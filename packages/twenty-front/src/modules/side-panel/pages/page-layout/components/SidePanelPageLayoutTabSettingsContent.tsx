@@ -71,20 +71,20 @@ export const SidePanelPageLayoutTabSettingsContent = ({
     return null;
   }
 
-  const tabsSorted = sortTabsByPosition(pageLayoutDraft.tabs);
-  const currentIndex = tabsSorted.findIndex(
+  const tabSsorted = sortTabsByPosition(pageLayoutDraft.tabs);
+  const currentIndex = tabSsorted.findIndex(
     (tabItem) => tabItem.id === pageLayoutTabSettingsOpenTabId,
   );
   if (currentIndex < 0) return null;
-  const tab = tabsSorted[currentIndex];
+  const tab = tabSsorted[currentIndex];
   const isRecordPage = pageLayoutDraft.type === PageLayoutType.RECORD_PAGE;
-  const hasPinnedTab = isRecordPage && tabsSorted.length > 1;
+  const hasPinnedTab = isRecordPage && tabSsorted.length > 1;
   const canMoveLeft = hasPinnedTab ? currentIndex > 1 : currentIndex > 0;
-  const canMoveRight = currentIndex < tabsSorted.length - 1;
-  const canDelete = tabsSorted.length > 1;
+  const canMoveRight = currentIndex < tabSsorted.length - 1;
+  const canDelete = tabSsorted.length > 1;
   const isAlreadyPinned = currentIndex === 0;
   const canSetAsPinned =
-    isRecordPage && !isAlreadyPinned && tabsSorted.length > 1;
+    isRecordPage && !isAlreadyPinned && tabSsorted.length > 1;
 
   const isResetToDefaultDisabled =
     !isNonEmptyString(tab.applicationId) ||

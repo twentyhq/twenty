@@ -305,7 +305,7 @@ export class ObjectPermissionService {
           newObjectPermission.canSoftDeleteObjectRecords !== undefined
             ? newObjectPermission.canSoftDeleteObjectRecords
             : existingObjectRecordPermission?.canSoftDeleteObjectRecords;
-        const hasSoftDeletePermissionAfterUpdate =
+        const haSsoftDeletePermissionAfterUpdate =
           resolvedCanSoftDelete ?? flatRole.canSoftDeleteAllObjectRecords;
 
         const resolvedCanDestroy =
@@ -317,7 +317,7 @@ export class ObjectPermissionService {
 
         if (
           hasUpdatePermissionAfterUpdate ||
-          hasSoftDeletePermissionAfterUpdate ||
+          haSsoftDeletePermissionAfterUpdate ||
           hasDestroyPermissionAfterUpdate
         ) {
           throw new PermissionsException(

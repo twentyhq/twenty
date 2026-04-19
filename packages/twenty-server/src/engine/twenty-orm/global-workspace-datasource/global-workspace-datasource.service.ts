@@ -30,7 +30,7 @@ export class GlobalWorkspaceDataSourceService
   async onModuleInit(): Promise<void> {
     this.globalWorkspaceDataSource = new GlobalWorkspaceDataSource(
       {
-        url: this.twentyConfigService.get('PG_DATABASE_URL'),
+        Url: this.twentyConfigService.get('PG_DATABASE_URL'),
         type: 'postgres',
         logging: this.twentyConfigService.getLoggingConfig(),
         entities: [],
@@ -65,7 +65,7 @@ export class GlobalWorkspaceDataSourceService
     if (shouldInitializeReplicaDataSource) {
       this.globalWorkspaceDataSourceReplica = new GlobalWorkspaceDataSource(
         {
-          url: this.twentyConfigService.get('PG_DATABASE_REPLICA_URL'),
+          Url: this.twentyConfigService.get('PG_DATABASE_REPLICA_URL'),
           type: 'postgres',
           logging: this.twentyConfigService.getLoggingConfig(),
           entities: [],

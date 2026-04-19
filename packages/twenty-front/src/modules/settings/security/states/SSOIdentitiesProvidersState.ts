@@ -1,11 +1,11 @@
 /* @license Enterprise */
 
-import { type SSOIdentityProvider } from '@/settings/security/types/SSOIdentityProvider';
+import { type SsoIdentityProvider } from '@/settings/security/types/SsoIdentityProvider';
 import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 
-export const SSOIdentitiesProvidersState = createAtomState<
-  Omit<SSOIdentityProvider, '__typename'>[]
+export const SsoIdentitiesProvidersState = createAtomState<
+  Omit<SsoIdentityProvider, '__typename'>[]
 >({
-  key: 'SSOIdentitiesProvidersState',
+  key: 'SsoIdentitiesProvidersState',
   defaultValue: [],
 });

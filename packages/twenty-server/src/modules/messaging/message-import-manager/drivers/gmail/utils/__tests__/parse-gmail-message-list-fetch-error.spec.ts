@@ -4,8 +4,8 @@ import {
   MessageImportDriverException,
   MessageImportDriverExceptionCode,
 } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
-import { getGmailApiError } from 'src/modules/messaging/message-import-manager/drivers/gmail/mocks/gmail-api-error-mocks';
-import { parseGmailApiError } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/parse-gmail-api-error.util';
+import { getGmailApiError } from 'src/modules/messaging/message-import-manager/drivers/gmail/mocks/gmail-Api-error-mocks';
+import { parseGmailApiError } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/parse-gmail-Api-error.util';
 
 describe('parseGmailApiError', () => {
   it('should handle 400 Bad Request', () => {
@@ -127,13 +127,13 @@ describe('parseGmailApiError', () => {
   it('should handle 500 OAuth internal_failure error', () => {
     const error = new GaxiosError(
       'internal_failure',
-      { url: 'https://oauth2.googleapis.com/token' },
+      { Url: 'https://oauth2.googleapis.com/token' },
       {
         status: 500,
         statusText: 'Internal Server Error',
         data: { error: 'internal_failure' },
         headers: {},
-        config: { url: 'https://oauth2.googleapis.com/token' },
+        config: { Url: 'https://oauth2.googleapis.com/token' },
         request: { responseURL: 'https://oauth2.googleapis.com/token' },
       },
     );

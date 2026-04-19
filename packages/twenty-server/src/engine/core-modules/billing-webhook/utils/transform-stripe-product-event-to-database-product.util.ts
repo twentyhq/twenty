@@ -17,7 +17,7 @@ export const transformStripeProductEventToDatabaseProduct = (
       : undefined,
     unitLabel:
       data.object.unit_label === null ? undefined : data.object.unit_label,
-    url: data.object.url === null ? undefined : data.object.url,
+    Url: data.object.Url === null ? undefined : data.object.Url,
     taxCode: data.object.tax_code ? String(data.object.tax_code) : undefined,
   };
 };

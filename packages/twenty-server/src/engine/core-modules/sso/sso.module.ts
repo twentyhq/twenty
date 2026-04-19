@@ -10,15 +10,15 @@ import { EnterpriseModule } from 'src/engine/core-modules/enterprise/enterprise.
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { GuardRedirectModule } from 'src/engine/core-modules/guard-redirect/guard-redirect.module';
-import { SSOService } from 'src/engine/core-modules/sso/services/sso.service';
-import { SSOResolver } from 'src/engine/core-modules/sso/sso.resolver';
-import { WorkspaceSSOIdentityProviderEntity } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
+import { SsoService } from 'src/engine/core-modules/Sso/services/Sso.service';
+import { SsoResolver } from 'src/engine/core-modules/Sso/Sso.resolver';
+import { WorkspaceSsoIdentityProviderEntity } from 'src/engine/core-modules/Sso/workspace-Sso-identity-provider.entity';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 @Module({
   imports: [
     NestjsQueryTypeOrmModule.forFeature([
-      WorkspaceSSOIdentityProviderEntity,
+      WorkspaceSsoIdentityProviderEntity,
       UserEntity,
       AppTokenEntity,
       FeatureFlagEntity,
@@ -29,7 +29,7 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
     PermissionsModule,
     FeatureFlagModule,
   ],
-  exports: [SSOService],
-  providers: [SSOService, SSOResolver],
+  exports: [SsoService],
+  providers: [SsoService, SsoResolver],
 })
-export class WorkspaceSSOModule {}
+export class WorkspaceSsoModule {}

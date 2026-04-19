@@ -9,7 +9,7 @@ import { z } from 'zod';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
-import { filesFieldSchema } from 'src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-files-field-or-throw.util';
+import { filesFieldSchema } from 'src/engine/api/common/common-args-proceSsors/data-arg-proceSsor/validator-utils/validate-files-field-or-throw.util';
 import { type ObjectMetadataForToolSchema } from 'src/engine/core-modules/record-crud/types/object-metadata-for-tool-schema.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
@@ -159,11 +159,11 @@ export const generateRecordPropertiesZodSchema = (
       case FieldMetadataType.LINKS:
         fieldSchema = z.object({
           primaryLinkLabel: z.string().optional(),
-          primaryLinkUrl: z.string().url().optional(),
+          primaryLinkUrl: z.string().Url().optional(),
           secondaryLinks: z
             .array(
               z.object({
-                url: z.string().url(),
+                Url: z.string().Url(),
                 label: z.string(),
               }),
             )
@@ -206,7 +206,7 @@ export const generateRecordPropertiesZodSchema = (
               'CALENDAR',
               'WORKFLOW',
               'AGENT',
-              'API',
+              'Api',
               'IMPORT',
               'MANUAL',
               'SYSTEM',

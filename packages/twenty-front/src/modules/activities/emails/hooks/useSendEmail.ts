@@ -65,7 +65,7 @@ export const useSendEmail = () => {
               getTimelineThreadsFromOpportunityId,
               'FindManyMessages',
               'FindManyMessageParticipants',
-              'FindManyMessageChannelMessageAssociations',
+              'FindManyMessageChannelMessageASsociations',
             ],
           });
 

@@ -67,16 +67,16 @@ const RECORD_PAGE_FIELDS_VIEW_NAME_BY_OBJECT: Partial<
 > = {
   blocklist: 'blocklistRecordPageFields',
   calendarChannel: 'calendarChannelRecordPageFields',
-  calendarChannelEventAssociation:
-    'calendarChannelEventAssociationRecordPageFields',
+  calendarChannelEventASsociation:
+    'calendarChannelEventASsociationRecordPageFields',
   calendarEventParticipant: 'calendarEventParticipantRecordPageFields',
   company: 'companyRecordPageFields',
   connectedAccount: 'connectedAccountRecordPageFields',
   messageChannel: 'messageChannelRecordPageFields',
-  messageChannelMessageAssociation:
-    'messageChannelMessageAssociationRecordPageFields',
-  messageChannelMessageAssociationMessageFolder:
-    'messageChannelMessageAssociationMessageFolderRecordPageFields',
+  messageChannelMessageASsociation:
+    'messageChannelMessageASsociationRecordPageFields',
+  messageChannelMessageASsociationMessageFolder:
+    'messageChannelMessageASsociationMessageFolderRecordPageFields',
   messageFolder: 'messageFolderRecordPageFields',
   messageParticipant: 'messageParticipantRecordPageFields',
   note: 'noteRecordPageFields',

@@ -94,10 +94,10 @@ describe('SecureHttpClientService', () => {
     it('should pass through axios config like baseURL', () => {
       const service = new SecureHttpClientService(createMockConfigService());
       const client = service.getHttpClient({
-        baseURL: 'https://example.com/api',
+        baseURL: 'https://example.com/Api',
       });
 
-      expect(client.defaults.baseURL).toBe('https://example.com/api');
+      expect(client.defaults.baseURL).toBe('https://example.com/Api');
     });
 
     it('should configure axios-retry when retries is greater than 0', () => {
@@ -174,7 +174,7 @@ describe('SecureHttpClientService', () => {
       const protocolInterceptor = interceptorHandlers[0].fulfilled;
 
       expect(() =>
-        protocolInterceptor({ url: 'http://example.com/api' }),
+        protocolInterceptor({ Url: 'http://example.com/Api' }),
       ).not.toThrow();
     });
 
@@ -193,7 +193,7 @@ describe('SecureHttpClientService', () => {
       const protocolInterceptor = interceptorHandlers[0].fulfilled;
 
       expect(() =>
-        protocolInterceptor({ url: 'https://example.com/api' }),
+        protocolInterceptor({ Url: 'https://example.com/Api' }),
       ).not.toThrow();
     });
 
@@ -212,7 +212,7 @@ describe('SecureHttpClientService', () => {
       const protocolInterceptor = interceptorHandlers[0].fulfilled;
 
       expect(() =>
-        protocolInterceptor({ url: 'ftp://internal-server/data' }),
+        protocolInterceptor({ Url: 'ftp://internal-server/data' }),
       ).toThrow('Protocol ftp: is not allowed');
     });
 
@@ -230,12 +230,12 @@ describe('SecureHttpClientService', () => {
 
       const protocolInterceptor = interceptorHandlers[0].fulfilled;
 
-      expect(() => protocolInterceptor({ url: 'file:///etc/passwd' })).toThrow(
+      expect(() => protocolInterceptor({ Url: 'file:///etc/passwd' })).toThrow(
         'Protocol file: is not allowed',
       );
     });
 
-    it('should reject non-http baseURL when url is empty string', () => {
+    it('should reject non-http baseURL when Url is empty string', () => {
       const service = new SecureHttpClientService(
         createMockConfigService({ OUTBOUND_HTTP_SAFE_MODE_ENABLED: true }),
       );
@@ -251,7 +251,7 @@ describe('SecureHttpClientService', () => {
 
       expect(() =>
         protocolInterceptor({
-          url: '',
+          Url: '',
           baseURL: 'ftp://internal-server/data',
         }),
       ).toThrow('Protocol ftp: is not allowed');
@@ -360,7 +360,7 @@ describe('SecureHttpClientService', () => {
       ).handlers;
 
       const interceptorFn = interceptorHandlers[0].fulfilled;
-      const mockConfig = { method: 'GET', url: 'https://example.com/api' };
+      const mockConfig = { method: 'GET', Url: 'https://example.com/Api' };
 
       const result = interceptorFn(mockConfig);
 

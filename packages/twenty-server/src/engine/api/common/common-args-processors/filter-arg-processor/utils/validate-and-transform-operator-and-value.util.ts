@@ -1,6 +1,6 @@
 import { msg } from '@lingui/core/macro';
 
-import { type FilterOperator } from 'src/engine/api/common/common-args-processors/filter-arg-processor/types/filter-operator.type';
+import { type FilterOperator } from 'src/engine/api/common/common-args-proceSsors/filter-arg-proceSsor/types/filter-operator.type';
 import {
   CommonQueryRunnerException,
   CommonQueryRunnerExceptionCode,

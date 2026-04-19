@@ -3,7 +3,7 @@ import { type DropResult, type ResponderProvided } from '@hello-pangea/dnd';
 import { useGetFieldMetadataItemByIdOrThrow } from '@/object-metadata/hooks/useGetFieldMetadataItemById';
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
 import { useObjectOptionsForBoard } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsForBoard';
-import { useProcessOptionDropdownDragEnd } from '@/object-record/object-options-dropdown/hooks/useProcessOptionDropdownDragEnd';
+import { useProceSsoptionDropdownDragEnd } from '@/object-record/object-options-dropdown/hooks/useProceSsoptionDropdownDragEnd';
 import { ObjectOptionsDropdownContext } from '@/object-record/object-options-dropdown/states/contexts/ObjectOptionsDropdownContext';
 import { useChangeRecordFieldVisibility } from '@/object-record/record-field/hooks/useChangeRecordFieldVisibility';
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
@@ -25,8 +25,8 @@ export const ViewFieldsVisibleDropdownSection = () => {
     ObjectOptionsDropdownContext,
   );
 
-  const { processOptionDropdownDragEnd } =
-    useProcessOptionDropdownDragEnd(recordIndexId);
+  const { proceSsoptionDropdownDragEnd } =
+    useProceSsoptionDropdownDragEnd(recordIndexId);
 
   const { handleReorderBoardFields, handleBoardFieldVisibilityChange } =
     useObjectOptionsForBoard({
@@ -41,7 +41,7 @@ export const ViewFieldsVisibleDropdownSection = () => {
   const handleReorderFields =
     viewType === ViewType.KANBAN
       ? handleReorderBoardFields
-      : processOptionDropdownDragEnd;
+      : proceSsoptionDropdownDragEnd;
 
   const { changeRecordFieldVisibility } =
     useChangeRecordFieldVisibility(recordIndexId);

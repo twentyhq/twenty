@@ -38,7 +38,7 @@ import {
   ViewExceptionCode,
   ViewExceptionMessageKey,
 } from 'src/engine/metadata-modules/view/exceptions/view.exception';
-import { ViewRestApiExceptionFilter } from 'src/engine/metadata-modules/view/filters/view-rest-api-exception.filter';
+import { ViewRestApiExceptionFilter } from 'src/engine/metadata-modules/view/filters/view-rest-Api-exception.filter';
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
 
 @Controller('rest/metadata/views')

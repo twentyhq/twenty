@@ -11,7 +11,7 @@ import { type ViewWithRelations } from '@/views/types/ViewWithRelations';
 
 type GetWorkspaceSidebarOrphanItemsInDisplayOrderArgs = {
   workspaceNavigationMenuItems: NavigationMenuItem[];
-  workspaceNavigationMenuItemsSorted: NavigationMenuItem[];
+  workspaceNavigationMenuItemSsorted: NavigationMenuItem[];
   objectMetadataItems: EnrichedObjectMetadataItem[];
   views: ViewWithRelations[];
   objectPermissionsByObjectMetadataId: Parameters<
@@ -22,7 +22,7 @@ type GetWorkspaceSidebarOrphanItemsInDisplayOrderArgs = {
 
 export const getWorkspaceSidebarOrphanItemsInDisplayOrder = ({
   workspaceNavigationMenuItems,
-  workspaceNavigationMenuItemsSorted,
+  workspaceNavigationMenuItemSsorted,
   objectMetadataItems,
   views,
   objectPermissionsByObjectMetadataId,
@@ -33,7 +33,7 @@ export const getWorkspaceSidebarOrphanItemsInDisplayOrder = ({
     .sort((a, b) => a.position - b.position);
 
   const processedItemsById = new Map(
-    workspaceNavigationMenuItemsSorted.map((item) => [item.id, item]),
+    workspaceNavigationMenuItemSsorted.map((item) => [item.id, item]),
   );
 
   return flatWorkspaceItems.reduce<NavigationMenuItem[]>((acc, item) => {

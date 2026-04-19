@@ -1,4 +1,4 @@
-import { validateDateTimeFieldOrThrow } from 'src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-date-time-field-or-throw.util';
+import { validateDateTimeFieldOrThrow } from 'src/engine/api/common/common-args-proceSsors/data-arg-proceSsor/validator-utils/validate-date-time-field-or-throw.util';
 import { CommonQueryRunnerException } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 
 describe('validateDateTimeFieldOrThrow', () => {

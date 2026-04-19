@@ -125,13 +125,13 @@ export const RecordTableColumnHeadDropdownMenu = ({
     openRecordFilterChipFromTableHeader(recordField.fieldMetadataItemId);
   };
 
-  const { isFilterable, isSortable } = useAtomFamilySelectorValue(
+  const { isFilterable, iSsortable } = useAtomFamilySelectorValue(
     isFieldMetadataItemFilterableAndSortableSelector,
     { fieldMetadataItemId: recordField.fieldMetadataItemId },
   );
 
   const showSeparator =
-    (isFilterable || isSortable) && isLabelIdentifier !== true;
+    (isFilterable || iSsortable) && isLabelIdentifier !== true;
   const canHide = isLabelIdentifier !== true;
 
   return (
@@ -145,7 +145,7 @@ export const RecordTableColumnHeadDropdownMenu = ({
               text={t`Filter`}
             />
           )}
-          {isSortable && (
+          {iSsortable && (
             <MenuItem
               LeftIcon={IconSortDescending}
               onClick={handleSortClick}

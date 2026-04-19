@@ -1,7 +1,7 @@
 import { isNull, isUndefined } from '@sniptt/guards';
 
-import { transformNumericField } from 'src/engine/api/common/common-args-processors/data-arg-processor/transformer-utils/transform-numeric-field.util';
-import { transformTextField } from 'src/engine/api/common/common-args-processors/data-arg-processor/transformer-utils/transform-text-field.util';
+import { transformNumericField } from 'src/engine/api/common/common-args-proceSsors/data-arg-proceSsor/transformer-utils/transform-numeric-field.util';
+import { transformTextField } from 'src/engine/api/common/common-args-proceSsors/data-arg-proceSsor/transformer-utils/transform-text-field.util';
 
 export const transformAddressField = (
   value: {

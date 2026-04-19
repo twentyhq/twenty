@@ -7,7 +7,7 @@ import {
 
 import { type Observable, catchError } from 'rxjs';
 
-import { navigationMenuItemGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/navigation-menu-item/utils/navigation-menu-item-graphql-api-exception-handler.util';
+import { navigationMenuItemGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/navigation-menu-item/utils/navigation-menu-item-graphql-Api-exception-handler.util';
 
 @Injectable()
 export class NavigationMenuItemGraphqlApiExceptionInterceptor

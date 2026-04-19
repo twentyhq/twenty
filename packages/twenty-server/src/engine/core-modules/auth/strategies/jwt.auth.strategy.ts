@@ -102,14 +102,14 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
 
     if (!apiKey || apiKey.revokedAt) {
       throw new AuthException(
-        'This API Key is revoked',
+        'This Api Key is revoked',
         AuthExceptionCode.FORBIDDEN_EXCEPTION,
       );
     }
 
     if (new Date(apiKey.expiresAt) < new Date()) {
       throw new AuthException(
-        'This API Key is expired',
+        'This Api Key is expired',
         AuthExceptionCode.FORBIDDEN_EXCEPTION,
       );
     }
@@ -425,7 +425,7 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
   }
 
   async validate(payload: JwtPayload): Promise<AuthContext> {
-    // Support legacy api keys
+    // Support legacy Api keys
     if (
       payload.type === JwtTokenTypeEnum.API_KEY ||
       this.isLegacyApiKeyPayload(payload)

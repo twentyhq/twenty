@@ -28,7 +28,7 @@ import {
   PageLayoutTabExceptionCode,
   PageLayoutTabExceptionMessageKey,
 } from 'src/engine/metadata-modules/page-layout-tab/exceptions/page-layout-tab.exception';
-import { PageLayoutTabRestApiExceptionFilter } from 'src/engine/metadata-modules/page-layout-tab/filters/page-layout-tab-rest-api-exception.filter';
+import { PageLayoutTabRestApiExceptionFilter } from 'src/engine/metadata-modules/page-layout-tab/filters/page-layout-tab-rest-Api-exception.filter';
 import { PageLayoutTabService } from 'src/engine/metadata-modules/page-layout-tab/services/page-layout-tab.service';
 
 @Controller('rest/metadata/pageLayoutTabs')

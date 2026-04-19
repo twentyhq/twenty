@@ -2,7 +2,7 @@ import { SetMetadata } from '@nestjs/common';
 
 import { PROCESS_METADATA } from 'src/engine/core-modules/message-queue/message-queue.constants';
 
-export interface MessageQueueProcessOptions {
+export interface MessageQueueProceSsoptions {
   jobName: string;
 }
 

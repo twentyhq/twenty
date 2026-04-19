@@ -1,4 +1,4 @@
-import { validateIsEmptyArrayOperatorValueOrThrow } from 'src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-is-empty-array-operator-value-or-throw.util';
+import { validateIsEmptyArrayOperatorValueOrThrow } from 'src/engine/api/common/common-args-proceSsors/filter-arg-proceSsor/utils/validate-is-empty-array-operator-value-or-throw.util';
 import { CommonQueryRunnerException } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 
 describe('validateIsEmptyArrayOperatorValueOrThrow', () => {

@@ -2,7 +2,7 @@ import { getOperandLabelShort } from '@/object-record/object-filter-dropdown/uti
 import { useGetRecordFilterDisplayValue } from '@/object-record/record-filter/hooks/useGetRecordFilterDisplayValue';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { isRecordFilterConsideredEmpty } from '@/object-record/record-filter/utils/isRecordFilterConsideredEmpty';
-import { isEmptinessOperand } from 'twenty-shared/utils';
+import { isEmptineSsoperand } from 'twenty-shared/utils';
 
 export const useGetRecordFilterChipLabelValue = () => {
   const { getRecordFilterDisplayValue } = useGetRecordFilterDisplayValue();
@@ -13,7 +13,7 @@ export const useGetRecordFilterChipLabelValue = () => {
     recordFilter: RecordFilter;
   }) => {
     const operandLabelShort = getOperandLabelShort(recordFilter.operand);
-    const operandIsEmptiness = isEmptinessOperand(recordFilter.operand);
+    const operandIsEmptiness = isEmptineSsoperand(recordFilter.operand);
     const recordFilterIsEmpty = isRecordFilterConsideredEmpty(recordFilter);
 
     const recordFilterDisplayValue = getRecordFilterDisplayValue(recordFilter);

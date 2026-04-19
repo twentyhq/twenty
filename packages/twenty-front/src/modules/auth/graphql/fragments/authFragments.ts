@@ -9,7 +9,7 @@ export const AUTH_TOKEN = gql`
 
 export const AUTH_TOKEN_PAIR = gql`
   fragment AuthTokenPairFragment on AuthTokenPair {
-    accessOrWorkspaceAgnosticToken {
+    acceSsorWorkspaceAgnosticToken {
       ...AuthTokenFragment
     }
     refreshToken {
@@ -30,7 +30,7 @@ export const AVAILABLE_WORKSPACE_FOR_AUTH_FRAGMENT = gql`
       customUrl
     }
     logo
-    sso {
+    Sso {
       type
       id
       issuer

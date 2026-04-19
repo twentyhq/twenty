@@ -8,7 +8,7 @@ import { DomainServerConfigService } from 'src/engine/core-modules/domain/domain
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
-import { cleanServerUrl } from 'src/utils/clean-server-url';
+import { cleanServerUrl } from 'src/utils/clean-server-Url';
 import { TWENTY_CLI_APPLICATION_REGISTRATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-cli-application-registration.constant';
 
 @Controller('.well-known')
@@ -23,10 +23,10 @@ export class OAuthDiscoveryController {
   @UseGuards(PublicEndpointGuard, NoPermissionGuard)
   async getAuthorizationServerMetadata(@Req() request: Request) {
     const issuer = this.getRequestBaseUrl(request);
-    // /authorize is served by the frontend; SERVER_URL (API-only) has no such
-    // route, so we route the client to the default frontend base URL in that
+    // /authorize is served by the frontend; SERVER_URL (Api-only) has no such
+    // route, so we route the client to the default frontend base Url in that
     // case. All other hosts (app.twenty.com, workspace subdomains, custom
-    // domains) serve both frontend and API.
+    // domains) serve both frontend and Api.
     const authorizeBase = this.isApiHost(request)
       ? cleanServerUrl(this.domainServerConfigService.getBaseUrl().toString())
       : issuer;
@@ -58,7 +58,7 @@ export class OAuthDiscoveryController {
       // OAuth mix-up attacks. Required by OAuth 2.1 security BCP.
       authorization_response_iss_parameter_supported: true,
       ...(cliRegistration
-        ? { cli_client_id: cliRegistration.oAuthClientId }
+        ? { cli_client_id: cliRegistration.oAuthclientId }
         : {}),
     };
   }
@@ -101,6 +101,6 @@ export class OAuthDiscoveryController {
   private isApiHost(request: Request): boolean {
     const serverUrl = this.twentyConfigService.get('SERVER_URL');
 
-    return request.get('host') === new URL(serverUrl).host;
+    return request.get('host') === new Url(serverUrl).host;
   }
 }

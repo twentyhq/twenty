@@ -3,7 +3,7 @@ import { Body, Controller, Post, UseFilters, UseGuards } from '@nestjs/common';
 import { generateText } from 'ai';
 import { PermissionFlagType } from 'twenty-shared/constants';
 
-import { RestApiExceptionFilter } from 'src/engine/api/rest/rest-api-exception.filter';
+import { RestApiExceptionFilter } from 'src/engine/api/rest/rest-Api-exception.filter';
 import type { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { JwtAuthGuard } from 'src/engine/guards/jwt-auth.guard';
@@ -13,7 +13,7 @@ import {
   AiException,
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
-import { AiRestApiExceptionFilter } from 'src/engine/metadata-modules/ai/filters/ai-api-exception.filter';
+import { AiRestApiExceptionFilter } from 'src/engine/metadata-modules/ai/filters/ai-Api-exception.filter';
 import { GenerateTextInput } from 'src/engine/metadata-modules/ai/ai-generate-text/dtos/generate-text.input';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 
@@ -33,7 +33,7 @@ export class AiGenerateTextController {
   ) {
     if (this.aiModelRegistryService.getAvailableModels().length === 0) {
       throw new AiException(
-        'No AI models are available. Please configure at least one AI provider API key.',
+        'No AI models are available. Please configure at least one AI provider Api key.',
         AiExceptionCode.API_KEY_NOT_CONFIGURED,
       );
     }

@@ -33,8 +33,8 @@ import { TransferApplicationRegistrationOwnershipInput } from 'src/engine/core-m
 import { UpdateApplicationRegistrationInput } from 'src/engine/core-modules/application/application-registration/dtos/update-application-registration.input';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { DomainServerConfigService } from 'src/engine/core-modules/domain/domain-server-config/services/domain-server-config.service';
-import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
-import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
+import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-Api-exception.filter';
+import { FileUrlService } from 'src/engine/core-modules/file/file-Url/file-Url.service';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
@@ -64,10 +64,10 @@ export class ApplicationRegistrationResolver {
 
   @UseGuards(PublicEndpointGuard, NoPermissionGuard)
   @Query(() => PublicApplicationRegistrationDTO, { nullable: true })
-  async findApplicationRegistrationByClientId(
+  async findApplicationRegistrationByclientId(
     @Args('clientId') clientId: string,
   ): Promise<PublicApplicationRegistrationDTO | null> {
-    return this.applicationRegistrationService.findPublicByClientId(clientId);
+    return this.applicationRegistrationService.findPublicByclientId(clientId);
   }
 
   @UseGuards(WorkspaceAuthGuard, NoPermissionGuard)

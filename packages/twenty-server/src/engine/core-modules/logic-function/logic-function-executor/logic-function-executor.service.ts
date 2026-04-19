@@ -31,7 +31,7 @@ import { FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/ty
 import { SubscriptionChannel } from 'src/engine/subscriptions/enums/subscription-channel.enum';
 import { SubscriptionService } from 'src/engine/subscriptions/subscription.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { cleanServerUrl } from 'src/utils/clean-server-url';
+import { cleanServerUrl } from 'src/utils/clean-server-Url';
 
 export class LogicFunctionExecutionException extends Error {
   constructor(

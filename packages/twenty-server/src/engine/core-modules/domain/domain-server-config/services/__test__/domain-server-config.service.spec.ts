@@ -43,7 +43,7 @@ describe('SubdomainManagerService', () => {
   });
 
   describe('buildBaseUrl', () => {
-    it('should build the base URL from environment variables', () => {
+    it('should build the base Url from environment variables', () => {
       jest
         .spyOn(twentyConfigService, 'get')
         .mockImplementation((key: string) => {

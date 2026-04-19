@@ -1,6 +1,6 @@
 import { FieldActorSource } from 'twenty-shared/types';
 
-import { validateActorFieldOrThrow } from 'src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-actor-field-or-throw.util';
+import { validateActorFieldOrThrow } from 'src/engine/api/common/common-args-proceSsors/data-arg-proceSsor/validator-utils/validate-actor-field-or-throw.util';
 import { CommonQueryRunnerException } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 
 describe('validateActorFieldOrThrow', () => {

@@ -1,7 +1,7 @@
 import { msg } from '@lingui/core/macro';
 import { isString } from '@sniptt/guards';
 
-import { type FilterOperator } from 'src/engine/api/common/common-args-processors/filter-arg-processor/types/filter-operator.type';
+import { type FilterOperator } from 'src/engine/api/common/common-args-proceSsors/filter-arg-proceSsor/types/filter-operator.type';
 import {
   CommonQueryRunnerException,
   CommonQueryRunnerExceptionCode,

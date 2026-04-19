@@ -5,7 +5,7 @@ import {
   createStandardIndexFlatMetadata,
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/create-standard-index-flat-metadata.util';
 
-export const buildCalendarChannelEventAssociationStandardFlatIndexMetadatas = ({
+export const buildCalendarChannelEventASsociationStandardFlatIndexMetadatas = ({
   now,
   objectName,
   workspaceId,
@@ -13,10 +13,10 @@ export const buildCalendarChannelEventAssociationStandardFlatIndexMetadatas = ({
   dependencyFlatEntityMaps,
   twentyStandardApplicationId,
 }: Omit<
-  CreateStandardIndexArgs<'calendarChannelEventAssociation'>,
+  CreateStandardIndexArgs<'calendarChannelEventASsociation'>,
   'context'
 >): Record<
-  AllStandardObjectIndexName<'calendarChannelEventAssociation'>,
+  AllStandardObjectIndexName<'calendarChannelEventASsociation'>,
   FlatIndexMetadata
 > => ({
   calendarChannelIdIndex: createStandardIndexFlatMetadata({

@@ -1,6 +1,6 @@
-import { useDeleteSSOIdentityProvider } from '@/settings/security/hooks/useDeleteSSOIdentityProvider';
-import { useUpdateSSOIdentityProvider } from '@/settings/security/hooks/useUpdateSSOIdentityProvider';
-import { type SSOIdentityProvider } from '@/settings/security/types/SSOIdentityProvider';
+import { useDeleteSsoIdentityProvider } from '@/settings/security/hooks/useDeleteSsoIdentityProvider';
+import { useUpdateSsoIdentityProvider } from '@/settings/security/hooks/useUpdateSsoIdentityProvider';
+import { type SsoIdentityProvider } from '@/settings/security/types/SsoIdentityProvider';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -13,33 +13,33 @@ import { LightIconButton } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
 import { SsoIdentityProviderStatus } from '~/generated-metadata/graphql';
 
-type SettingsSecuritySSORowDropdownMenuProps = {
-  SSOIdp: Omit<SSOIdentityProvider, '__typename'>;
+type SettingsSecuritySsoRowDropdownMenuProps = {
+  SsoIdp: Omit<SsoIdentityProvider, '__typename'>;
 };
 
-export const SettingsSecuritySSORowDropdownMenu = ({
-  SSOIdp,
-}: SettingsSecuritySSORowDropdownMenuProps) => {
-  const dropdownId = `settings-account-row-${SSOIdp.id}`;
+export const SettingsSecuritySsoRowDropdownMenu = ({
+  SsoIdp,
+}: SettingsSecuritySsoRowDropdownMenuProps) => {
+  const dropdownId = `settings-account-row-${SsoIdp.id}`;
 
   const { enqueueErrorSnackBar } = useSnackBar();
 
   const { closeDropdown } = useCloseDropdown();
 
-  const { deleteSSOIdentityProvider } = useDeleteSSOIdentityProvider();
-  const { updateSSOIdentityProvider } = useUpdateSSOIdentityProvider();
+  const { deleteSsoIdentityProvider } = useDeleteSsoIdentityProvider();
+  const { updateSsoIdentityProvider } = useUpdateSsoIdentityProvider();
 
   const { t } = useLingui();
 
-  const handleDeleteSSOIdentityProvider = async (
+  const handleDeleteSsoIdentityProvider = async (
     identityProviderId: string,
   ) => {
-    const result = await deleteSSOIdentityProvider({
+    const result = await deleteSsoIdentityProvider({
       identityProviderId,
     });
     if (isDefined(result.error)) {
       enqueueErrorSnackBar({
-        message: t`Error deleting SSO Identity Provider`,
+        message: t`Error deleting Sso Identity Provider`,
         options: {
           duration: 2000,
         },
@@ -47,19 +47,19 @@ export const SettingsSecuritySSORowDropdownMenu = ({
     }
   };
 
-  const toggleSSOIdentityProviderStatus = async (
+  const toggleSsoIdentityProviderStatus = async (
     identityProviderId: string,
   ) => {
-    const result = await updateSSOIdentityProvider({
+    const result = await updateSsoIdentityProvider({
       id: identityProviderId,
       status:
-        SSOIdp.status === 'Active'
+        SsoIdp.status === 'Active'
           ? SsoIdentityProviderStatus.Inactive
           : SsoIdentityProviderStatus.Active,
     });
     if (isDefined(result.error)) {
       enqueueErrorSnackBar({
-        message: t`Error editing SSO Identity Provider`,
+        message: t`Error editing Sso Identity Provider`,
         options: {
           duration: 2000,
         },
@@ -80,9 +80,9 @@ export const SettingsSecuritySSORowDropdownMenu = ({
             <MenuItem
               accent="default"
               LeftIcon={IconArchive}
-              text={SSOIdp.status === 'Active' ? t`Deactivate` : t`Activate`}
+              text={SsoIdp.status === 'Active' ? t`Deactivate` : t`Activate`}
               onClick={() => {
-                toggleSSOIdentityProviderStatus(SSOIdp.id);
+                toggleSsoIdentityProviderStatus(SsoIdp.id);
                 closeDropdown(dropdownId);
               }}
             />
@@ -91,7 +91,7 @@ export const SettingsSecuritySSORowDropdownMenu = ({
               LeftIcon={IconTrash}
               text={t`Delete`}
               onClick={() => {
-                handleDeleteSSOIdentityProvider(SSOIdp.id);
+                handleDeleteSsoIdentityProvider(SsoIdp.id);
                 closeDropdown(dropdownId);
               }}
             />

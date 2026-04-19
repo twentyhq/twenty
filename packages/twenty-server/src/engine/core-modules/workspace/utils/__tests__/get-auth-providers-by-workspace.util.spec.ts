@@ -1,8 +1,8 @@
 import {
-  type WorkspaceSSOIdentityProviderEntity,
+  type WorkspaceSsoIdentityProviderEntity,
   IdentityProviderType,
-  SSOIdentityProviderStatus,
-} from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
+  SsoIdentityProviderStatus,
+} from 'src/engine/core-modules/Sso/workspace-Sso-identity-provider.entity';
 import { getAuthProvidersByWorkspace } from 'src/engine/core-modules/workspace/utils/get-auth-providers-by-workspace.util';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
@@ -11,14 +11,14 @@ describe('getAuthProvidersByWorkspace', () => {
     isGoogleAuthEnabled: true,
     isPasswordAuthEnabled: true,
     isMicrosoftAuthEnabled: false,
-    workspaceSSOIdentityProviders: [
+    workspaceSsoIdentityProviders: [
       {
-        id: 'sso1',
-        name: 'SSO Provider 1',
-        type: IdentityProviderType.SAML,
+        id: 'Sso1',
+        name: 'Sso Provider 1',
+        type: IdentityProviderType.Saml,
 
-        status: SSOIdentityProviderStatus.Active,
-        issuer: 'sso1.example.com',
+        status: SsoIdentityProviderStatus.Active,
+        issuer: 'Sso1.example.com',
       },
     ],
   } as unknown as WorkspaceEntity;
@@ -31,7 +31,7 @@ describe('getAuthProvidersByWorkspace', () => {
         magicLink: false,
         password: true,
         microsoft: true,
-        sso: [],
+        Sso: [],
       },
     });
 
@@ -40,28 +40,28 @@ describe('getAuthProvidersByWorkspace', () => {
       magicLink: false,
       password: true,
       microsoft: false,
-      sso: [
+      Sso: [
         {
-          id: 'sso1',
-          name: 'SSO Provider 1',
-          type: IdentityProviderType.SAML,
+          id: 'Sso1',
+          name: 'Sso Provider 1',
+          type: IdentityProviderType.Saml,
 
-          status: SSOIdentityProviderStatus.Active,
-          issuer: 'sso1.example.com',
+          status: SsoIdentityProviderStatus.Active,
+          issuer: 'Sso1.example.com',
         },
       ],
     });
   });
 
-  it('should handle workspace with no SSO providers', () => {
+  it('should handle workspace with no Sso providers', () => {
     const result = getAuthProvidersByWorkspace({
-      workspace: { ...mockWorkspace, workspaceSSOIdentityProviders: [] },
+      workspace: { ...mockWorkspace, workspaceSsoIdentityProviders: [] },
       systemEnabledProviders: {
         google: true,
         magicLink: false,
         password: true,
         microsoft: true,
-        sso: [],
+        Sso: [],
       },
     });
 
@@ -70,21 +70,21 @@ describe('getAuthProvidersByWorkspace', () => {
       magicLink: false,
       password: true,
       microsoft: false,
-      sso: [],
+      Sso: [],
     });
   });
-  it('should handle workspace with SSO providers inactive', () => {
+  it('should handle workspace with Sso providers inactive', () => {
     const result = getAuthProvidersByWorkspace({
       workspace: {
         ...mockWorkspace,
-        workspaceSSOIdentityProviders: [
+        workspaceSsoIdentityProviders: [
           {
-            id: 'sso1',
-            name: 'SSO Provider 1',
-            type: IdentityProviderType.SAML,
-            status: SSOIdentityProviderStatus.Inactive,
-            issuer: 'sso1.example.com',
-          } as WorkspaceSSOIdentityProviderEntity,
+            id: 'Sso1',
+            name: 'Sso Provider 1',
+            type: IdentityProviderType.Saml,
+            status: SsoIdentityProviderStatus.Inactive,
+            issuer: 'Sso1.example.com',
+          } as WorkspaceSsoIdentityProviderEntity,
         ],
       },
       systemEnabledProviders: {
@@ -92,7 +92,7 @@ describe('getAuthProvidersByWorkspace', () => {
         magicLink: false,
         password: true,
         microsoft: true,
-        sso: [],
+        Sso: [],
       },
     });
 
@@ -101,7 +101,7 @@ describe('getAuthProvidersByWorkspace', () => {
       magicLink: false,
       password: true,
       microsoft: false,
-      sso: [],
+      Sso: [],
     });
   });
 
@@ -113,7 +113,7 @@ describe('getAuthProvidersByWorkspace', () => {
         magicLink: false,
         password: true,
         microsoft: true,
-        sso: [],
+        Sso: [],
       },
     });
 
@@ -122,14 +122,14 @@ describe('getAuthProvidersByWorkspace', () => {
       magicLink: false,
       password: true,
       microsoft: false,
-      sso: [
+      Sso: [
         {
-          id: 'sso1',
-          name: 'SSO Provider 1',
-          type: IdentityProviderType.SAML,
+          id: 'Sso1',
+          name: 'Sso Provider 1',
+          type: IdentityProviderType.Saml,
 
-          status: SSOIdentityProviderStatus.Active,
-          issuer: 'sso1.example.com',
+          status: SsoIdentityProviderStatus.Active,
+          issuer: 'Sso1.example.com',
         },
       ],
     });

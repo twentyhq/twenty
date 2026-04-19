@@ -6,8 +6,8 @@ import { v4 } from 'uuid';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
-import { FileWithSignedUrlDTO } from 'src/engine/core-modules/file/dtos/file-with-sign-url.dto';
-import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
+import { FileWithSignedUrlDTO } from 'src/engine/core-modules/file/dtos/file-with-sign-Url.dto';
+import { FileUrlService } from 'src/engine/core-modules/file/file-Url/file-Url.service';
 import { extractFileInfo } from 'src/engine/core-modules/file/utils/extract-file-info.utils';
 import { sanitizeFile } from 'src/engine/core-modules/file/utils/sanitize-file.utils';
 
@@ -64,7 +64,7 @@ export class FileEmailAttachmentService {
 
     return {
       ...savedFile,
-      url: this.fileUrlService.signFileByIdUrl({
+      Url: this.fileUrlService.signFileByIdUrl({
         fileId,
         workspaceId,
         fileFolder: FileFolder.EmailAttachment,

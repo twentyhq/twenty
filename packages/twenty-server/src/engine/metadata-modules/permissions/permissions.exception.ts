@@ -85,7 +85,7 @@ const getPermissionsExceptionUserFriendlyMessage = (
     case PermissionsExceptionCode.NO_ROLE_FOUND_FOR_USER_WORKSPACE:
       return msg`No role found for this user in the workspace.`;
     case PermissionsExceptionCode.API_KEY_ROLE_NOT_FOUND:
-      return msg`API key role not found.`;
+      return msg`Api key role not found.`;
     case PermissionsExceptionCode.NO_AUTHENTICATION_CONTEXT:
       return msg`Authentication is required.`;
     case PermissionsExceptionCode.INVALID_ARG:
@@ -173,7 +173,7 @@ export enum PermissionsExceptionMessage {
   UNKNOWN_OPERATION_NAME = 'Unknown operation name, cannot determine required permission',
   CANNOT_UPDATE_SELF_ROLE = 'Cannot update self role',
   NO_ROLE_FOUND_FOR_USER_WORKSPACE = 'No role found for userWorkspace',
-  API_KEY_ROLE_NOT_FOUND = 'API key has no role assigned',
+  API_KEY_ROLE_NOT_FOUND = 'Api key has no role assigned',
   NO_AUTHENTICATION_CONTEXT = 'No valid authentication context found',
   ROLE_LABEL_ALREADY_EXISTS = 'A role with this label already exists',
   DEFAULT_ROLE_NOT_FOUND = 'Default role not found',

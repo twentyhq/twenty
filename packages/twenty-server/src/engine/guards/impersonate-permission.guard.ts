@@ -31,7 +31,7 @@ export class ImpersonatePermissionGuard implements CanActivate {
         PermissionsExceptionMessage.PERMISSION_DENIED,
         PermissionsExceptionCode.PERMISSION_DENIED,
         {
-          userFriendlyMessage: msg`Can't impersonate user via api key`,
+          userFriendlyMessage: msg`Can't impersonate user via Api key`,
         },
       );
     }

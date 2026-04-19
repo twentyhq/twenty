@@ -1,6 +1,6 @@
 /* @license Enterprise */
 
-import { SSOIdentitiesProvidersState } from '@/settings/security/states/SSOIdentitiesProvidersState';
+import { SsoIdentitiesProvidersState } from '@/settings/security/states/SsoIdentitiesProvidersState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useMutation } from '@apollo/client/react';
 import {
@@ -8,16 +8,16 @@ import {
   DeleteSsoIdentityProviderDocument,
 } from '~/generated-metadata/graphql';
 
-export const useDeleteSSOIdentityProvider = () => {
+export const useDeleteSsoIdentityProvider = () => {
   const [deleteSsoIdentityProviderMutation] = useMutation(
     DeleteSsoIdentityProviderDocument,
   );
 
-  const setSSOIdentitiesProviders = useSetAtomState(
-    SSOIdentitiesProvidersState,
+  const setSsoIdentitiesProviders = useSetAtomState(
+    SsoIdentitiesProvidersState,
   );
 
-  const deleteSSOIdentityProvider = async ({
+  const deleteSsoIdentityProvider = async ({
     identityProviderId,
   }: DeleteSsoIdentityProviderMutationVariables['input']) => {
     return await deleteSsoIdentityProviderMutation({
@@ -25,11 +25,11 @@ export const useDeleteSSOIdentityProvider = () => {
         input: { identityProviderId },
       },
       onCompleted: (data) => {
-        setSSOIdentitiesProviders((SSOIdentitiesProviders) =>
-          SSOIdentitiesProviders.filter(
+        setSsoIdentitiesProviders((SsoIdentitiesProviders) =>
+          SsoIdentitiesProviders.filter(
             (identityProvider) =>
               identityProvider.id !==
-              data.deleteSSOIdentityProvider.identityProviderId,
+              data.deleteSsoIdentityProvider.identityProviderId,
           ),
         );
       },
@@ -37,6 +37,6 @@ export const useDeleteSSOIdentityProvider = () => {
   };
 
   return {
-    deleteSSOIdentityProvider,
+    deleteSsoIdentityProvider,
   };
 };

@@ -197,7 +197,7 @@ export class ObjectMetadataToolsFactory {
       },
       delete_object_metadata: {
         description:
-          'Delete an object metadata by its ID. This will also delete all associated fields.',
+          'Delete an object metadata by its ID. This will also delete all aSsociated fields.',
         inputSchema: DeleteObjectMetadataInputSchema,
         execute: async (parameters: { id: string }) => {
           try {

@@ -69,5 +69,5 @@ export class BillingProductEntity {
   unitLabel: string | null;
 
   @Column({ nullable: true, type: 'text' })
-  url: string | null;
+  Url: string | null;
 }

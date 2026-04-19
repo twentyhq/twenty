@@ -17,7 +17,7 @@ import {
 } from 'twenty-shared/utils';
 import { FindOptionsRelations, ObjectLiteral } from 'typeorm';
 
-import { ProcessNestedRelationsHelper } from 'src/engine/api/common/common-nested-relations-processor/process-nested-relations.helper';
+import { ProcessNestedRelationsHelper } from 'src/engine/api/common/common-nested-relations-proceSsor/process-nested-relations.helper';
 import { CommonSelectFieldsHelper } from 'src/engine/api/common/common-select-fields/common-select-fields-helper';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
@@ -92,7 +92,7 @@ export class ObjectRecordEventPublisher {
         continue;
       }
 
-      await this.processObjectRecordStreamEvents({
+      await this.proceSsobjectRecordStreamEvents({
         streamChannelId,
         streamData,
         workspaceEventBatch: eventBatch,
@@ -117,7 +117,7 @@ export class ObjectRecordEventPublisher {
     return { permissionsContext, flatWorkspaceMemberMaps };
   }
 
-  private async processObjectRecordStreamEvents({
+  private async proceSsobjectRecordStreamEvents({
     streamChannelId,
     streamData,
     workspaceEventBatch,

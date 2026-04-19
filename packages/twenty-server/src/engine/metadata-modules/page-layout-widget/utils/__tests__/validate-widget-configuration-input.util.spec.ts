@@ -34,7 +34,7 @@ describe('validateWidgetConfigurationInput', () => {
       ).not.toThrow();
     });
 
-    it('should throw error for invalid URL', () => {
+    it('should throw error for invalid Url', () => {
       expect(() =>
         validateWidgetConfigurationInput({
           configuration: {
@@ -42,10 +42,10 @@ describe('validateWidgetConfigurationInput', () => {
             configurationType: WidgetConfigurationType.IFRAME,
           },
         }),
-      ).toThrow(/url must be a URL address/);
+      ).toThrow(/Url must be a Url address/);
     });
 
-    it('should throw error for empty URL', () => {
+    it('should throw error for empty Url', () => {
       expect(() =>
         validateWidgetConfigurationInput({
           configuration: {
@@ -53,7 +53,7 @@ describe('validateWidgetConfigurationInput', () => {
             configurationType: WidgetConfigurationType.IFRAME,
           },
         }),
-      ).toThrow(/url must be a URL address/);
+      ).toThrow(/Url must be a Url address/);
     });
   });
 

@@ -2,7 +2,7 @@ import { type DynamicModule, Global, Module } from '@nestjs/common';
 import { DiscoveryModule } from '@nestjs/core';
 
 import { MessageQueueCoreModule } from 'src/engine/core-modules/message-queue/message-queue-core.module';
-import { MessageQueueMetadataAccessor } from 'src/engine/core-modules/message-queue/message-queue-metadata.accessor';
+import { MessageQueueMetadataAcceSsor } from 'src/engine/core-modules/message-queue/message-queue-metadata.acceSsor';
 import { MessageQueueExplorer } from 'src/engine/core-modules/message-queue/message-queue.explorer';
 import {
   type ASYNC_OPTIONS_TYPE,
@@ -23,7 +23,7 @@ export class MessageQueueModule {
     return {
       module: MessageQueueModule,
       imports: [DiscoveryModule],
-      providers: [MessageQueueExplorer, MessageQueueMetadataAccessor],
+      providers: [MessageQueueExplorer, MessageQueueMetadataAcceSsor],
     };
   }
 

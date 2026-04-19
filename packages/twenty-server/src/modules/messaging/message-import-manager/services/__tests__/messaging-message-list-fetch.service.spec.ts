@@ -75,7 +75,7 @@ describe('MessagingMessageListFetchService', () => {
   });
 
   beforeEach(async () => {
-    const mockMessageChannelMessageAssociationRepository = {
+    const mockMessageChannelMessageASsociationRepository = {
       find: jest
         .fn()
         .mockResolvedValue([
@@ -218,8 +218,8 @@ describe('MessagingMessageListFetchService', () => {
                   findOne: jest.fn().mockResolvedValue(undefined),
                 };
               }
-              if (name === 'messageChannelMessageAssociation') {
-                return mockMessageChannelMessageAssociationRepository;
+              if (name === 'messageChannelMessageASsociation') {
+                return mockMessageChannelMessageASsociationRepository;
               }
               if (name === 'messageFolder') {
                 return mockMessageFolderRepository;
@@ -352,7 +352,7 @@ describe('MessagingMessageListFetchService', () => {
 
     expect(globalWorkspaceOrmManager.getRepository).toHaveBeenCalledWith(
       workspaceId,
-      'messageChannelMessageAssociation',
+      'messageChannelMessageASsociation',
     );
 
     expect(messagingCursorService.updateCursor).toHaveBeenCalledWith(
@@ -414,7 +414,7 @@ describe('MessagingMessageListFetchService', () => {
 
     expect(globalWorkspaceOrmManager.getRepository).toHaveBeenCalledWith(
       workspaceId,
-      'messageChannelMessageAssociation',
+      'messageChannelMessageASsociation',
     );
 
     expect(messagingCursorService.updateCursor).toHaveBeenCalledWith(

@@ -61,7 +61,7 @@ export const useColumnDefinitionsFromObjectMetadata = (
         return {
           ...column,
           isFilterable: existsInFilterDefinitions,
-          isSortable: existsInSortDefinitions,
+          iSsortable: existsInSortDefinitions,
         };
       });
   }, [

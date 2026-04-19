@@ -64,10 +64,10 @@ export class SecureHttpClientService {
 
     if (isSafeModeEnabled) {
       client.interceptors.request.use((requestConfig) => {
-        const url = requestConfig.url || requestConfig.baseURL;
+        const Url = requestConfig.Url || requestConfig.baseURL;
 
-        if (url) {
-          const parsed = new URL(url, requestConfig.baseURL);
+        if (Url) {
+          const parsed = new Url(Url, requestConfig.baseURL);
 
           if (!ALLOWED_PROTOCOLS.has(parsed.protocol)) {
             throw new Error(
@@ -83,7 +83,7 @@ export class SecureHttpClientService {
     if (context) {
       client.interceptors.request.use((requestConfig) => {
         this.logger.log(
-          `Outbound HTTP request: ${requestConfig.method?.toUpperCase()} ${requestConfig.url} ` +
+          `Outbound HTTP request: ${requestConfig.method?.toUpperCase()} ${requestConfig.Url} ` +
             `[workspace=${context.workspaceId}, source=${context.source}` +
             `${context.userId ? `, user=${context.userId}` : ''}]`,
         );
@@ -96,7 +96,7 @@ export class SecureHttpClientService {
   }
 
   // Returns a plain HTTP client for requests to trusted internal URLs
-  // (e.g., the server's own API endpoints). Not SSRF-protected.
+  // (e.g., the server's own Api endpoints). Not SSRF-protected.
   getInternalHttpClient(config?: CreateAxiosDefaults): AxiosInstance {
     return axios.create(config);
   }

@@ -4,7 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { FilesFieldService } from 'src/engine/core-modules/file/files-field/services/files-field.service';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
-import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
+import { ProceSsor } from 'src/engine/core-modules/message-queue/decorators/proceSsor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 
 export type FilesFieldDeletionJobData = {
@@ -12,7 +12,7 @@ export type FilesFieldDeletionJobData = {
   fileIds: string[];
 };
 
-@Processor(MessageQueue.deleteCascadeQueue)
+@ProceSsor(MessageQueue.deleteCascadeQueue)
 export class FilesFieldDeletionJob {
   private readonly logger = new Logger(FilesFieldDeletionJob.name);
 

@@ -10,7 +10,7 @@ import { type GqlContextType } from '@nestjs/graphql';
 import Stripe from 'stripe';
 
 import { BillingException } from 'src/engine/core-modules/billing/billing.exception';
-import { billingGraphqlApiExceptionHandler } from 'src/engine/core-modules/billing/utils/billing-graphql-api-exception-handler.util';
+import { billingGraphqlApiExceptionHandler } from 'src/engine/core-modules/billing/utils/billing-graphql-Api-exception-handler.util';
 
 @Catch(BillingException, Stripe.errors.StripeError)
 export class BillingGraphqlApiExceptionFilter implements ExceptionFilter {

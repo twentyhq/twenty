@@ -118,7 +118,7 @@ export const ChooseYourPlanContent = ({ billing }: { billing: Billing }) => {
     if (planKey === BillingPlanKey.ENTERPRISE) {
       return {
         organizationBenefits: [
-          t`SSO (SAML / OIDC)`,
+          t`Sso (Saml / Oidc)`,
           t`20,000 workflow node executions`,
           t`Priority support`,
         ],

@@ -12,7 +12,7 @@ import {
   computeLimitParameters,
   computeOrderByParameters,
   computeStartingAfterParameters,
-} from 'src/engine/core-modules/open-api/utils/parameters.utils';
+} from 'src/engine/core-modules/open-Api/utils/parameters.utils';
 
 describe('computeParameters', () => {
   describe('computeLimit', () => {

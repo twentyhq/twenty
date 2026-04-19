@@ -1,7 +1,7 @@
 import { Logger, Scope } from '@nestjs/common';
 
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
-import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
+import { ProceSsor } from 'src/engine/core-modules/message-queue/decorators/proceSsor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessagingMessageCleanerService } from 'src/modules/messaging/message-cleaner/services/messaging-message-cleaner.service';
 
@@ -10,7 +10,7 @@ export type MessagingMessageChannelDeletionCleanupJobData = {
   messageChannelId: string;
 };
 
-@Processor({
+@ProceSsor({
   queueName: MessageQueue.messagingQueue,
   scope: Scope.REQUEST,
 })
@@ -28,10 +28,10 @@ export class MessagingMessageChannelDeletionCleanupJob {
     data: MessagingMessageChannelDeletionCleanupJobData,
   ): Promise<void> {
     this.logger.debug(
-      `WorkspaceId: ${data.workspaceId} Cleaning up message channel message associations for channel ${data.messageChannelId}`,
+      `WorkspaceId: ${data.workspaceId} Cleaning up message channel message aSsociations for channel ${data.messageChannelId}`,
     );
 
-    await this.messageCleanerService.deleteMessageChannelMessageAssociationsByChannelId(
+    await this.messageCleanerService.deleteMessageChannelMessageASsociationsByChannelId(
       {
         workspaceId: data.workspaceId,
         messageChannelId: data.messageChannelId,

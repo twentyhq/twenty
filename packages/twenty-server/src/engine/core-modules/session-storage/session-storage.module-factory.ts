@@ -56,7 +56,7 @@ export const getSessionStorageOptions = (
       }
 
       const redisClient = createClient({
-        url: connectionString,
+        Url: connectionString,
       });
 
       redisClient.connect().catch((err) => {

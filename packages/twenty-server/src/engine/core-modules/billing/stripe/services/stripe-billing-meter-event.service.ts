@@ -105,7 +105,7 @@ export class StripeBillingMeterEventService {
 
   /**
    * Returns a reasonable minimum start time for meter queries.
-   * Stripe's billing meters API doesn't accept timestamps from 1970 (epoch).
+   * Stripe's billing meters Api doesn't accept timestamps from 1970 (epoch).
    * Using 2020-01-01 as a safe minimum since Stripe Billing Meters is a recent feature.
    */
   private getMinimumMeterStartTime(): Date {

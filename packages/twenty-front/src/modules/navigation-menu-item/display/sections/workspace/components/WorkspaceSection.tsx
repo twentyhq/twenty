@@ -44,7 +44,7 @@ const StyledRightIconsContainer = styled.div`
 
 export const WorkspaceSection = () => {
   const items = useNavigationMenuItemSectionItems();
-  const { workspaceNavigationMenuItemsSorted } = useSortedNavigationMenuItems();
+  const { workspaceNavigationMenuItemSsorted } = useSortedNavigationMenuItems();
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
   const views = useAtomStateValue(viewsSelector);
   const { enterLayoutCustomizationMode } = useEnterLayoutCustomizationMode();
@@ -82,7 +82,7 @@ export const WorkspaceSection = () => {
       pageTitle: t`Edit folder`,
       pageIcon: getIcon(item.icon ?? FOLDER_ICON_DEFAULT),
     });
-    const firstChild = workspaceNavigationMenuItemsSorted.find((navItem) => {
+    const firstChild = workspaceNavigationMenuItemSsorted.find((navItem) => {
       if (navItem.folderId !== folderId) return false;
       if (navItem.type === NavigationMenuItemType.LINK) return false;
       const link = getNavigationMenuItemComputedLink(

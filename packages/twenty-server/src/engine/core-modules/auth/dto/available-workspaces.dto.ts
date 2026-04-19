@@ -3,17 +3,17 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { type SSOConfiguration } from 'src/engine/core-modules/sso/types/SSOConfigurations.type';
+import { type SsoConfiguration } from 'src/engine/core-modules/Sso/types/SsoConfigurations.type';
 import {
   IdentityProviderType,
-  SSOIdentityProviderStatus,
-} from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
+  SsoIdentityProviderStatus,
+} from 'src/engine/core-modules/Sso/workspace-Sso-identity-provider.entity';
 import { WorkspaceUrlsDTO } from 'src/engine/core-modules/workspace/dtos/workspace-urls.dto';
 
-@ObjectType('SSOConnection')
-class SSOConnectionDTO {
+@ObjectType('SsoConnection')
+class SsoConnectionDTO {
   @Field(() => IdentityProviderType)
-  type: SSOConfiguration['type'];
+  type: SsoConfiguration['type'];
 
   @Field(() => UUIDScalarType)
   id: string;
@@ -24,8 +24,8 @@ class SSOConnectionDTO {
   @Field(() => String)
   name: string;
 
-  @Field(() => SSOIdentityProviderStatus)
-  status: SSOConfiguration['status'];
+  @Field(() => SsoIdentityProviderStatus)
+  status: SsoConfiguration['status'];
 }
 
 @ObjectType('AvailableWorkspace')
@@ -51,8 +51,8 @@ export class AvailableWorkspace {
   @Field(() => String, { nullable: true })
   logo?: string;
 
-  @Field(() => [SSOConnectionDTO])
-  sso: SSOConnectionDTO[];
+  @Field(() => [SsoConnectionDTO])
+  Sso: SsoConnectionDTO[];
 }
 
 @ObjectType('AvailableWorkspaces')

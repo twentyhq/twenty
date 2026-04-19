@@ -140,7 +140,7 @@ export class ApplicationTarballService {
           latestAvailableVersion: packageJson?.version ?? null,
           isListed: false,
           isFeatured: false,
-          oAuthClientId: v4(),
+          oAuthclientId: v4(),
           oAuthRedirectUris: [],
           oAuthScopes: [],
           ownerWorkspaceId: params.ownerWorkspaceId,

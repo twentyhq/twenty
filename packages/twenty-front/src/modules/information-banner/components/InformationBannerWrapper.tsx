@@ -11,7 +11,7 @@ import { InformationBannerMaintenance } from '@/information-banner/components/ma
 import { InformationBannerReconnectAccountEmailAliases } from '@/information-banner/components/reconnect-account/InformationBannerReconnectAccountEmailAliases';
 import { InformationBannerReconnectAccountInsufficientPermissions } from '@/information-banner/components/reconnect-account/InformationBannerReconnectAccountInsufficientPermissions';
 import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
-import { useIsSomeMeteredProductCapReached } from '@/workspace/hooks/useIsSomeMeteredProductCapReached';
+import { useISsomeMeteredProductCapReached } from '@/workspace/hooks/useISsomeMeteredProductCapReached';
 import { useIsWorkspaceActivationStatusEqualsTo } from '@/workspace/hooks/useIsWorkspaceActivationStatusEqualsTo';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 
@@ -36,7 +36,7 @@ export const InformationBannerWrapper = () => {
   const isWorkspaceSuspended = useIsWorkspaceActivationStatusEqualsTo(
     WorkspaceActivationStatus.SUSPENDED,
   );
-  const isSomeMeteredProductCapReached = useIsSomeMeteredProductCapReached();
+  const iSsomeMeteredProductCapReached = useISsomeMeteredProductCapReached();
 
   const displayBillingSubscriptionPausedBanner =
     isWorkspaceSuspended && subscriptionStatus === SubscriptionStatus.Paused;
@@ -49,7 +49,7 @@ export const InformationBannerWrapper = () => {
     subscriptionStatus === SubscriptionStatus.Unpaid;
 
   const displayEndTrialPeriodBanner =
-    isSomeMeteredProductCapReached &&
+    iSsomeMeteredProductCapReached &&
     subscriptionStatus === SubscriptionStatus.Trialing;
 
   return (

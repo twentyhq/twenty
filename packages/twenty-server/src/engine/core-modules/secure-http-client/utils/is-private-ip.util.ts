@@ -98,7 +98,7 @@ const extractIpv4FromDottedMappedIpv6 = (addr: string): string | null => {
 };
 
 export const isPrivateIp = (addr: string): boolean => {
-  // IPv4-mapped IPv6 in hex form — the form Node.js URL parser produces.
+  // IPv4-mapped IPv6 in hex form — the form Node.js Url parser produces.
   const hexMappedIpv4 = extractIpv4FromHexMappedIpv6(addr);
 
   if (hexMappedIpv4 !== null) {

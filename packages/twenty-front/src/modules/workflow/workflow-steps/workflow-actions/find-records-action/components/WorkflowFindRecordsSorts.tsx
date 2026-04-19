@@ -4,7 +4,7 @@ import { type RecordSort } from '@/object-record/record-sort/types/RecordSort';
 import { Select } from '@/ui/input/components/Select';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { IconArrowsSort, IconTrash, useIcons } from 'twenty-ui/display';
+import { IconArrowSsort, IconTrash, useIcons } from 'twenty-ui/display';
 import { Button, type SelectOption } from 'twenty-ui/input';
 import { v4 as uuidv4 } from 'uuid';
 import { ViewSortDirection } from '~/generated-metadata/graphql';
@@ -26,19 +26,19 @@ const StyledAddButtonContainer = styled.div`
   margin-top: ${themeCssVariables.spacing[1]};
 `;
 
-type WorkflowFindRecordsSortsProps = {
+type WorkflowFindRecordSsortsProps = {
   recordSorts: RecordSort[];
   onChange: (recordSorts: RecordSort[]) => void;
   objectMetadataItem: EnrichedObjectMetadataItem;
   readonly: boolean;
 };
 
-export const WorkflowFindRecordsSorts = ({
+export const WorkflowFindRecordSsorts = ({
   recordSorts,
   onChange,
   objectMetadataItem,
   readonly,
-}: WorkflowFindRecordsSortsProps) => {
+}: WorkflowFindRecordSsortsProps) => {
   const { t } = useLingui();
   const { getIcon } = useIcons();
 
@@ -149,7 +149,7 @@ export const WorkflowFindRecordsSorts = ({
 
       <StyledAddButtonContainer>
         <Button
-          Icon={IconArrowsSort}
+          Icon={IconArrowSsort}
           size="small"
           variant="secondary"
           accent="default"

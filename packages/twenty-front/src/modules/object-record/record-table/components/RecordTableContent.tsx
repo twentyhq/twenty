@@ -14,7 +14,7 @@ import { RecordTableRecordGroupsBody } from '@/object-record/record-table/record
 import { RecordTableHeader } from '@/object-record/record-table/record-table-header/components/RecordTableHeader';
 import { isRowSelectedComponentFamilyState } from '@/object-record/record-table/record-table-row/states/isRowSelectedComponentFamilyState';
 import { recordTableHoverPositionComponentState } from '@/object-record/record-table/states/recordTableHoverPositionComponentState';
-import { isSomeCellInEditModeComponentSelector } from '@/object-record/record-table/states/selectors/isSomeCellInEditModeComponentSelector';
+import { iSsomeCellInEditModeComponentSelector } from '@/object-record/record-table/states/selectors/iSsomeCellInEditModeComponentSelector';
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
 import { RECORD_INDEX_DRAG_SELECT_BOUNDARY_CLASS } from '@/ui/utilities/drag-select/constants/RecordIndecDragSelectBoundaryClass';
 import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
@@ -85,22 +85,22 @@ export const RecordTableContent = ({
       recordTableId,
     );
 
-  const isSomeCellInEditMode = useAtomComponentSelectorCallbackState(
-    isSomeCellInEditModeComponentSelector,
+  const iSsomeCellInEditMode = useAtomComponentSelectorCallbackState(
+    iSsomeCellInEditModeComponentSelector,
     recordTableId,
   );
 
   const handleMouseLeave = useCallback(() => {
-    const cellInEditMode = store.get(isSomeCellInEditMode);
+    const cellInEditMode = store.get(iSsomeCellInEditMode);
 
     if (!cellInEditMode) {
       store.set(recordTableHoverPositionCallbackState, null);
     }
-  }, [store, isSomeCellInEditMode, recordTableHoverPositionCallbackState]);
+  }, [store, iSsomeCellInEditMode, recordTableHoverPositionCallbackState]);
 
   const handleDelegatedMouseMove = useCallback(
     (event: React.MouseEvent) => {
-      if (store.get(isSomeCellInEditMode)) {
+      if (store.get(iSsomeCellInEditMode)) {
         return;
       }
 
@@ -128,7 +128,7 @@ export const RecordTableContent = ({
 
       store.set(recordTableHoverPositionCallbackState, { column, row });
     },
-    [store, isSomeCellInEditMode, recordTableHoverPositionCallbackState],
+    [store, iSsomeCellInEditMode, recordTableHoverPositionCallbackState],
   );
 
   const isRecordTableDragColumnHidden = useAtomComponentStateValue(

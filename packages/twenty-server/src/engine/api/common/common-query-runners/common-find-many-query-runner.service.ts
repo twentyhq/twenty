@@ -235,10 +235,10 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
 
     return {
       ...args,
-      orderBy: this.orderByArgProcessor.process({
+      orderBy: this.orderByArgProceSsor.process({
         orderBy: args.orderBy,
       }),
-      filter: this.filterArgProcessor.process({
+      filter: this.filterArgProceSsor.process({
         filter: args.filter,
         flatObjectMetadata,
         flatFieldMetadataMaps,

@@ -22,7 +22,7 @@ import {
 import { OAuthRegisterInput } from 'src/engine/core-modules/application/application-oauth/dtos/oauth-register.input';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
-import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-api-exception.filter';
+import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-Api-exception.filter';
 import { validateRedirectUri } from 'src/engine/core-modules/auth/utils/validate-redirect-uri.util';
 import { ThrottlerException } from 'src/engine/core-modules/throttler/throttler.exception';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
@@ -140,7 +140,7 @@ export class OAuthRegistrationController {
     const registration = this.applicationRegistrationRepository.create({
       universalIdentifier: v4(),
       name: body.client_name,
-      oAuthClientId: clientId,
+      oAuthclientId: clientId,
       oAuthClientSecretHash: null,
       oAuthRedirectUris: body.redirect_uris,
       oAuthScopes: requestedScopes as OAuthScope[],

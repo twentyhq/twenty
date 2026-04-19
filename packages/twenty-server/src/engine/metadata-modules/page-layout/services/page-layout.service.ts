@@ -387,7 +387,7 @@ export class PageLayoutService {
       flatPageLayoutToDestroy.type === PageLayoutType.DASHBOARD &&
       !isLinkedDashboardAlreadyDestroyed
     ) {
-      await this.destroyAssociatedDashboards({
+      await this.destroyASsociatedDashboards({
         pageLayoutId: id,
         workspaceId,
       });
@@ -454,7 +454,7 @@ export class PageLayoutService {
     return true;
   }
 
-  private async destroyAssociatedDashboards({
+  private async destroyASsociatedDashboards({
     pageLayoutId,
     workspaceId,
   }: {

@@ -10,18 +10,18 @@ import {
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
-import { baseSchema } from 'src/engine/core-modules/open-api/utils/base-schema.utils';
+import { baseSchema } from 'src/engine/core-modules/open-Api/utils/base-schema.utils';
 import {
   computeMetadataSchemaComponents,
   computeParameterComponents,
   computeSchemaComponents,
-} from 'src/engine/core-modules/open-api/utils/components.utils';
-import { computeSchemaTags } from 'src/engine/core-modules/open-api/utils/compute-schema-tags.utils';
-import { computeWebhooks } from 'src/engine/core-modules/open-api/utils/computeWebhooks.utils';
+} from 'src/engine/core-modules/open-Api/utils/components.utils';
+import { computeSchemaTags } from 'src/engine/core-modules/open-Api/utils/compute-schema-tags.utils';
+import { computeWebhooks } from 'src/engine/core-modules/open-Api/utils/computeWebhooks.utils';
 import {
   get400ErrorResponses,
   get401ErrorResponses,
-} from 'src/engine/core-modules/open-api/utils/get-error-responses.utils';
+} from 'src/engine/core-modules/open-Api/utils/get-error-responses.utils';
 import {
   computeBatchPath,
   computeDuplicatesResultPath,
@@ -31,23 +31,23 @@ import {
   computeRestoreManyResultPath,
   computeRestoreOneResultPath,
   computeSingleResultPath,
-} from 'src/engine/core-modules/open-api/utils/path.utils';
+} from 'src/engine/core-modules/open-Api/utils/path.utils';
 import {
   getRequestBody,
   getUpdateRequestBody,
-} from 'src/engine/core-modules/open-api/utils/request-body.utils';
+} from 'src/engine/core-modules/open-Api/utils/request-body.utils';
 import {
   getCreateOneResponse201,
   getDeleteResponse200,
   getFindManyResponse200,
   getFindOneResponse200,
   getUpdateOneResponse200,
-} from 'src/engine/core-modules/open-api/utils/responses.utils';
+} from 'src/engine/core-modules/open-Api/utils/responses.utils';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { getServerUrl } from 'src/utils/get-server-url';
+import { getServerUrl } from 'src/utils/get-server-Url';
 
 @Injectable()
 export class OpenApiService {

@@ -106,7 +106,7 @@ export class BillingCreditRolloverService {
     }
 
     for (const grant of rolloverGrants) {
-      await this.stripeCreditGrantService.voidCreditGrant(grant.id);
+      await this.stripeCreditGrantService.vOidcreditGrant(grant.id);
     }
   }
 }

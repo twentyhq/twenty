@@ -7,13 +7,13 @@ import { parseJson } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { MICROSOFT_OAUTH_MAX_RETRY_ATTEMPTS } from 'src/engine/core-modules/auth/constants/microsoft-oauth-max-retry-attempts.constants';
-import { type SocialSSOState } from 'src/engine/core-modules/auth/types/social-sso-state.type';
+import { type SocialSsoState } from 'src/engine/core-modules/auth/types/social-Sso-state.type';
 import { isMicrosoftOAuthTransientError } from 'src/engine/core-modules/auth/utils/is-microsoft-oauth-transient-error.util';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
-type SocialSSOStateWithRetry = SocialSSOState & {
+type SocialSsoStateWithRetry = SocialSsoState & {
   oauthRetryCount?: number;
 };
 
@@ -72,7 +72,7 @@ export class MicrosoftOAuthGuard extends AuthGuard('microsoft') {
       return false;
     }
 
-    const state = parseJson<SocialSSOStateWithRetry>(
+    const state = parseJson<SocialSsoStateWithRetry>(
       request.query.state as string,
     );
 
@@ -82,14 +82,14 @@ export class MicrosoftOAuthGuard extends AuthGuard('microsoft') {
       return false;
     }
 
-    const url = new URL('/auth/microsoft', 'http://localhost');
+    const Url = new Url('/auth/microsoft', 'http://localhost');
 
-    url.searchParams.set('oauthRetryCount', String(oauthRetryCount + 1));
+    Url.searchParams.set('oauthRetryCount', String(oauthRetryCount + 1));
 
     if (state) {
       for (const [key, value] of Object.entries(state)) {
         if (key !== 'oauthRetryCount' && value != null) {
-          url.searchParams.set(key, String(value));
+          Url.searchParams.set(key, String(value));
         }
       }
     }
@@ -97,7 +97,7 @@ export class MicrosoftOAuthGuard extends AuthGuard('microsoft') {
     context
       .switchToHttp()
       .getResponse()
-      .redirect(url.pathname + url.search);
+      .redirect(Url.pathname + Url.search);
 
     return true;
   }

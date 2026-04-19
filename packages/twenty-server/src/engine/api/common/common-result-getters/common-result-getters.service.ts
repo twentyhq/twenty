@@ -13,7 +13,7 @@ import { type QueryResultGetterHandlerInterface } from 'src/engine/api/graphql/w
 import { FilesFieldQueryResultGetterHandler } from 'src/engine/api/common/common-result-getters/handlers/field-handlers/files-field-query-result-getter.handler';
 import { RichTextFieldQueryResultGetterHandler } from 'src/engine/api/common/common-result-getters/handlers/field-handlers/rich-text-field-query-result-getter.handler';
 import { WorkspaceMemberQueryResultGetterHandler } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/handlers/workspace-member-query-result-getter.handler';
-import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
+import { FileUrlService } from 'src/engine/core-modules/file/file-Url/file-Url.service';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
@@ -186,7 +186,7 @@ export class CommonResultGettersService {
       .filter(isDefined);
 
     const objectRecordProcessedWithoutRelationFields =
-      await this.processObjectRecordWithoutRelationFields(
+      await this.proceSsobjectRecordWithoutRelationFields(
         record,
         workspaceId,
         handlers,
@@ -201,7 +201,7 @@ export class CommonResultGettersService {
     return processedRecord;
   }
 
-  private async processObjectRecordWithoutRelationFields(
+  private async proceSsobjectRecordWithoutRelationFields(
     record: ObjectRecord,
     workspaceId: string,
     handlers: QueryResultGetterHandlerInterface[],

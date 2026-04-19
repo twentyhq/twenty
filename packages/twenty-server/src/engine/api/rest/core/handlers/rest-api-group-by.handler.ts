@@ -2,9 +2,9 @@ import { Injectable } from '@nestjs/common';
 
 import { DEFAULT_NUMBER_OF_GROUPS_LIMIT } from 'twenty-shared/constants';
 
-import { GroupByArgProcessorService } from 'src/engine/api/common/common-args-processors/group-by-arg-processor/group-by-arg-processor.service';
+import { GroupByArgProceSsorService } from 'src/engine/api/common/common-args-proceSsors/group-by-arg-proceSsor/group-by-arg-proceSsor.service';
 import { CommonGroupByQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-group-by-query-runner.service';
-import { RestApiBaseHandler } from 'src/engine/api/rest/core/handlers/rest-api-base.handler';
+import { RestApiBaseHandler } from 'src/engine/api/rest/core/handlers/rest-Api-base.handler';
 import { parseAggregateFieldsRestRequest } from 'src/engine/api/rest/input-request-parsers/aggregate-fields-parser-utils/parse-aggregate-fields-rest-request.util';
 import { parseFilterRestRequest } from 'src/engine/api/rest/input-request-parsers/filter-parser-utils/parse-filter-rest-request.util';
 import { parseGroupByRestRequest } from 'src/engine/api/rest/input-request-parsers/group-by-parser-utils/parse-group-by-rest-request.util';
@@ -14,13 +14,13 @@ import { parseOrderByForRecordsWithGroupByRestRequest } from 'src/engine/api/res
 import { parseOrderByWithGroupByRestRequest } from 'src/engine/api/rest/input-request-parsers/order-by-with-group-by-parser-utils/parse-order-by-with-group-by-rest-request.util';
 import { parseViewIdRestRequest } from 'src/engine/api/rest/input-request-parsers/view-id-parser-utils/parse-view-id-rest-request.util';
 import { AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request';
-import { workspaceQueryRunnerRestApiExceptionHandler } from 'src/engine/api/rest/utils/workspace-query-runner-rest-api-exception-handler.util';
+import { workspaceQueryRunnerRestApiExceptionHandler } from 'src/engine/api/rest/utils/workspace-query-runner-rest-Api-exception-handler.util';
 
 @Injectable()
 export class RestApiGroupByHandler extends RestApiBaseHandler {
   constructor(
     private readonly commonGroupByQueryRunnerService: CommonGroupByQueryRunnerService,
-    private readonly groupByArgProcessor: GroupByArgProcessorService,
+    private readonly groupByArgProceSsor: GroupByArgProceSsorService,
   ) {
     super();
   }
@@ -87,12 +87,12 @@ export class RestApiGroupByHandler extends RestApiBaseHandler {
     const includeRecords = parseIncludeRecordsSampleRestRequest(request);
     const aggregateFields = parseAggregateFieldsRestRequest(request);
     const availableAggregations =
-      this.groupByArgProcessor.getAvailableAggregations({
+      this.groupByArgProceSsor.getAvailableAggregations({
         flatObjectMetadata,
         flatFieldMetadataMaps,
       });
 
-    this.groupByArgProcessor.validateAggregateFieldKeysOrThrow({
+    this.groupByArgProceSsor.validateAggregateFieldKeysOrThrow({
       aggregateFieldKeys: Object.keys(aggregateFields),
       availableAggregations,
     });

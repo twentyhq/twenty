@@ -5,7 +5,7 @@ import {
   createStandardIndexFlatMetadata,
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/create-standard-index-flat-metadata.util';
 
-export const buildMessageChannelMessageAssociationMessageFolderStandardFlatIndexMetadatas =
+export const buildMessageChannelMessageASsociationMessageFolderStandardFlatIndexMetadatas =
   ({
     now,
     objectName,
@@ -14,18 +14,18 @@ export const buildMessageChannelMessageAssociationMessageFolderStandardFlatIndex
     dependencyFlatEntityMaps,
     twentyStandardApplicationId,
   }: Omit<
-    CreateStandardIndexArgs<'messageChannelMessageAssociationMessageFolder'>,
+    CreateStandardIndexArgs<'messageChannelMessageASsociationMessageFolder'>,
     'context'
   >): Record<
-    AllStandardObjectIndexName<'messageChannelMessageAssociationMessageFolder'>,
+    AllStandardObjectIndexName<'messageChannelMessageASsociationMessageFolder'>,
     FlatIndexMetadata
   > => ({
-    messageChannelMessageAssociationIdIndex: createStandardIndexFlatMetadata({
+    messageChannelMessageASsociationIdIndex: createStandardIndexFlatMetadata({
       objectName,
       workspaceId,
       context: {
-        indexName: 'messageChannelMessageAssociationIdIndex',
-        relatedFieldNames: ['messageChannelMessageAssociation'],
+        indexName: 'messageChannelMessageASsociationIdIndex',
+        relatedFieldNames: ['messageChannelMessageASsociation'],
       },
       standardObjectMetadataRelatedEntityIds,
       dependencyFlatEntityMaps,
@@ -44,15 +44,15 @@ export const buildMessageChannelMessageAssociationMessageFolderStandardFlatIndex
       twentyStandardApplicationId,
       now,
     }),
-    messageChannelMessageAssociationIdMessageFolderIdUniqueIndex:
+    messageChannelMessageASsociationIdMessageFolderIdUniqueIndex:
       createStandardIndexFlatMetadata({
         objectName,
         workspaceId,
         context: {
           indexName:
-            'messageChannelMessageAssociationIdMessageFolderIdUniqueIndex',
+            'messageChannelMessageASsociationIdMessageFolderIdUniqueIndex',
           relatedFieldNames: [
-            'messageChannelMessageAssociation',
+            'messageChannelMessageASsociation',
             'messageFolderId',
           ],
           isUnique: true,

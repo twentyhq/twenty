@@ -13,13 +13,13 @@ import { join } from 'path';
 import { YogaDriver, type YogaDriverConfig } from '@graphql-yoga/nestjs';
 import { SentryModule } from '@sentry/nestjs/setup';
 
-import { CoreGraphQLApiModule } from 'src/engine/api/graphql/core-graphql-api.module';
+import { CoreGraphQLApiModule } from 'src/engine/api/graphql/core-graphql-Api.module';
 import { GraphQLConfigModule } from 'src/engine/api/graphql/graphql-config/graphql-config.module';
 import { GraphQLConfigService } from 'src/engine/api/graphql/graphql-config/graphql-config.service';
-import { MetadataGraphQLApiModule } from 'src/engine/api/graphql/metadata-graphql-api.module';
+import { MetadataGraphQLApiModule } from 'src/engine/api/graphql/metadata-graphql-Api.module';
 import { McpMethodGuardMiddleware } from 'src/engine/api/mcp/middlewares/mcp-method-guard.middleware';
 import { McpModule } from 'src/engine/api/mcp/mcp.module';
-import { RestApiModule } from 'src/engine/api/rest/rest-api.module';
+import { RestApiModule } from 'src/engine/api/rest/rest-Api.module';
 import { WorkspaceAuthContextMiddleware } from 'src/engine/core-modules/auth/middlewares/workspace-auth-context.middleware';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { DataloaderModule } from 'src/engine/dataloaders/dataloader.module';

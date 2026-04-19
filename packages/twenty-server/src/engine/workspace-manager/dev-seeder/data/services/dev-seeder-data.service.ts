@@ -22,9 +22,9 @@ import {
   generateAttachmentSeedsForWorkspace,
 } from 'src/engine/workspace-manager/dev-seeder/data/constants/attachment-data-seeds.constant';
 import {
-  CALENDAR_CHANNEL_EVENT_ASSOCIATION_DATA_SEED_COLUMNS,
-  CALENDAR_CHANNEL_EVENT_ASSOCIATION_DATA_SEEDS,
-} from 'src/engine/workspace-manager/dev-seeder/data/constants/calendar-channel-event-association-data-seeds.constant';
+  CALENDAR_CHANNEL_EVENT_ASsoCIATION_DATA_SEED_COLUMNS,
+  CALENDAR_CHANNEL_EVENT_ASsoCIATION_DATA_SEEDS,
+} from 'src/engine/workspace-manager/dev-seeder/data/constants/calendar-channel-event-aSsociation-data-seeds.constant';
 import {
   CALENDAR_EVENT_DATA_SEED_COLUMNS,
   CALENDAR_EVENT_DATA_SEEDS,
@@ -54,9 +54,9 @@ import {
   MESSAGE_CHANNEL_DATA_SEEDS,
 } from 'src/engine/workspace-manager/dev-seeder/data/constants/message-channel-data-seeds.constant';
 import {
-  MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_DATA_SEED_COLUMNS,
-  MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_DATA_SEEDS,
-} from 'src/engine/workspace-manager/dev-seeder/data/constants/message-channel-message-association-data-seeds.constant';
+  MESSAGE_CHANNEL_MESSAGE_ASsoCIATION_DATA_SEED_COLUMNS,
+  MESSAGE_CHANNEL_MESSAGE_ASsoCIATION_DATA_SEEDS,
+} from 'src/engine/workspace-manager/dev-seeder/data/constants/message-channel-message-aSsociation-data-seeds.constant';
 import {
   MESSAGE_DATA_SEED_COLUMNS,
   MESSAGE_DATA_SEEDS,
@@ -242,9 +242,9 @@ const getRecordSeedsBatches = (
       recordSeeds: TASK_TARGET_DATA_SEEDS,
     },
     {
-      tableName: 'calendarChannelEventAssociation',
-      pgColumns: CALENDAR_CHANNEL_EVENT_ASSOCIATION_DATA_SEED_COLUMNS,
-      recordSeeds: CALENDAR_CHANNEL_EVENT_ASSOCIATION_DATA_SEEDS,
+      tableName: 'calendarChannelEventASsociation',
+      pgColumns: CALENDAR_CHANNEL_EVENT_ASsoCIATION_DATA_SEED_COLUMNS,
+      recordSeeds: CALENDAR_CHANNEL_EVENT_ASsoCIATION_DATA_SEEDS,
     },
     {
       tableName: 'calendarEventParticipant',
@@ -261,9 +261,9 @@ const getRecordSeedsBatches = (
   // Batch 6: Depends on batch 5 entities
   const batch6: RecordSeedConfig[] = [
     {
-      tableName: 'messageChannelMessageAssociation',
-      pgColumns: MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_DATA_SEED_COLUMNS,
-      recordSeeds: MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_DATA_SEEDS,
+      tableName: 'messageChannelMessageASsociation',
+      pgColumns: MESSAGE_CHANNEL_MESSAGE_ASsoCIATION_DATA_SEED_COLUMNS,
+      recordSeeds: MESSAGE_CHANNEL_MESSAGE_ASsoCIATION_DATA_SEEDS,
     },
     {
       tableName: 'messageParticipant',

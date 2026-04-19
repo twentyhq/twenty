@@ -190,7 +190,7 @@ export class WorkspaceEntityManager extends EntityManager {
   }
 
   override createQueryBuilder<Entity extends ObjectLiteral>(
-    entityClassOrQueryRunner?: EntityTarget<Entity> | QueryRunner,
+    entityClaSsorQueryRunner?: EntityTarget<Entity> | QueryRunner,
     alias?: string,
     queryRunner?: QueryRunner,
     options: {
@@ -205,7 +205,7 @@ export class WorkspaceEntityManager extends EntityManager {
 
     if (alias) {
       queryBuilder = this.connection.createQueryBuilder(
-        entityClassOrQueryRunner as EntityTarget<Entity>,
+        entityClaSsorQueryRunner as EntityTarget<Entity>,
         alias as string,
         queryRunner as QueryRunner | undefined,
         {
@@ -214,7 +214,7 @@ export class WorkspaceEntityManager extends EntityManager {
       );
     } else {
       queryBuilder = this.connection.createQueryBuilder(
-        entityClassOrQueryRunner as QueryRunner,
+        entityClaSsorQueryRunner as QueryRunner,
         {
           calledByWorkspaceEntityManager: true,
         },

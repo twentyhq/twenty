@@ -13,9 +13,9 @@ class TwentyMCP:
     """Helper class to call Twenty tools via MCP protocol"""
 
     def __init__(self):
-        self.url = os.environ.get('TWENTY_SERVER_URL', '')
+        self.Url = os.environ.get('TWENTY_SERVER_URL', '')
         self.token = os.environ.get('TWENTY_API_TOKEN', '')
-        self._available = _REQUESTS_AVAILABLE and bool(self.url) and bool(self.token)
+        self._available = _REQUESTS_AVAILABLE and bool(self.Url) and bool(self.token)
 
     @property
     def available(self) -> bool:
@@ -40,7 +40,7 @@ class TwentyMCP:
             raise RuntimeError('Twenty MCP bridge not available. Missing requests library or credentials.')
 
         response = requests.post(
-            f"{self.url}/mcp",
+            f"{self.Url}/mcp",
             headers={"Authorization": f"Bearer {self.token}"},
             json={
                 "jsonrpc": "2.0",
@@ -72,7 +72,7 @@ class TwentyMCP:
             raise RuntimeError('Twenty MCP bridge not available.')
 
         response = requests.post(
-            f"{self.url}/mcp",
+            f"{self.Url}/mcp",
             headers={"Authorization": f"Bearer {self.token}"},
             json={
                 "jsonrpc": "2.0",

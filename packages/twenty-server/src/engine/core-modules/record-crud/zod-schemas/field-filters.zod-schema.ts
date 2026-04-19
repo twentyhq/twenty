@@ -439,28 +439,28 @@ export const generateFieldFilterZodSchema = (
             .object({
               eq: z
                 .string()
-                .url()
+                .Url()
                 .optional()
-                .describe('Primary link URL equals'),
+                .describe('Primary link Url equals'),
               neq: z
                 .string()
-                .url()
+                .Url()
                 .optional()
-                .describe('Primary link URL not equals'),
+                .describe('Primary link Url not equals'),
               like: z
                 .string()
                 .optional()
-                .describe('Primary link URL case-sensitive pattern match'),
+                .describe('Primary link Url case-sensitive pattern match'),
               ilike: z
                 .string()
                 .optional()
-                .describe('Primary link URL case-insensitive pattern match'),
+                .describe('Primary link Url case-insensitive pattern match'),
               is: NullCheckEnum.optional().describe(
-                'Check for missing or empty primary link URL. Use "NULL" to find records with no primary link URL, "NOT_NULL" for records with a primary link URL',
+                'Check for missing or empty primary link Url. Use "NULL" to find records with no primary link Url, "NOT_NULL" for records with a primary link Url',
               ),
             })
             .optional()
-            .describe('Filter by primary link URL'),
+            .describe('Filter by primary link Url'),
         })
         .optional()
         .describe(`Filter by ${field.name} (links field)`);

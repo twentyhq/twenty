@@ -20,8 +20,8 @@ import { type AvailableWorkspace } from 'src/engine/core-modules/auth/dto/availa
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { FileCorePictureService } from 'src/engine/core-modules/file/file-core-picture/services/file-core-picture.service';
-import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
-import { extractFileIdFromUrl } from 'src/engine/core-modules/file/files-field/utils/extract-file-id-from-url.util';
+import { FileUrlService } from 'src/engine/core-modules/file/file-Url/file-Url.service';
+import { extractFileIdFromUrl } from 'src/engine/core-modules/file/files-field/utils/extract-file-id-from-Url.util';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
@@ -335,7 +335,7 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
       relations: {
         userWorkspaces: {
           workspace: {
-            workspaceSSOIdentityProviders: true,
+            workspaceSsoIdentityProviders: true,
             approvedAccessDomains: true,
           },
         },
@@ -351,7 +351,7 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
     );
 
     const workspacesFromApprovedAccessDomain = (
-      await this.approvedAccessDomainService.findValidatedApprovedAccessDomainWithWorkspacesAndSSOIdentityProvidersDomain(
+      await this.approvedAccessDomainService.findValidatedApprovedAccessDomainWithWorkspacesAndSsoIdentityProvidersDomain(
         getDomainNameByEmail(email),
       )
     )
@@ -502,7 +502,7 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
             queryRunner,
           });
 
-        return savedFile.url;
+        return savedFile.Url;
       } catch (error) {
         if (error.code === FileStorageExceptionCode.FILE_NOT_FOUND) {
           return;
@@ -523,7 +523,7 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
         },
       );
 
-    return savedFile?.url;
+    return savedFile?.Url;
   }
 
   castWorkspaceToAvailableWorkspace(workspace: WorkspaceEntity) {
@@ -538,8 +538,8 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
             fileFolder: FileFolder.CorePicture,
           })
         : '',
-      sso:
-        workspace.workspaceSSOIdentityProviders?.reduce(
+      Sso:
+        workspace.workspaceSsoIdentityProviders?.reduce(
           (acc, identityProvider) =>
             acc.concat(
               identityProvider.status === 'Inactive'
@@ -554,7 +554,7 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
                     },
                   ],
             ),
-          [] as AvailableWorkspace['sso'],
+          [] as AvailableWorkspace['Sso'],
         ) ?? [],
     };
   }

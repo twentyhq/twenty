@@ -482,7 +482,7 @@ describe('EnterprisePlanService', () => {
       expect(fetchMock).not.toHaveBeenCalled();
     });
 
-    it('should refresh and return true when API call succeeds', async () => {
+    it('should refresh and return true when Api call succeeds', async () => {
       const fakeKey = createFakeJwt(MOCK_KEY_PAYLOAD);
       const fakeValidityToken = createFakeJwt(MOCK_VALIDITY_PAYLOAD);
 
@@ -515,7 +515,7 @@ describe('EnterprisePlanService', () => {
       });
     });
 
-    it('should return false when API returns non-OK response', async () => {
+    it('should return false when Api returns non-OK response', async () => {
       const fakeKey = createFakeJwt(MOCK_KEY_PAYLOAD);
 
       setupEnterpriseKey(fakeKey);
@@ -532,7 +532,7 @@ describe('EnterprisePlanService', () => {
       expect(result).toBe(false);
     });
 
-    it('should return false when API response is missing validityToken', async () => {
+    it('should return false when Api response is missing validityToken', async () => {
       const fakeKey = createFakeJwt(MOCK_KEY_PAYLOAD);
 
       setupEnterpriseKey(fakeKey);
@@ -608,7 +608,7 @@ describe('EnterprisePlanService', () => {
       expect(callBody.seatCount).toBe(25);
     });
 
-    it('should return false when API returns non-OK response', async () => {
+    it('should return false when Api returns non-OK response', async () => {
       await setupValidState();
 
       fetchMock.mockResolvedValue({ ok: false, status: 500 });
@@ -667,7 +667,7 @@ describe('EnterprisePlanService', () => {
       });
     });
 
-    it('should return null when API returns non-OK response', async () => {
+    it('should return null when Api returns non-OK response', async () => {
       await setupValidState();
 
       fetchMock.mockResolvedValue({ ok: false, status: 500 });
@@ -709,7 +709,7 @@ describe('EnterprisePlanService', () => {
   });
 
   describe('getPortalUrl', () => {
-    it('should return null when no API URL is configured', async () => {
+    it('should return null when no Api Url is configured', async () => {
       configGetMock.mockReturnValue(undefined);
 
       const result = await service.getPortalUrl();
@@ -725,12 +725,12 @@ describe('EnterprisePlanService', () => {
       expect(result).toBeNull();
     });
 
-    it('should return portal URL on success', async () => {
+    it('should return portal Url on success', async () => {
       await setupValidState();
 
       fetchMock.mockResolvedValue({
         ok: true,
-        json: () => Promise.resolve({ url: 'https://portal.example.com' }),
+        json: () => Promise.resolve({ Url: 'https://portal.example.com' }),
       });
 
       const result = await service.getPortalUrl('https://return.example.com');
@@ -745,7 +745,7 @@ describe('EnterprisePlanService', () => {
       );
     });
 
-    it('should return null when API fails', async () => {
+    it('should return null when Api fails', async () => {
       await setupValidState();
 
       fetchMock.mockResolvedValue({ ok: false, status: 500 });
@@ -767,7 +767,7 @@ describe('EnterprisePlanService', () => {
   });
 
   describe('getCheckoutUrl', () => {
-    it('should return null when no API URL is configured', async () => {
+    it('should return null when no Api Url is configured', async () => {
       configGetMock.mockReturnValue(undefined);
 
       const result = await service.getCheckoutUrl('monthly', 5);
@@ -775,10 +775,10 @@ describe('EnterprisePlanService', () => {
       expect(result).toBeNull();
     });
 
-    it('should return checkout URL on success', async () => {
+    it('should return checkout Url on success', async () => {
       fetchMock.mockResolvedValue({
         ok: true,
-        json: () => Promise.resolve({ url: 'https://checkout.example.com' }),
+        json: () => Promise.resolve({ Url: 'https://checkout.example.com' }),
       });
 
       const result = await service.getCheckoutUrl('yearly', 10);
@@ -791,7 +791,7 @@ describe('EnterprisePlanService', () => {
       });
     });
 
-    it('should return null when API fails', async () => {
+    it('should return null when Api fails', async () => {
       fetchMock.mockResolvedValue({ ok: false, status: 500 });
 
       const result = await service.getCheckoutUrl('monthly', 5);
@@ -807,7 +807,7 @@ describe('EnterprisePlanService', () => {
       expect(result).toBeNull();
     });
 
-    it('should return null when API response has no url', async () => {
+    it('should return null when Api response has no Url', async () => {
       fetchMock.mockResolvedValue({
         ok: true,
         json: () => Promise.resolve({}),

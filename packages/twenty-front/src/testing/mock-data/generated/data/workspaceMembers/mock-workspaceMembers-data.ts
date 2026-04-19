@@ -9496,7 +9496,7 @@ export const mockedWorkspaceMemberRecords: ObjectRecord[] =
           "node": {
             "__typename": "Opportunity",
             "id": "50505050-0030-4e7c-8001-123456789abc",
-            "name": "Apple ID Enterprise SSO Setup"
+            "name": "Apple ID Enterprise Sso Setup"
           }
         },
         {
@@ -19261,7 +19261,7 @@ export const mockedWorkspaceMemberRecords: ObjectRecord[] =
               "secondaryLinks": []
             },
             "id": "20202020-a8b7-40cb-ba39-f34496257262",
-            "name": "Manhattan Associates"
+            "name": "Manhattan ASsociates"
           }
         },
         {

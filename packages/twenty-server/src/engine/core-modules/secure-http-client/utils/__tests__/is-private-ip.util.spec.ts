@@ -103,7 +103,7 @@ describe('isPrivateIp', () => {
     });
   });
 
-  describe('IPv4-mapped IPv6 in hex form (Node.js URL-normalized)', () => {
+  describe('IPv4-mapped IPv6 in hex form (Node.js Url-normalized)', () => {
     it('should detect ::ffff:7f00:1 (127.0.0.1) as private', () => {
       expect(isPrivateIp('::ffff:7f00:1')).toBe(true);
     });

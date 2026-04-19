@@ -7,7 +7,7 @@ import { capitalize, isDefined } from 'twenty-shared/utils';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
-import { generateRandomFieldValue } from 'src/engine/core-modules/open-api/utils/generate-random-field-value.util';
+import { generateRandomFieldValue } from 'src/engine/core-modules/open-Api/utils/generate-random-field-value.util';
 import {
   computeAggregateParameters,
   computeDepthParameters,
@@ -23,7 +23,7 @@ import {
   computeStartingAfterParameters,
   computeUpsertParameters,
   computeViewIdParameters,
-} from 'src/engine/core-modules/open-api/utils/parameters.utils';
+} from 'src/engine/core-modules/open-Api/utils/parameters.utils';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
@@ -552,7 +552,7 @@ export const computeMetadataSchemaComponents = (
         case 'apiKey': {
           schemas[`${capitalize(item.nameSingular)}`] = {
             type: 'object',
-            description: `An API key`,
+            description: `An Api key`,
             properties: {
               name: { type: 'string' },
               expiresAt: { type: 'string', format: 'date-time' },
@@ -569,7 +569,7 @@ export const computeMetadataSchemaComponents = (
           };
           schemas[`${capitalize(item.nameSingular)}ForUpdate`] = {
             type: 'object',
-            description: `An API key for update`,
+            description: `An Api key for update`,
             properties: {
               name: { type: 'string' },
               expiresAt: { type: 'string', format: 'date-time' },
@@ -583,7 +583,7 @@ export const computeMetadataSchemaComponents = (
           };
           schemas[`${capitalize(item.nameSingular)}ForResponse`] = {
             type: 'object',
-            description: `An API key`,
+            description: `An Api key`,
             properties: {
               id: { type: 'string', format: 'uuid' },
               name: { type: 'string' },

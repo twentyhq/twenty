@@ -4,7 +4,7 @@ import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomC
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { IconArrowsSort, IconTrash } from 'twenty-ui/display';
+import { IconArrowSsort, IconTrash } from 'twenty-ui/display';
 import { Button, type SelectOption } from 'twenty-ui/input';
 import { Select } from '@/ui/input/components/Select';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -21,15 +21,15 @@ const StyledAddButtonContainer = styled.div`
   margin-top: ${themeCssVariables.spacing[1]};
 `;
 
-type RecordTableSettingsSortsContentProps = {
+type RecordTableSettingSsortsContentProps = {
   sortableFieldOptions: Array<SelectOption<string>>;
   directionOptions: Array<SelectOption<ViewSortDirection>>;
 };
 
-export const RecordTableSettingsSortsContent = ({
+export const RecordTableSettingSsortsContent = ({
   sortableFieldOptions,
   directionOptions,
-}: RecordTableSettingsSortsContentProps) => {
+}: RecordTableSettingSsortsContentProps) => {
   const [currentRecordSorts, setCurrentRecordSorts] = useAtomComponentState(
     currentRecordSortsComponentState,
   );
@@ -101,7 +101,7 @@ export const RecordTableSettingsSortsContent = ({
       ))}
       <StyledAddButtonContainer>
         <Button
-          Icon={IconArrowsSort}
+          Icon={IconArrowSsort}
           size="small"
           variant="secondary"
           accent="default"

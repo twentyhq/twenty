@@ -4,11 +4,11 @@ const ALLOWED_CUSTOM_SCHEMES = ['cursor:', 'vscode:', 'code:'];
 
 export const validateRedirectUri = (
   uri: string,
-): { valid: true; parsed: URL } | { valid: false; reason: string } => {
-  let parsed: URL;
+): { valid: true; parsed: Url } | { valid: false; reason: string } => {
+  let parsed: Url;
 
   try {
-    parsed = new URL(uri);
+    parsed = new Url(uri);
   } catch {
     return { valid: false, reason: `Invalid redirect URI: ${uri}` };
   }

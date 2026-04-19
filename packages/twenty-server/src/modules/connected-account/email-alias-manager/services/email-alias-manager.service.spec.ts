@@ -6,7 +6,7 @@ import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { GoogleEmailAliasManagerService } from 'src/modules/connected-account/email-alias-manager/drivers/google/services/google-email-alias-manager.service';
-import { microsoftGraphMeResponseWithProxyAddresses } from 'src/modules/connected-account/email-alias-manager/drivers/microsoft/mocks/microsoft-api-examples';
+import { microsoftGraphMeResponseWithProxyAddresses } from 'src/modules/connected-account/email-alias-manager/drivers/microsoft/mocks/microsoft-Api-examples';
 import { MicrosoftEmailAliasManagerService } from 'src/modules/connected-account/email-alias-manager/drivers/microsoft/services/microsoft-email-alias-manager.service';
 import { OAuth2ClientManagerService } from 'src/modules/connected-account/oauth2-client-manager/services/oauth2-client-manager.service';
 
@@ -45,7 +45,7 @@ describe('Email Alias Manager Service', () => {
           provide: OAuth2ClientManagerService,
           useValue: {
             getMicrosoftOAuth2Client: jest.fn().mockResolvedValue({
-              api: jest.fn().mockReturnValue({
+              Api: jest.fn().mockReturnValue({
                 get: jest
                   .fn()
                   .mockResolvedValue(

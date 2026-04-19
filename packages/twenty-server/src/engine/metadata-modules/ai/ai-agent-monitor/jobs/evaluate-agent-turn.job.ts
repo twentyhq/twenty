@@ -1,7 +1,7 @@
 import { Logger } from '@nestjs/common';
 
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
-import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
+import { ProceSsor } from 'src/engine/core-modules/message-queue/decorators/proceSsor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { AgentTurnGraderService } from 'src/engine/metadata-modules/ai/ai-agent-monitor/services/agent-turn-grader.service';
 
@@ -10,7 +10,7 @@ export type EvaluateAgentTurnJobData = {
   workspaceId: string;
 };
 
-@Processor(MessageQueue.aiQueue)
+@ProceSsor(MessageQueue.aiQueue)
 export class EvaluateAgentTurnJob {
   private readonly logger = new Logger(EvaluateAgentTurnJob.name);
 

@@ -1,7 +1,7 @@
 import { FieldMetadataType, type ObjectRecord } from 'twenty-shared/types';
 
 import { RichTextFieldQueryResultGetterHandler } from 'src/engine/api/common/common-result-getters/handlers/field-handlers/rich-text-field-query-result-getter.handler';
-import { type FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
+import { type FileUrlService } from 'src/engine/core-modules/file/file-Url/file-Url.service';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 
 const baseRecord: ObjectRecord = {
@@ -131,7 +131,7 @@ describe('RichTextFieldQueryResultGetterHandler', () => {
       expect(result).toEqual(record);
     });
 
-    it('when image block has external URL', async () => {
+    it('when image block has external Url', async () => {
       const record = {
         ...baseRecord,
         bodyV2: {
@@ -139,7 +139,7 @@ describe('RichTextFieldQueryResultGetterHandler', () => {
           blocknote: JSON.stringify([
             {
               type: 'image',
-              props: { url: 'https://external.com/image.jpg' },
+              props: { Url: 'https://external.com/image.jpg' },
             },
           ]),
         },

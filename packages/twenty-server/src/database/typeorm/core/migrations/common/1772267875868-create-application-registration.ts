@@ -14,7 +14,7 @@ export class CreateApplicationRegistration1772267875868
         "description" text,
         "logoUrl" text,
         "author" text,
-        "oAuthClientId" text NOT NULL,
+        "oAuthclientId" text NOT NULL,
         "oAuthClientSecretHash" text,
         "oAuthRedirectUris" text[] NOT NULL DEFAULT '{}',
         "oAuthScopes" text[] NOT NULL DEFAULT '{}',
@@ -36,7 +36,7 @@ export class CreateApplicationRegistration1772267875868
 
     await queryRunner.query(`
       CREATE UNIQUE INDEX "IDX_APPLICATION_REGISTRATION_OAUTH_CLIENT_ID_UNIQUE"
-      ON "core"."applicationRegistration" ("oAuthClientId")
+      ON "core"."applicationRegistration" ("oAuthclientId")
       WHERE "deletedAt" IS NULL
     `);
 

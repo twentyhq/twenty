@@ -7,7 +7,7 @@ import {
 
 import { type Observable, catchError } from 'rxjs';
 
-import { webhookGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/webhook/utils/webhook-graphql-api-exception-handler.util';
+import { webhookGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/webhook/utils/webhook-graphql-Api-exception-handler.util';
 
 @Injectable()
 export class WebhookGraphqlApiExceptionInterceptor implements NestInterceptor {

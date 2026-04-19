@@ -5,7 +5,7 @@ import { RecordFilterOperand } from '@/object-record/record-filter/types/RecordF
 import { getRecordFilterFieldMetadataItem } from '@/object-record/record-filter/utils/getRecordFilterFieldMetadataItem';
 import { isRecordFilterAboutSoftDelete as isRecordFilterAboutSoftDeleteUtil } from '@/object-record/record-filter/utils/isRecordFilterAboutSoftDelete';
 
-export const useCheckIsSoftDeleteFilter = () => {
+export const useCheckISsoftDeleteFilter = () => {
   const { objectMetadataItems } = useObjectMetadataItems();
 
   const isRecordFilterAboutSoftDelete = (recordFilter: RecordFilter) => {

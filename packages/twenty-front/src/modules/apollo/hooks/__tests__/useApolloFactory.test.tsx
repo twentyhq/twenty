@@ -9,7 +9,7 @@ enableFetchMocks();
 
 jest.mock('@/apollo/utils/getTokenPair', () => ({
   getTokenPair: jest.fn().mockReturnValue({
-    accessOrWorkspaceAgnosticToken: { token: 'testAccessToken', expiresAt: '' },
+    acceSsorWorkspaceAgnosticToken: { token: 'testAccessToken', expiresAt: '' },
     refreshToken: { token: 'testRefreshToken', expiresAt: '' },
   }),
 }));

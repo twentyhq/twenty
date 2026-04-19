@@ -5,7 +5,7 @@ import type { ObjectRecordEvent } from 'twenty-shared/database-events';
 
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
-import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
+import { ProceSsor } from 'src/engine/core-modules/message-queue/decorators/proceSsor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { transformEventBatchToEventPayloads } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/database-event/utils/transform-event-batch-to-event-payloads';
@@ -18,7 +18,7 @@ import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/wo
 
 const DATABASE_EVENT_JOBS_CHUNK_SIZE = 20;
 
-@Processor(MessageQueue.triggerQueue)
+@ProceSsor(MessageQueue.triggerQueue)
 export class CallDatabaseEventTriggerJobsJob {
   constructor(
     @InjectMessageQueue(MessageQueue.logicFunctionQueue)

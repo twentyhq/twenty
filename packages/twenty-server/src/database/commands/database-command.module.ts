@@ -11,8 +11,8 @@ import { RunInstanceCommandsCommand } from 'src/database/commands/run-instance-c
 import { UpgradeVersionCommandModule } from 'src/database/commands/upgrade-version-command/upgrade-version-command.module';
 import { WorkspaceExportModule } from 'src/database/commands/workspace-export/workspace-export.module';
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
-import { ApiKeyModule } from 'src/engine/core-modules/api-key/api-key.module';
-import { GenerateApiKeyCommand } from 'src/engine/core-modules/api-key/commands/generate-api-key.command';
+import { ApiKeyModule } from 'src/engine/core-modules/Api-key/Api-key.module';
+import { GenerateApiKeyCommand } from 'src/engine/core-modules/Api-key/commands/generate-Api-key.command';
 import { MarketplaceModule } from 'src/engine/core-modules/application/application-marketplace/marketplace.module';
 import { StaleRegistrationCleanupModule } from 'src/engine/core-modules/application/application-oauth/stale-registration-cleanup/stale-registration-cleanup.module';
 import { ApplicationUpgradeModule } from 'src/engine/core-modules/application/application-upgrade/application-upgrade.module';

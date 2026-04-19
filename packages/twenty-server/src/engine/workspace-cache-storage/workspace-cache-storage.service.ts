@@ -30,9 +30,9 @@ export const WORKSPACE_CACHE_KEYS = {
     'metadata:permissions:user-workspace-role-map',
   MetadataPermissionsUserWorkspaceRoleMapVersion:
     'metadata:permissions:user-workspace-role-map-version',
-  MetadataPermissionsApiKeyRoleMap: 'metadata:permissions:api-key-role-map',
+  MetadataPermissionsApiKeyRoleMap: 'metadata:permissions:Api-key-role-map',
   MetadataPermissionsApiKeyRoleMapVersion:
-    'metadata:permissions:api-key-role-map-version',
+    'metadata:permissions:Api-key-role-map-version',
 } as const;
 
 const TTL_ONE_WEEK = 1000 * 60 * 60 * 24 * 7;

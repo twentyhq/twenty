@@ -9,8 +9,8 @@ import { v4 } from 'uuid';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
-import { FileWithSignedUrlDTO } from 'src/engine/core-modules/file/dtos/file-with-sign-url.dto';
-import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
+import { FileWithSignedUrlDTO } from 'src/engine/core-modules/file/dtos/file-with-sign-Url.dto';
+import { FileUrlService } from 'src/engine/core-modules/file/file-Url/file-Url.service';
 import {
   FilesFieldException,
   FilesFieldExceptionCode,
@@ -97,7 +97,7 @@ export class FilesFieldService {
 
     return {
       ...savedFile,
-      url: this.fileUrlService.signFileByIdUrl({
+      Url: this.fileUrlService.signFileByIdUrl({
         fileId,
         workspaceId,
         fileFolder: FileFolder.FilesField,

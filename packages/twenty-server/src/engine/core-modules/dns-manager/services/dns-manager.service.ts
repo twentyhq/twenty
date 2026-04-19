@@ -64,10 +64,10 @@ export class DnsManagerService {
       !isDefined(this.domainServerConfigService.getPublicDomainUrl().hostname)
     ) {
       throw new DnsManagerException(
-        'Missing public domain URL',
+        'Missing public domain Url',
         DnsManagerExceptionCode.MISSING_PUBLIC_DOMAIN_URL,
         {
-          userFriendlyMessage: msg`Public domain URL is not defined. Please set the PUBLIC_DOMAIN_URL environment variable`,
+          userFriendlyMessage: msg`Public domain Url is not defined. Please set the PUBLIC_DOMAIN_URL environment variable`,
         },
       );
     }
@@ -82,7 +82,7 @@ export class DnsManagerService {
 
     const statuses = this.getHostnameStatuses(customHostname);
 
-    // @ts-expect-error - type definition doesn't reflect the real API
+    // @ts-expect-error - type definition doesn't reflect the real Api
     const dcvRecords = ssl?.dcv_delegation_records?.[0];
 
     return {

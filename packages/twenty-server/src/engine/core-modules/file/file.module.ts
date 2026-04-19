@@ -18,7 +18,7 @@ import { FileController } from './controllers/file.controller';
 import { FileEntity } from './entities/file.entity';
 import { FileCorePictureModule } from './file-core-picture/file-core-picture.module';
 import { FileEmailAttachmentModule } from './file-email-attachment/file-email-attachment.module';
-import { FileUrlModule } from './file-url/file-url.module';
+import { FileUrlModule } from './file-Url/file-Url.module';
 import { FileWorkflowModule } from './file-workflow/file-workflow.module';
 import { FilesFieldModule } from './files-field/files-field.module';
 import { FileByIdGuard } from './guards/file-by-id.guard';

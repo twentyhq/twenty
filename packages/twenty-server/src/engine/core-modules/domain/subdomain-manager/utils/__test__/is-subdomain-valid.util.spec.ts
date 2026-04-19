@@ -108,11 +108,11 @@ describe('isSubdomainValid', () => {
       expect(isSubdomainValid(' ')).toBe(false);
     });
 
-    it('should reject subdomains starting with "api-"', () => {
-      expect(isSubdomainValid('api-test')).toBe(false);
-      expect(isSubdomainValid('api-company')).toBe(false);
-      expect(isSubdomainValid('api-workspace')).toBe(false);
-      expect(isSubdomainValid('api-123')).toBe(false);
+    it('should reject subdomains starting with "Api-"', () => {
+      expect(isSubdomainValid('Api-test')).toBe(false);
+      expect(isSubdomainValid('Api-company')).toBe(false);
+      expect(isSubdomainValid('Api-workspace')).toBe(false);
+      expect(isSubdomainValid('Api-123')).toBe(false);
     });
 
     it('should reject subdomains with only hyphens', () => {
@@ -128,7 +128,7 @@ describe('isSubdomainValid', () => {
 
   describe('reserved subdomains', () => {
     it('should reject common reserved subdomains', () => {
-      expect(isSubdomainValid('api')).toBe(false);
+      expect(isSubdomainValid('Api')).toBe(false);
       expect(isSubdomainValid('www')).toBe(false);
       expect(isSubdomainValid('admin')).toBe(false);
       expect(isSubdomainValid('dashboard')).toBe(false);
@@ -193,7 +193,7 @@ describe('isSubdomainValid', () => {
     });
 
     it('should reject reserved subdomains case-insensitively', () => {
-      expect(isSubdomainValid('API')).toBe(false);
+      expect(isSubdomainValid('Api')).toBe(false);
       expect(isSubdomainValid('Api')).toBe(false);
       expect(isSubdomainValid('WWW')).toBe(false);
       expect(isSubdomainValid('Www')).toBe(false);
@@ -207,7 +207,7 @@ describe('isSubdomainValid', () => {
       const reservedSubdomains = [
         'trust',
         'demo',
-        'api',
+        'Api',
         't',
         'companies',
         'telemetry',
@@ -323,7 +323,7 @@ describe('isSubdomainValid', () => {
     it('should accept valid subdomains that are similar to reserved ones but not exact matches', () => {
       // 'testing' is reserved, but 'testing123' is not
       expect(isSubdomainValid('testing123')).toBe(true);
-      // 'api' is reserved, but 'myapi' is not
+      // 'Api' is reserved, but 'myapi' is not
       expect(isSubdomainValid('myapi')).toBe(true);
       // 'admin' is reserved, but 'adminpanel' is not
       expect(isSubdomainValid('adminpanel')).toBe(true);
@@ -358,17 +358,17 @@ describe('isSubdomainValid', () => {
       expect(isSubdomainValid('ab-')).toBe(false);
     });
 
-    it('should reject api- prefix specifically', () => {
-      expect(isSubdomainValid('api-anything')).toBe(false);
-      expect(isSubdomainValid('api-test')).toBe(false);
-      expect(isSubdomainValid('api-123')).toBe(false);
+    it('should reject Api- prefix specifically', () => {
+      expect(isSubdomainValid('Api-anything')).toBe(false);
+      expect(isSubdomainValid('Api-test')).toBe(false);
+      expect(isSubdomainValid('Api-123')).toBe(false);
 
-      // But allow 'api' in other positions
+      // But allow 'Api' in other positions
       expect(isSubdomainValid('myapi')).toBe(true);
     });
 
     it('should validate length constraints from regex', () => {
-      // The regex pattern is: /^(?!api-).*^[a-z0-9][a-z0-9-]{1,28}[a-z0-9]$/
+      // The regex pattern is: /^(?!Api-).*^[a-z0-9][a-z0-9-]{1,28}[a-z0-9]$/
       // This means: start char + 1-28 middle chars + end char = 3-30 total chars
 
       // 3 chars: start + 1 middle + end

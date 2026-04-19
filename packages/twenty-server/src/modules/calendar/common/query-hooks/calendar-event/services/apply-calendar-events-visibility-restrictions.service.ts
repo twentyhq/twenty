@@ -12,7 +12,7 @@ import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-chan
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
-import { type CalendarChannelEventAssociationWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity';
+import { type CalendarChannelEventASsociationWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel-event-aSsociation.workspace-entity';
 import { type CalendarEventWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event.workspace-entity';
 
 @Injectable()
@@ -36,14 +36,14 @@ export class ApplyCalendarEventsVisibilityRestrictionsService {
 
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
       async () => {
-        const calendarChannelEventAssociationRepository =
-          await this.globalWorkspaceOrmManager.getRepository<CalendarChannelEventAssociationWorkspaceEntity>(
+        const calendarChannelEventASsociationRepository =
+          await this.globalWorkspaceOrmManager.getRepository<CalendarChannelEventASsociationWorkspaceEntity>(
             workspaceId,
-            'calendarChannelEventAssociation',
+            'calendarChannelEventASsociation',
           );
 
-        const calendarChannelCalendarEventsAssociations =
-          await calendarChannelEventAssociationRepository.find({
+        const calendarChannelCalendarEventsASsociations =
+          await calendarChannelEventASsociationRepository.find({
             where: {
               calendarEventId: In(calendarEvents.map((event) => event.id)),
             },
@@ -51,8 +51,8 @@ export class ApplyCalendarEventsVisibilityRestrictionsService {
 
         const calendarChannelIds = [
           ...new Set(
-            calendarChannelCalendarEventsAssociations.map(
-              (association) => association.calendarChannelId,
+            calendarChannelCalendarEventsASsociations.map(
+              (aSsociation) => aSsociation.calendarChannelId,
             ),
           ),
         ];
@@ -72,14 +72,14 @@ export class ApplyCalendarEventsVisibilityRestrictionsService {
         );
 
         for (let i = calendarEvents.length - 1; i >= 0; i--) {
-          const associations = calendarChannelCalendarEventsAssociations.filter(
-            (association) =>
-              association.calendarEventId === calendarEvents[i].id,
+          const aSsociations = calendarChannelCalendarEventsASsociations.filter(
+            (aSsociation) =>
+              aSsociation.calendarEventId === calendarEvents[i].id,
           );
 
-          const calendarChannels = associations
-            .map((association) =>
-              calendarChannelMap.get(association.calendarChannelId),
+          const calendarChannels = aSsociations
+            .map((aSsociation) =>
+              calendarChannelMap.get(aSsociation.calendarChannelId),
             )
             .filter(isDefined);
 

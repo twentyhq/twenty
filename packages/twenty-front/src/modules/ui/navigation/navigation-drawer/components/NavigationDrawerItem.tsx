@@ -73,7 +73,7 @@ type StyledItemProps = Pick<
   | 'isSelectedInEditMode'
   | 'variant'
 > & {
-  isSoon: boolean;
+  iSsoon: boolean;
   isNavigationDrawerExpanded: boolean;
   hasRightOptions: boolean;
   href?: string;
@@ -91,11 +91,11 @@ const StyledItem = styled.button<StyledItemProps>`
       : '1px solid transparent'};
   border-radius: ${themeCssVariables.border.radius.sm};
   box-sizing: border-box;
-  color: ${({ active, isSoon, variant }) => {
+  color: ${({ active, iSsoon, variant }) => {
     if (active === true) {
       return themeCssVariables.font.color.primary;
     }
-    if (isSoon) {
+    if (iSsoon) {
       return themeCssVariables.font.color.light;
     }
     if (variant === 'tertiary') {
@@ -103,8 +103,8 @@ const StyledItem = styled.button<StyledItemProps>`
     }
     return themeCssVariables.font.color.secondary;
   }};
-  cursor: ${({ isSoon, isDragging }) =>
-    isDragging ? 'grabbing' : isSoon ? 'default' : 'pointer'};
+  cursor: ${({ iSsoon, isDragging }) =>
+    isDragging ? 'grabbing' : iSsoon ? 'default' : 'pointer'};
   display: flex;
   font-family: ${themeCssVariables.font.family};
   font-size: ${themeCssVariables.font.size.md};
@@ -119,7 +119,7 @@ const StyledItem = styled.button<StyledItemProps>`
       ? themeCssVariables.spacing['0.5']
       : themeCssVariables.spacing[1]};
   padding-top: ${themeCssVariables.spacing[1]};
-  pointer-events: ${({ isSoon }) => (isSoon ? 'none' : 'auto')};
+  pointer-events: ${({ iSsoon }) => (iSsoon ? 'none' : 'auto')};
   text-decoration: none;
   user-select: none;
   width: ${({ isNavigationDrawerExpanded, hasRightOptions }) =>
@@ -276,7 +276,7 @@ export const NavigationDrawerItem = ({
 
   const { navigationItemId } = useNavigationDrawerTooltip(label, to);
 
-  const isSoon = modifier === 'soon';
+  const iSsoon = modifier === 'soon';
   const isNew = modifier === 'new';
   const keyboardKeys =
     isDefined(modifier) && typeof modifier === 'object'
@@ -330,7 +330,7 @@ export const NavigationDrawerItem = ({
         onMouseDown={handleMouseDown}
         active={active}
         aria-selected={active}
-        isSoon={isSoon}
+        iSsoon={iSsoon}
         variant={variant}
         indentationLevel={indentationLevel}
         isNavigationDrawerExpanded={isNavigationDrawerExpanded}
@@ -397,7 +397,7 @@ export const NavigationDrawerItem = ({
 
           {showStyledSpacer && <StyledSpacer />}
 
-          {isSoon && (
+          {iSsoon && (
             <NavigationDrawerAnimatedCollapseWrapper>
               <Pill label={t`Soon`} />
             </NavigationDrawerAnimatedCollapseWrapper>

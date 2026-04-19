@@ -1,4 +1,4 @@
-import { type FilterOperator } from 'src/engine/api/common/common-args-processors/filter-arg-processor/types/filter-operator.type';
+import { type FilterOperator } from 'src/engine/api/common/common-args-proceSsors/filter-arg-proceSsor/types/filter-operator.type';
 import type { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 
 import { validateAndTransformArrayItems } from './validate-and-transform-array-items.util';

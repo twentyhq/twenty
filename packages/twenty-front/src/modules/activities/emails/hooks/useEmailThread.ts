@@ -6,7 +6,7 @@ import { type EmailThread } from '@/activities/emails/types/EmailThread';
 import { type EmailThreadMessage } from '@/activities/emails/types/EmailThreadMessage';
 import { type EmailThreadMessageParticipant } from '@/activities/emails/types/EmailThreadMessageParticipant';
 import { type EmailThreadMessageWithSender } from '@/activities/emails/types/EmailThreadMessageWithSender';
-import { type MessageChannelMessageAssociation } from '@/activities/emails/types/MessageChannelMessageAssociation';
+import { type MessageChannelMessageASsociation } from '@/activities/emails/types/MessageChannelMessageASsociation';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
@@ -104,15 +104,15 @@ export const useEmailThread = (threadId: string | null) => {
       skip: messages.length === 0,
     });
 
-  const { records: messageChannelMessageAssociationData } =
-    useFindManyRecords<MessageChannelMessageAssociation>({
+  const { records: messageChannelMessageASsociationData } =
+    useFindManyRecords<MessageChannelMessageASsociation>({
       filter: {
         messageId: {
           eq: lastMessageId ?? '',
         },
       },
       objectNameSingular:
-        CoreObjectNameSingular.MessageChannelMessageAssociation,
+        CoreObjectNameSingular.MessageChannelMessageASsociation,
       recordGqlFields: {
         id: true,
         messageId: true,
@@ -124,12 +124,12 @@ export const useEmailThread = (threadId: string | null) => {
     });
 
   const messageThreadExternalId =
-    messageChannelMessageAssociationData.length > 0
-      ? messageChannelMessageAssociationData[0].messageThreadExternalId
+    messageChannelMessageASsociationData.length > 0
+      ? messageChannelMessageASsociationData[0].messageThreadExternalId
       : null;
   const lastMessageExternalId =
-    messageChannelMessageAssociationData.length > 0
-      ? messageChannelMessageAssociationData[0].messageExternalId
+    messageChannelMessageASsociationData.length > 0
+      ? messageChannelMessageASsociationData[0].messageExternalId
       : null;
 
   const messagesWithSender: EmailThreadMessageWithSender[] = messages

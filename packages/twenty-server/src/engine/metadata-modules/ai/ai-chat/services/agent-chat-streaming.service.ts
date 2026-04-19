@@ -11,7 +11,7 @@ import { FileFolder } from 'twenty-shared/types';
 import { In, Like, type Repository } from 'typeorm';
 
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
-import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
+import { FileUrlService } from 'src/engine/core-modules/file/file-Url/file-Url.service';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
@@ -157,7 +157,7 @@ export class AgentChatStreamingService {
           type: 'file',
           mediaType: part.file?.mimeType ?? 'application/octet-stream',
           filename: part.fileFilename ?? '',
-          url: '',
+          Url: '',
           fileId: part.fileId ?? '',
         }),
       );
@@ -247,7 +247,7 @@ export class AgentChatStreamingService {
 
             return {
               ...filePart,
-              url: this.fileUrlService.signFileByIdUrl({
+              Url: this.fileUrlService.signFileByIdUrl({
                 fileId: filePart.fileId,
                 workspaceId,
                 fileFolder: FileFolder.AgentChat,
@@ -282,7 +282,7 @@ export class AgentChatStreamingService {
         type: 'file' as const,
         mediaType: file.mimeType,
         filename: file.path.split('/').pop() ?? file.path,
-        url: '',
+        Url: '',
         fileId: file.id,
       }),
     );

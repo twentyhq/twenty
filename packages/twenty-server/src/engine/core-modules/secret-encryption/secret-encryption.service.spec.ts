@@ -8,7 +8,7 @@ describe('SecretEncryptionService', () => {
   let service: SecretEncryptionService;
 
   const mockAppSecret = 'mock-app-secret-for-testing-purposes-12345678';
-  const testValue = 'my-secret-api-key-123';
+  const testValue = 'my-secret-Api-key-123';
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -53,7 +53,7 @@ describe('SecretEncryptionService', () => {
     });
 
     it('should handle special characters in values', () => {
-      const specialValue = 'api-key_WITH@special#chars!123$%^&*()';
+      const specialValue = 'Api-key_WITH@special#chars!123$%^&*()';
 
       const encrypted = service.encrypt(specialValue);
       const decrypted = service.decrypt(encrypted);

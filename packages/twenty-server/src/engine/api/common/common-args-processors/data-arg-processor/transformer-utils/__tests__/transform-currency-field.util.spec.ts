@@ -1,4 +1,4 @@
-import { transformCurrencyField } from 'src/engine/api/common/common-args-processors/data-arg-processor/transformer-utils/transform-currency-field.util';
+import { transformCurrencyField } from 'src/engine/api/common/common-args-proceSsors/data-arg-proceSsor/transformer-utils/transform-currency-field.util';
 
 describe('transformCurrencyField', () => {
   it('should return null when value is null', () => {

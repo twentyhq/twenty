@@ -12,7 +12,7 @@ import {
 
 import { PermissionFlagType } from 'twenty-shared/constants';
 
-import { RestApiExceptionFilter } from 'src/engine/api/rest/rest-api-exception.filter';
+import { RestApiExceptionFilter } from 'src/engine/api/rest/rest-Api-exception.filter';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { JwtAuthGuard } from 'src/engine/guards/jwt-auth.guard';

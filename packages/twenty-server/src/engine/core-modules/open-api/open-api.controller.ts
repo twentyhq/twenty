@@ -2,7 +2,7 @@ import { Controller, Get, Req, Res, UseGuards } from '@nestjs/common';
 
 import { Request, Response } from 'express';
 
-import { OpenApiService } from 'src/engine/core-modules/open-api/open-api.service';
+import { OpenApiService } from 'src/engine/core-modules/open-Api/open-Api.service';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 
@@ -10,7 +10,7 @@ import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 export class OpenApiController {
   constructor(private readonly openApiService: OpenApiService) {}
 
-  @Get(['open-api/core', 'rest/open-api/core'])
+  @Get(['open-Api/core', 'rest/open-Api/core'])
   @UseGuards(PublicEndpointGuard, NoPermissionGuard)
   async generateOpenApiSchemaCore(
     @Req() request: Request,
@@ -21,7 +21,7 @@ export class OpenApiController {
     res.send(data);
   }
 
-  @Get(['open-api/metadata', 'rest/open-api/metadata'])
+  @Get(['open-Api/metadata', 'rest/open-Api/metadata'])
   @UseGuards(PublicEndpointGuard, NoPermissionGuard)
   async generateOpenApiSchemaMetaData(
     @Req() request: Request,

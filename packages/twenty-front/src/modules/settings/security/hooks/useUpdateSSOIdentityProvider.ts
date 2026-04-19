@@ -1,6 +1,6 @@
 /* @license Enterprise */
 
-import { SSOIdentitiesProvidersState } from '@/settings/security/states/SSOIdentitiesProvidersState';
+import { SsoIdentitiesProvidersState } from '@/settings/security/states/SsoIdentitiesProvidersState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useMutation } from '@apollo/client/react';
 import {
@@ -8,16 +8,16 @@ import {
   EditSsoIdentityProviderDocument,
 } from '~/generated-metadata/graphql';
 
-export const useUpdateSSOIdentityProvider = () => {
+export const useUpdateSsoIdentityProvider = () => {
   const [editSsoIdentityProviderMutation] = useMutation(
     EditSsoIdentityProviderDocument,
   );
 
-  const setSSOIdentitiesProviders = useSetAtomState(
-    SSOIdentitiesProvidersState,
+  const setSsoIdentitiesProviders = useSetAtomState(
+    SsoIdentitiesProvidersState,
   );
 
-  const updateSSOIdentityProvider = async (
+  const updateSsoIdentityProvider = async (
     payload: EditSsoIdentityProviderMutationVariables['input'],
   ) => {
     return await editSsoIdentityProviderMutation({
@@ -25,10 +25,10 @@ export const useUpdateSSOIdentityProvider = () => {
         input: payload,
       },
       onCompleted: (data) => {
-        setSSOIdentitiesProviders((SSOIdentitiesProviders) =>
-          SSOIdentitiesProviders.map((identityProvider) =>
-            identityProvider.id === data.editSSOIdentityProvider.id
-              ? data.editSSOIdentityProvider
+        setSsoIdentitiesProviders((SsoIdentitiesProviders) =>
+          SsoIdentitiesProviders.map((identityProvider) =>
+            identityProvider.id === data.editSsoIdentityProvider.id
+              ? data.editSsoIdentityProvider
               : identityProvider,
           ),
         );
@@ -37,6 +37,6 @@ export const useUpdateSSOIdentityProvider = () => {
   };
 
   return {
-    updateSSOIdentityProvider,
+    updateSsoIdentityProvider,
   };
 };

@@ -5,7 +5,7 @@ import GraphQLJSON from 'graphql-type-json';
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 
 import { useCachedMetadata } from 'src/engine/api/graphql/graphql-config/hooks/use-cached-metadata';
-import { MetadataGraphQLApiModule } from 'src/engine/api/graphql/metadata-graphql-api.module';
+import { MetadataGraphQLApiModule } from 'src/engine/api/graphql/metadata-graphql-Api.module';
 import { type CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { ClientConfig } from 'src/engine/core-modules/client-config/client-config.entity';
 import { type ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';

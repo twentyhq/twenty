@@ -26,7 +26,7 @@ export const computeProfilingReport = (
     const ids = Object.keys(profilingReport.runs[runName].sumById);
     const valuesUnsorted = Object.values(profilingReport.runs[runName].sumById);
 
-    const valuesSortedAsc = [...valuesUnsorted].sort((a, b) => a - b);
+    const valueSsortedAsc = [...valuesUnsorted].sort((a, b) => a - b);
 
     const numberOfIds = ids.length;
 
@@ -56,11 +56,11 @@ export const computeProfilingReport = (
     const p95Index = Math.floor(numberOfIds * 0.95);
     const p99Index = Math.floor(numberOfIds * 0.99);
 
-    profilingReport.runs[runName].p50 = valuesSortedAsc[p50Index];
-    profilingReport.runs[runName].p80 = valuesSortedAsc[p80Index];
-    profilingReport.runs[runName].p90 = valuesSortedAsc[p90Index];
-    profilingReport.runs[runName].p95 = valuesSortedAsc[p95Index];
-    profilingReport.runs[runName].p99 = valuesSortedAsc[p99Index];
+    profilingReport.runs[runName].p50 = valueSsortedAsc[p50Index];
+    profilingReport.runs[runName].p80 = valueSsortedAsc[p80Index];
+    profilingReport.runs[runName].p90 = valueSsortedAsc[p90Index];
+    profilingReport.runs[runName].p95 = valueSsortedAsc[p95Index];
+    profilingReport.runs[runName].p99 = valueSsortedAsc[p99Index];
   }
 
   const runNamesForTotal = Object.keys(profilingReport.runs).filter((runName) =>

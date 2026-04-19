@@ -86,7 +86,7 @@ const bootstrap = async () => {
     }),
   );
 
-  // Inject the server url in the frontend page
+  // Inject the server Url in the frontend page
   generateFrontConfig();
 
   await app.listen(twentyConfigService.get('NODE_PORT'));

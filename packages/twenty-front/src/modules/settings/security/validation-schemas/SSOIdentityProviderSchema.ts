@@ -2,27 +2,27 @@
 
 import { z } from 'zod';
 
-export const SSOIdentitiesProvidersOIDCParamsSchema = z
+export const SsoIdentitiesProvidersOidcParamsSchema = z
   .object({
-    type: z.literal('OIDC'),
-    clientID: z.string().nonempty(),
+    type: z.literal('Oidc'),
+    clientId: z.string().nonempty(),
     clientSecret: z.string().nonempty(),
   })
   .required();
 
-export const SSOIdentitiesProvidersSAMLParamsSchema = z
+export const SsoIdentitiesProvidersSamlParamsSchema = z
   .object({
-    type: z.literal('SAML'),
+    type: z.literal('Saml'),
     id: z.string().nonempty(),
-    ssoURL: z.url().nonempty(),
+    ssoUrl: z.url().nonempty(),
     certificate: z.string().nonempty(),
   })
   .required();
 
-export const SSOIdentitiesProvidersParamsSchema = z
+export const SsoIdentitiesProvidersParamsSchema = z
   .discriminatedUnion('type', [
-    SSOIdentitiesProvidersOIDCParamsSchema,
-    SSOIdentitiesProvidersSAMLParamsSchema,
+    SsoIdentitiesProvidersOidcParamsSchema,
+    SsoIdentitiesProvidersSamlParamsSchema,
   ])
   .and(
     z

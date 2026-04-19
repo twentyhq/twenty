@@ -10,7 +10,7 @@ class LinkMetadataDTO {
   label: string;
 
   @Field()
-  url: string;
+  Url: string;
 }
 
 @ObjectType('LinksMetadata')

@@ -1,4 +1,4 @@
-import { transformArrayField } from 'src/engine/api/common/common-args-processors/data-arg-processor/transformer-utils/transform-array-field.util';
+import { transformArrayField } from 'src/engine/api/common/common-args-proceSsors/data-arg-proceSsor/transformer-utils/transform-array-field.util';
 
 describe('transformArrayField', () => {
   it('should return null when value is null', () => {

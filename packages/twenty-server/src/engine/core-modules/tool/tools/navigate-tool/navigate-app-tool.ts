@@ -145,7 +145,7 @@ export class NavigateAppTool implements Tool {
       return {
         success: false,
         message: `Object metadata for view "${matchingView.name}" not found`,
-        error: `Could not resolve the object associated with view "${matchingView.name}"`,
+        error: `Could not resolve the object aSsociated with view "${matchingView.name}"`,
       };
     }
 

@@ -1,6 +1,6 @@
 import { HeadlessFrontComponentRendererEngineCommand } from '@/command-menu-item/engine-command/components/HeadlessFrontComponentRendererEngineCommand';
 import { HeadlessNavigateEngineCommand } from '@/command-menu-item/engine-command/components/HeadlessNavigateEngineCommand';
-import { HeadlessOpenSidePanelPageEngineCommand } from '@/command-menu-item/engine-command/components/HeadlessOpenSidePanelPageEngineCommand';
+import { HeadleSsopenSidePanelPageEngineCommand } from '@/command-menu-item/engine-command/components/HeadleSsopenSidePanelPageEngineCommand';
 import { NavigationEngineCommand } from '@/command-menu-item/engine-command/components/NavigationEngineCommand';
 import { ComposeEmailCommand } from '@/command-menu-item/engine-command/global/components/ComposeEmailCommand';
 import { DeleteRecordsCommand } from '@/command-menu-item/engine-command/record/components/DeleteRecordsCommand';
@@ -185,7 +185,7 @@ export const ENGINE_COMPONENT_KEY_COMPONENT_MAP: Record<
     />
   ),
   [EngineComponentKey.SEARCH_RECORDS]: (
-    <HeadlessOpenSidePanelPageEngineCommand
+    <HeadleSsopenSidePanelPageEngineCommand
       page={SidePanelPages.SearchRecords}
       pageTitle={msg`Search`}
       pageIcon={IconSearch}
@@ -193,21 +193,21 @@ export const ENGINE_COMPONENT_KEY_COMPONENT_MAP: Record<
     />
   ),
   [EngineComponentKey.SEARCH_RECORDS_FALLBACK]: (
-    <HeadlessOpenSidePanelPageEngineCommand
+    <HeadleSsopenSidePanelPageEngineCommand
       page={SidePanelPages.SearchRecords}
       pageTitle={msg`Search`}
       pageIcon={IconSearch}
     />
   ),
   [EngineComponentKey.ASK_AI]: (
-    <HeadlessOpenSidePanelPageEngineCommand
+    <HeadleSsopenSidePanelPageEngineCommand
       page={SidePanelPages.AskAI}
       pageTitle={msg`Ask AI`}
       pageIcon={IconSparkles}
     />
   ),
   [EngineComponentKey.VIEW_PREVIOUS_AI_CHATS]: (
-    <HeadlessOpenSidePanelPageEngineCommand
+    <HeadleSsopenSidePanelPageEngineCommand
       page={SidePanelPages.ViewPreviousAiChats}
       pageTitle={msg`View Previous AI Chats`}
       pageIcon={IconHistory}

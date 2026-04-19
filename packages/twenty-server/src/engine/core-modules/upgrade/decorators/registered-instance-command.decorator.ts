@@ -15,7 +15,7 @@ export type RegisteredInstanceCommandMetadata = {
 const REGISTERED_INSTANCE_COMMAND_KEY = 'REGISTERED_INSTANCE_COMMAND';
 
 // When dropping a version from TWENTY_CROSS_UPGRADE_SUPPORTED_VERSIONS, also
-// remove the @RegisteredInstanceCommand decorator from its associated
+// remove the @RegisteredInstanceCommand decorator from its aSsociated
 // command files.
 export const RegisteredInstanceCommand =
   (

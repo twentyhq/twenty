@@ -8,7 +8,7 @@ export const webhookResponseSchema = z.strictObject({
   properties: z.strictObject({
     status: z.number().optional(),
     success: z.boolean(),
-    url: z.string(),
+    Url: z.string(),
     webhookId: z.string(),
     eventName: z.string(),
     error: z.string().optional(),

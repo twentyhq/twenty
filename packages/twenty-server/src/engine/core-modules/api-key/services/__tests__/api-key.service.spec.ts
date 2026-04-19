@@ -3,13 +3,13 @@ import { getDataSourceToken, getRepositoryToken } from '@nestjs/typeorm';
 
 import { IsNull } from 'typeorm';
 
-import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
+import { ApiKeyEntity } from 'src/engine/core-modules/Api-key/Api-key.entity';
 import {
   ApiKeyException,
   ApiKeyExceptionCode,
-} from 'src/engine/core-modules/api-key/exceptions/api-key.exception';
-import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-key-role.service';
-import { ApiKeyService } from 'src/engine/core-modules/api-key/services/api-key.service';
+} from 'src/engine/core-modules/Api-key/exceptions/Api-key.exception';
+import { ApiKeyRoleService } from 'src/engine/core-modules/Api-key/services/Api-key-role.service';
+import { ApiKeyService } from 'src/engine/core-modules/Api-key/services/Api-key.service';
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
@@ -26,11 +26,11 @@ describe('ApiKeyService', () => {
   let mockDataSource: any;
 
   const mockWorkspaceId = 'workspace-123';
-  const mockApiKeyId = 'api-key-456';
+  const mockApiKeyId = 'Api-key-456';
 
   const mockApiKey: ApiKeyEntity = {
     id: mockApiKeyId,
-    name: 'Test API Key',
+    name: 'Test Api Key',
     expiresAt: new Date('2030-12-31'),
     revokedAt: undefined,
     workspaceId: mockWorkspaceId,
@@ -41,13 +41,13 @@ describe('ApiKeyService', () => {
 
   const mockRevokedApiKey: ApiKeyEntity = {
     ...mockApiKey,
-    id: 'revoked-api-key',
+    id: 'revoked-Api-key',
     revokedAt: new Date('2024-06-01'),
   };
 
   const mockExpiredApiKey: ApiKeyEntity = {
     ...mockApiKey,
-    id: 'expired-api-key',
+    id: 'expired-Api-key',
     expiresAt: new Date('2024-01-01'),
   };
 
@@ -133,16 +133,16 @@ describe('ApiKeyService', () => {
   });
 
   describe('create', () => {
-    it('should create and save an API key and assign role', async () => {
+    it('should create and save an Api key and assign role', async () => {
       const apiKeyData = {
-        name: 'New API Key',
+        name: 'New Api Key',
         expiresAt: new Date('2025-12-31'),
         workspaceId: mockWorkspaceId,
         roleId: 'mock-role-id',
       };
 
       const expectedApiKeyFields = {
-        name: 'New API Key',
+        name: 'New Api Key',
         expiresAt: new Date('2025-12-31'),
         workspaceId: mockWorkspaceId,
       };
@@ -166,9 +166,9 @@ describe('ApiKeyService', () => {
       expect(result).toEqual(mockApiKey);
     });
 
-    it('should delete API key if role assignment fails', async () => {
+    it('should delete Api key if role assignment fails', async () => {
       const apiKeyData = {
-        name: 'New API Key',
+        name: 'New Api Key',
         expiresAt: new Date('2025-12-31'),
         workspaceId: mockWorkspaceId,
         roleId: 'mock-role-id',
@@ -191,7 +191,7 @@ describe('ApiKeyService', () => {
 
     it('should handle save failures gracefully', async () => {
       const apiKeyData = {
-        name: 'New API Key',
+        name: 'New Api Key',
         expiresAt: new Date('2025-12-31'),
         workspaceId: mockWorkspaceId,
         roleId: 'mock-role-id',
@@ -207,7 +207,7 @@ describe('ApiKeyService', () => {
   });
 
   describe('findById', () => {
-    it('should find an API key by ID and workspace ID', async () => {
+    it('should find an Api key by ID and workspace ID', async () => {
       mockApiKeyRepository.findOne.mockResolvedValue(mockApiKey);
 
       const result = await service.findById(mockApiKeyId, mockWorkspaceId);
@@ -221,7 +221,7 @@ describe('ApiKeyService', () => {
       expect(result).toEqual(mockApiKey);
     });
 
-    it('should return null if API key not found', async () => {
+    it('should return null if Api key not found', async () => {
       mockApiKeyRepository.findOne.mockResolvedValue(null);
 
       const result = await service.findById('non-existent', mockWorkspaceId);
@@ -231,7 +231,7 @@ describe('ApiKeyService', () => {
   });
 
   describe('findByWorkspaceId', () => {
-    it('should find all API keys for a workspace', async () => {
+    it('should find all Api keys for a workspace', async () => {
       const mockApiKeys = [mockApiKey, { ...mockApiKey, id: 'another-key' }];
 
       mockApiKeyRepository.find.mockResolvedValue(mockApiKeys);
@@ -248,7 +248,7 @@ describe('ApiKeyService', () => {
   });
 
   describe('findActiveByWorkspaceId', () => {
-    it('should find only active (non-revoked) API keys', async () => {
+    it('should find only active (non-revoked) Api keys', async () => {
       const activeApiKeys = [mockApiKey];
 
       mockApiKeyRepository.find.mockResolvedValue(activeApiKeys);
@@ -266,8 +266,8 @@ describe('ApiKeyService', () => {
   });
 
   describe('update', () => {
-    it('should update an existing API key', async () => {
-      const updateData = { name: 'Updated API Key' };
+    it('should update an existing Api key', async () => {
+      const updateData = { name: 'Updated Api Key' };
       const updatedApiKey = { ...mockApiKey, ...updateData };
 
       mockApiKeyRepository.findOne
@@ -288,7 +288,7 @@ describe('ApiKeyService', () => {
       expect(result).toEqual(updatedApiKey);
     });
 
-    it('should return null if API key to update does not exist', async () => {
+    it('should return null if Api key to update does not exist', async () => {
       mockApiKeyRepository.findOne.mockResolvedValue(null);
 
       const result = await service.update('non-existent', mockWorkspaceId, {
@@ -301,7 +301,7 @@ describe('ApiKeyService', () => {
   });
 
   describe('revoke', () => {
-    it('should revoke an API key by setting revokedAt', async () => {
+    it('should revoke an Api key by setting revokedAt', async () => {
       const revokedApiKey = { ...mockApiKey, revokedAt: new Date() };
 
       mockApiKeyRepository.findOne
@@ -322,7 +322,7 @@ describe('ApiKeyService', () => {
   });
 
   describe('validateApiKey', () => {
-    it('should validate an active API key', async () => {
+    it('should validate an active Api key', async () => {
       mockApiKeyRepository.findOne.mockResolvedValue(mockApiKey);
 
       const result = await service.validateApiKey(
@@ -333,7 +333,7 @@ describe('ApiKeyService', () => {
       expect(result).toEqual(mockApiKey);
     });
 
-    it('should throw ApiKeyException if API key does not exist', async () => {
+    it('should throw ApiKeyException if Api key does not exist', async () => {
       mockApiKeyRepository.findOne.mockResolvedValue(null);
 
       await expect(
@@ -347,7 +347,7 @@ describe('ApiKeyService', () => {
       });
     });
 
-    it('should throw ApiKeyException if API key is revoked', async () => {
+    it('should throw ApiKeyException if Api key is revoked', async () => {
       mockApiKeyRepository.findOne.mockResolvedValue(mockRevokedApiKey);
 
       await expect(
@@ -361,7 +361,7 @@ describe('ApiKeyService', () => {
       });
     });
 
-    it('should throw ApiKeyException if API key is expired', async () => {
+    it('should throw ApiKeyException if Api key is expired', async () => {
       mockApiKeyRepository.findOne.mockResolvedValue(mockExpiredApiKey);
 
       await expect(
@@ -385,7 +385,7 @@ describe('ApiKeyService', () => {
       mockJwtWrapperService.sign.mockReturnValue(mockToken);
     });
 
-    it('should generate a JWT token for a valid API key', async () => {
+    it('should generate a JWT token for a valid Api key', async () => {
       mockApiKeyRepository.findOne.mockResolvedValue(mockApiKey);
       const expiresAt = new Date('2025-12-31');
 
@@ -414,7 +414,7 @@ describe('ApiKeyService', () => {
       expect(result).toEqual({ token: mockToken });
     });
 
-    it('should return undefined if no API key ID provided', async () => {
+    it('should return undefined if no Api key ID provided', async () => {
       const result = await service.generateApiKeyToken(mockWorkspaceId);
 
       expect(result).toBeUndefined();
@@ -461,13 +461,13 @@ describe('ApiKeyService', () => {
 
   describe('utility methods', () => {
     describe('isExpired', () => {
-      it('should return true for expired API key', () => {
+      it('should return true for expired Api key', () => {
         const result = service.isExpired(mockExpiredApiKey);
 
         expect(result).toBe(true);
       });
 
-      it('should return false for non-expired API key', () => {
+      it('should return false for non-expired Api key', () => {
         const result = service.isExpired(mockApiKey);
 
         expect(result).toBe(false);
@@ -475,13 +475,13 @@ describe('ApiKeyService', () => {
     });
 
     describe('isRevoked', () => {
-      it('should return true for revoked API key', () => {
+      it('should return true for revoked Api key', () => {
         const result = service.isRevoked(mockRevokedApiKey);
 
         expect(result).toBe(true);
       });
 
-      it('should return false for non-revoked API key', () => {
+      it('should return false for non-revoked Api key', () => {
         const result = service.isRevoked(mockApiKey);
 
         expect(result).toBe(false);
@@ -489,19 +489,19 @@ describe('ApiKeyService', () => {
     });
 
     describe('isActive', () => {
-      it('should return true for active API key', () => {
+      it('should return true for active Api key', () => {
         const result = service.isActive(mockApiKey);
 
         expect(result).toBe(true);
       });
 
-      it('should return false for revoked API key', () => {
+      it('should return false for revoked Api key', () => {
         const result = service.isActive(mockRevokedApiKey);
 
         expect(result).toBe(false);
       });
 
-      it('should return false for expired API key', () => {
+      it('should return false for expired Api key', () => {
         const result = service.isActive(mockExpiredApiKey);
 
         expect(result).toBe(false);

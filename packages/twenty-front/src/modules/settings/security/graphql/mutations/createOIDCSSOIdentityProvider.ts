@@ -2,9 +2,9 @@
 
 import { gql } from '@apollo/client';
 
-export const CREATE_OIDC_SSO_IDENTITY_PROVIDER = gql`
-  mutation CreateOIDCIdentityProvider($input: SetupOIDCSsoInput!) {
-    createOIDCIdentityProvider(input: $input) {
+export const CREATE_Oidc_Sso_IDENTITY_PROVIDER = gql`
+  mutation CreateOidcIdentityProvider($input: SetupOidcSsoInput!) {
+    createOidcIdentityProvider(input: $input) {
       id
       type
       issuer

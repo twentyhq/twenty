@@ -9,7 +9,7 @@ import {
 
 import { Response } from 'express';
 
-import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-api-exception.filter';
+import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-Api-exception.filter';
 import { MicrosoftOAuthGuard } from 'src/engine/core-modules/auth/guards/microsoft-oauth.guard';
 import { MicrosoftProviderEnabledGuard } from 'src/engine/core-modules/auth/guards/microsoft-provider-enabled.guard';
 import { AuthService } from 'src/engine/core-modules/auth/services/auth.service';
@@ -31,7 +31,7 @@ export class MicrosoftAuthController {
     NoPermissionGuard,
   )
   async microsoftAuth() {
-    // As this method is protected by Microsoft Auth guard, it will trigger Microsoft SSO flow
+    // As this method is protected by Microsoft Auth guard, it will trigger Microsoft Sso flow
     return;
   }
 
@@ -47,7 +47,7 @@ export class MicrosoftAuthController {
     @Res() res: Response,
   ) {
     return res.redirect(
-      await this.authService.signInUpWithSocialSSO(
+      await this.authService.signInUpWithSocialSso(
         req.user,
         AuthProviderEnum.Microsoft,
       ),

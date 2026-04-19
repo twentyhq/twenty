@@ -1,6 +1,6 @@
 import { type OpenAPIV3_1 } from 'openapi-types';
 
-import { computeOpenApiPath } from 'src/engine/core-modules/open-api/utils/path.utils';
+import { computeOpenApiPath } from 'src/engine/core-modules/open-Api/utils/path.utils';
 
 export const API_Version = 'v0.1';
 
@@ -13,7 +13,7 @@ export const baseSchema = (
     openapi: '3.1.1',
     info: {
       title: 'Twenty Api',
-      description: `Use this page to explore and call the **REST API**.
+      description: `Use this page to explore and call the **REST Api**.
 
 ## Authentication
 
@@ -104,14 +104,14 @@ order_by=id[AscNullsFirst],createdAt[DescNullsLast]
 You can use AI to generate code based on the OpenAPI schema with the following URLs:
 
 \`\`\`text
-Core: ${serverUrl}/rest/open-api/core?token=${token ?? '<your_token>'}
-Metadata: ${serverUrl}/rest/open-api/metadata?token=${token ?? '<your_token>'}
+Core: ${serverUrl}/rest/open-Api/core?token=${token ?? '<your_token>'}
+Metadata: ${serverUrl}/rest/open-Api/metadata?token=${token ?? '<your_token>'}
 \`\`\`
 
 Quick prompt example (Cursor or any agent):
 
 \`\`\`text
-Here is an OpenAPI schema for the Twenty REST API:\n${serverUrl}/rest/open-api/core?token=${token ?? '<your_token>'}
+Here is an OpenAPI schema for the Twenty REST Api:\n${serverUrl}/rest/open-Api/core?token=${token ?? '<your_token>'}
 
 Use it to list companies created after 2024-01-01, ordered by createdAt desc, and include only 20 results.
 \`\`\`
@@ -127,14 +127,14 @@ Notes:
       },
       license: {
         name: 'AGPL-3.0',
-        url: 'https://github.com/twentyhq/twenty?tab=License-1-ov-file#readme',
+        Url: 'https://github.com/twentyhq/twenty?tab=License-1-ov-file#readme',
       },
       version: API_Version,
     },
     // Testing purposes
     servers: [
       {
-        url: `${serverUrl}/rest/${schemaName !== 'core' ? schemaName : ''}`,
+        Url: `${serverUrl}/rest/${schemaName !== 'core' ? schemaName : ''}`,
         description: 'Production Development',
       },
     ],
@@ -156,8 +156,8 @@ Notes:
     ],
     externalDocs: {
       description: 'Find out more about **Twenty**',
-      url: 'https://twenty.com',
+      Url: 'https://twenty.com',
     },
-    paths: { [`/open-api/${schemaName}`]: computeOpenApiPath(serverUrl) },
+    paths: { [`/open-Api/${schemaName}`]: computeOpenApiPath(serverUrl) },
   };
 };

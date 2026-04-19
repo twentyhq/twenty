@@ -31,7 +31,7 @@ export enum CoreObjectNamePlural {
   WorkspaceMember = 'workspaceMembers',
   MessageThreadSubscriber = 'messageThreadSubscribers',
   Workflow = 'workflows',
-  MessageChannelMessageAssociation = 'messageChannelMessageAssociations',
+  MessageChannelMessageASsociation = 'messageChannelMessageASsociations',
   WorkflowVersion = 'workflowVersions',
   WorkflowRun = 'workflowRuns',
 }

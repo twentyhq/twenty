@@ -5,15 +5,15 @@ import { type FlatViewField } from 'src/engine/metadata-modules/flat-view-field/
 import { type AllStandardObjectName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-name.type';
 import { computeStandardAttachmentViewFields } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field/compute-standard-attachment-view-fields.util';
 import { computeStandardBlocklistViewFields } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field/compute-standard-blocklist-view-fields.util';
-import { computeStandardCalendarChannelEventAssociationViewFields } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field/compute-standard-calendar-channel-event-association-view-fields.util';
+import { computeStandardCalendarChannelEventASsociationViewFields } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field/compute-standard-calendar-channel-event-aSsociation-view-fields.util';
 import { computeStandardCalendarChannelViewFields } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field/compute-standard-calendar-channel-view-fields.util';
 import { computeStandardCalendarEventParticipantViewFields } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field/compute-standard-calendar-event-participant-view-fields.util';
 import { computeStandardCalendarEventViewFields } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field/compute-standard-calendar-event-view-fields.util';
 import { computeStandardCompanyViewFields } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field/compute-standard-company-view-fields.util';
 import { computeStandardConnectedAccountViewFields } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field/compute-standard-connected-account-view-fields.util';
 import { computeStandardDashboardViewFields } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field/compute-standard-dashboard-view-fields.util';
-import { computeStandardMessageChannelMessageAssociationMessageFolderViewFields } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field/compute-standard-message-channel-message-association-message-folder-view-fields.util';
-import { computeStandardMessageChannelMessageAssociationViewFields } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field/compute-standard-message-channel-message-association-view-fields.util';
+import { computeStandardMessageChannelMessageASsociationMessageFolderViewFields } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field/compute-standard-message-channel-message-aSsociation-message-folder-view-fields.util';
+import { computeStandardMessageChannelMessageASsociationViewFields } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field/compute-standard-message-channel-message-aSsociation-view-fields.util';
 import { computeStandardMessageChannelViewFields } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field/compute-standard-message-channel-view-fields.util';
 import { computeStandardMessageFolderViewFields } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field/compute-standard-message-folder-view-fields.util';
 import { computeStandardMessageParticipantViewFields } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field/compute-standard-message-participant-view-fields.util';
@@ -41,8 +41,8 @@ const STANDARD_FLAT_VIEW_FIELD_METADATA_BUILDERS_BY_OBJECT_NAME = {
   attachment: computeStandardAttachmentViewFields,
   blocklist: computeStandardBlocklistViewFields,
   calendarChannel: computeStandardCalendarChannelViewFields,
-  calendarChannelEventAssociation:
-    computeStandardCalendarChannelEventAssociationViewFields,
+  calendarChannelEventASsociation:
+    computeStandardCalendarChannelEventASsociationViewFields,
   calendarEvent: computeStandardCalendarEventViewFields,
   calendarEventParticipant: computeStandardCalendarEventParticipantViewFields,
   company: computeStandardCompanyViewFields,
@@ -50,10 +50,10 @@ const STANDARD_FLAT_VIEW_FIELD_METADATA_BUILDERS_BY_OBJECT_NAME = {
   dashboard: computeStandardDashboardViewFields,
   message: computeStandardMessageViewFields,
   messageChannel: computeStandardMessageChannelViewFields,
-  messageChannelMessageAssociation:
-    computeStandardMessageChannelMessageAssociationViewFields,
-  messageChannelMessageAssociationMessageFolder:
-    computeStandardMessageChannelMessageAssociationMessageFolderViewFields,
+  messageChannelMessageASsociation:
+    computeStandardMessageChannelMessageASsociationViewFields,
+  messageChannelMessageASsociationMessageFolder:
+    computeStandardMessageChannelMessageASsociationMessageFolderViewFields,
   messageFolder: computeStandardMessageFolderViewFields,
   messageParticipant: computeStandardMessageParticipantViewFields,
   messageThread: computeStandardMessageThreadViewFields,

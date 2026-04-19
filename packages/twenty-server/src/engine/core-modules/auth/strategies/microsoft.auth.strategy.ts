@@ -12,8 +12,8 @@ import {
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { type MicrosoftPassportProfile } from 'src/engine/core-modules/auth/types/microsoft-passport-profile.type';
-import { type SocialSSOSignInUpActionType } from 'src/engine/core-modules/auth/types/signInUp.type';
-import { type SocialSSOState } from 'src/engine/core-modules/auth/types/social-sso-state.type';
+import { type SocialSsoSignInUpActionType } from 'src/engine/core-modules/auth/types/signInUp.type';
+import { type SocialSsoState } from 'src/engine/core-modules/auth/types/social-Sso-state.type';
 import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 export type MicrosoftRequest = Omit<
@@ -30,7 +30,7 @@ export type MicrosoftRequest = Omit<
     workspacePersonalInviteToken?: string;
     workspaceId?: string;
     billingCheckoutSessionState?: string;
-    action: SocialSSOSignInUpActionType;
+    action: SocialSsoSignInUpActionType;
   };
 };
 
@@ -38,7 +38,7 @@ export type MicrosoftRequest = Omit<
 export class MicrosoftStrategy extends PassportStrategy(Strategy, 'microsoft') {
   constructor(twentyConfigService: TwentyConfigService) {
     super({
-      clientID: twentyConfigService.get('AUTH_MICROSOFT_CLIENT_ID'),
+      clientId: twentyConfigService.get('AUTH_MICROSOFT_CLIENT_ID'),
       clientSecret: twentyConfigService.get('AUTH_MICROSOFT_CLIENT_SECRET'),
       callbackURL: twentyConfigService.get('AUTH_MICROSOFT_CALLBACK_URL'),
       tenant: 'common',
@@ -75,7 +75,7 @@ export class MicrosoftStrategy extends PassportStrategy(Strategy, 'microsoft') {
     done: VerifyCallback,
   ): Promise<void> {
     const { name, userPrincipalName, photos } = profile;
-    const state = parseJson<SocialSSOState>(request.query.state as string);
+    const state = parseJson<SocialSsoState>(request.query.state as string);
 
     if (!userPrincipalName) {
       throw new AuthException(

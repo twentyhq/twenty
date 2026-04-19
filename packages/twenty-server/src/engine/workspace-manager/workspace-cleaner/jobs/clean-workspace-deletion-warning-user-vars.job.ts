@@ -5,7 +5,7 @@ import chunk from 'lodash.chunk';
 import { Repository } from 'typeorm';
 
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
-import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
+import { ProceSsor } from 'src/engine/core-modules/message-queue/decorators/proceSsor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { UserVarsService } from 'src/engine/core-modules/user/user-vars/services/user-vars.service';
@@ -16,7 +16,7 @@ export type CleanWorkspaceDeletionWarningUserVarsJobData = {
   workspaceId: string;
 };
 
-@Processor({
+@ProceSsor({
   queueName: MessageQueue.workspaceQueue,
   scope: Scope.REQUEST,
 })

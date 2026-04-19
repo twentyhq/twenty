@@ -4,19 +4,19 @@ import {
   type CreateStandardViewFieldArgs,
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field/create-standard-view-field-flat-metadata.util';
 
-export const computeStandardMessageChannelMessageAssociationViewFields = (
+export const computeStandardMessageChannelMessageASsociationViewFields = (
   args: Omit<
-    CreateStandardViewFieldArgs<'messageChannelMessageAssociation'>,
+    CreateStandardViewFieldArgs<'messageChannelMessageASsociation'>,
     'context'
   >,
 ): Record<string, FlatViewField> => {
   return {
-    allMessageChannelMessageAssociationsMessageChannel:
+    allMessageChannelMessageASsociationsMessageChannel:
       createStandardViewFieldFlatMetadata({
         ...args,
-        objectName: 'messageChannelMessageAssociation',
+        objectName: 'messageChannelMessageASsociation',
         context: {
-          viewName: 'allMessageChannelMessageAssociations',
+          viewName: 'allMessageChannelMessageASsociations',
           viewFieldName: 'messageChannelId',
           fieldName: 'messageChannelId',
           position: 0,
@@ -24,12 +24,12 @@ export const computeStandardMessageChannelMessageAssociationViewFields = (
           size: 150,
         },
       }),
-    allMessageChannelMessageAssociationsMessage:
+    allMessageChannelMessageASsociationsMessage:
       createStandardViewFieldFlatMetadata({
         ...args,
-        objectName: 'messageChannelMessageAssociation',
+        objectName: 'messageChannelMessageASsociation',
         context: {
-          viewName: 'allMessageChannelMessageAssociations',
+          viewName: 'allMessageChannelMessageASsociations',
           viewFieldName: 'message',
           fieldName: 'message',
           position: 1,
@@ -37,12 +37,12 @@ export const computeStandardMessageChannelMessageAssociationViewFields = (
           size: 150,
         },
       }),
-    allMessageChannelMessageAssociationsMessageExternalId:
+    allMessageChannelMessageASsociationsMessageExternalId:
       createStandardViewFieldFlatMetadata({
         ...args,
-        objectName: 'messageChannelMessageAssociation',
+        objectName: 'messageChannelMessageASsociation',
         context: {
-          viewName: 'allMessageChannelMessageAssociations',
+          viewName: 'allMessageChannelMessageASsociations',
           viewFieldName: 'messageExternalId',
           fieldName: 'messageExternalId',
           position: 2,
@@ -50,12 +50,12 @@ export const computeStandardMessageChannelMessageAssociationViewFields = (
           size: 150,
         },
       }),
-    allMessageChannelMessageAssociationsDirection:
+    allMessageChannelMessageASsociationsDirection:
       createStandardViewFieldFlatMetadata({
         ...args,
-        objectName: 'messageChannelMessageAssociation',
+        objectName: 'messageChannelMessageASsociation',
         context: {
-          viewName: 'allMessageChannelMessageAssociations',
+          viewName: 'allMessageChannelMessageASsociations',
           viewFieldName: 'direction',
           fieldName: 'direction',
           position: 3,
@@ -63,12 +63,12 @@ export const computeStandardMessageChannelMessageAssociationViewFields = (
           size: 150,
         },
       }),
-    allMessageChannelMessageAssociationsCreatedAt:
+    allMessageChannelMessageASsociationsCreatedAt:
       createStandardViewFieldFlatMetadata({
         ...args,
-        objectName: 'messageChannelMessageAssociation',
+        objectName: 'messageChannelMessageASsociation',
         context: {
-          viewName: 'allMessageChannelMessageAssociations',
+          viewName: 'allMessageChannelMessageASsociations',
           viewFieldName: 'createdAt',
           fieldName: 'createdAt',
           position: 4,
@@ -77,12 +77,12 @@ export const computeStandardMessageChannelMessageAssociationViewFields = (
         },
       }),
 
-    messageChannelMessageAssociationRecordPageFieldsMessageChannel:
+    messageChannelMessageASsociationRecordPageFieldsMessageChannel:
       createStandardViewFieldFlatMetadata({
         ...args,
-        objectName: 'messageChannelMessageAssociation',
+        objectName: 'messageChannelMessageASsociation',
         context: {
-          viewName: 'messageChannelMessageAssociationRecordPageFields',
+          viewName: 'messageChannelMessageASsociationRecordPageFields',
           viewFieldName: 'messageChannelId',
           fieldName: 'messageChannelId',
           position: 0,
@@ -91,12 +91,12 @@ export const computeStandardMessageChannelMessageAssociationViewFields = (
           viewFieldGroupName: 'general',
         },
       }),
-    messageChannelMessageAssociationRecordPageFieldsMessage:
+    messageChannelMessageASsociationRecordPageFieldsMessage:
       createStandardViewFieldFlatMetadata({
         ...args,
-        objectName: 'messageChannelMessageAssociation',
+        objectName: 'messageChannelMessageASsociation',
         context: {
-          viewName: 'messageChannelMessageAssociationRecordPageFields',
+          viewName: 'messageChannelMessageASsociationRecordPageFields',
           viewFieldName: 'message',
           fieldName: 'message',
           position: 1,
@@ -105,12 +105,12 @@ export const computeStandardMessageChannelMessageAssociationViewFields = (
           viewFieldGroupName: 'general',
         },
       }),
-    messageChannelMessageAssociationRecordPageFieldsMessageExternalId:
+    messageChannelMessageASsociationRecordPageFieldsMessageExternalId:
       createStandardViewFieldFlatMetadata({
         ...args,
-        objectName: 'messageChannelMessageAssociation',
+        objectName: 'messageChannelMessageASsociation',
         context: {
-          viewName: 'messageChannelMessageAssociationRecordPageFields',
+          viewName: 'messageChannelMessageASsociationRecordPageFields',
           viewFieldName: 'messageExternalId',
           fieldName: 'messageExternalId',
           position: 2,
@@ -119,12 +119,12 @@ export const computeStandardMessageChannelMessageAssociationViewFields = (
           viewFieldGroupName: 'general',
         },
       }),
-    messageChannelMessageAssociationRecordPageFieldsDirection:
+    messageChannelMessageASsociationRecordPageFieldsDirection:
       createStandardViewFieldFlatMetadata({
         ...args,
-        objectName: 'messageChannelMessageAssociation',
+        objectName: 'messageChannelMessageASsociation',
         context: {
-          viewName: 'messageChannelMessageAssociationRecordPageFields',
+          viewName: 'messageChannelMessageASsociationRecordPageFields',
           viewFieldName: 'direction',
           fieldName: 'direction',
           position: 3,
@@ -133,12 +133,12 @@ export const computeStandardMessageChannelMessageAssociationViewFields = (
           viewFieldGroupName: 'general',
         },
       }),
-    messageChannelMessageAssociationRecordPageFieldsCreatedAt:
+    messageChannelMessageASsociationRecordPageFieldsCreatedAt:
       createStandardViewFieldFlatMetadata({
         ...args,
-        objectName: 'messageChannelMessageAssociation',
+        objectName: 'messageChannelMessageASsociation',
         context: {
-          viewName: 'messageChannelMessageAssociationRecordPageFields',
+          viewName: 'messageChannelMessageASsociationRecordPageFields',
           viewFieldName: 'createdAt',
           fieldName: 'createdAt',
           position: 0,
@@ -147,12 +147,12 @@ export const computeStandardMessageChannelMessageAssociationViewFields = (
           viewFieldGroupName: 'system',
         },
       }),
-    messageChannelMessageAssociationRecordPageFieldsCreatedBy:
+    messageChannelMessageASsociationRecordPageFieldsCreatedBy:
       createStandardViewFieldFlatMetadata({
         ...args,
-        objectName: 'messageChannelMessageAssociation',
+        objectName: 'messageChannelMessageASsociation',
         context: {
-          viewName: 'messageChannelMessageAssociationRecordPageFields',
+          viewName: 'messageChannelMessageASsociationRecordPageFields',
           viewFieldName: 'createdBy',
           fieldName: 'createdBy',
           position: 1,

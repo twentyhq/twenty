@@ -234,19 +234,19 @@ export const buildMessageThreadStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
-  messageChannelMessageAssociations: createStandardRelationFieldFlatMetadata({
+  messageChannelMessageASsociations: createStandardRelationFieldFlatMetadata({
     objectName,
     workspaceId,
     context: {
       type: FieldMetadataType.RELATION,
       morphId: null,
-      fieldName: 'messageChannelMessageAssociations',
-      label: i18nLabel(msg`Message Channel Association`),
+      fieldName: 'messageChannelMessageASsociations',
+      label: i18nLabel(msg`Message Channel ASsociation`),
       description: i18nLabel(msg`Messages from the channel.`),
       icon: 'IconMessage',
       isNullable: true,
       isUIReadOnly: true,
-      targetObjectName: 'messageChannelMessageAssociation',
+      targetObjectName: 'messageChannelMessageASsociation',
       targetFieldName: 'messageThread',
       settings: {
         relationType: RelationType.ONE_TO_MANY,

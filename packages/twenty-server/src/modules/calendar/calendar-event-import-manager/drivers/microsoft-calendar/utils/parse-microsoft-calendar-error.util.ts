@@ -15,7 +15,7 @@ export const parseMicrosoftCalendarError = (
     case 400:
       if (!isDefined(message)) {
         return new CalendarEventImportDriverException(
-          'Microsoft Graph API returned 400 with empty error body',
+          'Microsoft Graph Api returned 400 with empty error body',
           CalendarEventImportDriverExceptionCode.TEMPORARY_ERROR,
         );
       }

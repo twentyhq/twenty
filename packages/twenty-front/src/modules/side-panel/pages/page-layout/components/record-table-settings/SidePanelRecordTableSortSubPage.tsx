@@ -1,4 +1,4 @@
-import { RecordTableSettingsSorts } from '@/side-panel/pages/page-layout/components/record-table-settings/RecordTableSettingsSorts';
+import { RecordTableSettingSsorts } from '@/side-panel/pages/page-layout/components/record-table-settings/RecordTableSettingSsorts';
 import { usePageLayoutIdFromContextStore } from '@/side-panel/pages/page-layout/hooks/usePageLayoutIdFromContextStore';
 
 import { useWidgetInEditMode } from '@/side-panel/pages/page-layout/hooks/useWidgetInEditMode';
@@ -30,7 +30,7 @@ export const SidePanelRecordTableSortSubPage = () => {
   }
 
   return (
-    <RecordTableSettingsSorts
+    <RecordTableSettingSsorts
       viewId={viewId}
       objectMetadataId={widgetInEditMode.objectMetadataId}
     />

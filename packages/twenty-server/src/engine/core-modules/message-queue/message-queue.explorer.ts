@@ -16,14 +16,14 @@ import {
 import { type MessageQueueWorkerOptions } from 'src/engine/core-modules/message-queue/interfaces/message-queue-worker-options.interface';
 
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
-import { MessageQueueMetadataAccessor } from 'src/engine/core-modules/message-queue/message-queue-metadata.accessor';
+import { MessageQueueMetadataAcceSsor } from 'src/engine/core-modules/message-queue/message-queue-metadata.acceSsor';
 import { type MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { type MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { QUEUE_WORKER_OPTIONS } from 'src/engine/core-modules/message-queue/message-queue-worker-options.constant';
 import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-queue-token.util';
 import { shouldCaptureException } from 'src/engine/utils/global-exception-handler.util';
 
-interface ProcessorGroup {
+interface ProceSsorGroup {
   instance: object;
   host: Module;
   processMethodNames: string[];
@@ -38,7 +38,7 @@ export class MessageQueueExplorer implements OnModuleInit {
   constructor(
     private readonly moduleRef: ModuleRef,
     private readonly discoveryService: DiscoveryService,
-    private readonly metadataAccessor: MessageQueueMetadataAccessor,
+    private readonly metadataAcceSsor: MessageQueueMetadataAcceSsor,
     private readonly metadataScanner: MetadataScanner,
     private readonly exceptionHandlerService: ExceptionHandlerService,
   ) {}
@@ -48,49 +48,49 @@ export class MessageQueueExplorer implements OnModuleInit {
   }
 
   explore() {
-    const processors = this.discoveryService
+    const proceSsors = this.discoveryService
       .getProviders()
       .filter((wrapper) =>
-        this.metadataAccessor.isProcessor(
+        this.metadataAcceSsor.isProceSsor(
           !wrapper.metatype || wrapper.inject
             ? wrapper.instance?.constructor
             : wrapper.metatype,
         ),
       );
 
-    const groupedProcessors = this.groupProcessorsByQueueName(processors);
+    const groupedProceSsors = this.groupProceSsorsByQueueName(proceSsors);
 
-    for (const [queueName, processorGroupCollection] of Object.entries(
-      groupedProcessors,
+    for (const [queueName, proceSsorGroupCollection] of Object.entries(
+      groupedProceSsors,
     )) {
       const queueToken = getQueueToken(queueName);
       const messageQueueService = this.getQueueService(queueToken);
 
-      this.handleProcessorGroupCollection(
-        processorGroupCollection,
+      this.handleProceSsorGroupCollection(
+        proceSsorGroupCollection,
         messageQueueService,
         QUEUE_WORKER_OPTIONS[queueName as MessageQueue],
       );
     }
   }
 
-  private groupProcessorsByQueueName(processors: InstanceWrapper[]) {
-    return processors.reduce(
+  private groupProceSsorsByQueueName(proceSsors: InstanceWrapper[]) {
+    return proceSsors.reduce(
       (acc, wrapper) => {
         const { instance, metatype } = wrapper;
         const methodNames = this.metadataScanner.getAllMethodNames(instance);
         const { queueName } =
-          this.metadataAccessor.getProcessorMetadata(
+          this.metadataAcceSsor.getProceSsorMetadata(
             instance.constructor || metatype,
           ) ?? {};
 
         const processMethodNames = methodNames.filter((name) =>
-          this.metadataAccessor.isProcess(instance[name]),
+          this.metadataAcceSsor.isProcess(instance[name]),
         );
 
         if (!queueName) {
           this.logger.error(
-            `Processor ${wrapper.name} is missing queue name metadata`,
+            `ProceSsor ${wrapper.name} is missing queue name metadata`,
           );
 
           return acc;
@@ -98,7 +98,7 @@ export class MessageQueueExplorer implements OnModuleInit {
 
         if (!wrapper.host) {
           this.logger.error(
-            `Processor ${wrapper.name} is missing host metadata`,
+            `ProceSsor ${wrapper.name} is missing host metadata`,
           );
 
           return acc;
@@ -117,7 +117,7 @@ export class MessageQueueExplorer implements OnModuleInit {
 
         return acc;
       },
-      {} as Record<string, ProcessorGroup[]>,
+      {} as Record<string, ProceSsorGroup[]>,
     );
   }
 
@@ -132,25 +132,25 @@ export class MessageQueueExplorer implements OnModuleInit {
     }
   }
 
-  private async handleProcessorGroupCollection(
-    processorGroupCollection: ProcessorGroup[],
+  private async handleProceSsorGroupCollection(
+    proceSsorGroupCollection: ProceSsorGroup[],
     queue: MessageQueueService,
     options?: MessageQueueWorkerOptions,
   ) {
     queue.work(async (job) => {
-      for (const processorGroup of processorGroupCollection) {
-        await this.handleProcessor(processorGroup, job);
+      for (const proceSsorGroup of proceSsorGroupCollection) {
+        await this.handleProceSsor(proceSsorGroup, job);
       }
     }, options);
   }
 
-  private async handleProcessor(
-    { instance, host, processMethodNames, isRequestScoped }: ProcessorGroup,
+  private async handleProceSsor(
+    { instance, host, processMethodNames, isRequestScoped }: ProceSsorGroup,
     job: MessageQueueJob<MessageQueueJobData>,
   ) {
     const filteredProcessMethodNames = processMethodNames.filter(
       (processMethodName) => {
-        const metadata = this.metadataAccessor.getProcessMetadata(
+        const metadata = this.metadataAcceSsor.getProcessMetadata(
           // @ts-expect-error legacy noImplicitAny
           instance[processMethodName],
         );

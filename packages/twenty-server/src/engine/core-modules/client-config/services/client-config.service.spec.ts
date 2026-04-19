@@ -110,7 +110,7 @@ describe('ClientConfigService', () => {
 
       jest.spyOn(domainServerConfigService, 'getFrontUrl').mockReturnValue({
         hostname: 'app.twenty.com',
-      } as URL);
+      } as Url);
     });
 
     it('should return complete client config with all properties', async () => {
@@ -138,7 +138,7 @@ describe('ClientConfigService', () => {
           magicLink: false,
           password: true,
           microsoft: false,
-          sso: [],
+          Sso: [],
         },
         signInPrefilled: false,
         isMultiWorkspaceEnabled: true,
@@ -158,7 +158,7 @@ describe('ClientConfigService', () => {
           provider: 'GOOGLE_RECAPTCHA',
           siteKey: 'site-key-123',
         },
-        api: {
+        Api: {
           mutationMaximumAffectedRecords: 1000,
         },
         isAttachmentPreviewEnabled: true,

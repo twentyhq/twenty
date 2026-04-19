@@ -485,13 +485,13 @@ export class GraphqlQueryOrderGroupByParser {
       );
     }
 
-    const associatedGroupByField = groupByFields.find(
+    const aSsociatedGroupByField = groupByFields.find(
       (groupByField) =>
         groupByField.fieldMetadata.id === fieldMetadataId &&
         (groupByField as GroupByDateField).dateGranularity === granularity,
     ) as GroupByDateField | undefined;
 
-    if (!isDefined(associatedGroupByField)) {
+    if (!isDefined(aSsociatedGroupByField)) {
       throw new UserInputError(
         `Cannot order by a date granularity that is not in groupBy criteria: ${granularity}`,
       );
@@ -499,15 +499,15 @@ export class GraphqlQueryOrderGroupByParser {
 
     const columnNameWithQuotes = `"${
       formatColumnNamesFromCompositeFieldAndSubfields(
-        associatedGroupByField.fieldMetadata.name,
-        associatedGroupByField.subFieldName
-          ? [associatedGroupByField.subFieldName]
+        aSsociatedGroupByField.fieldMetadata.name,
+        aSsociatedGroupByField.subFieldName
+          ? [aSsociatedGroupByField.subFieldName]
           : undefined,
       )[0]
     }"`;
 
     const expression = getGroupByOrderExpression({
-      groupByField: associatedGroupByField,
+      groupByField: aSsociatedGroupByField,
       columnNameWithQuotes,
     });
 
@@ -526,7 +526,7 @@ export class GraphqlQueryOrderGroupByParser {
     fieldMetadata: FlatFieldMetadata;
   }): Record<string, OrderByClause> | null => {
     const {
-      associatedGroupByField,
+      aSsociatedGroupByField,
       nestedFieldMetadata,
       nestedFieldOrderByValue,
     } = prepareForOrderByRelationFieldParsing({
@@ -538,7 +538,7 @@ export class GraphqlQueryOrderGroupByParser {
     });
 
     if (
-      !isDefined(associatedGroupByField) ||
+      !isDefined(aSsociatedGroupByField) ||
       !isDefined(nestedFieldMetadata) ||
       !isDefined(nestedFieldOrderByValue)
     ) {
@@ -571,8 +571,8 @@ export class GraphqlQueryOrderGroupByParser {
       }
 
       if (
-        !isDefined(associatedGroupByField.nestedSubFieldName) ||
-        associatedGroupByField.nestedSubFieldName !== nestedSubFieldName
+        !isDefined(aSsociatedGroupByField.nestedSubFieldName) ||
+        aSsociatedGroupByField.nestedSubFieldName !== nestedSubFieldName
       ) {
         throw new UserInputError(
           `Cannot order by a composite subfield that is not in groupBy criteria: ${nestedSubFieldName}`,
@@ -615,8 +615,8 @@ export class GraphqlQueryOrderGroupByParser {
       ).granularity;
 
       if (
-        !isDefined(associatedGroupByField.dateGranularity) ||
-        associatedGroupByField.dateGranularity !== granularity
+        !isDefined(aSsociatedGroupByField.dateGranularity) ||
+        aSsociatedGroupByField.dateGranularity !== granularity
       ) {
         throw new UserInputError(
           `Cannot order by a date granularity that is not in groupBy criteria: ${granularity}`,
@@ -626,15 +626,15 @@ export class GraphqlQueryOrderGroupByParser {
       const joinAlias = fieldMetadata.name;
       const nestedColumnName = formatColumnNamesFromCompositeFieldAndSubfields(
         nestedFieldMetadata.name,
-        associatedGroupByField.nestedSubFieldName
-          ? [associatedGroupByField.nestedSubFieldName]
+        aSsociatedGroupByField.nestedSubFieldName
+          ? [aSsociatedGroupByField.nestedSubFieldName]
           : undefined,
       )[0];
 
       const columnNameWithQuotes = `"${joinAlias}"."${nestedColumnName}"`;
 
       const expression = getGroupByOrderExpression({
-        groupByField: associatedGroupByField,
+        groupByField: aSsociatedGroupByField,
         columnNameWithQuotes,
       });
 
@@ -655,8 +655,8 @@ export class GraphqlQueryOrderGroupByParser {
       const joinAlias = fieldMetadata.name;
       const nestedColumnName = formatColumnNamesFromCompositeFieldAndSubfields(
         nestedFieldMetadata.name,
-        associatedGroupByField.nestedSubFieldName
-          ? [associatedGroupByField.nestedSubFieldName]
+        aSsociatedGroupByField.nestedSubFieldName
+          ? [aSsociatedGroupByField.nestedSubFieldName]
           : undefined,
       )[0];
 

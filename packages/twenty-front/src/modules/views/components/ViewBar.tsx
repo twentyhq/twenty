@@ -4,7 +4,7 @@ import { ObjectSortDropdownButton } from '@/object-record/object-sort-dropdown/c
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { TopBar } from '@/ui/layout/top-bar/components/TopBar';
 import { QueryParamsFiltersEffect } from '@/views/components/QueryParamsFiltersEffect';
-import { QueryParamsSortsEffect } from '@/views/components/QueryParamsSortsEffect';
+import { QueryParamSsortsEffect } from '@/views/components/QueryParamSsortsEffect';
 import { ViewBarPageTitle } from '@/views/components/ViewBarPageTitle';
 import { ViewPickerDropdown } from '@/views/view-picker/components/ViewPickerDropdown';
 
@@ -57,7 +57,7 @@ export const ViewBar = ({
       <ViewBarRecordFilterEffect />
       <ViewBarRecordSortEffect />
       <QueryParamsFiltersEffect />
-      <QueryParamsSortsEffect />
+      <QueryParamSsortsEffect />
       <QueryParamsCleanupEffect />
       <ViewBarPageTitle />
       <TopBar

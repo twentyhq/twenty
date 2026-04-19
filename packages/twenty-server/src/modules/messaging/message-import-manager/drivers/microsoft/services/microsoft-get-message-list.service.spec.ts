@@ -47,7 +47,7 @@ describe('MicrosoftGetMessageListService', () => {
   };
 
   const createMockMicrosoftClient = () => ({
-    api: jest.fn().mockReturnThis(),
+    Api: jest.fn().mockReturnThis(),
     version: jest.fn().mockReturnThis(),
     headers: jest.fn().mockReturnThis(),
     get: jest.fn().mockResolvedValue({

@@ -16,7 +16,7 @@ import { EmailVerificationSent } from '@/auth/sign-in-up/components/EmailVerific
 import { FooterNote } from '@/auth/sign-in-up/components/FooterNote';
 import { SignInUpGlobalScopeForm } from '@/auth/sign-in-up/components/SignInUpGlobalScopeForm';
 import { SignInUpWorkspaceScopeForm } from '@/auth/sign-in-up/components/SignInUpWorkspaceScopeForm';
-import { SignInUpSSOIdentityProviderSelection } from '@/auth/sign-in-up/components/internal/SignInUpSSOIdentityProviderSelection';
+import { SignInUpSsoIdentityProviderSelection } from '@/auth/sign-in-up/components/internal/SignInUpSsoIdentityProviderSelection';
 import { SignInUpWorkspaceScopeFormEffect } from '@/auth/sign-in-up/components/internal/SignInUpWorkspaceScopeFormEffect';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { useGetPublicWorkspaceDataByDomain } from '@/domain-manager/hooks/useGetPublicWorkspaceDataByDomain';
@@ -165,9 +165,9 @@ export const SignInUp = () => {
 
     if (
       isOnAWorkspace &&
-      signInUpStep === SignInUpStep.SSOIdentityProviderSelection
+      signInUpStep === SignInUpStep.SsoIdentityProviderSelection
     ) {
-      return <SignInUpSSOIdentityProviderSelection />;
+      return <SignInUpSsoIdentityProviderSelection />;
     }
 
     if (signInUpStep === SignInUpStep.TwoFactorAuthenticationProvision) {

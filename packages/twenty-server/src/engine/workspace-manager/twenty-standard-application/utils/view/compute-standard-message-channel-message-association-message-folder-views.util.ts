@@ -6,20 +6,20 @@ import {
   type CreateStandardViewArgs,
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/create-standard-view-flat-metadata.util';
 
-export const computeStandardMessageChannelMessageAssociationMessageFolderViews =
+export const computeStandardMessageChannelMessageASsociationMessageFolderViews =
   (
     args: Omit<
-      CreateStandardViewArgs<'messageChannelMessageAssociationMessageFolder'>,
+      CreateStandardViewArgs<'messageChannelMessageASsociationMessageFolder'>,
       'context'
     >,
   ): Record<string, FlatView> => {
     return {
-      allMessageChannelMessageAssociationMessageFolders:
+      allMessageChannelMessageASsociationMessageFolders:
         createStandardViewFlatMetadata({
           ...args,
-          objectName: 'messageChannelMessageAssociationMessageFolder',
+          objectName: 'messageChannelMessageASsociationMessageFolder',
           context: {
-            viewName: 'allMessageChannelMessageAssociationMessageFolders',
+            viewName: 'allMessageChannelMessageASsociationMessageFolders',
             name: 'All {objectLabelPlural}',
             type: ViewType.TABLE,
             key: ViewKey.INDEX,
@@ -27,14 +27,14 @@ export const computeStandardMessageChannelMessageAssociationMessageFolderViews =
             icon: 'IconList',
           },
         }),
-      messageChannelMessageAssociationMessageFolderRecordPageFields:
+      messageChannelMessageASsociationMessageFolderRecordPageFields:
         createStandardViewFlatMetadata({
           ...args,
-          objectName: 'messageChannelMessageAssociationMessageFolder',
+          objectName: 'messageChannelMessageASsociationMessageFolder',
           context: {
             viewName:
-              'messageChannelMessageAssociationMessageFolderRecordPageFields',
-            name: 'Message Channel Message Association Message Folder Record Page Fields',
+              'messageChannelMessageASsociationMessageFolderRecordPageFields',
+            name: 'Message Channel Message ASsociation Message Folder Record Page Fields',
             type: ViewType.FIELDS_WIDGET,
             key: null,
             position: 0,

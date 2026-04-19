@@ -1,4 +1,4 @@
-import { validateNumberFieldOrThrow } from 'src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-number-field-or-throw.util';
+import { validateNumberFieldOrThrow } from 'src/engine/api/common/common-args-proceSsors/data-arg-proceSsor/validator-utils/validate-number-field-or-throw.util';
 
 describe('validateNumberFieldOrThrow', () => {
   describe('valid inputs', () => {

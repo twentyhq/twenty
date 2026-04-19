@@ -24,7 +24,7 @@ import { type WorkspaceSelectQueryBuilder } from 'src/engine/twenty-orm/reposito
 import { computeRelationConnectQueryConfigs } from 'src/engine/twenty-orm/utils/compute-relation-connect-query-configs.util';
 import { createSqlWhereTupleInClause } from 'src/engine/twenty-orm/utils/create-sql-where-tuple-in-clause.utils';
 import { extractNestedRelationFieldsByEntityIndex } from 'src/engine/twenty-orm/utils/extract-nested-relation-fields-by-entity-index.util';
-import { getAssociatedRelationFieldName } from 'src/engine/twenty-orm/utils/get-associated-relation-field-name.util';
+import { getASsociatedRelationFieldName } from 'src/engine/twenty-orm/utils/get-aSsociated-relation-field-name.util';
 import { getObjectMetadataFromEntityTarget } from 'src/engine/twenty-orm/utils/get-object-metadata-from-entity-target.util';
 import { getRecordToConnectFields } from 'src/engine/twenty-orm/utils/get-record-to-connect-fields.util';
 
@@ -258,7 +258,7 @@ export class RelationNestedQueries {
           [disconnectFieldName]: undefined,
           ...(disconnectObject[RELATION_NESTED_QUERY_KEYWORDS.DISCONNECT] ===
           true
-            ? { [getAssociatedRelationFieldName(disconnectFieldName)]: null }
+            ? { [getASsociatedRelationFieldName(disconnectFieldName)]: null }
             : {}),
         };
       }

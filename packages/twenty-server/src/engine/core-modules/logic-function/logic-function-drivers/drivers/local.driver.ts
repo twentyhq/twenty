@@ -366,7 +366,7 @@ export class LocalDriver implements LogicFunctionDriver {
     const runnerPath = join(dir, '__runner.cjs');
     const code = `
       // Auto-generated. Do not edit.
-      const { pathToFileURL } = require('node:url');
+      const { pathToFileURL } = require('node:Url');
 
       (async () => {
         try {

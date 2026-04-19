@@ -183,7 +183,7 @@ export const convertObjectMetadataToSchemaProperties = ({
                 type: 'object',
                 description: 'A secondary link',
                 properties: {
-                  url: {
+                  Url: {
                     type: 'string',
                     format: 'uri',
                   },
@@ -264,7 +264,7 @@ export const convertObjectMetadataToSchemaProperties = ({
                 'CALENDAR',
                 'WORKFLOW',
                 'AGENT',
-                'API',
+                'Api',
                 'IMPORT',
                 'MANUAL',
                 'SYSTEM',
@@ -355,7 +355,7 @@ export const convertObjectMetadataToSchemaProperties = ({
                     extension: {
                       type: 'string',
                     },
-                    url: {
+                    Url: {
                       type: 'string',
                     },
                   }

@@ -1,5 +1,5 @@
-import { GET_AUTHORIZATION_URL_FOR_SSO } from '@/auth/graphql/mutations/getAuthorizationUrlForSSO';
-import { useSSO } from '@/auth/sign-in-up/hooks/useSSO';
+import { GET_AUTHORIZATION_URL_FOR_Sso } from '@/auth/graphql/mutations/getAuthorizationUrlForSso';
+import { useSso } from '@/auth/sign-in-up/hooks/useSso';
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
@@ -24,7 +24,7 @@ const mockRedirect = jest.fn();
 const apolloMocks = [
   {
     request: {
-      query: GET_AUTHORIZATION_URL_FOR_SSO,
+      query: GET_AUTHORIZATION_URL_FOR_Sso,
       variables: {
         input: {
           identityProviderId: 'success-id',
@@ -33,13 +33,13 @@ const apolloMocks = [
     },
     result: {
       data: {
-        getAuthorizationUrlForSSO: { authorizationURL: 'http://example.com' },
+        getAuthorizationUrlForSso: { authorizationURL: 'http://example.com' },
       },
     },
   },
   {
     request: {
-      query: GET_AUTHORIZATION_URL_FOR_SSO,
+      query: GET_AUTHORIZATION_URL_FOR_Sso,
       variables: {
         input: {
           identityProviderId: 'error-id',
@@ -59,29 +59,29 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => (
   </MemoryRouter>
 );
 
-describe('useSSO', () => {
+describe('useSso', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  it('should call getAuthorizationUrlForSSO with correct parameters', async () => {
-    const { result } = renderHook(() => useSSO(), {
+  it('should call getAuthorizationUrlForSso with correct parameters', async () => {
+    const { result } = renderHook(() => useSso(), {
       wrapper: Wrapper,
     });
     const identityProviderId = 'success-id';
 
-    await result.current.redirectToSSOLoginPage(identityProviderId);
+    await result.current.redirectToSsoLoginPage(identityProviderId);
 
     expect(mockRedirect).toHaveBeenCalledWith('http://example.com');
   });
 
   it('should enqueue error snackbar when URL retrieval fails', async () => {
-    const { result } = renderHook(() => useSSO(), {
+    const { result } = renderHook(() => useSso(), {
       wrapper: Wrapper,
     });
     const identityProviderId = 'error-id';
 
-    await result.current.redirectToSSOLoginPage(identityProviderId);
+    await result.current.redirectToSsoLoginPage(identityProviderId);
 
     expect(mockEnqueueErrorSnackBar).toHaveBeenCalledWith({
       apolloError: new CombinedGraphQLErrors({

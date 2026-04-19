@@ -1,5 +1,5 @@
 import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
-import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
+import { ProceSsor } from 'src/engine/core-modules/message-queue/decorators/proceSsor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 
@@ -8,7 +8,7 @@ export type HandleWorkspaceMemberDeletedJobData = {
   userId: string;
 };
 
-@Processor(MessageQueue.workspaceQueue)
+@ProceSsor(MessageQueue.workspaceQueue)
 export class HandleWorkspaceMemberDeletedJob {
   constructor(private readonly workspaceService: WorkspaceService) {}
 

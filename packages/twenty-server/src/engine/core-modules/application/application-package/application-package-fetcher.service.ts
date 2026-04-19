@@ -234,7 +234,7 @@ export class ApplicationPackageFetcherService implements OnModuleInit {
     authToken?: string;
   }): Promise<void> {
     const lines: string[] = [];
-    const registryHost = new URL(config.registryUrl).host;
+    const registryHost = new Url(config.registryUrl).host;
 
     if (config.packageName.startsWith('@')) {
       const scope = config.packageName.split('/')[0];

@@ -75,7 +75,7 @@ describe('TOTPStrategy Configuration', () => {
       const result = strategy.initiate('test@example.com', 'TestApp');
 
       expect(result.uri).toMatch(/^otpauth:\/\/totp\//);
-      expect(result.uri).toContain('test%40example.com'); // URL encoded email
+      expect(result.uri).toContain('test%40example.com'); // Url encoded email
       expect(result.uri).toContain('TestApp');
       expect(result.context.status).toBe(OTPStatus.PENDING);
       expect(result.context.secret).toBeDefined();

@@ -1,4 +1,4 @@
-import { validateCurrencyFieldOrThrow } from 'src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-currency-field-or-throw.util';
+import { validateCurrencyFieldOrThrow } from 'src/engine/api/common/common-args-proceSsors/data-arg-proceSsor/validator-utils/validate-currency-field-or-throw.util';
 import { CommonQueryRunnerException } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 
 describe('validateCurrencyFieldOrThrow', () => {

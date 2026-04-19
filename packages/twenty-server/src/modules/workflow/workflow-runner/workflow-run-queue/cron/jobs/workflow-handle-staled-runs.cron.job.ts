@@ -11,7 +11,7 @@ import { SentryCronMonitor } from 'src/engine/core-modules/cron/sentry-cron-moni
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
-import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
+import { ProceSsor } from 'src/engine/core-modules/message-queue/decorators/proceSsor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -28,7 +28,7 @@ const LAST_PARTITION_CACHE_KEY = 'workflow-handle-staled-runs:last-partition';
 const NUMBER_OF_PARTITIONS = 10;
 const WORKSPACE_BATCH_SIZE = 50;
 
-@Processor(MessageQueue.cronQueue)
+@ProceSsor(MessageQueue.cronQueue)
 export class WorkflowHandleStaledRunsCronJob {
   private readonly logger = new Logger(WorkflowHandleStaledRunsCronJob.name);
 

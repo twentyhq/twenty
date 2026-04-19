@@ -27,7 +27,7 @@ describe('transformStripeProductEventToDatabaseProduct', () => {
         object: 'product',
         default_price: 'price_123',
         unit_label: 'Unit',
-        url: 'https://example.com',
+        Url: 'https://example.com',
         tax_code: 'tax_code_1',
         metadata: { key: 'value' },
       },
@@ -44,7 +44,7 @@ describe('transformStripeProductEventToDatabaseProduct', () => {
       marketingFeatures: [{ name: 'feature1' }],
       defaultStripePriceId: 'price_123',
       unitLabel: 'Unit',
-      url: 'https://example.com',
+      Url: 'https://example.com',
       taxCode: 'tax_code_1',
     });
   });
@@ -67,7 +67,7 @@ describe('transformStripeProductEventToDatabaseProduct', () => {
         marketing_features: [],
         default_price: null,
         unit_label: null,
-        url: null,
+        Url: null,
         tax_code: null,
         metadata: {},
       },
@@ -84,7 +84,7 @@ describe('transformStripeProductEventToDatabaseProduct', () => {
       marketingFeatures: [],
       defaultStripePriceId: undefined,
       unitLabel: undefined,
-      url: undefined,
+      Url: undefined,
       taxCode: undefined,
     });
   });

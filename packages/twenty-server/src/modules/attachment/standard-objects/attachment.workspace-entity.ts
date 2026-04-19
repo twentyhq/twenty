@@ -1,6 +1,6 @@
 import { type ActorMetadata, FieldMetadataType } from 'twenty-shared/types';
 
-import { type FileOutput } from 'src/engine/api/common/common-args-processors/data-arg-processor/types/file-item.type';
+import { type FileOutput } from 'src/engine/api/common/common-args-proceSsors/data-arg-proceSsor/types/file-item.type';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { type CustomWorkspaceEntity } from 'src/engine/twenty-orm/custom.workspace-entity';
 import { type FieldTypeAndNameMetadata } from 'src/engine/workspace-manager/utils/get-ts-vector-column-expression.util';

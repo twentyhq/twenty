@@ -41,7 +41,7 @@ const getAllByPrefixAndKey = (
   return Array.from(xmlDoc.getElementsByTagName(`${key}`));
 };
 
-export const parseSAMLMetadataFromXMLFile = (
+export const parseSamlMetadataFromXMLFile = (
   xmlString: string,
 ):
   | { success: true; data: z.infer<typeof validator> }
@@ -56,10 +56,10 @@ export const parseSAMLMetadataFromXMLFile = (
     const entityDescriptor = getByPrefixAndKey(xmlDoc, 'EntityDescriptor');
     if (!entityDescriptor) throw new Error('No EntityDescriptor found');
 
-    const IDPSSODescriptor = getByPrefixAndKey(xmlDoc, 'IDPSSODescriptor');
-    if (!IDPSSODescriptor) throw new Error('No IDPSSODescriptor found');
+    const IDPSsoDescriptor = getByPrefixAndKey(xmlDoc, 'IDPSsoDescriptor');
+    if (!IDPSsoDescriptor) throw new Error('No IDPSsoDescriptor found');
 
-    const keyDescriptors = getByPrefixAndKey(IDPSSODescriptor, 'KeyDescriptor');
+    const keyDescriptors = getByPrefixAndKey(IDPSsoDescriptor, 'KeyDescriptor');
     if (!keyDescriptors) throw new Error('No KeyDescriptor found');
 
     const keyInfo = getByPrefixAndKey(keyDescriptors, 'KeyInfo');
@@ -75,7 +75,7 @@ export const parseSAMLMetadataFromXMLFile = (
     if (!x509Certificate) throw new Error('No X509Certificate found');
 
     const singleSignOnServices = getAllByPrefixAndKey(
-      IDPSSODescriptor,
+      IDPSsoDescriptor,
       'SingleSignOnService',
     );
 
@@ -88,7 +88,7 @@ export const parseSAMLMetadataFromXMLFile = (
         .find(
           (singleSignOnService) =>
             singleSignOnService.Binding ===
-            'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect',
+            'urn:oasis:names:tc:Saml:2.0:bindings:HTTP-Redirect',
         )?.Location,
       certificate: x509Certificate,
       entityID: entityDescriptor?.getAttribute('entityID'),

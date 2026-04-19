@@ -18,7 +18,7 @@ import {
   PermissionsExceptionCode,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 
-export type ColumnNameProcessor = {
+export type ColumnNameProceSsor = {
   processCompositeField: ({
     fieldMetadataId,
     fieldMetadata,
@@ -53,7 +53,7 @@ export type ColumnNameProcessor = {
 export function processFieldMetadataForColumnNameMapping(
   flatObjectMetadata: FlatObjectMetadata,
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
-  processor: ColumnNameProcessor,
+  proceSsor: ColumnNameProceSsor,
 ) {
   for (const fieldMetadataId of flatObjectMetadata.fieldIds) {
     const fieldMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
@@ -71,7 +71,7 @@ export function processFieldMetadataForColumnNameMapping(
         );
       }
 
-      processor.processCompositeField({
+      proceSsor.processCompositeField({
         fieldMetadataId,
         fieldMetadata,
         compositeType,
@@ -87,7 +87,7 @@ export function processFieldMetadataForColumnNameMapping(
         const { joinColumnName, fieldMetadataName } =
           extractGraphQLRelationFieldNames(fieldMetadata);
 
-        processor.processRelationField({
+        proceSsor.processRelationField({
           fieldMetadataId,
           fieldMetadata,
           joinColumnName,
@@ -96,7 +96,7 @@ export function processFieldMetadataForColumnNameMapping(
       } else {
         const columnName = computeColumnName(fieldMetadata);
 
-        processor.processSimpleField({
+        proceSsor.processSimpleField({
           fieldMetadataId,
           fieldMetadata,
           columnName,

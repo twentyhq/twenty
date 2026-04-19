@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 
-import { CoreCommonApiModule } from 'src/engine/api/common/core-common-api.module';
+import { CoreCommonApiModule } from 'src/engine/api/common/core-common-Api.module';
 import { DirectExecutionService } from 'src/engine/api/graphql/direct-execution/direct-execution.service';
 import { WorkspaceResolverNameMapCacheService } from 'src/engine/api/graphql/direct-execution/services/workspace-resolver-name-map-cache.service';
 import { WorkspaceResolverBuilderModule } from 'src/engine/api/graphql/workspace-resolver-builder/workspace-resolver-builder.module';

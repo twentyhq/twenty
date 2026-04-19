@@ -13,7 +13,7 @@ const FileObjectType = new GraphQLObjectType({
     fileId: { type: new GraphQLNonNull(UUIDScalarType) },
     label: { type: new GraphQLNonNull(GraphQLString) },
     extension: { type: GraphQLString },
-    url: { type: GraphQLString },
+    Url: { type: GraphQLString },
   },
 });
 

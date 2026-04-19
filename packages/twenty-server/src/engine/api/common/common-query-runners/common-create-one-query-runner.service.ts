@@ -59,7 +59,7 @@ export class CommonCreateOneQueryRunnerService extends CommonBaseQueryRunnerServ
       flatObjectMetadataMaps,
     } = queryRunnerContext;
 
-    const coercedData = await this.dataArgProcessor.process({
+    const coercedData = await this.dataArgProceSsor.process({
       partialRecordInputs: [args.data],
       authContext,
       flatObjectMetadata,

@@ -1,4 +1,4 @@
-import { validateRichTextFieldOrThrow } from 'src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-rich-text-field-or-throw.util';
+import { validateRichTextFieldOrThrow } from 'src/engine/api/common/common-args-proceSsors/data-arg-proceSsor/validator-utils/validate-rich-text-field-or-throw.util';
 import { CommonQueryRunnerException } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 
 describe('validateRichTextFieldOrThrow', () => {

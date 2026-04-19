@@ -1,4 +1,4 @@
-import { validateLinksFieldOrThrow } from 'src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-links-field-or-throw.util';
+import { validateLinksFieldOrThrow } from 'src/engine/api/common/common-args-proceSsors/data-arg-proceSsor/validator-utils/validate-links-field-or-throw.util';
 import { CommonQueryRunnerException } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 
 describe('validateLinksFieldOrThrow', () => {
@@ -13,7 +13,7 @@ describe('validateLinksFieldOrThrow', () => {
       const linksValue = {
         primaryLinkUrl: 'https://example.com',
         primaryLinkLabel: 'Example Website',
-        secondaryLinks: [{ url: 'https://secondary.com', label: 'Secondary' }],
+        secondaryLinks: [{ Url: 'https://secondary.com', label: 'Secondary' }],
       };
       const result = validateLinksFieldOrThrow(linksValue, 'testField');
 

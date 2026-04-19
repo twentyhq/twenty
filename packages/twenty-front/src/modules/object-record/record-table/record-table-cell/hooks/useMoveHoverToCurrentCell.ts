@@ -4,7 +4,7 @@ import { type TableCellPosition } from '@/object-record/record-table/types/Table
 import { useStore } from 'jotai';
 
 import { recordTableHoverPositionComponentState } from '@/object-record/record-table/states/recordTableHoverPositionComponentState';
-import { isSomeCellInEditModeComponentSelector } from '@/object-record/record-table/states/selectors/isSomeCellInEditModeComponentSelector';
+import { iSsomeCellInEditModeComponentSelector } from '@/object-record/record-table/states/selectors/iSsomeCellInEditModeComponentSelector';
 import { useAtomComponentSelectorCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorCallbackState';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 
@@ -14,8 +14,8 @@ export const useMoveHoverToCurrentCell = (recordTableId: string) => {
     recordTableId,
   );
 
-  const isSomeCellInEditMode = useAtomComponentSelectorCallbackState(
-    isSomeCellInEditModeComponentSelector,
+  const iSsomeCellInEditMode = useAtomComponentSelectorCallbackState(
+    iSsomeCellInEditModeComponentSelector,
     recordTableId,
   );
 
@@ -23,13 +23,13 @@ export const useMoveHoverToCurrentCell = (recordTableId: string) => {
 
   const moveHoverToCurrentCell = useCallback(
     (cellPosition: TableCellPosition) => {
-      const cellInEditMode = store.get(isSomeCellInEditMode);
+      const cellInEditMode = store.get(iSsomeCellInEditMode);
 
       if (!cellInEditMode) {
         setRecordTableHoverPosition(cellPosition);
       }
     },
-    [store, isSomeCellInEditMode, setRecordTableHoverPosition],
+    [store, iSsomeCellInEditMode, setRecordTableHoverPosition],
   );
 
   return { moveHoverToCurrentCell };

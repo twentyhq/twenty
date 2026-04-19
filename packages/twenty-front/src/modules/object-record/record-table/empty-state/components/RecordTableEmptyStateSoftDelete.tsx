@@ -1,5 +1,5 @@
 import { useObjectLabel } from '@/object-metadata/hooks/useObjectLabel';
-import { useCheckIsSoftDeleteFilter } from '@/object-record/record-filter/hooks/useCheckIsSoftDeleteFilter';
+import { useCheckISsoftDeleteFilter } from '@/object-record/record-filter/hooks/useCheckISsoftDeleteFilter';
 import { useRemoveRecordFilter } from '@/object-record/record-filter/hooks/useRemoveRecordFilter';
 import { useHandleToggleTrashColumnFilter } from '@/object-record/record-index/hooks/useHandleToggleTrashColumnFilter';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
@@ -28,7 +28,7 @@ export const RecordTableEmptyStateSoftDelete = () => {
 
   const { removeRecordFilter } = useRemoveRecordFilter();
 
-  const { isRecordFilterAboutSoftDelete } = useCheckIsSoftDeleteFilter();
+  const { isRecordFilterAboutSoftDelete } = useCheckISsoftDeleteFilter();
 
   const handleButtonClick = async () => {
     const deletedFilter = currentRecordFilters.find(

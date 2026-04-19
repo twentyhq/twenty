@@ -6,13 +6,13 @@ import { useSaveCurrentViewFields } from '@/views/hooks/useSaveCurrentViewFields
 import { mapRecordFieldToViewField } from '@/views/utils/mapRecordFieldToViewField';
 import { useCallback } from 'react';
 
-export const useProcessOptionDropdownDragEnd = (recordTableId: string) => {
+export const useProceSsoptionDropdownDragEnd = (recordTableId: string) => {
   const { reorderVisibleRecordFields } =
     useReorderVisibleRecordFields(recordTableId);
 
   const { saveViewFields } = useSaveCurrentViewFields();
 
-  const processOptionDropdownDragEnd: OnDragEndResponder = useCallback(
+  const proceSsoptionDropdownDragEnd: OnDragEndResponder = useCallback(
     async (result) => {
       if (
         !result.destination ||
@@ -33,6 +33,6 @@ export const useProcessOptionDropdownDragEnd = (recordTableId: string) => {
   );
 
   return {
-    processOptionDropdownDragEnd,
+    proceSsoptionDropdownDragEnd,
   };
 };

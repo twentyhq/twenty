@@ -57,10 +57,10 @@ export const RelativeDatePickerHeader = ({
   const [draftAmountValue, setDraftAmountValue] = useState(amountTextValue);
 
   const isUnitPlural = isDefined(amount) && amount > 1 && direction !== 'THIS';
-  const unitOptionsSource = allowIntraDayUnits
+  const unitOptionSsource = allowIntraDayUnits
     ? RELATIVE_DATETIME_UNITS_SELECT_OPTIONS
     : RELATIVE_DATE_UNITS_SELECT_OPTIONS;
-  const unitSelectOptions = unitOptionsSource.map((unit) => ({
+  const unitSelectOptions = unitOptionSsource.map((unit) => ({
     ...unit,
     label: `${unit.label}${isUnitPlural ? 's' : ''}`,
   }));

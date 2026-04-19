@@ -14,7 +14,7 @@ import { UndecoratedLink } from 'twenty-ui/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   AuthorizeAppDocument,
-  FindApplicationRegistrationByClientIdDocument,
+  FindApplicationRegistrationByclientIdDocument,
 } from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
@@ -111,12 +111,12 @@ export const Authorize = () => {
     data,
     loading,
     error: queryError,
-  } = useQuery(FindApplicationRegistrationByClientIdDocument, {
+  } = useQuery(FindApplicationRegistrationByclientIdDocument, {
     variables: { clientId: clientId ?? '' },
     skip: !isDefined(clientId),
   });
 
-  const applicationRegistration = data?.findApplicationRegistrationByClientId;
+  const applicationRegistration = data?.findApplicationRegistrationByclientId;
   const [authorizeApp] = useMutation(AuthorizeAppDocument);
   const [hasLogoError, setHasLogoError] = useState(false);
   const [authorizeError, setAuthorizeError] = useState<string | null>(null);

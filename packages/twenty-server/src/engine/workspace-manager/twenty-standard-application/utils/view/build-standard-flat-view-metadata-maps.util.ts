@@ -6,14 +6,14 @@ import { type AllStandardObjectName } from 'src/engine/workspace-manager/twenty-
 import { computeStandardAttachmentViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-attachment-views.util';
 import { computeStandardBlocklistViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-blocklist-views.util';
 import { computeStandardCalendarChannelViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-calendar-channel-views.util';
-import { computeStandardCalendarChannelEventAssociationViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-calendar-channel-event-association-views.util';
+import { computeStandardCalendarChannelEventASsociationViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-calendar-channel-event-aSsociation-views.util';
 import { computeStandardCalendarEventParticipantViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-calendar-event-participant-views.util';
 import { computeStandardCalendarEventViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-calendar-event-views.util';
 import { computeStandardCompanyViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-company-views.util';
 import { computeStandardConnectedAccountViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-connected-account-views.util';
 import { computeStandardDashboardViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-dashboard-views.util';
-import { computeStandardMessageChannelMessageAssociationMessageFolderViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-message-channel-message-association-message-folder-views.util';
-import { computeStandardMessageChannelMessageAssociationViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-message-channel-message-association-views.util';
+import { computeStandardMessageChannelMessageASsociationMessageFolderViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-message-channel-message-aSsociation-message-folder-views.util';
+import { computeStandardMessageChannelMessageASsociationViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-message-channel-message-aSsociation-views.util';
 import { computeStandardMessageChannelViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-message-channel-views.util';
 import { computeStandardMessageFolderViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-message-folder-views.util';
 import { computeStandardMessageParticipantViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-message-participant-views.util';
@@ -41,8 +41,8 @@ const STANDARD_FLAT_VIEW_METADATA_BUILDERS_BY_OBJECT_NAME = {
   attachment: computeStandardAttachmentViews,
   blocklist: computeStandardBlocklistViews,
   calendarChannel: computeStandardCalendarChannelViews,
-  calendarChannelEventAssociation:
-    computeStandardCalendarChannelEventAssociationViews,
+  calendarChannelEventASsociation:
+    computeStandardCalendarChannelEventASsociationViews,
   calendarEvent: computeStandardCalendarEventViews,
   calendarEventParticipant: computeStandardCalendarEventParticipantViews,
   company: computeStandardCompanyViews,
@@ -50,10 +50,10 @@ const STANDARD_FLAT_VIEW_METADATA_BUILDERS_BY_OBJECT_NAME = {
   dashboard: computeStandardDashboardViews,
   message: computeStandardMessageViews,
   messageChannel: computeStandardMessageChannelViews,
-  messageChannelMessageAssociation:
-    computeStandardMessageChannelMessageAssociationViews,
-  messageChannelMessageAssociationMessageFolder:
-    computeStandardMessageChannelMessageAssociationMessageFolderViews,
+  messageChannelMessageASsociation:
+    computeStandardMessageChannelMessageASsociationViews,
+  messageChannelMessageASsociationMessageFolder:
+    computeStandardMessageChannelMessageASsociationMessageFolderViews,
   messageFolder: computeStandardMessageFolderViews,
   messageParticipant: computeStandardMessageParticipantViews,
   messageThread: computeStandardMessageThreadViews,

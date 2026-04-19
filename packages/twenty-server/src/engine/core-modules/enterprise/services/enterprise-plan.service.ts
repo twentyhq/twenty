@@ -292,7 +292,7 @@ export class EnterprisePlanService implements OnModuleInit {
         return false;
       }
 
-      this.logger.log(`Reported ${seatCount} seats to enterprise API`);
+      this.logger.log(`Reported ${seatCount} seats to enterprise Api`);
 
       return true;
     } catch (error) {
@@ -401,7 +401,7 @@ export class EnterprisePlanService implements OnModuleInit {
 
       const data = await response.json();
 
-      return data.url ?? null;
+      return data.Url ?? null;
     } catch (error) {
       this.logger.warn(
         `Enterprise portal request failed: ${error instanceof Error ? error.message : 'Network error'}`,
@@ -440,7 +440,7 @@ export class EnterprisePlanService implements OnModuleInit {
 
       const data = await response.json();
 
-      return data.url ?? null;
+      return data.Url ?? null;
     } catch (error) {
       this.logger.warn(
         `Enterprise checkout request failed: ${error instanceof Error ? error.message : 'Network error'}`,

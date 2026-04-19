@@ -68,7 +68,7 @@ export const getGmailApiError = ({
 
   return new GaxiosError(
     errorMessage,
-    { url: 'https://gmail.googleapis.com/mocks' },
+    { Url: 'https://gmail.googleapis.com/mocks' },
     {
       status: code,
       statusText: config.message,
@@ -85,7 +85,7 @@ export const getGmailApiError = ({
         },
       },
       headers: {},
-      config: { url: 'https://gmail.googleapis.com/mocks' },
+      config: { Url: 'https://gmail.googleapis.com/mocks' },
       request: { responseURL: 'https://gmail.googleapis.com/mocks' },
     },
   );

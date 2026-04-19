@@ -11,7 +11,7 @@ export type SpreadsheetImportField = {
   label: string;
   // Field's unique identifier
   key: string;
-  // Field's metadata item id - same for all associated nested fields
+  // Field's metadata item id - same for all aSsociated nested fields
   fieldMetadataItemId: string;
   // UI-facing additional information displayed via tooltip and ? icon
   description?: string;

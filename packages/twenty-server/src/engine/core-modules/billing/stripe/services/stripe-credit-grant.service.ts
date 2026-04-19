@@ -83,7 +83,7 @@ export class StripeCreditGrantService {
     return this.convertMonetaryToCredits(availableAmount, unitPriceCents);
   }
 
-  async voidCreditGrant(creditGrantId: string): Promise<void> {
+  async vOidcreditGrant(creditGrantId: string): Promise<void> {
     await this.stripe.billing.creditGrants.voidGrant(creditGrantId);
   }
 

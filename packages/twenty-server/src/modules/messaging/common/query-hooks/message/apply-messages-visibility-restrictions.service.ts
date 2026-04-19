@@ -13,7 +13,7 @@ import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-ac
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
-import { type MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
+import { type MessageChannelMessageASsociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-aSsociation.workspace-entity';
 import { type MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
@@ -38,14 +38,14 @@ export class ApplyMessagesVisibilityRestrictionsService {
 
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
       async () => {
-        const messageChannelMessageAssociationRepository =
-          await this.globalWorkspaceOrmManager.getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
+        const messageChannelMessageASsociationRepository =
+          await this.globalWorkspaceOrmManager.getRepository<MessageChannelMessageASsociationWorkspaceEntity>(
             workspaceId,
-            'messageChannelMessageAssociation',
+            'messageChannelMessageASsociation',
           );
 
-        const messageChannelMessagesAssociations =
-          await messageChannelMessageAssociationRepository.find({
+        const messageChannelMessagesASsociations =
+          await messageChannelMessageASsociationRepository.find({
             where: {
               messageId: In(messages.map((message) => message.id)),
             },
@@ -53,7 +53,7 @@ export class ApplyMessagesVisibilityRestrictionsService {
 
         const messageChannelIds = [
           ...new Set(
-            messageChannelMessagesAssociations.map((a) => a.messageChannelId),
+            messageChannelMessagesASsociations.map((a) => a.messageChannelId),
           ),
         ];
 
@@ -79,18 +79,18 @@ export class ApplyMessagesVisibilityRestrictionsService {
           );
 
         for (let i = messages.length - 1; i >= 0; i--) {
-          const associations = messageChannelMessagesAssociations.filter(
-            (association) => association.messageId === messages[i].id,
+          const aSsociations = messageChannelMessagesASsociations.filter(
+            (aSsociation) => aSsociation.messageId === messages[i].id,
           );
 
-          const messageChannels = associations
-            .map((association) =>
-              messageChannelMap.get(association.messageChannelId),
+          const messageChannels = aSsociations
+            .map((aSsociation) =>
+              messageChannelMap.get(aSsociation.messageChannelId),
             )
             .filter(isDefined);
 
           if (messageChannels.length === 0) {
-            throw new NotFoundError('Associated message channels not found');
+            throw new NotFoundError('ASsociated message channels not found');
           }
 
           const messageChannelsGroupByVisibility = groupBy(

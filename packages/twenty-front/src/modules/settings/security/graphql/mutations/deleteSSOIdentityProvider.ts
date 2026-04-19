@@ -2,9 +2,9 @@
 
 import { gql } from '@apollo/client';
 
-export const DELETE_SSO_IDENTITY_PROVIDER = gql`
-  mutation DeleteSSOIdentityProvider($input: DeleteSsoInput!) {
-    deleteSSOIdentityProvider(input: $input) {
+export const DELETE_Sso_IDENTITY_PROVIDER = gql`
+  mutation DeleteSsoIdentityProvider($input: DeleteSsoInput!) {
+    deleteSsoIdentityProvider(input: $input) {
       identityProviderId
     }
   }

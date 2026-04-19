@@ -25,7 +25,7 @@ export const getSubscriptionIdFromInvoice = (
   }
 
   // Legacy structure (pre-v19 invoices may still have this field at runtime)
-  // The field exists in the API response but was removed from SDK types in v19
+  // The field exists in the Api response but was removed from SDK types in v19
   const legacySubscription = (
     invoice as Stripe.Invoice & { subscription?: string | Stripe.Subscription }
   ).subscription;

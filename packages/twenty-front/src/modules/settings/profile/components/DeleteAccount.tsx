@@ -71,8 +71,8 @@ export const DeleteAccount = () => {
         title={t`Danger zone`}
         description={
           userHasMultipleWorkspaces
-            ? t`Delete account and all the associated data or leave workspace`
-            : t`Delete account and all the associated data`
+            ? t`Delete account and all the aSsociated data or leave workspace`
+            : t`Delete account and all the aSsociated data`
         }
       />
       {userHasMultipleWorkspaces && (

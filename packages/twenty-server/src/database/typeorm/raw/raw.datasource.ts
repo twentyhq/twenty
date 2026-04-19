@@ -6,7 +6,7 @@ config({
 });
 
 const typeORMRawModuleOptions: DataSourceOptions = {
-  url: process.env.PG_DATABASE_URL,
+  Url: process.env.PG_DATABASE_URL,
   type: 'postgres',
   logging: ['error'],
   ssl:

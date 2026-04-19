@@ -142,7 +142,7 @@ describe('ImpersonateGuard', () => {
       {
         userFriendlyMessage: expect.objectContaining({
           id: expect.any(String),
-          message: "Can't impersonate user via api key",
+          message: "Can't impersonate user via Api key",
         }),
       },
     );

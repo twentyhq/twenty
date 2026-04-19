@@ -6,18 +6,18 @@ import {
   type CreateStandardViewArgs,
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/create-standard-view-flat-metadata.util';
 
-export const computeStandardMessageChannelMessageAssociationViews = (
+export const computeStandardMessageChannelMessageASsociationViews = (
   args: Omit<
-    CreateStandardViewArgs<'messageChannelMessageAssociation'>,
+    CreateStandardViewArgs<'messageChannelMessageASsociation'>,
     'context'
   >,
 ): Record<string, FlatView> => {
   return {
-    allMessageChannelMessageAssociations: createStandardViewFlatMetadata({
+    allMessageChannelMessageASsociations: createStandardViewFlatMetadata({
       ...args,
-      objectName: 'messageChannelMessageAssociation',
+      objectName: 'messageChannelMessageASsociation',
       context: {
-        viewName: 'allMessageChannelMessageAssociations',
+        viewName: 'allMessageChannelMessageASsociations',
         name: 'All {objectLabelPlural}',
         type: ViewType.TABLE,
         key: ViewKey.INDEX,
@@ -25,13 +25,13 @@ export const computeStandardMessageChannelMessageAssociationViews = (
         icon: 'IconList',
       },
     }),
-    messageChannelMessageAssociationRecordPageFields:
+    messageChannelMessageASsociationRecordPageFields:
       createStandardViewFlatMetadata({
         ...args,
-        objectName: 'messageChannelMessageAssociation',
+        objectName: 'messageChannelMessageASsociation',
         context: {
-          viewName: 'messageChannelMessageAssociationRecordPageFields',
-          name: 'Message Channel Message Association Record Page Fields',
+          viewName: 'messageChannelMessageASsociationRecordPageFields',
+          name: 'Message Channel Message ASsociation Record Page Fields',
           type: ViewType.FIELDS_WIDGET,
           key: null,
           position: 0,

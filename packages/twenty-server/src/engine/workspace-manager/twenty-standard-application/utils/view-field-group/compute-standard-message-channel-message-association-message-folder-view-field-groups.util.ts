@@ -4,34 +4,34 @@ import {
   type CreateStandardViewFieldGroupArgs,
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/create-standard-view-field-group-flat-metadata.util';
 
-export const computeStandardMessageChannelMessageAssociationMessageFolderViewFieldGroups =
+export const computeStandardMessageChannelMessageASsociationMessageFolderViewFieldGroups =
   (
     args: Omit<
-      CreateStandardViewFieldGroupArgs<'messageChannelMessageAssociationMessageFolder'>,
+      CreateStandardViewFieldGroupArgs<'messageChannelMessageASsociationMessageFolder'>,
       'context'
     >,
   ): Record<string, FlatViewFieldGroup> => {
     return {
-      messageChannelMessageAssociationMessageFolderRecordPageFieldsGeneral:
+      messageChannelMessageASsociationMessageFolderRecordPageFieldsGeneral:
         createStandardViewFieldGroupFlatMetadata({
           ...args,
-          objectName: 'messageChannelMessageAssociationMessageFolder',
+          objectName: 'messageChannelMessageASsociationMessageFolder',
           context: {
             viewName:
-              'messageChannelMessageAssociationMessageFolderRecordPageFields',
+              'messageChannelMessageASsociationMessageFolderRecordPageFields',
             viewFieldGroupName: 'general',
             name: 'General',
             position: 0,
             isVisible: true,
           },
         }),
-      messageChannelMessageAssociationMessageFolderRecordPageFieldsSystem:
+      messageChannelMessageASsociationMessageFolderRecordPageFieldsSystem:
         createStandardViewFieldGroupFlatMetadata({
           ...args,
-          objectName: 'messageChannelMessageAssociationMessageFolder',
+          objectName: 'messageChannelMessageASsociationMessageFolder',
           context: {
             viewName:
-              'messageChannelMessageAssociationMessageFolderRecordPageFields',
+              'messageChannelMessageASsociationMessageFolderRecordPageFields',
             viewFieldGroupName: 'system',
             name: 'System',
             position: 1,

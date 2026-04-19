@@ -83,7 +83,7 @@ describe('transformLinksValue', () => {
         primaryLinkLabel: 'Birdie',
         secondaryLinks: JSON.stringify([
           {
-            url: 'https://example.com/test%2520name',
+            Url: 'https://example.com/test%2520name',
             label: 'Encoded secondary link',
           },
         ]),
@@ -95,7 +95,7 @@ describe('transformLinksValue', () => {
         primaryLinkLabel: 'Birdie',
         secondaryLinks: JSON.stringify([
           {
-            url: 'https://example.com/test%2520name',
+            Url: 'https://example.com/test%2520name',
             label: 'Encoded secondary link',
           },
         ]),

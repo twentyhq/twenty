@@ -7,7 +7,7 @@ import {
 
 import { type Observable, catchError } from 'rxjs';
 
-import { messageChannelGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/message-channel/utils/message-channel-graphql-api-exception-handler.util';
+import { messageChannelGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/message-channel/utils/message-channel-graphql-Api-exception-handler.util';
 
 @Injectable()
 export class MessageChannelGraphqlApiExceptionInterceptor

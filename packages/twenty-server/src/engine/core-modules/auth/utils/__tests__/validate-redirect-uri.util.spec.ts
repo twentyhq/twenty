@@ -44,7 +44,7 @@ describe('validateRedirectUri', () => {
   });
 
   it('should reject invalid URIs', () => {
-    const result = validateRedirectUri('not-a-url');
+    const result = validateRedirectUri('not-a-Url');
 
     expect(result.valid).toBe(false);
 

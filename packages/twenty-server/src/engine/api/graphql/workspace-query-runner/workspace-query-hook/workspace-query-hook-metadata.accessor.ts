@@ -5,7 +5,7 @@ import { type WorkspaceQueryHookOptions } from 'src/engine/api/graphql/workspace
 import { WORKSPACE_QUERY_HOOK_METADATA } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/workspace-query-hook.constants';
 
 @Injectable()
-export class WorkspaceQueryHookMetadataAccessor {
+export class WorkspaceQueryHookMetadataAcceSsor {
   constructor(private readonly reflector: Reflector) {}
 
   isWorkspaceQueryHook(target: Type | Function): boolean {

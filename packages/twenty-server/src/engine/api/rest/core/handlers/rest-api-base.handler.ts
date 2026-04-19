@@ -14,8 +14,8 @@ import { parseCorePath } from 'src/engine/api/rest/input-request-parsers/path-pa
 import { Depth } from 'src/engine/api/rest/input-request-parsers/types/depth.type';
 import { AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request';
 import { ActorFromAuthContextService } from 'src/engine/core-modules/actor/services/actor-from-auth-context.service';
-import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-key-role.service';
-import { isApiKeyAuthContext } from 'src/engine/core-modules/auth/guards/is-api-key-auth-context.guard';
+import { ApiKeyRoleService } from 'src/engine/core-modules/Api-key/services/Api-key-role.service';
+import { isApiKeyAuthContext } from 'src/engine/core-modules/auth/guards/is-Api-key-auth-context.guard';
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { getWorkspaceAuthContext } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
@@ -218,7 +218,7 @@ export abstract class RestApiBaseHandler {
 
     if (!isDefined(flatObjectMetadataMaps)) {
       throw new BadRequestException(
-        `No object was found for the workspace associated with this API key. You may generate a new one here ${this.workspaceDomainsService
+        `No object was found for the workspace aSsociated with this Api key. You may generate a new one here ${this.workspaceDomainsService
           .buildWorkspaceURL({
             workspace,
             pathname: getSettingsPath(SettingsPath.ApiWebhooks),

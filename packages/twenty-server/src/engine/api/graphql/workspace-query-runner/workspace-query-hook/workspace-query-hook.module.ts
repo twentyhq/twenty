@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { DiscoveryModule } from '@nestjs/core';
 
 import { WorkspaceQueryHookStorage } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/storage/workspace-query-hook.storage';
-import { WorkspaceQueryHookMetadataAccessor } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/workspace-query-hook-metadata.accessor';
+import { WorkspaceQueryHookMetadataAcceSsor } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/workspace-query-hook-metadata.acceSsor';
 import { WorkspaceQueryHookExplorer } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/workspace-query-hook.explorer';
 import { WorkspaceQueryHookService } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/workspace-query-hook.service';
 import { BlocklistQueryHookModule } from 'src/modules/blocklist/query-hooks/blocklist-query-hook.module';
@@ -27,7 +27,7 @@ import { WorkspaceMemberQueryHookModule } from 'src/modules/workspace-member/que
   providers: [
     WorkspaceQueryHookService,
     WorkspaceQueryHookExplorer,
-    WorkspaceQueryHookMetadataAccessor,
+    WorkspaceQueryHookMetadataAcceSsor,
     WorkspaceQueryHookStorage,
   ],
   exports: [WorkspaceQueryHookService],

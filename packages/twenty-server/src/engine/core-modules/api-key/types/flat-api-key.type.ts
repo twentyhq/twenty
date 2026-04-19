@@ -1,6 +1,6 @@
 import { type CastRecordTypeOrmDatePropertiesToString } from 'src/engine/metadata-modules/flat-entity/types/cast-record-typeorm-date-properties-to-string.type';
-import { type API_KEY_ENTITY_NON_CACHED_PROPERTIES } from 'src/engine/core-modules/api-key/constants/api-key-entity-non-cached-properties.constant';
-import { type ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
+import { type API_KEY_ENTITY_NON_CACHED_PROPERTIES } from 'src/engine/core-modules/Api-key/constants/Api-key-entity-non-cached-properties.constant';
+import { type ApiKeyEntity } from 'src/engine/core-modules/Api-key/Api-key.entity';
 
 type ApiKeyEntityNonCachedProperties =
   (typeof API_KEY_ENTITY_NON_CACHED_PROPERTIES)[number];

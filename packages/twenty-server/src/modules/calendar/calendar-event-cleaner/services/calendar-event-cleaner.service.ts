@@ -15,7 +15,7 @@ export class CalendarEventCleanerService {
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
   ) {}
 
-  async deleteCalendarChannelEventAssociationsByChannelId({
+  async deleteCalendarChannelEventASsociationsByChannelId({
     workspaceId,
     calendarChannelId,
   }: {
@@ -25,10 +25,10 @@ export class CalendarEventCleanerService {
     const authContext = buildSystemAuthContext(workspaceId);
 
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
-      const calendarChannelEventAssociationRepository =
+      const calendarChannelEventASsociationRepository =
         await this.globalWorkspaceOrmManager.getRepository(
           workspaceId,
-          'calendarChannelEventAssociation',
+          'calendarChannelEventASsociation',
         );
 
       const workspaceDataSource =
@@ -46,8 +46,8 @@ export class CalendarEventCleanerService {
             _workspaceId: string,
             transactionManager?: WorkspaceEntityManager,
           ) => {
-            const associations =
-              await calendarChannelEventAssociationRepository.find(
+            const aSsociations =
+              await calendarChannelEventASsociationRepository.find(
                 {
                   where: { calendarChannelId },
                   take: limit,
@@ -56,7 +56,7 @@ export class CalendarEventCleanerService {
                 transactionManager,
               );
 
-            return associations.map(({ id }) => id);
+            return aSsociations.map(({ id }) => id);
           },
           async (
             ids: string[],
@@ -64,9 +64,9 @@ export class CalendarEventCleanerService {
             transactionManager?: WorkspaceEntityManager,
           ) => {
             this.logger.log(
-              `WorkspaceId: ${workspaceId} Deleting ${ids.length} calendar channel event associations for channel ${calendarChannelId}`,
+              `WorkspaceId: ${workspaceId} Deleting ${ids.length} calendar channel event aSsociations for channel ${calendarChannelId}`,
             );
-            await calendarChannelEventAssociationRepository.delete(
+            await calendarChannelEventASsociationRepository.delete(
               ids,
               transactionManager,
             );
@@ -91,10 +91,10 @@ export class CalendarEventCleanerService {
         workspaceId,
         500,
         async (limit, offset) => {
-          const nonAssociatedCalendarEvents =
+          const nonASsociatedCalendarEvents =
             await calendarEventRepository.find({
               where: {
-                calendarChannelEventAssociations: {
+                calendarChannelEventASsociations: {
                   id: IsNull(),
                 },
               },
@@ -102,7 +102,7 @@ export class CalendarEventCleanerService {
               skip: offset,
             });
 
-          return nonAssociatedCalendarEvents.map(({ id }) => id);
+          return nonASsociatedCalendarEvents.map(({ id }) => id);
         },
         async (ids) => {
           await calendarEventRepository.delete({ id: Any(ids) });

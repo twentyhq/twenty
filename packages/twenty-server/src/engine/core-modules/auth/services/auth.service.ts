@@ -35,8 +35,8 @@ import { type UpdatePasswordDTO } from 'src/engine/core-modules/auth/dto/update-
 import { type UserCredentialsInput } from 'src/engine/core-modules/auth/dto/user-credentials.input';
 import { type CheckUserExistDTO } from 'src/engine/core-modules/auth/dto/user-exists.dto';
 import { type WorkspaceInviteHashValidDTO } from 'src/engine/core-modules/auth/dto/workspace-invite-hash-valid.dto';
-import { AuthSsoService } from 'src/engine/core-modules/auth/services/auth-sso.service';
-import { CreateSSOConnectedAccountService } from 'src/engine/core-modules/auth/services/create-sso-connected-account.service';
+import { AuthSsoService } from 'src/engine/core-modules/auth/services/auth-Sso.service';
+import { CreateSsoConnectedAccountService } from 'src/engine/core-modules/auth/services/create-Sso-connected-account.service';
 import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-up.service';
 import { type GoogleRequest } from 'src/engine/core-modules/auth/strategies/google.auth.strategy';
 import { type MicrosoftRequest } from 'src/engine/core-modules/auth/strategies/microsoft.auth.strategy';
@@ -102,7 +102,7 @@ export class AuthService {
     private readonly auditService: AuditService,
     private readonly applicationRegistrationService: ApplicationRegistrationService,
     private readonly featureFlagService: FeatureFlagService,
-    private readonly createSSOConnectedAccountService: CreateSSOConnectedAccountService,
+    private readonly createSsoConnectedAccountService: CreateSsoConnectedAccountService,
   ) {}
 
   private async checkAccessAndUseInvitationOrThrow(
@@ -327,7 +327,7 @@ export class AuthService {
     return await this.permissionsService.userHasWorkspaceSettingPermission({
       userWorkspaceId: userWorkspace.id,
       workspaceId: workspace.id,
-      setting: PermissionFlagType.SSO_BYPASS,
+      setting: PermissionFlagType.Sso_BYPASS,
     });
   }
 
@@ -406,7 +406,7 @@ export class AuthService {
 
     return {
       tokens: {
-        accessOrWorkspaceAgnosticToken: accessToken,
+        acceSsorWorkspaceAgnosticToken: accessToken,
         refreshToken,
       },
     };
@@ -465,7 +465,7 @@ export class AuthService {
 
     return {
       tokens: {
-        accessOrWorkspaceAgnosticToken: accessToken,
+        acceSsorWorkspaceAgnosticToken: accessToken,
         refreshToken,
       },
     };
@@ -508,7 +508,7 @@ export class AuthService {
     const { clientId, codeChallenge } = authorizeAppInput;
 
     const applicationRegistration =
-      await this.applicationRegistrationService.findOneByClientId(clientId);
+      await this.applicationRegistrationService.findOneByclientId(clientId);
 
     if (!applicationRegistration) {
       throw new AuthException(
@@ -555,10 +555,10 @@ export class AuthService {
         );
       }
     } else {
-      let redirectUrl: URL;
+      let redirectUrl: Url;
 
       try {
-        redirectUrl = new URL(authorizeAppInput.redirectUrl);
+        redirectUrl = new Url(authorizeAppInput.redirectUrl);
       } catch {
         throw new AuthException(
           `Invalid redirectUrl for '${clientId}'`,
@@ -620,7 +620,7 @@ export class AuthService {
 
     const authCodeContext = {
       redirectUri: authorizeAppInput.redirectUrl,
-      clientId: applicationRegistration.oAuthClientId,
+      clientId: applicationRegistration.oAuthclientId,
       scope: requestedScopes.join(' '),
       ...(codeChallenge ? { codeChallenge } : {}),
     };
@@ -766,7 +766,7 @@ export class AuthService {
     workspace: WorkspaceDomainConfig;
     billingCheckoutSessionState?: string;
   }) {
-    const url = this.workspaceDomainsService.buildWorkspaceURL({
+    const Url = this.workspaceDomainsService.buildWorkspaceURL({
       workspace,
       pathname: AppPath.Verify,
       searchParams: {
@@ -775,7 +775,7 @@ export class AuthService {
       },
     });
 
-    return url.toString();
+    return Url.toString();
   }
 
   async findInvitationForSignInUp(
@@ -933,7 +933,7 @@ export class AuthService {
     }
   }
 
-  async signInUpWithSocialSSO(
+  async signInUpWithSocialSso(
     {
       firstName,
       lastName,
@@ -978,11 +978,11 @@ export class AuthService {
           },
         ));
 
-      const url = this.domainServerConfigService.buildBaseUrl({
+      const Url = this.domainServerConfigService.buildBaseUrl({
         pathname: AppPath.SignInUp,
         searchParams: {
           tokenPair: JSON.stringify({
-            accessOrWorkspaceAgnosticToken:
+            acceSsorWorkspaceAgnosticToken:
               await this.workspaceAgnosticTokenService.generateWorkspaceAgnosticToken(
                 {
                   userId: user.id,
@@ -998,7 +998,7 @@ export class AuthService {
         },
       });
 
-      return url.toString();
+      return Url.toString();
     }
 
     const currentWorkspace =
@@ -1049,7 +1049,7 @@ export class AuthService {
         billingCheckoutSessionState,
       });
 
-      await this.createSSOConnectedAccountIfFeatureFlagIsOn({
+      await this.createSsoConnectedAccountIfFeatureFlagIsOn({
         workspaceId: workspace.id,
         userId: user.id,
         handle: email,
@@ -1079,31 +1079,31 @@ export class AuthService {
     }
   }
 
-  async createSSOConnectedAccountIfFeatureFlagIsOn(input: {
+  async createSsoConnectedAccountIfFeatureFlagIsOn(input: {
     workspaceId: string;
     userId: string;
     handle: string;
     authProvider:
       | AuthProviderEnum.Google
       | AuthProviderEnum.Microsoft
-      | AuthProviderEnum.SSO;
-    oidcTokenClaims?: Record<string, unknown>;
+      | AuthProviderEnum.Sso;
+    OidcTokenClaims?: Record<string, unknown>;
     connectedAccountProvider?: ConnectedAccountProvider;
   }): Promise<void> {
     const provider =
       input.connectedAccountProvider ??
       this.mapAuthProviderToConnectedAccountProvider(input.authProvider);
 
-    const scopes = this.getSSOScopes(provider);
+    const scopes = this.getSsoScopes(provider);
 
-    await this.createSSOConnectedAccountService.createOrUpdateSSOConnectedAccount(
+    await this.createSsoConnectedAccountService.createOrUpdateSsoConnectedAccount(
       {
         workspaceId: input.workspaceId,
         userId: input.userId,
         handle: input.handle,
         provider,
         scopes,
-        oidcTokenClaims: input.oidcTokenClaims,
+        OidcTokenClaims: input.OidcTokenClaims,
       },
     );
   }
@@ -1112,15 +1112,15 @@ export class AuthService {
     authProvider:
       | AuthProviderEnum.Google
       | AuthProviderEnum.Microsoft
-      | AuthProviderEnum.SSO,
+      | AuthProviderEnum.Sso,
   ): ConnectedAccountProvider {
     switch (authProvider) {
       case AuthProviderEnum.Google:
         return ConnectedAccountProvider.GOOGLE;
       case AuthProviderEnum.Microsoft:
         return ConnectedAccountProvider.MICROSOFT;
-      case AuthProviderEnum.SSO:
-        return ConnectedAccountProvider.OIDC;
+      case AuthProviderEnum.Sso:
+        return ConnectedAccountProvider.Oidc;
       default:
         throw new Error(
           `Unsupported auth provider: ${authProvider satisfies never}`,
@@ -1128,15 +1128,15 @@ export class AuthService {
     }
   }
 
-  private getSSOScopes(provider: ConnectedAccountProvider): string[] {
+  private getSsoScopes(provider: ConnectedAccountProvider): string[] {
     switch (provider) {
       case ConnectedAccountProvider.GOOGLE:
         return ['email', 'profile'];
       case ConnectedAccountProvider.MICROSOFT:
         return ['user.read'];
-      case ConnectedAccountProvider.OIDC:
+      case ConnectedAccountProvider.Oidc:
         return ['openid', 'email', 'profile'];
-      case ConnectedAccountProvider.SAML:
+      case ConnectedAccountProvider.Saml:
         return [];
       case ConnectedAccountProvider.IMAP_SMTP_CALDAV:
         return [];

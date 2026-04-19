@@ -1,5 +1,5 @@
 import { type DragDropProvider } from '@dnd-kit/react';
-import { isSortable } from '@dnd-kit/react/sortable';
+import { iSsortable } from '@dnd-kit/react/sortable';
 import { useStore } from 'jotai';
 import { type ComponentProps, useCallback, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -84,7 +84,7 @@ export const useNavigationMenuItemDndKit = (
   ] = useState<DropDestination | null>(null);
 
   const { navigationMenuItems } = useNavigationMenuItemsData();
-  const { navigationMenuItemsSorted } = useSortedNavigationMenuItems();
+  const { navigationMenuItemSsorted } = useSortedNavigationMenuItems();
   const { workspaceNavigationMenuItems } = useNavigationMenuItemsDraftState();
   const { handleAddToNavigationDrop } = useHandleAddToNavigationDrop();
   const { handleNavigationMenuItemDragAndDrop } =
@@ -96,7 +96,7 @@ export const useNavigationMenuItemDndKit = (
 
   const orphanItems = isWorkspaceSection
     ? workspaceNavigationMenuItems
-    : navigationMenuItemsSorted;
+    : navigationMenuItemSsorted;
 
   const orphanItemCount = orphanItems.filter(
     (item: { folderId?: string | null }) => !isDefined(item.folderId),
@@ -118,7 +118,7 @@ export const useNavigationMenuItemDndKit = (
     [store],
   );
 
-  const isSourceFolderDrag = useCallback(
+  const iSsourceFolderDrag = useCallback(
     (source: { id?: unknown; data?: unknown } | null): boolean => {
       const sourceItem = getNavItemById(
         source?.id != null ? String(source.id) : undefined,
@@ -140,7 +140,7 @@ export const useNavigationMenuItemDndKit = (
     ): string | null => {
       const sourceIsFolder = isAddToNavDrag
         ? getAddToNavPayload(source?.id)?.type === 'FOLDER'
-        : isSourceFolderDrag(source);
+        : iSsourceFolderDrag(source);
 
       if (!sourceIsFolder) {
         return null;
@@ -160,7 +160,7 @@ export const useNavigationMenuItemDndKit = (
 
       return null;
     },
-    [sectionType, getAddToNavPayload, isSourceFolderDrag],
+    [sectionType, getAddToNavPayload, iSsourceFolderDrag],
   );
 
   const applyWorkspaceReorder = useCallback(
@@ -210,7 +210,7 @@ export const useNavigationMenuItemDndKit = (
       const target = operation.target;
       const isAddToNavDrag =
         sourceDroppableId === ADD_TO_NAV_SOURCE_DROPPABLE_ID;
-      const sourceIsSortable = source !== null && isSortable(source);
+      const sourceISsortable = source !== null && iSsortable(source);
       const resolved = resolveDropTarget(target, getNavItemById, sectionType);
 
       // Branch 1: sortable-to-sortable
@@ -218,8 +218,8 @@ export const useNavigationMenuItemDndKit = (
         resolved !== null &&
         source !== null &&
         target !== null &&
-        isSortable(source) &&
-        isSortable(target)
+        iSsortable(source) &&
+        iSsortable(target)
       ) {
         const forbiddenId = isAddToNavDrag
           ? computeForbiddenTargetId(source, resolved, true)
@@ -231,7 +231,7 @@ export const useNavigationMenuItemDndKit = (
       }
 
       // Branch 2: sortable-to-droppable-slot (includes insert-before zones)
-      if (resolved !== null && sourceIsSortable) {
+      if (resolved !== null && sourceISsortable) {
         setActiveDropTargetId(resolved.effectiveDropTargetId);
         setAddToNavigationFallbackDestination(resolved.destination);
         setForbiddenDropTargetId(
@@ -286,15 +286,15 @@ export const useNavigationMenuItemDndKit = (
     setForbiddenDropTargetId(null);
     setAddToNavigationFallbackDestination(null);
 
-    const sourceIsSortable = source !== null && isSortable(source);
-    const targetIsSortable = target !== null && isSortable(target);
+    const sourceISsortable = source !== null && iSsortable(source);
+    const targetISsortable = target !== null && iSsortable(target);
     const resolved = resolveDropTarget(target, getNavItemById, sectionType);
 
     // Workspace fast path: sortable-to-sortable within workspace
     if (
       isWorkspaceSection &&
-      sourceIsSortable &&
-      targetIsSortable &&
+      sourceISsortable &&
+      targetISsortable &&
       isDefined(source) &&
       isDefined(target) &&
       resolved !== null

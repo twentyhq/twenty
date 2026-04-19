@@ -51,7 +51,7 @@ export const useApplyObjectFilterDropdownOperand = () => {
   const applyObjectFilterDropdownOperand = (
     newOperand: RecordFilterOperand,
   ) => {
-    const isValuelessOperand = [
+    const isValueleSsoperand = [
       RecordFilterOperand.IS_EMPTY,
       RecordFilterOperand.IS_NOT_EMPTY,
       RecordFilterOperand.IS_IN_PAST,
@@ -66,7 +66,7 @@ export const useApplyObjectFilterDropdownOperand = () => {
         ...objectFilterDropdownCurrentRecordFilter,
         operand: newOperand,
       } satisfies RecordFilter;
-    } else if (isValuelessOperand) {
+    } else if (isValueleSsoperand) {
       if (!isDefined(fieldMetadataItemUsedInDropdown)) {
         throw new Error(
           'FieldMetadataItemUsedInDropdown is not defined, cannot create empty record filter, this should not happen',

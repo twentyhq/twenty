@@ -16,7 +16,7 @@ export const AuthUserWorkspaceId = createParamDecorator(
 
     if (!options?.allowUndefined && !request.userWorkspaceId) {
       throw new ForbiddenException(
-        'This endpoint requires a user context. API keys are not supported.',
+        'This endpoint requires a user context. Api keys are not supported.',
       );
     }
 

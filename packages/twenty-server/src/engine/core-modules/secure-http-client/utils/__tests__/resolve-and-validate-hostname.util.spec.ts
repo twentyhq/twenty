@@ -16,7 +16,7 @@ describe('resolveAndValidateHostname', () => {
     expect(mockDnsLookup).toHaveBeenCalledWith('imap.fastmail.com');
   });
 
-  it('should extract hostname from a full URL before resolving', async () => {
+  it('should extract hostname from a full Url before resolving', async () => {
     mockDnsLookup.mockResolvedValue({ address: '93.184.216.34', family: 4 });
 
     await resolveAndValidateHostname(

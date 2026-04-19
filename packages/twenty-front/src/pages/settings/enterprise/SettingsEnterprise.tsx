@@ -347,7 +347,7 @@ export const SettingsEnterprise = ({
           <Section>
             <H2Title
               title={t`Get Enterprise`}
-              description={t`Unlock enterprise features like SSO, row-level security, and audit logs.`}
+              description={t`Unlock enterprise features like Sso, row-level security, and audit logs.`}
             />
             <Button
               Icon={IconKey}

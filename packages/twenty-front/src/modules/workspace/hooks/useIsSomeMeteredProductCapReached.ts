@@ -1,7 +1,7 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
-export const useIsSomeMeteredProductCapReached = (): boolean => {
+export const useISsomeMeteredProductCapReached = (): boolean => {
   const billingSubscriptionItems = useAtomStateValue(currentWorkspaceState)
     ?.currentBillingSubscription?.billingSubscriptionItems;
 

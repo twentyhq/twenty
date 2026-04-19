@@ -152,7 +152,7 @@ describe('JwtAuthStrategy', () => {
 
       await expect(strategy.validate(payload as JwtPayload)).rejects.toThrow(
         new AuthException(
-          'This API Key is revoked',
+          'This Api Key is revoked',
           AuthExceptionCode.FORBIDDEN_EXCEPTION,
         ),
       );
@@ -170,7 +170,7 @@ describe('JwtAuthStrategy', () => {
       workspaceStore[payload.sub] = mockWorkspace;
       apiKeyStore['workspace-id'] = {
         [payload.jti]: {
-          id: 'api-key-id',
+          id: 'Api-key-id',
           revokedAt: new Date(),
         },
       };
@@ -179,7 +179,7 @@ describe('JwtAuthStrategy', () => {
 
       await expect(strategy.validate(payload as JwtPayload)).rejects.toThrow(
         new AuthException(
-          'This API Key is revoked',
+          'This Api Key is revoked',
           AuthExceptionCode.FORBIDDEN_EXCEPTION,
         ),
       );
@@ -197,7 +197,7 @@ describe('JwtAuthStrategy', () => {
       workspaceStore[payload.sub] = mockWorkspace;
       apiKeyStore['workspace-id'] = {
         [payload.jti]: {
-          id: 'api-key-id',
+          id: 'Api-key-id',
           revokedAt: null,
         },
       };
@@ -207,7 +207,7 @@ describe('JwtAuthStrategy', () => {
       const result = await strategy.validate(payload as JwtPayload);
 
       expect(result).toBeTruthy();
-      expect(result.apiKey?.id).toBe('api-key-id');
+      expect(result.apiKey?.id).toBe('Api-key-id');
     });
   });
 

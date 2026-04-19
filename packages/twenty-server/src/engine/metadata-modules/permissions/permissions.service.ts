@@ -6,7 +6,7 @@ import { PermissionFlagType } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 import { In, Repository } from 'typeorm';
 
-import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-key-role.service';
+import { ApiKeyRoleService } from 'src/engine/core-modules/Api-key/services/Api-key-role.service';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import {
   ApplicationException,
@@ -122,7 +122,7 @@ export class PermissionsService {
         [PermissionFlagType.EXPORT_CSV]: false,
         [PermissionFlagType.CONNECTED_ACCOUNTS]: false,
         [PermissionFlagType.IMPERSONATE]: false,
-        [PermissionFlagType.SSO_BYPASS]: false,
+        [PermissionFlagType.Sso_BYPASS]: false,
         [PermissionFlagType.PROFILE_INFORMATION]: false,
         [PermissionFlagType.MARKETPLACE_APPS]: false,
       },
@@ -158,7 +158,7 @@ export class PermissionsService {
           PermissionsExceptionMessage.API_KEY_ROLE_NOT_FOUND,
           PermissionsExceptionCode.API_KEY_ROLE_NOT_FOUND,
           {
-            userFriendlyMessage: msg`The API key does not have a valid role assigned. Please check your API key configuration.`,
+            userFriendlyMessage: msg`The Api key does not have a valid role assigned. Please check your Api key configuration.`,
           },
         );
       }

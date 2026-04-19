@@ -546,7 +546,7 @@ const createStockMarketIframe = ({
 }): FlatPageLayoutWidget => {
   const configuration = {
     configurationType: WidgetConfigurationType.IFRAME as const,
-    url: 'https://www.tradingview.com/embed-widget/hotlists/?locale=en',
+    Url: 'https://www.tradingview.com/embed-widget/hotlists/?locale=en',
   };
 
   return createStandardPageLayoutWidgetFlatMetadata({

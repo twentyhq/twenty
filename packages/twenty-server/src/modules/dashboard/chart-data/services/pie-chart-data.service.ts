@@ -24,7 +24,7 @@ import {
 import { ChartDataQueryService } from 'src/modules/dashboard/chart-data/services/chart-data-query.service';
 import { getFieldMetadata } from 'src/modules/dashboard/chart-data/utils/get-field-metadata.util';
 import { getSelectOptions } from 'src/modules/dashboard/chart-data/utils/get-select-options.util';
-import { processOneDimensionalResults } from 'src/modules/dashboard/chart-data/utils/process-one-dimensional-results.util';
+import { proceSsoneDimensionalResults } from 'src/modules/dashboard/chart-data/utils/process-one-dimensional-results.util';
 import { sortChartDataIfNeeded } from 'src/modules/dashboard/chart-data/utils/sort-chart-data-if-needed.util';
 
 type GetPieChartDataParams = {
@@ -197,7 +197,7 @@ export class PieChartDataService {
     const {
       processedDataPoints: rawProcessedDataPoints,
       formattedToRawLookup,
-    } = processOneDimensionalResults({
+    } = proceSsoneDimensionalResults({
       rawResults: limitedResults,
       primaryAxisGroupByField: groupByField,
       dateGranularity: configuration.dateGranularity,

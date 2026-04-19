@@ -13,7 +13,7 @@ import { MicrosoftOAuth2ClientManagerService } from 'src/modules/connected-accou
 import { OAuth2ClientManagerService } from 'src/modules/connected-account/oauth2-client-manager/services/oauth2-client-manager.service';
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { MessageFolderEntity } from 'src/engine/metadata-modules/message-folder/entities/message-folder.entity';
-import { microsoftGraphWithMessagesDeltaLink } from 'src/modules/messaging/message-import-manager/drivers/microsoft/mocks/microsoft-api-examples';
+import { microsoftGraphWithMessagesDeltaLink } from 'src/modules/messaging/message-import-manager/drivers/microsoft/mocks/microsoft-Api-examples';
 import { MessageFolderName } from 'src/modules/messaging/message-import-manager/drivers/microsoft/types/folders';
 
 import { MicrosoftGetMessageListService } from './microsoft-get-message-list.service';
@@ -244,7 +244,7 @@ xdescribe('Microsoft dev tests : get message list service for folders', () => {
     );
 
     const mockMicrosoftClient = {
-      api: jest.fn().mockReturnThis(),
+      Api: jest.fn().mockReturnThis(),
       version: jest.fn().mockReturnThis(),
       headers: jest.fn().mockReturnThis(),
       get: jest.fn().mockResolvedValue(microsoftGraphWithMessagesDeltaLink),

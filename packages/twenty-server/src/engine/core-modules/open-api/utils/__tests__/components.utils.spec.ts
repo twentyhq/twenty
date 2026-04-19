@@ -3,7 +3,7 @@ import { type EachTestingContext } from 'twenty-shared/testing';
 import { FieldMetadataType, NumberDataType } from 'twenty-shared/types';
 
 import { objectMetadataItemMock } from 'src/engine/api/__mocks__/object-metadata-item.mock';
-import { computeSchemaComponents } from 'src/engine/core-modules/open-api/utils/components.utils';
+import { computeSchemaComponents } from 'src/engine/core-modules/open-Api/utils/components.utils';
 import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
@@ -105,7 +105,7 @@ describe('computeSchemaComponents', () => {
               "CALENDAR",
               "WORKFLOW",
               "AGENT",
-              "API",
+              "Api",
               "IMPORT",
               "MANUAL",
               "SYSTEM",
@@ -223,7 +223,7 @@ describe('computeSchemaComponents', () => {
                 "label": {
                   "type": "string",
                 },
-                "url": {
+                "Url": {
                   "format": "uri",
                   "type": "string",
                 },
@@ -333,7 +333,7 @@ describe('computeSchemaComponents', () => {
               "CALENDAR",
               "WORKFLOW",
               "AGENT",
-              "API",
+              "Api",
               "IMPORT",
               "MANUAL",
               "SYSTEM",
@@ -455,7 +455,7 @@ describe('computeSchemaComponents', () => {
                 "label": {
                   "type": "string",
                 },
-                "url": {
+                "Url": {
                   "format": "uri",
                   "type": "string",
                 },
@@ -598,7 +598,7 @@ describe('computeSchemaComponents', () => {
               "CALENDAR",
               "WORKFLOW",
               "AGENT",
-              "API",
+              "Api",
               "IMPORT",
               "MANUAL",
               "SYSTEM",
@@ -716,7 +716,7 @@ describe('computeSchemaComponents', () => {
                 "label": {
                   "type": "string",
                 },
-                "url": {
+                "Url": {
                   "format": "uri",
                   "type": "string",
                 },

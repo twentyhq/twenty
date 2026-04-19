@@ -46,7 +46,7 @@ export const mergeLinksFieldValues = (
   recordsWithValues.forEach((record) => {
     if (hasRecordFieldValue(record.value.primaryLinkUrl)) {
       allLinks.push({
-        url: record.value.primaryLinkUrl,
+        Url: record.value.primaryLinkUrl,
         label: record.value.primaryLinkLabel,
       });
     }
@@ -56,12 +56,12 @@ export const mergeLinksFieldValues = (
     );
 
     allLinks.push(
-      ...secondaryLinks.filter((link) => hasRecordFieldValue(link.url)),
+      ...secondaryLinks.filter((link) => hasRecordFieldValue(link.Url)),
     );
   });
 
-  const uniqueLinks = uniqBy(allLinks, 'url').filter(
-    (link) => link.url !== primaryLinkUrl,
+  const uniqueLinks = uniqBy(allLinks, 'Url').filter(
+    (link) => link.Url !== primaryLinkUrl,
   );
 
   const result = {

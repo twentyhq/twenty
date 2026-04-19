@@ -79,7 +79,7 @@ export class ViewAccessService {
     workspaceId: string,
     apiKeyId?: string,
   ): Promise<boolean> {
-    // UNLISTED views can only be created by users (not API keys)
+    // UNLISTED views can only be created by users (not Api keys)
     if (visibility === ViewVisibility.UNLISTED) {
       if (!isDefined(userWorkspaceId)) {
         this.throwCreatePermissionDenied();

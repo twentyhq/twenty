@@ -14,14 +14,14 @@ import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billin
 import { BillingUsageCapService } from 'src/engine/core-modules/billing/services/billing-usage-cap.service';
 import { SentryCronMonitor } from 'src/engine/core-modules/cron/sentry-cron-monitor.decorator';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
-import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
+import { ProceSsor } from 'src/engine/core-modules/message-queue/decorators/proceSsor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 const BATCH_SIZE = 100;
 
 @Injectable()
-@Processor(MessageQueue.cronQueue)
+@ProceSsor(MessageQueue.cronQueue)
 export class EnforceUsageCapJob {
   private readonly logger = new Logger(EnforceUsageCapJob.name);
 

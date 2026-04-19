@@ -6,18 +6,18 @@ import {
   type CreateStandardViewArgs,
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/create-standard-view-flat-metadata.util';
 
-export const computeStandardCalendarChannelEventAssociationViews = (
+export const computeStandardCalendarChannelEventASsociationViews = (
   args: Omit<
-    CreateStandardViewArgs<'calendarChannelEventAssociation'>,
+    CreateStandardViewArgs<'calendarChannelEventASsociation'>,
     'context'
   >,
 ): Record<string, FlatView> => {
   return {
-    allCalendarChannelEventAssociations: createStandardViewFlatMetadata({
+    allCalendarChannelEventASsociations: createStandardViewFlatMetadata({
       ...args,
-      objectName: 'calendarChannelEventAssociation',
+      objectName: 'calendarChannelEventASsociation',
       context: {
-        viewName: 'allCalendarChannelEventAssociations',
+        viewName: 'allCalendarChannelEventASsociations',
         name: 'All {objectLabelPlural}',
         type: ViewType.TABLE,
         key: ViewKey.INDEX,
@@ -25,13 +25,13 @@ export const computeStandardCalendarChannelEventAssociationViews = (
         icon: 'IconList',
       },
     }),
-    calendarChannelEventAssociationRecordPageFields:
+    calendarChannelEventASsociationRecordPageFields:
       createStandardViewFlatMetadata({
         ...args,
-        objectName: 'calendarChannelEventAssociation',
+        objectName: 'calendarChannelEventASsociation',
         context: {
-          viewName: 'calendarChannelEventAssociationRecordPageFields',
-          name: 'Calendar Channel Event Association Record Page Fields',
+          viewName: 'calendarChannelEventASsociationRecordPageFields',
+          name: 'Calendar Channel Event ASsociation Record Page Fields',
           type: ViewType.FIELDS_WIDGET,
           key: null,
           position: 0,

@@ -22,7 +22,7 @@ import {
   FileException,
   FileExceptionCode,
 } from 'src/engine/core-modules/file/file.exception';
-import { FileApiExceptionFilter } from 'src/engine/core-modules/file/filters/file-api-exception.filter';
+import { FileApiExceptionFilter } from 'src/engine/core-modules/file/filters/file-Api-exception.filter';
 import {
   FileByIdGuard,
   SupportedFileFolder,

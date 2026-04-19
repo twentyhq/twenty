@@ -23,15 +23,15 @@ export const getCropSize = (value: ShortCropSize): CropSize | null => {
 };
 
 export const getImageBufferFromUrl = async (
-  url: string,
+  Url: string,
   axiosInstance: AxiosInstance,
 ): Promise<Buffer> => {
-  if (!url || typeof url !== 'string' || url.trim().length === 0) {
-    throw new Error('Invalid URL provided: URL must be a non-empty string');
+  if (!Url || typeof Url !== 'string' || Url.trim().length === 0) {
+    throw new Error('Invalid Url provided: Url must be a non-empty string');
   }
 
   try {
-    const response = await axiosInstance.get(url, {
+    const response = await axiosInstance.get(Url, {
       responseType: 'arraybuffer',
       validateStatus: (status) => status >= 200 && status < 300,
       maxRedirects: 5,
@@ -39,7 +39,7 @@ export const getImageBufferFromUrl = async (
     });
 
     if (!response.data) {
-      throw new Error('Received empty response from image URL');
+      throw new Error('Received empty response from image Url');
     }
 
     const bufferLength = Buffer.isBuffer(response.data)
@@ -47,7 +47,7 @@ export const getImageBufferFromUrl = async (
       : response.data.byteLength;
 
     if (bufferLength === 0) {
-      throw new Error('Received empty response from image URL');
+      throw new Error('Received empty response from image Url');
     }
 
     const contentType = response.headers['content-type'];
@@ -62,6 +62,6 @@ export const getImageBufferFromUrl = async (
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Unknown error';
 
-    throw new Error(`Failed to fetch image from ${url}: ${message}`);
+    throw new Error(`Failed to fetch image from ${Url}: ${message}`);
   }
 };

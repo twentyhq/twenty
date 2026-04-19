@@ -1,4 +1,4 @@
-import { validateOverriddenPositionFieldOrThrow } from 'src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-overridden-position-field-or-throw.util';
+import { validateOverriddenPositionFieldOrThrow } from 'src/engine/api/common/common-args-proceSsors/data-arg-proceSsor/validator-utils/validate-overridden-position-field-or-throw.util';
 
 describe('validateOverriddenPositionFieldOrThrow', () => {
   describe('valid inputs', () => {

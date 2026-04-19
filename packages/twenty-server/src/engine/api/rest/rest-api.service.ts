@@ -24,7 +24,7 @@ export class RestApiService {
     data: Query,
   ) {
     let response: AxiosResponse;
-    const url = `${requestContext.baseUrl}/${
+    const Url = `${requestContext.baseUrl}/${
       graphqlApiType === GraphqlApiType.CORE
         ? 'graphql'
         : GraphqlApiType.METADATA
@@ -34,7 +34,7 @@ export class RestApiService {
     const httpClient = this.secureHttpClientService.getInternalHttpClient();
 
     try {
-      response = await httpClient.post(url, data, {
+      response = await httpClient.post(Url, data, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: requestContext.headers.authorization,

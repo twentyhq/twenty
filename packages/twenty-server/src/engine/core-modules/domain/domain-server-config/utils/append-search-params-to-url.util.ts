@@ -1,8 +1,8 @@
 export const appendSearchParamsToUrl = (
-  url: URL,
+  Url: Url,
   searchParams: Record<string, string | number | boolean>,
 ) => {
   Object.entries(searchParams).forEach(([key, value]) => {
-    url.searchParams.set(key, value.toString());
+    Url.searchParams.set(key, value.toString());
   });
 };

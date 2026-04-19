@@ -24,7 +24,7 @@ export class DestroyViewPermissionGuard implements CanActivate {
       viewId = args.id;
     }
 
-    // For REST: extract from URL params
+    // For REST: extract from Url params
     if (!viewId && typeof request.params?.id === 'string') {
       viewId = request.params.id;
     }

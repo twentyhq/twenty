@@ -13,7 +13,7 @@ import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspac
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { FileCorePictureService } from 'src/engine/core-modules/file/file-core-picture/services/file-core-picture.service';
-import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
+import { FileUrlService } from 'src/engine/core-modules/file/file-Url/file-Url.service';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
@@ -94,7 +94,7 @@ describe('UserWorkspaceService', () => {
         {
           provide: ApprovedAccessDomainService,
           useValue: {
-            findValidatedApprovedAccessDomainWithWorkspacesAndSSOIdentityProvidersDomain:
+            findValidatedApprovedAccessDomainWithWorkspacesAndSsoIdentityProvidersDomain:
               jest.fn().mockResolvedValue([]),
           },
         },
@@ -182,7 +182,7 @@ describe('UserWorkspaceService', () => {
   });
 
   describe('create', () => {
-    it("should create a user workspace without a default avatar url if it's an existing user without any user workspace having a default avatar url", async () => {
+    it("should create a user workspace without a default avatar Url if it's an existing user without any user workspace having a default avatar Url", async () => {
       const userId = 'user-id';
       const workspaceId = 'workspace-id';
       const userWorkspace = {
@@ -213,7 +213,7 @@ describe('UserWorkspaceService', () => {
       expect(userWorkspaceRepository.save).toHaveBeenCalledWith(userWorkspace);
       expect(result).toEqual(userWorkspace);
     });
-    it("should create a user workspace without a default avatar url if it's a new user without a picture url", async () => {
+    it("should create a user workspace without a default avatar Url if it's a new user without a picture Url", async () => {
       const userId = 'user-id';
       const workspaceId = 'workspace-id';
       const userWorkspace = {
@@ -248,7 +248,7 @@ describe('UserWorkspaceService', () => {
         email: 'test@example.com',
         firstName: 'John',
         lastName: 'Doe',
-        defaultAvatarUrl: 'avatar-url',
+        defaultAvatarUrl: 'avatar-Url',
         locale: 'en',
         isEmailVerified: false,
         disabled: false,
@@ -284,7 +284,7 @@ describe('UserWorkspaceService', () => {
         .mockResolvedValue(workspaceMemberRepository as any);
 
       jest.spyOn(userWorkspaceRepository, 'findOneOrFail').mockResolvedValue({
-        defaultAvatarUrl: 'userWorkspace-avatar-url',
+        defaultAvatarUrl: 'userWorkspace-avatar-Url',
       } as UserWorkspaceEntity);
 
       await service.createWorkspaceMember(workspaceId, user);
@@ -298,7 +298,7 @@ describe('UserWorkspaceService', () => {
         userId: user.id,
         userEmail: user.email,
         locale: 'en',
-        avatarUrl: 'userWorkspace-avatar-url',
+        avatarUrl: 'userWorkspace-avatar-Url',
       });
     });
   });
@@ -521,17 +521,17 @@ describe('UserWorkspaceService', () => {
         id: 'workspace-id-1',
         displayName: 'Workspace 1',
         logo: 'logo1.png',
-        workspaceSSOIdentityProviders: [
+        workspaceSsoIdentityProviders: [
           {
-            id: 'sso-id-1',
-            name: 'SSO Provider 1',
+            id: 'Sso-id-1',
+            name: 'Sso Provider 1',
             issuer: 'issuer1',
             type: 'type1',
             status: 'Active',
           },
           {
-            id: 'sso-id-2',
-            name: 'SSO Provider 2',
+            id: 'Sso-id-2',
+            name: 'Sso Provider 2',
             issuer: 'issuer2',
             type: 'type2',
             status: 'Inactive',
@@ -542,7 +542,7 @@ describe('UserWorkspaceService', () => {
         id: 'workspace-id-2',
         displayName: 'Workspace 2',
         logo: 'logo2.png',
-        workspaceSSOIdentityProviders: [],
+        workspaceSsoIdentityProviders: [],
       } as unknown as WorkspaceEntity;
       const user = {
         email,
@@ -562,7 +562,7 @@ describe('UserWorkspaceService', () => {
       jest
         .spyOn(
           approvedAccessDomainService,
-          'findValidatedApprovedAccessDomainWithWorkspacesAndSSOIdentityProvidersDomain',
+          'findValidatedApprovedAccessDomainWithWorkspacesAndSsoIdentityProvidersDomain',
         )
         .mockResolvedValue([]);
 
@@ -579,7 +579,7 @@ describe('UserWorkspaceService', () => {
         relations: {
           userWorkspaces: {
             workspace: {
-              workspaceSSOIdentityProviders: true,
+              workspaceSsoIdentityProviders: true,
               approvedAccessDomains: true,
             },
           },
@@ -601,17 +601,17 @@ describe('UserWorkspaceService', () => {
         id: 'workspace-id-1',
         displayName: 'Workspace 1',
         logo: 'logo1.png',
-        workspaceSSOIdentityProviders: [
+        workspaceSsoIdentityProviders: [
           {
-            id: 'sso-id-1',
-            name: 'SSO Provider 1',
+            id: 'Sso-id-1',
+            name: 'Sso Provider 1',
             issuer: 'issuer1',
             type: 'type1',
             status: 'Active',
           },
           {
-            id: 'sso-id-2',
-            name: 'SSO Provider 2',
+            id: 'Sso-id-2',
+            name: 'Sso Provider 2',
             issuer: 'issuer2',
             type: 'type2',
             status: 'Inactive',
@@ -622,7 +622,7 @@ describe('UserWorkspaceService', () => {
         id: 'workspace-id-2',
         displayName: 'Workspace 2',
         logo: 'logo2.png',
-        workspaceSSOIdentityProviders: [],
+        workspaceSsoIdentityProviders: [],
       } as unknown as WorkspaceEntity;
 
       const user = {
@@ -639,7 +639,7 @@ describe('UserWorkspaceService', () => {
       jest
         .spyOn(
           approvedAccessDomainService,
-          'findValidatedApprovedAccessDomainWithWorkspacesAndSSOIdentityProvidersDomain',
+          'findValidatedApprovedAccessDomainWithWorkspacesAndSsoIdentityProvidersDomain',
         )
         .mockResolvedValueOnce([
           {
@@ -663,7 +663,7 @@ describe('UserWorkspaceService', () => {
         relations: {
           userWorkspaces: {
             workspace: {
-              workspaceSSOIdentityProviders: true,
+              workspaceSsoIdentityProviders: true,
               approvedAccessDomains: true,
             },
           },
@@ -682,7 +682,7 @@ describe('UserWorkspaceService', () => {
         id: 'workspace-id-1',
         displayName: 'Workspace 1',
         logo: 'logo1.png',
-        workspaceSSOIdentityProviders: [],
+        workspaceSsoIdentityProviders: [],
       } as unknown as WorkspaceEntity;
 
       jest.spyOn(userRepository, 'findOne').mockResolvedValue(null);
@@ -690,7 +690,7 @@ describe('UserWorkspaceService', () => {
       jest
         .spyOn(
           approvedAccessDomainService,
-          'findValidatedApprovedAccessDomainWithWorkspacesAndSSOIdentityProvidersDomain',
+          'findValidatedApprovedAccessDomainWithWorkspacesAndSsoIdentityProvidersDomain',
         )
         .mockResolvedValueOnce([
           {

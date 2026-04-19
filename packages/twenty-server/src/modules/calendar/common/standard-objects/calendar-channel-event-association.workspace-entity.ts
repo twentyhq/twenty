@@ -7,10 +7,10 @@ import { type CalendarEventWorkspaceEntity } from 'src/modules/calendar/common/s
 
 const EVENT_EXTERNAL_ID_FIELD_NAME = 'eventExternalId';
 
-export const SEARCH_FIELDS_FOR_CALENDAR_CHANNEL_EVENT_ASSOCIATION: FieldTypeAndNameMetadata[] =
+export const SEARCH_FIELDS_FOR_CALENDAR_CHANNEL_EVENT_ASsoCIATION: FieldTypeAndNameMetadata[] =
   [{ name: EVENT_EXTERNAL_ID_FIELD_NAME, type: FieldMetadataType.TEXT }];
 
-export class CalendarChannelEventAssociationWorkspaceEntity extends BaseWorkspaceEntity {
+export class CalendarChannelEventASsociationWorkspaceEntity extends BaseWorkspaceEntity {
   eventExternalId: string | null;
   recurringEventExternalId: string | null;
   calendarChannelId: string;

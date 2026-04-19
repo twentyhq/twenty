@@ -16,7 +16,7 @@ import { ViewFilterException } from 'src/engine/metadata-modules/view-filter/exc
 import { ViewGroupException } from 'src/engine/metadata-modules/view-group/exceptions/view-group.exception';
 import { ViewSortException } from 'src/engine/metadata-modules/view-sort/exceptions/view-sort.exception';
 import { ViewException } from 'src/engine/metadata-modules/view/exceptions/view.exception';
-import { viewGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/view/utils/view-graphql-api-exception-handler.util';
+import { viewGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/view/utils/view-graphql-Api-exception-handler.util';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 
 @Catch(

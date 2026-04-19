@@ -1,7 +1,7 @@
 import { type GeoMapAddressComponent } from 'src/engine/core-modules/geo-map/types/geo-map-address-component.type';
 import { sanitizePlaceDetailsResults } from 'src/engine/core-modules/geo-map/utils/sanitize-place-details-results.util';
 
-// Real Google Places API response for "48 Pirrama Road, Pyrmont NSW 2009, Australia"
+// Real Google Places Api response for "48 Pirrama Road, Pyrmont NSW 2009, Australia"
 const GOOGLE_OFFICE_SYDNEY: GeoMapAddressComponent[] = [
   { long_name: '48', short_name: '48', types: ['street_number'] },
   {
@@ -32,7 +32,7 @@ const GOOGLE_OFFICE_SYDNEY: GeoMapAddressComponent[] = [
   { long_name: '2009', short_name: '2009', types: ['postal_code'] },
 ];
 
-// Real Google Places API response for "111 8th Avenue, New York, NY 10011, USA"
+// Real Google Places Api response for "111 8th Avenue, New York, NY 10011, USA"
 const NYC_ADDRESS: GeoMapAddressComponent[] = [
   { long_name: '111', short_name: '111', types: ['street_number'] },
   {

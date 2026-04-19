@@ -15,7 +15,7 @@ export const useCanChangePassword = () => {
   }
 
   const hasBypassPermission = currentUserWorkspace?.permissionFlags?.includes(
-    PermissionFlagType.SSO_BYPASS,
+    PermissionFlagType.Sso_BYPASS,
   );
 
   if (!hasBypassPermission) {

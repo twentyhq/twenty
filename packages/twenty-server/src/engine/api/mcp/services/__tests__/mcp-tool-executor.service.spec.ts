@@ -126,7 +126,7 @@ describe('McpToolExecutorService', () => {
     it('should return result with isError: true when tool execution throws', async () => {
       const toolSet = {
         failing_tool: {
-          execute: jest.fn().mockRejectedValue(new Error('API rate limited')),
+          execute: jest.fn().mockRejectedValue(new Error('Api rate limited')),
           description: 'A tool that fails',
           inputSchema: { type: 'object' },
         },
@@ -141,7 +141,7 @@ describe('McpToolExecutorService', () => {
         id: '123',
         jsonrpc: '2.0',
         result: {
-          content: [{ type: 'text', text: 'API rate limited' }],
+          content: [{ type: 'text', text: 'Api rate limited' }],
           isError: true,
         },
       });

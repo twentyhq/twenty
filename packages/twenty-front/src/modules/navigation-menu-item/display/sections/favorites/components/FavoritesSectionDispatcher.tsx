@@ -8,7 +8,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { AnimatedEaseInOut } from 'twenty-ui/utilities';
 
 export const FavoritesSectionDispatcher = () => {
-  const { navigationMenuItemsSorted } = useSortedNavigationMenuItems();
+  const { navigationMenuItemSsorted } = useSortedNavigationMenuItems();
   const isLayoutCustomizationModeEnabled = useAtomStateValue(
     isLayoutCustomizationModeEnabledState,
   );
@@ -18,7 +18,7 @@ export const FavoritesSectionDispatcher = () => {
 
   const hasFavoritesSectionContent =
     isNavigationMenuItemFolderCreating ||
-    navigationMenuItemsSorted.some((item) => !item.folderId);
+    navigationMenuItemSsorted.some((item) => !item.folderId);
 
   if (!hasFavoritesSectionContent) {
     return null;

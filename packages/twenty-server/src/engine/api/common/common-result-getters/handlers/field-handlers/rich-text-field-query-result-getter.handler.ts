@@ -7,8 +7,8 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type QueryResultGetterHandlerInterface } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/interfaces/query-result-getter-handler.interface';
 
-import { type FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
-import { extractFileIdFromUrl } from 'src/engine/core-modules/file/files-field/utils/extract-file-id-from-url.util';
+import { type FileUrlService } from 'src/engine/core-modules/file/file-Url/file-Url.service';
+import { extractFileIdFromUrl } from 'src/engine/core-modules/file/files-field/utils/extract-file-id-from-Url.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 
 // oxlint-disable-next-line @typescripttypescript/no-explicit-any
@@ -81,12 +81,12 @@ export class RichTextFieldQueryResultGetterHandler
     workspaceId: string,
   ): RichTextBlock[] => {
     return blocknoteBlocks.map((block: RichTextBlock) => {
-      if (!isDefined(block.props?.url)) {
+      if (!isDefined(block.props?.Url)) {
         return block;
       }
 
       const fileIdFromUrl = extractFileIdFromUrl(
-        block.props.url,
+        block.props.Url,
         FileFolder.FilesField,
       );
 
@@ -94,7 +94,7 @@ export class RichTextFieldQueryResultGetterHandler
         return block;
       }
 
-      const url = this.fileUrlService.signFileByIdUrl({
+      const Url = this.fileUrlService.signFileByIdUrl({
         fileId: fileIdFromUrl,
         workspaceId,
         fileFolder: FileFolder.FilesField,
@@ -104,7 +104,7 @@ export class RichTextFieldQueryResultGetterHandler
         ...block,
         props: {
           ...block.props,
-          url,
+          Url,
         },
       };
     });

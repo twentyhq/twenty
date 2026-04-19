@@ -92,7 +92,7 @@ describe('GoogleAPIScopesService', () => {
       expect(result).toBe(false);
     });
 
-    it('should work with the current Google API scopes', () => {
+    it('should work with the current Google Api scopes', () => {
       // What is currently returned by Google
       const actualGoogleScopes = [
         'https://www.googleapis.com/auth/calendar.events',

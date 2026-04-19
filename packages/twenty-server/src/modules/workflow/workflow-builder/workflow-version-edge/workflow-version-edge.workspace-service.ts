@@ -73,9 +73,9 @@ export class WorkflowVersionEdgeWorkspaceService {
           );
         }
 
-        const isSourceTrigger = source === TRIGGER_STEP_ID;
+        const iSsourceTrigger = source === TRIGGER_STEP_ID;
 
-        if (isSourceTrigger) {
+        if (iSsourceTrigger) {
           return this.createTriggerEdge({
             trigger,
             steps,
@@ -143,9 +143,9 @@ export class WorkflowVersionEdgeWorkspaceService {
           );
         }
 
-        const isSourceTrigger = source === TRIGGER_STEP_ID;
+        const iSsourceTrigger = source === TRIGGER_STEP_ID;
 
-        if (isSourceTrigger) {
+        if (iSsourceTrigger) {
           return this.deleteTriggerEdge({
             trigger,
             steps,

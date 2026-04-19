@@ -56,7 +56,7 @@ describe('WorkspaceDomainsService', () => {
   });
 
   describe('getWorkspaceUrls', () => {
-    it('should return a URL containing the correct customDomain if customDomain is provided', () => {
+    it('should return a Url containing the correct customDomain if customDomain is provided', () => {
       jest
         .spyOn(twentyConfigService, 'get')
         .mockImplementation((key: string) => {
@@ -80,7 +80,7 @@ describe('WorkspaceDomainsService', () => {
       });
     });
 
-    it('should return a URL containing the correct subdomain if customDomain is not provided but subdomain is', () => {
+    it('should return a Url containing the correct subdomain if customDomain is not provided but subdomain is', () => {
       jest
         .spyOn(twentyConfigService, 'get')
         .mockImplementation((key: string) => {
@@ -107,7 +107,7 @@ describe('WorkspaceDomainsService', () => {
   });
 
   describe('buildWorkspaceURL', () => {
-    it('should build workspace URL with given subdomain', () => {
+    it('should build workspace Url with given subdomain', () => {
       jest
         .spyOn(twentyConfigService, 'get')
         .mockImplementation((key: string) => {

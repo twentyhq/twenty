@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import { useStore } from 'jotai';
 
 import { useMoveHoverToCurrentCell } from '@/object-record/record-table/record-table-cell/hooks/useMoveHoverToCurrentCell';
-import { isSomeCellInEditModeComponentSelector } from '@/object-record/record-table/states/selectors/isSomeCellInEditModeComponentSelector';
+import { iSsomeCellInEditModeComponentSelector } from '@/object-record/record-table/states/selectors/iSsomeCellInEditModeComponentSelector';
 import { type TableCellPosition } from '@/object-record/record-table/types/TableCellPosition';
 import { useAtomComponentSelectorCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorCallbackState';
 
@@ -17,8 +17,8 @@ export const useHandleContainerMouseEnter = ({
 }) => {
   const { moveHoverToCurrentCell } = useMoveHoverToCurrentCell(recordTableId);
 
-  const isSomeCellInEditModeSelector = useAtomComponentSelectorCallbackState(
-    isSomeCellInEditModeComponentSelector,
+  const iSsomeCellInEditModeSelector = useAtomComponentSelectorCallbackState(
+    iSsomeCellInEditModeComponentSelector,
     recordTableId,
   );
 
@@ -26,13 +26,13 @@ export const useHandleContainerMouseEnter = ({
 
   const handleContainerMouseEnter = useCallback(
     ({ cellPosition }: HandleContainerMouseEnterArgs) => {
-      const isSomeCellInEditMode = store.get(isSomeCellInEditModeSelector);
+      const iSsomeCellInEditMode = store.get(iSsomeCellInEditModeSelector);
 
-      if (!isSomeCellInEditMode) {
+      if (!iSsomeCellInEditMode) {
         moveHoverToCurrentCell(cellPosition);
       }
     },
-    [isSomeCellInEditModeSelector, moveHoverToCurrentCell, store],
+    [iSsomeCellInEditModeSelector, moveHoverToCurrentCell, store],
   );
 
   return {

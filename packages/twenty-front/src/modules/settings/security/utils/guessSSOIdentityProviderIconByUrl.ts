@@ -4,7 +4,7 @@ import {
   IconKey,
   IconMicrosoftOutlook,
 } from 'twenty-ui/display';
-export const guessSSOIdentityProviderIconByUrl = (
+export const guessSsoIdentityProviderIconByUrl = (
   url: string,
 ): IconComponent => {
   if (url.includes('google')) {

@@ -6,15 +6,15 @@ import { transformStripeEntitlementUpdatedEventToDatabaseEntitlement } from 'src
 import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
 
 describe('transformStripeEntitlementUpdatedEventToDatabaseEntitlement', () => {
-  it('should return the SSO key with true value', () => {
+  it('should return the Sso key with true value', () => {
     const data: Stripe.EntitlementsActiveEntitlementSummaryUpdatedEvent.Data = {
       object: {
         customer: 'cus_123',
         entitlements: {
           data: [
             {
-              lookup_key: 'SSO',
-              feature: 'SSO',
+              lookup_key: 'Sso',
+              feature: 'Sso',
               livemode: false,
               id: 'ent_123',
               object: 'entitlements.active_entitlement',
@@ -22,7 +22,7 @@ describe('transformStripeEntitlementUpdatedEventToDatabaseEntitlement', () => {
           ],
           object: 'list',
           has_more: false,
-          url: '',
+          Url: '',
         },
         livemode: false,
         object: 'entitlements.active_entitlement_summary',
@@ -37,7 +37,7 @@ describe('transformStripeEntitlementUpdatedEventToDatabaseEntitlement', () => {
     expect(result).toEqual([
       {
         workspaceId: 'workspaceId',
-        key: BillingEntitlementKey.SSO,
+        key: BillingEntitlementKey.Sso,
         value: true,
         stripeCustomerId: 'cus_123',
       },
@@ -62,7 +62,7 @@ describe('transformStripeEntitlementUpdatedEventToDatabaseEntitlement', () => {
     ]);
   });
 
-  it('should return the SSO key with false value,should only render the values that are listed in BillingEntitlementKeys', () => {
+  it('should return the Sso key with false value,should only render the values that are listed in BillingEntitlementKeys', () => {
     const data: Stripe.EntitlementsActiveEntitlementSummaryUpdatedEvent.Data = {
       object: {
         customer: 'cus_123',
@@ -78,7 +78,7 @@ describe('transformStripeEntitlementUpdatedEventToDatabaseEntitlement', () => {
           ],
           object: 'list',
           has_more: false,
-          url: '',
+          Url: '',
         },
         livemode: false,
         object: 'entitlements.active_entitlement_summary',
@@ -93,7 +93,7 @@ describe('transformStripeEntitlementUpdatedEventToDatabaseEntitlement', () => {
     expect(result).toEqual([
       {
         workspaceId: 'workspaceId',
-        key: BillingEntitlementKey.SSO,
+        key: BillingEntitlementKey.Sso,
         value: false,
         stripeCustomerId: 'cus_123',
       },

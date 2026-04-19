@@ -6,7 +6,7 @@ import {
   type Meter,
   type MetricOptions,
   type ObservableGauge,
-} from '@opentelemetry/api';
+} from '@opentelemetry/Api';
 import { isDefined } from 'twenty-shared/utils';
 
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';

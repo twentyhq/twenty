@@ -1867,7 +1867,7 @@ bigpond.com
 bigpond.com.au
 bigpond.net
 bigpond.net.au
-bigprofessor.so
+bigprofeSsor.so
 bigramp.com
 bigstring.com
 bigtetek.cf
@@ -2093,7 +2093,7 @@ borofans.com
 boss.cf
 bossmail.de
 bossmail.ru
-bossofthemoss.com
+boSsofthemoss.com
 bostonoffice.com
 bot.nu
 botkaislove.ru
@@ -2276,7 +2276,7 @@ businessbackend.com
 businesscredit.xyz
 business-man.com
 businessman.net
-businesssource.net
+businesSsource.net
 businesssuccessislifesuccess.com
 businessweekmail.com
 buspad.org
@@ -2601,11 +2601,11 @@ chipbankasi.com
 chipkolik.com
 chirk.com
 chithinh.com
-chivasso.cf
-chivasso.ga
-chivasso.gq
-chivasso.ml
-chivasso.tk
+chivaSso.cf
+chivaSso.ga
+chivaSso.gq
+chivaSso.ml
+chivaSso.tk
 chocaholic.com.au
 chocklet.us
 choco.la
@@ -3331,7 +3331,7 @@ dettol.ml
 dettol.tk
 deucemail.com
 deutschland-net.com
-dev-api.ru
+dev-Api.ru
 dev-null.cf
 dev-null.ga
 dev-null.gq
@@ -3962,7 +3962,7 @@ e-mailanywhere.com
 emailappp.com
 emailapps.in
 emailapps.info
-emailasso.net
+emailaSso.net
 e-mailbox.ga
 emailchoice.com
 emailcorner.net
@@ -4917,7 +4917,7 @@ frommiami.com
 frommichigan.com
 fromminnesota.com
 frommississippi.com
-frommissouri.com
+frommiSsouri.com
 from-mn.com
 from-mo.com
 frommontana.com
@@ -5288,7 +5288,7 @@ gigs.craigslist.org
 gillsfans.co.uk
 gilray.net
 gimal.com
-gimesson.pe.hu
+gimeSson.pe.hu
 ginzi.be
 ginzi.co.uk
 ginzi.es
@@ -6274,7 +6274,7 @@ ilikespam.com
 ilkposta.com
 illistnoise.com
 ilmale.it
-ilnostrogrossograssomatrimoniomolisano.com
+ilnostrogroSsograSsomatrimoniomolisano.com
 i-love-cats.com
 ilovechocolate.com
 ilovegiraffes.net
@@ -8798,7 +8798,7 @@ mail2minnesota.com
 mail2miracle.com
 mail2missionary.com
 mail2mississippi.com
-mail2missouri.com
+mail2miSsouri.com
 mail2mitch.com
 mail2model.com
 mail2moldova.commail2molly.com
@@ -8965,7 +8965,7 @@ mail2priest.com
 mail2prince.com
 mail2princess.com
 mail2producer.com
-mail2professor.com
+mail2profeSsor.com
 mail2protect.com
 mail2psychiatrist.com
 mail2psycho.com
@@ -9718,7 +9718,7 @@ mariah-carey.ml.org
 maricopa.edu
 marijuana.com
 marijuana.nl
-mark-compressoren.ru
+mark-compreSsoren.ru
 marketing.lu
 marketingfanatic.com
 marketlink.info
@@ -10538,7 +10538,7 @@ nds8ufik2kfxku.ga
 nds8ufik2kfxku.ml
 nds8ufik2kfxku.tk
 ndsupernet.com
-neat-url.com
+neat-Url.com
 neb.rr.com
 neeva.net
 negated.com
@@ -11862,7 +11862,7 @@ prodigy.net
 prodigy.net.mx
 proeasyweb.com
 profast.top
-professor.ru
+profeSsor.ru
 profilific.com
 progetplus.it
 programist.ru
@@ -13068,7 +13068,7 @@ simpleitsecurity.info
 simplemail.in
 simplemail.top
 simplesport.ru
-simple-url.com
+simple-Url.com
 simscity.cf
 sim-simka.ru
 simsmail.ga
@@ -13497,9 +13497,9 @@ ss-hitler.ml
 ss-hitler.tk
 ssl.tls.cloudns.asia
 ssl-mail.com
-sso-demo-okta.com
-ssoia.com
-ssongs34f.com
+Sso-demo-okta.com
+Ssoia.com
+Ssongs34f.com
 sssppua.ga
 sssppua.ml
 sssppua.tk
@@ -13771,7 +13771,7 @@ swirve.com
 swissinfo.org
 swissmail.com
 swissmail.net
-swissonline.ch
+swiSsonline.ch
 switchboardmail.com
 switzerland.org
 swomc.com
@@ -14292,7 +14292,7 @@ tim.it
 timein.net
 timekr.xyz
 timgiarevn.com
-timkassouf.com
+timkaSsouf.com
 timormail.com
 tin.it
 tinoza.org

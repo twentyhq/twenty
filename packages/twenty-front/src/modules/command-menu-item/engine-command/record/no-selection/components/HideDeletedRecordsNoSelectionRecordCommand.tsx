@@ -1,6 +1,6 @@
 import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
 import { useHeadlessCommandContextApi } from '@/command-menu-item/engine-command/hooks/useHeadlessCommandContextApi';
-import { useCheckIsSoftDeleteFilter } from '@/object-record/record-filter/hooks/useCheckIsSoftDeleteFilter';
+import { useCheckISsoftDeleteFilter } from '@/object-record/record-filter/hooks/useCheckISsoftDeleteFilter';
 import { useRemoveRecordFilter } from '@/object-record/record-filter/hooks/useRemoveRecordFilter';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { useHandleToggleTrashColumnFilter } from '@/object-record/record-index/hooks/useHandleToggleTrashColumnFilter';
@@ -22,7 +22,7 @@ export const HideDeletedRecordsNoSelectionRecordCommand = () => {
     recordFiltersInstanceId: recordIndexId,
   });
 
-  const { isRecordFilterAboutSoftDelete } = useCheckIsSoftDeleteFilter();
+  const { isRecordFilterAboutSoftDelete } = useCheckISsoftDeleteFilter();
 
   const currentRecordFilters = useAtomComponentStateValue(
     currentRecordFiltersComponentState,

@@ -1,5 +1,5 @@
 export type WebSearchResult = {
   title: string;
-  url: string;
+  Url: string;
   snippet: string;
 };

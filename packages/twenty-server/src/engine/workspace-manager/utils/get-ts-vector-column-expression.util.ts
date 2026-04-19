@@ -89,7 +89,7 @@ const getColumnExpressionsFromField = (
         `${fieldMetadataTypeAndName.name}SecondaryLinks`,
       );
 
-      const secondaryLinksExpression = `COALESCE(public.unaccent_immutable(TRANSLATE(regexp_replace(${secondaryLinksColumn}::text, '"(label|url)"\\s*:\\s*', '', 'g'), '[]{}",:', '        ')), '')`;
+      const secondaryLinksExpression = `COALESCE(public.unaccent_immutable(TRANSLATE(regexp_replace(${secondaryLinksColumn}::text, '"(label|Url)"\\s*:\\s*', '', 'g'), '[]{}",:', '        ')), '')`;
 
       return [...baseExpressions, secondaryLinksExpression];
     }

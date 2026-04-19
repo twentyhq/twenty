@@ -1,4 +1,4 @@
-import { type PageInfo } from 'src/engine/api/rest/core/handlers/rest-api-base.handler';
+import { type PageInfo } from 'src/engine/api/rest/core/handlers/rest-Api-base.handler';
 
 export type CommonPageInfo = {
   hasNextPage: NonNullable<PageInfo['hasNextPage']>;

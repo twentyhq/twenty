@@ -2,7 +2,7 @@ import { type CanActivate } from '@nestjs/common';
 import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
-import { ApiKeyService } from 'src/engine/core-modules/api-key/services/api-key.service';
+import { ApiKeyService } from 'src/engine/core-modules/Api-key/services/Api-key.service';
 import { AppTokenEntity } from 'src/engine/core-modules/app-token/app-token.entity';
 import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
 import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-up.service';
@@ -12,7 +12,7 @@ import { CaptchaGuard } from 'src/engine/core-modules/captcha/captcha.guard';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { EmailVerificationService } from 'src/engine/core-modules/email-verification/services/email-verification.service';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
-import { SSOService } from 'src/engine/core-modules/sso/services/sso.service';
+import { SsoService } from 'src/engine/core-modules/Sso/services/Sso.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { TwoFactorAuthenticationService } from 'src/engine/core-modules/two-factor-authentication/two-factor-authentication.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
@@ -67,7 +67,7 @@ describe('AuthResolver', () => {
           useValue: {
             buildWorkspaceURL: jest
               .fn()
-              .mockResolvedValue(new URL('http://localhost:3001')),
+              .mockResolvedValue(new Url('http://localhost:3001')),
           },
         },
         {
@@ -119,7 +119,7 @@ describe('AuthResolver', () => {
           useValue: {},
         },
         {
-          provide: SSOService,
+          provide: SsoService,
           useValue: {},
         },
         {

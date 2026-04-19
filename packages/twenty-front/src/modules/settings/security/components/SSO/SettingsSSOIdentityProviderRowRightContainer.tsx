@@ -1,8 +1,8 @@
 /* @license Enterprise */
 
-import { SettingsSecuritySSORowDropdownMenu } from '@/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu';
-import { type SSOIdentityProvider } from '@/settings/security/types/SSOIdentityProvider';
-import { getColorBySSOIdentityProviderStatus } from '@/settings/security/utils/getColorBySSOIdentityProviderStatus';
+import { SettingsSecuritySsoRowDropdownMenu } from '@/settings/security/components/Sso/SettingsSecuritySsoRowDropdownMenu';
+import { type SsoIdentityProvider } from '@/settings/security/types/SsoIdentityProvider';
+import { getColorBySsoIdentityProviderStatus } from '@/settings/security/utils/getColorBySsoIdentityProviderStatus';
 import { styled } from '@linaria/react';
 import { Status } from 'twenty-ui/display';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -13,19 +13,19 @@ const StyledRowRightContainer = styled.div`
   gap: ${themeCssVariables.spacing[1]};
 `;
 
-export const SettingsSSOIdentityProviderRowRightContainer = ({
-  SSOIdp,
+export const SettingsSsoIdentityProviderRowRightContainer = ({
+  SsoIdp,
 }: {
-  SSOIdp: Omit<SSOIdentityProvider, '__typename'>;
+  SsoIdp: Omit<SsoIdentityProvider, '__typename'>;
 }) => {
   return (
     <StyledRowRightContainer>
       <Status
-        color={getColorBySSOIdentityProviderStatus[SSOIdp.status]}
-        text={SSOIdp.status}
+        color={getColorBySsoIdentityProviderStatus[SsoIdp.status]}
+        text={SsoIdp.status}
         weight="medium"
       />
-      <SettingsSecuritySSORowDropdownMenu SSOIdp={SSOIdp} />
+      <SettingsSecuritySsoRowDropdownMenu SsoIdp={SsoIdp} />
     </StyledRowRightContainer>
   );
 };

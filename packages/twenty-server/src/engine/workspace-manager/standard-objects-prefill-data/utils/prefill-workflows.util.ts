@@ -458,10 +458,10 @@ export const prefillWorkflows = async (
                 },
               },
               outputSchema: {
-                url: {
+                Url: {
                   icon: 'IconVariable',
                   type: 'string',
-                  label: 'url',
+                  label: 'Url',
                   value: 'https://twenty.com',
                   isLeaf: true,
                 },
@@ -679,7 +679,7 @@ export const prefillWorkflows = async (
                   name: '{{1b01193b-8300-4d79-940b-44464bf45505.domain}}',
                   domainName: {
                     primaryLinkUrl:
-                      '{{1b01193b-8300-4d79-940b-44464bf45505.url}}',
+                      '{{1b01193b-8300-4d79-940b-44464bf45505.Url}}',
                     primaryLinkLabel:
                       '{{1b01193b-8300-4d79-940b-44464bf45505.domain}}',
                   },

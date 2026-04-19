@@ -7,7 +7,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { And, Any, ILike, In, Not, Or, Repository } from 'typeorm';
 
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
-import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
+import { ProceSsor } from 'src/engine/core-modules/message-queue/decorators/proceSsor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
@@ -16,7 +16,7 @@ import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspac
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 import { type BlocklistWorkspaceEntity } from 'src/modules/blocklist/standard-objects/blocklist.workspace-entity';
-import { type MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
+import { type MessageChannelMessageASsociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-aSsociation.workspace-entity';
 import { MessagingMessageCleanerService } from 'src/modules/messaging/message-cleaner/services/messaging-message-cleaner.service';
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
@@ -24,7 +24,7 @@ export type BlocklistItemDeleteMessagesJobData = WorkspaceEventBatch<
   ObjectRecordCreateEvent<BlocklistWorkspaceEntity>
 >;
 
-@Processor({
+@ProceSsor({
   queueName: MessageQueue.messagingQueue,
   scope: Scope.REQUEST,
 })
@@ -82,10 +82,10 @@ export class BlocklistItemDeleteMessagesJob {
         new Map<string, string[]>(),
       );
 
-      const messageChannelMessageAssociationRepository =
-        await this.globalWorkspaceOrmManager.getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
+      const messageChannelMessageASsociationRepository =
+        await this.globalWorkspaceOrmManager.getRepository<MessageChannelMessageASsociationWorkspaceEntity>(
           workspaceId,
-          'messageChannelMessageAssociation',
+          'messageChannelMessageASsociation',
         );
 
       const workspaceMemberRepository =
@@ -176,8 +176,8 @@ export class BlocklistItemDeleteMessagesJob {
               : { handle, role: In(rolesToDelete) };
           });
 
-          const messageChannelMessageAssociationsToDelete =
-            await messageChannelMessageAssociationRepository.find({
+          const messageChannelMessageASsociationsToDelete =
+            await messageChannelMessageASsociationRepository.find({
               where: {
                 messageChannelId: messageChannel.id,
                 message: {
@@ -186,12 +186,12 @@ export class BlocklistItemDeleteMessagesJob {
               },
             });
 
-          if (messageChannelMessageAssociationsToDelete.length === 0) {
+          if (messageChannelMessageASsociationsToDelete.length === 0) {
             continue;
           }
 
-          await messageChannelMessageAssociationRepository.delete(
-            messageChannelMessageAssociationsToDelete.map(({ id }) => id),
+          await messageChannelMessageASsociationRepository.delete(
+            messageChannelMessageASsociationsToDelete.map(({ id }) => id),
           );
         }
       }

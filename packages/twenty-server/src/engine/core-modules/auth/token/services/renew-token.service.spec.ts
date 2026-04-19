@@ -103,7 +103,7 @@ describe('RenewTokenService', () => {
         await service.generateTokensFromRefreshToken(mockRefreshToken);
 
       expect(result).toEqual({
-        accessOrWorkspaceAgnosticToken: mockAccessToken,
+        acceSsorWorkspaceAgnosticToken: mockAccessToken,
         refreshToken: mockNewRefreshToken,
       });
       expect(refreshTokenService.verifyRefreshToken).toHaveBeenCalledWith(

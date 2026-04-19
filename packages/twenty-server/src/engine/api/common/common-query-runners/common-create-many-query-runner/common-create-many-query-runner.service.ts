@@ -154,7 +154,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
 
     return {
       ...args,
-      data: await this.dataArgProcessor.process({
+      data: await this.dataArgProceSsor.process({
         partialRecordInputs: args.data,
         authContext,
         flatObjectMetadata,

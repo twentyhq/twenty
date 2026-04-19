@@ -16,7 +16,7 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
-import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
+import { FileUrlService } from 'src/engine/core-modules/file/file-Url/file-Url.service';
 import { ApprovedAccessDomainService } from './approved-access-domain.service';
 
 // To avoid dynamic import issues in Jest
@@ -73,7 +73,7 @@ describe('ApprovedAccessDomainService', () => {
           useValue: {
             signFileByIdUrl: jest
               .fn()
-              .mockReturnValue('https://signed-url.com/logo.png'),
+              .mockReturnValue('https://signed-Url.com/logo.png'),
           },
         },
       ],
@@ -292,13 +292,13 @@ describe('ApprovedAccessDomainService', () => {
 
       jest
         .spyOn(workspaceDomainsService, 'buildWorkspaceURL')
-        .mockReturnValue(new URL('https://sub.twenty.com'));
+        .mockReturnValue(new Url('https://sub.twenty.com'));
 
       jest
         .spyOn(twentyConfigService, 'get')
         .mockImplementation((key: string) => {
           if (key === 'EMAIL_FROM_ADDRESS') return 'no-reply@example.com';
-          if (key === 'SERVER_URL') return 'https://api.example.com';
+          if (key === 'SERVER_URL') return 'https://Api.example.com';
         });
 
       await service.sendApprovedAccessDomainValidationEmail(

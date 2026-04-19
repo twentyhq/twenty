@@ -20,7 +20,7 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { RoleValidationService } from 'src/engine/metadata-modules/role-validation/services/role-validation.service';
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
-import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
+import { FileUrlService } from 'src/engine/core-modules/file/file-Url/file-Url.service';
 import { WorkspaceInvitationService } from './workspace-invitation.service';
 
 // To fix a circular dependency issue
@@ -72,7 +72,7 @@ describe('WorkspaceInvitationService', () => {
           useValue: {
             buildWorkspaceURL: jest
               .fn()
-              .mockResolvedValue(new URL('http://localhost:3001')),
+              .mockResolvedValue(new Url('http://localhost:3001')),
           },
         },
         {
@@ -117,7 +117,7 @@ describe('WorkspaceInvitationService', () => {
           useValue: {
             signFileByIdUrl: jest
               .fn()
-              .mockReturnValue('https://signed-url.com/logo.png'),
+              .mockReturnValue('https://signed-Url.com/logo.png'),
           },
         },
         {

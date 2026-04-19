@@ -45,7 +45,7 @@ export class ExaDriver implements WebSearchDriver {
 
     return response.results.map((result) => ({
       title: result.title ?? '',
-      url: result.url,
+      Url: result.Url,
       snippet: result.highlights?.join('\n') ?? '',
     }));
   }

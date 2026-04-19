@@ -4,14 +4,14 @@ import { msg } from '@lingui/core/macro';
 import { isNonEmptyString, isNull } from '@sniptt/guards';
 import { isSafeUrl } from 'twenty-shared/utils';
 
-import { validateRawJsonFieldOrThrow } from 'src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-raw-json-field-or-throw.util';
-import { validateTextFieldOrThrow } from 'src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-text-field-or-throw.util';
+import { validateRawJsonFieldOrThrow } from 'src/engine/api/common/common-args-proceSsors/data-arg-proceSsor/validator-utils/validate-raw-json-field-or-throw.util';
+import { validateTextFieldOrThrow } from 'src/engine/api/common/common-args-proceSsors/data-arg-proceSsor/validator-utils/validate-text-field-or-throw.util';
 import {
   CommonQueryRunnerException,
   CommonQueryRunnerExceptionCode,
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 
-const URL_VALUE_PATTERN = /"(?:url|href)"\s*:\s*"([^"]*)"/gi;
+const URL_VALUE_PATTERN = /"(?:Url|href)"\s*:\s*"([^"]*)"/gi;
 
 const hasDangerousUrl = (json: string): boolean => {
   URL_VALUE_PATTERN.lastIndex = 0;
@@ -19,9 +19,9 @@ const hasDangerousUrl = (json: string): boolean => {
   let match;
 
   while ((match = URL_VALUE_PATTERN.exec(json)) !== null) {
-    const url = match[1].trim();
+    const Url = match[1].trim();
 
-    if (url.length > 0 && !isSafeUrl(url)) {
+    if (Url.length > 0 && !isSafeUrl(Url)) {
       return true;
     }
   }
@@ -59,10 +59,10 @@ const validateBlocknoteFieldOrThrow = (
 
   if (hasDangerousUrl(textValue)) {
     throw new CommonQueryRunnerException(
-      `Dangerous URL protocol in blocknote content for field "${fieldName}"`,
+      `Dangerous Url protocol in blocknote content for field "${fieldName}"`,
       CommonQueryRunnerExceptionCode.INVALID_ARGS_DATA,
       {
-        userFriendlyMessage: msg`Content contains a URL with a dangerous protocol.`,
+        userFriendlyMessage: msg`Content contains a Url with a dangerous protocol.`,
       },
     );
   }

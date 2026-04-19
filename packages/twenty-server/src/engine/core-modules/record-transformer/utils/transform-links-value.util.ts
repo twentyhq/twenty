@@ -40,7 +40,7 @@ export const transformLinksValue = (
 
   const processedSecondaryLinks = secondaryLinks?.map((link) => ({
     ...link,
-    url: isDefined(link.url) ? normalizeUrlOrigin(link.url) : link.url,
+    Url: isDefined(link.Url) ? normalizeUrlOrigin(link.Url) : link.Url,
   }));
 
   return {

@@ -69,7 +69,7 @@ export const TimelineCard = () => {
             {t`No activity yet`}
           </AnimatedPlaceholderEmptyTitle>
           <AnimatedPlaceholderEmptySubTitle>
-            {t`There is no activity associated with this record.`}
+            {t`There is no activity aSsociated with this record.`}
           </AnimatedPlaceholderEmptySubTitle>
         </AnimatedPlaceholderEmptyTextContainer>
       </AnimatedPlaceholderEmptyContainer>

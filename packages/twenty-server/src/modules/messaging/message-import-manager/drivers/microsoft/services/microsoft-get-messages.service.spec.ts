@@ -14,7 +14,7 @@ import { OAuth2ClientManagerService } from 'src/modules/connected-account/oauth2
 import {
   microsoftGraphBatchWithHtmlMessagesResponse,
   microsoftGraphBatchWithTwoMessagesResponse,
-} from 'src/modules/messaging/message-import-manager/drivers/microsoft/mocks/microsoft-api-examples';
+} from 'src/modules/messaging/message-import-manager/drivers/microsoft/mocks/microsoft-Api-examples';
 import { MicrosoftFetchByBatchService } from 'src/modules/messaging/message-import-manager/drivers/microsoft/services/microsoft-fetch-by-batch.service';
 import { type MicrosoftGraphBatchResponse } from 'src/modules/messaging/message-import-manager/drivers/microsoft/services/microsoft-get-messages.interface';
 import { MicrosoftGetMessagesService } from 'src/modules/messaging/message-import-manager/drivers/microsoft/services/microsoft-get-messages.service';

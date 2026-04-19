@@ -14,8 +14,8 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
-import { type SocialSSOSignInUpActionType } from 'src/engine/core-modules/auth/types/signInUp.type';
-import { type SocialSSOState } from 'src/engine/core-modules/auth/types/social-sso-state.type';
+import { type SocialSsoSignInUpActionType } from 'src/engine/core-modules/auth/types/signInUp.type';
+import { type SocialSsoState } from 'src/engine/core-modules/auth/types/social-Sso-state.type';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 export type GoogleRequest = Omit<
@@ -30,7 +30,7 @@ export type GoogleRequest = Omit<
     locale?: keyof typeof APP_LOCALES | null;
     workspaceInviteHash?: string;
     workspacePersonalInviteToken?: string;
-    action: SocialSSOSignInUpActionType;
+    action: SocialSsoSignInUpActionType;
     workspaceId?: string;
     billingCheckoutSessionState?: string;
   };
@@ -40,7 +40,7 @@ export type GoogleRequest = Omit<
 export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
   constructor(twentyConfigService: TwentyConfigService) {
     super({
-      clientID: twentyConfigService.get('AUTH_GOOGLE_CLIENT_ID'),
+      clientId: twentyConfigService.get('AUTH_GOOGLE_CLIENT_ID'),
       clientSecret: twentyConfigService.get('AUTH_GOOGLE_CLIENT_SECRET'),
       callbackURL: twentyConfigService.get('AUTH_GOOGLE_CALLBACK_URL'),
       scope: ['email', 'profile'],
@@ -73,7 +73,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
     done: VerifyCallback,
   ): Promise<void> {
     const { name, emails, photos } = profile;
-    const state = parseJson<SocialSSOState>(request.query.state as string);
+    const state = parseJson<SocialSsoState>(request.query.state as string);
 
     const firstVerifiedEmail = emails?.find(
       (email) => email?.verified === true,

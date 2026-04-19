@@ -1,6 +1,6 @@
 import { sanitizeAutocompleteResults } from 'src/engine/core-modules/geo-map/utils/sanitize-autocomplete-results.util';
 
-// Real Google Places Autocomplete API prediction format
+// Real Google Places Autocomplete Api prediction format
 const GOOGLE_PREDICTIONS = [
   {
     description: '48 Pirrama Road, Pyrmont NSW 2009, Australia',

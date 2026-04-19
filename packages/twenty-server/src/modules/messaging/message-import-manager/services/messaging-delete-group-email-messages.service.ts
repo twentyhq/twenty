@@ -6,11 +6,11 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
-import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
+import { MessageChannelMessageASsociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-aSsociation.workspace-entity';
 import { MessagingMessageCleanerService } from 'src/modules/messaging/message-cleaner/services/messaging-message-cleaner.service';
 import { isGroupEmail } from 'src/modules/messaging/message-import-manager/utils/is-group-email';
 
-const MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_BATCH_SIZE = 500;
+const MESSAGE_CHANNEL_MESSAGE_ASsoCIATION_BATCH_SIZE = 500;
 
 type MessageBatchRawResult = {
   mcmaId: string;
@@ -42,21 +42,21 @@ export class MessagingDeleteGroupEmailMessagesService {
 
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
       async () => {
-        const messageChannelMessageAssociationRepository =
-          await this.globalWorkspaceOrmManager.getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
+        const messageChannelMessageASsociationRepository =
+          await this.globalWorkspaceOrmManager.getRepository<MessageChannelMessageASsociationWorkspaceEntity>(
             workspaceId,
-            'messageChannelMessageAssociation',
+            'messageChannelMessageASsociation',
           );
 
         const firstRecord =
-          await messageChannelMessageAssociationRepository.findOne({
+          await messageChannelMessageASsociationRepository.findOne({
             where: { messageChannelId },
             order: { id: 'ASC' },
           });
 
         if (!firstRecord) {
           this.logger.debug(
-            `WorkspaceId: ${workspaceId}, MessageChannelId: ${messageChannelId} - No message associations found`,
+            `WorkspaceId: ${workspaceId}, MessageChannelId: ${messageChannelId} - No message aSsociations found`,
           );
 
           return 0;
@@ -67,7 +67,7 @@ export class MessagingDeleteGroupEmailMessagesService {
 
         while (isDefined(cursorId)) {
           const batch: MessageBatchRawResult[] =
-            await messageChannelMessageAssociationRepository
+            await messageChannelMessageASsociationRepository
               .createQueryBuilder('mcma')
               .select('mcma.id', 'mcmaId')
               .addSelect('mcma.messageId', 'messageId')
@@ -85,7 +85,7 @@ export class MessagingDeleteGroupEmailMessagesService {
               })
               .andWhere('mcma.id >= :cursorId', { cursorId })
               .orderBy('mcma.id', 'ASC')
-              .take(MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_BATCH_SIZE)
+              .take(MESSAGE_CHANNEL_MESSAGE_ASsoCIATION_BATCH_SIZE)
               .getRawMany<MessageBatchRawResult>();
 
           if (batch.length === 0) {
@@ -115,7 +115,7 @@ export class MessagingDeleteGroupEmailMessagesService {
               );
 
               for (const messageExternalIdsChunk of messageExternalIdsChunks) {
-                await this.messagingMessageCleanerService.deleteMessagesChannelMessageAssociationsAndRelatedOrphans(
+                await this.messagingMessageCleanerService.deleteMessagesChannelMessageASsociationsAndRelatedOrphans(
                   {
                     workspaceId,
                     messageExternalIds: messageExternalIdsChunk,
@@ -132,7 +132,7 @@ export class MessagingDeleteGroupEmailMessagesService {
             }
           }
 
-          if (batch.length < MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_BATCH_SIZE) {
+          if (batch.length < MESSAGE_CHANNEL_MESSAGE_ASsoCIATION_BATCH_SIZE) {
             break;
           }
 

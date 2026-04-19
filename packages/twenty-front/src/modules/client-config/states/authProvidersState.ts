@@ -8,6 +8,6 @@ export const authProvidersState = createAtomState<AuthProviders>({
     magicLink: false,
     password: true,
     microsoft: false,
-    sso: [],
+    Sso: [],
   },
 });

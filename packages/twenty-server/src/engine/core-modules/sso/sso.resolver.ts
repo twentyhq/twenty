@@ -9,23 +9,23 @@ import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorato
 import { EnterpriseFeaturesEnabledGuard } from 'src/engine/core-modules/auth/guards/enterprise-features-enabled.guard';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
-import { DeleteSsoInput } from 'src/engine/core-modules/sso/dtos/delete-sso.input';
-import { DeleteSsoDTO } from 'src/engine/core-modules/sso/dtos/delete-sso.dto';
-import { EditSsoInput } from 'src/engine/core-modules/sso/dtos/edit-sso.input';
-import { EditSsoDTO } from 'src/engine/core-modules/sso/dtos/edit-sso.dto';
-import { FindAvailableSSOIDPDTO } from 'src/engine/core-modules/sso/dtos/find-available-SSO-IDP.dto';
+import { DeleteSsoInput } from 'src/engine/core-modules/Sso/dtos/delete-Sso.input';
+import { DeleteSsoDTO } from 'src/engine/core-modules/Sso/dtos/delete-Sso.dto';
+import { EditSsoInput } from 'src/engine/core-modules/Sso/dtos/edit-Sso.input';
+import { EditSsoDTO } from 'src/engine/core-modules/Sso/dtos/edit-Sso.dto';
+import { FindAvailableSsoIDPDTO } from 'src/engine/core-modules/Sso/dtos/find-available-Sso-IDP.dto';
 import {
-  SetupOIDCSsoInput,
-  SetupSAMLSsoInput,
-} from 'src/engine/core-modules/sso/dtos/setup-sso.input';
-import { SetupSsoDTO } from 'src/engine/core-modules/sso/dtos/setup-sso.dto';
-import { SSOService } from 'src/engine/core-modules/sso/services/sso.service';
-import { type SSOException } from 'src/engine/core-modules/sso/sso.exception';
+  SetupOidcSsoInput,
+  SetupSamlSsoInput,
+} from 'src/engine/core-modules/Sso/dtos/setup-Sso.input';
+import { SetupSsoDTO } from 'src/engine/core-modules/Sso/dtos/setup-Sso.dto';
+import { SsoService } from 'src/engine/core-modules/Sso/services/Sso.service';
+import { type SsoException } from 'src/engine/core-modules/Sso/Sso.exception';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
-import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
+import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-Api-exception.filter';
 
 @MetadataResolver()
 @UseFilters(
@@ -34,36 +34,36 @@ import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-module
 )
 @UsePipes(ResolverValidationPipe)
 @UseGuards(SettingsPermissionGuard(PermissionFlagType.SECURITY))
-export class SSOResolver {
-  constructor(private readonly ssoService: SSOService) {}
+export class SsoResolver {
+  constructor(private readonly SsoService: SsoService) {}
 
   @UseGuards(WorkspaceAuthGuard, EnterpriseFeaturesEnabledGuard)
   @Mutation(() => SetupSsoDTO)
-  async createOIDCIdentityProvider(
-    @Args('input') setupSsoInput: SetupOIDCSsoInput,
+  async createOidcIdentityProvider(
+    @Args('input') setupSsoInput: SetupOidcSsoInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ): Promise<SetupSsoDTO | SSOException> {
-    return this.ssoService.createOIDCIdentityProvider(
+  ): Promise<SetupSsoDTO | SsoException> {
+    return this.SsoService.createOidcIdentityProvider(
       setupSsoInput,
       workspaceId,
     );
   }
 
   @UseGuards(WorkspaceAuthGuard, EnterpriseFeaturesEnabledGuard)
-  @Query(() => [FindAvailableSSOIDPDTO])
-  async getSSOIdentityProviders(
+  @Query(() => [FindAvailableSsoIDPDTO])
+  async getSsoIdentityProviders(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ) {
-    return this.ssoService.getSSOIdentityProviders(workspaceId);
+    return this.SsoService.getSsoIdentityProviders(workspaceId);
   }
 
   @UseGuards(WorkspaceAuthGuard, EnterpriseFeaturesEnabledGuard)
   @Mutation(() => SetupSsoDTO)
-  async createSAMLIdentityProvider(
-    @Args('input') setupSsoInput: SetupSAMLSsoInput,
+  async createSamlIdentityProvider(
+    @Args('input') setupSsoInput: SetupSamlSsoInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-  ): Promise<SetupSsoDTO | SSOException> {
-    return this.ssoService.createSAMLIdentityProvider(
+  ): Promise<SetupSsoDTO | SsoException> {
+    return this.SsoService.createSamlIdentityProvider(
       setupSsoInput,
       workspaceId,
     );
@@ -71,11 +71,11 @@ export class SSOResolver {
 
   @UseGuards(WorkspaceAuthGuard, EnterpriseFeaturesEnabledGuard)
   @Mutation(() => DeleteSsoDTO)
-  async deleteSSOIdentityProvider(
+  async deleteSsoIdentityProvider(
     @Args('input') { identityProviderId }: DeleteSsoInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ) {
-    return this.ssoService.deleteSSOIdentityProvider(
+    return this.SsoService.deleteSsoIdentityProvider(
       identityProviderId,
       workspaceId,
     );
@@ -83,10 +83,10 @@ export class SSOResolver {
 
   @UseGuards(WorkspaceAuthGuard, EnterpriseFeaturesEnabledGuard)
   @Mutation(() => EditSsoDTO)
-  async editSSOIdentityProvider(
+  async editSsoIdentityProvider(
     @Args('input') input: EditSsoInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ) {
-    return this.ssoService.editSSOIdentityProvider(input, workspaceId);
+    return this.SsoService.editSsoIdentityProvider(input, workspaceId);
   }
 }

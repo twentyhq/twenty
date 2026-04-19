@@ -37,14 +37,14 @@ const createMockCalendarEvent = (
   updatedAt: '2024-03-20T09:00:00Z',
   iCalUid: '',
   conferenceSolution: '',
-  calendarChannelEventAssociations: [],
+  calendarChannelEventASsociations: [],
   calendarEventParticipants: [],
 });
 
 describe('ApplyCalendarEventsVisibilityRestrictionsService', () => {
   let service: ApplyCalendarEventsVisibilityRestrictionsService;
 
-  const mockCalendarEventAssociationRepository = {
+  const mockCalendarEventASsociationRepository = {
     find: jest.fn(),
   };
 
@@ -66,8 +66,8 @@ describe('ApplyCalendarEventsVisibilityRestrictionsService', () => {
 
   const mockGlobalWorkspaceOrmManager = {
     getRepository: jest.fn().mockImplementation((workspaceId, name) => {
-      if (name === 'calendarChannelEventAssociation') {
-        return mockCalendarEventAssociationRepository;
+      if (name === 'calendarChannelEventASsociation') {
+        return mockCalendarEventASsociationRepository;
       }
       if (name === 'workspaceMember') {
         return mockWorkspaceMemberRepository;
@@ -114,7 +114,7 @@ describe('ApplyCalendarEventsVisibilityRestrictionsService', () => {
       createMockCalendarEvent('1', 'Test Event', 'Test Description'),
     ];
 
-    mockCalendarEventAssociationRepository.find.mockResolvedValue([
+    mockCalendarEventASsociationRepository.find.mockResolvedValue([
       {
         calendarEventId: '1',
         calendarChannelId: '1',
@@ -150,7 +150,7 @@ describe('ApplyCalendarEventsVisibilityRestrictionsService', () => {
       createMockCalendarEvent('1', 'Test Event', 'Test Description'),
     ];
 
-    mockCalendarEventAssociationRepository.find.mockResolvedValue([
+    mockCalendarEventASsociationRepository.find.mockResolvedValue([
       {
         calendarEventId: '1',
         calendarChannelId: '1',
@@ -190,7 +190,7 @@ describe('ApplyCalendarEventsVisibilityRestrictionsService', () => {
       createMockCalendarEvent('1', 'Test Event', 'Test Description'),
     ];
 
-    mockCalendarEventAssociationRepository.find.mockResolvedValue([
+    mockCalendarEventASsociationRepository.find.mockResolvedValue([
       {
         calendarEventId: '1',
         calendarChannelId: '1',
@@ -231,7 +231,7 @@ describe('ApplyCalendarEventsVisibilityRestrictionsService', () => {
       createMockCalendarEvent('1', 'Test Event', 'Test Description'),
     ];
 
-    mockCalendarEventAssociationRepository.find.mockResolvedValue([
+    mockCalendarEventASsociationRepository.find.mockResolvedValue([
       {
         calendarEventId: '1',
         calendarChannelId: '1',
@@ -270,7 +270,7 @@ describe('ApplyCalendarEventsVisibilityRestrictionsService', () => {
       id: 'user-workspace-id',
     });
 
-    mockCalendarEventAssociationRepository.find.mockResolvedValue([
+    mockCalendarEventASsociationRepository.find.mockResolvedValue([
       {
         calendarEventId: '1',
         calendarChannelId: '1',
@@ -321,14 +321,14 @@ describe('ApplyCalendarEventsVisibilityRestrictionsService', () => {
     ]);
   });
 
-  it('should return all calendar events with the right visibility when userId is undefined (api key request)', async () => {
+  it('should return all calendar events with the right visibility when userId is undefined (Api key request)', async () => {
     const calendarEvents = [
       createMockCalendarEvent('1', 'Event 1', 'Description 1'),
       createMockCalendarEvent('2', 'Event 2', 'Description 2'),
       createMockCalendarEvent('3', 'Event 3', 'Description 3'),
     ];
 
-    mockCalendarEventAssociationRepository.find.mockResolvedValue([
+    mockCalendarEventASsociationRepository.find.mockResolvedValue([
       {
         calendarEventId: '1',
         calendarChannelId: '1',
@@ -358,7 +358,7 @@ describe('ApplyCalendarEventsVisibilityRestrictionsService', () => {
       },
     ]);
 
-    // userId is undefined (api key request), so connected account check is skipped
+    // userId is undefined (Api key request), so connected account check is skipped
     // METADATA events should be obfuscated
 
     const result = await service.applyCalendarEventsVisibilityRestrictions(

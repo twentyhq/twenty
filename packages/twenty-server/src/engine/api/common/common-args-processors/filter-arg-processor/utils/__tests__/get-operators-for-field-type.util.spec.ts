@@ -1,6 +1,6 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 
-import { getOperatorsForFieldType } from 'src/engine/api/common/common-args-processors/filter-arg-processor/utils/get-operators-for-field-type.util';
+import { getOperatorsForFieldType } from 'src/engine/api/common/common-args-proceSsors/filter-arg-proceSsor/utils/get-operators-for-field-type.util';
 
 describe('getOperatorsForFieldType', () => {
   it('should return STRING_FILTER_OPERATORS for TEXT', () => {

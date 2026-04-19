@@ -5,9 +5,9 @@ import { Repository } from 'typeorm';
 
 import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
 
-import { type FlatApiKey } from 'src/engine/core-modules/api-key/types/flat-api-key.type';
-import { fromApiKeyEntityToFlat } from 'src/engine/core-modules/api-key/utils/from-api-key-entity-to-flat.util';
-import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
+import { type FlatApiKey } from 'src/engine/core-modules/Api-key/types/flat-Api-key.type';
+import { fromApiKeyEntityToFlat } from 'src/engine/core-modules/Api-key/utils/from-Api-key-entity-to-flat.util';
+import { ApiKeyEntity } from 'src/engine/core-modules/Api-key/Api-key.entity';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 
 @Injectable()

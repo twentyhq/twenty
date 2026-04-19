@@ -45,7 +45,7 @@ export const COMPANY_FLAT_FIELDS_MOCK = {
       primaryLinkLabel: "''",
     },
     description:
-      'The company website URL. We use this url to fetch the company icon',
+      'The company website Url. We use this Url to fetch the company icon',
     icon: 'IconLink',
     standardOverrides: null,
     options: null,

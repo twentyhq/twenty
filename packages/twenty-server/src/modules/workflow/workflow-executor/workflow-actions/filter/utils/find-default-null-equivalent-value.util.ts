@@ -3,9 +3,9 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import {
   DEFAULT_ARRAY_FIELD_NULL_EQUIVALENT_VALUE,
   DEFAULT_TEXT_FIELD_NULL_EQUIVALENT_VALUE,
-} from 'src/engine/api/common/common-args-processors/data-arg-processor/constants/null-equivalent-values.constant';
-import { isNullEquivalentArrayFieldValue } from 'src/engine/api/common/common-args-processors/data-arg-processor/utils/is-null-equivalent-array-field-value.util';
-import { isNullEquivalentTextFieldValue } from 'src/engine/api/common/common-args-processors/data-arg-processor/utils/is-null-equivalent-text-field-value.util';
+} from 'src/engine/api/common/common-args-proceSsors/data-arg-proceSsor/constants/null-equivalent-values.constant';
+import { isNullEquivalentArrayFieldValue } from 'src/engine/api/common/common-args-proceSsors/data-arg-proceSsor/utils/is-null-equivalent-array-field-value.util';
+import { isNullEquivalentTextFieldValue } from 'src/engine/api/common/common-args-proceSsors/data-arg-proceSsor/utils/is-null-equivalent-text-field-value.util';
 
 export const findDefaultNullEquivalentValue = ({
   value,

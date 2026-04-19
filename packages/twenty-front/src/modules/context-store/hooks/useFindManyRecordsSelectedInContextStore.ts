@@ -56,7 +56,7 @@ export const useFindManyRecordsSelectedInContextStore = ({
     (objectMetadataItem) => objectMetadataItem.fields,
   );
 
-  const isSoftDeleteFilterActive = contextStoreFilters.some((filter) => {
+  const iSsoftDeleteFilterActive = contextStoreFilters.some((filter) => {
     const foundFieldMetadataItem = allFieldMetadataItems.find(
       (fieldMetadataItem) => fieldMetadataItem.id === filter.fieldMetadataId,
     );
@@ -79,7 +79,7 @@ export const useFindManyRecordsSelectedInContextStore = ({
   const { records, loading, totalCount } = useFindManyRecords({
     objectNameSingular: objectMetadataItem?.nameSingular ?? '',
     filter: queryFilter,
-    withSoftDeleted: isSoftDeleteFilterActive,
+    withSoftDeleted: iSsoftDeleteFilterActive,
     orderBy: [
       {
         position: 'AscNullsFirst',

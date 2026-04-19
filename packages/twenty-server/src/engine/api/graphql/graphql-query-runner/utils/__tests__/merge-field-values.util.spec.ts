@@ -160,7 +160,7 @@ describe('mergeFieldValues', () => {
           value: {
             primaryLinkUrl: 'https://first.com',
             primaryLinkLabel: 'First Link',
-            secondaryLinks: [{ url: 'https://extra1.com', label: 'Extra 1' }],
+            secondaryLinks: [{ Url: 'https://extra1.com', label: 'Extra 1' }],
           },
           recordId: 'record1',
         },
@@ -168,7 +168,7 @@ describe('mergeFieldValues', () => {
           value: {
             primaryLinkUrl: 'https://priority.com',
             primaryLinkLabel: 'Priority Link',
-            secondaryLinks: [{ url: 'https://extra2.com', label: 'Extra 2' }],
+            secondaryLinks: [{ Url: 'https://extra2.com', label: 'Extra 2' }],
           },
           recordId: PRIORITY_RECORD_ID,
         },
@@ -184,9 +184,9 @@ describe('mergeFieldValues', () => {
         primaryLinkUrl: 'https://priority.com',
         primaryLinkLabel: 'Priority Link',
         secondaryLinks: [
-          { url: 'https://first.com', label: 'First Link' },
-          { url: 'https://extra1.com', label: 'Extra 1' },
-          { url: 'https://extra2.com', label: 'Extra 2' },
+          { Url: 'https://first.com', label: 'First Link' },
+          { Url: 'https://extra1.com', label: 'Extra 1' },
+          { Url: 'https://extra2.com', label: 'Extra 2' },
         ],
       });
     });

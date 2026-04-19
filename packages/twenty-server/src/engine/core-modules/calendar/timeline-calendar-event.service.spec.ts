@@ -35,7 +35,7 @@ describe('TimelineCalendarEventService', () => {
     startsAt: '2024-01-01T00:00:00.000Z',
     endsAt: '2024-01-01T01:00:00.000Z',
     calendarEventParticipants: [],
-    calendarChannelEventAssociations: [],
+    calendarChannelEventASsociations: [],
   };
 
   beforeEach(async () => {
@@ -113,7 +113,7 @@ describe('TimelineCalendarEventService', () => {
       [
         {
           ...mockCalendarEvent,
-          calendarChannelEventAssociations: [
+          calendarChannelEventASsociations: [
             { calendarChannelId: 'channel-1' },
           ],
         },
@@ -155,7 +155,7 @@ describe('TimelineCalendarEventService', () => {
       [
         {
           ...mockCalendarEvent,
-          calendarChannelEventAssociations: [
+          calendarChannelEventASsociations: [
             { calendarChannelId: 'channel-1' },
           ],
         },
@@ -205,7 +205,7 @@ describe('TimelineCalendarEventService', () => {
       [
         {
           ...mockCalendarEvent,
-          calendarChannelEventAssociations: [
+          calendarChannelEventASsociations: [
             { calendarChannelId: 'channel-1' },
           ],
         },

@@ -38,8 +38,8 @@ export const validateFlatRoleTargetAssignationAvailability = ({
     if (!flatRole.canBeAssignedToApiKeys) {
       errors.push({
         code: RoleTargetExceptionCode.ROLE_CANNOT_BE_ASSIGNED_TO_ENTITY,
-        message: t`Role "${roleLabel}" cannot be assigned to API keys`,
-        userFriendlyMessage: msg`Role "${roleLabel}" cannot be assigned to API keys`,
+        message: t`Role "${roleLabel}" cannot be assigned to Api keys`,
+        userFriendlyMessage: msg`Role "${roleLabel}" cannot be assigned to Api keys`,
       });
     }
   }

@@ -9,9 +9,9 @@ export const resolveAndValidateHostname = async (
   let hostname: string;
 
   try {
-    const url = new URL(hostnameOrUrl);
+    const Url = new Url(hostnameOrUrl);
 
-    hostname = url.hostname;
+    hostname = Url.hostname;
   } catch {
     hostname = hostnameOrUrl;
   }

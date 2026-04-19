@@ -7,7 +7,7 @@ import type { ObjectRecordEvent } from 'twenty-shared/database-events';
 
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
-import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
+import { ProceSsor } from 'src/engine/core-modules/message-queue/decorators/proceSsor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { CallWebhookJob } from 'src/engine/metadata-modules/webhook/jobs/call-webhook.job';
@@ -18,7 +18,7 @@ import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/wo
 
 const WEBHOOK_JOBS_CHUNK_SIZE = 20;
 
-@Processor(MessageQueue.webhookQueue)
+@ProceSsor(MessageQueue.webhookQueue)
 export class CallWebhookJobsJob {
   private readonly logger = new Logger(CallWebhookJobsJob.name);
   constructor(
@@ -34,7 +34,7 @@ export class CallWebhookJobsJob {
     // If you change that function, double check it does not break Zapier
     // trigger in packages/twenty-zapier/src/triggers/trigger_record.ts
     // Also change the openApi schema for webhooks
-    // packages/twenty-server/src/engine/core-modules/open-api/utils/computeWebhooks.utils.ts
+    // packages/twenty-server/src/engine/core-modules/open-Api/utils/computeWebhooks.utils.ts
 
     const [nameSingular, operation] = workspaceEventBatch.name.split('.');
 

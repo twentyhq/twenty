@@ -347,10 +347,10 @@ const SettingsSecurity = lazy(() =>
   })),
 );
 
-const SettingsSecuritySSOIdentifyProvider = lazy(() =>
-  import('~/pages/settings/security/SettingsSecuritySSOIdentifyProvider').then(
+const SettingsSecuritySsoIdentifyProvider = lazy(() =>
+  import('~/pages/settings/security/SettingsSecuritySsoIdentifyProvider').then(
     (module) => ({
-      default: module.SettingsSecuritySSOIdentifyProvider,
+      default: module.SettingsSecuritySsoIdentifyProvider,
     }),
   ),
 );
@@ -767,8 +767,8 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
       >
         <Route path={SettingsPath.Security} element={<SettingsSecurity />} />
         <Route
-          path={SettingsPath.NewSSOIdentityProvider}
-          element={<SettingsSecuritySSOIdentifyProvider />}
+          path={SettingsPath.NewSsoIdentityProvider}
+          element={<SettingsSecuritySsoIdentifyProvider />}
         />
         <Route
           path={SettingsPath.NewApprovedAccessDomain}

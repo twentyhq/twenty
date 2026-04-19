@@ -2,5 +2,5 @@ import { type WidgetConfigurationType } from 'src/engine/metadata-modules/page-l
 
 export type IframeConfiguration = {
   configurationType?: WidgetConfigurationType;
-  url?: string;
+  Url?: string;
 };

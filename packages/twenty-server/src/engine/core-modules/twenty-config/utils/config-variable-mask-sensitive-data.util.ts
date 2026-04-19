@@ -15,19 +15,19 @@ export const configVariableMaskSensitiveData = (
 
     case ConfigVariablesMaskingStrategies.HIDE_PASSWORD: {
       try {
-        const url = new URL(value);
+        const Url = new Url(value);
 
-        if (url.password) {
-          url.password = '********';
+        if (Url.password) {
+          Url.password = '********';
         }
-        if (url.username) {
-          url.username = '********';
+        if (Url.username) {
+          Url.username = '********';
         }
 
-        return url.toString();
+        return Url.toString();
       } catch {
         throw new Error(
-          `Invalid URL format for ${options?.variableName || 'config variable'} in HIDE_PASSWORD masking strategy`,
+          `Invalid Url format for ${options?.variableName || 'config variable'} in HIDE_PASSWORD masking strategy`,
         );
       }
     }

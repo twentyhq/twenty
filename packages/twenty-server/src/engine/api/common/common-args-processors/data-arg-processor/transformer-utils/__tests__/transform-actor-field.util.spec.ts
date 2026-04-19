@@ -1,6 +1,6 @@
 import { FieldActorSource } from 'twenty-shared/types';
 
-import { transformActorField } from 'src/engine/api/common/common-args-processors/data-arg-processor/transformer-utils/transform-actor-field.util';
+import { transformActorField } from 'src/engine/api/common/common-args-proceSsors/data-arg-proceSsor/transformer-utils/transform-actor-field.util';
 
 describe('transformActorField', () => {
   it('should return null when value is null', () => {
@@ -45,12 +45,12 @@ describe('transformActorField', () => {
 
   it('should transform actor with null context', () => {
     const result = transformActorField({
-      source: FieldActorSource.API,
+      source: FieldActorSource.Api,
       context: null,
     });
 
     expect(result).toEqual({
-      source: FieldActorSource.API,
+      source: FieldActorSource.Api,
       context: null,
     });
   });

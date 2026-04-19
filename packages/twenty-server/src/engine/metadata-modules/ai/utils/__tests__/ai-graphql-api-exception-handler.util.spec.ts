@@ -2,7 +2,7 @@ import {
   AiException,
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
-import { aiGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/ai/utils/ai-graphql-api-exception-handler.util';
+import { aiGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/ai/utils/ai-graphql-Api-exception-handler.util';
 import {
   ErrorCode,
   type BaseGraphQLError,
@@ -18,7 +18,7 @@ const catchGraphqlError = (error: Error): BaseGraphQLError => {
 };
 
 describe('aiGraphqlApiExceptionHandler', () => {
-  it('maps API key configuration failures to INTERNAL_SERVER_ERROR with a subCode', () => {
+  it('maps Api key configuration failures to INTERNAL_SERVER_ERROR with a subCode', () => {
     const error = new AiException(
       'No AI models are available',
       AiExceptionCode.API_KEY_NOT_CONFIGURED,

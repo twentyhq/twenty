@@ -5,5 +5,5 @@ export enum UsageResourceType {
   WORKFLOW = 'WORKFLOW',
   APP = 'APP',
   STORAGE = 'STORAGE',
-  API = 'API',
+  Api = 'Api',
 }

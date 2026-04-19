@@ -94,7 +94,7 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
     );
 
     const groupByFields =
-      this.groupByArgProcessor.validateAndTransformGroupByFieldsOrThrow({
+      this.groupByArgProceSsor.validateAndTransformGroupByFieldsOrThrow({
         groupBy: args.groupBy,
         flatObjectMetadata,
         flatObjectMetadataMaps,
@@ -396,11 +396,11 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
     args: CommonInput<GroupByQueryArgs>,
     queryRunnerContext: CommonBaseQueryRunnerContext,
   ): Promise<void> {
-    const normalizedGroupBy = this.groupByArgProcessor.process({
+    const normalizedGroupBy = this.groupByArgProceSsor.process({
       groupBy: args.groupBy,
     });
 
-    this.groupByArgProcessor.validateAndTransformGroupByFieldsOrThrow({
+    this.groupByArgProceSsor.validateAndTransformGroupByFieldsOrThrow({
       groupBy: normalizedGroupBy,
       flatObjectMetadata: queryRunnerContext.flatObjectMetadata,
       flatObjectMetadataMaps: queryRunnerContext.flatObjectMetadataMaps,
@@ -416,16 +416,16 @@ export class CommonGroupByQueryRunnerService extends CommonBaseQueryRunnerServic
 
     return {
       ...args,
-      groupBy: this.groupByArgProcessor.process({
+      groupBy: this.groupByArgProceSsor.process({
         groupBy: args.groupBy,
       }),
-      orderBy: this.orderByWithGroupByArgProcessor.process({
+      orderBy: this.orderByWithGroupByArgProceSsor.process({
         orderBy: args.orderBy,
       }),
-      orderByForRecords: this.orderByArgProcessor.process({
+      orderByForRecords: this.orderByArgProceSsor.process({
         orderBy: args.orderByForRecords,
       }),
-      filter: this.filterArgProcessor.process({
+      filter: this.filterArgProceSsor.process({
         filter: args.filter,
         flatObjectMetadata,
         flatFieldMetadataMaps,

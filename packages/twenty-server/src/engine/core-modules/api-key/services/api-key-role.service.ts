@@ -4,11 +4,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { isDefined } from 'twenty-shared/utils';
 import { In, IsNull, Not, Repository } from 'typeorm';
 
-import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
+import { ApiKeyEntity } from 'src/engine/core-modules/Api-key/Api-key.entity';
 import {
   ApiKeyException,
   ApiKeyExceptionCode,
-} from 'src/engine/core-modules/api-key/exceptions/api-key.exception';
+} from 'src/engine/core-modules/Api-key/exceptions/Api-key.exception';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { RoleTargetService } from 'src/engine/metadata-modules/role-target/services/role-target.service';
@@ -74,7 +74,7 @@ export class ApiKeyRoleService {
 
     if (!isDefined(roleId)) {
       throw new ApiKeyException(
-        `API key ${apiKeyId} has no role assigned`,
+        `Api key ${apiKeyId} has no role assigned`,
         ApiKeyExceptionCode.API_KEY_NO_ROLE_ASSIGNED,
       );
     }
@@ -99,7 +99,7 @@ export class ApiKeyRoleService {
 
     if (!isDefined(roleId)) {
       throw new ApiKeyException(
-        `API key ${apiKeyId} has no role assigned`,
+        `Api key ${apiKeyId} has no role assigned`,
         ApiKeyExceptionCode.API_KEY_NO_ROLE_ASSIGNED,
       );
     }
@@ -111,7 +111,7 @@ export class ApiKeyRoleService {
 
     if (!isDefined(flatRole)) {
       throw new ApiKeyException(
-        `Role ${roleId} not found for API key ${apiKeyId}`,
+        `Role ${roleId} not found for Api key ${apiKeyId}`,
         ApiKeyExceptionCode.API_KEY_NO_ROLE_ASSIGNED,
       );
     }
@@ -134,7 +134,7 @@ export class ApiKeyRoleService {
 
     if (!apiKey) {
       throw new ApiKeyException(
-        `API Key with id ${apiKeyId} not found in workspace`,
+        `Api Key with id ${apiKeyId} not found in workspace`,
         ApiKeyExceptionCode.API_KEY_NOT_FOUND,
       );
     }
@@ -152,7 +152,7 @@ export class ApiKeyRoleService {
 
     if (!role.canBeAssignedToApiKeys) {
       throw new ApiKeyException(
-        `Role "${role.label}" cannot be assigned to API keys`,
+        `Role "${role.label}" cannot be assigned to Api keys`,
         ApiKeyExceptionCode.ROLE_CANNOT_BE_ASSIGNED_TO_API_KEYS,
       );
     }

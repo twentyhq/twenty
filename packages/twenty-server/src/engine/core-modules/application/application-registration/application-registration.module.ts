@@ -11,7 +11,7 @@ import { ApplicationModule } from 'src/engine/core-modules/application/applicati
 import { DomainServerConfigModule } from 'src/engine/core-modules/domain/domain-server-config/domain-server-config.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { FileStorageModule } from 'src/engine/core-modules/file-storage/file-storage.module';
-import { FileUrlModule } from 'src/engine/core-modules/file/file-url/file-url.module';
+import { FileUrlModule } from 'src/engine/core-modules/file/file-Url/file-Url.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';

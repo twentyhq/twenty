@@ -29,7 +29,7 @@ export const useHandleNavigationMenuItemDragAndDrop = (
   const store = useStore();
   const { navigationMenuItems, workspaceNavigationMenuItems } =
     useNavigationMenuItemsData();
-  const { navigationMenuItemsSorted } = useSortedNavigationMenuItems();
+  const { navigationMenuItemSsorted } = useSortedNavigationMenuItems();
   const { updateManyNavigationMenuItems } = useUpdateManyNavigationMenuItems();
   const setNavigationMenuItemsDraft = useSetAtomState(
     navigationMenuItemsDraftState,
@@ -53,7 +53,7 @@ export const useHandleNavigationMenuItemDragAndDrop = (
       ? (store.get(navigationMenuItemsDraftState.atom) ?? []).sort(
           (a, b) => a.position - b.position,
         )
-      : navigationMenuItemsSorted;
+      : navigationMenuItemSsorted;
 
   const applyReorder = async (
     draggableId: string,

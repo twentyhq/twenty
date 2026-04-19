@@ -67,7 +67,7 @@ describe('AdminPanelConfigService', () => {
           value: 'http://localhost',
           metadata: {
             group: 'SERVER_CONFIG',
-            description: 'Server URL',
+            description: 'Server Url',
             type: 'string',
             options: undefined,
           },
@@ -87,7 +87,7 @@ describe('AdminPanelConfigService', () => {
           value: 'secret-key',
           metadata: {
             group: 'SERVER_CONFIG',
-            description: 'API Key',
+            description: 'Api Key',
             isSensitive: true,
             type: 'string',
             options: undefined,
@@ -118,7 +118,7 @@ describe('AdminPanelConfigService', () => {
               {
                 name: 'API_KEY',
                 value: 'secret-key',
-                description: 'API Key',
+                description: 'Api Key',
                 isSensitive: true,
                 isEnvOnly: false,
                 type: 'string',
@@ -128,7 +128,7 @@ describe('AdminPanelConfigService', () => {
               {
                 name: 'SERVER_URL',
                 value: 'http://localhost',
-                description: 'Server URL',
+                description: 'Server Url',
                 isSensitive: false,
                 isEnvOnly: false,
                 type: 'string',
@@ -329,9 +329,9 @@ describe('AdminPanelVersionService', () => {
       });
     });
 
-    it('should handle Docker Hub API error', async () => {
+    it('should handle Docker Hub Api error', async () => {
       mockEnvironmentGet.mockReturnValue('1.0.0');
-      mockHttpClientGet.mockRejectedValue(new Error('API Error'));
+      mockHttpClientGet.mockRejectedValue(new Error('Api Error'));
 
       const result = await versionService.getVersionInfo();
 

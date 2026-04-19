@@ -35,7 +35,7 @@ const getAiExceptionUserFriendlyMessage = (code: AiExceptionCode) => {
     case AiExceptionCode.MESSAGE_NOT_FOUND:
       return msg`Chat message not found.`;
     case AiExceptionCode.API_KEY_NOT_CONFIGURED:
-      return msg`API key is not configured.`;
+      return msg`Api key is not configured.`;
     case AiExceptionCode.USER_WORKSPACE_ID_NOT_FOUND:
       return msg`User workspace not found.`;
     case AiExceptionCode.ROLE_NOT_FOUND:

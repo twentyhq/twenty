@@ -6,8 +6,8 @@ export const isValidAuthTokenPair = (
   return (
     tokenPair &&
     typeof tokenPair === 'object' &&
-    tokenPair.accessOrWorkspaceAgnosticToken &&
-    typeof tokenPair.accessOrWorkspaceAgnosticToken === 'object' &&
-    typeof tokenPair.accessOrWorkspaceAgnosticToken.token === 'string'
+    tokenPair.acceSsorWorkspaceAgnosticToken &&
+    typeof tokenPair.acceSsorWorkspaceAgnosticToken === 'object' &&
+    typeof tokenPair.acceSsorWorkspaceAgnosticToken.token === 'string'
   );
 };

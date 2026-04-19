@@ -65,7 +65,7 @@ export class ConnectedAccountDTO {
   lastSignedInAt: Date | null;
 
   @HideField()
-  oidcTokenClaims: Record<string, unknown> | null;
+  OidcTokenClaims: Record<string, unknown> | null;
 
   @IsUUID()
   @IsNotEmpty()

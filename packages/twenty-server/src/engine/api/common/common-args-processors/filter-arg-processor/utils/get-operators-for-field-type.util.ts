@@ -12,8 +12,8 @@ import {
   RICH_TEXT_FILTER_OPERATORS,
   STRING_FILTER_OPERATORS,
   UUID_FILTER_OPERATORS,
-} from 'src/engine/api/common/common-args-processors/filter-arg-processor/constants/filter-operators.constant';
-import { type FilterOperator } from 'src/engine/api/common/common-args-processors/filter-arg-processor/types/filter-operator.type';
+} from 'src/engine/api/common/common-args-proceSsors/filter-arg-proceSsor/constants/filter-operators.constant';
+import { type FilterOperator } from 'src/engine/api/common/common-args-proceSsors/filter-arg-proceSsor/types/filter-operator.type';
 
 export const getOperatorsForFieldType = (
   fieldType: FieldMetadataType,

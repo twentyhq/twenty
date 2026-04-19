@@ -43,7 +43,7 @@ describe('configVariableMaskSensitiveData', () => {
   });
 
   describe('HIDE_PASSWORD strategy', () => {
-    it('should mask password in URL', () => {
+    it('should mask password in Url', () => {
       const result = configVariableMaskSensitiveData(
         'postgresql://user:password123@localhost:5432/db',
         ConfigVariablesMaskingStrategies.HIDE_PASSWORD,
@@ -52,7 +52,7 @@ describe('configVariableMaskSensitiveData', () => {
       expect(result).toBe('postgresql://********:********@localhost:5432/db');
     });
 
-    it('should handle URL without password', () => {
+    it('should handle Url without password', () => {
       const result = configVariableMaskSensitiveData(
         'postgresql://localhost:5432/db',
         ConfigVariablesMaskingStrategies.HIDE_PASSWORD,
@@ -64,12 +64,12 @@ describe('configVariableMaskSensitiveData', () => {
     it('should throw error for invalid URLs', () => {
       expect(() =>
         configVariableMaskSensitiveData(
-          'not-a-url',
+          'not-a-Url',
           ConfigVariablesMaskingStrategies.HIDE_PASSWORD,
           { variableName: 'TEST_URL' },
         ),
       ).toThrow(
-        'Invalid URL format for TEST_URL in HIDE_PASSWORD masking strategy',
+        'Invalid Url format for TEST_URL in HIDE_PASSWORD masking strategy',
       );
     });
   });

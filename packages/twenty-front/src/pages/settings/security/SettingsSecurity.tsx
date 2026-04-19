@@ -15,11 +15,11 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { SettingsRoleDefaultRole } from '@/settings/roles/components/SettingsRolesDefaultRole';
 import { SettingsRolesQueryEffect } from '@/settings/roles/components/SettingsRolesQueryEffect';
 import { useSettingsAllRoles } from '@/settings/roles/hooks/useSettingsAllRoles';
-import { SettingsSSOIdentitiesProvidersListCard } from '@/settings/security/components/SSO/SettingsSSOIdentitiesProvidersListCard';
-import { SettingsSecurityAuthBypassOptionsList } from '@/settings/security/components/SettingsSecurityAuthBypassOptionsList';
+import { SettingsSsoIdentitiesProvidersListCard } from '@/settings/security/components/Sso/SettingsSsoIdentitiesProvidersListCard';
+import { SettingsSecurityAuthBypaSsoptionsList } from '@/settings/security/components/SettingsSecurityAuthBypaSsoptionsList';
 import { SettingsSecurityAuthProvidersOptionsList } from '@/settings/security/components/SettingsSecurityAuthProvidersOptionsList';
 import { SettingsSecurityEditableProfileFields } from '@/settings/security/components/SettingsSecurityEditableProfileFields';
-import { SSOIdentitiesProvidersState } from '@/settings/security/states/SSOIdentitiesProvidersState';
+import { SsoIdentitiesProvidersState } from '@/settings/security/states/SsoIdentitiesProvidersState';
 import { ToggleImpersonate } from '@/settings/workspace/components/ToggleImpersonate';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
@@ -76,7 +76,7 @@ export const SettingsSecurity = () => {
   );
   const isClickHouseConfigured = useAtomStateValue(isClickHouseConfiguredState);
   const authProviders = useAtomStateValue(authProvidersState);
-  const SSOIdentitiesProviders = useAtomStateValue(SSOIdentitiesProvidersState);
+  const SsoIdentitiesProviders = useAtomStateValue(SsoIdentitiesProvidersState);
   const [currentWorkspace, setCurrentWorkspace] = useAtomState(
     currentWorkspaceState,
   );
@@ -150,7 +150,7 @@ export const SettingsSecurity = () => {
 
   const roles = useSettingsAllRoles();
 
-  const hasSsoIdentityProviders = SSOIdentitiesProviders.length > 0;
+  const hasSsoIdentityProviders = SsoIdentitiesProviders.length > 0;
   const hasDirectAuthEnabled =
     currentWorkspace?.isGoogleAuthEnabled ||
     currentWorkspace?.isMicrosoftAuthEnabled ||
@@ -184,8 +184,8 @@ export const SettingsSecurity = () => {
           <StyledSectionContainer>
             <Section>
               <H2Title
-                title={t`SSO`}
-                description={t`Configure an SSO connection`}
+                title={t`Sso`}
+                description={t`Configure an Sso connection`}
                 adornment={
                   <Tag
                     text={t`Enterprise`}
@@ -195,7 +195,7 @@ export const SettingsSecurity = () => {
                   />
                 }
               />
-              <SettingsSSOIdentitiesProvidersListCard />
+              <SettingsSsoIdentitiesProvidersListCard />
             </Section>
           </StyledSectionContainer>
 
@@ -222,10 +222,10 @@ export const SettingsSecurity = () => {
             <Section>
               <StyledContainer>
                 <H2Title
-                  title={t`SSO Bypass`}
-                  description={t`Configure fallback login methods for users with SSO bypass permissions`}
+                  title={t`Sso Bypass`}
+                  description={t`Configure fallback login methods for users with Sso bypass permissions`}
                 />
-                <SettingsSecurityAuthBypassOptionsList />
+                <SettingsSecurityAuthBypaSsoptionsList />
               </StyledContainer>
             </Section>
           )}

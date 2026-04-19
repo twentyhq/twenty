@@ -435,7 +435,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
             settings: {
               ...BASE_STEP_DEFINITION,
               input: {
-                url: '',
+                Url: '',
                 method: 'GET',
                 headers: {},
                 body: {},

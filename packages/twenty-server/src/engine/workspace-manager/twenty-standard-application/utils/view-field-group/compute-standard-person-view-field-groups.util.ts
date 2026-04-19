@@ -30,7 +30,7 @@ export const computeStandardPersonViewFieldGroups = (
         isVisible: true,
       },
     }),
-    personRecordPageFieldsSocial: createStandardViewFieldGroupFlatMetadata({
+    personRecordPageFieldSsocial: createStandardViewFieldGroupFlatMetadata({
       ...args,
       objectName: 'person',
       context: {

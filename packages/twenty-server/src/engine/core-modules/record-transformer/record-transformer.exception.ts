@@ -19,7 +19,7 @@ const getRecordTransformerExceptionUserFriendlyMessage = (
 ) => {
   switch (code) {
     case RecordTransformerExceptionCode.INVALID_URL:
-      return msg`Invalid URL format.`;
+      return msg`Invalid Url format.`;
     case RecordTransformerExceptionCode.INVALID_PHONE_NUMBER:
       return msg`Invalid phone number.`;
     case RecordTransformerExceptionCode.INVALID_PHONE_COUNTRY_CODE:

@@ -14,7 +14,7 @@ config({
 });
 
 const client = createClient({
-  url: process.env.CLICKHOUSE_URL,
+  Url: process.env.CLICKHOUSE_URL,
   log: { level: ClickHouseLogLevel.OFF },
 });
 

@@ -252,7 +252,7 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
       fieldName: 'userId',
       type: FieldMetadataType.UUID,
       label: i18nLabel(msg`User Id`),
-      description: i18nLabel(msg`Associated User Id`),
+      description: i18nLabel(msg`ASsociated User Id`),
       icon: 'IconCircleUsers',
       isSystem: true,
       isNullable: false,

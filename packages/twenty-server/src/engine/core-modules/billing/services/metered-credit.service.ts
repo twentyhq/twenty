@@ -36,7 +36,7 @@ export class MeteredCreditService {
 
   /**
    * Get metered pricing info for a subscription by looking up the metered subscription item
-   * and extracting tier cap and unit price from the associated price.
+   * and extracting tier cap and unit price from the aSsociated price.
    */
   async getMeteredPricingInfo(
     subscriptionId: string,

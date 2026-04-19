@@ -10,7 +10,7 @@ import { computeMessageDirection } from 'src/modules/messaging/message-import-ma
 import { MicrosoftImportDriverException } from 'src/modules/messaging/message-import-manager/drivers/microsoft/exceptions/microsoft-import-driver.exception';
 import { type MicrosoftGraphBatchResponse } from 'src/modules/messaging/message-import-manager/drivers/microsoft/services/microsoft-get-messages.interface';
 import { type MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message';
-import { formatAddressObjectAsParticipants } from 'src/modules/messaging/message-import-manager/utils/format-address-object-as-participants.util';
+import { formatAddreSsobjectAsParticipants } from 'src/modules/messaging/message-import-manager/utils/format-address-object-as-participants.util';
 import { safeParseEmailAddress } from 'src/modules/messaging/message-import-manager/utils/safe-parse.util';
 
 import { MicrosoftFetchByBatchService } from './microsoft-fetch-by-batch.service';
@@ -110,25 +110,25 @@ export class MicrosoftGetMessagesService {
 
       const participants = [
         ...(safeParseFrom
-          ? formatAddressObjectAsParticipants(
+          ? formatAddreSsobjectAsParticipants(
               safeParseFrom,
               MessageParticipantRole.FROM,
             )
           : []),
         ...(safeParseTo
-          ? formatAddressObjectAsParticipants(
+          ? formatAddreSsobjectAsParticipants(
               safeParseTo,
               MessageParticipantRole.TO,
             )
           : []),
         ...(safeParseCc
-          ? formatAddressObjectAsParticipants(
+          ? formatAddreSsobjectAsParticipants(
               safeParseCc,
               MessageParticipantRole.CC,
             )
           : []),
         ...(safeParseBcc
-          ? formatAddressObjectAsParticipants(
+          ? formatAddreSsobjectAsParticipants(
               safeParseBcc,
               MessageParticipantRole.BCC,
             )

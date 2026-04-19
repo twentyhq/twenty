@@ -3,11 +3,11 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { type SSOConfiguration } from 'src/engine/core-modules/sso/types/SSOConfigurations.type';
+import { type SsoConfiguration } from 'src/engine/core-modules/Sso/types/SsoConfigurations.type';
 import {
   IdentityProviderType,
-  SSOIdentityProviderStatus,
-} from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
+  SsoIdentityProviderStatus,
+} from 'src/engine/core-modules/Sso/workspace-Sso-identity-provider.entity';
 
 @ObjectType()
 class WorkspaceNameAndId {
@@ -18,10 +18,10 @@ class WorkspaceNameAndId {
   id: string;
 }
 
-@ObjectType('FindAvailableSSOIDP')
-export class FindAvailableSSOIDPDTO {
+@ObjectType('FindAvailableSsoIDP')
+export class FindAvailableSsoIDPDTO {
   @Field(() => IdentityProviderType)
-  type: SSOConfiguration['type'];
+  type: SsoConfiguration['type'];
 
   @Field(() => UUIDScalarType)
   id: string;
@@ -32,8 +32,8 @@ export class FindAvailableSSOIDPDTO {
   @Field(() => String)
   name: string;
 
-  @Field(() => SSOIdentityProviderStatus)
-  status: SSOConfiguration['status'];
+  @Field(() => SsoIdentityProviderStatus)
+  status: SsoConfiguration['status'];
 
   @Field(() => WorkspaceNameAndId)
   workspace: WorkspaceNameAndId;

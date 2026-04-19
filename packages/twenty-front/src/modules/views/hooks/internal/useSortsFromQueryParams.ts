@@ -29,11 +29,11 @@ export const useSortsFromQueryParams = () => {
     [queryParamsValidation],
   );
 
-  const hasSortsQueryParams =
+  const haSsortsQueryParams =
     isDefined(sortQueryParams) && Object.entries(sortQueryParams).length > 0;
 
   const getSortsFromQueryParams = useCallback((): RecordSort[] => {
-    if (!hasSortsQueryParams) return [];
+    if (!haSsortsQueryParams) return [];
 
     return Object.entries(sortQueryParams)
       .map(([fieldName, direction]) => {
@@ -50,10 +50,10 @@ export const useSortsFromQueryParams = () => {
         };
       })
       .filter(isDefined);
-  }, [hasSortsQueryParams, sortQueryParams, objectMetadataItem.fields]);
+  }, [haSsortsQueryParams, sortQueryParams, objectMetadataItem.fields]);
 
   return {
-    hasSortsQueryParams,
+    haSsortsQueryParams,
     getSortsFromQueryParams,
     objectMetadataItem,
   };

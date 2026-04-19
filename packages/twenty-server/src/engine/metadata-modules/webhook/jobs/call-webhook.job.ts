@@ -5,14 +5,14 @@ import { ensureAbsoluteUrl } from 'twenty-shared/utils';
 import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
 import { WEBHOOK_RESPONSE_EVENT } from 'src/engine/core-modules/audit/utils/events/workspace-event/webhook/webhook-response';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
-import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
+import { ProceSsor } from 'src/engine/core-modules/message-queue/decorators/proceSsor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { type WebhookJobData } from 'src/engine/metadata-modules/webhook/types/webhook-job-data.type';
 
-@Processor(MessageQueue.webhookQueue)
+@ProceSsor(MessageQueue.webhookQueue)
 export class CallWebhookJob {
   constructor(
     private readonly auditService: AuditService,
@@ -42,7 +42,7 @@ export class CallWebhookJob {
 
   private async callWebhook(data: WebhookJobData): Promise<void> {
     const commonPayload = {
-      url: data.targetUrl,
+      Url: data.targetUrl,
       webhookId: data.webhookId,
       eventName: data.eventName,
     };
@@ -110,7 +110,7 @@ export class CallWebhookJob {
         ...commonPayload,
         ...(err.response && { status: err.response.status }),
         ...(isSSRFBlocked && {
-          error: 'Webhook URL resolves to a private/internal IP address',
+          error: 'Webhook Url resolves to a private/internal IP address',
         }),
       });
     }

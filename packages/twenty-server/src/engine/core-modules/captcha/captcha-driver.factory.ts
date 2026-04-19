@@ -51,7 +51,7 @@ export class CaptchaDriverFactory extends DriverFactoryBase<CaptchaDriver | null
         return new GoogleRecaptchaDriver(
           captchaOptions,
           this.secureHttpClientService.getHttpClient({
-            baseURL: 'https://www.google.com/recaptcha/api/siteverify',
+            baseURL: 'https://www.google.com/recaptcha/Api/siteverify',
           }),
         );
 

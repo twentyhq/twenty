@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
-import { ApiKeyModule } from 'src/engine/core-modules/api-key/api-key.module';
+import { ApiKeyEntity } from 'src/engine/core-modules/Api-key/Api-key.entity';
+import { ApiKeyModule } from 'src/engine/core-modules/Api-key/Api-key.module';
 import { ApplicationRegistrationModule } from 'src/engine/core-modules/application/application-registration/application-registration.module';
 import { AppTokenEntity } from 'src/engine/core-modules/app-token/app-token.entity';
 import { AppTokenService } from 'src/engine/core-modules/app-token/services/app-token.service';
@@ -14,12 +14,12 @@ import { GoogleAuthController } from 'src/engine/core-modules/auth/controllers/g
 import { MicrosoftAPIsAuthController } from 'src/engine/core-modules/auth/controllers/microsoft-apis-auth.controller';
 import { MicrosoftAuthController } from 'src/engine/core-modules/auth/controllers/microsoft-auth.controller';
 import { OAuthPropagatorController } from 'src/engine/core-modules/auth/controllers/oauth-propagator.controller';
-import { SSOAuthController } from 'src/engine/core-modules/auth/controllers/sso-auth.controller';
-import { AuthSsoService } from 'src/engine/core-modules/auth/services/auth-sso.service';
+import { SsoAuthController } from 'src/engine/core-modules/auth/controllers/Sso-auth.controller';
+import { AuthSsoService } from 'src/engine/core-modules/auth/services/auth-Sso.service';
 import { CreateCalendarChannelService } from 'src/engine/core-modules/auth/services/create-calendar-channel.service';
 import { CreateConnectedAccountService } from 'src/engine/core-modules/auth/services/create-connected-account.service';
 import { CreateMessageChannelService } from 'src/engine/core-modules/auth/services/create-message-channel.service';
-import { CreateSSOConnectedAccountService } from 'src/engine/core-modules/auth/services/create-sso-connected-account.service';
+import { CreateSsoConnectedAccountService } from 'src/engine/core-modules/auth/services/create-Sso-connected-account.service';
 import { GoogleAPIScopesService } from 'src/engine/core-modules/auth/services/google-apis-scopes';
 import { GoogleApisServiceAvailabilityService } from 'src/engine/core-modules/auth/services/google-apis-service-availability.service';
 import { GoogleAPIsService } from 'src/engine/core-modules/auth/services/google-apis.service';
@@ -27,7 +27,7 @@ import { MicrosoftAPIsService } from 'src/engine/core-modules/auth/services/micr
 import { ResetPasswordService } from 'src/engine/core-modules/auth/services/reset-password.service';
 import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-up.service';
 import { UpdateConnectedAccountOnReconnectService } from 'src/engine/core-modules/auth/services/update-connected-account-on-reconnect.service';
-import { SamlAuthStrategy } from 'src/engine/core-modules/auth/strategies/saml.auth.strategy';
+import { SamlAuthStrategy } from 'src/engine/core-modules/auth/strategies/Saml.auth.strategy';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 import { RefreshTokenService } from 'src/engine/core-modules/auth/token/services/refresh-token.service';
@@ -47,8 +47,8 @@ import { KeyValuePairEntity } from 'src/engine/core-modules/key-value-pair/key-v
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { OnboardingModule } from 'src/engine/core-modules/onboarding/onboarding.module';
 import { SecureHttpClientModule } from 'src/engine/core-modules/secure-http-client/secure-http-client.module';
-import { WorkspaceSSOModule } from 'src/engine/core-modules/sso/sso.module';
-import { WorkspaceSSOIdentityProviderEntity } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
+import { WorkspaceSsoModule } from 'src/engine/core-modules/Sso/Sso.module';
+import { WorkspaceSsoIdentityProviderEntity } from 'src/engine/core-modules/Sso/workspace-Sso-identity-provider.entity';
 import { TwoFactorAuthenticationMethodEntity } from 'src/engine/core-modules/two-factor-authentication/entities/two-factor-authentication-method.entity';
 import { TwoFactorAuthenticationModule } from 'src/engine/core-modules/two-factor-authentication/two-factor-authentication.module';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
@@ -87,7 +87,7 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
       ApiKeyEntity,
       ApplicationEntity,
       FeatureFlagEntity,
-      WorkspaceSSOIdentityProviderEntity,
+      WorkspaceSsoIdentityProviderEntity,
       KeyValuePairEntity,
       UserWorkspaceEntity,
       TwoFactorAuthenticationMethodEntity,
@@ -101,7 +101,7 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
     ConnectedAccountModule,
     MessagingCommonModule,
     MessagingFolderSyncManagerModule,
-    WorkspaceSSOModule,
+    WorkspaceSsoModule,
     FeatureFlagModule,
     WorkspaceInvitationModule,
     EmailVerificationModule,
@@ -127,7 +127,7 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
     GoogleAPIsAuthController,
     MicrosoftAPIsAuthController,
     OAuthPropagatorController,
-    SSOAuthController,
+    SsoAuthController,
   ],
   providers: [
     SignInUpService,
@@ -151,7 +151,7 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
     CreateMessageChannelService,
     CreateCalendarChannelService,
     CreateConnectedAccountService,
-    CreateSSOConnectedAccountService,
+    CreateSsoConnectedAccountService,
     UpdateConnectedAccountOnReconnectService,
     TransientTokenService,
     AuthSsoService,

@@ -28,7 +28,7 @@ export class DeleteViewSortPermissionGuard implements CanActivate {
       entityId = args.id;
     }
 
-    // For REST: extract from URL params
+    // For REST: extract from Url params
     if (!entityId && typeof request.params?.id === 'string') {
       entityId = request.params.id;
     }

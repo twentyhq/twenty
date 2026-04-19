@@ -12,7 +12,7 @@ import { useOnboardingStatus } from '@/onboarding/hooks/useOnboardingStatus';
 import { OnboardingStatus } from '~/generated-metadata/graphql';
 
 const tokenPair = {
-  accessOrWorkspaceAgnosticToken: {
+  acceSsorWorkspaceAgnosticToken: {
     token: 'accessToken',
     expiresAt: 'expiresAt',
   },

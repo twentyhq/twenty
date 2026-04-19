@@ -62,27 +62,27 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
       twentyStandardApplicationId,
       now,
     }),
-  calendarChannelEventAssociation: ({
+  calendarChannelEventASsociation: ({
     now,
     workspaceId,
     standardObjectMetadataRelatedEntityIds,
     twentyStandardApplicationId,
     dependencyFlatEntityMaps,
   }: Omit<
-    CreateStandardObjectArgs<'calendarChannelEventAssociation'>,
+    CreateStandardObjectArgs<'calendarChannelEventASsociation'>,
     'context' | 'objectName'
   >) =>
     createStandardObjectFlatMetadata({
-      objectName: 'calendarChannelEventAssociation',
+      objectName: 'calendarChannelEventASsociation',
       dependencyFlatEntityMaps,
       context: {
         universalIdentifier:
-          STANDARD_OBJECTS.calendarChannelEventAssociation.universalIdentifier,
-        nameSingular: 'calendarChannelEventAssociation',
-        namePlural: 'calendarChannelEventAssociations',
-        labelSingular: i18nLabel(msg`Calendar Channel Event Association`),
-        labelPlural: i18nLabel(msg`Calendar Channel Event Associations`),
-        description: i18nLabel(msg`Calendar Channel Event Associations`),
+          STANDARD_OBJECTS.calendarChannelEventASsociation.universalIdentifier,
+        nameSingular: 'calendarChannelEventASsociation',
+        namePlural: 'calendarChannelEventASsociations',
+        labelSingular: i18nLabel(msg`Calendar Channel Event ASsociation`),
+        labelPlural: i18nLabel(msg`Calendar Channel Event ASsociations`),
+        description: i18nLabel(msg`Calendar Channel Event ASsociations`),
         icon: 'IconCalendar',
         isSystem: true,
         isAuditLogged: false,
@@ -270,26 +270,26 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
       twentyStandardApplicationId,
       now,
     }),
-  messageChannelMessageAssociation: ({
+  messageChannelMessageASsociation: ({
     now,
     workspaceId,
     standardObjectMetadataRelatedEntityIds,
     twentyStandardApplicationId,
     dependencyFlatEntityMaps,
   }: Omit<
-    CreateStandardObjectArgs<'messageChannelMessageAssociation'>,
+    CreateStandardObjectArgs<'messageChannelMessageASsociation'>,
     'context' | 'objectName'
   >) =>
     createStandardObjectFlatMetadata({
-      objectName: 'messageChannelMessageAssociation',
+      objectName: 'messageChannelMessageASsociation',
       dependencyFlatEntityMaps,
       context: {
         universalIdentifier:
-          STANDARD_OBJECTS.messageChannelMessageAssociation.universalIdentifier,
-        nameSingular: 'messageChannelMessageAssociation',
-        namePlural: 'messageChannelMessageAssociations',
-        labelSingular: i18nLabel(msg`Message Channel Message Association`),
-        labelPlural: i18nLabel(msg`Message Channel Message Associations`),
+          STANDARD_OBJECTS.messageChannelMessageASsociation.universalIdentifier,
+        nameSingular: 'messageChannelMessageASsociation',
+        namePlural: 'messageChannelMessageASsociations',
+        labelSingular: i18nLabel(msg`Message Channel Message ASsociation`),
+        labelPlural: i18nLabel(msg`Message Channel Message ASsociations`),
         description: i18nLabel(msg`Message Synced with a Message Channel`),
         icon: 'IconMessage',
         isSystem: true,
@@ -362,33 +362,33 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
       twentyStandardApplicationId,
       now,
     }),
-  messageChannelMessageAssociationMessageFolder: ({
+  messageChannelMessageASsociationMessageFolder: ({
     now,
     workspaceId,
     standardObjectMetadataRelatedEntityIds,
     twentyStandardApplicationId,
     dependencyFlatEntityMaps,
   }: Omit<
-    CreateStandardObjectArgs<'messageChannelMessageAssociationMessageFolder'>,
+    CreateStandardObjectArgs<'messageChannelMessageASsociationMessageFolder'>,
     'context' | 'objectName'
   >) =>
     createStandardObjectFlatMetadata({
-      objectName: 'messageChannelMessageAssociationMessageFolder',
+      objectName: 'messageChannelMessageASsociationMessageFolder',
       dependencyFlatEntityMaps,
       context: {
         universalIdentifier:
-          STANDARD_OBJECTS.messageChannelMessageAssociationMessageFolder
+          STANDARD_OBJECTS.messageChannelMessageASsociationMessageFolder
             .universalIdentifier,
-        nameSingular: 'messageChannelMessageAssociationMessageFolder',
-        namePlural: 'messageChannelMessageAssociationMessageFolders',
+        nameSingular: 'messageChannelMessageASsociationMessageFolder',
+        namePlural: 'messageChannelMessageASsociationMessageFolders',
         labelSingular: i18nLabel(
-          msg`Message Channel Message Association Message Folder`,
+          msg`Message Channel Message ASsociation Message Folder`,
         ),
         labelPlural: i18nLabel(
-          msg`Message Channel Message Association Message Folders`,
+          msg`Message Channel Message ASsociation Message Folders`,
         ),
         description: i18nLabel(
-          msg`Join table linking message channel message associations to message folders`,
+          msg`Join table linking message channel message aSsociations to message folders`,
         ),
         icon: 'IconFolder',
         isSystem: true,

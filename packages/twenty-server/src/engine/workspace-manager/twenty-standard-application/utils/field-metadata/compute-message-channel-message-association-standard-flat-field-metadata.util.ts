@@ -15,10 +15,10 @@ import {
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-field-flat-metadata.util';
 import { createStandardRelationFieldFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-relation-field-flat-metadata.util';
 import { getTsVectorColumnExpressionFromFields } from 'src/engine/workspace-manager/utils/get-ts-vector-column-expression.util';
-import { SEARCH_FIELDS_FOR_MESSAGE_CHANNEL_MESSAGE_ASSOCIATION } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
+import { SEARCH_FIELDS_FOR_MESSAGE_CHANNEL_MESSAGE_ASsoCIATION } from 'src/modules/messaging/common/standard-objects/message-channel-message-aSsociation.workspace-entity';
 import { MessageDirection } from 'src/modules/messaging/common/enums/message-direction.enum';
 
-export const buildMessageChannelMessageAssociationStandardFlatFieldMetadatas =
+export const buildMessageChannelMessageASsociationStandardFlatFieldMetadatas =
   ({
     now,
     objectName,
@@ -28,12 +28,12 @@ export const buildMessageChannelMessageAssociationStandardFlatFieldMetadatas =
     twentyStandardApplicationId,
   }: Omit<
     CreateStandardFieldArgs<
-      'messageChannelMessageAssociation',
+      'messageChannelMessageASsociation',
       FieldMetadataType
     >,
     'context'
   >): Record<
-    AllStandardObjectFieldName<'messageChannelMessageAssociation'>,
+    AllStandardObjectFieldName<'messageChannelMessageASsociation'>,
     FlatFieldMetadata
   > => ({
     id: createStandardFieldFlatMetadata({
@@ -170,7 +170,7 @@ export const buildMessageChannelMessageAssociationStandardFlatFieldMetadatas =
         type: FieldMetadataType.POSITION,
         label: i18nLabel(msg`Position`),
         description: i18nLabel(
-          msg`Message channel message association record position`,
+          msg`Message channel message aSsociation record position`,
         ),
         icon: 'IconHierarchy2',
         isSystem: true,
@@ -196,7 +196,7 @@ export const buildMessageChannelMessageAssociationStandardFlatFieldMetadatas =
         settings: {
           generatedType: 'STORED',
           asExpression: getTsVectorColumnExpressionFromFields(
-            SEARCH_FIELDS_FOR_MESSAGE_CHANNEL_MESSAGE_ASSOCIATION,
+            SEARCH_FIELDS_FOR_MESSAGE_CHANNEL_MESSAGE_ASsoCIATION,
           ),
         },
       },
@@ -303,7 +303,7 @@ export const buildMessageChannelMessageAssociationStandardFlatFieldMetadatas =
         isNullable: true,
         isUIReadOnly: true,
         targetObjectName: 'messageThread',
-        targetFieldName: 'messageChannelMessageAssociations',
+        targetFieldName: 'messageChannelMessageASsociations',
         settings: {
           relationType: RelationType.MANY_TO_ONE,
           onDelete: RelationOnDeleteAction.CASCADE,
@@ -328,7 +328,7 @@ export const buildMessageChannelMessageAssociationStandardFlatFieldMetadatas =
         isNullable: true,
         isUIReadOnly: true,
         targetObjectName: 'message',
-        targetFieldName: 'messageChannelMessageAssociations',
+        targetFieldName: 'messageChannelMessageASsociations',
         settings: {
           relationType: RelationType.MANY_TO_ONE,
           onDelete: RelationOnDeleteAction.CASCADE,
@@ -354,8 +354,8 @@ export const buildMessageChannelMessageAssociationStandardFlatFieldMetadatas =
         icon: 'IconFolders',
         isNullable: true,
         isUIReadOnly: true,
-        targetObjectName: 'messageChannelMessageAssociationMessageFolder',
-        targetFieldName: 'messageChannelMessageAssociation',
+        targetObjectName: 'messageChannelMessageASsociationMessageFolder',
+        targetFieldName: 'messageChannelMessageASsociation',
         settings: {
           relationType: RelationType.ONE_TO_MANY,
         },

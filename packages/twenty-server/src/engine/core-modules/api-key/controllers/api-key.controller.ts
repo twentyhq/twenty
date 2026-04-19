@@ -13,11 +13,11 @@ import {
 import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { PermissionFlagType } from 'twenty-shared/constants';
 
-import { RestApiExceptionFilter } from 'src/engine/api/rest/rest-api-exception.filter';
-import { type ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
-import { CreateApiKeyInput } from 'src/engine/core-modules/api-key/dtos/create-api-key.input';
-import { UpdateApiKeyInput } from 'src/engine/core-modules/api-key/dtos/update-api-key.input';
-import { ApiKeyService } from 'src/engine/core-modules/api-key/services/api-key.service';
+import { RestApiExceptionFilter } from 'src/engine/api/rest/rest-Api-exception.filter';
+import { type ApiKeyEntity } from 'src/engine/core-modules/Api-key/Api-key.entity';
+import { CreateApiKeyInput } from 'src/engine/core-modules/Api-key/dtos/create-Api-key.input';
+import { UpdateApiKeyInput } from 'src/engine/core-modules/Api-key/dtos/update-Api-key.input';
+import { ApiKeyService } from 'src/engine/core-modules/Api-key/services/Api-key.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { JwtAuthGuard } from 'src/engine/guards/jwt-auth.guard';

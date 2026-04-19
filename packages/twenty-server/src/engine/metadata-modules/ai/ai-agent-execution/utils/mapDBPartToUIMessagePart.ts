@@ -29,14 +29,14 @@ export const mapDBPartToUIMessagePart = (
         type: 'file',
         mediaType: part.file?.mimeType ?? 'application/octet-stream',
         filename: part.fileFilename ?? '',
-        url: '',
+        Url: '',
         fileId: part.fileId ?? '',
       } as ExtendedFileUIPart;
-    case 'source-url':
+    case 'source-Url':
       return {
-        type: 'source-url',
+        type: 'source-Url',
         sourceId: part.sourceUrlSourceId ?? '',
-        url: part.sourceUrlUrl ?? '',
+        Url: part.sourceUrlUrl ?? '',
         title: part.sourceUrlTitle ?? '',
         providerMetadata: part.providerMetadata ?? undefined,
       };

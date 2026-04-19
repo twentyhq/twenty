@@ -25,7 +25,7 @@ describe('BillingCreditRolloverService', () => {
           useValue: {
             createCreditGrant: jest.fn(),
             listCreditGrants: jest.fn().mockResolvedValue([]),
-            voidCreditGrant: jest.fn(),
+            vOidcreditGrant: jest.fn(),
             getCustomerCreditBalance: jest.fn().mockResolvedValue(0),
           },
         },
@@ -140,8 +140,8 @@ describe('BillingCreditRolloverService', () => {
       await service.processRolloverOnPeriodTransition(baseParams);
 
       // Should only void the active rollover grant, not promotional or already voided
-      expect(stripeCreditGrantService.voidCreditGrant).toHaveBeenCalledTimes(1);
-      expect(stripeCreditGrantService.voidCreditGrant).toHaveBeenCalledWith(
+      expect(stripeCreditGrantService.vOidcreditGrant).toHaveBeenCalledTimes(1);
+      expect(stripeCreditGrantService.vOidcreditGrant).toHaveBeenCalledWith(
         'grant_old',
       );
 

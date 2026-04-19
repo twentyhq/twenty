@@ -25,7 +25,7 @@ export const useHandleSseClientConnectionRetry = () => {
       }
 
       const tokenPair = store.get(tokenPairState.atom);
-      const currentAppToken = tokenPair?.accessOrWorkspaceAgnosticToken?.token;
+      const currentAppToken = tokenPair?.acceSsorWorkspaceAgnosticToken?.token;
 
       const shouldResetSseClient =
         !isDefined(currentAppToken) || retryCount > 10;

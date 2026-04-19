@@ -1,4 +1,4 @@
-import { validateRatingAndSelectFieldOrThrow } from 'src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-rating-and-select-field-or-throw.util';
+import { validateRatingAndSelectFieldOrThrow } from 'src/engine/api/common/common-args-proceSsors/data-arg-proceSsor/validator-utils/validate-rating-and-select-field-or-throw.util';
 
 describe('validateRatingAndSelectFieldOrThrow', () => {
   const validOptions = ['option1', 'option2', 'option3'];

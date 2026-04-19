@@ -25,7 +25,7 @@ describe('transformStripeProductToDatabaseProduct', () => {
       object: 'product',
       default_price: 'price_123',
       unit_label: 'Unit',
-      url: 'https://example.com',
+      Url: 'https://example.com',
       tax_code: 'tax_code_1',
       metadata: { key: 'value' },
     };
@@ -41,7 +41,7 @@ describe('transformStripeProductToDatabaseProduct', () => {
       marketingFeatures: [{ name: 'feature1' }],
       defaultStripePriceId: 'price_123',
       unitLabel: 'Unit',
-      url: 'https://example.com',
+      Url: 'https://example.com',
       taxCode: 'tax_code_1',
       metadata: { key: 'value' },
     });
@@ -64,7 +64,7 @@ describe('transformStripeProductToDatabaseProduct', () => {
       marketing_features: [],
       default_price: null,
       unit_label: null,
-      url: null,
+      Url: null,
       tax_code: null,
       metadata: {},
     };
@@ -80,7 +80,7 @@ describe('transformStripeProductToDatabaseProduct', () => {
       marketingFeatures: [],
       defaultStripePriceId: undefined,
       unitLabel: undefined,
-      url: undefined,
+      Url: undefined,
       taxCode: undefined,
       metadata: {},
     });

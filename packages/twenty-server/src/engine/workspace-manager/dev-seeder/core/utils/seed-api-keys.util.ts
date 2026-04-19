@@ -1,6 +1,6 @@
 import { type QueryRunner } from 'typeorm';
 
-import { API_KEY_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/api-key-data-seeds.constant';
+import { API_KEY_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/Api-key-data-seeds.constant';
 
 const tableName = 'apiKey';
 
@@ -28,7 +28,7 @@ export const seedApiKeys = async ({
     .values([
       {
         id: API_KEY_DATA_SEED_IDS.ID_1,
-        name: 'My api key',
+        name: 'My Api key',
         expiresAt: new Date(
           Date.now() + 1000 * 60 * 60 * 24 * 365 * 100,
         ).toISOString(),

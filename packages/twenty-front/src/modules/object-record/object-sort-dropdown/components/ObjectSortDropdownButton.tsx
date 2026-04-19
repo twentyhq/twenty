@@ -89,7 +89,7 @@ export const ObjectSortDropdownButton = () => {
       visibleFieldMetadataItemIds.includes(fieldMetadataItem.id),
     );
 
-  const hiddenFieldMetadataItemsSorted = filteredSearchInputFieldMetadataItems
+  const hiddenFieldMetadataItemSsorted = filteredSearchInputFieldMetadataItems
     .sort((fieldMetadataItemA, fieldMetadataItemB) =>
       fieldMetadataItemA.label.localeCompare(fieldMetadataItemB.label),
     )
@@ -102,7 +102,7 @@ export const ObjectSortDropdownButton = () => {
 
   const shouldShowSeparator =
     visibleFieldMetadataItems.length > 0 &&
-    hiddenFieldMetadataItemsSorted.length > 0;
+    hiddenFieldMetadataItemSsorted.length > 0;
 
   const handleDropdownButtonClose = () => {
     resetRecordSortDropdownSearchInput();
@@ -149,7 +149,7 @@ export const ObjectSortDropdownButton = () => {
 
   const selectableItemIdArray = [
     ...visibleFieldMetadataItems.map((item) => item.id),
-    ...hiddenFieldMetadataItemsSorted.map((item) => item.id),
+    ...hiddenFieldMetadataItemSsorted.map((item) => item.id),
   ];
 
   const selectedItemId = useAtomComponentStateValue(
@@ -162,7 +162,7 @@ export const ObjectSortDropdownButton = () => {
     OBJECT_SORT_DROPDOWN_ID,
   );
 
-  const shouldShowHiddenFields = hiddenFieldMetadataItemsSorted.length > 0;
+  const shouldShowHiddenFields = hiddenFieldMetadataItemSsorted.length > 0;
   const shouldShowVisibleFields = visibleFieldMetadataItems.length > 0;
 
   return (
@@ -257,7 +257,7 @@ export const ObjectSortDropdownButton = () => {
               <>
                 <DropdownMenuSectionLabel label={t`Hidden fields`} />
                 <DropdownMenuItemsContainer>
-                  {hiddenFieldMetadataItemsSorted.map(
+                  {hiddenFieldMetadataItemSsorted.map(
                     (hiddenFieldMetadataItem, index) => (
                       <SelectableListItem
                         key={hiddenFieldMetadataItem.id}

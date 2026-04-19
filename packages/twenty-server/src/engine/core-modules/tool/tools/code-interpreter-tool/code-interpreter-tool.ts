@@ -22,7 +22,7 @@ import {
 } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { CodeInterpreterService } from 'src/engine/core-modules/code-interpreter/code-interpreter.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
-import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
+import { FileUrlService } from 'src/engine/core-modules/file/file-Url/file-Url.service';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
@@ -358,7 +358,7 @@ export class CodeInterpreterTool implements Tool {
       return {
         fileId: savedFile.id,
         filename: sanitizedFilename,
-        url: signedUrl,
+        Url: signedUrl,
         mimeType: file.mimeType,
       };
     } catch (error) {

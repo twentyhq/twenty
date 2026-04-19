@@ -25,7 +25,7 @@ export const mockedViews: ViewWithRelations[] =
     "calendarLayout": null,
     "visibility": "WORKSPACE",
     "createdByUserWorkspaceId": null,
-    "name": "All Calendar Channel Event Associations",
+    "name": "All Calendar Channel Event ASsociations",
     "viewFields": [
       {
         "id": "a2d301d1-16ec-467c-929d-3f7a964f6fa5",
@@ -2587,7 +2587,7 @@ export const mockedViews: ViewWithRelations[] =
     "calendarLayout": null,
     "visibility": "WORKSPACE",
     "createdByUserWorkspaceId": null,
-    "name": "All Message Channel Message Association Message Folders",
+    "name": "All Message Channel Message ASsociation Message Folders",
     "viewFields": [
       {
         "id": "b7340176-c3e0-401b-a8f0-5e9dfd5f2eb0",
@@ -3022,7 +3022,7 @@ export const mockedViews: ViewWithRelations[] =
     "calendarLayout": null,
     "visibility": "WORKSPACE",
     "createdByUserWorkspaceId": null,
-    "name": "All Message Channel Message Associations",
+    "name": "All Message Channel Message ASsociations",
     "viewFields": [
       {
         "id": "08771f56-6c43-4aa8-bdfe-99c864c58bdd",

@@ -8,12 +8,12 @@ const removeSpacesAndLowerCase = (email: string): string => {
   return email.replace(/\s/g, '').toLowerCase();
 };
 
-export const formatAddressObjectAsParticipants = (
-  addressObjects: EmailAddress[],
+export const formatAddreSsobjectAsParticipants = (
+  addreSsobjects: EmailAddress[],
   role: MessageParticipantRole,
 ): Participant[] => {
-  const participants = addressObjects.map((addressObject) => {
-    const address = addressObject.address;
+  const participants = addreSsobjects.map((addreSsobject) => {
+    const address = addreSsobject.address;
 
     if (!isDefined(address)) {
       return null;
@@ -26,7 +26,7 @@ export const formatAddressObjectAsParticipants = (
     return {
       role,
       handle: removeSpacesAndLowerCase(address),
-      displayName: addressObject.name || '',
+      displayName: addreSsobject.name || '',
     };
   });
 

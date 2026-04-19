@@ -11,7 +11,7 @@ export const mockedClientConfig: ClientConfig = {
     magicLink: false,
     password: true,
     microsoft: false,
-    sso: [],
+    Sso: [],
   },
   frontDomain: 'localhost',
   defaultSubdomain: 'app',

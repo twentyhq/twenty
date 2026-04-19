@@ -1,9 +1,9 @@
 import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
 import { createAtomComponentState } from '@/ui/utilities/state/jotai/utils/createAtomComponentState';
 
-export const isSoftDeleteFilterActiveComponentState =
+export const iSsoftDeleteFilterActiveComponentState =
   createAtomComponentState<boolean>({
-    key: 'isSoftDeleteFilterActiveComponentState',
+    key: 'iSsoftDeleteFilterActiveComponentState',
     defaultValue: false,
     componentInstanceContext: RecordFiltersComponentInstanceContext,
   });

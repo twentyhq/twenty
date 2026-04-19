@@ -515,10 +515,10 @@ export class FilesFieldSync {
             const fileId = file.fileId;
 
             throw new TwentyORMException(
-              `File ${fileId} is already associated with a permanent files field`,
+              `File ${fileId} is already aSsociated with a permanent files field`,
               TwentyORMExceptionCode.INVALID_INPUT,
               {
-                userFriendlyMessage: msg`File ${fileId} is already associated with a permanent files field. Please re-upload the file.`,
+                userFriendlyMessage: msg`File ${fileId} is already aSsociated with a permanent files field. Please re-upload the file.`,
               },
             );
           }

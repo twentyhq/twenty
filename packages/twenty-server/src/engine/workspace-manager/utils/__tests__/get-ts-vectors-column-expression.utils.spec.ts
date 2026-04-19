@@ -146,7 +146,7 @@ describe('getTsVectorColumnExpressionFromFields', () => {
     expect(result).toContain('domainNamePrimaryLinkUrl');
     expect(result).toContain('domainNameSecondaryLinks');
     expect(result).toContain(
-      "COALESCE(public.unaccent_immutable(TRANSLATE(regexp_replace(\"domainNameSecondaryLinks\"::text, '\"(label|url)\"\\s*:\\s*', '', 'g'), '[]{}\",:',",
+      "COALESCE(public.unaccent_immutable(TRANSLATE(regexp_replace(\"domainNameSecondaryLinks\"::text, '\"(label|Url)\"\\s*:\\s*', '', 'g'), '[]{}\",:',",
     );
   });
 
@@ -155,7 +155,7 @@ describe('getTsVectorColumnExpressionFromFields', () => {
     const result = getTsVectorColumnExpressionFromFields(fields);
 
     expect(result).toContain(
-      "regexp_replace(\"domainNameSecondaryLinks\"::text, '\"(label|url)\"\\s*:\\s*', '', 'g')",
+      "regexp_replace(\"domainNameSecondaryLinks\"::text, '\"(label|Url)\"\\s*:\\s*', '', 'g')",
     );
   });
 
@@ -211,7 +211,7 @@ describe('getTsVectorColumnExpressionFromFields', () => {
         "COALESCE(TRANSLATE(regexp_replace(\"phonesAdditionalPhones\"::text, '\"(number|countryCode|callingCode)\"\\s*:\\s*', '', 'g'), '[]{}\",:',",
       );
       const secondaryLinksCoalesce = result.includes(
-        "COALESCE(public.unaccent_immutable(TRANSLATE(regexp_replace(\"domainNameSecondaryLinks\"::text, '\"(label|url)\"\\s*:\\s*', '', 'g'), '[]{}\",:',",
+        "COALESCE(public.unaccent_immutable(TRANSLATE(regexp_replace(\"domainNameSecondaryLinks\"::text, '\"(label|Url)\"\\s*:\\s*', '', 'g'), '[]{}\",:',",
       );
 
       expect(additionalEmailsCoalesce).toBe(true);

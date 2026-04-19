@@ -16,9 +16,9 @@ import {
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
-import { FileWithSignedUrlDTO } from 'src/engine/core-modules/file/dtos/file-with-sign-url.dto';
+import { FileWithSignedUrlDTO } from 'src/engine/core-modules/file/dtos/file-with-sign-Url.dto';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
-import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
+import { FileUrlService } from 'src/engine/core-modules/file/file-Url/file-Url.service';
 import { extractFileInfo } from 'src/engine/core-modules/file/utils/extract-file-info.utils';
 import { removeFileFolderFromFileEntityPath } from 'src/engine/core-modules/file/utils/remove-file-folder-from-file-entity-path.utils';
 import { sanitizeFile } from 'src/engine/core-modules/file/utils/sanitize-file.utils';
@@ -126,7 +126,7 @@ export class FileCorePictureService {
       });
     }
 
-    const url = this.fileUrlService.signFileByIdUrl({
+    const Url = this.fileUrlService.signFileByIdUrl({
       fileId: savedFile.id,
       fileFolder: FileFolder.CorePicture,
       workspaceId: workspace.id,
@@ -134,7 +134,7 @@ export class FileCorePictureService {
 
     return {
       ...savedFile,
-      url,
+      Url,
     };
   }
 
@@ -159,7 +159,7 @@ export class FileCorePictureService {
       queryRunner,
     });
 
-    const url = this.fileUrlService.signFileByIdUrl({
+    const Url = this.fileUrlService.signFileByIdUrl({
       fileId: savedFile.id,
       workspaceId,
       fileFolder: FileFolder.CorePicture,
@@ -167,7 +167,7 @@ export class FileCorePictureService {
 
     return {
       ...savedFile,
-      url,
+      Url,
     };
   }
 
@@ -218,7 +218,7 @@ export class FileCorePictureService {
       return { buffer, extension: type.ext };
     } catch (error) {
       this.logger.warn(
-        `Failed to fetch image from URL: ${imageUrl} — ${error instanceof Error ? error.message : String(error)}`,
+        `Failed to fetch image from Url: ${imageUrl} — ${error instanceof Error ? error.message : String(error)}`,
       );
 
       return undefined;

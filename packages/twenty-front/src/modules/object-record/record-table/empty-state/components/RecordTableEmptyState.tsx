@@ -6,7 +6,7 @@ import { RecordTableEmptyStateNoRecordFoundForFilter } from '@/object-record/rec
 import { RecordTableEmptyStateReadOnly } from '@/object-record/record-table/empty-state/components/RecordTableEmptyStateReadOnly';
 import { RecordTableEmptyStateRemote } from '@/object-record/record-table/empty-state/components/RecordTableEmptyStateRemote';
 import { RecordTableEmptyStateSoftDelete } from '@/object-record/record-table/empty-state/components/RecordTableEmptyStateSoftDelete';
-import { isSoftDeleteFilterActiveComponentState } from '@/object-record/record-table/states/isSoftDeleteFilterActiveComponentState';
+import { iSsoftDeleteFilterActiveComponentState } from '@/object-record/record-table/states/iSsoftDeleteFilterActiveComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
 export const RecordTableEmptyState = () => {
@@ -18,8 +18,8 @@ export const RecordTableEmptyState = () => {
 
   const isRemote = objectMetadataItem.isRemote;
 
-  const isSoftDeleteFilterActive = useAtomComponentStateValue(
-    isSoftDeleteFilterActiveComponentState,
+  const iSsoftDeleteFilterActive = useAtomComponentStateValue(
+    iSsoftDeleteFilterActiveComponentState,
     recordTableId,
   );
 
@@ -35,7 +35,7 @@ export const RecordTableEmptyState = () => {
 
   if (isRemote) {
     return <RecordTableEmptyStateRemote />;
-  } else if (isSoftDeleteFilterActive === true) {
+  } else if (iSsoftDeleteFilterActive === true) {
     return <RecordTableEmptyStateSoftDelete />;
   } else if (noRecordAtAll) {
     return <RecordTableEmptyStateNoGroupNoRecordAtAll />;

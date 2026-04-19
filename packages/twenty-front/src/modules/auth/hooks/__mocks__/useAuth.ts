@@ -51,7 +51,7 @@ export const results = {
   },
   getAuthTokensFromLoginToken: {
     tokens: {
-      accessOrWorkspaceAgnosticToken: { token, expiresAt: 'expiresAt' },
+      acceSsorWorkspaceAgnosticToken: { token, expiresAt: 'expiresAt' },
       refreshToken: { token, expiresAt: 'expiresAt' },
     },
   },

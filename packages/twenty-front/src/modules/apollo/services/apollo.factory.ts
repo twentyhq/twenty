@@ -123,7 +123,7 @@ export class ApolloFactory implements ApolloManager {
           };
         }
 
-        const token = tokenPair.accessOrWorkspaceAgnosticToken?.token;
+        const token = tokenPair.acceSsorWorkspaceAgnosticToken?.token;
 
         return {
           headers: {

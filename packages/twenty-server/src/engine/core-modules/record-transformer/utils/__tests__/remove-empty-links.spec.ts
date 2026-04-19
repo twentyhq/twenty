@@ -52,11 +52,11 @@ describe('removeEmptyLinks', () => {
         primaryLinkLabel: null,
         secondaryLinks: [
           {
-            url: 'https://docs.twenty.com',
+            Url: 'https://docs.twenty.com',
             label: 'Documentation',
           },
           {
-            url: 'https://github.com/twentyhq/twenty',
+            Url: 'https://github.com/twentyhq/twenty',
             label: 'GitHub',
           },
         ],
@@ -66,38 +66,38 @@ describe('removeEmptyLinks', () => {
       primaryLinkLabel: 'Documentation',
       secondaryLinks: [
         {
-          url: 'https://github.com/twentyhq/twenty',
+          Url: 'https://github.com/twentyhq/twenty',
           label: 'GitHub',
         },
       ],
     });
   });
 
-  it('should throw RecordTransformerException when primary link URL is invalid', () => {
+  it('should throw RecordTransformerException when primary link Url is invalid', () => {
     expect(() =>
       removeEmptyLinks({
         primaryLinkUrl: 'lydia,com',
-        primaryLinkLabel: 'Invalid URL',
+        primaryLinkLabel: 'Invalid Url',
         secondaryLinks: [],
       }),
     ).toThrow(
       expect.objectContaining({
         constructor: RecordTransformerException,
         code: RecordTransformerExceptionCode.INVALID_URL,
-        message: 'The URL of the link is not valid',
+        message: 'The Url of the link is not valid',
       }),
     );
   });
 
-  it('should throw RecordTransformerException when any secondary link URL is invalid', () => {
+  it('should throw RecordTransformerException when any secondary link Url is invalid', () => {
     expect(() =>
       removeEmptyLinks({
         primaryLinkUrl: 'https://www.twenty.com',
         primaryLinkLabel: 'Twenty Website',
         secondaryLinks: [
           {
-            url: 'wikipedia',
-            label: 'Invalid URL',
+            Url: 'wikipedia',
+            label: 'Invalid Url',
           },
         ],
       }),
@@ -105,7 +105,7 @@ describe('removeEmptyLinks', () => {
       expect.objectContaining({
         constructor: RecordTransformerException,
         code: RecordTransformerExceptionCode.INVALID_URL,
-        message: 'The URL of the link is not valid',
+        message: 'The Url of the link is not valid',
       }),
     );
   });
@@ -114,11 +114,11 @@ describe('removeEmptyLinks', () => {
     expect(() =>
       removeEmptyLinks({
         primaryLinkUrl: 'lydia,com',
-        primaryLinkLabel: 'Invalid URL',
+        primaryLinkLabel: 'Invalid Url',
         secondaryLinks: [
           {
-            url: 'wikipedia',
-            label: 'Invalid URL',
+            Url: 'wikipedia',
+            label: 'Invalid Url',
           },
         ],
       }),
@@ -126,7 +126,7 @@ describe('removeEmptyLinks', () => {
       expect.objectContaining({
         constructor: RecordTransformerException,
         code: RecordTransformerExceptionCode.INVALID_URL,
-        message: 'The URL of the link is not valid',
+        message: 'The Url of the link is not valid',
       }),
     );
   });
@@ -138,12 +138,12 @@ describe('removeEmptyLinks', () => {
         primaryLinkLabel: 'Twenty Website',
         secondaryLinks: [
           {
-            url: '',
-            label: 'Empty URL',
+            Url: '',
+            label: 'Empty Url',
           },
           {
-            url: null,
-            label: 'Null URL',
+            Url: null,
+            label: 'Null Url',
           },
         ],
       }),
@@ -158,15 +158,15 @@ describe('removeEmptyLinks', () => {
     expect(
       removeEmptyLinks({
         primaryLinkUrl: '',
-        primaryLinkLabel: 'Empty URL',
+        primaryLinkLabel: 'Empty Url',
         secondaryLinks: [
           {
-            url: null,
-            label: 'Null URL',
+            Url: null,
+            label: 'Null Url',
           },
           {
-            url: '',
-            label: 'Empty URL',
+            Url: '',
+            label: 'Empty Url',
           },
         ],
       }),
@@ -184,7 +184,7 @@ describe('removeEmptyLinks', () => {
         primaryLinkLabel: null,
         secondaryLinks: [
           {
-            url: 'https://docs.twenty.com',
+            Url: 'https://docs.twenty.com',
             label: null,
           },
         ],
@@ -194,7 +194,7 @@ describe('removeEmptyLinks', () => {
       primaryLinkLabel: null,
       secondaryLinks: [
         {
-          url: 'https://docs.twenty.com',
+          Url: 'https://docs.twenty.com',
           label: null,
         },
       ],

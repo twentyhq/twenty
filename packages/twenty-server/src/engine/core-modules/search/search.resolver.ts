@@ -8,7 +8,7 @@ import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { SearchArgs } from 'src/engine/core-modules/search/dtos/search-args';
 import { SearchResultConnectionDTO } from 'src/engine/core-modules/search/dtos/search-result-connection.dto';
-import { SearchApiExceptionFilter } from 'src/engine/core-modules/search/filters/search-api-exception.filter';
+import { SearchApiExceptionFilter } from 'src/engine/core-modules/search/filters/search-Api-exception.filter';
 import { SearchService } from 'src/engine/core-modules/search/services/search.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';

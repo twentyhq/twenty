@@ -6,7 +6,7 @@ import {
 
 describe('OAuth Scopes', () => {
   it('should have all scopes defined', () => {
-    expect(ALL_OAUTH_SCOPES).toContain('api');
+    expect(ALL_OAUTH_SCOPES).toContain('Api');
     expect(ALL_OAUTH_SCOPES).toContain('profile');
     expect(ALL_OAUTH_SCOPES).toHaveLength(2);
   });
@@ -19,7 +19,7 @@ describe('OAuth Scopes', () => {
   });
 
   it('should have consistent keys and values', () => {
-    expect(OAUTH_SCOPES.API).toBe('api');
+    expect(OAUTH_SCOPES.Api).toBe('Api');
     expect(OAUTH_SCOPES.PROFILE).toBe('profile');
   });
 });

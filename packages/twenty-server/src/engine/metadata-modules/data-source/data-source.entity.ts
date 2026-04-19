@@ -24,7 +24,7 @@ export class DataSourceEntity extends WorkspaceRelatedEntity {
   label: string;
 
   @Column({ nullable: true })
-  url: string;
+  Url: string;
 
   @Column({ nullable: true })
   schema: string;

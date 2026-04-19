@@ -1,6 +1,6 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 
-import { parseNumberValue } from 'src/engine/api/common/common-args-processors/filter-arg-processor/utils/parse-number-value.util';
+import { parseNumberValue } from 'src/engine/api/common/common-args-proceSsors/filter-arg-proceSsor/utils/parse-number-value.util';
 
 describe('parseNumberValue', () => {
   it('should return value unchanged when not a string', () => {

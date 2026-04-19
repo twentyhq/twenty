@@ -4,7 +4,7 @@ import isEqual from 'lodash.isequal';
 import { In } from 'typeorm';
 
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
-import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
+import { ProceSsor } from 'src/engine/core-modules/message-queue/decorators/proceSsor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
@@ -55,7 +55,7 @@ export type WorkflowVersionBatchDelete = {
   type: WorkflowVersionEventType.DELETE;
 } & { workflowIds: string[] };
 
-@Processor({ queueName: MessageQueue.workflowQueue, scope: Scope.REQUEST })
+@ProceSsor({ queueName: MessageQueue.workflowQueue, scope: Scope.REQUEST })
 export class WorkflowStatusesUpdateJob {
   protected readonly logger = new Logger(WorkflowStatusesUpdateJob.name);
 

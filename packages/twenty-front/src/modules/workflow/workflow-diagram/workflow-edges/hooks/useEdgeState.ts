@@ -16,7 +16,7 @@ export const useEdgeState = () => {
     workflowHoveredEdgeComponentState,
   );
 
-  const isSourceSelected = ({
+  const iSsourceSelected = ({
     nodeId,
     sourceHandle,
   }: {
@@ -29,7 +29,7 @@ export const useEdgeState = () => {
     );
   };
 
-  const isSourceHovered = ({
+  const iSsourceHovered = ({
     nodeId,
     sourceHandle,
   }: {
@@ -49,7 +49,7 @@ export const useEdgeState = () => {
     targetHandle,
   }: WorkflowDiagramEdgeDescriptor) => {
     return (
-      isSourceSelected({ nodeId: source, sourceHandle }) &&
+      iSsourceSelected({ nodeId: source, sourceHandle }) &&
       workflowSelectedEdge?.target === target &&
       workflowSelectedEdge.targetHandle === targetHandle
     );
@@ -62,7 +62,7 @@ export const useEdgeState = () => {
     targetHandle,
   }: WorkflowDiagramEdgeDescriptor) => {
     return (
-      isSourceHovered({ nodeId: source, sourceHandle }) &&
+      iSsourceHovered({ nodeId: source, sourceHandle }) &&
       workflowHoveredEdge?.target === target &&
       workflowHoveredEdge.targetHandle === targetHandle
     );
@@ -155,11 +155,11 @@ export const useEdgeState = () => {
 
   return {
     isEdgeSelected,
-    isSourceSelected,
+    iSsourceSelected,
     setEdgeSelected,
     clearEdgeSelected,
     isEdgeHovered,
-    isSourceHovered,
+    iSsourceHovered,
     setEdgeHovered,
     clearEdgeHover,
   };

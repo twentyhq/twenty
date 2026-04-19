@@ -37,7 +37,7 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 )
 @Index(
   'IDX_APPLICATION_REGISTRATION_OAUTH_CLIENT_ID_UNIQUE',
-  ['oAuthClientId'],
+  ['oAuthclientId'],
   {
     unique: true,
     where: '"deletedAt" IS NULL',
@@ -64,7 +64,7 @@ export class ApplicationRegistrationEntity {
 
   @Field()
   @Column({ nullable: false, type: 'text' })
-  oAuthClientId: string;
+  oAuthclientId: string;
 
   @Column({ nullable: true, type: 'text' })
   oAuthClientSecretHash: string | null;

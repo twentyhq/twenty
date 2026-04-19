@@ -27,8 +27,8 @@ const mockApplication = {
 } as Request['application'];
 
 const mockApiKey = {
-  id: 'api-key-id',
-  name: 'Test API Key',
+  id: 'Api-key-id',
+  name: 'Test Api Key',
 } as Request['apiKey'];
 
 const mockWorkspaceMember = {

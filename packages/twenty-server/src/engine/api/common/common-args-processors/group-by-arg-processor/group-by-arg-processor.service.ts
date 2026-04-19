@@ -11,7 +11,7 @@ import {
   CommonQueryRunnerExceptionCode,
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
-import { validateAndTransformGroupByFieldsOrThrow } from 'src/engine/api/common/common-args-processors/group-by-arg-processor/utils/validate-and-transform-group-by-fields-or-throw.util';
+import { validateAndTransformGroupByFieldsOrThrow } from 'src/engine/api/common/common-args-proceSsors/group-by-arg-proceSsor/utils/validate-and-transform-group-by-fields-or-throw.util';
 import {
   type AggregationField,
   getAvailableAggregationsFromObjectFields,
@@ -28,7 +28,7 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 import { resolveAggregateFieldKey } from 'src/engine/core-modules/record-crud/utils/resolve-aggregate-field-key.util';
 
 @Injectable()
-export class GroupByArgProcessorService {
+export class GroupByArgProceSsorService {
   process({
     groupBy,
   }: {

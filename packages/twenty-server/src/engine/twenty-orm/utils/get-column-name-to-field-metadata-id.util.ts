@@ -6,7 +6,7 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import {
-  type ColumnNameProcessor,
+  type ColumnNameProceSsor,
   processFieldMetadataForColumnNameMapping,
 } from 'src/engine/twenty-orm/utils/process-field-metadata-for-column-name-mapping.util';
 
@@ -16,7 +16,7 @@ export function getColumnNameToFieldMetadataIdMap(
 ) {
   const columnNameToFieldMetadataIdMap: Record<string, string> = {};
 
-  const processor: ColumnNameProcessor = {
+  const proceSsor: ColumnNameProceSsor = {
     processCompositeField: ({
       fieldMetadataId,
       fieldMetadata,
@@ -63,7 +63,7 @@ export function getColumnNameToFieldMetadataIdMap(
   processFieldMetadataForColumnNameMapping(
     flatObjectMetadata,
     flatFieldMetadataMaps,
-    processor,
+    proceSsor,
   );
 
   return columnNameToFieldMetadataIdMap;

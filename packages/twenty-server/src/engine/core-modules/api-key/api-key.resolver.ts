@@ -6,24 +6,24 @@ import { PermissionFlagType } from 'twenty-shared/constants';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
-import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
-import { CreateApiKeyInput } from 'src/engine/core-modules/api-key/dtos/create-api-key.input';
-import { GetApiKeyInput } from 'src/engine/core-modules/api-key/dtos/get-api-key.input';
-import { RevokeApiKeyInput } from 'src/engine/core-modules/api-key/dtos/revoke-api-key.input';
-import { UpdateApiKeyInput } from 'src/engine/core-modules/api-key/dtos/update-api-key.input';
+import { ApiKeyEntity } from 'src/engine/core-modules/Api-key/Api-key.entity';
+import { CreateApiKeyInput } from 'src/engine/core-modules/Api-key/dtos/create-Api-key.input';
+import { GetApiKeyInput } from 'src/engine/core-modules/Api-key/dtos/get-Api-key.input';
+import { RevokeApiKeyInput } from 'src/engine/core-modules/Api-key/dtos/revoke-Api-key.input';
+import { UpdateApiKeyInput } from 'src/engine/core-modules/Api-key/dtos/update-Api-key.input';
 import {
   ApiKeyException,
   ApiKeyExceptionCode,
-} from 'src/engine/core-modules/api-key/exceptions/api-key.exception';
-import { apiKeyGraphqlApiExceptionHandler } from 'src/engine/core-modules/api-key/utils/api-key-graphql-api-exception-handler.util';
+} from 'src/engine/core-modules/Api-key/exceptions/Api-key.exception';
+import { apiKeyGraphqlApiExceptionHandler } from 'src/engine/core-modules/Api-key/utils/Api-key-graphql-Api-exception-handler.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 
-import { ApiKeyRoleService } from './services/api-key-role.service';
-import { ApiKeyService } from './services/api-key.service';
+import { ApiKeyRoleService } from './services/Api-key-role.service';
+import { ApiKeyService } from './services/Api-key.service';
 
 @MetadataResolver(() => ApiKeyEntity)
 @UseGuards(

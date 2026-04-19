@@ -4,19 +4,19 @@ import {
   type CreateStandardViewFieldArgs,
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field/create-standard-view-field-flat-metadata.util';
 
-export const computeStandardCalendarChannelEventAssociationViewFields = (
+export const computeStandardCalendarChannelEventASsociationViewFields = (
   args: Omit<
-    CreateStandardViewFieldArgs<'calendarChannelEventAssociation'>,
+    CreateStandardViewFieldArgs<'calendarChannelEventASsociation'>,
     'context'
   >,
 ): Record<string, FlatViewField> => {
   return {
-    allCalendarChannelEventAssociationsCalendarChannel:
+    allCalendarChannelEventASsociationsCalendarChannel:
       createStandardViewFieldFlatMetadata({
         ...args,
-        objectName: 'calendarChannelEventAssociation',
+        objectName: 'calendarChannelEventASsociation',
         context: {
-          viewName: 'allCalendarChannelEventAssociations',
+          viewName: 'allCalendarChannelEventASsociations',
           viewFieldName: 'calendarChannelId',
           fieldName: 'calendarChannelId',
           position: 0,
@@ -24,12 +24,12 @@ export const computeStandardCalendarChannelEventAssociationViewFields = (
           size: 150,
         },
       }),
-    allCalendarChannelEventAssociationsCalendarEvent:
+    allCalendarChannelEventASsociationsCalendarEvent:
       createStandardViewFieldFlatMetadata({
         ...args,
-        objectName: 'calendarChannelEventAssociation',
+        objectName: 'calendarChannelEventASsociation',
         context: {
-          viewName: 'allCalendarChannelEventAssociations',
+          viewName: 'allCalendarChannelEventASsociations',
           viewFieldName: 'calendarEvent',
           fieldName: 'calendarEvent',
           position: 1,
@@ -37,12 +37,12 @@ export const computeStandardCalendarChannelEventAssociationViewFields = (
           size: 150,
         },
       }),
-    allCalendarChannelEventAssociationsEventExternalId:
+    allCalendarChannelEventASsociationsEventExternalId:
       createStandardViewFieldFlatMetadata({
         ...args,
-        objectName: 'calendarChannelEventAssociation',
+        objectName: 'calendarChannelEventASsociation',
         context: {
-          viewName: 'allCalendarChannelEventAssociations',
+          viewName: 'allCalendarChannelEventASsociations',
           viewFieldName: 'eventExternalId',
           fieldName: 'eventExternalId',
           position: 2,
@@ -50,12 +50,12 @@ export const computeStandardCalendarChannelEventAssociationViewFields = (
           size: 150,
         },
       }),
-    allCalendarChannelEventAssociationsCreatedAt:
+    allCalendarChannelEventASsociationsCreatedAt:
       createStandardViewFieldFlatMetadata({
         ...args,
-        objectName: 'calendarChannelEventAssociation',
+        objectName: 'calendarChannelEventASsociation',
         context: {
-          viewName: 'allCalendarChannelEventAssociations',
+          viewName: 'allCalendarChannelEventASsociations',
           viewFieldName: 'createdAt',
           fieldName: 'createdAt',
           position: 3,
@@ -64,12 +64,12 @@ export const computeStandardCalendarChannelEventAssociationViewFields = (
         },
       }),
 
-    calendarChannelEventAssociationRecordPageFieldsCalendarChannel:
+    calendarChannelEventASsociationRecordPageFieldsCalendarChannel:
       createStandardViewFieldFlatMetadata({
         ...args,
-        objectName: 'calendarChannelEventAssociation',
+        objectName: 'calendarChannelEventASsociation',
         context: {
-          viewName: 'calendarChannelEventAssociationRecordPageFields',
+          viewName: 'calendarChannelEventASsociationRecordPageFields',
           viewFieldName: 'calendarChannelId',
           fieldName: 'calendarChannelId',
           position: 0,
@@ -78,12 +78,12 @@ export const computeStandardCalendarChannelEventAssociationViewFields = (
           viewFieldGroupName: 'general',
         },
       }),
-    calendarChannelEventAssociationRecordPageFieldsCalendarEvent:
+    calendarChannelEventASsociationRecordPageFieldsCalendarEvent:
       createStandardViewFieldFlatMetadata({
         ...args,
-        objectName: 'calendarChannelEventAssociation',
+        objectName: 'calendarChannelEventASsociation',
         context: {
-          viewName: 'calendarChannelEventAssociationRecordPageFields',
+          viewName: 'calendarChannelEventASsociationRecordPageFields',
           viewFieldName: 'calendarEvent',
           fieldName: 'calendarEvent',
           position: 1,
@@ -92,12 +92,12 @@ export const computeStandardCalendarChannelEventAssociationViewFields = (
           viewFieldGroupName: 'general',
         },
       }),
-    calendarChannelEventAssociationRecordPageFieldsEventExternalId:
+    calendarChannelEventASsociationRecordPageFieldsEventExternalId:
       createStandardViewFieldFlatMetadata({
         ...args,
-        objectName: 'calendarChannelEventAssociation',
+        objectName: 'calendarChannelEventASsociation',
         context: {
-          viewName: 'calendarChannelEventAssociationRecordPageFields',
+          viewName: 'calendarChannelEventASsociationRecordPageFields',
           viewFieldName: 'eventExternalId',
           fieldName: 'eventExternalId',
           position: 2,
@@ -106,12 +106,12 @@ export const computeStandardCalendarChannelEventAssociationViewFields = (
           viewFieldGroupName: 'general',
         },
       }),
-    calendarChannelEventAssociationRecordPageFieldsCreatedAt:
+    calendarChannelEventASsociationRecordPageFieldsCreatedAt:
       createStandardViewFieldFlatMetadata({
         ...args,
-        objectName: 'calendarChannelEventAssociation',
+        objectName: 'calendarChannelEventASsociation',
         context: {
-          viewName: 'calendarChannelEventAssociationRecordPageFields',
+          viewName: 'calendarChannelEventASsociationRecordPageFields',
           viewFieldName: 'createdAt',
           fieldName: 'createdAt',
           position: 0,
@@ -120,12 +120,12 @@ export const computeStandardCalendarChannelEventAssociationViewFields = (
           viewFieldGroupName: 'system',
         },
       }),
-    calendarChannelEventAssociationRecordPageFieldsCreatedBy:
+    calendarChannelEventASsociationRecordPageFieldsCreatedBy:
       createStandardViewFieldFlatMetadata({
         ...args,
-        objectName: 'calendarChannelEventAssociation',
+        objectName: 'calendarChannelEventASsociation',
         context: {
-          viewName: 'calendarChannelEventAssociationRecordPageFields',
+          viewName: 'calendarChannelEventASsociationRecordPageFields',
           viewFieldName: 'createdBy',
           fieldName: 'createdBy',
           position: 1,

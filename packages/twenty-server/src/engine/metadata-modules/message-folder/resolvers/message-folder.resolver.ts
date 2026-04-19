@@ -13,7 +13,7 @@ import {
   UpdateMessageFolderInput,
   UpdateMessageFoldersInput,
 } from 'src/engine/metadata-modules/message-folder/dtos/update-message-folder.input';
-import { MessageFolderGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/message-folder/interceptors/message-folder-graphql-api-exception.interceptor';
+import { MessageFolderGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/message-folder/interceptors/message-folder-graphql-Api-exception.interceptor';
 import { MessageFolderMetadataService } from 'src/engine/metadata-modules/message-folder/message-folder-metadata.service';
 
 @UseGuards(WorkspaceAuthGuard)

@@ -13,7 +13,7 @@ import { ImapMessagesImportErrorHandler } from 'src/modules/messaging/message-im
 import { parseMessageId } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/parse-message-id.util';
 import { type EmailAddress } from 'src/modules/messaging/message-import-manager/types/email-address';
 import { type MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message';
-import { formatAddressObjectAsParticipants } from 'src/modules/messaging/message-import-manager/utils/format-address-object-as-participants.util';
+import { formatAddreSsobjectAsParticipants } from 'src/modules/messaging/message-import-manager/utils/format-address-object-as-participants.util';
 import { sanitizeString } from 'src/modules/messaging/message-import-manager/utils/sanitize-string.util';
 
 type ConnectedAccount = Pick<
@@ -214,7 +214,7 @@ export class ImapGetMessagesService {
     ] as const;
 
     return addressFields.flatMap(({ field, role }) =>
-      formatAddressObjectAsParticipants(this.extractAddresses(field), role),
+      formatAddreSsobjectAsParticipants(this.extractAddresses(field), role),
     );
   }
 

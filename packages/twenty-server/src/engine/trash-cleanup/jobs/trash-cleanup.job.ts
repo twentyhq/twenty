@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
-import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
+import { ProceSsor } from 'src/engine/core-modules/message-queue/decorators/proceSsor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { TrashCleanupService } from 'src/engine/trash-cleanup/services/trash-cleanup.service';
 
@@ -11,7 +11,7 @@ export type TrashCleanupJobData = {
 };
 
 @Injectable()
-@Processor(MessageQueue.workspaceQueue)
+@ProceSsor(MessageQueue.workspaceQueue)
 export class TrashCleanupJob {
   private readonly logger = new Logger(TrashCleanupJob.name);
 

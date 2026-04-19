@@ -1,6 +1,6 @@
 /* @license Enterprise */
 
-import { parseSAMLMetadataFromXMLFile } from '@/settings/security/utils/parseSAMLMetadataFromXMLFile';
+import { parseSamlMetadataFromXMLFile } from '@/settings/security/utils/parseSamlMetadataFromXMLFile';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { type ChangeEvent, useContext, useRef } from 'react';
@@ -55,7 +55,7 @@ const StyledButtonCopy = styled.div`
   margin-bottom: ${themeCssVariables.spacing[1]};
 `;
 
-export const SettingsSSOSAMLForm = () => {
+export const SettingsSsoSamlForm = () => {
   const { theme } = useContext(ThemeContext);
   const { enqueueErrorSnackBar } = useSnackBar();
   const { setValue, getValues, watch, trigger } = useFormContext();
@@ -65,9 +65,9 @@ export const SettingsSSOSAMLForm = () => {
   const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
     if (isDefined(e.target.files)) {
       const text = await e.target.files[0].text();
-      const samlMetadataParsed = parseSAMLMetadataFromXMLFile(text);
+      const SamlMetadataParsed = parseSamlMetadataFromXMLFile(text);
       e.target.value = '';
-      if (!samlMetadataParsed.success) {
+      if (!SamlMetadataParsed.success) {
         return enqueueErrorSnackBar({
           message: t`Invalid File`,
           options: {
@@ -75,15 +75,15 @@ export const SettingsSSOSAMLForm = () => {
           },
         });
       }
-      setValue('ssoURL', samlMetadataParsed.data.ssoUrl);
-      setValue('certificate', samlMetadataParsed.data.certificate);
-      setValue('issuer', samlMetadataParsed.data.entityID);
+      setValue('ssoUrl', SamlMetadataParsed.data.ssoUrl);
+      setValue('certificate', SamlMetadataParsed.data.certificate);
+      setValue('issuer', SamlMetadataParsed.data.entityID);
       trigger();
     }
   };
 
-  const entityID = `${REACT_APP_SERVER_BASE_URL}/auth/saml/login/${getValues('id')}`;
-  const acsUrl = `${REACT_APP_SERVER_BASE_URL}/auth/saml/callback/${getValues('id')}`;
+  const entityID = `${REACT_APP_SERVER_BASE_URL}/auth/Saml/login/${getValues('id')}`;
+  const acsUrl = `${REACT_APP_SERVER_BASE_URL}/auth/Saml/callback/${getValues('id')}`;
 
   const inputFileRef = useRef<HTMLInputElement>(null);
 
@@ -91,19 +91,19 @@ export const SettingsSSOSAMLForm = () => {
     inputFileRef?.current?.click?.();
   };
 
-  const ssoURL = watch('ssoURL');
+  const ssoUrl = watch('ssoUrl');
   const certificate = watch('certificate');
   const issuer = watch('issuer');
 
   const isXMLMetadataValid = () => {
-    return [ssoURL, certificate, issuer].every(
+    return [ssoUrl, certificate, issuer].every(
       (field) => isDefined(field) && field.length > 0,
     );
   };
 
   const downloadMetadata = async () => {
     const response = await fetch(
-      `${REACT_APP_SERVER_BASE_URL}/auth/saml/metadata/${getValues('id')}`,
+      `${REACT_APP_SERVER_BASE_URL}/auth/Saml/metadata/${getValues('id')}`,
     );
     if (!response.ok) {
       return enqueueErrorSnackBar({
@@ -171,7 +171,7 @@ export const SettingsSSOSAMLForm = () => {
           <StyledContainer>
             <StyledLinkContainer>
               <SettingsTextInput
-                instanceId="sso-saml-acs-url"
+                instanceId="Sso-Saml-acs-url"
                 disabled={true}
                 label={t`ACS Url`}
                 value={acsUrl}
@@ -192,7 +192,7 @@ export const SettingsSSOSAMLForm = () => {
           <StyledContainer>
             <StyledLinkContainer>
               <SettingsTextInput
-                instanceId="sso-saml-entity-id"
+                instanceId="Sso-Saml-entity-id"
                 disabled={true}
                 label={t`Entity ID`}
                 value={entityID}

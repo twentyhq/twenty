@@ -124,7 +124,7 @@ describe('ActorFromAuthContextService', () => {
         type: 'apiKey',
         apiKey: {
           id: '20202020-56c2-471b-925d-31ed3ecd0951',
-          name: 'API Key Name',
+          name: 'Api Key Name',
         },
         workspace: { id: '20202020-bdec-497f-847a-1bb334fefe58' },
       } as unknown as WorkspaceAuthContext;
@@ -138,9 +138,9 @@ describe('ActorFromAuthContextService', () => {
       expect(result).toEqual<ExpectedResult>([
         {
           createdBy: {
-            source: FieldActorSource.API,
+            source: FieldActorSource.Api,
             workspaceMemberId: null,
-            name: 'API Key Name',
+            name: 'Api Key Name',
             context: {},
           },
         },

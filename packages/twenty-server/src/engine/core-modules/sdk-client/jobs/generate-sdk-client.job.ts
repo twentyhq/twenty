@@ -1,4 +1,4 @@
-import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
+import { ProceSsor } from 'src/engine/core-modules/message-queue/decorators/proceSsor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { SdkClientGenerationService } from 'src/engine/core-modules/sdk-client/sdk-client-generation.service';
@@ -9,7 +9,7 @@ export type GenerateSdkClientJobData = {
   applicationUniversalIdentifier: string;
 };
 
-@Processor(MessageQueue.workspaceQueue)
+@ProceSsor(MessageQueue.workspaceQueue)
 export class GenerateSdkClientJob {
   constructor(
     private readonly sdkClientGenerationService: SdkClientGenerationService,

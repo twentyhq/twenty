@@ -4,31 +4,31 @@ import {
   type CreateStandardViewFieldGroupArgs,
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/create-standard-view-field-group-flat-metadata.util';
 
-export const computeStandardCalendarChannelEventAssociationViewFieldGroups = (
+export const computeStandardCalendarChannelEventASsociationViewFieldGroups = (
   args: Omit<
-    CreateStandardViewFieldGroupArgs<'calendarChannelEventAssociation'>,
+    CreateStandardViewFieldGroupArgs<'calendarChannelEventASsociation'>,
     'context'
   >,
 ): Record<string, FlatViewFieldGroup> => {
   return {
-    calendarChannelEventAssociationRecordPageFieldsGeneral:
+    calendarChannelEventASsociationRecordPageFieldsGeneral:
       createStandardViewFieldGroupFlatMetadata({
         ...args,
-        objectName: 'calendarChannelEventAssociation',
+        objectName: 'calendarChannelEventASsociation',
         context: {
-          viewName: 'calendarChannelEventAssociationRecordPageFields',
+          viewName: 'calendarChannelEventASsociationRecordPageFields',
           viewFieldGroupName: 'general',
           name: 'General',
           position: 0,
           isVisible: true,
         },
       }),
-    calendarChannelEventAssociationRecordPageFieldsSystem:
+    calendarChannelEventASsociationRecordPageFieldsSystem:
       createStandardViewFieldGroupFlatMetadata({
         ...args,
-        objectName: 'calendarChannelEventAssociation',
+        objectName: 'calendarChannelEventASsociation',
         context: {
-          viewName: 'calendarChannelEventAssociationRecordPageFields',
+          viewName: 'calendarChannelEventASsociationRecordPageFields',
           viewFieldGroupName: 'system',
           name: 'System',
           position: 1,

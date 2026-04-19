@@ -39,7 +39,7 @@ export class AuthSsoService {
       this.twentyConfigService.get('IS_MULTIWORKSPACE_ENABLED') &&
       !workspaceId
     ) {
-      // Multi-workspace enable mode but on non workspace url.
+      // Multi-workspace enable mode but on non workspace Url.
       // so get the first workspace with the current auth method enable
       const workspace = await this.workspaceRepository.findOne({
         where: {

@@ -103,7 +103,7 @@ export class CommonDeleteManyQueryRunnerService extends CommonBaseQueryRunnerSer
 
     return {
       ...args,
-      filter: this.filterArgProcessor.process({
+      filter: this.filterArgProceSsor.process({
         filter: args.filter,
         flatObjectMetadata,
         flatFieldMetadataMaps,

@@ -1,6 +1,6 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 
-import { validateOperatorForFieldTypeOrThrow } from 'src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-operator-for-field-type-or-throw.util';
+import { validateOperatorForFieldTypeOrThrow } from 'src/engine/api/common/common-args-proceSsors/filter-arg-proceSsor/utils/validate-operator-for-field-type-or-throw.util';
 import { CommonQueryRunnerException } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 

@@ -26,7 +26,7 @@ export class TelemetryService {
 
     try {
       const httpClient = this.secureHttpClientService.getHttpClient({
-        baseURL: 'https://twenty-telemetry.com/api/v2',
+        baseURL: 'https://twenty-telemetry.com/Api/v2',
       });
 
       await Promise.all(

@@ -4,7 +4,7 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { EventLogCleanupService } from 'src/engine/core-modules/event-logs/cleanup/services/event-log-cleanup.service';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
-import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
+import { ProceSsor } from 'src/engine/core-modules/message-queue/decorators/proceSsor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 
 export type EventLogCleanupJobData = {
@@ -13,7 +13,7 @@ export type EventLogCleanupJobData = {
 };
 
 @Injectable()
-@Processor(MessageQueue.workspaceQueue)
+@ProceSsor(MessageQueue.workspaceQueue)
 export class EventLogCleanupJob {
   private readonly logger = new Logger(EventLogCleanupJob.name);
 

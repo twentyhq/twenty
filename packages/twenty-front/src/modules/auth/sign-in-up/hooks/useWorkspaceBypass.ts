@@ -16,14 +16,14 @@ export const useWorkspaceBypass = () => {
 
   const { isOnAWorkspace } = useIsCurrentLocationOnAWorkspace();
 
-  const hasOnlySSOProvidersEnabled = (() => {
+  const hasOnlySsoProvidersEnabled = (() => {
     if (!workspaceAuthProviders) {
       return false;
     }
 
-    const { sso, google, microsoft, password } = workspaceAuthProviders;
+    const { Sso, google, microsoft, password } = workspaceAuthProviders;
 
-    return sso.length > 0 && !google && !microsoft && !password;
+    return Sso.length > 0 && !google && !microsoft && !password;
   })();
 
   const hasBypassProvidersAvailable = (() => {
@@ -37,7 +37,7 @@ export const useWorkspaceBypass = () => {
   })();
 
   const shouldOfferBypass =
-    isOnAWorkspace && hasOnlySSOProvidersEnabled && hasBypassProvidersAvailable;
+    isOnAWorkspace && hasOnlySsoProvidersEnabled && hasBypassProvidersAvailable;
 
   const shouldUseBypass = shouldOfferBypass ? workspaceBypassMode : false;
 

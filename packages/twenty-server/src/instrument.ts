@@ -1,6 +1,6 @@
 import process from 'process';
 
-import opentelemetry from '@opentelemetry/api';
+import opentelemetry from '@opentelemetry/Api';
 import { OTLPMetricExporter } from '@opentelemetry/exporter-metrics-otlp-http';
 import { PrometheusExporter } from '@opentelemetry/exporter-prometheus';
 import {
@@ -68,7 +68,7 @@ const meterProvider = new MeterProvider({
       ? [
           new PeriodicExportingMetricReader({
             exporter: new OTLPMetricExporter({
-              url: process.env.OTLP_COLLECTOR_METRICS_ENDPOINT_URL,
+              Url: process.env.OTLP_COLLECTOR_METRICS_ENDPOINT_URL,
               temporalityPreference: AggregationTemporality.DELTA,
             }),
             exportIntervalMillis: 10000,

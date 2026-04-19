@@ -7,7 +7,7 @@ import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 
 export const QueryParamsCleanupEffect = () => {
   const { hasFiltersQueryParams } = useHasFiltersInQueryParams();
-  const { hasSortsQueryParams, objectMetadataItem } = useSortsFromQueryParams();
+  const { haSsortsQueryParams, objectMetadataItem } = useSortsFromQueryParams();
 
   const { currentView } = useGetCurrentViewOnly();
 
@@ -26,7 +26,7 @@ export const QueryParamsCleanupEffect = () => {
       return;
     }
 
-    if (!hasFiltersQueryParams && !hasSortsQueryParams) {
+    if (!hasFiltersQueryParams && !haSsortsQueryParams) {
       return;
     }
 
@@ -47,7 +47,7 @@ export const QueryParamsCleanupEffect = () => {
   }, [
     currentViewObjectMetadataItemIsDifferentFromURLObjectMetadataItem,
     hasFiltersQueryParams,
-    hasSortsQueryParams,
+    haSsortsQueryParams,
     hasCleanedQueryParams,
     searchParams,
     setSearchParams,

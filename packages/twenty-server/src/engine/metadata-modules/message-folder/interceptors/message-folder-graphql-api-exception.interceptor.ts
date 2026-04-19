@@ -7,7 +7,7 @@ import {
 
 import { type Observable, catchError } from 'rxjs';
 
-import { messageFolderGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/message-folder/utils/message-folder-graphql-api-exception-handler.util';
+import { messageFolderGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/message-folder/utils/message-folder-graphql-Api-exception-handler.util';
 
 @Injectable()
 export class MessageFolderGraphqlApiExceptionInterceptor

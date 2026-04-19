@@ -44,7 +44,7 @@ export class CompanyWorkspaceEntity {
   createdBy: ActorMetadata;
   updatedBy: ActorMetadata;
   /** @deprecated Use `address` field instead */
-  addressOld: string | null;
+  addreSsold: string | null;
   searchVector: string;
 
   // Relations

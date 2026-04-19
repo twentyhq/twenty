@@ -17,7 +17,7 @@ import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/typ
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
-import { type MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
+import { type MessageChannelMessageASsociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-aSsociation.workspace-entity';
 import { MessagingMessageCleanerService } from 'src/modules/messaging/message-cleaner/services/messaging-message-cleaner.service';
 import { SyncMessageFoldersService } from 'src/modules/messaging/message-folder-manager/services/sync-message-folders.service';
 import { MessagingAccountAuthenticationService } from 'src/modules/messaging/message-import-manager/services/messaging-account-authentication.service';
@@ -158,10 +158,10 @@ export class MessagingMessageListFetchService {
           `WorkspaceId: ${workspaceId}, MessageChannelId: ${freshMessageChannel.id} - Is full sync: ${isFullSync}, toImportCount: ${messageExternalIds.length}, toDeleteCount: ${messageExternalIdsToDelete.length}`,
         );
 
-        const messageChannelMessageAssociationRepository =
-          await this.globalWorkspaceOrmManager.getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
+        const messageChannelMessageASsociationRepository =
+          await this.globalWorkspaceOrmManager.getRepository<MessageChannelMessageASsociationWorkspaceEntity>(
             workspaceId,
-            'messageChannelMessageAssociation',
+            'messageChannelMessageASsociation',
           );
 
         const messageExternalIdsChunks = chunk(messageExternalIds, 200);
@@ -170,23 +170,23 @@ export class MessagingMessageListFetchService {
           index,
           messageExternalIdsChunk,
         ] of messageExternalIdsChunks.entries()) {
-          const existingMessageChannelMessageAssociations =
-            await messageChannelMessageAssociationRepository.find({
+          const existingMessageChannelMessageASsociations =
+            await messageChannelMessageASsociationRepository.find({
               where: {
                 messageChannelId: freshMessageChannel.id,
                 messageExternalId: In(messageExternalIdsChunk),
               },
             });
 
-          const existingMessageChannelMessageAssociationsExternalIds =
-            existingMessageChannelMessageAssociations.map(
-              (messageChannelMessageAssociation) =>
-                messageChannelMessageAssociation.messageExternalId,
+          const existingMessageChannelMessageASsociationsExternalIds =
+            existingMessageChannelMessageASsociations.map(
+              (messageChannelMessageASsociation) =>
+                messageChannelMessageASsociation.messageExternalId,
             );
 
           const messageExternalIdsToImport = messageExternalIdsChunk.filter(
             (messageExternalId) =>
-              !existingMessageChannelMessageAssociationsExternalIds.includes(
+              !existingMessageChannelMessageASsociationsExternalIds.includes(
                 messageExternalId,
               ),
           );
@@ -217,8 +217,8 @@ export class MessagingMessageListFetchService {
           );
         }
 
-        const fullSyncMessageChannelMessageAssociationsToDelete = isFullSync
-          ? await this.computeFullSyncMessageChannelMessageAssociationsToDelete(
+        const fullSyncMessageChannelMessageASsociationsToDelete = isFullSync
+          ? await this.computeFullSyncMessageChannelMessageASsociationsToDelete(
               freshMessageChannel,
               messageExternalIds,
               workspaceId,
@@ -227,25 +227,25 @@ export class MessagingMessageListFetchService {
 
         const allMessageExternalIdsToDelete = [
           ...messageExternalIdsToDelete,
-          ...fullSyncMessageChannelMessageAssociationsToDelete.map(
-            (messageChannelMessageAssociation) =>
-              messageChannelMessageAssociation.messageExternalId,
+          ...fullSyncMessageChannelMessageASsociationsToDelete.map(
+            (messageChannelMessageASsociation) =>
+              messageChannelMessageASsociation.messageExternalId,
           ),
         ];
 
         if (allMessageExternalIdsToDelete.length) {
           this.logger.log(
-            `WorkspaceId: ${workspaceId}, MessageChannelId: ${freshMessageChannel.id} - Deleting ${allMessageExternalIdsToDelete.length} message channel message associations`,
+            `WorkspaceId: ${workspaceId}, MessageChannelId: ${freshMessageChannel.id} - Deleting ${allMessageExternalIdsToDelete.length} message channel message aSsociations`,
           );
 
           const toDeleteChunks = chunk(allMessageExternalIdsToDelete, 200);
 
           for (const [index, toDeleteChunk] of toDeleteChunks.entries()) {
             this.logger.debug(
-              `messageChannelId: ${freshMessageChannel.id} Deleting ${toDeleteChunk.length} message channel message associations in batch ${index + 1}`,
+              `messageChannelId: ${freshMessageChannel.id} Deleting ${toDeleteChunk.length} message channel message aSsociations in batch ${index + 1}`,
             );
 
-            await this.messagingMessageCleanerService.deleteMessagesChannelMessageAssociationsAndRelatedOrphans(
+            await this.messagingMessageCleanerService.deleteMessagesChannelMessageASsociationsAndRelatedOrphans(
               {
                 workspaceId,
                 messageExternalIds: toDeleteChunk.filter((messageExternalId) =>
@@ -351,21 +351,21 @@ export class MessagingMessageListFetchService {
     return true;
   }
 
-  private async computeFullSyncMessageChannelMessageAssociationsToDelete(
+  private async computeFullSyncMessageChannelMessageASsociationsToDelete(
     messageChannel: Pick<MessageChannelEntity, 'id'>,
     messageExternalIds: string[],
     workspaceId: string,
   ) {
-    const messageChannelMessageAssociationRepository =
-      await this.globalWorkspaceOrmManager.getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
+    const messageChannelMessageASsociationRepository =
+      await this.globalWorkspaceOrmManager.getRepository<MessageChannelMessageASsociationWorkspaceEntity>(
         workspaceId,
-        'messageChannelMessageAssociation',
+        'messageChannelMessageASsociation',
       );
 
-    const fullSyncMessageChannelMessageAssociationsToDelete = [];
+    const fullSyncMessageChannelMessageASsociationsToDelete = [];
 
-    const firstMessageChannelMessageAssociation =
-      await messageChannelMessageAssociationRepository.findOne({
+    const firstMessageChannelMessageASsociation =
+      await messageChannelMessageASsociationRepository.findOne({
         where: {
           messageChannelId: messageChannel.id,
         },
@@ -374,29 +374,29 @@ export class MessagingMessageListFetchService {
         },
       });
 
-    if (!isDefined(firstMessageChannelMessageAssociation)) {
+    if (!isDefined(firstMessageChannelMessageASsociation)) {
       this.logger.log(
-        `messageChannelId: ${messageChannel.id} Full sync: No message channel message associations found`,
+        `messageChannelId: ${messageChannel.id} Full sync: No message channel message aSsociations found`,
       );
 
       return [];
     }
 
     this.logger.log(
-      `messageChannelId: ${messageChannel.id} Full sync: First message channel message association id: ${firstMessageChannelMessageAssociation.id}`,
+      `messageChannelId: ${messageChannel.id} Full sync: First message channel message aSsociation id: ${firstMessageChannelMessageASsociation.id}`,
     );
 
-    let nextFirstBatchMessageChannelMessageAssociationId: string | undefined =
-      firstMessageChannelMessageAssociation.id;
+    let nextFirstBatchMessageChannelMessageASsociationId: string | undefined =
+      firstMessageChannelMessageASsociation.id;
     let batchIndex = 0;
 
-    while (isDefined(nextFirstBatchMessageChannelMessageAssociationId)) {
-      const existingMessageChannelMessageAssociations =
-        await messageChannelMessageAssociationRepository.find({
+    while (isDefined(nextFirstBatchMessageChannelMessageASsociationId)) {
+      const existingMessageChannelMessageASsociations =
+        await messageChannelMessageASsociationRepository.find({
           where: {
             messageChannelId: messageChannel.id,
             id: MoreThanOrEqual(
-              nextFirstBatchMessageChannelMessageAssociationId,
+              nextFirstBatchMessageChannelMessageASsociationId,
             ),
           },
           order: {
@@ -405,38 +405,38 @@ export class MessagingMessageListFetchService {
           take: 200,
         });
 
-      const messageChannelMessageAssociationsToDelete =
-        existingMessageChannelMessageAssociations.filter(
-          (existingMessageChannelMessageAssociation) =>
+      const messageChannelMessageASsociationsToDelete =
+        existingMessageChannelMessageASsociations.filter(
+          (existingMessageChannelMessageASsociation) =>
             isDefined(
-              existingMessageChannelMessageAssociation.messageExternalId,
+              existingMessageChannelMessageASsociation.messageExternalId,
             ) &&
             !messageExternalIds.includes(
-              existingMessageChannelMessageAssociation.messageExternalId,
+              existingMessageChannelMessageASsociation.messageExternalId,
             ),
         );
 
       this.logger.log(
-        `messageChannelId: ${messageChannel.id} Full sync: Message channel message associations to delete in batch ${batchIndex}: ${messageChannelMessageAssociationsToDelete.length}`,
+        `messageChannelId: ${messageChannel.id} Full sync: Message channel message aSsociations to delete in batch ${batchIndex}: ${messageChannelMessageASsociationsToDelete.length}`,
       );
 
-      fullSyncMessageChannelMessageAssociationsToDelete.push(
-        ...messageChannelMessageAssociationsToDelete,
+      fullSyncMessageChannelMessageASsociationsToDelete.push(
+        ...messageChannelMessageASsociationsToDelete,
       );
 
-      if (existingMessageChannelMessageAssociations.length < 200) {
-        nextFirstBatchMessageChannelMessageAssociationId = undefined;
+      if (existingMessageChannelMessageASsociations.length < 200) {
+        nextFirstBatchMessageChannelMessageASsociationId = undefined;
         break;
       }
 
-      nextFirstBatchMessageChannelMessageAssociationId =
-        existingMessageChannelMessageAssociations[
-          existingMessageChannelMessageAssociations.length - 1
+      nextFirstBatchMessageChannelMessageASsociationId =
+        existingMessageChannelMessageASsociations[
+          existingMessageChannelMessageASsociations.length - 1
         ].id;
 
       batchIndex++;
     }
 
-    return fullSyncMessageChannelMessageAssociationsToDelete;
+    return fullSyncMessageChannelMessageASsociationsToDelete;
   }
 }

@@ -139,9 +139,9 @@ export class JwtWrapperService {
         return tokenFromHeader;
       }
 
-      // If not found in header, try to extract from URL query parameter
+      // If not found in header, try to extract from Url query parameter
       // This is for edge cases where we don't control the origin request
-      // (e.g. the REST API playground)
+      // (e.g. the REST Api playground)
       return ExtractJwt.fromUrlQueryParameter('token')(request);
     };
   }

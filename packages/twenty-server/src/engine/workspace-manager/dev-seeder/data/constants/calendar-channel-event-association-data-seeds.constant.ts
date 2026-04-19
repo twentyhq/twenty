@@ -1,7 +1,7 @@
 import { CALENDAR_CHANNEL_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/calendar-channel-data-seeds.constant';
 import { CALENDAR_EVENT_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/calendar-event-data-seeds.constant';
 
-type CalendarChannelEventAssociationDataSeed = {
+type CalendarChannelEventASsociationDataSeed = {
   id: string;
   calendarChannelId: string;
   calendarEventId: string;
@@ -9,7 +9,7 @@ type CalendarChannelEventAssociationDataSeed = {
   recurringEventExternalId: string;
 };
 
-export const CALENDAR_CHANNEL_EVENT_ASSOCIATION_DATA_SEED_COLUMNS: (keyof CalendarChannelEventAssociationDataSeed)[] =
+export const CALENDAR_CHANNEL_EVENT_ASsoCIATION_DATA_SEED_COLUMNS: (keyof CalendarChannelEventASsociationDataSeed)[] =
   [
     'id',
     'calendarChannelId',
@@ -18,28 +18,28 @@ export const CALENDAR_CHANNEL_EVENT_ASSOCIATION_DATA_SEED_COLUMNS: (keyof Calend
     'recurringEventExternalId',
   ];
 
-const GENERATE_CALENDAR_CHANNEL_EVENT_ASSOCIATION_IDS = (): Record<
+const GENERATE_CALENDAR_CHANNEL_EVENT_ASsoCIATION_IDS = (): Record<
   string,
   string
 > => {
-  const ASSOCIATION_IDS: Record<string, string> = {};
+  const ASsoCIATION_IDS: Record<string, string> = {};
 
   for (let INDEX = 1; INDEX <= 800; INDEX++) {
     const HEX_INDEX = INDEX.toString(16).padStart(4, '0');
 
-    ASSOCIATION_IDS[`ID_${INDEX}`] =
+    ASsoCIATION_IDS[`ID_${INDEX}`] =
       `20202020-${HEX_INDEX}-4e7c-8001-123456789abc`;
   }
 
-  return ASSOCIATION_IDS;
+  return ASsoCIATION_IDS;
 };
 
-export const CALENDAR_CHANNEL_EVENT_ASSOCIATION_DATA_SEED_IDS =
-  GENERATE_CALENDAR_CHANNEL_EVENT_ASSOCIATION_IDS();
+export const CALENDAR_CHANNEL_EVENT_ASsoCIATION_DATA_SEED_IDS =
+  GENERATE_CALENDAR_CHANNEL_EVENT_ASsoCIATION_IDS();
 
-const GENERATE_CALENDAR_CHANNEL_EVENT_ASSOCIATION_SEEDS =
-  (): CalendarChannelEventAssociationDataSeed[] => {
-    const ASSOCIATION_SEEDS: CalendarChannelEventAssociationDataSeed[] = [];
+const GENERATE_CALENDAR_CHANNEL_EVENT_ASsoCIATION_SEEDS =
+  (): CalendarChannelEventASsociationDataSeed[] => {
+    const ASsoCIATION_SEEDS: CalendarChannelEventASsociationDataSeed[] = [];
 
     const EVENT_IDS = Object.keys(CALENDAR_EVENT_DATA_SEED_IDS).map(
       (key) =>
@@ -56,7 +56,7 @@ const GENERATE_CALENDAR_CHANNEL_EVENT_ASSOCIATION_SEEDS =
       CALENDAR_CHANNEL_DATA_SEED_IDS.TEAM_CALENDAR,
     ];
 
-    // Create associations for each event
+    // Create aSsociations for each event
     EVENT_IDS.forEach((eventId, index) => {
       // Distribute events across channels with weighted distribution
       let CHANNEL_ID: string;
@@ -79,21 +79,21 @@ const GENERATE_CALENDAR_CHANNEL_EVENT_ASSOCIATION_SEEDS =
         CHANNEL_ID = CHANNEL_IDS[4]; // TEAM_CALENDAR
       }
 
-      const ASSOCIATION_INDEX = index + 1;
+      const ASsoCIATION_INDEX = index + 1;
 
-      ASSOCIATION_SEEDS.push({
-        id: CALENDAR_CHANNEL_EVENT_ASSOCIATION_DATA_SEED_IDS[
-          `ID_${ASSOCIATION_INDEX}`
+      ASsoCIATION_SEEDS.push({
+        id: CALENDAR_CHANNEL_EVENT_ASsoCIATION_DATA_SEED_IDS[
+          `ID_${ASsoCIATION_INDEX}`
         ],
         calendarChannelId: CHANNEL_ID,
         calendarEventId: eventId,
-        eventExternalId: `external_event_${ASSOCIATION_INDEX}@calendar.com`,
-        recurringEventExternalId: `recurring_${ASSOCIATION_INDEX}@calendar.com`,
+        eventExternalId: `external_event_${ASsoCIATION_INDEX}@calendar.com`,
+        recurringEventExternalId: `recurring_${ASsoCIATION_INDEX}@calendar.com`,
       });
     });
 
-    return ASSOCIATION_SEEDS;
+    return ASsoCIATION_SEEDS;
   };
 
-export const CALENDAR_CHANNEL_EVENT_ASSOCIATION_DATA_SEEDS =
-  GENERATE_CALENDAR_CHANNEL_EVENT_ASSOCIATION_SEEDS();
+export const CALENDAR_CHANNEL_EVENT_ASsoCIATION_DATA_SEEDS =
+  GENERATE_CALENDAR_CHANNEL_EVENT_ASsoCIATION_SEEDS();

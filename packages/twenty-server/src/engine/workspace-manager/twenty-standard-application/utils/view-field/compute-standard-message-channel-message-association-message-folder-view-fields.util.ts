@@ -4,33 +4,33 @@ import {
   type CreateStandardViewFieldArgs,
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field/create-standard-view-field-flat-metadata.util';
 
-export const computeStandardMessageChannelMessageAssociationMessageFolderViewFields =
+export const computeStandardMessageChannelMessageASsociationMessageFolderViewFields =
   (
     args: Omit<
-      CreateStandardViewFieldArgs<'messageChannelMessageAssociationMessageFolder'>,
+      CreateStandardViewFieldArgs<'messageChannelMessageASsociationMessageFolder'>,
       'context'
     >,
   ): Record<string, FlatViewField> => {
     return {
-      allMessageChannelMessageAssociationMessageFoldersMessageChannelMessageAssociation:
+      allMessageChannelMessageASsociationMessageFoldersMessageChannelMessageASsociation:
         createStandardViewFieldFlatMetadata({
           ...args,
-          objectName: 'messageChannelMessageAssociationMessageFolder',
+          objectName: 'messageChannelMessageASsociationMessageFolder',
           context: {
-            viewName: 'allMessageChannelMessageAssociationMessageFolders',
-            viewFieldName: 'messageChannelMessageAssociation',
-            fieldName: 'messageChannelMessageAssociation',
+            viewName: 'allMessageChannelMessageASsociationMessageFolders',
+            viewFieldName: 'messageChannelMessageASsociation',
+            fieldName: 'messageChannelMessageASsociation',
             position: 0,
             isVisible: true,
             size: 150,
           },
         }),
-      allMessageChannelMessageAssociationMessageFoldersMessageFolder:
+      allMessageChannelMessageASsociationMessageFoldersMessageFolder:
         createStandardViewFieldFlatMetadata({
           ...args,
-          objectName: 'messageChannelMessageAssociationMessageFolder',
+          objectName: 'messageChannelMessageASsociationMessageFolder',
           context: {
-            viewName: 'allMessageChannelMessageAssociationMessageFolders',
+            viewName: 'allMessageChannelMessageASsociationMessageFolders',
             viewFieldName: 'messageFolderId',
             fieldName: 'messageFolderId',
             position: 1,
@@ -38,12 +38,12 @@ export const computeStandardMessageChannelMessageAssociationMessageFolderViewFie
             size: 150,
           },
         }),
-      allMessageChannelMessageAssociationMessageFoldersCreatedAt:
+      allMessageChannelMessageASsociationMessageFoldersCreatedAt:
         createStandardViewFieldFlatMetadata({
           ...args,
-          objectName: 'messageChannelMessageAssociationMessageFolder',
+          objectName: 'messageChannelMessageASsociationMessageFolder',
           context: {
-            viewName: 'allMessageChannelMessageAssociationMessageFolders',
+            viewName: 'allMessageChannelMessageASsociationMessageFolders',
             viewFieldName: 'createdAt',
             fieldName: 'createdAt',
             position: 2,
@@ -52,28 +52,28 @@ export const computeStandardMessageChannelMessageAssociationMessageFolderViewFie
           },
         }),
 
-      messageChannelMessageAssociationMessageFolderRecordPageFieldsMessageChannelMessageAssociation:
+      messageChannelMessageASsociationMessageFolderRecordPageFieldsMessageChannelMessageASsociation:
         createStandardViewFieldFlatMetadata({
           ...args,
-          objectName: 'messageChannelMessageAssociationMessageFolder',
+          objectName: 'messageChannelMessageASsociationMessageFolder',
           context: {
             viewName:
-              'messageChannelMessageAssociationMessageFolderRecordPageFields',
-            viewFieldName: 'messageChannelMessageAssociation',
-            fieldName: 'messageChannelMessageAssociation',
+              'messageChannelMessageASsociationMessageFolderRecordPageFields',
+            viewFieldName: 'messageChannelMessageASsociation',
+            fieldName: 'messageChannelMessageASsociation',
             position: 0,
             isVisible: true,
             size: 150,
             viewFieldGroupName: 'general',
           },
         }),
-      messageChannelMessageAssociationMessageFolderRecordPageFieldsMessageFolder:
+      messageChannelMessageASsociationMessageFolderRecordPageFieldsMessageFolder:
         createStandardViewFieldFlatMetadata({
           ...args,
-          objectName: 'messageChannelMessageAssociationMessageFolder',
+          objectName: 'messageChannelMessageASsociationMessageFolder',
           context: {
             viewName:
-              'messageChannelMessageAssociationMessageFolderRecordPageFields',
+              'messageChannelMessageASsociationMessageFolderRecordPageFields',
             viewFieldName: 'messageFolderId',
             fieldName: 'messageFolderId',
             position: 1,
@@ -82,13 +82,13 @@ export const computeStandardMessageChannelMessageAssociationMessageFolderViewFie
             viewFieldGroupName: 'general',
           },
         }),
-      messageChannelMessageAssociationMessageFolderRecordPageFieldsCreatedAt:
+      messageChannelMessageASsociationMessageFolderRecordPageFieldsCreatedAt:
         createStandardViewFieldFlatMetadata({
           ...args,
-          objectName: 'messageChannelMessageAssociationMessageFolder',
+          objectName: 'messageChannelMessageASsociationMessageFolder',
           context: {
             viewName:
-              'messageChannelMessageAssociationMessageFolderRecordPageFields',
+              'messageChannelMessageASsociationMessageFolderRecordPageFields',
             viewFieldName: 'createdAt',
             fieldName: 'createdAt',
             position: 0,
@@ -97,13 +97,13 @@ export const computeStandardMessageChannelMessageAssociationMessageFolderViewFie
             viewFieldGroupName: 'system',
           },
         }),
-      messageChannelMessageAssociationMessageFolderRecordPageFieldsCreatedBy:
+      messageChannelMessageASsociationMessageFolderRecordPageFieldsCreatedBy:
         createStandardViewFieldFlatMetadata({
           ...args,
-          objectName: 'messageChannelMessageAssociationMessageFolder',
+          objectName: 'messageChannelMessageASsociationMessageFolder',
           context: {
             viewName:
-              'messageChannelMessageAssociationMessageFolderRecordPageFields',
+              'messageChannelMessageASsociationMessageFolderRecordPageFields',
             viewFieldName: 'createdBy',
             fieldName: 'createdBy',
             position: 1,

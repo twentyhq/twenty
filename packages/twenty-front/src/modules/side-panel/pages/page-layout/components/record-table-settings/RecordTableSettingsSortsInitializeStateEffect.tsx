@@ -6,13 +6,13 @@ import { type View } from '@/views/types/View';
 import { useEffect, useState } from 'react';
 import { type ViewSortDirection } from '~/generated-metadata/graphql';
 
-type RecordTableSettingsSortsInitializeStateEffectProps = {
+type RecordTableSettingSsortsInitializeStateEffectProps = {
   view: View;
 };
 
-export const RecordTableSettingsSortsInitializeStateEffect = ({
+export const RecordTableSettingSsortsInitializeStateEffect = ({
   view,
-}: RecordTableSettingsSortsInitializeStateEffectProps) => {
+}: RecordTableSettingSsortsInitializeStateEffectProps) => {
   const setCurrentRecordSorts = useSetAtomComponentState(
     currentRecordSortsComponentState,
   );
@@ -23,14 +23,14 @@ export const RecordTableSettingsSortsInitializeStateEffect = ({
 
   const [hasInitializedSorts, setHasInitializedSorts] = useState(false);
 
-  const stateAlreadyHasSorts = currentRecordSorts.length > 0;
+  const stateAlreadyHaSsorts = currentRecordSorts.length > 0;
 
   useEffect(() => {
     if (hasInitializedSorts) {
       return;
     }
 
-    if (stateAlreadyHasSorts) {
+    if (stateAlreadyHaSsorts) {
       setHasInitializedSorts(true);
       return;
     }
@@ -45,7 +45,7 @@ export const RecordTableSettingsSortsInitializeStateEffect = ({
 
     setCurrentRecordSorts(recordSorts);
     setHasInitializedSorts(true);
-  }, [view, hasInitializedSorts, stateAlreadyHasSorts, setCurrentRecordSorts]);
+  }, [view, hasInitializedSorts, stateAlreadyHaSsorts, setCurrentRecordSorts]);
 
   return null;
 };

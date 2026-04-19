@@ -10,7 +10,7 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
-import { AuthSsoService } from 'src/engine/core-modules/auth/services/auth-sso.service';
+import { AuthSsoService } from 'src/engine/core-modules/auth/services/auth-Sso.service';
 import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-up.service';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
@@ -30,7 +30,7 @@ import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-in
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
-import { CreateSSOConnectedAccountService } from 'src/engine/core-modules/auth/services/create-sso-connected-account.service';
+import { CreateSsoConnectedAccountService } from 'src/engine/core-modules/auth/services/create-Sso-connected-account.service';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 
@@ -183,9 +183,9 @@ describe('AuthService', () => {
           },
         },
         {
-          provide: CreateSSOConnectedAccountService,
+          provide: CreateSsoConnectedAccountService,
           useValue: {
-            createOrUpdateSSOConnectedAccount: jest
+            createOrUpdateSsoConnectedAccount: jest
               .fn()
               .mockResolvedValue(undefined),
           },
@@ -258,7 +258,7 @@ describe('AuthService', () => {
     });
   });
 
-  it('allows password login through SSO bypass when user has permission', async () => {
+  it('allows password login through Sso bypass when user has permission', async () => {
     const workspace = {
       id: 'workspace-id',
       isPasswordAuthEnabled: false,
@@ -620,7 +620,7 @@ describe('AuthService', () => {
       expect(spyWorkspaceRepository).toHaveBeenCalledTimes(1);
       expect(spyAuthSsoService).toHaveBeenCalledTimes(0);
     });
-    it('findWorkspaceForSignInUp - signup social sso auth with workspaceInviteHash', async () => {
+    it('findWorkspaceForSignInUp - signup social Sso auth with workspaceInviteHash', async () => {
       const spyWorkspaceRepository = jest
         .spyOn(workspaceRepository, 'findOne')
         .mockResolvedValue({
@@ -641,7 +641,7 @@ describe('AuthService', () => {
       expect(spyWorkspaceRepository).toHaveBeenCalledTimes(1);
       expect(spyAuthSsoService).toHaveBeenCalledTimes(0);
     });
-    it('findWorkspaceForSignInUp - signup social sso auth', async () => {
+    it('findWorkspaceForSignInUp - signup social Sso auth', async () => {
       const spyWorkspaceRepository = jest.spyOn(workspaceRepository, 'findOne');
 
       const spyAuthSsoService = jest
@@ -658,7 +658,7 @@ describe('AuthService', () => {
       expect(spyWorkspaceRepository).toHaveBeenCalledTimes(0);
       expect(spyAuthSsoService).toHaveBeenCalledTimes(1);
     });
-    it('findWorkspaceForSignInUp - sso auth', async () => {
+    it('findWorkspaceForSignInUp - Sso auth', async () => {
       const spyWorkspaceRepository = jest.spyOn(workspaceRepository, 'findOne');
 
       const spyAuthSsoService = jest
@@ -666,7 +666,7 @@ describe('AuthService', () => {
         .mockResolvedValue({} as WorkspaceEntity);
 
       const result = await service.findWorkspaceForSignInUp({
-        authProvider: AuthProviderEnum.SSO,
+        authProvider: AuthProviderEnum.Sso,
         workspaceId: 'workspaceId',
         email: 'email',
       });

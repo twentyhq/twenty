@@ -109,8 +109,8 @@ export const useSettingsRolePermissionFlagConfig = ({
         isRelevantForUsers: true,
       },
       {
-        key: PermissionFlagType.SSO_BYPASS,
-        name: t`SSO Bypass`,
+        key: PermissionFlagType.Sso_BYPASS,
+        name: t`Sso Bypass`,
         description: t`Enable bypass options`,
         Icon: IconShield,
         isRelevantForAgents: false,

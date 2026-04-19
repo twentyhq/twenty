@@ -7,7 +7,7 @@ import { v4 } from 'uuid';
 import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
-import { type MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
+import { type MessageChannelMessageASsociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-aSsociation.workspace-entity';
 import { type MessageThreadWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-thread.workspace-entity';
 import { type MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
 import { type MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message';
@@ -15,7 +15,7 @@ import { type MessageWithParticipants } from 'src/modules/messaging/message-impo
 type MessageAccumulator = {
   existingMessageInDB?: MessageWorkspaceEntity;
   existingThreadInDB?: Pick<MessageThreadWorkspaceEntity, 'id'>;
-  existingMessageChannelMessageAssociationInDB?: MessageChannelMessageAssociationWorkspaceEntity;
+  existingMessageChannelMessageASsociationInDB?: MessageChannelMessageASsociationWorkspaceEntity;
   messageToCreate?: Pick<
     MessageWorkspaceEntity,
     | 'id'
@@ -26,8 +26,8 @@ type MessageAccumulator = {
     | 'messageThreadId'
   >;
   threadToCreate?: Pick<MessageThreadWorkspaceEntity, 'id' | 'subject'>;
-  messageChannelMessageAssociationToCreate?: Pick<
-    MessageChannelMessageAssociationWorkspaceEntity,
+  messageChannelMessageASsociationToCreate?: Pick<
+    MessageChannelMessageASsociationWorkspaceEntity,
     | 'id'
     | 'messageChannelId'
     | 'messageId'
@@ -52,7 +52,7 @@ export class MessagingMessageService {
   ): Promise<{
     createdMessages: Partial<MessageWorkspaceEntity>[];
     messageExternalIdsAndIdsMap: Map<string, string>;
-    messageExternalIdToMessageChannelMessageAssociationIdMap: Map<
+    messageExternalIdToMessageChannelMessageASsociationIdMap: Map<
       string,
       string
     >;
@@ -61,10 +61,10 @@ export class MessagingMessageService {
 
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
       async () => {
-        const messageChannelMessageAssociationRepository =
-          await this.globalWorkspaceOrmManager.getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
+        const messageChannelMessageASsociationRepository =
+          await this.globalWorkspaceOrmManager.getRepository<MessageChannelMessageASsociationWorkspaceEntity>(
             workspaceId,
-            'messageChannelMessageAssociation',
+            'messageChannelMessageASsociation',
           );
 
         const messageRepository =
@@ -89,8 +89,8 @@ export class MessagingMessageService {
           },
         });
 
-        const messageChannelMessageAssociationsReferencingMessageThread =
-          await messageChannelMessageAssociationRepository.find(
+        const messageChannelMessageASsociationsReferencingMessageThread =
+          await messageChannelMessageASsociationRepository.find(
             {
               where: {
                 messageThreadExternalId: In(
@@ -103,8 +103,8 @@ export class MessagingMessageService {
             transactionManager,
           );
 
-        const existingMessageChannelMessageAssociations =
-          await messageChannelMessageAssociationRepository.find({
+        const existingMessageChannelMessageASsociations =
+          await messageChannelMessageASsociationRepository.find({
             where: {
               messageId: In(existingMessagesInDB.map((message) => message.id)),
               messageChannelId,
@@ -120,14 +120,14 @@ export class MessagingMessageService {
         await this.enrichMessageAccumulatorWithExistingMessageThreadIds(
           messages,
           messageAccumulatorMap,
-          messageChannelMessageAssociationsReferencingMessageThread,
+          messageChannelMessageASsociationsReferencingMessageThread,
           workspaceId,
         );
 
-        await this.enrichMessageAccumulatorWithExistingMessageChannelMessageAssociations(
+        await this.enrichMessageAccumulatorWithExistingMessageChannelMessageASsociations(
           messages,
           messageAccumulatorMap,
-          existingMessageChannelMessageAssociations,
+          existingMessageChannelMessageASsociations,
         );
 
         await this.enrichMessageAccumulatorWithMessageThreadToCreate(
@@ -177,10 +177,10 @@ export class MessagingMessageService {
 
           if (
             !isDefined(
-              messageAccumulator.existingMessageChannelMessageAssociationInDB,
+              messageAccumulator.existingMessageChannelMessageASsociationInDB,
             )
           ) {
-            messageAccumulator.messageChannelMessageAssociationToCreate = {
+            messageAccumulator.messageChannelMessageASsociationToCreate = {
               id: v4(),
               messageChannelId,
               messageId: newOrExistingMessageId,
@@ -254,22 +254,22 @@ export class MessagingMessageService {
 
         await messageRepository.insert(messagesToCreate, transactionManager);
 
-        const messageChannelMessageAssociationsToCreate = Array.from(
+        const messageChannelMessageASsociationsToCreate = Array.from(
           messageAccumulatorMap.values(),
         )
           .map(
             (accumulator) =>
-              accumulator.messageChannelMessageAssociationToCreate,
+              accumulator.messageChannelMessageASsociationToCreate,
           )
           .filter(isDefined);
 
-        await messageChannelMessageAssociationRepository.insert(
-          messageChannelMessageAssociationsToCreate,
+        await messageChannelMessageASsociationRepository.insert(
+          messageChannelMessageASsociationsToCreate,
           transactionManager,
         );
 
         const messageExternalIdsAndIdsMap = new Map<string, string>();
-        const messageExternalIdToMessageChannelMessageAssociationIdMap =
+        const messageExternalIdToMessageChannelMessageASsociationIdMap =
           new Map<string, string>();
 
         for (const [
@@ -290,16 +290,16 @@ export class MessagingMessageService {
             );
           }
 
-          const createdAssociationId =
-            accumulator.messageChannelMessageAssociationToCreate?.id;
-          const existingAssociationId =
-            accumulator.existingMessageChannelMessageAssociationInDB?.id;
-          const associationId = createdAssociationId ?? existingAssociationId;
+          const createdASsociationId =
+            accumulator.messageChannelMessageASsociationToCreate?.id;
+          const existingASsociationId =
+            accumulator.existingMessageChannelMessageASsociationInDB?.id;
+          const aSsociationId = createdASsociationId ?? existingASsociationId;
 
-          if (isDefined(associationId)) {
-            messageExternalIdToMessageChannelMessageAssociationIdMap.set(
+          if (isDefined(aSsociationId)) {
+            messageExternalIdToMessageChannelMessageASsociationIdMap.set(
               externalId,
-              associationId,
+              aSsociationId,
             );
           }
         }
@@ -307,7 +307,7 @@ export class MessagingMessageService {
         return {
           createdMessages: messagesToCreate,
           messageExternalIdsAndIdsMap,
-          messageExternalIdToMessageChannelMessageAssociationIdMap,
+          messageExternalIdToMessageChannelMessageASsociationIdMap,
         };
       },
       authContext,
@@ -339,8 +339,8 @@ export class MessagingMessageService {
   private async enrichMessageAccumulatorWithExistingMessageThreadIds(
     messages: MessageWithParticipants[],
     messageAccumulatorMap: Map<string, MessageAccumulator>,
-    messageChannelMessageAssociationsReferencingMessageThread: Pick<
-      MessageChannelMessageAssociationWorkspaceEntity,
+    messageChannelMessageASsociationsReferencingMessageThread: Pick<
+      MessageChannelMessageASsociationWorkspaceEntity,
       'messageThreadExternalId' | 'message'
     >[],
     workspaceId: string,
@@ -354,17 +354,17 @@ export class MessagingMessageService {
         );
       }
 
-      const messageChannelMessageAssociationReferencingMessageThread =
-        messageChannelMessageAssociationsReferencingMessageThread.find(
-          (association) =>
-            association.messageThreadExternalId ===
+      const messageChannelMessageASsociationReferencingMessageThread =
+        messageChannelMessageASsociationsReferencingMessageThread.find(
+          (aSsociation) =>
+            aSsociation.messageThreadExternalId ===
             message.messageThreadExternalId,
         );
 
       const existingThreadIdInDBIfMessageIsExistingInDB =
         messageAccumulator.existingMessageInDB?.messageThreadId;
-      const existingThreadIdInDBIfMessageIsReferencedInMessageChannelMessageAssociation =
-        messageChannelMessageAssociationReferencingMessageThread?.message
+      const existingThreadIdInDBIfMessageIsReferencedInMessageChannelMessageASsociation =
+        messageChannelMessageASsociationReferencingMessageThread?.message
           ?.messageThreadId;
 
       if (isDefined(existingThreadIdInDBIfMessageIsExistingInDB)) {
@@ -375,21 +375,21 @@ export class MessagingMessageService {
 
       if (
         isDefined(
-          existingThreadIdInDBIfMessageIsReferencedInMessageChannelMessageAssociation,
+          existingThreadIdInDBIfMessageIsReferencedInMessageChannelMessageASsociation,
         )
       ) {
         messageAccumulator.existingThreadInDB = {
-          id: existingThreadIdInDBIfMessageIsReferencedInMessageChannelMessageAssociation,
+          id: existingThreadIdInDBIfMessageIsReferencedInMessageChannelMessageASsociation,
         };
       }
 
       if (
         isDefined(existingThreadIdInDBIfMessageIsExistingInDB) &&
         isDefined(
-          existingThreadIdInDBIfMessageIsReferencedInMessageChannelMessageAssociation,
+          existingThreadIdInDBIfMessageIsReferencedInMessageChannelMessageASsociation,
         ) &&
         existingThreadIdInDBIfMessageIsExistingInDB !==
-          existingThreadIdInDBIfMessageIsReferencedInMessageChannelMessageAssociation
+          existingThreadIdInDBIfMessageIsReferencedInMessageChannelMessageASsociation
       ) {
         this.logger.warn(
           `
@@ -398,7 +398,7 @@ export class MessagingMessageService {
           Message HeaderId: ${message.headerMessageId} /
           Message Thread ExternalId: ${message.messageThreadExternalId} /
           Message Thread Id in DB: ${existingThreadIdInDBIfMessageIsExistingInDB} /
-          Message Thread Id in Message Channel Message Association: ${existingThreadIdInDBIfMessageIsReferencedInMessageChannelMessageAssociation} /
+          Message Thread Id in Message Channel Message ASsociation: ${existingThreadIdInDBIfMessageIsReferencedInMessageChannelMessageASsociation} /
           Message Subject: ${message.subject} /
           Message Received At: ${message.receivedAt} /
           Thread inter channel detected`,
@@ -409,10 +409,10 @@ export class MessagingMessageService {
     }
   }
 
-  private async enrichMessageAccumulatorWithExistingMessageChannelMessageAssociations(
+  private async enrichMessageAccumulatorWithExistingMessageChannelMessageASsociations(
     messages: MessageWithParticipants[],
     messageAccumulatorMap: Map<string, MessageAccumulator>,
-    existingMessageChannelMessageAssociations: MessageChannelMessageAssociationWorkspaceEntity[],
+    existingMessageChannelMessageASsociations: MessageChannelMessageASsociationWorkspaceEntity[],
   ) {
     for (const message of messages) {
       const messageAccumulator = messageAccumulatorMap.get(message.externalId);
@@ -429,14 +429,14 @@ export class MessagingMessageService {
         continue;
       }
 
-      const existingMessageChannelMessageAssociation =
-        existingMessageChannelMessageAssociations.find(
-          (association) => association.messageId === existingMessage.id,
+      const existingMessageChannelMessageASsociation =
+        existingMessageChannelMessageASsociations.find(
+          (aSsociation) => aSsociation.messageId === existingMessage.id,
         );
 
-      if (existingMessageChannelMessageAssociation) {
-        messageAccumulator.existingMessageChannelMessageAssociationInDB =
-          existingMessageChannelMessageAssociation;
+      if (existingMessageChannelMessageASsociation) {
+        messageAccumulator.existingMessageChannelMessageASsociationInDB =
+          existingMessageChannelMessageASsociation;
       }
     }
   }

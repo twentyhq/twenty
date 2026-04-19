@@ -15,15 +15,15 @@ export enum ApiKeyExceptionCode {
 const getApiKeyExceptionUserFriendlyMessage = (code: ApiKeyExceptionCode) => {
   switch (code) {
     case ApiKeyExceptionCode.API_KEY_NOT_FOUND:
-      return msg`API key not found.`;
+      return msg`Api key not found.`;
     case ApiKeyExceptionCode.API_KEY_REVOKED:
-      return msg`This API key has been revoked.`;
+      return msg`This Api key has been revoked.`;
     case ApiKeyExceptionCode.API_KEY_EXPIRED:
-      return msg`This API key has expired.`;
+      return msg`This Api key has expired.`;
     case ApiKeyExceptionCode.API_KEY_NO_ROLE_ASSIGNED:
-      return msg`This API key has no role assigned.`;
+      return msg`This Api key has no role assigned.`;
     case ApiKeyExceptionCode.ROLE_CANNOT_BE_ASSIGNED_TO_API_KEYS:
-      return msg`This role cannot be assigned to API keys.`;
+      return msg`This role cannot be assigned to Api keys.`;
     default:
       assertUnreachable(code);
   }

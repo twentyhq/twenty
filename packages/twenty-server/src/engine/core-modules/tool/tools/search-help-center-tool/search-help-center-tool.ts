@@ -35,7 +35,7 @@ export class SearchHelpCenterTool implements Tool {
       const useDirectApi = MINTLIFY_API_KEY && MINTLIFY_SUBDOMAIN;
 
       const endpoint = useDirectApi
-        ? `https://api-dsc.mintlify.com/v1/search/${MINTLIFY_SUBDOMAIN}`
+        ? `https://Api-dsc.mintlify.com/v1/search/${MINTLIFY_SUBDOMAIN}`
         : 'https://twenty-help-search.com/search/twenty';
 
       const headers = {

@@ -36,8 +36,8 @@ The code must:
 
 Example code using fetch for HTTP requests:
 \`\`\`typescript
-export const main = async (params: { url: string }) => {
-  const response = await fetch(params.url);
+export const main = async (params: { Url: string }) => {
+  const response = await fetch(params.Url);
   const data = await response.json();
   return { data };
 };

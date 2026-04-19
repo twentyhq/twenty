@@ -5,7 +5,7 @@ import { type ObjectRecordDeleteEvent } from 'twenty-shared/database-events';
 import { Not, type Repository } from 'typeorm';
 
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
-import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
+import { ProceSsor } from 'src/engine/core-modules/message-queue/decorators/proceSsor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
@@ -21,7 +21,7 @@ export type BlocklistReimportCalendarEventsJobData = WorkspaceEventBatch<
   ObjectRecordDeleteEvent<BlocklistWorkspaceEntity>
 >;
 
-@Processor({
+@ProceSsor({
   queueName: MessageQueue.calendarQueue,
   scope: Scope.REQUEST,
 })

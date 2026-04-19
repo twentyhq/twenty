@@ -24,9 +24,9 @@ import {
   type ParticipantWithMessageId,
 } from 'src/modules/messaging/message-import-manager/drivers/gmail/types/gmail-message.type';
 import {
-  type MessageChannelMessageAssociationFolderAssociation,
-  MessagingMessageFolderAssociationService,
-} from 'src/modules/messaging/message-import-manager/services/messaging-message-folder-association.service';
+  type MessageChannelMessageASsociationFolderASsociation,
+  MessagingMessageFolderASsociationService,
+} from 'src/modules/messaging/message-import-manager/services/messaging-message-folder-aSsociation.service';
 import { MessagingMessageService } from 'src/modules/messaging/message-import-manager/services/messaging-message.service';
 import { type MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message';
 import { MessagingMessageParticipantService } from 'src/modules/messaging/message-participant-manager/services/messaging-message-participant.service';
@@ -39,7 +39,7 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
     private readonly messageQueueService: MessageQueueService,
     private readonly messageService: MessagingMessageService,
     private readonly messageParticipantService: MessagingMessageParticipantService,
-    private readonly messageFolderAssociationService: MessagingMessageFolderAssociationService,
+    private readonly messageFolderASsociationService: MessagingMessageFolderASsociationService,
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
   ) {}
 
@@ -62,7 +62,7 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
             async (transactionManager: WorkspaceEntityManager) => {
               const {
                 messageExternalIdsAndIdsMap,
-                messageExternalIdToMessageChannelMessageAssociationIdMap,
+                messageExternalIdToMessageChannelMessageASsociationIdMap,
               } = await this.messageService.saveMessagesWithinTransaction(
                 messagesToSave,
                 messageChannel.id,
@@ -121,7 +121,7 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
                 transactionManager,
               );
 
-              const folderAssociations: MessageChannelMessageAssociationFolderAssociation[] =
+              const folderASsociations: MessageChannelMessageASsociationFolderASsociation[] =
                 messagesToSave.flatMap((message) => {
                   const messageFolderIds = message.messageFolderIds ?? [];
 
@@ -129,25 +129,25 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
                     return [];
                   }
 
-                  const associationId =
-                    messageExternalIdToMessageChannelMessageAssociationIdMap.get(
+                  const aSsociationId =
+                    messageExternalIdToMessageChannelMessageASsociationIdMap.get(
                       message.externalId,
                     );
 
-                  if (!isDefined(associationId)) {
+                  if (!isDefined(aSsociationId)) {
                     return [];
                   }
 
                   return [
                     {
-                      messageChannelMessageAssociationId: associationId,
+                      messageChannelMessageASsociationId: aSsociationId,
                       messageFolderIds,
                     },
                   ];
                 });
 
-              await this.messageFolderAssociationService.saveMessageFolderAssociations(
-                folderAssociations,
+              await this.messageFolderASsociationService.saveMessageFolderASsociations(
+                folderASsociations,
                 workspaceId,
                 transactionManager,
               );

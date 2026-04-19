@@ -34,26 +34,26 @@ const StyledButtonCopy = styled.div`
   margin-bottom: ${themeCssVariables.spacing[1]};
 `;
 
-export const SettingsSSOOIDCForm = () => {
+export const SettingsSsoOidcForm = () => {
   const { control } = useFormContext();
   const { copyToClipboard } = useCopyToClipboard();
   const { t } = useLingui();
 
   const authorizedUrl = window.location.origin;
-  const redirectionUrl = `${REACT_APP_SERVER_BASE_URL}/auth/oidc/callback`;
+  const redirectionUrl = `${REACT_APP_SERVER_BASE_URL}/auth/Oidc/callback`;
 
   return (
     <>
       <Section>
         <H2Title
           title={t`Client Settings`}
-          description={t`Provide your OIDC provider details`}
+          description={t`Provide your Oidc provider details`}
         />
         <StyledInputsContainer>
           <StyledContainer>
             <StyledLinkContainer>
               <SettingsTextInput
-                instanceId="sso-oidc-authorized-uri"
+                instanceId="Sso-Oidc-authorized-uri"
                 readOnly={true}
                 label={t`Authorized URI`}
                 value={authorizedUrl}
@@ -77,7 +77,7 @@ export const SettingsSSOOIDCForm = () => {
           <StyledContainer>
             <StyledLinkContainer>
               <SettingsTextInput
-                instanceId="sso-oidc-redirection-uri"
+                instanceId="Sso-Oidc-redirection-uri"
                 readOnly={true}
                 label={t`Redirection URI`}
                 value={redirectionUrl}
@@ -107,11 +107,11 @@ export const SettingsSSOOIDCForm = () => {
         />
         <StyledInputsContainer>
           <Controller
-            name="clientID"
+            name="clientId"
             control={control}
             render={({ field: { onChange, value } }) => (
               <SettingsTextInput
-                instanceId="sso-oidc-client-id"
+                instanceId="Sso-Oidc-client-id"
                 autoComplete="off"
                 label={t`Client ID`}
                 value={value}
@@ -126,7 +126,7 @@ export const SettingsSSOOIDCForm = () => {
             control={control}
             render={({ field: { onChange, value } }) => (
               <SettingsTextInput
-                instanceId="sso-oidc-client-secret"
+                instanceId="Sso-Oidc-client-secret"
                 autoComplete="off"
                 type="password"
                 label={t`Client Secret`}
@@ -142,7 +142,7 @@ export const SettingsSSOOIDCForm = () => {
             control={control}
             render={({ field: { onChange, value } }) => (
               <SettingsTextInput
-                instanceId="sso-oidc-issuer"
+                instanceId="Sso-Oidc-issuer"
                 autoComplete="off"
                 label={t`Issuer URI`}
                 value={value}

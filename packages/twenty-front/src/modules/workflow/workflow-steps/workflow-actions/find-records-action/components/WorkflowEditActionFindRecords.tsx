@@ -31,7 +31,7 @@ import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowS
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
 import { WorkflowFindRecordsFilters } from '@/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowFindRecordsFilters';
 import { WorkflowFindRecordsFiltersEffect } from '@/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowFindRecordsFiltersEffect';
-import { WorkflowFindRecordsSorts } from '@/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowFindRecordsSorts';
+import { WorkflowFindRecordSsorts } from '@/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowFindRecordSsorts';
 import { WorkflowObjectDropdownContent } from '@/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowObjectDropdownContent';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -263,7 +263,7 @@ export const WorkflowEditActionFindRecords = ({
           <>
             <div>
               <InputLabel>{t`Sort`}</InputLabel>
-              <WorkflowFindRecordsSorts
+              <WorkflowFindRecordSsorts
                 recordSorts={formData.orderBy?.recordSorts ?? []}
                 objectMetadataItem={selectedObjectMetadataItem}
                 onChange={(sorts: RecordSort[]) => {

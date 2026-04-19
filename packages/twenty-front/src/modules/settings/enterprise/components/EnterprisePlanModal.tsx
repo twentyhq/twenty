@@ -97,7 +97,7 @@ export const EnterprisePlanModal = () => {
   const client = useApolloClient();
 
   const benefits = [
-    t`SSO (SAML / OIDC)`,
+    t`Sso (Saml / Oidc)`,
     t`Row-level security`,
     t`Audit logs`,
     t`Custom objects`,

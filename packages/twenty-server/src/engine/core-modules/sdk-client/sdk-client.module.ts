@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { CoreGraphQLApiModule } from 'src/engine/api/graphql/core-graphql-api.module';
+import { CoreGraphQLApiModule } from 'src/engine/api/graphql/core-graphql-Api.module';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { SdkClientController } from 'src/engine/core-modules/sdk-client/controllers/sdk-client.controller';

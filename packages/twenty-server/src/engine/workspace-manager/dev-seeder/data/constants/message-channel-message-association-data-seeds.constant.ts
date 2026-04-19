@@ -2,7 +2,7 @@ import { MESSAGE_CHANNEL_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-
 import { MESSAGE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/message-data-seeds.constant';
 import { MessageDirection } from 'src/modules/messaging/common/enums/message-direction.enum';
 
-type MessageChannelMessageAssociationDataSeed = {
+type MessageChannelMessageASsociationDataSeed = {
   id: string;
   createdAt: Date;
   updatedAt: Date;
@@ -14,7 +14,7 @@ type MessageChannelMessageAssociationDataSeed = {
   direction: MessageDirection;
 };
 
-export const MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_DATA_SEED_COLUMNS: (keyof MessageChannelMessageAssociationDataSeed)[] =
+export const MESSAGE_CHANNEL_MESSAGE_ASsoCIATION_DATA_SEED_COLUMNS: (keyof MessageChannelMessageASsociationDataSeed)[] =
   [
     'id',
     'createdAt',
@@ -27,39 +27,39 @@ export const MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_DATA_SEED_COLUMNS: (keyof Messa
     'direction',
   ];
 
-const GENERATE_MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_IDS = (): Record<
+const GENERATE_MESSAGE_CHANNEL_MESSAGE_ASsoCIATION_IDS = (): Record<
   string,
   string
 > => {
-  const ASSOCIATION_IDS: Record<string, string> = {};
+  const ASsoCIATION_IDS: Record<string, string> = {};
 
   for (let INDEX = 1; INDEX <= 600; INDEX++) {
     const HEX_INDEX = INDEX.toString(16).padStart(4, '0');
 
-    ASSOCIATION_IDS[`ID_${INDEX}`] =
+    ASsoCIATION_IDS[`ID_${INDEX}`] =
       `20202020-${HEX_INDEX}-4e7c-8001-123456789bcd`;
   }
 
-  return ASSOCIATION_IDS;
+  return ASsoCIATION_IDS;
 };
 
-export const MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_DATA_SEED_IDS =
-  GENERATE_MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_IDS();
+export const MESSAGE_CHANNEL_MESSAGE_ASsoCIATION_DATA_SEED_IDS =
+  GENERATE_MESSAGE_CHANNEL_MESSAGE_ASsoCIATION_IDS();
 
-const GENERATE_MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_SEEDS =
-  (): MessageChannelMessageAssociationDataSeed[] => {
-    const ASSOCIATION_SEEDS: MessageChannelMessageAssociationDataSeed[] = [];
+const GENERATE_MESSAGE_CHANNEL_MESSAGE_ASsoCIATION_SEEDS =
+  (): MessageChannelMessageASsociationDataSeed[] => {
+    const ASsoCIATION_SEEDS: MessageChannelMessageASsociationDataSeed[] = [];
 
     const MESSAGE_IDS = Object.keys(MESSAGE_DATA_SEED_IDS).map(
       (key) => MESSAGE_DATA_SEED_IDS[key as keyof typeof MESSAGE_DATA_SEED_IDS],
     );
 
     MESSAGE_IDS.forEach((messageId, index) => {
-      const ASSOCIATION_INDEX = index + 1;
+      const ASsoCIATION_INDEX = index + 1;
 
       const NOW = new Date();
       const RANDOM_DAYS_OFFSET = Math.floor(Math.random() * 90);
-      const ASSOCIATION_DATE = new Date(
+      const ASsoCIATION_DATE = new Date(
         NOW.getTime() - RANDOM_DAYS_OFFSET * 24 * 60 * 60 * 1000,
       );
 
@@ -94,15 +94,15 @@ const GENERATE_MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_SEEDS =
           : MessageDirection.OUTGOING;
 
       // Generate unique external IDs for email sync
-      const MESSAGE_EXTERNAL_ID = `msg-${ASSOCIATION_INDEX}-${Date.now()}`;
-      const MESSAGE_THREAD_EXTERNAL_ID = `thread-${Math.floor(ASSOCIATION_INDEX / 2)}-${Date.now()}`;
+      const MESSAGE_EXTERNAL_ID = `msg-${ASsoCIATION_INDEX}-${Date.now()}`;
+      const MESSAGE_THREAD_EXTERNAL_ID = `thread-${Math.floor(ASsoCIATION_INDEX / 2)}-${Date.now()}`;
 
-      ASSOCIATION_SEEDS.push({
-        id: MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_DATA_SEED_IDS[
-          `ID_${ASSOCIATION_INDEX}`
+      ASsoCIATION_SEEDS.push({
+        id: MESSAGE_CHANNEL_MESSAGE_ASsoCIATION_DATA_SEED_IDS[
+          `ID_${ASsoCIATION_INDEX}`
         ],
-        createdAt: ASSOCIATION_DATE,
-        updatedAt: ASSOCIATION_DATE,
+        createdAt: ASsoCIATION_DATE,
+        updatedAt: ASsoCIATION_DATE,
         deletedAt: null,
         messageExternalId: MESSAGE_EXTERNAL_ID,
         messageThreadExternalId: MESSAGE_THREAD_EXTERNAL_ID,
@@ -112,8 +112,8 @@ const GENERATE_MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_SEEDS =
       });
     });
 
-    return ASSOCIATION_SEEDS;
+    return ASsoCIATION_SEEDS;
   };
 
-export const MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_DATA_SEEDS =
-  GENERATE_MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_SEEDS();
+export const MESSAGE_CHANNEL_MESSAGE_ASsoCIATION_DATA_SEEDS =
+  GENERATE_MESSAGE_CHANNEL_MESSAGE_ASsoCIATION_SEEDS();

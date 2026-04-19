@@ -1,7 +1,7 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { authProvidersState } from '@/client-config/states/authProvidersState';
 import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
-import { SSOIdentitiesProvidersState } from '@/settings/security/states/SSOIdentitiesProvidersState';
+import { SsoIdentitiesProvidersState } from '@/settings/security/states/SsoIdentitiesProvidersState';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { styled } from '@linaria/react';
@@ -36,7 +36,7 @@ export const SettingsSecurityAuthProvidersOptionsList = () => {
   const { t } = useLingui();
 
   const { enqueueErrorSnackBar } = useSnackBar();
-  const SSOIdentitiesProviders = useAtomStateValue(SSOIdentitiesProvidersState);
+  const SsoIdentitiesProviders = useAtomStateValue(SsoIdentitiesProvidersState);
   const authProviders = useAtomStateValue(authProvidersState);
 
   const [currentWorkspace, setCurrentWorkspace] = useAtomState(
@@ -53,7 +53,7 @@ export const SettingsSecurityAuthProvidersOptionsList = () => {
   };
 
   const toggleAuthMethod = async (
-    authProvider: keyof Omit<AuthProviders, '__typename' | 'magicLink' | 'sso'>,
+    authProvider: keyof Omit<AuthProviders, '__typename' | 'magicLink' | 'Sso'>,
   ) => {
     if (!currentWorkspace?.id) {
       throw new Error(t`User is not logged in`);
@@ -69,7 +69,7 @@ export const SettingsSecurityAuthProvidersOptionsList = () => {
       currentWorkspace.isGoogleAuthEnabled,
       currentWorkspace.isMicrosoftAuthEnabled,
       currentWorkspace.isPasswordAuthEnabled,
-      (SSOIdentitiesProviders?.length ?? 0) > 0,
+      (SsoIdentitiesProviders?.length ?? 0) > 0,
     ];
 
     if (

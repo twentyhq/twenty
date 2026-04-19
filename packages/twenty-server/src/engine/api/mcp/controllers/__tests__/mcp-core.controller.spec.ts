@@ -9,7 +9,7 @@ import { McpCoreController } from 'src/engine/api/mcp/controllers/mcp-core.contr
 import { type JsonRpc } from 'src/engine/api/mcp/dtos/json-rpc';
 import { McpAuthGuard } from 'src/engine/api/mcp/guards/mcp-auth.guard';
 import { McpProtocolService } from 'src/engine/api/mcp/services/mcp-protocol.service';
-import { type FlatApiKey } from 'src/engine/core-modules/api-key/types/flat-api-key.type';
+import { type FlatApiKey } from 'src/engine/core-modules/Api-key/types/flat-Api-key.type';
 import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { HttpExceptionHandlerService } from 'src/engine/core-modules/exception-handler/http-exception-handler.service';
@@ -72,7 +72,7 @@ describe('McpCoreController', () => {
     const mockWorkspace = { id: 'workspace-1' } as FlatWorkspace;
     const mockUser = { id: 'user-1' } as UserEntity;
     const mockUserWorkspaceId = 'user-workspace-1';
-    const mockApiKey = { id: 'api-key-1' } as FlatApiKey;
+    const mockApiKey = { id: 'Api-key-1' } as FlatApiKey;
     const mockRes = {
       status: jest.fn().mockReturnThis(),
       setHeader: jest.fn(),
@@ -241,7 +241,7 @@ describe('McpCoreController', () => {
       expect(mockRes.status).toHaveBeenCalledWith(202);
     });
 
-    it('should handle API key auth without user', async () => {
+    it('should handle Api key auth without user', async () => {
       const mockRequest: JsonRpc = {
         jsonrpc: '2.0',
         method: 'tools/call',

@@ -153,7 +153,7 @@ describe('FileStorageService', () => {
     });
 
     describe('getPresignedUrl', () => {
-      it('should delegate to the driver and return the URL', async () => {
+      it('should delegate to the driver and return the Url', async () => {
         mockDriver.getPresignedUrl.mockResolvedValue(
           'https://s3.example.com/signed',
         );

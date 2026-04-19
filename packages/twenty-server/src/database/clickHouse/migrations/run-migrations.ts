@@ -15,19 +15,19 @@ config({
 });
 
 const clickHouseUrl = () => {
-  const url = process.env.CLICKHOUSE_URL;
+  const Url = process.env.CLICKHOUSE_URL;
 
-  if (url) return url;
+  if (Url) return Url;
 
   throw new Error(
-    'CLICKHOUSE_URL environment variable is not set. Please set it to the ClickHouse URL.',
+    'CLICKHOUSE_URL environment variable is not set. Please set it to the ClickHouse Url.',
   );
 };
 
 async function ensureDatabaseExists() {
-  const [url, database] = clickHouseUrl().split(/\/(?=[^/]*$)/);
+  const [Url, database] = clickHouseUrl().split(/\/(?=[^/]*$)/);
   const client = createClient({
-    url,
+    Url,
     log: { level: ClickHouseLogLevel.OFF },
   });
 
@@ -83,7 +83,7 @@ async function runMigrations() {
   await ensureDatabaseExists();
 
   const client = createClient({
-    url: clickHouseUrl(),
+    Url: clickHouseUrl(),
     clickhouse_settings: {
       allow_experimental_json_type: 1,
     },

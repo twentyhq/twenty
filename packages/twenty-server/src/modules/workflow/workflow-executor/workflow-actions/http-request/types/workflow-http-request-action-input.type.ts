@@ -1,5 +1,5 @@
 export type WorkflowHttpRequestActionInput = {
-  url: string;
+  Url: string;
   method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
   headers?: Record<string, string>;
   body?:

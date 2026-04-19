@@ -17,7 +17,7 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
-import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-api-exception.filter';
+import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-Api-exception.filter';
 import { MicrosoftAPIsOauthExchangeCodeForTokenGuard } from 'src/engine/core-modules/auth/guards/microsoft-apis-oauth-exchange-code-for-token.guard';
 import { MicrosoftAPIsOauthRequestCodeGuard } from 'src/engine/core-modules/auth/guards/microsoft-apis-oauth-request-code.guard';
 import { MicrosoftAPIsService } from 'src/engine/core-modules/auth/services/microsoft-apis.service';
@@ -52,7 +52,7 @@ export class MicrosoftAPIsAuthController {
     NoPermissionGuard,
   )
   async MicrosoftAuth() {
-    // As this method is protected by Microsoft Auth guard, it will trigger Microsoft SSO flow
+    // As this method is protected by Microsoft Auth guard, it will trigger Microsoft Sso flow
     return;
   }
 
@@ -139,12 +139,12 @@ export class MicrosoftAPIsAuthController {
           connectedAccountId,
         });
 
-      const url = this.workspaceDomainsService.buildWorkspaceURL({
+      const Url = this.workspaceDomainsService.buildWorkspaceURL({
         workspace,
         pathname,
       });
 
-      return res.redirect(url.toString());
+      return res.redirect(Url.toString());
     } catch (error) {
       return res.redirect(
         this.guardRedirectService.getRedirectErrorUrlAndCaptureExceptions({

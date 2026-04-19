@@ -322,7 +322,7 @@ describe('buildLogicFunctionEvent', () => {
 
   it('should preserve the request path as-is', () => {
     const request = createMockRequest({
-      path: '/s/api/users',
+      path: '/s/Api/users',
     });
 
     const result = buildLogicFunctionEvent({
@@ -331,12 +331,12 @@ describe('buildLogicFunctionEvent', () => {
       forwardedRequestHeaders: [],
     });
 
-    expect(result.requestContext.http.path).toBe('/s/api/users');
+    expect(result.requestContext.http.path).toBe('/s/Api/users');
   });
 
   it('should preserve path without prefix', () => {
     const request = createMockRequest({
-      path: '/api/users',
+      path: '/Api/users',
     });
 
     const result = buildLogicFunctionEvent({
@@ -345,7 +345,7 @@ describe('buildLogicFunctionEvent', () => {
       forwardedRequestHeaders: [],
     });
 
-    expect(result.requestContext.http.path).toBe('/api/users');
+    expect(result.requestContext.http.path).toBe('/Api/users');
   });
 
   it('should handle GET request with no body', () => {
@@ -386,7 +386,7 @@ describe('buildLogicFunctionEvent', () => {
       headers: {
         'content-type': 'application/json',
         authorization: 'Bearer secret',
-        'x-api-key': 'key123',
+        'x-Api-key': 'key123',
         cookie: 'session=abc',
       },
     });
@@ -394,11 +394,11 @@ describe('buildLogicFunctionEvent', () => {
     const result = buildLogicFunctionEvent({
       request,
       pathParameters: {},
-      forwardedRequestHeaders: ['x-api-key'],
+      forwardedRequestHeaders: ['x-Api-key'],
     });
 
     expect(result.headers).toEqual({
-      'x-api-key': 'key123',
+      'x-Api-key': 'key123',
     });
     expect(result.headers['authorization']).toBeUndefined();
     expect(result.headers['cookie']).toBeUndefined();

@@ -12,7 +12,7 @@ import { JwtAuthGuard } from 'src/engine/guards/jwt-auth.guard';
 
 // RFC 9728 / MCP authorization spec: when the MCP endpoint returns 401,
 // include a WWW-Authenticate header pointing to the path-aware Protected
-// Resource Metadata URL so the client discovers the correct resource
+// Resource Metadata Url so the client discovers the correct resource
 // identifier. The `scope` parameter tells the client which scopes to request.
 @Injectable()
 export class McpAuthGuard implements CanActivate {

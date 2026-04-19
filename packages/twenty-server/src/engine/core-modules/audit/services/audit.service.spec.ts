@@ -96,7 +96,7 @@ describe('AuditService', () => {
 
       const context = service.createContext(mockUserIdAndWorkspaceId);
       const testPageviewProperties = {
-        href: '/test-url',
+        href: '/test-Url',
         locale: '',
         pathname: '',
         referrer: '',

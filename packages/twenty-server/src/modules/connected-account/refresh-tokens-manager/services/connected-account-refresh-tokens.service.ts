@@ -8,8 +8,8 @@ import { Repository } from 'typeorm';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
-import { GoogleAPIRefreshAccessTokenService } from 'src/modules/connected-account/refresh-tokens-manager/drivers/google/services/google-api-refresh-tokens.service';
-import { MicrosoftAPIRefreshAccessTokenService } from 'src/modules/connected-account/refresh-tokens-manager/drivers/microsoft/services/microsoft-api-refresh-tokens.service';
+import { GoogleAPIRefreshAccessTokenService } from 'src/modules/connected-account/refresh-tokens-manager/drivers/google/services/google-Api-refresh-tokens.service';
+import { MicrosoftAPIRefreshAccessTokenService } from 'src/modules/connected-account/refresh-tokens-manager/drivers/microsoft/services/microsoft-Api-refresh-tokens.service';
 import {
   ConnectedAccountRefreshAccessTokenException,
   ConnectedAccountRefreshAccessTokenExceptionCode,
@@ -115,8 +115,8 @@ export class ConnectedAccountRefreshTokensService {
         );
       }
       case ConnectedAccountProvider.IMAP_SMTP_CALDAV:
-      case ConnectedAccountProvider.OIDC:
-      case ConnectedAccountProvider.SAML:
+      case ConnectedAccountProvider.Oidc:
+      case ConnectedAccountProvider.Saml:
         return true;
       default:
         return assertUnreachable(
@@ -142,8 +142,8 @@ export class ConnectedAccountRefreshTokensService {
             refreshToken,
           );
         case ConnectedAccountProvider.IMAP_SMTP_CALDAV:
-        case ConnectedAccountProvider.OIDC:
-        case ConnectedAccountProvider.SAML:
+        case ConnectedAccountProvider.Oidc:
+        case ConnectedAccountProvider.Saml:
           throw new ConnectedAccountRefreshAccessTokenException(
             `Token refresh is not supported for ${connectedAccount.provider} provider for connected account ${connectedAccount.id} in workspace ${workspaceId}`,
             ConnectedAccountRefreshAccessTokenExceptionCode.PROVIDER_NOT_SUPPORTED,

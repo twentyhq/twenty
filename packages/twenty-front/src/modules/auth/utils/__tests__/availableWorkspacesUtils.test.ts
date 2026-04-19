@@ -16,7 +16,7 @@ const createMockAvailableWorkspace = (
   id: 'workspace-1',
   displayName: 'Test Workspace',
   logo: null,
-  sso: [],
+  Sso: [],
   workspaceUrls: {
     customUrl: null,
     subdomainUrl: 'https://test.twenty.com',

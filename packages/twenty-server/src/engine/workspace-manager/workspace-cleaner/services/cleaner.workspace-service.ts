@@ -390,14 +390,14 @@ export class CleanerWorkspaceService {
       );
 
       try {
-        const isSoftDeletedWorkspace = isDefined(workspace.deletedAt);
+        const iSsoftDeletedWorkspace = isDefined(workspace.deletedAt);
         const isWithinDeletionLimit =
           deletedWorkspacesCount <
           this.maxNumberOfWorkspacesDeletedPerExecution;
 
         if (
           (!isDefined(onlyOperation) || onlyOperation === 'destroy') &&
-          isSoftDeletedWorkspace &&
+          iSsoftDeletedWorkspace &&
           isWithinDeletionLimit
         ) {
           const result = await this.destroySoftDeletedWorkspace({

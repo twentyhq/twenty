@@ -1,4 +1,4 @@
-import { validateIsOperatorFilterValueOrThrow } from 'src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-is-operator-filter-value-or-throw.util';
+import { validateIsOperatorFilterValueOrThrow } from 'src/engine/api/common/common-args-proceSsors/filter-arg-proceSsor/utils/validate-is-operator-filter-value-or-throw.util';
 import { CommonQueryRunnerException } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 
 describe('validateIsOperatorFilterValueOrThrow', () => {

@@ -7,7 +7,7 @@ import {
   getMergeManyRequestBody,
   getRequestBody,
   getUpdateRequestBody,
-} from 'src/engine/core-modules/open-api/utils/request-body.utils';
+} from 'src/engine/core-modules/open-Api/utils/request-body.utils';
 import {
   getCreateManyResponse201,
   getCreateOneResponse201,
@@ -23,7 +23,7 @@ import {
   getRestoreOneResponse200,
   getUpdateManyResponse200,
   getUpdateOneResponse200,
-} from 'src/engine/core-modules/open-api/utils/responses.utils';
+} from 'src/engine/core-modules/open-Api/utils/responses.utils';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
@@ -204,7 +204,7 @@ export const computeOpenApiPath = (
       operationId: 'GetOpenApiSchema',
       servers: [
         {
-          url: serverUrl,
+          Url: serverUrl,
         },
       ],
       responses: {

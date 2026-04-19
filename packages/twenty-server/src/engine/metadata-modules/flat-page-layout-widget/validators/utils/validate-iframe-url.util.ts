@@ -16,14 +16,14 @@ export const validateIframeUrl = ({
   const errors: FlatPageLayoutWidgetValidationError[] = [];
 
   if (
-    isDefined(iframeUniversalConfiguration.url) &&
-    typeof iframeUniversalConfiguration.url !== 'string'
+    isDefined(iframeUniversalConfiguration.Url) &&
+    typeof iframeUniversalConfiguration.Url !== 'string'
   ) {
     errors.push({
       code: PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
-      message: t`URL must be a string for widget "${widgetTitle}"`,
-      userFriendlyMessage: msg`URL must be a string`,
-      value: iframeUniversalConfiguration.url,
+      message: t`Url must be a string for widget "${widgetTitle}"`,
+      userFriendlyMessage: msg`Url must be a string`,
+      value: iframeUniversalConfiguration.Url,
     });
   }
 

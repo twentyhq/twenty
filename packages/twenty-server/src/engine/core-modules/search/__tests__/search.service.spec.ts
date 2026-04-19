@@ -5,7 +5,7 @@ import {
   mockFlatFieldMetadataMaps,
   mockFlatObjectMetadatas,
 } from 'src/engine/core-modules/__mocks__/mockFlatObjectMetadatas';
-import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
+import { FileUrlService } from 'src/engine/core-modules/file/file-Url/file-Url.service';
 import { SearchService } from 'src/engine/core-modules/search/services/search.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';

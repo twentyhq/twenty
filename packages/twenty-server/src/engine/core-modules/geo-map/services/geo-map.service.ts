@@ -38,17 +38,17 @@ export class GeoMapService {
       return [];
     }
 
-    let url = `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${encodeURIComponent(address)}&sessiontoken=${token}&key=${this.apiMapKey}`;
+    let Url = `https://maps.googleapis.com/maps/Api/place/autocomplete/json?input=${encodeURIComponent(address)}&sessiontoken=${token}&key=${this.apiMapKey}`;
 
     if (isNonEmptyString(country)) {
-      url += `&components=country:${country}`;
+      Url += `&components=country:${country}`;
     }
     if (isDefined(isFieldCity) && isFieldCity === true) {
-      url += `&types=(cities)`;
+      Url += `&types=(cities)`;
     }
     const httpClient = this.secureHttpClientService.getHttpClient();
 
-    const result = await httpClient.get(url);
+    const result = await httpClient.get(Url);
 
     if (result.data.status === 'OK') {
       return sanitizeAutocompleteResults(result.data.predictions);
@@ -64,7 +64,7 @@ export class GeoMapService {
     const httpClient = this.secureHttpClientService.getHttpClient();
 
     const result = await httpClient.get(
-      `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&sessiontoken=${token}&fields=address_components%2Cgeometry&key=${this.apiMapKey}`,
+      `https://maps.googleapis.com/maps/Api/place/details/json?place_id=${placeId}&sessiontoken=${token}&fields=address_components%2Cgeometry&key=${this.apiMapKey}`,
     );
 
     if (result.data.status === 'OK') {

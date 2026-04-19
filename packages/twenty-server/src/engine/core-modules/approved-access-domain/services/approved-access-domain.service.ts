@@ -18,7 +18,7 @@ import {
 import { approvedAccessDomainValidator } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.validate';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
-import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
+import { FileUrlService } from 'src/engine/core-modules/file/file-Url/file-Url.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
@@ -234,13 +234,13 @@ export class ApprovedAccessDomainService {
     });
   }
 
-  async findValidatedApprovedAccessDomainWithWorkspacesAndSSOIdentityProvidersDomain(
+  async findValidatedApprovedAccessDomainWithWorkspacesAndSsoIdentityProvidersDomain(
     domain: string,
   ) {
     return await this.approvedAccessDomainRepository.find({
       relations: [
         'workspace',
-        'workspace.workspaceSSOIdentityProviders',
+        'workspace.workspaceSsoIdentityProviders',
         'workspace.approvedAccessDomains',
       ],
       where: {

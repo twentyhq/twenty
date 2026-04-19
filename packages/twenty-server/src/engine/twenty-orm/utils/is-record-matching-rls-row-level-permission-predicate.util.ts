@@ -145,7 +145,7 @@ export const isRecordMatchingRLSRowLevelPermissionPredicate = ({
     }
 
     if (isObject(filterValue)) {
-      // The API considers "or" with an object as an "and"
+      // The Api considers "or" with an object as an "and"
       return isRecordMatchingRLSRowLevelPermissionPredicate({
         record,
         filter: filterValue,
@@ -180,12 +180,12 @@ export const isRecordMatchingRLSRowLevelPermissionPredicate = ({
   const shouldTakeDeletedAtIntoAccount =
     shouldIgnoreSoftDeleteDefaultFilter !== true;
 
-  const shouldRejectMatchingBecauseRecordIsSoftDeleted =
+  const shouldRejectMatchingBecauseRecordISsoftDeleted =
     isLeafFilter(filter) &&
     shouldTakeDeletedAtIntoAccount &&
     isDefined(record.deletedAt);
 
-  if (shouldRejectMatchingBecauseRecordIsSoftDeleted) {
+  if (shouldRejectMatchingBecauseRecordISsoftDeleted) {
     return false;
   }
 

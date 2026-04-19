@@ -13,7 +13,7 @@ export const useSortedNavigationMenuItems = () => {
   const views = useAtomStateValue(viewsSelector);
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
 
-  const navigationMenuItemsSorted = useMemo(() => {
+  const navigationMenuItemSsorted = useMemo(() => {
     return filterAndSortNavigationMenuItems(
       navigationMenuItems,
       views,
@@ -21,7 +21,7 @@ export const useSortedNavigationMenuItems = () => {
     );
   }, [navigationMenuItems, views, objectMetadataItems]);
 
-  const workspaceNavigationMenuItemsSorted = useMemo(() => {
+  const workspaceNavigationMenuItemSsorted = useMemo(() => {
     return filterAndSortNavigationMenuItems(
       workspaceNavigationMenuItems,
       views,
@@ -30,7 +30,7 @@ export const useSortedNavigationMenuItems = () => {
   }, [workspaceNavigationMenuItems, views, objectMetadataItems]);
 
   return {
-    navigationMenuItemsSorted,
-    workspaceNavigationMenuItemsSorted,
+    navigationMenuItemSsorted,
+    workspaceNavigationMenuItemSsorted,
   };
 };

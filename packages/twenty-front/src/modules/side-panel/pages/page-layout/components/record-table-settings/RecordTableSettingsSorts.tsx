@@ -2,8 +2,8 @@ import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMeta
 import { filterSortableFieldMetadataItems } from '@/object-metadata/utils/filterSortableFieldMetadataItems';
 import { RecordSortsComponentInstanceContext } from '@/object-record/record-sort/states/context/RecordSortsComponentInstanceContext';
 import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
-import { RecordTableSettingsSortsContent } from '@/side-panel/pages/page-layout/components/record-table-settings/RecordTableSettingsSortsContent';
-import { RecordTableSettingsSortsInitializeStateEffect } from '@/side-panel/pages/page-layout/components/record-table-settings/RecordTableSettingsSortsInitializeStateEffect';
+import { RecordTableSettingSsortsContent } from '@/side-panel/pages/page-layout/components/record-table-settings/RecordTableSettingSsortsContent';
+import { RecordTableSettingSsortsInitializeStateEffect } from '@/side-panel/pages/page-layout/components/record-table-settings/RecordTableSettingSsortsInitializeStateEffect';
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import { useViewById } from '@/views/hooks/useViewById';
 import { styled } from '@linaria/react';
@@ -21,15 +21,15 @@ const StyledSortSettingsContainer = styled.div`
   padding: ${themeCssVariables.spacing[3]};
 `;
 
-type RecordTableSettingsSortsProps = {
+type RecordTableSettingSsortsProps = {
   viewId: string;
   objectMetadataId: string;
 };
 
-export const RecordTableSettingsSorts = ({
+export const RecordTableSettingSsorts = ({
   viewId,
   objectMetadataId,
-}: RecordTableSettingsSortsProps) => {
+}: RecordTableSettingSsortsProps) => {
   const { view } = useViewById(viewId);
   const { objectMetadataItem } = useObjectMetadataItemById({
     objectId: objectMetadataId,
@@ -71,11 +71,11 @@ export const RecordTableSettingsSorts = ({
       <RecordSortsComponentInstanceContext.Provider
         value={{ instanceId: recordIndexId }}
       >
-        <RecordTableSettingsSortsContent
+        <RecordTableSettingSsortsContent
           sortableFieldOptions={sortableFieldOptions}
           directionOptions={directionOptions}
         />
-        <RecordTableSettingsSortsInitializeStateEffect view={view} />
+        <RecordTableSettingSsortsInitializeStateEffect view={view} />
       </RecordSortsComponentInstanceContext.Provider>
     </StyledSortSettingsContainer>
   );

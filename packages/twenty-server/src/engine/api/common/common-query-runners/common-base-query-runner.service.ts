@@ -4,13 +4,13 @@ import { type PermissionFlagType } from 'twenty-shared/constants';
 
 import { QueryResultFieldValue } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/interfaces/query-result-field-value';
 
-import { DataArgProcessorService } from 'src/engine/api/common/common-args-processors/data-arg-processor/data-arg-processor.service';
-import { FilterArgProcessorService } from 'src/engine/api/common/common-args-processors/filter-arg-processor/filter-arg-processor.service';
-import { GroupByArgProcessorService } from 'src/engine/api/common/common-args-processors/group-by-arg-processor/group-by-arg-processor.service';
-import { OrderByArgProcessorService } from 'src/engine/api/common/common-args-processors/order-by-arg-processor/order-by-arg-processor.service';
-import { OrderByWithGroupByArgProcessorService } from 'src/engine/api/common/common-args-processors/order-by-with-group-by-arg-processor/order-by-with-group-by-arg-processor.service';
-import { QueryRunnerArgsFactory } from 'src/engine/api/common/common-args-processors/query-runner-args.factory';
-import { ProcessNestedRelationsHelper } from 'src/engine/api/common/common-nested-relations-processor/process-nested-relations.helper';
+import { DataArgProceSsorService } from 'src/engine/api/common/common-args-proceSsors/data-arg-proceSsor/data-arg-proceSsor.service';
+import { FilterArgProceSsorService } from 'src/engine/api/common/common-args-proceSsors/filter-arg-proceSsor/filter-arg-proceSsor.service';
+import { GroupByArgProceSsorService } from 'src/engine/api/common/common-args-proceSsors/group-by-arg-proceSsor/group-by-arg-proceSsor.service';
+import { OrderByArgProceSsorService } from 'src/engine/api/common/common-args-proceSsors/order-by-arg-proceSsor/order-by-arg-proceSsor.service';
+import { OrderByWithGroupByArgProceSsorService } from 'src/engine/api/common/common-args-proceSsors/order-by-with-group-by-arg-proceSsor/order-by-with-group-by-arg-proceSsor.service';
+import { QueryRunnerArgsFactory } from 'src/engine/api/common/common-args-proceSsors/query-runner-args.factory';
+import { ProcessNestedRelationsHelper } from 'src/engine/api/common/common-nested-relations-proceSsor/process-nested-relations.helper';
 import {
   CommonQueryRunnerException,
   CommonQueryRunnerExceptionCode,
@@ -34,7 +34,7 @@ import { OBJECTS_WITH_SETTINGS_PERMISSIONS_REQUIREMENTS } from 'src/engine/api/g
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
 import { WorkspacePreQueryHookPayload } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/types/workspace-query-hook.type';
 import { WorkspaceQueryHookService } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/workspace-query-hook.service';
-import { isApiKeyAuthContext } from 'src/engine/core-modules/auth/guards/is-api-key-auth-context.guard';
+import { isApiKeyAuthContext } from 'src/engine/core-modules/auth/guards/is-Api-key-auth-context.guard';
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
@@ -66,15 +66,15 @@ export abstract class CommonBaseQueryRunnerService<
   @Inject()
   protected readonly queryRunnerArgsFactory: QueryRunnerArgsFactory;
   @Inject()
-  protected readonly dataArgProcessor: DataArgProcessorService;
+  protected readonly dataArgProceSsor: DataArgProceSsorService;
   @Inject()
-  protected readonly filterArgProcessor: FilterArgProcessorService;
+  protected readonly filterArgProceSsor: FilterArgProceSsorService;
   @Inject()
-  protected readonly groupByArgProcessor: GroupByArgProcessorService;
+  protected readonly groupByArgProceSsor: GroupByArgProceSsorService;
   @Inject()
-  protected readonly orderByArgProcessor: OrderByArgProcessorService;
+  protected readonly orderByArgProceSsor: OrderByArgProceSsorService;
   @Inject()
-  protected readonly orderByWithGroupByArgProcessor: OrderByWithGroupByArgProcessorService;
+  protected readonly orderByWithGroupByArgProceSsor: OrderByWithGroupByArgProceSsorService;
   @Inject()
   protected readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager;
   @Inject()
@@ -354,7 +354,7 @@ export abstract class CommonBaseQueryRunnerService<
       const workspaceId = authContext.workspace.id;
 
       const shortConfig = {
-        key: `api:throttler:${workspaceId}-short-limit`,
+        key: `Api:throttler:${workspaceId}-short-limit`,
         maxTokens: this.twentyConfigService.get(
           'API_RATE_LIMITING_SHORT_LIMIT',
         ),
@@ -364,7 +364,7 @@ export abstract class CommonBaseQueryRunnerService<
       };
 
       const longConfig = {
-        key: `api:throttler:${workspaceId}-long-limit`,
+        key: `Api:throttler:${workspaceId}-long-limit`,
         maxTokens: this.twentyConfigService.get('API_RATE_LIMITING_LONG_LIMIT'),
         timeWindow: this.twentyConfigService.get(
           'API_RATE_LIMITING_LONG_TTL_IN_MS',

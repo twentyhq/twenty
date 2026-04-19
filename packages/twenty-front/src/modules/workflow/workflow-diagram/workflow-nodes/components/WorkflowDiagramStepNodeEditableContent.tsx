@@ -71,7 +71,7 @@ export const WorkflowDiagramStepNodeEditableContent = ({
   const { isConnectable, isConnectingSource, isConnectionInProgress } =
     useConnectionState(data.nodeType);
 
-  const { isSourceSelected, isSourceHovered } = useEdgeState();
+  const { iSsourceSelected, iSsourceHovered } = useEdgeState();
 
   const isNodeConnectable = isConnectable({ nodeId: id });
 
@@ -156,7 +156,7 @@ export const WorkflowDiagramStepNodeEditableContent = ({
           type="source"
           position={Position.Bottom}
           selected={
-            isSourceSelected({
+            iSsourceSelected({
               nodeId: id,
               sourceHandle: WORKFLOW_DIAGRAM_NODE_DEFAULT_SOURCE_HANDLE_ID,
             }) ||
@@ -168,7 +168,7 @@ export const WorkflowDiagramStepNodeEditableContent = ({
             (isNodeConnectable && isHovered)
           }
           hovered={
-            isSourceHovered({
+            iSsourceHovered({
               nodeId: id,
               sourceHandle: WORKFLOW_DIAGRAM_NODE_DEFAULT_SOURCE_HANDLE_ID,
             }) || isHovered
@@ -182,7 +182,7 @@ export const WorkflowDiagramStepNodeEditableContent = ({
           type="source"
           position={Position.Right}
           selected={
-            isSourceSelected({
+            iSsourceSelected({
               nodeId: id,
               sourceHandle: data.rightHandleOptions.id,
             }) ||
@@ -194,7 +194,7 @@ export const WorkflowDiagramStepNodeEditableContent = ({
             (isNodeConnectable && isHovered)
           }
           hovered={
-            isSourceHovered({
+            iSsourceHovered({
               nodeId: id,
               sourceHandle: data.rightHandleOptions.id,
             }) || isHovered

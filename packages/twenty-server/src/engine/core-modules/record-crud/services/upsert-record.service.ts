@@ -7,7 +7,7 @@ import {
   RecordCrudException,
   RecordCrudExceptionCode,
 } from 'src/engine/core-modules/record-crud/exceptions/record-crud.exception';
-import { CommonApiContextBuilderService } from 'src/engine/core-modules/record-crud/services/common-api-context-builder.service';
+import { CommonApiContextBuilderService } from 'src/engine/core-modules/record-crud/services/common-Api-context-builder.service';
 import { type UpsertRecordParams } from 'src/engine/core-modules/record-crud/types/upsert-record-params.type';
 import { removeUndefinedFromRecord } from 'src/engine/core-modules/record-crud/utils/remove-undefined-from-record.util';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
@@ -47,7 +47,7 @@ export class UpsertRecordService {
       // This prevents validation errors for partial composite field inputs
       const cleanedRecord = removeUndefinedFromRecord(objectRecord);
 
-      // Use Common API with upsert flag - it handles conflict detection automatically
+      // Use Common Api with upsert flag - it handles conflict detection automatically
       const { results: upsertedRecord } =
         await this.commonCreateOneRunner.execute(
           {

@@ -48,7 +48,7 @@ const ORPHAN_DROPPABLE_ID =
   NavigationMenuItemDroppableIds.FAVORITE_ORPHAN_NAVIGATION_MENU_ITEMS;
 
 export const FavoritesSection = () => {
-  const { navigationMenuItemsSorted } = useSortedNavigationMenuItems();
+  const { navigationMenuItemSsorted } = useSortedNavigationMenuItems();
   const { userNavigationMenuItemsByFolder } = useNavigationMenuItemsByFolder();
   const { deleteManyNavigationMenuItems } = useDeleteManyNavigationMenuItems();
   const { isDragging } = useContext(NavigationMenuItemDragContext);
@@ -73,8 +73,8 @@ export const FavoritesSection = () => {
   );
 
   const topLevelItems = useMemo(
-    () => navigationMenuItemsSorted.filter((item) => !item.folderId),
-    [navigationMenuItemsSorted],
+    () => navigationMenuItemSsorted.filter((item) => !item.folderId),
+    [navigationMenuItemSsorted],
   );
 
   const folderChildrenById = useMemo(() => {

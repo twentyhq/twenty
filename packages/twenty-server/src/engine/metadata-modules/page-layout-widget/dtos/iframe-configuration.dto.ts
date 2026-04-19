@@ -16,5 +16,5 @@ export class IframeConfigurationDTO implements IframeConfiguration {
   @IsString()
   @IsOptional()
   @IsUrl()
-  url?: string;
+  Url?: string;
 }

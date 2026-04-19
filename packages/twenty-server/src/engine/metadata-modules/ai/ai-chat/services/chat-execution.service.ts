@@ -421,7 +421,7 @@ export class ChatExecutionService {
       }),
     });
 
-    let context = `The user is viewing a ${objectNameSingular} record (ID: ${recordId}, URL: ${resourceUrl}). Use tools to fetch record details if needed.`;
+    let context = `The user is viewing a ${objectNameSingular} record (ID: ${recordId}, Url: ${resourceUrl}). Use tools to fetch record details if needed.`;
 
     if (isDefined(pageLayoutId)) {
       context += `\nPage layout ID: ${pageLayoutId}.`;

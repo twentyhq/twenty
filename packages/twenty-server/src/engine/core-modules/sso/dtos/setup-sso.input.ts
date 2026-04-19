@@ -5,7 +5,7 @@ import { Field, InputType } from '@nestjs/graphql';
 import { IsOptional, IsString, IsUrl, IsUUID } from 'class-validator';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { IsX509Certificate } from 'src/engine/core-modules/sso/dtos/validators/x509.validator';
+import { IsX509Certificate } from 'src/engine/core-modules/Sso/dtos/validators/x509.validator';
 
 @InputType()
 class SetupSsoInputCommon {
@@ -20,10 +20,10 @@ class SetupSsoInputCommon {
 }
 
 @InputType()
-export class SetupOIDCSsoInput extends SetupSsoInputCommon {
+export class SetupOidcSsoInput extends SetupSsoInputCommon {
   @Field(() => String)
   @IsString()
-  clientID: string;
+  clientId: string;
 
   @Field(() => String)
   @IsString()
@@ -31,14 +31,14 @@ export class SetupOIDCSsoInput extends SetupSsoInputCommon {
 }
 
 @InputType()
-export class SetupSAMLSsoInput extends SetupSsoInputCommon {
+export class SetupSamlSsoInput extends SetupSsoInputCommon {
   @Field(() => UUIDScalarType)
   @IsUUID()
   id: string;
 
   @Field(() => String)
   @IsUrl({ protocols: ['http', 'https'] })
-  ssoURL: string;
+  ssoUrl: string;
 
   @Field(() => String)
   @IsX509Certificate()

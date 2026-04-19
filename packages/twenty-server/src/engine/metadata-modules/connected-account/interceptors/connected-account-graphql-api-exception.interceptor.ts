@@ -7,7 +7,7 @@ import {
 
 import { type Observable, catchError } from 'rxjs';
 
-import { connectedAccountGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/connected-account/utils/connected-account-graphql-api-exception-handler.util';
+import { connectedAccountGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/connected-account/utils/connected-account-graphql-Api-exception-handler.util';
 
 @Injectable()
 export class ConnectedAccountGraphqlApiExceptionInterceptor

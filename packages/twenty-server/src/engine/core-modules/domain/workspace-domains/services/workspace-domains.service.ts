@@ -5,7 +5,7 @@ import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { DomainServerConfigService } from 'src/engine/core-modules/domain/domain-server-config/services/domain-server-config.service';
-import { buildUrlWithPathnameAndSearchParams } from 'src/engine/core-modules/domain/domain-server-config/utils/build-url-with-pathname-and-search-params.util';
+import { buildUrlWithPathnameAndSearchParams } from 'src/engine/core-modules/domain/domain-server-config/utils/build-Url-with-pathname-and-search-params.util';
 import { WorkspaceDomainConfig } from 'src/engine/core-modules/domain/workspace-domains/types/workspace-domain-config.type';
 import { PublicDomainEntity } from 'src/engine/core-modules/public-domain/public-domain.entity';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -34,13 +34,13 @@ export class WorkspaceDomainsService {
   }) {
     const workspaceUrls = this.getWorkspaceUrls(workspace);
 
-    const url = buildUrlWithPathnameAndSearchParams({
-      baseUrl: new URL(workspaceUrls.customUrl ?? workspaceUrls.subdomainUrl),
+    const Url = buildUrlWithPathnameAndSearchParams({
+      baseUrl: new Url(workspaceUrls.customUrl ?? workspaceUrls.subdomainUrl),
       pathname,
       searchParams,
     });
 
-    return url;
+    return Url;
   }
 
   computeWorkspaceRedirectErrorUrl(
@@ -48,13 +48,13 @@ export class WorkspaceDomainsService {
     workspace: WorkspaceDomainConfig,
     pathname: string,
   ) {
-    const url = this.buildWorkspaceURL({
+    const Url = this.buildWorkspaceURL({
       workspace,
       pathname,
       searchParams: { errorMessage },
     });
 
-    return url.toString();
+    return Url.toString();
   }
 
   private async getDefaultWorkspace() {
@@ -68,7 +68,7 @@ export class WorkspaceDomainsService {
       order: {
         createdAt: 'DESC',
       },
-      relations: ['workspaceSSOIdentityProviders'],
+      relations: ['workspaceSsoIdentityProviders'],
     });
 
     if (workspaces.length > 1) {
@@ -99,7 +99,7 @@ export class WorkspaceDomainsService {
     const workspaceFromCustomDomainOrSubdomain =
       (await this.workspaceRepository.findOne({
         where,
-        relations: ['workspaceSSOIdentityProviders'],
+        relations: ['workspaceSsoIdentityProviders'],
       })) ?? undefined;
 
     if (isDefined(workspaceFromCustomDomainOrSubdomain) || !isDefined(domain)) {
@@ -111,28 +111,28 @@ export class WorkspaceDomainsService {
         where: {
           domain,
         },
-        relations: ['workspace', 'workspace.workspaceSSOIdentityProviders'],
+        relations: ['workspace', 'workspace.workspaceSsoIdentityProviders'],
       });
 
     return publicDomainFromCustomDomain?.workspace;
   }
 
   private getCustomWorkspaceUrl(customDomain: string) {
-    const url = this.domainServerConfigService.getFrontUrl();
+    const Url = this.domainServerConfigService.getFrontUrl();
 
-    url.hostname = customDomain;
+    Url.hostname = customDomain;
 
-    return url.toString();
+    return Url.toString();
   }
 
   private getTwentyWorkspaceUrl(subdomain: string) {
-    const url = this.domainServerConfigService.getFrontUrl();
+    const Url = this.domainServerConfigService.getFrontUrl();
 
-    url.hostname = this.twentyConfigService.get('IS_MULTIWORKSPACE_ENABLED')
-      ? `${subdomain}.${url.hostname}`
-      : url.hostname;
+    Url.hostname = this.twentyConfigService.get('IS_MULTIWORKSPACE_ENABLED')
+      ? `${subdomain}.${Url.hostname}`
+      : Url.hostname;
 
-    return url.toString();
+    return Url.toString();
   }
 
   getSubdomainAndCustomDomainFromWorkspaceFallbackOnDefaultSubdomain(

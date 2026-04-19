@@ -1,6 +1,6 @@
 /* @license Enterprise */
 
-import { SSOIdentitiesProvidersState } from '@/settings/security/states/SSOIdentitiesProvidersState';
+import { SsoIdentitiesProvidersState } from '@/settings/security/states/SsoIdentitiesProvidersState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useMutation } from '@apollo/client/react';
 import {
@@ -10,7 +10,7 @@ import {
   CreateSamlIdentityProviderDocument,
 } from '~/generated-metadata/graphql';
 
-export const useCreateSSOIdentityProvider = () => {
+export const useCreateSsoIdentityProvider = () => {
   const [createOidcIdentityProviderMutation] = useMutation(
     CreateOidcIdentityProviderDocument,
   );
@@ -18,40 +18,40 @@ export const useCreateSSOIdentityProvider = () => {
     CreateSamlIdentityProviderDocument,
   );
 
-  const setSSOIdentitiesProviders = useSetAtomState(
-    SSOIdentitiesProvidersState,
+  const setSsoIdentitiesProviders = useSetAtomState(
+    SsoIdentitiesProvidersState,
   );
 
-  const createSSOIdentityProvider = async (
+  const createSsoIdentityProvider = async (
     input:
       | ({
-          type: 'OIDC';
+          type: 'Oidc';
         } & CreateOidcIdentityProviderMutationVariables['input'])
       | ({
-          type: 'SAML';
+          type: 'Saml';
         } & CreateSamlIdentityProviderMutationVariables['input']),
   ) => {
-    if (input.type === 'OIDC') {
+    if (input.type === 'Oidc') {
       // oxlint-disable-next-line unused-imports/no-unused-vars
       const { type, ...params } = input;
       return await createOidcIdentityProviderMutation({
         variables: { input: params },
         onCompleted: (data) => {
-          setSSOIdentitiesProviders((existingProvider) => [
+          setSsoIdentitiesProviders((existingProvider) => [
             ...existingProvider,
-            data.createOIDCIdentityProvider,
+            data.createOidcIdentityProvider,
           ]);
         },
       });
-    } else if (input.type === 'SAML') {
+    } else if (input.type === 'Saml') {
       // oxlint-disable-next-line unused-imports/no-unused-vars
       const { type, ...params } = input;
       return await createSamlIdentityProviderMutation({
         variables: { input: params },
         onCompleted: (data) => {
-          setSSOIdentitiesProviders((existingProvider) => [
+          setSsoIdentitiesProviders((existingProvider) => [
             ...existingProvider,
-            data.createSAMLIdentityProvider,
+            data.createSamlIdentityProvider,
           ]);
         },
       });
@@ -61,6 +61,6 @@ export const useCreateSSOIdentityProvider = () => {
   };
 
   return {
-    createSSOIdentityProvider,
+    createSsoIdentityProvider,
   };
 };

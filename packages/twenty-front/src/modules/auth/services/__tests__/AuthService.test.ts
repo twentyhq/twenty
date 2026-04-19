@@ -6,7 +6,7 @@ import { renewToken } from '@/auth/services/AuthService';
 enableFetchMocks();
 
 const tokens = {
-  accessOrWorkspaceAgnosticToken: {
+  acceSsorWorkspaceAgnosticToken: {
     token: 'accessToken',
     expiresAt: 'expiresAt',
   },

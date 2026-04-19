@@ -24,7 +24,7 @@ const createMockMessage = (
   receivedAt: new Date('2024-03-20T10:00:00Z'),
   messageThreadId: '',
   messageThread: null,
-  messageChannelMessageAssociations: [],
+  messageChannelMessageASsociations: [],
   messageParticipants: [],
   deletedAt: null,
   createdAt: '2024-03-20T09:00:00Z',
@@ -34,7 +34,7 @@ const createMockMessage = (
 describe('ApplyMessagesVisibilityRestrictionsService', () => {
   let service: ApplyMessagesVisibilityRestrictionsService;
 
-  const mockMessageChannelMessageAssociationRepository = {
+  const mockMessageChannelMessageASsociationRepository = {
     find: jest.fn(),
   };
 
@@ -56,8 +56,8 @@ describe('ApplyMessagesVisibilityRestrictionsService', () => {
 
   const mockGlobalWorkspaceOrmManager = {
     getRepository: jest.fn().mockImplementation((workspaceId, name) => {
-      if (name === 'messageChannelMessageAssociation') {
-        return mockMessageChannelMessageAssociationRepository;
+      if (name === 'messageChannelMessageASsociation') {
+        return mockMessageChannelMessageASsociationRepository;
       }
       if (name === 'workspaceMember') {
         return mockWorkspaceMemberRepository;
@@ -103,7 +103,7 @@ describe('ApplyMessagesVisibilityRestrictionsService', () => {
       createMockMessage('messageId', 'Test Subject', 'Test Message'),
     ];
 
-    mockMessageChannelMessageAssociationRepository.find.mockResolvedValue([
+    mockMessageChannelMessageASsociationRepository.find.mockResolvedValue([
       {
         messageId: 'messageId',
         messageChannelId: 'messageChannelId',
@@ -138,7 +138,7 @@ describe('ApplyMessagesVisibilityRestrictionsService', () => {
       createMockMessage('messageId', 'Test Subject', 'Test Message'),
     ];
 
-    mockMessageChannelMessageAssociationRepository.find.mockResolvedValue([
+    mockMessageChannelMessageASsociationRepository.find.mockResolvedValue([
       {
         messageId: 'messageId',
         messageChannelId: 'messageChannelId',
@@ -183,7 +183,7 @@ describe('ApplyMessagesVisibilityRestrictionsService', () => {
       createMockMessage('messageId', 'Test Subject', 'Test Message'),
     ];
 
-    mockMessageChannelMessageAssociationRepository.find.mockResolvedValue([
+    mockMessageChannelMessageASsociationRepository.find.mockResolvedValue([
       {
         messageId: 'messageId',
         messageChannelId: 'messageChannelId',
@@ -229,7 +229,7 @@ describe('ApplyMessagesVisibilityRestrictionsService', () => {
       createMockMessage('messageId', 'Test Subject', 'Test Message'),
     ];
 
-    mockMessageChannelMessageAssociationRepository.find.mockResolvedValue([
+    mockMessageChannelMessageASsociationRepository.find.mockResolvedValue([
       {
         messageId: 'messageId',
         messageChannelId: 'messageChannelId',
@@ -275,7 +275,7 @@ describe('ApplyMessagesVisibilityRestrictionsService', () => {
       createMockMessage('messageId', 'Test Subject', 'Test Message'),
     ];
 
-    mockMessageChannelMessageAssociationRepository.find.mockResolvedValue([
+    mockMessageChannelMessageASsociationRepository.find.mockResolvedValue([
       {
         messageId: 'messageId',
         messageChannelId: 'messageChannelId',
@@ -316,7 +316,7 @@ describe('ApplyMessagesVisibilityRestrictionsService', () => {
       createMockMessage('3', 'Subject 3', 'Message 3'),
     ];
 
-    mockMessageChannelMessageAssociationRepository.find.mockResolvedValue([
+    mockMessageChannelMessageASsociationRepository.find.mockResolvedValue([
       { messageId: '1', messageChannelId: '1' },
       { messageId: '2', messageChannelId: '2' },
       { messageId: '3', messageChannelId: '3' },
@@ -362,14 +362,14 @@ describe('ApplyMessagesVisibilityRestrictionsService', () => {
     ]);
   });
 
-  it('should return all messages with the right visibility when userId is undefined (api key request)', async () => {
+  it('should return all messages with the right visibility when userId is undefined (Api key request)', async () => {
     const messages = [
       createMockMessage('1', 'Subject 1', 'Message 1'),
       createMockMessage('2', 'Subject 2', 'Message 2'),
       createMockMessage('3', 'Subject 3', 'Message 3'),
     ];
 
-    mockMessageChannelMessageAssociationRepository.find.mockResolvedValue([
+    mockMessageChannelMessageASsociationRepository.find.mockResolvedValue([
       { messageId: '1', messageChannelId: '1' },
       { messageId: '2', messageChannelId: '2' },
       { messageId: '3', messageChannelId: '3' },

@@ -1,15 +1,15 @@
-import { DataArgProcessorService } from 'src/engine/api/common/common-args-processors/data-arg-processor/data-arg-processor.service';
-import { FilterArgProcessorService } from 'src/engine/api/common/common-args-processors/filter-arg-processor/filter-arg-processor.service';
-import { GroupByArgProcessorService } from 'src/engine/api/common/common-args-processors/group-by-arg-processor/group-by-arg-processor.service';
-import { OrderByArgProcessorService } from 'src/engine/api/common/common-args-processors/order-by-arg-processor/order-by-arg-processor.service';
-import { OrderByWithGroupByArgProcessorService } from 'src/engine/api/common/common-args-processors/order-by-with-group-by-arg-processor/order-by-with-group-by-arg-processor.service';
-import { QueryRunnerArgsFactory } from 'src/engine/api/common/common-args-processors/query-runner-args.factory';
+import { DataArgProceSsorService } from 'src/engine/api/common/common-args-proceSsors/data-arg-proceSsor/data-arg-proceSsor.service';
+import { FilterArgProceSsorService } from 'src/engine/api/common/common-args-proceSsors/filter-arg-proceSsor/filter-arg-proceSsor.service';
+import { GroupByArgProceSsorService } from 'src/engine/api/common/common-args-proceSsors/group-by-arg-proceSsor/group-by-arg-proceSsor.service';
+import { OrderByArgProceSsorService } from 'src/engine/api/common/common-args-proceSsors/order-by-arg-proceSsor/order-by-arg-proceSsor.service';
+import { OrderByWithGroupByArgProceSsorService } from 'src/engine/api/common/common-args-proceSsors/order-by-with-group-by-arg-proceSsor/order-by-with-group-by-arg-proceSsor.service';
+import { QueryRunnerArgsFactory } from 'src/engine/api/common/common-args-proceSsors/query-runner-args.factory';
 
-export const CommonArgsProcessors = [
-  DataArgProcessorService,
-  FilterArgProcessorService,
-  GroupByArgProcessorService,
-  OrderByArgProcessorService,
-  OrderByWithGroupByArgProcessorService,
+export const CommonArgsProceSsors = [
+  DataArgProceSsorService,
+  FilterArgProceSsorService,
+  GroupByArgProceSsorService,
+  OrderByArgProceSsorService,
+  OrderByWithGroupByArgProceSsorService,
   QueryRunnerArgsFactory,
 ]; // TODO: Refacto-common Remove QueryRunnerArgsFactory

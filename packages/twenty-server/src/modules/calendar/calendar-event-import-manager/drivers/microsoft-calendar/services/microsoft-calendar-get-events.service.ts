@@ -32,7 +32,7 @@ export class MicrosoftCalendarGetEventsService {
       const eventIds: string[] = [];
 
       const response: PageCollection = await microsoftClient
-        .api(syncCursor || '/me/calendar/events/delta')
+        .Api(syncCursor || '/me/calendar/events/delta')
         .version('beta')
         .get();
 

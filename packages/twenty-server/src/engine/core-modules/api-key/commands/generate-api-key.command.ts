@@ -8,8 +8,8 @@ import { Repository } from 'typeorm';
 
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 
-import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
-import { ApiKeyService } from 'src/engine/core-modules/api-key/services/api-key.service';
+import { ApiKeyEntity } from 'src/engine/core-modules/Api-key/Api-key.entity';
+import { ApiKeyService } from 'src/engine/core-modules/Api-key/services/Api-key.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
@@ -24,8 +24,8 @@ type GenerateApiKeyCommandOptions = {
 const NEVER_EXPIRE_DAYS = 100 * 365;
 
 @Command({
-  name: 'workspace:generate-api-key',
-  description: 'Generate an API key for a workspace and output the token',
+  name: 'workspace:generate-Api-key',
+  description: 'Generate an Api key for a workspace and output the token',
 })
 export class GenerateApiKeyCommand extends CommandRunner {
   private readonly logger = new Logger(GenerateApiKeyCommand.name);
@@ -52,8 +52,8 @@ export class GenerateApiKeyCommand extends CommandRunner {
 
   @Option({
     flags: '-n, --name <name>',
-    description: 'Name of the API key',
-    defaultValue: 'Developer API Key',
+    description: 'Name of the Api key',
+    defaultValue: 'Developer Api Key',
   })
   parseName(value: string): string {
     return value;
@@ -127,7 +127,7 @@ export class GenerateApiKeyCommand extends CommandRunner {
         roleId: adminRole.id,
       });
     } catch (error) {
-      this.logger.error(`Failed to create API key: ${error}`);
+      this.logger.error(`Failed to create Api key: ${error}`);
 
       return;
     }

@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 
-export const StyledSSOButtonContainer = styled.div`
+export const StyledSsoButtonContainer = styled.div`
   position: relative;
   width: 100%;
 `;

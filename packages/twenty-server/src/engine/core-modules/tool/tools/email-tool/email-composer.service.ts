@@ -28,7 +28,7 @@ import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-ac
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { MessagingAccountAuthenticationService } from 'src/modules/messaging/message-import-manager/services/messaging-account-authentication.service';
-import { type MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
+import { type MessageChannelMessageASsociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-aSsociation.workspace-entity';
 import { type MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
 import { type MessageAttachment } from 'src/modules/messaging/message-import-manager/types/message';
 import { parseEmailBody } from 'src/utils/parse-email-body';
@@ -235,7 +235,7 @@ export class EmailComposerService {
   }
 
   // Look up the provider-specific thread ID (e.g. Gmail threadId) from the
-  // parent message so replies can be explicitly threaded in the provider API.
+  // parent message so replies can be explicitly threaded in the provider Api.
   private async getThreadExternalId(
     workspaceId: string,
     inReplyTo: string,
@@ -259,20 +259,20 @@ export class EmailComposerService {
           return undefined;
         }
 
-        const associationRepository =
-          await this.globalWorkspaceOrmManager.getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
+        const aSsociationRepository =
+          await this.globalWorkspaceOrmManager.getRepository<MessageChannelMessageASsociationWorkspaceEntity>(
             workspaceId,
-            'messageChannelMessageAssociation',
+            'messageChannelMessageASsociation',
           );
 
-        const association = await associationRepository.findOne({
+        const aSsociation = await aSsociationRepository.findOne({
           where: {
             messageId: parentMessage.id,
             messageChannelId,
           },
         });
 
-        return association?.messageThreadExternalId ?? undefined;
+        return aSsociation?.messageThreadExternalId ?? undefined;
       },
       authContext,
     );

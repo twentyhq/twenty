@@ -8,7 +8,7 @@ import {
 } from 'twenty-shared/types';
 import { z } from 'zod';
 
-import { type FileInput } from 'src/engine/api/common/common-args-processors/data-arg-processor/types/file-item.type';
+import { type FileInput } from 'src/engine/api/common/common-args-proceSsors/data-arg-proceSsor/types/file-item.type';
 import {
   CommonQueryRunnerException,
   CommonQueryRunnerExceptionCode,

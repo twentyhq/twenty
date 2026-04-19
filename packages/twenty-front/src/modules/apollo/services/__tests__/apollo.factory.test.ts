@@ -18,7 +18,7 @@ jest.mock('@/auth/services/AuthService', () => {
     ...initialAuthService,
     renewToken: jest.fn().mockReturnValue(
       Promise.resolve({
-        accessOrWorkspaceAgnosticToken: {
+        acceSsorWorkspaceAgnosticToken: {
           token: 'newAccessToken',
           expiresAt: '',
         },
@@ -30,7 +30,7 @@ jest.mock('@/auth/services/AuthService', () => {
 
 jest.mock('@/apollo/utils/getTokenPair', () => ({
   getTokenPair: jest.fn().mockReturnValue({
-    accessOrWorkspaceAgnosticToken: { token: 'testAccessToken', expiresAt: '' },
+    acceSsorWorkspaceAgnosticToken: { token: 'testAccessToken', expiresAt: '' },
     refreshToken: { token: 'testRefreshToken', expiresAt: '' },
   }),
 }));

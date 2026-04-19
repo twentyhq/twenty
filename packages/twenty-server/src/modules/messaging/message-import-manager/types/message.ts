@@ -7,7 +7,7 @@ export type Message = Omit<
   | 'createdAt'
   | 'updatedAt'
   | 'deletedAt'
-  | 'messageChannelMessageAssociations'
+  | 'messageChannelMessageASsociations'
   | 'messageParticipants'
   | 'messageThread'
   | 'messageThreadId'

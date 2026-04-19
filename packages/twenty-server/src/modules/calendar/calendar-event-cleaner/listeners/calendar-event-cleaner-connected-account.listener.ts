@@ -7,9 +7,9 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 import {
-  DeleteConnectedAccountAssociatedCalendarDataJob,
-  type DeleteConnectedAccountAssociatedCalendarDataJobData,
-} from 'src/modules/calendar/calendar-event-cleaner/jobs/delete-connected-account-associated-calendar-data.job';
+  DeleteConnectedAccountASsociatedCalendarDataJob,
+  type DeleteConnectedAccountASsociatedCalendarDataJobData,
+} from 'src/modules/calendar/calendar-event-cleaner/jobs/delete-connected-account-aSsociated-calendar-data.job';
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { OnDatabaseBatchEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-database-batch-event.decorator';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
@@ -29,8 +29,8 @@ export class CalendarEventCleanerConnectedAccountListener {
   ) {
     await Promise.all(
       payload.events.map((eventPayload) =>
-        this.calendarQueueService.add<DeleteConnectedAccountAssociatedCalendarDataJobData>(
-          DeleteConnectedAccountAssociatedCalendarDataJob.name,
+        this.calendarQueueService.add<DeleteConnectedAccountASsociatedCalendarDataJobData>(
+          DeleteConnectedAccountASsociatedCalendarDataJob.name,
           {
             workspaceId: payload.workspaceId,
             connectedAccountId: eventPayload.recordId,

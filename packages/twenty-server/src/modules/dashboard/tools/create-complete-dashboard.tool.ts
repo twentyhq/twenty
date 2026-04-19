@@ -78,7 +78,7 @@ WIDGET TYPES:
    - Additional required: configuration.groupByFieldMetadataId (note: different field name!)
    - Example: { type: "GRAPH", objectMetadataId: "<opportunity-object-uuid>", configuration: { configurationType: "PIE_CHART", aggregateFieldMetadataId: "<id-field-uuid>", aggregateOperation: "COUNT", groupByFieldMetadataId: "<stage-field-uuid>" } }
 
-5. IFRAME: { type: "IFRAME", configuration: { configurationType: "IFRAME", url: "https://..." } }
+5. IFRAME: { type: "IFRAME", configuration: { configurationType: "IFRAME", Url: "https://..." } }
 
 6. STANDALONE_RICH_TEXT: { type: "STANDALONE_RICH_TEXT", configuration: { configurationType: "STANDALONE_RICH_TEXT", body: { ... } } }
 

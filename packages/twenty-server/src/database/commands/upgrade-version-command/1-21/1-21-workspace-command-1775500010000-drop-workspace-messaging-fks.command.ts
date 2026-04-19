@@ -9,16 +9,16 @@ import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/ge
 
 const FK_COLUMNS_TO_DROP = [
   {
-    tableName: 'messageChannelMessageAssociation',
+    tableName: 'messageChannelMessageASsociation',
     columnName: 'messageChannelId',
   },
   {
-    tableName: 'calendarChannelEventAssociation',
+    tableName: 'calendarChannelEventASsociation',
     columnName: 'calendarChannelId',
   },
   { tableName: 'messageFolder', columnName: 'messageChannelId' },
   {
-    tableName: 'messageChannelMessageAssociationMessageFolder',
+    tableName: 'messageChannelMessageASsociationMessageFolder',
     columnName: 'messageFolderId',
   },
 ];

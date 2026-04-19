@@ -49,7 +49,7 @@ export class MicrosoftGetAllFoldersService implements MessageFolderDriver {
         );
 
       const response = await microsoftClient
-        .api('/me/mailFolders')
+        .Api('/me/mailFolders')
         .version('beta')
         .top(MESSAGING_MICROSOFT_MAIL_FOLDERS_LIST_MAX_RESULT)
         .get()
@@ -117,7 +117,7 @@ export class MicrosoftGetAllFoldersService implements MessageFolderDriver {
 
   /*
    * All Microsoft folders have a parentFolderId including the standard folders
-   * which point to root node which doesn't exits in the API response.
+   * which point to root node which doesn't exits in the Api response.
    * We remove this to simplify the folder hierarchy on frontend.
    */
   private getRootFolderId(folders: MicrosoftGraphFolder[]): string | null {

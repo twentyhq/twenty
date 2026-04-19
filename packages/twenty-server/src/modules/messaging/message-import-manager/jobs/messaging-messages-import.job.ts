@@ -5,7 +5,7 @@ import { Repository } from 'typeorm';
 
 import { MessageChannelSyncStage } from 'twenty-shared/types';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
-import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
+import { ProceSsor } from 'src/engine/core-modules/message-queue/decorators/proceSsor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -18,7 +18,7 @@ export type MessagingMessagesImportJobData = {
   workspaceId: string;
 };
 
-@Processor({
+@ProceSsor({
   queueName: MessageQueue.messagingQueue,
   scope: Scope.REQUEST,
 })

@@ -6,8 +6,8 @@ import { SettingsPath } from 'twenty-shared/types';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { SettingsCard } from '@/settings/components/SettingsCard';
-import { SettingsSSOIdentitiesProvidersListCardWrapper } from '@/settings/security/components/SSO/SettingsSSOIdentitiesProvidersListCardWrapper';
-import { SSOIdentitiesProvidersState } from '@/settings/security/states/SSOIdentitiesProvidersState';
+import { SettingsSsoIdentitiesProvidersListCardWrapper } from '@/settings/security/components/Sso/SettingsSsoIdentitiesProvidersListCardWrapper';
+import { SsoIdentitiesProvidersState } from '@/settings/security/states/SsoIdentitiesProvidersState';
 import { useSnackBarOnQueryError } from '@/apollo/hooks/useSnackBarOnQueryError';
 import { styled } from '@linaria/react';
 import { useEffect } from 'react';
@@ -27,45 +27,45 @@ const StyledLinkContainer = styled.div<{ isDisabled: boolean }>`
   }
 `;
 
-export const SettingsSSOIdentitiesProvidersListCard = () => {
+export const SettingsSsoIdentitiesProvidersListCard = () => {
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 
   const { t } = useLingui();
 
-  const [SSOIdentitiesProviders, setSSOIdentitiesProviders] = useAtomState(
-    SSOIdentitiesProvidersState,
+  const [SsoIdentitiesProviders, setSsoIdentitiesProviders] = useAtomState(
+    SsoIdentitiesProvidersState,
   );
 
   const {
     loading,
-    data: ssoData,
-    error: ssoError,
+    data: SsoData,
+    error: SsoError,
   } = useQuery(GetSsoIdentityProvidersDocument, {
     fetchPolicy: 'network-only',
     skip: currentWorkspace?.hasValidEnterpriseKey === false,
   });
 
   useEffect(() => {
-    if (ssoData) {
-      setSSOIdentitiesProviders(ssoData?.getSSOIdentityProviders ?? []);
+    if (SsoData) {
+      setSsoIdentitiesProviders(SsoData?.getSsoIdentityProviders ?? []);
     }
-  }, [ssoData, setSSOIdentitiesProviders]);
+  }, [SsoData, setSsoIdentitiesProviders]);
 
-  useSnackBarOnQueryError(ssoError);
+  useSnackBarOnQueryError(SsoError);
 
-  return loading || !SSOIdentitiesProviders.length ? (
+  return loading || !SsoIdentitiesProviders.length ? (
     <StyledLinkContainer
       isDisabled={currentWorkspace?.hasValidEnterpriseKey !== true}
     >
-      <Link to={getSettingsPath(SettingsPath.NewSSOIdentityProvider)}>
+      <Link to={getSettingsPath(SettingsPath.NewSsoIdentityProvider)}>
         <SettingsCard
-          title={t`Add SSO Identity Provider`}
+          title={t`Add Sso Identity Provider`}
           disabled={currentWorkspace?.hasValidEnterpriseKey !== true}
           Icon={<IconKey />}
         />
       </Link>
     </StyledLinkContainer>
   ) : (
-    <SettingsSSOIdentitiesProvidersListCardWrapper />
+    <SettingsSsoIdentitiesProvidersListCardWrapper />
   );
 };

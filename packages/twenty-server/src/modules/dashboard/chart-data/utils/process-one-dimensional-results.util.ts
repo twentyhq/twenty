@@ -15,12 +15,12 @@ export type ProcessedOneDimensionalDataPoint = {
   aggregateValue: number;
 };
 
-export type ProcessOneDimensionalResultsOutput = {
+export type ProceSsoneDimensionalResultsOutput = {
   processedDataPoints: ProcessedOneDimensionalDataPoint[];
   formattedToRawLookup: Map<string, RawDimensionValue>;
 };
 
-type ProcessOneDimensionalResultsParams = {
+type ProceSsoneDimensionalResultsParams = {
   rawResults: GroupByRawResult[];
   primaryAxisGroupByField: FlatFieldMetadata;
   dateGranularity?: ObjectRecordGroupByDateGranularity | null;
@@ -29,14 +29,14 @@ type ProcessOneDimensionalResultsParams = {
   firstDayOfTheWeek: FirstDayOfTheWeek;
 };
 
-export const processOneDimensionalResults = ({
+export const proceSsoneDimensionalResults = ({
   rawResults,
   primaryAxisGroupByField,
   dateGranularity,
   subFieldName,
   userTimezone,
   firstDayOfTheWeek,
-}: ProcessOneDimensionalResultsParams): ProcessOneDimensionalResultsOutput => {
+}: ProceSsoneDimensionalResultsParams): ProceSsoneDimensionalResultsOutput => {
   const formattedToRawLookup = new Map<string, RawDimensionValue>();
   const processedDataPoints: ProcessedOneDimensionalDataPoint[] = [];
 

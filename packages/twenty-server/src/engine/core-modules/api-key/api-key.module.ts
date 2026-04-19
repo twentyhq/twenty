@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
-import { ApiKeyResolver } from 'src/engine/core-modules/api-key/api-key.resolver';
-import { GenerateApiKeyCommand } from 'src/engine/core-modules/api-key/commands/generate-api-key.command';
-import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-key-role.service';
-import { ApiKeyService } from 'src/engine/core-modules/api-key/services/api-key.service';
-import { WorkspaceApiKeyMapCacheService } from 'src/engine/core-modules/api-key/services/workspace-api-key-map-cache.service';
+import { ApiKeyEntity } from 'src/engine/core-modules/Api-key/Api-key.entity';
+import { ApiKeyResolver } from 'src/engine/core-modules/Api-key/Api-key.resolver';
+import { GenerateApiKeyCommand } from 'src/engine/core-modules/Api-key/commands/generate-Api-key.command';
+import { ApiKeyRoleService } from 'src/engine/core-modules/Api-key/services/Api-key-role.service';
+import { ApiKeyService } from 'src/engine/core-modules/Api-key/services/Api-key.service';
+import { WorkspaceApiKeyMapCacheService } from 'src/engine/core-modules/Api-key/services/workspace-Api-key-map-cache.service';
 import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { JwtModule } from 'src/engine/core-modules/jwt/jwt.module';
@@ -18,7 +18,7 @@ import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
-import { ApiKeyController } from './controllers/api-key.controller';
+import { ApiKeyController } from './controllers/Api-key.controller';
 
 @Module({
   imports: [

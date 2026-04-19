@@ -587,9 +587,9 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               "id": "d6a8258e-a176-4e9f-83eb-3f4ca836a924",
               "universalIdentifier": "20202020-bdf8-4572-a2cc-ecbb6bcc3a02",
               "type": "RELATION",
-              "name": "calendarChannelEventAssociations",
-              "label": "Calendar Channel Event Associations",
-              "description": "Calendar Channel Event Associations",
+              "name": "calendarChannelEventASsociations",
+              "label": "Calendar Channel Event ASsociations",
+              "description": "Calendar Channel Event ASsociations",
               "icon": "IconCalendar",
               "isCustom": false,
               "isActive": true,
@@ -619,13 +619,13 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 "targetObjectMetadata": {
                   "__typename": "Object",
                   "id": "e810b473-155d-423f-8e0a-9c1bb95acb96",
-                  "nameSingular": "calendarChannelEventAssociation",
-                  "namePlural": "calendarChannelEventAssociations"
+                  "nameSingular": "calendarChannelEventASsociation",
+                  "namePlural": "calendarChannelEventASsociations"
                 },
                 "sourceFieldMetadata": {
                   "__typename": "Field",
                   "id": "d6a8258e-a176-4e9f-83eb-3f4ca836a924",
-                  "name": "calendarChannelEventAssociations"
+                  "name": "calendarChannelEventASsociations"
                 },
                 "targetFieldMetadata": {
                   "__typename": "Field",
@@ -697,8 +697,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "__typename": "Object",
           "id": "e810b473-155d-423f-8e0a-9c1bb95acb96",
           "universalIdentifier": "20202020-491b-4aaa-9825-afd1bae6ae00",
-          "nameSingular": "calendarChannelEventAssociation",
-          "namePlural": "calendarChannelEventAssociations",
+          "nameSingular": "calendarChannelEventASsociation",
+          "namePlural": "calendarChannelEventASsociations",
           "isCustom": false,
           "isRemote": false,
           "isActive": true,
@@ -713,9 +713,9 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "isLabelSyncedWithName": false,
           "isSearchable": false,
           "duplicateCriteria": null,
-          "labelSingular": "Calendar Channel Event Association",
-          "labelPlural": "Calendar Channel Event Associations",
-          "description": "Calendar Channel Event Associations",
+          "labelSingular": "Calendar Channel Event ASsociation",
+          "labelPlural": "Calendar Channel Event ASsociations",
+          "description": "Calendar Channel Event ASsociations",
           "icon": "IconCalendar",
           "fieldsList": [
             {
@@ -895,7 +895,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               "type": "POSITION",
               "name": "position",
               "label": "Position",
-              "description": "Calendar channel event association record position",
+              "description": "Calendar channel event aSsociation record position",
               "icon": "IconHierarchy2",
               "isCustom": false,
               "isActive": true,
@@ -1054,8 +1054,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 "sourceObjectMetadata": {
                   "__typename": "Object",
                   "id": "e810b473-155d-423f-8e0a-9c1bb95acb96",
-                  "nameSingular": "calendarChannelEventAssociation",
-                  "namePlural": "calendarChannelEventAssociations"
+                  "nameSingular": "calendarChannelEventASsociation",
+                  "namePlural": "calendarChannelEventASsociations"
                 },
                 "targetObjectMetadata": {
                   "__typename": "Object",
@@ -1071,7 +1071,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 "targetFieldMetadata": {
                   "__typename": "Field",
                   "id": "d6a8258e-a176-4e9f-83eb-3f4ca836a924",
-                  "name": "calendarChannelEventAssociations"
+                  "name": "calendarChannelEventASsociations"
                 }
               },
               "morphRelations": null
@@ -3510,8 +3510,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               "id": "8a4d3a4b-91b7-46a1-bd0f-e3e8b40017a7",
               "universalIdentifier": "20202020-314e-40a4-906d-a5d5d6c285f6",
               "type": "RELATION",
-              "name": "messageChannelMessageAssociations",
-              "label": "Message Channel Association",
+              "name": "messageChannelMessageASsociations",
+              "label": "Message Channel ASsociation",
               "description": "Messages from the channel.",
               "icon": "IconMessage",
               "isCustom": false,
@@ -3542,13 +3542,13 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 "targetObjectMetadata": {
                   "__typename": "Object",
                   "id": "6a48ae9e-2964-48b4-90cd-abef2f7eac30",
-                  "nameSingular": "messageChannelMessageAssociation",
-                  "namePlural": "messageChannelMessageAssociations"
+                  "nameSingular": "messageChannelMessageASsociation",
+                  "namePlural": "messageChannelMessageASsociations"
                 },
                 "sourceFieldMetadata": {
                   "__typename": "Field",
                   "id": "8a4d3a4b-91b7-46a1-bd0f-e3e8b40017a7",
-                  "name": "messageChannelMessageAssociations"
+                  "name": "messageChannelMessageASsociations"
                 },
                 "targetFieldMetadata": {
                   "__typename": "Field",
@@ -10940,8 +10940,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "__typename": "Object",
           "id": "6a48ae9e-2964-48b4-90cd-abef2f7eac30",
           "universalIdentifier": "20202020-ad1e-4127-bccb-d83ae04d2ccb",
-          "nameSingular": "messageChannelMessageAssociation",
-          "namePlural": "messageChannelMessageAssociations",
+          "nameSingular": "messageChannelMessageASsociation",
+          "namePlural": "messageChannelMessageASsociations",
           "isCustom": false,
           "isRemote": false,
           "isActive": true,
@@ -10956,8 +10956,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "isLabelSyncedWithName": false,
           "isSearchable": false,
           "duplicateCriteria": null,
-          "labelSingular": "Message Channel Message Association",
-          "labelPlural": "Message Channel Message Associations",
+          "labelSingular": "Message Channel Message ASsociation",
+          "labelPlural": "Message Channel Message ASsociations",
           "description": "Message Synced with a Message Channel",
           "icon": "IconMessage",
           "fieldsList": [
@@ -11138,7 +11138,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               "type": "POSITION",
               "name": "position",
               "label": "Position",
-              "description": "Message channel message association record position",
+              "description": "Message channel message aSsociation record position",
               "icon": "IconHierarchy2",
               "isCustom": false,
               "isActive": true,
@@ -11338,8 +11338,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 "sourceObjectMetadata": {
                   "__typename": "Object",
                   "id": "6a48ae9e-2964-48b4-90cd-abef2f7eac30",
-                  "nameSingular": "messageChannelMessageAssociation",
-                  "namePlural": "messageChannelMessageAssociations"
+                  "nameSingular": "messageChannelMessageASsociation",
+                  "namePlural": "messageChannelMessageASsociations"
                 },
                 "targetObjectMetadata": {
                   "__typename": "Object",
@@ -11355,7 +11355,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 "targetFieldMetadata": {
                   "__typename": "Field",
                   "id": "00712157-bcd3-4412-ae41-f197c0165ee9",
-                  "name": "messageChannelMessageAssociations"
+                  "name": "messageChannelMessageASsociations"
                 }
               },
               "morphRelations": null
@@ -11393,8 +11393,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 "sourceObjectMetadata": {
                   "__typename": "Object",
                   "id": "6a48ae9e-2964-48b4-90cd-abef2f7eac30",
-                  "nameSingular": "messageChannelMessageAssociation",
-                  "namePlural": "messageChannelMessageAssociations"
+                  "nameSingular": "messageChannelMessageASsociation",
+                  "namePlural": "messageChannelMessageASsociations"
                 },
                 "targetObjectMetadata": {
                   "__typename": "Object",
@@ -11410,7 +11410,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 "targetFieldMetadata": {
                   "__typename": "Field",
                   "id": "8a4d3a4b-91b7-46a1-bd0f-e3e8b40017a7",
-                  "name": "messageChannelMessageAssociations"
+                  "name": "messageChannelMessageASsociations"
                 }
               },
               "morphRelations": null
@@ -11446,14 +11446,14 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 "sourceObjectMetadata": {
                   "__typename": "Object",
                   "id": "6a48ae9e-2964-48b4-90cd-abef2f7eac30",
-                  "nameSingular": "messageChannelMessageAssociation",
-                  "namePlural": "messageChannelMessageAssociations"
+                  "nameSingular": "messageChannelMessageASsociation",
+                  "namePlural": "messageChannelMessageASsociations"
                 },
                 "targetObjectMetadata": {
                   "__typename": "Object",
                   "id": "3d3605e7-f61c-4abe-9886-a485b4450bf9",
-                  "nameSingular": "messageChannelMessageAssociationMessageFolder",
-                  "namePlural": "messageChannelMessageAssociationMessageFolders"
+                  "nameSingular": "messageChannelMessageASsociationMessageFolder",
+                  "namePlural": "messageChannelMessageASsociationMessageFolders"
                 },
                 "sourceFieldMetadata": {
                   "__typename": "Field",
@@ -11463,7 +11463,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 "targetFieldMetadata": {
                   "__typename": "Field",
                   "id": "98452015-690b-4e86-9eba-16c2d6a6134d",
-                  "name": "messageChannelMessageAssociation"
+                  "name": "messageChannelMessageASsociation"
                 }
               },
               "morphRelations": null
@@ -13198,7 +13198,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               "type": "UUID",
               "name": "userId",
               "label": "User Id",
-              "description": "Associated User Id",
+              "description": "ASsociated User Id",
               "icon": "IconCircleUsers",
               "isCustom": false,
               "isActive": true,
@@ -15958,8 +15958,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "__typename": "Object",
           "id": "3d3605e7-f61c-4abe-9886-a485b4450bf9",
           "universalIdentifier": "20202020-a1b0-40b0-8ab0-5b6c7d8e9f0a",
-          "nameSingular": "messageChannelMessageAssociationMessageFolder",
-          "namePlural": "messageChannelMessageAssociationMessageFolders",
+          "nameSingular": "messageChannelMessageASsociationMessageFolder",
+          "namePlural": "messageChannelMessageASsociationMessageFolders",
           "isCustom": false,
           "isRemote": false,
           "isActive": true,
@@ -15974,9 +15974,9 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
           "isLabelSyncedWithName": false,
           "isSearchable": false,
           "duplicateCriteria": null,
-          "labelSingular": "Message Channel Message Association Message Folder",
-          "labelPlural": "Message Channel Message Association Message Folders",
-          "description": "Join table linking message channel message associations to message folders",
+          "labelSingular": "Message Channel Message ASsociation Message Folder",
+          "labelPlural": "Message Channel Message ASsociation Message Folders",
+          "description": "Join table linking message channel message aSsociations to message folders",
           "icon": "IconFolder",
           "fieldsList": [
             {
@@ -16211,7 +16211,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               "type": "POSITION",
               "name": "position",
               "label": "Position",
-              "description": "Message channel message association message folder record position",
+              "description": "Message channel message aSsociation message folder record position",
               "icon": "IconHierarchy2",
               "isCustom": false,
               "isActive": true,
@@ -16235,9 +16235,9 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               "id": "98452015-690b-4e86-9eba-16c2d6a6134d",
               "universalIdentifier": "7411cfa3-4fd9-4b90-a636-940015fd7243",
               "type": "RELATION",
-              "name": "messageChannelMessageAssociation",
-              "label": "Message Channel Message Association",
-              "description": "Message Channel Message Association",
+              "name": "messageChannelMessageASsociation",
+              "label": "Message Channel Message ASsociation",
+              "description": "Message Channel Message ASsociation",
               "icon": "IconMessage",
               "isCustom": false,
               "isActive": true,
@@ -16252,7 +16252,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               "settings": {
                 "onDelete": "CASCADE",
                 "relationType": "MANY_TO_ONE",
-                "joinColumnName": "messageChannelMessageAssociationId"
+                "joinColumnName": "messageChannelMessageASsociationId"
               },
               "isLabelSyncedWithName": false,
               "morphId": null,
@@ -16263,19 +16263,19 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 "sourceObjectMetadata": {
                   "__typename": "Object",
                   "id": "3d3605e7-f61c-4abe-9886-a485b4450bf9",
-                  "nameSingular": "messageChannelMessageAssociationMessageFolder",
-                  "namePlural": "messageChannelMessageAssociationMessageFolders"
+                  "nameSingular": "messageChannelMessageASsociationMessageFolder",
+                  "namePlural": "messageChannelMessageASsociationMessageFolders"
                 },
                 "targetObjectMetadata": {
                   "__typename": "Object",
                   "id": "6a48ae9e-2964-48b4-90cd-abef2f7eac30",
-                  "nameSingular": "messageChannelMessageAssociation",
-                  "namePlural": "messageChannelMessageAssociations"
+                  "nameSingular": "messageChannelMessageASsociation",
+                  "namePlural": "messageChannelMessageASsociations"
                 },
                 "sourceFieldMetadata": {
                   "__typename": "Field",
                   "id": "98452015-690b-4e86-9eba-16c2d6a6134d",
-                  "name": "messageChannelMessageAssociation"
+                  "name": "messageChannelMessageASsociation"
                 },
                 "targetFieldMetadata": {
                   "__typename": "Field",
@@ -21638,8 +21638,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
               "id": "00712157-bcd3-4412-ae41-f197c0165ee9",
               "universalIdentifier": "20202020-3cef-43a3-82c6-50e7cfbc9ae4",
               "type": "RELATION",
-              "name": "messageChannelMessageAssociations",
-              "label": "Message Channel Association",
+              "name": "messageChannelMessageASsociations",
+              "label": "Message Channel ASsociation",
               "description": "Messages from the channel.",
               "icon": "IconMessage",
               "isCustom": false,
@@ -21670,13 +21670,13 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 "targetObjectMetadata": {
                   "__typename": "Object",
                   "id": "6a48ae9e-2964-48b4-90cd-abef2f7eac30",
-                  "nameSingular": "messageChannelMessageAssociation",
-                  "namePlural": "messageChannelMessageAssociations"
+                  "nameSingular": "messageChannelMessageASsociation",
+                  "namePlural": "messageChannelMessageASsociations"
                 },
                 "sourceFieldMetadata": {
                   "__typename": "Field",
                   "id": "00712157-bcd3-4412-ae41-f197c0165ee9",
-                  "name": "messageChannelMessageAssociations"
+                  "name": "messageChannelMessageASsociations"
                 },
                 "targetFieldMetadata": {
                   "__typename": "Field",

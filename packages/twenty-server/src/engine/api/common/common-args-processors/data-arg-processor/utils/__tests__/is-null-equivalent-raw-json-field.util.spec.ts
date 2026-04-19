@@ -1,4 +1,4 @@
-import { isNullEquivalentRawJsonFieldValue } from 'src/engine/api/common/common-args-processors/data-arg-processor/utils/is-null-equivalent-raw-json-field-value.util';
+import { isNullEquivalentRawJsonFieldValue } from 'src/engine/api/common/common-args-proceSsors/data-arg-proceSsor/utils/is-null-equivalent-raw-json-field-value.util';
 
 describe('isNullEquivalentRawJsonFieldValue', () => {
   describe('null-equivalent values', () => {

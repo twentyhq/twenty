@@ -2,27 +2,27 @@
 
 import {
   type IdentityProviderType,
-  type SSOIdentityProviderStatus,
-} from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
+  type SsoIdentityProviderStatus,
+} from 'src/engine/core-modules/Sso/workspace-Sso-identity-provider.entity';
 
-type CommonSSOConfiguration = {
+type CommonSsoConfiguration = {
   id: string;
   issuer: string;
   name?: string;
-  status: SSOIdentityProviderStatus;
+  status: SsoIdentityProviderStatus;
 };
 
-export type OIDCConfiguration = {
-  type: IdentityProviderType.OIDC;
-  clientID: string;
+export type OidcConfiguration = {
+  type: IdentityProviderType.Oidc;
+  clientId: string;
   clientSecret: string;
-} & CommonSSOConfiguration;
+} & CommonSsoConfiguration;
 
-export type SAMLConfiguration = {
-  type: IdentityProviderType.SAML;
-  ssoURL: string;
+export type SamlConfiguration = {
+  type: IdentityProviderType.Saml;
+  ssoUrl: string;
   certificate: string;
   fingerprint?: string;
-} & CommonSSOConfiguration;
+} & CommonSsoConfiguration;
 
-export type SSOConfiguration = OIDCConfiguration | SAMLConfiguration;
+export type SsoConfiguration = OidcConfiguration | SamlConfiguration;

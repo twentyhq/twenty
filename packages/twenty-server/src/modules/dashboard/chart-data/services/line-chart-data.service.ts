@@ -31,7 +31,7 @@ import { applyGapFilling } from 'src/modules/dashboard/chart-data/utils/apply-ga
 import { getAggregateOperationLabel } from 'src/modules/dashboard/chart-data/utils/get-aggregate-operation-label.util';
 import { getFieldMetadata } from 'src/modules/dashboard/chart-data/utils/get-field-metadata.util';
 import { getSelectOptions } from 'src/modules/dashboard/chart-data/utils/get-select-options.util';
-import { processOneDimensionalResults } from 'src/modules/dashboard/chart-data/utils/process-one-dimensional-results.util';
+import { proceSsoneDimensionalResults } from 'src/modules/dashboard/chart-data/utils/process-one-dimensional-results.util';
 import { processTwoDimensionalResults } from 'src/modules/dashboard/chart-data/utils/process-two-dimensional-results.util';
 import { sortChartDataIfNeeded } from 'src/modules/dashboard/chart-data/utils/sort-chart-data-if-needed.util';
 import { sortSecondaryAxisData } from 'src/modules/dashboard/chart-data/utils/sort-secondary-axis-data.util';
@@ -260,7 +260,7 @@ export class LineChartDataService {
     const {
       processedDataPoints: rawProcessedDataPoints,
       formattedToRawLookup,
-    } = processOneDimensionalResults({
+    } = proceSsoneDimensionalResults({
       rawResults: gapFilledResults,
       primaryAxisGroupByField,
       dateGranularity: configuration.primaryAxisDateGranularity,

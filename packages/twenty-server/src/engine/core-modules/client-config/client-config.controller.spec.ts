@@ -61,7 +61,7 @@ describe('ClientConfigController', () => {
           magicLink: false,
           password: true,
           microsoft: false,
-          sso: [],
+          Sso: [],
         },
         signInPrefilled: false,
         isMultiWorkspaceEnabled: true,
@@ -81,7 +81,7 @@ describe('ClientConfigController', () => {
           provider: undefined,
           siteKey: undefined,
         },
-        api: {
+        Api: {
           mutationMaximumAffectedRecords: 100,
         },
         isAttachmentPreviewEnabled: true,

@@ -8,7 +8,7 @@ import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-ac
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
 import { ConnectedAccountModule } from 'src/modules/connected-account/connected-account.module';
-import { IMAPAPIsModule } from 'src/modules/connected-account/imap-api/imap-apis.module';
+import { IMAPAPIsModule } from 'src/modules/connected-account/imap-Api/imap-apis.module';
 import { MessagingIMAPDriverModule } from 'src/modules/messaging/message-import-manager/drivers/imap/messaging-imap-driver.module';
 import { MessagingImportManagerModule } from 'src/modules/messaging/message-import-manager/messaging-import-manager.module';
 

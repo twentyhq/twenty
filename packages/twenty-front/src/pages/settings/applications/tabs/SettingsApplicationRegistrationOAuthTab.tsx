@@ -113,7 +113,7 @@ export const SettingsApplicationRegistrationOAuthTab = ({
     {
       Icon: IconKey,
       label: t`Client ID`,
-      value: registration.oAuthClientId,
+      value: registration.oAuthclientId,
     },
     {
       Icon: IconShield,

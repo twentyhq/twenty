@@ -71,7 +71,7 @@ export const NotesCard = () => {
             {t`No notes`}
           </AnimatedPlaceholderEmptyTitle>
           <AnimatedPlaceholderEmptySubTitle>
-            {t`There are no associated notes with this record.`}
+            {t`There are no aSsociated notes with this record.`}
           </AnimatedPlaceholderEmptySubTitle>
         </AnimatedPlaceholderEmptyTextContainer>
         {hasObjectUpdatePermissions && (

@@ -5,25 +5,25 @@ import { In } from 'typeorm';
 import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
-import { type MessageChannelMessageAssociationMessageFolderWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association-message-folder.workspace-entity';
+import { type MessageChannelMessageASsociationMessageFolderWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-aSsociation-message-folder.workspace-entity';
 
-export type MessageChannelMessageAssociationFolderAssociation = {
-  messageChannelMessageAssociationId: string;
+export type MessageChannelMessageASsociationFolderASsociation = {
+  messageChannelMessageASsociationId: string;
   messageFolderIds: string[];
 };
 
 @Injectable()
-export class MessagingMessageFolderAssociationService {
+export class MessagingMessageFolderASsociationService {
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
   ) {}
 
-  async saveMessageFolderAssociations(
-    associations: MessageChannelMessageAssociationFolderAssociation[],
+  async saveMessageFolderASsociations(
+    aSsociations: MessageChannelMessageASsociationFolderASsociation[],
     workspaceId: string,
     transactionManager?: WorkspaceEntityManager,
   ): Promise<void> {
-    if (associations.length === 0) {
+    if (aSsociations.length === 0) {
       return;
     }
 
@@ -31,15 +31,15 @@ export class MessagingMessageFolderAssociationService {
 
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
       const repository =
-        await this.globalWorkspaceOrmManager.getRepository<MessageChannelMessageAssociationMessageFolderWorkspaceEntity>(
+        await this.globalWorkspaceOrmManager.getRepository<MessageChannelMessageASsociationMessageFolderWorkspaceEntity>(
           workspaceId,
-          'messageChannelMessageAssociationMessageFolder',
+          'messageChannelMessageASsociationMessageFolder',
         );
 
-      const records = associations.flatMap((association) =>
-        association.messageFolderIds.map((folderId) => ({
-          messageChannelMessageAssociationId:
-            association.messageChannelMessageAssociationId,
+      const records = aSsociations.flatMap((aSsociation) =>
+        aSsociation.messageFolderIds.map((folderId) => ({
+          messageChannelMessageASsociationId:
+            aSsociation.messageChannelMessageASsociationId,
           messageFolderId: folderId,
         })),
       );
@@ -48,16 +48,16 @@ export class MessagingMessageFolderAssociationService {
         return;
       }
 
-      const associationIds = [
+      const aSsociationIds = [
         ...new Set(
-          records.map((record) => record.messageChannelMessageAssociationId),
+          records.map((record) => record.messageChannelMessageASsociationId),
         ),
       ];
 
       const existingRecords = await repository.find(
         {
           where: {
-            messageChannelMessageAssociationId: In(associationIds),
+            messageChannelMessageASsociationId: In(aSsociationIds),
           },
         },
         transactionManager,
@@ -66,14 +66,14 @@ export class MessagingMessageFolderAssociationService {
       const existingKeys = new Set(
         existingRecords.map(
           (record) =>
-            `${record.messageChannelMessageAssociationId}:${record.messageFolderId}`,
+            `${record.messageChannelMessageASsociationId}:${record.messageFolderId}`,
         ),
       );
 
       const recordsToInsert = records.filter(
         (record) =>
           !existingKeys.has(
-            `${record.messageChannelMessageAssociationId}:${record.messageFolderId}`,
+            `${record.messageChannelMessageASsociationId}:${record.messageFolderId}`,
           ),
       );
 

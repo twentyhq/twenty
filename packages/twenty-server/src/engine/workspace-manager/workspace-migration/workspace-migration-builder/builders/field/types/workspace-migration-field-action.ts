@@ -16,7 +16,7 @@ export type UniversalCreateFieldAction =
       UniversalFlatFieldMetadata,
       ExtractUniversalForeignKeyAggregatorForMetadataName<'fieldMetadata'>
     >;
-    // Optional ID for the related field (for API metadata).
+    // Optional ID for the related field (for Api metadata).
     relatedFieldId?: string;
   };
 

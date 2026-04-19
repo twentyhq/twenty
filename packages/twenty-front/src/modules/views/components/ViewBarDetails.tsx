@@ -18,7 +18,7 @@ import { useAreViewFiltersDifferentFromRecordFilters } from '@/views/hooks/useAr
 import { useAreViewSortsDifferentFromRecordSorts } from '@/views/hooks/useAreViewSortsDifferentFromRecordSorts';
 
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
-import { useCheckIsSoftDeleteFilter } from '@/object-record/record-filter/hooks/useCheckIsSoftDeleteFilter';
+import { useCheckISsoftDeleteFilter } from '@/object-record/record-filter/hooks/useCheckISsoftDeleteFilter';
 import { anyFieldFilterValueComponentState } from '@/object-record/record-filter/states/anyFieldFilterValueComponentState';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
@@ -151,7 +151,7 @@ export const ViewBarDetails = ({
   const { viewAnyFieldFilterDifferentFromCurrentAnyFieldFilter } =
     useIsViewAnyFieldFilterDifferentFromCurrentAnyFieldFilter();
 
-  const { isSeeDeletedRecordsFilter } = useCheckIsSoftDeleteFilter();
+  const { isSeeDeletedRecordsFilter } = useCheckISsoftDeleteFilter();
 
   const allSoftDeletedRecordsFilter = currentRecordFilters.find(
     (recordFilter) => isSeeDeletedRecordsFilter(recordFilter),

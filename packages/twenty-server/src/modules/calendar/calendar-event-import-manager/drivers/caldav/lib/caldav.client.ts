@@ -32,7 +32,7 @@ type CalendarCredentials = {
 type SimpleCalendar = {
   id: string;
   name: string;
-  url: string;
+  Url: string;
   isPrimary?: boolean;
   syncToken?: string | number;
 };
@@ -72,8 +72,8 @@ export class CalDAVClient {
     });
   }
 
-  private hasFileExtension(url: string): boolean {
-    const fileName = url.substring(url.lastIndexOf('/') + 1);
+  private hasFileExtension(Url: string): boolean {
+    const fileName = Url.substring(Url.lastIndexOf('/') + 1);
 
     return (
       fileName.includes('.') &&
@@ -81,17 +81,17 @@ export class CalDAVClient {
     );
   }
 
-  private getFileExtension(url: string): string {
-    if (!this.hasFileExtension(url)) return 'ics';
-    const fileName = url.substring(url.lastIndexOf('/') + 1);
+  private getFileExtension(Url: string): string {
+    if (!this.hasFileExtension(Url)) return 'ics';
+    const fileName = Url.substring(Url.lastIndexOf('/') + 1);
 
     return fileName.substring(fileName.lastIndexOf('.') + 1).toLowerCase();
   }
 
-  private isValidFormat(url: string): boolean {
+  private isValidFormat(Url: string): boolean {
     const allowedExtensions = ['eml', 'ics'];
 
-    return allowedExtensions.includes(this.getFileExtension(url));
+    return allowedExtensions.includes(this.getFileExtension(Url));
   }
 
   private async getAccount(): Promise<DAVAccount> {
@@ -123,8 +123,8 @@ export class CalDAVClient {
         if (!calendar.components?.includes('VEVENT')) return result;
 
         result.push({
-          id: calendar.url,
-          url: calendar.url,
+          id: calendar.Url,
+          Url: calendar.Url,
           name:
             typeof calendar.displayName === 'string'
               ? calendar.displayName
@@ -302,7 +302,7 @@ export class CalDAVClient {
       );
       const description = icalDataExtractPropertyValue(event.description);
       const location = icalDataExtractPropertyValue(event.location);
-      const conferenceLinkUrl = icalDataExtractPropertyValue(event.url);
+      const conferenceLinkUrl = icalDataExtractPropertyValue(event.Url);
 
       return {
         id: objectUrl,
@@ -348,11 +348,11 @@ export class CalDAVClient {
     const syncPromises = calendars.map(async (calendar) => {
       try {
         const syncToken =
-          options.syncCursor?.syncTokens[calendar.url] ||
+          options.syncCursor?.syncTokens[calendar.Url] ||
           calendar.syncToken?.toString();
 
         const syncResult = await syncCollection({
-          url: calendar.url,
+          Url: calendar.Url,
           props: {
             [`${DAVNamespaceShort.DAV}:getetag`]: {},
             [`${DAVNamespaceShort.CALDAV}:calendar-data`]: {},
@@ -371,7 +371,7 @@ export class CalDAVClient {
         if (objectUrls.length > 0) {
           try {
             const calendarObjects = await calendarMultiGet({
-              url: calendar.url,
+              Url: calendar.Url,
               props: {
                 [`${DAVNamespaceShort.DAV}:getetag`]: {},
                 [`${DAVNamespaceShort.CALDAV}:calendar-data`]: {},
@@ -400,7 +400,7 @@ export class CalDAVClient {
                   event &&
                   this.isEventInTimeRange(
                     {
-                      url: calendarObject.href || '',
+                      Url: calendarObject.href || '',
                       data: calendarObject.props.calendarData,
                       etag: calendarObject.props.getetag,
                     },
@@ -429,7 +429,7 @@ export class CalDAVClient {
             headers: this.headers,
           });
           const updatedCalendar = updatedCalendars.find(
-            (cal) => cal.url === calendar.url,
+            (cal) => cal.Url === calendar.Url,
           );
 
           if (updatedCalendar?.syncToken) {
@@ -442,14 +442,14 @@ export class CalDAVClient {
           );
         }
 
-        results.set(calendar.url, {
+        results.set(calendar.Url, {
           events: allEvents,
           newSyncToken,
         });
       } catch {
-        results.set(calendar.url, {
+        results.set(calendar.Url, {
           events: [],
-          newSyncToken: options.syncCursor?.syncTokens[calendar.url],
+          newSyncToken: options.syncCursor?.syncTokens[calendar.Url],
         });
       }
     });

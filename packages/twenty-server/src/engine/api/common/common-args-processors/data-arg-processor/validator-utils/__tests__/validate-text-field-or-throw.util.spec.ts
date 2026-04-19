@@ -1,4 +1,4 @@
-import { validateTextFieldOrThrow } from 'src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-text-field-or-throw.util';
+import { validateTextFieldOrThrow } from 'src/engine/api/common/common-args-proceSsors/data-arg-proceSsor/validator-utils/validate-text-field-or-throw.util';
 
 describe('validateTextFieldOrThrow', () => {
   describe('valid inputs', () => {

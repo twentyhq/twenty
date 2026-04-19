@@ -20,7 +20,7 @@ const getWebhookExceptionUserFriendlyMessage = (code: WebhookExceptionCode) => {
     case WebhookExceptionCode.INVALID_WEBHOOK_INPUT:
       return msg`Invalid webhook input.`;
     case WebhookExceptionCode.INVALID_TARGET_URL:
-      return msg`Invalid target URL. Please provide a valid HTTP or HTTPS URL.`;
+      return msg`Invalid target Url. Please provide a valid HTTP or HTTPS Url.`;
     default:
       assertUnreachable(code);
   }

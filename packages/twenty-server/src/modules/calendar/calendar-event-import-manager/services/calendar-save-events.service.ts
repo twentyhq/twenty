@@ -8,7 +8,7 @@ import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manage
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { CalendarEventParticipantService } from 'src/modules/calendar/calendar-event-participant-manager/services/calendar-event-participant.service';
-import { type CalendarChannelEventAssociationWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity';
+import { type CalendarChannelEventASsociationWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel-event-aSsociation.workspace-entity';
 import { type CalendarEventWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event.workspace-entity';
 import { type FetchedCalendarEvent } from 'src/modules/calendar/common/types/fetched-calendar-event';
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
@@ -41,10 +41,10 @@ export class CalendarSaveEventsService {
           'calendarEvent',
         );
 
-      const calendarChannelEventAssociationRepository =
-        await this.globalWorkspaceOrmManager.getRepository<CalendarChannelEventAssociationWorkspaceEntity>(
+      const calendarChannelEventASsociationRepository =
+        await this.globalWorkspaceOrmManager.getRepository<CalendarChannelEventASsociationWorkspaceEntity>(
           workspaceId,
-          'calendarChannelEventAssociation',
+          'calendarChannelEventASsociation',
         );
 
       const workspaceDataSource =
@@ -174,8 +174,8 @@ export class CalendarSaveEventsService {
             );
           }
 
-          const calendarChannelEventAssociationsToSave: Pick<
-            CalendarChannelEventAssociationWorkspaceEntity,
+          const calendarChannelEventASsociationsToSave: Pick<
+            CalendarChannelEventASsociationWorkspaceEntity,
             | 'calendarEventId'
             | 'eventExternalId'
             | 'calendarChannelId'
@@ -205,9 +205,9 @@ export class CalendarSaveEventsService {
             },
           );
 
-          if (calendarChannelEventAssociationsToSave.length > 0) {
-            await calendarChannelEventAssociationRepository.insert(
-              calendarChannelEventAssociationsToSave,
+          if (calendarChannelEventASsociationsToSave.length > 0) {
+            await calendarChannelEventASsociationRepository.insert(
+              calendarChannelEventASsociationsToSave,
               transactionManager,
             );
           }
@@ -235,7 +235,7 @@ export class CalendarSaveEventsService {
                 },
               );
 
-          // todo: we should prevent duplicate rows on calendarEventAssociation by creating
+          // todo: we should prevent duplicate rows on calendarEventASsociation by creating
           // an index on calendarChannelId and calendarEventId
           const participantsToUpdate =
             fetchedCalendarEventsWithDBEventsEnrichedWithSavedEvents

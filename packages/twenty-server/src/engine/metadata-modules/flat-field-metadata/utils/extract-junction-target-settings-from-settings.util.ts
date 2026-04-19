@@ -7,7 +7,7 @@ type JunctionTargetSettings = {
 
 // TODO refactor using either type predicate or FieldMetadataType discriminating union
 // Extracts junction target settings from untyped settings input
-// This function handles the boundary where settings come from external API input
+// This function handles the boundary where settings come from external Api input
 export const extractJunctionTargetSettingsFromSettings = (
   settings: AllFieldMetadataSettings | null | undefined,
 ): JunctionTargetSettings => {

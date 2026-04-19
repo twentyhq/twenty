@@ -155,7 +155,7 @@ describe('ConfigValueConverterService', () => {
         FRONTEND_URL: {
           type: ConfigVariableType.STRING,
           group: ConfigVariablesGroup.SERVER_CONFIG,
-          description: 'Frontend URL',
+          description: 'Frontend Url',
         },
       });
 
@@ -335,7 +335,7 @@ describe('ConfigValueConverterService', () => {
         FRONTEND_URL: {
           type: ConfigVariableType.STRING,
           group: ConfigVariablesGroup.SERVER_CONFIG,
-          description: 'Frontend URL',
+          description: 'Frontend Url',
         },
       });
 
@@ -532,7 +532,7 @@ describe('ConfigValueConverterService', () => {
         FRONTEND_URL: {
           type: ConfigVariableType.STRING,
           group: ConfigVariablesGroup.SERVER_CONFIG,
-          description: 'Frontend URL',
+          description: 'Frontend Url',
         },
       });
 

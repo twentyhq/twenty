@@ -7,7 +7,7 @@ import {
 
 import { type Observable, catchError } from 'rxjs';
 
-import { frontComponentGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/front-component/utils/front-component-graphql-api-exception-handler.util';
+import { frontComponentGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/front-component/utils/front-component-graphql-Api-exception-handler.util';
 
 @Injectable()
 export class FrontComponentGraphqlApiExceptionInterceptor

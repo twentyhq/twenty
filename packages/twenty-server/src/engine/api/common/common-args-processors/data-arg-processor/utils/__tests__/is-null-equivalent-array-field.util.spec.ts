@@ -1,4 +1,4 @@
-import { isNullEquivalentArrayFieldValue } from 'src/engine/api/common/common-args-processors/data-arg-processor/utils/is-null-equivalent-array-field-value.util';
+import { isNullEquivalentArrayFieldValue } from 'src/engine/api/common/common-args-proceSsors/data-arg-proceSsor/utils/is-null-equivalent-array-field-value.util';
 
 describe('isNullEquivalentArrayFieldValue', () => {
   describe('null-equivalent values', () => {

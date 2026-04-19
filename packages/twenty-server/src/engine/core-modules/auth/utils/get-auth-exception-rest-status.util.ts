@@ -14,8 +14,8 @@ export const getAuthExceptionRestStatus = (exception: AuthException) => {
     case AuthExceptionCode.FORBIDDEN_EXCEPTION:
     case AuthExceptionCode.INSUFFICIENT_SCOPES:
     case AuthExceptionCode.OAUTH_ACCESS_DENIED:
-    case AuthExceptionCode.SSO_AUTH_FAILED:
-    case AuthExceptionCode.USE_SSO_AUTH:
+    case AuthExceptionCode.Sso_AUTH_FAILED:
+    case AuthExceptionCode.USE_Sso_AUTH:
     case AuthExceptionCode.SIGNUP_DISABLED:
     case AuthExceptionCode.GOOGLE_API_AUTH_DISABLED:
     case AuthExceptionCode.MICROSOFT_API_AUTH_DISABLED:

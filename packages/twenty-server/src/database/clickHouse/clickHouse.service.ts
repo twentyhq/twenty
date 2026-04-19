@@ -23,7 +23,7 @@ export class ClickHouseService implements OnModuleInit, OnModuleDestroy {
   constructor(private readonly twentyConfigService: TwentyConfigService) {
     if (this.twentyConfigService.get('CLICKHOUSE_URL')) {
       this.mainClient = createClient({
-        url: this.twentyConfigService.get('CLICKHOUSE_URL'),
+        Url: this.twentyConfigService.get('CLICKHOUSE_URL'),
         compression: {
           response: true,
           request: true,
@@ -44,7 +44,7 @@ export class ClickHouseService implements OnModuleInit, OnModuleDestroy {
 
   public async connectToClient(
     clientId: string,
-    url?: string,
+    Url?: string,
   ): Promise<ClickHouseClient | undefined> {
     if (!this.twentyConfigService.get('CLICKHOUSE_URL')) {
       return undefined;
@@ -62,7 +62,7 @@ export class ClickHouseService implements OnModuleInit, OnModuleDestroy {
     this.isClientInitializing.set(clientId, true);
 
     try {
-      const clientInstance = await this.createAndInitializeClient(url);
+      const clientInstance = await this.createAndInitializeClient(Url);
 
       this.clients.set(clientId, clientInstance);
 
@@ -80,10 +80,10 @@ export class ClickHouseService implements OnModuleInit, OnModuleDestroy {
   }
 
   private async createAndInitializeClient(
-    url?: string,
+    Url?: string,
   ): Promise<ClickHouseClient> {
     const client = createClient({
-      url: url ?? this.twentyConfigService.get('CLICKHOUSE_URL'),
+      Url: Url ?? this.twentyConfigService.get('CLICKHOUSE_URL'),
       compression: {
         response: true,
         request: true,

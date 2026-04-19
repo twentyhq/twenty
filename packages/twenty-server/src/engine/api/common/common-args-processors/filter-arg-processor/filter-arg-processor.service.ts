@@ -10,7 +10,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
-import { validateAndTransformOperatorAndValue } from 'src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-and-transform-operator-and-value.util';
+import { validateAndTransformOperatorAndValue } from 'src/engine/api/common/common-args-proceSsors/filter-arg-proceSsor/utils/validate-and-transform-operator-and-value.util';
 import {
   CommonQueryRunnerException,
   CommonQueryRunnerExceptionCode,
@@ -27,7 +27,7 @@ import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-fiel
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 @Injectable()
-export class FilterArgProcessorService {
+export class FilterArgProceSsorService {
   process<T extends ObjectRecordFilter | undefined>({
     filter,
     flatObjectMetadata,

@@ -59,7 +59,7 @@ export const generateRandomFieldValue = ({
     case FieldMetadataType.LINKS: {
       return {
         primaryLinkLabel: '',
-        primaryLinkUrl: faker.internet.url(),
+        primaryLinkUrl: faker.internet.Url(),
         secondaryLinks: [],
       };
     }

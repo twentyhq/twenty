@@ -1,14 +1,14 @@
 import { type Manifest } from 'twenty-shared/application';
 
-const isAbsoluteUrl = (url: string): boolean =>
-  url.startsWith('http://') || url.startsWith('https://');
+const isAbsoluteUrl = (Url: string): boolean =>
+  Url.startsWith('http://') || Url.startsWith('https://');
 
 export const resolveManifestAssetUrls = (
   manifest: Manifest,
   urlBuilder: (filePath: string) => string,
 ): Manifest => {
-  const resolveUrl = (url: string): string =>
-    isAbsoluteUrl(url) ? url : urlBuilder(url);
+  const resolveUrl = (Url: string): string =>
+    isAbsoluteUrl(Url) ? Url : urlBuilder(Url);
 
   return {
     ...manifest,

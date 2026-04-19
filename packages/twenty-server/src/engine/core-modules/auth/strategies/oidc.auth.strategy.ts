@@ -11,7 +11,7 @@ import {
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 
-export type OIDCRequest = Omit<
+export type OidcRequest = Omit<
   Request,
   'user' | 'workspace' | 'workspaceMetadataVersion'
 > & {
@@ -21,12 +21,12 @@ export type OIDCRequest = Omit<
     firstName?: string | null;
     lastName?: string | null;
     workspaceInviteHash?: string;
-    oidcTokenClaims?: Record<string, unknown>;
+    OidcTokenClaims?: Record<string, unknown>;
   };
 };
 
 @Injectable()
-export class OIDCAuthStrategy extends PassportStrategy(
+export class OidcAuthStrategy extends PassportStrategy(
   Strategy,
   'openidconnect',
 ) {
@@ -87,7 +87,7 @@ export class OIDCAuthStrategy extends PassportStrategy(
     req: Request,
     tokenset: TokenSet,
     // oxlint-disable-next-line @typescripttypescript/no-explicit-any
-    done: (err: any, user?: OIDCRequest['user']) => void,
+    done: (err: any, user?: OidcRequest['user']) => void,
   ) {
     try {
       const state = this.extractState(req);
@@ -111,7 +111,7 @@ export class OIDCAuthStrategy extends PassportStrategy(
         identityProviderId: state.identityProviderId,
         ...(userinfo.given_name ? { firstName: userinfo.given_name } : {}),
         ...(userinfo.family_name ? { lastName: userinfo.family_name } : {}),
-        oidcTokenClaims: tokenset.claims() as Record<string, unknown>,
+        OidcTokenClaims: tokenset.claims() as Record<string, unknown>,
       });
     } catch (err) {
       done(err);

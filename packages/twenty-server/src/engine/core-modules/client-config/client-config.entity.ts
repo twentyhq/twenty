@@ -283,7 +283,7 @@ export class ClientConfig {
   captcha: Captcha;
 
   @Field(() => ApiConfig)
-  api: ApiConfig;
+  Api: ApiConfig;
 
   @Field(() => Boolean)
   canManageFeatureFlags: boolean;

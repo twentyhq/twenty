@@ -29,7 +29,7 @@ import {
 import { CalendarSaveEventsService } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-save-events.service';
 import { filterEventsAndReturnCancelledEvents } from 'src/modules/calendar/calendar-event-import-manager/utils/filter-events.util';
 import { CalendarChannelSyncStatusService } from 'src/modules/calendar/common/services/calendar-channel-sync-status.service';
-import { type CalendarChannelEventAssociationWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity';
+import { type CalendarChannelEventASsociationWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel-event-aSsociation.workspace-entity';
 import { type FetchedCalendarEvent } from 'src/modules/calendar/common/types/fetched-calendar-event';
 import { EmailAliasManagerService } from 'src/modules/connected-account/email-alias-manager/services/email-alias-manager.service';
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
@@ -174,13 +174,13 @@ export class CalendarEventsImportService {
             workspaceId,
           );
         }
-        const calendarChannelEventAssociationRepository =
-          await this.globalWorkspaceOrmManager.getRepository<CalendarChannelEventAssociationWorkspaceEntity>(
+        const calendarChannelEventASsociationRepository =
+          await this.globalWorkspaceOrmManager.getRepository<CalendarChannelEventASsociationWorkspaceEntity>(
             workspaceId,
-            'calendarChannelEventAssociation',
+            'calendarChannelEventASsociation',
           );
 
-        await calendarChannelEventAssociationRepository.delete({
+        await calendarChannelEventASsociationRepository.delete({
           eventExternalId: Any(cancelledEventExternalIds),
           calendarChannelId: calendarChannel.id,
         });

@@ -22,7 +22,7 @@ const isAuthEnabledOrThrow = (
     return true;
   if (provider === AuthProviderEnum.Password && workspace.isPasswordAuthEnabled)
     return true;
-  if (provider === AuthProviderEnum.SSO) return true;
+  if (provider === AuthProviderEnum.Sso) return true;
 
   throw exceptionToThrowCustom;
 };

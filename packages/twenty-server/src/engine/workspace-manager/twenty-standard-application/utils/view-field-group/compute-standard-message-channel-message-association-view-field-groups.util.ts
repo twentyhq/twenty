@@ -4,31 +4,31 @@ import {
   type CreateStandardViewFieldGroupArgs,
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/create-standard-view-field-group-flat-metadata.util';
 
-export const computeStandardMessageChannelMessageAssociationViewFieldGroups = (
+export const computeStandardMessageChannelMessageASsociationViewFieldGroups = (
   args: Omit<
-    CreateStandardViewFieldGroupArgs<'messageChannelMessageAssociation'>,
+    CreateStandardViewFieldGroupArgs<'messageChannelMessageASsociation'>,
     'context'
   >,
 ): Record<string, FlatViewFieldGroup> => {
   return {
-    messageChannelMessageAssociationRecordPageFieldsGeneral:
+    messageChannelMessageASsociationRecordPageFieldsGeneral:
       createStandardViewFieldGroupFlatMetadata({
         ...args,
-        objectName: 'messageChannelMessageAssociation',
+        objectName: 'messageChannelMessageASsociation',
         context: {
-          viewName: 'messageChannelMessageAssociationRecordPageFields',
+          viewName: 'messageChannelMessageASsociationRecordPageFields',
           viewFieldGroupName: 'general',
           name: 'General',
           position: 0,
           isVisible: true,
         },
       }),
-    messageChannelMessageAssociationRecordPageFieldsSystem:
+    messageChannelMessageASsociationRecordPageFieldsSystem:
       createStandardViewFieldGroupFlatMetadata({
         ...args,
-        objectName: 'messageChannelMessageAssociation',
+        objectName: 'messageChannelMessageASsociation',
         context: {
-          viewName: 'messageChannelMessageAssociationRecordPageFields',
+          viewName: 'messageChannelMessageASsociationRecordPageFields',
           viewFieldGroupName: 'system',
           name: 'System',
           position: 1,

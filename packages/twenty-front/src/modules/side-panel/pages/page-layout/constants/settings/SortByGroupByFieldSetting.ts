@@ -2,11 +2,11 @@ import { ChartSortByGroupByFieldDropdownContent } from '@/side-panel/pages/page-
 import { CHART_CONFIGURATION_SETTING_LABELS } from '@/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels';
 import { CHART_CONFIGURATION_SETTING_IDS } from '@/side-panel/pages/page-layout/types/ChartConfigurationSettingIds';
 import { type ChartSettingsItem } from '@/side-panel/pages/page-layout/types/ChartSettingsGroup';
-import { IconArrowsSort } from 'twenty-ui/display';
+import { IconArrowSsort } from 'twenty-ui/display';
 
 export const SORT_BY_GROUP_BY_FIELD_SETTING: ChartSettingsItem = {
   isBoolean: false,
-  Icon: IconArrowsSort,
+  Icon: IconArrowSsort,
   label: CHART_CONFIGURATION_SETTING_LABELS.SORT_BY_GROUP_BY_FIELD,
   id: CHART_CONFIGURATION_SETTING_IDS.SORT_BY_GROUP_BY_FIELD,
   dependsOn: [CHART_CONFIGURATION_SETTING_IDS.GROUP_BY],

@@ -15,7 +15,7 @@ describe('hasTokenPair', () => {
   describe('when getTokenPair returns a valid token pair', () => {
     it('should return true for a complete valid token pair', () => {
       const validTokenPair = {
-        accessOrWorkspaceAgnosticToken: {
+        acceSsorWorkspaceAgnosticToken: {
           token: 'valid-access-token',
           expiresAt: '2024-01-01T00:00:00Z',
         },
@@ -34,7 +34,7 @@ describe('hasTokenPair', () => {
 
     it('should return true for a minimal valid token pair', () => {
       const minimalTokenPair = {
-        accessOrWorkspaceAgnosticToken: {
+        acceSsorWorkspaceAgnosticToken: {
           token: 'minimal-token',
           expiresAt: '2024-01-01T00:00:00Z',
         },
@@ -53,7 +53,7 @@ describe('hasTokenPair', () => {
 
     it('should return true even if token pair has extra fields', () => {
       const tokenPairWithExtras = {
-        accessOrWorkspaceAgnosticToken: {
+        acceSsorWorkspaceAgnosticToken: {
           token: 'access-token',
           expiresAt: '2024-01-01T00:00:00Z',
           customField: 'custom-value',
@@ -97,7 +97,7 @@ describe('hasTokenPair', () => {
       // Reset and test with valid token
       mockGetTokenPair.mockClear();
       const validToken = {
-        accessOrWorkspaceAgnosticToken: {
+        acceSsorWorkspaceAgnosticToken: {
           token: 'valid-token',
           expiresAt: '2024-01-01T00:00:00Z',
         },
@@ -117,7 +117,7 @@ describe('hasTokenPair', () => {
     it('should not perform additional validation beyond getTokenPair', () => {
       // This test ensures hasTokenPair doesn't duplicate validation logic
       const tokenPair = {
-        accessOrWorkspaceAgnosticToken: {
+        acceSsorWorkspaceAgnosticToken: {
           token: 'any-token-that-getTokenPair-considers-valid',
           expiresAt: '2024-01-01T00:00:00Z',
         },
@@ -139,7 +139,7 @@ describe('hasTokenPair', () => {
   describe('multiple calls', () => {
     it('should call getTokenPair on each invocation', () => {
       const tokenPair = {
-        accessOrWorkspaceAgnosticToken: {
+        acceSsorWorkspaceAgnosticToken: {
           token: 'test-token',
           expiresAt: '2024-01-01T00:00:00Z',
         },
@@ -159,7 +159,7 @@ describe('hasTokenPair', () => {
 
     it('should return consistent results for consistent getTokenPair results', () => {
       const tokenPair = {
-        accessOrWorkspaceAgnosticToken: {
+        acceSsorWorkspaceAgnosticToken: {
           token: 'consistent-token',
           expiresAt: '2024-01-01T00:00:00Z',
         },

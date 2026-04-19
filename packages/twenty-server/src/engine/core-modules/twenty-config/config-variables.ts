@@ -120,7 +120,7 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.GOOGLE_AUTH,
-    description: 'Callback URL for Google Auth APIs',
+    description: 'Callback Url for Google Auth APIs',
     type: ConfigVariableType.STRING,
     isSensitive: false,
   })
@@ -128,7 +128,7 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.GOOGLE_AUTH,
-    description: 'Enable or disable Google Single Sign-On (SSO)',
+    description: 'Enable or disable Google Single Sign-On (Sso)',
     type: ConfigVariableType.BOOLEAN,
   })
   @IsOptional()
@@ -155,7 +155,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.GOOGLE_AUTH,
     isSensitive: false,
-    description: 'Callback URL for Google authentication',
+    description: 'Callback Url for Google authentication',
     type: ConfigVariableType.STRING,
   })
   @IsUrl({ require_tld: false, require_protocol: true })
@@ -213,7 +213,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.MICROSOFT_AUTH,
     isSensitive: false,
-    description: 'Callback URL for Microsoft authentication',
+    description: 'Callback Url for Microsoft authentication',
     type: ConfigVariableType.STRING,
   })
   @IsUrl({ require_tld: false, require_protocol: true })
@@ -223,7 +223,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.MICROSOFT_AUTH,
     isSensitive: false,
-    description: 'Callback URL for Microsoft APIs',
+    description: 'Callback Url for Microsoft APIs',
     type: ConfigVariableType.STRING,
   })
   @IsUrl({ require_tld: false, require_protocol: true })
@@ -462,7 +462,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.STORAGE_CONFIG,
     description:
-      'Custom S3 endpoint URL. Optional — only needed for S3-compatible services like MinIO (e.g. http://minio:9000). Omit for native AWS S3, where the SDK resolves the endpoint from the region automatically.',
+      'Custom S3 endpoint Url. Optional — only needed for S3-compatible services like MinIO (e.g. http://minio:9000). Omit for native AWS S3, where the SDK resolves the endpoint from the region automatically.',
     type: ConfigVariableType.STRING,
   })
   @ValidateIf((env) => env.STORAGE_TYPE === StorageDriverType.S_3)
@@ -657,7 +657,7 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.CODE_INTERPRETER_CONFIG,
-    description: 'E2B API key for sandboxed code execution',
+    description: 'E2B Api key for sandboxed code execution',
     type: ConfigVariableType.STRING,
     isSensitive: true,
   })
@@ -688,7 +688,7 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LLM,
-    description: 'Exa API key for web search',
+    description: 'Exa Api key for web search',
     type: ConfigVariableType.STRING,
     isSensitive: true,
   })
@@ -802,7 +802,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.BILLING_CONFIG,
     isSensitive: true,
-    description: 'Stripe API key for billing',
+    description: 'Stripe Api key for billing',
     type: ConfigVariableType.STRING,
   })
   @ValidateIf((env) => env.IS_BILLING_ENABLED === true)
@@ -981,7 +981,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.SERVER_CONFIG,
     isSensitive: true,
-    description: 'Database connection URL',
+    description: 'Database connection Url',
     type: ConfigVariableType.STRING,
     isEnvOnly: true,
   })
@@ -997,7 +997,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,
     isSensitive: true,
-    description: 'Optional PostgreSQL replica connection URL for read queries',
+    description: 'Optional PostgreSQL replica connection Url for read queries',
     type: ConfigVariableType.STRING,
     isEnvOnly: true,
   })
@@ -1069,7 +1069,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.SERVER_CONFIG,
     isSensitive: true,
-    description: 'Redis connection URL used for cache and queues by default',
+    description: 'Redis connection Url used for cache and queues by default',
     isEnvOnly: true,
     type: ConfigVariableType.STRING,
   })
@@ -1118,7 +1118,7 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.SERVER_CONFIG,
-    description: 'Base URL for the server',
+    description: 'Base Url for the server',
     type: ConfigVariableType.STRING,
     isEnvOnly: true,
   })
@@ -1155,7 +1155,7 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.SERVER_CONFIG,
-    description: 'Base URL for public domains',
+    description: 'Base Url for public domains',
     type: ConfigVariableType.STRING,
   })
   @IsUrl({ require_tld: false, require_protocol: true })
@@ -1182,7 +1182,7 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.RATE_LIMITING,
-    description: 'Time-to-live for short API rate limiting in milliseconds',
+    description: 'Time-to-live for short Api rate limiting in milliseconds',
     type: ConfigVariableType.NUMBER,
   })
   @CastToPositiveNumber()
@@ -1199,7 +1199,7 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.RATE_LIMITING,
-    description: 'Time-to-live for long API rate limiting in milliseconds',
+    description: 'Time-to-live for long Api rate limiting in milliseconds',
     type: ConfigVariableType.NUMBER,
   })
   @CastToPositiveNumber()
@@ -1233,7 +1233,7 @@ export class ConfigVariables {
   @CastToPositiveNumber()
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.RATE_LIMITING,
-    description: 'Maximum complexity allowed for Common API queries',
+    description: 'Maximum complexity allowed for Common Api queries',
     type: ConfigVariableType.NUMBER,
   })
   COMMON_QUERY_COMPLEXITY_LIMIT = 2000;
@@ -1296,7 +1296,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.CLOUDFLARE_CONFIG,
     isSensitive: true,
-    description: 'API key for Cloudflare integration',
+    description: 'Api key for Cloudflare integration',
     type: ConfigVariableType.STRING,
   })
   @ValidateIf((env) => env.CLOUDFLARE_ZONE_ID)
@@ -1339,7 +1339,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LLM,
     isSensitive: true,
-    description: 'API key for OpenAI models (GPT, o-series)',
+    description: 'Api key for OpenAI models (GPT, o-series)',
     type: ConfigVariableType.STRING,
   })
   @IsOptional()
@@ -1348,7 +1348,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LLM,
     isSensitive: true,
-    description: 'API key for Anthropic models (Claude)',
+    description: 'Api key for Anthropic models (Claude)',
     type: ConfigVariableType.STRING,
   })
   @IsOptional()
@@ -1357,7 +1357,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LLM,
     isSensitive: true,
-    description: 'API key for Google AI models (Gemini)',
+    description: 'Api key for Google AI models (Gemini)',
     type: ConfigVariableType.STRING,
   })
   @IsOptional()
@@ -1366,7 +1366,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LLM,
     isSensitive: true,
-    description: 'API key for xAI models (Grok)',
+    description: 'Api key for xAI models (Grok)',
     type: ConfigVariableType.STRING,
   })
   @IsOptional()
@@ -1375,7 +1375,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LLM,
     isSensitive: true,
-    description: 'API key for Groq inference',
+    description: 'Api key for Groq inference',
     type: ConfigVariableType.STRING,
   })
   @IsOptional()
@@ -1384,7 +1384,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LLM,
     isSensitive: true,
-    description: 'API key for Mistral models',
+    description: 'Api key for Mistral models',
     type: ConfigVariableType.STRING,
   })
   @IsOptional()
@@ -1545,12 +1545,12 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.SERVER_CONFIG,
-    description: 'Base URL for the Enterprise API on twenty.com',
+    description: 'Base Url for the Enterprise Api on twenty.com',
     isHiddenInAdminPanel: true,
     type: ConfigVariableType.STRING,
   })
   @IsOptional()
-  ENTERPRISE_API_URL: string = 'https://twenty.com/api/enterprise';
+  ENTERPRISE_API_URL: string = 'https://twenty.com/Api/enterprise';
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,
@@ -1582,7 +1582,7 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,
-    description: 'Enable or disable google map api usage',
+    description: 'Enable or disable google map Api usage',
     type: ConfigVariableType.BOOLEAN,
   })
   @IsOptional()
@@ -1591,7 +1591,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,
     isSensitive: true,
-    description: 'Google map api key for places and map',
+    description: 'Google map Api key for places and map',
     type: ConfigVariableType.STRING,
   })
   @ValidateIf((env) => env.IS_MAPS_AND_ADDRESS_AUTOCOMPLETE_ENABLED)
@@ -1600,7 +1600,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,
     isSensitive: true,
-    description: 'Mintlify API key for documentation search',
+    description: 'Mintlify Api key for documentation search',
     isEnvOnly: true,
     isHiddenInAdminPanel: true,
     type: ConfigVariableType.STRING,
@@ -1686,7 +1686,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,
     description:
-      'Default npm registry URL for resolving app packages (e.g. https://registry.npmjs.org)',
+      'Default npm registry Url for resolving app packages (e.g. https://registry.npmjs.org)',
     type: ConfigVariableType.STRING,
   })
   @IsUrl({ require_tld: false })
@@ -1696,7 +1696,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,
     description:
-      'CDN base URL for serving files from registry (e.g. https://unpkg.com)',
+      'CDN base Url for serving files from registry (e.g. https://unpkg.com)',
     type: ConfigVariableType.STRING,
   })
   @IsUrl({ require_tld: false })

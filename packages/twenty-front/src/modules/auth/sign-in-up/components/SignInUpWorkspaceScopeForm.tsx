@@ -1,7 +1,7 @@
 import { SignInUpWithCredentials } from '@/auth/sign-in-up/components/internal/SignInUpWithCredentials';
 import { SignInUpWithGoogle } from '@/auth/sign-in-up/components/internal/SignInUpWithGoogle';
 import { SignInUpWithMicrosoft } from '@/auth/sign-in-up/components/internal/SignInUpWithMicrosoft';
-import { SignInUpWithSSO } from '@/auth/sign-in-up/components/internal/SignInUpWithSSO';
+import { SignInUpWithSso } from '@/auth/sign-in-up/components/internal/SignInUpWithSso';
 import { useHandleResetPassword } from '@/auth/sign-in-up/hooks/useHandleResetPassword';
 import { useSignInUp } from '@/auth/sign-in-up/hooks/useSignInUp';
 import { useSignInUpForm } from '@/auth/sign-in-up/hooks/useSignInUpForm';
@@ -44,7 +44,7 @@ export const SignInUpWorkspaceScopeForm = () => {
     shouldOfferBypass && shouldUseBypass
       ? {
           ...workspaceAuthBypassProviders,
-          sso: [],
+          Sso: [],
         }
       : workspaceAuthProviders;
 
@@ -57,11 +57,11 @@ export const SignInUpWorkspaceScopeForm = () => {
           <SignInUpWithMicrosoft action="join-workspace" />
         )}
 
-        {providers.sso.length > 0 && <SignInUpWithSSO />}
+        {providers.Sso.length > 0 && <SignInUpWithSso />}
 
         {(providers.google ||
           providers.microsoft ||
-          providers.sso.length > 0) &&
+          providers.Sso.length > 0) &&
         providers.password ? (
           <HorizontalSeparator />
         ) : null}

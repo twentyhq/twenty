@@ -3,9 +3,9 @@ import { recordTableCellEditModePositionComponentState } from '@/object-record/r
 import { createAtomComponentSelector } from '@/ui/utilities/state/jotai/utils/createAtomComponentSelector';
 import { isDefined } from 'twenty-shared/utils';
 
-export const isSomeCellInEditModeComponentSelector =
+export const iSsomeCellInEditModeComponentSelector =
   createAtomComponentSelector<boolean>({
-    key: 'isSomeCellInEditModeComponentSelector',
+    key: 'iSsomeCellInEditModeComponentSelector',
     componentInstanceContext: RecordTableComponentInstanceContext,
     get:
       ({ instanceId }) =>

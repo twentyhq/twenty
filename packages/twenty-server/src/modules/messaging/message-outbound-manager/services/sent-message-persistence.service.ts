@@ -7,7 +7,7 @@ import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connect
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { MessageDirection } from 'src/modules/messaging/common/enums/message-direction.enum';
-import { type MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
+import { type MessageChannelMessageASsociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-aSsociation.workspace-entity';
 import { type MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
 import { type MessageThreadWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-thread.workspace-entity';
 import { type MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
@@ -54,10 +54,10 @@ export class SentMessagePersistenceService {
           'messageParticipant',
         );
 
-      const associationRepository =
-        await this.globalWorkspaceOrmManager.getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
+      const aSsociationRepository =
+        await this.globalWorkspaceOrmManager.getRepository<MessageChannelMessageASsociationWorkspaceEntity>(
           input.workspaceId,
-          'messageChannelMessageAssociation',
+          'messageChannelMessageASsociation',
         );
 
       const messageThreadId = await this.findOrCreateThread({
@@ -88,7 +88,7 @@ export class SentMessagePersistenceService {
         await messageParticipantRepository.insert(participants);
       }
 
-      await associationRepository.insert({
+      await aSsociationRepository.insert({
         messageChannelId: input.messageChannelId,
         messageId,
         messageExternalId: input.sendResult.messageExternalId ?? null,

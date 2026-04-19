@@ -10,7 +10,7 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 
 @Injectable()
-export class OrderByWithGroupByArgProcessorService {
+export class OrderByWithGroupByArgProceSsorService {
   process({
     orderBy,
   }: {

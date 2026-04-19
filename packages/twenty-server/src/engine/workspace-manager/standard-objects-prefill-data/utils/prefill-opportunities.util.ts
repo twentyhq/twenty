@@ -121,7 +121,7 @@ export const prefillOpportunities = async (
       },
       {
         id: OPPORTUNITY_STRIPE_API_INTEGRATION_ID,
-        name: 'API Integration Deal',
+        name: 'Api Integration Deal',
         amountAmountMicros: 75000000000,
         amountCurrencyCode: 'USD',
         closeDate: new Date('2026-01-25T16:26:00.000Z'),

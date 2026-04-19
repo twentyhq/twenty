@@ -78,7 +78,7 @@ export const MemberInfosTab = ({
       <Section>
         <H2Title
           title={t`Email`}
-          description={t`The email associated to this account`}
+          description={t`The email aSsociated to this account`}
         />
         <MemberEmailField email={member.userEmail} />
       </Section>

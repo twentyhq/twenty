@@ -4,7 +4,7 @@ import axios from 'axios';
 import { type Manifest } from 'twenty-shared/application';
 import { z } from 'zod';
 
-import { buildRegistryCdnUrl } from 'src/engine/core-modules/application/application-marketplace/utils/build-registry-cdn-url.util';
+import { buildRegistryCdnUrl } from 'src/engine/core-modules/application/application-marketplace/utils/build-registry-cdn-Url.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 export type RegistryPackageInfo = {
@@ -46,7 +46,7 @@ export class MarketplaceService {
     version: string,
   ): Promise<Manifest | null> {
     const cdnBaseUrl = this.twentyConfigService.get('APP_REGISTRY_CDN_URL');
-    const url = buildRegistryCdnUrl({
+    const Url = buildRegistryCdnUrl({
       cdnBaseUrl,
       packageName,
       version,
@@ -54,7 +54,7 @@ export class MarketplaceService {
     });
 
     try {
-      const { data } = await axios.get(url, {
+      const { data } = await axios.get(Url, {
         headers: { 'User-Agent': 'Twenty-Marketplace' },
         timeout: 5_000,
       });
@@ -78,7 +78,7 @@ export class MarketplaceService {
     version: string,
   ): Promise<string | null> {
     const cdnBaseUrl = this.twentyConfigService.get('APP_REGISTRY_CDN_URL');
-    const url = buildRegistryCdnUrl({
+    const Url = buildRegistryCdnUrl({
       cdnBaseUrl,
       packageName,
       version,
@@ -86,7 +86,7 @@ export class MarketplaceService {
     });
 
     try {
-      const { data } = await axios.get(url, {
+      const { data } = await axios.get(Url, {
         headers: { 'User-Agent': 'Twenty-Marketplace' },
         timeout: 5_000,
         responseType: 'text',

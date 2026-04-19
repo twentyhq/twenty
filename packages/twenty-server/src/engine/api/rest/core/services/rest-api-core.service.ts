@@ -2,21 +2,21 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { RestApiCreateManyHandler } from 'src/engine/api/rest/core/handlers/rest-api-create-many.handler';
-import { RestApiCreateOneHandler } from 'src/engine/api/rest/core/handlers/rest-api-create-one.handler';
-import { RestApiDeleteManyHandler } from 'src/engine/api/rest/core/handlers/rest-api-delete-many.handler';
-import { RestApiDeleteOneHandler } from 'src/engine/api/rest/core/handlers/rest-api-delete-one.handler';
-import { RestApiDestroyManyHandler } from 'src/engine/api/rest/core/handlers/rest-api-destroy-many.handler';
-import { RestApiDestroyOneHandler } from 'src/engine/api/rest/core/handlers/rest-api-destroy-one.handler';
-import { RestApiFindDuplicatesHandler } from 'src/engine/api/rest/core/handlers/rest-api-find-duplicates.handler';
-import { RestApiFindManyHandler } from 'src/engine/api/rest/core/handlers/rest-api-find-many.handler';
-import { RestApiFindOneHandler } from 'src/engine/api/rest/core/handlers/rest-api-find-one.handler';
-import { RestApiGroupByHandler } from 'src/engine/api/rest/core/handlers/rest-api-group-by.handler';
-import { RestApiMergeManyHandler } from 'src/engine/api/rest/core/handlers/rest-api-merge-many.handler';
-import { RestApiRestoreManyHandler } from 'src/engine/api/rest/core/handlers/rest-api-restore-many.handler';
-import { RestApiRestoreOneHandler } from 'src/engine/api/rest/core/handlers/rest-api-restore-one.handler';
-import { RestApiUpdateManyHandler } from 'src/engine/api/rest/core/handlers/rest-api-update-many.handler';
-import { RestApiUpdateOneHandler } from 'src/engine/api/rest/core/handlers/rest-api-update-one.handler';
+import { RestApiCreateManyHandler } from 'src/engine/api/rest/core/handlers/rest-Api-create-many.handler';
+import { RestApiCreateOneHandler } from 'src/engine/api/rest/core/handlers/rest-Api-create-one.handler';
+import { RestApiDeleteManyHandler } from 'src/engine/api/rest/core/handlers/rest-Api-delete-many.handler';
+import { RestApiDeleteOneHandler } from 'src/engine/api/rest/core/handlers/rest-Api-delete-one.handler';
+import { RestApiDestroyManyHandler } from 'src/engine/api/rest/core/handlers/rest-Api-destroy-many.handler';
+import { RestApiDestroyOneHandler } from 'src/engine/api/rest/core/handlers/rest-Api-destroy-one.handler';
+import { RestApiFindDuplicatesHandler } from 'src/engine/api/rest/core/handlers/rest-Api-find-duplicates.handler';
+import { RestApiFindManyHandler } from 'src/engine/api/rest/core/handlers/rest-Api-find-many.handler';
+import { RestApiFindOneHandler } from 'src/engine/api/rest/core/handlers/rest-Api-find-one.handler';
+import { RestApiGroupByHandler } from 'src/engine/api/rest/core/handlers/rest-Api-group-by.handler';
+import { RestApiMergeManyHandler } from 'src/engine/api/rest/core/handlers/rest-Api-merge-many.handler';
+import { RestApiRestoreManyHandler } from 'src/engine/api/rest/core/handlers/rest-Api-restore-many.handler';
+import { RestApiRestoreOneHandler } from 'src/engine/api/rest/core/handlers/rest-Api-restore-one.handler';
+import { RestApiUpdateManyHandler } from 'src/engine/api/rest/core/handlers/rest-Api-update-many.handler';
+import { RestApiUpdateOneHandler } from 'src/engine/api/rest/core/handlers/rest-Api-update-one.handler';
 import { parseCorePath } from 'src/engine/api/rest/input-request-parsers/path-parser-utils/parse-core-path.utils';
 import { parseSoftDeleteRestRequest } from 'src/engine/api/rest/input-request-parsers/soft-delete-parser-utils/parse-soft-delete-rest-request.util';
 import { AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request';
@@ -80,16 +80,16 @@ export class RestApiCoreService {
   async delete(request: AuthenticatedRequest) {
     const { id: recordId } = parseCorePath(request);
 
-    const isSoftDelete = parseSoftDeleteRestRequest(request);
+    const iSsoftDelete = parseSoftDeleteRestRequest(request);
 
-    if (!isSoftDelete && isDefined(recordId))
+    if (!iSsoftDelete && isDefined(recordId))
       return await this.restApiDestroyOneHandler.handle(request);
-    if (!isSoftDelete && !isDefined(recordId))
+    if (!iSsoftDelete && !isDefined(recordId))
       return await this.restApiDestroyManyHandler.handle(request);
 
-    if (isSoftDelete && isDefined(recordId))
+    if (iSsoftDelete && isDefined(recordId))
       return await this.restApiDeleteOneHandler.handle(request);
-    if (isSoftDelete && !isDefined(recordId))
+    if (iSsoftDelete && !isDefined(recordId))
       return await this.restApiDeleteManyHandler.handle(request);
   }
 

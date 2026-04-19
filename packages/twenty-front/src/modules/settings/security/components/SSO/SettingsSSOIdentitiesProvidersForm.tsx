@@ -2,9 +2,9 @@
 
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsRadioCardContainer } from '@/settings/components/SettingsRadioCardContainer';
-import { SettingsSSOOIDCForm } from '@/settings/security/components/SSO/SettingsSSOOIDCForm';
-import { SettingsSSOSAMLForm } from '@/settings/security/components/SSO/SettingsSSOSAMLForm';
-import { type SettingSecurityNewSSOIdentityFormValues } from '@/settings/security/types/SSOIdentityProvider';
+import { SettingsSsoOidcForm } from '@/settings/security/components/Sso/SettingsSsoOidcForm';
+import { SettingsSsoSamlForm } from '@/settings/security/components/Sso/SettingsSsoSamlForm';
+import { type SettingSecurityNewSsoIdentityFormValues } from '@/settings/security/types/SsoIdentityProvider';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
@@ -26,9 +26,9 @@ const StyledInputsContainer = styled.div`
   }
 `;
 
-export const SettingsSSOIdentitiesProvidersForm = () => {
+export const SettingsSsoIdentitiesProvidersForm = () => {
   const { control, watch } =
-    useFormContext<SettingSecurityNewSSOIdentityFormValues>();
+    useFormContext<SettingSecurityNewSsoIdentityFormValues>();
 
   const IdentitiesProvidersMap: Record<
     IdentityProviderType,
@@ -42,23 +42,23 @@ export const SettingsSSOIdentitiesProvidersForm = () => {
       };
     }
   > = {
-    OIDC: {
+    Oidc: {
       option: {
         Icon: IconKey,
-        title: 'OIDC',
-        value: 'OIDC',
+        title: 'Oidc',
+        value: 'Oidc',
         description: '',
       },
-      form: <SettingsSSOOIDCForm />,
+      form: <SettingsSsoOidcForm />,
     },
-    SAML: {
+    Saml: {
       option: {
         Icon: IconKey,
-        title: 'SAML',
-        value: 'SAML',
+        title: 'Saml',
+        value: 'Saml',
         description: '',
       },
-      form: <SettingsSSOSAMLForm />,
+      form: <SettingsSsoSamlForm />,
     },
   };
 
@@ -66,16 +66,16 @@ export const SettingsSSOIdentitiesProvidersForm = () => {
 
   const formByType = useMemo(() => {
     switch (selectedType) {
-      case IdentityProviderType.OIDC:
-        return IdentitiesProvidersMap.OIDC.form;
-      case IdentityProviderType.SAML:
-        return IdentitiesProvidersMap.SAML.form;
+      case IdentityProviderType.Oidc:
+        return IdentitiesProvidersMap.Oidc.form;
+      case IdentityProviderType.Saml:
+        return IdentitiesProvidersMap.Saml.form;
       default:
         return null;
     }
   }, [
-    IdentitiesProvidersMap.OIDC.form,
-    IdentitiesProvidersMap.SAML.form,
+    IdentitiesProvidersMap.Oidc.form,
+    IdentitiesProvidersMap.Saml.form,
     selectedType,
   ]);
 
@@ -89,13 +89,13 @@ export const SettingsSSOIdentitiesProvidersForm = () => {
             control={control}
             render={({ field: { onChange, value } }) => (
               <SettingsTextInput
-                instanceId="sso-identity-provider-name"
+                instanceId="Sso-identity-provider-name"
                 autoComplete="off"
                 label={t`Name`}
                 value={value}
                 onChange={onChange}
                 fullWidth
-                placeholder={t`Google OIDC`}
+                placeholder={t`Google Oidc`}
               />
             )}
           />
@@ -104,7 +104,7 @@ export const SettingsSSOIdentitiesProvidersForm = () => {
       <Section>
         <H2Title
           title={t`Type`}
-          description={t`Choose between OIDC and SAML protocols`}
+          description={t`Choose between Oidc and Saml protocols`}
         />
         <StyledInputsContainer>
           <Controller
@@ -127,4 +127,4 @@ export const SettingsSSOIdentitiesProvidersForm = () => {
   );
 };
 
-export default SettingsSSOIdentitiesProvidersForm;
+export default SettingsSsoIdentitiesProvidersForm;

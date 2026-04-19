@@ -7,7 +7,7 @@ import {
 
 import { type Observable, catchError } from 'rxjs';
 
-import { calendarChannelGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/calendar-channel/utils/calendar-channel-graphql-api-exception-handler.util';
+import { calendarChannelGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/calendar-channel/utils/calendar-channel-graphql-Api-exception-handler.util';
 
 @Injectable()
 export class CalendarChannelGraphqlApiExceptionInterceptor

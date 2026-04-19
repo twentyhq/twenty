@@ -93,7 +93,7 @@ describe('S3Driver.getPresignedUrl', () => {
   });
 
   it('should use custom expiry when provided', async () => {
-    (getSignedUrl as jest.Mock).mockResolvedValue('https://signed.url');
+    (getSignedUrl as jest.Mock).mockResolvedValue('https://signed.Url');
 
     const driver = new S3Driver({
       bucketName: 'test-bucket',

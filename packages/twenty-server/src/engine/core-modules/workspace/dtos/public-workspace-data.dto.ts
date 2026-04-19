@@ -3,13 +3,13 @@ import { Field, ObjectType } from '@nestjs/graphql';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import {
   IdentityProviderType,
-  SSOIdentityProviderStatus,
-} from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
+  SsoIdentityProviderStatus,
+} from 'src/engine/core-modules/Sso/workspace-Sso-identity-provider.entity';
 import { WorkspaceUrlsDTO } from 'src/engine/core-modules/workspace/dtos/workspace-urls.dto';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
-@ObjectType('SSOIdentityProvider')
-export class SSOIdentityProviderDTO {
+@ObjectType('SsoIdentityProvider')
+export class SsoIdentityProviderDTO {
   @Field(() => UUIDScalarType)
   id: string;
 
@@ -19,8 +19,8 @@ export class SSOIdentityProviderDTO {
   @Field(() => IdentityProviderType)
   type: IdentityProviderType;
 
-  @Field(() => SSOIdentityProviderStatus)
-  status: SSOIdentityProviderStatus;
+  @Field(() => SsoIdentityProviderStatus)
+  status: SsoIdentityProviderStatus;
 
   @Field(() => String)
   issuer: string;
@@ -28,8 +28,8 @@ export class SSOIdentityProviderDTO {
 
 @ObjectType('AuthProviders')
 export class AuthProvidersDTO {
-  @Field(() => [SSOIdentityProviderDTO])
-  sso: Array<SSOIdentityProviderDTO>;
+  @Field(() => [SsoIdentityProviderDTO])
+  Sso: Array<SsoIdentityProviderDTO>;
 
   @Field(() => Boolean)
   google: boolean;

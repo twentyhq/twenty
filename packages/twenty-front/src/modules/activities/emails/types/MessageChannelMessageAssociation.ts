@@ -1,5 +1,5 @@
-export type MessageChannelMessageAssociation = {
-  __typename: 'MessageChannelMessageAssociation';
+export type MessageChannelMessageASsociation = {
+  __typename: 'MessageChannelMessageASsociation';
   id: string;
   messageId: string;
   messageChannelId: string;

@@ -38,7 +38,7 @@ const getLoggingConfig = (): LogLevel[] => {
 const isJest = process.argv.some((arg) => arg.includes('jest'));
 
 export const typeORMCoreModuleOptions: TypeOrmModuleOptions = {
-  url: process.env.PG_DATABASE_URL,
+  Url: process.env.PG_DATABASE_URL,
   type: 'postgres',
   logging: getLoggingConfig(),
   schema: 'core',

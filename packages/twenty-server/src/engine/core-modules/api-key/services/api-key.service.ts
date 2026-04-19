@@ -5,12 +5,12 @@ import { msg } from '@lingui/core/macro';
 import { IsNull, Repository } from 'typeorm';
 import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
-import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
+import { ApiKeyEntity } from 'src/engine/core-modules/Api-key/Api-key.entity';
 import {
   ApiKeyException,
   ApiKeyExceptionCode,
-} from 'src/engine/core-modules/api-key/exceptions/api-key.exception';
-import { type ApiKeyToken } from 'src/engine/core-modules/auth/dto/api-key-token.dto';
+} from 'src/engine/core-modules/Api-key/exceptions/Api-key.exception';
+import { type ApiKeyToken } from 'src/engine/core-modules/auth/dto/Api-key-token.dto';
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { RoleTargetService } from 'src/engine/metadata-modules/role-target/services/role-target.service';
@@ -108,27 +108,27 @@ export class ApiKeyService {
 
     if (!apiKey) {
       throw new ApiKeyException(
-        `API Key with id ${id} not found`,
+        `Api Key with id ${id} not found`,
         ApiKeyExceptionCode.API_KEY_NOT_FOUND,
       );
     }
 
     if (apiKey.revokedAt) {
       throw new ApiKeyException(
-        'This API Key is revoked',
+        'This Api Key is revoked',
         ApiKeyExceptionCode.API_KEY_REVOKED,
         {
-          userFriendlyMessage: msg`This API Key has been revoked and can no longer be used.`,
+          userFriendlyMessage: msg`This Api Key has been revoked and can no longer be used.`,
         },
       );
     }
 
     if (new Date() > apiKey.expiresAt) {
       throw new ApiKeyException(
-        'This API Key has expired',
+        'This Api Key has expired',
         ApiKeyExceptionCode.API_KEY_EXPIRED,
         {
-          userFriendlyMessage: msg`This API Key has expired. Please create a new one.`,
+          userFriendlyMessage: msg`This Api Key has expired. Please create a new one.`,
         },
       );
     }

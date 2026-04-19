@@ -25,7 +25,7 @@ describe('useHasAccessTokenPair', () => {
 
     await act(async () => {
       result.current.setTokenPair({
-        accessOrWorkspaceAgnosticToken: {
+        acceSsorWorkspaceAgnosticToken: {
           expiresAt: '',
           token: 'testToken',
         },

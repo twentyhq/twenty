@@ -17,7 +17,7 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import {
-  IconArrowsSort,
+  IconArrowSsort,
   IconBox,
   IconFilter,
   IconListDetails,
@@ -165,7 +165,7 @@ export const SidePanelDashboardRecordTableSettings = () => {
                     <CommandMenuItem
                       id="record-table-sort"
                       label={t`Sort`}
-                      Icon={IconArrowsSort}
+                      Icon={IconArrowSsort}
                       hasSubMenu
                       onClick={handleSortClick}
                       description={sortDescription}

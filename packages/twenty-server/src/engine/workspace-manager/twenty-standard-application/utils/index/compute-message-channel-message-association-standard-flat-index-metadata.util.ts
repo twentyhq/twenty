@@ -5,7 +5,7 @@ import {
   createStandardIndexFlatMetadata,
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/create-standard-index-flat-metadata.util';
 
-export const buildMessageChannelMessageAssociationStandardFlatIndexMetadatas =
+export const buildMessageChannelMessageASsociationStandardFlatIndexMetadatas =
   ({
     now,
     objectName,
@@ -14,10 +14,10 @@ export const buildMessageChannelMessageAssociationStandardFlatIndexMetadatas =
     dependencyFlatEntityMaps,
     twentyStandardApplicationId,
   }: Omit<
-    CreateStandardIndexArgs<'messageChannelMessageAssociation'>,
+    CreateStandardIndexArgs<'messageChannelMessageASsociation'>,
     'context'
   >): Record<
-    AllStandardObjectIndexName<'messageChannelMessageAssociation'>,
+    AllStandardObjectIndexName<'messageChannelMessageASsociation'>,
     FlatIndexMetadata
   > => ({
     messageChannelIdIndex: createStandardIndexFlatMetadata({

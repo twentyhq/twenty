@@ -8,8 +8,8 @@ import { MCP_SERVER_INSTRUCTIONS } from 'src/engine/api/mcp/constants/mcp-server
 import { type JsonRpc } from 'src/engine/api/mcp/dtos/json-rpc';
 import { McpProtocolService } from 'src/engine/api/mcp/services/mcp-protocol.service';
 import { McpToolExecutorService } from 'src/engine/api/mcp/services/mcp-tool-executor.service';
-import { type FlatApiKey } from 'src/engine/core-modules/api-key/types/flat-api-key.type';
-import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-key-role.service';
+import { type FlatApiKey } from 'src/engine/core-modules/Api-key/types/flat-Api-key.type';
+import { ApiKeyRoleService } from 'src/engine/core-modules/Api-key/services/Api-key-role.service';
 import { EXECUTE_TOOL_TOOL_NAME } from 'src/engine/core-modules/tool-provider/tools/execute-tool.tool';
 import { GET_TOOL_CATALOG_TOOL_NAME } from 'src/engine/core-modules/tool-provider/tools/get-tool-catalog.tool';
 import { LEARN_TOOLS_TOOL_NAME } from 'src/engine/core-modules/tool-provider/tools/learn-tools.tool';
@@ -31,7 +31,7 @@ describe('McpProtocolService', () => {
   const mockRoleId = 'role-1';
   const mockAdminRoleId = 'admin-role-1';
   const mockApiKey = {
-    id: 'api-key-1',
+    id: 'Api-key-1',
     workspaceId: mockWorkspace.id,
   } as FlatApiKey;
 

@@ -15,7 +15,7 @@ import { type Tool } from 'src/engine/core-modules/tool/types/tool.type';
 @Injectable()
 export class HttpTool implements Tool {
   description =
-    'Make an HTTP request to any URL with configurable method, headers, and body.';
+    'Make an HTTP request to any Url with configurable method, headers, and body.';
   inputSchema = HttpRequestInputZodSchema;
 
   constructor(
@@ -26,13 +26,13 @@ export class HttpTool implements Tool {
     parameters: ToolInput,
     context: ToolExecutionContext,
   ): Promise<ToolOutput> {
-    const { url, method, headers, body } = parameters as HttpRequestInput;
+    const { Url, method, headers, body } = parameters as HttpRequestInput;
     const headersCopy = { ...headers };
     const isMethodForBody = ['POST', 'PUT', 'PATCH'].includes(method);
 
     try {
       const axiosConfig: AxiosRequestConfig = {
-        url,
+        Url,
         method: method,
         headers: headersCopy,
       };
@@ -58,7 +58,7 @@ export class HttpTool implements Tool {
 
       return {
         success: true,
-        message: `HTTP ${method} request to ${url} completed successfully`,
+        message: `HTTP ${method} request to ${Url} completed successfully`,
         result: response.data,
         status: response.status,
         statusText: response.statusText,
@@ -68,14 +68,14 @@ export class HttpTool implements Tool {
       if (isAxiosError(error)) {
         return {
           success: false,
-          message: `HTTP ${method} request to ${url} failed`,
+          message: `HTTP ${method} request to ${Url} failed`,
           error: error.response?.data || error.message || 'HTTP request failed',
         };
       }
 
       return {
         success: false,
-        message: `HTTP ${method} request to ${url} failed`,
+        message: `HTTP ${method} request to ${Url} failed`,
         error: error instanceof Error ? error.message : 'HTTP request failed',
       };
     }

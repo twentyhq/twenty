@@ -1,4 +1,4 @@
-import { transformFullNameField } from 'src/engine/api/common/common-args-processors/data-arg-processor/transformer-utils/transform-full-name-field.util';
+import { transformFullNameField } from 'src/engine/api/common/common-args-proceSsors/data-arg-proceSsor/transformer-utils/transform-full-name-field.util';
 
 describe('transformFullNameField', () => {
   it('should return null when value is null', () => {

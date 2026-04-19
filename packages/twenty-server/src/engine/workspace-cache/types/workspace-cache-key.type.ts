@@ -5,7 +5,7 @@ import {
 import { type EntityMetadata } from 'typeorm';
 
 import { type ResolverNameMapEntry } from 'src/engine/api/graphql/direct-execution/utils/build-resolver-name-map.util';
-import { type FlatApiKey } from 'src/engine/core-modules/api-key/types/flat-api-key.type';
+import { type FlatApiKey } from 'src/engine/core-modules/Api-key/types/flat-Api-key.type';
 import { type ApplicationVariableCacheMaps } from 'src/engine/core-modules/application/application-variable/types/application-variable-cache-maps.type';
 import { type FlatApplicationCacheMaps } from 'src/engine/core-modules/application/types/flat-application-cache-maps.type';
 import { type FlatWorkspaceMemberMaps } from 'src/engine/core-modules/user/types/flat-workspace-member-maps.type';
@@ -30,7 +30,7 @@ export const WORKSPACE_CACHE_KEYS_V2 = {
   featureFlagsMap: 'feature-flag:feature-flags-map',
   rolesPermissions: 'metadata:permissions:roles-permissions',
   userWorkspaceRoleMap: 'metadata:permissions:user-workspace-role-map',
-  apiKeyRoleMap: 'metadata:permissions:api-key-role-map',
+  apiKeyRoleMap: 'metadata:permissions:Api-key-role-map',
   flatApplicationMaps: 'flat-maps:flatApplicationMaps',
   flatRoleMaps: 'flat-maps:role',
   flatRoleTargetMaps: 'flat-maps:role-target',
@@ -53,7 +53,7 @@ export const WORKSPACE_CACHE_KEYS_V2 = {
   flatFrontComponentMaps: 'flat-maps:front-component',
   flatWebhookMaps: 'flat-maps:webhook',
   flatWorkspaceMemberMaps: 'flat-maps:workspace-member',
-  apiKeyMap: 'cache:api-key-map',
+  apiKeyMap: 'cache:Api-key-map',
   applicationVariableMaps: 'cache:application-variable',
   graphQLResolverNameMap: 'direct-execution:graphql-resolver-name-map',
 } as const satisfies Record<WorkspaceCacheKeyName, string>;

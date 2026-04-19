@@ -7,7 +7,7 @@ import {
 
 import { type Observable, catchError } from 'rxjs';
 
-import { skillGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/skill/utils/skill-graphql-api-exception-handler.util';
+import { skillGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/skill/utils/skill-graphql-Api-exception-handler.util';
 
 @Injectable()
 export class SkillGraphqlApiExceptionInterceptor implements NestInterceptor {

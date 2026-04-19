@@ -5,7 +5,7 @@ import { In, Repository } from 'typeorm';
 
 import { CalendarChannelSyncStage } from 'twenty-shared/types';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
-import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
+import { ProceSsor } from 'src/engine/core-modules/message-queue/decorators/proceSsor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
@@ -17,7 +17,7 @@ export type CalendarOngoingStaleJobData = {
   workspaceId: string;
 };
 
-@Processor({
+@ProceSsor({
   queueName: MessageQueue.calendarQueue,
   scope: Scope.REQUEST,
 })

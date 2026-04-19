@@ -32,7 +32,7 @@ export const computeProfilingReportByComponent = (
       reportByComponent[componentName].sumById,
     );
 
-    const valuesSortedAsc = [...valuesUnsorted].sort((a, b) => a - b);
+    const valueSsortedAsc = [...valuesUnsorted].sort((a, b) => a - b);
 
     const numberOfIds = ids.length;
 
@@ -53,11 +53,11 @@ export const computeProfilingReportByComponent = (
     const p95Index = Math.floor(numberOfIds * 0.95);
     const p99Index = Math.floor(numberOfIds * 0.99);
 
-    reportByComponent[componentName].p50 = valuesSortedAsc[p50Index];
-    reportByComponent[componentName].p80 = valuesSortedAsc[p80Index];
-    reportByComponent[componentName].p90 = valuesSortedAsc[p90Index];
-    reportByComponent[componentName].p95 = valuesSortedAsc[p95Index];
-    reportByComponent[componentName].p99 = valuesSortedAsc[p99Index];
+    reportByComponent[componentName].p50 = valueSsortedAsc[p50Index];
+    reportByComponent[componentName].p80 = valueSsortedAsc[p80Index];
+    reportByComponent[componentName].p90 = valueSsortedAsc[p90Index];
+    reportByComponent[componentName].p95 = valueSsortedAsc[p95Index];
+    reportByComponent[componentName].p99 = valueSsortedAsc[p99Index];
   }
 
   return reportByComponent;

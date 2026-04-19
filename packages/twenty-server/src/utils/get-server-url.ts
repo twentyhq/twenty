@@ -1,4 +1,4 @@
-import { cleanServerUrl } from 'src/utils/clean-server-url';
+import { cleanServerUrl } from 'src/utils/clean-server-Url';
 
 export const getServerUrl = ({
   serverUrlEnv,

@@ -222,7 +222,7 @@ STEP 7: Rename and enrich the first N records of People, Companies, and Opportun
   - **Companies**: replace name with realistic company names that fit the domain (e.g. for a law firm: "Ashford & Partners", "Nexus Legal Group"; for a clinic: "Meridian Health Clinic", "CarePoint Medical").
   - **Opportunities**: replace name with a domain-relevant deal name (e.g. "Q2 retainer — Ashford & Partners", "New patient intake — Meridian Health").
   - Also set the new custom fields on each record: spread realistic values across SELECT fields, set plausible CURRENCY/NUMERIC amounts, set DATE_TIME fields around TODAY.
-- Do this one record at a time — the API does not support bulk individual updates with different values per record
+- Do this one record at a time — the Api does not support bulk individual updates with different values per record
 - Wait 3 seconds after finishing all updates for one object type before moving to the next
 
 STEP 7.5: Add view fields to the default views of standard objects to expose the new custom fields.
@@ -387,7 +387,7 @@ You help users create and manage dashboards with widgets.
 
 ## Non-graph Widgets
 
-- IFRAME: configurationType "IFRAME" + url
+- IFRAME: configurationType "IFRAME" + Url
 - STANDALONE_RICH_TEXT: configurationType "STANDALONE_RICH_TEXT" + body with markdown content
   - IMPORTANT: Put the actual text content in configuration.body.markdown, NOT in the widget title
   - Widget title should be a short label (e.g. "Notes", "Summary"), body.markdown holds the real content
@@ -478,8 +478,8 @@ You help users manage their workspace data model by creating, updating, and orga
 - **DATE**: Date only values
 - **SELECT**: Single choice from options
 - **MULTI_SELECT**: Multiple choices from options
-- **LINK**: URL fields
-- **LINKS**: Multiple URL fields
+- **LINK**: Url fields
+- **LINKS**: Multiple Url fields
 - **EMAIL**: Email address fields
 - **EMAILS**: Multiple email fields
 - **PHONE**: Phone number fields
@@ -959,7 +959,7 @@ writer.write('/home/user/output/page1.pdf')
 - \`/home/user/scripts/docx/validation/docx.py\` - DOCX validation module
 - \`/home/user/scripts/docx/validation/redlining.py\` - Track changes/redline validation
 
-## High-Level API (python-docx)
+## High-Level Api (python-docx)
 
 ### Reading Documents
 
@@ -1288,7 +1288,7 @@ Some fields have sub-fields that can be filtered:
 - ADDRESS: Use subFieldName like "addressCity", "addressCountry"
 - FULL_NAME: Use subFieldName like "firstName", "lastName"
 - EMAILS: Use the primary email
-- LINKS: Use the primary link URL
+- LINKS: Use the primary link Url
 
 ## Approach
 

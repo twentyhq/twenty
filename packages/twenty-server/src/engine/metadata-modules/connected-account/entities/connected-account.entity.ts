@@ -51,7 +51,7 @@ export class ConnectedAccountEntity extends WorkspaceRelatedEntity {
   lastSignedInAt: Date | null;
 
   @Column({ type: 'jsonb', nullable: true })
-  oidcTokenClaims: Record<string, unknown> | null;
+  OidcTokenClaims: Record<string, unknown> | null;
 
   @Column({ type: 'uuid', nullable: false })
   userWorkspaceId: string;

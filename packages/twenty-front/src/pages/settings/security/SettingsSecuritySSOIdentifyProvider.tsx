@@ -1,11 +1,11 @@
 /* @license Enterprise */
 
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
-import SettingsSSOIdentitiesProvidersForm from '@/settings/security/components/SSO/SettingsSSOIdentitiesProvidersForm';
-import { useCreateSSOIdentityProvider } from '@/settings/security/hooks/useCreateSSOIdentityProvider';
-import { type SettingSecurityNewSSOIdentityFormValues } from '@/settings/security/types/SSOIdentityProvider';
-import { sSOIdentityProviderDefaultValues } from '@/settings/security/utils/sSOIdentityProviderDefaultValues';
-import { SSOIdentitiesProvidersParamsSchema } from '@/settings/security/validation-schemas/SSOIdentityProviderSchema';
+import SettingsSsoIdentitiesProvidersForm from '@/settings/security/components/Sso/SettingsSsoIdentitiesProvidersForm';
+import { useCreateSsoIdentityProvider } from '@/settings/security/hooks/useCreateSsoIdentityProvider';
+import { type SettingSecurityNewSsoIdentityFormValues } from '@/settings/security/types/SsoIdentityProvider';
+import { SsoIdentityProviderDefaultValues } from '@/settings/security/utils/SsoIdentityProviderDefaultValues';
+import { SsoIdentitiesProvidersParamsSchema } from '@/settings/security/validation-schemas/SsoIdentityProviderSchema';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
@@ -17,16 +17,16 @@ import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
-export const SettingsSecuritySSOIdentifyProvider = () => {
+export const SettingsSecuritySsoIdentifyProvider = () => {
   const navigate = useNavigateSettings();
 
   const { enqueueErrorSnackBar } = useSnackBar();
-  const { createSSOIdentityProvider } = useCreateSSOIdentityProvider();
+  const { createSsoIdentityProvider } = useCreateSsoIdentityProvider();
 
-  const form = useForm<SettingSecurityNewSSOIdentityFormValues>({
+  const form = useForm<SettingSecurityNewSsoIdentityFormValues>({
     mode: 'onSubmit',
-    resolver: zodResolver(SSOIdentitiesProvidersParamsSchema),
-    defaultValues: Object.values(sSOIdentityProviderDefaultValues).reduce(
+    resolver: zodResolver(SsoIdentitiesProvidersParamsSchema),
+    defaultValues: Object.values(SsoIdentityProviderDefaultValues).reduce(
       (acc, fn) => ({ ...acc, ...fn() }),
       {},
     ),
@@ -38,15 +38,15 @@ export const SettingsSecuritySSOIdentifyProvider = () => {
 
       const values = form.getValues();
       const providerKeys = Object.keys(
-        sSOIdentityProviderDefaultValues[type](),
+        SsoIdentityProviderDefaultValues[type](),
       );
 
       const filteredValues = Object.fromEntries(
         Object.entries(values).filter(([key]) => providerKeys.includes(key)),
       );
 
-      await createSSOIdentityProvider(
-        SSOIdentitiesProvidersParamsSchema.parse(filteredValues),
+      await createSsoIdentityProvider(
+        SsoIdentitiesProvidersParamsSchema.parse(filteredValues),
       );
 
       navigate(SettingsPath.Security);
@@ -64,7 +64,7 @@ export const SettingsSecuritySSOIdentifyProvider = () => {
         {...form}
       >
         <SubMenuTopBarContainer
-          title={t`New SSO Configuration`}
+          title={t`New Sso Configuration`}
           actionButton={
             <SaveAndCancelButtons
               onCancel={() => navigate(SettingsPath.Security)}
@@ -80,10 +80,10 @@ export const SettingsSecuritySSOIdentifyProvider = () => {
               children: <Trans>Security</Trans>,
               href: getSettingsPath(SettingsPath.Security),
             },
-            { children: <Trans>New SSO provider</Trans> },
+            { children: <Trans>New Sso provider</Trans> },
           ]}
         >
-          <SettingsSSOIdentitiesProvidersForm />
+          <SettingsSsoIdentitiesProvidersForm />
         </SubMenuTopBarContainer>
       </FormProvider>
     </form>

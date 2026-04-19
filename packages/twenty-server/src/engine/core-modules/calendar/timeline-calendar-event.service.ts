@@ -90,15 +90,15 @@ export class TimelineCalendarEventService {
               person: true,
               workspaceMember: true,
             },
-            calendarChannelEventAssociations: true,
+            calendarChannelEventASsociations: true,
           },
         });
 
         const allCalendarChannelIds = [
           ...new Set(
             events.flatMap((event) =>
-              event.calendarChannelEventAssociations.map(
-                (association) => association.calendarChannelId,
+              event.calendarChannelEventASsociations.map(
+                (aSsociation) => aSsociation.calendarChannelId,
               ),
             ),
           ),
@@ -201,10 +201,10 @@ export class TimelineCalendarEventService {
             }),
           );
 
-          const hasFullAccess = event.calendarChannelEventAssociations.some(
-            (association) => {
+          const hasFullAccess = event.calendarChannelEventASsociations.some(
+            (aSsociation) => {
               const channel = calendarChannelMap.get(
-                association.calendarChannelId,
+                aSsociation.calendarChannelId,
               );
 
               return (
@@ -221,7 +221,7 @@ export class TimelineCalendarEventService {
           return {
             ...omit(event, [
               'calendarEventParticipants',
-              'calendarChannelEventAssociations',
+              'calendarChannelEventASsociations',
             ]),
             title:
               visibility === CalendarChannelVisibility.METADATA

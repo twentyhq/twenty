@@ -15,7 +15,7 @@ export type UniversalCreateObjectAction =
       UniversalFlatFieldMetadata,
       ExtractUniversalForeignKeyAggregatorForMetadataName<'fieldMetadata'>
     >[];
-    // Optional map to provide specific IDs for field creation (for API metadata).
+    // Optional map to provide specific IDs for field creation (for Api metadata).
     fieldIdByUniversalIdentifier?: Record<string, string>;
   };
 

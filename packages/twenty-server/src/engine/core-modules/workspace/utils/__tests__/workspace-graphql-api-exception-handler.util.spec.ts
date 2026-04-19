@@ -2,7 +2,7 @@ import {
   ConflictError,
   NotFoundError,
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
-import { workspaceGraphqlApiExceptionHandler } from 'src/engine/core-modules/workspace/utils/workspace-graphql-api-exception-handler.util';
+import { workspaceGraphqlApiExceptionHandler } from 'src/engine/core-modules/workspace/utils/workspace-graphql-Api-exception-handler.util';
 import {
   WorkspaceException,
   WorkspaceExceptionCode,

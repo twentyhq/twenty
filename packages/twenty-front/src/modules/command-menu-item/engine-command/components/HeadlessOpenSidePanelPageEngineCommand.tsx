@@ -7,7 +7,7 @@ import { t } from '@lingui/core/macro';
 import { type SidePanelPages } from 'twenty-shared/types';
 import { type IconComponent } from 'twenty-ui/display';
 
-export const HeadlessOpenSidePanelPageEngineCommand = ({
+export const HeadleSsopenSidePanelPageEngineCommand = ({
   page,
   pageTitle,
   pageIcon,

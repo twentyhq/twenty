@@ -6,7 +6,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { And, Any, ILike, In, Not, Or, type Repository } from 'typeorm';
 
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
-import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
+import { ProceSsor } from 'src/engine/core-modules/message-queue/decorators/proceSsor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
@@ -15,13 +15,13 @@ import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 import { type BlocklistWorkspaceEntity } from 'src/modules/blocklist/standard-objects/blocklist.workspace-entity';
 import { CalendarEventCleanerService } from 'src/modules/calendar/calendar-event-cleaner/services/calendar-event-cleaner.service';
-import { type CalendarChannelEventAssociationWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity';
+import { type CalendarChannelEventASsociationWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-channel-event-aSsociation.workspace-entity';
 
 export type BlocklistItemDeleteCalendarEventsJobData = WorkspaceEventBatch<
   ObjectRecordCreateEvent<BlocklistWorkspaceEntity>
 >;
 
-@Processor({
+@ProceSsor({
   queueName: MessageQueue.calendarQueue,
   scope: Scope.REQUEST,
 })
@@ -77,10 +77,10 @@ export class BlocklistItemDeleteCalendarEventsJob {
         new Map<string, string[]>(),
       );
 
-      const calendarChannelEventAssociationRepository =
-        await this.globalWorkspaceOrmManager.getRepository<CalendarChannelEventAssociationWorkspaceEntity>(
+      const calendarChannelEventASsociationRepository =
+        await this.globalWorkspaceOrmManager.getRepository<CalendarChannelEventASsociationWorkspaceEntity>(
           workspaceId,
-          'calendarChannelEventAssociation',
+          'calendarChannelEventASsociation',
         );
 
       const workspaceMemberRepository =
@@ -157,8 +157,8 @@ export class BlocklistItemDeleteCalendarEventsJob {
               : { handle };
           });
 
-          const calendarEventsAssociationsToDelete =
-            await calendarChannelEventAssociationRepository.find({
+          const calendarEventsASsociationsToDelete =
+            await calendarChannelEventASsociationRepository.find({
               where: {
                 calendarChannelId: calendarChannel.id,
                 calendarEvent: {
@@ -167,12 +167,12 @@ export class BlocklistItemDeleteCalendarEventsJob {
               },
             });
 
-          if (calendarEventsAssociationsToDelete.length === 0) {
+          if (calendarEventsASsociationsToDelete.length === 0) {
             continue;
           }
 
-          await calendarChannelEventAssociationRepository.delete(
-            calendarEventsAssociationsToDelete.map(({ id }) => id),
+          await calendarChannelEventASsociationRepository.delete(
+            calendarEventsASsociationsToDelete.map(({ id }) => id),
           );
         }
       }

@@ -1,25 +1,25 @@
 /* @license Enterprise */
 
-import { type SettingSecurityNewSSOIdentityFormValues } from '@/settings/security/types/SSOIdentityProvider';
+import { type SettingSecurityNewSsoIdentityFormValues } from '@/settings/security/types/SsoIdentityProvider';
 import { v4 } from 'uuid';
 import { type IdentityProviderType } from '~/generated-metadata/graphql';
 
-export const sSOIdentityProviderDefaultValues: Record<
+export const SsoIdentityProviderDefaultValues: Record<
   IdentityProviderType,
-  () => SettingSecurityNewSSOIdentityFormValues
+  () => SettingSecurityNewSsoIdentityFormValues
 > = {
-  SAML: () => ({
-    type: 'SAML',
-    ssoURL: '',
+  Saml: () => ({
+    type: 'Saml',
+    ssoUrl: '',
     name: '',
     id: v4(),
     certificate: '',
     issuer: '',
   }),
-  OIDC: () => ({
-    type: 'OIDC',
+  Oidc: () => ({
+    type: 'Oidc',
     name: '',
-    clientID: '',
+    clientId: '',
     clientSecret: '',
     issuer: '',
   }),

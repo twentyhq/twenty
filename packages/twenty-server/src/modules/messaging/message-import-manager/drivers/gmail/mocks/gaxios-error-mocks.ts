@@ -8,7 +8,7 @@ const gaxiosErrorMocks = {
     status: null,
     config: {
       method: 'GET',
-      url: 'https://gmail.googleapis.com/gmail/v1/users/me/messages',
+      Url: 'https://gmail.googleapis.com/gmail/v1/users/me/messages',
       headers: {
         Authorization: 'Bearer [TOKEN]',
         Accept: 'application/json',
@@ -27,7 +27,7 @@ const gaxiosErrorMocks = {
     status: null,
     config: {
       method: 'GET',
-      url: 'https://gmail.googleapis.com/gmail/v1/users/me/messages',
+      Url: 'https://gmail.googleapis.com/gmail/v1/users/me/messages',
       headers: {
         Authorization: 'Bearer [TOKEN]',
         Accept: 'application/json',
@@ -46,7 +46,7 @@ const gaxiosErrorMocks = {
     status: null,
     config: {
       method: 'GET',
-      url: 'https://gmail.googleapis.com/gmail/v1/users/me/messages',
+      Url: 'https://gmail.googleapis.com/gmail/v1/users/me/messages',
       headers: {
         Authorization: 'Bearer [TOKEN]',
         Accept: 'application/json',
@@ -65,7 +65,7 @@ const gaxiosErrorMocks = {
     status: null,
     config: {
       method: 'GET',
-      url: 'https://gmail.googleapis.com/gmail/v1/users/me/messages',
+      Url: 'https://gmail.googleapis.com/gmail/v1/users/me/messages',
       headers: {
         Authorization: 'Bearer [TOKEN]',
         Accept: 'application/json',
@@ -84,7 +84,7 @@ const gaxiosErrorMocks = {
     status: null,
     config: {
       method: 'GET',
-      url: 'https://gmail.googleapis.com/gmail/v1/users/me/messages',
+      Url: 'https://gmail.googleapis.com/gmail/v1/users/me/messages',
       headers: {
         Authorization: 'Bearer [TOKEN]',
         Accept: 'application/json',

@@ -9,8 +9,8 @@ import {
   type PassportSamlConfig,
   type SamlConfig,
   type VerifyWithRequest,
-} from '@node-saml/passport-saml';
-import { type AuthenticateOptions } from '@node-saml/passport-saml/lib/types';
+} from '@node-Saml/passport-Saml';
+import { type AuthenticateOptions } from '@node-Saml/passport-Saml/lib/types';
 import { isEmail } from 'class-validator';
 import { type Request } from 'express';
 
@@ -18,9 +18,9 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
-import { SSOService } from 'src/engine/core-modules/sso/services/sso.service';
+import { SsoService } from 'src/engine/core-modules/Sso/services/Sso.service';
 
-export type SAMLRequest = Omit<
+export type SamlRequest = Omit<
   Request,
   'user' | 'workspace' | 'workspaceMetadataVersion'
 > & {
@@ -34,28 +34,28 @@ export type SAMLRequest = Omit<
 @Injectable()
 export class SamlAuthStrategy extends PassportStrategy(
   MultiSamlStrategy,
-  'saml',
+  'Saml',
 ) {
-  constructor(private readonly ssoService: SSOService) {
+  constructor(private readonly SsoService: SsoService) {
     super(
       {
         getSamlOptions: (req, callback) => {
-          this.ssoService
-            .findSSOIdentityProviderById(req.params.identityProviderId)
+          this.SsoService
+            .findSsoIdentityProviderById(req.params.identityProviderId)
             .then((identityProvider) => {
               if (
                 identityProvider &&
-                this.ssoService.isSAMLIdentityProvider(identityProvider)
+                this.SsoService.isSamlIdentityProvider(identityProvider)
               ) {
                 // IdP metadata XML typically has whitespace-formatted certificates
                 const sanitizedCertificate =
                   identityProvider.certificate.replace(/\s/g, '');
 
                 const config: SamlConfig = {
-                  entryPoint: identityProvider.ssoURL,
-                  issuer: this.ssoService.buildIssuerURL(identityProvider),
+                  entryPoint: identityProvider.ssoUrl,
+                  issuer: this.SsoService.buildIssuerURL(identityProvider),
                   callbackUrl:
-                    this.ssoService.buildCallbackUrl(identityProvider),
+                    this.SsoService.buildCallbackUrl(identityProvider),
                   idpCert: sanitizedCertificate,
                   wantAssertionsSigned: true,
                   wantAuthnResponseSigned: false,
@@ -67,7 +67,7 @@ export class SamlAuthStrategy extends PassportStrategy(
               }
 
               // TODO: improve error management
-              return callback(new Error('Invalid SAML identity provider'));
+              return callback(new Error('Invalid Saml identity provider'));
             })
             .catch((err) => {
               // TODO: improve error management

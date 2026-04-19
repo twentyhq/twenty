@@ -264,13 +264,13 @@ export class TimelineMessagingService {
           .createQueryBuilder()
           .select('messageThread.id', 'id')
           .addSelect(
-            'messageChannelMessageAssociation.messageChannelId',
+            'messageChannelMessageASsociation.messageChannelId',
             'messageChannelId',
           )
           .leftJoin('messageThread.messages', 'message')
           .leftJoin(
-            'message.messageChannelMessageAssociations',
-            'messageChannelMessageAssociation',
+            'message.messageChannelMessageASsociations',
+            'messageChannelMessageASsociation',
           )
           .where('messageThread.id = ANY(:messageThreadIds)', {
             messageThreadIds,

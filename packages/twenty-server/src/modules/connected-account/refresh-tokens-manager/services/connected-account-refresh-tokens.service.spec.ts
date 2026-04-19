@@ -5,8 +5,8 @@ import { ConnectedAccountProvider } from 'twenty-shared/types';
 
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
-import { GoogleAPIRefreshAccessTokenService } from 'src/modules/connected-account/refresh-tokens-manager/drivers/google/services/google-api-refresh-tokens.service';
-import { MicrosoftAPIRefreshAccessTokenService } from 'src/modules/connected-account/refresh-tokens-manager/drivers/microsoft/services/microsoft-api-refresh-tokens.service';
+import { GoogleAPIRefreshAccessTokenService } from 'src/modules/connected-account/refresh-tokens-manager/drivers/google/services/google-Api-refresh-tokens.service';
+import { MicrosoftAPIRefreshAccessTokenService } from 'src/modules/connected-account/refresh-tokens-manager/drivers/microsoft/services/microsoft-Api-refresh-tokens.service';
 import {
   ConnectedAccountRefreshAccessTokenException,
   ConnectedAccountRefreshAccessTokenExceptionCode,
@@ -335,10 +335,10 @@ describe('ConnectedAccountRefreshTokensService', () => {
       expect(result).toBe(true);
     });
 
-    it('should return true for OIDC provider regardless of lastCredentialsRefreshedAt', async () => {
+    it('should return true for Oidc provider regardless of lastCredentialsRefreshedAt', async () => {
       const connectedAccount = {
         id: mockConnectedAccountId,
-        provider: ConnectedAccountProvider.OIDC,
+        provider: ConnectedAccountProvider.Oidc,
         lastCredentialsRefreshedAt: null,
       } as ConnectedAccountEntity;
 
@@ -347,10 +347,10 @@ describe('ConnectedAccountRefreshTokensService', () => {
       expect(result).toBe(true);
     });
 
-    it('should return true for SAML provider regardless of lastCredentialsRefreshedAt', async () => {
+    it('should return true for Saml provider regardless of lastCredentialsRefreshedAt', async () => {
       const connectedAccount = {
         id: mockConnectedAccountId,
-        provider: ConnectedAccountProvider.SAML,
+        provider: ConnectedAccountProvider.Saml,
         lastCredentialsRefreshedAt: null,
       } as ConnectedAccountEntity;
 
@@ -360,11 +360,11 @@ describe('ConnectedAccountRefreshTokensService', () => {
     });
   });
 
-  describe('refreshAndSaveTokens - OIDC/SAML', () => {
-    it('should reuse existing tokens for OIDC without attempting a refresh', async () => {
+  describe('refreshAndSaveTokens - Oidc/Saml', () => {
+    it('should reuse existing tokens for Oidc without attempting a refresh', async () => {
       const connectedAccount = {
         id: mockConnectedAccountId,
-        provider: ConnectedAccountProvider.OIDC,
+        provider: ConnectedAccountProvider.Oidc,
         accessToken: mockAccessToken,
         refreshToken: mockRefreshToken,
         lastCredentialsRefreshedAt: null,
@@ -388,10 +388,10 @@ describe('ConnectedAccountRefreshTokensService', () => {
       expect(connectedAccountRepository.update).not.toHaveBeenCalled();
     });
 
-    it('should reuse existing tokens for SAML without attempting a refresh', async () => {
+    it('should reuse existing tokens for Saml without attempting a refresh', async () => {
       const connectedAccount = {
         id: mockConnectedAccountId,
-        provider: ConnectedAccountProvider.SAML,
+        provider: ConnectedAccountProvider.Saml,
         accessToken: mockAccessToken,
         refreshToken: mockRefreshToken,
         lastCredentialsRefreshedAt: null,

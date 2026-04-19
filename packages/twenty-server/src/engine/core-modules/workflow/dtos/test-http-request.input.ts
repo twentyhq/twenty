@@ -7,10 +7,10 @@ import { WorkflowHttpRequestActionInput } from 'src/modules/workflow/workflow-ex
 @InputType()
 export class TestHttpRequestInput {
   @Field(() => String, {
-    description: 'URL to make the request to',
+    description: 'Url to make the request to',
     nullable: false,
   })
-  url: WorkflowHttpRequestActionInput['url'];
+  Url: WorkflowHttpRequestActionInput['Url'];
 
   @Field(() => String, {
     description: 'HTTP method',

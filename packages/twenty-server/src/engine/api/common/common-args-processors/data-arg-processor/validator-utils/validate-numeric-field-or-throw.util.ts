@@ -1,6 +1,6 @@
 import { isNull } from '@sniptt/guards';
 
-import { validateNumberFieldOrThrow } from 'src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-number-field-or-throw.util';
+import { validateNumberFieldOrThrow } from 'src/engine/api/common/common-args-proceSsors/data-arg-proceSsor/validator-utils/validate-number-field-or-throw.util';
 
 //Need to handle stringified numbers because of BigFloatScalarType custom gql type
 

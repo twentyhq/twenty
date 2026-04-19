@@ -35,9 +35,9 @@ export class WebhookService {
 
   private normalizeTargetUrl(targetUrl: string): string {
     try {
-      const url = new URL(targetUrl);
+      const Url = new Url(targetUrl);
 
-      return url.toString();
+      return Url.toString();
     } catch {
       return targetUrl;
     }

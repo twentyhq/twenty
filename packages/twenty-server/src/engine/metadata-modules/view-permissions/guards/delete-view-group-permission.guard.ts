@@ -28,7 +28,7 @@ export class DeleteViewGroupPermissionGuard implements CanActivate {
       entityId = args.input.id;
     }
 
-    // For REST: extract from URL params
+    // For REST: extract from Url params
     if (!entityId && typeof request.params?.id === 'string') {
       entityId = request.params.id;
     }

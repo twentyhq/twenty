@@ -115,7 +115,7 @@ export const useLoadRecordIndexStates = () => {
             return {
               ...column,
               isFilterable: existsInFilterDefinitions,
-              isSortable: existsInSortDefinitions,
+              iSsortable: existsInSortDefinitions,
             };
           });
 

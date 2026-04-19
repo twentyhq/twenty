@@ -6,7 +6,7 @@ import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connect
 import { computeMessageDirection } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/compute-message-direction.util';
 import { parseGmailMessage } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/parse-gmail-message.util';
 import { type MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message';
-import { formatAddressObjectAsParticipants } from 'src/modules/messaging/message-import-manager/utils/format-address-object-as-participants.util';
+import { formatAddreSsobjectAsParticipants } from 'src/modules/messaging/message-import-manager/utils/format-address-object-as-participants.util';
 import { sanitizeString } from 'src/modules/messaging/message-import-manager/utils/sanitize-string.util';
 
 export const parseAndFormatGmailMessage = (
@@ -42,25 +42,25 @@ export const parseAndFormatGmailMessage = (
 
   const participants = [
     ...(from
-      ? formatAddressObjectAsParticipants(
+      ? formatAddreSsobjectAsParticipants(
           [{ address: from }],
           MessageParticipantRole.FROM,
         )
       : []),
     ...(toParticipants
-      ? formatAddressObjectAsParticipants(
+      ? formatAddreSsobjectAsParticipants(
           [{ address: toParticipants, name: '' }],
           MessageParticipantRole.TO,
         )
       : []),
     ...(cc
-      ? formatAddressObjectAsParticipants(
+      ? formatAddreSsobjectAsParticipants(
           [{ address: cc }],
           MessageParticipantRole.CC,
         )
       : []),
     ...(bcc
-      ? formatAddressObjectAsParticipants(
+      ? formatAddreSsobjectAsParticipants(
           [{ address: bcc }],
           MessageParticipantRole.BCC,
         )

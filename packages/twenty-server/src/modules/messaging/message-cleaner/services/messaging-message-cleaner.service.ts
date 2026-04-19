@@ -6,7 +6,7 @@ import { In, IsNull } from 'typeorm';
 import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
-import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
+import { MessageChannelMessageASsociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-aSsociation.workspace-entity';
 import { type MessageThreadWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-thread.workspace-entity';
 import { type MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
 import { deleteUsingPagination } from 'src/modules/messaging/message-cleaner/utils/delete-using-pagination.util';
@@ -18,7 +18,7 @@ export class MessagingMessageCleanerService {
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
   ) {}
 
-  async deleteMessagesChannelMessageAssociationsAndRelatedOrphans({
+  async deleteMessagesChannelMessageASsociationsAndRelatedOrphans({
     workspaceId,
     messageExternalIds,
     messageChannelId,
@@ -36,10 +36,10 @@ export class MessagingMessageCleanerService {
           'message',
         );
 
-      const messageChannelMessageAssociationRepository =
-        await this.globalWorkspaceOrmManager.getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
+      const messageChannelMessageASsociationRepository =
+        await this.globalWorkspaceOrmManager.getRepository<MessageChannelMessageASsociationWorkspaceEntity>(
           workspaceId,
-          'messageChannelMessageAssociation',
+          'messageChannelMessageASsociation',
         );
 
       const messageThreadRepository =
@@ -51,34 +51,34 @@ export class MessagingMessageCleanerService {
       const messageExternalIdsChunks = chunk(messageExternalIds, 500);
 
       for (const messageExternalIdsChunk of messageExternalIdsChunks) {
-        const messageChannelMessageAssociationsToDelete =
-          await messageChannelMessageAssociationRepository.find({
+        const messageChannelMessageASsociationsToDelete =
+          await messageChannelMessageASsociationRepository.find({
             where: {
               messageExternalId: In(messageExternalIdsChunk),
               messageChannelId,
             },
           });
 
-        if (messageChannelMessageAssociationsToDelete.length <= 0) {
+        if (messageChannelMessageASsociationsToDelete.length <= 0) {
           continue;
         }
 
-        await messageChannelMessageAssociationRepository.delete(
-          messageChannelMessageAssociationsToDelete.map(({ id }) => id),
+        await messageChannelMessageASsociationRepository.delete(
+          messageChannelMessageASsociationsToDelete.map(({ id }) => id),
         );
 
         this.logger.log(
-          `WorkspaceId: ${workspaceId} Deleting ${messageChannelMessageAssociationsToDelete.length} message channel message associations`,
+          `WorkspaceId: ${workspaceId} Deleting ${messageChannelMessageASsociationsToDelete.length} message channel message aSsociations`,
         );
 
         const orphanMessages = await messageRepository.find({
           where: {
             id: In(
-              messageChannelMessageAssociationsToDelete.map(
+              messageChannelMessageASsociationsToDelete.map(
                 ({ messageId }) => messageId,
               ),
             ),
-            messageChannelMessageAssociations: {
+            messageChannelMessageASsociations: {
               id: IsNull(),
             },
           },
@@ -120,7 +120,7 @@ export class MessagingMessageCleanerService {
     }, authContext);
   }
 
-  async deleteMessageChannelMessageAssociationsByChannelId({
+  async deleteMessageChannelMessageASsociationsByChannelId({
     workspaceId,
     messageChannelId,
   }: {
@@ -130,10 +130,10 @@ export class MessagingMessageCleanerService {
     const authContext = buildSystemAuthContext(workspaceId);
 
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
-      const messageChannelMessageAssociationRepository =
-        await this.globalWorkspaceOrmManager.getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
+      const messageChannelMessageASsociationRepository =
+        await this.globalWorkspaceOrmManager.getRepository<MessageChannelMessageASsociationWorkspaceEntity>(
           workspaceId,
-          'messageChannelMessageAssociation',
+          'messageChannelMessageASsociation',
         );
 
       const workspaceDataSource =
@@ -151,8 +151,8 @@ export class MessagingMessageCleanerService {
             _workspaceId: string,
             transactionManager?: WorkspaceEntityManager,
           ) => {
-            const associations =
-              await messageChannelMessageAssociationRepository.find(
+            const aSsociations =
+              await messageChannelMessageASsociationRepository.find(
                 {
                   where: { messageChannelId },
                   take: limit,
@@ -161,7 +161,7 @@ export class MessagingMessageCleanerService {
                 transactionManager,
               );
 
-            return associations.map(({ id }) => id);
+            return aSsociations.map(({ id }) => id);
           },
           async (
             ids: string[],
@@ -169,9 +169,9 @@ export class MessagingMessageCleanerService {
             transactionManager?: WorkspaceEntityManager,
           ) => {
             this.logger.log(
-              `WorkspaceId: ${workspaceId} Deleting ${ids.length} message channel message associations for channel ${messageChannelId}`,
+              `WorkspaceId: ${workspaceId} Deleting ${ids.length} message channel message aSsociations for channel ${messageChannelId}`,
             );
-            await messageChannelMessageAssociationRepository.delete(
+            await messageChannelMessageASsociationRepository.delete(
               ids,
               transactionManager,
             );
@@ -212,21 +212,21 @@ export class MessagingMessageCleanerService {
               _workspaceId: string,
               transactionManager: WorkspaceEntityManager,
             ) => {
-              const nonAssociatedMessages = await messageRepository.find(
+              const nonASsociatedMessages = await messageRepository.find(
                 {
                   where: {
-                    messageChannelMessageAssociations: {
+                    messageChannelMessageASsociations: {
                       id: IsNull(),
                     },
                   },
                   take: limit,
                   skip: offset,
-                  relations: ['messageChannelMessageAssociations'],
+                  relations: ['messageChannelMessageASsociations'],
                 },
                 transactionManager,
               );
 
-              return nonAssociatedMessages.map(({ id }) => id);
+              return nonASsociatedMessages.map(({ id }) => id);
             },
             async (
               ids: string[],

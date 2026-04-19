@@ -51,7 +51,7 @@ describe('fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget', () => {
         objectUniversalIdentifier: 'obj-uuid-1',
         configuration: {
           configurationType: 'IFRAME',
-          url: 'https://example.com',
+          Url: 'https://example.com',
         },
       },
       pageLayoutTabUniversalIdentifier,
@@ -70,7 +70,7 @@ describe('fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget', () => {
     });
     expect(result.universalConfiguration).toEqual({
       configurationType: 'IFRAME',
-      url: 'https://example.com',
+      Url: 'https://example.com',
     });
   });
 

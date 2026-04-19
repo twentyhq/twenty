@@ -10,7 +10,7 @@ import {
   type StandardPageLayoutTabConfig,
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/page-layout-config/standard-page-layout-config.type';
 
-const MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_MESSAGE_FOLDER_PAGE_TABS = {
+const MESSAGE_CHANNEL_MESSAGE_ASsoCIATION_MESSAGE_FOLDER_PAGE_TABS = {
   home: {
     universalIdentifier: '20202020-ab12-4012-8012-a5c4a6121201',
     ...TAB_PROPS.home,
@@ -33,14 +33,14 @@ const MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_MESSAGE_FOLDER_PAGE_TABS = {
   },
 } as const satisfies Record<string, StandardPageLayoutTabConfig>;
 
-export const STANDARD_MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_MESSAGE_FOLDER_PAGE_LAYOUT_CONFIG =
+export const STANDARD_MESSAGE_CHANNEL_MESSAGE_ASsoCIATION_MESSAGE_FOLDER_PAGE_LAYOUT_CONFIG =
   {
-    name: 'Default Message Channel Message Association Message Folder Layout',
+    name: 'Default Message Channel Message ASsociation Message Folder Layout',
     type: PageLayoutType.RECORD_PAGE,
     objectUniversalIdentifier:
-      STANDARD_OBJECTS.messageChannelMessageAssociationMessageFolder
+      STANDARD_OBJECTS.messageChannelMessageASsociationMessageFolder
         .universalIdentifier,
     universalIdentifier: '20202020-a112-4012-8012-a5c4a6120001',
     defaultTabUniversalIdentifier: null,
-    tabs: MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_MESSAGE_FOLDER_PAGE_TABS,
+    tabs: MESSAGE_CHANNEL_MESSAGE_ASsoCIATION_MESSAGE_FOLDER_PAGE_TABS,
   } as const satisfies StandardPageLayoutConfig;

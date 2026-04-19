@@ -6,11 +6,11 @@ import { OBJECT_RECORD_DELETED_EVENT } from 'src/engine/core-modules/audit/utils
 import { OBJECT_RECORD_UPDATED_EVENT } from 'src/engine/core-modules/audit/utils/events/object-event/object-record-updated';
 import { OBJECT_RECORD_UPSERTED_EVENT } from 'src/engine/core-modules/audit/utils/events/object-event/object-record-upserted';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
-import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
+import { ProceSsor } from 'src/engine/core-modules/message-queue/decorators/proceSsor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 
-@Processor(MessageQueue.entityEventsToDbQueue)
+@ProceSsor(MessageQueue.entityEventsToDbQueue)
 export class CreateAuditLogFromInternalEvent {
   constructor(private readonly auditService: AuditService) {}
 

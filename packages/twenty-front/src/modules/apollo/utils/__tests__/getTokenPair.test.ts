@@ -74,7 +74,7 @@ describe('getTokenPair', () => {
       expect(mockCookieStorage.removeItem).toHaveBeenCalledWith('tokenPair');
     });
 
-    it('should remove cookie and return undefined when accessOrWorkspaceAgnosticToken is missing', () => {
+    it('should remove cookie and return undefined when acceSsorWorkspaceAgnosticToken is missing', () => {
       const invalidTokenPair = {
         refreshToken: { token: 'refresh-token' },
       };
@@ -88,9 +88,9 @@ describe('getTokenPair', () => {
       expect(mockCookieStorage.removeItem).toHaveBeenCalledWith('tokenPair');
     });
 
-    it('should remove cookie and return undefined when accessOrWorkspaceAgnosticToken is not an object', () => {
+    it('should remove cookie and return undefined when acceSsorWorkspaceAgnosticToken is not an object', () => {
       const invalidTokenPair = {
-        accessOrWorkspaceAgnosticToken: 'not-an-object',
+        acceSsorWorkspaceAgnosticToken: 'not-an-object',
         refreshToken: { token: 'refresh-token' },
       };
       mockCookieStorage.getItem.mockReturnValue(
@@ -105,7 +105,7 @@ describe('getTokenPair', () => {
 
     it('should remove cookie and return undefined when token is missing', () => {
       const invalidTokenPair = {
-        accessOrWorkspaceAgnosticToken: {
+        acceSsorWorkspaceAgnosticToken: {
           expiresAt: '2024-01-01T00:00:00Z',
         },
         refreshToken: { token: 'refresh-token' },
@@ -122,7 +122,7 @@ describe('getTokenPair', () => {
 
     it('should remove cookie and return undefined when token is not a string', () => {
       const invalidTokenPair = {
-        accessOrWorkspaceAgnosticToken: {
+        acceSsorWorkspaceAgnosticToken: {
           token: 123,
           expiresAt: '2024-01-01T00:00:00Z',
         },
@@ -140,7 +140,7 @@ describe('getTokenPair', () => {
 
     it('should accept empty string token as valid', () => {
       const validTokenPair = {
-        accessOrWorkspaceAgnosticToken: {
+        acceSsorWorkspaceAgnosticToken: {
           token: '',
           expiresAt: '2024-01-01T00:00:00Z',
         },
@@ -158,7 +158,7 @@ describe('getTokenPair', () => {
   describe('when tokenPair cookie has valid structure', () => {
     it('should return valid tokenPair with all required fields', () => {
       const validTokenPair = {
-        accessOrWorkspaceAgnosticToken: {
+        acceSsorWorkspaceAgnosticToken: {
           token: 'valid-access-token',
           expiresAt: '2024-01-01T00:00:00Z',
         },
@@ -177,7 +177,7 @@ describe('getTokenPair', () => {
 
     it('should return valid tokenPair with minimal required fields', () => {
       const validTokenPair = {
-        accessOrWorkspaceAgnosticToken: {
+        acceSsorWorkspaceAgnosticToken: {
           token: 'minimal-access-token',
         },
       };
@@ -191,7 +191,7 @@ describe('getTokenPair', () => {
 
     it('should return valid tokenPair with extra fields', () => {
       const validTokenPair = {
-        accessOrWorkspaceAgnosticToken: {
+        acceSsorWorkspaceAgnosticToken: {
           token: 'access-token-with-extras',
           expiresAt: '2024-01-01T00:00:00Z',
           extraField: 'extra-value',
@@ -231,7 +231,7 @@ describe('getTokenPair', () => {
     it('should handle very long token strings', () => {
       const longToken = 'a'.repeat(10000);
       const validTokenPair = {
-        accessOrWorkspaceAgnosticToken: {
+        acceSsorWorkspaceAgnosticToken: {
           token: longToken,
         },
       };
@@ -240,13 +240,13 @@ describe('getTokenPair', () => {
       const result = getTokenPair();
 
       expect(result).toEqual(validTokenPair);
-      expect(result?.accessOrWorkspaceAgnosticToken.token).toHaveLength(10000);
+      expect(result?.acceSsorWorkspaceAgnosticToken.token).toHaveLength(10000);
     });
 
     it('should handle unicode characters in token', () => {
       const unicodeToken = 'token-with-unicode-🚀-characters-∑';
       const validTokenPair = {
-        accessOrWorkspaceAgnosticToken: {
+        acceSsorWorkspaceAgnosticToken: {
           token: unicodeToken,
         },
       };
@@ -255,7 +255,7 @@ describe('getTokenPair', () => {
       const result = getTokenPair();
 
       expect(result).toEqual(validTokenPair);
-      expect(result?.accessOrWorkspaceAgnosticToken.token).toBe(unicodeToken);
+      expect(result?.acceSsorWorkspaceAgnosticToken.token).toBe(unicodeToken);
     });
   });
 });

@@ -3,7 +3,7 @@ import { Logger } from '@nestjs/common';
 import {
   CreateEmailIdentityCommand,
   CreateTenantCommand,
-  CreateTenantResourceAssociationCommand,
+  CreateTenantResourceASsociationCommand,
   GetEmailIdentityCommand,
   PutEmailIdentityDkimAttributesCommand,
 } from '@aws-sdk/client-sesv2';
@@ -144,7 +144,7 @@ export class AwsSesDriver implements EmailingDomainDriverInterface {
       );
 
       if (!isVerified) {
-        await this.associateResourceWithTenant(domain, tenantName);
+        await this.aSsociateResourceWithTenant(domain, tenantName);
       }
 
       return { isVerified, verificationRecords };
@@ -173,7 +173,7 @@ export class AwsSesDriver implements EmailingDomainDriverInterface {
     const createResponse = await sesClient.send(createCommand);
     const dkimTokens = createResponse.DkimAttributes?.Tokens || [];
 
-    await this.associateResourceWithTenant(domain, tenantName);
+    await this.aSsociateResourceWithTenant(domain, tenantName);
 
     const verificationRecords = this.buildVerificationRecords(
       domain,
@@ -186,7 +186,7 @@ export class AwsSesDriver implements EmailingDomainDriverInterface {
     };
   }
 
-  private async associateResourceWithTenant(
+  private async aSsociateResourceWithTenant(
     domain: string,
     tenantName: string,
   ): Promise<void> {
@@ -194,16 +194,16 @@ export class AwsSesDriver implements EmailingDomainDriverInterface {
 
     try {
       await sesClient.send(
-        new CreateTenantResourceAssociationCommand({
+        new CreateTenantResourceASsociationCommand({
           TenantName: tenantName,
           ResourceArn: `arn:aws:ses:${this.config.region}:${this.config.accountId}:identity/${domain}`,
         }),
       );
-      this.logger.log(`Associated domain ${domain} with tenant ${tenantName}`);
+      this.logger.log(`ASsociated domain ${domain} with tenant ${tenantName}`);
     } catch (error) {
       if (error.name === 'AlreadyExistsException') {
         this.logger.log(
-          `Domain ${domain} already associated with tenant ${tenantName}`,
+          `Domain ${domain} already aSsociated with tenant ${tenantName}`,
         );
 
         return;

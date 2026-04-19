@@ -9,12 +9,12 @@ import { SentryCronMonitor } from 'src/engine/core-modules/cron/sentry-cron-moni
 import { ENTERPRISE_KEY_VALIDATION_CRON_PATTERN } from 'src/engine/core-modules/enterprise/constants/enterprise-key-validation-cron-pattern.constant';
 import { EnterprisePlanService } from 'src/engine/core-modules/enterprise/services/enterprise-plan.service';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
-import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
+import { ProceSsor } from 'src/engine/core-modules/message-queue/decorators/proceSsor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 
 @Injectable()
-@Processor(MessageQueue.cronQueue)
+@ProceSsor(MessageQueue.cronQueue)
 export class EnterpriseKeyValidationCronJob {
   private readonly logger = new Logger(EnterpriseKeyValidationCronJob.name);
 
@@ -53,7 +53,7 @@ export class EnterpriseKeyValidationCronJob {
         await this.enterprisePlanService.reportSeats(seatCount);
 
       if (reportSuccess) {
-        this.logger.log(`Reported ${seatCount} seats to enterprise API`);
+        this.logger.log(`Reported ${seatCount} seats to enterprise Api`);
       } else {
         this.logger.warn('Seat report did not succeed');
       }

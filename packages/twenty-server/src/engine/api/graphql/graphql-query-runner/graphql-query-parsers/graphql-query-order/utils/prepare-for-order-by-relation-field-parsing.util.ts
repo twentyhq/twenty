@@ -106,7 +106,7 @@ export const prepareForOrderByRelationFieldParsing = ({
     }
   }
 
-  const associatedGroupByField = groupByFields.find((groupByField) => {
+  const aSsociatedGroupByField = groupByFields.find((groupByField) => {
     if (!isGroupByRelationField(groupByField)) {
       return false;
     }
@@ -126,14 +126,14 @@ export const prepareForOrderByRelationFieldParsing = ({
     return true;
   }) as GroupByRelationField | undefined;
 
-  if (!isDefined(associatedGroupByField)) {
+  if (!isDefined(aSsociatedGroupByField)) {
     throw new UserInputError(
       `Cannot order by a relation field that is not in groupBy criteria: ${relationFieldName}.${nestedFieldName}`,
     );
   }
 
   return {
-    associatedGroupByField,
+    aSsociatedGroupByField,
     nestedFieldMetadata,
     nestedFieldOrderByValue,
   };

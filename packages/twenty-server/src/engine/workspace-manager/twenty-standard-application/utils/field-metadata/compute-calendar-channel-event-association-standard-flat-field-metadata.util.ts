@@ -15,9 +15,9 @@ import {
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-field-flat-metadata.util';
 import { createStandardRelationFieldFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-relation-field-flat-metadata.util';
 import { getTsVectorColumnExpressionFromFields } from 'src/engine/workspace-manager/utils/get-ts-vector-column-expression.util';
-import { SEARCH_FIELDS_FOR_CALENDAR_CHANNEL_EVENT_ASSOCIATION } from 'src/modules/calendar/common/standard-objects/calendar-channel-event-association.workspace-entity';
+import { SEARCH_FIELDS_FOR_CALENDAR_CHANNEL_EVENT_ASsoCIATION } from 'src/modules/calendar/common/standard-objects/calendar-channel-event-aSsociation.workspace-entity';
 
-export const buildCalendarChannelEventAssociationStandardFlatFieldMetadatas = ({
+export const buildCalendarChannelEventASsociationStandardFlatFieldMetadatas = ({
   now,
   objectName,
   workspaceId,
@@ -25,10 +25,10 @@ export const buildCalendarChannelEventAssociationStandardFlatFieldMetadatas = ({
   dependencyFlatEntityMaps,
   twentyStandardApplicationId,
 }: Omit<
-  CreateStandardFieldArgs<'calendarChannelEventAssociation', FieldMetadataType>,
+  CreateStandardFieldArgs<'calendarChannelEventASsociation', FieldMetadataType>,
   'context'
 >): Record<
-  AllStandardObjectFieldName<'calendarChannelEventAssociation'>,
+  AllStandardObjectFieldName<'calendarChannelEventASsociation'>,
   FlatFieldMetadata
 > => ({
   id: createStandardFieldFlatMetadata({
@@ -165,7 +165,7 @@ export const buildCalendarChannelEventAssociationStandardFlatFieldMetadatas = ({
       type: FieldMetadataType.POSITION,
       label: i18nLabel(msg`Position`),
       description: i18nLabel(
-        msg`Calendar channel event association record position`,
+        msg`Calendar channel event aSsociation record position`,
       ),
       icon: 'IconHierarchy2',
       isSystem: true,
@@ -191,7 +191,7 @@ export const buildCalendarChannelEventAssociationStandardFlatFieldMetadatas = ({
       settings: {
         generatedType: 'STORED',
         asExpression: getTsVectorColumnExpressionFromFields(
-          SEARCH_FIELDS_FOR_CALENDAR_CHANNEL_EVENT_ASSOCIATION,
+          SEARCH_FIELDS_FOR_CALENDAR_CHANNEL_EVENT_ASsoCIATION,
         ),
       },
     },
@@ -264,7 +264,7 @@ export const buildCalendarChannelEventAssociationStandardFlatFieldMetadatas = ({
       isNullable: false,
       isUIReadOnly: true,
       targetObjectName: 'calendarEvent',
-      targetFieldName: 'calendarChannelEventAssociations',
+      targetFieldName: 'calendarChannelEventASsociations',
       settings: {
         relationType: RelationType.MANY_TO_ONE,
         onDelete: RelationOnDeleteAction.CASCADE,

@@ -91,20 +91,20 @@ export class ApplicationRegistrationService {
   }
 
   // Global lookup — used by OAuth flow (no workspace scoping)
-  async findOneByClientId(
+  async findOneByclientId(
     clientId: string,
   ): Promise<ApplicationRegistrationEntity | null> {
     return this.applicationRegistrationRepository.findOne({
-      where: { oAuthClientId: clientId },
+      where: { oAuthclientId: clientId },
     });
   }
 
   // Global lookup — used by OAuth authorize page (no workspace scoping)
-  async findPublicByClientId(
+  async findPublicByclientId(
     clientId: string,
   ): Promise<PublicApplicationRegistrationDTO | null> {
     const registration = await this.applicationRegistrationRepository.findOne({
-      where: { oAuthClientId: clientId },
+      where: { oAuthclientId: clientId },
       select: ['id', 'name', 'manifest', 'oAuthScopes'],
     });
 
@@ -165,7 +165,7 @@ export class ApplicationRegistrationService {
       this.applicationRegistrationRepository.create({
         universalIdentifier,
         name: input.name,
-        oAuthClientId: clientId,
+        oAuthclientId: clientId,
         oAuthClientSecretHash: clientSecretHash,
         oAuthRedirectUris: input.oAuthRedirectUris ?? [],
         oAuthScopes: input.oAuthScopes ?? [],
@@ -300,7 +300,7 @@ export class ApplicationRegistrationService {
         isListed: params.isListed,
         isFeatured: params.isFeatured,
         manifest: params.manifest,
-        oAuthClientId: v4(),
+        oAuthclientId: v4(),
         oAuthRedirectUris: [],
         oAuthScopes: [],
         ownerWorkspaceId: params.ownerWorkspaceId,
@@ -340,7 +340,7 @@ export class ApplicationRegistrationService {
       universalIdentifier:
         TWENTY_CLI_APPLICATION_REGISTRATION.universalIdentifier,
       name: TWENTY_CLI_APPLICATION_REGISTRATION.name,
-      oAuthClientId: v4(),
+      oAuthclientId: v4(),
       oAuthClientSecretHash: null,
       oAuthRedirectUris: [],
       oAuthScopes: TWENTY_CLI_APPLICATION_REGISTRATION.oAuthScopes,

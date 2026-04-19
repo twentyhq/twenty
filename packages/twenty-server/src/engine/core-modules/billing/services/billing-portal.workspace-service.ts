@@ -78,14 +78,14 @@ export class BillingPortalWorkspaceService {
       });
 
     assertIsDefinedOrThrow(
-      checkoutSession.url,
+      checkoutSession.Url,
       new BillingException(
-        'Error: missing checkout.session.url',
+        'Error: missing checkout.session.Url',
         BillingExceptionCode.BILLING_STRIPE_ERROR,
       ),
     );
 
-    return checkoutSession.url;
+    return checkoutSession.Url;
   }
 
   async createDirectSubscription({
@@ -220,14 +220,14 @@ export class BillingPortalWorkspaceService {
       );
 
     assertIsDefinedOrThrow(
-      session.url,
+      session.Url,
       new BillingException(
-        'Error: missing billingPortal.session.url',
+        'Error: missing billingPortal.session.Url',
         BillingExceptionCode.BILLING_STRIPE_ERROR,
       ),
     );
 
-    return session.url;
+    return session.Url;
   }
 
   async computeBillingPortalSessionURLForPaymentMethodUpdate(
@@ -251,14 +251,14 @@ export class BillingPortalWorkspaceService {
       );
 
     assertIsDefinedOrThrow(
-      session.url,
+      session.Url,
       new BillingException(
-        'Error: missing billingPortal.session.url',
+        'Error: missing billingPortal.session.Url',
         BillingExceptionCode.BILLING_STRIPE_ERROR,
       ),
     );
 
-    return session.url;
+    return session.Url;
   }
 
   private getDefaultMeteredProductPrice(

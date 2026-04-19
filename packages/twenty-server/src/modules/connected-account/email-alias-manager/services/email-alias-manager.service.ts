@@ -41,8 +41,8 @@ export class EmailAliasManagerService {
           );
         break;
       case ConnectedAccountProvider.IMAP_SMTP_CALDAV:
-      case ConnectedAccountProvider.OIDC:
-      case ConnectedAccountProvider.SAML:
+      case ConnectedAccountProvider.Oidc:
+      case ConnectedAccountProvider.Saml:
         handleAliases = [];
         break;
       default:

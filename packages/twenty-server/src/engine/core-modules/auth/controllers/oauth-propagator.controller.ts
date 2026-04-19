@@ -14,7 +14,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 
-import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-api-exception.filter';
+import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-Api-exception.filter';
 import { DomainServerConfigService } from 'src/engine/core-modules/domain/domain-server-config/services/domain-server-config.service';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -47,10 +47,10 @@ export class OAuthPropagatorController {
 
     const decodedRedirectUri = decodeURIComponent(state);
 
-    let redirectUrl: URL;
+    let redirectUrl: Url;
 
     try {
-      redirectUrl = new URL(decodedRedirectUri);
+      redirectUrl = new Url(decodedRedirectUri);
     } catch {
       throw new BadRequestException('Invalid redirect URI in state');
     }
@@ -69,7 +69,7 @@ export class OAuthPropagatorController {
     return res.redirect(302, redirectUrl.toString());
   }
 
-  private async isValidDomain(url: URL): Promise<boolean> {
+  private async isValidDomain(Url: Url): Promise<boolean> {
     if (
       this.twentyConfigService.get('NODE_ENV') === NodeEnvironment.DEVELOPMENT
     ) {
@@ -78,7 +78,7 @@ export class OAuthPropagatorController {
 
     const workspace =
       await this.workspaceDomainsService.getWorkspaceByOriginOrDefaultWorkspace(
-        url.href,
+        Url.href,
       );
 
     return isDefined(workspace);

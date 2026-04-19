@@ -24,7 +24,7 @@ export const isFieldMetadataItemFilterableAndSortableSelector =
         if (!isDefined(foundObjectMetadataItem)) {
           return {
             isFilterable: false,
-            isSortable: false,
+            iSsortable: false,
           };
         }
 
@@ -35,7 +35,7 @@ export const isFieldMetadataItemFilterableAndSortableSelector =
         if (!isDefined(foundFieldMetadataItem)) {
           return {
             isFilterable: false,
-            isSortable: false,
+            iSsortable: false,
           };
         }
 
@@ -53,13 +53,13 @@ export const isFieldMetadataItemFilterableAndSortableSelector =
           findById(fieldMetadataItemId),
         );
 
-        const isSortable = sortableFieldMetadataItems.some(
+        const iSsortable = sortableFieldMetadataItems.some(
           findById(fieldMetadataItemId),
         );
 
         return {
           isFilterable,
-          isSortable,
+          iSsortable,
         };
       },
   });

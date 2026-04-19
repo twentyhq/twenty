@@ -19,7 +19,7 @@ export class BillingEndTrialPeriodDTO {
 
   @Field(() => String, {
     description:
-      'Billing portal URL for payment method update (returned when no payment method exists)',
+      'Billing portal Url for payment method update (returned when no payment method exists)',
     nullable: true,
   })
   billingPortalUrl?: string;

@@ -2,7 +2,7 @@ import { Test, type TestingModule } from '@nestjs/testing';
 
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 
-import { DataArgProcessorService } from 'src/engine/api/common/common-args-processors/data-arg-processor/data-arg-processor.service';
+import { DataArgProceSsorService } from 'src/engine/api/common/common-args-proceSsors/data-arg-proceSsor/data-arg-proceSsor.service';
 import { type SystemWorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
 import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
@@ -22,8 +22,8 @@ jest.mock(
   }),
 );
 
-describe('DataArgProcessorService', () => {
-  let dataArgProcessorService: DataArgProcessorService;
+describe('DataArgProceSsorService', () => {
+  let dataArgProceSsorService: DataArgProceSsorService;
   let recordPositionService: jest.Mocked<RecordPositionService>;
 
   const mockWorkspaceId = '20202020-1234-1234-1234-123456789012';
@@ -95,7 +95,7 @@ describe('DataArgProcessorService', () => {
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        DataArgProcessorService,
+        DataArgProceSsorService,
         {
           provide: RecordPositionService,
           useValue: recordPositionService,
@@ -103,8 +103,8 @@ describe('DataArgProcessorService', () => {
       ],
     }).compile();
 
-    dataArgProcessorService = module.get<DataArgProcessorService>(
-      DataArgProcessorService,
+    dataArgProceSsorService = module.get<DataArgProceSsorService>(
+      DataArgProceSsorService,
     );
   });
 
@@ -113,7 +113,7 @@ describe('DataArgProcessorService', () => {
   });
 
   it('should be defined', () => {
-    expect(dataArgProcessorService).toBeDefined();
+    expect(dataArgProceSsorService).toBeDefined();
   });
 
   it('should normalize relation connect where composite values', async () => {
@@ -187,7 +187,7 @@ describe('DataArgProcessorService', () => {
       universalIdentifiersByApplicationId: {},
     };
 
-    const result = await dataArgProcessorService.process({
+    const result = await dataArgProceSsorService.process({
       partialRecordInputs: [
         {
           company: {
@@ -253,7 +253,7 @@ describe('DataArgProcessorService', () => {
             const flatObjectMetadata = createFlatObjectMetadata(fieldNames);
 
             await expect(
-              dataArgProcessorService.process({
+              dataArgProceSsorService.process({
                 partialRecordInputs: [testCase.input],
                 authContext: createMockAuthContext(),
                 flatObjectMetadata,
@@ -295,7 +295,7 @@ describe('DataArgProcessorService', () => {
               createFlatFieldMetadataMaps(fieldNames);
             const flatObjectMetadata = createFlatObjectMetadata(fieldNames);
 
-            const result = await dataArgProcessorService.process({
+            const result = await dataArgProceSsorService.process({
               partialRecordInputs: [testCase.input],
               authContext: createMockAuthContext(),
               flatObjectMetadata,

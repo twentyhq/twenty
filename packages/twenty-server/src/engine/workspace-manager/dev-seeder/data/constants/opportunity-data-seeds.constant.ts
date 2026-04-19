@@ -161,7 +161,7 @@ const OPPORTUNITY_TEMPLATES = [
     amount: 1100000,
     stage: 'MEETING',
   },
-  { name: 'Apple ID Enterprise SSO Setup', amount: 240000, stage: 'SCREENING' },
+  { name: 'Apple ID Enterprise Sso Setup', amount: 240000, stage: 'SCREENING' },
   { name: 'iPhone Field Service Optimization', amount: 680000, stage: 'NEW' },
   {
     name: 'Apple Retail Partnership Program',

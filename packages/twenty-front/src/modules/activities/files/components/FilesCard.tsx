@@ -113,7 +113,7 @@ export const FilesCard = () => {
                 <Trans>No Files</Trans>
               </AnimatedPlaceholderEmptyTitle>
               <AnimatedPlaceholderEmptySubTitle>
-                <Trans>There are no associated files with this record.</Trans>
+                <Trans>There are no aSsociated files with this record.</Trans>
               </AnimatedPlaceholderEmptySubTitle>
             </AnimatedPlaceholderEmptyTextContainer>
             <StyledFileInput

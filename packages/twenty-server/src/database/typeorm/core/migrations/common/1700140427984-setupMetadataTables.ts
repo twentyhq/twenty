@@ -75,19 +75,19 @@ export class SetupMetadataTables1700140427984 implements MigrationInterface {
       `CREATE TABLE "core"."postgresCredentials" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "user" character varying NOT NULL, "passwordHash" character varying NOT NULL, "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "deletedAt" TIMESTAMP WITH TIME ZONE, "workspaceId" uuid NOT NULL, CONSTRAINT "PK_3f9c4cdf895bfea0a6ea15bdd81" PRIMARY KEY ("id"))`,
     );
     await queryRunner.query(
-      `CREATE TYPE "core"."workspaceSSOIdentityProvider_status_enum" AS ENUM('Active', 'Inactive', 'Error')`,
+      `CREATE TYPE "core"."workspaceSsoIdentityProvider_status_enum" AS ENUM('Active', 'Inactive', 'Error')`,
     );
     await queryRunner.query(
-      `CREATE TYPE "core"."workspaceSSOIdentityProvider_type_enum" AS ENUM('OIDC', 'SAML')`,
+      `CREATE TYPE "core"."workspaceSsoIdentityProvider_type_enum" AS ENUM('Oidc', 'Saml')`,
     );
     await queryRunner.query(
-      `CREATE TABLE "core"."workspaceSSOIdentityProvider" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "name" character varying NOT NULL, "status" "core"."workspaceSSOIdentityProvider_status_enum" NOT NULL DEFAULT 'Active', "workspaceId" uuid NOT NULL, "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "type" "core"."workspaceSSOIdentityProvider_type_enum" NOT NULL DEFAULT 'OIDC', "issuer" character varying NOT NULL, "clientID" character varying, "clientSecret" character varying, "ssoURL" character varying, "certificate" character varying, "fingerprint" character varying, CONSTRAINT "PK_a4e3928eb641e7cd612042b628b" PRIMARY KEY ("id"))`,
+      `CREATE TABLE "core"."workspaceSsoIdentityProvider" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "name" character varying NOT NULL, "status" "core"."workspaceSsoIdentityProvider_status_enum" NOT NULL DEFAULT 'Active', "workspaceId" uuid NOT NULL, "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "type" "core"."workspaceSsoIdentityProvider_type_enum" NOT NULL DEFAULT 'Oidc', "issuer" character varying NOT NULL, "clientId" character varying, "clientSecret" character varying, "ssoUrl" character varying, "certificate" character varying, "fingerprint" character varying, CONSTRAINT "PK_a4e3928eb641e7cd612042b628b" PRIMARY KEY ("id"))`,
     );
     await queryRunner.query(
       `CREATE TYPE "core"."dataSource_type_enum" AS ENUM('postgres')`,
     );
     await queryRunner.query(
-      `CREATE TABLE "core"."dataSource" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "label" character varying, "url" character varying, "schema" character varying, "type" "core"."dataSource_type_enum" NOT NULL DEFAULT 'postgres', "isRemote" boolean NOT NULL DEFAULT false, "workspaceId" uuid NOT NULL, "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), CONSTRAINT "PK_6d01ae6c0f47baf4f8e37342268" PRIMARY KEY ("id"))`,
+      `CREATE TABLE "core"."dataSource" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "label" character varying, "Url" character varying, "schema" character varying, "type" "core"."dataSource_type_enum" NOT NULL DEFAULT 'postgres', "isRemote" boolean NOT NULL DEFAULT false, "workspaceId" uuid NOT NULL, "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), "updatedAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), CONSTRAINT "PK_6d01ae6c0f47baf4f8e37342268" PRIMARY KEY ("id"))`,
     );
     await queryRunner.query(
       `CREATE INDEX "IDX_DATA_SOURCE_WORKSPACE_ID_CREATED_AT" ON "core"."dataSource" ("workspaceId", "createdAt") `,
@@ -417,7 +417,7 @@ export class SetupMetadataTables1700140427984 implements MigrationInterface {
       `ALTER TABLE "core"."postgresCredentials" ADD CONSTRAINT "FK_9494639abc06f9c8c3691bf5d22" FOREIGN KEY ("workspaceId") REFERENCES "core"."workspace"("id") ON DELETE CASCADE ON UPDATE NO ACTION`,
     );
     await queryRunner.query(
-      `ALTER TABLE "core"."workspaceSSOIdentityProvider" ADD CONSTRAINT "FK_bc8d8855198de1fbc32fba8df93" FOREIGN KEY ("workspaceId") REFERENCES "core"."workspace"("id") ON DELETE CASCADE ON UPDATE NO ACTION`,
+      `ALTER TABLE "core"."workspaceSsoIdentityProvider" ADD CONSTRAINT "FK_bc8d8855198de1fbc32fba8df93" FOREIGN KEY ("workspaceId") REFERENCES "core"."workspace"("id") ON DELETE CASCADE ON UPDATE NO ACTION`,
     );
     await queryRunner.query(
       `ALTER TABLE "core"."objectPermission" ADD CONSTRAINT "FK_826052747c82e59f0a006204256" FOREIGN KEY ("roleId") REFERENCES "core"."role"("id") ON DELETE CASCADE ON UPDATE NO ACTION`,
@@ -753,7 +753,7 @@ export class SetupMetadataTables1700140427984 implements MigrationInterface {
       `ALTER TABLE "core"."objectPermission" DROP CONSTRAINT "FK_826052747c82e59f0a006204256"`,
     );
     await queryRunner.query(
-      `ALTER TABLE "core"."workspaceSSOIdentityProvider" DROP CONSTRAINT "FK_bc8d8855198de1fbc32fba8df93"`,
+      `ALTER TABLE "core"."workspaceSsoIdentityProvider" DROP CONSTRAINT "FK_bc8d8855198de1fbc32fba8df93"`,
     );
     await queryRunner.query(
       `ALTER TABLE "core"."postgresCredentials" DROP CONSTRAINT "FK_9494639abc06f9c8c3691bf5d22"`,
@@ -982,12 +982,12 @@ export class SetupMetadataTables1700140427984 implements MigrationInterface {
     );
     await queryRunner.query(`DROP TABLE "core"."dataSource"`);
     await queryRunner.query(`DROP TYPE "core"."dataSource_type_enum"`);
-    await queryRunner.query(`DROP TABLE "core"."workspaceSSOIdentityProvider"`);
+    await queryRunner.query(`DROP TABLE "core"."workspaceSsoIdentityProvider"`);
     await queryRunner.query(
-      `DROP TYPE "core"."workspaceSSOIdentityProvider_type_enum"`,
+      `DROP TYPE "core"."workspaceSsoIdentityProvider_type_enum"`,
     );
     await queryRunner.query(
-      `DROP TYPE "core"."workspaceSSOIdentityProvider_status_enum"`,
+      `DROP TYPE "core"."workspaceSsoIdentityProvider_status_enum"`,
     );
     await queryRunner.query(`DROP TABLE "core"."postgresCredentials"`);
     await queryRunner.query(`DROP TABLE "core"."featureFlag"`);

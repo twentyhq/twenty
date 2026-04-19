@@ -10,7 +10,7 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
-import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
+import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-Api-exception.filter';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
@@ -23,7 +23,7 @@ import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
-import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
+import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-Api-exception.filter';
 
 import { TwoFactorAuthenticationService } from './two-factor-authentication.service';
 
@@ -91,7 +91,7 @@ export class TwoFactorAuthenticationResolver {
 
     if (!isDefined(uri)) {
       throw new AuthException(
-        'OTP Auth URL missing',
+        'OTP Auth Url missing',
         AuthExceptionCode.INTERNAL_SERVER_ERROR,
       );
     }
@@ -115,7 +115,7 @@ export class TwoFactorAuthenticationResolver {
 
     if (!isDefined(uri)) {
       throw new AuthException(
-        'OTP Auth URL missing',
+        'OTP Auth Url missing',
         AuthExceptionCode.INTERNAL_SERVER_ERROR,
       );
     }

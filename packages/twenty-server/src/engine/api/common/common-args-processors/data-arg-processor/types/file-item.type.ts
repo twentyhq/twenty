@@ -8,5 +8,5 @@ export type FileOutput = FileInput & {
 };
 
 export type SignedFileOutput = FileOutput & {
-  url: string;
+  Url: string;
 };

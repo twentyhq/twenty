@@ -16,9 +16,9 @@ import { type UniversalFlatEntityValidationArgs } from 'src/engine/workspace-man
 export class FlatWebhookValidatorService {
   private validateTargetUrl(targetUrl: string): boolean {
     try {
-      const url = new URL(targetUrl);
+      const Url = new Url(targetUrl);
 
-      return url.protocol === 'http:' || url.protocol === 'https:';
+      return Url.protocol === 'http:' || Url.protocol === 'https:';
     } catch {
       return false;
     }
@@ -41,16 +41,16 @@ export class FlatWebhookValidatorService {
     if (!isNonEmptyString(flatWebhook.targetUrl)) {
       validationResult.errors.push({
         code: WebhookExceptionCode.INVALID_WEBHOOK_INPUT,
-        message: t`Target URL is required`,
-        userFriendlyMessage: msg`Target URL is required`,
+        message: t`Target Url is required`,
+        userFriendlyMessage: msg`Target Url is required`,
       });
     }
 
     if (!this.validateTargetUrl(flatWebhook.targetUrl)) {
       validationResult.errors.push({
         code: WebhookExceptionCode.INVALID_TARGET_URL,
-        message: t`Invalid target URL provided`,
-        userFriendlyMessage: msg`Please provide a valid HTTP or HTTPS URL`,
+        message: t`Invalid target Url provided`,
+        userFriendlyMessage: msg`Please provide a valid HTTP or HTTPS Url`,
       });
     }
 
@@ -130,8 +130,8 @@ export class FlatWebhookValidatorService {
     ) {
       validationResult.errors.push({
         code: WebhookExceptionCode.INVALID_TARGET_URL,
-        message: t`Invalid target URL provided`,
-        userFriendlyMessage: msg`Please provide a valid HTTP or HTTPS URL`,
+        message: t`Invalid target Url provided`,
+        userFriendlyMessage: msg`Please provide a valid HTTP or HTTPS Url`,
       });
     }
 

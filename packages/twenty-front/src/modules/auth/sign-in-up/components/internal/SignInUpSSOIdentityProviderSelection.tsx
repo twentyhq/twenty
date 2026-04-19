@@ -1,7 +1,7 @@
 /* @license Enterprise */
 
-import { useSSO } from '@/auth/sign-in-up/hooks/useSSO';
-import { guessSSOIdentityProviderIconByUrl } from '@/settings/security/utils/guessSSOIdentityProviderIconByUrl';
+import { useSso } from '@/auth/sign-in-up/hooks/useSso';
+import { guessSsoIdentityProviderIconByUrl } from '@/settings/security/utils/guessSsoIdentityProviderIconByUrl';
 import { styled } from '@linaria/react';
 
 import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
@@ -17,21 +17,21 @@ const StyledContentContainer = styled.div`
   margin-top: ${themeCssVariables.spacing[4]};
 `;
 
-export const SignInUpSSOIdentityProviderSelection = () => {
+export const SignInUpSsoIdentityProviderSelection = () => {
   const workspaceAuthProviders = useAtomStateValue(workspaceAuthProvidersState);
 
-  const { redirectToSSOLoginPage } = useSSO();
+  const { redirectToSsoLoginPage } = useSso();
 
   return (
     <>
       <StyledContentContainer>
-        {isDefined(workspaceAuthProviders?.sso) &&
-          workspaceAuthProviders?.sso.map((idp) => (
+        {isDefined(workspaceAuthProviders?.Sso) &&
+          workspaceAuthProviders?.Sso.map((idp) => (
             <React.Fragment key={idp.id}>
               <MainButton
                 title={idp.name}
-                onClick={() => redirectToSSOLoginPage(idp.id)}
-                Icon={guessSSOIdentityProviderIconByUrl(idp.issuer)}
+                onClick={() => redirectToSsoLoginPage(idp.id)}
+                Icon={guessSsoIdentityProviderIconByUrl(idp.issuer)}
                 fullWidth
               />
               <HorizontalSeparator visible={false} />

@@ -15,14 +15,14 @@ export const parseMicrosoftMessagesImportError = (
   if (error.statusCode === 400) {
     if (!isDefined(error.message)) {
       return new MessageImportDriverException(
-        `Microsoft Graph API returned 400 with empty error body`,
+        `Microsoft Graph Api returned 400 with empty error body`,
         MessageImportDriverExceptionCode.TEMPORARY_ERROR,
         { cause: options?.cause },
       );
     }
 
     return new MessageImportDriverException(
-      `Invalid request to Microsoft Graph API: ${error.message}`,
+      `Invalid request to Microsoft Graph Api: ${error.message}`,
       MessageImportDriverExceptionCode.UNKNOWN,
       { cause: options?.cause },
     );
@@ -30,7 +30,7 @@ export const parseMicrosoftMessagesImportError = (
 
   if (error.statusCode === 401) {
     return new MessageImportDriverException(
-      'Unauthorized access to Microsoft Graph API',
+      'Unauthorized access to Microsoft Graph Api',
       MessageImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS,
       { cause: options?.cause },
     );
@@ -38,7 +38,7 @@ export const parseMicrosoftMessagesImportError = (
 
   if (error.statusCode === 403) {
     return new MessageImportDriverException(
-      'Forbidden access to Microsoft Graph API',
+      'Forbidden access to Microsoft Graph Api',
       MessageImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS,
       { cause: options?.cause },
     );
@@ -81,14 +81,14 @@ export const parseMicrosoftMessagesImportError = (
     error.statusCode === 509
   ) {
     return new MessageImportDriverException(
-      `Microsoft Graph API ${error.code} ${error.statusCode} error: ${error.message}`,
+      `Microsoft Graph Api ${error.code} ${error.statusCode} error: ${error.message}`,
       MessageImportDriverExceptionCode.TEMPORARY_ERROR,
       { cause: options?.cause },
     );
   }
 
   return new MessageImportDriverException(
-    `Microsoft Graph API unknown error: ${error} with status code ${error.statusCode}`,
+    `Microsoft Graph Api unknown error: ${error} with status code ${error.statusCode}`,
     MessageImportDriverExceptionCode.UNKNOWN,
     { cause: options?.cause },
   );

@@ -44,7 +44,7 @@ const getTwentyORMExceptionUserFriendlyMessage = (
     case TwentyORMExceptionCode.USER_WORKSPACE_ROLE_MAP_VERSION_NOT_FOUND:
       return msg`User workspace role configuration not found.`;
     case TwentyORMExceptionCode.API_KEY_ROLE_MAP_VERSION_NOT_FOUND:
-      return msg`API key role configuration not found.`;
+      return msg`Api key role configuration not found.`;
     case TwentyORMExceptionCode.MALFORMED_METADATA:
       return msg`Data structure is invalid.`;
     case TwentyORMExceptionCode.WORKSPACE_NOT_FOUND:

@@ -65,7 +65,7 @@ export const main = async (params) => {
   const domain = host ? (psl.get(host) ?? host) : '';
 
   return {
-    url: domain ? \`https://\${domain}\` : '',
+    Url: domain ? \`https://\${domain}\` : '',
     domain,
   };
 };`;
@@ -201,7 +201,7 @@ export const getCreateCompanyWhenAddingNewPersonCodeStepLogicFunctionDefinitions
         id: extractDomainLogicFunctionId,
         name: 'Extract domain from email',
         description:
-          'Extracts a normalized company domain and URL from a person email address.',
+          'Extracts a normalized company domain and Url from a person email address.',
         sourceHandlerCode: EXTRACT_DOMAIN_LOGIC_FUNCTION_SOURCE,
         toolInputSchema: EXTRACT_DOMAIN_TOOL_INPUT_SCHEMA,
       },

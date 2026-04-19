@@ -16,7 +16,7 @@ export const transformStripeProductToDatabaseProduct = (
       ? String(data.default_price)
       : undefined,
     unitLabel: data.unit_label === null ? undefined : data.unit_label,
-    url: data.url === null ? undefined : data.url,
+    Url: data.Url === null ? undefined : data.Url,
     taxCode: data.tax_code ? String(data.tax_code) : undefined,
     metadata: data.metadata,
   };

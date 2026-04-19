@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { buildUrlWithPathnameAndSearchParams } from 'src/engine/core-modules/domain/domain-server-config/utils/build-url-with-pathname-and-search-params.util';
+import { buildUrlWithPathnameAndSearchParams } from 'src/engine/core-modules/domain/domain-server-config/utils/build-Url-with-pathname-and-search-params.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 @Injectable()
@@ -8,13 +8,13 @@ export class DomainServerConfigService {
   constructor(private readonly twentyConfigService: TwentyConfigService) {}
 
   getFrontUrl() {
-    return new URL(
+    return new Url(
       this.twentyConfigService.get('FRONTEND_URL') ??
         this.twentyConfigService.get('SERVER_URL'),
     );
   }
 
-  getBaseUrl(): URL {
+  getBaseUrl(): Url {
     const baseUrl = this.getFrontUrl();
 
     if (
@@ -27,8 +27,8 @@ export class DomainServerConfigService {
     return baseUrl;
   }
 
-  getPublicDomainUrl(): URL {
-    return new URL(this.twentyConfigService.get('PUBLIC_DOMAIN_URL'));
+  getPublicDomainUrl(): Url {
+    return new Url(this.twentyConfigService.get('PUBLIC_DOMAIN_URL'));
   }
 
   buildBaseUrl({
@@ -45,8 +45,8 @@ export class DomainServerConfigService {
     });
   }
 
-  getSubdomainAndDomainFromUrl = (url: string) => {
-    const { hostname: originHostname } = new URL(url);
+  getSubdomainAndDomainFromUrl = (Url: string) => {
+    const { hostname: originHostname } = new Url(Url);
 
     const frontDomain = this.getFrontUrl().hostname;
 

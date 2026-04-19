@@ -37,7 +37,7 @@ export const SSEClientEffect = () => {
         url: `${REACT_APP_SERVER_BASE_URL}/metadata`,
         headers: () => {
           const currentTokenPair = store.get(tokenPairState.atom);
-          const token = currentTokenPair?.accessOrWorkspaceAgnosticToken?.token;
+          const token = currentTokenPair?.acceSsorWorkspaceAgnosticToken?.token;
 
           return {
             Authorization: token ? `Bearer ${token}` : '',

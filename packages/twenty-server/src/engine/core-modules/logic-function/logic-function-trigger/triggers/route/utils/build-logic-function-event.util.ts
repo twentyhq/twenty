@@ -119,8 +119,8 @@ export const normalizePathParameters = (
 };
 
 /**
- * Builds an AWS HTTP API v2 compatible event from an Express request
- * @see https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-develop-integrations-lambda.html
+ * Builds an AWS HTTP Api v2 compatible event from an Express request
+ * @see https://docs.aws.amazon.com/apigateway/latest/developerguide/http-Api-develop-integrations-lambda.html
  */
 export const buildLogicFunctionEvent = ({
   request,

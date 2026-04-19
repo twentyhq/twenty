@@ -24,7 +24,7 @@ describe('OAuthDiscoveryController', () => {
         {
           provide: TwentyConfigService,
           useValue: {
-            get: jest.fn().mockReturnValue('https://api.example.com'),
+            get: jest.fn().mockReturnValue('https://Api.example.com'),
           },
         },
         {
@@ -32,7 +32,7 @@ describe('OAuthDiscoveryController', () => {
           useValue: {
             getBaseUrl: jest
               .fn()
-              .mockReturnValue(new URL('https://app.example.com')),
+              .mockReturnValue(new Url('https://app.example.com')),
           },
         },
         {

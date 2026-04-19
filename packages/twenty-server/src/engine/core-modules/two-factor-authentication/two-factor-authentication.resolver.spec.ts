@@ -219,7 +219,7 @@ describe('TwoFactorAuthenticationResolver', () => {
         resolver.initiateOTPProvisioning(mockInput, origin),
       ).rejects.toThrow(
         new AuthException(
-          'OTP Auth URL missing',
+          'OTP Auth Url missing',
           AuthExceptionCode.INTERNAL_SERVER_ERROR,
         ),
       );
@@ -264,7 +264,7 @@ describe('TwoFactorAuthenticationResolver', () => {
         ),
       ).rejects.toThrow(
         new AuthException(
-          'OTP Auth URL missing',
+          'OTP Auth Url missing',
           AuthExceptionCode.INTERNAL_SERVER_ERROR,
         ),
       );

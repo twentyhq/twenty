@@ -52,7 +52,7 @@ export class BillingWebhookAlertService {
 
     if (!product) {
       throw new BillingException(
-        `Product associated to meter ${stripeMeterId} not found`,
+        `Product aSsociated to meter ${stripeMeterId} not found`,
         BillingExceptionCode.BILLING_PRODUCT_NOT_FOUND,
       );
     }

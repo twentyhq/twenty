@@ -20,7 +20,7 @@ export type NavigationMenuItemClickParams = {
 
 export const useNavigationMenuItemSectionItems = (): NavigationMenuItem[] => {
   const { workspaceNavigationMenuItems } = useNavigationMenuItemsData();
-  const { workspaceNavigationMenuItemsSorted } = useSortedNavigationMenuItems();
+  const { workspaceNavigationMenuItemSsorted } = useSortedNavigationMenuItems();
   const { workspaceNavigationMenuItemsByFolder } =
     useNavigationMenuItemsByFolder();
   const isLayoutCustomizationModeEnabled = useAtomStateValue(
@@ -39,7 +39,7 @@ export const useNavigationMenuItemSectionItems = (): NavigationMenuItem[] => {
 
   const flatItems = getWorkspaceSidebarOrphanItemsInDisplayOrder({
     workspaceNavigationMenuItems,
-    workspaceNavigationMenuItemsSorted,
+    workspaceNavigationMenuItemSsorted,
     objectMetadataItems,
     views,
     objectPermissionsByObjectMetadataId,

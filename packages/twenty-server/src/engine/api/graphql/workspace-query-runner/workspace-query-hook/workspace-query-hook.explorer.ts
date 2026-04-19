@@ -12,7 +12,7 @@ import {
   type WorkspacePreQueryHookInstance,
 } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/interfaces/workspace-query-hook.interface';
 
-import { isApiKeyAuthContext } from 'src/engine/core-modules/auth/guards/is-api-key-auth-context.guard';
+import { isApiKeyAuthContext } from 'src/engine/core-modules/auth/guards/is-Api-key-auth-context.guard';
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
 import {
@@ -26,7 +26,7 @@ import { isQueryResultFieldValueARecord } from 'src/engine/api/graphql/workspace
 import { type WorkspaceQueryHookKey } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/decorators/workspace-query-hook.decorator';
 import { WorkspaceQueryHookStorage } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/storage/workspace-query-hook.storage';
 import { WorkspaceQueryHookType } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/types/workspace-query-hook.type';
-import { WorkspaceQueryHookMetadataAccessor } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/workspace-query-hook-metadata.accessor';
+import { WorkspaceQueryHookMetadataAcceSsor } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/workspace-query-hook-metadata.acceSsor';
 import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
 
 @Injectable()
@@ -37,7 +37,7 @@ export class WorkspaceQueryHookExplorer implements OnModuleInit {
   constructor(
     private readonly moduleRef: ModuleRef,
     private readonly discoveryService: DiscoveryService,
-    private readonly metadataAccessor: WorkspaceQueryHookMetadataAccessor,
+    private readonly metadataAcceSsor: WorkspaceQueryHookMetadataAcceSsor,
     private readonly workspaceQueryHookStorage: WorkspaceQueryHookStorage,
   ) {}
 
@@ -49,7 +49,7 @@ export class WorkspaceQueryHookExplorer implements OnModuleInit {
     const hooks = this.discoveryService
       .getProviders()
       .filter((wrapper) =>
-        this.metadataAccessor.isWorkspaceQueryHook(
+        this.metadataAcceSsor.isWorkspaceQueryHook(
           !wrapper.metatype || wrapper.inject
             ? wrapper.instance?.constructor
             : wrapper.metatype,
@@ -60,7 +60,7 @@ export class WorkspaceQueryHookExplorer implements OnModuleInit {
       const { instance, metatype } = hook;
 
       const { key, type } =
-        this.metadataAccessor.getWorkspaceQueryHookMetadata(
+        this.metadataAcceSsor.getWorkspaceQueryHookMetadata(
           instance.constructor || metatype,
         ) ?? {};
 

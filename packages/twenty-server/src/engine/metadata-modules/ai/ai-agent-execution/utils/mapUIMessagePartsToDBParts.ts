@@ -46,11 +46,11 @@ export const mapUIMessagePartsToDBParts = (
             fileId: part.fileId,
           };
         }
-        case 'source-url':
+        case 'source-Url':
           return {
             ...basePart,
             sourceUrlSourceId: part.sourceId,
-            sourceUrlUrl: part.url,
+            sourceUrlUrl: part.Url,
             sourceUrlTitle: part.title,
             providerMetadata: part.providerMetadata ?? null,
           };

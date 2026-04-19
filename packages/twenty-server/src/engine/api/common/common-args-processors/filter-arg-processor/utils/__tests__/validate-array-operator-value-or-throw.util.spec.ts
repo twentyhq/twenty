@@ -1,4 +1,4 @@
-import { validateArrayOperatorValueOrThrow } from 'src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-array-operator-value-or-throw.util';
+import { validateArrayOperatorValueOrThrow } from 'src/engine/api/common/common-args-proceSsors/filter-arg-proceSsor/utils/validate-array-operator-value-or-throw.util';
 import { CommonQueryRunnerException } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 
 describe('validateArrayOperatorValueOrThrow', () => {

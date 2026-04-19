@@ -9,13 +9,13 @@ export const isImpersonatingState = createAtomSelector<boolean>({
   get: ({ get }) => {
     const tokenPair = get(tokenPairState);
 
-    if (!isDefined(tokenPair?.accessOrWorkspaceAgnosticToken?.token)) {
+    if (!isDefined(tokenPair?.acceSsorWorkspaceAgnosticToken?.token)) {
       return false;
     }
 
     try {
       const decodedToken = jwtDecode<{ isImpersonating: boolean }>(
-        tokenPair.accessOrWorkspaceAgnosticToken.token,
+        tokenPair.acceSsorWorkspaceAgnosticToken.token,
       );
       return decodedToken?.isImpersonating ?? false;
     } catch {

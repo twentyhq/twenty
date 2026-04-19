@@ -5,22 +5,22 @@ import { Repository } from 'typeorm';
 
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
-import { SSOService } from 'src/engine/core-modules/sso/services/sso.service';
-import { SSOException } from 'src/engine/core-modules/sso/sso.exception';
-import { WorkspaceSSOIdentityProviderEntity } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
+import { SsoService } from 'src/engine/core-modules/Sso/services/Sso.service';
+import { SsoException } from 'src/engine/core-modules/Sso/Sso.exception';
+import { WorkspaceSsoIdentityProviderEntity } from 'src/engine/core-modules/Sso/workspace-Sso-identity-provider.entity';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
-describe('SSOService', () => {
-  let service: SSOService;
-  let repository: Repository<WorkspaceSSOIdentityProviderEntity>;
+describe('SsoService', () => {
+  let service: SsoService;
+  let repository: Repository<WorkspaceSsoIdentityProviderEntity>;
   let billingService: BillingService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        SSOService,
+        SsoService,
         {
-          provide: getRepositoryToken(WorkspaceSSOIdentityProviderEntity),
+          provide: getRepositoryToken(WorkspaceSsoIdentityProviderEntity),
           useClass: Repository,
         },
         {
@@ -44,9 +44,9 @@ describe('SSOService', () => {
       ],
     }).compile();
 
-    service = module.get<SSOService>(SSOService);
-    repository = module.get<Repository<WorkspaceSSOIdentityProviderEntity>>(
-      getRepositoryToken(WorkspaceSSOIdentityProviderEntity),
+    service = module.get<SsoService>(SsoService);
+    repository = module.get<Repository<WorkspaceSsoIdentityProviderEntity>>(
+      getRepositoryToken(WorkspaceSsoIdentityProviderEntity),
     );
     billingService = module.get<BillingService>(BillingService);
   });
@@ -55,19 +55,19 @@ describe('SSOService', () => {
     expect(service).toBeDefined();
   });
 
-  describe('createOIDCIdentityProvider', () => {
-    it('should create an OIDC identity provider successfully', async () => {
+  describe('createOidcIdentityProvider', () => {
+    it('should create an Oidc identity provider successfully', async () => {
       const workspaceId = 'workspace-123';
       const data = {
         issuer: 'https://example.com',
-        clientID: 'client-id',
+        clientId: 'client-id',
         clientSecret: 'client-secret',
         name: 'Test Provider',
       };
       const mockIssuer = { metadata: { issuer: 'https://example.com' } };
       const mockSavedProvider = {
         id: 'provider-123',
-        type: 'OIDC',
+        type: 'Oidc',
         name: 'Test Provider',
         status: 'ACTIVE',
         issuer: 'https://example.com',
@@ -75,20 +75,20 @@ describe('SSOService', () => {
 
       jest.spyOn(billingService, 'hasEntitlement').mockResolvedValue(true);
       jest
-        .spyOn(service as any, 'getIssuerForOIDC')
+        .spyOn(service as any, 'getIssuerForOidc')
         .mockResolvedValue(mockIssuer);
       jest
         .spyOn(repository, 'save')
         .mockResolvedValue(mockSavedProvider as any);
 
-      const result = await service.createOIDCIdentityProvider(
+      const result = await service.createOidcIdentityProvider(
         data,
         workspaceId,
       );
 
       expect(result).toEqual({
         id: 'provider-123',
-        type: 'OIDC',
+        type: 'Oidc',
         name: 'Test Provider',
         status: 'ACTIVE',
         issuer: 'https://example.com',
@@ -96,11 +96,11 @@ describe('SSOService', () => {
 
       expect(billingService.hasEntitlement).toHaveBeenCalledWith(
         workspaceId,
-        'SSO',
+        'Sso',
       );
       expect(repository.save).toHaveBeenCalledWith({
-        type: 'OIDC',
-        clientID: 'client-id',
+        type: 'Oidc',
+        clientId: 'client-id',
         clientSecret: 'client-secret',
         issuer: 'https://example.com',
         name: 'Test Provider',
@@ -108,27 +108,27 @@ describe('SSOService', () => {
       });
     });
 
-    it('should throw an exception when SSO is disabled', async () => {
+    it('should throw an exception when Sso is disabled', async () => {
       const workspaceId = 'workspace-123';
       const data = {
         issuer: 'https://example.com',
-        clientID: 'client-id',
+        clientId: 'client-id',
         clientSecret: 'client-secret',
         name: 'Test Provider',
       };
 
       jest.spyOn(billingService, 'hasEntitlement').mockResolvedValue(false);
 
-      const result = await service.createOIDCIdentityProvider(
+      const result = await service.createOidcIdentityProvider(
         data,
         workspaceId,
       );
 
-      expect(result).toBeInstanceOf(SSOException);
+      expect(result).toBeInstanceOf(SsoException);
     });
   });
 
-  describe('deleteSSOIdentityProvider', () => {
+  describe('deleteSsoIdentityProvider', () => {
     it('should delete the identity provider successfully', async () => {
       const identityProviderId = 'provider-123';
       const workspaceId = 'workspace-123';
@@ -137,7 +137,7 @@ describe('SSOService', () => {
       jest.spyOn(repository, 'findOne').mockResolvedValue(mockProvider as any);
       jest.spyOn(repository, 'delete').mockResolvedValue(null as any);
 
-      const result = await service.deleteSSOIdentityProvider(
+      const result = await service.deleteSsoIdentityProvider(
         identityProviderId,
         workspaceId,
       );
@@ -158,18 +158,18 @@ describe('SSOService', () => {
       jest.spyOn(repository, 'findOne').mockResolvedValue(null);
 
       await expect(
-        service.deleteSSOIdentityProvider(identityProviderId, workspaceId),
-      ).rejects.toThrow(SSOException);
+        service.deleteSsoIdentityProvider(identityProviderId, workspaceId),
+      ).rejects.toThrow(SsoException);
     });
   });
 
-  describe('getAuthorizationUrlForSSO', () => {
-    it('should return an authorization URL', async () => {
+  describe('getAuthorizationUrlForSso', () => {
+    it('should return an authorization Url', async () => {
       const identityProviderId = 'provider-123';
       const searchParams = { client: 'web' };
       const mockIdentityProvider = {
         id: 'provider-123',
-        type: 'OIDC',
+        type: 'Oidc',
       };
 
       jest
@@ -179,7 +179,7 @@ describe('SSOService', () => {
         .spyOn(service as any, 'buildIssuerURL')
         .mockReturnValue('https://example.com/auth');
 
-      const result = await service.getAuthorizationUrlForSSO(
+      const result = await service.getAuthorizationUrlForSso(
         identityProviderId,
         searchParams,
       );
@@ -187,7 +187,7 @@ describe('SSOService', () => {
       expect(result).toEqual({
         id: 'provider-123',
         authorizationURL: 'https://example.com/auth',
-        type: 'OIDC',
+        type: 'Oidc',
       });
 
       expect(repository.findOne).toHaveBeenCalledWith({
@@ -202,8 +202,8 @@ describe('SSOService', () => {
       jest.spyOn(repository, 'findOne').mockResolvedValue(null);
 
       await expect(
-        service.getAuthorizationUrlForSSO(identityProviderId, searchParams),
-      ).rejects.toThrow(SSOException);
+        service.getAuthorizationUrlForSso(identityProviderId, searchParams),
+      ).rejects.toThrow(SsoException);
     });
   });
 });

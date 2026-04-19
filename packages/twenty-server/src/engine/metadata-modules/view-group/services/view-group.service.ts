@@ -95,7 +95,7 @@ export class ViewGroupService {
 
         if (!isDefined(mainGroupByFieldMetadataId)) {
           throw new ViewGroupException(
-            'The associated view is not a grouped view: mainGroupByFieldMetadataId is missing.',
+            'The aSsociated view is not a grouped view: mainGroupByFieldMetadataId is missing.',
             ViewGroupExceptionCode.MISSING_MAIN_GROUP_BY_FIELD_METADATA_ID,
           );
         }

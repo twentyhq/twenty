@@ -19,7 +19,7 @@ export const removeEmptyLinks = ({
   const filteredLinks = [
     isNonEmptyString(primaryLinkUrl)
       ? {
-          url: primaryLinkUrl,
+          Url: primaryLinkUrl,
           label: primaryLinkLabel,
         }
       : null,
@@ -27,21 +27,21 @@ export const removeEmptyLinks = ({
   ]
     .filter(isDefined)
     .map((link) => {
-      if (!isNonEmptyString(link.url)) {
+      if (!isNonEmptyString(link.Url)) {
         return undefined;
       }
 
       return {
-        url: link.url,
+        Url: link.Url,
         label: link.label,
       };
     })
     .filter(isDefined);
 
   for (const link of filteredLinks) {
-    if (!isValidUrl(link.url)) {
+    if (!isValidUrl(link.Url)) {
       throw new RecordTransformerException(
-        'The URL of the link is not valid',
+        'The Url of the link is not valid',
         RecordTransformerExceptionCode.INVALID_URL,
       );
     }
@@ -51,7 +51,7 @@ export const removeEmptyLinks = ({
   const otherLinks = filteredLinks.slice(1);
 
   return {
-    primaryLinkUrl: firstLink?.url ?? null,
+    primaryLinkUrl: firstLink?.Url ?? null,
     primaryLinkLabel: firstLink?.label ?? null,
     secondaryLinks: otherLinks,
   };

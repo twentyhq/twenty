@@ -3,8 +3,8 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import {
   POSTGRES_DEFAULT_ARRAY_FIELD_NULL_EQUIVALENT_VALUE,
   POSTGRES_DEFAULT_TEXT_FIELD_NULL_EQUIVALENT_VALUE,
-} from 'src/engine/api/common/common-args-processors/data-arg-processor/constants/null-equivalent-values.constant';
-import { findPostgresDefaultNullEquivalentValue } from 'src/engine/api/common/common-args-processors/data-arg-processor/utils/find-postgres-default-null-equivalent-value.util';
+} from 'src/engine/api/common/common-args-proceSsors/data-arg-proceSsor/constants/null-equivalent-values.constant';
+import { findPostgresDefaultNullEquivalentValue } from 'src/engine/api/common/common-args-proceSsors/data-arg-proceSsor/utils/find-postgres-default-null-equivalent-value.util';
 
 describe('findPostgresDefaultNullEquivalentValue', () => {
   describe('Simple Types', () => {

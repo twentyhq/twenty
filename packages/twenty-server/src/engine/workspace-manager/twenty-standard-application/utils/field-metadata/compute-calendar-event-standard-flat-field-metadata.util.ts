@@ -400,19 +400,19 @@ export const buildCalendarEventStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
-  calendarChannelEventAssociations: createStandardRelationFieldFlatMetadata({
+  calendarChannelEventASsociations: createStandardRelationFieldFlatMetadata({
     objectName,
     workspaceId,
     context: {
       type: FieldMetadataType.RELATION,
       morphId: null,
-      fieldName: 'calendarChannelEventAssociations',
-      label: i18nLabel(msg`Calendar Channel Event Associations`),
-      description: i18nLabel(msg`Calendar Channel Event Associations`),
+      fieldName: 'calendarChannelEventASsociations',
+      label: i18nLabel(msg`Calendar Channel Event ASsociations`),
+      description: i18nLabel(msg`Calendar Channel Event ASsociations`),
       icon: 'IconCalendar',
       isNullable: false,
       isUIReadOnly: true,
-      targetObjectName: 'calendarChannelEventAssociation',
+      targetObjectName: 'calendarChannelEventASsociation',
       targetFieldName: 'calendarEvent',
       settings: {
         relationType: RelationType.ONE_TO_MANY,

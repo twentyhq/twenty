@@ -109,13 +109,13 @@ export class CommonUpdateManyQueryRunnerService extends CommonBaseQueryRunnerSer
 
     return {
       ...args,
-      filter: this.filterArgProcessor.process({
+      filter: this.filterArgProceSsor.process({
         filter: args.filter,
         flatObjectMetadata,
         flatFieldMetadataMaps,
       }),
       data: (
-        await this.dataArgProcessor.process({
+        await this.dataArgProceSsor.process({
           partialRecordInputs: [args.data],
           authContext,
           flatObjectMetadata,

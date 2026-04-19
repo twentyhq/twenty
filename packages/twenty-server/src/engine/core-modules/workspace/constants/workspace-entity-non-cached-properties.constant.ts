@@ -11,7 +11,7 @@ export const WORKSPACE_ENTITY_NON_CACHED_PROPERTIES = [
   'publicDomains',
   'workspaceMembersCount',
   'allPostgresCredentials',
-  'workspaceSSOIdentityProviders',
+  'workspaceSsoIdentityProviders',
   'agents',
   'webhooks',
   'apiKeys',

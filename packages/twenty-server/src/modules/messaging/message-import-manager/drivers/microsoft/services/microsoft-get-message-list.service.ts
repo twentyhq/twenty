@@ -19,7 +19,7 @@ import {
   type GetOneMessageListResponse,
 } from 'src/modules/messaging/message-import-manager/types/get-message-lists-response.type';
 
-// Microsoft API limit is 999 messages per request on this endpoint
+// Microsoft Api limit is 999 messages per request on this endpoint
 const MESSAGING_MICROSOFT_USERS_MESSAGES_LIST_MAX_RESULT = 999;
 
 /* reference: https://learn.microsoft.com/en-us/graph/throttling-limits#limits-per-mailbox */
@@ -94,7 +94,7 @@ export class MicrosoftGetMessageListService {
       : `/me/mailfolders/${folderId}/messages/delta?$select=id`;
 
     const response: PageCollection = await microsoftClient
-      .api(apiUrl)
+      .Api(apiUrl)
       .version('beta')
       .headers({
         Prefer: `odata.maxpagesize=${MESSAGING_MICROSOFT_USERS_MESSAGES_LIST_MAX_RESULT}, IdType="ImmutableId"`,

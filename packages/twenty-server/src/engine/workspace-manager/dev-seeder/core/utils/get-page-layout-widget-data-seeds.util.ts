@@ -617,7 +617,7 @@ export const getPageLayoutWidgetDataSeeds = (
       },
       configuration: {
         configurationType: WidgetConfigurationType.IFRAME,
-        url: 'https://www.star-history.com/?repos=twentyhq%2Ftwenty&type=date&legend=top-left',
+        Url: 'https://www.star-history.com/?repos=twentyhq%2Ftwenty&type=date&legend=top-left',
       },
       objectMetadataId: null,
       overrides: null,

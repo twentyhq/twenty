@@ -14,7 +14,7 @@ import { getTimezoneAbbreviationForZonedDateTime } from '@/ui/input/components/i
 import { type Nullable } from 'twenty-shared/types';
 import {
   isDefined,
-  isEmptinessOperand,
+  isEmptineSsoperand,
   parseJson,
   relativeDateFilterStringifiedSchema,
 } from 'twenty-shared/utils';
@@ -38,7 +38,7 @@ export const useGetRecordFilterDisplayValue = () => {
 
     const filterType = recordFilter.type;
 
-    const operandIsEmptiness = isEmptinessOperand(recordFilter.operand);
+    const operandIsEmptiness = isEmptineSsoperand(recordFilter.operand);
     const recordFilterIsEmpty = isRecordFilterConsideredEmpty(recordFilter);
 
     const nowInZonedDateTime = Temporal.Now.zonedDateTimeISO(userTimezone);

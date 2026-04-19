@@ -7,16 +7,16 @@ import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useParams } from 'react-router-dom';
 import { GetAuthorizationUrlForSsoDocument } from '~/generated-metadata/graphql';
 
-export const useSSO = () => {
+export const useSso = () => {
   const apolloClient = useApolloClient();
   const workspaceInviteHash = useParams().workspaceInviteHash;
 
   const { enqueueErrorSnackBar } = useSnackBar();
   const { redirect } = useRedirect();
-  const redirectToSSOLoginPage = async (identityProviderId: string) => {
-    let authorizationUrlForSSOResult;
+  const redirectToSsoLoginPage = async (identityProviderId: string) => {
+    let authorizationUrlForSsoResult;
     try {
-      authorizationUrlForSSOResult = await apolloClient.mutate({
+      authorizationUrlForSsoResult = await apolloClient.mutate({
         mutation: GetAuthorizationUrlForSsoDocument,
         variables: {
           input: {
@@ -34,7 +34,7 @@ export const useSSO = () => {
     }
 
     const authorizationURL =
-      authorizationUrlForSSOResult.data?.getAuthorizationUrlForSSO
+      authorizationUrlForSsoResult.data?.getAuthorizationUrlForSso
         ?.authorizationURL;
 
     if (authorizationURL) {
@@ -43,6 +43,6 @@ export const useSSO = () => {
   };
 
   return {
-    redirectToSSOLoginPage,
+    redirectToSsoLoginPage,
   };
 };

@@ -25,8 +25,8 @@ export const getMissingDraftEmailScopes = (
       return hasScope ? [] : [MICROSOFT_SEND_SCOPE];
     }
     case ConnectedAccountProvider.IMAP_SMTP_CALDAV:
-    case ConnectedAccountProvider.OIDC:
-    case ConnectedAccountProvider.SAML:
+    case ConnectedAccountProvider.Oidc:
+    case ConnectedAccountProvider.Saml:
       return [];
     default:
       assertUnreachable(

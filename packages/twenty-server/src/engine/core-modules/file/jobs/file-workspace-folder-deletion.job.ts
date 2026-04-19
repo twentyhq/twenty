@@ -1,13 +1,13 @@
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
-import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
+import { ProceSsor } from 'src/engine/core-modules/message-queue/decorators/proceSsor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 
 export type FileWorkspaceFolderDeletionJobData = {
   workspaceId: string;
 };
 
-@Processor(MessageQueue.deleteCascadeQueue)
+@ProceSsor(MessageQueue.deleteCascadeQueue)
 export class FileWorkspaceFolderDeletionJob {
   constructor(private readonly fileService: FileService) {}
 

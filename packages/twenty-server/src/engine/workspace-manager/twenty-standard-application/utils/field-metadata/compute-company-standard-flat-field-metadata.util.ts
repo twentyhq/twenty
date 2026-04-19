@@ -139,7 +139,7 @@ export const buildCompanyStandardFlatFieldMetadatas = ({
       type: FieldMetadataType.LINKS,
       label: i18nLabel(msg`Domain Name`),
       description: i18nLabel(
-        msg`The company website URL. We use this url to fetch the company icon`,
+        msg`The company website Url. We use this Url to fetch the company icon`,
       ),
       icon: 'IconLink',
       isNullable: true,

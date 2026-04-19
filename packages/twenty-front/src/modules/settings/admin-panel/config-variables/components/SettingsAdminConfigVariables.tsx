@@ -102,15 +102,15 @@ export const SettingsAdminConfigVariables = () => {
         return false;
       }
 
-      let matchesSource = true;
+      let matcheSsource = true;
       if (configVariableSourceFilter === 'database')
-        matchesSource = v.source === ConfigSource.DATABASE;
+        matcheSsource = v.source === ConfigSource.DATABASE;
       if (configVariableSourceFilter === 'environment')
-        matchesSource = v.source === ConfigSource.ENVIRONMENT;
+        matcheSsource = v.source === ConfigSource.ENVIRONMENT;
       if (configVariableSourceFilter === 'default')
-        matchesSource = v.source === ConfigSource.DEFAULT;
+        matcheSsource = v.source === ConfigSource.DEFAULT;
 
-      return matchesSource;
+      return matcheSsource;
     });
   }, [
     allVariables,

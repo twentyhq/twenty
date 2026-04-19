@@ -5,7 +5,7 @@ export enum SignInUpStep {
   Password = 'password',
   EmailVerification = 'emailVerification',
   WorkspaceSelection = 'workspaceSelection',
-  SSOIdentityProviderSelection = 'SSOIdentityProviderSelection',
+  SsoIdentityProviderSelection = 'SsoIdentityProviderSelection',
   TwoFactorAuthenticationVerification = 'TwoFactorAuthenticationVerification',
   TwoFactorAuthenticationProvision = 'TwoFactorAuthenticationProvision',
 }

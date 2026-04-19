@@ -237,7 +237,7 @@ describe('ResetPasswordService', () => {
       jest
         .spyOn(workspaceDomainsService, 'buildWorkspaceURL')
         .mockReturnValue(
-          new URL(
+          new Url(
             'https://subdomain.localhost.com:3000/reset-password/passwordResetToken',
           ),
         );

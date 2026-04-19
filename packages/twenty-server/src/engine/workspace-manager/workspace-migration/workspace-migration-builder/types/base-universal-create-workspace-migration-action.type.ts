@@ -13,7 +13,7 @@ export type BaseUniversalCreateWorkspaceMigrationAction<
   >;
   type: typeof WORKSPACE_MIGRATION_ACTION_TYPE.create;
   metadataName: T;
-  // Optional ID to use when creating the entity (for API metadata).
+  // Optional ID to use when creating the entity (for Api metadata).
   // If not provided, a new UUID will be generated.
   id?: string;
 };

@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { type Repository } from 'typeorm';
 
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
-import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
+import { ProceSsor } from 'src/engine/core-modules/message-queue/decorators/proceSsor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
@@ -16,7 +16,7 @@ export type DeleteWorkspaceMemberConnectedAccountsCleanupJobData = {
   workspaceMemberId: string;
 };
 
-@Processor(MessageQueue.deleteCascadeQueue)
+@ProceSsor(MessageQueue.deleteCascadeQueue)
 export class DeleteWorkspaceMemberConnectedAccountsCleanupJob {
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,

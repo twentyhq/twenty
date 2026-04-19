@@ -84,8 +84,8 @@ export const SyncEmails = () => {
     setNextOnboardingStatus();
   };
 
-  const userAuthenticatedWithSSO =
-    lastAuthenticatedMethod === AuthenticatedMethod.SSO;
+  const userAuthenticatedWithSso =
+    lastAuthenticatedMethod === AuthenticatedMethod.Sso;
 
   const isGoogleMessagingEnabled = useAtomStateValue(
     isGoogleMessagingEnabledState,
@@ -129,7 +129,7 @@ export const SyncEmails = () => {
         />
       </StyledSyncEmailsContainer>
       <StyledProviderContainer>
-        {!userAuthenticatedWithSSO && isGoogleProviderEnabled && (
+        {!userAuthenticatedWithSso && isGoogleProviderEnabled && (
           <MainButton
             title={t`Sync with Google`}
             onClick={() => handleButtonClick(ConnectedAccountProvider.GOOGLE)}
@@ -137,7 +137,7 @@ export const SyncEmails = () => {
             Icon={() => <IconGoogle size={theme.icon.size.sm} />}
           />
         )}
-        {!userAuthenticatedWithSSO && isMicrosoftProviderEnabled && (
+        {!userAuthenticatedWithSso && isMicrosoftProviderEnabled && (
           <MainButton
             title={t`Sync with Outlook`}
             onClick={() =>
@@ -154,7 +154,7 @@ export const SyncEmails = () => {
             width={144}
           />
         )}
-        {userAuthenticatedWithSSO && isMicrosoftProviderEnabled && (
+        {userAuthenticatedWithSso && isMicrosoftProviderEnabled && (
           <MainButton
             title={t`Continue`}
             onClick={() =>
@@ -163,7 +163,7 @@ export const SyncEmails = () => {
             width={144}
           />
         )}
-        {userAuthenticatedWithSSO && isGoogleProviderEnabled && (
+        {userAuthenticatedWithSso && isGoogleProviderEnabled && (
           <MainButton
             title={t`Continue`}
             onClick={() => handleButtonClick(ConnectedAccountProvider.GOOGLE)}

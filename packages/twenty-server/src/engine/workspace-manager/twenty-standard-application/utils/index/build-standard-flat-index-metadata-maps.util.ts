@@ -5,14 +5,14 @@ import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-m
 import { type AllStandardObjectName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-name.type';
 import { buildAttachmentStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-attachment-standard-flat-index-metadata.util';
 import { buildBlocklistStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-blocklist-standard-flat-index-metadata.util';
-import { buildCalendarChannelEventAssociationStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-calendar-channel-event-association-standard-flat-index-metadata.util';
+import { buildCalendarChannelEventASsociationStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-calendar-channel-event-aSsociation-standard-flat-index-metadata.util';
 import { buildCalendarChannelStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-calendar-channel-standard-flat-index-metadata.util';
 import { buildCalendarEventParticipantStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-calendar-event-participant-standard-flat-index-metadata.util';
 import { buildCompanyStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-company-standard-flat-index-metadata.util';
 import { buildConnectedAccountStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-connected-account-standard-flat-index-metadata.util';
 import { buildDashboardStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-dashboard-standard-flat-index-metadata.util';
-import { buildMessageChannelMessageAssociationMessageFolderStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-message-channel-message-association-message-folder-standard-flat-index-metadata.util';
-import { buildMessageChannelMessageAssociationStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-message-channel-message-association-standard-flat-index-metadata.util';
+import { buildMessageChannelMessageASsociationMessageFolderStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-message-channel-message-aSsociation-message-folder-standard-flat-index-metadata.util';
+import { buildMessageChannelMessageASsociationStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-message-channel-message-aSsociation-standard-flat-index-metadata.util';
 import { buildMessageChannelStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-message-channel-standard-flat-index-metadata.util';
 import { buildMessageFolderStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-message-folder-standard-flat-index-metadata.util';
 import { buildMessageParticipantStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-message-participant-standard-flat-index-metadata.util';
@@ -38,8 +38,8 @@ type StandardIndexBuilder<P extends AllStandardObjectName> = (
 const STANDARD_FLAT_INDEX_METADATA_BUILDERS_BY_OBJECT_NAME = {
   attachment: buildAttachmentStandardFlatIndexMetadatas,
   blocklist: buildBlocklistStandardFlatIndexMetadatas,
-  calendarChannelEventAssociation:
-    buildCalendarChannelEventAssociationStandardFlatIndexMetadatas,
+  calendarChannelEventASsociation:
+    buildCalendarChannelEventASsociationStandardFlatIndexMetadatas,
   calendarChannel: buildCalendarChannelStandardFlatIndexMetadatas,
   calendarEventParticipant:
     buildCalendarEventParticipantStandardFlatIndexMetadatas,
@@ -48,10 +48,10 @@ const STANDARD_FLAT_INDEX_METADATA_BUILDERS_BY_OBJECT_NAME = {
   dashboard: buildDashboardStandardFlatIndexMetadatas,
   message: buildMessageStandardFlatIndexMetadatas,
   messageChannel: buildMessageChannelStandardFlatIndexMetadatas,
-  messageChannelMessageAssociation:
-    buildMessageChannelMessageAssociationStandardFlatIndexMetadatas,
-  messageChannelMessageAssociationMessageFolder:
-    buildMessageChannelMessageAssociationMessageFolderStandardFlatIndexMetadatas,
+  messageChannelMessageASsociation:
+    buildMessageChannelMessageASsociationStandardFlatIndexMetadatas,
+  messageChannelMessageASsociationMessageFolder:
+    buildMessageChannelMessageASsociationMessageFolderStandardFlatIndexMetadatas,
   messageFolder: buildMessageFolderStandardFlatIndexMetadatas,
   messageParticipant: buildMessageParticipantStandardFlatIndexMetadatas,
   note: buildNoteStandardFlatIndexMetadatas,

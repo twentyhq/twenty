@@ -17,5 +17,5 @@ export class FileWithSignedUrlDTO {
   createdAt: Date;
 
   @Field()
-  url: string;
+  Url: string;
 }

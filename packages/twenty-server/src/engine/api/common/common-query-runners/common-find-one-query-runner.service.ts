@@ -120,7 +120,7 @@ export class CommonFindOneQueryRunnerService extends CommonBaseQueryRunnerServic
 
     return {
       ...args,
-      filter: this.filterArgProcessor.process({
+      filter: this.filterArgProceSsor.process({
         filter: args.filter,
         flatObjectMetadata,
         flatFieldMetadataMaps,

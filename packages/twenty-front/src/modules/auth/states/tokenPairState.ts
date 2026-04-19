@@ -7,6 +7,6 @@ export const tokenPairState = createAtomState<AuthTokenPair | null>({
   useCookieStorage: {
     cookieKey: 'tokenPair',
     validateInitFn: (payload: AuthTokenPair) =>
-      Boolean(payload['accessOrWorkspaceAgnosticToken']),
+      Boolean(payload['acceSsorWorkspaceAgnosticToken']),
   },
 });

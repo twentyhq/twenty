@@ -2,8 +2,8 @@ import { Test, type TestingModule } from '@nestjs/testing';
 
 import { FieldMetadataType } from 'twenty-shared/types';
 
-import { fieldMetadataConfigByFieldName } from 'src/engine/api/common/common-args-processors/data-arg-processor/__tests__/constants/field-metadata-config-by-field-name.constant';
-import { FilterArgProcessorService } from 'src/engine/api/common/common-args-processors/filter-arg-processor/filter-arg-processor.service';
+import { fieldMetadataConfigByFieldName } from 'src/engine/api/common/common-args-proceSsors/data-arg-proceSsor/__tests__/constants/field-metadata-config-by-field-name.constant';
+import { FilterArgProceSsorService } from 'src/engine/api/common/common-args-proceSsors/filter-arg-proceSsor/filter-arg-proceSsor.service';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -11,8 +11,8 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 import { failingFilterInputsByFieldMetadataType } from './constants/failing-filter-inputs-by-field-metadata-type.constant';
 import { successfulFilterInputsByFieldMetadataType } from './constants/successful-filter-inputs-by-field-metadata-type.constant';
 
-describe('FilterArgProcessorService', () => {
-  let filterArgProcessorService: FilterArgProcessorService;
+describe('FilterArgProceSsorService', () => {
+  let filterArgProceSsorService: FilterArgProceSsorService;
 
   const createFlatFieldMetadataMaps = (
     fieldNames: string[],
@@ -66,11 +66,11 @@ describe('FilterArgProcessorService', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [FilterArgProcessorService],
+      providers: [FilterArgProceSsorService],
     }).compile();
 
-    filterArgProcessorService = module.get<FilterArgProcessorService>(
-      FilterArgProcessorService,
+    filterArgProceSsorService = module.get<FilterArgProceSsorService>(
+      FilterArgProceSsorService,
     );
   });
 
@@ -103,7 +103,7 @@ describe('FilterArgProcessorService', () => {
             const flatObjectMetadata = createFlatObjectMetadata(fieldNames);
 
             expect(() =>
-              filterArgProcessorService.process({
+              filterArgProceSsorService.process({
                 filter: testCase.filter,
                 flatObjectMetadata,
                 flatFieldMetadataMaps,
@@ -139,7 +139,7 @@ describe('FilterArgProcessorService', () => {
               createFlatFieldMetadataMaps(fieldNames);
             const flatObjectMetadata = createFlatObjectMetadata(fieldNames);
 
-            const result = filterArgProcessorService.process({
+            const result = filterArgProceSsorService.process({
               filter: testCase.filter,
               flatObjectMetadata,
               flatFieldMetadataMaps,
@@ -165,7 +165,7 @@ describe('FilterArgProcessorService', () => {
         and: [{ textField: { eq: 'test' } }, { numberField: { gt: 0 } }],
       };
 
-      const result = filterArgProcessorService.process({
+      const result = filterArgProceSsorService.process({
         filter,
         flatObjectMetadata,
         flatFieldMetadataMaps,
@@ -183,7 +183,7 @@ describe('FilterArgProcessorService', () => {
         or: [{ textField: { eq: 'test' } }, { numberField: { gt: 0 } }],
       };
 
-      const result = filterArgProcessorService.process({
+      const result = filterArgProceSsorService.process({
         filter,
         flatObjectMetadata,
         flatFieldMetadataMaps,
@@ -201,7 +201,7 @@ describe('FilterArgProcessorService', () => {
         not: { textField: { eq: 'test' } },
       };
 
-      const result = filterArgProcessorService.process({
+      const result = filterArgProceSsorService.process({
         filter,
         flatObjectMetadata,
         flatFieldMetadataMaps,
@@ -227,7 +227,7 @@ describe('FilterArgProcessorService', () => {
         ],
       };
 
-      const result = filterArgProcessorService.process({
+      const result = filterArgProceSsorService.process({
         filter,
         flatObjectMetadata,
         flatFieldMetadataMaps,
@@ -243,7 +243,7 @@ describe('FilterArgProcessorService', () => {
       const flatFieldMetadataMaps = createFlatFieldMetadataMaps(fieldNames);
       const flatObjectMetadata = createFlatObjectMetadata(fieldNames);
 
-      const result = filterArgProcessorService.process({
+      const result = filterArgProceSsorService.process({
         filter: { numberField: { eq: '42' } },
         flatObjectMetadata,
         flatFieldMetadataMaps,
@@ -257,7 +257,7 @@ describe('FilterArgProcessorService', () => {
       const flatFieldMetadataMaps = createFlatFieldMetadataMaps(fieldNames);
       const flatObjectMetadata = createFlatObjectMetadata(fieldNames);
 
-      const result = filterArgProcessorService.process({
+      const result = filterArgProceSsorService.process({
         filter: { booleanField: { eq: 'true' } },
         flatObjectMetadata,
         flatFieldMetadataMaps,
@@ -271,7 +271,7 @@ describe('FilterArgProcessorService', () => {
       const flatFieldMetadataMaps = createFlatFieldMetadataMaps(fieldNames);
       const flatObjectMetadata = createFlatObjectMetadata(fieldNames);
 
-      const result = filterArgProcessorService.process({
+      const result = filterArgProceSsorService.process({
         filter: { numberField: { in: [1, null, 3] } },
         flatObjectMetadata,
         flatFieldMetadataMaps,

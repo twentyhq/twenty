@@ -1,15 +1,15 @@
 import { MessageParticipantRole } from 'twenty-shared/types';
 
-import { formatAddressObjectAsParticipants } from 'src/modules/messaging/message-import-manager/utils/format-address-object-as-participants.util';
+import { formatAddreSsobjectAsParticipants } from 'src/modules/messaging/message-import-manager/utils/format-address-object-as-participants.util';
 
-describe('formatAddressObjectAsParticipants', () => {
+describe('formatAddreSsobjectAsParticipants', () => {
   it('should format address object as participants', () => {
     const addresses = [
       { name: 'John Doe', address: 'john.doe @example.com' },
       { name: 'Jane Smith', address: 'jane.smith@example.com ' },
     ];
 
-    const result = formatAddressObjectAsParticipants(
+    const result = formatAddreSsobjectAsParticipants(
       addresses,
       MessageParticipantRole.FROM,
     );
@@ -29,13 +29,13 @@ describe('formatAddressObjectAsParticipants', () => {
   });
 
   it('should return an empty array if address object handle has no @', () => {
-    const addressObject = {
+    const addreSsobject = {
       name: 'John Doe',
       address: 'john.doe',
     };
 
-    const result = formatAddressObjectAsParticipants(
-      [addressObject],
+    const result = formatAddreSsobjectAsParticipants(
+      [addreSsobject],
       MessageParticipantRole.TO,
     );
 
@@ -43,13 +43,13 @@ describe('formatAddressObjectAsParticipants', () => {
   });
 
   it('should return an empty array if address object handle is empty', () => {
-    const addressObject = {
+    const addreSsobject = {
       name: 'John Doe',
       address: '',
     };
 
-    const result = formatAddressObjectAsParticipants(
-      [addressObject],
+    const result = formatAddreSsobjectAsParticipants(
+      [addreSsobject],
       MessageParticipantRole.TO,
     );
 
@@ -57,13 +57,13 @@ describe('formatAddressObjectAsParticipants', () => {
   });
 
   it('should return a lowewrcase handle if the handle is not lowercase', () => {
-    const addressObject = {
+    const addreSsobject = {
       name: 'John Doe',
       address: 'John.Doe@example.com',
     };
 
-    const result = formatAddressObjectAsParticipants(
-      [addressObject],
+    const result = formatAddreSsobjectAsParticipants(
+      [addreSsobject],
       MessageParticipantRole.TO,
     );
 

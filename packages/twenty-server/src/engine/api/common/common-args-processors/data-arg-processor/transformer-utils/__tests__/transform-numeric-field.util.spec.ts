@@ -1,4 +1,4 @@
-import { transformNumericField } from 'src/engine/api/common/common-args-processors/data-arg-processor/transformer-utils/transform-numeric-field.util';
+import { transformNumericField } from 'src/engine/api/common/common-args-proceSsors/data-arg-proceSsor/transformer-utils/transform-numeric-field.util';
 
 describe('transformNumericField', () => {
   it('should return null when value is null', () => {

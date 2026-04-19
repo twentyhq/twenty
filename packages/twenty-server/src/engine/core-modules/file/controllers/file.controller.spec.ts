@@ -14,7 +14,7 @@ import {
   FileException,
   FileExceptionCode,
 } from 'src/engine/core-modules/file/file.exception';
-import { FileApiExceptionFilter } from 'src/engine/core-modules/file/filters/file-api-exception.filter';
+import { FileApiExceptionFilter } from 'src/engine/core-modules/file/filters/file-Api-exception.filter';
 import { FileByIdGuard } from 'src/engine/core-modules/file/guards/file-by-id.guard';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
@@ -81,7 +81,7 @@ describe('FileController', () => {
   });
 
   describe('getFileById', () => {
-    it('should 302 redirect when presigned URL is available', async () => {
+    it('should 302 redirect when presigned Url is available', async () => {
       jest.spyOn(fileService, 'getFileResponseById').mockResolvedValue({
         type: 'redirect',
         presignedUrl: 'https://s3.example.com/file?signed=abc',
@@ -108,7 +108,7 @@ describe('FileController', () => {
       expect(mockResponse.setHeader).not.toHaveBeenCalled();
     });
 
-    it('should stream with headers when no presigned URL (local driver)', async () => {
+    it('should stream with headers when no presigned Url (local driver)', async () => {
       const mockStream = createMockStream();
 
       jest.spyOn(fileService, 'getFileResponseById').mockResolvedValue({

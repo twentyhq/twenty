@@ -1,4 +1,4 @@
-import { transformAddressField } from 'src/engine/api/common/common-args-processors/data-arg-processor/transformer-utils/transform-address-field.util';
+import { transformAddressField } from 'src/engine/api/common/common-args-proceSsors/data-arg-proceSsor/transformer-utils/transform-address-field.util';
 
 describe('transformAddressField', () => {
   it('should return null when value is null', () => {

@@ -276,7 +276,7 @@ export class BackfillRecordPageLayoutsCommand extends ActiveOrSuspendedWorkspace
           )
         ) {
           this.logger.log(
-            `Skipping standard record page layout ${pageLayout.universalIdentifier} for workspace ${workspaceId}: associated object ${pageLayout.objectMetadataUniversalIdentifier} does not exist`,
+            `Skipping standard record page layout ${pageLayout.universalIdentifier} for workspace ${workspaceId}: aSsociated object ${pageLayout.objectMetadataUniversalIdentifier} does not exist`,
           );
 
           return false;

@@ -394,7 +394,7 @@ const recordTableConfigSchema = z.object({
 // Iframe configuration
 const iframeConfigSchema = z.object({
   configurationType: z.literal(WidgetConfigurationType.IFRAME),
-  url: z.string().url().optional().describe('URL to embed'),
+  Url: z.string().Url().optional().describe('Url to embed'),
 });
 
 // Rich text configuration

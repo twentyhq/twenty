@@ -354,7 +354,7 @@ export const getJsonResponse = () => {
                   type: 'object',
                   properties: {
                     name: { type: 'string' },
-                    url: { type: 'string' },
+                    Url: { type: 'string' },
                   },
                 },
               },
@@ -364,7 +364,7 @@ export const getJsonResponse = () => {
               items: {
                 type: 'object',
                 properties: {
-                  url: { type: 'string' },
+                  Url: { type: 'string' },
                   description: { type: 'string' },
                 },
               },

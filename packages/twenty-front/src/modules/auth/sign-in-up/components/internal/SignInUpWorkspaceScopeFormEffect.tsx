@@ -46,13 +46,13 @@ export const SignInUpWorkspaceScopeFormEffect = () => {
       return;
     }
 
-    const hasOnlySSOProvidersEnabled =
+    const hasOnlySsoProvidersEnabled =
       !workspaceAuthProviders.google &&
       !workspaceAuthProviders.microsoft &&
       !workspaceAuthProviders.password;
 
-    if (hasOnlySSOProvidersEnabled && workspaceAuthProviders.sso.length > 1) {
-      return setSignInUpStep(SignInUpStep.SSOIdentityProviderSelection);
+    if (hasOnlySsoProvidersEnabled && workspaceAuthProviders.Sso.length > 1) {
+      return setSignInUpStep(SignInUpStep.SsoIdentityProviderSelection);
     }
   }, [setSignInUpStep, workspaceAuthProviders]);
 
@@ -85,7 +85,7 @@ export const SignInUpWorkspaceScopeFormEffect = () => {
       signInUpStep === SignInUpStep.Init &&
       !workspaceAuthProviders.google &&
       !workspaceAuthProviders.microsoft &&
-      workspaceAuthProviders.sso.length === 0
+      workspaceAuthProviders.Sso.length === 0
     ) {
       continueWithEmail();
       return;

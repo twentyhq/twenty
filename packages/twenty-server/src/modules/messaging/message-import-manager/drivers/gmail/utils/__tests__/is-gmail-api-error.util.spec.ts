@@ -1,9 +1,9 @@
 import { GaxiosError } from 'gaxios';
 
-import { isGmailApiError } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/is-gmail-api-error.util';
+import { isGmailApiError } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/is-gmail-Api-error.util';
 
 describe('isGmailApiError', () => {
-  it('should detect Gmail API error shape even when instanceof GaxiosError fails', () => {
+  it('should detect Gmail Api error shape even when instanceof GaxiosError fails', () => {
     const originalError = new GaxiosError(
       'Rate limit exceeded',
       {},

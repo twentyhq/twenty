@@ -17,7 +17,7 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
-import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-api-exception.filter';
+import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-Api-exception.filter';
 import { GoogleAPIsOauthExchangeCodeForTokenGuard } from 'src/engine/core-modules/auth/guards/google-apis-oauth-exchange-code-for-token.guard';
 import { GoogleAPIsOauthRequestCodeGuard } from 'src/engine/core-modules/auth/guards/google-apis-oauth-request-code.guard';
 import { GoogleAPIsService } from 'src/engine/core-modules/auth/services/google-apis.service';
@@ -52,7 +52,7 @@ export class GoogleAPIsAuthController {
     NoPermissionGuard,
   )
   async googleAuth() {
-    // As this method is protected by Google Auth guard, it will trigger Google SSO flow
+    // As this method is protected by Google Auth guard, it will trigger Google Sso flow
     return;
   }
 
@@ -132,12 +132,12 @@ export class GoogleAPIsAuthController {
           connectedAccountId,
         });
 
-      const url = this.workspaceDomainsService.buildWorkspaceURL({
+      const Url = this.workspaceDomainsService.buildWorkspaceURL({
         workspace,
         pathname,
       });
 
-      return res.redirect(url.toString());
+      return res.redirect(Url.toString());
     } catch (error) {
       return res.redirect(
         this.guardRedirectService.getRedirectErrorUrlAndCaptureExceptions({

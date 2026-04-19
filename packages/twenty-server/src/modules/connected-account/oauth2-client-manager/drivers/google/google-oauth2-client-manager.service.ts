@@ -14,14 +14,14 @@ export class GoogleOAuth2ClientManagerService {
   public async getOAuth2Client(
     refreshToken: string,
   ): Promise<Auth.OAuth2Client> {
-    const gmailClientId = this.twentyConfigService.get('AUTH_GOOGLE_CLIENT_ID');
+    const gmailclientId = this.twentyConfigService.get('AUTH_GOOGLE_CLIENT_ID');
     const gmailClientSecret = this.twentyConfigService.get(
       'AUTH_GOOGLE_CLIENT_SECRET',
     );
 
     try {
       const oAuth2Client = new google.auth.OAuth2(
-        gmailClientId,
+        gmailclientId,
         gmailClientSecret,
       );
 

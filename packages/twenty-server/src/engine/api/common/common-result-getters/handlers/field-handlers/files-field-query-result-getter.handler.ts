@@ -6,9 +6,9 @@ import {
 
 import { type QueryResultGetterHandlerInterface } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters/interfaces/query-result-getter-handler.interface';
 
-import { isFileOutputArray } from 'src/engine/api/common/common-args-processors/data-arg-processor/types/file-item.guard';
-import type { SignedFileOutput } from 'src/engine/api/common/common-args-processors/data-arg-processor/types/file-item.type';
-import { type FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
+import { isFileOutputArray } from 'src/engine/api/common/common-args-proceSsors/data-arg-proceSsor/types/file-item.guard';
+import type { SignedFileOutput } from 'src/engine/api/common/common-args-proceSsors/data-arg-proceSsor/types/file-item.type';
+import { type FileUrlService } from 'src/engine/core-modules/file/file-Url/file-Url.service';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 
 export class FilesFieldQueryResultGetterHandler
@@ -39,7 +39,7 @@ export class FilesFieldQueryResultGetterHandler
       const signedFilesFieldValue: SignedFileOutput[] = [];
 
       for (const file of filesFieldValue) {
-        const url = this.fileUrlService.signFileByIdUrl({
+        const Url = this.fileUrlService.signFileByIdUrl({
           fileId: file.fileId,
           workspaceId,
           fileFolder: FileFolder.FilesField,
@@ -47,7 +47,7 @@ export class FilesFieldQueryResultGetterHandler
 
         signedFilesFieldValue.push({
           ...file,
-          url,
+          Url,
         });
       }
 

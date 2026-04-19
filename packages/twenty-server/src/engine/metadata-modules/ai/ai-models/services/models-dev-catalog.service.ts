@@ -116,7 +116,7 @@ export class ModelsDevCatalogService {
 
       if (!response.ok) {
         this.logger.warn(
-          `models.dev API returned ${response.status}, using cached data`,
+          `models.dev Api returned ${response.status}, using cached data`,
         );
 
         return this.cache;

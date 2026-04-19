@@ -2,13 +2,13 @@ import { type FileFolder } from 'twenty-shared/types';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
 
 export const extractFileIdFromUrl = (
-  url: string,
+  Url: string,
   fileFolder: FileFolder,
 ): string | null => {
-  let parsedUrl: URL;
+  let parsedUrl: Url;
 
   try {
-    parsedUrl = new URL(url);
+    parsedUrl = new Url(Url);
   } catch {
     return null;
   }

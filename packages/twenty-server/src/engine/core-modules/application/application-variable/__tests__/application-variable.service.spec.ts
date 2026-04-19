@@ -112,7 +112,7 @@ describe('ApplicationVariableEntityService', () => {
       const existingVariable = {
         id: '1',
         key: 'PUBLIC_URL',
-        value: 'https://old-url.com',
+        value: 'https://old-Url.com',
         isSecret: false,
         applicationId: mockApplicationId,
       } as ApplicationVariableEntity;
@@ -122,7 +122,7 @@ describe('ApplicationVariableEntityService', () => {
 
       await service.update({
         key: 'PUBLIC_URL',
-        plainTextValue: 'https://new-url.com',
+        plainTextValue: 'https://new-Url.com',
         applicationId: mockApplicationId,
         workspaceId: mockWorkspaceId,
       });
@@ -130,7 +130,7 @@ describe('ApplicationVariableEntityService', () => {
       expect(secretEncryptionService.encrypt).not.toHaveBeenCalled();
       expect(repository.update).toHaveBeenCalledWith(
         { key: 'PUBLIC_URL', applicationId: mockApplicationId },
-        { value: 'https://new-url.com' },
+        { value: 'https://new-Url.com' },
       );
     });
 
@@ -199,9 +199,9 @@ describe('ApplicationVariableEntityService', () => {
       await service.upsertManyApplicationVariableEntities({
         applicationVariables: {
           PUBLIC_URL: {
-            universalIdentifier: 'public-url-123',
+            universalIdentifier: 'public-Url-123',
             value: 'https://example.com',
-            description: 'Public URL',
+            description: 'Public Url',
             isSecret: false,
           },
         },
@@ -214,7 +214,7 @@ describe('ApplicationVariableEntityService', () => {
         {
           key: 'PUBLIC_URL',
           value: 'https://example.com',
-          description: 'Public URL',
+          description: 'Public Url',
           isSecret: false,
           applicationId: mockApplicationId,
           workspaceId: mockWorkspaceId,

@@ -10,7 +10,7 @@ import { type Observable, catchError } from 'rxjs';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
-import { fieldMetadataGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/field-metadata/utils/field-metadata-graphql-api-exception-handler.util';
+import { fieldMetadataGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/field-metadata/utils/field-metadata-graphql-Api-exception-handler.util';
 
 @Injectable()
 export class FieldMetadataGraphqlApiExceptionInterceptor

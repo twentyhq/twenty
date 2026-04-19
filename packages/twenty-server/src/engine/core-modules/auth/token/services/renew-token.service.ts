@@ -27,7 +27,7 @@ export class RenewTokenService {
   ) {}
 
   async generateTokensFromRefreshToken(token: string): Promise<{
-    accessOrWorkspaceAgnosticToken: AuthToken;
+    acceSsorWorkspaceAgnosticToken: AuthToken;
     refreshToken: AuthToken;
   }> {
     if (!token) {
@@ -97,7 +97,7 @@ export class RenewTokenService {
     });
 
     return {
-      accessOrWorkspaceAgnosticToken: accessToken,
+      acceSsorWorkspaceAgnosticToken: accessToken,
       refreshToken,
     };
   }

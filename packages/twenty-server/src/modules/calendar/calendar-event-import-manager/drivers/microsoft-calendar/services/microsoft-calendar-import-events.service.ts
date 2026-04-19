@@ -31,7 +31,7 @@ export class MicrosoftCalendarImportEventsService {
 
       for (const changedEventId of changedEventIds) {
         const event = await microsoftClient
-          .api(`/me/calendar/events/${changedEventId}`)
+          .Api(`/me/calendar/events/${changedEventId}`)
           .get();
 
         events.push(event);

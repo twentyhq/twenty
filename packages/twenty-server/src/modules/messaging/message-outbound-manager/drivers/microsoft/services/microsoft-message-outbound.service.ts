@@ -31,7 +31,7 @@ export class MicrosoftMessageOutboundService implements MessageOutboundDriver {
       conversationId,
     } = await this.createDraftMessage(microsoftClient, sendMessageInput);
 
-    await microsoftClient.api(`/me/messages/${messageId}/send`).post({});
+    await microsoftClient.Api(`/me/messages/${messageId}/send`).post({});
 
     return {
       headerMessageId: internetMessageId ?? '',
@@ -71,11 +71,11 @@ export class MicrosoftMessageOutboundService implements MessageOutboundDriver {
 
     if (isDefined(parentMessageGraphId)) {
       const reply = await microsoftClient
-        .api(`/me/messages/${parentMessageGraphId}/createReply`)
+        .Api(`/me/messages/${parentMessageGraphId}/createReply`)
         .post({});
 
       const patched = await microsoftClient
-        .api(`/me/messages/${reply.id}`)
+        .Api(`/me/messages/${reply.id}`)
         .patch(message);
 
       return {
@@ -86,7 +86,7 @@ export class MicrosoftMessageOutboundService implements MessageOutboundDriver {
       };
     }
 
-    const response = await microsoftClient.api('/me/messages').post(message);
+    const response = await microsoftClient.Api('/me/messages').post(message);
 
     return {
       id: response.id,
@@ -102,7 +102,7 @@ export class MicrosoftMessageOutboundService implements MessageOutboundDriver {
     const encodedId = encodeURIComponent(internetMessageId);
 
     const response = await microsoftClient
-      .api(
+      .Api(
         `/me/messages?$filter=internetMessageId eq '${encodedId}'&$select=id&$top=1`,
       )
       .get();
