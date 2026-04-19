@@ -185,13 +185,12 @@ export class OAuthRegistrationController {
     @Param('clientId') clientId: string,
     @Res({ passthrough: true }) res: Response,
   ) {
-    const registration =
-      await this.applicationRegistrationRepository.findOne({
-        where: {
-          oAuthClientId: clientId,
-          sourceType: ApplicationRegistrationSourceType.OAUTH_ONLY,
-        },
-      });
+    const registration = await this.applicationRegistrationRepository.findOne({
+      where: {
+        oAuthClientId: clientId,
+        sourceType: ApplicationRegistrationSourceType.OAUTH_ONLY,
+      },
+    });
 
     if (!registration) {
       res.status(404);
