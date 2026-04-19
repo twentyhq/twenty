@@ -24,6 +24,7 @@ const StyledNoAccessContainer = styled.div`
 
 type WidgetCardShellProps = {
   widget: PageLayoutWidget;
+  title?: string;
   variant: WidgetCardVariant;
   isEditable: boolean;
   isEditing: boolean;
@@ -46,6 +47,7 @@ type WidgetCardShellProps = {
 
 export const WidgetCardShell = ({
   widget,
+  title,
   variant,
   isEditable,
   isEditing,
@@ -95,7 +97,7 @@ export const WidgetCardShell = ({
             isResizing={isResizing}
             isReorderEnabled={isReorderEnabled}
             isDeletingWidgetEnabled={isDeletingWidgetEnabled}
-            title={widget.title}
+            title={title ?? widget.title}
             onRemove={onRemove}
             actions={actions}
             forbiddenDisplay={

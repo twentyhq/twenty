@@ -1,6 +1,7 @@
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { WidgetCardShell } from '@/page-layout/widgets/components/WidgetCardShell';
 import { useWidgetActions } from '@/page-layout/widgets/hooks/useWidgetActions';
+import { useWidgetDerivedTitle } from '@/page-layout/widgets/hooks/useWidgetDerivedTitle';
 import { useWidgetRendererState } from '@/page-layout/widgets/hooks/useWidgetRendererState';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { styled } from '@linaria/react';
@@ -48,6 +49,8 @@ export const RecordPageWidgetRenderer = ({
 
   const actions = useWidgetActions({ widget });
 
+  const derivedTitle = useWidgetDerivedTitle(widget);
+
   // TODO: remove once all record page layouts widgets use the editable contain in edit mode
   const shouldWrapWithEditingWrapper =
     isWidgetEditable &&
@@ -59,6 +62,7 @@ export const RecordPageWidgetRenderer = ({
   const shell = (
     <WidgetCardShell
       widget={widget}
+      title={derivedTitle}
       variant={state.variant}
       isEditable={isWidgetEditable}
       isEditing={state.isEditing}
