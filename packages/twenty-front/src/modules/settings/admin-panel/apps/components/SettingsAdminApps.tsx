@@ -108,7 +108,12 @@ export const SettingsAdminApps = () => {
                 mobileGridAutoColumns={TABLE_GRID_MOBILE}
                 isClickable
               >
-                <TableCell color={themeCssVariables.font.color.primary}>
+                <TableCell
+                  color={themeCssVariables.font.color.primary}
+                  overflow="hidden"
+                  textOverflow="ellipsis"
+                  whiteSpace="nowrap"
+                >
                   <OverflowingTextWithTooltip text={registration.name} />
                 </TableCell>
                 <TableCell overflow="hidden" align="right">
