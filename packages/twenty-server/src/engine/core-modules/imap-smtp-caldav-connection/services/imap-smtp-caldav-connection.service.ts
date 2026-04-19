@@ -142,7 +142,7 @@ export class ImapSmtpCaldavService {
     const client = new CalDAVClient({
       serverUrl: params.host,
       username: params.username ?? handle,
-      password: params.password,
+      password: params.password ?? '',
     });
 
     try {
