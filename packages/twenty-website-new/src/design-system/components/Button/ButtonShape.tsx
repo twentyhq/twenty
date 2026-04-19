@@ -1,20 +1,46 @@
-import { styled } from "@linaria/react";
+import { styled } from '@linaria/react';
 
-interface ButtonShapeProps {
+type ButtonShapeProps = {
   dataSlot?: string;
   fillColor: string;
+  height: number;
   strokeColor: string;
+};
+
+// The bottom-right corner taper is a fixed design element; only the straight
+// vertical segment between top-right arc and the taper changes with height.
+const TAPER_HEIGHT = 15.477;
+const TAPER_TOP_OFFSET = 4;
+const STRAIGHT_V_AT_FORTY = 20.523;
+
+function getLeftFillPath(height: number) {
+  return `M4 0 A4 4 0 0 0 0 4 V${height - 4} A4 4 0 0 0 4 ${height} Z`;
 }
 
-const LEFT_FILL = "M4 0 A4 4 0 0 0 0 4 V36 A4 4 0 0 0 4 40 Z";
-const LEFT_OUTLINE = "M4 0.5 A3.5 3.5 0 0 0 0.5 4 V36 A3.5 3.5 0 0 0 4 39.5";
+function getLeftOutlinePath(height: number) {
+  return `M4 0.5 A3.5 3.5 0 0 0 0.5 4 V${height - 4} A3.5 3.5 0 0 0 4 ${height - 0.5}`;
+}
 
-const RIGHT_FILL = "M0 0 h11 a4 4 0 0 1 4 4 v20.523 a6 6 0 0 1 -1.544 4.019 l-8.548 9.477 A6 6 0 0 1 0.453 40 H0 Z";
-const RIGHT_OUTLINE = "M0 0.5 h11 a3.5 3.5 0 0 1 3.5 3.5 v20.523 a5.5 5.5 0 0 1 -1.416 3.684 l-8.547 9.477 a5.5 5.5 0 0 1 -4.084 1.816 H0";
+function getRightFillPath(height: number) {
+  const straight = Math.max(
+    height - TAPER_TOP_OFFSET - TAPER_HEIGHT,
+    0,
+  );
+  return `M0 0 h11 a4 4 0 0 1 4 4 v${straight} a6 6 0 0 1 -1.544 4.019 l-8.548 9.477 A6 6 0 0 1 0.453 ${height} H0 Z`;
+}
+
+function getRightOutlinePath(height: number) {
+  const straight = Math.max(
+    height - TAPER_TOP_OFFSET - TAPER_HEIGHT,
+    0,
+  );
+  return `M0 0.5 h11 a3.5 3.5 0 0 1 3.5 3.5 v${straight} a5.5 5.5 0 0 1 -1.416 3.684 l-8.547 9.477 a5.5 5.5 0 0 1 -4.084 1.816 H0`;
+}
+
+void STRAIGHT_V_AT_FORTY;
 
 const ShapeContainer = styled.div`
   display: flex;
-  height: 40px;
   inset: 0;
   pointer-events: none;
   position: absolute;
@@ -42,36 +68,96 @@ const RightCap = styled.svg`
 export function ButtonShape({
   dataSlot,
   fillColor,
+  height,
   strokeColor,
 }: ButtonShapeProps) {
-  const isOutline = fillColor === "none";
+  const isOutline = fillColor === 'none';
 
   return (
-    <ShapeContainer data-slot={dataSlot}>
-      <LeftCap width="4" height="40" viewBox="0 0 4 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <ShapeContainer data-slot={dataSlot} style={{ height }}>
+      <LeftCap
+        fill="none"
+        height={height}
+        viewBox={`0 0 4 ${height}`}
+        width="4"
+        xmlns="http://www.w3.org/2000/svg"
+      >
         {isOutline ? (
-          <path d={LEFT_OUTLINE} fill={fillColor} stroke={strokeColor} strokeWidth="1" strokeLinejoin="round" strokeLinecap="round" />
+          <path
+            d={getLeftOutlinePath(height)}
+            fill={fillColor}
+            stroke={strokeColor}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="1"
+          />
         ) : (
-          <path d={LEFT_FILL} fill={fillColor} stroke={strokeColor} />
+          <path
+            d={getLeftFillPath(height)}
+            fill={fillColor}
+            stroke={strokeColor}
+          />
         )}
       </LeftCap>
 
-      <MiddleSegment width="100%" height="40" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <MiddleSegment
+        fill="none"
+        height={height}
+        preserveAspectRatio="none"
+        xmlns="http://www.w3.org/2000/svg"
+        width="100%"
+      >
         {isOutline ? (
           <>
-            <line x1="0" y1="0.5" x2="100%" y2="0.5" stroke={strokeColor} strokeWidth="1" />
-            <line x1="0" y1="39.5" x2="100%" y2="39.5" stroke={strokeColor} strokeWidth="1" />
+            <line
+              stroke={strokeColor}
+              strokeWidth="1"
+              x1="0"
+              x2="100%"
+              y1="0.5"
+              y2="0.5"
+            />
+            <line
+              stroke={strokeColor}
+              strokeWidth="1"
+              x1="0"
+              x2="100%"
+              y1={height - 0.5}
+              y2={height - 0.5}
+            />
           </>
         ) : (
-          <rect width="100%" height="40" fill={fillColor} stroke={strokeColor} />
+          <rect
+            fill={fillColor}
+            height={height}
+            stroke={strokeColor}
+            width="100%"
+          />
         )}
       </MiddleSegment>
 
-      <RightCap width="15" height="40" viewBox="0 0 15 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <RightCap
+        fill="none"
+        height={height}
+        viewBox={`0 0 15 ${height}`}
+        width="15"
+        xmlns="http://www.w3.org/2000/svg"
+      >
         {isOutline ? (
-          <path d={RIGHT_OUTLINE} fill={fillColor} stroke={strokeColor} strokeWidth="1" strokeLinejoin="round" strokeLinecap="round" />
+          <path
+            d={getRightOutlinePath(height)}
+            fill={fillColor}
+            stroke={strokeColor}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="1"
+          />
         ) : (
-          <path d={RIGHT_FILL} fill={fillColor} stroke={strokeColor} />
+          <path
+            d={getRightFillPath(height)}
+            fill={fillColor}
+            stroke={strokeColor}
+          />
         )}
       </RightCap>
     </ShapeContainer>

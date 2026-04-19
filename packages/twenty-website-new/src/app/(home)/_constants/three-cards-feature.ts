@@ -24,7 +24,7 @@ export const THREE_CARDS_FEATURE_DATA: ThreeCardsFeatureCardsDataType = {
       illustration: 'familiar-interface',
     },
     {
-      heading: { text: 'Live data and AI Built', fontFamily: 'sans' },
+      heading: { text: 'Live data and AI built', fontFamily: 'sans' },
       body: {
         text: 'Everything updates in real time, with AI chat always ready to help you move faster.',
       },

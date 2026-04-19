@@ -327,7 +327,7 @@ export const HERO_DATA: HeroHomeDataType = {
   heading: [
     { text: 'Build', fontFamily: 'serif' },
     { text: ' your Enterprise CRM ', fontFamily: 'serif' },
-    { text: 'at AI Speed', fontFamily: 'sans' },
+    { text: 'at\u00A0AI\u00A0Speed', fontFamily: 'sans' },
   ],
   body: {
     text: 'Twenty gives technical teams the building blocks for a custom CRM that meets complex business needs and quickly adapts as the business evolves.',

@@ -251,8 +251,11 @@ const halftoneFragmentShader = `
     if (applyToDarkAreas > 0.5) {
       toneValue = 1.0 - toneValue;
     }
+    // Preserve the pre-toneTarget light-mode response by keeping the power
+    // bias inside the averaged tone calculation.
+    float powerBias = localPower * length(vec2(0.5)) * (1.0 / 3.0);
     float bandRadius = clamp(
-      toneValue + localPower * length(vec2(0.5)) + lightLift,
+      toneValue + powerBias + lightLift,
       0.0,
       1.0
     ) * 1.86 * 0.5;
