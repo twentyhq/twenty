@@ -9,6 +9,7 @@
     "node_modules",
     "src/generated",
     "src/generated-metadata",
+    "src/generated-admin",
     "src/locales/generated",
     "src/testing/mock-data",
     "**/__mocks__/**",
