@@ -1302,90 +1302,6 @@ export interface WorkspaceUrls {
     __typename: 'WorkspaceUrls'
 }
 
-export interface UserInfo {
-    id: Scalars['UUID']
-    email: Scalars['String']
-    firstName?: Scalars['String']
-    lastName?: Scalars['String']
-    createdAt: Scalars['DateTime']
-    __typename: 'UserInfo'
-}
-
-export interface WorkspaceInfo {
-    id: Scalars['UUID']
-    name: Scalars['String']
-    allowImpersonation: Scalars['Boolean']
-    logo?: Scalars['String']
-    totalUsers: Scalars['Float']
-    activationStatus: WorkspaceActivationStatus
-    createdAt: Scalars['DateTime']
-    workspaceUrls: WorkspaceUrls
-    users: UserInfo[]
-    featureFlags: FeatureFlag[]
-    __typename: 'WorkspaceInfo'
-}
-
-export interface UserLookup {
-    user: UserInfo
-    workspaces: WorkspaceInfo[]
-    __typename: 'UserLookup'
-}
-
-export interface AdminPanelRecentUser {
-    id: Scalars['UUID']
-    email: Scalars['String']
-    firstName?: Scalars['String']
-    lastName?: Scalars['String']
-    createdAt: Scalars['DateTime']
-    workspaceName?: Scalars['String']
-    workspaceId?: Scalars['UUID']
-    __typename: 'AdminPanelRecentUser'
-}
-
-export interface AdminPanelTopWorkspace {
-    id: Scalars['UUID']
-    name: Scalars['String']
-    totalUsers: Scalars['Int']
-    subdomain: Scalars['String']
-    __typename: 'AdminPanelTopWorkspace'
-}
-
-export interface AdminWorkspaceChatThread {
-    id: Scalars['UUID']
-    title?: Scalars['String']
-    totalInputTokens: Scalars['Int']
-    totalOutputTokens: Scalars['Int']
-    conversationSize: Scalars['Int']
-    createdAt: Scalars['DateTime']
-    updatedAt: Scalars['DateTime']
-    __typename: 'AdminWorkspaceChatThread'
-}
-
-export interface AdminChatMessagePart {
-    type: Scalars['String']
-    textContent?: Scalars['String']
-    toolName?: Scalars['String']
-    __typename: 'AdminChatMessagePart'
-}
-
-export interface AdminChatMessage {
-    id: Scalars['UUID']
-    role: AgentMessageRole
-    parts: AdminChatMessagePart[]
-    createdAt: Scalars['DateTime']
-    __typename: 'AdminChatMessage'
-}
-
-
-/** Role of a message in a chat thread */
-export type AgentMessageRole = 'SYSTEM' | 'USER' | 'ASSISTANT'
-
-export interface AdminChatThreadMessages {
-    thread: AdminWorkspaceChatThread
-    messages: AdminChatMessage[]
-    __typename: 'AdminChatThreadMessages'
-}
-
 export interface BillingTrialPeriod {
     duration: Scalars['Float']
     isCreditCardRequired: Scalars['Boolean']
@@ -1464,34 +1380,6 @@ export interface ClientAiModelConfig {
 }
 
 export type ModelFamily = 'GPT' | 'CLAUDE' | 'GEMINI' | 'MISTRAL' | 'GROK'
-
-export interface AdminAiModelConfig {
-    modelId: Scalars['String']
-    label: Scalars['String']
-    modelFamily?: ModelFamily
-    modelFamilyLabel?: Scalars['String']
-    sdkPackage?: Scalars['String']
-    isAvailable: Scalars['Boolean']
-    isAdminEnabled: Scalars['Boolean']
-    isDeprecated?: Scalars['Boolean']
-    isRecommended?: Scalars['Boolean']
-    contextWindowTokens?: Scalars['Float']
-    maxOutputTokens?: Scalars['Float']
-    inputCostPerMillionTokens?: Scalars['Float']
-    outputCostPerMillionTokens?: Scalars['Float']
-    providerName?: Scalars['String']
-    providerLabel?: Scalars['String']
-    name?: Scalars['String']
-    dataResidency?: Scalars['String']
-    __typename: 'AdminAiModelConfig'
-}
-
-export interface AdminAiModels {
-    models: AdminAiModelConfig[]
-    defaultSmartModelId?: Scalars['String']
-    defaultFastModelId?: Scalars['String']
-    __typename: 'AdminAiModels'
-}
 
 export interface Billing {
     isBillingEnabled: Scalars['Boolean']
@@ -1587,196 +1475,6 @@ export interface UsageBreakdownItem {
     creditsUsed: Scalars['Float']
     __typename: 'UsageBreakdownItem'
 }
-
-export interface ConfigVariable {
-    name: Scalars['String']
-    description: Scalars['String']
-    value?: Scalars['JSON']
-    isSensitive: Scalars['Boolean']
-    source: ConfigSource
-    isEnvOnly: Scalars['Boolean']
-    type: ConfigVariableType
-    options?: Scalars['JSON']
-    __typename: 'ConfigVariable'
-}
-
-export type ConfigSource = 'ENVIRONMENT' | 'DATABASE' | 'DEFAULT'
-
-export type ConfigVariableType = 'BOOLEAN' | 'NUMBER' | 'ARRAY' | 'STRING' | 'ENUM' | 'JSON'
-
-export interface ConfigVariablesGroupData {
-    variables: ConfigVariable[]
-    name: ConfigVariablesGroup
-    description: Scalars['String']
-    isHiddenOnLoad: Scalars['Boolean']
-    __typename: 'ConfigVariablesGroupData'
-}
-
-export type ConfigVariablesGroup = 'SERVER_CONFIG' | 'RATE_LIMITING' | 'STORAGE_CONFIG' | 'GOOGLE_AUTH' | 'MICROSOFT_AUTH' | 'EMAIL_SETTINGS' | 'LOGGING' | 'ADVANCED_SETTINGS' | 'BILLING_CONFIG' | 'CAPTCHA_CONFIG' | 'CLOUDFLARE_CONFIG' | 'LLM' | 'LOGIC_FUNCTION_CONFIG' | 'CODE_INTERPRETER_CONFIG' | 'SSL' | 'SUPPORT_CHAT_CONFIG' | 'ANALYTICS_CONFIG' | 'TOKENS_DURATION' | 'AWS_SES_SETTINGS'
-
-export interface ConfigVariables {
-    groups: ConfigVariablesGroupData[]
-    __typename: 'ConfigVariables'
-}
-
-export interface JobOperationResult {
-    jobId: Scalars['String']
-    success: Scalars['Boolean']
-    error?: Scalars['String']
-    __typename: 'JobOperationResult'
-}
-
-export interface DeleteJobsResponse {
-    deletedCount: Scalars['Int']
-    results: JobOperationResult[]
-    __typename: 'DeleteJobsResponse'
-}
-
-export interface QueueJob {
-    id: Scalars['String']
-    name: Scalars['String']
-    data?: Scalars['JSON']
-    state: JobState
-    timestamp?: Scalars['Float']
-    failedReason?: Scalars['String']
-    processedOn?: Scalars['Float']
-    finishedOn?: Scalars['Float']
-    attemptsMade: Scalars['Float']
-    returnValue?: Scalars['JSON']
-    logs?: Scalars['String'][]
-    stackTrace?: Scalars['String'][]
-    __typename: 'QueueJob'
-}
-
-
-/** Job state in the queue */
-export type JobState = 'COMPLETED' | 'FAILED' | 'ACTIVE' | 'WAITING' | 'DELAYED' | 'PRIORITIZED' | 'WAITING_CHILDREN'
-
-export interface QueueRetentionConfig {
-    completedMaxAge: Scalars['Float']
-    completedMaxCount: Scalars['Float']
-    failedMaxAge: Scalars['Float']
-    failedMaxCount: Scalars['Float']
-    __typename: 'QueueRetentionConfig'
-}
-
-export interface QueueJobsResponse {
-    jobs: QueueJob[]
-    count: Scalars['Float']
-    totalCount: Scalars['Float']
-    hasMore: Scalars['Boolean']
-    retentionConfig: QueueRetentionConfig
-    __typename: 'QueueJobsResponse'
-}
-
-export interface RetryJobsResponse {
-    retriedCount: Scalars['Int']
-    results: JobOperationResult[]
-    __typename: 'RetryJobsResponse'
-}
-
-export interface SystemHealthService {
-    id: HealthIndicatorId
-    label: Scalars['String']
-    status: AdminPanelHealthServiceStatus
-    __typename: 'SystemHealthService'
-}
-
-export type HealthIndicatorId = 'database' | 'redis' | 'worker' | 'connectedAccount' | 'app'
-
-export type AdminPanelHealthServiceStatus = 'OPERATIONAL' | 'OUTAGE'
-
-export interface SystemHealth {
-    services: SystemHealthService[]
-    __typename: 'SystemHealth'
-}
-
-export interface VersionInfo {
-    currentVersion?: Scalars['String']
-    latestVersion: Scalars['String']
-    __typename: 'VersionInfo'
-}
-
-export interface AdminPanelWorkerQueueHealth {
-    id: Scalars['String']
-    queueName: Scalars['String']
-    status: AdminPanelHealthServiceStatus
-    __typename: 'AdminPanelWorkerQueueHealth'
-}
-
-export interface AdminPanelHealthServiceData {
-    id: HealthIndicatorId
-    label: Scalars['String']
-    description: Scalars['String']
-    status: AdminPanelHealthServiceStatus
-    errorMessage?: Scalars['String']
-    details?: Scalars['String']
-    queues?: AdminPanelWorkerQueueHealth[]
-    __typename: 'AdminPanelHealthServiceData'
-}
-
-export interface MaintenanceMode {
-    startAt: Scalars['DateTime']
-    endAt: Scalars['DateTime']
-    link?: Scalars['String']
-    __typename: 'MaintenanceMode'
-}
-
-export interface ModelsDevModelSuggestion {
-    modelId: Scalars['String']
-    name: Scalars['String']
-    inputCostPerMillionTokens: Scalars['Float']
-    outputCostPerMillionTokens: Scalars['Float']
-    cachedInputCostPerMillionTokens?: Scalars['Float']
-    cacheCreationCostPerMillionTokens?: Scalars['Float']
-    contextWindowTokens: Scalars['Float']
-    maxOutputTokens: Scalars['Float']
-    modalities: Scalars['String'][]
-    supportsReasoning: Scalars['Boolean']
-    __typename: 'ModelsDevModelSuggestion'
-}
-
-export interface ModelsDevProviderSuggestion {
-    id: Scalars['String']
-    modelCount: Scalars['Float']
-    npm: Scalars['String']
-    __typename: 'ModelsDevProviderSuggestion'
-}
-
-export interface QueueMetricsDataPoint {
-    x: Scalars['Float']
-    y: Scalars['Float']
-    __typename: 'QueueMetricsDataPoint'
-}
-
-export interface QueueMetricsSeries {
-    id: Scalars['String']
-    data: QueueMetricsDataPoint[]
-    __typename: 'QueueMetricsSeries'
-}
-
-export interface WorkerQueueMetrics {
-    failed: Scalars['Float']
-    completed: Scalars['Float']
-    waiting: Scalars['Float']
-    active: Scalars['Float']
-    delayed: Scalars['Float']
-    failureRate: Scalars['Float']
-    failedData?: Scalars['Float'][]
-    completedData?: Scalars['Float'][]
-    __typename: 'WorkerQueueMetrics'
-}
-
-export interface QueueMetricsData {
-    queueName: Scalars['String']
-    workers: Scalars['Float']
-    timeRange: QueueMetricsTimeRange
-    details?: WorkerQueueMetrics
-    data: QueueMetricsSeries[]
-    __typename: 'QueueMetricsData'
-}
-
-export type QueueMetricsTimeRange = 'SevenDays' | 'OneDay' | 'TwelveHours' | 'FourHours' | 'OneHour'
 
 export interface VersionDistributionEntry {
     version: Scalars['String']
@@ -2919,27 +2617,6 @@ export interface Query {
     getConnectedImapSmtpCaldavAccount: ConnectedImapSmtpCaldavAccount
     getAutoCompleteAddress: AutocompleteResult[]
     getAddressDetails: PlaceDetailsResult
-    userLookupAdminPanel: UserLookup
-    adminPanelRecentUsers: AdminPanelRecentUser[]
-    adminPanelTopWorkspaces: AdminPanelTopWorkspace[]
-    getConfigVariablesGrouped: ConfigVariables
-    getSystemHealthStatus: SystemHealth
-    getIndicatorHealthStatus: AdminPanelHealthServiceData
-    getQueueMetrics: QueueMetricsData
-    versionInfo: VersionInfo
-    getAdminAiModels: AdminAiModels
-    getDatabaseConfigVariable: ConfigVariable
-    getQueueJobs: QueueJobsResponse
-    findAllApplicationRegistrations: ApplicationRegistration[]
-    getAiProviders: Scalars['JSON']
-    getModelsDevProviders: ModelsDevProviderSuggestion[]
-    getModelsDevSuggestions: ModelsDevModelSuggestion[]
-    getAdminAiUsageByWorkspace: UsageBreakdownItem[]
-    getMaintenanceMode?: MaintenanceMode
-    workspaceLookupAdminPanel: UserLookup
-    getAdminWorkspaceChatThreads: AdminWorkspaceChatThread[]
-    getAdminChatThreadMessages: AdminChatThreadMessages
-    findOneAdminApplicationRegistration: ApplicationRegistration
     getUsageAnalytics: UsageAnalytics
     getPostgresCredentials?: PostgresCredentials
     findManyPublicDomains: PublicDomain[]
@@ -3147,23 +2824,6 @@ export interface Mutation {
     startChannelSync: ChannelSyncSuccess
     saveImapSmtpCaldavAccount: ImapSmtpCaldavConnectionSuccess
     updateLabPublicFeatureFlag: FeatureFlag
-    updateWorkspaceFeatureFlag: Scalars['Boolean']
-    setAdminAiModelEnabled: Scalars['Boolean']
-    setAdminAiModelsEnabled: Scalars['Boolean']
-    setAdminAiModelRecommended: Scalars['Boolean']
-    setAdminAiModelsRecommended: Scalars['Boolean']
-    setAdminDefaultAiModel: Scalars['Boolean']
-    createDatabaseConfigVariable: Scalars['Boolean']
-    updateDatabaseConfigVariable: Scalars['Boolean']
-    deleteDatabaseConfigVariable: Scalars['Boolean']
-    retryJobs: RetryJobsResponse
-    deleteJobs: DeleteJobsResponse
-    addAiProvider: Scalars['Boolean']
-    removeAiProvider: Scalars['Boolean']
-    addModelToProvider: Scalars['Boolean']
-    removeModelFromProvider: Scalars['Boolean']
-    setMaintenanceMode: Scalars['Boolean']
-    clearMaintenanceMode: Scalars['Boolean']
     enablePostgresProxy: PostgresCredentials
     disablePostgresProxy: PostgresCredentials
     createPublicDomain: PublicDomain
@@ -3189,8 +2849,6 @@ export interface Mutation {
 }
 
 export type AnalyticsType = 'PAGEVIEW' | 'TRACK'
-
-export type AiModelRole = 'FAST' | 'SMART'
 
 export type WorkspaceMigrationActionType = 'delete' | 'create' | 'update'
 
@@ -4556,95 +4214,6 @@ export interface WorkspaceUrlsGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface UserInfoGenqlSelection{
-    id?: boolean | number
-    email?: boolean | number
-    firstName?: boolean | number
-    lastName?: boolean | number
-    createdAt?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface WorkspaceInfoGenqlSelection{
-    id?: boolean | number
-    name?: boolean | number
-    allowImpersonation?: boolean | number
-    logo?: boolean | number
-    totalUsers?: boolean | number
-    activationStatus?: boolean | number
-    createdAt?: boolean | number
-    workspaceUrls?: WorkspaceUrlsGenqlSelection
-    users?: UserInfoGenqlSelection
-    featureFlags?: FeatureFlagGenqlSelection
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface UserLookupGenqlSelection{
-    user?: UserInfoGenqlSelection
-    workspaces?: WorkspaceInfoGenqlSelection
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface AdminPanelRecentUserGenqlSelection{
-    id?: boolean | number
-    email?: boolean | number
-    firstName?: boolean | number
-    lastName?: boolean | number
-    createdAt?: boolean | number
-    workspaceName?: boolean | number
-    workspaceId?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface AdminPanelTopWorkspaceGenqlSelection{
-    id?: boolean | number
-    name?: boolean | number
-    totalUsers?: boolean | number
-    subdomain?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface AdminWorkspaceChatThreadGenqlSelection{
-    id?: boolean | number
-    title?: boolean | number
-    totalInputTokens?: boolean | number
-    totalOutputTokens?: boolean | number
-    conversationSize?: boolean | number
-    createdAt?: boolean | number
-    updatedAt?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface AdminChatMessagePartGenqlSelection{
-    type?: boolean | number
-    textContent?: boolean | number
-    toolName?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface AdminChatMessageGenqlSelection{
-    id?: boolean | number
-    role?: boolean | number
-    parts?: AdminChatMessagePartGenqlSelection
-    createdAt?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface AdminChatThreadMessagesGenqlSelection{
-    thread?: AdminWorkspaceChatThreadGenqlSelection
-    messages?: AdminChatMessageGenqlSelection
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
 export interface BillingTrialPeriodGenqlSelection{
     duration?: boolean | number
     isCreditCardRequired?: boolean | number
@@ -4722,36 +4291,6 @@ export interface ClientAiModelConfigGenqlSelection{
     contextWindowTokens?: boolean | number
     maxOutputTokens?: boolean | number
     dataResidency?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface AdminAiModelConfigGenqlSelection{
-    modelId?: boolean | number
-    label?: boolean | number
-    modelFamily?: boolean | number
-    modelFamilyLabel?: boolean | number
-    sdkPackage?: boolean | number
-    isAvailable?: boolean | number
-    isAdminEnabled?: boolean | number
-    isDeprecated?: boolean | number
-    isRecommended?: boolean | number
-    contextWindowTokens?: boolean | number
-    maxOutputTokens?: boolean | number
-    inputCostPerMillionTokens?: boolean | number
-    outputCostPerMillionTokens?: boolean | number
-    providerName?: boolean | number
-    providerLabel?: boolean | number
-    name?: boolean | number
-    dataResidency?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface AdminAiModelsGenqlSelection{
-    models?: AdminAiModelConfigGenqlSelection
-    defaultSmartModelId?: boolean | number
-    defaultFastModelId?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -4853,201 +4392,6 @@ export interface UsageBreakdownItemGenqlSelection{
     key?: boolean | number
     label?: boolean | number
     creditsUsed?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface ConfigVariableGenqlSelection{
-    name?: boolean | number
-    description?: boolean | number
-    value?: boolean | number
-    isSensitive?: boolean | number
-    source?: boolean | number
-    isEnvOnly?: boolean | number
-    type?: boolean | number
-    options?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface ConfigVariablesGroupDataGenqlSelection{
-    variables?: ConfigVariableGenqlSelection
-    name?: boolean | number
-    description?: boolean | number
-    isHiddenOnLoad?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface ConfigVariablesGenqlSelection{
-    groups?: ConfigVariablesGroupDataGenqlSelection
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface JobOperationResultGenqlSelection{
-    jobId?: boolean | number
-    success?: boolean | number
-    error?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface DeleteJobsResponseGenqlSelection{
-    deletedCount?: boolean | number
-    results?: JobOperationResultGenqlSelection
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface QueueJobGenqlSelection{
-    id?: boolean | number
-    name?: boolean | number
-    data?: boolean | number
-    state?: boolean | number
-    timestamp?: boolean | number
-    failedReason?: boolean | number
-    processedOn?: boolean | number
-    finishedOn?: boolean | number
-    attemptsMade?: boolean | number
-    returnValue?: boolean | number
-    logs?: boolean | number
-    stackTrace?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface QueueRetentionConfigGenqlSelection{
-    completedMaxAge?: boolean | number
-    completedMaxCount?: boolean | number
-    failedMaxAge?: boolean | number
-    failedMaxCount?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface QueueJobsResponseGenqlSelection{
-    jobs?: QueueJobGenqlSelection
-    count?: boolean | number
-    totalCount?: boolean | number
-    hasMore?: boolean | number
-    retentionConfig?: QueueRetentionConfigGenqlSelection
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface RetryJobsResponseGenqlSelection{
-    retriedCount?: boolean | number
-    results?: JobOperationResultGenqlSelection
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface SystemHealthServiceGenqlSelection{
-    id?: boolean | number
-    label?: boolean | number
-    status?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface SystemHealthGenqlSelection{
-    services?: SystemHealthServiceGenqlSelection
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface VersionInfoGenqlSelection{
-    currentVersion?: boolean | number
-    latestVersion?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface AdminPanelWorkerQueueHealthGenqlSelection{
-    id?: boolean | number
-    queueName?: boolean | number
-    status?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface AdminPanelHealthServiceDataGenqlSelection{
-    id?: boolean | number
-    label?: boolean | number
-    description?: boolean | number
-    status?: boolean | number
-    errorMessage?: boolean | number
-    details?: boolean | number
-    queues?: AdminPanelWorkerQueueHealthGenqlSelection
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface MaintenanceModeGenqlSelection{
-    startAt?: boolean | number
-    endAt?: boolean | number
-    link?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface ModelsDevModelSuggestionGenqlSelection{
-    modelId?: boolean | number
-    name?: boolean | number
-    inputCostPerMillionTokens?: boolean | number
-    outputCostPerMillionTokens?: boolean | number
-    cachedInputCostPerMillionTokens?: boolean | number
-    cacheCreationCostPerMillionTokens?: boolean | number
-    contextWindowTokens?: boolean | number
-    maxOutputTokens?: boolean | number
-    modalities?: boolean | number
-    supportsReasoning?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface ModelsDevProviderSuggestionGenqlSelection{
-    id?: boolean | number
-    modelCount?: boolean | number
-    npm?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface QueueMetricsDataPointGenqlSelection{
-    x?: boolean | number
-    y?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface QueueMetricsSeriesGenqlSelection{
-    id?: boolean | number
-    data?: QueueMetricsDataPointGenqlSelection
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface WorkerQueueMetricsGenqlSelection{
-    failed?: boolean | number
-    completed?: boolean | number
-    waiting?: boolean | number
-    active?: boolean | number
-    delayed?: boolean | number
-    failureRate?: boolean | number
-    failedData?: boolean | number
-    completedData?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface QueueMetricsDataGenqlSelection{
-    queueName?: boolean | number
-    workers?: boolean | number
-    timeRange?: boolean | number
-    details?: WorkerQueueMetricsGenqlSelection
-    data?: QueueMetricsSeriesGenqlSelection
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -6299,27 +5643,6 @@ export interface QueryGenqlSelection{
     getConnectedImapSmtpCaldavAccount?: (ConnectedImapSmtpCaldavAccountGenqlSelection & { __args: {id: Scalars['UUID']} })
     getAutoCompleteAddress?: (AutocompleteResultGenqlSelection & { __args: {address: Scalars['String'], token: Scalars['String'], country?: (Scalars['String'] | null), isFieldCity?: (Scalars['Boolean'] | null)} })
     getAddressDetails?: (PlaceDetailsResultGenqlSelection & { __args: {placeId: Scalars['String'], token: Scalars['String']} })
-    userLookupAdminPanel?: (UserLookupGenqlSelection & { __args: {userIdentifier: Scalars['String']} })
-    adminPanelRecentUsers?: (AdminPanelRecentUserGenqlSelection & { __args?: {searchTerm?: (Scalars['String'] | null)} })
-    adminPanelTopWorkspaces?: (AdminPanelTopWorkspaceGenqlSelection & { __args?: {searchTerm?: (Scalars['String'] | null)} })
-    getConfigVariablesGrouped?: ConfigVariablesGenqlSelection
-    getSystemHealthStatus?: SystemHealthGenqlSelection
-    getIndicatorHealthStatus?: (AdminPanelHealthServiceDataGenqlSelection & { __args: {indicatorId: HealthIndicatorId} })
-    getQueueMetrics?: (QueueMetricsDataGenqlSelection & { __args: {queueName: Scalars['String'], timeRange?: (QueueMetricsTimeRange | null)} })
-    versionInfo?: VersionInfoGenqlSelection
-    getAdminAiModels?: AdminAiModelsGenqlSelection
-    getDatabaseConfigVariable?: (ConfigVariableGenqlSelection & { __args: {key: Scalars['String']} })
-    getQueueJobs?: (QueueJobsResponseGenqlSelection & { __args: {queueName: Scalars['String'], state: JobState, limit?: (Scalars['Int'] | null), offset?: (Scalars['Int'] | null)} })
-    findAllApplicationRegistrations?: ApplicationRegistrationGenqlSelection
-    getAiProviders?: boolean | number
-    getModelsDevProviders?: ModelsDevProviderSuggestionGenqlSelection
-    getModelsDevSuggestions?: (ModelsDevModelSuggestionGenqlSelection & { __args: {providerType: Scalars['String']} })
-    getAdminAiUsageByWorkspace?: (UsageBreakdownItemGenqlSelection & { __args?: {periodStart?: (Scalars['DateTime'] | null), periodEnd?: (Scalars['DateTime'] | null)} })
-    getMaintenanceMode?: MaintenanceModeGenqlSelection
-    workspaceLookupAdminPanel?: (UserLookupGenqlSelection & { __args: {workspaceId: Scalars['UUID']} })
-    getAdminWorkspaceChatThreads?: (AdminWorkspaceChatThreadGenqlSelection & { __args: {workspaceId: Scalars['UUID']} })
-    getAdminChatThreadMessages?: (AdminChatThreadMessagesGenqlSelection & { __args: {threadId: Scalars['UUID']} })
-    findOneAdminApplicationRegistration?: (ApplicationRegistrationGenqlSelection & { __args: {id: Scalars['String']} })
     getUsageAnalytics?: (UsageAnalyticsGenqlSelection & { __args?: {input?: (UsageAnalyticsInput | null)} })
     getPostgresCredentials?: PostgresCredentialsGenqlSelection
     findManyPublicDomains?: PublicDomainGenqlSelection
@@ -6546,23 +5869,6 @@ export interface MutationGenqlSelection{
     startChannelSync?: (ChannelSyncSuccessGenqlSelection & { __args: {connectedAccountId: Scalars['UUID']} })
     saveImapSmtpCaldavAccount?: (ImapSmtpCaldavConnectionSuccessGenqlSelection & { __args: {accountOwnerId: Scalars['UUID'], handle: Scalars['String'], connectionParameters: EmailAccountConnectionParameters, id?: (Scalars['UUID'] | null)} })
     updateLabPublicFeatureFlag?: (FeatureFlagGenqlSelection & { __args: {input: UpdateLabPublicFeatureFlagInput} })
-    updateWorkspaceFeatureFlag?: { __args: {workspaceId: Scalars['UUID'], featureFlag: Scalars['String'], value: Scalars['Boolean']} }
-    setAdminAiModelEnabled?: { __args: {modelId: Scalars['String'], enabled: Scalars['Boolean']} }
-    setAdminAiModelsEnabled?: { __args: {modelIds: Scalars['String'][], enabled: Scalars['Boolean']} }
-    setAdminAiModelRecommended?: { __args: {modelId: Scalars['String'], recommended: Scalars['Boolean']} }
-    setAdminAiModelsRecommended?: { __args: {modelIds: Scalars['String'][], recommended: Scalars['Boolean']} }
-    setAdminDefaultAiModel?: { __args: {role: AiModelRole, modelId: Scalars['String']} }
-    createDatabaseConfigVariable?: { __args: {key: Scalars['String'], value: Scalars['JSON']} }
-    updateDatabaseConfigVariable?: { __args: {key: Scalars['String'], value: Scalars['JSON']} }
-    deleteDatabaseConfigVariable?: { __args: {key: Scalars['String']} }
-    retryJobs?: (RetryJobsResponseGenqlSelection & { __args: {queueName: Scalars['String'], jobIds: Scalars['String'][]} })
-    deleteJobs?: (DeleteJobsResponseGenqlSelection & { __args: {queueName: Scalars['String'], jobIds: Scalars['String'][]} })
-    addAiProvider?: { __args: {providerName: Scalars['String'], providerConfig: Scalars['JSON']} }
-    removeAiProvider?: { __args: {providerName: Scalars['String']} }
-    addModelToProvider?: { __args: {providerName: Scalars['String'], modelConfig: Scalars['JSON']} }
-    removeModelFromProvider?: { __args: {providerName: Scalars['String'], modelName: Scalars['String']} }
-    setMaintenanceMode?: { __args: {startAt: Scalars['DateTime'], endAt: Scalars['DateTime'], link?: (Scalars['String'] | null)} }
-    clearMaintenanceMode?: boolean | number
     enablePostgresProxy?: PostgresCredentialsGenqlSelection
     disablePostgresProxy?: PostgresCredentialsGenqlSelection
     createPublicDomain?: (PublicDomainGenqlSelection & { __args: {domain: Scalars['String']} })
@@ -7759,78 +7065,6 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     
 
 
-    const UserInfo_possibleTypes: string[] = ['UserInfo']
-    export const isUserInfo = (obj?: { __typename?: any } | null): obj is UserInfo => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isUserInfo"')
-      return UserInfo_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const WorkspaceInfo_possibleTypes: string[] = ['WorkspaceInfo']
-    export const isWorkspaceInfo = (obj?: { __typename?: any } | null): obj is WorkspaceInfo => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isWorkspaceInfo"')
-      return WorkspaceInfo_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const UserLookup_possibleTypes: string[] = ['UserLookup']
-    export const isUserLookup = (obj?: { __typename?: any } | null): obj is UserLookup => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isUserLookup"')
-      return UserLookup_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const AdminPanelRecentUser_possibleTypes: string[] = ['AdminPanelRecentUser']
-    export const isAdminPanelRecentUser = (obj?: { __typename?: any } | null): obj is AdminPanelRecentUser => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isAdminPanelRecentUser"')
-      return AdminPanelRecentUser_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const AdminPanelTopWorkspace_possibleTypes: string[] = ['AdminPanelTopWorkspace']
-    export const isAdminPanelTopWorkspace = (obj?: { __typename?: any } | null): obj is AdminPanelTopWorkspace => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isAdminPanelTopWorkspace"')
-      return AdminPanelTopWorkspace_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const AdminWorkspaceChatThread_possibleTypes: string[] = ['AdminWorkspaceChatThread']
-    export const isAdminWorkspaceChatThread = (obj?: { __typename?: any } | null): obj is AdminWorkspaceChatThread => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isAdminWorkspaceChatThread"')
-      return AdminWorkspaceChatThread_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const AdminChatMessagePart_possibleTypes: string[] = ['AdminChatMessagePart']
-    export const isAdminChatMessagePart = (obj?: { __typename?: any } | null): obj is AdminChatMessagePart => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isAdminChatMessagePart"')
-      return AdminChatMessagePart_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const AdminChatMessage_possibleTypes: string[] = ['AdminChatMessage']
-    export const isAdminChatMessage = (obj?: { __typename?: any } | null): obj is AdminChatMessage => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isAdminChatMessage"')
-      return AdminChatMessage_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const AdminChatThreadMessages_possibleTypes: string[] = ['AdminChatThreadMessages']
-    export const isAdminChatThreadMessages = (obj?: { __typename?: any } | null): obj is AdminChatThreadMessages => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isAdminChatThreadMessages"')
-      return AdminChatThreadMessages_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
     const BillingTrialPeriod_possibleTypes: string[] = ['BillingTrialPeriod']
     export const isBillingTrialPeriod = (obj?: { __typename?: any } | null): obj is BillingTrialPeriod => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isBillingTrialPeriod"')
@@ -7891,22 +7125,6 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     export const isClientAiModelConfig = (obj?: { __typename?: any } | null): obj is ClientAiModelConfig => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isClientAiModelConfig"')
       return ClientAiModelConfig_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const AdminAiModelConfig_possibleTypes: string[] = ['AdminAiModelConfig']
-    export const isAdminAiModelConfig = (obj?: { __typename?: any } | null): obj is AdminAiModelConfig => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isAdminAiModelConfig"')
-      return AdminAiModelConfig_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const AdminAiModels_possibleTypes: string[] = ['AdminAiModels']
-    export const isAdminAiModels = (obj?: { __typename?: any } | null): obj is AdminAiModels => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isAdminAiModels"')
-      return AdminAiModels_possibleTypes.includes(obj.__typename)
     }
     
 
@@ -7987,174 +7205,6 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     export const isUsageBreakdownItem = (obj?: { __typename?: any } | null): obj is UsageBreakdownItem => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isUsageBreakdownItem"')
       return UsageBreakdownItem_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const ConfigVariable_possibleTypes: string[] = ['ConfigVariable']
-    export const isConfigVariable = (obj?: { __typename?: any } | null): obj is ConfigVariable => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isConfigVariable"')
-      return ConfigVariable_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const ConfigVariablesGroupData_possibleTypes: string[] = ['ConfigVariablesGroupData']
-    export const isConfigVariablesGroupData = (obj?: { __typename?: any } | null): obj is ConfigVariablesGroupData => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isConfigVariablesGroupData"')
-      return ConfigVariablesGroupData_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const ConfigVariables_possibleTypes: string[] = ['ConfigVariables']
-    export const isConfigVariables = (obj?: { __typename?: any } | null): obj is ConfigVariables => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isConfigVariables"')
-      return ConfigVariables_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const JobOperationResult_possibleTypes: string[] = ['JobOperationResult']
-    export const isJobOperationResult = (obj?: { __typename?: any } | null): obj is JobOperationResult => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isJobOperationResult"')
-      return JobOperationResult_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const DeleteJobsResponse_possibleTypes: string[] = ['DeleteJobsResponse']
-    export const isDeleteJobsResponse = (obj?: { __typename?: any } | null): obj is DeleteJobsResponse => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isDeleteJobsResponse"')
-      return DeleteJobsResponse_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const QueueJob_possibleTypes: string[] = ['QueueJob']
-    export const isQueueJob = (obj?: { __typename?: any } | null): obj is QueueJob => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isQueueJob"')
-      return QueueJob_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const QueueRetentionConfig_possibleTypes: string[] = ['QueueRetentionConfig']
-    export const isQueueRetentionConfig = (obj?: { __typename?: any } | null): obj is QueueRetentionConfig => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isQueueRetentionConfig"')
-      return QueueRetentionConfig_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const QueueJobsResponse_possibleTypes: string[] = ['QueueJobsResponse']
-    export const isQueueJobsResponse = (obj?: { __typename?: any } | null): obj is QueueJobsResponse => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isQueueJobsResponse"')
-      return QueueJobsResponse_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const RetryJobsResponse_possibleTypes: string[] = ['RetryJobsResponse']
-    export const isRetryJobsResponse = (obj?: { __typename?: any } | null): obj is RetryJobsResponse => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isRetryJobsResponse"')
-      return RetryJobsResponse_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const SystemHealthService_possibleTypes: string[] = ['SystemHealthService']
-    export const isSystemHealthService = (obj?: { __typename?: any } | null): obj is SystemHealthService => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isSystemHealthService"')
-      return SystemHealthService_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const SystemHealth_possibleTypes: string[] = ['SystemHealth']
-    export const isSystemHealth = (obj?: { __typename?: any } | null): obj is SystemHealth => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isSystemHealth"')
-      return SystemHealth_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const VersionInfo_possibleTypes: string[] = ['VersionInfo']
-    export const isVersionInfo = (obj?: { __typename?: any } | null): obj is VersionInfo => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isVersionInfo"')
-      return VersionInfo_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const AdminPanelWorkerQueueHealth_possibleTypes: string[] = ['AdminPanelWorkerQueueHealth']
-    export const isAdminPanelWorkerQueueHealth = (obj?: { __typename?: any } | null): obj is AdminPanelWorkerQueueHealth => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isAdminPanelWorkerQueueHealth"')
-      return AdminPanelWorkerQueueHealth_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const AdminPanelHealthServiceData_possibleTypes: string[] = ['AdminPanelHealthServiceData']
-    export const isAdminPanelHealthServiceData = (obj?: { __typename?: any } | null): obj is AdminPanelHealthServiceData => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isAdminPanelHealthServiceData"')
-      return AdminPanelHealthServiceData_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const MaintenanceMode_possibleTypes: string[] = ['MaintenanceMode']
-    export const isMaintenanceMode = (obj?: { __typename?: any } | null): obj is MaintenanceMode => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isMaintenanceMode"')
-      return MaintenanceMode_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const ModelsDevModelSuggestion_possibleTypes: string[] = ['ModelsDevModelSuggestion']
-    export const isModelsDevModelSuggestion = (obj?: { __typename?: any } | null): obj is ModelsDevModelSuggestion => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isModelsDevModelSuggestion"')
-      return ModelsDevModelSuggestion_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const ModelsDevProviderSuggestion_possibleTypes: string[] = ['ModelsDevProviderSuggestion']
-    export const isModelsDevProviderSuggestion = (obj?: { __typename?: any } | null): obj is ModelsDevProviderSuggestion => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isModelsDevProviderSuggestion"')
-      return ModelsDevProviderSuggestion_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const QueueMetricsDataPoint_possibleTypes: string[] = ['QueueMetricsDataPoint']
-    export const isQueueMetricsDataPoint = (obj?: { __typename?: any } | null): obj is QueueMetricsDataPoint => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isQueueMetricsDataPoint"')
-      return QueueMetricsDataPoint_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const QueueMetricsSeries_possibleTypes: string[] = ['QueueMetricsSeries']
-    export const isQueueMetricsSeries = (obj?: { __typename?: any } | null): obj is QueueMetricsSeries => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isQueueMetricsSeries"')
-      return QueueMetricsSeries_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const WorkerQueueMetrics_possibleTypes: string[] = ['WorkerQueueMetrics']
-    export const isWorkerQueueMetrics = (obj?: { __typename?: any } | null): obj is WorkerQueueMetrics => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isWorkerQueueMetrics"')
-      return WorkerQueueMetrics_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const QueueMetricsData_possibleTypes: string[] = ['QueueMetricsData']
-    export const isQueueMetricsData = (obj?: { __typename?: any } | null): obj is QueueMetricsData => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isQueueMetricsData"')
-      return QueueMetricsData_possibleTypes.includes(obj.__typename)
     }
     
 
@@ -9522,12 +8572,6 @@ export const enumFeatureFlagKey = {
    IS_DATASOURCE_MIGRATED: 'IS_DATASOURCE_MIGRATED' as const
 }
 
-export const enumAgentMessageRole = {
-   SYSTEM: 'SYSTEM' as const,
-   USER: 'USER' as const,
-   ASSISTANT: 'ASSISTANT' as const
-}
-
 export const enumIdentityProviderType = {
    OIDC: 'OIDC' as const,
    SAML: 'SAML' as const
@@ -9555,74 +8599,6 @@ export const enumSupportDriver = {
 export const enumCaptchaDriverType = {
    GOOGLE_RECAPTCHA: 'GOOGLE_RECAPTCHA' as const,
    TURNSTILE: 'TURNSTILE' as const
-}
-
-export const enumConfigSource = {
-   ENVIRONMENT: 'ENVIRONMENT' as const,
-   DATABASE: 'DATABASE' as const,
-   DEFAULT: 'DEFAULT' as const
-}
-
-export const enumConfigVariableType = {
-   BOOLEAN: 'BOOLEAN' as const,
-   NUMBER: 'NUMBER' as const,
-   ARRAY: 'ARRAY' as const,
-   STRING: 'STRING' as const,
-   ENUM: 'ENUM' as const,
-   JSON: 'JSON' as const
-}
-
-export const enumConfigVariablesGroup = {
-   SERVER_CONFIG: 'SERVER_CONFIG' as const,
-   RATE_LIMITING: 'RATE_LIMITING' as const,
-   STORAGE_CONFIG: 'STORAGE_CONFIG' as const,
-   GOOGLE_AUTH: 'GOOGLE_AUTH' as const,
-   MICROSOFT_AUTH: 'MICROSOFT_AUTH' as const,
-   EMAIL_SETTINGS: 'EMAIL_SETTINGS' as const,
-   LOGGING: 'LOGGING' as const,
-   ADVANCED_SETTINGS: 'ADVANCED_SETTINGS' as const,
-   BILLING_CONFIG: 'BILLING_CONFIG' as const,
-   CAPTCHA_CONFIG: 'CAPTCHA_CONFIG' as const,
-   CLOUDFLARE_CONFIG: 'CLOUDFLARE_CONFIG' as const,
-   LLM: 'LLM' as const,
-   LOGIC_FUNCTION_CONFIG: 'LOGIC_FUNCTION_CONFIG' as const,
-   CODE_INTERPRETER_CONFIG: 'CODE_INTERPRETER_CONFIG' as const,
-   SSL: 'SSL' as const,
-   SUPPORT_CHAT_CONFIG: 'SUPPORT_CHAT_CONFIG' as const,
-   ANALYTICS_CONFIG: 'ANALYTICS_CONFIG' as const,
-   TOKENS_DURATION: 'TOKENS_DURATION' as const,
-   AWS_SES_SETTINGS: 'AWS_SES_SETTINGS' as const
-}
-
-export const enumJobState = {
-   COMPLETED: 'COMPLETED' as const,
-   FAILED: 'FAILED' as const,
-   ACTIVE: 'ACTIVE' as const,
-   WAITING: 'WAITING' as const,
-   DELAYED: 'DELAYED' as const,
-   PRIORITIZED: 'PRIORITIZED' as const,
-   WAITING_CHILDREN: 'WAITING_CHILDREN' as const
-}
-
-export const enumHealthIndicatorId = {
-   database: 'database' as const,
-   redis: 'redis' as const,
-   worker: 'worker' as const,
-   connectedAccount: 'connectedAccount' as const,
-   app: 'app' as const
-}
-
-export const enumAdminPanelHealthServiceStatus = {
-   OPERATIONAL: 'OPERATIONAL' as const,
-   OUTAGE: 'OUTAGE' as const
-}
-
-export const enumQueueMetricsTimeRange = {
-   SevenDays: 'SevenDays' as const,
-   OneDay: 'OneDay' as const,
-   TwelveHours: 'TwelveHours' as const,
-   FourHours: 'FourHours' as const,
-   OneHour: 'OneHour' as const
 }
 
 export const enumRelationType = {
@@ -9871,11 +8847,6 @@ export const enumUsageOperationType = {
 export const enumAnalyticsType = {
    PAGEVIEW: 'PAGEVIEW' as const,
    TRACK: 'TRACK' as const
-}
-
-export const enumAiModelRole = {
-   FAST: 'FAST' as const,
-   SMART: 'SMART' as const
 }
 
 export const enumWorkspaceMigrationActionType = {

@@ -1607,84 +1607,6 @@ type WorkspaceUrls {
   subdomainUrl: String!
 }
 
-type UserInfo {
-  id: UUID!
-  email: String!
-  firstName: String
-  lastName: String
-  createdAt: DateTime!
-}
-
-type WorkspaceInfo {
-  id: UUID!
-  name: String!
-  allowImpersonation: Boolean!
-  logo: String
-  totalUsers: Float!
-  activationStatus: WorkspaceActivationStatus!
-  createdAt: DateTime!
-  workspaceUrls: WorkspaceUrls!
-  users: [UserInfo!]!
-  featureFlags: [FeatureFlag!]!
-}
-
-type UserLookup {
-  user: UserInfo!
-  workspaces: [WorkspaceInfo!]!
-}
-
-type AdminPanelRecentUser {
-  id: UUID!
-  email: String!
-  firstName: String
-  lastName: String
-  createdAt: DateTime!
-  workspaceName: String
-  workspaceId: UUID
-}
-
-type AdminPanelTopWorkspace {
-  id: UUID!
-  name: String!
-  totalUsers: Int!
-  subdomain: String!
-}
-
-type AdminWorkspaceChatThread {
-  id: UUID!
-  title: String
-  totalInputTokens: Int!
-  totalOutputTokens: Int!
-  conversationSize: Int!
-  createdAt: DateTime!
-  updatedAt: DateTime!
-}
-
-type AdminChatMessagePart {
-  type: String!
-  textContent: String
-  toolName: String
-}
-
-type AdminChatMessage {
-  id: UUID!
-  role: AgentMessageRole!
-  parts: [AdminChatMessagePart!]!
-  createdAt: DateTime!
-}
-
-"""Role of a message in a chat thread"""
-enum AgentMessageRole {
-  SYSTEM
-  USER
-  ASSISTANT
-}
-
-type AdminChatThreadMessages {
-  thread: AdminWorkspaceChatThread!
-  messages: [AdminChatMessage!]!
-}
-
 type BillingTrialPeriod {
   duration: Float!
   isCreditCardRequired: Boolean!
@@ -1767,32 +1689,6 @@ enum ModelFamily {
   GEMINI
   MISTRAL
   GROK
-}
-
-type AdminAiModelConfig {
-  modelId: String!
-  label: String!
-  modelFamily: ModelFamily
-  modelFamilyLabel: String
-  sdkPackage: String
-  isAvailable: Boolean!
-  isAdminEnabled: Boolean!
-  isDeprecated: Boolean
-  isRecommended: Boolean
-  contextWindowTokens: Float
-  maxOutputTokens: Float
-  inputCostPerMillionTokens: Float
-  outputCostPerMillionTokens: Float
-  providerName: String
-  providerLabel: String
-  name: String
-  dataResidency: String
-}
-
-type AdminAiModels {
-  models: [AdminAiModelConfig!]!
-  defaultSmartModelId: String
-  defaultFastModelId: String
 }
 
 type Billing {
@@ -1884,228 +1780,6 @@ type UsageBreakdownItem {
   key: String!
   label: String
   creditsUsed: Float!
-}
-
-type ConfigVariable {
-  name: String!
-  description: String!
-  value: JSON
-  isSensitive: Boolean!
-  source: ConfigSource!
-  isEnvOnly: Boolean!
-  type: ConfigVariableType!
-  options: JSON
-}
-
-enum ConfigSource {
-  ENVIRONMENT
-  DATABASE
-  DEFAULT
-}
-
-enum ConfigVariableType {
-  BOOLEAN
-  NUMBER
-  ARRAY
-  STRING
-  ENUM
-  JSON
-}
-
-type ConfigVariablesGroupData {
-  variables: [ConfigVariable!]!
-  name: ConfigVariablesGroup!
-  description: String!
-  isHiddenOnLoad: Boolean!
-}
-
-enum ConfigVariablesGroup {
-  SERVER_CONFIG
-  RATE_LIMITING
-  STORAGE_CONFIG
-  GOOGLE_AUTH
-  MICROSOFT_AUTH
-  EMAIL_SETTINGS
-  LOGGING
-  ADVANCED_SETTINGS
-  BILLING_CONFIG
-  CAPTCHA_CONFIG
-  CLOUDFLARE_CONFIG
-  LLM
-  LOGIC_FUNCTION_CONFIG
-  CODE_INTERPRETER_CONFIG
-  SSL
-  SUPPORT_CHAT_CONFIG
-  ANALYTICS_CONFIG
-  TOKENS_DURATION
-  AWS_SES_SETTINGS
-}
-
-type ConfigVariables {
-  groups: [ConfigVariablesGroupData!]!
-}
-
-type JobOperationResult {
-  jobId: String!
-  success: Boolean!
-  error: String
-}
-
-type DeleteJobsResponse {
-  deletedCount: Int!
-  results: [JobOperationResult!]!
-}
-
-type QueueJob {
-  id: String!
-  name: String!
-  data: JSON
-  state: JobState!
-  timestamp: Float
-  failedReason: String
-  processedOn: Float
-  finishedOn: Float
-  attemptsMade: Float!
-  returnValue: JSON
-  logs: [String!]
-  stackTrace: [String!]
-}
-
-"""Job state in the queue"""
-enum JobState {
-  COMPLETED
-  FAILED
-  ACTIVE
-  WAITING
-  DELAYED
-  PRIORITIZED
-  WAITING_CHILDREN
-}
-
-type QueueRetentionConfig {
-  completedMaxAge: Float!
-  completedMaxCount: Float!
-  failedMaxAge: Float!
-  failedMaxCount: Float!
-}
-
-type QueueJobsResponse {
-  jobs: [QueueJob!]!
-  count: Float!
-  totalCount: Float!
-  hasMore: Boolean!
-  retentionConfig: QueueRetentionConfig!
-}
-
-type RetryJobsResponse {
-  retriedCount: Int!
-  results: [JobOperationResult!]!
-}
-
-type SystemHealthService {
-  id: HealthIndicatorId!
-  label: String!
-  status: AdminPanelHealthServiceStatus!
-}
-
-enum HealthIndicatorId {
-  database
-  redis
-  worker
-  connectedAccount
-  app
-}
-
-enum AdminPanelHealthServiceStatus {
-  OPERATIONAL
-  OUTAGE
-}
-
-type SystemHealth {
-  services: [SystemHealthService!]!
-}
-
-type VersionInfo {
-  currentVersion: String
-  latestVersion: String!
-}
-
-type AdminPanelWorkerQueueHealth {
-  id: String!
-  queueName: String!
-  status: AdminPanelHealthServiceStatus!
-}
-
-type AdminPanelHealthServiceData {
-  id: HealthIndicatorId!
-  label: String!
-  description: String!
-  status: AdminPanelHealthServiceStatus!
-  errorMessage: String
-  details: String
-  queues: [AdminPanelWorkerQueueHealth!]
-}
-
-type MaintenanceMode {
-  startAt: DateTime!
-  endAt: DateTime!
-  link: String
-}
-
-type ModelsDevModelSuggestion {
-  modelId: String!
-  name: String!
-  inputCostPerMillionTokens: Float!
-  outputCostPerMillionTokens: Float!
-  cachedInputCostPerMillionTokens: Float
-  cacheCreationCostPerMillionTokens: Float
-  contextWindowTokens: Float!
-  maxOutputTokens: Float!
-  modalities: [String!]!
-  supportsReasoning: Boolean!
-}
-
-type ModelsDevProviderSuggestion {
-  id: String!
-  modelCount: Float!
-  npm: String!
-}
-
-type QueueMetricsDataPoint {
-  x: Float!
-  y: Float!
-}
-
-type QueueMetricsSeries {
-  id: String!
-  data: [QueueMetricsDataPoint!]!
-}
-
-type WorkerQueueMetrics {
-  failed: Float!
-  completed: Float!
-  waiting: Float!
-  active: Float!
-  delayed: Float!
-  failureRate: Float!
-  failedData: [Float!]
-  completedData: [Float!]
-}
-
-type QueueMetricsData {
-  queueName: String!
-  workers: Float!
-  timeRange: QueueMetricsTimeRange!
-  details: WorkerQueueMetrics
-  data: [QueueMetricsSeries!]!
-}
-
-enum QueueMetricsTimeRange {
-  SevenDays
-  OneDay
-  TwelveHours
-  FourHours
-  OneHour
 }
 
 type VersionDistributionEntry {
@@ -3356,27 +3030,6 @@ type Query {
   getConnectedImapSmtpCaldavAccount(id: UUID!): ConnectedImapSmtpCaldavAccount!
   getAutoCompleteAddress(address: String!, token: String!, country: String, isFieldCity: Boolean): [AutocompleteResult!]!
   getAddressDetails(placeId: String!, token: String!): PlaceDetailsResult!
-  userLookupAdminPanel(userIdentifier: String!): UserLookup!
-  adminPanelRecentUsers(searchTerm: String = ""): [AdminPanelRecentUser!]!
-  adminPanelTopWorkspaces(searchTerm: String = ""): [AdminPanelTopWorkspace!]!
-  getConfigVariablesGrouped: ConfigVariables!
-  getSystemHealthStatus: SystemHealth!
-  getIndicatorHealthStatus(indicatorId: HealthIndicatorId!): AdminPanelHealthServiceData!
-  getQueueMetrics(queueName: String!, timeRange: QueueMetricsTimeRange = OneHour): QueueMetricsData!
-  versionInfo: VersionInfo!
-  getAdminAiModels: AdminAiModels!
-  getDatabaseConfigVariable(key: String!): ConfigVariable!
-  getQueueJobs(queueName: String!, state: JobState!, limit: Int = 50, offset: Int = 0): QueueJobsResponse!
-  findAllApplicationRegistrations: [ApplicationRegistration!]!
-  getAiProviders: JSON!
-  getModelsDevProviders: [ModelsDevProviderSuggestion!]!
-  getModelsDevSuggestions(providerType: String!): [ModelsDevModelSuggestion!]!
-  getAdminAiUsageByWorkspace(periodStart: DateTime, periodEnd: DateTime): [UsageBreakdownItem!]!
-  getMaintenanceMode: MaintenanceMode
-  workspaceLookupAdminPanel(workspaceId: UUID!): UserLookup!
-  getAdminWorkspaceChatThreads(workspaceId: UUID!): [AdminWorkspaceChatThread!]!
-  getAdminChatThreadMessages(threadId: UUID!): AdminChatThreadMessages!
-  findOneAdminApplicationRegistration(id: String!): ApplicationRegistration!
   getUsageAnalytics(input: UsageAnalyticsInput): UsageAnalytics!
   getPostgresCredentials: PostgresCredentials
   findManyPublicDomains: [PublicDomain!]!
@@ -3691,23 +3344,6 @@ type Mutation {
   startChannelSync(connectedAccountId: UUID!): ChannelSyncSuccess!
   saveImapSmtpCaldavAccount(accountOwnerId: UUID!, handle: String!, connectionParameters: EmailAccountConnectionParameters!, id: UUID): ImapSmtpCaldavConnectionSuccess!
   updateLabPublicFeatureFlag(input: UpdateLabPublicFeatureFlagInput!): FeatureFlag!
-  updateWorkspaceFeatureFlag(workspaceId: UUID!, featureFlag: String!, value: Boolean!): Boolean!
-  setAdminAiModelEnabled(modelId: String!, enabled: Boolean!): Boolean!
-  setAdminAiModelsEnabled(modelIds: [String!]!, enabled: Boolean!): Boolean!
-  setAdminAiModelRecommended(modelId: String!, recommended: Boolean!): Boolean!
-  setAdminAiModelsRecommended(modelIds: [String!]!, recommended: Boolean!): Boolean!
-  setAdminDefaultAiModel(role: AiModelRole!, modelId: String!): Boolean!
-  createDatabaseConfigVariable(key: String!, value: JSON!): Boolean!
-  updateDatabaseConfigVariable(key: String!, value: JSON!): Boolean!
-  deleteDatabaseConfigVariable(key: String!): Boolean!
-  retryJobs(queueName: String!, jobIds: [String!]!): RetryJobsResponse!
-  deleteJobs(queueName: String!, jobIds: [String!]!): DeleteJobsResponse!
-  addAiProvider(providerName: String!, providerConfig: JSON!): Boolean!
-  removeAiProvider(providerName: String!): Boolean!
-  addModelToProvider(providerName: String!, modelConfig: JSON!): Boolean!
-  removeModelFromProvider(providerName: String!, modelName: String!): Boolean!
-  setMaintenanceMode(startAt: DateTime!, endAt: DateTime!, link: String): Boolean!
-  clearMaintenanceMode: Boolean!
   enablePostgresProxy: PostgresCredentials!
   disablePostgresProxy: PostgresCredentials!
   createPublicDomain(domain: String!): PublicDomain!
@@ -4706,11 +4342,6 @@ input ConnectionParameters {
 input UpdateLabPublicFeatureFlagInput {
   publicFeatureFlag: String!
   value: Boolean!
-}
-
-enum AiModelRole {
-  FAST
-  SMART
 }
 
 input CreateOneAppTokenInput {
