@@ -1,7 +1,9 @@
 import {
   Body,
   Controller,
+  Get,
   HttpCode,
+  Param,
   Post,
   Req,
   Res,
@@ -154,6 +156,8 @@ export class OAuthRegistrationController {
     res.setHeader('Cache-Control', 'no-store');
     res.setHeader('Pragma', 'no-cache');
 
+    const issuer = `${req.protocol}://${req.get('host')}`;
+
     return {
       client_id: clientId,
       client_name: body.client_name,
@@ -163,6 +167,55 @@ export class OAuthRegistrationController {
       token_endpoint_auth_method: tokenEndpointAuthMethod,
       scope: requestedScopes.join(' '),
       client_id_issued_at: Math.floor(Date.now() / 1000),
+      // RFC 7591 §3.2.1 / RFC 7592: pointer at the registration's management
+      // endpoint. Some OAuth clients (notably Claude.ai's custom-connector
+      // backend) reject DCR responses that omit this field even though the
+      // RFC marks it OPTIONAL. Matching behavior of Linear / Sentry / other
+      // public MCP servers that Claude.ai connects to successfully.
+      registration_client_uri: `${issuer}/oauth/register/${clientId}`,
+    };
+  }
+
+  // RFC 7592 §2.1: minimal read-back of a dynamically registered client.
+  // We issue no `registration_access_token`, so this endpoint exposes only
+  // public metadata (same fields returned from the original POST). Returns
+  // 404 for unknown or non-dynamic clients. No workspace/user authentication
+  // is required because the client_id is an unguessable UUID and the
+  // returned data is already public (client_name, redirect_uris, scopes).
+  @Get('register/:clientId')
+  @UseGuards(PublicEndpointGuard, NoPermissionGuard)
+  async readRegistration(
+    @Param('clientId') clientId: string,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const registration =
+      await this.applicationRegistrationRepository.findOne({
+        where: {
+          oAuthClientId: clientId,
+          sourceType: ApplicationRegistrationSourceType.OAUTH_ONLY,
+        },
+      });
+
+    if (!registration) {
+      res.status(404);
+
+      return {
+        error: 'invalid_client',
+        error_description: 'Client not found',
+      };
+    }
+
+    res.setHeader('Cache-Control', 'no-store');
+    res.setHeader('Pragma', 'no-cache');
+
+    return {
+      client_id: registration.oAuthClientId,
+      client_name: registration.name,
+      redirect_uris: registration.oAuthRedirectUris,
+      grant_types: ['authorization_code', 'refresh_token'],
+      response_types: ['code'],
+      token_endpoint_auth_method: 'none',
+      scope: registration.oAuthScopes.join(' '),
     };
   }
 
