@@ -47,7 +47,10 @@ export const SettingsLogicFunctionDetail = () => {
   const workspaceCustomApplicationId =
     currentWorkspace?.workspaceCustomApplication?.id;
 
-  const isManaged = applicationId !== workspaceCustomApplicationId;
+  const isApplicationFunction = applicationId !== '';
+
+  const isReadonly =
+    isApplicationFunction && applicationId !== workspaceCustomApplicationId;
 
   const instanceId = `${LOGIC_FUNCTION_DETAIL_ID}-${logicFunctionId}`;
 
@@ -74,8 +77,8 @@ export const SettingsLogicFunctionDetail = () => {
       id: 'editor',
       title: t`Editor`,
       Icon: IconCode,
-      disabled: isManaged,
-      hide: isManaged,
+      disabled: isReadonly,
+      hide: isReadonly,
     },
     { id: 'settings', title: t`Settings`, Icon: IconSettings },
     { id: 'test', title: t`Test`, Icon: IconPlayerPlay },
@@ -139,6 +142,7 @@ export const SettingsLogicFunctionDetail = () => {
           <SettingsLogicFunctionLabelContainer
             value={formValues.name}
             onChange={onChange('name')}
+            readonly={isReadonly}
           />
         }
         links={breadcrumbLinks}
@@ -160,6 +164,7 @@ export const SettingsLogicFunctionDetail = () => {
             <SettingsLogicFunctionSettingsTab
               formValues={formValues}
               onChange={onChange}
+              readonly={isReadonly}
             />
           )}
           {isTestTab && (
