@@ -22,7 +22,7 @@
 
 # Why Twenty
 
-AI turned CRM into the system that runs your go-to-market, and every team on the same SaaS gets the same agent decisions. Twenty is the CRM you build, ship, and version like the rest of your stack.
+Twenty gives technical teams the building blocks for a custom CRM that meets complex business needs and quickly adapts as the business evolves. Twenty is the CRM you build, ship, and version like the rest of your stack.
 
 <br />
 
@@ -30,7 +30,7 @@ AI turned CRM into the system that runs your go-to-market, and every team on the
 
 ### <img src="./packages/twenty-website/public/images/readme/globe-icon.svg" width="14" height="14"/> Cloud
 
-The fastest way to get started. Sign up at [twenty.com](https://twenty.com) and spin up a workspace in under a minute — no infrastructure to manage, always up to date.
+The fastest way to get started. Sign up at [twenty.com](https://twenty.com) and spin up a workspace in under a minute, with no infrastructure to manage and always up to date.
 
 ### <img src="./packages/twenty-website/public/images/readme/book-icon.svg" width="14" height="14"/> Build an app
 
@@ -70,9 +70,12 @@ See the [app development guide](https://docs.twenty.com/developers/extend/apps/g
 
 Run Twenty on your own infrastructure with [Docker Compose](https://docs.twenty.com/developers/self-host/capabilities/docker-compose), or contribute locally via the [local setup guide](https://docs.twenty.com/developers/contribute/capabilities/local-setup).
 
+<br />
+<br />
+
 # What you can build
 
-Twenty gives you the building blocks of a modern CRM — objects, views, workflows, and agents — and lets you extend them as code. Here's a tour of what's in the box.
+Twenty gives you the building blocks of a modern CRM (objects, views, workflows, and agents) and lets you extend them as code. Here's a tour of what's in the box.
 
 <table align="center">
   <tr>
@@ -130,20 +133,22 @@ Twenty gives you the building blocks of a modern CRM — objects, views, workflo
 # Stack
 - <img src="https://cdn.simpleicons.org/typescript" width="14" height="14"/> [TypeScript](https://www.typescriptlang.org/)
 - <img src="https://cdn.simpleicons.org/nx" width="14" height="14"/> [Nx](https://nx.dev/)
-- <img src="https://cdn.simpleicons.org/nestjs" width="14" height="14"/> [NestJS](https://nestjs.com/), with <img src="https://cdn.simpleicons.org/bull" width="14" height="14"/> [BullMQ](https://bullmq.io/), <img src="https://cdn.simpleicons.org/postgresql" width="14" height="14"/> [PostgreSQL](https://www.postgresql.org/), <img src="https://cdn.simpleicons.org/redis" width="14" height="14"/> [Redis](https://redis.io/)
-- <img src="https://cdn.simpleicons.org/react" width="14" height="14"/> [React](https://reactjs.org/), with <img src="https://cdn.simpleicons.org/jotai" width="14" height="14"/> [Jotai](https://jotai.org/), <img src="https://cdn.simpleicons.org/styledcomponents" width="14" height="14"/> [Linaria](https://linaria.dev/) and <img src="https://cdn.simpleicons.org/googletranslate" width="14" height="14"/> [Lingui](https://lingui.dev/)
+- <img src="https://cdn.simpleicons.org/nestjs" width="14" height="14"/> [NestJS](https://nestjs.com/), with [BullMQ](https://bullmq.io/), <img src="https://cdn.simpleicons.org/postgresql" width="14" height="14"/> [PostgreSQL](https://www.postgresql.org/), <img src="https://cdn.simpleicons.org/redis" width="14" height="14"/> [Redis](https://redis.io/)
+- <img src="https://cdn.simpleicons.org/react" width="14" height="14"/> [React](https://reactjs.org/), with [Jotai](https://jotai.org/), [Linaria](https://linaria.dev/) and [Lingui](https://lingui.dev/)
 
 
 
 # Thanks
 
-<p align="center">
-  <a href="https://www.chromatic.com/"><img src="./packages/twenty-website/public/images/readme/chromatic.png" height="30" alt="Chromatic" /></a>
-  <a href="https://greptile.com"><img src="./packages/twenty-website/public/images/readme/greptile.png" height="30" alt="Greptile" /></a>
-  <a href="https://sentry.io/"><img src="./packages/twenty-website/public/images/readme/sentry.png" height="30" alt="Sentry" /></a>
-  <a href="https://crowdin.com/"><img src="./packages/twenty-website/public/images/readme/crowdin.png" height="30" alt="Crowdin" /></a>
-  <a href="https://e2b.dev/"><img src="./packages/twenty-website/public/images/readme/e2b.svg" height="30" alt="E2B" /></a>
-</p>
+<table align="center">
+  <tr>
+    <td align="center" width="120"><a href="https://www.chromatic.com/"><img src="./packages/twenty-website/public/images/readme/chromatic.png" height="28" alt="Chromatic" /></a></td>
+    <td align="center" width="120"><a href="https://greptile.com"><img src="./packages/twenty-website/public/images/readme/greptile.png" height="28" alt="Greptile" /></a></td>
+    <td align="center" width="120"><a href="https://sentry.io/"><img src="./packages/twenty-website/public/images/readme/sentry.png" height="28" alt="Sentry" /></a></td>
+    <td align="center" width="120"><a href="https://crowdin.com/"><img src="./packages/twenty-website/public/images/readme/crowdin.png" height="28" alt="Crowdin" /></a></td>
+    <td align="center" width="120"><a href="https://e2b.dev/"><img src="./packages/twenty-website/public/images/readme/e2b.svg" height="28" alt="E2B" /></a></td>
+  </tr>
+</table>
 
   Thanks to these amazing services that we use and recommend for UI testing (Chromatic), code review (Greptile), catching bugs (Sentry) and translating (Crowdin).
 
