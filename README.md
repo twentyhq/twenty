@@ -20,6 +20,12 @@
 
 <br />
 
+# Why Twenty
+
+AI turned CRM into the system that runs your go-to-market, and every team on the same SaaS gets the same agent decisions. Twenty is the CRM you build, ship, and version like the rest of your stack.
+
+<br />
+
 # Installation
 
 ### <img src="./packages/twenty-website/public/images/readme/globe-icon.svg" width="14" height="14"/> Cloud
@@ -64,80 +70,65 @@ See the [app development guide](https://docs.twenty.com/developers/extend/apps/g
 
 Run Twenty on your own infrastructure with [Docker Compose](https://docs.twenty.com/developers/self-host/capabilities/docker-compose), or contribute locally via the [local setup guide](https://docs.twenty.com/developers/contribute/capabilities/local-setup).
 
-# Why Twenty
-
-AI turned CRM into the system that runs your go-to-market, and every team on the same SaaS gets the same agent decisions. Twenty is the CRM you build, ship, and version like the rest of your stack.
-
-<br />
-
-# What You Can Do With Twenty
-
-Twenty v2 is a code-first, AI-native CRM platform. Build, ship, and version your own CRM apps — with the full CRM toolkit out of the box and AI agents on top.
-
-+ [The build loop](#the-build-loop)
-+ [Primitives](#primitives)
-+ [Ship like software](#ship-like-software)
-+ [Agents on every surface](#agents-on-every-surface)
-+ [CRM fundamentals](#crm-fundamentals)
-
-
-## The build loop
-
-<p align="center">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="./packages/twenty-website/public/images/readme/v2-build-apps-dark.png" />
-    <source media="(prefers-color-scheme: light)" srcset="./packages/twenty-website/public/images/readme/v2-build-apps-light.png" />
-    <img src="./packages/twenty-website/public/images/readme/v2-build-apps-light.png" alt="Create your apps with code and AI" />
-  </picture>
-</p>
-
-## Primitives
-
-<p align="center">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="./packages/twenty-website/public/images/readme/v2-tools-dark.png" />
-    <source media="(prefers-color-scheme: light)" srcset="./packages/twenty-website/public/images/readme/v2-tools-light.png" />
-    <img src="./packages/twenty-website/public/images/readme/v2-tools-light.png" alt="Customize your layouts" />
-  </picture>
-</p>
-
-## Ship like software
-
-<p align="center">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="./packages/twenty-website/public/images/readme/v2-version-control-dark.png" />
-    <source media="(prefers-color-scheme: light)" srcset="./packages/twenty-website/public/images/readme/v2-version-control-light.png" />
-    <img src="./packages/twenty-website/public/images/readme/v2-version-control-light.png" alt="Version control with GitHub" />
-  </picture>
-</p>
-
-## Agents on every surface
-
-<p align="center">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="./packages/twenty-website/public/images/readme/v2-ai-agents-dark.png" />
-    <source media="(prefers-color-scheme: light)" srcset="./packages/twenty-website/public/images/readme/v2-ai-agents-light.png" />
-    <img src="./packages/twenty-website/public/images/readme/v2-ai-agents-light.png" alt="AI agents and chats" />
-  </picture>
-</p>
-
-## CRM fundamentals
-
-<p align="center">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="./packages/twenty-website/public/images/readme/v2-crm-tools-dark.png" />
-    <source media="(prefers-color-scheme: light)" srcset="./packages/twenty-website/public/images/readme/v2-crm-tools-light.png" />
-    <img src="./packages/twenty-website/public/images/readme/v2-crm-tools-light.png" alt="Kanban, workflows, dashboards, and more" />
-  </picture>
-</p>
+<table align="center">
+  <tr>
+    <td width="33%">
+      <picture>
+        <source media="(prefers-color-scheme: dark)" srcset="./packages/twenty-website/public/images/readme/v2-build-apps-dark.png" />
+        <source media="(prefers-color-scheme: light)" srcset="./packages/twenty-website/public/images/readme/v2-build-apps-light.png" />
+        <img src="./packages/twenty-website/public/images/readme/v2-build-apps-light.png" alt="Create your apps" />
+      </picture>
+    </td>
+    <td width="33%">
+      <picture>
+        <source media="(prefers-color-scheme: dark)" srcset="./packages/twenty-website/public/images/readme/v2-version-control-dark.png" />
+        <source media="(prefers-color-scheme: light)" srcset="./packages/twenty-website/public/images/readme/v2-version-control-light.png" />
+        <img src="./packages/twenty-website/public/images/readme/v2-version-control-light.png" alt="Stay in control" />
+      </picture>
+    </td>
+    <td width="33%">
+      <picture>
+        <source media="(prefers-color-scheme: dark)" srcset="./packages/twenty-website/public/images/readme/v2-tools-dark.png" />
+        <source media="(prefers-color-scheme: light)" srcset="./packages/twenty-website/public/images/readme/v2-tools-light.png" />
+        <img src="./packages/twenty-website/public/images/readme/v2-tools-light.png" alt="All the tools" />
+      </picture>
+    </td>
+  </tr>
+  <tr>
+    <td width="33%"></td>
+    <td width="33%">
+      <picture>
+        <source media="(prefers-color-scheme: dark)" srcset="./packages/twenty-website/public/images/readme/v2-ai-agents-dark.png" />
+        <source media="(prefers-color-scheme: light)" srcset="./packages/twenty-website/public/images/readme/v2-ai-agents-light.png" />
+        <img src="./packages/twenty-website/public/images/readme/v2-ai-agents-light.png" alt="AI" />
+      </picture>
+    </td>
+    <td width="33%">
+      <picture>
+        <source media="(prefers-color-scheme: dark)" srcset="./packages/twenty-website/public/images/readme/v2-crm-tools-dark.png" />
+        <source media="(prefers-color-scheme: light)" srcset="./packages/twenty-website/public/images/readme/v2-crm-tools-light.png" />
+        <img src="./packages/twenty-website/public/images/readme/v2-crm-tools-light.png" alt="Plus all the tools of a good CRM" />
+      </picture>
+    </td>
+  </tr>
+</table>
 
 <br />
 
 # Stack
-- [TypeScript](https://www.typescriptlang.org/)
-- [Nx](https://nx.dev/)
-- [NestJS](https://nestjs.com/), with [BullMQ](https://bullmq.io/), [PostgreSQL](https://www.postgresql.org/), [Redis](https://redis.io/)
-- [React](https://reactjs.org/), with [Jotai](https://jotai.org/), [Linaria](https://linaria.dev/) and [Lingui](https://lingui.dev/)
+
+<p>
+  <a href="https://www.typescriptlang.org/"><img src="https://img.shields.io/badge/TypeScript-3178C6?style=flat&logo=typescript&logoColor=white" alt="TypeScript" /></a>
+  <a href="https://nx.dev/"><img src="https://img.shields.io/badge/Nx-143055?style=flat&logo=nx&logoColor=white" alt="Nx" /></a>
+  <a href="https://nestjs.com/"><img src="https://img.shields.io/badge/NestJS-E0234E?style=flat&logo=nestjs&logoColor=white" alt="NestJS" /></a>
+  <a href="https://bullmq.io/"><img src="https://img.shields.io/badge/BullMQ-E74C3C?style=flat&logo=bull&logoColor=white" alt="BullMQ" /></a>
+  <a href="https://www.postgresql.org/"><img src="https://img.shields.io/badge/PostgreSQL-4169E1?style=flat&logo=postgresql&logoColor=white" alt="PostgreSQL" /></a>
+  <a href="https://redis.io/"><img src="https://img.shields.io/badge/Redis-DC382D?style=flat&logo=redis&logoColor=white" alt="Redis" /></a>
+  <a href="https://reactjs.org/"><img src="https://img.shields.io/badge/React-20232A?style=flat&logo=react&logoColor=61DAFB" alt="React" /></a>
+  <a href="https://jotai.org/"><img src="https://img.shields.io/badge/Jotai-000000?style=flat&logo=jotai&logoColor=white" alt="Jotai" /></a>
+  <a href="https://linaria.dev/"><img src="https://img.shields.io/badge/Linaria-2E2E2E?style=flat&logo=styledcomponents&logoColor=white" alt="Linaria" /></a>
+  <a href="https://lingui.dev/"><img src="https://img.shields.io/badge/Lingui-EF4444?style=flat&logo=translate&logoColor=white" alt="Lingui" /></a>
+</p>
 
 
 
@@ -156,9 +147,13 @@ Twenty v2 is a code-first, AI-native CRM platform. Build, ship, and version your
 
 # Join the Community
 
-- Star the repo
-- Subscribe to releases (watch -> custom -> releases)
-- Follow us on [Twitter](https://twitter.com/twentycrm) or [LinkedIn](https://www.linkedin.com/company/twenty/)
-- Join our [Discord](https://discord.gg/cx5n4Jzs57)
-- Improve translations on [Crowdin](https://twenty.crowdin.com/twenty)
-- [Contributions](https://github.com/twentyhq/twenty/contribute) are, of course, most welcome!
+<p>
+  <a href="https://github.com/twentyhq/twenty"><img src="https://img.shields.io/github/stars/twentyhq/twenty?style=flat&logo=github&logoColor=white&color=181717&label=Star" alt="Star the repo" /></a>
+  <a href="https://discord.gg/cx5n4Jzs57"><img src="https://img.shields.io/badge/Discord-5865F2?style=flat&logo=discord&logoColor=white" alt="Discord" /></a>
+  <a href="https://github.com/twentyhq/twenty/discussions"><img src="https://img.shields.io/badge/Feature%20requests-181717?style=flat&logo=github&logoColor=white" alt="Feature requests" /></a>
+  <a href="https://github.com/orgs/twentyhq/projects/1/views/35"><img src="https://img.shields.io/badge/Releases-16A34A?style=flat&logo=github&logoColor=white" alt="Releases" /></a>
+  <a href="https://twitter.com/twentycrm"><img src="https://img.shields.io/badge/X-000000?style=flat&logo=x&logoColor=white" alt="X" /></a>
+  <a href="https://www.linkedin.com/company/twenty/"><img src="https://img.shields.io/badge/LinkedIn-0A66C2?style=flat&logo=linkedin&logoColor=white" alt="LinkedIn" /></a>
+  <a href="https://twenty.crowdin.com/twenty"><img src="https://img.shields.io/badge/Crowdin-2E3340?style=flat&logo=crowdin&logoColor=white" alt="Crowdin" /></a>
+  <a href="https://github.com/twentyhq/twenty/contribute"><img src="https://img.shields.io/badge/Contribute-EA4AAA?style=flat&logo=github&logoColor=white" alt="Contribute" /></a>
+</p>
