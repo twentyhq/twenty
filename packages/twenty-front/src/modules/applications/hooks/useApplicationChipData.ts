@@ -43,10 +43,12 @@ export const useApplicationChipData = ({
 
   const isStandard =
     application?.universalIdentifier ===
-    TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER;
+      TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER ||
+    application?.name === 'Standard';
   const isCustom =
-    isDefined(currentWorkspace?.workspaceCustomApplication?.id) &&
-    currentWorkspace.workspaceCustomApplication.id === applicationId;
+    (isDefined(currentWorkspace?.workspaceCustomApplication?.id) &&
+      currentWorkspace.workspaceCustomApplication.id === applicationId) ||
+    application?.name === 'Custom';
 
   const colors: ApplicationChipColors | undefined = isStandard
     ? {
