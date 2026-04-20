@@ -34,9 +34,6 @@ const StyledCreditUsageFooterActions = styled.div`
   margin-top: ${themeCssVariables.spacing[4]};
 `;
 
-const StyledExternalLink = styled.a`
-  text-decoration: none;
-`;
 
 export const SettingsBillingCreditsSection = ({
   currentBillingSubscription,
@@ -158,19 +155,19 @@ export const SettingsBillingCreditsSection = ({
               variant="secondary"
             />
           </UndecoratedLink>
-          <StyledExternalLink
-            href={getDocumentationUrl({
-              path: DOCUMENTATION_PATHS.USER_GUIDE_BILLING_CAPABILITIES_CREDITS,
-            })}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Button
-              Icon={IconExternalLink}
-              title={t`How credits work`}
-              variant="secondary"
-            />
-          </StyledExternalLink>
+          <Button
+            Icon={IconExternalLink}
+            title={t`How credits work`}
+            variant="secondary"
+            onClick={() =>
+              window.open(
+                getDocumentationUrl({
+                  path: DOCUMENTATION_PATHS.USER_GUIDE_BILLING_CAPABILITIES_CREDITS,
+                }),
+                '_blank',
+              )
+            }
+          />
         </StyledCreditUsageFooterActions>
       </Section>
       <Section>
