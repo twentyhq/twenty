@@ -127,11 +127,7 @@ export function EnterpriseActivateClient() {
           return;
         }
 
-        if (
-          data.enterpriseKey &&
-          data.licensee &&
-          data.subscriptionId
-        ) {
+        if (data.enterpriseKey && data.licensee && data.subscriptionId) {
           setResult({
             enterpriseKey: data.enterpriseKey,
             licensee: data.licensee,
@@ -189,7 +185,11 @@ export function EnterpriseActivateClient() {
 
           <KeyBlock>
             {result.enterpriseKey}
-            <CopyButton $copied={copied} onClick={() => void handleCopy()} type="button">
+            <CopyButton
+              $copied={copied}
+              onClick={() => void handleCopy()}
+              type="button"
+            >
               {copied ? 'Copied!' : 'Copy'}
             </CopyButton>
           </KeyBlock>
@@ -199,9 +199,7 @@ export function EnterpriseActivateClient() {
             <NextStepsList>
               <li>{'Copy the enterprise key above.'}</li>
               <li>
-                {
-                  'Open your Twenty self-hosted instance Settings → Enterprise.'
-                }
+                {'Open your Twenty self-hosted instance Settings → Enterprise.'}
               </li>
               <li>{'Paste the key and click Activate.'}</li>
             </NextStepsList>

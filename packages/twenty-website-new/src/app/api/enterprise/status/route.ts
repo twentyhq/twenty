@@ -11,17 +11,23 @@ export async function POST(request: Request) {
     const { enterpriseKey } = body;
 
     if (!enterpriseKey || typeof enterpriseKey !== 'string') {
-      return NextResponse.json({ error: 'Missing enterpriseKey' }, {
-        status: 400,
-      });
+      return NextResponse.json(
+        { error: 'Missing enterpriseKey' },
+        {
+          status: 400,
+        },
+      );
     }
 
     const payload = verifyEnterpriseKey(enterpriseKey);
 
     if (!payload) {
-      return NextResponse.json({ error: 'Invalid enterprise key' }, {
-        status: 403,
-      });
+      return NextResponse.json(
+        { error: 'Invalid enterprise key' },
+        {
+          status: 403,
+        },
+      );
     }
 
     const stripe = getStripeClient();
@@ -29,12 +35,13 @@ export async function POST(request: Request) {
 
     const rawCancelAt = subscription.cancel_at;
     const rawCancelAtPeriodEnd = subscription.cancel_at_period_end;
-    const rawCurrentPeriodEnd =
-      getSubscriptionCurrentPeriodEnd(subscription);
+    const rawCurrentPeriodEnd = getSubscriptionCurrentPeriodEnd(subscription);
 
     const effectiveCancelAt =
       rawCancelAt ??
-      (rawCancelAtPeriodEnd && rawCurrentPeriodEnd ? rawCurrentPeriodEnd : null);
+      (rawCancelAtPeriodEnd && rawCurrentPeriodEnd
+        ? rawCurrentPeriodEnd
+        : null);
 
     const isCancellationScheduled =
       subscription.status !== 'canceled' && effectiveCancelAt !== null;
@@ -47,8 +54,7 @@ export async function POST(request: Request) {
       isCancellationScheduled,
     });
   } catch (error: unknown) {
-    const message =
-      error instanceof Error ? error.message : 'Unknown error';
+    const message = error instanceof Error ? error.message : 'Unknown error';
 
     return NextResponse.json(
       { error: `Status error: ${message}` },

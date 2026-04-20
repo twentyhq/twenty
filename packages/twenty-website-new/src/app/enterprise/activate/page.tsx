@@ -24,9 +24,7 @@ export const metadata: Metadata = {
 
 function EnterpriseActivateFallback() {
   return (
-    <div className={activateFallbackClassName}>
-      {'Loading activation…'}
-    </div>
+    <div className={activateFallbackClassName}>{'Loading activation…'}</div>
   );
 }
 

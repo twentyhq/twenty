@@ -9,7 +9,8 @@ type SubscriptionWithPeriodBounds = Stripe.Subscription & {
 export const getSubscriptionCurrentPeriodEnd = (
   subscription: Stripe.Response<Stripe.Subscription>,
 ): number | null => {
-  const extended = subscription as Stripe.Response<SubscriptionWithPeriodBounds>;
+  const extended =
+    subscription as Stripe.Response<SubscriptionWithPeriodBounds>;
   const end = extended.current_period_end;
 
   return typeof end === 'number' ? end : null;

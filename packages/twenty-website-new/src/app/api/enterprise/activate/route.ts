@@ -22,9 +22,19 @@ export async function GET(request: Request) {
       expand: ['subscription', 'customer'],
     });
 
-    if (session.payment_status !== 'paid') {
+    // Subscriptions that begin in a free trial complete with
+    // `payment_status: 'no_payment_required'`, so accept both successful states.
+    const SUCCESSFUL_PAYMENT_STATUSES: Array<typeof session.payment_status> = [
+      'paid',
+      'no_payment_required',
+    ];
+
+    if (
+      session.status !== 'complete' ||
+      !SUCCESSFUL_PAYMENT_STATUSES.includes(session.payment_status)
+    ) {
       return NextResponse.json(
-        { error: 'Payment not completed' },
+        { error: 'Checkout session is not completed' },
         { status: 402 },
       );
     }
@@ -35,6 +45,19 @@ export async function GET(request: Request) {
       return NextResponse.json(
         { error: 'Subscription not found' },
         { status: 400 },
+      );
+    }
+
+    const ACTIVATABLE_SUBSCRIPTION_STATUSES: Array<typeof subscription.status> =
+      ['active', 'trialing'];
+
+    if (!ACTIVATABLE_SUBSCRIPTION_STATUSES.includes(subscription.status)) {
+      return NextResponse.json(
+        {
+          error: 'Subscription is not active',
+          status: subscription.status,
+        },
+        { status: 402 },
       );
     }
 
@@ -52,8 +75,7 @@ export async function GET(request: Request) {
       subscriptionId: subscription.id,
     });
   } catch (error: unknown) {
-    const message =
-      error instanceof Error ? error.message : 'Unknown error';
+    const message = error instanceof Error ? error.message : 'Unknown error';
 
     return NextResponse.json(
       { error: `Activation error: ${message}` },
