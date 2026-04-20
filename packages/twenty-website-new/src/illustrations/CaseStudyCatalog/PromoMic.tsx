@@ -91,13 +91,6 @@ const settings = {
     "waveAmount": 2
   }
 };
-const shape = {
-  "filename": null,
-  "key": "torusKnot",
-  "kind": "builtin",
-  "label": "Torus Knot",
-  "loader": null
-};
 const initialPose = {
   "autoElapsed": 0,
   "rotateElapsed": 0,
@@ -143,21 +136,6 @@ function getRectArea(rect) {
   }
 
   return Math.max(rect.width, 0) * Math.max(rect.height, 0);
-}
-
-function createBox3Corners(bounds) {
-  const { min, max } = bounds;
-
-  return [
-    new THREE.Vector3(min.x, min.y, min.z),
-    new THREE.Vector3(min.x, min.y, max.z),
-    new THREE.Vector3(min.x, max.y, min.z),
-    new THREE.Vector3(min.x, max.y, max.z),
-    new THREE.Vector3(max.x, min.y, min.z),
-    new THREE.Vector3(max.x, min.y, max.z),
-    new THREE.Vector3(max.x, max.y, min.z),
-    new THREE.Vector3(max.x, max.y, max.z),
-  ];
 }
 
 function getImagePreviewZoom(previewDistance) {
@@ -246,110 +224,6 @@ function getImageFootprintScale({
   return getFootprintScaleFromRects(currentRect, referenceRect);
 }
 
-function projectBox3ToViewport({
-  camera,
-  localBounds,
-  meshMatrixWorld,
-  viewportHeight,
-  viewportWidth,
-}) {
-  if (
-    localBounds.isEmpty() ||
-    viewportWidth <= 0 ||
-    viewportHeight <= 0
-  ) {
-    return null;
-  }
-
-  let minX = Number.POSITIVE_INFINITY;
-  let minY = Number.POSITIVE_INFINITY;
-  let maxX = Number.NEGATIVE_INFINITY;
-  let maxY = Number.NEGATIVE_INFINITY;
-  let hasProjectedCorner = false;
-
-  for (const corner of createBox3Corners(localBounds)) {
-    corner.applyMatrix4(meshMatrixWorld).project(camera);
-
-    if (
-      !Number.isFinite(corner.x) ||
-      !Number.isFinite(corner.y) ||
-      !Number.isFinite(corner.z)
-    ) {
-      continue;
-    }
-
-    hasProjectedCorner = true;
-
-    const x = (corner.x * 0.5 + 0.5) * viewportWidth;
-    const y = (1 - (corner.y * 0.5 + 0.5)) * viewportHeight;
-
-    minX = Math.min(minX, x);
-    minY = Math.min(minY, y);
-    maxX = Math.max(maxX, x);
-    maxY = Math.max(maxY, y);
-  }
-
-  if (!hasProjectedCorner) {
-    return null;
-  }
-
-  return clampRectToViewport(
-    {
-      x: minX,
-      y: minY,
-      width: maxX - minX,
-      height: maxY - minY,
-    },
-    viewportWidth,
-    viewportHeight,
-  );
-}
-
-function getMeshFootprintScale({
-  camera,
-  localBounds,
-  lookAtTarget,
-  meshMatrixWorld,
-  viewportHeight,
-  viewportWidth,
-}) {
-  const currentRect = projectBox3ToViewport({
-    camera,
-    localBounds,
-    meshMatrixWorld,
-    viewportHeight,
-    viewportWidth,
-  });
-  const referenceCamera = camera.clone();
-  const currentOffset = referenceCamera.position.clone().sub(lookAtTarget);
-  const referenceOffset =
-    currentOffset.lengthSq() > 0
-      ? currentOffset.setLength(REFERENCE_PREVIEW_DISTANCE)
-      : new THREE.Vector3(0, 0, REFERENCE_PREVIEW_DISTANCE);
-
-  referenceCamera.position.copy(lookAtTarget).add(referenceOffset);
-  referenceCamera.lookAt(lookAtTarget);
-  referenceCamera.updateProjectionMatrix();
-  referenceCamera.updateMatrixWorld(true);
-
-  const referenceRect = projectBox3ToViewport({
-    camera: referenceCamera,
-    localBounds,
-    meshMatrixWorld,
-    viewportHeight,
-    viewportWidth,
-  });
-
-  return getFootprintScaleFromRects(currentRect, referenceRect);
-}
-
-
-
-
-
-
-
-
 function createRenderTarget(width, height) {
   return new THREE.WebGLRenderTarget(width, height, {
     minFilter: THREE.LinearFilter,
@@ -410,7 +284,11 @@ async function mountHalftoneCanvas(options) {
   const image = await new Promise((resolve, reject) => {
     const img = new Image();
     img.onload = () => resolve(img);
-    img.onerror = () => reject(new Error('Failed to load image'));
+    img.onerror = () => {
+      const error = new Error('Failed to load image');
+      onError?.(error);
+      reject(error);
+    };
     img.src = imageUrl;
   });
 
