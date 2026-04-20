@@ -15,7 +15,7 @@ export const InformationBannerNoMoreCredits = () => {
 
   return (
     <InformationBanner
-      componentInstanceId="information-banner-end-trial-period"
+      componentInstanceId="information-banner-no-more-credits"
       color="danger"
       variant="secondary"
       message={
