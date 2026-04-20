@@ -14,10 +14,10 @@ import {
   type LogicFunctionTranspileResult,
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
 
-import { FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
-import type { FlatApplicationVariable } from 'src/engine/core-modules/application/application-variable/types/flat-application-variable.type';
 import { ApplicationLogsService } from 'src/engine/core-modules/application-logs/application-logs.service';
 import { parseApplicationLogLines } from 'src/engine/core-modules/application-logs/utils/parse-application-log-lines';
+import type { FlatApplicationVariable } from 'src/engine/core-modules/application/application-variable/types/flat-application-variable.type';
+import { FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
 import { LOGIC_FUNCTION_EXECUTED_EVENT } from 'src/engine/core-modules/audit/utils/events/workspace-event/logic-function/logic-function-executed';
 import { ApplicationTokenService } from 'src/engine/core-modules/auth/token/services/application-token.service';
@@ -288,7 +288,7 @@ export class LogicFunctionExecutorService {
         {
           resourceType: UsageResourceType.LOGIC_FUNCTION,
           operationType: UsageOperationType.CODE_EXECUTION,
-          creditsUsedMicro: 1,
+          creditsUsedMicro: 100,
           quantity: 1,
           unit: UsageUnit.INVOCATION,
           resourceId: flatLogicFunction.id,
