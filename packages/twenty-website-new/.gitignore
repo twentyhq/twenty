@@ -13,6 +13,9 @@
 /.next/
 /out/
 
+# generated (e.g. Playwright screenshots)
+/output/
+
 # production
 /build
 
