@@ -77,7 +77,7 @@ Run Twenty on your own infrastructure with [Docker Compose](https://docs.twenty.
 
 Twenty gives you the building blocks of a modern CRM (objects, views, workflows, and agents) and lets you extend them as code. Here's a tour of what's in the box.
 
-<p><a href="https://docs.twenty.com/user-guide/introduction"><img src="./packages/twenty-website/public/images/readme/planner-icon.svg" width="14" height="14"/> User Guide</a> · <a href="https://docs.twenty.com"><img src="./packages/twenty-website/public/images/readme/book-icon.svg" width="14" height="14"/> Documentation</a></p>
+Want to go deeper? Read the <a href="https://docs.twenty.com/user-guide/introduction"><img src="./packages/twenty-website/public/images/readme/planner-icon.svg" width="14" height="14"/> User Guide</a> for product walkthroughs, or the <a href="https://docs.twenty.com"><img src="./packages/twenty-website/public/images/readme/book-icon.svg" width="14" height="14"/> Documentation</a> for developer reference.
 
 <table align="center">
   <tr>
@@ -87,7 +87,7 @@ Twenty gives you the building blocks of a modern CRM (objects, views, workflows,
         <source media="(prefers-color-scheme: light)" srcset="./packages/twenty-website/public/images/readme/v2-build-apps-light.png" />
         <img src="./packages/twenty-website/public/images/readme/v2-build-apps-light.png" alt="Create your apps" />
       </picture>
-      <p align="center"><a href="https://docs.twenty.com/developers/extend/apps/getting-started"><img src="./packages/twenty-website/public/images/readme/book-icon.svg" width="12" height="12"/> Read the docs</a></p>
+      <p align="center"><a href="https://docs.twenty.com/developers/extend/apps/getting-started"><img src="./packages/twenty-website/public/images/readme/code-icon.svg" width="16" height="16"/> Learn more about apps in doc</a></p>
     </td>
     <td width="50%">
       <picture>
@@ -95,7 +95,7 @@ Twenty gives you the building blocks of a modern CRM (objects, views, workflows,
         <source media="(prefers-color-scheme: light)" srcset="./packages/twenty-website/public/images/readme/v2-version-control-light.png" />
         <img src="./packages/twenty-website/public/images/readme/v2-version-control-light.png" alt="Stay on top with version control" />
       </picture>
-      <p align="center"><a href="https://docs.twenty.com/developers/extend/apps/getting-started"><img src="./packages/twenty-website/public/images/readme/book-icon.svg" width="12" height="12"/> Read the docs</a></p>
+      <p align="center"><a href="https://docs.twenty.com/developers/extend/apps/getting-started"><img src="./packages/twenty-website/public/images/readme/monitor-icon.svg" width="16" height="16"/> Learn more about version control in doc</a></p>
     </td>
   </tr>
   <tr>
@@ -105,7 +105,7 @@ Twenty gives you the building blocks of a modern CRM (objects, views, workflows,
         <source media="(prefers-color-scheme: light)" srcset="./packages/twenty-website/public/images/readme/v2-all-tools-light.png" />
         <img src="./packages/twenty-website/public/images/readme/v2-all-tools-light.png" alt="All the tools you need to build anything" />
       </picture>
-      <p align="center"><a href="https://docs.twenty.com/developers/extend"><img src="./packages/twenty-website/public/images/readme/book-icon.svg" width="12" height="12"/> Read the docs</a></p>
+      <p align="center"><a href="https://docs.twenty.com/developers/extend"><img src="./packages/twenty-website/public/images/readme/rocket-icon.svg" width="16" height="16"/> Learn more about primitives in doc</a></p>
     </td>
     <td width="50%">
       <picture>
@@ -113,7 +113,7 @@ Twenty gives you the building blocks of a modern CRM (objects, views, workflows,
         <source media="(prefers-color-scheme: light)" srcset="./packages/twenty-website/public/images/readme/v2-tools-light.png" />
         <img src="./packages/twenty-website/public/images/readme/v2-tools-light.png" alt="Customize your layouts" />
       </picture>
-      <p align="center"><a href="https://docs.twenty.com/user-guide/views-pipelines"><img src="./packages/twenty-website/public/images/readme/book-icon.svg" width="12" height="12"/> Read the docs</a></p>
+      <p align="center"><a href="https://docs.twenty.com/user-guide/views-pipelines"><img src="./packages/twenty-website/public/images/readme/planner-icon.svg" width="16" height="16"/> Learn more about layouts in doc</a></p>
     </td>
   </tr>
   <tr>
@@ -123,7 +123,7 @@ Twenty gives you the building blocks of a modern CRM (objects, views, workflows,
         <source media="(prefers-color-scheme: light)" srcset="./packages/twenty-website/public/images/readme/v2-ai-agents-light.png" />
         <img src="./packages/twenty-website/public/images/readme/v2-ai-agents-light.png" alt="AI agents and chats" />
       </picture>
-      <p align="center"><a href="https://docs.twenty.com/user-guide/ai"><img src="./packages/twenty-website/public/images/readme/book-icon.svg" width="12" height="12"/> Read the docs</a></p>
+      <p align="center"><a href="https://docs.twenty.com/user-guide/ai"><img src="./packages/twenty-website/public/images/readme/message-icon.svg" width="16" height="16"/> Learn more about AI in doc</a></p>
     </td>
     <td width="50%">
       <picture>
@@ -131,7 +131,7 @@ Twenty gives you the building blocks of a modern CRM (objects, views, workflows,
         <source media="(prefers-color-scheme: light)" srcset="./packages/twenty-website/public/images/readme/v2-crm-tools-light.png" />
         <img src="./packages/twenty-website/public/images/readme/v2-crm-tools-light.png" alt="Plus all the tools of a good CRM" />
       </picture>
-      <p align="center"><a href="https://docs.twenty.com/user-guide/introduction"><img src="./packages/twenty-website/public/images/readme/book-icon.svg" width="12" height="12"/> Read the docs</a></p>
+      <p align="center"><a href="https://docs.twenty.com/user-guide/introduction"><img src="./packages/twenty-website/public/images/readme/star-icon.svg" width="16" height="16"/> Learn more about CRM features in doc</a></p>
     </td>
   </tr>
 </table>
@@ -140,18 +140,10 @@ Twenty gives you the building blocks of a modern CRM (objects, views, workflows,
 
 # Stack
 
-<p>
-  <a href="https://www.typescriptlang.org/"><img src="https://img.shields.io/badge/TypeScript-3178C6?style=flat&logo=typescript&logoColor=white" alt="TypeScript" /></a>
-  <a href="https://nx.dev/"><img src="https://img.shields.io/badge/Nx-143055?style=flat&logo=nx&logoColor=white" alt="Nx" /></a>
-  <a href="https://nestjs.com/"><img src="https://img.shields.io/badge/NestJS-E0234E?style=flat&logo=nestjs&logoColor=white" alt="NestJS" /></a>
-  <a href="https://bullmq.io/"><img src="https://img.shields.io/badge/BullMQ-C0392B?style=flat" alt="BullMQ" /></a>
-  <a href="https://www.postgresql.org/"><img src="https://img.shields.io/badge/PostgreSQL-4169E1?style=flat&logo=postgresql&logoColor=white" alt="PostgreSQL" /></a>
-  <a href="https://redis.io/"><img src="https://img.shields.io/badge/Redis-DC382D?style=flat&logo=redis&logoColor=white" alt="Redis" /></a>
-  <a href="https://reactjs.org/"><img src="https://img.shields.io/badge/React-20232A?style=flat&logo=react&logoColor=61DAFB" alt="React" /></a>
-  <a href="https://jotai.org/"><img src="https://img.shields.io/badge/Jotai-000000?style=flat" alt="Jotai" /></a>
-  <a href="https://linaria.dev/"><img src="https://img.shields.io/badge/Linaria-2E2E2E?style=flat" alt="Linaria" /></a>
-  <a href="https://lingui.dev/"><img src="https://img.shields.io/badge/Lingui-1E40AF?style=flat" alt="Lingui" /></a>
-</p>
+- <a href="https://www.typescriptlang.org/"><img src="https://cdn.simpleicons.org/typescript" width="14" height="14"/> TypeScript</a>
+- <a href="https://nx.dev/"><img src="https://cdn.simpleicons.org/nx" width="14" height="14"/> Nx</a>
+- <a href="https://nestjs.com/"><img src="https://cdn.simpleicons.org/nestjs" width="14" height="14"/> NestJS</a>, with <a href="https://bullmq.io/">BullMQ</a>, <a href="https://www.postgresql.org/"><img src="https://cdn.simpleicons.org/postgresql" width="14" height="14"/> PostgreSQL</a>, <a href="https://redis.io/"><img src="https://cdn.simpleicons.org/redis" width="14" height="14"/> Redis</a>
+- <a href="https://reactjs.org/"><img src="https://cdn.simpleicons.org/react" width="14" height="14"/> React</a>, with <a href="https://jotai.org/">Jotai</a>, <a href="https://linaria.dev/">Linaria</a> and <a href="https://lingui.dev/">Lingui</a>
 
 
 
