@@ -2,12 +2,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { MAX_EMAIL_RECIPIENTS } from 'twenty-shared/constants';
 import { type EmailAttachment } from 'twenty-shared/types';
 
-import { i18n } from '@lingui/core';
-import { t } from '@lingui/core/macro';
-
 import { useSendEmail } from '@/activities/emails/hooks/useSendEmail';
-import { bodyMentionsAttachment } from '@/activities/emails/utils/bodyMentionsAttachment';
-import { useDialogManager } from '@/ui/feedback/dialog-manager/hooks/useDialogManager';
 
 type UseEmailComposerStateArgs = {
   connectedAccountId: string;
@@ -42,7 +37,6 @@ export const useEmailComposerState = ({
   const [files, setFiles] = useState<EmailAttachment[]>([]);
 
   const { sendEmail, loading } = useSendEmail();
-  const { enqueueDialog } = useDialogManager();
 
   const recipientCount = useMemo(
     () => countRecipients(to) + countRecipients(cc) + countRecipients(bcc),
@@ -57,7 +51,11 @@ export const useEmailComposerState = ({
     !loading &&
     !exceedsRecipientLimit;
 
-  const performSend = useCallback(async () => {
+  const handleSend = useCallback(async () => {
+    if (!to.trim() || !connectedAccountId || exceedsRecipientLimit) {
+      return;
+    }
+
     const trimmedTo = to.trim();
     const trimmedCc = cc.trim();
     const trimmedBcc = bcc.trim();
@@ -87,49 +85,7 @@ export const useEmailComposerState = ({
     files,
     sendEmail,
     onSent,
-  ]);
-
-  const handleSend = useCallback(async () => {
-    if (!to.trim() || !connectedAccountId || exceedsRecipientLimit) {
-      return;
-    }
-
-    const locale = i18n.locale;
-
-    const hasNoAttachments = files.length === 0;
-    const mentionsAttachment =
-      bodyMentionsAttachment(body, locale) ||
-      bodyMentionsAttachment(subject, locale);
-
-    if (hasNoAttachments && mentionsAttachment) {
-      enqueueDialog({
-        title: t`Missing attachment?`,
-        message: t`It looks like you meant to attach a file but didn't. Send anyway?`,
-        buttons: [
-          { title: t`Cancel`, variant: 'secondary' },
-          {
-            title: t`Send anyway`,
-            onClick: performSend,
-            variant: 'primary',
-            accent: 'blue',
-            role: 'confirm',
-          },
-        ],
-      });
-
-      return;
-    }
-
-    await performSend();
-  }, [
-    to,
-    connectedAccountId,
     exceedsRecipientLimit,
-    body,
-    subject,
-    files,
-    enqueueDialog,
-    performSend,
   ]);
 
   return {
