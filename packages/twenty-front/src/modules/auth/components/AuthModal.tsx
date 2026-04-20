@@ -10,6 +10,7 @@ import { useLocation } from 'react-router-dom';
 const StyledContent = styled.div`
   align-items: center;
   justify-content: center;
+  min-height: 320px;
 `;
 
 type AuthModalProps = {
