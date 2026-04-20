@@ -12,6 +12,10 @@ const VisualColumn = styled.div`
   min-width: 0;
   width: 100%;
 
+  @media (max-width: ${theme.breakpoints.md - 1}px) {
+    order: -1;
+  }
+
   @media (min-width: ${theme.breakpoints.md}px) {
     max-width: 672px;
     position: sticky;

@@ -3,11 +3,15 @@ import type { EyebrowType } from '@/design-system/components/Eyebrow/types/Eyebr
 import type { HeadingType } from '@/design-system/components/Heading/types/Heading';
 import type { ProductStepperContentStepType } from '@/sections/ProductStepper/types/ProductStepperContentStep';
 
+export type ProductStepperLayoutMode = 'scroll' | 'swipe';
+
 export type ProductStepperContentProps = {
   activeStepIndex: number;
   body: BodyType;
   eyebrow: EyebrowType;
   heading: HeadingType[];
+  layoutMode: ProductStepperLayoutMode;
   localProgress: number;
+  onMobileStepIndexChange: (nextIndex: number) => void;
   steps: ProductStepperContentStepType[];
 };
