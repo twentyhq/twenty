@@ -8,7 +8,10 @@ export type ApplicationsByIdValue = {
   universalIdentifier: string;
 };
 
-export const useApplicationsByIdMap = (): Map<string, ApplicationsByIdValue> => {
+export const useApplicationsByIdMap = (): Map<
+  string,
+  ApplicationsByIdValue
+> => {
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 
   return useMemo(() => {

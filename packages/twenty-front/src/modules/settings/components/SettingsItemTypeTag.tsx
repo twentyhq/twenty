@@ -18,9 +18,7 @@ export const SettingsItemTypeTag = ({
 }: SettingsItemTypeTagProps) => {
   if (isDefined(applicationId)) {
     return <AppChip applicationId={applicationId} className={className} />;
-  }
-
-  if (isRemote === true) {
+  } else if (isRemote === true) {
     return (
       <Chip
         className={className}
@@ -37,7 +35,7 @@ export const SettingsItemTypeTag = ({
         }
       />
     );
+  } else {
+    return null;
   }
-
-  return null;
 };

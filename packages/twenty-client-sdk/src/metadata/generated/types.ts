@@ -1765,6 +1765,9 @@ export default {
             "billingSubscriptions": [
                 138
             ],
+            "installedApplications": [
+                52
+            ],
             "currentBillingSubscription": [
                 138
             ],
