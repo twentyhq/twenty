@@ -1,6 +1,6 @@
 <p align="center">
   <a href="https://www.producthunt.com/products/twenty-crm?launch=twenty-2-0">
-    <img src="./packages/twenty-website/public/images/readme/product-hunt-banner-dark.png" alt="We're live on Product Hunt — Support us" />
+    <img src="./packages/twenty-website/public/images/readme/product-hunt-banner-light.png" alt="We're live on Product Hunt — Support us" />
   </a>
 </p>
 
