@@ -14,4 +14,5 @@ export const getStandardPageLayoutTabTitles = () => [
   t`Calendar`,
   t`Note`,
   t`Flow`,
+  t`Tab 1`,
 ];
