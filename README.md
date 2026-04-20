@@ -6,15 +6,15 @@
 
 <h2 align="center" >The Open-Source CRM You Build With Code and AI </h2>
 
-<p align="center"><a href="https://twenty.com">🌐 Website</a> · <a href="https://docs.twenty.com">📚 Documentation</a> · <a href="https://github.com/orgs/twentyhq/projects/1"><img src="./packages/twenty-website/public/images/readme/planner-icon.svg" width="12" height="12"/> Roadmap </a> · <a href="https://discord.gg/cx5n4Jzs57"><img src="./packages/twenty-website/public/images/readme/discord-icon.svg" width="12" height="12"/> Discord</a> · <a href="https://www.figma.com/file/xt8O9mFeLl46C5InWwoMrN/Twenty"><img src="./packages/twenty-website/public/images/readme/figma-icon.png"  width="12" height="12"/>  Figma</a></p>
+<p align="center"><a href="https://twenty.com"><img src="./packages/twenty-website/public/images/readme/globe-icon.svg" width="12" height="12"/> Website</a> · <a href="https://docs.twenty.com"><img src="./packages/twenty-website/public/images/readme/book-icon.svg" width="12" height="12"/> Documentation</a> · <a href="https://github.com/orgs/twentyhq/projects/1"><img src="./packages/twenty-website/public/images/readme/planner-icon.svg" width="12" height="12"/> Roadmap </a> · <a href="https://discord.gg/cx5n4Jzs57"><img src="./packages/twenty-website/public/images/readme/discord-icon.svg" width="12" height="12"/> Discord</a> · <a href="https://www.figma.com/file/xt8O9mFeLl46C5InWwoMrN/Twenty"><img src="./packages/twenty-website/public/images/readme/figma-icon.png"  width="12" height="12"/>  Figma</a></p>
 
 <br />
 
 # Installation
 
 See:
-🚀 [Self-hosting](https://docs.twenty.com/developers/self-host/capabilities/docker-compose)
-🖥️ [Local Setup](https://docs.twenty.com/developers/contribute/capabilities/local-setup)
+<img src="./packages/twenty-website/public/images/readme/rocket-icon.svg" width="14" height="14"/> [Self-hosting](https://docs.twenty.com/developers/self-host/capabilities/docker-compose)
+<img src="./packages/twenty-website/public/images/readme/monitor-icon.svg" width="14" height="14"/> [Local Setup](https://docs.twenty.com/developers/contribute/capabilities/local-setup)
 
 # Why Twenty
 
