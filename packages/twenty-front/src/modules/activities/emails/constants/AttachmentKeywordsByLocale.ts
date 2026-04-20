@@ -1,12 +1,5 @@
 export const ATTACHMENT_KEYWORDS_BY_LOCALE: Record<string, string[]> = {
-  ar: [
-    'المرفقات',
-    'الملف',
-    'ارفاق',
-    'مرفق',
-    'مضمون',
-    'صفحة المغلف',
-  ],
+  ar: ['المرفقات', 'الملف', 'ارفاق', 'مرفق', 'مضمون', 'صفحة المغلف'],
   ca: [
     'adjunt',
     'fitxer',
@@ -99,14 +92,7 @@ export const ATTACHMENT_KEYWORDS_BY_LOCALE: Record<string, string[]> = {
     'PJ',
     'P.J',
   ],
-  he: [
-    'נספח',
-    'קובץ',
-    'לצרף',
-    'מצורף',
-    'מצרף',
-    'מצרפת',
-  ],
+  he: ['נספח', 'קובץ', 'לצרף', 'מצורף', 'מצרף', 'מצרפת'],
   hu: [
     'csatolmány',
     'fájl',
@@ -186,14 +172,7 @@ export const ATTACHMENT_KEYWORDS_BY_LOCALE: Record<string, string[]> = {
     'fișier',
     'atach',
   ],
-  ru: [
-    'вложение',
-    'файл',
-    'вложенный',
-    'прикрепленный',
-    'резюме',
-    'документ',
-  ],
+  ru: ['вложение', 'файл', 'вложенный', 'прикрепленный', 'резюме', 'документ'],
   sr: [
     'прилог',
     'фајл',
