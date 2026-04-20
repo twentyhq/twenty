@@ -101,22 +101,6 @@ export const ActivityTargetsInlineCell = ({
                 showLabel: showLabel,
                 readonly: isReadOnly,
                 labelWidth: fieldDefinition?.labelWidth,
-                editModeContent: (
-                  <MultipleRecordPicker
-                    focusId={componentInstanceId}
-                    componentInstanceId={componentInstanceId}
-                    onClickOutside={handleCloseRelationPicker}
-                    onChange={(morphItem) => {
-                      updateActivityTargetFromCell({
-                        recordPickerInstanceId: componentInstanceId,
-                        morphItem,
-                        activityTargetWithTargetRecords:
-                          activityTargetObjectRecords,
-                      });
-                    }}
-                    onSubmit={handleCloseRelationPicker}
-                  />
-                ),
                 label: t`Relations`,
                 displayModeContent: (
                   <ActivityTargetChips
