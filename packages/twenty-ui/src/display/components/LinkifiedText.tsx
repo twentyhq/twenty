@@ -1,5 +1,4 @@
 import { styled } from '@linaria/react';
-import { type ReactNode } from 'react';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import { themeCssVariables } from '@ui/theme-constants';
@@ -15,17 +14,17 @@ const StyledLink = styled.a`
 `;
 
 type LinkifiedTextProps = {
-  children: ReactNode;
+  text: string;
 };
 
-export const LinkifiedText = ({ children }: LinkifiedTextProps) => {
-  if (!isNonEmptyString(children)) {
-    return <>{children}</>;
+export const LinkifiedText = ({ text }: LinkifiedTextProps) => {
+  if (!isNonEmptyString(text)) {
+    return null;
   }
 
   return (
     <>
-      {linkifyText(children).map((part, index) =>
+      {linkifyText(text).map((part, index) =>
         part.type === 'link' ? (
           <StyledLink
             key={index}

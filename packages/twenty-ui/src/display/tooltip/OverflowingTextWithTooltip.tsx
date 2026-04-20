@@ -133,7 +133,7 @@ export const OverflowingTextWithTooltip = ({
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
         >
-          <LinkifiedText>{text}</LinkifiedText>
+          {typeof text === 'string' ? <LinkifiedText text={text} /> : text}
         </StyledOverflowingMultilineText>
       ) : (
         <StyledOverflowingText
@@ -145,7 +145,7 @@ export const OverflowingTextWithTooltip = ({
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
         >
-          <LinkifiedText>{text}</LinkifiedText>
+          {typeof text === 'string' ? <LinkifiedText text={text} /> : text}
         </StyledOverflowingText>
       )}
 

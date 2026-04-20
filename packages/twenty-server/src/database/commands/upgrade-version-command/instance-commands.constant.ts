@@ -18,7 +18,7 @@ import { AddConditionalAvailabilityExpressionToPageLayoutWidgetFastInstanceComma
 import { AddIsPreInstalledToApplicationRegistrationFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-1/2-1-instance-command-fast-1776886452831-add-is-pre-installed-to-application-registration';
 import { AddProviderExecutedToAgentMessagePartFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-1/2-1-instance-command-fast-1777012800000-add-provider-executed-to-agent-message-part';
 import { BackfillPageLayoutWidgetPositionSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-1/2-1-instance-command-slow-1795000002000-backfill-page-layout-widget-position';
-import { SetCalendarEventDescriptionDisplayedMaxRowsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/1-23/1-23-instance-command-fast-1786000000000-set-calendar-event-description-displayed-max-rows';
+import { SetCalendarEventDescriptionDisplayedMaxRowsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/1-24/1-24-instance-command-fast-1786000000000-set-calendar-event-description-displayed-max-rows';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
