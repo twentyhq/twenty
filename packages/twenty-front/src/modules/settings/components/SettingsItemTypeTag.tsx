@@ -1,6 +1,6 @@
 import { AppChip } from '@/applications/components/AppChip';
 import { Avatar } from 'twenty-ui/display';
-import { Chip, ChipVariant } from 'twenty-ui/components';
+import { Chip, ChipAccent, ChipVariant } from 'twenty-ui/components';
 import { isDefined } from 'twenty-shared/utils';
 
 type SettingsItemTypeTagProps = {
@@ -26,10 +26,11 @@ export const SettingsItemTypeTag = ({
         className={className}
         label="Remote"
         variant={ChipVariant.Transparent}
+        accent={ChipAccent.TextPrimary}
         leftComponent={
           <Avatar
             type="app"
-            size="xs"
+            size="md"
             placeholder="Remote"
             placeholderColorSeed="Remote"
           />

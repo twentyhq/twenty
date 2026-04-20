@@ -2,6 +2,7 @@ import { useApplicationChipData } from '@/applications/hooks/useApplicationChipD
 import { Avatar } from 'twenty-ui/display';
 import {
   Chip,
+  ChipAccent,
   type ChipSize,
   ChipVariant,
   LinkChip,
@@ -27,9 +28,12 @@ export const AppChip = ({
   const leftComponent = (
     <Avatar
       type="app"
-      size="xs"
+      size="md"
       placeholder={applicationChipData.name}
       placeholderColorSeed={applicationChipData.seed}
+      color={applicationChipData.colors?.color}
+      backgroundColor={applicationChipData.colors?.backgroundColor}
+      borderColor={applicationChipData.colors?.borderColor}
     />
   );
 
@@ -41,6 +45,7 @@ export const AppChip = ({
         leftComponent={leftComponent}
         size={size}
         variant={variant ?? ChipVariant.Highlighted}
+        accent={ChipAccent.TextPrimary}
         to={to}
       />
     );
@@ -53,6 +58,7 @@ export const AppChip = ({
       leftComponent={leftComponent}
       size={size}
       variant={variant ?? ChipVariant.Transparent}
+      accent={ChipAccent.TextPrimary}
     />
   );
 };

@@ -31,7 +31,7 @@ const StyledAvatar = styled.div<{
 
   border-radius: ${({ rounded, type }) => {
     if (rounded) return '50%';
-    if (type === 'icon' || type === 'app') return '4px';
+    if (type === 'icon') return '4px';
     return '2px';
   }};
   border: ${({ type, borderColor }) =>
@@ -75,6 +75,7 @@ export type AvatarProps = {
   type?: Nullable<AvatarType>;
   color?: string;
   backgroundColor?: string;
+  borderColor?: string;
   onClick?: () => void;
 };
 
@@ -89,6 +90,7 @@ export const Avatar = ({
   type = 'squared',
   color,
   backgroundColor,
+  borderColor,
 }: AvatarProps) => {
   const { theme } = useContext(ThemeContext);
 
@@ -130,17 +132,18 @@ export const Avatar = ({
     : (backgroundColor ??
       stringToThemeColorP3String({
         string: placeholderColorSeed ?? '',
-        variant: 4,
+        variant: type === 'app' ? 5 : 4,
         theme,
       }));
 
   const fixedBorderColor =
     type === 'app' && !isPlaceholderFirstCharEmpty
-      ? stringToThemeColorP3String({
+      ? (borderColor ??
+        stringToThemeColorP3String({
           string: placeholderColorSeed ?? '',
           variant: 6,
           theme,
-        })
+        }))
       : undefined;
 
   const showBackgroundColor = showPlaceholder;
