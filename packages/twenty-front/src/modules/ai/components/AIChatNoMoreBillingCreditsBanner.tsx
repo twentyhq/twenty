@@ -1,4 +1,4 @@
-import { AIChatBanner } from '@/ai/components/AIChatBanner';
+import { AiChatBanner } from '@/ai/components/AiChatBanner';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { useEndSubscriptionTrialPeriod } from '@/settings/billing/hooks/useEndSubscriptionTrialPeriod';
@@ -107,7 +107,7 @@ export const AIChatNoMoreBillingCreditsBanner = () => {
 
   return (
     <>
-      <AIChatBanner
+      <AiChatBanner
         message={message}
         variant="warning"
         buttonTitle={buttonTitle}
