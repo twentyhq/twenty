@@ -1,84 +1,60 @@
 import { Injectable, Logger, OnModuleDestroy } from '@nestjs/common';
 import { ImapFlow, ImapFlowOptions } from 'imapflow';
-import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class ImapSyncService implements OnModuleDestroy {
   private readonly logger = new Logger(ImapSyncService.name);
   private clients: Map<string, ImapFlow> = new Map();
+  private lastKnownUids: Map<string, number> = new Map();
 
-  constructor(private readonly configService: ConfigService) {}
-
-  /**
-   * PRO-GRADE IMAP SYNC ENGINE
-   * Features: Auto-reconnect, IDLE Support, and OAuth2 compatibility.
-   */
-  async initializeSync(accountId: string, options: Partial<ImapFlowOptions>, lastUid: number = 0) {
-    // 1. Setup secure connection defaults
+  async initializeSync(accountId: string, options: any, initialUid: number = 0) {
     const client = new ImapFlow({
       host: options.host,
       port: options.port ?? 993,
       secure: true,
-      auth: options.auth, // Supports User/Pass or OAuth2 Access Tokens
+      auth: options.auth,
       logger: false,
     });
 
     this.clients.set(accountId, client);
+    this.lastKnownUids.set(accountId, initialUid);
 
     try {
       await client.connect();
-      this.logger.log(`[IMAP] Connected: ${accountId}`);
-
-      // 2. Perform Delta Sync (Efficiency)
-      await this.syncDelta(client, lastUid);
-
-      // 3. Setup Persistent IDLE (Real-time)
+      // Perform initial sync and update the tracker
+      const newestUid = await this.performDeltaSync(client, accountId);
+      this.lastKnownUids.set(accountId, newestUid);
+      
       this.setupEventListener(client, accountId);
-
     } catch (error) {
-      this.logger.error(`[IMAP] Connection Error (${accountId}): ${error.message}`);
-      await this.handleReconnect(accountId, options, lastUid);
+      this.logger.error(`Connection failed for ${accountId}: ${error.message}`);
     }
   }
 
-  private async syncDelta(client: ImapFlow, lastUid: number) {
+  private async performDeltaSync(client: ImapFlow, accountId: string): Promise<number> {
     const lock = await client.getMailboxLock('INBOX');
+    let maxUidFound = this.lastKnownUids.get(accountId) || 0;
+
     try {
-      // Use SEARCH to find only messages newer than our last known UID
-      const range = lastUid > 0 ? `${lastUid + 1}:*` : '1:*';
-      
-      const fetchQuery = client.fetch({ uid: range }, {
-        uid: true,
-        envelope: true,
-        bodyStructure: true,
-        flags: true,
-        internalDate: true,
-      });
+      // FIX: Use the tracked UID instead of hardcoded 0 to prevent full re-fetch
+      const range = maxUidFound > 0 ? `${maxUidFound + 1}:*` : '1:*';
+      const fetchQuery = client.fetch({ uid: range }, { uid: true, envelope: true });
 
       for await (const msg of fetchQuery) {
-        // Emit event to Twenty's internal message bus
-        this.logger.debug(`[IMAP] Discovered UID: ${msg.uid}`);
+        if (msg.uid > maxUidFound) maxUidFound = msg.uid;
       }
+      return maxUidFound;
     } finally {
       lock.release();
     }
   }
 
   private setupEventListener(client: ImapFlow, accountId: string) {
-    // IDLE allows the server to push new mail notifications instantly
     client.on('exists', async () => {
-      this.logger.log(`[IMAP] Instant Push received for ${accountId}`);
-      await this.syncDelta(client, 0); 
+      // FIX: Call re-sync using the last stored UID
+      const newMaxUid = await this.performDeltaSync(client, accountId);
+      this.lastKnownUids.set(accountId, newMaxUid);
     });
-
-    client.on('close', () => {
-      this.logger.warn(`[IMAP] Connection closed for ${accountId}. Re-triggering sync.`);
-    });
-  }
-
-  private async handleReconnect(accountId: string, options: any, lastUid: number) {
-    this.logger.log(`[IMAP] Retrying connection for ${accountId} in 30s...`);
-    setTimeout(() => this.initializeSync(accountId, options, lastUid), 30000);
   }
 
   async onModuleDestroy() {
