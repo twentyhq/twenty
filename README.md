@@ -1,5 +1,15 @@
 <p align="center">
   <a href="https://www.twenty.com">
+    <img src="./packages/twenty-website/public/images/core/logo.svg" width="100px" alt="Twenty logo" />
+  </a>
+</p>
+
+<h2 align="center" >The #1 Open-Source CRM</h2>
+
+<p align="center"><a href="https://twenty.com"><img src="./packages/twenty-website/public/images/readme/globe-icon.svg" width="12" height="12"/> Website</a> · <a href="https://docs.twenty.com"><img src="./packages/twenty-website/public/images/readme/book-icon.svg" width="12" height="12"/> Documentation</a> · <a href="https://github.com/orgs/twentyhq/projects/1"><img src="./packages/twenty-website/public/images/readme/map-icon.svg" width="12" height="12"/> Roadmap </a> · <a href="https://discord.gg/cx5n4Jzs57"><img src="./packages/twenty-website/public/images/readme/discord-icon.svg" width="12" height="12"/> Discord</a> · <a href="https://www.figma.com/file/xt8O9mFeLl46C5InWwoMrN/Twenty"><img src="./packages/twenty-website/public/images/readme/figma-icon.png"  width="12" height="12"/>  Figma</a></p>
+
+<p align="center">
+  <a href="https://www.twenty.com">
     <picture>
       <source media="(prefers-color-scheme: dark)" srcset="./packages/twenty-website/public/images/readme/github-cover-dark.png" />
       <source media="(prefers-color-scheme: light)" srcset="./packages/twenty-website/public/images/readme/github-cover-light.png" />
@@ -8,17 +18,51 @@
   </a>
 </p>
 
-<h2 align="center" >The Open-Source CRM You Build With Code and AI </h2>
-
-<p align="center"><a href="https://twenty.com"><img src="./packages/twenty-website/public/images/readme/globe-icon.svg" width="12" height="12"/> Website</a> · <a href="https://docs.twenty.com"><img src="./packages/twenty-website/public/images/readme/book-icon.svg" width="12" height="12"/> Documentation</a> · <a href="https://github.com/orgs/twentyhq/projects/1"><img src="./packages/twenty-website/public/images/readme/map-icon.svg" width="12" height="12"/> Roadmap </a> · <a href="https://discord.gg/cx5n4Jzs57"><img src="./packages/twenty-website/public/images/readme/discord-icon.svg" width="12" height="12"/> Discord</a> · <a href="https://www.figma.com/file/xt8O9mFeLl46C5InWwoMrN/Twenty"><img src="./packages/twenty-website/public/images/readme/figma-icon.png"  width="12" height="12"/>  Figma</a></p>
-
 <br />
 
 # Installation
 
-See:
-<img src="./packages/twenty-website/public/images/readme/rocket-icon.svg" width="14" height="14"/> [Self-hosting](https://docs.twenty.com/developers/self-host/capabilities/docker-compose)
-<img src="./packages/twenty-website/public/images/readme/monitor-icon.svg" width="14" height="14"/> [Local Setup](https://docs.twenty.com/developers/contribute/capabilities/local-setup)
+### <img src="./packages/twenty-website/public/images/readme/globe-icon.svg" width="14" height="14"/> Cloud
+
+The fastest way to get started. Sign up at [twenty.com](https://twenty.com) and spin up a workspace in under a minute — no infrastructure to manage, always up to date.
+
+### <img src="./packages/twenty-website/public/images/readme/book-icon.svg" width="14" height="14"/> Build an app
+
+Scaffold a new app with the Twenty CLI:
+
+```bash
+npx create-twenty-app my-app
+```
+
+Define objects, fields, and views as code:
+
+```ts
+import { defineObject, FieldType } from 'twenty-sdk/define';
+
+export default defineObject({
+  nameSingular: 'deal',
+  namePlural: 'deals',
+  labelSingular: 'Deal',
+  labelPlural: 'Deals',
+  fields: [
+    { name: 'name', label: 'Name', type: FieldType.TEXT },
+    { name: 'amount', label: 'Amount', type: FieldType.CURRENCY },
+    { name: 'closeDate', label: 'Close Date', type: FieldType.DATE_TIME },
+  ],
+});
+```
+
+Then ship it to your workspace:
+
+```bash
+npx twenty deploy
+```
+
+See the [app development guide](https://docs.twenty.com/developers/extend/apps/getting-started) for objects, views, agents, and logic functions.
+
+### <img src="./packages/twenty-website/public/images/readme/rocket-icon.svg" width="14" height="14"/> Self-hosting
+
+Run Twenty on your own infrastructure with [Docker Compose](https://docs.twenty.com/developers/self-host/capabilities/docker-compose), or contribute locally via the [local setup guide](https://docs.twenty.com/developers/contribute/capabilities/local-setup).
 
 # Why Twenty
 
