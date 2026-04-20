@@ -54,51 +54,31 @@ Twenty v2 is a code-first, AI-native CRM platform. Build, ship, and version your
 ## Create your apps with code + AI
 
 <p align="center">
-    <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/refs/heads/main/packages/twenty-website/public/images/readme/v2-build-apps.png" />
-      <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/refs/heads/main/packages/twenty-website/public/images/readme/v2-build-apps.png" />
-      <img src="./packages/twenty-website/public/images/readme/v2-build-apps.png" alt="Create your apps with code and AI" />
-    </picture>
+  <img src="./packages/twenty-website/public/images/readme/v2-build-apps.png" alt="Create your apps with code and AI" />
 </p>
 
 ## All the tools you need to build anything
 
 <p align="center">
-    <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/refs/heads/main/packages/twenty-website/public/images/readme/v2-tools.png" />
-      <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/refs/heads/main/packages/twenty-website/public/images/readme/v2-tools.png" />
-      <img src="./packages/twenty-website/public/images/readme/v2-tools.png" alt="Data model, logic, and layout" />
-    </picture>
+  <img src="./packages/twenty-website/public/images/readme/v2-tools.png" alt="Data model, logic, and layout" />
 </p>
 
 ## Stay on top with version control
 
 <p align="center">
-    <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/refs/heads/main/packages/twenty-website/public/images/readme/v2-version-control.png" />
-      <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/refs/heads/main/packages/twenty-website/public/images/readme/v2-version-control.png" />
-      <img src="./packages/twenty-website/public/images/readme/v2-version-control.png" alt="Version control with GitHub" />
-    </picture>
+  <img src="./packages/twenty-website/public/images/readme/v2-version-control.png" alt="Version control with GitHub" />
 </p>
 
 ## AI agents and chats
 
 <p align="center">
-    <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/refs/heads/main/packages/twenty-website/public/images/readme/v2-ai-agents.png" />
-      <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/refs/heads/main/packages/twenty-website/public/images/readme/v2-ai-agents.png" />
-      <img src="./packages/twenty-website/public/images/readme/v2-ai-agents.png" alt="AI agents and chats" />
-    </picture>
+  <img src="./packages/twenty-website/public/images/readme/v2-ai-agents.png" alt="AI agents and chats" />
 </p>
 
 ## Plus all the tools of a good CRM
 
 <p align="center">
-    <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/refs/heads/main/packages/twenty-website/public/images/readme/v2-crm-tools.png" />
-      <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/refs/heads/main/packages/twenty-website/public/images/readme/v2-crm-tools.png" />
-      <img src="./packages/twenty-website/public/images/readme/v2-crm-tools.png" alt="Kanban, workflows, dashboards, and more" />
-    </picture>
+  <img src="./packages/twenty-website/public/images/readme/v2-crm-tools.png" alt="Kanban, workflows, dashboards, and more" />
 </p>
 
 <br />
