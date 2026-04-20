@@ -1,4 +1,4 @@
-import { useApplicationsByIdMap } from '@/applications/hooks/useApplicationsByIdMap';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { isDDLLockedState } from '@/client-config/states/isDDLLockedState';
 import { useDeleteOneObjectMetadataItem } from '@/object-metadata/hooks/useDeleteOneObjectMetadataItem';
 import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdateOneObjectMetadataItem';
@@ -84,7 +84,8 @@ export const SettingsObjectTable = ({
   const { totalCountByObjectMetadataItemNamePlural } =
     useCombinedGetTotalCount();
 
-  const applicationsById = useApplicationsByIdMap();
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
+  const installedApplications = currentWorkspace?.installedApplications;
 
   const allObjectSettingsArray = useMemo(
     () =>
@@ -94,8 +95,10 @@ export const SettingsObjectTable = ({
             objectMetadataItem,
             labelPlural: objectMetadataItem.labelPlural,
             objectTypeLabel:
-              applicationsById.get(objectMetadataItem.applicationId ?? '')
-                ?.name ?? (objectMetadataItem.isRemote ? 'Remote' : ''),
+              installedApplications?.find(
+                (application) =>
+                  application.id === objectMetadataItem.applicationId,
+              )?.name ?? (objectMetadataItem.isRemote ? 'Remote' : ''),
             fieldsCount: objectMetadataItem.fields.filter(
               (field) => !isHiddenSystemField(field),
             ).length,
@@ -108,7 +111,7 @@ export const SettingsObjectTable = ({
     [
       objectMetadataItems,
       totalCountByObjectMetadataItemNamePlural,
-      applicationsById,
+      installedApplications,
     ],
   );
 

@@ -1,6 +1,5 @@
 import { CurrentApplicationContext } from '@/applications/contexts/CurrentApplicationContext';
 import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from '@/applications/constants/TwentyStandardApplication';
-import { useApplicationsByIdMap } from '@/applications/hooks/useApplicationsByIdMap';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { t } from '@lingui/core/macro';
@@ -32,11 +31,12 @@ export const useApplicationChipData = ({
   applicationId,
 }: UseApplicationChipDataArgs): UseApplicationChipDataReturnType => {
   const { theme } = useContext(ThemeContext);
-  const applicationsById = useApplicationsByIdMap();
   const currentApplicationId = useContext(CurrentApplicationContext);
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 
-  const application = applicationsById.get(applicationId);
+  const application = currentWorkspace?.installedApplications.find(
+    (installedApplication) => installedApplication.id === applicationId,
+  );
 
   const isCurrent =
     isDefined(currentApplicationId) && currentApplicationId === applicationId;
