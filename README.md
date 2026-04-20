@@ -97,7 +97,7 @@ Want to go deeper? Read the <a href="https://docs.twenty.com/user-guide/introduc
         <source media="(prefers-color-scheme: light)" srcset="./packages/twenty-website/public/images/readme/v2-version-control-light.png" />
         <img src="./packages/twenty-website/public/images/readme/v2-version-control-light.png" alt="Stay on top with version control" />
       </picture>
-      <p align="center"><a href="https://docs.twenty.com/developers/extend/apps/getting-started"><img src="./packages/twenty-website/public/images/readme/monitor-icon.svg" width="16" height="16"/> Learn more about version control in doc</a></p>
+      <p align="center"><a href="https://docs.twenty.com/developers/extend/apps/publishing"><img src="./packages/twenty-website/public/images/readme/monitor-icon.svg" width="16" height="16"/> Learn more about version control in doc</a></p>
     </td>
   </tr>
   <tr>
@@ -107,7 +107,7 @@ Want to go deeper? Read the <a href="https://docs.twenty.com/user-guide/introduc
         <source media="(prefers-color-scheme: light)" srcset="./packages/twenty-website/public/images/readme/v2-all-tools-light.png" />
         <img src="./packages/twenty-website/public/images/readme/v2-all-tools-light.png" alt="All the tools you need to build anything" />
       </picture>
-      <p align="center"><a href="https://docs.twenty.com/developers/extend"><img src="./packages/twenty-website/public/images/readme/rocket-icon.svg" width="16" height="16"/> Learn more about primitives in doc</a></p>
+      <p align="center"><a href="https://docs.twenty.com/developers/extend/apps/building"><img src="./packages/twenty-website/public/images/readme/rocket-icon.svg" width="16" height="16"/> Learn more about primitives in doc</a></p>
     </td>
     <td width="50%">
       <picture>
@@ -115,7 +115,7 @@ Want to go deeper? Read the <a href="https://docs.twenty.com/user-guide/introduc
         <source media="(prefers-color-scheme: light)" srcset="./packages/twenty-website/public/images/readme/v2-tools-light.png" />
         <img src="./packages/twenty-website/public/images/readme/v2-tools-light.png" alt="Customize your layouts" />
       </picture>
-      <p align="center"><a href="https://docs.twenty.com/user-guide/views-pipelines"><img src="./packages/twenty-website/public/images/readme/planner-icon.svg" width="16" height="16"/> Learn more about layouts in doc</a></p>
+      <p align="center"><a href="https://docs.twenty.com/user-guide/views-pipelines/overview"><img src="./packages/twenty-website/public/images/readme/planner-icon.svg" width="16" height="16"/> Learn more about layouts in doc</a></p>
     </td>
   </tr>
   <tr>
@@ -125,7 +125,7 @@ Want to go deeper? Read the <a href="https://docs.twenty.com/user-guide/introduc
         <source media="(prefers-color-scheme: light)" srcset="./packages/twenty-website/public/images/readme/v2-ai-agents-light.png" />
         <img src="./packages/twenty-website/public/images/readme/v2-ai-agents-light.png" alt="AI agents and chats" />
       </picture>
-      <p align="center"><a href="https://docs.twenty.com/user-guide/ai"><img src="./packages/twenty-website/public/images/readme/message-icon.svg" width="16" height="16"/> Learn more about AI in doc</a></p>
+      <p align="center"><a href="https://docs.twenty.com/user-guide/ai/overview"><img src="./packages/twenty-website/public/images/readme/message-icon.svg" width="16" height="16"/> Learn more about AI in doc</a></p>
     </td>
     <td width="50%">
       <picture>
@@ -151,14 +151,15 @@ Want to go deeper? Read the <a href="https://docs.twenty.com/user-guide/introduc
 
 # Thanks
 
-<table align="center">
-  <tr>
-    <td align="center" width="120"><a href="https://www.chromatic.com/"><img src="./packages/twenty-website/public/images/readme/chromatic.png" height="28" alt="Chromatic" /></a></td>
-    <td align="center" width="120"><a href="https://greptile.com"><img src="./packages/twenty-website/public/images/readme/greptile.png" height="28" alt="Greptile" /></a></td>
-    <td align="center" width="120"><a href="https://sentry.io/"><img src="./packages/twenty-website/public/images/readme/sentry.png" height="28" alt="Sentry" /></a></td>
-    <td align="center" width="120"><a href="https://crowdin.com/"><img src="./packages/twenty-website/public/images/readme/crowdin.png" height="28" alt="Crowdin" /></a></td>
-  </tr>
-</table>
+<p align="center">
+  <a href="https://www.chromatic.com/"><img src="./packages/twenty-website/public/images/readme/chromatic.png" height="28" alt="Chromatic" /></a>
+  &nbsp;&nbsp;&nbsp;&nbsp;
+  <a href="https://greptile.com"><img src="./packages/twenty-website/public/images/readme/greptile.png" height="28" alt="Greptile" /></a>
+  &nbsp;&nbsp;&nbsp;&nbsp;
+  <a href="https://sentry.io/"><img src="./packages/twenty-website/public/images/readme/sentry.png" height="28" alt="Sentry" /></a>
+  &nbsp;&nbsp;&nbsp;&nbsp;
+  <a href="https://crowdin.com/"><img src="./packages/twenty-website/public/images/readme/crowdin.png" height="28" alt="Crowdin" /></a>
+</p>
 
   Thanks to these amazing services that we use and recommend for UI testing (Chromatic), code review (Greptile), catching bugs (Sentry) and translating (Crowdin).
 
