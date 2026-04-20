@@ -3,34 +3,34 @@ import { type I18n } from '@lingui/core';
 import { isDefined } from 'twenty-shared/utils';
 
 import { generateMessageId } from 'src/engine/core-modules/i18n/utils/generateMessageId';
-import { type PageLayoutWidgetOverrides } from 'src/engine/metadata-modules/page-layout-widget/entities/page-layout-widget.entity';
+import { type ViewFieldGroupOverrides } from 'src/engine/metadata-modules/view-field-group/entities/view-field-group.entity';
 
-export const resolvePageLayoutWidgetTitle = ({
-  title,
+export const resolveViewFieldGroupName = ({
+  name,
   applicationId,
   twentyStandardApplicationId,
   overrides,
   i18nInstance,
 }: {
-  title: string;
+  name: string;
   applicationId: string;
   twentyStandardApplicationId: string;
-  overrides?: PageLayoutWidgetOverrides | null;
+  overrides?: ViewFieldGroupOverrides | null;
   i18nInstance: I18n;
 }): string => {
   if (applicationId !== twentyStandardApplicationId) {
-    return title;
+    return name;
   }
 
-  if (isDefined(overrides?.title)) {
-    return title;
+  if (isDefined(overrides?.name)) {
+    return name;
   }
 
-  const messageId = generateMessageId(title);
+  const messageId = generateMessageId(name);
   const translatedMessage = i18nInstance._(messageId);
 
   if (translatedMessage === messageId) {
-    return title;
+    return name;
   }
 
   return translatedMessage;

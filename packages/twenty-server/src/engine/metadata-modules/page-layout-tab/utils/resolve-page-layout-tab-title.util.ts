@@ -4,20 +4,21 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { generateMessageId } from 'src/engine/core-modules/i18n/utils/generateMessageId';
 import { type PageLayoutTabOverrides } from 'src/engine/metadata-modules/page-layout-tab/entities/page-layout-tab.entity';
-import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
 
 export const resolvePageLayoutTabTitle = ({
   title,
   applicationId,
+  twentyStandardApplicationId,
   overrides,
   i18nInstance,
 }: {
   title: string;
   applicationId: string;
+  twentyStandardApplicationId: string;
   overrides?: PageLayoutTabOverrides | null;
   i18nInstance: I18n;
 }): string => {
-  if (applicationId !== TWENTY_STANDARD_APPLICATION.universalIdentifier) {
+  if (applicationId !== twentyStandardApplicationId) {
     return title;
   }
 

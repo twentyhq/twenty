@@ -15,6 +15,7 @@ import {
 
 import { PermissionFlagType } from 'twenty-shared/constants';
 
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { type I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
@@ -42,18 +43,26 @@ export class PageLayoutWidgetResolver {
   constructor(
     private readonly pageLayoutWidgetService: PageLayoutWidgetService,
     private readonly i18nService: I18nService,
+    private readonly applicationService: ApplicationService,
   ) {}
 
   @ResolveField(() => String)
   async title(
     @Parent() widget: PageLayoutWidgetDTO,
     @Context() context: I18nContext,
+    @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<string> {
     const i18n = this.i18nService.getI18nInstance(context.req.locale);
+
+    const { twentyStandardFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId: workspace.id },
+      );
 
     return resolvePageLayoutWidgetTitle({
       title: widget.title,
       applicationId: widget.applicationId,
+      twentyStandardApplicationId: twentyStandardFlatApplication.id,
       overrides: widget.overrides,
       i18nInstance: i18n,
     });

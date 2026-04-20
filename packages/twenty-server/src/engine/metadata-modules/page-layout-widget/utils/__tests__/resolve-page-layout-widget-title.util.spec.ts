@@ -2,13 +2,14 @@ import { type I18n } from '@lingui/core';
 
 import { generateMessageId } from 'src/engine/core-modules/i18n/utils/generateMessageId';
 import { resolvePageLayoutWidgetTitle } from 'src/engine/metadata-modules/page-layout-widget/utils/resolve-page-layout-widget-title.util';
-import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
 
 jest.mock('src/engine/core-modules/i18n/utils/generateMessageId');
 
 const mockGenerateMessageId = generateMessageId as jest.MockedFunction<
   typeof generateMessageId
 >;
+
+const STANDARD_APPLICATION_ID = 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa';
 
 describe('resolvePageLayoutWidgetTitle', () => {
   let mockI18n: jest.Mocked<I18n>;
@@ -26,7 +27,8 @@ describe('resolvePageLayoutWidgetTitle', () => {
 
     const result = resolvePageLayoutWidgetTitle({
       title: 'Fields',
-      applicationId: TWENTY_STANDARD_APPLICATION.universalIdentifier,
+      applicationId: STANDARD_APPLICATION_ID,
+      twentyStandardApplicationId: STANDARD_APPLICATION_ID,
       i18nInstance: mockI18n,
     });
 
@@ -41,7 +43,8 @@ describe('resolvePageLayoutWidgetTitle', () => {
 
     const result = resolvePageLayoutWidgetTitle({
       title: 'My Custom Widget',
-      applicationId: TWENTY_STANDARD_APPLICATION.universalIdentifier,
+      applicationId: STANDARD_APPLICATION_ID,
+      twentyStandardApplicationId: STANDARD_APPLICATION_ID,
       i18nInstance: mockI18n,
     });
 
@@ -56,7 +59,8 @@ describe('resolvePageLayoutWidgetTitle', () => {
 
     const result = resolvePageLayoutWidgetTitle({
       title: '',
-      applicationId: TWENTY_STANDARD_APPLICATION.universalIdentifier,
+      applicationId: STANDARD_APPLICATION_ID,
+      twentyStandardApplicationId: STANDARD_APPLICATION_ID,
       i18nInstance: mockI18n,
     });
 
@@ -92,7 +96,8 @@ describe('resolvePageLayoutWidgetTitle', () => {
 
       const result = resolvePageLayoutWidgetTitle({
         title: source,
-        applicationId: TWENTY_STANDARD_APPLICATION.universalIdentifier,
+        applicationId: STANDARD_APPLICATION_ID,
+        twentyStandardApplicationId: STANDARD_APPLICATION_ID,
         i18nInstance: mockI18n,
       });
 
@@ -109,6 +114,7 @@ describe('resolvePageLayoutWidgetTitle', () => {
     const result = resolvePageLayoutWidgetTitle({
       title: 'Fields',
       applicationId: customAppId,
+      twentyStandardApplicationId: STANDARD_APPLICATION_ID,
       i18nInstance: mockI18n,
     });
 
@@ -123,7 +129,8 @@ describe('resolvePageLayoutWidgetTitle', () => {
 
     const result = resolvePageLayoutWidgetTitle({
       title: 'Fields',
-      applicationId: TWENTY_STANDARD_APPLICATION.universalIdentifier,
+      applicationId: STANDARD_APPLICATION_ID,
+      twentyStandardApplicationId: STANDARD_APPLICATION_ID,
       overrides: { title: 'Fields' },
       i18nInstance: mockI18n,
     });
@@ -139,7 +146,8 @@ describe('resolvePageLayoutWidgetTitle', () => {
 
     const result = resolvePageLayoutWidgetTitle({
       title: 'Fields',
-      applicationId: TWENTY_STANDARD_APPLICATION.universalIdentifier,
+      applicationId: STANDARD_APPLICATION_ID,
+      twentyStandardApplicationId: STANDARD_APPLICATION_ID,
       overrides: { conditionalAvailabilityExpression: 'device == "MOBILE"' },
       i18nInstance: mockI18n,
     });
