@@ -1,24 +1,31 @@
 ---
-title: Workflow-Guthaben
-description: Was Workflow-Guthaben sind, wie sie verbraucht werden und wie Sie mehr kaufen.
+title: Guthaben
+description: Understanding how credits power workflows, AI agents, and the AI chatbot — and how to manage your balance.
 ---
 
 ## Übersicht
 
-Guthaben ermöglichen Ihre Workflow-Automatisierungen in Twenty. Jede Workflow-Aktion verbraucht Guthaben abhängig von ihrer Komplexität.
+Credits power workflow automations and AI capabilities. They are consumed when workflow actions execute, when AI agents process tasks inside workflows, and whithin the AI chat.
 
 ## Guthabenverteilung
 
 Guthaben richten sich nach Ihrem Abrechnungszeitraum, nicht nach Ihrem Tarif:
 
-| Abrechnungszeitraum | Guthaben          |
-| ------------------- | ----------------- |
-| Monatlich           | 5 Millionen/Monat |
-| Jährlich            | 50 Millionen/Jahr |
+| Abrechnungszeitraum | Guthaben |
+| ------------------- | -------- |
+| Monatlich           | 5/month  |
+| Jährlich            | 50/year  |
 
 <Note>
-Die 5 Millionen monatlichen Guthaben sind dafür gedacht, dass Sie Automatisierungen ausführen können, ohne sich um Kosten zu kümmern. Für die meisten Workflows mit Standardaktionen ist das mehr als ausreichend. Zusätzliches Guthaben benötigen Sie nur bei der Ausführung fortgeschrittener Code-Knoten oder KI-gestützter Funktionen.
+The 5 monthly credits are designed to empower you to run automations without worrying about costs. Für die meisten Workflows mit Standardaktionen ist das mehr als ausreichend. Zusätzliches Guthaben benötigen Sie nur bei der Ausführung fortgeschrittener Code-Knoten oder KI-gestützter Funktionen.
 </Note>
+
+## Credit Rollover
+
+Unused credits at the end of a billing period are automatically carried over to the next period.
+
+* **Cap**: The rollover amount is capped at one period's full allocation, so you can never carry over more credits than your plan provides per period.
+* **Visibility**: When rollover credits are available, they appear as a separate **Rollover Credits** line in **Settings → Billing**, alongside a **Total Available** balance.
 
 ## Guthabenverbrauch
 
@@ -28,7 +35,7 @@ Verschiedene Aktionen verbrauchen unterschiedliche Mengen an Guthaben:
 | ---------------------------------------------------------------------------- | ------------------------ |
 | **Grundlegende Vorgänge** (Suchen, Aktualisieren, Erstellen von Datensätzen) | Minimal                  |
 | **Komplexe Vorgänge** (Code-Knoten, externe API-Aufrufe)                     | Mehr Guthaben            |
-| **AI-Eingabeaufforderungen** (demnächst verfügbar)                           | Variabel je nach Nutzung |
+| **AI prompt & AI chats**                                                     | Variabel je nach Nutzung |
 
 Credits werden in Echtzeit abgezogen, wenn Workflows ausgeführt werden.
 

@@ -1,24 +1,31 @@
 ---
-title: Crediti del flusso di lavoro
-description: Comprendere i crediti dei flussi di lavoro, il consumo e come acquistarne di più.
+title: Crediti
+description: Understanding how credits power workflows, AI agents, and the AI chatbot — and how to manage your balance.
 ---
 
 ## Panoramica
 
-I crediti alimentano le automazioni dei tuoi flussi di lavoro in Twenty. Ogni azione del flusso di lavoro consuma crediti in base alla sua complessità.
+Credits power workflow automations and AI capabilities. They are consumed when workflow actions execute, when AI agents process tasks inside workflows, and whithin the AI chat.
 
 ## Allocazione dei crediti
 
 I crediti si basano sul tuo ciclo di fatturazione, non sul tuo piano:
 
-| Ciclo di fatturazione | Crediti         |
-| --------------------- | --------------- |
-| Mensile               | 5 milioni/mese  |
-| Annuale               | 50 milioni/anno |
+| Ciclo di fatturazione | Crediti |
+| --------------------- | ------- |
+| Mensile               | 5/month |
+| Annuale               | 50/year |
 
 <Note>
-I 5 milioni di crediti mensili sono pensati per permetterti di eseguire automazioni senza preoccuparti dei costi. Per la maggior parte dei flussi di lavoro che utilizzano azioni standard, questo è più che sufficiente. Avrai bisogno di crediti aggiuntivi solo quando esegui nodi di codice avanzati o funzionalità basate sull'IA.
+The 5 monthly credits are designed to empower you to run automations without worrying about costs. Per la maggior parte dei flussi di lavoro che utilizzano azioni standard, questo è più che sufficiente. Avrai bisogno di crediti aggiuntivi solo quando esegui nodi di codice avanzati o funzionalità basate sull'IA.
 </Note>
+
+## Credit Rollover
+
+Unused credits at the end of a billing period are automatically carried over to the next period.
+
+* **Cap**: The rollover amount is capped at one period's full allocation, so you can never carry over more credits than your plan provides per period.
+* **Visibility**: When rollover credits are available, they appear as a separate **Rollover Credits** line in **Settings → Billing**, alongside a **Total Available** balance.
 
 ## Consumo di crediti
 
@@ -28,7 +35,7 @@ Azioni diverse consumano quantità diverse di crediti:
 | -------------------------------------------------------------------- | ------------------------------ |
 | **Operazioni di base** (ricerca, aggiornamento, creazione di record) | Minimo                         |
 | **Operazioni complesse** (nodi di codice, chiamate alle API esterne) | Più crediti                    |
-| **Prompt IA** (in arrivo)                                            | Variabile in base all'utilizzo |
+| **AI prompt & AI chats**                                             | Variabile in base all'utilizzo |
 
 I crediti vengono detratti in tempo reale quando i workflow vengono eseguiti.
 

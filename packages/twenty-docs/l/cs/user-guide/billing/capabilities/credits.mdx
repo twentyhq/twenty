@@ -1,24 +1,31 @@
 ---
-title: Kredity pracovních postupů
-description: Pochopení kreditů pracovních postupů, jejich spotřeby a způsobu, jak zakoupit další.
+title: Kredity
+description: Understanding how credits power workflows, AI agents, and the AI chatbot — and how to manage your balance.
 ---
 
 ## Přehled
 
-Kredity pracovních postupů pohánějí vaše automatizace v Twenty. Každá akce v pracovním postupu spotřebovává kredity podle své složitosti.
+Credits power workflow automations and AI capabilities. They are consumed when workflow actions execute, when AI agents process tasks inside workflows, and whithin the AI chat.
 
 ## Přidělení kreditů
 
 Kredity se odvíjejí od vašeho fakturačního cyklu, nikoli od plánu:
 
-| Fakturační cyklus | Kredity         |
-| ----------------- | --------------- |
-| Měsíční           | 5 milionů/měsíc |
-| Roční             | 50 milionů/rok  |
+| Fakturační cyklus | Kredity |
+| ----------------- | ------- |
+| Měsíční           | 5/month |
+| Roční             | 50/year |
 
 <Note>
-Těch 5 milionů měsíčních kreditů je navrženo tak, aby vám umožnilo spouštět automatizace bez obav o náklady. Pro většinu pracovních postupů využívajících standardní akce je to více než dostačující. Další kredity budete potřebovat pouze při spouštění pokročilých uzlů kódu nebo funkcí poháněných AI.
+The 5 monthly credits are designed to empower you to run automations without worrying about costs. Pro většinu pracovních postupů využívajících standardní akce je to více než dostačující. Další kredity budete potřebovat pouze při spouštění pokročilých uzlů kódu nebo funkcí poháněných AI.
 </Note>
+
+## Credit Rollover
+
+Unused credits at the end of a billing period are automatically carried over to the next period.
+
+* **Cap**: The rollover amount is capped at one period's full allocation, so you can never carry over more credits than your plan provides per period.
+* **Visibility**: When rollover credits are available, they appear as a separate **Rollover Credits** line in **Settings → Billing**, alongside a **Total Available** balance.
 
 ## Spotřeba kreditů
 
@@ -28,7 +35,7 @@ Různé akce spotřebovávají různá množství kreditů:
 | ------------------------------------------------------------------ | ------------------------ |
 | **Základní operace** (vyhledávání, aktualizace, vytváření záznamů) | Minimální                |
 | **Komplexní operace** (uzly kódu, volání externího API)            | Více kreditů             |
-| **AI návrhy** (brzy k dispozici)                                   | Proměnlivé podle využití |
+| **AI prompt & AI chats**                                           | Proměnlivé podle využití |
 
 Kredity jsou odečítány v reálném čase, když se pracovní postupy provádějí.
 
