@@ -6,6 +6,10 @@ const StyledRightColumn = styled.div`
   min-width: 0;
   width: 100%;
 
+  @media (max-width: ${theme.breakpoints.md - 1}px) {
+    order: -1;
+  }
+
   @media (min-width: ${theme.breakpoints.md}px) {
     align-self: start;
     max-width: 672px;

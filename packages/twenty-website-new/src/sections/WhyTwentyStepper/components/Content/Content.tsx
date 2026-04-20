@@ -3,6 +3,7 @@
 import { Body, Heading, StepperProgressRail } from '@/design-system/components';
 import type { BodyType } from '@/design-system/components/Body/types/Body';
 import type { HeadingType } from '@/design-system/components/Heading/types/Heading';
+import { StepperSwipeDeck } from '@/lib/stepper';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
 import type { CSSProperties } from 'react';
@@ -58,18 +59,30 @@ const StepBlock = styled.div`
   }
 `;
 
+const SwipeStepBlock = styled.div`
+  display: grid;
+  grid-template-columns: 1fr;
+  row-gap: ${theme.spacing(4)};
+`;
+
+export type WhyTwentyStepperLayoutMode = 'scroll' | 'swipe';
+
 export type WhyTwentyStepperContentProps = {
   activeStepIndex: number;
   body: BodyType[];
   heading: HeadingType;
+  layoutMode: WhyTwentyStepperLayoutMode;
   localProgress: number;
+  onMobileStepIndexChange: (nextIndex: number) => void;
 };
 
 export function Content({
   activeStepIndex,
   body,
   heading,
+  layoutMode,
   localProgress,
+  onMobileStepIndexChange,
 }: WhyTwentyStepperContentProps) {
   const stepCount = body.length;
 
@@ -85,33 +98,57 @@ export function Content({
         <HeadingBlock>
           <Heading as="h2" segments={heading} size="xl" weight="light" />
         </HeadingBlock>
-        {body.map((bodyItem, index) => {
-          let opacity = 1;
-          let translateY = 0;
+        {layoutMode === 'swipe' ? (
+          <StepperSwipeDeck
+            activeIndex={activeStepIndex}
+            onActiveIndexChange={onMobileStepIndexChange}
+            stepCount={stepCount}
+          >
+            {(stepIndex) => (
+              <SwipeStepBlock>
+                <Body
+                  body={body[stepIndex]}
+                  family="sans"
+                  size="md"
+                  weight="regular"
+                />
+              </SwipeStepBlock>
+            )}
+          </StepperSwipeDeck>
+        ) : (
+          body.map((bodyItem, index) => {
+            let opacity = 1;
+            let translateY = 0;
 
-          if (index > activeStepIndex + 1) {
-            opacity = 0;
-            translateY = 300;
-          } else if (index === activeStepIndex + 1) {
-            opacity = 0.4;
-            translateY = 300 * (1 - localProgress);
-          }
+            if (index > activeStepIndex + 1) {
+              opacity = 0;
+              translateY = 300;
+            } else if (index === activeStepIndex + 1) {
+              opacity = 0.4;
+              translateY = 300 * (1 - localProgress);
+            }
 
-          return (
-            <StepBlock
-              data-active={String(index <= activeStepIndex)}
-              key={index}
-              style={
-                {
-                  '--step-opacity': opacity,
-                  '--step-translate-y': `${translateY}px`,
-                } as CSSProperties
-              }
-            >
-              <Body body={bodyItem} family="sans" size="md" weight="regular" />
-            </StepBlock>
-          );
-        })}
+            return (
+              <StepBlock
+                data-active={String(index <= activeStepIndex)}
+                key={index}
+                style={
+                  {
+                    '--step-opacity': opacity,
+                    '--step-translate-y': `${translateY}px`,
+                  } as CSSProperties
+                }
+              >
+                <Body
+                  body={bodyItem}
+                  family="sans"
+                  size="md"
+                  weight="regular"
+                />
+              </StepBlock>
+            );
+          })
+        )}
       </StepsColumn>
     </ContentRoot>
   );

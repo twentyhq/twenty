@@ -1,6 +1,7 @@
 'use client';
 
 import { Body, Heading } from '@/design-system/components';
+import { StepperSwipeDeck } from '@/lib/stepper';
 import { HOME_STEPPER_HOLD_FRACTIONS } from '@/sections/HomeStepper/utils/home-stepper-lottie-frame-map';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
@@ -87,9 +88,21 @@ const StepBlock = styled.div`
   }
 `;
 
+const SwipeStepBlock = styled.div`
+  display: grid;
+  grid-template-columns: 1fr;
+  max-width: 454px;
+  min-width: 0;
+  row-gap: ${theme.spacing(4)};
+`;
+
+export type HomeStepperLayoutMode = 'scroll' | 'swipe';
+
 export type HomeStepperLeftColumnProps = {
   activeStepIndex: number;
+  layoutMode: HomeStepperLayoutMode;
   localProgress: number;
+  onMobileStepIndexChange: (nextIndex: number) => void;
   steps: HomeStepperStepType[];
 };
 
@@ -125,7 +138,9 @@ function computeDesktopStepStyle(
 
 export function LeftColumn({
   activeStepIndex,
+  layoutMode,
   localProgress,
+  onMobileStepIndexChange,
   steps,
 }: HomeStepperLeftColumnProps) {
   return (
@@ -137,30 +152,48 @@ export function LeftColumn({
           steps={steps}
         />
         <StepsContainer>
-          {steps.map((step, index) => {
-            const { opacity, transform } = computeDesktopStepStyle(
-              index,
-              activeStepIndex,
-              localProgress,
-              steps.length,
-            );
+          {layoutMode === 'swipe' ? (
+            <StepperSwipeDeck
+              activeIndex={activeStepIndex}
+              onActiveIndexChange={onMobileStepIndexChange}
+              stepCount={steps.length}
+            >
+              {(stepIndex) => {
+                const step = steps[stepIndex];
+                return (
+                  <SwipeStepBlock>
+                    <Heading segments={step.heading} size="lg" weight="light" />
+                    <Body body={step.body} size="sm" />
+                  </SwipeStepBlock>
+                );
+              }}
+            </StepperSwipeDeck>
+          ) : (
+            steps.map((step, index) => {
+              const { opacity, transform } = computeDesktopStepStyle(
+                index,
+                activeStepIndex,
+                localProgress,
+                steps.length,
+              );
 
-            return (
-              <StepBlock
-                data-active={String(index === activeStepIndex)}
-                key={index}
-                style={
-                  {
-                    '--step-opacity': opacity,
-                    '--step-transform': transform,
-                  } as CSSProperties
-                }
-              >
-                <Heading segments={step.heading} size="lg" weight="light" />
-                <Body body={step.body} size="sm" />
-              </StepBlock>
-            );
-          })}
+              return (
+                <StepBlock
+                  data-active={String(index === activeStepIndex)}
+                  key={index}
+                  style={
+                    {
+                      '--step-opacity': opacity,
+                      '--step-transform': transform,
+                    } as CSSProperties
+                  }
+                >
+                  <Heading segments={step.heading} size="lg" weight="light" />
+                  <Body body={step.body} size="sm" />
+                </StepBlock>
+              );
+            })
+          )}
         </StepsContainer>
       </StickyPanel>
       <SpacerStack>
