@@ -11,7 +11,8 @@ import { PromoMic } from '@/illustrations/CaseStudyCatalog/PromoMic';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
 
-const CORNER_OFFSET = '-6px';
+const CORNER_SIZE = 14;
+const CORNER_OFFSET = '-7px';
 const CONNECTED_TOP_OFFSET = '6px';
 const LINE_INSET = '20px';
 const TRUSTED_BY_BOTTOM_PADDING = 12;
@@ -105,11 +106,12 @@ const FrameLineRight = styled(FrameLine)<{ compactTop: boolean }>`
 const FrameCorner = styled.span`
   align-items: center;
   display: flex;
-  height: 12px;
+  height: ${CORNER_SIZE}px;
   justify-content: center;
+  line-height: 0;
   pointer-events: none;
   position: absolute;
-  width: 12px;
+  width: ${CORNER_SIZE}px;
 `;
 
 const FrameCornerTopLeft = styled(FrameCorner)`
@@ -276,23 +278,29 @@ export function Promo({
               <>
                 <FrameCornerTopLeft>
                   <PlusIcon
-                    size={12}
+                    size={CORNER_SIZE}
                     strokeColor={theme.colors.highlight[100]}
                   />
                 </FrameCornerTopLeft>
                 <FrameCornerTopRight>
                   <PlusIcon
-                    size={12}
+                    size={CORNER_SIZE}
                     strokeColor={theme.colors.highlight[100]}
                   />
                 </FrameCornerTopRight>
               </>
             )}
             <FrameCornerBottomLeft>
-              <PlusIcon size={12} strokeColor={theme.colors.highlight[100]} />
+              <PlusIcon
+                size={CORNER_SIZE}
+                strokeColor={theme.colors.highlight[100]}
+              />
             </FrameCornerBottomLeft>
             <FrameCornerBottomRight>
-              <PlusIcon size={12} strokeColor={theme.colors.highlight[100]} />
+              <PlusIcon
+                size={CORNER_SIZE}
+                strokeColor={theme.colors.highlight[100]}
+              />
             </FrameCornerBottomRight>
           </Frame>
         </FrameBoard>

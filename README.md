@@ -7,18 +7,6 @@
 <h2 align="center" >The Open-Source CRM You Build With Code and AI </h2>
 
 <p align="center"><a href="https://twenty.com">🌐 Website</a> · <a href="https://docs.twenty.com">📚 Documentation</a> · <a href="https://github.com/orgs/twentyhq/projects/1"><img src="./packages/twenty-website/public/images/readme/planner-icon.svg" width="12" height="12"/> Roadmap </a> · <a href="https://discord.gg/cx5n4Jzs57"><img src="./packages/twenty-website/public/images/readme/discord-icon.svg" width="12" height="12"/> Discord</a> · <a href="https://www.figma.com/file/xt8O9mFeLl46C5InWwoMrN/Twenty"><img src="./packages/twenty-website/public/images/readme/figma-icon.png"  width="12" height="12"/>  Figma</a></p>
-<br />
-
-
-<p align="center">
-  <a href="https://www.twenty.com">
-    <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/refs/heads/main/packages/twenty-website/public/images/readme/github-cover-dark.png" />
-      <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/twentyhq/twenty/refs/heads/main/packages/twenty-website/public/images/readme/github-cover-light.png" />
-      <img src="./packages/twenty-website/public/images/readme/github-cover-light.png" alt="Cover" />
-    </picture>
-  </a>
-</p>
 
 <br />
 
@@ -30,13 +18,11 @@ See:
 
 # Why Twenty
 
-We built Twenty for three reasons:
+**The future of CRM is built, not bought.** CRM used to be a ledger you filled on Fridays. AI turned it into the system that runs your go-to-market — and every company running the same Salesforce will get the same agent decisions, the same scoring, the same emails. Automated mediocrity.
 
-**CRMs are too expensive, and users are trapped.** Companies use locked-in customer data to hike prices. It shouldn't be that way.
+**Customization went from quarters to an afternoon.** A developer can describe what they want to Claude Code and ship a custom object, workflow, or integration the same day. The bottleneck isn't building anymore — it's whether your platform lets you.
 
-**A fresh start is required to build a better experience.** We can learn from past mistakes and craft a cohesive experience inspired by new UX patterns from tools like Notion, Airtable or Linear.
-
-**We believe in open-source and community.** Hundreds of developers are already building Twenty together. Once we have plugin capabilities, a whole ecosystem will grow around it.
+**Differentiation lives in the code you own.** You don't rent your deployment pipeline or your data warehouse. CRM is going the same way. Twenty is the CRM you build, ship, and version like the rest of your stack.
 
 <br />
 
@@ -54,13 +40,13 @@ Twenty v2 is a code-first, AI-native CRM platform. Build, ship, and version your
 ## Create your apps with code + AI
 
 <p align="center">
-  <img src="./packages/twenty-website/public/images/readme/v2-build-apps.png" alt="Create your apps with code and AI" />
+  <img src="./packages/twenty-website/public/images/readme/v2-build-apps.png" alt="Create your apps with code and AI" width="760" />
 </p>
 
 ## All the tools you need to build anything
 
 <p align="center">
-  <img src="./packages/twenty-website/public/images/readme/v2-tools.png" alt="Data model, logic, and layout" />
+  <img src="./packages/twenty-website/public/images/readme/v2-tools.png" alt="Data model, logic, and layout" width="760" />
 </p>
 
 ## Stay on top with version control
