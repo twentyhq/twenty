@@ -21,8 +21,9 @@ const BackgroundShape = styled.div`
   z-index: 0;
 `;
 
-const StyledContainer = styled(Container)`
-  padding-bottom: ${theme.spacing(22)};
+const StyledContainer = styled(Container)<{ $compactBottom: boolean }>`
+  padding-bottom: ${({ $compactBottom }) =>
+    $compactBottom ? theme.spacing(6) : theme.spacing(22)};
   padding-left: ${theme.spacing(4)};
   padding-right: ${theme.spacing(4)};
   padding-top: ${theme.spacing(22)};
@@ -33,7 +34,8 @@ const StyledContainer = styled(Container)`
     padding-left: ${theme.spacing(10)};
     padding-right: ${theme.spacing(10)};
     padding-top: ${theme.spacing(25)};
-    padding-bottom: ${theme.spacing(25)};
+    padding-bottom: ${({ $compactBottom }) =>
+      $compactBottom ? theme.spacing(8) : theme.spacing(25)};
   }
 `;
 
@@ -41,6 +43,7 @@ type RootProps = {
   backgroundColor: string;
   children: ReactNode;
   color: string;
+  compactBottom?: boolean;
   shapeFillColor?: string;
 };
 
@@ -48,6 +51,7 @@ export function Root({
   backgroundColor,
   children,
   color,
+  compactBottom = false,
   shapeFillColor = theme.colors.primary.background[100],
 }: RootProps) {
   return (
@@ -55,7 +59,9 @@ export function Root({
       <BackgroundShape>
         <TestimonialsShape fillColor={shapeFillColor} />
       </BackgroundShape>
-      <StyledContainer>{children}</StyledContainer>
+      <StyledContainer $compactBottom={compactBottom}>
+        {children}
+      </StyledContainer>
     </StyledSection>
   );
 }
