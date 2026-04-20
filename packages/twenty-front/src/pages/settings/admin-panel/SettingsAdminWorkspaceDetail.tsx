@@ -265,13 +265,13 @@ export const SettingsAdminWorkspaceDetail = () => {
                     <TableHeader align="right">{t`Status`}</TableHeader>
                   </TableRow>
                   {workspace.featureFlags?.map((flag) => {
-                    const jotaiValue =
+                    const currentWorkspaceValue =
                       currentWorkspace?.id === workspaceId
                         ? currentWorkspace?.featureFlags?.find(
                             (f) => f.key === flag.key,
                           )?.value
                         : undefined;
-                    const displayedValue = jotaiValue ?? flag.value;
+                    const displayedValue = currentWorkspaceValue ?? flag.value;
                     return (
                       <TableRow
                         gridAutoColumns="1fr 100px"
