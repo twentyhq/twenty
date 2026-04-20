@@ -12,13 +12,27 @@ import { Card } from '../Card/Card';
 const GUIDE_INTERSECTION_TOP = '176px';
 
 const helpedHeadingClassName = css`
+  &[data-size='xl'] {
+    font-size: clamp(
+      ${theme.font.size(8)},
+      9.5vw,
+      ${theme.font.size(15)}
+    );
+    line-height: 1.1;
+  }
+
   @media (min-width: ${theme.breakpoints.md}px) {
     max-width: 760px;
     white-space: pre-line;
-  }
 
-  [data-family='sans'] {
-    white-space: nowrap;
+    &[data-size='xl'] {
+      font-size: ${theme.font.size(20)};
+      line-height: ${theme.lineHeight(21.5)};
+    }
+
+    [data-family='sans'] {
+      white-space: nowrap;
+    }
   }
 `;
 
