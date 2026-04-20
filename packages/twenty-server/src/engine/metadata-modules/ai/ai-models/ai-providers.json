@@ -951,7 +951,13 @@
         "modelFamily": "GEMINI",
         "inputCostPerMillionTokens": 1.25,
         "outputCostPerMillionTokens": 10,
-        "cachedInputCostPerMillionTokens": 0.31,
+        "cachedInputCostPerMillionTokens": 0.125,
+        "longContextCost": {
+          "inputCostPerMillionTokens": 2.5,
+          "outputCostPerMillionTokens": 15,
+          "thresholdTokens": 200000,
+          "cachedInputCostPerMillionTokens": 0.25
+        },
         "contextWindowTokens": 1048576,
         "maxOutputTokens": 65536,
         "modalities": ["image", "audio", "video", "pdf"],
