@@ -209,6 +209,7 @@ export const SettingsApplicationsDeveloperTab = () => {
                       <IconChevronRight
                         size={theme.icon.size.md}
                         stroke={theme.icon.stroke.sm}
+                        color={theme.font.color.light}
                       />
                     }
                     link={getRegistrationLink(registration)}
@@ -282,7 +283,7 @@ export const SettingsApplicationsDeveloperTab = () => {
                           <IconChevronRight
                             size={theme.icon.size.md}
                             stroke={theme.icon.stroke.sm}
-                            color={theme.font.color.tertiary}
+                            color={theme.font.color.light}
                           />
                         </StyledActionTableCell>
                       </TableRow>

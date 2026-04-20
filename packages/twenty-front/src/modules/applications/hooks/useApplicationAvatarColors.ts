@@ -26,7 +26,7 @@ export const useApplicationAvatarColors = (
   const { theme } = useContext(ThemeContext);
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 
-  if (!isDefined(application)) {
+  if (!isDefined(application) || !isDefined(application.id)) {
     return undefined;
   }
 
@@ -36,10 +36,8 @@ export const useApplicationAvatarColors = (
     application.name === TWENTY_STANDARD_APPLICATION_NAME;
 
   const isCustom =
-    (isDefined(currentWorkspace?.workspaceCustomApplication?.id) &&
-      isDefined(application.id) &&
-      currentWorkspace.workspaceCustomApplication.id === application.id) ||
-    application.name === 'Custom';
+    isDefined(currentWorkspace?.workspaceCustomApplication?.id) &&
+    currentWorkspace.workspaceCustomApplication.id === application.id;
 
   if (isStandard) {
     return {
