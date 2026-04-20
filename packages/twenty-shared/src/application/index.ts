@@ -62,5 +62,6 @@ export type {
   ViewFilterGroupManifest,
   ViewGroupManifest,
   ViewFieldGroupManifest,
+  ViewSortManifest,
   ViewManifest,
 } from './viewManifestType';

@@ -6,6 +6,12 @@ import { Pages } from '@/enums/pages';
 import { SignoffShape } from '@/sections/Signoff/SignoffShape';
 import { theme } from '@/theme';
 
+const GUIDE_CROSSHAIR_BY_PAGE: Partial<
+  Record<Pages, { crossX: string; crossY: string; lineColor?: string }>
+> = {
+  [Pages.Partners]: { crossX: 'calc(50% + 334px)', crossY: '198px' },
+};
+
 const StyledSection = styled.section`
   min-width: 0;
   width: 100%;
@@ -93,8 +99,12 @@ export function Root(props: RootProps) {
       {isShaped && shapeFillColor ? (
         <SignoffShape fillColor={shapeFillColor} />
       ) : null}
-      {page === Pages.Partners ? (
-        <GuideCrosshair crossX="calc(50% + 334px)" crossY="198px" />
+      {page && GUIDE_CROSSHAIR_BY_PAGE[page] ? (
+        <GuideCrosshair
+          crossX={GUIDE_CROSSHAIR_BY_PAGE[page]!.crossX}
+          crossY={GUIDE_CROSSHAIR_BY_PAGE[page]!.crossY}
+          lineColor={GUIDE_CROSSHAIR_BY_PAGE[page]!.lineColor}
+        />
       ) : null}
       <StyledContainer>{children}</StyledContainer>
     </StyledSection>

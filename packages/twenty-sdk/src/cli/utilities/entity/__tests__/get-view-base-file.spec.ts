@@ -27,13 +27,14 @@ describe('getViewBaseFile', () => {
     expect(result).toContain("objectUniversalIdentifier: 'fill-later'");
   });
 
-  it('should include commented fields and filters when no fields provided', () => {
+  it('should include commented fields, filters and sorts when no fields provided', () => {
     const result = getViewBaseFile({
       name: 'empty-view',
     });
 
     expect(result).toContain('// fields: [');
     expect(result).toContain('// filters: [');
+    expect(result).toContain('// sorts: [');
   });
 
   it('should render fields block when fields are provided', () => {

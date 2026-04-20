@@ -79,6 +79,15 @@ export { defineSkill } from '@/sdk/define/skills/define-skill';
 export { defineView } from '@/sdk/define/views/define-view';
 export type { ViewConfig } from '@/sdk/define/views/view-config';
 export { ViewKey } from '@/sdk/define/views/view-key';
+export type {
+  ViewFieldGroupManifest,
+  ViewFieldManifest,
+  ViewFilterGroupManifest,
+  ViewFilterManifest,
+  ViewGroupManifest,
+  ViewManifestFilterValue,
+  ViewSortManifest,
+} from 'twenty-shared/application';
 
 export { getPublicAssetUrl } from '@/sdk/define/get-public-asset-url';
 
@@ -94,6 +103,7 @@ export {
   ViewFilterGroupLogicalOperator,
   ViewFilterOperand,
   ViewOpenRecordIn,
+  ViewSortDirection,
   ViewType,
   ViewVisibility,
 } from 'twenty-shared/types';

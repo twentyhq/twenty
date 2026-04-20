@@ -68,6 +68,13 @@ ${fieldsBlock}
   //     value: '',
   //   },
   // ],
+  // sorts: [
+  //   {
+  //     universalIdentifier: '...',
+  //     fieldMetadataUniversalIdentifier: '...',
+  //     direction: 'DESC',
+  //   },
+  // ],
 });
 `;
 };
