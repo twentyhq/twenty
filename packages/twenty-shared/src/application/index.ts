@@ -18,6 +18,10 @@ export { DEFAULT_APP_ACCESS_TOKEN_NAME } from './constants/DefaultAppAccessToken
 export { GENERATED_DIR } from './constants/GeneratedDirectory';
 export { NODE_ESM_CJS_BANNER } from './constants/NodeEsmCjsBanner';
 export { OUTPUT_DIR } from './constants/OutputDirectory';
+export {
+  TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+  TWENTY_STANDARD_APPLICATION_NAME,
+} from './constants/TwentyStandardApplication';
 export { SyncableEntity } from './enums/syncable-entities.enum';
 export type {
   RegularFieldManifest,

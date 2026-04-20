@@ -35,14 +35,22 @@ export const useApplicationChipData = ({
 
   const colors = useApplicationAvatarColors(application);
 
+  if (!isDefined(application)) {
+    return {
+      applicationChipData: {
+        name: '',
+        seed: applicationId,
+      },
+    };
+  }
+
   const isCurrent =
     isDefined(currentApplicationId) && currentApplicationId === applicationId;
 
   return {
     applicationChipData: {
-      name: isCurrent ? t`This app` : (application?.name ?? ''),
-      seed:
-        application?.universalIdentifier ?? application?.name ?? applicationId,
+      name: isCurrent ? t`This app` : application.name,
+      seed: application.universalIdentifier ?? application.name,
       colors,
     },
   };
