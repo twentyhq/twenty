@@ -9,6 +9,8 @@ import { useLocation } from 'react-router-dom';
 
 const StyledContent = styled.div`
   align-items: center;
+  display: flex;
+  flex-direction: column;
   justify-content: center;
   min-height: 320px;
 `;
