@@ -2,8 +2,8 @@ import { SidePanelCommandMenuItemDisplayPage } from '@/command-menu-item/display
 import { SidePanelCommandMenuItemEditPage } from '@/command-menu-item/edit/components/SidePanelCommandMenuItemEditPage';
 import { SidePanelNavigationMenuItemEditPage } from '@/navigation-menu-item/edit/side-panel/components/SidePanelNavigationMenuItemEditPage';
 import { SidePanelNewSidebarItemPage } from '@/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemPage';
-import { SidePanelAIChatThreadsPage } from '@/side-panel/pages/ai-chat-threads/components/SidePanelAIChatThreadsPage';
-import { SidePanelAskAIPage } from '@/side-panel/pages/ask-ai/components/SidePanelAskAIPage';
+import { SidePanelAiChatThreadsPage } from '@/side-panel/pages/ai-chat-threads/components/SidePanelAiChatThreadsPage';
+import { SidePanelAskAiPage } from '@/side-panel/pages/ask-ai/components/SidePanelAskAiPage';
 import { SidePanelCalendarEventPage } from '@/side-panel/pages/calendar-event/components/SidePanelCalendarEventPage';
 import { SidePanelComposeEmailPage } from '@/side-panel/pages/compose-email/components/SidePanelComposeEmailPage';
 import { SidePanelFrontComponentPage } from '@/side-panel/pages/front-component/components/SidePanelFrontComponentPage';
@@ -49,8 +49,8 @@ export const SIDE_PANEL_PAGES_CONFIG = new Map<SidePanelPages, React.ReactNode>(
     [SidePanelPages.WorkflowStepView, <SidePanelWorkflowViewStep />],
     [SidePanelPages.WorkflowRunStepView, <SidePanelWorkflowRunViewStep />],
     [SidePanelPages.SearchRecords, <SidePanelSearchRecordsPage />],
-    [SidePanelPages.AskAI, <SidePanelAskAIPage />],
-    [SidePanelPages.ViewPreviousAIChats, <SidePanelAIChatThreadsPage />],
+    [SidePanelPages.AskAI, <SidePanelAskAiPage />],
+    [SidePanelPages.ViewPreviousAiChats, <SidePanelAiChatThreadsPage />],
     [
       SidePanelPages.PageLayoutDashboardWidgetTypeSelect,
       <SidePanelPageLayoutDashboardWidgetTypeSelect />,

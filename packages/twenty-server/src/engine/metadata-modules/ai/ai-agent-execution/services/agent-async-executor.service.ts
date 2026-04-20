@@ -31,7 +31,7 @@ import { WORKFLOW_SYSTEM_PROMPTS } from 'src/engine/metadata-modules/ai/ai-agent
 import { type AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { repairToolCall } from 'src/engine/metadata-modules/ai/ai-agent/utils/repair-tool-call.util';
 import { AI_TELEMETRY_CONFIG } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-telemetry.const';
-import { AgentModelConfigService } from 'src/engine/metadata-modules/ai/ai-models/services/agent-model-config.service';
+import { AiModelConfigService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-config.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
@@ -46,7 +46,7 @@ export class AgentAsyncExecutorService {
 
   constructor(
     private readonly aiModelRegistryService: AiModelRegistryService,
-    private readonly agentModelConfigService: AgentModelConfigService,
+    private readonly aiModelConfigService: AiModelConfigService,
     private readonly toolRegistry: ToolRegistryService,
     @InjectRepository(RoleTargetEntity)
     private readonly roleTargetRepository: Repository<RoleTargetEntity>,
@@ -170,10 +170,10 @@ export class AgentAsyncExecutorService {
           },
         );
 
-        providerOptions = this.agentModelConfigService.getProviderOptions(
+        providerOptions = this.aiModelConfigService.getProviderOptions(
           registeredModel,
           agent as unknown as Parameters<
-            typeof this.agentModelConfigService.getProviderOptions
+            typeof this.aiModelConfigService.getProviderOptions
           >[1],
         );
       }

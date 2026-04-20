@@ -14,7 +14,7 @@ import {
 import { AiModelPreferencesService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-preferences.service';
 import { ProviderConfigService } from 'src/engine/metadata-modules/ai/ai-models/services/provider-config.service';
 import { SdkProviderFactoryService } from 'src/engine/metadata-modules/ai/ai-models/services/sdk-provider-factory.service';
-import { type AIModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-config.type';
+import { type AiModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-config.type';
 import { type AiProviderConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-provider-config.type';
 import { type AiProviderModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-provider-model-config.type';
 import { type AiProvidersConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-providers-config.type';
@@ -34,7 +34,7 @@ import {
   type WorkspaceModelAvailabilitySettings,
 } from 'src/engine/metadata-modules/ai/ai-models/utils/is-model-allowed.util';
 
-export interface RegisteredAIModel {
+export interface RegisteredAiModel {
   modelId: string;
   sdkPackage: AiSdkPackage;
   model: LanguageModel;
@@ -46,8 +46,8 @@ export interface RegisteredAIModel {
 @Injectable()
 export class AiModelRegistryService {
   private readonly logger = new Logger(AiModelRegistryService.name);
-  private modelRegistry: Map<string, RegisteredAIModel> = new Map();
-  private modelConfigCache: Map<string, AIModelConfig> = new Map();
+  private modelRegistry: Map<string, RegisteredAiModel> = new Map();
+  private modelConfigCache: Map<string, AiModelConfig> = new Map();
   private providerModelDefCache: Map<
     string,
     { providerName: string; modelDef: AiProviderModelConfig }
@@ -112,7 +112,7 @@ export class AiModelRegistryService {
 
         this.modelConfigCache.set(
           compositeId,
-          this.toAIModelConfig(compositeId, config, modelDef),
+          this.toAiModelConfig(compositeId, config, modelDef),
         );
 
         this.providerModelDefCache.set(compositeId, {
@@ -134,11 +134,11 @@ export class AiModelRegistryService {
     }
   }
 
-  private toAIModelConfig(
+  private toAiModelConfig(
     compositeId: string,
     providerConfig: AiProviderConfig,
     modelDef: AiProviderModelConfig,
-  ): AIModelConfig {
+  ): AiModelConfig {
     return {
       modelId: compositeId,
       label: modelDef.label,
@@ -163,19 +163,19 @@ export class AiModelRegistryService {
     };
   }
 
-  getModel(modelId: string): RegisteredAIModel | undefined {
+  getModel(modelId: string): RegisteredAiModel | undefined {
     this.ensureFresh();
 
     return this.modelRegistry.get(modelId);
   }
 
-  getAvailableModels(): RegisteredAIModel[] {
+  getAvailableModels(): RegisteredAiModel[] {
     this.ensureFresh();
 
     return Array.from(this.modelRegistry.values());
   }
 
-  getModelConfig(modelId: string): AIModelConfig | undefined {
+  getModelConfig(modelId: string): AiModelConfig | undefined {
     this.ensureFresh();
 
     return this.modelConfigCache.get(modelId);
@@ -187,7 +187,7 @@ export class AiModelRegistryService {
 
   private getFirstAvailableModelFromList(
     modelIds: string[],
-  ): RegisteredAIModel | undefined {
+  ): RegisteredAiModel | undefined {
     for (const modelId of modelIds) {
       const model = this.getModel(modelId);
 
@@ -199,15 +199,15 @@ export class AiModelRegistryService {
     return undefined;
   }
 
-  getDefaultSpeedModel(): RegisteredAIModel {
+  getDefaultSpeedModel(): RegisteredAiModel {
     return this.getDefaultModelForRole(AiModelRole.FAST);
   }
 
-  getDefaultPerformanceModel(): RegisteredAIModel {
+  getDefaultPerformanceModel(): RegisteredAiModel {
     return this.getDefaultModelForRole(AiModelRole.SMART);
   }
 
-  private getDefaultModelForRole(role: AiModelRole): RegisteredAIModel {
+  private getDefaultModelForRole(role: AiModelRole): RegisteredAiModel {
     const prefs = this.preferencesService.getPreferences();
     const preferenceKey =
       role === AiModelRole.FAST ? 'defaultFastModels' : 'defaultSmartModels';
@@ -228,7 +228,7 @@ export class AiModelRegistryService {
     return model;
   }
 
-  getEffectiveModelConfig(modelId: string): AIModelConfig {
+  getEffectiveModelConfig(modelId: string): AiModelConfig {
     this.ensureFresh();
 
     if (isAutoSelectModelId(modelId)) {
@@ -262,8 +262,8 @@ export class AiModelRegistryService {
   }
 
   private createDefaultConfigForCustomModel(
-    registeredModel: RegisteredAIModel,
-  ): AIModelConfig {
+    registeredModel: RegisteredAiModel,
+  ): AiModelConfig {
     return {
       modelId: registeredModel.modelId,
       label: registeredModel.modelId,
@@ -316,14 +316,14 @@ export class AiModelRegistryService {
     }
   }
 
-  getAdminFilteredModels(): RegisteredAIModel[] {
+  getAdminFilteredModels(): RegisteredAiModel[] {
     return this.getAvailableModels().filter((model) =>
       this.isModelAdminAllowed(model.modelId),
     );
   }
 
   getAllModelsWithStatus(): Array<{
-    modelConfig: AIModelConfig;
+    modelConfig: AiModelConfig;
     isAvailable: boolean;
     isAdminEnabled: boolean;
     isRecommended: boolean;
@@ -401,7 +401,7 @@ export class AiModelRegistryService {
     return this.providerConfigService.getCatalogProviderNames();
   }
 
-  resolveModelForAgent(agent: { modelId: string } | null): RegisteredAIModel {
+  resolveModelForAgent(agent: { modelId: string } | null): RegisteredAiModel {
     const aiModel = this.getEffectiveModelConfig(
       agent?.modelId ?? AUTO_SELECT_SMART_MODEL_ID,
     );

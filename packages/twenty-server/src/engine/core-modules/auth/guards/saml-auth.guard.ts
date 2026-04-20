@@ -19,7 +19,7 @@ import { type WorkspaceSSOIdentityProviderEntity } from 'src/engine/core-modules
 @Injectable()
 export class SAMLAuthGuard extends AuthGuard('saml') {
   constructor(
-    private readonly sSOService: SSOService,
+    private readonly ssoService: SSOService,
     private readonly guardRedirectService: GuardRedirectService,
     private readonly workspaceDomainsService: WorkspaceDomainsService,
   ) {
@@ -34,7 +34,7 @@ export class SAMLAuthGuard extends AuthGuard('saml') {
       | null = null;
 
     try {
-      identityProvider = await this.sSOService.findSSOIdentityProviderById(
+      identityProvider = await this.ssoService.findSSOIdentityProviderById(
         request.params.identityProviderId,
       );
 
@@ -44,7 +44,7 @@ export class SAMLAuthGuard extends AuthGuard('saml') {
           AuthExceptionCode.INVALID_DATA,
         );
       }
-      new SamlAuthStrategy(this.sSOService);
+      new SamlAuthStrategy(this.ssoService);
 
       return (await super.canActivate(context)) as boolean;
     } catch (err) {

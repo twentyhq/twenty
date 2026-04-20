@@ -1,4 +1,4 @@
-import { useSwitchToNewAIChat } from '@/ai/hooks/useSwitchToNewAIChat';
+import { useSwitchToNewAiChat } from '@/ai/hooks/useSwitchToNewAiChat';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
@@ -23,7 +23,7 @@ import {
 import { NavigationBar } from 'twenty-ui/navigation';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
-type NavigationBarItemName = 'main' | 'search' | 'newAIChat';
+type NavigationBarItemName = 'main' | 'search' | 'newAiChat';
 
 export const MobileNavigationBar = () => {
   const navigate = useNavigate();
@@ -36,7 +36,7 @@ export const MobileNavigationBar = () => {
     useAtomState(isNavigationDrawerExpandedState);
   const [currentMobileNavigationDrawer, setCurrentMobileNavigationDrawer] =
     useAtomState(currentMobileNavigationDrawerState);
-  const { switchToNewChat } = useSwitchToNewAIChat();
+  const { switchToNewChat } = useSwitchToNewAiChat();
   const isAiEnabled = useIsFeatureEnabled(FeatureFlagKey.IS_AI_ENABLED);
   const { alphaSortedActiveNonSystemObjectMetadataItems } =
     useFilteredObjectMetadataItems();
@@ -95,7 +95,7 @@ export const MobileNavigationBar = () => {
     ...(isAiEnabled
       ? [
           {
-            name: 'newAIChat' as const,
+            name: 'newAiChat' as const,
             Icon: IconMessageCirclePlus,
             onClick: () => {
               setIsNavigationDrawerExpanded(false);

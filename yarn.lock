@@ -12866,7 +12866,7 @@ __metadata:
 
 "@nestjs/graphql@patch:@nestjs/graphql@12.1.1#./patches/@nestjs+graphql+12.1.1.patch::locator=twenty-server%40workspace%3Apackages%2Ftwenty-server":
   version: 12.1.1
-  resolution: "@nestjs/graphql@patch:@nestjs/graphql@npm%3A12.1.1#./patches/@nestjs+graphql+12.1.1.patch::version=12.1.1&hash=c6f13a&locator=twenty-server%40workspace%3Apackages%2Ftwenty-server"
+  resolution: "@nestjs/graphql@patch:@nestjs/graphql@npm%3A12.1.1#./patches/@nestjs+graphql+12.1.1.patch::version=12.1.1&hash=eaf96d&locator=twenty-server%40workspace%3Apackages%2Ftwenty-server"
   dependencies:
     "@graphql-tools/merge": "npm:9.0.1"
     "@graphql-tools/schema": "npm:10.0.2"
@@ -12900,7 +12900,7 @@ __metadata:
       optional: true
     ts-morph:
       optional: true
-  checksum: 10c0/807541d7f7d8a3261787c04bd9456ad1a3198645b967ad68371406f5038ec5e5f3dd26912a914cce25465b828e7d1b037558c79461adb93efbc78382424444c2
+  checksum: 10c0/0d13646d982c3d18de9a5d4989edf2e8d1ef15974d41795f8b220819a8b27c4d4cb9c71bd73524978fe12457e1e955b86f47efa3a4621a571b139d1918702125
   languageName: node
   linkType: hard
 
@@ -60946,6 +60946,7 @@ __metadata:
     remark-gfm: "npm:^4.0.1"
     sharp: "npm:^0.33.5"
     three: "npm:^0.183.2"
+    zod: "npm:^4.1.11"
   languageName: unknown
   linkType: soft
 

@@ -13,6 +13,7 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { billingState } from '@/client-config/states/billingState';
 import { useClientConfig } from '@/client-config/hooks/useClientConfig';
 import { SettingsAiModelsTable } from '@/settings/ai/components/SettingsAiModelsTable';
+import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { SettingsAdminAiProviderListCard } from '@/settings/admin-panel/ai/components/SettingsAdminAiProviderListCard';
 import { AI_PROVIDER_SOURCE } from '@/settings/admin-panel/ai/constants/AiProviderSource';
 import { SET_ADMIN_AI_MODEL_RECOMMENDED } from '@/settings/admin-panel/ai/graphql/mutations/setAdminAiModelRecommended';
@@ -42,7 +43,7 @@ import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/Gene
 import {
   AiModelRole,
   type AdminAiModelConfig,
-} from '~/generated-metadata/graphql';
+} from '~/generated-admin/graphql';
 
 const USAGE_TABLE_GRID_TEMPLATE_COLUMNS = '1fr 120px';
 
@@ -53,6 +54,7 @@ type UsageBreakdownItem = {
 };
 
 export const SettingsAdminAI = () => {
+  const apolloAdminClient = useApolloAdminClient();
   const { enqueueErrorSnackBar } = useSnackBar();
   const { refetch: refetchClientConfig } = useClientConfig();
   const { formatUsageValue } = useUsageValueFormatter();
@@ -75,18 +77,27 @@ export const SettingsAdminAI = () => {
       defaultFastModelId?: string | null;
       models: AdminAiModelConfig[];
     };
-  }>(GET_ADMIN_AI_MODELS);
+  }>(GET_ADMIN_AI_MODELS, { client: apolloAdminClient });
 
-  const [setModelRecommended] = useMutation(SET_ADMIN_AI_MODEL_RECOMMENDED);
-  const [setModelsRecommended] = useMutation(SET_ADMIN_AI_MODELS_RECOMMENDED);
-  const [setDefaultModel] = useMutation(SET_ADMIN_DEFAULT_AI_MODEL);
+  const [setModelRecommended] = useMutation(SET_ADMIN_AI_MODEL_RECOMMENDED, {
+    client: apolloAdminClient,
+  });
+  const [setModelsRecommended] = useMutation(SET_ADMIN_AI_MODELS_RECOMMENDED, {
+    client: apolloAdminClient,
+  });
+  const [setDefaultModel] = useMutation(SET_ADMIN_DEFAULT_AI_MODEL, {
+    client: apolloAdminClient,
+  });
 
   const { data: providersData, loading: isLoadingProviders } =
-    useQuery<GetAiProvidersResult>(GET_AI_PROVIDERS);
+    useQuery<GetAiProvidersResult>(GET_AI_PROVIDERS, {
+      client: apolloAdminClient,
+    });
 
   const { data: usageData, previousData: previousUsageData } = useQuery<{
     getAdminAiUsageByWorkspace: UsageBreakdownItem[];
   }>(GET_ADMIN_AI_USAGE_BY_WORKSPACE, {
+    client: apolloAdminClient,
     variables: {
       periodStart: usageDates.periodStart,
       periodEnd: usageDates.periodEnd,

@@ -1,5 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 import { SettingsTableCard } from '@/settings/components/SettingsTableCard';
+import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { SettingsAdminWorkerMetricsTooltip } from '@/settings/admin-panel/health-status/components/SettingsAdminWorkerMetricsTooltip';
 import { useSnackBarOnQueryError } from '@/apollo/hooks/useSnackBarOnQueryError';
 import { styled } from '@linaria/react';
@@ -11,7 +12,7 @@ import { useQuery } from '@apollo/client/react';
 import {
   QueueMetricsTimeRange,
   GetQueueMetricsDocument,
-} from '~/generated-metadata/graphql';
+} from '~/generated-admin/graphql';
 
 const StyledGraphContainer = styled.div`
   background-color: ${themeCssVariables.background.secondary};
@@ -48,9 +49,11 @@ export const SettingsAdminWorkerMetricsGraph = ({
   queueName,
   timeRange,
 }: SettingsAdminWorkerMetricsGraphProps) => {
+  const apolloAdminClient = useApolloAdminClient();
   const { theme } = useContext(ThemeContext);
 
   const { loading, data, error } = useQuery(GetQueueMetricsDocument, {
+    client: apolloAdminClient,
     variables: {
       queueName,
       timeRange,

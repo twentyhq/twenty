@@ -15,7 +15,7 @@ import { agentChatIsStreamingComponentFamilyState } from '@/ai/states/agentChatI
 import { agentChatMessagesComponentFamilyState } from '@/ai/states/agentChatMessagesComponentFamilyState';
 import { agentChatMessagesLoadingState } from '@/ai/states/agentChatMessagesLoadingState';
 import { agentChatThreadsLoadingState } from '@/ai/states/agentChatThreadsLoadingState';
-import { currentAIChatThreadState } from '@/ai/states/currentAIChatThreadState';
+import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { useListenToBrowserEvent } from '@/browser-event/hooks/useListenToBrowserEvent';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -23,7 +23,7 @@ import { useSetAtomComponentFamilyState } from '@/ui/utilities/state/jotai/hooks
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
 export const AgentChatStreamSubscriptionEffect = () => {
-  const currentAIChatThread = useAtomStateValue(currentAIChatThreadState);
+  const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
 
   const { createChatThread } = useCreateAgentChatThread();
 
@@ -41,25 +41,25 @@ export const AgentChatStreamSubscriptionEffect = () => {
   useAgentChat(ensureThreadIdForSend);
 
   const subscriptionThreadId =
-    currentAIChatThread !== null && isValidUuid(currentAIChatThread)
-      ? currentAIChatThread
+    currentAiChatThread !== null && isValidUuid(currentAiChatThread)
+      ? currentAiChatThread
       : null;
 
   useAgentChatSubscription(subscriptionThreadId);
 
   const agentChatFetchedMessages = useAtomComponentFamilyStateValue(
     agentChatFetchedMessagesComponentFamilyState,
-    { threadId: currentAIChatThread },
+    { threadId: currentAiChatThread },
   );
 
   const setAgentChatMessages = useSetAtomComponentFamilyState(
     agentChatMessagesComponentFamilyState,
-    { threadId: currentAIChatThread },
+    { threadId: currentAiChatThread },
   );
 
   const agentChatIsStreaming = useAtomComponentFamilyStateValue(
     agentChatIsStreamingComponentFamilyState,
-    { threadId: currentAIChatThread },
+    { threadId: currentAiChatThread },
   );
 
   const agentChatDisplayedThread = useAtomStateValue(
@@ -81,17 +81,17 @@ export const AgentChatStreamSubscriptionEffect = () => {
 
     setAgentChatMessages(agentChatFetchedMessages);
 
-    if (currentAIChatThread !== agentChatDisplayedThread) {
+    if (currentAiChatThread !== agentChatDisplayedThread) {
       if (agentChatFetchedMessages.length > 0) {
         setAgentChatIsInitialScrollPendingOnThreadChange(true);
       }
-      setAgentChatDisplayedThread(currentAIChatThread);
+      setAgentChatDisplayedThread(currentAiChatThread);
     }
   }, [
     agentChatFetchedMessages,
     agentChatIsStreaming,
     setAgentChatMessages,
-    currentAIChatThread,
+    currentAiChatThread,
     agentChatDisplayedThread,
     setAgentChatDisplayedThread,
     setAgentChatIsInitialScrollPendingOnThreadChange,

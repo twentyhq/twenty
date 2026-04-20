@@ -294,8 +294,8 @@ export function Content({ data }: ContentProps) {
           <ToggleButton
             data-color="primary"
             data-variant="outlined"
-            onClick={() => setExpanded((prev) => !prev)}
             type="button"
+            onClick={() => setExpanded((prev) => !prev)}
           >
             <BaseButton
               color="primary"

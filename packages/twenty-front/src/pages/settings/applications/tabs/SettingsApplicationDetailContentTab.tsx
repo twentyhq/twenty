@@ -9,7 +9,7 @@ import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { H2Title } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
 import { type Application } from '~/generated-metadata/graphql';
-import { SettingsAIAgentsTable } from '~/pages/settings/ai/components/SettingsAIAgentsTable';
+import { SettingsAiAgentsTable } from '~/pages/settings/ai/components/SettingsAiAgentsTable';
 import {
   SettingsApplicationDataTable,
   type ApplicationDataTableRow,
@@ -139,7 +139,7 @@ export const SettingsApplicationDetailContentTab = ({
             title={t`Agents`}
             description={t`Agents powering this app`}
           />
-          <SettingsAIAgentsTable />
+          <SettingsAiAgentsTable />
         </Section>
       )}
     </>

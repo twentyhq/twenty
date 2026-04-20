@@ -87,6 +87,7 @@ const IconSlot = styled.span`
 const Label = styled.span`
   color: var(--button-label-color);
   transition: color 220ms ease;
+  z-index: 2;
 `;
 
 export type BaseButtonProps = {

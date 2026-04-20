@@ -3,7 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { FileStorageModule } from 'src/engine/core-modules/file-storage/file-storage.module';
-import { FileAIChatModule } from 'src/engine/core-modules/file/file-ai-chat/file-ai-chat.module';
+import { FileAiChatModule } from 'src/engine/core-modules/file/file-ai-chat/file-ai-chat.module';
 import { FilePathGuard } from 'src/engine/core-modules/file/guards/file-path-guard';
 import { FileDeletionJob } from 'src/engine/core-modules/file/jobs/file-deletion.job';
 import { FileWorkspaceFolderDeletionJob } from 'src/engine/core-modules/file/jobs/file-workspace-folder-deletion.job';
@@ -34,7 +34,7 @@ import { FileService } from './services/file.service';
     FilesFieldModule,
     FileCorePictureModule,
     FileWorkflowModule,
-    FileAIChatModule,
+    FileAiChatModule,
     FileEmailAttachmentModule,
     SecureHttpClientModule,
   ],
@@ -53,7 +53,7 @@ import { FileService } from './services/file.service';
     FilesFieldModule,
     FileCorePictureModule,
     FileWorkflowModule,
-    FileAIChatModule,
+    FileAiChatModule,
     FileEmailAttachmentModule,
   ],
   controllers: [FileController],
