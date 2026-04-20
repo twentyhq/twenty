@@ -29,7 +29,7 @@ import { useExecuteLogicFunction } from '@/logic-functions/hooks/useExecuteLogic
 const LOGIC_FUNCTION_DETAIL_ID = 'logic-function-detail';
 
 export const SettingsLogicFunctionDetail = () => {
-  const { logicFunctionId = '', applicationId = '' } = useParams();
+  const { logicFunctionId = '', applicationId } = useParams();
 
   const navigate = useNavigate();
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
@@ -37,8 +37,8 @@ export const SettingsLogicFunctionDetail = () => {
   const { data, loading: applicationLoading } = useQuery(
     FindOneApplicationDocument,
     {
-      variables: { id: applicationId },
-      skip: !applicationId,
+      variables: { id: applicationId ?? '' },
+      skip: !isDefined(applicationId),
     },
   );
 
@@ -47,10 +47,8 @@ export const SettingsLogicFunctionDetail = () => {
   const workspaceCustomApplicationId =
     currentWorkspace?.workspaceCustomApplication?.id;
 
-  const isApplicationFunction = applicationId !== '';
-
   const isReadonly =
-    isApplicationFunction && applicationId !== workspaceCustomApplicationId;
+    isDefined(applicationId) && applicationId !== workspaceCustomApplicationId;
 
   const instanceId = `${LOGIC_FUNCTION_DETAIL_ID}-${logicFunctionId}`;
 
@@ -90,41 +88,40 @@ export const SettingsLogicFunctionDetail = () => {
   const isSettingsTab = activeTabId === 'settings';
   const isTestTab = activeTabId === 'test';
 
-  const breadcrumbLinks =
-    isDefined(applicationId) && applicationId !== ''
-      ? [
-          {
-            children: t`Workspace`,
-            href: getSettingsPath(SettingsPath.Workspace),
-          },
-          {
-            children: t`Applications`,
-            href: getSettingsPath(SettingsPath.Applications),
-          },
-          {
-            children: `${applicationName}`,
-            href: getSettingsPath(
-              SettingsPath.ApplicationDetail,
-              {
-                applicationId,
-              },
-              undefined,
-              'content',
-            ),
-          },
-          { children: `${logicFunction?.name}` },
-        ]
-      : [
-          {
-            children: t`Workspace`,
-            href: getSettingsPath(SettingsPath.Workspace),
-          },
-          {
-            children: t`AI`,
-            href: getSettingsPath(SettingsPath.AI),
-          },
-          { children: `${logicFunction?.name}` },
-        ];
+  const breadcrumbLinks = isDefined(applicationId)
+    ? [
+        {
+          children: t`Workspace`,
+          href: getSettingsPath(SettingsPath.Workspace),
+        },
+        {
+          children: t`Applications`,
+          href: getSettingsPath(SettingsPath.Applications),
+        },
+        {
+          children: `${applicationName}`,
+          href: getSettingsPath(
+            SettingsPath.ApplicationDetail,
+            {
+              applicationId,
+            },
+            undefined,
+            'content',
+          ),
+        },
+        { children: `${logicFunction?.name}` },
+      ]
+    : [
+        {
+          children: t`Workspace`,
+          href: getSettingsPath(SettingsPath.Workspace),
+        },
+        {
+          children: t`AI`,
+          href: getSettingsPath(SettingsPath.AI),
+        },
+        { children: `${logicFunction?.name}` },
+      ];
 
   const files = [
     {
