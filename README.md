@@ -24,6 +24,8 @@
 
 Twenty gives technical teams the building blocks for a custom CRM that meets complex business needs and quickly adapts as the business evolves. Twenty is the CRM you build, ship, and version like the rest of your stack.
 
+<a href="https://twenty.com/why-twenty"><img src="./packages/twenty-website/public/images/readme/star-icon.svg" width="14" height="14"/> Learn more about why we built Twenty</a>
+
 <br />
 
 # Installation
@@ -140,10 +142,10 @@ Want to go deeper? Read the <a href="https://docs.twenty.com/user-guide/introduc
 
 # Stack
 
-- <a href="https://www.typescriptlang.org/"><img src="https://cdn.simpleicons.org/typescript" width="14" height="14"/> TypeScript</a>
-- <a href="https://nx.dev/"><img src="https://cdn.simpleicons.org/nx" width="14" height="14"/> Nx</a>
-- <a href="https://nestjs.com/"><img src="https://cdn.simpleicons.org/nestjs" width="14" height="14"/> NestJS</a>, with <a href="https://bullmq.io/">BullMQ</a>, <a href="https://www.postgresql.org/"><img src="https://cdn.simpleicons.org/postgresql" width="14" height="14"/> PostgreSQL</a>, <a href="https://redis.io/"><img src="https://cdn.simpleicons.org/redis" width="14" height="14"/> Redis</a>
-- <a href="https://reactjs.org/"><img src="https://cdn.simpleicons.org/react" width="14" height="14"/> React</a>, with <a href="https://jotai.org/">Jotai</a>, <a href="https://linaria.dev/">Linaria</a> and <a href="https://lingui.dev/">Lingui</a>
+- <a href="https://www.typescriptlang.org/"><img src="./packages/twenty-website/public/images/readme/stack-typescript.svg" width="14" height="14"/> TypeScript</a>
+- <a href="https://nx.dev/"><img src="./packages/twenty-website/public/images/readme/stack-nx.svg" width="14" height="14"/> Nx</a>
+- <a href="https://nestjs.com/"><img src="./packages/twenty-website/public/images/readme/stack-nestjs.svg" width="14" height="14"/> NestJS</a>, with <a href="https://bullmq.io/">BullMQ</a>, <a href="https://www.postgresql.org/"><img src="./packages/twenty-website/public/images/readme/stack-postgresql.svg" width="14" height="14"/> PostgreSQL</a>, <a href="https://redis.io/"><img src="./packages/twenty-website/public/images/readme/stack-redis.svg" width="14" height="14"/> Redis</a>
+- <a href="https://reactjs.org/"><img src="./packages/twenty-website/public/images/readme/stack-react.svg" width="14" height="14"/> React</a>, with <a href="https://jotai.org/">Jotai</a>, <a href="https://linaria.dev/">Linaria</a> and <a href="https://lingui.dev/">Lingui</a>
 
 
 
