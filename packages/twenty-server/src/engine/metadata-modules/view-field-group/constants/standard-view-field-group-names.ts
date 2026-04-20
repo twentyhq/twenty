@@ -1,12 +1,12 @@
-import { t } from '@lingui/core/macro';
+import { msg } from '@lingui/core/macro';
 
 export const getStandardViewFieldGroupNames = () => [
-  t`General`,
-  t`System`,
-  t`Work`,
-  t`Social`,
-  t`Deal`,
-  t`Relations`,
-  t`Business`,
-  t`Contact`,
+  msg`General`,
+  msg`System`,
+  msg`Work`,
+  msg`Social`,
+  msg`Deal`,
+  msg`Relations`,
+  msg`Business`,
+  msg`Contact`,
 ];
