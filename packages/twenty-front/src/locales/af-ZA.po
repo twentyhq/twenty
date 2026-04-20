@@ -14314,6 +14314,11 @@ msgstr "Hierdie aksie sal hierdie vouer en al {2} navigasiekieslysitems daarin u
 msgid "This action will delete this folder and the navigation menu item inside. Do you want to continue?"
 msgstr "Hierdie aksie sal hierdie vouer en die navigasiekieslysitem daarin uitvee. Wil jy voortgaan?"
 
+#. js-lingui-id: 6jJt3O
+#: src/modules/applications/hooks/useApplicationChipData.ts
+msgid "This app"
+msgstr ""
+
 #. js-lingui-id: SLIRqz
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
 msgid "This database value overrides environment settings. "

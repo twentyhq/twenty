@@ -14314,6 +14314,11 @@ msgstr "Bu işlem bu klasörü ve içindeki tüm {2} gezinti menüsü öğesini 
 msgid "This action will delete this folder and the navigation menu item inside. Do you want to continue?"
 msgstr "Bu işlem bu klasörü ve içindeki gezinti menüsü öğesini silecek. Devam etmek istiyor musunuz?"
 
+#. js-lingui-id: 6jJt3O
+#: src/modules/applications/hooks/useApplicationChipData.ts
+msgid "This app"
+msgstr ""
+
 #. js-lingui-id: SLIRqz
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
 msgid "This database value overrides environment settings. "

@@ -14314,6 +14314,11 @@ msgstr "Denne handlingen vil slette denne mappen og alle {2} navigasjonsmenyelem
 msgid "This action will delete this folder and the navigation menu item inside. Do you want to continue?"
 msgstr "Denne handlingen vil slette denne mappen og navigasjonsmenyelementet i den. Vil du fortsette?"
 
+#. js-lingui-id: 6jJt3O
+#: src/modules/applications/hooks/useApplicationChipData.ts
+msgid "This app"
+msgstr ""
+
 #. js-lingui-id: SLIRqz
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
 msgid "This database value overrides environment settings. "

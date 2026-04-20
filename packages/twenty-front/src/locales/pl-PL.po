@@ -14314,6 +14314,11 @@ msgstr "Ta akcja usunie ten folder oraz {2, plural, one {# pozycję menu nawigac
 msgid "This action will delete this folder and the navigation menu item inside. Do you want to continue?"
 msgstr "Ta akcja usunie ten folder oraz element menu nawigacji w środku. Czy chcesz kontynuować?"
 
+#. js-lingui-id: 6jJt3O
+#: src/modules/applications/hooks/useApplicationChipData.ts
+msgid "This app"
+msgstr ""
+
 #. js-lingui-id: SLIRqz
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
 msgid "This database value overrides environment settings. "

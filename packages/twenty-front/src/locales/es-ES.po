@@ -14316,6 +14316,11 @@ msgstr "Esta acción eliminará esta carpeta y todos los {2} elementos del menú
 msgid "This action will delete this folder and the navigation menu item inside. Do you want to continue?"
 msgstr "Esta acción eliminará esta carpeta y el elemento del menú de navegación que contiene. ¿Deseas continuar?"
 
+#. js-lingui-id: 6jJt3O
+#: src/modules/applications/hooks/useApplicationChipData.ts
+msgid "This app"
+msgstr ""
+
 #. js-lingui-id: SLIRqz
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
 msgid "This database value overrides environment settings. "
