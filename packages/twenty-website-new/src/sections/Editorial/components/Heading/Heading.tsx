@@ -15,7 +15,7 @@ type EditorialHeadingProps = {
 export function Heading({ segments }: EditorialHeadingProps) {
   return (
     <HeadingWrap>
-      <BaseHeading as="h2" segments={segments} size="xl" weight="light" />
+      <BaseHeading as="h2" segments={segments} size="lg" weight="light" />
     </HeadingWrap>
   );
 }
