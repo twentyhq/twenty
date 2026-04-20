@@ -73,9 +73,11 @@ Run Twenty on your own infrastructure with [Docker Compose](https://docs.twenty.
 <br />
 <br />
 
-# What you can build
+# Everything you need
 
 Twenty gives you the building blocks of a modern CRM (objects, views, workflows, and agents) and lets you extend them as code. Here's a tour of what's in the box.
+
+<p><a href="https://docs.twenty.com/user-guide/introduction"><img src="./packages/twenty-website/public/images/readme/planner-icon.svg" width="14" height="14"/> User Guide</a> · <a href="https://docs.twenty.com"><img src="./packages/twenty-website/public/images/readme/book-icon.svg" width="14" height="14"/> Documentation</a></p>
 
 <table align="center">
   <tr>
@@ -85,6 +87,7 @@ Twenty gives you the building blocks of a modern CRM (objects, views, workflows,
         <source media="(prefers-color-scheme: light)" srcset="./packages/twenty-website/public/images/readme/v2-build-apps-light.png" />
         <img src="./packages/twenty-website/public/images/readme/v2-build-apps-light.png" alt="Create your apps" />
       </picture>
+      <p align="center"><a href="https://docs.twenty.com/developers/extend/apps/getting-started"><img src="./packages/twenty-website/public/images/readme/book-icon.svg" width="12" height="12"/> Read the docs</a></p>
     </td>
     <td width="50%">
       <picture>
@@ -92,6 +95,7 @@ Twenty gives you the building blocks of a modern CRM (objects, views, workflows,
         <source media="(prefers-color-scheme: light)" srcset="./packages/twenty-website/public/images/readme/v2-version-control-light.png" />
         <img src="./packages/twenty-website/public/images/readme/v2-version-control-light.png" alt="Stay on top with version control" />
       </picture>
+      <p align="center"><a href="https://docs.twenty.com/developers/extend/apps/getting-started"><img src="./packages/twenty-website/public/images/readme/book-icon.svg" width="12" height="12"/> Read the docs</a></p>
     </td>
   </tr>
   <tr>
@@ -101,6 +105,7 @@ Twenty gives you the building blocks of a modern CRM (objects, views, workflows,
         <source media="(prefers-color-scheme: light)" srcset="./packages/twenty-website/public/images/readme/v2-all-tools-light.png" />
         <img src="./packages/twenty-website/public/images/readme/v2-all-tools-light.png" alt="All the tools you need to build anything" />
       </picture>
+      <p align="center"><a href="https://docs.twenty.com/developers/extend"><img src="./packages/twenty-website/public/images/readme/book-icon.svg" width="12" height="12"/> Read the docs</a></p>
     </td>
     <td width="50%">
       <picture>
@@ -108,6 +113,7 @@ Twenty gives you the building blocks of a modern CRM (objects, views, workflows,
         <source media="(prefers-color-scheme: light)" srcset="./packages/twenty-website/public/images/readme/v2-tools-light.png" />
         <img src="./packages/twenty-website/public/images/readme/v2-tools-light.png" alt="Customize your layouts" />
       </picture>
+      <p align="center"><a href="https://docs.twenty.com/user-guide/views-pipelines"><img src="./packages/twenty-website/public/images/readme/book-icon.svg" width="12" height="12"/> Read the docs</a></p>
     </td>
   </tr>
   <tr>
@@ -117,6 +123,7 @@ Twenty gives you the building blocks of a modern CRM (objects, views, workflows,
         <source media="(prefers-color-scheme: light)" srcset="./packages/twenty-website/public/images/readme/v2-ai-agents-light.png" />
         <img src="./packages/twenty-website/public/images/readme/v2-ai-agents-light.png" alt="AI agents and chats" />
       </picture>
+      <p align="center"><a href="https://docs.twenty.com/user-guide/ai"><img src="./packages/twenty-website/public/images/readme/book-icon.svg" width="12" height="12"/> Read the docs</a></p>
     </td>
     <td width="50%">
       <picture>
@@ -124,6 +131,7 @@ Twenty gives you the building blocks of a modern CRM (objects, views, workflows,
         <source media="(prefers-color-scheme: light)" srcset="./packages/twenty-website/public/images/readme/v2-crm-tools-light.png" />
         <img src="./packages/twenty-website/public/images/readme/v2-crm-tools-light.png" alt="Plus all the tools of a good CRM" />
       </picture>
+      <p align="center"><a href="https://docs.twenty.com/user-guide/introduction"><img src="./packages/twenty-website/public/images/readme/book-icon.svg" width="12" height="12"/> Read the docs</a></p>
     </td>
   </tr>
 </table>
@@ -131,10 +139,19 @@ Twenty gives you the building blocks of a modern CRM (objects, views, workflows,
 <br />
 
 # Stack
-- <img src="https://cdn.simpleicons.org/typescript" width="14" height="14"/> [TypeScript](https://www.typescriptlang.org/)
-- <img src="https://cdn.simpleicons.org/nx" width="14" height="14"/> [Nx](https://nx.dev/)
-- <img src="https://cdn.simpleicons.org/nestjs" width="14" height="14"/> [NestJS](https://nestjs.com/), with [BullMQ](https://bullmq.io/), <img src="https://cdn.simpleicons.org/postgresql" width="14" height="14"/> [PostgreSQL](https://www.postgresql.org/), <img src="https://cdn.simpleicons.org/redis" width="14" height="14"/> [Redis](https://redis.io/)
-- <img src="https://cdn.simpleicons.org/react" width="14" height="14"/> [React](https://reactjs.org/), with [Jotai](https://jotai.org/), [Linaria](https://linaria.dev/) and [Lingui](https://lingui.dev/)
+
+<p>
+  <a href="https://www.typescriptlang.org/"><img src="https://img.shields.io/badge/TypeScript-3178C6?style=flat&logo=typescript&logoColor=white" alt="TypeScript" /></a>
+  <a href="https://nx.dev/"><img src="https://img.shields.io/badge/Nx-143055?style=flat&logo=nx&logoColor=white" alt="Nx" /></a>
+  <a href="https://nestjs.com/"><img src="https://img.shields.io/badge/NestJS-E0234E?style=flat&logo=nestjs&logoColor=white" alt="NestJS" /></a>
+  <a href="https://bullmq.io/"><img src="https://img.shields.io/badge/BullMQ-C0392B?style=flat" alt="BullMQ" /></a>
+  <a href="https://www.postgresql.org/"><img src="https://img.shields.io/badge/PostgreSQL-4169E1?style=flat&logo=postgresql&logoColor=white" alt="PostgreSQL" /></a>
+  <a href="https://redis.io/"><img src="https://img.shields.io/badge/Redis-DC382D?style=flat&logo=redis&logoColor=white" alt="Redis" /></a>
+  <a href="https://reactjs.org/"><img src="https://img.shields.io/badge/React-20232A?style=flat&logo=react&logoColor=61DAFB" alt="React" /></a>
+  <a href="https://jotai.org/"><img src="https://img.shields.io/badge/Jotai-000000?style=flat" alt="Jotai" /></a>
+  <a href="https://linaria.dev/"><img src="https://img.shields.io/badge/Linaria-2E2E2E?style=flat" alt="Linaria" /></a>
+  <a href="https://lingui.dev/"><img src="https://img.shields.io/badge/Lingui-1E40AF?style=flat" alt="Lingui" /></a>
+</p>
 
 
 
@@ -146,7 +163,6 @@ Twenty gives you the building blocks of a modern CRM (objects, views, workflows,
     <td align="center" width="120"><a href="https://greptile.com"><img src="./packages/twenty-website/public/images/readme/greptile.png" height="28" alt="Greptile" /></a></td>
     <td align="center" width="120"><a href="https://sentry.io/"><img src="./packages/twenty-website/public/images/readme/sentry.png" height="28" alt="Sentry" /></a></td>
     <td align="center" width="120"><a href="https://crowdin.com/"><img src="./packages/twenty-website/public/images/readme/crowdin.png" height="28" alt="Crowdin" /></a></td>
-    <td align="center" width="120"><a href="https://e2b.dev/"><img src="./packages/twenty-website/public/images/readme/e2b.svg" height="28" alt="E2B" /></a></td>
   </tr>
 </table>
 
