@@ -515,11 +515,6 @@ msgstr "1. Chọn một đối tượng"
 msgid "1. Type"
 msgstr "1. Loại"
 
-#. js-lingui-id: 7IIx+y
-#: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
-msgid "10,000 workflow node executions"
-msgstr "10.000 lượt thực thi nút quy trình công việc"
-
 #. js-lingui-id: rU05hS
 #: src/modules/settings/experience/components/DateTimeSettingsTimeFormatSelect.tsx
 msgid "12h"
@@ -575,6 +570,11 @@ msgstr "Phương thức 2FA đã được xóa thành công."
 #: src/modules/settings/two-factor-authentication/components/DeleteTwoFactorAuthenticationMethod.tsx
 msgid "2FA Method Reset"
 msgstr "Đặt lại phương thức 2FA"
+
+#. js-lingui-id: 2Lvxm0
+#: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
+msgid "50,000 workflow node executions"
+msgstr ""
 
 #. js-lingui-id: 4lbHin
 #: src/modules/logic-functions/components/LogicFunctionExecutionResult.tsx

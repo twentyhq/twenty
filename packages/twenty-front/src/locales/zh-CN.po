@@ -515,11 +515,6 @@ msgstr "1. 选择一个对象"
 msgid "1. Type"
 msgstr "1. 类型"
 
-#. js-lingui-id: 7IIx+y
-#: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
-msgid "10,000 workflow node executions"
-msgstr "10,000 次工作流节点执行"
-
 #. js-lingui-id: rU05hS
 #: src/modules/settings/experience/components/DateTimeSettingsTimeFormatSelect.tsx
 msgid "12h"
@@ -575,6 +570,11 @@ msgstr "双因素验证方法已成功删除。"
 #: src/modules/settings/two-factor-authentication/components/DeleteTwoFactorAuthenticationMethod.tsx
 msgid "2FA Method Reset"
 msgstr "双因素验证方法重置"
+
+#. js-lingui-id: 2Lvxm0
+#: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
+msgid "50,000 workflow node executions"
+msgstr ""
 
 #. js-lingui-id: 4lbHin
 #: src/modules/logic-functions/components/LogicFunctionExecutionResult.tsx

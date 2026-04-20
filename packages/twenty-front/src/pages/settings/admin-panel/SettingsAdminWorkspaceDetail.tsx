@@ -6,6 +6,7 @@ import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 
 import { currentUserState } from '@/auth/states/currentUserState';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { canManageFeatureFlagsState } from '@/client-config/states/canManageFeatureFlagsState';
 import { AI_ADMIN_PATH } from '@/settings/admin-panel/ai/constants/AiAdminPath';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
@@ -64,6 +65,7 @@ export const SettingsAdminWorkspaceDetail = () => {
   );
 
   const currentUser = useAtomStateValue(currentUserState);
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const canManageFeatureFlags = useAtomStateValue(canManageFeatureFlagsState);
   const { enqueueErrorSnackBar } = useSnackBar();
   const { updateFeatureFlagState } = useFeatureFlagState();
@@ -262,25 +264,34 @@ export const SettingsAdminWorkspaceDetail = () => {
                     <TableHeader>{t`Feature Flag`}</TableHeader>
                     <TableHeader align="right">{t`Status`}</TableHeader>
                   </TableRow>
-                  {workspace.featureFlags?.map((flag) => (
-                    <TableRow
-                      gridAutoColumns="1fr 100px"
-                      mobileGridAutoColumns="1fr 80px"
-                      key={flag.key}
-                    >
-                      <TableCell>{flag.key}</TableCell>
-                      <TableCell align="right">
-                        {isDefined(flag.key) && (
-                          <Toggle
-                            value={flag.value}
-                            onChange={(newValue) =>
-                              handleFeatureFlagUpdate(flag.key!, newValue)
-                            }
-                          />
-                        )}
-                      </TableCell>
-                    </TableRow>
-                  ))}
+                  {workspace.featureFlags?.map((flag) => {
+                    const currentWorkspaceValue =
+                      currentWorkspace?.id === workspaceId
+                        ? currentWorkspace?.featureFlags?.find(
+                            (f) => f.key === flag.key,
+                          )?.value
+                        : undefined;
+                    const displayedValue = currentWorkspaceValue ?? flag.value;
+                    return (
+                      <TableRow
+                        gridAutoColumns="1fr 100px"
+                        mobileGridAutoColumns="1fr 80px"
+                        key={flag.key}
+                      >
+                        <TableCell>{flag.key}</TableCell>
+                        <TableCell align="right">
+                          {isDefined(flag.key) && (
+                            <Toggle
+                              value={displayedValue}
+                              onChange={(newValue) =>
+                                handleFeatureFlagUpdate(flag.key!, newValue)
+                              }
+                            />
+                          )}
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
                 </TableBody>
               </Table>
             </Section>

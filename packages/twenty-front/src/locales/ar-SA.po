@@ -515,11 +515,6 @@ msgstr "١. اختر كائنًا"
 msgid "1. Type"
 msgstr "1. نوع"
 
-#. js-lingui-id: 7IIx+y
-#: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
-msgid "10,000 workflow node executions"
-msgstr "١٠٬٠٠٠ تنفيذ لعقدة سير العمل"
-
 #. js-lingui-id: rU05hS
 #: src/modules/settings/experience/components/DateTimeSettingsTimeFormatSelect.tsx
 msgid "12h"
@@ -575,6 +570,11 @@ msgstr "تم حذف طريقة 2FA بنجاح."
 #: src/modules/settings/two-factor-authentication/components/DeleteTwoFactorAuthenticationMethod.tsx
 msgid "2FA Method Reset"
 msgstr "إعادة ضبط طريقة 2FA"
+
+#. js-lingui-id: 2Lvxm0
+#: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
+msgid "50,000 workflow node executions"
+msgstr ""
 
 #. js-lingui-id: 4lbHin
 #: src/modules/logic-functions/components/LogicFunctionExecutionResult.tsx

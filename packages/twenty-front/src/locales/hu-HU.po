@@ -515,11 +515,6 @@ msgstr "1. Válasszon egy objektumot"
 msgid "1. Type"
 msgstr "1. Típus"
 
-#. js-lingui-id: 7IIx+y
-#: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
-msgid "10,000 workflow node executions"
-msgstr "10 000 munkafolyamat csomópont végrehajtás"
-
 #. js-lingui-id: rU05hS
 #: src/modules/settings/experience/components/DateTimeSettingsTimeFormatSelect.tsx
 msgid "12h"
@@ -575,6 +570,11 @@ msgstr "A kétlépcsős azonosítás módja sikeresen törölve."
 #: src/modules/settings/two-factor-authentication/components/DeleteTwoFactorAuthenticationMethod.tsx
 msgid "2FA Method Reset"
 msgstr "Kétlépcsős azonosítási mód visszaállítva"
+
+#. js-lingui-id: 2Lvxm0
+#: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
+msgid "50,000 workflow node executions"
+msgstr ""
 
 #. js-lingui-id: 4lbHin
 #: src/modules/logic-functions/components/LogicFunctionExecutionResult.tsx

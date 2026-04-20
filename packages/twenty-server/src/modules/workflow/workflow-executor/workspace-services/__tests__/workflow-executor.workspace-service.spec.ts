@@ -3,14 +3,14 @@ import { Test, type TestingModule } from '@nestjs/testing';
 import { getWorkflowRunContext, StepStatus } from 'twenty-shared/workflow';
 
 import { BILLING_WORKFLOW_EXECUTION_ERROR_MESSAGE } from 'src/engine/core-modules/billing/constants/billing-workflow-execution-error-message.constant';
-import { USAGE_RECORDED } from 'src/engine/core-modules/usage/constants/usage-recorded.constant';
-import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
-import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
-import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
+import { USAGE_RECORDED } from 'src/engine/core-modules/usage/constants/usage-recorded.constant';
+import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
+import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
+import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { WorkflowActionFactory } from 'src/modules/workflow/workflow-executor/factories/workflow-action.factory';
 import { shouldExecuteStep } from 'src/modules/workflow/workflow-executor/utils/should-execute-step.util';
@@ -213,7 +213,7 @@ describe('WorkflowExecutorWorkspaceService', () => {
           {
             resourceType: UsageResourceType.WORKFLOW,
             operationType: UsageOperationType.WORKFLOW_EXECUTION,
-            creditsUsedMicro: 1,
+            creditsUsedMicro: 100,
             quantity: 1,
             unit: UsageUnit.INVOCATION,
             resourceId: 'workflow-id',
@@ -728,7 +728,7 @@ describe('WorkflowExecutorWorkspaceService', () => {
           {
             resourceType: UsageResourceType.WORKFLOW,
             operationType: UsageOperationType.WORKFLOW_EXECUTION,
-            creditsUsedMicro: 1,
+            creditsUsedMicro: 100,
             quantity: 1,
             unit: UsageUnit.INVOCATION,
             resourceId: 'workflow-id',

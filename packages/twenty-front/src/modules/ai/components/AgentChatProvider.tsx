@@ -9,9 +9,9 @@ export const AgentChatProvider = ({
 }) => {
   const isAiEnabled = useIsFeatureEnabled(FeatureFlagKey.IS_AI_ENABLED);
 
-  if (!isAiEnabled) {
-    return <>{children}</>;
-  }
-
-  return <AgentChatProviderContent>{children}</AgentChatProviderContent>;
+  return (
+    <AgentChatProviderContent isAiEnabled={isAiEnabled}>
+      {children}
+    </AgentChatProviderContent>
+  );
 };
