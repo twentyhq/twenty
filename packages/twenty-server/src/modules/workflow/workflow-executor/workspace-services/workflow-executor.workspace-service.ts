@@ -9,9 +9,6 @@ import {
   WorkflowRunStepInfos,
 } from 'twenty-shared/workflow';
 
-import { BILLING_WORKFLOW_EXECUTION_ERROR_MESSAGE } from 'src/engine/core-modules/billing/constants/billing-workflow-execution-error-message.constant';
-import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing-product-key.enum';
-import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -59,7 +56,6 @@ export class WorkflowExecutorWorkspaceService {
     private readonly workflowActionFactory: WorkflowActionFactory,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
     private readonly workflowRunWorkspaceService: WorkflowRunWorkspaceService,
-    private readonly billingService: BillingService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
     private readonly metricsService: MetricsService,
     @InjectMessageQueue(MessageQueue.workflowQueue)
@@ -376,16 +372,6 @@ export class WorkflowExecutorWorkspaceService {
     );
   }
 
-  private async canBillWorkflowNodeExecution(workspaceId: string) {
-    return (
-      !this.billingService.isBillingEnabled() ||
-      (await this.billingService.canBillMeteredProduct(
-        workspaceId,
-        BillingProductKey.WORKFLOW_NODE_EXECUTION,
-      ))
-    );
-  }
-
   private async processStepExecutionResult({
     actionOutput,
     stepId,
@@ -467,14 +453,9 @@ export class WorkflowExecutorWorkspaceService {
     workflowRunId: string;
     workspaceId: string;
   }) {
-    const canBill = await this.canBillWorkflowNodeExecution(workspaceId);
-
-    if (!canBill) {
-      return {
-        error: BILLING_WORKFLOW_EXECUTION_ERROR_MESSAGE,
-      };
-    }
-
+    // TODO: re-enable workflow node execution credit cap once billing limits are revisited.
+    // Previously gated on BillingService.canBillMeteredProduct(WORKFLOW_NODE_EXECUTION);
+    // temporarily disabled so workflows keep running when the period cap is reached.
     const stepId = step.id;
 
     const workflowAction = this.workflowActionFactory.get(step.type);
