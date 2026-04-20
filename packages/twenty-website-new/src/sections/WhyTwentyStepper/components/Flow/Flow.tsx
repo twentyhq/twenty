@@ -19,10 +19,22 @@ const IllustrationColumn = styled.div`
   }
 
   @media (min-width: ${theme.breakpoints.md}px) {
+    align-items: center;
     align-self: start;
-    max-width: 672px;
+    display: flex;
+    height: calc(100vh - 4.5rem);
+    justify-content: center;
     position: sticky;
-    top: calc(4.5rem + (100vh - 4.5rem) * 0.5 - 368px);
+    top: 4.5rem;
+  }
+`;
+
+const IllustrationFrame = styled.div`
+  min-width: 0;
+  width: 100%;
+
+  @media (min-width: ${theme.breakpoints.md}px) {
+    max-width: 672px;
   }
 `;
 
@@ -73,7 +85,9 @@ export function Flow({ body, heading, illustration }: FlowProps) {
         onMobileStepIndexChange={setMobileStepIndex}
       />
       <IllustrationColumn>
-        <IllustrationMount illustration={illustration} />
+        <IllustrationFrame>
+          <IllustrationMount illustration={illustration} />
+        </IllustrationFrame>
       </IllustrationColumn>
     </Root>
   );

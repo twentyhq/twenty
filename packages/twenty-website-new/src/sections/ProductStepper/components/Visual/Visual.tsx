@@ -17,9 +17,22 @@ const VisualColumn = styled.div`
   }
 
   @media (min-width: ${theme.breakpoints.md}px) {
-    max-width: 672px;
+    align-items: center;
+    align-self: start;
+    display: flex;
+    height: calc(100vh - 4.5rem);
+    justify-content: center;
     position: sticky;
-    top: calc(4.5rem + (100vh - 4.5rem) * 0.5 - 368px);
+    top: 4.5rem;
+  }
+`;
+
+const VisualFrame = styled.div`
+  min-width: 0;
+  width: 100%;
+
+  @media (min-width: ${theme.breakpoints.md}px) {
+    max-width: 672px;
   }
 `;
 
@@ -41,26 +54,28 @@ export function Visual({ activeStepIndex, images }: ProductStepperVisualProps) {
 
   return (
     <VisualColumn>
-      <StepperVisualFrame
-        backgroundSrc={PRODUCT_STEPPER_BACKGROUND}
-        shapeSrc={PRODUCT_STEPPER_SHAPE}
-      >
-        {images.map((image, index) => {
-          if (!image) return null;
+      <VisualFrame>
+        <StepperVisualFrame
+          backgroundSrc={PRODUCT_STEPPER_BACKGROUND}
+          shapeSrc={PRODUCT_STEPPER_SHAPE}
+        >
+          {images.map((image, index) => {
+            if (!image) return null;
 
-          return (
-            <NextImage
-              key={`${image.src}-${index}`}
-              alt={image.alt}
-              className={slideImageClassName}
-              data-active={String(index === activeStepIndex)}
-              fill
-              sizes="(min-width: 921px) 672px, 100vw"
-              src={image.src}
-            />
-          );
-        })}
-      </StepperVisualFrame>
+            return (
+              <NextImage
+                key={`${image.src}-${index}`}
+                alt={image.alt}
+                className={slideImageClassName}
+                data-active={String(index === activeStepIndex)}
+                fill
+                sizes="(min-width: 921px) 50vw, 100vw"
+                src={image.src}
+              />
+            );
+          })}
+        </StepperVisualFrame>
+      </VisualFrame>
     </VisualColumn>
   );
 }

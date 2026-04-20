@@ -13,12 +13,6 @@ const GLB_URL = '/illustrations/why-twenty/stepper/logo.glb';
 const VisualColumn = styled.div`
   min-width: 0;
   width: 100%;
-
-  @media (min-width: ${theme.breakpoints.md}px) {
-    max-width: 672px;
-    position: sticky;
-    top: ${theme.spacing(10)};
-  }
 `;
 
 const VisualContainer = styled.div`
@@ -31,8 +25,10 @@ const VisualContainer = styled.div`
   width: 100%;
 
   @media (min-width: ${theme.breakpoints.md}px) {
-    height: 705px;
-    max-width: 672px;
+    aspect-ratio: 672 / 705;
+    height: auto;
+    max-height: 705px;
+    min-height: 0;
   }
 `;
 
