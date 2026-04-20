@@ -13,6 +13,7 @@ import {
 import { AllUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/all-universal-flat-entity-maps.type';
 import { aggregateOrchestratorActionsReport } from 'src/engine/workspace-manager/workspace-migration/utils/aggregate-orchestrator-actions-report.util';
 import { crossEntityTransversalValidation } from 'src/engine/workspace-manager/workspace-migration/utils/cross-entity-transversal-validation.util';
+import { mergeOrchestratorFailureReports } from 'src/engine/workspace-manager/workspace-migration/utils/merge-orchestrator-failure-reports.util';
 import { WorkspaceMigrationAgentActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/agent/workspace-migration-agent-actions-builder.service';
 import { WorkspaceMigrationCommandMenuItemActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/command-menu-item/workspace-migration-command-menu-item-actions-builder.service';
 import { WorkspaceMigrationFieldPermissionActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/field-permission/workspace-migration-field-permission-actions-builder.service';
@@ -822,14 +823,16 @@ export class WorkspaceMigrationBuildOrchestratorService {
       }
     }
 
-    const { objectMetadata, viewField } = crossEntityTransversalValidation({
+    const crossEntityFailureReport = crossEntityTransversalValidation({
       optimisticUniversalFlatMaps: optimisticAllFlatEntityMaps,
       orchestratorActionsReport,
       preDeletionFlatViewFieldMaps,
     });
 
-    orchestratorFailureReport.objectMetadata.push(...objectMetadata);
-    orchestratorFailureReport.viewField.push(...viewField);
+    mergeOrchestratorFailureReports({
+      target: orchestratorFailureReport,
+      source: crossEntityFailureReport,
+    });
 
     const allErrors = Object.values(orchestratorFailureReport);
 

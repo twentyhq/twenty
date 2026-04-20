@@ -1,4 +1,4 @@
-import { defineObject, FieldType } from 'twenty-sdk';
+import { defineObject, FieldType } from 'twenty-sdk/define';
 
 export const EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER =
   '47fd9bd9-392b-4d9f-9091-9a91b1edf519';

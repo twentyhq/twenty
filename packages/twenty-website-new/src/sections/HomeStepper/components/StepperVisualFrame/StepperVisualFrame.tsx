@@ -117,7 +117,7 @@ export function StepperVisualFrame({
               alt=""
               className={patternImageClassName}
               fill
-              sizes="(min-width: 921px) 672px, 100vw"
+              sizes="(min-width: 921px) 50vw, 100vw"
               src={backgroundSrc}
             />
           </PatternBackdrop>
@@ -132,7 +132,7 @@ export function StepperVisualFrame({
             className={shapeImageClassName}
             fill
             priority={false}
-            sizes="(min-width: 921px) 672px, 100vw"
+            sizes="(min-width: 921px) 50vw, 100vw"
             src={shapeSrc}
           />
         </ShapeOverlay>

@@ -122,7 +122,7 @@ export class AuthResolver {
     private workspaceDomainsService: WorkspaceDomainsService,
     private userWorkspaceService: UserWorkspaceService,
     private emailVerificationTokenService: EmailVerificationTokenService,
-    private sSOService: SSOService,
+    private ssoService: SSOService,
     private readonly auditService: AuditService,
     private readonly permissionsService: PermissionsService,
   ) {}
@@ -142,7 +142,7 @@ export class AuthResolver {
   async getAuthorizationUrlForSSO(
     @Args('input') params: GetAuthorizationUrlForSSOInput,
   ) {
-    return await this.sSOService.getAuthorizationUrlForSSO(
+    return await this.ssoService.getAuthorizationUrlForSSO(
       params.identityProviderId,
       omit(params, ['identityProviderId']),
     );

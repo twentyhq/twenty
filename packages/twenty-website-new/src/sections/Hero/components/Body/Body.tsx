@@ -6,9 +6,22 @@ import type { Pages } from '@/enums/pages';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
 
+const defaultHeroBodyColor = `var(--hero-body-color, ${theme.colors.primary.text[60]})`;
+
 const BodyContainer = styled.div`
-  &[data-page='whyTwenty'] {
-    color: ${theme.colors.secondary.text[60]};
+  --body-sm-color: ${defaultHeroBodyColor};
+  color: ${defaultHeroBodyColor};
+
+  &[data-color-scheme='primary'] {
+    --hero-body-color: ${theme.colors.primary.text[60]};
+  }
+
+  &[data-color-scheme='secondary'] {
+    --hero-body-color: ${theme.colors.secondary.text[80]};
+  }
+
+  &[data-preserve-line-breaks='true'] {
+    white-space: pre-line;
   }
 
   margin-top: calc(${theme.spacing(2)} - ${theme.spacing(6)});
@@ -20,7 +33,7 @@ const BodyContainer = styled.div`
       max-width: 591px;
     }
 
-    &[data-page='partner'] {
+    &[data-page='partners'] {
       max-width: 500px;
     }
 
@@ -38,6 +51,7 @@ const BodyContainer = styled.div`
 
     &[data-page='releaseNotes'] {
       max-width: 591px;
+      white-space: pre-line;
     }
 
     &[data-page='caseStudies'] {
@@ -46,11 +60,26 @@ const BodyContainer = styled.div`
   }
 `;
 
-export type HeroBodyProps = BodyProps & { page: Pages };
+export type HeroBodyColorScheme = 'primary' | 'secondary';
 
-export function Body({ page, ...bodyProps }: HeroBodyProps) {
+export type HeroBodyProps = BodyProps & {
+  page: Pages;
+  colorScheme?: HeroBodyColorScheme;
+  preserveLineBreaks?: boolean;
+};
+
+export function Body({
+  page,
+  colorScheme,
+  preserveLineBreaks = false,
+  ...bodyProps
+}: HeroBodyProps) {
   return (
-    <BodyContainer data-page={page}>
+    <BodyContainer
+      data-color-scheme={colorScheme}
+      data-page={page}
+      data-preserve-line-breaks={preserveLineBreaks}
+    >
       <BaseBody {...bodyProps} />
     </BodyContainer>
   );

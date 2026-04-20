@@ -1,6 +1,14 @@
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
+import type { ReactNode } from 'react';
 import { ButtonShape } from './ButtonShape';
+
+export type ButtonSize = 'regular' | 'small';
+
+export const BUTTON_HEIGHTS_PX: Record<ButtonSize, number> = {
+  regular: 40,
+  small: 32,
+};
 
 export const buttonBaseStyles = `
   --button-label-color: ${theme.colors.primary.text[100]};
@@ -15,7 +23,7 @@ export const buttonBaseStyles = `
   font-family: ${theme.font.family.mono};
   font-size: ${theme.font.size(3)};
   font-weight: ${theme.font.weight.medium};
-  height: ${theme.spacing(10)};
+  height: ${BUTTON_HEIGHTS_PX.regular}px;
   justify-content: center;
   letter-spacing: 0;
   overflow: hidden;
@@ -23,6 +31,11 @@ export const buttonBaseStyles = `
   position: relative;
   text-decoration: none;
   text-transform: uppercase;
+
+  &[data-size='small'] {
+    height: ${BUTTON_HEIGHTS_PX.small}px;
+    padding: 0 ${theme.spacing(4)};
+  }
 
   &[data-variant='contained'][data-color='secondary'] {
     --button-label-color: ${theme.colors.secondary.text[100]};
@@ -36,7 +49,7 @@ export const buttonBaseStyles = `
 
   &[data-variant='outlined'][data-color='primary'] {
     --button-label-color: ${theme.colors.secondary.text[100]};
-    --button-label-hover-color: ${theme.colors.primary.text[100]};
+    --button-label-hover-color: ${theme.colors.secondary.text[100]};
   }
 
   &:is(:hover, :focus-visible) {
@@ -57,20 +70,37 @@ export const buttonBaseStyles = `
   }
 `;
 
+const Content = styled.span`
+  align-items: center;
+  display: inline-flex;
+  gap: ${theme.spacing(2)};
+  position: relative;
+  z-index: 1;
+`;
+
+const IconSlot = styled.span`
+  color: var(--button-label-color);
+  display: inline-flex;
+  transition: color 220ms ease;
+`;
+
 const Label = styled.span`
   color: var(--button-label-color);
-  position: relative;
   transition: color 220ms ease;
-  z-index: 1;
+  z-index: 2;
 `;
 
 export type BaseButtonProps = {
   color: 'primary' | 'secondary';
   label: string;
+  leadingIcon?: ReactNode;
+  size?: ButtonSize;
   variant: 'contained' | 'outlined';
 };
 
 const secondaryContainedHoverFillColor = theme.colors.secondary.background.hover;
+const primaryOutlinedHoverFillColor = theme.colors.primary.background[100];
+const primaryOutlinedHoverFillOpacity = 0.05;
 const secondaryOutlinedHoverFillColor = theme.colors.primary.text[100];
 const secondaryOutlinedHoverFillOpacity = 0.05;
 
@@ -88,7 +118,13 @@ const HoverFill = styled.span`
   }
 `;
 
-export function BaseButton({ color, label, variant }: BaseButtonProps) {
+export function BaseButton({
+  color,
+  label,
+  leadingIcon,
+  size = 'regular',
+  variant,
+}: BaseButtonProps) {
   let fillColor: string;
   let hoverFillColor: string;
   let hoverFillOpacity = 1;
@@ -107,7 +143,8 @@ export function BaseButton({ color, label, variant }: BaseButtonProps) {
       break;
     case 'outlined.primary':
       fillColor = 'none';
-      hoverFillColor = theme.colors.primary.background[100];
+      hoverFillColor = primaryOutlinedHoverFillColor;
+      hoverFillOpacity = primaryOutlinedHoverFillOpacity;
       strokeColor = theme.colors.primary.background[100];
       break;
     case 'outlined.secondary':
@@ -120,17 +157,23 @@ export function BaseButton({ color, label, variant }: BaseButtonProps) {
       throw new Error(`Unhandled button appearance: ${variant} ${color}`);
   }
 
+  const height = BUTTON_HEIGHTS_PX[size];
+
   return (
     <>
       <ButtonShape
         dataSlot="button-base-shape"
         fillColor={fillColor}
+        height={height}
         strokeColor={strokeColor}
       />
       <HoverFill data-slot="button-hover-fill" style={{ opacity: hoverFillOpacity }}>
-        <ButtonShape fillColor={hoverFillColor} strokeColor="none" />
+        <ButtonShape fillColor={hoverFillColor} height={height} strokeColor="none" />
       </HoverFill>
-      <Label data-slot="button-label">{label}</Label>
+      <Content>
+        {leadingIcon ? <IconSlot>{leadingIcon}</IconSlot> : null}
+        <Label data-slot="button-label">{label}</Label>
+      </Content>
     </>
   );
 }

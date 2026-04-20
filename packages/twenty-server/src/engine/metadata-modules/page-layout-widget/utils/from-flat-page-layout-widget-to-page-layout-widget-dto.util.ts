@@ -16,6 +16,7 @@ export const fromFlatPageLayoutWidgetToPageLayoutWidgetDto = (
   return {
     ...rest,
     ...(overrides ?? {}),
+    overrides,
     isOverridden: false,
     objectMetadataId: objectMetadataId ?? undefined,
     createdAt: new Date(createdAt),

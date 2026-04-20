@@ -1,29 +1,11 @@
-import { PlusIcon } from '@/icons';
 import { TrustedBySeparatorType } from '@/sections/TrustedBy/types';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
 
 const StyledSeparatorRow = styled.div`
   display: flex;
+  justify-content: center;
   width: 100%;
-  align-items: center;
-  gap: ${theme.spacing(1.5)};
-`;
-
-const SeparatorIcon = styled.span`
-  display: flex;
-  align-items: center;
-  width: 12px;
-  height: 12px;
-  flex-shrink: 0;
-`;
-
-const SeparatorLine = styled.div`
-  flex-grow: 1;
-  flex-shrink: 0;
-  flex-basis: 0;
-  height: 1px;
-  background-color: ${theme.colors.primary.border[10]};
 `;
 
 const SeparatorText = styled.p`
@@ -42,15 +24,7 @@ type SeparatorProps = { separator: TrustedBySeparatorType };
 export function Separator({ separator }: SeparatorProps) {
   return (
     <StyledSeparatorRow>
-      <SeparatorIcon aria-hidden>
-        <PlusIcon size={12} strokeColor={theme.colors.highlight[100]} />
-      </SeparatorIcon>
-      <SeparatorLine aria-hidden />
       <SeparatorText>{separator.text}</SeparatorText>
-      <SeparatorLine aria-hidden />
-      <SeparatorIcon aria-hidden>
-        <PlusIcon size={12} strokeColor={theme.colors.highlight[100]} />
-      </SeparatorIcon>
     </StyledSeparatorRow>
   );
 }

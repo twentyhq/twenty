@@ -14,6 +14,7 @@ import {
   IconPlus,
   IconTable,
   type IconComponent,
+  useIcons,
 } from 'twenty-ui/display';
 import { ThemeContext } from 'twenty-ui/theme-constants';
 import { PageLayoutTabLayoutMode } from '~/generated-metadata/graphql';
@@ -26,6 +27,8 @@ type PageLayoutHeaderInfo = {
   isReadonly: boolean;
   tab: PageLayoutTab | undefined;
   widgetInEditMode: PageLayoutWidget | undefined;
+  isIconEditable: boolean;
+  selectedIconKey: string | null;
 };
 
 type UsePageLayoutHeaderInfoParams = {
@@ -46,6 +49,7 @@ export const usePageLayoutHeaderInfo = ({
   editedTitle,
 }: UsePageLayoutHeaderInfoParams): PageLayoutHeaderInfo | null => {
   const { theme } = useContext(ThemeContext);
+  const { getIcon } = useIcons();
   const iconColor = theme.font.color.tertiary;
 
   switch (sidePanelPage) {
@@ -68,14 +72,20 @@ export const usePageLayoutHeaderInfo = ({
 
       const isCanvasTab = tab.layoutMode === PageLayoutTabLayoutMode.CANVAS;
 
+      const resolvedTabIcon = isDefined(tab.icon)
+        ? getIcon(tab.icon)
+        : IconAppWindow;
+
       return {
-        headerIcon: IconAppWindow,
+        headerIcon: resolvedTabIcon ?? IconAppWindow,
         headerIconColor: iconColor,
         headerType: isCanvasTab ? t`Full tab widget` : t`Tab`,
         title,
         isReadonly: false,
         tab,
         widgetInEditMode: undefined,
+        isIconEditable: true,
+        selectedIconKey: tab.icon ?? null,
       };
     }
 
@@ -106,6 +116,8 @@ export const usePageLayoutHeaderInfo = ({
         isReadonly: false,
         tab: undefined,
         widgetInEditMode,
+        isIconEditable: false,
+        selectedIconKey: null,
       };
     }
 
@@ -145,6 +157,8 @@ export const usePageLayoutHeaderInfo = ({
         isReadonly: false,
         tab: undefined,
         widgetInEditMode,
+        isIconEditable: false,
+        selectedIconKey: null,
       };
     }
 
@@ -175,6 +189,8 @@ export const usePageLayoutHeaderInfo = ({
         isReadonly: false,
         tab: undefined,
         widgetInEditMode,
+        isIconEditable: false,
+        selectedIconKey: null,
       };
     }
 
@@ -205,6 +221,8 @@ export const usePageLayoutHeaderInfo = ({
         isReadonly: false,
         tab: undefined,
         widgetInEditMode,
+        isIconEditable: false,
+        selectedIconKey: null,
       };
     }
 
@@ -235,6 +253,8 @@ export const usePageLayoutHeaderInfo = ({
         isReadonly: false,
         tab: undefined,
         widgetInEditMode,
+        isIconEditable: false,
+        selectedIconKey: null,
       };
     }
 
@@ -247,6 +267,8 @@ export const usePageLayoutHeaderInfo = ({
         isReadonly: true,
         tab: undefined,
         widgetInEditMode: undefined,
+        isIconEditable: false,
+        selectedIconKey: null,
       };
     }
 
@@ -259,6 +281,8 @@ export const usePageLayoutHeaderInfo = ({
         isReadonly: true,
         tab: undefined,
         widgetInEditMode: undefined,
+        isIconEditable: false,
+        selectedIconKey: null,
       };
     }
     default:

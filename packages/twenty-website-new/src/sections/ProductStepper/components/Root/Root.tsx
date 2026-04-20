@@ -26,7 +26,7 @@ const Grid = styled(Container)`
   @media (min-width: ${theme.breakpoints.md}px) {
     align-items: start;
     column-gap: ${theme.spacing(10)};
-    grid-template-columns: minmax(0, 1fr) minmax(0, 672px);
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     min-height: 100%;
     padding-bottom: ${theme.spacing(20)};
     padding-left: ${theme.spacing(10)};

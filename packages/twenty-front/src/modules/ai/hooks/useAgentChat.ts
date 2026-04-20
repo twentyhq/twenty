@@ -22,7 +22,7 @@ import { agentChatInputState } from '@/ai/states/agentChatInputState';
 import { agentChatSelectedFilesState } from '@/ai/states/agentChatSelectedFilesState';
 import { agentChatUploadedFilesState } from '@/ai/states/agentChatUploadedFilesState';
 import { agentChatMessagesComponentFamilyState } from '@/ai/states/agentChatMessagesComponentFamilyState';
-import { currentAIChatThreadState } from '@/ai/states/currentAIChatThreadState';
+import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { useGetBrowsingContext } from '@/ai/hooks/useBrowsingContext';
 import { useAgentChatModelId } from '@/ai/hooks/useAgentChatModelId';
 import { useListenToBrowserEvent } from '@/browser-event/hooks/useListenToBrowserEvent';
@@ -37,7 +37,7 @@ export const useAgentChat = (
   const { modelIdForRequest } = useAgentChatModelId();
   const { getBrowsingContext } = useGetBrowsingContext();
   const apolloClient = useApolloClient();
-  const setCurrentAIChatThread = useSetAtomState(currentAIChatThreadState);
+  const setCurrentAiChatThread = useSetAtomState(currentAiChatThreadState);
   const store = useStore();
 
   const agentChatSelectedFiles = useAtomStateValue(agentChatSelectedFilesState);
@@ -55,7 +55,7 @@ export const useAgentChat = (
 
   const handleSendMessage = useCallback(async () => {
     const draftKey =
-      store.get(currentAIChatThreadState.atom) ??
+      store.get(currentAiChatThreadState.atom) ??
       AGENT_CHAT_NEW_THREAD_DRAFT_KEY;
     const contentToSend =
       draftKey === AGENT_CHAT_NEW_THREAD_DRAFT_KEY
@@ -158,7 +158,7 @@ export const useAgentChat = (
 
       setPendingThreadIdAfterFirstSend((pendingId) => {
         if (isDefined(pendingId)) {
-          setCurrentAIChatThread(pendingId);
+          setCurrentAiChatThread(pendingId);
         }
 
         return null;
@@ -195,7 +195,7 @@ export const useAgentChat = (
       });
 
       if (draftKey === AGENT_CHAT_NEW_THREAD_DRAFT_KEY) {
-        setCurrentAIChatThread(threadId);
+        setCurrentAiChatThread(threadId);
       }
 
       setPendingThreadIdAfterFirstSend(null);
@@ -211,7 +211,7 @@ export const useAgentChat = (
     setAgentChatUploadedFiles,
     setAgentChatDraftsByThreadId,
     modelIdForRequest,
-    setCurrentAIChatThread,
+    setCurrentAiChatThread,
     apolloClient,
   ]);
 
@@ -221,7 +221,7 @@ export const useAgentChat = (
   });
 
   const handleStop = useCallback(async () => {
-    const threadId = store.get(currentAIChatThreadState.atom);
+    const threadId = store.get(currentAiChatThreadState.atom);
 
     if (!isDefined(threadId) || !isValidUuid(threadId)) {
       return;

@@ -21,7 +21,7 @@ export class AddWorkspaceIdToIndirectEntitiesFastInstanceCommand
   public async up(queryRunner: QueryRunner): Promise<void> {
     for (const table of TABLES) {
       await queryRunner.query(
-        `ALTER TABLE "core"."${table}" ADD "workspaceId" uuid`,
+        `ALTER TABLE "core"."${table}" ADD COLUMN IF NOT EXISTS "workspaceId" uuid`,
       );
     }
   }
@@ -29,7 +29,7 @@ export class AddWorkspaceIdToIndirectEntitiesFastInstanceCommand
   public async down(queryRunner: QueryRunner): Promise<void> {
     for (const table of TABLES) {
       await queryRunner.query(
-        `ALTER TABLE "core"."${table}" DROP COLUMN "workspaceId"`,
+        `ALTER TABLE "core"."${table}" DROP COLUMN IF EXISTS "workspaceId"`,
       );
     }
   }

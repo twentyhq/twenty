@@ -123,7 +123,7 @@ describe('workspace members permissions', () => {
     });
   });
 
-  it('should deny updateOne on /graphql when member updates themself', async () => {
+  it('should deny /graphql updateOne on own record for standard field name.firstName when member lacks WORKSPACE_MEMBERS', async () => {
     const graphqlOperation = updateOneOperationFactory({
       objectMetadataSingularName: 'workspaceMember',
       gqlFields: WORKSPACE_MEMBER_GQL_FIELDS,
@@ -146,7 +146,31 @@ describe('workspace members permissions', () => {
     expect(response.body.errors[0].extensions.code).toBe(ErrorCode.FORBIDDEN);
   });
 
-  it('should deny update on custom field for another workspace member on /graphql (member role)', async () => {
+  it('should deny /graphql updateOne on own record for a custom field when member lacks WORKSPACE_MEMBERS', async () => {
+    const graphqlOperation = updateOneOperationFactory({
+      objectMetadataSingularName: 'workspaceMember',
+      gqlFields: `
+        id
+        ${customFieldName}
+      `,
+      recordId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+      data: {
+        [customFieldName]: 'self-custom-value',
+      },
+    });
+
+    const response =
+      await makeGraphqlAPIRequestWithMemberRole(graphqlOperation);
+
+    expect(response.body.data).toStrictEqual({ updateWorkspaceMember: null });
+    expect(response.body.errors).toBeDefined();
+    expect(response.body.errors[0].message).toBe(
+      PermissionsExceptionMessage.PERMISSION_DENIED,
+    );
+    expect(response.body.errors[0].extensions.code).toBe(ErrorCode.FORBIDDEN);
+  });
+
+  it('should deny /graphql updateOne on another workspace member for a custom field when member lacks WORKSPACE_MEMBERS', async () => {
     const customFieldValue = 'Ile-de-france';
     const graphqlOperation = updateOneOperationFactory({
       objectMetadataSingularName: 'workspaceMember',

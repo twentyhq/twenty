@@ -54,7 +54,7 @@ export const createExecuteToolTool = (
     parameters: ExecuteToolInput,
     options: ToolExecutionOptions,
   ): Promise<ToolOutput> => {
-    const { toolName, arguments: args } = parameters;
+    const { toolName, arguments: args = {} } = parameters;
 
     if (excludeTools?.has(toolName)) {
       return {

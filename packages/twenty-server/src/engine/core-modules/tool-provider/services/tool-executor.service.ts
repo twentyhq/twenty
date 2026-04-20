@@ -33,7 +33,6 @@ import { type ToolDescriptor } from 'src/engine/core-modules/tool-provider/types
 import { type ToolExecutionRef } from 'src/engine/core-modules/tool-provider/types/tool-execution-ref.type';
 import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-index-entry.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
-import { stripLoadingMessage } from 'src/engine/core-modules/tool/utils/wrap-tool-for-execution.util';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
@@ -77,24 +76,24 @@ export class ToolExecutorService {
 
   async dispatch(
     descriptor: ToolIndexEntry | ToolDescriptor,
-    args: Record<string, unknown>,
+    args: Record<string, unknown> | undefined,
     context: ToolProviderContext,
   ): Promise<ToolOutput> {
-    const cleanArgs = stripLoadingMessage(args);
+    const safeArgs = args ?? {};
 
     switch (descriptor.executionRef.kind) {
       case 'database_crud':
         return this.dispatchDatabaseCrud(
           descriptor.executionRef,
-          cleanArgs,
+          safeArgs,
           context,
         );
       case 'static':
-        return this.dispatchStaticTool(descriptor, cleanArgs, context);
+        return this.dispatchStaticTool(descriptor, safeArgs, context);
       case 'logic_function':
         return this.dispatchLogicFunction(
           descriptor.executionRef,
-          cleanArgs,
+          safeArgs,
           context,
         );
     }

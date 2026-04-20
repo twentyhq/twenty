@@ -1,4 +1,4 @@
-import type { ObjectConfig } from '@/sdk/objects/object-config';
+import type { ObjectConfig } from '@/sdk/define/objects/object-config';
 import { getDefaultObjectFields } from '@/cli/utilities/build/manifest/utils/get-default-object-fields';
 import { getDefaultRelationObjectFields } from '@/cli/utilities/build/manifest/utils/get-default-relation-object-fields';
 import {

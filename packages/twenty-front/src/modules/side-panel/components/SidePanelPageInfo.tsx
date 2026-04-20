@@ -7,7 +7,7 @@ import {
 
 import { selectedNavigationMenuItemIdInEditModeState } from '@/navigation-menu-item/common/states/selectedNavigationMenuItemIdInEditModeState';
 import { useNavigationMenuItemSectionItems } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemSectionItems';
-import { SidePanelAskAIInfo } from '@/side-panel/components/SidePanelAskAIInfo';
+import { SidePanelAskAiInfo } from '@/side-panel/components/SidePanelAskAiInfo';
 import { SidePanelFolderInfo } from '@/side-panel/components/SidePanelFolderInfo';
 import { SidePanelLinkInfo } from '@/side-panel/components/SidePanelLinkInfo';
 import { SidePanelMultipleRecordsInfo } from '@/side-panel/components/SidePanelMultipleRecordsInfo';
@@ -114,10 +114,10 @@ export const SidePanelPageInfo = ({ pageChip }: SidePanelPageInfoProps) => {
     );
   }
 
-  const isAskAIPage = pageChip.page?.page === SidePanelPages.AskAI;
+  const isAskAiPage = pageChip.page?.page === SidePanelPages.AskAI;
 
-  if (isAskAIPage) {
-    return <SidePanelAskAIInfo />;
+  if (isAskAiPage) {
+    return <SidePanelAskAiInfo />;
   }
 
   if (pageChip.page?.page === SidePanelPages.NavigationMenuAddItem) {

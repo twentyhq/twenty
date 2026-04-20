@@ -6,11 +6,27 @@ const StyledRightColumn = styled.div`
   min-width: 0;
   width: 100%;
 
+  @media (max-width: ${theme.breakpoints.md - 1}px) {
+    order: -1;
+  }
+
   @media (min-width: ${theme.breakpoints.md}px) {
+    align-items: center;
     align-self: start;
-    max-width: 672px;
+    display: flex;
+    height: calc(100vh - 4.5rem);
+    justify-content: center;
     position: sticky;
-    top: calc(4.5rem + (100vh - 4.5rem) * 0.5 - 368px);
+    top: 4.5rem;
+  }
+`;
+
+const VisualFrame = styled.div`
+  min-width: 0;
+  width: 100%;
+
+  @media (min-width: ${theme.breakpoints.md}px) {
+    max-width: 672px;
   }
 `;
 
@@ -19,5 +35,9 @@ type RightColumnProps = {
 };
 
 export function RightColumn({ children }: RightColumnProps) {
-  return <StyledRightColumn>{children}</StyledRightColumn>;
+  return (
+    <StyledRightColumn>
+      <VisualFrame>{children}</VisualFrame>
+    </StyledRightColumn>
+  );
 }

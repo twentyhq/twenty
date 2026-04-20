@@ -1,4 +1,5 @@
-import { defineFrontComponent, someDefined, selectedRecords } from '@/sdk';
+import { defineFrontComponent } from '@/sdk/define';
+import { someDefined, selectedRecords } from '@/sdk/front-component';
 
 const MyComponent = () => null;
 

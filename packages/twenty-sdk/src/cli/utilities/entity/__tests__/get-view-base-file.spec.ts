@@ -8,7 +8,7 @@ describe('getViewBaseFile', () => {
       objectUniversalIdentifier: 'obj-abc-123',
     });
 
-    expect(result).toContain("import { defineView } from 'twenty-sdk'");
+    expect(result).toContain("import { defineView } from 'twenty-sdk/define';");
     expect(result).toContain('export default defineView({');
     expect(result).toContain(
       "universalIdentifier: '71e45a58-41da-4ae4-8b73-a543c0a9d3d4'",
@@ -27,13 +27,14 @@ describe('getViewBaseFile', () => {
     expect(result).toContain("objectUniversalIdentifier: 'fill-later'");
   });
 
-  it('should include commented fields and filters when no fields provided', () => {
+  it('should include commented fields, filters and sorts when no fields provided', () => {
     const result = getViewBaseFile({
       name: 'empty-view',
     });
 
     expect(result).toContain('// fields: [');
     expect(result).toContain('// filters: [');
+    expect(result).toContain('// sorts: [');
   });
 
   it('should render fields block when fields are provided', () => {

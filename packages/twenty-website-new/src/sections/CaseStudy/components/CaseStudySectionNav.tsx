@@ -34,17 +34,37 @@ const Shell = styled.aside<{ $visible: boolean }>`
 
 const Panel = styled.div`
   background-color: ${theme.colors.secondary.background[100]};
+  border: 1px solid ${theme.colors.secondary.border[10]};
+  border-radius: ${theme.radius(3)};
   box-sizing: border-box;
   display: flex;
+  flex-direction: column;
   gap: ${theme.spacing(4)};
   overflow: hidden;
-  padding: ${theme.spacing(4)};
+  padding: ${theme.spacing(5)};
   width: 100%;
+`;
+
+const Eyebrow = styled.p`
+  color: ${theme.colors.secondary.text[40]};
+  font-family: ${theme.font.family.mono};
+  font-size: ${theme.font.size(2.5)};
+  font-weight: ${theme.font.weight.medium};
+  letter-spacing: 0.08em;
+  line-height: ${theme.lineHeight(3)};
+  margin: 0;
+  text-transform: uppercase;
+`;
+
+const NavBody = styled.div`
+  display: flex;
+  gap: ${theme.spacing(4)};
 `;
 
 const RailTrack = styled.div`
   align-self: stretch;
-  background-color: ${theme.colors.secondary.border[20]};
+  background-color: ${theme.colors.secondary.border[10]};
+  border-radius: 2px;
   flex-shrink: 0;
   position: relative;
   width: 2px;
@@ -52,11 +72,12 @@ const RailTrack = styled.div`
 
 const RailFill = styled.div<{ $percent: number }>`
   background-color: ${theme.colors.highlight[100]};
+  border-radius: 2px;
   height: ${({ $percent }) => $percent}%;
   left: 0;
   position: absolute;
   top: 0;
-  transition: height 0.2s ease;
+  transition: height 0.25s ease;
   width: 100%;
 `;
 
@@ -64,7 +85,7 @@ const NavList = styled.nav`
   display: flex;
   flex: 1;
   flex-direction: column;
-  gap: 22px;
+  gap: ${theme.spacing(5)};
   min-height: 0;
   min-width: 0;
 `;
@@ -75,20 +96,32 @@ const NavLink = styled.a<{ $active: boolean }>`
       ? theme.colors.secondary.text[100]
       : theme.colors.secondary.text[60]};
   cursor: pointer;
+  display: block;
   font-family: ${theme.font.family.sans};
-  font-size: ${theme.font.size(3)};
+  font-size: ${theme.font.size(3.5)};
   font-weight: ${({ $active }) =>
     $active ? theme.font.weight.medium : theme.font.weight.regular};
-  line-height: ${theme.lineHeight(3.5)};
+  line-height: ${theme.lineHeight(4.5)};
   overflow-wrap: anywhere;
   text-decoration: none;
   transition:
     color 0.15s ease,
-    font-weight 0.15s ease;
+    font-weight 0.15s ease,
+    transform 0.15s ease;
 
   &:hover {
     color: ${theme.colors.secondary.text[100]};
   }
+`;
+
+const NavIndex = styled.span`
+  color: ${theme.colors.secondary.text[40]};
+  font-family: ${theme.font.family.mono};
+  font-size: ${theme.font.size(2.5)};
+  font-weight: ${theme.font.weight.medium};
+  letter-spacing: 0.05em;
+  margin-right: ${theme.spacing(2)};
+  text-transform: uppercase;
 `;
 
 const SocialRow = styled.div`
@@ -176,23 +209,27 @@ export function CaseStudySectionNav({ items }: CaseStudySectionNavProps) {
   return (
     <Shell $visible={visible} aria-hidden={!visible}>
       <Panel>
-        <RailTrack>
-          <RailFill $percent={progressPercent} />
-        </RailTrack>
-        <NavList aria-label="On this page">
-          {items.map((item, index) => (
-            <NavLink
-              key={index}
-              $active={index === activeIndex}
-              href={`#${SECTION_ID_PREFIX}-${index}`}
-              onClick={(event) =>
-                handleNavClick(event, `${SECTION_ID_PREFIX}-${index}`)
-              }
-            >
-              {index + 1} — {item}
-            </NavLink>
-          ))}
-        </NavList>
+        <Eyebrow>On this page</Eyebrow>
+        <NavBody>
+          <RailTrack>
+            <RailFill $percent={progressPercent} />
+          </RailTrack>
+          <NavList aria-label="On this page">
+            {items.map((item, index) => (
+              <NavLink
+                key={index}
+                $active={index === activeIndex}
+                href={`#${SECTION_ID_PREFIX}-${index}`}
+                onClick={(event) =>
+                  handleNavClick(event, `${SECTION_ID_PREFIX}-${index}`)
+                }
+              >
+                <NavIndex>{String(index + 1).padStart(2, '0')}</NavIndex>
+                {item}
+              </NavLink>
+            ))}
+          </NavList>
+        </NavBody>
       </Panel>
 
       <SocialRow>

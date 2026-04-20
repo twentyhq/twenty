@@ -1,7 +1,11 @@
 'use client';
 
 import { LinkButton } from '@/design-system/components';
-import { ArrowRightUpIcon, SOCIAL_ICONS } from '@/icons';
+import {
+  ArrowRightUpIcon,
+  INFORMATIVE_ICONS,
+  SOCIAL_ICONS,
+} from '@/icons';
 import type {
   MenuNavItemType,
   MenuScheme,
@@ -13,7 +17,7 @@ import { Separator } from '@base-ui/react/separator';
 import { styled } from '@linaria/react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import React from 'react';
+import React, { useState } from 'react';
 
 const StyledDrawerContent = styled.div`
   display: grid;
@@ -47,7 +51,7 @@ const NavigationContainer = styled.nav`
   width: 100%;
 `;
 
-const NavItem = styled(Link)`
+const navItemStyles = `
   border-radius: ${theme.radius(2)};
   display: block;
   font-family: ${theme.font.family.mono};
@@ -85,6 +89,129 @@ const NavItem = styled(Link)`
   &:focus-visible {
     outline: 1px solid ${theme.colors.highlight[100]};
     outline-offset: 1px;
+  }
+`;
+
+const NavItem = styled(Link)`
+  ${navItemStyles}
+`;
+
+const ExternalNavItem = styled.a`
+  ${navItemStyles}
+`;
+
+const NavGroupButton = styled.button`
+  ${navItemStyles}
+  align-items: center;
+  background: none;
+  border: none;
+  column-gap: ${theme.spacing(2)};
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  padding: 0;
+  text-align: left;
+`;
+
+const NavGroupChevron = styled.span`
+  align-items: center;
+  display: inline-flex;
+  flex-shrink: 0;
+  transform: rotate(0deg);
+  transition: transform 0.24s cubic-bezier(0.22, 1, 0.36, 1);
+
+  ${NavGroupButton}[aria-expanded='true'] & {
+    transform: rotate(180deg);
+  }
+
+  svg {
+    display: block;
+  }
+`;
+
+const NavGroupChildren = styled.div`
+  display: grid;
+  margin-top: ${theme.spacing(7)};
+  padding-left: ${theme.spacing(4)};
+  row-gap: ${theme.spacing(5)};
+`;
+
+const NavChildItemStyles = `
+  align-items: center;
+  column-gap: ${theme.spacing(3)};
+  display: grid;
+  font-family: ${theme.font.family.mono};
+  font-size: ${theme.font.size(6)};
+  font-weight: ${theme.font.weight.light};
+  grid-template-columns: auto 1fr;
+  letter-spacing: 0;
+  line-height: 28px;
+  text-decoration: none;
+  text-transform: uppercase;
+  width: 100%;
+
+  &[data-scheme='primary'] {
+    color: ${theme.colors.primary.text[100]};
+  }
+
+  &[data-scheme='secondary'] {
+    color: ${theme.colors.secondary.text[100]};
+  }
+
+  &[data-active] {
+    color: ${theme.colors.highlight[100]};
+  }
+
+  &:focus-visible {
+    outline: 1px solid ${theme.colors.highlight[100]};
+    outline-offset: 1px;
+  }
+`;
+
+const NavChildItem = styled(Link)`
+  ${NavChildItemStyles}
+`;
+
+const ExternalNavChildItem = styled.a`
+  ${NavChildItemStyles}
+`;
+
+const NavChildIcon = styled.span`
+  align-items: center;
+  display: inline-flex;
+  flex-shrink: 0;
+  height: 24px;
+  justify-content: center;
+  width: 24px;
+
+  &[data-scheme='primary'] {
+    color: ${theme.colors.primary.text[60]};
+  }
+
+  &[data-scheme='secondary'] {
+    color: ${theme.colors.secondary.text[60]};
+  }
+
+  ${NavChildItem}[data-active] &,
+  ${ExternalNavChildItem}[data-active] & {
+    color: ${theme.colors.highlight[100]};
+  }
+`;
+
+const NavChildLabel = styled.span`
+  &::before {
+    background: ${theme.colors.highlight[100]};
+    content: '';
+    display: none;
+    height: 2px;
+    margin-right: ${theme.spacing(2)};
+    vertical-align: middle;
+    width: 10px;
+  }
+
+  ${NavChildItem}[data-active] &::before,
+  ${ExternalNavChildItem}[data-active] &::before {
+    display: inline-block;
   }
 `;
 
@@ -154,17 +281,99 @@ const Divider = styled(Separator)`
   }
 `;
 
+type NavGroupProps = {
+  item: MenuNavItemType;
+  pathname: string | null;
+  scheme: MenuScheme;
+};
+
+function NavGroup({ item, pathname, scheme }: NavGroupProps) {
+  const hasActiveChild =
+    item.children?.some(
+      (child) => !child.external && pathname?.startsWith(child.href),
+    ) ?? false;
+  const [isOpen, setIsOpen] = useState(hasActiveChild);
+
+  return (
+    <div>
+      <NavGroupButton
+        type="button"
+        aria-expanded={isOpen}
+        data-scheme={scheme}
+        data-active={hasActiveChild || undefined}
+        onClick={() => setIsOpen((prev) => !prev)}
+      >
+        {item.label}
+        <NavGroupChevron aria-hidden>
+          <svg
+            width="12"
+            height="12"
+            viewBox="0 0 10 10"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M2 3.5L5 6.5L8 3.5"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        </NavGroupChevron>
+      </NavGroupButton>
+      {isOpen && (
+        <NavGroupChildren>
+          {item.children?.map((child) => {
+            const IconComponent = child.icon
+              ? INFORMATIVE_ICONS[child.icon]
+              : null;
+
+            return (
+              <Drawer.Close
+                key={child.href}
+                nativeButton={false}
+                render={
+                  child.external ? (
+                    <ExternalNavChildItem
+                      data-scheme={scheme}
+                      href={child.href}
+                      rel="noopener noreferrer"
+                      target="_blank"
+                    />
+                  ) : (
+                    <NavChildItem
+                      data-scheme={scheme}
+                      data-active={
+                        pathname?.startsWith(child.href) || undefined
+                      }
+                      href={child.href}
+                    />
+                  )
+                }
+              >
+                <NavChildIcon data-scheme={scheme} aria-hidden>
+                  {IconComponent && (
+                    <IconComponent size={20} color="currentColor" />
+                  )}
+                </NavChildIcon>
+                <NavChildLabel>{child.label}</NavChildLabel>
+              </Drawer.Close>
+            );
+          })}
+        </NavGroupChildren>
+      )}
+    </div>
+  );
+}
+
 type MenuDrawerProps = {
   navItems: MenuNavItemType[];
   scheme: MenuScheme;
   socialLinks: MenuSocialLinkType[];
 };
 
-export function MenuDrawer({
-  navItems,
-  scheme,
-  socialLinks,
-}: MenuDrawerProps) {
+export function MenuDrawer({ navItems, scheme, socialLinks }: MenuDrawerProps) {
   const pathname = usePathname();
   const buttonColor = scheme === 'primary' ? 'secondary' : 'primary';
 
@@ -178,86 +387,98 @@ export function MenuDrawer({
       ? theme.colors.primary.border[60]
       : theme.colors.secondary.border[60];
 
+  const topLevelItems = navItems.filter((item) => item.children || item.href);
+
   return (
     <Drawer.Portal>
       <Drawer.Popup aria-label="Navigation menu">
         <StyledDrawerContent data-scheme={scheme}>
           <NavigationContainer aria-label="Mobile navigation">
-          {navItems.map((item, index) => (
-            <React.Fragment key={item.href}>
-              <Drawer.Close
-                nativeButton={false}
-                render={
-                  <NavItem
-                    data-scheme={scheme}
-                    data-active={
-                      pathname?.startsWith(item.href) || undefined
-                    }
-                    href={item.href}
+            {topLevelItems.map((item, index) => (
+              <React.Fragment key={item.label}>
+                {item.children ? (
+                  <NavGroup
+                    item={item}
+                    scheme={scheme}
+                    pathname={pathname}
                   />
-                }
-              >
-                {item.label}
-              </Drawer.Close>
-              {index < navItems.length - 1 && (
-                <HorizontalSeparator
-                  orientation="horizontal"
-                  style={
-                    { '--separator-color': separatorColor } as React.CSSProperties
-                  }
-                />
-              )}
-            </React.Fragment>
-          ))}
-        </NavigationContainer>
-
-        <CtaContainer>
-          <LinkButton
-            color={buttonColor}
-            href="https://app.twenty.com/welcome"
-            label="Log in"
-            type="anchor"
-            variant="outlined"
-          />
-        </CtaContainer>
-
-        <SocialContainer>
-          {socialLinks
-            .filter((item) => item.showInDrawer)
-            .map((item, index) => {
-              const IconComponent = SOCIAL_ICONS[item.icon];
-              if (!IconComponent) return null;
-
-              return (
-                <React.Fragment key={item.href}>
-                  {index > 0 && (
-                    <Divider data-scheme={scheme} orientation="vertical" />
-                  )}
-                  <SocialItem
-                    data-scheme={scheme}
-                    href={item.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label={item.ariaLabel}
+                ) : item.href ? (
+                  <Drawer.Close
+                    nativeButton={false}
+                    render={
+                      <NavItem
+                        data-scheme={scheme}
+                        data-active={
+                          pathname?.startsWith(item.href) || undefined
+                        }
+                        href={item.href}
+                      />
+                    }
                   >
-                    <IconComponent
-                      size={14}
-                      fillColor={iconFillColor}
-                      aria-hidden="true"
-                    />
                     {item.label}
-                    {item.label && (
-                      <ArrowRightUpIcon
-                        size={8}
-                        strokeColor={theme.colors.highlight[100]}
+                  </Drawer.Close>
+                ) : null}
+                {index < topLevelItems.length - 1 && (
+                  <HorizontalSeparator
+                    orientation="horizontal"
+                    style={
+                      {
+                        '--separator-color': separatorColor,
+                      } as React.CSSProperties
+                    }
+                  />
+                )}
+              </React.Fragment>
+            ))}
+          </NavigationContainer>
+
+          <CtaContainer>
+            <LinkButton
+              color={buttonColor}
+              href="https://app.twenty.com/welcome"
+              label="Log in"
+              type="anchor"
+              variant="outlined"
+            />
+          </CtaContainer>
+
+          <SocialContainer>
+            {socialLinks
+              .filter((item) => item.showInDrawer)
+              .map((item, index) => {
+                const IconComponent = SOCIAL_ICONS[item.icon];
+                if (!IconComponent) return null;
+
+                return (
+                  <React.Fragment key={item.href}>
+                    {index > 0 && (
+                      <Divider data-scheme={scheme} orientation="vertical" />
+                    )}
+                    <SocialItem
+                      data-scheme={scheme}
+                      href={item.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={item.ariaLabel}
+                    >
+                      <IconComponent
+                        size={14}
+                        fillColor={iconFillColor}
                         aria-hidden="true"
                       />
-                    )}
-                  </SocialItem>
-                </React.Fragment>
-              );
-            })}
-        </SocialContainer>
+                      {item.label}
+                      {item.label && (
+                        <ArrowRightUpIcon
+                          size={8}
+                          strokeColor={theme.colors.highlight[100]}
+                          aria-hidden="true"
+                        />
+                      )}
+                    </SocialItem>
+                  </React.Fragment>
+                );
+              })}
+          </SocialContainer>
         </StyledDrawerContent>
       </Drawer.Popup>
     </Drawer.Portal>

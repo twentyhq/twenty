@@ -1,0 +1,24 @@
+import {
+  BROADCAST_ON_RESEND_EMAIL_FIELD_UNIVERSAL_IDENTIFIER,
+  RESEND_BROADCAST_OBJECT_UNIVERSAL_IDENTIFIER,
+  RESEND_EMAILS_ON_BROADCAST_FIELD_UNIVERSAL_IDENTIFIER,
+  RESEND_EMAIL_OBJECT_UNIVERSAL_IDENTIFIER,
+} from 'src/modules/resend/constants/universal-identifiers';
+import { defineField, FieldType, RelationType } from 'twenty-sdk/define';
+
+export default defineField({
+  universalIdentifier: BROADCAST_ON_RESEND_EMAIL_FIELD_UNIVERSAL_IDENTIFIER,
+  objectUniversalIdentifier: RESEND_EMAIL_OBJECT_UNIVERSAL_IDENTIFIER,
+  type: FieldType.RELATION,
+  name: 'broadcast',
+  label: 'Broadcast',
+  relationTargetObjectMetadataUniversalIdentifier:
+    RESEND_BROADCAST_OBJECT_UNIVERSAL_IDENTIFIER,
+  relationTargetFieldMetadataUniversalIdentifier:
+    RESEND_EMAILS_ON_BROADCAST_FIELD_UNIVERSAL_IDENTIFIER,
+  universalSettings: {
+    relationType: RelationType.MANY_TO_ONE,
+    joinColumnName: 'broadcastId',
+  },
+  icon: 'IconSpeakerphone',
+});

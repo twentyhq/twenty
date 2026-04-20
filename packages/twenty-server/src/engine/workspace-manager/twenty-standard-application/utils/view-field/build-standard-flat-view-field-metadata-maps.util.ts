@@ -1,5 +1,3 @@
-import { isDefined } from 'twenty-shared/utils';
-
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
@@ -78,14 +76,11 @@ const STANDARD_FLAT_VIEW_FIELD_METADATA_BUILDERS_BY_OBJECT_NAME = {
 export type BuildStandardFlatViewFieldMetadataMapsArgs = Omit<
   CreateStandardViewFieldArgs,
   'context' | 'objectName'
-> & {
-  shouldIncludeRecordPageLayouts?: boolean;
-};
+>;
 
-export const buildStandardFlatViewFieldMetadataMaps = ({
-  shouldIncludeRecordPageLayouts,
-  ...args
-}: BuildStandardFlatViewFieldMetadataMapsArgs): FlatEntityMaps<FlatViewField> => {
+export const buildStandardFlatViewFieldMetadataMaps = (
+  args: BuildStandardFlatViewFieldMetadataMapsArgs,
+): FlatEntityMaps<FlatViewField> => {
   const allViewFieldMetadatas: FlatViewField[] = (
     Object.keys(
       STANDARD_FLAT_VIEW_FIELD_METADATA_BUILDERS_BY_OBJECT_NAME,
@@ -99,15 +94,7 @@ export const buildStandardFlatViewFieldMetadataMaps = ({
       objectName,
     });
 
-    return Object.values(result).filter(
-      (viewField) =>
-        shouldIncludeRecordPageLayouts ||
-        isDefined(
-          args.dependencyFlatEntityMaps.flatViewMaps.byUniversalIdentifier[
-            viewField.viewUniversalIdentifier
-          ],
-        ),
-    );
+    return Object.values(result);
   });
 
   let flatViewFieldMaps = createEmptyFlatEntityMaps();

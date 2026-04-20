@@ -51,7 +51,7 @@ export const getViewBaseFile = ({
   ],`
       : defaultFields;
 
-  return `import { defineView } from 'twenty-sdk';
+  return `import { defineView } from 'twenty-sdk/define';
 
 export default defineView({
   universalIdentifier: '${universalIdentifier}',
@@ -66,6 +66,13 @@ ${fieldsBlock}
   //     fieldMetadataUniversalIdentifier: '...',
   //     operand: 'Contains',
   //     value: '',
+  //   },
+  // ],
+  // sorts: [
+  //   {
+  //     universalIdentifier: '...',
+  //     fieldMetadataUniversalIdentifier: '...',
+  //     direction: 'DESC',
   //   },
   // ],
 });

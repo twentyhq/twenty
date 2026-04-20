@@ -17,9 +17,7 @@ import { LiveDataHeroTable } from './LiveDataHeroTable';
 const APP_FONT = `'Inter', ${theme.font.family.sans}`;
 const SCENE_HEIGHT = 508;
 const SCENE_WIDTH = 411;
-const SCENE_SCALE = 1;
-const SCENE_SCALE_MD = 0.86;
-const SCENE_SCALE_SM = 0.74;
+const LIVE_DATA_SCENE_VIEWPORT_TRANSFORM = `translateX(-50%) scale(min(100cqw / ${SCENE_WIDTH}px, 100cqh / ${SCENE_HEIGHT}px))`;
 const TABLE_PANEL_HOVER_SCALE = 1.012;
 const TABLER_STROKE = 1.65;
 const FILTER_ICON_STROKE = 1.33;
@@ -128,17 +126,9 @@ const SceneViewport = styled.div`
   left: 50%;
   position: absolute;
   top: 0;
-  transform: translateX(-50%) scale(${SCENE_SCALE});
+  transform: ${LIVE_DATA_SCENE_VIEWPORT_TRANSFORM};
   transform-origin: top center;
   width: 101%;
-
-  @media (max-width: ${theme.breakpoints.md - 1}px) {
-    transform: translateX(-50%) scale(${SCENE_SCALE_MD});
-  }
-
-  @media (max-width: 640px) {
-    transform: translateX(-50%) scale(${SCENE_SCALE_SM});
-  }
 `;
 
 const SceneFrame = styled.div`
@@ -181,9 +171,7 @@ const TablePanel = styled.div<{ $active?: boolean }>`
   position: absolute;
   right: 0px;
   transform: ${({ $active }) =>
-    `translate3d(0, 0, 0) scale(${
-      $active ? TABLE_PANEL_HOVER_SCALE : 1
-    })`};
+    `translate3d(0, 0, 0) scale(${$active ? TABLE_PANEL_HOVER_SCALE : 1})`};
   transform-origin: bottom right;
   transition:
     box-shadow 260ms cubic-bezier(0.22, 1, 0.36, 1),
@@ -895,10 +883,7 @@ export function LiveDataVisual({
                 $bottom={bobCursor.bottom}
                 $right={bobCursor.right}
               >
-                <MarkerCursorSlot
-                  $pressed={phase === 'remove-filter'}
-                  $visible
-                >
+                <MarkerCursorSlot $pressed={phase === 'remove-filter'} $visible>
                   <MarkerCursor
                     color={COLORS.bobCursor}
                     rotation={bobCursor.rotation}

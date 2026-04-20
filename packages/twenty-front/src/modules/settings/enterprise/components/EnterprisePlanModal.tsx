@@ -100,8 +100,8 @@ export const EnterprisePlanModal = () => {
     t`SSO (SAML / OIDC)`,
     t`Row-level security`,
     t`Audit logs`,
-    t`Custom objects`,
-    t`API & Webhooks`,
+    t`Advanced Encryption`,
+    t`Custom AI Models`,
   ];
 
   const price = selectedInterval === 'monthly' ? MONTHLY_PRICE : YEARLY_PRICE;

@@ -39,7 +39,7 @@ export class NativeModelCapabilities {
 }
 
 @ObjectType()
-export class ClientAIModelConfig {
+export class ClientAiModelConfig {
   @Field(() => String)
   // Composite model id (`provider/modelName`) for this workspace; matches registry and admin APIs.
   modelId: ModelId;
@@ -88,7 +88,7 @@ export class ClientAIModelConfig {
 }
 
 @ObjectType()
-export class AdminAIModelConfig {
+export class AdminAiModelConfig {
   @Field(() => String)
   // Composite model id (`provider/modelName`) used for toggles, defaults, and registry lookups.
   modelId: string;
@@ -143,10 +143,10 @@ export class AdminAIModelConfig {
   dataResidency?: string;
 }
 
-@ObjectType('AdminAIModels')
-export class AdminAIModelsDTO {
-  @Field(() => [AdminAIModelConfig])
-  models: AdminAIModelConfig[];
+@ObjectType('AdminAiModels')
+export class AdminAiModelsDTO {
+  @Field(() => [AdminAiModelConfig])
+  models: AdminAiModelConfig[];
 
   @Field(() => String, { nullable: true })
   // Composite model id for the default “smart” role (`provider/modelName`).
@@ -249,8 +249,8 @@ export class ClientConfig {
   @Field(() => Billing, { nullable: false })
   billing: Billing;
 
-  @Field(() => [ClientAIModelConfig])
-  aiModels: ClientAIModelConfig[];
+  @Field(() => [ClientAiModelConfig])
+  aiModels: ClientAiModelConfig[];
 
   @Field(() => Boolean)
   signInPrefilled: boolean;

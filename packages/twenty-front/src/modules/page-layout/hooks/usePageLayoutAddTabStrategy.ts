@@ -1,7 +1,6 @@
 import { useCreatePageLayoutTab } from '@/page-layout/hooks/useCreatePageLayoutTab';
 import { useCurrentPageLayoutOrThrow } from '@/page-layout/hooks/useCurrentPageLayoutOrThrow';
 import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
-import { useRecordPageLayoutObjectApplicationId } from '@/page-layout/hooks/useRecordPageLayoutObjectApplicationId';
 import { pageLayoutTabSettingsOpenTabIdComponentState } from '@/page-layout/states/pageLayoutTabSettingsOpenTabIdComponentState';
 import { type PageLayoutAddTabStrategy } from '@/page-layout/types/PageLayoutAddTabStrategy';
 import { isReactivatableTab } from '@/page-layout/utils/isReactivatableTab';
@@ -25,7 +24,6 @@ export const usePageLayoutAddTabStrategy = ({
 }): PageLayoutAddTabStrategy | undefined => {
   const { currentPageLayout } = useCurrentPageLayoutOrThrow();
   const isPageLayoutInEditMode = useIsPageLayoutInEditMode();
-  const { objectApplicationId } = useRecordPageLayoutObjectApplicationId();
 
   const isRecordPageGlobalEditionEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_RECORD_PAGE_LAYOUT_GLOBAL_EDITION_ENABLED,
@@ -77,9 +75,7 @@ export const usePageLayoutAddTabStrategy = ({
     return undefined;
   }
 
-  const hasInactiveTabs = currentPageLayout.tabs.some((tab) =>
-    isReactivatableTab({ tab, objectApplicationId }),
-  );
+  const hasInactiveTabs = currentPageLayout.tabs.some(isReactivatableTab);
 
   const mode =
     currentPageLayout.type === PageLayoutType.RECORD_PAGE && hasInactiveTabs

@@ -1,5 +1,7 @@
 import request from 'supertest';
 
+import { MCP_PROTOCOL_VERSION } from 'src/engine/api/mcp/constants/mcp-protocol-version.const';
+
 /**
  * Integration tests for MCP core controller
  *
@@ -70,7 +72,7 @@ describe('MCP Controller (integration)', () => {
         expect(res.body.id).toBe(123);
         expect(res.body.jsonrpc).toBe('2.0');
         expect(res.body.result).toBeDefined();
-        expect(res.body.result.protocolVersion).toBe('2024-11-05');
+        expect(res.body.result.protocolVersion).toBe(MCP_PROTOCOL_VERSION);
         expect(res.body.result.capabilities).toBeDefined();
         expect(res.body.result.serverInfo).toBeDefined();
         expect(res.body.result.serverInfo.name).toBe('Twenty MCP Server');

@@ -18,7 +18,7 @@ import { agentChatHandleEventCallbackComponentFamilyState } from '@/ai/states/ag
 import { agentChatIsStreamingComponentFamilyState } from '@/ai/states/agentChatIsStreamingComponentFamilyState';
 import { agentChatMessagesComponentFamilyState } from '@/ai/states/agentChatMessagesComponentFamilyState';
 import { agentChatUsageComponentFamilyState } from '@/ai/states/agentChatUsageComponentFamilyState';
-import { currentAIChatThreadTitleComponentFamilyState } from '@/ai/states/currentAIChatThreadTitleComponentFamilyState';
+import { currentAiChatThreadTitleComponentFamilyState } from '@/ai/states/currentAiChatThreadTitleComponentFamilyState';
 import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
 import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -116,7 +116,7 @@ export const useAgentChatSubscription = (threadId: string | null) => {
     agentChatUsageComponentFamilyState,
   );
   const threadTitleFamilyCallback = useAtomComponentFamilyStateCallbackState(
-    currentAIChatThreadTitleComponentFamilyState,
+    currentAiChatThreadTitleComponentFamilyState,
   );
 
   useEffect(() => {

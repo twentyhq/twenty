@@ -10,7 +10,7 @@ import { AGENT_CHAT_NEW_THREAD_DRAFT_KEY } from '@/ai/states/agentChatDraftsByTh
 import { agentChatFetchedMessagesComponentFamilyState } from '@/ai/states/agentChatFetchedMessagesComponentFamilyState';
 import { agentChatMessagesLoadingState } from '@/ai/states/agentChatMessagesLoadingState';
 import { agentChatQueuedMessagesComponentFamilyState } from '@/ai/states/agentChatQueuedMessagesComponentFamilyState';
-import { currentAIChatThreadState } from '@/ai/states/currentAIChatThreadState';
+import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { skipMessagesSkeletonUntilLoadedState } from '@/ai/states/skipMessagesSkeletonUntilLoadedState';
 import { mapDBMessagesToUIMessages } from '@/ai/utils/mapDBMessagesToUIMessages';
 import { useQueryWithCallbacks } from '@/apollo/hooks/useQueryWithCallbacks';
@@ -26,13 +26,13 @@ import {
 
 export const AgentChatMessagesFetchEffect = () => {
   const store = useStore();
-  const currentAIChatThread = useAtomStateValue(currentAIChatThreadState);
+  const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
 
   const isNewThread = useMemo(
     () =>
-      currentAIChatThread === null ||
-      currentAIChatThread === AGENT_CHAT_NEW_THREAD_DRAFT_KEY,
-    [currentAIChatThread],
+      currentAiChatThread === null ||
+      currentAiChatThread === AGENT_CHAT_NEW_THREAD_DRAFT_KEY,
+    [currentAiChatThread],
   );
 
   const setAgentChatMessagesLoading = useSetAtomState(
@@ -45,12 +45,12 @@ export const AgentChatMessagesFetchEffect = () => {
 
   const setAgentChatFetchedMessages = useSetAtomComponentFamilyState(
     agentChatFetchedMessagesComponentFamilyState,
-    { threadId: currentAIChatThread },
+    { threadId: currentAiChatThread },
   );
 
   const setAgentChatQueuedMessages = useSetAtomComponentFamilyState(
     agentChatQueuedMessagesComponentFamilyState,
-    { threadId: currentAIChatThread },
+    { threadId: currentAiChatThread },
   );
 
   const handleEventCallbackFamilyCallback =
@@ -84,7 +84,7 @@ export const AgentChatMessagesFetchEffect = () => {
         return;
       }
 
-      const threadId = store.get(currentAIChatThreadState.atom);
+      const threadId = store.get(currentAiChatThreadState.atom);
 
       if (!isDefined(threadId)) {
         return;
@@ -135,8 +135,8 @@ export const AgentChatMessagesFetchEffect = () => {
   const { refetch: refetchAgentChatMessages } = useQueryWithCallbacks(
     GetChatMessagesDocument,
     {
-      variables: { threadId: currentAIChatThread ?? '' },
-      skip: !isDefined(currentAIChatThread) || isNewThread,
+      variables: { threadId: currentAiChatThread ?? '' },
+      skip: !isDefined(currentAiChatThread) || isNewThread,
       onFirstLoad: handleFirstLoad,
       onDataLoaded: handleDataLoaded,
       onLoadingChange: handleLoadingChange,

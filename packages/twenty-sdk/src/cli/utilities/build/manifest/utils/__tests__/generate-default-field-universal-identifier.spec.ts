@@ -1,5 +1,5 @@
 import { generateDefaultFieldUniversalIdentifier } from '@/cli/utilities/build/manifest/utils/generate-default-field-universal-identifier';
-import { type ObjectConfig } from '@/sdk/objects/object-config';
+import { type ObjectConfig } from '@/sdk/define/objects/object-config';
 
 describe('generateDefaultFieldUniversalIdentifier', () => {
   it('should generate a unique universal identifier', () => {

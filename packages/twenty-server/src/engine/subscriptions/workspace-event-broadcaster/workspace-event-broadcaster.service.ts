@@ -41,22 +41,44 @@ export class WorkspaceEventBroadcaster {
 
     const streamIdsToRemove: string[] = [];
 
-    const payload: EventStreamPayload = {
-      objectRecordEventsWithQueryIds: [],
-      metadataEvents: events.map((event) => ({
-        metadataName: event.entityName,
-        type: event.type,
-        recordId: event.recordId,
-        properties: event.properties,
-        updatedCollectionHash,
-      })),
-    };
-
     for (const [streamChannelId, streamData] of streamsData) {
       if (!isDefined(streamData)) {
         streamIdsToRemove.push(streamChannelId);
         continue;
       }
+
+      const streamUserWorkspaceId = streamData.authContext.userWorkspaceId;
+
+      const metadataEventsForStream = events
+        .filter((event) => {
+          // Events without recipientUserWorkspaceIds are workspace-wide; delivered
+          // to every stream. Events with the field are user-scoped; only delivered
+          // to streams whose authContext.userWorkspaceId is in the list.
+          if (!isDefined(event.recipientUserWorkspaceIds)) {
+            return true;
+          }
+
+          return (
+            isDefined(streamUserWorkspaceId) &&
+            event.recipientUserWorkspaceIds.includes(streamUserWorkspaceId)
+          );
+        })
+        .map((event) => ({
+          metadataName: event.entityName,
+          type: event.type,
+          recordId: event.recordId,
+          properties: event.properties,
+          updatedCollectionHash,
+        }));
+
+      if (metadataEventsForStream.length === 0) {
+        continue;
+      }
+
+      const payload: EventStreamPayload = {
+        objectRecordEventsWithQueryIds: [],
+        metadataEvents: metadataEventsForStream,
+      };
 
       await this.subscriptionService.publishToEventStream({
         workspaceId,

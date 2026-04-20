@@ -37,11 +37,13 @@ export const SettingsApplicationDataTableRow = ({
       </TableCell>
       <TableCell align="right">{row.fieldsCount}</TableCell>
       <StyledActionTableCell>
-        <IconChevronRight
-          size={theme.icon.size.md}
-          stroke={theme.icon.stroke.sm}
-          color={theme.font.color.tertiary}
-        />
+        {row.link && (
+          <IconChevronRight
+            size={theme.icon.size.md}
+            stroke={theme.icon.stroke.sm}
+            color={theme.font.color.tertiary}
+          />
+        )}
       </StyledActionTableCell>
     </TableRow>
   );

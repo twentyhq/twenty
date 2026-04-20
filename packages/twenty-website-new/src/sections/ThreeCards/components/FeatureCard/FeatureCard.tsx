@@ -34,6 +34,7 @@ const CardImage = styled.div`
 const CardImageFrame = styled.div`
   background-color: ${theme.colors.primary.border[10]};
   border-radius: 2px;
+  container-type: size;
   height: 100%;
   isolation: isolate;
   overflow: hidden;

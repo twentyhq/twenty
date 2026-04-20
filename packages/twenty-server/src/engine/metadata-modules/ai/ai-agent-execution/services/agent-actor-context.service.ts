@@ -5,9 +5,9 @@ import { type ActorMetadata } from 'twenty-shared/types';
 import { buildCreatedByFromFullNameMetadata } from 'src/engine/core-modules/actor/utils/build-created-by-from-full-name-metadata.util';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import {
-  AgentException,
-  AgentExceptionCode,
-} from 'src/engine/metadata-modules/ai/ai-agent/agent.exception';
+  AiException,
+  AiExceptionCode,
+} from 'src/engine/metadata-modules/ai/ai.exception';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -46,9 +46,9 @@ export class AgentActorContextService {
       await this.userWorkspaceService.findById(userWorkspaceId);
 
     if (!userWorkspace) {
-      throw new AgentException(
+      throw new AiException(
         'User workspace not found',
-        AgentExceptionCode.AGENT_EXECUTION_FAILED,
+        AiExceptionCode.AGENT_EXECUTION_FAILED,
       );
     }
 
@@ -72,9 +72,9 @@ export class AgentActorContextService {
       );
 
     if (!workspaceMember) {
-      throw new AgentException(
+      throw new AiException(
         'Workspace member not found for user',
-        AgentExceptionCode.AGENT_EXECUTION_FAILED,
+        AiExceptionCode.AGENT_EXECUTION_FAILED,
       );
     }
 
@@ -84,9 +84,9 @@ export class AgentActorContextService {
     });
 
     if (!roleId) {
-      throw new AgentException(
+      throw new AiException(
         'User role not found',
-        AgentExceptionCode.AGENT_EXECUTION_FAILED,
+        AiExceptionCode.AGENT_EXECUTION_FAILED,
       );
     }
 

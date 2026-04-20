@@ -1,4 +1,4 @@
-import { defineFrontComponent } from 'twenty-sdk';
+import { defineFrontComponent } from 'twenty-sdk/define';
 import { type KeyboardEvent, useState } from 'react';
 
 type RemoteKeyboardEventDetail = {

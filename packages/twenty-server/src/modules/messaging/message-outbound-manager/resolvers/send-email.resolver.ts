@@ -79,11 +79,13 @@ export class SendEmailResolver {
 
       const sendResult = await this.sendEmailService.sendComposedEmail(data);
 
-      await this.sendEmailService.persistSentMessage(
-        sendResult,
-        data,
-        workspace.id,
-      );
+      if (data.shouldPersistMessage) {
+        await this.sendEmailService.persistSentMessage(
+          sendResult,
+          data,
+          workspace.id,
+        );
+      }
 
       const attachmentFileIds = (input.files ?? []).map((file) => file.id);
 

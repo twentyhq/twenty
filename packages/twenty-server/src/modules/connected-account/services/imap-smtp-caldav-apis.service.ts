@@ -15,7 +15,9 @@ import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-chan
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { resolveRolePermissionConfig } from 'src/engine/twenty-orm/utils/resolve-role-permission-config.util';
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { SyncMessageFoldersService } from 'src/modules/messaging/message-folder-manager/services/sync-message-folders.service';
 
@@ -68,15 +70,20 @@ export class ImapSmtpCalDavAPIService {
     const { handle, workspaceId, workspaceMemberId, connectedAccountId } =
       input;
 
-    const authContext = buildSystemAuthContext(workspaceId);
-
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
       async () => {
-        // Resolve userWorkspaceId from workspaceMemberId
+        const workspaceContext = getWorkspaceContext();
+        const rolePermissionConfig = resolveRolePermissionConfig({
+          authContext: workspaceContext.authContext,
+          userWorkspaceRoleMap: workspaceContext.userWorkspaceRoleMap,
+          apiKeyRoleMap: workspaceContext.apiKeyRoleMap,
+        });
+
         const workspaceMemberRepo =
           await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
             workspaceId,
             'workspaceMember',
+            rolePermissionConfig ?? undefined,
           );
 
         const member = await workspaceMemberRepo.findOne({
@@ -190,7 +197,6 @@ export class ImapSmtpCalDavAPIService {
 
         return newOrExistingAccountId;
       },
-      authContext,
     );
   }
 }

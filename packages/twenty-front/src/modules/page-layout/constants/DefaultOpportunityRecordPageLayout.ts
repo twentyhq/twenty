@@ -33,6 +33,7 @@ export const DEFAULT_OPPORTUNITY_RECORD_PAGE_LAYOUT: PageLayout = {
       widgets: [
         {
           __typename: 'PageLayoutWidget',
+          applicationId: '',
           id: 'opportunity-widget-fields',
           isActive: true,
           pageLayoutTabId: 'opportunity-tab-fields',
@@ -73,6 +74,7 @@ export const DEFAULT_OPPORTUNITY_RECORD_PAGE_LAYOUT: PageLayout = {
       widgets: [
         {
           __typename: 'PageLayoutWidget',
+          applicationId: '',
           id: 'opportunity-widget-timeline',
           isActive: true,
           pageLayoutTabId: 'opportunity-tab-timeline',
@@ -113,6 +115,7 @@ export const DEFAULT_OPPORTUNITY_RECORD_PAGE_LAYOUT: PageLayout = {
       widgets: [
         {
           __typename: 'PageLayoutWidget',
+          applicationId: '',
           id: 'opportunity-widget-tasks',
           isActive: true,
           pageLayoutTabId: 'opportunity-tab-tasks',
@@ -153,6 +156,7 @@ export const DEFAULT_OPPORTUNITY_RECORD_PAGE_LAYOUT: PageLayout = {
       widgets: [
         {
           __typename: 'PageLayoutWidget',
+          applicationId: '',
           id: 'opportunity-widget-notes',
           isActive: true,
           pageLayoutTabId: 'opportunity-tab-notes',
@@ -193,6 +197,7 @@ export const DEFAULT_OPPORTUNITY_RECORD_PAGE_LAYOUT: PageLayout = {
       widgets: [
         {
           __typename: 'PageLayoutWidget',
+          applicationId: '',
           id: 'opportunity-widget-files',
           isActive: true,
           pageLayoutTabId: 'opportunity-tab-files',
@@ -233,6 +238,7 @@ export const DEFAULT_OPPORTUNITY_RECORD_PAGE_LAYOUT: PageLayout = {
       widgets: [
         {
           __typename: 'PageLayoutWidget',
+          applicationId: '',
           id: 'opportunity-widget-emails',
           isActive: true,
           pageLayoutTabId: 'opportunity-tab-emails',
@@ -273,6 +279,7 @@ export const DEFAULT_OPPORTUNITY_RECORD_PAGE_LAYOUT: PageLayout = {
       widgets: [
         {
           __typename: 'PageLayoutWidget',
+          applicationId: '',
           id: 'opportunity-widget-calendar',
           isActive: true,
           pageLayoutTabId: 'opportunity-tab-calendar',

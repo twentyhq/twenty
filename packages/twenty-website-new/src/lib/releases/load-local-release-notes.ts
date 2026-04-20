@@ -6,6 +6,18 @@ import matter from 'gray-matter';
 import type { LocalReleaseNote } from '@/lib/releases/types';
 import { compareSemanticVersions } from '@/lib/semver/compare-semantic-versions';
 
+function normalizeFrontmatterDate(dateValue: unknown): string {
+  if (typeof dateValue === 'string') {
+    return dateValue;
+  }
+
+  if (dateValue instanceof Date && !Number.isNaN(dateValue.getTime())) {
+    return dateValue.toISOString().slice(0, 10);
+  }
+
+  return '';
+}
+
 function resolveReleasesDirectory(): string | null {
   const candidates = [
     path.join(process.cwd(), 'src', 'content', 'releases'),
@@ -45,9 +57,9 @@ export function loadLocalReleaseNotes(): LocalReleaseNote[] {
     const fullPath = path.join(directoryPath, fileName);
     const raw = fs.readFileSync(fullPath, 'utf-8');
     const { data, content } = matter(raw);
-    const dateValue = data.Date;
+    const dateValue = data.Date ?? data.date;
     const releaseValue = data.release;
-    const date = typeof dateValue === 'string' ? dateValue : '';
+    const date = normalizeFrontmatterDate(dateValue);
     const release = typeof releaseValue === 'string' ? releaseValue : '';
 
     if (!release) {

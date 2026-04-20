@@ -1,3 +1,4 @@
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { CommandMenuItemDropdown } from '@/command-menu/components/CommandMenuItemDropdown';
 import { useDeletePageLayoutWidget } from '@/page-layout/hooks/useDeletePageLayoutWidget';
@@ -14,10 +15,13 @@ import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModa
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useLingui } from '@lingui/react/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
+  AppTooltip,
   IconEyeX,
   IconRefreshDot,
   IconSwitchHorizontal,
@@ -25,6 +29,8 @@ import {
 } from 'twenty-ui/display';
 
 const RESET_WIDGET_TO_DEFAULT_MODAL_ID = 'reset-widget-to-default-modal';
+const RESET_WIDGET_TO_DEFAULT_MENU_ITEM_ID =
+  'reset-widget-to-default-menu-item';
 
 type WidgetSettingsManageSectionProps = {
   pageLayoutId: string;
@@ -41,6 +47,8 @@ export const WidgetSettingsManageSection = ({
     pageLayoutEditingWidgetIdComponentState,
     pageLayoutId,
   );
+
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 
   const { deletePageLayoutWidget } = useDeletePageLayoutWidget(pageLayoutId);
 
@@ -59,7 +67,15 @@ export const WidgetSettingsManageSection = ({
     return null;
   }
 
+  const isResetToDefaultDisabled =
+    !isNonEmptyString(widgetInEditMode?.applicationId) ||
+    widgetInEditMode.applicationId ===
+      currentWorkspace?.workspaceCustomApplication?.id;
+
   const handleResetToDefault = () => {
+    if (isResetToDefaultDisabled) {
+      return;
+    }
     openModal(RESET_WIDGET_TO_DEFAULT_MODAL_ID);
   };
 
@@ -100,17 +116,28 @@ export const WidgetSettingsManageSection = ({
             contextualTextPosition="right"
           />
         </SelectableListItem>
-        <SelectableListItem
-          itemId={WIDGET_SETTINGS_SELECTABLE_ITEM_IDS.RESET_TO_DEFAULT}
-          onEnter={handleResetToDefault}
-        >
-          <CommandMenuItem
-            id={WIDGET_SETTINGS_SELECTABLE_ITEM_IDS.RESET_TO_DEFAULT}
-            Icon={IconRefreshDot}
-            label={t`Reset to default`}
-            onClick={handleResetToDefault}
+        <div id={RESET_WIDGET_TO_DEFAULT_MENU_ITEM_ID}>
+          <SelectableListItem
+            itemId={WIDGET_SETTINGS_SELECTABLE_ITEM_IDS.RESET_TO_DEFAULT}
+            onEnter={handleResetToDefault}
+          >
+            <CommandMenuItem
+              id={WIDGET_SETTINGS_SELECTABLE_ITEM_IDS.RESET_TO_DEFAULT}
+              Icon={IconRefreshDot}
+              label={t`Reset to default`}
+              onClick={handleResetToDefault}
+              disabled={isResetToDefaultDisabled}
+            />
+          </SelectableListItem>
+        </div>
+        {isResetToDefaultDisabled && (
+          <AppTooltip
+            anchorSelect={`#${RESET_WIDGET_TO_DEFAULT_MENU_ITEM_ID}`}
+            content={t`No default configuration available for this widget`}
+            noArrow
+            place="bottom"
           />
-        </SelectableListItem>
+        )}
         <SelectableListItem
           itemId={WIDGET_SETTINGS_SELECTABLE_ITEM_IDS.REPLACE_WIDGET}
           onEnter={handleReplaceWidget}

@@ -6,8 +6,11 @@ import { FooterBackground } from './Footer/Background';
 import { Money } from './Helped/Money';
 import { Spaceship } from './Helped/Spaceship';
 import { Target } from './Helped/Target';
+import { HomeBackgroundHalftone } from './Hero/HomeBackgroundHalftone';
 import { Product } from './Hero/Product';
+import { ReleaseNotes } from './Hero/ReleaseNotes';
 import { WhyTwenty } from './Hero/WhyTwenty';
+import { WhyTwentyHeroHalftone } from './Hero/WhyTwentyHeroHalftone';
 import { Quotes } from './Quote/Quotes';
 import { Hourglass } from './Testimonials/Hourglass';
 import { Partner } from './Testimonials/Partner';
@@ -62,13 +65,16 @@ export const ILLUSTRATIONS = {
   ...THREE_CARDS_ILLUSTRATIONS,
   faqBackground: FaqBackground,
   footerBackground: FooterBackground,
+  heroHomeBackground: HomeBackgroundHalftone,
   heroPartnerHalftone: PartnerHeroHalftoneIllustration,
   homeStepperBackgroundHalftone: HomeStepperBackgroundIllustration,
   problemMonolith: ProblemMonolithIllustration,
   quoteQuotes: Quotes,
   whyTwentyStepperLogo: WhyTwentyStepperLogo,
   heroProduct: Product,
+  heroReleaseNotes: ReleaseNotes,
   heroWhyTwenty: WhyTwenty,
+  heroWhyTwentyHalftone: WhyTwentyHeroHalftone,
   testimonialsPartner: Partner,
   testimonialsHourglass: Hourglass,
   money: Money,

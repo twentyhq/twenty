@@ -3,32 +3,65 @@ import {
   EDITORIAL_FOUR,
   EDITORIAL_ONE,
   EDITORIAL_THREE,
-  EDITORIAL_TWO,
   HERO_DATA,
   MARQUEE_DATA,
-  QUOTE_DATA,
   SIGNOFF_DATA,
-  STATEMENT_ONE,
-  STATEMENT_TWO,
-  STEPPER_DATA,
 } from '@/app/why-twenty/_constants';
 import { LinkButton } from '@/design-system/components';
 import { Pages } from '@/enums/pages';
 import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';
 import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels';
+import { OverflowProbe } from '@/lib/debug/overflow-probe';
 import { Editorial } from '@/sections/Editorial/components';
 import { Hero } from '@/sections/Hero/components';
 import { Marquee } from '@/sections/Marquee/components';
 import { Menu } from '@/sections/Menu/components';
-import { Quote } from '@/sections/Quote/components';
 import { Signoff } from '@/sections/Signoff/components';
-import { Statement } from '@/sections/Statement/components';
-import { WhyTwentyStepper } from '@/sections/WhyTwentyStepper/components';
 import { theme } from '@/theme';
+import { css } from '@linaria/core';
 import type { Metadata } from 'next';
 
+const editorialOneIntroClass = css`
+  margin-bottom: ${theme.spacing(4)};
+  --editorial-heading-max-width: 760px;
+  --editorial-intro-max-width: 760px;
+
+  @media (min-width: ${theme.breakpoints.md}px) {
+    margin-bottom: ${theme.spacing(8)};
+  }
+`;
+
+const editorialRightIntroClass = css`
+  margin-bottom: ${theme.spacing(4)};
+  --editorial-heading-max-width: 760px;
+  --editorial-intro-max-width: 760px;
+
+  @media (min-width: ${theme.breakpoints.md}px) {
+    align-items: flex-end;
+    margin-bottom: ${theme.spacing(8)};
+    margin-left: auto;
+    margin-right: 0;
+    text-align: right;
+    width: auto;
+  }
+`;
+
+const crosshairLineColor = theme.colors.secondary.border[10];
+
+const sectionCrosshairLeft = {
+  crossX: '120px',
+  crossY: '0px',
+  lineColor: crosshairLineColor,
+};
+
+const sectionCrosshairRight = {
+  crossX: 'calc(100% - 120px)',
+  crossY: '0px',
+  lineColor: crosshairLineColor,
+};
+
 export const metadata: Metadata = {
-  title: 'Why Twenty — Twenty',
+  title: 'Why Twenty | Twenty',
   description:
     'Most packaged software makes companies more similar. Learn why the future of CRM is built, not bought.',
 };
@@ -39,6 +72,7 @@ export default async function WhyTwentyPage() {
 
   return (
     <>
+      <OverflowProbe />
       <Menu.Root
         backgroundColor={theme.colors.secondary.background[100]}
         scheme="secondary"
@@ -51,42 +85,80 @@ export default async function WhyTwentyPage() {
         <Menu.Cta scheme="secondary" />
       </Menu.Root>
 
-      <Hero.Root backgroundColor={theme.colors.secondary.background[100]}>
+      <Hero.Root
+        backgroundColor={theme.colors.secondary.background[100]}
+        colorScheme="secondary"
+      >
         <Hero.Heading
           page={Pages.WhyTwenty}
           segments={HERO_DATA.heading}
           size="xl"
         />
-        <Hero.Body page={Pages.WhyTwenty} body={HERO_DATA.body} />
+        <Hero.Body body={HERO_DATA.body} page={Pages.WhyTwenty} />
         <Hero.WhyTwentyVisual />
       </Hero.Root>
 
       <Editorial.Root
         backgroundColor={theme.colors.secondary.background[100]}
         color={theme.colors.secondary.text[100]}
+        crosshair={sectionCrosshairRight}
         mutedColor={theme.colors.secondary.text[60]}
       >
-        <Editorial.Intro>
+        <Editorial.Intro className={editorialOneIntroClass}>
           <Editorial.Eyebrow
             colorScheme="secondary"
             eyebrow={EDITORIAL_ONE.eyebrow!}
           />
           <Editorial.Heading segments={EDITORIAL_ONE.heading!} />
         </Editorial.Intro>
-        <Editorial.Body body={EDITORIAL_ONE.body} layout="two-column" />
+        <Editorial.Body body={EDITORIAL_ONE.body} layout="two-column-left" />
       </Editorial.Root>
 
-      <Quote.Root backgroundColor={theme.colors.secondary.background[100]}>
-        <Quote.Visual illustration={QUOTE_DATA.illustration} />
-        <Quote.Heading segments={QUOTE_DATA.heading} />
-      </Quote.Root>
-
+      {/*
       <Editorial.Root
         backgroundColor={theme.colors.secondary.background[100]}
         color={theme.colors.secondary.text[100]}
         mutedColor={theme.colors.secondary.text[60]}
       >
         <Editorial.Body body={EDITORIAL_TWO.body} layout="centered" />
+      </Editorial.Root>
+      */}
+
+      <Editorial.Root
+        backgroundColor={theme.colors.secondary.background[100]}
+        color={theme.colors.secondary.text[100]}
+        crosshair={sectionCrosshairLeft}
+        mutedColor={theme.colors.secondary.text[60]}
+      >
+        <Editorial.Intro className={editorialRightIntroClass}>
+          <Editorial.Eyebrow
+            colorScheme="secondary"
+            eyebrow={EDITORIAL_FOUR.eyebrow!}
+          />
+          <Editorial.Heading segments={EDITORIAL_FOUR.heading!} />
+        </Editorial.Intro>
+        <Editorial.Body body={EDITORIAL_FOUR.body} layout="two-column-right" />
+      </Editorial.Root>
+
+      {/* <Quote.Root backgroundColor={theme.colors.secondary.background[80]}>
+        <Quote.Visual illustration={QUOTE_DATA.illustration} />
+        <Quote.Heading segments={QUOTE_DATA.heading} />
+      </Quote.Root>*/}
+
+      <Editorial.Root
+        backgroundColor={theme.colors.secondary.background[100]}
+        color={theme.colors.secondary.text[100]}
+        crosshair={sectionCrosshairRight}
+        mutedColor={theme.colors.secondary.text[60]}
+      >
+        <Editorial.Intro className={editorialOneIntroClass}>
+          <Editorial.Eyebrow
+            colorScheme="secondary"
+            eyebrow={EDITORIAL_THREE.eyebrow!}
+          />
+          <Editorial.Heading segments={EDITORIAL_THREE.heading!} />
+        </Editorial.Intro>
+        <Editorial.Body body={EDITORIAL_THREE.body} layout="two-column-left" />
       </Editorial.Root>
 
       <Marquee.Root
@@ -95,64 +167,16 @@ export default async function WhyTwentyPage() {
         heading={MARQUEE_DATA.heading}
       />
 
-      <Editorial.Root
-        backgroundColor={theme.colors.secondary.background[100]}
-        color={theme.colors.secondary.text[100]}
-        mutedColor={theme.colors.secondary.text[60]}
-      >
-        <Editorial.Intro>
-          <Editorial.Eyebrow
-            colorScheme="secondary"
-            eyebrow={EDITORIAL_THREE.eyebrow!}
-          />
-          <Editorial.Heading segments={EDITORIAL_THREE.heading!} />
-        </Editorial.Intro>
-        <Editorial.Body body={EDITORIAL_THREE.body} layout="indented" />
-      </Editorial.Root>
-
-      <Statement.Root
-        backgroundColor={theme.colors.secondary.background[100]}
-        color={theme.colors.secondary.text[100]}
-      >
-        <Statement.Heading segments={STATEMENT_ONE.heading} />
-      </Statement.Root>
-
-      <Statement.Root
-        backgroundColor={theme.colors.primary.background[100]}
-        color={theme.colors.primary.text[100]}
-      >
-        <Statement.Heading segments={STATEMENT_TWO.heading} />
-      </Statement.Root>
-
-      <Editorial.Root
-        backgroundColor={theme.colors.primary.background[100]}
-        color={theme.colors.primary.text[100]}
-        mutedColor={theme.colors.primary.text[60]}
-      >
-        <Editorial.Intro>
-          <Editorial.Eyebrow
-            colorScheme="primary"
-            eyebrow={EDITORIAL_FOUR.eyebrow!}
-          />
-          <Editorial.Heading segments={EDITORIAL_FOUR.heading!} />
-        </Editorial.Intro>
-        <Editorial.Body body={EDITORIAL_FOUR.body} layout="two-column" />
-      </Editorial.Root>
-
-      <WhyTwentyStepper.Flow
-        body={STEPPER_DATA.body}
-        heading={STEPPER_DATA.heading}
-        illustration={STEPPER_DATA.illustration}
-      />
-
       <Signoff.Root
-        backgroundColor={theme.colors.primary.text[10]}
+        backgroundColor={theme.colors.secondary.background[100]}
         color={theme.colors.secondary.text[100]}
-        variant="shaped"
-        shapeFillColor={theme.colors.secondary.background[100]}
+        page={Pages.WhyTwenty}
       >
-        <Signoff.Heading segments={SIGNOFF_DATA.heading} />
-        <Signoff.Body body={SIGNOFF_DATA.body} />
+        <Signoff.Heading
+          page={Pages.WhyTwenty}
+          segments={SIGNOFF_DATA.heading}
+        />
+        <Signoff.Body body={SIGNOFF_DATA.body} page={Pages.WhyTwenty} />
         <Signoff.Cta>
           <LinkButton
             color="primary"

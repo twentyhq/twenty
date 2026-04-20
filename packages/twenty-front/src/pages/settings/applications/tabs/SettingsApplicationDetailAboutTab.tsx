@@ -1,106 +1,182 @@
-import { t } from '@lingui/core/macro';
-import { isDefined } from 'twenty-shared/utils';
-import { H2Title, IconTrash, AppTooltip } from 'twenty-ui/display';
-import { Section } from 'twenty-ui/layout';
-import { SettingsApplicationVersionContainer } from '~/pages/settings/applications/components/SettingsApplicationVersionContainer';
-import { Button } from 'twenty-ui/input';
+import { LazyMarkdownRenderer } from '@/ai/components/LazyMarkdownRenderer';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
-import { Trans } from '@lingui/react/macro';
-import { SettingsPath } from 'twenty-shared/types';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
-import { useState } from 'react';
-import { useMutation } from '@apollo/client/react';
+import { styled } from '@linaria/react';
+import { t } from '@lingui/core/macro';
+import { Trans } from '@lingui/react/macro';
+import { isDefined } from 'twenty-shared/utils';
 import {
-  type Application,
-  UninstallApplicationDocument,
-} from '~/generated-metadata/graphql';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { useNavigateSettings } from '~/hooks/useNavigateSettings';
+  IconCheck,
+  IconDownload,
+  IconTrash,
+  IconUpload,
+} from 'twenty-ui/display';
+import { Button } from 'twenty-ui/input';
+import { Section } from 'twenty-ui/layout';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  type ContentEntry,
+  type DeveloperLinks,
+  SettingsApplicationAboutSidebar,
+} from '@/settings/applications/components/SettingsApplicationAboutSidebar';
+import { SettingsApplicationScreenshotGallery } from '@/settings/applications/components/SettingsApplicationScreenshotGallery';
 
 const UNINSTALL_APPLICATION_MODAL_ID = 'uninstall-application-modal';
 
+type SettingsApplicationDetailAboutTabProps = {
+  displayName: string;
+  description?: string;
+  aboutDescription?: string;
+  screenshots?: string[];
+  author?: string;
+  category?: string;
+  contentEntries?: ContentEntry[];
+  currentVersion?: string;
+  latestAvailableVersion?: string;
+  developerLinks?: DeveloperLinks;
+  isInstalled: boolean;
+  canInstallMarketplaceApps?: boolean;
+  onInstall?: () => void;
+  isInstalling?: boolean;
+  hasUpdate?: boolean;
+  onUpgrade?: () => void;
+  isUpgrading?: boolean;
+  canBeUninstalled?: boolean;
+  onUninstall?: () => void;
+  isUninstalling?: boolean;
+};
+
+const StyledContentContainer = styled.div`
+  display: flex;
+  gap: ${themeCssVariables.spacing[4]};
+`;
+
+const StyledMainContent = styled.div`
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+`;
+
 export const SettingsApplicationDetailAboutTab = ({
-  application,
-}: {
-  application?: Omit<Application, 'objects'> & {
-    objects: { id: string }[];
-  };
-}) => {
+  displayName,
+  description,
+  aboutDescription,
+  screenshots,
+  author,
+  category,
+  contentEntries,
+  currentVersion,
+  latestAvailableVersion,
+  developerLinks,
+  isInstalled,
+  canInstallMarketplaceApps,
+  onInstall,
+  isInstalling,
+  hasUpdate,
+  onUpgrade,
+  isUpgrading,
+  canBeUninstalled,
+  onUninstall,
+  isUninstalling,
+}: SettingsApplicationDetailAboutTabProps) => {
   const { openModal } = useModal();
 
-  const [isLoading, setIsLoading] = useState(false);
+  const hasScreenshots = isDefined(screenshots) && screenshots.length > 0;
 
-  const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
+  const markdownText =
+    aboutDescription ??
+    description ??
+    t`No description available for this application`;
 
-  const [uninstallApplication] = useMutation(UninstallApplicationDocument);
-
-  const navigate = useNavigateSettings();
-
-  const registrationId = application?.applicationRegistrationId;
-
-  const latestAvailableVersion =
-    application?.applicationRegistration?.latestAvailableVersion ?? null;
-
-  if (!isDefined(application)) {
-    return null;
-  }
-
-  const handleUninstallApplication = async () => {
-    setIsLoading(true);
-    try {
-      await uninstallApplication({
-        variables: { universalIdentifier: application.universalIdentifier },
-      });
-
-      enqueueSuccessSnackBar({
-        message: t`Application successfully uninstalled.`,
-      });
-      navigate(SettingsPath.Applications);
-    } catch {
-      enqueueErrorSnackBar({ message: t`Error uninstalling application.` });
-    } finally {
-      setIsLoading(false);
+  const getActionButton = () => {
+    if (!canInstallMarketplaceApps) {
+      return null;
     }
+
+    if (!isInstalled) {
+      return (
+        <Button
+          Icon={IconDownload}
+          title={isInstalling ? t`Installing...` : t`Install`}
+          variant={'primary'}
+          accent={'blue'}
+          onClick={onInstall}
+          disabled={isInstalling}
+        />
+      );
+    }
+
+    if (hasUpdate) {
+      return (
+        <Button
+          Icon={IconUpload}
+          title={
+            isUpgrading
+              ? t`Upgrading...`
+              : t`Upgrade to ${latestAvailableVersion}`
+          }
+          variant={'secondary'}
+          accent={'blue'}
+          onClick={onUpgrade}
+          disabled={isUpgrading}
+        />
+      );
+    }
+
+    if (canBeUninstalled) {
+      return (
+        <Button
+          Icon={IconTrash}
+          title={isUninstalling ? t`Uninstalling...` : t`Uninstall`}
+          variant={'secondary'}
+          accent={'danger'}
+          onClick={() => openModal(UNINSTALL_APPLICATION_MODAL_ID)}
+          disabled={isUninstalling}
+        />
+      );
+    }
+
+    return (
+      <Button
+        Icon={IconCheck}
+        title={t`Installed`}
+        variant={'secondary'}
+        accent={'default'}
+        disabled={true}
+      />
+    );
   };
 
   const confirmationValue = t`yes`;
 
   return (
     <>
-      <Section>
-        <SettingsApplicationVersionContainer
-          application={application}
-          latestAvailableVersion={latestAvailableVersion}
-          appRegistrationId={registrationId}
+      {hasScreenshots && (
+        <SettingsApplicationScreenshotGallery
+          screenshots={screenshots}
+          displayName={displayName}
         />
-      </Section>
-      <>
-        <Section>
-          <H2Title
-            title={t`Manage your app`}
-            description={t`Uninstall this application`}
-          />
-          <Button
-            accent="danger"
-            id={'uninstall-button-anchor'}
-            variant="secondary"
-            title={t`Uninstall`}
-            Icon={IconTrash}
-            disabled={!application.canBeUninstalled}
-            onClick={() =>
-              application.canBeUninstalled
-                ? openModal(UNINSTALL_APPLICATION_MODAL_ID)
-                : null
-            }
-          />
-          {!application.canBeUninstalled && (
-            <AppTooltip
-              anchorSelect={`#uninstall-button-anchor`}
-              content={t`This application is required for your workspace to function properly and cannot be uninstalled.`}
-              place="bottom-start"
-            />
-          )}
-        </Section>
+      )}
+
+      <StyledContentContainer>
+        <StyledMainContent>
+          <Section>
+            <LazyMarkdownRenderer text={markdownText} />
+          </Section>
+        </StyledMainContent>
+
+        <SettingsApplicationAboutSidebar
+          actionButton={getActionButton()}
+          author={author}
+          category={category}
+          contentEntries={contentEntries}
+          currentVersion={currentVersion}
+          latestAvailableVersion={latestAvailableVersion}
+          developerLinks={developerLinks}
+        />
+      </StyledContentContainer>
+
+      {canBeUninstalled && isDefined(onUninstall) && (
         <ConfirmationModal
           confirmationPlaceholder={confirmationValue}
           confirmationValue={confirmationValue}
@@ -112,11 +188,11 @@ export const SettingsApplicationDetailAboutTab = ({
               uninstall this application.
             </Trans>
           }
-          onConfirmClick={handleUninstallApplication}
+          onConfirmClick={onUninstall}
           confirmButtonText={t`Uninstall`}
-          loading={isLoading}
+          loading={isUninstalling}
         />
-      </>
+      )}
     </>
   );
 };

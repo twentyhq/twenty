@@ -572,7 +572,7 @@ const FaqVisualShell = styled.div`
   @media (min-width: ${theme.breakpoints.md}px) {
     right: -10%;
     transform: translateY(-12%);
-    width: min(60vw, 900px);
+    width: 60vw;
   }
 `;
 
