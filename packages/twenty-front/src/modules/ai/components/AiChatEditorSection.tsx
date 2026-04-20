@@ -140,7 +140,7 @@ export const AiChatEditorSection = () => {
 
       <StyledInputArea isMobile={isMobile}>
         <AgentChatContextPreview />
-        {!hasReachedCurrentBillingPeriodCap && (
+        {hasReachedCurrentBillingPeriodCap && (
           <AIChatNoMoreBillingCreditsBanner />
         )}
         <StyledInputBox>

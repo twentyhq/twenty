@@ -3,7 +3,7 @@ import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 // Returns how many decimal places are needed to represent a small value.
-// For values >= 0.01 returns 2; for e.g. 0.0000001 returns 7.
+// Always two digits precision, no more than 7 decimal places.
 const getDecimalsNeeded = (value: number): number => {
   if (value === 0) return 2;
   return Math.min(7, Math.max(0, Math.ceil(-Math.log10(value))) + 2);

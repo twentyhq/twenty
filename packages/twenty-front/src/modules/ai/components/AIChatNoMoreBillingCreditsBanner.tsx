@@ -69,7 +69,9 @@ export const AIChatNoMoreBillingCreditsBanner = () => {
 
   const message = isTrialing
     ? t`You've hit your usage limit. Subscribe for more usage.`
-    : t`You've hit your usage limit. \nUpgrade to ${nextTierCredits} credits for $${nextTierPrice}/${nextTierInterval}.`;
+    : isDefined(nextMeteredBillingPrice)
+      ? t`You've hit your usage limit. \nUpgrade to ${nextTierCredits} credits for $${nextTierPrice}/${nextTierInterval}.`
+      : t`You've hit your usage limit. \nReach to our support team to upgrade.`;
 
   const buttonTitle = isTrialing ? t`Subscribe Now` : t`Upgrade`;
 

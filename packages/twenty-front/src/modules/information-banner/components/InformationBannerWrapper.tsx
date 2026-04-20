@@ -57,8 +57,10 @@ export const InformationBannerWrapper = () => {
     subscriptionStatus === SubscriptionStatus.Trialing;
 
   const displayNoMoreCreditsBanner =
-    hasReachedCurrentBillingPeriodCap &&
-    subscriptionStatus !== SubscriptionStatus.Trialing;
+    !isWorkspaceSuspended &&
+    !displayFailPaymentInfoBanner &&
+    !displayEndTrialPeriodBanner &&
+    hasReachedCurrentBillingPeriodCap;
 
   return (
     <StyledInformationBannerWrapper>

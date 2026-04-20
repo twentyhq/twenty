@@ -3,7 +3,7 @@ import { usePlans } from '@/settings/billing/hooks/usePlans';
 import type { MeteredBillingPrice } from '@/settings/billing/types/billing-price-tiers.type';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import {
-  BillingPlanKey,
+  type BillingPlanKey,
   BillingProductKey,
 } from '~/generated-metadata/graphql';
 
