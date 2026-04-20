@@ -136,8 +136,11 @@ export const ALL_ONE_TO_MANY_METADATA_RELATIONS = {
       universalFlatEntityForeignKeyAggregator:
         'viewFieldGroupUniversalIdentifiers',
     },
-    // @ts-expect-error TODO migrate viewSort to v2
-    viewSorts: null,
+    viewSorts: {
+      metadataName: 'viewSort',
+      flatEntityForeignKeyAggregator: 'viewSortIds',
+      universalFlatEntityForeignKeyAggregator: 'viewSortUniversalIdentifiers',
+    },
   },
   viewField: {},
   viewFieldGroup: {

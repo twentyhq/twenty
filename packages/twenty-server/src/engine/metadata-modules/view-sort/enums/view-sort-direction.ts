@@ -1,4 +1,1 @@
-export enum ViewSortDirection {
-  ASC = 'ASC',
-  DESC = 'DESC',
-}
+export { ViewSortDirection } from 'twenty-shared/types';

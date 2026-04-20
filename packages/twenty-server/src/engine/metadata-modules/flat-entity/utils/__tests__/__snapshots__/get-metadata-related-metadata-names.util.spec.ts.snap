@@ -139,6 +139,7 @@ exports[`getMetadataRelatedMetadataNames should return related metadata names fo
   "viewFilterGroup",
   "viewGroup",
   "viewFieldGroup",
+  "viewSort",
 ]
 `;
 

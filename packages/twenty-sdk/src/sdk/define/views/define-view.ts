@@ -63,5 +63,19 @@ export const defineView: DefineEntity<ViewConfig> = (config) => {
     }
   }
 
+  if (config.sorts) {
+    for (const sort of config.sorts) {
+      if (!sort.universalIdentifier) {
+        errors.push('ViewSort must have a universalIdentifier');
+      }
+      if (!sort.fieldMetadataUniversalIdentifier) {
+        errors.push('ViewSort must have a fieldMetadataUniversalIdentifier');
+      }
+      if (sort.direction !== 'ASC' && sort.direction !== 'DESC') {
+        errors.push("ViewSort direction must be 'ASC' or 'DESC'");
+      }
+    }
+  }
+
   return createValidationResult({ config, errors });
 };
