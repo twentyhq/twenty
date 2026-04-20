@@ -9,8 +9,6 @@ COPY ./.yarnrc.yml .
 COPY ./.yarn/releases /app/.yarn/releases
 COPY ./.yarn/patches /app/.yarn/patches
 COPY ./packages/twenty-oxlint-rules /app/packages/twenty-oxlint-rules
-COPY ./packages/twenty-ui/package.json /app/packages/twenty-ui/
-COPY ./packages/twenty-shared/package.json /app/packages/twenty-shared/
 COPY ./packages/twenty-website-new/package.json /app/packages/twenty-website-new/package.json
 
 RUN yarn
