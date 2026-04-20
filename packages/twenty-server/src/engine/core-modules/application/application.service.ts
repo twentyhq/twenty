@@ -132,11 +132,6 @@ export class ApplicationService {
   async findManyApplications(
     workspaceId: string,
   ): Promise<ApplicationEntity[]> {
-    // Only join `applicationRegistration` (ManyToOne, 1:1 row impact). The
-    // OneToMany children (logicFunctions, agents, frontComponents, objects,
-    // applicationVariables) are not requested by the client at the list level
-    // and joining all five at once produces a Cartesian explosion that has
-    // already caused query timeouts in production.
     return this.applicationRepository.find({
       where: { workspaceId },
       relations: ['applicationRegistration'],
@@ -164,10 +159,6 @@ export class ApplicationService {
       ...(isDefined(id) ? { id } : { universalIdentifier }),
     };
 
-    // Keep the lightweight ManyToOne / OneToOne joins on the main query
-    // (they cannot inflate row count) but split the OneToMany relations into
-    // parallel queries to avoid a Cartesian product across
-    // logicFunctions × agents × frontComponents × objects × applicationVariables.
     const application = await this.applicationRepository.findOne({
       where,
       relations: [
