@@ -164,6 +164,12 @@ msgstr ""
 msgid "{0} credits"
 msgstr "{0} kredytów"
 
+#. js-lingui-id: Zo6POu
+#. placeholder {0}: recordPageLayoutObject.labelPlural
+#: src/modules/layout-customization/components/LayoutCustomizationBar.tsx
+msgid "{0} layout edition"
+msgstr ""
+
 #. js-lingui-id: peiknr
 #. placeholder {0}: activeVisibleFieldLabels.length
 #. placeholder {0}: activeFilterLabels.length
@@ -206,7 +212,7 @@ msgid "{appName} wants to access your account"
 msgstr "{appName} chce uzyskać dostęp do Twojego konta"
 
 #. js-lingui-id: SU5Crx
-#: src/modules/ai/components/internal/AIChatContextUsageButton.tsx
+#: src/modules/ai/components/internal/AiChatContextUsageButton.tsx
 msgid "{cachedPercent}% cached"
 msgstr "{cachedPercent}% w pamięci podręcznej"
 
@@ -268,7 +274,7 @@ msgid "{eventAction} a related {eventObject}"
 msgstr "{eventAction} powiązany {eventObject}"
 
 #. js-lingui-id: POhzPf
-#: src/modules/ai/hooks/useAIChatFileUpload.ts
+#: src/modules/ai/hooks/useAiChatFileUpload.ts
 msgid "{failedCount} file(s) failed to upload"
 msgstr "Czy plik {failedCount} nie został przesłany"
 
@@ -475,8 +481,8 @@ msgstr "••••••••"
 #. js-lingui-id: SMgdEJ
 #. placeholder {0}: formatNumber(preview.estimatedTokenCount, { abbreviate: true, decimals: 1, })
 #. placeholder {0}: formatNumber( section.estimatedTokenCount, { abbreviate: true, decimals: 1, }, )
-#: src/pages/settings/ai/SettingsAIPrompts.tsx
-#: src/pages/settings/ai/SettingsAIPrompts.tsx
+#: src/pages/settings/ai/SettingsAiPrompts.tsx
+#: src/pages/settings/ai/SettingsAiPrompts.tsx
 msgid "~ {0} tokens"
 msgstr ""
 
@@ -684,7 +690,7 @@ msgid "About this workspace"
 msgstr "O tej przestrzeni roboczej"
 
 #. js-lingui-id: HfdWGA
-#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetailContent.tsx
+#: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
 msgid "About your app"
 msgstr ""
 
@@ -704,7 +710,7 @@ msgid "Access workspace data"
 msgstr "Dostęp do danych przestrzeni roboczej"
 
 #. js-lingui-id: c2UA7k
-#: src/pages/settings/ai/components/SettingsAIMCP.tsx
+#: src/pages/settings/ai/components/SettingsAiMCP.tsx
 msgid "Access your workspace data from your favorite MCP client like Claude Desktop, Windsurf or Cursor."
 msgstr ""
 
@@ -798,7 +804,7 @@ msgstr "Działania, które użytkownicy mogą wykonywać na tym obiekcie"
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/ai/SettingsSkillForm.tsx
 #: src/pages/settings/ai/components/SettingsSkillInactiveMenuDropDown.tsx
-#: src/pages/settings/ai/components/SettingsAIUsageTab.tsx
+#: src/pages/settings/ai/components/SettingsAiUsageTab.tsx
 #: src/modules/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu.tsx
 #: src/modules/settings/data-model/objects/components/SettingsObjectInactiveMenuDropDown.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
@@ -833,7 +839,7 @@ msgid "Active API keys created by you or your team."
 msgstr "Aktywne klucze API utworzone przez Ciebie lub Twój zespół."
 
 #. js-lingui-id: A7Ks+i
-#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetailContent.tsx
+#: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralStats.tsx
 msgid "Active installs"
 msgstr "Aktywne instalacje"
 
@@ -921,7 +927,7 @@ msgid "Add custom endpoints, private gateways, or additional regions."
 msgstr "Dodaj niestandardowe punkty końcowe, prywatne bramy lub dodatkowe regiony."
 
 #. js-lingui-id: GuJvBr
-#: src/pages/settings/ai/components/SettingsAIMoreTab.tsx
+#: src/pages/settings/ai/components/SettingsAiMoreTab.tsx
 msgid "Add custom instructions specific to your workspace (appended to system prompt)"
 msgstr "Dodaj niestandardowe instrukcje specyficzne dla Twojego obszaru roboczego (dołączane do podpowiedzi systemowej)"
 
@@ -1385,12 +1391,12 @@ msgstr ""
 #: src/pages/settings/logic-functions/SettingsLogicFunctionDetail.tsx
 #: src/pages/settings/ai/SettingsToolDetail.tsx
 #: src/pages/settings/ai/SettingsSkillForm.tsx
+#: src/pages/settings/ai/SettingsAiUsageUserDetail.tsx
+#: src/pages/settings/ai/SettingsAiPrompts.tsx
 #: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
 #: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
 #: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
 #: src/pages/settings/ai/SettingsAgentForm.tsx
-#: src/pages/settings/ai/SettingsAIUsageUserDetail.tsx
-#: src/pages/settings/ai/SettingsAIPrompts.tsx
 #: src/pages/settings/ai/SettingsAI.tsx
 #: src/pages/settings/ai/SettingsAI.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
@@ -1418,18 +1424,18 @@ msgid "AI consumption across all workspaces."
 msgstr ""
 
 #. js-lingui-id: kkfXGh
-#: src/pages/settings/ai/components/SettingsAIUsageTab.tsx
+#: src/pages/settings/ai/components/SettingsAiUsageTab.tsx
 msgid "AI consumption over time."
 msgstr ""
 
 #. js-lingui-id: kNfr85
-#: src/pages/settings/ai/forms/components/SettingsAIAgentForm.tsx
+#: src/pages/settings/ai/forms/components/SettingsAiAgentForm.tsx
 #: src/pages/settings/ai/components/SettingsAgentSettingsTab.tsx
 msgid "AI Model"
 msgstr "Model AI"
 
 #. js-lingui-id: Sfwld8
-#: src/modules/ai/components/AIChatApiKeyNotConfiguredMessage.tsx
+#: src/modules/ai/components/AiChatApiKeyNotConfiguredMessage.tsx
 msgid "AI not configured. Set OPENAI_API_KEY, ANTHROPIC_API_KEY, or XAI_API_KEY in your environment."
 msgstr "AI nie jest skonfigurowane. Ustaw w swoim środowisku OPENAI_API_KEY, ANTHROPIC_API_KEY lub XAI_API_KEY."
 
@@ -1439,11 +1445,11 @@ msgid "AI request prep"
 msgstr "Przygotowanie żądania AI"
 
 #. js-lingui-id: tzhisR
-#: src/pages/settings/ai/SettingsAIUsageUserDetail.tsx
-#: src/pages/settings/ai/components/SettingsAIUsageTab.tsx
-#: src/pages/settings/ai/components/SettingsAIUsageTab.tsx
-#: src/pages/settings/ai/components/SettingsAIUsageTab.tsx
-#: src/pages/settings/ai/components/SettingsAIUsageTab.tsx
+#: src/pages/settings/ai/SettingsAiUsageUserDetail.tsx
+#: src/pages/settings/ai/components/SettingsAiUsageTab.tsx
+#: src/pages/settings/ai/components/SettingsAiUsageTab.tsx
+#: src/pages/settings/ai/components/SettingsAiUsageTab.tsx
+#: src/pages/settings/ai/components/SettingsAiUsageTab.tsx
 msgid "AI Usage"
 msgstr ""
 
@@ -1453,34 +1459,34 @@ msgid "AI usage analytics across workspaces is available with an Enterprise key.
 msgstr ""
 
 #. js-lingui-id: zkptxb
-#: src/pages/settings/ai/components/SettingsAIUsageTab.tsx
+#: src/pages/settings/ai/components/SettingsAiUsageTab.tsx
 msgid "AI usage analytics is available with an Enterprise key."
 msgstr ""
 
 #. js-lingui-id: U2F/HK
-#: src/pages/settings/ai/components/SettingsAIUsageTab.tsx
+#: src/pages/settings/ai/components/SettingsAiUsageTab.tsx
 msgid "AI usage analytics requires ClickHouse. Contact your administrator."
 msgstr ""
 
 #. js-lingui-id: KgAAyO
-#: src/pages/settings/ai/components/SettingsAIUsageTab.tsx
+#: src/pages/settings/ai/components/SettingsAiUsageTab.tsx
 msgid "AI usage analytics will appear here once you start using AI features."
 msgstr ""
 
 #. js-lingui-id: SknniY
-#: src/pages/settings/ai/SettingsAIUsageUserDetail.tsx
-#: src/pages/settings/ai/components/SettingsAIUsageTab.tsx
+#: src/pages/settings/ai/SettingsAiUsageUserDetail.tsx
+#: src/pages/settings/ai/components/SettingsAiUsageTab.tsx
 msgid "AI Usage by Model"
 msgstr ""
 
 #. js-lingui-id: ehjYr9
-#: src/pages/settings/ai/SettingsAIUsageUserDetail.tsx
-#: src/pages/settings/ai/components/SettingsAIUsageTab.tsx
+#: src/pages/settings/ai/SettingsAiUsageUserDetail.tsx
+#: src/pages/settings/ai/components/SettingsAiUsageTab.tsx
 msgid "AI Usage by Type"
 msgstr ""
 
 #. js-lingui-id: X2afmM
-#: src/pages/settings/ai/components/SettingsAIUsageTab.tsx
+#: src/pages/settings/ai/components/SettingsAiUsageTab.tsx
 msgid "AI Usage by User"
 msgstr ""
 
@@ -1490,7 +1496,7 @@ msgid "AI Usage by Workspace"
 msgstr ""
 
 #. js-lingui-id: KLyZ6L
-#: src/pages/settings/ai/SettingsAIUsageUserDetail.tsx
+#: src/pages/settings/ai/SettingsAiUsageUserDetail.tsx
 msgid "AI User Usage"
 msgstr ""
 
@@ -1676,7 +1682,7 @@ msgid "Allow importing data from CSV files"
 msgstr "Zezwól na importowanie danych z plików CSV"
 
 #. js-lingui-id: irI8Y5
-#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetail.tsx
+#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralToggles.tsx
 msgid "Allow installation"
 msgstr ""
 
@@ -1755,7 +1761,7 @@ msgid "An error occurred while checking user existence"
 msgstr "Wystąpił błąd podczas sprawdzania istnienia użytkownika"
 
 #. js-lingui-id: I/scZd
-#: src/modules/ai/components/AIChatErrorMessage.tsx
+#: src/modules/ai/components/AiChatErrorMessage.tsx
 msgid "An error occurred while processing your message"
 msgstr "Wystąpił błąd podczas przetwarzania twojej wiadomości"
 
@@ -1877,7 +1883,7 @@ msgstr "API i Webhooks"
 #. js-lingui-id: yRnk5W
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
-#: src/pages/settings/ai/components/SettingsAIMCP.tsx
+#: src/pages/settings/ai/components/SettingsAiMCP.tsx
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
@@ -1983,6 +1989,11 @@ msgstr ""
 #: src/modules/settings/data-model/object-details/components/SettingsObjectRelationsTable.tsx
 msgid "App"
 msgstr "Aplikacja"
+
+#. js-lingui-id: qKnSyT
+#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDangerZone.tsx
+msgid "App deleted successfully"
+msgstr ""
 
 #. js-lingui-id: aAIQg2
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
@@ -2136,7 +2147,7 @@ msgid "Are you sure you want to destroy this {0}? It cannot be recovered anymore
 msgstr ""
 
 #. js-lingui-id: +UIjOX
-#: src/pages/settings/applications/components/SettingsApplicationRegistrationConfigVariableDetail.tsx
+#: src/modules/settings/config-variables/components/ConfigVariableEdit.tsx
 msgid "Are you sure you want to reset this variable?"
 msgstr ""
 
@@ -2184,15 +2195,15 @@ msgid "Ascending"
 msgstr "Rosnąco"
 
 #. js-lingui-id: xWEvuo
-#: src/modules/side-panel/hooks/useOpenAskAIPageInSidePanel.ts
-#: src/modules/side-panel/components/SidePanelAskAIInfo.tsx
+#: src/modules/side-panel/hooks/useOpenAskAiPageInSidePanel.ts
+#: src/modules/side-panel/components/SidePanelAskAiInfo.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 #: src/modules/command-menu-item/engine-command/constants/EngineComponentKeyHeadlessComponentMap.tsx
 msgid "Ask AI"
 msgstr "Zapytaj AI"
 
 #. js-lingui-id: mc9nK2
-#: src/modules/ai/hooks/useAIChatEditor.ts
+#: src/modules/ai/hooks/useAiChatEditor.ts
 msgid "Ask, search or make anything..."
 msgstr "Pytaj, szukaj lub twórz cokolwiek..."
 
@@ -2444,7 +2455,7 @@ msgid "Availability"
 msgstr "Dostępność"
 
 #. js-lingui-id: csDS2L
-#: src/pages/settings/ai/components/SettingsAIModelsTab.tsx
+#: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
 #: src/modules/settings/data-model/new-object/components/SettingsAvailableStandardObjectsSection.tsx
 msgid "Available"
 msgstr "Dostępne"
@@ -2545,7 +2556,7 @@ msgid "Before"
 msgstr "Przed"
 
 #. js-lingui-id: KYr9vA
-#: src/pages/settings/ai/components/SettingsAIModelsTab.tsx
+#: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
 msgid "Best"
 msgstr ""
 
@@ -2635,8 +2646,8 @@ msgid "Both"
 msgstr "Oba"
 
 #. js-lingui-id: 1hGdwj
-#: src/pages/settings/ai/SettingsAIUsageUserDetail.tsx
-#: src/pages/settings/ai/components/SettingsAIUsageTab.tsx
+#: src/pages/settings/ai/SettingsAiUsageUserDetail.tsx
+#: src/pages/settings/ai/components/SettingsAiUsageTab.tsx
 msgid "Breakdown across AI models."
 msgstr ""
 
@@ -2822,7 +2833,7 @@ msgid "Can't scan? Copy the"
 msgstr "Nie można zeskanować? Skopiuj"
 
 #. js-lingui-id: dEgA5A
-#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
+#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDangerZone.tsx
 #: src/pages/auth/Authorize.tsx
 #: src/modules/ui/layout/modal/components/ConfirmationModal.tsx
 #: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx
@@ -3152,7 +3163,7 @@ msgid "Clear the field or \"X\" to revert to environment/default value."
 msgstr "Wyczyść pole lub \"X\", aby przywrócić wartość środowiska lub domyślną."
 
 #. js-lingui-id: Gt8ndY
-#: src/pages/settings/ai/components/SettingsAIUsageTab.tsx
+#: src/pages/settings/ai/components/SettingsAiUsageTab.tsx
 #: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx
 msgid "Click a user to see their daily breakdown."
 msgstr "Kliknij użytkownika, aby zobaczyć dzienne zestawienie."
@@ -3194,7 +3205,7 @@ msgstr "Do dzienników inspekcji wymagany jest ClickHouse. Skontaktuj się z adm
 
 #. js-lingui-id: CTdw8/
 #: src/pages/settings/security/event-logs/SettingsEventLogs.tsx
-#: src/pages/settings/ai/components/SettingsAIUsageTab.tsx
+#: src/pages/settings/ai/components/SettingsAiUsageTab.tsx
 #: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx
 msgid "ClickHouse Not Configured"
 msgstr "ClickHouse nie jest skonfigurowany"
@@ -3395,7 +3406,8 @@ msgid "Conditions"
 msgstr "Warunki"
 
 #. js-lingui-id: 14PdY0
-#: src/pages/settings/applications/components/SettingsApplicationRegistrationContent.tsx
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetail.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminContent.tsx
 msgid "Config"
 msgstr "Konfiguracja"
@@ -3487,7 +3499,7 @@ msgid "Configure when this function should be executed"
 msgstr "Skonfiguruj, kiedy ta funkcja powinna być wykonywana"
 
 #. js-lingui-id: hzDiM0
-#: src/pages/settings/ai/components/SettingsAIModelsTab.tsx
+#: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
 msgid "Configure your default AI model"
 msgstr ""
 
@@ -3497,7 +3509,6 @@ msgid "Configure your emails and calendar settings."
 msgstr "Skonfiguruj swoje ustawienia e-mail i kalendarza."
 
 #. js-lingui-id: M1co/O
-#: src/pages/settings/applications/components/SettingsApplicationRegistrationConfigVariableStatus.tsx
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAiProviderListCard.tsx
 msgid "Configured"
 msgstr "Skonfigurowane"
@@ -3644,7 +3655,7 @@ msgstr "Rozmiar kontekstu"
 
 #. js-lingui-id: LXIm4m
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
-#: src/modules/ai/components/internal/AIChatContextUsageButton.tsx
+#: src/modules/ai/components/internal/AiChatContextUsageButton.tsx
 msgid "Context window"
 msgstr "Okno kontekstu"
 
@@ -3695,7 +3706,7 @@ msgid "Control which types of entities this role can be assigned to"
 msgstr "Kontroluj, do jakich typów podmiotów można przypisać tę rolę"
 
 #. js-lingui-id: YyNOE7
-#: src/modules/ai/components/internal/AIChatContextUsageButton.tsx
+#: src/modules/ai/components/internal/AiChatContextUsageButton.tsx
 msgid "Conversation"
 msgstr "Konwersacja"
 
@@ -3810,7 +3821,7 @@ msgstr "Obiekty podstawowe"
 
 #. js-lingui-id: I99Miw
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
-#: src/modules/ai/components/internal/AIChatContextUsageButton.tsx
+#: src/modules/ai/components/internal/AiChatContextUsageButton.tsx
 msgid "Cost"
 msgstr "Koszt"
 
@@ -3860,7 +3871,7 @@ msgid "Couldn't copy to clipboard"
 msgstr "Nie można skopiować do schowka"
 
 #. js-lingui-id: S2XvS+
-#: src/modules/ai/hooks/useAIChatFileUpload.ts
+#: src/modules/ai/hooks/useAiChatFileUpload.ts
 msgid "Couldn't upload the file."
 msgstr "Nie można było przesłać pliku."
 
@@ -4121,12 +4132,12 @@ msgid "Credits by period"
 msgstr "Kredyty według okresu"
 
 #. js-lingui-id: EABlI0
-#: src/modules/ai/components/AIChatCreditsExhaustedMessage.tsx
+#: src/modules/ai/components/AiChatCreditsExhaustedMessage.tsx
 msgid "Credits exhausted. Please contact your workspace admin to upgrade."
 msgstr "Kredyty zostały wyczerpane. Skontaktuj się z administratorem przestrzeni roboczej, aby dokonać uaktualnienia."
 
 #. js-lingui-id: JIXvMy
-#: src/modules/ai/components/AIChatCreditsExhaustedMessage.tsx
+#: src/modules/ai/components/AiChatCreditsExhaustedMessage.tsx
 msgid "Credits exhausted. Upgrade your plan to get more credits."
 msgstr "Kredyty zostały wyczerpane. Zaktualizuj swój plan, aby uzyskać więcej kredytów."
 
@@ -4311,8 +4322,8 @@ msgid "Czech"
 msgstr "czeski"
 
 #. js-lingui-id: ShUrwO
-#: src/pages/settings/ai/SettingsAIUsageUserDetail.tsx
-#: src/pages/settings/ai/components/SettingsAIUsageTab.tsx
+#: src/pages/settings/ai/SettingsAiUsageUserDetail.tsx
+#: src/pages/settings/ai/components/SettingsAiUsageTab.tsx
 msgid "Daily AI Usage"
 msgstr ""
 
@@ -4325,10 +4336,10 @@ msgstr "Dzienne zużycie"
 #. js-lingui-id: Zz6Cxn
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
-#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
 #: src/pages/settings/ai/SettingsToolDetail.tsx
 #: src/pages/settings/ai/SettingsSkillForm.tsx
 #: src/pages/settings/ai/components/SettingsAgentSettingsTab.tsx
+#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDangerZone.tsx
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
 #: src/modules/settings/profile/components/DeleteWorkspace.tsx
@@ -4574,7 +4585,7 @@ msgid "default"
 msgstr ""
 
 #. js-lingui-id: ovBPCi
-#: src/pages/settings/ai/components/SettingsAIModelsTab.tsx
+#: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
 #: src/modules/settings/data-model/fields/forms/date/utils/getDisplayFormatLabel.ts
 #: src/modules/settings/data-model/fields/forms/address/components/MultiSelectAddressFields.tsx
 msgid "Default"
@@ -4685,7 +4696,6 @@ msgstr "usuń"
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
-#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
 #: src/pages/settings/ai/SettingsToolDetail.tsx
 #: src/pages/settings/ai/SettingsToolDetail.tsx
 #: src/pages/settings/ai/SettingsSkillForm.tsx
@@ -4693,6 +4703,7 @@ msgstr "usuń"
 #: src/pages/settings/ai/components/SettingsSkillInactiveMenuDropDown.tsx
 #: src/pages/settings/ai/components/SettingsAgentEvalsTab.tsx
 #: src/pages/settings/ai/components/SettingsAgentEvalsTab.tsx
+#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDangerZone.tsx
 #: src/modules/workflow/workflow-steps/filters/components/WorkflowStepFilterOptionsDropdown.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowStepFooter.tsx
 #: src/modules/views/view-picker/components/ViewPickerOptionDropdown.tsx
@@ -4773,8 +4784,8 @@ msgid "Delete API key"
 msgstr "Usuń klucz API"
 
 #. js-lingui-id: JXU6Ex
-#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
-#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
+#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDangerZone.tsx
+#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDangerZone.tsx
 msgid "Delete app"
 msgstr "Usuń aplikację"
 
@@ -4804,7 +4815,7 @@ msgid "Delete node"
 msgstr "Usuń węzeł"
 
 #. js-lingui-id: x9/fRy
-#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
+#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDangerZone.tsx
 msgid "Delete or transfer this app registration"
 msgstr "Usuń lub przenieś tę rejestrację aplikacji"
 
@@ -4941,7 +4952,6 @@ msgstr "Opisz, co chcesz, aby AI zrobiło..."
 #. js-lingui-id: Nu4oKW
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
-#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationConfigTab.tsx
 #: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
 #: src/pages/settings/applications/components/SettingsApplicationNameDescriptionTable.tsx
 #: src/pages/settings/ai/SettingsToolDetail.tsx
@@ -4950,6 +4960,7 @@ msgstr "Opisz, co chcesz, aby AI zrobiło..."
 #: src/modules/settings/logic-functions/components/SettingsLogicFunctionNewForm.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 #: src/modules/settings/data-model/new-object/components/SettingsAvailableStandardObjectsSection.tsx
+#: src/modules/settings/config-variables/components/ConfigVariableTable.tsx
 msgid "Description"
 msgstr "Opis"
 
@@ -5037,13 +5048,14 @@ msgid "Display text on multiple lines"
 msgstr "Wyświetlaj tekst na wielu liniach"
 
 #. js-lingui-id: ljWYXA
-#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetail.tsx
+#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralToggles.tsx
 msgid "Display this app in the NPM packages list"
 msgstr ""
 
 #. js-lingui-id: vU/Hht
-#: src/pages/settings/applications/components/SettingsApplicationRegistrationContent.tsx
-#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetailContent.tsx
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralStats.tsx
+#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetail.tsx
 msgid "Distribution"
 msgstr "Dystrybucja"
 
@@ -5136,7 +5148,7 @@ msgid "Downgrade"
 msgstr "Zniż"
 
 #. js-lingui-id: mzI/c+
-#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetailContent.tsx
+#: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
 #: src/modules/activities/files/components/DocumentViewer.tsx
 #: src/modules/activities/files/components/AttachmentDropdown.tsx
 msgid "Download"
@@ -5265,7 +5277,7 @@ msgid "e.g. My OpenAI Proxy"
 msgstr "np. Moje proxy OpenAI"
 
 #. js-lingui-id: 88vQqv
-#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
+#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDangerZone.tsx
 msgid "e.g. my-workspace"
 msgstr "np. my-workspace"
 
@@ -5275,7 +5287,7 @@ msgid "e.g. OpenAI EU"
 msgstr "np. OpenAI EU"
 
 #. js-lingui-id: p5P8NB
-#: src/pages/settings/ai/components/SettingsAIMoreTab.tsx
+#: src/pages/settings/ai/components/SettingsAiMoreTab.tsx
 msgid "E.g., \"We are a B2B SaaS company. Always use formal language...\""
 msgstr "Np.: \"Jesteśmy firmą B2B SaaS. Zawsze używaj języka formalnego...\""
 
@@ -5316,7 +5328,6 @@ msgstr "eddy@gmail.com, @apple.com"
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableRowOptionsDropdown.tsx
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTabEnvironmentVariableTableRow.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
-#: src/modules/settings/admin-panel/config-variables/components/ConfigVariableActionButtons.tsx
 #: src/modules/object-record/record-group/hooks/useRecordGroupActions.ts
 #: src/modules/object-record/record-field/ui/meta-types/input/components/MultiItemFieldMenuItem.tsx
 #: src/modules/object-record/record-field/ui/form-types/components/FormMultiSelectFieldInput.tsx
@@ -5745,7 +5756,7 @@ msgid "Enter a value to store in database"
 msgstr "Wprowadź wartość do przechowywania w bazie danych"
 
 #. js-lingui-id: P/e64M
-#: src/pages/settings/ai/forms/components/SettingsAIAgentForm.tsx
+#: src/pages/settings/ai/forms/components/SettingsAiAgentForm.tsx
 #: src/pages/settings/ai/components/SettingsAgentSettingsTab.tsx
 msgid "Enter agent name*"
 msgstr "Wprowadź nazwę agenta*"
@@ -5889,13 +5900,13 @@ msgid "Enter the infos to set the connection"
 msgstr "Wprowadź informacje, aby ustawić połączenie"
 
 #. js-lingui-id: 3EF9HN
-#: src/pages/settings/ai/forms/components/SettingsAIAgentForm.tsx
+#: src/pages/settings/ai/forms/components/SettingsAiAgentForm.tsx
 #: src/pages/settings/ai/components/SettingsAgentSettingsTab.tsx
 msgid "Enter the system prompt that defines this agent's behavior and capabilities"
 msgstr "Wprowadź polecenie systemowe definiujące zachowanie i możliwości tego agenta"
 
 #. js-lingui-id: tEWpbi
-#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
+#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDangerZone.tsx
 msgid "Enter the workspace subdomain to transfer this app to. You will lose access to manage it."
 msgstr "Wprowadź subdomenę przestrzeni roboczej, do której chcesz przenieść tę aplikację. Utracisz możliwość zarządzania nią."
 
@@ -5925,7 +5936,7 @@ msgstr "Wprowadź swój klucz API"
 #: src/pages/settings/security/SettingsSecurity.tsx
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
-#: src/pages/settings/ai/components/SettingsAIUsageTab.tsx
+#: src/pages/settings/ai/components/SettingsAiUsageTab.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminContent.tsx
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
@@ -5934,7 +5945,7 @@ msgstr "Przedsiębiorstwo"
 
 #. js-lingui-id: rmZVdg
 #: src/pages/settings/security/SettingsSecurity.tsx
-#: src/pages/settings/ai/components/SettingsAIUsageTab.tsx
+#: src/pages/settings/ai/components/SettingsAiUsageTab.tsx
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
 msgid "Enterprise feature"
 msgstr ""
@@ -6011,7 +6022,7 @@ msgid "Error deleting api key."
 msgstr "Błąd podczas usuwania klucza API."
 
 #. js-lingui-id: gmjkzq
-#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
+#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDangerZone.tsx
 msgid "Error deleting app"
 msgstr "Błąd podczas usuwania aplikacji"
 
@@ -6085,6 +6096,11 @@ msgstr "Błąd podczas regenerowania klucza API."
 msgid "Error resending invitation"
 msgstr "Błąd podczas wysyłania ponownego zaproszenia"
 
+#. js-lingui-id: XuMw6C
+#: src/modules/settings/config-variables/components/ConfigVariableEdit.tsx
+msgid "Error resetting variable"
+msgstr ""
+
 #. js-lingui-id: cpGsq/
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationOAuthTab.tsx
 msgid "Error rotating client secret"
@@ -6106,7 +6122,7 @@ msgid "Error updating role"
 msgstr "Błąd podczas aktualizacji roli"
 
 #. js-lingui-id: s+iV3f
-#: src/pages/settings/applications/components/SettingsApplicationRegistrationConfigVariableDetail.tsx
+#: src/modules/settings/config-variables/components/ConfigVariableEdit.tsx
 msgid "Error updating variable"
 msgstr "Błąd podczas aktualizowania zmiennej"
 
@@ -6521,7 +6537,7 @@ msgid "Failed to execute evaluation input"
 msgstr ""
 
 #. js-lingui-id: Ukrbw5
-#: src/modules/ai/components/AIChatErrorMessage.tsx
+#: src/modules/ai/components/AiChatErrorMessage.tsx
 msgid "Failed to get response"
 msgstr "Nie udało się uzyskać odpowiedzi"
 
@@ -6555,11 +6571,6 @@ msgstr "Nie udało się przetworzyć kontekstu: {contextValue}"
 msgid "Failed to remove model"
 msgstr "Nie udało się usunąć modelu"
 
-#. js-lingui-id: A/P7PX
-#: src/modules/settings/admin-panel/config-variables/hooks/useConfigVariableActions.ts
-msgid "Failed to remove override"
-msgstr "Nie udało się usunąć nadpisania"
-
 #. js-lingui-id: T4nt+1
 #: src/modules/settings/workspace-member/components/WorkspaceMemberPictureUploader.tsx
 msgid "Failed to remove picture"
@@ -6587,7 +6598,7 @@ msgid "Failed to save role permissions: {errorMessage}"
 msgstr ""
 
 #. js-lingui-id: 9ryUyP
-#: src/pages/settings/ai/components/SettingsAIMoreTab.tsx
+#: src/pages/settings/ai/components/SettingsAiMoreTab.tsx
 msgid "Failed to save workspace instructions"
 msgstr "Nie udało się zapisać instrukcji dla obszaru roboczego"
 
@@ -6603,7 +6614,7 @@ msgid "Failed to set maintenance mode."
 msgstr ""
 
 #. js-lingui-id: LVcnN8
-#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
+#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDangerZone.tsx
 msgid "Failed to transfer ownership. Check that the subdomain is correct."
 msgstr "Nie udało się przenieść własności. Sprawdź, czy subdomena jest prawidłowa."
 
@@ -6613,13 +6624,13 @@ msgid "Failed to update default model"
 msgstr "Nie udało się zaktualizować modelu domyślnego"
 
 #. js-lingui-id: 1R13Ov
-#: src/pages/settings/ai/components/SettingsAIModelsTab.tsx
+#: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
 msgid "Failed to update model"
 msgstr "Nie udało się zaktualizować modelu"
 
 #. js-lingui-id: W7Ff/4
-#: src/pages/settings/ai/components/SettingsAIModelsTab.tsx
-#: src/pages/settings/ai/components/SettingsAIModelsTab.tsx
+#: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
+#: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
 msgid "Failed to update model availability"
@@ -6636,7 +6647,7 @@ msgid "Failed to update model recommendations"
 msgstr ""
 
 #. js-lingui-id: rCUG3c
-#: src/pages/settings/ai/components/SettingsAIModelsTab.tsx
+#: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
 msgid "Failed to update model selection mode"
 msgstr "Nie udało się zaktualizować trybu wyboru modelu"
 
@@ -6654,11 +6665,6 @@ msgstr "Nie udało się zaktualizować rekordów. Spróbuj ponownie."
 #: src/modules/settings/members/components/MemberPermissionsTab.tsx
 msgid "Failed to update role"
 msgstr "Nie udało się zaktualizować roli"
-
-#. js-lingui-id: Dzh4a2
-#: src/modules/settings/admin-panel/config-variables/hooks/useConfigVariableActions.ts
-msgid "Failed to update variable"
-msgstr "Nie udało się zaktualizować zmiennej"
 
 #. js-lingui-id: pBEL6J
 #: src/modules/marketplace/hooks/useUpgradeApplication.ts
@@ -6678,7 +6684,7 @@ msgid "Failed to upload file \"{fileNameForError}\": {errorMessage}"
 msgstr "Nie udało się przesłać pliku \"{fileNameForError}\": {errorMessage}"
 
 #. js-lingui-id: cQPyHI
-#: src/modules/ai/hooks/useAIChatFileUpload.ts
+#: src/modules/ai/hooks/useAiChatFileUpload.ts
 msgid "Failed to upload file: {fileName}"
 msgstr "Nie udało się przesłać pliku: {fileName}"
 
@@ -6709,7 +6715,7 @@ msgid "False"
 msgstr "Fałsz"
 
 #. js-lingui-id: XVIZ7v
-#: src/pages/settings/ai/components/SettingsAIModelsTab.tsx
+#: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
 msgid "Fast Model"
 msgstr "Szybki model"
@@ -7076,7 +7082,7 @@ msgid "Fourth"
 msgstr "Czwarty"
 
 #. js-lingui-id: aUj1gh
-#: src/modules/ai/components/AIChatCreditsExhaustedMessage.tsx
+#: src/modules/ai/components/AiChatCreditsExhaustedMessage.tsx
 msgid "Free trial credits exhausted. Subscribe now to continue using AI features."
 msgstr "Kredyty z darmowego okresu próbnego zostały wyczerpane. Wykup teraz subskrypcję, aby nadal korzystać z funkcji AI."
 
@@ -7147,8 +7153,9 @@ msgstr ""
 #. js-lingui-id: Weq9zb
 #: src/pages/settings/SettingsWorkspace.tsx
 #: src/pages/settings/SettingsWorkspace.tsx
-#: src/pages/settings/applications/components/SettingsApplicationRegistrationContent.tsx
-#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetailContent.tsx
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
+#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetail.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminContent.tsx
 #: src/modules/page-layout/widgets/fields/hooks/useFieldsWidgetGroupsForDisplay.ts
@@ -7803,7 +7810,7 @@ msgid "Info"
 msgstr "Informacja"
 
 #. js-lingui-id: iaXnN5
-#: src/pages/settings/ai/SettingsAIPrompts.tsx
+#: src/pages/settings/ai/SettingsAiPrompts.tsx
 msgid "Information about the current user (auto-generated and included in each request)"
 msgstr "Informacje o bieżącym użytkowniku (automatycznie generowane i dołączane do każdego żądania)"
 
@@ -7847,8 +7854,8 @@ msgid "Input settings"
 msgstr "Ustawienia wprowadzania"
 
 #. js-lingui-id: cjbZw+
-#: src/modules/ai/components/internal/AIChatContextUsageButton.tsx
-#: src/modules/ai/components/internal/AIChatContextUsageButton.tsx
+#: src/modules/ai/components/internal/AiChatContextUsageButton.tsx
+#: src/modules/ai/components/internal/AiChatContextUsageButton.tsx
 msgid "Input tokens"
 msgstr "Tokeny wejściowe"
 
@@ -7869,14 +7876,14 @@ msgid "Install and manage applications"
 msgstr "Zainstaluj i zarządzaj aplikacjami"
 
 #. js-lingui-id: JXiMtM
-#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetailContent.tsx
+#: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralStats.tsx
 msgid "Install Stats"
 msgstr "Statystyki instalacji"
 
 #. js-lingui-id: eQkgKV
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
 #: src/pages/settings/applications/SettingsApplications.tsx
-#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetailContent.tsx
+#: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
 msgid "Installed"
 msgstr "Zainstalowane"
 
@@ -8395,7 +8402,7 @@ msgid "Last 90 days"
 msgstr "Ostatnie 90 dni"
 
 #. js-lingui-id: c5zxSg
-#: src/modules/ai/components/internal/AIChatContextUsageButton.tsx
+#: src/modules/ai/components/internal/AiChatContextUsageButton.tsx
 msgid "Last message"
 msgstr "Ostatnia wiadomość"
 
@@ -8445,7 +8452,7 @@ msgstr "Najnowsza data"
 
 #. js-lingui-id: zUzYWu
 #: src/pages/settings/applications/components/SettingsApplicationVersionContainer.tsx
-#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetailContent.tsx
+#: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
 msgid "Latest version"
 msgstr "Najnowsza wersja"
@@ -8475,6 +8482,11 @@ msgstr "Układ"
 #: src/modules/layout-customization/components/LayoutCustomizationBar.tsx
 msgid "Layout customization"
 msgstr "Dostosowywanie układu"
+
+#. js-lingui-id: euTsq6
+#: src/modules/layout-customization/components/LayoutCustomizationBarMenuDropdown.tsx
+msgid "Layout customization menu"
+msgstr ""
 
 #. js-lingui-id: yU0QVO
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
@@ -8745,7 +8757,7 @@ msgid "Loading..."
 msgstr "Ładowanie..."
 
 #. js-lingui-id: 8NbHF7
-#: src/pages/settings/ai/SettingsAIPrompts.tsx
+#: src/pages/settings/ai/SettingsAiPrompts.tsx
 msgid "Locale"
 msgstr "Ustawienia regionalne"
 
@@ -8999,12 +9011,12 @@ msgid "Maximum values"
 msgstr "Maksymalna liczba wartości"
 
 #. js-lingui-id: NvQoNb
-#: src/pages/settings/ai/components/SettingsAIMCP.tsx
+#: src/pages/settings/ai/components/SettingsAiMCP.tsx
 msgid "MCP Configuration copied to clipboard"
 msgstr "Konfiguracja MCP został skopiowany do schowka"
 
 #. js-lingui-id: 8CWirf
-#: src/pages/settings/ai/components/SettingsAIMCP.tsx
+#: src/pages/settings/ai/components/SettingsAiMCP.tsx
 msgid "MCP Server"
 msgstr "Serwer MCP"
 
@@ -9214,7 +9226,7 @@ msgid "Models"
 msgstr "Modele"
 
 #. js-lingui-id: oHM560
-#: src/pages/settings/ai/components/SettingsAIModelsTab.tsx
+#: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
 msgid "Models available in the chat model picker"
 msgstr "Modele dostępne w selektorze modeli czatu"
 
@@ -9309,7 +9321,7 @@ msgid "More widgets"
 msgstr "Więcej widżetów"
 
 #. js-lingui-id: SOHptZ
-#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetailContent.tsx
+#: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralStats.tsx
 msgid "Most installed version"
 msgstr "Najczęściej instalowana wersja"
 
@@ -9410,7 +9422,6 @@ msgstr "mySkill"
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
 #: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
-#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationConfigTab.tsx
 #: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
 #: src/pages/settings/applications/components/SettingsApplicationNameDescriptionTable.tsx
 #: src/pages/settings/applications/components/SettingsApplicationDataTable.tsx
@@ -9442,9 +9453,9 @@ msgstr "mySkill"
 #: src/modules/settings/data-model/object-details/components/SettingsObjectRelationsTable.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectSearchSection.tsx
 #: src/modules/settings/data-model/new-object/components/SettingsAvailableStandardObjectsSection.tsx
+#: src/modules/settings/config-variables/components/ConfigVariableTable.tsx
 #: src/modules/settings/ai/components/SettingsAiModelsTable.tsx
 #: src/modules/settings/ai/components/SettingsAiModelHoverCard.tsx
-#: src/modules/settings/admin-panel/config-variables/components/SettingsAdminConfigVariablesTable.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
@@ -9565,8 +9576,8 @@ msgstr "Nowa zatwierdzona domena dostępu"
 #. js-lingui-id: hIQkLb
 #: src/modules/navigation/components/MainNavigationDrawerTabsRow.tsx
 #: src/modules/navigation/components/MainNavigationDrawerTabsRow.tsx
-#: src/modules/ai/components/NavigationDrawerAIChatThreadDateSection.tsx
-#: src/modules/ai/components/AIChatThreadsList.tsx
+#: src/modules/ai/components/NavigationDrawerAiChatThreadDateSection.tsx
+#: src/modules/ai/components/AiChatThreadsList.tsx
 msgid "New chat"
 msgstr "Nowa rozmowa"
 
@@ -9717,7 +9728,7 @@ msgid "Ninth"
 msgstr "Dziewiąty"
 
 #. js-lingui-id: 1UzENP
-#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetailContent.tsx
+#: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelUpdateFieldsValueForObject.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSeeFieldsValueForObject.tsx
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
@@ -9770,7 +9781,7 @@ msgid "No agents match your search"
 msgstr "Żadni agenci nie pasują do twojego wyszukiwania"
 
 #. js-lingui-id: nPalt1
-#: src/pages/settings/ai/SettingsAIUsageUserDetail.tsx
+#: src/pages/settings/ai/SettingsAiUsageUserDetail.tsx
 msgid "No AI consumption recorded for this user."
 msgstr ""
 
@@ -9825,7 +9836,7 @@ msgid "No calling code"
 msgstr "Bez kodu kraju"
 
 #. js-lingui-id: d14J3J
-#: src/modules/ai/components/NavigationDrawerAIChatContent.tsx
+#: src/modules/ai/components/NavigationDrawerAiChatContent.tsx
 msgid "No chat"
 msgstr ""
 
@@ -9918,6 +9929,17 @@ msgstr "Nie znaleziono danych"
 #: src/modules/views/view-picker/components/ViewPickerContentCreateMode.tsx
 msgid "No Date field"
 msgstr "Brak pola daty"
+
+#. js-lingui-id: lAfu/q
+#: src/modules/side-panel/pages/page-layout/components/RegularTabSettingsContent.tsx
+#: src/modules/side-panel/pages/page-layout/components/CanvasTabSettingsContent.tsx
+msgid "No default configuration available for this tab"
+msgstr ""
+
+#. js-lingui-id: B8I32S
+#: src/modules/side-panel/pages/page-layout/components/WidgetSettingsManageSection.tsx
+msgid "No default configuration available for this widget"
+msgstr ""
 
 #. js-lingui-id: P4KXUa
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateSoftDelete.tsx
@@ -10076,7 +10098,7 @@ msgid "No metrics data available"
 msgstr "Brak dostępnych danych o metrykach"
 
 #. js-lingui-id: UWZZdQ
-#: src/pages/settings/ai/forms/components/SettingsAIAgentForm.tsx
+#: src/pages/settings/ai/forms/components/SettingsAiAgentForm.tsx
 #: src/pages/settings/ai/components/SettingsAgentSettingsTab.tsx
 msgid "No models available. Please configure AI models in your workspace settings."
 msgstr "Brak dostępnych modeli. Skonfiguruj modele AI w ustawieniach przestrzeni roboczej."
@@ -10230,12 +10252,12 @@ msgstr "Brak skonfigurowanych wyzwalaczy dla tej funkcji."
 
 #. js-lingui-id: WwlPOG
 #: src/pages/settings/SettingsUsageUserDetail.tsx
-#: src/pages/settings/ai/SettingsAIUsageUserDetail.tsx
+#: src/pages/settings/ai/SettingsAiUsageUserDetail.tsx
 msgid "No usage data"
 msgstr "Brak danych o użyciu"
 
 #. js-lingui-id: TayaS7
-#: src/pages/settings/ai/components/SettingsAIUsageTab.tsx
+#: src/pages/settings/ai/components/SettingsAiUsageTab.tsx
 #: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx
 msgid "No usage data yet"
 msgstr ""
@@ -10340,7 +10362,7 @@ msgid "Not Found"
 msgstr "Nie znaleziono"
 
 #. js-lingui-id: MTqQMG
-#: src/pages/settings/applications/components/SettingsApplicationRegistrationConfigVariableStatus.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationConfigTab.tsx
 msgid "Not set"
 msgstr "Nieustawione"
 
@@ -10441,9 +10463,10 @@ msgid "Numbered list"
 msgstr ""
 
 #. js-lingui-id: b/j06W
+#: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationOAuthTab.tsx
-#: src/pages/settings/applications/components/SettingsApplicationRegistrationContent.tsx
-#: src/pages/settings/ai/components/SettingsAIMCP.tsx
+#: src/pages/settings/ai/components/SettingsAiMCP.tsx
+#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetail.tsx
 msgid "OAuth"
 msgstr "OAuth"
 
@@ -10869,8 +10892,8 @@ msgid "Output"
 msgstr "Wynik"
 
 #. js-lingui-id: i1+tKD
-#: src/modules/ai/components/internal/AIChatContextUsageButton.tsx
-#: src/modules/ai/components/internal/AIChatContextUsageButton.tsx
+#: src/modules/ai/components/internal/AiChatContextUsageButton.tsx
+#: src/modules/ai/components/internal/AiChatContextUsageButton.tsx
 msgid "Output tokens"
 msgstr "Tokeny wyjściowe"
 
@@ -10886,14 +10909,13 @@ msgstr "Przegląd"
 
 #. js-lingui-id: LtI9AS
 #: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
-#: src/pages/settings/applications/components/SettingsApplicationRegistrationConfigVariableDetail.tsx
-#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetailContent.tsx
+#: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelEditOwnerSection.tsx
 msgid "Owner"
 msgstr "Właściciel"
 
 #. js-lingui-id: RWJnRQ
-#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
+#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDangerZone.tsx
 msgid "Ownership transferred successfully"
 msgstr "Pomyślnie przeniesiono własność"
 
@@ -10903,7 +10925,7 @@ msgid "p"
 msgstr ""
 
 #. js-lingui-id: mGYa19
-#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetailContent.tsx
+#: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
 msgid "Package"
 msgstr "Pakiet"
 
@@ -11045,7 +11067,7 @@ msgid "People I’ve sent emails to."
 msgstr "Osoby, do których wysłałem e-maile."
 
 #. js-lingui-id: qMTN0w
-#: src/pages/settings/ai/SettingsAIUsageUserDetail.tsx
+#: src/pages/settings/ai/SettingsAiUsageUserDetail.tsx
 msgid "Per-day AI consumption."
 msgstr ""
 
@@ -11257,7 +11279,7 @@ msgid "Please type \"{confirmationValue}\" to confirm you want to delete this AP
 msgstr "Proszę wpisać \"{confirmationValue}\", aby potwierdzić usunięcie tego Klucza API. Pamiętaj, że wszystkie skrypty korzystające z tego klucza przestaną działać."
 
 #. js-lingui-id: osUElx
-#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
+#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDangerZone.tsx
 msgid "Please type \"{confirmationValue}\" to confirm you want to delete this app. All workspace installations linked to it will lose their OAuth credentials."
 msgstr "Wpisz \"{confirmationValue}\", aby potwierdzić, że chcesz usunąć tę aplikację. Wszystkie instalacje w przestrzeniach roboczych powiązane z nią utracą swoje dane uwierzytelniające OAuth."
 
@@ -11618,18 +11640,18 @@ msgid "Read documentation"
 msgstr "Przeczytaj dokumentację"
 
 #. js-lingui-id: U26cMX
-#: src/pages/settings/ai/components/SettingsAIMoreTab.tsx
+#: src/pages/settings/ai/components/SettingsAiMoreTab.tsx
 msgid "Read system prompts"
 msgstr ""
 
 #. js-lingui-id: EKsFda
-#: src/pages/settings/ai/components/SettingsAIMoreTab.tsx
+#: src/pages/settings/ai/components/SettingsAiMoreTab.tsx
 msgid "Read the system prompts to understand how the AI works"
 msgstr ""
 
 #. js-lingui-id: 0URVx8
 #. placeholder {0}: formatNumber( systemPromptTokenCount, { abbreviate: true, decimals: 1, }, )
-#: src/pages/settings/ai/components/SettingsAIMoreTab.tsx
+#: src/pages/settings/ai/components/SettingsAiMoreTab.tsx
 msgid "Read the system prompts to understand how the AI works (~{0} tokens)"
 msgstr ""
 
@@ -11639,8 +11661,8 @@ msgid "Read your profile"
 msgstr "Odczyt Twojego profilu"
 
 #. js-lingui-id: 6pSHJ5
-#: src/pages/settings/ai/SettingsAIPrompts.tsx
-#: src/pages/settings/ai/SettingsAIPrompts.tsx
+#: src/pages/settings/ai/SettingsAiPrompts.tsx
+#: src/pages/settings/ai/SettingsAiPrompts.tsx
 msgid "Read-only"
 msgstr ""
 
@@ -12046,7 +12068,6 @@ msgid "Request Failed"
 msgstr "Żądanie nie powiodło się"
 
 #. js-lingui-id: TMLAx2
-#: src/pages/settings/applications/components/SettingsApplicationRegistrationConfigVariableStatus.tsx
 #: src/pages/settings/ai/components/SettingsToolParameterTable.tsx
 msgid "Required"
 msgstr "Wymagane"
@@ -12058,14 +12079,14 @@ msgid "Resend email"
 msgstr "Wyślij ponownie e-mail"
 
 #. js-lingui-id: OfhWJH
-#: src/pages/settings/applications/components/SettingsApplicationRegistrationConfigVariableDetail.tsx
-#: src/pages/settings/admin-panel/SettingsAdminConfigVariableDetails.tsx
 #: src/modules/views/components/ViewBarDetails.tsx
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsManageSection.tsx
 #: src/modules/side-panel/pages/page-layout/components/RegularTabSettingsContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/CanvasTabSettingsContent.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
+#: src/modules/settings/config-variables/components/ConfigVariableEdit.tsx
+#: src/modules/layout-customization/components/LayoutCustomizationBarResetConfirmationModal.tsx
 msgid "Reset"
 msgstr "Zresetuj"
 
@@ -12085,6 +12106,11 @@ msgstr ""
 msgid "Reset label to default"
 msgstr ""
 
+#. js-lingui-id: AASIAQ
+#: src/modules/layout-customization/components/LayoutCustomizationBarMenuDropdown.tsx
+msgid "Reset record page layout"
+msgstr ""
+
 #. js-lingui-id: L+rMC9
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsManageSection.tsx
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsManageSection.tsx
@@ -12095,13 +12121,9 @@ msgstr ""
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
 #: src/modules/settings/data-model/fields/forms/address/components/SettingsDataModelFieldAddressForm.tsx
+#: src/modules/layout-customization/components/LayoutCustomizationBarResetConfirmationModal.tsx
 #: src/modules/command-menu-item/edit/components/SidePanelCommandMenuItemEditPage.tsx
 msgid "Reset to default"
-msgstr "Przywróć domyślne"
-
-#. js-lingui-id: Tj36Dr
-#: src/modules/settings/admin-panel/config-variables/components/ConfigVariableActionButtons.tsx
-msgid "Reset to Default"
 msgstr "Przywróć domyślne"
 
 #. js-lingui-id: 14xBUx
@@ -12110,8 +12132,7 @@ msgid "Reset to static value"
 msgstr "Resetuj do wartości statycznej"
 
 #. js-lingui-id: 6rzsES
-#: src/pages/settings/applications/components/SettingsApplicationRegistrationConfigVariableDetail.tsx
-#: src/pages/settings/admin-panel/SettingsAdminConfigVariableDetails.tsx
+#: src/modules/settings/config-variables/components/ConfigVariableEdit.tsx
 msgid "Reset variable"
 msgstr "Zresetuj zmienną"
 
@@ -12163,7 +12184,7 @@ msgid "Restore {objectLabel}"
 msgstr ""
 
 #. js-lingui-id: hO3AfV
-#: src/pages/settings/ai/components/SettingsAIModelsTab.tsx
+#: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
 msgid "Restrict available models to a curated list"
 msgstr "Ogranicz dostępne modele do wyselekcjonowanej listy"
 
@@ -12379,7 +12400,6 @@ msgstr "Sobota"
 
 #. js-lingui-id: tfDRzk
 #: src/modules/settings/components/SaveAndCancelButtons/SaveButton.tsx
-#: src/modules/settings/admin-panel/config-variables/components/ConfigVariableActionButtons.tsx
 msgid "Save"
 msgstr "Zapisz"
 
@@ -12466,7 +12486,7 @@ msgid "Search a folder..."
 msgstr "Szukaj folderu..."
 
 #. js-lingui-id: 8J0e5B
-#: src/pages/settings/ai/components/SettingsAIModelsTab.tsx
+#: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
 msgid "Search a model..."
 msgstr "Szukaj modelu..."
@@ -12518,7 +12538,7 @@ msgid "Search agents"
 msgstr "Szukaj agentów"
 
 #. js-lingui-id: 4fd0q+
-#: src/pages/settings/ai/components/SettingsAIAgentsTable.tsx
+#: src/pages/settings/ai/components/SettingsAiAgentsTable.tsx
 msgid "Search an agent..."
 msgstr "Szukaj agenta..."
 
@@ -13415,7 +13435,7 @@ msgid "Small section heading"
 msgstr ""
 
 #. js-lingui-id: 5J8ZFl
-#: src/pages/settings/ai/components/SettingsAIModelsTab.tsx
+#: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
 msgid "Smart Model"
 msgstr "Inteligentny model"
@@ -13526,9 +13546,9 @@ msgid "Sorts"
 msgstr "Sortowanie"
 
 #. js-lingui-id: wdxz7K
-#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetailContent.tsx
-#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetailContent.tsx
-#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetailContent.tsx
+#: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
+#: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
+#: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
 #: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 #: src/modules/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardRecordTableSettings.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableOptionsDropdownContent.tsx
@@ -13648,7 +13668,6 @@ msgstr "Stan"
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
-#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationConfigTab.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
 #: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
 #: src/modules/settings/components/SettingsDnsRecordsTable.tsx
@@ -13778,7 +13797,7 @@ msgstr "Zapisz się do newslettera"
 
 #. js-lingui-id: ShbDuS
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
-#: src/modules/ai/components/AIChatCreditsExhaustedMessage.tsx
+#: src/modules/ai/components/AiChatCreditsExhaustedMessage.tsx
 msgid "Subscribe Now"
 msgstr "Subskrybuj teraz"
 
@@ -13969,13 +13988,13 @@ msgid "System objects"
 msgstr ""
 
 #. js-lingui-id: FHPe8O
-#: src/pages/settings/ai/SettingsAIPrompts.tsx
-#: src/pages/settings/ai/SettingsAIPrompts.tsx
-#: src/pages/settings/ai/SettingsAIPrompts.tsx
-#: src/pages/settings/ai/forms/components/SettingsAIAgentForm.tsx
+#: src/pages/settings/ai/SettingsAiPrompts.tsx
+#: src/pages/settings/ai/SettingsAiPrompts.tsx
+#: src/pages/settings/ai/SettingsAiPrompts.tsx
+#: src/pages/settings/ai/forms/components/SettingsAiAgentForm.tsx
+#: src/pages/settings/ai/components/SettingsAiMoreTab.tsx
+#: src/pages/settings/ai/components/SettingsAiMoreTab.tsx
 #: src/pages/settings/ai/components/SettingsAgentSettingsTab.tsx
-#: src/pages/settings/ai/components/SettingsAIMoreTab.tsx
-#: src/pages/settings/ai/components/SettingsAIMoreTab.tsx
 msgid "System Prompt"
 msgstr "Polecenie Systemowe"
 
@@ -14031,7 +14050,7 @@ msgid "Target relation on Junction Object"
 msgstr "Docelowa relacja w obiekcie łącznikowym"
 
 #. js-lingui-id: qmwHSv
-#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
+#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDangerZone.tsx
 msgid "Target workspace subdomain"
 msgstr "Docelowa subdomena przestrzeni roboczej"
 
@@ -14298,6 +14317,7 @@ msgstr ""
 
 #. js-lingui-id: 2xOCJW
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
+#: src/modules/layout-customization/components/LayoutCustomizationBarResetConfirmationModal.tsx
 msgid "This action cannot be undone."
 msgstr ""
 
@@ -14508,11 +14528,6 @@ msgstr "Spowoduje to trwałe usunięcie obiektu i wszystkich jego rekordów. Wpi
 msgid "This will permanently delete your two factor authentication method.<0/>Since 2FA is mandatory in your workspace, you will be logged out after deletion and will be asked to configure it again upon login. <1/>Please type in your email to confirm."
 msgstr "Spowoduje to trwałe usunięcie Twojej metody uwierzytelniania dwuskładnikowego.<0/>Ponieważ 2FA jest obowiązkowe w Twojej przestrzeni roboczej, po usunięciu zostaniesz wylogowany(-a) i przy następnym logowaniu poprosimy Cię o ponowną konfigurację. <1/>Wpisz swój e-mail, aby potwierdzić."
 
-#. js-lingui-id: 4YifBe
-#: src/pages/settings/admin-panel/SettingsAdminConfigVariableDetails.tsx
-msgid "This will revert the database value to environment/default value. The database override will be removed and the system will use the environment settings."
-msgstr "Spowoduje to przywrócenie wartości bazy danych na wartość środowiskową/lub domyślną. Zastąpienie bazy danych zostanie usunięte, a system będzie korzystać z ustawień środowiska."
-
 #. js-lingui-id: f8HOUp
 #: src/modules/ai/components/ThinkingStepsDisplay.tsx
 msgid "Thought"
@@ -14568,7 +14583,7 @@ msgid "Timestamp and participants will be shared with your team."
 msgstr "Znacznik czasu i uczestnicy zostaną udostępnieni twojemu zespołowi."
 
 #. js-lingui-id: 40Gx0U
-#: src/pages/settings/ai/SettingsAIPrompts.tsx
+#: src/pages/settings/ai/SettingsAiPrompts.tsx
 msgid "Timezone"
 msgstr "Strefa czasowa"
 
@@ -14623,7 +14638,7 @@ msgid "Token limits for context and output"
 msgstr "Limity tokenów dla kontekstu i wyjścia"
 
 #. js-lingui-id: WOr+hW
-#: src/modules/ai/components/internal/AIChatContextUsageButton.tsx
+#: src/modules/ai/components/internal/AiChatContextUsageButton.tsx
 msgid "tokens"
 msgstr "tokeny"
 
@@ -14709,7 +14724,7 @@ msgstr "Łącznie dostępne"
 
 #. js-lingui-id: hg5QeV
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
-#: src/modules/ai/components/internal/AIChatContextUsageButton.tsx
+#: src/modules/ai/components/internal/AiChatContextUsageButton.tsx
 msgid "Total cost"
 msgstr "Całkowity koszt"
 
@@ -14724,9 +14739,9 @@ msgid "Total time"
 msgstr "Całkowity czas"
 
 #. js-lingui-id: BxecEJ
-#: src/pages/settings/ai/components/SettingsAIUsageTab.tsx
-#: src/pages/settings/ai/components/SettingsAIUsageTab.tsx
-#: src/pages/settings/ai/components/SettingsAIUsageTab.tsx
+#: src/pages/settings/ai/components/SettingsAiUsageTab.tsx
+#: src/pages/settings/ai/components/SettingsAiUsageTab.tsx
+#: src/pages/settings/ai/components/SettingsAiUsageTab.tsx
 msgid "Track AI consumption across your workspace."
 msgstr ""
 
@@ -14736,13 +14751,13 @@ msgid "Track your {intervalLabel} workflow credit consumption."
 msgstr "Śledź zużycie kredytów workflow w {intervalLabel}."
 
 #. js-lingui-id: zPGNJm
-#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
+#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDangerZone.tsx
 msgid "Transfer"
 msgstr "Przenieś"
 
 #. js-lingui-id: KSnRfc
-#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
-#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
+#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDangerZone.tsx
+#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDangerZone.tsx
 msgid "Transfer ownership"
 msgstr "Przenieś własność"
 
@@ -15020,7 +15035,7 @@ msgid "Uninstall Application?"
 msgstr ""
 
 #. js-lingui-id: 7S4EZE
-#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
+#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDangerZone.tsx
 msgid "Uninstall this app from all workspaces before deleting it"
 msgstr "Odinstaluj tę aplikację ze wszystkich przestrzeni roboczych przed jej usunięciem"
 
@@ -15048,7 +15063,7 @@ msgid "unit"
 msgstr ""
 
 #. js-lingui-id: fMyWEp
-#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetailContent.tsx
+#: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
 msgid "Universal ID"
 msgstr "Uniwersalny identyfikator"
 
@@ -15137,7 +15152,7 @@ msgstr ""
 #: src/modules/object-record/components/RecordChip.tsx
 #: src/modules/mention/components/MentionRecordChip.tsx
 #: src/modules/ai/components/RecordLink.tsx
-#: src/modules/ai/components/AIChatThreadGroup.tsx
+#: src/modules/ai/components/AiChatThreadGroup.tsx
 #: src/modules/ai/components/internal/AgentChatFilePreview.tsx
 #: src/modules/activities/timeline-activities/rows/activity/components/EventRowActivity.tsx
 msgid "Untitled"
@@ -15250,7 +15265,7 @@ msgid "Upgrade"
 msgstr "Aktualizacja"
 
 #. js-lingui-id: 7aHRdp
-#: src/modules/ai/components/AIChatCreditsExhaustedMessage.tsx
+#: src/modules/ai/components/AiChatCreditsExhaustedMessage.tsx
 msgid "Upgrade Plan"
 msgstr "Zaktualizuj plan"
 
@@ -15362,7 +15377,7 @@ msgid "Usage"
 msgstr "Użycie"
 
 #. js-lingui-id: 8Jr4QC
-#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetailContent.tsx
+#: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralStats.tsx
 msgid "Usage across all workspaces on this server"
 msgstr "Użycie we wszystkich przestrzeniach roboczych na tym serwerze"
 
@@ -15404,7 +15419,7 @@ msgid "Use authenticator apps and browser extensions like 1Password, Authy, Micr
 msgstr "Użyj aplikacji uwierzytelniających i rozszerzeń przeglądarki, takich jak 1Password, Authy, Microsoft Authenticator, aby generować jednorazowe hasła"
 
 #. js-lingui-id: hCZsJ0
-#: src/pages/settings/ai/components/SettingsAIModelsTab.tsx
+#: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
 msgid "Use best models only"
 msgstr "Używaj tylko najlepszych modeli"
 
@@ -15425,12 +15440,12 @@ msgid "Use our API or add your first {objectLabel} manually"
 msgstr "Użyj naszego API lub dodaj swoje pierwsze {objectLabel} manualnie"
 
 #. js-lingui-id: 664z2C
-#: src/pages/settings/ai/components/SettingsAIModelsTab.tsx
+#: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
 msgid "Used for chats, agents, and complex reasoning"
 msgstr "Używany do czatów, agentów i złożonego rozumowania"
 
 #. js-lingui-id: C41qgx
-#: src/pages/settings/ai/components/SettingsAIModelsTab.tsx
+#: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
 msgid "Used for lightweight tasks like title generation"
 msgstr "Używany do lekkich zadań, takich jak generowanie tytułów"
 
@@ -15446,8 +15461,8 @@ msgstr "Przydatne w przypadku tabel przestawnych/łącznikowych"
 #: src/pages/settings/security/event-logs/utils/getColumnsForEventLogTable.ts
 #: src/pages/settings/security/event-logs/utils/getColumnsForEventLogTable.ts
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
+#: src/pages/settings/ai/SettingsAiPrompts.tsx
 #: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
-#: src/pages/settings/ai/SettingsAIPrompts.tsx
 #: src/pages/settings/accounts/SettingsNewAccount.tsx
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx
 #: src/pages/settings/accounts/SettingsAccountsConfigurationStepEmail.tsx
@@ -15461,7 +15476,7 @@ msgid "User"
 msgstr "Użytkownik"
 
 #. js-lingui-id: zw/lpB
-#: src/pages/settings/ai/SettingsAIPrompts.tsx
+#: src/pages/settings/ai/SettingsAiPrompts.tsx
 msgid "User Context"
 msgstr "Kontekst użytkownika"
 
@@ -15471,7 +15486,7 @@ msgid "User Info"
 msgstr "Informacje o użytkowniku"
 
 #. js-lingui-id: J5T9NW
-#: src/pages/settings/ai/SettingsAIPrompts.tsx
+#: src/pages/settings/ai/SettingsAiPrompts.tsx
 msgid "User Information"
 msgstr "Informacje o użytkowniku"
 
@@ -15526,8 +15541,8 @@ msgstr "Pomyślnie odświeżono token ważności"
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/KeyValuePairInput.tsx
 #: src/modules/side-panel/pages/page-layout/hooks/useGraphXSortOptionLabels.ts
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTabEnvironmentVariableTableRow.tsx
+#: src/modules/settings/config-variables/components/ConfigVariableTable.tsx
 #: src/modules/settings/components/SettingsDnsRecordsTable.tsx
-#: src/modules/settings/admin-panel/config-variables/components/SettingsAdminConfigVariablesTable.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableValueInput.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableValueInput.tsx
 #: src/modules/page-layout/widgets/graph/graph-widget-gauge-chart/components/GraphWidgetGaugeChart.tsx
@@ -15546,15 +15561,15 @@ msgstr "Wartość jest ustawiona w środowisku serwera, może być inna u pracow
 msgid "Values"
 msgstr "Wartości"
 
-#. js-lingui-id: HBiN8v
-#: src/pages/settings/applications/components/SettingsApplicationRegistrationConfigVariableDetail.tsx
-msgid "Variable {variableKey} updated"
-msgstr "Zmienna {variableKey} została zaktualizowana"
+#. js-lingui-id: M9lOpp
+#: src/modules/settings/config-variables/components/ConfigVariableEdit.tsx
+msgid "Variable {title} reset"
+msgstr ""
 
-#. js-lingui-id: rawKOG
-#: src/modules/settings/admin-panel/config-variables/hooks/useConfigVariableActions.ts
-msgid "Variable deleted successfully."
-msgstr "Zmienna została usunięta pomyślnie."
+#. js-lingui-id: d2GZm6
+#: src/modules/settings/config-variables/components/ConfigVariableEdit.tsx
+msgid "Variable {title} updated"
+msgstr ""
 
 #. js-lingui-id: +woNYv
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowOutputSchemaBuilder.tsx
@@ -15565,11 +15580,6 @@ msgstr ""
 #: src/modules/object-record/record-field/ui/form-types/components/VariableChip.tsx
 msgid "Variable not found"
 msgstr "Nie znaleziono zmiennej"
-
-#. js-lingui-id: 2ushgC
-#: src/modules/settings/admin-panel/config-variables/hooks/useConfigVariableActions.ts
-msgid "Variable updated successfully."
-msgstr "Zmienna została zaktualizowana pomyślnie."
 
 #. js-lingui-id: QDEWii
 #: src/pages/settings/emailing-domains/utils/getEmailingDomainStatusText.ts
@@ -15655,7 +15665,7 @@ msgid "View billing details"
 msgstr "Zobacz szczegóły płatności"
 
 #. js-lingui-id: SXCuo2
-#: src/modules/ai/components/AIChatApiKeyNotConfiguredMessage.tsx
+#: src/modules/ai/components/AiChatApiKeyNotConfiguredMessage.tsx
 msgid "View Docs"
 msgstr "Wyświetl dokumentację"
 
@@ -15971,7 +15981,7 @@ msgid "Welcome, {workspaceName}."
 msgstr "Witaj, {workspaceName}."
 
 #. js-lingui-id: Itn+J7
-#: src/modules/ai/components/suggested-prompts/AIChatSuggestedPrompts.tsx
+#: src/modules/ai/components/suggested-prompts/AiChatSuggestedPrompts.tsx
 msgid "What can I help you with?"
 msgstr "W czym mogę pomóc?"
 
@@ -16066,7 +16076,7 @@ msgid "Worker"
 msgstr "Pracownik"
 
 #. js-lingui-id: Kqs5vQ
-#: src/pages/settings/ai/components/SettingsAIAgentsTable.tsx
+#: src/pages/settings/ai/components/SettingsAiAgentsTable.tsx
 msgid "Workflow agents"
 msgstr ""
 
@@ -16124,12 +16134,12 @@ msgstr "Przepływy pracy"
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationConfigVariableDetail.tsx
 #: src/pages/settings/ai/SettingsToolDetail.tsx
 #: src/pages/settings/ai/SettingsSkillForm.tsx
+#: src/pages/settings/ai/SettingsAiUsageUserDetail.tsx
+#: src/pages/settings/ai/SettingsAiPrompts.tsx
 #: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
 #: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
 #: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
 #: src/pages/settings/ai/SettingsAgentForm.tsx
-#: src/pages/settings/ai/SettingsAIUsageUserDetail.tsx
-#: src/pages/settings/ai/SettingsAIPrompts.tsx
 #: src/pages/settings/ai/SettingsAI.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceChatThread.tsx
 #: src/modules/views/view-picker/components/ViewPickerListContent.tsx
@@ -16180,8 +16190,8 @@ msgid "Workspace Info"
 msgstr "Informacje o przestrzeni roboczej"
 
 #. js-lingui-id: BYrMT0
-#: src/pages/settings/ai/components/SettingsAIMoreTab.tsx
-#: src/pages/settings/ai/components/SettingsAIMoreTab.tsx
+#: src/pages/settings/ai/components/SettingsAiMoreTab.tsx
+#: src/pages/settings/ai/components/SettingsAiMoreTab.tsx
 msgid "Workspace Instructions"
 msgstr "Instrukcje obszaru roboczego"
 
@@ -16236,7 +16246,7 @@ msgid "Write a description"
 msgstr "Napisz opis"
 
 #. js-lingui-id: 7QXVrh
-#: src/pages/settings/ai/forms/components/SettingsAIAgentForm.tsx
+#: src/pages/settings/ai/forms/components/SettingsAiAgentForm.tsx
 #: src/pages/settings/ai/components/SettingsAgentSettingsTab.tsx
 msgid "Write a description for this agent"
 msgstr "Napisz opis dla tego agenta"
@@ -16297,16 +16307,16 @@ msgstr "Żółty"
 #. js-lingui-id: 3d1wCB
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationOAuthTab.tsx
-#: src/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
+#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDangerZone.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "yes"
 msgstr "tak"
 
 #. js-lingui-id: l75CjT
+#: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
 #: src/pages/settings/ai/components/SettingsToolParameterTable.tsx
-#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetailContent.tsx
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 msgid "Yes"
 msgstr "Tak"

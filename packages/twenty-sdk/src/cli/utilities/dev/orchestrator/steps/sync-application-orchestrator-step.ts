@@ -7,7 +7,7 @@ import {
   type OrchestratorStateStepEvent,
   type OrchestratorStateSyncStatus,
 } from '@/cli/utilities/dev/orchestrator/dev-mode-orchestrator-state';
-import { formatSyncErrorEvents } from '@/cli/utilities/dev/orchestrator/steps/format-sync-error-events';
+import { formatManifestValidationErrors } from '@/cli/utilities/error/format-manifest-validation-errors';
 import { serializeError } from '@/cli/utilities/error/serialize-error';
 import { type Manifest } from 'twenty-shared/application';
 
@@ -81,7 +81,7 @@ export class SyncApplicationOrchestratorStep {
 
     const errorEvents = this.verbose
       ? null
-      : formatSyncErrorEvents(syncResult.error);
+      : formatManifestValidationErrors(syncResult.error);
 
     if (errorEvents) {
       events.push(...errorEvents);

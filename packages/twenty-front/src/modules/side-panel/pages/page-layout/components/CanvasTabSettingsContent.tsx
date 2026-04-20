@@ -13,6 +13,7 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import {
+  AppTooltip,
   IconChevronLeft,
   IconChevronRight,
   IconEyeX,
@@ -22,6 +23,8 @@ import {
 } from 'twenty-ui/display';
 
 const RESET_TAB_TO_DEFAULT_MODAL_ID = 'reset-canvas-tab-to-default-modal';
+const RESET_TAB_TO_DEFAULT_MENU_ITEM_ID =
+  'reset-canvas-tab-to-default-menu-item';
 
 type CanvasTabSettingsContentProps = {
   pageLayoutId: string;
@@ -29,7 +32,7 @@ type CanvasTabSettingsContentProps = {
   canSetAsPinned: boolean;
   canMoveLeft: boolean;
   canMoveRight: boolean;
-  canShowResetToDefault: boolean;
+  isResetToDefaultDisabled: boolean;
   canDelete: boolean;
   onMoveLeft: () => void;
   onMoveRight: () => void;
@@ -44,7 +47,7 @@ export const CanvasTabSettingsContent = ({
   canSetAsPinned,
   canMoveLeft,
   canMoveRight,
-  canShowResetToDefault,
+  isResetToDefaultDisabled,
   canDelete,
   onMoveLeft,
   onMoveRight,
@@ -60,6 +63,9 @@ export const CanvasTabSettingsContent = ({
   );
 
   const handleResetToDefault = () => {
+    if (isResetToDefaultDisabled) {
+      return;
+    }
     openModal(RESET_TAB_TO_DEFAULT_MODAL_ID);
   };
 
@@ -70,9 +76,7 @@ export const CanvasTabSettingsContent = ({
     ...(isDefined(canvasWidget)
       ? [TAB_SETTINGS_SELECTABLE_ITEM_IDS.VISIBILITY_RESTRICTION]
       : []),
-    ...(canShowResetToDefault
-      ? [TAB_SETTINGS_SELECTABLE_ITEM_IDS.RESET_TO_DEFAULT]
-      : []),
+    TAB_SETTINGS_SELECTABLE_ITEM_IDS.RESET_TO_DEFAULT,
     ...(canDelete ? [TAB_SETTINGS_SELECTABLE_ITEM_IDS.DELETE] : []),
   ];
 
@@ -149,7 +153,7 @@ export const CanvasTabSettingsContent = ({
               />
             </SelectableListItem>
           )}
-          {canShowResetToDefault && (
+          <div id={RESET_TAB_TO_DEFAULT_MENU_ITEM_ID}>
             <SelectableListItem
               itemId={TAB_SETTINGS_SELECTABLE_ITEM_IDS.RESET_TO_DEFAULT}
               onEnter={handleResetToDefault}
@@ -159,8 +163,17 @@ export const CanvasTabSettingsContent = ({
                 Icon={IconRefreshDot}
                 label={t`Reset to default`}
                 onClick={handleResetToDefault}
+                disabled={isResetToDefaultDisabled}
               />
             </SelectableListItem>
+          </div>
+          {isResetToDefaultDisabled && (
+            <AppTooltip
+              anchorSelect={`#${RESET_TAB_TO_DEFAULT_MENU_ITEM_ID}`}
+              content={t`No default configuration available for this tab`}
+              noArrow
+              place="bottom"
+            />
           )}
           {canDelete && (
             <SelectableListItem

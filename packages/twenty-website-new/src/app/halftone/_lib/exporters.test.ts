@@ -78,6 +78,24 @@ describe('halftone export naming', () => {
     ).toBe(DEFAULT_HALFTONE_SETTINGS.halftone.hoverDashColor);
   });
 
+  it('preserves dark-area halftone presets through export parsing', () => {
+    const output = generateReactComponent(
+      normalizeHalftoneStudioSettings({
+        ...DEFAULT_HALFTONE_SETTINGS,
+        halftone: {
+          ...DEFAULT_HALFTONE_SETTINGS.halftone,
+          toneTarget: 'dark',
+        },
+      }),
+      undefined,
+      'dark tone preset',
+    );
+
+    const parsed = parseExportedPreset(output);
+
+    expect(parsed.settings.halftone.toneTarget).toBe('dark');
+  });
+
   it('uses the initial pose as the export runtime rotation baseline', async () => {
     const reactOutput = generateReactComponent(
       DEFAULT_HALFTONE_SETTINGS,

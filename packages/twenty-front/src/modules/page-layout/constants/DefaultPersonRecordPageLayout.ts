@@ -33,6 +33,7 @@ export const DEFAULT_PERSON_RECORD_PAGE_LAYOUT: PageLayout = {
       widgets: [
         {
           __typename: 'PageLayoutWidget',
+          applicationId: '',
           id: 'person-widget-fields',
           isActive: true,
           pageLayoutTabId: 'person-tab-fields',
@@ -73,6 +74,7 @@ export const DEFAULT_PERSON_RECORD_PAGE_LAYOUT: PageLayout = {
       widgets: [
         {
           __typename: 'PageLayoutWidget',
+          applicationId: '',
           id: 'person-widget-timeline',
           isActive: true,
           pageLayoutTabId: 'person-tab-timeline',
@@ -113,6 +115,7 @@ export const DEFAULT_PERSON_RECORD_PAGE_LAYOUT: PageLayout = {
       widgets: [
         {
           __typename: 'PageLayoutWidget',
+          applicationId: '',
           id: 'person-widget-tasks',
           isActive: true,
           pageLayoutTabId: 'person-tab-tasks',
@@ -153,6 +156,7 @@ export const DEFAULT_PERSON_RECORD_PAGE_LAYOUT: PageLayout = {
       widgets: [
         {
           __typename: 'PageLayoutWidget',
+          applicationId: '',
           id: 'person-widget-notes',
           isActive: true,
           pageLayoutTabId: 'person-tab-notes',
@@ -193,6 +197,7 @@ export const DEFAULT_PERSON_RECORD_PAGE_LAYOUT: PageLayout = {
       widgets: [
         {
           __typename: 'PageLayoutWidget',
+          applicationId: '',
           id: 'person-widget-files',
           isActive: true,
           pageLayoutTabId: 'person-tab-files',
@@ -233,6 +238,7 @@ export const DEFAULT_PERSON_RECORD_PAGE_LAYOUT: PageLayout = {
       widgets: [
         {
           __typename: 'PageLayoutWidget',
+          applicationId: '',
           id: 'person-widget-emails',
           isActive: true,
           pageLayoutTabId: 'person-tab-emails',
@@ -273,6 +279,7 @@ export const DEFAULT_PERSON_RECORD_PAGE_LAYOUT: PageLayout = {
       widgets: [
         {
           __typename: 'PageLayoutWidget',
+          applicationId: '',
           id: 'person-widget-calendar',
           isActive: true,
           pageLayoutTabId: 'person-tab-calendar',

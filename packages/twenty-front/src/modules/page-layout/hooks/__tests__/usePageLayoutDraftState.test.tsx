@@ -99,6 +99,7 @@ describe('usePageLayoutDraftState', () => {
             widgets: [
               {
                 id: 'widget-1',
+                applicationId: '',
                 pageLayoutTabId: 'tab-1',
                 title: 'New Widget',
                 isActive: true,

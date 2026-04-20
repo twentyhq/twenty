@@ -27,6 +27,7 @@ export function Cta({ scheme }: CtaProps) {
         color={buttonColor}
         href="https://app.twenty.com/welcome"
         label="Log in"
+        size="small"
         type="anchor"
         variant="outlined"
       />
@@ -34,6 +35,7 @@ export function Cta({ scheme }: CtaProps) {
         color={buttonColor}
         href="https://app.twenty.com/welcome"
         label="Get started"
+        size="small"
         type="anchor"
         variant="contained"
       />

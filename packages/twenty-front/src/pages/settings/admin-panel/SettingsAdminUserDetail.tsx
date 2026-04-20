@@ -8,6 +8,7 @@ import { SettingsPath } from 'twenty-shared/types';
 import { getImageAbsoluteURI, getSettingsPath } from 'twenty-shared/utils';
 
 import { currentUserState } from '@/auth/states/currentUserState';
+import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { SettingsAdminWorkspaceContent } from '@/settings/admin-panel/components/SettingsAdminWorkspaceContent';
 import { SETTINGS_ADMIN_USER_LOOKUP_WORKSPACE_TABS_ID } from '@/settings/admin-panel/constants/SettingsAdminUserLookupWorkspaceTabsId';
 import { useHandleImpersonate } from '@/settings/admin-panel/hooks/useHandleImpersonate';
@@ -35,7 +36,7 @@ import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import {
   type UserLookupAdminPanelQuery,
   UserLookupAdminPanelDocument,
-} from '~/generated-metadata/graphql';
+} from '~/generated-admin/graphql';
 
 const StyledButtonContainer = styled.div`
   margin-top: ${themeCssVariables.spacing[3]};
@@ -43,6 +44,7 @@ const StyledButtonContainer = styled.div`
 
 export const SettingsAdminUserDetail = () => {
   const { userId } = useParams<{ userId: string }>();
+  const apolloAdminClient = useApolloAdminClient();
 
   const activeTabId = useAtomComponentStateValue(
     activeTabIdComponentState,
@@ -51,6 +53,7 @@ export const SettingsAdminUserDetail = () => {
 
   const { data: userLookupData, loading: isLoading } =
     useQuery<UserLookupAdminPanelQuery>(UserLookupAdminPanelDocument, {
+      client: apolloAdminClient,
       variables: { userIdentifier: userId },
       skip: !userId,
     });

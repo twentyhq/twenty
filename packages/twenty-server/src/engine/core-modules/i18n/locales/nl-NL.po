@@ -352,7 +352,7 @@ msgid "Admin role not found."
 msgstr "Beheerdersrol niet gevonden."
 
 #. js-lingui-id: kmAKx+
-#: src/engine/metadata-modules/ai/ai-agent/agent.exception.ts
+#: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "Agent execution failed."
 msgstr "Agentuitvoering mislukt."
 
@@ -365,7 +365,7 @@ msgid "Agent not found"
 msgstr "Agent niet gevonden"
 
 #. js-lingui-id: UxwIFr
-#: src/engine/metadata-modules/ai/ai-agent/agent.exception.ts
+#: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "Agent not found."
 msgstr "Agent niet gevonden."
 
@@ -420,7 +420,7 @@ msgid "An agent with this name already exists"
 msgstr "Er bestaat al een agent met deze naam"
 
 #. js-lingui-id: Wnol69
-#: src/engine/metadata-modules/ai/ai-agent/agent.exception.ts
+#: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "An agent with this name already exists."
 msgstr "Er bestaat al een agent met deze naam."
 
@@ -514,7 +514,7 @@ msgid "Annual Recurring Revenue: The actual or estimated annual revenue of the c
 msgstr "Jaarlijks Terugkerende Inkomsten: De daadwerkelijke of geschatte jaarlijkse inkomsten van het bedrijf"
 
 #. js-lingui-id: fRWsMD
-#: src/engine/metadata-modules/ai/ai-agent/agent.exception.ts
+#: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "API key is not configured."
 msgstr "API-sleutel is niet geconfigureerd."
 
@@ -1162,6 +1162,17 @@ msgstr "Kan geen schrijfmachtiging geven zonder leesmachtiging."
 msgid "Cannot have more than one active workflow version"
 msgstr "Kan niet meer dan één actieve workflowversie hebben."
 
+#. js-lingui-id: oCh764
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-belongs-to-caller-application.util.ts
+msgid "Cannot modify permissions on a role owned by another application"
+msgstr ""
+
+#. js-lingui-id: M47UGK
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-belongs-to-caller-application.util.ts
+#: src/engine/metadata-modules/permissions/permissions.exception.ts
+msgid "Cannot modify permissions on a role owned by another application."
+msgstr ""
+
 #. js-lingui-id: DAGexD
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
 msgid "Cannot modify predicate belonging to a different object."
@@ -1269,6 +1280,16 @@ msgstr "Kanaal-ID"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-standard-flat-field-metadata.util.ts
 msgid "Channel Type"
 msgstr "Kanaaltype"
+
+#. js-lingui-id: erTWgO
+#: src/engine/metadata-modules/ai/ai.exception.ts
+msgid "Chat message not found."
+msgstr ""
+
+#. js-lingui-id: /VxChJ
+#: src/engine/metadata-modules/ai/ai.exception.ts
+msgid "Chat thread not found."
+msgstr ""
 
 #. js-lingui-id: NGL+Sl
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
@@ -3034,7 +3055,7 @@ msgid "Invalid action type."
 msgstr "Ongeldig actietype."
 
 #. js-lingui-id: D/IcuN
-#: src/engine/metadata-modules/ai/ai-agent/agent.exception.ts
+#: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "Invalid agent input."
 msgstr "Ongeldige agentinvoer."
 
@@ -5882,7 +5903,7 @@ msgstr ""
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate-group.exception.ts
 #: src/engine/metadata-modules/role/exceptions/role-target.exception.ts
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
-#: src/engine/metadata-modules/ai/ai-agent/agent.exception.ts
+#: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "Role not found."
 msgstr "Rol niet gevonden."
 
@@ -6193,7 +6214,7 @@ msgid "Stage"
 msgstr ""
 
 #. js-lingui-id: 7XNKWU
-#: src/engine/metadata-modules/ai/ai-agent/agent.exception.ts
+#: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "Standard agents cannot be modified."
 msgstr "Standaardagenten kunnen niet worden gewijzigd."
 
@@ -7020,7 +7041,7 @@ msgid "This record does not exist or has been deleted."
 msgstr "Dit record bestaat niet of is verwijderd."
 
 #. js-lingui-id: rExecr
-#: src/engine/metadata-modules/ai/ai-agent/agent.exception.ts
+#: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "This role cannot be assigned to agents."
 msgstr "Deze rol kan niet aan agenten worden toegewezen."
 
@@ -7483,7 +7504,7 @@ msgstr "Gebruiker is niet aangemaakt met e-mail/wachtwoord"
 
 #. js-lingui-id: lUEEso
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
-#: src/engine/metadata-modules/ai/ai-agent/agent.exception.ts
+#: src/engine/metadata-modules/ai/ai.exception.ts
 #: src/engine/core-modules/user-workspace/user-workspace.exception.ts
 #: src/engine/core-modules/auth/auth.exception.ts
 #: src/engine/core-modules/auth/strategies/jwt.auth.strategy.spec.ts

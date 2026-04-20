@@ -46,7 +46,7 @@ describe('McpAuthGuard', () => {
 
     expect(mockSetHeader).toHaveBeenCalledWith(
       'WWW-Authenticate',
-      'Bearer resource_metadata="https://acme.twenty.com/.well-known/oauth-protected-resource"',
+      'Bearer resource_metadata="https://acme.twenty.com/.well-known/oauth-protected-resource/mcp", scope="api profile"',
     );
   });
 });

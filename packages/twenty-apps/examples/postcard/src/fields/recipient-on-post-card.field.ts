@@ -1,10 +1,4 @@
-import {
-  defineField,
-  FieldType,
-  RelationType,
-  OnDeleteAction,
-  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
-} from 'twenty-sdk';
+import { defineField, FieldType, RelationType, OnDeleteAction, STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-sdk/define';
 import { POST_CARD_UNIVERSAL_IDENTIFIER } from '../objects/post-card.object';
 
 export const RECIPIENT_ON_POST_CARD_ID = 'c44f158e-2747-42c6-9295-75b8cbae7039';

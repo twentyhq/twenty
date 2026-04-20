@@ -17,6 +17,7 @@ export const createDefaultStandaloneRichTextWidget = (
   return {
     __typename: 'PageLayoutWidget',
     id,
+    applicationId: '',
     pageLayoutTabId,
     title: 'Untitled Rich Text',
     isActive: true,

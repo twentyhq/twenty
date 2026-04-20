@@ -1,6 +1,6 @@
 import { Global, Module } from '@nestjs/common';
 
-import { AgentModelConfigService } from 'src/engine/metadata-modules/ai/ai-models/services/agent-model-config.service';
+import { AiModelConfigService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-config.service';
 import { AiModelPreferencesService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-preferences.service';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { ModelsDevCatalogService } from 'src/engine/metadata-modules/ai/ai-models/services/models-dev-catalog.service';
@@ -15,11 +15,11 @@ import { SdkProviderFactoryService } from 'src/engine/metadata-modules/ai/ai-mod
     ModelsDevCatalogService,
     AiModelPreferencesService,
     AiModelRegistryService,
-    AgentModelConfigService,
+    AiModelConfigService,
   ],
   exports: [
     AiModelRegistryService,
-    AgentModelConfigService,
+    AiModelConfigService,
     SdkProviderFactoryService,
     ModelsDevCatalogService,
   ],

@@ -23,7 +23,7 @@ import { AdminWorkspaceChatThreadDTO } from 'src/engine/core-modules/admin-panel
 import { AdminChatThreadMessagesDTO } from 'src/engine/core-modules/admin-panel/dtos/admin-chat-thread-messages.dto';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
-import { AdminAIModelsDTO } from 'src/engine/core-modules/client-config/client-config.entity';
+import { AdminAiModelsDTO } from 'src/engine/core-modules/client-config/client-config.entity';
 import { UsageBreakdownItemDTO } from 'src/engine/core-modules/usage/dtos/usage-breakdown-item.dto';
 import { UsageAnalyticsService } from 'src/engine/core-modules/usage/services/usage-analytics.service';
 import { AiModelRole } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-role.enum';
@@ -58,7 +58,7 @@ import { type AiProviderModelConfig } from 'src/engine/metadata-modules/ai/ai-mo
 import { extractConfigVariableName } from 'src/engine/metadata-modules/ai/ai-models/utils/extract-config-variable-name.util';
 import { loadDefaultAiProviders } from 'src/engine/metadata-modules/ai/ai-models/utils/load-default-ai-providers.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
+import { AdminResolver } from 'src/engine/api/graphql/graphql-config/decorators/admin-resolver.decorator';
 import { AdminPanelGuard } from 'src/engine/guards/admin-panel-guard';
 import { ServerLevelImpersonateGuard } from 'src/engine/guards/server-level-impersonate.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
@@ -74,7 +74,7 @@ import { SetMaintenanceModeInput } from './dtos/set-maintenance-mode.input';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 
 @UsePipes(ResolverValidationPipe)
-@MetadataResolver()
+@AdminResolver()
 @UseFilters(
   AuthGraphqlApiExceptionFilter,
   PreventNestToAutoLogGraphqlErrorsFilter,
@@ -211,8 +211,8 @@ export class AdminPanelResolver {
   }
 
   @UseGuards(AdminPanelGuard)
-  @Query(() => AdminAIModelsDTO)
-  async getAdminAiModels(): Promise<AdminAIModelsDTO> {
+  @Query(() => AdminAiModelsDTO)
+  async getAdminAiModels(): Promise<AdminAiModelsDTO> {
     const resolvedProviders =
       this.aiModelRegistryService.getResolvedProvidersForAdmin();
 

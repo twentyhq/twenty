@@ -38,6 +38,7 @@ export const DEFAULT_WORKFLOW_PAGE_LAYOUT: PageLayout = {
       widgets: [
         {
           __typename: 'PageLayoutWidget',
+          applicationId: '',
           id: 'workflow-widget-flow',
           isActive: true,
           pageLayoutTabId: 'workflow-tab-flow',

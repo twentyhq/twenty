@@ -1,13 +1,13 @@
 // @ts-nocheck
 'use client';
 
+import { createSiteWebGlRenderer } from '@/lib/webgl';
 import { useEffect, useRef, type CSSProperties } from 'react';
 import * as THREE from 'three';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
-import { createSiteWebGlRenderer } from '@/lib/webgl';
 
 const DRACO_DECODER_PATH =
   'https://www.gstatic.com/draco/versioned/decoders/1.5.6/';
@@ -118,6 +118,7 @@ const DIAMOND_MODEL_URL = '/illustrations/home/three-cards/diamond.glb';
 const LEGACY_IMPORTED_GEOMETRY_SCALE_TARGET = 2.75;
 const previewDistance = 4.5;
 const VIRTUAL_RENDER_HEIGHT = 768;
+
 const passThroughVertexShader =
   '\n  varying vec2 vUv;\n\n  void main() {\n    vUv = uv;\n    gl_Position = vec4(position, 1.0);\n  }\n';
 const blurFragmentShader =
@@ -134,19 +135,23 @@ function getModelOverrides(modelUrl) {
   }
 
   return {
-    animation: {
-      autoRotateEnabled: false,
-    },
     importedGeometry: {
       useLegacyNormalization: true,
+      // The diamond GLB ships off-axis; baking this Z rotation into the
+      // geometry lets it auto-rotate around the world Y axis like the other
+      // models while still reading as a symmetric diamond on screen.
+      postRotateZ: 1,
     },
     initialPose: {
       ...initialPose,
-      autoElapsed: 42.43333333333221,
-      rotateElapsed: 89.98333333332951,
-      rotationX: -8.99639917695435,
-      rotationY: -8.99639917695435,
-      timeElapsed: 851.4676000003166,
+      autoElapsed: 0,
+      rotateElapsed: 0,
+      rotationX: 0,
+      rotationY: 0,
+      rotationZ: 0,
+      targetRotationX: 0,
+      targetRotationY: 0,
+      timeElapsed: 0,
     },
   };
 }
@@ -870,7 +875,7 @@ function createLoadingManager() {
 }
 
 function normalizeImportedGeometry(geometry, options = {}) {
-  const { useLegacyNormalization = false } = options;
+  const { useLegacyNormalization = false, postRotateZ = 0 } = options;
   geometry.computeBoundingBox();
 
   let boundingBox = geometry.boundingBox;
@@ -906,6 +911,10 @@ function normalizeImportedGeometry(geometry, options = {}) {
   center = new THREE.Vector3();
   boundingBox?.getCenter(center);
   geometry.translate(-center.x, -center.y, -center.z);
+
+  if (postRotateZ !== 0) {
+    geometry.rotateZ(postRotateZ);
+  }
 
   geometry.computeVertexNormals();
   geometry.computeBoundingBox();

@@ -1,0 +1,193 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`Sync application should fail when creating permissions on a standard role from another app should fail when adding a field permission under the standard admin role 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "fieldPermission": [
+        {
+          "errors": [
+            {
+              "code": "ROLE_BELONGS_TO_ANOTHER_APPLICATION",
+              "message": "Cannot modify permissions on a role owned by another application",
+              "userFriendlyMessage": "Cannot modify permissions on a role owned by another application.",
+            },
+            {
+              "code": "ROLE_NOT_EDITABLE",
+              "message": "Role is not editable",
+              "userFriendlyMessage": "This role cannot be modified because it is a system role. Only custom roles can be edited.",
+            },
+            {
+              "code": "OBJECT_METADATA_NOT_FOUND_PERMISSIONS",
+              "message": "Object metadata not found",
+              "userFriendlyMessage": "Object metadata not found",
+            },
+            {
+              "code": "FIELD_METADATA_NOT_FOUND",
+              "message": "Field metadata not found",
+              "userFriendlyMessage": "Field metadata not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "fieldMetadataUniversalIdentifier": Any<String>,
+            "objectMetadataUniversalIdentifier": Any<String>,
+            "roleUniversalIdentifier": Any<String>,
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "fieldPermission",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+      "role": [
+        {
+          "errors": [
+            {
+              "code": "ENTITY_ALREADY_EXISTS",
+              "message": "Cannot create role: universalIdentifier "20202020-02c2-43f2-b94d-cab1f2b532eb" already exists in role maps from application "20202020-64aa-4b6f-b003-9c74b97cee20"",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "role",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 role, 1 fieldPermission",
+    "summary": {
+      "fieldPermission": 1,
+      "role": 1,
+      "totalErrors": 2,
+    },
+    "userFriendlyMessage": "Metadata validation failed",
+  },
+  "message": "Validation errors occurred while syncing application manifest metadata",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Sync application should fail when creating permissions on a standard role from another app should fail when adding a permission flag under the standard admin role 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "permissionFlag": [
+        {
+          "errors": [
+            {
+              "code": "ROLE_BELONGS_TO_ANOTHER_APPLICATION",
+              "message": "Cannot modify permissions on a role owned by another application",
+              "userFriendlyMessage": "Cannot modify permissions on a role owned by another application.",
+            },
+            {
+              "code": "ROLE_NOT_EDITABLE",
+              "message": "Role is not editable",
+              "userFriendlyMessage": "This role cannot be modified because it is a system role. Only custom roles can be edited.",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "roleUniversalIdentifier": Any<String>,
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "permissionFlag",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+      "role": [
+        {
+          "errors": [
+            {
+              "code": "ENTITY_ALREADY_EXISTS",
+              "message": "Cannot create role: universalIdentifier "20202020-02c2-43f2-b94d-cab1f2b532eb" already exists in role maps from application "20202020-64aa-4b6f-b003-9c74b97cee20"",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "role",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 role, 1 permissionFlag",
+    "summary": {
+      "permissionFlag": 1,
+      "role": 1,
+      "totalErrors": 2,
+    },
+    "userFriendlyMessage": "Metadata validation failed",
+  },
+  "message": "Validation errors occurred while syncing application manifest metadata",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Sync application should fail when creating permissions on a standard role from another app should fail when adding an object permission under the standard admin role 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "objectPermission": [
+        {
+          "errors": [
+            {
+              "code": "ROLE_BELONGS_TO_ANOTHER_APPLICATION",
+              "message": "Cannot modify permissions on a role owned by another application",
+              "userFriendlyMessage": "Cannot modify permissions on a role owned by another application.",
+            },
+            {
+              "code": "ROLE_NOT_EDITABLE",
+              "message": "Role is not editable",
+              "userFriendlyMessage": "This role cannot be modified because it is a system role. Only custom roles can be edited.",
+            },
+            {
+              "code": "OBJECT_METADATA_NOT_FOUND_PERMISSIONS",
+              "message": "Object metadata not found",
+              "userFriendlyMessage": "Object metadata not found",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "objectMetadataUniversalIdentifier": Any<String>,
+            "roleUniversalIdentifier": Any<String>,
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "objectPermission",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+      "role": [
+        {
+          "errors": [
+            {
+              "code": "ENTITY_ALREADY_EXISTS",
+              "message": "Cannot create role: universalIdentifier "20202020-02c2-43f2-b94d-cab1f2b532eb" already exists in role maps from application "20202020-64aa-4b6f-b003-9c74b97cee20"",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "role",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 role, 1 objectPermission",
+    "summary": {
+      "objectPermission": 1,
+      "role": 1,
+      "totalErrors": 2,
+    },
+    "userFriendlyMessage": "Metadata validation failed",
+  },
+  "message": "Validation errors occurred while syncing application manifest metadata",
+  "name": "GraphQLError",
+}
+`;

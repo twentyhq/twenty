@@ -7,14 +7,11 @@ import {
 } from '@/cli/utilities/build/manifest/manifest-extract-config';
 import { extractManifestFromFile } from '@/cli/utilities/build/manifest/manifest-extract-config-from-file';
 import { getDefaultFieldsInObjectFields } from '@/cli/utilities/build/manifest/utils/get-default-fields-in-object-fields';
-import {
-  type ApplicationConfig,
-  type FrontComponentConfig,
-  type LogicFunctionConfig,
-} from '@/sdk';
-import { type ObjectConfig } from '@/sdk/objects/object-config';
-import { type PageLayoutConfig } from '@/sdk/page-layouts/page-layout-config';
-import { type ViewConfig } from '@/sdk/views/view-config';
+import { type ApplicationConfig, type LogicFunctionConfig } from '@/sdk/define';
+import { type FrontComponentConfig } from '@/sdk/define/front-component/front-component-config';
+import { type ObjectConfig } from '@/sdk/define/objects/object-config';
+import { type PageLayoutConfig } from '@/sdk/define/page-layouts/page-layout-config';
+import { type ViewConfig } from '@/sdk/define/views/view-config';
 import { readFile } from 'node:fs/promises';
 import { basename, extname, relative } from 'path';
 import { glob } from 'tinyglobby';
@@ -40,10 +37,10 @@ import {
 import { getInputSchemaFromSourceCode } from 'twenty-shared/logic-function';
 import { assertUnreachable } from 'twenty-shared/utils';
 import { addMissingFieldOptionIds } from '@/cli/utilities/build/manifest/utils/add-missing-field-option-ids';
-import { type PostInstallLogicFunctionConfig } from '@/sdk/logic-functions/post-install-logic-function-config';
-import { type PreInstallLogicFunctionConfig } from '@/sdk/logic-functions/pre-install-logic-function-config';
+import { type PostInstallLogicFunctionConfig } from '@/sdk/define/logic-functions/post-install-logic-function-config';
+import { type PreInstallLogicFunctionConfig } from '@/sdk/define/logic-functions/pre-install-logic-function-config';
 import { fromRoleConfigToRoleManifest } from '@/cli/utilities/build/manifest/utils/from-role-config-to-role-manifest';
-import { type RoleConfig } from '@/sdk/roles/role-config';
+import { type RoleConfig } from '@/sdk/define/roles/role-config';
 
 const loadSources = async (appPath: string): Promise<string[]> => {
   return await glob(['**/*.ts', '**/*.tsx'], {

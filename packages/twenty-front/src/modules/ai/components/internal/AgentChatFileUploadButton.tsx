@@ -1,4 +1,4 @@
-import { useAIChatFileUpload } from '@/ai/hooks/useAIChatFileUpload';
+import { useAiChatFileUpload } from '@/ai/hooks/useAiChatFileUpload';
 import { agentChatSelectedFilesState } from '@/ai/states/agentChatSelectedFilesState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { styled } from '@linaria/react';
@@ -23,7 +23,7 @@ export const AgentChatFileUploadButton = () => {
     agentChatSelectedFilesState,
   );
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const { uploadFiles } = useAIChatFileUpload();
+  const { uploadFiles } = useAiChatFileUpload();
 
   const handleFileInputChange = (
     event: React.ChangeEvent<HTMLInputElement>,

@@ -7,7 +7,7 @@ import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-
 import { FileModule } from 'src/engine/core-modules/file/file.module';
 import { ThrottlerModule } from 'src/engine/core-modules/throttler/throttler.module';
 import { AiAgentRoleModule } from 'src/engine/metadata-modules/ai/ai-agent-role/ai-agent-role.module';
-import { AgentGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/ai/ai-agent/interceptors/agent-graphql-api-exception.interceptor';
+import { AiGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/ai/interceptors/ai-graphql-api-exception.interceptor';
 import { AiModelsModule } from 'src/engine/metadata-modules/ai/ai-models/ai-models.module';
 import { FlatAgentModule } from 'src/engine/metadata-modules/flat-agent/flat-agent.module';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
@@ -45,7 +45,7 @@ import { AgentEntity } from './entities/agent.entity';
     AgentResolver,
     AgentService,
     WorkspaceMigrationGraphqlApiExceptionInterceptor,
-    AgentGraphqlApiExceptionInterceptor,
+    AiGraphqlApiExceptionInterceptor,
   ],
   exports: [AgentService, TypeOrmModule.forFeature([AgentEntity])],
 })

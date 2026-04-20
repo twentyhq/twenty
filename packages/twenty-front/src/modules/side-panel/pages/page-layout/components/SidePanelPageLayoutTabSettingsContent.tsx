@@ -14,6 +14,7 @@ import { RegularTabSettingsContent } from '@/side-panel/pages/page-layout/compon
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useNavigate } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -85,11 +86,9 @@ export const SidePanelPageLayoutTabSettingsContent = ({
   const canSetAsPinned =
     isRecordPage && !isAlreadyPinned && tabsSorted.length > 1;
 
-  const isCustomTab =
-    isDefined(currentWorkspace?.workspaceCustomApplication) &&
-    tab.applicationId === currentWorkspace.workspaceCustomApplication.id;
-
-  const canShowResetToDefault = !isCustomTab;
+  const isResetToDefaultDisabled =
+    !isNonEmptyString(tab.applicationId) ||
+    tab.applicationId === currentWorkspace?.workspaceCustomApplication?.id;
 
   const handleDelete = () => {
     deleteTab(tab.id);
@@ -111,7 +110,7 @@ export const SidePanelPageLayoutTabSettingsContent = ({
         canSetAsPinned={canSetAsPinned}
         canMoveLeft={canMoveLeft}
         canMoveRight={canMoveRight}
-        canShowResetToDefault={canShowResetToDefault}
+        isResetToDefaultDisabled={isResetToDefaultDisabled}
         canDelete={canDelete}
         onMoveLeft={() => moveLeft(tab.id)}
         onMoveRight={() => moveRight(tab.id)}
@@ -127,7 +126,7 @@ export const SidePanelPageLayoutTabSettingsContent = ({
       canSetAsPinned={canSetAsPinned}
       canMoveLeft={canMoveLeft}
       canMoveRight={canMoveRight}
-      canShowResetToDefault={canShowResetToDefault}
+      isResetToDefaultDisabled={isResetToDefaultDisabled}
       canDelete={canDelete}
       onMoveLeft={() => moveLeft(tab.id)}
       onMoveRight={() => moveRight(tab.id)}

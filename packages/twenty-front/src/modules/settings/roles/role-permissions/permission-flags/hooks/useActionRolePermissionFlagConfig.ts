@@ -30,7 +30,7 @@ type UseActionRolePermissionFlagConfigParams = {
 export const useActionRolePermissionFlagConfig = ({
   assignmentCapabilities,
 }: UseActionRolePermissionFlagConfigParams = {}): SettingsRolePermissionsSettingPermission[] => {
-  const isAIEnabled = useIsFeatureEnabled(FeatureFlagKey.IS_AI_ENABLED);
+  const isAiEnabled = useIsFeatureEnabled(FeatureFlagKey.IS_AI_ENABLED);
 
   const {
     canBeAssignedToAgents = false,
@@ -154,7 +154,7 @@ export const useActionRolePermissionFlagConfig = ({
       canBeAssignedToUsers && !canBeAssignedToAgents && !canBeAssignedToApiKeys;
 
     return allPermissions.filter((permission) => {
-      if (permission.key === PermissionFlagType.AI && !isAIEnabled) {
+      if (permission.key === PermissionFlagType.AI && !isAiEnabled) {
         return false;
       }
 
@@ -179,6 +179,6 @@ export const useActionRolePermissionFlagConfig = ({
     canBeAssignedToAgents,
     canBeAssignedToUsers,
     canBeAssignedToApiKeys,
-    isAIEnabled,
+    isAiEnabled,
   ]);
 };

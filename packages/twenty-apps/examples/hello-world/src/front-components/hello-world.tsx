@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { CoreApiClient, CoreSchema } from 'twenty-client-sdk/core';
-import { defineFrontComponent } from 'twenty-sdk';
+import { defineFrontComponent } from 'twenty-sdk/define';
 
 export const HELLO_WORLD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER =
   '7a758f23-5e7d-497d-98c9-7ca8d6c085b0';

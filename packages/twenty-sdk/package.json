@@ -1,9 +1,7 @@
 {
   "name": "twenty-sdk",
-  "version": "1.22.0",
-  "main": "dist/index.cjs",
-  "module": "dist/index.mjs",
-  "types": "dist/sdk/index.d.ts",
+  "version": "1.23.0-canary.1",
+  "sideEffects": false,
   "bin": {
     "twenty": "dist/cli.cjs"
   },
@@ -24,10 +22,15 @@
     "development"
   ],
   "exports": {
-    ".": {
-      "types": "./dist/sdk/index.d.ts",
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.cjs"
+    "./define": {
+      "types": "./dist/define/index.d.ts",
+      "import": "./dist/define/index.mjs",
+      "require": "./dist/define/index.cjs"
+    },
+    "./front-component": {
+      "types": "./dist/front-component/index.d.ts",
+      "import": "./dist/front-component/index.mjs",
+      "require": "./dist/front-component/index.cjs"
     },
     "./ui": {
       "types": "./dist/ui/index.d.ts",
@@ -97,6 +100,12 @@
   },
   "typesVersions": {
     "*": {
+      "define": [
+        "dist/define/index.d.ts"
+      ],
+      "front-component": [
+        "dist/front-component/index.d.ts"
+      ],
       "cli": [
         "dist/cli/operations/index.d.ts"
       ],

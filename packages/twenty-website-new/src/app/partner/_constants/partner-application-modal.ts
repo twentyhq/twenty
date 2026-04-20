@@ -26,7 +26,12 @@ export const PARTNER_APPLICATION_MODAL_COPY = {
     messageHint:
       'Tell us about the custom solutions or integrations you plan to build.',
   },
-  footnote:
-    "Our partner team typically reviews applications within 48 hours. Once approved, you'll get access to our partner portal and developer resources.",
   submit: 'Submit application',
+  submitInFlight: 'Submitting…',
+  validation: {
+    incompleteForm: 'Please complete all required fields before submitting.',
+    invalidEmail: 'Enter a valid email address.',
+    submitFailed:
+      'We could not submit your application. Please try again in a moment.',
+  },
 } as const;
