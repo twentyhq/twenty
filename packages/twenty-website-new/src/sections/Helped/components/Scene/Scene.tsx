@@ -13,11 +13,7 @@ const GUIDE_INTERSECTION_TOP = '176px';
 
 const helpedHeadingClassName = css`
   &[data-size='xl'] {
-    font-size: clamp(
-      ${theme.font.size(8)},
-      9.5vw,
-      ${theme.font.size(15)}
-    );
+    font-size: clamp(${theme.font.size(8)}, 9.5vw, ${theme.font.size(15)});
     line-height: 1.1;
   }
 
@@ -110,7 +106,11 @@ export function Scene({ data }: SceneProps) {
         sectionRef={sectionRef}
       />
       <StickyInner ref={innerRef}>
-        <GuideCrosshair crossX="50%" crossY={GUIDE_INTERSECTION_TOP} zIndex={0} />
+        <GuideCrosshair
+          crossX="50%"
+          crossY={GUIDE_INTERSECTION_TOP}
+          zIndex={0}
+        />
         <HeadlineBlock>
           <EyebrowExitTarget data-helped-exit-target>
             <Eyebrow colorScheme="primary" heading={data.eyebrow.heading} />
