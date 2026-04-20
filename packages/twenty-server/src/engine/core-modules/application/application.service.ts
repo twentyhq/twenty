@@ -12,10 +12,15 @@ import {
 } from 'src/engine/core-modules/application/application.exception';
 import { getDefaultApplicationPackageFields } from 'src/engine/core-modules/application/application-package/utils/get-default-application-package-fields.util';
 import { parseAvailablePackagesFromPackageJsonAndYarnLock } from 'src/engine/core-modules/application/application-package/utils/parse-available-packages-from-package-json-and-yarn-lock.util';
+import { ApplicationVariableEntity } from 'src/engine/core-modules/application/application-variable/application-variable.entity';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { ALL_FLAT_ENTITY_MAPS_PROPERTIES } from 'src/engine/metadata-modules/flat-entity/constant/all-flat-entity-maps-properties.constant';
+import { FrontComponentEntity } from 'src/engine/metadata-modules/front-component/entities/front-component.entity';
+import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import { logicFunctionCreateHash } from 'src/engine/metadata-modules/logic-function/utils/logic-function-create-hash.utils';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
 
@@ -28,6 +33,16 @@ export class ApplicationService {
     private readonly fileStorageService: FileStorageService,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
+    @InjectRepository(LogicFunctionEntity)
+    private readonly logicFunctionRepository: Repository<LogicFunctionEntity>,
+    @InjectRepository(AgentEntity)
+    private readonly agentRepository: Repository<AgentEntity>,
+    @InjectRepository(FrontComponentEntity)
+    private readonly frontComponentRepository: Repository<FrontComponentEntity>,
+    @InjectRepository(ObjectMetadataEntity)
+    private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
+    @InjectRepository(ApplicationVariableEntity)
+    private readonly applicationVariableRepository: Repository<ApplicationVariableEntity>,
   ) {}
 
   async findApplicationRoleId(
@@ -117,18 +132,14 @@ export class ApplicationService {
   async findManyApplications(
     workspaceId: string,
   ): Promise<ApplicationEntity[]> {
+    // Only join `applicationRegistration` (ManyToOne, 1:1 row impact). The
+    // OneToMany children (logicFunctions, agents, frontComponents, objects,
+    // applicationVariables) are not requested by the client at the list level
+    // and joining all five at once produces a Cartesian explosion that has
+    // already caused query timeouts in production.
     return this.applicationRepository.find({
       where: { workspaceId },
-      relations: [
-        'logicFunctions',
-        'agents',
-        'frontComponents',
-        'objects',
-        'applicationVariables',
-        'packageJsonFile',
-        'yarnLockFile',
-        'applicationRegistration',
-      ],
+      relations: ['applicationRegistration'],
     });
   }
 
@@ -153,19 +164,54 @@ export class ApplicationService {
       ...(isDefined(id) ? { id } : { universalIdentifier }),
     };
 
-    return await this.applicationRepository.findOne({
+    // Keep the lightweight ManyToOne / OneToOne joins on the main query
+    // (they cannot inflate row count) but split the OneToMany relations into
+    // parallel queries to avoid a Cartesian product across
+    // logicFunctions × agents × frontComponents × objects × applicationVariables.
+    const application = await this.applicationRepository.findOne({
       where,
       relations: [
-        'logicFunctions',
-        'agents',
-        'frontComponents',
-        'objects',
-        'applicationVariables',
         'packageJsonFile',
         'yarnLockFile',
         'applicationRegistration',
       ],
     });
+
+    if (!isDefined(application)) {
+      return null;
+    }
+
+    const [
+      logicFunctions,
+      agents,
+      frontComponents,
+      objects,
+      applicationVariables,
+    ] = await Promise.all([
+      this.logicFunctionRepository.find({
+        where: { applicationId: application.id, workspaceId },
+      }),
+      this.agentRepository.find({
+        where: { applicationId: application.id, workspaceId },
+      }),
+      this.frontComponentRepository.find({
+        where: { applicationId: application.id, workspaceId },
+      }),
+      this.objectMetadataRepository.find({
+        where: { applicationId: application.id, workspaceId },
+      }),
+      this.applicationVariableRepository.find({
+        where: { applicationId: application.id, workspaceId },
+      }),
+    ]);
+
+    application.logicFunctions = logicFunctions;
+    application.agents = agents;
+    application.frontComponents = frontComponents;
+    application.objects = objects;
+    application.applicationVariables = applicationVariables;
+
+    return application;
   }
 
   async findOneApplicationOrThrow({
