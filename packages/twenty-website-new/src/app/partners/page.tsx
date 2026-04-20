@@ -72,13 +72,14 @@ export default async function PartnerPage() {
 
       <TrustedBy.Root
         backgroundColor={theme.colors.primary.background[100]}
+        compactBottom
       >
         <TrustedBy.Separator separator={TRUSTED_BY_DATA.separator} />
         <TrustedBy.Logos logos={TRUSTED_BY_DATA.logos} />
         <TrustedBy.ClientCount label={TRUSTED_BY_DATA.clientCountLabel.text} />
       </TrustedBy.Root>
 
-      <CaseStudyCatalog.Promo entries={CASE_STUDY_CATALOG_ENTRIES} />
+      <CaseStudyCatalog.Promo compactTop entries={CASE_STUDY_CATALOG_ENTRIES} />
 
       <ThreeCards.Root backgroundColor={theme.colors.secondary.background[5]}>
         <ThreeCards.Intro page={Pages.Partners} align="left">

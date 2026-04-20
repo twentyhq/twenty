@@ -40,7 +40,7 @@ export const MENU_DATA: MenuDataType = {
             image: '/images/shared/menu/developers-preview.png',
             imageAlt: 'Blue developer illustration with branching arrows',
             imagePosition: 'center',
-            imageScale: 1.4,
+            imageScale: 1.6,
             title: 'Build on an open platform',
             description:
               'APIs, SDKs and webhooks to extend Twenty and ship apps on top of your CRM data.',
