@@ -55,7 +55,7 @@ export class PageLayoutTabResolver {
 
     const { twentyStandardFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
-        { workspaceId: workspace.id },
+        { workspace },
       );
 
     return resolvePageLayoutTabTitle({

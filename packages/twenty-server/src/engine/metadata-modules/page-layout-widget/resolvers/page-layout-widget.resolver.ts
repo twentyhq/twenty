@@ -56,7 +56,7 @@ export class PageLayoutWidgetResolver {
 
     const { twentyStandardFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
-        { workspaceId: workspace.id },
+        { workspace },
       );
 
     return resolvePageLayoutWidgetTitle({
