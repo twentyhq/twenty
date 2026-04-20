@@ -137,13 +137,15 @@ export const Avatar = ({
       }));
 
   const fixedBorderColor =
-    type === 'app' && !isPlaceholderFirstCharEmpty
+    type === 'app'
       ? (borderColor ??
-        stringToThemeColorP3String({
-          string: placeholderColorSeed ?? '',
-          variant: 6,
-          theme,
-        }))
+        (isPlaceholderFirstCharEmpty
+          ? undefined
+          : stringToThemeColorP3String({
+              string: placeholderColorSeed ?? '',
+              variant: 6,
+              theme,
+            })))
       : undefined;
 
   const showBackgroundColor = showPlaceholder;
