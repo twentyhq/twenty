@@ -132,7 +132,7 @@ export const PLAN_TABLE_DATA: PlanTableDataType = {
       type: 'row',
     },
     {
-      title: 'Automations',
+      title: 'AI & Automations',
       type: 'category',
     },
     {
@@ -148,6 +148,14 @@ export const PLAN_TABLE_DATA: PlanTableDataType = {
       tiers: {
         organization: { kind: 'yes', label: 'Yes' },
         pro: { kind: 'yes', label: 'Yes' },
+      },
+      type: 'row',
+    },
+    {
+      featureLabel: 'Custom AI models',
+      tiers: {
+        organization: { kind: 'yes', label: 'Yes' },
+        pro: { kind: 'dash' },
       },
       type: 'row',
     },
@@ -197,6 +205,14 @@ export const PLAN_TABLE_DATA: PlanTableDataType = {
     },
     {
       featureLabel: 'SSO',
+      tiers: {
+        organization: { kind: 'yes', label: 'Yes' },
+        pro: { kind: 'dash' },
+      },
+      type: 'row',
+    },
+    {
+      featureLabel: 'Advanced Encryption',
       tiers: {
         organization: { kind: 'yes', label: 'Yes' },
         pro: { kind: 'dash' },
