@@ -161,11 +161,7 @@ export class ApplicationService {
 
     const application = await this.applicationRepository.findOne({
       where,
-      relations: [
-        'packageJsonFile',
-        'yarnLockFile',
-        'applicationRegistration',
-      ],
+      relations: ['packageJsonFile', 'yarnLockFile', 'applicationRegistration'],
     });
 
     if (!isDefined(application)) {
