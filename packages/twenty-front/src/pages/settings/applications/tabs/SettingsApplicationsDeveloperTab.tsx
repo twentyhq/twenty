@@ -243,9 +243,9 @@ export const SettingsApplicationsDeveloperTab = () => {
                           <Avatar
                             avatarUrl={application.logo || null}
                             placeholder={application.name}
-                            placeholderColorSeed={application.name}
+                            placeholderColorSeed={application.id ?? application.name}
                             size="md"
-                            type="squared"
+                            type="app"
                           />
                           <OverflowingTextWithTooltip text={application.name} />
                         </StyledNameTableCell>

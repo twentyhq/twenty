@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { IconEyeOff } from 'twenty-ui/display';
+import { Avatar, IconEyeOff } from 'twenty-ui/display';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { OBJECT_SETTINGS_WIDTH } from '@/settings/data-model/constants/ObjectSettings';
 
@@ -8,6 +8,7 @@ type SettingsApplicationDetailTitleProps = {
   displayName: string;
   description?: string;
   logoUrl?: string;
+  universalIdentifier?: string;
   isUnlisted?: boolean;
 };
 
@@ -34,37 +35,6 @@ const StyledHeaderTop = styled.div`
   align-items: center;
   display: flex;
   gap: ${themeCssVariables.spacing[2]};
-`;
-
-const StyledLogo = styled.div`
-  align-items: center;
-  background-color: ${themeCssVariables.background.tertiary};
-  border-radius: ${themeCssVariables.border.radius.sm};
-  display: flex;
-  flex-shrink: 0;
-  height: 24px;
-  justify-content: center;
-  overflow: hidden;
-  width: 24px;
-`;
-
-const StyledLogoImage = styled.img`
-  height: 32px;
-  object-fit: contain;
-  width: 32px;
-`;
-
-const StyledLogoPlaceholder = styled.div`
-  align-items: center;
-  background-color: ${themeCssVariables.color.blue};
-  border-radius: ${themeCssVariables.border.radius.xs};
-  color: ${themeCssVariables.font.color.inverted};
-  display: flex;
-  font-size: ${themeCssVariables.font.size.lg};
-  font-weight: ${themeCssVariables.font.weight.medium};
-  height: 32px;
-  justify-content: center;
-  width: 32px;
 `;
 
 const StyledAppName = styled.div`
@@ -99,6 +69,7 @@ export const SettingsApplicationDetailTitle = ({
   displayName,
   description,
   logoUrl,
+  universalIdentifier,
   isUnlisted = false,
 }: SettingsApplicationDetailTitleProps) => {
   return (
@@ -112,15 +83,13 @@ export const SettingsApplicationDetailTitle = ({
       <StyledHeader>
         <StyledHeaderLeft>
           <StyledHeaderTop>
-            <StyledLogo>
-              {logoUrl ? (
-                <StyledLogoImage src={logoUrl} alt={displayName} />
-              ) : (
-                <StyledLogoPlaceholder>
-                  {displayName.charAt(0).toUpperCase()}
-                </StyledLogoPlaceholder>
-              )}
-            </StyledLogo>
+            <Avatar
+              type="app"
+              size="lg"
+              avatarUrl={logoUrl}
+              placeholder={displayName}
+              placeholderColorSeed={universalIdentifier ?? displayName}
+            />
             <StyledAppName>{displayName}</StyledAppName>
           </StyledHeaderTop>
           {description && (
