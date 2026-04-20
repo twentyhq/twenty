@@ -34,7 +34,6 @@ const StyledCreditUsageFooterActions = styled.div`
   margin-top: ${themeCssVariables.spacing[4]};
 `;
 
-
 export const SettingsBillingCreditsSection = ({
   currentBillingSubscription,
 }: {

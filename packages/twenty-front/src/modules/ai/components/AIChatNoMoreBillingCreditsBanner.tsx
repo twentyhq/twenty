@@ -73,11 +73,17 @@ export const AIChatNoMoreBillingCreditsBanner = () => {
       ? t`You've hit your usage limit. \nUpgrade to ${nextTierCredits} credits for $${nextTierPrice}/${nextTierInterval}.`
       : t`You've hit your usage limit. \nReach to our support team to upgrade.`;
 
-  const buttonTitle = isTrialing ? t`Subscribe Now` : t`Upgrade`;
+  const buttonTitle = isTrialing
+    ? t`Subscribe Now`
+    : isDefined(nextMeteredBillingPrice)
+      ? t`Upgrade`
+      : undefined;
 
   const handleButtonClick = isTrialing
     ? () => openModal(AI_CHAT_END_TRIAL_PERIOD_MODAL_ID)
-    : () => openModal(AI_CHAT_UPGRADE_CREDIT_PLAN_MODAL_ID);
+    : isDefined(nextMeteredBillingPrice)
+      ? () => openModal(AI_CHAT_UPGRADE_CREDIT_PLAN_MODAL_ID)
+      : undefined;
 
   const handleUpgradeConfirm = async () => {
     if (!isDefined(nextMeteredBillingPrice)) return;
