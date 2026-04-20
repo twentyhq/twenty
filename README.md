@@ -30,38 +30,38 @@ See:
 
 Twenty v2 is a code-first, AI-native CRM platform. Build, ship, and version your own CRM apps — with the full CRM toolkit out of the box and AI agents on top.
 
-+ [Create your apps with code + AI](#create-your-apps-with-code--ai)
-+ [All the tools you need to build anything](#all-the-tools-you-need-to-build-anything)
-+ [Stay on top with version control](#stay-on-top-with-version-control)
-+ [AI agents and chats](#ai-agents-and-chats)
-+ [Plus all the tools of a good CRM](#plus-all-the-tools-of-a-good-crm)
++ [The build loop](#the-build-loop)
++ [Primitives](#primitives)
++ [Ship like software](#ship-like-software)
++ [Agents on every surface](#agents-on-every-surface)
++ [CRM fundamentals](#crm-fundamentals)
 
 
-## Create your apps with code + AI
-
-<p align="center">
-  <img src="./packages/twenty-website/public/images/readme/v2-build-apps.png" alt="Create your apps with code and AI" width="760" />
-</p>
-
-## All the tools you need to build anything
+## The build loop
 
 <p align="center">
-  <img src="./packages/twenty-website/public/images/readme/v2-tools.png" alt="Data model, logic, and layout" width="760" />
+  <img src="./packages/twenty-website/public/images/readme/v2-build-apps.png" alt="Create your apps with code and AI" />
 </p>
 
-## Stay on top with version control
+## Primitives
+
+<p align="center">
+  <img src="./packages/twenty-website/public/images/readme/v2-tools.png" alt="Data model, logic, and layout" />
+</p>
+
+## Ship like software
 
 <p align="center">
   <img src="./packages/twenty-website/public/images/readme/v2-version-control.png" alt="Version control with GitHub" />
 </p>
 
-## AI agents and chats
+## Agents on every surface
 
 <p align="center">
   <img src="./packages/twenty-website/public/images/readme/v2-ai-agents.png" alt="AI agents and chats" />
 </p>
 
-## Plus all the tools of a good CRM
+## CRM fundamentals
 
 <p align="center">
   <img src="./packages/twenty-website/public/images/readme/v2-crm-tools.png" alt="Kanban, workflows, dashboards, and more" />
