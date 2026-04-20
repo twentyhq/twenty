@@ -4,4 +4,5 @@ export type ToolRetrievalOptions = {
   categories?: ToolCategory[];
   excludeTools?: string[];
   wrapWithErrorContext?: boolean;
+  includeLoadingMessage?: boolean;
 };

@@ -17,7 +17,10 @@ import { type ToolDescriptor } from 'src/engine/core-modules/tool-provider/types
 import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-index-entry.type';
 import { wrapWithErrorHandler } from 'src/engine/core-modules/tool-provider/utils/tool-error.util';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
-import { wrapJsonSchemaForExecution } from 'src/engine/core-modules/tool/utils/wrap-tool-for-execution.util';
+import {
+  stripLoadingMessage,
+  wrapJsonSchemaForExecution,
+} from 'src/engine/core-modules/tool/utils/wrap-tool-for-execution.util';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 
 @Injectable()
@@ -104,23 +107,37 @@ export class ToolRegistryService {
   hydrateToolSet(
     descriptors: ToolDescriptor[],
     context: ToolProviderContext,
-    options?: { wrapWithErrorContext?: boolean },
+    options?: {
+      wrapWithErrorContext?: boolean;
+      includeLoadingMessage?: boolean;
+    },
   ): ToolSet {
     const toolSet: ToolSet = {};
+    const includeLoadingMessage = options?.includeLoadingMessage ?? true;
 
     for (const descriptor of descriptors) {
-      const schemaWithLoading = wrapJsonSchemaForExecution(
-        descriptor.inputSchema as Record<string, unknown>,
-      );
+      const baseSchema = descriptor.inputSchema as Record<string, unknown>;
+      const schema = includeLoadingMessage
+        ? wrapJsonSchemaForExecution(baseSchema)
+        : baseSchema;
 
       const executeFn = async (
         args: Record<string, unknown>,
-      ): Promise<ToolOutput> =>
-        this.toolExecutorService.dispatch(descriptor, args, context);
+      ): Promise<ToolOutput> => {
+        const cleanArgs = includeLoadingMessage
+          ? stripLoadingMessage(args ?? {})
+          : (args ?? {});
+
+        return this.toolExecutorService.dispatch(
+          descriptor,
+          cleanArgs,
+          context,
+        );
+      };
 
       toolSet[descriptor.name] = {
         description: descriptor.description,
-        inputSchema: jsonSchema(schemaWithLoading),
+        inputSchema: jsonSchema(schema),
         execute: options?.wrapWithErrorContext
           ? wrapWithErrorHandler(descriptor.name, executeFn)
           : executeFn,
@@ -148,6 +165,7 @@ export class ToolRegistryService {
   async getToolsByName(
     names: string[],
     context: ToolContext,
+    options?: { includeLoadingMessage?: boolean },
   ): Promise<ToolSet> {
     const fullContext = this.buildContextFromToolContext(context);
 
@@ -164,7 +182,9 @@ export class ToolRegistryService {
         inputSchema: schemas.get(entry.name)!,
       }));
 
-    return this.hydrateToolSet(descriptors, fullContext);
+    return this.hydrateToolSet(descriptors, fullContext, {
+      includeLoadingMessage: options?.includeLoadingMessage,
+    });
   }
 
   async getToolInfo(
@@ -207,7 +227,7 @@ export class ToolRegistryService {
 
   async resolveAndExecute(
     toolName: string,
-    args: Record<string, unknown>,
+    args: Record<string, unknown> | undefined,
     context: ToolContext,
     _options: ToolExecutionOptions,
   ): Promise<ToolOutput> {
@@ -246,7 +266,12 @@ export class ToolRegistryService {
     context: ToolProviderContext,
     options: ToolRetrievalOptions = {},
   ): Promise<ToolSet> {
-    const { categories, excludeTools, wrapWithErrorContext } = options;
+    const {
+      categories,
+      excludeTools,
+      wrapWithErrorContext,
+      includeLoadingMessage,
+    } = options;
     const categorySet = categories ? new Set(categories) : undefined;
 
     const results = await Promise.all(
@@ -279,6 +304,7 @@ export class ToolRegistryService {
 
     const toolSet = this.hydrateToolSet(filteredDescriptors, context, {
       wrapWithErrorContext,
+      includeLoadingMessage,
     });
 
     if (categories?.includes(ToolCategory.NATIVE_MODEL)) {

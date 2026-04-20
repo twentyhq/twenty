@@ -118,6 +118,7 @@ export class McpProtocolService {
     const preloadedTools = await this.toolRegistry.getToolsByName(
       COMMON_PRELOAD_TOOLS,
       toolContext,
+      { includeLoadingMessage: false },
     );
 
     return {
