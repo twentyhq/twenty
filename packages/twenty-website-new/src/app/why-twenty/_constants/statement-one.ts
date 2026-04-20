@@ -2,7 +2,7 @@ import type { StatementDataType } from '@/sections/Statement/types';
 
 export const STATEMENT_ONE: StatementDataType = {
   heading: {
-    text: 'Lorem ipsum dolor sit amet, consecteturLorem ipsum dolor sit amet, consectetur oremipsum dolor sit amet, conse.',
+    text: 'The best go-to-market teams will run systems nobody else has.',
     fontFamily: 'serif',
   },
 };

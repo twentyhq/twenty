@@ -6,6 +6,9 @@ export const HERO_DATA: HeroWhyTwentyDataType = {
     { text: ' not bought.', fontFamily: 'sans' },
   ],
   body: {
-    text: 'Most packaged software makes companies more similar. CRM is no exception. AI is turning software into a commodity. That does not make your go-to-market a commodity. It makes it the battleground.',
+    text:
+      'CRM was a database you filled on Fridays. ' +
+      'AI turned it into the system that runs your go-to-market. ' +
+      "To differentiate, you have to build what your competitors can't buy.",
   },
 };
