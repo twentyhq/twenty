@@ -1,11 +1,5 @@
 <p align="center">
   <a href="https://www.twenty.com">
-    <img src="./packages/twenty-website/public/images/core/logo.svg" width="100px" alt="Twenty logo" />
-  </a>
-</p>
-
-<p align="center">
-  <a href="https://www.twenty.com">
     <picture>
       <source media="(prefers-color-scheme: dark)" srcset="./packages/twenty-website/public/images/readme/github-cover-dark.png" />
       <source media="(prefers-color-scheme: light)" srcset="./packages/twenty-website/public/images/readme/github-cover-light.png" />
