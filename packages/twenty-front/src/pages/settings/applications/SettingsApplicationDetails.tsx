@@ -295,6 +295,8 @@ export const SettingsApplicationDetails = () => {
             displayName={displayName}
             description={description}
             logoUrl={logoUrl}
+            applicationId={application?.id}
+            applicationName={application?.name}
             universalIdentifier={application?.universalIdentifier}
           />
         }

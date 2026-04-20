@@ -268,6 +268,8 @@ export const SettingsAvailableApplicationDetails = () => {
             displayName={displayName}
             description={description}
             logoUrl={app?.logoUrl}
+            applicationId={application?.id}
+            applicationName={application?.name}
             universalIdentifier={detail.universalIdentifier}
             isUnlisted={isUnlisted}
           />

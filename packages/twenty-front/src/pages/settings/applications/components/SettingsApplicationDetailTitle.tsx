@@ -1,13 +1,16 @@
+import { useApplicationAvatarColors } from '@/applications/hooks/useApplicationAvatarColors';
+import { OBJECT_SETTINGS_WIDTH } from '@/settings/data-model/constants/ObjectSettings';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { Avatar, IconEyeOff } from 'twenty-ui/display';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { OBJECT_SETTINGS_WIDTH } from '@/settings/data-model/constants/ObjectSettings';
 
 type SettingsApplicationDetailTitleProps = {
   displayName: string;
   description?: string;
   logoUrl?: string;
+  applicationId?: string;
+  applicationName?: string;
   universalIdentifier?: string;
   isUnlisted?: boolean;
 };
@@ -69,9 +72,17 @@ export const SettingsApplicationDetailTitle = ({
   displayName,
   description,
   logoUrl,
+  applicationId,
+  applicationName,
   universalIdentifier,
   isUnlisted = false,
 }: SettingsApplicationDetailTitleProps) => {
+  const colors = useApplicationAvatarColors({
+    id: applicationId,
+    name: applicationName,
+    universalIdentifier,
+  });
+
   return (
     <StyledTitleContainer>
       {isUnlisted && (
@@ -89,6 +100,9 @@ export const SettingsApplicationDetailTitle = ({
               avatarUrl={logoUrl}
               placeholder={displayName}
               placeholderColorSeed={universalIdentifier ?? displayName}
+              color={colors?.color}
+              backgroundColor={colors?.backgroundColor}
+              borderColor={colors?.borderColor}
             />
             <StyledAppName>{displayName}</StyledAppName>
           </StyledHeaderTop>
