@@ -6,6 +6,8 @@ WORKDIR /app
 COPY ./package.json .
 COPY ./yarn.lock .
 COPY ./.yarnrc.yml .
+COPY ./tsconfig.base.json .
+COPY ./nx.json .
 COPY ./.yarn/releases /app/.yarn/releases
 COPY ./.yarn/patches /app/.yarn/patches
 COPY ./packages/twenty-oxlint-rules /app/packages/twenty-oxlint-rules
