@@ -69,7 +69,7 @@ export class ToolExecutorWorkflowAction implements WorkflowAction {
 
       if (emailInput.body) {
         const resolvedBody = resolveRichTextVariables(emailInput.body, context);
-        const bodyJson = JSON.parse(resolvedBody);
+        const bodyJson = JSON.parse(resolvedBody!);
         const htmlBody = await renderRichTextToHtml(bodyJson);
 
         toolInput = {
