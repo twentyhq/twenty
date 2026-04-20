@@ -183,6 +183,7 @@ export class OAuthRegistrationController {
   @UseGuards(PublicEndpointGuard, NoPermissionGuard)
   async readRegistration(
     @Param('clientId') clientId: string,
+    @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
   ) {
     const registration = await this.applicationRegistrationRepository.findOne({
@@ -204,6 +205,8 @@ export class OAuthRegistrationController {
     res.setHeader('Cache-Control', 'no-store');
     res.setHeader('Pragma', 'no-cache');
 
+    const issuer = `${req.protocol}://${req.get('host')}`;
+
     return {
       client_id: registration.oAuthClientId,
       client_name: registration.name,
@@ -212,6 +215,7 @@ export class OAuthRegistrationController {
       response_types: ['code'],
       token_endpoint_auth_method: 'none',
       scope: registration.oAuthScopes.join(' '),
+      registration_client_uri: `${issuer}/oauth/register/${registration.oAuthClientId}`,
     };
   }
 
