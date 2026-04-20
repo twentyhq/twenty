@@ -37,7 +37,7 @@ const PricingBannerContainer = styled.div`
 export const metadata: Metadata = {
   title: 'Pricing | Twenty',
   description:
-    'Plans that scale with your team. Compare tiers of the #1 open-source CRM.',
+    'Plans that scale with your team. Compare tiers of the #1 open source CRM.',
 };
 
 export default async function PricingPage() {

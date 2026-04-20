@@ -29,8 +29,9 @@ import { styled } from '@linaria/react';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Twenty | Open Source CRM',
-  description: 'Modular, scalable open source CRM for modern teams.',
+  title: 'Twenty | #1 open source CRM',
+  description:
+    'The #1 open source CRM for modern teams. Modular, scalable, and built to fit your business.',
 };
 
 const HOME_TOP_BACKGROUND_COLOR = '#F4F4F4';

@@ -21,7 +21,7 @@ import { Fragment } from 'react';
 export const metadata: Metadata = {
   title: 'Releases | Twenty',
   description:
-    'Discover the newest features and improvements in Twenty, the open-source CRM.',
+    'Discover the newest features and improvements in Twenty, the #1 open source CRM.',
 };
 
 export default async function ReleasesPage() {

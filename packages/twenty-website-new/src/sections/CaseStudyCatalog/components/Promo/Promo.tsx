@@ -140,7 +140,10 @@ const StyledContainer = styled(Container)<{ compactTop: boolean }>`
   gap: ${theme.spacing(10)};
   grid-template-columns: 1fr;
   min-height: 520px;
-  padding-bottom: ${theme.spacing(24 + TRUSTED_BY_BOTTOM_PADDING)};
+  padding-bottom: ${({ compactTop }) =>
+    compactTop
+      ? theme.spacing(16)
+      : theme.spacing(24 + TRUSTED_BY_BOTTOM_PADDING)};
   padding-left: ${theme.spacing(4)};
   padding-right: ${theme.spacing(4)};
   padding-top: ${({ compactTop }) =>
@@ -152,9 +155,10 @@ const StyledContainer = styled(Container)<{ compactTop: boolean }>`
     column-gap: ${theme.spacing(16)};
     grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
     min-height: 500px;
-    padding-bottom: ${theme.spacing(
-      40 + TRUSTED_BY_BOTTOM_PADDING_DESKTOP,
-    )};
+    padding-bottom: ${({ compactTop }) =>
+      compactTop
+        ? `calc(${theme.spacing(24)} + ${theme.spacing(12)} - ${CONNECTED_TOP_OFFSET})`
+        : theme.spacing(40 + TRUSTED_BY_BOTTOM_PADDING_DESKTOP)};
     padding-left: ${theme.spacing(10)};
     padding-right: ${theme.spacing(10)};
     padding-top: ${({ compactTop }) =>

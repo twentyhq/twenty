@@ -7,5 +7,5 @@ export const RELEASE_NOTES_HERO_HEADING: HeadingType[] = [
 ];
 
 export const RELEASE_NOTES_HERO_BODY: BodyType = {
-  text: 'Discover the newest features and improvements in Twenty,\nthe #1 open-source CRM.',
+  text: 'Discover the newest features and improvements in Twenty,\nthe #1 open source CRM.',
 };
