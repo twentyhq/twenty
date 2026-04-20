@@ -1,4 +1,4 @@
-import { type ConfigVariable } from '~/generated-metadata/graphql';
+import { type ConfigVariable } from '~/generated-admin/graphql';
 import { ConfigVariableTable } from '@/settings/config-variables/components/ConfigVariableTable';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { SettingsPath } from 'twenty-shared/types';

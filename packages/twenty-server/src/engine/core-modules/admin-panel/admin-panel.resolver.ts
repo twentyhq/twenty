@@ -58,7 +58,7 @@ import { type AiProviderModelConfig } from 'src/engine/metadata-modules/ai/ai-mo
 import { extractConfigVariableName } from 'src/engine/metadata-modules/ai/ai-models/utils/extract-config-variable-name.util';
 import { loadDefaultAiProviders } from 'src/engine/metadata-modules/ai/ai-models/utils/load-default-ai-providers.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
+import { AdminResolver } from 'src/engine/api/graphql/graphql-config/decorators/admin-resolver.decorator';
 import { AdminPanelGuard } from 'src/engine/guards/admin-panel-guard';
 import { ServerLevelImpersonateGuard } from 'src/engine/guards/server-level-impersonate.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
@@ -74,7 +74,7 @@ import { SetMaintenanceModeInput } from './dtos/set-maintenance-mode.input';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 
 @UsePipes(ResolverValidationPipe)
-@MetadataResolver()
+@AdminResolver()
 @UseFilters(
   AuthGraphqlApiExceptionFilter,
   PreventNestToAutoLogGraphqlErrorsFilter,

@@ -1,4 +1,5 @@
 import { useClientConfig } from '@/client-config/hooks/useClientConfig';
+import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { GET_DATABASE_CONFIG_VARIABLE } from '@/settings/admin-panel/config-variables/graphql/queries/getDatabaseConfigVariable';
 import { type ConfigVariableValue } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -7,19 +8,23 @@ import {
   CreateDatabaseConfigVariableDocument,
   DeleteDatabaseConfigVariableDocument,
   UpdateDatabaseConfigVariableDocument,
-} from '~/generated-metadata/graphql';
+} from '~/generated-admin/graphql';
 
 export const useConfigVariableActions = (variableName: string) => {
+  const apolloAdminClient = useApolloAdminClient();
   const { refetch: refetchClientConfig } = useClientConfig();
 
   const [updateDatabaseConfigVariable] = useMutation(
     UpdateDatabaseConfigVariableDocument,
+    { client: apolloAdminClient },
   );
   const [createDatabaseConfigVariable] = useMutation(
     CreateDatabaseConfigVariableDocument,
+    { client: apolloAdminClient },
   );
   const [deleteDatabaseConfigVariable] = useMutation(
     DeleteDatabaseConfigVariableDocument,
+    { client: apolloAdminClient },
   );
 
   const handleUpdateVariable = async (

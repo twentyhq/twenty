@@ -9,7 +9,7 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   AgentMessageRole,
   type GetAdminChatThreadMessagesQuery,
-} from '~/generated-metadata/graphql';
+} from '~/generated-admin/graphql';
 
 type ChatMessage = NonNullable<
   GetAdminChatThreadMessagesQuery['getAdminChatThreadMessages']

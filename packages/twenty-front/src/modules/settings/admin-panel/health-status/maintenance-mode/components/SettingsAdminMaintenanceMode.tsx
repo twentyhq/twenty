@@ -9,6 +9,7 @@ import { Card, CardContent, Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { maintenanceModeState } from '@/client-config/states/maintenanceModeState';
+import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { CLEAR_MAINTENANCE_MODE } from '@/settings/admin-panel/health-status/maintenance-mode/graphql/mutations/clearMaintenanceMode';
 import { SET_MAINTENANCE_MODE } from '@/settings/admin-panel/health-status/maintenance-mode/graphql/mutations/setMaintenanceMode';
 import { adminPanelMaintenanceModeState } from '@/settings/admin-panel/health-status/maintenance-mode/states/adminPanelMaintenanceModeState';
@@ -34,6 +35,7 @@ const StyledStatusRow = styled.div`
 `;
 
 export const SettingsAdminMaintenanceMode = () => {
+  const apolloAdminClient = useApolloAdminClient();
   const [adminPanelMaintenanceMode, setAdminPanelMaintenanceMode] =
     useAtomState(adminPanelMaintenanceModeState);
 
@@ -43,8 +45,12 @@ export const SettingsAdminMaintenanceMode = () => {
   const { userTimezone } = useUserTimezone();
   const { enqueueErrorSnackBar } = useSnackBar();
 
-  const [setMaintenanceModeMutation] = useMutation(SET_MAINTENANCE_MODE);
-  const [clearMaintenanceModeMutation] = useMutation(CLEAR_MAINTENANCE_MODE);
+  const [setMaintenanceModeMutation] = useMutation(SET_MAINTENANCE_MODE, {
+    client: apolloAdminClient,
+  });
+  const [clearMaintenanceModeMutation] = useMutation(CLEAR_MAINTENANCE_MODE, {
+    client: apolloAdminClient,
+  });
 
   const isEnabled = isDefined(adminPanelMaintenanceMode);
 

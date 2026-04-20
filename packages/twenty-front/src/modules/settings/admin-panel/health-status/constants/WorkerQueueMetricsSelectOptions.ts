@@ -1,5 +1,5 @@
 import { msg } from '@lingui/core/macro';
-import { QueueMetricsTimeRange } from '~/generated-metadata/graphql';
+import { QueueMetricsTimeRange } from '~/generated-admin/graphql';
 
 export const WORKER_QUEUE_METRICS_SELECT_OPTIONS = [
   { value: QueueMetricsTimeRange.SevenDays, label: msg`This week` },

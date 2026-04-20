@@ -13,7 +13,7 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   type AdminPanelWorkerQueueHealth,
   QueueMetricsTimeRange,
-} from '~/generated-metadata/graphql';
+} from '~/generated-admin/graphql';
 
 const SettingsAdminWorkerMetricsGraph = lazy(() =>
   import('./SettingsAdminWorkerMetricsGraph').then((module) => ({
