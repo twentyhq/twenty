@@ -119,6 +119,15 @@ describe('isRecordMatchingRLSRowLevelPermissionPredicate', () => {
         joinColumnName: 'companyId',
       },
     ),
+    createMockFlatFieldMetadata(
+      'account-tags-id',
+      'accountTags',
+      FieldMetadataType.RELATION,
+      {
+        relationType: 'ONE_TO_MANY',
+        junctionTargetFieldId: 'junction-target-field-id',
+      },
+    ),
   ];
 
   const flatObjectMetadata = createMockFlatObjectMetadata(
@@ -286,5 +295,86 @@ describe('isRecordMatchingRLSRowLevelPermissionPredicate', () => {
     });
 
     expect(result).toBe(true);
+  });
+
+  // [STRATUM-PATCH] Regression tests for many-to-many (junction) RELATION
+  // filters. Upstream twentyhq/twenty threw "Not implemented yet" whenever an
+  // RLS predicate targeted a junction relation field (settings have
+  // junctionTargetFieldId but no joinColumnName). See matching fix and tests
+  // in packages/twenty-front/.../isRecordMatchingFilter.{ts,test.ts}.
+  describe('Many-to-many RELATION (junction) filter', () => {
+    const tagA = 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa';
+    const tagB = 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb';
+    const tagC = 'cccccccc-cccc-cccc-cccc-cccccccccccc';
+
+    it('matches a record whose junction array contains an id in the filter "some.in" list', () => {
+      const result = isRecordMatchingRLSRowLevelPermissionPredicate({
+        record: {
+          ...baseRecord,
+          accountTags: [{ id: tagA }, { id: tagB }],
+        } as ObjectRecord,
+        filter: { accountTags: { some: { in: [tagA] } } },
+        flatObjectMetadata,
+        flatFieldMetadataMaps,
+      });
+
+      expect(result).toBe(true);
+    });
+
+    it('does not match when no junction-array id is in the filter "some.in" list', () => {
+      const result = isRecordMatchingRLSRowLevelPermissionPredicate({
+        record: {
+          ...baseRecord,
+          accountTags: [{ id: tagA }, { id: tagB }],
+        } as ObjectRecord,
+        filter: { accountTags: { some: { in: [tagC] } } },
+        flatObjectMetadata,
+        flatFieldMetadataMaps,
+      });
+
+      expect(result).toBe(false);
+    });
+
+    it('does not match when the junction array is empty', () => {
+      const result = isRecordMatchingRLSRowLevelPermissionPredicate({
+        record: {
+          ...baseRecord,
+          accountTags: [],
+        } as ObjectRecord,
+        filter: { accountTags: { some: { in: [tagA] } } },
+        flatObjectMetadata,
+        flatFieldMetadataMaps,
+      });
+
+      expect(result).toBe(false);
+    });
+
+    it('matches with a NOT wrapper when none of the junction ids are in the filter list', () => {
+      const result = isRecordMatchingRLSRowLevelPermissionPredicate({
+        record: {
+          ...baseRecord,
+          accountTags: [{ id: tagA }],
+        } as ObjectRecord,
+        filter: { not: { accountTags: { some: { in: [tagC] } } } },
+        flatObjectMetadata,
+        flatFieldMetadataMaps,
+      });
+
+      expect(result).toBe(true);
+    });
+
+    it('does not match with a NOT wrapper when a junction id is in the filter list', () => {
+      const result = isRecordMatchingRLSRowLevelPermissionPredicate({
+        record: {
+          ...baseRecord,
+          accountTags: [{ id: tagA }],
+        } as ObjectRecord,
+        filter: { not: { accountTags: { some: { in: [tagA] } } } },
+        flatObjectMetadata,
+        flatFieldMetadataMaps,
+      });
+
+      expect(result).toBe(false);
+    });
   });
 });

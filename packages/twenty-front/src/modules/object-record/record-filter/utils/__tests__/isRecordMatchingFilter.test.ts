@@ -535,4 +535,139 @@ describe('isRecordMatchingFilter', () => {
       ).toBe(false);
     });
   });
+
+  // Regression: when a view filter targets a many-to-many RELATION field
+  // (junction relation, e.g. accountTags), Apollo optimistic-effect code calls
+  // isRecordMatchingFilter with a shape like `{ fieldName: { some: { in: [uuid] } } }`
+  // (see turnRecordFilterIntoGqlOperationFilter.ts). The record stored in the
+  // Apollo cache holds the related junction records under `record[fieldName]`
+  // as an array of `{ id, ... }` objects (see generateJunctionRelationGqlFields).
+  // Previously the RELATION case only handled filters keyed by the join column
+  // and threw "Not implemented yet, use UUID filter instead on the corresponding
+  // 'fieldNameId' field" for junction relations, breaking every create/update
+  // on an object with such a view filter active.
+  describe('Many-to-many RELATION (junction) filter', () => {
+    const caredForPetsFieldName = 'caredForPets' as const;
+    const petAgreementA = 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa';
+    const petAgreementB = 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb';
+    const petAgreementC = 'cccccccc-cccc-cccc-cccc-cccccccccccc';
+
+    it('matches a record whose junction array contains an id in the filter "some.in" list', () => {
+      const record = {
+        ...companiesMock[0],
+        [caredForPetsFieldName]: [{ id: petAgreementA }, { id: petAgreementB }],
+      };
+
+      const filter: RecordGqlOperationFilter = {
+        [caredForPetsFieldName]: { some: { in: [petAgreementA] } },
+      };
+
+      expect(
+        isRecordMatchingFilter({
+          record,
+          filter,
+          objectMetadataItem: companyMockObjectMetadataItem,
+        }),
+      ).toBe(true);
+    });
+
+    it('does not match when no junction-array id is in the filter "some.in" list', () => {
+      const record = {
+        ...companiesMock[0],
+        [caredForPetsFieldName]: [{ id: petAgreementA }, { id: petAgreementB }],
+      };
+
+      const filter: RecordGqlOperationFilter = {
+        [caredForPetsFieldName]: { some: { in: [petAgreementC] } },
+      };
+
+      expect(
+        isRecordMatchingFilter({
+          record,
+          filter,
+          objectMetadataItem: companyMockObjectMetadataItem,
+        }),
+      ).toBe(false);
+    });
+
+    it('does not match when the junction array is empty', () => {
+      const record = {
+        ...companiesMock[0],
+        [caredForPetsFieldName]: [],
+      };
+
+      const filter: RecordGqlOperationFilter = {
+        [caredForPetsFieldName]: { some: { in: [petAgreementA] } },
+      };
+
+      expect(
+        isRecordMatchingFilter({
+          record,
+          filter,
+          objectMetadataItem: companyMockObjectMetadataItem,
+        }),
+      ).toBe(false);
+    });
+
+    it('does not match when the junction field is undefined on the record', () => {
+      const record = {
+        ...companiesMock[0],
+        [caredForPetsFieldName]: undefined,
+      };
+
+      const filter: RecordGqlOperationFilter = {
+        [caredForPetsFieldName]: { some: { in: [petAgreementA] } },
+      };
+
+      expect(
+        isRecordMatchingFilter({
+          record,
+          filter,
+          objectMetadataItem: companyMockObjectMetadataItem,
+        }),
+      ).toBe(false);
+    });
+
+    it('matches with a NOT wrapper when none of the junction ids are in the filter list', () => {
+      const record = {
+        ...companiesMock[0],
+        [caredForPetsFieldName]: [{ id: petAgreementA }],
+      };
+
+      const filter: RecordGqlOperationFilter = {
+        not: {
+          [caredForPetsFieldName]: { some: { in: [petAgreementC] } },
+        },
+      };
+
+      expect(
+        isRecordMatchingFilter({
+          record,
+          filter,
+          objectMetadataItem: companyMockObjectMetadataItem,
+        }),
+      ).toBe(true);
+    });
+
+    it('does not match with a NOT wrapper when a junction id is in the filter list', () => {
+      const record = {
+        ...companiesMock[0],
+        [caredForPetsFieldName]: [{ id: petAgreementA }],
+      };
+
+      const filter: RecordGqlOperationFilter = {
+        not: {
+          [caredForPetsFieldName]: { some: { in: [petAgreementA] } },
+        },
+      };
+
+      expect(
+        isRecordMatchingFilter({
+          record,
+          filter,
+          objectMetadataItem: companyMockObjectMetadataItem,
+        }),
+      ).toBe(false);
+    });
+  });
 });

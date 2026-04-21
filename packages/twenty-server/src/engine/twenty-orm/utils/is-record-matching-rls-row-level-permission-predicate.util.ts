@@ -411,18 +411,52 @@ export const isRecordMatchingRLSRowLevelPermissionPredicate = ({
         });
       }
       case FieldMetadataType.RELATION: {
-        const isJoinColumn =
-          (
-            objectMetadataField.settings as
-              | { joinColumnName?: string }
-              | undefined
-          )?.joinColumnName === filterKey;
+        const relationSettings = objectMetadataField.settings as
+          | { joinColumnName?: string; junctionTargetFieldId?: string }
+          | undefined;
+
+        const isJoinColumn = relationSettings?.joinColumnName === filterKey;
 
         if (isJoinColumn) {
           return isMatchingUUIDFilter({
             uuidFilter: filterValue as UUIDFilter,
             value: recordFieldValue,
           });
+        }
+
+        // [STRATUM-PATCH] Junction (many-to-many) relation support.
+        // Mirrors the frontend fix in
+        // packages/twenty-front/.../isRecordMatchingFilter.ts. Upstream
+        // (twentyhq/twenty) throws the "Not implemented yet" error below for
+        // any RLS predicate targeting a M2M relation field (no joinColumnName,
+        // has junctionTargetFieldId). Expected filter shape is
+        // `{ some: { in: [uuid, ...] } }` and recordFieldValue is an array of
+        // related records `{ id, ... }`. Remove this block and port tests once
+        // upstream handles junction relations here.
+        const isJunctionRelation = isDefined(
+          relationSettings?.junctionTargetFieldId,
+        );
+
+        if (isJunctionRelation) {
+          const junctionFilter = filterValue as {
+            some?: { in?: string[] };
+          };
+          const filterIds = junctionFilter.some?.in;
+
+          if (!Array.isArray(filterIds) || filterIds.length === 0) {
+            return false;
+          }
+
+          if (
+            !Array.isArray(recordFieldValue) ||
+            recordFieldValue.length === 0
+          ) {
+            return false;
+          }
+
+          return recordFieldValue.some(
+            (item) => isDefined(item?.id) && filterIds.includes(item.id),
+          );
         }
 
         throw new Error(

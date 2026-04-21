@@ -429,6 +429,41 @@ export const isRecordMatchingFilter = ({
           });
         }
 
+        // [STRATUM-PATCH] Junction (many-to-many) relation support.
+        // Upstream (twentyhq/twenty) currently throws the "Not implemented yet"
+        // error below whenever a view filter targets a M2M relation field such
+        // as accountTags/personTags, because those fields have no joinColumnName.
+        // This broke every Company/Person create/update on workspaces with
+        // tag-filtered views. See turnRecordFilterIntoGqlOperationFilter.ts for
+        // the expected filter shape (`{ some: { in: [uuid, ...] } }`) and
+        // generateJunctionRelationGqlFields for the record shape (array of
+        // `{ id, ... }`). Remove this block once upstream handles junction
+        // relations in isRecordMatchingFilter and port the tests over.
+        const isJunctionRelation = isDefined(
+          objectMetadataField.settings?.junctionTargetFieldId,
+        );
+
+        if (isJunctionRelation) {
+          const junctionFilter = filterValue as {
+            some?: { in?: string[] };
+          };
+          const filterIds = junctionFilter.some?.in;
+
+          if (!Array.isArray(filterIds) || filterIds.length === 0) {
+            return false;
+          }
+
+          const related = record[filterKey];
+
+          if (!Array.isArray(related) || related.length === 0) {
+            return false;
+          }
+
+          return related.some(
+            (item) => isDefined(item?.id) && filterIds.includes(item.id),
+          );
+        }
+
         throw new Error(
           `Not implemented yet, use UUID filter instead on the corresponding "${filterKey}Id" field`,
         );
