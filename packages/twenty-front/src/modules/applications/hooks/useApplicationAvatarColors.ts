@@ -21,8 +21,14 @@ type UseApplicationAvatarColorsArgs = {
 };
 
 const STANDARD_APPLICATION_AVATAR_COLORS: ApplicationAvatarColors = {
+  // The standard application avatar follows the Figma `Colors/Blue` palette,
+  // which is Radix's pure blue and not Twenty's `theme.color.blue*` tokens
+  // (those map to the indigo palette).
+  // oxlint-disable-next-line twenty/no-hardcoded-colors
   backgroundColor: '#CEE7FE',
+  // oxlint-disable-next-line twenty/no-hardcoded-colors
   borderColor: '#B7D9F8',
+  // oxlint-disable-next-line twenty/no-hardcoded-colors
   color: '#113264',
 };
 
