@@ -16,7 +16,10 @@ import { GenerateApiKeyCommand } from 'src/engine/core-modules/api-key/commands/
 import { MarketplaceModule } from 'src/engine/core-modules/application/application-marketplace/marketplace.module';
 import { StaleRegistrationCleanupModule } from 'src/engine/core-modules/application/application-oauth/stale-registration-cleanup/stale-registration-cleanup.module';
 import { ApplicationUpgradeModule } from 'src/engine/core-modules/application/application-upgrade/application-upgrade.module';
-import { RebuildDefaultPackageFilesModule } from 'src/engine/core-modules/application/commands/rebuild-default-package-files.module';
+import { RebuildApplicationDefaultDepsCommand } from 'src/database/commands/rebuild-application-default-deps.command';
+import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/workspace-iterator.module';
+import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
+import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { EnforceUsageCapCronCommand } from 'src/engine/core-modules/billing/crons/commands/enforce-usage-cap.cron.command';
 import { EnterpriseKeyValidationCronCommand } from 'src/engine/core-modules/enterprise/cron/command/enterprise-key-validation.cron.command';
 import { EnterpriseModule } from 'src/engine/core-modules/enterprise/enterprise.module';
@@ -74,7 +77,9 @@ import { AutomatedTriggerModule } from 'src/modules/workflow/workflow-trigger/au
     MarketplaceModule,
     ApplicationUpgradeModule,
     StaleRegistrationCleanupModule,
-    RebuildDefaultPackageFilesModule,
+    WorkspaceIteratorModule,
+    ApplicationModule,
+    WorkspaceCacheModule,
     WorkspaceVersionModule,
     UpgradeModule,
   ],
@@ -90,6 +95,7 @@ import { AutomatedTriggerModule } from 'src/modules/workflow/workflow-trigger/au
     GenerateApiKeyCommand,
     EnforceUsageCapCronCommand,
     UpgradeStatusCommand,
+    RebuildApplicationDefaultDepsCommand,
   ],
 })
 export class DatabaseCommandModule {}
