@@ -63,6 +63,7 @@ export type { InputJsonSchema } from 'twenty-shared/logic-function';
 export { defineNavigationMenuItem } from '@/sdk/define/navigation-menu-items/define-navigation-menu-item';
 
 export { defineObject } from '@/sdk/define/objects/define-object';
+export { generateDefaultFieldUniversalIdentifier } from '@/sdk/define/objects/generate-default-field-universal-identifier';
 export {
   STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS as STANDARD_OBJECT,
   STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
