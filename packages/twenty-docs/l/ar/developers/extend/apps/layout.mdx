@@ -1,23 +1,23 @@
 ---
 title: التخطيط
-description: Define views, navigation menu items, and page layouts to shape how your app appears in Twenty.
+description: عرّف طرق العرض، وعناصر قائمة التنقّل، وتخطيطات الصفحات لتشكيل كيفية ظهور تطبيقك في Twenty.
 icon: table-columns
 ---
 
-Layout entities control how your app surfaces inside Twenty's UI — what lives in the sidebar, which saved views ship with the app, and how a record detail page is arranged.
+تتحكّم كيانات التخطيط في كيفية ظهور تطبيقك داخل واجهة مستخدم Twenty — ما الذي يوجد في الشريط الجانبي، وأي العروض المحفوظة تأتي مع التطبيق، وكيف يتم ترتيب صفحة تفاصيل السجل.
 
-## Layout concepts
+## مفاهيم التخطيط
 
-| Concept                  | What it controls                                                                  | كيان                       |
-| ------------------------ | --------------------------------------------------------------------------------- | -------------------------- |
-| **View**                 | A saved list configuration for an object — visible fields, order, filters, groups | `defineView`               |
-| **Navigation Menu Item** | An entry in the left sidebar that links to a view or an external URL              | `defineNavigationMenuItem` |
-| **Page Layout**          | The tabs and widgets that make up a record's detail page                          | `definePageLayout`         |
+| المفهوم                | ما الذي يتحكّم فيه                                                              | كيان                       |
+| ---------------------- | ------------------------------------------------------------------------------- | -------------------------- |
+| **عرض**                | تكوين قائمة محفوظة لكائن — الحقول المرئية، والترتيب، وعوامل التصفية، والمجموعات | `defineView`               |
+| **عنصر قائمة التنقّل** | عنصر في الشريط الجانبي الأيسر يرتبط بعرض أو بعنوان URL خارجي                    | `defineNavigationMenuItem` |
+| **تخطيط الصفحة**       | علامات التبويب وعناصر الواجهة التي تشكّل صفحة تفاصيل السجل                      | `definePageLayout`         |
 
-Views, navigation items, and page layouts reference each other by `universalIdentifier`:
+تشير العروض، وعناصر التنقّل، وتخطيطات الصفحات إلى بعضها البعض عبر `universalIdentifier`:
 
-* A **navigation menu item** of type `VIEW` points at a `defineView` identifier, so the sidebar link opens that saved view.
-* A **page layout** of type `RECORD_PAGE` targets an object and can embed [front components](/l/ar/developers/extend/apps/front-components) inside its tabs as widgets.
+* يشير **عنصر قائمة التنقّل** من النوع `VIEW` إلى معرّف `defineView`، بحيث يفتح رابط الشريط الجانبي ذلك العرض المحفوظ.
+* يستهدف **تخطيط الصفحة** من النوع `RECORD_PAGE` كائنًا ويمكنه تضمين [مكوّنات الواجهة الأمامية](/l/ar/developers/extend/apps/front-components) داخل علامات التبويب الخاصة به بوصفها عناصر واجهة.
 
 <AccordionGroup>
 <Accordion title="defineView" description="تعريف العروض المحفوظة للكائنات">

@@ -1,23 +1,23 @@
 ---
 title: OAuth
 icon: ключ
-description: Authorization code flow with PKCE and client credentials for server-to-server access.
+description: Поток авторизационного кода с PKCE и учётными данными клиента для доступа между серверами.
 ---
 
-Twenty implements OAuth 2.0 with authorization code + PKCE for user-facing apps and client credentials for server-to-server access. Clients are registered dynamically via [RFC 7591](https://datatracker.ietf.org/doc/html/rfc7591) — no manual setup in a dashboard.
+Twenty реализует OAuth 2.0 с потоком авторизационного кода + PKCE для пользовательских приложений и с учётными данными клиента для доступа между серверами. Клиенты регистрируются динамически по [RFC 7591](https://datatracker.ietf.org/doc/html/rfc7591) — никакой ручной настройки в панели управления.
 
-## When to Use OAuth
+## Когда использовать OAuth
 
-| Сценарий                                | Auth Method                                                                      |
-| --------------------------------------- | -------------------------------------------------------------------------------- |
-| Internal scripts, automation            | [API Key](/l/ru/developers/extend/api#authentication)                                 |
-| External app acting on behalf of a user | **OAuth — Authorization Code**                                                   |
-| Server-to-server, no user context       | **OAuth — Client Credentials**                                                   |
-| Twenty App with UI extensions           | [Apps](/l/ru/developers/extend/apps/getting-started) (OAuth is handled automatically) |
+| Сценарий                                                           | Метод аутентификации                                                                       |
+| ------------------------------------------------------------------ | ------------------------------------------------------------------------------------------ |
+| Внутренние скрипты, автоматизация                                  | [Ключ API](/l/ru/developers/extend/api#authentication)                                          |
+| Внешнее приложение, действующее от имени пользователя              | **OAuth — авторизационный код**                                                            |
+| Между серверами, без контекста пользователя                        | **OAuth — клиентские учётные данные**                                                      |
+| Приложение Twenty с расширениями пользовательского интерфейса (UI) | [Приложения](/l/ru/developers/extend/apps/getting-started) (OAuth обрабатывается автоматически) |
 
-## Register a Client
+## Зарегистрировать клиента
 
-Twenty supports **dynamic client registration** per [RFC 7591](https://datatracker.ietf.org/doc/html/rfc7591). No manual setup needed — register programmatically:
+Twenty поддерживает **динамическую регистрацию клиентов** по [RFC 7591](https://datatracker.ietf.org/doc/html/rfc7591). Ручная настройка не требуется — регистрируйте программно:
 
 ```bash
 POST /oauth/register
@@ -31,7 +31,7 @@ Content-Type: application/json
 }
 ```
 
-**Response:**
+**Ответ:**
 
 ```json
 {
@@ -43,23 +43,23 @@ Content-Type: application/json
 ```
 
 <Warning>
-Store the `client_secret` securely — it cannot be retrieved later.
+Храните `client_secret` в надёжном месте — позже его нельзя будет получить.
 </Warning>
 
 ## Области действия
 
-| Scope     | Доступ                                               |
-| --------- | ---------------------------------------------------- |
-| `api`     | Full read/write access to the Core and Metadata APIs |
-| `profile` | Read the authenticated user's profile information    |
+| Область действия | Доступ                                                      |
+| ---------------- | ----------------------------------------------------------- |
+| `api`            | Полный доступ на чтение/запись к Core и Metadata API        |
+| `profile`        | Чтение информации профиля аутентифицированного пользователя |
 
-Request scopes as a space-separated string: `scope=api profile`
+Запрашивайте области действия как строку, разделённую пробелами: `scope=api profile`
 
-## Authorization Code Flow
+## Поток авторизационного кода
 
-Use this flow when your app acts on behalf of a Twenty user.
+Используйте этот поток, когда ваше приложение действует от имени пользователя Twenty.
 
-### 1. Redirect the user to authorize
+### 1. Перенаправьте пользователя для авторизации
 
 ```
 GET /oauth/authorize?
@@ -72,29 +72,29 @@ GET /oauth/authorize?
   code_challenge_method=S256
 ```
 
-| Параметр                | Обязательно   | Описание                                                     |
-| ----------------------- | ------------- | ------------------------------------------------------------ |
-| `client_id`             | Да            | Your registered client ID                                    |
-| `response_type`         | Да            | Must be `code`                                               |
-| `redirect_uri`          | Да            | Must match a registered redirect URI                         |
-| `scope`                 | Нет           | Space-separated scopes (defaults to `api`)                   |
-| `state`                 | Рекомендуется | Random string to prevent CSRF attacks                        |
-| `code_challenge`        | Рекомендуется | PKCE challenge (SHA-256 hash of verifier, base64url-encoded) |
-| `code_challenge_method` | Рекомендуется | Must be `S256` when using PKCE                               |
+| Параметр                | Обязательно   | Описание                                                        |
+| ----------------------- | ------------- | --------------------------------------------------------------- |
+| `client_id`             | Да            | Идентификатор вашего зарегистрированного клиента                |
+| `response_type`         | Да            | Должно быть `code`                                              |
+| `redirect_uri`          | Да            | Должен совпадать с зарегистрированным redirect URI              |
+| `scope`                 | Нет           | Области действия, разделённые пробелами (по умолчанию `api`)    |
+| `state`                 | Рекомендуется | Случайная строка для предотвращения CSRF-атак                   |
+| `code_challenge`        | Рекомендуется | Вызов PKCE (хэш SHA-256 от верификатора, в кодировке base64url) |
+| `code_challenge_method` | Рекомендуется | Должно быть `S256` при использовании PKCE                       |
 
-The user sees a consent screen and approves or denies access.
+Пользователь видит экран согласия и подтверждает или отклоняет доступ.
 
-### 2. Handle the callback
+### 2. Обработайте обратный вызов
 
-After authorization, Twenty redirects back to your `redirect_uri`:
+После авторизации Twenty перенаправляет обратно на ваш `redirect_uri`:
 
 ```
 https://myapp.com/callback?code=AUTH_CODE&state=random_state_value
 ```
 
-Verify that `state` matches what you sent.
+Проверьте, что `state` совпадает с отправленным значением.
 
-### 3. Exchange the code for tokens
+### 3. Обменяйте код на токены
 
 ```bash
 POST /oauth/token
@@ -108,7 +108,7 @@ client_secret=YOUR_CLIENT_SECRET&
 code_verifier=YOUR_PKCE_VERIFIER
 ```
 
-**Response:**
+**Ответ:**
 
 ```json
 {
@@ -119,14 +119,14 @@ code_verifier=YOUR_PKCE_VERIFIER
 }
 ```
 
-### 4. Use the access token
+### 4. Используйте токен доступа
 
 ```bash
 GET /rest/companies
 Authorization: Bearer ACCESS_TOKEN
 ```
 
-### 5. Refresh when expired
+### 5. Обновляйте при истечении срока действия
 
 ```bash
 POST /oauth/token
@@ -138,9 +138,9 @@ client_id=YOUR_CLIENT_ID&
 client_secret=YOUR_CLIENT_SECRET
 ```
 
-## Client Credentials Flow
+## Поток клиентских учётных данных
 
-For server-to-server integrations with no user interaction:
+Для интеграций между серверами без участия пользователя:
 
 ```bash
 POST /oauth/token
@@ -152,38 +152,38 @@ client_secret=YOUR_CLIENT_SECRET&
 scope=api
 ```
 
-The returned token has workspace-level access, not tied to any specific user.
+Возвращаемый токен имеет доступ на уровне рабочей области и не привязан к конкретному пользователю.
 
-## Server Discovery
+## Обнаружение сервера
 
-Twenty publishes its OAuth configuration at a standard discovery endpoint:
+Twenty публикует свою конфигурацию OAuth на стандартной конечной точке обнаружения:
 
 ```
 GET /.well-known/oauth-authorization-server
 ```
 
-This returns all endpoints, supported grant types, scopes, and capabilities — useful for building generic OAuth clients.
+Это возвращает все конечные точки, поддерживаемые типы грантов, области действия и возможности — полезно для создания универсальных OAuth-клиентов.
 
-## API Endpoints Summary
+## Сводка конечных точек API
 
-| Конечная точка                            | Назначение                  |
-| ----------------------------------------- | --------------------------- |
-| `/.well-known/oauth-authorization-server` | Server metadata discovery   |
-| `/oauth/register`                         | Dynamic client registration |
-| `/oauth/authorize`                        | User authorization          |
-| `/oauth/token`                            | Token exchange and refresh  |
+| Конечная точка                            | Назначение                        |
+| ----------------------------------------- | --------------------------------- |
+| `/.well-known/oauth-authorization-server` | Обнаружение метаданных сервера    |
+| `/oauth/register`                         | Динамическая регистрация клиентов |
+| `/oauth/authorize`                        | Авторизация пользователя          |
+| `/oauth/token`                            | Обмен и обновление токена         |
 
 | Среда                       | Базовый URL              |
 | --------------------------- | ------------------------ |
 | **Облако**                  | `https://api.twenty.com` |
 | **Самостоятельный хостинг** | `https://{your-domain}`  |
 
-## OAuth vs API Keys
+## OAuth против ключей API
 
-|                              | API ключи               | OAuth                                  |
-| ---------------------------- | ----------------------- | -------------------------------------- |
-| **Настройка**                | Generate in Settings    | Register a client, implement flow      |
-| **User context**             | None (workspace-level)  | Specific user's permissions            |
-| **Лучше всего подходит для** | Scripts, internal tools | External apps, multi-user integrations |
-| **Token rotation**           | Вручную                 | Automatic via refresh tokens           |
-| **Scoped access**            | Full API access         | Granular via scopes                    |
+|                                 | API ключи                             | OAuth                                                 |
+| ------------------------------- | ------------------------------------- | ----------------------------------------------------- |
+| **Настройка**                   | Создаются в разделе «Настройки»       | Зарегистрировать клиента, реализовать поток           |
+| **Контекст пользователя**       | Отсутствует (уровень рабочей области) | Права конкретного пользователя                        |
+| **Лучше всего подходит для**    | Скрипты, внутренние инструменты       | Внешние приложения, мультипользовательские интеграции |
+| **Ротация токенов**             | Вручную                               | Автоматическая с помощью refresh-токенов              |
+| **Доступ по областям действия** | Полный доступ к API                   | Детализированный через области действия               |

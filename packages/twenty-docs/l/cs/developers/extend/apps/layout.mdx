@@ -1,23 +1,23 @@
 ---
 title: Rozvržení
-description: Define views, navigation menu items, and page layouts to shape how your app appears in Twenty.
+description: Definujte pohledy, položky navigační nabídky a rozvržení stránek, abyste utvářeli, jak se vaše aplikace zobrazuje v Twenty.
 icon: table-columns
 ---
 
-Layout entities control how your app surfaces inside Twenty's UI — what lives in the sidebar, which saved views ship with the app, and how a record detail page is arranged.
+Prvky rozvržení řídí, jak se vaše aplikace zobrazuje v uživatelském rozhraní Twenty — co je v postranním panelu, které uložené pohledy jsou součástí aplikace a jak je uspořádána stránka s podrobnostmi záznamu.
 
-## Layout concepts
+## Pojmy rozvržení
 
-| Concept                  | What it controls                                                                  | Entita                     |
-| ------------------------ | --------------------------------------------------------------------------------- | -------------------------- |
-| **View**                 | A saved list configuration for an object — visible fields, order, filters, groups | `defineView`               |
-| **Navigation Menu Item** | An entry in the left sidebar that links to a view or an external URL              | `defineNavigationMenuItem` |
-| **Page Layout**          | The tabs and widgets that make up a record's detail page                          | `definePageLayout`         |
+| Pojem                         | Co řídí                                                                        | Entita                     |
+| ----------------------------- | ------------------------------------------------------------------------------ | -------------------------- |
+| **Pohled**                    | Uložené nastavení seznamu pro objekt — viditelná pole, pořadí, filtry, skupiny | `defineView`               |
+| **Položka navigační nabídky** | Položka v levém postranním panelu, která odkazuje na pohled nebo externí URL   | `defineNavigationMenuItem` |
+| **Rozvržení stránky**         | Karty a widgety, které tvoří stránku s podrobnostmi záznamu                    | `definePageLayout`         |
 
-Views, navigation items, and page layouts reference each other by `universalIdentifier`:
+Pohledy, položky navigační nabídky a rozvržení stránek se na sebe odkazují pomocí `universalIdentifier`:
 
-* A **navigation menu item** of type `VIEW` points at a `defineView` identifier, so the sidebar link opens that saved view.
-* A **page layout** of type `RECORD_PAGE` targets an object and can embed [front components](/l/cs/developers/extend/apps/front-components) inside its tabs as widgets.
+* Položka **navigační nabídky** typu `VIEW` odkazuje na identifikátor `defineView`, takže odkaz v postranním panelu otevře daný uložený pohled.
+* **Rozvržení stránky** typu `RECORD_PAGE` cílí na objekt a může vkládat [front components](/l/cs/developers/extend/apps/front-components) do svých karet jako widgety.
 
 <AccordionGroup>
 <Accordion title="defineView" description="Definujte uložená zobrazení pro objekty">
