@@ -5,7 +5,10 @@ import { SendEmailTool } from 'src/engine/core-modules/tool/tools/email-tool/sen
 import { HttpTool } from 'src/engine/core-modules/tool/tools/http-tool/http-tool';
 import { ToolExecutorWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/tool-executor-workflow-action';
 import { type WorkflowActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action-settings.type';
-import { WorkflowActionType } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
+import {
+  type WorkflowAction,
+  WorkflowActionType,
+} from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 
 jest.mock(
   'src/engine/core-modules/tool/tools/email-tool/utils/render-rich-text-to-html.util',
@@ -36,13 +39,14 @@ const emailInput = {
 const buildEmailStep = (
   type: 'SEND_EMAIL' | 'DRAFT_EMAIL',
   input: Record<string, unknown>,
-) => ({
-  id: 'step-1',
-  type: type as WorkflowActionType,
-  name: type === 'SEND_EMAIL' ? 'Send Email' : 'Draft Email',
-  valid: true,
-  settings: { ...baseSettings, input },
-});
+): WorkflowAction =>
+  ({
+    id: 'step-1',
+    type: WorkflowActionType[type],
+    name: type === 'SEND_EMAIL' ? 'Send Email' : 'Draft Email',
+    valid: true,
+    settings: { ...baseSettings, input },
+  }) as WorkflowAction;
 
 describe('ToolExecutorWorkflowAction', () => {
   let action: ToolExecutorWorkflowAction;
@@ -88,7 +92,6 @@ describe('ToolExecutorWorkflowAction', () => {
       runInfo: {
         workspaceId: 'workspace-1',
         workflowRunId: 'run-1',
-        attemptCount: 1,
       },
     });
 
