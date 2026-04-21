@@ -14,7 +14,7 @@ const StyledContainer = styled.div`
   display: inline-flex;
   font-size: ${themeCssVariables.font.size.sm};
   font-weight: ${themeCssVariables.font.weight.regular};
-  gap: ${themeCssVariables.spacing[1]};
+  gap: ${themeCssVariables.spacing[2]};
   max-width: 100%;
   min-width: 0;
   overflow: hidden;
