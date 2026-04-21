@@ -20,6 +20,12 @@ type UseApplicationAvatarColorsArgs = {
   universalIdentifier?: string | null;
 };
 
+const STANDARD_APPLICATION_AVATAR_COLORS: ApplicationAvatarColors = {
+  backgroundColor: '#CEE7FE',
+  borderColor: '#B7D9F8',
+  color: '#113264',
+};
+
 export const useApplicationAvatarColors = (
   application: UseApplicationAvatarColorsArgs | null | undefined,
 ): ApplicationAvatarColors | undefined => {
@@ -40,11 +46,7 @@ export const useApplicationAvatarColors = (
     currentWorkspace.workspaceCustomApplication.id === application.id;
 
   if (isStandard) {
-    return {
-      backgroundColor: theme.color.blue5,
-      borderColor: theme.color.blue6,
-      color: theme.color.blue12,
-    };
+    return STANDARD_APPLICATION_AVATAR_COLORS;
   }
 
   if (isCustom) {
