@@ -5,6 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { CommandLogger } from 'src/database/commands/logger';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 type RebuildDefaultPackageFilesCommandOptions = {
@@ -61,7 +62,8 @@ export class RebuildApplicationDefaultDepsCommand extends CommandRunner {
           ]);
 
         const applications = Object.values(flatApplicationMaps.byId).filter(
-          isDefined,
+          (application): application is FlatApplication =>
+            isDefined(application) && !isDefined(application.deletedAt),
         );
 
         this.logger.log(
