@@ -84,11 +84,11 @@ export class RebuildApplicationDefaultDepsCommand extends CommandRunner {
     });
 
     if (report.fail.length > 0) {
-      this.logger.error(
-        chalk.red(`Command completed with ${report.fail.length} failure(s)`),
+      throw new Error(
+        `Command completed with ${report.fail.length} failure(s)`,
       );
-    } else {
-      this.logger.log(chalk.blue('Command completed!'));
     }
+
+    this.logger.log(chalk.blue('Command completed!'));
   }
 }
