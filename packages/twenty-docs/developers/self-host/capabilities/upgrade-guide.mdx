@@ -25,11 +25,11 @@ If you use Docker Compose, follow these steps:
 
 The server runs all required upgrade migrations automatically on startup. No manual command is needed.
 
-## Cross-version upgrades (v1.21+)
+## Cross-version upgrades (v1.22+)
 
-Starting from **v1.21**, Twenty supports cross-version upgrades. You can jump directly from any supported version to the latest release without stepping through each intermediate version.
+Starting from **v1.22**, Twenty supports cross-version upgrades. You can jump directly from any supported version to the latest release without stepping through each intermediate version.
 
-For example, upgrading from v1.21 straight to v2.0 is fully supported.
+For example, upgrading from v1.22 straight to v2.0 is fully supported.
 
 ## Checking upgrade status
 
@@ -85,6 +85,6 @@ docker exec -it {server_container_name_or_id} yarn command:prod upgrade:status -
 
 This shows only workspaces that are behind or have failed, along with the error message for each failure.
 
-## Before v1.21
+## Before v1.22
 
-If your instance is older than v1.21, you must upgrade incrementally through each major tagged version (v1.6 to v1.7, then v1.7 to v1.8, and so on) until you reach v1.21. From there, you can jump directly to the latest version.
+If your instance is older than v1.22, you must upgrade incrementally through each major tagged version (v1.6 to v1.7, then v1.7 to v1.8, and so on) until you reach v1.22. From there, you can jump directly to the latest version.
