@@ -3,7 +3,7 @@
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
-import { useEffect, useRef } from 'react';
+import { useEffect, useLayoutEffect, useRef } from 'react';
 import * as THREE from 'three';
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
@@ -585,6 +585,45 @@ const FaqVisualCanvasMount = styled.div`
 
 export function FaqBackground() {
   const mountReference = useRef<HTMLDivElement>(null);
+  const shellReference = useRef<HTMLDivElement>(null);
+
+  useLayoutEffect(() => {
+    const shell = shellReference.current;
+
+    if (!shell) {
+      return;
+    }
+
+    const initialHeight = shell.clientHeight;
+
+    if (initialHeight === 0) {
+      return;
+    }
+
+    const initialViewportHeight = window.innerHeight || initialHeight;
+
+    shell.style.bottom = 'auto';
+    shell.style.height = `${initialHeight}px`;
+
+    let resizeFrameId = 0;
+
+    const handleWindowResize = () => {
+      window.cancelAnimationFrame(resizeFrameId);
+      resizeFrameId = window.requestAnimationFrame(() => {
+        const currentViewportHeight =
+          window.innerHeight || initialViewportHeight;
+        const ratio = currentViewportHeight / initialViewportHeight;
+        shell.style.height = `${Math.round(initialHeight * ratio)}px`;
+      });
+    };
+
+    window.addEventListener('resize', handleWindowResize);
+
+    return () => {
+      window.cancelAnimationFrame(resizeFrameId);
+      window.removeEventListener('resize', handleWindowResize);
+    };
+  }, []);
 
   useEffect(() => {
     const container = mountReference.current;
@@ -743,7 +782,7 @@ export function FaqBackground() {
     const postScene = new THREE.Scene();
     postScene.add(new THREE.Mesh(fullScreenGeometry, halftoneMaterial));
 
-    const syncSize = () => {
+    const applySize = () => {
       const width = getWidth();
       const height = getHeight();
       const virtualWidth = getVirtualWidth();
@@ -766,7 +805,8 @@ export function FaqBackground() {
       );
     };
 
-    const resizeObserver = new ResizeObserver(syncSize);
+    applySize();
+    const resizeObserver = new ResizeObserver(applySize);
     resizeObserver.observe(container);
 
     loadFaqGeometry(GLB_URL)
@@ -891,7 +931,7 @@ export function FaqBackground() {
   }, []);
 
   return (
-    <FaqVisualShell>
+    <FaqVisualShell ref={shellReference}>
       <FaqVisualCanvasMount aria-hidden ref={mountReference} />
     </FaqVisualShell>
   );
