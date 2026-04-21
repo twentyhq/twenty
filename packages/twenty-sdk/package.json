@@ -1,6 +1,6 @@
 {
   "name": "twenty-sdk",
-  "version": "1.23.0",
+  "version": "2.0.0",
   "sideEffects": false,
   "bin": {
     "twenty": "dist/cli.cjs"
