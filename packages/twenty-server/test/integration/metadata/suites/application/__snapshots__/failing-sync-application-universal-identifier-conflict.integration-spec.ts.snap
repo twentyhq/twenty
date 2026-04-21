@@ -19,6 +19,7 @@ exports[`Sync application should fail on universalIdentifier conflicts should fa
             },
           ],
           "flatEntityMinimalInformation": {
+            "label": "Stolen Admin Role",
             "universalIdentifier": Any<String>,
           },
           "metadataName": "role",

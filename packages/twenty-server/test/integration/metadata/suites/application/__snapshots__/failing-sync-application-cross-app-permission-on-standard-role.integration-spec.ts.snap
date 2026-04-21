@@ -54,6 +54,7 @@ exports[`Sync application should fail when creating permissions on a standard ro
             },
           ],
           "flatEntityMinimalInformation": {
+            "label": "Stolen Admin Role",
             "universalIdentifier": Any<String>,
           },
           "metadataName": "role",
@@ -117,6 +118,7 @@ exports[`Sync application should fail when creating permissions on a standard ro
             },
           ],
           "flatEntityMinimalInformation": {
+            "label": "Stolen Admin Role",
             "universalIdentifier": Any<String>,
           },
           "metadataName": "role",
@@ -186,6 +188,7 @@ exports[`Sync application should fail when creating permissions on a standard ro
             },
           ],
           "flatEntityMinimalInformation": {
+            "label": "Stolen Admin Role",
             "universalIdentifier": Any<String>,
           },
           "metadataName": "role",
