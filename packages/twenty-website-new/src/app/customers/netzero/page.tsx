@@ -10,7 +10,7 @@ import { theme } from '@/theme';
 import type { Metadata } from 'next';
 
 const PLACEHOLDER_HERO =
-  'https://images.unsplash.com/photo-1510524474345-1c4bac68d1d0?w=1600&q=80';
+  'https://images.unsplash.com/photo-1744830343976-ce690ba2a67c?w=1600&q=80';
 
 const CASE_STUDY: CaseStudyData = {
   meta: {

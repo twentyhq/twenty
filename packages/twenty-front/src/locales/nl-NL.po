@@ -4211,6 +4211,7 @@ msgstr "Huidige werkruimte lid niet gevonden."
 #: src/pages/settings/ai/components/SettingsToolsTable.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelObjectPicker.tsx
 #: src/modules/settings/data-model/fields/forms/date/utils/getDisplayFormatLabel.ts
+#: src/modules/applications/hooks/useApplicationChipData.ts
 msgid "Custom"
 msgstr "Aangepast"
 
@@ -13568,6 +13569,7 @@ msgstr "Stadia"
 #: src/pages/settings/ai/components/SettingsToolsTable.tsx
 #: src/pages/settings/ai/components/SettingsToolsTable.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelObjectPicker.tsx
+#: src/modules/applications/hooks/useApplicationChipData.ts
 msgid "Standard"
 msgstr "Standaard"
 
@@ -14315,6 +14317,11 @@ msgstr "Deze actie verwijdert deze map en alle {2} navigatiemenu-items erin. Wil
 #: src/modules/navigation-menu-item/display/folder/components/NavigationMenuItemFolderDnd.tsx
 msgid "This action will delete this folder and the navigation menu item inside. Do you want to continue?"
 msgstr "Deze actie verwijdert deze map en het navigatiemenu-item erin. Wil je doorgaan?"
+
+#. js-lingui-id: 6jJt3O
+#: src/modules/applications/hooks/useApplicationChipData.ts
+msgid "This app"
+msgstr ""
 
 #. js-lingui-id: SLIRqz
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx

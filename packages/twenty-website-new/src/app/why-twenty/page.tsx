@@ -11,7 +11,6 @@ import { LinkButton } from '@/design-system/components';
 import { Pages } from '@/enums/pages';
 import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';
 import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels';
-import { OverflowProbe } from '@/lib/debug/overflow-probe';
 import { Editorial } from '@/sections/Editorial/components';
 import { Hero } from '@/sections/Hero/components';
 import { Marquee } from '@/sections/Marquee/components';
@@ -72,7 +71,6 @@ export default async function WhyTwentyPage() {
 
   return (
     <>
-      <OverflowProbe />
       <Menu.Root
         backgroundColor={theme.colors.secondary.background[100]}
         scheme="secondary"

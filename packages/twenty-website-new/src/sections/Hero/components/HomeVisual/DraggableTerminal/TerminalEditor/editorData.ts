@@ -128,7 +128,7 @@ const schemaIdentifiersSource = `export const SCHEMA_IDS = {
 } as const;
 `;
 
-const rocketObjectSource = `import { defineObject, FieldType, RelationType } from 'twenty-sdk';
+const rocketObjectSource = `import { defineObject, FieldType, RelationType } from 'twenty-sdk/define';
 
 import { SCHEMA_IDS } from 'src/constants/schema-identifiers';
 
@@ -206,7 +206,7 @@ const launchObjectSource = `import {
   FieldType,
   OnDeleteAction,
   RelationType,
-} from 'twenty-sdk';
+} from 'twenty-sdk/define';
 
 import { SCHEMA_IDS } from 'src/constants/schema-identifiers';
 
@@ -309,7 +309,7 @@ const payloadObjectSource = `import {
   OnDeleteAction,
   RelationType,
   STANDARD_OBJECT,
-} from 'twenty-sdk';
+} from 'twenty-sdk/define';
 
 import { SCHEMA_IDS } from 'src/constants/schema-identifiers';
 
@@ -397,7 +397,7 @@ export default defineObject({
 });
 `;
 
-const launchSiteObjectSource = `import { defineObject, FieldType, RelationType } from 'twenty-sdk';
+const launchSiteObjectSource = `import { defineObject, FieldType, RelationType } from 'twenty-sdk/define';
 
 import { SCHEMA_IDS } from 'src/constants/schema-identifiers';
 
@@ -451,7 +451,7 @@ export default defineObject({
 });
 `;
 
-const launchesViewSource = `import { defineView, ViewKey } from 'twenty-sdk';
+const launchesViewSource = `import { defineView, ViewKey } from 'twenty-sdk/define';
 
 import { SCHEMA_IDS } from 'src/constants/schema-identifiers';
 
@@ -495,7 +495,7 @@ const upcomingLaunchesViewSource = `import {
   defineView,
   ViewFilterOperand,
   ViewType,
-} from 'twenty-sdk';
+} from 'twenty-sdk/define';
 
 import { SCHEMA_IDS } from 'src/constants/schema-identifiers';
 
@@ -519,7 +519,7 @@ export default defineView({
 const launchesNavItemSource = `import {
   defineNavigationMenuItem,
   NavigationMenuItemType,
-} from 'twenty-sdk';
+} from 'twenty-sdk/define';
 
 import { SCHEMA_IDS } from 'src/constants/schema-identifiers';
 
@@ -537,7 +537,7 @@ export default defineNavigationMenuItem({
 const upcomingLaunchesNavItemSource = `import {
   defineNavigationMenuItem,
   NavigationMenuItemType,
-} from 'twenty-sdk';
+} from 'twenty-sdk/define';
 
 import { SCHEMA_IDS } from 'src/constants/schema-identifiers';
 
@@ -555,7 +555,7 @@ export default defineNavigationMenuItem({
 const pastLaunchesNavItemSource = `import {
   defineNavigationMenuItem,
   NavigationMenuItemType,
-} from 'twenty-sdk';
+} from 'twenty-sdk/define';
 
 import { SCHEMA_IDS } from 'src/constants/schema-identifiers';
 
@@ -573,7 +573,7 @@ export default defineNavigationMenuItem({
 const rocketsNavItemSource = `import {
   defineNavigationMenuItem,
   NavigationMenuItemType,
-} from 'twenty-sdk';
+} from 'twenty-sdk/define';
 
 import { SCHEMA_IDS } from 'src/constants/schema-identifiers';
 
@@ -591,7 +591,7 @@ export default defineNavigationMenuItem({
 const payloadsNavItemSource = `import {
   defineNavigationMenuItem,
   NavigationMenuItemType,
-} from 'twenty-sdk';
+} from 'twenty-sdk/define';
 
 import { SCHEMA_IDS } from 'src/constants/schema-identifiers';
 
@@ -609,7 +609,7 @@ export default defineNavigationMenuItem({
 const launchSitesNavItemSource = `import {
   defineNavigationMenuItem,
   NavigationMenuItemType,
-} from 'twenty-sdk';
+} from 'twenty-sdk/define';
 
 import { SCHEMA_IDS } from 'src/constants/schema-identifiers';
 
@@ -624,7 +624,7 @@ export default defineNavigationMenuItem({
 });
 `;
 
-const rocketsViewSource = `import { defineView, ViewKey } from 'twenty-sdk';
+const rocketsViewSource = `import { defineView, ViewKey } from 'twenty-sdk/define';
 
 import { SCHEMA_IDS } from 'src/constants/schema-identifiers';
 
@@ -658,7 +658,7 @@ export default defineView({
 });
 `;
 
-const payloadsViewSource = `import { defineView, ViewKey } from 'twenty-sdk';
+const payloadsViewSource = `import { defineView, ViewKey } from 'twenty-sdk/define';
 
 import { SCHEMA_IDS } from 'src/constants/schema-identifiers';
 
@@ -704,7 +704,7 @@ export default defineView({
 });
 `;
 
-const launchSitesViewSource = `import { defineView, ViewKey } from 'twenty-sdk';
+const launchSitesViewSource = `import { defineView, ViewKey } from 'twenty-sdk/define';
 
 import { SCHEMA_IDS } from 'src/constants/schema-identifiers';
 
@@ -742,7 +742,7 @@ const pastLaunchesViewSource = `import {
   defineView,
   ViewFilterOperand,
   ViewType,
-} from 'twenty-sdk';
+} from 'twenty-sdk/define';
 
 import { SCHEMA_IDS } from 'src/constants/schema-identifiers';
 
@@ -767,7 +767,7 @@ const flyAgainCommandMenuItemSource = `import {
   CommandMenuItemAvailabilityType,
   CommandMenuItemActionType,
   defineCommandMenuItem,
-} from 'twenty-sdk';
+} from 'twenty-sdk/define';
 
 import { SCHEMA_IDS } from 'src/constants/schema-identifiers';
 
@@ -794,7 +794,7 @@ const scheduleLaunchFromRocketCommandMenuItemSource = `import {
   CommandMenuItemAvailabilityType,
   CommandMenuItemActionType,
   defineCommandMenuItem,
-} from 'twenty-sdk';
+} from 'twenty-sdk/define';
 
 import { SCHEMA_IDS } from 'src/constants/schema-identifiers';
 
@@ -819,7 +819,7 @@ const retireRocketCommandMenuItemSource = `import {
   CommandMenuItemAvailabilityType,
   CommandMenuItemActionType,
   defineCommandMenuItem,
-} from 'twenty-sdk';
+} from 'twenty-sdk/define';
 
 import { SCHEMA_IDS } from 'src/constants/schema-identifiers';
 
@@ -844,7 +844,7 @@ const rescheduleLaunchCommandMenuItemSource = `import {
   CommandMenuItemAvailabilityType,
   CommandMenuItemActionType,
   defineCommandMenuItem,
-} from 'twenty-sdk';
+} from 'twenty-sdk/define';
 
 import { SCHEMA_IDS } from 'src/constants/schema-identifiers';
 
@@ -867,7 +867,7 @@ const addPayloadCommandMenuItemSource = `import {
   CommandMenuItemAvailabilityType,
   CommandMenuItemActionType,
   defineCommandMenuItem,
-} from 'twenty-sdk';
+} from 'twenty-sdk/define';
 
 import { SCHEMA_IDS } from 'src/constants/schema-identifiers';
 
@@ -892,7 +892,7 @@ const upcomingLaunchesCommandMenuItemSource = `import {
   CommandMenuItemAvailabilityType,
   CommandMenuItemActionType,
   defineCommandMenuItem,
-} from 'twenty-sdk';
+} from 'twenty-sdk/define';
 
 import { SCHEMA_IDS } from 'src/constants/schema-identifiers';
 
@@ -916,7 +916,7 @@ const bookSlotCommandMenuItemSource = `import {
   CommandMenuItemActionType,
   defineCommandMenuItem,
   STANDARD_OBJECT,
-} from 'twenty-sdk';
+} from 'twenty-sdk/define';
 
 import { SCHEMA_IDS } from 'src/constants/schema-identifiers';
 
@@ -944,7 +944,7 @@ const setPayloadStatusCommandMenuItemSource = `import {
   CommandMenuItemAvailabilityType,
   CommandMenuItemActionType,
   defineCommandMenuItem,
-} from 'twenty-sdk';
+} from 'twenty-sdk/define';
 
 import { SCHEMA_IDS } from 'src/constants/schema-identifiers';
 
@@ -968,7 +968,7 @@ const setCustomerStatusCommandMenuItemSource = `import {
   CommandMenuItemActionType,
   defineCommandMenuItem,
   STANDARD_OBJECT,
-} from 'twenty-sdk';
+} from 'twenty-sdk/define';
 
 import { SCHEMA_IDS } from 'src/constants/schema-identifiers';
 
@@ -993,7 +993,7 @@ const setSiteStatusCommandMenuItemSource = `import {
   CommandMenuItemAvailabilityType,
   CommandMenuItemActionType,
   defineCommandMenuItem,
-} from 'twenty-sdk';
+} from 'twenty-sdk/define';
 
 import { SCHEMA_IDS } from 'src/constants/schema-identifiers';
 
@@ -1017,7 +1017,7 @@ const bookWindowCommandMenuItemSource = `import {
   CommandMenuItemAvailabilityType,
   CommandMenuItemActionType,
   defineCommandMenuItem,
-} from 'twenty-sdk';
+} from 'twenty-sdk/define';
 
 import { SCHEMA_IDS } from 'src/constants/schema-identifiers';
 
@@ -1044,7 +1044,7 @@ const launchesFromSiteCommandMenuItemSource = `import {
   CommandMenuItemAvailabilityType,
   CommandMenuItemActionType,
   defineCommandMenuItem,
-} from 'twenty-sdk';
+} from 'twenty-sdk/define';
 
 import { SCHEMA_IDS } from 'src/constants/schema-identifiers';
 
@@ -1064,7 +1064,7 @@ export default defineCommandMenuItem({
 });
 `;
 
-const applicationConfigSource = `import { defineApplication } from 'twenty-sdk';
+const applicationConfigSource = `import { defineApplication } from 'twenty-sdk/define';
 
 import {
   APP_DESCRIPTION,

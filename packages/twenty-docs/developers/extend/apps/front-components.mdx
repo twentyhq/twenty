@@ -22,7 +22,7 @@ Front components can render in two locations within Twenty:
 The quickest way to see a front component in action is to register it as a **command**. Adding a `command` field with `isPinned: true` makes it appear as a quick-action button in the top-right corner of the page — no page layout needed:
 
 ```tsx src/front-components/hello-world.tsx
-import { defineFrontComponent } from 'twenty-sdk';
+import { defineFrontComponent } from 'twenty-sdk/define';
 
 const HelloWorld = () => {
   return (
@@ -81,7 +81,8 @@ Front components come in two rendering modes controlled by the `isHeadless` opti
 **Headless (`isHeadless: true`)** — The component mounts invisibly in the background. It does not open the side panel. Headless components are designed for actions that execute logic and then unmount themselves — for example, running an async task, navigating to a page, or showing a confirmation modal. They pair naturally with the SDK Command components described below.
 
 ```tsx src/front-components/sync-tracker.tsx
-import { defineFrontComponent, useRecordId, enqueueSnackbar } from 'twenty-sdk';
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { useRecordId, enqueueSnackbar } from 'twenty-sdk/front-component';
 import { useEffect } from 'react';
 
 const SyncTracker = () => {
@@ -119,7 +120,7 @@ Import them from `twenty-sdk/command`:
 Here is a full example of a headless front component using `Command` to run an action from the command menu:
 
 ```tsx src/front-components/run-action.tsx
-import { defineFrontComponent } from 'twenty-sdk';
+import { defineFrontComponent } from 'twenty-sdk/define';
 import { Command } from 'twenty-sdk/command';
 import { CoreApiClient } from 'twenty-sdk/clients';
 
@@ -155,7 +156,7 @@ export default defineFrontComponent({
 And an example using `CommandModal` to ask for confirmation before executing:
 
 ```tsx src/front-components/delete-draft.tsx
-import { defineFrontComponent } from 'twenty-sdk';
+import { defineFrontComponent } from 'twenty-sdk/define';
 import { CommandModal } from 'twenty-sdk/command';
 
 const DeleteDraft = () => {
@@ -193,12 +194,12 @@ export default defineFrontComponent({
 Inside your component, use SDK hooks to access the current user, record, and component instance:
 
 ```tsx src/front-components/record-info.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
 import {
-  defineFrontComponent,
   useUserId,
   useRecordId,
   useFrontComponentId,
-} from 'twenty-sdk';
+} from 'twenty-sdk/front-component';
 
 const RecordInfo = () => {
   const userId = useUserId();
@@ -247,8 +248,9 @@ Front components can trigger navigation, modals, and notifications using functio
 Here is an example that uses the host API to show a snackbar and close the side panel after an action completes:
 
 ```tsx src/front-components/archive-record.tsx
-import { defineFrontComponent, useRecordId } from 'twenty-sdk';
-import { enqueueSnackbar, closeSidePanel } from 'twenty-sdk';
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { useRecordId } from 'twenty-sdk/front-component';
+import { enqueueSnackbar, closeSidePanel } from 'twenty-sdk/front-component';
 import { CoreApiClient } from 'twenty-sdk/clients';
 
 const ArchiveRecord = () => {
@@ -308,14 +310,14 @@ Adding a `command` field to `defineFrontComponent` registers the component in th
 The `conditionalAvailabilityExpression` field lets you control when a command is visible based on the current page context. Import typed variables and operators from `twenty-sdk` to build expressions:
 
 ```tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
 import {
-  defineFrontComponent,
   pageType,
   numberOfSelectedRecords,
   objectPermissions,
   everyEquals,
   isDefined,
-} from 'twenty-sdk';
+} from 'twenty-sdk/front-component';
 
 export default defineFrontComponent({
   universalIdentifier: '...',
@@ -375,7 +377,7 @@ export default defineFrontComponent({
 Front components can access files from the app's `public/` directory using `getPublicAssetUrl`:
 
 ```tsx
-import { defineFrontComponent, getPublicAssetUrl } from 'twenty-sdk';
+import { defineFrontComponent, getPublicAssetUrl } from 'twenty-sdk/define';
 
 const Logo = () => <img src={getPublicAssetUrl('logo.png')} alt="Logo" />;
 
@@ -400,7 +402,7 @@ Front components support multiple styling approaches. You can use:
 - **Any CSS-in-JS library** compatible with React
 
 ```tsx
-import { defineFrontComponent } from 'twenty-sdk';
+import { defineFrontComponent } from 'twenty-sdk/define';
 import { Button, Tag, Status } from 'twenty-sdk/ui';
 
 const StyledWidget = () => {

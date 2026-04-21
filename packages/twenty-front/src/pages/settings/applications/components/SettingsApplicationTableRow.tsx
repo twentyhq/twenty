@@ -1,10 +1,11 @@
 import { type ReactNode } from 'react';
 
-import { t } from '@lingui/core/macro';
+import { useApplicationAvatarColors } from '@/applications/hooks/useApplicationAvatarColors';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { OverflowingTextWithTooltip } from 'twenty-ui/display';
+import { t } from '@lingui/core/macro';
 import { Tag } from 'twenty-ui/components';
+import { Avatar, OverflowingTextWithTooltip } from 'twenty-ui/display';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type ApplicationWithoutRelation } from '~/pages/settings/applications/types/applicationWithoutRelation';
 
@@ -24,6 +25,8 @@ export const SettingsApplicationTableRow = ({
   hasUpdate,
   link,
 }: SettingsApplicationTableRowProps) => {
+  const colors = useApplicationAvatarColors(application);
+
   return (
     <TableRow
       gridTemplateColumns={APPLICATION_TABLE_ROW_GRID_TEMPLATE_COLUMNS}
@@ -36,6 +39,17 @@ export const SettingsApplicationTableRow = ({
         minWidth="0"
         overflow="hidden"
       >
+        <Avatar
+          type="app"
+          size="md"
+          placeholder={application.name}
+          placeholderColorSeed={
+            application.universalIdentifier ?? application.name
+          }
+          color={colors?.color}
+          backgroundColor={colors?.backgroundColor}
+          borderColor={colors?.borderColor}
+        />
         <OverflowingTextWithTooltip text={application.name} />
       </TableCell>
       <TableCell gap={themeCssVariables.spacing[2]} minWidth="0">

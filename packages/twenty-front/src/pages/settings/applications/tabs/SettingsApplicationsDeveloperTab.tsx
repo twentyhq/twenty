@@ -1,3 +1,4 @@
+import { useApplicationAvatarColors } from '@/applications/hooks/useApplicationAvatarColors';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
 import {
@@ -58,6 +59,31 @@ const StyledTableRowsContainer = styled.div`
 `;
 
 const NPM_PACKAGES_GRID_COLUMNS = '200px 1fr 36px';
+
+type MarketplaceAppAvatarProps = {
+  application: { id: string; name: string; logo?: string | null };
+};
+
+const MarketplaceAppAvatar = ({ application }: MarketplaceAppAvatarProps) => {
+  const colors = useApplicationAvatarColors({
+    id: application.id,
+    name: application.name,
+    universalIdentifier: application.id,
+  });
+
+  return (
+    <Avatar
+      avatarUrl={application.logo || null}
+      placeholder={application.name}
+      placeholderColorSeed={application.id ?? application.name}
+      size="md"
+      type="app"
+      color={colors?.color}
+      backgroundColor={colors?.backgroundColor}
+      borderColor={colors?.borderColor}
+    />
+  );
+};
 
 export const SettingsApplicationsDeveloperTab = () => {
   const { t } = useLingui();
@@ -183,6 +209,7 @@ export const SettingsApplicationsDeveloperTab = () => {
                       <IconChevronRight
                         size={theme.icon.size.md}
                         stroke={theme.icon.stroke.sm}
+                        color={theme.font.color.light}
                       />
                     }
                     link={getRegistrationLink(registration)}
@@ -240,13 +267,7 @@ export const SettingsApplicationsDeveloperTab = () => {
                         )}
                       >
                         <StyledNameTableCell>
-                          <Avatar
-                            avatarUrl={application.logo || null}
-                            placeholder={application.name}
-                            placeholderColorSeed={application.name}
-                            size="md"
-                            type="squared"
-                          />
+                          <MarketplaceAppAvatar application={application} />
                           <OverflowingTextWithTooltip text={application.name} />
                         </StyledNameTableCell>
                         <TableCell
@@ -262,7 +283,7 @@ export const SettingsApplicationsDeveloperTab = () => {
                           <IconChevronRight
                             size={theme.icon.size.md}
                             stroke={theme.icon.stroke.sm}
-                            color={theme.font.color.tertiary}
+                            color={theme.font.color.light}
                           />
                         </StyledActionTableCell>
                       </TableRow>

@@ -5,6 +5,7 @@ import { resolveInput, resolveRichTextVariables } from 'twenty-shared/utils';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
 import { DraftEmailTool } from 'src/engine/core-modules/tool/tools/email-tool/draft-email-tool';
+import { renderRichTextToHtml } from 'src/engine/core-modules/tool/tools/email-tool/utils/render-rich-text-to-html.util';
 import { HttpTool } from 'src/engine/core-modules/tool/tools/http-tool/http-tool';
 import { SendEmailTool } from 'src/engine/core-modules/tool/tools/email-tool/send-email-tool';
 import { type ToolInput } from 'src/engine/core-modules/tool/types/tool-input.type';
@@ -67,9 +68,13 @@ export class ToolExecutorWorkflowAction implements WorkflowAction {
       const emailInput = toolInput as WorkflowSendEmailActionInput;
 
       if (emailInput.body) {
+        const resolvedBody = resolveRichTextVariables(emailInput.body, context);
+        const bodyJson = JSON.parse(resolvedBody!);
+        const htmlBody = await renderRichTextToHtml(bodyJson);
+
         toolInput = {
           ...emailInput,
-          body: resolveRichTextVariables(emailInput.body, context),
+          body: htmlBody,
         };
       }
     }

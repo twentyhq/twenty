@@ -8,10 +8,7 @@ import {
 } from '@/icons';
 import type { FaqQuestionType } from '@/sections/Faq/types/FaqQuestion';
 import { theme } from '@/theme';
-import {
-  Accordion as BaseAccordion,
-  type AccordionTriggerState,
-} from '@base-ui/react/accordion';
+import { Accordion as BaseAccordion } from '@base-ui/react/accordion';
 import { styled } from '@linaria/react';
 
 const QuestionText = styled.span`
@@ -55,10 +52,27 @@ const ToggleVisual = styled.span`
   display: inline-flex;
   height: 36px;
   justify-content: center;
+  position: relative;
   transition:
     border-color 0.2s ease,
     transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
   width: 36px;
+`;
+
+const ToggleIconLayer = styled.span`
+  align-items: center;
+  display: inline-flex;
+  inset: 0;
+  justify-content: center;
+  position: absolute;
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
+
+  &[data-icon='minus'] {
+    opacity: 0;
+    transform: scale(0.9);
+  }
 `;
 
 const RowTrigger = styled.button`
@@ -121,6 +135,16 @@ export const ItemRow = styled.div`
 
   &[data-open] ${QuestionIconLayer}[data-layer='fill'] {
     opacity: 1;
+  }
+
+  &[data-open] ${ToggleIconLayer}[data-icon='plus'] {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+
+  &[data-open] ${ToggleIconLayer}[data-icon='minus'] {
+    opacity: 1;
+    transform: scale(1);
   }
 
   @media (min-width: ${theme.breakpoints.md}px) {
@@ -186,42 +210,41 @@ export function Item({ question, value }: ItemProps) {
   return (
     <BaseAccordion.Item key={value} value={value} render={<ItemRow />}>
       <BaseAccordion.Header render={<Header />}>
-        <BaseAccordion.Trigger
-          render={(props, state: AccordionTriggerState) => {
-            const isOpen = state.open;
-            const ToggleIcon = isOpen ? MinusIcon : PlusIcon;
-            return (
-              // oxlint-disable-next-line react/jsx-props-no-spreading -- Accordion.Trigger host props
-              <RowTrigger {...props} type="button">
-                <QuestionIconContainer aria-hidden>
-                  <QuestionIconLayer data-layer="outline">
-                    <RectangleOutlineIcon
-                      size={14}
-                      strokeColor={theme.colors.secondary.text[100]}
-                    />
-                  </QuestionIconLayer>
-                  <QuestionIconLayer data-layer="fill">
-                    <RectangleFillIcon
-                      size={14}
-                      fillColor={theme.colors.secondary.text[100]}
-                    />
-                  </QuestionIconLayer>
-                </QuestionIconContainer>
+        <BaseAccordion.Trigger render={<RowTrigger type="button" />}>
+          <QuestionIconContainer aria-hidden>
+            <QuestionIconLayer data-layer="outline">
+              <RectangleOutlineIcon
+                size={14}
+                strokeColor={theme.colors.secondary.text[100]}
+              />
+            </QuestionIconLayer>
+            <QuestionIconLayer data-layer="fill">
+              <RectangleFillIcon
+                size={14}
+                fillColor={theme.colors.secondary.text[100]}
+              />
+            </QuestionIconLayer>
+          </QuestionIconContainer>
 
-                <QuestionText>{question.question.text}</QuestionText>
+          <QuestionText>{question.question.text}</QuestionText>
 
-                <ToggleContainer>
-                  <ToggleVisual aria-hidden>
-                    <ToggleIcon
-                      size={12}
-                      strokeColor={theme.colors.secondary.border[80]}
-                    />
-                  </ToggleVisual>
-                </ToggleContainer>
-              </RowTrigger>
-            );
-          }}
-        />
+          <ToggleContainer>
+            <ToggleVisual aria-hidden>
+              <ToggleIconLayer data-icon="plus">
+                <PlusIcon
+                  size={12}
+                  strokeColor={theme.colors.secondary.border[80]}
+                />
+              </ToggleIconLayer>
+              <ToggleIconLayer data-icon="minus">
+                <MinusIcon
+                  size={12}
+                  strokeColor={theme.colors.secondary.border[80]}
+                />
+              </ToggleIconLayer>
+            </ToggleVisual>
+          </ToggleContainer>
+        </BaseAccordion.Trigger>
       </BaseAccordion.Header>
 
       <BaseAccordion.Panel render={<AnswerWrapper />} keepMounted>

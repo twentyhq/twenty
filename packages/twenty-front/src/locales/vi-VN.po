@@ -4211,6 +4211,7 @@ msgstr "Không tìm thấy thành viên hiện tại của không gian làm vi�
 #: src/pages/settings/ai/components/SettingsToolsTable.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelObjectPicker.tsx
 #: src/modules/settings/data-model/fields/forms/date/utils/getDisplayFormatLabel.ts
+#: src/modules/applications/hooks/useApplicationChipData.ts
 msgid "Custom"
 msgstr "Tùy chỉnh"
 
@@ -13568,6 +13569,7 @@ msgstr "Giai đoạn"
 #: src/pages/settings/ai/components/SettingsToolsTable.tsx
 #: src/pages/settings/ai/components/SettingsToolsTable.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelObjectPicker.tsx
+#: src/modules/applications/hooks/useApplicationChipData.ts
 msgid "Standard"
 msgstr "Tiêu chuẩn"
 
@@ -14313,6 +14315,11 @@ msgstr "Hành động này sẽ xóa thư mục này và toàn bộ {2} mục me
 #: src/modules/navigation-menu-item/display/folder/components/NavigationMenuItemFolderDnd.tsx
 msgid "This action will delete this folder and the navigation menu item inside. Do you want to continue?"
 msgstr "Hành động này sẽ xóa thư mục này và mục menu điều hướng bên trong. Bạn có muốn tiếp tục không?"
+
+#. js-lingui-id: 6jJt3O
+#: src/modules/applications/hooks/useApplicationChipData.ts
+msgid "This app"
+msgstr ""
 
 #. js-lingui-id: SLIRqz
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx

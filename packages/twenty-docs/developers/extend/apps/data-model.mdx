@@ -25,7 +25,7 @@ import {
   defineRole,
   PermissionFlag,
   STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
-} from 'twenty-sdk';
+} from 'twenty-sdk/define';
 
 export default defineRole({
   universalIdentifier: '2c80f640-2083-4803-bb49-003e38279de6',
@@ -74,7 +74,7 @@ Every app must have exactly one `defineApplication` call that describes:
 - **(Optional) Pre-install / post-install functions**: logic functions that run before or after installation.
 
 ```ts src/application-config.ts
-import { defineApplication } from 'twenty-sdk';
+import { defineApplication } from 'twenty-sdk/define';
 import { DEFAULT_ROLE_UNIVERSAL_IDENTIFIER } from 'src/roles/default-role';
 
 export default defineApplication({
@@ -129,7 +129,7 @@ The `defaultRoleUniversalIdentifier` in `application-config.ts` designates the d
 When you scaffold a new app, the CLI creates a default role file:
 
 ```ts src/roles/default-role.ts
-import { defineRole, PermissionFlag } from 'twenty-sdk';
+import { defineRole, PermissionFlag } from 'twenty-sdk/define';
 
 export const DEFAULT_ROLE_UNIVERSAL_IDENTIFIER =
   'b648f87b-1d26-4961-b974-0908fd991061';
@@ -169,7 +169,7 @@ Notes:
 Custom objects describe both schema and behavior for records in your workspace. Use `defineObject()` to define objects with built-in validation:
 
 ```ts postCard.object.ts
-import { defineObject, FieldType } from 'twenty-sdk';
+import { defineObject, FieldType } from 'twenty-sdk/define';
 
 enum PostCardStatus {
   DRAFT = 'DRAFT',
@@ -258,7 +258,7 @@ Key points:
 Use `defineField()` to add fields to objects you don't own — such as standard Twenty objects (Person, Company, etc.) or objects from other apps. Unlike inline fields in `defineObject()`, standalone fields require an `objectUniversalIdentifier` to specify which object they extend:
 
 ```ts src/fields/company-loyalty-tier.field.ts
-import { defineField, FieldType } from 'twenty-sdk';
+import { defineField, FieldType } from 'twenty-sdk/define';
 
 export default defineField({
   universalIdentifier: 'f2a1b3c4-d5e6-7890-abcd-ef1234567890',
@@ -308,7 +308,7 @@ Suppose a `PostCard` can be sent to many `PostCardRecipient` records. Each recip
 **Step 1: Define the ONE_TO_MANY side on PostCard** (the "one" side):
 
 ```ts src/fields/post-card-recipients-on-post-card.field.ts
-import { defineField, FieldType, RelationType } from 'twenty-sdk';
+import { defineField, FieldType, RelationType } from 'twenty-sdk/define';
 import { POST_CARD_UNIVERSAL_IDENTIFIER } from '../objects/post-card.object';
 import { POST_CARD_RECIPIENT_UNIVERSAL_IDENTIFIER } from '../objects/post-card-recipient.object';
 
@@ -335,7 +335,7 @@ export default defineField({
 **Step 2: Define the MANY_TO_ONE side on PostCardRecipient** (the "many" side — holds the foreign key):
 
 ```ts src/fields/post-card-on-post-card-recipient.field.ts
-import { defineField, FieldType, RelationType, OnDeleteAction } from 'twenty-sdk';
+import { defineField, FieldType, RelationType, OnDeleteAction } from 'twenty-sdk/define';
 import { POST_CARD_UNIVERSAL_IDENTIFIER } from '../objects/post-card.object';
 import { POST_CARD_RECIPIENT_UNIVERSAL_IDENTIFIER } from '../objects/post-card-recipient.object';
 
@@ -376,7 +376,7 @@ import {
   RelationType,
   OnDeleteAction,
   STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
-} from 'twenty-sdk';
+} from 'twenty-sdk/define';
 import { SELF_HOSTING_USER_UNIVERSAL_IDENTIFIER } from '../objects/self-hosting-user.object';
 
 export const PERSON_FIELD_ID = 'c3333333-3333-3333-3333-333333333333';

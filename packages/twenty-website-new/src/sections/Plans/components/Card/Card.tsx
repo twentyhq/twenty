@@ -14,14 +14,16 @@ const StyledCard = styled.div`
   background-color: ${theme.colors.primary.background[100]};
   border: 1px solid transparent;
   border-radius: ${theme.radius(2)};
-  display: grid;
-  grid-template-columns: 1fr;
+  display: flex;
+  flex-direction: column;
+  gap: ${theme.spacing(4)};
+  height: 100%;
+  min-height: 0;
   overflow: hidden;
   padding-bottom: ${theme.spacing(4)};
   padding-left: ${theme.spacing(4)};
   padding-right: ${theme.spacing(4)};
   padding-top: ${theme.spacing(4)};
-  row-gap: ${theme.spacing(4)};
   position: relative;
   z-index: 1;
 `;
@@ -30,6 +32,7 @@ const CardHeader = styled.div`
   align-items: flex-start;
   display: flex;
   flex-direction: row;
+  flex-shrink: 0;
   gap: ${theme.spacing(3)};
   justify-content: space-between;
   overflow: visible;
@@ -92,6 +95,7 @@ const PriceLine = styled.div`
 
 const CardRule = styled.div`
   border-top: 1px dotted ${theme.colors.primary.border[10]};
+  flex-shrink: 0;
   height: 0;
   width: 100%;
 `;
@@ -123,6 +127,7 @@ const CardIcon = styled.div`
 `;
 
 const CtaWrapper = styled.div`
+  flex-shrink: 0;
   width: 100%;
 
   > * {
@@ -135,13 +140,15 @@ const FEATURES_SWITCH_ANIMATION_MS = 110;
 const FEATURE_ITEM_STAGGER_MS = 8;
 const FEATURE_ITEM_EXPANDED_HEIGHT = theme.spacing(8);
 const FEATURE_ITEM_SPACING = theme.spacing(4);
+const FEATURE_LIST_ROW_LAYOUT_HEIGHT = theme.spacing(5.5);
 
 const FeaturesViewport = styled.div`
-  height: var(--features-height, auto);
+  flex: 1 1 auto;
+  min-height: var(--features-height, 0);
   min-width: 0;
   overflow: hidden;
   position: relative;
-  transition: height ${FEATURES_SWITCH_ANIMATION_MS}ms
+  transition: min-height ${FEATURES_SWITCH_ANIMATION_MS}ms
     cubic-bezier(0.2, 0.8, 0.2, 1);
 
   @media (prefers-reduced-motion: reduce) {
@@ -205,6 +212,10 @@ const FeatureItem = styled.li`
   min-width: 0;
   overflow: hidden;
 
+  &[data-state='stable'] {
+    max-height: none;
+  }
+
   &[data-state='entering'] {
     animation: pricingFeatureItemEnter ${FEATURES_SWITCH_ANIMATION_MS}ms
       cubic-bezier(0.2, 0.8, 0.2, 1) both;
@@ -231,7 +242,6 @@ type CardProps = {
 const PRICE_ROLL_DURATION_MS = 500;
 const PRICE_NUMBER_FORMATTER = new Intl.NumberFormat('en-US');
 const PRICE_HEADING_NUMBER_REGEX = /^(.*?)(\d[\d,]*)(.*)$/;
-const FEATURE_LIST_ROW_MIN_HEIGHT = theme.spacing(5.5);
 
 const useAnimatedNumber = (target: number) => {
   const [display, setDisplay] = useState(target);
@@ -272,7 +282,9 @@ function getHeadingSegments(heading: PlanCardType['price']['heading']) {
   return Array.isArray(heading) ? heading : [heading];
 }
 
-function getPriceHeadingNumericValue(heading: PlanCardType['price']['heading']) {
+function getPriceHeadingNumericValue(
+  heading: PlanCardType['price']['heading'],
+) {
   const segments = getHeadingSegments(heading);
 
   for (const segment of segments) {
@@ -321,12 +333,22 @@ function getBulletsKey(bullets: PlanCardType['features']['bullets']) {
   return bullets.map((bullet) => bullet.text).join('||');
 }
 
-function getFeaturesMinHeight(maxBullets: number) {
+function getFeaturesLayoutMinHeight(maxBullets: number) {
   if (maxBullets <= 0) {
     return '0px';
   }
 
-  return `calc((${FEATURE_LIST_ROW_MIN_HEIGHT} * ${maxBullets}) + (${theme.spacing(
+  return `calc((${FEATURE_LIST_ROW_LAYOUT_HEIGHT} * ${maxBullets}) + (${theme.spacing(
+    4,
+  )} * ${maxBullets - 1}))`;
+}
+
+function getFeaturesAnimationMinHeight(maxBullets: number) {
+  if (maxBullets <= 0) {
+    return '0px';
+  }
+
+  return `calc((${FEATURE_ITEM_EXPANDED_HEIGHT} * ${maxBullets}) + (${theme.spacing(
     4,
   )} * ${maxBullets - 1}))`;
 }
@@ -376,13 +398,16 @@ export function Card({ card, highlighted = false, maxBullets }: CardProps) {
       return;
     }
 
-    const timeoutId = window.setTimeout(() => {
-      setComparisonBullets(visibleBullets);
-      setVisibleBullets(queuedBullets);
-      setQueuedBullets(null);
-      setFeaturesPhase('entering');
-    }, FEATURES_SWITCH_ANIMATION_MS +
-      FEATURE_ITEM_STAGGER_MS * visibleBullets.length);
+    const timeoutId = window.setTimeout(
+      () => {
+        setComparisonBullets(visibleBullets);
+        setVisibleBullets(queuedBullets);
+        setQueuedBullets(null);
+        setFeaturesPhase('entering');
+      },
+      FEATURES_SWITCH_ANIMATION_MS +
+        FEATURE_ITEM_STAGGER_MS * visibleBullets.length,
+    );
 
     return () => {
       window.clearTimeout(timeoutId);
@@ -394,11 +419,14 @@ export function Card({ card, highlighted = false, maxBullets }: CardProps) {
       return;
     }
 
-    const timeoutId = window.setTimeout(() => {
-      setComparisonBullets(null);
-      setFeaturesPhase('stable');
-    }, FEATURES_SWITCH_ANIMATION_MS +
-      FEATURE_ITEM_STAGGER_MS * visibleBullets.length);
+    const timeoutId = window.setTimeout(
+      () => {
+        setComparisonBullets(null);
+        setFeaturesPhase('stable');
+      },
+      FEATURES_SWITCH_ANIMATION_MS +
+        FEATURE_ITEM_STAGGER_MS * visibleBullets.length,
+    );
 
     return () => {
       window.clearTimeout(timeoutId);
@@ -450,9 +478,14 @@ export function Card({ card, highlighted = false, maxBullets }: CardProps) {
       <CardRule />
 
       <FeaturesViewport
-        style={{
-          '--features-height': getFeaturesMinHeight(maxBullets),
-        } as CSSProperties}
+        style={
+          {
+            '--features-height':
+              featuresPhase === 'stable'
+                ? getFeaturesLayoutMinHeight(maxBullets)
+                : getFeaturesAnimationMinHeight(maxBullets),
+          } as CSSProperties
+        }
       >
         <FeaturesList data-state={featuresPhase}>
           {visibleBullets.map((bullet, index) => (
@@ -469,20 +502,19 @@ export function Card({ card, highlighted = false, maxBullets }: CardProps) {
                 {
                   '--feature-index': index,
                   '--feature-item-height': FEATURE_ITEM_EXPANDED_HEIGHT,
-                  '--feature-spacing':
-                    index > 0 ? FEATURE_ITEM_SPACING : '0px',
+                  '--feature-spacing': index > 0 ? FEATURE_ITEM_SPACING : '0px',
                 } as CSSProperties
-                }
-              >
-                <FeatureCheck>
-                  <CheckIcon
-                    color={theme.colors.highlight[100]}
-                    size={16}
-                    strokeWidth={1.5}
-                  />
-                </FeatureCheck>
-                <Body as="span" body={bullet} size="sm" />
-              </FeatureItem>
+              }
+            >
+              <FeatureCheck>
+                <CheckIcon
+                  color={theme.colors.highlight[100]}
+                  size={16}
+                  strokeWidth={1.5}
+                />
+              </FeatureCheck>
+              <Body as="span" body={bullet} size="sm" />
+            </FeatureItem>
           ))}
         </FeaturesList>
       </FeaturesViewport>

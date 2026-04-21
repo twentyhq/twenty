@@ -66,8 +66,9 @@ const StyledMain = styled.main`
 `;
 
 export const metadata: Metadata = {
-  title: 'Twenty | Open Source CRM',
-  description: 'Modular, scalable open source CRM for modern teams.',
+  title: 'Twenty | #1 open source CRM',
+  description:
+    'The #1 open source CRM for modern teams. Modular, scalable, and built to fit your business.',
 };
 
 export default function RootLayout({

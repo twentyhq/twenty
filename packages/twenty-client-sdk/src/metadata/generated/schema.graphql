@@ -830,6 +830,7 @@ type Workspace {
   workspaceCustomApplication: Application
   featureFlags: [FeatureFlag!]
   billingSubscriptions: [BillingSubscription!]!
+  installedApplications: [Application!]!
   currentBillingSubscription: BillingSubscription
   billingEntitlements: [BillingEntitlement!]!
   hasValidEnterpriseKey: Boolean!

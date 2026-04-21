@@ -26,6 +26,7 @@ import { ThreeCards } from '@/sections/ThreeCards/components';
 import { TrustedBy } from '@/sections/TrustedBy/components';
 import type { ThreeCardsScrollLayoutOptions } from '@/sections/ThreeCards/utils/three-cards-scroll-layout';
 import { theme } from '@/theme';
+import { styled } from '@linaria/react';
 import type { Metadata } from 'next';
 
 const PARTNER_ILLUSTRATION_CARDS_SCROLL_LAYOUT_OPTIONS: ThreeCardsScrollLayoutOptions =
@@ -37,10 +38,18 @@ const PARTNER_ILLUSTRATION_CARDS_SCROLL_LAYOUT_OPTIONS: ThreeCardsScrollLayoutOp
     stagger: 0.16,
   };
 
+const PromoSpacing = styled.div`
+  margin-bottom: ${theme.spacing(8)};
+
+  @media (min-width: ${theme.breakpoints.md}px) {
+    margin-bottom: ${theme.spacing(12)};
+  }
+`;
+
 export const metadata: Metadata = {
   title: 'Partners | Twenty',
   description:
-    'Join our partner ecosystem and grow with us as we build the #1 open-source CRM.',
+    'Join our partner ecosystem and grow with us as we build the #1 open source CRM.',
 };
 
 export default async function PartnerPage() {
@@ -72,13 +81,16 @@ export default async function PartnerPage() {
 
       <TrustedBy.Root
         backgroundColor={theme.colors.primary.background[100]}
+        compactBottom
       >
         <TrustedBy.Separator separator={TRUSTED_BY_DATA.separator} />
         <TrustedBy.Logos logos={TRUSTED_BY_DATA.logos} />
         <TrustedBy.ClientCount label={TRUSTED_BY_DATA.clientCountLabel.text} />
       </TrustedBy.Root>
 
-      <CaseStudyCatalog.Promo entries={CASE_STUDY_CATALOG_ENTRIES} />
+      <PromoSpacing>
+        <CaseStudyCatalog.Promo compactTop entries={CASE_STUDY_CATALOG_ENTRIES} />
+      </PromoSpacing>
 
       <ThreeCards.Root backgroundColor={theme.colors.secondary.background[5]}>
         <ThreeCards.Intro page={Pages.Partners} align="left">

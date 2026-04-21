@@ -28,7 +28,7 @@ import {
   defineRole,
   PermissionFlag,
   STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
-} from 'twenty-sdk';
+} from 'twenty-sdk/define';
 
 export default defineRole({
   universalIdentifier: '2c80f640-2083-4803-bb49-003e38279de6',
@@ -77,7 +77,7 @@ export default defineRole({
 * **(اختياري) دوال ما قبل التثبيت/ما بعد التثبيت**: دوال منطقية تعمل قبل التثبيت أو بعده.
 
 ```ts src/application-config.ts
-import { defineApplication } from 'twenty-sdk';
+import { defineApplication } from 'twenty-sdk/define';
 import { DEFAULT_ROLE_UNIVERSAL_IDENTIFIER } from 'src/roles/default-role';
 
 export default defineApplication({
@@ -132,7 +132,7 @@ export default defineApplication({
 عند توليد تطبيق جديد بالقالب، ينشئ CLI ملفّ دور افتراضي:
 
 ```ts src/roles/default-role.ts
-import { defineRole, PermissionFlag } from 'twenty-sdk';
+import { defineRole, PermissionFlag } from 'twenty-sdk/define';
 
 export const DEFAULT_ROLE_UNIVERSAL_IDENTIFIER =
   'b648f87b-1d26-4961-b974-0908fd991061';
@@ -172,7 +172,7 @@ export default defineRole({
 تصف الكائنات المخصصة كلًا من المخطط والسلوك للسجلات في مساحة عملك. استخدم `defineObject()` لتعريف كائنات مع تحقق مدمج:
 
 ```ts postCard.object.ts
-import { defineObject, FieldType } from 'twenty-sdk';
+import { defineObject, FieldType } from 'twenty-sdk/define';
 
 enum PostCardStatus {
   DRAFT = 'DRAFT',
@@ -261,7 +261,7 @@ export default defineObject({
 استخدم `defineField()` لإضافة حقول إلى كائنات لا تملكها — مثل كائنات Twenty القياسية (Person, Company, etc.) أو كائنات من تطبيقات أخرى. على خلاف الحقول المضمّنة في `defineObject()`، تتطلّب الحقول المستقلة `objectUniversalIdentifier` لتحديد الكائن الذي تقوم بتوسيعه:
 
 ```ts src/fields/company-loyalty-tier.field.ts
-import { defineField, FieldType } from 'twenty-sdk';
+import { defineField, FieldType } from 'twenty-sdk/define';
 
 export default defineField({
   universalIdentifier: 'f2a1b3c4-d5e6-7890-abcd-ef1234567890',
@@ -311,7 +311,7 @@ export default defineField({
 **الخطوة 1: عرّف جانب ONE_TO_MANY على PostCard** (جانب "الواحد"):
 
 ```ts src/fields/post-card-recipients-on-post-card.field.ts
-import { defineField, FieldType, RelationType } from 'twenty-sdk';
+import { defineField, FieldType, RelationType } from 'twenty-sdk/define';
 import { POST_CARD_UNIVERSAL_IDENTIFIER } from '../objects/post-card.object';
 import { POST_CARD_RECIPIENT_UNIVERSAL_IDENTIFIER } from '../objects/post-card-recipient.object';
 
@@ -338,7 +338,7 @@ export default defineField({
 **الخطوة 2: عرّف جانب MANY_TO_ONE على PostCardRecipient** (جانب "العديد" — يحمل المفتاح الخارجي):
 
 ```ts src/fields/post-card-on-post-card-recipient.field.ts
-import { defineField, FieldType, RelationType, OnDeleteAction } from 'twenty-sdk';
+import { defineField, FieldType, RelationType, OnDeleteAction } from 'twenty-sdk/define';
 import { POST_CARD_UNIVERSAL_IDENTIFIER } from '../objects/post-card.object';
 import { POST_CARD_RECIPIENT_UNIVERSAL_IDENTIFIER } from '../objects/post-card-recipient.object';
 
@@ -379,7 +379,7 @@ import {
   RelationType,
   OnDeleteAction,
   STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
-} from 'twenty-sdk';
+} from 'twenty-sdk/define';
 import { SELF_HOSTING_USER_UNIVERSAL_IDENTIFIER } from '../objects/self-hosting-user.object';
 
 export const PERSON_FIELD_ID = 'c3333333-3333-3333-3333-333333333333';
@@ -448,8 +448,8 @@ export default defineObject({
 كل ملف وظيفة يستخدم `defineLogicFunction()` لتصدير تكوين مع معالج ومشغّلات اختيارية.
 
 ```ts src/logic-functions/createPostCard.logic-function.ts
-import { defineLogicFunction } from 'twenty-sdk';
-import type { DatabaseEventPayload, ObjectRecordCreateEvent, CronPayload, RoutePayload } from 'twenty-sdk';
+import { defineLogicFunction } from 'twenty-sdk/define';
+import type { DatabaseEventPayload, ObjectRecordCreateEvent, CronPayload, RoutePayload } from 'twenty-sdk/define';
 import { CoreApiClient, type Person } from 'twenty-client-sdk/core';
 
 const handler = async (params: RoutePayload) => {
@@ -518,7 +518,7 @@ yarn twenty logs
 استورد نوع `RoutePayload` من `twenty-sdk`:
 
 ```ts
-import { defineLogicFunction, type RoutePayload } from 'twenty-sdk';
+import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
 
 const handler = async (event: RoutePayload) => {
   const { headers, queryStringParameters, pathParameters, body } = event;
@@ -530,15 +530,15 @@ const handler = async (event: RoutePayload) => {
 
 يحتوي نوع `RoutePayload` على البنية التالية:
 
-  | الخاصية                      | النوع                                 | الوصف                                                        | مثال                                                                       |
-  | ---------------------------- | ------------------------------------- | ------------------------------------------------------------ | -------------------------------------------------------------------------- |
-  | `headers`                    | `Record<string, string \| undefined>` | رؤوس HTTP (فقط تلك المدرجة في `forwardedRequestHeaders`)     | انظر القسم أدناه                                                           |
-  | `queryStringParameters`      | `Record<string, string \| undefined>` | معلمات سلسلة الاستعلام (تُضمّ القيم المتعددة باستخدام فواصل) | `/users?ids=1&ids=2&ids=3&name=Alice` -> `{ ids: '1,2,3', name: 'Alice' }` |
-  | `pathParameters`             | `Record<string, string \| undefined>` | معلمات المسار المستخرجة من نمط المسار                        | `/users/:id`, `/users/123` -> `{ id: '123' }`                              |
-  | `المحتوى`                    | `object \| null`                      | جسم الطلب المُحلَّل (JSON)                                   | `{ id: 1 }` -> `{ id: 1 }`                                                 |
-  | `isBase64Encoded`            | `قيمة منطقية`                         | ما إذا كان جسم الطلب مُرمَّزًا بترميز base64                 |                                                                            |
-  | `requestContext.http.method` | `string`                              | طريقة HTTP (GET, POST, PUT, PATCH, DELETE)                   |                                                                            |
-  | `requestContext.http.path`   | `string`                              | المسار الخام للطلب                                           |                                                                            |
+  | الخاصية                      | النوع                                                   | الوصف                                                        | مثال                                                                       |
+  | ---------------------------- | ------------------------------------------------------- | ------------------------------------------------------------ | -------------------------------------------------------------------------- |
+  | `headers`                    | `Record\<string, string \| undefined>` | رؤوس HTTP (فقط تلك المدرجة في `forwardedRequestHeaders`)     | انظر القسم أدناه                                                           |
+  | `queryStringParameters`      | `Record\<string, string \| undefined>` | معلمات سلسلة الاستعلام (تُضمّ القيم المتعددة باستخدام فواصل) | `/users?ids=1&ids=2&ids=3&name=Alice` -> `{ ids: '1,2,3', name: 'Alice' }` |
+  | `pathParameters`             | `Record\<string, string \| undefined>` | معلمات المسار المستخرجة من نمط المسار                        | `/users/:id`, `/users/123` -> `{ id: '123' }`                              |
+  | `المحتوى`                    | `object \| null`                                        | جسم الطلب المُحلَّل (JSON)                                   | `{ id: 1 }` -> `{ id: 1 }`                                                 |
+  | `isBase64Encoded`            | `قيمة منطقية`                                           | ما إذا كان جسم الطلب مُرمَّزًا بترميز base64                 |                                                                            |
+  | `requestContext.http.method` | `string`                                                | طريقة HTTP (GET, POST, PUT, PATCH, DELETE)                   |                                                                            |
+  | `requestContext.http.path`   | `string`                                                | المسار الخام للطلب                                           |                                                                            |
 
 
 #### forwardedRequestHeaders
@@ -583,7 +583,7 @@ const handler = async (event: RoutePayload) => {
 لتمييز دالة منطقية كأداة، عيِّن `isTool: true`:
 
 ```ts src/logic-functions/enrich-company.logic-function.ts
-import { defineLogicFunction } from 'twenty-sdk';
+import { defineLogicFunction } from 'twenty-sdk/define';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
 const handler = async (params: { companyName: string; domain?: string }) => {
@@ -649,7 +649,7 @@ export default defineLogicFunction({
 دالة ما بعد التثبيت هي دالة منطقية تعمل تلقائيًا بعد تثبيت تطبيقك على مساحة عمل. ينفّذه الخادم **بعد** مزامنة البيانات الوصفية للتطبيق وإنشاء عميل SDK، بحيث تكون مساحة العمل جاهزة تمامًا للاستخدام ويكون المخطط الجديد مطبَّقًا. تشمل حالات الاستخدام النموذجية تهيئة البيانات الافتراضية، وإنشاء السجلات الأولية، وتكوين إعدادات مساحة العمل، أو توفير الموارد على خدمات جهات خارجية.
 
 ```ts src/logic-functions/post-install.ts
-import { definePostInstallLogicFunction, type InstallPayload } from 'twenty-sdk';
+import { definePostInstallLogicFunction, type InstallPayload } from 'twenty-sdk/define';
 
 const handler = async (payload: InstallPayload): Promise<void> => {
   console.log('Post install logic function executed successfully!', payload.previousVersion);
@@ -692,7 +692,7 @@ yarn twenty exec --postInstall
 دالة ما قبل التثبيت هي دالة منطقية تعمل تلقائيًا أثناء التثبيت، **قبل تطبيق ترحيل البيانات الوصفية لمساحة العمل**. تتشارك نفس بنية الحمولة مع ما بعد التثبيت (`InstallPayload`)، لكنها موضوعة أبكر في تدفّق التثبيت كي تجهّز حالة يعتمد عليها الترحيل القادم — ومن الاستخدامات الشائعة: نسخ البيانات احتياطيًا، التحقق من التوافق مع المخطط الجديد، أو أرشفة السجلات التي ستُعاد هيكلتها أو ستُحذف.
 
 ```ts src/logic-functions/pre-install.ts
-import { definePreInstallLogicFunction, type InstallPayload } from 'twenty-sdk';
+import { definePreInstallLogicFunction, type InstallPayload } from 'twenty-sdk/define';
 
 const handler = async (payload: InstallPayload): Promise<void> => {
   console.log('Pre install logic function executed successfully!', payload.previousVersion);
@@ -750,7 +750,7 @@ yarn twenty exec --preInstall
 مثال — بَذر سجل `PostCard` افتراضي بعد التثبيت:
 
 ```ts src/logic-functions/post-install.ts
-import { definePostInstallLogicFunction, type InstallPayload } from 'twenty-sdk';
+import { definePostInstallLogicFunction, type InstallPayload } from 'twenty-sdk/define';
 import { createClient } from './generated/client';
 
 const handler = async ({ previousVersion }: InstallPayload): Promise<void> => {
@@ -782,7 +782,7 @@ export default definePostInstallLogicFunction({
 مثال — أرشف السجلات قبل ترحيل هدّام:
 
 ```ts src/logic-functions/pre-install.ts
-import { definePreInstallLogicFunction, type InstallPayload } from 'twenty-sdk';
+import { definePreInstallLogicFunction, type InstallPayload } from 'twenty-sdk/define';
 import { createClient } from './generated/client';
 
 const handler = async ({ previousVersion, newVersion }: InstallPayload): Promise<void> => {
@@ -854,7 +854,7 @@ export default definePreInstallLogicFunction({
 أسرع طريقة لرؤية مكوّن أمامي قيد العمل هي تسجيله كأمر. إضافة حقل `command` مع `isPinned: true` يجعلُه يظهر كزر إجراء سريع في الزاوية العلوية اليمنى من الصفحة — دون الحاجة إلى تخطيط صفحة:
 
 ```tsx src/front-components/hello-world.tsx
-import { defineFrontComponent } from 'twenty-sdk';
+import { defineFrontComponent } from 'twenty-sdk/define';
 
 const HelloWorld = () => {
   return (
@@ -915,7 +915,8 @@ export default defineFrontComponent({
 **عديم الرأس (`isHeadless: true`)** — يتم تركيب المكوّن بشكل غير مرئي في الخلفية. لا يفتح اللوحة الجانبية. تم تصميم المكوّنات عديمة الرأس لإجراءات تنفّذ منطقًا ثم تُزيل تركيبها ذاتيًا — على سبيل المثال، تشغيل مهمة غير متزامنة، أو الانتقال إلى صفحة، أو إظهار نافذة تأكيد منبثقة. تتوافق بشكل طبيعي مع مكوّنات Command في SDK الموصوفة أدناه.
 
 ```tsx src/front-components/sync-tracker.tsx
-import { defineFrontComponent, useRecordId, enqueueSnackbar } from 'twenty-sdk';
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { useRecordId, enqueueSnackbar } from 'twenty-sdk/front-component';
 import { useEffect } from 'react';
 
 const SyncTracker = () => {
@@ -953,7 +954,7 @@ export default defineFrontComponent({
 فيما يلي مثال كامل لمكوّن واجهة أمامية عديم الرأس يستخدم `Command` لتشغيل إجراء من قائمة الأوامر:
 
 ```tsx src/front-components/run-action.tsx
-import { defineFrontComponent } from 'twenty-sdk';
+import { defineFrontComponent } from 'twenty-sdk/define';
 import { Command } from 'twenty-sdk/command';
 import { CoreApiClient } from 'twenty-sdk/clients';
 
@@ -989,7 +990,7 @@ export default defineFrontComponent({
 ومثال يستخدم `CommandModal` لطلب التأكيد قبل التنفيذ:
 
 ```tsx src/front-components/delete-draft.tsx
-import { defineFrontComponent } from 'twenty-sdk';
+import { defineFrontComponent } from 'twenty-sdk/define';
 import { CommandModal } from 'twenty-sdk/command';
 
 const DeleteDraft = () => {
@@ -1027,12 +1028,12 @@ export default defineFrontComponent({
 داخل مكوّنك، استخدم خطافات SDK للوصول إلى المستخدم الحالي، والسجل، ومثيل المكوّن:
 
 ```tsx src/front-components/record-info.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
 import {
-  defineFrontComponent,
   useUserId,
   useRecordId,
   useFrontComponentId,
-} from 'twenty-sdk';
+} from 'twenty-sdk/front-component';
 
 const RecordInfo = () => {
   const userId = useUserId();
@@ -1081,8 +1082,9 @@ export default defineFrontComponent({
 فيما يلي مثال يستخدم واجهة برمجة تطبيقات المضيف لعرض Snackbar وإغلاق اللوحة الجانبية بعد اكتمال الإجراء:
 
 ```tsx src/front-components/archive-record.tsx
-import { defineFrontComponent, useRecordId } from 'twenty-sdk';
-import { enqueueSnackbar, closeSidePanel } from 'twenty-sdk';
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { useRecordId } from 'twenty-sdk/front-component';
+import { enqueueSnackbar, closeSidePanel } from 'twenty-sdk/front-component';
 import { CoreApiClient } from 'twenty-sdk/clients';
 
 const ArchiveRecord = () => {
@@ -1142,14 +1144,14 @@ export default defineFrontComponent({
 يتيح لك الحقل `conditionalAvailabilityExpression` التحكّم في وقت ظهور الأمر بناءً على سياق الصفحة الحالي. استورد متغيّرات ومشغّلات مضبوطة الأنواع من `twenty-sdk` لبناء التعابير:
 
 ```tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
 import {
-  defineFrontComponent,
   pageType,
   numberOfSelectedRecords,
   objectPermissions,
   everyEquals,
   isDefined,
-} from 'twenty-sdk';
+} from 'twenty-sdk/front-component';
 
 export default defineFrontComponent({
   universalIdentifier: '...',
@@ -1209,7 +1211,7 @@ export default defineFrontComponent({
 يمكن للمكوّنات الأمامية الوصول إلى ملفات من دليل `public/` للتطبيق باستخدام `getPublicAssetUrl`:
 
 ```tsx
-import { defineFrontComponent, getPublicAssetUrl } from 'twenty-sdk';
+import { defineFrontComponent, getPublicAssetUrl } from 'twenty-sdk/define';
 
 const Logo = () => <img src={getPublicAssetUrl('logo.png')} alt="Logo" />;
 
@@ -1234,7 +1236,7 @@ export default defineFrontComponent({
 * **أي مكتبة CSS-in-JS** متوافقة مع React
 
 ```tsx
-import { defineFrontComponent } from 'twenty-sdk';
+import { defineFrontComponent } from 'twenty-sdk/define';
 import { Button, Tag, Status } from 'twenty-sdk/ui';
 
 const StyledWidget = () => {
@@ -1261,7 +1263,7 @@ export default defineFrontComponent({
 تُحدِّد المهارات تعليمات وإمكانات قابلة لإعادة الاستخدام يمكن لوكلاء الذكاء الاصطناعي استخدامها داخل مساحة العمل لديك. استخدم `defineSkill()` لتعريف مهارات مع تحقّق مدمج:
 
 ```ts src/skills/example-skill.ts
-import { defineSkill } from 'twenty-sdk';
+import { defineSkill } from 'twenty-sdk/define';
 
 export default defineSkill({
   universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
@@ -1290,7 +1292,7 @@ export default defineSkill({
 الوكلاء هم مساعدون ذكاء اصطناعي يعيشون داخل مساحة العمل لديك. استخدم `defineAgent()` لإنشاء وكلاء بموجه نظام مخصّص:
 
 ```ts src/agents/example-agent.ts
-import { defineAgent } from 'twenty-sdk';
+import { defineAgent } from 'twenty-sdk/define';
 
 export default defineAgent({
   universalIdentifier: 'b3c4d5e6-f7a8-9012-bcde-f34567890123',
@@ -1316,7 +1318,7 @@ export default defineAgent({
 العروض هي تكوينات محفوظة لكيفية عرض سجلات كائن ما — بما في ذلك الحقول المرئية وترتيبها وأي مرشّحات أو مجموعات مُطبَّقة. استخدم `defineView()` لتضمين عروض مُهيّأة مسبقًا مع تطبيقك:
 
 ```ts src/views/example-view.ts
-import { defineView, ViewKey } from 'twenty-sdk';
+import { defineView, ViewKey } from 'twenty-sdk/define';
 import { EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER } from '../objects/example-object';
 import { NAME_FIELD_UNIVERSAL_IDENTIFIER } from '../objects/example-object';
 
@@ -1352,7 +1354,7 @@ export default defineView({
 تضيف عناصر قائمة التنقل إدخالات مخصّصة إلى الشريط الجانبي لمساحة العمل. استخدم `defineNavigationMenuItem()` للارتباط بالعروض أو عناوين URL خارجية أو الكائنات:
 
 ```ts src/navigation-menu-items/example-navigation-menu-item.ts
-import { defineNavigationMenuItem, NavigationMenuItemType } from 'twenty-sdk';
+import { defineNavigationMenuItem, NavigationMenuItemType } from 'twenty-sdk/define';
 import { EXAMPLE_VIEW_UNIVERSAL_IDENTIFIER } from '../views/example-view';
 
 export default defineNavigationMenuItem({
@@ -1378,7 +1380,7 @@ export default defineNavigationMenuItem({
 تتيح لك تخطيطات الصفحات تخصيص مظهر صفحة تفاصيل السجل — ما الألسنة التي تظهر، وما الويدجتات داخل كل لسان، وكيف يتم ترتيبها. استخدم `definePageLayout()` لتضمين تخطيطات مخصّصة مع تطبيقك:
 
 ```ts src/page-layouts/example-record-page-layout.ts
-import { definePageLayout, PageLayoutTabLayoutMode } from 'twenty-sdk';
+import { definePageLayout, PageLayoutTabLayoutMode } from 'twenty-sdk/define';
 import { EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER } from '../objects/example-object';
 import { HELLO_WORLD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER } from '../front-components/hello-world';
 
@@ -1441,7 +1443,7 @@ export default definePageLayout({
 **في دالة منطقية:**
 
 ```ts src/logic-functions/send-invoice.ts
-import { defineLogicFunction, getPublicAssetUrl } from 'twenty-sdk';
+import { defineLogicFunction, getPublicAssetUrl } from 'twenty-sdk/define';
 
 const handler = async (): Promise<any> => {
   const logoUrl = getPublicAssetUrl('logo.png');
@@ -1466,7 +1468,7 @@ export default defineLogicFunction({
 **في مكوّن أمامي:**
 
 ```tsx src/front-components/company-card.tsx
-import { defineFrontComponent, getPublicAssetUrl } from 'twenty-sdk';
+import { defineFrontComponent, getPublicAssetUrl } from 'twenty-sdk/define';
 
 export default defineFrontComponent(() => {
   const logoUrl = getPublicAssetUrl('logo.png');
@@ -1490,7 +1492,7 @@ yarn add axios
 ثم استوردها في شيفرتك:
 
 ```ts src/logic-functions/fetch-data.ts
-import { defineLogicFunction } from 'twenty-sdk';
+import { defineLogicFunction } from 'twenty-sdk/define';
 import axios from 'axios';
 
 const handler = async (): Promise<any> => {
@@ -1511,7 +1513,7 @@ export default defineLogicFunction({
 وينطبق الأمر نفسه على المكوّنات الأمامية:
 
 ```tsx src/front-components/chart.tsx
-import { defineFrontComponent } from 'twenty-sdk';
+import { defineFrontComponent } from 'twenty-sdk/define';
 import { format } from 'date-fns';
 
 const DateWidget = () => {
@@ -1555,18 +1557,18 @@ yarn twenty add frontComponent
 
 ### أنواع الكيانات المتاحة
 
-| نوع الكيان         | أمر                                  | الملف المُولَّد                       |
-| ------------------ | ------------------------------------ | ------------------------------------- |
-| كائن               | `yarn twenty add object`             | `src/objects/<name>.ts`               |
-| الحقل              | `yarn twenty add field`              | `src/fields/<name>.ts`                |
-| دالة منطقية        | `yarn twenty add logicFunction`      | `src/logic-functions/<name>.ts`       |
-| مكوّن أمامي        | `yarn twenty add frontComponent`     | `src/front-components/<name>.tsx`     |
-| دور                | `yarn twenty add role`               | `src/roles/<name>.ts`                 |
-| مهارة              | `yarn twenty add skill`              | `src/skills/<name>.ts`                |
-| وكيل               | `yarn twenty add agent`              | `src/agents/<name>.ts`                |
-| عرض                | `yarn twenty add view`               | `src/views/<name>.ts`                 |
-| عنصر قائمة التنقّل | `yarn twenty add navigationMenuItem` | `src/navigation-menu-items/<name>.ts` |
-| تخطيط الصفحة       | `yarn twenty add pageLayout`         | `src/page-layouts/<name>.ts`          |
+| نوع الكيان         | أمر                                  | الملف المُولَّد                                         |
+| ------------------ | ------------------------------------ | ------------------------------------------------------- |
+| كائن               | `yarn twenty add object`             | `src/objects/\<name>.ts`               |
+| الحقل              | `yarn twenty add field`              | `src/fields/\<name>.ts`                |
+| دالة منطقية        | `yarn twenty add logicFunction`      | `src/logic-functions/\<name>.ts`       |
+| مكوّن أمامي        | `yarn twenty add frontComponent`     | `src/front-components/\<name>.tsx`     |
+| دور                | `yarn twenty add role`               | `src/roles/\<name>.ts`                 |
+| مهارة              | `yarn twenty add skill`              | `src/skills/\<name>.ts`                |
+| وكيل               | `yarn twenty add agent`              | `src/agents/\<name>.ts`                |
+| عرض                | `yarn twenty add view`               | `src/views/\<name>.ts`                 |
+| عنصر قائمة التنقّل | `yarn twenty add navigationMenuItem` | `src/navigation-menu-items/\<name>.ts` |
+| تخطيط الصفحة       | `yarn twenty add pageLayout`         | `src/page-layouts/\<name>.ts`          |
 
 ### ما الذي تُنشئه أداة القوالب
 

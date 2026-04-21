@@ -120,7 +120,7 @@ export const FormAdvancedTextFieldInput = ({
       defaultValue,
       contentType,
       onUpdate: (editor) => {
-        if (contentType === 'markdown') {
+        if (contentType === 'markdown' || contentType === 'html') {
           onChange(editor.getHTML());
         } else {
           const jsonContent = editor.getJSON();

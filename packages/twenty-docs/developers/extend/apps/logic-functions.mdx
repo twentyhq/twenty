@@ -16,8 +16,8 @@ Logic functions are server-side TypeScript functions that run on the Twenty plat
 Each function file uses `defineLogicFunction()` to export a configuration with a handler and optional triggers.
 
 ```ts src/logic-functions/createPostCard.logic-function.ts
-import { defineLogicFunction } from 'twenty-sdk';
-import type { DatabaseEventPayload, ObjectRecordCreateEvent, CronPayload, RoutePayload } from 'twenty-sdk';
+import { defineLogicFunction } from 'twenty-sdk/define';
+import type { DatabaseEventPayload, ObjectRecordCreateEvent, CronPayload, RoutePayload } from 'twenty-sdk/define';
 import { CoreApiClient, type Person } from 'twenty-client-sdk/core';
 
 const handler = async (params: RoutePayload) => {
@@ -87,7 +87,7 @@ When a route trigger invokes your logic function, it receives a `RoutePayload` o
 Import the `RoutePayload` type from `twenty-sdk`:
 
 ```ts
-import { defineLogicFunction, type RoutePayload } from 'twenty-sdk';
+import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
 
 const handler = async (event: RoutePayload) => {
   const { headers, queryStringParameters, pathParameters, body } = event;
@@ -152,7 +152,7 @@ Logic functions can be exposed as **tools** for AI agents and workflows. When ma
 To mark a logic function as a tool, set `isTool: true`:
 
 ```ts src/logic-functions/enrich-company.logic-function.ts
-import { defineLogicFunction } from 'twenty-sdk';
+import { defineLogicFunction } from 'twenty-sdk/define';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
 const handler = async (params: { companyName: string; domain?: string }) => {
@@ -218,7 +218,7 @@ export default defineLogicFunction({
 A post-install function is a logic function that runs automatically once your app has finished installing on a workspace. The server executes it **after** the app's metadata has been synchronized and the SDK client has been generated, so the workspace is fully ready to use and the new schema is in place. Typical use cases include seeding default data, creating initial records, configuring workspace settings, or provisioning resources on third-party services.
 
 ```ts src/logic-functions/post-install.ts
-import { definePostInstallLogicFunction, type InstallPayload } from 'twenty-sdk';
+import { definePostInstallLogicFunction, type InstallPayload } from 'twenty-sdk/define';
 
 const handler = async (payload: InstallPayload): Promise<void> => {
   console.log('Post install logic function executed successfully!', payload.previousVersion);
@@ -261,7 +261,7 @@ Key points:
 A pre-install function is a logic function that runs automatically during installation, **before the workspace metadata migration is applied**. It shares the same payload shape as post-install (`InstallPayload`), but it is positioned earlier in the install flow so it can prepare state that the upcoming migration depends on — typical uses include backing up data, validating compatibility with the new schema, or archiving records that are about to be restructured or dropped.
 
 ```ts src/logic-functions/pre-install.ts
-import { definePreInstallLogicFunction, type InstallPayload } from 'twenty-sdk';
+import { definePreInstallLogicFunction, type InstallPayload } from 'twenty-sdk/define';
 
 const handler = async (payload: InstallPayload): Promise<void> => {
   console.log('Pre install logic function executed successfully!', payload.previousVersion);
@@ -319,7 +319,7 @@ Pre-install is always **synchronous** (it blocks the install and can abort it). 
 Example — seed a default `PostCard` record after install:
 
 ```ts src/logic-functions/post-install.ts
-import { definePostInstallLogicFunction, type InstallPayload } from 'twenty-sdk';
+import { definePostInstallLogicFunction, type InstallPayload } from 'twenty-sdk/define';
 import { createClient } from './generated/client';
 
 const handler = async ({ previousVersion }: InstallPayload): Promise<void> => {
@@ -351,7 +351,7 @@ export default definePostInstallLogicFunction({
 Example — archive records before a destructive migration:
 
 ```ts src/logic-functions/pre-install.ts
-import { definePreInstallLogicFunction, type InstallPayload } from 'twenty-sdk';
+import { definePreInstallLogicFunction, type InstallPayload } from 'twenty-sdk/define';
 import { createClient } from './generated/client';
 
 const handler = async ({ previousVersion, newVersion }: InstallPayload): Promise<void> => {

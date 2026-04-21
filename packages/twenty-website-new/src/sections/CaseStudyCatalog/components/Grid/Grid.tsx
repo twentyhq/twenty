@@ -32,7 +32,8 @@ const StyledContainer = styled(Container)<{ compactTop: boolean }>`
   }
 `;
 
-const CORNER_OFFSET = '-6px';
+const CORNER_SIZE = 14;
+const CORNER_OFFSET = '-7px';
 
 const FramedGrid = styled.div`
   position: relative;
@@ -89,11 +90,12 @@ const FrameRailBottom = styled.span`
 const FrameCorner = styled.span`
   align-items: center;
   display: none;
-  height: 12px;
+  height: ${CORNER_SIZE}px;
   justify-content: center;
+  line-height: 0;
   pointer-events: none;
   position: absolute;
-  width: 12px;
+  width: ${CORNER_SIZE}px;
 
   @media (min-width: ${theme.breakpoints.md}px) {
     display: flex;
@@ -157,18 +159,30 @@ export function Grid({
           {!compactTop && (
             <>
               <FrameCornerTopLeft aria-hidden>
-                <PlusIcon size={12} strokeColor={theme.colors.highlight[100]} />
+                <PlusIcon
+                  size={CORNER_SIZE}
+                  strokeColor={theme.colors.highlight[100]}
+                />
               </FrameCornerTopLeft>
               <FrameCornerTopRight aria-hidden>
-                <PlusIcon size={12} strokeColor={theme.colors.highlight[100]} />
+                <PlusIcon
+                  size={CORNER_SIZE}
+                  strokeColor={theme.colors.highlight[100]}
+                />
               </FrameCornerTopRight>
             </>
           )}
           <FrameCornerBottomLeft aria-hidden>
-            <PlusIcon size={12} strokeColor={theme.colors.highlight[100]} />
+            <PlusIcon
+              size={CORNER_SIZE}
+              strokeColor={theme.colors.highlight[100]}
+            />
           </FrameCornerBottomLeft>
           <FrameCornerBottomRight aria-hidden>
-            <PlusIcon size={12} strokeColor={theme.colors.highlight[100]} />
+            <PlusIcon
+              size={CORNER_SIZE}
+              strokeColor={theme.colors.highlight[100]}
+            />
           </FrameCornerBottomRight>
           <CardGrid>
             {entries.map((entry, index) => {

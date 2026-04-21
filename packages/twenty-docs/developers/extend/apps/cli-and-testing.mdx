@@ -28,7 +28,7 @@ Use the `getPublicAssetUrl` helper from `twenty-sdk` to get the full URL of a fi
 **In a logic function:**
 
 ```ts src/logic-functions/send-invoice.ts
-import { defineLogicFunction, getPublicAssetUrl } from 'twenty-sdk';
+import { defineLogicFunction, getPublicAssetUrl } from 'twenty-sdk/define';
 
 const handler = async (): Promise<any> => {
   const logoUrl = getPublicAssetUrl('logo.png');
@@ -53,7 +53,7 @@ export default defineLogicFunction({
 **In a front component:**
 
 ```tsx src/front-components/company-card.tsx
-import { defineFrontComponent, getPublicAssetUrl } from 'twenty-sdk';
+import { defineFrontComponent, getPublicAssetUrl } from 'twenty-sdk/define';
 
 export default defineFrontComponent(() => {
   const logoUrl = getPublicAssetUrl('logo.png');
@@ -77,7 +77,7 @@ yarn add axios
 Then import it in your code:
 
 ```ts src/logic-functions/fetch-data.ts
-import { defineLogicFunction } from 'twenty-sdk';
+import { defineLogicFunction } from 'twenty-sdk/define';
 import axios from 'axios';
 
 const handler = async (): Promise<any> => {
@@ -98,7 +98,7 @@ export default defineLogicFunction({
 The same works for front components:
 
 ```tsx src/front-components/chart.tsx
-import { defineFrontComponent } from 'twenty-sdk';
+import { defineFrontComponent } from 'twenty-sdk/define';
 import { format } from 'date-fns';
 
 const DateWidget = () => {

@@ -4,7 +4,8 @@ import { theme } from '@/theme';
 import { styled } from '@linaria/react';
 import { Children, type ReactNode } from 'react';
 
-const CORNER_OFFSET = '-6px';
+const CORNER_SIZE = 14;
+const CORNER_OFFSET = '-7px';
 
 const StyledSection = styled.section<{
   compactTop: boolean;
@@ -18,6 +19,7 @@ const StyledSection = styled.section<{
     compactTop ? theme.spacing(4) : theme.spacing(12)};
   position: relative;
   width: 100%;
+  z-index: ${({ compactBottom }) => (compactBottom ? 2 : 'auto')};
 
   @media (min-width: ${theme.breakpoints.md}px) {
     padding-bottom: ${({ compactBottom }) =>
@@ -97,11 +99,12 @@ const StyledCountCell = styled(StyledCell)`
 const CornerMarker = styled.span`
   align-items: center;
   display: flex;
-  height: 12px;
+  height: ${CORNER_SIZE}px;
   justify-content: center;
+  line-height: 0;
   pointer-events: none;
   position: absolute;
-  width: 12px;
+  width: ${CORNER_SIZE}px;
 `;
 
 const CornerTopLeft = styled(CornerMarker)`
@@ -150,16 +153,28 @@ export function Root({
       <StyledContainer>
         <StyledCard backgroundColor={cardBackgroundColor}>
           <CornerTopLeft aria-hidden>
-            <PlusIcon size={12} strokeColor={theme.colors.highlight[100]} />
+            <PlusIcon
+              size={CORNER_SIZE}
+              strokeColor={theme.colors.highlight[100]}
+            />
           </CornerTopLeft>
           <CornerTopRight aria-hidden>
-            <PlusIcon size={12} strokeColor={theme.colors.highlight[100]} />
+            <PlusIcon
+              size={CORNER_SIZE}
+              strokeColor={theme.colors.highlight[100]}
+            />
           </CornerTopRight>
           <CornerBottomLeft aria-hidden>
-            <PlusIcon size={12} strokeColor={theme.colors.highlight[100]} />
+            <PlusIcon
+              size={CORNER_SIZE}
+              strokeColor={theme.colors.highlight[100]}
+            />
           </CornerBottomLeft>
           <CornerBottomRight aria-hidden>
-            <PlusIcon size={12} strokeColor={theme.colors.highlight[100]} />
+            <PlusIcon
+              size={CORNER_SIZE}
+              strokeColor={theme.colors.highlight[100]}
+            />
           </CornerBottomRight>
           <StyledLabelCell>{label}</StyledLabelCell>
           <StyledLogosCell>{logos}</StyledLogosCell>

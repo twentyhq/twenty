@@ -29,7 +29,7 @@ Views, navigation items, and page layouts reference each other by `universalIden
 Views are saved configurations for how records of an object are displayed — including which fields are visible, their order, and any filters or groups applied. Use `defineView()` to ship pre-configured views with your app:
 
 ```ts src/views/example-view.ts
-import { defineView, ViewKey } from 'twenty-sdk';
+import { defineView, ViewKey } from 'twenty-sdk/define';
 import { EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER } from '../objects/example-object';
 import { NAME_FIELD_UNIVERSAL_IDENTIFIER } from '../objects/example-object';
 
@@ -65,7 +65,7 @@ Key points:
 Navigation menu items add custom entries to the workspace sidebar. Use `defineNavigationMenuItem()` to link to views, external URLs, or objects:
 
 ```ts src/navigation-menu-items/example-navigation-menu-item.ts
-import { defineNavigationMenuItem, NavigationMenuItemType } from 'twenty-sdk';
+import { defineNavigationMenuItem, NavigationMenuItemType } from 'twenty-sdk/define';
 import { EXAMPLE_VIEW_UNIVERSAL_IDENTIFIER } from '../views/example-view';
 
 export default defineNavigationMenuItem({
@@ -91,7 +91,7 @@ Key points:
 Page layouts let you customize how a record detail page looks — which tabs appear, what widgets are inside each tab, and how they are arranged. Use `definePageLayout()` to ship custom layouts with your app:
 
 ```ts src/page-layouts/example-record-page-layout.ts
-import { definePageLayout, PageLayoutTabLayoutMode } from 'twenty-sdk';
+import { definePageLayout, PageLayoutTabLayoutMode } from 'twenty-sdk/define';
 import { EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER } from '../objects/example-object';
 import { HELLO_WORLD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER } from '../front-components/hello-world';
 

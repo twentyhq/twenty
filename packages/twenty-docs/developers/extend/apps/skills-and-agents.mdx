@@ -16,7 +16,7 @@ Apps can define AI capabilities that live inside the workspace — reusable skil
 Skills define reusable instructions and capabilities that AI agents can use within your workspace. Use `defineSkill()` to define skills with built-in validation:
 
 ```ts src/skills/example-skill.ts
-import { defineSkill } from 'twenty-sdk';
+import { defineSkill } from 'twenty-sdk/define';
 
 export default defineSkill({
   universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
@@ -45,7 +45,7 @@ Key points:
 Agents are AI assistants that live inside your workspace. Use `defineAgent()` to create agents with a custom system prompt:
 
 ```ts src/agents/example-agent.ts
-import { defineAgent } from 'twenty-sdk';
+import { defineAgent } from 'twenty-sdk/define';
 
 export default defineAgent({
   universalIdentifier: 'b3c4d5e6-f7a8-9012-bcde-f34567890123',

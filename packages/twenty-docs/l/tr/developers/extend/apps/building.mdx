@@ -28,7 +28,7 @@ import {
   defineRole,
   PermissionFlag,
   STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
-} from 'twenty-sdk';
+} from 'twenty-sdk/define';
 
 export default defineRole({
   universalIdentifier: '2c80f640-2083-4803-bb49-003e38279de6',
@@ -77,7 +77,7 @@ Her uygulamanın, şunları tanımlayan tam olarak bir adet `defineApplication` 
 * **(İsteğe bağlı) Kurulum öncesi / kurulum sonrası fonksiyonlar**: kurulumdan önce veya sonra çalışan mantık fonksiyonları.
 
 ```ts src/application-config.ts
-import { defineApplication } from 'twenty-sdk';
+import { defineApplication } from 'twenty-sdk/define';
 import { DEFAULT_ROLE_UNIVERSAL_IDENTIFIER } from 'src/roles/default-role';
 
 export default defineApplication({
@@ -132,7 +132,7 @@ Eğer [uygulamanızı yayımlamayı](/l/tr/developers/extend/apps/publishing) pl
 Yeni bir uygulama iskeleti oluşturduğunuzda, CLI varsayılan bir rol dosyası oluşturur:
 
 ```ts src/roles/default-role.ts
-import { defineRole, PermissionFlag } from 'twenty-sdk';
+import { defineRole, PermissionFlag } from 'twenty-sdk/define';
 
 export const DEFAULT_ROLE_UNIVERSAL_IDENTIFIER =
   'b648f87b-1d26-4961-b974-0908fd991061';
@@ -172,7 +172,7 @@ Notlar:
 Özel nesneler, çalışma alanınızdaki kayıtlar için hem şemayı hem de davranışı tanımlar. Yerleşik doğrulamayla nesneler tanımlamak için `defineObject()` kullanın:
 
 ```ts postCard.object.ts
-import { defineObject, FieldType } from 'twenty-sdk';
+import { defineObject, FieldType } from 'twenty-sdk/define';
 
 enum PostCardStatus {
   DRAFT = 'DRAFT',
@@ -261,7 +261,7 @@ ancak bu önerilmez.
 Sahibi olmadığınız nesnelere alan eklemek için `defineField()` kullanın — standart Twenty nesneleri (Person, Company, vb.) gibi. veya diğer uygulamalardaki nesneler. `defineObject()` içindeki satır içi alanların aksine, bağımsız alanlar hangi nesneyi genişlettiklerini belirtmek için bir `objectUniversalIdentifier` gerektirir:
 
 ```ts src/fields/company-loyalty-tier.field.ts
-import { defineField, FieldType } from 'twenty-sdk';
+import { defineField, FieldType } from 'twenty-sdk/define';
 
 export default defineField({
   universalIdentifier: 'f2a1b3c4-d5e6-7890-abcd-ef1234567890',
@@ -311,7 +311,7 @@ Bir `PostCard`'ın birçok `PostCardRecipient` kaydına gönderilebildiğini var
 **Adım 1: PostCard üzerinde ONE_TO_MANY tarafını tanımlayın** ("bir" taraf):
 
 ```ts src/fields/post-card-recipients-on-post-card.field.ts
-import { defineField, FieldType, RelationType } from 'twenty-sdk';
+import { defineField, FieldType, RelationType } from 'twenty-sdk/define';
 import { POST_CARD_UNIVERSAL_IDENTIFIER } from '../objects/post-card.object';
 import { POST_CARD_RECIPIENT_UNIVERSAL_IDENTIFIER } from '../objects/post-card-recipient.object';
 
@@ -338,7 +338,7 @@ export default defineField({
 **Adım 2: PostCardRecipient üzerinde MANY_TO_ONE tarafını tanımlayın** ("çok" taraf — yabancı anahtarı tutar):
 
 ```ts src/fields/post-card-on-post-card-recipient.field.ts
-import { defineField, FieldType, RelationType, OnDeleteAction } from 'twenty-sdk';
+import { defineField, FieldType, RelationType, OnDeleteAction } from 'twenty-sdk/define';
 import { POST_CARD_UNIVERSAL_IDENTIFIER } from '../objects/post-card.object';
 import { POST_CARD_RECIPIENT_UNIVERSAL_IDENTIFIER } from '../objects/post-card-recipient.object';
 
@@ -379,7 +379,7 @@ import {
   RelationType,
   OnDeleteAction,
   STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
-} from 'twenty-sdk';
+} from 'twenty-sdk/define';
 import { SELF_HOSTING_USER_UNIVERSAL_IDENTIFIER } from '../objects/self-hosting-user.object';
 
 export const PERSON_FIELD_ID = 'c3333333-3333-3333-3333-333333333333';
@@ -448,8 +448,8 @@ export default defineObject({
 Her fonksiyon dosyası, bir işleyici ve isteğe bağlı tetikleyiciler içeren bir yapılandırmayı dışa aktarmak için `defineLogicFunction()` kullanır.
 
 ```ts src/logic-functions/createPostCard.logic-function.ts
-import { defineLogicFunction } from 'twenty-sdk';
-import type { DatabaseEventPayload, ObjectRecordCreateEvent, CronPayload, RoutePayload } from 'twenty-sdk';
+import { defineLogicFunction } from 'twenty-sdk/define';
+import type { DatabaseEventPayload, ObjectRecordCreateEvent, CronPayload, RoutePayload } from 'twenty-sdk/define';
 import { CoreApiClient, type Person } from 'twenty-client-sdk/core';
 
 const handler = async (params: RoutePayload) => {
@@ -519,7 +519,7 @@ Bir rota tetikleyicisi mantık fonksiyonunuzu çağırdığında,
 `RoutePayload` türünü `twenty-sdk` içinden içe aktarın:
 
 ```ts
-import { defineLogicFunction, type RoutePayload } from 'twenty-sdk';
+import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
 
 const handler = async (event: RoutePayload) => {
   const { headers, queryStringParameters, pathParameters, body } = event;
@@ -531,15 +531,15 @@ const handler = async (event: RoutePayload) => {
 
 `RoutePayload` türünün yapısı şu şekildedir:
 
-  | Özellik                      | Tür                                   | Açıklama                                                                   | Örnek                                                                      |
-  | ---------------------------- | ------------------------------------- | -------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
-  | `headers`                    | `Record<string, string \| undefined>` | HTTP başlıkları (`forwardedRequestHeaders` içinde listelenenlerle sınırlı) | aşağıdaki bölüme bakın                                                     |
-  | `queryStringParameters`      | `Record<string, string \| undefined>` | Sorgu dizesi parametreleri (birden çok değer virgülle birleştirilir)       | `/users?ids=1&ids=2&ids=3&name=Alice` -> `{ ids: '1,2,3', name: 'Alice' }` |
-  | `pathParameters`             | `Record<string, string \| undefined>` | Rota deseninden çıkarılan yol parametreleri                                | `/users/:id`, `/users/123` -> `{ id: '123' }`                              |
-  | `body`                       | `object \| null`                      | Ayrıştırılmış istek gövdesi (JSON)                                         | `{ id: 1 }` -> `{ id: 1 }`                                                 |
-  | `isBase64Encoded`            | `boolean`                             | Gövdenin base64 ile kodlanıp kodlanmadığı                                  |                                                                            |
-  | `requestContext.http.method` | `string`                              | HTTP yöntemi (GET, POST, PUT, PATCH, DELETE)                               |                                                                            |
-  | `requestContext.http.path`   | `string`                              | Ham istek yolu                                                             |                                                                            |
+  | Özellik                      | Tür                                                     | Açıklama                                                                   | Örnek                                                                      |
+  | ---------------------------- | ------------------------------------------------------- | -------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
+  | `headers`                    | `Record\<string, string \| undefined>` | HTTP başlıkları (`forwardedRequestHeaders` içinde listelenenlerle sınırlı) | aşağıdaki bölüme bakın                                                     |
+  | `queryStringParameters`      | `Record\<string, string \| undefined>` | Sorgu dizesi parametreleri (birden çok değer virgülle birleştirilir)       | `/users?ids=1&ids=2&ids=3&name=Alice` -> `{ ids: '1,2,3', name: 'Alice' }` |
+  | `pathParameters`             | `Record\<string, string \| undefined>` | Rota deseninden çıkarılan yol parametreleri                                | `/users/:id`, `/users/123` -> `{ id: '123' }`                              |
+  | `body`                       | `object \| null`                                        | Ayrıştırılmış istek gövdesi (JSON)                                         | `{ id: 1 }` -> `{ id: 1 }`                                                 |
+  | `isBase64Encoded`            | `boolean`                                               | Gövdenin base64 ile kodlanıp kodlanmadığı                                  |                                                                            |
+  | `requestContext.http.method` | `string`                                                | HTTP yöntemi (GET, POST, PUT, PATCH, DELETE)                               |                                                                            |
+  | `requestContext.http.path`   | `string`                                                | Ham istek yolu                                                             |                                                                            |
 
 
 #### forwardedRequestHeaders
@@ -584,7 +584,7 @@ Mantık işlevleri, yapay zeka ajanları ve iş akışları için **araçlar** o
 Bir mantık fonksiyonunu araç olarak işaretlemek için `isTool: true` olarak ayarlayın:
 
 ```ts src/logic-functions/enrich-company.logic-function.ts
-import { defineLogicFunction } from 'twenty-sdk';
+import { defineLogicFunction } from 'twenty-sdk/define';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
 const handler = async (params: { companyName: string; domain?: string }) => {
@@ -650,7 +650,7 @@ export default defineLogicFunction({
 Kurulum sonrası işlev, uygulamanız bir çalışma alanına yüklendikten sonra otomatik olarak çalışan bir mantık işlevidir. Sunucu, uygulamanın meta verileri senkronize edildikten ve SDK istemcisi oluşturulduktan **sonra** bunu yürütür; böylece çalışma alanı tamamen kullanıma hazırdır ve yeni şema kullanıma alınmıştır. Tipik kullanım örnekleri arasında varsayılan verilerin tohumlanması, başlangıç kayıtlarının oluşturulması, çalışma alanı ayarlarının yapılandırılması veya üçüncü taraf hizmetlerde kaynak sağlanması yer alır.
 
 ```ts src/logic-functions/post-install.ts
-import { definePostInstallLogicFunction, type InstallPayload } from 'twenty-sdk';
+import { definePostInstallLogicFunction, type InstallPayload } from 'twenty-sdk/define';
 
 const handler = async (payload: InstallPayload): Promise<void> => {
   console.log('Post install logic function executed successfully!', payload.previousVersion);
@@ -693,7 +693,7 @@ yarn twenty exec --postInstall
 Kurulum öncesi işlev, kurulum sırasında otomatik olarak çalışan ve **çalışma alanı üstveri (metadata) geçişi uygulanmadan önce** yürütülen bir mantık işlevidir. Kurulum sonrası ile (`InstallPayload`) aynı yük (payload) biçimini paylaşır, ancak kurulum akışında daha erken konumlandığından yaklaşan geçişin bağlı olduğu durumu hazırlayabilir — tipik kullanımlar arasında verileri yedeklemek, yeni şemayla uyumluluğu doğrulamak veya yeniden yapılandırılacak ya da kaldırılacak kayıtları arşivlemek yer alır.
 
 ```ts src/logic-functions/pre-install.ts
-import { definePreInstallLogicFunction, type InstallPayload } from 'twenty-sdk';
+import { definePreInstallLogicFunction, type InstallPayload } from 'twenty-sdk/define';
 
 const handler = async (payload: InstallPayload): Promise<void> => {
   console.log('Pre install logic function executed successfully!', payload.previousVersion);
@@ -751,7 +751,7 @@ Kurulum öncesi her zaman **senkron**dur (kurulumu bloke eder ve iptal edebilir)
 Örnek — kurulumdan sonra varsayılan bir `PostCard` kaydı tohumlama:
 
 ```ts src/logic-functions/post-install.ts
-import { definePostInstallLogicFunction, type InstallPayload } from 'twenty-sdk';
+import { definePostInstallLogicFunction, type InstallPayload } from 'twenty-sdk/define';
 import { createClient } from './generated/client';
 
 const handler = async ({ previousVersion }: InstallPayload): Promise<void> => {
@@ -783,7 +783,7 @@ export default definePostInstallLogicFunction({
 Örnek — yıkıcı bir geçişten önce kayıtları arşivleme:
 
 ```ts src/logic-functions/pre-install.ts
-import { definePreInstallLogicFunction, type InstallPayload } from 'twenty-sdk';
+import { definePreInstallLogicFunction, type InstallPayload } from 'twenty-sdk/define';
 import { createClient } from './generated/client';
 
 const handler = async ({ previousVersion, newVersion }: InstallPayload): Promise<void> => {
@@ -855,7 +855,7 @@ Emin değilseniz, varsayılan olarak **kurulum sonrası**nı tercih edin. Yalnı
 Bir ön uç bileşenini çalışırken görmenin en hızlı yolu, onu bir komut olarak kaydetmektir. `isPinned: true` ile bir `command` alanı eklemek, sayfanın sağ üst köşesinde hızlı işlem düğmesi olarak görünmesini sağlar — herhangi bir sayfa düzenine gerek yoktur:
 
 ```tsx src/front-components/hello-world.tsx
-import { defineFrontComponent } from 'twenty-sdk';
+import { defineFrontComponent } from 'twenty-sdk/define';
 
 const HelloWorld = () => {
   return (
@@ -916,7 +916,8 @@ Komutların ötesinde, bir ön uç bileşenini bir **sayfa düzeninde** widget o
 **Headless (`isHeadless: true`)** — Bileşen arka planda görünmez şekilde bağlanır. Yan paneli açmaz. Headless bileşenler, mantığı çalıştırıp ardından kendilerini kaldıran eylemler için tasarlanmıştır — örneğin, bir async görevi çalıştırma, bir sayfaya gitme veya bir onay modalı gösterme. Aşağıda açıklanan SDK Command bileşenleriyle doğal olarak eşleşirler.
 
 ```tsx src/front-components/sync-tracker.tsx
-import { defineFrontComponent, useRecordId, enqueueSnackbar } from 'twenty-sdk';
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { useRecordId, enqueueSnackbar } from 'twenty-sdk/front-component';
 import { useEffect } from 'react';
 
 const SyncTracker = () => {
@@ -954,7 +955,7 @@ Bunları `twenty-sdk/command` içinden içe aktarın:
 `Command` kullanarak komut menüsünden bir eylem çalıştıran headless bir ön bileşenin tam örneği:
 
 ```tsx src/front-components/run-action.tsx
-import { defineFrontComponent } from 'twenty-sdk';
+import { defineFrontComponent } from 'twenty-sdk/define';
 import { Command } from 'twenty-sdk/command';
 import { CoreApiClient } from 'twenty-sdk/clients';
 
@@ -990,7 +991,7 @@ export default defineFrontComponent({
 Ve yürütmeden önce onay istemek için `CommandModal` kullanan bir örnek:
 
 ```tsx src/front-components/delete-draft.tsx
-import { defineFrontComponent } from 'twenty-sdk';
+import { defineFrontComponent } from 'twenty-sdk/define';
 import { CommandModal } from 'twenty-sdk/command';
 
 const DeleteDraft = () => {
@@ -1028,12 +1029,12 @@ export default defineFrontComponent({
 Bileşeninizin içinde, geçerli kullanıcıya, kayda ve bileşen örneğine erişmek için SDK hook'larını kullanın:
 
 ```tsx src/front-components/record-info.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
 import {
-  defineFrontComponent,
   useUserId,
   useRecordId,
   useFrontComponentId,
-} from 'twenty-sdk';
+} from 'twenty-sdk/front-component';
 
 const RecordInfo = () => {
   const userId = useUserId();
@@ -1082,8 +1083,9 @@ Kullanılabilir hook'lar:
 Bir eylem tamamlandıktan sonra bir snackbar göstermek ve yan paneli kapatmak için host API'sini kullanan bir örnek:
 
 ```tsx src/front-components/archive-record.tsx
-import { defineFrontComponent, useRecordId } from 'twenty-sdk';
-import { enqueueSnackbar, closeSidePanel } from 'twenty-sdk';
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { useRecordId } from 'twenty-sdk/front-component';
+import { enqueueSnackbar, closeSidePanel } from 'twenty-sdk/front-component';
 import { CoreApiClient } from 'twenty-sdk/clients';
 
 const ArchiveRecord = () => {
@@ -1143,14 +1145,14 @@ export default defineFrontComponent({
 `conditionalAvailabilityExpression` alanı, geçerli sayfa bağlamına göre bir komutun ne zaman görünür olacağını kontrol etmenizi sağlar. İfadeler oluşturmak için `twenty-sdk`'den türlendirilmiş değişkenleri ve operatörleri içe aktarın:
 
 ```tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
 import {
-  defineFrontComponent,
   pageType,
   numberOfSelectedRecords,
   objectPermissions,
   everyEquals,
   isDefined,
-} from 'twenty-sdk';
+} from 'twenty-sdk/front-component';
 
 export default defineFrontComponent({
   universalIdentifier: '...',
@@ -1210,7 +1212,7 @@ export default defineFrontComponent({
 Ön uç bileşenleri, `getPublicAssetUrl` kullanarak uygulamanın `public/` dizinindeki dosyalara erişebilir:
 
 ```tsx
-import { defineFrontComponent, getPublicAssetUrl } from 'twenty-sdk';
+import { defineFrontComponent, getPublicAssetUrl } from 'twenty-sdk/define';
 
 const Logo = () => <img src={getPublicAssetUrl('logo.png')} alt="Logo" />;
 
@@ -1235,7 +1237,7 @@ Ayrıntılar için [genel varlıklar bölümüne](#accessing-public-assets-with-
 * **React ile uyumlu herhangi bir CSS-in-JS kitaplığı**
 
 ```tsx
-import { defineFrontComponent } from 'twenty-sdk';
+import { defineFrontComponent } from 'twenty-sdk/define';
 import { Button, Tag, Status } from 'twenty-sdk/ui';
 
 const StyledWidget = () => {
@@ -1262,7 +1264,7 @@ export default defineFrontComponent({
 Yetenekler, yapay zekâ ajanlarının çalışma alanınızda kullanabileceği yeniden kullanılabilir yönergeleri ve kabiliyetleri tanımlar. Yerleşik doğrulamayla yetenekleri tanımlamak için `defineSkill()` kullanın:
 
 ```ts src/skills/example-skill.ts
-import { defineSkill } from 'twenty-sdk';
+import { defineSkill } from 'twenty-sdk/define';
 
 export default defineSkill({
   universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
@@ -1291,7 +1293,7 @@ export default defineSkill({
 Ajanlar, çalışma alanınız içinde bulunan yapay zekâ asistanlarıdır. Özel bir sistem istemiyle ajanlar oluşturmak için `defineAgent()` kullanın:
 
 ```ts src/agents/example-agent.ts
-import { defineAgent } from 'twenty-sdk';
+import { defineAgent } from 'twenty-sdk/define';
 
 export default defineAgent({
   universalIdentifier: 'b3c4d5e6-f7a8-9012-bcde-f34567890123',
@@ -1317,7 +1319,7 @@ export default defineAgent({
 Görünümler, bir nesnenin kayıtlarının nasıl görüntüleneceğine ilişkin kaydedilmiş yapılandırmalardır — hangi alanların görünür olacağını, sıralarını ve uygulanan filtreleri veya grupları içerir. Uygulamanızla önceden yapılandırılmış görünümler sunmak için `defineView()` kullanın:
 
 ```ts src/views/example-view.ts
-import { defineView, ViewKey } from 'twenty-sdk';
+import { defineView, ViewKey } from 'twenty-sdk/define';
 import { EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER } from '../objects/example-object';
 import { NAME_FIELD_UNIVERSAL_IDENTIFIER } from '../objects/example-object';
 
@@ -1353,7 +1355,7 @@ export default defineView({
 Gezinme menüsü öğeleri, çalışma alanı kenar çubuğuna özel girişler ekler. Görünümlere, harici URL'lere veya nesnelere bağlanmak için `defineNavigationMenuItem()` kullanın:
 
 ```ts src/navigation-menu-items/example-navigation-menu-item.ts
-import { defineNavigationMenuItem, NavigationMenuItemType } from 'twenty-sdk';
+import { defineNavigationMenuItem, NavigationMenuItemType } from 'twenty-sdk/define';
 import { EXAMPLE_VIEW_UNIVERSAL_IDENTIFIER } from '../views/example-view';
 
 export default defineNavigationMenuItem({
@@ -1379,7 +1381,7 @@ export default defineNavigationMenuItem({
 Sayfa düzenleri, bir kayıt ayrıntı sayfasının nasıl görüneceğini özelleştirmenizi sağlar — hangi sekmelerin görüneceği, her sekmenin içinde hangi widget'ların olacağı ve bunların nasıl düzenleneceği. Uygulamanızla özel düzenler sunmak için `definePageLayout()` kullanın:
 
 ```ts src/page-layouts/example-record-page-layout.ts
-import { definePageLayout, PageLayoutTabLayoutMode } from 'twenty-sdk';
+import { definePageLayout, PageLayoutTabLayoutMode } from 'twenty-sdk/define';
 import { EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER } from '../objects/example-object';
 import { HELLO_WORLD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER } from '../front-components/hello-world';
 
@@ -1442,7 +1444,7 @@ Uygulamanızın kökündeki `public/` klasörü, statik dosyaları barındırır
 **Bir mantık işlevinde:**
 
 ```ts src/logic-functions/send-invoice.ts
-import { defineLogicFunction, getPublicAssetUrl } from 'twenty-sdk';
+import { defineLogicFunction, getPublicAssetUrl } from 'twenty-sdk/define';
 
 const handler = async (): Promise<any> => {
   const logoUrl = getPublicAssetUrl('logo.png');
@@ -1467,7 +1469,7 @@ export default defineLogicFunction({
 **Bir ön uç bileşeninde:**
 
 ```tsx src/front-components/company-card.tsx
-import { defineFrontComponent, getPublicAssetUrl } from 'twenty-sdk';
+import { defineFrontComponent, getPublicAssetUrl } from 'twenty-sdk/define';
 
 export default defineFrontComponent(() => {
   const logoUrl = getPublicAssetUrl('logo.png');
@@ -1491,7 +1493,7 @@ yarn add axios
 Ardından kodunuza içe aktarın:
 
 ```ts src/logic-functions/fetch-data.ts
-import { defineLogicFunction } from 'twenty-sdk';
+import { defineLogicFunction } from 'twenty-sdk/define';
 import axios from 'axios';
 
 const handler = async (): Promise<any> => {
@@ -1512,7 +1514,7 @@ export default defineLogicFunction({
 Aynısı ön uç bileşenleri için de geçerlidir:
 
 ```tsx src/front-components/chart.tsx
-import { defineFrontComponent } from 'twenty-sdk';
+import { defineFrontComponent } from 'twenty-sdk/define';
 import { format } from 'date-fns';
 
 const DateWidget = () => {
@@ -1556,18 +1558,18 @@ yarn twenty add frontComponent
 
 ### Kullanılabilir varlık türleri
 
-| Varlık türü          | Komut                                | Oluşturulan dosya                     |
-| -------------------- | ------------------------------------ | ------------------------------------- |
-| Nesne                | `yarn twenty add object`             | `src/objects/<name>.ts`               |
-| Alan                 | `yarn twenty add field`              | `src/fields/<name>.ts`                |
-| Mantık işlevi        | `yarn twenty add logicFunction`      | `src/logic-functions/<name>.ts`       |
-| Ön uç bileşeni       | `yarn twenty add frontComponent`     | `src/front-components/<name>.tsx`     |
-| Rol                  | `yarn twenty add role`               | `src/roles/<name>.ts`                 |
-| Beceri               | `yarn twenty add skill`              | `src/skills/<name>.ts`                |
-| Temsilci             | `yarn twenty add agent`              | `src/agents/<name>.ts`                |
-| Görünüm              | `yarn twenty add view`               | `src/views/<name>.ts`                 |
-| Gezinme menüsü öğesi | `yarn twenty add navigationMenuItem` | `src/navigation-menu-items/<name>.ts` |
-| Sayfa düzeni         | `yarn twenty add pageLayout`         | `src/page-layouts/<name>.ts`          |
+| Varlık türü          | Komut                                | Oluşturulan dosya                                       |
+| -------------------- | ------------------------------------ | ------------------------------------------------------- |
+| Nesne                | `yarn twenty add object`             | `src/objects/\<name>.ts`               |
+| Alan                 | `yarn twenty add field`              | `src/fields/\<name>.ts`                |
+| Mantık işlevi        | `yarn twenty add logicFunction`      | `src/logic-functions/\<name>.ts`       |
+| Ön uç bileşeni       | `yarn twenty add frontComponent`     | `src/front-components/\<name>.tsx`     |
+| Rol                  | `yarn twenty add role`               | `src/roles/\<name>.ts`                 |
+| Beceri               | `yarn twenty add skill`              | `src/skills/\<name>.ts`                |
+| Temsilci             | `yarn twenty add agent`              | `src/agents/\<name>.ts`                |
+| Görünüm              | `yarn twenty add view`               | `src/views/\<name>.ts`                 |
+| Gezinme menüsü öğesi | `yarn twenty add navigationMenuItem` | `src/navigation-menu-items/\<name>.ts` |
+| Sayfa düzeni         | `yarn twenty add pageLayout`         | `src/page-layouts/\<name>.ts`          |
 
 ### İskelet oluşturucunun ürettikleri
 

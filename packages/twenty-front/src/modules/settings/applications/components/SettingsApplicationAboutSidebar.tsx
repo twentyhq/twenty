@@ -1,11 +1,13 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { type ComponentType, type ReactNode } from 'react';
-import { isNonEmptyString } from '@sniptt/guards';
+import { type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { Tag } from 'twenty-ui/components';
 import {
   IconAlertTriangle,
   IconBrandNpm,
+  type IconComponent,
   IconLink,
   IconMail,
   IconWorld,
@@ -13,7 +15,7 @@ import {
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 export type ContentEntry = {
-  icon: ComponentType<{ size?: number }>;
+  icon: IconComponent;
   count: number;
   one: string;
   many: string;
@@ -62,17 +64,11 @@ const StyledSidebarValue = styled.div`
   font-weight: ${themeCssVariables.font.weight.medium};
 `;
 
-const StyledContentItem = styled.div`
-  align-items: center;
-  color: ${themeCssVariables.font.color.primary};
+const StyledContentList = styled.div`
+  align-items: flex-start;
   display: flex;
-  font-size: ${themeCssVariables.font.size.sm};
+  flex-direction: column;
   gap: ${themeCssVariables.spacing[2]};
-  margin-bottom: ${themeCssVariables.spacing[2]};
-
-  &:last-of-type {
-    margin-bottom: 0;
-  }
 `;
 
 const StyledLink = styled.a`
@@ -149,12 +145,18 @@ export const SettingsApplicationAboutSidebar = ({
       {filteredContentEntries.length > 0 && (
         <StyledSidebarSection>
           <StyledSidebarLabel>{t`Content`}</StyledSidebarLabel>
-          {filteredContentEntries.map((entry) => (
-            <StyledContentItem key={entry.one}>
-              <entry.icon size={16} />
-              {entry.count} {entry.count === 1 ? entry.one : entry.many}
-            </StyledContentItem>
-          ))}
+          <StyledContentList>
+            {filteredContentEntries.map((entry) => (
+              <Tag
+                key={entry.one}
+                color="gray"
+                Icon={entry.icon}
+                text={`${entry.count} ${
+                  entry.count === 1 ? entry.one : entry.many
+                }`}
+              />
+            ))}
+          </StyledContentList>
         </StyledSidebarSection>
       )}
 

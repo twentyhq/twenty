@@ -13,6 +13,7 @@ import {
 import { getDefaultApplicationPackageFields } from 'src/engine/core-modules/application/application-package/utils/get-default-application-package-fields.util';
 import { parseAvailablePackagesFromPackageJsonAndYarnLock } from 'src/engine/core-modules/application/application-package/utils/parse-available-packages-from-package-json-and-yarn-lock.util';
 import { ApplicationVariableEntity } from 'src/engine/core-modules/application/application-variable/application-variable.entity';
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
@@ -136,6 +137,20 @@ export class ApplicationService {
       where: { workspaceId },
       relations: ['applicationRegistration'],
     });
+  }
+
+  async findManyInstalledFlatApplications(
+    workspaceId: string,
+  ): Promise<FlatApplication[]> {
+    const { flatApplicationMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatApplicationMaps',
+      ]);
+
+    return Object.values(flatApplicationMaps.byId).filter(
+      (flatApplication): flatApplication is FlatApplication =>
+        isDefined(flatApplication) && !isDefined(flatApplication.deletedAt),
+    );
   }
 
   async findOneApplication({
