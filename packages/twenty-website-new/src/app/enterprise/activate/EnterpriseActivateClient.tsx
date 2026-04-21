@@ -1,6 +1,12 @@
 'use client';
 
+import {
+  BaseButton,
+  buttonBaseStyles,
+} from '@/design-system/components/Button/BaseButton';
+import { Body, Heading } from '@/design-system/components';
 import { theme } from '@/theme';
+import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -11,21 +17,10 @@ type ActivationResult = {
   subscriptionId: string;
 };
 
-const PageWrap = styled.div`
-  box-sizing: border-box;
-  margin-left: auto;
-  margin-right: auto;
-  margin-top: ${theme.spacing(12)};
-  max-width: 700px;
-  min-height: 60vh;
-  padding-left: ${theme.spacing(4)};
-  padding-right: ${theme.spacing(4)};
-`;
-
-const Title = styled.h1`
-  font-size: ${theme.font.size(8)};
-  font-weight: 600;
-  margin-bottom: ${theme.spacing(4)};
+const ContentStack = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${theme.spacing(6)};
 `;
 
 const ErrorBox = styled.div`
@@ -33,27 +28,27 @@ const ErrorBox = styled.div`
   border: 1px solid ${theme.colors.accent.pink[70]};
   border-radius: ${theme.radius(2)};
   color: ${theme.colors.accent.pink[100]};
+  font-family: ${theme.font.family.sans};
+  font-size: ${theme.font.size(4)};
+  line-height: 1.55;
   padding: ${theme.spacing(4)};
 `;
 
-const SuccessLead = styled.p`
+const successLeadClassName = css`
   color: ${theme.colors.accent.green[100]};
-  margin-bottom: ${theme.spacing(4)};
 `;
 
 const LicenseeRow = styled.div`
-  margin-bottom: ${theme.spacing(6)};
+  align-items: baseline;
+  display: flex;
+  flex-wrap: wrap;
+  gap: ${theme.spacing(1)};
 `;
 
-const KeyLabel = styled.div`
-  font-weight: 600;
-  margin-bottom: ${theme.spacing(2)};
-`;
-
-const KeyHint = styled.p`
-  color: ${theme.colors.primary.text[60]};
-  font-size: ${theme.font.size(3)};
-  margin-bottom: ${theme.spacing(2)};
+const KeySection = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${theme.spacing(2)};
 `;
 
 const KeyBlock = styled.div`
@@ -69,15 +64,8 @@ const KeyBlock = styled.div`
   word-break: break-all;
 `;
 
-const CopyButton = styled.button<{ $copied: boolean }>`
-  background-color: ${({ $copied }) =>
-    $copied ? theme.colors.accent.green[100] : theme.colors.primary.text[100]};
-  border: none;
-  border-radius: ${theme.radius(1)};
-  color: ${theme.colors.primary.background[100]};
-  cursor: pointer;
-  font-size: ${theme.font.size(2)};
-  padding: ${theme.spacing(2)} ${theme.spacing(3)};
+const CopyTrigger = styled.button`
+  ${buttonBaseStyles}
   position: absolute;
   right: ${theme.spacing(2)};
   top: ${theme.spacing(2)};
@@ -85,16 +73,29 @@ const CopyButton = styled.button<{ $copied: boolean }>`
 
 const NextStepsBox = styled.div`
   background-color: ${theme.colors.primary.border[5]};
-  border: 1px solid ${theme.colors.accent.blue[70]};
+  border: 1px solid ${theme.colors.primary.border[20]};
+  border-left: 3px solid ${theme.colors.highlight[100]};
   border-radius: ${theme.radius(2)};
-  margin-top: ${theme.spacing(8)};
+  display: flex;
+  flex-direction: column;
+  gap: ${theme.spacing(2)};
   padding: ${theme.spacing(4)};
 `;
 
 const NextStepsList = styled.ol`
-  line-height: 1.75;
-  margin-top: ${theme.spacing(2)};
+  display: flex;
+  flex-direction: column;
+  gap: ${theme.spacing(2)};
+  list-style-position: outside;
+  margin: 0;
   padding-left: ${theme.spacing(5)};
+`;
+
+const nextStepItemClassName = css`
+  &::marker {
+    color: ${theme.colors.primary.text[60]};
+    font-weight: ${theme.font.weight.medium};
+  }
 `;
 
 export function EnterpriseActivateClient() {
@@ -159,53 +160,104 @@ export function EnterpriseActivateClient() {
   };
 
   return (
-    <PageWrap>
-      <Title>{'Enterprise activation'}</Title>
-
-      {loading && <p>{'Activating your enterprise license…'}</p>}
+    <ContentStack>
+      {loading && (
+        <Body
+          body={{ text: 'Activating your enterprise license…' }}
+          size="sm"
+          variant="body-paragraph"
+        />
+      )}
 
       {error !== null && <ErrorBox>{error}</ErrorBox>}
 
       {result !== null && (
-        <div>
-          <SuccessLead>
-            {'Your enterprise license has been activated successfully.'}
-          </SuccessLead>
+        <>
+          <Body
+            body={{
+              text: 'Your enterprise license has been activated successfully.',
+            }}
+            className={successLeadClassName}
+            size="md"
+            weight="medium"
+          />
 
           <LicenseeRow>
-            <strong>{'Licensee:'}</strong> {result.licensee}
+            <Body
+              as="span"
+              body={{ text: 'Licensee: ' }}
+              size="sm"
+              weight="medium"
+            />
+            <Body as="span" body={{ text: result.licensee }} size="sm" />
           </LicenseeRow>
 
-          <KeyLabel>{'Your enterprise key'}</KeyLabel>
-          <KeyHint>
-            {
-              'Copy this key and paste it into your Twenty self-hosted instance settings.'
-            }
-          </KeyHint>
+          <KeySection>
+            <Heading
+              as="h2"
+              segments={{ fontFamily: 'sans', text: 'Your enterprise key' }}
+              size="xs"
+              weight="medium"
+            />
+            <Body
+              body={{
+                text: 'Copy this key and paste it into your Twenty self-hosted instance settings.',
+              }}
+              size="sm"
+              variant="body-paragraph"
+            />
 
-          <KeyBlock>
-            {result.enterpriseKey}
-            <CopyButton
-              $copied={copied}
-              onClick={() => void handleCopy()}
-              type="button"
-            >
-              {copied ? 'Copied!' : 'Copy'}
-            </CopyButton>
-          </KeyBlock>
+            <KeyBlock>
+              {result.enterpriseKey}
+              <CopyTrigger
+                data-color="primary"
+                data-size="small"
+                data-variant="contained"
+                onClick={() => void handleCopy()}
+                type="button"
+              >
+                <BaseButton
+                  color="primary"
+                  label={copied ? 'Copied!' : 'Copy'}
+                  size="small"
+                  variant="contained"
+                />
+              </CopyTrigger>
+            </KeyBlock>
+          </KeySection>
 
           <NextStepsBox>
-            <strong>{'Next steps'}</strong>
+            <Heading
+              as="h3"
+              segments={{ fontFamily: 'sans', text: 'Next steps' }}
+              size="xs"
+              weight="medium"
+            />
             <NextStepsList>
-              <li>{'Copy the enterprise key above.'}</li>
-              <li>
-                {'Open your Twenty self-hosted instance Settings → Enterprise.'}
+              <li className={nextStepItemClassName}>
+                <Body
+                  body={{ text: 'Copy the enterprise key above.' }}
+                  size="sm"
+                />
               </li>
-              <li>{'Paste the key and click Activate.'}</li>
+              <li className={nextStepItemClassName}>
+                <Body
+                  body={{
+                    text: 'Open your Twenty self-hosted instance Settings → Enterprise.',
+                  }}
+                  size="sm"
+                />
+              </li>
+              <li className={nextStepItemClassName}>
+                <Body
+                  body={{ text: 'Paste the key and click Activate.' }}
+                  size="sm"
+                />
+              </li>
             </NextStepsList>
           </NextStepsBox>
-        </div>
+        </>
       )}
-    </PageWrap>
+    </ContentStack>
   );
 }

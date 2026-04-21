@@ -1,20 +1,15 @@
+import { MENU_DATA } from '@/app/_constants';
+import { EnterpriseActivateClient } from '@/app/enterprise/activate/EnterpriseActivateClient';
+import { Body, Container, Eyebrow } from '@/design-system/components';
+import { Pages } from '@/enums/pages';
+import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';
+import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels';
+import { Hero } from '@/sections/Hero/components';
+import { Menu } from '@/sections/Menu/components';
 import { theme } from '@/theme';
-import { css } from '@linaria/core';
 import type { Metadata } from 'next';
 import { Suspense } from 'react';
-
-import { EnterpriseActivateClient } from './EnterpriseActivateClient';
-
-const activateFallbackClassName = css`
-  box-sizing: border-box;
-  color: ${theme.colors.primary.text[60]};
-  margin-left: auto;
-  margin-right: auto;
-  margin-top: ${theme.spacing(12)};
-  max-width: 700px;
-  padding-left: ${theme.spacing(4)};
-  padding-right: ${theme.spacing(4)};
-`;
+import { styled } from '@linaria/react';
 
 export const metadata: Metadata = {
   title: 'Enterprise activation | Twenty',
@@ -22,16 +17,82 @@ export const metadata: Metadata = {
     'Complete activation for your Twenty self-hosted enterprise license.',
 };
 
+const ENTERPRISE_ACTIVATE_HEADING = [
+  { text: 'Enterprise ', fontFamily: 'serif' as const },
+  { text: 'activation', fontFamily: 'sans' as const },
+];
+
+const ENTERPRISE_ACTIVATE_BODY = {
+  text: 'Your checkout is complete. Follow the steps below to copy your license key into your Twenty instance.',
+};
+
+const ActivatePageContent = styled.section`
+  background-color: ${theme.colors.primary.background[100]};
+  flex: 1;
+  padding-bottom: ${theme.spacing(20)};
+  padding-top: ${theme.spacing(8)};
+  width: 100%;
+`;
+
+const ActivateContentInner = styled.div`
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 640px;
+  width: 100%;
+`;
+
 function EnterpriseActivateFallback() {
   return (
-    <div className={activateFallbackClassName}>{'Loading activation…'}</div>
+    <Body
+      body={{ text: 'Loading activation…' }}
+      size="sm"
+      variant="body-paragraph"
+    />
   );
 }
 
-export default function EnterpriseActivatePage() {
+export default async function EnterpriseActivatePage() {
+  const stats = await fetchCommunityStats();
+  const menuSocialLinks = mergeSocialLinkLabels(MENU_DATA.socialLinks, stats);
+
   return (
-    <Suspense fallback={<EnterpriseActivateFallback />}>
-      <EnterpriseActivateClient />
-    </Suspense>
+    <>
+      <Menu.Root
+        backgroundColor="#F3F3F3"
+        scheme="primary"
+        navItems={MENU_DATA.navItems}
+        socialLinks={menuSocialLinks}
+      >
+        <Menu.Logo scheme="primary" />
+        <Menu.Nav scheme="primary" navItems={MENU_DATA.navItems} />
+        <Menu.Social scheme="primary" socialLinks={menuSocialLinks} />
+        <Menu.Cta scheme="primary" />
+      </Menu.Root>
+
+      <Hero.Root
+        backgroundColor={theme.colors.secondary.background[5]}
+        colorScheme="primary"
+      >
+        <Eyebrow
+          colorScheme="primary"
+          heading={{ text: 'Self-hosting', fontFamily: 'sans' }}
+        />
+        <Hero.Heading
+          page={Pages.Pricing}
+          segments={ENTERPRISE_ACTIVATE_HEADING}
+        />
+        <Hero.Body body={ENTERPRISE_ACTIVATE_BODY} page={Pages.Pricing} />
+      </Hero.Root>
+
+      <ActivatePageContent>
+        <Container>
+          <ActivateContentInner>
+            <Suspense fallback={<EnterpriseActivateFallback />}>
+              <EnterpriseActivateClient />
+            </Suspense>
+          </ActivateContentInner>
+        </Container>
+      </ActivatePageContent>
+    </>
   );
 }
