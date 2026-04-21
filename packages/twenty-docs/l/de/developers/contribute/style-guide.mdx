@@ -1,14 +1,14 @@
 ---
 title: Styleguide
 icon: paintbrush
-description: Code conventions and best practices for contributing to Twenty.
+description: Code-Konventionen und bewährte Verfahren für Beiträge zu Twenty.
 ---
 
 ## React
 
-### Functional components only
+### Ausschließlich funktionale Komponenten
 
-Always use TSX functional components with named exports.
+Verwenden Sie immer TSX-Funktionskomponenten mit benannten Exporten.
 
 ```tsx
 // ❌ Bad
@@ -25,7 +25,7 @@ export function MyComponent() {
 
 ### Props
 
-Create a type named `{ComponentName}Props`. Use destructuring. Don't use `React.FC`.
+Erstellen Sie einen Typ namens `{ComponentName}Props`. Verwenden Sie Destrukturierung. Verwenden Sie `React.FC` nicht.
 
 ```tsx
 type MyComponentProps = {
@@ -35,7 +35,7 @@ type MyComponentProps = {
 export const MyComponent = ({ name }: MyComponentProps) => <div>Hello {name}</div>;
 ```
 
-### No single-variable prop spreading
+### Kein Prop-Spreading mit einer einzelnen Variablen
 
 ```tsx
 // ❌ Bad
@@ -47,7 +47,7 @@ const MyComponent = ({ prop1, prop2 }: MyComponentProps) => <Other {...{ prop1, 
 
 ## Zustandsverwaltung
 
-### Jotai atoms for global state
+### Jotai-Atome für globalen Zustand
 
 ```tsx
 import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
@@ -59,16 +59,16 @@ export const myAtomState = createAtomState<string>({
 });
 ```
 
-* Prefer atoms over prop drilling
-* Don't use `useRef` for state — use `useState` or atoms
-* Use atom families and selectors for lists
+* Bevorzugen Sie Atome gegenüber Prop-Drilling
+* Verwenden Sie `useRef` nicht für den Zustand — verwenden Sie `useState` oder Atome
+* Verwenden Sie Atomfamilien und Selektoren für Listen
 
-### Avoid unnecessary re-renders
+### Vermeiden Sie unnötige Re-Renders
 
-* Extract `useEffect` and data fetching into sibling sidecar components
-* Prefer event handlers (`handleClick`, `handleChange`) over `useEffect`
-* Don't use `React.memo()` — fix the root cause instead
-* Limit `useCallback` / `useMemo` usage
+* Lagern Sie `useEffect` und das Daten-Fetching in gleichrangige Sidecar-Komponenten aus
+* Bevorzugen Sie Event-Handler (`handleClick`, `handleChange`) gegenüber `useEffect`
+* Verwenden Sie `React.memo()` nicht — beheben Sie stattdessen die Grundursache
+* Beschränken Sie die Nutzung von `useCallback`/`useMemo`
 
 ```tsx
 // ❌ Bad — useEffect in the same component causes re-renders
@@ -94,11 +94,11 @@ export const Page = () => {
 
 ## TypeScript
 
-* **`type` over `interface`** — more flexible, easier to compose
-* **String literals over enums** — except for GraphQL codegen enums and internal library APIs
-* **No `any`** — strict TypeScript enforced
-* **No type imports** — use regular imports (enforced by Oxlint `typescript/consistent-type-imports`)
-* **Use [Zod](https://github.com/colinhacks/zod)** for runtime validation of untyped objects
+* **`type` statt `interface`** — flexibler, leichter zu kombinieren
+* **String-Literale statt Enums** — außer für GraphQL-Codegen-Enums und interne Bibliotheks-APIs
+* **Kein `any`** — striktes TypeScript wird durchgesetzt
+* **Keine Type-Imports** — verwenden Sie reguläre Imports (erzwungen durch Oxlint `typescript/consistent-type-imports`)
+* **Verwenden Sie [Zod](https://github.com/colinhacks/zod)** für die Laufzeitvalidierung ungetypter Objekte
 
 ## JavaScript
 
@@ -112,17 +112,17 @@ onClick?.();
 
 ## Namensgebung
 
-* **Variables**: camelCase, descriptive (`email` not `value`, `fieldMetadata` not `fm`)
-* **Constants**: SCREAMING_SNAKE_CASE
-* **Types/Classes**: PascalCase
-* **Files/directories**: kebab-case (`.component.tsx`, `.service.ts`, `.entity.ts`)
-* **Event handlers**: `handleClick` (not `onClick` for the handler function)
-* **Component props**: prefix with component name (`ButtonProps`)
-* **Styled components**: prefix with `Styled` (`StyledTitle`)
+* **Variablen**: camelCase, aussagekräftig (`email` statt `value`, `fieldMetadata` statt `fm`)
+* **Konstanten**: SCREAMING_SNAKE_CASE
+* **Typen/Klassen**: PascalCase
+* **Dateien/Verzeichnisse**: kebab-case (`.component.tsx`, `.service.ts`, `.entity.ts`)
+* **Event-Handler**: `handleClick` (nicht `onClick` für die Handler-Funktion)
+* **Komponenten-Props**: mit dem Komponentennamen präfixieren (`ButtonProps`)
+* **Styled Components**: mit `Styled` präfixieren (`StyledTitle`)
 
 ## Styling
 
-Use [Linaria](https://github.com/callstack/linaria) styled components. Use theme values — avoid hardcoded `px`, `rem`, or colors.
+Verwenden Sie [Linaria](https://github.com/callstack/linaria) Styled Components. Verwenden Sie Theme-Werte — vermeiden Sie hartkodierte `px`, `rem` oder Farben.
 
 ```tsx
 // ❌ Bad
@@ -142,7 +142,7 @@ const StyledButton = styled.button`
 
 ## Importe
 
-Use aliases instead of relative paths:
+Verwenden Sie Aliase statt relativer Pfade:
 
 ```tsx
 // ❌ Bad
@@ -153,7 +153,7 @@ import { Foo } from '~/testing/decorators/Foo';
 import { Bar } from '@/modules/bar/components/Bar';
 ```
 
-## Folder Structure
+## Ordnerstruktur
 
 ```
 front
@@ -171,6 +171,6 @@ front
 └── ui/              # Reusable UI components (display, input, feedback, ...)
 ```
 
-* Modules can import from other modules, but `ui/` should stay dependency-free
-* Use `internal/` subfolders for module-private code
-* Components under 300 lines, services under 500 lines
+* Module können aus anderen Modulen importieren, aber `ui/` sollte abhängigkeitsfrei bleiben
+* Verwenden Sie `internal/`-Unterordner für modulinternen Code
+* Komponenten unter 300 Zeilen, Services unter 500 Zeilen

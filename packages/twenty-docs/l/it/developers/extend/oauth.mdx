@@ -1,23 +1,23 @@
 ---
 title: OAuth
 icon: chiave
-description: Authorization code flow with PKCE and client credentials for server-to-server access.
+description: Flusso del codice di autorizzazione con PKCE e credenziali client per l'accesso da server a server.
 ---
 
-Twenty implements OAuth 2.0 with authorization code + PKCE for user-facing apps and client credentials for server-to-server access. Clients are registered dynamically via [RFC 7591](https://datatracker.ietf.org/doc/html/rfc7591) — no manual setup in a dashboard.
+Twenty implementa OAuth 2.0 con codice di autorizzazione + PKCE per le app rivolte agli utenti e credenziali client per l'accesso da server a server. I client vengono registrati dinamicamente tramite [RFC 7591](https://datatracker.ietf.org/doc/html/rfc7591) — nessuna configurazione manuale in una dashboard.
 
-## When to Use OAuth
+## Quando utilizzare OAuth
 
-| Scenario                                | Auth Method                                                                      |
-| --------------------------------------- | -------------------------------------------------------------------------------- |
-| Internal scripts, automation            | [API Key](/l/it/developers/extend/api#authentication)                                 |
-| External app acting on behalf of a user | **OAuth — Authorization Code**                                                   |
-| Server-to-server, no user context       | **OAuth — Client Credentials**                                                   |
-| Twenty App with UI extensions           | [Apps](/l/it/developers/extend/apps/getting-started) (OAuth is handled automatically) |
+| Scenario                                          | Metodo di autenticazione                                                         |
+| ------------------------------------------------- | -------------------------------------------------------------------------------- |
+| Script interni, automazioni                       | [Chiave API](/l/it/developers/extend/api#authentication)                              |
+| App esterna che agisce per conto di un utente     | **OAuth — Codice di autorizzazione**                                             |
+| Da server a server, nessun contesto utente        | **OAuth — Credenziali client**                                                   |
+| App Twenty con estensioni dell'interfaccia utente | [App](/l/it/developers/extend/apps/getting-started) (OAuth è gestito automaticamente) |
 
-## Register a Client
+## Registrare un client
 
-Twenty supports **dynamic client registration** per [RFC 7591](https://datatracker.ietf.org/doc/html/rfc7591). No manual setup needed — register programmatically:
+Twenty supporta la **registrazione dinamica dei client** secondo [RFC 7591](https://datatracker.ietf.org/doc/html/rfc7591). Non è necessaria alcuna configurazione manuale — registra a livello di codice:
 
 ```bash
 POST /oauth/register
@@ -31,7 +31,7 @@ Content-Type: application/json
 }
 ```
 
-**Response:**
+**Risposta:**
 
 ```json
 {
@@ -43,23 +43,23 @@ Content-Type: application/json
 ```
 
 <Warning>
-Store the `client_secret` securely — it cannot be retrieved later.
+Conserva `client_secret` in modo sicuro — non potrà essere recuperato in seguito.
 </Warning>
 
 ## Ambiti
 
-| Scope     | Accesso                                              |
-| --------- | ---------------------------------------------------- |
-| `api`     | Full read/write access to the Core and Metadata APIs |
-| `profilo` | Read the authenticated user's profile information    |
+| Ambito    | Accesso                                                        |
+| --------- | -------------------------------------------------------------- |
+| `api`     | Accesso completo in lettura/scrittura alle API Core e Metadata |
+| `profilo` | Legge le informazioni del profilo dell'utente autenticato      |
 
-Request scopes as a space-separated string: `scope=api profile`
+Richiedi gli ambiti come stringa separata da spazi: `scope=api profile`
 
-## Authorization Code Flow
+## Flusso con codice di autorizzazione
 
-Use this flow when your app acts on behalf of a Twenty user.
+Usa questo flusso quando la tua app agisce per conto di un utente Twenty.
 
-### 1. Redirect the user to authorize
+### 1. Reindirizza l'utente per autorizzare
 
 ```
 GET /oauth/authorize?
@@ -72,29 +72,29 @@ GET /oauth/authorize?
   code_challenge_method=S256
 ```
 
-| Parametro               | Obbligatorio | Descrizione                                                  |
-| ----------------------- | ------------ | ------------------------------------------------------------ |
-| `client_id`             | Sì           | Your registered client ID                                    |
-| `response_type`         | Sì           | Must be `code`                                               |
-| `redirect_uri`          | Sì           | Must match a registered redirect URI                         |
-| `scope`                 | No           | Space-separated scopes (defaults to `api`)                   |
-| `stato`                 | Consigliato  | Random string to prevent CSRF attacks                        |
-| `code_challenge`        | Consigliato  | PKCE challenge (SHA-256 hash of verifier, base64url-encoded) |
-| `code_challenge_method` | Consigliato  | Must be `S256` when using PKCE                               |
+| Parametro               | Obbligatorio | Descrizione                                                         |
+| ----------------------- | ------------ | ------------------------------------------------------------------- |
+| `client_id`             | Sì           | ID client registrato                                                |
+| `response_type`         | Sì           | Deve essere `code`                                                  |
+| `redirect_uri`          | Sì           | Deve corrispondere a un URI di reindirizzamento registrato          |
+| `scope`                 | No           | Ambiti separati da spazi (predefinito `api`)                        |
+| `stato`                 | Consigliato  | Stringa casuale per prevenire attacchi CSRF                         |
+| `code_challenge`        | Consigliato  | Challenge PKCE (hash SHA-256 del verifier, codificato in base64url) |
+| `code_challenge_method` | Consigliato  | Deve essere `S256` quando si usa PKCE                               |
 
-The user sees a consent screen and approves or denies access.
+L'utente vede una schermata di consenso e approva o nega l'accesso.
 
-### 2. Handle the callback
+### 2. Gestisci la callback
 
-After authorization, Twenty redirects back to your `redirect_uri`:
+Dopo l'autorizzazione, Twenty reindirizza al tuo `redirect_uri`:
 
 ```
 https://myapp.com/callback?code=AUTH_CODE&state=random_state_value
 ```
 
-Verify that `state` matches what you sent.
+Verifica che `state` corrisponda a quanto inviato.
 
-### 3. Exchange the code for tokens
+### 3. Scambia il codice con i token
 
 ```bash
 POST /oauth/token
@@ -108,7 +108,7 @@ client_secret=YOUR_CLIENT_SECRET&
 code_verifier=YOUR_PKCE_VERIFIER
 ```
 
-**Response:**
+**Risposta:**
 
 ```json
 {
@@ -119,14 +119,14 @@ code_verifier=YOUR_PKCE_VERIFIER
 }
 ```
 
-### 4. Use the access token
+### 4. Usa il token di accesso
 
 ```bash
 GET /rest/companies
 Authorization: Bearer ACCESS_TOKEN
 ```
 
-### 5. Refresh when expired
+### 5. Aggiorna alla scadenza
 
 ```bash
 POST /oauth/token
@@ -138,9 +138,9 @@ client_id=YOUR_CLIENT_ID&
 client_secret=YOUR_CLIENT_SECRET
 ```
 
-## Client Credentials Flow
+## Flusso delle credenziali del client
 
-For server-to-server integrations with no user interaction:
+Per integrazioni da server a server senza interazione dell'utente:
 
 ```bash
 POST /oauth/token
@@ -152,38 +152,38 @@ client_secret=YOUR_CLIENT_SECRET&
 scope=api
 ```
 
-The returned token has workspace-level access, not tied to any specific user.
+Il token restituito ha accesso a livello di spazio di lavoro, non legato a un utente specifico.
 
-## Server Discovery
+## Scoperta del server
 
-Twenty publishes its OAuth configuration at a standard discovery endpoint:
+Twenty pubblica la propria configurazione OAuth in un endpoint di discovery standard:
 
 ```
 GET /.well-known/oauth-authorization-server
 ```
 
-This returns all endpoints, supported grant types, scopes, and capabilities — useful for building generic OAuth clients.
+Questo restituisce tutti gli endpoint, i tipi di grant supportati, gli ambiti e le funzionalità — utile per creare client OAuth generici.
 
-## API Endpoints Summary
+## Riepilogo degli endpoint API
 
-| Endpoint                                  | Scopo                       |
-| ----------------------------------------- | --------------------------- |
-| `/.well-known/oauth-authorization-server` | Server metadata discovery   |
-| `/oauth/register`                         | Dynamic client registration |
-| `/oauth/authorize`                        | User authorization          |
-| `/oauth/token`                            | Token exchange and refresh  |
+| Endpoint                                  | Scopo                                  |
+| ----------------------------------------- | -------------------------------------- |
+| `/.well-known/oauth-authorization-server` | Individuazione dei metadati del server |
+| `/oauth/register`                         | Registrazione dinamica dei client      |
+| `/oauth/authorize`                        | Autorizzazione utente                  |
+| `/oauth/token`                            | Scambio e aggiornamento dei token      |
 
 | Ambiente          | URL di base              |
 | ----------------- | ------------------------ |
 | **Cloud**         | `https://api.twenty.com` |
 | **Auto-ospitato** | `https://{your-domain}`  |
 
-## OAuth vs API Keys
+## OAuth vs Chiavi API
 
-|                    | API Keys                | OAuth                                  |
-| ------------------ | ----------------------- | -------------------------------------- |
-| **Impostazione**   | Generate in Settings    | Register a client, implement flow      |
-| **User context**   | None (workspace-level)  | Specific user's permissions            |
-| **Ideale per**     | Scripts, internal tools | External apps, multi-user integrations |
-| **Token rotation** | Manuale                 | Automatic via refresh tokens           |
-| **Scoped access**  | Full API access         | Granular via scopes                    |
+|                         | API Keys                                | OAuth                                    |
+| ----------------------- | --------------------------------------- | ---------------------------------------- |
+| **Impostazione**        | Genera nelle Impostazioni               | Registra un client, implementa il flusso |
+| **Contesto utente**     | Nessuno (a livello di spazio di lavoro) | Autorizzazioni dell'utente specifico     |
+| **Ideale per**          | Script, strumenti interni               | App esterne, integrazioni multiutente    |
+| **Rotazione dei token** | Manuale                                 | Automatica tramite token di refresh      |
+| **Accesso con ambiti**  | Accesso completo alle API               | Granulare tramite ambiti                 |

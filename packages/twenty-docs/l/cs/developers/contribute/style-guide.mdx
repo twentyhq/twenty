@@ -1,14 +1,14 @@
 ---
 title: Stylová příručka
-icon: paintbrush
-description: Code conventions and best practices for contributing to Twenty.
+icon: paintbrush},{
+description: Konvence kódu a osvědčené postupy pro přispívání do Twenty.
 ---
 
 ## React
 
-### Functional components only
+### Pouze funkcionální komponenty
 
-Always use TSX functional components with named exports.
+Vždy používejte funkcionální komponenty TSX s pojmenovanými exporty.
 
 ```tsx
 // ❌ Bad
@@ -25,7 +25,7 @@ export function MyComponent() {
 
 ### Vlastnosti
 
-Create a type named `{ComponentName}Props`. Use destructuring. Don't use `React.FC`.
+Vytvořte typ s názvem `{ComponentName}Props`. Používejte destrukturování. Nepoužívejte `React.FC`.
 
 ```tsx
 type MyComponentProps = {
@@ -35,7 +35,7 @@ type MyComponentProps = {
 export const MyComponent = ({ name }: MyComponentProps) => <div>Hello {name}</div>;
 ```
 
-### No single-variable prop spreading
+### Žádné rozprostření jediné proměnné do props
 
 ```tsx
 // ❌ Bad
@@ -47,7 +47,7 @@ const MyComponent = ({ prop1, prop2 }: MyComponentProps) => <Other {...{ prop1, 
 
 ## Správa stavu
 
-### Jotai atoms for global state
+### Atomy Jotai pro globální stav
 
 ```tsx
 import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
@@ -59,16 +59,16 @@ export const myAtomState = createAtomState<string>({
 });
 ```
 
-* Prefer atoms over prop drilling
-* Don't use `useRef` for state — use `useState` or atoms
-* Use atom families and selectors for lists
+* Upřednostňujte atomy před prop drillingem
+* Nepoužívejte `useRef` pro stav — použijte `useState` nebo atomy
+* Používejte rodiny atomů a selektory pro seznamy
 
-### Avoid unnecessary re-renders
+### Vyhněte se zbytečnému opakovanému vykreslování
 
-* Extract `useEffect` and data fetching into sibling sidecar components
-* Prefer event handlers (`handleClick`, `handleChange`) over `useEffect`
-* Don't use `React.memo()` — fix the root cause instead
-* Limit `useCallback` / `useMemo` usage
+* Vytáhněte `useEffect` a načítání dat do sourozeneckých sidecar komponent
+* Upřednostňujte obslužné funkce událostí (`handleClick`, `handleChange`) před `useEffect`
+* Nepoužívejte `React.memo()` — místo toho opravte kořenovou příčinu
+* Omezte používání `useCallback` / `useMemo`
 
 ```tsx
 // ❌ Bad — useEffect in the same component causes re-renders
@@ -94,11 +94,11 @@ export const Page = () => {
 
 ## TypeScript
 
-* **`type` over `interface`** — more flexible, easier to compose
-* **String literals over enums** — except for GraphQL codegen enums and internal library APIs
-* **No `any`** — strict TypeScript enforced
-* **No type imports** — use regular imports (enforced by Oxlint `typescript/consistent-type-imports`)
-* **Use [Zod](https://github.com/colinhacks/zod)** for runtime validation of untyped objects
+* **`type` místo `interface`** — flexibilnější, lépe kombinovatelný
+* **Řetězcové literály místo výčtů** — s výjimkou enumů GraphQL codegenu a interních API knihoven
+* **Žádné `any`** — vynucený přísný TypeScript
+* **Žádné type imports** — používejte běžné importy (vynuceno nástrojem Oxlint `typescript/consistent-type-imports`)
+* **Používejte [Zod](https://github.com/colinhacks/zod)** pro runtime validaci netypovaných objektů
 
 ## JavaScript
 
@@ -112,17 +112,17 @@ onClick?.();
 
 ## Pojmenovávání
 
-* **Variables**: camelCase, descriptive (`email` not `value`, `fieldMetadata` not `fm`)
-* **Constants**: SCREAMING_SNAKE_CASE
-* **Types/Classes**: PascalCase
-* **Files/directories**: kebab-case (`.component.tsx`, `.service.ts`, `.entity.ts`)
-* **Event handlers**: `handleClick` (not `onClick` for the handler function)
-* **Component props**: prefix with component name (`ButtonProps`)
-* **Styled components**: prefix with `Styled` (`StyledTitle`)
+* **Proměnné**: camelCase, popisné (`email` nikoli `value`, `fieldMetadata` nikoli `fm`)
+* **Konstanty**: SCREAMING_SNAKE_CASE
+* **Typy/Třídy**: PascalCase
+* **Soubory/adresáře**: kebab-case (`.component.tsx`, `.service.ts`, `.entity.ts`)
+* **Obslužné funkce událostí**: `handleClick` (nikoli `onClick` pro obslužnou funkci)
+* **Vlastnosti komponenty (props)**: předponu tvoří název komponenty (`ButtonProps`)
+* **Stylované komponenty**: předpona `Styled` (`StyledTitle`)
 
 ## Styling
 
-Use [Linaria](https://github.com/callstack/linaria) styled components. Use theme values — avoid hardcoded `px`, `rem`, or colors.
+Používejte stylované komponenty [Linaria](https://github.com/callstack/linaria). Používejte hodnoty z tématu — vyhněte se napevno zadaným `px`, `rem` nebo barvám.
 
 ```tsx
 // ❌ Bad
@@ -142,7 +142,7 @@ const StyledButton = styled.button`
 
 ## Importy
 
-Use aliases instead of relative paths:
+Používejte aliasy místo relativních cest:
 
 ```tsx
 // ❌ Bad
@@ -153,7 +153,7 @@ import { Foo } from '~/testing/decorators/Foo';
 import { Bar } from '@/modules/bar/components/Bar';
 ```
 
-## Folder Structure
+## Struktura složek
 
 ```
 front
@@ -171,6 +171,6 @@ front
 └── ui/              # Reusable UI components (display, input, feedback, ...)
 ```
 
-* Modules can import from other modules, but `ui/` should stay dependency-free
-* Use `internal/` subfolders for module-private code
-* Components under 300 lines, services under 500 lines
+* Moduly mohou importovat z jiných modulů, ale `ui/` by mělo zůstat bez závislostí
+* Používejte podadresáře `internal/` pro kód soukromý pro modul
+* Komponenty do 300 řádků, služby do 500 řádků

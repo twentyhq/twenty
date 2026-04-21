@@ -48,10 +48,10 @@ Store the `client_secret` securely — it cannot be retrieved later.
 
 ## Kapsamlar
 
-| Scope    | Erişim                                               |
-| -------- | ---------------------------------------------------- |
-| `api`    | Full read/write access to the Core and Metadata APIs |
-| `profil` | Read the authenticated user's profile information    |
+| Scope     | Erişim                                               |
+| --------- | ---------------------------------------------------- |
+| `api`     | Full read/write access to the Core and Metadata APIs |
+| `profile` | Read the authenticated user's profile information    |
 
 Request scopes as a space-separated string: `scope=api profile`
 
@@ -78,7 +78,7 @@ GET /oauth/authorize?
 | `response_type`         | Evet     | Must be `code`                                               |
 | `redirect_uri`          | Evet     | Must match a registered redirect URI                         |
 | `scope`                 | Hayır    | Space-separated scopes (defaults to `api`)                   |
-| `durum`                 | Önerilen | Random string to prevent CSRF attacks                        |
+| `state`                 | Önerilen | Random string to prevent CSRF attacks                        |
 | `code_challenge`        | Önerilen | PKCE challenge (SHA-256 hash of verifier, base64url-encoded) |
 | `code_challenge_method` | Önerilen | Must be `S256` when using PKCE                               |
 

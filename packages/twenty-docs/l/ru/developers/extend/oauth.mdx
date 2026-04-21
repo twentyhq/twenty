@@ -51,7 +51,7 @@ Store the `client_secret` securely — it cannot be retrieved later.
 | Scope     | Доступ                                               |
 | --------- | ---------------------------------------------------- |
 | `api`     | Full read/write access to the Core and Metadata APIs |
-| `профиль` | Read the authenticated user's profile information    |
+| `profile` | Read the authenticated user's profile information    |
 
 Request scopes as a space-separated string: `scope=api profile`
 
@@ -78,7 +78,7 @@ GET /oauth/authorize?
 | `response_type`         | Да            | Must be `code`                                               |
 | `redirect_uri`          | Да            | Must match a registered redirect URI                         |
 | `scope`                 | Нет           | Space-separated scopes (defaults to `api`)                   |
-| `состояние`             | Рекомендуется | Random string to prevent CSRF attacks                        |
+| `state`                 | Рекомендуется | Random string to prevent CSRF attacks                        |
 | `code_challenge`        | Рекомендуется | PKCE challenge (SHA-256 hash of verifier, base64url-encoded) |
 | `code_challenge_method` | Рекомендуется | Must be `S256` when using PKCE                               |
 
