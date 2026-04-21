@@ -1,23 +1,23 @@
 ---
 title: Layout
-description: Define views, navigation menu items, and page layouts to shape how your app appears in Twenty.
+description: Definieren Sie Ansichten, Navigationsmenüeinträge und Seitenlayouts, um das Erscheinungsbild Ihrer App in Twenty zu gestalten.
 icon: table-columns
 ---
 
-Layout entities control how your app surfaces inside Twenty's UI — what lives in the sidebar, which saved views ship with the app, and how a record detail page is arranged.
+Layout-Entitäten steuern, wie Ihre App innerhalb der Benutzeroberfläche von Twenty dargestellt wird — was in der Seitenleiste angezeigt wird, welche gespeicherten Ansichten mit der App ausgeliefert werden und wie eine Detailseite eines Datensatzes angeordnet ist.
 
-## Layout concepts
+## Layout-Konzepte
 
-| Concept                  | What it controls                                                                  | Entität                    |
-| ------------------------ | --------------------------------------------------------------------------------- | -------------------------- |
-| **View**                 | A saved list configuration for an object — visible fields, order, filters, groups | `defineView`               |
-| **Navigation Menu Item** | An entry in the left sidebar that links to a view or an external URL              | `defineNavigationMenuItem` |
-| **Page Layout**          | The tabs and widgets that make up a record's detail page                          | `definePageLayout`         |
+| Konzept                    | Was es steuert                                                                                         | Entität                    |
+| -------------------------- | ------------------------------------------------------------------------------------------------------ | -------------------------- |
+| **Ansicht**                | Eine gespeicherte Listen-Konfiguration für ein Objekt — sichtbare Felder, Reihenfolge, Filter, Gruppen | `defineView`               |
+| **Navigationsmenüeintrag** | Ein Eintrag in der linken Seitenleiste, der auf eine Ansicht oder eine externe URL verweist            | `defineNavigationMenuItem` |
+| **Seitenlayout**           | Die Tabs und Widgets, aus denen die Detailseite eines Datensatzes besteht                              | `definePageLayout`         |
 
-Views, navigation items, and page layouts reference each other by `universalIdentifier`:
+Ansichten, Navigationsmenüeinträge und Seitenlayouts verweisen über `universalIdentifier` aufeinander:
 
-* A **navigation menu item** of type `VIEW` points at a `defineView` identifier, so the sidebar link opens that saved view.
-* A **page layout** of type `RECORD_PAGE` targets an object and can embed [front components](/l/de/developers/extend/apps/front-components) inside its tabs as widgets.
+* Ein **Navigationsmenüeintrag** vom Typ `VIEW` verweist auf einen `defineView`-Bezeichner, sodass der Seitenleistenlink diese gespeicherte Ansicht öffnet.
+* Ein **Seitenlayout** vom Typ `RECORD_PAGE` zielt auf ein Objekt ab und kann [Frontkomponenten](/l/de/developers/extend/apps/front-components) innerhalb seiner Tabs als Widgets einbetten.
 
 <AccordionGroup>
 <Accordion title="defineView" description="Gespeicherte Views für Objekte definieren">
