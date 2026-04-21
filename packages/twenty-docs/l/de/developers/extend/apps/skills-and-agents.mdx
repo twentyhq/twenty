@@ -42,7 +42,7 @@ Hauptpunkte:
 </Accordion>
 <Accordion title="defineAgent" description="KI-Agenten mit benutzerdefinierten Prompts definieren">
 
-Agenten sind KI-Assistenten, die innerhalb Ihres Workspaces leben. Verwenden Sie `defineAgent()`, um Agenten mit einem benutzerdefinierten System-Prompt zu erstellen:
+Agenten sind KI-Assistenten, die innerhalb Ihres Arbeitsbereichs leben. Verwenden Sie `defineAgent()`, um Agenten mit einem benutzerdefinierten System-Prompt zu erstellen:
 
 ```ts src/agents/example-agent.ts
 import { defineAgent } from 'twenty-sdk/define';
@@ -58,7 +58,7 @@ export default defineAgent({
 ```
 
 Hauptpunkte:
-* `name` ist die eindeutige Kennzeichnungs-Zeichenfolge für den Agenten (kebab-case empfohlen).
+* `name` ist eine eindeutige Kennung (als Zeichenfolge) für den Agenten (kebab-case empfohlen).
 * `label` ist der in der UI angezeigte Anzeigename.
 * `prompt` ist der System-Prompt, der das Verhalten des Agenten definiert.
 * `description` (optional) liefert Kontext dazu, was der Agent tut.

@@ -60,9 +60,9 @@ export default defineFrontComponent({
 | `universalIdentifier` | 是  | 该组件的稳定唯一 ID                                                                         |
 | `component`           | 是  | 一个 React 组件函数                                                                       |
 | `name`                | 否  | 显示名称                                                                                |
-| `描述`                  | 否  | 组件的功能描述                                                                             |
+| `description`         | 否  | 组件的功能描述                                                                             |
 | `isHeadless`          | 否  | Set to `true` if the component has no visible UI (see below)                        |
-| `命令`                  | 否  | Register the component as a command (see [command options](#command-options) below) |
+| `command`             | 否  | Register the component as a command (see [command options](#command-options) below) |
 
 ## Placing a front component on a page
 
@@ -293,9 +293,9 @@ Adding a `command` field to `defineFrontComponent` registers the component in th
 | 字段                                      | 必填 | 描述                                                                                                                                                                             |
 | --------------------------------------- | -- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `universalIdentifier`                   | 是  | Stable unique ID for the command                                                                                                                                               |
-| `标签`                                    | 是  | Full label shown in the command menu (Cmd+K)                                                                                                                                   |
+| `label`                                 | 是  | Full label shown in the command menu (Cmd+K)                                                                                                                                   |
 | `shortLabel`                            | 否  | Shorter label displayed on the pinned quick-action button                                                                                                                      |
-| `图标`                                    | 否  | Icon name displayed next to the label (e.g. `'IconBolt'`, `'IconSend'`)                                                                                                        |
+| `icon`                                  | 否  | Icon name displayed next to the label (e.g. `'IconBolt'`, `'IconSend'`)                                                                                                        |
 | `isPinned`                              | 否  | When `true`, shows the command as a quick-action button in the top-right corner of the page                                                                                    |
 | `availabilityType`                      | 否  | Controls where the command appears: `'GLOBAL'` (always available), `'RECORD_SELECTION'` (only when records are selected), or `'FALLBACK'` (shown when no other commands match) |
 | `availabilityObjectUniversalIdentifier` | 否  | Restrict the command to pages of a specific object type (e.g. only on Company records)                                                                                         |
@@ -338,15 +338,15 @@ export default defineFrontComponent({
 | ------------------------------ | --------- | ---------------------------------------------------------------- |
 | `pageType`                     | `string`  | Current page type (e.g. `'RecordIndexPage'`, `'RecordShowPage'`) |
 | `isInSidePanel`                | `boolean` | Whether the component is rendered in a side panel                |
-| `numberOfSelectedRecords`      | `数字`      | Number of currently selected records                             |
+| `numberOfSelectedRecords`      | `number`  | Number of currently selected records                             |
 | `isSelectAll`                  | `boolean` | Whether "select all" is active                                   |
 | `selectedRecords`              | `array`   | The selected record objects                                      |
 | `favoriteRecordIds`            | `array`   | IDs of favorited records                                         |
-| `objectPermissions`            | `对象`      | Permissions for the current object type                          |
-| `targetObjectReadPermissions`  | `对象`      | Read permissions for the target object                           |
-| `targetObjectWritePermissions` | `对象`      | Write permissions for the target object                          |
-| `featureFlags`                 | `对象`      | Active feature flags                                             |
-| `objectMetadataItem`           | `对象`      | Metadata of the current object type                              |
+| `objectPermissions`            | `object`  | Permissions for the current object type                          |
+| `targetObjectReadPermissions`  | `object`  | Read permissions for the target object                           |
+| `targetObjectWritePermissions` | `object`  | Write permissions for the target object                          |
+| `featureFlags`                 | `object`  | Active feature flags                                             |
+| `objectMetadataItem`           | `object`  | Metadata of the current object type                              |
 | `hasAnySoftDeleteFilterOnView` | `boolean` | Whether the current view has a soft-delete filter                |
 
 **Operators** — combine variables into boolean expressions:

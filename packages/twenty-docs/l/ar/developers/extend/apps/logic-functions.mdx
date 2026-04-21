@@ -99,8 +99,8 @@ const handler = async (event: RoutePayload) => {
   | `headers`                    | `Record\<string, string \| undefined>` | رؤوس HTTP (فقط تلك المدرجة في `forwardedRequestHeaders`)     | انظر القسم أدناه                                                           |
   | `queryStringParameters`      | `Record\<string, string \| undefined>` | معلمات سلسلة الاستعلام (تُضمّ القيم المتعددة باستخدام فواصل) | `/users?ids=1&ids=2&ids=3&name=Alice` -> `{ ids: '1,2,3', name: 'Alice' }` |
   | `pathParameters`             | `Record\<string, string \| undefined>` | معلمات المسار المستخرجة من نمط المسار                        | `/users/:id`, `/users/123` -> `{ id: '123' }`                              |
-  | `المحتوى`                    | `object \| null`                                        | جسم الطلب المُحلَّل (JSON)                                   | `{ id: 1 }` -> `{ id: 1 }`                                                 |
-  | `isBase64Encoded`            | `قيمة منطقية`                                           | ما إذا كان جسم الطلب مُرمَّزًا بترميز base64                 |                                                                            |
+  | `body`                       | `object \| null`                                        | جسم الطلب المُحلَّل (JSON)                                   | `{ id: 1 }` -> `{ id: 1 }`                                                 |
+  | `isBase64Encoded`            | `boolean`                                               | ما إذا كان جسم الطلب مُرمَّزًا بترميز base64                 |                                                                            |
   | `requestContext.http.method` | `string`                                                | طريقة HTTP (GET, POST, PUT, PATCH, DELETE)                   |                                                                            |
   | `requestContext.http.path`   | `string`                                                | المسار الخام للطلب                                           |                                                                            |
 

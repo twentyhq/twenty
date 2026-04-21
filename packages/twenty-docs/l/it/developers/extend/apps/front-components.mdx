@@ -60,9 +60,9 @@ Fai clic per renderizzare il componente in linea.
 | `universalIdentifier` | Sì           | ID univoco stabile per questo componente                                                 |
 | `component`           | Sì           | Una funzione di componente React                                                         |
 | `name`                | No           | Nome visualizzato                                                                        |
-| `descrizione`         | No           | Descrizione di ciò che fa il componente                                                  |
+| `description`         | No           | Descrizione di ciò che fa il componente                                                  |
 | `isHeadless`          | No           | Imposta su `true` se il componente non ha una UI visibile (vedi sotto)                   |
-| `comando`             | No           | Registra il componente come comando (vedi [opzioni del comando](#command-options) sotto) |
+| `command`             | No           | Registra il componente come comando (vedi [opzioni del comando](#command-options) sotto) |
 
 ## Posizionare un componente front-end su una pagina
 
@@ -293,9 +293,9 @@ Aggiungere un campo `command` a `defineFrontComponent` registra il componente ne
 | Campo                                   | Obbligatorio | Descrizione                                                                                                                                                                                          |
 | --------------------------------------- | ------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `universalIdentifier`                   | Sì           | ID univoco stabile per il comando                                                                                                                                                                    |
-| `etichetta`                             | Sì           | Etichetta completa mostrata nel menu comandi (Cmd+K)                                                                                                                                                 |
+| `label`                                 | Sì           | Etichetta completa mostrata nel menu comandi (Cmd+K)                                                                                                                                                 |
 | `shortLabel`                            | No           | Etichetta breve visualizzata sul pulsante di azione rapida fissato                                                                                                                                   |
-| `icona`                                 | No           | Nome dell'icona visualizzato accanto all'etichetta (ad es. `'IconBolt'`, `'IconSend'`)                                                                                                               |
+| `icon`                                  | No           | Nome dell'icona visualizzato accanto all'etichetta (ad es. `'IconBolt'`, `'IconSend'`)                                                                                                               |
 | `isPinned`                              | No           | Quando `true`, mostra il comando come pulsante di azione rapida nell'angolo in alto a destra della pagina                                                                                            |
 | `availabilityType`                      | No           | Controlla dove compare il comando: `'GLOBAL'` (sempre disponibile), `'RECORD_SELECTION'` (solo quando sono selezionati dei record) o `'FALLBACK'` (mostrato quando nessun altro comando corrisponde) |
 | `availabilityObjectUniversalIdentifier` | No           | Limita il comando alle pagine di uno specifico tipo di oggetto (ad es. solo sui record Company)                                                                                                      |
@@ -338,15 +338,15 @@ export default defineFrontComponent({
 | ------------------------------ | --------- | ------------------------------------------------------------------------ |
 | `pageType`                     | `string`  | Tipo di pagina corrente (ad es. `'RecordIndexPage'`, `'RecordShowPage'`) |
 | `isInSidePanel`                | `boolean` | Indica se il componente è renderizzato in un pannello laterale           |
-| `numberOfSelectedRecords`      | `numero`  | Numero di record attualmente selezionati                                 |
+| `numberOfSelectedRecords`      | `number`  | Numero di record attualmente selezionati                                 |
 | `isSelectAll`                  | `boolean` | Indica se "seleziona tutto" è attivo                                     |
 | `selectedRecords`              | `array`   | Gli oggetti dei record selezionati                                       |
 | `favoriteRecordIds`            | `array`   | ID dei record aggiunti ai preferiti                                      |
-| `objectPermissions`            | `oggetto` | Autorizzazioni per il tipo di oggetto corrente                           |
-| `targetObjectReadPermissions`  | `oggetto` | Autorizzazioni di lettura per l'oggetto di destinazione                  |
-| `targetObjectWritePermissions` | `oggetto` | Autorizzazioni di scrittura per l'oggetto di destinazione                |
-| `featureFlags`                 | `oggetto` | Flag delle funzionalità attivi                                           |
-| `objectMetadataItem`           | `oggetto` | Metadati del tipo di oggetto corrente                                    |
+| `objectPermissions`            | `object`  | Autorizzazioni per il tipo di oggetto corrente                           |
+| `targetObjectReadPermissions`  | `object`  | Autorizzazioni di lettura per l'oggetto di destinazione                  |
+| `targetObjectWritePermissions` | `object`  | Autorizzazioni di scrittura per l'oggetto di destinazione                |
+| `featureFlags`                 | `object`  | Flag delle funzionalità attivi                                           |
+| `objectMetadataItem`           | `object`  | Metadati del tipo di oggetto corrente                                    |
 | `hasAnySoftDeleteFilterOnView` | `boolean` | Indica se la vista corrente ha un filtro di soft-delete                  |
 
 **Operatori** — combinano variabili in espressioni booleane:

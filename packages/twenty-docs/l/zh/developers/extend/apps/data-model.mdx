@@ -90,7 +90,7 @@ export default defineApplication({
 });
 ```
 
-备注:
+备注：
 * `universalIdentifier` 字段是你拥有的确定性 ID。 只需生成一次，并在多次同步过程中保持稳定不变。
 * `applicationVariables` 会变成你的函数和前端组件可用的环境变量（例如，`DEFAULT_RECIPIENT_NAME` 可作为 `process.env.DEFAULT_RECIPIENT_NAME` 使用）。
 * `defaultRoleUniversalIdentifier` 必须引用使用 `defineRole()` 定义的角色（见上文）。
@@ -153,7 +153,7 @@ export default defineRole({
 * **\*.role.ts** 定义该角色可以执行的操作。
 * **application-config.ts** 指向该角色，使你的函数继承其权限。
 
-备注:
+备注：
 * 从脚手架生成的角色开始，然后按照最小权限原则逐步收紧权限。
 * 将 `objectPermissions` 和 `fieldPermissions` 替换为你的函数所需的对象/字段。
 * `permissionFlags` 控制对平台级能力的访问。 尽量保持最小化。

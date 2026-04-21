@@ -1,6 +1,6 @@
 ---
-title: CLI & Testing
-description: CLI commands, testing setup, public assets, npm packages, remotes, and CI configuration.
+title: CLI a testování
+description: Příkazy CLI, nastavení testování, veřejné statické soubory, balíčky npm, vzdálené repozitáře a konfigurace CI.
 icon: terminal
 ---
 
@@ -14,7 +14,7 @@ Soubory umístěné v `public/` jsou:
 * **Dostupné ve frontendových komponentách** — použijte URL prostředků k zobrazení obrázků, ikon či jiných médií uvnitř komponent Reactu.
 * **Dostupné v logických funkcích** — odkazujte na URL prostředků v e-mailech, odpovědích API či jiné serverové logice.
 * **Používány pro metadata Marketplace** — pole `logoUrl` a `screenshots` v `defineApplication()` odkazují na soubory z této složky (např. `public/logo.png`). Tyto se zobrazují v Marketplace, když je vaše aplikace zveřejněna.
-* **Automaticky synchronizované ve vývojovém režimu** — když v `public/` přidáte, aktualizujete nebo smažete soubor, je automaticky synchronizován na server. Není potřeba restart.
+* **Automaticky synchronizované ve vývojovém režimu** — když v `public/` přidáte, aktualizujete nebo smažete soubor, je automaticky synchronizován na server. Není potřeba restartovat.
 * **Zahrnuté do buildů** — `yarn twenty build` zabalí všechny veřejné prostředky do distribučního výstupu.
 
 ### Přístup k veřejným prostředkům pomocí `getPublicAssetUrl`
@@ -429,6 +429,6 @@ jobs:
           TWENTY_API_KEY: ${{ steps.twenty.outputs.access-token }}
 ```
 
-Není potřeba konfigurovat žádné secrets — akce `spawn-twenty-docker-image` spustí efemérní server Twenty přímo v runneru a vypíše podrobnosti připojení. Secret `GITHUB_TOKEN` je poskytován GitHubem automaticky.
+Není potřeba konfigurovat žádné secrets — akce `spawn-twenty-docker-image` spustí dočasný server Twenty přímo v runneru a vypíše podrobnosti připojení. Secret `GITHUB_TOKEN` je poskytován GitHubem automaticky.
 
 Chcete-li připnout konkrétní verzi Twenty místo `latest`, změňte proměnnou prostředí `TWENTY_VERSION` na začátku workflow.

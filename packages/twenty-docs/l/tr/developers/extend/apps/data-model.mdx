@@ -65,7 +65,7 @@ export default defineRole({
 Her uygulamanın, şunları tanımlayan tam olarak bir adet `defineApplication` çağrısı olmalıdır:
 
 * **Kimlik**: tanımlayıcılar, görünen ad ve açıklama.
-* **İzinler**: işlevlerinin ve ön bileşenlerinin hangi rolü kullandığı.
+* **İzinler**: işlevlerinin ve ön uç bileşenlerinin hangi rolü kullandığı.
 * **(İsteğe bağlı) Değişkenler**: fonksiyonlarınıza ortam değişkenleri olarak sunulan anahtar–değer çiftleri.
 * **(İsteğe bağlı) Kurulum öncesi / kurulum sonrası fonksiyonlar**: kurulumdan önce veya sonra çalışan mantık fonksiyonları.
 
@@ -92,7 +92,7 @@ export default defineApplication({
 
 Notlar:
 * `universalIdentifier` alanları, size ait deterministik kimliklerdir. Bunları bir kez oluşturun ve senkronizasyonlar boyunca kararlı tutun.
-* `applicationVariables`, fonksiyonlarınız ve ön bileşenleriniz için ortam değişkenlerine dönüşür (örn. `DEFAULT_RECIPIENT_NAME`, `process.env.DEFAULT_RECIPIENT_NAME` olarak kullanılabilir).
+* `applicationVariables`, fonksiyonlarınız ve ön uç bileşenleriniz için ortam değişkenlerine dönüşür (örn. `DEFAULT_RECIPIENT_NAME`, `process.env.DEFAULT_RECIPIENT_NAME` olarak kullanılabilir).
 * `defaultRoleUniversalIdentifier`, `defineRole()` ile tanımlanmış bir role referans vermelidir (yukarıya bakın).
 * Kurulum öncesi ve kurulum sonrası fonksiyonlar manifest derlemesi sırasında otomatik olarak algılanır — bunlara `defineApplication()` içinde referans vermeniz gerekmez.
 
@@ -114,7 +114,7 @@ Eğer [uygulamanızı yayımlamayı](/l/tr/developers/extend/apps/publishing) pl
 
 #### Roller ve izinler
 
-`application-config.ts` içindeki `defaultRoleUniversalIdentifier`, uygulamanızın mantık fonksiyonları ve ön bileşenleri tarafından kullanılan varsayılan rolü belirtir. Ayrıntılar için yukarıdaki `defineRole` bölümüne bakın.
+`application-config.ts` içindeki `defaultRoleUniversalIdentifier`, uygulamanızın mantık fonksiyonları ve ön uç bileşenleri tarafından kullanılan varsayılan rolü belirtir. Ayrıntılar için yukarıdaki `defineRole` bölümüne bakın.
 
 * `TWENTY_APP_ACCESS_TOKEN` olarak enjekte edilen çalışma zamanı belirteci bu rolden türetilir.
 * Türlendirilmiş istemci, o role tanınan izinlerle sınırlandırılır.

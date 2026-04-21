@@ -535,12 +535,12 @@ console.log(uploadedFile);
 // { id: '...', path: '...', size: 12345, createdAt: '...', url: 'https://...' }
 ```
 
-| Parameter                          | Typ            | Beschreibung                                                          |
-| ---------------------------------- | -------------- | --------------------------------------------------------------------- |
-| `fileBuffer`                       | `Buffer`       | Der Rohinhalt der Datei                                               |
-| `filename`                         | `Zeichenkette` | Der Name der Datei (wird für Speicherung und Anzeige verwendet)       |
-| `contentType`                      | `Zeichenkette` | MIME-Typ (standardmäßig `application/octet-stream`, wenn weggelassen) |
-| `fieldMetadataUniversalIdentifier` | `Zeichenkette` | Der `universalIdentifier` des Dateityp-Felds in Ihrem Objekt          |
+| Parameter                          | Typ      | Beschreibung                                                          |
+| ---------------------------------- | -------- | --------------------------------------------------------------------- |
+| `fileBuffer`                       | `Buffer` | Der Rohinhalt der Datei                                               |
+| `filename`                         | `string` | Der Name der Datei (wird für Speicherung und Anzeige verwendet)       |
+| `contentType`                      | `string` | MIME-Typ (standardmäßig `application/octet-stream`, wenn weggelassen) |
+| `fieldMetadataUniversalIdentifier` | `string` | Der `universalIdentifier` des Dateityp-Felds in Ihrem Objekt          |
 
 Hauptpunkte:
 * Sie verwendet den `universalIdentifier` des Feldes (nicht dessen arbeitsbereichsspezifische ID), sodass Ihr Upload-Code in jedem Arbeitsbereich funktioniert, in dem Ihre App installiert ist.

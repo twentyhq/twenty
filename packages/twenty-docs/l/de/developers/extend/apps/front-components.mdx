@@ -4,7 +4,7 @@ description: Build React components that render inside Twenty's UI with sandboxe
 icon: window-maximize
 ---
 
-Frontend-Komponenten sind React-Komponenten, die direkt innerhalb der Twenty-UI gerendert werden. Sie laufen in einem **isolierten Web Worker** unter Verwendung von Remote DOM — Ihr Code wird in einer Sandbox ausgeführt, rendert jedoch nativ auf der Seite, nicht in einem iframe.
+Front-Komponenten sind React-Komponenten, die direkt innerhalb der Twenty-UI gerendert werden. Sie laufen in einem **isolierten Web Worker** unter Verwendung von Remote DOM — Ihr Code wird in einer Sandbox ausgeführt, rendert jedoch nativ auf der Seite, nicht in einem iframe.
 
 ## Wo Front-Komponenten verwendet werden können
 
@@ -15,7 +15,7 @@ Front-Komponenten können an zwei Stellen innerhalb von Twenty gerendert werden:
 
 ## Einfaches Beispiel
 
-Der schnellste Weg, eine Frontend-Komponente in Aktion zu sehen, ist, sie als Befehl zu registrieren. Das Hinzufügen eines `command`-Felds mit `isPinned: true` lässt sie als Schnellaktionsschaltfläche oben rechts auf der Seite erscheinen — kein Seitenlayout erforderlich:
+Der schnellste Weg, eine Front-Komponente in Aktion zu sehen, ist, sie als Befehl zu registrieren. Das Hinzufügen eines `command`-Felds mit `isPinned: true` lässt sie als Schnellaktionsschaltfläche oben rechts auf der Seite erscheinen — kein Seitenlayout erforderlich:
 
 ```tsx src/front-components/hello-world.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
@@ -64,9 +64,9 @@ Klicken Sie darauf, um die Komponente inline zu rendern.
 | `isHeadless`          | Nein         | Auf `true` setzen, wenn die Komponente keine sichtbare UI hat (siehe unten)              |
 | `command`             | Nein         | Die Komponente als Befehl registrieren (siehe unten [Befehlsoptionen](#command-options)) |
 
-## Eine Frontend-Komponente auf einer Seite platzieren
+## Eine Front-Komponente auf einer Seite platzieren
 
-Über Befehle hinaus können Sie eine Frontend-Komponente direkt in eine Datensatzseite einbetten, indem Sie sie als Widget in einem **Seitenlayout** hinzufügen. Details finden Sie im Abschnitt [definePageLayout](/l/de/developers/extend/apps/skills-and-agents#definepagelayout).
+Über Befehle hinaus können Sie eine Front-Komponente direkt in eine Datensatzseite einbetten, indem Sie sie als Widget in einem **Seitenlayout** hinzufügen. Details finden Sie im Abschnitt [definePageLayout](/l/de/developers/extend/apps/skills-and-agents#definepagelayout).
 
 ## Headless vs. Nicht-Headless
 
@@ -224,12 +224,12 @@ Verfügbare Hooks:
 | --------------------------------------------- | -------------------- | --------------------------------------------------------------------------- |
 | `useUserId()`                                 | `string` oder `null` | Die ID des aktuellen Benutzers                                              |
 | `useRecordId()`                               | `string` oder `null` | Die ID des aktuellen Datensatzes (wenn auf einer Datensatzseite platziert)  |
-| `useFrontComponentId()`                       | `Zeichenkette`       | Die ID dieser Komponenteninstanz                                            |
+| `useFrontComponentId()`                       | `string`             | Die ID dieser Komponenteninstanz                                            |
 | `useFrontComponentExecutionContext(selector)` | variiert             | Zugriff auf den vollständigen Ausführungskontext mit einer Selektorfunktion |
 
 ## Host-Kommunikations-API
 
-Frontend-Komponenten können Navigation, Modals und Benachrichtigungen mittels Funktionen aus `twenty-sdk` auslösen:
+Front-Komponenten können Navigation, Modals und Benachrichtigungen mittels Funktionen aus `twenty-sdk` auslösen:
 
 | Funktion                                        | Beschreibung                              |
 | ----------------------------------------------- | ----------------------------------------- |
@@ -334,20 +334,20 @@ export default defineFrontComponent({
 
 **Kontextvariablen** — sie repräsentieren den aktuellen Zustand der Seite:
 
-| Variable                       | Typ            | Beschreibung                                                    |
-| ------------------------------ | -------------- | --------------------------------------------------------------- |
-| `pageType`                     | `Zeichenkette` | Aktueller Seitentyp (z. B. 'RecordIndexPage', 'RecordShowPage') |
-| `isInSidePanel`                | `boolean`      | Ob die Komponente in einem Seitenpanel gerendert wird           |
-| `numberOfSelectedRecords`      | `number`       | Anzahl der aktuell ausgewählten Datensätze                      |
-| `isSelectAll`                  | `boolean`      | Ob „Alle auswählen“ aktiv ist                                   |
-| `selectedRecords`              | `array`        | Die ausgewählten Datensatzobjekte                               |
-| `favoriteRecordIds`            | `array`        | IDs der favorisierten Datensätze                                |
-| `objectPermissions`            | `object`       | Berechtigungen für den aktuellen Objekttyp                      |
-| `targetObjectReadPermissions`  | `object`       | Leseberechtigungen für das Zielobjekt                           |
-| `targetObjectWritePermissions` | `object`       | Schreibberechtigungen für das Zielobjekt                        |
-| `featureFlags`                 | `object`       | Aktive Feature-Flags                                            |
-| `objectMetadataItem`           | `object`       | Metadaten des aktuellen Objekttyps                              |
-| `hasAnySoftDeleteFilterOnView` | `boolean`      | Ob die aktuelle Ansicht einen Soft-Delete-Filter hat            |
+| Variable                       | Typ       | Beschreibung                                                    |
+| ------------------------------ | --------- | --------------------------------------------------------------- |
+| `pageType`                     | `string`  | Aktueller Seitentyp (z. B. 'RecordIndexPage', 'RecordShowPage') |
+| `isInSidePanel`                | `boolean` | Ob die Komponente in einem Seitenpanel gerendert wird           |
+| `numberOfSelectedRecords`      | `number`  | Anzahl der aktuell ausgewählten Datensätze                      |
+| `isSelectAll`                  | `boolean` | Ob „Alle auswählen“ aktiv ist                                   |
+| `selectedRecords`              | `array`   | Die ausgewählten Datensatzobjekte                               |
+| `favoriteRecordIds`            | `array`   | IDs der favorisierten Datensätze                                |
+| `objectPermissions`            | `object`  | Berechtigungen für den aktuellen Objekttyp                      |
+| `targetObjectReadPermissions`  | `object`  | Leseberechtigungen für das Zielobjekt                           |
+| `targetObjectWritePermissions` | `object`  | Schreibberechtigungen für das Zielobjekt                        |
+| `featureFlags`                 | `object`  | Aktive Feature-Flags                                            |
+| `objectMetadataItem`           | `object`  | Metadaten des aktuellen Objekttyps                              |
+| `hasAnySoftDeleteFilterOnView` | `boolean` | Ob die aktuelle Ansicht einen Soft-Delete-Filter hat            |
 
 **Operatoren** — Variablen zu booleschen Ausdrücken kombinieren:
 
@@ -370,7 +370,7 @@ export default defineFrontComponent({
 
 ## Öffentliche Assets
 
-Frontend-Komponenten können mit `getPublicAssetUrl` auf Dateien aus dem `public/`-Verzeichnis der App zugreifen:
+Front-Komponenten können mit `getPublicAssetUrl` auf Dateien aus dem `public/`-Verzeichnis der App zugreifen:
 
 ```tsx
 import { defineFrontComponent, getPublicAssetUrl } from 'twenty-sdk/define';
@@ -388,7 +388,7 @@ Details finden Sie im Abschnitt [Öffentliche Assets](/l/de/developers/extend/ap
 
 ## Styling
 
-Frontend-Komponenten unterstützen mehrere Styling-Ansätze. Sie können verwenden:
+Front-Komponenten unterstützen mehrere Styling-Ansätze. Sie können verwenden:
 
 * **Inline-Styles** — `style={{ color: 'red' }}`
 * **Twenty-UI-Komponenten** — Import aus `twenty-sdk/ui` (Button, Tag, Status, Chip, Avatar und mehr)

@@ -5,26 +5,86 @@ icon: arrow-up-right-dots
 
 ## Linee guida generali
 
-**Assicurati sempre di eseguire il backup del database prima di iniziare il processo di aggiornamento** eseguendo `docker exec -it {db_container_name_or_id} pg_dumpall -U {postgres_user} > databases_backup.sql`.
+**Always back up your database before starting the upgrade process** by running:
 
-Per ripristinare il backup, esegui `cat databases_backup.sql | docker exec -i {db_container_name_or_id} psql -U {postgres_user}`.
+```bash
+docker exec -it {db_container_name_or_id} pg_dumpall -U {postgres_user} > databases_backup.sql
+```
 
-Se hai utilizzato Docker Compose, segui questi passaggi:
+To restore from backup:
 
-1. In un terminale, sull'host dove Twenty è in esecuzione, spegni Twenty: `docker compose down`
+```bash
+cat databases_backup.sql | docker exec -i {db_container_name_or_id} psql -U {postgres_user}
+```
 
-2. Aggiorna la versione modificando il valore `TAG` nel file .env vicino al tuo docker-compose. ( Si consiglia di utilizzare la versione `major.minor`, ad esempio `v0.53` )
+If you use Docker Compose, follow these steps:
 
-3. Riporta Twenty online con `docker compose up -d`
+1. Stop Twenty: `docker compose down`
+2. Change the `TAG` value in the `.env` file next to your `docker-compose.yml`
+3. Start Twenty: `docker compose up -d`
 
-**Assicurati che dopo ogni versione aggiornata tu abbia un backup non corrotto.**
+The server runs all required upgrade migrations automatically on startup. No manual command is needed.
 
-## Passaggi di aggiornamento specifici per la versione
+## Cross-version upgrades (v1.22+)
 
-## After v1.21
+Starting from **v1.22**, Twenty supports cross-version upgrades. You can jump directly from any supported version to the latest release without stepping through each intermediate version.
 
-We know support sequential upgrades. You don't need to go through each version one by one.
+For example, upgrading from v1.22 straight to v2.0 is fully supported.
 
-## Before v1.21
+## Checking upgrade status
 
-Make sure to go through every major tagged version when upgrading (upgrade v1.6.x to v.7.y, then v.7.y to v.8.z, etc.).
+The `upgrade:status` command lets you inspect the current state of your instance and workspace migrations. It is useful for debugging upgrade issues or when filing a support request.
+
+Run it from the server container:
+
+```bash
+docker exec -it {server_container_name_or_id} yarn command:prod upgrade:status
+```
+
+Esempio di output:
+
+```sh
+APP_VERSION: v1.23.0
+
+Instance
+    Inferred version: 1.23.0
+    Latest command:   1.23.0_DropWorkspaceVersionColumnFastInstanceCommand_1785000000000
+    Status:           Up to date
+    Executed by:      v1.23.0
+    At:               2026-04-16T11:43:58.823Z
+
+Workspace
+  Apple (20202020-1c25-4d02-bf25-6aeccf7ea419)
+      Inferred version: 1.23.0
+      Latest command:   1.23.0_UpdateGlobalObjectContextCommandMenuItemsCommand_1780000005000
+      Status:           Up to date
+      Executed by:      v1.23.0
+      At:               2026-04-16T11:44:09.361Z
+
+Summary
+    Instance: Up to date
+    Workspaces: 1 up to date, 0 behind, 0 failed (1 total)
+```
+
+### Opzioni
+
+| Flag                      | Descrizione                                                      |
+| ------------------------- | ---------------------------------------------------------------- |
+| `-w, --workspace-id <id>` | Filter to a specific workspace. Can be passed multiple times.    |
+| `-f, --failed-only`       | Hide up-to-date workspaces, only show behind and failed entries. |
+
+## Risoluzione dei problemi
+
+If the upgrade fails on some workspaces, the server will not advance past the failing step. Restarting the server (`docker compose up -d`) will retry the upgrade from where it left off.
+
+To quickly identify problems, run:
+
+```bash
+docker exec -it {server_container_name_or_id} yarn command:prod upgrade:status --failed-only
+```
+
+This shows only workspaces that are behind or have failed, along with the error message for each failure.
+
+## Before v1.22
+
+If your instance is older than v1.22, you must upgrade incrementally through each major tagged version (v1.6 to v1.7, then v1.7 to v1.8, and so on) until you reach v1.22. From there, you can jump directly to the latest version.
