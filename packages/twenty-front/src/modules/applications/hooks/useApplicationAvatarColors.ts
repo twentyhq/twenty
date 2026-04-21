@@ -40,8 +40,9 @@ export const useApplicationAvatarColors = (
   }
 
   const isStandard =
+    isDefined(application.universalIdentifier) &&
     application.universalIdentifier ===
-    TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER;
+      TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER;
 
   const isCustom =
     isDefined(currentWorkspace?.workspaceCustomApplication?.id) &&
