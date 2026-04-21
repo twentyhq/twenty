@@ -791,6 +791,165 @@ export class SalesExecutionService {
     }
     return Math.abs(hash).toString(16).padStart(8, '0');
   }
+
+  async getUpsellCrossSellRecommendations(accountId: string): Promise<UpsellCrossSellRecommendation> {
+    const recommendations = [
+      {
+        type: 'upsell' as const,
+        productId: 'prod_enterprise',
+        productName: 'Enterprise Plan',
+        currentPlan: 'Professional',
+        recommendedPlan: 'Enterprise',
+        potentialRevenue: 24000,
+        confidence: 0.85,
+        rationale: 'Customer has exceeded seat limit and uses advanced features',
+      },
+      {
+        type: 'cross_sell' as const,
+        productId: 'prod_analytics',
+        productName: 'Analytics Add-on',
+        potentialRevenue: 6000,
+        confidence: 0.72,
+        rationale: 'Based on usage patterns, analytics would improve ROI',
+      },
+      {
+        type: 'cross_sell' as const,
+        productId: 'prod_support',
+        productName: 'Premium Support',
+        potentialRevenue: 3600,
+        confidence: 0.65,
+        rationale: 'High support ticket volume indicates need for premium tier',
+      },
+    ];
+
+    return {
+      accountId,
+      recommendations,
+    };
+  }
+
+  async enrollInAdvocacyProgram(customerId: string): Promise<CustomerAdvocacyProgram> {
+    return {
+      id: `adv_${Date.now()}`,
+      customerId,
+      tier: 'bronze',
+      points: 0,
+      benefits: [
+        'Early access to new features',
+        'Quarterly swag package',
+        'Priority support',
+      ],
+      activities: [
+        { type: 'referral', points: 500, status: 'available' },
+        { type: 'case_study', points: 1000, status: 'available' },
+        { type: 'testimonial', points: 300, status: 'available' },
+        { type: 'review', points: 200, status: 'available' },
+        { type: 'event', points: 750, status: 'available' },
+      ],
+    };
+  }
+
+  async recordAdvocacyActivity(
+    advocacyId: string,
+    activityType: 'referral' | 'case_study' | 'testimonial' | 'review' | 'event',
+    metadata?: Record<string, unknown>,
+  ): Promise<{ points: number; totalPoints: number; newTier: string }> {
+    const activityPoints: Record<string, number> = {
+      referral: 500,
+      case_study: 1000,
+      testimonial: 300,
+      review: 200,
+      event: 750,
+    };
+
+    const points = activityPoints[activityType] || 0;
+    const totalPoints = 500 + points;
+    const newTier = totalPoints >= 3000 ? 'platinum' : totalPoints >= 1500 ? 'gold' : totalPoints >= 500 ? 'silver' : 'bronze';
+
+    return { points, totalPoints, newTier };
+  }
+
+  async requestDiscountApproval(input: DiscountApprovalInput): Promise<{
+    requestId: string;
+    status: string;
+    requiredApprovers: string[];
+    estimatedResponseTime: string;
+  }> {
+    const approvalThresholds = [
+      { discount: 5, approvers: [], responseTime: 'Instant' },
+      { discount: 10, approvers: ['Sales Manager'], responseTime: '24 hours' },
+      { discount: 15, approvers: ['Sales Manager', 'Regional Director'], responseTime: '48 hours' },
+      { discount: 20, approvers: ['Sales Manager', 'Regional Director', 'VP Sales'], responseTime: '72 hours' },
+      { discount: 25, approvers: ['Sales Manager', 'Regional Director', 'VP Sales', 'CRO'], responseTime: '5 days' },
+    ];
+
+    const threshold = approvalThresholds.find(t => input.requestedDiscount <= t.discount) 
+      || approvalThresholds[approvalThresholds.length - 1];
+
+    return {
+      requestId: `disc_${Date.now()}`,
+      status: 'pending',
+      requiredApprovers: threshold.approvers,
+      estimatedResponseTime: threshold.responseTime,
+    };
+  }
+
+  async calculateCommission(input: CommissionInput): Promise<{
+    repId: string;
+    dealId: string;
+    revenue: number;
+    baseRate: number;
+    multipliers: Record<string, number>;
+    commission: number;
+    quotaAttainment: number;
+    accelerator: number;
+    totalCommission: number;
+  }> {
+    const baseRates = {
+      new: 0.10,
+      renewal: 0.05,
+      expansion: 0.12,
+      upsell: 0.08,
+    };
+
+    const tierMultipliers = {
+      '<50%': 0.0,
+      '50-75%': 0.5,
+      '75-100%': 1.0,
+      '100-125%': 1.5,
+      '>125%': 2.0,
+    };
+
+    const baseRate = baseRates[input.dealType] || 0.08;
+    const attainmentStr = input.attainment < 50 
+      ? '<50%' 
+      : input.attainment < 75 
+        ? '50-75%' 
+        : input.attainment < 100 
+          ? '75-100%' 
+          : input.attainment < 125 
+            ? '100-125%' 
+            : '>125%';
+    
+    const accelerator = tierMultipliers[attainmentStr];
+    const commission = input.revenue * baseRate;
+    const totalCommission = commission * accelerator;
+
+    return {
+      repId: input.repId,
+      dealId: input.dealId,
+      revenue: input.revenue,
+      baseRate: baseRate * 100,
+      multipliers: {
+        dealType: baseRate,
+        attainment: accelerator,
+      },
+      commission,
+      quotaAttainment: input.attainment,
+      accelerator,
+      totalCommission,
+    };
+  }
 }
 
 export interface CreateSalesPlaybookInput {
@@ -846,4 +1005,48 @@ export interface ApplyPlaybookResult {
   completionPercentage: number;
   pendingTasks: number;
   nextTask: string;
+}
+
+export interface UpsellCrossSellRecommendation {
+  accountId: string;
+  recommendations: Array<{
+    type: 'upsell' | 'cross_sell';
+    productId: string;
+    productName: string;
+    currentPlan?: string;
+    recommendedPlan?: string;
+    potentialRevenue: number;
+    confidence: number;
+    rationale: string;
+  }>;
+}
+
+export interface CustomerAdvocacyProgram {
+  id: string;
+  customerId: string;
+  tier: 'bronze' | 'silver' | 'gold' | 'platinum';
+  points: number;
+  benefits: string[];
+  activities: Array<{
+    type: 'referral' | 'case_study' | 'testimonial' | 'review' | 'event';
+    points: number;
+    status: 'available' | 'completed' | 'pending';
+  }>;
+}
+
+export interface DiscountApprovalInput {
+  quoteId: string;
+  requestedDiscount: number;
+  discountType: 'percentage' | 'fixed';
+  reason: string;
+  approverRole: string;
+}
+
+export interface CommissionInput {
+  repId: string;
+  dealId: string;
+  revenue: number;
+  dealType: 'new' | 'renewal' | 'expansion' | 'upsell';
+  quota: number;
+  attainment: number;
 }

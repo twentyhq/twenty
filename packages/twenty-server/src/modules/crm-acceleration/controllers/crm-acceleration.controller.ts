@@ -969,4 +969,49 @@ export class CrmAccelerationController {
   getPlaybookTemplates(@AuthWorkspace() workspace: FlatWorkspace) {
     return this.salesExecutionService.getPlaybookTemplates();
   }
+
+  // #65 - Upsell/Cross-sell Recommendations
+  @Get('accounts/:accountId/upsell-cross-sell')
+  async getUpsellCrossSellRecommendations(
+    @AuthWorkspace() workspace: FlatWorkspace,
+    @Param('accountId') accountId: string,
+  ) {
+    return this.salesExecutionService.getUpsellCrossSellRecommendations(accountId);
+  }
+
+  // #66 - Customer Advocacy Program
+  @Post('customers/:customerId/advocacy/enroll')
+  async enrollInAdvocacyProgram(
+    @AuthWorkspace() workspace: FlatWorkspace,
+    @Param('customerId') customerId: string,
+  ) {
+    return this.salesExecutionService.enrollInAdvocacyProgram(customerId);
+  }
+
+  @Post('advocacy/:advocacyId/activity')
+  async recordAdvocacyActivity(
+    @AuthWorkspace() workspace: FlatWorkspace,
+    @Param('advocacyId') advocacyId: string,
+    @Body() body: { activityType: 'referral' | 'case_study' | 'testimonial' | 'review' | 'event'; metadata?: Record<string, unknown> },
+  ) {
+    return this.salesExecutionService.recordAdvocacyActivity(advocacyId, body.activityType, body.metadata);
+  }
+
+  // #70 - Discount Approval Workflows
+  @Post('discount-approval/request')
+  async requestDiscountApproval(
+    @AuthWorkspace() workspace: FlatWorkspace,
+    @Body() body: { quoteId: string; requestedDiscount: number; discountType: 'percentage' | 'fixed'; reason: string; approverRole: string },
+  ) {
+    return this.salesExecutionService.requestDiscountApproval(body);
+  }
+
+  // #74 - Commission Calculator
+  @Post('commission/calculate')
+  async calculateCommission(
+    @AuthWorkspace() workspace: FlatWorkspace,
+    @Body() body: { repId: string; dealId: string; revenue: number; dealType: 'new' | 'renewal' | 'expansion' | 'upsell'; quota: number; attainment: number },
+  ) {
+    return this.salesExecutionService.calculateCommission(body);
+  }
 }

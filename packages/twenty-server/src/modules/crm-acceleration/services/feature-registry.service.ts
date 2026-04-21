@@ -190,6 +190,42 @@ const IMPLEMENTED_FEATURES: CrmFeatureDefinition[] = [
     status: 'implemented',
     isImperative: true,
   },
+  // #65 - Upsell/Cross-sell Recommendations
+  {
+    id: 65,
+    name: 'Upsell/Cross-sell Recommendations',
+    module: 'M6',
+    status: 'implemented',
+    isImperative: true,
+    notes: 'AI-powered recommendations based on customer behavior and usage patterns',
+  },
+  // #66 - Customer Advocacy Program
+  {
+    id: 66,
+    name: 'Customer Advocacy Program',
+    module: 'M6',
+    status: 'implemented',
+    isImperative: true,
+    notes: 'Referral program with points, tiers and rewards',
+  },
+  // #70 - Discount Approval Workflows
+  {
+    id: 70,
+    name: 'Discount Approval Workflows',
+    module: 'M7',
+    status: 'implemented',
+    isImperative: true,
+    notes: 'Multi-level approval based on discount threshold',
+  },
+  // #74 - Commission Calculator
+  {
+    id: 74,
+    name: 'Commission Calculator',
+    module: 'M7',
+    status: 'implemented',
+    isImperative: true,
+    notes: 'Tiered commission with accelerators based on quota attainment',
+  },
 ];
 
 const ALL_MODULE_IDS: Array<CrmFeatureId> = [

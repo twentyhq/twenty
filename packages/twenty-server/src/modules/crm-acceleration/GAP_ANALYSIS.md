@@ -1,16 +1,17 @@
 # CRM Gap Analysis - 100 Features vs Implementado
-> Generado: 2026-04-15 | Rama: feature/subscription-plans-and-integrations
+> Generado: 2026-04-21 | Rama: feature/subscription-plans-and-integrations
 
 ## Estado General
 
 | Estado | Count |
 |--------|-------|
-| Implementado real (crm-acceleration services) | 25 |
+| Implementado real (crm-acceleration services) | 29 |
+| Servicios completos (product, quote) | 2 |
 | Stub / entidad minima (modulos separados) | 7 |
 | Fase 2 - pendiente codigo | 46 |
-| Fase 3 - pendiente codigo | 28 |
+| Fase 3 - pendiente codigo | 26 |
 | Fase 4 - backlog | 12 |
-| **Total faltante** | **77** |
+| **Total faltante** | **73** |
 
 ---
 
@@ -42,6 +43,17 @@
 | 85 | MCP Extension Points | mcp-extension-points.service.ts |
 | 91 | Audit Logs Inmutables | sales-execution.service.ts |
 | 94 | Field-Level RBAC | field-rbac.service.ts |
+| 65 | Upsell/Cross-sell Recommendations | sales-execution.service.ts |
+| 66 | Customer Advocacy Program | sales-execution.service.ts |
+| 70 | Discount Approval Workflows | sales-execution.service.ts |
+| 74 | Commission Calculator | sales-execution.service.ts |
+
+## Servicios completos (modulos separados)
+
+| # | Feature | Servicio | Funcionalidad |
+|---|---------|---------|---------------|
+| 67 | Product Catalog | product.service.ts | CRUD, inventario, reservas, alertas stock |
+| 68 | Quote Builder | quote.service.ts | CRUD cotizaciones, line-items, PDF stub |
 
 ## Stubs - modulos separados (entidades minimas, sin logica completa)
 
@@ -70,10 +82,10 @@
 ## Fase 3 - Prioridad Media
 
 ### M4 - AI Agents: 41,42,43,44,45,46,47,48
-### M6 - Customer Success: 60,63,64,65,66
-### M7 - CPQ & Revenue Ops: 70,72,73,74
+### M6 - Customer Success: 60,61,62,63,64
+### M7 - CPQ & Revenue Ops: 72,73
 ### M8 - ABM: 75,76,77,78,79,80
-### M10 - Seguridad: 89,90,91,92,93,95,96
+### M10 - Seguridad: 89,90,92,93,95,96
 
 ---
 
@@ -102,8 +114,6 @@
 
 | # | Feature |
 |---|---------|
-| 74 | Commission Calculator |
-| 70 | Discount Approval Workflows |
 | 75 | Target Account Lists (TAL) |
 | 76 | Multi-Stakeholder Mapping |
 | 77 | Account Engagement Score |
@@ -117,6 +127,6 @@
 ## Roadmap Semanas
 
 Semana 1-2: #57, #53, #54, #58, #52, #60  (Pipeline + CS base)
-Semana 3-4: #64, #91, #63, #74, #70        (CS avanzado + Revenue Ops)
+Semana 3-4: #64, #91, #63, #74, #70        (CS avanzado + Revenue Ops) ✅ COMPLETADO
 Semana 5-6: #75, #76, #77, #56, #51        (ABM + Sales Execution)
 Semana 7-8: #35, #38, #39, #72             (BI interno + CPQ)
