@@ -387,6 +387,7 @@
             "developers/extend/apps/data-model",
             "developers/extend/apps/logic-functions",
             "developers/extend/apps/front-components",
+            "developers/extend/apps/layout",
             "developers/extend/apps/skills-and-agents",
             "developers/extend/apps/cli-and-testing",
             "developers/extend/apps/publishing"
