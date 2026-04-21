@@ -16,7 +16,7 @@ type RebuildDefaultPackageFilesCommandOptions = {
   description:
     'Re-upload default package.json and yarn.lock to file storage for all applications in the workspace',
 })
-export class RebuildDefaultPackageFilesCommand extends CommandRunner {
+export class RebuildApplicationDefaultDepsCommand extends CommandRunner {
   protected logger: CommandLogger;
 
   constructor(
