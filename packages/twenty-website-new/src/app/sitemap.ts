@@ -1,5 +1,7 @@
 import type { MetadataRoute } from 'next';
 
+import { CASE_STUDY_CATALOG_ENTRIES } from '@/app/customers/_constants/case-study-catalog';
+
 const SITE_URL =
   process.env.NEXT_PUBLIC_WEBSITE_URL?.replace(/\/$/, '') ?? 'https://twenty.com';
 
@@ -15,23 +17,24 @@ const STATIC_ROUTES: ReadonlyArray<{
   { path: '/partners', changeFrequency: 'monthly', priority: 0.7 },
   { path: '/releases', changeFrequency: 'weekly', priority: 0.7 },
   { path: '/customers', changeFrequency: 'monthly', priority: 0.7 },
-  { path: '/customers/9dots', changeFrequency: 'yearly', priority: 0.5 },
-  { path: '/customers/act-education', changeFrequency: 'yearly', priority: 0.5 },
-  { path: '/customers/alternative-partners', changeFrequency: 'yearly', priority: 0.5 },
-  { path: '/customers/elevate-consulting', changeFrequency: 'yearly', priority: 0.5 },
-  { path: '/customers/netzero', changeFrequency: 'yearly', priority: 0.5 },
-  { path: '/customers/w3villa', changeFrequency: 'yearly', priority: 0.5 },
   { path: '/privacy-policy', changeFrequency: 'yearly', priority: 0.3 },
   { path: '/terms', changeFrequency: 'yearly', priority: 0.3 },
 ];
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const lastModified = new Date();
+  const staticEntries = STATIC_ROUTES.map(
+    ({ path, changeFrequency, priority }) => ({
+      url: `${SITE_URL}${path}`,
+      changeFrequency,
+      priority,
+    }),
+  );
 
-  return STATIC_ROUTES.map(({ path, changeFrequency, priority }) => ({
-    url: `${SITE_URL}${path}`,
-    lastModified,
-    changeFrequency,
-    priority,
+  const caseStudyEntries = CASE_STUDY_CATALOG_ENTRIES.map((entry) => ({
+    url: `${SITE_URL}${entry.href}`,
+    changeFrequency: 'yearly' as const,
+    priority: 0.5,
   }));
+
+  return [...staticEntries, ...caseStudyEntries];
 }
