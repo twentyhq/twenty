@@ -69,6 +69,22 @@ const IMPLEMENTED_FEATURES: CrmFeatureDefinition[] = [
     isImperative: true,
   },
   {
+    id: 51,
+    name: 'Sales Playbook - Templates',
+    module: 'M5',
+    status: 'implemented',
+    isImperative: true,
+    notes: 'Create, apply and manage sales playbooks',
+  },
+  {
+    id: 55,
+    name: 'Sales Playbook - Integrated',
+    module: 'M5',
+    status: 'implemented',
+    isImperative: true,
+    notes: 'Playbook templates and deal application',
+  },
+  {
     id: 56,
     name: 'Gamification',
     module: 'M5',

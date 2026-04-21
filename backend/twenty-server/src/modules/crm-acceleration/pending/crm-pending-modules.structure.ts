@@ -37,7 +37,7 @@ export const CRM_PENDING_MODULES: PendingModuleStructure[] = [
   {
     module: 'M5',
     title: 'Sales Execution & Pipeline Management',
-    pendingFeatureIds: without(range(49, 58), [49, 50, 52, 53, 54, 56, 57, 58]),
+    pendingFeatureIds: without(range(49, 58), [49, 50, 51, 52, 53, 54, 55, 56, 57, 58]),
     completionPhase: 'phase-2',
   },
   {

@@ -690,6 +690,98 @@ export class SalesExecutionService {
     };
   }
 
+  async createSalesPlaybook(input: CreateSalesPlaybookInput): Promise<SalesPlaybookResult> {
+    const playbook: SalesPlaybook = {
+      id: `playbook-${Date.now()}`,
+      name: input.name,
+      description: input.description,
+      stages: input.stages,
+      isActive: true,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      usageCount: 0,
+    };
+    return { playbook, success: true };
+  }
+
+  async applyPlaybookToDeal(
+    dealId: string,
+    playbookId: string,
+  ): Promise<ApplyPlaybookResult> {
+    const appliedStages = [
+      {
+        stageName: 'Discovery',
+        tasks: [
+          { task: 'Identify pain points', completed: false, order: 1 },
+          { task: 'Confirm budget authority', completed: false, order: 2 },
+          { task: 'Understand timeline', completed: false, order: 3 },
+        ],
+      },
+      {
+        stageName: 'Qualification',
+        tasks: [
+          { task: 'Define success criteria', completed: false, order: 1 },
+          { task: 'Identify decision makers', completed: false, order: 2 },
+          { task: 'Assess technical fit', completed: false, order: 3 },
+        ],
+      },
+      {
+        stageName: 'Proposal',
+        tasks: [
+          { task: 'Prepare solution presentation', completed: false, order: 1 },
+          { task: 'Draft commercial proposal', completed: false, order: 2 },
+          { task: 'Internal review', completed: false, order: 3 },
+        ],
+      },
+      {
+        stageName: 'Closing',
+        tasks: [
+          { task: 'Negotiate terms', completed: false, order: 1 },
+          { task: 'Legal review', completed: false, order: 2 },
+          { task: 'Contract signing', completed: false, order: 3 },
+        ],
+      },
+    ];
+
+    return {
+      dealId,
+      playbookId,
+      appliedStages,
+      completionPercentage: 0,
+      pendingTasks: 12,
+      nextTask: 'Identify pain points',
+    };
+  }
+
+  async getPlaybookTemplates(): Promise<PlaybookTemplate[]> {
+    return [
+      {
+        id: 'template-enterprise',
+        name: 'Enterprise Sales Playbook',
+        description: 'Complete playbook for enterprise deals >$100K',
+        stages: ['Discovery', 'Qualification', 'Proposal', 'Closing'],
+      },
+      {
+        id: 'template-mid-market',
+        name: 'Mid-Market Sales Playbook',
+        description: 'Optimized for $25K-$100K deals',
+        stages: ['Discovery', 'Proposal', 'Closing'],
+      },
+      {
+        id: 'template-smb',
+        name: 'SMB Quick Win Playbook',
+        description: 'Fast-track playbook for sub-$25K deals',
+        stages: ['Discovery', 'Demo', 'Close'],
+      },
+      {
+        id: 'template-renewal',
+        name: 'Renewal & Expansion Playbook',
+        description: 'Retention and upsell focused',
+        stages: ['Review', 'QBR', 'Expansion', 'Close'],
+      },
+    ];
+  }
+
   private generateChecksum(data: string): string {
     let hash = 0;
     for (let i = 0; i < data.length; i++) {
@@ -699,4 +791,59 @@ export class SalesExecutionService {
     }
     return Math.abs(hash).toString(16).padStart(8, '0');
   }
+}
+
+export interface CreateSalesPlaybookInput {
+  name: string;
+  description: string;
+  stages: Array<{
+    name: string;
+    tasks: Array<{
+      task: string;
+      description?: string;
+      order: number;
+    }>;
+  }>;
+}
+
+export interface SalesPlaybook {
+  id: string;
+  name: string;
+  description: string;
+  stages: Array<{
+    name: string;
+    tasks: Array<{
+      task: string;
+      description?: string;
+      order: number;
+    }>;
+  }>;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+  usageCount: number;
+}
+
+export interface SalesPlaybookResult {
+  playbook: SalesPlaybook;
+  success: boolean;
+}
+
+export interface PlaybookTemplate {
+  id: string;
+  name: string;
+  description: string;
+  stages: string[];
+}
+
+export interface ApplyPlaybookResult {
+  dealId: string;
+  playbookId: string;
+  appliedStages: Array<{
+    stageName: string;
+    tasks: Array<{ task: string; completed: boolean; order: number }>;
+  }>;
+  completionPercentage: number;
+  pendingTasks: number;
+  nextTask: string;
 }

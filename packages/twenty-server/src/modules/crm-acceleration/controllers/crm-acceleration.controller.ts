@@ -547,6 +547,9 @@ export class CrmAccelerationController {
     const opts = body.options || {
       cloneCompany: true,
       cloneContacts: true,
+      cloneActivities: false,
+      cloneNotes: false,
+      cloneTasks: false,
       resetStage: true,
       resetCloseDate: true,
     };
@@ -633,6 +636,7 @@ export class CrmAccelerationController {
       startDate: new Date(body.startDate),
       milestones: body.milestones.map(m => ({
         ...m,
+        actualAmount: m.actualAmount ?? 0,
         status: calculated.milestones.find(cm => cm.milestoneId === m.milestoneId)?.status || 'on_track',
       })),
       totalTargetAmount: calculated.totalTargetAmount,
@@ -856,7 +860,7 @@ export class CrmAccelerationController {
     return {
       featureId: 91,
       result: {
-        logId: saved.id,
+        dbId: saved.id,
         ...calculated,
       },
       persisted: true,
@@ -908,5 +912,61 @@ export class CrmAccelerationController {
       payload: body,
       execute: () => Promise.resolve(result),
     });
+  }
+
+  @Post('playbook/sales/create')
+  async createSalesPlaybook(
+    @AuthWorkspace() workspace: FlatWorkspace,
+    @Body()
+    body: {
+      name: string;
+      description: string;
+      stages: Array<{
+        name: string;
+        tasks: Array<{
+          task: string;
+          description?: string;
+          order: number;
+        }>;
+      }>;
+    },
+  ) {
+    const result = await this.salesExecutionService.createSalesPlaybook(body);
+
+    return this.executeAndPersist({
+      workspaceId: workspace.id,
+      featureId: 51,
+      route: 'playbook/sales/create',
+      payload: body,
+      execute: () => Promise.resolve(result),
+    });
+  }
+
+  @Post('playbook/sales/apply')
+  async applyPlaybookToDeal(
+    @AuthWorkspace() workspace: FlatWorkspace,
+    @Body()
+    body: {
+      dealId: string;
+      playbookId: string;
+    },
+  ) {
+    const result = await this.salesExecutionService.applyPlaybookToDeal(
+      body.dealId,
+      body.playbookId,
+    );
+
+    return this.executeAndPersist({
+      workspaceId: workspace.id,
+      featureId: 51,
+      route: 'playbook/sales/apply',
+      payload: body,
+      execute: () => Promise.resolve(result),
+    });
+  }
+
+  @Get('playbook/sales/templates')
+  getPlaybookTemplates(@AuthWorkspace() workspace: FlatWorkspace) {
+    return this.salesExecutionService.getPlaybookTemplates();
   }
 }

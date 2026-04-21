@@ -24,10 +24,10 @@ export class CrmExecutionDataAccessService {
       resetCloseDate: boolean;
     },
   ) {
-    const workspaceRepository = await this.globalWorkspaceOrmManager.getRepository({
-      name: 'opportunity',
+    const workspaceRepository = await this.globalWorkspaceOrmManager.getRepository(
       workspaceId,
-    });
+      'opportunity',
+    );
 
     const sourceDeal = await workspaceRepository.findOne({
       where: { id: sourceDealId },
@@ -78,10 +78,10 @@ export class CrmExecutionDataAccessService {
   }
 
   async buildAccountHierarchy(workspaceId: string) {
-    const workspaceRepository = await this.globalWorkspaceOrmManager.getRepository({
-      name: 'company',
+const workspaceRepository = await this.globalWorkspaceOrmManager.getRepository(
       workspaceId,
-    });
+      'opportunity',
+    );
 
     const accounts = await workspaceRepository.find();
 
@@ -160,10 +160,10 @@ export class CrmExecutionDataAccessService {
       notes?: string;
     }>,
   ) {
-    const workspaceRepository = await this.globalWorkspaceOrmManager.getRepository({
-      name: 'opportunity',
+    const workspaceRepository = await this.globalWorkspaceOrmManager.getRepository(
       workspaceId,
-    });
+      'opportunity',
+    );
 
     const deal = await workspaceRepository.findOne({
       where: { id: dealId },
@@ -223,15 +223,15 @@ export class CrmExecutionDataAccessService {
     workspaceId: string,
     accountId: string,
   ) {
-    const companyRepository = await this.globalWorkspaceOrmManager.getRepository({
-      name: 'company',
+    const companyRepository = await this.globalWorkspaceOrmManager.getRepository(
       workspaceId,
-    });
+      'company',
+    );
 
-    const opportunityRepository = await this.globalWorkspaceOrmManager.getRepository({
-      name: 'opportunity',
+    const opportunityRepository = await this.globalWorkspaceOrmManager.getRepository(
       workspaceId,
-    });
+      'opportunity',
+    );
 
     const company = await companyRepository.findOne({
       where: { id: accountId },
