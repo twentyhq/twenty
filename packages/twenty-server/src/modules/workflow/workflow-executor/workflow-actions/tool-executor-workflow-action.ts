@@ -1,6 +1,12 @@
 import { Injectable } from '@nestjs/common';
+import type { JSONContent } from '@tiptap/core';
 
-import { resolveInput, resolveRichTextVariables } from 'twenty-shared/utils';
+import {
+  isDefined,
+  parseJson,
+  resolveInput,
+  resolveRichTextVariables,
+} from 'twenty-shared/utils';
 
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
@@ -35,6 +41,22 @@ export class ToolExecutorWorkflowAction implements WorkflowAction {
     ]);
   }
 
+  private async resolveEmailBody(
+    body: string,
+    context: Record<string, unknown>,
+  ): Promise<string> {
+    const bodyWithResolvedVariables = resolveRichTextVariables(body, context);
+    const tipTapDocument = isDefined(bodyWithResolvedVariables)
+      ? parseJson<JSONContent>(bodyWithResolvedVariables)
+      : null;
+
+    if (isDefined(tipTapDocument) && tipTapDocument.type === 'doc') {
+      return renderRichTextToHtml(tipTapDocument);
+    }
+
+    return bodyWithResolvedVariables ?? body;
+  }
+
   async execute({
     currentStepId,
     steps,
@@ -67,14 +89,11 @@ export class ToolExecutorWorkflowAction implements WorkflowAction {
     ) {
       const emailInput = toolInput as WorkflowSendEmailActionInput;
 
-      if (emailInput.body) {
-        const resolvedBody = resolveRichTextVariables(emailInput.body, context);
-        const bodyJson = JSON.parse(resolvedBody!);
-        const htmlBody = await renderRichTextToHtml(bodyJson);
-
+      if (isDefined(emailInput.body)) {
+        const emailBody = await this.resolveEmailBody(emailInput.body, context);
         toolInput = {
           ...emailInput,
-          body: htmlBody,
+          body: emailBody,
         };
       }
     }
