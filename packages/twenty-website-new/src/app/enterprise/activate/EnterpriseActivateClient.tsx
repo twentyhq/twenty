@@ -64,11 +64,34 @@ const KeyBlock = styled.div`
   word-break: break-all;
 `;
 
-const CopyTrigger = styled.button`
+const CopyTrigger = styled.button<{ $copied: boolean }>`
   ${buttonBaseStyles}
   position: absolute;
   right: ${theme.spacing(2)};
   top: ${theme.spacing(2)};
+
+  ${({ $copied }) =>
+    $copied
+      ? `
+    & [data-slot='button-base-shape'] path,
+    & [data-slot='button-base-shape'] rect {
+      fill: ${theme.colors.accent.green[100]} !important;
+    }
+
+    & [data-slot='button-hover-fill'] {
+      opacity: 0 !important;
+      pointer-events: none;
+    }
+
+    & [data-slot='button-label'] {
+      color: ${theme.colors.primary.background[100]} !important;
+    }
+
+    &:is(:hover, :focus-visible) [data-slot='button-label'] {
+      color: ${theme.colors.primary.background[100]} !important;
+    }
+  `
+      : ''}
 `;
 
 const NextStepsBox = styled.div`
@@ -210,6 +233,7 @@ export function EnterpriseActivateClient() {
             <KeyBlock>
               {result.enterpriseKey}
               <CopyTrigger
+                $copied={copied}
                 data-color="primary"
                 data-size="small"
                 data-variant="contained"
