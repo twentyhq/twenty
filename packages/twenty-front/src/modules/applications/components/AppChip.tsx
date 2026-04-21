@@ -1,4 +1,5 @@
 import { useApplicationChipData } from '@/applications/hooks/useApplicationChipData';
+import { styled } from '@linaria/react';
 import { Avatar } from 'twenty-ui/display';
 import {
   Chip,
@@ -7,6 +8,7 @@ import {
   ChipVariant,
   LinkChip,
 } from 'twenty-ui/components';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type AppChipProps = {
   applicationId: string;
@@ -15,6 +17,22 @@ type AppChipProps = {
   to?: string;
   className?: string;
 };
+
+const StyledChip = styled(Chip)`
+  && {
+    color: ${themeCssVariables.font.color.secondary};
+    font-size: ${themeCssVariables.font.size.sm};
+    font-weight: ${themeCssVariables.font.weight.regular};
+  }
+`;
+
+const StyledLinkChip = styled(LinkChip)`
+  && {
+    color: ${themeCssVariables.font.color.secondary};
+    font-size: ${themeCssVariables.font.size.sm};
+    font-weight: ${themeCssVariables.font.weight.regular};
+  }
+`;
 
 export const AppChip = ({
   applicationId,
@@ -39,26 +57,26 @@ export const AppChip = ({
 
   if (to) {
     return (
-      <LinkChip
+      <StyledLinkChip
         className={className}
         label={applicationChipData.name}
         leftComponent={leftComponent}
         size={size}
         variant={variant ?? ChipVariant.Highlighted}
-        accent={ChipAccent.TextPrimary}
+        accent={ChipAccent.TextSecondary}
         to={to}
       />
     );
   }
 
   return (
-    <Chip
+    <StyledChip
       className={className}
       label={applicationChipData.name}
       leftComponent={leftComponent}
       size={size}
       variant={variant ?? ChipVariant.Transparent}
-      accent={ChipAccent.TextPrimary}
+      accent={ChipAccent.TextSecondary}
     />
   );
 };
