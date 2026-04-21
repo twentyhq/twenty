@@ -1,147 +1,55 @@
 ---
 title: واجهات برمجة التطبيقات
-description: استعلم وعدّل بيانات إدارة علاقات العملاء (CRM) لديك برمجياً باستخدام REST أو GraphQL.
+icon: plug
+description: REST and GraphQL APIs generated from your workspace schema.
 ---
 
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
-تم تصميم Twenty ليكون صديقًا للمطورين، حيث يوفر واجهات برمجة قوية تتكيف مع نموذج البيانات المخصص. نحن نوفر أربعة أنواع متميزة من واجهات برمجة التطبيقات لتلبية احتياجات التكامل المختلفة.
+## Schema-per-tenant APIs
 
-## نهج المطوّر أولاً
+There is no static API reference for Twenty. Each workspace has its own schema — when you add a custom object (say `Invoice`), it immediately gets REST and GraphQL endpoints identical to built-in objects like `Company` or `Person`. The API is generated from the schema, so endpoints use your object and field names directly — no opaque IDs.
 
-تقوم Twenty بإنشاء واجهات برمجة التطبيقات خصيصاً لنموذج بياناتك:
+Your workspace-specific API documentation is available under **Settings → API & Webhooks** after creating an API key. It includes an interactive playground where you can execute real calls against your data.
 
-* **لا حاجة إلى معرفات طويلة**: استخدم أسماء الكائنات والحقول مباشرة في نقاط النهاية
-* **معاملة متساوية للكائنات القياسية والمخصصة**: تحصل كائناتك المخصصة على نفس معاملة واجهة برمجة التطبيقات كما هو الحال مع الكائنات المضمنة
-* **نقاط نهاية مخصصة**: يحصل كل كائن وحقل على نقطة نهاية API الخاصة به
-* **وثائق مخصصة**: يتم إنشاؤها خصيصًا لنموذج بيانات مساحة عملك
+## Two APIs
 
-<Note>
-وثائق واجهة برمجة التطبيقات المخصصة لك متاحة ضمن **الإعدادات → واجهات برمجة التطبيقات وخطافات الويب** بعد إنشاء مفتاح API. نظرًا لأن Twenty تُنشئ واجهات برمجة تطبيقات تتطابق مع نموذج البيانات المخصص لديك، فإن الوثائق فريدة لمساحة عملك.
-</Note>
+**Core API** — `/rest/` and `/graphql/`
 
-## نوعا واجهات برمجة التطبيقات
+CRUD on records: People, Companies, Opportunities, your custom objects. Query, filter, traverse relations.
 
-### واجهة برمجة التطبيقات الأساسية
+**Metadata API** — `/rest/metadata/` and `/metadata/`
 
-يتم الوصول إليها عبر `/rest/` أو `/graphql/`
+Schema management: create/modify/delete objects, fields, and relations. This is how you programmatically change your data model.
 
-تعامَل مع **السجلات** الفعلية لديك (البيانات):
+Both are available as REST and GraphQL. GraphQL adds batch upserts and the ability to traverse relations in a single query. Same underlying data either way.
 
-* إنشاء وقراءة وتحديث وحذف الأشخاص والشركات والفرص، إلخ.
-* استعلام وتصفية البيانات
-* إدارة العلاقات بين السجلات
+## Base URLs
 
-### واجهة برمجة البيانات الوصفية
-
-يتم الوصول إليها عبر `/rest/metadata/` أو `/metadata/`
-
-إدارة **مساحة العمل ونموذج البيانات** لديك:
-
-* إنشاء أو تعديل أو حذف الكائنات والحقول
-* تكوين إعدادات مساحة العمل
-* تعريف العلاقات بين الكائنات
-
-## REST مقابل GraphQL
-
-تتوفر واجهات برمجة التطبيقات الأساسية وواجهات البيانات الوصفية بصيغتي REST وGraphQL:
-
-| التنسيق     | العمليات المتاحة                                                              |
-| ----------- | ----------------------------------------------------------------------------- |
-| **REST**    | CRUD، عمليات الدفعات، إدراج/تحديث                                             |
-| **GraphQL** | نفس الشيء + **عمليات إدراج/تحديث مجمعة**، واستعلامات العلاقات في استدعاء واحد |
-
-اختر بناءً على احتياجاتك — كلا الصيغتين تصلان إلى البيانات نفسها.
-
-## نقاط نهاية API
-
-| البيئة                | عنوان URL الأساسي         |
-| --------------------- | ------------------------- |
-| **السحابة**           | `https://api.twenty.com/` |
-| **الاستضافة الذاتية** | `https://{your-domain}/`  |
+| البيئة      | عنوان URL الأساسي         |
+| ----------- | ------------------------- |
+| Cloud       | `https://api.twenty.com/` |
+| Self-Hosted | `https://{your-domain}/`  |
 
 ## المصادقة
-
-كل طلب API يتطلب تضمين مفتاح API في رأس الطلب:
 
 ```
 Authorization: Bearer YOUR_API_KEY
 ```
 
-### قم بإنشاء مفتاح API
-
-1. انتقل إلى **الإعدادات → واجهات برمجة التطبيقات وخطافات الويب**
-2. انقر على **+ إنشاء مفتاح**
-3. التكوين:
-   * **الاسم**: اسم وصفي للمفتاح
-   * **تاريخ الانتهاء**: متى تنتهي صلاحية المفتاح
-4. انقر على **حفظ**
-5. **انسخه فوراً** — يظهر المفتاح مرة واحدة فقط
+Create an API key in **Settings → API & Webhooks → + Create key**. Copy it immediately — it's shown once. Keys can be scoped to a specific role under **Settings → Roles → Assignment tab** to limit what they can access.
 
 <VimeoEmbed videoId="928786722" title="إنشاء مفتاح API" />
 
-<Warning>
-يمنح مفتاح API الخاص بك الوصول إلى بيانات حساسة. لا تشاركه مع خدمات غير موثوقة. إذا تم اختراقه، عطّلْه فوراً وأنشئ مفتاحاً جديداً.
-</Warning>
+For OAuth-based access (external apps acting on behalf of users), see [OAuth](/l/ar/developers/extend/oauth).
 
-### تعيين دور لمفتاح API
+## Batch operations
 
-لتحسين الأمان، عيّن دوراً محدداً لتقييد الوصول:
+Both REST and GraphQL support batching up to 60 records per request — create, update, or delete. GraphQL also supports batch upsert (create-or-update in one call) using plural names like `CreateCompanies`.
 
-1. اذهب إلى **الإعدادات → الأدوار**
-2. انقر على الدور الذي ترغب في تعيينه
-3. افتح علامة التبويب **التعيين**
-4. ضمن **مفاتيح API**، انقر على **+ تعيين إلى مفتاح API**
-5. حدد مفتاح API
+## Rate limits
 
-سيرث المفتاح أذونات ذلك الدور. راجع [الأذونات](/l/ar/user-guide/permissions-access/capabilities/permissions) للحصول على التفاصيل.
-
-### إدارة مفاتيح API
-
-**إعادة التوليد**: الإعدادات → واجهات برمجة التطبيقات وخطافات الويب → انقر على المفتاح → **إعادة التوليد**
-
-**حذف**: الإعدادات → واجهات برمجة التطبيقات وخطافات الويب → انقر على المفتاح → **حذف**
-
-## ملعب واجهة برمجة التطبيقات
-
-اختبر واجهات برمجة التطبيقات لديك مباشرة في المتصفح باستخدام الملعب المدمج لدينا — متاح لكلٍ من **REST** و**GraphQL**.
-
-### الوصول إلى الملعب
-
-1. انتقل إلى **الإعدادات → واجهات برمجة التطبيقات وخطافات الويب**
-2. أنشئ مفتاح API (مطلوب)
-3. انقر على **REST API** أو **GraphQL API** لفتح الملعب
-
-### ما الذي ستحصل عليه
-
-* **وثائق تفاعلية**: يتم إنشاؤها لنموذج البيانات المحدد لديك
-* **اختبارات حيّة**: تنفيذ استدعاءات API فعلية على مساحة عملك
-* **مستكشف المخطط**: تصفح الكائنات والحقول والعلاقات المتاحة
-* **منشئ الطلبات**: أنشئ الاستعلامات مع الإكمال التلقائي
-
-يعكس الملعب الكائنات والحقول المخصصة لديك، لذا تكون الوثائق دائماً دقيقة لمساحة عملك.
-
-## عمليات الدفعات
-
-كلٌ من REST وGraphQL يدعمان عمليات الدفعات:
-
-* **حجم الدفعة**: حتى 60 سجل لكل طلب
-* **العمليات**: إنشاء وتحديث وحذف سجلات متعددة
-
-**ميزات خاصة بـ GraphQL:**
-
-* **إدراج/تحديث دفعي**: إنشاء أو تحديث في استدعاء واحد
-* استخدم الأسماء الجمع للكائنات (على سبيل المثال، `CreateCompanies` بدلاً من `CreateCompany`)
-
-## حدود المعدل
-
-يتم تنظيم طلبات API لضمان استقرار المنصة:
-
-| الحد           | القيمة                 |
-| -------------- | ---------------------- |
-| **الطلبات**    | 100 استدعاء في الدقيقة |
-| **حجم الدفعة** | 60 سجل لكل استدعاء     |
-
-<Tip>
-استخدم عمليات الدفعات لزيادة الإنتاجية — عالج ما يصل إلى 60 سجلًا في استدعاء API واحد بدلاً من إجراء طلبات فردية.
-</Tip>
+| الحد       | القيمة             |
+| ---------- | ------------------ |
+| Requests   | 100 per minute     |
+| Batch size | 60 سجل لكل استدعاء |

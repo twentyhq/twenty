@@ -1,11 +1,12 @@
 ---
 title: Вебхуки
-description: Получайте уведомления в реальном времени, когда в вашей CRM происходят события.
+icon: satellite-dish
+description: Get notified when records change — HTTP POST to your endpoint on every create, update, or delete.
 ---
 
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
-Вебхуки отправляют данные в ваши системы в реальном времени при возникновении событий в Twenty — опрос не требуется. Используйте их, чтобы поддерживать синхронизацию с внешними системами, запускать автоматизации или отправлять оповещения.
+Twenty sends an HTTP POST to your URL whenever a record is created, updated, or deleted. All object types are covered, including custom objects.
 
 ## Создать вебхук
 

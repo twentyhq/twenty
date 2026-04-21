@@ -1,0 +1,131 @@
+---
+title: Disposizione
+description: Define views, navigation menu items, and page layouts to shape how your app appears in Twenty.
+icon: table-columns
+---
+
+Layout entities control how your app surfaces inside Twenty's UI — what lives in the sidebar, which saved views ship with the app, and how a record detail page is arranged.
+
+## Layout concepts
+
+| Concept                  | What it controls                                                                  | Entità                     |
+| ------------------------ | --------------------------------------------------------------------------------- | -------------------------- |
+| **View**                 | A saved list configuration for an object — visible fields, order, filters, groups | `defineView`               |
+| **Navigation Menu Item** | An entry in the left sidebar that links to a view or an external URL              | `defineNavigationMenuItem` |
+| **Page Layout**          | The tabs and widgets that make up a record's detail page                          | `definePageLayout`         |
+
+Views, navigation items, and page layouts reference each other by `universalIdentifier`:
+
+* A **navigation menu item** of type `VIEW` points at a `defineView` identifier, so the sidebar link opens that saved view.
+* A **page layout** of type `RECORD_PAGE` targets an object and can embed [front components](/l/it/developers/extend/apps/front-components) inside its tabs as widgets.
+
+<AccordionGroup>
+<Accordion title="defineView" description="Definisci viste salvate per gli oggetti">
+
+Le viste sono configurazioni salvate di come vengono visualizzati i record di un oggetto — inclusi quali campi sono visibili, il loro ordine e gli eventuali filtri o raggruppamenti applicati. Usa `defineView()` per fornire viste preconfigurate con la tua app:
+
+```ts src/views/example-view.ts
+import { defineView, ViewKey } from 'twenty-sdk/define';
+import { EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER } from '../objects/example-object';
+import { NAME_FIELD_UNIVERSAL_IDENTIFIER } from '../objects/example-object';
+
+export default defineView({
+  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  name: 'All example items',
+  objectUniversalIdentifier: EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER,
+  icon: 'IconList',
+  key: ViewKey.INDEX,
+  position: 0,
+  fields: [
+    {
+      universalIdentifier: 'f926bdb7-6af7-4683-9a09-adbca56c29f0',
+      fieldMetadataUniversalIdentifier: NAME_FIELD_UNIVERSAL_IDENTIFIER,
+      position: 0,
+      isVisible: true,
+      size: 200,
+    },
+  ],
+});
+```
+
+Punti chiave:
+* `objectUniversalIdentifier` specifica a quale oggetto si applica questa vista.
+* `key` determina il tipo di vista (ad es., `ViewKey.INDEX` per la vista elenco principale).
+* `fields` controlla quali colonne compaiono e il loro ordine. Ogni campo fa riferimento a un `fieldMetadataUniversalIdentifier`.
+* Puoi anche definire `filters`, `filterGroups`, `groups` e `fieldGroups` per configurazioni più avanzate.
+* `position` controlla l'ordinamento quando esistono più viste per lo stesso oggetto.
+
+</Accordion>
+<Accordion title="defineNavigationMenuItem" description="Definisci i link di navigazione della barra laterale">
+
+Le voci del menu di navigazione aggiungono elementi personalizzati alla barra laterale dello spazio di lavoro. Usa `defineNavigationMenuItem()` per collegarti a viste, URL esterni o oggetti:
+
+```ts src/navigation-menu-items/example-navigation-menu-item.ts
+import { defineNavigationMenuItem, NavigationMenuItemType } from 'twenty-sdk/define';
+import { EXAMPLE_VIEW_UNIVERSAL_IDENTIFIER } from '../views/example-view';
+
+export default defineNavigationMenuItem({
+  universalIdentifier: '9327db91-afa1-41b6-bd9d-2b51a26efb4c',
+  name: 'example-navigation-menu-item',
+  icon: 'IconList',
+  color: 'blue',
+  position: 0,
+  type: NavigationMenuItemType.VIEW,
+  viewUniversalIdentifier: EXAMPLE_VIEW_UNIVERSAL_IDENTIFIER,
+});
+```
+
+Punti chiave:
+* `type` determina a cosa rimanda la voce di menu: `NavigationMenuItemType.VIEW` per una vista salvata o `NavigationMenuItemType.LINK` per un URL esterno.
+* Per i link a viste, imposta `viewUniversalIdentifier`. Per i link esterni, imposta `link`.
+* `position` controlla l'ordinamento nella barra laterale.
+* `icon` e `color` (opzionali) personalizzano l'aspetto.
+
+</Accordion>
+<Accordion title="definePageLayout" description="Definisci layout di pagina personalizzati per le viste dei record">
+
+I layout di pagina ti consentono di personalizzare l'aspetto di una pagina dei dettagli di un record — quali schede compaiono, quali widget sono all'interno di ciascuna scheda e come sono disposti. Usa `definePageLayout()` per fornire layout personalizzati con la tua app:
+
+```ts src/page-layouts/example-record-page-layout.ts
+import { definePageLayout, PageLayoutTabLayoutMode } from 'twenty-sdk/define';
+import { EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER } from '../objects/example-object';
+import { HELLO_WORLD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER } from '../front-components/hello-world';
+
+export default definePageLayout({
+  universalIdentifier: '203aeb94-6701-46d6-9af1-be2bbcc9e134',
+  name: 'Example Record Page',
+  type: 'RECORD_PAGE',
+  objectUniversalIdentifier: EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER,
+  tabs: [
+    {
+      universalIdentifier: '6ed26b60-a51d-4ad7-86dd-1c04c7f3cac5',
+      title: 'Hello World',
+      position: 50,
+      icon: 'IconWorld',
+      layoutMode: PageLayoutTabLayoutMode.CANVAS,
+      widgets: [
+        {
+          universalIdentifier: 'aa4234e0-2e5f-4c02-a96a-573449e2351d',
+          title: 'Hello World',
+          type: 'FRONT_COMPONENT',
+          configuration: {
+            configurationType: 'FRONT_COMPONENT',
+            frontComponentUniversalIdentifier:
+              HELLO_WORLD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
+          },
+        },
+      ],
+    },
+  ],
+});
+```
+
+Punti chiave:
+* `type` è in genere `'RECORD_PAGE'` per personalizzare la vista dei dettagli di un oggetto specifico.
+* `objectUniversalIdentifier` specifica a quale oggetto si applica questo layout.
+* Ogni `tab` definisce una sezione della pagina con un `title`, `position` e `layoutMode` (`CANVAS` per il layout libero).
+* Ogni `widget` all'interno di una scheda può renderizzare un componente front-end, un elenco di relazioni o altri tipi di widget integrati.
+* `position` sulle schede controlla il loro ordine. Usa valori più alti (ad es., 50) per posizionare le schede personalizzate dopo quelle integrate.
+
+</Accordion>
+</AccordionGroup>

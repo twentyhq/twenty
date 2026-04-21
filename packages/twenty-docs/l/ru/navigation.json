@@ -1,24 +1,27 @@
 {
   "tabs": {
+    "gettingStarted": {
+      "label": "Начало работы",
+      "groups": {
+        "welcome": {
+          "label": "Welcome"
+        },
+        "coreConcepts": {
+          "label": "Core Concepts"
+        }
+      }
+    },
     "userGuide": {
       "label": "Руководство пользователя",
       "groups": {
-        "discoverTwenty": {
-          "label": "Откройте Twenty",
-          "groups": {
-            "gettingStartedCapabilities": {
-              "label": "Возможности"
-            },
-            "gettingStartedHowTos": {
-              "label": "Инструкции"
-            }
-          }
+        "userGuideOverview": {
+          "label": "Обзор"
         },
         "dataModel": {
           "label": "Модель данных",
           "groups": {
-            "dataModelCapabilities": {
-              "label": "Возможности"
+            "dataModelReference": {
+              "label": "Reference"
             },
             "dataModelHowTos": {
               "label": "Инструкции"
@@ -28,8 +31,8 @@
         "dataMigration": {
           "label": "Миграция данных",
           "groups": {
-            "dataMigrationCapabilities": {
-              "label": "Возможности"
+            "dataMigrationReference": {
+              "label": "Reference"
             },
             "dataMigrationHowTos": {
               "label": "Инструкции"
@@ -39,8 +42,8 @@
         "calendarEmails": {
           "label": "Календарь и электронная почта",
           "groups": {
-            "calendarEmailsCapabilities": {
-              "label": "Возможности"
+            "calendarEmailsReference": {
+              "label": "Reference"
             },
             "calendarEmailsHowTos": {
               "label": "Инструкции"
@@ -50,8 +53,8 @@
         "workflows": {
           "label": "Рабочие процессы",
           "groups": {
-            "workflowsCapabilities": {
-              "label": "Возможности"
+            "workflowsReference": {
+              "label": "Reference"
             },
             "workflowsHowTos": {
               "label": "Инструкции",
@@ -75,21 +78,26 @@
         "ai": {
           "label": "ИИ",
           "groups": {
-            "aiCapabilities": {
-              "label": "Возможности"
+            "aiReference": {
+              "label": "Reference"
             },
             "aiHowTos": {
               "label": "Инструкции"
             }
           }
         },
-        "viewsPipelines": {
-          "label": "Представления и воронки",
+        "layout": {
+          "label": "Макет",
           "groups": {
-            "viewsPipelinesCapabilities": {
-              "label": "Возможности"
+            "layoutReference": {
+              "label": "Reference",
+              "groups": {
+                "layoutViews": {
+                  "label": "Представления"
+                }
+              }
             },
-            "viewsPipelinesHowTos": {
+            "layoutHowTos": {
               "label": "Инструкции"
             }
           }
@@ -97,8 +105,8 @@
         "dashboards": {
           "label": "Панели управления",
           "groups": {
-            "dashboardsCapabilities": {
-              "label": "Возможности"
+            "dashboardsReference": {
+              "label": "Reference"
             },
             "dashboardsHowTos": {
               "label": "Инструкции"
@@ -108,8 +116,8 @@
         "permissionsAccess": {
           "label": "Разрешения и доступ",
           "groups": {
-            "permissionsAccessCapabilities": {
-              "label": "Возможности"
+            "permissionsAccessReference": {
+              "label": "Reference"
             },
             "permissionsAccessHowTos": {
               "label": "Инструкции"
@@ -119,8 +127,8 @@
         "billing": {
           "label": "Биллинг",
           "groups": {
-            "billingCapabilities": {
-              "label": "Возможности"
+            "billingReference": {
+              "label": "Reference"
             },
             "billingHowTos": {
               "label": "Инструкции"
@@ -130,8 +138,8 @@
         "settings": {
           "label": "Настройки",
           "groups": {
-            "settingsCapabilities": {
-              "label": "Возможности"
+            "settingsReference": {
+              "label": "Reference"
             },
             "settingsHowTos": {
               "label": "Инструкции"
@@ -143,59 +151,20 @@
     "developers": {
       "label": "Разработчики",
       "groups": {
-        "developersGroup": {
-          "label": "Разработчики"
+        "developersOverview": {
+          "label": "Обзор"
         },
-        "extend": {
-          "label": "Расширяйте",
-          "groups": {
-            "apps": {
-              "label": "Приложения"
-            }
-          }
+        "apps": {
+          "label": "Приложения"
+        },
+        "api": {
+          "label": "API"
         },
         "selfHost": {
-          "label": "Самостоятельный хостинг",
-          "groups": {
-            "selfHostCapabilities": {
-              "label": "Возможности"
-            }
-          }
+          "label": "Самостоятельный хостинг"
         },
         "contribute": {
-          "label": "Внести вклад",
-          "groups": {
-            "contributeCapabilities": {
-              "label": "Возможности",
-              "groups": {
-                "frontendDevelopment": {
-                  "label": "Разработка интерфейса",
-                  "groups": {
-                    "twentyUi": {
-                      "label": "Twenty UI",
-                      "groups": {
-                        "display": {
-                          "label": "Отображение"
-                        },
-                        "feedback": {
-                          "label": "Обратная связь"
-                        },
-                        "input": {
-                          "label": "Ввод"
-                        },
-                        "navigation": {
-                          "label": "Навигация"
-                        }
-                      }
-                    }
-                  }
-                },
-                "backendDevelopment": {
-                  "label": "Разработка серверной части"
-                }
-              }
-            }
-          }
+          "label": "Внести вклад"
         }
       }
     }

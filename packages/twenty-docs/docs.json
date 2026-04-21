@@ -802,7 +802,7 @@
         "language": "ar",
         "tabs": [
           {
-            "tab": "Getting Started",
+            "tab": "البدء",
             "groups": [
               {
                 "group": "Welcome",
@@ -831,7 +831,7 @@
             "tab": "دليل المستخدم",
             "groups": [
               {
-                "group": "Overview",
+                "group": "نظرة عامة",
                 "pages": [
                   "l/ar/user-guide/introduction"
                 ]
@@ -1004,7 +1004,7 @@
                 ]
               },
               {
-                "group": "Layout",
+                "group": "التخطيط",
                 "icon": "table-columns",
                 "pages": [
                   "l/ar/user-guide/layout/overview",
@@ -1013,7 +1013,7 @@
                     "pages": [
                       "l/ar/user-guide/layout/capabilities/navigation",
                       {
-                        "group": "Views",
+                        "group": "العروض",
                         "pages": [
                           "l/ar/user-guide/views-pipelines/capabilities/table-views",
                           "l/ar/user-guide/views-pipelines/capabilities/kanban-views",
@@ -1027,7 +1027,7 @@
                     ]
                   },
                   {
-                    "group": "How-Tos",
+                    "group": "الإرشادات",
                     "pages": [
                       "l/ar/user-guide/views-pipelines/how-tos/create-a-table-view-with-grouping",
                       "l/ar/user-guide/views-pipelines/how-tos/create-a-kanban-view-for-projects",
@@ -1132,7 +1132,7 @@
             "tab": "المطورون",
             "groups": [
               {
-                "group": "Overview",
+                "group": "نظرة عامة",
                 "pages": [
                   "l/ar/developers/introduction"
                 ]
@@ -1152,7 +1152,7 @@
                 ]
               },
               {
-                "group": "API",
+                "group": "واجهة برمجة التطبيقات",
                 "pages": [
                   "l/ar/developers/extend/api",
                   "l/ar/developers/extend/webhooks",
@@ -1185,7 +1185,7 @@
         "language": "cs",
         "tabs": [
           {
-            "tab": "Getting Started",
+            "tab": "Začínáme",
             "groups": [
               {
                 "group": "Welcome",
@@ -1214,7 +1214,7 @@
             "tab": "Uživatelská příručka",
             "groups": [
               {
-                "group": "Overview",
+                "group": "Přehled",
                 "pages": [
                   "l/cs/user-guide/introduction"
                 ]
@@ -1387,7 +1387,7 @@
                 ]
               },
               {
-                "group": "Layout",
+                "group": "Rozvržení",
                 "icon": "table-columns",
                 "pages": [
                   "l/cs/user-guide/layout/overview",
@@ -1396,7 +1396,7 @@
                     "pages": [
                       "l/cs/user-guide/layout/capabilities/navigation",
                       {
-                        "group": "Views",
+                        "group": "Zobrazení",
                         "pages": [
                           "l/cs/user-guide/views-pipelines/capabilities/table-views",
                           "l/cs/user-guide/views-pipelines/capabilities/kanban-views",
@@ -1410,7 +1410,7 @@
                     ]
                   },
                   {
-                    "group": "How-Tos",
+                    "group": "Návody",
                     "pages": [
                       "l/cs/user-guide/views-pipelines/how-tos/create-a-table-view-with-grouping",
                       "l/cs/user-guide/views-pipelines/how-tos/create-a-kanban-view-for-projects",
@@ -1515,7 +1515,7 @@
             "tab": "Vývojáři",
             "groups": [
               {
-                "group": "Overview",
+                "group": "Přehled",
                 "pages": [
                   "l/cs/developers/introduction"
                 ]
@@ -1568,7 +1568,7 @@
         "language": "de",
         "tabs": [
           {
-            "tab": "Getting Started",
+            "tab": "Erste Schritte",
             "groups": [
               {
                 "group": "Welcome",
@@ -1597,7 +1597,7 @@
             "tab": "Benutzerhandbuch",
             "groups": [
               {
-                "group": "Overview",
+                "group": "Übersicht",
                 "pages": [
                   "l/de/user-guide/introduction"
                 ]
@@ -1779,7 +1779,7 @@
                     "pages": [
                       "l/de/user-guide/layout/capabilities/navigation",
                       {
-                        "group": "Views",
+                        "group": "Ansichten",
                         "pages": [
                           "l/de/user-guide/views-pipelines/capabilities/table-views",
                           "l/de/user-guide/views-pipelines/capabilities/kanban-views",
@@ -1793,7 +1793,7 @@
                     ]
                   },
                   {
-                    "group": "How-Tos",
+                    "group": "Anleitungen",
                     "pages": [
                       "l/de/user-guide/views-pipelines/how-tos/create-a-table-view-with-grouping",
                       "l/de/user-guide/views-pipelines/how-tos/create-a-kanban-view-for-projects",
@@ -1898,7 +1898,7 @@
             "tab": "Entwickler",
             "groups": [
               {
-                "group": "Overview",
+                "group": "Übersicht",
                 "pages": [
                   "l/de/developers/introduction"
                 ]
@@ -2334,7 +2334,7 @@
         "language": "it",
         "tabs": [
           {
-            "tab": "Getting Started",
+            "tab": "Per iniziare",
             "groups": [
               {
                 "group": "Welcome",
@@ -2363,7 +2363,7 @@
             "tab": "Guida utente",
             "groups": [
               {
-                "group": "Overview",
+                "group": "Panoramica",
                 "pages": [
                   "l/it/user-guide/introduction"
                 ]
@@ -2536,7 +2536,7 @@
                 ]
               },
               {
-                "group": "Layout",
+                "group": "Disposizione",
                 "icon": "table-columns",
                 "pages": [
                   "l/it/user-guide/layout/overview",
@@ -2545,7 +2545,7 @@
                     "pages": [
                       "l/it/user-guide/layout/capabilities/navigation",
                       {
-                        "group": "Views",
+                        "group": "Viste",
                         "pages": [
                           "l/it/user-guide/views-pipelines/capabilities/table-views",
                           "l/it/user-guide/views-pipelines/capabilities/kanban-views",
@@ -2559,7 +2559,7 @@
                     ]
                   },
                   {
-                    "group": "How-Tos",
+                    "group": "Guide pratiche",
                     "pages": [
                       "l/it/user-guide/views-pipelines/how-tos/create-a-table-view-with-grouping",
                       "l/it/user-guide/views-pipelines/how-tos/create-a-kanban-view-for-projects",
@@ -2664,7 +2664,7 @@
             "tab": "Sviluppatori",
             "groups": [
               {
-                "group": "Overview",
+                "group": "Panoramica",
                 "pages": [
                   "l/it/developers/introduction"
                 ]
@@ -3483,7 +3483,7 @@
         "language": "pt",
         "tabs": [
           {
-            "tab": "Getting Started",
+            "tab": "Primeiros passos",
             "groups": [
               {
                 "group": "Welcome",
@@ -3512,7 +3512,7 @@
             "tab": "User Guide",
             "groups": [
               {
-                "group": "Overview",
+                "group": "Visão Geral",
                 "pages": [
                   "l/pt/user-guide/introduction"
                 ]
@@ -3694,7 +3694,7 @@
                     "pages": [
                       "l/pt/user-guide/layout/capabilities/navigation",
                       {
-                        "group": "Views",
+                        "group": "Visualizações",
                         "pages": [
                           "l/pt/user-guide/views-pipelines/capabilities/table-views",
                           "l/pt/user-guide/views-pipelines/capabilities/kanban-views",
@@ -3813,7 +3813,7 @@
             "tab": "Programadores",
             "groups": [
               {
-                "group": "Overview",
+                "group": "Visão Geral",
                 "pages": [
                   "l/pt/developers/introduction"
                 ]
@@ -4249,7 +4249,7 @@
         "language": "ru",
         "tabs": [
           {
-            "tab": "Getting Started",
+            "tab": "Начало работы",
             "groups": [
               {
                 "group": "Welcome",
@@ -4278,7 +4278,7 @@
             "tab": "Руководство пользователя",
             "groups": [
               {
-                "group": "Overview",
+                "group": "Обзор",
                 "pages": [
                   "l/ru/user-guide/introduction"
                 ]
@@ -4451,7 +4451,7 @@
                 ]
               },
               {
-                "group": "Layout",
+                "group": "Макет",
                 "icon": "table-columns",
                 "pages": [
                   "l/ru/user-guide/layout/overview",
@@ -4460,7 +4460,7 @@
                     "pages": [
                       "l/ru/user-guide/layout/capabilities/navigation",
                       {
-                        "group": "Views",
+                        "group": "Представления",
                         "pages": [
                           "l/ru/user-guide/views-pipelines/capabilities/table-views",
                           "l/ru/user-guide/views-pipelines/capabilities/kanban-views",
@@ -4474,7 +4474,7 @@
                     ]
                   },
                   {
-                    "group": "How-Tos",
+                    "group": "Инструкции",
                     "pages": [
                       "l/ru/user-guide/views-pipelines/how-tos/create-a-table-view-with-grouping",
                       "l/ru/user-guide/views-pipelines/how-tos/create-a-kanban-view-for-projects",
@@ -4579,7 +4579,7 @@
             "tab": "Разработчики",
             "groups": [
               {
-                "group": "Overview",
+                "group": "Обзор",
                 "pages": [
                   "l/ru/developers/introduction"
                 ]
@@ -4632,7 +4632,7 @@
         "language": "tr",
         "tabs": [
           {
-            "tab": "Getting Started",
+            "tab": "Başlarken",
             "groups": [
               {
                 "group": "Welcome",
@@ -4661,7 +4661,7 @@
             "tab": "Kullanıcı Rehberi",
             "groups": [
               {
-                "group": "Overview",
+                "group": "Genel Bakış",
                 "pages": [
                   "l/tr/user-guide/introduction"
                 ]
@@ -4834,7 +4834,7 @@
                 ]
               },
               {
-                "group": "Layout",
+                "group": "Düzen",
                 "icon": "table-columns",
                 "pages": [
                   "l/tr/user-guide/layout/overview",
@@ -4843,7 +4843,7 @@
                     "pages": [
                       "l/tr/user-guide/layout/capabilities/navigation",
                       {
-                        "group": "Views",
+                        "group": "Görünümler",
                         "pages": [
                           "l/tr/user-guide/views-pipelines/capabilities/table-views",
                           "l/tr/user-guide/views-pipelines/capabilities/kanban-views",
@@ -4857,7 +4857,7 @@
                     ]
                   },
                   {
-                    "group": "How-Tos",
+                    "group": "Nasıl Yapılırlar",
                     "pages": [
                       "l/tr/user-guide/views-pipelines/how-tos/create-a-table-view-with-grouping",
                       "l/tr/user-guide/views-pipelines/how-tos/create-a-kanban-view-for-projects",
@@ -4962,7 +4962,7 @@
             "tab": "Geliştiriciler",
             "groups": [
               {
-                "group": "Overview",
+                "group": "Genel Bakış",
                 "pages": [
                   "l/tr/developers/introduction"
                 ]
@@ -5015,7 +5015,7 @@
         "language": "zh",
         "tabs": [
           {
-            "tab": "Getting Started",
+            "tab": "开始使用",
             "groups": [
               {
                 "group": "Welcome",
@@ -5044,7 +5044,7 @@
             "tab": "用户指南",
             "groups": [
               {
-                "group": "Overview",
+                "group": "概览",
                 "pages": [
                   "l/zh/user-guide/introduction"
                 ]
@@ -5217,7 +5217,7 @@
                 ]
               },
               {
-                "group": "Layout",
+                "group": "布局",
                 "icon": "table-columns",
                 "pages": [
                   "l/zh/user-guide/layout/overview",
@@ -5226,7 +5226,7 @@
                     "pages": [
                       "l/zh/user-guide/layout/capabilities/navigation",
                       {
-                        "group": "Views",
+                        "group": "视图",
                         "pages": [
                           "l/zh/user-guide/views-pipelines/capabilities/table-views",
                           "l/zh/user-guide/views-pipelines/capabilities/kanban-views",
@@ -5240,7 +5240,7 @@
                     ]
                   },
                   {
-                    "group": "How-Tos",
+                    "group": "操作指南",
                     "pages": [
                       "l/zh/user-guide/views-pipelines/how-tos/create-a-table-view-with-grouping",
                       "l/zh/user-guide/views-pipelines/how-tos/create-a-kanban-view-for-projects",
@@ -5345,7 +5345,7 @@
             "tab": "开发者",
             "groups": [
               {
-                "group": "Overview",
+                "group": "概览",
                 "pages": [
                   "l/zh/developers/introduction"
                 ]
@@ -5365,7 +5365,7 @@
                 ]
               },
               {
-                "group": "API",
+                "group": "接口",
                 "pages": [
                   "l/zh/developers/extend/api",
                   "l/zh/developers/extend/webhooks",

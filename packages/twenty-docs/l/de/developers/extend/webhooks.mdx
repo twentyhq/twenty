@@ -1,11 +1,12 @@
 ---
 title: Webhooks
-description: Erhalten Sie Benachrichtigungen in Echtzeit, wenn Ereignisse in Ihrem CRM auftreten.
+icon: satellite-dish
+description: Get notified when records change — HTTP POST to your endpoint on every create, update, or delete.
 ---
 
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
-Webhooks übermitteln Daten in Echtzeit an Ihre Systeme, wenn Ereignisse in Twenty auftreten — kein Polling erforderlich. Verwenden Sie sie, um externe Systeme synchron zu halten, Automatisierungen auszulösen oder Benachrichtigungen zu senden.
+Twenty sends an HTTP POST to your URL whenever a record is created, updated, or deleted. All object types are covered, including custom objects.
 
 ## Webhook erstellen
 

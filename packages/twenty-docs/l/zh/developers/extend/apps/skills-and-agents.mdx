@@ -1,0 +1,69 @@
+---
+title: 技能与智能体
+description: Define AI skills and agents for your app.
+icon: robot
+---
+
+<Warning>
+  Skills and agents are currently in alpha. 该功能可用，但仍在演进中。
+</Warning>
+
+Apps can define AI capabilities that live inside the workspace — reusable skill instructions and agents with custom system prompts.
+
+<AccordionGroup>
+<Accordion title="defineSkill" description="定义 AI 智能体技能">
+
+技能定义了可复用的指令和能力，AI 智能体可在你的工作区中使用。 使用 `defineSkill()` 定义带内置校验的技能：
+
+```ts src/skills/example-skill.ts
+import { defineSkill } from 'twenty-sdk/define';
+
+export default defineSkill({
+  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  name: 'sales-outreach',
+  label: 'Sales Outreach',
+  description: 'Guides the AI agent through a structured sales outreach process',
+  icon: 'IconBrain',
+  content: `You are a sales outreach assistant. When reaching out to a prospect:
+1. Research the company and recent news
+2. Identify the prospect's role and likely pain points
+3. Draft a personalized message referencing specific details
+4. Keep the tone professional but conversational`,
+});
+```
+
+关键点：
+* `name` 是该技能的唯一标识字符串（推荐使用 kebab-case）。
+* `label` 是在 UI 中显示的人类可读名称。
+* `content` 包含技能指令——这是 AI 智能体使用的文本。
+* `icon`（可选）设置在 UI 中显示的图标。
+* `description`（可选）提供有关技能用途的更多上下文。
+
+</Accordion>
+<Accordion title="defineAgent" description="Define AI agents with custom prompts">
+
+Agents are AI assistants that live inside your workspace. Use `defineAgent()` to create agents with a custom system prompt:
+
+```ts src/agents/example-agent.ts
+import { defineAgent } from 'twenty-sdk/define';
+
+export default defineAgent({
+  universalIdentifier: 'b3c4d5e6-f7a8-9012-bcde-f34567890123',
+  name: 'sales-assistant',
+  label: 'Sales Assistant',
+  description: 'Helps the sales team draft outreach emails and research prospects',
+  icon: 'IconRobot',
+  prompt: 'You are a helpful sales assistant. Help users with their questions and tasks.',
+});
+```
+
+关键点：
+* `name` is the unique identifier string for the agent (kebab-case recommended).
+* `label` is the display name shown in the UI.
+* `prompt` is the system prompt that defines the agent's behavior.
+* `description` (optional) provides context about what the agent does.
+* `icon`（可选）设置在 UI 中显示的图标。
+* `modelId` (optional) overrides the default AI model used by the agent.
+
+</Accordion>
+</AccordionGroup>

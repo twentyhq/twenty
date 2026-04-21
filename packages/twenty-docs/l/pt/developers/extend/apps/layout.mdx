@@ -1,0 +1,131 @@
+---
+title: Layout
+description: Define views, navigation menu items, and page layouts to shape how your app appears in Twenty.
+icon: table-columns
+---
+
+Layout entities control how your app surfaces inside Twenty's UI — what lives in the sidebar, which saved views ship with the app, and how a record detail page is arranged.
+
+## Layout concepts
+
+| Concept                  | What it controls                                                                  | Entidade                   |
+| ------------------------ | --------------------------------------------------------------------------------- | -------------------------- |
+| **View**                 | A saved list configuration for an object — visible fields, order, filters, groups | `defineView`               |
+| **Navigation Menu Item** | An entry in the left sidebar that links to a view or an external URL              | `defineNavigationMenuItem` |
+| **Page Layout**          | The tabs and widgets that make up a record's detail page                          | `definePageLayout`         |
+
+Views, navigation items, and page layouts reference each other by `universalIdentifier`:
+
+* A **navigation menu item** of type `VIEW` points at a `defineView` identifier, so the sidebar link opens that saved view.
+* A **page layout** of type `RECORD_PAGE` targets an object and can embed [front components](/l/pt/developers/extend/apps/front-components) inside its tabs as widgets.
+
+<AccordionGroup>
+<Accordion title="defineView" description="Define visualizações salvas para objetos">
+
+As visualizações são configurações salvas de como os registros de um objeto são exibidos — incluindo quais campos são visíveis, sua ordem e quaisquer filtros ou grupos aplicados. Use `defineView()` para enviar visualizações pré-configuradas com seu app:
+
+```ts src/views/example-view.ts
+import { defineView, ViewKey } from 'twenty-sdk/define';
+import { EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER } from '../objects/example-object';
+import { NAME_FIELD_UNIVERSAL_IDENTIFIER } from '../objects/example-object';
+
+export default defineView({
+  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  name: 'All example items',
+  objectUniversalIdentifier: EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER,
+  icon: 'IconList',
+  key: ViewKey.INDEX,
+  position: 0,
+  fields: [
+    {
+      universalIdentifier: 'f926bdb7-6af7-4683-9a09-adbca56c29f0',
+      fieldMetadataUniversalIdentifier: NAME_FIELD_UNIVERSAL_IDENTIFIER,
+      position: 0,
+      isVisible: true,
+      size: 200,
+    },
+  ],
+});
+```
+
+Pontos-chave:
+* `objectUniversalIdentifier` especifica a qual objeto esta visualização se aplica.
+* `key` determina o tipo de visualização (por exemplo, `ViewKey.INDEX` para a visualização de lista principal).
+* `fields` controla quais colunas aparecem e sua ordem. Cada campo referencia um `fieldMetadataUniversalIdentifier`.
+* Você também pode definir `filters`, `filterGroups`, `groups` e `fieldGroups` para configurações mais avançadas.
+* `position` controla a ordenação quando existem várias visualizações para o mesmo objeto.
+
+</Accordion>
+<Accordion title="defineNavigationMenuItem" description="Define links de navegação da barra lateral">
+
+Os itens do menu de navegação adicionam entradas personalizadas à barra lateral do espaço de trabalho. Use `defineNavigationMenuItem()` para vincular a visualizações, URLs externas ou objetos:
+
+```ts src/navigation-menu-items/example-navigation-menu-item.ts
+import { defineNavigationMenuItem, NavigationMenuItemType } from 'twenty-sdk/define';
+import { EXAMPLE_VIEW_UNIVERSAL_IDENTIFIER } from '../views/example-view';
+
+export default defineNavigationMenuItem({
+  universalIdentifier: '9327db91-afa1-41b6-bd9d-2b51a26efb4c',
+  name: 'example-navigation-menu-item',
+  icon: 'IconList',
+  color: 'blue',
+  position: 0,
+  type: NavigationMenuItemType.VIEW,
+  viewUniversalIdentifier: EXAMPLE_VIEW_UNIVERSAL_IDENTIFIER,
+});
+```
+
+Pontos-chave:
+* `type` determina para o que o item de menu aponta: `NavigationMenuItemType.VIEW` para uma visualização salva ou `NavigationMenuItemType.LINK` para uma URL externa.
+* Para links de visualização, defina `viewUniversalIdentifier`. Para links externos, defina `link`.
+* `position` controla a ordenação na barra lateral.
+* `icon` e `color` (opcionais) personalizam a aparência.
+
+</Accordion>
+<Accordion title="definePageLayout" description="Defina layouts de página personalizados para visualizações de registro">
+
+Layouts de página permitem personalizar como uma página de detalhes do registro se parece — quais abas aparecem, quais widgets estão dentro de cada aba e como eles são organizados. Use `definePageLayout()` para enviar layouts personalizados com seu app:
+
+```ts src/page-layouts/example-record-page-layout.ts
+import { definePageLayout, PageLayoutTabLayoutMode } from 'twenty-sdk/define';
+import { EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER } from '../objects/example-object';
+import { HELLO_WORLD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER } from '../front-components/hello-world';
+
+export default definePageLayout({
+  universalIdentifier: '203aeb94-6701-46d6-9af1-be2bbcc9e134',
+  name: 'Example Record Page',
+  type: 'RECORD_PAGE',
+  objectUniversalIdentifier: EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER,
+  tabs: [
+    {
+      universalIdentifier: '6ed26b60-a51d-4ad7-86dd-1c04c7f3cac5',
+      title: 'Hello World',
+      position: 50,
+      icon: 'IconWorld',
+      layoutMode: PageLayoutTabLayoutMode.CANVAS,
+      widgets: [
+        {
+          universalIdentifier: 'aa4234e0-2e5f-4c02-a96a-573449e2351d',
+          title: 'Hello World',
+          type: 'FRONT_COMPONENT',
+          configuration: {
+            configurationType: 'FRONT_COMPONENT',
+            frontComponentUniversalIdentifier:
+              HELLO_WORLD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
+          },
+        },
+      ],
+    },
+  ],
+});
+```
+
+Pontos-chave:
+* `type` geralmente é `'RECORD_PAGE'` para personalizar a visualização de detalhes de um objeto específico.
+* `objectUniversalIdentifier` especifica a qual objeto este layout se aplica.
+* Cada `tab` define uma seção da página com um `title`, `position` e `layoutMode` (`CANVAS` para layout livre).
+* Cada `widget` dentro de uma aba pode renderizar um componente de front-end, uma lista de relações ou outros tipos de widget incorporados.
+* `position` nas abas controla sua ordem. Use valores mais altos (por exemplo, 50) para colocar abas personalizadas após as nativas.
+
+</Accordion>
+</AccordionGroup>
