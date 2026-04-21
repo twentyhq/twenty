@@ -1,0 +1,18 @@
+name: CI Cross-Version Upgrade
+
+permissions:
+  contents: read
+
+on:
+  push:
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+'
+  workflow_dispatch:
+
+jobs:
+  cross-version-upgrade:
+    timeout-minutes: 45
+    runs-on: ubuntu-latest
+    steps:
+      - name: Placeholder
+        run: echo "Cross-version upgrade CI — not yet implemented"
