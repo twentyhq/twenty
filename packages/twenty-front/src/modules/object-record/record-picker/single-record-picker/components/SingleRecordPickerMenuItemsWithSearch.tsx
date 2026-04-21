@@ -5,6 +5,7 @@ import {
   SingleRecordPickerMenuItems,
   type SingleRecordPickerMenuItemsProps,
 } from '@/object-record/record-picker/single-record-picker/components/SingleRecordPickerMenuItems';
+import { RECORD_PICKER_DROPDOWN_MAX_HEIGHT } from '@/object-record/record-picker/constants/RecordPickerDropdownSize';
 import { useSingleRecordPickerRecords } from '@/object-record/record-picker/single-record-picker/hooks/useSingleRecordPickerRecords';
 import { useSingleRecordPickerSearch } from '@/object-record/record-picker/single-record-picker/hooks/useSingleRecordPickerSearch';
 import { SingleRecordPickerComponentInstanceContext } from '@/object-record/record-picker/single-record-picker/states/contexts/SingleRecordPickerComponentInstanceContext';
@@ -100,7 +101,10 @@ export const SingleRecordPickerMenuItemsWithSearch = ({
             </>
           )}
 
-          <DropdownMenuItemsContainer hasMaxHeight>
+          {/* [STRATUM-PATCH] Use taller RECORD_PICKER_DROPDOWN_MAX_HEIGHT (see RecordPickerDropdownSize.ts) */}
+          <DropdownMenuItemsContainer
+            maxHeight={RECORD_PICKER_DROPDOWN_MAX_HEIGHT}
+          >
             <SingleRecordPickerMenuItems
               focusId={focusId}
               pickableMorphItems={pickableMorphItems}
@@ -123,7 +127,10 @@ export const SingleRecordPickerMenuItemsWithSearch = ({
       {layoutDirection === 'search-bar-on-top' && (
         <>
           <DropdownMenuSeparator />
-          <DropdownMenuItemsContainer hasMaxHeight>
+          {/* [STRATUM-PATCH] Use taller RECORD_PICKER_DROPDOWN_MAX_HEIGHT (see RecordPickerDropdownSize.ts) */}
+          <DropdownMenuItemsContainer
+            maxHeight={RECORD_PICKER_DROPDOWN_MAX_HEIGHT}
+          >
             <SingleRecordPickerMenuItems
               focusId={focusId}
               pickableMorphItems={pickableMorphItems}

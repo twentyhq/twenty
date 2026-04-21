@@ -10,6 +10,7 @@ import { multipleRecordPickerShouldShowSkeletonComponentState } from '@/object-r
 import { multipleRecordPickerPickableRecordIdsMatchingSearchComponentSelector } from '@/object-record/record-picker/multiple-record-picker/states/selectors/multipleRecordPickerPickableRecordIdsMatchingSearchComponentSelector';
 import { getMultipleRecordPickerSelectableListId } from '@/object-record/record-picker/multiple-record-picker/utils/getMultipleRecordPickerSelectableListId';
 import { type RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
+import { RECORD_PICKER_DROPDOWN_MAX_HEIGHT } from '@/object-record/record-picker/constants/RecordPickerDropdownSize';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
@@ -82,7 +83,8 @@ export const MultipleRecordPickerMenuItems = ({
   const searchHasNoResults = pickableRecordIds.length === 0;
 
   return (
-    <DropdownMenuItemsContainer hasMaxHeight>
+    // [STRATUM-PATCH] Use taller RECORD_PICKER_DROPDOWN_MAX_HEIGHT (see RecordPickerDropdownSize.ts)
+    <DropdownMenuItemsContainer maxHeight={RECORD_PICKER_DROPDOWN_MAX_HEIGHT}>
       {multipleRecordPickerShouldShowInitialLoading ? (
         <RecordPickerInitialLoadingEmptyContainer />
       ) : multipleRecordPickerShouldShowSkeleton ? (

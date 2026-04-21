@@ -558,9 +558,12 @@ describe('isRecordMatchingFilter', () => {
         [caredForPetsFieldName]: [{ id: petAgreementA }, { id: petAgreementB }],
       };
 
-      const filter: RecordGqlOperationFilter = {
+      // The junction-relation filter shape `{ some: { in: [...] } }` is
+      // produced at runtime by turnRecordFilterIntoGqlOperationFilter but is
+      // not yet part of the RecordGqlOperationFilter union — cast accordingly.
+      const filter = {
         [caredForPetsFieldName]: { some: { in: [petAgreementA] } },
-      };
+      } as unknown as RecordGqlOperationFilter;
 
       expect(
         isRecordMatchingFilter({
@@ -577,9 +580,9 @@ describe('isRecordMatchingFilter', () => {
         [caredForPetsFieldName]: [{ id: petAgreementA }, { id: petAgreementB }],
       };
 
-      const filter: RecordGqlOperationFilter = {
+      const filter = {
         [caredForPetsFieldName]: { some: { in: [petAgreementC] } },
-      };
+      } as unknown as RecordGqlOperationFilter;
 
       expect(
         isRecordMatchingFilter({
@@ -596,9 +599,12 @@ describe('isRecordMatchingFilter', () => {
         [caredForPetsFieldName]: [],
       };
 
-      const filter: RecordGqlOperationFilter = {
+      // The junction-relation filter shape `{ some: { in: [...] } }` is
+      // produced at runtime by turnRecordFilterIntoGqlOperationFilter but is
+      // not yet part of the RecordGqlOperationFilter union — cast accordingly.
+      const filter = {
         [caredForPetsFieldName]: { some: { in: [petAgreementA] } },
-      };
+      } as unknown as RecordGqlOperationFilter;
 
       expect(
         isRecordMatchingFilter({
@@ -615,9 +621,12 @@ describe('isRecordMatchingFilter', () => {
         [caredForPetsFieldName]: undefined,
       };
 
-      const filter: RecordGqlOperationFilter = {
+      // The junction-relation filter shape `{ some: { in: [...] } }` is
+      // produced at runtime by turnRecordFilterIntoGqlOperationFilter but is
+      // not yet part of the RecordGqlOperationFilter union — cast accordingly.
+      const filter = {
         [caredForPetsFieldName]: { some: { in: [petAgreementA] } },
-      };
+      } as unknown as RecordGqlOperationFilter;
 
       expect(
         isRecordMatchingFilter({
@@ -634,11 +643,11 @@ describe('isRecordMatchingFilter', () => {
         [caredForPetsFieldName]: [{ id: petAgreementA }],
       };
 
-      const filter: RecordGqlOperationFilter = {
+      const filter = {
         not: {
           [caredForPetsFieldName]: { some: { in: [petAgreementC] } },
         },
-      };
+      } as unknown as RecordGqlOperationFilter;
 
       expect(
         isRecordMatchingFilter({
@@ -655,11 +664,11 @@ describe('isRecordMatchingFilter', () => {
         [caredForPetsFieldName]: [{ id: petAgreementA }],
       };
 
-      const filter: RecordGqlOperationFilter = {
+      const filter = {
         not: {
           [caredForPetsFieldName]: { some: { in: [petAgreementA] } },
         },
-      };
+      } as unknown as RecordGqlOperationFilter;
 
       expect(
         isRecordMatchingFilter({

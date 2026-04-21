@@ -4,6 +4,7 @@ import {
   SingleRecordPickerMenuItemsWithSearch,
   type SingleRecordPickerMenuItemsWithSearchProps,
 } from '@/object-record/record-picker/single-record-picker/components/SingleRecordPickerMenuItemsWithSearch';
+import { RECORD_PICKER_DROPDOWN_WIDTH } from '@/object-record/record-picker/constants/RecordPickerDropdownWidth';
 import { SingleRecordPickerComponentInstanceContext } from '@/object-record/record-picker/single-record-picker/states/contexts/SingleRecordPickerComponentInstanceContext';
 import { singleRecordPickerSearchFilterComponentState } from '@/object-record/record-picker/single-record-picker/states/singleRecordPickerSearchFilterComponentState';
 import { type RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
@@ -75,7 +76,12 @@ export const SingleRecordPicker = ({
     <SingleRecordPickerComponentInstanceContext.Provider
       value={{ instanceId: componentInstanceId }}
     >
-      <DropdownContent ref={containerRef} widthInPixels={dropdownWidth}>
+      <DropdownContent
+        ref={containerRef}
+        // [STRATUM-PATCH] Default to the wider RECORD_PICKER_DROPDOWN_WIDTH when
+        // the caller doesn't pass an explicit width (see RecordPickerDropdownSize.ts).
+        widthInPixels={dropdownWidth ?? RECORD_PICKER_DROPDOWN_WIDTH}
+      >
         <SingleRecordPickerMenuItemsWithSearch
           focusId={focusId}
           {...{

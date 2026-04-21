@@ -50,20 +50,27 @@ const StyledInternalContainer = styled.div`
 export const DropdownMenuItemsContainer = ({
   children,
   hasMaxHeight,
+  maxHeight,
   scrollable = true,
   className,
 }: {
   children: React.ReactNode;
   hasMaxHeight?: boolean;
+  // [STRATUM-PATCH] Explicit pixel override used by record-picker surfaces
+  // that need more vertical room than the shared 168px default. Wins over
+  // hasMaxHeight when provided. See RecordPickerDropdownSize.ts.
+  maxHeight?: number;
   scrollable?: boolean;
   className?: string;
 }) => {
+  const resolvedMaxHeight =
+    maxHeight ??
+    (hasMaxHeight ? DROPDOWN_MENU_ITEMS_CONTAINER_MAX_HEIGHT : undefined);
+
   return scrollable === true ? (
     <StyledScrollableContainer
       className={className}
-      maxHeight={
-        hasMaxHeight ? DROPDOWN_MENU_ITEMS_CONTAINER_MAX_HEIGHT : undefined
-      }
+      maxHeight={resolvedMaxHeight}
     >
       <StyledExternalContainer role="listbox">
         <StyledInternalContainer>{children}</StyledInternalContainer>

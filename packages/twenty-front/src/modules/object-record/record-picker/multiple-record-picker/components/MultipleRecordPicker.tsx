@@ -11,6 +11,7 @@ import { multipleRecordPickerSearchFilterComponentState } from '@/object-record/
 import { getMultipleRecordPickerSelectableListId } from '@/object-record/record-picker/multiple-record-picker/utils/getMultipleRecordPickerSelectableListId';
 import { type RecordPickerLayoutDirection } from '@/object-record/record-picker/types/RecordPickerLayoutDirection';
 import { type RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
+import { RECORD_PICKER_DROPDOWN_WIDTH } from '@/object-record/record-picker/constants/RecordPickerDropdownWidth';
 import { CreateNewButton } from '@/ui/input/relation-picker/components/CreateNewButton';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -127,7 +128,12 @@ export const MultipleRecordPicker = ({
         containerRef={containerRef}
         onClickOutside={handleClickOutside}
       />
-      <DropdownContent ref={containerRef} widthInPixels={dropdownWidth}>
+      <DropdownContent
+        ref={containerRef}
+        // [STRATUM-PATCH] Default to the wider RECORD_PICKER_DROPDOWN_WIDTH when
+        // the caller doesn't pass an explicit width (see RecordPickerDropdownSize.ts).
+        widthInPixels={dropdownWidth ?? RECORD_PICKER_DROPDOWN_WIDTH}
+      >
         {layoutDirection === 'search-bar-on-bottom' && (
           <>
             {createNewButtonSection}

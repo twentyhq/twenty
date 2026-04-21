@@ -11,6 +11,7 @@ import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-recor
 import { objectFilterDropdownSearchInputComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSearchInputComponentState';
 import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
+import { RECORD_PICKER_DROPDOWN_MAX_HEIGHT } from '@/object-record/record-picker/constants/RecordPickerDropdownSize';
 import { MultipleSelectDropdown } from '@/object-record/select/components/MultipleSelectDropdown';
 import { useRecordsForSelect } from '@/object-record/select/hooks/useRecordsForSelect';
 import { type SelectableItem } from '@/object-record/select/types/SelectableItem';
@@ -269,6 +270,8 @@ export const ObjectFilterDropdownRecordSelect = ({
         onChange={handleMultipleRecordSelectChange}
         searchFilter={objectFilterDropdownSearchInput}
         loadingItems={loading}
+        // [STRATUM-PATCH] Taller list for RELATION filter value pickers (see RecordPickerDropdownSize.ts)
+        maxHeight={RECORD_PICKER_DROPDOWN_MAX_HEIGHT}
       />
     </>
   );

@@ -22,6 +22,7 @@ export const MultipleSelectDropdown = ({
   filteredSelectedItems,
   onChange,
   searchFilter,
+  maxHeight,
 }: {
   selectableListId: string;
   focusId: string;
@@ -34,6 +35,9 @@ export const MultipleSelectDropdown = ({
     newSelectedValue: boolean,
   ) => void;
   loadingItems: boolean;
+  // [STRATUM-PATCH] Optional taller max-height for record-picker surfaces
+  // (see RecordPickerDropdownSize.ts). Falls back to the shared 168px default.
+  maxHeight?: number;
 }) => {
   const { closeDropdown } = useCloseDropdown();
 
@@ -86,7 +90,7 @@ export const MultipleSelectDropdown = ({
       selectableItemIdArray={selectableItemIds}
       focusId={focusId}
     >
-      <DropdownMenuItemsContainer hasMaxHeight>
+      <DropdownMenuItemsContainer hasMaxHeight maxHeight={maxHeight}>
         {itemsInDropdown?.map((item) => {
           return (
             <SelectableListItem
