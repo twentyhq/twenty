@@ -25,6 +25,7 @@ export const DOCUMENTATION_PATHS = {
     '/developers/extend/apps/front-components',
   DEVELOPERS_EXTEND_APPS_GETTING_STARTED:
     '/developers/extend/apps/getting-started',
+  DEVELOPERS_EXTEND_APPS_LAYOUT: '/developers/extend/apps/layout',
   DEVELOPERS_EXTEND_APPS_LOGIC_FUNCTIONS:
     '/developers/extend/apps/logic-functions',
   DEVELOPERS_EXTEND_APPS_PUBLISHING: '/developers/extend/apps/publishing',
