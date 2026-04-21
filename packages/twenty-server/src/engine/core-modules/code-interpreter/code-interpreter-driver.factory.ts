@@ -4,6 +4,7 @@ import { type CodeInterpreterDriver } from 'src/engine/core-modules/code-interpr
 
 import { CodeInterpreterDriverType } from 'src/engine/core-modules/code-interpreter/code-interpreter.interface';
 import { DisabledDriver } from 'src/engine/core-modules/code-interpreter/drivers/disabled.driver';
+import { DockerDriver } from 'src/engine/core-modules/code-interpreter/drivers/docker.driver';
 import { E2BDriver } from 'src/engine/core-modules/code-interpreter/drivers/e2b.driver';
 import { LocalDriver } from 'src/engine/core-modules/code-interpreter/drivers/local.driver';
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
@@ -24,8 +25,11 @@ export class CodeInterpreterDriverFactory extends DriverFactoryBase<CodeInterpre
   protected buildConfigKey(): string {
     const driverType = this.twentyConfigService.get('CODE_INTERPRETER_TYPE');
 
-    if (driverType === CodeInterpreterDriverType.E_2_B) {
-      return `e2b|${this.configGroupHashService.computeHash(ConfigVariablesGroup.CODE_INTERPRETER_CONFIG)}`;
+    if (
+      driverType === CodeInterpreterDriverType.E_2_B ||
+      driverType === CodeInterpreterDriverType.DOCKER
+    ) {
+      return `${driverType.toLowerCase()}|${this.configGroupHashService.computeHash(ConfigVariablesGroup.CODE_INTERPRETER_CONFIG)}`;
     }
 
     return driverType;
@@ -65,6 +69,35 @@ export class CodeInterpreterDriverFactory extends DriverFactoryBase<CodeInterpre
         }
 
         return new E2BDriver({ apiKey, timeoutMs });
+      }
+
+      case CodeInterpreterDriverType.DOCKER: {
+        const image = this.twentyConfigService.get('DOCKER_SANDBOX_IMAGE');
+        const workDirRoot = this.twentyConfigService.get(
+          'DOCKER_SANDBOX_WORK_DIR',
+        );
+        const network = this.twentyConfigService.get('DOCKER_SANDBOX_NETWORK');
+        const memoryMb = this.twentyConfigService.get(
+          'DOCKER_SANDBOX_MEMORY_MB',
+        );
+        const pidsLimit = this.twentyConfigService.get(
+          'DOCKER_SANDBOX_PIDS_LIMIT',
+        );
+
+        if (!workDirRoot) {
+          throw new Error(
+            'DOCKER_SANDBOX_WORK_DIR is required when CODE_INTERPRETER_TYPE is DOCKER',
+          );
+        }
+
+        return new DockerDriver({
+          image,
+          workDirRoot,
+          network: network || undefined,
+          memoryMb,
+          pidsLimit,
+          timeoutMs,
+        });
       }
 
       default:
