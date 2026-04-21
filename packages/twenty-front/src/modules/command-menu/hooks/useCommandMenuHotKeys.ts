@@ -9,11 +9,9 @@ import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
 import { useGlobalHotkeys } from '@/ui/utilities/hotkey/hooks/useGlobalHotkeys';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { isNonEmptyString } from '@sniptt/guards';
 import { Key } from 'ts-key-enum';
 import { SidePanelPages } from 'twenty-shared/types';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 export const useCommandMenuHotKeys = () => {
   const { toggleSidePanelMenu } = useSidePanelMenu();
@@ -30,8 +28,6 @@ export const useCommandMenuHotKeys = () => {
   const { closeKeyboardShortcutMenu } = useKeyboardShortcutMenu();
 
   const sidePanelPage = useAtomStateValue(sidePanelPageState);
-
-  const isAiEnabled = useIsFeatureEnabled(FeatureFlagKey.IS_AI_ENABLED);
 
   useGlobalHotkeys({
     keys: ['ctrl+k', 'meta+k'],
@@ -58,12 +54,10 @@ export const useCommandMenuHotKeys = () => {
   useGlobalHotkeys({
     keys: ['@'],
     callback: () => {
-      if (isAiEnabled) {
-        openAskAiPage({ resetNavigationStack: true });
-      }
+      openAskAiPage({ resetNavigationStack: true });
     },
     containsModifier: false,
-    dependencies: [openAskAiPage, isAiEnabled],
+    dependencies: [openAskAiPage],
     options: {
       ignoreModifiers: true,
     },

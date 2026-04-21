@@ -10,11 +10,9 @@ import { FLOW_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/constan
 import { HUMAN_INPUT_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/constants/HumanInputActions';
 import { RECORD_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/constants/RecordActions';
 import { getActionIconColorOrThrow } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIconColorOrThrow';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useLingui } from '@lingui/react/macro';
 import { IconFunction } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 export type WorkflowActionSelection = {
   type: WorkflowActionType;
@@ -26,8 +24,6 @@ export const SidePanelWorkflowSelectAction = ({
 }: {
   onActionSelected: (selection: WorkflowActionSelection) => void;
 }) => {
-  const isAiEnabled = useIsFeatureEnabled(FeatureFlagKey.IS_AI_ENABLED);
-
   const { t } = useLingui();
 
   const logicFunctions = useAtomStateValue(logicFunctionsSelector);
@@ -57,17 +53,13 @@ export const SidePanelWorkflowSelectAction = ({
         onClick={handleActionClick}
       />
 
-      {isAiEnabled && (
-        <>
-          <SidePanelWorkflowSelectStepTitle>
-            {t`AI`}
-          </SidePanelWorkflowSelectStepTitle>
-          <WorkflowActionMenuItems
-            actions={AI_ACTIONS}
-            onClick={handleActionClick}
-          />
-        </>
-      )}
+      <SidePanelWorkflowSelectStepTitle>
+        {t`AI`}
+      </SidePanelWorkflowSelectStepTitle>
+      <WorkflowActionMenuItems
+        actions={AI_ACTIONS}
+        onClick={handleActionClick}
+      />
 
       <SidePanelWorkflowSelectStepTitle>
         {t`Flow`}

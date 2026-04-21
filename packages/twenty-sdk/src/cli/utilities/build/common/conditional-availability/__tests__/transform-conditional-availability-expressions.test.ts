@@ -274,7 +274,7 @@ describe('transformConditionalAvailabilityExpressionsForEsBuildPlugin', () => {
     describe('feature-flag-gated-front-component', () => {
       it('should allow when feature flag is enabled', () => {
         const context = buildMockCommandMenuContextApi({
-          featureFlags: { IS_AI_ENABLED: true },
+          featureFlags: { IS_JUNCTION_RELATIONS_ENABLED: true },
         });
 
         expect(
@@ -287,7 +287,7 @@ describe('transformConditionalAvailabilityExpressionsForEsBuildPlugin', () => {
 
       it('should deny when feature flag is disabled', () => {
         const context = buildMockCommandMenuContextApi({
-          featureFlags: { IS_AI_ENABLED: false },
+          featureFlags: { IS_JUNCTION_RELATIONS_ENABLED: false },
         });
 
         expect(

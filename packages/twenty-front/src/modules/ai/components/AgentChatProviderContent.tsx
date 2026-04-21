@@ -10,26 +10,20 @@ import { Suspense } from 'react';
 
 export const AgentChatProviderContent = ({
   children,
-  isAiEnabled,
 }: {
   children: React.ReactNode;
-  isAiEnabled: boolean;
 }) => {
   return (
     <Suspense fallback={null}>
       <AgentChatComponentInstanceContext.Provider
         value={{ instanceId: 'agentChatComponentInstance' }}
       >
-        {isAiEnabled && (
-          <>
-            <AgentChatThreadInitializationEffect />
-            <AgentChatMessagesFetchEffect />
-            <AgentChatStreamSubscriptionEffect />
-            <AgentChatStreamingPartsDiffSyncEffect />
-            <AgentChatSessionStartTimeEffect />
-            <AgentChatStreamingAutoScrollEffect />
-          </>
-        )}
+        <AgentChatThreadInitializationEffect />
+        <AgentChatMessagesFetchEffect />
+        <AgentChatStreamSubscriptionEffect />
+        <AgentChatStreamingPartsDiffSyncEffect />
+        <AgentChatSessionStartTimeEffect />
+        <AgentChatStreamingAutoScrollEffect />
         {children}
       </AgentChatComponentInstanceContext.Provider>
     </Suspense>

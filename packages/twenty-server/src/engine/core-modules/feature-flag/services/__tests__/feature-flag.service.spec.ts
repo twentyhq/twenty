@@ -37,7 +37,7 @@ describe('FeatureFlagService', () => {
   };
 
   const workspaceId = 'workspace-id';
-  const featureFlag = FeatureFlagKey.IS_AI_ENABLED;
+  const featureFlag = FeatureFlagKey.IS_JUNCTION_RELATIONS_ENABLED;
 
   beforeEach(async () => {
     jest.clearAllMocks();
@@ -121,11 +121,11 @@ describe('FeatureFlagService', () => {
       // Prepare
       mockWorkspaceCacheService.getOrRecompute.mockResolvedValue({
         featureFlagsMap: {
-          [FeatureFlagKey.IS_AI_ENABLED]: false,
+          [FeatureFlagKey.IS_JUNCTION_RELATIONS_ENABLED]: false,
         },
       });
       const mockFeatureFlags = [
-        { key: FeatureFlagKey.IS_AI_ENABLED, value: false },
+        { key: FeatureFlagKey.IS_JUNCTION_RELATIONS_ENABLED, value: false },
       ];
 
       // Act
@@ -144,7 +144,7 @@ describe('FeatureFlagService', () => {
     it('should return a map of feature flags for a workspace', async () => {
       // Prepare
       const mockFeatureFlags = [
-        { key: FeatureFlagKey.IS_AI_ENABLED, value: false, workspaceId },
+        { key: FeatureFlagKey.IS_JUNCTION_RELATIONS_ENABLED, value: false, workspaceId },
       ];
 
       mockFeatureFlagRepository.find.mockResolvedValue(mockFeatureFlags);
@@ -154,7 +154,7 @@ describe('FeatureFlagService', () => {
 
       // Assert
       expect(result).toEqual({
-        [FeatureFlagKey.IS_AI_ENABLED]: false,
+        [FeatureFlagKey.IS_JUNCTION_RELATIONS_ENABLED]: false,
       });
     });
   });
@@ -162,7 +162,7 @@ describe('FeatureFlagService', () => {
   describe('enableFeatureFlags', () => {
     it('should enable multiple feature flags for a workspace', async () => {
       // Prepare
-      const keys = [FeatureFlagKey.IS_AI_ENABLED];
+      const keys = [FeatureFlagKey.IS_JUNCTION_RELATIONS_ENABLED];
 
       mockFeatureFlagRepository.upsert.mockResolvedValue({});
       mockWorkspaceCacheService.invalidateAndRecompute.mockResolvedValue(

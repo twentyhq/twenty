@@ -8,7 +8,6 @@ import { Args, Mutation, Parent, Query, ResolveField } from '@nestjs/graphql';
 
 import { msg } from '@lingui/core/macro';
 import { PermissionFlagType } from 'twenty-shared/constants';
-import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
@@ -22,7 +21,6 @@ import { WorkspaceMemberDTO } from 'src/engine/core-modules/user/dtos/workspace-
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspaceMemberId } from 'src/engine/decorators/auth/auth-workspace-member-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import { RequireFeatureFlag } from 'src/engine/guards/feature-flag.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
@@ -270,7 +268,6 @@ export class RoleResolver {
   }
 
   @Mutation(() => Boolean)
-  @RequireFeatureFlag(FeatureFlagKey.IS_AI_ENABLED)
   async assignRoleToAgent(
     @Args('agentId', { type: () => UUIDScalarType }) agentId: string,
     @Args('roleId', { type: () => UUIDScalarType }) roleId: string,
@@ -286,7 +283,6 @@ export class RoleResolver {
   }
 
   @Mutation(() => Boolean)
-  @RequireFeatureFlag(FeatureFlagKey.IS_AI_ENABLED)
   async removeRoleFromAgent(
     @Args('agentId', { type: () => UUIDScalarType }) agentId: string,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
