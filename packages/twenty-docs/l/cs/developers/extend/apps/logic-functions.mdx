@@ -1,10 +1,10 @@
 ---
 title: Logické funkce
-description: Define server-side TypeScript functions with HTTP, cron, and database event triggers.
+description: Definujte serverové funkce v TypeScriptu se spouštěči pro HTTP, cron a databázové události.
 icon: bolt
 ---
 
-Logic functions are server-side TypeScript functions that run on the Twenty platform. They can be triggered by HTTP requests, cron schedules, or database events — and can also be exposed as tools for AI agents.
+Logické funkce jsou serverové funkce v TypeScriptu, které běží na platformě Twenty. Mohou být spouštěny požadavky HTTP, plány cronu nebo databázovými událostmi — a lze je také zpřístupnit jako nástroje pro agenty AI.
 
 <AccordionGroup>
 <Accordion title="defineLogicFunction" description="Definujte logické funkce a jejich spouštěče">
@@ -388,7 +388,7 @@ export default definePreInstallLogicFunction({
 
 **Zlaté pravidlo:**
 
-| You want to...                                                                                    | Použít                                                                                   |
+| Chcete...                                                                                         | Použít                                                                                   |
 | ------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
 | Naplňte výchozí data, nakonfigurujte pracovní prostor, zaregistrujte externí prostředky           | `post-install`                                                                           |
 | Spusťte dlouho běžící plnění nebo volání třetích stran, která by neměla blokovat odezvu instalace | `post-install` (výchozí — `shouldRunSynchronously: false`, s opakovanými pokusy workeru) |
