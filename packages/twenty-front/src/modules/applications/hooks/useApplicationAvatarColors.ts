@@ -1,10 +1,7 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useContext } from 'react';
-import {
-  TWENTY_STANDARD_APPLICATION_NAME,
-  TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
-} from 'twenty-shared/application';
+import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 import { ThemeContext } from 'twenty-ui/theme-constants';
 
@@ -44,8 +41,7 @@ export const useApplicationAvatarColors = (
 
   const isStandard =
     application.universalIdentifier ===
-      TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER ||
-    application.name === TWENTY_STANDARD_APPLICATION_NAME;
+    TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER;
 
   const isCustom =
     isDefined(currentWorkspace?.workspaceCustomApplication?.id) &&
