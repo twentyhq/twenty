@@ -49,10 +49,7 @@ import { getCancelChannel } from 'src/engine/metadata-modules/ai/ai-chat/utils/g
 import { SystemPromptBuilderService } from 'src/engine/metadata-modules/ai/ai-chat/services/system-prompt-builder.service';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 
-@UseGuards(
-  WorkspaceAuthGuard,
-  SettingsPermissionGuard(PermissionFlagType.AI),
-)
+@UseGuards(WorkspaceAuthGuard, SettingsPermissionGuard(PermissionFlagType.AI))
 @UseInterceptors(AiGraphqlApiExceptionInterceptor)
 @MetadataResolver(() => AgentChatThreadDTO)
 export class AgentChatResolver {

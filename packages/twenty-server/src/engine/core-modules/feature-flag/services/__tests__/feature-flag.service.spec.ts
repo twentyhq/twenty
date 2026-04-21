@@ -144,7 +144,11 @@ describe('FeatureFlagService', () => {
     it('should return a map of feature flags for a workspace', async () => {
       // Prepare
       const mockFeatureFlags = [
-        { key: FeatureFlagKey.IS_JUNCTION_RELATIONS_ENABLED, value: false, workspaceId },
+        {
+          key: FeatureFlagKey.IS_JUNCTION_RELATIONS_ENABLED,
+          value: false,
+          workspaceId,
+        },
       ];
 
       mockFeatureFlagRepository.find.mockResolvedValue(mockFeatureFlags);

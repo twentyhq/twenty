@@ -21,10 +21,7 @@ import { CreateAgentInput } from './dtos/create-agent.input';
 import { UpdateAgentInput } from './dtos/update-agent.input';
 import { AiGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/ai/interceptors/ai-graphql-api-exception.interceptor';
 
-@UseGuards(
-  WorkspaceAuthGuard,
-  SettingsPermissionGuard(PermissionFlagType.AI),
-)
+@UseGuards(WorkspaceAuthGuard, SettingsPermissionGuard(PermissionFlagType.AI))
 @UseInterceptors(
   WorkspaceMigrationGraphqlApiExceptionInterceptor,
   AiGraphqlApiExceptionInterceptor,
