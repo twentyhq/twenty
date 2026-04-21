@@ -5,12 +5,12 @@
 
 | Estado | Count |
 |--------|-------|
-| Implementado real (crm-acceleration services) | 14 |
+| Implementado real (crm-acceleration services) | 23 |
 | Stub / entidad minima (modulos separados) | 7 |
-| Fase 2 - pendiente codigo | 55 |
+| Fase 2 - pendiente codigo | 46 |
 | Fase 3 - pendiente codigo | 28 |
 | Fase 4 - backlog | 12 |
-| **Total faltante** | **85** |
+| **Total faltante** | **77** |
 
 ---
 
@@ -26,11 +26,20 @@
 | 40 | Executive Real-Time Scorecard | executive-scorecard.service.ts |
 | 49 | Multi-Pipeline Support | pipeline-execution.service.ts |
 | 50 | Deal Rotation Warning | pipeline-execution.service.ts |
+| 52 | Blueprint Process Management | sales-execution.service.ts |
+| 53 | Account Hierarchy Management | sales-execution.service.ts |
+| 54 | Competitor Tracking | sales-execution.service.ts |
 | 56 | Gamification | gamification.service.ts |
+| 57 | Deal Cloning | sales-execution.service.ts |
+| 58 | Earned Revenue Tracking | sales-execution.service.ts |
 | 59 | Customer Health Score | customer-success.service.ts |
+| 60 | CS Playbooks | sales-execution.service.ts |
 | 61 | NPS / CSAT Automation | customer-success.service.ts |
 | 62 | Renewal Management | customer-success.service.ts |
+| 63 | Expansion Revenue Tracking | sales-execution.service.ts |
+| 64 | QBR Management | sales-execution.service.ts |
 | 85 | MCP Extension Points | mcp-extension-points.service.ts |
+| 91 | Audit Logs Inmutables | sales-execution.service.ts |
 | 94 | Field-Level RBAC | field-rbac.service.ts |
 
 ## Stubs - modulos separados (entidades minimas, sin logica completa)

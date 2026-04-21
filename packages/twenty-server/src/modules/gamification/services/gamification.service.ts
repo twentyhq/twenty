@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 
 export interface LeaderboardEntry {
   rank: number;
@@ -86,6 +86,8 @@ export class GamificationService {
           requirement = parseInt(badge.criteria) || 50;
           progress = userStats.ticketsResolved;
           break;
+        default:
+          throw new BadRequestException(`Unsupported badge type: ${badge.type}`);
       }
 
       return {

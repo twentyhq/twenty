@@ -31,7 +31,11 @@
       "Bash(sed -i 's|packages/twenty-docker/twenty-app-dev/rootfs/|docker/backend/s6/rootfs/|g' docker/backend/Dockerfile.prod)",
       "Bash(sed -i 's|packages/twenty-docker/twenty/Dockerfile|docker/backend/Dockerfile.prod|g' docker/backend/Dockerfile.prod)",
       "Bash(docker version:*)",
-      "Bash(docker builder:*)"
+      "Bash(docker builder:*)",
+      "Bash(docker context ls:*)",
+      "Bash(docker context:*)",
+      "Bash(wmic process:*)",
+      "Bash(cmd:*)"
     ]
   }
 }

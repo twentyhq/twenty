@@ -4,7 +4,10 @@ import {
   Controller,
   Get,
   Param,
+  ParseUUIDPipe,
   Post,
+  UsePipes,
+  ValidationPipe,
   UseGuards,
 } from '@nestjs/common';
 
@@ -22,14 +25,32 @@ import { FeatureRegistryService } from 'src/modules/crm-acceleration/services/fe
 import { FieldRbacService } from 'src/modules/crm-acceleration/services/field-rbac.service';
 import { McpExtensionPointsService } from 'src/modules/crm-acceleration/services/mcp-extension-points.service';
 import { PipelineExecutionService } from 'src/modules/crm-acceleration/services/pipeline-execution.service';
+import { SalesExecutionService } from 'src/modules/crm-acceleration/services/sales-execution.service';
+import { CrmExecutionDataAccessService } from 'src/modules/crm-acceleration/services/crm-execution-data-access.service';
 import {
   GamificationService,
 } from 'src/modules/gamification/services/gamification.service';
 import {
   LeadScoringService,
-  type LeadScoreInput,
 } from 'src/modules/lead-scoring/services/lead-scoring.service';
+import {
+  GamificationAchievementsRequestDto,
+  GamificationLeaderboardRequestDto,
+} from 'src/modules/gamification/dtos/gamification-request.dto';
+import {
+  LeadBatchScoreRequestDto,
+  LeadScoreInputDto,
+} from 'src/modules/lead-scoring/dtos/lead-scoring-request.dto';
 import { type CrmFeatureId } from 'src/modules/crm-acceleration/types/crm-acceleration.types';
+
+const REQUEST_VALIDATION_PIPE = new ValidationPipe({
+  transform: true,
+  whitelist: true,
+  forbidNonWhitelisted: true,
+  transformOptions: {
+    enableImplicitConversion: true,
+  },
+});
 
 @Controller('rest/crm-acceleration')
 @UseGuards(JwtAuthGuard, WorkspaceAuthGuard, NoPermissionGuard)
@@ -46,6 +67,8 @@ export class CrmAccelerationController {
     private readonly mcpExtensionPointsService: McpExtensionPointsService,
     private readonly leadScoringService: LeadScoringService,
     private readonly gamificationService: GamificationService,
+    private readonly salesExecutionService: SalesExecutionService,
+    private readonly dataAccessService: CrmExecutionDataAccessService,
   ) {}
 
   private parseFeatureId(featureId: string): CrmFeatureId {
@@ -397,7 +420,8 @@ export class CrmAccelerationController {
   }
 
   @Post('lead-scoring/score')
-  calculateLeadScore(@AuthWorkspace() workspace: FlatWorkspace, @Body() body: LeadScoreInput) {
+  @UsePipes(REQUEST_VALIDATION_PIPE)
+  calculateLeadScore(@AuthWorkspace() workspace: FlatWorkspace, @Body() body: LeadScoreInputDto) {
     return this.executeAndPersist({
       workspaceId: workspace.id,
       featureId: 1,
@@ -408,15 +432,10 @@ export class CrmAccelerationController {
   }
 
   @Post('lead-scoring/batch')
+  @UsePipes(REQUEST_VALIDATION_PIPE)
   calculateLeadScores(
     @AuthWorkspace() workspace: FlatWorkspace,
-    @Body()
-    body: {
-      leads: Array<{
-        leadId: string;
-        data: LeadScoreInput;
-      }>;
-    },
+    @Body() body: LeadBatchScoreRequestDto,
   ) {
     return this.executeAndPersist({
       workspaceId: workspace.id,
@@ -428,18 +447,10 @@ export class CrmAccelerationController {
   }
 
   @Post('gamification/leaderboard')
+  @UsePipes(REQUEST_VALIDATION_PIPE)
   buildGamificationLeaderboard(
     @AuthWorkspace() workspace: FlatWorkspace,
-    @Body()
-    body: {
-      users: Array<{
-        id: string;
-        name: string;
-        dealsWon: number;
-        revenue: number;
-        badgeCount: number;
-      }>;
-    },
+    @Body() body: GamificationLeaderboardRequestDto,
   ) {
     return this.executeAndPersist({
       workspaceId: workspace.id,
@@ -451,18 +462,10 @@ export class CrmAccelerationController {
   }
 
   @Post('gamification/achievements')
+  @UsePipes(REQUEST_VALIDATION_PIPE)
   evaluateGamificationAchievements(
     @AuthWorkspace() workspace: FlatWorkspace,
-    @Body()
-    body: {
-      userStats: {
-        dealsWon: number;
-        revenue: number;
-        dealsCreated: number;
-        ticketsResolved: number;
-      };
-      badges: Array<{ type: string; criteria: string }>;
-    },
+    @Body() body: GamificationAchievementsRequestDto,
   ) {
     return this.executeAndPersist({
       workspaceId: workspace.id,
@@ -520,6 +523,390 @@ export class CrmAccelerationController {
       route: 'mcp/extension-points',
       payload: body,
       execute: () => this.mcpExtensionPointsService.buildObjectExtensionPoints(body),
+    });
+  }
+
+  @Post('deal/clone')
+  async cloneDeal(
+    @AuthWorkspace() workspace: FlatWorkspace,
+    @Body()
+    body: {
+      sourceDealId: string;
+      newDealName: string;
+      options?: {
+        cloneCompany: boolean;
+        cloneContacts: boolean;
+        cloneActivities: boolean;
+        cloneNotes: boolean;
+        cloneTasks: boolean;
+        resetStage: boolean;
+        resetCloseDate: boolean;
+      };
+    },
+  ) {
+    const opts = body.options || {
+      cloneCompany: true,
+      cloneContacts: true,
+      resetStage: true,
+      resetCloseDate: true,
+    };
+
+    const cloned = await this.dataAccessService.cloneDeal(
+      workspace.id,
+      body.sourceDealId,
+      body.newDealName,
+      opts,
+    );
+
+    return this.executeAndPersist({
+      workspaceId: workspace.id,
+      featureId: 57,
+      route: 'deal/clone',
+      payload: body,
+      execute: () => Promise.resolve(cloned),
+    });
+  }
+
+  @Post('account/hierarchy')
+  async buildAccountHierarchy(@AuthWorkspace() workspace: FlatWorkspace) {
+    const result = await this.dataAccessService.buildAccountHierarchy(workspace.id);
+
+    return this.executeAndPersist({
+      workspaceId: workspace.id,
+      featureId: 53,
+      route: 'account/hierarchy',
+      payload: {},
+      execute: () => Promise.resolve(result),
+    });
+  }
+
+  @Post('competitor/track')
+  async trackCompetitors(
+    @AuthWorkspace() workspace: FlatWorkspace,
+    @Body()
+    body: {
+      dealId: string;
+      competitors: Array<{
+        competitorId: string;
+        competitorName: string;
+        strength: 'strong' | 'moderate' | 'weak';
+        notes?: string;
+      }>;
+    },
+  ) {
+    const result = await this.dataAccessService.trackCompetitors(
+      workspace.id,
+      body.dealId,
+      body.competitors,
+    );
+
+    return this.executeAndPersist({
+      workspaceId: workspace.id,
+      featureId: 54,
+      route: 'competitor/track',
+      payload: body,
+      execute: () => Promise.resolve(result),
+    });
+  }
+
+  @Post('revenue/earned')
+  async trackEarnedRevenue(
+    @AuthWorkspace() workspace: FlatWorkspace,
+    @Body()
+    body: {
+      dealId: string;
+      startDate: string;
+      milestones: Array<{
+        milestoneId: string;
+        milestoneName: string;
+        targetDate: string;
+        targetAmount: number;
+        achievedDate?: string;
+        actualAmount?: number;
+      }>;
+    },
+  ) {
+    const calculated = this.salesExecutionService.trackEarnedRevenue(body);
+    
+    const saved = await this.dataAccessService.saveEarnedRevenue(workspace.id, {
+      dealId: body.dealId,
+      startDate: new Date(body.startDate),
+      milestones: body.milestones.map(m => ({
+        ...m,
+        status: calculated.milestones.find(cm => cm.milestoneId === m.milestoneId)?.status || 'on_track',
+      })),
+      totalTargetAmount: calculated.totalTargetAmount,
+      totalEarnedAmount: calculated.totalEarnedAmount,
+      progress: calculated.progress,
+      projectedCompletionDate: new Date(calculated.projectedCompletionDate),
+      riskFlags: calculated.riskFlags,
+    });
+    
+    return {
+      featureId: 58,
+      result: { ...calculated, id: saved.id },
+      persisted: true,
+      persistedAt: saved.createdAt?.toISOString(),
+    };
+  }
+
+  @Get('revenue/earned')
+  getEarnedRevenueList(@AuthWorkspace() workspace: FlatWorkspace) {
+    return this.dataAccessService.getEarnedRevenueList(workspace.id);
+  }
+
+  @Get('revenue/earned/deal/:dealId')
+  getEarnedRevenueByDeal(
+    @AuthWorkspace() workspace: FlatWorkspace,
+    @Param('dealId') dealId: string,
+  ) {
+    return this.dataAccessService.getEarnedRevenueByDeal(workspace.id, dealId);
+  }
+
+  @Post('blueprint/create')
+  async createBlueprint(
+    @AuthWorkspace() workspace: FlatWorkspace,
+    @Body()
+    body: {
+      blueprintId: string;
+      name: string;
+      stages: Array<{
+        stageId: string;
+        name: string;
+        order: number;
+        description?: string;
+        requiredFields: string[];
+        automations?: Array<{
+          type: string;
+          config: Record<string, unknown>;
+        }>;
+      }>;
+      isActive: boolean;
+    },
+  ) {
+    const validated = this.salesExecutionService.createBlueprint(body);
+    
+    if (validated.isValid) {
+      const saved = await this.dataAccessService.createBlueprint(workspace.id, {
+        name: body.name,
+        stages: body.stages,
+        isActive: body.isActive,
+      });
+      
+      return {
+        featureId: 52,
+        result: { ...validated, id: saved.id },
+        persisted: true,
+        persistedAt: saved.createdAt.toISOString(),
+      };
+    }
+    
+    return {
+      featureId: 52,
+      result: validated,
+      persisted: false,
+    };
+  }
+
+  @Get('blueprint')
+  getBlueprints(@AuthWorkspace() workspace: FlatWorkspace) {
+    return this.dataAccessService.getBlueprints(workspace.id);
+  }
+
+  @Get('blueprint/:id')
+  getBlueprintById(
+    @AuthWorkspace() workspace: FlatWorkspace,
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
+    return this.dataAccessService.getBlueprintById(workspace.id, id);
+  }
+
+  @Post('blueprint/:id/delete')
+  deleteBlueprint(
+    @AuthWorkspace() workspace: FlatWorkspace,
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
+    return this.dataAccessService.deleteBlueprint(workspace.id, id);
+  }
+
+  @Post('playbook/cs/create')
+  async createCsPlaybook(
+    @AuthWorkspace() workspace: FlatWorkspace,
+    @Body()
+    body: {
+      playbookId: string;
+      name: string;
+      triggerType: 'onboarding' | 'health_score' | 'renewal' | 'upsell' | 'custom';
+      steps: Array<{
+        stepId: string;
+        title: string;
+        description: string;
+        order: number;
+        durationDays?: number;
+        assignees?: string[];
+        completionCriteria?: string;
+      }>;
+      isActive: boolean;
+    },
+  ) {
+    const validated = this.salesExecutionService.createPlaybook(body);
+    
+    if (validated.isValid) {
+      const saved = await this.dataAccessService.createPlaybook(workspace.id, {
+        name: body.name,
+        triggerType: body.triggerType as any,
+        steps: body.steps,
+        isActive: body.isActive,
+        estimatedDurationDays: validated.estimatedDurationDays,
+      });
+      
+      return {
+        featureId: 60,
+        result: { ...validated, id: saved.id },
+        persisted: true,
+        persistedAt: saved.createdAt.toISOString(),
+      };
+    }
+    
+    return {
+      featureId: 60,
+      result: validated,
+      persisted: false,
+    };
+  }
+
+  @Get('playbook/cs')
+  getCsPlaybooks(@AuthWorkspace() workspace: FlatWorkspace) {
+    return this.dataAccessService.getPlaybooks(workspace.id);
+  }
+
+  @Get('playbook/cs/:id')
+  getCsPlaybookById(
+    @AuthWorkspace() workspace: FlatWorkspace,
+    @Param('id', ParseUUIDPipe) id: string,
+  ) {
+    return this.dataAccessService.getPlaybookById(workspace.id, id);
+  }
+
+  @Post('qbr/schedule')
+  scheduleQbr(
+    @AuthWorkspace() workspace: FlatWorkspace,
+    @Body()
+    body: {
+      qbrId: string;
+      accountId: string;
+      accountName: string;
+      scheduledDate: string;
+      attendees: Array<{
+        attendeeId: string;
+        attendeeName: string;
+        email: string;
+        role: 'internal' | 'client';
+      }>;
+      documents?: Array<{
+        documentId: string;
+        documentType: 'agenda' | 'presentation' | 'report' | 'action_items' | 'meeting_notes';
+        title: string;
+        url?: string;
+        content?: string;
+      }>;
+    },
+  ) {
+    return this.executeAndPersist({
+      workspaceId: workspace.id,
+      featureId: 64,
+      route: 'qbr/schedule',
+      payload: body,
+      execute: () => this.salesExecutionService.scheduleQbr(body),
+    });
+  }
+
+  @Post('audit/immutable')
+  async createImmutableAuditLog(
+    @AuthWorkspace() workspace: FlatWorkspace,
+    @Body()
+    body: {
+      entityType: string;
+      entityId: string;
+      action: 'create' | 'update' | 'delete' | 'read' | 'export';
+      changes: Array<{
+        field: string;
+        oldValue: unknown;
+        newValue: unknown;
+      }>;
+      userId: string;
+      userName: string;
+      ipAddress?: string;
+      userAgent?: string;
+    },
+  ) {
+    const calculated = this.salesExecutionService.createImmutableAuditLog(body);
+    
+    const saved = await this.dataAccessService.createAuditLog(workspace.id, {
+      entityType: body.entityType,
+      entityId: body.entityId,
+      action: calculated.action as any,
+      changes: body.changes,
+      userId: body.userId,
+      userName: body.userName,
+      ipAddress: body.ipAddress,
+      userAgent: body.userAgent,
+    });
+
+    return {
+      featureId: 91,
+      result: {
+        logId: saved.id,
+        ...calculated,
+      },
+      persisted: true,
+      persistedAt: saved.createdAt.toISOString(),
+    };
+  }
+
+  @Get('audit/immutable')
+  async getAuditLogs(
+    @AuthWorkspace() workspace: FlatWorkspace,
+  ) {
+    return this.dataAccessService.getAuditLogs(workspace.id, { limit: 100 });
+  }
+
+  @Get('audit/immutable/verify/:logId')
+  async verifyAuditLog(
+    @AuthWorkspace() workspace: FlatWorkspace,
+    @Param('logId') logId: string,
+  ) {
+    return this.dataAccessService.verifyAuditLog(workspace.id, logId);
+  }
+
+  @Post('revenue/expansion')
+  async calculateExpansionRevenue(
+    @AuthWorkspace() workspace: FlatWorkspace,
+    @Body()
+    body: {
+      accountId: string;
+      currentMrr?: number;
+      expansionOpportunities?: Array<{
+        opportunityId: string;
+        type: 'upsell' | 'cross_sell' | 'add_on' | 'seat_expansion';
+        description: string;
+        probability: number;
+        amount: number;
+        targetDate: string;
+      }>;
+    },
+  ) {
+    const result = await this.dataAccessService.calculateExpansionRevenue(
+      workspace.id,
+      body.accountId,
+    );
+
+    return this.executeAndPersist({
+      workspaceId: workspace.id,
+      featureId: 63,
+      route: 'revenue/expansion',
+      payload: body,
+      execute: () => Promise.resolve(result),
     });
   }
 }

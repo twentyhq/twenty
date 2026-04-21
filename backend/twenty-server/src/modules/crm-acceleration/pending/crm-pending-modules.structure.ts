@@ -37,13 +37,13 @@ export const CRM_PENDING_MODULES: PendingModuleStructure[] = [
   {
     module: 'M5',
     title: 'Sales Execution & Pipeline Management',
-    pendingFeatureIds: without(range(49, 58), [49, 50, 56]),
+    pendingFeatureIds: without(range(49, 58), [49, 50, 52, 53, 54, 56, 57, 58]),
     completionPhase: 'phase-2',
   },
   {
     module: 'M6',
     title: 'Customer Success & Retencion',
-    pendingFeatureIds: without(range(59, 66), [59, 61, 62]),
+    pendingFeatureIds: without(range(59, 66), [59, 60, 61, 62, 63, 64]),
     completionPhase: 'phase-3',
   },
   {
@@ -67,7 +67,7 @@ export const CRM_PENDING_MODULES: PendingModuleStructure[] = [
   {
     module: 'M10',
     title: 'Seguridad, Compliance & Enterprise',
-    pendingFeatureIds: without(range(89, 96), [94]),
+    pendingFeatureIds: without(range(89, 96), [91, 94]),
     completionPhase: 'phase-3',
   },
   {
