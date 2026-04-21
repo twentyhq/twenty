@@ -13,7 +13,7 @@ export function getLatestReleasePreview(): MenuNavChildPreview | null {
   }
 
   const imageMatches = [...latest.content.matchAll(IMAGE_REGEX_GLOBAL)];
-  const imageMatch = imageMatches.at(-1);
+  const imageMatch = imageMatches[0];
 
   const image = imageMatch?.[1];
   if (!image) {
