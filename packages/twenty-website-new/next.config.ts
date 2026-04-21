@@ -3,6 +3,7 @@ import withLinaria, { type LinariaConfig } from 'next-with-linaria';
 
 const nextConfig: LinariaConfig = {
   images: {
+    formats: ['image/avif', 'image/webp'],
     remotePatterns: [
       {
         hostname: 'avatars.githubusercontent.com',
