@@ -1,6 +1,7 @@
 import { MENU_DATA } from '@/app/_constants';
 import { EnterpriseActivateClient } from '@/app/enterprise/activate/EnterpriseActivateClient';
 import { Body, Container, Eyebrow } from '@/design-system/components';
+import type { HeadingType } from '@/design-system/components/Heading/types/Heading';
 import { Pages } from '@/enums/pages';
 import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';
 import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels';
@@ -17,9 +18,9 @@ export const metadata: Metadata = {
     'Complete activation for your Twenty self-hosted enterprise license.',
 };
 
-const ENTERPRISE_ACTIVATE_HEADING = [
-  { text: 'Enterprise ', fontFamily: 'serif' as const },
-  { text: 'activation', fontFamily: 'sans' as const },
+const ENTERPRISE_ACTIVATE_HEADING: HeadingType[] = [
+  { text: 'Enterprise ', fontFamily: 'serif' },
+  { text: 'activation', fontFamily: 'sans' },
 ];
 
 const ENTERPRISE_ACTIVATE_BODY = {
