@@ -379,7 +379,6 @@
                   "developers/extend/apps/data-model",
                   "developers/extend/apps/logic-functions",
                   "developers/extend/apps/front-components",
-                  "developers/extend/apps/layout",
                   "developers/extend/apps/skills-and-agents",
                   "developers/extend/apps/cli-and-testing",
                   "developers/extend/apps/publishing"
@@ -762,7 +761,6 @@
                   "l/fr/developers/extend/apps/data-model",
                   "l/fr/developers/extend/apps/logic-functions",
                   "l/fr/developers/extend/apps/front-components",
-                  "l/fr/developers/extend/apps/layout",
                   "l/fr/developers/extend/apps/skills-and-agents",
                   "l/fr/developers/extend/apps/cli-and-testing",
                   "l/fr/developers/extend/apps/publishing"
@@ -1145,7 +1143,6 @@
                   "l/ar/developers/extend/apps/data-model",
                   "l/ar/developers/extend/apps/logic-functions",
                   "l/ar/developers/extend/apps/front-components",
-                  "l/ar/developers/extend/apps/layout",
                   "l/ar/developers/extend/apps/skills-and-agents",
                   "l/ar/developers/extend/apps/cli-and-testing",
                   "l/ar/developers/extend/apps/publishing"
@@ -1528,7 +1525,6 @@
                   "l/cs/developers/extend/apps/data-model",
                   "l/cs/developers/extend/apps/logic-functions",
                   "l/cs/developers/extend/apps/front-components",
-                  "l/cs/developers/extend/apps/layout",
                   "l/cs/developers/extend/apps/skills-and-agents",
                   "l/cs/developers/extend/apps/cli-and-testing",
                   "l/cs/developers/extend/apps/publishing"
@@ -1911,7 +1907,6 @@
                   "l/de/developers/extend/apps/data-model",
                   "l/de/developers/extend/apps/logic-functions",
                   "l/de/developers/extend/apps/front-components",
-                  "l/de/developers/extend/apps/layout",
                   "l/de/developers/extend/apps/skills-and-agents",
                   "l/de/developers/extend/apps/cli-and-testing",
                   "l/de/developers/extend/apps/publishing"
@@ -2294,7 +2289,6 @@
                   "l/es/developers/extend/apps/data-model",
                   "l/es/developers/extend/apps/logic-functions",
                   "l/es/developers/extend/apps/front-components",
-                  "l/es/developers/extend/apps/layout",
                   "l/es/developers/extend/apps/skills-and-agents",
                   "l/es/developers/extend/apps/cli-and-testing",
                   "l/es/developers/extend/apps/publishing"
@@ -2677,7 +2671,6 @@
                   "l/it/developers/extend/apps/data-model",
                   "l/it/developers/extend/apps/logic-functions",
                   "l/it/developers/extend/apps/front-components",
-                  "l/it/developers/extend/apps/layout",
                   "l/it/developers/extend/apps/skills-and-agents",
                   "l/it/developers/extend/apps/cli-and-testing",
                   "l/it/developers/extend/apps/publishing"
@@ -3060,7 +3053,6 @@
                   "l/ja/developers/extend/apps/data-model",
                   "l/ja/developers/extend/apps/logic-functions",
                   "l/ja/developers/extend/apps/front-components",
-                  "l/ja/developers/extend/apps/layout",
                   "l/ja/developers/extend/apps/skills-and-agents",
                   "l/ja/developers/extend/apps/cli-and-testing",
                   "l/ja/developers/extend/apps/publishing"
@@ -3443,7 +3435,6 @@
                   "l/ko/developers/extend/apps/data-model",
                   "l/ko/developers/extend/apps/logic-functions",
                   "l/ko/developers/extend/apps/front-components",
-                  "l/ko/developers/extend/apps/layout",
                   "l/ko/developers/extend/apps/skills-and-agents",
                   "l/ko/developers/extend/apps/cli-and-testing",
                   "l/ko/developers/extend/apps/publishing"
@@ -3826,7 +3817,6 @@
                   "l/pt/developers/extend/apps/data-model",
                   "l/pt/developers/extend/apps/logic-functions",
                   "l/pt/developers/extend/apps/front-components",
-                  "l/pt/developers/extend/apps/layout",
                   "l/pt/developers/extend/apps/skills-and-agents",
                   "l/pt/developers/extend/apps/cli-and-testing",
                   "l/pt/developers/extend/apps/publishing"
@@ -4209,7 +4199,6 @@
                   "l/ro/developers/extend/apps/data-model",
                   "l/ro/developers/extend/apps/logic-functions",
                   "l/ro/developers/extend/apps/front-components",
-                  "l/ro/developers/extend/apps/layout",
                   "l/ro/developers/extend/apps/skills-and-agents",
                   "l/ro/developers/extend/apps/cli-and-testing",
                   "l/ro/developers/extend/apps/publishing"
@@ -4592,7 +4581,6 @@
                   "l/ru/developers/extend/apps/data-model",
                   "l/ru/developers/extend/apps/logic-functions",
                   "l/ru/developers/extend/apps/front-components",
-                  "l/ru/developers/extend/apps/layout",
                   "l/ru/developers/extend/apps/skills-and-agents",
                   "l/ru/developers/extend/apps/cli-and-testing",
                   "l/ru/developers/extend/apps/publishing"
@@ -4975,7 +4963,6 @@
                   "l/tr/developers/extend/apps/data-model",
                   "l/tr/developers/extend/apps/logic-functions",
                   "l/tr/developers/extend/apps/front-components",
-                  "l/tr/developers/extend/apps/layout",
                   "l/tr/developers/extend/apps/skills-and-agents",
                   "l/tr/developers/extend/apps/cli-and-testing",
                   "l/tr/developers/extend/apps/publishing"
@@ -5358,7 +5345,6 @@
                   "l/zh/developers/extend/apps/data-model",
                   "l/zh/developers/extend/apps/logic-functions",
                   "l/zh/developers/extend/apps/front-components",
-                  "l/zh/developers/extend/apps/layout",
                   "l/zh/developers/extend/apps/skills-and-agents",
                   "l/zh/developers/extend/apps/cli-and-testing",
                   "l/zh/developers/extend/apps/publishing"
