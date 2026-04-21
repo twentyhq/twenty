@@ -1,35 +1,35 @@
 ---
 title: واجهات برمجة التطبيقات
 icon: plug
-description: REST and GraphQL APIs generated from your workspace schema.
+description: واجهات برمجة تطبيقات REST وGraphQL مُولَّدة من مخطط مساحة عملك.
 ---
 
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
-## Schema-per-tenant APIs
+## واجهات برمجة تطبيقات بمخطط لكل مستأجر
 
-There is no static API reference for Twenty. Each workspace has its own schema — when you add a custom object (say `Invoice`), it immediately gets REST and GraphQL endpoints identical to built-in objects like `Company` or `Person`. The API is generated from the schema, so endpoints use your object and field names directly — no opaque IDs.
+لا توجد مرجعية ثابتة لواجهة برمجة التطبيقات الخاصة بـ Twenty. لكل مساحة عمل مخططها الخاص — عند إضافة كائن مخصص (مثل `Invoice`)، يحصل فورًا على نقاط نهاية REST وGraphQL مطابقة لتلك الخاصة بالكائنات المدمجة مثل `Company` أو `Person`. تُولَّد واجهة برمجة التطبيقات من المخطط، لذا تستخدم نقاط النهاية أسماء الكائنات والحقول لديك مباشرة — بدون معرّفات غامضة.
 
-Your workspace-specific API documentation is available under **Settings → API & Webhooks** after creating an API key. It includes an interactive playground where you can execute real calls against your data.
+وثائق واجهة برمجة التطبيقات الخاصة بمساحة عملك متاحة ضمن **الإعدادات → واجهات برمجة التطبيقات وخطافات الويب** بعد إنشاء مفتاح API. يتضمن ساحة تجريبية تفاعلية يمكنك من خلالها تنفيذ استدعاءات حقيقية على بياناتك.
 
-## Two APIs
+## واجهتا برمجة تطبيقات
 
-**Core API** — `/rest/` and `/graphql/`
+**واجهة برمجة التطبيقات الأساسية** — `/rest/` و`/graphql/`
 
-CRUD on records: People, Companies, Opportunities, your custom objects. Query, filter, traverse relations.
+عمليات CRUD على السجلات: الأشخاص، الشركات، الفرص، وكائناتك المخصصة. استعلام، تصفية، والتنقل عبر العلاقات.
 
-**Metadata API** — `/rest/metadata/` and `/metadata/`
+**واجهة برمجة تطبيقات البيانات الوصفية** — `/rest/metadata/` و`/metadata/`
 
-Schema management: create/modify/delete objects, fields, and relations. This is how you programmatically change your data model.
+إدارة المخطط: إنشاء/تعديل/حذف الكائنات والحقول والعلاقات. هذه هي الطريقة لتغيير نموذج بياناتك برمجيًا.
 
-Both are available as REST and GraphQL. GraphQL adds batch upserts and the ability to traverse relations in a single query. Same underlying data either way.
+كلاهما متاحان عبر REST وGraphQL. تضيف GraphQL عمليات upsert على دفعات وإمكانية التنقل عبر العلاقات في استعلام واحد. نفس البيانات الأساسية بأي من الطريقتين.
 
-## Base URLs
+## عناوين URL الأساسية
 
-| البيئة      | عنوان URL الأساسي         |
-| ----------- | ------------------------- |
-| Cloud       | `https://api.twenty.com/` |
-| Self-Hosted | `https://{your-domain}/`  |
+| البيئة            | عنوان URL الأساسي         |
+| ----------------- | ------------------------- |
+| السحابة           | `https://api.twenty.com/` |
+| الاستضافة الذاتية | `https://{your-domain}/`  |
 
 ## المصادقة
 
@@ -37,19 +37,19 @@ Both are available as REST and GraphQL. GraphQL adds batch upserts and the abili
 Authorization: Bearer YOUR_API_KEY
 ```
 
-Create an API key in **Settings → API & Webhooks → + Create key**. Copy it immediately — it's shown once. Keys can be scoped to a specific role under **Settings → Roles → Assignment tab** to limit what they can access.
+أنشئ مفتاح API من **الإعدادات → واجهات برمجة التطبيقات وخطافات الويب → + Create key**. انسخه فورًا — يُعرَض مرة واحدة فقط. يمكن تقييد نطاق المفاتيح بدور محدد ضمن **الإعدادات → الأدوار → علامة التبويب Assignment** للحد مما يمكنها الوصول إليه.
 
 <VimeoEmbed videoId="928786722" title="إنشاء مفتاح API" />
 
-For OAuth-based access (external apps acting on behalf of users), see [OAuth](/l/ar/developers/extend/oauth).
+للوصول المعتمد على OAuth (تطبيقات خارجية تتصرف نيابةً عن المستخدمين)، راجع [OAuth](/l/ar/developers/extend/oauth).
 
-## Batch operations
+## عمليات الدفعات
 
-Both REST and GraphQL support batching up to 60 records per request — create, update, or delete. GraphQL also supports batch upsert (create-or-update in one call) using plural names like `CreateCompanies`.
+يدعم كلٌّ من REST وGraphQL التجميع لما يصل إلى 60 سجلًا لكل طلب — إنشاء أو تحديث أو حذف. كما تدعم GraphQL عملية upsert على دفعات (إنشاء-أو-تحديث في استدعاء واحد) باستخدام أسماء جمع مثل `CreateCompanies`.
 
-## Rate limits
+## حدود المعدل
 
-| الحد       | القيمة             |
-| ---------- | ------------------ |
-| Requests   | 100 per minute     |
-| Batch size | 60 سجل لكل استدعاء |
+| الحد       | القيمة                 |
+| ---------- | ---------------------- |
+| الطلبات    | 100 استدعاء في الدقيقة |
+| حجم الدفعة | 60 سجل لكل استدعاء     |
