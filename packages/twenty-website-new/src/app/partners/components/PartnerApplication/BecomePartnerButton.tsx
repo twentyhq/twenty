@@ -14,11 +14,13 @@ const StyledTrigger = styled.button`
 
 type BecomePartnerButtonProps = {
   color?: 'primary' | 'secondary';
+  label?: string;
   variant?: 'contained' | 'outlined';
 };
 
 export function BecomePartnerButton({
   color = 'secondary',
+  label = 'Become a partner',
   variant = 'contained',
 }: BecomePartnerButtonProps) {
   const { openPartnerApplicationModal } = usePartnerApplicationModal();
@@ -32,7 +34,7 @@ export function BecomePartnerButton({
         openPartnerApplicationModal();
       }}
     >
-      <BaseButton color={color} label="Become a partner" variant={variant} />
+      <BaseButton color={color} label={label} variant={variant} />
     </StyledTrigger>
   );
 }
