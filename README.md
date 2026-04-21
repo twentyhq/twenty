@@ -121,7 +121,7 @@ Want to go deeper? Read the <a href="https://docs.twenty.com/user-guide/introduc
         <source media="(prefers-color-scheme: light)" srcset="./packages/twenty-website/public/images/readme/v2-tools-light.png" />
         <img src="./packages/twenty-website/public/images/readme/v2-tools-light.png" alt="Customize your layouts" />
       </picture>
-      <p align="center"><a href="https://docs.twenty.com/user-guide/views-pipelines/overview"><img src="./packages/twenty-website/public/images/readme/planner-icon.svg" width="16" height="16"/> Learn more about layouts in doc</a></p>
+      <p align="center"><a href="https://docs.twenty.com/user-guide/layout/overview"><img src="./packages/twenty-website/public/images/readme/planner-icon.svg" width="16" height="16"/> Learn more about layouts in doc</a></p>
     </td>
   </tr>
   <tr>
