@@ -9,19 +9,23 @@ import { LocalDriver } from 'src/engine/core-modules/code-interpreter/drivers/lo
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 import { DriverFactoryBase } from 'src/engine/core-modules/twenty-config/dynamic-factory.base';
 import { ConfigVariablesGroup } from 'src/engine/core-modules/twenty-config/enums/config-variables-group.enum';
+import { ConfigGroupHashService } from 'src/engine/core-modules/twenty-config/services/config-group-hash.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 @Injectable()
 export class CodeInterpreterDriverFactory extends DriverFactoryBase<CodeInterpreterDriver> {
-  constructor(twentyConfigService: TwentyConfigService) {
-    super(twentyConfigService);
+  constructor(
+    twentyConfigService: TwentyConfigService,
+    configGroupHashService: ConfigGroupHashService,
+  ) {
+    super(twentyConfigService, configGroupHashService);
   }
 
   protected buildConfigKey(): string {
     const driverType = this.twentyConfigService.get('CODE_INTERPRETER_TYPE');
 
     if (driverType === CodeInterpreterDriverType.E_2_B) {
-      return `e2b|${this.getConfigGroupHash(ConfigVariablesGroup.CODE_INTERPRETER_CONFIG)}`;
+      return `e2b|${this.configGroupHashService.computeHash(ConfigVariablesGroup.CODE_INTERPRETER_CONFIG)}`;
     }
 
     return driverType;

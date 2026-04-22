@@ -1,3 +1,4 @@
+import { IllustrationMount } from '@/illustrations';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
 
@@ -21,34 +22,39 @@ const StyledVisual = styled.div`
 `;
 
 const StyledMasked = styled.div`
-  background-color: ${theme.colors.secondary.background[100]};
+  background-color: #1c1c1c;
   height: 100%;
+  isolation: isolate;
+  -webkit-mask-image: ${mobileMask};
+  -webkit-mask-position: center;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-size: 100% 100%;
   mask-image: ${mobileMask};
+  mask-position: center;
   mask-repeat: no-repeat;
   mask-size: 100% 100%;
+  overflow: hidden;
+  position: relative;
   width: 100%;
 
   @media (min-width: ${theme.breakpoints.md}px) {
+    -webkit-mask-image: ${desktopMask};
     mask-image: ${desktopMask};
   }
 `;
 
-const StyledImage = styled.img`
-  display: block;
-  height: 100%;
-  object-fit: cover;
-  width: 100%;
+const StyledHalftoneLayer = styled.div`
+  inset: 0;
+  position: absolute;
 `;
 
 export function Visual() {
   return (
     <StyledVisual>
       <StyledMasked>
-        <StyledImage
-          src="/images/home/problem/problem-visual.svg"
-          alt="Abstract black-and-white image of a tall pillar with mountains in the background."
-          aria-hidden="true"
-        />
+        <StyledHalftoneLayer>
+          <IllustrationMount illustration="problemMonolith" />
+        </StyledHalftoneLayer>
       </StyledMasked>
     </StyledVisual>
   );

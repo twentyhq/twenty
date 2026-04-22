@@ -1,12 +1,13 @@
-import { FOOTER_DATA } from '@/app/(home)/constants/footer';
+import { FooterVisibilityGate } from '@/app/_components/FooterVisibilityGate';
+import { FOOTER_DATA } from '@/app/_constants/footer';
+import { ContactCalModalRoot } from '@/app/components/ContactCalModal';
 import { Footer } from '@/sections/Footer/components';
 import { theme } from '@/theme';
 import { cssVariables } from '@/theme/css-variables';
 import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
 import type { Metadata } from 'next';
-import { Aleo, Azeret_Mono, Host_Grotesk } from 'next/font/google';
-import '../../../twenty-ui/dist/theme-light.css';
+import { Aleo, Azeret_Mono, Host_Grotesk, VT323 } from 'next/font/google';
 
 const hostGrotesk = Host_Grotesk({
   subsets: ['latin'],
@@ -26,6 +27,13 @@ const azeretMono = Azeret_Mono({
   subsets: ['latin'],
   weight: ['300', '500'],
   variable: '--font-mono',
+  display: 'swap',
+});
+
+const vt323 = VT323({
+  subsets: ['latin'],
+  weight: '400',
+  variable: '--font-retro',
   display: 'swap',
 });
 
@@ -58,29 +66,33 @@ const StyledMain = styled.main`
 `;
 
 export const metadata: Metadata = {
-  title: 'Twenty — Open Source CRM',
-  description: 'Modular, scalable open source CRM for modern teams.',
+  title: 'Twenty | #1 open source CRM',
+  description:
+    'The #1 open source CRM for modern teams. Modular, scalable, and built to fit your business.',
 };
 
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className="light">
+    <html lang="en">
       <body
-        className={`${cssVariables} ${hostGrotesk.variable} ${aleo.variable} ${azeretMono.variable}`}
+        className={`${cssVariables} ${hostGrotesk.variable} ${aleo.variable} ${azeretMono.variable} ${vt323.variable}`}
+        suppressHydrationWarning
       >
-        <StyledMain>{children}</StyledMain>
-        <Footer.Root illustration={FOOTER_DATA.illustration}>
-          <Footer.Logo />
-          <Footer.Nav groups={FOOTER_DATA.navGroups} />
-          <Footer.Bottom
-            copyright={FOOTER_DATA.bottom.copyright}
-            credit={FOOTER_DATA.bottom.credit}
-          >
-            <Footer.Social links={FOOTER_DATA.socialLinks} />
-          </Footer.Bottom>
-        </Footer.Root>
+        <ContactCalModalRoot>
+          <StyledMain>{children}</StyledMain>
+          <FooterVisibilityGate>
+            <Footer.Root illustration={FOOTER_DATA.illustration}>
+              <Footer.Logo />
+              <Footer.Nav groups={FOOTER_DATA.navGroups} />
+              <Footer.Bottom
+                copyright={FOOTER_DATA.bottom.copyright}
+                links={FOOTER_DATA.socialLinks}
+              />
+            </Footer.Root>
+          </FooterVisibilityGate>
+        </ContactCalModalRoot>
       </body>
     </html>
   );

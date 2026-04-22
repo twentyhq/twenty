@@ -33,7 +33,6 @@ type PeriodParams = {
   periodStart: Date;
   periodEnd: Date;
   operationTypes?: string[];
-  useDollarMode?: boolean;
 };
 
 const ALLOWED_GROUP_BY_FIELDS = [
@@ -137,7 +136,6 @@ export class UsageAnalyticsService {
     periodEnd,
     groupByField,
     operationTypes,
-    useDollarMode = false,
     extraWhere = '',
     extraParams,
   }: PeriodParams & {
@@ -173,8 +171,6 @@ export class UsageAnalyticsService {
       LIMIT ${BREAKDOWN_QUERY_LIMIT}
     `;
 
-    const convert = useDollarMode ? toDollars : toDisplayCredits;
-
     const rows = await this.clickHouseService.select<BreakdownRowMicro>(query, {
       workspaceId,
       periodStart: formatDateForClickHouse(periodStart),
@@ -187,7 +183,7 @@ export class UsageAnalyticsService {
 
     return rows.map((row) => ({
       key: row.key,
-      creditsUsed: convert(row.creditsUsedMicro),
+      creditsUsed: row.creditsUsedMicro,
     }));
   }
 
@@ -196,7 +192,6 @@ export class UsageAnalyticsService {
     periodStart,
     periodEnd,
     operationTypes,
-    useDollarMode = false,
     extraWhere = '',
     extraParams,
   }: PeriodParams & {
@@ -222,8 +217,6 @@ export class UsageAnalyticsService {
       ORDER BY date ASC
     `;
 
-    const convert = useDollarMode ? toDollars : toDisplayCredits;
-
     const rows = await this.clickHouseService.select<TimeSeriesRowMicro>(
       query,
       {
@@ -239,7 +232,7 @@ export class UsageAnalyticsService {
 
     return rows.map((row) => ({
       date: row.date,
-      creditsUsed: convert(row.creditsUsedMicro),
+      creditsUsed: row.creditsUsedMicro,
     }));
   }
 }

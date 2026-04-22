@@ -3,4 +3,5 @@ export enum ViewType {
   KANBAN = 'KANBAN',
   CALENDAR = 'CALENDAR',
   FIELDS_WIDGET = 'FIELDS_WIDGET',
+  TABLE_WIDGET = 'TABLE_WIDGET',
 }

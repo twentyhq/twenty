@@ -1,24 +1,27 @@
 {
   "tabs": {
+    "gettingStarted": {
+      "label": "Primeiros passos",
+      "groups": {
+        "welcome": {
+          "label": "Welcome"
+        },
+        "coreConcepts": {
+          "label": "Core Concepts"
+        }
+      }
+    },
     "userGuide": {
       "label": "User Guide",
       "groups": {
-        "discoverTwenty": {
-          "label": "Discover Twenty",
-          "groups": {
-            "gettingStartedCapabilities": {
-              "label": "Capabilities"
-            },
-            "gettingStartedHowTos": {
-              "label": "How-Tos"
-            }
-          }
+        "userGuideOverview": {
+          "label": "Visão Geral"
         },
         "dataModel": {
           "label": "Modelo de dados",
           "groups": {
-            "dataModelCapabilities": {
-              "label": "Capabilities"
+            "dataModelReference": {
+              "label": "Reference"
             },
             "dataModelHowTos": {
               "label": "How-Tos"
@@ -28,8 +31,8 @@
         "dataMigration": {
           "label": "Data Migration",
           "groups": {
-            "dataMigrationCapabilities": {
-              "label": "Capabilities"
+            "dataMigrationReference": {
+              "label": "Reference"
             },
             "dataMigrationHowTos": {
               "label": "How-Tos"
@@ -39,8 +42,8 @@
         "calendarEmails": {
           "label": "Calendar & Emails",
           "groups": {
-            "calendarEmailsCapabilities": {
-              "label": "Capabilities"
+            "calendarEmailsReference": {
+              "label": "Reference"
             },
             "calendarEmailsHowTos": {
               "label": "How-Tos"
@@ -50,8 +53,8 @@
         "workflows": {
           "label": "Fluxos de trabalho",
           "groups": {
-            "workflowsCapabilities": {
-              "label": "Capabilities"
+            "workflowsReference": {
+              "label": "Reference"
             },
             "workflowsHowTos": {
               "label": "How-Tos",
@@ -75,21 +78,26 @@
         "ai": {
           "label": "IA",
           "groups": {
-            "aiCapabilities": {
-              "label": "Capabilities"
+            "aiReference": {
+              "label": "Reference"
             },
             "aiHowTos": {
               "label": "How-Tos"
             }
           }
         },
-        "viewsPipelines": {
-          "label": "Visualizações e pipelines",
+        "layout": {
+          "label": "Layout",
           "groups": {
-            "viewsPipelinesCapabilities": {
-              "label": "Capabilities"
+            "layoutReference": {
+              "label": "Reference",
+              "groups": {
+                "layoutViews": {
+                  "label": "Visualizações"
+                }
+              }
             },
-            "viewsPipelinesHowTos": {
+            "layoutHowTos": {
               "label": "How-Tos"
             }
           }
@@ -97,8 +105,8 @@
         "dashboards": {
           "label": "Painéis",
           "groups": {
-            "dashboardsCapabilities": {
-              "label": "Capabilities"
+            "dashboardsReference": {
+              "label": "Reference"
             },
             "dashboardsHowTos": {
               "label": "How-Tos"
@@ -108,8 +116,8 @@
         "permissionsAccess": {
           "label": "Permissions & Access",
           "groups": {
-            "permissionsAccessCapabilities": {
-              "label": "Capabilities"
+            "permissionsAccessReference": {
+              "label": "Reference"
             },
             "permissionsAccessHowTos": {
               "label": "How-Tos"
@@ -119,8 +127,8 @@
         "billing": {
           "label": "Faturação",
           "groups": {
-            "billingCapabilities": {
-              "label": "Capabilities"
+            "billingReference": {
+              "label": "Reference"
             },
             "billingHowTos": {
               "label": "How-Tos"
@@ -130,8 +138,8 @@
         "settings": {
           "label": "Configurações",
           "groups": {
-            "settingsCapabilities": {
-              "label": "Capabilities"
+            "settingsReference": {
+              "label": "Reference"
             },
             "settingsHowTos": {
               "label": "How-Tos"
@@ -143,59 +151,20 @@
     "developers": {
       "label": "Programadores",
       "groups": {
-        "developersGroup": {
-          "label": "Programadores"
+        "developersOverview": {
+          "label": "Visão Geral"
         },
-        "extend": {
-          "label": "Extend",
-          "groups": {
-            "apps": {
-              "label": "Aplicativos"
-            }
-          }
+        "apps": {
+          "label": "Aplicativos"
+        },
+        "api": {
+          "label": "API"
         },
         "selfHost": {
-          "label": "Self-Host",
-          "groups": {
-            "selfHostCapabilities": {
-              "label": "Capabilities"
-            }
-          }
+          "label": "Self-Host"
         },
         "contribute": {
-          "label": "Contribute",
-          "groups": {
-            "contributeCapabilities": {
-              "label": "Capabilities",
-              "groups": {
-                "frontendDevelopment": {
-                  "label": "Desenvolvimento Frontend",
-                  "groups": {
-                    "twentyUi": {
-                      "label": "Twenty UI",
-                      "groups": {
-                        "display": {
-                          "label": "Exibir"
-                        },
-                        "feedback": {
-                          "label": "Feedback"
-                        },
-                        "input": {
-                          "label": "Entrada"
-                        },
-                        "navigation": {
-                          "label": "Navegação"
-                        }
-                      }
-                    }
-                  }
-                },
-                "backendDevelopment": {
-                  "label": "Desenvolvimento Backend"
-                }
-              }
-            }
-          }
+          "label": "Contribute"
         }
       }
     }

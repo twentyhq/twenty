@@ -1,14 +1,15 @@
-import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { type SendMessageInput } from 'src/modules/messaging/message-outbound-manager/types/send-message-input.type';
+import { type SendMessageResult } from 'src/modules/messaging/message-outbound-manager/types/send-message-result.type';
 
 export type MessageOutboundDriver = {
   sendMessage(
     sendMessageInput: SendMessageInput,
-    connectedAccount: ConnectedAccountWorkspaceEntity,
-  ): Promise<void>;
+    connectedAccount: ConnectedAccountEntity,
+  ): Promise<SendMessageResult>;
 
   createDraft(
     sendMessageInput: SendMessageInput,
-    connectedAccount: ConnectedAccountWorkspaceEntity,
+    connectedAccount: ConnectedAccountEntity,
   ): Promise<void>;
 };

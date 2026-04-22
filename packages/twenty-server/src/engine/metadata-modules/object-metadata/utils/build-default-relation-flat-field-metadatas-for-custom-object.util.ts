@@ -24,7 +24,6 @@ import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/w
 const morphIdByRelationObjectNameSingular = {
   timelineActivity:
     STANDARD_OBJECTS.timelineActivity.morphIds.targetMorphId.morphId,
-  favorite: null,
   attachment: STANDARD_OBJECTS.attachment.morphIds.targetMorphId.morphId,
   noteTarget: STANDARD_OBJECTS.noteTarget.morphIds.targetMorphId.morphId,
   taskTarget: STANDARD_OBJECTS.taskTarget.morphIds.targetMorphId.morphId,

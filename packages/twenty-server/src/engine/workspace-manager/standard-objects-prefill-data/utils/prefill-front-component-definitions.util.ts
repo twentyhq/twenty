@@ -1,5 +1,8 @@
 import { v5 as uuidv5 } from 'uuid';
 
+import { PAGE_LAYOUT_SEEDS } from 'src/engine/workspace-manager/dev-seeder/core/constants/page-layout-seeds.constant';
+import { generateSeedId } from 'src/engine/workspace-manager/dev-seeder/core/utils/generate-seed-id.util';
+
 const SEED_FRONT_COMPONENT_ID_NAMESPACE =
   'e7a3b1c4-f5d6-4e8a-9b2c-3d4e5f6a7b8c';
 
@@ -20,6 +23,8 @@ export type SeedFrontComponentCommandMenuItemDefinition = {
   label: string;
   icon: string;
   position: number;
+  isPinned?: boolean;
+  pageLayoutId?: string | null;
 };
 
 export const getSeedFrontComponentIds = (workspaceId: string) => ({
@@ -97,6 +102,21 @@ export const getSeedFrontComponentCommandMenuItemDefinitions = (
       label: 'Show Notification',
       icon: 'IconBell',
       position: 201,
+    },
+    {
+      universalIdentifier: uuidv5(
+        `${workspaceId}:seed-front-component-command:standalone-page-show-notification`,
+        SEED_FRONT_COMPONENT_ID_NAMESPACE,
+      ),
+      frontComponentId: showNotificationId,
+      label: 'Show Notification',
+      icon: 'IconStar',
+      position: 202,
+      isPinned: true,
+      pageLayoutId: generateSeedId(
+        workspaceId,
+        PAGE_LAYOUT_SEEDS.DOCUMENTATION_STANDALONE_PAGE,
+      ),
     },
   ];
 };

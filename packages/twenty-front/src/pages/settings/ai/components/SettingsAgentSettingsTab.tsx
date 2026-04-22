@@ -21,7 +21,7 @@ import { type Agent } from '~/generated-metadata/graphql';
 import { SettingsAgentDeleteConfirmationModal } from '~/pages/settings/ai/components/SettingsAgentDeleteConfirmationModal';
 import { SettingsAgentResponseFormat } from '~/pages/settings/ai/components/SettingsAgentResponseFormat';
 import { computeMetadataNameFromLabel } from '~/pages/settings/data-model/utils/computeMetadataNameFromLabel';
-import { type SettingsAIAgentFormValues } from '~/pages/settings/ai/hooks/useSettingsAgentFormState';
+import { type SettingsAiAgentFormValues } from '~/pages/settings/ai/hooks/useSettingsAgentFormState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 const StyledFormContainer = styled.div`
@@ -49,10 +49,10 @@ const StyledErrorMessage = styled.div`
 const DELETE_AGENT_MODAL_ID = 'delete-agent-modal';
 
 type SettingsAgentSettingsTabProps = {
-  formValues: SettingsAIAgentFormValues;
+  formValues: SettingsAiAgentFormValues;
   onFieldChange: (
-    field: keyof SettingsAIAgentFormValues,
-    value: SettingsAIAgentFormValues[keyof SettingsAIAgentFormValues],
+    field: keyof SettingsAiAgentFormValues,
+    value: SettingsAiAgentFormValues[keyof SettingsAiAgentFormValues],
   ) => void;
   disabled: boolean;
   agent?: Agent;

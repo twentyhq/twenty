@@ -7,13 +7,23 @@ import { In, type Repository } from 'typeorm';
 import { isDefined } from 'twenty-shared/utils';
 import { PermissionFlagType } from 'twenty-shared/constants';
 
+import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+
 import { AdminPanelHealthService } from 'src/engine/core-modules/admin-panel/admin-panel-health.service';
 import { AdminPanelQueueService } from 'src/engine/core-modules/admin-panel/admin-panel-queue.service';
-import { AdminPanelService } from 'src/engine/core-modules/admin-panel/admin-panel.service';
+import { AdminPanelChatService } from 'src/engine/core-modules/admin-panel/services/admin-panel-chat.service';
+import { AdminPanelConfigService } from 'src/engine/core-modules/admin-panel/services/admin-panel-config.service';
+import { AdminPanelStatisticsService } from 'src/engine/core-modules/admin-panel/services/admin-panel-statistics.service';
+import { AdminPanelUserLookupService } from 'src/engine/core-modules/admin-panel/services/admin-panel-user-lookup.service';
+import { AdminPanelVersionService } from 'src/engine/core-modules/admin-panel/services/admin-panel-version.service';
 import { MaintenanceModeService } from 'src/engine/core-modules/admin-panel/maintenance-mode.service';
+import { AdminPanelRecentUserDTO } from 'src/engine/core-modules/admin-panel/dtos/admin-panel-recent-user.dto';
+import { AdminPanelTopWorkspaceDTO } from 'src/engine/core-modules/admin-panel/dtos/admin-panel-top-workspace.dto';
+import { AdminWorkspaceChatThreadDTO } from 'src/engine/core-modules/admin-panel/dtos/admin-workspace-chat-thread.dto';
+import { AdminChatThreadMessagesDTO } from 'src/engine/core-modules/admin-panel/dtos/admin-chat-thread-messages.dto';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
-import { AdminAIModelsDTO } from 'src/engine/core-modules/client-config/client-config.entity';
+import { AdminAiModelsDTO } from 'src/engine/core-modules/client-config/client-config.entity';
 import { UsageBreakdownItemDTO } from 'src/engine/core-modules/usage/dtos/usage-breakdown-item.dto';
 import { UsageAnalyticsService } from 'src/engine/core-modules/usage/services/usage-analytics.service';
 import { AiModelRole } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-role.enum';
@@ -48,7 +58,7 @@ import { type AiProviderModelConfig } from 'src/engine/metadata-modules/ai/ai-mo
 import { extractConfigVariableName } from 'src/engine/metadata-modules/ai/ai-models/utils/extract-config-variable-name.util';
 import { loadDefaultAiProviders } from 'src/engine/metadata-modules/ai/ai-models/utils/load-default-ai-providers.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
+import { AdminResolver } from 'src/engine/api/graphql/graphql-config/decorators/admin-resolver.decorator';
 import { AdminPanelGuard } from 'src/engine/guards/admin-panel-guard';
 import { ServerLevelImpersonateGuard } from 'src/engine/guards/server-level-impersonate.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
@@ -61,9 +71,10 @@ import { ModelsDevModelSuggestionDTO } from './dtos/models-dev-model-suggestion.
 import { ModelsDevProviderSuggestionDTO } from './dtos/models-dev-provider-suggestion.dto';
 import { QueueMetricsDataDTO } from './dtos/queue-metrics-data.dto';
 import { SetMaintenanceModeInput } from './dtos/set-maintenance-mode.input';
+import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 
 @UsePipes(ResolverValidationPipe)
-@MetadataResolver()
+@AdminResolver()
 @UseFilters(
   AuthGraphqlApiExceptionFilter,
   PreventNestToAutoLogGraphqlErrorsFilter,
@@ -76,7 +87,11 @@ import { SetMaintenanceModeInput } from './dtos/set-maintenance-mode.input';
 )
 export class AdminPanelResolver {
   constructor(
-    private readonly adminService: AdminPanelService,
+    private readonly adminUserLookupService: AdminPanelUserLookupService,
+    private readonly adminStatisticsService: AdminPanelStatisticsService,
+    private readonly adminChatService: AdminPanelChatService,
+    private readonly adminConfigService: AdminPanelConfigService,
+    private readonly adminVersionService: AdminPanelVersionService,
     private readonly adminPanelHealthService: AdminPanelHealthService,
     private readonly applicationRegistrationService: ApplicationRegistrationService,
     private adminPanelQueueService: AdminPanelQueueService,
@@ -91,11 +106,39 @@ export class AdminPanelResolver {
   ) {}
 
   @UseGuards(ServerLevelImpersonateGuard)
-  @Mutation(() => UserLookup)
+  @Query(() => UserLookup)
   async userLookupAdminPanel(
     @Args() userLookupInput: UserLookupInput,
   ): Promise<UserLookup> {
-    return await this.adminService.userLookup(userLookupInput.userIdentifier);
+    return await this.adminUserLookupService.userLookup(
+      userLookupInput.userIdentifier,
+    );
+  }
+
+  @UseGuards(ServerLevelImpersonateGuard)
+  @Query(() => [AdminPanelRecentUserDTO])
+  async adminPanelRecentUsers(
+    @Args('searchTerm', {
+      type: () => String,
+      nullable: true,
+      defaultValue: '',
+    })
+    searchTerm: string,
+  ): Promise<AdminPanelRecentUserDTO[]> {
+    return this.adminStatisticsService.getRecentUsers(searchTerm);
+  }
+
+  @UseGuards(ServerLevelImpersonateGuard)
+  @Query(() => [AdminPanelTopWorkspaceDTO])
+  async adminPanelTopWorkspaces(
+    @Args('searchTerm', {
+      type: () => String,
+      nullable: true,
+      defaultValue: '',
+    })
+    searchTerm: string,
+  ): Promise<AdminPanelTopWorkspaceDTO[]> {
+    return this.adminStatisticsService.getTopWorkspaces(searchTerm);
   }
 
   @UseGuards(AdminPanelGuard)
@@ -123,7 +166,7 @@ export class AdminPanelResolver {
   @UseGuards(AdminPanelGuard)
   @Query(() => ConfigVariablesDTO)
   async getConfigVariablesGrouped(): Promise<ConfigVariablesDTO> {
-    return this.adminService.getConfigVariablesGrouped();
+    return this.adminConfigService.getConfigVariablesGrouped();
   }
 
   @UseGuards(AdminPanelGuard)
@@ -164,12 +207,12 @@ export class AdminPanelResolver {
   @UseGuards(AdminPanelGuard)
   @Query(() => VersionInfoDTO)
   async versionInfo(): Promise<VersionInfoDTO> {
-    return this.adminService.getVersionInfo();
+    return this.adminVersionService.getVersionInfo();
   }
 
   @UseGuards(AdminPanelGuard)
-  @Query(() => AdminAIModelsDTO)
-  async getAdminAiModels(): Promise<AdminAIModelsDTO> {
+  @Query(() => AdminAiModelsDTO)
+  async getAdminAiModels(): Promise<AdminAiModelsDTO> {
     const resolvedProviders =
       this.aiModelRegistryService.getResolvedProvidersForAdmin();
 
@@ -230,11 +273,36 @@ export class AdminPanelResolver {
 
   @UseGuards(AdminPanelGuard)
   @Mutation(() => Boolean)
+  async setAdminAiModelsEnabled(
+    @Args('modelIds', { type: () => [String] }) modelIds: string[],
+    @Args('enabled', { type: () => Boolean }) enabled: boolean,
+  ): Promise<boolean> {
+    await this.aiModelRegistryService.setModelsAdminEnabled(modelIds, enabled);
+
+    return true;
+  }
+
+  @UseGuards(AdminPanelGuard)
+  @Mutation(() => Boolean)
   async setAdminAiModelRecommended(
     @Args('modelId', { type: () => String }) modelId: string,
     @Args('recommended', { type: () => Boolean }) recommended: boolean,
   ): Promise<boolean> {
     await this.aiModelRegistryService.setModelRecommended(modelId, recommended);
+
+    return true;
+  }
+
+  @UseGuards(AdminPanelGuard)
+  @Mutation(() => Boolean)
+  async setAdminAiModelsRecommended(
+    @Args('modelIds', { type: () => [String] }) modelIds: string[],
+    @Args('recommended', { type: () => Boolean }) recommended: boolean,
+  ): Promise<boolean> {
+    await this.aiModelRegistryService.setModelsRecommended(
+      modelIds,
+      recommended,
+    );
 
     return true;
   }
@@ -257,7 +325,7 @@ export class AdminPanelResolver {
   ): Promise<ConfigVariableDTO> {
     this.twentyConfigService.validateConfigVariableExists(key as string);
 
-    return this.adminService.getConfigVariable(key);
+    return this.adminConfigService.getConfigVariable(key);
   }
 
   @UseGuards(AdminPanelGuard)
@@ -403,7 +471,6 @@ export class AdminPanelResolver {
 
     customProviders[providerName] = providerConfig;
     await this.twentyConfigService.set('AI_PROVIDERS', customProviders);
-    this.aiModelRegistryService.refreshRegistry();
 
     return true;
   }
@@ -420,7 +487,6 @@ export class AdminPanelResolver {
 
     delete customProviders[providerName];
     await this.twentyConfigService.set('AI_PROVIDERS', customProviders);
-    this.aiModelRegistryService.refreshRegistry();
 
     return true;
   }
@@ -475,7 +541,6 @@ export class AdminPanelResolver {
     };
 
     await this.twentyConfigService.set('AI_PROVIDERS', customProviders);
-    this.aiModelRegistryService.refreshRegistry();
 
     return true;
   }
@@ -508,7 +573,6 @@ export class AdminPanelResolver {
     };
 
     await this.twentyConfigService.set('AI_PROVIDERS', customProviders);
-    this.aiModelRegistryService.refreshRegistry();
 
     return true;
   }
@@ -592,5 +656,37 @@ export class AdminPanelResolver {
     await this.maintenanceModeService.clearMaintenanceMode();
 
     return true;
+  }
+
+  @UseGuards(ServerLevelImpersonateGuard)
+  @Query(() => UserLookup)
+  async workspaceLookupAdminPanel(
+    @Args('workspaceId', { type: () => UUIDScalarType }) workspaceId: string,
+  ): Promise<UserLookup> {
+    return this.adminUserLookupService.workspaceLookup(workspaceId);
+  }
+
+  @UseGuards(ServerLevelImpersonateGuard)
+  @Query(() => [AdminWorkspaceChatThreadDTO])
+  async getAdminWorkspaceChatThreads(
+    @Args('workspaceId', { type: () => UUIDScalarType }) workspaceId: string,
+  ): Promise<AdminWorkspaceChatThreadDTO[]> {
+    return this.adminChatService.getWorkspaceChatThreads(workspaceId);
+  }
+
+  @UseGuards(ServerLevelImpersonateGuard)
+  @Query(() => AdminChatThreadMessagesDTO)
+  async getAdminChatThreadMessages(
+    @Args('threadId', { type: () => UUIDScalarType }) threadId: string,
+  ): Promise<AdminChatThreadMessagesDTO> {
+    return this.adminChatService.getChatThreadMessages(threadId);
+  }
+
+  @UseGuards(AdminPanelGuard)
+  @Query(() => ApplicationRegistrationEntity)
+  async findOneAdminApplicationRegistration(
+    @Args('id') id: string,
+  ): Promise<ApplicationRegistrationEntity> {
+    return this.applicationRegistrationService.findOneByIdGlobal(id);
   }
 }

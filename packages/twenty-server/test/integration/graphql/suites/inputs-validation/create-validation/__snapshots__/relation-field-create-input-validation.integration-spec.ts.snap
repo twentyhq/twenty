@@ -2,9 +2,9 @@
 
 exports[`Create input validation - RELATION Gql create input - failure RELATION - should fail with : {"manyToOneRelationFieldId":"non-uuid"} 1`] = `"Invalid UUID value 'non-uuid' for field "manyToOneRelationFieldId""`;
 
-exports[`Create input validation - RELATION Gql create input - failure RELATION - should fail with : {"oneToManyRelationFieldId":"not-existing-field"} 1`] = `"Field "oneToManyRelationFieldId" is not defined by type "ApiInputValidationTestObjectCreateInput". Did you mean "manyToOneRelationFieldId" or "manyToOneRelationField"?"`;
+exports[`Create input validation - RELATION Gql create input - failure RELATION - should fail with : {"oneToManyRelationFieldId":"not-existing-field"} 1`] = `"Object apiInputValidationTestObject doesn't have any "oneToManyRelationFieldId" field."`;
 
-exports[`Create input validation - RELATION Gql create input - failure RELATION - should fail with : {"oneToOneRelationField":"not-existing-field"} 1`] = `"Field "oneToOneRelationField" is not defined by type "ApiInputValidationTestObjectCreateInput". Did you mean "manyToOneRelationField" or "manyToOneRelationFieldId"?"`;
+exports[`Create input validation - RELATION Gql create input - failure RELATION - should fail with : {"oneToOneRelationField":"not-existing-field"} 1`] = `"Object apiInputValidationTestObject doesn't have any "oneToOneRelationField" field."`;
 
 exports[`Create input validation - RELATION Rest create input - failure RELATION - should fail with : {"manyToOneRelationFieldId":"non-uuid"} 1`] = `"["Invalid UUID value 'non-uuid' for field \\"manyToOneRelationFieldId\\""]"`;
 

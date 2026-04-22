@@ -31,9 +31,6 @@ export const responseData = {
     edges: [],
   },
   jobTitle: '',
-  favorites: {
-    edges: [],
-  },
   attachments: {
     edges: [],
   },

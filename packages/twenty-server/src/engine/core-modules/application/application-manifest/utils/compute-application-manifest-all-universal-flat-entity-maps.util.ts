@@ -2,15 +2,20 @@ import { type Manifest } from 'twenty-shared/application';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { generateIndexForFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/generate-index-for-flat-field-metadata.util';
+
 import { fromCommandMenuItemManifestToUniversalFlatCommandMenuItem } from 'src/engine/core-modules/application/application-manifest/converters/from-command-menu-item-manifest-to-universal-flat-command-menu-item.util';
 import { fromFieldManifestToUniversalFlatFieldMetadata } from 'src/engine/core-modules/application/application-manifest/converters/from-field-manifest-to-universal-flat-field-metadata.util';
+import { fromFieldPermissionManifestToUniversalFlatFieldPermission } from 'src/engine/core-modules/application/application-manifest/converters/from-field-permission-manifest-to-universal-flat-field-permission.util';
 import { fromFrontComponentManifestToUniversalFlatFrontComponent } from 'src/engine/core-modules/application/application-manifest/converters/from-front-component-manifest-to-universal-flat-front-component.util';
 import { fromLogicFunctionManifestToUniversalFlatLogicFunction } from 'src/engine/core-modules/application/application-manifest/converters/from-logic-function-manifest-to-universal-flat-logic-function.util';
 import { fromNavigationMenuItemManifestToUniversalFlatNavigationMenuItem } from 'src/engine/core-modules/application/application-manifest/converters/from-navigation-menu-item-manifest-to-universal-flat-navigation-menu-item.util';
 import { fromObjectManifestToUniversalFlatObjectMetadata } from 'src/engine/core-modules/application/application-manifest/converters/from-object-manifest-to-universal-flat-object-metadata.util';
+import { fromObjectPermissionManifestToUniversalFlatObjectPermission } from 'src/engine/core-modules/application/application-manifest/converters/from-object-permission-manifest-to-universal-flat-object-permission.util';
 import { fromPageLayoutManifestToUniversalFlatPageLayout } from 'src/engine/core-modules/application/application-manifest/converters/from-page-layout-manifest-to-universal-flat-page-layout.util';
 import { fromPageLayoutTabManifestToUniversalFlatPageLayoutTab } from 'src/engine/core-modules/application/application-manifest/converters/from-page-layout-tab-manifest-to-universal-flat-page-layout-tab.util';
 import { fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget } from 'src/engine/core-modules/application/application-manifest/converters/from-page-layout-widget-manifest-to-universal-flat-page-layout-widget.util';
+import { fromPermissionFlagToUniversalFlatPermissionFlag } from 'src/engine/core-modules/application/application-manifest/converters/from-permission-flag-to-universal-flat-permission-flag.util';
 import { fromRoleManifestToUniversalFlatRole } from 'src/engine/core-modules/application/application-manifest/converters/from-role-manifest-to-universal-flat-role.util';
 import { fromSkillManifestToUniversalFlatSkill } from 'src/engine/core-modules/application/application-manifest/converters/from-skill-manifest-to-universal-flat-skill.util';
 import { computeSearchVectorUniversalSettingsFromObjectManifest } from 'src/engine/core-modules/application/application-manifest/utils/compute-search-vector-universal-settings-from-object-manifest.util';
@@ -20,6 +25,7 @@ import { fromViewFilterGroupManifestToUniversalFlatViewFilterGroup } from 'src/e
 import { fromViewFilterManifestToUniversalFlatViewFilter } from 'src/engine/core-modules/application/application-manifest/converters/from-view-filter-manifest-to-universal-flat-view-filter.util';
 import { fromViewGroupManifestToUniversalFlatViewGroup } from 'src/engine/core-modules/application/application-manifest/converters/from-view-group-manifest-to-universal-flat-view-group.util';
 import { fromViewManifestToUniversalFlatView } from 'src/engine/core-modules/application/application-manifest/converters/from-view-manifest-to-universal-flat-view.util';
+import { fromViewSortManifestToUniversalFlatViewSort } from 'src/engine/core-modules/application/application-manifest/converters/from-view-sort-manifest-to-universal-flat-view-sort.util';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { fromAgentManifestToUniversalFlatAgent } from 'src/engine/core-modules/application/utils/from-agent-manifest-to-universal-flat-agent.util';
 import { createEmptyAllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-all-flat-entity-maps.constant';
@@ -41,12 +47,14 @@ export const computeApplicationManifestAllUniversalFlatEntityMaps = ({
     ownerFlatApplication;
 
   for (const objectManifest of manifest.objects) {
+    const flatObjectMetadata = fromObjectManifestToUniversalFlatObjectMetadata({
+      objectManifest,
+      applicationUniversalIdentifier,
+      now,
+    });
+
     addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
-      universalFlatEntity: fromObjectManifestToUniversalFlatObjectMetadata({
-        objectManifest,
-        applicationUniversalIdentifier,
-        now,
-      }),
+      universalFlatEntity: flatObjectMetadata,
       universalFlatEntityMapsToMutate:
         allUniversalFlatEntityMaps.flatObjectMetadataMaps,
     });
@@ -68,28 +76,61 @@ export const computeApplicationManifestAllUniversalFlatEntityMaps = ({
               objectUniversalIdentifier: objectManifest.universalIdentifier,
             };
 
+      const flatFieldMetadata = fromFieldManifestToUniversalFlatFieldMetadata({
+        fieldManifest: enrichedFieldManifest,
+        applicationUniversalIdentifier,
+        now,
+      });
+
       addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
-        universalFlatEntity: fromFieldManifestToUniversalFlatFieldMetadata({
-          fieldManifest: enrichedFieldManifest,
-          applicationUniversalIdentifier,
-          now,
-        }),
+        universalFlatEntity: flatFieldMetadata,
         universalFlatEntityMapsToMutate:
           allUniversalFlatEntityMaps.flatFieldMetadataMaps,
       });
+
+      if (flatFieldMetadata.isUnique) {
+        addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
+          universalFlatEntity: generateIndexForFlatFieldMetadata({
+            flatFieldMetadata,
+            flatObjectMetadata,
+          }),
+          universalFlatEntityMapsToMutate:
+            allUniversalFlatEntityMaps.flatIndexMaps,
+        });
+      }
     }
   }
 
   for (const fieldManifest of manifest.fields) {
+    const flatFieldMetadata = fromFieldManifestToUniversalFlatFieldMetadata({
+      fieldManifest: fieldManifest,
+      applicationUniversalIdentifier,
+      now,
+    });
+
     addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
-      universalFlatEntity: fromFieldManifestToUniversalFlatFieldMetadata({
-        fieldManifest: fieldManifest,
-        applicationUniversalIdentifier,
-        now,
-      }),
+      universalFlatEntity: flatFieldMetadata,
       universalFlatEntityMapsToMutate:
         allUniversalFlatEntityMaps.flatFieldMetadataMaps,
     });
+
+    if (flatFieldMetadata.isUnique) {
+      const flatObjectMetadata =
+        allUniversalFlatEntityMaps.flatObjectMetadataMaps.byUniversalIdentifier[
+          flatFieldMetadata.objectMetadataUniversalIdentifier
+        ];
+
+      if (isDefined(flatObjectMetadata)) {
+        addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
+          universalFlatEntity: generateIndexForFlatFieldMetadata({
+            flatFieldMetadata,
+            flatObjectMetadata,
+          }),
+          universalFlatEntityMapsToMutate:
+            allUniversalFlatEntityMaps.flatIndexMaps,
+        });
+      }
+    }
   }
 
   for (const logicFunctionManifest of manifest.logicFunctions) {
@@ -144,6 +185,47 @@ export const computeApplicationManifestAllUniversalFlatEntityMaps = ({
       }),
       universalFlatEntityMapsToMutate: allUniversalFlatEntityMaps.flatRoleMaps,
     });
+    for (const objectPermissionManifest of roleManifest.objectPermissions ??
+      []) {
+      addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
+        universalFlatEntity:
+          fromObjectPermissionManifestToUniversalFlatObjectPermission({
+            objectPermissionManifest,
+            roleUniversalIdentifier: roleManifest.universalIdentifier,
+            applicationUniversalIdentifier,
+            now,
+          }),
+        universalFlatEntityMapsToMutate:
+          allUniversalFlatEntityMaps.flatObjectPermissionMaps,
+      });
+    }
+
+    for (const fieldPermissionManifest of roleManifest.fieldPermissions ?? []) {
+      addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
+        universalFlatEntity:
+          fromFieldPermissionManifestToUniversalFlatFieldPermission({
+            fieldPermissionManifest,
+            roleUniversalIdentifier: roleManifest.universalIdentifier,
+            applicationUniversalIdentifier,
+            now,
+          }),
+        universalFlatEntityMapsToMutate:
+          allUniversalFlatEntityMaps.flatFieldPermissionMaps,
+      });
+    }
+
+    for (const permissionFlag of roleManifest.permissionFlags ?? []) {
+      addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
+        universalFlatEntity: fromPermissionFlagToUniversalFlatPermissionFlag({
+          permissionFlag,
+          roleUniversalIdentifier: roleManifest.universalIdentifier,
+          applicationUniversalIdentifier,
+          now,
+        }),
+        universalFlatEntityMapsToMutate:
+          allUniversalFlatEntityMaps.flatPermissionFlagMaps,
+      });
+    }
   }
 
   for (const skillManifest of manifest.skills ?? []) {
@@ -242,6 +324,19 @@ export const computeApplicationManifestAllUniversalFlatEntityMaps = ({
         }),
         universalFlatEntityMapsToMutate:
           allUniversalFlatEntityMaps.flatViewGroupMaps,
+      });
+    }
+
+    for (const viewSortManifest of viewManifest.sorts ?? []) {
+      addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
+        universalFlatEntity: fromViewSortManifestToUniversalFlatViewSort({
+          viewSortManifest,
+          viewUniversalIdentifier: viewManifest.universalIdentifier,
+          applicationUniversalIdentifier,
+          now,
+        }),
+        universalFlatEntityMapsToMutate:
+          allUniversalFlatEntityMaps.flatViewSortMaps,
       });
     }
   }

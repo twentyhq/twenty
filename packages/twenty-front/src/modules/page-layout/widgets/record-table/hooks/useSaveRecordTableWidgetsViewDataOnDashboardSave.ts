@@ -39,7 +39,7 @@ export const useSaveRecordTableWidgetsViewDataOnDashboardSave = () => {
   const {
     performViewFilterGroupAPICreate,
     performViewFilterGroupAPIUpdate,
-    performViewFilterGroupAPIDelete,
+    performViewFilterGroupAPIDestroy,
   } = usePerformViewFilterGroupAPIPersist();
 
   const {
@@ -186,10 +186,12 @@ export const useSaveRecordTableWidgetsViewDataOnDashboardSave = () => {
           mapRecordFieldToViewFieldWithCurrentAggregateOperation,
         );
 
+        const existingViewFields = currentView.viewFields ?? [];
+
         const { viewFieldsToCreate, viewFieldsToUpdate } =
           computeViewFieldsToCreateAndUpdate({
             newViewFields,
-            existingViewFields: currentView.viewFields ?? [],
+            existingViewFields,
             viewId,
           });
 
@@ -249,7 +251,7 @@ export const useSaveRecordTableWidgetsViewDataOnDashboardSave = () => {
             },
           })),
         );
-        await performViewFilterGroupAPIDelete(
+        await performViewFilterGroupAPIDestroy(
           viewFilterGroupsToDelete.map((viewFilterGroup) => viewFilterGroup.id),
         );
 
@@ -295,7 +297,7 @@ export const useSaveRecordTableWidgetsViewDataOnDashboardSave = () => {
       performViewFilterAPIDelete,
       performViewFilterGroupAPICreate,
       performViewFilterGroupAPIUpdate,
-      performViewFilterGroupAPIDelete,
+      performViewFilterGroupAPIDestroy,
       performViewSortAPICreate,
       performViewSortAPIUpdate,
       performViewSortAPIDelete,

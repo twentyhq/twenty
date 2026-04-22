@@ -6,7 +6,7 @@ import { t } from '@lingui/core/macro';
 import { IconDotsVertical, IconRefresh, IconTrash } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
-import { JobState } from '~/generated-metadata/graphql';
+import { JobState } from '~/generated-admin/graphql';
 
 type SettingsAdminQueueJobRowDropdownMenuProps = {
   jobId: string;

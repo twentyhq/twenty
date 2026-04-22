@@ -24,7 +24,6 @@ export default defineConfig(() => {
       outDir: 'dist',
       lib: {
         entry: {
-          index: 'src/sdk/index.ts',
           cli: 'src/cli/cli.ts',
           operations: 'src/cli/operations/index.ts',
           'front-component-renderer/build':

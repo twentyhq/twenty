@@ -8,15 +8,17 @@ import { CaptchaDriverType } from 'src/engine/core-modules/captcha/interfaces';
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { DriverFactoryBase } from 'src/engine/core-modules/twenty-config/dynamic-factory.base';
 import { ConfigVariablesGroup } from 'src/engine/core-modules/twenty-config/enums/config-variables-group.enum';
+import { ConfigGroupHashService } from 'src/engine/core-modules/twenty-config/services/config-group-hash.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 @Injectable()
 export class CaptchaDriverFactory extends DriverFactoryBase<CaptchaDriver | null> {
   constructor(
     twentyConfigService: TwentyConfigService,
+    configGroupHashService: ConfigGroupHashService,
     private readonly secureHttpClientService: SecureHttpClientService,
   ) {
-    super(twentyConfigService);
+    super(twentyConfigService, configGroupHashService);
   }
 
   protected buildConfigKey(): string {
@@ -26,7 +28,7 @@ export class CaptchaDriverFactory extends DriverFactoryBase<CaptchaDriver | null
       return 'disabled';
     }
 
-    return `${driver}|${this.getConfigGroupHash(ConfigVariablesGroup.CAPTCHA_CONFIG)}`;
+    return `${driver}|${this.configGroupHashService.computeHash(ConfigVariablesGroup.CAPTCHA_CONFIG)}`;
   }
 
   protected createDriver(): CaptchaDriver | null {

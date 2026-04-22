@@ -1,0 +1,131 @@
+---
+title: Düzen
+description: Define views, navigation menu items, and page layouts to shape how your app appears in Twenty.
+icon: table-columns
+---
+
+Layout entities control how your app surfaces inside Twenty's UI — what lives in the sidebar, which saved views ship with the app, and how a record detail page is arranged.
+
+## Layout concepts
+
+| Concept                  | What it controls                                                                  | Varlık                     |
+| ------------------------ | --------------------------------------------------------------------------------- | -------------------------- |
+| **View**                 | A saved list configuration for an object — visible fields, order, filters, groups | `defineView`               |
+| **Navigation Menu Item** | An entry in the left sidebar that links to a view or an external URL              | `defineNavigationMenuItem` |
+| **Page Layout**          | The tabs and widgets that make up a record's detail page                          | `definePageLayout`         |
+
+Views, navigation items, and page layouts reference each other by `universalIdentifier`:
+
+* A **navigation menu item** of type `VIEW` points at a `defineView` identifier, so the sidebar link opens that saved view.
+* A **page layout** of type `RECORD_PAGE` targets an object and can embed [front components](/l/tr/developers/extend/apps/front-components) inside its tabs as widgets.
+
+<AccordionGroup>
+<Accordion title="defineView" description="Nesneler için kaydedilmiş görünümler tanımlayın">
+
+Görünümler, bir nesnenin kayıtlarının nasıl görüntüleneceğine ilişkin kaydedilmiş yapılandırmalardır — hangi alanların görünür olacağını, sıralarını ve uygulanan filtreleri veya grupları içerir. Uygulamanızla önceden yapılandırılmış görünümler sunmak için `defineView()` kullanın:
+
+```ts src/views/example-view.ts
+import { defineView, ViewKey } from 'twenty-sdk/define';
+import { EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER } from '../objects/example-object';
+import { NAME_FIELD_UNIVERSAL_IDENTIFIER } from '../objects/example-object';
+
+export default defineView({
+  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  name: 'All example items',
+  objectUniversalIdentifier: EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER,
+  icon: 'IconList',
+  key: ViewKey.INDEX,
+  position: 0,
+  fields: [
+    {
+      universalIdentifier: 'f926bdb7-6af7-4683-9a09-adbca56c29f0',
+      fieldMetadataUniversalIdentifier: NAME_FIELD_UNIVERSAL_IDENTIFIER,
+      position: 0,
+      isVisible: true,
+      size: 200,
+    },
+  ],
+});
+```
+
+Önemli noktalar:
+* `objectUniversalIdentifier`, bu görünümün hangi nesneye uygulanacağını belirtir.
+* `key`, görünüm türünü belirler (ör. ana liste görünümü için `ViewKey.INDEX`).
+* `fields`, hangi sütunların görüneceğini ve sıralarını kontrol eder. Her alan bir `fieldMetadataUniversalIdentifier` öğesine referans verir.
+* Daha gelişmiş yapılandırmalar için `filters`, `filterGroups`, `groups` ve `fieldGroups` de tanımlayabilirsiniz.
+* `position`, aynı nesne için birden fazla görünüm olduğunda sıralamayı kontrol eder.
+
+</Accordion>
+<Accordion title="defineNavigationMenuItem" description="Kenar çubuğu gezinme bağlantılarını tanımlayın">
+
+Gezinme menüsü öğeleri, çalışma alanı kenar çubuğuna özel girişler ekler. Görünümlere, harici URL'lere veya nesnelere bağlanmak için `defineNavigationMenuItem()` kullanın:
+
+```ts src/navigation-menu-items/example-navigation-menu-item.ts
+import { defineNavigationMenuItem, NavigationMenuItemType } from 'twenty-sdk/define';
+import { EXAMPLE_VIEW_UNIVERSAL_IDENTIFIER } from '../views/example-view';
+
+export default defineNavigationMenuItem({
+  universalIdentifier: '9327db91-afa1-41b6-bd9d-2b51a26efb4c',
+  name: 'example-navigation-menu-item',
+  icon: 'IconList',
+  color: 'blue',
+  position: 0,
+  type: NavigationMenuItemType.VIEW,
+  viewUniversalIdentifier: EXAMPLE_VIEW_UNIVERSAL_IDENTIFIER,
+});
+```
+
+Önemli noktalar:
+* `type`, menü öğesinin neye bağlanacağını belirler: kaydedilmiş bir görünüm için `NavigationMenuItemType.VIEW` veya harici bir URL için `NavigationMenuItemType.LINK`.
+* Görünüm bağlantıları için `viewUniversalIdentifier` ayarlayın. Harici bağlantılar için `link` ayarlayın.
+* `position`, kenar çubuğundaki sıralamayı kontrol eder.
+* `icon` ve `color` (isteğe bağlı) görünümü özelleştirir.
+
+</Accordion>
+<Accordion title="definePageLayout" description="Kayıt görünümleri için özel sayfa düzenleri tanımlayın">
+
+Sayfa düzenleri, bir kayıt ayrıntı sayfasının nasıl görüneceğini özelleştirmenizi sağlar — hangi sekmelerin görüneceği, her sekmenin içinde hangi widget'ların olacağı ve bunların nasıl düzenleneceği. Uygulamanızla özel düzenler sunmak için `definePageLayout()` kullanın:
+
+```ts src/page-layouts/example-record-page-layout.ts
+import { definePageLayout, PageLayoutTabLayoutMode } from 'twenty-sdk/define';
+import { EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER } from '../objects/example-object';
+import { HELLO_WORLD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER } from '../front-components/hello-world';
+
+export default definePageLayout({
+  universalIdentifier: '203aeb94-6701-46d6-9af1-be2bbcc9e134',
+  name: 'Example Record Page',
+  type: 'RECORD_PAGE',
+  objectUniversalIdentifier: EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER,
+  tabs: [
+    {
+      universalIdentifier: '6ed26b60-a51d-4ad7-86dd-1c04c7f3cac5',
+      title: 'Hello World',
+      position: 50,
+      icon: 'IconWorld',
+      layoutMode: PageLayoutTabLayoutMode.CANVAS,
+      widgets: [
+        {
+          universalIdentifier: 'aa4234e0-2e5f-4c02-a96a-573449e2351d',
+          title: 'Hello World',
+          type: 'FRONT_COMPONENT',
+          configuration: {
+            configurationType: 'FRONT_COMPONENT',
+            frontComponentUniversalIdentifier:
+              HELLO_WORLD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
+          },
+        },
+      ],
+    },
+  ],
+});
+```
+
+Önemli noktalar:
+* `type` genellikle belirli bir nesnenin ayrıntı görünümünü özelleştirmek için `'RECORD_PAGE'` olur.
+* `objectUniversalIdentifier`, bu düzenin hangi nesneye uygulanacağını belirtir.
+* Her `tab`, bir `title`, `position` ve `layoutMode` ile sayfanın bir bölümünü tanımlar (serbest biçimli düzen için `CANVAS`).
+* Bir sekmenin içindeki her `widget`, bir ön uç bileşeni, bir ilişki listesi veya diğer yerleşik widget türlerini oluşturabilir.
+* Sekmelerdeki `position`, sıralarını kontrol eder. Özel sekmeleri yerleşik olanların sonrasına yerleştirmek için daha yüksek değerler kullanın (ör. 50).
+
+</Accordion>
+</AccordionGroup>

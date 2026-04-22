@@ -13,7 +13,6 @@ export const STANDARD_OBJECT_ICONS = {
   company: 'IconBuildingSkyscraper',
   connectedAccount: 'IconAt',
   dashboard: 'IconLayoutDashboard',
-  favorite: 'IconHeart',
   auditLog: 'IconTimelineEvent',
   messageChannelMessageAssociation: 'IconMessage',
   messageChannel: 'IconMessage',

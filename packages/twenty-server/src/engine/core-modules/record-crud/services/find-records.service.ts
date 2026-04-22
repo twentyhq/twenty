@@ -50,7 +50,9 @@ export class FindRecordsService {
         { id: OrderByDirection.AscNullsFirst },
       ];
 
-      const { records, totalCount } = await this.commonFindManyRunner.execute(
+      const {
+        results: { records, totalCount },
+      } = await this.commonFindManyRunner.execute(
         {
           filter,
           orderBy: orderByWithIdCondition,

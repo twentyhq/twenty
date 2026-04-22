@@ -1,17 +1,13 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
-import { In, Repository } from 'typeorm';
+import { In, MoreThanOrEqual, QueryRunner, Repository } from 'typeorm';
 
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { compareVersionMajorAndMinor } from 'src/utils/version/compare-version-minor-and-major';
 
 @Injectable()
 export class WorkspaceVersionService {
-  private readonly logger = new Logger(WorkspaceVersionService.name);
-
   constructor(
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
@@ -28,56 +24,34 @@ export class WorkspaceVersionService {
     });
   }
 
-  async getWorkspacesBelowVersion(
-    version: string,
-  ): Promise<Pick<WorkspaceEntity, 'id' | 'displayName' | 'version'>[]> {
-    const allActiveOrSuspendedWorkspaces =
-      await this.loadActiveOrSuspendedWorkspaces();
+  async getActiveOrSuspendedWorkspaceIds({
+    startFromWorkspaceId,
+    workspaceCountLimit,
+    queryRunner,
+  }: {
+    startFromWorkspaceId?: string;
+    workspaceCountLimit?: number;
+    queryRunner?: QueryRunner;
+  } = {}): Promise<string[]> {
+    const repository = queryRunner
+      ? queryRunner.manager.getRepository(WorkspaceEntity)
+      : this.workspaceRepository;
 
-    if (allActiveOrSuspendedWorkspaces.length === 0) {
-      this.logger.log(
-        'No workspaces found. Running migrations for fresh installation.',
-      );
-
-      return [];
-    }
-
-    return allActiveOrSuspendedWorkspaces.filter((workspace) => {
-      if (!isDefined(workspace.version)) {
-        return true;
-      }
-
-      try {
-        const versionCompareResult = compareVersionMajorAndMinor(
-          workspace.version,
-          version,
-        );
-
-        return versionCompareResult === 'lower';
-      } catch (error) {
-        this.logger.error(
-          `Error checking workspace ${workspace.id} version: ${error.message}`,
-        );
-
-        return true;
-      }
-    });
-  }
-
-  private async loadActiveOrSuspendedWorkspaces(): Promise<
-    Pick<WorkspaceEntity, 'id' | 'version' | 'displayName'>[]
-  > {
-    return this.workspaceRepository.find({
-      select: ['id', 'version', 'displayName'],
+    const workspaces = await repository.find({
+      select: ['id'],
       where: {
         activationStatus: In([
           WorkspaceActivationStatus.ACTIVE,
           WorkspaceActivationStatus.SUSPENDED,
         ]),
+        ...(startFromWorkspaceId
+          ? { id: MoreThanOrEqual(startFromWorkspaceId) }
+          : {}),
       },
-      order: {
-        id: 'ASC',
-      },
+      order: { id: 'ASC' },
+      take: workspaceCountLimit,
     });
+
+    return workspaces.map((workspace) => workspace.id);
   }
 }

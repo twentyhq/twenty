@@ -15,11 +15,14 @@ import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorato
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { PageLayoutTabDTO } from 'src/engine/metadata-modules/page-layout-tab/dtos/page-layout-tab.dto';
+import { PageLayoutWidgetDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/page-layout-widget.dto';
 import { CreatePageLayoutInput } from 'src/engine/metadata-modules/page-layout/dtos/inputs/create-page-layout.input';
 import { UpdatePageLayoutWithTabsInput } from 'src/engine/metadata-modules/page-layout/dtos/inputs/update-page-layout-with-tabs.input';
 import { UpdatePageLayoutInput } from 'src/engine/metadata-modules/page-layout/dtos/inputs/update-page-layout.input';
 import { PageLayoutDTO } from 'src/engine/metadata-modules/page-layout/dtos/page-layout.dto';
 import { PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
+import { PageLayoutResetService } from 'src/engine/metadata-modules/page-layout/services/page-layout-reset.service';
 import { PageLayoutUpdateService } from 'src/engine/metadata-modules/page-layout/services/page-layout-update.service';
 import { PageLayoutService } from 'src/engine/metadata-modules/page-layout/services/page-layout.service';
 import { PageLayoutGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/page-layout/utils/page-layout-graphql-api-exception.filter';
@@ -34,6 +37,7 @@ export class PageLayoutResolver {
   constructor(
     private readonly pageLayoutService: PageLayoutService,
     private readonly pageLayoutUpdateService: PageLayoutUpdateService,
+    private readonly pageLayoutResetService: PageLayoutResetService,
   ) {}
 
   @Query(() => [PageLayoutDTO])
@@ -119,6 +123,42 @@ export class PageLayoutResolver {
       id,
       workspaceId: workspace.id,
       input,
+    });
+  }
+
+  @Mutation(() => PageLayoutDTO)
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.LAYOUTS))
+  async resetPageLayoutToDefault(
+    @Args('id', { type: () => String }) id: string,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+  ): Promise<PageLayoutDTO> {
+    return this.pageLayoutResetService.resetPageLayoutToDefault({
+      id,
+      workspaceId: workspace.id,
+    });
+  }
+
+  @Mutation(() => PageLayoutWidgetDTO)
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.LAYOUTS))
+  async resetPageLayoutWidgetToDefault(
+    @Args('id', { type: () => String }) id: string,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+  ): Promise<PageLayoutWidgetDTO> {
+    return this.pageLayoutResetService.resetPageLayoutWidgetToDefault({
+      id,
+      workspaceId: workspace.id,
+    });
+  }
+
+  @Mutation(() => PageLayoutTabDTO)
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.LAYOUTS))
+  async resetPageLayoutTabToDefault(
+    @Args('id', { type: () => String }) id: string,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+  ): Promise<Omit<PageLayoutTabDTO, 'widgets'>> {
+    return this.pageLayoutResetService.resetPageLayoutTabToDefault({
+      id,
+      workspaceId: workspace.id,
     });
   }
 }

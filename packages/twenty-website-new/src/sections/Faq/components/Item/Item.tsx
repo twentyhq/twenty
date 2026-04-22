@@ -1,19 +1,15 @@
 'use client';
 
 import {
-  Accordion as BaseAccordion,
-  type AccordionTriggerState,
-} from '@base-ui/react/accordion';
-import {
   MinusIcon,
   PlusIcon,
   RectangleFillIcon,
   RectangleOutlineIcon,
 } from '@/icons';
-import { theme } from '@/theme';
-import { styled } from '@linaria/react';
-import { IconButton } from '@/design-system/components';
 import type { FaqQuestionType } from '@/sections/Faq/types/FaqQuestion';
+import { theme } from '@/theme';
+import { Accordion as BaseAccordion } from '@base-ui/react/accordion';
+import { styled } from '@linaria/react';
 
 const QuestionText = styled.span`
   color: ${theme.colors.secondary.text[40]};
@@ -47,14 +43,77 @@ const QuestionIconLayer = styled.span`
 const ToggleContainer = styled.div`
   grid-column: 5;
   margin-top: ${theme.spacing(0.5)};
+`;
 
-  button::after {
-    bottom: 0;
-    content: '';
-    left: 0;
-    position: absolute;
-    right: 0;
-    top: 0;
+const ToggleVisual = styled.span`
+  align-items: center;
+  border: 1px solid ${theme.colors.secondary.border[40]};
+  border-radius: ${theme.radius(2)};
+  display: inline-flex;
+  height: 36px;
+  justify-content: center;
+  position: relative;
+  transition:
+    border-color 0.2s ease,
+    transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+  width: 36px;
+`;
+
+const ToggleIconLayer = styled.span`
+  align-items: center;
+  display: inline-flex;
+  inset: 0;
+  justify-content: center;
+  position: absolute;
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
+
+  &[data-icon='minus'] {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+`;
+
+const RowTrigger = styled.button`
+  background: transparent;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  display: grid;
+  font: inherit;
+  grid-column: 1 / -1;
+  grid-template-columns: subgrid;
+  margin: 0;
+  padding: 0;
+  position: relative;
+  text-align: left;
+  width: 100%;
+
+  &:focus-visible {
+    outline: 1px solid ${theme.colors.highlight[100]};
+    outline-offset: 1px;
+  }
+
+  &:hover ${QuestionText} {
+    color: #ffffff;
+  }
+
+  &:hover ${QuestionIconLayer}[data-layer='outline'] {
+    opacity: 0;
+  }
+
+  &:hover ${QuestionIconLayer}[data-layer='fill'] {
+    opacity: 1;
+  }
+
+  &:hover ${ToggleVisual} {
+    border-color: ${theme.colors.secondary.text[100]};
+    transform: scale(1.08);
+  }
+
+  &:active ${ToggleVisual} {
+    transform: scale(0.96);
   }
 `;
 
@@ -78,6 +137,16 @@ export const ItemRow = styled.div`
     opacity: 1;
   }
 
+  &[data-open] ${ToggleIconLayer}[data-icon='plus'] {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+
+  &[data-open] ${ToggleIconLayer}[data-icon='minus'] {
+    opacity: 1;
+    transform: scale(1);
+  }
+
   @media (min-width: ${theme.breakpoints.md}px) {
     grid-template-columns: 14px 60px 1fr 80px 36px;
     row-gap: ${theme.spacing(4)};
@@ -93,22 +162,6 @@ const Header = styled.h3`
   margin-right: 0;
   margin-top: 0;
   position: relative;
-
-  &:hover ${QuestionText} {
-    color: #ffffff;
-  }
-
-  &:hover ${QuestionIconLayer}[data-layer='outline'] {
-    opacity: 0;
-  }
-
-  &:hover ${QuestionIconLayer}[data-layer='fill'] {
-    opacity: 1;
-  }
-
-  &:hover ${ToggleContainer} button {
-    border-color: ${theme.colors.secondary.text[100]};
-  }
 `;
 
 const QuestionIconContainer = styled.span`
@@ -157,43 +210,41 @@ export function Item({ question, value }: ItemProps) {
   return (
     <BaseAccordion.Item key={value} value={value} render={<ItemRow />}>
       <BaseAccordion.Header render={<Header />}>
-        <QuestionIconContainer aria-hidden>
-          <QuestionIconLayer data-layer="outline">
-            <RectangleOutlineIcon
-              size={14}
-              strokeColor={theme.colors.secondary.text[100]}
-            />
-          </QuestionIconLayer>
-          <QuestionIconLayer data-layer="fill">
-            <RectangleFillIcon
-              size={14}
-              fillColor={theme.colors.secondary.text[100]}
-            />
-          </QuestionIconLayer>
-        </QuestionIconContainer>
+        <BaseAccordion.Trigger render={<RowTrigger type="button" />}>
+          <QuestionIconContainer aria-hidden>
+            <QuestionIconLayer data-layer="outline">
+              <RectangleOutlineIcon
+                size={14}
+                strokeColor={theme.colors.secondary.text[100]}
+              />
+            </QuestionIconLayer>
+            <QuestionIconLayer data-layer="fill">
+              <RectangleFillIcon
+                size={14}
+                fillColor={theme.colors.secondary.text[100]}
+              />
+            </QuestionIconLayer>
+          </QuestionIconContainer>
 
-        <QuestionText>{question.question.text}</QuestionText>
+          <QuestionText>{question.question.text}</QuestionText>
 
-        <ToggleContainer>
-          <BaseAccordion.Trigger
-            render={(props, state: AccordionTriggerState) => {
-              const isOpen = state.open;
-              return (
-                <IconButton
-                  icon={isOpen ? MinusIcon : PlusIcon}
-                  ariaLabel={isOpen ? 'Collapse' : 'Expand'}
-                  borderColor={theme.colors.secondary.border[40]}
-                  iconFillColor="none"
-                  iconSize={12}
-                  iconStrokeColor={theme.colors.secondary.border[80]}
-                  size={36}
-                  onClick={props.onClick}
-                  ariaExpanded={isOpen}
+          <ToggleContainer>
+            <ToggleVisual aria-hidden>
+              <ToggleIconLayer data-icon="plus">
+                <PlusIcon
+                  size={12}
+                  strokeColor={theme.colors.secondary.border[80]}
                 />
-              );
-            }}
-          />
-        </ToggleContainer>
+              </ToggleIconLayer>
+              <ToggleIconLayer data-icon="minus">
+                <MinusIcon
+                  size={12}
+                  strokeColor={theme.colors.secondary.border[80]}
+                />
+              </ToggleIconLayer>
+            </ToggleVisual>
+          </ToggleContainer>
+        </BaseAccordion.Trigger>
       </BaseAccordion.Header>
 
       <BaseAccordion.Panel render={<AnswerWrapper />} keepMounted>

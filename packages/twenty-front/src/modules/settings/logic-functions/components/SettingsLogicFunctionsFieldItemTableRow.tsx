@@ -1,53 +1,65 @@
-import { styled } from '@linaria/react';
-import { type LogicFunction } from '~/generated-metadata/graphql';
+import {
+  type LogicFunctionTableRow,
+  StyledTableRow,
+} from '@/settings/logic-functions/components/SettingsLogicFunctionsTable';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
-import { IconChevronRight } from 'twenty-ui/display';
-import { StyledTableRow } from '@/settings/logic-functions/components/SettingsLogicFunctionsTable';
+import { styled } from '@linaria/react';
 import { useContext } from 'react';
+import {
+  IconChevronRight,
+  IconCode,
+  OverflowingTextWithTooltip,
+} from 'twenty-ui/display';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
-const StyledIconChevronRightContainer = styled.span`
+const StyledIconContainer = styled.span`
   align-items: center;
-  color: ${themeCssVariables.font.color.tertiary};
   display: flex;
+`;
+
+const StyledIconChevronRightContainer = styled(StyledIconContainer)`
+  color: ${themeCssVariables.font.color.light};
 `;
 
 export const SettingsLogicFunctionsFieldItemTableRow = ({
   logicFunction,
-  to,
 }: {
-  logicFunction: LogicFunction;
-  to: string;
+  logicFunction: LogicFunctionTableRow;
 }) => {
   const { theme } = useContext(ThemeContext);
+
   return (
-    <StyledTableRow to={to}>
+    <StyledTableRow to={logicFunction.link}>
       <TableCell
         color={themeCssVariables.font.color.primary}
         gap={themeCssVariables.spacing[2]}
       >
-        {logicFunction.name}
+        <StyledIconContainer>
+          <IconCode size={theme.icon.size.md} />
+        </StyledIconContainer>
+        <OverflowingTextWithTooltip text={logicFunction.name} />
       </TableCell>
-      <TableCell
-        color={themeCssVariables.font.color.primary}
-        gap={themeCssVariables.spacing[2]}
-      ></TableCell>
       <TableCell
         color={themeCssVariables.font.color.secondary}
         gap={themeCssVariables.spacing[2]}
+        align={'right'}
+        whiteSpace="nowrap"
+        overflow="hidden"
       >
-        {logicFunction.runtime}
+        <OverflowingTextWithTooltip text={logicFunction.trigger} />
       </TableCell>
       <TableCell
         align="center"
         padding={`0 ${themeCssVariables.spacing[1]} 0 ${themeCssVariables.spacing[2]}`}
       >
-        <StyledIconChevronRightContainer>
-          <IconChevronRight
-            size={theme.icon.size.md}
-            stroke={theme.icon.stroke.sm}
-          />
-        </StyledIconChevronRightContainer>
+        {logicFunction.link && (
+          <StyledIconChevronRightContainer>
+            <IconChevronRight
+              size={theme.icon.size.md}
+              stroke={theme.icon.stroke.sm}
+            />
+          </StyledIconChevronRightContainer>
+        )}
       </TableCell>
     </StyledTableRow>
   );

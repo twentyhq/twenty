@@ -15,22 +15,6 @@ export const TOO_MANY_RELATION_QUERY_GQL_FIELDS = `
         }
       }
     }
-    favorites {
-      edges {
-        node {
-          id
-          company {
-            id
-          }
-          person {
-            id
-            company {
-              id
-            }
-          }
-        }
-      }
-    }
     noteTargets {
       edges {
         node {
@@ -83,6 +67,19 @@ export const TOO_MANY_RELATION_QUERY_GQL_FIELDS = `
       people {
         edges {
           node {
+            id
+            company {
+              id
+            }
+          }
+        }
+      }
+    }
+    attachments {
+      edges {
+        node {
+          id
+          person {
             id
             company {
               id

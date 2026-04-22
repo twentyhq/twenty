@@ -9,10 +9,8 @@ import { HttpRequestInputZodSchema } from 'src/engine/core-modules/tool/tools/ht
 import { type HttpRequestInput } from 'src/engine/core-modules/tool/tools/http-tool/types/http-request-input.type';
 import { type ToolInput } from 'src/engine/core-modules/tool/types/tool-input.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
-import {
-  type Tool,
-  type ToolExecutionContext,
-} from 'src/engine/core-modules/tool/types/tool.type';
+import { type ToolExecutionContext } from 'src/engine/core-modules/tool/types/tool-execution-context.type';
+import { type Tool } from 'src/engine/core-modules/tool/types/tool.type';
 
 @Injectable()
 export class HttpTool implements Tool {

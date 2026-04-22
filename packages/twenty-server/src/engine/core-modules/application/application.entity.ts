@@ -20,6 +20,7 @@ import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/appli
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { ApplicationVariableEntity } from 'src/engine/core-modules/application/application-variable/application-variable.entity';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
+import { FrontComponentEntity } from 'src/engine/metadata-modules/front-component/entities/front-component.entity';
 import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
@@ -128,6 +129,15 @@ export class ApplicationEntity extends WorkspaceRelatedEntity {
     onDelete: 'CASCADE',
   })
   objects: Relation<ObjectMetadataEntity[]>;
+
+  @OneToMany(
+    () => FrontComponentEntity,
+    (frontComponent) => frontComponent.application,
+    {
+      onDelete: 'CASCADE',
+    },
+  )
+  frontComponents: Relation<FrontComponentEntity[]>;
 
   @OneToMany(
     () => ApplicationVariableEntity,

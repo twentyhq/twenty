@@ -35,11 +35,11 @@ describe('usePageLayoutWithRelationWidgets', () => {
         applicationId: '',
         id: 'tab-1',
         title: 'Fields',
+        isActive: true,
         icon: 'IconList',
         position: 100,
         layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
         pageLayoutId: 'test-layout',
-        isOverridden: false,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
         deletedAt: null,
@@ -47,8 +47,10 @@ describe('usePageLayoutWithRelationWidgets', () => {
           {
             __typename: 'PageLayoutWidget',
             id: 'widget-fields',
+            applicationId: '',
             pageLayoutTabId: 'tab-1',
             title: 'Fields',
+            isActive: true,
             type: WidgetType.FIELDS,
             objectMetadataId: null,
             gridPosition: {
@@ -63,7 +65,6 @@ describe('usePageLayoutWithRelationWidgets', () => {
               configurationType: WidgetConfigurationType.FIELDS,
               viewId: null,
             },
-            isOverridden: false,
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString(),
             deletedAt: null,
@@ -71,8 +72,10 @@ describe('usePageLayoutWithRelationWidgets', () => {
           {
             __typename: 'PageLayoutWidget',
             id: 'widget-notes',
+            applicationId: '',
             pageLayoutTabId: 'tab-1',
             title: 'Notes',
+            isActive: true,
             type: WidgetType.NOTES,
             objectMetadataId: null,
             gridPosition: {
@@ -86,7 +89,6 @@ describe('usePageLayoutWithRelationWidgets', () => {
               __typename: 'NotesConfiguration',
               configurationType: WidgetConfigurationType.NOTES,
             },
-            isOverridden: false,
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString(),
             deletedAt: null,
@@ -94,8 +96,10 @@ describe('usePageLayoutWithRelationWidgets', () => {
           {
             __typename: 'PageLayoutWidget',
             id: 'widget-other',
+            applicationId: '',
             pageLayoutTabId: 'tab-1',
             title: 'Other',
+            isActive: true,
             type: WidgetType.GRAPH,
             objectMetadataId: null,
             gridPosition: {
@@ -115,7 +119,6 @@ describe('usePageLayoutWithRelationWidgets', () => {
               primaryAxisOrderBy: GraphOrderBy.FIELD_ASC,
               displayDataLabel: false,
             },
-            isOverridden: false,
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString(),
             deletedAt: null,
@@ -219,8 +222,10 @@ describe('usePageLayoutWithRelationWidgets', () => {
             {
               __typename: 'PageLayoutWidget',
               id: 'widget-other',
+              applicationId: '',
               pageLayoutTabId: 'tab-1',
               title: 'Other',
+              isActive: true,
               type: WidgetType.GRAPH,
               objectMetadataId: null,
               gridPosition: {
@@ -240,7 +245,6 @@ describe('usePageLayoutWithRelationWidgets', () => {
                 primaryAxisOrderBy: GraphOrderBy.FIELD_ASC,
                 displayDataLabel: false,
               },
-              isOverridden: false,
               createdAt: new Date().toISOString(),
               updatedAt: new Date().toISOString(),
               deletedAt: null,

@@ -3,7 +3,7 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import {
   MessageChannelContactAutoCreationPolicy,
   MessageFolderImportPolicy,
-} from '@/accounts/types/MessageChannel';
+} from 'twenty-shared/types';
 import { SettingsAccountsMessageChannelDetails } from '@/settings/accounts/components/SettingsAccountsMessageChannelDetails';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { MessageChannelVisibility } from '~/generated/graphql';
@@ -27,7 +27,6 @@ const meta: Meta<typeof SettingsAccountsMessageChannelDetails> = {
       excludeGroupEmails: false,
       isSyncEnabled: true,
       visibility: MessageChannelVisibility.SHARE_EVERYTHING,
-      messageFolders: [],
       messageFolderImportPolicy: MessageFolderImportPolicy.ALL_FOLDERS,
     },
   },

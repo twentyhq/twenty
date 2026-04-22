@@ -25,6 +25,7 @@ jobs:
         packages/twenty-server/**
         packages/twenty-front/src/generated/**
         packages/twenty-front/src/generated-metadata/**
+        packages/twenty-front/src/generated-admin/**
         packages/twenty-client-sdk/**
         packages/twenty-emails/**
         packages/twenty-shared/**
@@ -144,15 +145,18 @@ jobs:
           exit 1
       - name: Server / Check for Pending Migrations
         run: |
-          CORE_MIGRATION_OUTPUT=$(npx nx run twenty-server:typeorm migration:generate core-migration-check -d src/database/typeorm/core/core.datasource.ts || true)
+          npx nx database:migrate:generate twenty-server -- --name pending-migration-check || true
 
-          CORE_MIGRATION_FILE=$(ls packages/twenty-server/*core-migration-check.ts 2>/dev/null || echo "")
+          if ! git diff --quiet; then
+            echo "::error::Unexpected migration files were generated. Please run 'npx nx database:migrate:generate twenty-server -- --name <migration-name>' and commit the result."
+            echo ""
+            echo "The following migration changes were detected:"
+            echo "==================================================="
+            git diff
+            echo "==================================================="
+            echo ""
 
-          if [ -n "$CORE_MIGRATION_FILE" ]; then
-            echo "::error::Unexpected migration files were generated. Please create a proper migration manually."
-            echo "$CORE_MIGRATION_OUTPUT"
-
-            rm -f packages/twenty-server/*core-migration-check.ts
+            git checkout -- .
 
             exit 1
           fi
@@ -162,13 +166,14 @@ jobs:
 
           npx nx run twenty-front:graphql:generate
           npx nx run twenty-front:graphql:generate --configuration=metadata
+          npx nx run twenty-front:graphql:generate --configuration=admin
 
-          if ! git diff --quiet -- packages/twenty-front/src/generated packages/twenty-front/src/generated-metadata; then
-            echo "::error::GraphQL schema changes detected. Please run 'npx nx run twenty-front:graphql:generate' and 'npx nx run twenty-front:graphql:generate --configuration=metadata' and commit the changes."
+          if ! git diff --quiet -- packages/twenty-front/src/generated packages/twenty-front/src/generated-metadata packages/twenty-front/src/generated-admin; then
+            echo "::error::GraphQL schema changes detected. Please run the three graphql:generate configurations ('data', 'metadata', 'admin') and commit the changes."
             echo ""
             echo "The following GraphQL schema changes were detected:"
             echo "==================================================="
-            git diff -- packages/twenty-front/src/generated packages/twenty-front/src/generated-metadata
+            git diff -- packages/twenty-front/src/generated packages/twenty-front/src/generated-metadata packages/twenty-front/src/generated-admin
             echo "==================================================="
             echo ""
             HAS_ERRORS=true

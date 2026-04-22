@@ -1,4 +1,4 @@
-import { Container } from '@/design-system/components';
+import { Container, GuideCrosshair } from '@/design-system/components';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
 import type { CSSProperties, ReactNode } from 'react';
@@ -6,6 +6,10 @@ import type { CSSProperties, ReactNode } from 'react';
 const StyledSection = styled.section`
   min-width: 0;
   width: 100%;
+
+  &[data-has-crosshair] {
+    position: relative;
+  }
 `;
 
 const Inner = styled.div`
@@ -28,10 +32,17 @@ const StyledContainer = styled(Container)`
   }
 `;
 
+type EditorialCrosshair = {
+  crossX: string;
+  crossY: string;
+  lineColor?: string;
+};
+
 type RootProps = {
   backgroundColor: string;
   children: ReactNode;
   color: string;
+  crosshair?: EditorialCrosshair;
   mutedColor: string;
 };
 
@@ -39,6 +50,7 @@ export function Root({
   backgroundColor,
   children,
   color,
+  crosshair,
   mutedColor,
 }: RootProps) {
   const cssVariables = {
@@ -47,12 +59,20 @@ export function Root({
 
   return (
     <StyledSection
+      data-has-crosshair={crosshair ? '' : undefined}
       style={{
         ...cssVariables,
         backgroundColor,
         color,
       }}
     >
+      {crosshair ? (
+        <GuideCrosshair
+          crossX={crosshair.crossX}
+          crossY={crosshair.crossY}
+          lineColor={crosshair.lineColor}
+        />
+      ) : null}
       <StyledContainer>
         <Inner>{children}</Inner>
       </StyledContainer>

@@ -1,4 +1,4 @@
-import { defineAgent } from 'twenty-sdk';
+import { defineAgent } from 'twenty-sdk/define';
 
 export const EXAMPLE_AGENT_UNIVERSAL_IDENTIFIER =
   '110bebc2-f116-46b6-a35d-61e91c3c0a43';

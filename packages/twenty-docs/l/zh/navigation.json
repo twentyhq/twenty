@@ -1,24 +1,27 @@
 {
   "tabs": {
+    "gettingStarted": {
+      "label": "开始使用",
+      "groups": {
+        "welcome": {
+          "label": "Welcome"
+        },
+        "coreConcepts": {
+          "label": "Core Concepts"
+        }
+      }
+    },
     "userGuide": {
       "label": "用户指南",
       "groups": {
-        "discoverTwenty": {
-          "label": "发现 Twenty",
-          "groups": {
-            "gettingStartedCapabilities": {
-              "label": "功能"
-            },
-            "gettingStartedHowTos": {
-              "label": "操作指南"
-            }
-          }
+        "userGuideOverview": {
+          "label": "概览"
         },
         "dataModel": {
           "label": "数据模型",
           "groups": {
-            "dataModelCapabilities": {
-              "label": "功能"
+            "dataModelReference": {
+              "label": "Reference"
             },
             "dataModelHowTos": {
               "label": "操作指南"
@@ -28,8 +31,8 @@
         "dataMigration": {
           "label": "数据迁移",
           "groups": {
-            "dataMigrationCapabilities": {
-              "label": "功能"
+            "dataMigrationReference": {
+              "label": "Reference"
             },
             "dataMigrationHowTos": {
               "label": "操作指南"
@@ -39,8 +42,8 @@
         "calendarEmails": {
           "label": "日历与电子邮件",
           "groups": {
-            "calendarEmailsCapabilities": {
-              "label": "功能"
+            "calendarEmailsReference": {
+              "label": "Reference"
             },
             "calendarEmailsHowTos": {
               "label": "操作指南"
@@ -50,8 +53,8 @@
         "workflows": {
           "label": "工作流",
           "groups": {
-            "workflowsCapabilities": {
-              "label": "功能"
+            "workflowsReference": {
+              "label": "Reference"
             },
             "workflowsHowTos": {
               "label": "操作指南",
@@ -75,21 +78,26 @@
         "ai": {
           "label": "AI",
           "groups": {
-            "aiCapabilities": {
-              "label": "功能"
+            "aiReference": {
+              "label": "Reference"
             },
             "aiHowTos": {
               "label": "操作指南"
             }
           }
         },
-        "viewsPipelines": {
-          "label": "视图与管道",
+        "layout": {
+          "label": "布局",
           "groups": {
-            "viewsPipelinesCapabilities": {
-              "label": "功能"
+            "layoutReference": {
+              "label": "Reference",
+              "groups": {
+                "layoutViews": {
+                  "label": "视图"
+                }
+              }
             },
-            "viewsPipelinesHowTos": {
+            "layoutHowTos": {
               "label": "操作指南"
             }
           }
@@ -97,8 +105,8 @@
         "dashboards": {
           "label": "仪表板",
           "groups": {
-            "dashboardsCapabilities": {
-              "label": "功能"
+            "dashboardsReference": {
+              "label": "Reference"
             },
             "dashboardsHowTos": {
               "label": "操作指南"
@@ -108,8 +116,8 @@
         "permissionsAccess": {
           "label": "权限与访问",
           "groups": {
-            "permissionsAccessCapabilities": {
-              "label": "功能"
+            "permissionsAccessReference": {
+              "label": "Reference"
             },
             "permissionsAccessHowTos": {
               "label": "操作指南"
@@ -119,8 +127,8 @@
         "billing": {
           "label": "账单",
           "groups": {
-            "billingCapabilities": {
-              "label": "功能"
+            "billingReference": {
+              "label": "Reference"
             },
             "billingHowTos": {
               "label": "操作指南"
@@ -130,8 +138,8 @@
         "settings": {
           "label": "设置",
           "groups": {
-            "settingsCapabilities": {
-              "label": "功能"
+            "settingsReference": {
+              "label": "Reference"
             },
             "settingsHowTos": {
               "label": "操作指南"
@@ -143,59 +151,20 @@
     "developers": {
       "label": "开发者",
       "groups": {
-        "developersGroup": {
-          "label": "开发者"
+        "developersOverview": {
+          "label": "概览"
         },
-        "extend": {
-          "label": "扩展",
-          "groups": {
-            "apps": {
-              "label": "应用"
-            }
-          }
+        "apps": {
+          "label": "应用"
+        },
+        "api": {
+          "label": "接口"
         },
         "selfHost": {
-          "label": "自托管",
-          "groups": {
-            "selfHostCapabilities": {
-              "label": "功能"
-            }
-          }
+          "label": "自托管"
         },
         "contribute": {
-          "label": "贡献",
-          "groups": {
-            "contributeCapabilities": {
-              "label": "功能",
-              "groups": {
-                "frontendDevelopment": {
-                  "label": "前端开发",
-                  "groups": {
-                    "twentyUi": {
-                      "label": "Twenty UI",
-                      "groups": {
-                        "display": {
-                          "label": "展示"
-                        },
-                        "feedback": {
-                          "label": "反馈"
-                        },
-                        "input": {
-                          "label": "输入"
-                        },
-                        "navigation": {
-                          "label": "导航"
-                        }
-                      }
-                    }
-                  }
-                },
-                "backendDevelopment": {
-                  "label": "后端开发"
-                }
-              }
-            }
-          }
+          "label": "贡献"
         }
       }
     }

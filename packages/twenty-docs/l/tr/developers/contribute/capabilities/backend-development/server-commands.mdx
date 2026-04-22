@@ -1,5 +1,6 @@
 ---
 title: Backend Komutları
+icon: terminal
 ---
 
 ## Faydalı Komutlar
@@ -47,25 +48,8 @@ npx nx run twenty-server:database:reset
 #### Core/Metadata şemalarında (TypeORM) nesneler için
 
 ```bash
-npx nx run twenty-server:typeorm migration:generate src/database/typeorm/core/migrations/nameOfYourMigration -d src/database/typeorm/core/core.datasource.ts
+npx nx run twenty-server:database:migrate:generate
 ```
-
-#### Çalışma Alanı Nesneleri İçin
-
-Çalışma alanı için geçiş dosyaları yoktur; her çalışma alanı için otomatik olarak oluşturulur,
-veritabanında depolanır ve bu komut ile uygulanır.
-
-```bash
-npx nx run twenty-server:command workspace:sync-metadata -f
-```
-
-<Warning>
-
-Bu işlem veritabanını siler, migrasyonları ve tohumlamayı yeniden çalıştırır.
-
-Bu komutu çalıştırmadan önce saklamak istediğiniz verileri yedeklediğinizden emin olun.
-
-</Warning>
 
 ## Teknoloji Yığını
 

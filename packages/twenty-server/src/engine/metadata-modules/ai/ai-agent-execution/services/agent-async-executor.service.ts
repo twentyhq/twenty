@@ -12,25 +12,26 @@ import { type ActorMetadata } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type Repository } from 'typeorm';
 
-import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
+import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
 
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { ToolCategory } from 'twenty-shared/ai';
 import { ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
 import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
+import { countNativeWebSearchCallsFromSteps } from 'src/engine/metadata-modules/ai/ai-billing/utils/count-native-web-search-calls-from-steps.util';
 import { extractCacheCreationTokensFromSteps } from 'src/engine/metadata-modules/ai/ai-billing/utils/extract-cache-creation-tokens.util';
 import { mergeLanguageModelUsage } from 'src/engine/metadata-modules/ai/ai-billing/utils/merge-language-model-usage.util';
 import {
-  AgentException,
-  AgentExceptionCode,
-} from 'src/engine/metadata-modules/ai/ai-agent/agent.exception';
+  AiException,
+  AiExceptionCode,
+} from 'src/engine/metadata-modules/ai/ai.exception';
 import { AGENT_CONFIG } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-config.const';
 import { WORKFLOW_SYSTEM_PROMPTS } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-system-prompts.const';
 import { type AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { repairToolCall } from 'src/engine/metadata-modules/ai/ai-agent/utils/repair-tool-call.util';
 import { AI_TELEMETRY_CONFIG } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-telemetry.const';
-import { AgentModelConfigService } from 'src/engine/metadata-modules/ai/ai-models/services/agent-model-config.service';
+import { AiModelConfigService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-config.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
@@ -45,7 +46,7 @@ export class AgentAsyncExecutorService {
 
   constructor(
     private readonly aiModelRegistryService: AiModelRegistryService,
-    private readonly agentModelConfigService: AgentModelConfigService,
+    private readonly aiModelConfigService: AiModelConfigService,
     private readonly toolRegistry: ToolRegistryService,
     @InjectRepository(RoleTargetEntity)
     private readonly roleTargetRepository: Repository<RoleTargetEntity>,
@@ -169,10 +170,10 @@ export class AgentAsyncExecutorService {
           },
         );
 
-        providerOptions = this.agentModelConfigService.getProviderOptions(
+        providerOptions = this.aiModelConfigService.getProviderOptions(
           registeredModel,
           agent as unknown as Parameters<
-            typeof this.agentModelConfigService.getProviderOptions
+            typeof this.aiModelConfigService.getProviderOptions
           >[1],
         );
       }
@@ -207,6 +208,10 @@ export class AgentAsyncExecutorService {
         textResponse.steps,
       );
 
+      const nativeWebSearchCallCount = countNativeWebSearchCallsFromSteps(
+        textResponse.steps,
+      );
+
       const agentSchema =
         agent?.responseFormat?.type === 'json'
           ? agent.responseFormat.schema
@@ -217,6 +222,7 @@ export class AgentAsyncExecutorService {
           result: { response: textResponse.text },
           usage: textResponse.usage,
           cacheCreationTokens,
+          nativeWebSearchCallCount,
         };
       }
 
@@ -233,9 +239,9 @@ export class AgentAsyncExecutorService {
       });
 
       if (structuredResult.output == null) {
-        throw new AgentException(
+        throw new AiException(
           'Failed to generate structured output from execution results',
-          AgentExceptionCode.AGENT_EXECUTION_FAILED,
+          AiExceptionCode.AGENT_EXECUTION_FAILED,
         );
       }
 
@@ -246,14 +252,15 @@ export class AgentAsyncExecutorService {
           structuredResult.usage,
         ),
         cacheCreationTokens,
+        nativeWebSearchCallCount,
       };
     } catch (error) {
-      if (error instanceof AgentException) {
+      if (error instanceof AiException) {
         throw error;
       }
-      throw new AgentException(
+      throw new AiException(
         error instanceof Error ? error.message : 'Agent execution failed',
-        AgentExceptionCode.AGENT_EXECUTION_FAILED,
+        AiExceptionCode.AGENT_EXECUTION_FAILED,
       );
     }
   }

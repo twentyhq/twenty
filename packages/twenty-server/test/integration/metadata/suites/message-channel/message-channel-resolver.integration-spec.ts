@@ -1,28 +1,10 @@
 import { gql } from 'graphql-tag';
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
-import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
-import { FeatureFlagKey } from 'twenty-shared/types';
 
 import { CONNECTED_ACCOUNT_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/connected-account-data-seeds.constant';
 import { MESSAGE_CHANNEL_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/message-channel-data-seeds.constant';
 
 describe('messageChannelResolver (e2e)', () => {
-  beforeAll(async () => {
-    await updateFeatureFlag({
-      featureFlag: FeatureFlagKey.IS_CONNECTED_ACCOUNT_MIGRATED,
-      value: true,
-      expectToFail: false,
-    });
-  });
-
-  afterAll(async () => {
-    await updateFeatureFlag({
-      featureFlag: FeatureFlagKey.IS_CONNECTED_ACCOUNT_MIGRATED,
-      value: false,
-      expectToFail: false,
-    });
-  });
-
   describe('myMessageChannels', () => {
     it('should return only the current user message channels', async () => {
       const response = await makeMetadataAPIRequest({
@@ -43,9 +25,7 @@ describe('messageChannelResolver (e2e)', () => {
       expect(response.body.errors).toBeUndefined();
 
       const channels = response.body.data.myMessageChannels;
-      const channelIds = channels.map(
-        (channel: { id: string }) => channel.id,
-      );
+      const channelIds = channels.map((channel: { id: string }) => channel.id);
 
       expect(channelIds).toContain(MESSAGE_CHANNEL_DATA_SEED_IDS.JANE);
       expect(channelIds).not.toContain(MESSAGE_CHANNEL_DATA_SEED_IDS.JONY);
@@ -70,9 +50,7 @@ describe('messageChannelResolver (e2e)', () => {
       expect(response.body.errors).toBeUndefined();
 
       const channels = response.body.data.myMessageChannels;
-      const channelIds = channels.map(
-        (channel: { id: string }) => channel.id,
-      );
+      const channelIds = channels.map((channel: { id: string }) => channel.id);
 
       expect(channelIds).toContain(MESSAGE_CHANNEL_DATA_SEED_IDS.JANE);
       expect(channelIds).not.toContain(MESSAGE_CHANNEL_DATA_SEED_IDS.JONY);

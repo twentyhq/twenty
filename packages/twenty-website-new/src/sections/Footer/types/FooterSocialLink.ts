@@ -1,9 +1,8 @@
+export type FooterSocialIconKey = 'discord' | 'github' | 'linkedin' | 'x';
+
 export type FooterSocialLinkType = {
   ariaLabel: string;
-  className?: string;
   href: string;
-  icon: string;
+  icon: FooterSocialIconKey;
   label?: string;
-  showInDesktop: boolean;
-  showInDrawer: boolean;
 };

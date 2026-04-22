@@ -8,7 +8,7 @@ import type { FileUpload } from 'graphql-upload/processRequest.mjs';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { FileWithSignedUrlDTO } from 'src/engine/core-modules/file/dtos/file-with-sign-url.dto';
-import { FileAIChatService } from 'src/engine/core-modules/file/file-ai-chat/services/file-ai-chat.service';
+import { FileAiChatService } from 'src/engine/core-modules/file/file-ai-chat/services/file-ai-chat.service';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -21,12 +21,12 @@ import { streamToBuffer } from 'src/utils/stream-to-buffer';
 @UsePipes(ResolverValidationPipe)
 @UseFilters(PreventNestToAutoLogGraphqlErrorsFilter)
 @MetadataResolver()
-export class FileAIChatResolver {
-  constructor(private readonly fileAIChatService: FileAIChatService) {}
+export class FileAiChatResolver {
+  constructor(private readonly fileAiChatService: FileAiChatService) {}
 
   @Mutation(() => FileWithSignedUrlDTO)
   @UseGuards(SettingsPermissionGuard(PermissionFlagType.UPLOAD_FILE))
-  async uploadAIChatFile(
+  async uploadAiChatFile(
     @AuthWorkspace()
     { id: workspaceId }: WorkspaceEntity,
     @Args({ name: 'file', type: () => GraphQLUpload })
@@ -35,7 +35,7 @@ export class FileAIChatResolver {
     const stream = createReadStream();
     const buffer = await streamToBuffer(stream);
 
-    return await this.fileAIChatService.uploadFile({
+    return await this.fileAiChatService.uploadFile({
       file: buffer,
       filename,
       workspaceId,

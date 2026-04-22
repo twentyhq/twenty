@@ -5,6 +5,7 @@ import {
   type ViewFilterGroupLogicalOperator,
   type ViewFilterOperand,
   type ViewOpenRecordIn,
+  type ViewSortDirection,
   type ViewType,
   type ViewVisibility,
 } from '@/types';
@@ -52,6 +53,11 @@ export type ViewFieldGroupManifest = SyncableEntityOptions & {
   isVisible?: boolean;
 };
 
+export type ViewSortManifest = SyncableEntityOptions & {
+  fieldMetadataUniversalIdentifier: string;
+  direction: ViewSortDirection;
+};
+
 export type ViewManifest = SyncableEntityOptions & {
   name: string;
   objectUniversalIdentifier: string;
@@ -67,4 +73,5 @@ export type ViewManifest = SyncableEntityOptions & {
   filterGroups?: ViewFilterGroupManifest[];
   groups?: ViewGroupManifest[];
   fieldGroups?: ViewFieldGroupManifest[];
+  sorts?: ViewSortManifest[];
 };

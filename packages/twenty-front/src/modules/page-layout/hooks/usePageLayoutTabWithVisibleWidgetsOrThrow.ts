@@ -3,9 +3,11 @@ import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutIn
 import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
 import { buildWidgetVisibilityContext } from '@/page-layout/utils/buildWidgetVisibilityContext';
 import { filterVisibleWidgets } from '@/page-layout/utils/filterVisibleWidgets';
+import { sortWidgetsByVerticalListPosition } from '@/page-layout/utils/sortWidgetsByVerticalListPosition';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { isDefined } from 'twenty-shared/utils';
+import { PageLayoutTabLayoutMode } from '~/generated-metadata/graphql';
 
 export const usePageLayoutTabWithVisibleWidgetsOrThrow = (
   tabId: string,
@@ -25,14 +27,30 @@ export const usePageLayoutTabWithVisibleWidgetsOrThrow = (
     throw new Error('Tab not found');
   }
 
+  const activeWidgets = tab.widgets.filter((widget) => widget.isActive);
+
   if (isPageLayoutInEditMode) {
-    return tab;
+    return {
+      ...tab,
+      widgets:
+        tab.layoutMode === PageLayoutTabLayoutMode.VERTICAL_LIST
+          ? sortWidgetsByVerticalListPosition(activeWidgets)
+          : activeWidgets,
+    };
   }
 
   const context = buildWidgetVisibilityContext({ isMobile, isInSidePanel });
 
+  const visibleWidgets = filterVisibleWidgets({
+    widgets: activeWidgets,
+    context,
+  });
+
   return {
     ...tab,
-    widgets: filterVisibleWidgets({ widgets: tab.widgets, context }),
+    widgets:
+      tab.layoutMode === PageLayoutTabLayoutMode.VERTICAL_LIST
+        ? sortWidgetsByVerticalListPosition(visibleWidgets)
+        : visibleWidgets,
   };
 };

@@ -2,15 +2,16 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import chalk from 'chalk';
-import { isDefined } from 'twenty-shared/utils';
+import { isNonEmptyString } from '@sniptt/guards';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
+import { isDefined } from 'twenty-shared/utils';
 import { In, MoreThanOrEqual, Repository } from 'typeorm';
 
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { GlobalWorkspaceDataSource } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-datasource';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { WorkspaceMigrationRunnerException } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-runner.exception';
 
 export type WorkspaceIteratorArgs = {
   workspaceIds?: string[];
@@ -51,7 +52,6 @@ export class WorkspaceIteratorService {
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
-    private readonly dataSourceService: DataSourceService,
   ) {}
 
   async iterate(args: WorkspaceIteratorArgs): Promise<WorkspaceIteratorReport> {
@@ -81,12 +81,12 @@ export class WorkspaceIteratorService {
 
         await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
           async () => {
-            const workspaceHasDataSource =
-              await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceId(
-                workspaceId,
-              );
+            const workspace = await this.workspaceRepository.findOne({
+              select: ['databaseSchema'],
+              where: { id: workspaceId },
+            });
 
-            const dataSource = isDefined(workspaceHasDataSource)
+            const dataSource = isNonEmptyString(workspace?.databaseSchema)
               ? await this.globalWorkspaceOrmManager.getGlobalWorkspaceDataSource()
               : undefined;
 
@@ -106,18 +106,38 @@ export class WorkspaceIteratorService {
       }
     }
 
-    report.fail.forEach(({ error, workspaceId }) =>
+    report.fail.forEach(({ error, workspaceId }) => {
       this.logger.error(
         `Error in workspace ${workspaceId}: ${error.message}`,
         error.stack,
-      ),
-    );
+      );
+
+      if (error instanceof WorkspaceMigrationRunnerException && error.errors) {
+        for (const [label, innerError] of Object.entries(error.errors)) {
+          if (!isDefined(innerError)) continue;
+
+          if (innerError instanceof Error) {
+            this.logger.error(
+              `Caused by ${label} in workspace ${workspaceId}: ${innerError.message}`,
+              innerError.stack,
+            );
+          } else {
+            this.logger.error(
+              `Caused by ${label} in workspace ${workspaceId}: ${String(innerError)}`,
+            );
+          }
+        }
+      }
+    });
 
     return report;
   }
 
   private async fetchWorkspaceIds(
-    options: Omit<WorkspaceIteratorArgs, 'callback'>,
+    options: Pick<
+      WorkspaceIteratorArgs,
+      'activationStatuses' | 'startFromWorkspaceId' | 'workspaceCountLimit'
+    >,
   ): Promise<string[]> {
     const activationStatuses =
       options.activationStatuses ?? DEFAULT_ACTIVATION_STATUSES;

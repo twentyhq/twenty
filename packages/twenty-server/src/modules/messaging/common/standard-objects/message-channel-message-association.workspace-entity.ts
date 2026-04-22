@@ -5,7 +5,6 @@ import { type FieldTypeAndNameMetadata } from 'src/engine/workspace-manager/util
 import { type EntityRelation } from 'src/engine/workspace-manager/workspace-migration/types/entity-relation.interface';
 import { type MessageDirection } from 'src/modules/messaging/common/enums/message-direction.enum';
 import { type MessageChannelMessageAssociationMessageFolderWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association-message-folder.workspace-entity';
-import { type MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { type MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
 
 const MESSAGE_EXTERNAL_ID_FIELD_NAME = 'messageExternalId';
@@ -17,7 +16,6 @@ export class MessageChannelMessageAssociationWorkspaceEntity extends BaseWorkspa
   messageExternalId: string | null;
   messageThreadExternalId: string | null;
   direction: MessageDirection;
-  messageChannel: EntityRelation<MessageChannelWorkspaceEntity> | null;
   messageChannelId: string;
   message: EntityRelation<MessageWorkspaceEntity> | null;
   messageId: string;

@@ -1,28 +1,10 @@
 import { gql } from 'graphql-tag';
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
-import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
-import { FeatureFlagKey } from 'twenty-shared/types';
 
 import { MESSAGE_CHANNEL_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/message-channel-data-seeds.constant';
 import { MESSAGE_FOLDER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/message-folder-data-seeds.constant';
 
 describe('messageFolderResolver (e2e)', () => {
-  beforeAll(async () => {
-    await updateFeatureFlag({
-      featureFlag: FeatureFlagKey.IS_CONNECTED_ACCOUNT_MIGRATED,
-      value: true,
-      expectToFail: false,
-    });
-  });
-
-  afterAll(async () => {
-    await updateFeatureFlag({
-      featureFlag: FeatureFlagKey.IS_CONNECTED_ACCOUNT_MIGRATED,
-      value: false,
-      expectToFail: false,
-    });
-  });
-
   describe('myMessageFolders', () => {
     it('should return only the current user message folders', async () => {
       const response = await makeMetadataAPIRequest({
@@ -46,9 +28,7 @@ describe('messageFolderResolver (e2e)', () => {
 
       expect(folderIds).toContain(MESSAGE_FOLDER_DATA_SEED_IDS.JANE_INBOX);
       expect(folderIds).toContain(MESSAGE_FOLDER_DATA_SEED_IDS.JANE_SENT);
-      expect(folderIds).not.toContain(
-        MESSAGE_FOLDER_DATA_SEED_IDS.JONY_INBOX,
-      );
+      expect(folderIds).not.toContain(MESSAGE_FOLDER_DATA_SEED_IDS.JONY_INBOX);
     });
 
     it('should filter by messageChannelId', async () => {
@@ -73,9 +53,7 @@ describe('messageFolderResolver (e2e)', () => {
       const folderIds = folders.map((folder: { id: string }) => folder.id);
 
       expect(folderIds).toContain(MESSAGE_FOLDER_DATA_SEED_IDS.JANE_INBOX);
-      expect(folderIds).not.toContain(
-        MESSAGE_FOLDER_DATA_SEED_IDS.JONY_INBOX,
-      );
+      expect(folderIds).not.toContain(MESSAGE_FOLDER_DATA_SEED_IDS.JONY_INBOX);
     });
 
     it('should deny filtering by another user messageChannelId', async () => {

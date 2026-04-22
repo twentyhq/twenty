@@ -1,4 +1,4 @@
-import { defineField, FieldType } from 'twenty-sdk';
+import { defineField, FieldType } from 'twenty-sdk/define';
 import { POST_CARD_UNIVERSAL_IDENTIFIER } from '../objects/post-card.object';
 
 export default defineField({
@@ -10,25 +10,31 @@ export default defineField({
   description: 'Post card category',
   options: [
     {
-      id: 'c1d2e3f4-0001-4000-8000-000000000001',
+      id: 'cd751c81-787d-4581-bc51-efe43f0050a7',
       value: 'PERSONAL',
       label: 'Personal',
       color: 'blue',
       position: 0,
     },
     {
-      id: 'c1d2e3f4-0002-4000-8000-000000000002',
+      id: 'eec437ca-5beb-41a9-a826-c9a5eca2eef4',
       value: 'BUSINESS',
       label: 'Business',
       color: 'green',
       position: 1,
     },
     {
-      id: 'c1d2e3f4-0003-4000-8000-000000000003',
+      id: 'a5baa37d-1047-4972-b6b8-7faae0e3eac1',
       value: 'PROMOTIONAL',
       label: 'Promotional',
       color: 'orange',
       position: 2,
+    },
+    {
+      value: 'OTHER',
+      label: 'Other',
+      color: 'gray',
+      position: 3,
     },
   ],
 });

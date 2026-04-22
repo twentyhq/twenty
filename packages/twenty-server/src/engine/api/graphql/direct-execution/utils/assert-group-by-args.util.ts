@@ -6,7 +6,7 @@ import {
   isString,
 } from 'class-validator';
 
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isEmptyObject } from 'twenty-shared/utils';
 
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
 import {
@@ -68,7 +68,13 @@ export function assertGroupByArgs(
     );
   }
 
-  if ('orderBy' in args && isDefined(args.orderBy) && !isArray(args.orderBy)) {
+  if (
+    'orderBy' in args &&
+    isDefined(args.orderBy) &&
+    !isEmptyObject(args.orderBy) &&
+    !isArray(args.orderBy) &&
+    !isObject(args.orderBy)
+  ) {
     throw new GraphqlDirectExecutionException(
       'Invalid argument: "orderBy" must be an array',
       GraphqlDirectExecutionExceptionCode.INVALID_QUERY_INPUT,
@@ -79,7 +85,9 @@ export function assertGroupByArgs(
   if (
     'orderByForRecords' in args &&
     isDefined(args.orderByForRecords) &&
-    !isArray(args.orderByForRecords)
+    !isEmptyObject(args.orderByForRecords) &&
+    !isArray(args.orderByForRecords) &&
+    !isObject(args.orderByForRecords)
   ) {
     throw new GraphqlDirectExecutionException(
       'Invalid argument: "orderByForRecords" must be an array',

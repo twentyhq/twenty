@@ -99,7 +99,7 @@ export type RecordTableConfiguration = {
 export type FieldConfiguration = {
   configurationType: 'FIELD';
   fieldMetadataId: string;
-  fieldDisplayMode: 'CARD' | 'FIELD' | 'VIEW';
+  fieldDisplayMode: 'CARD' | 'EDITOR' | 'FIELD' | 'VIEW';
 };
 
 export type FieldsConfiguration = {
@@ -151,6 +151,10 @@ export type EmailsConfiguration = {
   configurationType: 'EMAILS';
 };
 
+export type EmailThreadConfiguration = {
+  configurationType: 'EMAIL_THREAD';
+};
+
 export type CalendarConfiguration = {
   configurationType: 'CALENDAR';
 };
@@ -189,4 +193,5 @@ export type PageLayoutWidgetConfiguration =
   | CalendarConfiguration
   | WorkflowConfiguration
   | WorkflowVersionConfiguration
-  | WorkflowRunConfiguration;
+  | WorkflowRunConfiguration
+  | EmailThreadConfiguration;

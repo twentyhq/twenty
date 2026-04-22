@@ -16,9 +16,18 @@ export const COMMAND_MENU_ITEM_FRAGMENT = gql`
     shortLabel
     position
     isPinned
+    payload {
+      ... on PathCommandMenuItemPayload {
+        path
+      }
+      ... on ObjectMetadataCommandMenuItemPayload {
+        objectMetadataItemId
+      }
+    }
     hotKeys
     conditionalAvailabilityExpression
     availabilityType
     availabilityObjectMetadataId
+    pageLayoutId
   }
 `;

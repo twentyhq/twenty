@@ -2,9 +2,7 @@ import { renderHook } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { act } from 'react';
 import { MemoryRouter } from 'react-router-dom';
-import { SIDE_PANEL_COMPONENT_INSTANCE_ID } from '@/side-panel/constants/SidePanelComponentInstanceId';
 import { SIDE_PANEL_CONTEXT_CHIP_GROUPS_DROPDOWN_ID } from '@/side-panel/constants/SidePanelContextChipGroupsDropdownId';
-import { SIDE_PANEL_PREVIOUS_COMPONENT_INSTANCE_ID } from '@/side-panel/constants/SidePanelPreviousComponentInstanceId';
 import { useSidePanelCloseAnimationCompleteCleanup } from '@/side-panel/hooks/useSidePanelCloseAnimationCompleteCleanup';
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
 import { sidePanelPageInfoState } from '@/side-panel/states/sidePanelPageInfoState';
@@ -21,19 +19,12 @@ import { SidePanelPages } from 'twenty-shared/types';
 import { IconList } from 'twenty-ui/display';
 
 const mockCloseDropdown = jest.fn();
-const mockResetContextStoreStates = jest.fn();
 const mockResetSelectedItem = jest.fn();
 const mockEmitSidePanelCloseEvent = jest.fn();
 
 jest.mock('@/ui/layout/dropdown/hooks/useCloseDropdown', () => ({
   useCloseDropdown: () => ({
     closeDropdown: mockCloseDropdown,
-  }),
-}));
-
-jest.mock('@/command-menu/hooks/useResetContextStoreStates', () => ({
-  useResetContextStoreStates: () => ({
-    resetContextStoreStates: mockResetContextStoreStates,
   }),
 }));
 
@@ -162,20 +153,11 @@ describe('useSidePanelCloseAnimationCompleteCleanup', () => {
     });
 
     expect(mockCloseDropdown).toHaveBeenCalledTimes(1);
-    expect(mockResetContextStoreStates).toHaveBeenCalledTimes(2);
     expect(mockResetSelectedItem).toHaveBeenCalledTimes(1);
     expect(mockEmitSidePanelCloseEvent).toHaveBeenCalledTimes(1);
 
     expect(mockCloseDropdown).toHaveBeenCalledWith(
       SIDE_PANEL_CONTEXT_CHIP_GROUPS_DROPDOWN_ID,
-    );
-    expect(mockResetContextStoreStates).toHaveBeenNthCalledWith(
-      1,
-      SIDE_PANEL_COMPONENT_INSTANCE_ID,
-    );
-    expect(mockResetContextStoreStates).toHaveBeenNthCalledWith(
-      2,
-      SIDE_PANEL_PREVIOUS_COMPONENT_INSTANCE_ID,
     );
   });
 });

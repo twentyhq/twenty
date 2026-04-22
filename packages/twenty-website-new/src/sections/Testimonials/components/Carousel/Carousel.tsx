@@ -2,21 +2,12 @@
 
 import { Body, Eyebrow, Heading, IconButton } from '@/design-system/components';
 import type { EyebrowType } from '@/design-system/components/Eyebrow/types/Eyebrow';
-import type { IllustrationType } from '@/design-system/components/Illustration/types/Illustration';
 import { ArrowLeftIcon, ArrowRightIcon } from '@/icons';
 import type { TestimonialCardType } from '@/sections/Testimonials/types/TestimonialCard';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
-import NextImage from 'next/image';
-import { useState } from 'react';
-import { Embed } from '../Embed/Embed';
+import { type ReactNode, useState } from 'react';
 import { Separator } from '../Separator/Separator';
-
-const DATE_FORMATTER = new Intl.DateTimeFormat('en-US', {
-  day: 'numeric',
-  month: 'long',
-  year: 'numeric',
-});
 
 const StyledCarousel = styled.div`
   display: grid;
@@ -28,7 +19,7 @@ const StyledCarousel = styled.div`
   @media (min-width: ${theme.breakpoints.md}px) {
     align-items: stretch;
     column-gap: ${theme.spacing(15)};
-    grid-template-columns: auto auto 1fr;
+    grid-template-columns: auto auto minmax(0, 1fr);
     row-gap: 0;
   }
 `;
@@ -55,7 +46,9 @@ const CounterSlot = styled.div`
   }
 `;
 
-const EmbedSlot = styled.div`
+const VisualSlot = styled.div`
+  align-self: start;
+  justify-self: start;
   order: 2;
 
   @media (min-width: ${theme.breakpoints.md}px) {
@@ -82,9 +75,11 @@ const RightColumn = styled.div`
   display: grid;
   grid-template-columns: 1fr;
   grid-template-rows: auto 1fr auto;
+  min-width: 0;
   row-gap: ${theme.spacing(6)};
 
   @media (min-width: ${theme.breakpoints.md}px) {
+    min-width: 0;
     padding-bottom: ${theme.spacing(8)};
     padding-top: ${theme.spacing(8)};
     row-gap: ${theme.spacing(14)};
@@ -100,11 +95,16 @@ const HeadingWrapper = styled.div`
   opacity: 0;
   pointer-events: none;
   visibility: hidden;
+  transform: translateY(8px);
+  transition:
+    opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 
   &[data-active='true'] {
     opacity: 1;
     pointer-events: auto;
     visibility: visible;
+    transform: translateY(0);
   }
 `;
 
@@ -118,7 +118,6 @@ const FooterRow = styled.div`
   @media (min-width: ${theme.breakpoints.md}px) {
     align-items: center;
     grid-template-columns: auto 1fr;
-    justify-items: end;
   }
 `;
 
@@ -135,55 +134,26 @@ const NavGroup = styled.div`
 `;
 
 const AuthorBlock = styled.div`
-  align-items: center;
-  column-gap: ${theme.spacing(4)};
   display: grid;
-  grid-template-columns: 48px 1fr;
+  grid-template-columns: 1fr;
+  justify-items: start;
   order: 1;
+  row-gap: ${theme.spacing(1)};
+  text-align: left;
 
   @media (min-width: ${theme.breakpoints.md}px) {
+    justify-self: end;
     order: 2;
   }
 `;
 
-const AvatarFrame = styled.div`
-  border-radius: ${theme.radius(0.5)};
-  height: 48px;
-  overflow: hidden;
-  position: relative;
-  width: 48px;
-`;
-
-const AuthorMeta = styled.div`
-  display: grid;
-  grid-template-columns: 1fr;
-  row-gap: ${theme.spacing(2)};
-`;
-
-const NameHandleRow = styled.div`
-  align-items: center;
-  column-gap: ${theme.spacing(2)};
-  display: grid;
-  grid-auto-flow: column;
-  justify-content: start;
-`;
-
-const HandleText = styled.span`
-  border-left: 1px solid ${theme.colors.primary.border[20]};
-  padding-left: ${theme.spacing(2)};
-`;
-
 type CarouselProps = {
+  children: ReactNode;
   eyebrow: EyebrowType;
-  illustration: IllustrationType;
   testimonials: TestimonialCardType[];
 };
 
-export function Carousel({
-  eyebrow,
-  illustration,
-  testimonials,
-}: CarouselProps) {
+export function Carousel({ children, eyebrow, testimonials }: CarouselProps) {
   const [index, setIndex] = useState(0);
 
   const total = testimonials.length;
@@ -192,6 +162,7 @@ export function Carousel({
   const hasPrevious = index > 0;
   const hasNext = index < total - 1;
   const current = testimonials[index];
+  const authorSecondaryLine = current.author.designation ?? null;
 
   const goToPrevious = () => {
     if (hasPrevious) setIndex(index - 1);
@@ -213,9 +184,7 @@ export function Carousel({
             {index + 1}/{total}
           </CounterText>
         </CounterSlot>
-        <EmbedSlot>
-          <Embed illustration={illustration} />
-        </EmbedSlot>
+        <VisualSlot>{children}</VisualSlot>
       </LeftColumn>
 
       <Separator />
@@ -272,33 +241,20 @@ export function Carousel({
           </NavGroup>
 
           <AuthorBlock>
-            <AvatarFrame>
-              <NextImage
-                alt={current.author.avatar.alt || ''}
-                fill
-                sizes="48px"
-                src={current.author.avatar.src}
-                style={{ objectFit: 'cover' }}
-              />
-            </AvatarFrame>
-            <AuthorMeta>
-              <NameHandleRow>
-                <Body
-                  as="span"
-                  body={current.author.name}
-                  size="sm"
-                  weight="medium"
-                />
-                <HandleText>
-                  <Body as="span" body={current.author.handle} size="sm" />
-                </HandleText>
-              </NameHandleRow>
+            <Body
+              as="span"
+              body={current.author.name}
+              size="sm"
+              weight="medium"
+            />
+            {authorSecondaryLine ? (
               <Body
-                as="p"
-                body={{ text: DATE_FORMATTER.format(current.author.date) }}
+                as="span"
+                body={authorSecondaryLine}
                 size="xs"
+                weight="light"
               />
-            </AuthorMeta>
+            ) : null}
           </AuthorBlock>
         </FooterRow>
       </RightColumn>

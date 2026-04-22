@@ -38,6 +38,9 @@ describe('ClientConfigService', () => {
             getAdminFilteredModels: jest.fn().mockReturnValue([]),
             getRecommendedModelIds: jest.fn().mockReturnValue(new Set()),
             getModelConfig: jest.fn().mockReturnValue(undefined),
+            getResolvedProvidersForAdmin: jest.fn().mockReturnValue({}),
+            getDefaultSpeedModel: jest.fn().mockReturnValue(undefined),
+            getDefaultPerformanceModel: jest.fn().mockReturnValue(undefined),
           },
         },
         {

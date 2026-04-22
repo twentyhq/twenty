@@ -1,54 +1,44 @@
-import {
-  type TrustedByClientCountLabelType,
-  type TrustedByLogosType,
-} from '@/sections/TrustedBy/types';
+import { type TrustedByLogosType } from '@/sections/TrustedBy/types';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
-import { ClientCount } from '../ClientCount/ClientCount';
 import { Logo } from '../Logo/Logo';
-
-const StyledLogos = styled.div`
-  align-items: center;
-  display: flex;
-  flex-direction: column;
-  gap: ${theme.spacing(5)};
-  justify-content: center;
-  position: relative;
-  width: 100%;
-
-  @media (min-width: ${theme.breakpoints.md}px) {
-    flex-direction: row;
-    gap: ${theme.spacing(14)};
-  }
-`;
 
 const LogoStrip = styled.div`
   align-items: center;
   display: grid;
-  gap: ${theme.spacing(4)} ${theme.spacing(6)};
-  grid-template-columns: repeat(2, minmax(0, max-content));
+  gap: ${theme.spacing(4)} ${theme.spacing(4)};
+  grid-template-columns: repeat(3, minmax(0, max-content));
+  justify-content: center;
   justify-items: center;
+
+  & > :last-child:nth-child(3n + 1) {
+    grid-column: 2;
+  }
 
   @media (min-width: ${theme.breakpoints.md}px) {
     display: flex;
-    gap: ${theme.spacing(14)};
+    flex-wrap: wrap;
+    gap: ${theme.spacing(8)};
+    justify-content: center;
   }
 `;
 
 type LogosProps = {
-  clientCountLabel: TrustedByClientCountLabelType;
   logos: TrustedByLogosType[];
 };
 
-export function Logos({ clientCountLabel, logos }: LogosProps) {
+export function Logos({ logos }: LogosProps) {
   return (
-    <StyledLogos>
-      <LogoStrip>
-        {logos.map((logo, index) => (
-          <Logo fit={logo.fit} key={`${logo.src}-${index}`} src={logo.src} />
-        ))}
-      </LogoStrip>
-      <ClientCount label={clientCountLabel.text} />
-    </StyledLogos>
+    <LogoStrip>
+      {logos.map((logo, index) => (
+        <Logo
+          fit={logo.fit}
+          grayBrightness={logo.grayBrightness}
+          grayOpacity={logo.grayOpacity}
+          key={`${logo.src}-${index}`}
+          src={logo.src}
+        />
+      ))}
+    </LogoStrip>
   );
 }

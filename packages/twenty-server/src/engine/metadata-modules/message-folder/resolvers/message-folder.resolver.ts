@@ -1,17 +1,11 @@
 import { UseGuards, UseInterceptors } from '@nestjs/common';
 import { Args, Mutation, Query } from '@nestjs/graphql';
 
-import { FeatureFlagKey } from 'twenty-shared/types';
-
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import {
-  FeatureFlagGuard,
-  RequireFeatureFlag,
-} from 'src/engine/guards/feature-flag.guard';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { MessageFolderDTO } from 'src/engine/metadata-modules/message-folder/dtos/message-folder.dto';
@@ -22,7 +16,7 @@ import {
 import { MessageFolderGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/message-folder/interceptors/message-folder-graphql-api-exception.interceptor';
 import { MessageFolderMetadataService } from 'src/engine/metadata-modules/message-folder/message-folder-metadata.service';
 
-@UseGuards(WorkspaceAuthGuard, FeatureFlagGuard)
+@UseGuards(WorkspaceAuthGuard)
 @UseInterceptors(MessageFolderGraphqlApiExceptionInterceptor)
 @MetadataResolver(() => MessageFolderDTO)
 export class MessageFolderResolver {
@@ -32,7 +26,6 @@ export class MessageFolderResolver {
 
   @Query(() => [MessageFolderDTO])
   @UseGuards(NoPermissionGuard)
-  @RequireFeatureFlag(FeatureFlagKey.IS_CONNECTED_ACCOUNT_MIGRATED)
   async myMessageFolders(
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string,
@@ -58,7 +51,6 @@ export class MessageFolderResolver {
 
   @Mutation(() => MessageFolderDTO)
   @UseGuards(NoPermissionGuard)
-  @RequireFeatureFlag(FeatureFlagKey.IS_CONNECTED_ACCOUNT_MIGRATED)
   async updateMessageFolder(
     @Args('input') input: UpdateMessageFolderInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -79,7 +71,6 @@ export class MessageFolderResolver {
 
   @Mutation(() => [MessageFolderDTO])
   @UseGuards(NoPermissionGuard)
-  @RequireFeatureFlag(FeatureFlagKey.IS_CONNECTED_ACCOUNT_MIGRATED)
   async updateMessageFolders(
     @Args('input') input: UpdateMessageFoldersInput,
     @AuthWorkspace() workspace: WorkspaceEntity,

@@ -10,10 +10,10 @@ const buildViewField = (
   id: v4(),
   fieldMetadataId: v4(),
   position: 0,
+  isActive: true,
   isVisible: true,
   size: 100,
   aggregateOperation: null,
-  isOverridden: false,
   ...overrides,
 });
 
@@ -21,10 +21,10 @@ const buildExistingViewField = (overrides: Partial<ViewField>): ViewField => ({
   id: v4(),
   fieldMetadataId: v4(),
   position: 0,
+  isActive: true,
   isVisible: true,
   size: 100,
   aggregateOperation: null,
-  isOverridden: false,
   ...overrides,
 });
 

@@ -7,7 +7,6 @@ import { CacheLockModule } from 'src/engine/core-modules/cache-lock/cache-lock.m
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { RecordPositionModule } from 'src/engine/core-modules/record-position/record-position.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { WorkflowCommonModule } from 'src/modules/workflow/common/workflow-common.module';
 import { DeleteWorkflowRunsCommand } from 'src/modules/workflow/workflow-runner/workflow-run/command/delete-workflow-runs.command';
@@ -23,7 +22,6 @@ import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runne
     RecordPositionModule,
     CacheLockModule,
     MetricsModule,
-    DataSourceModule,
     WorkspaceIteratorModule,
   ],
   providers: [WorkflowRunWorkspaceService, DeleteWorkflowRunsCommand],

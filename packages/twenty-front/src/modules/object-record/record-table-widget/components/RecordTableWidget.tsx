@@ -1,6 +1,15 @@
+import { RecordIndexTableContainerEffect } from '@/object-record/record-index/components/RecordIndexTableContainerEffect';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { RecordTableWidgetSetReadOnlyColumnHeadersEffect } from '@/object-record/record-table-widget/components/RecordTableWidgetSetReadOnlyColumnHeadersEffect';
 import { RecordTableWithWrappers } from '@/object-record/record-table/components/RecordTableWithWrappers';
+import { styled } from '@linaria/react';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
+
+const StyledTableContainer = styled.div`
+  border: 1px solid ${themeCssVariables.border.color.light};
+  border-radius: ${themeCssVariables.border.radius.sm};
+  overflow: hidden;
+`;
 
 export const RecordTableWidget = () => {
   const { objectNameSingular, recordIndexId, viewBarInstanceId } =
@@ -11,11 +20,14 @@ export const RecordTableWidget = () => {
       <RecordTableWidgetSetReadOnlyColumnHeadersEffect
         recordTableId={recordIndexId}
       />
-      <RecordTableWithWrappers
-        recordTableId={recordIndexId}
-        objectNameSingular={objectNameSingular}
-        viewBarId={viewBarInstanceId}
-      />
+      <RecordIndexTableContainerEffect />
+      <StyledTableContainer>
+        <RecordTableWithWrappers
+          recordTableId={recordIndexId}
+          objectNameSingular={objectNameSingular}
+          viewBarId={viewBarInstanceId}
+        />
+      </StyledTableContainer>
     </>
   );
 };

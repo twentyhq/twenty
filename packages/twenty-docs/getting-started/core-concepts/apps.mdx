@@ -1,0 +1,47 @@
+---
+title: Apps
+icon: "cube"
+description: Extend Twenty with code — custom objects, server-side logic, UI components, and AI agents, all as TypeScript packages.
+---
+
+Most CRMs give you a config panel. Twenty gives you a platform. Apps are how developers extend Twenty beyond what the UI offers — defining data models, server-side logic, UI components, and AI capabilities as code, then deploying them to one or more workspaces.
+
+## Why apps exist
+
+Workflows cover no-code automation. But some things need code: a custom pricing engine, a proprietary enrichment pipeline, a compliance check that runs on every record update, a custom UI panel that pulls data from an internal tool.
+
+Apps let you build these as first-class extensions — not brittle scripts talking to an API from outside, but code that runs on the platform with full access to the type system, permission model, and UI.
+
+## What an app can define
+
+An app is a TypeScript package that declares **entities** using the `twenty-sdk`:
+
+| Entity | What it does |
+|--------|-------------|
+| **Objects & Fields** | New data tables and fields on existing objects — same treatment as built-in ones |
+| **Logic Functions** | Server-side TypeScript triggered by HTTP routes, cron schedules, or database events |
+| **Front Components** | Sandboxed React components that render inside Twenty's UI (side panel, widgets, command menu) |
+| **Skills & Agents** | AI capabilities — reusable instructions and autonomous assistants |
+| **Views & Navigation** | Pre-configured list views and sidebar menu items |
+
+Everything is detected via AST analysis at build time — no config files, no registration boilerplate. Put a `export default defineObject(...)` in any `.ts` file and the SDK picks it up.
+
+## How they run
+
+- **Logic functions** execute in isolated Node.js processes, sandboxed from the host. They access data through a typed API client scoped to the app's role permissions.
+- **Front components** run in Web Workers using Remote DOM — sandboxed from the main page but rendering native DOM elements (not iframes).
+- **Permissions** are enforced at the API level. An app only sees what its role allows.
+
+## The developer experience
+
+```bash
+npx create-twenty-app@latest my-app
+cd my-app
+yarn twenty dev
+```
+
+`yarn twenty dev` watches your source files, rebuilds on change, and live-syncs to a local Twenty instance. The typed API client regenerates automatically when the schema changes. When you're ready, `yarn twenty deploy` pushes to production. Apps can also be published to npm and listed in the Twenty marketplace.
+
+<Card title="Build your first app" icon="arrow-right" href="/developers/extend/apps/getting-started">
+  Full walkthrough — scaffold, develop, deploy.
+</Card>

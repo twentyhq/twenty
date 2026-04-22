@@ -32,6 +32,7 @@ import { useResetFocusStackToFocusItem } from '@/ui/utilities/focus/hooks/useRes
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { currentPageLayoutIdState } from '@/page-layout/states/currentPageLayoutIdState';
 import { useStore } from 'jotai';
 import { useCallback, useEffect, useState } from 'react';
 import {
@@ -44,6 +45,7 @@ import { AppBasePath, AppPath, SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { AnalyticsType } from '~/generated-metadata/graphql';
 import { usePageChangeEffectNavigateLocation } from '~/hooks/usePageChangeEffectNavigateLocation';
+import { getPageLayoutIdForLocation } from '~/modules/app/utils/getPageLayoutIdForLocation';
 import { useInitializeQueryParamState } from '~/modules/app/hooks/useInitializeQueryParamState';
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
 import { getPageTitleFromPath } from '~/utils/title-utils';
@@ -146,10 +148,15 @@ export const PageChangeEffect = () => {
     if (!previousLocation || previousLocation !== location.pathname) {
       setPreviousLocation(location.pathname);
       executeTasksOnAnyLocationChange();
-    } else {
-      return;
+
+      const newPageLayoutId = getPageLayoutIdForLocation({
+        location,
+        store,
+      });
+
+      store.set(currentPageLayoutIdState.atom, newPageLayoutId);
     }
-  }, [location, previousLocation, executeTasksOnAnyLocationChange]);
+  }, [location, previousLocation, executeTasksOnAnyLocationChange, store]);
 
   useEffect(() => {
     initializeQueryParamState();

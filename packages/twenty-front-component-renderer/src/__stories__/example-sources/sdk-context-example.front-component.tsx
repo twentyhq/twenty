@@ -1,9 +1,9 @@
-import { useState } from 'react';
+import { defineFrontComponent } from 'twenty-sdk/define';
 import {
-  defineFrontComponent,
   useFrontComponentExecutionContext,
   useUserId,
-} from '@/sdk';
+} from 'twenty-sdk/front-component';
+import { useState } from 'react';
 
 const CARD_STYLE = {
   padding: 24,
@@ -72,7 +72,7 @@ const SdkContextComponent = () => {
             overflow: 'auto',
           }}
         >
-          {JSON.stringify(fullContext, null, 2) ?? 'undefined'}
+          {JSON.stringify(fullContext, null, 2)}
         </pre>
       </div>
 

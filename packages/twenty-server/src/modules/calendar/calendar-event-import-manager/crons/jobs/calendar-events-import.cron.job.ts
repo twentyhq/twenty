@@ -1,22 +1,25 @@
-import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
+import { Logger } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
-import { FeatureFlagKey } from 'twenty-shared/types';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
-import { DataSource, Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 
+import { CalendarChannelSyncStage } from 'twenty-shared/types';
 import { SentryCronMonitor } from 'src/engine/core-modules/cron/sentry-cron-monitor.decorator';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
-import { type CalendarEventListFetchJobData } from 'src/modules/calendar/calendar-event-import-manager/jobs/calendar-event-list-fetch.job';
-import { CalendarEventsImportJob } from 'src/modules/calendar/calendar-event-import-manager/jobs/calendar-events-import.job';
-import { CalendarChannelSyncStage } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
+import {
+  CalendarEventsImportJob,
+  type CalendarEventsImportJobData,
+} from 'src/modules/calendar/calendar-event-import-manager/jobs/calendar-events-import.job';
+import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
+import { isThrottled } from 'src/modules/connected-account/utils/is-throttled';
+import { toIsoStringOrNull } from 'src/utils/date/toIsoStringOrNull';
 
 export const CALENDAR_EVENTS_IMPORT_CRON_PATTERN = '*/1 * * * *';
 
@@ -24,15 +27,16 @@ export const CALENDAR_EVENTS_IMPORT_CRON_PATTERN = '*/1 * * * *';
   queueName: MessageQueue.cronQueue,
 })
 export class CalendarEventsImportCronJob {
+  private readonly logger = new Logger(CalendarEventsImportCronJob.name);
+
   constructor(
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
     @InjectMessageQueue(MessageQueue.calendarQueue)
     private readonly messageQueueService: MessageQueueService,
-    @InjectDataSource()
-    private readonly coreDataSource: DataSource,
+    @InjectRepository(CalendarChannelEntity)
+    private readonly calendarChannelRepository: Repository<CalendarChannelEntity>,
     private readonly exceptionHandlerService: ExceptionHandlerService,
-    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   @Process(CalendarEventsImportCronJob.name)
@@ -49,29 +53,67 @@ export class CalendarEventsImportCronJob {
 
     for (const activeWorkspace of activeWorkspaces) {
       try {
-        const now = new Date().toISOString();
+        const pendingCalendarChannels =
+          await this.calendarChannelRepository.find({
+            where: {
+              workspaceId: activeWorkspace.id,
+              isSyncEnabled: true,
+              syncStage:
+                CalendarChannelSyncStage.CALENDAR_EVENTS_IMPORT_PENDING,
+            },
+          });
 
-        // TODO: remove workspace schema branch once IS_CONNECTED_ACCOUNT_MIGRATED feature flag is removed
-        const isMigrated = await this.featureFlagService.isFeatureEnabled(
-          FeatureFlagKey.IS_CONNECTED_ACCOUNT_MIGRATED,
-          activeWorkspace.id,
+        const calendarChannelsToSchedule = pendingCalendarChannels.filter(
+          (calendarChannel) =>
+            !isThrottled(
+              toIsoStringOrNull(calendarChannel.syncStageStartedAt),
+              calendarChannel.throttleFailureCount,
+            ),
         );
 
-        const [calendarChannels] = isMigrated
-          ? await this.coreDataSource.query(
-              `UPDATE core."calendarChannel" SET "syncStage" = '${CalendarChannelSyncStage.CALENDAR_EVENTS_IMPORT_SCHEDULED}', "syncStageStartedAt" = COALESCE("syncStageStartedAt", '${now}')
-               WHERE "workspaceId" = '${activeWorkspace.id}' AND "isSyncEnabled" = true AND "syncStage" = '${CalendarChannelSyncStage.CALENDAR_EVENTS_IMPORT_PENDING}' RETURNING *`,
-            )
-          : await this.coreDataSource.query(
-              `UPDATE ${getWorkspaceSchemaName(activeWorkspace.id)}."calendarChannel" SET "syncStage" = '${CalendarChannelSyncStage.CALENDAR_EVENTS_IMPORT_SCHEDULED}', "syncStageStartedAt" = COALESCE("syncStageStartedAt", '${now}')
-               WHERE "isSyncEnabled" = true AND "syncStage" = '${CalendarChannelSyncStage.CALENDAR_EVENTS_IMPORT_PENDING}' RETURNING *`,
-            );
+        const throttledCount =
+          pendingCalendarChannels.length - calendarChannelsToSchedule.length;
 
-        for (const calendarChannel of calendarChannels) {
-          await this.messageQueueService.add<CalendarEventListFetchJobData>(
+        if (throttledCount > 0) {
+          this.logger.log(
+            `Skipped ${throttledCount} throttled calendar channels for workspace ${activeWorkspace.id}`,
+          );
+        }
+
+        if (calendarChannelsToSchedule.length === 0) {
+          continue;
+        }
+
+        const calendarChannelIds = calendarChannelsToSchedule.map(
+          (calendarChannel) => calendarChannel.id,
+        );
+
+        const updateResult = await this.calendarChannelRepository
+          .createQueryBuilder()
+          .update()
+          .set({
+            syncStage:
+              CalendarChannelSyncStage.CALENDAR_EVENTS_IMPORT_SCHEDULED,
+            syncStageStartedAt: new Date(),
+          })
+          .where({
+            id: In(calendarChannelIds),
+            workspaceId: activeWorkspace.id,
+            isSyncEnabled: true,
+            syncStage: CalendarChannelSyncStage.CALENDAR_EVENTS_IMPORT_PENDING,
+          })
+          .returning('id')
+          .execute();
+
+        const updatedIds = updateResult.raw.map(
+          (row: { id: string }) => row.id,
+        );
+
+        for (const calendarChannelId of updatedIds) {
+          await this.messageQueueService.add<CalendarEventsImportJobData>(
             CalendarEventsImportJob.name,
             {
-              calendarChannelId: calendarChannel.id,
+              calendarChannelId,
               workspaceId: activeWorkspace.id,
             },
           );

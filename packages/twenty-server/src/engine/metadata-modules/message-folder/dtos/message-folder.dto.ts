@@ -36,9 +36,9 @@ export class MessageFolderDTO {
   @Field()
   isSynced: boolean;
 
-  @IsUUID()
+  @IsString()
   @IsOptional()
-  @Field(() => UUIDScalarType, { nullable: true })
+  @Field(() => String, { nullable: true })
   parentFolderId: string | null;
 
   @IsString()

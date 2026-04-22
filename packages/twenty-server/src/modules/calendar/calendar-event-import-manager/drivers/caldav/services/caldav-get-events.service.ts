@@ -3,7 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { CalDavClientProvider } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/providers/caldav.provider';
 import { parseCalDAVError } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/utils/parse-caldav-error.util';
 import { type GetCalendarEventsResponse } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-get-events.service';
-import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 
 @Injectable()
 export class CalDavGetEventsService {
@@ -18,7 +18,7 @@ export class CalDavGetEventsService {
 
   public async getCalendarEvents(
     connectedAccount: Pick<
-      ConnectedAccountWorkspaceEntity,
+      ConnectedAccountEntity,
       'provider' | 'id' | 'connectionParameters' | 'handle'
     >,
     syncCursor?: string,

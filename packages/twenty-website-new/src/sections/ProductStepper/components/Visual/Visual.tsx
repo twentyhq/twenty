@@ -5,17 +5,34 @@ import { styled } from '@linaria/react';
 import NextImage from 'next/image';
 import { StepperVisualFrame } from '../StepperVisualFrame/StepperVisualFrame';
 
-const PRODUCT_STEPPER_BACKGROUND = '/images/product/stepper/background.png';
-const PRODUCT_STEPPER_SHAPE = '/images/product/stepper/background-shape.png';
+const PRODUCT_STEPPER_BACKGROUND = '/images/product/stepper/background.webp';
+const PRODUCT_STEPPER_SHAPE = '/images/product/stepper/background-shape.webp';
 
 const VisualColumn = styled.div`
   min-width: 0;
   width: 100%;
 
+  @media (max-width: ${theme.breakpoints.md - 1}px) {
+    order: -1;
+  }
+
+  @media (min-width: ${theme.breakpoints.md}px) {
+    align-items: center;
+    align-self: start;
+    display: flex;
+    height: calc(100vh - 4.5rem);
+    justify-content: center;
+    position: sticky;
+    top: 4.5rem;
+  }
+`;
+
+const VisualFrame = styled.div`
+  min-width: 0;
+  width: 100%;
+
   @media (min-width: ${theme.breakpoints.md}px) {
     max-width: 672px;
-    position: sticky;
-    top: ${theme.spacing(10)};
   }
 `;
 
@@ -37,26 +54,28 @@ export function Visual({ activeStepIndex, images }: ProductStepperVisualProps) {
 
   return (
     <VisualColumn>
-      <StepperVisualFrame
-        backgroundSrc={PRODUCT_STEPPER_BACKGROUND}
-        shapeSrc={PRODUCT_STEPPER_SHAPE}
-      >
-        {images.map((image, index) => {
-          if (!image) return null;
+      <VisualFrame>
+        <StepperVisualFrame
+          backgroundSrc={PRODUCT_STEPPER_BACKGROUND}
+          shapeSrc={PRODUCT_STEPPER_SHAPE}
+        >
+          {images.map((image, index) => {
+            if (!image) return null;
 
-          return (
-            <NextImage
-              key={`${image.src}-${index}`}
-              alt={image.alt}
-              className={slideImageClassName}
-              data-active={String(index === activeStepIndex)}
-              fill
-              sizes="(min-width: 921px) 672px, 100vw"
-              src={image.src}
-            />
-          );
-        })}
-      </StepperVisualFrame>
+            return (
+              <NextImage
+                key={`${image.src}-${index}`}
+                alt={image.alt}
+                className={slideImageClassName}
+                data-active={String(index === activeStepIndex)}
+                fill
+                sizes="(min-width: 921px) 50vw, 100vw"
+                src={image.src}
+              />
+            );
+          })}
+        </StepperVisualFrame>
+      </VisualFrame>
     </VisualColumn>
   );
 }

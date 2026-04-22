@@ -1,5 +1,5 @@
+import { defineFrontComponent } from 'twenty-sdk/define';
 import { useState } from 'react';
-import { defineFrontComponent } from '@/sdk';
 
 const SHADCN_CSS = `
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}

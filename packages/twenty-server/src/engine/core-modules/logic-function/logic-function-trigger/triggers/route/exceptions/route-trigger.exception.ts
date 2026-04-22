@@ -13,6 +13,7 @@ export enum RouteTriggerExceptionCode {
   ROUTE_PATH_ALREADY_EXIST = 'ROUTE_PATH_ALREADY_EXIST',
   FORBIDDEN_EXCEPTION = 'FORBIDDEN_EXCEPTION',
   LOGIC_FUNCTION_EXECUTION_ERROR = 'LOGIC_FUNCTION_EXECUTION_ERROR',
+  RATE_LIMIT_EXCEEDED = 'RATE_LIMIT_EXCEEDED',
 }
 
 const getRouteTriggerExceptionUserFriendlyMessage = (
@@ -35,6 +36,8 @@ const getRouteTriggerExceptionUserFriendlyMessage = (
       return msg`You do not have permission to perform this action.`;
     case RouteTriggerExceptionCode.LOGIC_FUNCTION_EXECUTION_ERROR:
       return msg`Logic function execution failed.`;
+    case RouteTriggerExceptionCode.RATE_LIMIT_EXCEEDED:
+      return msg`Too many requests. Please try again later.`;
     default:
       assertUnreachable(code);
   }

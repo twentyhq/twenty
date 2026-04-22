@@ -12,13 +12,13 @@ export {
   createExecuteToolTool,
   executeToolInputSchema,
   type ExecuteToolInput,
-  type ExecuteToolResult,
 } from './execute-tool.tool';
 
 export {
   LOAD_SKILL_TOOL_NAME,
   createLoadSkillTool,
   loadSkillInputSchema,
+  type ListAvailableSkillNamesFunction,
   type LoadSkillFunction,
   type LoadSkillInput,
   type LoadSkillResult,

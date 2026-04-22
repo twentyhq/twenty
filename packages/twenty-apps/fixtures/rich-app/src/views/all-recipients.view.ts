@@ -1,4 +1,4 @@
-import { defineView } from 'twenty-sdk';
+import { defineView } from 'twenty-sdk/define';
 import { ViewType } from 'twenty-shared/types';
 import {
   RECIPIENT_ADDRESS_FIELD_UNIVERSAL_IDENTIFIER,

@@ -10,6 +10,7 @@ import { FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspa
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
 import { UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
+import { validateRoleBelongsToCallerApplication } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-belongs-to-caller-application.util';
 
 @Injectable()
 export class FlatFieldPermissionValidatorService {
@@ -21,6 +22,7 @@ export class FlatFieldPermissionValidatorService {
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
     },
+    buildOptions,
   }: UniversalFlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.fieldPermission
   >): FailedFlatEntityValidation<'fieldPermission', 'create'> {
@@ -63,12 +65,21 @@ export class FlatFieldPermissionValidatorService {
         message: t`Role not found`,
         userFriendlyMessage: msg`Role not found`,
       });
-    } else if (!referencedRole.isEditable) {
-      validationResult.errors.push({
-        code: PermissionsExceptionCode.ROLE_NOT_EDITABLE,
-        message: t`Role is not editable`,
-        userFriendlyMessage: msg`This role cannot be modified because it is a system role. Only custom roles can be edited.`,
-      });
+    } else {
+      validationResult.errors.push(
+        ...validateRoleBelongsToCallerApplication({
+          referencedRole,
+          buildOptions,
+        }),
+      );
+
+      if (!referencedRole.isEditable) {
+        validationResult.errors.push({
+          code: PermissionsExceptionCode.ROLE_NOT_EDITABLE,
+          message: t`Role is not editable`,
+          userFriendlyMessage: msg`This role cannot be modified because it is a system role. Only custom roles can be edited.`,
+        });
+      }
     }
 
     const referencedObjectMetadata = findFlatEntityByUniversalIdentifier({

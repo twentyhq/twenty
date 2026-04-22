@@ -10,6 +10,7 @@ export const cssVariables = css`
     --color-white-10: #FFFFFF1A;
 
     --color-black-100: #1C1C1C;
+    --color-black-hover: #333333;
     --color-black-80: #1C1C1CCC;
     --color-black-60: #1C1C1C99;
     --color-black-40: #1C1C1C66;
@@ -19,6 +20,15 @@ export const cssVariables = css`
 
     --color-blue-100: #4A38F5;
     --color-blue-70: #8174F8;
+
+    --color-pink-100: #ED87FC;
+    --color-pink-70: #F3ABFD;
+
+    --color-yellow-100: #FEFFB7;
+    --color-yellow-70: #FEFFD9;
+
+    --color-green-100: #89FC9A;
+    --color-green-70: #B0FDBE;
 
     --radius-base: 2px;
     --spacing-base: 4px;

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { OAuth2ClientManagerService } from 'src/modules/connected-account/oauth2-client-manager/services/oauth2-client-manager.service';
-import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { type MicrosoftGraphBatchResponse } from 'src/modules/messaging/message-import-manager/drivers/microsoft/services/microsoft-get-messages.interface';
 
 @Injectable()
@@ -13,7 +13,7 @@ export class MicrosoftFetchByBatchService {
   async fetchAllByBatches(
     messageIds: string[],
     connectedAccount: Pick<
-      ConnectedAccountWorkspaceEntity,
+      ConnectedAccountEntity,
       'accessToken' | 'refreshToken' | 'id' | 'provider'
     >,
   ): Promise<{

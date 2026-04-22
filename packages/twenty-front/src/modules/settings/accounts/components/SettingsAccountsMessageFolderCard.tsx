@@ -1,8 +1,8 @@
-import { MessageFolderImportPolicy } from '@/accounts/types/MessageChannel';
 import { SettingsAccountsMessageFoldersCard } from '@/settings/accounts/components/message-folders/SettingsAccountsMessageFoldersCard';
 import { SettingsAccountsMessageFolderIcon } from '@/settings/accounts/components/SettingsAccountsMessageFolderIcon';
 import { SettingsAccountsRadioSettingsCard } from '@/settings/accounts/components/SettingsAccountsRadioSettingsCard';
 import { msg } from '@lingui/core/macro';
+import { MessageFolderImportPolicy } from 'twenty-shared/types';
 
 type SettingsAccountsMessageFolderCardProps = {
   onChange: (nextValue: MessageFolderImportPolicy) => void;

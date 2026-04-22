@@ -1,33 +1,51 @@
 'use client';
 
+import dynamic from 'next/dynamic';
+import { getSharedCompanyLogoUrlFromDomainName } from '@/lib/shared-asset-paths';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
 import {
+  IconBarcode,
   IconBook,
   IconBox,
   IconBrandLinkedin,
   IconBuildingFactory2,
   IconBuildingSkyscraper,
+  IconCalendarClock,
   IconCalendarEvent,
+  IconCalendarPlus,
   IconCheck,
   IconCheckbox,
   IconChevronDown,
   IconCopy,
   IconCreativeCommonsSa,
   IconDotsVertical,
+  IconFlag,
   IconFolder,
   IconHome2,
+  IconLayoutDashboard,
+  IconLayoutKanban,
   IconLayoutSidebarLeftCollapse,
   IconLink,
   IconList,
   IconMap2,
+  IconMapPin,
   IconMessageCircle,
   IconMessageCirclePlus,
   IconMoneybag,
   IconNotes,
   IconPencil,
+  IconChevronUp,
+  IconHeart,
+  IconPlanet,
+  IconPlayerPause,
   IconPlayerPlay,
   IconPlus,
+  IconProgress,
+  IconRefresh,
+  IconRepeat,
+  IconRocket,
+  IconRuler,
   IconSearch,
   IconSettings,
   IconSettingsAutomation,
@@ -37,38 +55,64 @@ import {
   IconUserCircle,
   IconUsers,
   IconVersions,
+  IconWeight,
   IconX,
 } from '@tabler/icons-react';
 import {
+  useCallback,
   useEffect,
   useMemo,
-  useRef,
   useState,
+  type CSSProperties,
   type ReactNode,
-  type PointerEvent as ReactPointerEvent,
 } from 'react';
 import type {
+  HeroDashboardPageDefinition,
   HeroCellEntity,
+  HeroKanbanPageDefinition,
   HeroCellPerson,
   HeroCellRelation,
   HeroCellText,
   HeroCellValue,
-  HeroColumnDef,
-  HeroRowDef,
+  HeroNavbarActionType,
+  HeroPageDefinition,
+  HeroPageType,
   HeroSidebarEntry,
   HeroSidebarFolder,
   HeroSidebarIcon,
   HeroSidebarItem,
+  HeroTablePageDefinition,
+  HeroWorkflowPageDefinition,
   HeroVisualType,
 } from '../../types/HeroHomeData';
 import { Chip, ChipVariant } from './homeVisualChip';
 import { VISUAL_TOKENS } from './homeVisualTokens';
+import { normalizeHeroPage, type HeroPageDefaults } from './normalizeHeroPage';
+import { KanbanPage } from './KanbanPage';
+import { PagePreviewLoader } from './PagePreviewLoader';
+import { TablePage } from './TablePage';
+import { DraggableAppWindow } from './DraggableAppWindow/DraggableAppWindow';
+import { DraggableTerminal } from './DraggableTerminal/DraggableTerminal';
+import { OBJECT_PINNED_ACTIONS } from './objectPinnedActions';
+import {
+  COMPANIES_ITEM_ID,
+  COMPANIES_ITEM_LABEL,
+  CRM_OBJECT_SEQUENCE,
+} from './rocketObject';
+import { WindowOrderProvider } from './WindowOrder/WindowOrderProvider';
 
 const APP_FONT = VISUAL_TOKENS.font.family;
 const DEFAULT_TABLE_WIDTH = 1700;
 const APPLE_WORKSPACE_LOGO_SRC = '/images/home/hero/apple-rainbow-logo.svg';
 const TABLE_CELL_HORIZONTAL_PADDING = 8;
 const HOVER_ACTION_EDGE_INSET = 4;
+const COMPLETED_CREATED_OBJECT_IDS = CRM_OBJECT_SEQUENCE.map(({ id }) => id);
+const COMPLETED_REVEALED_OBJECT_IDS = [
+  ...COMPLETED_CREATED_OBJECT_IDS,
+  COMPANIES_ITEM_ID,
+];
+const COMPLETED_ACTIVE_OBJECT_LABEL =
+  CRM_OBJECT_SEQUENCE.at(-1)?.label ?? COMPANIES_ITEM_LABEL;
 
 const COLORS = {
   accent: VISUAL_TOKENS.accent.accent9,
@@ -103,6 +147,29 @@ const SIDEBAR_TONES: Record<
   red: { background: '#fdd8d8', border: '#f9c6c6', color: '#DC3D43' },
 };
 
+// RGB tuples for each tone's accent color. Used by the object-appearance
+// animation to tint the highlight/ring to match the newly-created object's
+// sidebar icon (e.g. Rocket = violet, Launch = orange, Payload = teal).
+const hexToRgbTuple = (hex: string): string => {
+  const clean = hex.replace('#', '');
+  const expanded =
+    clean.length === 3
+      ? clean
+          .split('')
+          .map((char) => char + char)
+          .join('')
+      : clean;
+  const value = parseInt(expanded, 16);
+  return `${(value >> 16) & 255}, ${(value >> 8) & 255}, ${value & 255}`;
+};
+
+const SIDEBAR_TONE_RGB: Record<string, string> = Object.fromEntries(
+  Object.entries(SIDEBAR_TONES).map(([tone, palette]) => [
+    tone,
+    hexToRgbTuple(palette.color),
+  ]),
+);
+
 const PERSON_TONES: Record<string, { background: string; color: string }> = {
   amber: { background: '#f6e6d7', color: '#7a4f2a' },
   blue: { background: '#dbeafe', color: '#1d4ed8' },
@@ -116,10 +183,68 @@ const PERSON_TONES: Record<string, { background: string; color: string }> = {
 
 const TABLER_STROKE = 1.6;
 const NAVIGATION_TABLER_STROKE = 2;
+const NAVBAR_ACTION_TABLER_STROKE = 2;
 const ROW_HOVER_ACTION_DISABLED_COLUMNS = new Set([
   'createdBy',
   'accountOwner',
 ]);
+
+const NAVBAR_ACTION_ICON_MAP: Record<string, typeof IconPlus> = {
+  box: IconBox,
+  calendarClock: IconCalendarClock,
+  calendarEvent: IconCalendarEvent,
+  calendarPlus: IconCalendarPlus,
+  chevronDown: IconChevronDown,
+  chevronUp: IconChevronUp,
+  dotsVertical: IconDotsVertical,
+  flag: IconFlag,
+  heart: IconHeart,
+  playerPause: IconPlayerPause,
+  plus: IconPlus,
+  repeat: IconRepeat,
+  rocket: IconRocket,
+};
+
+const SalesDashboardPage = dynamic(
+  () =>
+    import('./SalesDashboardPage').then((mod) => ({
+      default: mod.SalesDashboardPage,
+    })),
+  {
+    loading: () => (
+      <PagePreviewLoader ariaLabel="Loading sales dashboard preview" />
+    ),
+    ssr: false,
+  },
+);
+
+const WorkflowPage = dynamic(
+  () =>
+    import('./WorkflowPage').then((mod) => ({
+      default: mod.WorkflowPage,
+    })),
+  {
+    loading: () => <PagePreviewLoader ariaLabel="Loading workflow preview" />,
+    ssr: false,
+  },
+);
+
+const PAGE_RENDERERS = {
+  table: (page: HeroTablePageDefinition) => <TablePage page={page} />,
+  kanban: (page: HeroKanbanPageDefinition) => <KanbanPage page={page} />,
+  dashboard: (page: HeroDashboardPageDefinition) => (
+    <DashboardViewport
+      aria-label={`Interactive preview of the ${page.header.title.toLowerCase()}`}
+    >
+      <SalesDashboardPage page={page} />
+    </DashboardViewport>
+  ),
+  workflow: (page: HeroWorkflowPageDefinition) => <WorkflowPage page={page} />,
+} satisfies {
+  [K in HeroPageType]: (
+    page: Extract<HeroPageDefinition, { type: K }>,
+  ) => ReactNode;
+};
 
 // -- Styled Components --
 
@@ -136,44 +261,43 @@ const StyledHomeVisual = styled.div`
 `;
 
 const ShellScene = styled.div`
+  aspect-ratio: 1 / 1;
   margin: 0 auto;
-  max-width: 980px;
-  transform-origin: center top;
-  transition: transform 0.18s ease;
-  width: 100%;
-`;
-
-const Frame = styled.div`
-  aspect-ratio: 1280 / 832;
-  background-color: ${COLORS.background};
-  background-image: ${VISUAL_TOKENS.background.noisy};
-  border: 1px solid ${COLORS.border};
-  border-radius: 8px;
-  box-shadow: ${COLORS.shadow};
-  overflow: hidden;
+  max-height: 740px;
   position: relative;
+  width: 100%;
+
+  @media (min-width: ${theme.breakpoints.md}px) {
+    aspect-ratio: 1280 / 832;
+  }
 `;
 
 const AppLayout = styled.div`
   display: flex;
+  flex: 1 1 auto;
   height: 100%;
+  min-width: 0;
+  overflow: hidden;
   min-height: 0;
   position: relative;
+  width: 100%;
   z-index: 1;
 `;
 
 const SidebarPanel = styled.aside`
   background: transparent;
   display: grid;
-  flex: 0 0 72px;
-  gap: 12px;
+  flex: 0 0 48px;
+  gap: 8px;
   grid-template-rows: auto auto minmax(0, 1fr);
   min-height: 0;
-  padding: 12px 8px;
-  width: 72px;
+  padding: 8px 4px;
+  width: 48px;
 
   @media (min-width: ${theme.breakpoints.md}px) {
     flex-basis: 220px;
+    gap: 12px;
+    padding: 12px 8px;
     width: 220px;
   }
 `;
@@ -181,18 +305,39 @@ const SidebarPanel = styled.aside`
 const SidebarTopBar = styled.div`
   align-items: center;
   display: grid;
-  gap: 8px;
-  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, 1fr);
   min-height: 32px;
+
+  @media (min-width: ${theme.breakpoints.md}px) {
+    gap: 8px;
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
 `;
 
 const WorkspaceMenu = styled.div`
   align-items: center;
   display: grid;
-  gap: 8px;
-  grid-template-columns: auto 1fr auto;
+  gap: 4px;
+  grid-auto-flow: column;
+  grid-template-columns: auto;
+  justify-content: center;
   min-width: 0;
   padding: 6px 4px;
+
+  > svg:last-child {
+    display: none;
+  }
+
+  @media (min-width: ${theme.breakpoints.md}px) {
+    gap: 8px;
+    grid-auto-flow: row;
+    grid-template-columns: auto 1fr auto;
+    justify-content: stretch;
+
+    > svg:last-child {
+      display: block;
+    }
+  }
 `;
 
 const WorkspaceIcon = styled.div`
@@ -201,12 +346,14 @@ const WorkspaceIcon = styled.div`
   flex: 0 0 auto;
   height: 16px;
   justify-content: center;
-  width: 14px;
+  width: 16px;
 `;
 
 const WorkspaceIconImage = styled.img`
   display: block;
   height: 100%;
+  object-fit: contain;
+  object-position: center;
   width: 100%;
 `;
 
@@ -229,9 +376,13 @@ const WorkspaceLabel = styled.span`
 
 const SidebarTopActions = styled.div`
   align-items: center;
-  display: grid;
+  display: none;
   gap: 2px;
   grid-auto-flow: column;
+
+  @media (min-width: ${theme.breakpoints.md}px) {
+    display: grid;
+  }
 `;
 
 const SidebarIconButton = styled.div`
@@ -247,12 +398,15 @@ const SidebarControls = styled.div`
   align-items: center;
   display: grid;
   gap: 8px;
-  grid-template-columns: auto 1fr;
+  grid-auto-flow: column;
+  grid-template-columns: auto;
+  justify-content: center;
   min-width: 0;
 
   @media (min-width: ${theme.breakpoints.md}px) {
     display: flex;
     gap: 12px;
+    grid-auto-flow: row;
     justify-content: space-between;
   }
 `;
@@ -261,16 +415,19 @@ const SegmentedRail = styled.div`
   background: #fcfcfccc;
   border: 1px solid ${COLORS.border};
   border-radius: 40px;
-  display: grid;
+  display: none;
   gap: 2px;
   grid-auto-flow: column;
   padding: 3px;
+
+  @media (min-width: ${theme.breakpoints.md}px) {
+    display: grid;
+  }
 `;
 
 const Segment = styled.div<{ $selected?: boolean }>`
   align-items: center;
-  background: ${({ $selected }) =>
-    $selected ? '#0000000a' : 'transparent'};
+  background: ${({ $selected }) => ($selected ? '#0000000a' : 'transparent')};
   border-radius: 16px;
   display: flex;
   height: 22px;
@@ -323,12 +480,19 @@ const SidebarScroll = styled.div`
   flex-direction: column;
   gap: 2px;
   min-height: 0;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
 `;
 
 const SidebarSection = styled.div`
   display: grid;
   gap: 2px;
+  padding-bottom: 8px;
 `;
 
 const SidebarSectionLabel = styled.span<{ $workspace?: boolean }>`
@@ -338,8 +502,7 @@ const SidebarSectionLabel = styled.span<{ $workspace?: boolean }>`
   font-size: 11px;
   font-weight: 600;
   line-height: 1;
-  padding: ${({ $workspace }) =>
-    $workspace ? '4px 4px 8px' : '0 4px 4px'};
+  padding: ${({ $workspace }) => ($workspace ? '4px 4px 8px' : '0 4px 4px')};
 
   @media (min-width: ${theme.breakpoints.md}px) {
     display: block;
@@ -351,6 +514,7 @@ const SidebarItemRow = styled.div<{
   $depth?: number;
   $interactive?: boolean;
   $withBranch?: boolean;
+  $highlighted?: boolean;
 }>`
   align-items: center;
   background: ${({ $active }) =>
@@ -358,19 +522,78 @@ const SidebarItemRow = styled.div<{
   border-radius: 4px;
   display: grid;
   gap: 0;
-  grid-template-columns: ${({ $withBranch }) =>
-    $withBranch ? '9px minmax(0, 1fr) auto' : 'minmax(0, 1fr) auto'};
+  grid-template-columns: auto;
+  justify-content: center;
   height: 28px;
-  padding: 0 2px 0 ${({ $depth = 0 }) => `${$depth === 0 ? 4 : 11}px`};
+  padding: 0;
   position: relative;
   text-decoration: none;
   transition: background-color 0.14s ease;
+  animation: ${({ $highlighted }) =>
+    $highlighted
+      ? 'heroObjectAppearRow 1800ms cubic-bezier(0.34, 1.56, 0.64, 1) both'
+      : 'none'};
+  transform-origin: left center;
+
+  @media (min-width: ${theme.breakpoints.md}px) {
+    grid-template-columns: ${({ $withBranch }) =>
+      $withBranch ? '9px minmax(0, 1fr) auto' : 'minmax(0, 1fr) auto'};
+    justify-content: stretch;
+    padding: 0 2px 0 ${({ $depth = 0 }) => `${$depth === 0 ? 4 : 11}px`};
+  }
 
   &:hover {
     background: ${({ $active, $interactive }) =>
       $active || $interactive
         ? VISUAL_TOKENS.background.transparent.medium
         : 'transparent'};
+  }
+
+  @keyframes heroObjectAppearRow {
+    0% {
+      background: rgba(var(--hero-highlight-rgb, 237, 95, 0), 0);
+      box-shadow:
+        0 0 0 0 rgba(var(--hero-highlight-rgb, 237, 95, 0), 0),
+        0 0 0 0 rgba(var(--hero-highlight-rgb, 237, 95, 0), 0);
+      opacity: 0;
+      transform: translateX(-32px) translateY(-6px) scale(0.6);
+    }
+    16% {
+      background: rgba(var(--hero-highlight-rgb, 237, 95, 0), 0.55);
+      box-shadow:
+        0 0 0 6px rgba(var(--hero-highlight-rgb, 237, 95, 0), 0.4),
+        0 12px 28px -6px rgba(var(--hero-highlight-rgb, 237, 95, 0), 0.55);
+      opacity: 1;
+      transform: translateX(0) translateY(0) scale(1.18);
+    }
+    32% {
+      background: rgba(var(--hero-highlight-rgb, 237, 95, 0), 0.42);
+      box-shadow:
+        0 0 0 12px rgba(var(--hero-highlight-rgb, 237, 95, 0), 0.24),
+        0 10px 22px -6px rgba(var(--hero-highlight-rgb, 237, 95, 0), 0.38);
+      transform: translateX(0) scale(0.97);
+    }
+    50% {
+      background: rgba(var(--hero-highlight-rgb, 237, 95, 0), 0.28);
+      box-shadow:
+        0 0 0 18px rgba(var(--hero-highlight-rgb, 237, 95, 0), 0.12),
+        0 6px 16px -6px rgba(var(--hero-highlight-rgb, 237, 95, 0), 0.22);
+      transform: translateX(0) scale(1.02);
+    }
+    72% {
+      background: rgba(var(--hero-highlight-rgb, 237, 95, 0), 0.16);
+      box-shadow:
+        0 0 0 22px rgba(var(--hero-highlight-rgb, 237, 95, 0), 0),
+        0 0 0 0 rgba(var(--hero-highlight-rgb, 237, 95, 0), 0);
+      transform: translateX(0) scale(1);
+    }
+    100% {
+      background: ${VISUAL_TOKENS.background.transparent.medium};
+      box-shadow:
+        0 0 0 0 rgba(var(--hero-highlight-rgb, 237, 95, 0), 0),
+        0 0 0 0 rgba(var(--hero-highlight-rgb, 237, 95, 0), 0);
+      transform: translateX(0) scale(1);
+    }
   }
 `;
 
@@ -386,13 +609,20 @@ const SidebarItemRowLink = styled.a<{
   border-radius: 4px;
   display: grid;
   gap: 0;
-  grid-template-columns: ${({ $withBranch }) =>
-    $withBranch ? '9px minmax(0, 1fr) auto' : 'minmax(0, 1fr) auto'};
+  grid-template-columns: auto;
+  justify-content: center;
   height: 28px;
-  padding: 0 2px 0 ${({ $depth = 0 }) => `${$depth === 0 ? 4 : 11}px`};
+  padding: 0;
   position: relative;
   text-decoration: none;
   transition: background-color 0.14s ease;
+
+  @media (min-width: ${theme.breakpoints.md}px) {
+    grid-template-columns: ${({ $withBranch }) =>
+      $withBranch ? '9px minmax(0, 1fr) auto' : 'minmax(0, 1fr) auto'};
+    justify-content: stretch;
+    padding: 0 2px 0 ${({ $depth = 0 }) => `${$depth === 0 ? 4 : 11}px`};
+  }
 
   &:hover {
     background: ${({ $active, $interactive }) =>
@@ -406,8 +636,13 @@ const SidebarIconSurface = styled.div<{
   $background: string;
   $border: string;
   $color: string;
+  $pulse?: boolean;
 }>`
   align-items: center;
+  animation: ${({ $pulse }) =>
+    $pulse
+      ? 'heroObjectAppearIcon 1400ms cubic-bezier(0.34, 1.7, 0.64, 1) both'
+      : 'none'};
   background: ${({ $background }) => $background};
   border: 1px solid ${({ $border }) => $border};
   border-radius: 4px;
@@ -418,13 +653,35 @@ const SidebarIconSurface = styled.div<{
   justify-content: center;
   position: relative;
   width: 16px;
+
+  @keyframes heroObjectAppearIcon {
+    0% {
+      transform: scale(0.35) rotate(-18deg);
+    }
+    30% {
+      transform: scale(1.45) rotate(8deg);
+    }
+    55% {
+      transform: scale(0.9) rotate(-4deg);
+    }
+    80% {
+      transform: scale(1.06) rotate(2deg);
+    }
+    100% {
+      transform: scale(1) rotate(0deg);
+    }
+  }
 `;
 
 const SidebarItemText = styled.div`
-  align-items: center;
-  display: flex;
-  gap: 2px;
+  display: none;
   min-width: 0;
+
+  @media (min-width: ${theme.breakpoints.md}px) {
+    align-items: center;
+    display: flex;
+    gap: 2px;
+  }
 `;
 
 const SidebarItemLabel = styled.span<{ $active?: boolean }>`
@@ -461,9 +718,11 @@ const SidebarItemMeta = styled.span`
   }
 `;
 
-const SidebarChevron = styled.div`
+const SidebarChevron = styled.div<{ $expanded?: boolean }>`
   color: ${COLORS.textTertiary};
   display: none;
+  transform: rotate(${({ $expanded }) => ($expanded ? '0deg' : '-90deg')});
+  transition: transform 0.16s ease;
 
   @media (min-width: ${theme.breakpoints.md}px) {
     display: flex;
@@ -538,7 +797,7 @@ const SidebarAvatar = styled.div<{
 
 const RightPane = styled.div`
   display: flex;
-  flex: 1 1 auto;
+  flex: 1 1 0;
   flex-direction: column;
   gap: 12px;
   min-height: 0;
@@ -553,18 +812,22 @@ const RightPane = styled.div`
 const NavbarBar = styled.div`
   align-items: center;
   background: transparent;
-  display: flex;
+  display: grid;
   flex: 0 0 32px;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
   height: 32px;
-  justify-content: space-between;
   min-width: 0;
+  width: 100%;
 `;
 
 const Breadcrumb = styled.div`
   align-items: center;
   display: flex;
+  flex: 1 1 auto;
   gap: 2px;
   min-width: 0;
+  overflow: hidden;
 `;
 
 const BreadcrumbTag = styled.div`
@@ -574,18 +837,6 @@ const BreadcrumbTag = styled.div`
   height: 20px;
   min-width: 0;
   padding: 0 2px;
-`;
-
-const AccentIconSurface = styled.div`
-  align-items: center;
-  background: ${COLORS.accentSurface};
-  border: 1px solid ${COLORS.accentBorder};
-  border-radius: 4px;
-  color: ${COLORS.accent};
-  display: flex;
-  height: 16px;
-  justify-content: center;
-  width: 16px;
 `;
 
 const CrumbLabel = styled.span`
@@ -603,12 +854,18 @@ const CrumbLabel = styled.span`
 const NavbarActions = styled.div`
   align-items: center;
   display: flex;
+  flex: 0 1 auto;
   gap: 8px;
+  justify-self: end;
+  max-width: 100%;
+  min-width: 0;
   pointer-events: none;
 `;
 
 const DesktopOnlyNavbarAction = styled.div`
   display: none;
+  flex: 0 1 auto;
+  min-width: 0;
 
   @media (min-width: ${theme.breakpoints.md}px) {
     display: block;
@@ -617,18 +874,23 @@ const DesktopOnlyNavbarAction = styled.div`
 
 const NAVBAR_ACTION_BORDER = 'rgba(0, 0, 0, 0.08)';
 
-const NavbarActionButton = styled.div`
+const NavbarActionButton = styled.div<{ $iconOnly?: boolean }>`
   align-items: center;
   background: transparent;
   border: 1px solid ${NAVBAR_ACTION_BORDER};
   border-radius: ${VISUAL_TOKENS.border.radius.sm};
   display: inline-flex;
+  flex: 0 1 auto;
   font-family: ${APP_FONT};
   font-size: ${VISUAL_TOKENS.font.size.md};
   font-weight: ${VISUAL_TOKENS.font.weight.medium};
   gap: ${VISUAL_TOKENS.spacing[1]};
   height: 24px;
-  padding: 0 ${VISUAL_TOKENS.spacing[2]};
+  justify-content: center;
+  min-width: ${({ $iconOnly }) => ($iconOnly ? '24px' : '0')};
+  max-width: 100%;
+  padding: ${({ $iconOnly }) =>
+    $iconOnly ? '0' : `0 ${VISUAL_TOKENS.spacing[2]}`};
   white-space: nowrap;
 `;
 
@@ -646,7 +908,21 @@ const NavbarActionLabel = styled.span<{ $color?: string }>`
   font-size: inherit;
   font-weight: inherit;
   line-height: 1.4;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
   white-space: nowrap;
+`;
+
+const DesktopOnlyNavbarTrailing = styled.div`
+  align-items: center;
+  display: none;
+  gap: ${VISUAL_TOKENS.spacing[1]};
+  height: 100%;
+
+  @media (min-width: ${theme.breakpoints.md}px) {
+    display: inline-flex;
+  }
 `;
 
 const NavbarActionSeparator = styled.div`
@@ -654,6 +930,38 @@ const NavbarActionSeparator = styled.div`
   border-radius: 56px;
   height: 100%;
   width: 1px;
+`;
+
+// Pinned action buttons register to the left of the New Record button once
+// the chat reveals an object. Tighter padding/gap than the default navbar
+// buttons so multiple commands can sit side-by-side. Entrance animation
+// cascades left-to-right via --pinned-action-index so buttons feel like
+// they're landing one after the other.
+const PinnedActionButton = styled(NavbarActionButton)`
+  animation: pinnedActionIn 340ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: calc(var(--pinned-action-index, 0) * 90ms);
+  display: none;
+  gap: 4px;
+  padding: 0 6px;
+
+  @media (min-width: ${theme.breakpoints.md}px) {
+    display: inline-flex;
+  }
+
+  @keyframes pinnedActionIn {
+    from {
+      opacity: 0;
+      transform: translateY(-6px) scale(0.94);
+    }
+    60% {
+      opacity: 1;
+      transform: translateY(1px) scale(1.02);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
 `;
 
 const IndexSurface = styled.div`
@@ -717,12 +1025,16 @@ const TinyDot = styled.div`
 
 const ViewActions = styled.div`
   align-items: center;
-  display: flex;
+  display: none;
   flex: 0 0 auto;
   gap: 2px;
   margin-left: auto;
   position: relative;
   z-index: 1;
+
+  @media (min-width: ${theme.breakpoints.md}px) {
+    display: flex;
+  }
 `;
 
 const ViewAction = styled.span`
@@ -742,10 +1054,23 @@ const ViewAction = styled.span`
 const TableShell = styled.div`
   display: flex;
   flex: 1 1 auto;
-  min-width: 0;
   min-height: 0;
+  min-width: 0;
   overflow: hidden;
   width: 100%;
+`;
+
+const DashboardViewport = styled.div`
+  flex: 1 1 auto;
+  min-height: 0;
+  min-width: 0;
+  overflow: auto;
+  scrollbar-width: none;
+  width: 100%;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
 `;
 
 const GripRail = styled.div`
@@ -1002,8 +1327,9 @@ const HoverActions = styled.div<{ $rightInset?: number; $visible: boolean }>`
   padding: 0 4px;
   pointer-events: none;
   position: absolute;
-  right: ${({ $rightInset = HOVER_ACTION_EDGE_INSET - TABLE_CELL_HORIZONTAL_PADDING }) =>
-    `${$rightInset}px`};
+  right: ${({
+    $rightInset = HOVER_ACTION_EDGE_INSET - TABLE_CELL_HORIZONTAL_PADDING,
+  }) => `${$rightInset}px`};
   top: 4px;
   transform: translateX(${({ $visible }) => ($visible ? '0' : '4px')});
   transition:
@@ -1075,12 +1401,16 @@ const FaviconImage = styled.img`
 
 const TABLER_ICON_MAP: Record<string, typeof IconBuildingSkyscraper> = {
   book: IconBook,
-  box: IconBox,
   buildingSkyscraper: IconBuildingSkyscraper,
+  calendarEvent: IconCalendarEvent,
   checkbox: IconCheckbox,
   folder: IconFolder,
+  layoutDashboard: IconLayoutDashboard,
+  mapPin: IconMapPin,
   notes: IconNotes,
+  planet: IconPlanet,
   playerPlay: IconPlayerPlay,
+  rocket: IconRocket,
   settings: IconSettings,
   settingsAutomation: IconSettingsAutomation,
   targetArrow: IconTargetArrow,
@@ -1095,11 +1425,20 @@ const HEADER_ICON_MAP: Record<string, typeof IconBuildingSkyscraper> = {
   arr: IconMoneybag,
   createdBy: IconCreativeCommonsSa,
   employees: IconUsers,
+  heightMeters: IconRuler,
   icp: IconTarget,
   industry: IconBuildingFactory2,
+  launchDate: IconCalendarEvent,
   linkedin: IconBrandLinkedin,
   mainContact: IconUser,
+  manufacturer: IconBuildingFactory2,
+  massKg: IconWeight,
+  name: IconRocket,
   opportunities: IconTargetArrow,
+  reusable: IconRefresh,
+  serialNumber: IconBarcode,
+  status: IconProgress,
+  targetOrbit: IconPlanet,
   url: IconLink,
 };
 
@@ -1125,6 +1464,12 @@ function sanitizeURL(link: string | null | undefined) {
 }
 
 function getLogoUrlFromDomainName(domainName?: string): string | undefined {
+  const sharedLogoUrl = getSharedCompanyLogoUrlFromDomainName(domainName);
+
+  if (sharedLogoUrl) {
+    return sharedLogoUrl;
+  }
+
   const sanitizedDomain = sanitizeURL(domainName);
 
   return sanitizedDomain
@@ -1136,9 +1481,17 @@ function isFolder(entry: HeroSidebarEntry): entry is HeroSidebarFolder {
   return 'items' in entry;
 }
 
+function hasRenderablePage(
+  item: HeroSidebarItem,
+  pageDefaults: HeroPageDefaults,
+): boolean {
+  return normalizeHeroPage(item, pageDefaults) !== null;
+}
+
 function findActiveItem(
   entries: HeroSidebarEntry[],
   activeLabel: string,
+  pageDefaults: HeroPageDefaults,
 ): HeroSidebarItem | undefined {
   for (const entry of entries) {
     if (isFolder(entry)) {
@@ -1160,17 +1513,17 @@ function findActiveItem(
     }
 
     if (entry.label === activeLabel) {
-      const entryHasTable =
-        (entry.columns?.length ?? 0) > 0 || (entry.rows?.length ?? 0) > 0;
-
-      if (!entryHasTable && entry.children && entry.children.length > 0) {
-        const firstChildWithTable = entry.children.find(
-          (child) =>
-            (child.columns?.length ?? 0) > 0 || (child.rows?.length ?? 0) > 0,
+      if (
+        !hasRenderablePage(entry, pageDefaults) &&
+        entry.children &&
+        entry.children.length > 0
+      ) {
+        const firstChildWithRenderablePage = entry.children.find((child) =>
+          hasRenderablePage(child, pageDefaults),
         );
 
-        if (firstChildWithTable) {
-          return firstChildWithTable;
+        if (firstChildWithRenderablePage) {
+          return firstChildWithRenderablePage;
         }
       }
 
@@ -1179,6 +1532,116 @@ function findActiveItem(
   }
 
   return undefined;
+}
+
+function findContainingFolderId(
+  entries: HeroSidebarEntry[],
+  label: string,
+): string | undefined {
+  for (const entry of entries) {
+    if (!isFolder(entry)) {
+      continue;
+    }
+
+    if (
+      entry.items.some(
+        (item) =>
+          item.label === label ||
+          item.children?.some((child) => child.label === label) === true,
+      )
+    ) {
+      return entry.id;
+    }
+  }
+
+  return undefined;
+}
+
+function renderPageDefinition(
+  page: HeroPageDefinition,
+  onNavigateToLabel?: (label: string) => void,
+  pageKey?: string,
+) {
+  switch (page.type) {
+    case 'table':
+      return (
+        <TablePage
+          key={pageKey}
+          page={page}
+          onNavigateToLabel={onNavigateToLabel}
+        />
+      );
+    case 'kanban':
+      return PAGE_RENDERERS.kanban(page);
+    case 'dashboard':
+      return PAGE_RENDERERS.dashboard(page);
+    case 'workflow':
+      return PAGE_RENDERERS.workflow(page);
+  }
+}
+
+function getNavbarActionToneColor(
+  tone: HeroNavbarActionType['labelTone'],
+): string {
+  if (tone === 'primary') {
+    return VISUAL_TOKENS.font.color.primary;
+  }
+
+  if (tone === 'tertiary') {
+    return VISUAL_TOKENS.font.color.light;
+  }
+
+  return VISUAL_TOKENS.font.color.secondary;
+}
+
+function renderNavbarAction(
+  action: HeroNavbarActionType,
+  index: number,
+): ReactNode {
+  const ActionIcon = NAVBAR_ACTION_ICON_MAP[action.icon];
+  const isIconOnly =
+    action.variant === 'icon' || (!action.label && !action.trailingLabel);
+  const labelColor = getNavbarActionToneColor(action.labelTone);
+
+  const button = (
+    <NavbarActionButton
+      key={`${action.icon}-${index}-${action.label ?? action.trailingLabel ?? ''}`}
+      $iconOnly={isIconOnly}
+    >
+      {ActionIcon ? (
+        <NavbarActionIconWrap>
+          <ActionIcon
+            aria-hidden
+            size={VISUAL_TOKENS.icon.size.sm}
+            stroke={NAVBAR_ACTION_TABLER_STROKE}
+          />
+        </NavbarActionIconWrap>
+      ) : null}
+      {action.label ? (
+        <NavbarActionLabel $color={labelColor}>
+          {action.label}
+        </NavbarActionLabel>
+      ) : null}
+      {action.trailingLabel ? (
+        <DesktopOnlyNavbarTrailing>
+          <NavbarActionSeparator />
+          <NavbarActionLabel $color={VISUAL_TOKENS.font.color.light}>
+            {action.trailingLabel}
+          </NavbarActionLabel>
+        </DesktopOnlyNavbarTrailing>
+      ) : null}
+    </NavbarActionButton>
+  );
+
+  if (action.desktopOnly) {
+    return (
+      <DesktopOnlyNavbarAction key={`desktop-${index}`}>
+        {button}
+      </DesktopOnlyNavbarAction>
+    );
+  }
+
+  return button;
 }
 
 // -- Small icon wrappers --
@@ -1266,6 +1729,20 @@ function LinkMini({ color = COLORS.textTertiary, size = 16 }: MiniIconProps) {
 function ListMini({ color = COLORS.textSecondary, size = 16 }: MiniIconProps) {
   return (
     <IconList aria-hidden color={color} size={size} stroke={TABLER_STROKE} />
+  );
+}
+
+function KanbanMini({
+  color = COLORS.textSecondary,
+  size = 16,
+}: MiniIconProps) {
+  return (
+    <IconLayoutKanban
+      aria-hidden
+      color={color}
+      size={size}
+      stroke={TABLER_STROKE}
+    />
   );
 }
 
@@ -1386,13 +1863,17 @@ function PersonAvatarContent({ token }: { token: HeroCellPerson }) {
   return token.shortLabel ?? getInitials(token.name);
 }
 
-function renderSidebarIcon(icon: HeroSidebarIcon): ReactNode {
+function renderSidebarIcon(
+  icon: HeroSidebarIcon,
+  pulse: boolean = false,
+): ReactNode {
   if (icon.kind === 'brand') {
     return (
       <SidebarIconSurface
         $background="transparent"
         $border="transparent"
         $color={COLORS.textSecondary}
+        $pulse={pulse}
       >
         <FaviconLogo
           domain={
@@ -1435,7 +1916,7 @@ function renderSidebarIcon(icon: HeroSidebarIcon): ReactNode {
     return (
       <SidebarAvatar
         $background={tone.background}
-        $color={tone.color}
+        $color={icon.color ?? tone.color}
         $shape={icon.shape}
       >
         <span
@@ -1459,6 +1940,7 @@ function renderSidebarIcon(icon: HeroSidebarIcon): ReactNode {
       $background={tone.background}
       $border={tone.border}
       $color={tone.color}
+      $pulse={pulse}
     >
       {TablerIcon ? (
         <TablerIcon
@@ -1493,38 +1975,60 @@ function renderSidebarIcon(icon: HeroSidebarIcon): ReactNode {
 // -- Sidebar item component --
 
 function SidebarItemComponent({
+  collapsible = false,
+  expanded = false,
   depth = 0,
   interactive = true,
   isLastChild = false,
   item,
+  onToggleExpanded,
   onSelect,
   selectedLabel,
+  highlightedItemId,
 }: {
+  collapsible?: boolean;
+  expanded?: boolean;
   depth?: number;
   interactive?: boolean;
   isLastChild?: boolean;
   item: HeroSidebarItem;
+  onToggleExpanded?: () => void;
   onSelect?: (label: string) => void;
   selectedLabel?: string;
+  highlightedItemId?: string;
 }) {
   const showBranch = depth > 0;
-  const rowSelectable = interactive && item.href === undefined;
-  const rowInteractive = rowSelectable || item.href !== undefined;
+  const rowSelectable = interactive && item.href === undefined && !collapsible;
+  const rowInteractive =
+    rowSelectable || item.href !== undefined || (interactive && collapsible);
   const rowActive =
-    rowSelectable && selectedLabel !== undefined && item.label === selectedLabel;
+    rowSelectable &&
+    selectedLabel !== undefined &&
+    item.label === selectedLabel;
+  const rowHighlighted = highlightedItemId === item.id;
   const childItems = item.children ?? [];
+  // Tint the appearance animation with the item's own tone so Rocket pops
+  // violet, Launch pops orange, Payload pops teal, etc.
+  const iconTone =
+    'tone' in item.icon && typeof item.icon.tone === 'string'
+      ? item.icon.tone
+      : 'gray';
+  const highlightRgb = SIDEBAR_TONE_RGB[iconTone] ?? SIDEBAR_TONE_RGB.gray;
+  const highlightStyle = rowHighlighted
+    ? ({ '--hero-highlight-rgb': highlightRgb } as React.CSSProperties)
+    : undefined;
   const rowContent = (
     <>
       {showBranch ? <SidebarBranchCell $isLastChild={isLastChild} /> : null}
       <SidebarRowMain $withBranch={showBranch}>
-        {renderSidebarIcon(item.icon)}
+        {renderSidebarIcon(item.icon, rowHighlighted)}
         <SidebarItemText>
           <SidebarItemLabel $active={rowActive}>{item.label}</SidebarItemLabel>
           {item.meta ? <SidebarItemMeta>· {item.meta}</SidebarItemMeta> : null}
         </SidebarItemText>
       </SidebarRowMain>
       {item.showChevron || (item.children && item.children.length > 0) ? (
-        <SidebarChevron>
+        <SidebarChevron $expanded={!collapsible || expanded}>
           <ChevronDownMini color={COLORS.textTertiary} size={12} />
         </SidebarChevron>
       ) : null}
@@ -1550,21 +2054,32 @@ function SidebarItemComponent({
         <SidebarItemRow
           $active={rowActive}
           $depth={depth}
+          $highlighted={rowHighlighted}
           $interactive={rowInteractive}
           $withBranch={showBranch}
-          onClick={rowSelectable ? () => onSelect?.(item.label) : undefined}
-          style={{ cursor: rowInteractive ? 'pointer' : 'default' }}
+          onClick={
+            collapsible
+              ? onToggleExpanded
+              : rowSelectable
+                ? () => onSelect?.(item.label)
+                : undefined
+          }
+          style={{
+            cursor: rowInteractive ? 'pointer' : 'default',
+            ...highlightStyle,
+          }}
         >
           {rowContent}
         </SidebarItemRow>
       )}
-      {childItems.length > 0 ? (
+      {childItems.length > 0 && (!collapsible || expanded) ? (
         <SidebarChildStack>
           <BranchLine />
           {childItems.map((child, index) => (
             <SidebarItemComponent
               key={child.id}
               depth={depth + 1}
+              highlightedItemId={highlightedItemId}
               isLastChild={index === childItems.length - 1}
               interactive={interactive}
               item={child}
@@ -1717,10 +2232,7 @@ function TextCellComponent({
       clickable={false}
       label={cell.value}
       leftComponent={
-        <PersonAvatarCircle
-          $background={tone.background}
-          $color={tone.color}
-        >
+        <PersonAvatarCircle $background={tone.background} $color={tone.color}>
           {cell.shortLabel}
         </PersonAvatarCircle>
       }
@@ -1785,140 +2297,177 @@ function renderCellValue(
 // -- Main component --
 
 export function HomeVisual({ visual }: { visual: HeroVisualType }) {
-  const shellRef = useRef<HTMLDivElement>(null);
-  const viewportRef = useRef<HTMLDivElement>(null);
-  const dragRef = useRef({
-    active: false,
-    pointerId: -1,
-    startScrollLeft: 0,
-    startX: 0,
-  });
-
   const defaultActiveLabel =
+    visual.favoritesNav?.find((item) => item.active)?.label ??
     visual.workspaceNav.find((entry) => !isFolder(entry) && entry.active)
       ?.label ??
     visual.workspaceNav[0]?.label ??
     '';
 
   const [activeLabel, setActiveLabel] = useState(defaultActiveLabel);
-  const [dragging, setDragging] = useState(false);
-  const [hoveredRowId, setHoveredRowId] = useState<string | null>(null);
-  const [tilt, setTilt] = useState({ x: 0, y: 0 });
+  const [createdObjectIds, setCreatedObjectIds] = useState<string[]>([]);
+  // Objects whose pinned navbar commands have been scaffolded by the chat.
+  // Includes Companies (reused from the standard sidebar) and all newly
+  // created CRM objects. The navbar looks up its pinned actions here so
+  // commands only appear after the assistant announces them.
+  const [revealedObjectIds, setRevealedObjectIds] = useState<string[]>([]);
+  const [highlightedItemId, setHighlightedItemId] = useState<string | null>(
+    null,
+  );
+  const [openFolderIds, setOpenFolderIds] = useState(() => {
+    const activeFolderId = findContainingFolderId(
+      visual.workspaceNav,
+      defaultActiveLabel,
+    );
 
-  const activeItem = useMemo(
-    () => findActiveItem(visual.workspaceNav, activeLabel),
-    [activeLabel, visual.workspaceNav],
+    return visual.workspaceNav.flatMap((entry) => {
+      if (!isFolder(entry)) {
+        return [];
+      }
+
+      if (entry.defaultOpen || entry.id === activeFolderId) {
+        return [entry.id];
+      }
+
+      return [];
+    });
+  });
+  const pageDefaults = useMemo(
+    () => ({
+      defaultActions: visual.actions ?? [],
+      defaultTableWidth: visual.tableWidth ?? DEFAULT_TABLE_WIDTH,
+    }),
+    [visual.actions, visual.tableWidth],
   );
 
-  const columns: HeroColumnDef[] = activeItem?.columns ?? [];
-  const rows: HeroRowDef[] = activeItem?.rows ?? [];
-  const viewLabel = activeItem?.viewLabel ?? activeLabel;
-  const viewCount = activeItem?.viewCount ?? rows.length;
-  const totalTableWidth = visual.tableWidth ?? DEFAULT_TABLE_WIDTH;
-  const actions = visual.actions ?? [];
-
-  const columnWidth = columns.reduce((sum, column) => sum + column.width, 0);
-  const fillerWidth = Math.max(totalTableWidth - columnWidth, 0);
-
-  const handleShellPointerMove = (event: ReactPointerEvent<HTMLDivElement>) => {
-    if (event.pointerType !== 'mouse' || dragging || !shellRef.current) {
-      return;
+  // Inject the CRM objects at the top of the workspace sidebar as they are
+  // "created" by the AI chat. The callback chain is:
+  // AssistantResponse -> ConversationPanel -> DraggableTerminal -> here. Each
+  // object streams in one-by-one from the first assistant paragraph; the
+  // workspace mirrors that order, with the most recently created object on top
+  // and surfaced as the active page.
+  const workspaceNav = useMemo<HeroSidebarEntry[]>(() => {
+    if (createdObjectIds.length === 0) {
+      return visual.workspaceNav;
     }
 
-    const bounds = shellRef.current.getBoundingClientRect();
-    const horizontal = ((event.clientX - bounds.left) / bounds.width - 0.5) * 2;
-    const vertical = ((event.clientY - bounds.top) / bounds.height - 0.5) * 2;
+    // Walk the created list from newest-first so the last object streamed sits
+    // on top. Any CRM entry not yet created is simply skipped.
+    const prepended = [...createdObjectIds]
+      .reverse()
+      .map(
+        (id) =>
+          CRM_OBJECT_SEQUENCE.find((entry) => entry.id === id)?.sidebarItem,
+      )
+      .filter((item): item is NonNullable<typeof item> => item !== undefined);
 
-    setTilt({
-      x: Number((-vertical * 2.2).toFixed(2)),
-      y: Number((horizontal * 3.8).toFixed(2)),
-    });
-  };
+    return [...prepended, ...visual.workspaceNav];
+  }, [createdObjectIds, visual.workspaceNav]);
 
-  const resetTilt = () => {
-    setTilt({ x: 0, y: 0 });
-  };
-
-  const handlePointerDown = (event: ReactPointerEvent<HTMLDivElement>) => {
-    if (
-      event.pointerType !== 'mouse' ||
-      event.button !== 0 ||
-      !viewportRef.current
-    ) {
+  const handleObjectCreated = useCallback((id: string) => {
+    setRevealedObjectIds((current) =>
+      current.includes(id) ? current : [...current, id],
+    );
+    // Companies is reused from the standard sidebar — no prepend, just flash
+    // the existing item and show its index page.
+    if (id === COMPANIES_ITEM_ID) {
+      setActiveLabel(COMPANIES_ITEM_LABEL);
+      setHighlightedItemId(COMPANIES_ITEM_ID);
       return;
     }
-
-    dragRef.current = {
-      active: true,
-      pointerId: event.pointerId,
-      startScrollLeft: viewportRef.current.scrollLeft,
-      startX: event.clientX,
-    };
-
-    viewportRef.current.setPointerCapture(event.pointerId);
-    setDragging(true);
-    event.preventDefault();
-  };
-
-  const handlePointerMove = (event: ReactPointerEvent<HTMLDivElement>) => {
-    if (!dragRef.current.active || !viewportRef.current) {
+    const entry = CRM_OBJECT_SEQUENCE.find((candidate) => candidate.id === id);
+    if (!entry) {
       return;
     }
+    setCreatedObjectIds((current) =>
+      current.includes(id) ? current : [...current, id],
+    );
+    setActiveLabel(entry.label);
+    setHighlightedItemId(entry.id);
+  }, []);
 
-    viewportRef.current.scrollLeft =
-      dragRef.current.startScrollLeft -
-      (event.clientX - dragRef.current.startX);
-  };
+  const handleChatReset = useCallback(() => {
+    setCreatedObjectIds([]);
+    setRevealedObjectIds([]);
+    setHighlightedItemId(null);
+    setActiveLabel(defaultActiveLabel);
+  }, [defaultActiveLabel]);
 
-  const endDragging = () => {
-    dragRef.current.active = false;
-    dragRef.current.pointerId = -1;
-    setDragging(false);
-  };
-
-  const handlePointerUp = (event: ReactPointerEvent<HTMLDivElement>) => {
-    if (!viewportRef.current || dragRef.current.pointerId !== event.pointerId) {
-      return;
-    }
-
-    viewportRef.current.releasePointerCapture(event.pointerId);
-    endDragging();
-  };
+  const handleJumpToConversationEnd = useCallback(() => {
+    setCreatedObjectIds(COMPLETED_CREATED_OBJECT_IDS);
+    setRevealedObjectIds(COMPLETED_REVEALED_OBJECT_IDS);
+    setHighlightedItemId(null);
+    setActiveLabel(COMPLETED_ACTIVE_OBJECT_LABEL);
+  }, []);
 
   useEffect(() => {
-    const node = viewportRef.current;
+    if (highlightedItemId === null) {
+      return undefined;
+    }
+    const id = window.setTimeout(() => setHighlightedItemId(null), 2000);
+    return () => window.clearTimeout(id);
+  }, [highlightedItemId]);
 
-    if (!node) {
+  const activeItem = useMemo(
+    () =>
+      (visual.favoritesNav
+        ? findActiveItem(visual.favoritesNav, activeLabel, pageDefaults)
+        : undefined) ?? findActiveItem(workspaceNav, activeLabel, pageDefaults),
+    [activeLabel, pageDefaults, visual.favoritesNav, workspaceNav],
+  );
+  const activePage = useMemo(
+    () => (activeItem ? normalizeHeroPage(activeItem, pageDefaults) : null),
+    [activeItem, pageDefaults],
+  );
+  const activeHeader = activePage?.header;
+  const activeActions = activeHeader?.actions ?? [];
+  const navbarActions = activeHeader?.navbarActions;
+  // Pinned commands registered by the active object. Surfaced only after the
+  // chat has revealed that object, mirroring how a real workspace would only
+  // gain header actions after the schema / command-menu-items lands.
+  const pinnedActions =
+    activeItem && revealedObjectIds.includes(activeItem.id)
+      ? OBJECT_PINNED_ACTIONS[activeItem.id]
+      : undefined;
+  const showPageCount = activeHeader?.count !== undefined;
+  const showListIcon = activeHeader?.showListIcon ?? false;
+  const showViewBar =
+    activePage !== null &&
+    activePage !== undefined &&
+    activePage.type !== 'dashboard' &&
+    activePage.type !== 'workflow';
+
+  const handleSelectLabel = (label: string) => {
+    setActiveLabel(label);
+
+    const containingFolderId = findContainingFolderId(workspaceNav, label);
+
+    if (!containingFolderId) {
       return;
     }
 
-    const onWheel: EventListener = (event) => {
-      if (!(event instanceof WheelEvent)) {
-        return;
-      }
+    setOpenFolderIds((current) =>
+      current.includes(containingFolderId)
+        ? current
+        : [...current, containingFolderId],
+    );
+  };
 
-      if (
-        node.scrollWidth <= node.clientWidth ||
-        Math.abs(event.deltaY) <= Math.abs(event.deltaX)
-      ) {
-        return;
-      }
-
-      node.scrollLeft += event.deltaY;
-      event.preventDefault();
-    };
-
-    node.addEventListener('wheel', onWheel, { passive: false });
-
-    return () => {
-      node.removeEventListener('wheel', onWheel);
-    };
-  }, []);
+  const handleToggleFolder = (folderId: string) => {
+    setOpenFolderIds((current) =>
+      current.includes(folderId)
+        ? current.filter((id) => id !== folderId)
+        : [...current, folderId],
+    );
+  };
 
   const renderSidebarEntry = (entry: HeroSidebarEntry) => {
     if (isFolder(entry)) {
       return (
         <SidebarItemComponent
+          collapsible
+          expanded={openFolderIds.includes(entry.id)}
+          highlightedItemId={highlightedItemId ?? undefined}
           key={entry.id}
           item={{
             id: entry.id,
@@ -1927,7 +2476,8 @@ export function HomeVisual({ visual }: { visual: HeroVisualType }) {
             showChevron: entry.showChevron,
             children: entry.items,
           }}
-          onSelect={setActiveLabel}
+          onSelect={handleSelectLabel}
+          onToggleExpanded={() => handleToggleFolder(entry.id)}
           selectedLabel={activeLabel}
         />
       );
@@ -1935,9 +2485,10 @@ export function HomeVisual({ visual }: { visual: HeroVisualType }) {
 
     return (
       <SidebarItemComponent
+        highlightedItemId={highlightedItemId ?? undefined}
         key={entry.id}
         item={entry}
-        onSelect={setActiveLabel}
+        onSelect={handleSelectLabel}
         selectedLabel={activeLabel}
       />
     );
@@ -1945,270 +2496,203 @@ export function HomeVisual({ visual }: { visual: HeroVisualType }) {
 
   return (
     <StyledHomeVisual>
-      <ShellScene
-        ref={shellRef}
-        onPointerLeave={resetTilt}
-        onPointerMove={handleShellPointerMove}
-        style={{
-          transform: `perspective(1600px) rotateX(${tilt.x}deg) rotateY(${tilt.y}deg)`,
-        }}
-      >
-        <Frame>
-          <AppLayout>
-            <SidebarPanel>
-              <SidebarTopBar>
-                <WorkspaceMenu>
-                  <WorkspaceIcon>
-                    <WorkspaceIconImage
-                      alt=""
-                      aria-hidden="true"
-                      src={APPLE_WORKSPACE_LOGO_SRC}
-                    />
-                  </WorkspaceIcon>
-                  <WorkspaceLabel>{visual.workspace.name}</WorkspaceLabel>
-                  <ChevronDownMini color={COLORS.textLight} size={12} />
-                </WorkspaceMenu>
-                <SidebarTopActions>
-                  <SidebarIconButton aria-hidden="true">
-                    <SearchMini />
-                  </SidebarIconButton>
-                  <SidebarIconButton aria-hidden="true">
-                    <CollapseSidebarMini />
-                  </SidebarIconButton>
-                </SidebarTopActions>
-              </SidebarTopBar>
-
-              <SidebarControls>
-                <SegmentedRail aria-hidden="true">
-                  <Segment $selected>
-                    <HomeMini />
-                  </Segment>
-                  <Segment>
-                    <CommentMini />
-                  </Segment>
-                </SegmentedRail>
-                <NewChat aria-hidden="true">
-                  <MessageCirclePlusMini />
-                  <NewChatLabel>New chat</NewChatLabel>
-                </NewChat>
-              </SidebarControls>
-
-              <SidebarScroll>
-                {visual.favoritesNav && visual.favoritesNav.length > 0 ? (
-                  <SidebarSection>
-                    <SidebarSectionLabel>Favorites</SidebarSectionLabel>
-                    {visual.favoritesNav.map((item) => (
-                      <SidebarItemComponent
-                        key={item.id}
-                        interactive={false}
-                        item={item}
+      <ShellScene>
+        <WindowOrderProvider>
+          <DraggableAppWindow>
+            <AppLayout>
+              <SidebarPanel>
+                <SidebarTopBar>
+                  <WorkspaceMenu>
+                    <WorkspaceIcon>
+                      <WorkspaceIconImage
+                        alt=""
+                        aria-hidden="true"
+                        src={APPLE_WORKSPACE_LOGO_SRC}
                       />
-                    ))}
-                  </SidebarSection>
-                ) : null}
-                <SidebarSection>
-                  <SidebarSectionLabel $workspace>Workspace</SidebarSectionLabel>
-                  {visual.workspaceNav.map(renderSidebarEntry)}
-                </SidebarSection>
-              </SidebarScroll>
-            </SidebarPanel>
+                    </WorkspaceIcon>
+                    <WorkspaceLabel>{visual.workspace.name}</WorkspaceLabel>
+                    <ChevronDownMini color={COLORS.textLight} size={12} />
+                  </WorkspaceMenu>
+                  <SidebarTopActions>
+                    <SidebarIconButton aria-hidden="true">
+                      <SearchMini />
+                    </SidebarIconButton>
+                    <SidebarIconButton aria-hidden="true">
+                      <CollapseSidebarMini />
+                    </SidebarIconButton>
+                  </SidebarTopActions>
+                </SidebarTopBar>
 
-            <RightPane>
-              <NavbarBar>
-                <Breadcrumb>
-                  <BreadcrumbTag>
-                    <AccentIconSurface>
-                      <IconBuildingSkyscraper
-                        aria-hidden
-                        color={COLORS.accent}
-                        size={14}
-                      />
-                    </AccentIconSurface>
-                    <CrumbLabel>{activeLabel}</CrumbLabel>
-                  </BreadcrumbTag>
-                </Breadcrumb>
+                <SidebarControls>
+                  <SegmentedRail aria-hidden="true">
+                    <Segment $selected>
+                      <HomeMini />
+                    </Segment>
+                    <Segment>
+                      <CommentMini />
+                    </Segment>
+                  </SegmentedRail>
+                  <NewChat aria-hidden="true">
+                    <MessageCirclePlusMini />
+                    <NewChatLabel>New chat</NewChatLabel>
+                  </NewChat>
+                </SidebarControls>
 
-                <NavbarActions aria-hidden>
-                  <DesktopOnlyNavbarAction>
-                    <NavbarActionButton>
-                      <NavbarActionIconWrap>
-                        <IconPlus
-                          aria-hidden
-                          size={VISUAL_TOKENS.icon.size.sm}
-                          stroke={VISUAL_TOKENS.icon.stroke.sm}
+                <SidebarScroll>
+                  {visual.favoritesNav && visual.favoritesNav.length > 0 ? (
+                    <SidebarSection>
+                      <SidebarSectionLabel>Favorites</SidebarSectionLabel>
+                      {visual.favoritesNav.map((item) => (
+                        <SidebarItemComponent
+                          highlightedItemId={highlightedItemId ?? undefined}
+                          key={item.id}
+                          item={item}
+                          onSelect={handleSelectLabel}
+                          selectedLabel={activeLabel}
                         />
-                      </NavbarActionIconWrap>
-                      <NavbarActionLabel>New Record</NavbarActionLabel>
-                    </NavbarActionButton>
-                  </DesktopOnlyNavbarAction>
-                  <NavbarActionButton>
-                    <NavbarActionIconWrap>
-                      <IconDotsVertical
-                        aria-hidden
-                        size={VISUAL_TOKENS.icon.size.sm}
-                        stroke={VISUAL_TOKENS.icon.stroke.sm}
-                      />
-                    </NavbarActionIconWrap>
-                    <NavbarActionSeparator />
-                    <NavbarActionLabel $color={VISUAL_TOKENS.font.color.light}>
-                      ⌘K
-                    </NavbarActionLabel>
-                  </NavbarActionButton>
-                </NavbarActions>
-              </NavbarBar>
+                      ))}
+                    </SidebarSection>
+                  ) : null}
+                  <SidebarSection>
+                    <SidebarSectionLabel $workspace>
+                      Workspace
+                    </SidebarSectionLabel>
+                    {workspaceNav.map(renderSidebarEntry)}
+                  </SidebarSection>
+                </SidebarScroll>
+              </SidebarPanel>
 
-              <IndexSurface>
-                <ViewbarBar>
-                  <ViewSwitcher aria-hidden="true">
-                    <ListMini />
-                    <ViewName>{viewLabel}</ViewName>
-                    <TinyDot />
-                    <ViewCount>{viewCount}</ViewCount>
-                    <ChevronDownMini color={COLORS.textLight} />
-                  </ViewSwitcher>
-                  <ViewActions>
-                    {actions.map((action) => (
-                      <ViewAction key={action}>{action}</ViewAction>
-                    ))}
-                  </ViewActions>
-                </ViewbarBar>
+              <RightPane>
+                <NavbarBar>
+                  <Breadcrumb>
+                    <BreadcrumbTag>
+                      {activeItem ? renderSidebarIcon(activeItem.icon) : null}
+                      <CrumbLabel>{activeLabel}</CrumbLabel>
+                    </BreadcrumbTag>
+                  </Breadcrumb>
 
-                <TableShell>
-                  <GripRail aria-hidden="true">
-                    <GripCell />
-                    {rows.map((row) => (
-                      <GripCell key={`grip-${row.id}`} />
-                    ))}
-                    <GripCell />
-                  </GripRail>
-
-                  <TableViewport
-                    ref={viewportRef}
-                    $dragging={dragging}
-                    aria-label={`Interactive preview of the ${activeLabel} table`}
-                    onPointerCancel={endDragging}
-                    onPointerDown={handlePointerDown}
-                    onPointerLeave={endDragging}
-                    onPointerMove={handlePointerMove}
-                    onPointerUp={handlePointerUp}
-                  >
-                    <TableCanvas $width={totalTableWidth}>
-                      <HeaderRow>
-                        {columns.map((column) => (
-                          <TableCell
-                            key={column.id}
-                            $align={column.align}
-                            $header
-                            $sticky={column.isFirstColumn}
-                            $width={column.width}
-                          >
-                            <HeaderCellContent>
-                              {column.isFirstColumn ? (
-                                <>
-                                  <CheckboxContainer>
-                                    <CheckboxBox />
-                                  </CheckboxContainer>
-                                  {renderHeaderIcon(column.id)}
-                                  <HeaderLabel>{column.label}</HeaderLabel>
-                                  <EdgePlus aria-hidden="true">
-                                    <PlusMini
-                                      color={COLORS.textTertiary}
-                                      size={12}
-                                    />
-                                  </EdgePlus>
-                                </>
-                              ) : (
-                                <>
-                                  {renderHeaderIcon(column.id)}
-                                  <HeaderLabel>{column.label}</HeaderLabel>
-                                </>
-                              )}
-                            </HeaderCellContent>
-                          </TableCell>
-                        ))}
-                        <EmptyFillCell $header $width={fillerWidth}>
-                          {fillerWidth > 0 ? (
-                            <HeaderFillContent>
-                              <PlusMini color={COLORS.textTertiary} size={16} />
-                            </HeaderFillContent>
-                          ) : null}
-                        </EmptyFillCell>
-                      </HeaderRow>
-
-                      {rows.map((row) => {
-                        const hovered = hoveredRowId === row.id;
-
-                        return (
-                          <DataRow
-                            key={row.id}
-                            onMouseEnter={() => setHoveredRowId(row.id)}
-                            onMouseLeave={() =>
-                              setHoveredRowId((current) =>
-                                current === row.id ? null : current,
-                              )
+                  <NavbarActions aria-hidden>
+                    {navbarActions ? (
+                      navbarActions.map(renderNavbarAction)
+                    ) : (
+                      <>
+                        {pinnedActions?.map((action, index) => (
+                          <PinnedActionButton
+                            key={`pinned-${activeItem?.id}-${action.label}-${index}`}
+                            style={
+                              {
+                                '--pinned-action-index': index,
+                              } as CSSProperties
                             }
                           >
-                            {columns.map((column) => {
-                              const cell = row.cells[column.id];
-
-                              return (
-                                <TableCell
-                                  key={`${row.id}-${column.id}`}
-                                  $align={column.align}
-                                  $hovered={hovered}
-                                  $sticky={column.isFirstColumn}
-                                  $width={column.width}
-                                >
-                                  {cell
-                                    ? renderCellValue(
-                                        cell,
-                                        hovered,
-                                        !!column.isFirstColumn,
-                                        column.id,
-                                      )
-                                    : null}
-                                </TableCell>
-                              );
-                            })}
-                            <EmptyFillCell
-                              $hovered={hovered}
-                              $width={fillerWidth}
-                            />
-                          </DataRow>
-                        );
-                      })}
-
-                      <FooterRow>
-                        {columns.length > 0 ? (
-                          <TableCell
-                            $sticky={columns[0].isFirstColumn}
-                            $width={columns[0].width}
-                          >
-                            <FooterFirstContent>
-                              <MutedText>Calculate</MutedText>
-                              <ChevronDownMini
-                                color={COLORS.textTertiary}
-                                size={14}
-                              />
-                            </FooterFirstContent>
-                          </TableCell>
-                        ) : null}
-                        {columns.slice(1).map((column) => (
-                          <TableCell
-                            key={`footer-${column.id}`}
-                            $align={column.align}
-                            $width={column.width}
-                          />
+                            <NavbarActionIconWrap>
+                              {(() => {
+                                const Icon =
+                                  NAVBAR_ACTION_ICON_MAP[action.icon] ??
+                                  IconPlus;
+                                return (
+                                  <Icon
+                                    aria-hidden
+                                    size={VISUAL_TOKENS.icon.size.sm}
+                                    stroke={NAVBAR_ACTION_TABLER_STROKE}
+                                  />
+                                );
+                              })()}
+                            </NavbarActionIconWrap>
+                            <NavbarActionLabel>
+                              {action.label}
+                            </NavbarActionLabel>
+                          </PinnedActionButton>
                         ))}
-                        <EmptyFillCell $footer $width={fillerWidth} />
-                      </FooterRow>
-                    </TableCanvas>
-                  </TableViewport>
-                </TableShell>
-              </IndexSurface>
-            </RightPane>
-          </AppLayout>
-        </Frame>
+                        <DesktopOnlyNavbarAction>
+                          <NavbarActionButton>
+                            <NavbarActionIconWrap>
+                              <IconPlus
+                                aria-hidden
+                                size={VISUAL_TOKENS.icon.size.sm}
+                                stroke={NAVBAR_ACTION_TABLER_STROKE}
+                              />
+                            </NavbarActionIconWrap>
+                            <NavbarActionLabel>New</NavbarActionLabel>
+                          </NavbarActionButton>
+                        </DesktopOnlyNavbarAction>
+                        <NavbarActionButton>
+                          <NavbarActionIconWrap>
+                            <IconDotsVertical
+                              aria-hidden
+                              size={VISUAL_TOKENS.icon.size.sm}
+                              stroke={NAVBAR_ACTION_TABLER_STROKE}
+                            />
+                          </NavbarActionIconWrap>
+                          <DesktopOnlyNavbarTrailing>
+                            <NavbarActionSeparator />
+                            <NavbarActionLabel
+                              $color={VISUAL_TOKENS.font.color.light}
+                            >
+                              ⌘K
+                            </NavbarActionLabel>
+                          </DesktopOnlyNavbarTrailing>
+                        </NavbarActionButton>
+                      </>
+                    )}
+                  </NavbarActions>
+                </NavbarBar>
+
+                <IndexSurface>
+                  {showViewBar ? (
+                    <ViewbarBar>
+                      <ViewSwitcher aria-hidden="true">
+                        {showListIcon ? (
+                          <>
+                            {activePage?.type === 'kanban' ? (
+                              <KanbanMini />
+                            ) : (
+                              <ListMini />
+                            )}
+                            <ViewName>
+                              {activeHeader?.title ?? activeLabel}
+                            </ViewName>
+                            {showPageCount ? (
+                              <>
+                                <TinyDot />
+                                <ViewCount>{activeHeader?.count}</ViewCount>
+                                <ChevronDownMini color={COLORS.textLight} />
+                              </>
+                            ) : null}
+                          </>
+                        ) : (
+                          <ViewName>
+                            {activeHeader?.title ?? activeLabel}
+                          </ViewName>
+                        )}
+                      </ViewSwitcher>
+                      {activeActions.length > 0 ? (
+                        <ViewActions>
+                          {activeActions.map((action) => (
+                            <ViewAction key={action}>{action}</ViewAction>
+                          ))}
+                        </ViewActions>
+                      ) : null}
+                    </ViewbarBar>
+                  ) : null}
+
+                  {activePage
+                    ? renderPageDefinition(
+                        activePage,
+                        handleSelectLabel,
+                        activeItem?.id ?? activeLabel,
+                      )
+                    : null}
+                </IndexSurface>
+              </RightPane>
+            </AppLayout>
+          </DraggableAppWindow>
+          <DraggableTerminal
+            onObjectCreated={handleObjectCreated}
+            onChatReset={handleChatReset}
+            onJumpToConversationEnd={handleJumpToConversationEnd}
+          />
+        </WindowOrderProvider>
       </ShellScene>
     </StyledHomeVisual>
   );

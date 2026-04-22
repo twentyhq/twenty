@@ -61,6 +61,7 @@ export const fromUniversalFlatIndexToFlatIndex = ({
           order: universalFlatIndexFieldMetadata.order,
           createdAt: now,
           updatedAt: now,
+          workspaceId,
         };
       },
     );

@@ -11,8 +11,6 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { t } from '@lingui/core/macro';
 import {
   IconChartBar,
@@ -24,10 +22,10 @@ import {
 } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { UndecoratedLink } from 'twenty-ui/navigation';
-import { SettingsAIMoreTab } from '~/pages/settings/ai/components/SettingsAIMoreTab';
+import { SettingsAiMoreTab } from '~/pages/settings/ai/components/SettingsAiMoreTab';
 import { SettingsAgentToolsTab } from '~/pages/settings/ai/components/SettingsAgentToolsTab';
-import { SettingsAIModelsTab } from './components/SettingsAIModelsTab';
-import { SettingsAIUsageTab } from './components/SettingsAIUsageTab';
+import { SettingsAiModelsTab } from './components/SettingsAiModelsTab';
+import { SettingsAiUsageTab } from './components/SettingsAiUsageTab';
 import { SettingsAgentSkills } from './components/SettingsAgentSkills';
 import { SETTINGS_AI_TABS } from './constants/SettingsAiTabs';
 
@@ -40,10 +38,6 @@ export const SettingsAI = () => {
   const activeTabId = useAtomComponentStateValue(
     activeTabIdComponentState,
     SETTINGS_AI_TABS.COMPONENT_INSTANCE_ID,
-  );
-
-  const isUsageAnalyticsEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_USAGE_ANALYTICS_ENABLED,
   );
 
   const handleCreateTool = async () => {
@@ -100,15 +94,11 @@ export const SettingsAI = () => {
       title: t`Tools`,
       Icon: IconTool,
     },
-    ...(isUsageAnalyticsEnabled
-      ? [
-          {
-            id: SETTINGS_AI_TABS.TABS_IDS.USAGE,
-            title: t`Usage`,
-            Icon: IconChartBar,
-          },
-        ]
-      : []),
+    {
+      id: SETTINGS_AI_TABS.TABS_IDS.USAGE,
+      title: t`Usage`,
+      Icon: IconChartBar,
+    },
     {
       id: SETTINGS_AI_TABS.TABS_IDS.MORE,
       title: t`More`,
@@ -127,7 +117,7 @@ export const SettingsAI = () => {
       title={t`AI`}
       actionButton={
         isSkillsTab ? (
-          <UndecoratedLink to={getSettingsPath(SettingsPath.AINewSkill)}>
+          <UndecoratedLink to={getSettingsPath(SettingsPath.AiNewSkill)}>
             <Button
               Icon={IconPlus}
               title={t`New Skill`}
@@ -159,11 +149,11 @@ export const SettingsAI = () => {
           tabs={tabs}
           componentInstanceId={SETTINGS_AI_TABS.COMPONENT_INSTANCE_ID}
         />
-        {isModelsTab && <SettingsAIModelsTab />}
+        {isModelsTab && <SettingsAiModelsTab />}
         {isSkillsTab && <SettingsAgentSkills />}
         {isToolsTab && <SettingsAgentToolsTab />}
-        {isUsageTab && <SettingsAIUsageTab />}
-        {isMoreTab && <SettingsAIMoreTab />}
+        {isUsageTab && <SettingsAiUsageTab />}
+        {isMoreTab && <SettingsAiMoreTab />}
       </SettingsPageContainer>
     </SubMenuTopBarContainer>
   );

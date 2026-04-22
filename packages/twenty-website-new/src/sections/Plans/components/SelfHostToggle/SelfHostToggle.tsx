@@ -8,9 +8,11 @@ const ToggleRow = styled.label`
   align-items: center;
   column-gap: ${theme.spacing(2)};
   cursor: pointer;
-  display: grid;
-  grid-template-columns: auto 1fr;
-  width: 100%;
+  display: inline-grid;
+  grid-template-columns: auto auto;
+  justify-self: end;
+  position: relative;
+  white-space: nowrap;
 `;
 
 const Checkbox = styled.span`
@@ -18,9 +20,9 @@ const Checkbox = styled.span`
   border: 1px solid ${theme.colors.highlight[100]};
   border-radius: ${theme.radius(1)};
   display: grid;
-  height: 20px;
+  height: 16px;
   justify-items: center;
-  width: 20px;
+  width: 16px;
 
   &[data-checked='true'] {
     background-color: ${theme.colors.highlight[100]};
@@ -36,9 +38,9 @@ function CheckmarkIcon() {
     <svg
       aria-hidden
       fill="none"
-      height="12"
+      height="10"
       viewBox="0 0 12 12"
-      width="12"
+      width="10"
       xmlns="http://www.w3.org/2000/svg"
     >
       <path
@@ -62,9 +64,9 @@ const HiddenInput = styled.input`
 const LabelText = styled.span`
   color: ${theme.colors.primary.text[80]};
   font-family: ${theme.font.family.sans};
-  font-size: ${theme.font.size(4)};
+  font-size: ${theme.font.size(3.5)};
   font-weight: ${theme.font.weight.regular};
-  line-height: ${theme.lineHeight(5.5)};
+  line-height: ${theme.lineHeight(3.5)};
 `;
 
 type SelfHostToggleProps = {
@@ -82,15 +84,13 @@ export function SelfHostToggle({
     <ToggleRow>
       <HiddenInput
         checked={isSelfHost}
-        onChange={() =>
-          onHostingChange(isSelfHost ? 'cloud' : 'selfHost')
-        }
+        onChange={() => onHostingChange(isSelfHost ? 'cloud' : 'selfHost')}
         type="checkbox"
       />
+      <LabelText>Selfhosting</LabelText>
       <Checkbox data-checked={isSelfHost}>
         {isSelfHost && <CheckmarkIcon />}
       </Checkbox>
-      <LabelText>Selfhosting</LabelText>
     </ToggleRow>
   );
 }

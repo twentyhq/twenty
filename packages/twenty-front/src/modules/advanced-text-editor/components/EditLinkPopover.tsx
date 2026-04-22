@@ -8,7 +8,7 @@ import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { type Editor } from '@tiptap/core';
 import { useId, useState, type FocusEvent, type FormEvent } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { getSafeUrl, isDefined } from 'twenty-shared/utils';
 import { IconLink, IconPencil } from 'twenty-ui/display';
 
 type EditLinkPopoverProps = {
@@ -33,15 +33,16 @@ export const EditLinkPopover = ({
   ) => {
     event.preventDefault();
 
-    if (!isDefined(value)) {
+    if (!isDefined(value) || !isNonEmptyString(value)) {
       editor.chain().focus().extendMarkRange('link').unsetLink().run();
     } else {
-      editor
-        .chain()
-        .focus()
-        .extendMarkRange('link')
-        .setLink({ href: value })
-        .run();
+      const href = getSafeUrl(value);
+
+      if (!href) {
+        return;
+      }
+
+      editor.chain().focus().extendMarkRange('link').setLink({ href }).run();
     }
 
     toggleDropdown({ dropdownComponentInstanceIdFromProps: dropdownId });

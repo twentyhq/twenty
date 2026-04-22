@@ -3,12 +3,14 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { ClickHouseModule } from 'src/database/clickHouse/clickHouse.module';
 import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/workspace-iterator.module';
 import { BillingGaugeService } from 'src/engine/core-modules/billing/billing-gauge.service';
 import { BillingResolver } from 'src/engine/core-modules/billing/billing.resolver';
 import { BillingSyncCustomerDataCommand } from 'src/engine/core-modules/billing/commands/billing-sync-customer-data.command';
 import { BillingSyncPlansDataCommand } from 'src/engine/core-modules/billing/commands/billing-sync-plans-data.command';
 import { BillingUpdateSubscriptionPriceCommand } from 'src/engine/core-modules/billing/commands/billing-update-subscription-price.command';
+import { EnforceUsageCapCronCommand } from 'src/engine/core-modules/billing/crons/commands/enforce-usage-cap.cron.command';
 import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { BillingEntitlementEntity } from 'src/engine/core-modules/billing/entities/billing-entitlement.entity';
 import { BillingMeterEntity } from 'src/engine/core-modules/billing/entities/billing-meter.entity';
@@ -28,6 +30,7 @@ import { BillingSubscriptionItemService } from 'src/engine/core-modules/billing/
 import { BillingSubscriptionPhaseService } from 'src/engine/core-modules/billing/services/billing-subscription-phase.service';
 import { BillingSubscriptionUpdateService } from 'src/engine/core-modules/billing/services/billing-subscription-update.service';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
+import { BillingUsageCapService } from 'src/engine/core-modules/billing/services/billing-usage-cap.service';
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { MeteredCreditService } from 'src/engine/core-modules/billing/services/metered-credit.service';
@@ -42,11 +45,11 @@ import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AiBillingModule } from 'src/engine/metadata-modules/ai/ai-billing/ai-billing.module';
 import { AiModelsModule } from 'src/engine/metadata-modules/ai/ai-models/ai-models.module';
-import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 
 @Module({
   imports: [
+    ClickHouseModule,
     FeatureFlagModule,
     StripeModule,
     MessageQueueModule,
@@ -66,7 +69,6 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
       UserWorkspaceEntity,
       FeatureFlagEntity,
     ]),
-    DataSourceModule,
     MetricsModule,
     EnterpriseModule,
     WorkspaceIteratorModule,
@@ -88,10 +90,12 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
     BillingUpdateSubscriptionPriceCommand,
     BillingSyncPlansDataCommand,
     BillingUsageService,
+    BillingUsageCapService,
     BillingPriceService,
     BillingCreditRolloverService,
     MeteredCreditService,
     BillingGaugeService,
+    EnforceUsageCapCronCommand,
   ],
   exports: [
     BillingSubscriptionService,
@@ -100,8 +104,10 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
     BillingPortalWorkspaceService,
     BillingService,
     BillingUsageService,
+    BillingUsageCapService,
     BillingCreditRolloverService,
     MeteredCreditService,
+    EnforceUsageCapCronCommand,
   ],
 })
 export class BillingModule {}

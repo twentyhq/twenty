@@ -1,6 +1,7 @@
 import { theme } from '@/theme';
 import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
+import { Fragment } from 'react';
 import { HeadingType } from './types/Heading';
 
 const headingRootClassName = css`
@@ -74,17 +75,29 @@ const headingRootClassName = css`
 const StyledSpan = styled.span`
   &[data-family='sans'] {
     font-family: ${theme.font.family.sans};
-    letter-spacing: -0.02em;
+    letter-spacing: -0.04em;
   }
 
   &[data-family='serif'] {
     font-family: ${theme.font.family.serif};
-    letter-spacing: 0;
+    letter-spacing: -0.02em;
   }
 
   &[data-family='mono'] {
     font-family: ${theme.font.family.mono};
-    letter-spacing: -0.02em;
+    letter-spacing: -0.04em;
+  }
+
+  &[data-weight='light'] {
+    font-weight: ${theme.font.weight.light};
+  }
+
+  &[data-weight='regular'] {
+    font-weight: ${theme.font.weight.regular};
+  }
+
+  &[data-weight='medium'] {
+    font-weight: ${theme.font.weight.medium};
   }
 `;
 
@@ -115,13 +128,27 @@ export function Heading({
   return (
     <Tag className={rootClassName} data-weight={weight} data-size={size}>
       {Array.isArray(segments) ? (
-        segments.map((segment, index) => (
-          <StyledSpan key={index} data-family={segment.fontFamily}>
-            {segment.text}
-          </StyledSpan>
-        ))
+        segments.map((segment, index) => {
+          const lineBreakBefore =
+            segment.newLine === true || segment.lineBreakBefore === true;
+
+          return (
+            <Fragment key={index}>
+              {lineBreakBefore ? <br /> : null}
+              <StyledSpan
+                data-family={segment.fontFamily}
+                data-weight={segment.fontWeight}
+              >
+                {segment.text}
+              </StyledSpan>
+            </Fragment>
+          );
+        })
       ) : (
-        <StyledSpan data-family={segments.fontFamily}>
+        <StyledSpan
+          data-family={segments.fontFamily}
+          data-weight={segments.fontWeight}
+        >
           {segments.text}
         </StyledSpan>
       )}

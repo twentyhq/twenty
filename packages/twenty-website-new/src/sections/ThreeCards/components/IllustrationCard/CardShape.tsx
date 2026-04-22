@@ -35,11 +35,7 @@ export function ThreeCardsCardShape({
         style={{ display: "block" }}
       >
         <path d={THREE_CARDS_CARD_SHAPE_FILL_PATH} fill={fillColor} />
-        <path
-          d={THREE_CARDS_CARD_SHAPE_STROKE_PATH}
-          stroke={strokeColor}
-          strokeOpacity={0.2}
-        />
+        <path d={THREE_CARDS_CARD_SHAPE_STROKE_PATH} stroke={strokeColor} />
       </svg>
     </div>
   );

@@ -98,7 +98,6 @@ export const SidePanelNewSidebarItemViewPickerSubView = ({
       <SidePanelAddToNavigationDroppable>
         {({ innerRef, droppableProps, placeholder }) => (
           <SidePanelList
-            commandGroups={[]}
             selectableItemIds={selectableItemIds}
             noResults={isEmpty}
             noResultsText={noResultsText}

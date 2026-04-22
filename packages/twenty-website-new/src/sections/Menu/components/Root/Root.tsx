@@ -10,23 +10,41 @@ import type {
 import { theme } from '@/theme';
 import { Drawer } from '@base-ui/react/drawer';
 import { styled } from '@linaria/react';
-import { useState, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { CloseDrawerWhenNavigationExpandsEffect } from '../../effect-components/CloseDrawerWhenNavigationExpandsEffect';
 import { MenuDrawer } from '../Drawer/Drawer';
 
-const StyledSection = styled.section`
+const SCROLL_IDLE_TIMEOUT_MS = 150;
+
+const StyledSection = styled.section<{
+  $enableBackdropBlur: boolean;
+  $isElevated: boolean;
+}>`
+  backdrop-filter: ${({ $enableBackdropBlur }) =>
+    $enableBackdropBlur ? 'blur(10px)' : 'none'};
+  box-shadow: ${({ $isElevated }) =>
+    $isElevated
+      ? '0 1px 3px 0 rgba(0, 0, 0, 0.06)'
+      : '0 1px 3px 0 rgba(0, 0, 0, 0)'};
   min-width: 0;
+  position: sticky;
+  top: 0;
+  transition: box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   width: 100%;
+  z-index: 200;
 `;
 
 const StyledContainer = styled(Container)`
-  padding-top: ${theme.spacing(4)};
+  padding-top: ${theme.spacing(2)};
+  padding-bottom: ${theme.spacing(2)};
   position: relative;
   z-index: 100;
 `;
 
-const StyledNav = styled.nav`
+const StyledNav = styled.nav<{ $backgroundColor?: string }>`
   align-items: center;
+  background-color: ${({ $backgroundColor }) =>
+    $backgroundColor ?? 'transparent'};
   border-radius: ${theme.radius(2)};
   display: grid;
   grid-auto-flow: column;
@@ -57,19 +75,57 @@ const MobileRightContainer = styled.div`
 type RootProps = {
   backgroundColor: string;
   children: ReactNode;
+  enableBackdropBlur?: boolean;
   navItems: MenuNavItemType[];
+  scrolledBackgroundColor?: string;
+  scrolledSurfaceColor?: string;
   scheme: MenuScheme;
+  surfaceColor?: string;
   socialLinks: MenuSocialLinkType[];
 };
 
 export function Root({
   backgroundColor,
   children,
+  enableBackdropBlur = true,
   navItems,
+  scrolledBackgroundColor,
+  scrolledSurfaceColor,
   scheme,
+  surfaceColor,
   socialLinks,
 }: RootProps) {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [hasScrolled, setHasScrolled] = useState(false);
+  const [isScrolling, setIsScrolling] = useState(false);
+  const scrollTimeoutRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setHasScrolled(window.scrollY > 8);
+      setIsScrolling(true);
+
+      if (scrollTimeoutRef.current !== null) {
+        window.clearTimeout(scrollTimeoutRef.current);
+      }
+
+      scrollTimeoutRef.current = window.setTimeout(() => {
+        setIsScrolling(false);
+        scrollTimeoutRef.current = null;
+      }, SCROLL_IDLE_TIMEOUT_MS);
+    };
+
+    setHasScrolled(window.scrollY > 8);
+    window.addEventListener('scroll', handleScroll, { passive: true });
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+
+      if (scrollTimeoutRef.current !== null) {
+        window.clearTimeout(scrollTimeoutRef.current);
+      }
+    };
+  }, []);
 
   const buttonColor: {
     border: string;
@@ -88,6 +144,13 @@ export function Root({
           linkButton: 'primary',
         };
 
+  const resolvedBackgroundColor =
+    hasScrolled && scrolledBackgroundColor
+      ? scrolledBackgroundColor
+      : backgroundColor;
+  const resolvedSurfaceColor =
+    hasScrolled && scrolledSurfaceColor ? scrolledSurfaceColor : surfaceColor;
+
   return (
     <Drawer.Root
       open={isDrawerOpen}
@@ -97,9 +160,17 @@ export function Root({
       <CloseDrawerWhenNavigationExpandsEffect
         onClose={() => setIsDrawerOpen(false)}
       />
-      <StyledSection style={{ backgroundColor }}>
+      <StyledSection
+        $enableBackdropBlur={enableBackdropBlur}
+        $isElevated={isScrolling || hasScrolled}
+        style={{ backgroundColor: resolvedBackgroundColor }}
+      >
         <StyledContainer>
-          <StyledNav aria-label="Primary navigation" data-scheme={scheme}>
+          <StyledNav
+            $backgroundColor={resolvedSurfaceColor}
+            aria-label="Primary navigation"
+            data-scheme={scheme}
+          >
             {children}
             <MobileRightContainer>
               <LinkButton

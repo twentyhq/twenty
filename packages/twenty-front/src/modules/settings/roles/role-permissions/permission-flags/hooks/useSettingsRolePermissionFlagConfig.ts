@@ -1,5 +1,4 @@
 import { type SettingsRolePermissionsSettingPermission } from '@/settings/roles/role-permissions/permission-flags/types/SettingsRolePermissionsSettingPermission';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { t } from '@lingui/core/macro';
 import { useMemo } from 'react';
 import {
@@ -17,10 +16,7 @@ import {
   IconSpy,
   IconUsers,
 } from 'twenty-ui/display';
-import {
-  FeatureFlagKey,
-  PermissionFlagType,
-} from '~/generated-metadata/graphql';
+import { PermissionFlagType } from '~/generated-metadata/graphql';
 
 type UseSettingsRolePermissionFlagConfigParams = {
   assignmentCapabilities?: {
@@ -33,8 +29,6 @@ type UseSettingsRolePermissionFlagConfigParams = {
 export const useSettingsRolePermissionFlagConfig = ({
   assignmentCapabilities,
 }: UseSettingsRolePermissionFlagConfigParams = {}): SettingsRolePermissionsSettingPermission[] => {
-  const isAIEnabled = useIsFeatureEnabled(FeatureFlagKey.IS_AI_ENABLED);
-
   const {
     canBeAssignedToAgents = false,
     canBeAssignedToUsers = false,
@@ -174,9 +168,6 @@ export const useSettingsRolePermissionFlagConfig = ({
       canBeAssignedToUsers && !canBeAssignedToAgents && !canBeAssignedToApiKeys;
 
     return allPermissions.filter((permission) => {
-      if (permission.key === PermissionFlagType.AI_SETTINGS && !isAIEnabled) {
-        return false;
-      }
       if (hasAssignmentCapabilities) {
         if (canBeAssignedOnlyToAgents && !permission.isRelevantForAgents) {
           return false;
@@ -198,6 +189,5 @@ export const useSettingsRolePermissionFlagConfig = ({
     canBeAssignedToAgents,
     canBeAssignedToUsers,
     canBeAssignedToApiKeys,
-    isAIEnabled,
   ]);
 };

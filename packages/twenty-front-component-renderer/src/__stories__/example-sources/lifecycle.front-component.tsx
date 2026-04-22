@@ -1,4 +1,4 @@
-import { defineFrontComponent } from '@/sdk';
+import { defineFrontComponent } from 'twenty-sdk/define';
 import { useEffect, useState } from 'react';
 
 const LifecycleComponent = () => {
