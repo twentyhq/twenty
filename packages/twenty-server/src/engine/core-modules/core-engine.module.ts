@@ -52,6 +52,13 @@ import { RedisClientService } from 'src/engine/core-modules/redis-client/redis-c
 import { SearchModule } from 'src/engine/core-modules/search/search.module';
 import { WorkspaceSSOModule } from 'src/engine/core-modules/sso/sso.module';
 import { TelemetryModule } from 'src/engine/core-modules/telemetry/telemetry.module';
+import { DataResidencyModule } from 'src/engine/core-modules/data-residency/data-residency.module';
+import { FieldEncryptionModule } from 'src/engine/core-modules/field-encryption/field-encryption.module';
+import { MobileModule } from 'src/engine/core-modules/mobile/mobile.module';
+import { OfflineSyncModule } from 'src/engine/core-modules/offline-sync/offline-sync.module';
+import { SecurityModule } from 'src/engine/core-modules/security/security.module';
+import { SandboxModule } from 'src/engine/core-modules/sandbox/sandbox.module';
+import { MCPModule } from 'src/engine/core-modules/mcp/mcp.module';
 import { TwentyConfigModule } from 'src/engine/core-modules/twenty-config/twenty-config.module';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UsageModule } from 'src/engine/core-modules/usage/usage.module';
@@ -153,6 +160,13 @@ import { FileModule } from './file/file.module';
     TrashCleanupModule,
     DashboardModule,
     EventLogsModule,
+    DataResidencyModule,
+    FieldEncryptionModule,
+    MobileModule,
+    OfflineSyncModule,
+    SecurityModule,
+    SandboxModule,
+    MCPModule,
   ],
   exports: [
     AuditModule,
