@@ -4,10 +4,10 @@ import { tmpdir } from 'os';
 import { join } from 'path';
 
 import * as tar from 'tar';
+import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
 import { installApplication } from 'test/integration/metadata/suites/application/utils/install-application.util';
 import { uploadAppTarball } from 'test/integration/metadata/suites/application/utils/upload-app-tarball.util';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
-import { type DataSource } from 'typeorm';
 
 const createTestTarball = async (
   files: Record<string, string>,
@@ -98,35 +98,17 @@ const buildManifestWithCrossEntityIdentifierConflict = (
   });
 
 describe('Install application should return structured validation errors', () => {
-  let ds: DataSource;
-  const createdRegistrationIds: string[] = [];
   const createdApplicationUniversalIdentifiers: string[] = [];
 
   beforeAll(() => {
     jest.useRealTimers();
-    ds = globalThis.testDataSource;
   });
 
   afterAll(async () => {
     for (const uid of createdApplicationUniversalIdentifiers) {
-      await ds.query(
-        `DELETE FROM core."file" WHERE "applicationId" IN (
-          SELECT id FROM core."application" WHERE "universalIdentifier" = $1
-        )`,
-        [uid],
-      );
-
-      await ds.query(
-        `DELETE FROM core."application" WHERE "universalIdentifier" = $1`,
-        [uid],
-      );
-    }
-
-    for (const id of createdRegistrationIds) {
-      await ds.query(
-        `DELETE FROM core."applicationRegistration" WHERE id = $1`,
-        [id],
-      );
+      await cleanupApplicationAndAppRegistration({
+        applicationUniversalIdentifier: uid,
+      });
     }
 
     jest.useFakeTimers();
@@ -160,7 +142,6 @@ describe('Install application should return structured validation errors', () =>
 
     const registrationId = uploadResult.data!.uploadAppTarball.id;
 
-    createdRegistrationIds.push(registrationId);
     createdApplicationUniversalIdentifiers.push(universalIdentifier);
 
     const { errors } = await installApplication({
