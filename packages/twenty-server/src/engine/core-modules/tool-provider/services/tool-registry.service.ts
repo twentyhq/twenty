@@ -1,6 +1,6 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 
-import { type ToolExecutionOptions, type ToolSet, jsonSchema } from 'ai';
+import { type ToolSet, jsonSchema } from 'ai';
 
 import { type NativeToolProvider } from 'src/engine/core-modules/tool-provider/interfaces/native-tool-provider.interface';
 import { type ToolProvider } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
@@ -9,6 +9,7 @@ import { type ToolRetrievalOptions } from 'src/engine/core-modules/tool-provider
 
 import { TOOL_PROVIDERS } from 'src/engine/core-modules/tool-provider/constants/tool-providers.token';
 import { ToolCategory } from 'twenty-shared/ai';
+import { compactToolOutput } from 'src/engine/core-modules/tool-provider/output-serialization/compact-tool-output.util';
 import { NativeModelToolProvider } from 'src/engine/core-modules/tool-provider/providers/native-model-tool.provider';
 import { ToolExecutorService } from 'src/engine/core-modules/tool-provider/services/tool-executor.service';
 import { type LearnToolsAspect } from 'src/engine/core-modules/tool-provider/tools/learn-tools.tool';
@@ -110,10 +111,12 @@ export class ToolRegistryService {
     options?: {
       wrapWithErrorContext?: boolean;
       includeLoadingMessage?: boolean;
+      serializeOutput?: boolean;
     },
   ): ToolSet {
     const toolSet: ToolSet = {};
     const includeLoadingMessage = options?.includeLoadingMessage ?? true;
+    const serializeOutput = options?.serializeOutput ?? false;
 
     for (const descriptor of descriptors) {
       const baseSchema = descriptor.inputSchema as Record<string, unknown>;
@@ -128,11 +131,15 @@ export class ToolRegistryService {
           ? stripLoadingMessage(args ?? {})
           : (args ?? {});
 
-        return this.toolExecutorService.dispatch(
+        const result = await this.toolExecutorService.dispatch(
           descriptor,
           cleanArgs,
           context,
         );
+
+        return serializeOutput
+          ? (compactToolOutput(result) as ToolOutput)
+          : result;
       };
 
       toolSet[descriptor.name] = {
@@ -165,7 +172,10 @@ export class ToolRegistryService {
   async getToolsByName(
     names: string[],
     context: ToolContext,
-    options?: { includeLoadingMessage?: boolean },
+    options?: {
+      includeLoadingMessage?: boolean;
+      serializeOutput?: boolean;
+    },
   ): Promise<ToolSet> {
     const fullContext = this.buildContextFromToolContext(context);
 
@@ -184,6 +194,7 @@ export class ToolRegistryService {
 
     return this.hydrateToolSet(descriptors, fullContext, {
       includeLoadingMessage: options?.includeLoadingMessage,
+      serializeOutput: options?.serializeOutput,
     });
   }
 
@@ -229,7 +240,7 @@ export class ToolRegistryService {
     toolName: string,
     args: Record<string, unknown> | undefined,
     context: ToolContext,
-    _options: ToolExecutionOptions,
+    options?: { serializeOutput?: boolean },
   ): Promise<ToolOutput> {
     try {
       const fullContext = this.buildContextFromToolContext(context);
@@ -245,7 +256,15 @@ export class ToolRegistryService {
         };
       }
 
-      return await this.toolExecutorService.dispatch(entry, args, fullContext);
+      const result = await this.toolExecutorService.dispatch(
+        entry,
+        args,
+        fullContext,
+      );
+
+      return options?.serializeOutput
+        ? (compactToolOutput(result) as ToolOutput)
+        : result;
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : String(error);
@@ -271,6 +290,7 @@ export class ToolRegistryService {
       excludeTools,
       wrapWithErrorContext,
       includeLoadingMessage,
+      serializeOutput,
     } = options;
     const categorySet = categories ? new Set(categories) : undefined;
 
@@ -305,6 +325,7 @@ export class ToolRegistryService {
     const toolSet = this.hydrateToolSet(filteredDescriptors, context, {
       wrapWithErrorContext,
       includeLoadingMessage,
+      serializeOutput,
     });
 
     if (categories?.includes(ToolCategory.NATIVE_MODEL)) {

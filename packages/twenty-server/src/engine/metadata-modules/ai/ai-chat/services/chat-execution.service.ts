@@ -23,7 +23,6 @@ import { CodeInterpreterService } from 'src/engine/core-modules/code-interpreter
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { COMMON_PRELOAD_TOOLS } from 'src/engine/core-modules/tool-provider/constants/common-preload-tools.const';
-import { wrapToolsWithOutputSerialization } from 'src/engine/core-modules/tool-provider/output-serialization/wrap-tools-with-output-serialization.util';
 import { ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
 import {
   createExecuteToolTool,
@@ -152,6 +151,7 @@ export class ChatExecutionService {
     const preloadedTools = await this.toolRegistry.getToolsByName(
       toolNamesToPreload,
       toolContext,
+      { serializeOutput: true },
     );
 
     const resolvedModelId = modelId ?? workspace.smartModel;
@@ -175,10 +175,11 @@ export class ChatExecutionService {
         ? this.getNativeWebSearchTools(registeredModel)
         : { tools: {}, callableToolNames: [] };
 
-    // Direct tools: native provider tools + preloaded tools.
-    // These are callable directly AND as fallback through execute_tool.
+    // Tools the model can call directly: preloaded registry tools (already
+    // serialized by the hydrator) plus SDK-native tools (opaque, never
+    // serialized). execute_tool routes discovered tools through the registry.
     const directTools: ToolSet = {
-      ...wrapToolsWithOutputSerialization(preloadedTools),
+      ...preloadedTools,
       ...nativeSearchTools,
     };
 
@@ -188,7 +189,7 @@ export class ChatExecutionService {
     ];
 
     // ToolSet is constant for the entire conversation — no mutation.
-    // learn_tools returns schemas as text; execute_tool dispatches to cached tools.
+    // learn_tools returns schemas as text; execute_tool dispatches via the registry.
     const activeTools: ToolSet = {
       ...directTools,
       [LEARN_TOOLS_TOOL_NAME]: createLearnToolsTool(
@@ -198,7 +199,7 @@ export class ChatExecutionService {
       [EXECUTE_TOOL_TOOL_NAME]: createExecuteToolTool(
         this.toolRegistry,
         toolContext,
-        directTools,
+        { serializeOutput: true },
       ),
       [LOAD_SKILL_TOOL_NAME]: createLoadSkillTool(
         (skillNames) =>
