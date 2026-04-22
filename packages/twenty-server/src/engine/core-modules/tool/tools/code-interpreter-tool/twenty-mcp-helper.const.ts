@@ -139,6 +139,11 @@ class TwentyMCP:
             return json.loads(content[0]["text"])
         return result.get("result")
 
-# Pre-instantiated helper - use 'twenty' in your code
+# --------------------------------------------------------------------------
+# \`twenty\` is a pre-built instance of the TwentyMCP class above. It is
+# already bound in this module scope — DO NOT \`import twenty\`. There is
+# no Python package by that name. Just use it directly, e.g.:
+#     companies = twenty.call_tool('find_companies', {'limit': 10})
+# --------------------------------------------------------------------------
 twenty = TwentyMCP()
 `;
