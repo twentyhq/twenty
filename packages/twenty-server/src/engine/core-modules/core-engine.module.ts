@@ -59,6 +59,8 @@ import { OfflineSyncModule } from 'src/engine/core-modules/offline-sync/offline-
 import { SecurityModule } from 'src/engine/core-modules/security/security.module';
 import { SandboxModule } from 'src/engine/core-modules/sandbox/sandbox.module';
 import { MCPModule } from 'src/engine/core-modules/mcp/mcp.module';
+import { AiMLModule } from 'src/engine/core-modules/ai-ml/ai-ml.module';
+import { OmnicanalModule } from 'src/engine/core-modules/omnicanal/omnicanal.module';
 import { TwentyConfigModule } from 'src/engine/core-modules/twenty-config/twenty-config.module';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UsageModule } from 'src/engine/core-modules/usage/usage.module';
@@ -167,6 +169,8 @@ import { FileModule } from './file/file.module';
     SecurityModule,
     SandboxModule,
     MCPModule,
+    AiMLModule,
+    OmnicanalModule,
   ],
   exports: [
     AuditModule,
