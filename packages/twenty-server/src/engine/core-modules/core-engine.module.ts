@@ -61,6 +61,8 @@ import { SandboxModule } from 'src/engine/core-modules/sandbox/sandbox.module';
 import { MCPModule } from 'src/engine/core-modules/mcp/mcp.module';
 import { AiMLModule } from 'src/engine/core-modules/ai-ml/ai-ml.module';
 import { OmnicanalModule } from 'src/engine/core-modules/omnicanal/omnicanal.module';
+import { BIAnalyticsModule } from 'src/engine/core-modules/bi-analytics/bi-analytics.module';
+import { ABMModule } from 'src/engine/core-modules/abm/abm.module';
 import { TwentyConfigModule } from 'src/engine/core-modules/twenty-config/twenty-config.module';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UsageModule } from 'src/engine/core-modules/usage/usage.module';
@@ -171,6 +173,8 @@ import { FileModule } from './file/file.module';
     MCPModule,
     AiMLModule,
     OmnicanalModule,
+    BIAnalyticsModule,
+    ABMModule,
   ],
   exports: [
     AuditModule,
