@@ -49,8 +49,12 @@ export const useFieldsWidgetEditorGroupsData = ({
       return { groups: [], ungroupedFields: [], editorMode: 'ungrouped' };
     }
 
+    const activeFields = objectMetadataItem.fields.filter(
+      (field) => field.isActive,
+    );
+
     const eligibleFieldMetadataIds = new Set(
-      objectMetadataItem.fields
+      activeFields
         .filter((field) =>
           isFieldMetadataEligibleForFieldsWidget({
             fieldName: field.name,
@@ -74,7 +78,7 @@ export const useFieldsWidgetEditorGroupsData = ({
       let globalIndex = startGlobalIndex;
       let position = startPosition;
 
-      return objectMetadataItem.fields
+      return activeFields
         .filter(
           (field) =>
             !existingFieldMetadataIds.has(field.id) &&
@@ -105,7 +109,7 @@ export const useFieldsWidgetEditorGroupsData = ({
 
         const fields: FieldsWidgetGroupField[] = groupFields
           .map((viewField) => {
-            const fieldMetadataItem = objectMetadataItem.fields.find(
+            const fieldMetadataItem = activeFields.find(
               (f) => f.id === viewField.fieldMetadataId,
             );
 
@@ -160,7 +164,7 @@ export const useFieldsWidgetEditorGroupsData = ({
       const fields = [...view.viewFields]
         .sort((a, b) => a.position - b.position)
         .map((viewField) => {
-          const fieldMetadataItem = objectMetadataItem.fields.find(
+          const fieldMetadataItem = activeFields.find(
             (f) => f.id === viewField.fieldMetadataId,
           );
 
