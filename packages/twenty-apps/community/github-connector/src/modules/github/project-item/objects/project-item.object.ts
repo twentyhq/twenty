@@ -43,7 +43,6 @@ enum ProjectItemPriority {
 export const PROJECT_ITEM_PRIORITY_FIELD_UNIVERSAL_IDENTIFIER =
   '952a601c-b2da-4b84-9c7b-a9b42fcb7d95';
 
-// Auto-generated `createdAt` system field UUID (deterministic per object).
 export const PROJECT_ITEM_CREATED_AT_FIELD_UNIVERSAL_IDENTIFIER =
   '597b4141-487f-5ad3-87c2-49f0a1679856';
 

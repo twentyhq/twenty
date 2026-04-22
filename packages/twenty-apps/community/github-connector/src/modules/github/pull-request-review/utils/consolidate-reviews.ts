@@ -34,17 +34,6 @@ const compareSubmittedAt = (
   return av < bv ? -1 : 1;
 };
 
-/**
- * Consolidates the raw review events for a single (PR, reviewer) pair into a
- * single verdict using the "first substantive wins" rule:
- *   - If any event is APPROVED or CHANGES_REQUESTED, the earliest such event
- *     determines the verdict state and `firstSubmittedAt`.
- *   - Otherwise (only COMMENTED / DISMISSED events), the earliest event wins.
- *   - `lastSubmittedAt` is the latest `submittedAt` across all events.
- *   - `eventCount` is the number of raw events fed in.
- *
- * Throws if `events` is empty (callers should never group an empty bucket).
- */
 export const consolidateReviews = (
   events: ReviewEventForConsolidation[],
 ): ConsolidatedVerdict => {

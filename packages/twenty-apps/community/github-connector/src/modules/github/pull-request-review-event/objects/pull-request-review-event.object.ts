@@ -22,7 +22,6 @@ enum ReviewEventState {
 export const REVIEW_EVENT_STATE_FIELD_UNIVERSAL_IDENTIFIER =
   'e5eeeaab-4ea9-4f9f-873d-9c1c1473ddb3';
 
-// Auto-generated `createdAt` system field UUID (deterministic per object).
 export const PULL_REQUEST_REVIEW_EVENT_CREATED_AT_FIELD_UNIVERSAL_IDENTIFIER =
   'fc577b22-c927-5b0e-9d6d-532dd41cf6d2';
 

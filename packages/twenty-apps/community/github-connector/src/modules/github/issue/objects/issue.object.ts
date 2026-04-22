@@ -35,7 +35,6 @@ enum IssueState {
 export const ISSUE_STATE_FIELD_UNIVERSAL_IDENTIFIER =
   '1c2d3e4f-5a6b-4c7d-a48e-9f0a1b2c3d4e';
 
-// Auto-generated `createdAt` system field UUID (deterministic per object).
 export const ISSUE_CREATED_AT_FIELD_UNIVERSAL_IDENTIFIER =
   '440e9ba8-20d1-5843-91ef-3b7b699a59f4';
 

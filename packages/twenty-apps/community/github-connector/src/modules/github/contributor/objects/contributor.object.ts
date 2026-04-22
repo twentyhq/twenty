@@ -18,7 +18,6 @@ export const CONTRIBUTOR_AVATAR_URL_FIELD_UNIVERSAL_IDENTIFIER =
 export const CONTRIBUTOR_CONTRIBUTIONS_FIELD_UNIVERSAL_IDENTIFIER =
   '66f73e49-6edb-48fa-812b-c3e684ef6340';
 
-// Auto-generated `createdAt` system field UUID (deterministic per object).
 export const CONTRIBUTOR_CREATED_AT_FIELD_UNIVERSAL_IDENTIFIER =
   'bb8d2a87-b41c-578b-98de-2e37dba12a14';
 

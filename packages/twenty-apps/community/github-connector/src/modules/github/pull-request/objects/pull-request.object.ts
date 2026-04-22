@@ -33,7 +33,6 @@ export const PR_CLOSED_AT_FIELD_UNIVERSAL_IDENTIFIER =
 export const PR_GITHUB_CREATED_AT_FIELD_UNIVERSAL_IDENTIFIER =
   'e38deee8-c57f-4b40-8c35-2b5d1fee759e';
 
-// Auto-generated `createdAt` system field UUID (deterministic per object).
 export const PULL_REQUEST_CREATED_AT_FIELD_UNIVERSAL_IDENTIFIER =
   '78d142cf-7033-565d-b802-860bde5b0078';
 

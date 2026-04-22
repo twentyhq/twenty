@@ -80,12 +80,6 @@ async function requestInstallationToken(
   };
 }
 
-/**
- * Fine-grained PATs always start with `github_pat_`. Classic tokens
- * (`ghp_…`, the legacy 40-char hex tokens, and OAuth `gho_…` / `ghu_…`
- * variants) are intentionally rejected: this connector only supports
- * scoped, fine-grained tokens.
- */
 function assertFineGrainedPat(token: string): void {
   if (token.startsWith('github_pat_')) return;
   throw new Error(
@@ -93,14 +87,6 @@ function assertFineGrainedPat(token: string): void {
   );
 }
 
-/**
- * Returns a GitHub token to authenticate REST/GraphQL calls.
- *
- * Resolution order:
- *   1. `GITHUB_TOKEN` (fine-grained PAT)  preferred for ease of setup
- *   2. GitHub App credentials (`GITHUB_APP_ID` + `GITHUB_APP_PRIVATE_KEY` +
- *      `GITHUB_APP_INSTALLATION_ID`)  rotated installation tokens
- */
 export async function getGitHubToken(): Promise<string> {
   const pat = process.env.GITHUB_TOKEN?.trim();
   if (pat) {

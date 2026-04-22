@@ -21,7 +21,6 @@ export const REVIEW_LAST_SUBMITTED_AT_FIELD_UNIVERSAL_IDENTIFIER =
 export const REVIEW_EVENT_COUNT_FIELD_UNIVERSAL_IDENTIFIER =
   '5bca3165-8033-41da-96bb-bf381e6db45f';
 
-// Auto-generated `createdAt` system field UUID (deterministic per object).
 export const PULL_REQUEST_REVIEW_CREATED_AT_FIELD_UNIVERSAL_IDENTIFIER =
   'b4d61187-1b78-5d6e-9752-79f994ff6d55';
 

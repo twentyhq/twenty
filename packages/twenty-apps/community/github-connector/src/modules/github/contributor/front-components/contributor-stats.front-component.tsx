@@ -44,10 +44,6 @@ type SearchResponse = {
   contributors: ContributorInfo[];
 };
 
-// Front-component event handlers receive a CustomEvent whose `detail` is the
-// SerializedEventData built by the host. See
-// twenty-front-component-renderer/src/host/utils/createHtmlHostWrapper.ts and
-// twenty-front-component-renderer/src/__stories__/example-sources/form-events.front-component.tsx.
 type SerializedFormEvent = {
   detail?: { value?: string; checked?: boolean };
   value?: string;
@@ -72,7 +68,6 @@ const PERIOD_OPTIONS: Array<{ value: Period; label: string }> = [
   { value: 'year', label: 'Last year' },
 ];
 
-// Salesforce Lightning Design System (SLDS) tokens
 const COLORS = {
   bg: '#F3F2F2',
   surface: '#FFFFFF',

@@ -122,8 +122,6 @@ async function graphql<T>(
   return json.data;
 }
 
-// ---------- Pull Requests with Reviews ----------
-
 const PULL_REQUESTS_QUERY = `
 query($owner: String!, $name: String!, $cursor: String) {
   repository(owner: $owner, name: $name) {
@@ -215,8 +213,6 @@ export async function fetchPullRequestsGraphQL(
   };
 }
 
-// ---------- PR count (lightweight, no node data) ----------
-
 const PR_COUNT_QUERY = `
 query($owner: String!, $name: String!) {
   repository(owner: $owner, name: $name) {
@@ -244,8 +240,6 @@ export async function fetchPullRequestCount(
     return 0;
   }
 }
-
-// ---------- Issues ----------
 
 const ISSUES_QUERY = `
 query($owner: String!, $name: String!, $cursor: String) {
@@ -322,8 +316,6 @@ export async function fetchIssuesGraphQL(
   }
 }
 
-// ---------- Issue count (lightweight, no node data) ----------
-
 const ISSUE_COUNT_QUERY = `
 query($owner: String!, $name: String!) {
   repository(owner: $owner, name: $name) {
@@ -351,8 +343,6 @@ export async function fetchIssueCount(
     return 0;
   }
 }
-
-// ---------- Project Items ----------
 
 const PROJECT_ITEMS_QUERY = `
 query($owner: String!, $number: Int!, $cursor: String) {
@@ -431,11 +421,6 @@ type ProjectItemsUserResponse = {
   user: { projectV2: { items: ProjectItemsConnection } | null } | null;
 };
 
-/**
- * Swallows GraphQL `Could not resolve to a (User|Organization)` errors so we
- * can probe both `user(login)` and `organization(login)` without crashing
- * when the login only matches one of them.
- */
 async function tryGraphqlByOwnerKind<T>(
   query: string,
   variables: Record<string, unknown>,
@@ -489,8 +474,6 @@ export async function fetchProjectItemsPage(
     endCursor: connection.pageInfo.endCursor,
   };
 }
-
-// ---------- Single project item by node ID (used by webhook) ----------
 
 const PROJECT_ITEM_BY_NODE_ID_QUERY = `
 query($id: ID!) {
@@ -566,8 +549,6 @@ export async function fetchProjectItemByNodeId(
   }
 }
 
-// ---------- Project Items count (lightweight) ----------
-
 const PROJECT_ITEMS_COUNT_QUERY = `
 query($owner: String!, $number: Int!) {
   organization(login: $owner) {
@@ -607,8 +588,6 @@ export async function fetchProjectItemCount(
   );
   return userData?.user?.projectV2?.items.totalCount ?? 0;
 }
-
-// ---------- Contributors (mentionableUsers) ----------
 
 const CONTRIBUTORS_QUERY = `
 query($owner: String!, $name: String!, $cursor: String) {
@@ -670,8 +649,6 @@ export async function fetchContributorsGraphQL(
     endCursor: connection.pageInfo.endCursor,
   };
 }
-
-// ---------- Contributor count (lightweight, no node data) ----------
 
 const CONTRIBUTOR_COUNT_QUERY = `
 query($owner: String!, $name: String!) {
