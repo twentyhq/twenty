@@ -85,12 +85,31 @@ methods.
 
 ### Option 1 — Personal Access Token (recommended for trying it out)
 
-| Variable        | Required | Notes                                                          |
-| --------------- | -------- | -------------------------------------------------------------- |
-| `GITHUB_TOKEN`  | yes      | Classic or fine-grained PAT with `repo` and `read:org` scopes. |
+| Variable        | Required | Notes                                                                |
+| --------------- | -------- | -------------------------------------------------------------------- |
+| `GITHUB_TOKEN`  | yes      | Fine-grained PAT (preferred) or classic PAT. See permissions below.  |
 
-Generate a PAT at <https://github.com/settings/tokens>. When `GITHUB_TOKEN`
-is set, it always wins, regardless of any GitHub App config below.
+Create a fine-grained PAT at
+<https://github.com/settings/personal-access-tokens>:
+
+1. **Resource owner**: yourself or the org that owns the repos in
+   `GITHUB_REPOS`.
+2. **Repository access**: pick the specific repos (or "All repositories").
+3. **Repository permissions** — set to **Read-only**:
+   - `Contents`
+   - `Issues`
+   - `Pull requests`
+   - `Metadata` (selected automatically)
+4. **Organization permissions** — only if you want to sync GitHub Projects
+   (v2): set `Projects` to **Read-only**.
+5. Generate, then copy the `github_pat_…` value.
+
+(Classic PATs at <https://github.com/settings/tokens> still work and need
+`repo` + `read:org`, but fine-grained tokens are scoped tighter and
+recommended.)
+
+When `GITHUB_TOKEN` is set, it always wins regardless of any GitHub App
+config below.
 
 ### Option 2 — GitHub App (recommended for production / org-wide installs)
 

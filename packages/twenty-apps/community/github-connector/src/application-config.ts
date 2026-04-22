@@ -17,7 +17,7 @@ export default defineApplication({
     GITHUB_TOKEN: {
       universalIdentifier: 'fb1d2e91-3a75-4c89-9d6b-1e2f7a4c5d8e',
       description:
-        'Personal Access Token (classic or fine-grained). When set, takes precedence over the GitHub App credentials below. Easiest way to try the app.',
+        'Personal Access Token. Fine-grained tokens (https://github.com/settings/personal-access-tokens) are preferred — needs Read-only access to Contents, Issues, Pull requests and Metadata (and Organization → Projects for Projects v2). Classic tokens with `repo`+`read:org` also work. When set, takes precedence over the GitHub App credentials below.',
       isSecret: true,
     },
     GITHUB_APP_ID: {
