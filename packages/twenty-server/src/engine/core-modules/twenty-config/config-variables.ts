@@ -720,6 +720,15 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.CODE_INTERPRETER_CONFIG,
+    description:
+      'Override URL the sandbox uses to reach Twenty\'s MCP endpoint. Needed when the sandbox runs on a network that cannot resolve the public SERVER_URL (e.g. DOCKER driver with internal-only sandbox network). Falls back to SERVER_URL when unset.',
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  CODE_INTERPRETER_SERVER_URL?: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.CODE_INTERPRETER_CONFIG,
     description: 'Timeout in milliseconds for code execution (default: 300000)',
     type: ConfigVariableType.NUMBER,
   })
