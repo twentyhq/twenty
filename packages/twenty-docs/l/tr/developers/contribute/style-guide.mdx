@@ -1,14 +1,14 @@
 ---
 title: Stil Rehberi
-icon: paintbrush
-description: Code conventions and best practices for contributing to Twenty.
+icon: Boya fırçası
+description: Twenty'ye katkıda bulunmak için kod kuralları ve en iyi uygulamalar.
 ---
 
 ## React
 
-### Functional components only
+### Yalnızca fonksiyonel bileşenler
 
-Always use TSX functional components with named exports.
+Her zaman named export'larla TSX fonksiyonel bileşenlerini kullanın.
 
 ```tsx
 // ❌ Bad
@@ -25,7 +25,7 @@ export function MyComponent() {
 
 ### Özellikler
 
-Create a type named `{ComponentName}Props`. Use destructuring. Don't use `React.FC`.
+`{ComponentName}Props` adında bir type oluşturun. Destructuring kullanın. `React.FC` kullanmayın.
 
 ```tsx
 type MyComponentProps = {
@@ -35,7 +35,7 @@ type MyComponentProps = {
 export const MyComponent = ({ name }: MyComponentProps) => <div>Hello {name}</div>;
 ```
 
-### No single-variable prop spreading
+### Tek değişken için prop spread kullanmayın
 
 ```tsx
 // ❌ Bad
@@ -47,7 +47,7 @@ const MyComponent = ({ prop1, prop2 }: MyComponentProps) => <Other {...{ prop1, 
 
 ## Durum Yönetimi
 
-### Jotai atoms for global state
+### Global durum için Jotai atomları
 
 ```tsx
 import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
@@ -59,16 +59,16 @@ export const myAtomState = createAtomState<string>({
 });
 ```
 
-* Prefer atoms over prop drilling
-* Don't use `useRef` for state — use `useState` or atoms
-* Use atom families and selectors for lists
+* Prop drilling yerine atomları tercih edin
+* Durum için `useRef` kullanmayın — `useState` veya atomları kullanın
+* Listeler için atom ailelerini ve seçicileri kullanın
 
-### Avoid unnecessary re-renders
+### Gereksiz yeniden render'ları önleyin
 
-* Extract `useEffect` and data fetching into sibling sidecar components
-* Prefer event handlers (`handleClick`, `handleChange`) over `useEffect`
-* Don't use `React.memo()` — fix the root cause instead
-* Limit `useCallback` / `useMemo` usage
+* `useEffect` ve veri çekmeyi kardeş sidecar bileşenlere ayırın
+* `useEffect` yerine olay işleyicilerini (`handleClick`, `handleChange`) tercih edin
+* `React.memo()` kullanmayın — bunun yerine kök nedeni düzeltin
+* `useCallback` / `useMemo` kullanımını sınırlayın
 
 ```tsx
 // ❌ Bad — useEffect in the same component causes re-renders
@@ -94,11 +94,11 @@ export const Page = () => {
 
 ## TypeScript
 
-* **`type` over `interface`** — more flexible, easier to compose
-* **String literals over enums** — except for GraphQL codegen enums and internal library APIs
-* **No `any`** — strict TypeScript enforced
-* **No type imports** — use regular imports (enforced by Oxlint `typescript/consistent-type-imports`)
-* **Use [Zod](https://github.com/colinhacks/zod)** for runtime validation of untyped objects
+* **`interface` yerine `type`** — daha esnek, birleştirmesi daha kolay
+* **enum yerine string literal'lar** — GraphQL codegen enum'ları ve dahili kütüphane API'leri hariç
+* **`any` yok** — katı TypeScript zorunludur
+* **Type import'ları yok** — normal import'lar kullanın (Oxlint `typescript/consistent-type-imports` tarafından uygulanır)
+* **[Zod](https://github.com/colinhacks/zod) kullanın** tiplenmemiş nesnelerin çalışma zamanı doğrulaması için
 
 ## JavaScript
 
@@ -112,17 +112,17 @@ onClick?.();
 
 ## İsimlendirme
 
-* **Variables**: camelCase, descriptive (`email` not `value`, `fieldMetadata` not `fm`)
-* **Constants**: SCREAMING_SNAKE_CASE
-* **Types/Classes**: PascalCase
-* **Files/directories**: kebab-case (`.component.tsx`, `.service.ts`, `.entity.ts`)
-* **Event handlers**: `handleClick` (not `onClick` for the handler function)
-* **Component props**: prefix with component name (`ButtonProps`)
-* **Styled components**: prefix with `Styled` (`StyledTitle`)
+* **Değişkenler**: camelCase, açıklayıcı (`email` değil `value`, `fieldMetadata` değil `fm`)
+* **Sabitler**: SCREAMING_SNAKE_CASE
+* **Tipler/Sınıflar**: PascalCase
+* **Dosyalar/dizinler**: kebab-case (`.component.tsx`, `.service.ts`, `.entity.ts`)
+* **Olay işleyicileri**: `handleClick` (işleyici fonksiyon için `onClick` değil)
+* **Bileşen prop'ları**: önek olarak bileşen adını kullanın (`ButtonProps`)
+* **Styled bileşenler**: `Styled` öneğini kullanın (`StyledTitle`)
 
 ## Stil
 
-Use [Linaria](https://github.com/callstack/linaria) styled components. Use theme values — avoid hardcoded `px`, `rem`, or colors.
+[Linaria](https://github.com/callstack/linaria) ile stillendirilmiş bileşenleri kullanın. Tema değerlerini kullanın — kodda sabit tanımlanmış `px`, `rem` veya renklerden kaçının.
 
 ```tsx
 // ❌ Bad
@@ -142,7 +142,7 @@ const StyledButton = styled.button`
 
 ## İçe Aktarımlar
 
-Use aliases instead of relative paths:
+Göreli yollar yerine alias kullanın:
 
 ```tsx
 // ❌ Bad
@@ -153,7 +153,7 @@ import { Foo } from '~/testing/decorators/Foo';
 import { Bar } from '@/modules/bar/components/Bar';
 ```
 
-## Folder Structure
+## Klasör Yapısı
 
 ```
 front
@@ -171,6 +171,6 @@ front
 └── ui/              # Reusable UI components (display, input, feedback, ...)
 ```
 
-* Modules can import from other modules, but `ui/` should stay dependency-free
-* Use `internal/` subfolders for module-private code
-* Components under 300 lines, services under 500 lines
+* Modüller diğer modüllerden import edebilir, ancak `ui/` bağımlılıksız kalmalıdır
+* `internal/` alt klasörlerini modüle özel kod için kullanın
+* Bileşenler 300 satırın altında, servisler 500 satırın altında
