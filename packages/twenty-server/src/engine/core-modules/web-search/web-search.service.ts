@@ -33,13 +33,6 @@ export class WebSearchService {
     );
   }
 
-  shouldUseNativeSearch(): boolean {
-    return (
-      this.twentyConfigService.get('WEB_SEARCH_PREFER_NATIVE') ||
-      !this.isEnabled()
-    );
-  }
-
   async search(
     query: string,
     options?: WebSearchOptions,

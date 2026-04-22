@@ -11,7 +11,7 @@ import { WebSearchService } from 'src/engine/core-modules/web-search/web-search.
 @Injectable()
 export class WebSearchTool implements Tool {
   description =
-    'Search the web for real-time information. Returns relevant results with titles, URLs, and content snippets. Supports optional category filtering for company, people, news, and other content types.';
+    'Structured web search powered by Exa. Returns entity-aware results with category filtering (companies, people, research papers, news, and other content types). Prefer this when the query benefits from structured data or a specific category. For general real-time web browsing, prefer the native `web_search` tool when it is available.';
   inputSchema = WebSearchInputZodSchema;
 
   constructor(private readonly webSearchService: WebSearchService) {}

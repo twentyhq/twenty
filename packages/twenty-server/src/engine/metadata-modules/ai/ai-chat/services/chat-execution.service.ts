@@ -58,7 +58,6 @@ import {
 } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { SdkProviderFactoryService } from 'src/engine/metadata-modules/ai/ai-models/services/sdk-provider-factory.service';
 import { type AiModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-config.type';
-import { WebSearchService } from 'src/engine/core-modules/web-search/web-search.service';
 import { SkillService } from 'src/engine/metadata-modules/skill/skill.service';
 
 export type ChatExecutionOptions = {
@@ -94,7 +93,6 @@ export class ChatExecutionService {
     private readonly exceptionHandlerService: ExceptionHandlerService,
     private readonly sdkProviderFactory: SdkProviderFactoryService,
     private readonly messagePruningService: MessagePruningService,
-    private readonly webSearchService: WebSearchService,
   ) {}
 
   async streamChat({
@@ -141,12 +139,10 @@ export class ChatExecutionService {
       `Built tool catalog with ${toolCatalog.length} tools, ${skillCatalog.length} skills available`,
     );
 
-    const useNativeSearch = this.webSearchService.shouldUseNativeSearch();
-
-    const toolNamesToPreload = [
-      ...COMMON_PRELOAD_TOOLS,
-      ...(useNativeSearch ? [] : ['web_search']),
-    ];
+    // Preload Exa when the workspace has it enabled; ActionToolProvider
+    // only emits the exa_web_search descriptor when isEnabled() is true,
+    // so getToolsByName silently skips it otherwise.
+    const toolNamesToPreload = [...COMMON_PRELOAD_TOOLS, 'exa_web_search'];
 
     const preloadedTools = await this.toolRegistry.getToolsByName(
       toolNamesToPreload,
@@ -170,10 +166,11 @@ export class ChatExecutionService {
       registeredModel.modelId,
     );
 
+    // Native web_search is returned when the resolved model's SDK provider
+    // exposes it (Anthropic, OpenAI). Coexists with exa_web_search when both
+    // are available — the model picks based on tool descriptions.
     const { tools: nativeSearchTools, callableToolNames: searchToolNames } =
-      useNativeSearch
-        ? this.getNativeWebSearchTools(registeredModel)
-        : { tools: {}, callableToolNames: [] };
+      this.getNativeWebSearchTools(registeredModel);
 
     // Tools the model can call directly: preloaded registry tools (already
     // serialized by the hydrator) plus SDK-native tools (opaque, never
@@ -331,16 +328,13 @@ export class ChatExecutionService {
         userWorkspaceId,
       );
 
-      if (useNativeSearch) {
-        const nativeWebSearchCallCount =
-          countNativeWebSearchCallsFromSteps(steps);
-
-        this.aiBillingService.billNativeWebSearchUsage(
-          nativeWebSearchCallCount,
-          workspace.id,
-          userWorkspaceId,
-        );
-      }
+      // billNativeWebSearchUsage short-circuits when count <= 0, so calling
+      // unconditionally is safe regardless of whether native search fired.
+      this.aiBillingService.billNativeWebSearchUsage(
+        countNativeWebSearchCallsFromSteps(steps),
+        workspace.id,
+        userWorkspaceId,
+      );
     };
 
     const stream = streamText({

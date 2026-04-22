@@ -48,7 +48,7 @@ export class ActionToolProvider implements ToolProvider {
       ['search_help_center', this.searchHelpCenterTool],
       ['code_interpreter', this.codeInterpreterTool],
       ['navigate_app', this.navigateAppTool],
-      ['web_search', this.webSearchTool],
+      ['exa_web_search', this.webSearchTool],
     ]);
   }
 
@@ -130,7 +130,11 @@ export class ActionToolProvider implements ToolProvider {
 
     if (this.webSearchService.isEnabled()) {
       descriptors.push(
-        this.buildDescriptor('web_search', this.webSearchTool, includeSchemas),
+        this.buildDescriptor(
+          'exa_web_search',
+          this.webSearchTool,
+          includeSchemas,
+        ),
       );
     }
 

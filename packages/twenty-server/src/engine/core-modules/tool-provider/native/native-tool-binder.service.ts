@@ -7,7 +7,6 @@ import { type NativeToolBinder } from 'src/engine/core-modules/tool-provider/nat
 import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
 
 import { ToolCategory } from 'twenty-shared/ai';
-import { WebSearchService } from 'src/engine/core-modules/web-search/web-search.service';
 import { AiModelConfigService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-config.service';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 
@@ -18,7 +17,6 @@ export class NativeToolBinderService implements NativeToolBinder {
   constructor(
     private readonly aiModelConfigService: AiModelConfigService,
     private readonly aiModelRegistryService: AiModelRegistryService,
-    private readonly webSearchService: WebSearchService,
   ) {}
 
   async isAvailable(context: ToolProviderContext): Promise<boolean> {
@@ -30,13 +28,12 @@ export class NativeToolBinderService implements NativeToolBinder {
       return {};
     }
 
-    if (!this.webSearchService.shouldUseNativeSearch()) {
-      return {};
-    }
-
     const registeredModel =
       await this.aiModelRegistryService.resolveModelForAgent(context.agent);
 
+    // Enablement is driven by the agent's model configuration
+    // (modelConfiguration.webSearch.enabled). If the agent does not opt into
+    // a capability, getNativeModelTools returns an empty ToolSet.
     return this.aiModelConfigService.getNativeModelTools(
       registeredModel,
       context.agent,
