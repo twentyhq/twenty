@@ -3,9 +3,9 @@ import {
   fetchIssuesGraphQL,
   type GqlIssue,
 } from 'src/modules/github/connector/graphql';
-import { batchUpsertEngineers } from 'src/modules/engineer/graphql/mutations/batch-upsert';
+import { batchUpsertContributors } from 'src/modules/github/contributor/graphql/mutations/batch-upsert';
 import { batchUpsertIssues } from 'src/modules/github/issue/graphql/mutations/batch-upsert';
-import { dedupeEngineers } from 'src/modules/engineer/normalizers';
+import { dedupeContributors } from 'src/modules/github/contributor/normalizers';
 import { issueFromGraphql } from 'src/modules/github/issue/normalizers';
 import { timed } from 'src/modules/shared/timing';
 
@@ -46,15 +46,15 @@ const handler = async (event: RoutePayload<FetchIssuesPayload>) => {
 
   const fullRepo = `${owner}/${repo}`;
 
-  const engineerInputs = dedupeEngineers(issues.map((i) => i.author));
-  const engineers = await timed(
-    `fetch-issues:upsertEngineers ${tag} (${engineerInputs.length})`,
-    () => batchUpsertEngineers(engineerInputs),
+  const contributorInputs = dedupeContributors(issues.map((i) => i.author));
+  const contributors = await timed(
+    `fetch-issues:upsertContributors ${tag} (${contributorInputs.length})`,
+    () => batchUpsertContributors(contributorInputs),
   );
 
   const idByLogin = new Map<string, string>();
-  for (const eng of engineers) {
-    if (eng.ghLogin) idByLogin.set(eng.ghLogin, eng.id);
+  for (const c of contributors) {
+    if (c.ghLogin) idByLogin.set(c.ghLogin, c.id);
   }
 
   const issueData = issues.map((issue) => ({

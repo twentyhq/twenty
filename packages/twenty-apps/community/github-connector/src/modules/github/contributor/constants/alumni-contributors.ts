@@ -7,7 +7,7 @@
  * historical PRs/reviews would inflate the external numbers and crowd out
  * actual community contributors.
  *
- * Matched case-insensitively against `engineer.ghLogin`.
+ * Matched case-insensitively against `contributor.ghLogin`.
  */
 export const ALUMNI_GITHUB_HANDLES: readonly string[] = [
   'guillim',

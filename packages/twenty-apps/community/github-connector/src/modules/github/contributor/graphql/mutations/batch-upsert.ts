@@ -1,7 +1,7 @@
-import type { EngineerRow } from 'src/modules/engineer/types/engineer-row';
+import type { ContributorRow } from 'src/modules/github/contributor/types/contributor-row';
 import { chunkedBatchCreate } from 'src/modules/shared/twenty-client';
 
-export async function batchUpsertEngineers(
+export async function batchUpsertContributors(
   items: Array<{
     ghLogin: string;
     name: string;
@@ -10,8 +10,8 @@ export async function batchUpsertEngineers(
     avatarUrl?: { primaryLinkLabel: string; primaryLinkUrl: string; secondaryLinks: null } | null;
     contributions?: number;
   }>,
-): Promise<EngineerRow[]> {
-  return chunkedBatchCreate('createEngineers', items, {
+): Promise<ContributorRow[]> {
+  return chunkedBatchCreate('createContributors', items, {
     id: true,
     ghLogin: true,
     name: true,
@@ -19,5 +19,5 @@ export async function batchUpsertEngineers(
     isCoreTeam: true,
     avatarUrl: true,
     contributions: true,
-  }) as Promise<EngineerRow[]>;
+  }) as Promise<ContributorRow[]>;
 }

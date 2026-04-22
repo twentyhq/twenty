@@ -3,7 +3,7 @@ import {
   fetchContributorsGraphQL,
   type GqlContributor,
 } from 'src/modules/github/connector/graphql';
-import { batchUpsertEngineers } from 'src/modules/engineer/graphql/mutations/batch-upsert';
+import { batchUpsertContributors } from 'src/modules/github/contributor/graphql/mutations/batch-upsert';
 
 export type FetchContributorsFixturePage = {
   contributors: GqlContributor[];
@@ -45,7 +45,7 @@ const handler = async (event: RoutePayload<FetchContributorsPayload>) => {
     return { contributorCount: 0, totalCount, hasMore: false, endCursor: null };
   }
 
-  const engineerData = contributors.map((c: GqlContributor) => ({
+  const contributorData = contributors.map((c: GqlContributor) => ({
     ghLogin: c.login,
     name: c.login,
     githubId: c.databaseId ?? 0,
@@ -55,7 +55,7 @@ const handler = async (event: RoutePayload<FetchContributorsPayload>) => {
     isCoreTeam: coreTeamLogins.has(c.login),
   }));
 
-  await batchUpsertEngineers(engineerData);
+  await batchUpsertContributors(contributorData);
 
   return {
     contributorCount: contributors.length,
@@ -69,7 +69,7 @@ export default defineLogicFunction({
   universalIdentifier: 'ed9ba981-4172-4924-a18f-51fc6dcbcb23',
   name: 'fetch-contributors',
   description:
-    'Fetches one page of contributors via GitHub GraphQL API and batch upserts them as engineers with core team flag',
+    'Fetches one page of contributors via GitHub GraphQL API and batch upserts them with the core team flag',
   timeoutSeconds: 300,
   handler,
   httpRouteTriggerSettings: {

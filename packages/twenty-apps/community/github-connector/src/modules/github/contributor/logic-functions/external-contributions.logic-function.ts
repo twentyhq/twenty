@@ -5,14 +5,14 @@ import { isAlumniGithubHandle } from 'src/modules/github/contributor/constants/a
 
 type Payload = Record<string, never>;
 
-type EngineerInfo = {
+type ContributorInfo = {
   id: string;
   name: string | null;
   ghLogin: string | null;
   avatarUrl: string | null;
 };
 
-type LeaderRow = EngineerInfo & { count: number };
+type LeaderRow = ContributorInfo & { count: number };
 
 type MonthBucket = {
   month: string;
@@ -40,7 +40,7 @@ const PAGE_SIZE = 100;
 const MAX_PAGES = 80;
 const MONTHS_BACK = 24;
 const TOP_N = 10;
-const ENGINEER_BATCH = 100;
+const CONTRIBUTOR_BATCH = 100;
 
 type Edge<T> = { node: T };
 type Connection<T> = {
@@ -88,7 +88,7 @@ type ReviewNode = {
   firstSubmittedAt: string | null;
   reviewerId: string | null;
 };
-type EngineerNode = {
+type ContributorNode = {
   id: string;
   name: string | null;
   ghLogin: string | null;
@@ -194,25 +194,25 @@ const handler = async (
     },
   );
 
-  // Collect all engineer ids referenced anywhere, then look them up in batches
-  // to find which are external + non-bot.
-  const allEngineerIds = new Set<string>();
+  // Collect all contributor ids referenced anywhere, then look them up in
+  // batches to find which are external + non-bot.
+  const allContributorIds = new Set<string>();
   for (const pr of mergedResult.items) {
-    if (pr.authorId) allEngineerIds.add(pr.authorId);
+    if (pr.authorId) allContributorIds.add(pr.authorId);
   }
   for (const issue of issuesResult.items) {
-    if (issue.authorId) allEngineerIds.add(issue.authorId);
+    if (issue.authorId) allContributorIds.add(issue.authorId);
   }
   for (const r of reviewsResult.items) {
-    if (r.reviewerId) allEngineerIds.add(r.reviewerId);
+    if (r.reviewerId) allContributorIds.add(r.reviewerId);
   }
 
-  const externalEngineers = new Map<string, EngineerInfo>();
-  const ids = Array.from(allEngineerIds);
-  for (let i = 0; i < ids.length; i += ENGINEER_BATCH) {
-    const batch = ids.slice(i, i + ENGINEER_BATCH);
+  const externalContributors = new Map<string, ContributorInfo>();
+  const ids = Array.from(allContributorIds);
+  for (let i = 0; i < ids.length; i += CONTRIBUTOR_BATCH) {
+    const batch = ids.slice(i, i + CONTRIBUTOR_BATCH);
     const res = await client.query({
-      engineers: {
+      contributors: {
         __args: { filter: { id: { in: batch } }, first: batch.length },
         edges: {
           node: {
@@ -226,14 +226,14 @@ const handler = async (
       },
     });
     const edges =
-      (res.engineers as { edges?: { node: EngineerNode }[] } | undefined)
+      (res.contributors as { edges?: { node: ContributorNode }[] } | undefined)
         ?.edges ?? [];
     for (const e of edges) {
       const n = e.node;
       if (n.isCoreTeam) continue;
       if (isIgnoredGithubHandle(n.ghLogin)) continue;
       if (isAlumniGithubHandle(n.ghLogin)) continue;
-      externalEngineers.set(n.id, {
+      externalContributors.set(n.id, {
         id: n.id,
         name: n.name ?? null,
         ghLogin: n.ghLogin ?? null,
@@ -242,15 +242,15 @@ const handler = async (
     }
   }
 
-  // Lifetime "Total External Contributors": distinct external engineers (bots
-  // excluded) — counted from the full engineer table, regardless of activity
-  // window. Cheap separate query.
+  // Lifetime "Total External Contributors": distinct external contributors
+  // (bots excluded) — counted from the full contributor table, regardless of
+  // activity window. Cheap separate query.
   let externalContributorsLifetime = 0;
   {
     let cursor: string | null = null;
     for (let page = 0; page < MAX_PAGES; page++) {
       const res = await client.query({
-        engineers: {
+        contributors: {
           __args: {
             filter: { isCoreTeam: { eq: false } },
             first: PAGE_SIZE,
@@ -261,7 +261,7 @@ const handler = async (
         },
       });
       const conn =
-        (res.engineers as
+        (res.contributors as
           | (Connection<{ id: string; ghLogin: string | null }> & {
               totalCount?: number;
             })
@@ -304,7 +304,7 @@ const handler = async (
 
   for (const pr of mergedResult.items) {
     if (!pr.authorId || !pr.mergedAt) continue;
-    if (!externalEngineers.has(pr.authorId)) continue;
+    if (!externalContributors.has(pr.authorId)) continue;
     const t = new Date(pr.mergedAt).getTime();
     if (t < rangeStartMs) continue;
     const key = monthKey(new Date(pr.mergedAt));
@@ -319,7 +319,7 @@ const handler = async (
 
   for (const issue of issuesResult.items) {
     if (!issue.authorId || !issue.githubCreatedAt) continue;
-    if (!externalEngineers.has(issue.authorId)) continue;
+    if (!externalContributors.has(issue.authorId)) continue;
     const t = new Date(issue.githubCreatedAt).getTime();
     if (t < rangeStartMs) continue;
     const key = monthKey(new Date(issue.githubCreatedAt));
@@ -330,7 +330,7 @@ const handler = async (
 
   for (const r of reviewsResult.items) {
     if (!r.reviewerId || !r.firstSubmittedAt) continue;
-    if (!externalEngineers.has(r.reviewerId)) continue;
+    if (!externalContributors.has(r.reviewerId)) continue;
     const t = new Date(r.firstSubmittedAt).getTime();
     if (t < rangeStartMs) continue;
     reviewCounts.set(r.reviewerId, (reviewCounts.get(r.reviewerId) ?? 0) + 1);
@@ -341,12 +341,12 @@ const handler = async (
       .sort((a, b) => b[1] - a[1])
       .slice(0, TOP_N)
       .map(([id, count]) => {
-        const eng = externalEngineers.get(id);
+        const c = externalContributors.get(id);
         return {
           id,
-          name: eng?.name ?? null,
-          ghLogin: eng?.ghLogin ?? null,
-          avatarUrl: eng?.avatarUrl ?? null,
+          name: c?.name ?? null,
+          ghLogin: c?.ghLogin ?? null,
+          avatarUrl: c?.avatarUrl ?? null,
           count,
         };
       });

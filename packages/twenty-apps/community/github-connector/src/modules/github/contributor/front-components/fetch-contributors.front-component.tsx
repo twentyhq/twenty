@@ -93,6 +93,6 @@ export default defineFrontComponent({
     icon: 'IconUsers',
     isPinned: false,
     conditionalAvailabilityExpression:
-      objectMetadataItem.nameSingular === 'engineer',
+      objectMetadataItem.nameSingular === 'contributor',
   },
 });

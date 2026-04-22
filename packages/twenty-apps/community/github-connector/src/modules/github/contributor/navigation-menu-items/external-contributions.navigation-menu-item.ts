@@ -1,5 +1,5 @@
 import { defineNavigationMenuItem, NavigationMenuItemType } from 'twenty-sdk/define';
-import { CONTRIBUTORS_FOLDER_UNIVERSAL_IDENTIFIER } from 'src/modules/engineer/navigation-menu-items/engineers.navigation-menu-item';
+import { CONTRIBUTORS_FOLDER_UNIVERSAL_IDENTIFIER } from 'src/modules/github/contributor/navigation-menu-items/contributors.navigation-menu-item';
 import { EXTERNAL_CONTRIBUTIONS_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER } from 'src/modules/github/contributor/page-layouts/external-contributions.page-layout';
 
 export default defineNavigationMenuItem({

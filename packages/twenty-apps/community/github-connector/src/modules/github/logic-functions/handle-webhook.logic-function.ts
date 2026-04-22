@@ -8,7 +8,7 @@ import {
   getRawBodyForSignature,
   verifyGitHubSignature,
 } from 'src/modules/github/connector/webhook-signature';
-import { batchUpsertEngineers } from 'src/modules/engineer/graphql/mutations/batch-upsert';
+import { batchUpsertContributors } from 'src/modules/github/contributor/graphql/mutations/batch-upsert';
 import { batchUpsertPullRequests } from 'src/modules/github/pull-request/graphql/mutations/batch-upsert';
 import { batchUpsertReviewEvents } from 'src/modules/github/pull-request-review-event/graphql/mutations/batch-upsert';
 import { batchUpsertConsolidatedReviews } from 'src/modules/github/pull-request-review/graphql/mutations/batch-upsert';
@@ -17,18 +17,18 @@ import { buildConsolidatedRow } from 'src/modules/github/pull-request-review/uti
 import type { ReviewEventState } from 'src/modules/github/pull-request-review/utils/consolidate-reviews';
 import { batchUpsertIssues } from 'src/modules/github/issue/graphql/mutations/batch-upsert';
 import { batchUpsertProjectItems } from 'src/modules/github/project-item/graphql/mutations/batch-upsert';
-import { dedupeEngineers } from 'src/modules/engineer/normalizers';
+import { dedupeContributors } from 'src/modules/github/contributor/normalizers';
 import { pullRequestFromWebhook } from 'src/modules/github/pull-request/normalizers';
 import { reviewEventFromWebhook } from 'src/modules/github/pull-request-review-event/normalizers';
 import { issueFromWebhook } from 'src/modules/github/issue/normalizers';
 import { projectItemFromGraphql } from 'src/modules/github/project-item/normalizers';
 
-async function upsertEngineersByLogin(
+async function upsertContributorsByLogin(
   users: Array<{ login: string; id?: number } | null | undefined>,
 ): Promise<Map<string, string>> {
-  const inputs = dedupeEngineers(users);
+  const inputs = dedupeContributors(users);
   if (inputs.length === 0) return new Map();
-  const rows = await batchUpsertEngineers(inputs);
+  const rows = await batchUpsertContributors(inputs);
   const map = new Map<string, string>();
   for (const r of rows) {
     if (r.ghLogin) map.set(r.ghLogin, r.id);
@@ -43,7 +43,7 @@ async function handlePullRequestEvent(payload: GitHubWebhookPayload) {
     return { skipped: true, reason: 'missing pull_request or repository' };
   }
 
-  const idByLogin = await upsertEngineersByLogin([pr.user, pr.merged_by]);
+  const idByLogin = await upsertContributorsByLogin([pr.user, pr.merged_by]);
   const authorId = idByLogin.get(pr.user.login) ?? null;
   const mergerId = pr.merged_by ? (idByLogin.get(pr.merged_by.login) ?? null) : null;
 
@@ -77,7 +77,7 @@ async function handlePullRequestReviewEvent(payload: GitHubWebhookPayload) {
     };
   }
 
-  const idByLogin = await upsertEngineersByLogin([
+  const idByLogin = await upsertContributorsByLogin([
     pr.user,
     pr.merged_by,
     review.user,
@@ -152,7 +152,7 @@ async function handleIssueEvent(payload: GitHubWebhookPayload) {
     return { skipped: true, reason: 'missing issue or repository' };
   }
 
-  const idByLogin = await upsertEngineersByLogin([issue.user]);
+  const idByLogin = await upsertContributorsByLogin([issue.user]);
   const canonical = issueFromWebhook(issue, repository.full_name);
 
   const [record] = await batchUpsertIssues([

@@ -21,7 +21,7 @@ type Totals = {
   prReviewed: number;
 };
 
-type EngineerInfo = {
+type ContributorInfo = {
   id: string;
   name: string | null;
   ghLogin: string | null;
@@ -29,13 +29,13 @@ type EngineerInfo = {
 };
 
 type ContributorStatsPayload = {
-  engineerId?: string;
+  contributorId?: string;
   period?: StatsPeriod;
 };
 
 type ContributorStatsResponse =
   | {
-      engineer: EngineerInfo;
+      contributor: ContributorInfo;
       period: StatsPeriod;
       granularity: Granularity;
       buckets: Bucket[];
@@ -168,13 +168,13 @@ async function paginateUntil<T>(
 type MergedPrNode = { mergedAt: string | null };
 type ReviewNode = { firstSubmittedAt: string | null };
 
-const fetchEngineerInfo = async (
-  engineerId: string,
-): Promise<EngineerInfo | null> => {
+const fetchContributorInfo = async (
+  contributorId: string,
+): Promise<ContributorInfo | null> => {
   const client = getClient();
   const res = await client.query({
-    engineers: {
-      __args: { filter: { id: { eq: engineerId } }, first: 1 },
+    contributors: {
+      __args: { filter: { id: { eq: contributorId } }, first: 1 },
       edges: {
         node: {
           id: true,
@@ -186,7 +186,7 @@ const fetchEngineerInfo = async (
     },
   });
   const edges =
-    (res.engineers as {
+    (res.contributors as {
       edges?: {
         node: {
           id: string;
@@ -209,19 +209,19 @@ const fetchEngineerInfo = async (
 const handler = async (
   event: RoutePayload<ContributorStatsPayload>,
 ): Promise<ContributorStatsResponse> => {
-  const engineerId = event.body?.engineerId;
+  const contributorId = event.body?.contributorId;
   const period: StatsPeriod = event.body?.period ?? 'month';
 
-  if (!engineerId) {
-    return { error: 'engineerId is required' };
+  if (!contributorId) {
+    return { error: 'contributorId is required' };
   }
   if (!(period in PERIOD_CONFIG)) {
     return { error: `Unsupported period: ${period}` };
   }
 
-  const engineer = await fetchEngineerInfo(engineerId);
-  if (!engineer) {
-    return { error: 'Engineer not found' };
+  const contributor = await fetchContributorInfo(contributorId);
+  if (!contributor) {
+    return { error: 'Contributor not found' };
   }
 
   const now = new Date();
@@ -239,7 +239,7 @@ const handler = async (
           __args: {
             filter: {
               and: [
-                { mergerId: { eq: engineerId } },
+                { mergerId: { eq: contributorId } },
                 { state: { eq: 'MERGED' } },
               ],
             },
@@ -271,7 +271,7 @@ const handler = async (
           __args: {
             filter: {
               and: [
-                { authorId: { eq: engineerId } },
+                { authorId: { eq: contributorId } },
                 { state: { eq: 'MERGED' } },
               ],
             },
@@ -301,7 +301,7 @@ const handler = async (
       const res = await client.query({
         pullRequestReviews: {
           __args: {
-            filter: { reviewerId: { eq: engineerId } },
+            filter: { reviewerId: { eq: contributorId } },
             orderBy: [{ firstSubmittedAt: 'DescNullsLast' }],
             first: PAGE_SIZE,
             after: cursor,
@@ -359,7 +359,7 @@ const handler = async (
   }
 
   return {
-    engineer,
+    contributor,
     period,
     granularity,
     buckets,
@@ -376,7 +376,7 @@ export default defineLogicFunction({
   universalIdentifier: 'a3c9e1b6-2f47-4d8a-9b0f-7e6d1a2c3b4f',
   name: 'contributor-stats',
   description:
-    'Returns time-bucketed counts of PRs authored (merged only), merged and reviewed by an engineer over the selected period.',
+    'Returns time-bucketed counts of PRs authored (merged only), merged and reviewed by a contributor over the selected period.',
   timeoutSeconds: 30,
   handler,
   httpRouteTriggerSettings: {

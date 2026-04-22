@@ -6,7 +6,7 @@ type SearchContributorsPayload = {
   limit?: number;
 };
 
-type EngineerResult = {
+type ContributorResult = {
   id: string;
   name: string | null;
   ghLogin: string | null;
@@ -14,7 +14,7 @@ type EngineerResult = {
 };
 
 type SearchContributorsResponse = {
-  engineers: EngineerResult[];
+  contributors: ContributorResult[];
 };
 
 const DEFAULT_LIMIT = 20;
@@ -42,7 +42,7 @@ const handler = async (
         };
 
   const res = await client.query({
-    engineers: {
+    contributors: {
       __args: {
         ...(filter ? { filter } : {}),
         orderBy: [{ name: 'AscNullsLast' }],
@@ -67,23 +67,23 @@ const handler = async (
   };
 
   const edges =
-    (res.engineers as { edges?: { node: Node }[] } | undefined)?.edges ?? [];
+    (res.contributors as { edges?: { node: Node }[] } | undefined)?.edges ?? [];
 
-  const engineers: EngineerResult[] = edges.map((e) => ({
+  const contributors: ContributorResult[] = edges.map((e) => ({
     id: e.node.id,
     name: e.node.name ?? null,
     ghLogin: e.node.ghLogin ?? null,
     avatarUrl: e.node.avatarUrl?.primaryLinkUrl ?? null,
   }));
 
-  return { engineers };
+  return { contributors };
 };
 
 export default defineLogicFunction({
   universalIdentifier: 'b4d8f2a7-3e58-4f9b-ac1d-8f7e2b3c4d5e',
   name: 'search-contributors',
   description:
-    'Searches engineers (contributors) by name or GitHub login for use in front-end pickers.',
+    'Searches contributors by name or GitHub login for use in front-end pickers.',
   timeoutSeconds: 15,
   handler,
   httpRouteTriggerSettings: {

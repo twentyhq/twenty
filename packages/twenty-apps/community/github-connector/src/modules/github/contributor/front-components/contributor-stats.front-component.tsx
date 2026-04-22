@@ -19,7 +19,7 @@ type Bucket = {
   prReviewed: number;
 };
 
-type EngineerInfo = {
+type ContributorInfo = {
   id: string;
   name: string | null;
   ghLogin: string | null;
@@ -27,7 +27,7 @@ type EngineerInfo = {
 };
 
 type StatsResponse = {
-  engineer: EngineerInfo;
+  contributor: ContributorInfo;
   period: Period;
   granularity: 'day' | 'week' | 'month';
   buckets: Bucket[];
@@ -41,7 +41,7 @@ type StatsResponse = {
 };
 
 type SearchResponse = {
-  engineers: EngineerInfo[];
+  contributors: ContributorInfo[];
 };
 
 // Front-component event handlers receive a CustomEvent whose `detail` is the
@@ -455,7 +455,7 @@ const ContributorStats = () => {
   const [error, setError] = useState<string | null>(null);
 
   const [searchQuery, setSearchQuery] = useState('');
-  const [searchResults, setSearchResults] = useState<SearchResponse['engineers']>([]);
+  const [searchResults, setSearchResults] = useState<SearchResponse['contributors']>([]);
   const [searchLoading, setSearchLoading] = useState(false);
 
   useEffect(() => {
@@ -472,7 +472,7 @@ const ContributorStats = () => {
           query: searchQuery,
           limit: 20,
         })) as SearchResponse;
-        if (!cancelled) setSearchResults(res.engineers ?? []);
+        if (!cancelled) setSearchResults(res.contributors ?? []);
       } catch (err) {
         if (!cancelled) {
           enqueueSnackbar({
@@ -502,7 +502,7 @@ const ContributorStats = () => {
     (async () => {
       try {
         const res = (await callAppRoute('/contributors/stats', {
-          engineerId: selectedId,
+          contributorId: selectedId,
           period,
         })) as StatsResponse;
         if (cancelled) return;
@@ -526,20 +526,20 @@ const ContributorStats = () => {
     };
   }, [selectedId, period]);
 
-  const renderHeader = (engineer: EngineerInfo | null) => (
+  const renderHeader = (contributor: ContributorInfo | null) => (
     <div style={styles.header}>
       <div style={styles.contributor}>
-        {engineer?.avatarUrl ? (
-          <img src={engineer.avatarUrl} alt="" style={styles.avatar} />
+        {contributor?.avatarUrl ? (
+          <img src={contributor.avatarUrl} alt="" style={styles.avatar} />
         ) : (
           <div style={styles.avatar} />
         )}
         <div style={styles.nameCol}>
           <span style={styles.name}>
-            {engineer?.name ?? engineer?.ghLogin ?? 'Contributor stats'}
+            {contributor?.name ?? contributor?.ghLogin ?? 'Contributor stats'}
           </span>
-          {engineer?.ghLogin && (
-            <span style={styles.login}>@{engineer.ghLogin}</span>
+          {contributor?.ghLogin && (
+            <span style={styles.login}>@{contributor.ghLogin}</span>
           )}
         </div>
       </div>
@@ -625,7 +625,7 @@ const ContributorStats = () => {
 
   return (
     <div style={styles.root}>
-      {renderHeader(stats?.engineer ?? null)}
+      {renderHeader(stats?.contributor ?? null)}
       <div style={styles.body}>
         {loading && !stats && (
           <div style={styles.centered}>Loading contributor stats...</div>
@@ -702,6 +702,6 @@ export default defineFrontComponent({
     icon: 'IconChartBar',
     isPinned: false,
     conditionalAvailabilityExpression:
-      objectMetadataItem.nameSingular === 'engineer',
+      objectMetadataItem.nameSingular === 'contributor',
   },
 });

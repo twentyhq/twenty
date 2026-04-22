@@ -17,7 +17,7 @@ Six custom objects:
 - `pullRequestReviewEvent`
 - `issue`
 - `projectItem`
-- `engineer` (the GitHub contributors)
+- `contributor` (the GitHub contributors)
 
 Each object ships with fields, relationships, table views, and a navigation menu
 entry under a top-level "GitHub" section.

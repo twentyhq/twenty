@@ -107,6 +107,6 @@ export default defineFrontComponent({
     EXTERNAL_CONTRIBUTORS_COUNTER_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
   name: 'External Contributors (this month)',
   description:
-    'Big-number counter of distinct external engineers (bots excluded) who authored at least one PR merged in the current calendar month.',
+    'Big-number counter of distinct external contributors (bots excluded) who authored at least one PR merged in the current calendar month.',
   component: ExternalContributorsCounter,
 });

@@ -7,7 +7,7 @@ import {
 } from 'src/modules/github/connector/graphql';
 import { findIssueByNumberAndRepo } from 'src/modules/github/issue/graphql/queries/find-by-number-and-repo';
 import { findPullRequestByGithubNumber } from 'src/modules/github/pull-request/graphql/queries/find-by-github-number';
-import { findEngineerByGhLogin } from 'src/modules/engineer/graphql/queries/find-by-gh-login';
+import { findContributorByGhLogin } from 'src/modules/github/contributor/graphql/queries/find-by-gh-login';
 
 const STATUS_MAP: Record<string, string> = {
   'No Status': 'NO_STATUS',
@@ -58,8 +58,8 @@ export async function projectItemFromGraphql(
 
   let mainAssigneeId: string | null = null;
   if (assigneeLogins.length > 0) {
-    const engineer = await findEngineerByGhLogin(assigneeLogins[0]);
-    mainAssigneeId = engineer?.id ?? null;
+    const contributor = await findContributorByGhLogin(assigneeLogins[0]);
+    mainAssigneeId = contributor?.id ?? null;
   }
 
   let linkedIssueId: string | null = null;

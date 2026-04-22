@@ -1,12 +1,12 @@
-import type { EngineerRow } from 'src/modules/engineer/types/engineer-row';
+import type { ContributorRow } from 'src/modules/github/contributor/types/contributor-row';
 import { getClient } from 'src/modules/shared/twenty-client';
 
-export async function findEngineerByGhLogin(
+export async function findContributorByGhLogin(
   ghLogin: string,
-): Promise<EngineerRow | null> {
+): Promise<ContributorRow | null> {
   const client = getClient();
   const res = await client.query({
-    engineers: {
+    contributors: {
       __args: {
         filter: { ghLogin: { eq: ghLogin } },
         first: 1,
@@ -22,6 +22,6 @@ export async function findEngineerByGhLogin(
     },
   });
 
-  const edges = (res.engineers as { edges: { node: EngineerRow }[] })?.edges;
+  const edges = (res.contributors as { edges: { node: ContributorRow }[] })?.edges;
   return edges?.[0]?.node ?? null;
 }

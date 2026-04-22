@@ -14,7 +14,7 @@ type Response = {
 
 const PAGE_SIZE = 100;
 const MAX_PAGES = 50;
-const ENGINEER_BATCH = 100;
+const CONTRIBUTOR_BATCH = 100;
 
 type Edge<T> = { node: T };
 type Connection<T> = {
@@ -23,7 +23,7 @@ type Connection<T> = {
 };
 
 type MergedPrNode = { mergedAt: string | null; authorId: string | null };
-type EngineerNode = {
+type ContributorNode = {
   id: string;
   ghLogin: string | null;
   isCoreTeam: boolean | null;
@@ -89,10 +89,10 @@ const handler = async (
 
   const ids = Array.from(authorIds);
   let externalCount = 0;
-  for (let i = 0; i < ids.length; i += ENGINEER_BATCH) {
-    const batch = ids.slice(i, i + ENGINEER_BATCH);
+  for (let i = 0; i < ids.length; i += CONTRIBUTOR_BATCH) {
+    const batch = ids.slice(i, i + CONTRIBUTOR_BATCH);
     const res = await client.query({
-      engineers: {
+      contributors: {
         __args: { filter: { id: { in: batch } }, first: batch.length },
         edges: {
           node: { id: true, ghLogin: true, isCoreTeam: true },
@@ -100,7 +100,7 @@ const handler = async (
       },
     });
     const edges =
-      (res.engineers as { edges?: { node: EngineerNode }[] } | undefined)
+      (res.contributors as { edges?: { node: ContributorNode }[] } | undefined)
         ?.edges ?? [];
     for (const e of edges) {
       const n = e.node;
@@ -123,7 +123,7 @@ export default defineLogicFunction({
   universalIdentifier: 'e7b3a92f-1c4d-4e8f-bd07-2a5c8b1d3e6f',
   name: 'external-contributors-this-month',
   description:
-    'Counts distinct external engineers (isCoreTeam=false, bots and alumni excluded) who authored at least one PR merged in the current calendar month.',
+    'Counts distinct external contributors (isCoreTeam=false, bots and alumni excluded) who authored at least one PR merged in the current calendar month.',
   timeoutSeconds: 60,
   handler,
   httpRouteTriggerSettings: {

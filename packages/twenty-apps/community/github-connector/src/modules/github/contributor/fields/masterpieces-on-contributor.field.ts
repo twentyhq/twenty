@@ -1,14 +1,14 @@
 import { defineField, FieldType, RelationType } from 'twenty-sdk/define';
-import { ENGINEER_UNIVERSAL_IDENTIFIER } from 'src/modules/engineer/objects/engineer.object';
+import { CONTRIBUTOR_UNIVERSAL_IDENTIFIER } from 'src/modules/github/contributor/objects/contributor.object';
 import { PULL_REQUEST_UNIVERSAL_IDENTIFIER } from 'src/modules/github/pull-request/objects/pull-request.object';
 import { MERGER_FIELD_UNIVERSAL_IDENTIFIER } from 'src/modules/github/pull-request/fields/merger-on-pull-request.field';
 
-export const MASTERPIECES_FIELD_UNIVERSAL_IDENTIFIER =
+export const MASTERPIECES_ON_CONTRIBUTOR_FIELD_UNIVERSAL_IDENTIFIER =
   '02ec0165-fb5a-46f9-b7c7-a0fd605befa2';
 
 export default defineField({
-  universalIdentifier: MASTERPIECES_FIELD_UNIVERSAL_IDENTIFIER,
-  objectUniversalIdentifier: ENGINEER_UNIVERSAL_IDENTIFIER,
+  universalIdentifier: MASTERPIECES_ON_CONTRIBUTOR_FIELD_UNIVERSAL_IDENTIFIER,
+  objectUniversalIdentifier: CONTRIBUTOR_UNIVERSAL_IDENTIFIER,
   type: FieldType.RELATION,
   name: 'masterpieces',
   label: 'Masterpieces',

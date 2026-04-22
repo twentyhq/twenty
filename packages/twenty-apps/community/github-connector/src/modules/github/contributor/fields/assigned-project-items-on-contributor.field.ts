@@ -1,14 +1,15 @@
 import { defineField, FieldType, RelationType } from 'twenty-sdk/define';
-import { ENGINEER_UNIVERSAL_IDENTIFIER } from 'src/modules/engineer/objects/engineer.object';
+import { CONTRIBUTOR_UNIVERSAL_IDENTIFIER } from 'src/modules/github/contributor/objects/contributor.object';
 import { PROJECT_ITEM_UNIVERSAL_IDENTIFIER } from 'src/modules/github/project-item/objects/project-item.object';
 import { MAIN_ASSIGNEE_ON_PROJECT_ITEM_FIELD_UNIVERSAL_IDENTIFIER } from 'src/modules/github/project-item/fields/main-assignee-on-project-item.field';
 
-export const ASSIGNED_PROJECT_ITEMS_ON_ENGINEER_FIELD_UNIVERSAL_IDENTIFIER =
+export const ASSIGNED_PROJECT_ITEMS_ON_CONTRIBUTOR_FIELD_UNIVERSAL_IDENTIFIER =
   'b35aed82-2c01-4f37-b3f9-cf67dc269d2c';
 
 export default defineField({
-  universalIdentifier: ASSIGNED_PROJECT_ITEMS_ON_ENGINEER_FIELD_UNIVERSAL_IDENTIFIER,
-  objectUniversalIdentifier: ENGINEER_UNIVERSAL_IDENTIFIER,
+  universalIdentifier:
+    ASSIGNED_PROJECT_ITEMS_ON_CONTRIBUTOR_FIELD_UNIVERSAL_IDENTIFIER,
+  objectUniversalIdentifier: CONTRIBUTOR_UNIVERSAL_IDENTIFIER,
   type: FieldType.RELATION,
   name: 'assignedProjectItems',
   label: 'Assigned Items',

@@ -2,7 +2,7 @@ import {
   defineNavigationMenuItem,
   NavigationMenuItemType,
 } from 'twenty-sdk/define';
-import { CONTRIBUTORS_FOLDER_UNIVERSAL_IDENTIFIER } from 'src/modules/engineer/navigation-menu-items/engineers.navigation-menu-item';
+import { CONTRIBUTORS_FOLDER_UNIVERSAL_IDENTIFIER } from 'src/modules/github/contributor/navigation-menu-items/contributors.navigation-menu-item';
 import { PR_ACTIVITY_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER } from 'src/modules/github/contributor/page-layouts/pr-activity.page-layout';
 
 export default defineNavigationMenuItem({

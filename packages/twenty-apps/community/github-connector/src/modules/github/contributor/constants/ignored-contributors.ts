@@ -2,7 +2,7 @@
  * GitHub logins of bots / automation accounts that should be excluded from
  * any contributor leaderboard or stats roll-up.
  *
- * Matched case-insensitively against `engineer.ghLogin`.
+ * Matched case-insensitively against `contributor.ghLogin`.
  */
 export const IGNORED_GITHUB_HANDLES: readonly string[] = [
   'cubic-dev-ai',

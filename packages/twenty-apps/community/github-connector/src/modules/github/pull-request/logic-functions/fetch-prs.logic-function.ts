@@ -3,12 +3,12 @@ import {
   fetchPullRequestsGraphQL,
   type GqlPullRequest,
 } from 'src/modules/github/connector/graphql';
-import { batchUpsertEngineers } from 'src/modules/engineer/graphql/mutations/batch-upsert';
+import { batchUpsertContributors } from 'src/modules/github/contributor/graphql/mutations/batch-upsert';
 import { batchUpsertPullRequests } from 'src/modules/github/pull-request/graphql/mutations/batch-upsert';
 import { batchUpsertReviewEvents } from 'src/modules/github/pull-request-review-event/graphql/mutations/batch-upsert';
 import { batchUpsertConsolidatedReviews } from 'src/modules/github/pull-request-review/graphql/mutations/batch-upsert';
 import { buildConsolidatedRow } from 'src/modules/github/pull-request-review/utils/build-consolidated-row';
-import { dedupeEngineers } from 'src/modules/engineer/normalizers';
+import { dedupeContributors } from 'src/modules/github/contributor/normalizers';
 import { pullRequestFromGraphql } from 'src/modules/github/pull-request/normalizers';
 import { reviewEventFromGraphql } from 'src/modules/github/pull-request-review-event/normalizers';
 import { timed } from 'src/modules/shared/timing';
@@ -53,15 +53,15 @@ const handler = async (event: RoutePayload<FetchPrsPayload>) => {
     pr.mergedBy,
     ...pr.reviews.nodes.map((r) => r.author),
   ]);
-  const engineerInputs = dedupeEngineers(allUsers);
-  const engineers = await timed(
-    `fetch-prs:upsertEngineers ${tag} (${engineerInputs.length})`,
-    () => batchUpsertEngineers(engineerInputs),
+  const contributorInputs = dedupeContributors(allUsers);
+  const contributors = await timed(
+    `fetch-prs:upsertContributors ${tag} (${contributorInputs.length})`,
+    () => batchUpsertContributors(contributorInputs),
   );
 
   const idByLogin = new Map<string, string>();
-  for (const eng of engineers) {
-    if (eng.ghLogin) idByLogin.set(eng.ghLogin, eng.id);
+  for (const c of contributors) {
+    if (c.ghLogin) idByLogin.set(c.ghLogin, c.id);
   }
 
   const fullRepo = `${owner}/${repo}`;

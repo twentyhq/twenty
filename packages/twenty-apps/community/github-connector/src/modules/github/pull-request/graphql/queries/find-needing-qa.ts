@@ -11,7 +11,6 @@ export type PrNeedingQa = {
     id: string;
     name?: string | null;
     ghLogin?: string | null;
-    discordId?: string | null;
   } | null;
 };
 
@@ -39,7 +38,7 @@ export async function findPrsNeedingQa(): Promise<PrNeedingQa[]> {
           url: { primaryLinkLabel: true, primaryLinkUrl: true },
           mergedAt: true,
           testerId: true,
-          tester: { id: true, name: true, ghLogin: true, discordId: true },
+          tester: { id: true, name: true, ghLogin: true },
         },
       },
     },

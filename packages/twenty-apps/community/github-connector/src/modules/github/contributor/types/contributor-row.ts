@@ -1,6 +1,6 @@
 import type { LinksFieldValue } from 'src/modules/shared/types';
 
-export type EngineerRow = {
+export type ContributorRow = {
   id: string;
   ghLogin?: string | null;
   name?: string | null;
