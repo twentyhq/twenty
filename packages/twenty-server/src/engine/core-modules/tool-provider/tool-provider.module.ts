@@ -8,7 +8,7 @@ import { DashboardToolProvider } from 'src/engine/core-modules/tool-provider/pro
 import { DatabaseToolProvider } from 'src/engine/core-modules/tool-provider/providers/database-tool.provider';
 import { LogicFunctionToolProvider } from 'src/engine/core-modules/tool-provider/providers/logic-function-tool.provider';
 import { MetadataToolProvider } from 'src/engine/core-modules/tool-provider/providers/metadata-tool.provider';
-import { NativeModelToolProvider } from 'src/engine/core-modules/tool-provider/providers/native-model-tool.provider';
+import { NativeToolBinderService } from 'src/engine/core-modules/tool-provider/native/native-tool-binder.service';
 import { ViewFieldToolProvider } from 'src/engine/core-modules/tool-provider/providers/view-field-tool.provider';
 import { ViewToolProvider } from 'src/engine/core-modules/tool-provider/providers/view-tool.provider';
 import { WorkflowToolProvider } from 'src/engine/core-modules/tool-provider/providers/workflow-tool.provider';
@@ -63,14 +63,15 @@ import { ToolRegistryService } from './services/tool-registry.service';
     DashboardToolProvider,
     DatabaseToolProvider,
     MetadataToolProvider,
-    NativeModelToolProvider,
+    NativeToolBinderService,
     LogicFunctionToolProvider,
     ViewFieldToolProvider,
     ViewToolProvider,
     WorkflowToolProvider,
     {
-      // TOOL_PROVIDERS contains only providers implementing ToolProvider (generateDescriptors).
-      // NativeModelToolProvider is excluded -- it's injected separately in the registry.
+      // TOOL_PROVIDERS contains only providers implementing ToolProvider
+      // (registry tools with descriptors). The native tool binder is a
+      // parallel concept and is injected directly into ToolRegistryService.
       provide: TOOL_PROVIDERS,
       useFactory: (
         actionProvider: ActionToolProvider,

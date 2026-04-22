@@ -2,15 +2,14 @@ import { Inject, Injectable, Logger } from '@nestjs/common';
 
 import { type ToolSet, jsonSchema } from 'ai';
 
-import { type NativeToolProvider } from 'src/engine/core-modules/tool-provider/interfaces/native-tool-provider.interface';
 import { type ToolProvider } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
 import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
 import { type ToolRetrievalOptions } from 'src/engine/core-modules/tool-provider/interfaces/tool-retrieval-options.type';
 
 import { TOOL_PROVIDERS } from 'src/engine/core-modules/tool-provider/constants/tool-providers.token';
 import { ToolCategory } from 'twenty-shared/ai';
+import { NativeToolBinderService } from 'src/engine/core-modules/tool-provider/native/native-tool-binder.service';
 import { compactToolOutput } from 'src/engine/core-modules/tool-provider/output-serialization/compact-tool-output.util';
-import { NativeModelToolProvider } from 'src/engine/core-modules/tool-provider/providers/native-model-tool.provider';
 import { ToolExecutorService } from 'src/engine/core-modules/tool-provider/services/tool-executor.service';
 import { type LearnToolsAspect } from 'src/engine/core-modules/tool-provider/tools/learn-tools.tool';
 import { type ToolContext } from 'src/engine/core-modules/tool-provider/types/tool-context.type';
@@ -31,7 +30,7 @@ export class ToolRegistryService {
   constructor(
     @Inject(TOOL_PROVIDERS)
     private readonly providers: ToolProvider[],
-    private readonly nativeModelToolProvider: NativeModelToolProvider,
+    private readonly nativeToolBinder: NativeToolBinderService,
     private readonly toolExecutorService: ToolExecutorService,
   ) {}
 
@@ -329,10 +328,8 @@ export class ToolRegistryService {
     });
 
     if (categories?.includes(ToolCategory.NATIVE_MODEL)) {
-      if (await this.nativeModelToolProvider.isAvailable(context)) {
-        const nativeTools = await (
-          this.nativeModelToolProvider as NativeToolProvider
-        ).generateTools(context);
+      if (await this.nativeToolBinder.isAvailable(context)) {
+        const nativeTools = await this.nativeToolBinder.bind(context);
 
         Object.assign(toolSet, nativeTools);
       }
