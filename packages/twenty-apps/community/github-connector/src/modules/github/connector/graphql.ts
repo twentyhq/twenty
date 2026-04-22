@@ -356,8 +356,7 @@ export async function fetchIssueCount(
 
 const PROJECT_ITEMS_QUERY = `
 query($owner: String!, $number: Int!, $cursor: String) {
-  repositoryOwner(login: $owner) {
-    ... on ProjectV2Owner {
+  organization(login: $owner) {
     projectV2(number: $number) {
       items(first: 100, after: $cursor) {
         totalCount
@@ -410,21 +409,45 @@ query($owner: String!, $number: Int!, $cursor: String) {
         }
       }
     }
-    }
   }
 }`;
 
-type ProjectItemsResponse = {
-  repositoryOwner: {
-    projectV2: {
-      items: {
-        totalCount: number;
-        pageInfo: { hasNextPage: boolean; endCursor: string | null };
-        nodes: ProjectV2Item[];
-      };
-    } | null;
-  } | null;
+const PROJECT_ITEMS_USER_QUERY = PROJECT_ITEMS_QUERY.replace(
+  'organization(login: $owner)',
+  'user(login: $owner)',
+);
+
+type ProjectItemsConnection = {
+  totalCount: number;
+  pageInfo: { hasNextPage: boolean; endCursor: string | null };
+  nodes: ProjectV2Item[];
 };
+
+type ProjectItemsResponse = {
+  organization: { projectV2: { items: ProjectItemsConnection } | null } | null;
+};
+
+type ProjectItemsUserResponse = {
+  user: { projectV2: { items: ProjectItemsConnection } | null } | null;
+};
+
+/**
+ * Swallows GraphQL `Could not resolve to a (User|Organization)` errors so we
+ * can probe both `user(login)` and `organization(login)` without crashing
+ * when the login only matches one of them.
+ */
+async function tryGraphqlByOwnerKind<T>(
+  query: string,
+  variables: Record<string, unknown>,
+): Promise<T | null> {
+  try {
+    return await graphql<T>(query, variables);
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : '';
+    if (/Could not resolve to a (User|Organization)/i.test(msg)) return null;
+    throw err;
+  }
+}
 
 export async function fetchProjectItemsPage(
   owner: string,
@@ -436,14 +459,26 @@ export async function fetchProjectItemsPage(
   hasMore: boolean;
   endCursor: string | null;
 }> {
-  const data = await graphql<ProjectItemsResponse>(PROJECT_ITEMS_QUERY, {
-    owner,
-    number: projectNumber,
-    cursor,
-  });
+  const orgData = await tryGraphqlByOwnerKind<ProjectItemsResponse>(
+    PROJECT_ITEMS_QUERY,
+    { owner, number: projectNumber, cursor },
+  );
 
-  const connection = data.repositoryOwner?.projectV2?.items;
+  let connection: ProjectItemsConnection | undefined =
+    orgData?.organization?.projectV2?.items;
+
   if (!connection) {
+    const userData = await tryGraphqlByOwnerKind<ProjectItemsUserResponse>(
+      PROJECT_ITEMS_USER_QUERY,
+      { owner, number: projectNumber, cursor },
+    );
+    connection = userData?.user?.projectV2?.items;
+  }
+
+  if (!connection) {
+    console.warn(
+      `[github-gql] project ${owner}/${projectNumber} returned no items (project does not exist or the configured token lacks read access — for classic PATs add the \`read:project\` scope, for fine-grained PATs grant Organization → Projects: Read).`,
+    );
     return { items: [], totalCount: 0, hasMore: false, endCursor: null };
   }
 
@@ -535,30 +570,42 @@ export async function fetchProjectItemByNodeId(
 
 const PROJECT_ITEMS_COUNT_QUERY = `
 query($owner: String!, $number: Int!) {
-  repositoryOwner(login: $owner) {
-    ... on ProjectV2Owner {
-      projectV2(number: $number) {
-        items { totalCount }
-      }
+  organization(login: $owner) {
+    projectV2(number: $number) {
+      items { totalCount }
     }
   }
 }`;
 
+const PROJECT_ITEMS_COUNT_USER_QUERY = PROJECT_ITEMS_COUNT_QUERY.replace(
+  'organization(login: $owner)',
+  'user(login: $owner)',
+);
+
 type ProjectItemsCountResponse = {
-  repositoryOwner: {
-    projectV2: { items: { totalCount: number } } | null;
-  } | null;
+  organization: { projectV2: { items: { totalCount: number } } | null } | null;
+};
+
+type ProjectItemsCountUserResponse = {
+  user: { projectV2: { items: { totalCount: number } } | null } | null;
 };
 
 export async function fetchProjectItemCount(
   owner: string,
   projectNumber: number,
 ): Promise<number> {
-  const data = await graphql<ProjectItemsCountResponse>(
+  const orgData = await tryGraphqlByOwnerKind<ProjectItemsCountResponse>(
     PROJECT_ITEMS_COUNT_QUERY,
     { owner, number: projectNumber },
   );
-  return data.repositoryOwner?.projectV2?.items.totalCount ?? 0;
+  const orgCount = orgData?.organization?.projectV2?.items.totalCount;
+  if (typeof orgCount === 'number') return orgCount;
+
+  const userData = await tryGraphqlByOwnerKind<ProjectItemsCountUserResponse>(
+    PROJECT_ITEMS_COUNT_USER_QUERY,
+    { owner, number: projectNumber },
+  );
+  return userData?.user?.projectV2?.items.totalCount ?? 0;
 }
 
 // ---------- Contributors (mentionableUsers) ----------
