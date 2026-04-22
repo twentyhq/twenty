@@ -182,7 +182,7 @@ type PullRequestsResponse = {
       pageInfo: { hasNextPage: boolean; endCursor: string | null };
       nodes: GqlPullRequest[];
     };
-  };
+  } | null;
 };
 
 export async function fetchPullRequestsGraphQL(
@@ -200,6 +200,10 @@ export async function fetchPullRequestsGraphQL(
     name,
     cursor,
   });
+
+  if (!data.repository) {
+    return { prs: [], totalCount: 0, hasMore: false, endCursor: null };
+  }
 
   const connection = data.repository.pullRequests;
 
@@ -351,8 +355,9 @@ export async function fetchIssueCount(
 // ---------- Project Items ----------
 
 const PROJECT_ITEMS_QUERY = `
-query($org: String!, $number: Int!, $cursor: String) {
-  organization(login: $org) {
+query($owner: String!, $number: Int!, $cursor: String) {
+  repositoryOwner(login: $owner) {
+    ... on ProjectV2Owner {
     projectV2(number: $number) {
       items(first: 100, after: $cursor) {
         totalCount
@@ -405,23 +410,24 @@ query($org: String!, $number: Int!, $cursor: String) {
         }
       }
     }
+    }
   }
 }`;
 
 type ProjectItemsResponse = {
-  organization: {
+  repositoryOwner: {
     projectV2: {
       items: {
         totalCount: number;
         pageInfo: { hasNextPage: boolean; endCursor: string | null };
         nodes: ProjectV2Item[];
       };
-    };
-  };
+    } | null;
+  } | null;
 };
 
 export async function fetchProjectItemsPage(
-  org: string,
+  owner: string,
   projectNumber: number,
   cursor: string | null = null,
 ): Promise<{
@@ -431,12 +437,15 @@ export async function fetchProjectItemsPage(
   endCursor: string | null;
 }> {
   const data = await graphql<ProjectItemsResponse>(PROJECT_ITEMS_QUERY, {
-    org,
+    owner,
     number: projectNumber,
     cursor,
   });
 
-  const connection = data.organization.projectV2.items;
+  const connection = data.repositoryOwner?.projectV2?.items;
+  if (!connection) {
+    return { items: [], totalCount: 0, hasMore: false, endCursor: null };
+  }
 
   return {
     items: connection.nodes,
@@ -525,29 +534,31 @@ export async function fetchProjectItemByNodeId(
 // ---------- Project Items count (lightweight) ----------
 
 const PROJECT_ITEMS_COUNT_QUERY = `
-query($org: String!, $number: Int!) {
-  organization(login: $org) {
-    projectV2(number: $number) {
-      items { totalCount }
+query($owner: String!, $number: Int!) {
+  repositoryOwner(login: $owner) {
+    ... on ProjectV2Owner {
+      projectV2(number: $number) {
+        items { totalCount }
+      }
     }
   }
 }`;
 
 type ProjectItemsCountResponse = {
-  organization: {
-    projectV2: { items: { totalCount: number } };
-  };
+  repositoryOwner: {
+    projectV2: { items: { totalCount: number } } | null;
+  } | null;
 };
 
 export async function fetchProjectItemCount(
-  org: string,
+  owner: string,
   projectNumber: number,
 ): Promise<number> {
   const data = await graphql<ProjectItemsCountResponse>(
     PROJECT_ITEMS_COUNT_QUERY,
-    { org, number: projectNumber },
+    { owner, number: projectNumber },
   );
-  return data.organization.projectV2.items.totalCount;
+  return data.repositoryOwner?.projectV2?.items.totalCount ?? 0;
 }
 
 // ---------- Contributors (mentionableUsers) ----------
@@ -580,7 +591,7 @@ type ContributorsResponse = {
       pageInfo: { hasNextPage: boolean; endCursor: string | null };
       nodes: GqlContributor[];
     };
-  };
+  } | null;
 };
 
 export async function fetchContributorsGraphQL(
@@ -598,6 +609,10 @@ export async function fetchContributorsGraphQL(
     name,
     cursor,
   });
+
+  if (!data.repository) {
+    return { contributors: [], totalCount: 0, hasMore: false, endCursor: null };
+  }
 
   const connection = data.repository.mentionableUsers;
 

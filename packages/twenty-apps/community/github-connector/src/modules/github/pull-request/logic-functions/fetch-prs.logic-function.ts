@@ -12,6 +12,7 @@ import { dedupeContributors } from 'src/modules/github/contributor/normalizers';
 import { pullRequestFromGraphql } from 'src/modules/github/pull-request/normalizers';
 import { reviewEventFromGraphql } from 'src/modules/github/pull-request-review-event/normalizers';
 import { timed } from 'src/modules/shared/timing';
+import { isFixtureAllowed } from 'src/modules/shared/fixtures';
 
 export type FetchPrsFixturePage = {
   prs: GqlPullRequest[];
@@ -37,10 +38,12 @@ const handler = async (event: RoutePayload<FetchPrsPayload>) => {
   const tag = `${owner}/${repo}${cursor ? `@${cursor.slice(0, 8)}` : ''}`;
   console.log(`[fetch-prs] start ${tag}${fixturePage ? ' (fixture)' : ''}`);
 
-  const result = fixturePage
-    ?? (await timed(`fetch-prs:github ${tag}`, () =>
-      fetchPullRequestsGraphQL(owner, repo, cursor),
-    ));
+  const result =
+    fixturePage && isFixtureAllowed()
+      ? fixturePage
+      : await timed(`fetch-prs:github ${tag}`, () =>
+          fetchPullRequestsGraphQL(owner, repo, cursor),
+        );
   const { prs, totalCount, hasMore, endCursor } = result;
 
   if (prs.length === 0) {

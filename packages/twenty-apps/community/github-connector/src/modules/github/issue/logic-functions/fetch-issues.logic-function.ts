@@ -8,6 +8,7 @@ import { batchUpsertIssues } from 'src/modules/github/issue/graphql/mutations/ba
 import { dedupeContributors } from 'src/modules/github/contributor/normalizers';
 import { issueFromGraphql } from 'src/modules/github/issue/normalizers';
 import { timed } from 'src/modules/shared/timing';
+import { isFixtureAllowed } from 'src/modules/shared/fixtures';
 
 export type FetchIssuesFixturePage = {
   issues: GqlIssue[];
@@ -33,10 +34,12 @@ const handler = async (event: RoutePayload<FetchIssuesPayload>) => {
   const tag = `${owner}/${repo}${cursor ? `@${cursor.slice(0, 8)}` : ''}`;
   console.log(`[fetch-issues] start ${tag}${fixturePage ? ' (fixture)' : ''}`);
 
-  const result = fixturePage
-    ?? (await timed(`fetch-issues:github ${tag}`, () =>
-      fetchIssuesGraphQL(owner, repo, cursor),
-    ));
+  const result =
+    fixturePage && isFixtureAllowed()
+      ? fixturePage
+      : await timed(`fetch-issues:github ${tag}`, () =>
+          fetchIssuesGraphQL(owner, repo, cursor),
+        );
   const { issues, totalCount, hasMore, endCursor } = result;
 
   if (issues.length === 0) {

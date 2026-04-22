@@ -12,7 +12,13 @@ export async function retry<T>(
   fn: () => Promise<T>,
   options: RetryOptions = {},
 ): Promise<T> {
-  const retries = options.retries ?? 3;
+  // Always run at least one attempt, even when callers pass 0 / negative /
+  // non-integer values, so this function never throws an `undefined`.
+  const requestedRetries = options.retries ?? 3;
+  const retries = Math.max(
+    Math.floor(Number.isFinite(requestedRetries) ? requestedRetries : 1),
+    1,
+  );
   const baseDelayMs = options.baseDelayMs ?? 500;
   const maxDelayMs = options.maxDelayMs ?? 5_000;
   const shouldRetry = options.shouldRetry ?? (() => true);

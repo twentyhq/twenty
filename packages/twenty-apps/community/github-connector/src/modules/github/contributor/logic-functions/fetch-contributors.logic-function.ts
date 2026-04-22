@@ -4,6 +4,7 @@ import {
   type GqlContributor,
 } from 'src/modules/github/connector/graphql';
 import { batchUpsertContributors } from 'src/modules/github/contributor/graphql/mutations/batch-upsert';
+import { isFixtureAllowed } from 'src/modules/shared/fixtures';
 
 export type FetchContributorsFixturePage = {
   contributors: GqlContributor[];
@@ -20,16 +21,15 @@ type FetchContributorsPayload = {
 };
 
 const handler = async (event: RoutePayload<FetchContributorsPayload>) => {
-  console.log('[fetch-contributors] Handler invoked');
-  console.log('[fetch-contributors] Event body:', JSON.stringify(event.body));
-
   const { owner, repo, cursor = null, fixturePage } = event.body ?? {};
   if (!owner || !repo) {
     return { error: 'owner and repo are required' };
   }
 
-  const result = fixturePage
-    ?? (await fetchContributorsGraphQL(owner, repo, cursor));
+  const result =
+    fixturePage && isFixtureAllowed()
+      ? fixturePage
+      : await fetchContributorsGraphQL(owner, repo, cursor);
   const { contributors, totalCount, hasMore, endCursor } = result;
 
   if (contributors.length === 0) {

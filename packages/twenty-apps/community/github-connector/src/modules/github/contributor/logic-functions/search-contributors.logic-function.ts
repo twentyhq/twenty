@@ -23,11 +23,14 @@ const MAX_LIMIT = 50;
 const handler = async (
   event: RoutePayload<SearchContributorsPayload>,
 ): Promise<SearchContributorsResponse> => {
-  const rawQuery = (event.body?.query ?? '').trim();
-  const limit = Math.min(
-    Math.max(event.body?.limit ?? DEFAULT_LIMIT, 1),
-    MAX_LIMIT,
-  );
+  const queryInput = event.body?.query;
+  const rawQuery = typeof queryInput === 'string' ? queryInput.trim() : '';
+  const limitInput = event.body?.limit;
+  const limitNumber =
+    typeof limitInput === 'number' && Number.isFinite(limitInput)
+      ? limitInput
+      : DEFAULT_LIMIT;
+  const limit = Math.min(Math.max(Math.floor(limitNumber), 1), MAX_LIMIT);
 
   const client = getClient();
 

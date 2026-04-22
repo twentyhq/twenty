@@ -1,6 +1,9 @@
 import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
 import { fetchPullRequestCount } from 'src/modules/github/connector/graphql';
-import { getGithubRepos } from 'src/modules/github/connector/config';
+import {
+  getGithubRepos,
+  parseGithubRepo,
+} from 'src/modules/github/connector/config';
 
 const PAGE_SIZE = 100;
 
@@ -22,7 +25,12 @@ const handler = async (event: RoutePayload<CountPrsPayload>) => {
   let totalPages = 0;
 
   for (const fullRepo of repos) {
-    const [owner, repo] = fullRepo.split('/');
+    const parsed = parseGithubRepo(fullRepo);
+    if (!parsed) {
+      console.warn(`[count-prs] Skipping malformed repo entry: ${fullRepo}`);
+      continue;
+    }
+    const { owner, repo } = parsed;
     const totalCount = await fetchPullRequestCount(owner, repo);
     const pages = Math.max(Math.ceil(totalCount / PAGE_SIZE), 1);
     repoCounts.push({ owner, repo, totalCount, pages });

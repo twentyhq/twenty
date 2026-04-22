@@ -1,13 +1,30 @@
+export type GithubRepo = { owner: string; repo: string };
+
+/**
+ * Parses a single repo entry (`owner/repo`). GitHub repository slugs accept
+ * letters, digits, hyphens, underscores and dots, and at most one `/`.
+ * Returns null when the entry can't be parsed cleanly.
+ */
+export function parseGithubRepo(entry: string): GithubRepo | null {
+  const trimmed = entry.trim();
+  if (!trimmed) return null;
+  const match = trimmed.match(/^([A-Za-z0-9._-]+)\/([A-Za-z0-9._-]+)$/);
+  if (!match) return null;
+  return { owner: match[1], repo: match[2] };
+}
+
 /**
  * Reads `GITHUB_REPOS` (comma-separated `owner/repo` list) at call time so the
  * value can be reconfigured via the application variables UI without a redeploy.
+ * Malformed entries are silently skipped.
  */
 export function getGithubRepos(): string[] {
   const raw = process.env.GITHUB_REPOS ?? '';
   return raw
     .split(',')
-    .map((r) => r.trim())
-    .filter((r) => r.includes('/'));
+    .map(parseGithubRepo)
+    .filter((r): r is GithubRepo => r !== null)
+    .map((r) => `${r.owner}/${r.repo}`);
 }
 
 export type GithubProject = { owner: string; number: number };

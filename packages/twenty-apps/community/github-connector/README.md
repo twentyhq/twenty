@@ -22,19 +22,22 @@ navigation entry under a top-level "GitHub" section:
 - `projectItem`
 - `contributor`
 
-Five logic functions are wired up:
+Logic functions wired up:
 
-| Function                  | Trigger                                          |
-| ------------------------- | ------------------------------------------------ |
-| `count-prs`               | HTTP `POST /github/count-prs`                    |
-| `fetch-prs`               | HTTP `POST /github/fetch-prs`                    |
-| `count-issues`            | HTTP `POST /github/count-issues`                 |
-| `fetch-issues`            | HTTP `POST /github/fetch-issues`                 |
-| `count-contributors`      | HTTP `POST /github/count-contributors`           |
-| `fetch-contributors`      | HTTP `POST /github/fetch-contributors`           |
-| `count-project-items`     | HTTP `POST /github/count-project-items`          |
-| `fetch-project-items`     | HTTP `POST /github/fetch-project-items`          |
-| `handle-github-webhook`   | HTTP `POST /github/webhook` (no auth, signed)    |
+| Function                          | Trigger                                          |
+| --------------------------------- | ------------------------------------------------ |
+| `count-prs`                       | HTTP `POST /github/count-prs`                    |
+| `fetch-prs`                       | HTTP `POST /github/fetch-prs`                    |
+| `count-issues`                    | HTTP `POST /github/count-issues`                 |
+| `fetch-issues`                    | HTTP `POST /github/fetch-issues`                 |
+| `count-contributors`              | HTTP `POST /github/count-contributors`           |
+| `fetch-contributors`              | HTTP `POST /github/fetch-contributors`           |
+| `count-project-items`             | HTTP `POST /github/count-project-items`          |
+| `fetch-project-items`             | HTTP `POST /github/fetch-project-items`          |
+| `handle-github-webhook`           | HTTP `POST /github/webhook` (no auth, signed)    |
+| `search-contributors`             | HTTP `POST /contributors/search`                 |
+| `contributor-stats`               | HTTP `POST /contributors/stats`                  |
+| `recompute-pull-request-reviews`  | HTTP `POST /pull-request-reviews/recompute`      |
 
 Four headless front-components expose the manual sync flows as commands in
 the Twenty UI:
@@ -106,9 +109,10 @@ Create a fine-grained PAT at
    (v2): set `Projects` to **Read-only**.
 5. Generate, then copy the `github_pat_…` value.
 
-(Classic PATs at <https://github.com/settings/tokens> still work and need
-`repo` + `read:org`, but fine-grained tokens are scoped tighter and
-recommended.)
+(Classic PATs at <https://github.com/settings/tokens> still work. They need
+`repo` + `read:org` for PR/issue/contributor syncs, plus `read:project`
+when you also sync GitHub Projects (v2). Fine-grained tokens are scoped
+tighter and recommended.)
 
 When `GITHUB_TOKEN` is set, it always wins regardless of any GitHub App
 config below.
@@ -173,6 +177,15 @@ Set the same value as `GITHUB_WEBHOOK_SECRET` on both sides to enable HMAC
 verification. For local testing, expose your dev server with
 [smee.io](https://smee.io/) or `ngrok` and use that URL as the webhook URL on
 GitHub.
+
+> Note: HMAC verification needs the original raw request body. The Twenty
+> SDK currently parses JSON requests before handing them to logic functions,
+> so when the runtime delivers an already-parsed body the connector will
+> log a warning and reject the delivery rather than silently accept it.
+> Until the SDK exposes the raw bytes for HTTP routes, leave
+> `GITHUB_WEBHOOK_SECRET` unset (and rely on a hard-to-guess `/github/webhook`
+> URL plus IP allow-listing) or terminate signature verification at a
+> reverse proxy in front of Twenty.
 
 ## How auth resolution works
 

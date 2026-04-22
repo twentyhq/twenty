@@ -96,11 +96,26 @@ describe('getRawBodyForSignature', () => {
     );
   });
 
-  it('JSON-stringifies object bodies (parsed-by-runtime case)', () => {
-    expect(getRawBodyForSignature({ body: { a: 1 } })).toBe('{"a":1}');
+  it('returns null for parsed object bodies (raw bytes lost)', () => {
+    expect(getRawBodyForSignature({ body: { a: 1 } })).toBeNull();
   });
 
   it('returns empty string for null/undefined', () => {
     expect(getRawBodyForSignature({ body: null })).toBe('');
+  });
+});
+
+describe('verifyGitHubSignature with parsed body', () => {
+  it('rejects with a clear reason when the runtime parsed the JSON', () => {
+    const result = verifyGitHubSignature({
+      rawBody: null,
+      signatureHeader: 'sha256=deadbeef',
+      secret: SECRET,
+    });
+    expect(result).toMatchObject({
+      ok: false,
+      reason:
+        'raw request body is unavailable (the runtime parsed it as JSON); HMAC cannot be verified',
+    });
   });
 });

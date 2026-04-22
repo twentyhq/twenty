@@ -3,6 +3,7 @@ import { fetchProjectItemsPage } from 'src/modules/github/connector/graphql';
 import type { ProjectV2Item } from 'src/modules/github/connector/types';
 import { batchUpsertProjectItems } from 'src/modules/github/project-item/graphql/mutations/batch-upsert';
 import { projectItemFromGraphql } from 'src/modules/github/project-item/normalizers';
+import { isFixtureAllowed } from 'src/modules/shared/fixtures';
 
 export type FetchProjectItemsFixturePage = {
   items: ProjectV2Item[];
@@ -24,8 +25,10 @@ const handler = async (event: RoutePayload<FetchProjectItemsPayload>) => {
     return { error: 'owner and number are required' };
   }
 
-  const result = fixturePage
-    ?? (await fetchProjectItemsPage(owner, number, cursor));
+  const result =
+    fixturePage && isFixtureAllowed()
+      ? fixturePage
+      : await fetchProjectItemsPage(owner, number, cursor);
   const { items, totalCount, hasMore, endCursor } = result;
 
   if (items.length === 0) {

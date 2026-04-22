@@ -6,7 +6,10 @@ import {
   extractAssigneeLogins,
 } from 'src/modules/github/connector/graphql';
 import { findIssueByNumberAndRepo } from 'src/modules/github/issue/graphql/queries/find-by-number-and-repo';
-import { findPullRequestByGithubNumber } from 'src/modules/github/pull-request/graphql/queries/find-by-github-number';
+import {
+  findPullRequestByGithubNumber,
+  findPullRequestByRepoAndNumber,
+} from 'src/modules/github/pull-request/graphql/queries/find-by-github-number';
 import { findContributorByGhLogin } from 'src/modules/github/contributor/graphql/queries/find-by-gh-login';
 
 const STATUS_MAP: Record<string, string> = {
@@ -77,7 +80,9 @@ export async function projectItemFromGraphql(
         githubUrl = toLinksField(item.content.url, `#${item.content.number}`);
       }
     } else if (contentType === 'PullRequest' && item.content.number) {
-      const pr = await findPullRequestByGithubNumber(item.content.number);
+      const pr = repo
+        ? await findPullRequestByRepoAndNumber(repo, item.content.number)
+        : await findPullRequestByGithubNumber(item.content.number);
       linkedPullRequestId = pr?.id ?? null;
       if (item.content.url) {
         githubUrl = toLinksField(item.content.url, `#${item.content.number}`);
