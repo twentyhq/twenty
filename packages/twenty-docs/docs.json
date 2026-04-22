@@ -1571,7 +1571,7 @@
             "tab": "Erste Schritte",
             "groups": [
               {
-                "group": "Welcome",
+                "group": "Willkommen",
                 "pages": [
                   "l/de/getting-started/introduction",
                   "l/de/getting-started/key-features",
@@ -1579,7 +1579,7 @@
                 ]
               },
               {
-                "group": "Core Concepts",
+                "group": "Kernkonzepte",
                 "pages": [
                   "l/de/getting-started/core-concepts/data-model",
                   "l/de/getting-started/core-concepts/layout",
@@ -1608,7 +1608,7 @@
                 "pages": [
                   "l/de/user-guide/data-model/overview",
                   {
-                    "group": "Reference",
+                    "group": "Referenz",
                     "pages": [
                       "l/de/user-guide/data-model/capabilities/objects",
                       "l/de/user-guide/data-model/capabilities/fields",
@@ -1634,7 +1634,7 @@
                 "pages": [
                   "l/de/user-guide/data-migration/overview",
                   {
-                    "group": "Reference",
+                    "group": "Referenz",
                     "pages": [
                       "l/de/user-guide/data-migration/capabilities/file-formats",
                       "l/de/user-guide/data-migration/capabilities/field-mapping",
@@ -1666,7 +1666,7 @@
                 "pages": [
                   "l/de/user-guide/calendar-emails/overview",
                   {
-                    "group": "Reference",
+                    "group": "Referenz",
                     "pages": [
                       "l/de/user-guide/calendar-emails/capabilities/mailbox",
                       "l/de/user-guide/calendar-emails/capabilities/calendar"
@@ -1691,7 +1691,7 @@
                 "pages": [
                   "l/de/user-guide/workflows/overview",
                   {
-                    "group": "Reference",
+                    "group": "Referenz",
                     "pages": [
                       "l/de/user-guide/workflows/capabilities/workflow-triggers",
                       "l/de/user-guide/workflows/capabilities/workflow-actions",
@@ -1754,7 +1754,7 @@
                 "pages": [
                   "l/de/user-guide/ai/overview",
                   {
-                    "group": "Reference",
+                    "group": "Referenz",
                     "pages": [
                       "l/de/user-guide/ai/capabilities/ai-chatbot",
                       "l/de/user-guide/ai/capabilities/ai-agents",
@@ -1775,7 +1775,7 @@
                 "pages": [
                   "l/de/user-guide/layout/overview",
                   {
-                    "group": "Reference",
+                    "group": "Referenz",
                     "pages": [
                       "l/de/user-guide/layout/capabilities/navigation",
                       {
@@ -1812,7 +1812,7 @@
                 "pages": [
                   "l/de/user-guide/dashboards/overview",
                   {
-                    "group": "Reference",
+                    "group": "Referenz",
                     "pages": [
                       "l/de/user-guide/dashboards/capabilities/dashboards",
                       "l/de/user-guide/dashboards/capabilities/widgets",
@@ -1834,7 +1834,7 @@
                 "pages": [
                   "l/de/user-guide/permissions-access/overview",
                   {
-                    "group": "Reference",
+                    "group": "Referenz",
                     "pages": [
                       "l/de/user-guide/permissions-access/capabilities/permissions",
                       "l/de/user-guide/permissions-access/capabilities/sso-configuration"
@@ -1854,7 +1854,7 @@
                 "pages": [
                   "l/de/user-guide/billing/overview",
                   {
-                    "group": "Reference",
+                    "group": "Referenz",
                     "pages": [
                       "l/de/user-guide/billing/capabilities/pricing-plans",
                       "l/de/user-guide/billing/capabilities/credits"
@@ -1874,7 +1874,7 @@
                 "pages": [
                   "l/de/user-guide/settings/overview",
                   {
-                    "group": "Reference",
+                    "group": "Referenz",
                     "pages": [
                       "l/de/user-guide/settings/capabilities/workspace-settings",
                       "l/de/user-guide/settings/capabilities/member-management",
@@ -2337,7 +2337,7 @@
             "tab": "Per iniziare",
             "groups": [
               {
-                "group": "Welcome",
+                "group": "Benvenuto",
                 "pages": [
                   "l/it/getting-started/introduction",
                   "l/it/getting-started/key-features",
@@ -2345,7 +2345,7 @@
                 ]
               },
               {
-                "group": "Core Concepts",
+                "group": "Concetti chiave",
                 "pages": [
                   "l/it/getting-started/core-concepts/data-model",
                   "l/it/getting-started/core-concepts/layout",
@@ -2374,7 +2374,7 @@
                 "pages": [
                   "l/it/user-guide/data-model/overview",
                   {
-                    "group": "Reference",
+                    "group": "Riferimento",
                     "pages": [
                       "l/it/user-guide/data-model/capabilities/objects",
                       "l/it/user-guide/data-model/capabilities/fields",
@@ -2400,7 +2400,7 @@
                 "pages": [
                   "l/it/user-guide/data-migration/overview",
                   {
-                    "group": "Reference",
+                    "group": "Riferimento",
                     "pages": [
                       "l/it/user-guide/data-migration/capabilities/file-formats",
                       "l/it/user-guide/data-migration/capabilities/field-mapping",
@@ -2432,7 +2432,7 @@
                 "pages": [
                   "l/it/user-guide/calendar-emails/overview",
                   {
-                    "group": "Reference",
+                    "group": "Riferimento",
                     "pages": [
                       "l/it/user-guide/calendar-emails/capabilities/mailbox",
                       "l/it/user-guide/calendar-emails/capabilities/calendar"
@@ -2457,7 +2457,7 @@
                 "pages": [
                   "l/it/user-guide/workflows/overview",
                   {
-                    "group": "Reference",
+                    "group": "Riferimento",
                     "pages": [
                       "l/it/user-guide/workflows/capabilities/workflow-triggers",
                       "l/it/user-guide/workflows/capabilities/workflow-actions",
@@ -2520,7 +2520,7 @@
                 "pages": [
                   "l/it/user-guide/ai/overview",
                   {
-                    "group": "Reference",
+                    "group": "Riferimento",
                     "pages": [
                       "l/it/user-guide/ai/capabilities/ai-chatbot",
                       "l/it/user-guide/ai/capabilities/ai-agents",
@@ -2541,7 +2541,7 @@
                 "pages": [
                   "l/it/user-guide/layout/overview",
                   {
-                    "group": "Reference",
+                    "group": "Riferimento",
                     "pages": [
                       "l/it/user-guide/layout/capabilities/navigation",
                       {
@@ -2578,7 +2578,7 @@
                 "pages": [
                   "l/it/user-guide/dashboards/overview",
                   {
-                    "group": "Reference",
+                    "group": "Riferimento",
                     "pages": [
                       "l/it/user-guide/dashboards/capabilities/dashboards",
                       "l/it/user-guide/dashboards/capabilities/widgets",
@@ -2600,7 +2600,7 @@
                 "pages": [
                   "l/it/user-guide/permissions-access/overview",
                   {
-                    "group": "Reference",
+                    "group": "Riferimento",
                     "pages": [
                       "l/it/user-guide/permissions-access/capabilities/permissions",
                       "l/it/user-guide/permissions-access/capabilities/sso-configuration"
@@ -2620,7 +2620,7 @@
                 "pages": [
                   "l/it/user-guide/billing/overview",
                   {
-                    "group": "Reference",
+                    "group": "Riferimento",
                     "pages": [
                       "l/it/user-guide/billing/capabilities/pricing-plans",
                       "l/it/user-guide/billing/capabilities/credits"
@@ -2640,7 +2640,7 @@
                 "pages": [
                   "l/it/user-guide/settings/overview",
                   {
-                    "group": "Reference",
+                    "group": "Riferimento",
                     "pages": [
                       "l/it/user-guide/settings/capabilities/workspace-settings",
                       "l/it/user-guide/settings/capabilities/member-management",
@@ -3486,7 +3486,7 @@
             "tab": "Primeiros passos",
             "groups": [
               {
-                "group": "Welcome",
+                "group": "Boas-vindas",
                 "pages": [
                   "l/pt/getting-started/introduction",
                   "l/pt/getting-started/key-features",
@@ -3494,7 +3494,7 @@
                 ]
               },
               {
-                "group": "Core Concepts",
+                "group": "Conceitos essenciais",
                 "pages": [
                   "l/pt/getting-started/core-concepts/data-model",
                   "l/pt/getting-started/core-concepts/layout",
@@ -3523,7 +3523,7 @@
                 "pages": [
                   "l/pt/user-guide/data-model/overview",
                   {
-                    "group": "Reference",
+                    "group": "Referência",
                     "pages": [
                       "l/pt/user-guide/data-model/capabilities/objects",
                       "l/pt/user-guide/data-model/capabilities/fields",
@@ -3549,7 +3549,7 @@
                 "pages": [
                   "l/pt/user-guide/data-migration/overview",
                   {
-                    "group": "Reference",
+                    "group": "Referência",
                     "pages": [
                       "l/pt/user-guide/data-migration/capabilities/file-formats",
                       "l/pt/user-guide/data-migration/capabilities/field-mapping",
@@ -3581,7 +3581,7 @@
                 "pages": [
                   "l/pt/user-guide/calendar-emails/overview",
                   {
-                    "group": "Reference",
+                    "group": "Referência",
                     "pages": [
                       "l/pt/user-guide/calendar-emails/capabilities/mailbox",
                       "l/pt/user-guide/calendar-emails/capabilities/calendar"
@@ -3606,7 +3606,7 @@
                 "pages": [
                   "l/pt/user-guide/workflows/overview",
                   {
-                    "group": "Reference",
+                    "group": "Referência",
                     "pages": [
                       "l/pt/user-guide/workflows/capabilities/workflow-triggers",
                       "l/pt/user-guide/workflows/capabilities/workflow-actions",
@@ -3669,7 +3669,7 @@
                 "pages": [
                   "l/pt/user-guide/ai/overview",
                   {
-                    "group": "Reference",
+                    "group": "Referência",
                     "pages": [
                       "l/pt/user-guide/ai/capabilities/ai-chatbot",
                       "l/pt/user-guide/ai/capabilities/ai-agents",
@@ -3690,7 +3690,7 @@
                 "pages": [
                   "l/pt/user-guide/layout/overview",
                   {
-                    "group": "Reference",
+                    "group": "Referência",
                     "pages": [
                       "l/pt/user-guide/layout/capabilities/navigation",
                       {
@@ -3708,7 +3708,7 @@
                     ]
                   },
                   {
-                    "group": "How-Tos",
+                    "group": "Tutoriais",
                     "pages": [
                       "l/pt/user-guide/views-pipelines/how-tos/create-a-table-view-with-grouping",
                       "l/pt/user-guide/views-pipelines/how-tos/create-a-kanban-view-for-projects",
@@ -3727,7 +3727,7 @@
                 "pages": [
                   "l/pt/user-guide/dashboards/overview",
                   {
-                    "group": "Reference",
+                    "group": "Referência",
                     "pages": [
                       "l/pt/user-guide/dashboards/capabilities/dashboards",
                       "l/pt/user-guide/dashboards/capabilities/widgets",
@@ -3749,7 +3749,7 @@
                 "pages": [
                   "l/pt/user-guide/permissions-access/overview",
                   {
-                    "group": "Reference",
+                    "group": "Referência",
                     "pages": [
                       "l/pt/user-guide/permissions-access/capabilities/permissions",
                       "l/pt/user-guide/permissions-access/capabilities/sso-configuration"
@@ -3769,7 +3769,7 @@
                 "pages": [
                   "l/pt/user-guide/billing/overview",
                   {
-                    "group": "Reference",
+                    "group": "Referência",
                     "pages": [
                       "l/pt/user-guide/billing/capabilities/pricing-plans",
                       "l/pt/user-guide/billing/capabilities/credits"
@@ -3789,7 +3789,7 @@
                 "pages": [
                   "l/pt/user-guide/settings/overview",
                   {
-                    "group": "Reference",
+                    "group": "Referência",
                     "pages": [
                       "l/pt/user-guide/settings/capabilities/workspace-settings",
                       "l/pt/user-guide/settings/capabilities/member-management",
@@ -4252,7 +4252,7 @@
             "tab": "Начало работы",
             "groups": [
               {
-                "group": "Welcome",
+                "group": "Добро пожаловать",
                 "pages": [
                   "l/ru/getting-started/introduction",
                   "l/ru/getting-started/key-features",
@@ -4260,7 +4260,7 @@
                 ]
               },
               {
-                "group": "Core Concepts",
+                "group": "Основные понятия",
                 "pages": [
                   "l/ru/getting-started/core-concepts/data-model",
                   "l/ru/getting-started/core-concepts/layout",
@@ -4289,7 +4289,7 @@
                 "pages": [
                   "l/ru/user-guide/data-model/overview",
                   {
-                    "group": "Reference",
+                    "group": "Справочник",
                     "pages": [
                       "l/ru/user-guide/data-model/capabilities/objects",
                       "l/ru/user-guide/data-model/capabilities/fields",
@@ -4315,7 +4315,7 @@
                 "pages": [
                   "l/ru/user-guide/data-migration/overview",
                   {
-                    "group": "Reference",
+                    "group": "Справочник",
                     "pages": [
                       "l/ru/user-guide/data-migration/capabilities/file-formats",
                       "l/ru/user-guide/data-migration/capabilities/field-mapping",
@@ -4347,7 +4347,7 @@
                 "pages": [
                   "l/ru/user-guide/calendar-emails/overview",
                   {
-                    "group": "Reference",
+                    "group": "Справочник",
                     "pages": [
                       "l/ru/user-guide/calendar-emails/capabilities/mailbox",
                       "l/ru/user-guide/calendar-emails/capabilities/calendar"
@@ -4372,7 +4372,7 @@
                 "pages": [
                   "l/ru/user-guide/workflows/overview",
                   {
-                    "group": "Reference",
+                    "group": "Справочник",
                     "pages": [
                       "l/ru/user-guide/workflows/capabilities/workflow-triggers",
                       "l/ru/user-guide/workflows/capabilities/workflow-actions",
@@ -4435,7 +4435,7 @@
                 "pages": [
                   "l/ru/user-guide/ai/overview",
                   {
-                    "group": "Reference",
+                    "group": "Справочник",
                     "pages": [
                       "l/ru/user-guide/ai/capabilities/ai-chatbot",
                       "l/ru/user-guide/ai/capabilities/ai-agents",
@@ -4456,7 +4456,7 @@
                 "pages": [
                   "l/ru/user-guide/layout/overview",
                   {
-                    "group": "Reference",
+                    "group": "Справочник",
                     "pages": [
                       "l/ru/user-guide/layout/capabilities/navigation",
                       {
@@ -4493,7 +4493,7 @@
                 "pages": [
                   "l/ru/user-guide/dashboards/overview",
                   {
-                    "group": "Reference",
+                    "group": "Справочник",
                     "pages": [
                       "l/ru/user-guide/dashboards/capabilities/dashboards",
                       "l/ru/user-guide/dashboards/capabilities/widgets",
@@ -4515,7 +4515,7 @@
                 "pages": [
                   "l/ru/user-guide/permissions-access/overview",
                   {
-                    "group": "Reference",
+                    "group": "Справочник",
                     "pages": [
                       "l/ru/user-guide/permissions-access/capabilities/permissions",
                       "l/ru/user-guide/permissions-access/capabilities/sso-configuration"
@@ -4535,7 +4535,7 @@
                 "pages": [
                   "l/ru/user-guide/billing/overview",
                   {
-                    "group": "Reference",
+                    "group": "Справочник",
                     "pages": [
                       "l/ru/user-guide/billing/capabilities/pricing-plans",
                       "l/ru/user-guide/billing/capabilities/credits"
@@ -4555,7 +4555,7 @@
                 "pages": [
                   "l/ru/user-guide/settings/overview",
                   {
-                    "group": "Reference",
+                    "group": "Справочник",
                     "pages": [
                       "l/ru/user-guide/settings/capabilities/workspace-settings",
                       "l/ru/user-guide/settings/capabilities/member-management",
@@ -4635,7 +4635,7 @@
             "tab": "Başlarken",
             "groups": [
               {
-                "group": "Welcome",
+                "group": "Hoş geldiniz",
                 "pages": [
                   "l/tr/getting-started/introduction",
                   "l/tr/getting-started/key-features",
@@ -4643,7 +4643,7 @@
                 ]
               },
               {
-                "group": "Core Concepts",
+                "group": "Temel Kavramlar",
                 "pages": [
                   "l/tr/getting-started/core-concepts/data-model",
                   "l/tr/getting-started/core-concepts/layout",
@@ -4672,7 +4672,7 @@
                 "pages": [
                   "l/tr/user-guide/data-model/overview",
                   {
-                    "group": "Reference",
+                    "group": "Başvuru",
                     "pages": [
                       "l/tr/user-guide/data-model/capabilities/objects",
                       "l/tr/user-guide/data-model/capabilities/fields",
@@ -4698,7 +4698,7 @@
                 "pages": [
                   "l/tr/user-guide/data-migration/overview",
                   {
-                    "group": "Reference",
+                    "group": "Başvuru",
                     "pages": [
                       "l/tr/user-guide/data-migration/capabilities/file-formats",
                       "l/tr/user-guide/data-migration/capabilities/field-mapping",
@@ -4730,7 +4730,7 @@
                 "pages": [
                   "l/tr/user-guide/calendar-emails/overview",
                   {
-                    "group": "Reference",
+                    "group": "Başvuru",
                     "pages": [
                       "l/tr/user-guide/calendar-emails/capabilities/mailbox",
                       "l/tr/user-guide/calendar-emails/capabilities/calendar"
@@ -4755,7 +4755,7 @@
                 "pages": [
                   "l/tr/user-guide/workflows/overview",
                   {
-                    "group": "Reference",
+                    "group": "Başvuru",
                     "pages": [
                       "l/tr/user-guide/workflows/capabilities/workflow-triggers",
                       "l/tr/user-guide/workflows/capabilities/workflow-actions",
@@ -4818,7 +4818,7 @@
                 "pages": [
                   "l/tr/user-guide/ai/overview",
                   {
-                    "group": "Reference",
+                    "group": "Başvuru",
                     "pages": [
                       "l/tr/user-guide/ai/capabilities/ai-chatbot",
                       "l/tr/user-guide/ai/capabilities/ai-agents",
@@ -4839,7 +4839,7 @@
                 "pages": [
                   "l/tr/user-guide/layout/overview",
                   {
-                    "group": "Reference",
+                    "group": "Başvuru",
                     "pages": [
                       "l/tr/user-guide/layout/capabilities/navigation",
                       {
@@ -4876,7 +4876,7 @@
                 "pages": [
                   "l/tr/user-guide/dashboards/overview",
                   {
-                    "group": "Reference",
+                    "group": "Başvuru",
                     "pages": [
                       "l/tr/user-guide/dashboards/capabilities/dashboards",
                       "l/tr/user-guide/dashboards/capabilities/widgets",
@@ -4898,7 +4898,7 @@
                 "pages": [
                   "l/tr/user-guide/permissions-access/overview",
                   {
-                    "group": "Reference",
+                    "group": "Başvuru",
                     "pages": [
                       "l/tr/user-guide/permissions-access/capabilities/permissions",
                       "l/tr/user-guide/permissions-access/capabilities/sso-configuration"
@@ -4918,7 +4918,7 @@
                 "pages": [
                   "l/tr/user-guide/billing/overview",
                   {
-                    "group": "Reference",
+                    "group": "Başvuru",
                     "pages": [
                       "l/tr/user-guide/billing/capabilities/pricing-plans",
                       "l/tr/user-guide/billing/capabilities/credits"
@@ -4938,7 +4938,7 @@
                 "pages": [
                   "l/tr/user-guide/settings/overview",
                   {
-                    "group": "Reference",
+                    "group": "Başvuru",
                     "pages": [
                       "l/tr/user-guide/settings/capabilities/workspace-settings",
                       "l/tr/user-guide/settings/capabilities/member-management",
@@ -5018,7 +5018,7 @@
             "tab": "开始使用",
             "groups": [
               {
-                "group": "Welcome",
+                "group": "欢迎",
                 "pages": [
                   "l/zh/getting-started/introduction",
                   "l/zh/getting-started/key-features",
@@ -5026,7 +5026,7 @@
                 ]
               },
               {
-                "group": "Core Concepts",
+                "group": "核心概念",
                 "pages": [
                   "l/zh/getting-started/core-concepts/data-model",
                   "l/zh/getting-started/core-concepts/layout",
@@ -5055,7 +5055,7 @@
                 "pages": [
                   "l/zh/user-guide/data-model/overview",
                   {
-                    "group": "Reference",
+                    "group": "参考",
                     "pages": [
                       "l/zh/user-guide/data-model/capabilities/objects",
                       "l/zh/user-guide/data-model/capabilities/fields",
@@ -5081,7 +5081,7 @@
                 "pages": [
                   "l/zh/user-guide/data-migration/overview",
                   {
-                    "group": "Reference",
+                    "group": "参考",
                     "pages": [
                       "l/zh/user-guide/data-migration/capabilities/file-formats",
                       "l/zh/user-guide/data-migration/capabilities/field-mapping",
@@ -5113,7 +5113,7 @@
                 "pages": [
                   "l/zh/user-guide/calendar-emails/overview",
                   {
-                    "group": "Reference",
+                    "group": "参考",
                     "pages": [
                       "l/zh/user-guide/calendar-emails/capabilities/mailbox",
                       "l/zh/user-guide/calendar-emails/capabilities/calendar"
@@ -5138,7 +5138,7 @@
                 "pages": [
                   "l/zh/user-guide/workflows/overview",
                   {
-                    "group": "Reference",
+                    "group": "参考",
                     "pages": [
                       "l/zh/user-guide/workflows/capabilities/workflow-triggers",
                       "l/zh/user-guide/workflows/capabilities/workflow-actions",
@@ -5201,7 +5201,7 @@
                 "pages": [
                   "l/zh/user-guide/ai/overview",
                   {
-                    "group": "Reference",
+                    "group": "参考",
                     "pages": [
                       "l/zh/user-guide/ai/capabilities/ai-chatbot",
                       "l/zh/user-guide/ai/capabilities/ai-agents",
@@ -5222,7 +5222,7 @@
                 "pages": [
                   "l/zh/user-guide/layout/overview",
                   {
-                    "group": "Reference",
+                    "group": "参考",
                     "pages": [
                       "l/zh/user-guide/layout/capabilities/navigation",
                       {
@@ -5259,7 +5259,7 @@
                 "pages": [
                   "l/zh/user-guide/dashboards/overview",
                   {
-                    "group": "Reference",
+                    "group": "参考",
                     "pages": [
                       "l/zh/user-guide/dashboards/capabilities/dashboards",
                       "l/zh/user-guide/dashboards/capabilities/widgets",
@@ -5281,7 +5281,7 @@
                 "pages": [
                   "l/zh/user-guide/permissions-access/overview",
                   {
-                    "group": "Reference",
+                    "group": "参考",
                     "pages": [
                       "l/zh/user-guide/permissions-access/capabilities/permissions",
                       "l/zh/user-guide/permissions-access/capabilities/sso-configuration"
@@ -5301,7 +5301,7 @@
                 "pages": [
                   "l/zh/user-guide/billing/overview",
                   {
-                    "group": "Reference",
+                    "group": "参考",
                     "pages": [
                       "l/zh/user-guide/billing/capabilities/pricing-plans",
                       "l/zh/user-guide/billing/capabilities/credits"
@@ -5321,7 +5321,7 @@
                 "pages": [
                   "l/zh/user-guide/settings/overview",
                   {
-                    "group": "Reference",
+                    "group": "参考",
                     "pages": [
                       "l/zh/user-guide/settings/capabilities/workspace-settings",
                       "l/zh/user-guide/settings/capabilities/member-management",

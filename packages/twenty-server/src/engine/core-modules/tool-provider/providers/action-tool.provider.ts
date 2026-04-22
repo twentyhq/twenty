@@ -8,8 +8,6 @@ import { type ToolProvider } from 'src/engine/core-modules/tool-provider/interfa
 import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
 
 import { ToolCategory } from 'twenty-shared/ai';
-import { type StaticToolHandler } from 'src/engine/core-modules/tool-provider/interfaces/static-tool-handler.interface';
-import { ToolExecutorService } from 'src/engine/core-modules/tool-provider/services/tool-executor.service';
 import { type ToolDescriptor } from 'src/engine/core-modules/tool-provider/types/tool-descriptor.type';
 import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-index-entry.type';
 import { CodeInterpreterService } from 'src/engine/core-modules/code-interpreter/code-interpreter.service';
@@ -20,7 +18,7 @@ import { HttpTool } from 'src/engine/core-modules/tool/tools/http-tool/http-tool
 import { NavigateAppTool } from 'src/engine/core-modules/tool/tools/navigate-tool/navigate-app-tool';
 import { SearchHelpCenterTool } from 'src/engine/core-modules/tool/tools/search-help-center-tool/search-help-center-tool';
 import { WebSearchTool } from 'src/engine/core-modules/tool/tools/web-search-tool/web-search-tool';
-import { type ToolInput } from 'src/engine/core-modules/tool/types/tool-input.type';
+import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { type Tool } from 'src/engine/core-modules/tool/types/tool.type';
 import { WebSearchService } from 'src/engine/core-modules/web-search/web-search.service';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
@@ -42,7 +40,6 @@ export class ActionToolProvider implements ToolProvider {
     private readonly codeInterpreterService: CodeInterpreterService,
     private readonly webSearchService: WebSearchService,
     private readonly permissionsService: PermissionsService,
-    private readonly toolExecutorService: ToolExecutorService,
   ) {
     this.toolMap = new Map<string, Tool>([
       ['http_request', this.httpTool],
@@ -51,23 +48,8 @@ export class ActionToolProvider implements ToolProvider {
       ['search_help_center', this.searchHelpCenterTool],
       ['code_interpreter', this.codeInterpreterTool],
       ['navigate_app', this.navigateAppTool],
-      ['web_search', this.webSearchTool],
+      ['exa_web_search', this.webSearchTool],
     ]);
-
-    // Register each action tool as a static handler in the executor
-    for (const [toolId, tool] of this.toolMap) {
-      const handler: StaticToolHandler = {
-        execute: async (args: ToolInput, context: ToolProviderContext) =>
-          tool.execute(args, {
-            workspaceId: context.workspaceId,
-            userId: context.userId,
-            userWorkspaceId: context.userWorkspaceId,
-            onCodeExecutionUpdate: context.onCodeExecutionUpdate,
-          }),
-      };
-
-      this.toolExecutorService.registerStaticHandler(toolId, handler);
-    }
   }
 
   async isAvailable(_context: ToolProviderContext): Promise<boolean> {
@@ -148,11 +130,36 @@ export class ActionToolProvider implements ToolProvider {
 
     if (this.webSearchService.isEnabled()) {
       descriptors.push(
-        this.buildDescriptor('web_search', this.webSearchTool, includeSchemas),
+        this.buildDescriptor(
+          'exa_web_search',
+          this.webSearchTool,
+          includeSchemas,
+        ),
       );
     }
 
     return descriptors;
+  }
+
+  async executeStaticTool(
+    toolName: string,
+    args: Record<string, unknown>,
+    context: ToolProviderContext,
+  ): Promise<ToolOutput> {
+    const tool = this.toolMap.get(toolName);
+
+    if (!tool) {
+      throw new Error(
+        `Unknown action tool "${toolName}" (category: ${this.category})`,
+      );
+    }
+
+    return tool.execute(args, {
+      workspaceId: context.workspaceId,
+      userId: context.userId,
+      userWorkspaceId: context.userWorkspaceId,
+      onCodeExecutionUpdate: context.onCodeExecutionUpdate,
+    });
   }
 
   private buildDescriptor(

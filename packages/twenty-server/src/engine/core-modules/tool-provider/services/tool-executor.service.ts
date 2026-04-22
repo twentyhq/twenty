@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { type AggregateOperations } from 'twenty-shared/types';
@@ -26,9 +26,8 @@ import { GroupByRecordsService } from 'src/engine/core-modules/record-crud/servi
 import { type FindRecordsParams } from 'src/engine/core-modules/record-crud/types/find-records-params.type';
 import { UpdateManyRecordsService } from 'src/engine/core-modules/record-crud/services/update-many-records.service';
 import { UpdateRecordService } from 'src/engine/core-modules/record-crud/services/update-record.service';
-import { type ToolCategory } from 'twenty-shared/ai';
-import { type StaticToolHandler } from 'src/engine/core-modules/tool-provider/interfaces/static-tool-handler.interface';
-import { type CategoryToolGenerator } from 'src/engine/core-modules/tool-provider/types/category-tool-generator.type';
+import { TOOL_PROVIDERS } from 'src/engine/core-modules/tool-provider/constants/tool-providers.token';
+import { type ToolProvider } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
 import { type ToolDescriptor } from 'src/engine/core-modules/tool-provider/types/tool-descriptor.type';
 import { type ToolExecutionRef } from 'src/engine/core-modules/tool-provider/types/tool-execution-ref.type';
 import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-index-entry.type';
@@ -40,16 +39,9 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 export class ToolExecutorService {
   private readonly logger = new Logger(ToolExecutorService.name);
 
-  // Per-tool handlers (action tools, etc.)
-  private readonly staticToolHandlers = new Map<string, StaticToolHandler>();
-
-  // Category-level ToolSet generators (workflow, view, dashboard, metadata)
-  private readonly categoryGenerators = new Map<
-    ToolCategory,
-    CategoryToolGenerator
-  >();
-
   constructor(
+    @Inject(TOOL_PROVIDERS)
+    private readonly providers: ToolProvider[],
     private readonly findRecordsService: FindRecordsService,
     private readonly groupByRecordsService: GroupByRecordsService,
     private readonly createRecordService: CreateRecordService,
@@ -62,17 +54,6 @@ export class ToolExecutorService {
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
   ) {}
-
-  registerStaticHandler(toolId: string, handler: StaticToolHandler): void {
-    this.staticToolHandlers.set(toolId, handler);
-  }
-
-  registerCategoryGenerator(
-    category: ToolCategory,
-    generator: CategoryToolGenerator,
-  ): void {
-    this.categoryGenerators.set(category, generator);
-  }
 
   async dispatch(
     descriptor: ToolIndexEntry | ToolDescriptor,
@@ -222,35 +203,32 @@ export class ToolExecutorService {
       throw new Error('Expected static executionRef');
     }
 
-    // Per-tool handler first (action tools)
-    const handler = this.staticToolHandlers.get(descriptor.executionRef.toolId);
+    const provider = this.providers.find(
+      (candidate) => candidate.category === descriptor.category,
+    );
 
-    if (handler) {
-      return handler.execute(args, context);
-    }
-
-    // Category-level generator fallback (workflow, view, dashboard, metadata)
-    const generator = this.categoryGenerators.get(descriptor.category);
-
-    if (!generator) {
+    if (!provider) {
       throw new Error(
-        `No handler or generator for static tool: ${descriptor.executionRef.toolId}`,
+        `No provider registered for category "${descriptor.category}" (tool: ${descriptor.executionRef.toolId})`,
       );
     }
 
-    const toolSet = await generator(context);
-    const tool = toolSet[descriptor.name];
-
-    if (!tool?.execute) {
-      throw new Error(
-        `Tool ${descriptor.name} not found in generated ToolSet for category ${descriptor.category}`,
-      );
+    // Defense-in-depth: catalog and by-name lookups already filter by
+    // `isAvailable`, but re-verify at dispatch so the gate is enforced in
+    // one place regardless of how the descriptor reached us.
+    if (!(await provider.isAvailable(context))) {
+      return {
+        success: false,
+        message: `Tool "${descriptor.name}" is not available`,
+        error: `Tool "${descriptor.name}" is not available in this context. Use get_tool_catalog to see available tools.`,
+      };
     }
 
-    return tool.execute(
-      { loadingMessage: '', ...args },
-      { toolCallId: '', messages: [] },
-    ) as Promise<ToolOutput>;
+    return provider.executeStaticTool(
+      descriptor.executionRef.toolId,
+      args,
+      context,
+    );
   }
 
   private async dispatchLogicFunction(

@@ -696,15 +696,6 @@ export class ConfigVariables {
   EXA_API_KEY?: string;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.LLM,
-    description:
-      'When true, use native provider search (Anthropic/OpenAI) when available. When false, always prefer the configured driver (e.g. Exa).',
-    type: ConfigVariableType.BOOLEAN,
-  })
-  @IsOptional()
-  WEB_SEARCH_PREFER_NATIVE = false;
-
-  @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ANALYTICS_CONFIG,
     description: 'Enable or disable analytics for telemetry',
     type: ConfigVariableType.BOOLEAN,

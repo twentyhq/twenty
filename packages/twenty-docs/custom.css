@@ -12,7 +12,8 @@
   opacity: 0.85 !important;
 }
 
-:is(.dark, [data-theme="dark"]) #topbar-cta-button a {
+:is(.dark, [data-theme="dark"]) #topbar-cta-button a,
+:is(.dark, [data-theme="dark"]) #topbar-cta-button a span {
   background-color: #ffffff !important;
   color: #141414 !important;
 }

@@ -1,4 +1,8 @@
 import { CurrentApplicationContext } from '@/applications/contexts/CurrentApplicationContext';
+import { useResolvedApplicationDescription } from '@/applications/hooks/useResolvedApplicationDescription';
+import { isTwentyStandardApplication } from '@/applications/utils/isTwentyStandardApplication';
+import { isWorkspaceCustomApplication } from '@/applications/utils/isWorkspaceCustomApplication';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useUpgradeApplication } from '@/marketplace/hooks/useUpgradeApplication';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -38,6 +42,8 @@ import {
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { SettingsApplicationDetailSkeletonLoader } from '~/pages/settings/applications/components/SettingsApplicationDetailSkeletonLoader';
 import { SettingsApplicationDetailTitle } from '~/pages/settings/applications/components/SettingsApplicationDetailTitle';
+import { CUSTOM_APPLICATION_ILLUSTRATIONS } from '~/pages/settings/applications/constants/CustomApplicationIllustrations';
+import { STANDARD_APPLICATION_ILLUSTRATIONS } from '~/pages/settings/applications/constants/StandardApplicationIllustrations';
 import { SettingsApplicationCustomTab } from '~/pages/settings/applications/tabs/SettingsApplicationCustomTab';
 import { SettingsApplicationDetailAboutTab } from '~/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab';
 import { SettingsApplicationDetailContentTab } from '~/pages/settings/applications/tabs/SettingsApplicationDetailContentTab';
@@ -70,12 +76,29 @@ export const SettingsApplicationDetails = () => {
   const detail = detailData?.findMarketplaceAppDetail;
   const manifest = detail?.manifest as Manifest | undefined;
   const app = manifest?.application;
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
+  const isStandardApplication = isTwentyStandardApplication(application);
+  const isCustomApplication = isWorkspaceCustomApplication(
+    application,
+    currentWorkspace,
+  );
+
+  const resolvedDescription = useResolvedApplicationDescription(application);
 
   const displayName =
     app?.displayName ?? application?.name ?? t`Application details`;
-  const description = app?.description ?? application?.description ?? undefined;
+  const description = app?.description ?? resolvedDescription;
   const logoUrl =
     app?.logoUrl ?? application?.applicationRegistration?.logoUrl ?? undefined;
+
+  const getScreenshots = () => {
+    if (app?.screenshots?.length) return app.screenshots;
+    if (isStandardApplication) return STANDARD_APPLICATION_ILLUSTRATIONS;
+    if (isCustomApplication) return CUSTOM_APPLICATION_ILLUSTRATIONS;
+    return undefined;
+  };
+
+  const screenshots = getScreenshots();
 
   const settingsCustomTabFrontComponentId =
     application?.settingsCustomTabFrontComponentId;
@@ -228,7 +251,7 @@ export const SettingsApplicationDetails = () => {
             displayName={displayName}
             description={description}
             aboutDescription={app?.aboutDescription}
-            screenshots={app?.screenshots}
+            screenshots={screenshots}
             author={app?.author}
             category={app?.category}
             contentEntries={contentEntries}
