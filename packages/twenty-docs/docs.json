@@ -424,22 +424,22 @@
               {
                 "group": "Welcome",
                 "pages": [
-                  "l/fr/getting-started/introduction",
-                  "l/fr/getting-started/key-features",
-                  "l/fr/getting-started/quickstart"
+                  "getting-started/introduction",
+                  "getting-started/key-features",
+                  "getting-started/quickstart"
                 ]
               },
               {
                 "group": "Core Concepts",
                 "pages": [
-                  "l/fr/getting-started/core-concepts/data-model",
-                  "l/fr/getting-started/core-concepts/layout",
-                  "l/fr/getting-started/core-concepts/workflows",
-                  "l/fr/getting-started/core-concepts/calendar-and-email",
-                  "l/fr/getting-started/core-concepts/ai",
-                  "l/fr/getting-started/core-concepts/apps",
-                  "l/fr/getting-started/core-concepts/dashboards",
-                  "l/fr/getting-started/core-concepts/glossary"
+                  "getting-started/core-concepts/data-model",
+                  "getting-started/core-concepts/layout",
+                  "getting-started/core-concepts/workflows",
+                  "getting-started/core-concepts/calendar-and-email",
+                  "getting-started/core-concepts/ai",
+                  "getting-started/core-concepts/apps",
+                  "getting-started/core-concepts/dashboards",
+                  "getting-started/core-concepts/glossary"
                 ]
               }
             ]
@@ -807,22 +807,22 @@
               {
                 "group": "مرحبًا",
                 "pages": [
-                  "l/ar/getting-started/introduction",
-                  "l/ar/getting-started/key-features",
-                  "l/ar/getting-started/quickstart"
+                  "getting-started/introduction",
+                  "getting-started/key-features",
+                  "getting-started/quickstart"
                 ]
               },
               {
                 "group": "المفاهيم الأساسية",
                 "pages": [
-                  "l/ar/getting-started/core-concepts/data-model",
-                  "l/ar/getting-started/core-concepts/layout",
-                  "l/ar/getting-started/core-concepts/workflows",
-                  "l/ar/getting-started/core-concepts/calendar-and-email",
-                  "l/ar/getting-started/core-concepts/ai",
-                  "l/ar/getting-started/core-concepts/apps",
-                  "l/ar/getting-started/core-concepts/dashboards",
-                  "l/ar/getting-started/core-concepts/glossary"
+                  "getting-started/core-concepts/data-model",
+                  "getting-started/core-concepts/layout",
+                  "getting-started/core-concepts/workflows",
+                  "getting-started/core-concepts/calendar-and-email",
+                  "getting-started/core-concepts/ai",
+                  "getting-started/core-concepts/apps",
+                  "getting-started/core-concepts/dashboards",
+                  "getting-started/core-concepts/glossary"
                 ]
               }
             ]
