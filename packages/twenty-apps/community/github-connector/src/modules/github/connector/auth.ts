@@ -81,16 +81,32 @@ async function requestInstallationToken(
 }
 
 /**
+ * Fine-grained PATs always start with `github_pat_`. Classic tokens
+ * (`ghp_…`, the legacy 40-char hex tokens, and OAuth `gho_…` / `ghu_…`
+ * variants) are intentionally rejected: this connector only supports
+ * scoped, fine-grained tokens.
+ */
+function assertFineGrainedPat(token: string): void {
+  if (token.startsWith('github_pat_')) return;
+  throw new Error(
+    'GITHUB_TOKEN must be a fine-grained Personal Access Token (starts with `github_pat_`). Classic PATs are not supported — create one at https://github.com/settings/personal-access-tokens.',
+  );
+}
+
+/**
  * Returns a GitHub token to authenticate REST/GraphQL calls.
  *
  * Resolution order:
- *   1. `GITHUB_TOKEN` (PAT)  preferred for ease of setup
+ *   1. `GITHUB_TOKEN` (fine-grained PAT)  preferred for ease of setup
  *   2. GitHub App credentials (`GITHUB_APP_ID` + `GITHUB_APP_PRIVATE_KEY` +
  *      `GITHUB_APP_INSTALLATION_ID`)  rotated installation tokens
  */
 export async function getGitHubToken(): Promise<string> {
   const pat = process.env.GITHUB_TOKEN?.trim();
-  if (pat) return pat;
+  if (pat) {
+    assertFineGrainedPat(pat);
+    return pat;
+  }
 
   if (cached && Date.now() < cached.expiresAt - TOKEN_MARGIN_MS) {
     return cached.token;
@@ -109,7 +125,7 @@ export async function getGitHubToken(): Promise<string> {
       .filter(Boolean)
       .join(', ');
     throw new Error(
-      `Missing GitHub credentials. Set GITHUB_TOKEN (PAT) or all of: ${missing}.`,
+      `Missing GitHub credentials. Set GITHUB_TOKEN (fine-grained PAT) or all of: ${missing}.`,
     );
   }
 

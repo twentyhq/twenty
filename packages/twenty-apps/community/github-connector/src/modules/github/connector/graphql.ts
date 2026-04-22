@@ -477,7 +477,7 @@ export async function fetchProjectItemsPage(
 
   if (!connection) {
     console.warn(
-      `[github-gql] project ${owner}/${projectNumber} returned no items (project does not exist or the configured token lacks read access — for classic PATs add the \`read:project\` scope, for fine-grained PATs grant Organization → Projects: Read).`,
+      `[github-gql] project ${owner}/${projectNumber} returned no items (project does not exist or the fine-grained PAT lacks Organization → Projects: Read for "${owner}", and may also need to be approved by an org admin).`,
     );
     return { items: [], totalCount: 0, hasMore: false, endCursor: null };
   }

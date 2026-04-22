@@ -92,13 +92,14 @@ methods.
 
 | Variable        | Required | Notes                                                                |
 | --------------- | -------- | -------------------------------------------------------------------- |
-| `GITHUB_TOKEN`  | yes      | Fine-grained PAT (preferred) or classic PAT. See permissions below.  |
+| `GITHUB_TOKEN`  | yes      | Fine-grained PAT (`github_pat_…`). See permissions below.            |
 
 Create a fine-grained PAT at
 <https://github.com/settings/personal-access-tokens>:
 
-1. **Resource owner**: yourself or the org that owns the repos in
-   `GITHUB_REPOS`.
+1. **Resource owner**: the org (or user) that owns the repos in
+   `GITHUB_REPOS` and the projects in `GITHUB_PROJECTS`. Org-owned tokens
+   must be approved by an org admin before they can read org resources.
 2. **Repository access**: pick the specific repos (or "All repositories").
 3. **Repository permissions** — set to **Read-only**:
    - `Contents`
@@ -109,10 +110,8 @@ Create a fine-grained PAT at
    (v2): set `Projects` to **Read-only**.
 5. Generate, then copy the `github_pat_…` value.
 
-(Classic PATs at <https://github.com/settings/tokens> still work. They need
-`repo` + `read:org` for PR/issue/contributor syncs, plus `read:project`
-when you also sync GitHub Projects (v2). Fine-grained tokens are scoped
-tighter and recommended.)
+Classic PATs are intentionally not supported — fine-grained tokens are
+scoped per-repo/per-org and avoid the all-or-nothing `repo` scope.
 
 When `GITHUB_TOKEN` is set, it always wins regardless of any GitHub App
 config below.
@@ -192,7 +191,8 @@ GitHub.
 `src/modules/github/connector/auth.ts` returns a token using the following
 order:
 
-1. `GITHUB_TOKEN` (PAT) if present.
+1. `GITHUB_TOKEN` (fine-grained PAT, `github_pat_…`) if present. Classic
+   PATs are rejected at startup.
 2. Cached installation token, if still valid.
 3. Fresh installation token minted from the GitHub App credentials.
 
