@@ -4,10 +4,10 @@
       "label": "Başlarken",
       "groups": {
         "welcome": {
-          "label": "Welcome"
+          "label": "Hoş geldiniz"
         },
         "coreConcepts": {
-          "label": "Core Concepts"
+          "label": "Temel Kavramlar"
         }
       }
     },
@@ -21,7 +21,7 @@
           "label": "Veri modeli",
           "groups": {
             "dataModelReference": {
-              "label": "Reference"
+              "label": "Başvuru"
             },
             "dataModelHowTos": {
               "label": "Nasıl Yapılırlar"
@@ -32,7 +32,7 @@
           "label": "Veri Geçişi",
           "groups": {
             "dataMigrationReference": {
-              "label": "Reference"
+              "label": "Başvuru"
             },
             "dataMigrationHowTos": {
               "label": "Nasıl Yapılırlar"
@@ -43,7 +43,7 @@
           "label": "Takvim ve E-postalar",
           "groups": {
             "calendarEmailsReference": {
-              "label": "Reference"
+              "label": "Başvuru"
             },
             "calendarEmailsHowTos": {
               "label": "Nasıl Yapılırlar"
@@ -54,7 +54,7 @@
           "label": "İş Akışları",
           "groups": {
             "workflowsReference": {
-              "label": "Reference"
+              "label": "Başvuru"
             },
             "workflowsHowTos": {
               "label": "Nasıl Yapılırlar",
@@ -79,7 +79,7 @@
           "label": "AI",
           "groups": {
             "aiReference": {
-              "label": "Reference"
+              "label": "Başvuru"
             },
             "aiHowTos": {
               "label": "Nasıl Yapılırlar"
@@ -90,7 +90,7 @@
           "label": "Düzen",
           "groups": {
             "layoutReference": {
-              "label": "Reference",
+              "label": "Başvuru",
               "groups": {
                 "layoutViews": {
                   "label": "Görünümler"
@@ -106,7 +106,7 @@
           "label": "Gösterge Panelleri",
           "groups": {
             "dashboardsReference": {
-              "label": "Reference"
+              "label": "Başvuru"
             },
             "dashboardsHowTos": {
               "label": "Nasıl Yapılırlar"
@@ -117,7 +117,7 @@
           "label": "İzinler ve Erişim",
           "groups": {
             "permissionsAccessReference": {
-              "label": "Reference"
+              "label": "Başvuru"
             },
             "permissionsAccessHowTos": {
               "label": "Nasıl Yapılırlar"
@@ -128,7 +128,7 @@
           "label": "Faturalandırma",
           "groups": {
             "billingReference": {
-              "label": "Reference"
+              "label": "Başvuru"
             },
             "billingHowTos": {
               "label": "Nasıl Yapılırlar"
@@ -139,7 +139,7 @@
           "label": "Ayarlar",
           "groups": {
             "settingsReference": {
-              "label": "Reference"
+              "label": "Başvuru"
             },
             "settingsHowTos": {
               "label": "Nasıl Yapılırlar"
