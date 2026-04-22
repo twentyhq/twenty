@@ -18,7 +18,7 @@ import {
 export const PR_ACTIVITY_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER =
   'a8d2f1c4-7b69-4e3a-8c5d-9f6b1a3e7c2d';
 
-const THIS_MONTH_RELATIVE = 'THIS_1_MONTH;;UTC;;SUNDAY;;';
+const THIS_WEEK_RELATIVE = 'THIS_1_WEEK;;UTC;;SUNDAY;;';
 
 export default definePageLayout({
   universalIdentifier: PR_ACTIVITY_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER,
@@ -34,7 +34,7 @@ export default definePageLayout({
       widgets: [
         {
           universalIdentifier: 'f1a2b3c4-d5e6-4789-a0b1-c2d3e4f5a6b1',
-          title: 'PRs Merged This Month',
+          title: 'PRs Merged This Week',
           type: 'GRAPH',
           objectUniversalIdentifier: PULL_REQUEST_UNIVERSAL_IDENTIFIER,
           gridPosition: { row: 0, column: 0, rowSpan: 2, columnSpan: 4 },
@@ -54,7 +54,7 @@ export default definePageLayout({
                   fieldMetadataUniversalIdentifier:
                     MERGED_AT_FIELD_UNIVERSAL_IDENTIFIER,
                   operand: 'IS_RELATIVE',
-                  value: THIS_MONTH_RELATIVE,
+                  value: THIS_WEEK_RELATIVE,
                   type: 'DATE_TIME',
                 },
               ],
@@ -63,7 +63,7 @@ export default definePageLayout({
         },
         {
           universalIdentifier: 'f1a2b3c4-d5e6-4789-a0b1-c2d3e4f5a6b2',
-          title: 'PR Reviews This Month',
+          title: 'PR Reviews This Week',
           type: 'GRAPH',
           objectUniversalIdentifier: PULL_REQUEST_REVIEW_UNIVERSAL_IDENTIFIER,
           gridPosition: { row: 0, column: 4, rowSpan: 2, columnSpan: 4 },
@@ -83,7 +83,7 @@ export default definePageLayout({
                   fieldMetadataUniversalIdentifier:
                     REVIEW_FIRST_SUBMITTED_AT_FIELD_UNIVERSAL_IDENTIFIER,
                   operand: 'IS_RELATIVE',
-                  value: THIS_MONTH_RELATIVE,
+                  value: THIS_WEEK_RELATIVE,
                   type: 'DATE_TIME',
                 },
               ],
@@ -92,7 +92,7 @@ export default definePageLayout({
         },
         {
           universalIdentifier: 'c1f2a3b4-d5e6-4789-a0b1-c2d3e4f5a6b7',
-          title: 'PRs Merged per Month',
+          title: 'PRs Merged per Week',
           type: 'GRAPH',
           objectUniversalIdentifier: PULL_REQUEST_UNIVERSAL_IDENTIFIER,
           gridPosition: { row: 2, column: 0, rowSpan: 8, columnSpan: 6 },
@@ -104,7 +104,7 @@ export default definePageLayout({
             primaryAxisGroupByFieldMetadataUniversalIdentifier:
               MERGED_AT_FIELD_UNIVERSAL_IDENTIFIER,
             primaryAxisDateGranularity:
-              ObjectRecordGroupByDateGranularity.MONTH,
+              ObjectRecordGroupByDateGranularity.WEEK,
             displayDataLabel: false,
             displayLegend: false,
             color: 'green',
@@ -115,7 +115,7 @@ export default definePageLayout({
         },
         {
           universalIdentifier: 'd2e3f4a5-b6c7-4890-a1b2-c3d4e5f6a7b8',
-          title: 'PR Reviews per Month',
+          title: 'PR Reviews per Week',
           type: 'GRAPH',
           objectUniversalIdentifier: PULL_REQUEST_REVIEW_UNIVERSAL_IDENTIFIER,
           gridPosition: { row: 2, column: 6, rowSpan: 8, columnSpan: 6 },
@@ -127,7 +127,7 @@ export default definePageLayout({
             primaryAxisGroupByFieldMetadataUniversalIdentifier:
               REVIEW_FIRST_SUBMITTED_AT_FIELD_UNIVERSAL_IDENTIFIER,
             primaryAxisDateGranularity:
-              ObjectRecordGroupByDateGranularity.MONTH,
+              ObjectRecordGroupByDateGranularity.WEEK,
             displayDataLabel: false,
             displayLegend: false,
             color: 'blue',
