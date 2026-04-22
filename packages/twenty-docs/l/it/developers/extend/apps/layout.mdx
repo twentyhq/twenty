@@ -1,23 +1,23 @@
 ---
 title: Layout
-description: Define views, navigation menu items, and page layouts to shape how your app appears in Twenty.
+description: Definisci viste, voci del menu di navigazione e layout di pagina per determinare come la tua app appare in Twenty.
 icon: table-columns
 ---
 
-Layout entities control how your app surfaces inside Twenty's UI — what lives in the sidebar, which saved views ship with the app, and how a record detail page is arranged.
+Le entità di layout controllano come la tua app si presenta all'interno dell'interfaccia utente di Twenty — ciò che è presente nella barra laterale, quali viste salvate sono incluse con l'app e come è organizzata la pagina dei dettagli di un record.
 
-## Layout concepts
+## Concetti di layout
 
-| Concept                  | What it controls                                                                  | Entità                     |
-| ------------------------ | --------------------------------------------------------------------------------- | -------------------------- |
-| **View**                 | A saved list configuration for an object — visible fields, order, filters, groups | `defineView`               |
-| **Navigation Menu Item** | An entry in the left sidebar that links to a view or an external URL              | `defineNavigationMenuItem` |
-| **Page Layout**          | The tabs and widgets that make up a record's detail page                          | `definePageLayout`         |
+| Concetto                         | Cosa controlla                                                                               | Entità                     |
+| -------------------------------- | -------------------------------------------------------------------------------------------- | -------------------------- |
+| **Vista**                        | Una configurazione di elenco salvata per un oggetto — campi visibili, ordine, filtri, gruppi | `defineView`               |
+| **Voce del menu di navigazione** | Una voce nella barra laterale sinistra che collega a una vista o a un URL esterno            | `defineNavigationMenuItem` |
+| **Layout di pagina**             | Le schede e i widget che compongono la pagina dei dettagli di un record                      | `definePageLayout`         |
 
-Views, navigation items, and page layouts reference each other by `universalIdentifier`:
+Le viste, le voci del menu di navigazione e i layout di pagina fanno riferimento tra loro tramite `universalIdentifier`:
 
-* A **navigation menu item** of type `VIEW` points at a `defineView` identifier, so the sidebar link opens that saved view.
-* A **page layout** of type `RECORD_PAGE` targets an object and can embed [front components](/l/it/developers/extend/apps/front-components) inside its tabs as widgets.
+* Una **voce del menu di navigazione** di tipo `VIEW` punta a un identificatore `defineView`, quindi il link nella barra laterale apre quella vista salvata.
+* Un **layout di pagina** di tipo `RECORD_PAGE` si applica a un oggetto e può incorporare [front components](/l/it/developers/extend/apps/front-components) all'interno delle sue schede come widget.
 
 <AccordionGroup>
 <Accordion title="defineView" description="Definisci viste salvate per gli oggetti">

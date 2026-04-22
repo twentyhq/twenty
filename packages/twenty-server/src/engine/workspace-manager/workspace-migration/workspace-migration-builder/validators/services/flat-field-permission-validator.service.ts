@@ -145,6 +145,7 @@ export class FlatFieldPermissionValidatorService {
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
     },
+    buildOptions,
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.fieldPermission
   >): FailedFlatEntityValidation<'fieldPermission', 'update'> {
@@ -187,12 +188,21 @@ export class FlatFieldPermissionValidatorService {
         message: t`Role not found`,
         userFriendlyMessage: msg`Role not found`,
       });
-    } else if (!referencedRole.isEditable) {
-      validationResult.errors.push({
-        code: PermissionsExceptionCode.ROLE_NOT_EDITABLE,
-        message: t`Role is not editable`,
-        userFriendlyMessage: msg`This role cannot be modified because it is a system role. Only custom roles can be edited.`,
-      });
+    } else {
+      validationResult.errors.push(
+        ...validateRoleBelongsToCallerApplication({
+          referencedRole,
+          buildOptions,
+        }),
+      );
+
+      if (!referencedRole.isEditable) {
+        validationResult.errors.push({
+          code: PermissionsExceptionCode.ROLE_NOT_EDITABLE,
+          message: t`Role is not editable`,
+          userFriendlyMessage: msg`This role cannot be modified because it is a system role. Only custom roles can be edited.`,
+        });
+      }
     }
 
     if (isDefined(flatEntityUpdate.objectMetadataUniversalIdentifier)) {

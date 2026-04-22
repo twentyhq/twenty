@@ -1,45 +1,62 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 import { defineLogicFunction, type DatabaseEventPayload, type ObjectRecordUpdateEvent } from 'twenty-sdk/define';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined } from '@utils/is-defined';
 
-import { ON_RESEND_CONTACT_UPDATED_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/modules/resend/constants/universal-identifiers';
-import type { ResendContactRecord } from 'src/modules/resend/shared/types/resend-contact-record';
-import { findOrCreatePerson } from 'src/modules/resend/shared/utils/find-or-create-person';
-import { getResendClient } from 'src/modules/resend/shared/utils/get-resend-client';
+import { ON_RESEND_CONTACT_UPDATED_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from '@modules/resend/constants/universal-identifiers';
+import type { ResendContactRecord } from '@modules/resend/shared/types/resend-contact-record';
+import { findOrCreatePerson } from '@modules/resend/shared/utils/find-or-create-person';
+import { getResendClient } from '@modules/resend/shared/utils/get-resend-client';
 
 type ContactUpdateEvent = DatabaseEventPayload<
   ObjectRecordUpdateEvent<ResendContactRecord>
 >;
 
+const valuesEqual = (a: unknown, b: unknown): boolean =>
+  JSON.stringify(a ?? null) === JSON.stringify(b ?? null);
+
 const handler = async (
   event: ContactUpdateEvent,
 ): Promise<object | undefined> => {
-  if (event.properties.updatedFields?.includes('lastSyncedFromResend')) {
+  const { before, after } = event.properties;
+
+  const lastSyncedChanged = !valuesEqual(
+    before?.lastSyncedFromResend,
+    after?.lastSyncedFromResend,
+  );
+
+  const unsubscribedChanged = !valuesEqual(
+    before?.unsubscribed,
+    after?.unsubscribed,
+  );
+  const nameChanged = !valuesEqual(before?.name, after?.name);
+  const emailChanged = !valuesEqual(before?.email, after?.email);
+  const userFieldsChanged = unsubscribedChanged || nameChanged || emailChanged;
+
+  if (lastSyncedChanged && !userFieldsChanged) {
     return { skipped: true, reason: 'inbound sync echo' };
   }
 
-  const { after } = event.properties;
   const resendId = after?.resendId;
 
   if (!isNonEmptyString(resendId)) {
     return { skipped: true, reason: 'no resendId on record' };
   }
 
-  const resend = getResendClient();
+  const resendClient = getResendClient();
 
   const updatePayload: Record<string, unknown> = { id: resendId };
 
-  if (event.properties.updatedFields?.includes('unsubscribed')) {
+  if (unsubscribedChanged) {
     updatePayload.unsubscribed = after.unsubscribed;
   }
 
-  if (event.properties.updatedFields?.includes('name')) {
+  if (nameChanged) {
     updatePayload.firstName = after.name?.firstName ?? null;
     updatePayload.lastName = after.name?.lastName ?? null;
   }
 
-  if (event.properties.updatedFields?.includes('email')) {
+  if (emailChanged) {
     updatePayload.email = after.email?.primaryEmail;
   }
 
@@ -47,8 +64,8 @@ const handler = async (
     return { skipped: true, reason: 'no relevant fields changed' };
   }
 
-  const { error } = await resend.contacts.update(
-    updatePayload as Parameters<typeof resend.contacts.update>[0],
+  const { error } = await resendClient.contacts.update(
+    updatePayload as Parameters<typeof resendClient.contacts.update>[0],
   );
 
   if (isDefined(error)) {
@@ -59,7 +76,7 @@ const handler = async (
 
   let personId: string | undefined;
 
-  if (event.properties.updatedFields?.includes('email')) {
+  if (emailChanged) {
     const email = after.email?.primaryEmail;
     const client = new CoreApiClient();
 
@@ -81,7 +98,9 @@ const handler = async (
   return {
     synced: true,
     resendId,
-    updatedFields: Object.keys(updatePayload).filter((k) => k !== 'id'),
+    updatedFields: Object.keys(updatePayload).filter(
+      (payloadKey) => payloadKey !== 'id',
+    ),
     personId,
   };
 };

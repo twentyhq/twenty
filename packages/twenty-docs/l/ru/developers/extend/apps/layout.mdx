@@ -1,23 +1,23 @@
 ---
 title: Макет
-description: Define views, navigation menu items, and page layouts to shape how your app appears in Twenty.
+description: Определите представления, пункты меню навигации и макеты страниц, чтобы сформировать внешний вид вашего приложения в Twenty.
 icon: table-columns
 ---
 
-Layout entities control how your app surfaces inside Twenty's UI — what lives in the sidebar, which saved views ship with the app, and how a record detail page is arranged.
+Сущности макета определяют, как ваше приложение представлено в интерфейсе Twenty — что находится в боковой панели, какие сохранённые представления поставляются с приложением и как устроена страница сведений о записи.
 
-## Layout concepts
+## Концепции макета
 
-| Concept                  | What it controls                                                                  | Сущность                   |
-| ------------------------ | --------------------------------------------------------------------------------- | -------------------------- |
-| **View**                 | A saved list configuration for an object — visible fields, order, filters, groups | `defineView`               |
-| **Navigation Menu Item** | An entry in the left sidebar that links to a view or an external URL              | `defineNavigationMenuItem` |
-| **Page Layout**          | The tabs and widgets that make up a record's detail page                          | `definePageLayout`         |
+| Понятие                  | Что определяет                                                                       | Сущность                   |
+| ------------------------ | ------------------------------------------------------------------------------------ | -------------------------- |
+| **Представление**        | Сохранённая конфигурация списка для объекта — видимые поля, порядок, фильтры, группы | `defineView`               |
+| **Пункт меню навигации** | Элемент в левой боковой панели, который ссылается на представление или внешний URL   | `defineNavigationMenuItem` |
+| **Макет страницы**       | Вкладки и виджеты, из которых состоит страница сведений о записи                     | `definePageLayout`         |
 
-Views, navigation items, and page layouts reference each other by `universalIdentifier`:
+Представления, пункты меню навигации и макеты страниц ссылаются друг на друга по `universalIdentifier`:
 
-* A **navigation menu item** of type `VIEW` points at a `defineView` identifier, so the sidebar link opens that saved view.
-* A **page layout** of type `RECORD_PAGE` targets an object and can embed [front components](/l/ru/developers/extend/apps/front-components) inside its tabs as widgets.
+* **Пункт меню навигации** типа `VIEW` указывает на идентификатор `defineView`, поэтому ссылка в боковой панели открывает это сохранённое представление.
+* **Макет страницы** типа `RECORD_PAGE` ориентирован на объект и может встраивать [фронт-компоненты](/l/ru/developers/extend/apps/front-components) во вкладки в качестве виджетов.
 
 <AccordionGroup>
 <Accordion title="defineView" description="Определяйте сохранённые представления для объектов">

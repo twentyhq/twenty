@@ -1,7 +1,8 @@
 import { CoreApiClient } from 'twenty-client-sdk/core';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined } from '@utils/is-defined';
 
-import { capitalize } from 'src/modules/resend/shared/utils/capitalize';
+import { capitalize } from '@modules/resend/shared/utils/capitalize';
+import { extractMutationRecord } from '@modules/resend/shared/utils/typed-client';
 
 export const upsertRecord = async (
   client: CoreApiClient,
@@ -38,9 +39,10 @@ export const upsertRecord = async (
     },
   });
 
-  const created = (createResult as Record<string, unknown>)[
-    createMutationName
-  ] as { id: string } | undefined;
+  const created = extractMutationRecord<{ id: string }>(
+    createResult,
+    createMutationName,
+  );
 
   if (isDefined(created)) {
     existingMap.set(resendId, created.id);

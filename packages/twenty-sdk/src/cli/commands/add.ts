@@ -3,7 +3,7 @@ import inquirer from 'inquirer';
 import { writeFile } from 'node:fs/promises';
 import { join, relative } from 'path';
 import { SyncableEntity } from 'twenty-shared/application';
-import { FieldMetadataType } from 'twenty-shared/types';
+import { FieldMetadataType, ViewType } from 'twenty-shared/types';
 import { assertUnreachable } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
@@ -15,6 +15,7 @@ import { getLogicFunctionBaseFile } from '@/cli/utilities/entity/entity-logic-fu
 import { getNavigationMenuItemBaseFile } from '@/cli/utilities/entity/entity-navigation-menu-item-template';
 import { getObjectBaseFile } from '@/cli/utilities/entity/entity-object-template';
 import { getPageLayoutBaseFile } from '@/cli/utilities/entity/entity-page-layout-template';
+import { getRecordPageLayoutBaseFile } from '@/cli/utilities/entity/entity-record-page-layout-template';
 import { getRoleBaseFile } from '@/cli/utilities/entity/entity-role-template';
 import { getAgentBaseFile } from '@/cli/utilities/entity/entity-agent-template';
 import { getSkillBaseFile } from '@/cli/utilities/entity/entity-skill-template';
@@ -27,6 +28,7 @@ const APP_FOLDER = 'src';
 export class EntityAddCommand {
   private lastObjectUniversalIdentifier: string | undefined;
   private lastNameFieldUniversalIdentifier: string | undefined;
+  private lastObjectLabelSingular: string | undefined;
 
   async execute(entityType?: SyncableEntity, path?: string): Promise<void> {
     try {
@@ -59,7 +61,7 @@ export class EntityAddCommand {
       );
 
       if (entity === SyncableEntity.Object) {
-        await this.promptAndCreateViewAndNavigationMenuItem(name, path);
+        await this.promptAndCreateObjectCompanions(name, path);
       }
     } catch (error) {
       console.error(
@@ -81,6 +83,7 @@ export class EntityAddCommand {
 
         this.lastObjectUniversalIdentifier = objectUniversalIdentifier;
         this.lastNameFieldUniversalIdentifier = nameFieldUniversalIdentifier;
+        this.lastObjectLabelSingular = entityData.labelSingular;
 
         const file = getObjectBaseFile({
           data: entityData,
@@ -191,27 +194,28 @@ export class EntityAddCommand {
     }
   }
 
-  private async promptAndCreateViewAndNavigationMenuItem(
+  private async promptAndCreateObjectCompanions(
     objectName: string,
     customPath?: string,
   ): Promise<void> {
-    const { createViewAndNavItem } = await inquirer.prompt<{
-      createViewAndNavItem: boolean;
+    const { createCompanions } = await inquirer.prompt<{
+      createCompanions: boolean;
     }>([
       {
         type: 'confirm',
-        name: 'createViewAndNavItem',
+        name: 'createCompanions',
         message:
-          'Also create a view and navigation menu item for this object? (recommended)',
+          'Also create a view, navigation menu item, and record page layout for this object? (recommended)',
         default: true,
       },
     ]);
 
-    if (!createViewAndNavItem || !this.lastObjectUniversalIdentifier) {
+    if (!createCompanions || !this.lastObjectUniversalIdentifier) {
       return;
     }
 
     const viewUniversalIdentifier = v4();
+    const fieldsWidgetViewUniversalIdentifier = v4();
 
     const viewFile = getViewBaseFile({
       name: `all-${kebabCase(objectName)}`,
@@ -258,6 +262,41 @@ export class EntityAddCommand {
       chalk.cyan(relative(CURRENT_EXECUTION_DIRECTORY, viewFilePath)),
     );
 
+    const recordPageFieldsViewFields = this.buildRecordPageFieldsViewFields(
+      this.lastNameFieldUniversalIdentifier,
+    );
+
+    const recordPageFieldsViewFile = getViewBaseFile({
+      name: `${kebabCase(objectName)}-record-page-fields`,
+      universalIdentifier: fieldsWidgetViewUniversalIdentifier,
+      objectUniversalIdentifier: this.lastObjectUniversalIdentifier,
+      type: ViewType.FIELDS_WIDGET,
+      fields: recordPageFieldsViewFields,
+    });
+
+    const recordPageFieldsViewFileName = `${kebabCase(objectName)}-record-page-fields.ts`;
+    const recordPageFieldsViewFilePath = join(
+      viewFolderPath,
+      recordPageFieldsViewFileName,
+    );
+
+    if (await pathExists(recordPageFieldsViewFilePath)) {
+      const { overwrite } = await this.handleFileExist();
+
+      if (!overwrite) {
+        return;
+      }
+    }
+
+    await writeFile(recordPageFieldsViewFilePath, recordPageFieldsViewFile);
+
+    console.log(
+      chalk.green(`✓ Created record-page-fields view:`),
+      chalk.cyan(
+        relative(CURRENT_EXECUTION_DIRECTORY, recordPageFieldsViewFilePath),
+      ),
+    );
+
     const navFile = getNavigationMenuItemBaseFile({
       name: objectName,
       type: 'OBJECT',
@@ -291,6 +330,75 @@ export class EntityAddCommand {
       chalk.green(`✓ Created navigation menu item:`),
       chalk.cyan(relative(CURRENT_EXECUTION_DIRECTORY, navFilePath)),
     );
+
+    const recordPageLayoutFile = getRecordPageLayoutBaseFile({
+      objectLabelSingular: this.lastObjectLabelSingular ?? objectName,
+      objectUniversalIdentifier: this.lastObjectUniversalIdentifier,
+      fieldsWidgetViewUniversalIdentifier,
+    });
+
+    const pageLayoutFolderPath = customPath
+      ? join(CURRENT_EXECUTION_DIRECTORY, customPath)
+      : join(
+          CURRENT_EXECUTION_DIRECTORY,
+          APP_FOLDER,
+          this.getFolderName(SyncableEntity.PageLayout),
+        );
+
+    await ensureDir(pageLayoutFolderPath);
+
+    const recordPageLayoutFileName = `${kebabCase(objectName)}-record-page-layout.ts`;
+    const recordPageLayoutFilePath = join(
+      pageLayoutFolderPath,
+      recordPageLayoutFileName,
+    );
+
+    if (await pathExists(recordPageLayoutFilePath)) {
+      const { overwrite } = await this.handleFileExist();
+
+      if (!overwrite) {
+        return;
+      }
+    }
+
+    await writeFile(recordPageLayoutFilePath, recordPageLayoutFile);
+
+    console.log(
+      chalk.green(`✓ Created record page layout:`),
+      chalk.cyan(
+        relative(CURRENT_EXECUTION_DIRECTORY, recordPageLayoutFilePath),
+      ),
+    );
+  }
+
+  private buildRecordPageFieldsViewFields(
+    nameFieldUniversalIdentifier: string | undefined,
+  ) {
+    const autoGeneratedFieldNames = [
+      'createdAt',
+      'updatedAt',
+      'createdBy',
+      'updatedBy',
+    ] as const;
+
+    const autoGeneratedFields = autoGeneratedFieldNames.map((fieldName) => ({
+      defaultFieldName: fieldName,
+      isVisible: true,
+      size: 200,
+    }));
+
+    const fields = nameFieldUniversalIdentifier
+      ? [
+          {
+            fieldMetadataUniversalIdentifier: nameFieldUniversalIdentifier,
+            isVisible: true,
+            size: 200,
+          },
+          ...autoGeneratedFields,
+        ]
+      : autoGeneratedFields;
+
+    return fields.map((field, index) => ({ ...field, position: index }));
   }
 
   private async getEntity() {

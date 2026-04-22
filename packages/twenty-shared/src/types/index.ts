@@ -279,6 +279,7 @@ export type {
 export { StepLogicalOperator } from './StepFilters';
 export { TwoFactorAuthenticationStrategy } from './TwoFactorAuthenticationStrategy';
 export { IsValidGraphQLEnumName } from './validators/is-valid-graphql-enum-name.validator';
+export { ViewCalendarLayout } from './ViewCalendarLayout';
 export { ViewFilterGroupLogicalOperator } from './ViewFilterGroupLogicalOperator';
 export { ViewFilterOperand } from './ViewFilterOperand';
 export { ViewFilterOperandDeprecated } from './ViewFilterOperandDeprecated';

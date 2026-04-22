@@ -1,12 +1,12 @@
 import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
 import { buildDefaultObjectManifest } from 'test/integration/metadata/suites/application/utils/build-default-object-manifest.util';
+import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
-import { uninstallApplication } from 'test/integration/metadata/suites/application/utils/uninstall-application.util';
+import { findManyObjectMetadataWithIndexes } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata-with-indexes.util';
 import { type Manifest } from 'twenty-shared/application';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { v4 as uuidv4 } from 'uuid';
-import { findManyObjectMetadataWithIndexes } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata-with-indexes.util';
 
 const TEST_APP_ID = uuidv4();
 const TEST_ROLE_ID = uuidv4();
@@ -52,38 +52,9 @@ describe('Manifest update - fields', () => {
   }, 60000);
 
   afterEach(async () => {
-    try {
-      await uninstallApplication({
-        universalIdentifier: TEST_APP_ID,
-        expectToFail: false,
-      });
-    } catch {
-      // May fail if the test didn't fully install/sync
-    }
-
-    await globalThis.testDataSource.query(
-      `DELETE FROM core."role" WHERE "universalIdentifier" = $1`,
-      [TEST_ROLE_ID],
-    );
-
-    await globalThis.testDataSource.query(
-      `DELETE FROM core."file" WHERE "applicationId" IN (
-        SELECT id FROM core."application" WHERE "universalIdentifier" = $1
-      )`,
-      [TEST_APP_ID],
-    );
-
-    await globalThis.testDataSource.query(
-      `DELETE FROM core."application"
-       WHERE "universalIdentifier" = $1`,
-      [TEST_APP_ID],
-    );
-
-    await globalThis.testDataSource.query(
-      `DELETE FROM core."applicationRegistration"
-       WHERE "universalIdentifier" = $1`,
-      [TEST_APP_ID],
-    );
+    await cleanupApplicationAndAppRegistration({
+      applicationUniversalIdentifier: TEST_APP_ID,
+    });
   });
 
   it('should create a new field when added to manifest on second sync', async () => {
@@ -295,8 +266,7 @@ describe('Manifest update - fields', () => {
 
     const object = objects.find(
       (objectMetadata) =>
-        objectMetadata.universalIdentifier ===
-        TEST_OBJECT.universalIdentifier,
+        objectMetadata.universalIdentifier === TEST_OBJECT.universalIdentifier,
     );
 
     expect(object).toBeDefined();
@@ -311,8 +281,7 @@ describe('Manifest update - fields', () => {
       (index) =>
         index.isUnique &&
         index.indexFieldMetadataList.some(
-          (indexField) =>
-            indexField.fieldMetadataId === externalIdField?.id,
+          (indexField) => indexField.fieldMetadataId === externalIdField?.id,
         ),
     );
 

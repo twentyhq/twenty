@@ -1,12 +1,12 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 import { defineLogicFunction, type DatabaseEventPayload, type ObjectRecordCreateEvent } from 'twenty-sdk/define';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined } from '@utils/is-defined';
 
-import { ON_RESEND_CONTACT_CREATED_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/modules/resend/constants/universal-identifiers';
-import type { ResendContactRecord } from 'src/modules/resend/shared/types/resend-contact-record';
-import { findOrCreatePerson } from 'src/modules/resend/shared/utils/find-or-create-person';
-import { getResendClient } from 'src/modules/resend/shared/utils/get-resend-client';
+import { ON_RESEND_CONTACT_CREATED_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from '@modules/resend/constants/universal-identifiers';
+import type { ResendContactRecord } from '@modules/resend/shared/types/resend-contact-record';
+import { findOrCreatePerson } from '@modules/resend/shared/utils/find-or-create-person';
+import { getResendClient } from '@modules/resend/shared/utils/get-resend-client';
 
 type ContactCreateEvent = DatabaseEventPayload<
   ObjectRecordCreateEvent<ResendContactRecord>
@@ -27,9 +27,9 @@ const handler = async (
     return { skipped: true, reason: 'no email on record' };
   }
 
-  const resend = getResendClient();
+  const resendClient = getResendClient();
 
-  const { data, error } = await resend.contacts.create({
+  const { data, error } = await resendClient.contacts.create({
     email,
     firstName: after.name?.firstName ?? undefined,
     lastName: after.name?.lastName ?? undefined,

@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useRecordId } from 'twenty-sdk/front-component';
 import { CoreApiClient } from 'twenty-client-sdk/core';
-import { isDefined } from 'twenty-shared/utils';
+
+import { isDefined } from '@utils/is-defined';
 
 type RecordHtmlState = {
   html: string | null;
@@ -32,7 +33,7 @@ export const useRecordHtml = (objectName: string): RecordHtmlState => {
           htmlBody: true,
         },
       })
-      .then((result) => {
+      .then((result: unknown) => {
         const record = (result as Record<string, unknown>)[objectName] as
           | { htmlBody?: string | null }
           | undefined;
