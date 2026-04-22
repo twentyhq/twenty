@@ -8,6 +8,8 @@ Twenty SDK: custom objects with rich relationships, navigation menu items,
 table views, logic functions for periodic syncs, an HTTP webhook handler, and
 authenticated GraphQL/REST calls against an external provider.
 
+![Pull Requests view with the Fetch Pull Requests command](docs/pull-requests-view.png)
+
 ## What it adds to your workspace
 
 Six custom objects, each with fields, relationships, table views, and a
