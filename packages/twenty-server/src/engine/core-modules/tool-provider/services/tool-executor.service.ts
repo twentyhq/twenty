@@ -213,6 +213,17 @@ export class ToolExecutorService {
       );
     }
 
+    // Defense-in-depth: catalog and by-name lookups already filter by
+    // `isAvailable`, but re-verify at dispatch so the gate is enforced in
+    // one place regardless of how the descriptor reached us.
+    if (!(await provider.isAvailable(context))) {
+      return {
+        success: false,
+        message: `Tool "${descriptor.name}" is not available`,
+        error: `Tool "${descriptor.name}" is not available in this context. Use get_tool_catalog to see available tools.`,
+      };
+    }
+
     return provider.executeStaticTool(
       descriptor.executionRef.toolId,
       args,
