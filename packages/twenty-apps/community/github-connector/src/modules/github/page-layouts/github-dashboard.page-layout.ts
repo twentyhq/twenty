@@ -5,6 +5,11 @@ import {
   PageLayoutTabLayoutMode,
 } from 'twenty-sdk/define';
 import {
+  CONTRIBUTOR_CONTRIBUTIONS_FIELD_UNIVERSAL_IDENTIFIER,
+  CONTRIBUTOR_GH_LOGIN_FIELD_UNIVERSAL_IDENTIFIER,
+  CONTRIBUTOR_UNIVERSAL_IDENTIFIER,
+} from 'src/modules/github/contributor/objects/contributor.object';
+import {
   MERGED_AT_FIELD_UNIVERSAL_IDENTIFIER,
   PULL_REQUEST_NAME_FIELD_UNIVERSAL_IDENTIFIER,
   PULL_REQUEST_UNIVERSAL_IDENTIFIER,
@@ -15,21 +20,21 @@ import {
   REVIEW_TITLE_FIELD_UNIVERSAL_IDENTIFIER,
 } from 'src/modules/github/pull-request-review/objects/pull-request-review.object';
 
-export const PR_ACTIVITY_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER =
+export const GITHUB_DASHBOARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER =
   'a8d2f1c4-7b69-4e3a-8c5d-9f6b1a3e7c2d';
 
 const THIS_WEEK_RELATIVE = 'THIS_1_WEEK;;UTC;;SUNDAY;;';
 
 export default definePageLayout({
-  universalIdentifier: PR_ACTIVITY_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER,
-  name: 'PR Activity',
+  universalIdentifier: GITHUB_DASHBOARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER,
+  name: 'GitHub Dashboard',
   type: 'STANDALONE_PAGE',
   tabs: [
     {
       universalIdentifier: 'b3e9c2a1-4d68-4f7b-9c25-1e3a5b7c9d11',
-      title: 'PR Activity',
+      title: 'GitHub Dashboard',
       position: 0,
-      icon: 'IconChartLine',
+      icon: 'IconBrandGithub',
       layoutMode: PageLayoutTabLayoutMode.GRID,
       widgets: [
         {
@@ -132,6 +137,29 @@ export default definePageLayout({
             displayLegend: false,
             color: 'blue',
             layout: 'VERTICAL',
+            timezone: 'UTC',
+            firstDayOfTheWeek: 0,
+          },
+        },
+        {
+          universalIdentifier: 'e3f4a5b6-c7d8-4901-b2c3-d4e5f6a7b8c9',
+          title: 'Top Contributors',
+          type: 'GRAPH',
+          objectUniversalIdentifier: CONTRIBUTOR_UNIVERSAL_IDENTIFIER,
+          gridPosition: { row: 10, column: 0, rowSpan: 8, columnSpan: 12 },
+          configuration: {
+            configurationType: 'BAR_CHART',
+            aggregateFieldMetadataUniversalIdentifier:
+              CONTRIBUTOR_CONTRIBUTIONS_FIELD_UNIVERSAL_IDENTIFIER,
+            aggregateOperation: AggregateOperations.SUM,
+            primaryAxisGroupByFieldMetadataUniversalIdentifier:
+              CONTRIBUTOR_GH_LOGIN_FIELD_UNIVERSAL_IDENTIFIER,
+            primaryAxisOrderBy: 'VALUE_DESC',
+            displayDataLabel: true,
+            displayLegend: false,
+            color: 'purple',
+            layout: 'HORIZONTAL',
+            omitNullValues: true,
             timezone: 'UTC',
             firstDayOfTheWeek: 0,
           },
