@@ -13,4 +13,5 @@ export type UpdateEmailDto = {
   lastSyncedFromResend: string;
   personId?: string;
   contactId?: string;
+  broadcastId?: string;
 };

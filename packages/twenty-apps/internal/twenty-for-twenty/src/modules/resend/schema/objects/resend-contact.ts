@@ -16,7 +16,7 @@ export default defineObject({
   labelSingular: 'Resend contact',
   labelPlural: 'Resend contacts',
   description: 'A contact from Resend',
-  icon: 'IconAddressBook',
+  icon: 'IconUser',
   labelIdentifierFieldMetadataUniversalIdentifier:
     NAME_FIELD_UNIVERSAL_IDENTIFIER,
   fields: [

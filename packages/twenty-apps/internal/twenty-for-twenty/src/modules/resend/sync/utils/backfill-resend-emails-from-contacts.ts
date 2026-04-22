@@ -10,11 +10,16 @@ export type ContactBackfillEntry = {
   personId?: string;
 };
 
+type StoredEmailsField = {
+  primaryEmail?: string | null;
+  additionalEmails?: ReadonlyArray<string> | null;
+};
+
 type ExistingResendEmail = {
   id: string;
   contactId?: string | null;
   personId?: string | null;
-  toAddresses?: { primaryEmail?: string | null } | null;
+  toAddresses?: StoredEmailsField | null;
 };
 
 export type BackfillResendEmailsFromContactsResult = {
@@ -23,6 +28,35 @@ export type BackfillResendEmailsFromContactsResult = {
 };
 
 const normalize = (email: string): string => email.trim().toLowerCase();
+
+const normalizeAdditionalEmails = (
+  additionalEmails: ReadonlyArray<string> | null | undefined,
+): string[] | null => {
+  if (!Array.isArray(additionalEmails) || additionalEmails.length === 0) {
+    return null;
+  }
+
+  return additionalEmails.map((email) =>
+    typeof email === 'string' ? normalize(email) : email,
+  );
+};
+
+const additionalEmailsDiffer = (
+  current: ReadonlyArray<string> | null | undefined,
+  next: ReadonlyArray<string> | null,
+): boolean => {
+  const currentArray = Array.isArray(current) ? current : null;
+
+  if (currentArray === null && next === null) return false;
+  if (currentArray === null || next === null) return true;
+  if (currentArray.length !== next.length) return true;
+
+  for (let index = 0; index < currentArray.length; index++) {
+    if (currentArray[index] !== next[index]) return true;
+  }
+
+  return false;
+};
 
 export const backfillResendEmailsFromContacts = async (
   client: CoreApiClient,
@@ -71,7 +105,10 @@ export const backfillResendEmailsFromContacts = async (
               id: true,
               contactId: true,
               personId: true,
-              toAddresses: { primaryEmail: true },
+              toAddresses: {
+                primaryEmail: true,
+                additionalEmails: true,
+              },
             },
           },
         },
@@ -103,11 +140,12 @@ export const backfillResendEmailsFromContacts = async (
         continue;
       }
 
-      const entry = entriesByEmail.get(normalize(primaryRecipient));
+      const normalizedPrimary = normalize(primaryRecipient);
+      const entry = entriesByEmail.get(normalizedPrimary);
 
       if (!isDefined(entry)) continue;
 
-      const data: Record<string, string> = {};
+      const data: Record<string, unknown> = {};
 
       if (!isDefined(email.contactId)) {
         data.contactId = entry.contactId;
@@ -115,6 +153,22 @@ export const backfillResendEmailsFromContacts = async (
 
       if (!isDefined(email.personId) && isDefined(entry.personId)) {
         data.personId = entry.personId;
+      }
+
+      const normalizedAdditional = normalizeAdditionalEmails(
+        email.toAddresses?.additionalEmails,
+      );
+      const primaryDiffers = primaryRecipient !== normalizedPrimary;
+      const additionalDiffers = additionalEmailsDiffer(
+        email.toAddresses?.additionalEmails,
+        normalizedAdditional,
+      );
+
+      if (primaryDiffers || additionalDiffers) {
+        data.toAddresses = {
+          primaryEmail: normalizedPrimary,
+          additionalEmails: normalizedAdditional,
+        };
       }
 
       if (Object.keys(data).length === 0) continue;

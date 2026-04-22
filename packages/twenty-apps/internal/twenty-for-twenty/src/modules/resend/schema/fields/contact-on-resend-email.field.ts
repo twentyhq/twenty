@@ -20,5 +20,5 @@ export default defineField({
     relationType: RelationType.MANY_TO_ONE,
     joinColumnName: 'contactId',
   },
-  icon: 'IconAddressBook',
+  icon: 'IconUser',
 });

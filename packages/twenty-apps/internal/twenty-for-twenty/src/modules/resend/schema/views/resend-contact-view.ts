@@ -22,7 +22,7 @@ export default defineView({
   universalIdentifier: RESEND_CONTACT_VIEW_UNIVERSAL_IDENTIFIER,
   name: 'Resend contacts',
   objectUniversalIdentifier: RESEND_CONTACT_OBJECT_UNIVERSAL_IDENTIFIER,
-  icon: 'IconAddressBook',
+  icon: 'IconUser',
   position: 0,
   fields: [
     {

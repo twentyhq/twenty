@@ -2,7 +2,12 @@ import { isDefined } from '@utils/is-defined';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 import { MetadataApiClient } from 'twenty-client-sdk/metadata';
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { Command, enqueueSnackbar } from 'twenty-sdk/front-component';
+import {
+  AppPath,
+  Command,
+  enqueueSnackbar,
+  navigate,
+} from 'twenty-sdk/front-component';
 
 import { APPLICATION_UNIVERSAL_IDENTIFIER } from '@constants/universal-identifiers';
 import { INITIAL_SYNC_MODE_ENV_VAR_NAME } from '@modules/resend/constants/sync-config';
@@ -10,6 +15,7 @@ import {
   SYNC_RESEND_DATA_COMMAND_UNIVERSAL_IDENTIFIER,
   SYNC_RESEND_DATA_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
 } from '@modules/resend/constants/universal-identifiers';
+import { resolveSyncStatusPageLayoutId } from '@modules/resend/manual-sync/utils/resolve-sync-status-page-layout-id';
 import { resetAllSyncCursors } from '@modules/resend/sync/cursor/utils/reset-all-sync-cursors';
 
 const resolveApplicationId = async (
@@ -59,11 +65,18 @@ const execute = async () => {
 
   await flipInitialSyncModeOn(metadataClient, applicationId);
 
+  const pageLayoutId = await resolveSyncStatusPageLayoutId(
+    metadataClient,
+    applicationId,
+  );
+
   await enqueueSnackbar({
     message:
       'Sync cursors reset and initial sync triggered — it will run in the background.',
     variant: 'success',
   });
+
+  await navigate(AppPath.PageLayoutPage, { pageLayoutId });
 };
 
 const SyncResendData = () => <Command execute={execute} />;

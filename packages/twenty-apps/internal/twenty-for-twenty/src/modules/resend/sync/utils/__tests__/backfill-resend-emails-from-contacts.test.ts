@@ -205,6 +205,71 @@ describe('backfillResendEmailsFromContacts', () => {
     expect(secondCallArgs.after).toBe('cursor-1');
   });
 
+  it('also rewrites toAddresses with normalized primaryEmail / additionalEmails when the stored values are mixed case', async () => {
+    const query = vi.fn(async () => ({
+      resendEmails: {
+        edges: [
+          {
+            node: {
+              id: 'email-mixed',
+              contactId: null,
+              personId: null,
+              toAddresses: {
+                primaryEmail: 'Foo@Example.com',
+                additionalEmails: ['Bar@EXAMPLE.com', 'baz@example.com'],
+              },
+            },
+          },
+          {
+            node: {
+              id: 'email-already-normalized',
+              contactId: null,
+              personId: null,
+              toAddresses: {
+                primaryEmail: 'foo@example.com',
+                additionalEmails: null,
+              },
+            },
+          },
+        ],
+      },
+    }));
+    const mutation = vi.fn(async () => ({}));
+
+    const result = await backfillResendEmailsFromContacts(
+      buildClient(query, mutation),
+      new Map([['foo@example.com', { contactId: 'twenty-contact-foo' }]]),
+    );
+
+    expect(result.updated).toBe(2);
+    expect(result.errors).toEqual([]);
+
+    const callArgs = (
+      mutation.mock.calls as unknown as Array<
+        [{ updateResendEmail: { __args: unknown } }]
+      >
+    ).map((call) => call[0].updateResendEmail.__args);
+
+    expect(callArgs).toEqual([
+      {
+        id: 'email-mixed',
+        data: {
+          contactId: 'twenty-contact-foo',
+          toAddresses: {
+            primaryEmail: 'foo@example.com',
+            additionalEmails: ['bar@example.com', 'baz@example.com'],
+          },
+        },
+      },
+      {
+        id: 'email-already-normalized',
+        data: {
+          contactId: 'twenty-contact-foo',
+        },
+      },
+    ]);
+  });
+
   it('captures lookup errors and returns immediately', async () => {
     const query = vi.fn().mockRejectedValue(new Error('lookup failed'));
     const mutation = vi.fn();

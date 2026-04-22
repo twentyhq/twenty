@@ -64,4 +64,31 @@ describe('toEmailsField', () => {
       additionalEmails: null,
     });
   });
+
+  it('lowercases a plain email', () => {
+    expect(toEmailsField('Thomas@Mail.Twenty.Com')).toEqual({
+      primaryEmail: 'thomas@mail.twenty.com',
+      additionalEmails: null,
+    });
+  });
+
+  it('lowercases the address inside the "Name <email>" format', () => {
+    expect(toEmailsField('Thomas <Thomas@Mail.Twenty.Com>')).toEqual({
+      primaryEmail: 'thomas@mail.twenty.com',
+      additionalEmails: null,
+    });
+  });
+
+  it('lowercases each entry of an array', () => {
+    expect(
+      toEmailsField([
+        'Alice <Alice@Example.com>',
+        'BOB@example.com',
+        '"Carol C." <Carol@EXAMPLE.com>',
+      ]),
+    ).toEqual({
+      primaryEmail: 'alice@example.com',
+      additionalEmails: ['bob@example.com', 'carol@example.com'],
+    });
+  });
 });

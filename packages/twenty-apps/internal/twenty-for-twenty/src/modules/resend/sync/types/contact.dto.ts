@@ -7,4 +7,5 @@ export type ContactDto = {
   createdAt: string;
   lastSyncedFromResend: string;
   personId?: string;
+  segmentId?: string;
 };

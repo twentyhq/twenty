@@ -17,6 +17,11 @@ import type { SyncResult } from '@modules/resend/sync/types/sync-result';
 import type { SyncStepResult } from '@modules/resend/sync/types/sync-step-result';
 import type { UpdateEmailDto } from '@modules/resend/sync/types/update-email.dto';
 import { backfillResendContactPersonId } from '@modules/resend/sync/utils/backfill-resend-contact-person-id';
+import { findRecentSentBroadcasts } from '@modules/resend/sync/utils/find-recent-sent-broadcasts';
+import {
+  BROADCAST_EMAIL_MATCH_WINDOW_MS,
+  resolveBroadcastIdForEmail,
+} from '@modules/resend/sync/utils/resolve-broadcast-id-for-email';
 import { upsertRecords } from '@modules/resend/sync/utils/upsert-records';
 
 export type SyncEmailsOptions = {
@@ -43,6 +48,13 @@ export const syncEmails = async (
   const cutoffTimestampMs = isDefined(stopBeforeCreatedAtMs)
     ? Date.now() - stopBeforeCreatedAtMs
     : undefined;
+
+  const broadcastSinceIso = isDefined(cutoffTimestampMs)
+    ? new Date(cutoffTimestampMs - BROADCAST_EMAIL_MATCH_WINDOW_MS).toISOString()
+    : new Date(0).toISOString();
+  const sortedBroadcasts = await findRecentSentBroadcasts(client, {
+    sinceIso: broadcastSinceIso,
+  });
 
   await withSyncCursor(
     client,
@@ -86,6 +98,12 @@ export const syncEmails = async (
             return contactByEmail.get(primaryTo.trim().toLowerCase())?.id;
           };
 
+          const resolveBroadcastId = (createdAt: string): string | undefined =>
+            resolveBroadcastIdForEmail(
+              new Date(createdAt).getTime(),
+              sortedBroadcasts,
+            );
+
           const pageOutcome = await upsertRecords({
             items: pageEmails,
             getId: (email) => email.id,
@@ -93,6 +111,7 @@ export const syncEmails = async (
               const mappedLastEvent = mapLastEvent(email.last_event);
               const personId = resolvePersonId(email.id);
               const contactId = resolveContactId(email.id);
+              const broadcastId = resolveBroadcastId(email.created_at);
 
               return {
                 subject: email.subject,
@@ -109,12 +128,14 @@ export const syncEmails = async (
                 lastSyncedFromResend: syncedAt,
                 ...(isDefined(personId) && { personId }),
                 ...(isDefined(contactId) && { contactId }),
+                ...(isDefined(broadcastId) && { broadcastId }),
               };
             },
             mapUpdateData: (_detail, email): UpdateEmailDto => {
               const mappedLastEvent = mapLastEvent(email.last_event);
               const personId = resolvePersonId(email.id);
               const contactId = resolveContactId(email.id);
+              const broadcastId = resolveBroadcastId(email.created_at);
 
               return {
                 subject: email.subject,
@@ -130,6 +151,7 @@ export const syncEmails = async (
                 lastSyncedFromResend: syncedAt,
                 ...(isDefined(personId) && { personId }),
                 ...(isDefined(contactId) && { contactId }),
+                ...(isDefined(broadcastId) && { broadcastId }),
               };
             },
             client,

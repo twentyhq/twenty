@@ -19,5 +19,5 @@ export default defineField({
   universalSettings: {
     relationType: RelationType.ONE_TO_MANY,
   },
-  icon: 'IconAddressBook',
+  icon: 'IconUser',
 });

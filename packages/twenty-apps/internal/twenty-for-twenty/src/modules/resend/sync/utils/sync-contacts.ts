@@ -6,9 +6,12 @@ import type { ContactDto } from '@modules/resend/sync/types/contact.dto';
 import type { SyncResult } from '@modules/resend/sync/types/sync-result';
 import type { SyncStepResult } from '@modules/resend/sync/types/sync-step-result';
 import { findPeopleByEmail } from '@modules/resend/shared/utils/find-people-by-email';
+import { findTwentyIdsByResendId } from '@modules/resend/shared/utils/find-twenty-ids-by-resend-id';
 import { forEachPage } from '@modules/resend/shared/utils/for-each-page';
+import { getErrorMessage } from '@modules/resend/shared/utils/get-error-message';
 import { toEmailsField } from '@modules/resend/shared/utils/to-emails-field';
 import { toIsoString } from '@modules/resend/shared/utils/to-iso-string';
+import { withRateLimitRetry } from '@modules/resend/shared/utils/with-rate-limit-retry';
 import {
   backfillResendEmailsFromContacts,
   type ContactBackfillEntry,
@@ -29,6 +32,7 @@ const toContactDto = (
   contact: RawContact,
   syncedAt: string,
   personId: string | undefined,
+  segmentId: string | undefined,
 ): ContactDto => ({
   email: toEmailsField(contact.email),
   name: {
@@ -39,7 +43,48 @@ const toContactDto = (
   createdAt: toIsoString(contact.created_at),
   lastSyncedFromResend: syncedAt,
   ...(isDefined(personId) && { personId }),
+  ...(isDefined(segmentId) && { segmentId }),
 });
+
+const fetchFirstSegmentResendIdsForPage = async (
+  resend: Resend,
+  pageContacts: ReadonlyArray<RawContact>,
+  errors: string[],
+): Promise<Map<string, string>> => {
+  const firstSegmentByContactId = new Map<string, string>();
+
+  for (const contact of pageContacts) {
+    try {
+      const { data, error } = await withRateLimitRetry(
+        () =>
+          resend.contacts.segments.list({
+            contactId: contact.id,
+            limit: 1,
+          }),
+        { channel: 'contact-segments' },
+      );
+
+      if (isDefined(error)) {
+        errors.push(
+          `resendContact ${contact.id} segments: ${JSON.stringify(error)}`,
+        );
+        continue;
+      }
+
+      const firstSegmentId = data?.data?.[0]?.id;
+
+      if (typeof firstSegmentId === 'string' && firstSegmentId.length > 0) {
+        firstSegmentByContactId.set(contact.id, firstSegmentId);
+      }
+    } catch (error) {
+      errors.push(
+        `resendContact ${contact.id} segments: ${getErrorMessage(error)}`,
+      );
+    }
+  }
+
+  return firstSegmentByContactId;
+};
 
 export type SyncContactsOptions = {
   deadlineAtMs?: number;
@@ -62,21 +107,58 @@ export const syncContacts = async (
     const { completed } = await forEachPage(
       (paginationParameters) => resend.contacts.list(paginationParameters),
       async (pageContacts) => {
-        const personIdByEmail = await findPeopleByEmail(
-          client,
-          pageContacts.map((contact) => contact.email),
+        const firstSegmentByContactId = await fetchFirstSegmentResendIdsForPage(
+          resend,
+          pageContacts,
+          aggregate.errors,
         );
+
+        const uniqueSegmentResendIds = Array.from(
+          new Set(firstSegmentByContactId.values()),
+        );
+
+        const [personIdByEmail, twentySegmentIdByResendId] = await Promise.all([
+          findPeopleByEmail(
+            client,
+            pageContacts.map((contact) => contact.email),
+          ),
+          uniqueSegmentResendIds.length > 0
+            ? findTwentyIdsByResendId(
+                client,
+                'resendSegments',
+                uniqueSegmentResendIds,
+              )
+            : Promise.resolve(new Map<string, string>()),
+        ]);
 
         const resolvePersonId = (email: string): string | undefined =>
           personIdByEmail.get(email.trim().toLowerCase());
+
+        const resolveSegmentId = (contactId: string): string | undefined => {
+          const segmentResendId = firstSegmentByContactId.get(contactId);
+
+          if (!isDefined(segmentResendId)) return undefined;
+
+          return twentySegmentIdByResendId.get(segmentResendId);
+        };
 
         const pageOutcome = await upsertRecords({
           items: pageContacts,
           getId: (contact) => contact.id,
           mapCreateData: (_detail, item) =>
-            toContactDto(item, syncedAt, resolvePersonId(item.email)),
+            toContactDto(
+              item,
+              syncedAt,
+              resolvePersonId(item.email),
+              resolveSegmentId(item.id),
+            ),
           mapUpdateData: (_detail, item) =>
-            toContactDto(item, syncedAt, resolvePersonId(item.email)),
+            toContactDto(
+              item,
+              syncedAt,
+              resolvePersonId(item.email),
+              resolveSegmentId(item.id),
+            ),
           client,
           objectNameSingular: 'resendContact',
           objectNamePlural: 'resendContacts',

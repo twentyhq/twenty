@@ -7,10 +7,10 @@ const extractEmailAddress = (raw: string): string => {
   const openingIndex = trimmed.lastIndexOf('<', closingIndex);
 
   if (openingIndex !== -1 && closingIndex > openingIndex) {
-    return trimmed.slice(openingIndex + 1, closingIndex).trim();
+    return trimmed.slice(openingIndex + 1, closingIndex).trim().toLowerCase();
   }
 
-  return trimmed;
+  return trimmed.toLowerCase();
 };
 
 export const toEmailsField = (
