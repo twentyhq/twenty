@@ -1,75 +1,147 @@
 # GitHub Connector
 
-Sync pull requests, issues, contributors and project items from GitHub into Twenty,
-and react to GitHub webhook events in real time.
+Sync pull requests, issues, contributors and project items from GitHub into
+Twenty, and react to GitHub webhook events in real time.
 
-This app showcases how to build a non-trivial third-party connector with the Twenty
-SDK: custom objects with rich relationships, navigation menu items, table views,
-logic functions for periodic syncs, an HTTP webhook handler, and authenticated
-GraphQL/REST calls against an external provider.
+This app showcases how to build a non-trivial third-party connector with the
+Twenty SDK: custom objects with rich relationships, navigation menu items,
+table views, logic functions for periodic syncs, an HTTP webhook handler, and
+authenticated GraphQL/REST calls against an external provider.
 
 ## What it adds to your workspace
 
-Six custom objects:
+Six custom objects, each with fields, relationships, table views, and a
+navigation entry under a top-level "GitHub" section:
 
 - `pullRequest`
 - `pullRequestReview`
 - `pullRequestReviewEvent`
 - `issue`
 - `projectItem`
-- `contributor` (the GitHub contributors)
+- `contributor`
 
-Each object ships with fields, relationships, table views, and a navigation menu
-entry under a top-level "GitHub" section.
+Five logic functions are wired up:
 
-A handful of logic functions are wired up so you can:
+| Function                  | Trigger                                          |
+| ------------------------- | ------------------------------------------------ |
+| `count-prs`               | HTTP `POST /github/count-prs`                    |
+| `fetch-prs`               | HTTP `POST /github/fetch-prs`                    |
+| `count-issues`            | HTTP `POST /github/count-issues`                 |
+| `fetch-issues`            | HTTP `POST /github/fetch-issues`                 |
+| `count-contributors`      | HTTP `POST /github/count-contributors`           |
+| `fetch-contributors`      | HTTP `POST /github/fetch-contributors`           |
+| `count-project-items`     | HTTP `POST /github/count-project-items`          |
+| `fetch-project-items`     | HTTP `POST /github/fetch-project-items`          |
+| `handle-github-webhook`   | HTTP `POST /github/webhook` (no auth, signed)    |
 
-- Manually trigger a fetch of pull requests, issues, project items or contributors
-- Receive GitHub webhooks at `POST /handle-webhook` and update records on the fly
+Four headless front-components expose the manual sync flows as commands in
+the Twenty UI:
 
-## Setup
+- **Fetch Pull Requests** (visible on the Pull Request object)
+- **Fetch Issues** (visible on the Issue object)
+- **Fetch Contributors** (visible on the Contributor object)
+- **Fetch Project Items** (visible on the Project Item object)
+
+## Install
+
+You have two options. Use **dev mode** for a tight edit/test loop while
+iterating on the app, or **install** for a one-shot deploy.
+
+### Option A — Live development (`yarn twenty dev`)
+
+Use this when you want every code change to be re-synced into your local
+Twenty server automatically.
 
 ```bash
 cd packages/twenty-apps/community/github-connector
 yarn install
+
+# Register your local Twenty server as a remote (interactive prompt).
+# When asked for the URL use http://localhost:2021 and paste an API key
+# from Settings -> Developers in the Twenty UI.
 yarn twenty remote add
-yarn twenty install
+
+# Build, install, and watch for changes.
+yarn twenty dev
 ```
 
-Then configure the application variables in your Twenty workspace
-(Settings → Apps → GitHub Connector). You only need one of the two auth methods:
+The first `yarn twenty dev` run installs the app on the remote and starts
+watching `src/`. Edit any file and the change is re-synced within seconds.
 
-### Option 1: Personal Access Token (recommended for trying it out)
+### Option B — One-shot install
 
-| Variable        | Required | Notes                                                              |
-| --------------- | -------- | ------------------------------------------------------------------ |
-| `GITHUB_TOKEN`  | yes      | Classic or fine-grained PAT with `repo` and `read:org` scopes.     |
+```bash
+cd packages/twenty-apps/community/github-connector
+yarn install
+yarn twenty remote add        # same prompts as above
+yarn twenty install           # builds and installs once
+```
 
-When `GITHUB_TOKEN` is set it always wins, regardless of any GitHub App config.
+## Configure authentication
 
-### Option 2: GitHub App (recommended for production / org-wide installs)
+Once the app is installed, open the Twenty UI and go to
+**Settings → Apps → GitHub Connector**. You only need one of the two auth
+methods.
 
-| Variable                     | Required | Notes                                                                 |
-| ---------------------------- | -------- | --------------------------------------------------------------------- |
-| `GITHUB_APP_ID`              | yes      | Numeric App ID from the GitHub App settings page.                     |
-| `GITHUB_APP_PRIVATE_KEY`     | yes      | PEM private key (BEGIN/END PRIVATE KEY block). Newlines are tolerant. |
-| `GITHUB_APP_INSTALLATION_ID` | yes      | The installation id for your org.                                     |
+### Option 1 — Personal Access Token (recommended for trying it out)
 
-The connector exchanges the App credentials for a short-lived installation token
-(cached in-memory until shortly before expiry) and uses it for all GitHub calls.
+| Variable        | Required | Notes                                                          |
+| --------------- | -------- | -------------------------------------------------------------- |
+| `GITHUB_TOKEN`  | yes      | Classic or fine-grained PAT with `repo` and `read:org` scopes. |
+
+Generate a PAT at <https://github.com/settings/tokens>. When `GITHUB_TOKEN`
+is set, it always wins, regardless of any GitHub App config below.
+
+### Option 2 — GitHub App (recommended for production / org-wide installs)
+
+| Variable                     | Required | Notes                                                                  |
+| ---------------------------- | -------- | ---------------------------------------------------------------------- |
+| `GITHUB_APP_ID`              | yes      | Numeric App ID from the GitHub App settings page.                      |
+| `GITHUB_APP_PRIVATE_KEY`     | yes      | PEM private key (BEGIN/END PRIVATE KEY block). Newlines are tolerant.  |
+| `GITHUB_APP_INSTALLATION_ID` | yes      | The installation id of the App on your org/user.                       |
+
+To create one:
+
+1. <https://github.com/settings/apps/new> (or
+   `https://github.com/organizations/<org>/settings/apps/new`).
+2. Grant the App these **repository permissions**: `Contents: Read`,
+   `Issues: Read`, `Pull Requests: Read`, `Metadata: Read`. For Projects v2
+   add `Organization → Projects: Read`.
+3. Generate a private key (downloads a `.pem`).
+4. Install the App on your org/user — the URL bar of the post-install page
+   contains the installation id, e.g. `.../installations/12345678`.
+5. Paste the App ID, the PEM contents, and the installation ID into the
+   variables above.
+
+The connector exchanges the App credentials for a short-lived installation
+token (cached in-memory until shortly before expiry) and uses it for all
+GitHub calls.
 
 ### Common variables
 
-| Variable                  | Required | Notes                                                                                    |
-| ------------------------- | -------- | ---------------------------------------------------------------------------------------- |
-| `GITHUB_REPOS`            | yes      | Comma-separated `owner/repo` list, e.g. `twentyhq/twenty,octo/hello`.                    |
-| `GITHUB_PROJECT_NUMBERS`  | no       | Comma-separated GitHub Project (v2) numbers to sync.                                     |
-| `GITHUB_WEBHOOK_SECRET`   | no       | Shared secret to verify `X-Hub-Signature-256`. When unset, signatures are not verified.  |
+| Variable                  | Required | Notes                                                                                   |
+| ------------------------- | -------- | --------------------------------------------------------------------------------------- |
+| `GITHUB_REPOS`            | yes      | Comma-separated `owner/repo` list, e.g. `octocat/hello-world,octo-org/octo-repo`.       |
+| `GITHUB_PROJECT_NUMBERS`  | no       | Comma-separated GitHub Project (v2) numbers to sync.                                    |
+| `GITHUB_WEBHOOK_SECRET`   | no       | Shared secret to verify `X-Hub-Signature-256`. When unset, signatures are not verified. |
+
+## Running a sync
+
+In the Twenty UI, open any of the GitHub objects (e.g. **Pull Requests**) and
+trigger the matching command from the command palette (`Cmd/Ctrl+K`):
+
+- Pull Requests view → **Fetch Pull Requests**
+- Issues view → **Fetch Issues**
+- Contributors view → **Fetch Contributors**
+- Project Items view → **Fetch Project Items**
+
+Each command iterates over every entry in `GITHUB_REPOS` (or
+`GITHUB_PROJECT_NUMBERS`) and shows a progress bar.
 
 ## Webhooks
 
-Point your GitHub App / repository webhook at the app's `handle-webhook`
-route. Recommended event subscriptions:
+Point a GitHub repo or App webhook at the public URL of your Twenty server,
+path `POST /github/webhook`. Recommended event subscriptions:
 
 - Pull requests
 - Pull request reviews
@@ -77,7 +149,9 @@ route. Recommended event subscriptions:
 - Project (v2) items
 
 Set the same value as `GITHUB_WEBHOOK_SECRET` on both sides to enable HMAC
-verification.
+verification. For local testing, expose your dev server with
+[smee.io](https://smee.io/) or `ngrok` and use that URL as the webhook URL on
+GitHub.
 
 ## How auth resolution works
 
@@ -90,3 +164,20 @@ order:
 
 This makes the example easy to try in 30 seconds with a PAT, while still
 demonstrating the production-grade GitHub App flow.
+
+## Tests
+
+The app ships with a small integration test suite that runs against a local
+`twenty-app-dev-test` container.
+
+```bash
+docker run -d --name twenty-app-dev-test \
+  -p 2021:2021 twentycrm/twenty-app-dev:v2.0.3
+
+cd packages/twenty-apps/community/github-connector
+yarn test
+```
+
+The suite installs the app into the container, then asserts that every
+object/field/logic-function is wired up and that webhook signature
+verification behaves correctly.
