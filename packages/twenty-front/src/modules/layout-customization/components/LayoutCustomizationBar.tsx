@@ -30,6 +30,15 @@ const StyledContainer = styled.div`
   justify-content: space-between;
   padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[3]};
   width: 100%;
+
+  button,
+  button * {
+    color: ${GRAY_SCALE_LIGHT.gray1};
+  }
+
+  button[type='submit']:not(:disabled):not(:focus) {
+    border-color: color(display-p3 1 1 1 / 0.5);
+  }
 `;
 
 const StyledLeftSection = styled.div`
