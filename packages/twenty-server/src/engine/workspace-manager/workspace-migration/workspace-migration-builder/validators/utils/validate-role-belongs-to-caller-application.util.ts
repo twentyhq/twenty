@@ -19,8 +19,8 @@ export const validateRoleBelongsToCallerApplication = ({
     return [
       {
         code: PermissionsExceptionCode.ROLE_BELONGS_TO_ANOTHER_APPLICATION,
-        message: t`Cannot modify permissions on a role owned by another application`,
-        userFriendlyMessage: msg`Cannot modify permissions on a role owned by another application.`,
+        message: t`Cannot target a role owned by another application`,
+        userFriendlyMessage: msg`Cannot target a role owned by another application.`,
       },
     ];
   }
