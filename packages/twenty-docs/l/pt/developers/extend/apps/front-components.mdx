@@ -1,6 +1,6 @@
 ---
 title: Componentes de front-end
-description: Build React components that render inside Twenty's UI with sandboxed isolation.
+description: Crie componentes React que renderizam dentro da UI do Twenty com isolamento em sandbox.
 icon: window-maximize
 ---
 
@@ -74,7 +74,7 @@ Os componentes de front-end têm dois modos de renderização controlados pela o
 
 **Não headless (padrão)** — O componente renderiza uma interface visível. Quando acionado pelo menu de comandos, ele é aberto no painel lateral. Este é o comportamento padrão quando `isHeadless` é `false` ou omitido.
 
-**Headless (`isHeadless: true`)** — The component mounts invisibly in the background. Ele não abre o painel lateral. Componentes headless são projetados para ações que executam lógica e, em seguida, se desmontam — por exemplo, executar uma tarefa assíncrona, navegar para uma página ou exibir um modal de confirmação. Eles se combinam naturalmente com os componentes Command do SDK descritos abaixo.
+**Headless (`isHeadless: true`)** — O componente é montado de forma invisível em segundo plano. Ele não abre o painel lateral. Componentes headless são projetados para ações que executam lógica e, em seguida, se desmontam — por exemplo, executar uma tarefa assíncrona, navegar para uma página ou exibir um modal de confirmação. Eles se combinam naturalmente com os componentes Command do SDK descritos abaixo.
 
 ```tsx src/front-components/sync-tracker.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';

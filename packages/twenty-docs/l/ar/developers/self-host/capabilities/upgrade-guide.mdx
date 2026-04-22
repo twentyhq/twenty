@@ -5,37 +5,37 @@ icon: arrow-up-right-dots
 
 ## إرشادات عامة
 
-**Always back up your database before starting the upgrade process** by running:
+**احرص دائمًا على إنشاء نسخة احتياطية لقاعدة البيانات قبل بدء عملية الترقية** عن طريق تشغيل:
 
 ```bash
 docker exec -it {db_container_name_or_id} pg_dumpall -U {postgres_user} > databases_backup.sql
 ```
 
-To restore from backup:
+لاستعادة النسخة الاحتياطية:
 
 ```bash
 cat databases_backup.sql | docker exec -i {db_container_name_or_id} psql -U {postgres_user}
 ```
 
-If you use Docker Compose, follow these steps:
+إذا كنت تستخدم Docker Compose، اتبع الخطوات التالية:
 
-1. Stop Twenty: `docker compose down`
-2. Change the `TAG` value in the `.env` file next to your `docker-compose.yml`
-3. Start Twenty: `docker compose up -d`
+1. أوقف Twenty: `docker compose down`
+2. غيّر قيمة `TAG` في ملف `.env` الموجود بجانب ملف `docker-compose.yml`
+3. ابدأ تشغيل Twenty: `docker compose up -d`
 
-The server runs all required upgrade migrations automatically on startup. No manual command is needed.
+يقوم الخادم بتشغيل جميع عمليات ترحيل الترقية المطلوبة تلقائيًا عند بدء التشغيل. لا حاجة إلى أي أمر يدوي.
 
-## Cross-version upgrades (v1.22+)
+## الترقيات عبر الإصدارات (v1.22+)
 
-Starting from **v1.22**, Twenty supports cross-version upgrades. You can jump directly from any supported version to the latest release without stepping through each intermediate version.
+بدءًا من **v1.22**، يدعم Twenty الترقيات عبر الإصدارات. يمكنك الانتقال مباشرةً من أي إصدار مدعوم إلى أحدث إصدار دون المرور بكل إصدار وسيط.
 
-For example, upgrading from v1.22 straight to v2.0 is fully supported.
+على سبيل المثال، الترقية من v1.22 مباشرةً إلى v2.0 مدعومة بالكامل.
 
-## Checking upgrade status
+## التحقق من حالة الترقية
 
-The `upgrade:status` command lets you inspect the current state of your instance and workspace migrations. It is useful for debugging upgrade issues or when filing a support request.
+يتيح لك الأمر `upgrade:status` فحص الحالة الحالية لمثيلك وعمليات ترحيل مساحات العمل. يكون مفيدًا لاستكشاف مشكلات الترقية وإصلاحها أو عند تقديم طلب دعم.
 
-Run it from the server container:
+قم بتشغيله من حاوية الخادم:
 
 ```bash
 docker exec -it {server_container_name_or_id} yarn command:prod upgrade:status
@@ -68,23 +68,23 @@ Summary
 
 ### خيارات
 
-| Flag                      | الوصف                                                            |
-| ------------------------- | ---------------------------------------------------------------- |
-| `-w, --workspace-id <id>` | Filter to a specific workspace. Can be passed multiple times.    |
-| `-f, --failed-only`       | Hide up-to-date workspaces, only show behind and failed entries. |
+| خيار                      | الوصف                                                       |
+| ------------------------- | ----------------------------------------------------------- |
+| `-w, --workspace-id <id>` | لتصفية حسب مساحة عمل معيّنة. يمكن تمريره عدة مرات.          |
+| `-f, --failed-only`       | إخفاء مساحات العمل المحدَّثة، وعرض المتأخرة أو الفاشلة فقط. |
 
 ## استكشاف الأخطاء وإصلاحها
 
-If the upgrade fails on some workspaces, the server will not advance past the failing step. Restarting the server (`docker compose up -d`) will retry the upgrade from where it left off.
+إذا فشلت الترقية في بعض مساحات العمل، فلن يتجاوز الخادم الخطوة الفاشلة. إعادة تشغيل الخادم (`docker compose up -d`) ستعيد محاولة الترقية من حيث توقفت.
 
-To quickly identify problems, run:
+لتحديد المشكلات بسرعة، قم بتشغيل:
 
 ```bash
 docker exec -it {server_container_name_or_id} yarn command:prod upgrade:status --failed-only
 ```
 
-This shows only workspaces that are behind or have failed, along with the error message for each failure.
+يعرض هذا فقط مساحات العمل المتأخرة أو التي فشلت، مع رسالة الخطأ لكل حالة فشل.
 
-## Before v1.22
+## قبل v1.22
 
-If your instance is older than v1.22, you must upgrade incrementally through each major tagged version (v1.6 to v1.7, then v1.7 to v1.8, and so on) until you reach v1.22. From there, you can jump directly to the latest version.
+إذا كان مثيلك أقدم من v1.22، فيجب عليك الترقية تدريجيًا عبر كل إصدار رئيسي موسوم (من v1.6 إلى v1.7، ثم من v1.7 إلى v1.8، وهكذا) حتى تصل إلى v1.22. ومن هناك، يمكنك الانتقال مباشرةً إلى أحدث إصدار.
