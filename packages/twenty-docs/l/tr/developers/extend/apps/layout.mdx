@@ -1,23 +1,23 @@
 ---
 title: Düzen
-description: Define views, navigation menu items, and page layouts to shape how your app appears in Twenty.
+description: Uygulamanızın Twenty içinde nasıl görüneceğini şekillendirmek için görünümleri, gezinme menüsü öğelerini ve sayfa düzenlerini tanımlayın.
 icon: table-columns
 ---
 
-Layout entities control how your app surfaces inside Twenty's UI — what lives in the sidebar, which saved views ship with the app, and how a record detail page is arranged.
+Düzen varlıkları, uygulamanızın Twenty arayüzünde nasıl göründüğünü kontrol eder — kenar çubuğunda nelerin yer aldığı, uygulamayla birlikte hangi kayıtlı görünümlerin geldiği ve bir kayıt ayrıntı sayfasının nasıl düzenlendiği.
 
-## Layout concepts
+## Düzen kavramları
 
-| Concept                  | What it controls                                                                  | Varlık                     |
-| ------------------------ | --------------------------------------------------------------------------------- | -------------------------- |
-| **View**                 | A saved list configuration for an object — visible fields, order, filters, groups | `defineView`               |
-| **Navigation Menu Item** | An entry in the left sidebar that links to a view or an external URL              | `defineNavigationMenuItem` |
-| **Page Layout**          | The tabs and widgets that make up a record's detail page                          | `definePageLayout`         |
+| Kavram                   | Neyi kontrol eder                                                                               | Varlık                     |
+| ------------------------ | ----------------------------------------------------------------------------------------------- | -------------------------- |
+| **Görünüm**              | Bir nesne için kaydedilmiş liste yapılandırması — görünür alanlar, sıralama, filtreler, gruplar | `defineView`               |
+| **Gezinme Menüsü Öğesi** | Sol kenar çubuğunda, bir görünüme veya harici bir URL'ye bağlanan bir öğe                       | `defineNavigationMenuItem` |
+| **Sayfa Düzeni**         | Bir kaydın ayrıntı sayfasını oluşturan sekmeler ve widget'lar                                   | `definePageLayout`         |
 
-Views, navigation items, and page layouts reference each other by `universalIdentifier`:
+Görünümler, gezinme menüsü öğeleri ve sayfa düzenleri birbirlerine `universalIdentifier` ile başvurur:
 
-* A **navigation menu item** of type `VIEW` points at a `defineView` identifier, so the sidebar link opens that saved view.
-* A **page layout** of type `RECORD_PAGE` targets an object and can embed [front components](/l/tr/developers/extend/apps/front-components) inside its tabs as widgets.
+* Türü `VIEW` olan bir **gezinme menüsü öğesi**, bir `defineView` tanımlayıcısını işaret eder; böylece kenar çubuğu bağlantısı o kayıtlı görünümü açar.
+* Türü `RECORD_PAGE` olan bir **sayfa düzeni**, bir nesneyi hedefler ve sekmelerinin içine widget'lar olarak [ön uç bileşenleri](/l/tr/developers/extend/apps/front-components) gömebilir.
 
 <AccordionGroup>
 <Accordion title="defineView" description="Nesneler için kaydedilmiş görünümler tanımlayın">

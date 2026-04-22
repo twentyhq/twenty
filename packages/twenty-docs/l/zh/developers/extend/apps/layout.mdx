@@ -1,28 +1,28 @@
 ---
 title: 布局
-description: Define views, navigation menu items, and page layouts to shape how your app appears in Twenty.
+description: 定义视图、导航菜单项和页面布局，以塑造你的应用在 Twenty 中的呈现方式。
 icon: table-columns
 ---
 
-Layout entities control how your app surfaces inside Twenty's UI — what lives in the sidebar, which saved views ship with the app, and how a record detail page is arranged.
+布局实体控制你的应用如何在 Twenty 的 UI 中呈现——侧边栏中有哪些内容、应用随附哪些已保存的视图，以及记录详情页如何排布。
 
-## Layout concepts
+## 布局概念
 
-| Concept                  | What it controls                                                                  | 实体                         |
-| ------------------------ | --------------------------------------------------------------------------------- | -------------------------- |
-| **View**                 | A saved list configuration for an object — visible fields, order, filters, groups | `defineView`               |
-| **Navigation Menu Item** | An entry in the left sidebar that links to a view or an external URL              | `defineNavigationMenuItem` |
-| **Page Layout**          | The tabs and widgets that make up a record's detail page                          | `definePageLayout`         |
+| 概念        | 控制内容                       | 实体                         |
+| --------- | -------------------------- | -------------------------- |
+| **视图**    | 对象的已保存列表配置——可见字段、顺序、筛选器、分组 | `defineView`               |
+| **导航菜单项** | 左侧侧边栏中的一项，链接到某个视图或外部 URL   | `defineNavigationMenuItem` |
+| **页面布局**  | 构成记录详情页的选项卡和小部件            | `definePageLayout`         |
 
-Views, navigation items, and page layouts reference each other by `universalIdentifier`:
+视图、导航菜单项和页面布局通过 `universalIdentifier` 相互引用：
 
-* A **navigation menu item** of type `VIEW` points at a `defineView` identifier, so the sidebar link opens that saved view.
-* A **page layout** of type `RECORD_PAGE` targets an object and can embed [front components](/l/zh/developers/extend/apps/front-components) inside its tabs as widgets.
+* 类型为 `VIEW` 的**导航菜单项**指向一个 `defineView` 标识符，因此侧边栏链接会打开该已保存视图。
+* 类型为 `RECORD_PAGE` 的**页面布局**面向某个对象，并可在其选项卡内嵌入[前端组件](/l/zh/developers/extend/apps/front-components)作为小部件。
 
 <AccordionGroup>
 <Accordion title="defineView" description="为对象定义已保存的视图">
 
-Views are saved configurations for how records of an object are displayed — including which fields are visible, their order, and any filters or groups applied. Use `defineView()` to ship pre-configured views with your app:
+视图是关于对象记录如何显示的已保存配置——包括哪些字段可见、它们的顺序，以及应用的任何筛选器或分组。 使用 `defineView()` 随你的应用一起提供预配置的视图：
 
 ```ts src/views/example-view.ts
 import { defineView, ViewKey } from 'twenty-sdk/define';
@@ -49,16 +49,16 @@ export default defineView({
 ```
 
 关键点：
-* `objectUniversalIdentifier` specifies which object this view applies to.
-* `key` determines the view type (e.g., `ViewKey.INDEX` for the main list view).
-* `fields` controls which columns appear and their order. Each field references a `fieldMetadataUniversalIdentifier`.
-* You can also define `filters`, `filterGroups`, `groups`, and `fieldGroups` for more advanced configurations.
-* `position` controls the ordering when multiple views exist for the same object.
+* `objectUniversalIdentifier` 指定此视图适用于哪个对象。
+* `key` 决定视图类型（例如，主列表视图使用 `ViewKey.INDEX`）。
+* `fields` 控制显示哪些列及其顺序。 每个字段引用一个 `fieldMetadataUniversalIdentifier`。
+* 你还可以定义 `filters`、`filterGroups`、`groups` 和 `fieldGroups` 以进行更高级的配置。
+* `position` 在同一对象存在多个视图时控制其排序。
 
 </Accordion>
 <Accordion title="defineNavigationMenuItem" description="定义侧边栏导航链接">
 
-Navigation menu items add custom entries to the workspace sidebar. Use `defineNavigationMenuItem()` to link to views, external URLs, or objects:
+导航菜单项会在工作区侧边栏中添加自定义条目。 使用 `defineNavigationMenuItem()` 链接到视图、外部 URL 或对象：
 
 ```ts src/navigation-menu-items/example-navigation-menu-item.ts
 import { defineNavigationMenuItem, NavigationMenuItemType } from 'twenty-sdk/define';
@@ -76,15 +76,15 @@ export default defineNavigationMenuItem({
 ```
 
 关键点：
-* `type` determines what the menu item links to: `NavigationMenuItemType.VIEW` for a saved view, or `NavigationMenuItemType.LINK` for an external URL.
-* For view links, set `viewUniversalIdentifier`. For external links, set `link`.
-* `position` controls the ordering in the sidebar.
-* `icon` and `color` (optional) customize the appearance.
+* `type` 决定菜单项链接到的目标：`NavigationMenuItemType.VIEW` 表示已保存视图，`NavigationMenuItemType.LINK` 表示外部 URL。
+* 对于视图链接，设置 `viewUniversalIdentifier`。 对于外部链接，设置 `link`。
+* `position` 控制在侧边栏中的排序。
+* `icon` 和 `color`（可选）用于自定义外观。
 
 </Accordion>
-<Accordion title="definePageLayout" description="Define custom page layouts for record views">
+<Accordion title="definePageLayout" description="为记录视图定义自定义页面布局">
 
-Page layouts let you customize how a record detail page looks — which tabs appear, what widgets are inside each tab, and how they are arranged. Use `definePageLayout()` to ship custom layouts with your app:
+页面布局使你可以自定义记录详情页的外观——显示哪些选项卡、每个选项卡内有哪些小部件，以及它们如何排列。 使用 `definePageLayout()` 随你的应用一起提供自定义布局：
 
 ```ts src/page-layouts/example-record-page-layout.ts
 import { definePageLayout, PageLayoutTabLayoutMode } from 'twenty-sdk/define';
@@ -121,11 +121,11 @@ export default definePageLayout({
 ```
 
 关键点：
-* `type` is typically `'RECORD_PAGE'` to customize the detail view of a specific object.
-* `objectUniversalIdentifier` specifies which object this layout applies to.
-* Each `tab` defines a section of the page with a `title`, `position`, and `layoutMode` (`CANVAS` for free-form layout).
-* Each `widget` inside a tab can render a front component, a relation list, or other built-in widget types.
-* `position` on tabs controls their order. Use higher values (e.g., 50) to place custom tabs after built-in ones.
+* `type` 通常为 'RECORD_PAGE'，用于自定义特定对象的详情视图。
+* `objectUniversalIdentifier` 指定此布局适用于哪个对象。
+* 每个 `tab` 使用 `title`、`position` 和 `layoutMode` 定义页面的一个部分（`CANVAS` 表示自由布局）。
+* 选项卡内的每个 `widget` 可以渲染一个前端组件、关系列表或其他内置小部件类型。
+* 选项卡上的 `position` 控制其顺序。 使用更高的值（例如 50）可将自定义选项卡放在内置选项卡之后。
 
 </Accordion>
 </AccordionGroup>

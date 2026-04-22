@@ -1,6 +1,6 @@
 ---
 title: 前端组件
-description: Build React components that render inside Twenty's UI with sandboxed isolation.
+description: 构建可在 Twenty 的 UI 中渲染并具备沙盒隔离的 React 组件。
 icon: window-maximize
 ---
 
@@ -55,18 +55,18 @@ export default defineFrontComponent({
 
 ## 配置字段
 
-| 字段                    | 必填 | 描述                                                                                  |
-| --------------------- | -- | ----------------------------------------------------------------------------------- |
-| `universalIdentifier` | 是  | 该组件的稳定唯一 ID                                                                         |
-| `component`           | 是  | 一个 React 组件函数                                                                       |
-| `name`                | 否  | 显示名称                                                                                |
-| `description`         | 否  | 组件的功能描述                                                                             |
-| `isHeadless`          | 否  | Set to `true` if the component has no visible UI (see below)                        |
-| `command`             | 否  | Register the component as a command (see [command options](#command-options) below) |
+| 字段                    | 必填 | 描述                                       |
+| --------------------- | -- | ---------------------------------------- |
+| `universalIdentifier` | 是  | 该组件的稳定唯一 ID                              |
+| `component`           | 是  | 一个 React 组件函数                            |
+| `name`                | 否  | 显示名称                                     |
+| `description`         | 否  | 组件的功能描述                                  |
+| `isHeadless`          | 否  | 如果组件没有可见的 UI，则设为 `true`（见下文）             |
+| `command`             | 否  | 将该组件注册为命令（参见下文的[命令选项](#command-options)） |
 
-## Placing a front component on a page
+## 在页面上放置前端组件
 
-Beyond commands, you can embed a front component directly into a record page by adding it as a widget in a **page layout**. See the [definePageLayout](/l/zh/developers/extend/apps/skills-and-agents#definepagelayout) section for details.
+除了命令之外，您还可以在**页面布局**中将其添加为小部件，从而将前端组件直接嵌入记录页面。 详情请参见[definePageLayout](/l/zh/developers/extend/apps/skills-and-agents#definepagelayout)部分。
 
 ## 无头与非无头
 
@@ -100,7 +100,7 @@ export default defineFrontComponent({
 });
 ```
 
-Because the component returns `null`, Twenty skips rendering a container for it — no empty space appears in the layout. The component still has access to all hooks and the host communication API.
+由于该组件返回 `null`，Twenty 会跳过为其渲染容器——布局中不会出现空白区域。 该组件仍可访问所有 hooks 和宿主通信 API。
 
 ## SDK Command 组件
 
@@ -185,9 +185,9 @@ export default defineFrontComponent({
 });
 ```
 
-## Accessing runtime context
+## 访问运行时上下文
 
-Inside your component, use SDK hooks to access the current user, record, and component instance:
+在组件内部，使用 SDK 的 hooks 获取当前用户、记录和组件实例：
 
 ```tsx src/front-components/record-info.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
@@ -218,28 +218,28 @@ export default defineFrontComponent({
 });
 ```
 
-Available hooks:
+可用的 hooks：
 
-| 钩子                                            | Returns            | 描述                                                         |
-| --------------------------------------------- | ------------------ | ---------------------------------------------------------- |
-| `useUserId()`                                 | `string` or `null` | The current user's ID                                      |
-| `useRecordId()`                               | `string` or `null` | The current record's ID (when placed on a record page)     |
-| `useFrontComponentId()`                       | `string`           | This component instance's ID                               |
-| `useFrontComponentExecutionContext(selector)` | 因情况而异              | Access the full execution context with a selector function |
+| 钩子                                            | 返回值               | 描述                  |
+| --------------------------------------------- | ----------------- | ------------------- |
+| `useUserId()`                                 | `string` 或 `null` | 当前用户的 ID            |
+| `useRecordId()`                               | `string` 或 `null` | 当前记录的 ID（当放置在记录页面时） |
+| `useFrontComponentId()`                       | `string`          | 此组件实例的 ID           |
+| `useFrontComponentExecutionContext(selector)` | 因情况而异             | 使用选择器函数访问完整的执行上下文   |
 
-## Host communication API
+## 宿主通信 API
 
-Front components can trigger navigation, modals, and notifications using functions from `twenty-sdk`:
+前端组件可以使用来自 `twenty-sdk` 的函数触发导航、模态框和通知：
 
-| 函数                                              | 描述                            |
-| ----------------------------------------------- | ----------------------------- |
-| `navigate(to, params?, queryParams?, options?)` | Navigate to a page in the app |
-| `openSidePanelPage(params)`                     | Open a side panel             |
-| `closeSidePanel()`                              | 关闭侧边栏                         |
-| `openCommandConfirmationModal(params)`          | Show a confirmation dialog    |
-| `enqueueSnackbar(params)`                       | Show a toast notification     |
-| `unmountFrontComponent()`                       | Unmount the component         |
-| `updateProgress(progress)`                      | Update a progress indicator   |
+| 函数                                              | 描述            |
+| ----------------------------------------------- | ------------- |
+| `navigate(to, params?, queryParams?, options?)` | 在应用中导航到某个页面   |
+| `openSidePanelPage(params)`                     | 打开侧边栏         |
+| `closeSidePanel()`                              | 关闭侧边栏         |
+| `openCommandConfirmationModal(params)`          | 显示确认对话框       |
+| `enqueueSnackbar(params)`                       | 显示一条 Toast 通知 |
+| `unmountFrontComponent()`                       | 卸载该组件         |
+| `updateProgress(progress)`                      | 更新进度指示器       |
 
 下面是一个示例，使用宿主 API 在操作完成后显示一条 snackbar 并关闭侧边栏：
 
@@ -286,24 +286,24 @@ export default defineFrontComponent({
 });
 ```
 
-## Command options
+## 命令选项
 
-Adding a `command` field to `defineFrontComponent` registers the component in the command menu (Cmd+K). If `isPinned` is `true`, it also appears as a quick-action button in the top-right corner of the page.
+在 `defineFrontComponent` 中添加一个 `command` 字段会将该组件注册到命令菜单（Cmd+K）中。 如果 `isPinned` 为 `true`，它还会显示为页面右上角的快速操作按钮。
 
-| 字段                                      | 必填 | 描述                                                                                                                                                                             |
-| --------------------------------------- | -- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `universalIdentifier`                   | 是  | Stable unique ID for the command                                                                                                                                               |
-| `label`                                 | 是  | Full label shown in the command menu (Cmd+K)                                                                                                                                   |
-| `shortLabel`                            | 否  | Shorter label displayed on the pinned quick-action button                                                                                                                      |
-| `icon`                                  | 否  | Icon name displayed next to the label (e.g. `'IconBolt'`, `'IconSend'`)                                                                                                        |
-| `isPinned`                              | 否  | When `true`, shows the command as a quick-action button in the top-right corner of the page                                                                                    |
-| `availabilityType`                      | 否  | Controls where the command appears: `'GLOBAL'` (always available), `'RECORD_SELECTION'` (only when records are selected), or `'FALLBACK'` (shown when no other commands match) |
-| `availabilityObjectUniversalIdentifier` | 否  | Restrict the command to pages of a specific object type (e.g. only on Company records)                                                                                         |
-| `conditionalAvailabilityExpression`     | 否  | A boolean expression to dynamically control whether the command is visible (see below)                                                                                         |
+| 字段                                      | 必填 | 描述                                                                               |
+| --------------------------------------- | -- | -------------------------------------------------------------------------------- |
+| `universalIdentifier`                   | 是  | 该命令的稳定唯一 ID                                                                      |
+| `label`                                 | 是  | 在命令菜单（Cmd+K）中显示的完整标签                                                             |
+| `shortLabel`                            | 否  | 固定的快速操作按钮上显示的较短标签                                                                |
+| `icon`                                  | 否  | 显示在标签旁边的图标名称（例如 `'IconBolt'`、`'IconSend'`）                                       |
+| `isPinned`                              | 否  | 为 `true` 时，会将该命令显示为页面右上角的快速操作按钮                                                  |
+| `availabilityType`                      | 否  | 控制命令出现的位置：'GLOBAL'（始终可用）、'RECORD_SELECTION'（仅在选择了记录时），或 'FALLBACK'（当没有其他命令匹配时显示） |
+| `availabilityObjectUniversalIdentifier` | 否  | 将该命令限制在特定对象类型的页面上（例如仅在 Company 记录上）                                              |
+| `conditionalAvailabilityExpression`     | 否  | 用于动态控制命令是否可见的布尔表达式（见下文）                                                          |
 
-## Conditional availability expressions
+## 条件可用性表达式
 
-The `conditionalAvailabilityExpression` field lets you control when a command is visible based on the current page context. Import typed variables and operators from `twenty-sdk` to build expressions:
+通过 `conditionalAvailabilityExpression` 字段，您可以基于当前页面上下文控制命令何时可见。 从 `twenty-sdk` 导入带类型的变量和运算符来构建表达式：
 
 ```tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
@@ -332,45 +332,45 @@ export default defineFrontComponent({
 });
 ```
 
-**Context variables** — these represent the current state of the page:
+**上下文变量** — 表示页面的当前状态：
 
-| 变量                             | 类型        | 描述                                                               |
-| ------------------------------ | --------- | ---------------------------------------------------------------- |
-| `pageType`                     | `string`  | Current page type (e.g. `'RecordIndexPage'`, `'RecordShowPage'`) |
-| `isInSidePanel`                | `boolean` | Whether the component is rendered in a side panel                |
-| `numberOfSelectedRecords`      | `number`  | Number of currently selected records                             |
-| `isSelectAll`                  | `boolean` | Whether "select all" is active                                   |
-| `selectedRecords`              | `array`   | The selected record objects                                      |
-| `favoriteRecordIds`            | `array`   | IDs of favorited records                                         |
-| `objectPermissions`            | `object`  | Permissions for the current object type                          |
-| `targetObjectReadPermissions`  | `object`  | Read permissions for the target object                           |
-| `targetObjectWritePermissions` | `object`  | Write permissions for the target object                          |
-| `featureFlags`                 | `object`  | Active feature flags                                             |
-| `objectMetadataItem`           | `object`  | Metadata of the current object type                              |
-| `hasAnySoftDeleteFilterOnView` | `boolean` | Whether the current view has a soft-delete filter                |
+| 变量                             | 类型        | 描述                                            |
+| ------------------------------ | --------- | --------------------------------------------- |
+| `pageType`                     | `string`  | 当前页面类型（例如 'RecordIndexPage'、'RecordShowPage'） |
+| `isInSidePanel`                | `boolean` | 组件是否在侧边栏中渲染                                   |
+| `numberOfSelectedRecords`      | `number`  | 当前选中的记录数量                                     |
+| `isSelectAll`                  | `boolean` | “全选”是否已激活                                     |
+| `selectedRecords`              | `array`   | 已选记录对象                                        |
+| `favoriteRecordIds`            | `array`   | 已收藏记录的 ID                                     |
+| `objectPermissions`            | `object`  | 当前对象类型的权限                                     |
+| `targetObjectReadPermissions`  | `object`  | 目标对象的读取权限                                     |
+| `targetObjectWritePermissions` | `object`  | 目标对象的写入权限                                     |
+| `featureFlags`                 | `object`  | 当前启用的功能标志                                     |
+| `objectMetadataItem`           | `object`  | 当前对象类型的元数据                                    |
+| `hasAnySoftDeleteFilterOnView` | `boolean` | 当前视图是否包含软删除筛选器                                |
 
-**Operators** — combine variables into boolean expressions:
+**运算符** — 将变量组合为布尔表达式：
 
-| Operator                            | 描述                                                                |
-| ----------------------------------- | ----------------------------------------------------------------- |
-| `isDefined(value)`                  | `true` if the value is not null/undefined                         |
-| `isNonEmptyString(value)`           | `true` if the value is a non-empty string                         |
-| `includes(array, value)`            | `true` if the array contains the value                            |
-| `includesEvery(array, prop, value)` | `true` if every item's property includes the value                |
-| `every(array, prop)`                | `true` if the property is truthy on every item                    |
-| `everyDefined(array, prop)`         | `true` if the property is defined on every item                   |
-| `everyEquals(array, prop, value)`   | `true` if the property equals the value on every item             |
-| `some(array, prop)`                 | `true` if the property is truthy on at least one item             |
-| `someDefined(array, prop)`          | `true` if the property is defined on at least one item            |
-| `someEquals(array, prop, value)`    | `true` if the property equals the value on at least one item      |
-| `someNonEmptyString(array, prop)`   | `true` if the property is a non-empty string on at least one item |
-| `none(array, prop)`                 | `true` if the property is falsy on every item                     |
-| `noneDefined(array, prop)`          | `true` if the property is undefined on every item                 |
-| `noneEquals(array, prop, value)`    | `true` if the property does not equal the value on any item       |
+| 运算符                                 | 描述                               |
+| ----------------------------------- | -------------------------------- |
+| `isDefined(value)`                  | 当该值不是 null/undefined 时为 `true`   |
+| `isNonEmptyString(value)`           | 当该值为非空字符串时为 `true`               |
+| `includes(array, value)`            | 当数组包含该值时为 `true`                 |
+| `includesEvery(array, prop, value)` | 当每个条目的属性都包含该值时为 `true`           |
+| `every(array, prop)`                | 当该属性在每个条目上都为 truthy 时为 `true`    |
+| `everyDefined(array, prop)`         | 当该属性在每个条目上都已定义时为 `true`          |
+| `everyEquals(array, prop, value)`   | 当该属性在每个条目上都等于该值时为 `true`         |
+| `some(array, prop)`                 | 当至少一个条目上的该属性为 truthy 时为 `true`   |
+| `someDefined(array, prop)`          | 当至少一个条目上的该属性已定义时为 `true`         |
+| `someEquals(array, prop, value)`    | 当至少一个条目上的该属性等于该值时为 `true`        |
+| `someNonEmptyString(array, prop)`   | 当至少一个条目上的该属性为非空字符串时为 `true`      |
+| `none(array, prop)`                 | 当该属性在每个条目上都为 falsy 时为 `true`     |
+| `noneDefined(array, prop)`          | 当该属性在每个条目上都为 undefined 时为 `true` |
+| `noneEquals(array, prop, value)`    | 当该属性在任意条目上都不等于该值时为 `true`        |
 
-## Public assets
+## 公共资源
 
-Front components can access files from the app's `public/` directory using `getPublicAssetUrl`:
+前端组件可以使用 `getPublicAssetUrl` 访问应用的 `public/` 目录中的文件：
 
 ```tsx
 import { defineFrontComponent, getPublicAssetUrl } from 'twenty-sdk/define';
@@ -384,18 +384,18 @@ export default defineFrontComponent({
 });
 ```
 
-See the [public assets section](/l/zh/developers/extend/apps/cli-and-testing#public-assets-public-folder) for details.
+详情请参见[公共资源部分](/l/zh/developers/extend/apps/cli-and-testing#public-assets-public-folder)。
 
 ## 样式
 
-Front components support multiple styling approaches. You can use:
+前端组件支持多种样式方案。 您可以使用：
 
-* **Inline styles** — `style={{ color: 'red' }}`
-* **Twenty UI components** — import from `twenty-sdk/ui` (Button, Tag, Status, Chip, Avatar, and more)
-* **Emotion** — CSS-in-JS with `@emotion/react`
-* **Styled-components** — `styled.div` patterns
-* **Tailwind CSS** — utility classes
-* **Any CSS-in-JS library** compatible with React
+* **内联样式** — `style={{ color: 'red' }}`
+* **Twenty UI 组件** — 从 `twenty-sdk/ui` 导入（Button、Tag、Status、Chip、Avatar 等）
+* **Emotion** — 使用 `@emotion/react` 的 CSS-in-JS
+* **Styled-components** — `styled.div` 模式
+* **Tailwind CSS** — 工具类
+* **任何 CSS-in-JS 库**（与 React 兼容）
 
 ```tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
