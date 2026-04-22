@@ -13,6 +13,11 @@ export default defineApplication({
   description: APP_DESCRIPTION,
   icon: 'IconBrandGithub',
   defaultRoleUniversalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
+  screenshots: [
+    'public/screenshots/github-dashboard.png',
+    'public/screenshots/pull-requests-view.png',
+    'public/screenshots/contributor-stats.png',
+  ],
   applicationVariables: {
     GITHUB_TOKEN: {
       universalIdentifier: 'fb1d2e91-3a75-4c89-9d6b-1e2f7a4c5d8e',

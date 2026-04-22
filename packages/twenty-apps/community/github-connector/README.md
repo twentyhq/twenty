@@ -5,15 +5,21 @@ Twenty, and react to GitHub webhook events in real time.
 
 This app showcases how to build a non-trivial third-party connector with the
 Twenty SDK: custom objects with rich relationships, navigation menu items,
-table views, logic functions for periodic syncs, an HTTP webhook handler, and
-authenticated GraphQL/REST calls against an external provider.
+table views, a dashboard page layout, logic functions for periodic syncs, an
+HTTP webhook handler, and authenticated GraphQL/REST calls against an
+external provider.
 
-![Pull Requests view with the Fetch Pull Requests command](docs/pull-requests-view.png)
+![GitHub Dashboard with PR / review counters, weekly histograms, and top-contributor leaderboards](public/screenshots/github-dashboard.png)
+
+![Pull Requests view with the Fetch Pull Requests command](public/screenshots/pull-requests-view.png)
+
+![Contributor detail page with the Contributor Stats panel showing PRs authored, merged and reviewed over time](public/screenshots/contributor-stats.png)
 
 ## What it adds to your workspace
 
-Six custom objects, each with fields, relationships, table views, and a
-navigation entry under a top-level "GitHub" section:
+### Custom objects
+
+Six custom objects, each with fields, relationships and table views:
 
 - `pullRequest`
 - `pullRequestReview`
@@ -22,7 +28,20 @@ navigation entry under a top-level "GitHub" section:
 - `projectItem`
 - `contributor`
 
-Logic functions wired up:
+### Navigation
+
+A top-level **GitHub** folder in the left sidebar with:
+
+- Pull Requests
+- Issues
+- Project Items
+- Contributors
+- Pull Request Reviews
+- Pull Request Review Events
+- GitHub Dashboard (a page layout that aggregates PR activity over time and
+  surfaces top contributors)
+
+### Logic functions
 
 | Function                          | Trigger                                          |
 | --------------------------------- | ------------------------------------------------ |
@@ -37,15 +56,23 @@ Logic functions wired up:
 | `handle-github-webhook`           | HTTP `POST /github/webhook` (no auth, signed)    |
 | `search-contributors`             | HTTP `POST /contributors/search`                 |
 | `contributor-stats`               | HTTP `POST /contributors/stats`                  |
+| `top-contributors`                | HTTP `POST /contributors/top`                    |
 | `recompute-pull-request-reviews`  | HTTP `POST /pull-request-reviews/recompute`      |
 
-Four headless front-components expose the manual sync flows as commands in
-the Twenty UI:
+### Front components
 
-- **Fetch Pull Requests** (visible on the Pull Request object)
-- **Fetch Issues** (visible on the Issue object)
-- **Fetch Contributors** (visible on the Contributor object)
-- **Fetch Project Items** (visible on the Project Item object)
+Seven front components surface the connector inside the Twenty UI:
+
+- **Fetch Pull Requests** — command on the Pull Request object
+- **Fetch Issues** — command on the Issue object
+- **Fetch Contributors** — command on the Contributor object
+- **Fetch Project Items** — command on the Project Item object
+- **Contributor Stats** — panel on the Contributor object that renders a
+  bar chart of PRs authored / merged / reviewed over the selected period
+- **Top PR Authors** — dashboard widget that ranks the top 20 PR authors
+  over the last 90 days
+- **Top Reviewers** — dashboard widget that ranks the top 20 PR reviewers
+  over the last 90 days
 
 ## Install
 
@@ -146,21 +173,29 @@ GitHub calls.
 | Variable                  | Required | Notes                                                                                   |
 | ------------------------- | -------- | --------------------------------------------------------------------------------------- |
 | `GITHUB_REPOS`            | yes      | Comma-separated `owner/repo` list, e.g. `octocat/hello-world,octo-org/octo-repo`.       |
-| `GITHUB_PROJECTS`         | no       | Comma-separated GitHub Projects (v2) as `owner/number` (e.g. `twentyhq/24,octo/3`). Owner can be an org or a user. Full URLs like `https://github.com/orgs/twentyhq/projects/24` also work. |
+| `GITHUB_PROJECTS`         | no       | Comma-separated GitHub Projects (v2). See format below.                                 |
 | `GITHUB_WEBHOOK_SECRET`   | no       | Shared secret to verify `X-Hub-Signature-256`. When unset, signatures are not verified. |
+
+`GITHUB_PROJECTS` accepts entries in either of these forms:
+
+- `owner/number` — e.g. `twentyhq/24,octo/3`. Owner can be an org or a user.
+- Full project URL — e.g. `https://github.com/orgs/twentyhq/projects/24` or
+  `https://github.com/users/octocat/projects/3`.
 
 ## Running a sync
 
 In the Twenty UI, open any of the GitHub objects (e.g. **Pull Requests**) and
 trigger the matching command from the command palette (`Cmd/Ctrl+K`):
 
-- Pull Requests view → **Fetch Pull Requests**
-- Issues view → **Fetch Issues**
-- Contributors view → **Fetch Contributors**
-- Project Items view → **Fetch Project Items**
+| View              | Command               | Reads from        |
+| ----------------- | --------------------- | ----------------- |
+| Pull Requests     | Fetch Pull Requests   | `GITHUB_REPOS`    |
+| Issues            | Fetch Issues          | `GITHUB_REPOS`    |
+| Contributors      | Fetch Contributors    | `GITHUB_REPOS`    |
+| Project Items     | Fetch Project Items   | `GITHUB_PROJECTS` |
 
-Each command iterates over every entry in `GITHUB_REPOS` (or
-`GITHUB_PROJECTS`) and shows a progress bar.
+Each command iterates over every entry in the relevant variable and shows a
+progress bar.
 
 ## Webhooks
 
@@ -177,14 +212,14 @@ verification. For local testing, expose your dev server with
 [smee.io](https://smee.io/) or `ngrok` and use that URL as the webhook URL on
 GitHub.
 
-> Note: HMAC verification needs the original raw request body. The Twenty
-> SDK currently parses JSON requests before handing them to logic functions,
-> so when the runtime delivers an already-parsed body the connector will
-> log a warning and reject the delivery rather than silently accept it.
-> Until the SDK exposes the raw bytes for HTTP routes, leave
-> `GITHUB_WEBHOOK_SECRET` unset (and rely on a hard-to-guess `/github/webhook`
-> URL plus IP allow-listing) or terminate signature verification at a
-> reverse proxy in front of Twenty.
+> **Heads up — raw body required for signatures.** HMAC verification needs
+> the original request body bytes. The Twenty SDK currently parses JSON
+> requests before handing them to logic functions, so when the runtime
+> delivers an already-parsed body the connector logs a warning and rejects
+> the delivery instead of silently accepting it. Until the SDK exposes the
+> raw bytes for HTTP routes, either leave `GITHUB_WEBHOOK_SECRET` unset (and
+> rely on a hard-to-guess `/github/webhook` URL plus IP allow-listing), or
+> terminate signature verification at a reverse proxy in front of Twenty.
 
 ## How auth resolution works
 
