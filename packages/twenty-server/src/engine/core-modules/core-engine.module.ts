@@ -63,6 +63,9 @@ import { AiMLModule } from 'src/engine/core-modules/ai-ml/ai-ml.module';
 import { OmnicanalModule } from 'src/engine/core-modules/omnicanal/omnicanal.module';
 import { BIAnalyticsModule } from 'src/engine/core-modules/bi-analytics/bi-analytics.module';
 import { ABMModule } from 'src/engine/core-modules/abm/abm.module';
+import { SalesExecutionModule } from 'src/engine/core-modules/sales-execution/sales-execution.module';
+import { CustomerSuccessModule } from 'src/engine/core-modules/customer-success/customer-success.module';
+import { CPQModule } from 'src/engine/core-modules/cpq/cpq.module';
 import { TwentyConfigModule } from 'src/engine/core-modules/twenty-config/twenty-config.module';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UsageModule } from 'src/engine/core-modules/usage/usage.module';
@@ -175,6 +178,9 @@ import { FileModule } from './file/file.module';
     OmnicanalModule,
     BIAnalyticsModule,
     ABMModule,
+    SalesExecutionModule,
+    CustomerSuccessModule,
+    CPQModule,
   ],
   exports: [
     AuditModule,
