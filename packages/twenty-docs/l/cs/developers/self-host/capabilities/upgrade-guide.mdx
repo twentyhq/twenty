@@ -5,37 +5,37 @@ icon: arrow-up-right-dots
 
 ## Obecné pokyny
 
-**Always back up your database before starting the upgrade process** by running:
+**Před zahájením procesu aktualizace vždy zálohujte svou databázi** spuštěním:
 
 ```bash
 docker exec -it {db_container_name_or_id} pg_dumpall -U {postgres_user} > databases_backup.sql
 ```
 
-To restore from backup:
+Pro obnovení ze zálohy:
 
 ```bash
 cat databases_backup.sql | docker exec -i {db_container_name_or_id} psql -U {postgres_user}
 ```
 
-If you use Docker Compose, follow these steps:
+Pokud používáte Docker Compose, postupujte takto:
 
-1. Stop Twenty: `docker compose down`
-2. Change the `TAG` value in the `.env` file next to your `docker-compose.yml`
-3. Start Twenty: `docker compose up -d`
+1. Zastavte Twenty: `docker compose down`
+2. Změňte hodnotu `TAG` v souboru `.env` vedle `docker-compose.yml`
+3. Spusťte Twenty: `docker compose up -d`
 
-The server runs all required upgrade migrations automatically on startup. No manual command is needed.
+Server při startu automaticky spustí všechny požadované migrační kroky upgradu. Není potřeba žádný ruční příkaz.
 
-## Cross-version upgrades (v1.22+)
+## Upgrade napříč verzemi (v1.22+)
 
-Starting from **v1.22**, Twenty supports cross-version upgrades. You can jump directly from any supported version to the latest release without stepping through each intermediate version.
+Počínaje **v1.22** podporuje Twenty upgrade napříč verzemi. Můžete přejít přímo z jakékoli podporované verze na nejnovější vydání, aniž byste museli procházet každou meziverzí.
 
-For example, upgrading from v1.22 straight to v2.0 is fully supported.
+Například přechod z v1.22 přímo na v2.0 je plně podporován.
 
-## Checking upgrade status
+## Kontrola stavu upgradu
 
-The `upgrade:status` command lets you inspect the current state of your instance and workspace migrations. It is useful for debugging upgrade issues or when filing a support request.
+Příkaz `upgrade:status` vám umožní zkontrolovat aktuální stav vaší instance a migrací pracovních prostorů. Je užitečný pro ladění problémů s upgradem nebo při podávání požadavku na podporu.
 
-Run it from the server container:
+Spusťte jej z kontejneru serveru:
 
 ```bash
 docker exec -it {server_container_name_or_id} yarn command:prod upgrade:status
@@ -68,23 +68,23 @@ Summary
 
 ### Možnosti
 
-| Flag                      | Popis                                                            |
-| ------------------------- | ---------------------------------------------------------------- |
-| `-w, --workspace-id <id>` | Filter to a specific workspace. Can be passed multiple times.    |
-| `-f, --failed-only`       | Hide up-to-date workspaces, only show behind and failed entries. |
+| Přepínač                  | Popis                                                                                |
+| ------------------------- | ------------------------------------------------------------------------------------ |
+| `-w, --workspace-id <id>` | Omezí se na konkrétní pracovní prostor. Lze zadat vícekrát.                          |
+| `-f, --failed-only`       | Skryje aktuální pracovní prostory; zobrazí pouze ty, které jsou pozadu, a neúspěšné. |
 
 ## Řešení potíží
 
-If the upgrade fails on some workspaces, the server will not advance past the failing step. Restarting the server (`docker compose up -d`) will retry the upgrade from where it left off.
+Pokud upgrade selže u některých pracovních prostorů, server nepokročí za chybující krok. Restartování serveru (`docker compose up -d`) zkusí upgrade znovu od místa, kde se zastavil.
 
-To quickly identify problems, run:
+Pro rychlou identifikaci problémů spusťte:
 
 ```bash
 docker exec -it {server_container_name_or_id} yarn command:prod upgrade:status --failed-only
 ```
 
-This shows only workspaces that are behind or have failed, along with the error message for each failure.
+Tímto se zobrazí pouze pracovní prostory, které jsou pozadu nebo selhaly, spolu s chybovou zprávou pro každé selhání.
 
-## Before v1.22
+## Před v1.22
 
-If your instance is older than v1.22, you must upgrade incrementally through each major tagged version (v1.6 to v1.7, then v1.7 to v1.8, and so on) until you reach v1.22. From there, you can jump directly to the latest version.
+Pokud je vaše instance starší než v1.22, musíte upgradovat postupně přes každou hlavní označenou verzi (z v1.6 na v1.7, poté z v1.7 na v1.8 atd.), dokud nedosáhnete v1.22. Odtud můžete přejít přímo na nejnovější verzi.
