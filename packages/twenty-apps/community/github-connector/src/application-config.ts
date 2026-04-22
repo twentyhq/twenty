@@ -1,6 +1,7 @@
 import { defineApplication } from 'twenty-sdk/define';
 
 import {
+  APP_ABOUT_DESCRIPTION,
   APP_DESCRIPTION,
   APP_DISPLAY_NAME,
   APPLICATION_UNIVERSAL_IDENTIFIER,
@@ -11,9 +12,11 @@ export default defineApplication({
   universalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
   displayName: APP_DISPLAY_NAME,
   description: APP_DESCRIPTION,
+  aboutDescription: APP_ABOUT_DESCRIPTION,
   icon: 'IconBrandGithub',
   defaultRoleUniversalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
   screenshots: [
+    'public/screenshots/app-listing.png',
     'public/screenshots/github-dashboard.png',
     'public/screenshots/pull-requests-view.png',
     'public/screenshots/contributor-stats.png',

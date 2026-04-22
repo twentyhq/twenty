@@ -1,5 +1,7 @@
 import { type ReactNode } from 'react';
 
+import { THEME } from 'src/modules/github/contributor/components/theme';
+
 export type LeaderboardEntry = {
   id: string;
   name: string | null;
@@ -8,22 +10,8 @@ export type LeaderboardEntry = {
   count: number;
 };
 
-const COLORS = {
-  fontPrimary: 'rgb(51, 51, 51)',
-  fontSecondary: 'rgb(102, 102, 102)',
-  fontTertiary: 'rgb(153, 153, 153)',
-  fontLight: 'rgb(179, 179, 179)',
-  borderLight: 'rgb(241, 241, 241)',
-  borderMedium: 'rgb(235, 235, 235)',
-  bgPrimary: 'rgb(255, 255, 255)',
-  bgSecondary: 'rgb(252, 252, 252)',
-  bgHover: 'rgb(247, 247, 247)',
-  avatarBg: 'rgb(235, 235, 235)',
-};
-
 const ROW_HEIGHT = 32;
 const CELL_PADDING_X = 8;
-const FONT_FAMILY = 'Inter, sans-serif';
 const RANK_COL_WIDTH = 36;
 const COUNT_COL_WIDTH = 72;
 
@@ -34,9 +22,9 @@ const styles = {
     width: '100%',
     height: '100%',
     minHeight: 0,
-    fontFamily: FONT_FAMILY,
-    color: COLORS.fontPrimary,
-    background: COLORS.bgPrimary,
+    fontFamily: THEME.fontFamily,
+    color: THEME.fontPrimary,
+    background: THEME.bgPrimary,
     boxSizing: 'border-box',
     overflow: 'hidden',
   } as const,
@@ -54,16 +42,16 @@ const styles = {
     alignItems: 'stretch',
     height: ROW_HEIGHT,
     flexShrink: 0,
-    borderBottom: `1px solid ${COLORS.borderLight}`,
-    background: COLORS.bgPrimary,
+    borderBottom: `1px solid ${THEME.borderLight}`,
+    background: THEME.bgPrimary,
   } as const,
   headerCell: {
     display: 'flex',
     alignItems: 'center',
     height: '100%',
     padding: `0 ${CELL_PADDING_X}px`,
-    borderRight: `1px solid ${COLORS.borderLight}`,
-    color: COLORS.fontTertiary,
+    borderRight: `1px solid ${THEME.borderLight}`,
+    color: THEME.fontTertiary,
     fontSize: 12,
     fontWeight: 500,
     boxSizing: 'border-box',
@@ -81,8 +69,8 @@ const styles = {
     height: ROW_HEIGHT,
     flexShrink: 0,
     width: '100%',
-    background: COLORS.bgPrimary,
-    color: COLORS.fontPrimary,
+    background: THEME.bgPrimary,
+    color: THEME.fontPrimary,
     textDecoration: 'none',
     boxSizing: 'border-box',
   } as const,
@@ -91,8 +79,8 @@ const styles = {
     alignItems: 'center',
     height: '100%',
     padding: `0 ${CELL_PADDING_X}px`,
-    borderBottom: `1px solid ${COLORS.borderLight}`,
-    borderRight: `1px solid ${COLORS.borderLight}`,
+    borderBottom: `1px solid ${THEME.borderLight}`,
+    borderRight: `1px solid ${THEME.borderLight}`,
     fontSize: 13,
     boxSizing: 'border-box',
     minWidth: 0,
@@ -106,7 +94,7 @@ const styles = {
     width: RANK_COL_WIDTH,
     flexShrink: 0,
     justifyContent: 'flex-end',
-    color: COLORS.fontTertiary,
+    color: THEME.fontTertiary,
     fontSize: 12,
     fontVariantNumeric: 'tabular-nums',
   } as const,
@@ -119,7 +107,7 @@ const styles = {
     width: COUNT_COL_WIDTH,
     flexShrink: 0,
     justifyContent: 'flex-end',
-    color: COLORS.fontSecondary,
+    color: THEME.fontSecondary,
     fontVariantNumeric: 'tabular-nums',
     fontWeight: 500,
   } as const,
@@ -128,7 +116,7 @@ const styles = {
     height: 16,
     borderRadius: '50%',
     objectFit: 'cover',
-    background: COLORS.avatarBg,
+    background: THEME.bgTertiary,
     flexShrink: 0,
   } as const,
   nameWrapper: {
@@ -142,7 +130,7 @@ const styles = {
   name: {
     fontSize: 13,
     fontWeight: 500,
-    color: COLORS.fontPrimary,
+    color: THEME.fontPrimary,
     overflow: 'hidden',
     textOverflow: 'ellipsis',
     whiteSpace: 'nowrap',
@@ -150,7 +138,7 @@ const styles = {
   login: {
     fontSize: 12,
     fontWeight: 400,
-    color: COLORS.fontTertiary,
+    color: THEME.fontTertiary,
     overflow: 'hidden',
     textOverflow: 'ellipsis',
     whiteSpace: 'nowrap',
@@ -160,7 +148,7 @@ const styles = {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    color: COLORS.fontTertiary,
+    color: THEME.fontTertiary,
     fontSize: 13,
     padding: 16,
     textAlign: 'center',
@@ -195,10 +183,10 @@ const Row = ({
     : undefined;
 
   const onEnter = (e: React.MouseEvent<HTMLElement>) => {
-    e.currentTarget.style.backgroundColor = COLORS.bgHover;
+    e.currentTarget.style.backgroundColor = THEME.bgSecondary;
   };
   const onLeave = (e: React.MouseEvent<HTMLElement>) => {
-    e.currentTarget.style.backgroundColor = COLORS.bgPrimary;
+    e.currentTarget.style.backgroundColor = THEME.bgPrimary;
   };
 
   const cells = (

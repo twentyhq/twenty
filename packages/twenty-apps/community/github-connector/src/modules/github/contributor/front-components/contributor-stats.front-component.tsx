@@ -5,6 +5,8 @@ import {
   objectMetadataItem,
   useRecordId,
 } from 'twenty-sdk/front-component';
+
+import { THEME } from 'src/modules/github/contributor/components/theme';
 import { callAppRoute } from 'src/modules/shared/call-app-route';
 
 type Period = 'week' | 'month' | '3months' | 'year';
@@ -67,24 +69,6 @@ const PERIOD_OPTIONS: Array<{ value: Period; label: string }> = [
   { value: 'year', label: 'Last year' },
 ];
 
-const COLORS = {
-  fontPrimary: 'rgb(51, 51, 51)',
-  fontSecondary: 'rgb(102, 102, 102)',
-  fontTertiary: 'rgb(153, 153, 153)',
-  fontLight: 'rgb(179, 179, 179)',
-  borderLight: 'rgb(241, 241, 241)',
-  borderMedium: 'rgb(229, 229, 229)',
-  bgPrimary: 'rgb(255, 255, 255)',
-  bgSecondary: 'rgb(252, 252, 252)',
-  bgPanel: 'rgb(247, 247, 247)',
-  avatarBg: 'rgb(235, 235, 235)',
-  chartAuthored: 'rgb(141, 116, 217)',
-  chartMerged: 'rgb(105, 184, 122)',
-  chartReviewed: 'rgb(99, 140, 219)',
-} as const;
-
-const FONT_FAMILY = 'Inter, sans-serif';
-const BORDER_RADIUS = 4;
 const WIDGET_HEADER_HEIGHT = 24;
 
 const styles = {
@@ -97,9 +81,9 @@ const styles = {
     boxSizing: 'border-box',
     padding: 12,
     gap: 12,
-    fontFamily: FONT_FAMILY,
-    color: COLORS.fontPrimary,
-    background: COLORS.bgPanel,
+    fontFamily: THEME.fontFamily,
+    color: THEME.fontPrimary,
+    background: THEME.bgSecondary,
     overflow: 'hidden',
   } as const,
   header: {
@@ -109,9 +93,9 @@ const styles = {
     gap: 8,
     flexWrap: 'wrap',
     padding: '8px 12px',
-    background: COLORS.bgPrimary,
-    border: `1px solid ${COLORS.borderLight}`,
-    borderRadius: BORDER_RADIUS,
+    background: THEME.bgPrimary,
+    border: `1px solid ${THEME.borderLight}`,
+    borderRadius: THEME.borderRadius,
     boxSizing: 'border-box',
     flexShrink: 0,
   } as const,
@@ -126,7 +110,7 @@ const styles = {
     height: 24,
     borderRadius: '50%',
     objectFit: 'cover',
-    background: COLORS.avatarBg,
+    background: THEME.bgTertiary,
     flexShrink: 0,
   } as const,
   smallAvatar: {
@@ -134,7 +118,7 @@ const styles = {
     height: 16,
     borderRadius: '50%',
     objectFit: 'cover',
-    background: COLORS.avatarBg,
+    background: THEME.bgTertiary,
     flexShrink: 0,
   } as const,
   nameCol: {
@@ -147,7 +131,7 @@ const styles = {
   name: {
     fontSize: 14,
     fontWeight: 500,
-    color: COLORS.fontPrimary,
+    color: THEME.fontPrimary,
     overflow: 'hidden',
     textOverflow: 'ellipsis',
     whiteSpace: 'nowrap',
@@ -155,7 +139,7 @@ const styles = {
   login: {
     fontSize: 12,
     fontWeight: 400,
-    color: COLORS.fontTertiary,
+    color: THEME.fontTertiary,
     overflow: 'hidden',
     textOverflow: 'ellipsis',
     whiteSpace: 'nowrap',
@@ -167,15 +151,15 @@ const styles = {
     flexWrap: 'wrap',
   } as const,
   select: {
-    fontFamily: FONT_FAMILY,
+    fontFamily: THEME.fontFamily,
     fontSize: 13,
     height: 28,
     lineHeight: '26px',
     padding: '0 24px 0 10px',
-    border: `1px solid ${COLORS.borderMedium}`,
-    borderRadius: BORDER_RADIUS,
-    background: `${COLORS.bgPrimary} url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 20 20' fill='%23999999'><path d='M10 13l-5-5h10z'/></svg>") no-repeat right 8px center`,
-    color: COLORS.fontPrimary,
+    border: `1px solid ${THEME.borderMedium}`,
+    borderRadius: THEME.borderRadius,
+    background: `${THEME.bgPrimary} url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 20 20' fill='gray'><path d='M10 13l-5-5h10z'/></svg>") no-repeat right 8px center`,
+    color: THEME.fontPrimary,
     cursor: 'pointer',
     outline: 'none',
     appearance: 'none',
@@ -183,16 +167,16 @@ const styles = {
     MozAppearance: 'none',
   } as const,
   buttonNeutral: {
-    fontFamily: FONT_FAMILY,
+    fontFamily: THEME.fontFamily,
     fontSize: 13,
     fontWeight: 500,
     height: 28,
     lineHeight: '26px',
     padding: '0 10px',
-    border: `1px solid ${COLORS.borderMedium}`,
-    borderRadius: BORDER_RADIUS,
-    background: COLORS.bgPrimary,
-    color: COLORS.fontPrimary,
+    border: `1px solid ${THEME.borderMedium}`,
+    borderRadius: THEME.borderRadius,
+    background: THEME.bgPrimary,
+    color: THEME.fontPrimary,
     cursor: 'pointer',
     outline: 'none',
   } as const,
@@ -208,10 +192,10 @@ const styles = {
     flexDirection: 'column',
     flex: 1,
     minHeight: 0,
-    border: `1px solid ${COLORS.borderLight}`,
-    borderRadius: BORDER_RADIUS,
+    border: `1px solid ${THEME.borderLight}`,
+    borderRadius: THEME.borderRadius,
     padding: 8,
-    background: COLORS.bgPrimary,
+    background: THEME.bgPrimary,
     boxSizing: 'border-box',
   } as const,
   chartHeader: {
@@ -225,7 +209,7 @@ const styles = {
   chartTitle: {
     fontSize: 13,
     fontWeight: 500,
-    color: COLORS.fontPrimary,
+    color: THEME.fontPrimary,
     overflow: 'hidden',
     textOverflow: 'ellipsis',
     whiteSpace: 'nowrap',
@@ -233,7 +217,7 @@ const styles = {
   chartTotal: {
     fontSize: 13,
     fontWeight: 500,
-    color: COLORS.fontTertiary,
+    color: THEME.fontTertiary,
     fontVariantNumeric: 'tabular-nums',
     flexShrink: 0,
   } as const,
@@ -249,7 +233,7 @@ const styles = {
     alignItems: 'center',
     justifyContent: 'center',
     flex: 1,
-    color: COLORS.fontTertiary,
+    color: THEME.fontTertiary,
     fontSize: 13,
     textAlign: 'center',
     padding: 16,
@@ -262,15 +246,15 @@ const styles = {
     minHeight: 0,
   } as const,
   searchInput: {
-    fontFamily: FONT_FAMILY,
+    fontFamily: THEME.fontFamily,
     fontSize: 13,
     height: 28,
     padding: '0 10px',
-    border: `1px solid ${COLORS.borderMedium}`,
-    borderRadius: BORDER_RADIUS,
+    border: `1px solid ${THEME.borderMedium}`,
+    borderRadius: THEME.borderRadius,
     outline: 'none',
-    background: COLORS.bgPrimary,
-    color: COLORS.fontPrimary,
+    background: THEME.bgPrimary,
+    color: THEME.fontPrimary,
   } as const,
   searchList: {
     display: 'flex',
@@ -278,9 +262,9 @@ const styles = {
     flex: 1,
     minHeight: 0,
     overflowY: 'auto',
-    border: `1px solid ${COLORS.borderLight}`,
-    borderRadius: BORDER_RADIUS,
-    background: COLORS.bgPrimary,
+    border: `1px solid ${THEME.borderLight}`,
+    borderRadius: THEME.borderRadius,
+    background: THEME.bgPrimary,
   } as const,
   searchItem: {
     display: 'flex',
@@ -288,13 +272,13 @@ const styles = {
     gap: 8,
     padding: '6px 10px',
     cursor: 'pointer',
-    borderBottom: `1px solid ${COLORS.borderLight}`,
+    borderBottom: `1px solid ${THEME.borderLight}`,
     fontSize: 13,
-    color: COLORS.fontPrimary,
+    color: THEME.fontPrimary,
   } as const,
   truncatedHint: {
     fontSize: 11,
-    color: COLORS.fontTertiary,
+    color: THEME.fontTertiary,
     marginTop: 4,
     paddingLeft: 4,
   } as const,
@@ -346,7 +330,7 @@ const BarChart = ({ buckets, valueKey, color }: BarChartProps) => {
                 bottom: `${bottomPct}%`,
                 transform: 'translateY(50%)',
                 fontSize: 10,
-                color: COLORS.fontTertiary,
+                color: THEME.fontTertiary,
                 lineHeight: 1,
                 fontVariantNumeric: 'tabular-nums',
               }}
@@ -376,7 +360,7 @@ const BarChart = ({ buckets, valueKey, color }: BarChartProps) => {
                 left: 0,
                 right: 0,
                 bottom: `${bottomPct}%`,
-                borderTop: `1px ${i === 0 ? 'solid' : 'dotted'} ${COLORS.borderLight}`,
+                borderTop: `1px ${i === 0 ? 'solid' : 'dotted'} ${THEME.borderLight}`,
                 pointerEvents: 'none',
               }}
             />
@@ -428,7 +412,7 @@ const BarChart = ({ buckets, valueKey, color }: BarChartProps) => {
                       top: '100%',
                       marginTop: 4,
                       fontSize: 10,
-                      color: COLORS.fontTertiary,
+                      color: THEME.fontTertiary,
                       whiteSpace: 'nowrap',
                       lineHeight: 1,
                       pointerEvents: 'none',
@@ -584,12 +568,12 @@ const ContributorStats = () => {
           />
           <div style={styles.searchList}>
             {searchLoading && searchResults.length === 0 && (
-              <div style={{ ...styles.searchItem, color: COLORS.fontTertiary }}>
+              <div style={{ ...styles.searchItem, color: THEME.fontTertiary }}>
                 Searching...
               </div>
             )}
             {!searchLoading && searchResults.length === 0 && (
-              <div style={{ ...styles.searchItem, color: COLORS.fontTertiary }}>
+              <div style={{ ...styles.searchItem, color: THEME.fontTertiary }}>
                 No contributors found.
               </div>
             )}
@@ -643,7 +627,7 @@ const ContributorStats = () => {
               <BarChart
                 buckets={stats.buckets}
                 valueKey="prAuthored"
-                color={COLORS.chartAuthored}
+                color={THEME.chartAuthored}
               />
               {stats.truncated.prAuthored && (
                 <span style={styles.truncatedHint}>
@@ -660,7 +644,7 @@ const ContributorStats = () => {
               <BarChart
                 buckets={stats.buckets}
                 valueKey="prMerged"
-                color={COLORS.chartMerged}
+                color={THEME.chartMerged}
               />
               {stats.truncated.prMerged && (
                 <span style={styles.truncatedHint}>
@@ -677,7 +661,7 @@ const ContributorStats = () => {
               <BarChart
                 buckets={stats.buckets}
                 valueKey="prReviewed"
-                color={COLORS.chartReviewed}
+                color={THEME.chartReviewed}
               />
               {stats.truncated.prReviewed && (
                 <span style={styles.truncatedHint}>

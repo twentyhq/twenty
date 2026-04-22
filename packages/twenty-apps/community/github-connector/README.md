@@ -9,6 +9,8 @@ table views, a dashboard page layout, logic functions for periodic syncs, an
 HTTP webhook handler, and authenticated GraphQL/REST calls against an
 external provider.
 
+![GitHub Connector marketplace listing in Settings → Apps with About / Content / Permissions / Settings tabs](public/screenshots/app-listing.png)
+
 ![GitHub Dashboard with PR / review counters, weekly histograms, and top-contributor leaderboards](public/screenshots/github-dashboard.png)
 
 ![Pull Requests view with the Fetch Pull Requests command](public/screenshots/pull-requests-view.png)
