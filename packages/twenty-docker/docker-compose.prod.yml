@@ -1,0 +1,284 @@
+# Production Stack with monitoring and optional services
+# Usage: docker compose -f docker-compose.prod.yml up -d
+#
+# Optional services (commented out by default):
+# - pgbouncer: Connection pooling for PostgreSQL
+# - prometheus: Metrics collection
+# - grafana: Metrics visualization
+# - minio: S3-compatible storage (for STORAGE_TYPE=local)
+
+name: twenty-prod
+
+services:
+  # ============================================
+  # INFRASTRUCTURE
+  # ============================================
+  db:
+    image: twentycrm/postgres:16
+    container_name: twenty-db
+    volumes:
+      - db-data:/var/lib/postgresql/data
+      - ./initdb:/docker-entrypoint-initdb.d
+    environment:
+      POSTGRES_DB: ${PG_DATABASE_NAME:-default}
+      POSTGRES_PASSWORD: ${PG_DATABASE_PASSWORD:?required}
+      POSTGRES_USER: ${PG_DATABASE_USER:-postgres}
+      POSTGRES_MAX_CONNECTIONS: "200"
+      POSTGRES_SHARED_BUFFERS: 256MB
+      POSTGRES_EFFECTIVE_CACHE_SIZE: 1GB
+      POSTGRES_MAINTENANCE_WORK_MEM: 64MB
+      POSTGRES_CHECKPOINT_COMPLETION_TARGET: 0.9
+      POSTGRES_WAL_BUFFERS: 16MB
+      POSTGRES_DEFAULT_STATISTICS_TARGET: 100
+      POSTGRES_RANDOM_PAGE_COST: 1.1
+      POSTGRES_EFFECTIVE_IO_CONCURRENCY: 200
+      POSTGRES_WORK_MEM: 4MB
+      POSTGRES_MIN_WAL_SIZE: 1GB
+      POSTGRES_MAX_WAL_SIZE: 4GB
+    ports:
+      - "${PG_PORT:-5432}:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${PG_DATABASE_USER:-postgres} -h localhost -d postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: always
+    networks:
+      - twenty-prod-network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "20m"
+        max-file: "5"
+    deploy:
+      resources:
+        limits:
+          cpus: '4'
+          memory: 8G
+        reservations:
+          cpus: '1'
+          memory: 2G
+
+  redis:
+    image: twentycrm/redis:7-alpine
+    container_name: twenty-redis
+    command: >
+      --maxmemory-policy allkeys-lru
+      --maxmemory 2gb
+      --save 900 1
+      --save 300 10
+      --save 60 10000
+      --appendonly yes
+      --appendfsync everysec
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: always
+    networks:
+      - twenty-prod-network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 2G
+        reservations:
+          cpus: '0.25'
+          memory: 256M
+
+  # ============================================
+  # APPLICATION CORE
+  # ============================================
+  server:
+    build:
+      context: ../.
+      dockerfile: packages/twenty-server/Dockerfile
+      target: server
+    image: twentycrm/twenty-server:${TAG:-latest}
+    container_name: twenty-server
+    volumes:
+      - server-storage:/app/packages/twenty-server/.local-storage
+    ports:
+      - "${SERVER_PORT:-3000}:3000"
+    environment:
+      NODE_ENV: production
+      NODE_PORT: 3000
+      PG_DATABASE_HOST: db
+      PG_DATABASE_PORT: 5432
+      PG_DATABASE_URL: postgres://${PG_DATABASE_USER:-postgres}:${PG_DATABASE_PASSWORD:?required}@db:5432/${PG_DATABASE_NAME:-default}
+      REDIS_URL: redis://redis:6379
+      STORAGE_TYPE: ${STORAGE_TYPE:-local}
+      STORAGE_LOCAL_PATH: /app/packages/twenty-server/.local-storage
+      APP_SECRET: ${APP_SECRET:?required}
+      DEBUG_MODE: "false"
+      DISABLE_DB_MIGRATIONS: "false"
+      DISABLE_CRON_JOBS_REGISTRATION: "false"
+      
+      # Performance tuning
+      WEB_CONCURRENCY: 4
+      UV_THREADPOOL_SIZE: 8
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:3000/healthz"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    restart: always
+    networks:
+      - twenty-prod-network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "10"
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          cpus: '4'
+          memory: 6G
+        reservations:
+          cpus: '1'
+          memory: 1G
+      update_config:
+        parallelism: 1
+        delay: 10s
+        order: start-first
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+
+  worker:
+    build:
+      context: ../.
+      dockerfile: packages/twenty-server/Dockerfile
+      target: worker
+    image: twentycrm/twenty-worker:${TAG:-latest}
+    container_name: twenty-worker
+    volumes:
+      - server-storage:/app/packages/twenty-server/.local-storage
+    environment:
+      NODE_ENV: production
+      PG_DATABASE_HOST: db
+      PG_DATABASE_PORT: 5432
+      PG_DATABASE_URL: postgres://${PG_DATABASE_USER:-postgres}:${PG_DATABASE_PASSWORD:?required}@db:5432/${PG_DATABASE_NAME:-default}
+      REDIS_URL: redis://redis:6379
+      STORAGE_TYPE: ${STORAGE_TYPE:-local}
+      STORAGE_LOCAL_PATH: /app/packages/twenty-server/.local-storage
+      APP_SECRET: ${APP_SECRET:?required}
+      DISABLE_DB_MIGRATIONS: "true"
+      DISABLE_CRON_JOBS_REGISTRATION: "true"
+      
+      # Worker concurrency
+      WORKER_CONCURRENCY: 4
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      server:
+        condition: service_healthy
+    restart: always
+    networks:
+      - twenty-prod-network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "10"
+    deploy:
+      replicas: 2
+      resources:
+        limits:
+          cpus: '2'
+          memory: 4G
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+
+  frontend:
+    build:
+      context: ../.
+      dockerfile: packages/twenty-front/Dockerfile
+    image: twentycrm/twenty-front:${TAG:-latest}
+    container_name: twenty-front
+    ports:
+      - "${FRONT_PORT:-4000}:3000"
+    environment:
+      NODE_ENV: production
+      VITE_API_BASE_URL: ${VITE_API_BASE_URL:-http://server:3000}
+      VITE_ENV: prod
+    depends_on:
+      - server
+    restart: always
+    networks:
+      - twenty-prod-network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "5"
+
+  # ============================================
+  # OPTIONAL: PRODUCTION EXTRAS
+  # ============================================
+  
+  # pgbouncer:
+  #   image: twentycrm/pgbouncer:latest
+  #   container_name: twenty-pgbouncer
+  #   environment:
+  #     POOL_MODE: transaction
+  #     DATABASE_URL: postgres://${PG_DATABASE_USER:-postgres}:${PG_DATABASE_PASSWORD:?required}@db:5432/${PG_DATABASE_NAME:-default}
+  #     POOL_SIZE: 25
+  #     MIN_POOL_SIZE: 10
+  #     MAX_CLIENT_CONN: 100
+  #   ports:
+  #     - "${PGBOUNCER_PORT:-6432}:5432"
+  #   depends_on:
+  #     - db
+  #   networks:
+  #     - twenty-prod-network
+
+  # prometheus:
+  #   image: prom/prometheus:latest
+  #   container_name: twenty-prometheus
+  #   volumes:
+  #     - ./prometheus.yml:/etc/prometheus/prometheus.yml
+  #     - prometheus-data:/prometheus
+  #   ports:
+  #     - "${PROMETHEUS_PORT:-9090}:9090"
+  #   networks:
+  #     - twenty-prod-network
+
+networks:
+  twenty-prod-network:
+    driver: bridge
+    name: twenty-prod
+    ipam:
+      config:
+        - subnet: 172.30.0.0/16
+
+volumes:
+  db-data:
+    name: twenty-prod-db
+  redis-data:
+    name: twenty-prod-redis
+  server-storage:
+    name: twenty-prod-storage
+  # prometheus-data:

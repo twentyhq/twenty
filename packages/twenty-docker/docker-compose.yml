@@ -1,134 +1,210 @@
 name: twenty
 
 services:
-  server:
-    image: twentycrm/twenty:${TAG:-latest}
+  # ============================================
+  # INFRASTRUCTURE CONTAINERS
+  # ============================================
+  db:
+    image: twentycrm/postgres:16
+    container_name: twenty-db
     volumes:
-      - server-local-data:/app/packages/twenty-server/.local-storage
-    ports:
-      - "3000:3000"
+      - db-data:/var/lib/postgresql/data
+      - ./initdb:/docker-entrypoint-initdb.d
     environment:
+      POSTGRES_DB: ${PG_DATABASE_NAME:-default}
+      POSTGRES_PASSWORD: ${PG_DATABASE_PASSWORD:-postgres}
+      POSTGRES_USER: ${PG_DATABASE_USER:-postgres}
+      POSTGRES_INITDB_ARGS: ${POSTGRES_INITDB_ARGS:--encoding=UTF8}
+    ports:
+      - "${PG_PORT:-5432}:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${PG_DATABASE_USER:-postgres} -h localhost -d postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: always
+    networks:
+      - twenty-network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  redis:
+    image: twentycrm/redis:7-alpine
+    container_name: twenty-redis
+    command: ["--maxmemory-policy", "noeviction", "--save", "", "--appendonly", "no"]
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: always
+    networks:
+      - twenty-network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # ============================================
+  # APPLICATION CONTAINERS
+  # ============================================
+  server:
+    build:
+      context: ../.
+      dockerfile: packages/twenty-server/Dockerfile
+      target: server
+    image: twentycrm/twenty-server:${TAG:-latest}
+    container_name: twenty-server
+    volumes:
+      - server-storage:/app/packages/twenty-server/.local-storage
+    ports:
+      - "${SERVER_PORT:-3000}:3000"
+    environment:
+      NODE_ENV: production
       NODE_PORT: 3000
-      PG_DATABASE_URL: postgres://${PG_DATABASE_USER:-postgres}:${PG_DATABASE_PASSWORD:-postgres}@${PG_DATABASE_HOST:-db}:${PG_DATABASE_PORT:-5432}/default
-      SERVER_URL: ${SERVER_URL}
-      REDIS_URL: ${REDIS_URL:-redis://redis:6379}
-      DISABLE_DB_MIGRATIONS: ${DISABLE_DB_MIGRATIONS}
-      DISABLE_CRON_JOBS_REGISTRATION: ${DISABLE_CRON_JOBS_REGISTRATION}
-
-      STORAGE_TYPE: ${STORAGE_TYPE}
-      STORAGE_S3_REGION: ${STORAGE_S3_REGION}
-      STORAGE_S3_NAME: ${STORAGE_S3_NAME}
-      STORAGE_S3_ENDPOINT: ${STORAGE_S3_ENDPOINT}
-
-      APP_SECRET: ${APP_SECRET:-replace_me_with_a_random_string}
-      # MESSAGING_PROVIDER_GMAIL_ENABLED: ${MESSAGING_PROVIDER_GMAIL_ENABLED}
-      # CALENDAR_PROVIDER_GOOGLE_ENABLED: ${CALENDAR_PROVIDER_GOOGLE_ENABLED}
-      # AUTH_GOOGLE_CLIENT_ID: ${AUTH_GOOGLE_CLIENT_ID}
-      # AUTH_GOOGLE_CLIENT_SECRET: ${AUTH_GOOGLE_CLIENT_SECRET}
-      # AUTH_GOOGLE_CALLBACK_URL: ${AUTH_GOOGLE_CALLBACK_URL}
-      # AUTH_GOOGLE_APIS_CALLBACK_URL: ${AUTH_GOOGLE_APIS_CALLBACK_URL}
-
-      # CALENDAR_PROVIDER_MICROSOFT_ENABLED: ${CALENDAR_PROVIDER_MICROSOFT_ENABLED}
-      # MESSAGING_PROVIDER_MICROSOFT_ENABLED: ${MESSAGING_PROVIDER_MICROSOFT_ENABLED}
-      # AUTH_MICROSOFT_ENABLED: ${AUTH_MICROSOFT_ENABLED}
-      # AUTH_MICROSOFT_CLIENT_ID: ${AUTH_MICROSOFT_CLIENT_ID}
-      # AUTH_MICROSOFT_CLIENT_SECRET: ${AUTH_MICROSOFT_CLIENT_SECRET}
-      # AUTH_MICROSOFT_CALLBACK_URL: ${AUTH_MICROSOFT_CALLBACK_URL}
-      # AUTH_MICROSOFT_APIS_CALLBACK_URL: ${AUTH_MICROSOFT_APIS_CALLBACK_URL}
-
-      # EMAIL_FROM_ADDRESS: ${EMAIL_FROM_ADDRESS:-contact@yourdomain.com}
-      # EMAIL_FROM_NAME: ${EMAIL_FROM_NAME:-"John from YourDomain"}
-      # EMAIL_DRIVER: ${EMAIL_DRIVER:-smtp}
-      # EMAIL_SMTP_HOST: ${EMAIL_SMTP_HOST:-smtp.gmail.com}
-      # EMAIL_SMTP_PORT: ${EMAIL_SMTP_PORT:-465}
-      # EMAIL_SMTP_USER: ${EMAIL_SMTP_USER:-}
-      # EMAIL_SMTP_PASSWORD: ${EMAIL_SMTP_PASSWORD:-}
-
+      
+      # Database
+      PG_DATABASE_HOST: db
+      PG_DATABASE_PORT: 5432
+      PG_DATABASE_URL: postgres://${PG_DATABASE_USER:-postgres}:${PG_DATABASE_PASSWORD:-postgres}@db:5432/${PG_DATABASE_NAME:-default}
+      
+      # Redis
+      REDIS_URL: redis://redis:6379
+      
+      # Storage
+      STORAGE_TYPE: ${STORAGE_TYPE:-local}
+      STORAGE_LOCAL_PATH: /app/packages/twenty-server/.local-storage
+      
+      # Security
+      APP_SECRET: ${APP_SECRET:?required}
+      
+      # Feature Flags
+      DEBUG_MODE: ${DEBUG_MODE:-false}
+      DISABLE_DB_MIGRATIONS: ${DISABLE_DB_MIGRATIONS:-false}
+      DISABLE_CRON_JOBS_REGISTRATION: ${DISABLE_CRON_JOBS_REGISTRATION:-false}
+      
     depends_on:
       db:
         condition: service_healthy
       redis:
         condition: service_healthy
     healthcheck:
-      test: curl --fail http://localhost:3000/healthz
-      interval: 5s
-      timeout: 5s
-      retries: 20
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:3000/healthz"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
     restart: always
+    networks:
+      - twenty-network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "5"
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 4G
+        reservations:
+          cpus: '0.5'
+          memory: 512M
 
   worker:
-    image: twentycrm/twenty:${TAG:-latest}
+    build:
+      context: ../.
+      dockerfile: packages/twenty-server/Dockerfile
+      target: worker
+    image: twentycrm/twenty-worker:${TAG:-latest}
+    container_name: twenty-worker
     volumes:
-      - server-local-data:/app/packages/twenty-server/.local-storage
-    command: ["yarn", "worker:prod"]
+      - server-storage:/app/packages/twenty-server/.local-storage
     environment:
-      PG_DATABASE_URL: postgres://${PG_DATABASE_USER:-postgres}:${PG_DATABASE_PASSWORD:-postgres}@${PG_DATABASE_HOST:-db}:${PG_DATABASE_PORT:-5432}/default
-      SERVER_URL: ${SERVER_URL}
-      REDIS_URL: ${REDIS_URL:-redis://redis:6379}
-      DISABLE_DB_MIGRATIONS: "true" # it already runs on the server
-      DISABLE_CRON_JOBS_REGISTRATION: "true" # it already runs on the server
-
-      STORAGE_TYPE: ${STORAGE_TYPE}
-      STORAGE_S3_REGION: ${STORAGE_S3_REGION}
-      STORAGE_S3_NAME: ${STORAGE_S3_NAME}
-      STORAGE_S3_ENDPOINT: ${STORAGE_S3_ENDPOINT}
-
-      APP_SECRET: ${APP_SECRET:-replace_me_with_a_random_string}
-      # MESSAGING_PROVIDER_GMAIL_ENABLED: ${MESSAGING_PROVIDER_GMAIL_ENABLED}
-      # CALENDAR_PROVIDER_GOOGLE_ENABLED: ${CALENDAR_PROVIDER_GOOGLE_ENABLED}
-      # AUTH_GOOGLE_CLIENT_ID: ${AUTH_GOOGLE_CLIENT_ID}
-      # AUTH_GOOGLE_CLIENT_SECRET: ${AUTH_GOOGLE_CLIENT_SECRET}
-      # AUTH_GOOGLE_CALLBACK_URL: ${AUTH_GOOGLE_CALLBACK_URL}
-      # AUTH_GOOGLE_APIS_CALLBACK_URL: ${AUTH_GOOGLE_APIS_CALLBACK_URL}
-
-      # CALENDAR_PROVIDER_MICROSOFT_ENABLED: ${CALENDAR_PROVIDER_MICROSOFT_ENABLED}
-      # MESSAGING_PROVIDER_MICROSOFT_ENABLED: ${MESSAGING_PROVIDER_MICROSOFT_ENABLED}
-      # AUTH_MICROSOFT_ENABLED: ${AUTH_MICROSOFT_ENABLED}
-      # AUTH_MICROSOFT_CLIENT_ID: ${AUTH_MICROSOFT_CLIENT_ID}
-      # AUTH_MICROSOFT_CLIENT_SECRET: ${AUTH_MICROSOFT_CLIENT_SECRET}
-      # AUTH_MICROSOFT_CALLBACK_URL: ${AUTH_MICROSOFT_CALLBACK_URL}
-      # AUTH_MICROSOFT_APIS_CALLBACK_URL: ${AUTH_MICROSOFT_APIS_CALLBACK_URL}
-
-      # EMAIL_FROM_ADDRESS: ${EMAIL_FROM_ADDRESS:-contact@yourdomain.com}
-      # EMAIL_FROM_NAME: ${EMAIL_FROM_NAME:-"John from YourDomain"}
-      # EMAIL_DRIVER: ${EMAIL_DRIVER:-smtp}
-      # EMAIL_SMTP_HOST: ${EMAIL_SMTP_HOST:-smtp.gmail.com}
-      # EMAIL_SMTP_PORT: ${EMAIL_SMTP_PORT:-465}
-      # EMAIL_SMTP_USER: ${EMAIL_SMTP_USER:-}
-      # EMAIL_SMTP_PASSWORD: ${EMAIL_SMTP_PASSWORD:-}
-
+      NODE_ENV: production
+      
+      # Database
+      PG_DATABASE_HOST: db
+      PG_DATABASE_PORT: 5432
+      PG_DATABASE_URL: postgres://${PG_DATABASE_USER:-postgres}:${PG_DATABASE_PASSWORD:-postgres}@db:5432/${PG_DATABASE_NAME:-default}
+      
+      # Redis
+      REDIS_URL: redis://redis:6379
+      
+      # Storage
+      STORAGE_TYPE: ${STORAGE_TYPE:-local}
+      STORAGE_LOCAL_PATH: /app/packages/twenty-server/.local-storage
+      
+      # Disable migrations/cron - runs in server
+      DISABLE_DB_MIGRATIONS: "true"
+      DISABLE_CRON_JOBS_REGISTRATION: "true"
+      
+      # Security
+      APP_SECRET: ${APP_SECRET:?required}
+      
     depends_on:
       db:
+        condition: service_healthy
+      redis:
         condition: service_healthy
       server:
         condition: service_healthy
     restart: always
+    networks:
+      - twenty-network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "5"
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 4G
+        reservations:
+          cpus: '0.5'
+          memory: 512M
 
-  db:
-    image: postgres:16
-    volumes:
-      - db-data:/var/lib/postgresql/data
+  frontend:
+    build:
+      context: ../.
+      dockerfile: packages/twenty-front/Dockerfile
+    image: twentycrm/twenty-front:${TAG:-latest}
+    container_name: twenty-front
+    ports:
+      - "${FRONT_PORT:-4000}:3000"
     environment:
-      POSTGRES_DB: ${PG_DATABASE_NAME:-default}
-      POSTGRES_PASSWORD: ${PG_DATABASE_PASSWORD:-postgres}
-      POSTGRES_USER: ${PG_DATABASE_USER:-postgres}
-    healthcheck:
-      test: pg_isready -U ${PG_DATABASE_USER:-postgres} -h localhost -d postgres
-      interval: 5s
-      timeout: 5s
-      retries: 10
+      NODE_ENV: production
+      VITE_API_BASE_URL: ${VITE_API_BASE_URL:-http://server:3000}
+      VITE_ENV: ${VITE_ENV:-prod}
+    depends_on:
+      - server
     restart: always
+    networks:
+      - twenty-network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "3"
 
-  redis:
-    image: redis
-    restart: always
-    command: ["--maxmemory-policy", "noeviction"]
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 5s
-      timeout: 5s
-      retries: 10
+networks:
+  twenty-network:
+    driver: bridge
+    name: twenty-backend
+    ipam:
+      config:
+        - subnet: 172.28.0.0/16
 
 volumes:
   db-data:
-  server-local-data:
+    name: twenty-db-data
+  server-storage:
+    name: twenty-server-storage

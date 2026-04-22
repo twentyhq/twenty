@@ -1,5 +1,71 @@
-.git
-.env
+# Dependencies
+node_modules
+.pnp
+.pnp.js
 **/node_modules
+
+# Build outputs
+dist
+build
+.next
+out
+.turbo
+
+# IDE
+.idea
+.vscode
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Git
+.git
+.gitignore
+
+# Test
+coverage
+.nyc_output
+
+# Documentation
+docs
+*.md
+!README.md
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment
+.env
+.env.*
+!.env.example
+packages/*/.env
+packages/*/.env.*
+
+# Nx
+.nx
 .nx/cache
-packages/twenty-server/.env
+.tmp
+
+# Development
+.dev-logs
+.dev-container
+
+# Database
+*.sql
+*.dump
+*.psql
+
+# Docker
+docker-compose.override.yml
+docker-compose.local.yml
+
+# Cache
+.cache
+.eslintcache
