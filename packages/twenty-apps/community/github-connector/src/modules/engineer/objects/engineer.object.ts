@@ -1,0 +1,94 @@
+import { defineObject, FieldType } from 'twenty-sdk/define';
+
+export const ENGINEER_UNIVERSAL_IDENTIFIER =
+  '8e9464f0-fdc9-487a-9963-c7accac0d4bb';
+
+export const ENGINEER_NAME_FIELD_UNIVERSAL_IDENTIFIER =
+  'e2e77e0e-5300-44ce-ab1c-9ad0593b5d1a';
+
+export const ENGINEER_GH_LOGIN_FIELD_UNIVERSAL_IDENTIFIER =
+  'a1d3c7b2-4e5f-4a8b-9c6d-2e1f0b3a4c5d';
+
+export const ENGINEER_GITHUB_ID_FIELD_UNIVERSAL_IDENTIFIER =
+  'f7a8b9c0-1d2e-4f3a-8b5c-6d7e8f9a0b1c';
+
+export const ENGINEER_IS_CORE_TEAM_FIELD_UNIVERSAL_IDENTIFIER =
+  '109e4800-624f-4c76-99cb-9d83d0d963b6';
+
+export const ENGINEER_AVATAR_URL_FIELD_UNIVERSAL_IDENTIFIER =
+  '450a612c-f7a3-4bba-aa36-e22339eb0720';
+
+export const ENGINEER_CONTRIBUTIONS_FIELD_UNIVERSAL_IDENTIFIER =
+  '66f73e49-6edb-48fa-812b-c3e684ef6340';
+
+export const ENGINEER_DISCORD_ID_FIELD_UNIVERSAL_IDENTIFIER =
+  'a98941e8-26e5-4960-b5e7-efd8bdbf9ef2';
+
+// Auto-generated `createdAt` system field UUID (deterministic per object).
+export const ENGINEER_CREATED_AT_FIELD_UNIVERSAL_IDENTIFIER =
+  'bb8d2a87-b41c-578b-98de-2e37dba12a14';
+
+export default defineObject({
+  universalIdentifier: ENGINEER_UNIVERSAL_IDENTIFIER,
+  nameSingular: 'engineer',
+  namePlural: 'engineers',
+  labelSingular: 'Contributor',
+  labelPlural: 'Contributors',
+  icon: 'IconUsers',
+  labelIdentifierFieldMetadataUniversalIdentifier:
+    ENGINEER_NAME_FIELD_UNIVERSAL_IDENTIFIER,
+  fields: [
+    {
+      universalIdentifier: ENGINEER_NAME_FIELD_UNIVERSAL_IDENTIFIER,
+      name: 'name',
+      type: FieldType.TEXT,
+      label: 'Name',
+      icon: 'IconUser',
+    },
+    {
+      universalIdentifier: ENGINEER_GH_LOGIN_FIELD_UNIVERSAL_IDENTIFIER,
+      name: 'ghLogin',
+      type: FieldType.TEXT,
+      label: 'GitHub Login',
+      icon: 'IconBrandGithub',
+      isUnique: true,
+    },
+    {
+      universalIdentifier: ENGINEER_GITHUB_ID_FIELD_UNIVERSAL_IDENTIFIER,
+      name: 'githubId',
+      type: FieldType.NUMBER,
+      label: 'GitHub ID',
+      icon: 'IconHash',
+    },
+    {
+      universalIdentifier: ENGINEER_IS_CORE_TEAM_FIELD_UNIVERSAL_IDENTIFIER,
+      name: 'isCoreTeam',
+      type: FieldType.BOOLEAN,
+      label: 'Core Team',
+      icon: 'IconShieldCheck',
+      defaultValue: false,
+    },
+    {
+      universalIdentifier: ENGINEER_AVATAR_URL_FIELD_UNIVERSAL_IDENTIFIER,
+      name: 'avatarUrl',
+      type: FieldType.LINKS,
+      label: 'Avatar',
+      icon: 'IconPhoto',
+    },
+    {
+      universalIdentifier: ENGINEER_CONTRIBUTIONS_FIELD_UNIVERSAL_IDENTIFIER,
+      name: 'contributions',
+      type: FieldType.NUMBER,
+      label: 'Contributions',
+      icon: 'IconTrendingUp',
+      defaultValue: 0,
+    },
+    {
+      universalIdentifier: ENGINEER_DISCORD_ID_FIELD_UNIVERSAL_IDENTIFIER,
+      name: 'discordId',
+      type: FieldType.TEXT,
+      label: 'Discord ID',
+      icon: 'IconBrandDiscord',
+    },
+  ],
+});
