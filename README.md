@@ -1,10 +1,4 @@
 <p align="center">
-  <a href="https://www.producthunt.com/products/twenty-crm?launch=twenty-2-0">
-    <img src="./packages/twenty-website/public/images/readme/product-hunt-banner.png" alt="We're live on Product Hunt — Support us" />
-  </a>
-</p>
-
-<p align="center">
   <a href="https://www.twenty.com">
     <img src="./packages/twenty-website/public/images/core/logo.svg" width="100px" alt="Twenty logo" />
   </a>
