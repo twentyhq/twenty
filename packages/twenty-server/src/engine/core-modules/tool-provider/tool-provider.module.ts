@@ -2,7 +2,6 @@ import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { RecordCrudModule } from 'src/engine/core-modules/record-crud/record-crud.module';
-import { ToolGeneratorModule } from 'src/engine/core-modules/tool-generator/tool-generator.module';
 import { TOOL_PROVIDERS } from 'src/engine/core-modules/tool-provider/constants/tool-providers.token';
 import { ActionToolProvider } from 'src/engine/core-modules/tool-provider/providers/action-tool.provider';
 import { DashboardToolProvider } from 'src/engine/core-modules/tool-provider/providers/dashboard-tool.provider';
@@ -41,7 +40,6 @@ import { ToolRegistryService } from './services/tool-registry.service';
 @Module({
   imports: [
     ToolModule,
-    ToolGeneratorModule,
     RecordCrudModule,
     AiModelsModule,
     forwardRef(() => AiAgentExecutionModule),
