@@ -13,9 +13,14 @@ type CountProjectItemsPayload = {
 };
 
 const handler = async (event: RoutePayload<CountProjectItemsPayload>) => {
-  const org = event.body?.org ?? getDefaultGithubOrg();
+  const bodyOrg = event.body?.org;
+  const org = bodyOrg && bodyOrg.length > 0 ? bodyOrg : getDefaultGithubOrg();
+
+  const bodyNumbers = event.body?.projectNumbers;
   const projectNumbers =
-    event.body?.projectNumbers ?? getGithubProjectNumbers();
+    bodyNumbers && bodyNumbers.length > 0
+      ? bodyNumbers
+      : getGithubProjectNumbers();
 
   const projects: Array<{
     projectNumber: number;

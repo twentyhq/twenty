@@ -6,10 +6,6 @@ import {
   unmountFrontComponent,
   updateProgress,
 } from 'twenty-sdk/front-component';
-import {
-  getDefaultGithubOrg,
-  getGithubProjectNumbers,
-} from 'src/modules/github/connector/config';
 import { callAppRoute } from 'src/modules/shared/call-app-route';
 
 type CountResponse = {
@@ -33,10 +29,16 @@ const FetchProjectItems = () => {
   useEffect(() => {
     const run = async () => {
       try {
-        const counts = (await callAppRoute('/github/count-project-items', {
-          org: getDefaultGithubOrg(),
-          projectNumbers: getGithubProjectNumbers(),
-        })) as CountResponse;
+        const counts = (await callAppRoute(
+          '/github/count-project-items',
+          {},
+        )) as CountResponse;
+
+        if (counts.projects.length === 0) {
+          throw new Error(
+            'No projects resolved. Set GITHUB_REPOS and GITHUB_PROJECT_NUMBERS in the application variables.',
+          );
+        }
 
         const totalPages = Math.max(counts.totalPages, 1);
         let pagesProcessed = 0;

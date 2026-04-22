@@ -6,14 +6,11 @@ import {
   unmountFrontComponent,
   updateProgress,
 } from 'twenty-sdk/front-component';
-import { getGithubRepos } from 'src/modules/github/connector/config';
 import { callAppRoute } from 'src/modules/shared/call-app-route';
 
 type CountResponse = {
-  owner: string;
-  repo: string;
-  totalCount: number;
   totalPages: number;
+  repos: Array<{ owner: string; repo: string; totalCount: number; pages: number }>;
 };
 
 type FetchPageResponse = {
@@ -31,30 +28,22 @@ const FetchContributors = () => {
   useEffect(() => {
     const run = async () => {
       try {
-        const repos = getGithubRepos();
-        if (repos.length === 0) {
+        const counts = (await callAppRoute(
+          '/github/count-contributors',
+          {},
+        )) as CountResponse;
+
+        if (counts.repos.length === 0) {
           throw new Error(
-            'GITHUB_REPOS is empty. Configure at least one `owner/repo` in the application variables.',
+            'No repos resolved. Set GITHUB_REPOS in the application variables.',
           );
         }
 
-        let totalSynced = 0;
-        let totalPages = 0;
-        const perRepo: Array<{ owner: string; repo: string; pages: number }> =
-          [];
-
-        for (const repoFullName of repos) {
-          const [owner, repo] = repoFullName.split('/');
-          const counts = (await callAppRoute('/github/count-contributors', {
-            owner,
-            repo,
-          })) as CountResponse;
-          totalPages += Math.max(counts.totalPages, 1);
-          perRepo.push({ owner, repo, pages: Math.max(counts.totalPages, 1) });
-        }
-
+        const totalPages = Math.max(counts.totalPages, 1);
         let pagesProcessed = 0;
-        for (const { owner, repo } of perRepo) {
+        let totalSynced = 0;
+
+        for (const { owner, repo } of counts.repos) {
           let cursor: string | null = null;
           let hasMore = true;
 

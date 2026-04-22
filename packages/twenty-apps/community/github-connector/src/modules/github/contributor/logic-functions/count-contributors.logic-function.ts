@@ -1,45 +1,42 @@
 import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
 import { fetchContributorCount } from 'src/modules/github/connector/graphql';
+import { getGithubRepos } from 'src/modules/github/connector/config';
 
 const PAGE_SIZE = 100;
 
 type CountContributorsPayload = {
-  owner: string;
-  repo: string;
+  repos?: string[];
 };
 
 const handler = async (event: RoutePayload<CountContributorsPayload>) => {
-  console.log('[count-contributors] Handler invoked');
-  console.log('[count-contributors] Event body:', JSON.stringify(event.body));
+  const bodyRepos = event.body?.repos;
+  const repos =
+    bodyRepos && bodyRepos.length > 0 ? bodyRepos : getGithubRepos();
 
-  const owner = event.body?.owner;
-  const repo = event.body?.repo;
-  if (!owner || !repo) {
-    return { error: 'owner and repo are required' };
+  const repoCounts: Array<{
+    owner: string;
+    repo: string;
+    totalCount: number;
+    pages: number;
+  }> = [];
+  let totalPages = 0;
+
+  for (const fullRepo of repos) {
+    const [owner, repo] = fullRepo.split('/');
+    const totalCount = await fetchContributorCount(owner, repo);
+    const pages = Math.max(Math.ceil(totalCount / PAGE_SIZE), 1);
+    repoCounts.push({ owner, repo, totalCount, pages });
+    totalPages += pages;
   }
 
-  console.log(`[count-contributors] Starting count for ${owner}/${repo}`);
-
-  const totalCount = await fetchContributorCount(owner, repo);
-  const totalPages = Math.max(Math.ceil(totalCount / PAGE_SIZE), 1);
-
-  console.log(
-    `[count-contributors] Done — ${totalCount} contributors, ${totalPages} pages`,
-  );
-
-  return {
-    owner,
-    repo,
-    totalCount,
-    totalPages,
-  };
+  return { totalPages, repos: repoCounts };
 };
 
 export default defineLogicFunction({
   universalIdentifier: 'fe0a6f00-0d63-4cb9-9b3c-1d8186181830',
   name: 'count-contributors',
   description:
-    'Counts the total contributors of a GitHub repository and returns the number of pages to fetch.',
+    'Counts contributors across configured repos and returns the per-repo page split.',
   timeoutSeconds: 30,
   handler,
   httpRouteTriggerSettings: {

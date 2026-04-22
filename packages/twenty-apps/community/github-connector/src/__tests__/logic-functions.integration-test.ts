@@ -51,16 +51,19 @@ describe('logic functions are wired up', () => {
     expect(['SUCCESS', 'ERROR']).toContain(result.status);
   });
 
-  it('count-contributors returns totalCount/totalPages and no longer includes orgMembers', async () => {
+  it('count-contributors iterates configured repos and returns the per-repo split', async () => {
     const result = await executeLogicFunction(fnIds.contributors, {
-      body: { owner: 'fixture-org', repo: 'fixture-repo' },
+      body: { repos: ['fixture-org/fixture-repo'] },
     });
     expect(['SUCCESS', 'ERROR']).toContain(result.status);
     if (result.status === 'SUCCESS') {
-      const data = result.data as Record<string, unknown>;
-      expect(typeof data.totalCount).toBe('number');
+      const data = result.data as {
+        totalPages: number;
+        repos: Array<{ owner: string; repo: string; pages: number }>;
+      };
       expect(typeof data.totalPages).toBe('number');
-      expect('orgMembers' in data).toBe(false);
+      expect(Array.isArray(data.repos)).toBe(true);
+      expect('orgMembers' in (data as Record<string, unknown>)).toBe(false);
     }
   });
 

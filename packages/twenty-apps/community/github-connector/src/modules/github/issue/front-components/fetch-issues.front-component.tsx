@@ -6,7 +6,6 @@ import {
   unmountFrontComponent,
   updateProgress,
 } from 'twenty-sdk/front-component';
-import { getGithubRepos } from 'src/modules/github/connector/config';
 import { callAppRoute } from 'src/modules/shared/call-app-route';
 import { retry } from 'src/modules/shared/retry';
 
@@ -30,9 +29,16 @@ const FetchIssues = () => {
   useEffect(() => {
     const run = async () => {
       try {
-        const counts = (await callAppRoute('/github/count-issues', {
-          repos: getGithubRepos(),
-        })) as CountResponse;
+        const counts = (await callAppRoute(
+          '/github/count-issues',
+          {},
+        )) as CountResponse;
+
+        if (counts.repos.length === 0) {
+          throw new Error(
+            'No repos resolved. Set GITHUB_REPOS in the application variables.',
+          );
+        }
 
         const totalPages = Math.max(counts.totalPages, 1);
         let pagesProcessed = 0;

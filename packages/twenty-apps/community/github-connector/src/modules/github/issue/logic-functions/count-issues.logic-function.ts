@@ -9,7 +9,9 @@ type CountIssuesPayload = {
 };
 
 const handler = async (event: RoutePayload<CountIssuesPayload>) => {
-  const repos = event.body?.repos ?? getGithubRepos();
+  const bodyRepos = event.body?.repos;
+  const repos =
+    bodyRepos && bodyRepos.length > 0 ? bodyRepos : getGithubRepos();
 
   const repoCounts: Array<{
     owner: string;
