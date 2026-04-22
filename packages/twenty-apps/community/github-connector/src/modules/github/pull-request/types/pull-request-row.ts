@@ -10,9 +10,6 @@ export type PullRequestRow = {
   mergedAt?: string | null;
   closedAt?: string | null;
   githubCreatedAt?: string | null;
-  mustBeQa?: boolean | null;
-  hasQaBeenDoneOnMain?: boolean | null;
   authorId?: string | null;
   mergerId?: string | null;
-  testerId?: string | null;
 };

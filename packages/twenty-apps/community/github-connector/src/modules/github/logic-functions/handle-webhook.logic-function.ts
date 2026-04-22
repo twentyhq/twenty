@@ -48,13 +48,9 @@ async function handlePullRequestEvent(payload: GitHubWebhookPayload) {
   const mergerId = pr.merged_by ? (idByLogin.get(pr.merged_by.login) ?? null) : null;
 
   const canonical = pullRequestFromWebhook(pr, repository.full_name);
-  const testerId =
-    canonical.state === 'MERGED' && canonical.mustBeQa
-      ? (authorId ?? mergerId)
-      : null;
 
   const [record] = await batchUpsertPullRequests([
-    { ...canonical, authorId, mergerId, testerId },
+    { ...canonical, authorId, mergerId },
   ]);
 
   return {
@@ -62,7 +58,6 @@ async function handlePullRequestEvent(payload: GitHubWebhookPayload) {
     pullRequestId: record?.id,
     action: payload.action,
     state: canonical.state,
-    mustBeQa: canonical.mustBeQa,
   };
 }
 

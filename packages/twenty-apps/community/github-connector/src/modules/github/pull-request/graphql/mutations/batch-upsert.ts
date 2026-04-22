@@ -12,10 +12,8 @@ export async function batchUpsertPullRequests(
     mergedAt: string | null;
     closedAt: string | null;
     githubCreatedAt: string | null;
-    mustBeQa: boolean;
     authorId: string | null;
     mergerId: string | null;
-    testerId?: string | null;
   }>,
 ): Promise<PullRequestRow[]> {
   return chunkedBatchCreate('createPullRequests', items, {

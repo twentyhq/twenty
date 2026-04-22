@@ -15,12 +15,6 @@ export const GITHUB_NUMBER_FIELD_UNIVERSAL_IDENTIFIER =
 export const URL_FIELD_UNIVERSAL_IDENTIFIER =
   'd4c3b2a1-6f5e-4d3c-9b8a-7f6e5d4c3b2a';
 
-export const MUST_BE_QA_FIELD_UNIVERSAL_IDENTIFIER =
-  'f6e5d4c3-8b7a-4f3e-bda0-9b8a7f6e5d4c';
-
-export const HAS_QA_BEEN_DONE_FIELD_UNIVERSAL_IDENTIFIER =
-  '7134c3c3-a449-42e9-8687-381958be0e3a';
-
 export const PR_UNIQUE_IDENTIFIER_FIELD_UNIVERSAL_IDENTIFIER =
   '23b446f8-199a-4be4-881a-a475570b9590';
 
@@ -135,22 +129,6 @@ export default defineObject({
       label: 'Unique Identifier',
       icon: 'IconFingerprint',
       isUnique: true,
-    },
-    {
-      universalIdentifier: MUST_BE_QA_FIELD_UNIVERSAL_IDENTIFIER,
-      name: 'mustBeQa',
-      type: FieldType.BOOLEAN,
-      label: 'Must be QA',
-      icon: 'IconChecklist',
-      defaultValue: false,
-    },
-    {
-      universalIdentifier: HAS_QA_BEEN_DONE_FIELD_UNIVERSAL_IDENTIFIER,
-      name: 'hasQaBeenDoneOnMain',
-      type: FieldType.BOOLEAN,
-      label: 'QA Done',
-      icon: 'IconCheck',
-      defaultValue: false,
     },
   ],
 });

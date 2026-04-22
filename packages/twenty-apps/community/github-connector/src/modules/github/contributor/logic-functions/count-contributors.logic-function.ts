@@ -4,16 +4,19 @@ import { fetchContributorCount } from 'src/modules/github/connector/graphql';
 const PAGE_SIZE = 100;
 
 type CountContributorsPayload = {
-  owner?: string;
-  repo?: string;
+  owner: string;
+  repo: string;
 };
 
 const handler = async (event: RoutePayload<CountContributorsPayload>) => {
   console.log('[count-contributors] Handler invoked');
   console.log('[count-contributors] Event body:', JSON.stringify(event.body));
 
-  const owner = event.body?.owner ?? 'twentyhq';
-  const repo = event.body?.repo ?? 'twenty';
+  const owner = event.body?.owner;
+  const repo = event.body?.repo;
+  if (!owner || !repo) {
+    return { error: 'owner and repo are required' };
+  }
 
   console.log(`[count-contributors] Starting count for ${owner}/${repo}`);
 
@@ -25,6 +28,8 @@ const handler = async (event: RoutePayload<CountContributorsPayload>) => {
   );
 
   return {
+    owner,
+    repo,
     totalCount,
     totalPages,
   };

@@ -1,10 +1,5 @@
 import type { LinksFieldValue } from 'src/modules/shared/types';
 import { toLinksField } from 'src/modules/shared/types';
-function mustBeQa(title: string): boolean {
-  const lower = title.toLowerCase().trim();
-  if (lower.includes('[no-qa]') || lower.includes('[noqa]')) return false;
-  return true;
-}
 import type { GitHubPullRequest } from 'src/modules/github/connector/types';
 import type { GqlPullRequest } from 'src/modules/github/connector/graphql';
 
@@ -19,7 +14,6 @@ export type PullRequestCanonical = {
   mergedAt: string | null;
   closedAt: string | null;
   githubCreatedAt: string | null;
-  mustBeQa: boolean;
 };
 
 export function derivePrState(
@@ -50,7 +44,6 @@ export function pullRequestFromWebhook(
     mergedAt: pr.merged_at,
     closedAt: pr.closed_at,
     githubCreatedAt: pr.created_at,
-    mustBeQa: mustBeQa(pr.title),
   };
 }
 
@@ -67,6 +60,5 @@ export function pullRequestFromGraphql(
     mergedAt: pr.mergedAt,
     closedAt: pr.closedAt,
     githubCreatedAt: pr.createdAt,
-    mustBeQa: mustBeQa(pr.title),
   };
 }

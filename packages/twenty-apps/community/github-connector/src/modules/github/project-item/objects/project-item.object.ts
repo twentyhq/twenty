@@ -38,7 +38,6 @@ enum ProjectItemPriority {
   MEDIUM = 'MEDIUM',
   HIGH = 'HIGH',
   CRITICAL = 'CRITICAL',
-  OUTAGE = 'OUTAGE',
 }
 
 export const PROJECT_ITEM_PRIORITY_FIELD_UNIVERSAL_IDENTIFIER =
@@ -161,13 +160,7 @@ export default defineObject({
           value: ProjectItemPriority.CRITICAL,
           label: 'Critical',
           position: 3,
-          color: 'gray',
-        },
-        {
-          value: ProjectItemPriority.OUTAGE,
-          label: 'Outage',
-          position: 4,
-          color: 'gray',
+          color: 'red',
         },
       ],
     },

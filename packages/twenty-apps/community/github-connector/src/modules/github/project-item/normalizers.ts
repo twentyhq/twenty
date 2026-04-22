@@ -23,7 +23,6 @@ const PRIORITY_MAP: Record<string, string> = {
   Medium: 'MEDIUM',
   High: 'HIGH',
   Critical: 'CRITICAL',
-  Outage: 'OUTAGE',
 };
 
 export type ProjectItemUpsertInput = {

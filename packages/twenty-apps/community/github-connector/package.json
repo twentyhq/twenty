@@ -14,7 +14,9 @@
   "scripts": {
     "twenty": "twenty",
     "lint": "oxlint -c .oxlintrc.json .",
-    "lint:fix": "oxlint --fix -c .oxlintrc.json ."
+    "lint:fix": "oxlint --fix -c .oxlintrc.json .",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "twenty-client-sdk": "2.0.0",
@@ -27,6 +29,7 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "typescript": "^5.9.3",
-    "vite-tsconfig-paths": "^4.2.1"
+    "vite-tsconfig-paths": "^4.2.1",
+    "vitest": "^3.1.1"
   }
 }
