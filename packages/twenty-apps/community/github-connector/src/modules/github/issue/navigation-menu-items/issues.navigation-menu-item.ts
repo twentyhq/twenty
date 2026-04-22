@@ -1,11 +1,11 @@
 import { defineNavigationMenuItem, NavigationMenuItemType } from 'twenty-sdk/define';
-import { PROJECT_ITEM_UNIVERSAL_IDENTIFIER } from 'src/modules/github/project-item/objects/project-item.object';
+import { ISSUE_UNIVERSAL_IDENTIFIER } from 'src/modules/github/issue/objects/issue.object';
 import { GITHUB_FOLDER_UNIVERSAL_IDENTIFIER } from 'src/modules/github/navigation-menu-items/github-folder.navigation-menu-item';
 
 export default defineNavigationMenuItem({
-  universalIdentifier: '25d3a916-9a70-478f-8d83-ef336e582fbc',
-  position: 2,
+  universalIdentifier: '7c4f8e1a-3b9d-4f2e-8a6c-1d5b7e9f3a2c',
+  position: 1,
   type: NavigationMenuItemType.OBJECT,
-  targetObjectUniversalIdentifier: PROJECT_ITEM_UNIVERSAL_IDENTIFIER,
+  targetObjectUniversalIdentifier: ISSUE_UNIVERSAL_IDENTIFIER,
   folderUniversalIdentifier: GITHUB_FOLDER_UNIVERSAL_IDENTIFIER,
 });
