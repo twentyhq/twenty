@@ -106,6 +106,15 @@ export class AgentChatResolver {
     });
   }
 
+  @Mutation(() => Boolean)
+  @RequireFeatureFlag(FeatureFlagKey.IS_AI_ENABLED)
+  async deleteChatThread(
+    @Args('id', { type: () => UUIDScalarType }) id: string,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
+  ): Promise<boolean> {
+    return this.agentChatService.deleteThread(id, userWorkspaceId);
+  }
+
   @Mutation(() => SendChatMessageResultDTO)
   async sendChatMessage(
     @Args('threadId', { type: () => UUIDScalarType }) threadId: string,

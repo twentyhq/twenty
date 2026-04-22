@@ -105,6 +105,44 @@ export class AgentChatService {
     return thread;
   }
 
+  async deleteThread(
+    threadId: string,
+    userWorkspaceId: string,
+  ): Promise<boolean> {
+    // Ownership check — throws AiException if missing. Capture the entity
+    // so we can attach a `before` payload to the broadcast event below.
+    const thread = await this.getThreadById(threadId, userWorkspaceId);
+
+    // Cascades to agentMessage, agentMessagePart, agentTurn via FK constraints.
+    const result = await this.threadRepository.delete({
+      id: threadId,
+      userWorkspaceId,
+    });
+
+    const deleted = (result.affected ?? 0) > 0;
+
+    if (deleted) {
+      // Mirror createThread / generateTitleIfNeeded so other connected
+      // clients evict the thread from their cache without a refetch.
+      await this.workspaceEventBroadcaster.broadcast({
+        workspaceId: thread.workspaceId,
+        events: [
+          {
+            type: 'deleted',
+            entityName: 'agentChatThread',
+            recordId: threadId,
+            recipientUserWorkspaceIds: [userWorkspaceId],
+            properties: {
+              before: serializeThreadForBroadcast(thread),
+            },
+          },
+        ],
+      });
+    }
+
+    return deleted;
+  }
+
   async addMessage({
     threadId,
     uiMessage,
