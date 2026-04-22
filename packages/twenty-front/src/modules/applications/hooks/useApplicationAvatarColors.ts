@@ -1,9 +1,9 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useContext } from 'react';
+import { ThemeContext } from '@ui/theme-constants';
 import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
-import { ThemeContext } from 'twenty-ui/theme-constants';
 
 export type ApplicationAvatarColors = {
   color: string;
@@ -22,11 +22,11 @@ const STANDARD_APPLICATION_AVATAR_COLORS: ApplicationAvatarColors = {
   // which is Radix's pure blue and not Twenty's `theme.color.blue*` tokens
   // (those map to the indigo palette).
   // oxlint-disable-next-line twenty/no-hardcoded-colors
-  backgroundColor: '#CEE7FE',
+  backgroundColor: '#E6F4FE',
   // oxlint-disable-next-line twenty/no-hardcoded-colors
-  borderColor: '#B7D9F8',
+  borderColor: '#D5EFFF',
   // oxlint-disable-next-line twenty/no-hardcoded-colors
-  color: '#113264',
+  color: '#0090FF',
 };
 
 export const useApplicationAvatarColors = (
@@ -54,9 +54,9 @@ export const useApplicationAvatarColors = (
 
   if (isCustom) {
     return {
-      backgroundColor: theme.color.orange5,
-      borderColor: theme.color.orange6,
-      color: theme.color.orange12,
+      backgroundColor: theme.color.orange3,
+      borderColor: theme.color.orange4,
+      color: theme.color.orange9,
     };
   }
 

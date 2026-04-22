@@ -8,6 +8,7 @@ import { Tag } from 'twenty-ui/components';
 import { Avatar, OverflowingTextWithTooltip } from 'twenty-ui/display';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type ApplicationWithoutRelation } from '~/pages/settings/applications/types/applicationWithoutRelation';
+import { getApplicationDescriptionSummary } from '~/pages/settings/applications/utils/getApplicationDescriptionSummary';
 
 export type SettingsApplicationTableRowProps = {
   action: ReactNode;
@@ -26,6 +27,9 @@ export const SettingsApplicationTableRow = ({
   link,
 }: SettingsApplicationTableRowProps) => {
   const colors = useApplicationAvatarColors(application);
+  const descriptionSummary = getApplicationDescriptionSummary(
+    application.description,
+  );
 
   return (
     <TableRow
@@ -53,7 +57,7 @@ export const SettingsApplicationTableRow = ({
         <OverflowingTextWithTooltip text={application.name} />
       </TableCell>
       <TableCell gap={themeCssVariables.spacing[2]} minWidth="0">
-        <OverflowingTextWithTooltip text={application.description} />
+        <OverflowingTextWithTooltip text={descriptionSummary} />
         {hasUpdate === true && (
           <Tag color="blue" text={t`Update`} weight="medium" />
         )}

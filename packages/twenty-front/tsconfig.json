@@ -22,6 +22,7 @@
     "outDir": "../../.cache/tsc",
     "paths": {
       "@/*": ["./src/modules/*"],
+      "@ui/*": ["../twenty-ui/src/*"],
       "~/*": ["./src/*"]
     },
     "types": ["node", "jest"],

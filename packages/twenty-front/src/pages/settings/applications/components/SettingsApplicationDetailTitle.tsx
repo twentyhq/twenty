@@ -4,6 +4,7 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { Avatar, IconEyeOff } from 'twenty-ui/display';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { getApplicationDescriptionSummary } from '~/pages/settings/applications/utils/getApplicationDescriptionSummary';
 
 type SettingsApplicationDetailTitleProps = {
   displayName: string;
@@ -37,7 +38,7 @@ const StyledHeaderLeft = styled.div`
 const StyledHeaderTop = styled.div`
   align-items: center;
   display: flex;
-  gap: ${themeCssVariables.spacing[2]};
+  gap: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledAppName = styled.div`
@@ -82,6 +83,7 @@ export const SettingsApplicationDetailTitle = ({
     name: applicationName,
     universalIdentifier,
   });
+  const descriptionSummary = getApplicationDescriptionSummary(description);
 
   return (
     <StyledTitleContainer>
@@ -106,8 +108,8 @@ export const SettingsApplicationDetailTitle = ({
             />
             <StyledAppName>{displayName}</StyledAppName>
           </StyledHeaderTop>
-          {description && (
-            <StyledAppDescription>{description}</StyledAppDescription>
+          {descriptionSummary && (
+            <StyledAppDescription>{descriptionSummary}</StyledAppDescription>
           )}
         </StyledHeaderLeft>
       </StyledHeader>

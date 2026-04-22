@@ -248,6 +248,7 @@ export default defineConfig(({ mode }) => {
     },
     resolve: {
       alias: {
+        '@ui/': path.resolve(__dirname, '../twenty-ui/src') + '/',
         path: 'rollup-plugin-node-polyfills/polyfills/path',
       },
     },
