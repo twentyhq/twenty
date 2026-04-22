@@ -1,11 +1,6 @@
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
-type AnyClient = {
-  query: (q: Record<string, unknown>) => Promise<Record<string, unknown>>;
-  mutation: (m: Record<string, unknown>) => Promise<Record<string, unknown>>;
-};
-
-export const getClient = () => new CoreApiClient() as unknown as AnyClient;
+export const getClient = () => new CoreApiClient();
 
 const BATCH_CHUNK_SIZE = 50;
 

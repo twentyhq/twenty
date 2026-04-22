@@ -185,18 +185,7 @@ const fetchContributorInfo = async (
       },
     },
   });
-  const edges =
-    (res.contributors as {
-      edges?: {
-        node: {
-          id: string;
-          name: string | null;
-          ghLogin: string | null;
-          avatarUrl: { primaryLinkUrl: string | null } | null;
-        };
-      }[];
-    } | undefined)?.edges ?? [];
-  const node = edges[0]?.node;
+  const node = res.contributors?.edges?.[0]?.node;
   if (!node) return null;
   return {
     id: node.id,

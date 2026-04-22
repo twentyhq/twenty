@@ -1,7 +1,7 @@
 import type { LinksFieldValue } from 'src/modules/shared/types';
 import { toLinksField } from 'src/modules/shared/types';
-import type { GitHubPullRequest } from 'src/modules/github/connector/types';
-import type { GqlPullRequest } from 'src/modules/github/connector/graphql';
+import type { GitHubPullRequest } from 'src/modules/github/pull-request/types/github-pull-request';
+import type { GqlPullRequest } from 'src/modules/github/pull-request/graphql/github/fetch-pull-requests';
 
 export type PullRequestState = 'OPEN' | 'CLOSED' | 'MERGED';
 

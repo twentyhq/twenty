@@ -4,13 +4,18 @@ import {
   ObjectRecordGroupByDateGranularity,
   PageLayoutTabLayoutMode,
 } from 'twenty-sdk/define';
+import { TOP_PR_AUTHORS_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER } from 'src/modules/github/contributor/front-components/top-pr-authors.front-component';
+import { TOP_REVIEWERS_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER } from 'src/modules/github/contributor/front-components/top-reviewers.front-component';
 import {
-  CONTRIBUTOR_CONTRIBUTIONS_FIELD_UNIVERSAL_IDENTIFIER,
-  CONTRIBUTOR_GH_LOGIN_FIELD_UNIVERSAL_IDENTIFIER,
-  CONTRIBUTOR_UNIVERSAL_IDENTIFIER,
-} from 'src/modules/github/contributor/objects/contributor.object';
+  ISSUE_GITHUB_CREATED_AT_FIELD_UNIVERSAL_IDENTIFIER,
+  ISSUE_STATE_FIELD_UNIVERSAL_IDENTIFIER,
+  ISSUE_TITLE_FIELD_UNIVERSAL_IDENTIFIER,
+  ISSUE_UNIVERSAL_IDENTIFIER,
+} from 'src/modules/github/issue/objects/issue.object';
 import {
   MERGED_AT_FIELD_UNIVERSAL_IDENTIFIER,
+  PR_GITHUB_CREATED_AT_FIELD_UNIVERSAL_IDENTIFIER,
+  PR_STATE_FIELD_UNIVERSAL_IDENTIFIER,
   PULL_REQUEST_NAME_FIELD_UNIVERSAL_IDENTIFIER,
   PULL_REQUEST_UNIVERSAL_IDENTIFIER,
 } from 'src/modules/github/pull-request/objects/pull-request.object';
@@ -24,6 +29,15 @@ export const GITHUB_DASHBOARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER =
   'a8d2f1c4-7b69-4e3a-8c5d-9f6b1a3e7c2d';
 
 const THIS_WEEK_RELATIVE = 'THIS_1_WEEK;;UTC;;SUNDAY;;';
+
+const COMMON = {
+  timezone: 'UTC',
+  firstDayOfTheWeek: 0,
+};
+
+const COL_1 = { column: 0, columnSpan: 3 } as const;
+const COL_2 = { column: 3, columnSpan: 5 } as const;
+const COL_3 = { column: 8, columnSpan: 4 } as const;
 
 export default definePageLayout({
   universalIdentifier: GITHUB_DASHBOARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER,
@@ -42,7 +56,7 @@ export default definePageLayout({
           title: 'PRs Merged This Week',
           type: 'GRAPH',
           objectUniversalIdentifier: PULL_REQUEST_UNIVERSAL_IDENTIFIER,
-          gridPosition: { row: 0, column: 0, rowSpan: 2, columnSpan: 4 },
+          gridPosition: { row: 0, ...COL_1, rowSpan: 3 },
           configuration: {
             configurationType: 'AGGREGATE_CHART',
             aggregateFieldMetadataUniversalIdentifier:
@@ -51,8 +65,7 @@ export default definePageLayout({
             label: 'PRs Merged',
             color: 'green',
             displayDataLabel: false,
-            timezone: 'UTC',
-            firstDayOfTheWeek: 0,
+            ...COMMON,
             filter: {
               recordFilters: [
                 {
@@ -71,7 +84,7 @@ export default definePageLayout({
           title: 'PR Reviews This Week',
           type: 'GRAPH',
           objectUniversalIdentifier: PULL_REQUEST_REVIEW_UNIVERSAL_IDENTIFIER,
-          gridPosition: { row: 0, column: 4, rowSpan: 2, columnSpan: 4 },
+          gridPosition: { row: 3, ...COL_1, rowSpan: 3 },
           configuration: {
             configurationType: 'AGGREGATE_CHART',
             aggregateFieldMetadataUniversalIdentifier:
@@ -80,8 +93,7 @@ export default definePageLayout({
             label: 'Reviews',
             color: 'blue',
             displayDataLabel: false,
-            timezone: 'UTC',
-            firstDayOfTheWeek: 0,
+            ...COMMON,
             filter: {
               recordFilters: [
                 {
@@ -96,11 +108,86 @@ export default definePageLayout({
           },
         },
         {
+          universalIdentifier: '8d4e9d09-29b0-4925-8fcc-aedf5bcecb37',
+          title: 'PRs Opened This Week',
+          type: 'GRAPH',
+          objectUniversalIdentifier: PULL_REQUEST_UNIVERSAL_IDENTIFIER,
+          gridPosition: { row: 6, ...COL_1, rowSpan: 3 },
+          configuration: {
+            configurationType: 'AGGREGATE_CHART',
+            aggregateFieldMetadataUniversalIdentifier:
+              PULL_REQUEST_NAME_FIELD_UNIVERSAL_IDENTIFIER,
+            aggregateOperation: AggregateOperations.COUNT,
+            label: 'PRs Opened',
+            color: 'purple',
+            displayDataLabel: false,
+            ...COMMON,
+            filter: {
+              recordFilters: [
+                {
+                  fieldMetadataUniversalIdentifier:
+                    PR_GITHUB_CREATED_AT_FIELD_UNIVERSAL_IDENTIFIER,
+                  operand: 'IS_RELATIVE',
+                  value: THIS_WEEK_RELATIVE,
+                  type: 'DATE_TIME',
+                },
+              ],
+            },
+          },
+        },
+        {
+          universalIdentifier: '3c321867-0227-4535-81db-c64a6f673d86',
+          title: 'Issues Opened This Week',
+          type: 'GRAPH',
+          objectUniversalIdentifier: ISSUE_UNIVERSAL_IDENTIFIER,
+          gridPosition: { row: 9, ...COL_1, rowSpan: 3 },
+          configuration: {
+            configurationType: 'AGGREGATE_CHART',
+            aggregateFieldMetadataUniversalIdentifier:
+              ISSUE_TITLE_FIELD_UNIVERSAL_IDENTIFIER,
+            aggregateOperation: AggregateOperations.COUNT,
+            label: 'Issues Opened',
+            color: 'orange',
+            displayDataLabel: false,
+            ...COMMON,
+            filter: {
+              recordFilters: [
+                {
+                  fieldMetadataUniversalIdentifier:
+                    ISSUE_GITHUB_CREATED_AT_FIELD_UNIVERSAL_IDENTIFIER,
+                  operand: 'IS_RELATIVE',
+                  value: THIS_WEEK_RELATIVE,
+                  type: 'DATE_TIME',
+                },
+              ],
+            },
+          },
+        },
+        {
+          universalIdentifier: '704209be-9174-43a8-ae51-6b11fff20e22',
+          title: 'PRs by State',
+          type: 'GRAPH',
+          objectUniversalIdentifier: PULL_REQUEST_UNIVERSAL_IDENTIFIER,
+          gridPosition: { row: 12, ...COL_1, rowSpan: 6 },
+          configuration: {
+            configurationType: 'PIE_CHART',
+            aggregateFieldMetadataUniversalIdentifier:
+              PULL_REQUEST_NAME_FIELD_UNIVERSAL_IDENTIFIER,
+            aggregateOperation: AggregateOperations.COUNT,
+            groupByFieldMetadataUniversalIdentifier:
+              PR_STATE_FIELD_UNIVERSAL_IDENTIFIER,
+            displayLegend: true,
+            showCenterMetric: true,
+            hideEmptyCategory: true,
+            ...COMMON,
+          },
+        },
+        {
           universalIdentifier: 'c1f2a3b4-d5e6-4789-a0b1-c2d3e4f5a6b7',
           title: 'PRs Merged per Week',
           type: 'GRAPH',
           objectUniversalIdentifier: PULL_REQUEST_UNIVERSAL_IDENTIFIER,
-          gridPosition: { row: 2, column: 0, rowSpan: 8, columnSpan: 6 },
+          gridPosition: { row: 0, ...COL_2, rowSpan: 6 },
           configuration: {
             configurationType: 'BAR_CHART',
             aggregateFieldMetadataUniversalIdentifier:
@@ -114,8 +201,8 @@ export default definePageLayout({
             displayLegend: false,
             color: 'green',
             layout: 'VERTICAL',
-            timezone: 'UTC',
-            firstDayOfTheWeek: 0,
+            omitNullValues: true,
+            ...COMMON,
           },
         },
         {
@@ -123,7 +210,7 @@ export default definePageLayout({
           title: 'PR Reviews per Week',
           type: 'GRAPH',
           objectUniversalIdentifier: PULL_REQUEST_REVIEW_UNIVERSAL_IDENTIFIER,
-          gridPosition: { row: 2, column: 6, rowSpan: 8, columnSpan: 6 },
+          gridPosition: { row: 6, ...COL_2, rowSpan: 6 },
           configuration: {
             configurationType: 'BAR_CHART',
             aggregateFieldMetadataUniversalIdentifier:
@@ -137,31 +224,55 @@ export default definePageLayout({
             displayLegend: false,
             color: 'blue',
             layout: 'VERTICAL',
-            timezone: 'UTC',
-            firstDayOfTheWeek: 0,
+            omitNullValues: true,
+            ...COMMON,
           },
         },
         {
-          universalIdentifier: 'e3f4a5b6-c7d8-4901-b2c3-d4e5f6a7b8c9',
-          title: 'Top Contributors',
+          universalIdentifier: '6d03cbd1-ee03-4bf4-a3ac-143d03fa7fd9',
+          title: 'Issues per Week',
           type: 'GRAPH',
-          objectUniversalIdentifier: CONTRIBUTOR_UNIVERSAL_IDENTIFIER,
-          gridPosition: { row: 10, column: 0, rowSpan: 8, columnSpan: 12 },
+          objectUniversalIdentifier: ISSUE_UNIVERSAL_IDENTIFIER,
+          gridPosition: { row: 12, ...COL_2, rowSpan: 6 },
           configuration: {
             configurationType: 'BAR_CHART',
             aggregateFieldMetadataUniversalIdentifier:
-              CONTRIBUTOR_CONTRIBUTIONS_FIELD_UNIVERSAL_IDENTIFIER,
-            aggregateOperation: AggregateOperations.SUM,
+              ISSUE_TITLE_FIELD_UNIVERSAL_IDENTIFIER,
+            aggregateOperation: AggregateOperations.COUNT,
             primaryAxisGroupByFieldMetadataUniversalIdentifier:
-              CONTRIBUTOR_GH_LOGIN_FIELD_UNIVERSAL_IDENTIFIER,
-            primaryAxisOrderBy: 'VALUE_DESC',
-            displayDataLabel: true,
-            displayLegend: false,
-            color: 'purple',
-            layout: 'HORIZONTAL',
+              ISSUE_GITHUB_CREATED_AT_FIELD_UNIVERSAL_IDENTIFIER,
+            primaryAxisDateGranularity:
+              ObjectRecordGroupByDateGranularity.WEEK,
+            secondaryAxisGroupByFieldMetadataUniversalIdentifier:
+              ISSUE_STATE_FIELD_UNIVERSAL_IDENTIFIER,
+            displayDataLabel: false,
+            displayLegend: true,
+            color: 'orange',
+            layout: 'VERTICAL',
             omitNullValues: true,
-            timezone: 'UTC',
-            firstDayOfTheWeek: 0,
+            ...COMMON,
+          },
+        },
+        {
+          universalIdentifier: '7b3e9c4a-1d52-4f8b-ac76-3e5b8d2f1a9c',
+          title: 'Top PR Authors',
+          type: 'FRONT_COMPONENT',
+          gridPosition: { row: 0, ...COL_3, rowSpan: 9 },
+          configuration: {
+            configurationType: 'FRONT_COMPONENT',
+            frontComponentUniversalIdentifier:
+              TOP_PR_AUTHORS_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
+          },
+        },
+        {
+          universalIdentifier: '5e4a8c1d-7f93-4b2e-9d6c-3a8f1b5e7d4c',
+          title: 'Top Reviewers',
+          type: 'FRONT_COMPONENT',
+          gridPosition: { row: 9, ...COL_3, rowSpan: 9 },
+          configuration: {
+            configurationType: 'FRONT_COMPONENT',
+            frontComponentUniversalIdentifier:
+              TOP_REVIEWERS_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
           },
         },
       ],

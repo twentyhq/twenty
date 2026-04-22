@@ -1,10 +1,10 @@
 import type { LinksFieldValue } from 'src/modules/shared/types';
 import { toLinksField } from 'src/modules/shared/types';
-import type { ProjectV2Item } from 'src/modules/github/connector/types';
+import type { ProjectV2Item } from 'src/modules/github/project-item/types/project-v2-item';
 import {
   extractFieldValue,
   extractAssigneeLogins,
-} from 'src/modules/github/connector/graphql';
+} from 'src/modules/github/project-item/utils/extract-field-value';
 import { findIssueByNumberAndRepo } from 'src/modules/github/issue/graphql/queries/find-by-number-and-repo';
 import {
   findPullRequestByGithubNumber,

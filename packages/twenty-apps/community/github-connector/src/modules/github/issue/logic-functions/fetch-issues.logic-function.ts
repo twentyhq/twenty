@@ -1,8 +1,8 @@
 import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
 import {
-  fetchIssuesGraphQL,
+  fetchIssues,
   type GqlIssue,
-} from 'src/modules/github/connector/graphql';
+} from 'src/modules/github/issue/graphql/github/fetch-issues';
 import { batchUpsertContributors } from 'src/modules/github/contributor/graphql/mutations/batch-upsert';
 import { batchUpsertIssues } from 'src/modules/github/issue/graphql/mutations/batch-upsert';
 import { dedupeContributors } from 'src/modules/github/contributor/normalizers';
@@ -38,7 +38,7 @@ const handler = async (event: RoutePayload<FetchIssuesPayload>) => {
     fixturePage && isFixtureAllowed()
       ? fixturePage
       : await timed(`fetch-issues:github ${tag}`, () =>
-          fetchIssuesGraphQL(owner, repo, cursor),
+          fetchIssues(owner, repo, cursor),
         );
   const { issues, totalCount, hasMore, endCursor } = result;
 

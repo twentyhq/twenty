@@ -1,8 +1,8 @@
 import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
 import {
-  fetchContributorsGraphQL,
+  fetchContributors,
   type GqlContributor,
-} from 'src/modules/github/connector/graphql';
+} from 'src/modules/github/contributor/graphql/github/fetch-contributors';
 import { batchUpsertContributors } from 'src/modules/github/contributor/graphql/mutations/batch-upsert';
 import { isFixtureAllowed } from 'src/modules/shared/fixtures';
 
@@ -29,7 +29,7 @@ const handler = async (event: RoutePayload<FetchContributorsPayload>) => {
   const result =
     fixturePage && isFixtureAllowed()
       ? fixturePage
-      : await fetchContributorsGraphQL(owner, repo, cursor);
+      : await fetchContributors(owner, repo, cursor);
   const { contributors, totalCount, hasMore, endCursor } = result;
 
   if (contributors.length === 0) {

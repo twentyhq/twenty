@@ -1,7 +1,7 @@
-const getEnv = (key: string): string | undefined =>
-  (globalThis as { process?: { env?: Record<string, string> } }).process?.env?.[
-    key
-  ];
+const getEnv = (key: string): string | undefined => {
+  if (typeof process === 'undefined') return undefined;
+  return process.env?.[key];
+};
 
 type ErrorResponse = {
   messages?: string[];

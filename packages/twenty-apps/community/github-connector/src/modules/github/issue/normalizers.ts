@@ -1,7 +1,7 @@
 import type { LinksFieldValue } from 'src/modules/shared/types';
 import { toLinksField } from 'src/modules/shared/types';
-import type { GitHubIssue } from 'src/modules/github/connector/types';
-import type { GqlIssue } from 'src/modules/github/connector/graphql';
+import type { GitHubIssue } from 'src/modules/github/issue/types/github-issue';
+import type { GqlIssue } from 'src/modules/github/issue/graphql/github/fetch-issues';
 
 export type IssueState = 'OPEN' | 'CLOSED';
 

@@ -22,6 +22,6 @@ export async function findContributorByGhLogin(
     },
   });
 
-  const edges = (res.contributors as { edges: { node: ContributorRow }[] })?.edges;
-  return edges?.[0]?.node ?? null;
+  const edges = res.contributors?.edges;
+  return (edges?.[0]?.node as ContributorRow | undefined) ?? null;
 }

@@ -1,4 +1,4 @@
-import type { GitHubReview } from 'src/modules/github/connector/types';
+import type { GitHubReview } from 'src/modules/github/pull-request-review-event/types/github-review';
 
 export type ReviewEventState =
   | 'APPROVED'

@@ -1,8 +1,8 @@
 import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
 import {
-  fetchPullRequestsGraphQL,
+  fetchPullRequests,
   type GqlPullRequest,
-} from 'src/modules/github/connector/graphql';
+} from 'src/modules/github/pull-request/graphql/github/fetch-pull-requests';
 import { batchUpsertContributors } from 'src/modules/github/contributor/graphql/mutations/batch-upsert';
 import { batchUpsertPullRequests } from 'src/modules/github/pull-request/graphql/mutations/batch-upsert';
 import { batchUpsertReviewEvents } from 'src/modules/github/pull-request-review-event/graphql/mutations/batch-upsert';
@@ -10,7 +10,10 @@ import { batchUpsertConsolidatedReviews } from 'src/modules/github/pull-request-
 import { buildConsolidatedRow } from 'src/modules/github/pull-request-review/utils/build-consolidated-row';
 import { dedupeContributors } from 'src/modules/github/contributor/normalizers';
 import { pullRequestFromGraphql } from 'src/modules/github/pull-request/normalizers';
-import { reviewEventFromGraphql } from 'src/modules/github/pull-request-review-event/normalizers';
+import {
+  reviewEventFromGraphql,
+  type ReviewEventState,
+} from 'src/modules/github/pull-request-review-event/normalizers';
 import { timed } from 'src/modules/shared/timing';
 import { isFixtureAllowed } from 'src/modules/shared/fixtures';
 
@@ -42,7 +45,7 @@ const handler = async (event: RoutePayload<FetchPrsPayload>) => {
     fixturePage && isFixtureAllowed()
       ? fixturePage
       : await timed(`fetch-prs:github ${tag}`, () =>
-          fetchPullRequestsGraphQL(owner, repo, cursor),
+          fetchPullRequests(owner, repo, cursor),
         );
   const { prs, totalCount, hasMore, endCursor } = result;
 
@@ -100,7 +103,7 @@ const handler = async (event: RoutePayload<FetchPrsPayload>) => {
     reviewerId: string | null;
     prNumber: number;
     reviewerLogin: string | null;
-    events: { state: string; submittedAt: string | null }[];
+    events: { state: ReviewEventState; submittedAt: string | null }[];
   };
 
   let skippedReviews = 0;
@@ -166,7 +169,7 @@ const handler = async (event: RoutePayload<FetchPrsPayload>) => {
         reviewerId: group.reviewerId,
         prNumber: group.prNumber,
         reviewerLogin: group.reviewerLogin,
-        events: group.events as { state: 'APPROVED' | 'CHANGES_REQUESTED' | 'COMMENTED' | 'DISMISSED'; submittedAt: string | null }[],
+        events: group.events,
       }),
     );
     const consolidatedRecords = await timed(

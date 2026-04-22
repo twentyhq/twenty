@@ -1,9 +1,9 @@
 import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
-import { fetchProjectItemCount } from 'src/modules/github/connector/graphql';
 import {
   getGithubProjects,
   type GithubProject,
 } from 'src/modules/github/connector/config';
+import { countProjectItems } from 'src/modules/github/project-item/graphql/github/count-project-items';
 
 const PAGE_SIZE = 100;
 
@@ -23,7 +23,7 @@ const handler = async (event: RoutePayload<CountProjectItemsPayload>) => {
   let totalPages = 0;
 
   for (const { owner, number } of projects) {
-    const totalCount = await fetchProjectItemCount(owner, number);
+    const totalCount = await countProjectItems(owner, number);
     const pages = Math.max(Math.ceil(totalCount / PAGE_SIZE), 1);
     results.push({ owner, number, totalCount, pages });
     totalPages += pages;

@@ -44,22 +44,21 @@ type SearchResponse = {
   contributors: ContributorInfo[];
 };
 
-type SerializedFormEvent = {
-  detail?: { value?: string; checked?: boolean };
-  value?: string;
-};
-const readSerializedValue = (e: SerializedFormEvent): string | undefined => {
-  if (typeof e?.detail?.value === 'string') return e.detail.value;
-  if (typeof e?.value === 'string') return e.value;
+const readSerializedValue = (
+  e: React.SyntheticEvent<HTMLElement>,
+): string | undefined => {
+  const obj = e as { detail?: { value?: string }; value?: string };
+  if (typeof obj.detail?.value === 'string') return obj.detail.value;
+  if (typeof obj.value === 'string') return obj.value;
   return undefined;
 };
+
 const onValueChange =
   (fn: (value: string) => void) =>
-  ((e: SerializedFormEvent) => {
+  (e: React.SyntheticEvent<HTMLElement>) => {
     const v = readSerializedValue(e);
     if (typeof v === 'string') fn(v);
-  }) as unknown as React.ChangeEventHandler<HTMLElement> &
-    React.FormEventHandler<HTMLElement>;
+  };
 
 const PERIOD_OPTIONS: Array<{ value: Period; label: string }> = [
   { value: 'week', label: 'Last week' },
@@ -69,26 +68,24 @@ const PERIOD_OPTIONS: Array<{ value: Period; label: string }> = [
 ];
 
 const COLORS = {
-  bg: '#F3F2F2',
-  surface: '#FFFFFF',
-  fg: '#181818',
-  textLabel: '#3E3E3C',
-  textWeak: '#444444',
-  muted: '#706E6B',
-  border: '#DDDBDA',
-  borderStrong: '#C9C7C5',
-  shadow: '0 2px 2px 0 rgba(0,0,0,0.10)',
-  brand: '#0176D3',
-  brandDark: '#014486',
-  focus: '#1B96FF',
-  authored: '#9050E9',
-  merged: '#04844B',
-  reviewed: '#0176D3',
-  gridline: '#ECEBEA',
+  fontPrimary: 'rgb(51, 51, 51)',
+  fontSecondary: 'rgb(102, 102, 102)',
+  fontTertiary: 'rgb(153, 153, 153)',
+  fontLight: 'rgb(179, 179, 179)',
+  borderLight: 'rgb(241, 241, 241)',
+  borderMedium: 'rgb(229, 229, 229)',
+  bgPrimary: 'rgb(255, 255, 255)',
+  bgSecondary: 'rgb(252, 252, 252)',
+  bgPanel: 'rgb(247, 247, 247)',
+  avatarBg: 'rgb(235, 235, 235)',
+  chartAuthored: 'rgb(141, 116, 217)',
+  chartMerged: 'rgb(105, 184, 122)',
+  chartReviewed: 'rgb(99, 140, 219)',
 } as const;
 
-const FONT_FAMILY =
-  '"Salesforce Sans", "SF Pro Text", -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif';
+const FONT_FAMILY = 'Inter, sans-serif';
+const BORDER_RADIUS = 4;
+const WIDGET_HEADER_HEIGHT = 24;
 
 const styles = {
   root: {
@@ -101,8 +98,8 @@ const styles = {
     padding: 12,
     gap: 12,
     fontFamily: FONT_FAMILY,
-    color: COLORS.fg,
-    background: COLORS.bg,
+    color: COLORS.fontPrimary,
+    background: COLORS.bgPanel,
     overflow: 'hidden',
   } as const,
   header: {
@@ -111,45 +108,54 @@ const styles = {
     justifyContent: 'space-between',
     gap: 8,
     flexWrap: 'wrap',
-    padding: '12px 14px',
-    background: COLORS.surface,
-    border: `1px solid ${COLORS.border}`,
-    borderRadius: 4,
-    boxShadow: COLORS.shadow,
+    padding: '8px 12px',
+    background: COLORS.bgPrimary,
+    border: `1px solid ${COLORS.borderLight}`,
+    borderRadius: BORDER_RADIUS,
     boxSizing: 'border-box',
+    flexShrink: 0,
   } as const,
   contributor: {
     display: 'flex',
     alignItems: 'center',
-    gap: 10,
+    gap: 8,
     minWidth: 0,
   } as const,
   avatar: {
-    width: 32,
-    height: 32,
+    width: 24,
+    height: 24,
     borderRadius: '50%',
     objectFit: 'cover',
-    background: COLORS.bg,
-    border: `1px solid ${COLORS.border}`,
+    background: COLORS.avatarBg,
+    flexShrink: 0,
+  } as const,
+  smallAvatar: {
+    width: 16,
+    height: 16,
+    borderRadius: '50%',
+    objectFit: 'cover',
+    background: COLORS.avatarBg,
     flexShrink: 0,
   } as const,
   nameCol: {
     display: 'flex',
-    flexDirection: 'column',
+    alignItems: 'baseline',
     minWidth: 0,
-    lineHeight: 1.25,
+    gap: 6,
+    lineHeight: 1.2,
   } as const,
   name: {
     fontSize: 14,
-    fontWeight: 700,
-    color: COLORS.fg,
+    fontWeight: 500,
+    color: COLORS.fontPrimary,
     overflow: 'hidden',
     textOverflow: 'ellipsis',
     whiteSpace: 'nowrap',
   } as const,
   login: {
     fontSize: 12,
-    color: COLORS.muted,
+    fontWeight: 400,
+    color: COLORS.fontTertiary,
     overflow: 'hidden',
     textOverflow: 'ellipsis',
     whiteSpace: 'nowrap',
@@ -161,35 +167,34 @@ const styles = {
     flexWrap: 'wrap',
   } as const,
   select: {
+    fontFamily: FONT_FAMILY,
     fontSize: 13,
-    height: 32,
-    lineHeight: '30px',
-    padding: '0 28px 0 12px',
-    border: `1px solid ${COLORS.borderStrong}`,
-    borderRadius: 4,
-    background: `${COLORS.surface} url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 20 20' fill='%23706E6B'><path d='M10 13l-5-5h10z'/></svg>") no-repeat right 8px center`,
-    color: COLORS.fg,
+    height: 28,
+    lineHeight: '26px',
+    padding: '0 24px 0 10px',
+    border: `1px solid ${COLORS.borderMedium}`,
+    borderRadius: BORDER_RADIUS,
+    background: `${COLORS.bgPrimary} url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 20 20' fill='%23999999'><path d='M10 13l-5-5h10z'/></svg>") no-repeat right 8px center`,
+    color: COLORS.fontPrimary,
     cursor: 'pointer',
     outline: 'none',
     appearance: 'none',
     WebkitAppearance: 'none',
     MozAppearance: 'none',
-    fontFamily: FONT_FAMILY,
-    boxShadow: 'inset 0 1px 0 rgba(0,0,0,0.02)',
   } as const,
   buttonNeutral: {
+    fontFamily: FONT_FAMILY,
     fontSize: 13,
-    height: 32,
-    lineHeight: '30px',
-    padding: '0 12px',
-    border: `1px solid ${COLORS.borderStrong}`,
-    borderRadius: 4,
-    background: COLORS.surface,
-    color: COLORS.brand,
+    fontWeight: 500,
+    height: 28,
+    lineHeight: '26px',
+    padding: '0 10px',
+    border: `1px solid ${COLORS.borderMedium}`,
+    borderRadius: BORDER_RADIUS,
+    background: COLORS.bgPrimary,
+    color: COLORS.fontPrimary,
     cursor: 'pointer',
     outline: 'none',
-    fontFamily: FONT_FAMILY,
-    fontWeight: 400,
   } as const,
   body: {
     display: 'flex',
@@ -203,46 +208,48 @@ const styles = {
     flexDirection: 'column',
     flex: 1,
     minHeight: 0,
-    border: `1px solid ${COLORS.border}`,
-    borderRadius: 4,
-    padding: '12px 14px',
-    background: COLORS.surface,
-    boxShadow: COLORS.shadow,
+    border: `1px solid ${COLORS.borderLight}`,
+    borderRadius: BORDER_RADIUS,
+    padding: 8,
+    background: COLORS.bgPrimary,
     boxSizing: 'border-box',
   } as const,
   chartHeader: {
     display: 'flex',
-    alignItems: 'baseline',
+    alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 8,
-    paddingBottom: 8,
-    borderBottom: `1px solid ${COLORS.border}`,
+    height: WIDGET_HEADER_HEIGHT,
+    padding: '0 4px',
+    flexShrink: 0,
   } as const,
   chartTitle: {
-    fontSize: 11,
-    fontWeight: 700,
-    color: COLORS.textLabel,
-    textTransform: 'uppercase',
-    letterSpacing: '0.0625em',
+    fontSize: 13,
+    fontWeight: 500,
+    color: COLORS.fontPrimary,
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap',
   } as const,
   chartTotal: {
-    fontSize: 18,
-    fontWeight: 300,
-    color: COLORS.fg,
+    fontSize: 13,
+    fontWeight: 500,
+    color: COLORS.fontTertiary,
     fontVariantNumeric: 'tabular-nums',
+    flexShrink: 0,
   } as const,
   chartContainer: {
     flex: '1 1 0%',
-    minHeight: 110,
+    minHeight: 90,
     width: '100%',
     position: 'relative',
+    marginTop: 4,
   } as const,
   centered: {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
     flex: 1,
-    color: COLORS.muted,
+    color: COLORS.fontTertiary,
     fontSize: 13,
     textAlign: 'center',
     padding: 16,
@@ -255,16 +262,15 @@ const styles = {
     minHeight: 0,
   } as const,
   searchInput: {
-    fontSize: 13,
-    height: 32,
-    padding: '0 12px',
-    border: `1px solid ${COLORS.borderStrong}`,
-    borderRadius: 4,
-    outline: 'none',
-    background: COLORS.surface,
-    color: COLORS.fg,
     fontFamily: FONT_FAMILY,
-    boxShadow: 'inset 0 1px 0 rgba(0,0,0,0.02)',
+    fontSize: 13,
+    height: 28,
+    padding: '0 10px',
+    border: `1px solid ${COLORS.borderMedium}`,
+    borderRadius: BORDER_RADIUS,
+    outline: 'none',
+    background: COLORS.bgPrimary,
+    color: COLORS.fontPrimary,
   } as const,
   searchList: {
     display: 'flex',
@@ -272,25 +278,25 @@ const styles = {
     flex: 1,
     minHeight: 0,
     overflowY: 'auto',
-    border: `1px solid ${COLORS.border}`,
-    borderRadius: 4,
-    background: COLORS.surface,
-    boxShadow: COLORS.shadow,
+    border: `1px solid ${COLORS.borderLight}`,
+    borderRadius: BORDER_RADIUS,
+    background: COLORS.bgPrimary,
   } as const,
   searchItem: {
     display: 'flex',
     alignItems: 'center',
-    gap: 10,
-    padding: '8px 12px',
+    gap: 8,
+    padding: '6px 10px',
     cursor: 'pointer',
-    borderBottom: `1px solid ${COLORS.border}`,
+    borderBottom: `1px solid ${COLORS.borderLight}`,
     fontSize: 13,
-    color: COLORS.fg,
+    color: COLORS.fontPrimary,
   } as const,
   truncatedHint: {
     fontSize: 11,
-    color: COLORS.muted,
-    marginTop: 6,
+    color: COLORS.fontTertiary,
+    marginTop: 4,
+    paddingLeft: 4,
   } as const,
 };
 
@@ -300,7 +306,7 @@ type BarChartProps = {
   color: string;
 };
 
-const CHART_PADDING = { top: 6, right: 4, bottom: 18, left: 26 };
+const CHART_PADDING = { top: 6, right: 4, bottom: 16, left: 22 };
 
 const BarChart = ({ buckets, valueKey, color }: BarChartProps) => {
   const yMax = useMemo(() => {
@@ -336,11 +342,11 @@ const BarChart = ({ buckets, valueKey, color }: BarChartProps) => {
               key={t}
               style={{
                 position: 'absolute',
-                right: 6,
+                right: 4,
                 bottom: `${bottomPct}%`,
                 transform: 'translateY(50%)',
                 fontSize: 10,
-                color: COLORS.muted,
+                color: COLORS.fontTertiary,
                 lineHeight: 1,
                 fontVariantNumeric: 'tabular-nums',
               }}
@@ -370,7 +376,7 @@ const BarChart = ({ buckets, valueKey, color }: BarChartProps) => {
                 left: 0,
                 right: 0,
                 bottom: `${bottomPct}%`,
-                borderTop: `1px ${i === 0 ? 'solid' : 'dotted'} ${i === 0 ? COLORS.borderStrong : COLORS.gridline}`,
+                borderTop: `1px ${i === 0 ? 'solid' : 'dotted'} ${COLORS.borderLight}`,
                 pointerEvents: 'none',
               }}
             />
@@ -408,7 +414,7 @@ const BarChart = ({ buckets, valueKey, color }: BarChartProps) => {
                 <div
                   style={{
                     width: '70%',
-                    maxWidth: 24,
+                    maxWidth: 22,
                     height: `${heightPct}%`,
                     minHeight: v > 0 ? 2 : 0,
                     background: color,
@@ -420,9 +426,9 @@ const BarChart = ({ buckets, valueKey, color }: BarChartProps) => {
                     style={{
                       position: 'absolute',
                       top: '100%',
-                      marginTop: 6,
+                      marginTop: 4,
                       fontSize: 10,
-                      color: COLORS.muted,
+                      color: COLORS.fontTertiary,
                       whiteSpace: 'nowrap',
                       lineHeight: 1,
                       pointerEvents: 'none',
@@ -533,9 +539,10 @@ const ContributorStats = () => {
           <span style={styles.name}>
             {contributor?.name ?? contributor?.ghLogin ?? 'Contributor stats'}
           </span>
-          {contributor?.ghLogin && (
-            <span style={styles.login}>@{contributor.ghLogin}</span>
-          )}
+          {contributor?.ghLogin &&
+            contributor.ghLogin !== contributor.name && (
+              <span style={styles.login}>@{contributor.ghLogin}</span>
+            )}
         </div>
       </div>
       <div style={styles.controls}>
@@ -577,12 +584,12 @@ const ContributorStats = () => {
           />
           <div style={styles.searchList}>
             {searchLoading && searchResults.length === 0 && (
-              <div style={{ ...styles.searchItem, color: COLORS.muted }}>
+              <div style={{ ...styles.searchItem, color: COLORS.fontTertiary }}>
                 Searching...
               </div>
             )}
             {!searchLoading && searchResults.length === 0 && (
-              <div style={{ ...styles.searchItem, color: COLORS.muted }}>
+              <div style={{ ...styles.searchItem, color: COLORS.fontTertiary }}>
                 No contributors found.
               </div>
             )}
@@ -598,15 +605,15 @@ const ContributorStats = () => {
                 style={styles.searchItem}
               >
                 {eng.avatarUrl ? (
-                  <img src={eng.avatarUrl} alt="" style={styles.avatar} />
+                  <img src={eng.avatarUrl} alt="" style={styles.smallAvatar} />
                 ) : (
-                  <div style={styles.avatar} />
+                  <div style={styles.smallAvatar} />
                 )}
                 <div style={styles.nameCol}>
                   <span style={styles.name}>
                     {eng.name ?? eng.ghLogin ?? 'Unknown'}
                   </span>
-                  {eng.ghLogin && (
+                  {eng.ghLogin && eng.ghLogin !== eng.name && (
                     <span style={styles.login}>@{eng.ghLogin}</span>
                   )}
                 </div>
@@ -636,7 +643,7 @@ const ContributorStats = () => {
               <BarChart
                 buckets={stats.buckets}
                 valueKey="prAuthored"
-                color={COLORS.authored}
+                color={COLORS.chartAuthored}
               />
               {stats.truncated.prAuthored && (
                 <span style={styles.truncatedHint}>
@@ -653,7 +660,7 @@ const ContributorStats = () => {
               <BarChart
                 buckets={stats.buckets}
                 valueKey="prMerged"
-                color={COLORS.merged}
+                color={COLORS.chartMerged}
               />
               {stats.truncated.prMerged && (
                 <span style={styles.truncatedHint}>
@@ -670,7 +677,7 @@ const ContributorStats = () => {
               <BarChart
                 buckets={stats.buckets}
                 valueKey="prReviewed"
-                color={COLORS.reviewed}
+                color={COLORS.chartReviewed}
               />
               {stats.truncated.prReviewed && (
                 <span style={styles.truncatedHint}>

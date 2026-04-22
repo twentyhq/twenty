@@ -1,6 +1,6 @@
 import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
-import { fetchProjectItemsPage } from 'src/modules/github/connector/graphql';
-import type { ProjectV2Item } from 'src/modules/github/connector/types';
+import { fetchProjectItems } from 'src/modules/github/project-item/graphql/github/fetch-project-items';
+import type { ProjectV2Item } from 'src/modules/github/project-item/types/project-v2-item';
 import { batchUpsertProjectItems } from 'src/modules/github/project-item/graphql/mutations/batch-upsert';
 import { projectItemFromGraphql } from 'src/modules/github/project-item/normalizers';
 import { isFixtureAllowed } from 'src/modules/shared/fixtures';
@@ -28,7 +28,7 @@ const handler = async (event: RoutePayload<FetchProjectItemsPayload>) => {
   const result =
     fixturePage && isFixtureAllowed()
       ? fixturePage
-      : await fetchProjectItemsPage(owner, number, cursor);
+      : await fetchProjectItems(owner, number, cursor);
   const { items, totalCount, hasMore, endCursor } = result;
 
   if (items.length === 0) {

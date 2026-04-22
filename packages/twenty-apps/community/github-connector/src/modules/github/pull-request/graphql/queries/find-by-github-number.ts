@@ -32,9 +32,8 @@ export async function findPullRequestByRepoAndNumber(
     },
   });
 
-  const edges = (res.pullRequests as { edges: { node: PullRequestRow }[] })
-    ?.edges;
-  return edges?.[0]?.node ?? null;
+  const node = res.pullRequests?.edges?.[0]?.node;
+  return (node as PullRequestRow | undefined) ?? null;
 }
 
 export async function findPullRequestByGithubNumber(
@@ -51,7 +50,6 @@ export async function findPullRequestByGithubNumber(
     },
   });
 
-  const edges = (res.pullRequests as { edges: { node: PullRequestRow }[] })
-    ?.edges;
-  return edges?.[0]?.node ?? null;
+  const node = res.pullRequests?.edges?.[0]?.node;
+  return (node as PullRequestRow | undefined) ?? null;
 }

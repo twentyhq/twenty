@@ -1,14 +1,13 @@
-import { metadata } from './client';
+import { MetadataApiClient } from 'twenty-client-sdk/metadata';
 
-type FieldNode = { name: string; type: string };
-type ObjectNode = {
-  nameSingular: string;
-  fields: { edges: { node: FieldNode }[] };
-};
+const metadata = () =>
+  new MetadataApiClient({
+    headers: {
+      Authorization: `Bearer ${process.env.TWENTY_API_KEY}`,
+    },
+  });
 
-export async function findObjectByName(
-  name: string,
-): Promise<ObjectNode | undefined> {
+export async function findObjectByName(name: string) {
   const client = metadata();
   const result = await client.query({
     objects: {
@@ -28,9 +27,7 @@ export async function findObjectByName(
     },
   });
 
-  const edges = (result.objects as { edges: { node: ObjectNode }[] }).edges;
-
-  return edges.find((e) => e.node.nameSingular === name)?.node;
+  return result.objects?.edges?.find((e) => e.node.nameSingular === name)?.node;
 }
 
 type ExecutionResult = {
@@ -51,11 +48,9 @@ export async function findLogicFunctionId(
     },
   });
 
-  const fns = result.findManyLogicFunctions as Array<{
-    id: string;
-    universalIdentifier: string;
-  }>;
-  const fn = fns.find((f) => f.universalIdentifier === universalIdentifier);
+  const fn = result.findManyLogicFunctions?.find(
+    (f) => f.universalIdentifier === universalIdentifier,
+  );
 
   if (!fn) {
     throw new Error(`Logic function ${universalIdentifier} not found`);
@@ -79,7 +74,7 @@ export async function executeLogicFunction(
     },
   });
 
-  return result.executeOneLogicFunction as unknown as ExecutionResult;
+  return result.executeOneLogicFunction as ExecutionResult;
 }
 
 const BASE_URL = process.env.TWENTY_API_URL ?? 'http://localhost:2021';
@@ -127,11 +122,7 @@ export async function findInstalledApp(universalIdentifier: string) {
     },
   });
 
-  return (
-    result.findManyApplications as Array<{
-      id: string;
-      name: string;
-      universalIdentifier: string;
-    }>
-  ).find((app) => app.universalIdentifier === universalIdentifier);
+  return result.findManyApplications?.find(
+    (app) => app.universalIdentifier === universalIdentifier,
+  );
 }

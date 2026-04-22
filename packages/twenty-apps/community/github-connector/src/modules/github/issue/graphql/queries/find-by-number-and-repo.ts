@@ -35,6 +35,6 @@ export async function findIssueByNumberAndRepo(
     },
   });
 
-  const edges = (res.issues as { edges: { node: IssueRow }[] })?.edges;
-  return edges?.[0]?.node ?? null;
+  const node = res.issues?.edges?.[0]?.node;
+  return (node as IssueRow | undefined) ?? null;
 }
