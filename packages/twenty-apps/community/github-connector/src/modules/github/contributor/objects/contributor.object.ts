@@ -12,9 +12,6 @@ export const CONTRIBUTOR_GH_LOGIN_FIELD_UNIVERSAL_IDENTIFIER =
 export const CONTRIBUTOR_GITHUB_ID_FIELD_UNIVERSAL_IDENTIFIER =
   'f7a8b9c0-1d2e-4f3a-8b5c-6d7e8f9a0b1c';
 
-export const CONTRIBUTOR_IS_CORE_TEAM_FIELD_UNIVERSAL_IDENTIFIER =
-  '109e4800-624f-4c76-99cb-9d83d0d963b6';
-
 export const CONTRIBUTOR_AVATAR_URL_FIELD_UNIVERSAL_IDENTIFIER =
   '450a612c-f7a3-4bba-aa36-e22339eb0720';
 
@@ -56,14 +53,6 @@ export default defineObject({
       type: FieldType.NUMBER,
       label: 'GitHub ID',
       icon: 'IconHash',
-    },
-    {
-      universalIdentifier: CONTRIBUTOR_IS_CORE_TEAM_FIELD_UNIVERSAL_IDENTIFIER,
-      name: 'isCoreTeam',
-      type: FieldType.BOOLEAN,
-      label: 'Core Team',
-      icon: 'IconShieldCheck',
-      defaultValue: false,
     },
     {
       universalIdentifier: CONTRIBUTOR_AVATAR_URL_FIELD_UNIVERSAL_IDENTIFIER,

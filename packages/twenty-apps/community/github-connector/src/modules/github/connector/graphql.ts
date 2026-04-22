@@ -633,52 +633,6 @@ export async function fetchContributorCount(
   return data.repository?.mentionableUsers.totalCount ?? 0;
 }
 
-// ---------- Org members (for core team detection) ----------
-
-const ORG_MEMBERS_QUERY = `
-query($org: String!, $cursor: String) {
-  organization(login: $org) {
-    membersWithRole(first: 100, after: $cursor) {
-      pageInfo { hasNextPage endCursor }
-      nodes {
-        login
-      }
-    }
-  }
-}`;
-
-type OrgMembersResponse = {
-  organization: {
-    membersWithRole: {
-      pageInfo: { hasNextPage: boolean; endCursor: string | null };
-      nodes: Array<{ login: string }>;
-    };
-  };
-};
-
-export async function fetchOrgMembersGraphQL(
-  org: string,
-): Promise<Set<string>> {
-  const members = new Set<string>();
-  let cursor: string | null = null;
-
-  while (true) {
-    const data: OrgMembersResponse = await graphql<OrgMembersResponse>(
-      ORG_MEMBERS_QUERY,
-      { org, cursor },
-    );
-
-    const connection: OrgMembersResponse['organization']['membersWithRole'] =
-      data.organization.membersWithRole;
-    for (const m of connection.nodes) members.add(m.login);
-
-    if (!connection.pageInfo.hasNextPage) break;
-    cursor = connection.pageInfo.endCursor;
-  }
-
-  return members;
-}
-
 export function extractAssigneeLogins(item: ProjectV2Item): string[] {
   for (const fv of item.fieldValues.nodes) {
     if (!fv.field || fv.field.name !== 'Assignees') continue;

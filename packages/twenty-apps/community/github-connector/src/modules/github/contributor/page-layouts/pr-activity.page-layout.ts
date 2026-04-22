@@ -4,7 +4,6 @@ import {
   ObjectRecordGroupByDateGranularity,
   PageLayoutTabLayoutMode,
 } from 'twenty-sdk/define';
-import { EXTERNAL_CONTRIBUTORS_COUNTER_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER } from 'src/modules/github/contributor/front-components/external-contributors-counter.front-component';
 import {
   MERGED_AT_FIELD_UNIVERSAL_IDENTIFIER,
   PULL_REQUEST_NAME_FIELD_UNIVERSAL_IDENTIFIER,
@@ -89,17 +88,6 @@ export default definePageLayout({
                 },
               ],
             },
-          },
-        },
-        {
-          universalIdentifier: 'f1a2b3c4-d5e6-4789-a0b1-c2d3e4f5a6b3',
-          title: 'External Contributors This Month',
-          type: 'FRONT_COMPONENT',
-          gridPosition: { row: 0, column: 8, rowSpan: 2, columnSpan: 4 },
-          configuration: {
-            configurationType: 'FRONT_COMPONENT',
-            frontComponentUniversalIdentifier:
-              EXTERNAL_CONTRIBUTORS_COUNTER_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
           },
         },
         {

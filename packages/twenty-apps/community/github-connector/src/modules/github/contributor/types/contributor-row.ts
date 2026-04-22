@@ -5,7 +5,6 @@ export type ContributorRow = {
   ghLogin?: string | null;
   name?: string | null;
   githubId?: number | null;
-  isCoreTeam?: boolean | null;
   avatarUrl?: LinksFieldValue | null;
   contributions?: number | null;
 };

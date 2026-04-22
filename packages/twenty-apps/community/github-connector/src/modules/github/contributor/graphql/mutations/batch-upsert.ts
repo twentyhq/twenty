@@ -6,7 +6,6 @@ export async function batchUpsertContributors(
     ghLogin: string;
     name: string;
     githubId: number;
-    isCoreTeam?: boolean;
     avatarUrl?: { primaryLinkLabel: string; primaryLinkUrl: string; secondaryLinks: null } | null;
     contributions?: number;
   }>,
@@ -16,7 +15,6 @@ export async function batchUpsertContributors(
     ghLogin: true,
     name: true,
     githubId: true,
-    isCoreTeam: true,
     avatarUrl: true,
     contributions: true,
   }) as Promise<ContributorRow[]>;

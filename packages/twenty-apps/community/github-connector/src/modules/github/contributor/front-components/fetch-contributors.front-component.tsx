@@ -11,7 +11,6 @@ import { callAppRoute } from 'src/modules/shared/call-app-route';
 type CountResponse = {
   totalCount: number;
   totalPages: number;
-  orgMembers: string[];
 };
 
 type FetchPageResponse = {
@@ -45,7 +44,6 @@ const FetchContributors = () => {
             owner: 'twentyhq',
             repo: 'twenty',
             cursor,
-            orgMembers: counts.orgMembers,
           })) as FetchPageResponse;
 
           totalSynced += data.contributorCount;
@@ -84,7 +82,7 @@ const FetchContributors = () => {
 export default defineFrontComponent({
   universalIdentifier: '08f40f82-24ed-4f3e-8c99-695151e90e38',
   name: 'Fetch Contributors',
-  description: 'Fetches all contributors of twentyhq/twenty and marks core team members',
+  description: 'Fetches all contributors of twentyhq/twenty and upserts them as Contributor records.',
   isHeadless: true,
   component: FetchContributors,
   command: {
