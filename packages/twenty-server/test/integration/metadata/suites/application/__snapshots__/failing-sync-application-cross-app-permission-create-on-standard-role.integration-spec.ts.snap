@@ -10,8 +10,8 @@ exports[`Sync application should fail when creating permissions on a standard ro
           "errors": [
             {
               "code": "ROLE_BELONGS_TO_ANOTHER_APPLICATION",
-              "message": "Cannot modify permissions on a role owned by another application",
-              "userFriendlyMessage": "Cannot modify permissions on a role owned by another application.",
+              "message": "Cannot target a role owned by another application",
+              "userFriendlyMessage": "Cannot target a role owned by another application.",
             },
             {
               "code": "ROLE_NOT_EDITABLE",
@@ -80,8 +80,8 @@ exports[`Sync application should fail when creating permissions on a standard ro
           "errors": [
             {
               "code": "ROLE_BELONGS_TO_ANOTHER_APPLICATION",
-              "message": "Cannot modify permissions on a role owned by another application",
-              "userFriendlyMessage": "Cannot modify permissions on a role owned by another application.",
+              "message": "Cannot target a role owned by another application",
+              "userFriendlyMessage": "Cannot target a role owned by another application.",
             },
             {
               "code": "ROLE_NOT_EDITABLE",
@@ -138,8 +138,8 @@ exports[`Sync application should fail when creating permissions on a standard ro
           "errors": [
             {
               "code": "ROLE_BELONGS_TO_ANOTHER_APPLICATION",
-              "message": "Cannot modify permissions on a role owned by another application",
-              "userFriendlyMessage": "Cannot modify permissions on a role owned by another application.",
+              "message": "Cannot target a role owned by another application",
+              "userFriendlyMessage": "Cannot target a role owned by another application.",
             },
             {
               "code": "ROLE_NOT_EDITABLE",
