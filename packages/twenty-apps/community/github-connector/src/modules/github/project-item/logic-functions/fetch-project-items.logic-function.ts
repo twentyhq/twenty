@@ -12,20 +12,20 @@ export type FetchProjectItemsFixturePage = {
 };
 
 type FetchProjectItemsPayload = {
-  org: string;
-  projectNumber: number;
+  owner: string;
+  number: number;
   cursor?: string | null;
   fixturePage?: FetchProjectItemsFixturePage;
 };
 
 const handler = async (event: RoutePayload<FetchProjectItemsPayload>) => {
-  const { org, projectNumber, cursor = null, fixturePage } = event.body ?? {};
-  if (!org || !projectNumber) {
-    return { error: 'org and projectNumber are required' };
+  const { owner, number, cursor = null, fixturePage } = event.body ?? {};
+  if (!owner || !number) {
+    return { error: 'owner and number are required' };
   }
 
   const result = fixturePage
-    ?? (await fetchProjectItemsPage(org, projectNumber, cursor));
+    ?? (await fetchProjectItemsPage(owner, number, cursor));
   const { items, totalCount, hasMore, endCursor } = result;
 
   if (items.length === 0) {

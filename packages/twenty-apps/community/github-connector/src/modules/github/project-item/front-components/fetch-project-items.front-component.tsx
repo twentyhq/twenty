@@ -10,8 +10,12 @@ import { callAppRoute } from 'src/modules/shared/call-app-route';
 
 type CountResponse = {
   totalPages: number;
-  org: string;
-  projects: Array<{ projectNumber: number; totalCount: number; pages: number }>;
+  projects: Array<{
+    owner: string;
+    number: number;
+    totalCount: number;
+    pages: number;
+  }>;
 };
 
 type FetchPageResponse = {
@@ -36,7 +40,7 @@ const FetchProjectItems = () => {
 
         if (counts.projects.length === 0) {
           throw new Error(
-            'No projects resolved. Set GITHUB_REPOS and GITHUB_PROJECT_NUMBERS in the application variables.',
+            'No projects resolved. Set GITHUB_PROJECTS in the application variables (e.g. `twentyhq/24`).',
           );
         }
 
@@ -44,14 +48,14 @@ const FetchProjectItems = () => {
         let pagesProcessed = 0;
         let totalItems = 0;
 
-        for (const { projectNumber } of counts.projects) {
+        for (const { owner, number } of counts.projects) {
           let cursor: string | null = null;
           let hasMore = true;
 
           while (hasMore) {
             const data = (await callAppRoute('/github/fetch-project-items', {
-              org: counts.org,
-              projectNumber,
+              owner,
+              number,
               cursor,
             })) as FetchPageResponse;
 

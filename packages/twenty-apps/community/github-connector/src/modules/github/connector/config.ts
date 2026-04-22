@@ -10,17 +10,49 @@ export function getGithubRepos(): string[] {
     .filter((r) => r.includes('/'));
 }
 
-export function getGithubProjectNumbers(): number[] {
-  const raw = process.env.GITHUB_PROJECT_NUMBERS ?? '';
-  return raw
-    .split(',')
-    .map((s) => Number.parseInt(s.trim(), 10))
-    .filter((n) => Number.isFinite(n) && n > 0);
+export type GithubProject = { owner: string; number: number };
+
+/**
+ * Parses a single project entry. Accepts:
+ *   - `owner/number`                                     (e.g. `twentyhq/24`)
+ *   - `https://github.com/orgs/owner/projects/number`
+ *   - `https://github.com/users/owner/projects/number`
+ * Returns null when the entry can't be parsed.
+ */
+export function parseGithubProject(entry: string): GithubProject | null {
+  const trimmed = entry.trim();
+  if (!trimmed) return null;
+
+  const urlMatch = trimmed.match(
+    /github\.com\/(?:orgs|users)\/([^/]+)\/projects\/(\d+)/i,
+  );
+  if (urlMatch) {
+    const owner = urlMatch[1];
+    const number = Number.parseInt(urlMatch[2], 10);
+    if (owner && Number.isFinite(number) && number > 0) {
+      return { owner, number };
+    }
+  }
+
+  const shortMatch = trimmed.match(/^([^/\s]+)\/(\d+)$/);
+  if (shortMatch) {
+    const owner = shortMatch[1];
+    const number = Number.parseInt(shortMatch[2], 10);
+    if (owner && Number.isFinite(number) && number > 0) {
+      return { owner, number };
+    }
+  }
+
+  return null;
 }
 
-/** Owner of the first configured repo, or empty string when none configured. */
-export function getDefaultGithubOrg(): string {
-  const first = getGithubRepos()[0];
-  if (!first) return '';
-  return first.split('/')[0] ?? '';
+/**
+ * Reads `GITHUB_PROJECTS` (comma-separated `owner/number` list) at call time.
+ */
+export function getGithubProjects(): GithubProject[] {
+  const raw = process.env.GITHUB_PROJECTS ?? '';
+  return raw
+    .split(',')
+    .map(parseGithubProject)
+    .filter((p): p is GithubProject => p !== null);
 }

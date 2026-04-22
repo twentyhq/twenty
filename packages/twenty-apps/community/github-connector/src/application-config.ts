@@ -48,10 +48,10 @@ export default defineApplication({
         'Comma-separated list of `owner/repo` to sync (e.g. `twentyhq/twenty,octo/hello`). Used by the manual fetch routes.',
       isSecret: false,
     },
-    GITHUB_PROJECT_NUMBERS: {
+    GITHUB_PROJECTS: {
       universalIdentifier: 'e3a8c7d2-4b95-4e1f-8a6c-9d2b5f7e1c84',
       description:
-        'Comma-separated list of GitHub Project (v2) numbers to sync.',
+        'Comma-separated list of GitHub Projects (v2) to sync. Each entry is `owner/number` (e.g. `twentyhq/24,octo/3`). Owner can be an organization or a user. Full URLs like `https://github.com/orgs/twentyhq/projects/24` or `https://github.com/users/octo/projects/3` are also accepted.',
       isSecret: false,
     },
   },

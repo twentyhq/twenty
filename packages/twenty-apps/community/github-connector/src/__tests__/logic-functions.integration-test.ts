@@ -46,7 +46,7 @@ describe('logic functions are wired up', () => {
 
   it('count-project-items is reachable', async () => {
     const result = await executeLogicFunction(fnIds.projectItems, {
-      body: { org: 'fixture-org', projectNumbers: [9999999] },
+      body: { projects: [{ owner: 'fixture-org', number: 9999999 }] },
     });
     expect(['SUCCESS', 'ERROR']).toContain(result.status);
   });

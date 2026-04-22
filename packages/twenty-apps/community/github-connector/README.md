@@ -143,7 +143,7 @@ GitHub calls.
 | Variable                  | Required | Notes                                                                                   |
 | ------------------------- | -------- | --------------------------------------------------------------------------------------- |
 | `GITHUB_REPOS`            | yes      | Comma-separated `owner/repo` list, e.g. `octocat/hello-world,octo-org/octo-repo`.       |
-| `GITHUB_PROJECT_NUMBERS`  | no       | Comma-separated GitHub Project (v2) numbers to sync.                                    |
+| `GITHUB_PROJECTS`         | no       | Comma-separated GitHub Projects (v2) as `owner/number` (e.g. `twentyhq/24,octo/3`). Owner can be an org or a user. Full URLs like `https://github.com/orgs/twentyhq/projects/24` also work. |
 | `GITHUB_WEBHOOK_SECRET`   | no       | Shared secret to verify `X-Hub-Signature-256`. When unset, signatures are not verified. |
 
 ## Running a sync
@@ -157,7 +157,7 @@ trigger the matching command from the command palette (`Cmd/Ctrl+K`):
 - Project Items view → **Fetch Project Items**
 
 Each command iterates over every entry in `GITHUB_REPOS` (or
-`GITHUB_PROJECT_NUMBERS`) and shows a progress bar.
+`GITHUB_PROJECTS`) and shows a progress bar.
 
 ## Webhooks
 

@@ -1,42 +1,35 @@
 import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
 import { fetchProjectItemCount } from 'src/modules/github/connector/graphql';
 import {
-  getDefaultGithubOrg,
-  getGithubProjectNumbers,
+  getGithubProjects,
+  type GithubProject,
 } from 'src/modules/github/connector/config';
 
 const PAGE_SIZE = 100;
 
 type CountProjectItemsPayload = {
-  org?: string;
-  projectNumbers?: number[];
+  projects?: GithubProject[];
 };
 
 const handler = async (event: RoutePayload<CountProjectItemsPayload>) => {
-  const bodyOrg = event.body?.org;
-  const org = bodyOrg && bodyOrg.length > 0 ? bodyOrg : getDefaultGithubOrg();
+  const bodyProjects = event.body?.projects;
+  const projects =
+    bodyProjects && bodyProjects.length > 0
+      ? bodyProjects
+      : getGithubProjects();
 
-  const bodyNumbers = event.body?.projectNumbers;
-  const projectNumbers =
-    bodyNumbers && bodyNumbers.length > 0
-      ? bodyNumbers
-      : getGithubProjectNumbers();
-
-  const projects: Array<{
-    projectNumber: number;
-    totalCount: number;
-    pages: number;
-  }> = [];
+  const results: Array<GithubProject & { totalCount: number; pages: number }> =
+    [];
   let totalPages = 0;
 
-  for (const projectNumber of projectNumbers) {
-    const totalCount = await fetchProjectItemCount(org, projectNumber);
+  for (const { owner, number } of projects) {
+    const totalCount = await fetchProjectItemCount(owner, number);
     const pages = Math.max(Math.ceil(totalCount / PAGE_SIZE), 1);
-    projects.push({ projectNumber, totalCount, pages });
+    results.push({ owner, number, totalCount, pages });
     totalPages += pages;
   }
 
-  return { totalPages, org, projects };
+  return { totalPages, projects: results };
 };
 
 export default defineLogicFunction({
