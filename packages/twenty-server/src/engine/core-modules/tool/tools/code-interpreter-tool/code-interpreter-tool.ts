@@ -212,20 +212,25 @@ export class CodeInterpreterTool implements Tool {
         ),
       );
 
-      return {
+      // ToolOutput's streamable fields (stdout/stderr/exitCode/files) live at
+      // the top level so ToolStepRenderer can read them flat off `output`,
+      // matching the post-#19321 convention used by every other tool. Nesting
+      // under `result` made the step render as "Failed" on thread reload,
+      // when no streaming part is available to back-fill the display.
+      const output = {
         success: result.exitCode === 0,
         message:
           result.exitCode === 0
             ? 'Code executed successfully'
             : 'Code execution failed',
-        result: {
-          stdout: result.stdout,
-          stderr: result.stderr,
-          exitCode: result.exitCode,
-          files: allOutputFileUrls,
-        },
+        stdout: result.stdout,
+        stderr: result.stderr,
+        exitCode: result.exitCode,
+        files: allOutputFileUrls,
         error: result.error,
       };
+
+      return output;
     } catch (error) {
       this.logger.error('Code interpreter execution failed', error);
 
