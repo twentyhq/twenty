@@ -1,10 +1,10 @@
 ---
 title: 逻辑函数
-description: Define server-side TypeScript functions with HTTP, cron, and database event triggers.
+description: 定义具有 HTTP、cron 和数据库事件触发器的服务端 TypeScript 函数。
 icon: bolt
 ---
 
-Logic functions are server-side TypeScript functions that run on the Twenty platform. They can be triggered by HTTP requests, cron schedules, or database events — and can also be exposed as tools for AI agents.
+逻辑函数是在 Twenty 平台上运行的服务端 TypeScript 函数。 它们可以由 HTTP 请求、cron 调度或数据库事件触发——也可以作为工具暴露给 AI 代理。
 
 <AccordionGroup>
 <Accordion title="defineLogicFunction" description="定义逻辑函数及其触发器">
@@ -388,7 +388,7 @@ export default definePreInstallLogicFunction({
 
 **经验法则：**
 
-| You want to...          | 使用                                                            |
+| 你想要...                  | 使用                                                            |
 | ----------------------- | ------------------------------------------------------------- |
 | 预填充默认数据、配置工作区、注册外部资源    | `post-install`                                                |
 | 运行不应阻塞安装响应的长时间预填充或第三方调用 | `post-install` (默认 — `shouldRunSynchronously: false`，由工作线程重试) |

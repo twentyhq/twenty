@@ -5,37 +5,37 @@ icon: arrow-up-right-dots
 
 ## Общие рекомендации
 
-**Always back up your database before starting the upgrade process** by running:
+**Всегда создавайте резервную копию базы данных перед началом процесса обновления**, выполнив:
 
 ```bash
 docker exec -it {db_container_name_or_id} pg_dumpall -U {postgres_user} > databases_backup.sql
 ```
 
-To restore from backup:
+Восстановление из резервной копии:
 
 ```bash
 cat databases_backup.sql | docker exec -i {db_container_name_or_id} psql -U {postgres_user}
 ```
 
-If you use Docker Compose, follow these steps:
+Если вы используете Docker Compose, выполните следующие шаги:
 
-1. Stop Twenty: `docker compose down`
-2. Change the `TAG` value in the `.env` file next to your `docker-compose.yml`
-3. Start Twenty: `docker compose up -d`
+1. Остановите Twenty: `docker compose down`
+2. Измените значение `TAG` в файле `.env` рядом с вашим `docker-compose.yml`
+3. Запустите Twenty: `docker compose up -d`
 
-The server runs all required upgrade migrations automatically on startup. No manual command is needed.
+Сервер автоматически выполняет все необходимые миграции обновления при запуске. Ручных команд не требуется.
 
-## Cross-version upgrades (v1.22+)
+## Межверсионные обновления (v1.22+)
 
-Starting from **v1.22**, Twenty supports cross-version upgrades. You can jump directly from any supported version to the latest release without stepping through each intermediate version.
+Начиная с **v1.22**, Twenty поддерживает межверсионные обновления. Вы можете перейти напрямую с любой поддерживаемой версии на последний релиз, не проходя каждую промежуточную версию.
 
-For example, upgrading from v1.22 straight to v2.0 is fully supported.
+Например, полностью поддерживается обновление с v1.22 сразу до v2.0.
 
-## Checking upgrade status
+## Проверка статуса обновления
 
-The `upgrade:status` command lets you inspect the current state of your instance and workspace migrations. It is useful for debugging upgrade issues or when filing a support request.
+Команда `upgrade:status` позволяет просмотреть текущее состояние вашего экземпляра и миграций рабочих пространств. Это полезно для отладки проблем с обновлением или при обращении в поддержку.
 
-Run it from the server container:
+Запустите её из контейнера сервера:
 
 ```bash
 docker exec -it {server_container_name_or_id} yarn command:prod upgrade:status
@@ -68,23 +68,23 @@ Summary
 
 ### Настройки
 
-| Flag                      | Описание                                                         |
-| ------------------------- | ---------------------------------------------------------------- |
-| `-w, --workspace-id <id>` | Filter to a specific workspace. Can be passed multiple times.    |
-| `-f, --failed-only`       | Hide up-to-date workspaces, only show behind and failed entries. |
+| Флаг                      | Описание                                                                            |
+| ------------------------- | ----------------------------------------------------------------------------------- |
+| `-w, --workspace-id <id>` | Фильтрует по конкретному рабочему пространству. Можно передавать несколько раз.     |
+| `-f, --failed-only`       | Скрывает актуальные рабочие пространства, показывает только отстающие и с ошибками. |
 
 ## Устранение неполадок
 
-If the upgrade fails on some workspaces, the server will not advance past the failing step. Restarting the server (`docker compose up -d`) will retry the upgrade from where it left off.
+Если обновление завершается ошибкой в некоторых рабочих пространствах, сервер не перейдёт дальше проблемного шага. Перезапуск сервера (`docker compose up -d`) повторит обновление с того места, где оно остановилось.
 
-To quickly identify problems, run:
+Чтобы быстро выявить проблемы, выполните:
 
 ```bash
 docker exec -it {server_container_name_or_id} yarn command:prod upgrade:status --failed-only
 ```
 
-This shows only workspaces that are behind or have failed, along with the error message for each failure.
+Будут показаны только рабочие пространства, которые отстают или завершились с ошибкой, вместе с сообщением об ошибке для каждого сбоя.
 
-## Before v1.22
+## До v1.22
 
-If your instance is older than v1.22, you must upgrade incrementally through each major tagged version (v1.6 to v1.7, then v1.7 to v1.8, and so on) until you reach v1.22. From there, you can jump directly to the latest version.
+Если ваш экземпляр старее v1.22, необходимо поэтапно обновляться через каждую основную помеченную версию (с v1.6 до v1.7, затем с v1.7 до v1.8 и так далее) до v1.22. После этого можно перейти сразу на последнюю версию.

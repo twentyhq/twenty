@@ -1,10 +1,10 @@
 ---
 title: Mantıksal işlevler
-description: Define server-side TypeScript functions with HTTP, cron, and database event triggers.
+description: Sunucu tarafı TypeScript işlevlerini HTTP, cron ve veritabanı olay tetikleyicileriyle tanımlayın.
 icon: bolt
 ---
 
-Logic functions are server-side TypeScript functions that run on the Twenty platform. They can be triggered by HTTP requests, cron schedules, or database events — and can also be exposed as tools for AI agents.
+Mantık işlevleri, Twenty platformunda çalışan sunucu tarafı TypeScript işlevleridir. HTTP istekleri, cron zamanlamaları veya veritabanı olayları tarafından tetiklenebilirler — ve ayrıca yapay zekâ ajanları için araçlar olarak sunulabilirler.
 
 <AccordionGroup>
 <Accordion title="defineLogicFunction" description="Mantık fonksiyonlarını ve tetikleyicilerini tanımlayın">
@@ -388,7 +388,7 @@ export default definePreInstallLogicFunction({
 
 **Kural olarak:**
 
-| You want to...                                                                                         | Kullan                                                                                      |
+| Şunu yapmak istiyorsunuz...                                                                            | Kullan                                                                                      |
 | ------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------- |
 | Varsayılan verileri tohumlamak, çalışma alanını yapılandırmak, harici kaynakları kaydetmek             | `post-install`                                                                              |
 | Kurulum yanıtını engellememesi gereken uzun süreli tohumlama veya üçüncü taraf çağrılarını çalıştırmak | `post-install` (varsayılan — `shouldRunSynchronously: false`, worker yeniden denemeleriyle) |

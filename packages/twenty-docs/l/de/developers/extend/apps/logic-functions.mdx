@@ -1,10 +1,10 @@
 ---
 title: Logikfunktionen
-description: Define server-side TypeScript functions with HTTP, cron, and database event triggers.
+description: Definieren Sie serverseitige TypeScript-Funktionen mit HTTP-, cron- und Datenbankereignis-Triggern.
 icon: bolt
 ---
 
-Logic functions are server-side TypeScript functions that run on the Twenty platform. They can be triggered by HTTP requests, cron schedules, or database events — and can also be exposed as tools for AI agents.
+Logikfunktionen sind serverseitige TypeScript-Funktionen, die auf der Twenty-Plattform ausgeführt werden. Sie können durch HTTP-Anfragen, cron-Zeitpläne oder Datenbankereignisse ausgelöst werden — und außerdem als Tools für KI-Agenten bereitgestellt werden.
 
 <AccordionGroup>
 <Accordion title="defineLogicFunction" description="Logikfunktionen und deren Trigger definieren">
@@ -387,7 +387,7 @@ export default definePreInstallLogicFunction({
 
 **Faustregel:**
 
-| You want to...                                                                                                                  | Verwenden                                                                              |
+| Sie möchten ...                                                                                                                 | Verwenden                                                                              |
 | ------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
 | Standarddaten befüllen, den Workspace konfigurieren, externe Ressourcen registrieren                                            | `post-install`                                                                         |
 | Lang laufendes Seeding oder Drittanbieteraufrufe ausführen, die die Installationsantwort nicht blockieren sollten               | `post-install` (Standard — `shouldRunSynchronously: false`, mit Worker-Wiederholungen) |

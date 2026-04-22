@@ -1,10 +1,10 @@
 ---
 title: 数据模型
-description: Define objects, fields, roles, and application metadata with the Twenty SDK.
+description: 使用 Twenty SDK 定义对象、字段、角色和应用程序元数据。
 icon: database
 ---
 
-The `twenty-sdk` package provides `defineEntity` functions to declare your app's data model. 你必须使用 `export default defineEntity({...})`，这样 SDK 才能检测到你的实体。 这些函数会在构建时校验你的配置，并提供 IDE 自动补全和类型安全。
+`twenty-sdk` 包提供 `defineEntity` 函数，用于声明应用的数据模型。 你必须使用 `export default defineEntity({...})`，这样 SDK 才能检测到你的实体。 这些函数会在构建时校验你的配置，并提供 IDE 自动补全和类型安全。
 
 <Note>
   **文件组织由你决定。**
@@ -438,17 +438,17 @@ export default defineObject({
 </Accordion>
 </AccordionGroup>
 
-## Scaffolding entities with `yarn twenty add`
+## 使用 `yarn twenty add` 脚手架生成实体
 
-Instead of creating entity files by hand, you can use the interactive scaffolder:
+无需手动创建实体文件，你可以使用交互式脚手架：
 
 ```bash filename="Terminal"
 yarn twenty add
 ```
 
-This prompts you to pick an entity type and walks you through the required fields. It generates a ready-to-use file with a stable `universalIdentifier` and the correct `defineEntity()` call.
+它会提示你选择实体类型，并引导你完成必填字段。 它会生成一个可直接使用的文件，包含稳定的 `universalIdentifier` 以及正确的 `defineEntity()` 调用。
 
-You can also pass the entity type directly to skip the first prompt:
+你也可以直接传入实体类型以跳过第一个提示：
 
 ```bash filename="Terminal"
 yarn twenty add object
@@ -458,18 +458,18 @@ yarn twenty add frontComponent
 
 ### 可用的实体类型
 
-| 实体类型            | 命令                                   | Generated file                                          |
-| --------------- | ------------------------------------ | ------------------------------------------------------- |
-| 对象              | `yarn twenty add object`             | `src/objects/\<name>.ts`               |
-| 字段              | `yarn twenty add field`              | `src/fields/\<name>.ts`                |
-| Logic function  | `yarn twenty add logicFunction`      | `src/logic-functions/\<name>.ts`       |
-| Front component | `yarn twenty add frontComponent`     | `src/front-components/\<name>.tsx`     |
-| 角色              | `yarn twenty add role`               | `src/roles/\<name>.ts`                 |
-| 技能              | `yarn twenty add skill`              | `src/skills/\<name>.ts`                |
-| 代理              | `yarn twenty add agent`              | `src/agents/\<name>.ts`                |
-| 视图              | `yarn twenty add view`               | `src/views/\<name>.ts`                 |
-| 导航菜单项           | `yarn twenty add navigationMenuItem` | `src/navigation-menu-items/\<name>.ts` |
-| 页面布局            | `yarn twenty add pageLayout`         | `src/page-layouts/\<name>.ts`          |
+| 实体类型  | 命令                                   | 生成的文件                                                   |
+| ----- | ------------------------------------ | ------------------------------------------------------- |
+| 对象    | `yarn twenty add object`             | `src/objects/\<name>.ts`               |
+| 字段    | `yarn twenty add field`              | `src/fields/\<name>.ts`                |
+| 逻辑函数  | `yarn twenty add logicFunction`      | `src/logic-functions/\<name>.ts`       |
+| 前端组件  | `yarn twenty add frontComponent`     | `src/front-components/\<name>.tsx`     |
+| 角色    | `yarn twenty add role`               | `src/roles/\<name>.ts`                 |
+| 技能    | `yarn twenty add skill`              | `src/skills/\<name>.ts`                |
+| 代理    | `yarn twenty add agent`              | `src/agents/\<name>.ts`                |
+| 视图    | `yarn twenty add view`               | `src/views/\<name>.ts`                 |
+| 导航菜单项 | `yarn twenty add navigationMenuItem` | `src/navigation-menu-items/\<name>.ts` |
+| 页面布局  | `yarn twenty add pageLayout`         | `src/page-layouts/\<name>.ts`          |
 
 ### 脚手架生成的内容
 
