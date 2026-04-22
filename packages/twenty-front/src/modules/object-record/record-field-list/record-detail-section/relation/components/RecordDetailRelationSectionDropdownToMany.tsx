@@ -10,6 +10,7 @@ import { useRecordFieldsScopeContextOrThrow } from '@/object-record/record-field
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { useUpdateJunctionRelationFromCell } from '@/object-record/record-field/ui/hooks/useUpdateJunctionRelationFromCell';
 import { useAddNewRecordAndOpenSidePanel } from '@/object-record/record-field/ui/meta-types/input/hooks/useAddNewRecordAndOpenSidePanel';
+import { useCreateRelatedRecord } from '@/object-record/record-field/ui/meta-types/input/hooks/useCreateRelatedRecord';
 import { useUpdateRelationOneToManyFieldInput } from '@/object-record/record-field/ui/meta-types/input/hooks/useUpdateRelationOneToManyFieldInput';
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
 import { type FieldRelationMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
@@ -42,10 +43,12 @@ import { LightIconButton } from 'twenty-ui/input';
 
 type RecordDetailRelationSectionDropdownToManyProps = {
   dropdownTriggerClickableComponent?: ReactNode;
+  onInlineCreate?: (newRecordId: string) => void;
 };
 
 export const RecordDetailRelationSectionDropdownToMany = ({
   dropdownTriggerClickableComponent,
+  onInlineCreate,
 }: RecordDetailRelationSectionDropdownToManyProps) => {
   const store = useStore();
   const { scopeInstanceId } = useRecordFieldsScopeContextOrThrow();
@@ -204,6 +207,15 @@ export const RecordDetailRelationSectionDropdownToMany = ({
     recordId,
   });
 
+  const { createRelatedRecord } = useCreateRelatedRecord({
+    fieldMetadataItem,
+    objectMetadataItem,
+    relationObjectMetadataNameSingular,
+    relationObjectMetadataItem,
+    relationFieldMetadataItem,
+    recordId,
+  });
+
   const { createOneRecord: createTargetRecord } = useCreateOneRecord({
     objectNameSingular:
       junctionTargetObjectMetadata?.nameSingular ??
@@ -335,7 +347,13 @@ export const RecordDetailRelationSectionDropdownToMany = ({
       }
 
       closeDropdown(dropdownId);
-      createNewRecordAndOpenSidePanel?.(searchString);
+
+      if (isDefined(onInlineCreate) && isDefined(createRelatedRecord)) {
+        const newRecordId = await createRelatedRecord(searchString);
+        onInlineCreate(newRecordId);
+      } else {
+        createNewRecordAndOpenSidePanel?.(searchString);
+      }
     },
     [
       closeDropdown,
@@ -351,6 +369,8 @@ export const RecordDetailRelationSectionDropdownToMany = ({
       multipleRecordPickerPickableMorphItemsCallbackState,
       multipleRecordPickerPerformSearch,
       objectMetadataItem,
+      onInlineCreate,
+      createRelatedRecord,
       pickerObjectMetadataItem,
       recordId,
       store,

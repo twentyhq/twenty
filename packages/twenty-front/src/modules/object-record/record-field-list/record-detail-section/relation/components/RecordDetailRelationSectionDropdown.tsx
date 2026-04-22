@@ -11,11 +11,13 @@ import { RelationType } from '~/generated-metadata/graphql';
 type RecordDetailRelationSectionDropdownProps = {
   loading: boolean;
   dropdownTriggerClickableComponent?: ReactNode;
+  onInlineCreate?: (newRecordId: string) => void;
 };
 
 export const RecordDetailRelationSectionDropdown = ({
   loading,
   dropdownTriggerClickableComponent,
+  onInlineCreate,
 }: RecordDetailRelationSectionDropdownProps) => {
   const { fieldDefinition, isRecordFieldReadOnly, recordId } =
     useContext(FieldContext);
@@ -57,12 +59,14 @@ export const RecordDetailRelationSectionDropdown = ({
     return (
       <RecordDetailRelationSectionDropdownToOne
         dropdownTriggerClickableComponent={dropdownTriggerClickableComponent}
+        onInlineCreate={onInlineCreate}
       />
     );
   } else if (isToManyObjects) {
     return (
       <RecordDetailRelationSectionDropdownToMany
         dropdownTriggerClickableComponent={dropdownTriggerClickableComponent}
+        onInlineCreate={onInlineCreate}
       />
     );
   } else {

@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import { useCallback, useContext, useState } from 'react';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
@@ -177,9 +177,29 @@ export const RecordDetailRelationSection = ({
     });
   };
 
+  const [inlineCreateRecordIds, setInlineCreateRecordIds] = useState<string[]>(
+    [],
+  );
+
+  const handleInlineCreate = useCallback((newRecordId: string) => {
+    setInlineCreateRecordIds((prev) => [...prev, newRecordId]);
+  }, []);
+
+  const handleInlineCreateDone = useCallback((recordId: string) => {
+    setInlineCreateRecordIds((prev) => prev.filter((id) => id !== recordId));
+  }, []);
+
+  const handleInlineCreateCancel = useCallback((recordId: string) => {
+    setInlineCreateRecordIds((prev) => prev.filter((id) => id !== recordId));
+  }, []);
+
   if (loading) return null;
 
   const relationRecordsCount = relationAggregateResult?.id?.COUNT ?? 0;
+
+  const relationFieldMetadataItemForCreate = relationObjectMetadataItem.fields.find(
+    ({ id }) => id === relationFieldMetadataId,
+  );
 
   return (
     <FieldInputEventContext.Provider
@@ -202,12 +222,18 @@ export const RecordDetailRelationSection = ({
             : undefined
         }
         hideRightAdornmentOnMouseLeave={!isDropdownOpen && !isMobile}
-        areRecordsAvailable={relationRecords.length > 0}
+        areRecordsAvailable={
+          relationRecords.length > 0 || inlineCreateRecordIds.length > 0
+        }
         rightAdornment={
-          <RecordDetailRelationSectionDropdown loading={loading} />
+          <RecordDetailRelationSectionDropdown
+            loading={loading}
+            onInlineCreate={handleInlineCreate}
+          />
         }
       >
-        {relationRecords.length > 0 && (
+        {(relationRecords.length > 0 ||
+          inlineCreateRecordIds.length > 0) && (
           <RecordDetailRelationRecordsList
             recordsWithObjectNameSingular={relationRecords.map(
               (relationRecord) => ({
@@ -216,6 +242,11 @@ export const RecordDetailRelationSection = ({
                 fieldMetadataId: relationFieldMetadataId,
               }),
             )}
+            inlineCreateRecordIds={inlineCreateRecordIds}
+            relationObjectMetadataItem={relationObjectMetadataItem}
+            relationFieldMetadataItem={relationFieldMetadataItemForCreate}
+            onInlineCreateDone={handleInlineCreateDone}
+            onInlineCreateCancel={handleInlineCreateCancel}
           />
         )}
       </RecordDetailSectionContainer>

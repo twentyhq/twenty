@@ -6,6 +6,7 @@ import { useRecordFieldsScopeContextOrThrow } from '@/object-record/record-field
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { FieldInputEventContext } from '@/object-record/record-field/ui/contexts/FieldInputEventContext';
 import { useAddNewRecordAndOpenSidePanel } from '@/object-record/record-field/ui/meta-types/input/hooks/useAddNewRecordAndOpenSidePanel';
+import { useCreateRelatedRecord } from '@/object-record/record-field/ui/meta-types/input/hooks/useCreateRelatedRecord';
 import { SingleRecordPicker } from '@/object-record/record-picker/single-record-picker/components/SingleRecordPicker';
 import { useSingleRecordPickerOpen } from '@/object-record/record-picker/single-record-picker/hooks/useSingleRecordPickerOpen';
 import { singleRecordPickerSearchFilterComponentState } from '@/object-record/record-picker/single-record-picker/states/singleRecordPickerSearchFilterComponentState';
@@ -31,10 +32,12 @@ import { LightIconButton } from 'twenty-ui/input';
 
 type RecordDetailRelationSectionDropdownToOneProps = {
   dropdownTriggerClickableComponent?: ReactNode;
+  onInlineCreate?: (newRecordId: string) => void;
 };
 
 export const RecordDetailRelationSectionDropdownToOne = ({
   dropdownTriggerClickableComponent,
+  onInlineCreate,
 }: RecordDetailRelationSectionDropdownToOneProps) => {
   const { scopeInstanceId } = useRecordFieldsScopeContextOrThrow();
   const { recordId, fieldDefinition } = useContext(FieldContext);
@@ -137,6 +140,15 @@ export const RecordDetailRelationSectionDropdownToOne = ({
     recordId,
   });
 
+  const { createRelatedRecord } = useCreateRelatedRecord({
+    fieldMetadataItem,
+    objectMetadataItem,
+    relationObjectMetadataNameSingular,
+    relationObjectMetadataItem,
+    relationFieldMetadataItem,
+    recordId,
+  });
+
   const { openSingleRecordPicker } = useSingleRecordPickerOpen();
 
   const handleOpenRelationPickerDropdown = () => {
@@ -148,11 +160,16 @@ export const RecordDetailRelationSectionDropdownToOne = ({
     }
   };
 
-  const handleCreateNew = (searchString?: string) => {
+  const handleCreateNew = useCallback(async (searchString?: string) => {
     closeDropdown(dropdownId);
 
-    createNewRecordAndOpenSidePanel?.(searchString);
-  };
+    if (isDefined(onInlineCreate) && isDefined(createRelatedRecord)) {
+      const newRecordId = await createRelatedRecord(searchString);
+      onInlineCreate(newRecordId);
+    } else {
+      createNewRecordAndOpenSidePanel?.(searchString);
+    }
+  }, [closeDropdown, createNewRecordAndOpenSidePanel, createRelatedRecord, dropdownId, onInlineCreate]);
 
   const shouldAllowCreateNew =
     relationObjectMetadataNameSingular !==
