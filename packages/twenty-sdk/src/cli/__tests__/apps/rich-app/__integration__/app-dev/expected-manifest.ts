@@ -6,6 +6,7 @@ import {
   NavigationMenuItemType,
   RelationOnDeleteAction,
   RelationType,
+  ViewCalendarLayout,
   ViewType,
 } from 'twenty-shared/types';
 
@@ -1524,6 +1525,27 @@ export const EXPECTED_MANIFEST: Manifest = {
       position: 1,
       type: ViewType.KANBAN,
       universalIdentifier: 'b1a2b3c4-0004-4a7b-8c9d-0e1f2a3b4c5d',
+    },
+    {
+      calendarFieldMetadataUniversalIdentifier:
+        'e06abe72-5b44-4e7f-93be-afc185a3c433',
+      calendarLayout: ViewCalendarLayout.MONTH,
+      fields: [
+        {
+          fieldMetadataUniversalIdentifier:
+            '58a0a314-d7ea-4865-9850-7fb84e72f30b',
+          isVisible: true,
+          position: 0,
+          size: 200,
+          universalIdentifier: 'bf1a2b3c-0006-4a7b-8c9d-0e1f2a3b4c5d',
+        },
+      ],
+      icon: 'IconCalendarEvent',
+      name: 'By Delivery Date',
+      objectUniversalIdentifier: '54b589ca-eeed-4950-a176-358418b85c05',
+      position: 2,
+      type: ViewType.CALENDAR,
+      universalIdentifier: 'b1a2b3c4-0005-4a7b-8c9d-0e1f2a3b4c5d',
     },
   ],
   navigationMenuItems: [
