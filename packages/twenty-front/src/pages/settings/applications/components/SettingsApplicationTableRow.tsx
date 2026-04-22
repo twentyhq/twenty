@@ -1,6 +1,7 @@
 import { type ReactNode } from 'react';
 
 import { useApplicationAvatarColors } from '@/applications/hooks/useApplicationAvatarColors';
+import { useResolvedApplicationDescription } from '@/applications/hooks/useResolvedApplicationDescription';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { t } from '@lingui/core/macro';
@@ -27,9 +28,9 @@ export const SettingsApplicationTableRow = ({
   link,
 }: SettingsApplicationTableRowProps) => {
   const colors = useApplicationAvatarColors(application);
-  const descriptionSummary = getApplicationDescriptionSummary(
-    application.description,
-  );
+  const resolvedDescription = useResolvedApplicationDescription(application);
+  const descriptionSummary =
+    getApplicationDescriptionSummary(resolvedDescription);
 
   return (
     <TableRow

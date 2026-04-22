@@ -1,4 +1,8 @@
 import { CurrentApplicationContext } from '@/applications/contexts/CurrentApplicationContext';
+import { useResolvedApplicationDescription } from '@/applications/hooks/useResolvedApplicationDescription';
+import { isTwentyStandardApplication } from '@/applications/utils/isTwentyStandardApplication';
+import { isWorkspaceCustomApplication } from '@/applications/utils/isWorkspaceCustomApplication';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useUpgradeApplication } from '@/marketplace/hooks/useUpgradeApplication';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -14,10 +18,7 @@ import { useMutation, useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import {
-  type Manifest,
-  TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
-} from 'twenty-shared/application';
+import { type Manifest } from 'twenty-shared/application';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import {
@@ -41,9 +42,8 @@ import {
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { SettingsApplicationDetailSkeletonLoader } from '~/pages/settings/applications/components/SettingsApplicationDetailSkeletonLoader';
 import { SettingsApplicationDetailTitle } from '~/pages/settings/applications/components/SettingsApplicationDetailTitle';
-import { WORKSPACE_CUSTOM_APPLICATION_DESCRIPTION } from '~/pages/settings/applications/constants/customApplicationDescription';
-import { CUSTOM_APPLICATION_ILLUSTRATIONS } from '~/pages/settings/applications/constants/customApplicationIllustrations';
-import { STANDARD_APPLICATION_ILLUSTRATIONS } from '~/pages/settings/applications/constants/standardApplicationIllustrations';
+import { CUSTOM_APPLICATION_ILLUSTRATIONS } from '~/pages/settings/applications/constants/CustomApplicationIllustrations';
+import { STANDARD_APPLICATION_ILLUSTRATIONS } from '~/pages/settings/applications/constants/StandardApplicationIllustrations';
 import { SettingsApplicationCustomTab } from '~/pages/settings/applications/tabs/SettingsApplicationCustomTab';
 import { SettingsApplicationDetailAboutTab } from '~/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab';
 import { SettingsApplicationDetailContentTab } from '~/pages/settings/applications/tabs/SettingsApplicationDetailContentTab';
@@ -52,7 +52,6 @@ import { SettingsApplicationPermissionsTab } from '~/pages/settings/applications
 import { isNewerSemver } from '~/pages/settings/applications/utils/isNewerSemver';
 
 const APPLICATION_DETAIL_ID = 'application-detail-id';
-const WORKSPACE_CUSTOM_APPLICATION_NAME = 'Custom';
 
 export const SettingsApplicationDetails = () => {
   const { applicationId = '' } = useParams<{ applicationId: string }>();
@@ -77,27 +76,29 @@ export const SettingsApplicationDetails = () => {
   const detail = detailData?.findMarketplaceAppDetail;
   const manifest = detail?.manifest as Manifest | undefined;
   const app = manifest?.application;
-  const isWorkspaceCustomApplication =
-    application?.name === WORKSPACE_CUSTOM_APPLICATION_NAME &&
-    !isDefined(application?.applicationRegistrationId) &&
-    application?.universalIdentifier !==
-      TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER;
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
+  const isStandardApplication = isTwentyStandardApplication(application);
+  const isCustomApplication = isWorkspaceCustomApplication(
+    application,
+    currentWorkspace,
+  );
+
+  const resolvedDescription = useResolvedApplicationDescription(application);
 
   const displayName =
     app?.displayName ?? application?.name ?? t`Application details`;
-  const description = isWorkspaceCustomApplication
-    ? WORKSPACE_CUSTOM_APPLICATION_DESCRIPTION
-    : (app?.description ?? application?.description ?? undefined);
+  const description = app?.description ?? resolvedDescription;
   const logoUrl =
     app?.logoUrl ?? application?.applicationRegistration?.logoUrl ?? undefined;
-  const screenshots = app?.screenshots?.length
-    ? app.screenshots
-    : application?.universalIdentifier ===
-        TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER
-      ? STANDARD_APPLICATION_ILLUSTRATIONS
-      : isWorkspaceCustomApplication
-        ? CUSTOM_APPLICATION_ILLUSTRATIONS
-        : undefined;
+
+  const getScreenshots = () => {
+    if (app?.screenshots?.length) return app.screenshots;
+    if (isStandardApplication) return STANDARD_APPLICATION_ILLUSTRATIONS;
+    if (isCustomApplication) return CUSTOM_APPLICATION_ILLUSTRATIONS;
+    return undefined;
+  };
+
+  const screenshots = getScreenshots();
 
   const settingsCustomTabFrontComponentId =
     application?.settingsCustomTabFrontComponentId;

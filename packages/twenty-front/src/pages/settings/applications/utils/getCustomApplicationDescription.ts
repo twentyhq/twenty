@@ -1,4 +1,7 @@
-export const WORKSPACE_CUSTOM_APPLICATION_DESCRIPTION = `The built-in home for your workspace's custom objects, views, layouts, logic functions, front components, and agents.
+import { t } from '@lingui/core/macro';
+
+export const getCustomApplicationDescription =
+  (): string => t`Host your workspace's customizations and overrides.
 
 #### What it includes
 Every extension you create on top of the standard app is grouped under Custom. It keeps your schema changes, interface changes, and workspace-specific logic in one place.
