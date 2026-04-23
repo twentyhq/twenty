@@ -1,0 +1,406 @@
+// oxlint-disable-next-line @typescripttypescript/ban-ts-comment
+// @ts-nocheck
+// Disabled type checking due to tsgo performance issue with deep spread operations
+// See: https://github.com/microsoft/typescript-go/issues/2551
+import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
+
+import { removeStep } from 'src/modules/workflow/workflow-builder/workflow-version-step/utils/remove-step';
+import {
+  type WorkflowAction,
+  WorkflowActionType,
+} from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
+import {
+  type WorkflowTrigger,
+  WorkflowTriggerType,
+} from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
+
+const mockTrigger = {
+  name: 'Trigger',
+  type: WorkflowTriggerType.MANUAL,
+  settings: { outputSchema: {} },
+  nextStepIds: ['1'],
+} as WorkflowTrigger;
+
+describe('removeStep', () => {
+  const createMockAction = (
+    id: string,
+    nextStepIds?: string[],
+  ): WorkflowAction => ({
+    id,
+    name: `Action ${id}`,
+    type: WorkflowActionType.CODE,
+    settings: {
+      input: {
+        logicFunctionId: 'test',
+        logicFunctionInput: {},
+      },
+      outputSchema: {},
+      errorHandlingOptions: {
+        retryOnFailure: { value: false },
+        continueOnFailure: { value: false },
+      },
+    },
+    valid: true,
+    nextStepIds,
+  });
+
+  it('should remove the specified step from the array', () => {
+    const step1 = createMockAction('1');
+    const step2 = createMockAction('2');
+    const step3 = createMockAction('3');
+
+    const result = removeStep({
+      existingTrigger: mockTrigger,
+      existingSteps: [step1, step2, step3],
+      stepIdToDelete: '2',
+    });
+
+    expect(result.updatedSteps).toEqual([step1, step3]);
+    expect(result.updatedTrigger).toEqual(mockTrigger);
+  });
+
+  it('should handle removing a step that has no next steps', () => {
+    const step1 = createMockAction('1', ['2']);
+    const step2 = createMockAction('2');
+    const step3 = createMockAction('3');
+
+    const result = removeStep({
+      existingTrigger: mockTrigger,
+      existingSteps: [step1, step2, step3],
+      stepIdToDelete: '2',
+    });
+
+    expect(result.updatedSteps).toEqual([{ ...step1, nextStepIds: [] }, step3]);
+    expect(result.updatedTrigger).toEqual(mockTrigger);
+  });
+
+  it('should update nextStepIds of parent steps to include children of removed step', () => {
+    const step1 = createMockAction('1', ['2']);
+    const step2 = createMockAction('2', ['3']);
+    const step3 = createMockAction('3');
+
+    const result = removeStep({
+      existingTrigger: mockTrigger,
+      existingSteps: [step1, step2, step3],
+      stepIdToDelete: '2',
+      stepToDeleteChildrenIds: ['3'],
+    });
+
+    expect(result.updatedSteps).toEqual([
+      { ...step1, nextStepIds: ['3'] },
+      step3,
+    ]);
+    expect(result.updatedTrigger).toEqual(mockTrigger);
+  });
+
+  it('should handle multiple parent steps pointing to the same step', () => {
+    const step1 = createMockAction('1', ['3']);
+    const step2 = createMockAction('2', ['3']);
+    const step3 = createMockAction('3', ['4']);
+    const step4 = createMockAction('4');
+
+    const result = removeStep({
+      existingTrigger: mockTrigger,
+      existingSteps: [step1, step2, step3, step4],
+      stepIdToDelete: '3',
+      stepToDeleteChildrenIds: ['4'],
+    });
+
+    expect(result.updatedSteps).toEqual([
+      { ...step1, nextStepIds: ['4'] },
+      { ...step2, nextStepIds: ['4'] },
+      step4,
+    ]);
+    expect(result.updatedTrigger).toEqual(mockTrigger);
+  });
+
+  it('should handle removing a step with multiple children', () => {
+    const step1 = createMockAction('1', ['2']);
+    const step2 = createMockAction('2', ['3', '4']);
+    const step3 = createMockAction('3');
+    const step4 = createMockAction('4');
+
+    const result = removeStep({
+      existingTrigger: mockTrigger,
+      existingSteps: [step1, step2, step3, step4],
+      stepIdToDelete: '2',
+      stepToDeleteChildrenIds: ['3', '4'],
+    });
+
+    expect(result.updatedSteps).toEqual([
+      { ...step1, nextStepIds: ['3', '4'] },
+      step3,
+      step4,
+    ]);
+    expect(result.updatedTrigger).toEqual(mockTrigger);
+  });
+
+  it('should handle removing a step linked to trigger', () => {
+    const step1 = createMockAction('1', ['2']);
+    const step2 = createMockAction('2', ['3']);
+    const step3 = createMockAction('3');
+
+    const result = removeStep({
+      existingTrigger: mockTrigger,
+      existingSteps: [step1, step2, step3],
+      stepIdToDelete: '1',
+      stepToDeleteChildrenIds: ['2'],
+    });
+
+    expect(result.updatedSteps).toEqual([step2, step3]);
+    expect(result.updatedTrigger).toEqual({
+      ...mockTrigger,
+      nextStepIds: ['2'],
+    });
+  });
+
+  it('should remove trigger if steps are null', () => {
+    const result = removeStep({
+      existingTrigger: { ...mockTrigger, nextStepIds: [] },
+      existingSteps: null,
+      stepIdToDelete: TRIGGER_STEP_ID,
+    });
+
+    expect(result.updatedTrigger).toEqual(null);
+    expect(result.updatedSteps).toEqual(null);
+  });
+
+  it('should replace with EMPTY node when deleting a leaf step on an If branch', () => {
+    const ifElseStep = {
+      id: '2',
+      name: 'If/Else',
+      type: WorkflowActionType.IF_ELSE,
+      settings: {
+        input: {
+          stepFilterGroups: [],
+          stepFilters: [],
+          branches: [
+            {
+              id: 'branch-if',
+              filterGroupId: 'fg-1',
+              nextStepIds: ['3'],
+            },
+            {
+              id: 'branch-else',
+              nextStepIds: ['4'],
+            },
+          ],
+        },
+        outputSchema: {},
+        errorHandlingOptions: {
+          retryOnFailure: { value: false },
+          continueOnFailure: { value: false },
+        },
+      },
+      valid: true,
+      nextStepIds: [],
+    } as WorkflowAction;
+
+    const step1 = createMockAction('1', ['2']);
+    const step3 = createMockAction('3');
+    const step4 = createMockAction('4');
+
+    const result = removeStep({
+      existingTrigger: mockTrigger,
+      existingSteps: [step1, ifElseStep, step3, step4],
+      stepIdToDelete: '3',
+      stepToDeleteChildrenIds: [],
+    });
+
+    expect(result.updatedSteps).toHaveLength(4);
+
+    const updatedIfElse = result.updatedSteps?.find(
+      (step) => step.id === '2',
+    ) as WorkflowAction & { type: WorkflowActionType.IF_ELSE };
+
+    const ifBranch = updatedIfElse.settings.input.branches[0];
+
+    expect(ifBranch.nextStepIds).toHaveLength(1);
+
+    const replacementNodeId = ifBranch.nextStepIds[0];
+    const replacementNode = result.updatedSteps?.find(
+      (step) => step.id === replacementNodeId,
+    );
+
+    expect(replacementNode).toBeDefined();
+    expect(replacementNode?.type).toBe(WorkflowActionType.EMPTY);
+    expect(replacementNode?.name).toBe('Add an Action');
+
+    const elseBranch = updatedIfElse.settings.input.branches[1];
+
+    expect(elseBranch.nextStepIds).toEqual(['4']);
+  });
+
+  it('should replace with EMPTY node when deleting a leaf step on an Else branch', () => {
+    const ifElseStep = {
+      id: '2',
+      name: 'If/Else',
+      type: WorkflowActionType.IF_ELSE,
+      settings: {
+        input: {
+          stepFilterGroups: [],
+          stepFilters: [],
+          branches: [
+            {
+              id: 'branch-if',
+              filterGroupId: 'fg-1',
+              nextStepIds: ['3'],
+            },
+            {
+              id: 'branch-else',
+              nextStepIds: ['4'],
+            },
+          ],
+        },
+        outputSchema: {},
+        errorHandlingOptions: {
+          retryOnFailure: { value: false },
+          continueOnFailure: { value: false },
+        },
+      },
+      valid: true,
+      nextStepIds: [],
+    } as WorkflowAction;
+
+    const step1 = createMockAction('1', ['2']);
+    const step3 = createMockAction('3');
+    const step4 = createMockAction('4');
+
+    const result = removeStep({
+      existingTrigger: mockTrigger,
+      existingSteps: [step1, ifElseStep, step3, step4],
+      stepIdToDelete: '4',
+      stepToDeleteChildrenIds: [],
+    });
+
+    expect(result.updatedSteps).toHaveLength(4);
+
+    const updatedIfElse = result.updatedSteps?.find(
+      (step) => step.id === '2',
+    ) as WorkflowAction & { type: WorkflowActionType.IF_ELSE };
+
+    const elseBranch = updatedIfElse.settings.input.branches[1];
+
+    expect(elseBranch.nextStepIds).toHaveLength(1);
+
+    const replacementNodeId = elseBranch.nextStepIds[0];
+    const replacementNode = result.updatedSteps?.find(
+      (step) => step.id === replacementNodeId,
+    );
+
+    expect(replacementNode).toBeDefined();
+    expect(replacementNode?.type).toBe(WorkflowActionType.EMPTY);
+
+    const ifBranch = updatedIfElse.settings.input.branches[0];
+
+    expect(ifBranch.nextStepIds).toEqual(['3']);
+  });
+
+  it('should not replace with EMPTY node when deleted step has children that get re-linked', () => {
+    const ifElseStep = {
+      id: '2',
+      name: 'If/Else',
+      type: WorkflowActionType.IF_ELSE,
+      settings: {
+        input: {
+          stepFilterGroups: [],
+          stepFilters: [],
+          branches: [
+            {
+              id: 'branch-if',
+              filterGroupId: 'fg-1',
+              nextStepIds: ['3'],
+            },
+            {
+              id: 'branch-else',
+              nextStepIds: ['5'],
+            },
+          ],
+        },
+        outputSchema: {},
+        errorHandlingOptions: {
+          retryOnFailure: { value: false },
+          continueOnFailure: { value: false },
+        },
+      },
+      valid: true,
+      nextStepIds: [],
+    } as WorkflowAction;
+
+    const step1 = createMockAction('1', ['2']);
+    const step3 = createMockAction('3', ['4']);
+    const step4 = createMockAction('4');
+    const step5 = createMockAction('5');
+
+    const result = removeStep({
+      existingTrigger: mockTrigger,
+      existingSteps: [step1, ifElseStep, step3, step4, step5],
+      stepIdToDelete: '3',
+      stepToDeleteChildrenIds: ['4'],
+    });
+
+    const updatedIfElse = result.updatedSteps?.find(
+      (step) => step.id === '2',
+    ) as WorkflowAction & { type: WorkflowActionType.IF_ELSE };
+
+    const ifBranch = updatedIfElse.settings.input.branches[0];
+
+    expect(ifBranch.nextStepIds).toEqual(['4']);
+
+    const hasEmptyNode = result.updatedSteps?.some(
+      (step) => step.type === WorkflowActionType.EMPTY,
+    );
+
+    expect(hasEmptyNode).toBe(false);
+  });
+
+  it('should handle removing a step that is part of iteratorLoopStepIds', () => {
+    const step1 = createMockAction('1', ['2']);
+    const iteratorStep = {
+      id: '2',
+      name: 'Iterator Step',
+      type: WorkflowActionType.ITERATOR,
+      settings: {
+        input: {
+          initialLoopStepIds: ['3'],
+          iterableValue: { value: [] },
+          iteratorKey: 'item',
+        },
+        outputSchema: {},
+        errorHandlingOptions: {
+          retryOnFailure: { value: false },
+          continueOnFailure: { value: false },
+        },
+      },
+      valid: true,
+      nextStepIds: ['4'],
+    } as WorkflowAction;
+    const step3 = createMockAction('3', ['5']);
+    const step4 = createMockAction('4');
+    const step5 = createMockAction('5');
+
+    const result = removeStep({
+      existingTrigger: mockTrigger,
+      existingSteps: [step1, iteratorStep, step3, step4, step5],
+      stepIdToDelete: '3',
+      stepToDeleteChildrenIds: ['5'],
+    });
+
+    expect(result.updatedSteps).toEqual([
+      step1,
+      {
+        ...iteratorStep,
+        settings: {
+          ...iteratorStep.settings,
+          input: {
+            ...iteratorStep.settings.input,
+            initialLoopStepIds: ['5'],
+          },
+        },
+      },
+      step4,
+      step5,
+    ]);
+    expect(result.updatedTrigger).toEqual(mockTrigger);
+  });
+});

@@ -1,0 +1,66 @@
+import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
+import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
+import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
+import { useAtomComponentFamilyState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
+import { hasInitializedCurrentRecordFilterGroupsComponentFamilyState } from '@/views/states/hasInitializedCurrentRecordFilterGroupsComponentFamilyState';
+import { viewFromViewIdFamilySelector } from '@/views/states/selectors/viewFromViewIdFamilySelector';
+import { mapViewFilterGroupsToRecordFilterGroups } from '@/views/utils/mapViewFilterGroupsToRecordFilterGroups';
+import { useEffect } from 'react';
+import { isDefined } from 'twenty-shared/utils';
+
+export const ViewBarRecordFilterGroupEffect = () => {
+  const contextStoreCurrentViewId = useAtomComponentStateValue(
+    contextStoreCurrentViewIdComponentState,
+  );
+
+  const { objectMetadataItem, recordIndexId } = useRecordIndexContextOrThrow();
+
+  const currentView = useAtomFamilySelectorValue(viewFromViewIdFamilySelector, {
+    viewId: contextStoreCurrentViewId ?? '',
+  });
+
+  const [
+    hasInitializedCurrentRecordFilterGroups,
+    setHasInitializedCurrentRecordFilterGroups,
+  ] = useAtomComponentFamilyState(
+    hasInitializedCurrentRecordFilterGroupsComponentFamilyState,
+    {
+      viewId: contextStoreCurrentViewId ?? undefined,
+    },
+  );
+
+  const setCurrentRecordFilterGroups = useSetAtomComponentState(
+    currentRecordFilterGroupsComponentState,
+    recordIndexId,
+  );
+
+  useEffect(() => {
+    if (isDefined(currentView) && !hasInitializedCurrentRecordFilterGroups) {
+      if (currentView.objectMetadataId !== objectMetadataItem.id) {
+        return;
+      }
+
+      if (isDefined(currentView)) {
+        setCurrentRecordFilterGroups(
+          mapViewFilterGroupsToRecordFilterGroups(
+            currentView.viewFilterGroups ?? [],
+          ),
+        );
+
+        setHasInitializedCurrentRecordFilterGroups(true);
+      }
+    }
+  }, [
+    contextStoreCurrentViewId,
+    setCurrentRecordFilterGroups,
+    hasInitializedCurrentRecordFilterGroups,
+    setHasInitializedCurrentRecordFilterGroups,
+    objectMetadataItem,
+    currentView,
+  ]);
+
+  return null;
+};

@@ -1,0 +1,285 @@
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+
+import { basename, dirname, join } from 'path';
+import { type Readable } from 'stream';
+
+import { FileFolder } from 'twenty-shared/types';
+import { Like, Repository, type QueryRunner } from 'typeorm';
+
+import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
+import { FileStorageDriverFactory } from 'src/engine/core-modules/file-storage/file-storage-driver.factory';
+import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
+import { FileSettings } from 'src/engine/core-modules/file/types/file-settings.types';
+
+export type ResourceIdentifier = {
+  workspaceId: string;
+  applicationUniversalIdentifier: string;
+  fileFolder: FileFolder;
+  resourcePath: string;
+};
+
+@Injectable()
+export class FileStorageService {
+  constructor(
+    private readonly fileStorageDriverFactory: FileStorageDriverFactory,
+    @InjectRepository(FileEntity)
+    private readonly fileRepository: Repository<FileEntity>,
+    @InjectRepository(ApplicationEntity)
+    private readonly applicationRepository: Repository<ApplicationEntity>,
+  ) {}
+
+  private buildOnStoragePath({
+    workspaceId,
+    applicationUniversalIdentifier,
+    fileFolder,
+    resourcePath,
+  }: ResourceIdentifier): string {
+    return join(
+      workspaceId,
+      applicationUniversalIdentifier,
+      fileFolder,
+      resourcePath,
+    ).replace(/\/+/g, '/');
+  }
+
+  async writeFile({
+    sourceFile,
+    mimeType,
+    fileFolder,
+    applicationUniversalIdentifier,
+    workspaceId,
+    resourcePath,
+    fileId,
+    settings,
+    queryRunner,
+  }: ResourceIdentifier & {
+    sourceFile: string | Buffer | Uint8Array;
+    mimeType: string | undefined;
+    fileId?: string;
+    settings: FileSettings;
+    queryRunner?: QueryRunner;
+  }): Promise<FileEntity> {
+    const driver = this.fileStorageDriverFactory.getCurrentDriver();
+
+    const applicationRepository = queryRunner
+      ? queryRunner.manager.getRepository(ApplicationEntity)
+      : this.applicationRepository;
+    const fileRepository = queryRunner
+      ? queryRunner.manager.getRepository(FileEntity)
+      : this.fileRepository;
+
+    const application = await applicationRepository.findOneOrFail({
+      where: {
+        universalIdentifier: applicationUniversalIdentifier,
+        workspaceId,
+      },
+    });
+
+    const onStoragePath = this.buildOnStoragePath({
+      workspaceId,
+      applicationUniversalIdentifier,
+      fileFolder,
+      resourcePath,
+    });
+
+    await driver.writeFile({
+      filePath: onStoragePath,
+      mimeType,
+      sourceFile,
+    });
+
+    await fileRepository.upsert(
+      {
+        path: `${fileFolder}/${resourcePath}`,
+        workspaceId,
+        applicationId: application.id,
+        id: fileId,
+        mimeType,
+        size:
+          typeof sourceFile === 'string'
+            ? Buffer.byteLength(sourceFile)
+            : sourceFile.length,
+        settings,
+      },
+      ['path', 'workspaceId', 'applicationId'],
+    );
+
+    return await fileRepository.findOneOrFail({
+      where: {
+        path: `${fileFolder}/${resourcePath}`,
+        applicationId: application.id,
+        workspaceId,
+      },
+    });
+  }
+
+  async getPresignedUrl(
+    params: ResourceIdentifier & {
+      expiresInSeconds?: number;
+      responseContentType?: string;
+      responseContentDisposition?: string;
+    },
+  ): Promise<string | null> {
+    const driver = this.fileStorageDriverFactory.getCurrentDriver();
+    const onStoragePath = this.buildOnStoragePath(params);
+
+    return driver.getPresignedUrl({
+      filePath: onStoragePath,
+      expiresInSeconds: params.expiresInSeconds,
+      responseContentType: params.responseContentType,
+      responseContentDisposition: params.responseContentDisposition,
+    });
+  }
+
+  readFile(params: ResourceIdentifier): Promise<Readable> {
+    const driver = this.fileStorageDriverFactory.getCurrentDriver();
+
+    const onStoragePath = this.buildOnStoragePath(params);
+
+    return driver.readFile({ filePath: onStoragePath });
+  }
+
+  downloadFile(
+    params: ResourceIdentifier & { localPath: string },
+  ): Promise<void> {
+    const driver = this.fileStorageDriverFactory.getCurrentDriver();
+    const onStoragePath = this.buildOnStoragePath(params);
+
+    return driver.downloadFile({
+      onStoragePath,
+      localPath: params.localPath,
+    });
+  }
+
+  deleteLegacy(params: {
+    folderPath: string;
+    filename?: string;
+  }): Promise<void> {
+    const driver = this.fileStorageDriverFactory.getCurrentDriver();
+
+    return driver.delete(params);
+  }
+
+  async deleteApplicationFiles({
+    applicationUniversalIdentifier,
+    workspaceId,
+  }: {
+    applicationUniversalIdentifier: string;
+    workspaceId: string;
+  }) {
+    const application = await this.applicationRepository.findOneOrFail({
+      where: {
+        universalIdentifier: applicationUniversalIdentifier,
+        workspaceId: workspaceId,
+      },
+    });
+
+    await this.fileRepository.delete({
+      applicationId: application.id,
+      workspaceId,
+    });
+  }
+
+  async delete(params: ResourceIdentifier): Promise<void> {
+    const driver = this.fileStorageDriverFactory.getCurrentDriver();
+    const onStoragePath = this.buildOnStoragePath(params);
+
+    const deleteResult = driver.delete({ folderPath: onStoragePath });
+
+    const application = await this.applicationRepository.findOneOrFail({
+      where: {
+        universalIdentifier: params.applicationUniversalIdentifier,
+        workspaceId: params.workspaceId,
+      },
+    });
+
+    const basePath = `${join(params.fileFolder, params.resourcePath)}`.replace(
+      /\/+/g,
+      '/',
+    );
+
+    await this.fileRepository.delete({
+      path: Like(`${basePath}%`),
+      applicationId: application.id,
+      workspaceId: params.workspaceId,
+    });
+
+    return deleteResult;
+  }
+
+  async deleteByFileId({
+    fileId,
+    workspaceId,
+    fileFolder,
+  }: {
+    fileId: string;
+    workspaceId: string;
+    fileFolder: FileFolder;
+  }): Promise<void> {
+    const file = await this.fileRepository.findOneOrFail({
+      where: {
+        id: fileId,
+        workspaceId,
+        path: Like(`${fileFolder}/%`),
+      },
+    });
+    const driver = this.fileStorageDriverFactory.getCurrentDriver();
+
+    await driver.delete({
+      folderPath: `${file.workspaceId}/${file.applicationId}`,
+      filename: file.path,
+    });
+
+    await this.fileRepository.delete(fileId);
+  }
+
+  copyLegacy(params: {
+    from: { folderPath: string; filename?: string };
+    to: { folderPath: string; filename?: string };
+  }): Promise<void> {
+    const driver = this.fileStorageDriverFactory.getCurrentDriver();
+
+    return driver.copy(params);
+  }
+
+  async copy({
+    from,
+    to,
+  }: {
+    from: ResourceIdentifier;
+    to: ResourceIdentifier;
+  }): Promise<void> {
+    const driver = this.fileStorageDriverFactory.getCurrentDriver();
+
+    const fromPath = this.buildOnStoragePath(from);
+    const toPath = this.buildOnStoragePath(to);
+
+    const isFile = await driver.checkFileExists({ filePath: fromPath });
+
+    if (isFile) {
+      return driver.copy({
+        from: { folderPath: dirname(fromPath), filename: basename(fromPath) },
+        to: { folderPath: dirname(toPath), filename: basename(toPath) },
+      });
+    }
+
+    return driver.copy({
+      from: { folderPath: fromPath },
+      to: { folderPath: toPath },
+    });
+  }
+
+  checkFolderExistsLegacy(params: { folderPath: string }): Promise<boolean> {
+    const driver = this.fileStorageDriverFactory.getCurrentDriver();
+
+    return driver.checkFolderExists(params);
+  }
+
+  checkFileExists(params: ResourceIdentifier): Promise<boolean> {
+    const driver = this.fileStorageDriverFactory.getCurrentDriver();
+    const onStoragePath = this.buildOnStoragePath(params);
+
+    return driver.checkFileExists({ filePath: onStoragePath });
+  }
+}

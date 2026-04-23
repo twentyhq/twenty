@@ -1,0 +1,52 @@
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
+import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObjectMetadataToGraphQLQuery';
+import { generateDepthRecordGqlFieldsFromObject } from '@/object-record/graphql/record-gql-fields/utils/generateDepthRecordGqlFieldsFromObject';
+import { getCreateOneRecordMutationResponseField } from '@/object-record/utils/getCreateOneRecordMutationResponseField';
+import { gql } from '@apollo/client';
+import {
+  type ObjectPermissions,
+  type RecordGqlOperationGqlRecordFields,
+} from 'twenty-shared/types';
+import { capitalize } from 'twenty-shared/utils';
+
+export const generateCreateOneRecordMutation = ({
+  objectMetadataItem,
+  objectMetadataItems,
+  recordGqlFields,
+  objectPermissionsByObjectMetadataId,
+}: {
+  objectMetadataItem: EnrichedObjectMetadataItem;
+  objectMetadataItems: EnrichedObjectMetadataItem[];
+  recordGqlFields?: RecordGqlOperationGqlRecordFields;
+  objectPermissionsByObjectMetadataId: Record<
+    string,
+    ObjectPermissions & { objectMetadataId: string }
+  >;
+}) => {
+  const appliedRecordGqlFields =
+    recordGqlFields ??
+    generateDepthRecordGqlFieldsFromObject({
+      depth: 1,
+      objectMetadataItems,
+      objectMetadataItem,
+    });
+
+  const capitalizedObjectName = capitalize(objectMetadataItem.nameSingular);
+
+  const mutationResponseField = getCreateOneRecordMutationResponseField(
+    objectMetadataItem.nameSingular,
+  );
+
+  const createOneRecordMutation = gql`
+    mutation CreateOne${capitalizedObjectName}($input: ${capitalizedObjectName}CreateInput!)  {
+      ${mutationResponseField}(data: $input) ${mapObjectMetadataToGraphQLQuery({
+        objectMetadataItems,
+        objectMetadataItem,
+        recordGqlFields: appliedRecordGqlFields,
+        objectPermissionsByObjectMetadataId,
+      })}
+    }
+  `;
+
+  return createOneRecordMutation;
+};

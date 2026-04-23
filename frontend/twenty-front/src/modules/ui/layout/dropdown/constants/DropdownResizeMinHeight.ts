@@ -1,0 +1,1 @@
+export const DROPDOWN_RESIZE_MIN_HEIGHT = 200;

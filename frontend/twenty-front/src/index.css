@@ -1,0 +1,24 @@
+body {
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: var(--t-background-tertiary);
+}
+
+html {
+  font-size: 13px;
+}
+
+button {
+  font-size: 13px;
+}
+
+form {
+  display: contents;
+}
+
+/* https://stackoverflow.com/questions/44543157/how-to-hide-the-google-invisible-recaptcha-badge */
+.grecaptcha-badge {
+  visibility: hidden !important;
+}

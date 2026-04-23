@@ -1,0 +1,3 @@
+export const TEST_ROCKET_ID_1 = '20202020-77d2-4000-8ce4-6a70b9720b32';
+export const TEST_ROCKET_ID_2 = '20202020-ed89-413a-b31a-962986a3546f';
+export const TEST_ROCKET_ID_3 = '20202020-1f3b-4e2a-9c1b-8d9e0f1a2b3c';

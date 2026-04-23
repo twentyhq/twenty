@@ -1,0 +1,96 @@
+import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
+import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
+import { useActiveRecordBoardCard } from '@/object-record/record-board/hooks/useActiveRecordBoardCard';
+import { useFocusedRecordBoardCard } from '@/object-record/record-board/hooks/useFocusedRecordBoardCard';
+import { useRecordBoardSelectAllHotkeys } from '@/object-record/record-board/hooks/useRecordBoardSelectAllHotkeys';
+import { useRecordBoardSelection } from '@/object-record/record-board/hooks/useRecordBoardSelection';
+import { useResetRecordBoardSelection } from '@/object-record/record-board/hooks/useResetRecordBoardSelection';
+import { RecordBoardCardContext } from '@/object-record/record-board/record-board-card/contexts/RecordBoardCardContext';
+import { isRecordBoardCardSelectedComponentFamilyState } from '@/object-record/record-board/states/isRecordBoardCardSelectedComponentFamilyState';
+import { recordBoardSelectedRecordIdsComponentSelector } from '@/object-record/record-board/states/selectors/recordBoardSelectedRecordIdsComponentSelector';
+import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
+import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { useContext } from 'react';
+import { Key } from 'ts-key-enum';
+
+export const useRecordBoardCardHotkeys = (focusId: string) => {
+  const { objectMetadataItem, recordBoardId } = useContext(RecordBoardContext);
+  const { recordId, rowIndex, columnIndex } = useContext(
+    RecordBoardCardContext,
+  );
+
+  const { openRecordInSidePanel } = useOpenRecordInSidePanel();
+  const { activateBoardCard } = useActiveRecordBoardCard();
+  const { setRecordAsSelected } = useRecordBoardSelection();
+
+  const { resetRecordBoardSelection } = useResetRecordBoardSelection();
+  const { unfocusBoardCard } = useFocusedRecordBoardCard(recordBoardId);
+
+  const isRecordBoardCardSelected = useAtomComponentFamilyStateValue(
+    isRecordBoardCardSelectedComponentFamilyState,
+    recordId,
+  );
+
+  const selectedRecordIds = useAtomComponentSelectorValue(
+    recordBoardSelectedRecordIdsComponentSelector,
+    recordBoardId,
+  );
+
+  const isAtLeastOneRecordSelected = selectedRecordIds.length > 0;
+
+  const handleSelectCard = () => {
+    setRecordAsSelected(recordId, !isRecordBoardCardSelected);
+  };
+
+  const handleOpenRecordInSidePanel = () => {
+    openRecordInSidePanel({
+      recordId,
+      objectNameSingular: objectMetadataItem.nameSingular,
+      isNewRecord: false,
+    });
+
+    activateBoardCard({
+      rowIndex,
+      columnIndex,
+    });
+  };
+
+  const handleEscape = () => {
+    unfocusBoardCard();
+
+    if (isAtLeastOneRecordSelected) {
+      resetRecordBoardSelection();
+    }
+  };
+
+  useHotkeysOnFocusedElement({
+    keys: ['x'],
+    callback: handleSelectCard,
+    focusId,
+    dependencies: [handleSelectCard],
+  });
+
+  useHotkeysOnFocusedElement({
+    keys: [
+      Key.Enter,
+      `${Key.Control}+${Key.Enter}`,
+      `${Key.Meta}+${Key.Enter}`,
+    ],
+    callback: handleOpenRecordInSidePanel,
+    focusId,
+    dependencies: [handleOpenRecordInSidePanel],
+  });
+
+  useHotkeysOnFocusedElement({
+    keys: [Key.Escape],
+    callback: handleEscape,
+    focusId,
+    dependencies: [handleEscape],
+  });
+
+  useRecordBoardSelectAllHotkeys({
+    recordBoardId,
+    focusId,
+  });
+};

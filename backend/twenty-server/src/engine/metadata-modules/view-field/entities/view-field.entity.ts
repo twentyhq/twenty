@@ -1,0 +1,107 @@
+import {
+  Column,
+  CreateDateColumn,
+  DeleteDateColumn,
+  Entity,
+  Index,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  type Relation,
+  UpdateDateColumn,
+} from 'typeorm';
+import {
+  AggregateOperations,
+  type SerializedRelation,
+} from 'twenty-shared/types';
+
+import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { ViewFieldGroupEntity } from 'src/engine/metadata-modules/view-field-group/entities/view-field-group.entity';
+import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
+import { OverridableEntity } from 'src/engine/workspace-manager/types/overridable-entity';
+
+export type ViewFieldOverrides = {
+  isVisible?: boolean;
+  size?: number;
+  position?: number;
+  aggregateOperation?: AggregateOperations | null;
+  viewFieldGroupId?: SerializedRelation | null;
+};
+
+@Entity({ name: 'viewField', schema: 'core' })
+@Index('IDX_VIEW_FIELD_WORKSPACE_ID_VIEW_ID', ['workspaceId', 'viewId'])
+@Index('IDX_VIEW_FIELD_VIEW_ID', ['viewId'])
+@Index('IDX_VIEW_FIELD_FIELD_METADATA_ID', ['fieldMetadataId'])
+@Index(
+  'IDX_VIEW_FIELD_FIELD_METADATA_ID_VIEW_ID_UNIQUE',
+  ['fieldMetadataId', 'viewId'],
+  {
+    unique: true,
+    where: '"deletedAt" IS NULL',
+  },
+)
+export class ViewFieldEntity
+  extends OverridableEntity<ViewFieldOverrides>
+  implements Required<ViewFieldEntity>
+{
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
+
+  @Column({ nullable: false, type: 'uuid' })
+  fieldMetadataId: string;
+
+  @ManyToOne(() => FieldMetadataEntity, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn({ name: 'fieldMetadataId' })
+  fieldMetadata: Relation<FieldMetadataEntity>;
+
+  @Column({ nullable: false, default: true })
+  isVisible: boolean;
+
+  @Column({ nullable: false, type: 'int', default: 0 })
+  size: number;
+
+  @Column({ nullable: false, type: 'double precision', default: 0 })
+  position: number;
+
+  @Column({
+    type: 'enum',
+    enum: Object.values(AggregateOperations),
+    nullable: true,
+    default: null,
+  })
+  aggregateOperation: AggregateOperations | null;
+
+  @Column({ nullable: false, type: 'uuid' })
+  viewId: string;
+
+  @Column({ nullable: true, type: 'uuid' })
+  viewFieldGroupId: string | null;
+
+  @CreateDateColumn({ type: 'timestamptz' })
+  createdAt: Date;
+
+  @UpdateDateColumn({ type: 'timestamptz' })
+  updatedAt: Date;
+
+  @DeleteDateColumn({ type: 'timestamptz' })
+  deletedAt: Date | null;
+
+  @ManyToOne(() => ViewEntity, (view) => view.viewFields, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn({ name: 'viewId' })
+  view: Relation<ViewEntity>;
+
+  @ManyToOne(
+    () => ViewFieldGroupEntity,
+    (viewFieldGroup) => viewFieldGroup.viewFields,
+    {
+      onDelete: 'SET NULL',
+      nullable: true,
+    },
+  )
+  @JoinColumn({ name: 'viewFieldGroupId' })
+  viewFieldGroup: Relation<ViewFieldGroupEntity> | null;
+}

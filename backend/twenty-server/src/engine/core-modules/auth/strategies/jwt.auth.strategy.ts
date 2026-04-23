@@ -1,0 +1,453 @@
+import { Injectable } from '@nestjs/common';
+import { PassportStrategy } from '@nestjs/passport';
+import { InjectRepository } from '@nestjs/typeorm';
+
+import { msg } from '@lingui/core/macro';
+import { Strategy } from 'passport-jwt';
+import { PermissionFlagType } from 'twenty-shared/constants';
+import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
+import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
+import { Repository } from 'typeorm';
+
+import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
+import {
+  AuthException,
+  AuthExceptionCode,
+} from 'src/engine/core-modules/auth/auth.exception';
+import {
+  type AccessTokenJwtPayload,
+  type ApiKeyTokenJwtPayload,
+  ApplicationAccessTokenJwtPayload,
+  type AuthContext,
+  type AuthContextUser,
+  FileTokenJwtPayloadLegacy,
+  type JwtPayload,
+  JwtTokenTypeEnum,
+  type WorkspaceAgnosticTokenJwtPayload,
+} from 'src/engine/core-modules/auth/types/auth-context.type';
+import { type FlatUserWorkspace } from 'src/engine/core-modules/user-workspace/types/flat-user-workspace.type';
+import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
+import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
+import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+
+@Injectable()
+export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
+  constructor(
+    private readonly jwtWrapperService: JwtWrapperService,
+    @InjectRepository(ApplicationEntity)
+    private readonly applicationRepository: Repository<ApplicationEntity>,
+    @InjectRepository(UserWorkspaceEntity)
+    private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
+    private readonly permissionsService: PermissionsService,
+    private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly coreEntityCacheService: CoreEntityCacheService,
+  ) {
+    const jwtFromRequestFunction = jwtWrapperService.extractJwtFromRequest();
+    // @ts-expect-error legacy noImplicitAny
+    const secretOrKeyProviderFunction = async (_request, rawJwtToken, done) => {
+      try {
+        const decodedToken = jwtWrapperService.decode<
+          | FileTokenJwtPayloadLegacy
+          | AccessTokenJwtPayload
+          | WorkspaceAgnosticTokenJwtPayload
+        >(rawJwtToken);
+
+        const appSecretBody =
+          decodedToken.type === JwtTokenTypeEnum.WORKSPACE_AGNOSTIC
+            ? decodedToken.userId
+            : decodedToken.workspaceId;
+
+        const secret = jwtWrapperService.generateAppSecret(
+          decodedToken.type,
+          appSecretBody,
+        );
+
+        done(null, secret);
+      } catch (error) {
+        done(error, null);
+      }
+    };
+
+    super({
+      jwtFromRequest: jwtFromRequestFunction,
+      ignoreExpiration: false,
+      secretOrKeyProvider: secretOrKeyProviderFunction,
+    });
+  }
+
+  private async validateAPIKey(
+    payload: ApiKeyTokenJwtPayload,
+  ): Promise<AuthContext> {
+    const workspace = await this.coreEntityCacheService.get(
+      'workspaceEntity',
+      payload.sub,
+    );
+
+    assertIsDefinedOrThrow(
+      workspace,
+      new AuthException(
+        'Workspace not found',
+        AuthExceptionCode.WORKSPACE_NOT_FOUND,
+      ),
+    );
+
+    const { apiKeyMap } = await this.workspaceCacheService.getOrRecompute(
+      workspace.id,
+      ['apiKeyMap'],
+    );
+
+    const apiKey = payload.jti ? apiKeyMap[payload.jti] : undefined;
+
+    if (!apiKey || apiKey.revokedAt) {
+      throw new AuthException(
+        'This API Key is revoked',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      );
+    }
+
+    if (new Date(apiKey.expiresAt) < new Date()) {
+      throw new AuthException(
+        'This API Key is expired',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      );
+    }
+
+    return { apiKey, workspace, workspaceMemberId: payload.workspaceMemberId };
+  }
+
+  private async validateAccessToken(
+    payload: AccessTokenJwtPayload,
+  ): Promise<AuthContext> {
+    let user: AuthContextUser | null = null;
+    let context: AuthContext = {};
+
+    const workspace = await this.coreEntityCacheService.get(
+      'workspaceEntity',
+      payload.workspaceId,
+    );
+
+    if (!isDefined(workspace)) {
+      throw new AuthException(
+        'Workspace not found',
+        AuthExceptionCode.WORKSPACE_NOT_FOUND,
+      );
+    }
+
+    if (payload.isImpersonating === true) {
+      context.impersonationContext = await this.validateImpersonation(payload);
+    }
+
+    const userId = payload.sub ?? payload.userId;
+
+    if (!userId) {
+      throw new AuthException(
+        'User not found',
+        AuthExceptionCode.USER_NOT_FOUND,
+      );
+    }
+
+    if (!payload.userWorkspaceId) {
+      throw new AuthException(
+        'UserWorkspaceEntity not found',
+        AuthExceptionCode.USER_WORKSPACE_NOT_FOUND,
+      );
+    }
+
+    const userContext = await this.resolveUserContext({
+      userId,
+      userWorkspaceId: payload.userWorkspaceId,
+    });
+
+    assertIsDefinedOrThrow(
+      userContext,
+      new AuthException(
+        'User or user workspace not found',
+        AuthExceptionCode.USER_NOT_FOUND,
+        {
+          userFriendlyMessage: msg`User does not have access to this workspace`,
+        },
+      ),
+    );
+
+    user = userContext.user;
+
+    context = {
+      ...context,
+      user,
+      workspace,
+      authProvider: payload.authProvider,
+      userWorkspace: userContext.userWorkspace,
+      userWorkspaceId: userContext.userWorkspace.id,
+      workspaceMemberId: payload.workspaceMemberId,
+    };
+
+    if (
+      workspace.activationStatus ===
+        WorkspaceActivationStatus.PENDING_CREATION ||
+      workspace.activationStatus === WorkspaceActivationStatus.ONGOING_CREATION
+    ) {
+      return context;
+    }
+
+    const { flatWorkspaceMemberMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspace.id, [
+        'flatWorkspaceMemberMaps',
+      ]);
+
+    const workspaceMemberId = flatWorkspaceMemberMaps.idByUserId[user.id];
+
+    const workspaceMember = isDefined(workspaceMemberId)
+      ? flatWorkspaceMemberMaps.byId[workspaceMemberId]
+      : undefined;
+
+    assertIsDefinedOrThrow(
+      workspaceMember,
+      new AuthException(
+        'User is not a member of the workspace',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+        {
+          userFriendlyMessage: msg`User is not a member of the workspace.`,
+        },
+      ),
+    );
+
+    return {
+      ...context,
+      workspaceMember,
+    };
+  }
+
+  private async resolveUserContext(params: {
+    userId: string;
+    userWorkspaceId: string;
+    expectedWorkspaceId?: string;
+  }): Promise<{
+    user: AuthContextUser;
+    userWorkspace: FlatUserWorkspace;
+  } | null> {
+    const user = await this.coreEntityCacheService.get('user', params.userId);
+
+    if (!isDefined(user)) {
+      return null;
+    }
+
+    const userWorkspace = await this.coreEntityCacheService.get(
+      'userWorkspaceEntity',
+      params.userWorkspaceId,
+    );
+
+    if (!isDefined(userWorkspace)) {
+      return null;
+    }
+
+    if (
+      isDefined(params.expectedWorkspaceId) &&
+      userWorkspace.workspaceId !== params.expectedWorkspaceId
+    ) {
+      return null;
+    }
+
+    return { user, userWorkspace };
+  }
+
+  private async validateImpersonation(payload: AccessTokenJwtPayload) {
+    if (
+      !payload.impersonatorUserWorkspaceId ||
+      !payload.impersonatedUserWorkspaceId
+    ) {
+      throw new AuthException(
+        'Invalid or missing user workspace ID in impersonation token',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      );
+    }
+
+    if (payload.impersonatedUserWorkspaceId !== payload.userWorkspaceId) {
+      throw new AuthException(
+        'Token user workspace ID does not match impersonated user workspace ID',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      );
+    }
+
+    if (
+      payload.impersonatedUserWorkspaceId ===
+      payload.impersonatorUserWorkspaceId
+    ) {
+      throw new AuthException(
+        'User cannot impersonate themselves',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      );
+    }
+
+    // Impersonation validation requires relations -- not cached
+    const impersonatorUserWorkspace =
+      await this.userWorkspaceRepository.findOne({
+        where: { id: payload.impersonatorUserWorkspaceId },
+        relations: ['user', 'workspace'],
+      });
+
+    const impersonatedUserWorkspace =
+      await this.userWorkspaceRepository.findOne({
+        where: { id: payload.impersonatedUserWorkspaceId },
+        relations: ['user', 'workspace'],
+      });
+
+    if (
+      !isDefined(impersonatorUserWorkspace) ||
+      !isDefined(impersonatedUserWorkspace)
+    ) {
+      throw new AuthException(
+        'Invalid impersonation token, cannot find impersonator or impersonated user workspace',
+        AuthExceptionCode.USER_WORKSPACE_NOT_FOUND,
+      );
+    }
+
+    const isServerLevelImpersonation =
+      impersonatorUserWorkspace.workspace.id !==
+      impersonatedUserWorkspace.workspace.id;
+
+    const hasServerLevelImpersonatePermission =
+      impersonatorUserWorkspace.user.canImpersonate === true &&
+      impersonatedUserWorkspace.workspace.allowImpersonation === true;
+
+    if (isServerLevelImpersonation) {
+      if (!hasServerLevelImpersonatePermission)
+        throw new AuthException(
+          'Server level impersonation not allowed',
+          AuthExceptionCode.FORBIDDEN_EXCEPTION,
+        );
+
+      return {
+        impersonatorUserWorkspaceId: payload.impersonatorUserWorkspaceId,
+        impersonatedUserWorkspaceId: payload.impersonatedUserWorkspaceId,
+      };
+    }
+
+    const hasWorkspaceLevelImpersonatePermission =
+      await this.permissionsService.userHasWorkspaceSettingPermission({
+        userWorkspaceId: impersonatorUserWorkspace.id,
+        setting: PermissionFlagType.IMPERSONATE,
+        workspaceId: impersonatedUserWorkspace.workspace.id,
+      });
+
+    if (!hasWorkspaceLevelImpersonatePermission) {
+      throw new AuthException(
+        'Impersonation not allowed',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      );
+    }
+
+    return {
+      impersonatorUserWorkspaceId: payload.impersonatorUserWorkspaceId,
+      impersonatedUserWorkspaceId: payload.impersonatedUserWorkspaceId,
+    };
+  }
+
+  private async validateWorkspaceAgnosticToken(
+    payload: WorkspaceAgnosticTokenJwtPayload,
+  ): Promise<AuthContext> {
+    const user = await this.coreEntityCacheService.get('user', payload.sub);
+
+    assertIsDefinedOrThrow(
+      user,
+      new AuthException('User not found', AuthExceptionCode.USER_NOT_FOUND),
+    );
+
+    return { user, authProvider: payload.authProvider };
+  }
+
+  private async validateApplicationToken(
+    payload: ApplicationAccessTokenJwtPayload,
+  ): Promise<AuthContext> {
+    const workspace = await this.coreEntityCacheService.get(
+      'workspaceEntity',
+      payload.workspaceId,
+    );
+
+    if (!isDefined(workspace)) {
+      throw new AuthException(
+        'Workspace not found',
+        AuthExceptionCode.WORKSPACE_NOT_FOUND,
+      );
+    }
+
+    const applicationId = payload.sub ?? payload.applicationId;
+
+    const application = await this.applicationRepository.findOne({
+      where: { id: applicationId },
+    });
+
+    if (!isDefined(application)) {
+      throw new AuthException(
+        'Application not found',
+        AuthExceptionCode.APPLICATION_NOT_FOUND,
+      );
+    }
+
+    const context: AuthContext = { application, workspace };
+
+    if (payload.userId && payload.userWorkspaceId) {
+      const userContext = await this.resolveUserContext({
+        userId: payload.userId,
+        userWorkspaceId: payload.userWorkspaceId,
+        expectedWorkspaceId: workspace.id,
+      });
+
+      if (isDefined(userContext)) {
+        context.user = userContext.user;
+        context.userWorkspace = userContext.userWorkspace;
+        context.userWorkspaceId = userContext.userWorkspace.id;
+
+        const { flatWorkspaceMemberMaps } =
+          await this.workspaceCacheService.getOrRecompute(workspace.id, [
+            'flatWorkspaceMemberMaps',
+          ]);
+
+        const workspaceMemberId =
+          flatWorkspaceMemberMaps.idByUserId[userContext.user.id];
+
+        if (isDefined(workspaceMemberId)) {
+          context.workspaceMemberId = workspaceMemberId;
+          context.workspaceMember =
+            flatWorkspaceMemberMaps.byId[workspaceMemberId];
+        }
+      }
+    }
+
+    return context;
+  }
+
+  private isLegacyApiKeyPayload(
+    payload: JwtPayload,
+  ): payload is ApiKeyTokenJwtPayload {
+    return !payload.type && !('workspaceId' in payload);
+  }
+
+  async validate(payload: JwtPayload): Promise<AuthContext> {
+    // Support legacy api keys
+    if (
+      payload.type === JwtTokenTypeEnum.API_KEY ||
+      this.isLegacyApiKeyPayload(payload)
+    ) {
+      return await this.validateAPIKey(payload);
+    }
+
+    if (payload.type === JwtTokenTypeEnum.WORKSPACE_AGNOSTIC) {
+      return await this.validateWorkspaceAgnosticToken(payload);
+    }
+
+    if (payload.type === JwtTokenTypeEnum.ACCESS) {
+      return await this.validateAccessToken(payload);
+    }
+
+    if (payload.type === JwtTokenTypeEnum.APPLICATION_ACCESS) {
+      return await this.validateApplicationToken(payload);
+    }
+
+    throw new AuthException(
+      'Invalid token',
+      AuthExceptionCode.INVALID_JWT_TOKEN_TYPE,
+    );
+  }
+}

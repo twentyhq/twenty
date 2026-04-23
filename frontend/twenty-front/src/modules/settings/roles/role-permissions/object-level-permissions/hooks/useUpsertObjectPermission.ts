@@ -1,0 +1,64 @@
+import { useUpsertObjectPermissionInDraftRole } from '@/settings/roles/role-permissions/object-level-permissions/hooks/useUpsertObjectPermissionInDraftRole';
+import { type SettingsRoleObjectPermissionKey } from '@/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectPermissionIconConfig';
+import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+import { isDefined } from 'twenty-shared/utils';
+import { type ObjectPermission } from '~/generated-metadata/graphql';
+
+export const useUpsertObjectPermission = ({ roleId }: { roleId: string }) => {
+  const settingsDraftRole = useAtomFamilyStateValue(
+    settingsDraftRoleFamilyState,
+    roleId,
+  );
+
+  const { upsertObjectPermissionInDraftRole } =
+    useUpsertObjectPermissionInDraftRole(roleId);
+
+  const upsertObjectPermission = (
+    objectMetadataItemId: string,
+    permissionKey: SettingsRoleObjectPermissionKey,
+    value: boolean | null,
+  ) => {
+    const existingObjectPermission = settingsDraftRole.objectPermissions?.find(
+      (objectPermissionToFind) =>
+        objectPermissionToFind.objectMetadataId === objectMetadataItemId,
+    );
+
+    const newPermissions = { [permissionKey]: value };
+
+    const isHigherPermission =
+      permissionKey === 'canUpdateObjectRecords' ||
+      permissionKey === 'canSoftDeleteObjectRecords' ||
+      permissionKey === 'canDestroyObjectRecords';
+
+    if (isHigherPermission && value !== false) {
+      newPermissions.canReadObjectRecords = value;
+    }
+
+    if (permissionKey === 'canReadObjectRecords' && value === false) {
+      newPermissions.canUpdateObjectRecords = false;
+      newPermissions.canSoftDeleteObjectRecords = false;
+      newPermissions.canDestroyObjectRecords = false;
+    }
+
+    if (!isDefined(existingObjectPermission)) {
+      const newObjectPermission = {
+        objectMetadataId: objectMetadataItemId,
+        ...newPermissions,
+      } satisfies ObjectPermission;
+
+      upsertObjectPermissionInDraftRole(newObjectPermission);
+    } else {
+      const updatedObjectPermission = {
+        ...existingObjectPermission,
+        ...newPermissions,
+      };
+
+      upsertObjectPermissionInDraftRole(updatedObjectPermission);
+    }
+  };
+
+  return {
+    upsertObjectPermission,
+  };
+};

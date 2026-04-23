@@ -1,0 +1,106 @@
+Successfully compiled: 5417 files with swc (647.69ms)
+(node:37400) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+[31m[Nest] 37400  - [39m08/04/2026, 8:52:16 a. m. [31m  ERROR[39m [38;5;3m[TypeOrmModule] [39m[31mUnable to connect to the database. Retrying (1)...[39m
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1201:49)
+    at afterConnectMultiple (node:net:1791:7)
+[31m[Nest] 37400  - [39m08/04/2026, 8:52:16 a. m. [31m  ERROR[39m [38;5;3m[TypeOrmModule] [39m[31mUnable to connect to the database. Retrying (2)...[39m
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1201:49)
+    at afterConnectMultiple (node:net:1791:7)
+[31m[Nest] 37400  - [39m08/04/2026, 8:52:16 a. m. [31m  ERROR[39m [38;5;3m[TypeOrmModule] [39m[31mUnable to connect to the database. Retrying (3)...[39m
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1201:49)
+    at afterConnectMultiple (node:net:1791:7)
+[31m[Nest] 37400  - [39m08/04/2026, 8:52:16 a. m. [31m  ERROR[39m [38;5;3m[TypeOrmModule] [39m[31mUnable to connect to the database. Retrying (4)...[39m
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1201:49)
+    at afterConnectMultiple (node:net:1791:7)
+[31m[Nest] 37400  - [39m08/04/2026, 8:52:16 a. m. [31m  ERROR[39m [38;5;3m[TypeOrmModule] [39m[31mUnable to connect to the database. Retrying (5)...[39m
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1201:49)
+    at afterConnectMultiple (node:net:1791:7)
+[31m[Nest] 37400  - [39m08/04/2026, 8:52:16 a. m. [31m  ERROR[39m [38;5;3m[TypeOrmModule] [39m[31mUnable to connect to the database. Retrying (6)...[39m
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1201:49)
+    at afterConnectMultiple (node:net:1791:7)
+[31m[Nest] 37400  - [39m08/04/2026, 8:52:16 a. m. [31m  ERROR[39m [38;5;3m[TypeOrmModule] [39m[31mUnable to connect to the database. Retrying (7)...[39m
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1201:49)
+    at afterConnectMultiple (node:net:1791:7)
+[31m[Nest] 37400  - [39m08/04/2026, 8:52:16 a. m. [31m  ERROR[39m [38;5;3m[TypeOrmModule] [39m[31mUnable to connect to the database. Retrying (8)...[39m
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1201:49)
+    at afterConnectMultiple (node:net:1791:7)
+[31m[Nest] 37400  - [39m08/04/2026, 8:52:16 a. m. [31m  ERROR[39m [38;5;3m[TypeOrmModule] [39m[31mUnable to connect to the database. Retrying (9)...[39m
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1201:49)
+    at afterConnectMultiple (node:net:1791:7)
+[31m[Nest] 37400  - [39m08/04/2026, 8:52:16 a. m. [31m  ERROR[39m [38;5;3m[ExceptionHandler] [39mAggregateError [ECONNREFUSED]: 
+[90m    at internalConnectMultiple (node:net:1201:49)[39m
+[90m    at afterConnectMultiple (node:net:1791:7)[39m {
+  code: [32m'ECONNREFUSED'[39m,
+  [errors]: [
+    Error: connect ECONNREFUSED ::1:5432
+    [90m    at createConnectionError (node:net:1754:14)[39m
+    [90m    at afterConnectMultiple (node:net:1784:16)[39m {
+      errno: [33m-4078[39m,
+      code: [32m'ECONNREFUSED'[39m,
+      syscall: [32m'connect'[39m,
+      address: [32m'::1'[39m,
+      port: [33m5432[39m
+    },
+    Error: connect ECONNREFUSED 127.0.0.1:5432
+    [90m    at createConnectionError (node:net:1754:14)[39m
+    [90m    at afterConnectMultiple (node:net:1784:16)[39m {
+      errno: [33m-4078[39m,
+      code: [32m'ECONNREFUSED'[39m,
+      syscall: [32m'connect'[39m,
+      address: [32m'127.0.0.1'[39m,
+      port: [33m5432[39m
+    }
+  ]
+}
+^CWarning: command "rimraf dist && nest start --watch" exited with non-zero status code.
+node:child_process:1000
+    throw err;
+    ^
+
+Error: Command failed: taskkill /pid 13788 /T /F
+ERROR: no se encontr� el proceso "13788".
+
+[90m    at genericNodeError (node:internal/errors:998:15)[39m
+[90m    at wrappedFn (node:internal/errors:543:14)[39m
+[90m    at checkExecSyncError (node:child_process:925:11)[39m
+[90m    at execSync (node:child_process:997:15)[39m
+    at treeKillSync (C:\Users\Fabian Leal\Documents\twenty\node_modules\[4m@nestjs\cli[24m\lib\utils\tree-kill.js:7:38)
+    at Timeout._onTimeout (C:\Users\Fabian Leal\Documents\twenty\node_modules\[4m@nestjs\cli[24m\actions\start.action.js:68:46)
+[90m    at listOnTimeout (node:internal/timers:605:17)[39m
+[90m    at process.processTimers (node:internal/timers:541:7)[39m {
+  status: [33m128[39m,
+  signal: [1mnull[22m,
+  output: [
+    [1mnull[22m,
+    Buffer(0) [Uint8Array] [],
+    Buffer(43) [Uint8Array] [
+       [33m69[39m,  [33m82[39m,  [33m82[39m,  [33m79[39m,  [33m82[39m,  [33m58[39m, [33m32[39m, [33m110[39m, [33m111[39m,
+       [33m32[39m, [33m115[39m, [33m101[39m,  [33m32[39m, [33m101[39m, [33m110[39m, [33m99[39m, [33m111[39m, [33m110[39m,
+      [33m116[39m, [33m114[39m, [33m162[39m,  [33m32[39m, [33m101[39m, [33m108[39m, [33m32[39m, [33m112[39m, [33m114[39m,
+      [33m111[39m,  [33m99[39m, [33m101[39m, [33m115[39m, [33m111[39m,  [33m32[39m, [33m34[39m,  [33m49[39m,  [33m51[39m,
+       [33m55[39m,  [33m56[39m,  [33m56[39m,  [33m34[39m,  [33m46[39m,  [33m13[39m, [33m10[39m
+    ]
+  ],
+  pid: [33m1960[39m,
+  stdout: Buffer(0) [Uint8Array] [],
+  stderr: Buffer(43) [Uint8Array] [
+     [33m69[39m,  [33m82[39m,  [33m82[39m,  [33m79[39m,  [33m82[39m,  [33m58[39m, [33m32[39m, [33m110[39m, [33m111[39m,
+     [33m32[39m, [33m115[39m, [33m101[39m,  [33m32[39m, [33m101[39m, [33m110[39m, [33m99[39m, [33m111[39m, [33m110[39m,
+    [33m116[39m, [33m114[39m, [33m162[39m,  [33m32[39m, [33m101[39m, [33m108[39m, [33m32[39m, [33m112[39m, [33m114[39m,
+    [33m111[39m,  [33m99[39m, [33m101[39m, [33m115[39m, [33m111[39m,  [33m32[39m, [33m34[39m,  [33m49[39m,  [33m51[39m,
+     [33m55[39m,  [33m56[39m,  [33m56[39m,  [33m34[39m,  [33m46[39m,  [33m13[39m, [33m10[39m
+  ]
+}
+
+Node.js v25.6.1
+Warning: command "rimraf dist && nest start --watch" exited with non-zero status code

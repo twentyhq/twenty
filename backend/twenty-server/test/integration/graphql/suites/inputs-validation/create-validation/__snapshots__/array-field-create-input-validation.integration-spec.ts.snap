@@ -1,0 +1,9 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`Create input validation - ARRAY Gql create input - failure ARRAY - should fail with : {"arrayField":1} 1`] = `"String cannot represent a non string value: 1"`;
+
+exports[`Create input validation - ARRAY Gql create input - failure ARRAY - should fail with : {"arrayField":true} 1`] = `"String cannot represent a non string value: true"`;
+
+exports[`Create input validation - ARRAY Rest create input - failure ARRAY - should fail with : {"arrayField":1} 1`] = `"["Invalid value 1 for field \\"arrayField - Array values need to be string\\""]"`;
+
+exports[`Create input validation - ARRAY Rest create input - failure ARRAY - should fail with : {"arrayField":true} 1`] = `"["Invalid value true for field \\"arrayField - Array values need to be string\\""]"`;

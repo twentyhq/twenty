@@ -1,0 +1,239 @@
+import { GraphWidgetChartContainer } from '@/page-layout/widgets/graph/components/GraphWidgetChartContainer';
+import { GraphWidgetLegend } from '@/page-layout/widgets/graph/components/GraphWidgetLegend';
+import { CHART_MOTION_CONFIG } from '@/page-layout/widgets/graph/constants/ChartMotionConfig';
+import { CustomArcsLayer } from '@/page-layout/widgets/graph/graph-widget-pie-chart/components/CustomArcsLayer';
+import { GraphPieChartTooltip } from '@/page-layout/widgets/graph/graph-widget-pie-chart/components/GraphPieChartTooltip';
+import { PieChartCenterMetric } from '@/page-layout/widgets/graph/graph-widget-pie-chart/components/PieChartCenterMetricLayer';
+import { PIE_CHART_HOVER_BRIGHTNESS } from '@/page-layout/widgets/graph/graph-widget-pie-chart/constants/PieChartHoverBrightness';
+import { PIE_CHART_MARGINS } from '@/page-layout/widgets/graph/graph-widget-pie-chart/constants/PieChartMargins';
+import { usePieChartData } from '@/page-layout/widgets/graph/graph-widget-pie-chart/hooks/usePieChartData';
+import { graphWidgetPieTooltipComponentState } from '@/page-layout/widgets/graph/graph-widget-pie-chart/states/graphWidgetPieTooltipComponentState';
+import { type PieChartDataItemWithColor } from '@/page-layout/widgets/graph/graph-widget-pie-chart/types/PieChartDataItem';
+import { getPieChartFormattedValue } from '@/page-layout/widgets/graph/graph-widget-pie-chart/utils/getPieChartFormattedValue';
+import { type GraphColorMode } from '@/page-layout/widgets/graph/types/GraphColorMode';
+import { createGraphColorRegistry } from '@/page-layout/widgets/graph/utils/createGraphColorRegistry';
+import { type GraphValueFormatOptions } from '@/page-layout/widgets/graph/utils/graphFormatters';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
+import { styled } from '@linaria/react';
+import {
+  ResponsivePie,
+  type ComputedDatum,
+  type PieCustomLayerProps,
+} from '@nivo/pie';
+import {
+  type MouseEvent as ReactMouseEvent,
+  useCallback,
+  useContext,
+  useMemo,
+  useRef,
+} from 'react';
+import { isDefined } from 'twenty-shared/utils';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  type PieChartConfiguration,
+  type PieChartDataItem,
+} from '~/generated-metadata/graphql';
+
+type GraphWidgetPieChartProps = {
+  data: PieChartDataItemWithColor[];
+  showLegend?: boolean;
+  id: string;
+  objectMetadataItemId: string;
+  configuration: PieChartConfiguration;
+  colorMode: GraphColorMode;
+  onSliceClick?: (datum: PieChartDataItemWithColor) => void;
+  showDataLabels?: boolean;
+  showCenterMetric?: boolean;
+} & GraphValueFormatOptions;
+
+const emptyStateData: PieChartDataItemWithColor[] = [{ id: 'empty', value: 1 }];
+
+const StyledContainer = styled.div`
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  justify-content: center;
+  width: 100%;
+`;
+
+const StyledPieChartWrapper = styled.div<{ preventHover: boolean }>`
+  container-type: size;
+  height: 100%;
+  position: relative;
+  width: 100%;
+
+  svg g path {
+    transition: filter 0.15s ease-in-out;
+
+    &:hover {
+      filter: ${({ preventHover }) =>
+        preventHover ? 'none' : `brightness(${PIE_CHART_HOVER_BRIGHTNESS})`};
+    }
+  }
+`;
+
+export const GraphWidgetPieChart = ({
+  data,
+  showLegend = true,
+  id,
+  objectMetadataItemId,
+  configuration,
+  colorMode,
+  displayType,
+  decimals,
+  prefix,
+  suffix,
+  customFormatter,
+  onSliceClick,
+  showDataLabels = false,
+  showCenterMetric = true,
+}: GraphWidgetPieChartProps) => {
+  const { theme } = useContext(ThemeContext);
+  const colorRegistry = createGraphColorRegistry(theme.color);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const setGraphWidgetPieTooltip = useSetAtomComponentState(
+    graphWidgetPieTooltipComponentState,
+  );
+
+  const formatOptions: GraphValueFormatOptions = {
+    displayType,
+    decimals,
+    prefix,
+    suffix,
+    customFormatter,
+  };
+
+  const { enrichedData, legendItems } = usePieChartData({
+    data,
+    colorRegistry,
+    colorMode,
+  });
+
+  const handleSliceMove = useCallback(
+    (
+      datum: ComputedDatum<PieChartDataItemWithColor>,
+      event: ReactMouseEvent<SVGElement>,
+    ) => {
+      if (!isDefined(containerRef.current)) return;
+
+      const containerRect = containerRef.current.getBoundingClientRect();
+      setGraphWidgetPieTooltip({
+        datum,
+        offsetLeft: event.clientX - containerRect.left,
+        offsetTop: event.clientY - containerRect.top,
+      });
+    },
+    [setGraphWidgetPieTooltip],
+  );
+
+  const handleSliceLeave = useCallback(() => {
+    setGraphWidgetPieTooltip(null);
+  }, [setGraphWidgetPieTooltip]);
+
+  const hasNoData = useMemo(
+    () =>
+      enrichedData.length === 0 ||
+      enrichedData.every((item) => item.value === 0),
+    [enrichedData],
+  );
+
+  const chartData = hasNoData ? emptyStateData : enrichedData;
+  const chartColors = hasNoData
+    ? [themeCssVariables.background.tertiary]
+    : enrichedData.map((item) => item.colorScheme.solid);
+  const pieChartPadAngle = hasNoData || enrichedData.length <= 1 ? 0 : 0.4;
+
+  const ArcsLayer = useCallback(
+    (props: PieCustomLayerProps<PieChartDataItemWithColor>) => (
+      <CustomArcsLayer
+        dataWithArc={props.dataWithArc}
+        arcGenerator={props.arcGenerator}
+        centerX={props.centerX}
+        centerY={props.centerY}
+        padAngle={pieChartPadAngle}
+        onMouseMove={hasNoData ? undefined : handleSliceMove}
+        onMouseLeave={hasNoData ? undefined : handleSliceLeave}
+        onClick={
+          hasNoData
+            ? undefined
+            : (datum) => {
+                if (isDefined(onSliceClick)) {
+                  onSliceClick(datum.data);
+                }
+              }
+        }
+      />
+    ),
+    [
+      hasNoData,
+      handleSliceMove,
+      handleSliceLeave,
+      onSliceClick,
+      pieChartPadAngle,
+    ],
+  );
+
+  return (
+    <StyledContainer id={id}>
+      <GraphWidgetChartContainer
+        ref={containerRef}
+        $isClickable={!hasNoData && isDefined(onSliceClick)}
+        $cursorSelector="svg g path"
+        onMouseLeave={handleSliceLeave}
+      >
+        <StyledPieChartWrapper preventHover={hasNoData}>
+          <ResponsivePie
+            data={chartData}
+            margin={showDataLabels && !hasNoData ? PIE_CHART_MARGINS : {}}
+            innerRadius={0.8}
+            colors={chartColors}
+            animate
+            motionConfig={CHART_MOTION_CONFIG}
+            enableArcLinkLabels={showDataLabels && !hasNoData}
+            enableArcLabels={false}
+            tooltip={() => null}
+            layers={[ArcsLayer, 'arcLinkLabels']}
+            arcLinkLabel={(datum: ComputedDatum<PieChartDataItem>) => {
+              const formattedValue = getPieChartFormattedValue({
+                datum,
+                enrichedData,
+                formatOptions,
+                displayType,
+              });
+              return formattedValue ?? datum.data.value.toString();
+            }}
+            arcLinkLabelsDiagonalLength={10}
+            arcLinkLabelsStraightLength={10}
+            arcLinkLabelsTextColor={themeCssVariables.font.color.light}
+            arcLinkLabelsColor={themeCssVariables.font.color.extraLight}
+            theme={{
+              labels: {
+                text: {
+                  fontSize: themeCssVariables.font.size.sm,
+                  fontWeight: themeCssVariables.font.weight.medium,
+                },
+              },
+            }}
+          />
+          <PieChartCenterMetric
+            objectMetadataItemId={objectMetadataItemId}
+            configuration={configuration}
+            show={showCenterMetric && !hasNoData}
+            hasNoData={hasNoData}
+          />
+        </StyledPieChartWrapper>
+      </GraphWidgetChartContainer>
+      <GraphPieChartTooltip
+        containerRef={containerRef}
+        enrichedData={enrichedData}
+        formatOptions={formatOptions}
+        displayType={displayType}
+        onSliceClick={onSliceClick}
+      />
+      {showLegend && data.length > 0 && (
+        <GraphWidgetLegend show items={legendItems} />
+      )}
+    </StyledContainer>
+  );
+};

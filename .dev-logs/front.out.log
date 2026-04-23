@@ -1,0 +1,7 @@
+
+[2m> [22m[2mnx run[22m twenty-front:start
+
+[linaria/wyw] Starting CSS pre-build
+[linaria/wyw] Pre-warm: 461ms
+  [32m➜[39m  [1mLocal[22m:   [36mhttp://localhost:[1m3001[22m/[39m
+[2m  [32m➜[39m  [1mNetwork[22m[2m: use [22m[1m--host[22m[2m to expose[22m

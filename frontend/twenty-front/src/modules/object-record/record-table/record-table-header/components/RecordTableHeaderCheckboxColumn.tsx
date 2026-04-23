@@ -1,0 +1,94 @@
+import { styled } from '@linaria/react';
+
+import { recordIndexAllRecordIdsComponentSelector } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
+
+import { RECORD_TABLE_COLUMN_CHECKBOX_WIDTH } from '@/object-record/record-table/constants/RecordTableColumnCheckboxWidth';
+import { RECORD_TABLE_COLUMN_CHECKBOX_WIDTH_CLASS_NAME } from '@/object-record/record-table/constants/RecordTableColumnCheckboxWidthClassName';
+import { RECORD_TABLE_ROW_HEIGHT } from '@/object-record/record-table/constants/RecordTableRowHeight';
+import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
+import { useResetTableRowSelection } from '@/object-record/record-table/hooks/internal/useResetTableRowSelection';
+import { useSelectAllRows } from '@/object-record/record-table/hooks/internal/useSelectAllRows';
+import { isRecordTableInitialLoadingComponentState } from '@/object-record/record-table/states/isRecordTableInitialLoadingComponentState';
+import { allRowsSelectedStatusComponentSelector } from '@/object-record/record-table/states/selectors/allRowsSelectedStatusComponentSelector';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { cx } from '@linaria/core';
+import { Checkbox } from 'twenty-ui/input';
+
+const StyledContainer = styled.div`
+  align-items: center;
+  background-color: ${themeCssVariables.background.primary};
+  border-bottom: 1px solid ${themeCssVariables.border.color.light};
+  display: flex;
+  height: ${RECORD_TABLE_ROW_HEIGHT}px;
+  justify-content: center;
+  min-width: 24px;
+  padding-right: ${themeCssVariables.spacing[1]};
+`;
+
+const StyledColumnHeaderCell = styled.div`
+  background-color: ${themeCssVariables.background.primary};
+
+  cursor: pointer;
+
+  max-height: ${RECORD_TABLE_ROW_HEIGHT}px;
+
+  min-width: ${RECORD_TABLE_COLUMN_CHECKBOX_WIDTH}px;
+`;
+
+export const RecordTableHeaderCheckboxColumn = () => {
+  const allRowsSelectedStatus = useAtomComponentSelectorValue(
+    allRowsSelectedStatusComponentSelector,
+  );
+
+  const { selectAllRows } = useSelectAllRows();
+
+  const { resetTableRowSelection } = useResetTableRowSelection();
+
+  const checked =
+    allRowsSelectedStatus === 'all' || allRowsSelectedStatus === 'some';
+  const indeterminate = allRowsSelectedStatus === 'some';
+
+  const { recordTableId } = useRecordTableContextOrThrow();
+
+  const isRecordTableInitialLoading = useAtomComponentStateValue(
+    isRecordTableInitialLoadingComponentState,
+    recordTableId,
+  );
+
+  const allRecordIds = useAtomComponentSelectorValue(
+    recordIndexAllRecordIdsComponentSelector,
+    recordTableId,
+  );
+
+  const recordTableIsEmpty =
+    !isRecordTableInitialLoading && allRecordIds.length === 0;
+
+  const onChange = () => {
+    if (checked) {
+      resetTableRowSelection();
+    } else {
+      selectAllRows();
+    }
+  };
+
+  return (
+    <StyledColumnHeaderCell
+      className={cx(
+        'header-cell',
+        RECORD_TABLE_COLUMN_CHECKBOX_WIDTH_CLASS_NAME,
+      )}
+    >
+      <StyledContainer data-select-disable>
+        <Checkbox
+          hoverable
+          checked={checked}
+          onChange={onChange}
+          indeterminate={indeterminate}
+          disabled={recordTableIsEmpty}
+        />
+      </StyledContainer>
+    </StyledColumnHeaderCell>
+  );
+};

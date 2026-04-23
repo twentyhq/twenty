@@ -1,0 +1,57 @@
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
+import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObjectMetadataToGraphQLQuery';
+import { generateDepthRecordGqlFieldsFromObject } from '@/object-record/graphql/record-gql-fields/utils/generateDepthRecordGqlFieldsFromObject';
+import { getUpdateOneRecordMutationResponseField } from '@/object-record/utils/getUpdateOneRecordMutationResponseField';
+import { gql } from '@apollo/client';
+import {
+  type ObjectPermissions,
+  type RecordGqlOperationGqlRecordFields,
+} from 'twenty-shared/types';
+import { capitalize } from 'twenty-shared/utils';
+
+export const generateUpdateOneRecordMutation = ({
+  objectMetadataItem,
+  objectMetadataItems,
+  recordGqlFields,
+  computeReferences,
+  objectPermissionsByObjectMetadataId,
+}: {
+  objectMetadataItem: EnrichedObjectMetadataItem;
+  objectMetadataItems: EnrichedObjectMetadataItem[];
+  recordGqlFields?: RecordGqlOperationGqlRecordFields;
+  computeReferences: boolean;
+  objectPermissionsByObjectMetadataId: Record<
+    string,
+    ObjectPermissions & { objectMetadataId: string }
+  >;
+}) => {
+  const appliedRecordGqlFields =
+    recordGqlFields ??
+    generateDepthRecordGqlFieldsFromObject({
+      depth: 1,
+      objectMetadataItems,
+      objectMetadataItem,
+    });
+
+  const capitalizedObjectName = capitalize(objectMetadataItem.nameSingular);
+
+  const mutationResponseField = getUpdateOneRecordMutationResponseField(
+    objectMetadataItem.nameSingular,
+  );
+
+  const updateOneRecordMutation = gql`
+  mutation UpdateOne${capitalizedObjectName}($idToUpdate: UUID!, $input: ${capitalizedObjectName}UpdateInput!){
+    ${mutationResponseField}(id: $idToUpdate, data: $input) ${mapObjectMetadataToGraphQLQuery(
+      {
+        objectMetadataItems,
+        objectMetadataItem,
+        computeReferences,
+        recordGqlFields: appliedRecordGqlFields,
+        objectPermissionsByObjectMetadataId,
+      },
+    )}
+  }
+`;
+
+  return updateOneRecordMutation;
+};

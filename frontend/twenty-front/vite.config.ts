@@ -1,0 +1,254 @@
+import { lingui } from '@lingui/vite-plugin';
+import { isNonEmptyString } from '@sniptt/guards';
+import react from '@vitejs/plugin-react-swc';
+import wyw from '@wyw-in-js/vite';
+import fs from 'fs';
+import path from 'path';
+import { visualizer } from 'rollup-plugin-visualizer';
+import {
+  defineConfig,
+  loadEnv,
+  type PluginOption,
+  searchForWorkspaceRoot,
+} from 'vite';
+import svgr from 'vite-plugin-svgr';
+import tsconfigPaths from 'vite-tsconfig-paths';
+
+import { createWywProfilingPlugin } from 'twenty-shared/vite';
+
+export default defineConfig(({ mode }) => {
+  const env = loadEnv(mode, __dirname, '');
+
+  const {
+    REACT_APP_SERVER_BASE_URL,
+    VITE_BUILD_SOURCEMAP,
+    VITE_HOST,
+    SSL_CERT_PATH,
+    SSL_KEY_PATH,
+    REACT_APP_PORT,
+    IS_DEBUG_MODE,
+  } = env;
+
+  const port = isNonEmptyString(REACT_APP_PORT)
+    ? parseInt(REACT_APP_PORT)
+    : 3001;
+
+  const CHUNK_SIZE_WARNING_LIMIT = 1024 * 1024; // 1MB
+  // Please don't increase this limit for main index chunk
+  // If it gets too big then find modules in the code base
+  // that can be loaded lazily, there are more!
+  const MAIN_CHUNK_SIZE_LIMIT = 6.8 * 1024 * 1024; // 6.8MB for main index chunk
+  const OTHER_CHUNK_SIZE_LIMIT = 5 * 1024 * 1024; // 5MB for other chunks
+
+  if (VITE_BUILD_SOURCEMAP === 'true') {
+    // oxlint-disable-next-line no-console
+    console.log(`VITE_BUILD_SOURCEMAP: ${VITE_BUILD_SOURCEMAP}`);
+  }
+
+  return {
+    root: __dirname,
+    cacheDir: '../../node_modules/.vite/packages/twenty-front',
+
+    server: {
+      port: port,
+      ...(VITE_HOST ? { host: VITE_HOST } : {}),
+      ...(SSL_KEY_PATH && SSL_CERT_PATH
+        ? {
+            protocol: 'https',
+            https: {
+              key: fs.readFileSync(env.SSL_KEY_PATH),
+              cert: fs.readFileSync(env.SSL_CERT_PATH),
+            },
+          }
+        : {
+            protocol: 'http',
+          }),
+      fs: {
+        allow: [
+          searchForWorkspaceRoot(process.cwd()),
+          '**/@blocknote/core/src/fonts/**',
+        ],
+      },
+    },
+
+    plugins: [
+      react({
+        plugins: [['@lingui/swc-plugin', {}]],
+      }),
+      tsconfigPaths({
+        root: __dirname,
+        projects: ['tsconfig.json'],
+      }),
+      svgr(),
+      lingui({
+        configPath: path.resolve(__dirname, './lingui.config.ts'),
+      }),
+      createWywProfilingPlugin(
+        wyw({
+          include: [path.resolve(__dirname, 'src') + '/**/*.{ts,tsx}'],
+          exclude: [
+            '**/generated-metadata/**',
+            '**/testing/mock-data/**',
+            '**/testing/jest/**',
+            '**/testing/hooks/**',
+            '**/testing/utils/**',
+            '**/testing/constants/**',
+            '**/testing/cache/**',
+            '**/*.test.{ts,tsx}',
+            '**/*.spec.{ts,tsx}',
+            '**/__tests__/**',
+            '**/__mocks__/**',
+            '**/types/**',
+            '**/constants/**',
+            '**/states/**',
+            '**/selectors/**',
+            '**/guards/**',
+            '**/schemas/**',
+            '**/utils/**',
+            '**/contexts/**',
+            '**/hooks/**',
+            '**/enums/**',
+            '**/queries/**',
+            '**/mutations/**',
+            '**/fragments/**',
+            '**/graphql/**',
+            '**/decorators/**',
+          ],
+          babelOptions: {
+            presets: ['@babel/preset-typescript', '@babel/preset-react'],
+            plugins: ['@babel/plugin-transform-export-namespace-from'],
+          },
+        }),
+      ),
+      ...(env.ANALYZE === 'true'
+        ? [
+            visualizer({
+              open: !process.env.CI,
+              gzipSize: true,
+              brotliSize: true,
+              filename: 'dist/stats.html',
+            }) as PluginOption,
+          ]
+        : []),
+    ],
+
+    optimizeDeps: {
+      exclude: [
+        '../../node_modules/.vite',
+        '../../node_modules/.cache',
+        '../../node_modules/twenty-ui',
+      ],
+    },
+
+    build: {
+      minify: 'esbuild',
+      outDir: 'build',
+      sourcemap: VITE_BUILD_SOURCEMAP === 'true' ? 'hidden' : false,
+      chunkSizeWarningLimit: CHUNK_SIZE_WARNING_LIMIT,
+      rollupOptions: {
+        //  Don't use manual chunks as it causes many issue
+        // including this one we wasted a lot of time on:
+        // https://github.com/rollup/rollup/issues/2793
+        output: {
+          // Custom plugin to fail build if chunks exceed max size
+          plugins: [
+            {
+              name: 'chunk-size-limit',
+              generateBundle(_options, bundle) {
+                const oversizedChunks: string[] = [];
+
+                Object.entries(bundle).forEach(([fileName, chunk]) => {
+                  if (chunk.type === 'chunk' && chunk.code !== undefined) {
+                    const size = Buffer.byteLength(chunk.code, 'utf8');
+                    const isMainChunk =
+                      fileName.includes('index') && chunk.isEntry;
+                    const sizeLimit = isMainChunk
+                      ? MAIN_CHUNK_SIZE_LIMIT
+                      : OTHER_CHUNK_SIZE_LIMIT;
+                    const limitType = isMainChunk ? 'main' : 'other';
+
+                    if (size > sizeLimit) {
+                      oversizedChunks.push(
+                        `${fileName} (${limitType}): ${(size / 1024 / 1024).toFixed(2)}MB (limit: ${(sizeLimit / 1024 / 1024).toFixed(2)}MB)`,
+                      );
+                    }
+                  }
+                });
+
+                if (oversizedChunks.length > 0) {
+                  const errorMessage = `Build failed: The following chunks exceed their size limits:\n${oversizedChunks.map((chunk) => `  - ${chunk}`).join('\n')}`;
+                  this.error(errorMessage);
+                }
+              },
+            },
+            // TODO; later - think about prefetching modules such
+            // as date time picker, phone input etc...
+            /*
+            {
+              name: 'add-prefetched-modules',
+              transformIndexHtml(html: string,
+                ctx: {
+                  path: string;
+                  filename: string;
+                  server?: ViteDevServer;
+                  bundle?: import('rollup').OutputBundle;
+                  chunk?: import('rollup').OutputChunk;
+                }) {
+
+                  const bundles = Object.keys(ctx.bundle ?? {});
+
+                  let modernBundles = bundles.filter(
+                    (bundle) => bundle.endsWith('.map') === false
+                  );
+
+
+                  // Remove existing files and concatenate them into link tags
+                  const prefechBundlesString = modernBundles
+                    .filter((bundle) => html.includes(bundle) === false)
+                    .map((bundle) => `<link rel="prefetch" href="${ctx.server?.config.base}${bundle}">`)
+                    .join('');
+
+                  // Use regular expression to get the content within <head> </head>
+                  const headContent = html.match(/<head>([\s\S]*)<\/head>/)?.[1] ?? '';
+                  // Insert the content of prefetch into the head
+                  const newHeadContent = `${headContent}${prefechBundlesString}`;
+                  // Replace the original head
+                  html = html.replace(
+                    /<head>([\s\S]*)<\/head>/,
+                    `<head>${newHeadContent}</head>`
+                  );
+
+                  return html;
+
+
+              },
+            }*/
+          ],
+        },
+      },
+    },
+
+    envPrefix: 'REACT_APP_',
+
+    define: {
+      _env_: {
+        REACT_APP_SERVER_BASE_URL,
+      },
+      'process.env': {
+        REACT_APP_SERVER_BASE_URL,
+        IS_DEBUG_MODE,
+        IS_DEV_ENV: mode === 'development' ? 'true' : 'false',
+      },
+    },
+    css: {
+      modules: {
+        localsConvention: 'camelCaseOnly',
+      },
+    },
+    resolve: {
+      alias: {
+        path: 'rollup-plugin-node-polyfills/polyfills/path',
+      },
+    },
+  };
+});

@@ -1,0 +1,258 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`Role update should fail should fail when updating a non-existent role 1`] = `
+{
+  "extensions": {
+    "code": "NOT_FOUND",
+    "subCode": "ROLE_NOT_FOUND",
+    "userFriendlyMessage": "The role you are looking for could not be found. It may have been deleted or you may not have access to it.",
+  },
+  "message": "Role not found",
+  "name": "NotFoundError",
+}
+`;
+
+exports[`Role update should fail updating role with existing write permissions should fail when updating only canReadAllObjectRecords to false while role has existing write permissions 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "role": [
+        {
+          "errors": [
+            {
+              "code": "CANNOT_GIVE_WRITING_PERMISSION_WITHOUT_READING_PERMISSION",
+              "message": "Cannot give writing permission without reading permission",
+              "userFriendlyMessage": "You cannot grant edit permissions without also granting read permissions. Please enable read access first.",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "role",
+          "status": "fail",
+          "type": "update",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 role",
+    "summary": {
+      "role": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Metadata validation failed",
+  },
+  "message": "Multiple validation errors occurred while updating role",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Role update should fail when updating a non-editable system role 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "role": [
+        {
+          "errors": [
+            {
+              "code": "ROLE_NOT_EDITABLE",
+              "message": "Role is not editable",
+              "userFriendlyMessage": "This role cannot be modified because it is a system role. Only custom roles can be edited.",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "role",
+          "status": "fail",
+          "type": "update",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 role",
+    "summary": {
+      "role": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Metadata validation failed",
+  },
+  "message": "Multiple validation errors occurred while updating role",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Role update should fail when updating canReadAllObjectRecords to false while canDestroyAllObjectRecords is true 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "role": [
+        {
+          "errors": [
+            {
+              "code": "CANNOT_GIVE_WRITING_PERMISSION_WITHOUT_READING_PERMISSION",
+              "message": "Cannot give writing permission without reading permission",
+              "userFriendlyMessage": "You cannot grant edit permissions without also granting read permissions. Please enable read access first.",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "role",
+          "status": "fail",
+          "type": "update",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 role",
+    "summary": {
+      "role": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Metadata validation failed",
+  },
+  "message": "Multiple validation errors occurred while updating role",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Role update should fail when updating canReadAllObjectRecords to false while canSoftDeleteAllObjectRecords is true 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "role": [
+        {
+          "errors": [
+            {
+              "code": "CANNOT_GIVE_WRITING_PERMISSION_WITHOUT_READING_PERMISSION",
+              "message": "Cannot give writing permission without reading permission",
+              "userFriendlyMessage": "You cannot grant edit permissions without also granting read permissions. Please enable read access first.",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "role",
+          "status": "fail",
+          "type": "update",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 role",
+    "summary": {
+      "role": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Metadata validation failed",
+  },
+  "message": "Multiple validation errors occurred while updating role",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Role update should fail when updating canReadAllObjectRecords to false while canUpdateAllObjectRecords is true 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "role": [
+        {
+          "errors": [
+            {
+              "code": "CANNOT_GIVE_WRITING_PERMISSION_WITHOUT_READING_PERMISSION",
+              "message": "Cannot give writing permission without reading permission",
+              "userFriendlyMessage": "You cannot grant edit permissions without also granting read permissions. Please enable read access first.",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "role",
+          "status": "fail",
+          "type": "update",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 role",
+    "summary": {
+      "role": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Metadata validation failed",
+  },
+  "message": "Multiple validation errors occurred while updating role",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Role update should fail when updating label to one that already exists 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "role": [
+        {
+          "errors": [
+            {
+              "code": "ROLE_LABEL_ALREADY_EXISTS",
+              "message": "A role with this label already exists",
+              "userFriendlyMessage": "A role with this label already exists.",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "role",
+          "status": "fail",
+          "type": "update",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 role",
+    "summary": {
+      "role": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Metadata validation failed",
+  },
+  "message": "Multiple validation errors occurred while updating role",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Role update should fail when updating to enable write permissions without read permission 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "role": [
+        {
+          "errors": [
+            {
+              "code": "CANNOT_GIVE_WRITING_PERMISSION_WITHOUT_READING_PERMISSION",
+              "message": "Cannot give writing permission without reading permission",
+              "userFriendlyMessage": "You cannot grant edit permissions without also granting read permissions. Please enable read access first.",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "role",
+          "status": "fail",
+          "type": "update",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 role",
+    "summary": {
+      "role": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Metadata validation failed",
+  },
+  "message": "Multiple validation errors occurred while updating role",
+  "name": "GraphQLError",
+}
+`;

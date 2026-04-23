@@ -1,0 +1,295 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`Agent creation should fail when computed name already exists 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "agent": [
+        {
+          "errors": [
+            {
+              "code": "AGENT_ALREADY_EXISTS",
+              "message": "Agent with name "existingTestAgent" already exists",
+              "userFriendlyMessage": "An agent with this name already exists",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "name": "existingTestAgent",
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "agent",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 agent",
+    "summary": {
+      "agent": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Metadata validation failed",
+  },
+  "message": "Multiple validation errors occurred while creating agent",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Agent creation should fail when label is empty string 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "agent": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_AGENT_INPUT",
+              "message": "Label cannot be empty",
+              "userFriendlyMessage": "Label cannot be empty",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "name": "",
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "agent",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 agent",
+    "summary": {
+      "agent": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Metadata validation failed",
+  },
+  "message": "Multiple validation errors occurred while creating agent",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Agent creation should fail when label is missing 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "http": {
+      "status": 400,
+    },
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "Field "label" of required type "String!" was not provided.",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Agent creation should fail when modelId is empty string 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "agent": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_AGENT_INPUT",
+              "message": "Model ID cannot be empty",
+              "userFriendlyMessage": "Model ID cannot be empty",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "name": "emptyModelidAgent",
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "agent",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 agent",
+    "summary": {
+      "agent": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Metadata validation failed",
+  },
+  "message": "Multiple validation errors occurred while creating agent",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Agent creation should fail when modelId is missing 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "http": {
+      "status": 400,
+    },
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "Field "modelId" of required type "String!" was not provided.",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Agent creation should fail when prompt is empty string 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "agent": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_AGENT_INPUT",
+              "message": "Prompt cannot be empty",
+              "userFriendlyMessage": "Prompt cannot be empty",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "name": "emptyPromptAgent",
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "agent",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 agent",
+    "summary": {
+      "agent": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Metadata validation failed",
+  },
+  "message": "Multiple validation errors occurred while creating agent",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Agent creation should fail when prompt is missing 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "http": {
+      "status": 400,
+    },
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "Field "prompt" of required type "String!" was not provided.",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Agent creation should fail when responseFormat has invalid type 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "agent": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_AGENT_INPUT",
+              "message": "Response format type must be either "text" or "json"",
+              "userFriendlyMessage": "Invalid response format type",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "name": "invalidResponseFormatAgent",
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "agent",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 agent",
+    "summary": {
+      "agent": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Metadata validation failed",
+  },
+  "message": "Multiple validation errors occurred while creating agent",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Agent creation should fail when responseFormat type is json but schema is missing 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "agent": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_AGENT_INPUT",
+              "message": "Response format with type "json" must include a schema",
+              "userFriendlyMessage": "JSON response format requires a schema",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "name": "jsonWithoutSchemaAgent",
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "agent",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 agent",
+    "summary": {
+      "agent": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Metadata validation failed",
+  },
+  "message": "Multiple validation errors occurred while creating agent",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Agent creation should fail when responseFormat type is text but schema is present 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "agent": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_AGENT_INPUT",
+              "message": "Response format with type "text" should not include a schema",
+              "userFriendlyMessage": "Text response format should not have a schema",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "name": "textWithSchemaAgent",
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "agent",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 agent",
+    "summary": {
+      "agent": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Metadata validation failed",
+  },
+  "message": "Multiple validation errors occurred while creating agent",
+  "name": "GraphQLError",
+}
+`;

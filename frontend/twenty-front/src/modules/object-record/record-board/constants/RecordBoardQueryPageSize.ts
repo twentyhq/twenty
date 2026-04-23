@@ -1,0 +1,1 @@
+export const RECORD_BOARD_QUERY_PAGE_SIZE = 10;

@@ -1,0 +1,139 @@
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { useRecordFieldsScopeContextOrThrow } from '@/object-record/record-field-list/contexts/RecordFieldsScopeContext';
+import { RecordDetailMorphRelationSectionDropdown } from '@/object-record/record-field-list/record-detail-section/relation/components/RecordDetailMorphRelationSectionDropdown';
+import { RecordDetailRelationSectionDropdown } from '@/object-record/record-field-list/record-detail-section/relation/components/RecordDetailRelationSectionDropdown';
+import {
+  FieldContext,
+  type GenericFieldContextType,
+} from '@/object-record/record-field/ui/contexts/FieldContext';
+import {
+  FieldInputEventContext,
+  type FieldInputEvent,
+} from '@/object-record/record-field/ui/contexts/FieldInputEventContext';
+import { usePersistField } from '@/object-record/record-field/ui/hooks/usePersistField';
+import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
+import {
+  type FieldMorphRelationMetadata,
+  type FieldRelationMetadata,
+} from '@/object-record/record-field/ui/types/FieldMetadata';
+import { isFieldMorphRelation } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelation';
+import { getRecordFieldCardRelationPickerDropdownId } from '@/object-record/record-show/utils/getRecordFieldCardRelationPickerDropdownId';
+import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
+import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { styled } from '@linaria/react';
+import { CustomError } from 'twenty-shared/utils';
+import { IconPencil } from 'twenty-ui/display';
+import { LightIconButton } from 'twenty-ui/input';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
+
+type FieldWidgetRelationEditActionProps = {
+  fieldDefinition:
+    | FieldDefinition<FieldRelationMetadata>
+    | FieldDefinition<FieldMorphRelationMetadata>;
+  recordId: string;
+};
+
+const StyledEditButtonWrapper = styled.div<{
+  isDropdownOpen: boolean;
+  isMobile: boolean;
+}>`
+  opacity: ${({ isDropdownOpen, isMobile }) =>
+    isDropdownOpen ? '1' : isMobile ? '1' : '0'};
+  pointer-events: ${({ isDropdownOpen }) => (isDropdownOpen ? 'auto' : 'none')};
+  transition: ${({ isDropdownOpen }) =>
+    isDropdownOpen
+      ? 'none'
+      : `opacity ${themeCssVariables.animation.duration.instant}s ease`};
+
+  .widget:hover & {
+    opacity: 1;
+    pointer-events: auto;
+  }
+`;
+
+export const FieldWidgetRelationEditAction = ({
+  fieldDefinition,
+  recordId,
+}: FieldWidgetRelationEditActionProps) => {
+  const { scopeInstanceId } = useRecordFieldsScopeContextOrThrow();
+
+  const { objectMetadataItems } = useObjectMetadataItems();
+  const objectMetadataItem = objectMetadataItems.find(
+    (item) =>
+      item.nameSingular === fieldDefinition.metadata.objectMetadataNameSingular,
+  );
+
+  if (!objectMetadataItem) {
+    throw new CustomError(
+      'Object metadata item not found',
+      'OBJECT_METADATA_ITEM_NOT_FOUND',
+    );
+  }
+
+  const persistField = usePersistField({
+    objectMetadataItemId: objectMetadataItem.id,
+  });
+
+  const handleSubmit: FieldInputEvent = ({ newValue }) => {
+    persistField({
+      recordId,
+      fieldDefinition,
+      valueToPersist: newValue,
+    });
+  };
+
+  const fieldContextValue = {
+    recordId,
+    fieldDefinition,
+    isLabelIdentifier: false,
+    isRecordFieldReadOnly: false,
+  } satisfies GenericFieldContextType;
+
+  const isMorphRelation = isFieldMorphRelation(fieldDefinition);
+
+  const relationSelectionDropdownId =
+    getRecordFieldCardRelationPickerDropdownId({
+      fieldDefinition,
+      recordId,
+      instanceId: scopeInstanceId,
+    });
+
+  const isDropdownOpen = useAtomComponentStateValue(
+    isDropdownOpenComponentState,
+    relationSelectionDropdownId,
+  );
+
+  const isMobile = useIsMobile();
+
+  const dropdownTriggerClickableComponent = (
+    <StyledEditButtonWrapper
+      isDropdownOpen={isDropdownOpen}
+      isMobile={isMobile}
+    >
+      <LightIconButton Icon={IconPencil} accent="secondary" />
+    </StyledEditButtonWrapper>
+  );
+
+  return (
+    <FieldContext.Provider value={fieldContextValue}>
+      <FieldInputEventContext.Provider value={{ onSubmit: handleSubmit }}>
+        {isMorphRelation ? (
+          <RecordDetailMorphRelationSectionDropdown
+            loading={false}
+            dropdownTriggerClickableComponent={
+              dropdownTriggerClickableComponent
+            }
+          />
+        ) : (
+          <RecordDetailRelationSectionDropdown
+            loading={false}
+            dropdownTriggerClickableComponent={
+              dropdownTriggerClickableComponent
+            }
+          />
+        )}
+      </FieldInputEventContext.Provider>
+    </FieldContext.Provider>
+  );
+};

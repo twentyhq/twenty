@@ -1,0 +1,93 @@
+import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
+import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
+import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
+import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
+import { getDefaultTabLayoutMode } from '@/page-layout/utils/getDefaultTabLayoutMode';
+import { getEmptyTabLayout } from '@/page-layout/utils/getEmptyTabLayout';
+import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
+import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
+import { useStore } from 'jotai';
+import { useCallback } from 'react';
+import { v4 as uuidv4 } from 'uuid';
+
+export const useCreatePageLayoutTab = ({
+  pageLayoutId: pageLayoutIdFromProps,
+  tabListInstanceId,
+}: {
+  pageLayoutId: string;
+  tabListInstanceId: string;
+}) => {
+  const pageLayoutId = useAvailableComponentInstanceIdOrThrow(
+    PageLayoutComponentInstanceContext,
+    pageLayoutIdFromProps,
+  );
+
+  const pageLayoutDraftState = useAtomComponentStateCallbackState(
+    pageLayoutDraftComponentState,
+    pageLayoutId,
+  );
+
+  const pageLayoutCurrentLayoutsState = useAtomComponentStateCallbackState(
+    pageLayoutCurrentLayoutsComponentState,
+    pageLayoutId,
+  );
+
+  const setActiveTabId = useSetAtomComponentState(
+    activeTabIdComponentState,
+    tabListInstanceId,
+  );
+
+  const store = useStore();
+
+  const createPageLayoutTab = useCallback(
+    (title?: string): string => {
+      const pageLayoutDraft = store.get(pageLayoutDraftState);
+
+      const newTabId = uuidv4();
+      const tabsLength = pageLayoutDraft.tabs.length;
+      const maxPosition =
+        tabsLength > 0
+          ? Math.max(...pageLayoutDraft.tabs.map((t) => t.position))
+          : -1;
+      const newTab: PageLayoutTab = {
+        id: newTabId,
+        applicationId: '',
+        title: title || `Tab ${tabsLength + 1}`,
+        position: maxPosition + 1,
+        pageLayoutId: pageLayoutId,
+        layoutMode: getDefaultTabLayoutMode(pageLayoutDraft.type),
+        widgets: [],
+        isOverridden: false,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        deletedAt: null,
+      };
+
+      const updatedTabs = [...(pageLayoutDraft.tabs ?? []), newTab];
+
+      store.set(pageLayoutDraftState, (prev) => ({
+        ...prev,
+        tabs: updatedTabs,
+      }));
+
+      store.set(pageLayoutCurrentLayoutsState, (prev) =>
+        getEmptyTabLayout(prev, newTabId),
+      );
+
+      setActiveTabId(newTabId);
+
+      return newTabId;
+    },
+    [
+      pageLayoutCurrentLayoutsState,
+      pageLayoutDraftState,
+      pageLayoutId,
+      setActiveTabId,
+      store,
+    ],
+  );
+
+  return { createPageLayoutTab };
+};

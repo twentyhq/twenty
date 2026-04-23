@@ -1,0 +1,888 @@
+
+[7m[1m[36m NX [39m[22m[27m  [36mRunning target [1mstart[22m for project twenty-server and [1m4[22m tasks it depends on:[39m
+
+[2m[36m[39m[22m
+
+[2m> [22m[2mnx run[22m twenty-shared:generateBarrels  [2m[existing outputs match the cache, left as is][22m
+
+
+[2m> [22m[2mnx run[22m twenty-shared:build  [2m[existing outputs match the cache, left as is][22m
+
+
+[2m> [22m[2mnx run[22m twenty-client-sdk:build  [2m[existing outputs match the cache, left as is][22m
+
+
+[2m> [22m[2mnx run[22m twenty-emails:build
+
+[2m> [22mnpx vite build
+
+[36mvite v7.1.12 [32mbuilding for production...[36m[39m
+transforming...
+[32m✓[39m 1010 modules transformed.
+rendering chunks...
+[2mdist/[22m[36mlocales/generated/zh-CN.mjs      [39m[1m[2m  3.98 kB[22m[1m[22m
+[2mdist/[22m[36mlocales/generated/zh-TW.mjs      [39m[1m[2m  4.03 kB[22m[1m[22m
+[2mdist/[22m[36mlocales/generated/en.mjs         [39m[1m[2m  4.13 kB[22m[1m[22m
+[2mdist/[22m[36mlocales/generated/fi-FI.mjs      [39m[1m[2m  4.21 kB[22m[1m[22m
+[2mdist/[22m[36mlocales/generated/af-ZA.mjs      [39m[1m[2m  4.29 kB[22m[1m[22m
+[2mdist/[22m[36mlocales/generated/no-NO.mjs      [39m[1m[2m  4.30 kB[22m[1m[22m
+[2mdist/[22m[36mlocales/generated/da-DK.mjs      [39m[1m[2m  4.32 kB[22m[1m[22m
+[2mdist/[22m[36mlocales/generated/nl-NL.mjs      [39m[1m[2m  4.34 kB[22m[1m[22m
+[2mdist/[22m[36mlocales/generated/sv-SE.mjs      [39m[1m[2m  4.34 kB[22m[1m[22m
+[2mdist/[22m[36mlocales/generated/pt-BR.mjs      [39m[1m[2m  4.35 kB[22m[1m[22m
+[2mdist/[22m[36mlocales/generated/pt-PT.mjs      [39m[1m[2m  4.36 kB[22m[1m[22m
+[2mdist/[22m[36mlocales/generated/it-IT.mjs      [39m[1m[2m  4.40 kB[22m[1m[22m
+[2mdist/[22m[36mlocales/generated/pl-PL.mjs      [39m[1m[2m  4.46 kB[22m[1m[22m
+[2mdist/[22m[36mlocales/generated/tr-TR.mjs      [39m[1m[2m  4.47 kB[22m[1m[22m
+[2mdist/[22m[36mlocales/generated/cs-CZ.mjs      [39m[1m[2m  4.48 kB[22m[1m[22m
+[2mdist/[22m[36mlocales/generated/ro-RO.mjs      [39m[1m[2m  4.49 kB[22m[1m[22m
+[2mdist/[22m[36mlocales/generated/de-DE.mjs      [39m[1m[2m  4.50 kB[22m[1m[22m
+[2mdist/[22m[36mlocales/generated/ca-ES.mjs      [39m[1m[2m  4.51 kB[22m[1m[22m
+[2mdist/[22m[36mlocales/generated/ko-KR.mjs      [39m[1m[2m  4.51 kB[22m[1m[22m
+[2mdist/[22m[36mlocales/generated/fr-FR.mjs      [39m[1m[2m  4.53 kB[22m[1m[22m
+[2mdist/[22m[36mlocales/generated/es-ES.mjs      [39m[1m[2m  4.54 kB[22m[1m[22m
+[2mdist/[22m[36mlocales/generated/hu-HU.mjs      [39m[1m[2m  4.59 kB[22m[1m[22m
+[2mdist/[22m[36mlocales/generated/he-IL.mjs      [39m[1m[2m  4.68 kB[22m[1m[22m
+[2mdist/[22m[36mlocales/generated/ja-JP.mjs      [39m[1m[2m  4.73 kB[22m[1m[22m
+[2mdist/[22m[36mlocales/generated/vi-VN.mjs      [39m[1m[2m  4.93 kB[22m[1m[22m
+[2mdist/[22m[36mlocales/generated/ar-SA.mjs      [39m[1m[2m  5.11 kB[22m[1m[22m
+[2mdist/[22m[36mlocales/generated/pseudo-en.mjs  [39m[1m[2m  5.40 kB[22m[1m[22m
+[2mdist/[22m[36mlocales/generated/sr-Cyrl.mjs    [39m[1m[2m  5.52 kB[22m[1m[22m
+[2mdist/[22m[36mlocales/generated/uk-UA.mjs      [39m[1m[2m  5.77 kB[22m[1m[22m
+[2mdist/[22m[36mlocales/generated/el-GR.mjs      [39m[1m[2m  6.14 kB[22m[1m[22m
+[2mdist/[22m[36mlocales/generated/ru-RU.mjs      [39m[1m[2m  6.39 kB[22m[1m[22m
+[2mdist/[22m[36mindex.mjs                        [39m[1m[33m869.92 kB[39m[22m
+[2mdist/[22m[36mlocales/generated/zh-CN.js      [39m[1m[2m  4.05 kB[22m[1m[22m
+[2mdist/[22m[36mlocales/generated/zh-TW.js      [39m[1m[2m  4.10 kB[22m[1m[22m
+[2mdist/[22m[36mlocales/generated/en.js         [39m[1m[2m  4.20 kB[22m[1m[22m
+[2mdist/[22m[36mlocales/generated/fi-FI.js      [39m[1m[2m  4.28 kB[22m[1m[22m
+[2mdist/[22m[36mlocales/generated/af-ZA.js      [39m[1m[2m  4.36 kB[22m[1m[22m
+[2mdist/[22m[36mlocales/generated/no-NO.js      [39m[1m[2m  4.37 kB[22m[1m[22m
+[2mdist/[22m[36mlocales/generated/da-DK.js      [39m[1m[2m  4.39 kB[22m[1m[22m
+[2mdist/[22m[36mlocales/generated/nl-NL.js      [39m[1m[2m  4.41 kB[22m[1m[22m
+[2mdist/[22m[36mlocales/generated/sv-SE.js      [39m[1m[2m  4.41 kB[22m[1m[22m
+[2mdist/[22m[36mlocales/generated/pt-BR.js      [39m[1m[2m  4.42 kB[22m[1m[22m
+[2mdist/[22m[36mlocales/generated/pt-PT.js      [39m[1m[2m  4.43 kB[22m[1m[22m
+[2mdist/[22m[36mlocales/generated/it-IT.js      [39m[1m[2m  4.47 kB[22m[1m[22m
+[2mdist/[22m[36mlocales/generated/pl-PL.js      [39m[1m[2m  4.53 kB[22m[1m[22m
+[2mdist/[22m[36mlocales/generated/tr-TR.js      [39m[1m[2m  4.54 kB[22m[1m[22m
+[2mdist/[22m[36mlocales/generated/cs-CZ.js      [39m[1m[2m  4.55 kB[22m[1m[22m
+[2mdist/[22m[36mlocales/generated/ro-RO.js      [39m[1m[2m  4.56 kB[22m[1m[22m
+[2mdist/[22m[36mlocales/generated/de-DE.js      [39m[1m[2m  4.57 kB[22m[1m[22m
+[2mdist/[22m[36mlocales/generated/ca-ES.js      [39m[1m[2m  4.58 kB[22m[1m[22m
+[2mdist/[22m[36mlocales/generated/ko-KR.js      [39m[1m[2m  4.58 kB[22m[1m[22m
+[2mdist/[22m[36mlocales/generated/fr-FR.js      [39m[1m[2m  4.60 kB[22m[1m[22m
+[2mdist/[22m[36mlocales/generated/es-ES.js      [39m[1m[2m  4.60 kB[22m[1m[22m
+[2mdist/[22m[36mlocales/generated/hu-HU.js      [39m[1m[2m  4.66 kB[22m[1m[22m
+[2mdist/[22m[36mlocales/generated/he-IL.js      [39m[1m[2m  4.75 kB[22m[1m[22m
+[2mdist/[22m[36mlocales/generated/ja-JP.js      [39m[1m[2m  4.80 kB[22m[1m[22m
+[2mdist/[22m[36mlocales/generated/vi-VN.js      [39m[1m[2m  5.00 kB[22m[1m[22m
+[2mdist/[22m[36mlocales/generated/ar-SA.js      [39m[1m[2m  5.18 kB[22m[1m[22m
+[2mdist/[22m[36mlocales/generated/pseudo-en.js  [39m[1m[2m  5.46 kB[22m[1m[22m
+[2mdist/[22m[36mlocales/generated/sr-Cyrl.js    [39m[1m[2m  5.59 kB[22m[1m[22m
+[2mdist/[22m[36mlocales/generated/uk-UA.js      [39m[1m[2m  5.84 kB[22m[1m[22m
+[2mdist/[22m[36mlocales/generated/el-GR.js      [39m[1m[2m  6.21 kB[22m[1m[22m
+[2mdist/[22m[36mlocales/generated/ru-RU.js      [39m[1m[2m  6.46 kB[22m[1m[22m
+[2mdist/[22m[36mindex.js                        [39m[1m[33m642.77 kB[39m[22m
+[32m✓ built in 6.26s[39m
+[2m> [22mtsgo -p tsconfig.lib.json --declaration --emitDeclarationOnly --outDir dist --rootDir src --composite false && npx tsc-alias -p tsconfig.lib.json --outDir dist
+
+
+[2m> [22m[2mnx run[22m twenty-server:start
+
+[2m> [22mrimraf dist && nest start --watch
+
+[36m> [39m[46m[1m SWC [22m[49m [36mRunning...[39m
+Successfully compiled: 5417 files with swc (539.82ms)
+Watching for file changes.
+(node:32072) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[NestFactory] [39m[32mStarting Nest application...[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAppModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mSentryModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mGraphQLConfigModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mCoreEngineModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTwentyConfigModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mNestjsQueryCoreModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mFileStorageModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mLogicFunctionLayerModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mNestjsQueryCoreModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mStripeSDKModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mMessageQueueModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mNestjsQueryCoreModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mNestjsQueryCoreModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mI18nModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mNestjsQueryCoreModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mNestjsQueryGraphQLModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mNestjsQueryCoreModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mNestjsQueryCoreModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mObjectMetadataRepositoryModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mRecordTransformerModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mEmailModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAppTokenModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mNestjsQueryCoreModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mLogicFunctionModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mFormActionModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mFilterActionModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mIfElseActionModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mEmptyActionModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mWorkflowBuilderModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mMessageQueueModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mModulesModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mMessagingModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mCalendarModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mWorkflowModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mGamificationModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mInventoryModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mOmnichannelModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mMarketplaceModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mVoIPModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mElectronicSignatureModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mLeadScoringModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mLiveChatModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAutomationRuleModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mKnowledgeBaseModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mMarketingCampaignModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mSupportTicketModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mProjectModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mProductModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mQuoteModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mDocumentModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mMetadataGraphQLApiModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mMetadataEngineModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mSearchFieldMetadataModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mNestjsQueryCoreModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigHostModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mWorkspaceMigrationBuilderValidatorsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mWorkspaceSchemaManagerModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTwentyORMModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mFlatFieldMetadataModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mGraphqlQueryRunnerModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mHttpModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mPipelineModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mMetadataQueryBuilderModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mDiscoveryModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mWorkspaceSchemaBuilderModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mScheduleModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mEventEmitterModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mEnvironmentModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mSecretEncryptionModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mWorkspaceEventEmitterModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mGraphQLSchemaBuilderModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTerminusModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mIndexMetadataModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mHealthModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mWorkspaceQueryHookModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmCoreModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[95m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [95m  DEBUG[39m [38;5;3m[DatabaseConfigDriver] [39m[95m[INIT] Database config driver created, monitoring keys: 81[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mDataSourceModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mWorkspaceFeatureFlagsMapCacheModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mNestjsQueryTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mNestjsQueryTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mNestjsQueryTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mFlatNavigationMenuItemModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mNestjsQueryTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mNestjsQueryTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mNestjsQueryTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mFlatViewModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mNestjsQueryTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mNestjsQueryTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mRoleValidationModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mNestjsQueryTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mNestjsQueryTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mNestjsQueryTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mKeyValuePairModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mNestjsQueryTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mFlatAgentModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mApplicationRegistrationVariableModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mNestjsQueryTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mFlatPageLayoutModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mFlatPageLayoutTabModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mFlatPageLayoutWidgetModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mNestjsQueryTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mNestjsQueryTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mNestjsQueryTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mNestjsQueryTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mNestjsQueryTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mNestjsQueryTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mNestjsQueryTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mFlatCommandMenuItemModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mFlatFrontComponentModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mNestjsQueryTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mNestjsQueryTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mNestjsQueryTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mNestjsQueryTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mNestjsQueryTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mNestjsQueryTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mFlatSkillModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mNestjsQueryTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mFlatWebhookModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[TwentyConfigService] [39m[32mDatabase configuration is enabled[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[TwentyConfigService] [39m[32mUsing database configuration driver[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mDatabaseConfigModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mNestjsQueryGraphQLModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mUserVarsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTwentyConfigModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mNestjsQueryGraphQLModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mDomainServerConfigModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mSecureHttpClientModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mClickHouseModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mRedisClientModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mSubdomainManagerModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mGoogleAPIRefreshAccessTokenModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mMicrosoftAPIRefreshAccessTokenModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mJwtModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mDnsManagerModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mWorkspaceDomainsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mMessagingSmtpDriverModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mImapSmtpCaldavValidatorModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTelemetryModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mOAuth2ClientManagerModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mCodeInterpreterModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mFileStorageModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mStripeModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mLoggerModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mJwtModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mCalDavDriverModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mMessagingIMAPDriverModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mCaptchaModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAiModelsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAiBillingModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mMicrosoftCalendarDriverModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mGoogleCalendarDriverModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mMessagingGmailDriverModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mWorkspaceMigrationBuilderModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mLogicFunctionResourceModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mApplicationPackageModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mExceptionHandlerModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mGuardRedirectModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mFileUrlModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mGeoMapModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mMessagingSendManagerModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mMessagingMicrosoftDriverModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAuditModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mNestjsQueryGraphQLModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mClientConfigModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mWorkspaceMemberModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mCustomDomainManagerModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mEnterpriseModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mWorkspaceSchemaMigrationRunnerActionHandlersModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mOnboardingModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mCloudflareModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mCacheModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mCacheStorageModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mWorkspaceCacheModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mWorkspaceCacheStorageModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mThrottlerModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mCoreEntityCacheModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mCacheLockModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mWorkspaceManyOrAllFlatEntityMapsCacheModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mFeatureFlagModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mApplicationModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mWorkspaceMetadataVersionModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mMetricsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mToolGeneratorModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mDataloaderModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mWorkspaceDataSourceModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mGlobalWorkspaceDataSourceModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mMatchParticipantModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mRecordPositionModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mFavoriteFolderModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mObjectMetadataRepositoryModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mObjectMetadataRepositoryModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mObjectMetadataRepositoryModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mDashboardSyncModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mObjectMetadataRepositoryModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mObjectMetadataRepositoryModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConnectedAccountDataAccessModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mMessageFolderDataAccessModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeORMModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mActorModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mNoteQueryHookModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTaskQueryHookModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mBlocklistValidationManagerModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mEmailAliasManagerModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mCalendarChannelDataAccessModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mRefreshTokensManagerModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mMessageChannelDataAccessModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mMessagingFolderSyncManagerModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mContactCreationManagerModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mWorkspaceMigrationModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mWorkspaceMigrationRunnerModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mMessageQueueCoreModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mMinimalMetadataModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mBlocklistQueryHookModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTimelineCalendarEventModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mCalendarQueryHookModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mCalendarCommonModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConnectedAccountQueryHookModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mMessagingCommonModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mSearchModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mRoleTargetModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mPermissionFlagModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mObjectPermissionModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mRowLevelPermissionModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTwentyStandardApplicationModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mMessageParticipantManagerModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mMessagingMonitoringModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mEmailModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mCalendarEventCleanerModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mCalendarEventParticipantManagerModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTrashCleanupModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mWorkflowStatusModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mFavoriteModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConnectedAccountModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mCalendarBlocklistManagerModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mMessagingBlocklistManagerModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mMessagingMessageCleanerModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mIMAPAPIsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mMessagingQueryHookModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAiAgentRoleModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mUserRoleModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mWorkflowRunQueueModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mPermissionsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mDashboardQueryHookModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mDashboardToolsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mNestjsQueryGraphQLModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mUserWorkspaceModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mEmailVerificationModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAdminPanelModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mNestjsQueryGraphQLModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mUsageModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mPublicDomainModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mEmailingDomainModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mPostgresCredentialsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mFilesFieldModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mFileCorePictureModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mEventLogsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mWorkspaceSSOModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mLabModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mApplicationVariableEntityModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mFileWorkflowModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mFileAIChatModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mApplicationRegistrationModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mGraphQLModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mMessagingImportManagerModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mViewPermissionsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mWorkspaceMemberQueryHookModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mCalendarEventImportManagerModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mObjectMetadataModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mFieldMetadataModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mWorkspaceQueryRunnerModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mToolModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTokenModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mMiddlewareModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mSubscriptionsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mSkillModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mViewFieldGroupModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mCommandMenuItemModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConnectedAccountMetadataModule dependencies initialized[39m[38;5;3m +0ms[39m
+[31m[Nest] 32072  - [39m09/04/2026, 10:24:34 a. m. [31m  ERROR[39m [38;5;3m[ExceptionHandler] [39mUnknownDependenciesException [Error]: Nest can't resolve dependencies of the JwtAuthGuard (?, WorkspaceCacheStorageService). Please make sure that the argument AccessTokenService at index [0] is available in the CrmAccelerationModule module.
+
+Potential solutions:
+- Is CrmAccelerationModule a valid NestJS module?
+- If AccessTokenService is a provider, is it part of the current CrmAccelerationModule?
+- If AccessTokenService is exported from a separate @Module, is that module imported within CrmAccelerationModule?
+  @Module({
+    imports: [ /* the Module containing AccessTokenService */ ]
+  })
+
+For more common dependency resolution issues, see: https://docs.nestjs.com/faq/common-errors
+    at Injector.lookupComponentInParentModules (C:\Users\Fabian Leal\Documents\twenty\node_modules\[4m@nestjs\core[24m\injector\injector.js:290:19)
+[90m    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)[39m
+    at async resolveParam (C:\Users\Fabian Leal\Documents\twenty\node_modules\[4m@nestjs\core[24m\injector\injector.js:140:38)
+    at async Promise.all (index 0)
+    at async Injector.resolveConstructorParams (C:\Users\Fabian Leal\Documents\twenty\node_modules\[4m@nestjs\core[24m\injector\injector.js:169:27)
+    at async Injector.loadInstance (C:\Users\Fabian Leal\Documents\twenty\node_modules\[4m@nestjs\core[24m\injector\injector.js:75:13)
+    at async Injector.loadInjectable (C:\Users\Fabian Leal\Documents\twenty\node_modules\[4m@nestjs\core[24m\injector\injector.js:99:9)
+    at async C:\Users\Fabian Leal\Documents\twenty\node_modules\[4m@nestjs\core[24m\injector\instance-loader.js:80:13
+    at async Promise.all (index 0)
+    at async InstanceLoader.createInstancesOfInjectables (C:\Users\Fabian Leal\Documents\twenty\node_modules\[4m@nestjs\core[24m\injector\instance-loader.js:79:9) {
+  type: [32m'JwtAuthGuard'[39m,
+  context: {
+    index: [33m0[39m,
+    dependencies: [
+      [36m[class AccessTokenService][39m,
+      [36m[class WorkspaceCacheStorageService][39m
+    ],
+    name: [36m[class AccessTokenService][39m
+  },
+  metadata: {
+    id: [32m'1988300340'[39m
+  },
+  moduleRef: {
+    id: [32m'427405981'[39m
+  }
+}
+Successfully compiled src\modules\crm-acceleration\crm-acceleration.module.ts with swc (23.19ms)
+Successfully compiled src\modules\crm-acceleration\crm-acceleration.module.ts with swc (14.17ms)
+node:internal/modules/cjs/loader:1458
+  throw err;
+  ^
+
+Error: Cannot find module '../../core-entity-cache/core-entity-cache.module'
+Require stack:
+- C:\Users\Fabian Leal\Documents\twenty\packages\twenty-server\dist\engine\metadata-modules\workspace-metadata-version\workspace-metadata-version.module.js
+- C:\Users\Fabian Leal\Documents\twenty\packages\twenty-server\dist\engine\workspace-manager\workspace-migration\workspace-migration-runner\workspace-migration-runner.module.js
+- C:\Users\Fabian Leal\Documents\twenty\packages\twenty-server\dist\engine\workspace-manager\workspace-migration\workspace-migration.module.js
+- C:\Users\Fabian Leal\Documents\twenty\packages\twenty-server\dist\engine\metadata-modules\role-target\role-target.module.js
+- C:\Users\Fabian Leal\Documents\twenty\packages\twenty-server\dist\engine\metadata-modules\permissions\permissions.module.js
+- C:\Users\Fabian Leal\Documents\twenty\packages\twenty-server\dist\engine\twenty-orm\twenty-orm.module.js
+- C:\Users\Fabian Leal\Documents\twenty\packages\twenty-server\dist\engine\object-metadata-repository\object-metadata-repository.module.js
+- C:\Users\Fabian Leal\Documents\twenty\packages\twenty-server\dist\modules\blocklist\blocklist-validation-manager\blocklist-validation-manager.module.js
+- C:\Users\Fabian Leal\Documents\twenty\packages\twenty-server\dist\modules\blocklist\query-hooks\blocklist-query-hook.module.js
+- C:\Users\Fabian Leal\Documents\twenty\packages\twenty-server\dist\engine\api\graphql\workspace-query-runner\workspace-query-hook\workspace-query-hook.module.js
+- C:\Users\Fabian Leal\Documents\twenty\packages\twenty-server\dist\engine\api\common\core-common-api.module.js
+- C:\Users\Fabian Leal\Documents\twenty\packages\twenty-server\dist\engine\api\graphql\workspace-resolver-builder\workspace-resolver-builder.module.js
+- C:\Users\Fabian Leal\Documents\twenty\packages\twenty-server\dist\engine\api\graphql\core-graphql-api.module.js
+- C:\Users\Fabian Leal\Documents\twenty\packages\twenty-server\dist\app.module.js
+- C:\Users\Fabian Leal\Documents\twenty\packages\twenty-server\dist\main.js
+[90m    at Module._resolveFilename (node:internal/modules/cjs/loader:1455:15)[39m
+[90m    at defaultResolveImpl (node:internal/modules/cjs/loader:1065:19)[39m
+[90m    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1070:22)[39m
+[90m    at Module._load (node:internal/modules/cjs/loader:1241:25)[39m
+[90m    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)[39m
+[90m    at Module.require (node:internal/modules/cjs/loader:1555:12)[39m
+[90m    at require (node:internal/modules/helpers:152:16)[39m
+    at Object.<anonymous> [90m(C:\Users\Fabian Leal\Documents\twenty\packages\twenty-server\[39msrc\engine\metadata-modules\workspace-metadata-version\workspace-metadata-version.module.ts:2:31[90m)[39m
+[90m    at Module._compile (node:internal/modules/cjs/loader:1811:14)[39m
+[90m    at Object..js (node:internal/modules/cjs/loader:1942:10)[39m {
+  code: [32m'MODULE_NOT_FOUND'[39m,
+  requireStack: [
+    [32m'C:\\Users\\Fabian Leal\\Documents\\twenty\\packages\\twenty-server\\dist\\engine\\metadata-modules\\workspace-metadata-version\\workspace-metadata-version.module.js'[39m,
+    [32m'C:\\Users\\Fabian Leal\\Documents\\twenty\\packages\\twenty-server\\dist\\engine\\workspace-manager\\workspace-migration\\workspace-migration-runner\\workspace-migration-runner.module.js'[39m,
+    [32m'C:\\Users\\Fabian Leal\\Documents\\twenty\\packages\\twenty-server\\dist\\engine\\workspace-manager\\workspace-migration\\workspace-migration.module.js'[39m,
+    [32m'C:\\Users\\Fabian Leal\\Documents\\twenty\\packages\\twenty-server\\dist\\engine\\metadata-modules\\role-target\\role-target.module.js'[39m,
+    [32m'C:\\Users\\Fabian Leal\\Documents\\twenty\\packages\\twenty-server\\dist\\engine\\metadata-modules\\permissions\\permissions.module.js'[39m,
+    [32m'C:\\Users\\Fabian Leal\\Documents\\twenty\\packages\\twenty-server\\dist\\engine\\twenty-orm\\twenty-orm.module.js'[39m,
+    [32m'C:\\Users\\Fabian Leal\\Documents\\twenty\\packages\\twenty-server\\dist\\engine\\object-metadata-repository\\object-metadata-repository.module.js'[39m,
+    [32m'C:\\Users\\Fabian Leal\\Documents\\twenty\\packages\\twenty-server\\dist\\modules\\blocklist\\blocklist-validation-manager\\blocklist-validation-manager.module.js'[39m,
+    [32m'C:\\Users\\Fabian Leal\\Documents\\twenty\\packages\\twenty-server\\dist\\modules\\blocklist\\query-hooks\\blocklist-query-hook.module.js'[39m,
+    [32m'C:\\Users\\Fabian Leal\\Documents\\twenty\\packages\\twenty-server\\dist\\engine\\api\\graphql\\workspace-query-runner\\workspace-query-hook\\workspace-query-hook.module.js'[39m,
+    [32m'C:\\Users\\Fabian Leal\\Documents\\twenty\\packages\\twenty-server\\dist\\engine\\api\\common\\core-common-api.module.js'[39m,
+    [32m'C:\\Users\\Fabian Leal\\Documents\\twenty\\packages\\twenty-server\\dist\\engine\\api\\graphql\\workspace-resolver-builder\\workspace-resolver-builder.module.js'[39m,
+    [32m'C:\\Users\\Fabian Leal\\Documents\\twenty\\packages\\twenty-server\\dist\\engine\\api\\graphql\\core-graphql-api.module.js'[39m,
+    [32m'C:\\Users\\Fabian Leal\\Documents\\twenty\\packages\\twenty-server\\dist\\app.module.js'[39m,
+    [32m'C:\\Users\\Fabian Leal\\Documents\\twenty\\packages\\twenty-server\\dist\\main.js'[39m
+  ]
+}
+
+Node.js v25.6.1
+node:internal/modules/cjs/loader:1458
+  throw err;
+  ^
+
+Error: Cannot find module 'C:\Users\Fabian Leal\Documents\twenty\packages\twenty-server\dist\main'
+[90m    at Module._resolveFilename (node:internal/modules/cjs/loader:1455:15)[39m
+[90m    at defaultResolveImpl (node:internal/modules/cjs/loader:1065:19)[39m
+[90m    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1070:22)[39m
+[90m    at Module._load (node:internal/modules/cjs/loader:1241:25)[39m
+[90m    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)[39m
+[90m    at Module.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:154:5)[39m
+[90m    at node:internal/main/run_main_module:33:47[39m {
+  code: [32m'MODULE_NOT_FOUND'[39m,
+  requireStack: []
+}
+
+Node.js v25.6.1
+node:internal/modules/cjs/loader:1458
+  throw err;
+  ^
+
+Error: Cannot find module './engine/core-modules/twenty-config/interfaces/node-environment.interface'
+Require stack:
+- C:\Users\Fabian Leal\Documents\twenty\packages\twenty-server\dist\main.js
+[90m    at Module._resolveFilename (node:internal/modules/cjs/loader:1455:15)[39m
+[90m    at defaultResolveImpl (node:internal/modules/cjs/loader:1065:19)[39m
+[90m    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1070:22)[39m
+[90m    at Module._load (node:internal/modules/cjs/loader:1241:25)[39m
+[90m    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)[39m
+[90m    at Module.require (node:internal/modules/cjs/loader:1555:12)[39m
+[90m    at require (node:internal/modules/helpers:152:16)[39m
+    at Object.<anonymous> [90m(C:\Users\Fabian Leal\Documents\twenty\packages\twenty-server\[39msrc\main.ts:11:39[90m)[39m
+[90m    at Module._compile (node:internal/modules/cjs/loader:1811:14)[39m
+[90m    at Object..js (node:internal/modules/cjs/loader:1942:10)[39m {
+  code: [32m'MODULE_NOT_FOUND'[39m,
+  requireStack: [
+    [32m'C:\\Users\\Fabian Leal\\Documents\\twenty\\packages\\twenty-server\\dist\\main.js'[39m
+  ]
+}
+
+Node.js v25.6.1
+node:internal/modules/cjs/loader:1458
+  throw err;
+  ^
+
+Error: Cannot find module './engine/core-modules/twenty-config/interfaces/node-environment.interface'
+Require stack:
+- C:\Users\Fabian Leal\Documents\twenty\packages\twenty-server\dist\main.js
+[90m    at Module._resolveFilename (node:internal/modules/cjs/loader:1455:15)[39m
+[90m    at defaultResolveImpl (node:internal/modules/cjs/loader:1065:19)[39m
+[90m    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1070:22)[39m
+[90m    at Module._load (node:internal/modules/cjs/loader:1241:25)[39m
+[90m    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)[39m
+[90m    at Module.require (node:internal/modules/cjs/loader:1555:12)[39m
+[90m    at require (node:internal/modules/helpers:152:16)[39m
+    at Object.<anonymous> [90m(C:\Users\Fabian Leal\Documents\twenty\packages\twenty-server\[39msrc\main.ts:11:39[90m)[39m
+[90m    at Module._compile (node:internal/modules/cjs/loader:1811:14)[39m
+[90m    at Object..js (node:internal/modules/cjs/loader:1942:10)[39m {
+  code: [32m'MODULE_NOT_FOUND'[39m,
+  requireStack: [
+    [32m'C:\\Users\\Fabian Leal\\Documents\\twenty\\packages\\twenty-server\\dist\\main.js'[39m
+  ]
+}
+
+Node.js v25.6.1
+node:internal/modules/cjs/loader:1458
+  throw err;
+  ^
+
+Error: Cannot find module './engine/core-modules/twenty-config/interfaces/node-environment.interface'
+Require stack:
+- C:\Users\Fabian Leal\Documents\twenty\packages\twenty-server\dist\main.js
+[90m    at Module._resolveFilename (node:internal/modules/cjs/loader:1455:15)[39m
+[90m    at defaultResolveImpl (node:internal/modules/cjs/loader:1065:19)[39m
+[90m    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1070:22)[39m
+[90m    at Module._load (node:internal/modules/cjs/loader:1241:25)[39m
+[90m    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)[39m
+[90m    at Module.require (node:internal/modules/cjs/loader:1555:12)[39m
+[90m    at require (node:internal/modules/helpers:152:16)[39m
+    at Object.<anonymous> [90m(C:\Users\Fabian Leal\Documents\twenty\packages\twenty-server\[39msrc\main.ts:11:39[90m)[39m
+[90m    at Module._compile (node:internal/modules/cjs/loader:1811:14)[39m
+[90m    at Object..js (node:internal/modules/cjs/loader:1942:10)[39m {
+  code: [32m'MODULE_NOT_FOUND'[39m,
+  requireStack: [
+    [32m'C:\\Users\\Fabian Leal\\Documents\\twenty\\packages\\twenty-server\\dist\\main.js'[39m
+  ]
+}
+
+Node.js v25.6.1
+node:internal/modules/cjs/loader:1458
+  throw err;
+  ^
+
+Error: Cannot find module './engine/core-modules/twenty-config/interfaces/node-environment.interface'
+Require stack:
+- C:\Users\Fabian Leal\Documents\twenty\packages\twenty-server\dist\main.js
+[90m    at Module._resolveFilename (node:internal/modules/cjs/loader:1455:15)[39m
+[90m    at defaultResolveImpl (node:internal/modules/cjs/loader:1065:19)[39m
+[90m    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1070:22)[39m
+[90m    at Module._load (node:internal/modules/cjs/loader:1241:25)[39m
+[90m    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)[39m
+[90m    at Module.require (node:internal/modules/cjs/loader:1555:12)[39m
+[90m    at require (node:internal/modules/helpers:152:16)[39m
+    at Object.<anonymous> [90m(C:\Users\Fabian Leal\Documents\twenty\packages\twenty-server\[39msrc\main.ts:11:39[90m)[39m
+[90m    at Module._compile (node:internal/modules/cjs/loader:1811:14)[39m
+[90m    at Object..js (node:internal/modules/cjs/loader:1942:10)[39m {
+  code: [32m'MODULE_NOT_FOUND'[39m,
+  requireStack: [
+    [32m'C:\\Users\\Fabian Leal\\Documents\\twenty\\packages\\twenty-server\\dist\\main.js'[39m
+  ]
+}
+
+Node.js v25.6.1
+node:internal/modules/cjs/loader:1458
+  throw err;
+  ^
+
+Error: Cannot find module './engine/core-modules/twenty-config/interfaces/node-environment.interface'
+Require stack:
+- C:\Users\Fabian Leal\Documents\twenty\packages\twenty-server\dist\main.js
+[90m    at Module._resolveFilename (node:internal/modules/cjs/loader:1455:15)[39m
+[90m    at defaultResolveImpl (node:internal/modules/cjs/loader:1065:19)[39m
+[90m    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1070:22)[39m
+[90m    at Module._load (node:internal/modules/cjs/loader:1241:25)[39m
+[90m    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)[39m
+[90m    at Module.require (node:internal/modules/cjs/loader:1555:12)[39m
+[90m    at require (node:internal/modules/helpers:152:16)[39m
+    at Object.<anonymous> [90m(C:\Users\Fabian Leal\Documents\twenty\packages\twenty-server\[39msrc\main.ts:11:39[90m)[39m
+[90m    at Module._compile (node:internal/modules/cjs/loader:1811:14)[39m
+[90m    at Object..js (node:internal/modules/cjs/loader:1942:10)[39m {
+  code: [32m'MODULE_NOT_FOUND'[39m,
+  requireStack: [
+    [32m'C:\\Users\\Fabian Leal\\Documents\\twenty\\packages\\twenty-server\\dist\\main.js'[39m
+  ]
+}
+
+Node.js v25.6.1
+node:internal/modules/cjs/loader:1458
+  throw err;
+  ^
+
+Error: Cannot find module './engine/core-modules/twenty-config/interfaces/node-environment.interface'
+Require stack:
+- C:\Users\Fabian Leal\Documents\twenty\packages\twenty-server\dist\main.js
+[90m    at Module._resolveFilename (node:internal/modules/cjs/loader:1455:15)[39m
+[90m    at defaultResolveImpl (node:internal/modules/cjs/loader:1065:19)[39m
+[90m    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1070:22)[39m
+[90m    at Module._load (node:internal/modules/cjs/loader:1241:25)[39m
+[90m    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)[39m
+[90m    at Module.require (node:internal/modules/cjs/loader:1555:12)[39m
+[90m    at require (node:internal/modules/helpers:152:16)[39m
+    at Object.<anonymous> [90m(C:\Users\Fabian Leal\Documents\twenty\packages\twenty-server\[39msrc\main.ts:11:39[90m)[39m
+[90m    at Module._compile (node:internal/modules/cjs/loader:1811:14)[39m
+[90m    at Object..js (node:internal/modules/cjs/loader:1942:10)[39m {
+  code: [32m'MODULE_NOT_FOUND'[39m,
+  requireStack: [
+    [32m'C:\\Users\\Fabian Leal\\Documents\\twenty\\packages\\twenty-server\\dist\\main.js'[39m
+  ]
+}
+
+Node.js v25.6.1
+node:internal/modules/cjs/loader:1458
+  throw err;
+  ^
+
+Error: Cannot find module './engine/core-modules/twenty-config/interfaces/node-environment.interface'
+Require stack:
+- C:\Users\Fabian Leal\Documents\twenty\packages\twenty-server\dist\main.js
+[90m    at Module._resolveFilename (node:internal/modules/cjs/loader:1455:15)[39m
+[90m    at defaultResolveImpl (node:internal/modules/cjs/loader:1065:19)[39m
+[90m    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1070:22)[39m
+[90m    at Module._load (node:internal/modules/cjs/loader:1241:25)[39m
+[90m    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)[39m
+[90m    at Module.require (node:internal/modules/cjs/loader:1555:12)[39m
+[90m    at require (node:internal/modules/helpers:152:16)[39m
+    at Object.<anonymous> [90m(C:\Users\Fabian Leal\Documents\twenty\packages\twenty-server\[39msrc\main.ts:11:39[90m)[39m
+[90m    at Module._compile (node:internal/modules/cjs/loader:1811:14)[39m
+[90m    at Object..js (node:internal/modules/cjs/loader:1942:10)[39m {
+  code: [32m'MODULE_NOT_FOUND'[39m,
+  requireStack: [
+    [32m'C:\\Users\\Fabian Leal\\Documents\\twenty\\packages\\twenty-server\\dist\\main.js'[39m
+  ]
+}
+
+Node.js v25.6.1
+node:internal/modules/cjs/loader:1458
+  throw err;
+  ^
+
+Error: Cannot find module './engine/core-modules/twenty-config/interfaces/node-environment.interface'
+Require stack:
+- C:\Users\Fabian Leal\Documents\twenty\packages\twenty-server\dist\main.js
+[90m    at Module._resolveFilename (node:internal/modules/cjs/loader:1455:15)[39m
+[90m    at defaultResolveImpl (node:internal/modules/cjs/loader:1065:19)[39m
+[90m    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1070:22)[39m
+[90m    at Module._load (node:internal/modules/cjs/loader:1241:25)[39m
+[90m    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)[39m
+[90m    at Module.require (node:internal/modules/cjs/loader:1555:12)[39m
+[90m    at require (node:internal/modules/helpers:152:16)[39m
+    at Object.<anonymous> [90m(C:\Users\Fabian Leal\Documents\twenty\packages\twenty-server\[39msrc\main.ts:11:39[90m)[39m
+[90m    at Module._compile (node:internal/modules/cjs/loader:1811:14)[39m
+[90m    at Object..js (node:internal/modules/cjs/loader:1942:10)[39m {
+  code: [32m'MODULE_NOT_FOUND'[39m,
+  requireStack: [
+    [32m'C:\\Users\\Fabian Leal\\Documents\\twenty\\packages\\twenty-server\\dist\\main.js'[39m
+  ]
+}
+
+Node.js v25.6.1
+ERROR: no se encontr� el proceso "32064".
+ERROR: no se encontr� el proceso "32064".
+node:child_process:1000
+    throw err;
+    ^
+
+Error: Command failed: taskkill /pid 32064 /T /F
+ERROR: no se encontr� el proceso "32064".
+
+[90m    at genericNodeError (node:internal/errors:998:15)[39m
+[90m    at wrappedFn (node:internal/errors:543:14)[39m
+[90m    at checkExecSyncError (node:child_process:925:11)[39m
+[90m    at execSync (node:child_process:997:15)[39m
+    at treeKillSync (C:\Users\Fabian Leal\Documents\twenty\node_modules\[4m@nestjs\cli[24m\lib\utils\tree-kill.js:7:38)
+    at Timeout._onTimeout (C:\Users\Fabian Leal\Documents\twenty\node_modules\[4m@nestjs\cli[24m\actions\start.action.js:68:46)
+[90m    at listOnTimeout (node:internal/timers:605:17)[39m
+[90m    at process.processTimers (node:internal/timers:541:7)[39m {
+  status: [33m128[39m,
+  signal: [1mnull[22m,
+  output: [
+    [1mnull[22m,
+    Buffer(0) [Uint8Array] [],
+    Buffer(43) [Uint8Array] [
+       [33m69[39m,  [33m82[39m,  [33m82[39m,  [33m79[39m,  [33m82[39m,  [33m58[39m, [33m32[39m, [33m110[39m, [33m111[39m,
+       [33m32[39m, [33m115[39m, [33m101[39m,  [33m32[39m, [33m101[39m, [33m110[39m, [33m99[39m, [33m111[39m, [33m110[39m,
+      [33m116[39m, [33m114[39m, [33m162[39m,  [33m32[39m, [33m101[39m, [33m108[39m, [33m32[39m, [33m112[39m, [33m114[39m,
+      [33m111[39m,  [33m99[39m, [33m101[39m, [33m115[39m, [33m111[39m,  [33m32[39m, [33m34[39m,  [33m51[39m,  [33m50[39m,
+       [33m48[39m,  [33m54[39m,  [33m52[39m,  [33m34[39m,  [33m46[39m,  [33m13[39m, [33m10[39m
+    ]
+  ],
+  pid: [33m28976[39m,
+  stdout: Buffer(0) [Uint8Array] [],
+  stderr: Buffer(43) [Uint8Array] [
+     [33m69[39m,  [33m82[39m,  [33m82[39m,  [33m79[39m,  [33m82[39m,  [33m58[39m, [33m32[39m, [33m110[39m, [33m111[39m,
+     [33m32[39m, [33m115[39m, [33m101[39m,  [33m32[39m, [33m101[39m, [33m110[39m, [33m99[39m, [33m111[39m, [33m110[39m,
+    [33m116[39m, [33m114[39m, [33m162[39m,  [33m32[39m, [33m101[39m, [33m108[39m, [33m32[39m, [33m112[39m, [33m114[39m,
+    [33m111[39m,  [33m99[39m, [33m101[39m, [33m115[39m, [33m111[39m,  [33m32[39m, [33m34[39m,  [33m51[39m,  [33m50[39m,
+     [33m48[39m,  [33m54[39m,  [33m52[39m,  [33m34[39m,  [33m46[39m,  [33m13[39m, [33m10[39m
+  ]
+}
+
+Node.js v25.6.1
+Warning: command "rimraf dist && nest start --watch" exited with non-zero status code
+[2m[31m[39m[22m
+
+[7m[1m[31m NX [39m[22m[27m  [31mRunning target [1mstart[22m for project twenty-server and [1m4[22m tasks it depends on failed[39m
+
+[2mFailed tasks:[22m
+
+[2m-[22m twenty-server:start
+
+[2mHint: run the command with[22m --verbose [2mfor more details.[22m
+

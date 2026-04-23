@@ -1,0 +1,49 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`Standard object metadata update should fail when trying to update labelIdentifierFieldMetadataId on standard object 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "subCode": "INVALID_OBJECT_INPUT",
+    "userFriendlyMessage": "Invalid object input.",
+  },
+  "message": "Cannot edit standard object metadata properties: labelIdentifierFieldMetadataId",
+  "name": "UserInputError",
+}
+`;
+
+exports[`Standard object metadata update should fail when trying to update namePlural on standard object 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "subCode": "INVALID_OBJECT_INPUT",
+    "userFriendlyMessage": "Invalid object input.",
+  },
+  "message": "Cannot edit standard object metadata properties: namePlural",
+  "name": "UserInputError",
+}
+`;
+
+exports[`Standard object metadata update should fail when trying to update nameSingular on standard object 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "subCode": "INVALID_OBJECT_INPUT",
+    "userFriendlyMessage": "Invalid object input.",
+  },
+  "message": "Cannot edit standard object metadata properties: nameSingular",
+  "name": "UserInputError",
+}
+`;
+
+exports[`Standard object metadata update should fail when trying to update several forbidden properties 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "subCode": "INVALID_OBJECT_INPUT",
+    "userFriendlyMessage": "Invalid object input.",
+  },
+  "message": "Cannot edit standard object metadata properties: isLabelSyncedWithName, namePlural",
+  "name": "UserInputError",
+}
+`;
