@@ -1,3 +1,20 @@
+# CRM-W144
+
+This is a fork of [Twenty CRM](https://github.com/twentyhq/twenty) (AGPL-3.0), used as the foundation for the **CRM Hub** of [W144 Platform](https://w144.com) — a Business Tension Intelligence platform for founder-led companies.
+
+## About This Fork
+
+- **Upstream:** [`twentyhq/twenty`](https://github.com/twentyhq/twenty)
+- **Purpose:** Customizations for W144 Platform (styling, authentication, BTI Event Patch integration)
+- **License:** AGPL-3.0 (maintained from upstream)
+- **Status:** Early development
+
+All modifications are published here in compliance with AGPL-3.0 § 13. For the original Twenty CRM product, visit [twenty.com](https://twenty.com).
+
+---
+
+# Original Twenty README
+
 <p align="center">
   <a href="https://www.twenty.com">
     <img src="./packages/twenty-website/public/images/core/logo.svg" width="100px" alt="Twenty logo" />
