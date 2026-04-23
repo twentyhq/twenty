@@ -8,15 +8,17 @@ import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels'
 import { Hero } from '@/sections/Hero/components';
 import { Menu } from '@/sections/Menu/components';
 import { theme } from '@/theme';
+import { buildPageMetadata } from '@/lib/seo';
 import type { Metadata } from 'next';
 import { Suspense } from 'react';
 import { styled } from '@linaria/react';
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildPageMetadata({
+  path: '/enterprise/activate',
   title: 'Enterprise activation | Twenty',
   description:
     'Complete activation for your Twenty self-hosted enterprise license.',
-};
+});
 
 const ENTERPRISE_ACTIVATE_HEADING: HeadingType[] = [
   { text: 'Enterprise ', fontFamily: 'serif' },

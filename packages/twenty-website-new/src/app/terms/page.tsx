@@ -4,14 +4,16 @@ import { MENU_DATA } from '@/sections/Menu/data';
 import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';
 import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels';
 import { LegalDocumentPage } from '@/sections/LegalDocument/legal-document-page';
+import { buildPageMetadata } from '@/lib/seo';
 
 import { TermsDocument } from './_components';
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildPageMetadata({
+  path: '/terms',
   title: 'Terms of Service | Twenty',
   description:
     'Terms of Service for Twenty.com PBC, including use of Twenty.com, sub-domains, and related services.',
-};
+});
 
 export default async function TermsPage() {
   const stats = await fetchCommunityStats();

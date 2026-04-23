@@ -8,6 +8,11 @@ import { splitFullName } from '@/lib/partner-application';
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 
+// Allowed values mirror `PARTNER_PROGRAM_OPTIONS` in
+// `src/lib/partner-application/partner-application-modal-data.ts`. Kept as a
+// literal here to avoid the route handler depending on a client module.
+const PARTNER_PROGRAM_IDS = ['technology', 'content', 'solutions'] as const;
+
 const partnerApplicationRequestSchema = z.strictObject({
   email: z
     .string()
@@ -15,6 +20,20 @@ const partnerApplicationRequestSchema = z.strictObject({
     .min(1, { error: 'Email is required.' })
     .pipe(z.email({ error: 'Invalid email address.' })),
   name: z.string().trim().min(1, { error: 'Name is required.' }),
+  company: z.string().trim().min(1, { error: 'Company is required.' }),
+  website: z
+    .string()
+    .trim()
+    .min(1, { error: 'Website is required.' })
+    .pipe(z.httpUrl({ error: 'Invalid website URL.' })),
+  message: z.string().trim().min(1, { error: 'Message is required.' }),
+  // The form lets users pick a program type; treat it as soft-required (we
+  // accept submissions that omit it for backwards compatibility, but reject
+  // unknown values so we don't silently store typos).
+  programId: z.enum(PARTNER_PROGRAM_IDS).optional(),
+  // Optional in the form copy ("Estimated monthly opportunities (optional)").
+  // Empty string is filtered client-side, but accept it here just in case.
+  opportunities: z.string().trim().optional(),
 });
 
 const webhookUrlSchema = z
@@ -22,9 +41,12 @@ const webhookUrlSchema = z
   .trim()
   .pipe(z.httpUrl({ error: 'Invalid webhook URL.' }));
 
-// Generous-but-finite cap for a 2-field form. The largest legitimate
-// payload is well under 1 KB; 4 KB leaves headroom for unicode names.
-const MAX_BODY_BYTES = 4 * 1024;
+// Cap chosen for a 6-field form whose largest input is the free-form
+// `message` textarea. 16 KB comfortably fits a multi-paragraph message
+// (~3000 chars even after JSON-escaping unicode) while still rejecting
+// obvious abuse early. If the form ever grows file uploads, switch to a
+// streaming reader; today JSON is enough.
+const MAX_BODY_BYTES = 16 * 1024;
 
 // Webhooks are user-facing latency too — the form blocks on this response.
 // 8 s is comfortable for a healthy webhook and tight enough to fail fast.
@@ -99,16 +121,26 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: message }, { status: 400 });
   }
 
-  const { name, email } = parsed.data;
+  const { name, email, company, website, message, programId, opportunities } =
+    parsed.data;
   const { firstName, lastName } = splitFullName(name);
 
   const upstream = await fetchWithTimeout(
     webhookUrl,
     {
+      // Existing keys (Email/FirstName/LastName) preserved so the downstream
+      // automation does not break. New keys are PascalCase to match the
+      // existing convention.
       body: JSON.stringify({
         Email: email,
         FirstName: firstName,
         LastName: lastName,
+        Company: company,
+        Website: website,
+        Message: message,
+        ...(programId !== undefined && { ProgramId: programId }),
+        ...(opportunities !== undefined &&
+          opportunities !== '' && { Opportunities: opportunities }),
       }),
       headers: { 'Content-Type': 'application/json' },
       method: 'POST',

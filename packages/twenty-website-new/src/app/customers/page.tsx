@@ -14,28 +14,18 @@ import { Menu } from '@/sections/Menu/components';
 import { Signoff } from '@/sections/Signoff/components';
 import { TrustedBy } from '@/sections/TrustedBy/components';
 import { theme } from '@/theme';
+import { buildPageMetadata } from '@/lib/seo';
 import { css } from '@linaria/core';
 import type { Metadata } from 'next';
 
-export const metadata: Metadata = {
+// Defaults from `buildPageMetadata` already cover canonical, openGraph, and
+// twitter — we don't need to repeat them here.
+export const metadata: Metadata = buildPageMetadata({
+  path: '/customers',
   title: 'Customers | Twenty',
   description:
     'Meet the teams running their business on Twenty. Real customer stories on how they shaped the CRM to fit their workflow.',
-  alternates: { canonical: '/customers' },
-  openGraph: {
-    title: 'Customers | Twenty',
-    description:
-      'Meet the teams running their business on Twenty. Real customer stories on how they shaped the CRM to fit their workflow.',
-    url: '/customers',
-    type: 'website',
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'Customers | Twenty',
-    description:
-      'Meet the teams running their business on Twenty. Real customer stories on how they shaped the CRM to fit their workflow.',
-  },
-};
+});
 
 const HERO_HEADING = [
   { text: 'See how teams ', fontFamily: 'serif' as const },

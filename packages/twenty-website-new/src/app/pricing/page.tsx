@@ -19,6 +19,7 @@ import { PricingStateProvider } from '@/sections/Plans/context/PricingStateConte
 import { PlanTable } from '@/sections/PlanTable/components';
 import { Salesforce } from '@/sections/Salesforce/components';
 import { theme } from '@/theme';
+import { buildPageMetadata } from '@/lib/seo';
 import { styled } from '@linaria/react';
 import type { Metadata } from 'next';
 
@@ -34,11 +35,12 @@ const PricingBannerContainer = styled.div`
   width: 100%;
 `;
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildPageMetadata({
+  path: '/pricing',
   title: 'Pricing | Twenty',
   description:
     'Plans that scale with your team. Compare tiers of the #1 open source CRM.',
-};
+});
 
 export default async function PricingPage() {
   const stats = await fetchCommunityStats();

@@ -450,6 +450,7 @@ export function PartnerApplicationModal({
       const companyValue = formData.get('company');
       const websiteValue = formData.get('website');
       const messageValue = formData.get('message');
+      const opportunitiesValue = formData.get('opportunities');
 
       const name = typeof nameValue === 'string' ? nameValue.trim() : '';
       const email = typeof emailValue === 'string' ? emailValue.trim() : '';
@@ -459,6 +460,8 @@ export function PartnerApplicationModal({
         typeof websiteValue === 'string' ? websiteValue.trim() : '';
       const message =
         typeof messageValue === 'string' ? messageValue.trim() : '';
+      const opportunities =
+        typeof opportunitiesValue === 'string' ? opportunitiesValue.trim() : '';
 
       const validationCopy = PARTNER_APPLICATION_MODAL_COPY.validation;
       const emailLooksValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -479,7 +482,19 @@ export function PartnerApplicationModal({
 
       try {
         const response = await fetch('/api/partner-application', {
-          body: JSON.stringify({ email, name }),
+          // Send every field the form collects. The route schema mirrors
+          // this contract; if it doesn't, the user sees a 400 instead of a
+          // silent partial submission. Optional fields are omitted when
+          // empty so the schema's `.optional()` accepts the payload.
+          body: JSON.stringify({
+            email,
+            name,
+            company,
+            website,
+            message,
+            programId,
+            ...(opportunities !== '' && { opportunities }),
+          }),
           headers: { 'Content-Type': 'application/json' },
           method: 'POST',
         });
@@ -496,7 +511,7 @@ export function PartnerApplicationModal({
         setIsSubmitting(false);
       }
     },
-    [isSubmitting, onClose],
+    [isSubmitting, onClose, programId],
   );
 
   if (!open) {

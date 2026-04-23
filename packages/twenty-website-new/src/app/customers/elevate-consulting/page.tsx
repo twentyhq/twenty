@@ -6,6 +6,7 @@ import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels'
 import { CaseStudy } from '@/sections/CaseStudy/components';
 import { Menu } from '@/sections/Menu/components';
 import { theme } from '@/theme';
+import { buildPageMetadata } from '@/lib/seo';
 import type { Metadata } from 'next';
 
 const PLACEHOLDER_HERO =
@@ -112,10 +113,11 @@ const CASE_STUDY: CaseStudyData = {
   },
 };
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildPageMetadata({
+  path: '/customers/elevate-consulting',
   title: CASE_STUDY.meta.title,
   description: CASE_STUDY.meta.description,
-};
+});
 
 export default async function ElevateConsultingCaseStudyPage() {
   const stats = await fetchCommunityStats();

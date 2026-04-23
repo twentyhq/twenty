@@ -287,14 +287,16 @@ The site reads exactly three site-wide env vars. They are documented in
 [`.env.example`](./.env.example) and validated at the boundary that consumes
 them (no `?? ''` to silently mask a missing value).
 
-| Variable                            | Required | Default | Purpose                                                                                                                  |
-| ----------------------------------- | -------- | ------- | ------------------------------------------------------------------------------------------------------------------------ |
-| `NEXT_PUBLIC_WEBSITE_URL`           | yes      | —       | Canonical origin used by `metadataBase`, sitemap, robots, and absolute OG / Twitter URLs. Read by `lib/seo/site-url.ts`. |
-| `NEXT_PUBLIC_DISABLE_HEAVY_VISUALS` | no       | `false` | Statically replaces every WebGL / 3D illustration with its fallback. Use during a driver-related incident.               |
-| `NEXT_PUBLIC_MAX_WEBGL_CONTEXTS`    | no       | `8`     | Soft cap on concurrent WebGL contexts before `WebGlMount` declines new ones.                                             |
+| Variable                            | Required | Default | Purpose                                                                                                                                                                                |
+| ----------------------------------- | -------- | ------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `NEXT_PUBLIC_WEBSITE_URL`           | yes      | —       | Canonical origin used by `metadataBase`, sitemap, robots, and absolute OG / Twitter URLs. Read by `lib/seo/site-url.ts`.                                                               |
+| `NEXT_PUBLIC_DISABLE_HEAVY_VISUALS` | no       | `false` | Statically replaces every WebGL / 3D illustration with its fallback. Use during a driver-related incident.                                                                             |
+| `NEXT_PUBLIC_MAX_WEBGL_CONTEXTS`    | no       | `8`     | Soft cap on concurrent WebGL contexts before `WebGlMount` declines new ones.                                                                                                           |
+| `GITHUB_TOKEN`                      | no       | —       | Optional GitHub PAT (no scopes required). Lifts the community-stats GitHub call from the 60/hr unauthenticated limit to 5000/hr. Cached for an hour either way (see `lib/community/`). |
 
 API routes under `app/api/` also consume server-only env vars (Stripe keys,
-GitHub tokens, JWT secrets). Those are documented at the consuming module.
+JWT secrets, partner-application webhook URL). Those are documented at the
+consuming module.
 
 ---
 

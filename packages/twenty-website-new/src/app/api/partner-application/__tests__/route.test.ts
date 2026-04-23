@@ -10,7 +10,16 @@
 const ORIGINAL_FETCH = global.fetch;
 const ORIGINAL_WEBHOOK_URL = process.env.PARTNER_APPLICATION_WEBHOOK_URL;
 
-const VALID_BODY = JSON.stringify({ email: 'a@b.co', name: 'Ada Lovelace' });
+const VALID_PAYLOAD = {
+  email: 'a@b.co',
+  name: 'Ada Lovelace',
+  company: 'Analytical Engines',
+  website: 'https://analytical.example/',
+  message: 'We would like to integrate Twenty with our analytical engine.',
+  programId: 'technology' as const,
+};
+
+const VALID_BODY = JSON.stringify(VALID_PAYLOAD);
 
 function buildRequest({
   body = VALID_BODY,
@@ -115,7 +124,7 @@ describe('POST /api/partner-application', () => {
     const { POST } = await loadRoute();
     const response = await POST(
       buildRequest({
-        body: JSON.stringify({ email: 'not-an-email', name: 'Ada' }),
+        body: JSON.stringify({ ...VALID_PAYLOAD, email: 'not-an-email' }),
         ip: '203.0.113.14',
       }),
     );
@@ -126,18 +135,49 @@ describe('POST /api/partner-application', () => {
     const { POST } = await loadRoute();
     const response = await POST(
       buildRequest({
-        body: JSON.stringify({
-          email: 'a@b.co',
-          name: 'Ada',
-          extra: 'nope',
-        }),
+        body: JSON.stringify({ ...VALID_PAYLOAD, extra: 'nope' }),
         ip: '203.0.113.15',
       }),
     );
     expect(response.status).toBe(400);
   });
 
-  it('forwards a valid submission to the webhook with split name and returns 200', async () => {
+  it('returns 400 when company is missing', async () => {
+    const { POST } = await loadRoute();
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { company: _omitted, ...withoutCompany } = VALID_PAYLOAD;
+    const response = await POST(
+      buildRequest({
+        body: JSON.stringify(withoutCompany),
+        ip: '203.0.113.16',
+      }),
+    );
+    expect(response.status).toBe(400);
+  });
+
+  it('returns 400 when website is not a URL', async () => {
+    const { POST } = await loadRoute();
+    const response = await POST(
+      buildRequest({
+        body: JSON.stringify({ ...VALID_PAYLOAD, website: 'not-a-url' }),
+        ip: '203.0.113.17',
+      }),
+    );
+    expect(response.status).toBe(400);
+  });
+
+  it('returns 400 when programId is unknown', async () => {
+    const { POST } = await loadRoute();
+    const response = await POST(
+      buildRequest({
+        body: JSON.stringify({ ...VALID_PAYLOAD, programId: 'wat' }),
+        ip: '203.0.113.18',
+      }),
+    );
+    expect(response.status).toBe(400);
+  });
+
+  it('forwards a valid submission to the webhook with all fields and returns 200', async () => {
     const fetchSpy = jest
       .fn()
       .mockResolvedValue(new Response(null, { status: 200 }));
@@ -157,8 +197,50 @@ describe('POST /api/partner-application', () => {
       Email: 'a@b.co',
       FirstName: 'Ada',
       LastName: 'Lovelace',
+      Company: 'Analytical Engines',
+      Website: 'https://analytical.example/',
+      Message: 'We would like to integrate Twenty with our analytical engine.',
+      ProgramId: 'technology',
     });
     expect(init.signal).toBeInstanceOf(AbortSignal);
+  });
+
+  it('forwards optional Opportunities when provided', async () => {
+    const fetchSpy = jest
+      .fn()
+      .mockResolvedValue(new Response(null, { status: 200 }));
+    global.fetch = fetchSpy;
+
+    const { POST } = await loadRoute();
+    const response = await POST(
+      buildRequest({
+        body: JSON.stringify({
+          ...VALID_PAYLOAD,
+          opportunities: '50/month',
+        }),
+        ip: '203.0.113.24',
+      }),
+    );
+
+    expect(response.status).toBe(200);
+    const [, init] = fetchSpy.mock.calls[0];
+    expect(JSON.parse(init.body as string)).toMatchObject({
+      Opportunities: '50/month',
+    });
+  });
+
+  it('omits optional Opportunities when not provided', async () => {
+    const fetchSpy = jest
+      .fn()
+      .mockResolvedValue(new Response(null, { status: 200 }));
+    global.fetch = fetchSpy;
+
+    const { POST } = await loadRoute();
+    const response = await POST(buildRequest({ ip: '203.0.113.25' }));
+
+    expect(response.status).toBe(200);
+    const [, init] = fetchSpy.mock.calls[0];
+    expect(JSON.parse(init.body as string)).not.toHaveProperty('Opportunities');
   });
 
   it('returns 502 when the webhook responds with a non-2xx status', async () => {

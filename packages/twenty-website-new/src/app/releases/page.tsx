@@ -15,14 +15,16 @@ import { Hero } from '@/sections/Hero/components';
 import { Menu } from '@/sections/Menu/components';
 import { ReleaseNotes } from '@/sections/ReleaseNotes/components';
 import { theme } from '@/theme';
+import { buildPageMetadata } from '@/lib/seo';
 import type { Metadata } from 'next';
 import { Fragment } from 'react';
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildPageMetadata({
+  path: '/releases',
   title: 'Releases | Twenty',
   description:
     'Discover the newest features and improvements in Twenty, the #1 open source CRM.',
-};
+});
 
 export default async function ReleasesPage() {
   const allNotes = loadLocalReleaseNotes();
