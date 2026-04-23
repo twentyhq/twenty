@@ -3,7 +3,10 @@ import { z } from 'zod';
 import { AI_SDK_PACKAGES, DATA_RESIDENCY_KEYS } from 'twenty-shared/ai';
 
 import { aiProviderAuthTypeSchema } from 'src/engine/metadata-modules/ai/ai-models/types/ai-provider-auth-type.type';
-import { aiProviderModelConfigSchema, type AiProviderModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-provider-model-config.type';
+import {
+  aiProviderModelConfigSchema,
+  type AiProviderModelConfig,
+} from 'src/engine/metadata-modules/ai/ai-models/types/ai-provider-model-config.type';
 
 export const aiProviderConfigSchema = z.object({
   npm: z.enum(AI_SDK_PACKAGES),
@@ -20,6 +23,9 @@ export const aiProviderConfigSchema = z.object({
   models: z.array(aiProviderModelConfigSchema).optional(),
 });
 
-export type AiProviderConfig = Omit<z.infer<typeof aiProviderConfigSchema>, 'models'> & {
+export type AiProviderConfig = Omit<
+  z.infer<typeof aiProviderConfigSchema>,
+  'models'
+> & {
   models?: AiProviderModelConfig[];
 };

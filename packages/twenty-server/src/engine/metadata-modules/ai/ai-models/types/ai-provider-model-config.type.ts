@@ -22,6 +22,8 @@ export const aiProviderModelConfigSchema = z.object({
 
 export type AiModelSource = 'catalog' | 'manual';
 
-export type AiProviderModelConfig = z.infer<typeof aiProviderModelConfigSchema> & {
+export type AiProviderModelConfig = z.infer<
+  typeof aiProviderModelConfigSchema
+> & {
   source?: AiModelSource;
 };
