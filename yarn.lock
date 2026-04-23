@@ -78,14 +78,14 @@ __metadata:
   linkType: hard
 
 "@ai-sdk/google@npm:^3.0.30":
-  version: 3.0.31
-  resolution: "@ai-sdk/google@npm:3.0.31"
+  version: 3.0.64
+  resolution: "@ai-sdk/google@npm:3.0.64"
   dependencies:
     "@ai-sdk/provider": "npm:3.0.8"
-    "@ai-sdk/provider-utils": "npm:4.0.15"
+    "@ai-sdk/provider-utils": "npm:4.0.23"
   peerDependencies:
     zod: ^3.25.76 || ^4.1.8
-  checksum: 10c0/dbf8ea1cbc876e03dde6a355f14c2bd08186b76586ac3454c4829b708af9c280ff7cd28699cec3170b26ec71db47c4ebf73a06f6a9322a2e7ddbb1f0a4a58737
+  checksum: 10c0/d85f1142021dc984fd174a6d0fdbed39e07235348db1cf423edbe3adddda2033e59939b797b7bd540bb2f40a6b6704e27f924cf18698ab17712aa961504eeec6
   languageName: node
   linkType: hard
 
