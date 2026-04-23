@@ -12,20 +12,16 @@ import { normalizeAiProviders } from 'src/engine/metadata-modules/ai/ai-models/u
 export class AiCatalogLoaderService implements OnModuleInit {
   private readonly logger = new Logger(AiCatalogLoaderService.name);
   private catalog: AiProvidersConfig = normalizeAiProviders(
-    defaultAiProviders as unknown as AiProvidersConfig,
+    defaultAiProviders as AiProvidersConfig,
   );
 
-  constructor(
-    private readonly twentyConfigService: TwentyConfigService,
-  ) {}
+  constructor(private readonly twentyConfigService: TwentyConfigService) {}
 
   async onModuleInit(): Promise<void> {
     const s3Key = this.twentyConfigService.get('AI_CATALOG_S3_PATH');
 
     if (!s3Key) {
-      this.logger.log(
-        'Using built-in AI catalog (AI_CATALOG_S3_PATH not set)',
-      );
+      this.logger.log('Using built-in AI catalog (AI_CATALOG_S3_PATH not set)');
 
       return;
     }
@@ -35,12 +31,9 @@ export class AiCatalogLoaderService implements OnModuleInit {
 
       this.catalog = normalizeAiProviders(raw);
     } catch (error: unknown) {
-      const message =
-        error instanceof Error ? error.message : String(error);
+      const message = error instanceof Error ? error.message : String(error);
 
-      this.logger.warn(
-        `Failed to load AI catalog from S3: ${message}`,
-      );
+      this.logger.warn(`Failed to load AI catalog from S3: ${message}`);
       this.catalog = {};
     }
   }
@@ -49,9 +42,7 @@ export class AiCatalogLoaderService implements OnModuleInit {
     return this.catalog;
   }
 
-  private async fetchFromS3(
-    s3Key: string,
-  ): Promise<AiProvidersConfig> {
+  private async fetchFromS3(s3Key: string): Promise<AiProvidersConfig> {
     const bucket = this.twentyConfigService.get('STORAGE_S3_NAME');
     const region = this.twentyConfigService.get('STORAGE_S3_REGION');
 
@@ -67,9 +58,7 @@ export class AiCatalogLoaderService implements OnModuleInit {
       throw new Error('Empty response body from S3');
     }
 
-    this.logger.log(
-      `Loaded AI catalog from S3: s3://${bucket}/${s3Key}`,
-    );
+    this.logger.log(`Loaded AI catalog from S3: s3://${bucket}/${s3Key}`);
 
     return aiProvidersConfigSchema.parse(JSON.parse(body));
   }
