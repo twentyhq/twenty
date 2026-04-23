@@ -25,8 +25,11 @@ import { fromCreateFieldInputToFlatFieldMetadatasToCreate } from 'src/engine/met
 import { fromDeleteFieldInputToFlatFieldMetadatasToDelete } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-delete-field-input-to-flat-field-metadatas-to-delete.util';
 import { fromUpdateFieldInputToFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-update-field-input-to-flat-field-metadata.util';
 import { throwOnFieldInputTranspilationsError } from 'src/engine/metadata-modules/flat-field-metadata/utils/throw-on-field-input-transpilations-error.util';
+import { computeRelationWidgetConfigurationType, isRelationFieldWithDefaultPageLayoutWidget } from 'src/engine/metadata-modules/flat-field-metadata/utils/compute-relation-widget-configuration-type.util';
 import { computeFlatViewFieldsFromFieldsWidgets } from 'src/engine/metadata-modules/flat-view-field/utils/compute-flat-view-fields-from-fields-widgets.util';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
+import { type FlatPageLayoutTab } from 'src/engine/metadata-modules/flat-page-layout-tab/types/flat-page-layout-tab.type';
+import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { EMPTY_ORCHESTRATOR_FAILURE_REPORT } from 'src/engine/workspace-manager/workspace-migration/constant/empty-orchestrator-failure-report.constant';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
@@ -95,6 +98,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       flatIndexMaps: existingFlatIndexMaps,
       flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
       flatPageLayoutWidgetMaps: existingFlatPageLayoutWidgetMaps,
+      flatPageLayoutTabMaps: existingFlatPageLayoutTabMaps,
     } = await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
       {
         workspaceId,
@@ -103,6 +107,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
           'flatIndexMaps',
           'flatFieldMetadataMaps',
           'flatPageLayoutWidgetMaps',
+          'flatPageLayoutTabMaps',
         ],
       },
     );
@@ -150,6 +155,49 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
           deletedFieldIds.has(widget.configuration.fieldMetadataId),
       );
 
+    const deletedFlatFieldMetadataObjectMetadataId =
+      deletedFlatFieldMetadata.objectMetadataId;
+    const deletedRelationWidgetConfigurationType = computeRelationWidgetConfigurationType({
+      relationTargetFieldMetadataName: deletedFlatFieldMetadata.name,
+    });
+
+    const isRelationWithDefaultWidget = isRelationFieldWithDefaultPageLayoutWidget({
+      fieldMetadataType: deletedFlatFieldMetadata.type,
+      name: deletedFlatFieldMetadata.name,
+    });
+
+    let relationPageLayoutWidgetsToDelete: FlatPageLayoutWidget[] = [];
+    let relationPageLayoutTabsToDelete: FlatPageLayoutTab[] = [];
+
+    if (isRelationWithDefaultWidget && isDefined(deletedRelationWidgetConfigurationType)) {
+      relationPageLayoutWidgetsToDelete = Object.values(
+        existingFlatPageLayoutWidgetMaps.byUniversalIdentifier,
+      )
+        .filter(isDefined)
+        .filter(
+          (widget) =>
+            !isDefined(widget.deletedAt) &&
+            widget.objectMetadataId === deletedFlatFieldMetadataObjectMetadataId &&
+            widget.configuration?.configurationType ===
+              deletedRelationWidgetConfigurationType,
+        );
+
+      const relationPageLayoutTabIds = new Set(
+        relationPageLayoutWidgetsToDelete
+          .map((widget) => widget.pageLayoutTabId)
+          .filter(isDefined),
+      );
+
+      relationPageLayoutTabsToDelete = Object.values(
+        existingFlatPageLayoutTabMaps.byUniversalIdentifier,
+      )
+        .filter(isDefined)
+        .filter(
+          (tab) =>
+            !isDefined(tab.deletedAt) && relationPageLayoutTabIds.has(tab.id),
+        );
+    }
+
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
@@ -169,6 +217,24 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
                   pageLayoutWidget: {
                     flatEntityToCreate: [],
                     flatEntityToDelete: flatPageLayoutWidgetsToDelete,
+                    flatEntityToUpdate: [],
+                  },
+                }
+              : {}),
+            ...(relationPageLayoutWidgetsToDelete.length > 0
+              ? {
+                  pageLayoutWidget: {
+                    flatEntityToCreate: [],
+                    flatEntityToDelete: relationPageLayoutWidgetsToDelete,
+                    flatEntityToUpdate: [],
+                  },
+                }
+              : {}),
+            ...(relationPageLayoutTabsToDelete.length > 0
+              ? {
+                  pageLayoutTab: {
+                    flatEntityToCreate: [],
+                    flatEntityToDelete: relationPageLayoutTabsToDelete,
                     flatEntityToUpdate: [],
                   },
                 }
@@ -381,6 +447,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       'flatObjectMetadataMaps',
       'flatFieldMetadataMaps',
       'flatPageLayoutWidgetMaps',
+      'flatPageLayoutTabMaps',
       'flatViewFieldMaps',
       'flatViewMaps',
       'flatViewFieldGroupMaps',
