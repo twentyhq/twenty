@@ -148,6 +148,15 @@ const Shell = styled.div<{
     return `${base}, height ${growDuration} ${springCurve}, width ${growDuration} ${springCurve}, transform ${growDuration} ${springCurve}`;
   }};
   will-change: transform, width, height;
+
+  @media (prefers-reduced-motion: reduce) {
+    /* Drop the decorative spring grow; keep the colour / shadow / opacity
+       acknowledgement transitions, which are functional feedback. */
+    transition:
+      background-color 0.22s ease,
+      box-shadow 0.22s ease,
+      opacity 0.1s ease;
+  }
 `;
 
 const Body = styled.div`

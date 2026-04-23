@@ -136,8 +136,7 @@ const SceneViewport = styled.div<{ $sceneScale: number }>`
   left: 50%;
   position: absolute;
   top: 0;
-  transform: translateX(-50%)
-    scale(${({ $sceneScale }) => $sceneScale});
+  transform: translateX(-50%) scale(${({ $sceneScale }) => $sceneScale});
   transform-origin: top center;
   width: ${SCENE_WIDTH}px;
 `;
@@ -339,6 +338,14 @@ const FilterChip = styled.div<{ $pressed?: boolean; $removing?: boolean }>`
       opacity: 0;
       transform: scale(0.64) translate3d(18px, -6px, 0);
     }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    /* Snap-hide the chip when removing — animation-end still fires (the
+       parent uses it as the removal signal) but the decorative pop is
+       collapsed to a single frame. */
+    animation-duration: 1ms;
+    animation-timing-function: linear;
   }
 `;
 

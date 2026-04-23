@@ -132,8 +132,7 @@ const ScaledScene = styled.div<{ $sceneScale: number }>`
   left: 50%;
   position: absolute;
   top: 0;
-  transform: translateX(-50%)
-    scale(${({ $sceneScale }) => $sceneScale});
+  transform: translateX(-50%) scale(${({ $sceneScale }) => $sceneScale});
   transform-origin: top center;
   width: ${SCENE_DESIGN_WIDTH}px;
 `;
@@ -188,6 +187,13 @@ const ConfettiParticle = styled.div<{
         )
         rotate(var(--confetti-rotation)) scale(1);
     }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    /* Confetti is purely decorative — the form-submit success state is still
+       conveyed by the surrounding visual change. */
+    animation: none;
+    opacity: 0;
   }
 `;
 

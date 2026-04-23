@@ -1,10 +1,40 @@
 'use client';
 
+/**
+ * Bespoke halftone renderer for the Testimonials hourglass.
+ *
+ * This is *not* a copy of `@/lib/halftone`'s `HalftoneCanvas` — the
+ * fragment shader here implements a row-based "barber pole" dash with a
+ * pre-blur glow halo and a shadow-grouping pass (`numRows`, `cellRatio`,
+ * `shadowGrouping`, `shadowCrush`, `tGlow`). The shared `HalftoneCanvas`
+ * implements a dot-grid pattern (`tile`, `s_3`, `s_4`, `applyToDarkAreas`)
+ * which is a different visual language used by the Helped /
+ * marketing-card visuals.
+ *
+ * Both share the same Three.js plumbing — environment map, light rig,
+ * frame loop, pointer interaction model — but the post-process pass is
+ * intentionally distinct. If a future merge is attempted, it would need
+ * to either (a) add a "renderer style" knob to `HalftoneCanvas` that
+ * picks between the two shaders, or (b) accept that the design language
+ * for testimonials has converged to the dot grid. Neither is undertaken
+ * here.
+ *
+ * What *is* shared, and must remain so:
+ *   - `createSiteWebGlRenderer` for renderer construction (page-wide
+ *     context budget accounting).
+ *   - `createFrameTimer` for the rAF loop.
+ *   - `loadImportedGeometryFromUrl` (used by the parent `Hourglass`) for
+ *     model loading.
+ */
+
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 import { styled } from '@linaria/react';
 import { useEffect, useRef } from 'react';
 import * as THREE from 'three';
-import { createFrameTimer, createSiteWebGlRenderer } from '@/lib/visual-runtime';
+import {
+  createFrameTimer,
+  createSiteWebGlRenderer,
+} from '@/lib/visual-runtime';
 
 interface HourglassLightingSettings {
   intensity: number;

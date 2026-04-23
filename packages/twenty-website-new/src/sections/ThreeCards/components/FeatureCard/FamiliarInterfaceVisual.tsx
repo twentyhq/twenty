@@ -298,8 +298,7 @@ const SceneViewport = styled.div<{ $sceneScale: number }>`
   left: 50%;
   position: absolute;
   top: 0;
-  transform: translateX(-50%)
-    scale(${({ $sceneScale }) => $sceneScale});
+  transform: translateX(-50%) scale(${({ $sceneScale }) => $sceneScale});
   transform-origin: top center;
   width: ${SCENE_WIDTH}px;
 `;
@@ -338,6 +337,10 @@ const BoardGroup = styled.div<{ $active: boolean }>`
   width: 412.302px;
   will-change: transform;
   z-index: 1;
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
 `;
 
 const BoardSurface = styled.div`
@@ -737,6 +740,10 @@ const DragCursor = styled.div<{ $active: boolean }>`
   @media (hover: none) {
     display: none;
   }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
 `;
 
 const DragCursorInner = styled.div<{ $active: boolean }>`
@@ -752,6 +759,10 @@ const DragCursorInner = styled.div<{ $active: boolean }>`
     );
   transition: transform 520ms cubic-bezier(0.18, 0.9, 0.22, 1.18);
   will-change: transform;
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
 `;
 
 const LaneDraggableCard = styled.div<{ $dragging: boolean }>`
