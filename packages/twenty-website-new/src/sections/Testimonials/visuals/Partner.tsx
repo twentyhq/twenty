@@ -1,11 +1,11 @@
 'use client';
 
-import { HalftoneCanvas } from '@/app/halftone/_components/HalftoneCanvas';
-import { loadImportedGeometryFromUrl } from '@/app/halftone/_lib/geometry-registry';
-import type {
-  HalftoneExportPose,
-  HalftoneStudioSettings,
-} from '@/app/halftone/_lib/state';
+import {
+  HalftoneCanvas,
+  loadImportedGeometryFromUrl,
+  type HalftoneExportPose,
+  type HalftoneStudioSettings,
+} from '@/lib/halftone';
 import { styled } from '@linaria/react';
 import { useEffect, useState } from 'react';
 import * as THREE from 'three';

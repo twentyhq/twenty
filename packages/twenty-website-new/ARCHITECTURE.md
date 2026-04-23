@@ -136,9 +136,18 @@ true number):
 
 | Rule                                      | Layer / scope                    | Current count |
 | ----------------------------------------- | -------------------------------- | ------------- |
-| `no-restricted-imports` — `@/app/**`      | `sections/**`                    | ~50 warnings  |
+| `no-restricted-imports` — `@/app/**`      | `sections/**`                    | ~10 warnings  |
 | `no-restricted-imports` — `@/sections/**` | `lib/**`                         | 1 warning     |
 | `no-raw-webgl-renderer`                   | `app/halftone/_lib/exporters.ts` | 1 (allowlist) |
+
+The remaining `sections → app` warnings are split across four route-scoped
+data / type modules: `app/customers/types`,
+`app/customers/case-study-catalog.data`, `app/pricing/plans.data`, and
+`app/partners/components/PartnerApplication/PartnerApplicationModalRoot`.
+Resolving them is "Phase 4 — extract route-scoped data into sections or
+lib." The `lib → sections` warning is `lib/releases/get-latest-release-preview.ts`
+importing a type from `sections/Menu/types`; either move the type into
+`lib/releases/` or move the function into `sections/Menu/lib/`.
 
 The known specific offenders are documented inline in `KNOWN_VIOLATIONS`
 (for the boundary script) and discoverable from the oxlint output (for the
@@ -148,28 +157,44 @@ import rules).
 
 ## 5. Halftone consolidation
 
-The halftone studio (`app/halftone/`) is currently the largest source of
-boundary violations because three sections (`Helped`, `Testimonials`, and
-`HomeStepper`) reach into `app/halftone/_components/` and
-`app/halftone/_lib/` for shared canvas + state primitives.
+The shared halftone runtime lives in [`src/lib/halftone/`](./src/lib/halftone/).
+Sections (`Helped`, `Testimonials`, `HomeStepper`) consume it via the
+barrel `@/lib/halftone` and **must not** deep-import. The studio page
+(`app/halftone/page.tsx`) and the studio-only modules under
+`app/halftone/_lib/` and `app/halftone/_components/` deep-import from
+`@/lib/halftone/<file>` — those imports are inside the studio route's
+private folders, not section code, so they're fine.
 
-The "_" prefix is Next's convention for route-private folders, which makes
-the dependency direction (`sections → app/halftone/_\*`) doubly wrong: it's
-both a layering violation _and_ a violation of Next's own private-folder
-contract.
+### What's where
 
-The plan, ordered to avoid rework:
+| Folder                                      | Contents                                                                                                                                                                                                   | Section-facing?                    |
+| ------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------- |
+| `lib/halftone/halftone-canvas.tsx`          | The reusable WebGL canvas component.                                                                                                                                                                       | Yes (re-exported from the barrel). |
+| `lib/halftone/state.ts`                     | `HalftoneStudioSettings`, defaults, normaliser, reducer.                                                                                                                                                   | Yes (re-exported from the barrel). |
+| `lib/halftone/footprint.ts`                 | Pure scale / rect helpers + the runtime source string used by the studio's HTML export.                                                                                                                    | Yes (re-exported from the barrel). |
+| `lib/halftone/geometry-registry.ts`         | Builtin geometry catalogue + GLB / FBX loader.                                                                                                                                                             | `loadImportedGeometryFromUrl` is.  |
+| `lib/halftone/materials.ts`                 | Halftone shader material — only `halftone-canvas.tsx` consumes it.                                                                                                                                         | No (internal to `lib/halftone/`).  |
+| `app/halftone/_lib/exporters.ts`            | React / HTML / GIF / PNG export pipeline. Lives in `app/` because it's only ever invoked from the studio page (and uses raw `THREE.WebGLRenderer` for offscreen renders — see §3 grandfathered exception). | No (studio-only).                  |
+| `app/halftone/_lib/share.ts`                | URL-share encode / decode for the studio's "share preset" feature.                                                                                                                                         | No (studio-only).                  |
+| `app/halftone/_lib/imageSvgExport.ts`       | SVG halftone export from a raster source.                                                                                                                                                                  | No (studio-only).                  |
+| `app/halftone/_lib/exportNames.ts`          | Filename / component-name normaliser for export artefacts.                                                                                                                                                 | No (studio-only).                  |
+| `app/halftone/_lib/formatters.ts`           | UI-only number / unit formatters for the controls panel.                                                                                                                                                   | No (studio-only).                  |
+| `app/halftone/_lib/glassEnvironmentData.ts` | Embedded HDR data URL for the glass material in standalone HTML exports.                                                                                                                                   | No (studio-only).                  |
+| `app/halftone/_components/*`                | The studio UI: `HalftoneStudio`, `ControlsPanel`, `controls/*`.                                                                                                                                            | No (studio-only).                  |
 
-1. Move `_lib/state.ts`, `_lib/footprint.ts`, `_lib/geometry-registry.ts`
-   into `lib/halftone/`.
-2. Move `_components/HalftoneCanvas.tsx` into `lib/halftone/` (or
-   `sections/Halftone/components/Canvas.tsx` if it grows section-shaped).
-3. Update the halftone studio page (`app/halftone/page.tsx`) to import from
-   the new location.
-4. Update the three offending sections.
-5. Delete the boundary warnings + the grandfathered entry.
+### Rules
 
-This is tracked outside this PR (see Phase 5 of the rollout plan).
+- New section consumers import from `@/lib/halftone` (the barrel).
+  Deep-importing `@/lib/halftone/<file>` works but is not part of the
+  supported API; the deep modules may be reorganised.
+- New studio-only modules go under `app/halftone/_lib/` /
+  `_components/`. Don't promote them to `lib/halftone/` until a section
+  needs them — the leak goes the other way.
+- `app/halftone/_lib/exporters.ts` is the **only** approved consumer of
+  raw `new THREE.WebGLRenderer(...)` (see §3) and is grandfathered in
+  `KNOWN_VIOLATIONS`. If you add a second consumer, you have to either
+  promote the renderer factory to handle export-resolution renders or
+  add a second `KNOWN_VIOLATIONS` entry — not silently extend the rule.
 
 ---
 

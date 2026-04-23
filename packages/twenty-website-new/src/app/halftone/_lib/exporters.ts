@@ -1,17 +1,17 @@
 import { normalizeExportComponentName } from '@/app/halftone/_lib/exportNames';
+import { GLASS_ENVIRONMENT_DATA_URL } from '@/app/halftone/_lib/glassEnvironmentData';
 import {
   HALFTONE_FOOTPRINT_RUNTIME_SOURCE,
   REFERENCE_PREVIEW_DISTANCE,
   VIRTUAL_RENDER_HEIGHT,
-} from '@/app/halftone/_lib/footprint';
+} from '@/lib/halftone/footprint';
 import {
   LEGACY_HALFTONE_SETTING_KEYS,
   isRoundedBandHalftoneSettings,
   type HalftoneExportPose,
   type HalftoneGeometrySpec,
   type HalftoneStudioSettings,
-} from '@/app/halftone/_lib/state';
-import { GLASS_ENVIRONMENT_DATA_URL } from '@/app/halftone/_lib/glassEnvironmentData';
+} from '@/lib/halftone/state';
 import { DRACO_DECODER_PATH } from '@/lib/visual-runtime/draco-decoder-path';
 
 export type ReactExportSettings = {

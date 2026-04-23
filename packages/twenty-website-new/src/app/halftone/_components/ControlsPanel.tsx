@@ -9,7 +9,7 @@ import type {
   HalftoneSourceMode,
   HalftoneStudioSettings,
   HalftoneTabId,
-} from '@/app/halftone/_lib/state';
+} from '@/lib/halftone/state';
 import { AnimationsTab } from './controls/AnimationsTab';
 import { DesignTab } from './controls/DesignTab';
 import { ExportTab } from './controls/ExportTab';

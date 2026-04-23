@@ -1,6 +1,5 @@
 'use client';
 
-import { HalftoneCanvas } from '@/app/halftone/_components/HalftoneCanvas';
 import {
   DEFAULT_GLASS_ANIMATION_SETTINGS,
   DEFAULT_GLASS_BACKGROUND_SETTINGS,
@@ -9,17 +8,21 @@ import {
   DEFAULT_SOLID_ANIMATION_SETTINGS,
   DEFAULT_SOLID_BACKGROUND_SETTINGS,
   DEFAULT_SOLID_MATERIAL_SETTINGS,
+  HalftoneCanvas,
   type HalftoneMaterialSurface,
-  type HalftoneToneTarget,
   type HalftoneStudioSettings,
-} from '@/app/halftone/_lib/state';
+  type HalftoneToneTarget,
+} from '@/lib/halftone';
 import { styled } from '@linaria/react';
 import { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
-import { createFrameTimer, createSiteWebGlRenderer } from '@/lib/visual-runtime';
+import {
+  createFrameTimer,
+  createSiteWebGlRenderer,
+} from '@/lib/visual-runtime';
 import { DRACO_DECODER_PATH } from '@/lib/visual-runtime/draco-decoder-path';
 
 const EMPTY_TEXTURE_DATA_URL =

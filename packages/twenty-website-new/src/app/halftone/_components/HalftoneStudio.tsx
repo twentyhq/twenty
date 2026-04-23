@@ -1,18 +1,6 @@
 'use client';
 
-import {
-  HalftoneCanvas,
-  type HalftoneSnapshotFn,
-} from '@/app/halftone/_components/HalftoneCanvas';
 import { ControlsPanel } from '@/app/halftone/_components/ControlsPanel';
-import { resolveExportArtifactNames } from '@/app/halftone/_lib/exportNames';
-import {
-  createFallbackGeometry,
-  disposeGeometryCache,
-  getGeometryForSpec,
-} from '@/app/halftone/_lib/geometry-registry';
-import { REFERENCE_PREVIEW_DISTANCE } from '@/app/halftone/_lib/footprint';
-import { generateImageHalftoneSvg } from '@/app/halftone/_lib/imageSvgExport';
 import {
   DEFAULT_REACT_EXPORT_SETTINGS,
   deriveExportComponentName,
@@ -22,6 +10,23 @@ import {
   parseExportedPreset,
   type ReactExportSettings,
 } from '@/app/halftone/_lib/exporters';
+import { resolveExportArtifactNames } from '@/app/halftone/_lib/exportNames';
+import { generateImageHalftoneSvg } from '@/app/halftone/_lib/imageSvgExport';
+import {
+  buildShareUrl,
+  decodeShareState,
+  encodeShareState,
+} from '@/app/halftone/_lib/share';
+import {
+  HalftoneCanvas,
+  type HalftoneSnapshotFn,
+} from '@/lib/halftone/halftone-canvas';
+import { REFERENCE_PREVIEW_DISTANCE } from '@/lib/halftone/footprint';
+import {
+  createFallbackGeometry,
+  disposeGeometryCache,
+  getGeometryForSpec,
+} from '@/lib/halftone/geometry-registry';
 import {
   DEFAULT_IMAGE_HALFTONE_SETTINGS,
   DEFAULT_SHAPE_HALFTONE_SETTINGS,
@@ -32,12 +37,7 @@ import {
   type HalftoneModelLoader,
   type HalftoneSourceMode,
   normalizeHalftoneStudioSettings,
-} from '@/app/halftone/_lib/state';
-import {
-  buildShareUrl,
-  decodeShareState,
-  encodeShareState,
-} from '@/app/halftone/_lib/share';
+} from '@/lib/halftone/state';
 import { Logo as LogoIcon } from '@/icons';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
@@ -1186,12 +1186,7 @@ export function HalftoneStudio() {
         height,
       });
     },
-    [
-      exportBackground,
-      imageElement,
-      previewDistance,
-      state.settings,
-    ],
+    [exportBackground, imageElement, previewDistance, state.settings],
   );
 
   const handleExportHalftoneSvg = useCallback(
@@ -1217,10 +1212,7 @@ export function HalftoneStudio() {
       });
       window.setTimeout(() => dispatch({ type: 'clearStatus' }), 2000);
     },
-    [
-      buildHalftoneSvg,
-      exportArtifactNames.fileBaseName,
-    ],
+    [buildHalftoneSvg, exportArtifactNames.fileBaseName],
   );
 
   const handleCopyHalftoneSvg = useCallback(

@@ -5,7 +5,7 @@ import {
   getImagePreviewZoom,
   getMeshFootprintScale,
   VIRTUAL_RENDER_HEIGHT,
-} from '@/app/halftone/_lib/footprint';
+} from '@/lib/halftone/footprint';
 import {
   applyHalftoneMaterialSettings,
   createHalftoneMaterial,
@@ -14,15 +14,15 @@ import {
   type HalftoneMaterialAssets,
   type HalftoneTransmissionMaterial,
   renderHalftoneMaterialScene,
-} from '@/app/halftone/_lib/materials';
+} from '@/lib/halftone/materials';
 import type {
   HalftoneExportPose,
   HalftoneStudioSettings,
-} from '@/app/halftone/_lib/state';
+} from '@/lib/halftone/state';
+import { createSiteWebGlRenderer } from '@/lib/visual-runtime';
 import { styled } from '@linaria/react';
 import { type MutableRefObject, useEffect, useRef } from 'react';
 import * as THREE from 'three';
-import { createSiteWebGlRenderer } from '@/lib/visual-runtime';
 
 const passThroughVertexShader = `
   varying vec2 vUv;
@@ -724,8 +724,7 @@ export function HalftoneCanvas({
 
     let animationFrameId = 0;
     let cancelled = false;
-    let isVisible =
-      typeof document === 'undefined' ? true : !document.hidden;
+    let isVisible = typeof document === 'undefined' ? true : !document.hidden;
     let isIntersecting = true;
     const shouldRender = () => isVisible && isIntersecting;
 
@@ -2029,7 +2028,10 @@ export function HalftoneCanvas({
       cleanup = () => {
         resizeObserver.disconnect();
         intersectionObserver.disconnect();
-        document.removeEventListener('visibilitychange', handleVisibilityChange);
+        document.removeEventListener(
+          'visibilitychange',
+          handleVisibilityChange,
+        );
         canvas.removeEventListener('pointermove', handlePointerMove);
         canvas.removeEventListener('pointerleave', handlePointerLeave);
         canvas.removeEventListener('pointerup', handlePointerUp);

@@ -1,7 +1,6 @@
 'use client';
 
-import { HalftoneCanvas } from '@/app/halftone/_components/HalftoneCanvas';
-import type { HalftoneStudioSettings } from '@/app/halftone/_lib/state';
+import { HalftoneCanvas, type HalftoneStudioSettings } from '@/lib/halftone';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
 import { useEffect, useRef, useState } from 'react';

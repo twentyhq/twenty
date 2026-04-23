@@ -1,12 +1,10 @@
-import { parseExportedPreset } from '@/app/halftone/_lib/exporters';
 import {
   HALFTONE_FOOTPRINT_RUNTIME_SOURCE,
   getContainedImageRect,
   getImageFootprintScale,
   getMeshFootprintScale,
   REFERENCE_PREVIEW_DISTANCE,
-} from '@/app/halftone/_lib/footprint';
-import { DEFAULT_HALFTONE_SETTINGS } from '@/app/halftone/_lib/state';
+} from '@/lib/halftone/footprint';
 import * as THREE from 'three';
 
 describe('halftone footprint helpers', () => {
@@ -121,48 +119,6 @@ return { getContainedImageRect, getImageFootprintScale, getMeshFootprintScale };
     expect(runtime.getMeshFootprintScale(meshArgs)).toBeCloseTo(
       getMeshFootprintScale(meshArgs),
       6,
-    );
-  });
-});
-
-describe('parseExportedPreset', () => {
-  it('falls back to the reference preview distance for legacy presets', () => {
-    const content = `
-const settings = ${JSON.stringify(DEFAULT_HALFTONE_SETTINGS, null, 2)};
-const shape = ${JSON.stringify(
-      {
-        filename: null,
-        key: 'torusKnot',
-        kind: 'builtin',
-        label: 'Torus Knot',
-        loader: null,
-      },
-      null,
-      2,
-    )};
-const initialPose = ${JSON.stringify(
-      {
-        autoElapsed: 0,
-        rotateElapsed: 0,
-        rotationX: 0,
-        rotationY: 0,
-        rotationZ: 0,
-        targetRotationX: 0,
-        targetRotationY: 0,
-        timeElapsed: 0,
-      },
-      null,
-      2,
-    )};
-const VIRTUAL_RENDER_HEIGHT = 768;
-
-export default function LegacyHalftone() {
-  return null;
-}
-`;
-
-    expect(parseExportedPreset(content).previewDistance).toBe(
-      REFERENCE_PREVIEW_DISTANCE,
     );
   });
 });

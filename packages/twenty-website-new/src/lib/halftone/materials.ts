@@ -1,4 +1,4 @@
-import type { HalftoneMaterialSettings } from '@/app/halftone/_lib/state';
+import type { HalftoneMaterialSettings } from '@/lib/halftone/state';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 import * as THREE from 'three';
 

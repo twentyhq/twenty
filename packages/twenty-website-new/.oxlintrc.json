@@ -63,15 +63,8 @@
           {
             "patterns": [
               {
-                "group": [
-                  "@/app/halftone/_components/**",
-                  "@/app/halftone/_lib/**"
-                ],
-                "message": "The `app/halftone/_components` + `_lib` folders are studio-internal. Move shared halftone primitives into `src/lib/halftone/` before consuming them from another section. (See ARCHITECTURE.md → Halftone consolidation.)"
-              },
-              {
                 "group": ["@/app/**"],
-                "message": "Sections are page-agnostic primitives — they must not depend on a specific route. Move shared types to `src/sections/<Section>/types/` or `src/lib/`. (See ARCHITECTURE.md → Layering rules.)"
+                "message": "Sections are page-agnostic primitives — they must not depend on a specific route. Move shared halftone primitives into `src/lib/halftone/`, shared types into `src/sections/<Section>/types/`, and shared data into `src/lib/`. (See ARCHITECTURE.md → Layering rules.)"
               }
             ]
           }

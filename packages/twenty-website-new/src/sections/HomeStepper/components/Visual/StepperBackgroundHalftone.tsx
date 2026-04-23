@@ -4,7 +4,7 @@ import {
   VIRTUAL_RENDER_HEIGHT,
   getImageFootprintScale,
   getImagePreviewZoom,
-} from '@/app/halftone/_lib/footprint';
+} from '@/lib/halftone';
 import { getPrefersReducedMotionSnapshot } from '@/lib/motion';
 import { createSiteWebGlRenderer } from '@/lib/visual-runtime';
 import { styled } from '@linaria/react';

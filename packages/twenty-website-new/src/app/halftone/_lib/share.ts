@@ -3,7 +3,7 @@ import {
   DEFAULT_HALFTONE_SETTINGS,
   normalizeHalftoneStudioSettings,
   type HalftoneStudioSettings,
-} from '@/app/halftone/_lib/state';
+} from '@/lib/halftone/state';
 
 export type ShareableHalftoneState = {
   settings: HalftoneStudioSettings;
