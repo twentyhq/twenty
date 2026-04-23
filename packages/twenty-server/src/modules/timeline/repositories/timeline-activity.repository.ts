@@ -7,6 +7,8 @@ import { In, MoreThan } from 'typeorm';
 import { objectRecordDiffMerge } from 'src/engine/core-modules/event-emitter/utils/object-record-diff-merge';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type TimelineActivityPayload } from 'src/modules/timeline/types/timeline-activity-payload';
 import { buildTimelineActivityRelatedMorphFieldMetadataName } from 'src/modules/timeline/utils/timeline-activity-related-morph-field-metadata-name-builder.util';
 
@@ -29,6 +31,15 @@ export class TimelineActivityRepository {
     workspaceId,
     payloads,
   }: TimelineActivityPayloadWorkspaceIdAndObjectSingularName) {
+    const hasMorphField = await this.hasTimelineActivityMorphField(
+      objectSingularName,
+      workspaceId,
+    );
+
+    if (!hasMorphField) {
+      return;
+    }
+
     const authContext = buildSystemAuthContext(workspaceId);
 
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
@@ -109,7 +120,6 @@ export class TimelineActivityRepository {
           shouldBypassPermissionChecks: true,
         },
       );
-
     const tenMinutesAgo = new Date(Date.now() - 10 * 60 * 1000);
 
     const timelineActivityPropertyName =
@@ -191,6 +201,31 @@ export class TimelineActivityRepository {
       properties: properties,
       workspaceMemberId: workspaceMemberId,
     });
+  }
+
+  private async hasTimelineActivityMorphField(
+    objectSingularName: string,
+    workspaceId: string,
+  ): Promise<boolean> {
+    const authContext = buildSystemAuthContext(workspaceId);
+
+    return await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      async () => {
+        const context = getWorkspaceContext();
+        const morphFieldName =
+          buildTimelineActivityRelatedMorphFieldMetadataName(
+            objectSingularName,
+          );
+        const fieldName = `${morphFieldName}Id`;
+
+        return Object.values(
+          context.flatFieldMetadataMaps.byUniversalIdentifier,
+        )
+          .filter(isDefined)
+          .some((field) => isDefined(field) && field?.name === fieldName);
+      },
+      authContext,
+    );
   }
 
   private async getTimelineActivityPropertyName(objectSingularName: string) {
