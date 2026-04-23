@@ -9,9 +9,9 @@ import { useCallback } from 'react';
 import { v4 } from 'uuid';
 import {
   ViewOpenRecordIn,
+  ViewType,
   ViewVisibility,
   WidgetConfigurationType,
-  ViewType,
 } from '~/generated-metadata/graphql';
 
 const DEFAULT_VIEW_FIELD_SIZE = 180;
@@ -66,11 +66,13 @@ export const useCreateViewForRecordTableWidget = (pageLayoutId: string) => {
 
       applyChanges();
 
-      updatePageLayoutWidget(widgetId, {
-        configuration: {
-          configurationType: WidgetConfigurationType.RECORD_TABLE,
-          viewId: newViewId,
-        },
+      requestAnimationFrame(() => {
+        updatePageLayoutWidget(widgetId, {
+          configuration: {
+            configurationType: WidgetConfigurationType.RECORD_TABLE,
+            viewId: newViewId,
+          },
+        });
       });
     },
     [addToDraft, applyChanges, updatePageLayoutWidget],
