@@ -5,7 +5,7 @@ import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
 
-type SettingsAdminSectionSkeletonLoaderProps = {
+type SettingsSectionSkeletonLoaderProps = {
   rowCount?: number;
 };
 
@@ -16,9 +16,9 @@ const StyledRows = styled.div`
   width: 100%;
 `;
 
-export const SettingsAdminSectionSkeletonLoader = ({
+export const SettingsSectionSkeletonLoader = ({
   rowCount = 4,
-}: SettingsAdminSectionSkeletonLoaderProps) => {
+}: SettingsSectionSkeletonLoaderProps) => {
   const { theme } = useContext(ThemeContext);
 
   return (
