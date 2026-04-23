@@ -68,6 +68,7 @@ const createValidManifest = (universalIdentifier: string) =>
     views: [],
     navigationMenuItems: [],
     pageLayouts: [],
+    pageLayoutTabs: [],
   });
 
 const insertRegistrationWithSource = async (

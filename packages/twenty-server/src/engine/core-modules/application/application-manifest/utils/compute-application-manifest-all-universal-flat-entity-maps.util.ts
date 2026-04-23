@@ -397,5 +397,44 @@ export const computeApplicationManifestAllUniversalFlatEntityMaps = ({
     }
   }
 
+  // Top-level pageLayoutTabs declared via `definePageLayoutTab` target an
+  // existing page layout (standard, this app's, or another app's) by
+  // `pageLayoutUniversalIdentifier`. The cross-application FK is resolved at
+  // validation time by the flat page layout tab validator.
+  for (const pageLayoutTabManifest of manifest.pageLayoutTabs ?? []) {
+    if (!isDefined(pageLayoutTabManifest.pageLayoutUniversalIdentifier)) {
+      continue;
+    }
+
+    addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
+      universalFlatEntity:
+        fromPageLayoutTabManifestToUniversalFlatPageLayoutTab({
+          pageLayoutTabManifest,
+          pageLayoutUniversalIdentifier:
+            pageLayoutTabManifest.pageLayoutUniversalIdentifier,
+          applicationUniversalIdentifier,
+          now,
+        }),
+      universalFlatEntityMapsToMutate:
+        allUniversalFlatEntityMaps.flatPageLayoutTabMaps,
+    });
+
+    for (const pageLayoutWidgetManifest of pageLayoutTabManifest.widgets ??
+      []) {
+      addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
+        universalFlatEntity:
+          fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget({
+            pageLayoutWidgetManifest,
+            pageLayoutTabUniversalIdentifier:
+              pageLayoutTabManifest.universalIdentifier,
+            applicationUniversalIdentifier,
+            now,
+          }),
+        universalFlatEntityMapsToMutate:
+          allUniversalFlatEntityMaps.flatPageLayoutWidgetMaps,
+      });
+    }
+  }
+
   return allUniversalFlatEntityMaps;
 };
