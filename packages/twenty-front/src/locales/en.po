@@ -11361,6 +11361,11 @@ msgstr "Post Code"
 msgid "Postcode"
 msgstr "Postcode"
 
+#. js-lingui-id: q+Xhwx
+#: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
+msgid "Pre-installed only"
+msgstr "Pre-installed only"
+
 #. js-lingui-id: /v6Rp9
 #: src/pages/onboarding/CreateWorkspace.tsx
 msgid "Prefilling your workspace data..."
