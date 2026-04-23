@@ -83,6 +83,7 @@ export class CodeInterpreterDriverFactory extends DriverFactoryBase<CodeInterpre
         const pidsLimit = this.twentyConfigService.get(
           'DOCKER_SANDBOX_PIDS_LIMIT',
         );
+        const runtime = this.twentyConfigService.get('DOCKER_SANDBOX_RUNTIME');
 
         if (!workDirRoot) {
           throw new Error(
@@ -96,6 +97,7 @@ export class CodeInterpreterDriverFactory extends DriverFactoryBase<CodeInterpre
           network: network || undefined,
           memoryMb,
           pidsLimit,
+          runtime: runtime || undefined,
           timeoutMs,
         });
       }

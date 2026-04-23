@@ -30,6 +30,9 @@ export type DockerDriverOptions = {
   network?: string;
   memoryMb?: number;
   pidsLimit?: number;
+  // Docker runtime name (e.g. 'runsc' for gVisor, 'sysbox-runc' for Sysbox).
+  // When undefined, the daemon's default runtime is used.
+  runtime?: string;
   timeoutMs?: number;
 };
 
@@ -125,6 +128,7 @@ export class DockerDriver implements CodeInterpreterDriver {
           PidsLimit: this.options.pidsLimit ?? 256,
           CapDrop: ['ALL'],
           SecurityOpt: ['no-new-privileges'],
+          Runtime: this.options.runtime,
         },
       });
       await container.start();

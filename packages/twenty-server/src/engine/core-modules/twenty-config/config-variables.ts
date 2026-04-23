@@ -721,6 +721,15 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.CODE_INTERPRETER_CONFIG,
     description:
+      'Docker runtime used to launch sandbox containers. Leave unset to use the default runc runtime. Set to "runsc" to route sandboxes through gVisor (user-space kernel) or "sysbox-runc" for Sysbox. The runtime must be registered on the host Docker daemon (/etc/docker/daemon.json). Only applies when CODE_INTERPRETER_TYPE=DOCKER.',
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  DOCKER_SANDBOX_RUNTIME?: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.CODE_INTERPRETER_CONFIG,
+    description:
       'Override URL the sandbox uses to reach Twenty\'s MCP endpoint. Needed when the sandbox runs on a network that cannot resolve the public SERVER_URL (e.g. DOCKER driver with internal-only sandbox network). Falls back to SERVER_URL when unset.',
     type: ConfigVariableType.STRING,
   })
