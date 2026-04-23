@@ -13,7 +13,7 @@ Le entità di layout controllano come la tua app si presenta all'interno dell'in
 | **Vista**                        | Una configurazione di elenco salvata per un oggetto — campi visibili, ordine, filtri, gruppi | `defineView`               |
 | **Voce del menu di navigazione** | Una voce nella barra laterale sinistra che collega a una vista o a un URL esterno            | `defineNavigationMenuItem` |
 | **Layout di pagina**             | Le schede e i widget che compongono la pagina dei dettagli di un record                      | `definePageLayout`         |
-| **Page Layout Tab**              | A standalone tab attached to an existing page layout (standard or your own app's)            | `definePageLayoutTab`      |
+| **Scheda layout di pagina**      | Una scheda indipendente associata a un layout di pagina esistente (standard o della tua app) | `definePageLayoutTab`      |
 
 Le viste, le voci del menu di navigazione e i layout di pagina fanno riferimento tra loro tramite `universalIdentifier`:
 
@@ -129,11 +129,11 @@ Punti chiave:
 * `position` sulle schede controlla il loro ordine. Usa valori più alti (ad es., 50) per posizionare le schede personalizzate dopo quelle integrate.
 
 </Accordion>
-<Accordion title="definePageLayoutTab" description="Add a tab to an existing page layout">
+<Accordion title="definePageLayoutTab" description="Aggiungi una scheda a un layout di pagina esistente">
 
-`definePageLayoutTab` lets your app attach a single tab — with optional widgets — to an **existing** page layout. The most common use case is adding a custom tab (for example, an analytics or AI summary tab) to one of Twenty's built-in record pages, or to a page layout your own app already ships.
+`definePageLayoutTab` consente alla tua app di aggiungere una singola scheda — con widget opzionali — a un layout di pagina **esistente**. Il caso d'uso più comune è aggiungere una scheda personalizzata (ad esempio, una scheda di analisi o di riepilogo IA) a una delle pagine record integrate di Twenty, oppure a un layout di pagina che la tua app fornisce già.
 
-The targeted page layout must be either a **standard** Twenty page layout or one defined by **your own app**; cross-app references to page layouts owned by another installed app are not supported today.
+Il layout di pagina di destinazione deve essere o un layout di pagina Twenty **standard** oppure uno definito dalla **tua app**; i riferimenti tra app a layout di pagina di proprietà di un'altra app installata non sono attualmente supportati.
 
 ```ts src/page-layouts/example-extra-tab.ts
 import {
@@ -169,10 +169,10 @@ export default definePageLayoutTab({
 ```
 
 Punti chiave:
-* `pageLayoutUniversalIdentifier` is **required** when using `definePageLayoutTab` and must point to a page layout that already exists at install time (standard or your app's). When the parent page layout is missing, installation fails with a clear validation error.
-* `widgets` are scoped to this tab only — they reference front components, views, etc. exactly like widgets defined inline in `definePageLayout`.
-* `position` controls ordering against existing tabs on the targeted layout. Pick a value that places your tab where you want it relative to built-in tabs.
-* Use this instead of `definePageLayout` when you only want to **add** to an existing layout. Use `definePageLayout` when you own the entire layout (typically a `RECORD_PAGE` for an object you ship in your app, or a `STANDALONE_PAGE`).
+* `pageLayoutUniversalIdentifier` è **obbligatorio** quando si utilizza `definePageLayoutTab` e deve puntare a un layout di pagina già esistente al momento dell'installazione (standard o della tua app). Quando il layout di pagina padre manca, l'installazione non va a buon fine e restituisce un chiaro errore di validazione.
+* `widgets` sono limitati solo a questa scheda — fanno riferimento a componenti front-end, viste, ecc. esattamente come i widget definiti inline in `definePageLayout`.
+* `position` controlla l'ordinamento rispetto alle schede esistenti nel layout di destinazione. Scegli un valore che collochi la tua scheda dove desideri rispetto alle schede integrate.
+* Usa questo invece di `definePageLayout` quando vuoi solo **aggiungere** a un layout esistente. Usa `definePageLayout` quando possiedi l'intero layout (in genere una `RECORD_PAGE` per un oggetto che distribuisci nella tua app, oppure una `STANDALONE_PAGE`).
 
 </Accordion>
 </AccordionGroup>

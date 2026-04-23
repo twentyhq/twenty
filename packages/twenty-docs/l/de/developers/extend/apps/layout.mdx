@@ -8,12 +8,12 @@ Layout-Entitäten steuern, wie Ihre App innerhalb der Benutzeroberfläche von Tw
 
 ## Layout-Konzepte
 
-| Konzept                    | Was es steuert                                                                                         | Entität                    |
-| -------------------------- | ------------------------------------------------------------------------------------------------------ | -------------------------- |
-| **Ansicht**                | Eine gespeicherte Listen-Konfiguration für ein Objekt — sichtbare Felder, Reihenfolge, Filter, Gruppen | `defineView`               |
-| **Navigationsmenüeintrag** | Ein Eintrag in der linken Seitenleiste, der auf eine Ansicht oder eine externe URL verweist            | `defineNavigationMenuItem` |
-| **Seitenlayout**           | Die Tabs und Widgets, aus denen die Detailseite eines Datensatzes besteht                              | `definePageLayout`         |
-| **Page Layout Tab**        | A standalone tab attached to an existing page layout (standard or your own app's)                      | `definePageLayoutTab`      |
+| Konzept                        | Was es steuert                                                                                                            | Entität                    |
+| ------------------------------ | ------------------------------------------------------------------------------------------------------------------------- | -------------------------- |
+| **Ansicht**                    | Eine gespeicherte Listen-Konfiguration für ein Objekt — sichtbare Felder, Reihenfolge, Filter, Gruppen                    | `defineView`               |
+| **Navigationsmenüeintrag**     | Ein Eintrag in der linken Seitenleiste, der auf eine Ansicht oder eine externe URL verweist                               | `defineNavigationMenuItem` |
+| **Seitenlayout**               | Die Tabs und Widgets, aus denen die Detailseite eines Datensatzes besteht                                                 | `definePageLayout`         |
+| **Seitenlayout-Registerkarte** | Eine eigenständige Registerkarte, die an ein vorhandenes Seitenlayout angehängt ist (Standard oder das Ihrer eigenen App) | `definePageLayoutTab`      |
 
 Ansichten, Navigationsmenüeinträge und Seitenlayouts verweisen über `universalIdentifier` aufeinander:
 
@@ -129,11 +129,11 @@ Hauptpunkte:
 * `position` auf Tabs steuert deren Reihenfolge. Verwenden Sie höhere Werte (z. B. 50), um benutzerdefinierte Tabs hinter den integrierten zu platzieren.
 
 </Accordion>
-<Accordion title="definePageLayoutTab" description="Add a tab to an existing page layout">
+<Accordion title="definePageLayoutTab" description="Eine Registerkarte zu einem bestehenden Seitenlayout hinzufügen">
 
-`definePageLayoutTab` lets your app attach a single tab — with optional widgets — to an **existing** page layout. The most common use case is adding a custom tab (for example, an analytics or AI summary tab) to one of Twenty's built-in record pages, or to a page layout your own app already ships.
+`definePageLayoutTab` ermöglicht es Ihrer App, eine einzelne Registerkarte — mit optionalen Widgets — an ein **bestehendes** Seitenlayout anzuhängen. Der häufigste Anwendungsfall ist das Hinzufügen einer benutzerdefinierten Registerkarte (z. B. einer Analytics- oder KI-Zusammenfassungs-Registerkarte) zu einer der in Twenty integrierten Datensatzseiten oder zu einem Seitenlayout, das Ihre eigene App bereits mitliefert.
 
-The targeted page layout must be either a **standard** Twenty page layout or one defined by **your own app**; cross-app references to page layouts owned by another installed app are not supported today.
+Das Zielseitenlayout muss entweder ein **Standard**-Seitenlayout von Twenty sein oder eines, das von **Ihrer eigenen App** definiert wird; appübergreifende Verweise auf Seitenlayouts, die einer anderen installierten App gehören, werden derzeit nicht unterstützt.
 
 ```ts src/page-layouts/example-extra-tab.ts
 import {
@@ -169,10 +169,10 @@ export default definePageLayoutTab({
 ```
 
 Hauptpunkte:
-* `pageLayoutUniversalIdentifier` is **required** when using `definePageLayoutTab` and must point to a page layout that already exists at install time (standard or your app's). When the parent page layout is missing, installation fails with a clear validation error.
-* `widgets` are scoped to this tab only — they reference front components, views, etc. exactly like widgets defined inline in `definePageLayout`.
-* `position` controls ordering against existing tabs on the targeted layout. Pick a value that places your tab where you want it relative to built-in tabs.
-* Use this instead of `definePageLayout` when you only want to **add** to an existing layout. Use `definePageLayout` when you own the entire layout (typically a `RECORD_PAGE` for an object you ship in your app, or a `STANDALONE_PAGE`).
+* `pageLayoutUniversalIdentifier` ist **erforderlich** bei der Verwendung von `definePageLayoutTab` und muss auf ein Seitenlayout verweisen, das zum Installationszeitpunkt bereits existiert (Standard oder das Ihrer App). Wenn das übergeordnete Seitenlayout fehlt, schlägt die Installation mit einem eindeutigen Validierungsfehler fehl.
+* `widgets` sind ausschließlich auf diese Registerkarte beschränkt — sie verweisen auf Frontend-Komponenten, Ansichten usw., genau wie Widgets, die inline in `definePageLayout` definiert sind.
+* `position` steuert die Reihenfolge im Zielseitenlayout relativ zu den vorhandenen Registerkarten. Wählen Sie einen Wert, der Ihre Registerkarte relativ zu integrierten Registerkarten an die gewünschte Position bringt.
+* Verwenden Sie dies anstelle von `definePageLayout`, wenn Sie einem vorhandenen Layout nur etwas **hinzufügen** möchten. Verwenden Sie `definePageLayout`, wenn Sie das gesamte Layout besitzen (typischerweise eine `RECORD_PAGE` für ein Objekt, das Sie in Ihrer App ausliefern, oder eine `STANDALONE_PAGE`).
 
 </Accordion>
 </AccordionGroup>

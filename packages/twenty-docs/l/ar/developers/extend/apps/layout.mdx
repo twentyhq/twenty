@@ -129,11 +129,11 @@ export default definePageLayout({
 * `position` على الألسنة يتحكّم في ترتيبها. استخدم قيمًا أعلى (مثل 50) لوضع الألسنة المخصّصة بعد الألسنة المدمجة.
 
 </Accordion>
-<Accordion title="definePageLayoutTab" description="Add a tab to an existing page layout">
+<Accordion title="definePageLayoutTab" description="إضافة علامة تبويب إلى تخطيط صفحة موجود">
 
-`definePageLayoutTab` lets your app attach a single tab — with optional widgets — to an **existing** page layout. The most common use case is adding a custom tab (for example, an analytics or AI summary tab) to one of Twenty's built-in record pages, or to a page layout your own app already ships.
+`definePageLayoutTab` يتيح لتطبيقك إرفاق علامة تبويب واحدة — مع عناصر واجهة اختيارية — إلى تخطيط صفحة **موجود**. أشيع حالات الاستخدام هي إضافة علامة تبويب مخصصة (على سبيل المثال، علامة تبويب للتحليلات أو ملخص الذكاء الاصطناعي) إلى إحدى صفحات السجل المضمنة في Twenty، أو إلى تخطيط صفحة يوفره تطبيقك بالفعل.
 
-The targeted page layout must be either a **standard** Twenty page layout or one defined by **your own app**; cross-app references to page layouts owned by another installed app are not supported today.
+يجب أن يكون تخطيط الصفحة المستهدف إما تخطيط صفحة Twenty **قياسيًا** أو تخطيطًا مُعرَّفًا بواسطة **تطبيقك أنت**؛ المراجع عبر التطبيقات إلى تخطيطات صفحات مملوكة لتطبيق آخر مُثبّت غير مدعومة حاليًا.
 
 ```ts src/page-layouts/example-extra-tab.ts
 import {
@@ -169,10 +169,10 @@ export default definePageLayoutTab({
 ```
 
 النقاط الرئيسية:
-* `pageLayoutUniversalIdentifier` is **required** when using `definePageLayoutTab` and must point to a page layout that already exists at install time (standard or your app's). When the parent page layout is missing, installation fails with a clear validation error.
-* `widgets` are scoped to this tab only — they reference front components, views, etc. exactly like widgets defined inline in `definePageLayout`.
-* `position` controls ordering against existing tabs on the targeted layout. Pick a value that places your tab where you want it relative to built-in tabs.
-* Use this instead of `definePageLayout` when you only want to **add** to an existing layout. Use `definePageLayout` when you own the entire layout (typically a `RECORD_PAGE` for an object you ship in your app, or a `STANDALONE_PAGE`).
+* `pageLayoutUniversalIdentifier` **مطلوب** عند استخدام `definePageLayoutTab` ويجب أن يشير إلى تخطيط صفحة موجود بالفعل وقت التثبيت (سواء قياسيًا أو تابعًا لتطبيقك). عند فقدان تخطيط الصفحة الأب، يفشل التثبيت برسالة خطأ تحقق واضحة.
+* `widgets` نطاقها مقتصر على علامة التبويب هذه فقط — فهي تُشير إلى مكونات الواجهة الأمامية، والعروض، وما إلى ذلك تمامًا مثل عناصر الواجهة المعرّفة مضمّنة داخل `definePageLayout`.
+* `position` يتحكّم في الترتيب مقارنةً بعلامات التبويب الموجودة على التخطيط المستهدف. اختر قيمة تضع علامة التبويب الخاصة بك في الموضع الذي تريده بالنسبة إلى علامات التبويب المضمنة.
+* استخدم هذا بدلًا من `definePageLayout` عندما تريد فقط **الإضافة** إلى تخطيط موجود. استخدم `definePageLayout` عندما تملك التخطيط بأكمله (عادةً ما يكون `RECORD_PAGE` لكائن توفّره في تطبيقك، أو `STANDALONE_PAGE`).
 
 </Accordion>
 </AccordionGroup>

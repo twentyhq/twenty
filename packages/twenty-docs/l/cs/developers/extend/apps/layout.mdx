@@ -8,12 +8,12 @@ Prvky rozvržení řídí, jak se vaše aplikace zobrazuje v uživatelském rozh
 
 ## Pojmy rozvržení
 
-| Pojem                         | Co řídí                                                                           | Entita                     |
-| ----------------------------- | --------------------------------------------------------------------------------- | -------------------------- |
-| **Pohled**                    | Uložené nastavení seznamu pro objekt — viditelná pole, pořadí, filtry, skupiny    | `defineView`               |
-| **Položka navigační nabídky** | Položka v levém postranním panelu, která odkazuje na pohled nebo externí URL      | `defineNavigationMenuItem` |
-| **Rozvržení stránky**         | Karty a widgety, které tvoří stránku s podrobnostmi záznamu                       | `definePageLayout`         |
-| **Page Layout Tab**           | A standalone tab attached to an existing page layout (standard or your own app's) | `definePageLayoutTab`      |
+| Pojem                         | Co řídí                                                                                                         | Entita                     |
+| ----------------------------- | --------------------------------------------------------------------------------------------------------------- | -------------------------- |
+| **Pohled**                    | Uložené nastavení seznamu pro objekt — viditelná pole, pořadí, filtry, skupiny                                  | `defineView`               |
+| **Položka navigační nabídky** | Položka v levém postranním panelu, která odkazuje na pohled nebo externí URL                                    | `defineNavigationMenuItem` |
+| **Rozvržení stránky**         | Karty a widgety, které tvoří stránku s podrobnostmi záznamu                                                     | `definePageLayout`         |
+| **Karta Rozložení stránky**   | Samostatná karta připojená k existujícímu rozložení stránky (standardnímu nebo rozložení vaší vlastní aplikace) | `definePageLayoutTab`      |
 
 Pohledy, položky navigační nabídky a rozvržení stránek se na sebe odkazují pomocí `universalIdentifier`:
 
@@ -129,11 +129,11 @@ Hlavní body:
 * `position` na kartách určuje jejich pořadí. Použijte vyšší hodnoty (např. 50) pro umístění vlastních karet za vestavěné.
 
 </Accordion>
-<Accordion title="definePageLayoutTab" description="Add a tab to an existing page layout">
+<Accordion title="definePageLayoutTab" description="Přidat kartu do existujícího rozvržení stránky">
 
-`definePageLayoutTab` lets your app attach a single tab — with optional widgets — to an **existing** page layout. The most common use case is adding a custom tab (for example, an analytics or AI summary tab) to one of Twenty's built-in record pages, or to a page layout your own app already ships.
+`definePageLayoutTab` umožňuje vaší aplikaci připojit jednu kartu — s volitelnými widgety — k **existujícímu** rozvržení stránky. Nejčastějším případem použití je přidání vlastní karty (například karty s analytikou nebo souhrnem AI) na jednu z vestavěných stránek záznamů Twenty nebo do rozvržení stránky, které vaše vlastní aplikace již dodává.
 
-The targeted page layout must be either a **standard** Twenty page layout or one defined by **your own app**; cross-app references to page layouts owned by another installed app are not supported today.
+Cílové rozvržení stránky musí být buď **standardní** rozvržení stránky Twenty, nebo takové, které je definované **vaší vlastní aplikací**; křížové odkazy na rozvržení stránek, která vlastní jiná nainstalovaná aplikace, dnes nejsou podporovány.
 
 ```ts src/page-layouts/example-extra-tab.ts
 import {
@@ -169,10 +169,10 @@ export default definePageLayoutTab({
 ```
 
 Hlavní body:
-* `pageLayoutUniversalIdentifier` is **required** when using `definePageLayoutTab` and must point to a page layout that already exists at install time (standard or your app's). When the parent page layout is missing, installation fails with a clear validation error.
-* `widgets` are scoped to this tab only — they reference front components, views, etc. exactly like widgets defined inline in `definePageLayout`.
-* `position` controls ordering against existing tabs on the targeted layout. Pick a value that places your tab where you want it relative to built-in tabs.
-* Use this instead of `definePageLayout` when you only want to **add** to an existing layout. Use `definePageLayout` when you own the entire layout (typically a `RECORD_PAGE` for an object you ship in your app, or a `STANDALONE_PAGE`).
+* `pageLayoutUniversalIdentifier` je při použití `definePageLayoutTab` **povinný** a musí odkazovat na rozvržení stránky, které již existuje v době instalace (standardní nebo vaší aplikace). Pokud nadřazené rozvržení stránky chybí, instalace selže s jasnou validační chybou.
+* `widgets` mají rozsah pouze pro tuto kartu — odkazují na frontendové komponenty, zobrazení apod. úplně stejně jako widgety definované přímo v `definePageLayout`.
+* `position` určuje pořadí vzhledem ke stávajícím kartám v cílovém rozvržení. Zvolte hodnotu, která umístí vaši kartu tam, kde ji chcete mít, relativně k vestavěným kartám.
+* Použijte to místo `definePageLayout`, když chcete pouze **přidat** do existujícího rozvržení. Použijte `definePageLayout`, když vlastníte celé rozvržení (typicky `RECORD_PAGE` pro objekt, který ve své aplikaci dodáváte, nebo `STANDALONE_PAGE`).
 
 </Accordion>
 </AccordionGroup>

@@ -8,12 +8,12 @@ icon: table-columns
 
 ## Концепции макета
 
-| Понятие                  | Что определяет                                                                       | Сущность                   |
-| ------------------------ | ------------------------------------------------------------------------------------ | -------------------------- |
-| **Представление**        | Сохранённая конфигурация списка для объекта — видимые поля, порядок, фильтры, группы | `defineView`               |
-| **Пункт меню навигации** | Элемент в левой боковой панели, который ссылается на представление или внешний URL   | `defineNavigationMenuItem` |
-| **Макет страницы**       | Вкладки и виджеты, из которых состоит страница сведений о записи                     | `definePageLayout`         |
-| **Page Layout Tab**      | A standalone tab attached to an existing page layout (standard or your own app's)    | `definePageLayoutTab`      |
+| Понятие                         | Что определяет                                                                                                     | Сущность                   |
+| ------------------------------- | ------------------------------------------------------------------------------------------------------------------ | -------------------------- |
+| **Представление**               | Сохранённая конфигурация списка для объекта — видимые поля, порядок, фильтры, группы                               | `defineView`               |
+| **Пункт меню навигации**        | Элемент в левой боковой панели, который ссылается на представление или внешний URL                                 | `defineNavigationMenuItem` |
+| **Макет страницы**              | Вкладки и виджеты, из которых состоит страница сведений о записи                                                   | `definePageLayout`         |
+| **Вкладка компоновки страницы** | Отдельная вкладка, прикреплённая к существующей компоновке страницы (стандартной или созданной в вашем приложении) | `definePageLayoutTab`      |
 
 Представления, пункты меню навигации и макеты страниц ссылаются друг на друга по `universalIdentifier`:
 
@@ -129,11 +129,11 @@ export default definePageLayout({
 * `position` у вкладок управляет их порядком. Используйте большие значения (например, 50), чтобы разместить пользовательские вкладки после встроенных.
 
 </Accordion>
-<Accordion title="definePageLayoutTab" description="Add a tab to an existing page layout">
+<Accordion title="definePageLayoutTab" description="Добавьте вкладку к существующему макету страницы.">
 
-`definePageLayoutTab` lets your app attach a single tab — with optional widgets — to an **existing** page layout. The most common use case is adding a custom tab (for example, an analytics or AI summary tab) to one of Twenty's built-in record pages, or to a page layout your own app already ships.
+`definePageLayoutTab` позволяет вашему приложению прикрепить одну вкладку — с необязательными виджетами — к **существующему** макету страницы. Самый распространённый сценарий — добавление пользовательской вкладки (например, вкладки с аналитикой или сводкой ИИ) к одной из встроенных страниц записей Twenty или к макету страницы, который уже поставляется вашим приложением.
 
-The targeted page layout must be either a **standard** Twenty page layout or one defined by **your own app**; cross-app references to page layouts owned by another installed app are not supported today.
+Целевой макет страницы должен быть либо **стандартным** макетом страницы Twenty, либо определённым **вашим собственным приложением**; ссылки между приложениями на макеты страниц, принадлежащие другому установленному приложению, пока не поддерживаются.
 
 ```ts src/page-layouts/example-extra-tab.ts
 import {
@@ -169,10 +169,10 @@ export default definePageLayoutTab({
 ```
 
 Основные моменты:
-* `pageLayoutUniversalIdentifier` is **required** when using `definePageLayoutTab` and must point to a page layout that already exists at install time (standard or your app's). When the parent page layout is missing, installation fails with a clear validation error.
-* `widgets` are scoped to this tab only — they reference front components, views, etc. exactly like widgets defined inline in `definePageLayout`.
-* `position` controls ordering against existing tabs on the targeted layout. Pick a value that places your tab where you want it relative to built-in tabs.
-* Use this instead of `definePageLayout` when you only want to **add** to an existing layout. Use `definePageLayout` when you own the entire layout (typically a `RECORD_PAGE` for an object you ship in your app, or a `STANDALONE_PAGE`).
+* `pageLayoutUniversalIdentifier` является **обязательным** при использовании `definePageLayoutTab` и должен указывать на макет страницы, который уже существует на момент установки (стандартный или вашего приложения). Если родительский макет страницы отсутствует, установка завершается с понятной ошибкой проверки.
+* `widgets` ограничены только этой вкладкой — они ссылаются на компоненты фронтенда, представления и т. п. точно так же, как виджеты, определённые непосредственно в `definePageLayout`.
+* `position` управляет порядком относительно существующих вкладок в целевом макете. Выберите значение, которое поместит вашу вкладку в нужное место относительно встроенных вкладок.
+* Используйте это вместо `definePageLayout`, когда вы хотите только **добавить** к существующему макету. Используйте `definePageLayout`, когда вы владеете всем макетом (обычно это `RECORD_PAGE` для объекта, который вы поставляете в своём приложении, или `STANDALONE_PAGE`).
 
 </Accordion>
 </AccordionGroup>

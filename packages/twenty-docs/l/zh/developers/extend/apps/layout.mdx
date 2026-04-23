@@ -129,11 +129,11 @@ export default definePageLayout({
 * 选项卡上的 `position` 控制其顺序。 使用更高的值（例如 50）可将自定义选项卡放在内置选项卡之后。
 
 </Accordion>
-<Accordion title="definePageLayoutTab" description="Add a tab to an existing page layout">
+<Accordion title="definePageLayoutTab" description="向现有页面布局添加一个选项卡">
 
-`definePageLayoutTab` lets your app attach a single tab — with optional widgets — to an **existing** page layout. The most common use case is adding a custom tab (for example, an analytics or AI summary tab) to one of Twenty's built-in record pages, or to a page layout your own app already ships.
+`definePageLayoutTab` 允许你的应用将单个选项卡 — 可选小部件 — 附加到一个**现有**页面布局。 最常见的用例是向 Twenty 内置的某个记录页面添加自定义选项卡（例如，分析或 AI 摘要选项卡），或向你的应用已随附的页面布局添加该选项卡。
 
-The targeted page layout must be either a **standard** Twenty page layout or one defined by **your own app**; cross-app references to page layouts owned by another installed app are not supported today.
+目标页面布局必须是 **标准** 的 Twenty 页面布局，或由 **你自己的应用** 定义的布局；目前不支持跨应用引用由其他已安装应用拥有的页面布局。
 
 ```ts src/page-layouts/example-extra-tab.ts
 import {
@@ -169,10 +169,10 @@ export default definePageLayoutTab({
 ```
 
 关键点：
-* `pageLayoutUniversalIdentifier` is **required** when using `definePageLayoutTab` and must point to a page layout that already exists at install time (standard or your app's). When the parent page layout is missing, installation fails with a clear validation error.
-* `widgets` are scoped to this tab only — they reference front components, views, etc. exactly like widgets defined inline in `definePageLayout`.
-* `position` controls ordering against existing tabs on the targeted layout. Pick a value that places your tab where you want it relative to built-in tabs.
-* Use this instead of `definePageLayout` when you only want to **add** to an existing layout. Use `definePageLayout` when you own the entire layout (typically a `RECORD_PAGE` for an object you ship in your app, or a `STANDALONE_PAGE`).
+* `pageLayoutUniversalIdentifier` 在使用 `definePageLayoutTab` 时是**必需**的，并且必须指向在安装时已存在的页面布局（标准布局或你的应用的布局）。 当父页面布局缺失时，安装会失败，并给出清晰的验证错误。
+* `widgets` 仅作用于此选项卡 — 它们引用前端组件、视图等，其方式与在 `definePageLayout` 中内联定义的小部件完全相同。
+* `position` 控制目标布局中相对于现有选项卡的排序。 选择一个取值，使你的选项卡相对于内置选项卡位于你想要的位置。
+* 当你只想向现有布局进行**添加**时，请使用此功能，而不是 `definePageLayout`。 当你拥有整个布局时，请使用 `definePageLayout`（通常是你在应用中提供的对象的 `RECORD_PAGE`，或 `STANDALONE_PAGE`）。
 
 </Accordion>
 </AccordionGroup>
