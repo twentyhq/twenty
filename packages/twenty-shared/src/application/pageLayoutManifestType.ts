@@ -21,10 +21,6 @@ export type PageLayoutTabManifest = SyncableEntityOptions & {
   icon?: string;
   layoutMode?: PageLayoutTabLayoutMode;
   widgets?: PageLayoutWidgetManifest[];
-  // Optional: only required when defining a tab standalone (via
-  // `definePageLayoutTab`) on an existing page layout. When the tab is
-  // declared inline as part of `definePageLayout({ tabs: [...] })`, the
-  // parent page layout's `universalIdentifier` is used automatically.
   pageLayoutUniversalIdentifier?: string;
 };
 
