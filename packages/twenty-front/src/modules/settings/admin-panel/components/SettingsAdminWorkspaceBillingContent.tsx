@@ -1,7 +1,6 @@
 import { useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { Tag } from 'twenty-ui/components';
 import { H2Title, IconExternalLink, IconInfoCircle } from 'twenty-ui/display';
@@ -11,10 +10,13 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { GET_WORKSPACE_BILLING_ADMIN_PANEL } from '@/settings/admin-panel/graphql/queries/getWorkspaceBillingAdminPanel';
+import { SettingsBillingLabelValueItem } from '@/settings/billing/components/internal/SettingsBillingLabelValueItem';
+import { PlansTags } from '@/settings/billing/components/internal/PlansTags';
 import { SubscriptionInfoContainer } from '@/settings/billing/components/SubscriptionInfoContainer';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { beautifyExactDate } from '~/utils/date-utils';
+import { BillingPlanKey } from '~/generated-metadata/graphql';
 import {
   SubscriptionInterval,
   SubscriptionStatus,
@@ -36,37 +38,32 @@ const StyledContainer = styled.div`
   margin-top: ${themeCssVariables.spacing[6]};
 `;
 
-const StyledRow = styled.div`
-  align-items: center;
+const StyledItemsContainer = styled.div`
   display: flex;
-  gap: ${themeCssVariables.spacing[4]};
-  justify-content: space-between;
-  min-width: 0;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[3]};
+  width: 100%;
 `;
 
-const StyledLabel = styled.span`
-  color: ${themeCssVariables.font.color.tertiary};
-  flex-shrink: 0;
-  font-size: ${themeCssVariables.font.size.xs};
-  font-weight: ${themeCssVariables.font.weight.semiBold};
-`;
-
-const StyledValue = styled.span`
+const StyledItemHeader = styled.div`
   align-items: center;
-  color: ${themeCssVariables.font.color.secondary};
+  color: ${themeCssVariables.font.color.primary};
   display: flex;
   font-size: ${themeCssVariables.font.size.sm};
-  font-weight: ${themeCssVariables.font.weight.medium};
-  gap: ${themeCssVariables.spacing[1]};
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  font-weight: ${themeCssVariables.font.weight.semiBold};
+  gap: ${themeCssVariables.spacing[2]};
+  justify-content: space-between;
 `;
 
-const StyledMono = styled.span`
-  font-family: ${themeCssVariables.code.font.family};
-  font-size: ${themeCssVariables.font.size.xs};
+const StyledEmptyState = styled.div`
+  align-items: center;
+  color: ${themeCssVariables.font.color.tertiary};
+  display: flex;
+  font-size: ${themeCssVariables.font.size.sm};
+  gap: ${themeCssVariables.spacing[2]};
+  justify-content: center;
+  padding: ${themeCssVariables.spacing[3]};
+  text-align: center;
 `;
 
 const StyledExternalLink = styled.a`
@@ -81,84 +78,31 @@ const StyledExternalLink = styled.a`
   }
 `;
 
-const StyledEmptyState = styled.div`
-  align-items: center;
-  color: ${themeCssVariables.font.color.tertiary};
-  display: flex;
-  font-size: ${themeCssVariables.font.size.sm};
-  gap: ${themeCssVariables.spacing[2]};
-  justify-content: center;
-  padding: ${themeCssVariables.spacing[3]};
-  text-align: center;
+const StyledMono = styled.span`
+  font-family: ${themeCssVariables.code.font.family};
+  font-size: ${themeCssVariables.font.size.xs};
 `;
 
-const StyledItemCard = styled.div`
-  background-color: ${themeCssVariables.background.secondary};
-  border: 1px solid ${themeCssVariables.border.color.medium};
-  border-radius: ${themeCssVariables.border.radius.md};
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  gap: ${themeCssVariables.spacing[3]};
-  padding: ${themeCssVariables.spacing[3]};
-  width: 100%;
-`;
-
-const StyledItemHeader = styled.div`
-  align-items: center;
-  color: ${themeCssVariables.font.color.primary};
-  display: flex;
-  font-size: ${themeCssVariables.font.size.sm};
-  font-weight: ${themeCssVariables.font.weight.semiBold};
-  gap: ${themeCssVariables.spacing[2]};
-  justify-content: space-between;
-`;
-
-const StyledItemsContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${themeCssVariables.spacing[3]};
-  width: 100%;
-`;
-
-const getStatusColor = (status: SubscriptionStatus): ThemeColor => {
-  switch (status) {
-    case SubscriptionStatus.Active:
-      return 'green';
-    case SubscriptionStatus.Trialing:
-      return 'blue';
-    case SubscriptionStatus.PastDue:
-      return 'orange';
-    case SubscriptionStatus.Canceled:
-    case SubscriptionStatus.Unpaid:
-      return 'red';
-    case SubscriptionStatus.Paused:
-    case SubscriptionStatus.Incomplete:
-    case SubscriptionStatus.IncompleteExpired:
-    default:
-      return 'gray';
-  }
+const STATUS_COLORS: Record<SubscriptionStatus, ThemeColor> = {
+  [SubscriptionStatus.Active]: 'green',
+  [SubscriptionStatus.Trialing]: 'blue',
+  [SubscriptionStatus.PastDue]: 'orange',
+  [SubscriptionStatus.Canceled]: 'red',
+  [SubscriptionStatus.Unpaid]: 'red',
+  [SubscriptionStatus.Paused]: 'gray',
+  [SubscriptionStatus.Incomplete]: 'gray',
+  [SubscriptionStatus.IncompleteExpired]: 'gray',
 };
 
-const formatStatusLabel = (status: SubscriptionStatus): string =>
-  status.replace(/([A-Z])/g, ' $1').trim();
-
-const formatPlanLabel = (planKey: string): string => {
-  const normalized = planKey.toUpperCase();
-
-  if (normalized === 'PRO') return 'Pro';
-  if (normalized === 'ENTERPRISE') return 'Organization';
-
-  return planKey;
-};
-
-const getPlanColor = (planKey: string): ThemeColor => {
-  const normalized = planKey.toUpperCase();
-
-  if (normalized === 'PRO') return 'sky';
-  if (normalized === 'ENTERPRISE') return 'purple';
-
-  return 'gray';
+const STATUS_LABELS: Record<SubscriptionStatus, string> = {
+  [SubscriptionStatus.Active]: 'Active',
+  [SubscriptionStatus.Trialing]: 'Trialing',
+  [SubscriptionStatus.PastDue]: 'Past Due',
+  [SubscriptionStatus.Canceled]: 'Canceled',
+  [SubscriptionStatus.Unpaid]: 'Unpaid',
+  [SubscriptionStatus.Paused]: 'Paused',
+  [SubscriptionStatus.Incomplete]: 'Incomplete',
+  [SubscriptionStatus.IncompleteExpired]: 'Incomplete Expired',
 };
 
 const formatCurrency = (amountMinor: number, currency: string): string => {
@@ -174,22 +118,27 @@ const formatCurrency = (amountMinor: number, currency: string): string => {
   }
 };
 
-const LabelValueRow = ({
-  label,
-  value,
-}: {
-  label: string;
-  value: ReactNode;
-}) => (
-  <StyledRow>
-    <StyledLabel>{label}</StyledLabel>
-    <StyledValue>{value}</StyledValue>
-  </StyledRow>
+const toBillingPlanKey = (planKey: string): BillingPlanKey | null =>
+  planKey === BillingPlanKey.PRO
+    ? BillingPlanKey.PRO
+    : planKey === BillingPlanKey.ENTERPRISE
+      ? BillingPlanKey.ENTERPRISE
+      : null;
+
+const StripeCustomerLink = ({ id }: { id: string }) => (
+  <StyledExternalLink
+    href={`${STRIPE_DASHBOARD_BASE_URL}/customers/${id}`}
+    target="_blank"
+    rel="noopener noreferrer"
+  >
+    <StyledMono>{id}</StyledMono>
+    <IconExternalLink size={12} />
+  </StyledExternalLink>
 );
 
-const StripeIdLink = ({ path, id }: { path: string; id: string }) => (
+const StripeSubscriptionLink = ({ id }: { id: string }) => (
   <StyledExternalLink
-    href={`${STRIPE_DASHBOARD_BASE_URL}/${path}/${id}`}
+    href={`${STRIPE_DASHBOARD_BASE_URL}/subscriptions/${id}`}
     target="_blank"
     rel="noopener noreferrer"
   >
@@ -262,6 +211,11 @@ export const SettingsAdminWorkspaceBillingContent = ({
   const formatPeriod = (start: string, end: string): string =>
     `${beautifyExactDate(start)} → ${beautifyExactDate(end)}`;
 
+  const planKey = isDefined(subscription?.planKey)
+    ? toBillingPlanKey(subscription.planKey)
+    : null;
+  const isTrialing = subscription?.status === SubscriptionStatus.Trialing;
+
   return (
     <StyledContainer>
       <Section>
@@ -270,17 +224,17 @@ export const SettingsAdminWorkspaceBillingContent = ({
           description={t`Stripe customer linked to this workspace`}
         />
         <SubscriptionInfoContainer>
-          <LabelValueRow
+          <SettingsBillingLabelValueItem
             label={t`Stripe customer`}
             value={
               isDefined(stripeCustomerId) ? (
-                <StripeIdLink path="customers" id={stripeCustomerId} />
+                <StripeCustomerLink id={stripeCustomerId} />
               ) : (
                 '\u2014'
               )
             }
           />
-          <LabelValueRow
+          <SettingsBillingLabelValueItem
             label={t`Credit balance`}
             value={
               isDefined(creditBalance)
@@ -308,33 +262,28 @@ export const SettingsAdminWorkspaceBillingContent = ({
           </SubscriptionInfoContainer>
         ) : (
           <SubscriptionInfoContainer>
-            <LabelValueRow
+            <SettingsBillingLabelValueItem
               label={t`Status`}
               value={
                 <Tag
-                  color={getStatusColor(subscription.status)}
-                  text={formatStatusLabel(subscription.status)}
+                  color={STATUS_COLORS[subscription.status]}
+                  text={STATUS_LABELS[subscription.status]}
                 />
               }
             />
-            {isDefined(subscription.planKey) && (
-              <LabelValueRow
+            {isDefined(planKey) && (
+              <SettingsBillingLabelValueItem
                 label={t`Plan`}
-                value={
-                  <Tag
-                    color={getPlanColor(subscription.planKey)}
-                    text={formatPlanLabel(subscription.planKey)}
-                  />
-                }
+                value={<PlansTags plan={planKey} isTrialPeriod={isTrialing} />}
               />
             )}
             {isDefined(intervalLabel) && (
-              <LabelValueRow
+              <SettingsBillingLabelValueItem
                 label={t`Billing interval`}
                 value={intervalLabel}
               />
             )}
-            <LabelValueRow
+            <SettingsBillingLabelValueItem
               label={t`Current period`}
               value={formatPeriod(
                 subscription.currentPeriodStart,
@@ -343,7 +292,7 @@ export const SettingsAdminWorkspaceBillingContent = ({
             />
             {isDefined(subscription.trialStart) &&
               isDefined(subscription.trialEnd) && (
-                <LabelValueRow
+                <SettingsBillingLabelValueItem
                   label={t`Trial period`}
                   value={formatPeriod(
                     subscription.trialStart,
@@ -352,25 +301,27 @@ export const SettingsAdminWorkspaceBillingContent = ({
                 />
               )}
             {subscription.cancelAtPeriodEnd && (
-              <LabelValueRow label={t`Cancels at period end`} value={t`Yes`} />
+              <SettingsBillingLabelValueItem
+                label={t`Cancels at period end`}
+                value={t`Yes`}
+              />
             )}
             {isDefined(subscription.cancelAt) && (
-              <LabelValueRow
+              <SettingsBillingLabelValueItem
                 label={t`Cancels at`}
                 value={beautifyExactDate(subscription.cancelAt)}
               />
             )}
             {isDefined(subscription.canceledAt) && (
-              <LabelValueRow
+              <SettingsBillingLabelValueItem
                 label={t`Canceled at`}
                 value={beautifyExactDate(subscription.canceledAt)}
               />
             )}
-            <LabelValueRow
+            <SettingsBillingLabelValueItem
               label={t`Stripe subscription`}
               value={
-                <StripeIdLink
-                  path="subscriptions"
+                <StripeSubscriptionLink
                   id={subscription.stripeSubscriptionId}
                 />
               }
@@ -389,7 +340,7 @@ export const SettingsAdminWorkspaceBillingContent = ({
             {[baseItem, meteredItem, ...otherItems]
               .filter(isDefined)
               .map((item) => (
-                <StyledItemCard key={item.stripePriceId}>
+                <SubscriptionInfoContainer key={item.stripePriceId}>
                   <StyledItemHeader>
                     <span>{item.productName || t`Unnamed product`}</span>
                     {isDefined(item.productKey) && (
@@ -397,13 +348,13 @@ export const SettingsAdminWorkspaceBillingContent = ({
                     )}
                   </StyledItemHeader>
                   {isDefined(item.quantity) && (
-                    <LabelValueRow
+                    <SettingsBillingLabelValueItem
                       label={t`Seats`}
                       value={formatNumber(item.quantity)}
                     />
                   )}
                   {isDefined(item.includedCredits) && (
-                    <LabelValueRow
+                    <SettingsBillingLabelValueItem
                       label={t`Credits per period`}
                       value={formatNumber(item.includedCredits, {
                         abbreviate: true,
@@ -411,8 +362,8 @@ export const SettingsAdminWorkspaceBillingContent = ({
                       })}
                     />
                   )}
-                  {isDefined(item.unitAmount) && isDefined(subscription) && (
-                    <LabelValueRow
+                  {isDefined(item.unitAmount) && (
+                    <SettingsBillingLabelValueItem
                       label={t`Unit price`}
                       value={formatCurrency(
                         item.unitAmount,
@@ -420,7 +371,7 @@ export const SettingsAdminWorkspaceBillingContent = ({
                       )}
                     />
                   )}
-                </StyledItemCard>
+                </SubscriptionInfoContainer>
               ))}
           </StyledItemsContainer>
         </Section>

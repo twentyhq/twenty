@@ -6,10 +6,15 @@ import { In, type Repository } from 'typeorm';
 import { AdminPanelWorkspaceBillingDTO } from 'src/engine/core-modules/admin-panel/dtos/admin-panel-workspace-billing.dto';
 import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { BillingPriceEntity } from 'src/engine/core-modules/billing/entities/billing-price.entity';
+import { BillingPlanKey } from 'src/engine/core-modules/billing/enums/billing-plan-key.enum';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 const CREDIT_BALANCE_MICRO_UNIT = 1_000_000;
+
+const KNOWN_PLAN_KEYS: ReadonlySet<string> = new Set(
+  Object.values(BillingPlanKey),
+);
 
 @Injectable()
 export class AdminPanelBillingService {
@@ -29,14 +34,12 @@ export class AdminPanelBillingService {
       return null;
     }
 
-    const customer = await this.billingCustomerRepository.findOne({
-      where: { workspaceId },
-    });
-
-    const subscription =
-      await this.billingSubscriptionService.getCurrentBillingSubscription({
+    const [customer, subscription] = await Promise.all([
+      this.billingCustomerRepository.findOne({ where: { workspaceId } }),
+      this.billingSubscriptionService.getCurrentBillingSubscription({
         workspaceId,
-      });
+      }),
+    ]);
 
     if (!customer && !subscription) {
       return null;
@@ -67,6 +70,12 @@ export class AdminPanelBillingService {
       prices.map((price) => [price.stripePriceId, price]),
     );
 
+    const planValue = subscription.metadata?.plan;
+    const planKey =
+      typeof planValue === 'string' && KNOWN_PLAN_KEYS.has(planValue)
+        ? planValue
+        : null;
+
     return {
       stripeCustomerId,
       creditBalance,
@@ -75,10 +84,7 @@ export class AdminPanelBillingService {
         status: subscription.status,
         interval: subscription.interval ?? null,
         currency: subscription.currency,
-        planKey:
-          typeof subscription.metadata?.plan === 'string'
-            ? subscription.metadata.plan
-            : null,
+        planKey,
         currentPeriodStart: subscription.currentPeriodStart,
         currentPeriodEnd: subscription.currentPeriodEnd,
         trialStart: subscription.trialStart,
@@ -89,25 +95,17 @@ export class AdminPanelBillingService {
         items: items.map((item) => {
           const price = priceByStripeId.get(item.stripePriceId);
           const firstTier = price?.tiers?.[0];
-          const includedCredits =
-            typeof firstTier?.up_to === 'number' ? firstTier.up_to : null;
+          const productKey = item.billingProduct?.metadata?.productKey;
 
           return {
             productName: item.billingProduct?.name ?? '',
-            productKey:
-              typeof item.billingProduct?.metadata?.productKey === 'string'
-                ? item.billingProduct.metadata.productKey
-                : null,
+            productKey: typeof productKey === 'string' ? productKey : null,
             stripePriceId: item.stripePriceId,
-            quantity:
-              item.quantity === null || item.quantity === undefined
-                ? null
-                : Number(item.quantity),
+            quantity: item.quantity != null ? Number(item.quantity) : null,
             unitAmount:
-              price?.unitAmount === null || price?.unitAmount === undefined
-                ? null
-                : Number(price.unitAmount),
-            includedCredits,
+              price?.unitAmount != null ? Number(price.unitAmount) : null,
+            includedCredits:
+              typeof firstTier?.up_to === 'number' ? firstTier.up_to : null,
           };
         }),
       },
