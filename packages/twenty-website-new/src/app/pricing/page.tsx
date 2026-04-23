@@ -1,10 +1,7 @@
 import { FAQ_DATA } from '@/sections/Faq/data';
 import { MENU_DATA } from '@/sections/Menu/data';
 import { TalkToUsButton } from '@/lib/contact-cal';
-import {
-  BecomePartnerButton,
-  PartnerApplicationModalRoot,
-} from '@/app/partners/components/PartnerApplication';
+import { BecomePartnerButton } from '@/app/partners/components/PartnerApplication';
 import { ENGAGEMENT_BAND_DATA } from '@/app/pricing/engagement-band.data';
 import { HERO_DATA } from '@/app/pricing/hero.data';
 import { PLAN_TABLE_DATA } from '@/app/pricing/plan-table.data';
@@ -48,7 +45,7 @@ export default async function PricingPage() {
   const menuSocialLinks = mergeSocialLinkLabels(MENU_DATA.socialLinks, stats);
 
   return (
-    <PartnerApplicationModalRoot>
+    <>
       <Menu.Root
         backgroundColor="#F3F3F3"
         scheme="primary"
@@ -138,6 +135,6 @@ export default async function PricingPage() {
         </Faq.Intro>
         <Faq.Items questions={FAQ_DATA.questions} />
       </Faq.Root>
-    </PartnerApplicationModalRoot>
+    </>
   );
 }

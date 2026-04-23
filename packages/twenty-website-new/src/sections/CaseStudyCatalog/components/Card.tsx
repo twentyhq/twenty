@@ -1,4 +1,4 @@
-import type { CaseStudyCatalogEntry } from '@/app/customers/types';
+import type { CaseStudyCatalogEntry } from '@/lib/customers';
 import { ArrowRightIcon, CLIENT_ICONS } from '@/icons';
 import { CustomerCasesCover } from '@/sections/CaseStudyCatalog/visuals/CustomerCasesCover';
 import { theme } from '@/theme';
@@ -64,7 +64,8 @@ const CardLink = styled(CardLinkBase)<{
   will-change: transform;
 
   @media (min-width: ${theme.breakpoints.md}px) {
-    flex-direction: ${({ variant }) => (variant === 'large' ? 'row' : 'column')};
+    flex-direction: ${({ variant }) =>
+      variant === 'large' ? 'row' : 'column'};
   }
 
   &:hover {

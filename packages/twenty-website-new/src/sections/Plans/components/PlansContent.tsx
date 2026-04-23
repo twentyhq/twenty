@@ -1,6 +1,6 @@
 'use client';
 
-import { PLANS_DATA } from '@/app/pricing/plans.data';
+import { PLANS_DATA } from '@/sections/Plans/data';
 import { usePricingState } from '@/sections/Plans/context/PricingStateContext';
 import type { PlansBillingPeriod } from '@/sections/Plans/types';
 import { getPlanCard } from '@/sections/Plans/utils';

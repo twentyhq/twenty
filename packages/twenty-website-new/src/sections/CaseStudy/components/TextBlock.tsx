@@ -1,4 +1,4 @@
-import type { CaseStudyTextBlock } from '@/app/customers/types';
+import type { CaseStudyTextBlock } from '@/lib/customers';
 import {
   Body as BaseBody,
   Container,
@@ -95,12 +95,18 @@ const CalloutAttributionName = styled.span`
   font-weight: ${theme.font.weight.medium};
 `;
 
-function parseCallout(raw: string): { quote: string; attribution?: { name: string; rest?: string } } {
+function parseCallout(raw: string): {
+  quote: string;
+  attribution?: { name: string; rest?: string };
+} {
   const separator = raw.lastIndexOf(' - ');
   if (separator === -1) {
     return { quote: raw.trim().replace(/^"|"$/g, '').replace(/^"|"$/g, '') };
   }
-  const quote = raw.slice(0, separator).trim().replace(/^["]|["]$/g, '');
+  const quote = raw
+    .slice(0, separator)
+    .trim()
+    .replace(/^["]|["]$/g, '');
   const attributionRaw = raw.slice(separator + 3).trim();
   const commaIndex = attributionRaw.indexOf(',');
   if (commaIndex === -1) {
@@ -121,7 +127,11 @@ type TextBlockProps = {
   sectionId?: string;
 };
 
-export function TextBlock({ block, isLast = false, sectionId }: TextBlockProps) {
+export function TextBlock({
+  block,
+  isLast = false,
+  sectionId,
+}: TextBlockProps) {
   return (
     <Section id={sectionId}>
       <StyledContainer $isLast={isLast}>
@@ -146,24 +156,25 @@ export function TextBlock({ block, isLast = false, sectionId }: TextBlockProps) 
                 weight="regular"
               />
             ))}
-            {block.callout && (() => {
-              const parsed = parseCallout(block.callout);
-              return (
-                <CalloutBlock>
-                  <CalloutQuote>“{parsed.quote}”</CalloutQuote>
-                  {parsed.attribution && (
-                    <CalloutAttribution>
-                      <CalloutAttributionName>
-                        {parsed.attribution.name}
-                      </CalloutAttributionName>
-                      {parsed.attribution.rest
-                        ? `, ${parsed.attribution.rest}`
-                        : ''}
-                    </CalloutAttribution>
-                  )}
-                </CalloutBlock>
-              );
-            })()}
+            {block.callout &&
+              (() => {
+                const parsed = parseCallout(block.callout);
+                return (
+                  <CalloutBlock>
+                    <CalloutQuote>“{parsed.quote}”</CalloutQuote>
+                    {parsed.attribution && (
+                      <CalloutAttribution>
+                        <CalloutAttributionName>
+                          {parsed.attribution.name}
+                        </CalloutAttributionName>
+                        {parsed.attribution.rest
+                          ? `, ${parsed.attribution.rest}`
+                          : ''}
+                      </CalloutAttribution>
+                    )}
+                  </CalloutBlock>
+                );
+              })()}
           </BodyStack>
         </ContentWrap>
       </StyledContainer>

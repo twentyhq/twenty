@@ -1,10 +1,10 @@
 'use client';
 
-import { usePartnerApplicationModal } from '@/app/partners/components/PartnerApplication/PartnerApplicationModalRoot';
 import { ButtonShape } from '@/design-system/components/Button/ButtonShape';
 import { Body, Heading } from '@/design-system/components';
 import { ArrowRightIcon } from '@/icons';
 import { INFORMATIVE_ICONS } from '@/icons/informative';
+import { usePartnerApplicationModal } from '@/lib/partner-application';
 import { WebGlMount } from '@/lib/visual-runtime';
 import type { ThreeCardsIllustrationCardType } from '@/sections/ThreeCards/types';
 import { THREE_CARDS_VISUALS } from '@/sections/ThreeCards/visuals';

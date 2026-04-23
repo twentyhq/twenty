@@ -1,4 +1,4 @@
-import type { CaseStudyCatalogEntry } from '@/app/customers/types';
+import type { CaseStudyCatalogEntry } from '@/lib/customers';
 import {
   Body,
   Container,

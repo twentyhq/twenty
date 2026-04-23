@@ -9,8 +9,8 @@ import {
   type ReactNode,
 } from 'react';
 
-import type { PartnerProgramId } from '@/app/partners/partner-application-modal.data';
-import { PartnerApplicationModal } from './PartnerApplicationModal';
+import { PartnerApplicationModal } from '@/lib/partner-application/PartnerApplicationModal';
+import type { PartnerProgramId } from '@/lib/partner-application/partner-application-modal-data';
 
 type PartnerApplicationModalContextValue = {
   openPartnerApplicationModal: (programId?: PartnerProgramId) => void;

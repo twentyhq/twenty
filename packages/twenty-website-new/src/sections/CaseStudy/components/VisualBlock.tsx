@@ -1,4 +1,4 @@
-import type { CaseStudyVisualBlock } from '@/app/customers/types';
+import type { CaseStudyVisualBlock } from '@/lib/customers';
 import { Container } from '@/design-system/components';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';

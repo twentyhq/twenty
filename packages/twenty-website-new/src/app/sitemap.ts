@@ -1,6 +1,6 @@
 import type { MetadataRoute } from 'next';
 
-import { CASE_STUDY_CATALOG_ENTRIES } from '@/app/customers/case-study-catalog.data';
+import { CASE_STUDY_CATALOG_ENTRIES } from '@/lib/customers';
 import { getSiteUrl } from '@/lib/seo';
 
 const SITE_URL = getSiteUrl();

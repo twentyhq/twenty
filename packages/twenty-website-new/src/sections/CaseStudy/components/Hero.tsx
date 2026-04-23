@@ -1,4 +1,4 @@
-import type { CaseStudyData } from '@/app/customers/types';
+import type { CaseStudyData } from '@/lib/customers';
 import { Container, Heading } from '@/design-system/components';
 import { CLIENT_ICONS } from '@/icons';
 import { CustomerCasesCover } from '@/sections/CaseStudyCatalog/visuals/CustomerCasesCover';

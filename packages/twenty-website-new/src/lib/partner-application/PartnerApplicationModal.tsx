@@ -4,7 +4,7 @@ import {
   PARTNER_APPLICATION_MODAL_COPY,
   PARTNER_PROGRAM_OPTIONS,
   type PartnerProgramId,
-} from '@/app/partners/partner-application-modal.data';
+} from '@/lib/partner-application/partner-application-modal-data';
 import {
   BUTTON_HEIGHTS_PX,
   buttonBaseStyles,
@@ -518,7 +518,11 @@ export function PartnerApplicationModal({
             <Heading
               as="h2"
               segments={[
-                { fontFamily: 'serif', text: copy.titleSerif, fontWeight: 'light' },
+                {
+                  fontFamily: 'serif',
+                  text: copy.titleSerif,
+                  fontWeight: 'light',
+                },
                 {
                   fontFamily: 'sans',
                   text: copy.titleSans,
@@ -574,9 +578,11 @@ export function PartnerApplicationModal({
                   <DropdownTriggerContent>
                     <DropdownLabel>{copy.selectLabel}</DropdownLabel>
                     <DropdownValue>
-                      {PARTNER_PROGRAM_OPTIONS.find(
-                        (option) => option.id === programId,
-                      )?.label}
+                      {
+                        PARTNER_PROGRAM_OPTIONS.find(
+                          (option) => option.id === programId,
+                        )?.label
+                      }
                     </DropdownValue>
                   </DropdownTriggerContent>
                   <DropdownIconContainer aria-hidden>

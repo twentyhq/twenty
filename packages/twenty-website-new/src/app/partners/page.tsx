@@ -2,13 +2,12 @@ import { FAQ_DATA } from '@/sections/Faq/data';
 import { MENU_DATA } from '@/sections/Menu/data';
 import { TRUSTED_BY_DATA } from '@/sections/TrustedBy/data';
 import { TalkToUsButton } from '@/lib/contact-cal';
-import { CASE_STUDY_CATALOG_ENTRIES } from '@/app/customers/case-study-catalog.data';
+import { CASE_STUDY_CATALOG_ENTRIES } from '@/lib/customers';
 import { THREE_CARDS_ILLUSTRATION_DATA } from '@/app/partners/three-cards-illustration.data';
 import { HERO_DATA } from '@/app/partners/hero.data';
 import { SIGNOFF_DATA } from '@/app/partners/signoff.data';
 import { TESTIMONIALS_DATA } from '@/app/partners/testimonials.data';
 import {
-  PartnerApplicationModalRoot,
   PartnerHeroCtas,
   PartnerSignoffCtas,
 } from '@/app/partners/components/PartnerApplication';
@@ -57,7 +56,7 @@ export default async function PartnerPage() {
   const menuSocialLinks = mergeSocialLinkLabels(MENU_DATA.socialLinks, stats);
 
   return (
-    <PartnerApplicationModalRoot>
+    <>
       <Menu.Root
         backgroundColor={theme.colors.primary.background[100]}
         scheme="primary"
@@ -89,7 +88,10 @@ export default async function PartnerPage() {
       </TrustedBy.Root>
 
       <PromoSpacing>
-        <CaseStudyCatalog.Promo compactTop entries={CASE_STUDY_CATALOG_ENTRIES} />
+        <CaseStudyCatalog.Promo
+          compactTop
+          entries={CASE_STUDY_CATALOG_ENTRIES}
+        />
       </PromoSpacing>
 
       <ThreeCards.Root backgroundColor={theme.colors.secondary.background[5]}>
@@ -130,7 +132,10 @@ export default async function PartnerPage() {
         color={theme.colors.primary.text[100]}
         page={Pages.Partners}
       >
-        <Signoff.Heading page={Pages.Partners} segments={SIGNOFF_DATA.heading} />
+        <Signoff.Heading
+          page={Pages.Partners}
+          segments={SIGNOFF_DATA.heading}
+        />
         <Signoff.Body body={SIGNOFF_DATA.body} page={Pages.Partners} />
         <Signoff.Cta>
           <PartnerSignoffCtas />
@@ -158,6 +163,6 @@ export default async function PartnerPage() {
         </Faq.Intro>
         <Faq.Items questions={FAQ_DATA.questions} />
       </Faq.Root>
-    </PartnerApplicationModalRoot>
+    </>
   );
 }

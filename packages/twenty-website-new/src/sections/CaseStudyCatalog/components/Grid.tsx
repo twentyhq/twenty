@@ -1,5 +1,7 @@
-import { CASE_STUDY_HALFTONE_PALETTE } from '@/app/customers/case-study-catalog.data';
-import type { CaseStudyCatalogEntry } from '@/app/customers/types';
+import {
+  CASE_STUDY_HALFTONE_PALETTE,
+  type CaseStudyCatalogEntry,
+} from '@/lib/customers';
 import { Container } from '@/design-system/components';
 import { PlusIcon } from '@/icons';
 import { Card } from '@/sections/CaseStudyCatalog/components/Card';

@@ -1,5 +1,5 @@
+import type { CaseStudyCatalogEntry } from '@/lib/customers/types';
 import { theme } from '@/theme';
-import type { CaseStudyCatalogEntry } from './types';
 
 const PLACEHOLDER_HERO = '/images/shared/people/avatars/katherine-adams.jpg';
 

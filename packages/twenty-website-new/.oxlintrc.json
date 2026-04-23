@@ -59,7 +59,7 @@
       "files": ["**/sections/**/*.ts", "**/sections/**/*.tsx"],
       "rules": {
         "no-restricted-imports": [
-          "warn",
+          "error",
           {
             "patterns": [
               {
@@ -75,7 +75,7 @@
       "files": ["**/lib/**/*.ts", "**/lib/**/*.tsx"],
       "rules": {
         "no-restricted-imports": [
-          "warn",
+          "error",
           {
             "patterns": [
               {

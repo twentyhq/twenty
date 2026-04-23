@@ -2,6 +2,7 @@ import { FooterVisibilityGate } from '@/app/_components/FooterVisibilityGate';
 import { ScrollToTopOnRouteChange } from '@/app/_components/ScrollToTopOnRouteChange';
 import { FOOTER_DATA } from '@/sections/Footer/data';
 import { ContactCalModalRoot } from '@/lib/contact-cal';
+import { PartnerApplicationModalRoot } from '@/lib/partner-application';
 import { getSiteUrl } from '@/lib/seo';
 import { DRACO_DECODER_ORIGIN } from '@/lib/visual-runtime/draco-decoder-path';
 import { Footer } from '@/sections/Footer/components';
@@ -126,18 +127,20 @@ export default function RootLayout({
         suppressHydrationWarning
       >
         <ContactCalModalRoot>
-          <ScrollToTopOnRouteChange />
-          <StyledMain>{children}</StyledMain>
-          <FooterVisibilityGate>
-            <Footer.Root>
-              <Footer.Logo />
-              <Footer.Nav groups={FOOTER_DATA.navGroups} />
-              <Footer.Bottom
-                copyright={FOOTER_DATA.bottom.copyright}
-                links={FOOTER_DATA.socialLinks}
-              />
-            </Footer.Root>
-          </FooterVisibilityGate>
+          <PartnerApplicationModalRoot>
+            <ScrollToTopOnRouteChange />
+            <StyledMain>{children}</StyledMain>
+            <FooterVisibilityGate>
+              <Footer.Root>
+                <Footer.Logo />
+                <Footer.Nav groups={FOOTER_DATA.navGroups} />
+                <Footer.Bottom
+                  copyright={FOOTER_DATA.bottom.copyright}
+                  links={FOOTER_DATA.socialLinks}
+                />
+              </Footer.Root>
+            </FooterVisibilityGate>
+          </PartnerApplicationModalRoot>
         </ContactCalModalRoot>
       </body>
     </html>

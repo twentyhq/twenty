@@ -1,11 +1,24 @@
-import type { MenuNavChildPreview } from '@/sections/Menu/types';
-
 import { loadLocalReleaseNotes } from '@/lib/releases/load-local-release-notes';
 
 const IMAGE_REGEX_GLOBAL = /!\[[^\]]*\]\(([^)]+)\)/g;
 const HEADING_REGEX_GLOBAL = /^#\s+(.+)$/gm;
 
-export function getLatestReleasePreview(): MenuNavChildPreview | null {
+/**
+ * Shape of a release-preview card. Structurally compatible with
+ * `MenuNavChildPreview` from `sections/Menu/types`, so the Menu data
+ * layer can drop the result straight into a nav child's `preview` slot
+ * without an explicit cast — but defined here so the dependency
+ * direction stays `sections/Menu → lib/releases`, never the reverse.
+ */
+export type LatestReleasePreview = {
+  image: string;
+  imageAlt: string;
+  imageScale?: number;
+  title: string;
+  description: string;
+};
+
+export function getLatestReleasePreview(): LatestReleasePreview | null {
   const notes = loadLocalReleaseNotes();
   const latest = notes[0];
   if (!latest) {

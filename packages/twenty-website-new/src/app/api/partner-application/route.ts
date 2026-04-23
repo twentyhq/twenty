@@ -1,4 +1,4 @@
-import { splitFullName } from '@/lib/partner-application/split-full-name';
+import { splitFullName } from '@/lib/partner-application';
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 

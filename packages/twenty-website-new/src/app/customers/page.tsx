@@ -2,7 +2,7 @@ import { FAQ_DATA } from '@/sections/Faq/data';
 import { MENU_DATA } from '@/sections/Menu/data';
 import { TRUSTED_BY_DATA } from '@/sections/TrustedBy/data';
 import { TalkToUsButton } from '@/lib/contact-cal';
-import { CASE_STUDY_CATALOG_ENTRIES } from '@/app/customers/case-study-catalog.data';
+import { CASE_STUDY_CATALOG_ENTRIES } from '@/lib/customers';
 import { Eyebrow, LinkButton } from '@/design-system/components';
 import { Pages } from '@/lib/pages';
 import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';

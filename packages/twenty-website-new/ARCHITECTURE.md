@@ -31,10 +31,10 @@ layer.
 These rules are **not** stylistic. Each one cuts a real risk:
 
 1. **`sections → app` is forbidden.** A section that knows about a specific
-   route can't be reused on another page. The `Plans` section currently imports
-   `PLANS_DATA` from `app/pricing/plans.data.ts` — it is grandfathered (see
-   §4 below) but the long-term answer is that pricing data lives in
-   `sections/Plans/data.ts` (or is passed in as a prop).
+   route can't be reused on another page. Section-shaped data lives in
+   `sections/<Section>/data.ts` (e.g. `sections/Plans/data.ts`), and
+   cross-route domain data (e.g. the customers catalogue) lives in
+   `lib/<domain>/`.
 2. **`lib → sections | app` is forbidden.** `lib` is the only layer the
    server-side data fetchers and pure utilities live in. If `lib` imports from
    `sections/`, you've created a code cycle that breaks tree-shaking and
@@ -119,11 +119,12 @@ studio is consolidated (see §5).
 
 ## 4. The cleanup ratchet
 
-Several rules in this document are emitted as **warnings** today because the
-codebase carries pre-existing violations that pre-date the rules. The plan:
+Some rules in this document started life as **warnings** because the
+codebase carried pre-existing violations that pre-dated the rules. The
+ratchet plan, applied iteratively:
 
-1. **Boundary warnings stay warnings** until each cleanup PR drops the
-   warning count for that layer to zero.
+1. **Boundary rules start as warnings** so the rule lands without
+   blocking CI on day one.
 2. **`scripts/check-boundaries.mjs` ratchets via `KNOWN_VIOLATIONS`.** Each
    entry must reference a real, current violation; an entry that no longer
    matches a real file is itself a build failure (so the list cannot rot).
@@ -131,23 +132,21 @@ codebase carries pre-existing violations that pre-date the rules. The plan:
    `"warn"` to `"error"` in `.oxlintrc.json` (or remove the
    `KNOWN_VIOLATIONS` entry entirely) in the same PR.
 
-Current grandfathered counts (`nx lint twenty-website-new` will tell you the
-true number):
+Current state (`nx lint twenty-website-new` will tell you the true number):
 
-| Rule                                      | Layer / scope                    | Current count |
+| Rule                                      | Layer / scope                    | Status        |
 | ----------------------------------------- | -------------------------------- | ------------- |
-| `no-restricted-imports` — `@/app/**`      | `sections/**`                    | ~10 warnings  |
-| `no-restricted-imports` — `@/sections/**` | `lib/**`                         | 1 warning     |
+| `no-restricted-imports` — `@/app/**`      | `sections/**`                    | **error** (0) |
+| `no-restricted-imports` — `@/sections/**` | `lib/**`                         | **error** (0) |
+| `no-restricted-imports` — `@/app/**`      | `design-system/**`               | warn (0)      |
 | `no-raw-webgl-renderer`                   | `app/halftone/_lib/exporters.ts` | 1 (allowlist) |
 
-The remaining `sections → app` warnings are split across four route-scoped
-data / type modules: `app/customers/types`,
-`app/customers/case-study-catalog.data`, `app/pricing/plans.data`, and
-`app/partners/components/PartnerApplication/PartnerApplicationModalRoot`.
-Resolving them is "Phase 4 — extract route-scoped data into sections or
-lib." The `lib → sections` warning is `lib/releases/get-latest-release-preview.ts`
-importing a type from `sections/Menu/types`; either move the type into
-`lib/releases/` or move the function into `sections/Menu/lib/`.
+Both the section→app and lib→sections rules are now **error**: any new
+violation fails CI. If you find yourself wanting to import from a layer
+above you, the answer is to lift the shared piece into `lib/` (or, for
+genuinely page-shaped state like a global modal provider, mount it in
+`app/layout.tsx` — see `lib/contact-cal` and `lib/partner-application`
+for the pattern).
 
 The known specific offenders are documented inline in `KNOWN_VIOLATIONS`
 (for the boundary script) and discoverable from the oxlint output (for the

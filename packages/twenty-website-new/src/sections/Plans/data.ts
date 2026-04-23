@@ -1,3 +1,5 @@
+import type { PlansDataType } from '@/sections/Plans/types';
+
 const PRO_HEADING = { fontFamily: 'sans' as const, text: 'Pro' };
 const ORGANIZATION_HEADING = {
   fontFamily: 'sans' as const,
@@ -47,8 +49,6 @@ const ORGANIZATION_BULLETS_SELF_HOST = [
   { text: 'Twenty team support' },
   { text: 'No open-source distribution requirement' },
 ];
-
-import type { PlansDataType } from '@/sections/Plans/types';
 
 export const PLANS_DATA = {
   organization: {
