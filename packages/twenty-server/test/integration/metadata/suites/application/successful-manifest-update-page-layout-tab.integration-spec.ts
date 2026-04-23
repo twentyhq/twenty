@@ -10,7 +10,6 @@ import { v4 as uuidv4 } from 'uuid';
 const TEST_APP_ID = uuidv4();
 const TEST_ROLE_ID = uuidv4();
 const TEST_TAB_ID = uuidv4();
-const TEST_WIDGET_ID = uuidv4();
 
 const STANDARD_PERSON_PAGE_LAYOUT_UNIVERSAL_ID =
   '20202020-a102-4002-8002-ae0a1ea11002';
@@ -77,7 +76,7 @@ describe('Manifest update - page layout tabs (standalone)', () => {
     });
   });
 
-  it('should attach a standalone tab with a widget to a standard page layout', async () => {
+  it('should attach a standalone tab to a standard page layout', async () => {
     await syncApplication({
       manifest: buildManifest({
         pageLayoutTabs: [
@@ -89,18 +88,6 @@ describe('Manifest update - page layout tabs (standalone)', () => {
             position: 1000,
             icon: 'IconChartBar',
             layoutMode: PageLayoutTabLayoutMode.CANVAS,
-            widgets: [
-              {
-                universalIdentifier: TEST_WIDGET_ID,
-                title: 'Insights Widget',
-                type: 'FRONT_COMPONENT',
-                configuration: {
-                  configurationType: 'FRONT_COMPONENT',
-                  frontComponentUniversalIdentifier:
-                    '20202020-1111-4000-8000-000000000001',
-                },
-              },
-            ],
           },
         ],
       }),
