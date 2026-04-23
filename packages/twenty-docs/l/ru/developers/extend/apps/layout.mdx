@@ -13,6 +13,7 @@ icon: table-columns
 | **Представление**        | Сохранённая конфигурация списка для объекта — видимые поля, порядок, фильтры, группы | `defineView`               |
 | **Пункт меню навигации** | Элемент в левой боковой панели, который ссылается на представление или внешний URL   | `defineNavigationMenuItem` |
 | **Макет страницы**       | Вкладки и виджеты, из которых состоит страница сведений о записи                     | `definePageLayout`         |
+| **Page Layout Tab**      | A standalone tab attached to an existing page layout (standard or your own app's)    | `definePageLayoutTab`      |
 
 Представления, пункты меню навигации и макеты страниц ссылаются друг на друга по `universalIdentifier`:
 
@@ -126,6 +127,52 @@ export default definePageLayout({
 * Каждая `tab` определяет раздел страницы с `title`, `position` и `layoutMode` (`CANVAS` для свободного макета).
 * Каждый `widget` внутри вкладки может отображать компонент фронтенда, список связей или другие встроенные типы виджетов.
 * `position` у вкладок управляет их порядком. Используйте большие значения (например, 50), чтобы разместить пользовательские вкладки после встроенных.
+
+</Accordion>
+<Accordion title="definePageLayoutTab" description="Add a tab to an existing page layout">
+
+`definePageLayoutTab` lets your app attach a single tab — with optional widgets — to an **existing** page layout. The most common use case is adding a custom tab (for example, an analytics or AI summary tab) to one of Twenty's built-in record pages, or to a page layout your own app already ships.
+
+The targeted page layout must be either a **standard** Twenty page layout or one defined by **your own app**; cross-app references to page layouts owned by another installed app are not supported today.
+
+```ts src/page-layouts/example-extra-tab.ts
+import {
+  definePageLayoutTab,
+  PageLayoutTabLayoutMode,
+} from 'twenty-sdk/define';
+import { HELLO_WORLD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER } from '../front-components/hello-world';
+
+const COMPANY_RECORD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER =
+  '20202020-ab01-4001-8001-c0aba11c0100';
+
+export default definePageLayoutTab({
+  universalIdentifier: 'b1b2b3b4-b5b6-4000-8000-000000000001',
+  pageLayoutUniversalIdentifier:
+    COMPANY_RECORD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER,
+  title: 'Hello World',
+  position: 1000,
+  icon: 'IconWorld',
+  layoutMode: PageLayoutTabLayoutMode.CANVAS,
+  widgets: [
+    {
+      universalIdentifier: 'b1b2b3b4-b5b6-4000-8000-000000000002',
+      title: 'Hello World',
+      type: 'FRONT_COMPONENT',
+      configuration: {
+        configurationType: 'FRONT_COMPONENT',
+        frontComponentUniversalIdentifier:
+          HELLO_WORLD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
+      },
+    },
+  ],
+});
+```
+
+Основные моменты:
+* `pageLayoutUniversalIdentifier` is **required** when using `definePageLayoutTab` and must point to a page layout that already exists at install time (standard or your app's). When the parent page layout is missing, installation fails with a clear validation error.
+* `widgets` are scoped to this tab only — they reference front components, views, etc. exactly like widgets defined inline in `definePageLayout`.
+* `position` controls ordering against existing tabs on the targeted layout. Pick a value that places your tab where you want it relative to built-in tabs.
+* Use this instead of `definePageLayout` when you only want to **add** to an existing layout. Use `definePageLayout` when you own the entire layout (typically a `RECORD_PAGE` for an object you ship in your app, or a `STANDALONE_PAGE`).
 
 </Accordion>
 </AccordionGroup>
