@@ -107,13 +107,22 @@ The contract that prevents this:
    is the single source for the decoder URL. The root layout `preconnect`s to
    that origin so the first GLB on the page doesn't pay a TLS handshake.
 
-### Grandfathered exception
+### Approved exceptions
 
-`app/halftone/_lib/exporters.ts` calls `new THREE.WebGLRenderer` directly
-because the export pipeline renders at custom resolutions outside the
-site-wide context budget. It is listed in `KNOWN_VIOLATIONS` of
-`scripts/check-boundaries.mjs` and will be reconciled when the halftone
-studio is consolidated (see §5).
+`app/halftone/_lib/exporters.ts` contains two `new THREE.WebGLRenderer(...)`
+calls inside template-literal strings. They are **not** runtime
+instantiations in our app — they're emitted into the standalone HTML
+file the user downloads from the studio, where there is no `lib/` to
+import. Both lines carry an inline directive:
+
+```ts
+// boundary-allow-next-line:no-raw-webgl-renderer -- emitted into the standalone HTML export; runs in the user's downloaded file with no access to lib/visual-runtime
+const renderer = new THREE.WebGLRenderer({ antialias: false, alpha: true });
+```
+
+If the directive ever stops suppressing a real violation (the line
+moves, gets deleted, or the rule changes), the boundary check fails
+and the directive must be removed in the same PR.
 
 ---
 
@@ -125,21 +134,28 @@ ratchet plan, applied iteratively:
 
 1. **Boundary rules start as warnings** so the rule lands without
    blocking CI on day one.
-2. **`scripts/check-boundaries.mjs` ratchets via `KNOWN_VIOLATIONS`.** Each
-   entry must reference a real, current violation; an entry that no longer
-   matches a real file is itself a build failure (so the list cannot rot).
+2. **`scripts/check-boundaries.mjs` ratchets via two mechanisms** — both
+   guard against the list rotting out of date:
+   - **Inline directives** of the form `// boundary-allow-next-line:<rule-id> -- <reason>`,
+     placed on the line directly above the offending line. Use this for
+     legitimate, narrow exceptions (e.g. code that only ever appears
+     inside a serialized template). A directive that no longer
+     suppresses a violation fails the build.
+   - **`KNOWN_VIOLATIONS`** in `scripts/check-boundaries.mjs`, for
+     pre-existing file-wide debt that's slated for cleanup. An entry
+     that no longer matches a real violation also fails the build.
 3. **Once a category is at zero**, flip the corresponding override from
-   `"warn"` to `"error"` in `.oxlintrc.json` (or remove the
-   `KNOWN_VIOLATIONS` entry entirely) in the same PR.
+   `"warn"` to `"error"` in `.oxlintrc.json` (or empty
+   `KNOWN_VIOLATIONS` entirely) in the same PR.
 
 Current state (`nx lint twenty-website-new` will tell you the true number):
 
-| Rule                                      | Layer / scope                    | Status        |
-| ----------------------------------------- | -------------------------------- | ------------- |
-| `no-restricted-imports` — `@/app/**`      | `sections/**`                    | **error** (0) |
-| `no-restricted-imports` — `@/sections/**` | `lib/**`                         | **error** (0) |
-| `no-restricted-imports` — `@/app/**`      | `design-system/**`               | warn (0)      |
-| `no-raw-webgl-renderer`                   | `app/halftone/_lib/exporters.ts` | 1 (allowlist) |
+| Rule                                      | Layer / scope      | Status                       |
+| ----------------------------------------- | ------------------ | ---------------------------- |
+| `no-restricted-imports` — `@/app/**`      | `sections/**`      | **error** (0)                |
+| `no-restricted-imports` — `@/sections/**` | `lib/**`           | **error** (0)                |
+| `no-restricted-imports` — `@/app/**`      | `design-system/**` | warn (0)                     |
+| `no-raw-webgl-renderer`                   | repo-wide          | **error** (2 inline-allowed) |
 
 Both the section→app and lib→sections rules are now **error**: any new
 violation fails CI. If you find yourself wanting to import from a layer
@@ -148,9 +164,9 @@ genuinely page-shaped state like a global modal provider, mount it in
 `app/layout.tsx` — see `lib/contact-cal` and `lib/partner-application`
 for the pattern).
 
-The known specific offenders are documented inline in `KNOWN_VIOLATIONS`
-(for the boundary script) and discoverable from the oxlint output (for the
-import rules).
+The two inline-allowed `no-raw-webgl-renderer` lines are documented in
+§3 above. They're text inside the standalone HTML export pipeline, not
+runtime code in our app.
 
 ---
 

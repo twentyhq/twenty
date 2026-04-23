@@ -41,13 +41,22 @@ const SRC = path.join(ROOT, 'src');
  * Drive the list to zero, then remove the entry entirely.
  *
  * Format: `<rule-id>:<relative-path>`
+ *
+ * Note: This is the heavy-handed escape hatch. For a single line that is
+ * legitimately exempt (e.g. the line is inside a serialized template, or
+ * is in a code-generation tool), prefer the inline directive instead:
+ *
+ *     // boundary-allow-next-line:<rule-id> -- <reason>
+ *     <the line that would otherwise trip the rule>
+ *
+ * Inline directives sit next to the offending code, document the reason,
+ * and ratchet the same way: a directive that no longer matches a real
+ * violation fails the build (so they cannot rot either).
  */
-const KNOWN_VIOLATIONS = new Set([
-  // Halftone studio still uses raw THREE.WebGLRenderer for PNG / GIF export
-  // because exporters render at custom resolutions outside the site-wide
-  // context budget. Tracked for the halftone consolidation phase.
-  'no-raw-webgl-renderer:src/app/halftone/_lib/exporters.ts',
-]);
+const KNOWN_VIOLATIONS = new Set([]);
+
+const ALLOW_DIRECTIVE_REGEX =
+  /\/\/\s*boundary-allow-next-line:([\w-]+)(?:\s+--\s+.+)?/;
 
 /** @type {Rule[]} */
 const RULES = [
@@ -97,27 +106,48 @@ async function* walk(dir) {
 /**
  * @param {string} contents
  * @param {RegExp} pattern
- * @returns {Array<{ line: number, column: number, snippet: string }>}
+ * @param {string} ruleId
+ * @returns {{
+ *   matches: Array<{ line: number, column: number, snippet: string, suppressed: boolean }>,
+ *   directives: Array<{ line: number, ruleId: string, suppressed: boolean }>,
+ * }}
  */
-function findMatches(contents, pattern) {
+function findMatches(contents, pattern, ruleId) {
   const matches = [];
+  /** @type {Array<{ line: number, ruleId: string, suppressed: boolean }>} */
+  const directives = [];
   const lines = contents.split('\n');
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i];
+
+    const directiveMatch = line.match(ALLOW_DIRECTIVE_REGEX);
+    if (directiveMatch && directiveMatch[1] === ruleId) {
+      directives.push({ line: i + 1, ruleId, suppressed: false });
+    }
+
     const m = line.match(pattern);
     if (m && m.index != null) {
+      // A directive on the line directly above this one suppresses the match
+      // and gets credited as "used" so it isn't flagged stale.
+      const prevDirective = directives.find((d) => d.line === i);
+      const suppressed = prevDirective !== undefined;
+      if (prevDirective) prevDirective.suppressed = true;
       matches.push({
         line: i + 1,
         column: m.index + 1,
         snippet: line.trim(),
+        suppressed,
       });
     }
   }
-  return matches;
+  return { matches, directives };
 }
 
 async function main() {
+  /** @type {Array<{ rule: Rule, file: string, line: number, column: number, snippet: string }>} */
   const violations = [];
+  /** @type {Array<{ rule: Rule, file: string, line: number }>} */
+  const staleDirectives = [];
 
   for await (const absPath of walk(SRC)) {
     const rel = path.relative(ROOT, absPath).split(path.sep).join('/');
@@ -133,9 +163,25 @@ async function main() {
         continue;
       }
 
-      const matches = findMatches(contents, rule.pattern);
+      const { matches, directives } = findMatches(
+        contents,
+        rule.pattern,
+        rule.id,
+      );
       for (const m of matches) {
-        violations.push({ rule, file: rel, ...m });
+        if (m.suppressed) continue;
+        violations.push({
+          rule,
+          file: rel,
+          line: m.line,
+          column: m.column,
+          snippet: m.snippet,
+        });
+      }
+      for (const d of directives) {
+        if (!d.suppressed) {
+          staleDirectives.push({ rule, file: rel, line: d.line });
+        }
       }
     }
   }
@@ -208,10 +254,30 @@ async function main() {
     console.error('');
   }
 
-  if (exitCode === 0 && KNOWN_VIOLATIONS.size > 0) {
+  if (staleDirectives.length > 0) {
+    exitCode = 1;
+    console.error('');
     console.error(
-      `check-boundaries: OK (${KNOWN_VIOLATIONS.size} grandfathered violation(s) tolerated; drive to zero).`,
+      `\u001b[31mcheck-boundaries: ${staleDirectives.length} stale boundary-allow-next-line directive(s)\u001b[0m`,
     );
+    console.error(
+      '  The directive on these lines no longer suppresses any violation. Remove it:',
+    );
+    console.error('');
+    for (const d of staleDirectives) {
+      console.error(`    - ${d.file}:${d.line}  (${d.rule.id})`);
+    }
+    console.error('');
+  }
+
+  if (exitCode === 0) {
+    if (KNOWN_VIOLATIONS.size > 0) {
+      console.error(
+        `check-boundaries: OK (${KNOWN_VIOLATIONS.size} grandfathered file-level violation(s) tolerated; drive to zero).`,
+      );
+    } else {
+      console.error('check-boundaries: OK');
+    }
   }
 
   return exitCode;

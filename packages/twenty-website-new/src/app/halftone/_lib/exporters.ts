@@ -2144,6 +2144,7 @@ async function mountHalftoneCanvas(options) {
     return () => {};
   }
 
+  // boundary-allow-next-line:no-raw-webgl-renderer -- emitted into the standalone HTML export; runs in the user's downloaded file with no access to lib/visual-runtime
   const renderer = new THREE.WebGLRenderer({ antialias: false, alpha: true });
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.setPixelRatio(1);
@@ -2752,6 +2753,7 @@ async function mountHalftoneCanvas(options) {
     img.src = imageUrl;
   });
 
+  // boundary-allow-next-line:no-raw-webgl-renderer -- emitted into the standalone HTML export; runs in the user's downloaded file with no access to lib/visual-runtime
   const renderer = new THREE.WebGLRenderer({ antialias: false, alpha: true });
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.setPixelRatio(1);
