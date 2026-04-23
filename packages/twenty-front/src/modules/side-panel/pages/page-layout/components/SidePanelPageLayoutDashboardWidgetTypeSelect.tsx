@@ -185,7 +185,7 @@ export const SidePanelPageLayoutDashboardWidgetTypeSelect = () => {
     closeSidePanelMenu();
   };
 
-  const handleNavigateToRecordTableSettings = async () => {
+  const handleNavigateToRecordTableSettings = () => {
     if (
       isExistingWidgetMissingOrDifferentType(
         existingWidget?.type,
@@ -202,7 +202,7 @@ export const SidePanelPageLayoutDashboardWidgetTypeSelect = () => {
 
       setPageLayoutEditingWidgetId(newRecordTableWidget.id);
 
-      await createViewForRecordTableWidget(
+      createViewForRecordTableWidget(
         newRecordTableWidget.id,
         firstAvailableObjectMetadataItem,
       );

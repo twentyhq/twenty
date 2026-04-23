@@ -1,21 +1,19 @@
-import { usePerformViewFieldAPIPersist } from '@/views/hooks/internal/usePerformViewFieldAPIPersist';
+import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
+import { type FlatViewField } from '@/metadata-store/types/FlatViewField';
 import { useCallback } from 'react';
 
 export const useToggleRecordTableWidgetFieldVisibility = () => {
-  const { performViewFieldAPIUpdate } = usePerformViewFieldAPIPersist();
+  const { updateInDraft, applyChanges } = useUpdateMetadataStoreDraft();
 
   const toggleRecordTableWidgetFieldVisibility = useCallback(
-    async (viewFieldId: string, isVisible: boolean) => {
-      await performViewFieldAPIUpdate([
-        {
-          input: {
-            id: viewFieldId,
-            update: { isVisible },
-          },
-        },
+    (viewFieldId: string, isVisible: boolean) => {
+      updateInDraft('viewFields', [
+        { id: viewFieldId, isVisible } as FlatViewField,
       ]);
+
+      applyChanges();
     },
-    [performViewFieldAPIUpdate],
+    [applyChanges, updateInDraft],
   );
 
   return { toggleRecordTableWidgetFieldVisibility };

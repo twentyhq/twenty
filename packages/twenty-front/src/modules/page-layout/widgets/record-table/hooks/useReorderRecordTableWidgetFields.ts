@@ -1,12 +1,13 @@
+import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
+import { type FlatViewField } from '@/metadata-store/types/FlatViewField';
 import { type RecordTableWidgetViewFieldItem } from '@/page-layout/widgets/record-table/types/RecordTableWidgetViewFieldItem';
-import { usePerformViewFieldAPIPersist } from '@/views/hooks/internal/usePerformViewFieldAPIPersist';
 import { useCallback } from 'react';
 
 export const useReorderRecordTableWidgetFields = () => {
-  const { performViewFieldAPIUpdate } = usePerformViewFieldAPIPersist();
+  const { updateInDraft, applyChanges } = useUpdateMetadataStoreDraft();
 
   const reorderRecordTableWidgetFields = useCallback(
-    async (
+    (
       sourceIndex: number,
       destinationIndex: number,
       visibleFieldItems: RecordTableWidgetViewFieldItem[],
@@ -19,16 +20,19 @@ export const useReorderRecordTableWidgetFields = () => {
       const [movedField] = reorderedFields.splice(sourceIndex, 1);
       reorderedFields.splice(destinationIndex, 0, movedField);
 
-      const updates = reorderedFields.map((fieldItem, index) => ({
-        input: {
-          id: fieldItem.viewField.id,
-          update: { position: index },
-        },
-      }));
+      const updates = reorderedFields.map(
+        (fieldItem, index) =>
+          ({
+            id: fieldItem.viewField.id,
+            position: index,
+          }) as FlatViewField,
+      );
 
-      await performViewFieldAPIUpdate(updates);
+      updateInDraft('viewFields', updates);
+
+      applyChanges();
     },
-    [performViewFieldAPIUpdate],
+    [applyChanges, updateInDraft],
   );
 
   return { reorderRecordTableWidgetFields };

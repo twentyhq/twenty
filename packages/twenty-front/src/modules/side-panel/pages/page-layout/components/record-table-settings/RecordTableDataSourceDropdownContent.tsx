@@ -83,14 +83,14 @@ export const RecordTableDataSourceDropdownContent = () => {
       ? (widgetInEditMode.configuration.viewId as string | undefined)
       : undefined;
 
-  const handleSelectSource = async (newObjectMetadataItemId: string) => {
+  const handleSelectSource = (newObjectMetadataItemId: string) => {
     if (currentObjectMetadataItemId === newObjectMetadataItemId) {
       closeDropdown();
       return;
     }
 
     if (isDefined(currentViewId)) {
-      await deleteViewForRecordTableWidget(currentViewId);
+      deleteViewForRecordTableWidget(currentViewId);
     }
 
     updateCurrentWidgetConfig({
@@ -105,7 +105,7 @@ export const RecordTableDataSourceDropdownContent = () => {
     );
 
     if (isDefined(selectedObjectMetadataItem) && isDefined(widgetInEditMode)) {
-      await createViewForRecordTableWidget(
+      createViewForRecordTableWidget(
         widgetInEditMode.id,
         selectedObjectMetadataItem,
       );

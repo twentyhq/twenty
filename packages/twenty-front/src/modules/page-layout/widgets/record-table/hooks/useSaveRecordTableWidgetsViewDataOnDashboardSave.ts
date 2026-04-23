@@ -182,16 +182,16 @@ export const useSaveRecordTableWidgetsViewDataOnDashboardSave = () => {
           }),
         );
 
-        const newViewFields = currentRecordFields.map(
+        const recordIndexViewFields = currentRecordFields.map(
           mapRecordFieldToViewFieldWithCurrentAggregateOperation,
         );
 
-        const existingViewFields = currentView.viewFields ?? [];
+        const metadataStoreViewFields = currentView.viewFields ?? [];
 
         const { viewFieldsToCreate, viewFieldsToUpdate } =
           computeViewFieldsToCreateAndUpdate({
-            newViewFields,
-            existingViewFields,
+            newViewFields: metadataStoreViewFields,
+            existingViewFields: recordIndexViewFields,
             viewId,
           });
 
