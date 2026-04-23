@@ -74,6 +74,7 @@ export class SentMessagePersistenceService {
         headerMessageId: input.sendResult.headerMessageId,
         subject: input.subject,
         text: input.body,
+        direction: MessageDirection.OUTGOING,
         receivedAt: new Date(),
         messageThreadId,
       });

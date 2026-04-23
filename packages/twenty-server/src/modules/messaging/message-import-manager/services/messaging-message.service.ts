@@ -166,6 +166,7 @@ export class MessagingMessageService {
               headerMessageId: message.headerMessageId,
               subject: message.subject,
               receivedAt: message.receivedAt,
+              direction: message.direction,
               text: message.text,
               messageThreadId,
             };
