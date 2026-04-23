@@ -1,9 +1,9 @@
 'use client';
 
+import { ScrollProgressEffect } from '@/lib/scroll';
 import { useStepperMdUp } from '@/lib/stepper';
 import type { HomeStepperStepType } from '@/sections/HomeStepper/types/HomeStepperStep';
 import { useEffect, useRef, useState, type RefObject } from 'react';
-import { SyncScrollProgressFromContainerEffect } from './../effect-components/SyncScrollProgressFromContainerEffect';
 import { LeftColumn } from './LeftColumn';
 import { RightColumn } from './RightColumn';
 import { Visual } from './Visual/Visual';
@@ -44,12 +44,11 @@ export function Flow({ scrollContainerRef, steps }: FlowProps) {
 
   return (
     <>
-      {isMdUp ? (
-        <SyncScrollProgressFromContainerEffect
-          scrollContainerRef={scrollContainerRef}
-          onScrollProgress={setScrollProgress}
-        />
-      ) : null}
+      <ScrollProgressEffect
+        scrollContainerRef={scrollContainerRef}
+        onScrollProgress={setScrollProgress}
+        enabled={isMdUp}
+      />
       <LeftColumn
         activeStepIndex={activeStepIndex}
         layoutMode={isMdUp ? 'scroll' : 'swipe'}

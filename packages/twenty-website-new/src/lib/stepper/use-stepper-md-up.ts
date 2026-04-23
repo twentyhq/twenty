@@ -1,30 +1,17 @@
 'use client';
 
+import { useMediaQuery } from '@/lib/motion';
 import { theme } from '@/theme';
-import { useSyncExternalStore } from 'react';
 
-const MEDIA_QUERY = `(min-width: ${theme.breakpoints.md}px)`;
+const MD_UP_QUERY = `(min-width: ${theme.breakpoints.md}px)`;
 
-function subscribeToMdUp(callback: () => void) {
-  const mediaQueryList = window.matchMedia(MEDIA_QUERY);
-  mediaQueryList.addEventListener('change', callback);
-  return () => {
-    mediaQueryList.removeEventListener('change', callback);
-  };
-}
-
-function getMdUpSnapshot() {
-  return window.matchMedia(MEDIA_QUERY).matches;
-}
-
-function getMdUpServerSnapshot() {
-  return false;
-}
-
-export function useStepperMdUp() {
-  return useSyncExternalStore(
-    subscribeToMdUp,
-    getMdUpSnapshot,
-    getMdUpServerSnapshot,
-  );
+/**
+ * `true` once the viewport is at the `md` breakpoint or wider. Stepper
+ * sections use this to switch between scroll-driven (desktop) and
+ * swipe-driven (mobile) layouts.
+ *
+ * Backed by the shared `useMediaQuery` primitive in `lib/motion/`.
+ */
+export function useStepperMdUp(): boolean {
+  return useMediaQuery(MD_UP_QUERY);
 }

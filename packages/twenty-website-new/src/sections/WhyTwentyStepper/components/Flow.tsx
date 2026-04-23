@@ -1,9 +1,9 @@
 'use client';
 
+import { ScrollProgressEffect } from '@/lib/scroll';
+import { useStepperMdUp } from '@/lib/stepper';
 import { WebGlMount } from '@/lib/visual-runtime';
 import { Logo as WhyTwentyStepperLogo } from '@/sections/WhyTwentyStepper/visuals/Logo';
-import { useStepperMdUp } from '@/lib/stepper';
-import { SyncScrollProgressFromContainerEffect } from '@/sections/WhyTwentyStepper/effect-components/SyncScrollProgressFromContainerEffect';
 import type { WhyTwentyStepperDataType } from '@/sections/WhyTwentyStepper/types';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
@@ -71,12 +71,11 @@ export function Flow({ body, heading }: FlowProps) {
 
   return (
     <Root scrollContainerRef={scrollContainerRef}>
-      {isMdUp ? (
-        <SyncScrollProgressFromContainerEffect
-          onScrollProgress={setScrollProgress}
-          scrollContainerRef={scrollContainerRef}
-        />
-      ) : null}
+      <ScrollProgressEffect
+        onScrollProgress={setScrollProgress}
+        scrollContainerRef={scrollContainerRef}
+        enabled={isMdUp}
+      />
       <Content
         activeStepIndex={activeStepIndex}
         body={body}

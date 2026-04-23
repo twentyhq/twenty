@@ -173,7 +173,54 @@ This is tracked outside this PR (see Phase 5 of the rollout plan).
 
 ---
 
-## 6. Environment variable contract
+## 6. Shared scroll & motion primitives
+
+Scroll-driven and media-query-driven UI is concentrated in two small `lib/`
+folders. **Sections may not roll their own** — every duplication of these
+patterns has historically drifted (different rAF policies, missed
+`{ passive: true }`, missed cleanup, missed SSR fallback).
+
+### `lib/scroll/`
+
+| Export                  | Shape                                                     | Use when                                                                                                                                                            |
+| ----------------------- | --------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `computeScrollProgress` | `(rectTop, rectHeight, viewportHeight) => number \| null` | Pure function. Returns 0..1 progress as a sticky-bearing container scrolls past the viewport, or `null` when the container is shorter than the viewport.            |
+| `useScrollProgress`     | `(ref, onProgress, { enabled? }) => void`                 | A section needs the live scroll progress of a sticky container (steppers, scroll-driven scenes). Calls `onProgress` synchronously on each `scroll` / `resize`.      |
+| `ScrollProgressEffect`  | `<ScrollProgressEffect ref onScrollProgress enabled? />`  | The same hook expressed as a JSX child. Use only when you need to mount the listener conditionally inside JSX (it's rare; prefer the hook + `enabled` in new code). |
+| `useScheduledOnScroll`  | `(callback, { enabled?, fireImmediately? }) => void`      | Scroll-driven layout work that mutates the DOM (`getBoundingClientRect` over many nodes, recomputing a 3D scene). Coalesces calls to one per animation frame.       |
+
+The pure `computeScrollProgress` exists so the math is testable in node
+without jsdom (see `lib/scroll/__tests__/compute-scroll-progress.test.ts`).
+All three hooks delegate to it for the actual progress calculation —
+update the math in one place.
+
+Why `useScheduledOnScroll` and not "just inline rAF":
+
+- The pattern is repeated identically in two sections today
+  (`ThreeCardsScrollLayoutEffect`, `HelpedSceneScrollLayoutEffect`). One
+  primitive removes the drift.
+- The cleanup path (cancel any pending rAF on unmount) is easy to forget
+  and produces "cannot read properties of null" warnings under React
+  StrictMode double-invocation.
+
+### `lib/motion/`
+
+| Export                    | Shape                                     | Use when                                                                                                                                                             |
+| ------------------------- | ----------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `useMediaQuery`           | `(query, { serverFallback? }) => boolean` | Any client-side reaction to a CSS media query. Backed by `useSyncExternalStore`, concurrent-safe, defaults SSR to `false`.                                           |
+| `usePrefersReducedMotion` | `() => boolean`                           | Conditional non-essential animation. **Don't** use this to skip functional animation (e.g. a scroll-driven stepper still updates; only its easing transition drops). |
+
+`useStepperMdUp` and `StepperSwipeDeck`'s reduced-motion subscription are
+both built on these primitives. New code that calls
+`window.matchMedia('(prefers-reduced-motion: reduce)')` directly inside a
+component body should be migrated to the hook (a few inline reads in
+section visuals — `helped-scene-layout.ts`, `PartnerHalftoneOverlay.tsx`,
+`StepperBackgroundHalftone.tsx` — are still on the old pattern; flag them
+in review and migrate opportunistically).
+
+---
+
+## 7. Environment variable contract
 
 The site reads exactly three site-wide env vars. They are documented in
 [`.env.example`](./.env.example) and validated at the boundary that consumes
@@ -190,7 +237,7 @@ GitHub tokens, JWT secrets). Those are documented at the consuming module.
 
 ---
 
-## 7. Cross-browser & memory invariants
+## 8. Cross-browser & memory invariants
 
 Some implementation details that have caused real bugs and must not regress.
 

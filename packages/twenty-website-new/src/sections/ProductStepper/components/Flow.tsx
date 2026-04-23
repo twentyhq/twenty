@@ -3,8 +3,8 @@
 import type { BodyType } from '@/design-system/components/Body';
 import type { EyebrowType } from '@/design-system/components/Eyebrow';
 import type { HeadingType } from '@/design-system/components/Heading';
+import { ScrollProgressEffect } from '@/lib/scroll';
 import { useStepperMdUp } from '@/lib/stepper';
-import { SyncScrollProgressFromContainerEffect } from '@/sections/ProductStepper/effect-components/SyncScrollProgressFromContainerEffect';
 import type { ProductStepperStepType } from '@/sections/ProductStepper/types/ProductStepperStep';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Content } from './Content';
@@ -58,12 +58,11 @@ export function Flow({ body, eyebrow, heading, steps }: FlowProps) {
 
   return (
     <Root scrollContainerRef={scrollContainerRef}>
-      {isMdUp ? (
-        <SyncScrollProgressFromContainerEffect
-          onScrollProgress={setScrollProgress}
-          scrollContainerRef={scrollContainerRef}
-        />
-      ) : null}
+      <ScrollProgressEffect
+        onScrollProgress={setScrollProgress}
+        scrollContainerRef={scrollContainerRef}
+        enabled={isMdUp}
+      />
       <Content
         activeStepIndex={activeStepIndex}
         body={body}

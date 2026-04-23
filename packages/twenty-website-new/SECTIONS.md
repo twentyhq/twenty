@@ -145,12 +145,19 @@ attach a side effect (`useEffect`, an event listener, a mutation observer,
 etc.). They live in their own folder so it's obvious from the layout that
 they don't render UI.
 
-Example: `sections/WhyTwentyStepper/effect-components/SyncScrollProgressFromContainerEffect.tsx`
-— attaches a scroll listener that updates a CSS variable on the parent
-container. It returns `null`.
+Example: `sections/Helped/effect-components/HelpedSceneScrollLayoutEffect.tsx`
+— calls `applyHelpedSceneLayout` on every scroll/resize via the shared
+`useScheduledOnScroll` primitive. It returns `null`.
 
 Effect components don't accept children. If you find yourself wanting one to
 render UI, it's a regular component — move it to `components/`.
+
+**Don't reinvent scroll/resize/media-query plumbing inside a section.**
+Reach for the shared primitives in `lib/scroll/` and `lib/motion/` instead
+(see [ARCHITECTURE.md §6](./ARCHITECTURE.md#6-shared-scroll--motion-primitives)).
+A section's effect component should be a 5–15-line shell that wires
+section-specific business logic (`apply<Section>Layout`, etc.) into the
+primitive — anything bigger usually means the math belongs in `utils/`.
 
 ---
 
