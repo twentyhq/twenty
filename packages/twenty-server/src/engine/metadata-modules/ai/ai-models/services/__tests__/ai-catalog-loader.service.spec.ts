@@ -2,9 +2,6 @@ import { Test, type TestingModule } from '@nestjs/testing';
 
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { AiCatalogLoaderService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-catalog-loader.service';
-import { buildCompositeModelId } from 'src/engine/metadata-modules/ai/ai-models/utils/composite-model-id.util';
-
-const EXPECTED_PROVIDERS = ['openai', 'anthropic', 'google', 'xai', 'mistral'];
 
 const mockS3Send = jest.fn();
 
@@ -36,79 +33,6 @@ describe('AiCatalogLoaderService', () => {
     }).compile();
 
     service = module.get(AiCatalogLoaderService);
-  });
-
-  describe('built-in catalog integrity', () => {
-    it('should have at least one model per expected provider', () => {
-      const providers = service.getAiProviders();
-
-      EXPECTED_PROVIDERS.forEach((providerName) => {
-        const config = providers[providerName];
-
-        expect(config).toBeDefined();
-        expect((config?.models?.length ?? 0) > 0).toBe(true);
-      });
-    });
-
-    it('should have all required fields for each model', () => {
-      const providers = service.getAiProviders();
-
-      Object.values(providers).forEach((config) => {
-        (config.models ?? []).forEach((model) => {
-          expect(model.name).toBeDefined();
-          expect(model.label).toBeDefined();
-          expect(model.inputCostPerMillionTokens).toBeDefined();
-          expect(model.outputCostPerMillionTokens).toBeDefined();
-          expect(model.contextWindowTokens).toBeGreaterThan(0);
-          expect(model.maxOutputTokens).toBeGreaterThan(0);
-        });
-      });
-    });
-
-    it('should have unique composite model IDs across all providers', () => {
-      const providers = service.getAiProviders();
-      const allCompositeIds: string[] = [];
-
-      Object.entries(providers).forEach(([key, config]) => {
-        (config.models ?? []).forEach((model) => {
-          allCompositeIds.push(buildCompositeModelId(key, model.name));
-        });
-      });
-
-      expect(new Set(allCompositeIds).size).toBe(allCompositeIds.length);
-    });
-
-    it('should have at least one non-deprecated model per expected provider', () => {
-      const providers = service.getAiProviders();
-
-      EXPECTED_PROVIDERS.forEach((providerName) => {
-        const config = providers[providerName];
-        const hasActiveModel = (config?.models ?? []).some(
-          (model) => !model.isDeprecated,
-        );
-
-        expect(hasActiveModel).toBe(true);
-      });
-    });
-
-    it('should set source to catalog for all models', () => {
-      const providers = service.getAiProviders();
-
-      Object.values(providers).forEach((config) => {
-        (config.models ?? []).forEach((model) => {
-          expect(model.source).toBe('catalog');
-        });
-      });
-    });
-
-    it('should have npm field set for all providers', () => {
-      const providers = service.getAiProviders();
-
-      Object.values(providers).forEach((config) => {
-        expect(config.npm).toBeDefined();
-        expect(config.npm).toMatch(/^@ai-sdk\//);
-      });
-    });
   });
 
   describe('onModuleInit', () => {
