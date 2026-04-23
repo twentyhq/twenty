@@ -1,3 +1,8 @@
 import { type PageLayoutTabManifest } from 'twenty-shared/application';
 
-export type PageLayoutTabConfig = PageLayoutTabManifest;
+export type PageLayoutTabConfig = Omit<
+  PageLayoutTabManifest,
+  'pageLayoutUniversalIdentifier'
+> & {
+  pageLayoutUniversalIdentifier: string;
+};

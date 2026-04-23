@@ -399,7 +399,9 @@ export const computeApplicationManifestAllUniversalFlatEntityMaps = ({
 
   for (const pageLayoutTabManifest of manifest.pageLayoutTabs ?? []) {
     if (!isDefined(pageLayoutTabManifest.pageLayoutUniversalIdentifier)) {
-      continue;
+      throw new Error(
+        `Top-level pageLayoutTab "${pageLayoutTabManifest.universalIdentifier}" is missing required pageLayoutUniversalIdentifier`,
+      );
     }
 
     addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
