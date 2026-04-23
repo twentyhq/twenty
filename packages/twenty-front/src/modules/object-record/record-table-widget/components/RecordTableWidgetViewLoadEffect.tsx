@@ -3,6 +3,7 @@ import { useLoadRecordIndexStates } from '@/object-record/record-index/hooks/use
 import { lastLoadedRecordTableWidgetViewIdComponentState } from '@/object-record/record-table-widget/states/lastLoadedRecordTableWidgetViewIdComponentState';
 import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
 import { recordTableWidgetViewDraftComponentState } from '@/page-layout/states/recordTableWidgetViewDraftComponentState';
+import { constructViewFromRecordTableWidgetViewSnapshot } from '@/page-layout/widgets/record-table/utils/constructViewFromRecordTableWidgetViewSnapshot';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
@@ -39,14 +40,7 @@ export const RecordTableWidgetViewLoadEffect = ({
   const viewFromDraft = useMemo(
     () =>
       isPageLayoutInEditMode && isDefined(draftSnapshot)
-        ? {
-            ...draftSnapshot.view,
-            viewFields: draftSnapshot.viewFields,
-            viewFilters: [],
-            viewSorts: [],
-            viewGroups: [],
-            viewFilterGroups: [],
-          }
+        ? constructViewFromRecordTableWidgetViewSnapshot(draftSnapshot)
         : undefined,
     [isPageLayoutInEditMode, draftSnapshot],
   );
