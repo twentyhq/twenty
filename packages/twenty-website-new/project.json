@@ -45,11 +45,28 @@
         "command": "node scripts/check-boundaries.mjs"
       }
     },
+    "check-section-shape": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "inputs": [
+        "{projectRoot}/src/sections/**/*",
+        "{projectRoot}/scripts/check-section-shape.mjs"
+      ],
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "node scripts/check-section-shape.mjs"
+      }
+    },
     "lint": {
-      "dependsOn": ["check-boundaries", "^build", "twenty-oxlint-rules:build"]
+      "dependsOn": [
+        "check-boundaries",
+        "check-section-shape",
+        "^build",
+        "twenty-oxlint-rules:build"
+      ]
     },
     "lint:diff-with-main": {
-      "dependsOn": ["check-boundaries"]
+      "dependsOn": ["check-boundaries", "check-section-shape"]
     },
     "typecheck": {},
     "test": {

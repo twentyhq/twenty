@@ -1,5 +1,5 @@
 import { Container } from '@/design-system/components';
-import { TestimonialsShape } from '@/sections/Testimonials/TestimonialsShape';
+import { TestimonialsShape } from '@/sections/Testimonials/components/TestimonialsShape';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
 import type { ReactNode } from 'react';

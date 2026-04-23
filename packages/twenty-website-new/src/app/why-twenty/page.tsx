@@ -184,8 +184,9 @@ export default async function WhyTwentyPage() {
       <Marquee.Root
         backgroundColor={theme.colors.secondary.background[100]}
         color={theme.colors.secondary.text[100]}
-        heading={MARQUEE_DATA.heading}
-      />
+      >
+        <Marquee.Heading segments={MARQUEE_DATA.heading} />
+      </Marquee.Root>
 
       <Signoff.Root
         backgroundColor={theme.colors.secondary.background[100]}

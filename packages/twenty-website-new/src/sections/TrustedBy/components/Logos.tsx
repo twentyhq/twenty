@@ -42,3 +42,5 @@ export function Logos({ logos }: LogosProps) {
     </LogoStrip>
   );
 }
+
+Logos.displayName = 'TrustedBy.Logos';

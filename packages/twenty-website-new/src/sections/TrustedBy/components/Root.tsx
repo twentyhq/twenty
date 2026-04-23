@@ -2,7 +2,16 @@ import { Container } from '@/design-system/components';
 import { PlusIcon } from '@/icons';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
-import { Children, type ReactNode } from 'react';
+import {
+  Children,
+  isValidElement,
+  type ReactElement,
+  type ReactNode,
+} from 'react';
+
+import { ClientCount } from './ClientCount/ClientCount';
+import { Logos } from './Logos';
+import { Separator } from './Separator';
 
 const CORNER_SIZE = 14;
 const CORNER_OFFSET = '-7px';
@@ -12,7 +21,8 @@ const StyledSection = styled.section<{
   compactBottom: boolean;
   backgroundColor?: string;
 }>`
-  background-color: ${({ backgroundColor }) => backgroundColor ?? 'transparent'};
+  background-color: ${({ backgroundColor }) =>
+    backgroundColor ?? 'transparent'};
   padding-bottom: ${({ compactBottom }) =>
     compactBottom ? '0' : theme.spacing(12)};
   padding-top: ${({ compactTop }) =>
@@ -135,6 +145,39 @@ interface RootProps {
   cardBackgroundColor?: string;
 }
 
+/**
+ * Match a child by `displayName` against the slot component. Avoids the
+ * positional `Children.toArray()[i]` pattern, which silently rebinds
+ * cells the moment a consumer reorders, wraps in a fragment, or adds a
+ * comment. Returns the *first* matching element — duplicate slots are
+ * treated as a developer error and surfaced via a dev-only throw below.
+ */
+function findSlot(
+  children: ReactNode,
+  type: { displayName?: string },
+): ReactElement | null {
+  let found: ReactElement | null = null;
+  let count = 0;
+  Children.forEach(children, (child) => {
+    if (
+      isValidElement(child) &&
+      typeof child.type === 'function' &&
+      (child.type as { displayName?: string }).displayName === type.displayName
+    ) {
+      if (found === null) {
+        found = child;
+      }
+      count += 1;
+    }
+  });
+  if (count > 1 && process.env.NODE_ENV !== 'production') {
+    throw new Error(
+      `<TrustedBy.Root> received ${count} <${type.displayName}> children — exactly one is expected.`,
+    );
+  }
+  return found;
+}
+
 export function Root({
   children,
   compactTop = false,
@@ -142,7 +185,19 @@ export function Root({
   backgroundColor,
   cardBackgroundColor,
 }: RootProps) {
-  const [label, logos, count] = Children.toArray(children);
+  const label = findSlot(children, Separator);
+  const logos = findSlot(children, Logos);
+  const count = findSlot(children, ClientCount);
+
+  if (
+    process.env.NODE_ENV !== 'production' &&
+    (label === null || logos === null || count === null)
+  ) {
+    throw new Error(
+      '<TrustedBy.Root> requires <TrustedBy.Separator>, <TrustedBy.Logos>, and <TrustedBy.ClientCount> children.',
+    );
+  }
+
   return (
     <StyledSection
       aria-label="Trusted by leading organizations"

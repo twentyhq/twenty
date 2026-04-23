@@ -1,8 +1,14 @@
-import { styled } from '@linaria/react';
-
 import type { HeadingType } from '@/design-system/components/Heading';
 import { theme } from '@/theme';
+import { styled } from '@linaria/react';
+import {
+  Children,
+  isValidElement,
+  type ReactElement,
+  type ReactNode,
+} from 'react';
 
+import { Heading } from './Heading';
 import { Track } from './Track';
 
 const StyledSection = styled.section`
@@ -33,18 +39,54 @@ const Row = styled.div`
 type RootProps = {
   backgroundColor: string;
   color: string;
-  heading: HeadingType[];
+  children: ReactNode;
 };
 
-export function Root({ backgroundColor, color, heading }: RootProps) {
+type HeadingElement = ReactElement<{ segments: HeadingType[] }>;
+
+/**
+ * Pull the `<Marquee.Heading>` slot out of `children` by `displayName`
+ * match. Positional indexing (`Children.toArray()[0]`) is intentionally
+ * avoided — it breaks the moment a consumer wraps in a fragment, adds a
+ * comment, or reorders.
+ */
+function findHeadingSlot(children: ReactNode): HeadingElement | null {
+  let found: HeadingElement | null = null;
+  Children.forEach(children, (child) => {
+    if (
+      isValidElement(child) &&
+      typeof child.type === 'function' &&
+      (child.type as { displayName?: string }).displayName ===
+        Heading.displayName
+    ) {
+      found = child as HeadingElement;
+    }
+  });
+  return found;
+}
+
+export function Root({ backgroundColor, children, color }: RootProps) {
+  const headingSlot = findHeadingSlot(children);
+
+  if (headingSlot === null) {
+    if (process.env.NODE_ENV !== 'production') {
+      throw new Error(
+        '<Marquee.Root> requires a <Marquee.Heading segments={...} /> child.',
+      );
+    }
+    return null;
+  }
+
+  const segments = headingSlot.props.segments;
+
   return (
     <StyledSection style={{ backgroundColor, color }}>
       <Viewport>
         <Row>
-          <Track heading={heading} reversed={false} />
+          <Track heading={segments} reversed={false} />
         </Row>
         <Row>
-          <Track heading={heading} reversed />
+          <Track heading={segments} reversed />
         </Row>
       </Viewport>
     </StyledSection>

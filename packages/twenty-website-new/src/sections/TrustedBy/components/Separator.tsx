@@ -1,4 +1,4 @@
-import { TrustedBySeparatorType } from '@/sections/TrustedBy/types';
+import type { TrustedBySeparatorType } from '@/sections/TrustedBy/types';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
 
@@ -28,3 +28,5 @@ export function Separator({ separator }: SeparatorProps) {
     </StyledSeparatorRow>
   );
 }
+
+Separator.displayName = 'TrustedBy.Separator';

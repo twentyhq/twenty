@@ -3,7 +3,7 @@ import type { ReactNode } from 'react';
 
 import { Container, GuideCrosshair } from '@/design-system/components';
 import { type Page, Pages } from '@/lib/pages';
-import { SignoffShape } from '@/sections/Signoff/SignoffShape';
+import { SignoffShape } from '@/sections/Signoff/components/SignoffShape';
 import { theme } from '@/theme';
 
 const GUIDE_CROSSHAIR_BY_PAGE: Partial<

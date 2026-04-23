@@ -1,7 +1,7 @@
 import { Body, Heading, LinkButton } from '@/design-system/components';
 import { CLIENT_ICONS } from '@/icons';
 import { WebGlMount } from '@/lib/visual-runtime';
-import { HelpedCardShape } from '@/sections/Helped/HelpedCardShape';
+import { HelpedCardShape } from '@/sections/Helped/components/HelpedCardShape';
 import type { HeadingCardType } from '@/sections/Helped/types/HeadingCard';
 import { HELPED_VISUALS } from '@/sections/Helped/visuals';
 import { theme } from '@/theme';

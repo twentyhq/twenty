@@ -3,7 +3,7 @@ import type { Metadata } from 'next';
 import { MENU_DATA } from '@/sections/Menu/data';
 import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';
 import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels';
-import { LegalDocumentPage } from '@/sections/LegalDocument/legal-document-page';
+import { LegalDocument } from '@/sections/LegalDocument/components';
 import { buildPageMetadata } from '@/lib/seo';
 
 import { TermsDocument } from './_components';
@@ -20,11 +20,11 @@ export default async function TermsPage() {
   const menuSocialLinks = mergeSocialLinkLabels(MENU_DATA.socialLinks, stats);
 
   return (
-    <LegalDocumentPage
+    <LegalDocument.Page
       menuData={{ navItems: MENU_DATA.navItems, socialLinks: menuSocialLinks }}
       title="Terms of Service"
     >
       <TermsDocument />
-    </LegalDocumentPage>
+    </LegalDocument.Page>
   );
 }

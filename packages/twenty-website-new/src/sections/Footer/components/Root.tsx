@@ -4,7 +4,7 @@ import { FooterBackground } from '@/sections/Footer/visuals/Background';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
 import type { ReactNode } from 'react';
-import { FooterShape } from './../FooterShape';
+import { FooterShape } from './FooterShape';
 
 const FooterRoot = styled.footer`
   background-color: ${theme.colors.secondary.background[100]};

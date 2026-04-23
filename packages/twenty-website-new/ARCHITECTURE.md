@@ -323,7 +323,93 @@ for one of the values above, use the token.
 
 ---
 
-## 8. Environment variable contract
+## 8. Section contract (`src/sections/<Section>/`)
+
+A "section" is a page-agnostic compound: a Root that owns the outer
+`<section>` element, plus named slots that the route composes inside it.
+The contract below is what makes sections portable across routes and
+trivially refactorable.
+
+### Required shape
+
+```
+src/sections/<Section>/
+├── components/
+│   ├── index.ts              ← single barrel: `export const <Section> = { Root, ...slots }`
+│   ├── Root.tsx              ← owns the outer <section>; reads slots via displayName
+│   ├── <Slot>.tsx            ← each slot sets `<Slot>.displayName = '<Section>.<Slot>'`
+│   └── ...
+├── types/                    ← optional; if present, must contain index.ts barrel
+├── data.ts                   ← optional; section-shaped static copy
+├── visuals/                  ← optional; heavy WebGL/Three.js scenes
+└── effect-components/        ← optional; scroll/resize effects co-located with the section
+```
+
+### Slot discovery
+
+Roots that compose multiple children **must match by `displayName`**,
+never by positional `Children.toArray(...)[i]`. Positional matching
+silently rebinds cells the moment a consumer wraps in a fragment, adds
+a comment, or reorders.
+
+The pattern (see `TrustedBy/components/Root.tsx`):
+
+```ts
+function findSlot(children, type) {
+  let found = null;
+  Children.forEach(children, (child) => {
+    if (
+      isValidElement(child) &&
+      typeof child.type === 'function' &&
+      (child.type as { displayName?: string }).displayName === type.displayName
+    ) {
+      found = child;
+    }
+  });
+  return found;
+}
+```
+
+Each slot component sets:
+
+```ts
+export function Separator(props: SeparatorProps) { ... }
+Separator.displayName = 'TrustedBy.Separator';
+```
+
+### Leaf-shaped sections
+
+A small number of sections ship a _toolkit_ of independently composable
+parts rather than a Root + slots — the route stitches the parts inside
+its own wrapper. These are explicitly allowlisted in
+`scripts/check-section-shape.mjs` (`LEAF_SECTIONS`):
+
+- `CaseStudy` — exposes `Hero`, `Body`, `TextBlock`, `VisualBlock`,
+  `Highlights`, `SectionNav` for case-study route assembly.
+- `CaseStudyCatalog` — exposes `Card`, `Grid`, `Promo` for the customers
+  index page.
+- `LegalDocument` — exposes a single `Page` wrapper (the `Page` naming
+  carries semantics that `Root` would lose).
+
+Adding a new entry to `LEAF_SECTIONS` is a deliberate architectural
+decision; default to Root + slots.
+
+### Mechanical enforcement
+
+`scripts/check-section-shape.mjs` enforces:
+
+1. Every `src/sections/<Section>/` has `components/index.{ts,tsx}`.
+2. Non-leaf sections have `components/Root.tsx`.
+3. `Root.tsx` does not call `Children.toArray(children)`.
+4. Sections registered in `SECTIONS_USING_NAMED_SLOTS` set
+   `<Slot>.displayName = '<Section>.<Slot>'` on every named slot Root
+   inspects.
+
+Wired into the `lint` Nx target alongside `check-boundaries.mjs`.
+
+---
+
+## 9. Environment variable contract
 
 The site reads exactly three site-wide env vars. They are documented in
 [`.env.example`](./.env.example) and validated at the boundary that consumes
@@ -342,7 +428,7 @@ consuming module.
 
 ---
 
-## 9. API surface (`app/api/**`)
+## 10. API surface (`app/api/**`)
 
 Every public POST endpoint in `app/api/**` is unauthed and forwards to a
 third party (a webhook, a payment provider, a calendar). Three classes of
@@ -397,7 +483,7 @@ same pattern.
 
 ---
 
-## 10. Cross-browser & memory invariants
+## 11. Cross-browser & memory invariants
 
 Some implementation details that have caused real bugs and must not regress.
 
