@@ -1,3 +1,4 @@
+import { ApplicationDisplay } from '@/applications/components/ApplicationDisplay';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableBody } from '@/ui/layout/table/components/TableBody';
@@ -13,7 +14,6 @@ import { SettingsPath } from 'twenty-shared/types';
 import {
   H2Title,
   IconChevronRight,
-  OverflowingTextWithTooltip,
 } from 'twenty-ui/display';
 import { SearchInput } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
@@ -102,41 +102,62 @@ export const SettingsAdminApps = () => {
           </TableRow>
           <TableBody>
             {filtered.map((registration) => (
-              <TableRow
+              <SettingsAdminAppsTableRow
                 key={registration.id}
-                to={getSettingsPath(
-                  SettingsPath.AdminPanelApplicationRegistrationDetail,
-                  { applicationRegistrationId: registration.id },
-                )}
-                gridAutoColumns={TABLE_GRID}
-                mobileGridAutoColumns={TABLE_GRID_MOBILE}
-                isClickable
-              >
-                <TableCell
-                  color={themeCssVariables.font.color.primary}
-                  overflow="hidden"
-                  textOverflow="ellipsis"
-                  whiteSpace="nowrap"
-                >
-                  <OverflowingTextWithTooltip text={registration.name} />
-                </TableCell>
-                <TableCell overflow="hidden" align="right">
-                  {getFormattedSource(registration)}
-                </TableCell>
-                <TableCell align="right">
-                  {registration.isListed ? t`Yes` : t`No`}
-                </TableCell>
-                <TableCell align="right">
-                  <IconChevronRight
-                    size={theme.icon.size.md}
-                    color={theme.font.color.tertiary}
-                  />
-                </TableCell>
-              </TableRow>
+                registration={registration}
+                getFormattedSource={getFormattedSource}
+              />
             ))}
           </TableBody>
         </Table>
       </StyledTableContainer>
     </Section>
+  );
+};
+
+type SettingsAdminAppsTableRowProps = {
+  registration: ApplicationRegistrationFragmentFragment;
+  getFormattedSource: (
+    registration: ApplicationRegistrationFragmentFragment,
+  ) => string;
+};
+
+const SettingsAdminAppsTableRow = ({
+  registration,
+  getFormattedSource,
+}: SettingsAdminAppsTableRowProps) => {
+  const { theme } = useContext(ThemeContext);
+
+  return (
+    <TableRow
+      to={getSettingsPath(
+        SettingsPath.AdminPanelApplicationRegistrationDetail,
+        { applicationRegistrationId: registration.id },
+      )}
+      gridAutoColumns={TABLE_GRID}
+      mobileGridAutoColumns={TABLE_GRID_MOBILE}
+      isClickable
+    >
+      <TableCell
+        color={themeCssVariables.font.color.primary}
+        gap={themeCssVariables.spacing[2]}
+        minWidth="0"
+        overflow="hidden"
+      >
+        <ApplicationDisplay application={registration} />
+      </TableCell>
+      <TableCell overflow="hidden" align="right">
+        {getFormattedSource(registration)}
+      </TableCell>
+      <TableCell align="right">
+        {registration.isListed ? t`Yes` : t`No`}
+      </TableCell>
+      <TableCell align="right">
+        <IconChevronRight
+          size={theme.icon.size.md}
+          color={theme.font.color.tertiary}
+        />
+      </TableCell>
+    </TableRow>
   );
 };
