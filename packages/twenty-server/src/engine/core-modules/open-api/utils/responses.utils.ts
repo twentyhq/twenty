@@ -32,14 +32,8 @@ export const getFindManyResponse200 = (
               type: 'object',
               properties: {
                 hasNextPage: { type: 'boolean' },
-                startCursor: {
-                  type: 'string',
-                  format: 'uuid',
-                },
-                endCursor: {
-                  type: 'string',
-                  format: 'uuid',
-                },
+                startCursor: { type: 'string' },
+                endCursor: { type: 'string' },
               },
             },
             ...(!fromMetadata && {
@@ -414,14 +408,8 @@ export const getFindDuplicatesResponse200 = (
                     type: 'object',
                     properties: {
                       hasNextPage: { type: 'boolean' },
-                      startCursor: {
-                        type: 'string',
-                        format: 'uuid',
-                      },
-                      endCursor: {
-                        type: 'string',
-                        format: 'uuid',
-                      },
+                      startCursor: { type: 'string' },
+                      endCursor: { type: 'string' },
                     },
                   },
                   [`${item.nameSingular}Duplicates`]: {
