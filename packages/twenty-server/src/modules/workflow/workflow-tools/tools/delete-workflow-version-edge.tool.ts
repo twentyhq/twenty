@@ -12,10 +12,8 @@ const deleteWorkflowVersionEdgeSchema = z.object({
     .uuid()
     .describe('The UUID of the workflow version'),
   source: z
-    .string()
-    .describe(
-      'The ID of the source step (UUID, or "trigger" for the trigger step)',
-    ),
+    .union([z.literal('trigger'), z.string().uuid()])
+    .describe('The source step: "trigger" or a step UUID'),
   target: z.string().uuid().describe('The UUID of the target step'),
   sourceConnectionOptions: z
     .object({

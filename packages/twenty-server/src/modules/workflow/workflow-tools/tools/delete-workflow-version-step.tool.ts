@@ -10,10 +10,7 @@ const deleteWorkflowVersionStepSchema = z.object({
     .string()
     .uuid()
     .describe('The UUID of the workflow version containing the step'),
-  stepId: z
-    .string()
-    .uuid()
-    .describe('The UUID of the step to delete'),
+  stepId: z.string().uuid().describe('The UUID of the step to delete'),
 });
 
 type DeleteWorkflowVersionStepInput = z.infer<
