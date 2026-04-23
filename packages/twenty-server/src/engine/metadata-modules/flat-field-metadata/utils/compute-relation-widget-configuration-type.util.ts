@@ -3,7 +3,10 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 
-const RELATION_NAME_TO_WIDGET_CONFIGURATION_TYPE: Record<string, WidgetConfigurationType> = {
+const RELATION_NAME_TO_WIDGET_CONFIGURATION_TYPE: Record<
+  string,
+  WidgetConfigurationType
+> = {
   attachments: WidgetConfigurationType.FILES,
   taskTargets: WidgetConfigurationType.TASKS,
   noteTargets: WidgetConfigurationType.NOTES,
@@ -17,7 +20,9 @@ export const computeRelationWidgetConfigurationType = ({
 }: {
   relationTargetFieldMetadataName: string;
 }): WidgetConfigurationType | undefined => {
-  return RELATION_NAME_TO_WIDGET_CONFIGURATION_TYPE[relationTargetFieldMetadataName];
+  return RELATION_NAME_TO_WIDGET_CONFIGURATION_TYPE[
+    relationTargetFieldMetadataName
+  ];
 };
 
 export const isRelationFieldWithDefaultPageLayoutWidget = ({
@@ -27,9 +32,7 @@ export const isRelationFieldWithDefaultPageLayoutWidget = ({
   fieldMetadataType: FieldMetadataType;
   name: string;
 }): boolean => {
-  if (
-    fieldMetadataType !== FieldMetadataType.RELATION
-  ) {
+  if (fieldMetadataType !== FieldMetadataType.RELATION) {
     return false;
   }
 

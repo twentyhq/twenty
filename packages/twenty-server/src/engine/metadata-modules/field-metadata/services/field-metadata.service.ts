@@ -25,7 +25,10 @@ import { fromCreateFieldInputToFlatFieldMetadatasToCreate } from 'src/engine/met
 import { fromDeleteFieldInputToFlatFieldMetadatasToDelete } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-delete-field-input-to-flat-field-metadatas-to-delete.util';
 import { fromUpdateFieldInputToFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-update-field-input-to-flat-field-metadata.util';
 import { throwOnFieldInputTranspilationsError } from 'src/engine/metadata-modules/flat-field-metadata/utils/throw-on-field-input-transpilations-error.util';
-import { computeRelationWidgetConfigurationType, isRelationFieldWithDefaultPageLayoutWidget } from 'src/engine/metadata-modules/flat-field-metadata/utils/compute-relation-widget-configuration-type.util';
+import {
+  computeRelationWidgetConfigurationType,
+  isRelationFieldWithDefaultPageLayoutWidget,
+} from 'src/engine/metadata-modules/flat-field-metadata/utils/compute-relation-widget-configuration-type.util';
 import { computeFlatViewFieldsFromFieldsWidgets } from 'src/engine/metadata-modules/flat-view-field/utils/compute-flat-view-fields-from-fields-widgets.util';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { type FlatPageLayoutTab } from 'src/engine/metadata-modules/flat-page-layout-tab/types/flat-page-layout-tab.type';
@@ -157,19 +160,24 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
 
     const deletedFlatFieldMetadataObjectMetadataId =
       deletedFlatFieldMetadata.objectMetadataId;
-    const deletedRelationWidgetConfigurationType = computeRelationWidgetConfigurationType({
-      relationTargetFieldMetadataName: deletedFlatFieldMetadata.name,
-    });
+    const deletedRelationWidgetConfigurationType =
+      computeRelationWidgetConfigurationType({
+        relationTargetFieldMetadataName: deletedFlatFieldMetadata.name,
+      });
 
-    const isRelationWithDefaultWidget = isRelationFieldWithDefaultPageLayoutWidget({
-      fieldMetadataType: deletedFlatFieldMetadata.type,
-      name: deletedFlatFieldMetadata.name,
-    });
+    const isRelationWithDefaultWidget =
+      isRelationFieldWithDefaultPageLayoutWidget({
+        fieldMetadataType: deletedFlatFieldMetadata.type,
+        name: deletedFlatFieldMetadata.name,
+      });
 
     let relationPageLayoutWidgetsToDelete: FlatPageLayoutWidget[] = [];
     let relationPageLayoutTabsToDelete: FlatPageLayoutTab[] = [];
 
-    if (isRelationWithDefaultWidget && isDefined(deletedRelationWidgetConfigurationType)) {
+    if (
+      isRelationWithDefaultWidget &&
+      isDefined(deletedRelationWidgetConfigurationType)
+    ) {
       relationPageLayoutWidgetsToDelete = Object.values(
         existingFlatPageLayoutWidgetMaps.byUniversalIdentifier,
       )
@@ -177,7 +185,8 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         .filter(
           (widget) =>
             !isDefined(widget.deletedAt) &&
-            widget.objectMetadataId === deletedFlatFieldMetadataObjectMetadataId &&
+            widget.objectMetadataId ===
+              deletedFlatFieldMetadataObjectMetadataId &&
             widget.configuration?.configurationType ===
               deletedRelationWidgetConfigurationType,
         );
