@@ -6,8 +6,11 @@ import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/wo
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { getRecordDisplayName } from 'src/engine/core-modules/record-crud/utils/get-record-display-name.util';
 import { getRecordImageIdentifier } from 'src/engine/core-modules/record-crud/utils/get-record-image-identifier.util';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { RecordIdentifierDTO } from 'src/engine/metadata-modules/navigation-menu-item/dtos/record-identifier.dto';
 import { getMinimalSelectForRecordIdentifier } from 'src/engine/metadata-modules/navigation-menu-item/utils/get-minimal-select-for-record-identifier.util';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
@@ -35,6 +38,35 @@ export class NavigationMenuItemRecordIdentifierService {
     workspaceId: string;
     authContext?: WorkspaceAuthContext;
   }): Promise<RecordIdentifierDTO | null> {
+    const resultMap = await this.resolveRecordIdentifiersBatch({
+      items: [{ targetRecordId, targetObjectMetadataId }],
+      workspaceId,
+      authContext,
+    });
+
+    return resultMap.get(targetRecordId) ?? null;
+  }
+
+  // Batches record identifier resolution by grouping records per object type,
+  // issuing one WHERE id IN (...) query per object type instead of N individual queries.
+  async resolveRecordIdentifiersBatch({
+    items,
+    workspaceId,
+    authContext,
+  }: {
+    items: Array<{
+      targetRecordId: string;
+      targetObjectMetadataId: string;
+    }>;
+    workspaceId: string;
+    authContext?: WorkspaceAuthContext;
+  }): Promise<Map<string, RecordIdentifierDTO>> {
+    const resultMap = new Map<string, RecordIdentifierDTO>();
+
+    if (items.length === 0) {
+      return resultMap;
+    }
+
     const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -43,19 +75,24 @@ export class NavigationMenuItemRecordIdentifierService {
         },
       );
 
-    const objectMetadata = findFlatEntityByIdInFlatEntityMaps({
-      flatEntityId: targetObjectMetadataId,
-      flatEntityMaps: flatObjectMetadataMaps,
-    });
+    const itemsByObjectMetadataId = new Map<
+      string,
+      string[]
+    >();
 
-    if (!isDefined(objectMetadata)) {
-      return null;
+    for (const item of items) {
+      const existing = itemsByObjectMetadataId.get(
+        item.targetObjectMetadataId,
+      );
+
+      if (isDefined(existing)) {
+        existing.push(item.targetRecordId);
+      } else {
+        itemsByObjectMetadataId.set(item.targetObjectMetadataId, [
+          item.targetRecordId,
+        ]);
+      }
     }
-
-    const minimalSelectColumns = getMinimalSelectForRecordIdentifier({
-      flatObjectMetadata: objectMetadata,
-      flatFieldMetadataMaps,
-    });
 
     const resolvedAuthContext: WorkspaceAuthContext =
       authContext ??
@@ -64,7 +101,65 @@ export class NavigationMenuItemRecordIdentifierService {
         workspace: { id: workspaceId },
       } as WorkspaceAuthContext);
 
-    const record =
+    await Promise.all(
+      Array.from(itemsByObjectMetadataId.entries()).map(
+        async ([objectMetadataId, recordIds]) => {
+          const objectMetadata = findFlatEntityByIdInFlatEntityMaps({
+            flatEntityId: objectMetadataId,
+            flatEntityMaps: flatObjectMetadataMaps,
+          });
+
+          if (!isDefined(objectMetadata)) {
+            return;
+          }
+
+          const records = await this.fetchRecordsByIds({
+            recordIds,
+            objectMetadata,
+            flatObjectMetadataMaps,
+            flatFieldMetadataMaps,
+            workspaceId,
+            authContext: resolvedAuthContext,
+          });
+
+          for (const record of records) {
+            const dto = this.buildRecordIdentifierDto({
+              record,
+              objectMetadata,
+              flatFieldMetadataMaps,
+              workspaceId,
+            });
+
+            resultMap.set(record.id as string, dto);
+          }
+        },
+      ),
+    );
+
+    return resultMap;
+  }
+
+  private async fetchRecordsByIds({
+    recordIds,
+    objectMetadata,
+    flatObjectMetadataMaps,
+    flatFieldMetadataMaps,
+    workspaceId,
+    authContext,
+  }: {
+    recordIds: string[];
+    objectMetadata: FlatObjectMetadata;
+    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
+    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+    workspaceId: string;
+    authContext: WorkspaceAuthContext;
+  }): Promise<Record<string, unknown>[]> {
+    const minimalSelectColumns = getMinimalSelectForRecordIdentifier({
+      flatObjectMetadata: objectMetadata,
+      flatFieldMetadataMaps,
+    });
+
+    const rawResults =
       await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
         async () => {
           const context = getWorkspaceContext();
@@ -75,14 +170,15 @@ export class NavigationMenuItemRecordIdentifierService {
           });
 
           if (!rolePermissionConfig) {
-            return null;
+            return [];
           }
 
-          const repository = await this.globalWorkspaceOrmManager.getRepository(
-            workspaceId,
-            objectMetadata.nameSingular,
-            rolePermissionConfig,
-          );
+          const repository =
+            await this.globalWorkspaceOrmManager.getRepository(
+              workspaceId,
+              objectMetadata.nameSingular,
+              rolePermissionConfig,
+            );
 
           const alias = objectMetadata.nameSingular;
           const queryBuilder = repository.createQueryBuilder(alias);
@@ -93,28 +189,38 @@ export class NavigationMenuItemRecordIdentifierService {
             queryBuilder.addSelect(`"${alias}"."${column}"`, column);
           }
 
-          const rawResult = await queryBuilder
-            .where(`${alias}.id = :id`, { id: targetRecordId })
-            .getRawOne();
-
-          if (!isDefined(rawResult)) {
-            return null;
-          }
-
-          return formatResult<Record<string, unknown>>(
-            rawResult,
-            objectMetadata,
-            flatObjectMetadataMaps,
-            flatFieldMetadataMaps,
-          );
+          return await queryBuilder
+            .where(`${alias}.id IN (:...ids)`, { ids: recordIds })
+            .getRawMany();
         },
-        resolvedAuthContext,
+        authContext,
       );
 
-    if (!isDefined(record)) {
-      return null;
+    if (!isDefined(rawResults) || rawResults.length === 0) {
+      return [];
     }
 
+    return rawResults.map((rawResult) =>
+      formatResult<Record<string, unknown>>(
+        rawResult,
+        objectMetadata,
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+      ),
+    );
+  }
+
+  private buildRecordIdentifierDto({
+    record,
+    objectMetadata,
+    flatFieldMetadataMaps,
+    workspaceId,
+  }: {
+    record: Record<string, unknown>;
+    objectMetadata: FlatObjectMetadata;
+    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+    workspaceId: string;
+  }): RecordIdentifierDTO {
     const labelIdentifier = getRecordDisplayName(
       record,
       objectMetadata,

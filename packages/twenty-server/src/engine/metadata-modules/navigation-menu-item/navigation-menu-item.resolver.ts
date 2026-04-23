@@ -47,10 +47,28 @@ export class NavigationMenuItemResolver {
     @AuthUserWorkspaceId({ allowUndefined: true })
     userWorkspaceId: string | undefined,
   ): Promise<NavigationMenuItemDTO[]> {
-    return await this.navigationMenuItemService.findAll({
+    const items = await this.navigationMenuItemService.findAll({
       workspaceId: workspace.id,
       userWorkspaceId,
     });
+
+    const authContext = getWorkspaceAuthContext();
+
+    const recordIdentifierMap =
+      await this.navigationMenuItemService.findTargetRecordsBatch({
+        navigationMenuItems: items,
+        workspaceId: workspace.id,
+        authContext,
+      });
+
+    for (const item of items) {
+      if (isDefined(item.targetRecordId)) {
+        item.targetRecordIdentifier =
+          recordIdentifierMap.get(item.targetRecordId) ?? null;
+      }
+    }
+
+    return items;
   }
 
   @Query(() => NavigationMenuItemDTO, { nullable: true })
@@ -181,11 +199,18 @@ export class NavigationMenuItemResolver {
     });
   }
 
+  // Returns the pre-populated value from batch resolution when available,
+  // falling back to a single-record query for non-batched code paths
+  // (e.g. single-item queries like navigationMenuItem).
   @ResolveField(() => RecordIdentifierDTO, { nullable: true })
   async targetRecordIdentifier(
     @Parent() navigationMenuItem: NavigationMenuItemDTO,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<RecordIdentifierDTO | null> {
+    if (isDefined(navigationMenuItem.targetRecordIdentifier)) {
+      return navigationMenuItem.targetRecordIdentifier;
+    }
+
     if (
       !isDefined(navigationMenuItem.targetRecordId) ||
       !isDefined(navigationMenuItem.targetObjectMetadataId)

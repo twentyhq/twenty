@@ -622,4 +622,44 @@ export class NavigationMenuItemService {
       throw error;
     }
   }
+
+  async findTargetRecordsBatch({
+    navigationMenuItems,
+    workspaceId,
+    authContext,
+  }: {
+    navigationMenuItems: NavigationMenuItemDTO[];
+    workspaceId: string;
+    authContext: WorkspaceAuthContext;
+  }): Promise<Map<string, RecordIdentifierDTO>> {
+    const items = navigationMenuItems
+      .filter(
+        (item) =>
+          isDefined(item.targetRecordId) &&
+          isDefined(item.targetObjectMetadataId),
+      )
+      .map((item) => ({
+        targetRecordId: item.targetRecordId!,
+        targetObjectMetadataId: item.targetObjectMetadataId!,
+      }));
+
+    if (items.length === 0) {
+      return new Map();
+    }
+
+    try {
+      return await this.navigationMenuItemRecordIdentifierService.resolveRecordIdentifiersBatch(
+        {
+          items,
+          workspaceId,
+          authContext,
+        },
+      );
+    } catch (error: unknown) {
+      if (error instanceof PermissionsException) {
+        return new Map();
+      }
+      throw error;
+    }
+  }
 }
