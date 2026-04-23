@@ -116,10 +116,10 @@ export default async function ProductPage() {
       <Signoff.Root
         backgroundColor={theme.colors.secondary.background[5]}
         color={theme.colors.primary.text[100]}
-        page={Pages.Partners}
+        page={Pages.Product}
       >
-        <Signoff.Heading page={Pages.Partners} segments={SIGNOFF_DATA.heading} />
-        <Signoff.Body body={SIGNOFF_DATA.body} page={Pages.Partners} />
+        <Signoff.Heading page={Pages.Product} segments={SIGNOFF_DATA.heading} />
+        <Signoff.Body body={SIGNOFF_DATA.body} page={Pages.Product} />
         <Signoff.Cta>
           <LinkButton
             color="secondary"

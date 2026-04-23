@@ -33,8 +33,24 @@
         "command": "npx next start"
       }
     },
-    "lint": {},
-    "lint:diff-with-main": {},
+    "check-boundaries": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "inputs": [
+        "{projectRoot}/src/**/*",
+        "{projectRoot}/scripts/check-boundaries.mjs"
+      ],
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "node scripts/check-boundaries.mjs"
+      }
+    },
+    "lint": {
+      "dependsOn": ["check-boundaries", "^build", "twenty-oxlint-rules:build"]
+    },
+    "lint:diff-with-main": {
+      "dependsOn": ["check-boundaries"]
+    },
     "typecheck": {},
     "test": {
       "executor": "@nx/jest:jest",

@@ -1,11 +1,18 @@
 import type { MetadataRoute } from 'next';
 
 import { CASE_STUDY_CATALOG_ENTRIES } from '@/app/customers/case-study-catalog.data';
-import { listBlogPostSitemapEntries } from '@/lib/blog';
 import { getSiteUrl } from '@/lib/seo';
 
 const SITE_URL = getSiteUrl();
 
+/**
+ * The sitemap intentionally omits `/blog` and `/blog/[slug]` while the blog
+ * route surface still returns `notFound()` (see `app/(blog)/blog/page.tsx`).
+ * Advertising URLs that 404 to crawlers wastes crawl budget and harms SEO.
+ *
+ * When the blog launches, add `/blog` to STATIC_ROUTES below and re-enable
+ * `listBlogPostSitemapEntries` from `@/lib/blog`.
+ */
 const STATIC_ROUTES: ReadonlyArray<{
   path: string;
   changeFrequency: MetadataRoute.Sitemap[number]['changeFrequency'];
@@ -18,7 +25,6 @@ const STATIC_ROUTES: ReadonlyArray<{
   { path: '/partners', changeFrequency: 'monthly', priority: 0.7 },
   { path: '/releases', changeFrequency: 'weekly', priority: 0.7 },
   { path: '/customers', changeFrequency: 'monthly', priority: 0.7 },
-  { path: '/blog', changeFrequency: 'weekly', priority: 0.6 },
   { path: '/privacy-policy', changeFrequency: 'yearly', priority: 0.3 },
   { path: '/terms', changeFrequency: 'yearly', priority: 0.3 },
 ];
@@ -38,7 +44,5 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.5,
   }));
 
-  const blogEntries = listBlogPostSitemapEntries(SITE_URL);
-
-  return [...staticEntries, ...caseStudyEntries, ...blogEntries];
+  return [...staticEntries, ...caseStudyEntries];
 }
