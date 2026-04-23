@@ -3,10 +3,8 @@ import { Injectable, Logger, type OnModuleInit } from '@nestjs/common';
 import { FileStorageDriverFactory } from 'src/engine/core-modules/file-storage/file-storage-driver.factory';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import defaultAiProviders from 'src/engine/metadata-modules/ai/ai-models/ai-providers.json';
-import {
-  aiProvidersConfigSchema,
-  type AiProvidersConfig,
-} from 'src/engine/metadata-modules/ai/ai-models/types/ai-providers-config.type';
+import { aiProvidersConfigSchema } from 'src/engine/metadata-modules/ai/ai-models/types/ai-providers-config.schema';
+import { type AiProvidersConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-providers-config.type';
 import { normalizeAiProviders } from 'src/engine/metadata-modules/ai/ai-models/utils/normalize-ai-providers.util';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 

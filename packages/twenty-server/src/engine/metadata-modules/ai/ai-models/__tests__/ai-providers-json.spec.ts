@@ -1,8 +1,6 @@
 import defaultAiProviders from 'src/engine/metadata-modules/ai/ai-models/ai-providers.json';
-import {
-  aiProvidersConfigSchema,
-  type AiProvidersConfig,
-} from 'src/engine/metadata-modules/ai/ai-models/types/ai-providers-config.type';
+import { aiProvidersConfigSchema } from 'src/engine/metadata-modules/ai/ai-models/types/ai-providers-config.schema';
+import { type AiProvidersConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-providers-config.type';
 import { buildCompositeModelId } from 'src/engine/metadata-modules/ai/ai-models/utils/composite-model-id.util';
 import { normalizeAiProviders } from 'src/engine/metadata-modules/ai/ai-models/utils/normalize-ai-providers.util';
 

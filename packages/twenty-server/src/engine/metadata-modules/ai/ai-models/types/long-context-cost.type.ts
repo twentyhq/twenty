@@ -1,11 +1,5 @@
 import { z } from 'zod';
 
-export const longContextCostSchema = z.object({
-  inputCostPerMillionTokens: z.number(),
-  outputCostPerMillionTokens: z.number(),
-  cachedInputCostPerMillionTokens: z.number().optional(),
-  cacheCreationCostPerMillionTokens: z.number().optional(),
-  thresholdTokens: z.number(),
-});
+import { longContextCostSchema } from 'src/engine/metadata-modules/ai/ai-models/types/long-context-cost.schema';
 
 export type LongContextCost = z.infer<typeof longContextCostSchema>;

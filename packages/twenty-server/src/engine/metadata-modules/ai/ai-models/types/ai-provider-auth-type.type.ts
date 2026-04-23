@@ -1,5 +1,5 @@
 import { z } from 'zod';
 
-export const aiProviderAuthTypeSchema = z.enum(['key', 'credentials', 'role']);
+import { aiProviderAuthTypeSchema } from 'src/engine/metadata-modules/ai/ai-models/types/ai-provider-auth-type.schema';
 
 export type AiProviderAuthType = z.infer<typeof aiProviderAuthTypeSchema>;
