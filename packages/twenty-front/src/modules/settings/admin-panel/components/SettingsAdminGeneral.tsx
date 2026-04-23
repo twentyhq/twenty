@@ -1,9 +1,9 @@
 import { canManageFeatureFlagsState } from '@/client-config/states/canManageFeatureFlagsState';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
+import { SettingsAdminSectionSkeletonLoader } from '@/settings/admin-panel/components/SettingsAdminSectionSkeletonLoader';
 import { SettingsAdminVersionContainer } from '@/settings/admin-panel/components/SettingsAdminVersionContainer';
 import { ADMIN_PANEL_RECENT_USERS } from '@/settings/admin-panel/graphql/queries/adminPanelRecentUsers';
 import { ADMIN_PANEL_TOP_WORKSPACES } from '@/settings/admin-panel/graphql/queries/adminPanelTopWorkspaces';
-import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableBody } from '@/ui/layout/table/components/TableBody';
@@ -105,7 +105,7 @@ export const SettingsAdminGeneral = () => {
               fullWidth
             />
             {isLoadingUsers ? (
-              <SettingsSkeletonLoader />
+              <SettingsAdminSectionSkeletonLoader />
             ) : recentUsers.length === 0 ? (
               <StyledEmptyState>
                 {t`No users found matching your search criteria.`}
@@ -154,7 +154,7 @@ export const SettingsAdminGeneral = () => {
               fullWidth
             />
             {isLoadingWorkspaces ? (
-              <SettingsSkeletonLoader />
+              <SettingsAdminSectionSkeletonLoader />
             ) : topWorkspaces.length === 0 ? (
               <StyledEmptyState>
                 {t`No workspaces found matching your search criteria.`}

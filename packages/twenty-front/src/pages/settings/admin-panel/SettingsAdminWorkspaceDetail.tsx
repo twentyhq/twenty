@@ -10,6 +10,7 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { canManageFeatureFlagsState } from '@/client-config/states/canManageFeatureFlagsState';
 import { AI_ADMIN_PATH } from '@/settings/admin-panel/ai/constants/AiAdminPath';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
+import { SettingsAdminSectionSkeletonLoader } from '@/settings/admin-panel/components/SettingsAdminSectionSkeletonLoader';
 import { SettingsAdminWorkspaceContent } from '@/settings/admin-panel/components/SettingsAdminWorkspaceContent';
 import { GET_ADMIN_WORKSPACE_CHAT_THREADS } from '@/settings/admin-panel/graphql/queries/getAdminWorkspaceChatThreads';
 import { WORKSPACE_LOOKUP_ADMIN_PANEL } from '@/settings/admin-panel/graphql/queries/workspaceLookupAdminPanel';
@@ -304,7 +305,7 @@ export const SettingsAdminWorkspaceDetail = () => {
               description={t`AI chat threads for this workspace`}
             />
             {isLoadingThreads ? (
-              <SettingsSkeletonLoader />
+              <SettingsAdminSectionSkeletonLoader />
             ) : threads.length === 0 ? (
               <Card rounded>
                 <TableRow gridTemplateColumns="1fr">
