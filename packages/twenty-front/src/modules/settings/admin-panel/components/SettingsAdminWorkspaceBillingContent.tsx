@@ -67,6 +67,12 @@ const StyledMono = styled.span`
   font-family: ${themeCssVariables.code.font.family};
 `;
 
+const StyledItemValue = styled.div`
+  align-items: center;
+  display: flex;
+  gap: ${themeCssVariables.spacing[2]};
+`;
+
 const STATUS_COLORS: Record<SubscriptionStatus, ThemeColor> = {
   [SubscriptionStatus.Active]: 'green',
   [SubscriptionStatus.Trialing]: 'blue',
@@ -317,7 +323,14 @@ export const SettingsAdminWorkspaceBillingContent = ({
                 ? IconCoins
                 : IconBox,
           label: item.productName || t`Unnamed product`,
-          value: formatItemValue(item),
+          value: (
+            <StyledItemValue>
+              <span>{formatItemValue(item)}</span>
+              {isDefined(item.productKey) && (
+                <Tag color="gray" text={item.productKey} />
+              )}
+            </StyledItemValue>
+          ),
         })),
       ]
     : [];
