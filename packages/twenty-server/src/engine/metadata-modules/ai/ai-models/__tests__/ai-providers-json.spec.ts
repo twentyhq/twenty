@@ -1,12 +1,12 @@
 import defaultAiProviders from 'src/engine/metadata-modules/ai/ai-models/ai-providers.json';
-import { aiProvidersConfigSchema } from 'src/engine/metadata-modules/ai/ai-models/types/ai-providers-config.type';
-import { type AiProvidersConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-providers-config.type';
+import {
+  aiProvidersConfigSchema,
+  type AiProvidersConfig,
+} from 'src/engine/metadata-modules/ai/ai-models/types/ai-providers-config.type';
 import { buildCompositeModelId } from 'src/engine/metadata-modules/ai/ai-models/utils/composite-model-id.util';
 import { normalizeAiProviders } from 'src/engine/metadata-modules/ai/ai-models/utils/normalize-ai-providers.util';
 
-const PROVIDERS = normalizeAiProviders(
-  defaultAiProviders as AiProvidersConfig,
-);
+const PROVIDERS = normalizeAiProviders(defaultAiProviders as AiProvidersConfig);
 
 const EXPECTED_PROVIDER_NAMES = [
   'openai',
@@ -18,7 +18,9 @@ const EXPECTED_PROVIDER_NAMES = [
 
 describe('ai-providers.json integrity', () => {
   it('should pass Zod schema validation', () => {
-    expect(() => aiProvidersConfigSchema.parse(defaultAiProviders)).not.toThrow();
+    expect(() =>
+      aiProvidersConfigSchema.parse(defaultAiProviders),
+    ).not.toThrow();
   });
 
   it('should have at least one model per expected provider', () => {
