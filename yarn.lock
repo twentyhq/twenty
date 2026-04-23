@@ -126,14 +126,14 @@ __metadata:
   linkType: hard
 
 "@ai-sdk/openai@npm:^3.0.30":
-  version: 3.0.34
-  resolution: "@ai-sdk/openai@npm:3.0.34"
+  version: 3.0.53
+  resolution: "@ai-sdk/openai@npm:3.0.53"
   dependencies:
     "@ai-sdk/provider": "npm:3.0.8"
-    "@ai-sdk/provider-utils": "npm:4.0.15"
+    "@ai-sdk/provider-utils": "npm:4.0.23"
   peerDependencies:
     zod: ^3.25.76 || ^4.1.8
-  checksum: 10c0/c490681ac4552b53ba51efcbfd0cf2f867ad215b85e3bb2818a3133fdf89ebb27f9d336115887bf9747e0bffe27d8563589920771e839aa46b49abf8a3c85d5b
+  checksum: 10c0/36b815de9916006d27432fadf4d071cfab1fc89958ebba2ca881ac63101fc378010fefec85837ffaef3e4a95fe1815399e635d9bb9ac9c0e3c8f8a46e2204b15
   languageName: node
   linkType: hard
 
