@@ -42,8 +42,10 @@ export const RecordTableSettingsFieldVisibility = ({
   const { toggleRecordTableWidgetFieldVisibility } =
     useToggleRecordTableWidgetFieldVisibility({ pageLayoutId, widgetId });
 
-  const { reorderRecordTableWidgetFields } =
-    useReorderRecordTableWidgetFields({ pageLayoutId, widgetId });
+  const { reorderRecordTableWidgetFields } = useReorderRecordTableWidgetFields({
+    pageLayoutId,
+    widgetId,
+  });
 
   const { getIcon } = useIcons();
 
