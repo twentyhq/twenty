@@ -1,29 +1,26 @@
-import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
-import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
-import { type FlatViewField } from '@/metadata-store/types/FlatViewField';
+import { recordTableWidgetViewDraftComponentState } from '@/page-layout/states/recordTableWidgetViewDraftComponentState';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 
-export const useRemoveDraftViewForRecordTableWidget = () => {
-  const { removeFromDraft, applyChanges } = useUpdateMetadataStoreDraft();
+export const useRemoveDraftViewForRecordTableWidget = (
+  pageLayoutId: string,
+) => {
+  const recordTableWidgetViewDraftState = useAtomComponentStateCallbackState(
+    recordTableWidgetViewDraftComponentState,
+    pageLayoutId,
+  );
+
   const store = useStore();
 
   const removeDraftViewForRecordTableWidget = useCallback(
-    (viewId: string) => {
-      const allViewFields = store.get(
-        metadataStoreState.atomFamily('viewFields'),
-      ).current as FlatViewField[];
-
-      const viewFieldIdsToRemove = allViewFields
-        .filter((field) => field.viewId === viewId)
-        .map((field) => field.id);
-
-      removeFromDraft({ key: 'viewFields', itemIds: viewFieldIdsToRemove });
-      removeFromDraft({ key: 'views', itemIds: [viewId] });
-
-      applyChanges();
+    (widgetId: string) => {
+      store.set(recordTableWidgetViewDraftState, (prev) => {
+        const { [widgetId]: _, ...rest } = prev;
+        return rest;
+      });
     },
-    [applyChanges, removeFromDraft, store],
+    [store, recordTableWidgetViewDraftState],
   );
 
   return { removeDraftViewForRecordTableWidget };

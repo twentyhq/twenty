@@ -1,19 +1,24 @@
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { useLoadRecordIndexStates } from '@/object-record/record-index/hooks/useLoadRecordIndexStates';
 import { lastLoadedRecordTableWidgetViewIdComponentState } from '@/object-record/record-table-widget/states/lastLoadedRecordTableWidgetViewIdComponentState';
+import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
+import { recordTableWidgetViewDraftComponentState } from '@/page-layout/states/recordTableWidgetViewDraftComponentState';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { viewFromViewIdFamilySelector } from '@/views/states/selectors/viewFromViewIdFamilySelector';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 type RecordTableWidgetViewLoadEffectProps = {
   viewId: string;
+  widgetId: string;
   objectMetadataItem: EnrichedObjectMetadataItem;
 };
 
 export const RecordTableWidgetViewLoadEffect = ({
   viewId,
+  widgetId,
   objectMetadataItem,
 }: RecordTableWidgetViewLoadEffectProps) => {
   const { loadRecordIndexStates } = useLoadRecordIndexStates();
@@ -23,18 +28,41 @@ export const RecordTableWidgetViewLoadEffect = ({
     setLastLoadedRecordTableWidgetViewId,
   ] = useAtomComponentState(lastLoadedRecordTableWidgetViewIdComponentState);
 
-  const viewFromViewId = useAtomFamilySelectorValue(
-    viewFromViewIdFamilySelector,
-    {
-      viewId,
-    },
+  const isPageLayoutInEditMode = useIsPageLayoutInEditMode();
+
+  const recordTableWidgetViewDraft = useAtomComponentStateValue(
+    recordTableWidgetViewDraftComponentState,
   );
 
+  const draftSnapshot = recordTableWidgetViewDraft[widgetId];
+
+  const viewFromDraft = useMemo(
+    () =>
+      isPageLayoutInEditMode && isDefined(draftSnapshot)
+        ? {
+            ...draftSnapshot.view,
+            viewFields: draftSnapshot.viewFields,
+            viewFilters: [],
+            viewSorts: [],
+            viewGroups: [],
+            viewFilterGroups: [],
+          }
+        : undefined,
+    [isPageLayoutInEditMode, draftSnapshot],
+  );
+
+  const viewFromSelector = useAtomFamilySelectorValue(
+    viewFromViewIdFamilySelector,
+    { viewId },
+  );
+
+  const currentView = viewFromDraft ?? viewFromSelector;
+
   const viewHasFields =
-    isDefined(viewFromViewId) && viewFromViewId.viewFields.length > 0;
+    isDefined(currentView) && currentView.viewFields.length > 0;
 
   useEffect(() => {
-    if (!isDefined(viewFromViewId)) {
+    if (!isDefined(currentView)) {
       return;
     }
 
@@ -50,7 +78,7 @@ export const RecordTableWidgetViewLoadEffect = ({
       return;
     }
 
-    loadRecordIndexStates(viewFromViewId, objectMetadataItem);
+    loadRecordIndexStates(currentView, objectMetadataItem);
 
     setLastLoadedRecordTableWidgetViewId({
       viewId,
@@ -60,7 +88,7 @@ export const RecordTableWidgetViewLoadEffect = ({
     viewId,
     lastLoadedRecordTableWidgetViewId,
     setLastLoadedRecordTableWidgetViewId,
-    viewFromViewId,
+    currentView,
     viewHasFields,
     objectMetadataItem,
     loadRecordIndexStates,

@@ -9,20 +9,17 @@ import { fieldsWidgetUngroupedFieldsPersistedComponentState } from '@/page-layou
 import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutPersistedComponentState } from '@/page-layout/states/pageLayoutPersistedComponentState';
+import { recordTableWidgetViewDraftComponentState } from '@/page-layout/states/recordTableWidgetViewDraftComponentState';
+import { recordTableWidgetViewPersistedComponentState } from '@/page-layout/states/recordTableWidgetViewPersistedComponentState';
 import { type DraftPageLayout } from '@/page-layout/types/DraftPageLayout';
 import { convertPageLayoutToTabLayouts } from '@/page-layout/utils/convertPageLayoutToTabLayouts';
-import { getWidgetConfigurationViewId } from '@/page-layout/utils/getWidgetConfigurationViewId';
-import { useRemoveDraftViewForRecordTableWidget } from '@/page-layout/widgets/record-table/hooks/useRemoveDraftViewForRecordTableWidget';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { WidgetType } from '~/generated-metadata/graphql';
 
 export const useCancelLayoutCustomization = () => {
   const store = useStore();
   const { exitLayoutCustomizationMode } = useExitLayoutCustomizationMode();
-  const { removeDraftViewForRecordTableWidget } =
-    useRemoveDraftViewForRecordTableWidget();
 
   const cancel = useCallback(() => {
     const activePageLayoutIds = store.get(
@@ -30,36 +27,11 @@ export const useCancelLayoutCustomization = () => {
     );
 
     for (const pageLayoutId of activePageLayoutIds) {
-      const draft = store.get(
-        pageLayoutDraftComponentState.atomFamily({
-          instanceId: pageLayoutId,
-        }),
-      );
       const persisted = store.get(
         pageLayoutPersistedComponentState.atomFamily({
           instanceId: pageLayoutId,
         }),
       );
-
-      const persistedWidgetIds = new Set(
-        persisted?.tabs.flatMap((tab) =>
-          tab.widgets.map((widget) => widget.id),
-        ) ?? [],
-      );
-
-      const pendingRecordTableViewIds = draft.tabs
-        .flatMap((tab) => tab.widgets)
-        .filter(
-          (widget) =>
-            widget.type === WidgetType.RECORD_TABLE &&
-            !persistedWidgetIds.has(widget.id),
-        )
-        .map((widget) => getWidgetConfigurationViewId(widget.configuration))
-        .filter(isDefined);
-
-      for (const viewId of pendingRecordTableViewIds) {
-        removeDraftViewForRecordTableWidget(viewId);
-      }
 
       if (isDefined(persisted)) {
         store.set(
@@ -120,10 +92,22 @@ export const useCancelLayoutCustomization = () => {
         }),
         fieldsWidgetEditorModePersisted,
       );
+
+      const recordTableWidgetViewPersisted = store.get(
+        recordTableWidgetViewPersistedComponentState.atomFamily({
+          instanceId: pageLayoutId,
+        }),
+      );
+      store.set(
+        recordTableWidgetViewDraftComponentState.atomFamily({
+          instanceId: pageLayoutId,
+        }),
+        recordTableWidgetViewPersisted,
+      );
     }
 
     exitLayoutCustomizationMode();
-  }, [store, exitLayoutCustomizationMode, removeDraftViewForRecordTableWidget]);
+  }, [store, exitLayoutCustomizationMode]);
 
   return { cancel };
 };

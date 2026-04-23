@@ -1,10 +1,24 @@
-import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
-import { type FlatViewField } from '@/metadata-store/types/FlatViewField';
+import { recordTableWidgetViewDraftComponentState } from '@/page-layout/states/recordTableWidgetViewDraftComponentState';
 import { type RecordTableWidgetViewFieldItem } from '@/page-layout/widgets/record-table/types/RecordTableWidgetViewFieldItem';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
+import { useStore } from 'jotai';
 import { useCallback } from 'react';
 
-export const useReorderRecordTableWidgetFields = () => {
-  const { updateInDraft, applyChanges } = useUpdateMetadataStoreDraft();
+type UseReorderRecordTableWidgetFieldsParams = {
+  pageLayoutId: string;
+  widgetId: string;
+};
+
+export const useReorderRecordTableWidgetFields = ({
+  pageLayoutId,
+  widgetId,
+}: UseReorderRecordTableWidgetFieldsParams) => {
+  const recordTableWidgetViewDraftState = useAtomComponentStateCallbackState(
+    recordTableWidgetViewDraftComponentState,
+    pageLayoutId,
+  );
+
+  const store = useStore();
 
   const reorderRecordTableWidgetFields = useCallback(
     (
@@ -20,19 +34,35 @@ export const useReorderRecordTableWidgetFields = () => {
       const [movedField] = reorderedFields.splice(sourceIndex, 1);
       reorderedFields.splice(destinationIndex, 0, movedField);
 
-      const updates = reorderedFields.map(
-        (fieldItem, index) =>
-          ({
-            id: fieldItem.viewField.id,
-            position: index,
-          }) as FlatViewField,
+      const updatedPositions = new Map(
+        reorderedFields.map((fieldItem, index) => [
+          fieldItem.viewField.id,
+          index,
+        ]),
       );
 
-      updateInDraft('viewFields', updates);
+      store.set(recordTableWidgetViewDraftState, (prev) => {
+        const widgetViewDraft = prev[widgetId];
 
-      applyChanges();
+        if (!widgetViewDraft) {
+          return prev;
+        }
+
+        return {
+          ...prev,
+          [widgetId]: {
+            ...widgetViewDraft,
+            viewFields: widgetViewDraft.viewFields.map((field) => {
+              const newPosition = updatedPositions.get(field.id);
+              return newPosition !== undefined
+                ? { ...field, position: newPosition }
+                : field;
+            }),
+          },
+        };
+      });
     },
-    [applyChanges, updateInDraft],
+    [store, recordTableWidgetViewDraftState, widgetId],
   );
 
   return { reorderRecordTableWidgetFields };

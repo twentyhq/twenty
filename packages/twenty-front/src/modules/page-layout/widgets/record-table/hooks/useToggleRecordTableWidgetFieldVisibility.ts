@@ -1,19 +1,45 @@
-import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
-import { type FlatViewField } from '@/metadata-store/types/FlatViewField';
+import { recordTableWidgetViewDraftComponentState } from '@/page-layout/states/recordTableWidgetViewDraftComponentState';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
+import { useStore } from 'jotai';
 import { useCallback } from 'react';
 
-export const useToggleRecordTableWidgetFieldVisibility = () => {
-  const { updateInDraft, applyChanges } = useUpdateMetadataStoreDraft();
+type UseToggleRecordTableWidgetFieldVisibilityParams = {
+  pageLayoutId: string;
+  widgetId: string;
+};
+
+export const useToggleRecordTableWidgetFieldVisibility = ({
+  pageLayoutId,
+  widgetId,
+}: UseToggleRecordTableWidgetFieldVisibilityParams) => {
+  const recordTableWidgetViewDraftState = useAtomComponentStateCallbackState(
+    recordTableWidgetViewDraftComponentState,
+    pageLayoutId,
+  );
+
+  const store = useStore();
 
   const toggleRecordTableWidgetFieldVisibility = useCallback(
     (viewFieldId: string, isVisible: boolean) => {
-      updateInDraft('viewFields', [
-        { id: viewFieldId, isVisible } as FlatViewField,
-      ]);
+      store.set(recordTableWidgetViewDraftState, (prev) => {
+        const widgetViewDraft = prev[widgetId];
 
-      applyChanges();
+        if (!widgetViewDraft) {
+          return prev;
+        }
+
+        return {
+          ...prev,
+          [widgetId]: {
+            ...widgetViewDraft,
+            viewFields: widgetViewDraft.viewFields.map((field) =>
+              field.id === viewFieldId ? { ...field, isVisible } : field,
+            ),
+          },
+        };
+      });
     },
-    [applyChanges, updateInDraft],
+    [store, recordTableWidgetViewDraftState, widgetId],
   );
 
   return { toggleRecordTableWidgetFieldVisibility };

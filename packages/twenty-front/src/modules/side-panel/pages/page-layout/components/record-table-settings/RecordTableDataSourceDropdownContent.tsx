@@ -51,7 +51,7 @@ export const RecordTableDataSourceDropdownContent = () => {
     useAddDraftViewForRecordTableWidget(pageLayoutId);
 
   const { removeDraftViewForRecordTableWidget } =
-    useRemoveDraftViewForRecordTableWidget();
+    useRemoveDraftViewForRecordTableWidget(pageLayoutId);
 
   const { updatePageLayoutWidget } = useUpdatePageLayoutWidget(pageLayoutId);
 
@@ -77,20 +77,14 @@ export const RecordTableDataSourceDropdownContent = () => {
     getSearchableValues: (item) => [item.labelPlural, item.namePlural],
   });
 
-  const currentViewId =
-    widgetInEditMode?.configuration &&
-    'viewId' in widgetInEditMode.configuration
-      ? (widgetInEditMode.configuration.viewId as string | undefined)
-      : undefined;
-
   const handleSelectSource = (newObjectMetadataItemId: string) => {
     if (currentObjectMetadataItemId === newObjectMetadataItemId) {
       closeDropdown();
       return;
     }
 
-    if (isDefined(currentViewId)) {
-      removeDraftViewForRecordTableWidget(currentViewId);
+    if (isDefined(widgetInEditMode)) {
+      removeDraftViewForRecordTableWidget(widgetInEditMode.id);
     }
 
     updateCurrentWidgetConfig({

@@ -1,11 +1,10 @@
-import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
-import { type FlatViewField } from '@/metadata-store/types/FlatViewField';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutPersistedComponentState } from '@/page-layout/states/pageLayoutPersistedComponentState';
+import { recordTableWidgetViewDraftComponentState } from '@/page-layout/states/recordTableWidgetViewDraftComponentState';
+import { recordTableWidgetViewPersistedComponentState } from '@/page-layout/states/recordTableWidgetViewPersistedComponentState';
 import { getWidgetConfigurationViewId } from '@/page-layout/utils/getWidgetConfigurationViewId';
 import { usePerformViewAPIPersist } from '@/views/hooks/internal/usePerformViewAPIPersist';
 import { usePerformViewFieldAPIPersist } from '@/views/hooks/internal/usePerformViewFieldAPIPersist';
-import { viewsSelector } from '@/views/states/selectors/viewsSelector';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -30,6 +29,12 @@ export const useCreatePendingRecordTableWidgetViews = () => {
         }),
       );
 
+      const recordTableWidgetViewDraft = store.get(
+        recordTableWidgetViewDraftComponentState.atomFamily({
+          instanceId: pageLayoutId,
+        }),
+      );
+
       const persistedRecordTableWidgets = new Map(
         (persisted?.tabs ?? [])
           .flatMap((tab) => tab.widgets)
@@ -48,11 +53,6 @@ export const useCreatePendingRecordTableWidgetViews = () => {
         draftRecordTableWidgets.map((widget) => widget.id),
       );
 
-      const views = store.get(viewsSelector.atom);
-      const allViewFields = store.get(
-        metadataStoreState.atomFamily('viewFields'),
-      ).current as FlatViewField[];
-
       for (const widget of draftRecordTableWidgets) {
         const viewId = getWidgetConfigurationViewId(widget.configuration);
 
@@ -70,11 +70,13 @@ export const useCreatePendingRecordTableWidgetViews = () => {
           await performViewAPIDestroy({ id: persistedViewId });
         }
 
-        const view = views.find((v) => v.id === viewId);
+        const widgetViewDraft = recordTableWidgetViewDraft[widget.id];
 
-        if (!isDefined(view)) {
+        if (!isDefined(widgetViewDraft)) {
           continue;
         }
+
+        const { view } = widgetViewDraft;
 
         const result = await performViewAPICreate(
           {
@@ -100,16 +102,14 @@ export const useCreatePendingRecordTableWidgetViews = () => {
           );
         }
 
-        const viewFieldInputs = allViewFields
-          .filter((field) => field.viewId === viewId)
-          .map((field) => ({
-            id: field.id,
-            viewId: field.viewId,
-            fieldMetadataId: field.fieldMetadataId,
-            position: field.position,
-            size: field.size,
-            isVisible: field.isVisible,
-          }));
+        const viewFieldInputs = widgetViewDraft.viewFields.map((field) => ({
+          id: field.id,
+          viewId: field.viewId,
+          fieldMetadataId: field.fieldMetadataId,
+          position: field.position,
+          size: field.size,
+          isVisible: field.isVisible,
+        }));
 
         if (viewFieldInputs.length > 0) {
           await performViewFieldAPICreate({ inputs: viewFieldInputs });
@@ -121,6 +121,13 @@ export const useCreatePendingRecordTableWidgetViews = () => {
           await performViewAPIDestroy({ id: viewId });
         }
       }
+
+      store.set(
+        recordTableWidgetViewPersistedComponentState.atomFamily({
+          instanceId: pageLayoutId,
+        }),
+        recordTableWidgetViewDraft,
+      );
     },
     [
       performViewAPICreate,

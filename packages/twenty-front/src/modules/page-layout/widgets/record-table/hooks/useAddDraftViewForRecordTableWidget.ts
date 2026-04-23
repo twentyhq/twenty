@@ -1,10 +1,12 @@
-import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
 import { type FlatView } from '@/metadata-store/types/FlatView';
 import { type FlatViewField } from '@/metadata-store/types/FlatViewField';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { useUpdatePageLayoutWidget } from '@/page-layout/hooks/useUpdatePageLayoutWidget';
+import { recordTableWidgetViewDraftComponentState } from '@/page-layout/states/recordTableWidgetViewDraftComponentState';
 import { filterFieldsForRecordTableViewCreation } from '@/page-layout/widgets/record-table/utils/filterFieldsForRecordTableViewCreation';
 import { sortFieldsByRelevanceForRecordTableWidget } from '@/page-layout/widgets/record-table/utils/sortFieldsByRelevanceForRecordTableWidget';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
+import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { v4 } from 'uuid';
 import {
@@ -18,8 +20,14 @@ const DEFAULT_VIEW_FIELD_SIZE = 180;
 const INITIAL_VISIBLE_FIELDS_COUNT_IN_WIDGET = 6;
 
 export const useAddDraftViewForRecordTableWidget = (pageLayoutId: string) => {
-  const { addToDraft, applyChanges } = useUpdateMetadataStoreDraft();
   const { updatePageLayoutWidget } = useUpdatePageLayoutWidget(pageLayoutId);
+
+  const recordTableWidgetViewDraftState = useAtomComponentStateCallbackState(
+    recordTableWidgetViewDraftComponentState,
+    pageLayoutId,
+  );
+
+  const store = useStore();
 
   const addDraftViewForRecordTableWidget = useCallback(
     (widgetId: string, objectMetadataItem: EnrichedObjectMetadataItem) => {
@@ -37,8 +45,6 @@ export const useAddDraftViewForRecordTableWidget = (pageLayoutId: string) => {
         visibility: ViewVisibility.UNLISTED,
         shouldHideEmptyGroups: false,
       };
-
-      addToDraft({ key: 'views', items: [flatView] });
 
       const eligibleFields = objectMetadataItem.fields.filter(
         filterFieldsForRecordTableViewCreation,
@@ -62,9 +68,10 @@ export const useAddDraftViewForRecordTableWidget = (pageLayoutId: string) => {
         }),
       );
 
-      addToDraft({ key: 'viewFields', items: flatViewFields });
-
-      applyChanges();
+      store.set(recordTableWidgetViewDraftState, (prev) => ({
+        ...prev,
+        [widgetId]: { view: flatView, viewFields: flatViewFields },
+      }));
 
       requestAnimationFrame(() => {
         updatePageLayoutWidget(widgetId, {
@@ -75,7 +82,7 @@ export const useAddDraftViewForRecordTableWidget = (pageLayoutId: string) => {
         });
       });
     },
-    [addToDraft, applyChanges, updatePageLayoutWidget],
+    [store, recordTableWidgetViewDraftState, updatePageLayoutWidget],
   );
 
   return { addDraftViewForRecordTableWidget };
