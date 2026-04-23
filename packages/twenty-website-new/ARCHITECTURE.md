@@ -206,10 +206,11 @@ private folders, not section code, so they're fine.
   `_components/`. Don't promote them to `lib/halftone/` until a section
   needs them — the leak goes the other way.
 - `app/halftone/_lib/exporters.ts` is the **only** approved consumer of
-  raw `new THREE.WebGLRenderer(...)` (see §3) and is grandfathered in
-  `KNOWN_VIOLATIONS`. If you add a second consumer, you have to either
-  promote the renderer factory to handle export-resolution renders or
-  add a second `KNOWN_VIOLATIONS` entry — not silently extend the rule.
+  raw `new THREE.WebGLRenderer(...)` (see §3). The two lines that need
+  it carry inline `// boundary-allow-next-line:no-raw-webgl-renderer`
+  directives. If you add a third, prefer promoting the renderer factory
+  to handle export-resolution renders rather than adding a third
+  directive.
 
 ---
 
@@ -297,7 +298,62 @@ GitHub tokens, JWT secrets). Those are documented at the consuming module.
 
 ---
 
-## 8. Cross-browser & memory invariants
+## 8. API surface (`app/api/**`)
+
+Every public POST endpoint in `app/api/**` is unauthed and forwards to a
+third party (a webhook, a payment provider, a calendar). Three classes of
+failure show up the moment one of these endpoints sees production traffic:
+runaway upstream latency pinning serverless functions, oversize bodies
+filling memory, and accidental floods (or low-effort abuse) burning the
+upstream's quota. Each route handler defends against all three using the
+primitives in [`src/lib/api/`](./src/lib/api/):
+
+| Concern               | Primitive                              | Mapping in route handlers                                     |
+| --------------------- | -------------------------------------- | ------------------------------------------------------------- |
+| Upstream hangs        | `fetchWithTimeout`                     | `error: 'timeout'` → 504, `error: 'network'` → 502            |
+| Oversize / wrong body | `readJsonBody`                         | `wrong-content-type` → 415, `too-large` → 413, bad JSON → 400 |
+| Per-IP burst control  | `createRateLimiter` + `getClientIpKey` | denied → 429 with `Retry-After` header                        |
+
+### Conventions
+
+- **Pick the timeout, cap, and rate-limit values at the call site.** They
+  encode product expectations about what a healthy request looks like and
+  belong with the route, not buried in `lib/api/`. The partner-application
+  route is the reference (see `src/app/api/partner-application/route.ts`).
+- **Order matters: validate config → rate-limit → read body → validate
+  body → call upstream.** Rate-limit before reading the body so a
+  rate-limited request can't make us spend cycles parsing it. Validate
+  config first so a misconfigured deployment fails fast and uniformly.
+- **Don't roll your own.** Calling `fetch` from a route handler without a
+  timeout, or `request.json()` without a size guard, will be flagged in
+  review. If you need a primitive that doesn't exist, add it to
+  `lib/api/` with tests.
+
+### Honest scope of the in-memory rate limit
+
+`createRateLimiter` keeps state in module memory. On serverless platforms
+(Vercel, Lambda, …) each warm function instance has its own bucket map,
+so the effective fleet-wide limit is `N × capacity` where `N` is the
+number of warm instances. This is enough to stop accidental floods and
+unsophisticated abuse cheaply and without extra infrastructure. For
+fleet-wide enforcement, swap the storage for a shared KV (the
+`check(key)` shape is intentionally compatible with a `Promise`-returning
+swap-in) or layer a CDN / WAF rule in front. The unit tests for
+`createRateLimiter` document the exact algorithm and edge cases.
+
+### Tested
+
+`lib/api/` ships with unit tests for each primitive
+(`__tests__/{fetch-with-timeout,read-json-body,rate-limit}.test.ts`) and
+the partner-application route has an end-to-end handler test
+(`app/api/partner-application/__tests__/route.test.ts`) covering the
+happy path and every error branch — including the 429 + `Retry-After`
+behaviour. New routes added to `app/api/**` are expected to follow the
+same pattern.
+
+---
+
+## 9. Cross-browser & memory invariants
 
 Some implementation details that have caused real bugs and must not regress.
 
