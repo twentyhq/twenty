@@ -1,18 +1,12 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 
+import { Readable } from 'stream';
+
+import { FileStorageDriverFactory } from 'src/engine/core-modules/file-storage/file-storage-driver.factory';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { DefaultAiCatalogService } from 'src/engine/metadata-modules/ai/ai-models/services/default-ai-catalog.service';
 
-const mockS3Send = jest.fn();
-
-jest.mock('@aws-sdk/client-s3', () => {
-  const actual = jest.requireActual('@aws-sdk/client-s3');
-
-  return {
-    ...actual,
-    S3Client: jest.fn().mockImplementation(() => ({ send: mockS3Send })),
-  };
-});
+const mockReadFile = jest.fn();
 
 describe('DefaultAiCatalogService', () => {
   let service: DefaultAiCatalogService;
@@ -25,10 +19,15 @@ describe('DefaultAiCatalogService', () => {
       get: jest.fn().mockReturnValue(undefined),
     } as any;
 
+    const mockDriverFactory = {
+      getCurrentDriver: jest.fn().mockReturnValue({ readFile: mockReadFile }),
+    };
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         DefaultAiCatalogService,
         { provide: TwentyConfigService, useValue: mockConfigService },
+        { provide: FileStorageDriverFactory, useValue: mockDriverFactory },
       ],
     }).compile();
 
@@ -43,11 +42,11 @@ describe('DefaultAiCatalogService', () => {
 
       expect(providers).toBeDefined();
       expect(Object.keys(providers).length).toBeGreaterThan(0);
-      expect(mockS3Send).not.toHaveBeenCalled();
+      expect(mockReadFile).not.toHaveBeenCalled();
     });
 
-    it('should load catalog from S3 when AI_CATALOG_S3_PATH is set', async () => {
-      const s3Catalog = JSON.stringify({
+    it('should load catalog from storage when AI_CATALOG_S3_PATH is set', async () => {
+      const catalog = JSON.stringify({
         customProvider: {
           npm: '@ai-sdk/openai',
           models: [
@@ -64,18 +63,12 @@ describe('DefaultAiCatalogService', () => {
       });
 
       mockConfigService.get.mockImplementation((key: string) => {
-        const values: Record<string, string> = {
-          AI_CATALOG_S3_PATH: 'config/ai-catalog.json',
-          STORAGE_S3_NAME: 'my-bucket',
-          STORAGE_S3_REGION: 'us-east-1',
-        };
+        if (key === 'AI_CATALOG_S3_PATH') return 'config/ai-catalog.json';
 
-        return values[key];
+        return undefined;
       });
 
-      mockS3Send.mockResolvedValue({
-        Body: { transformToString: () => Promise.resolve(s3Catalog) },
-      });
+      mockReadFile.mockResolvedValue(Readable.from([Buffer.from(catalog)]));
 
       await service.onModuleInit();
 
@@ -84,86 +77,55 @@ describe('DefaultAiCatalogService', () => {
       expect(Object.keys(providers)).toEqual(['customProvider']);
       expect(providers['customProvider'].name).toBe('customProvider');
       expect(providers['customProvider'].models?.[0].source).toBe('catalog');
+      expect(mockReadFile).toHaveBeenCalledWith({
+        filePath: 'config/ai-catalog.json',
+      });
     });
 
-    it('should reset catalog to empty object when S3 fetch fails', async () => {
+    it('should reset catalog to empty object when storage read fails', async () => {
       mockConfigService.get.mockImplementation((key: string) => {
-        const values: Record<string, string> = {
-          AI_CATALOG_S3_PATH: 'config/ai-catalog.json',
-          STORAGE_S3_NAME: 'my-bucket',
-          STORAGE_S3_REGION: 'us-east-1',
-        };
+        if (key === 'AI_CATALOG_S3_PATH') return 'config/ai-catalog.json';
 
-        return values[key];
+        return undefined;
       });
 
-      mockS3Send.mockRejectedValue(new Error('Network error'));
+      mockReadFile.mockRejectedValue(new Error('Network error'));
 
       await service.onModuleInit();
 
       expect(service.getDefaultAiCatalog()).toEqual({});
     });
 
-    it('should reset catalog to empty object when S3 returns empty body', async () => {
+    it('should reset catalog to empty object when storage returns invalid JSON', async () => {
       mockConfigService.get.mockImplementation((key: string) => {
-        const values: Record<string, string> = {
-          AI_CATALOG_S3_PATH: 'config/ai-catalog.json',
-          STORAGE_S3_NAME: 'my-bucket',
-          STORAGE_S3_REGION: 'us-east-1',
-        };
+        if (key === 'AI_CATALOG_S3_PATH') return 'config/ai-catalog.json';
 
-        return values[key];
+        return undefined;
       });
 
-      mockS3Send.mockResolvedValue({
-        Body: { transformToString: () => Promise.resolve('') },
-      });
+      mockReadFile.mockResolvedValue(
+        Readable.from([Buffer.from('not valid json')]),
+      );
 
       await service.onModuleInit();
 
       expect(service.getDefaultAiCatalog()).toEqual({});
     });
 
-    it('should reset catalog to empty object when S3 returns invalid JSON', async () => {
-      mockConfigService.get.mockImplementation((key: string) => {
-        const values: Record<string, string> = {
-          AI_CATALOG_S3_PATH: 'config/ai-catalog.json',
-          STORAGE_S3_NAME: 'my-bucket',
-          STORAGE_S3_REGION: 'us-east-1',
-        };
-
-        return values[key];
-      });
-
-      mockS3Send.mockResolvedValue({
-        Body: {
-          transformToString: () => Promise.resolve('not valid json'),
-        },
-      });
-
-      await service.onModuleInit();
-
-      expect(service.getDefaultAiCatalog()).toEqual({});
-    });
-
-    it('should reset catalog to empty object when S3 payload fails Zod validation', async () => {
+    it('should reset catalog to empty object when payload fails Zod validation', async () => {
       const invalidCatalog = JSON.stringify({
         badProvider: { models: 'not-an-array' },
       });
 
       mockConfigService.get.mockImplementation((key: string) => {
-        const values: Record<string, string> = {
-          AI_CATALOG_S3_PATH: 'config/ai-catalog.json',
-          STORAGE_S3_NAME: 'my-bucket',
-          STORAGE_S3_REGION: 'us-east-1',
-        };
+        if (key === 'AI_CATALOG_S3_PATH') return 'config/ai-catalog.json';
 
-        return values[key];
+        return undefined;
       });
 
-      mockS3Send.mockResolvedValue({
-        Body: { transformToString: () => Promise.resolve(invalidCatalog) },
-      });
+      mockReadFile.mockResolvedValue(
+        Readable.from([Buffer.from(invalidCatalog)]),
+      );
 
       await service.onModuleInit();
 
