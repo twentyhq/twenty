@@ -25,7 +25,7 @@ import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApo
 import { GET_WORKSPACE_BILLING_ADMIN_PANEL } from '@/settings/admin-panel/graphql/queries/getWorkspaceBillingAdminPanel';
 import { SettingsTableCard } from '@/settings/components/SettingsTableCard';
 import { PlansTags } from '@/settings/billing/components/internal/PlansTags';
-import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
+import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { beautifyExactDate } from '~/utils/date-utils';
 import { BillingPlanKey } from '~/generated-metadata/graphql';
@@ -143,7 +143,11 @@ export const SettingsAdminWorkspaceBillingContent = ({
   );
 
   if (loading) {
-    return <SettingsSkeletonLoader />;
+    return (
+      <StyledContainer>
+        <SettingsSectionSkeletonLoader rowCount={6} />
+      </StyledContainer>
+    );
   }
 
   const billing = data?.workspaceBillingAdminPanel ?? null;
