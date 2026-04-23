@@ -1,7 +1,6 @@
 import { z } from 'zod';
 
-import { AI_SDK_PACKAGES } from 'twenty-shared/ai';
-import { DATA_RESIDENCY_KEYS } from 'twenty-shared/ai';
+import { AI_SDK_PACKAGES, DATA_RESIDENCY_KEYS } from 'twenty-shared/ai';
 
 import { ModelFamily } from 'src/engine/metadata-modules/ai/ai-models/types/model-family.enum';
 

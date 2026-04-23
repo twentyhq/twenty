@@ -1,20 +1,16 @@
 import { UseGuards } from '@nestjs/common';
 import { Args, Mutation, Parent, Query, ResolveField } from '@nestjs/graphql';
 
-import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { PermissionFlagType } from 'twenty-shared/constants';
+import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
-import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
+import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import { CreateApiKeyInput } from 'src/engine/core-modules/api-key/dtos/create-api-key.input';
 import { GetApiKeyInput } from 'src/engine/core-modules/api-key/dtos/get-api-key.input';
 import { RevokeApiKeyInput } from 'src/engine/core-modules/api-key/dtos/revoke-api-key.input';
 import { UpdateApiKeyInput } from 'src/engine/core-modules/api-key/dtos/update-api-key.input';
-import {
-  ApiKeyException,
-  ApiKeyExceptionCode,
-} from 'src/engine/core-modules/api-key/exceptions/api-key.exception';
 import { apiKeyGraphqlApiExceptionHandler } from 'src/engine/core-modules/api-key/utils/api-key-graphql-api-exception-handler.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';

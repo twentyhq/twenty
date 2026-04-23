@@ -4,13 +4,7 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 import { AiCatalogLoaderService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-catalog-loader.service';
 import { buildCompositeModelId } from 'src/engine/metadata-modules/ai/ai-models/utils/composite-model-id.util';
 
-const EXPECTED_PROVIDERS = [
-  'openai',
-  'anthropic',
-  'google',
-  'xai',
-  'mistral',
-];
+const EXPECTED_PROVIDERS = ['openai', 'anthropic', 'google', 'xai', 'mistral'];
 
 const mockS3Send = jest.fn();
 
