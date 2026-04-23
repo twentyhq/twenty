@@ -238,7 +238,7 @@ export class TimelineActivityRepository {
             (field) =>
               isDefined(field) &&
               field?.name === fieldName &&
-              field.objectMetadataUniversalIdentifier === objectMetadataId,
+              field.objectMetadataId === objectMetadataId,
           );
       },
       authContext,
