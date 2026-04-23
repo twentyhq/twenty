@@ -1,5 +1,6 @@
 'use client';
 
+import { useScheduledOnScroll } from '@/lib/scroll';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
 import {
@@ -8,7 +9,7 @@ import {
   IconBrandThreads,
   IconBrandX,
 } from '@tabler/icons-react';
-import { useCallback, useEffect, useState, type MouseEvent } from 'react';
+import { useCallback, useState, type MouseEvent } from 'react';
 
 const HERO_ANCHOR_ID = 'case-study-hero';
 const SECTION_ID_PREFIX = 'case-study-section';
@@ -182,15 +183,7 @@ export function CaseStudySectionNav({ items }: CaseStudySectionNavProps) {
     setActiveIndex(nextActive);
   }, [items.length]);
 
-  useEffect(() => {
-    updateFromScroll();
-    window.addEventListener('scroll', updateFromScroll, { passive: true });
-    window.addEventListener('resize', updateFromScroll);
-    return () => {
-      window.removeEventListener('scroll', updateFromScroll);
-      window.removeEventListener('resize', updateFromScroll);
-    };
-  }, [updateFromScroll]);
+  useScheduledOnScroll(updateFromScroll);
 
   const progressPercent =
     items.length === 0 ? 0 : ((activeIndex + 1) / items.length) * 100;

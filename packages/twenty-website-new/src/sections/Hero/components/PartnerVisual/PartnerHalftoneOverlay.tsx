@@ -3,6 +3,8 @@
 import { styled } from '@linaria/react';
 import { useEffect, useRef } from 'react';
 import * as THREE from 'three';
+
+import { getPrefersReducedMotionSnapshot } from '@/lib/motion';
 import { createSiteWebGlRenderer } from '@/lib/visual-runtime';
 
 const PREVIEW_DISTANCE = 3.2;
@@ -747,7 +749,7 @@ export function PartnerHalftoneOverlay({
   const mountRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    if (getPrefersReducedMotionSnapshot()) {
       return;
     }
 

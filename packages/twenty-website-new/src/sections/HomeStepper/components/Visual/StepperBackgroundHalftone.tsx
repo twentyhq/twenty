@@ -5,11 +5,12 @@ import {
   getImageFootprintScale,
   getImagePreviewZoom,
 } from '@/app/halftone/_lib/footprint';
+import { getPrefersReducedMotionSnapshot } from '@/lib/motion';
+import { createSiteWebGlRenderer } from '@/lib/visual-runtime';
 import { styled } from '@linaria/react';
-import { STEPPER_VISUAL_POINTER_ROOT_SELECTOR } from '../StepperVisualFrame';
 import { useEffect, useRef } from 'react';
 import * as THREE from 'three';
-import { createSiteWebGlRenderer } from '@/lib/visual-runtime';
+import { STEPPER_VISUAL_POINTER_ROOT_SELECTOR } from '../StepperVisualFrame';
 
 const PREVIEW_DISTANCE = 4;
 const HOVER_FADE_IN = 18;
@@ -601,7 +602,7 @@ export function StepperBackgroundHalftone({
   const mountReference = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    if (getPrefersReducedMotionSnapshot()) {
       return;
     }
 

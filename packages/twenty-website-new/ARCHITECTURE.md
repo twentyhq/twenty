@@ -205,18 +205,38 @@ Why `useScheduledOnScroll` and not "just inline rAF":
 
 ### `lib/motion/`
 
-| Export                    | Shape                                     | Use when                                                                                                                                                             |
-| ------------------------- | ----------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `useMediaQuery`           | `(query, { serverFallback? }) => boolean` | Any client-side reaction to a CSS media query. Backed by `useSyncExternalStore`, concurrent-safe, defaults SSR to `false`.                                           |
-| `usePrefersReducedMotion` | `() => boolean`                           | Conditional non-essential animation. **Don't** use this to skip functional animation (e.g. a scroll-driven stepper still updates; only its easing transition drops). |
+| Export                            | Shape                                     | Use when                                                                                                                                                             |
+| --------------------------------- | ----------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `useMediaQuery`                   | `(query, { serverFallback? }) => boolean` | Any client-side reaction to a CSS media query. Backed by `useSyncExternalStore`, concurrent-safe, defaults SSR to `false`.                                           |
+| `usePrefersReducedMotion`         | `() => boolean`                           | Conditional non-essential animation. **Don't** use this to skip functional animation (e.g. a scroll-driven stepper still updates; only its easing transition drops). |
+| `getPrefersReducedMotionSnapshot` | `() => boolean`                           | Snapshot read from non-component code or one-shot mount-time gates where toggling the preference must NOT re-init an expensive scene.                                |
 
-`useStepperMdUp` and `StepperSwipeDeck`'s reduced-motion subscription are
-both built on these primitives. New code that calls
-`window.matchMedia('(prefers-reduced-motion: reduce)')` directly inside a
-component body should be migrated to the hook (a few inline reads in
-section visuals — `helped-scene-layout.ts`, `PartnerHalftoneOverlay.tsx`,
-`StepperBackgroundHalftone.tsx` — are still on the old pattern; flag them
-in review and migrate opportunistically).
+`useStepperMdUp` (and its snapshot sibling `getStepperMdUpSnapshot`) and
+`StepperSwipeDeck`'s reduced-motion subscription are all built on these
+primitives. New code must not call `window.matchMedia(…)` directly — pick
+the hook for component bodies that should track changes, or the snapshot
+for utilities and one-shot mount-time gates.
+
+#### Hook vs. snapshot — when to pick which
+
+The two shapes exist for different problems and **are not interchangeable**:
+
+- **Hook (`usePrefersReducedMotion`, `useMediaQuery`)** subscribes to
+  changes and re-renders the consumer. Use this in component bodies that
+  conditionally render different markup or transitions (e.g. `StepperSwipeDeck`'s
+  CSS transition opt-out). The user toggling the OS preference live updates
+  the UI without a refresh.
+- **Snapshot (`getPrefersReducedMotionSnapshot`, `getStepperMdUpSnapshot`)**
+  reads `matchMedia(...).matches` once. Use this from
+  - non-component code (a layout utility called inside `useEffect`),
+  - mount-time gates inside a `useEffect([])` whose effect body is too
+    expensive to tear down and rebuild on every preference toggle (the
+    Three.js mount in `PartnerHalftoneOverlay` / `StepperBackgroundHalftone`).
+
+If you find yourself wanting "react to changes but don't re-init the scene,"
+that's a third pattern (subscribe in a separate effect that mutates the
+already-mounted scene). It doesn't exist yet because no consumer needs it;
+add it here when one does.
 
 ---
 

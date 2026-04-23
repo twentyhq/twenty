@@ -1,2 +1,5 @@
 export { useMediaQuery } from './use-media-query';
-export { usePrefersReducedMotion } from './use-prefers-reduced-motion';
+export {
+  getPrefersReducedMotionSnapshot,
+  usePrefersReducedMotion,
+} from './use-prefers-reduced-motion';

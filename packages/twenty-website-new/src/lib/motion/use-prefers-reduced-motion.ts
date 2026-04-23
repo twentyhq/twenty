@@ -19,3 +19,20 @@ const PREFERS_REDUCED_MOTION_QUERY = '(prefers-reduced-motion: reduce)';
 export function usePrefersReducedMotion(): boolean {
   return useMediaQuery(PREFERS_REDUCED_MOTION_QUERY);
 }
+
+/**
+ * Snapshot equivalent of `usePrefersReducedMotion`. Reads `matchMedia` once
+ * without subscribing to changes.
+ *
+ * Use this from non-component code (utilities called inside `useEffect`)
+ * or from one-shot mount-time gates where you don't want a preference
+ * toggle to cause an expensive re-init (e.g. tearing down and rebuilding
+ * a Three.js scene). Component bodies should prefer the hook so the UI
+ * tracks the preference live.
+ *
+ * Always called on the client — guard with a typeof check if the call site
+ * may run during SSR.
+ */
+export function getPrefersReducedMotionSnapshot(): boolean {
+  return window.matchMedia(PREFERS_REDUCED_MOTION_QUERY).matches;
+}
