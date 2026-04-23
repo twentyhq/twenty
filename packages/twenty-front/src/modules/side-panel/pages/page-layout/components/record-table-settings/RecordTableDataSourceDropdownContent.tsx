@@ -4,7 +4,7 @@ import { filterReadableActiveObjectMetadataItems } from '@/object-metadata/utils
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useUpdatePageLayoutWidget } from '@/page-layout/hooks/useUpdatePageLayoutWidget';
 import { useAddDraftViewForRecordTableWidget } from '@/page-layout/widgets/record-table/hooks/useAddDraftViewForRecordTableWidget';
-import { useDeleteViewForRecordTableWidget } from '@/page-layout/widgets/record-table/hooks/useDeleteViewForRecordTableWidget';
+import { useRemoveDraftViewForRecordTableWidget } from '@/page-layout/widgets/record-table/hooks/useRemoveDraftViewForRecordTableWidget';
 import { usePageLayoutIdFromContextStore } from '@/side-panel/pages/page-layout/hooks/usePageLayoutIdFromContextStore';
 import { useUpdateCurrentWidgetConfig } from '@/side-panel/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
 import { useWidgetInEditMode } from '@/side-panel/pages/page-layout/hooks/useWidgetInEditMode';
@@ -50,8 +50,8 @@ export const RecordTableDataSourceDropdownContent = () => {
   const { addDraftViewForRecordTableWidget } =
     useAddDraftViewForRecordTableWidget(pageLayoutId);
 
-  const { deleteViewForRecordTableWidget } =
-    useDeleteViewForRecordTableWidget();
+  const { removeDraftViewForRecordTableWidget } =
+    useRemoveDraftViewForRecordTableWidget();
 
   const { updatePageLayoutWidget } = useUpdatePageLayoutWidget(pageLayoutId);
 
@@ -90,7 +90,7 @@ export const RecordTableDataSourceDropdownContent = () => {
     }
 
     if (isDefined(currentViewId)) {
-      deleteViewForRecordTableWidget(currentViewId);
+      removeDraftViewForRecordTableWidget(currentViewId);
     }
 
     updateCurrentWidgetConfig({

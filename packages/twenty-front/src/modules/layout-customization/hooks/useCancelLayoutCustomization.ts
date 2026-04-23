@@ -1,6 +1,5 @@
 import { useExitLayoutCustomizationMode } from '@/layout-customization/hooks/useExitLayoutCustomizationMode';
 import { activeCustomizationPageLayoutIdsState } from '@/layout-customization/states/activeCustomizationPageLayoutIdsState';
-import { type DraftPageLayout } from '@/page-layout/types/DraftPageLayout';
 import { fieldsWidgetEditorModeDraftComponentState } from '@/page-layout/states/fieldsWidgetEditorModeDraftComponentState';
 import { fieldsWidgetEditorModePersistedComponentState } from '@/page-layout/states/fieldsWidgetEditorModePersistedComponentState';
 import { fieldsWidgetGroupsDraftComponentState } from '@/page-layout/states/fieldsWidgetGroupsDraftComponentState';
@@ -10,9 +9,10 @@ import { fieldsWidgetUngroupedFieldsPersistedComponentState } from '@/page-layou
 import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutPersistedComponentState } from '@/page-layout/states/pageLayoutPersistedComponentState';
+import { type DraftPageLayout } from '@/page-layout/types/DraftPageLayout';
 import { convertPageLayoutToTabLayouts } from '@/page-layout/utils/convertPageLayoutToTabLayouts';
 import { getWidgetConfigurationViewId } from '@/page-layout/utils/getWidgetConfigurationViewId';
-import { useDeleteViewForRecordTableWidget } from '@/page-layout/widgets/record-table/hooks/useDeleteViewForRecordTableWidget';
+import { useRemoveDraftViewForRecordTableWidget } from '@/page-layout/widgets/record-table/hooks/useRemoveDraftViewForRecordTableWidget';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -21,8 +21,8 @@ import { WidgetType } from '~/generated-metadata/graphql';
 export const useCancelLayoutCustomization = () => {
   const store = useStore();
   const { exitLayoutCustomizationMode } = useExitLayoutCustomizationMode();
-  const { deleteViewForRecordTableWidget } =
-    useDeleteViewForRecordTableWidget();
+  const { removeDraftViewForRecordTableWidget } =
+    useRemoveDraftViewForRecordTableWidget();
 
   const cancel = useCallback(() => {
     const activePageLayoutIds = store.get(
@@ -58,7 +58,7 @@ export const useCancelLayoutCustomization = () => {
         .filter(isDefined);
 
       for (const viewId of pendingRecordTableViewIds) {
-        deleteViewForRecordTableWidget(viewId);
+        removeDraftViewForRecordTableWidget(viewId);
       }
 
       if (isDefined(persisted)) {
@@ -123,7 +123,7 @@ export const useCancelLayoutCustomization = () => {
     }
 
     exitLayoutCustomizationMode();
-  }, [store, exitLayoutCustomizationMode, deleteViewForRecordTableWidget]);
+  }, [store, exitLayoutCustomizationMode, removeDraftViewForRecordTableWidget]);
 
   return { cancel };
 };
