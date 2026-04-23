@@ -150,17 +150,17 @@ ratchet plan, applied iteratively:
 
 Current state (`nx lint twenty-website-new` will tell you the true number):
 
-| Rule                                      | Layer / scope      | Status                       |
-| ----------------------------------------- | ------------------ | ---------------------------- |
-| `no-restricted-imports` — `@/app/**`      | `sections/**`      | **error** (0)                |
-| `no-restricted-imports` — `@/sections/**` | `lib/**`           | **error** (0)                |
-| `no-restricted-imports` — `@/app/**`      | `design-system/**` | warn (0)                     |
-| `no-raw-webgl-renderer`                   | repo-wide          | **error** (2 inline-allowed) |
+| Rule                                                              | Layer / scope      | Status                       |
+| ----------------------------------------------------------------- | ------------------ | ---------------------------- |
+| `no-restricted-imports` — `@/app/**`                              | `sections/**`      | **error** (0)                |
+| `no-restricted-imports` — `@/sections/**`                         | `lib/**`           | **error** (0)                |
+| `no-restricted-imports` — `@/app/** \| @/sections/** \| @/lib/**` | `design-system/**` | **error** (0)                |
+| `no-raw-webgl-renderer`                                           | repo-wide          | **error** (2 inline-allowed) |
 
-Both the section→app and lib→sections rules are now **error**: any new
-violation fails CI. If you find yourself wanting to import from a layer
-above you, the answer is to lift the shared piece into `lib/` (or, for
-genuinely page-shaped state like a global modal provider, mount it in
+All four layering rules are now **error**: any new violation fails CI.
+If you find yourself wanting to import from a layer above you, the
+answer is to lift the shared piece into `lib/` (or, for genuinely
+page-shaped state like a global modal provider, mount it in
 `app/layout.tsx` — see `lib/contact-cal` and `lib/partner-application`
 for the pattern).
 

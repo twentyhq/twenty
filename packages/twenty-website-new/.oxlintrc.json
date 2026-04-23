@@ -91,7 +91,7 @@
       "files": ["**/design-system/**/*.ts", "**/design-system/**/*.tsx"],
       "rules": {
         "no-restricted-imports": [
-          "warn",
+          "error",
           {
             "patterns": [
               {
