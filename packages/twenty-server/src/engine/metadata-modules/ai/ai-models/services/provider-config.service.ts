@@ -2,7 +2,8 @@ import { Injectable } from '@nestjs/common';
 
 import { type ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { AiCatalogLoaderService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-catalog-loader.service';
+import { DefaultAiCatalogService } from 'src/engine/metadata-modules/ai/ai-models/services/default-ai-catalog.service';
+
 import { type AiProviderConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-provider-config.type';
 import { type AiProvidersConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-providers-config.type';
 import { extractConfigVariableName } from 'src/engine/metadata-modules/ai/ai-models/utils/extract-config-variable-name.util';
@@ -11,15 +12,17 @@ import { extractConfigVariableName } from 'src/engine/metadata-modules/ai/ai-mod
 export class ProviderConfigService {
   constructor(
     private readonly twentyConfigService: TwentyConfigService,
-    private readonly aiCatalogLoaderService: AiCatalogLoaderService,
+    private readonly defaultAiCatalogService: DefaultAiCatalogService,
   ) {}
 
   getCatalogProviderNames(): Set<string> {
-    return new Set(Object.keys(this.aiCatalogLoaderService.getAiCatalog()));
+    return new Set(
+      Object.keys(this.defaultAiCatalogService.getDefaultAiCatalog()),
+    );
   }
 
   getResolvedProviders(): AiProvidersConfig {
-    const rawCatalog = this.aiCatalogLoaderService.getAiCatalog();
+    const rawCatalog = this.defaultAiCatalogService.getDefaultAiCatalog();
     // Only resolve {{VAR}} templates in the committed catalog — never in
     // user-supplied custom providers, to prevent config variable exfiltration.
     const catalog = this.resolveTemplates(rawCatalog);

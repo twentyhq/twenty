@@ -1,7 +1,7 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { AiCatalogLoaderService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-catalog-loader.service';
+import { DefaultAiCatalogService } from 'src/engine/metadata-modules/ai/ai-models/services/default-ai-catalog.service';
 
 const mockS3Send = jest.fn();
 
@@ -15,7 +15,7 @@ jest.mock('@aws-sdk/client-s3', () => {
 });
 
 describe('AiCatalogLoaderService', () => {
-  let service: AiCatalogLoaderService;
+  let service: DefaultAiCatalogService;
   let mockConfigService: jest.Mocked<TwentyConfigService>;
 
   beforeEach(async () => {
@@ -27,19 +27,19 @@ describe('AiCatalogLoaderService', () => {
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        AiCatalogLoaderService,
+        DefaultAiCatalogService,
         { provide: TwentyConfigService, useValue: mockConfigService },
       ],
     }).compile();
 
-    service = module.get(AiCatalogLoaderService);
+    service = module.get(DefaultAiCatalogService);
   });
 
   describe('onModuleInit', () => {
     it('should use built-in catalog when AI_CATALOG_S3_PATH is not set', async () => {
       await service.onModuleInit();
 
-      const providers = service.getAiCatalog();
+      const providers = service.getDefaultAiCatalog();
 
       expect(providers).toBeDefined();
       expect(Object.keys(providers).length).toBeGreaterThan(0);
@@ -79,7 +79,7 @@ describe('AiCatalogLoaderService', () => {
 
       await service.onModuleInit();
 
-      const providers = service.getAiCatalog();
+      const providers = service.getDefaultAiCatalog();
 
       expect(Object.keys(providers)).toEqual(['customProvider']);
       expect(providers['customProvider'].name).toBe('customProvider');
@@ -101,7 +101,7 @@ describe('AiCatalogLoaderService', () => {
 
       await service.onModuleInit();
 
-      expect(service.getAiCatalog()).toEqual({});
+      expect(service.getDefaultAiCatalog()).toEqual({});
     });
 
     it('should reset catalog to empty object when S3 returns empty body', async () => {
@@ -121,7 +121,7 @@ describe('AiCatalogLoaderService', () => {
 
       await service.onModuleInit();
 
-      expect(service.getAiCatalog()).toEqual({});
+      expect(service.getDefaultAiCatalog()).toEqual({});
     });
 
     it('should reset catalog to empty object when S3 returns invalid JSON', async () => {
@@ -143,7 +143,7 @@ describe('AiCatalogLoaderService', () => {
 
       await service.onModuleInit();
 
-      expect(service.getAiCatalog()).toEqual({});
+      expect(service.getDefaultAiCatalog()).toEqual({});
     });
 
     it('should reset catalog to empty object when S3 payload fails Zod validation', async () => {
@@ -167,7 +167,7 @@ describe('AiCatalogLoaderService', () => {
 
       await service.onModuleInit();
 
-      expect(service.getAiCatalog()).toEqual({});
+      expect(service.getDefaultAiCatalog()).toEqual({});
     });
   });
 });

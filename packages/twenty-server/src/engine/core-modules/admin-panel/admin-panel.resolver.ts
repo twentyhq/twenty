@@ -57,7 +57,6 @@ import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.g
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { MODEL_FAMILY_LABELS } from 'src/engine/metadata-modules/ai/ai-models/constants/model-family-labels.const';
-import { AiCatalogLoaderService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-catalog-loader.service';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { ModelsDevCatalogService } from 'src/engine/metadata-modules/ai/ai-models/services/models-dev-catalog.service';
 import { AiModelRole } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-role.enum';
@@ -65,6 +64,7 @@ import { type AiProviderConfig } from 'src/engine/metadata-modules/ai/ai-models/
 import { type AiProviderModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-provider-model-config.type';
 import { extractConfigVariableName } from 'src/engine/metadata-modules/ai/ai-models/utils/extract-config-variable-name.util';
 
+import { DefaultAiCatalogService } from 'src/engine/metadata-modules/ai/ai-models/services/default-ai-catalog.service';
 import { AdminPanelHealthServiceDataDTO } from './dtos/admin-panel-health-service-data.dto';
 import { MaintenanceModeDTO } from './dtos/maintenance-mode.dto';
 import { ModelsDevModelSuggestionDTO } from './dtos/models-dev-model-suggestion.dto';
@@ -97,7 +97,7 @@ export class AdminPanelResolver {
     private featureFlagService: FeatureFlagService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly aiModelRegistryService: AiModelRegistryService,
-    private readonly aiCatalogLoaderService: AiCatalogLoaderService,
+    private readonly defaultAiCatalogService: DefaultAiCatalogService,
     private readonly modelsDevCatalogService: ModelsDevCatalogService,
     private readonly usageAnalyticsService: UsageAnalyticsService,
     private readonly maintenanceModeService: MaintenanceModeService,
@@ -424,7 +424,7 @@ export class AdminPanelResolver {
     const providers =
       this.aiModelRegistryService.getResolvedProvidersForAdmin();
     const catalogNames = this.aiModelRegistryService.getCatalogProviderNames();
-    const rawCatalog = this.aiCatalogLoaderService.getAiCatalog();
+    const rawCatalog = this.defaultAiCatalogService.getDefaultAiCatalog();
     const masked: Record<string, Record<string, unknown>> = {};
 
     for (const [key, config] of Object.entries(providers)) {

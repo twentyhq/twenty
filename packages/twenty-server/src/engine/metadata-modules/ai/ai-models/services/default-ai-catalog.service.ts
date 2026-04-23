@@ -9,8 +9,8 @@ import { type AiProvidersConfig } from 'src/engine/metadata-modules/ai/ai-models
 import { normalizeAiProviders } from 'src/engine/metadata-modules/ai/ai-models/utils/normalize-ai-providers.util';
 
 @Injectable()
-export class AiCatalogLoaderService implements OnModuleInit {
-  private readonly logger = new Logger(AiCatalogLoaderService.name);
+export class DefaultAiCatalogService implements OnModuleInit {
+  private readonly logger = new Logger(DefaultAiCatalogService.name);
   private catalog: AiProvidersConfig = normalizeAiProviders(
     defaultAiProviders as AiProvidersConfig,
   );
@@ -38,7 +38,7 @@ export class AiCatalogLoaderService implements OnModuleInit {
     }
   }
 
-  getAiCatalog(): Readonly<AiProvidersConfig> {
+  getDefaultAiCatalog(): Readonly<AiProvidersConfig> {
     return this.catalog;
   }
 
