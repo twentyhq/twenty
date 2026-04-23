@@ -17,11 +17,11 @@ import {
 const DEFAULT_VIEW_FIELD_SIZE = 180;
 const INITIAL_VISIBLE_FIELDS_COUNT_IN_WIDGET = 6;
 
-export const useCreateViewForRecordTableWidget = (pageLayoutId: string) => {
+export const useAddDraftViewForRecordTableWidget = (pageLayoutId: string) => {
   const { addToDraft, applyChanges } = useUpdateMetadataStoreDraft();
   const { updatePageLayoutWidget } = useUpdatePageLayoutWidget(pageLayoutId);
 
-  const createViewForRecordTableWidget = useCallback(
+  const addDraftViewForRecordTableWidget = useCallback(
     (widgetId: string, objectMetadataItem: EnrichedObjectMetadataItem) => {
       const newViewId = v4();
 
@@ -78,5 +78,5 @@ export const useCreateViewForRecordTableWidget = (pageLayoutId: string) => {
     [addToDraft, applyChanges, updatePageLayoutWidget],
   );
 
-  return { createViewForRecordTableWidget };
+  return { addDraftViewForRecordTableWidget };
 };
