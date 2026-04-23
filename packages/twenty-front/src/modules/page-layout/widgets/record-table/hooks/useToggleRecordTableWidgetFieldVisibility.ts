@@ -2,6 +2,7 @@ import { recordTableWidgetViewDraftComponentState } from '@/page-layout/states/r
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 
 type UseToggleRecordTableWidgetFieldVisibilityParams = {
   pageLayoutId: string;
@@ -24,7 +25,7 @@ export const useToggleRecordTableWidgetFieldVisibility = ({
       store.set(recordTableWidgetViewDraftState, (prev) => {
         const widgetViewDraft = prev[widgetId];
 
-        if (!widgetViewDraft) {
+        if (!isDefined(widgetViewDraft)) {
           return prev;
         }
 

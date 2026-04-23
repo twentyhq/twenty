@@ -3,6 +3,7 @@ import { type RecordTableWidgetViewFieldItem } from '@/page-layout/widgets/recor
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 
 type UseReorderRecordTableWidgetFieldsParams = {
   pageLayoutId: string;
@@ -44,7 +45,7 @@ export const useReorderRecordTableWidgetFields = ({
       store.set(recordTableWidgetViewDraftState, (prev) => {
         const widgetViewDraft = prev[widgetId];
 
-        if (!widgetViewDraft) {
+        if (!isDefined(widgetViewDraft)) {
           return prev;
         }
 

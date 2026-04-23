@@ -34,7 +34,7 @@ export const RecordTableSettingsSorts = ({
   pageLayoutId,
   objectMetadataId,
 }: RecordTableSettingsSortsProps) => {
-  const { view: resolvedView } = useRecordTableWidgetViewForDisplay({
+  const { view } = useRecordTableWidgetViewForDisplay({
     viewId,
     widgetId,
     pageLayoutId,
@@ -50,7 +50,7 @@ export const RecordTableSettingsSorts = ({
     viewId,
   );
 
-  if (!isDefined(resolvedView)) {
+  if (!isDefined(view)) {
     return null;
   }
 
@@ -83,7 +83,7 @@ export const RecordTableSettingsSorts = ({
           sortableFieldOptions={sortableFieldOptions}
           directionOptions={directionOptions}
         />
-        <RecordTableSettingsSortsInitializeStateEffect view={resolvedView} />
+        <RecordTableSettingsSortsInitializeStateEffect view={view} />
       </RecordSortsComponentInstanceContext.Provider>
     </StyledSortSettingsContainer>
   );
