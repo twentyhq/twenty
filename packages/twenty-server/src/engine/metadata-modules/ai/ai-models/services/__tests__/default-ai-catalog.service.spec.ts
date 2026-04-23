@@ -14,7 +14,7 @@ jest.mock('@aws-sdk/client-s3', () => {
   };
 });
 
-describe('AiCatalogLoaderService', () => {
+describe('DefaultAiCatalogService', () => {
   let service: DefaultAiCatalogService;
   let mockConfigService: jest.Mocked<TwentyConfigService>;
 
