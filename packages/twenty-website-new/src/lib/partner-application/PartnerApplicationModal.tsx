@@ -1,58 +1,35 @@
 'use client';
 
-import {
-  PARTNER_APPLICATION_MODAL_COPY,
-  PARTNER_PROGRAM_OPTIONS,
-  type PartnerProgramId,
-} from '@/lib/partner-application/partner-application-modal-data';
+import { Body, Form, Heading, Modal } from '@/design-system/components';
 import {
   BUTTON_HEIGHTS_PX,
   buttonBaseStyles,
 } from '@/design-system/components/Button/BaseButton';
 import { ButtonShape } from '@/design-system/components/Button/ButtonShape';
-import { Body, Heading } from '@/design-system/components';
+import {
+  PARTNER_APPLICATION_MODAL_COPY,
+  PARTNER_PROGRAM_OPTIONS,
+  type PartnerProgramId,
+} from '@/lib/partner-application/partner-application-modal-data';
 import { theme } from '@/theme';
+import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
 import { IconChevronDown } from '@tabler/icons-react';
-import { useCallback, useEffect, useId, useRef, useState } from 'react';
-import { createPortal } from 'react-dom';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
-const PANEL_BG = '#0c0c0c';
-
-const Overlay = styled.div`
-  align-items: center;
-  /* -webkit- prefix is required for the blur to render on Safari < 18. */
-  -webkit-backdrop-filter: blur(4px);
-  backdrop-filter: blur(4px);
-  background: rgba(28, 28, 28, 0.8);
-  box-sizing: border-box;
-  display: flex;
-  inset: 0;
-  justify-content: center;
-  padding: ${theme.spacing(3)};
-  position: fixed;
-  z-index: ${theme.zIndex.modal};
-`;
-
-const Panel = styled.div`
-  background: ${PANEL_BG};
-  border-radius: ${theme.radius(2)};
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  gap: clamp(8px, 1.5vh, 16px);
-  max-height: 100%;
-  max-width: 100%;
-  overflow-y: auto;
-  padding-block: clamp(12px, 2vh, 24px);
-  padding-inline: ${theme.spacing(3)};
-  position: relative;
-  width: min(360px, 100%);
+/**
+ * The partner-application panel is wider than the default `Modal`
+ * popup width (which targets the contact-cal modal). We pick the width
+ * via a CSS variable on the popup so the responsive switch stays in
+ * CSS — `style` props can't carry media queries, but custom properties
+ * defined on the same element the `var()` resolves on cascade
+ * naturally.
+ */
+const partnerPanelClass = css`
+  --modal-panel-width: min(360px, 100%);
 
   @media (min-width: ${theme.breakpoints.md}px) {
-    padding-block: clamp(12px, 2.5vh, 28px);
-    padding-inline: ${theme.spacing(4)};
-    width: min(902px, 100%);
+    --modal-panel-width: min(902px, 100%);
   }
 `;
 
@@ -250,61 +227,6 @@ const FieldRow = styled.div`
   }
 `;
 
-const TextInput = styled.input`
-  background: transparent;
-  border: 1px solid ${theme.colors.secondary.border[20]};
-  border-radius: ${theme.radius(2)};
-  box-sizing: border-box;
-  color: ${theme.colors.secondary.text[100]};
-  font-family: ${theme.font.family.sans};
-  font-size: ${theme.font.size(4)};
-  font-weight: ${theme.font.weight.regular};
-  height: clamp(40px, 5.5vh, 56px);
-  line-height: ${theme.lineHeight(5.5)};
-  padding-bottom: ${theme.spacing(1)};
-  padding-left: ${theme.spacing(3)};
-  padding-right: ${theme.spacing(3)};
-  padding-top: ${theme.spacing(1)};
-  width: 100%;
-
-  &::placeholder {
-    color: ${theme.colors.secondary.text[40]};
-  }
-
-  &:focus-visible {
-    border-color: ${theme.colors.highlight[100]};
-    outline: none;
-  }
-`;
-
-const TextArea = styled.textarea`
-  background: transparent;
-  border: 1px solid ${theme.colors.secondary.border[20]};
-  border-radius: ${theme.radius(2)};
-  box-sizing: border-box;
-  color: ${theme.colors.secondary.text[100]};
-  font-family: ${theme.font.family.sans};
-  font-size: ${theme.font.size(4)};
-  font-weight: ${theme.font.weight.regular};
-  line-height: ${theme.lineHeight(5.5)};
-  min-height: clamp(80px, 18vh, 185px);
-  padding-bottom: ${theme.spacing(1)};
-  padding-left: ${theme.spacing(3)};
-  padding-right: ${theme.spacing(3)};
-  padding-top: ${theme.spacing(1)};
-  resize: vertical;
-  width: 100%;
-
-  &::placeholder {
-    color: ${theme.colors.secondary.text[40]};
-  }
-
-  &:focus-visible {
-    border-color: ${theme.colors.highlight[100]};
-    outline: none;
-  }
-`;
-
 const SubmitError = styled.p`
   color: #ff9a9a;
   font-family: ${theme.font.family.sans};
@@ -335,12 +257,6 @@ const SubmitLabel = styled.span`
   z-index: 1;
 `;
 
-const FooterBlock = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: clamp(8px, 1.5vh, 16px);
-`;
-
 const FormFields = styled.div`
   display: flex;
   flex-direction: column;
@@ -358,8 +274,6 @@ export function PartnerApplicationModal({
   onClose,
   initialProgramId = 'technology',
 }: PartnerApplicationModalProps) {
-  const titleId = useId();
-  const panelRef = useRef<HTMLDivElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [programId, setProgramId] =
@@ -374,15 +288,6 @@ export function PartnerApplicationModal({
     }
   }, [open, initialProgramId]);
 
-  const handleOverlayPointerDown = useCallback(
-    (event: React.PointerEvent<HTMLDivElement>) => {
-      if (event.target === event.currentTarget) {
-        onClose();
-      }
-    },
-    [onClose],
-  );
-
   useEffect(() => {
     if (open) {
       setSubmitError(null);
@@ -395,36 +300,6 @@ export function PartnerApplicationModal({
     setSubmitError(null);
     setIsSubmitting(false);
   }, [open]);
-
-  useEffect(() => {
-    if (!open) {
-      return;
-    }
-
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        onClose();
-      }
-    };
-
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = 'hidden';
-    document.addEventListener('keydown', handleKeyDown);
-
-    const frame = window.requestAnimationFrame(() => {
-      panelRef.current
-        ?.querySelector<HTMLElement>(
-          'button, [href], input, textarea, [tabindex]:not([tabindex="-1"])',
-        )
-        ?.focus();
-    });
-
-    return () => {
-      document.body.style.overflow = previousOverflow;
-      document.removeEventListener('keydown', handleKeyDown);
-      window.cancelAnimationFrame(frame);
-    };
-  }, [open, onClose]);
 
   const handleDropdownBlur = useCallback(
     (event: React.FocusEvent<HTMLDivElement>) => {
@@ -514,129 +389,131 @@ export function PartnerApplicationModal({
     [isSubmitting, onClose, programId],
   );
 
-  if (!open) {
-    return null;
-  }
-
   const copy = PARTNER_APPLICATION_MODAL_COPY;
 
-  return createPortal(
-    <Overlay onPointerDown={handleOverlayPointerDown}>
-      <Panel
-        ref={panelRef}
-        aria-labelledby={titleId}
-        aria-modal="true"
-        role="dialog"
-      >
-        <TitleBlock>
-          <TitleHeadingWrapper id={titleId}>
-            <Heading
-              as="h2"
-              segments={[
-                {
-                  fontFamily: 'serif',
-                  text: copy.titleSerif,
-                  fontWeight: 'light',
-                },
-                {
-                  fontFamily: 'sans',
-                  text: copy.titleSans,
-                  fontWeight: 'light',
-                  newLine: true,
-                },
-              ]}
-              size="lg"
-              weight="light"
-            />
-          </TitleHeadingWrapper>
-          <SubtitleStack>
-            <Body body={{ text: copy.subtitleLine1 }} size="md" />
-            <Body body={{ text: copy.subtitleLine2 }} size="md" />
-          </SubtitleStack>
-        </TitleBlock>
+  return (
+    <Modal.Root
+      open={open}
+      onOpenChange={(nextOpen) => {
+        if (!nextOpen) onClose();
+      }}
+      className={partnerPanelClass}
+    >
+      <TitleBlock>
+        <Modal.Title
+          render={
+            <TitleHeadingWrapper>
+              <Heading
+                as="h2"
+                segments={[
+                  {
+                    fontFamily: 'serif',
+                    text: copy.titleSerif,
+                    fontWeight: 'light',
+                  },
+                  {
+                    fontFamily: 'sans',
+                    text: copy.titleSans,
+                    fontWeight: 'light',
+                    newLine: true,
+                  },
+                ]}
+                size="lg"
+                weight="light"
+              />
+            </TitleHeadingWrapper>
+          }
+        />
+        <Modal.Description
+          render={
+            <SubtitleStack>
+              <Body body={{ text: copy.subtitleLine1 }} size="md" />
+              <Body body={{ text: copy.subtitleLine2 }} size="md" />
+            </SubtitleStack>
+          }
+        />
+      </TitleBlock>
 
-        <form
-          ref={formRef}
-          autoComplete="off"
-          noValidate
-          onSubmit={handleSubmit}
-        >
-          <FormFields>
-            <Segments role="radiogroup" aria-label={copy.selectLabel}>
-              {PARTNER_PROGRAM_OPTIONS.map((option) => (
-                <SegmentButton
-                  key={option.id}
-                  aria-checked={programId === option.id}
-                  data-active={programId === option.id}
-                  role="radio"
-                  type="button"
-                  onClick={() => {
-                    setProgramId(option.id);
-                  }}
-                >
-                  {option.label}
-                </SegmentButton>
-              ))}
-            </Segments>
+      <form ref={formRef} autoComplete="off" noValidate onSubmit={handleSubmit}>
+        <FormFields>
+          <Segments role="radiogroup" aria-label={copy.selectLabel}>
+            {PARTNER_PROGRAM_OPTIONS.map((option) => (
+              <SegmentButton
+                key={option.id}
+                aria-checked={programId === option.id}
+                data-active={programId === option.id}
+                role="radio"
+                type="button"
+                onClick={() => {
+                  setProgramId(option.id);
+                }}
+              >
+                {option.label}
+              </SegmentButton>
+            ))}
+          </Segments>
 
-            <MobileProgramField>
-              <DropdownRoot ref={dropdownRef} onBlur={handleDropdownBlur}>
-                <DropdownTrigger
-                  aria-expanded={dropdownOpen}
-                  aria-haspopup="listbox"
-                  aria-label={copy.selectLabel}
-                  type="button"
-                  onClick={() => {
-                    setDropdownOpen((previous) => !previous);
-                  }}
-                >
-                  <DropdownTriggerContent>
-                    <DropdownLabel>{copy.selectLabel}</DropdownLabel>
-                    <DropdownValue>
-                      {
-                        PARTNER_PROGRAM_OPTIONS.find(
-                          (option) => option.id === programId,
-                        )?.label
-                      }
-                    </DropdownValue>
-                  </DropdownTriggerContent>
-                  <DropdownIconContainer aria-hidden>
-                    <IconChevronDown size={20} stroke={1.5} />
-                  </DropdownIconContainer>
-                </DropdownTrigger>
+          <MobileProgramField>
+            <DropdownRoot ref={dropdownRef} onBlur={handleDropdownBlur}>
+              <DropdownTrigger
+                aria-expanded={dropdownOpen}
+                aria-haspopup="listbox"
+                aria-label={copy.selectLabel}
+                type="button"
+                onClick={() => {
+                  setDropdownOpen((previous) => !previous);
+                }}
+              >
+                <DropdownTriggerContent>
+                  <DropdownLabel>{copy.selectLabel}</DropdownLabel>
+                  <DropdownValue>
+                    {
+                      PARTNER_PROGRAM_OPTIONS.find(
+                        (option) => option.id === programId,
+                      )?.label
+                    }
+                  </DropdownValue>
+                </DropdownTriggerContent>
+                <DropdownIconContainer aria-hidden>
+                  <IconChevronDown size={20} stroke={1.5} />
+                </DropdownIconContainer>
+              </DropdownTrigger>
 
-                {dropdownOpen && (
-                  <DropdownPanel role="listbox" aria-label={copy.selectLabel}>
-                    {PARTNER_PROGRAM_OPTIONS.map((option) => (
-                      <DropdownOption
-                        key={option.id}
-                        aria-selected={programId === option.id}
-                        data-selected={programId === option.id}
-                        role="option"
-                        type="button"
-                        onClick={() => {
-                          setProgramId(option.id);
-                          setDropdownOpen(false);
-                        }}
-                      >
-                        {option.label}
-                      </DropdownOption>
-                    ))}
-                  </DropdownPanel>
-                )}
-              </DropdownRoot>
-            </MobileProgramField>
+              {dropdownOpen && (
+                <DropdownPanel role="listbox" aria-label={copy.selectLabel}>
+                  {PARTNER_PROGRAM_OPTIONS.map((option) => (
+                    <DropdownOption
+                      key={option.id}
+                      aria-selected={programId === option.id}
+                      data-selected={programId === option.id}
+                      role="option"
+                      type="button"
+                      onClick={() => {
+                        setProgramId(option.id);
+                        setDropdownOpen(false);
+                      }}
+                    >
+                      {option.label}
+                    </DropdownOption>
+                  ))}
+                </DropdownPanel>
+              )}
+            </DropdownRoot>
+          </MobileProgramField>
 
-            <TextInput
+          <Form.Field>
+            <Form.Input
               aria-required="true"
               autoComplete="off"
               name="name"
               placeholder={copy.fields.name}
               type="text"
             />
+          </Form.Field>
 
-            <FieldRow>
-              <TextInput
+          <FieldRow>
+            <Form.Field>
+              <Form.Input
                 aria-required="true"
                 autoComplete="off"
                 inputMode="email"
@@ -644,60 +521,67 @@ export function PartnerApplicationModal({
                 placeholder={copy.fields.email}
                 type="text"
               />
-              <TextInput
+            </Form.Field>
+            <Form.Field>
+              <Form.Input
                 aria-required="true"
                 autoComplete="off"
                 name="company"
                 placeholder={copy.fields.company}
                 type="text"
               />
-            </FieldRow>
+            </Form.Field>
+          </FieldRow>
 
-            <TextInput
+          <Form.Field>
+            <Form.Input
               aria-required="true"
               autoComplete="off"
               name="website"
               placeholder={copy.fields.website}
               type="text"
             />
+          </Form.Field>
 
-            <TextInput
+          <Form.Field>
+            <Form.Input
               autoComplete="off"
               name="opportunities"
               placeholder={copy.fields.opportunities}
               type="text"
             />
+          </Form.Field>
 
-            <TextArea
+          <Form.Field>
+            <Form.Textarea
               aria-required="true"
               autoComplete="off"
               name="message"
               placeholder={`${copy.fields.messageLabel}\n\n${copy.fields.messageHint}`}
             />
+          </Form.Field>
 
-            <FooterBlock>
-              {submitError ? (
-                <SubmitError role="alert">{submitError}</SubmitError>
-              ) : null}
-              <SubmitButton
-                type="submit"
-                disabled={isSubmitting}
-                aria-busy={isSubmitting}
-              >
-                <ButtonShape
-                  fillColor={theme.colors.primary.background[100]}
-                  height={BUTTON_HEIGHTS_PX.regular}
-                  strokeColor="none"
-                />
-                <SubmitLabel>
-                  {isSubmitting ? copy.submitInFlight : copy.submit}
-                </SubmitLabel>
-              </SubmitButton>
-            </FooterBlock>
-          </FormFields>
-        </form>
-      </Panel>
-    </Overlay>,
-    document.body,
+          <Modal.Footer>
+            {submitError ? (
+              <SubmitError role="alert">{submitError}</SubmitError>
+            ) : null}
+            <SubmitButton
+              type="submit"
+              disabled={isSubmitting}
+              aria-busy={isSubmitting}
+            >
+              <ButtonShape
+                fillColor={theme.colors.primary.background[100]}
+                height={BUTTON_HEIGHTS_PX.regular}
+                strokeColor="none"
+              />
+              <SubmitLabel>
+                {isSubmitting ? copy.submitInFlight : copy.submit}
+              </SubmitLabel>
+            </SubmitButton>
+          </Modal.Footer>
+        </FormFields>
+      </form>
+    </Modal.Root>
   );
 }

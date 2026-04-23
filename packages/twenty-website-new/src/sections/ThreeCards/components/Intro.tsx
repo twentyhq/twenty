@@ -17,7 +17,7 @@ const StyledIntro = styled.div`
   }
 
   @media (min-width: ${theme.breakpoints.md}px) {
-    max-width: 921px;
+    max-width: ${theme.layout.editorial};
 
     &[data-align='center'][data-page=${Pages.Home}] {
       max-width: 900px;

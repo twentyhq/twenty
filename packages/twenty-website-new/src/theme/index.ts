@@ -1,6 +1,7 @@
 import { breakpoints } from './breakpoints';
 import { colors } from './colors';
 import { font } from './font';
+import { layout } from './layout';
 import { lineHeight } from './line-height';
 import { radius } from './radius';
 import { spacing } from './spacing';
@@ -13,6 +14,7 @@ export const theme = {
   radius,
   lineHeight,
   breakpoints,
+  layout,
   zIndex,
 };
 

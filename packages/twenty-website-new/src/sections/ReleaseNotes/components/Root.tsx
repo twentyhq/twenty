@@ -10,7 +10,7 @@ const StyledSection = styled.section`
 `;
 
 const StyledContainer = styled(Container)`
-  max-width: 800px;
+  max-width: ${theme.layout.readingWide};
   padding-bottom: ${theme.spacing(20)};
   padding-left: ${theme.spacing(4)};
   padding-right: ${theme.spacing(4)};

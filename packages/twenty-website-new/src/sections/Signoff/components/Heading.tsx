@@ -9,7 +9,7 @@ const HeadingWrap = styled.div`
   margin-bottom: ${theme.spacing(2)};
   margin-left: auto;
   margin-right: auto;
-  max-width: 921px;
+  max-width: ${theme.layout.editorial};
   min-width: 0;
   width: 100%;
 

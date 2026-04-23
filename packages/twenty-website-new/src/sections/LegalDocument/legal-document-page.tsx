@@ -15,7 +15,7 @@ const PageSection = styled.section`
 const Article = styled.article`
   margin-left: auto;
   margin-right: auto;
-  max-width: 720px;
+  max-width: ${theme.layout.readingNarrow};
   min-width: 0;
   padding-bottom: ${theme.spacing(20)};
   padding-left: ${theme.spacing(4)};

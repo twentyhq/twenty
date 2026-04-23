@@ -130,7 +130,7 @@ const threeCardsIllustrationHeadingClassName = css`
   width: 100%;
 
   @media (min-width: ${theme.breakpoints.md}px) {
-    max-width: 921px;
+    max-width: ${theme.layout.editorial};
   }
 
   [data-family='sans'] {

@@ -19,7 +19,7 @@ layers that come **after** it in the list below.
 | 1   | `src/app/**`           | `sections`, `lib`, `design-system`, `icons`, `theme`, `content`             | Next.js App Router routes, route-level layouts, route-scoped data files, route-scoped private folders (`_*`). |
 | 2   | `src/sections/**`      | `lib`, `design-system`, `icons`, `theme`                                    | Page sections (Hero, Faq, Pricing, …). Page-agnostic, composable in any order. May own heavy visuals.         |
 | 3   | `src/lib/**`           | `design-system` (only when used as a leaf hook/component), `icons`, `theme` | Pure utilities and runtime services (semver, seo, visual-runtime, contact-cal, …). No knowledge of routes.    |
-| 4   | `src/design-system/**` | `icons`, `theme`                                                            | Linaria primitives (Heading, Body, Button, Stack, …). Theme-driven. No business logic.                        |
+| 4   | `src/design-system/**` | `icons`, `theme`, `@base-ui/react`                                          | Linaria primitives (Heading, Body, Button, Stack, Form, Modal, …). Theme-driven. No business logic. See §7.   |
 | 5   | `src/icons/**`         | `theme`                                                                     | SVG icon components.                                                                                          |
 | 6   | `src/theme/**`         | (nothing internal)                                                          | Tokens, typography, spacing, colors, CSS variables.                                                           |
 
@@ -281,7 +281,49 @@ add it here when one does.
 
 ---
 
-## 7. Environment variable contract
+## 7. Design-system primitives
+
+The `src/design-system/` folder is the only layer that owns visual
+primitives. Sections compose them; `lib/` may consume them as leaves;
+nothing else may add to them.
+
+| Primitive                                        | What it gives you                                                                                                                                                                       |
+| ------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Heading`, `Body`, `Eyebrow`                     | Typographic primitives wired to `theme.font` / `theme.lineHeight`. Compose with `segments` for mixed serif/sans inside a single line.                                                   |
+| `LinkButton`, `SubmitButton`, `IconButton`       | Buttons. Always render through these — they own the `ButtonShape` SVG fill and the `BaseButton` interaction layer.                                                                      |
+| `Container`                                      | Centres content at `theme.breakpoints.maxContent` (1440px). Use as the outermost wrapper of any full-bleed section.                                                                     |
+| `Stack` / `Inline` / `Grid`                      | Layout primitives in `Layout/`. Replace ad-hoc `display: flex; flex-direction: column` blocks with `<Stack gap={n}>`. `gap` is a `theme.spacing` multiplier.                            |
+| `Form.Field` / `Form.Input` / `Form.Textarea`    | Compound form primitive. `Form.Field` provides accessibility context — children read `id` / `aria-describedby` / `aria-invalid` from it. **Required wrapper** for new inputs/textareas. |
+| `Modal.Root` / `Modal.Title` / `Modal.Body` / …  | Compound modal built on Base UI `Dialog`. Owns focus trap, scroll lock, ESC, click-outside, ARIA, focus restoration. `Title`/`Description` are unstyled — bring your own typography.    |
+| `GuideCrosshair`, `Image`, `StepperProgressRail` | Marketing-specific decorative primitives.                                                                                                                                               |
+
+### When to grow this layer
+
+Add a primitive when **two existing call sites** hand-roll the same
+pattern. Examples that already triggered this rule: the modal mechanics
+(`ContactCalModal` / `PartnerApplicationModal`), the form field wiring
+(both modals re-implemented their own `<input>` styles before `Form`
+landed), and the editorial width tokens (`theme.layout.*`).
+
+Don't extract speculatively — a single consumer is "a styled div in
+that consumer's folder," not "a design-system primitive."
+
+### Width tokens (`theme.layout`)
+
+| Token           | Px    | Use case                                       |
+| --------------- | ----- | ---------------------------------------------- |
+| `readingNarrow` | 720px | Legal documents (high information density).    |
+| `readingWide`   | 800px | Long-form release notes (mixed text + lists).  |
+| `editorial`     | 921px | Section signoffs and home `ThreeCards` intros. |
+
+Bespoke per-component `max-width: <px>` is still acceptable when the
+constraint is geometric (a hero illustration block, a single-card
+column) rather than text-flow width — but if you find yourself reaching
+for one of the values above, use the token.
+
+---
+
+## 8. Environment variable contract
 
 The site reads exactly three site-wide env vars. They are documented in
 [`.env.example`](./.env.example) and validated at the boundary that consumes
@@ -300,7 +342,7 @@ consuming module.
 
 ---
 
-## 8. API surface (`app/api/**`)
+## 9. API surface (`app/api/**`)
 
 Every public POST endpoint in `app/api/**` is unauthed and forwards to a
 third party (a webhook, a payment provider, a calendar). Three classes of
@@ -355,7 +397,7 @@ same pattern.
 
 ---
 
-## 9. Cross-browser & memory invariants
+## 10. Cross-browser & memory invariants
 
 Some implementation details that have caused real bugs and must not regress.
 
