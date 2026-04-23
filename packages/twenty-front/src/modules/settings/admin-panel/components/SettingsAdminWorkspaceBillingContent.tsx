@@ -3,16 +3,28 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { Tag } from 'twenty-ui/components';
-import { H2Title, IconExternalLink, IconInfoCircle } from 'twenty-ui/display';
+import {
+  H2Title,
+  IconBox,
+  IconCalendarEvent,
+  IconCalendarRepeat,
+  IconCircleX,
+  IconCoins,
+  IconCreditCard,
+  IconExternalLink,
+  IconId,
+  IconStatusChange,
+  IconTag,
+  IconUsers,
+} from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
 import { type ThemeColor } from 'twenty-ui/theme';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { GET_WORKSPACE_BILLING_ADMIN_PANEL } from '@/settings/admin-panel/graphql/queries/getWorkspaceBillingAdminPanel';
-import { SettingsBillingLabelValueItem } from '@/settings/billing/components/internal/SettingsBillingLabelValueItem';
+import { SettingsTableCard } from '@/settings/components/SettingsTableCard';
 import { PlansTags } from '@/settings/billing/components/internal/PlansTags';
-import { SubscriptionInfoContainer } from '@/settings/billing/components/SubscriptionInfoContainer';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { beautifyExactDate } from '~/utils/date-utils';
@@ -26,6 +38,7 @@ import {
 const STRIPE_DASHBOARD_BASE_URL = 'https://dashboard.stripe.com';
 const BASE_PRODUCT_KEY = 'BASE_PRODUCT';
 const METERED_PRODUCT_KEY = 'WORKFLOW_NODE_EXECUTION';
+const EM_DASH = '\u2014';
 
 type SettingsAdminWorkspaceBillingContentProps = {
   workspaceId: string;
@@ -38,37 +51,9 @@ const StyledContainer = styled.div`
   margin-top: ${themeCssVariables.spacing[6]};
 `;
 
-const StyledItemsContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${themeCssVariables.spacing[3]};
-  width: 100%;
-`;
-
-const StyledItemHeader = styled.div`
-  align-items: center;
-  color: ${themeCssVariables.font.color.primary};
-  display: flex;
-  font-size: ${themeCssVariables.font.size.sm};
-  font-weight: ${themeCssVariables.font.weight.semiBold};
-  gap: ${themeCssVariables.spacing[2]};
-  justify-content: space-between;
-`;
-
-const StyledEmptyState = styled.div`
-  align-items: center;
-  color: ${themeCssVariables.font.color.tertiary};
-  display: flex;
-  font-size: ${themeCssVariables.font.size.sm};
-  gap: ${themeCssVariables.spacing[2]};
-  justify-content: center;
-  padding: ${themeCssVariables.spacing[3]};
-  text-align: center;
-`;
-
 const StyledExternalLink = styled.a`
   align-items: center;
-  color: ${themeCssVariables.font.color.secondary};
+  color: inherit;
   display: inline-flex;
   gap: ${themeCssVariables.spacing[1]};
   text-decoration: none;
@@ -80,7 +65,6 @@ const StyledExternalLink = styled.a`
 
 const StyledMono = styled.span`
   font-family: ${themeCssVariables.code.font.family};
-  font-size: ${themeCssVariables.font.size.xs};
 `;
 
 const STATUS_COLORS: Record<SubscriptionStatus, ThemeColor> = {
@@ -125,20 +109,15 @@ const toBillingPlanKey = (planKey: string): BillingPlanKey | null =>
       ? BillingPlanKey.ENTERPRISE
       : null;
 
-const StripeCustomerLink = ({ id }: { id: string }) => (
+const StripeLink = ({
+  path,
+  id,
+}: {
+  path: 'customers' | 'subscriptions';
+  id: string;
+}) => (
   <StyledExternalLink
-    href={`${STRIPE_DASHBOARD_BASE_URL}/customers/${id}`}
-    target="_blank"
-    rel="noopener noreferrer"
-  >
-    <StyledMono>{id}</StyledMono>
-    <IconExternalLink size={12} />
-  </StyledExternalLink>
-);
-
-const StripeSubscriptionLink = ({ id }: { id: string }) => (
-  <StyledExternalLink
-    href={`${STRIPE_DASHBOARD_BASE_URL}/subscriptions/${id}`}
+    href={`${STRIPE_DASHBOARD_BASE_URL}/${path}/${id}`}
     target="_blank"
     rel="noopener noreferrer"
   >
@@ -175,14 +154,8 @@ export const SettingsAdminWorkspaceBillingContent = ({
         <Section>
           <H2Title
             title={t`Billing`}
-            description={t`Stripe customer and subscription details`}
+            description={t`No billing data is available for this workspace.`}
           />
-          <SubscriptionInfoContainer>
-            <StyledEmptyState>
-              <IconInfoCircle size={14} />
-              {t`No billing data available for this workspace.`}
-            </StyledEmptyState>
-          </SubscriptionInfoContainer>
         </Section>
       </StyledContainer>
     );
@@ -190,16 +163,24 @@ export const SettingsAdminWorkspaceBillingContent = ({
 
   const { stripeCustomerId, creditBalance, subscription } = billing;
 
-  const baseItem = subscription?.items.find(
-    (item) => item.productKey === BASE_PRODUCT_KEY,
-  );
-  const meteredItem = subscription?.items.find(
-    (item) => item.productKey === METERED_PRODUCT_KEY,
-  );
-  const otherItems =
-    subscription?.items.filter(
-      (item) => item !== baseItem && item !== meteredItem,
-    ) ?? [];
+  const customerItems = [
+    {
+      Icon: IconId,
+      label: t`Stripe customer`,
+      value: isDefined(stripeCustomerId) ? (
+        <StripeLink path="customers" id={stripeCustomerId} />
+      ) : (
+        EM_DASH
+      ),
+    },
+    {
+      Icon: IconCoins,
+      label: t`Credit balance`,
+      value: isDefined(creditBalance)
+        ? `${formatNumber(creditBalance, { abbreviate: true, decimals: 2 })} ${t`credits`}`
+        : EM_DASH,
+    },
+  ];
 
   const intervalLabel =
     subscription?.interval === SubscriptionInterval.Month
@@ -216,6 +197,127 @@ export const SettingsAdminWorkspaceBillingContent = ({
     : null;
   const isTrialing = subscription?.status === SubscriptionStatus.Trialing;
 
+  const formatItemValue = (
+    item: NonNullable<typeof subscription>['items'][number],
+  ): string => {
+    const parts: string[] = [];
+
+    if (isDefined(item.quantity)) {
+      parts.push(`${formatNumber(item.quantity)} ${t`seats`}`);
+    }
+    if (isDefined(item.includedCredits)) {
+      parts.push(
+        `${formatNumber(item.includedCredits, { abbreviate: true, decimals: 2 })} ${t`credits/period`}`,
+      );
+    }
+    if (isDefined(item.unitAmount) && isDefined(subscription)) {
+      parts.push(formatCurrency(item.unitAmount, subscription.currency));
+    }
+
+    return parts.length > 0 ? parts.join(' · ') : EM_DASH;
+  };
+
+  const subscriptionItems = subscription
+    ? [
+        {
+          Icon: IconStatusChange,
+          label: t`Status`,
+          value: (
+            <Tag
+              color={STATUS_COLORS[subscription.status]}
+              text={STATUS_LABELS[subscription.status]}
+            />
+          ),
+        },
+        ...(isDefined(planKey)
+          ? [
+              {
+                Icon: IconTag,
+                label: t`Plan`,
+                value: <PlansTags plan={planKey} isTrialPeriod={isTrialing} />,
+              },
+            ]
+          : []),
+        ...(isDefined(intervalLabel)
+          ? [
+              {
+                Icon: IconCalendarEvent,
+                label: t`Billing interval`,
+                value: intervalLabel,
+              },
+            ]
+          : []),
+        {
+          Icon: IconCalendarRepeat,
+          label: t`Current period`,
+          value: formatPeriod(
+            subscription.currentPeriodStart,
+            subscription.currentPeriodEnd,
+          ),
+        },
+        ...(isDefined(subscription.trialStart) &&
+        isDefined(subscription.trialEnd)
+          ? [
+              {
+                Icon: IconCalendarRepeat,
+                label: t`Trial period`,
+                value: formatPeriod(
+                  subscription.trialStart,
+                  subscription.trialEnd,
+                ),
+              },
+            ]
+          : []),
+        ...(subscription.cancelAtPeriodEnd
+          ? [
+              {
+                Icon: IconCircleX,
+                label: t`Cancels at period end`,
+                value: t`Yes`,
+              },
+            ]
+          : []),
+        ...(isDefined(subscription.cancelAt)
+          ? [
+              {
+                Icon: IconCircleX,
+                label: t`Cancels at`,
+                value: beautifyExactDate(subscription.cancelAt),
+              },
+            ]
+          : []),
+        ...(isDefined(subscription.canceledAt)
+          ? [
+              {
+                Icon: IconCircleX,
+                label: t`Canceled at`,
+                value: beautifyExactDate(subscription.canceledAt),
+              },
+            ]
+          : []),
+        {
+          Icon: IconCreditCard,
+          label: t`Stripe subscription`,
+          value: (
+            <StripeLink
+              path="subscriptions"
+              id={subscription.stripeSubscriptionId}
+            />
+          ),
+        },
+        ...subscription.items.map((item) => ({
+          Icon:
+            item.productKey === BASE_PRODUCT_KEY
+              ? IconUsers
+              : item.productKey === METERED_PRODUCT_KEY
+                ? IconCoins
+                : IconBox,
+          label: item.productName || t`Unnamed product`,
+          value: formatItemValue(item),
+        })),
+      ]
+    : [];
+
   return (
     <StyledContainer>
       <Section>
@@ -223,159 +325,30 @@ export const SettingsAdminWorkspaceBillingContent = ({
           title={t`Customer`}
           description={t`Stripe customer linked to this workspace`}
         />
-        <SubscriptionInfoContainer>
-          <SettingsBillingLabelValueItem
-            label={t`Stripe customer`}
-            value={
-              isDefined(stripeCustomerId) ? (
-                <StripeCustomerLink id={stripeCustomerId} />
-              ) : (
-                '\u2014'
-              )
-            }
-          />
-          <SettingsBillingLabelValueItem
-            label={t`Credit balance`}
-            value={
-              isDefined(creditBalance)
-                ? `${formatNumber(creditBalance, {
-                    abbreviate: true,
-                    decimals: 2,
-                  })} ${t`credits`}`
-                : '\u2014'
-            }
-          />
-        </SubscriptionInfoContainer>
+        <SettingsTableCard
+          rounded
+          items={customerItems}
+          gridAutoColumns="3fr 8fr"
+        />
       </Section>
 
       <Section>
         <H2Title
           title={t`Subscription`}
-          description={t`Current subscription state`}
+          description={
+            subscription
+              ? t`Current subscription state and line items`
+              : t`No active subscription.`
+          }
         />
-        {!subscription ? (
-          <SubscriptionInfoContainer>
-            <StyledEmptyState>
-              <IconInfoCircle size={14} />
-              {t`No active subscription.`}
-            </StyledEmptyState>
-          </SubscriptionInfoContainer>
-        ) : (
-          <SubscriptionInfoContainer>
-            <SettingsBillingLabelValueItem
-              label={t`Status`}
-              value={
-                <Tag
-                  color={STATUS_COLORS[subscription.status]}
-                  text={STATUS_LABELS[subscription.status]}
-                />
-              }
-            />
-            {isDefined(planKey) && (
-              <SettingsBillingLabelValueItem
-                label={t`Plan`}
-                value={<PlansTags plan={planKey} isTrialPeriod={isTrialing} />}
-              />
-            )}
-            {isDefined(intervalLabel) && (
-              <SettingsBillingLabelValueItem
-                label={t`Billing interval`}
-                value={intervalLabel}
-              />
-            )}
-            <SettingsBillingLabelValueItem
-              label={t`Current period`}
-              value={formatPeriod(
-                subscription.currentPeriodStart,
-                subscription.currentPeriodEnd,
-              )}
-            />
-            {isDefined(subscription.trialStart) &&
-              isDefined(subscription.trialEnd) && (
-                <SettingsBillingLabelValueItem
-                  label={t`Trial period`}
-                  value={formatPeriod(
-                    subscription.trialStart,
-                    subscription.trialEnd,
-                  )}
-                />
-              )}
-            {subscription.cancelAtPeriodEnd && (
-              <SettingsBillingLabelValueItem
-                label={t`Cancels at period end`}
-                value={t`Yes`}
-              />
-            )}
-            {isDefined(subscription.cancelAt) && (
-              <SettingsBillingLabelValueItem
-                label={t`Cancels at`}
-                value={beautifyExactDate(subscription.cancelAt)}
-              />
-            )}
-            {isDefined(subscription.canceledAt) && (
-              <SettingsBillingLabelValueItem
-                label={t`Canceled at`}
-                value={beautifyExactDate(subscription.canceledAt)}
-              />
-            )}
-            <SettingsBillingLabelValueItem
-              label={t`Stripe subscription`}
-              value={
-                <StripeSubscriptionLink
-                  id={subscription.stripeSubscriptionId}
-                />
-              }
-            />
-          </SubscriptionInfoContainer>
+        {subscription && (
+          <SettingsTableCard
+            rounded
+            items={subscriptionItems}
+            gridAutoColumns="3fr 8fr"
+          />
         )}
       </Section>
-
-      {isDefined(subscription) && subscription.items.length > 0 && (
-        <Section>
-          <H2Title
-            title={t`Line items`}
-            description={t`Products included in this subscription`}
-          />
-          <StyledItemsContainer>
-            {[baseItem, meteredItem, ...otherItems]
-              .filter(isDefined)
-              .map((item) => (
-                <SubscriptionInfoContainer key={item.stripePriceId}>
-                  <StyledItemHeader>
-                    <span>{item.productName || t`Unnamed product`}</span>
-                    {isDefined(item.productKey) && (
-                      <Tag color="gray" text={item.productKey} />
-                    )}
-                  </StyledItemHeader>
-                  {isDefined(item.quantity) && (
-                    <SettingsBillingLabelValueItem
-                      label={t`Seats`}
-                      value={formatNumber(item.quantity)}
-                    />
-                  )}
-                  {isDefined(item.includedCredits) && (
-                    <SettingsBillingLabelValueItem
-                      label={t`Credits per period`}
-                      value={formatNumber(item.includedCredits, {
-                        abbreviate: true,
-                        decimals: 2,
-                      })}
-                    />
-                  )}
-                  {isDefined(item.unitAmount) && (
-                    <SettingsBillingLabelValueItem
-                      label={t`Unit price`}
-                      value={formatCurrency(
-                        item.unitAmount,
-                        subscription.currency,
-                      )}
-                    />
-                  )}
-                </SubscriptionInfoContainer>
-              ))}
-          </StyledItemsContainer>
-        </Section>
-      )}
     </StyledContainer>
   );
 };
