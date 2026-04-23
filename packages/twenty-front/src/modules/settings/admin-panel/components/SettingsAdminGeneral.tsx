@@ -4,6 +4,7 @@ import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSec
 import { SettingsAdminVersionContainer } from '@/settings/admin-panel/components/SettingsAdminVersionContainer';
 import { ADMIN_PANEL_RECENT_USERS } from '@/settings/admin-panel/graphql/queries/adminPanelRecentUsers';
 import { ADMIN_PANEL_TOP_WORKSPACES } from '@/settings/admin-panel/graphql/queries/adminPanelTopWorkspaces';
+import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceLogo';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableBody } from '@/ui/layout/table/components/TableBody';
@@ -14,19 +15,35 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { useDebounce } from 'use-debounce';
 import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath } from 'twenty-shared/utils';
+import { getImageAbsoluteURI, getSettingsPath } from 'twenty-shared/utils';
+import { AvatarOrIcon } from 'twenty-ui/components';
 
 import { currentUserState } from '@/auth/states/currentUserState';
 import { H2Title } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { REACT_APP_SERVER_BASE_URL } from '~/config';
 
 const StyledEmptyState = styled.div`
   color: ${themeCssVariables.font.color.tertiary};
   padding: ${themeCssVariables.spacing[4]} 0;
+`;
+
+const StyledWorkspaceCell = styled.div`
+  align-items: center;
+  display: flex;
+  gap: ${themeCssVariables.spacing[2]};
+  min-width: 0;
+`;
+
+const StyledWorkspaceName = styled.span`
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `;
 
 export const SettingsAdminGeneral = () => {
@@ -64,6 +81,7 @@ export const SettingsAdminGeneral = () => {
       name: string;
       totalUsers: number;
       subdomain: string;
+      logo: string | null;
     }[];
   }>(ADMIN_PANEL_TOP_WORKSPACES, {
     client: apolloAdminClient,
@@ -176,7 +194,23 @@ export const SettingsAdminGeneral = () => {
                       )}
                     >
                       <TableCell color={themeCssVariables.font.color.primary}>
-                        {workspace.name || '\u2014'}
+                        <StyledWorkspaceCell>
+                          <AvatarOrIcon
+                            avatarUrl={
+                              getImageAbsoluteURI({
+                                imageUrl: isNonEmptyString(workspace.logo)
+                                  ? workspace.logo
+                                  : DEFAULT_WORKSPACE_LOGO,
+                                baseUrl: REACT_APP_SERVER_BASE_URL,
+                              }) ?? ''
+                            }
+                            placeholder={workspace.name}
+                            avatarType="squared"
+                          />
+                          <StyledWorkspaceName>
+                            {workspace.name || '\u2014'}
+                          </StyledWorkspaceName>
+                        </StyledWorkspaceCell>
                       </TableCell>
                       <TableCell align="right">
                         {workspace.totalUsers}
