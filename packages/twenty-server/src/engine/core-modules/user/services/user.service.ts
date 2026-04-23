@@ -7,7 +7,7 @@ import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { isWorkspaceActiveOrSuspended } from 'twenty-shared/workspace';
-import { type QueryRunner, IsNull, Not, Repository } from 'typeorm';
+import { type QueryRunner, In, IsNull, Not, Repository } from 'typeorm';
 
 import {
   AuthException,
@@ -111,6 +111,37 @@ export class UserService extends TypeOrmQueryService<UserEntity> {
 
         return await workspaceMemberRepository.find({
           withDeleted: withDeleted,
+        });
+      },
+      authContext,
+    );
+  }
+
+  async loadWorkspaceMembersByUserIds({
+    workspace,
+    userIds,
+  }: {
+    workspace: Pick<WorkspaceEntity, 'id' | 'activationStatus'>;
+    userIds: string[];
+  }): Promise<WorkspaceMemberWorkspaceEntity[]> {
+    if (!isWorkspaceActiveOrSuspended(workspace) || userIds.length === 0) {
+      return [];
+    }
+
+    const authContext = buildSystemAuthContext(workspace.id);
+
+    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      async () => {
+        const workspaceMemberRepository =
+          await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
+            workspace.id,
+            'workspaceMember',
+            { shouldBypassPermissionChecks: true },
+          );
+
+        return await workspaceMemberRepository.find({
+          select: ['id', 'userId', 'avatarUrl'],
+          where: { userId: In(userIds) },
         });
       },
       authContext,

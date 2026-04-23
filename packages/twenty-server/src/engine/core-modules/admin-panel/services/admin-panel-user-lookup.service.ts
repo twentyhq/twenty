@@ -2,9 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { msg } from '@lingui/core/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { FeatureFlagKey, FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { In, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 
 import { type UserLookup } from 'src/engine/core-modules/admin-panel/dtos/user-lookup.dto';
 import {
@@ -14,21 +15,20 @@ import {
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
-import { extractFileIdFromUrl } from 'src/engine/core-modules/file/files-field/utils/extract-file-id-from-url.util';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { userValidator } from 'src/engine/core-modules/user/user.validate';
+import { WorkspaceMemberTranspiler } from 'src/engine/core-modules/user/services/workspace-member-transpiler.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
-import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
-import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 @Injectable()
 export class AdminPanelUserLookupService {
   constructor(
     private readonly workspaceDomainsService: WorkspaceDomainsService,
     private readonly fileUrlService: FileUrlService,
-    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly userService: UserService,
+    private readonly workspaceMemberTranspiler: WorkspaceMemberTranspiler,
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
     @InjectRepository(WorkspaceEntity)
@@ -39,114 +39,63 @@ export class AdminPanelUserLookupService {
     private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
   ) {}
 
-  private signAvatarUrl({
-    avatarUrl,
-    workspaceId,
-  }: {
-    avatarUrl?: string | null;
-    workspaceId: string;
-  }): string | null {
-    if (!avatarUrl) {
-      return null;
-    }
-
-    const fileId = extractFileIdFromUrl(avatarUrl, FileFolder.CorePicture);
-
-    if (!isDefined(fileId)) {
-      return avatarUrl;
-    }
-
-    return this.fileUrlService.signFileByIdUrl({
-      fileId,
-      workspaceId,
-      fileFolder: FileFolder.CorePicture,
-    });
-  }
-
-  private async loadWorkspaceMemberAvatarUrls({
-    workspaceId,
+  private async loadSignedAvatarUrlsByUserId({
+    workspace,
     workspaceUsers,
   }: {
-    workspaceId: string;
+    workspace: Pick<WorkspaceEntity, 'id' | 'activationStatus'>;
     workspaceUsers: UserWorkspaceEntity[];
   }): Promise<Map<string, string | null>> {
     const definedWorkspaceUsers = workspaceUsers.filter((workspaceUser) =>
       isDefined(workspaceUser.user),
     );
 
-    const userIds = definedWorkspaceUsers.map(
-      (workspaceUser) => workspaceUser.user.id,
-    );
-
-    if (userIds.length === 0) {
+    if (definedWorkspaceUsers.length === 0) {
       return new Map();
     }
 
-    const authContext = buildSystemAuthContext(workspaceId);
+    const workspaceMembers =
+      await this.userService.loadWorkspaceMembersByUserIds({
+        workspace,
+        userIds: definedWorkspaceUsers.map(
+          (workspaceUser) => workspaceUser.user.id,
+        ),
+      });
+    const workspaceMemberByUserId = new Map(
+      workspaceMembers.map((member) => [member.userId, member]),
+    );
 
-    try {
-      return await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-        async () => {
-          const workspaceMemberRepository =
-            await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
-              workspaceId,
-              'workspaceMember',
-              { shouldBypassPermissionChecks: true },
-            );
+    return new Map(
+      definedWorkspaceUsers.map((workspaceUser) => {
+        const userId = workspaceUser.user.id;
+        const member = workspaceMemberByUserId.get(userId);
+        const memberSigned = isDefined(member)
+          ? this.workspaceMemberTranspiler.generateSignedAvatarUrl({
+              workspaceId: workspace.id,
+              workspaceMember: member,
+            })
+          : '';
 
-          const workspaceMembers = await workspaceMemberRepository.find({
-            select: ['userId', 'avatarUrl'],
-            where: {
-              userId: In(userIds),
-            },
+        if (isNonEmptyString(memberSigned)) {
+          return [userId, memberSigned];
+        }
+
+        const fallbackRaw =
+          workspaceUser.defaultAvatarUrl ?? workspaceUser.user.defaultAvatarUrl;
+
+        if (!isNonEmptyString(fallbackRaw)) {
+          return [userId, null];
+        }
+
+        const fallbackSigned =
+          this.workspaceMemberTranspiler.generateSignedAvatarUrl({
+            workspaceId: workspace.id,
+            workspaceMember: { avatarUrl: fallbackRaw, id: userId },
           });
 
-          const workspaceMemberAvatarUrlsByUserId = new Map(
-            workspaceMembers.map((workspaceMember) => [
-              workspaceMember.userId,
-              this.signAvatarUrl({
-                avatarUrl: workspaceMember.avatarUrl,
-                workspaceId,
-              }),
-            ]),
-          );
-
-          const fallbackAvatarUrlsByUserId = new Map(
-            definedWorkspaceUsers.map((workspaceUser) => [
-              workspaceUser.user.id,
-              this.signAvatarUrl({
-                avatarUrl:
-                  workspaceUser.defaultAvatarUrl ??
-                  workspaceUser.user.defaultAvatarUrl,
-                workspaceId,
-              }),
-            ]),
-          );
-
-          return new Map(
-            userIds.map((userId) => [
-              userId,
-              workspaceMemberAvatarUrlsByUserId.get(userId) ??
-                fallbackAvatarUrlsByUserId.get(userId) ??
-                null,
-            ]),
-          );
-        },
-        authContext,
-      );
-    } catch {
-      return new Map(
-        definedWorkspaceUsers.map((workspaceUser) => [
-          workspaceUser.user.id,
-          this.signAvatarUrl({
-            avatarUrl:
-              workspaceUser.defaultAvatarUrl ??
-              workspaceUser.user.defaultAvatarUrl,
-            workspaceId,
-          }),
-        ]),
-      );
-    }
+        return [userId, isNonEmptyString(fallbackSigned) ? fallbackSigned : null];
+      }),
+    );
   }
 
   async userLookup(userIdentifier: string): Promise<UserLookup> {
@@ -185,8 +134,8 @@ export class AdminPanelUserLookupService {
         const workspaceUsers = userWorkspace.workspace.workspaceUsers.filter(
           (workspaceUser) => isDefined(workspaceUser.user),
         );
-        const avatarUrlsByUserId = await this.loadWorkspaceMemberAvatarUrls({
-          workspaceId: userWorkspace.workspace.id,
+        const avatarUrlsByUserId = await this.loadSignedAvatarUrlsByUserId({
+          workspace: userWorkspace.workspace,
           workspaceUsers,
         });
 
@@ -270,8 +219,8 @@ export class AdminPanelUserLookupService {
     const definedWorkspaceUsers = workspaceUsers.filter((wu) =>
       isDefined(wu.user),
     );
-    const avatarUrlsByUserId = await this.loadWorkspaceMemberAvatarUrls({
-      workspaceId,
+    const avatarUrlsByUserId = await this.loadSignedAvatarUrlsByUserId({
+      workspace,
       workspaceUsers: definedWorkspaceUsers,
     });
 

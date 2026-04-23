@@ -12,5 +12,5 @@ export class AdminPanelRecentUserDTO extends UserInfoDTO {
   workspaceId?: string | null;
 
   @Field(() => String, { nullable: true })
-  workspaceLogoUrl?: string | null;
+  workspaceLogo?: string | null;
 }

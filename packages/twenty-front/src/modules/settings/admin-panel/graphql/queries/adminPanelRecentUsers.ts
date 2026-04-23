@@ -11,7 +11,7 @@ export const ADMIN_PANEL_RECENT_USERS = gql`
       createdAt
       workspaceName
       workspaceId
-      workspaceLogoUrl
+      workspaceLogo
     }
   }
 `;

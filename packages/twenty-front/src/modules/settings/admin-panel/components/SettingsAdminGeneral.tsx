@@ -159,7 +159,7 @@ export const SettingsAdminGeneral = () => {
                         {user.workspaceId ? (
                           <>
                             <Avatar
-                              avatarUrl={user.workspaceLogoUrl}
+                              avatarUrl={user.workspaceLogo}
                               placeholder={user.workspaceName || ''}
                               placeholderColorSeed={user.workspaceId}
                               size="sm"
