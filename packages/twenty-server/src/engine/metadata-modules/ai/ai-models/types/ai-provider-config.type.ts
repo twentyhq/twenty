@@ -1,20 +1,25 @@
-import { type AiSdkPackage, type DataResidency } from 'twenty-shared/ai';
+import { z } from 'zod';
 
-import { type AiProviderAuthType } from 'src/engine/metadata-modules/ai/ai-models/types/ai-provider-auth-type.type';
-import { type AiProviderModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-provider-model-config.type';
+import { AI_SDK_PACKAGES, DATA_RESIDENCY_KEYS } from 'twenty-shared/ai';
 
-export type AiProviderConfig = {
-  npm: AiSdkPackage;
-  // Optional provider display/catalog name (e.g. models.dev label). Not a model name; per-model names live on `models[].name`.
-  name?: string;
-  label?: string;
-  authType?: AiProviderAuthType;
-  apiKey?: string;
-  baseUrl?: string;
-  region?: string;
-  dataResidency?: DataResidency;
-  accessKeyId?: string;
-  secretAccessKey?: string;
-  sessionToken?: string;
+import { aiProviderAuthTypeSchema } from 'src/engine/metadata-modules/ai/ai-models/types/ai-provider-auth-type.type';
+import { aiProviderModelConfigSchema, type AiProviderModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-provider-model-config.type';
+
+export const aiProviderConfigSchema = z.object({
+  npm: z.enum(AI_SDK_PACKAGES),
+  name: z.string().optional(),
+  label: z.string().optional(),
+  authType: aiProviderAuthTypeSchema.optional(),
+  apiKey: z.string().optional(),
+  baseUrl: z.string().optional(),
+  region: z.string().optional(),
+  dataResidency: z.enum(DATA_RESIDENCY_KEYS).optional(),
+  accessKeyId: z.string().optional(),
+  secretAccessKey: z.string().optional(),
+  sessionToken: z.string().optional(),
+  models: z.array(aiProviderModelConfigSchema).optional(),
+});
+
+export type AiProviderConfig = Omit<z.infer<typeof aiProviderConfigSchema>, 'models'> & {
   models?: AiProviderModelConfig[];
 };

@@ -1,23 +1,27 @@
-import { type LongContextCost } from 'src/engine/metadata-modules/ai/ai-models/types/long-context-cost.type';
-import { type ModelFamily } from 'src/engine/metadata-modules/ai/ai-models/types/model-family.enum';
+import { z } from 'zod';
+
+import { ModelFamily } from 'src/engine/metadata-modules/ai/ai-models/types/model-family.enum';
+import { longContextCostSchema } from 'src/engine/metadata-modules/ai/ai-models/types/long-context-cost.type';
+
+export const aiProviderModelConfigSchema = z.object({
+  name: z.string(),
+  label: z.string(),
+  description: z.string().optional(),
+  modelFamily: z.nativeEnum(ModelFamily).optional(),
+  inputCostPerMillionTokens: z.number().optional(),
+  outputCostPerMillionTokens: z.number().optional(),
+  cachedInputCostPerMillionTokens: z.number().optional(),
+  cacheCreationCostPerMillionTokens: z.number().optional(),
+  longContextCost: longContextCostSchema.optional(),
+  contextWindowTokens: z.number().optional(),
+  maxOutputTokens: z.number().optional(),
+  modalities: z.array(z.string()).optional(),
+  supportsReasoning: z.boolean().optional(),
+  isDeprecated: z.boolean().optional(),
+});
 
 export type AiModelSource = 'catalog' | 'manual';
 
-export type AiProviderModelConfig = {
-  // Bare model name passed to the AI SDK (e.g. `gpt-4o`, `claude-3-opus`), not the composite `provider/modelName` id.
-  name: string;
-  label: string;
-  description?: string;
-  modelFamily?: ModelFamily;
-  inputCostPerMillionTokens?: number;
-  outputCostPerMillionTokens?: number;
-  cachedInputCostPerMillionTokens?: number;
-  cacheCreationCostPerMillionTokens?: number;
-  longContextCost?: LongContextCost;
-  contextWindowTokens?: number;
-  maxOutputTokens?: number;
-  modalities?: string[];
-  supportsReasoning?: boolean;
-  isDeprecated?: boolean;
+export type AiProviderModelConfig = z.infer<typeof aiProviderModelConfigSchema> & {
   source?: AiModelSource;
 };

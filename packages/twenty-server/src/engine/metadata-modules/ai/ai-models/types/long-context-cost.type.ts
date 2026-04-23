@@ -1,7 +1,11 @@
-export type LongContextCost = {
-  inputCostPerMillionTokens: number;
-  outputCostPerMillionTokens: number;
-  cachedInputCostPerMillionTokens?: number;
-  cacheCreationCostPerMillionTokens?: number;
-  thresholdTokens: number;
-};
+import { z } from 'zod';
+
+export const longContextCostSchema = z.object({
+  inputCostPerMillionTokens: z.number(),
+  outputCostPerMillionTokens: z.number(),
+  cachedInputCostPerMillionTokens: z.number().optional(),
+  cacheCreationCostPerMillionTokens: z.number().optional(),
+  thresholdTokens: z.number(),
+});
+
+export type LongContextCost = z.infer<typeof longContextCostSchema>;
