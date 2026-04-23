@@ -33,6 +33,7 @@ export class DefaultAiCatalogService implements OnModuleInit {
       const raw = await this.fetchCatalog(catalogPath);
 
       this.catalog = normalizeAiProviders(raw);
+      this.logger.log(`Loaded AI catalog from storage: ${catalogPath}`);
     } catch (error: unknown) {
       const message = error instanceof Error ? error.message : String(error);
 
@@ -43,16 +44,14 @@ export class DefaultAiCatalogService implements OnModuleInit {
     }
   }
 
-  getDefaultAiCatalog(): Readonly<AiProvidersConfig> {
-    return this.catalog;
+  getDefaultAiCatalog(): AiProvidersConfig {
+    return structuredClone(this.catalog);
   }
 
   private async fetchCatalog(filePath: string): Promise<AiProvidersConfig> {
     const driver = this.fileStorageDriverFactory.getCurrentDriver();
     const stream = await driver.readFile({ filePath });
     const body = (await streamToBuffer(stream)).toString('utf-8');
-
-    this.logger.log(`Loaded AI catalog from storage: ${filePath}`);
 
     return aiProvidersConfigSchema.parse(JSON.parse(body));
   }
