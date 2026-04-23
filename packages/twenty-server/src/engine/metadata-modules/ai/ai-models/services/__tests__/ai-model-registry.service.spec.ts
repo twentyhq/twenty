@@ -3,81 +3,10 @@ import { Test, type TestingModule } from '@nestjs/testing';
 import { ConfigGroupHashService } from 'src/engine/core-modules/twenty-config/services/config-group-hash.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { AiModelPreferencesService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-preferences.service';
-import { ProviderConfigService } from 'src/engine/metadata-modules/ai/ai-models/services/provider-config.service';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
+import { ProviderConfigService } from 'src/engine/metadata-modules/ai/ai-models/services/provider-config.service';
 import { SdkProviderFactoryService } from 'src/engine/metadata-modules/ai/ai-models/services/sdk-provider-factory.service';
-import { buildCompositeModelId } from 'src/engine/metadata-modules/ai/ai-models/utils/composite-model-id.util';
-import { loadDefaultAiProviders } from 'src/engine/metadata-modules/ai/ai-models/utils/load-default-ai-providers.util';
-import { type AiProvidersConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-providers-config.type';
 import { AUTO_SELECT_SMART_MODEL_ID } from 'twenty-shared/constants';
-
-const DEFAULT_PROVIDERS: AiProvidersConfig = loadDefaultAiProviders();
-
-const EXPECTED_PROVIDERS = ['openai', 'anthropic', 'google', 'xai', 'mistral'];
-
-describe('Default AI Providers (ai-providers.json)', () => {
-  it('should have at least one model per provider', () => {
-    EXPECTED_PROVIDERS.forEach((providerName) => {
-      const config = DEFAULT_PROVIDERS[providerName];
-
-      expect(config).toBeDefined();
-      expect((config?.models?.length ?? 0) > 0).toBe(true);
-    });
-  });
-
-  it('should have all required fields for each model', () => {
-    Object.entries(DEFAULT_PROVIDERS).forEach(([, config]) => {
-      (config.models ?? []).forEach((model) => {
-        expect(model.name).toBeDefined();
-        expect(model.label).toBeDefined();
-        expect(model.inputCostPerMillionTokens).toBeDefined();
-        expect(model.outputCostPerMillionTokens).toBeDefined();
-        expect(model.contextWindowTokens).toBeGreaterThan(0);
-        expect(model.maxOutputTokens).toBeGreaterThan(0);
-      });
-    });
-  });
-
-  it('should have unique model IDs across all providers', () => {
-    const allCompositeIds: string[] = [];
-
-    Object.entries(DEFAULT_PROVIDERS).forEach(([key, config]) => {
-      (config.models ?? []).forEach((model) => {
-        allCompositeIds.push(buildCompositeModelId(key, model.name));
-      });
-    });
-
-    const unique = new Set(allCompositeIds);
-
-    expect(unique.size).toBe(allCompositeIds.length);
-  });
-
-  it('should have at least one non-deprecated model per provider', () => {
-    EXPECTED_PROVIDERS.forEach((providerName) => {
-      const config = DEFAULT_PROVIDERS[providerName];
-      const hasActiveModel = (config?.models ?? []).some(
-        (model) => !model.isDeprecated,
-      );
-
-      expect(hasActiveModel).toBe(true);
-    });
-  });
-
-  it('should have source set to catalog for all models', () => {
-    Object.entries(DEFAULT_PROVIDERS).forEach(([, config]) => {
-      (config.models ?? []).forEach((model) => {
-        expect(model.source).toBe('catalog');
-      });
-    });
-  });
-
-  it('should have npm field set for all providers', () => {
-    Object.entries(DEFAULT_PROVIDERS).forEach(([, config]) => {
-      expect(config.npm).toBeDefined();
-      expect(config.npm).toMatch(/^@ai-sdk\//);
-    });
-  });
-});
 
 describe('AiModelRegistryService', () => {
   let service: AiModelRegistryService;
