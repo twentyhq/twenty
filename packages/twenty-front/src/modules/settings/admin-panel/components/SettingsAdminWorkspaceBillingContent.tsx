@@ -220,6 +220,16 @@ export const SettingsAdminWorkspaceBillingContent = ({
   const subscriptionItems = subscription
     ? [
         {
+          Icon: IconCreditCard,
+          label: t`Stripe subscription`,
+          value: (
+            <StripeLink
+              path="subscriptions"
+              id={subscription.stripeSubscriptionId}
+            />
+          ),
+        },
+        {
           Icon: IconStatusChange,
           label: t`Status`,
           value: (
@@ -295,16 +305,6 @@ export const SettingsAdminWorkspaceBillingContent = ({
               },
             ]
           : []),
-        {
-          Icon: IconCreditCard,
-          label: t`Stripe subscription`,
-          value: (
-            <StripeLink
-              path="subscriptions"
-              id={subscription.stripeSubscriptionId}
-            />
-          ),
-        },
         ...subscription.items.map((item) => ({
           Icon:
             item.productKey === BASE_PRODUCT_KEY
