@@ -216,13 +216,30 @@ export class TimelineActivityRepository {
           buildTimelineActivityRelatedMorphFieldMetadataName(
             objectSingularName,
           );
+        const objectMetadataId = Object.values(
+          context.flatObjectMetadataMaps.byUniversalIdentifier,
+        )
+          .filter(isDefined)
+          .find(
+            (object) =>
+              isDefined(object) && object?.nameSingular === objectSingularName,
+          )?.id;
         const fieldName = `${morphFieldName}Id`;
+
+        if (!objectMetadataId) {
+          return false;
+        }
 
         return Object.values(
           context.flatFieldMetadataMaps.byUniversalIdentifier,
         )
           .filter(isDefined)
-          .some((field) => isDefined(field) && field?.name === fieldName);
+          .some(
+            (field) =>
+              isDefined(field) &&
+              field?.name === fieldName &&
+              field.objectMetadataUniversalIdentifier === objectMetadataId,
+          );
       },
       authContext,
     );

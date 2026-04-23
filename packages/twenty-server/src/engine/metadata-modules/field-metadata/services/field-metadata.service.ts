@@ -191,8 +191,24 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
               deletedRelationWidgetConfigurationType,
         );
 
+      const widgetsCountByPageLayoutTabIds =
+        relationPageLayoutWidgetsToDelete.reduce(
+          (acc, widget) => {
+            if (isDefined(widget.pageLayoutTabId)) {
+              acc[widget.pageLayoutTabId] =
+                (acc[widget.pageLayoutTabId] || 0) + 1;
+            }
+            return acc;
+          },
+          {} as Record<string, number>,
+        );
+
       const relationPageLayoutTabIds = new Set(
         relationPageLayoutWidgetsToDelete
+          .filter(
+            (widget) =>
+              widgetsCountByPageLayoutTabIds[widget.pageLayoutTabId] === 1,
+          )
           .map((widget) => widget.pageLayoutTabId)
           .filter(isDefined),
       );
@@ -221,20 +237,15 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
               flatEntityToDelete: flatIndexesToDelete,
               flatEntityToUpdate: flatIndexesToUpdate,
             },
-            ...(flatPageLayoutWidgetsToDelete.length > 0
+            ...(flatPageLayoutWidgetsToDelete.length > 0 ||
+            relationPageLayoutWidgetsToDelete.length > 0
               ? {
                   pageLayoutWidget: {
                     flatEntityToCreate: [],
-                    flatEntityToDelete: flatPageLayoutWidgetsToDelete,
-                    flatEntityToUpdate: [],
-                  },
-                }
-              : {}),
-            ...(relationPageLayoutWidgetsToDelete.length > 0
-              ? {
-                  pageLayoutWidget: {
-                    flatEntityToCreate: [],
-                    flatEntityToDelete: relationPageLayoutWidgetsToDelete,
+                    flatEntityToDelete: [
+                      ...flatPageLayoutWidgetsToDelete,
+                      ...relationPageLayoutWidgetsToDelete,
+                    ],
                     flatEntityToUpdate: [],
                   },
                 }
