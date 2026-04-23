@@ -15,11 +15,11 @@ export class ProviderConfigService {
   ) {}
 
   getCatalogProviderNames(): Set<string> {
-    return new Set(Object.keys(this.aiCatalogLoaderService.getAiProviders()));
+    return new Set(Object.keys(this.aiCatalogLoaderService.getAiCatalog()));
   }
 
   getResolvedProviders(): AiProvidersConfig {
-    const rawCatalog = this.aiCatalogLoaderService.getAiProviders();
+    const rawCatalog = this.aiCatalogLoaderService.getAiCatalog();
     // Only resolve {{VAR}} templates in the committed catalog — never in
     // user-supplied custom providers, to prevent config variable exfiltration.
     const catalog = this.resolveTemplates(rawCatalog);

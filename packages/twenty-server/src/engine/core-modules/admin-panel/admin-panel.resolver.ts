@@ -424,7 +424,7 @@ export class AdminPanelResolver {
     const providers =
       this.aiModelRegistryService.getResolvedProvidersForAdmin();
     const catalogNames = this.aiModelRegistryService.getCatalogProviderNames();
-    const rawCatalog = this.aiCatalogLoaderService.getAiProviders();
+    const rawCatalog = this.aiCatalogLoaderService.getAiCatalog();
     const masked: Record<string, Record<string, unknown>> = {};
 
     for (const [key, config] of Object.entries(providers)) {

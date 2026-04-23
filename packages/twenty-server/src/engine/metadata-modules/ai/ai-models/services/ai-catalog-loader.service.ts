@@ -38,7 +38,7 @@ export class AiCatalogLoaderService implements OnModuleInit {
     }
   }
 
-  getAiProviders(): Readonly<AiProvidersConfig> {
+  getAiCatalog(): Readonly<AiProvidersConfig> {
     return this.catalog;
   }
 

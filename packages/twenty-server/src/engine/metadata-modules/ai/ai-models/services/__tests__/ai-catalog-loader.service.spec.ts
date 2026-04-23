@@ -39,7 +39,7 @@ describe('AiCatalogLoaderService', () => {
     it('should use built-in catalog when AI_CATALOG_S3_PATH is not set', async () => {
       await service.onModuleInit();
 
-      const providers = service.getAiProviders();
+      const providers = service.getAiCatalog();
 
       expect(providers).toBeDefined();
       expect(Object.keys(providers).length).toBeGreaterThan(0);
@@ -79,7 +79,7 @@ describe('AiCatalogLoaderService', () => {
 
       await service.onModuleInit();
 
-      const providers = service.getAiProviders();
+      const providers = service.getAiCatalog();
 
       expect(Object.keys(providers)).toEqual(['customProvider']);
       expect(providers['customProvider'].name).toBe('customProvider');
@@ -101,7 +101,7 @@ describe('AiCatalogLoaderService', () => {
 
       await service.onModuleInit();
 
-      expect(service.getAiProviders()).toEqual({});
+      expect(service.getAiCatalog()).toEqual({});
     });
 
     it('should reset catalog to empty object when S3 returns empty body', async () => {
@@ -121,7 +121,7 @@ describe('AiCatalogLoaderService', () => {
 
       await service.onModuleInit();
 
-      expect(service.getAiProviders()).toEqual({});
+      expect(service.getAiCatalog()).toEqual({});
     });
 
     it('should reset catalog to empty object when S3 returns invalid JSON', async () => {
@@ -143,7 +143,7 @@ describe('AiCatalogLoaderService', () => {
 
       await service.onModuleInit();
 
-      expect(service.getAiProviders()).toEqual({});
+      expect(service.getAiCatalog()).toEqual({});
     });
 
     it('should reset catalog to empty object when S3 payload fails Zod validation', async () => {
@@ -167,7 +167,7 @@ describe('AiCatalogLoaderService', () => {
 
       await service.onModuleInit();
 
-      expect(service.getAiProviders()).toEqual({});
+      expect(service.getAiCatalog()).toEqual({});
     });
   });
 });
