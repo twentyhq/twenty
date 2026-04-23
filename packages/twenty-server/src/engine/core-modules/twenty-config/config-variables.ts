@@ -1396,11 +1396,11 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LLM,
     description:
-      'S3 object key for the AI catalog override (e.g. config/ai-catalog.json). When set, the catalog is fetched from the STORAGE_S3_NAME bucket at startup instead of using the built-in ai-providers.json.',
+      'Storage path for the AI catalog override (e.g. config/ai-catalog.json). When set, the catalog is fetched from the configured storage backend at startup instead of using the built-in ai-providers.json.',
     type: ConfigVariableType.STRING,
   })
   @IsOptional()
-  AI_CATALOG_S3_PATH?: string;
+  AI_CATALOG_STORAGE_PATH?: string;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LLM,

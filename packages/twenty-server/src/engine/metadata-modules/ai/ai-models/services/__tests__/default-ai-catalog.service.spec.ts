@@ -35,7 +35,7 @@ describe('DefaultAiCatalogService', () => {
   });
 
   describe('onModuleInit', () => {
-    it('should use built-in catalog when AI_CATALOG_S3_PATH is not set', async () => {
+    it('should use built-in catalog when AI_CATALOG_STORAGE_PATH is not set', async () => {
       await service.onModuleInit();
 
       const providers = service.getDefaultAiCatalog();
@@ -45,7 +45,7 @@ describe('DefaultAiCatalogService', () => {
       expect(mockReadFile).not.toHaveBeenCalled();
     });
 
-    it('should load catalog from storage when AI_CATALOG_S3_PATH is set', async () => {
+    it('should load catalog from storage when AI_CATALOG_STORAGE_PATH is set', async () => {
       const catalog = JSON.stringify({
         customProvider: {
           npm: '@ai-sdk/openai',
@@ -63,7 +63,7 @@ describe('DefaultAiCatalogService', () => {
       });
 
       mockConfigService.get.mockImplementation((key: string) => {
-        if (key === 'AI_CATALOG_S3_PATH') return 'config/ai-catalog.json';
+        if (key === 'AI_CATALOG_STORAGE_PATH') return 'config/ai-catalog.json';
 
         return undefined;
       });
@@ -84,7 +84,7 @@ describe('DefaultAiCatalogService', () => {
 
     it('should reset catalog to empty object when storage read fails', async () => {
       mockConfigService.get.mockImplementation((key: string) => {
-        if (key === 'AI_CATALOG_S3_PATH') return 'config/ai-catalog.json';
+        if (key === 'AI_CATALOG_STORAGE_PATH') return 'config/ai-catalog.json';
 
         return undefined;
       });
@@ -98,7 +98,7 @@ describe('DefaultAiCatalogService', () => {
 
     it('should reset catalog to empty object when storage returns invalid JSON', async () => {
       mockConfigService.get.mockImplementation((key: string) => {
-        if (key === 'AI_CATALOG_S3_PATH') return 'config/ai-catalog.json';
+        if (key === 'AI_CATALOG_STORAGE_PATH') return 'config/ai-catalog.json';
 
         return undefined;
       });
@@ -118,7 +118,7 @@ describe('DefaultAiCatalogService', () => {
       });
 
       mockConfigService.get.mockImplementation((key: string) => {
-        if (key === 'AI_CATALOG_S3_PATH') return 'config/ai-catalog.json';
+        if (key === 'AI_CATALOG_STORAGE_PATH') return 'config/ai-catalog.json';
 
         return undefined;
       });

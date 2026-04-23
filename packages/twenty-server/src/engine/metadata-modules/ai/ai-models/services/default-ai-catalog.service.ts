@@ -21,10 +21,10 @@ export class DefaultAiCatalogService implements OnModuleInit {
   ) {}
 
   async onModuleInit(): Promise<void> {
-    const catalogPath = this.twentyConfigService.get('AI_CATALOG_S3_PATH');
+    const catalogPath = this.twentyConfigService.get('AI_CATALOG_STORAGE_PATH');
 
     if (!catalogPath) {
-      this.logger.log('Using built-in AI catalog (AI_CATALOG_S3_PATH not set)');
+      this.logger.log('Using built-in AI catalog (AI_CATALOG_STORAGE_PATH not set)');
 
       return;
     }
