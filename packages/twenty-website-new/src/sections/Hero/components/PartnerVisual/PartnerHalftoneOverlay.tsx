@@ -3,7 +3,7 @@
 import { styled } from '@linaria/react';
 import { useEffect, useRef } from 'react';
 import * as THREE from 'three';
-import { createSiteWebGlRenderer } from '@/lib/webgl';
+import { createSiteWebGlRenderer } from '@/lib/visual-runtime';
 
 const PREVIEW_DISTANCE = 3.2;
 const SOURCE_PREVIEW_DISTANCE = 6.1;

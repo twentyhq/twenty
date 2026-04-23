@@ -22,7 +22,7 @@ import type {
 import { styled } from '@linaria/react';
 import { type MutableRefObject, useEffect, useRef } from 'react';
 import * as THREE from 'three';
-import { createSiteWebGlRenderer } from '@/lib/webgl';
+import { createSiteWebGlRenderer } from '@/lib/visual-runtime';
 
 const passThroughVertexShader = `
   varying vec2 vUv;

@@ -25,7 +25,7 @@ const Shell = styled.aside<{ $visible: boolean }>`
   transform: translateY(-50%);
   transition: opacity 0.25s ease;
   width: 213px;
-  z-index: 10;
+  z-index: ${theme.zIndex.floatingNav};
 
   @media (min-width: ${theme.breakpoints.lg}px) {
     display: flex;

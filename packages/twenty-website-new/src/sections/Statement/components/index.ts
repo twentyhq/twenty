@@ -1,4 +1,4 @@
-import { Heading } from './Heading/Heading';
-import { Root } from './Root/Root';
+import { Heading } from './Heading';
+import { Root } from './Root';
 
 export const Statement = { Heading, Root };

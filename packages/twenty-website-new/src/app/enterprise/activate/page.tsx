@@ -1,8 +1,8 @@
-import { MENU_DATA } from '@/app/_constants';
+import { MENU_DATA } from '@/sections/Menu/data';
 import { EnterpriseActivateClient } from '@/app/enterprise/activate/EnterpriseActivateClient';
 import { Body, Container, Eyebrow } from '@/design-system/components';
-import type { HeadingType } from '@/design-system/components/Heading/types/Heading';
-import { Pages } from '@/enums/pages';
+import type { HeadingType } from '@/design-system/components/Heading';
+import { Pages } from '@/lib/pages';
 import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';
 import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels';
 import { Hero } from '@/sections/Hero/components';

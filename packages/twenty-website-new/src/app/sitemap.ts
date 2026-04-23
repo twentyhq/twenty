@@ -1,9 +1,10 @@
 import type { MetadataRoute } from 'next';
 
-import { CASE_STUDY_CATALOG_ENTRIES } from '@/app/customers/_constants/case-study-catalog';
+import { CASE_STUDY_CATALOG_ENTRIES } from '@/app/customers/case-study-catalog.data';
+import { listBlogPostSitemapEntries } from '@/lib/blog';
+import { getSiteUrl } from '@/lib/seo';
 
-const SITE_URL =
-  process.env.NEXT_PUBLIC_WEBSITE_URL?.replace(/\/$/, '') ?? 'https://twenty.com';
+const SITE_URL = getSiteUrl();
 
 const STATIC_ROUTES: ReadonlyArray<{
   path: string;
@@ -17,6 +18,7 @@ const STATIC_ROUTES: ReadonlyArray<{
   { path: '/partners', changeFrequency: 'monthly', priority: 0.7 },
   { path: '/releases', changeFrequency: 'weekly', priority: 0.7 },
   { path: '/customers', changeFrequency: 'monthly', priority: 0.7 },
+  { path: '/blog', changeFrequency: 'weekly', priority: 0.6 },
   { path: '/privacy-policy', changeFrequency: 'yearly', priority: 0.3 },
   { path: '/terms', changeFrequency: 'yearly', priority: 0.3 },
 ];
@@ -36,5 +38,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.5,
   }));
 
-  return [...staticEntries, ...caseStudyEntries];
+  const blogEntries = listBlogPostSitemapEntries(SITE_URL);
+
+  return [...staticEntries, ...caseStudyEntries, ...blogEntries];
 }

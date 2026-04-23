@@ -1,5 +1,5 @@
-import { signEnterpriseKey } from '@/shared/enterprise/enterprise-jwt';
-import { getStripeClient } from '@/shared/enterprise/stripe-client';
+import { signEnterpriseKey } from '@/lib/enterprise/enterprise-jwt';
+import { getStripeClient } from '@/lib/enterprise/stripe-client';
 import { NextResponse } from 'next/server';
 
 export const dynamic = 'force-dynamic';

@@ -1,9 +1,9 @@
-import { Root } from "./Root/Root";
-import { IllustrationCards } from "./IllustrationCards/IllustrationCards";
+import { Root } from "./Root";
+import { IllustrationCards } from "./IllustrationCards";
 import { IllustrationCard } from "./IllustrationCard/IllustrationCard";
-import { FeatureCards } from "./FeatureCards/FeatureCards";
+import { FeatureCards } from "./FeatureCards";
 import { FeatureCard } from "./FeatureCard/FeatureCard";
-import { Intro } from "./Intro/Intro";
+import { Intro } from "./Intro";
 
 export const ThreeCards = {
   Root,

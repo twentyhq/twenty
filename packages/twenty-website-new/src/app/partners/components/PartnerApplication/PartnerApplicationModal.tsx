@@ -4,7 +4,7 @@ import {
   PARTNER_APPLICATION_MODAL_COPY,
   PARTNER_PROGRAM_OPTIONS,
   type PartnerProgramId,
-} from '@/app/partners/_constants/partner-application-modal';
+} from '@/app/partners/partner-application-modal.data';
 import {
   BUTTON_HEIGHTS_PX,
   buttonBaseStyles,
@@ -21,6 +21,8 @@ const PANEL_BG = '#0c0c0c';
 
 const Overlay = styled.div`
   align-items: center;
+  /* -webkit- prefix is required for the blur to render on Safari < 18. */
+  -webkit-backdrop-filter: blur(4px);
   backdrop-filter: blur(4px);
   background: rgba(28, 28, 28, 0.8);
   box-sizing: border-box;
@@ -29,7 +31,7 @@ const Overlay = styled.div`
   justify-content: center;
   padding: ${theme.spacing(3)};
   position: fixed;
-  z-index: 300;
+  z-index: ${theme.zIndex.modal};
 `;
 
 const Panel = styled.div`

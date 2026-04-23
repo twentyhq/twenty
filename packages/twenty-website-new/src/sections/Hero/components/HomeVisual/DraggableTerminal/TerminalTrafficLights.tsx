@@ -8,6 +8,7 @@ import {
   type MouseEvent as ReactMouseEvent,
 } from 'react';
 import { createPortal } from 'react-dom';
+import { theme } from '@/theme';
 import { TERMINAL_TOKENS } from './terminalTokens';
 
 const TRAFFIC_LIGHT_DOT_SIZE = 12;
@@ -126,7 +127,7 @@ const FlyingDotContainer = styled.button`
   position: fixed;
   top: 0;
   width: ${TRAFFIC_LIGHT_DOT_SIZE}px;
-  z-index: 9999;
+  z-index: ${theme.zIndex.portalTop};
 
   /* Catchable once the physics loop flags the dot as resting. */
   &[data-resting='true'] {

@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader.js';
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { DRACO_DECODER_PATH } from '@/lib/visual-runtime/draco-decoder-path';
 
 type HalftoneModelLoader = 'fbx' | 'glb';
 
@@ -112,9 +113,6 @@ function mergeGeometries(geometries: THREE.BufferGeometry[]) {
 
   return merged;
 }
-
-const DRACO_DECODER_PATH =
-  'https://www.gstatic.com/draco/versioned/decoders/1.5.6/';
 
 const EMPTY_TEXTURE_DATA_URL =
   'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO8B7Q8AAAAASUVORK5CYII=';

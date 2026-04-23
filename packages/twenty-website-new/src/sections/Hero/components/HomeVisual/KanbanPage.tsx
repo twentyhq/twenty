@@ -1,6 +1,6 @@
 'use client';
 
-import { getSharedCompanyLogoUrlFromDomainName } from '@/lib/shared-asset-paths';
+import { getSharedCompanyLogoUrlFromDomainName } from '@/content/site/asset-paths';
 import { RatingStarIcon } from '@/icons';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';

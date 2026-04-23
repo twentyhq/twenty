@@ -6,10 +6,10 @@ import {
   getImagePreviewZoom,
 } from '@/app/halftone/_lib/footprint';
 import { styled } from '@linaria/react';
-import { STEPPER_VISUAL_POINTER_ROOT_SELECTOR } from '../StepperVisualFrame/StepperVisualFrame';
+import { STEPPER_VISUAL_POINTER_ROOT_SELECTOR } from '../StepperVisualFrame';
 import { useEffect, useRef } from 'react';
 import * as THREE from 'three';
-import { createSiteWebGlRenderer } from '@/lib/webgl';
+import { createSiteWebGlRenderer } from '@/lib/visual-runtime';
 
 const PREVIEW_DISTANCE = 4;
 const HOVER_FADE_IN = 18;

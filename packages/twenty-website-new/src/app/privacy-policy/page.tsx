@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 
-import { MENU_DATA } from '@/app/_constants';
+import { MENU_DATA } from '@/sections/Menu/data';
 import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';
 import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels';
 import { LegalDocumentPage } from '@/sections/LegalDocument/legal-document-page';

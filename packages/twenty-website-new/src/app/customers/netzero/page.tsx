@@ -1,7 +1,7 @@
-import { MENU_DATA } from '@/app/_constants';
+import { MENU_DATA } from '@/sections/Menu/data';
 import { CustomersCaseStudySignoff } from '@/app/customers/_components/CustomersCaseStudySignoff';
-import { getCaseStudyPalette } from '@/app/customers/_constants';
-import type { CaseStudyData } from '@/app/customers/_constants/types';
+import { getCaseStudyPalette } from '@/app/customers/case-study-catalog.data';
+import type { CaseStudyData } from '@/app/customers/types';
 import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';
 import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels';
 import { CaseStudy } from '@/sections/CaseStudy/components';

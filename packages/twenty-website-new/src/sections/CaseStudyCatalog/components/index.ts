@@ -1,5 +1,5 @@
-import { Card } from './Card/Card';
-import { Grid } from './Grid/Grid';
-import { Promo } from './Promo/Promo';
+import { Card } from './Card';
+import { Grid } from './Grid';
+import { Promo } from './Promo';
 
 export const CaseStudyCatalog = { Card, Grid, Promo };

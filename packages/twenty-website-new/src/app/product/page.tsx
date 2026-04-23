@@ -1,14 +1,14 @@
-import { FAQ_DATA, MENU_DATA, TRUSTED_BY_DATA } from '@/app/_constants';
-import { TalkToUsButton } from '@/app/components/ContactCalModal';
-import {
-  FEATURE_DATA,
-  HERO_DATA,
-  SIGNOFF_DATA,
-  STEPPER_DATA,
-  THREE_CARDS_ILLUSTRATION_DATA,
-} from '@/app/product/_constants';
+import { FAQ_DATA } from '@/sections/Faq/data';
+import { MENU_DATA } from '@/sections/Menu/data';
+import { TRUSTED_BY_DATA } from '@/sections/TrustedBy/data';
+import { TalkToUsButton } from '@/lib/contact-cal';
+import { FEATURE_DATA } from '@/app/product/feature.data';
+import { HERO_DATA } from '@/app/product/hero.data';
+import { SIGNOFF_DATA } from '@/app/product/signoff.data';
+import { STEPPER_DATA } from '@/app/product/stepper.data';
+import { THREE_CARDS_ILLUSTRATION_DATA } from '@/app/product/three-cards.data';
 import { Body, Eyebrow, Heading, LinkButton } from '@/design-system/components';
-import { Pages } from '@/enums/pages';
+import { Pages } from '@/lib/pages';
 import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';
 import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels';
 import { Faq } from '@/sections/Faq/components';
@@ -34,6 +34,16 @@ export default async function ProductPage() {
 
   return (
     <>
+      {/*
+       * Above-the-fold hero scene. Preload kicks off the GLB fetch in
+       * parallel with the JS chunk download, so the model is already in
+       * the browser cache by the time Three.js asks for it.
+       */}
+      <link
+        as="fetch"
+        href="/illustrations/product/hero/hero.glb"
+        rel="preload"
+      />
       <Menu.Root
         backgroundColor={theme.colors.primary.background[100]}
         scheme="primary"
@@ -126,7 +136,7 @@ export default async function ProductPage() {
         </Signoff.Cta>
       </Signoff.Root>
 
-      <Faq.Root illustration={FAQ_DATA.illustration}>
+      <Faq.Root>
         <Faq.Intro>
           <Eyebrow colorScheme="secondary" heading={FAQ_DATA.eyebrow.heading} />
           <Faq.Heading segments={FAQ_DATA.heading} />

@@ -60,7 +60,10 @@ const DESKTOP_CONTROLS_PANEL_FOOTPRINT =
 
 const StudioShell = styled.div<{ $background: string }>`
   background: ${(props) => props.$background};
+  /* Full-screen tool: track the visible viewport so the bottom controls bar
+   * is reachable on mobile Safari (where 100vh extends behind the URL bar). */
   height: 100vh;
+  height: 100dvh;
   overflow: hidden;
   position: relative;
   width: 100%;
@@ -142,6 +145,7 @@ const ControlsPositioner = styled.div`
   bottom: 20px;
   display: flex;
   height: calc(100vh - 40px);
+  height: calc(100dvh - 40px);
   justify-content: flex-end;
   pointer-events: none;
   position: fixed;

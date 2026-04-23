@@ -40715,13 +40715,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"gsap@npm:^3.14.2":
-  version: 3.14.2
-  resolution: "gsap@npm:3.14.2"
-  checksum: 10c0/8f7d93d58d43c23a8de22630539364fac270e0d1dd8b8747064275dcc177e9c3c944a2eb54a10684e2902011dad0ba9ca3eb5c2a0a3bdb815d4f5401f14519e6
-  languageName: node
-  linkType: hard
-
 "gtoken@npm:^6.1.0":
   version: 6.1.2
   resolution: "gtoken@npm:6.1.2"
@@ -60931,7 +60924,6 @@ __metadata:
     axios: "npm:^1.14.0"
     babel-plugin-react-compiler: "npm:1.0.0"
     gray-matter: "npm:^4.0.3"
-    gsap: "npm:^3.14.2"
     next: "npm:16.1.7"
     next-with-linaria: "npm:^1.3.0"
     react: "npm:19.2.3"

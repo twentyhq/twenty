@@ -1,19 +1,19 @@
-import { FAQ_DATA, MENU_DATA, TRUSTED_BY_DATA } from '@/app/_constants';
-import { TalkToUsButton } from '@/app/components/ContactCalModal';
-import { CASE_STUDY_CATALOG_ENTRIES } from '@/app/customers/_constants';
-import {
-  THREE_CARDS_ILLUSTRATION_DATA,
-  HERO_DATA,
-  SIGNOFF_DATA,
-  TESTIMONIALS_DATA,
-} from '@/app/partners/_constants';
+import { FAQ_DATA } from '@/sections/Faq/data';
+import { MENU_DATA } from '@/sections/Menu/data';
+import { TRUSTED_BY_DATA } from '@/sections/TrustedBy/data';
+import { TalkToUsButton } from '@/lib/contact-cal';
+import { CASE_STUDY_CATALOG_ENTRIES } from '@/app/customers/case-study-catalog.data';
+import { THREE_CARDS_ILLUSTRATION_DATA } from '@/app/partners/three-cards-illustration.data';
+import { HERO_DATA } from '@/app/partners/hero.data';
+import { SIGNOFF_DATA } from '@/app/partners/signoff.data';
+import { TESTIMONIALS_DATA } from '@/app/partners/testimonials.data';
 import {
   PartnerApplicationModalRoot,
   PartnerHeroCtas,
   PartnerSignoffCtas,
 } from '@/app/partners/components/PartnerApplication';
 import { Body, Eyebrow, Heading, LinkButton } from '@/design-system/components';
-import { Pages } from '@/enums/pages';
+import { Pages } from '@/lib/pages';
 import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';
 import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels';
 import { CaseStudyCatalog } from '@/sections/CaseStudyCatalog/components';
@@ -137,7 +137,7 @@ export default async function PartnerPage() {
         </Signoff.Cta>
       </Signoff.Root>
 
-      <Faq.Root illustration={FAQ_DATA.illustration}>
+      <Faq.Root>
         <Faq.Intro>
           <Eyebrow colorScheme="secondary" heading={FAQ_DATA.eyebrow.heading} />
           <Faq.Heading segments={FAQ_DATA.heading} />

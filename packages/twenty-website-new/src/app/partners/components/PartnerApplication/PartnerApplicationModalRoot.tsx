@@ -9,7 +9,7 @@ import {
   type ReactNode,
 } from 'react';
 
-import type { PartnerProgramId } from '@/app/partners/_constants/partner-application-modal';
+import type { PartnerProgramId } from '@/app/partners/partner-application-modal.data';
 import { PartnerApplicationModal } from './PartnerApplicationModal';
 
 type PartnerApplicationModalContextValue = {

@@ -1,7 +1,7 @@
 'use client';
 
 import dynamic from 'next/dynamic';
-import { getSharedCompanyLogoUrlFromDomainName } from '@/lib/shared-asset-paths';
+import { getSharedCompanyLogoUrlFromDomainName } from '@/content/site/asset-paths';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
 import {
@@ -63,7 +63,6 @@ import {
   useEffect,
   useMemo,
   useState,
-  type CSSProperties,
   type ReactNode,
 } from 'react';
 import type {
@@ -515,7 +514,9 @@ const SidebarItemRow = styled.div<{
   $interactive?: boolean;
   $withBranch?: boolean;
   $highlighted?: boolean;
+  $highlightRgb?: string;
 }>`
+  --hero-highlight-rgb: ${({ $highlightRgb }) => $highlightRgb ?? '237, 95, 0'};
   align-items: center;
   background: ${({ $active }) =>
     $active ? VISUAL_TOKENS.background.transparent.medium : 'transparent'};
@@ -937,9 +938,11 @@ const NavbarActionSeparator = styled.div`
 // buttons so multiple commands can sit side-by-side. Entrance animation
 // cascades left-to-right via --pinned-action-index so buttons feel like
 // they're landing one after the other.
-const PinnedActionButton = styled(NavbarActionButton)`
+const PinnedActionButton = styled(NavbarActionButton)<{
+  $pinnedActionIndex: number;
+}>`
   animation: pinnedActionIn 340ms cubic-bezier(0.22, 1, 0.36, 1) both;
-  animation-delay: calc(var(--pinned-action-index, 0) * 90ms);
+  animation-delay: calc(${({ $pinnedActionIndex }) => $pinnedActionIndex} * 90ms);
   display: none;
   gap: 4px;
   padding: 0 6px;
@@ -2014,9 +2017,6 @@ function SidebarItemComponent({
       ? item.icon.tone
       : 'gray';
   const highlightRgb = SIDEBAR_TONE_RGB[iconTone] ?? SIDEBAR_TONE_RGB.gray;
-  const highlightStyle = rowHighlighted
-    ? ({ '--hero-highlight-rgb': highlightRgb } as React.CSSProperties)
-    : undefined;
   const rowContent = (
     <>
       {showBranch ? <SidebarBranchCell $isLastChild={isLastChild} /> : null}
@@ -2054,6 +2054,7 @@ function SidebarItemComponent({
         <SidebarItemRow
           $active={rowActive}
           $depth={depth}
+          $highlightRgb={rowHighlighted ? highlightRgb : undefined}
           $highlighted={rowHighlighted}
           $interactive={rowInteractive}
           $withBranch={showBranch}
@@ -2064,10 +2065,7 @@ function SidebarItemComponent({
                 ? () => onSelect?.(item.label)
                 : undefined
           }
-          style={{
-            cursor: rowInteractive ? 'pointer' : 'default',
-            ...highlightStyle,
-          }}
+          style={{ cursor: rowInteractive ? 'pointer' : 'default' }}
         >
           {rowContent}
         </SidebarItemRow>
@@ -2578,12 +2576,8 @@ export function HomeVisual({ visual }: { visual: HeroVisualType }) {
                       <>
                         {pinnedActions?.map((action, index) => (
                           <PinnedActionButton
+                            $pinnedActionIndex={index}
                             key={`pinned-${activeItem?.id}-${action.label}-${index}`}
-                            style={
-                              {
-                                '--pinned-action-index': index,
-                              } as CSSProperties
-                            }
                           >
                             <NavbarActionIconWrap>
                               {(() => {

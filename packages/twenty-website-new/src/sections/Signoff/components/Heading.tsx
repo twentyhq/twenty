@@ -1,8 +1,8 @@
 import { styled } from '@linaria/react';
 
 import { Heading as BaseHeading } from '@/design-system/components';
-import type { HeadingType } from '@/design-system/components/Heading/types/Heading';
-import type { Pages } from '@/enums/pages';
+import type { HeadingType } from '@/design-system/components/Heading';
+import type { Page } from '@/lib/pages';
 import { theme } from '@/theme';
 
 const HeadingWrap = styled.div`
@@ -21,7 +21,7 @@ const HeadingWrap = styled.div`
 `;
 
 type HeadingProps = {
-  page?: Pages;
+  page?: Page;
   segments: HeadingType[];
 };
 
