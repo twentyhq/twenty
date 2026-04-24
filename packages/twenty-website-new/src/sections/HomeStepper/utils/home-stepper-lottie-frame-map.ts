@@ -11,13 +11,17 @@ const STEP_2_HOLD_END = 880;
 const STEP_2_TRANSITION_END = 925;
 
 // Total frame count of the `.lottie` asset this map was authored against.
-// The dotlottie player exposes `totalFrames` as `Math.round(op - ip)`; the
-// Lottielab export at `public/lottie/stepper/stepper.lottie` has `ip = 0`
-// and `op = 1439.4`, so the integer count is 1439. Both a runtime assert
-// (in `StepperLottie`) and a build-time script
-// (`scripts/check-lottie-frames.mjs`, wired into `nx lint`) verify this
-// number stays in sync with the asset — a designer re-export with a
-// different timeline would silently break the scroll mapping otherwise.
+// The Lottielab export at `public/lottie/stepper/stepper.lottie` has
+// `ip = 0` and `op = 1439.4` (a fractional out-point — animation editors
+// sometimes export those). dotlottie-react's `totalFrames` returns the
+// raw `op - ip` float; this map's math is integer-shaped (anchors below
+// like `STEP_2_TRANSITION_END = 925` and `lastIndex = totalFrames - 1`),
+// so `StepperLottie` floors at the read site and the build-time script
+// (`scripts/check-lottie-frames.mjs`, wired into `nx lint`) does the
+// same when reading `op` straight from the animation JSON. The integer
+// 1439 is the value both sides must agree on. A designer re-export with
+// a different timeline would silently break the scroll mapping
+// otherwise — both checks fail loudly to prevent that.
 //
 // IMPORTANT: the build-time script parses this file with a regex; keep
 // the `export const HOME_STEPPER_LOTTIE_EXPECTED_TOTAL_FRAMES = <number>`

@@ -28,9 +28,11 @@
  *   - The expected-frames constant is parsed from the TS file with a
  *     tight regex. Keep the `export const HOME_STEPPER_LOTTIE_EXPECTED_TOTAL_FRAMES = <n>`
  *     line shape stable, or update the regex below in lockstep.
- *   - The dotlottie-react player exposes `totalFrames` as
- *     `Math.floor(animation.op - animation.ip)` — we mirror that here
- *     so the build-time and runtime checks compare like-for-like.
+ *   - dotlottie-react's `totalFrames` returns the raw `op - ip` float
+ *     (e.g. 1439.4 for the current asset). The frame-map's downstream
+ *     math is integer-shaped, so `StepperLottie` floors at the read
+ *     site; we floor here too so the build-time and runtime checks
+ *     compare the same integer.
  */
 import { execFile } from 'node:child_process';
 import { readFile } from 'node:fs/promises';
@@ -121,7 +123,10 @@ async function readActualTotalFrames() {
         'Has the Lottie schema changed?',
     );
   }
-  // Match dotlottie-react's `totalFrames`: `Math.floor(op - ip)`.
+  // dotlottie-react's `totalFrames` returns the raw `op - ip` float;
+  // `StepperLottie` floors that on read so the rest of its frame-map
+  // math stays integer-shaped. We floor here too so this build-time
+  // check compares against the same integer as the runtime check.
   return Math.floor(op - ip);
 }
 
