@@ -502,3 +502,74 @@ Some implementation details that have caused real bugs and must not regress.
 - **One DRACO origin.** `lib/visual-runtime/draco-decoder-path.ts` is the
   single source of truth — bump the version there once instead of in twelve
   illustrations.
+- **Module-level "have we already failed?" caches must be bounded.** Visual
+  scenes record asset URLs that failed to load so subsequent renders skip
+  the fetch. An unbounded `Set<string>` here grows with every unique
+  failure across the lifetime of the tab. Use
+  `createBoundedFailureCache` from `@/lib/visual-runtime` (FIFO eviction
+  at 256 entries) instead of `new Set<string>()`. The reference consumers
+  are `Hero/HomeVisual/{HomeVisual,KanbanPage,TablePage}.tsx` and
+  `ThreeCards/components/FeatureCard/FamiliarInterfaceVisual.tsx`.
+
+---
+
+## 12. HTTP security headers
+
+`next.config.ts` ships a single `headers()` rule applied to every route
+(`source: '/:path*'`). The current set is intentionally conservative —
+strong on transport / clickjacking, deferred on full CSP because Cal.com,
+Stripe Checkout, and Lottie all inject external assets at runtime and
+locking each one down requires per-vendor nonce/hash plumbing.
+
+| Header                                                                     | Purpose                                                                                                                                                          |
+| -------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Strict-Transport-Security: max-age=63072000; includeSubDomains; preload`  | Two-year HSTS, subdomains included, preload-eligible. **Don't ship `preload` unless every subdomain serves HTTPS** — it's a one-way door once browsers cache it. |
+| `X-Content-Type-Options: nosniff`                                          | Disable MIME-type guessing.                                                                                                                                      |
+| `Referrer-Policy: strict-origin-when-cross-origin`                         | Match Next's navigation default; pin it as a header so sub-resource requests inherit it too.                                                                     |
+| `Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=()` | Deny APIs the marketing site has no business using.                                                                                                              |
+| `X-Frame-Options: DENY`                                                    | Defence-in-depth against clickjacking.                                                                                                                           |
+| `Content-Security-Policy: frame-ancestors 'none'`                          | Same intent as `X-Frame-Options` but expressed in CSP terms (modern browsers honour this; legacy still relies on the X-Frame header).                            |
+
+Verify with `curl -sI http://localhost:3000/ | head -40` after running
+`npx next start`. Adding a fully-locked-down `script-src` /
+`style-src` / `connect-src` is tracked separately — the right entry
+point is a CSP-only follow-up that audits each third-party origin
+explicitly.
+
+---
+
+## 13. Standalone `tsconfig.json`
+
+The package's `tsconfig.json` does **not** extend `tsconfig.base.json`
+from the monorepo root. The base config targets the legacy server +
+React-library code (`moduleResolution: node`, `target: es2018`, no
+`jsx`, no `strict`, no `paths`). Next 13+ with React 19 + the React
+Compiler needs `bundler` resolution, ES2020+, JSX, strict mode, and the
+`@/*` path alias. Extending the base would force overriding nearly
+every field, at which point the inheritance buys nothing.
+
+The standalone config is documented inline at the top of
+[`tsconfig.json`](./tsconfig.json) so future contributors see the
+contract without grepping. When the rest of the monorepo migrates off
+the legacy base (or to per-app configs matching this one), revisit.
+
+---
+
+## 14. CI surface
+
+Two GitHub Actions workflows touch this package:
+
+- [`ci-website-new.yaml`](../../.github/workflows/ci-website-new.yaml)
+  runs on every PR that changes `packages/twenty-website-new/**`. The
+  pipeline is `nx lint` → `nx typecheck` → `nx test --configuration=ci`
+  → `nx build`. `nx lint` is the single entry point for _all_ static
+  checks (oxlint + prettier + `check-boundaries.mjs` +
+  `check-section-shape.mjs`); future rule additions inherit CI coverage
+  for free.
+- The legacy [`ci-website.yaml`](../../.github/workflows/ci-website.yaml)
+  builds the _old_ `twenty-website` package and is unrelated.
+
+Don't add ad-hoc shell steps to the workflow that duplicate work the
+Nx targets already do. If a new check needs to run, add it to a target
+(`lint`, `typecheck`, `test`, or a new dedicated target wired into
+`lint`'s `dependsOn`) so local `nx lint` and CI stay aligned.

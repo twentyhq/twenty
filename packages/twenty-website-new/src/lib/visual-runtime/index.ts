@@ -26,6 +26,8 @@ export {
 export { createFrameTimer, type FrameTimer } from './frame-timer';
 
 export {
-  DRACO_DECODER_PATH,
-  DRACO_DECODER_ORIGIN,
-} from './draco-decoder-path';
+  createBoundedFailureCache,
+  type BoundedFailureCache,
+} from './bounded-failure-cache';
+
+export { DRACO_DECODER_PATH, DRACO_DECODER_ORIGIN } from './draco-decoder-path';

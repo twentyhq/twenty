@@ -2,6 +2,7 @@
 
 import dynamic from 'next/dynamic';
 import { getSharedCompanyLogoUrlFromDomainName } from '@/content/site/asset-paths';
+import { createBoundedFailureCache } from '@/lib/visual-runtime';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
 import {
@@ -942,7 +943,9 @@ const PinnedActionButton = styled(NavbarActionButton)<{
   $pinnedActionIndex: number;
 }>`
   animation: pinnedActionIn 340ms cubic-bezier(0.22, 1, 0.36, 1) both;
-  animation-delay: calc(${({ $pinnedActionIndex }) => $pinnedActionIndex} * 90ms);
+  animation-delay: calc(
+    ${({ $pinnedActionIndex }) => $pinnedActionIndex} * 90ms
+  );
   display: none;
   gap: 4px;
   padding: 0 6px;
@@ -1447,8 +1450,12 @@ const HEADER_ICON_MAP: Record<string, typeof IconBuildingSkyscraper> = {
 
 // -- Utility functions --
 
-const failedAvatarUrls = new Set<string>();
-const failedFaviconUrls = new Set<string>();
+// Caps the per-session memory footprint of failed-URL tracking. The
+// visuals load at most a few dozen unique avatars/favicons per render,
+// so 256 is generously above the working set while still bounding a
+// long-running tab. See `lib/visual-runtime/bounded-failure-cache.ts`.
+const failedAvatarUrls = createBoundedFailureCache(256);
+const failedFaviconUrls = createBoundedFailureCache(256);
 
 function getInitials(value: string) {
   return value

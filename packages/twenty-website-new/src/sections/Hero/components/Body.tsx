@@ -8,7 +8,7 @@ import { styled } from '@linaria/react';
 
 const defaultHeroBodyColor = `var(--hero-body-color, ${theme.colors.primary.text[60]})`;
 
-const BodyContainer = styled.div`
+const StyledBody = styled.div`
   --body-sm-color: ${defaultHeroBodyColor};
   color: ${defaultHeroBodyColor};
 
@@ -75,12 +75,12 @@ export function Body({
   ...bodyProps
 }: HeroBodyProps) {
   return (
-    <BodyContainer
+    <StyledBody
       data-color-scheme={colorScheme}
       data-page={page}
       data-preserve-line-breaks={preserveLineBreaks}
     >
       <BaseBody {...bodyProps} />
-    </BodyContainer>
+    </StyledBody>
   );
 }

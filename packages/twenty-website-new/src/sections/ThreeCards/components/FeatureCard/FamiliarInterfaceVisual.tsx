@@ -5,7 +5,7 @@ import {
   SHARED_COMPANY_LOGO_URLS,
   SHARED_PEOPLE_AVATAR_URLS,
 } from '@/content/site/asset-paths';
-import { WebGlMount } from '@/lib/visual-runtime';
+import { WebGlMount, createBoundedFailureCache } from '@/lib/visual-runtime';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
 import {
@@ -138,8 +138,12 @@ type OpportunityCardData = {
   recordId: string;
 };
 
-const failedAvatarUrls = new Set<string>();
-const failedFaviconUrls = new Set<string>();
+// Caps the per-session memory footprint of failed-URL tracking. The
+// visuals load at most a few dozen unique avatars/favicons per render,
+// so 256 is generously above the working set while still bounding a
+// long-running tab. See `lib/visual-runtime/bounded-failure-cache.ts`.
+const failedAvatarUrls = createBoundedFailureCache(256);
+const failedFaviconUrls = createBoundedFailureCache(256);
 
 const GITHUB_CARD: OpportunityCardData = {
   id: 'github',

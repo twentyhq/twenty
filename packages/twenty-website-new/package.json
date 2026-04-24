@@ -28,6 +28,7 @@
     "react-dom": "19.2.3",
     "react-markdown": "^10.1.0",
     "remark-gfm": "^4.0.1",
+    "sharp": "^0.33.5",
     "stripe": "^20.3.1",
     "three": "^0.183.2",
     "zod": "^4.1.11"
@@ -37,7 +38,6 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@types/three": "^0.183.1",
-    "babel-plugin-react-compiler": "1.0.0",
-    "sharp": "^0.33.5"
+    "babel-plugin-react-compiler": "1.0.0"
   }
 }

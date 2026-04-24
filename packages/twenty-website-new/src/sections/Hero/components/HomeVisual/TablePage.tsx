@@ -1,6 +1,7 @@
 'use client';
 
 import { getSharedCompanyLogoUrlFromDomainName } from '@/content/site/asset-paths';
+import { createBoundedFailureCache } from '@/lib/visual-runtime';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
 import {
@@ -92,8 +93,12 @@ const HEADER_ICON_MAP: Record<string, typeof IconCalendarEvent> = {
   url: IconLink,
 };
 
-const failedAvatarUrls = new Set<string>();
-const failedFaviconUrls = new Set<string>();
+// Caps the per-session memory footprint of failed-URL tracking. The
+// visuals load at most a few dozen unique avatars/favicons per render,
+// so 256 is generously above the working set while still bounding a
+// long-running tab. See `lib/visual-runtime/bounded-failure-cache.ts`.
+const failedAvatarUrls = createBoundedFailureCache(256);
+const failedFaviconUrls = createBoundedFailureCache(256);
 
 type MiniIconProps = {
   color?: string;
@@ -388,8 +393,9 @@ const HoverActions = styled.div<{ $rightInset?: number; $visible: boolean }>`
   padding: 0 4px;
   pointer-events: none;
   position: absolute;
-  right: ${({ $rightInset = HOVER_ACTION_EDGE_INSET - TABLE_CELL_HORIZONTAL_PADDING }) =>
-    `${$rightInset}px`};
+  right: ${({
+    $rightInset = HOVER_ACTION_EDGE_INSET - TABLE_CELL_HORIZONTAL_PADDING,
+  }) => `${$rightInset}px`};
   top: 4px;
   transform: translateX(${({ $visible }) => ($visible ? '0' : '4px')});
   transition:
@@ -512,10 +518,7 @@ function PencilMini({
   );
 }
 
-function CopyMini({
-  color = COLORS.textSecondary,
-  size = 14,
-}: MiniIconProps) {
+function CopyMini({ color = COLORS.textSecondary, size = 14 }: MiniIconProps) {
   return (
     <IconCopy aria-hidden color={color} size={size} stroke={TABLER_STROKE} />
   );
@@ -873,7 +876,10 @@ export function TablePage({
   const [dragging, setDragging] = useState(false);
   const [hoveredRowId, setHoveredRowId] = useState<string | null>(null);
 
-  const columnWidth = page.columns.reduce((sum, column) => sum + column.width, 0);
+  const columnWidth = page.columns.reduce(
+    (sum, column) => sum + column.width,
+    0,
+  );
   const totalTableWidth = page.width ?? columnWidth;
   const fillerWidth = Math.max(totalTableWidth - columnWidth, 0);
 
