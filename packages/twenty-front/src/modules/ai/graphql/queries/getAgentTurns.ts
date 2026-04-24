@@ -28,6 +28,7 @@ export const GET_AGENT_TURNS = gql`
           toolOutput
           errorMessage
           state
+          providerExecuted
           errorDetails
           sourceUrlSourceId
           sourceUrlUrl
