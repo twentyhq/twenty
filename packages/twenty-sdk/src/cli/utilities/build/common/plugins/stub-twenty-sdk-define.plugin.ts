@@ -1,10 +1,7 @@
 import type * as esbuild from 'esbuild';
 
-// All value-exports of twenty-sdk/define, classified for stubbing during the
-// user-app build. Types are stripped at TS compile time, so they don't appear
-// here. Any new value-export added to twenty-sdk/define must be appended below
-// (a unit test enforces this stays in sync).
-//
+import * as twentySdkDefine from '@/sdk/define';
+
 // Why we stub:
 //   Logic functions and front-components only need `default.config.handler`
 //   to exist at runtime. The wrappers (`defineLogicFunction`, etc.) and the
@@ -12,55 +9,42 @@ import type * as esbuild from 'esbuild';
 //   used by the manifest extractor, not by the Lambda runtime. Bundling the
 //   real implementations drags in zod, @sniptt/guards, twenty-shared and a
 //   few hundred KB per logic-function bundle.
-const FACTORY_EXPORTS = [
-  'createValidationResult',
-  'defineAgent',
-  'defineApplication',
-  'defineField',
-  'defineFrontComponent',
-  'defineLogicFunction',
-  'defineNavigationMenuItem',
-  'defineObject',
-  'definePageLayout',
-  'definePageLayoutTab',
-  'definePostInstallLogicFunction',
-  'definePreInstallLogicFunction',
-  'defineRole',
-  'defineSkill',
-  'defineView',
-] as const;
+//
+// We do NOT hand-maintain a list of exports: it is derived at CLI startup
+// from `Object.keys(twentySdkDefine)`. Adding a new export to
+// `twenty-sdk/define` automatically lands in the stub. A unit test pins the
+// classification to keep behaviour predictable and surface unexpected new
+// exports in PRs (snapshot diff).
 
-const ANY_EXPORTS = [
-  'AggregateOperations',
-  'DateDisplayFormat',
-  'FieldMetadataSettingsOnClickAction',
-  'FieldType',
-  'HTTPMethod',
-  'NavigationMenuItemType',
-  'NumberDataType',
-  'ObjectRecordGroupByDateGranularity',
-  'OnDeleteAction',
-  'PageLayoutTabLayoutMode',
-  'PermissionFlag',
-  'RelationType',
-  'STANDARD_OBJECT',
-  'STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS',
-  'ViewFilterGroupLogicalOperator',
-  'ViewFilterOperand',
-  'ViewKey',
-  'ViewOpenRecordIn',
-  'ViewSortDirection',
-  'ViewType',
-  'ViewVisibility',
-  'generateDefaultFieldUniversalIdentifier',
-  'getPublicAssetUrl',
-  'validateFields',
-] as const;
+// Factory exports preserve `(config) => ({ success: true, config, errors })`
+// because the manifest extractor reads `.config` off the call return value.
+// Anything else can be a no-op Proxy: enums for type-only branding,
+// pure helpers (e.g. `validateFields`) that aren't reachable at Lambda
+// runtime, and re-exported constants (e.g. `STANDARD_OBJECT`) used only
+// during manifest validation.
+export const isDefineFactoryExportName = (name: string): boolean =>
+  /^define[A-Z]/.test(name) || name === 'createValidationResult';
 
-export const TWENTY_SDK_DEFINE_STUBBED_EXPORTS = {
-  factories: FACTORY_EXPORTS,
-  any: ANY_EXPORTS,
-} as const;
+const partitionDefineExports = (
+  mod: Record<string, unknown>,
+): { factories: readonly string[]; any: readonly string[] } => {
+  const factories: string[] = [];
+  const any: string[] = [];
+
+  for (const name of Object.keys(mod).sort()) {
+    if (isDefineFactoryExportName(name)) {
+      factories.push(name);
+    } else {
+      any.push(name);
+    }
+  }
+
+  return { factories, any };
+};
+
+export const TWENTY_SDK_DEFINE_STUBBED_EXPORTS = partitionDefineExports(
+  twentySdkDefine as unknown as Record<string, unknown>,
+);
 
 const VIRTUAL_NAMESPACE = 'twenty-sdk-define-stub';
 const STUB_RESOLVED_PATH = '__twenty-sdk-define-stub__';
@@ -92,10 +76,10 @@ const __anyStub = new Proxy(() => undefined, __anyHandler);
 const buildStubModuleSource = (): string => {
   const exportLines: string[] = [];
 
-  for (const name of FACTORY_EXPORTS) {
+  for (const name of TWENTY_SDK_DEFINE_STUBBED_EXPORTS.factories) {
     exportLines.push(`export const ${name} = __defineFactoryStub;`);
   }
-  for (const name of ANY_EXPORTS) {
+  for (const name of TWENTY_SDK_DEFINE_STUBBED_EXPORTS.any) {
     exportLines.push(`export const ${name} = __anyStub;`);
   }
 
