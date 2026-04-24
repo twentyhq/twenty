@@ -1,6 +1,10 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { CoreApiClient } from 'twenty-client-sdk/core';
-import { defineLogicFunction, type DatabaseEventPayload, type ObjectRecordCreateEvent } from 'twenty-sdk/define';
+import { defineLogicFunction } from 'twenty-sdk/define';
+import {
+  type DatabaseEventPayload,
+  type ObjectRecordCreateEvent,
+} from 'twenty-sdk/logic-function';
 import { isDefined } from '@utils/is-defined';
 
 import { ON_RESEND_CONTACT_CREATED_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from '@modules/resend/constants/universal-identifiers';
@@ -18,7 +22,10 @@ const handler = async (
   const { after } = event.properties;
 
   if (isNonEmptyString(after.resendId)) {
-    return { skipped: true, reason: 'record already has resendId (inbound sync)' };
+    return {
+      skipped: true,
+      reason: 'record already has resendId (inbound sync)',
+    };
   }
 
   const email = after.email?.primaryEmail;
@@ -63,11 +70,17 @@ const handler = async (
     },
   });
 
-  return { synced: true, resendId: data.id, twentyId: event.recordId, personId };
+  return {
+    synced: true,
+    resendId: data.id,
+    twentyId: event.recordId,
+    personId,
+  };
 };
 
 export default defineLogicFunction({
-  universalIdentifier: ON_RESEND_CONTACT_CREATED_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
+  universalIdentifier:
+    ON_RESEND_CONTACT_CREATED_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
   name: 'on-resend-contact-created',
   description:
     'Creates a contact in Resend when a new resendContact record is created in Twenty',

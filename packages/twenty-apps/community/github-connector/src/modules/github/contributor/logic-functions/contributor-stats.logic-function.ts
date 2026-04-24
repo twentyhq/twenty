@@ -1,4 +1,5 @@
-import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
+import { defineLogicFunction } from 'twenty-sdk/define';
+import { type RoutePayload } from 'twenty-sdk/logic-function';
 import { getClient } from 'src/modules/shared/twenty-client';
 
 export type StatsPeriod = 'week' | 'month' | '3months' | 'year';
@@ -56,7 +57,11 @@ const PERIOD_CONFIG: Record<
   { granularity: Granularity; rangeMs: number; bucketCount: number }
 > = {
   week: { granularity: 'day', rangeMs: 7 * 24 * 3600 * 1000, bucketCount: 7 },
-  month: { granularity: 'day', rangeMs: 30 * 24 * 3600 * 1000, bucketCount: 30 },
+  month: {
+    granularity: 'day',
+    rangeMs: 30 * 24 * 3600 * 1000,
+    bucketCount: 30,
+  },
   '3months': {
     granularity: 'week',
     rangeMs: 13 * 7 * 24 * 3600 * 1000,
@@ -98,7 +103,10 @@ const bucketStartFor = (d: Date, granularity: Granularity): Date => {
 };
 
 const formatBucketLabel = (start: Date, granularity: Granularity): string => {
-  const month = start.toLocaleString('en-US', { month: 'short', timeZone: 'UTC' });
+  const month = start.toLocaleString('en-US', {
+    month: 'short',
+    timeZone: 'UTC',
+  });
   if (granularity === 'month') {
     return `${month} ${String(start.getUTCFullYear()).slice(2)}`;
   }
