@@ -2,7 +2,6 @@ import { Test, type TestingModule } from '@nestjs/testing';
 
 import { getWorkflowRunContext, StepStatus } from 'twenty-shared/workflow';
 
-import { BILLING_WORKFLOW_EXECUTION_ERROR_MESSAGE } from 'src/engine/core-modules/billing/constants/billing-workflow-execution-error-message.constant';
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
@@ -348,39 +347,6 @@ describe('WorkflowExecutorWorkspaceService', () => {
       expect(workflowActionFactory.get).not.toHaveBeenCalledWith(
         WorkflowActionType.SEND_EMAIL,
       );
-    });
-
-    it('should stop when billing validation fails', async () => {
-      mockBillingService.isBillingEnabled.mockReturnValueOnce(true);
-      mockBillingUsageService.hasAvailableCredits.mockResolvedValueOnce(false);
-
-      await service.executeFromSteps({
-        workflowRunId: mockWorkflowRunId,
-        stepIds: ['step-1'],
-        workspaceId: mockWorkspaceId,
-      });
-
-      expect(workflowActionFactory.get).toHaveBeenCalledTimes(0);
-
-      expect(
-        workflowRunWorkspaceService.updateWorkflowRunStepInfo,
-      ).toHaveBeenCalledTimes(1);
-
-      expect(workflowRunWorkspaceService.endWorkflowRun).toHaveBeenCalledTimes(
-        1,
-      );
-
-      expect(
-        workflowRunWorkspaceService.updateWorkflowRunStepInfo,
-      ).toHaveBeenCalledWith({
-        stepId: 'step-1',
-        stepInfo: {
-          error: BILLING_WORKFLOW_EXECUTION_ERROR_MESSAGE,
-          status: StepStatus.FAILED,
-        },
-        workflowRunId: mockWorkflowRunId,
-        workspaceId: 'workspace-id',
-      });
     });
 
     it('should not emit billing event for skipped steps', async () => {

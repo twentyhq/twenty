@@ -342,13 +342,6 @@ export class LogicFunctionExecutorService {
         functionName: flatLogicFunction.name,
       });
 
-    if (this.billingService.isBillingEnabled()) {
-      await this.billingUsageService.decrementAvailableCredits({
-        workspaceId,
-        usedCredits: 1,
-      });
-    }
-
     this.workspaceEventEmitter.emitCustomBatchEvent<UsageEvent>(
       USAGE_RECORDED,
       [
@@ -363,5 +356,12 @@ export class LogicFunctionExecutorService {
       ],
       workspaceId,
     );
+
+    if (this.billingService.isBillingEnabled()) {
+      await this.billingUsageService.decrementAvailableCredits({
+        workspaceId,
+        usedCredits: 100,
+      });
+    }
   }
 }

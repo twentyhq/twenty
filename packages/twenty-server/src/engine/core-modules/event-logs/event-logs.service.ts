@@ -240,7 +240,7 @@ export class EventLogsService {
 
     if (isDefined(filters.dateRange?.end)) {
       whereClauses.push('"timestamp" <= {endDate:DateTime64(3)}');
-        params.endDate = formatDateTimeForClickHouse(filters.dateRange.end);
+      params.endDate = formatDateTimeForClickHouse(filters.dateRange.end);
     }
 
     if (table === EventLogTable.OBJECT_EVENT) {

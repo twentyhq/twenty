@@ -363,13 +363,6 @@ export class WorkflowExecutorWorkspaceService {
     workspaceId: string,
     workflowId: string,
   ) {
-    if (this.billingService.isBillingEnabled()) {
-      await this.billingUsageService.decrementAvailableCredits({
-        workspaceId,
-        usedCredits: 1,
-      });
-    }
-
     this.workspaceEventEmitter.emitCustomBatchEvent<UsageEvent>(
       USAGE_RECORDED,
       [
@@ -384,6 +377,13 @@ export class WorkflowExecutorWorkspaceService {
       ],
       workspaceId,
     );
+
+    if (this.billingService.isBillingEnabled()) {
+      await this.billingUsageService.decrementAvailableCredits({
+        workspaceId,
+        usedCredits: 100,
+      });
+    }
   }
 
   private async canBillWorkflowNodeExecution(workspaceId: string) {

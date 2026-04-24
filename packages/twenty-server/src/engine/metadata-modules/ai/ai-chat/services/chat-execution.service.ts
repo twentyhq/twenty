@@ -32,7 +32,6 @@ import {
   LEARN_TOOLS_TOOL_NAME,
   LOAD_SKILL_TOOL_NAME,
 } from 'src/engine/core-modules/tool-provider/tools';
-import { WebSearchService } from 'src/engine/core-modules/web-search/web-search.service';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AgentActorContextService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-actor-context.service';
 import { AGENT_CONFIG } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-config.const';
@@ -348,8 +347,8 @@ export class ChatExecutionService {
       abortSignal,
       stopWhen: stepCountIs(AGENT_CONFIG.MAX_STEPS),
       experimental_telemetry: AI_TELEMETRY_CONFIG,
-      onAbort: ({ steps }) => {
-        billUsageFromSteps(steps);
+      onAbort: async ({ steps }) => {
+        await billUsageFromSteps(steps);
       },
       experimental_repairToolCall: async ({
         toolCall,
@@ -368,8 +367,8 @@ export class ChatExecutionService {
     });
 
     Promise.all([stream.usage, stream.steps])
-      .then(([, steps]) => {
-        billUsageFromSteps(steps);
+      .then(async ([, steps]) => {
+        await billUsageFromSteps(steps);
       })
       .catch((error) => {
         if (error?.name === 'AbortError') {

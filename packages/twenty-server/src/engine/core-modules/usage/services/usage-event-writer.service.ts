@@ -26,7 +26,9 @@ export class UsageEventWriterService {
     const rows = usageEvents.map((usageEvent) => ({
       timestamp: now,
       workspaceId,
-      periodStart: formatDateTimeForClickHouse(usageEvent.periodStart ?? new Date()),
+      periodStart: formatDateTimeForClickHouse(
+        usageEvent.periodStart ?? new Date(),
+      ),
       userWorkspaceId: usageEvent.userWorkspaceId ?? '',
       resourceType: usageEvent.resourceType,
       operationType: usageEvent.operationType,

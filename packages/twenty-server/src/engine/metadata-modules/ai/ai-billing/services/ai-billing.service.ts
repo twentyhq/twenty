@@ -104,13 +104,6 @@ export class AiBillingService {
       `Native web search billing: ${nativeWebSearchCallCount} calls, $${costInDollars.toFixed(4)}`,
     );
 
-    if (this.billingService.isBillingEnabled()) {
-      await this.billingUsageService.decrementAvailableCredits({
-        workspaceId,
-        usedCredits: creditsUsedMicro,
-      });
-    }
-
     this.workspaceEventEmitter.emitCustomBatchEvent<UsageEvent>(
       USAGE_RECORDED,
       [
@@ -125,6 +118,13 @@ export class AiBillingService {
       ],
       workspaceId,
     );
+
+    if (this.billingService.isBillingEnabled()) {
+      await this.billingUsageService.decrementAvailableCredits({
+        workspaceId,
+        usedCredits: creditsUsedMicro,
+      });
+    }
   }
 
   private async emitAiTokenUsageEvent(
@@ -136,12 +136,6 @@ export class AiBillingService {
     agentId?: string | null,
     userWorkspaceId?: string | null,
   ): Promise<void> {
-    if (this.billingService.isBillingEnabled()) {
-      await this.billingUsageService.decrementAvailableCredits({
-        workspaceId,
-        usedCredits: creditsUsedMicro,
-      });
-    }
     this.workspaceEventEmitter.emitCustomBatchEvent<UsageEvent>(
       USAGE_RECORDED,
       [
@@ -158,5 +152,11 @@ export class AiBillingService {
       ],
       workspaceId,
     );
+    if (this.billingService.isBillingEnabled()) {
+      await this.billingUsageService.decrementAvailableCredits({
+        workspaceId,
+        usedCredits: creditsUsedMicro,
+      });
+    }
   }
 }
