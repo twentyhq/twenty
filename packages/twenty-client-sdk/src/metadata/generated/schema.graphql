@@ -2440,6 +2440,7 @@ type AgentMessagePart {
   toolInput: JSON
   toolOutput: JSON
   state: String
+  providerExecuted: Boolean
   errorMessage: String
   errorDetails: JSON
   sourceUrlSourceId: String

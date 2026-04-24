@@ -2115,6 +2115,7 @@ export interface AgentMessagePart {
     toolInput?: Scalars['JSON']
     toolOutput?: Scalars['JSON']
     state?: Scalars['String']
+    providerExecuted?: Scalars['Boolean']
     errorMessage?: Scalars['String']
     errorDetails?: Scalars['JSON']
     sourceUrlSourceId?: Scalars['String']
@@ -5108,6 +5109,7 @@ export interface AgentMessagePartGenqlSelection{
     toolInput?: boolean | number
     toolOutput?: boolean | number
     state?: boolean | number
+    providerExecuted?: boolean | number
     errorMessage?: boolean | number
     errorDetails?: boolean | number
     sourceUrlSourceId?: boolean | number
