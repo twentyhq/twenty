@@ -10,7 +10,7 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: '*',
         allow: '/',
-        disallow: ['/halftone', '/enterprise/activate', '/api/', '/blog'],
+        disallow: ['/halftone', '/enterprise/activate', '/api/'],
       },
     ],
     sitemap: `${SITE_URL}/sitemap.xml`,
