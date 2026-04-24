@@ -70,20 +70,17 @@ RUN if [ -d /app/packages/twenty-front/build ]; then \
 
 
 # ===========================================================================
-# Target: twenty (production)
-#   docker build --target twenty -f packages/twenty-docker/twenty/Dockerfile .
+# Target: twenty-server (server only, no frontend)
+#   docker build --target twenty-server -f packages/twenty-docker/twenty/Dockerfile .
 # ===========================================================================
 
-FROM node:24-alpine AS twenty
+FROM node:24-alpine AS twenty-server
 
 RUN apk add --no-cache curl jq postgresql-client
 
 COPY ./packages/twenty-docker/twenty/entrypoint.sh /app/entrypoint.sh
 RUN chmod +x /app/entrypoint.sh
 WORKDIR /app/packages/twenty-server
-
-ARG REACT_APP_SERVER_BASE_URL
-ENV REACT_APP_SERVER_BASE_URL=$REACT_APP_SERVER_BASE_URL
 
 ARG APP_VERSION
 ENV APP_VERSION=$APP_VERSION
@@ -110,11 +107,8 @@ COPY --chown=1000 --from=twenty-server-build /app/packages/twenty-client-sdk/dis
 COPY --chown=1000 --from=twenty-server-build /app/packages/twenty-ui/package.json /app/packages/twenty-ui/
 COPY --chown=1000 --from=twenty-server-build /app/packages/twenty-front/package.json /app/packages/twenty-front/
 
-# Frontend static build
-COPY --chown=1000 --from=twenty-front-build /app/packages/twenty-front/build /app/packages/twenty-server/dist/front
-
 LABEL org.opencontainers.image.source=https://github.com/twentyhq/twenty
-LABEL org.opencontainers.image.description="Production Twenty image with backend and frontend."
+LABEL org.opencontainers.image.description="Twenty server image (no frontend)."
 
 RUN mkdir -p /app/.local-storage /app/packages/twenty-server/.local-storage && \
     chown 1000:1000 /app/.local-storage /app/packages/twenty-server/.local-storage
@@ -126,8 +120,35 @@ ENTRYPOINT ["/app/entrypoint.sh"]
 
 
 # ===========================================================================
-# Target: twenty-aws
-# docker build --target twenty-aws -f packages/twenty-docker/twenty/Dockerfile .
+# Target: twenty-server-aws (server only + aws-cli, no frontend)
+#   docker build --target twenty-server-aws -f packages/twenty-docker/twenty/Dockerfile .
+# ===========================================================================
+
+FROM twenty-server AS twenty-server-aws
+
+USER root
+RUN apk add --no-cache aws-cli
+USER 1000
+
+
+# ===========================================================================
+# Target: twenty (server + frontend)
+#   docker build --target twenty -f packages/twenty-docker/twenty/Dockerfile .
+# ===========================================================================
+
+FROM twenty-server AS twenty
+
+ARG REACT_APP_SERVER_BASE_URL
+ENV REACT_APP_SERVER_BASE_URL=$REACT_APP_SERVER_BASE_URL
+
+COPY --chown=1000 --from=twenty-front-build /app/packages/twenty-front/build /app/packages/twenty-server/dist/front
+
+LABEL org.opencontainers.image.description="Twenty image with backend and frontend."
+
+
+# ===========================================================================
+# Target: twenty-aws (server + frontend + aws-cli)
+#   docker build --target twenty-aws -f packages/twenty-docker/twenty/Dockerfile .
 # ===========================================================================
 
 FROM twenty AS twenty-aws

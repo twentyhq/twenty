@@ -17,6 +17,7 @@ import { AddPageLayoutIdToCommandMenuItemFastInstanceCommand } from 'src/databas
 import { AddConditionalAvailabilityExpressionToPageLayoutWidgetFastInstanceCommand } from 'src/database/commands/upgrade-version-command/1-23/1-23-instance-command-fast-1775654781000-add-conditional-availability-expression-to-page-layout-widget';
 import { AddIsPreInstalledToApplicationRegistrationFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-0/2-0-instance-command-fast-1776886452831-add-is-pre-installed-to-application-registration';
 import { AddProviderExecutedToAgentMessagePartFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-1/2-1-instance-command-fast-1777012800000-add-provider-executed-to-agent-message-part';
+import { BackfillPageLayoutWidgetPositionSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-1/2-1-instance-command-slow-1795000002000-backfill-page-layout-widget-position';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -36,4 +37,5 @@ export const INSTANCE_COMMANDS = [
   AddConditionalAvailabilityExpressionToPageLayoutWidgetFastInstanceCommand,
   AddIsPreInstalledToApplicationRegistrationFastInstanceCommand,
   AddProviderExecutedToAgentMessagePartFastInstanceCommand,
+  BackfillPageLayoutWidgetPositionSlowInstanceCommand,
 ];

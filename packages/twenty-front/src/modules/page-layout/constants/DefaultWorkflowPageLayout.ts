@@ -52,6 +52,10 @@ export const DEFAULT_WORKFLOW_PAGE_LAYOUT: PageLayout = {
             rowSpan: 12,
             columnSpan: 12,
           },
+          position: {
+            __typename: 'PageLayoutWidgetCanvasPosition',
+            layoutMode: PageLayoutTabLayoutMode.CANVAS,
+          },
           configuration: {
             __typename: 'FieldsConfiguration',
             configurationType: WidgetConfigurationType.FIELDS,
