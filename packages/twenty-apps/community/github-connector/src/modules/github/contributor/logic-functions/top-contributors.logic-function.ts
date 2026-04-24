@@ -1,4 +1,5 @@
-import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
+import { defineLogicFunction } from 'twenty-sdk/define';
+import { type RoutePayload } from 'twenty-sdk/logic-function';
 import { isBotLogin } from 'src/modules/github/contributor/utils/is-bot-login';
 import { getClient } from 'src/modules/shared/twenty-client';
 
@@ -107,7 +108,10 @@ const tally = (
     }
   }
   return Array.from(counts.values())
-    .sort((a, b) => b.count - a.count || (a.ghLogin ?? '').localeCompare(b.ghLogin ?? ''))
+    .sort(
+      (a, b) =>
+        b.count - a.count || (a.ghLogin ?? '').localeCompare(b.ghLogin ?? ''),
+    )
     .slice(0, limit);
 };
 
@@ -148,78 +152,82 @@ const handler = async (
   const client = getClient();
 
   const authoredResult: { items: PrNode[]; truncated: boolean } =
-    kind === 'reviewers' ? { items: [], truncated: false } : await paginateUntil<PrNode>(
-    async (cursor) => {
-      const res = await client.query({
-        pullRequests: {
-          __args: {
-            orderBy: [{ githubCreatedAt: 'DescNullsLast' }],
-            first: PAGE_SIZE,
-            after: cursor,
-          },
-          edges: {
-            node: {
-              githubCreatedAt: true,
-              author: {
-                id: true,
-                name: true,
-                ghLogin: true,
-                avatarUrl: { primaryLinkUrl: true },
+    kind === 'reviewers'
+      ? { items: [], truncated: false }
+      : await paginateUntil<PrNode>(
+          async (cursor) => {
+            const res = await client.query({
+              pullRequests: {
+                __args: {
+                  orderBy: [{ githubCreatedAt: 'DescNullsLast' }],
+                  first: PAGE_SIZE,
+                  after: cursor,
+                },
+                edges: {
+                  node: {
+                    githubCreatedAt: true,
+                    author: {
+                      id: true,
+                      name: true,
+                      ghLogin: true,
+                      avatarUrl: { primaryLinkUrl: true },
+                    },
+                  },
+                },
+                pageInfo: { hasNextPage: true, endCursor: true },
               },
-            },
+            });
+            return (
+              (res.pullRequests as Connection<PrNode>) ?? {
+                edges: [],
+                pageInfo: { hasNextPage: false, endCursor: null },
+              }
+            );
           },
-          pageInfo: { hasNextPage: true, endCursor: true },
-        },
-      });
-      return (
-        (res.pullRequests as Connection<PrNode>) ?? {
-          edges: [],
-          pageInfo: { hasNextPage: false, endCursor: null },
-        }
-      );
-    },
-    (n) => {
-      if (!n.githubCreatedAt) return false;
-      return new Date(n.githubCreatedAt).getTime() < sinceMs;
-    },
-  );
+          (n) => {
+            if (!n.githubCreatedAt) return false;
+            return new Date(n.githubCreatedAt).getTime() < sinceMs;
+          },
+        );
 
   const reviewedResult: { items: ReviewNode[]; truncated: boolean } =
-    kind === 'authors' ? { items: [], truncated: false } : await paginateUntil<ReviewNode>(
-    async (cursor) => {
-      const res = await client.query({
-        pullRequestReviews: {
-          __args: {
-            orderBy: [{ firstSubmittedAt: 'DescNullsLast' }],
-            first: PAGE_SIZE,
-            after: cursor,
-          },
-          edges: {
-            node: {
-              firstSubmittedAt: true,
-              reviewer: {
-                id: true,
-                name: true,
-                ghLogin: true,
-                avatarUrl: { primaryLinkUrl: true },
+    kind === 'authors'
+      ? { items: [], truncated: false }
+      : await paginateUntil<ReviewNode>(
+          async (cursor) => {
+            const res = await client.query({
+              pullRequestReviews: {
+                __args: {
+                  orderBy: [{ firstSubmittedAt: 'DescNullsLast' }],
+                  first: PAGE_SIZE,
+                  after: cursor,
+                },
+                edges: {
+                  node: {
+                    firstSubmittedAt: true,
+                    reviewer: {
+                      id: true,
+                      name: true,
+                      ghLogin: true,
+                      avatarUrl: { primaryLinkUrl: true },
+                    },
+                  },
+                },
+                pageInfo: { hasNextPage: true, endCursor: true },
               },
-            },
+            });
+            return (
+              (res.pullRequestReviews as Connection<ReviewNode>) ?? {
+                edges: [],
+                pageInfo: { hasNextPage: false, endCursor: null },
+              }
+            );
           },
-          pageInfo: { hasNextPage: true, endCursor: true },
-        },
-      });
-      return (
-        (res.pullRequestReviews as Connection<ReviewNode>) ?? {
-          edges: [],
-          pageInfo: { hasNextPage: false, endCursor: null },
-        }
-      );
-    },
-    (n) => {
-      if (!n.firstSubmittedAt) return false;
-      return new Date(n.firstSubmittedAt).getTime() < sinceMs;
-    },
-  );
+          (n) => {
+            if (!n.firstSubmittedAt) return false;
+            return new Date(n.firstSubmittedAt).getTime() < sinceMs;
+          },
+        );
 
   const topAuthors = tally(
     authoredResult.items.map((pr) => ({ contributor: pr.author })),

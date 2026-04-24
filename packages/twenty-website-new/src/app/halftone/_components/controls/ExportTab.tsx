@@ -6,7 +6,7 @@ import { formatAnimationName } from '@/app/halftone/_lib/formatters';
 import type {
   HalftoneGeometrySpec,
   HalftoneStudioSettings,
-} from '@/app/halftone/_lib/state';
+} from '@/lib/halftone/state';
 import { useState } from 'react';
 import {
   ExportButton,

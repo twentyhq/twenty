@@ -9,8 +9,6 @@ type TerminalPromptChipProps = {
   label: string;
 };
 
-// min-width: 0 lets the chip shrink below its intrinsic content width so the
-// inner label can ellipsize rather than forcing the footer to wrap.
 const ChipRoot = styled.button`
   align-items: center;
   background: ${TERMINAL_TOKENS.surface.chipBackground};

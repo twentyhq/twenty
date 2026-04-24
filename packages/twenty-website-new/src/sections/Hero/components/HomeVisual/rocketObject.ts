@@ -164,10 +164,6 @@ export const ROCKET_SIDEBAR_ITEM: HeroSidebarItem = {
   page: ROCKET_PAGE,
 };
 
-// -- Additional CRM objects --
-// Each object below gets its own empty-but-structured index view so the
-// workspace can reflect the schema as it's scaffolded by the chat.
-
 const LAUNCH_PAGE: HeroTablePageDefinition = {
   type: 'table',
   header: { title: 'Launches', count: 5 },
@@ -283,9 +279,7 @@ const LAUNCH_PAGE: HeroTablePageDefinition = {
         plannedLaunchAt: { type: 'text', value: 'Oct 13, 2023' },
         rocket: {
           type: 'relation',
-          items: [
-            { name: 'Falcon Heavy', shortLabel: 'F', tone: 'blue' },
-          ],
+          items: [{ name: 'Falcon Heavy', shortLabel: 'F', tone: 'blue' }],
         },
         launchSite: {
           type: 'relation',
@@ -538,16 +532,9 @@ export const LAUNCH_SITE_SIDEBAR_ITEM: HeroSidebarItem = {
   page: LAUNCH_SITE_PAGE,
 };
 
-// Id used by the chat to highlight the already-existing standard Companies
-// sidebar item (we reuse it as the customer object instead of creating a new
-// Customer object).
 export const COMPANIES_ITEM_ID = 'companies';
 export const COMPANIES_ITEM_LABEL = 'Companies';
 
-// Ordered pairs used by the chat stream to append objects to the sidebar in
-// the same order they're mentioned in the assistant's first paragraph. The
-// Customer step is intentionally absent — it reuses the standard Companies
-// object that's already in the sidebar.
 export const CRM_OBJECT_SEQUENCE: ReadonlyArray<{
   id: string;
   label: string;

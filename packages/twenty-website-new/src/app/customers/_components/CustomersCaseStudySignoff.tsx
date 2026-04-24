@@ -1,6 +1,6 @@
-import { TalkToUsButton } from '@/app/components/ContactCalModal';
+import { TalkToUsButton } from '@/lib/contact-cal';
 import { LinkButton } from '@/design-system/components';
-import { Pages } from '@/enums/pages';
+import { Pages } from '@/lib/pages';
 import { Signoff } from '@/sections/Signoff/components';
 import { theme } from '@/theme';
 

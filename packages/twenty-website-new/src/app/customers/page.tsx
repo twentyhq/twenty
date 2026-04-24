@@ -1,8 +1,10 @@
-import { FAQ_DATA, MENU_DATA, TRUSTED_BY_DATA } from '@/app/_constants';
-import { TalkToUsButton } from '@/app/components/ContactCalModal';
-import { CASE_STUDY_CATALOG_ENTRIES } from '@/app/customers/_constants';
+import { FAQ_DATA } from '@/sections/Faq/data';
+import { MENU_DATA } from '@/sections/Menu/data';
+import { TRUSTED_BY_DATA } from '@/sections/TrustedBy/data';
+import { TalkToUsButton } from '@/lib/contact-cal';
+import { CASE_STUDY_CATALOG_ENTRIES } from '@/lib/customers';
 import { Eyebrow, LinkButton } from '@/design-system/components';
-import { Pages } from '@/enums/pages';
+import { Pages } from '@/lib/pages';
 import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';
 import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels';
 import { CaseStudyCatalog } from '@/sections/CaseStudyCatalog/components';
@@ -12,28 +14,16 @@ import { Menu } from '@/sections/Menu/components';
 import { Signoff } from '@/sections/Signoff/components';
 import { TrustedBy } from '@/sections/TrustedBy/components';
 import { theme } from '@/theme';
+import { buildPageMetadata } from '@/lib/seo';
 import { css } from '@linaria/core';
 import type { Metadata } from 'next';
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildPageMetadata({
+  path: '/customers',
   title: 'Customers | Twenty',
   description:
     'Meet the teams running their business on Twenty. Real customer stories on how they shaped the CRM to fit their workflow.',
-  alternates: { canonical: '/customers' },
-  openGraph: {
-    title: 'Customers | Twenty',
-    description:
-      'Meet the teams running their business on Twenty. Real customer stories on how they shaped the CRM to fit their workflow.',
-    url: '/customers',
-    type: 'website',
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'Customers | Twenty',
-    description:
-      'Meet the teams running their business on Twenty. Real customer stories on how they shaped the CRM to fit their workflow.',
-  },
-};
+});
 
 const HERO_HEADING = [
   { text: 'See how teams ', fontFamily: 'serif' as const },
@@ -142,7 +132,7 @@ export default async function CaseStudiesCatalogPage() {
         </Signoff.Cta>
       </Signoff.Root>
 
-      <Faq.Root illustration={FAQ_DATA.illustration}>
+      <Faq.Root>
         <Faq.Intro>
           <Eyebrow colorScheme="secondary" heading={FAQ_DATA.eyebrow.heading} />
           <Faq.Heading segments={FAQ_DATA.heading} />

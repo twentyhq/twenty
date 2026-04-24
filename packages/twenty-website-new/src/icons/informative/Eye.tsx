@@ -1,10 +1,6 @@
 type EyeIconProps = { size: number; color: string; strokeWidth?: number };
 
-export function EyeIcon({
-  size,
-  color,
-  strokeWidth = 2,
-}: EyeIconProps) {
+export function EyeIcon({ size, color, strokeWidth = 2 }: EyeIconProps) {
   const height = (size * 13) / 16;
 
   return (

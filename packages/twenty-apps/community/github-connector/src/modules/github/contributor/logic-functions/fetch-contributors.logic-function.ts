@@ -1,4 +1,5 @@
-import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
+import { defineLogicFunction } from 'twenty-sdk/define';
+import { type RoutePayload } from 'twenty-sdk/logic-function';
 import {
   fetchContributors,
   type GqlContributor,
@@ -41,7 +42,11 @@ const handler = async (event: RoutePayload<FetchContributorsPayload>) => {
     name: c.login,
     githubId: c.databaseId ?? 0,
     avatarUrl: c.avatarUrl
-      ? { primaryLinkLabel: c.login, primaryLinkUrl: c.avatarUrl, secondaryLinks: null }
+      ? {
+          primaryLinkLabel: c.login,
+          primaryLinkUrl: c.avatarUrl,
+          secondaryLinks: null,
+        }
       : null,
   }));
 
