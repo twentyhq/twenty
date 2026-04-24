@@ -3,6 +3,7 @@ import { useLingui } from '@lingui/react/macro';
 import { IconDotsVertical, IconReload } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
+import { GRAY_SCALE_LIGHT } from 'twenty-ui/theme';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { LAYOUT_CUSTOMIZATION_BAR_DROPDOWN_ID } from '@/layout-customization/constants/LayoutCustomizationBarDropdownId';
@@ -19,7 +20,7 @@ const StyledInvertedIconButtonWrapper = styled.span`
   display: flex;
 
   button {
-    color: ${themeCssVariables.font.color.inverted};
+    color: ${GRAY_SCALE_LIGHT.gray1};
   }
 
   button:hover {

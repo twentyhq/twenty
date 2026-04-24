@@ -4,11 +4,7 @@ import { useId } from 'react';
 
 type EditIconProps = { size: number; color: string; strokeWidth?: number };
 
-export function EditIcon({
-  size,
-  color,
-  strokeWidth = 2,
-}: EditIconProps) {
+export function EditIcon({ size, color, strokeWidth = 2 }: EditIconProps) {
   const clipPathId = useId().replace(/:/g, '');
 
   return (

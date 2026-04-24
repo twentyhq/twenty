@@ -5,37 +5,37 @@ icon: arrow-up-right-dots
 
 ## 通用指南
 
-**Always back up your database before starting the upgrade process** by running:
+**在开始升级流程之前务必备份数据库**，运行：
 
 ```bash
 docker exec -it {db_container_name_or_id} pg_dumpall -U {postgres_user} > databases_backup.sql
 ```
 
-To restore from backup:
+从备份恢复：
 
 ```bash
 cat databases_backup.sql | docker exec -i {db_container_name_or_id} psql -U {postgres_user}
 ```
 
-If you use Docker Compose, follow these steps:
+如果您使用 Docker Compose，请按照以下步骤操作：
 
-1. Stop Twenty: `docker compose down`
-2. Change the `TAG` value in the `.env` file next to your `docker-compose.yml`
-3. Start Twenty: `docker compose up -d`
+1. 停止 Twenty：`docker compose down`
+2. 在与 `docker-compose.yml` 同目录的 `.env` 文件中更改 `TAG` 值
+3. 启动 Twenty：`docker compose up -d`
 
-The server runs all required upgrade migrations automatically on startup. No manual command is needed.
+服务器在启动时会自动运行所有所需的升级迁移。 无需手动执行任何命令。
 
-## Cross-version upgrades (v1.22+)
+## 跨版本升级（v1.22+）
 
-Starting from **v1.22**, Twenty supports cross-version upgrades. You can jump directly from any supported version to the latest release without stepping through each intermediate version.
+自 **v1.22** 起，Twenty 支持跨版本升级。 您可以从任意受支持的版本直接跳到最新版本，而无需逐一经过每个中间版本。
 
-For example, upgrading from v1.22 straight to v2.0 is fully supported.
+例如，从 v1.22 直接升级到 v2.0 完全受支持。
 
-## Checking upgrade status
+## 检查升级状态
 
-The `upgrade:status` command lets you inspect the current state of your instance and workspace migrations. It is useful for debugging upgrade issues or when filing a support request.
+`upgrade:status` 命令可用于查看您的实例和工作区迁移的当前状态。 这在调试升级问题或提交支持请求时非常有用。
 
-Run it from the server container:
+在服务器容器中运行：
 
 ```bash
 docker exec -it {server_container_name_or_id} yarn command:prod upgrade:status
@@ -68,23 +68,23 @@ Summary
 
 ### 选项
 
-| Flag                      | 描述                                                               |
-| ------------------------- | ---------------------------------------------------------------- |
-| `-w, --workspace-id <id>` | Filter to a specific workspace. Can be passed multiple times.    |
-| `-f, --failed-only`       | Hide up-to-date workspaces, only show behind and failed entries. |
+| 标志                        | 描述                      |
+| ------------------------- | ----------------------- |
+| `-w, --workspace-id <id>` | 筛选特定工作区。 可多次传递。         |
+| `-f, --failed-only`       | 隐藏已是最新的工作区，仅显示落后和失败的条目。 |
 
 ## 故障排除
 
-If the upgrade fails on some workspaces, the server will not advance past the failing step. Restarting the server (`docker compose up -d`) will retry the upgrade from where it left off.
+如果某些工作区的升级失败，服务器将不会越过失败的步骤继续进行。 重启服务器（`docker compose up -d`）将从中断处重试升级。
 
-To quickly identify problems, run:
+要快速定位问题，运行：
 
 ```bash
 docker exec -it {server_container_name_or_id} yarn command:prod upgrade:status --failed-only
 ```
 
-This shows only workspaces that are behind or have failed, along with the error message for each failure.
+这将仅显示落后或失败的工作区，并附上每个失败的错误信息。
 
-## Before v1.22
+## v1.22 之前
 
-If your instance is older than v1.22, you must upgrade incrementally through each major tagged version (v1.6 to v1.7, then v1.7 to v1.8, and so on) until you reach v1.22. From there, you can jump directly to the latest version.
+如果您的实例早于 v1.22，您必须按顺序逐步升级经过每个主要标记版本（从 v1.6 到 v1.7，再从 v1.7 到 v1.8，依此类推），直到达到 v1.22。 届时，您可以直接跳到最新版本。

@@ -1,23 +1,24 @@
 ---
 title: Düzen
-description: Define views, navigation menu items, and page layouts to shape how your app appears in Twenty.
+description: Uygulamanızın Twenty içinde nasıl görüneceğini şekillendirmek için görünümleri, gezinme menüsü öğelerini ve sayfa düzenlerini tanımlayın.
 icon: table-columns
 ---
 
-Layout entities control how your app surfaces inside Twenty's UI — what lives in the sidebar, which saved views ship with the app, and how a record detail page is arranged.
+Düzen varlıkları, uygulamanızın Twenty arayüzünde nasıl göründüğünü kontrol eder — kenar çubuğunda nelerin yer aldığı, uygulamayla birlikte hangi kayıtlı görünümlerin geldiği ve bir kayıt ayrıntı sayfasının nasıl düzenlendiği.
 
-## Layout concepts
+## Düzen kavramları
 
-| Concept                  | What it controls                                                                  | Varlık                     |
-| ------------------------ | --------------------------------------------------------------------------------- | -------------------------- |
-| **View**                 | A saved list configuration for an object — visible fields, order, filters, groups | `defineView`               |
-| **Navigation Menu Item** | An entry in the left sidebar that links to a view or an external URL              | `defineNavigationMenuItem` |
-| **Page Layout**          | The tabs and widgets that make up a record's detail page                          | `definePageLayout`         |
+| Kavram                   | Neyi kontrol eder                                                                               | Varlık                     |
+| ------------------------ | ----------------------------------------------------------------------------------------------- | -------------------------- |
+| **Görünüm**              | Bir nesne için kaydedilmiş liste yapılandırması — görünür alanlar, sıralama, filtreler, gruplar | `defineView`               |
+| **Gezinme Menüsü Öğesi** | Sol kenar çubuğunda, bir görünüme veya harici bir URL'ye bağlanan bir öğe                       | `defineNavigationMenuItem` |
+| **Sayfa Düzeni**         | Bir kaydın ayrıntı sayfasını oluşturan sekmeler ve widget'lar                                   | `definePageLayout`         |
+| **Sayfa düzeni sekmesi** | Mevcut bir sayfa düzenine (standart veya kendi uygulamanıza ait) eklenen bağımsız bir sekme     | `definePageLayoutTab`      |
 
-Views, navigation items, and page layouts reference each other by `universalIdentifier`:
+Görünümler, gezinme menüsü öğeleri ve sayfa düzenleri birbirlerine `universalIdentifier` ile başvurur:
 
-* A **navigation menu item** of type `VIEW` points at a `defineView` identifier, so the sidebar link opens that saved view.
-* A **page layout** of type `RECORD_PAGE` targets an object and can embed [front components](/l/tr/developers/extend/apps/front-components) inside its tabs as widgets.
+* Türü `VIEW` olan bir **gezinme menüsü öğesi**, bir `defineView` tanımlayıcısını işaret eder; böylece kenar çubuğu bağlantısı o kayıtlı görünümü açar.
+* Türü `RECORD_PAGE` olan bir **sayfa düzeni**, bir nesneyi hedefler ve sekmelerinin içine widget'lar olarak [ön uç bileşenleri](/l/tr/developers/extend/apps/front-components) gömebilir.
 
 <AccordionGroup>
 <Accordion title="defineView" description="Nesneler için kaydedilmiş görünümler tanımlayın">
@@ -126,6 +127,52 @@ export default definePageLayout({
 * Her `tab`, bir `title`, `position` ve `layoutMode` ile sayfanın bir bölümünü tanımlar (serbest biçimli düzen için `CANVAS`).
 * Bir sekmenin içindeki her `widget`, bir ön uç bileşeni, bir ilişki listesi veya diğer yerleşik widget türlerini oluşturabilir.
 * Sekmelerdeki `position`, sıralarını kontrol eder. Özel sekmeleri yerleşik olanların sonrasına yerleştirmek için daha yüksek değerler kullanın (ör. 50).
+
+</Accordion>
+<Accordion title="definePageLayoutTab" description="Mevcut bir sayfa düzenine bir sekme ekleyin">
+
+`definePageLayoutTab` uygulamanızın tek bir sekmeyi — isteğe bağlı widget'larla — **mevcut** bir sayfa düzenine eklemesine olanak tanır. En yaygın kullanım örneği, Twenty'nin yerleşik kayıt sayfalarından birine (örneğin, bir analitik veya yapay zekâ özet sekmesi) özel bir sekme eklemek ya da kendi uygulamanızın zaten sunduğu bir sayfa düzenine eklemektir.
+
+Hedeflenen sayfa düzeni ya **standart** bir Twenty sayfa düzeni ya da **kendi uygulamanız** tarafından tanımlanan bir düzen olmalıdır; yüklü başka bir uygulamaya ait sayfa düzenlerine uygulamalar arası referanslar şu anda desteklenmemektedir.
+
+```ts src/page-layouts/example-extra-tab.ts
+import {
+  definePageLayoutTab,
+  PageLayoutTabLayoutMode,
+} from 'twenty-sdk/define';
+import { HELLO_WORLD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER } from '../front-components/hello-world';
+
+const COMPANY_RECORD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER =
+  '20202020-ab01-4001-8001-c0aba11c0100';
+
+export default definePageLayoutTab({
+  universalIdentifier: 'b1b2b3b4-b5b6-4000-8000-000000000001',
+  pageLayoutUniversalIdentifier:
+    COMPANY_RECORD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER,
+  title: 'Hello World',
+  position: 1000,
+  icon: 'IconWorld',
+  layoutMode: PageLayoutTabLayoutMode.CANVAS,
+  widgets: [
+    {
+      universalIdentifier: 'b1b2b3b4-b5b6-4000-8000-000000000002',
+      title: 'Hello World',
+      type: 'FRONT_COMPONENT',
+      configuration: {
+        configurationType: 'FRONT_COMPONENT',
+        frontComponentUniversalIdentifier:
+          HELLO_WORLD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
+      },
+    },
+  ],
+});
+```
+
+Önemli noktalar:
+* `pageLayoutUniversalIdentifier`, `definePageLayoutTab` kullanılırken **zorunludur** ve kurulum sırasında (standart veya uygulamanızınki) zaten var olan bir sayfa düzenini işaret etmelidir. Üst sayfa düzeni eksikse, kurulum belirgin bir doğrulama hatasıyla başarısız olur.
+* `widgets` yalnızca bu sekmeyle sınırlıdır — satır içi olarak `definePageLayout` içinde tanımlanan widget'larda olduğu gibi, ön uç bileşenlerine, görünümlere vb. tam olarak aynı şekilde referans verirler.
+* `position`, hedeflenen düzende mevcut sekmelere göre sıralamayı kontrol eder. Yerleşik sekmelere göre sekmenizi istediğiniz konuma yerleştirecek bir değer seçin.
+* Yalnızca mevcut bir düzene **ekleme** yapmak istediğinizde `definePageLayout` yerine bunu kullanın. Tüm düzen size ait olduğunda `definePageLayout` kullanın (genellikle uygulamanızda sunduğunuz bir nesne için bir `RECORD_PAGE` veya bir `STANDALONE_PAGE`).
 
 </Accordion>
 </AccordionGroup>

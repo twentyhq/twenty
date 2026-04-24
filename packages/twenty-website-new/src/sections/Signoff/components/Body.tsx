@@ -1,8 +1,8 @@
 import { styled } from '@linaria/react';
 
 import { Body as BaseBody } from '@/design-system/components';
-import type { BodyType } from '@/design-system/components/Body/types/Body';
-import type { Pages } from '@/enums/pages';
+import type { BodyType } from '@/design-system/components/Body';
+import type { Page } from '@/lib/pages';
 import { theme } from '@/theme';
 
 const Subline = styled.div`
@@ -22,7 +22,7 @@ const Subline = styled.div`
 
 type BodyProps = {
   body: BodyType;
-  page?: Pages;
+  page?: Page;
 };
 
 export function Body({ body, page }: BodyProps) {

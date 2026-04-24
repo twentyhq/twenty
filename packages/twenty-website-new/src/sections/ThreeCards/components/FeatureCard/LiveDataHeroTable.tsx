@@ -1,6 +1,6 @@
 'use client';
 
-import { SHARED_COMPANY_LOGO_URLS } from '@/lib/shared-asset-paths';
+import { SHARED_COMPANY_LOGO_URLS } from '@/content/site/asset-paths';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
 import {
@@ -184,6 +184,14 @@ const RowMotion = styled.div<{ $delayMs?: number; $entering?: boolean }>`
       opacity: 1;
       transform: translate3d(0, 0, 0);
     }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    /* Rows still appear (functional — the demo is showing live data
+       arriving) but with no slide / fade easing. */
+    animation-duration: 1ms;
+    animation-delay: 0ms;
+    animation-timing-function: linear;
   }
 `;
 

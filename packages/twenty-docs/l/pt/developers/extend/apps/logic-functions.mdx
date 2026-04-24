@@ -1,10 +1,10 @@
 ---
 title: Funções lógicas
-description: Define server-side TypeScript functions with HTTP, cron, and database event triggers.
+description: Defina funções TypeScript no lado do servidor com gatilhos HTTP, cron e de eventos de banco de dados.
 icon: bolt
 ---
 
-Logic functions are server-side TypeScript functions that run on the Twenty platform. They can be triggered by HTTP requests, cron schedules, or database events — and can also be exposed as tools for AI agents.
+As funções de lógica são funções TypeScript no lado do servidor que são executadas na plataforma Twenty. Elas podem ser acionadas por solicitações HTTP, agendamentos cron ou eventos de banco de dados — e também podem ser expostas como ferramentas para agentes de IA.
 
 <AccordionGroup>
 <Accordion title="defineLogicFunction" description="Defina funções de lógica e seus gatilhos">
@@ -387,7 +387,7 @@ export default definePreInstallLogicFunction({
 
 **Regra geral:**
 
-| You want to...                                                                                                      | Usar                                                                                      |
+| Você quer...                                                                                                        | Usar                                                                                      |
 | ------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
 | Popular dados padrão, configurar o workspace, registrar recursos externos                                           | `post-install`                                                                            |
 | Executar processos longos de popular dados ou chamadas a terceiros que não devem bloquear a resposta da instalação  | `post-install` (padrão — `shouldRunSynchronously: false`, com novas tentativas do worker) |

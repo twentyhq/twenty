@@ -4,10 +4,10 @@
       "label": "Začínáme",
       "groups": {
         "welcome": {
-          "label": "Welcome"
+          "label": "Vítejte"
         },
         "coreConcepts": {
-          "label": "Core Concepts"
+          "label": "Základní pojmy"
         }
       }
     },
@@ -21,7 +21,7 @@
           "label": "Datový model",
           "groups": {
             "dataModelReference": {
-              "label": "Reference"
+              "label": "Referenční dokumentace"
             },
             "dataModelHowTos": {
               "label": "Návody"
@@ -32,7 +32,7 @@
           "label": "Migrace dat",
           "groups": {
             "dataMigrationReference": {
-              "label": "Reference"
+              "label": "Referenční dokumentace"
             },
             "dataMigrationHowTos": {
               "label": "Návody"
@@ -43,7 +43,7 @@
           "label": "Kalendář a e-maily",
           "groups": {
             "calendarEmailsReference": {
-              "label": "Reference"
+              "label": "Referenční dokumentace"
             },
             "calendarEmailsHowTos": {
               "label": "Návody"
@@ -54,7 +54,7 @@
           "label": "Pracovní postupy",
           "groups": {
             "workflowsReference": {
-              "label": "Reference"
+              "label": "Referenční dokumentace"
             },
             "workflowsHowTos": {
               "label": "Návody",
@@ -79,7 +79,7 @@
           "label": "AI",
           "groups": {
             "aiReference": {
-              "label": "Reference"
+              "label": "Referenční dokumentace"
             },
             "aiHowTos": {
               "label": "Návody"
@@ -90,7 +90,7 @@
           "label": "Rozvržení",
           "groups": {
             "layoutReference": {
-              "label": "Reference",
+              "label": "Referenční dokumentace",
               "groups": {
                 "layoutViews": {
                   "label": "Zobrazení"
@@ -106,7 +106,7 @@
           "label": "Panely",
           "groups": {
             "dashboardsReference": {
-              "label": "Reference"
+              "label": "Referenční dokumentace"
             },
             "dashboardsHowTos": {
               "label": "Návody"
@@ -117,7 +117,7 @@
           "label": "Oprávnění a přístup",
           "groups": {
             "permissionsAccessReference": {
-              "label": "Reference"
+              "label": "Referenční dokumentace"
             },
             "permissionsAccessHowTos": {
               "label": "Návody"
@@ -128,7 +128,7 @@
           "label": "Fakturace",
           "groups": {
             "billingReference": {
-              "label": "Reference"
+              "label": "Referenční dokumentace"
             },
             "billingHowTos": {
               "label": "Návody"
@@ -139,7 +139,7 @@
           "label": "Nastavení",
           "groups": {
             "settingsReference": {
-              "label": "Reference"
+              "label": "Referenční dokumentace"
             },
             "settingsHowTos": {
               "label": "Návody"

@@ -20,12 +20,8 @@ const WINDOW_ID = 'twenty-app-window';
 const MIN_WIDTH = 640;
 const MIN_HEIGHT = 420;
 const MIN_EDGE_GAP = 0;
-// Initial size cap — the hero scene is 1280×832, so we reuse that ratio to
-// keep the window looking like the Twenty app when it's shrunk to fit.
 const INITIAL_MAX_WIDTH = 1040;
 const INITIAL_ASPECT_RATIO = 1280 / 832;
-// Below this parent width, stack App Window + Terminal with a small diagonal
-// offset so both remain clickable on mobile.
 const MOBILE_PARENT_BREAKPOINT = 640;
 
 type Position = { left: number; top: number };
@@ -196,9 +192,6 @@ export const DraggableAppWindow = ({ children }: DraggableAppWindowProps) => {
 
   const { activate, zIndex } = useWindowOrder(WINDOW_ID);
 
-  // On mount, size the window to match the hero scene so it occupies the
-  // same visual footprint as before. Stored in state so drag/resize can move
-  // and shrink it freely afterwards.
   useLayoutEffect(() => {
     const shell = shellRef.current;
     const parent = shell?.parentElement as HTMLElement | null;
@@ -208,8 +201,6 @@ export const DraggableAppWindow = ({ children }: DraggableAppWindowProps) => {
     const parentRect = parent.getBoundingClientRect();
 
     if (parentRect.width < MOBILE_PARENT_BREAKPOINT) {
-      // Mobile: pin the App Window to the top of the scene. The Terminal sits
-      // tightly on top of it with only a small diagonal offset peeking out.
       const mobileWidth = Math.min(parentRect.width, 320);
       const mobileHeight = Math.min(
         parentRect.height,
@@ -220,9 +211,6 @@ export const DraggableAppWindow = ({ children }: DraggableAppWindowProps) => {
       return;
     }
 
-    // Cap the initial width so the window reads as a macOS app resting inside
-    // the hero rather than filling it edge-to-edge. Height follows the hero's
-    // aspect ratio so the app layout isn't letterboxed.
     const initialWidth = Math.min(parentRect.width, INITIAL_MAX_WIDTH);
     const initialHeight = Math.min(
       parentRect.height,
@@ -290,6 +278,15 @@ export const DraggableAppWindow = ({ children }: DraggableAppWindowProps) => {
     [activate, position],
   );
 
+  const latestPositionRef = useRef<Position | null>(position);
+  const latestSizeRef = useRef<Size | null>(size);
+  useEffect(() => {
+    latestPositionRef.current = position;
+  }, [position]);
+  useEffect(() => {
+    latestSizeRef.current = size;
+  }, [size]);
+
   useEffect(() => {
     if (!isDragging) {
       return undefined;
@@ -302,7 +299,12 @@ export const DraggableAppWindow = ({ children }: DraggableAppWindowProps) => {
       }
       const nextLeft = state.startLeft + (event.clientX - state.originX);
       const nextTop = state.startTop + (event.clientY - state.originY);
-      setPosition(clampPosition(nextLeft, nextTop, size));
+      const clamped = clampPosition(nextLeft, nextTop, size);
+      latestPositionRef.current = clamped;
+      const shell = shellRef.current;
+      if (shell !== null) {
+        shell.style.transform = `translate3d(${clamped.left}px, ${clamped.top}px, 0)`;
+      }
     };
 
     const stop = (event: PointerEvent) => {
@@ -312,6 +314,10 @@ export const DraggableAppWindow = ({ children }: DraggableAppWindowProps) => {
       }
       dragStateRef.current = null;
       setIsDragging(false);
+      const committed = latestPositionRef.current;
+      if (committed !== null) {
+        setPosition(committed);
+      }
       shellRef.current?.releasePointerCapture?.(event.pointerId);
     };
 
@@ -379,8 +385,6 @@ export const DraggableAppWindow = ({ children }: DraggableAppWindowProps) => {
       const growsFromLeft = LEFT_HANDLES.has(state.handle);
       const growsFromTop = TOP_HANDLES.has(state.handle);
 
-      // Mobile parents can be narrower than MIN_WIDTH; clamp the min against
-      // the parent so resize can't demand more room than exists.
       const effectiveMinWidth = Math.min(
         MIN_WIDTH,
         Math.max(parentRect.width - MIN_EDGE_GAP * 2, 0),
@@ -394,8 +398,6 @@ export const DraggableAppWindow = ({ children }: DraggableAppWindowProps) => {
       let nextLeft = state.startLeft;
       if (affectsWidth) {
         if (growsFromLeft) {
-          // Left edge can't cross past MIN_EDGE_GAP, which caps width at
-          // startLeft + startWidth - MIN_EDGE_GAP.
           const maxWidth = state.startWidth + state.startLeft - MIN_EDGE_GAP;
           nextWidth = Math.min(
             Math.max(state.startWidth - deltaX, effectiveMinWidth),
@@ -430,8 +432,14 @@ export const DraggableAppWindow = ({ children }: DraggableAppWindowProps) => {
         }
       }
 
-      setSize({ width: nextWidth, height: nextHeight });
-      setPosition({ left: nextLeft, top: nextTop });
+      latestSizeRef.current = { width: nextWidth, height: nextHeight };
+      latestPositionRef.current = { left: nextLeft, top: nextTop };
+      const shell = shellRef.current;
+      if (shell !== null) {
+        shell.style.width = `${nextWidth}px`;
+        shell.style.height = `${nextHeight}px`;
+        shell.style.transform = `translate3d(${nextLeft}px, ${nextTop}px, 0)`;
+      }
     };
 
     const stop = (event: PointerEvent) => {
@@ -441,6 +449,14 @@ export const DraggableAppWindow = ({ children }: DraggableAppWindowProps) => {
       }
       resizeStateRef.current = null;
       setIsResizing(false);
+      const committedSize = latestSizeRef.current;
+      const committedPosition = latestPositionRef.current;
+      if (committedSize !== null) {
+        setSize(committedSize);
+      }
+      if (committedPosition !== null) {
+        setPosition(committedPosition);
+      }
       shellRef.current?.releasePointerCapture?.(event.pointerId);
     };
 
@@ -455,13 +471,17 @@ export const DraggableAppWindow = ({ children }: DraggableAppWindowProps) => {
     };
   }, [getParentRect, isResizing]);
 
-  // Any pointer-down on the window activates it; the MacWindowBar owns the
-  // drag affordance separately so content clicks don't pull the window.
   const handleShellPointerDown = useCallback(() => {
     activate();
   }, [activate]);
 
   const isReady = position !== null && size !== null;
+
+  const isInteracting = isDragging || isResizing;
+  const renderPosition = isInteracting
+    ? (latestPositionRef.current ?? position)
+    : position;
+  const renderSize = isInteracting ? (latestSizeRef.current ?? size) : size;
 
   return (
     <Shell
@@ -471,11 +491,11 @@ export const DraggableAppWindow = ({ children }: DraggableAppWindowProps) => {
       onPointerDown={handleShellPointerDown}
       ref={shellRef}
       style={{
-        height: size ? `${size.height}px` : undefined,
-        transform: position
-          ? `translate(${position.left}px, ${position.top}px)`
-          : 'translate(0, 0)',
-        width: size ? `${size.width}px` : '100%',
+        height: renderSize ? `${renderSize.height}px` : undefined,
+        transform: renderPosition
+          ? `translate3d(${renderPosition.left}px, ${renderPosition.top}px, 0)`
+          : 'translate3d(0, 0, 0)',
+        width: renderSize ? `${renderSize.width}px` : '100%',
         zIndex,
       }}
     >

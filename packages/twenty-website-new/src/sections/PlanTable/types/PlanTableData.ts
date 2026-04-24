@@ -1,5 +1,5 @@
-import type { BodyType } from '@/design-system/components/Body/types/Body';
-import type { HeadingType } from '@/design-system/components/Heading/types/Heading';
+import type { BodyType } from '@/design-system/components/Body';
+import type { HeadingType } from '@/design-system/components/Heading';
 import type { PlansHostingMode, PlansTierId } from '@/sections/Plans/types';
 
 export type PlanTableTierColumnType = {

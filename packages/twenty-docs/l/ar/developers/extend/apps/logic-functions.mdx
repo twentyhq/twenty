@@ -1,10 +1,10 @@
 ---
 title: الوظائف المنطقية
-description: Define server-side TypeScript functions with HTTP, cron, and database event triggers.
+description: عرّف دوال TypeScript على جانب الخادم مع HTTP وcron ومشغّلات أحداث قاعدة البيانات.
 icon: bolt
 ---
 
-Logic functions are server-side TypeScript functions that run on the Twenty platform. They can be triggered by HTTP requests, cron schedules, or database events — and can also be exposed as tools for AI agents.
+دوال المنطق هي دوال TypeScript على جانب الخادم تعمل على منصة Twenty. يمكن تشغيلها بواسطة طلبات HTTP أو جداول cron أو أحداث قاعدة البيانات — كما يمكن إتاحتها كأدوات لوكلاء الذكاء الاصطناعي.
 
 <AccordionGroup>
 <Accordion title="defineLogicFunction" description="عرّف الدوال المنطقية ومشغّلاتها">
@@ -387,7 +387,7 @@ export default definePreInstallLogicFunction({
 
 **قاعدة عامة:**
 
-| You want to...                                                                 | استخدام                                                                                          |
+| ترغب في...                                                                     | استخدام                                                                                          |
 | ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------ |
 | بذر بيانات افتراضية، تهيئة مساحة العمل، تسجيل موارد خارجية                     | `post-install`                                                                                   |
 | تشغيل بذر طويل الأمد أو استدعاءات أطراف ثالثة لا ينبغي أن تحجب استجابة التثبيت | `post-install` (الإعداد الافتراضي — `shouldRunSynchronously: false`، مع محاولات إعادة من العامل) |

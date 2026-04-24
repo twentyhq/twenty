@@ -1,12 +1,12 @@
-import { MENU_DATA } from '@/app/_constants';
+import { MENU_DATA } from '@/sections/Menu/data';
 import { CustomersCaseStudySignoff } from '@/app/customers/_components/CustomersCaseStudySignoff';
-import { getCaseStudyPalette } from '@/app/customers/_constants';
-import type { CaseStudyData } from '@/app/customers/_constants/types';
+import { getCaseStudyPalette, type CaseStudyData } from '@/lib/customers';
 import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';
 import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels';
 import { CaseStudy } from '@/sections/CaseStudy/components';
 import { Menu } from '@/sections/Menu/components';
 import { theme } from '@/theme';
+import { buildPageMetadata } from '@/lib/seo';
 import type { Metadata } from 'next';
 
 const PLACEHOLDER_HERO =
@@ -99,10 +99,11 @@ const CASE_STUDY: CaseStudyData = {
   },
 };
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildPageMetadata({
+  path: '/customers/9dots',
   title: CASE_STUDY.meta.title,
   description: CASE_STUDY.meta.description,
-};
+});
 
 export default async function NineDotsCaseStudyPage() {
   const stats = await fetchCommunityStats();

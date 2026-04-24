@@ -35,13 +35,6 @@ export type EditorFile = {
   source: string;
 };
 
-// -- Source files --
-//
-// Copies of the rocket-app schema files the assistant scaffolds. Embedded
-// directly so the preview can render multiple tabs without needing the real
-// filesystem at runtime. Keep in rough sync with
-// /Users/thomascolasdesfrancs/code/Twenty-apps/rockets-app/src/.
-
 const schemaIdentifiersSource = `export const SCHEMA_IDS = {
   rocket: {
     object: '733956fd-c19c-4a13-a6c2-e92d6e28bcb9',
@@ -1266,11 +1259,8 @@ export const EDITOR_FILES: ReadonlyArray<EditorFile> = [
 
 export const DEFAULT_EDITOR_FILE_ID = 'launch-object';
 
-// File shown by default before the chat scaffolds any project files.
 export const STARTER_EDITOR_FILE_ID = 'application-config';
 
-// Files (and explorer rows) that only exist after the chat scaffolds the
-// launch-ops CRM. Used to filter the explorer tree / tabs before generation.
 export const GENERATED_FILE_IDS: ReadonlySet<string> = new Set([
   'schema-identifiers',
   'rocket-object',
@@ -1751,8 +1741,6 @@ export const EXPLORER_NODES: ExplorerNode[] = [
   },
 ];
 
-// -- Tokenizer --
-
 const KEYWORDS = new Set([
   'import',
   'export',
@@ -1847,7 +1835,6 @@ const tokenizeLine = (line: string): CodeLine => {
       } else if (/^[A-Z]/.test(word)) {
         push({ kind: 'identifier', value: word });
       } else {
-        // Look past whitespace to decide between function / property / text.
         let k = j;
         while (k < line.length && line[k] === ' ') {
           k += 1;

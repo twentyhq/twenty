@@ -1,13 +1,13 @@
-import { styled } from "@linaria/react";
+import { styled } from '@linaria/react';
 
 interface ClientCountShapeProps {
   strokeColor: string;
 }
 
-const LEFT_OUTLINE = "M4 0.5 A3.5 3.5 0 0 0 0.5 4 V44 A3.5 3.5 0 0 0 4 47.5";
+const LEFT_OUTLINE = 'M4 0.5 A3.5 3.5 0 0 0 0.5 4 V44 A3.5 3.5 0 0 0 4 47.5';
 
 const RIGHT_OUTLINE =
-  "M0 0.5 h11 a3.5 3.5 0 0 1 3.5 3.5 v28.523 a5.5 5.5 0 0 1 -1.416 3.684 l-8.547 9.477 a5.5 5.5 0 0 1 -4.084 1.816 H0";
+  'M0 0.5 h11 a3.5 3.5 0 0 1 3.5 3.5 v28.523 a5.5 5.5 0 0 1 -1.416 3.684 l-8.547 9.477 a5.5 5.5 0 0 1 -4.084 1.816 H0';
 
 const ShapeContainer = styled.div`
   display: flex;
@@ -46,11 +46,7 @@ export function ClientCountShape({ strokeColor }: ClientCountShapeProps) {
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
       >
-        <path
-          d={LEFT_OUTLINE}
-          stroke={strokeColor}
-          strokeWidth="1"
-        />
+        <path d={LEFT_OUTLINE} stroke={strokeColor} strokeWidth="1" />
       </LeftCap>
 
       <MiddleSegment

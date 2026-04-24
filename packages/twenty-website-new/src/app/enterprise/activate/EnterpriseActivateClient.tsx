@@ -70,25 +70,34 @@ const CopyTrigger = styled.button<{ $copied: boolean }>`
   right: ${theme.spacing(2)};
   top: ${theme.spacing(2)};
 
+  /*
+   * When showing the "Copied!" success state we override the inner
+   * BaseButton's appearance through its documented data-slot hooks.
+   * CSS rules cleanly win over SVG presentation attributes (fill on
+   * a path element) and over the Label's CSS-driven color, so no
+   * !important is needed for those.
+   *
+   * For the hover-fill we cannot override its inline opacity from CSS
+   * (inline style always wins) so we suppress it via visibility: hidden
+   * instead — that property is not set inline anywhere, so the cascade
+   * resolves correctly without !important.
+   */
   ${({ $copied }) =>
     $copied
       ? `
     & [data-slot='button-base-shape'] path,
     & [data-slot='button-base-shape'] rect {
-      fill: ${theme.colors.accent.green[100]} !important;
+      fill: ${theme.colors.accent.green[100]};
     }
 
     & [data-slot='button-hover-fill'] {
-      opacity: 0 !important;
+      visibility: hidden;
       pointer-events: none;
     }
 
-    & [data-slot='button-label'] {
-      color: ${theme.colors.primary.background[100]} !important;
-    }
-
+    & [data-slot='button-label'],
     &:is(:hover, :focus-visible) [data-slot='button-label'] {
-      color: ${theme.colors.primary.background[100]} !important;
+      color: ${theme.colors.primary.background[100]};
     }
   `
       : ''}

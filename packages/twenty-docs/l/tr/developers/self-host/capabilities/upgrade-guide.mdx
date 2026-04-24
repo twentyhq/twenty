@@ -5,37 +5,37 @@ icon: arrow-up-right-dots
 
 ## Genel kılavuzlar
 
-**Always back up your database before starting the upgrade process** by running:
+**Yükseltme işlemine başlamadan önce veritabanınızı her zaman yedekleyin**; bunun için şunu çalıştırın:
 
 ```bash
 docker exec -it {db_container_name_or_id} pg_dumpall -U {postgres_user} > databases_backup.sql
 ```
 
-To restore from backup:
+Yedekten geri yüklemek için:
 
 ```bash
 cat databases_backup.sql | docker exec -i {db_container_name_or_id} psql -U {postgres_user}
 ```
 
-If you use Docker Compose, follow these steps:
+Docker Compose kullanıyorsanız, aşağıdaki adımları izleyin:
 
-1. Stop Twenty: `docker compose down`
-2. Change the `TAG` value in the `.env` file next to your `docker-compose.yml`
-3. Start Twenty: `docker compose up -d`
+1. Twenty'yi durdurun: `docker compose down`
+2. `docker-compose.yml` dosyanızın yanındaki `.env` dosyasında `TAG` değerini değiştirin
+3. Twenty'yi başlatın: `docker compose up -d`
 
-The server runs all required upgrade migrations automatically on startup. No manual command is needed.
+Sunucu, başlatma sırasında gerekli tüm yükseltme migrasyonlarını otomatik olarak çalıştırır. Manuel bir komut gerekmez.
 
-## Cross-version upgrades (v1.22+)
+## Sürümler arası yükseltmeler (v1.22+)
 
-Starting from **v1.22**, Twenty supports cross-version upgrades. You can jump directly from any supported version to the latest release without stepping through each intermediate version.
+Twenty, **v1.22** sürümünden itibaren sürümler arası yükseltmeleri destekler. Desteklenen herhangi bir sürümden, ara sürümlerin her birine tek tek geçmeden doğrudan en son sürüme atlayabilirsiniz.
 
-For example, upgrading from v1.22 straight to v2.0 is fully supported.
+Örneğin, v1.22'den doğrudan v2.0'a yükseltme tamamen desteklenir.
 
-## Checking upgrade status
+## Yükseltme durumunu kontrol etme
 
-The `upgrade:status` command lets you inspect the current state of your instance and workspace migrations. It is useful for debugging upgrade issues or when filing a support request.
+`upgrade:status` komutu, örneğinizin ve çalışma alanı migrasyonlarının mevcut durumunu incelemenizi sağlar. Yükseltme sorunlarında hata ayıklamak veya bir destek talebi oluştururken kullanışlıdır.
 
-Run it from the server container:
+Sunucu konteynerinden çalıştırın:
 
 ```bash
 docker exec -it {server_container_name_or_id} yarn command:prod upgrade:status
@@ -68,23 +68,23 @@ Summary
 
 ### Seçenekler
 
-| Flag                      | Açıklama                                                         |
-| ------------------------- | ---------------------------------------------------------------- |
-| `-w, --workspace-id <id>` | Filter to a specific workspace. Can be passed multiple times.    |
-| `-f, --failed-only`       | Hide up-to-date workspaces, only show behind and failed entries. |
+| Bayrak                    | Açıklama                                                                                 |
+| ------------------------- | ---------------------------------------------------------------------------------------- |
+| `-w, --workspace-id <id>` | Belirli bir çalışma alanına göre filtreleme yapar. Birden çok kez verilebilir.           |
+| `-f, --failed-only`       | Güncel çalışma alanlarını gizler, yalnızca geride kalan ve başarısız girdileri gösterir. |
 
 ## Sorun Giderme
 
-If the upgrade fails on some workspaces, the server will not advance past the failing step. Restarting the server (`docker compose up -d`) will retry the upgrade from where it left off.
+Yükseltme bazı çalışma alanlarında başarısız olursa, sunucu başarısız olan adımın ötesine geçmez. Sunucuyu yeniden başlatmak (`docker compose up -d`), yükseltmeyi kaldığı yerden yeniden dener.
 
-To quickly identify problems, run:
+Sorunları hızlıca belirlemek için şunu çalıştırın:
 
 ```bash
 docker exec -it {server_container_name_or_id} yarn command:prod upgrade:status --failed-only
 ```
 
-This shows only workspaces that are behind or have failed, along with the error message for each failure.
+Bu, yalnızca geride kalan veya başarısız olan çalışma alanlarını ve her bir başarısızlık için hata iletisini gösterir.
 
-## Before v1.22
+## v1.22'den önce
 
-If your instance is older than v1.22, you must upgrade incrementally through each major tagged version (v1.6 to v1.7, then v1.7 to v1.8, and so on) until you reach v1.22. From there, you can jump directly to the latest version.
+Örneğiniz v1.22'den eskiyse, v1.22'ye ulaşana kadar her ana etiketli sürümden (v1.6'dan v1.7'ye, ardından v1.7'den v1.8'e vb.) kademeli olarak yükseltmeniz gerekir. Bundan sonra, doğrudan en son sürüme geçebilirsiniz.

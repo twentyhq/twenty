@@ -145,7 +145,7 @@ const getPermissionsExceptionUserFriendlyMessage = (
     case PermissionsExceptionCode.APPLICATION_ROLE_NOT_FOUND:
       return msg`No role assigned to the application.`;
     case PermissionsExceptionCode.ROLE_BELONGS_TO_ANOTHER_APPLICATION:
-      return msg`Cannot modify permissions on a role owned by another application.`;
+      return msg`Cannot target a role owned by another application.`;
     default:
       assertUnreachable(code);
   }

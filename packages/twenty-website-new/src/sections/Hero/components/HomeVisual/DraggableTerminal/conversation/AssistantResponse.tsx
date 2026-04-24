@@ -15,15 +15,9 @@ import { ChangesSummaryCard } from './ChangesSummaryCard';
 import { StreamingText, type StreamingSegment } from './StreamingText';
 import { ThinkingIndicator } from './ThinkingIndicator';
 
-// Delay between one paragraph finishing its stream and the next starting —
-// gives the reader a beat before new text appears.
 const BETWEEN_PARAGRAPHS_MS = 320;
-// Extra breath after each object paragraph, so the sidebar pop-in has a
-// moment to settle before the next object's paragraph begins streaming.
 const AFTER_OBJECT_BEAT_MS = 520;
-// Delay before the diff card slides in after the prose is done.
 const BEFORE_CARD_MS = 420;
-// Delay after the card lands before we signal the chat is finished.
 const AFTER_CARD_REVEAL_MS = 180;
 
 const ResponseRoot = styled.div`
@@ -89,8 +83,6 @@ const CardWrap = styled.div<{ $instant: boolean }>`
   }
 `;
 
-// -- Paragraph segment builders --
-
 const text = (value: string, onReveal?: () => void): StreamingSegment => ({
   kind: 'text',
   value,
@@ -106,12 +98,9 @@ const node = (
   onReveal,
 });
 
-// Sidebar ids mirror the ones in rocketObject.ts; keep in sync.
 const ROCKET_ID = 'rockets';
 const LAUNCH_ID = 'launches';
 const PAYLOAD_ID = 'payloads';
-// Customers re-use the standard Companies object — the chat highlights the
-// existing Companies sidebar item instead of creating a new Customer object.
 const COMPANIES_ID = 'companies';
 const LAUNCH_SITE_ID = 'launch-sites';
 
@@ -297,11 +286,6 @@ const STAGE_ORDER: Stage[] = [
   'done',
 ];
 
-// Progressive renderer: advances to the next stage once the previous one
-// signals completion (via StreamingText's `onComplete`). Every transition
-// flows through setTimeout so it's trivial to retime via the constants at the
-// top of the file. Each object sentence is its own stage so the sidebar pop-in
-// has room to breathe before the next object is mentioned.
 type AssistantResponseProps = {
   instantComplete?: boolean;
   onUndo?: () => void;
@@ -330,10 +314,6 @@ export const AssistantResponse = ({
     };
   }, []);
 
-  // Segments are rebuilt whenever the caller's onObjectCreated identity
-  // changes so each object chip's onReveal is wired to the latest handler.
-  // HomeVisual memoizes the handler with useCallback, so segments stay stable
-  // during streaming and StreamingText doesn't reset mid-reveal.
   const rocketParagraph = useMemo(
     () => buildIntroAndRocketParagraph(objectCreationHandler),
     [objectCreationHandler],

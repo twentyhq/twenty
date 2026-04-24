@@ -7,9 +7,7 @@ type FooterVisibilityGateProps = {
   children: ReactNode;
 };
 
-export function FooterVisibilityGate({
-  children,
-}: FooterVisibilityGateProps) {
+export function FooterVisibilityGate({ children }: FooterVisibilityGateProps) {
   const pathname = usePathname();
 
   if (pathname === '/halftone') {

@@ -4,6 +4,7 @@ import { type ToolSet, zodSchema } from 'ai';
 import { isDefined } from 'twenty-shared/utils';
 
 import { JSON_RPC_ERROR_CODE } from 'src/engine/api/mcp/constants/json-rpc-error-code.const';
+import { MCP_EXCLUDED_TOOL_NAMES } from 'src/engine/api/mcp/constants/mcp-excluded-tool-names.const';
 import { MCP_PROTOCOL_VERSION } from 'src/engine/api/mcp/constants/mcp-protocol-version.const';
 import { MCP_SERVER_INFO } from 'src/engine/api/mcp/constants/mcp-server-info.const';
 import { MCP_SERVER_INSTRUCTIONS } from 'src/engine/api/mcp/constants/mcp-server-instructions.const';
@@ -39,8 +40,6 @@ import {
 import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
 import { SkillService } from 'src/engine/metadata-modules/skill/skill.service';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
-
-const MCP_EXCLUDED_TOOLS = new Set(['code_interpreter', 'http_request']);
 
 @Injectable()
 export class McpProtocolService {
@@ -127,7 +126,7 @@ export class McpProtocolService {
         ...createGetToolCatalogTool(this.toolRegistry, workspace.id, roleId, {
           userId: options?.userId,
           userWorkspaceId: options?.userWorkspaceId,
-          excludeTools: MCP_EXCLUDED_TOOLS,
+          excludeTools: MCP_EXCLUDED_TOOL_NAMES,
         }),
         inputSchema: zodSchema(getToolCatalogInputSchema),
       },
@@ -135,17 +134,14 @@ export class McpProtocolService {
         ...createLearnToolsTool(
           this.toolRegistry,
           toolContext,
-          MCP_EXCLUDED_TOOLS,
+          MCP_EXCLUDED_TOOL_NAMES,
         ),
         inputSchema: zodSchema(learnToolsInputSchema),
       },
       [EXECUTE_TOOL_TOOL_NAME]: {
-        ...createExecuteToolTool(
-          this.toolRegistry,
-          toolContext,
-          preloadedTools,
-          MCP_EXCLUDED_TOOLS,
-        ),
+        ...createExecuteToolTool(this.toolRegistry, toolContext, {
+          excludeTools: MCP_EXCLUDED_TOOL_NAMES,
+        }),
         inputSchema: executeToolInputSchema,
       },
       [LOAD_SKILL_TOOL_NAME]: {

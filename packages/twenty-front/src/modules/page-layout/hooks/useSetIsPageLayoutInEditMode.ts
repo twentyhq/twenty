@@ -1,5 +1,3 @@
-import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
-import { contextStoreIsPageInEditModeComponentState } from '@/context-store/states/contextStoreIsPageInEditModeComponentState';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
 import { currentPageLayoutIdState } from '@/page-layout/states/currentPageLayoutIdState';
@@ -26,12 +24,6 @@ export const useSetIsPageLayoutInEditMode = (pageLayoutIdFromProps: string) => {
     isDashboardInEditModeComponentState,
     pageLayoutId,
   );
-
-  const contextStoreIsFullTabWidgetInEditModeState =
-    useAtomComponentStateCallbackState(
-      contextStoreIsPageInEditModeComponentState,
-      MAIN_CONTEXT_STORE_INSTANCE_ID,
-    );
 
   const fieldsWidgetGroupsDraftState = useAtomComponentStateCallbackState(
     fieldsWidgetGroupsDraftComponentState,
@@ -93,15 +85,12 @@ export const useSetIsPageLayoutInEditMode = (pageLayoutIdFromProps: string) => {
 
       store.set(isDashboardInEditModeState, value);
 
-      store.set(contextStoreIsFullTabWidgetInEditModeState, value);
-
       if (value) {
         store.set(currentPageLayoutIdState.atom, pageLayoutId);
       }
     },
     [
       isDashboardInEditModeState,
-      contextStoreIsFullTabWidgetInEditModeState,
       fieldsWidgetGroupsDraftState,
       fieldsWidgetUngroupedFieldsDraftState,
       fieldsWidgetEditorModeDraftState,

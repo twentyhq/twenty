@@ -15,14 +15,14 @@ import {
   RESEND_EMAILS_ON_CONTACT_FIELD_UNIVERSAL_IDENTIFIER,
   SEGMENT_ON_RESEND_CONTACT_FIELD_UNIVERSAL_IDENTIFIER,
   UNSUBSCRIBED_FIELD_UNIVERSAL_IDENTIFIER,
-} from 'src/modules/resend/constants/universal-identifiers';
+} from '@modules/resend/constants/universal-identifiers';
 import { defineView } from 'twenty-sdk/define';
 
 export default defineView({
   universalIdentifier: RESEND_CONTACT_VIEW_UNIVERSAL_IDENTIFIER,
   name: 'Resend contacts',
   objectUniversalIdentifier: RESEND_CONTACT_OBJECT_UNIVERSAL_IDENTIFIER,
-  icon: 'IconAddressBook',
+  icon: 'IconUser',
   position: 0,
   fields: [
     {

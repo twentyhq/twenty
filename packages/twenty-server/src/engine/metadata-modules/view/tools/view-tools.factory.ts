@@ -4,6 +4,7 @@ import { type ToolSet } from 'ai';
 import {
   AggregateOperations,
   FieldMetadataType,
+  ViewCalendarLayout,
   ViewType,
   ViewVisibility,
 } from 'twenty-shared/types';
@@ -14,7 +15,6 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadat
 import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
 import { ViewFieldService } from 'src/engine/metadata-modules/view-field/services/view-field.service';
 
-import { ViewCalendarLayout } from 'src/engine/metadata-modules/view/enums/view-calendar-layout.enum';
 import { ViewQueryParamsService } from 'src/engine/metadata-modules/view/services/view-query-params.service';
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';

@@ -218,7 +218,11 @@ export const TerminalSendButton = ({
       const btnEl = buttonRef.current;
       if (!btnEl) return;
       const shell = btnEl.closest('[class*="Shell"]');
-      if (shell && event.target instanceof Node && shell.contains(event.target)) {
+      if (
+        shell &&
+        event.target instanceof Node &&
+        shell.contains(event.target)
+      ) {
         setHintDismissed(true);
       }
     };

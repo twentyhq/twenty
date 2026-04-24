@@ -13,7 +13,7 @@ import {
   TEMPLATE_STATUS_FIELD_UNIVERSAL_IDENTIFIER,
   TEMPLATE_SUBJECT_FIELD_UNIVERSAL_IDENTIFIER,
   TEMPLATE_UPDATED_AT_FIELD_UNIVERSAL_IDENTIFIER,
-} from 'src/modules/resend/constants/universal-identifiers';
+} from '@modules/resend/constants/universal-identifiers';
 import { defineView } from 'twenty-sdk/define';
 
 export default defineView({

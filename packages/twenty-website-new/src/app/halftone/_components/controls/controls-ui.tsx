@@ -16,6 +16,8 @@ const TAB_LABEL_WIDTH = 72;
 
 export const PanelShell = styled.aside<{ $collapsed?: boolean }>`
   background: rgba(18, 18, 22, 0.88);
+  /* -webkit- prefix is required for the blur to render on Safari < 18. */
+  -webkit-backdrop-filter: blur(24px) saturate(1.4);
   backdrop-filter: blur(24px) saturate(1.4);
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 16px;
@@ -228,7 +230,7 @@ const EditableControlValueInput = styled.input`
   }
 `;
 
-export const SliderInput = styled.input`
+export const SliderInput = styled.input<{ $fillPercent: number }>`
   appearance: none;
   background: transparent;
   cursor: pointer;
@@ -241,8 +243,8 @@ export const SliderInput = styled.input`
   &::-webkit-slider-runnable-track {
     background: linear-gradient(
       to right,
-      rgba(255, 255, 255, 0.35) var(--fill, 50%),
-      rgba(255, 255, 255, 0.08) var(--fill, 50%)
+      rgba(255, 255, 255, 0.35) ${({ $fillPercent }) => $fillPercent}%,
+      rgba(255, 255, 255, 0.08) ${({ $fillPercent }) => $fillPercent}%
     );
     border-radius: 999px;
     height: 6px;
@@ -844,11 +846,11 @@ export function SliderControl({
     <SliderLabel>
       <span>{children}</span>
       <SliderInput
+        $fillPercent={fillPercent}
         max={max}
         min={min}
         onChange={onChange}
         step={step}
-        style={{ '--fill': `${fillPercent}%` } as React.CSSProperties}
         type="range"
         value={value}
       />

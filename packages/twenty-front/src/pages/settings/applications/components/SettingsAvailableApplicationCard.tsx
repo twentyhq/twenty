@@ -12,6 +12,7 @@ import { Avatar } from 'twenty-ui/display';
 import { Card } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type MarketplaceApp } from '~/generated-metadata/graphql';
+import { getApplicationDescriptionSummary } from '~/pages/settings/applications/utils/getApplicationDescriptionSummary';
 
 type SettingsAvailableApplicationCardProps = {
   application: MarketplaceApp;
@@ -45,6 +46,10 @@ const StyledDescription = styled.div`
 export const SettingsAvailableApplicationCard = ({
   application,
 }: SettingsAvailableApplicationCardProps) => {
+  const descriptionSummary = getApplicationDescriptionSummary(
+    application.description,
+  );
+
   return (
     <StyledLinkContainer>
       <Link
@@ -65,7 +70,7 @@ export const SettingsAvailableApplicationCard = ({
               <StyledSettingsCardTitle>
                 {application.name}
               </StyledSettingsCardTitle>
-              <StyledDescription>{application.description}</StyledDescription>
+              <StyledDescription>{descriptionSummary}</StyledDescription>
               <StyledSettingsCardThirdLine>
                 {t`by {author}`} {application.author}
               </StyledSettingsCardThirdLine>

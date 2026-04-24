@@ -1,8 +1,8 @@
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
-type ConnectionResult = {
-  edges: Array<{ node: { id: string; resendId: string } }>;
-};
+import { extractConnection } from '@modules/resend/shared/utils/typed-client';
+
+type ResendIdNode = { id: string; resendId: string };
 
 export const findRecordByResendId = async (
   client: CoreApiClient,
@@ -26,9 +26,7 @@ export const findRecordByResendId = async (
     },
   });
 
-  const connection = (result as Record<string, unknown>)[objectNamePlural] as
-    | ConnectionResult
-    | undefined;
+  const connection = extractConnection<ResendIdNode>(result, objectNamePlural);
 
-  return connection?.edges[0]?.node.id;
+  return connection.edges[0]?.node.id;
 };

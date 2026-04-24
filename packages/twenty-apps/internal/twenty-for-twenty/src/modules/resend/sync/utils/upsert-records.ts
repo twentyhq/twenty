@@ -1,26 +1,30 @@
-import type { SyncResult } from 'src/modules/resend/sync/types/sync-result';
-import type { UpsertRecordsOptions } from 'src/modules/resend/sync/types/upsert-records-options';
-import { getErrorMessage } from 'src/modules/resend/shared/utils/get-error-message';
-import { upsertRecord } from 'src/modules/resend/sync/utils/upsert-record';
-import { withRateLimitRetry } from 'src/modules/resend/shared/utils/with-rate-limit-retry';
+import type { SyncResult } from '@modules/resend/sync/types/sync-result';
+import type { UpsertRecordsOptions } from '@modules/resend/sync/types/upsert-records-options';
+import { fetchExistingTwentyIdsByResendIds } from '@modules/resend/sync/utils/fetch-existing-twenty-ids';
+import { getErrorMessage } from '@modules/resend/shared/utils/get-error-message';
+import { upsertRecord } from '@modules/resend/sync/utils/upsert-record';
+
+export type UpsertRecordsPageOutcome = {
+  result: SyncResult;
+  ok: boolean;
+  twentyIdByResendId: Map<string, string>;
+};
 
 export const upsertRecords = async <
   TListItem,
-  TDetail = TListItem,
   TCreateDto extends Record<string, unknown> = Record<string, unknown>,
   TUpdateDto extends Record<string, unknown> = Record<string, unknown>,
 >(
-  options: UpsertRecordsOptions<TListItem, TDetail, TCreateDto, TUpdateDto>,
-): Promise<SyncResult> => {
+  options: UpsertRecordsOptions<TListItem, TCreateDto, TUpdateDto>,
+): Promise<UpsertRecordsPageOutcome> => {
   const {
     items,
     getId,
-    fetchDetail,
     mapCreateData,
     mapUpdateData,
-    existingMap,
     client,
     objectNameSingular,
+    objectNamePlural,
   } = options;
 
   const result: SyncResult = {
@@ -30,32 +34,36 @@ export const upsertRecords = async <
     errors: [],
   };
 
+  const resendIds = items.map(getId);
+
+  const twentyIdByResendId = await fetchExistingTwentyIdsByResendIds(
+    client,
+    objectNamePlural,
+    resendIds,
+  );
+
   for (const item of items) {
     const resendId = getId(item);
 
     try {
-      const isNew = !existingMap.has(resendId);
-
-      const detail = fetchDetail
-        ? await withRateLimitRetry(() => fetchDetail(resendId))
-        : (item as unknown as TDetail);
+      const isNew = !twentyIdByResendId.has(resendId);
 
       if (isNew) {
-        const data = mapCreateData(detail, item);
+        const data = mapCreateData(item, item);
         await upsertRecord(
           client,
           objectNameSingular,
-          existingMap,
+          twentyIdByResendId,
           resendId,
           data,
         );
         result.created++;
       } else {
-        const data = mapUpdateData(detail, item);
+        const data = mapUpdateData(item, item);
         await upsertRecord(
           client,
           objectNameSingular,
-          existingMap,
+          twentyIdByResendId,
           resendId,
           data,
         );
@@ -68,5 +76,9 @@ export const upsertRecords = async <
     }
   }
 
-  return result;
+  return {
+    result,
+    ok: result.errors.length === 0,
+    twentyIdByResendId,
+  };
 };
