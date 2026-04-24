@@ -139,10 +139,13 @@ export class ChatExecutionService {
       `Built tool catalog with ${toolCatalog.length} tools, ${skillCatalog.length} skills available`,
     );
 
-    // Preload Exa when the workspace has it enabled; ActionToolProvider
-    // only emits the exa_web_search descriptor when isEnabled() is true,
-    // so getToolsByName silently skips it otherwise.
-    const toolNamesToPreload = [...COMMON_PRELOAD_TOOLS, 'exa_web_search'];
+    // Preload the Exa app tool (shipped as the `twenty-exa` npm package) so chat
+    // has structured web search ready without discovery. getToolsByName
+    // silently skips the entry when the workspace doesn't have the Exa app
+    // installed (admin hasn't registered it + flipped `isPreInstalled`).
+    // TODO(app-preloading): move this list into the app manifest so any
+    // app can declare `preloadedInChat: true` instead of hardcoding here.
+    const toolNamesToPreload = [...COMMON_PRELOAD_TOOLS, 'app_exa_web_search'];
 
     const preloadedTools = await this.toolRegistry.getToolsByName(
       toolNamesToPreload,
@@ -167,8 +170,8 @@ export class ChatExecutionService {
     );
 
     // Native web_search is returned when the resolved model's SDK provider
-    // exposes it (Anthropic, OpenAI). Coexists with exa_web_search when both
-    // are available — the model picks based on tool descriptions.
+    // exposes it (Anthropic, OpenAI). Coexists with app_exa_web_search when
+    // both are available — the model picks based on tool descriptions.
     const { tools: nativeSearchTools, callableToolNames: searchToolNames } =
       this.getNativeWebSearchTools(registeredModel);
 

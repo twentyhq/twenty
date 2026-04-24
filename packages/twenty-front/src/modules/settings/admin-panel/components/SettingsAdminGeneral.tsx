@@ -1,7 +1,7 @@
 import { canManageFeatureFlagsState } from '@/client-config/states/canManageFeatureFlagsState';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
+import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
 import { SettingsAdminVersionContainer } from '@/settings/admin-panel/components/SettingsAdminVersionContainer';
-import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableBody } from '@/ui/layout/table/components/TableBody';
@@ -56,18 +56,18 @@ export const SettingsAdminGeneral = () => {
   const { data: recentUsersData, loading: isLoadingUsers } = useQuery(
     AdminPanelRecentUsersDocument,
     {
-    client: apolloAdminClient,
-    variables: { searchTerm: debouncedUserSearchTerm },
-    skip: !canImpersonate,
+      client: apolloAdminClient,
+      variables: { searchTerm: debouncedUserSearchTerm },
+      skip: !canImpersonate,
     },
   );
 
   const { data: topWorkspacesData, loading: isLoadingWorkspaces } = useQuery(
     AdminPanelTopWorkspacesDocument,
     {
-    client: apolloAdminClient,
-    variables: { searchTerm: debouncedWorkspaceSearchTerm },
-    skip: !canImpersonate,
+      client: apolloAdminClient,
+      variables: { searchTerm: debouncedWorkspaceSearchTerm },
+      skip: !canImpersonate,
     },
   );
 
@@ -105,7 +105,7 @@ export const SettingsAdminGeneral = () => {
               fullWidth
             />
             {isLoadingUsers ? (
-              <SettingsSkeletonLoader />
+              <SettingsSectionSkeletonLoader />
             ) : recentUsers.length === 0 ? (
               <StyledEmptyState>
                 {t`No users found matching your search criteria.`}
@@ -199,7 +199,7 @@ export const SettingsAdminGeneral = () => {
               fullWidth
             />
             {isLoadingWorkspaces ? (
-              <SettingsSkeletonLoader />
+              <SettingsSectionSkeletonLoader />
             ) : topWorkspaces.length === 0 ? (
               <StyledEmptyState>
                 {t`No workspaces found matching your search criteria.`}

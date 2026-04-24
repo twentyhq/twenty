@@ -8,11 +8,12 @@ icon: table-columns
 
 ## 布局概念
 
-| 概念        | 控制内容                       | 实体                         |
-| --------- | -------------------------- | -------------------------- |
-| **视图**    | 对象的已保存列表配置——可见字段、顺序、筛选器、分组 | `defineView`               |
-| **导航菜单项** | 左侧侧边栏中的一项，链接到某个视图或外部 URL   | `defineNavigationMenuItem` |
-| **页面布局**  | 构成记录详情页的选项卡和小部件            | `definePageLayout`         |
+| 概念          | 控制内容                                | 实体                         |
+| ----------- | ----------------------------------- | -------------------------- |
+| **视图**      | 对象的已保存列表配置——可见字段、顺序、筛选器、分组          | `defineView`               |
+| **导航菜单项**   | 左侧侧边栏中的一项，链接到某个视图或外部 URL            | `defineNavigationMenuItem` |
+| **页面布局**    | 构成记录详情页的选项卡和小部件                     | `definePageLayout`         |
+| **页面布局选项卡** | 附加到现有页面布局（标准页面布局或你自己的应用的页面布局）的独立选项卡 | `definePageLayoutTab`      |
 
 视图、导航菜单项和页面布局通过 `universalIdentifier` 相互引用：
 
@@ -126,6 +127,52 @@ export default definePageLayout({
 * 每个 `tab` 使用 `title`、`position` 和 `layoutMode` 定义页面的一个部分（`CANVAS` 表示自由布局）。
 * 选项卡内的每个 `widget` 可以渲染一个前端组件、关系列表或其他内置小部件类型。
 * 选项卡上的 `position` 控制其顺序。 使用更高的值（例如 50）可将自定义选项卡放在内置选项卡之后。
+
+</Accordion>
+<Accordion title="definePageLayoutTab" description="向现有页面布局添加一个选项卡">
+
+`definePageLayoutTab` 允许你的应用将单个选项卡 — 可选小部件 — 附加到一个**现有**页面布局。 最常见的用例是向 Twenty 内置的某个记录页面添加自定义选项卡（例如，分析或 AI 摘要选项卡），或向你的应用已随附的页面布局添加该选项卡。
+
+目标页面布局必须是 **标准** 的 Twenty 页面布局，或由 **你自己的应用** 定义的布局；目前不支持跨应用引用由其他已安装应用拥有的页面布局。
+
+```ts src/page-layouts/example-extra-tab.ts
+import {
+  definePageLayoutTab,
+  PageLayoutTabLayoutMode,
+} from 'twenty-sdk/define';
+import { HELLO_WORLD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER } from '../front-components/hello-world';
+
+const COMPANY_RECORD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER =
+  '20202020-ab01-4001-8001-c0aba11c0100';
+
+export default definePageLayoutTab({
+  universalIdentifier: 'b1b2b3b4-b5b6-4000-8000-000000000001',
+  pageLayoutUniversalIdentifier:
+    COMPANY_RECORD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER,
+  title: 'Hello World',
+  position: 1000,
+  icon: 'IconWorld',
+  layoutMode: PageLayoutTabLayoutMode.CANVAS,
+  widgets: [
+    {
+      universalIdentifier: 'b1b2b3b4-b5b6-4000-8000-000000000002',
+      title: 'Hello World',
+      type: 'FRONT_COMPONENT',
+      configuration: {
+        configurationType: 'FRONT_COMPONENT',
+        frontComponentUniversalIdentifier:
+          HELLO_WORLD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
+      },
+    },
+  ],
+});
+```
+
+关键点：
+* `pageLayoutUniversalIdentifier` 在使用 `definePageLayoutTab` 时是**必需**的，并且必须指向在安装时已存在的页面布局（标准布局或你的应用的布局）。 当父页面布局缺失时，安装会失败，并给出清晰的验证错误。
+* `widgets` 仅作用于此选项卡 — 它们引用前端组件、视图等，其方式与在 `definePageLayout` 中内联定义的小部件完全相同。
+* `position` 控制目标布局中相对于现有选项卡的排序。 选择一个取值，使你的选项卡相对于内置选项卡位于你想要的位置。
+* 当你只想向现有布局进行**添加**时，请使用此功能，而不是 `definePageLayout`。 当你拥有整个布局时，请使用 `definePageLayout`（通常是你在应用中提供的对象的 `RECORD_PAGE`，或 `STANDALONE_PAGE`）。
 
 </Accordion>
 </AccordionGroup>

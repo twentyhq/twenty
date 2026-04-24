@@ -136,6 +136,8 @@ export class AdminPanelStatisticsService {
     }));
   }
 
+  
+
   private async loadSignedAvatarUrlsByUserId(
     rows: RecentUserRow[],
   ): Promise<Map<string, string | null>> {
