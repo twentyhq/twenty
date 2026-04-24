@@ -8,6 +8,7 @@ import {
 } from 'twenty-shared/application';
 import { FileFolder } from 'twenty-shared/types';
 
+import { APP_BUILD_ALIASES } from '@/cli/utilities/build/common/app-build-alias';
 import { esbuildOneShotBuild } from '@/cli/utilities/build/common/esbuild-one-shot-build';
 import { LOGIC_FUNCTION_EXTERNAL_MODULES } from '@/cli/utilities/build/common/esbuild-watcher';
 import { getBaseFrontComponentBuildOptions } from '@/cli/utilities/build/common/front-component-build/utils/get-base-front-component-build-options';
@@ -73,6 +74,7 @@ export const buildApplication = async (
       platform: 'node',
       outdir: join(options.appPath, OUTPUT_DIR),
       outExtension: { '.js': '.mjs' },
+      alias: APP_BUILD_ALIASES,
       external: LOGIC_FUNCTION_EXTERNAL_MODULES,
       tsconfig: join(options.appPath, 'tsconfig.json'),
       sourcemap: true,
@@ -95,6 +97,7 @@ export const buildApplication = async (
       sourcemap: true,
       metafile: true,
       logLevel: 'silent',
+      alias: APP_BUILD_ALIASES,
       plugins: [...getFrontComponentBuildPlugins()],
     },
     onFileBuilt: collectFileBuilt,

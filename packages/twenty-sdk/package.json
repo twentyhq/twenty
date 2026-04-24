@@ -32,6 +32,11 @@
       "import": "./dist/define/index.mjs",
       "require": "./dist/define/index.cjs"
     },
+    "./define-runtime-stub": {
+      "types": "./dist/define/index.d.ts",
+      "import": "./dist/define-runtime-stub/index.mjs",
+      "require": "./dist/define-runtime-stub/index.cjs"
+    },
     "./front-component": {
       "types": "./dist/front-component/index.d.ts",
       "import": "./dist/front-component/index.mjs",
@@ -106,6 +111,9 @@
   "typesVersions": {
     "*": {
       "define": [
+        "dist/define/index.d.ts"
+      ],
+      "define-runtime-stub": [
         "dist/define/index.d.ts"
       ],
       "front-component": [

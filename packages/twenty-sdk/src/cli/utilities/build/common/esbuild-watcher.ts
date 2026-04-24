@@ -1,3 +1,4 @@
+import { APP_BUILD_ALIASES } from '@/cli/utilities/build/common/app-build-alias';
 import { cleanupRemovedFiles } from '@/cli/utilities/build/common/cleanup-removed-files';
 import { processEsbuildResult } from '@/cli/utilities/build/common/esbuild-result-processor';
 import { FRONT_COMPONENT_EXTERNAL_MODULES } from '@/cli/utilities/build/common/front-component-build/constants/front-component-external-modules';
@@ -163,6 +164,7 @@ export class EsbuildWatcher implements RestartableWatcher {
       platform: this.config.platform,
       outdir: outputDir,
       outExtension: { '.js': '.mjs' },
+      alias: APP_BUILD_ALIASES,
       external: this.config.externalModules,
       tsconfig: path.join(this.appPath, 'tsconfig.json'),
       jsx: this.config.jsx,
