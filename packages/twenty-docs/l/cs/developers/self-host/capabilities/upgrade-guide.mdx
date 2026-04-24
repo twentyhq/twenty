@@ -1,381 +1,90 @@
 ---
 title: Průvodce upgradem
+icon: arrow-up-right-dots
 ---
 
 ## Obecné pokyny
 
-**Před zahájením procesu upgradu se vždy ujistěte, že jste zálohovali svou databázi** spuštěním `docker exec -it {db_container_name_or_id} pg_dumpall -U {postgres_user} > databases_backup.sql`.
-
-Pro obnovení zálohy spusťte `cat databases_backup.sql | docker exec -i {db_container_name_or_id} psql -U {postgres_user}`.
-
-Pokud jste použili Docker Compose, postupujte takto:
-
-1. V terminálu, na hostiteli, kde Twenty běží, vypněte Twenty: `docker compose down`
-
-2. Upgradujte verzi změnou hodnoty `TAG` v souboru .env vedle vašeho docker-compose. (Doporučujeme zvážit verzi `major.minor`, jako je `v0.53`)
-
-3. Opětovně zapněte Twenty pomocí `docker compose up -d`
-
-Chcete-li upgradovat svou instanci o několik verzí, například z v0.33.0 na v0.35.0, musíte svou instanci postupně upgradovat, v tomto příkladu z v0.33.0 na v0.34.0 a poté z v0.34.0 na v0.35.0.
-
-**Ujistěte se, že máte po každém upgradu nepoškozenou zálohu.**
-
-## Kroky upgradu specifické pro danou verzi
-
-## v1.0
-
-Ahoj Twenty v1.0! 🎉
-
-## v0.60
-
-### Vylepšení výkonu
-
-Všechny interakce s metadatovým API byly optimalizovány pro lepší výkon, zejména pro manipulaci s metadaty objektů a operace vytváření pracovních prostorů.
-
-Refaktorovali jsme naši strategii mezipaměti tak, aby upřednostňovala, pokud je to možné, zásahy do mezipaměti před databázovými dotazy, což výrazně zlepšilo výkon operací rozhraní API metadat.
-
-Pokud po upgradu narazíte na problémy s výkonem, může být nutné vyprázdnit cache, aby bylo zajištěno její sladění s nejnovějšími změnami. Spusťte tento příkaz v kontejneru twenty-server:
+**Před zahájením procesu aktualizace vždy zálohujte svou databázi** spuštěním:
 
 ```bash
-yarn command:prod cache:flush
+docker exec -it {db_container_name_or_id} pg_dumpall -U {postgres_user} > databases_backup.sql
 ```
 
-### v0.55
-
-Upgradujte svou instanci Twenty pro použití v0.55 image
-
-Už nemusíte spouštět žádný příkaz, nový obraz se automaticky postará o spuštění všech požadovaných migrací.
-
-### Chyba `Uživatel nemá oprávnění`
-
-Pokud po upgradu narazíte na chyby autorizace na většině požadavků, může být nutné vyprázdnit cache, abyste znovu provedli vyhodnocení nejnovějších oprávnění.
-
-Ve svém kontejneru `twenty-server` spusťte:
+Pro obnovení ze zálohy:
 
 ```bash
-yarn command:prod cache:flush
+cat databases_backup.sql | docker exec -i {db_container_name_or_id} psql -U {postgres_user}
 ```
 
-Tento problém je specifický pro tuto verzi Twenty a neměl by být vyžadován pro budoucí upgrady.
+Pokud používáte Docker Compose, postupujte takto:
 
-### v0.54
+1. Zastavte Twenty: `docker compose down`
+2. Změňte hodnotu `TAG` v souboru `.env` vedle `docker-compose.yml`
+3. Spusťte Twenty: `docker compose up -d`
 
-Od verze `0.53`, nejsou nutné žádné manuální akce.
+Server při startu automaticky spustí všechny požadované migrační kroky upgradu. Není potřeba žádný ruční příkaz.
 
-#### Omezení metadatového schématu
+## Upgrade napříč verzemi (v1.22+)
 
-Sloučili jsme schéma `metadata` do `core`, abychom zjednodušili načítání dat z `TypeORM`.
-Sloučili jsme krok příkazu `migrate` do příkazu `upgrade`. Nedoporučujeme ručně spouštět `migrate` v žádném z vašich kontejnerů server/worker.
+Počínaje **v1.22** podporuje Twenty upgrade napříč verzemi. Můžete přejít přímo z jakékoli podporované verze na nejnovější vydání, aniž byste museli procházet každou meziverzí.
 
-### Od v0.53
+Například přechod z v1.22 přímo na v2.0 je plně podporován.
 
-Od `0.53` je upgrade programově upraven v rámci `DockerFile`, což znamená, že od této chvíle již nemusíte ručně spouštět žádný příkaz.
+## Kontrola stavu upgradu
 
-Ujistěte se, že upgradujete svou instanci postupně, aniž byste přeskočili hlavní verzi (např. `0.43.3` na `0.44.0` je povoleno, ale `0.43.1` na `0.45.0` nikoli), aby se předešlo asynchronizaci verzí pracovního prostoru, což by mohlo mít za následek chybu při běhu a chybějící funkčnost.
+Příkaz `upgrade:status` vám umožní zkontrolovat aktuální stav vaší instance a migrací pracovních prostorů. Je užitečný pro ladění problémů s upgradem nebo při podávání požadavku na podporu.
 
-Chcete-li zkontrolovat, zda byl pracovní prostor správně migrován, můžete zkontrolovat jeho verzi v databázi v tabulce `core.workspace`.
+Spusťte jej z kontejneru serveru:
 
-Měla by se vždy nacházet v rozmezí vaší aktuální instance Twenty `major.minor` verze. Můžete zkontrolovat verzi instance na ovládacím panelu administrátora (na `/settings/admin-panel`, přístupné, pokud máte v databázi nastaveno uživatelské vlastnosti `canAccessFullAdminPanel` na true) nebo spuštěním `echo $APP_VERSION` ve vašem kontejneru `twenty-server`.
-
-Chcete-li opravit asynchronizaci verzí pracovního prostoru, budete muset upgradovat z odpovídající verze twenty podle souvisejícího průvodce upgradem po jednotlivých krocích, až do dosažení požadované verze.
-
-#### Odstranění `auditLog`
-
-Odstranili jsme standardní objekt auditLog, což znamená, že váš záložní soubor může být po této migraci výrazně zmenšen.
-
-### v0.51 až v0.52
-
-Upgradujte svou instanci Twenty pro použití v0.52 image
-
-```
-yarn database:migrate:prod
-yarn command:prod upgrade
+```bash
+docker exec -it {server_container_name_or_id} yarn command:prod upgrade:status
 ```
 
-#### Mám pracovní prostor zablokovaný ve verzi mezi `0.52.0` a `0.52.6`
+Ukázkový výstup:
 
-Bohužel `0.52.0` a `0.52.6` byly zcela odstraněny z dockerHub.
-Budete muset ručně změnit verzi pracovního prostoru na `0.51.0` v databázi a upgradovat pomocí twenty verze `0.52.11` podle jejího výše uvedeného průvodce upgradem.
+```sh
+APP_VERSION: v1.23.0
 
-### v0.50 až v0.51
+Instance
+    Inferred version: 1.23.0
+    Latest command:   1.23.0_DropWorkspaceVersionColumnFastInstanceCommand_1785000000000
+    Status:           Up to date
+    Executed by:      v1.23.0
+    At:               2026-04-16T11:43:58.823Z
 
-Upgradujte svou instanci Twenty pro použití v0.51 image
+Workspace
+  Apple (20202020-1c25-4d02-bf25-6aeccf7ea419)
+      Inferred version: 1.23.0
+      Latest command:   1.23.0_UpdateGlobalObjectContextCommandMenuItemsCommand_1780000005000
+      Status:           Up to date
+      Executed by:      v1.23.0
+      At:               2026-04-16T11:44:09.361Z
 
-```
-yarn database:migrate:prod
-yarn command:prod upgrade
-```
-
-### v0.44.0 až v0.50.0
-
-Upgradujte svou instanci Twenty pro použití v0.50.0 image
-
-```
-yarn database:migrate:prod
-yarn command:prod upgrade
-```
-
-#### Mutace Docker-compose.yml
-
-Tato verze obsahuje mutaci `docker-compose.yml`, která zajišťuje, že služba `worker` má přístup k objemu `server-local-data`.
-Aktualizujte svůj místní `docker-compose.yml` pomocí [docker-compose.yml v0.50.0](https://github.com/twentyhq/twenty/blob/v0.50.0/packages/twenty-docker/docker-compose.yml)
-
-### v0.43.0 až v0.44.0
-
-Upgradujte svou instanci Twenty pro použití v0.44.0 image
-
-```
-yarn database:migrate:prod
-yarn command:prod upgrade
+Summary
+    Instance: Up to date
+    Workspaces: 1 up to date, 0 behind, 0 failed (1 total)
 ```
 
-### v0.42.0 až v0.43.0
+### Možnosti
 
-Upgradujte svou instanci Twenty pro použití v0.43.0 image
+| Přepínač                  | Popis                                                                                |
+| ------------------------- | ------------------------------------------------------------------------------------ |
+| `-w, --workspace-id <id>` | Omezí se na konkrétní pracovní prostor. Lze zadat vícekrát.                          |
+| `-f, --failed-only`       | Skryje aktuální pracovní prostory; zobrazí pouze ty, které jsou pozadu, a neúspěšné. |
 
-```
-yarn database:migrate:prod
-yarn command:prod upgrade
-```
+## Řešení potíží
 
-V této verzi jsme také přešli na obraz postgres:16 v docker-compose.yml.
+Pokud upgrade selže u některých pracovních prostorů, server nepokročí za chybující krok. Restartování serveru (`docker compose up -d`) zkusí upgrade znovu od místa, kde se zastavil.
 
-#### (Možnost 1) Migrace databáze
+Pro rychlou identifikaci problémů spusťte:
 
-Zachování existujícího obrazu postgres-spilo je v pořádku, ale budete muset zmrazit verzi v `docker-compose.yml` na 0.43.0.
-
-#### (Možnost 2) Migrace databáze
-
-Pokud chcete migrovat svou databázi na nový obraz postgres:16, postupujte podle těchto kroků:
-
-1. Zálohujte svou databázi z kontejneru postgres-spilo
-
-```
-docker exec -it twenty-db-1 sh
-pg_dump -U {YOUR_POSTGRES_USER} -d {YOUR_POSTGRES_DB} > databases_backup.sql
-exit
-docker cp twenty-db-1:/home/postgres/databases_backup.sql .
+```bash
+docker exec -it {server_container_name_or_id} yarn command:prod upgrade:status --failed-only
 ```
 
-Ujistěte se, že váš záložní soubor není prázdný.
+Tímto se zobrazí pouze pracovní prostory, které jsou pozadu nebo selhaly, spolu s chybovou zprávou pro každé selhání.
 
-2. Upgradujte svůj `docker-compose.yml` na použití obrazu postgres:16 podle [docker-compose.yml](https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/docker-compose.yml) soubor.
+## Před v1.22
 
-3. Obnovte databázi do nového kontejneru postgres:16
-
-```
-docker cp databases_backup.sql twenty-db-1:/databases_backup.sql
-docker exec -it twenty-db-1 sh
-psql -U {YOUR_POSTGRES_USER} -d {YOUR_POSTGRES_DB} -f databases_backup.sql
-exit
-```
-
-### v0.41.0 až v0.42.0
-
-Upgradujte svou instanci Twenty pro použití v0.42.0 image
-
-```
-yarn database:migrate:prod
-yarn command:prod upgrade-0.42
-```
-
-**Proměnné prostředí**
-
-* Odstraněno: `FRONT_PORT`, `FRONT_PROTOCOL`, `FRONT_DOMAIN`, `PORT`
-* Přidáno: `FRONTEND_URL`, `NODE_PORT`, `MAX_NUMBER_OF_WORKSPACES_DELETED_PER_EXECUTION`, `MESSAGING_PROVIDER_MICROSOFT_ENABLED`, `CALENDAR_PROVIDER_MICROSOFT_ENABLED`, `IS_MICROSOFT_SYNC_ENABLED`
-
-### v0.40.0 až v0.41.0
-
-Upgradujte svou instanci Twenty pro použití v0.41.0 image
-
-```
-yarn database:migrate:prod
-yarn command:prod upgrade-0.41
-```
-
-**Proměnné prostředí**
-
-* Odstraněno: `AUTH_MICROSOFT_TENANT_ID`
-
-### v0.35.0 až v0.40.0
-
-Upgradujte svou instanci Twenty pro použití v0.40.0 image
-
-```
-yarn database:migrate:prod
-yarn command:prod upgrade-0.40
-```
-
-**Proměnné prostředí**
-
-* Přidáno: `IS_EMAIL_VERIFICATION_REQUIRED`, `EMAIL_VERIFICATION_TOKEN_EXPIRES_IN`, `WORKFLOW_EXEC_THROTTLE_LIMIT`, `WORKFLOW_EXEC_THROTTLE_TTL`
-
-### v0.34.0 až v0.35.0
-
-Upgradujte svou instanci Twenty pro použití v0.35.0 image
-
-```
-yarn database:migrate:prod
-yarn command:prod upgrade-0.35
-```
-
-Příkaz `yarn database:migrate:prod` aplikuje změny struktury databáze (core a metadata schémata)
-Příkaz `yarn command:prod upgrade-0.35` se postará o datovou migraci všech pracovních míst.
-
-**Proměnné prostředí**
-
-* Nahradili jsme `ENABLE_DB_MIGRATIONS` s `DISABLE_DB_MIGRATIONS` (výchozí hodnota je nyní `false`, pravděpodobně nemusíte nastavovat nic)
-
-### v0.33.0 až v0.34.0
-
-Upgradujte svou instanci Twenty pro použití v0.34.0 image
-
-```
-yarn database:migrate:prod
-yarn command:prod upgrade-0.34
-```
-
-Příkaz `yarn database:migrate:prod` aplikuje změny struktury databáze (core a metadata schémata)
-Příkaz `yarn command:prod upgrade-0.34` se postará o datovou migraci všech pracovních míst.
-
-**Proměnné prostředí**
-
-* Odstraněno: `FRONT_BASE_URL`
-* Přidáno: `FRONT_DOMAIN`, `FRONT_PROTOCOL`, `FRONT_PORT`
-
-Aktualizovali jsme způsob, jakým zpracováváme frontend URL.
-Nyní můžete nastavit frontend URL pomocí proměnných `FRONT_DOMAIN`, `FRONT_PROTOCOL` a `FRONT_PORT`.
-Pokud není FRONT_DOMAIN nastavena, frontend URL se vrátí na `SERVER_URL`.
-
-### v0.32.0 až v0.33.0
-
-Upgradujte svou instanci Twenty pro použití v0.33.0 image
-
-```
-yarn command:prod cache:flush
-yarn database:migrate:prod
-yarn command:prod upgrade-0.33
-```
-
-Příkaz `yarn command:prod cache:flush` vyprázdní cache Redis.
-Příkaz `yarn database:migrate:prod` aplikuje změny struktury databáze (core a metadata schémata)
-Příkaz `yarn command:prod upgrade-0.33` se postará o datovou migraci všech pracovních míst.
-
-Od této verze se obraz twenty-postgres pro DB stal zastaralým a místo něj se používá twenty-postgres-spilo.
-Pokud chcete pokračovat v používání obrazu twenty-postgres, jednoduše nahraďte `twentycrm/twenty-postgres:${TAG}` za `twentycrm/twenty-postgres` v docker-compose.yml.
-
-### v0.31.0 až v0.32.0
-
-Upgradujte svou instanci Twenty pro použití v0.32.0 image
-
-**Migrace schématu a dat**
-
-```
-yarn database:migrate:prod
-yarn command:prod upgrade-0.32
-```
-
-Příkaz `yarn database:migrate:prod` aplikuje změny struktury databáze (core a metadata schémata)
-Příkaz `yarn command:prod upgrade-0.32` se postará o datovou migraci všech pracovních míst.
-
-**Proměnné prostředí**
-
-Aktualizovali jsme způsob, jakým zpracováváme připojení k Redis.
-
-* Odstraněno: `REDIS_HOST`, `REDIS_PORT`, `REDIS_USERNAME`, `REDIS_PASSWORD`
-* Přidáno: `REDIS_URL`
-
-Aktualizujte svůj `.env` soubor tak, aby používal novou proměnnou `REDIS_URL` místo jednotlivých parametrů připojení k Redis.
-
-Také jsme zjednodušili způsob, jakým zpracováváme tokeny JWT.
-
-* Odstraněno: `ACCESS_TOKEN_SECRET`, `LOGIN_TOKEN_SECRET`, `REFRESH_TOKEN_SECRET`, `FILE_TOKEN_SECRET`
-* Přidáno: `APP_SECRET`
-
-Aktualizujte svůj `.env` soubor tak, aby používal novou proměnnou `APP_SECRET` místo jednotlivých tokenů (můžete použít stejný tajný řetězec jako dříve nebo vygenerovat nový náhodný řetězec)
-
-**Propojený účet**
-
-Pokud používáte propojený účet k synchronizaci vašich emailů a kalendářů Google, budete muset aktivovat [People API](https://developers.google.com/people) na konzoli Google Admin.
-
-### v0.30.0 až v0.31.0
-
-Upgradujte svou instanci Twenty pro použití v0.31.0 image
-
-**Migrace schématu a dat**:
-
-```
-yarn database:migrate:prod
-yarn command:prod upgrade-0.31
-```
-
-Příkaz `yarn database:migrate:prod` aplikuje změny struktury databáze (core a metadata schémata)
-Příkaz `yarn command:prod upgrade-0.31` se postará o datovou migraci všech pracovních míst.
-
-### v0.24.0 až v0.30.0
-
-Upgradujte svou instanci Twenty pro použití v0.30.0 image
-
-**Změna, která způsobí nekompatibilitu**:
-Pro zvýšení výkonu nyní vyžaduje Twenty konfiguraci cache Redis. Aktualizovali jsme náš [docker-compose.yml](https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/docker-compose.yml), aby to odrážel.
-Ujistěte se, že jste aktualizovali svou konfiguraci a své proměnné prostředí odpovídajícím způsobem:
-
-```
-REDIS_HOST={váš-redis-host}
-REDIS_PORT={váš-redis-port}
-CACHE_STORAGE_TYPE=redis
-```
-
-**Migrace schématu a dat**:
-
-```
-yarn database:migrate:prod
-yarn command:prod upgrade-0.30
-```
-
-Příkaz `yarn database:migrate:prod` aplikuje změny struktury databáze (core a metadata schémata)
-Příkaz `yarn command:prod upgrade-0.30` se postará o datovou migraci všech pracovních míst.
-
-### v0.23.0 až v0.24.0
-
-Upgradujte svou instanci Twenty pro použití v0.24.0 image
-
-Spusťte následující příkazy:
-
-```
-yarn database:migrate:prod
-yarn command:prod upgrade-0.24
-```
-
-Příkaz `yarn database:migrate:prod` aplikuje změny struktury databáze (core a metadata schémata)
-Příkaz `yarn command:prod upgrade-0.24` se postará o datovou migraci všech pracovních míst.
-
-### v0.22.0 až v0.23.0
-
-Upgradujte svou instanci Twenty pro použití v0.23.0 image
-
-Spusťte následující příkazy:
-
-```
-yarn database:migrate:prod
-yarn command:prod upgrade-0.23
-```
-
-Příkaz `yarn database:migrate:prod` aplikuje změny na databázi.
-Příkaz `yarn command:prod upgrade-0.23` se postará o datovou migraci, včetně přesunu aktivit na úkoly/poznámky.
-
-### v0.21.0 až v0.22.0
-
-Upgradujte svou instanci Twenty pro použití v0.22.0 image
-
-Spusťte následující příkazy:
-
-```
-yarn database:migrate:prod
-yarn command:prod workspace:sync-metadata -f
-yarn command:prod upgrade-0.22
-```
-
-Příkaz `yarn database:migrate:prod` aplikuje změny na databázi.
-Příkaz `yarn command:prod workspace:sync-metadata -f` synchronizuje definici standardních objektů s tabulkami metadata a aplikuje nezbytné migrace na existující pracovní prostory.
-Příkaz `yarn command:prod upgrade-0.22` aplikuje specifické datové transformace pro adaptaci na nové objektové defaultRequestInstrumentationOptions.
+Pokud je vaše instance starší než v1.22, musíte upgradovat postupně přes každou hlavní označenou verzi (z v1.6 na v1.7, poté z v1.7 na v1.8 atd.), dokud nedosáhnete v1.22. Odtud můžete přejít přímo na nejnovější verzi.

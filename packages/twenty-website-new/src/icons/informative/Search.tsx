@@ -1,6 +1,6 @@
-type SearchIconProps = { size: number; color: string };
+type SearchIconProps = { size: number; color: string; strokeWidth?: number };
 
-export function SearchIcon({ size, color }: SearchIconProps) {
+export function SearchIcon({ size, color, strokeWidth = 2 }: SearchIconProps) {
   return (
     <svg
       width={size}
@@ -15,13 +15,13 @@ export function SearchIcon({ size, color }: SearchIconProps) {
         cy={6.5}
         r={4.5}
         stroke={color}
-        strokeWidth={2}
+        strokeWidth={strokeWidth}
         strokeLinejoin="round"
       />
       <path
         d="m11 11 4 4"
         stroke={color}
-        strokeWidth={2}
+        strokeWidth={strokeWidth}
         strokeLinejoin="round"
       />
     </svg>

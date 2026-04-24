@@ -1,0 +1,419 @@
+---
+title: المكوّنات الأمامية
+description: أنشئ مكونات React تُعرَض داخل واجهة مستخدم Twenty ضمن بيئة معزولة (sandbox).
+icon: window-maximize
+---
+
+المكوّنات الأمامية هي مكوّنات React تُعرَض مباشرة داخل واجهة مستخدم Twenty. تعمل ضمن **Web Worker** معزول باستخدام Remote DOM — تكون شيفرتك في صندوق عزل لكنها تُعرَض أصيلًا داخل الصفحة، وليس ضمن iframe.
+
+## أين يمكن استخدام مكوّنات الواجهة الأمامية
+
+يمكن عرض مكوّنات الواجهة الأمامية في موقعين داخل Twenty:
+
+* **اللوحة الجانبية** — المكوّنات غير عديمة الرأس تفتح في اللوحة الجانبية اليمنى. هذا هو السلوك الافتراضي عندما يتم تشغيل مكوّن واجهة أمامية من قائمة الأوامر.
+* **الويدجت (لوحات المعلومات وصفحات السجلات)** — يمكن تضمين مكوّنات الواجهة الأمامية كويدجت داخل تخطيطات الصفحات. عند تكوين لوحة معلومات أو تخطيط صفحة سجل، يمكن للمستخدمين إضافة ويدجت لمكوّن واجهة أمامية.
+
+## مثال أساسي
+
+أسرع طريقة لرؤية مكوّن أمامي قيد العمل هي تسجيله كأمر. إضافة حقل `command` مع `isPinned: true` يجعلُه يظهر كزر إجراء سريع في الزاوية العلوية اليمنى من الصفحة — دون الحاجة إلى تخطيط صفحة:
+
+```tsx src/front-components/hello-world.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+
+const HelloWorld = () => {
+  return (
+    <div style={{ padding: '20px', fontFamily: 'sans-serif' }}>
+      <h1>Hello from my app!</h1>
+      <p>This component renders inside Twenty.</p>
+    </div>
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: '74c526eb-cb68-4cf7-b05c-0dd8c288d948',
+  name: 'hello-world',
+  description: 'A simple front component',
+  component: HelloWorld,
+  command: {
+    universalIdentifier: 'd4e5f6a7-b8c9-0123-defa-456789012345',
+    shortLabel: 'Hello',
+    label: 'Hello World',
+    icon: 'IconBolt',
+    isPinned: true,
+    availabilityType: 'GLOBAL',
+  },
+});
+```
+
+بعد المزامنة باستخدام `yarn twenty dev` (أو تشغيل الأمر لمرة واحدة `yarn twenty dev --once`)، يظهر الإجراء السريع في الزاوية العلوية اليمنى من الصفحة:
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/extends/apps/quick-action.png" alt="زر إجراء سريع في الزاوية العلوية اليمنى" />
+</div>
+
+انقره لعرض المكوّن مضمنًا داخل الصفحة.
+
+## حقول التكوين
+
+| الحقل                 | مطلوب | الوصف                                                             |
+| --------------------- | ----- | ----------------------------------------------------------------- |
+| `universalIdentifier` | نعم   | معرّف فريد ثابت لهذا المكوّن                                      |
+| `component`           | نعم   | دالة مكوّن React                                                  |
+| `name`                | لا    | اسم العرض                                                         |
+| `description`         | لا    | وصف لما يفعله المكوّن                                             |
+| `isHeadless`          | لا    | عيِّنه إلى `true` إذا كان المكوّن بلا واجهة مرئية (انظر أدناه)    |
+| `command`             | لا    | سجّل المكوّن كأمر (انظر [خيارات الأوامر](#command-options) أدناه) |
+
+## وضع مكوّن أمامي على صفحة
+
+إضافةً إلى الأوامر، يمكنك تضمين مكوّن أمامي مباشرةً في صفحة سجل عبر إضافته كودجت في **تخطيط صفحة**. راجع قسم [definePageLayout](/l/ar/developers/extend/apps/skills-and-agents#definepagelayout) للتفاصيل.
+
+## عديم الرأس مقابل غير عديم الرأس
+
+تأتي مكوّنات الواجهة الأمامية بوضعَي عرض يتحكّم بهما الخيار `isHeadless`:
+
+**غير عديم الرأس (افتراضي)** — يعرض المكوّن واجهة مستخدم مرئية. عند تشغيله من قائمة الأوامر يفتح في اللوحة الجانبية. هذا هو السلوك الافتراضي عندما تكون `isHeadless` تساوي `false` أو يتم تجاهلها.
+
+**عديم الرأس (`isHeadless: true`)** — يتم تركيب المكوّن بشكل غير مرئي في الخلفية. لا يفتح اللوحة الجانبية. تم تصميم المكوّنات عديمة الرأس لإجراءات تنفّذ منطقًا ثم تُزيل تركيبها ذاتيًا — على سبيل المثال، تشغيل مهمة غير متزامنة، أو الانتقال إلى صفحة، أو إظهار نافذة تأكيد منبثقة. تتوافق بشكل طبيعي مع مكوّنات Command في SDK الموصوفة أدناه.
+
+```tsx src/front-components/sync-tracker.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { useRecordId, enqueueSnackbar } from 'twenty-sdk/front-component';
+import { useEffect } from 'react';
+
+const SyncTracker = () => {
+  const recordId = useRecordId();
+
+  useEffect(() => {
+    enqueueSnackbar({ message: `Tracking record ${recordId}`, variant: 'info' });
+  }, [recordId]);
+
+  return null;
+};
+
+export default defineFrontComponent({
+  universalIdentifier: '...',
+  name: 'sync-tracker',
+  description: 'Tracks record views silently',
+  isHeadless: true,
+  component: SyncTracker,
+});
+```
+
+نظرًا لأن المكوّن يُرجع `null`، فإن Twenty يتخطّى عرض حاوية له — ولن تظهر مساحة فارغة في التخطيط. لا يزال لدى المكوّن إمكانية الوصول إلى جميع الخطافات وواجهة برمجة الاتصال مع المضيف.
+
+## مكوّنات Command في SDK
+
+توفر حزمة `twenty-sdk` أربعة مكوّنات مساعدة من نوع Command مصممة للمكوّنات عديمة الرأس في الواجهة الأمامية. كل مكوّن ينفّذ إجراءً عند التركيب، ويتعامل مع الأخطاء بعرض إشعار Snackbar، ويزيل تركيب مكوّن الواجهة الأمامية تلقائيًا عند الانتهاء.
+
+استوردها من `twenty-sdk/command`:
+
+* **`Command`** — يشغّل رد نداء غير متزامن عبر الخاصية `execute`.
+* **`CommandLink`** — ينتقل إلى مسار في التطبيق. الخصائص: `to`، `params`، `queryParams`، `options`.
+* **`CommandModal`** — يفتح نافذة تأكيد منبثقة. إذا أكّد المستخدم، ينفّذ رد النداء `execute`. الخصائص: `title`، `subtitle`، `execute`، `confirmButtonText`، `confirmButtonAccent`.
+* **`CommandOpenSidePanelPage`** — يفتح صفحة محدّدة في اللوحة الجانبية. الخصائص: `page`، `pageTitle`، `pageIcon`.
+
+فيما يلي مثال كامل لمكوّن واجهة أمامية عديم الرأس يستخدم `Command` لتشغيل إجراء من قائمة الأوامر:
+
+```tsx src/front-components/run-action.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { Command } from 'twenty-sdk/command';
+import { CoreApiClient } from 'twenty-sdk/clients';
+
+const RunAction = () => {
+  const execute = async () => {
+    const client = new CoreApiClient();
+
+    await client.mutation({
+      createTask: {
+        __args: { data: { title: 'Created by my app' } },
+        id: true,
+      },
+    });
+  };
+
+  return <Command execute={execute} />;
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'e5f6a7b8-c9d0-1234-efab-345678901234',
+  name: 'run-action',
+  description: 'Creates a task from the command menu',
+  component: RunAction,
+  isHeadless: true,
+  command: {
+    universalIdentifier: 'f6a7b8c9-d0e1-2345-fabc-456789012345',
+    label: 'Run my action',
+    icon: 'IconPlayerPlay',
+  },
+});
+```
+
+ومثال يستخدم `CommandModal` لطلب التأكيد قبل التنفيذ:
+
+```tsx src/front-components/delete-draft.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { CommandModal } from 'twenty-sdk/command';
+
+const DeleteDraft = () => {
+  const execute = async () => {
+    // perform the deletion
+  };
+
+  return (
+    <CommandModal
+      title="Delete draft?"
+      subtitle="This action cannot be undone."
+      execute={execute}
+      confirmButtonText="Delete"
+      confirmButtonAccent="danger"
+    />
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'a7b8c9d0-e1f2-3456-abcd-567890123456',
+  name: 'delete-draft',
+  description: 'Deletes a draft with confirmation',
+  component: DeleteDraft,
+  isHeadless: true,
+  command: {
+    universalIdentifier: 'b8c9d0e1-f2a3-4567-bcde-678901234567',
+    label: 'Delete draft',
+    icon: 'IconTrash',
+  },
+});
+```
+
+## الوصول إلى سياق وقت التشغيل
+
+داخل مكوّنك، استخدم خطافات SDK للوصول إلى المستخدم الحالي، والسجل، ومثيل المكوّن:
+
+```tsx src/front-components/record-info.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import {
+  useUserId,
+  useRecordId,
+  useFrontComponentId,
+} from 'twenty-sdk/front-component';
+
+const RecordInfo = () => {
+  const userId = useUserId();
+  const recordId = useRecordId();
+  const componentId = useFrontComponentId();
+
+  return (
+    <div>
+      <p>User: {userId}</p>
+      <p>Record: {recordId ?? 'No record context'}</p>
+      <p>Component: {componentId}</p>
+    </div>
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'b2c3d4e5-f6a7-8901-bcde-f23456789012',
+  name: 'record-info',
+  component: RecordInfo,
+});
+```
+
+الخطافات المتاحة:
+
+| الخطّاف                                       | القيم المعادة      | الوصف                                          |
+| --------------------------------------------- | ------------------ | ---------------------------------------------- |
+| `useUserId()`                                 | `string` أو `null` | معرّف المستخدم الحالي                          |
+| `useRecordId()`                               | `string` أو `null` | معرّف السجل الحالي (عند وضعه على صفحة سجل)     |
+| `useFrontComponentId()`                       | `string`           | معرّف مثيل هذا المكوّن                         |
+| `useFrontComponentExecutionContext(selector)` | يختلف              | الوصول إلى سياق التنفيذ الكامل عبر دالة محدِّد |
+
+## واجهة الاتصال مع المضيف
+
+يمكن للمكوّنات الأمامية تشغيل التنقّل والنوافذ المنبثقة والإشعارات باستخدام دوال من `twenty-sdk`:
+
+| دالة                                            | الوصف                          |
+| ----------------------------------------------- | ------------------------------ |
+| `navigate(to, params?, queryParams?, options?)` | الانتقال إلى صفحة داخل التطبيق |
+| `openSidePanelPage(params)`                     | فتح لوحة جانبية                |
+| `closeSidePanel()`                              | إغلاق اللوحة الجانبية          |
+| `openCommandConfirmationModal(params)`          | عرض مربع حوار تأكيد            |
+| `enqueueSnackbar(params)`                       | عرض إشعار توست                 |
+| `unmountFrontComponent()`                       | إلغاء تركيب المكوّن            |
+| `updateProgress(progress)`                      | تحديث مؤشّر التقدّم            |
+
+فيما يلي مثال يستخدم واجهة برمجة تطبيقات المضيف لعرض Snackbar وإغلاق اللوحة الجانبية بعد اكتمال الإجراء:
+
+```tsx src/front-components/archive-record.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { useRecordId } from 'twenty-sdk/front-component';
+import { enqueueSnackbar, closeSidePanel } from 'twenty-sdk/front-component';
+import { CoreApiClient } from 'twenty-sdk/clients';
+
+const ArchiveRecord = () => {
+  const recordId = useRecordId();
+
+  const handleArchive = async () => {
+    const client = new CoreApiClient();
+
+    await client.mutation({
+      updateTask: {
+        __args: { id: recordId, data: { status: 'ARCHIVED' } },
+        id: true,
+      },
+    });
+
+    await enqueueSnackbar({
+      message: 'Record archived',
+      variant: 'success',
+    });
+
+    await closeSidePanel();
+  };
+
+  return (
+    <div style={{ padding: '20px' }}>
+      <p>Archive this record?</p>
+      <button onClick={handleArchive}>Archive</button>
+    </div>
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'c9d0e1f2-a3b4-5678-cdef-789012345678',
+  name: 'archive-record',
+  description: 'Archives the current record',
+  component: ArchiveRecord,
+});
+```
+
+## خيارات الأوامر
+
+إضافة حقل `command` إلى `defineFrontComponent` تُسجِّل المكوّن في قائمة الأوامر (Cmd+K). إذا كانت قيمة `isPinned` هي `true`، فسيظهر أيضًا كزر إجراء سريع في الزاوية العلوية اليمنى من الصفحة.
+
+| الحقل                                   | مطلوب | الوصف                                                                                                                                                  |
+| --------------------------------------- | ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `universalIdentifier`                   | نعم   | معرّف فريد ثابت للأمر                                                                                                                                  |
+| `label`                                 | نعم   | التسمية الكاملة المعروضة في قائمة الأوامر (Cmd+K)                                                                                                      |
+| `shortLabel`                            | لا    | تسمية أقصر تُعرَض على زر الإجراء السريع المثبّت                                                                                                        |
+| `icon`                                  | لا    | اسم الأيقونة المعروض بجانب التسمية (مثل `'IconBolt'` و`'IconSend'`)                                                                                    |
+| `isPinned`                              | لا    | عند كونها `true`، يعرض الأمر كزر إجراء سريع في الزاوية العلوية اليمنى من الصفحة                                                                        |
+| `availabilityType`                      | لا    | تتحكّم في مكان ظهور الأمر: `'GLOBAL'` (متاح دائمًا)، و`'RECORD_SELECTION'` (فقط عند تحديد سجلات)، أو `'FALLBACK'` (يُعرَض عند عدم تطابق أي أوامر أخرى) |
+| `availabilityObjectUniversalIdentifier` | لا    | تقييد الأمر بصفحات نوع كائن معيّن (مثل سجلات Company فقط)                                                                                              |
+| `conditionalAvailabilityExpression`     | لا    | تعبير منطقي للتحكم ديناميكيًا في ما إذا كان الأمر مرئيًا (انظر أدناه)                                                                                  |
+
+## تعابير الإتاحة الشرطية
+
+يتيح لك الحقل `conditionalAvailabilityExpression` التحكّم في وقت ظهور الأمر بناءً على سياق الصفحة الحالي. استورد متغيّرات ومشغّلات مضبوطة الأنواع من `twenty-sdk` لبناء التعابير:
+
+```tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import {
+  pageType,
+  numberOfSelectedRecords,
+  objectPermissions,
+  everyEquals,
+  isDefined,
+} from 'twenty-sdk/front-component';
+
+export default defineFrontComponent({
+  universalIdentifier: '...',
+  name: 'bulk-action',
+  component: BulkAction,
+  command: {
+    universalIdentifier: '...',
+    label: 'Bulk Update',
+    availabilityType: 'RECORD_SELECTION',
+    conditionalAvailabilityExpression: everyEquals(
+      objectPermissions,
+      'canUpdateObjectRecords',
+      true,
+    ),
+  },
+});
+```
+
+**متغيّرات السياق** — تُمثّل الحالة الحالية للصفحة:
+
+| المتغيّر                       | النوع         | الوصف                                                           |
+| ------------------------------ | ------------- | --------------------------------------------------------------- |
+| `pageType`                     | `string`      | نوع الصفحة الحالي (مثل `'RecordIndexPage'` و`'RecordShowPage'`) |
+| `isInSidePanel`                | `boolean`     | ما إذا كان المكوّن معروضًا في لوحة جانبية                       |
+| `numberOfSelectedRecords`      | `number`      | عدد السجلات المحدّدة حاليًا                                     |
+| `isSelectAll`                  | `boolean`     | ما إذا كان "تحديد الكل" مفعّلًا                                 |
+| `selectedRecords`              | `array`       | كائنات السجلات المحدّدة                                         |
+| `favoriteRecordIds`            | `array`       | معرّفات السجلات المفضّلة                                        |
+| `objectPermissions`            | `object`      | الأذونات الخاصة بنوع الكائن الحالي                              |
+| `targetObjectReadPermissions`  | `object`      | أذونات القراءة للكائن الهدف                                     |
+| `targetObjectWritePermissions` | `object`      | أذونات الكتابة للكائن الهدف                                     |
+| `featureFlags`                 | `object`      | أعلام الميزات المفعَّلة                                         |
+| `objectMetadataItem`           | `object`      | بيانات التعريف لنوع الكائن الحالي                               |
+| `hasAnySoftDeleteFilterOnView` | `قيمة منطقية` | ما إذا كان العرض الحالي يحتوي على مرشّح حذف منطقي               |
+
+**المُشغِّلات** — جمّع المتغيّرات في تعابير منطقية:
+
+| المُشغِّل                           | الوصف                                                          |
+| ----------------------------------- | -------------------------------------------------------------- |
+| `isDefined(value)`                  | `true` إذا لم تكن القيمة null/undefined                        |
+| `isNonEmptyString(value)`           | `true` إذا كانت القيمة سلسلة غير فارغة                         |
+| `includes(array, value)`            | `true` إذا كانت المصفوفة تحتوي على القيمة                      |
+| `includesEvery(array, prop, value)` | `true` إذا كانت خاصية كل عنصر تتضمن القيمة                     |
+| `every(array, prop)`                | `true` إذا كانت الخاصية تُقيَّم بصحّة في كل عنصر               |
+| `everyDefined(array, prop)`         | `true` إذا كانت الخاصية معرّفة في كل عنصر                      |
+| `everyEquals(array, prop, value)`   | `true` إذا كانت الخاصية تساوي القيمة في كل عنصر                |
+| `some(array, prop)`                 | `true` إذا كانت الخاصية تُقيَّم بصحّة في عنصر واحد على الأقل   |
+| `someDefined(array, prop)`          | `true` إذا كانت الخاصية معرّفة في عنصر واحد على الأقل          |
+| `someEquals(array, prop, value)`    | `true` إذا كانت الخاصية تساوي القيمة في عنصر واحد على الأقل    |
+| `someNonEmptyString(array, prop)`   | `true` إذا كانت الخاصية سلسلة غير فارغة في عنصر واحد على الأقل |
+| `none(array, prop)`                 | `true` إذا كانت الخاصية تُقيَّم بخطأ في كل عنصر                |
+| `noneDefined(array, prop)`          | `true` إذا كانت الخاصية غير معرّفة في كل عنصر                  |
+| `noneEquals(array, prop, value)`    | `true` إذا لم تكن الخاصية تساوي القيمة في أي عنصر              |
+
+## الأصول العامة
+
+يمكن للمكوّنات الأمامية الوصول إلى ملفات من دليل `public/` للتطبيق باستخدام `getPublicAssetUrl`:
+
+```tsx
+import { defineFrontComponent, getPublicAssetUrl } from 'twenty-sdk/define';
+
+const Logo = () => <img src={getPublicAssetUrl('logo.png')} alt="Logo" />;
+
+export default defineFrontComponent({
+  universalIdentifier: '...',
+  name: 'logo',
+  component: Logo,
+});
+```
+
+راجع [قسم الأصول العامة](/l/ar/developers/extend/apps/cli-and-testing#public-assets-public-folder) للتفاصيل.
+
+## التنسيق
+
+تدعم المكوّنات الأمامية عدة أساليب للتنسيق. يمكنك استخدام:
+
+* **أنماط مضمنة** — `style={{ color: 'red' }}`
+* **مكوّنات Twenty لواجهة المستخدم** — استورد من `twenty-sdk/ui` (Button وTag وStatus وChip وAvatar وغيرها)
+* **Emotion** — CSS-in-JS مع `@emotion/react`
+* **Styled-components** — أنماط `styled.div`
+* **Tailwind CSS** — أصناف مساعدة
+* **أي مكتبة CSS-in-JS** متوافقة مع React
+
+```tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { Button, Tag, Status } from 'twenty-sdk/ui';
+
+const StyledWidget = () => {
+  return (
+    <div style={{ padding: '16px', display: 'flex', gap: '8px' }}>
+      <Button title="Click me" onClick={() => alert('Clicked!')} />
+      <Tag text="Active" color="green" />
+      <Status color="green" text="Online" />
+    </div>
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'e5f6a7b8-c9d0-1234-efab-567890123456',
+  name: 'styled-widget',
+  component: StyledWidget,
+});
+```

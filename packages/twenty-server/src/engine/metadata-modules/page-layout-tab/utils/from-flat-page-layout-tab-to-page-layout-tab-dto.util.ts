@@ -16,6 +16,7 @@ export const fromFlatPageLayoutTabToPageLayoutTabDto = (
   return {
     ...rest,
     ...(overrides ?? {}),
+    overrides,
     isOverridden: false,
     createdAt: new Date(createdAt),
     updatedAt: new Date(updatedAt),

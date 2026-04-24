@@ -5,7 +5,6 @@ import {
   CalendarChannelSyncStage,
   type CalendarChannelVisibility,
   ConnectedAccountProvider,
-  FeatureFlagKey,
   MessageChannelSyncStage,
   MessageChannelSyncStatus,
   type MessageChannelVisibility,
@@ -23,7 +22,6 @@ import { CreateMessageChannelService } from 'src/engine/core-modules/auth/servic
 import { GoogleAPIScopesService } from 'src/engine/core-modules/auth/services/google-apis-scopes';
 import { GoogleApisServiceAvailabilityService } from 'src/engine/core-modules/auth/services/google-apis-service-availability.service';
 import { UpdateConnectedAccountOnReconnectService } from 'src/engine/core-modules/auth/services/update-connected-account-on-reconnect.service';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { SyncMessageFoldersService } from 'src/modules/messaging/message-folder-manager/services/sync-message-folders.service';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -67,7 +65,6 @@ export class GoogleAPIsService {
     private readonly updateConnectedAccountOnReconnectService: UpdateConnectedAccountOnReconnectService,
     private readonly googleAPIScopesService: GoogleAPIScopesService,
     private readonly googleApisServiceAvailabilityService: GoogleApisServiceAvailabilityService,
-    private readonly featureFlagService: FeatureFlagService,
     private readonly syncMessageFoldersService: SyncMessageFoldersService,
     @InjectRepository(ConnectedAccountEntity)
     private readonly connectedAccountRepository: Repository<ConnectedAccountEntity>,
@@ -108,15 +105,9 @@ export class GoogleAPIsService {
       'MESSAGING_PROVIDER_GMAIL_ENABLED',
     );
 
-    const isDraftEmailEnabled = await this.featureFlagService.isFeatureEnabled(
-      FeatureFlagKey.IS_DRAFT_EMAIL_ENABLED,
-      workspaceId,
-    );
-
     const { scopes, isValid } =
       await this.googleAPIScopesService.getScopesFromGoogleAccessTokenAndCheckIfExpectedScopesArePresent(
         input.accessToken,
-        isDraftEmailEnabled,
       );
 
     if (!isValid) {

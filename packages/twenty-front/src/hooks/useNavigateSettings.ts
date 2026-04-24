@@ -15,10 +15,11 @@ export const useNavigateSettings = () => {
       replace?: boolean;
       state?: any;
     },
+    hash?: string,
   ) => {
     openSettingsMenu();
 
-    const path = getSettingsPath(to, params, queryParams);
+    const path = getSettingsPath(to, params, queryParams, hash);
     return navigate(path, options);
   };
 };

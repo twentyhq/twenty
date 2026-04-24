@@ -1,8 +1,8 @@
+import { defineFrontComponent } from 'twenty-sdk/define';
 import {
-  defineFrontComponent,
   useFrontComponentExecutionContext,
   useUserId,
-} from 'twenty-sdk';
+} from 'twenty-sdk/front-component';
 import { useState } from 'react';
 
 const CARD_STYLE = {

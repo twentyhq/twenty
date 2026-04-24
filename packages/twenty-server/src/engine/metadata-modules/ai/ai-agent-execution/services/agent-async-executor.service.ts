@@ -12,42 +12,43 @@ import { type ActorMetadata } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type Repository } from 'typeorm';
 
-import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
-
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
-import { ToolCategory } from 'twenty-shared/ai';
+import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
+import { NativeToolBinderService } from 'src/engine/core-modules/tool-provider/native/native-tool-binder.service';
 import { ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WORKFLOW_AGENT_REGISTRY_TOOL_CATEGORIES } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/workflow-agent-registry-tool-categories.const';
 import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
 import { countNativeWebSearchCallsFromSteps } from 'src/engine/metadata-modules/ai/ai-billing/utils/count-native-web-search-calls-from-steps.util';
 import { extractCacheCreationTokensFromSteps } from 'src/engine/metadata-modules/ai/ai-billing/utils/extract-cache-creation-tokens.util';
 import { mergeLanguageModelUsage } from 'src/engine/metadata-modules/ai/ai-billing/utils/merge-language-model-usage.util';
 import {
-  AgentException,
-  AgentExceptionCode,
-} from 'src/engine/metadata-modules/ai/ai-agent/agent.exception';
+  AiException,
+  AiExceptionCode,
+} from 'src/engine/metadata-modules/ai/ai.exception';
 import { AGENT_CONFIG } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-config.const';
 import { WORKFLOW_SYSTEM_PROMPTS } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-system-prompts.const';
 import { type AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { repairToolCall } from 'src/engine/metadata-modules/ai/ai-agent/utils/repair-tool-call.util';
 import { AI_TELEMETRY_CONFIG } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-telemetry.const';
-import { AgentModelConfigService } from 'src/engine/metadata-modules/ai/ai-models/services/agent-model-config.service';
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { AiModelConfigService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-config.service';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 
-// Agent execution within workflows uses database and action tools only.
-// Workflow tools are intentionally excluded to avoid circular dependencies
-// and recursive workflow execution.
+// Agent execution within workflows uses registry tools plus native model tools.
+// Workflow registry tools are intentionally excluded to avoid circular
+// dependencies and recursive workflow execution.
 @Injectable()
 export class AgentAsyncExecutorService {
   private readonly logger = new Logger(AgentAsyncExecutorService.name);
 
   constructor(
     private readonly aiModelRegistryService: AiModelRegistryService,
-    private readonly agentModelConfigService: AgentModelConfigService,
+    private readonly aiModelConfigService: AiModelConfigService,
     private readonly toolRegistry: ToolRegistryService,
+    private readonly nativeToolBinder: NativeToolBinderService,
     @InjectRepository(RoleTargetEntity)
     private readonly roleTargetRepository: Repository<RoleTargetEntity>,
     @InjectRepository(WorkspaceEntity)
@@ -139,41 +140,47 @@ export class AgentAsyncExecutorService {
           rolePermissionConfig,
         );
 
-        // Workflow context: DATABASE_CRUD, ACTION, and NATIVE_MODEL tools only
-        // Workflow tools are excluded to prevent circular dependencies
+        // Workflow context: registry tools come from DATABASE_CRUD and ACTION.
+        // Native model tools are bound separately below.
         const roleId = this.extractRoleIds(effectiveRoleConfig)[0] ?? '';
 
-        tools = await this.toolRegistry.getToolsByCategories(
+        const toolProviderContext: ToolProviderContext = {
+          workspaceId: agent.workspaceId,
+          roleId,
+          rolePermissionConfig: effectiveRoleConfig ?? { unionOf: [] },
+          authContext,
+          actorContext,
+          agent: agent as unknown as ToolProviderContext['agent'],
+          userId:
+            isDefined(authContext) && isUserAuthContext(authContext)
+              ? authContext.user.id
+              : undefined,
+          userWorkspaceId:
+            isDefined(authContext) && isUserAuthContext(authContext)
+              ? authContext.userWorkspaceId
+              : undefined,
+        };
+
+        const registryTools = await this.toolRegistry.getToolsByCategories(
+          toolProviderContext,
           {
-            workspaceId: agent.workspaceId,
-            roleId,
-            rolePermissionConfig: effectiveRoleConfig ?? { unionOf: [] },
-            authContext,
-            actorContext,
-            agent: agent as unknown as ToolProviderContext['agent'],
-            userId:
-              isDefined(authContext) && isUserAuthContext(authContext)
-                ? authContext.user.id
-                : undefined,
-            userWorkspaceId:
-              isDefined(authContext) && isUserAuthContext(authContext)
-                ? authContext.userWorkspaceId
-                : undefined,
-          },
-          {
-            categories: [
-              ToolCategory.DATABASE_CRUD,
-              ToolCategory.ACTION,
-              ToolCategory.NATIVE_MODEL,
-            ],
+            categories: WORKFLOW_AGENT_REGISTRY_TOOL_CATEGORIES,
             wrapWithErrorContext: false,
           },
         );
 
-        providerOptions = this.agentModelConfigService.getProviderOptions(
+        const nativeTools =
+          await this.nativeToolBinder.bind(toolProviderContext);
+
+        tools = {
+          ...registryTools,
+          ...nativeTools,
+        };
+
+        providerOptions = this.aiModelConfigService.getProviderOptions(
           registeredModel,
           agent as unknown as Parameters<
-            typeof this.agentModelConfigService.getProviderOptions
+            typeof this.aiModelConfigService.getProviderOptions
           >[1],
         );
       }
@@ -239,9 +246,9 @@ export class AgentAsyncExecutorService {
       });
 
       if (structuredResult.output == null) {
-        throw new AgentException(
+        throw new AiException(
           'Failed to generate structured output from execution results',
-          AgentExceptionCode.AGENT_EXECUTION_FAILED,
+          AiExceptionCode.AGENT_EXECUTION_FAILED,
         );
       }
 
@@ -255,12 +262,12 @@ export class AgentAsyncExecutorService {
         nativeWebSearchCallCount,
       };
     } catch (error) {
-      if (error instanceof AgentException) {
+      if (error instanceof AiException) {
         throw error;
       }
-      throw new AgentException(
+      throw new AiException(
         error instanceof Error ? error.message : 'Agent execution failed',
-        AgentExceptionCode.AGENT_EXECUTION_FAILED,
+        AiExceptionCode.AGENT_EXECUTION_FAILED,
       );
     }
   }

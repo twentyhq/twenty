@@ -1,122 +1,97 @@
-import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
-import { isHiddenSystemField } from '@/object-metadata/utils/isHiddenSystemField';
-import { SettingsLogicFunctionsTable } from '@/settings/logic-functions/components/SettingsLogicFunctionsTable';
+import {
+  type LogicFunctionTableRow,
+  SettingsLogicFunctionsTable,
+} from '@/settings/logic-functions/components/SettingsLogicFunctionsTable';
+import { useObjectAndFieldRows } from '@/settings/applications/hooks/useObjectAndFieldRows';
 import { t } from '@lingui/core/macro';
 import { useMemo } from 'react';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { type Manifest } from 'twenty-shared/application';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { H2Title } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
 import { type Application } from '~/generated-metadata/graphql';
-import { SettingsAIAgentsTable } from '~/pages/settings/ai/components/SettingsAIAgentsTable';
+import { SettingsApplicationDataTable } from '~/pages/settings/applications/components/SettingsApplicationDataTable';
 import {
-  SettingsApplicationDataTable,
-  type ApplicationDataTableRow,
-} from '~/pages/settings/applications/components/SettingsApplicationDataTable';
+  type ApplicationNameDescriptionTableRow,
+  SettingsApplicationNameDescriptionTable,
+} from '~/pages/settings/applications/components/SettingsApplicationNameDescriptionTable';
+
+type InstalledApplicationForContentTab = Omit<
+  Application,
+  'objects' | 'universalIdentifier' | 'frontComponents'
+> & {
+  objects: { id: string }[];
+  frontComponents?: { name: string; description?: string | null }[];
+};
+
+type SettingsApplicationDetailContentTabProps = {
+  applicationId: string;
+  installedApplication?: InstalledApplicationForContentTab;
+  manifestContent?: Manifest;
+};
 
 export const SettingsApplicationDetailContentTab = ({
-  application,
-}: {
-  application?: Omit<Application, 'objects' | 'universalIdentifier'> & {
-    objects: { id: string }[];
-  };
-}) => {
-  const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
+  applicationId,
+  installedApplication,
+  manifestContent,
+}: SettingsApplicationDetailContentTabProps) => {
+  const { objectRows, fieldGroupRows } = useObjectAndFieldRows({
+    applicationId,
+    installedApplication,
+    manifestContent,
+  });
 
-  const applicationObjectIds = useMemo(
-    () => application?.objects.map((object) => object.id) ?? [],
-    [application?.objects],
-  );
+  const logicFunctionRows = useMemo((): LogicFunctionTableRow[] => {
+    const computeTrigger = (lf: {
+      isTool?: boolean;
+      cronTriggerSettings?: unknown;
+      httpRouteTriggerSettings?: unknown;
+      databaseEventTriggerSettings?: { eventName?: string } | null;
+    }): string => {
+      if (lf.isTool) return 'Tool';
+      if (lf.cronTriggerSettings) return 'Cron';
+      if (lf.httpRouteTriggerSettings) return 'Route';
+      if (lf.databaseEventTriggerSettings)
+        return lf.databaseEventTriggerSettings.eventName ?? '';
+      return '';
+    };
 
-  const objectRows = useMemo((): ApplicationDataTableRow[] => {
-    if (!isDefined(application) || application.objects.length === 0) {
-      return [];
+    if (isDefined(installedApplication)) {
+      return (installedApplication.logicFunctions ?? []).map((lf) => ({
+        key: lf.id,
+        name: lf.name,
+        trigger: computeTrigger(lf),
+        link: getSettingsPath(SettingsPath.ApplicationLogicFunctionDetail, {
+          applicationId,
+          logicFunctionId: lf.id,
+        }),
+      }));
     }
 
-    return objectMetadataItems
-      .filter((objectMetadataItem) =>
-        applicationObjectIds.includes(objectMetadataItem.id),
-      )
-      .map((objectMetadataItem) => {
-        const nonSystemFields = objectMetadataItem.fields.filter(
-          (field) => !isHiddenSystemField(field),
-        );
+    return (manifestContent?.logicFunctions ?? []).map((lf) => ({
+      key: lf.universalIdentifier,
+      name: lf.name ?? lf.universalIdentifier,
+      trigger: computeTrigger(lf),
+    }));
+  }, [installedApplication, manifestContent?.logicFunctions, applicationId]);
 
-        return {
-          key: objectMetadataItem.nameSingular,
-          labelPlural: objectMetadataItem.labelPlural,
-          icon: objectMetadataItem.icon ?? undefined,
-          fieldsCount: nonSystemFields.length,
-          link: getSettingsPath(SettingsPath.ObjectDetail, {
-            objectNamePlural: objectMetadataItem.namePlural,
-          }),
-          tagItem: {
-            isCustom: objectMetadataItem.isCustom,
-            isRemote: objectMetadataItem.isRemote,
-            applicationId: objectMetadataItem.applicationId,
-          },
-        };
-      });
-  }, [application, objectMetadataItems, applicationObjectIds]);
+  const frontComponentRows =
+    useMemo((): ApplicationNameDescriptionTableRow[] => {
+      if (isDefined(installedApplication)) {
+        return (installedApplication.frontComponents ?? []).map((fc) => ({
+          key: fc.name,
+          name: fc.name,
+          description: fc.description,
+        }));
+      }
 
-  const fieldGroupRows = useMemo((): ApplicationDataTableRow[] => {
-    if (!isDefined(application)) {
-      return [];
-    }
-
-    const FIELD_GROUP_DENY_LIST = ['timelineActivity', 'favorite'];
-
-    return objectMetadataItems
-      .filter((objectMetadataItem) => {
-        if (applicationObjectIds.includes(objectMetadataItem.id)) {
-          return false;
-        }
-
-        if (FIELD_GROUP_DENY_LIST.includes(objectMetadataItem.nameSingular)) {
-          return false;
-        }
-
-        const appFields = objectMetadataItem.fields.filter(
-          (field) => field.applicationId === application.id,
-        );
-
-        return appFields.length > 0;
-      })
-      .map((objectMetadataItem) => {
-        const appFieldsCount = objectMetadataItem.fields.filter(
-          (field) => field.applicationId === application.id,
-        ).length;
-
-        return {
-          key: objectMetadataItem.nameSingular,
-          labelPlural: objectMetadataItem.labelPlural,
-          icon: objectMetadataItem.icon ?? undefined,
-          fieldsCount: appFieldsCount,
-          link: getSettingsPath(SettingsPath.ObjectDetail, {
-            objectNamePlural: objectMetadataItem.namePlural,
-          }),
-          tagItem: {
-            isCustom: objectMetadataItem.isCustom,
-            isRemote: objectMetadataItem.isRemote,
-            applicationId: objectMetadataItem.applicationId,
-          },
-        };
-      });
-  }, [objectMetadataItems, applicationObjectIds, application]);
-
-  if (!isDefined(application)) {
-    return null;
-  }
-
-  const { logicFunctions } = application;
-
-  const shouldDisplayLogicFunctions =
-    isDefined(logicFunctions) && logicFunctions?.length > 0;
-
-  // TODO: uncomment when adding back agents in application settings
-  // const shouldDisplayAgents = isDefined(agents) && agents.length > 0;
-  const shouldDisplayAgents = false;
+      return (manifestContent?.frontComponents ?? []).map((fc) => ({
+        key: fc.universalIdentifier,
+        name: fc.name ?? fc.universalIdentifier,
+        description: fc.description,
+      }));
+    }, [installedApplication, manifestContent?.frontComponents]);
 
   return (
     <>
@@ -124,24 +99,21 @@ export const SettingsApplicationDetailContentTab = ({
         objectRows={objectRows}
         fieldGroupRows={fieldGroupRows}
       />
-      {shouldDisplayLogicFunctions && (
+      {logicFunctionRows.length > 0 && (
         <Section>
           <H2Title
             title={t`Logic`}
             description={t`Logic functions powering this app`}
           />
-          <SettingsLogicFunctionsTable logicFunctions={logicFunctions} />
+          <SettingsLogicFunctionsTable logicFunctions={logicFunctionRows} />
         </Section>
       )}
-      {shouldDisplayAgents && (
-        <Section>
-          <H2Title
-            title={t`Agents`}
-            description={t`Agents powering this app`}
-          />
-          <SettingsAIAgentsTable />
-        </Section>
-      )}
+      <SettingsApplicationNameDescriptionTable
+        title={t`Front components`}
+        description={t`UI components provided by this app`}
+        sectionTitle={t`Front components`}
+        items={frontComponentRows}
+      />
     </>
   );
 };

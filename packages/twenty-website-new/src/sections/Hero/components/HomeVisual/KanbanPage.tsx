@@ -1,7 +1,8 @@
 'use client';
 
-import { getSharedCompanyLogoUrlFromDomainName } from '@/lib/shared-asset-paths';
+import { getSharedCompanyLogoUrlFromDomainName } from '@/content/site/asset-paths';
 import { RatingStarIcon } from '@/icons';
+import { createBoundedFailureCache } from '@/lib/visual-runtime';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
 import {
@@ -64,8 +65,8 @@ const LANE_TONES: Record<string, { background: string; color: string }> = {
   purple: { background: '#ede9fe', color: '#8e4ec6' },
 };
 
-const failedAvatarUrls = new Set<string>();
-const failedFaviconUrls = new Set<string>();
+const failedAvatarUrls = createBoundedFailureCache(256);
+const failedFaviconUrls = createBoundedFailureCache(256);
 
 const BoardShell = styled.div`
   flex: 1 1 auto;
@@ -634,7 +635,9 @@ function KanbanLane({
 
 export function KanbanPage({ page }: { page: HeroKanbanPageDefinition }) {
   return (
-    <BoardShell aria-label={`Interactive preview of the ${page.header.title} board`}>
+    <BoardShell
+      aria-label={`Interactive preview of the ${page.header.title} board`}
+    >
       <BoardCanvas $laneCount={page.lanes.length}>
         {page.lanes.map((lane, index) => (
           <KanbanLane

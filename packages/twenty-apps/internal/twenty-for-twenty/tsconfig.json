@@ -24,7 +24,10 @@
     "resolveJsonModule": true,
     "paths": {
       "src/*": ["./src/*"],
-      "~/*": ["./*"]
+      "~/*": ["./*"],
+      "@utils/*": ["./src/utils/*"],
+      "@constants/*": ["./src/constants/*"],
+      "@modules/*": ["./src/modules/*"]
     }
   },
   "exclude": [

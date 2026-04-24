@@ -1,21 +1,27 @@
 'use client';
 
 import dynamic from 'next/dynamic';
-import { getSharedCompanyLogoUrlFromDomainName } from '@/lib/shared-asset-paths';
+import { getSharedCompanyLogoUrlFromDomainName } from '@/content/site/asset-paths';
+import { createBoundedFailureCache } from '@/lib/visual-runtime';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
 import {
+  IconBarcode,
   IconBook,
+  IconBox,
   IconBrandLinkedin,
   IconBuildingFactory2,
   IconBuildingSkyscraper,
+  IconCalendarClock,
   IconCalendarEvent,
+  IconCalendarPlus,
   IconCheck,
   IconCheckbox,
   IconChevronDown,
   IconCopy,
   IconCreativeCommonsSa,
   IconDotsVertical,
+  IconFlag,
   IconFolder,
   IconHome2,
   IconLayoutDashboard,
@@ -24,6 +30,7 @@ import {
   IconLink,
   IconList,
   IconMap2,
+  IconMapPin,
   IconMessageCircle,
   IconMessageCirclePlus,
   IconMoneybag,
@@ -31,10 +38,15 @@ import {
   IconPencil,
   IconChevronUp,
   IconHeart,
+  IconPlanet,
   IconPlayerPause,
   IconPlayerPlay,
   IconPlus,
+  IconProgress,
+  IconRefresh,
   IconRepeat,
+  IconRocket,
+  IconRuler,
   IconSearch,
   IconSettings,
   IconSettingsAutomation,
@@ -44,14 +56,15 @@ import {
   IconUserCircle,
   IconUsers,
   IconVersions,
+  IconWeight,
   IconX,
 } from '@tabler/icons-react';
 import {
+  useCallback,
+  useEffect,
   useMemo,
-  useRef,
   useState,
   type ReactNode,
-  type PointerEvent as ReactPointerEvent,
 } from 'react';
 import type {
   HeroDashboardPageDefinition,
@@ -78,12 +91,28 @@ import { normalizeHeroPage, type HeroPageDefaults } from './normalizeHeroPage';
 import { KanbanPage } from './KanbanPage';
 import { PagePreviewLoader } from './PagePreviewLoader';
 import { TablePage } from './TablePage';
+import { DraggableAppWindow } from './DraggableAppWindow/DraggableAppWindow';
+import { DraggableTerminal } from './DraggableTerminal/DraggableTerminal';
+import { OBJECT_PINNED_ACTIONS } from './objectPinnedActions';
+import {
+  COMPANIES_ITEM_ID,
+  COMPANIES_ITEM_LABEL,
+  CRM_OBJECT_SEQUENCE,
+} from './rocketObject';
+import { WindowOrderProvider } from './WindowOrder/WindowOrderProvider';
 
 const APP_FONT = VISUAL_TOKENS.font.family;
 const DEFAULT_TABLE_WIDTH = 1700;
 const APPLE_WORKSPACE_LOGO_SRC = '/images/home/hero/apple-rainbow-logo.svg';
 const TABLE_CELL_HORIZONTAL_PADDING = 8;
 const HOVER_ACTION_EDGE_INSET = 4;
+const COMPLETED_CREATED_OBJECT_IDS = CRM_OBJECT_SEQUENCE.map(({ id }) => id);
+const COMPLETED_REVEALED_OBJECT_IDS = [
+  ...COMPLETED_CREATED_OBJECT_IDS,
+  COMPANIES_ITEM_ID,
+];
+const COMPLETED_ACTIVE_OBJECT_LABEL =
+  CRM_OBJECT_SEQUENCE.at(-1)?.label ?? COMPANIES_ITEM_LABEL;
 
 const COLORS = {
   accent: VISUAL_TOKENS.accent.accent9,
@@ -118,6 +147,26 @@ const SIDEBAR_TONES: Record<
   red: { background: '#fdd8d8', border: '#f9c6c6', color: '#DC3D43' },
 };
 
+const hexToRgbTuple = (hex: string): string => {
+  const clean = hex.replace('#', '');
+  const expanded =
+    clean.length === 3
+      ? clean
+          .split('')
+          .map((char) => char + char)
+          .join('')
+      : clean;
+  const value = parseInt(expanded, 16);
+  return `${(value >> 16) & 255}, ${(value >> 8) & 255}, ${value & 255}`;
+};
+
+const SIDEBAR_TONE_RGB: Record<string, string> = Object.fromEntries(
+  Object.entries(SIDEBAR_TONES).map(([tone, palette]) => [
+    tone,
+    hexToRgbTuple(palette.color),
+  ]),
+);
+
 const PERSON_TONES: Record<string, { background: string; color: string }> = {
   amber: { background: '#f6e6d7', color: '#7a4f2a' },
   blue: { background: '#dbeafe', color: '#1d4ed8' },
@@ -131,19 +180,26 @@ const PERSON_TONES: Record<string, { background: string; color: string }> = {
 
 const TABLER_STROKE = 1.6;
 const NAVIGATION_TABLER_STROKE = 2;
+const NAVBAR_ACTION_TABLER_STROKE = 2;
 const ROW_HOVER_ACTION_DISABLED_COLUMNS = new Set([
   'createdBy',
   'accountOwner',
 ]);
 
 const NAVBAR_ACTION_ICON_MAP: Record<string, typeof IconPlus> = {
+  box: IconBox,
+  calendarClock: IconCalendarClock,
+  calendarEvent: IconCalendarEvent,
+  calendarPlus: IconCalendarPlus,
   chevronDown: IconChevronDown,
   chevronUp: IconChevronUp,
   dotsVertical: IconDotsVertical,
+  flag: IconFlag,
   heart: IconHeart,
   playerPause: IconPlayerPause,
   plus: IconPlus,
   repeat: IconRepeat,
+  rocket: IconRocket,
 };
 
 const SalesDashboardPage = dynamic(
@@ -187,8 +243,6 @@ const PAGE_RENDERERS = {
   ) => ReactNode;
 };
 
-// -- Styled Components --
-
 const StyledHomeVisual = styled.div`
   isolation: isolate;
   margin-top: ${theme.spacing(5)};
@@ -202,45 +256,43 @@ const StyledHomeVisual = styled.div`
 `;
 
 const ShellScene = styled.div`
+  aspect-ratio: 1 / 1;
   margin: 0 auto;
-  transform-origin: center top;
-  transition: transform 0.18s ease;
-  width: 100%;
-`;
-
-const Frame = styled.div`
-  aspect-ratio: 1280 / 832;
-  background-color: ${COLORS.background};
-  background-image: ${VISUAL_TOKENS.background.noisy};
-  border: 1px solid ${COLORS.border};
-  border-radius: 8px;
-  box-shadow: ${COLORS.shadow};
   max-height: 740px;
-  overflow: hidden;
   position: relative;
   width: 100%;
+
+  @media (min-width: ${theme.breakpoints.md}px) {
+    aspect-ratio: 1280 / 832;
+  }
 `;
 
 const AppLayout = styled.div`
   display: flex;
+  flex: 1 1 auto;
   height: 100%;
+  min-width: 0;
+  overflow: hidden;
   min-height: 0;
   position: relative;
+  width: 100%;
   z-index: 1;
 `;
 
 const SidebarPanel = styled.aside`
   background: transparent;
   display: grid;
-  flex: 0 0 72px;
-  gap: 12px;
+  flex: 0 0 48px;
+  gap: 8px;
   grid-template-rows: auto auto minmax(0, 1fr);
   min-height: 0;
-  padding: 12px 8px;
-  width: 72px;
+  padding: 8px 4px;
+  width: 48px;
 
   @media (min-width: ${theme.breakpoints.md}px) {
     flex-basis: 220px;
+    gap: 12px;
+    padding: 12px 8px;
     width: 220px;
   }
 `;
@@ -248,18 +300,39 @@ const SidebarPanel = styled.aside`
 const SidebarTopBar = styled.div`
   align-items: center;
   display: grid;
-  gap: 8px;
-  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, 1fr);
   min-height: 32px;
+
+  @media (min-width: ${theme.breakpoints.md}px) {
+    gap: 8px;
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
 `;
 
 const WorkspaceMenu = styled.div`
   align-items: center;
   display: grid;
-  gap: 8px;
-  grid-template-columns: auto 1fr auto;
+  gap: 4px;
+  grid-auto-flow: column;
+  grid-template-columns: auto;
+  justify-content: center;
   min-width: 0;
   padding: 6px 4px;
+
+  > svg:last-child {
+    display: none;
+  }
+
+  @media (min-width: ${theme.breakpoints.md}px) {
+    gap: 8px;
+    grid-auto-flow: row;
+    grid-template-columns: auto 1fr auto;
+    justify-content: stretch;
+
+    > svg:last-child {
+      display: block;
+    }
+  }
 `;
 
 const WorkspaceIcon = styled.div`
@@ -268,12 +341,14 @@ const WorkspaceIcon = styled.div`
   flex: 0 0 auto;
   height: 16px;
   justify-content: center;
-  width: 14px;
+  width: 16px;
 `;
 
 const WorkspaceIconImage = styled.img`
   display: block;
   height: 100%;
+  object-fit: contain;
+  object-position: center;
   width: 100%;
 `;
 
@@ -296,9 +371,13 @@ const WorkspaceLabel = styled.span`
 
 const SidebarTopActions = styled.div`
   align-items: center;
-  display: grid;
+  display: none;
   gap: 2px;
   grid-auto-flow: column;
+
+  @media (min-width: ${theme.breakpoints.md}px) {
+    display: grid;
+  }
 `;
 
 const SidebarIconButton = styled.div`
@@ -314,12 +393,15 @@ const SidebarControls = styled.div`
   align-items: center;
   display: grid;
   gap: 8px;
-  grid-template-columns: auto 1fr;
+  grid-auto-flow: column;
+  grid-template-columns: auto;
+  justify-content: center;
   min-width: 0;
 
   @media (min-width: ${theme.breakpoints.md}px) {
     display: flex;
     gap: 12px;
+    grid-auto-flow: row;
     justify-content: space-between;
   }
 `;
@@ -328,10 +410,14 @@ const SegmentedRail = styled.div`
   background: #fcfcfccc;
   border: 1px solid ${COLORS.border};
   border-radius: 40px;
-  display: grid;
+  display: none;
   gap: 2px;
   grid-auto-flow: column;
   padding: 3px;
+
+  @media (min-width: ${theme.breakpoints.md}px) {
+    display: grid;
+  }
 `;
 
 const Segment = styled.div<{ $selected?: boolean }>`
@@ -389,7 +475,13 @@ const SidebarScroll = styled.div`
   flex-direction: column;
   gap: 2px;
   min-height: 0;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
 `;
 
 const SidebarSection = styled.div`
@@ -417,26 +509,88 @@ const SidebarItemRow = styled.div<{
   $depth?: number;
   $interactive?: boolean;
   $withBranch?: boolean;
+  $highlighted?: boolean;
+  $highlightRgb?: string;
 }>`
+  --hero-highlight-rgb: ${({ $highlightRgb }) => $highlightRgb ?? '237, 95, 0'};
   align-items: center;
   background: ${({ $active }) =>
     $active ? VISUAL_TOKENS.background.transparent.medium : 'transparent'};
   border-radius: 4px;
   display: grid;
   gap: 0;
-  grid-template-columns: ${({ $withBranch }) =>
-    $withBranch ? '9px minmax(0, 1fr) auto' : 'minmax(0, 1fr) auto'};
+  grid-template-columns: auto;
+  justify-content: center;
   height: 28px;
-  padding: 0 2px 0 ${({ $depth = 0 }) => `${$depth === 0 ? 4 : 11}px`};
+  padding: 0;
   position: relative;
   text-decoration: none;
   transition: background-color 0.14s ease;
+  animation: ${({ $highlighted }) =>
+    $highlighted
+      ? 'heroObjectAppearRow 1800ms cubic-bezier(0.34, 1.56, 0.64, 1) both'
+      : 'none'};
+  transform-origin: left center;
+
+  @media (min-width: ${theme.breakpoints.md}px) {
+    grid-template-columns: ${({ $withBranch }) =>
+      $withBranch ? '9px minmax(0, 1fr) auto' : 'minmax(0, 1fr) auto'};
+    justify-content: stretch;
+    padding: 0 2px 0 ${({ $depth = 0 }) => `${$depth === 0 ? 4 : 11}px`};
+  }
 
   &:hover {
     background: ${({ $active, $interactive }) =>
       $active || $interactive
         ? VISUAL_TOKENS.background.transparent.medium
         : 'transparent'};
+  }
+
+  @keyframes heroObjectAppearRow {
+    0% {
+      background: rgba(var(--hero-highlight-rgb, 237, 95, 0), 0);
+      box-shadow:
+        0 0 0 0 rgba(var(--hero-highlight-rgb, 237, 95, 0), 0),
+        0 0 0 0 rgba(var(--hero-highlight-rgb, 237, 95, 0), 0);
+      opacity: 0;
+      transform: translateX(-32px) translateY(-6px) scale(0.6);
+    }
+    16% {
+      background: rgba(var(--hero-highlight-rgb, 237, 95, 0), 0.55);
+      box-shadow:
+        0 0 0 6px rgba(var(--hero-highlight-rgb, 237, 95, 0), 0.4),
+        0 12px 28px -6px rgba(var(--hero-highlight-rgb, 237, 95, 0), 0.55);
+      opacity: 1;
+      transform: translateX(0) translateY(0) scale(1.18);
+    }
+    32% {
+      background: rgba(var(--hero-highlight-rgb, 237, 95, 0), 0.42);
+      box-shadow:
+        0 0 0 12px rgba(var(--hero-highlight-rgb, 237, 95, 0), 0.24),
+        0 10px 22px -6px rgba(var(--hero-highlight-rgb, 237, 95, 0), 0.38);
+      transform: translateX(0) scale(0.97);
+    }
+    50% {
+      background: rgba(var(--hero-highlight-rgb, 237, 95, 0), 0.28);
+      box-shadow:
+        0 0 0 18px rgba(var(--hero-highlight-rgb, 237, 95, 0), 0.12),
+        0 6px 16px -6px rgba(var(--hero-highlight-rgb, 237, 95, 0), 0.22);
+      transform: translateX(0) scale(1.02);
+    }
+    72% {
+      background: rgba(var(--hero-highlight-rgb, 237, 95, 0), 0.16);
+      box-shadow:
+        0 0 0 22px rgba(var(--hero-highlight-rgb, 237, 95, 0), 0),
+        0 0 0 0 rgba(var(--hero-highlight-rgb, 237, 95, 0), 0);
+      transform: translateX(0) scale(1);
+    }
+    100% {
+      background: ${VISUAL_TOKENS.background.transparent.medium};
+      box-shadow:
+        0 0 0 0 rgba(var(--hero-highlight-rgb, 237, 95, 0), 0),
+        0 0 0 0 rgba(var(--hero-highlight-rgb, 237, 95, 0), 0);
+      transform: translateX(0) scale(1);
+    }
   }
 `;
 
@@ -452,13 +606,20 @@ const SidebarItemRowLink = styled.a<{
   border-radius: 4px;
   display: grid;
   gap: 0;
-  grid-template-columns: ${({ $withBranch }) =>
-    $withBranch ? '9px minmax(0, 1fr) auto' : 'minmax(0, 1fr) auto'};
+  grid-template-columns: auto;
+  justify-content: center;
   height: 28px;
-  padding: 0 2px 0 ${({ $depth = 0 }) => `${$depth === 0 ? 4 : 11}px`};
+  padding: 0;
   position: relative;
   text-decoration: none;
   transition: background-color 0.14s ease;
+
+  @media (min-width: ${theme.breakpoints.md}px) {
+    grid-template-columns: ${({ $withBranch }) =>
+      $withBranch ? '9px minmax(0, 1fr) auto' : 'minmax(0, 1fr) auto'};
+    justify-content: stretch;
+    padding: 0 2px 0 ${({ $depth = 0 }) => `${$depth === 0 ? 4 : 11}px`};
+  }
 
   &:hover {
     background: ${({ $active, $interactive }) =>
@@ -472,8 +633,13 @@ const SidebarIconSurface = styled.div<{
   $background: string;
   $border: string;
   $color: string;
+  $pulse?: boolean;
 }>`
   align-items: center;
+  animation: ${({ $pulse }) =>
+    $pulse
+      ? 'heroObjectAppearIcon 1400ms cubic-bezier(0.34, 1.7, 0.64, 1) both'
+      : 'none'};
   background: ${({ $background }) => $background};
   border: 1px solid ${({ $border }) => $border};
   border-radius: 4px;
@@ -484,13 +650,35 @@ const SidebarIconSurface = styled.div<{
   justify-content: center;
   position: relative;
   width: 16px;
+
+  @keyframes heroObjectAppearIcon {
+    0% {
+      transform: scale(0.35) rotate(-18deg);
+    }
+    30% {
+      transform: scale(1.45) rotate(8deg);
+    }
+    55% {
+      transform: scale(0.9) rotate(-4deg);
+    }
+    80% {
+      transform: scale(1.06) rotate(2deg);
+    }
+    100% {
+      transform: scale(1) rotate(0deg);
+    }
+  }
 `;
 
 const SidebarItemText = styled.div`
-  align-items: center;
-  display: flex;
-  gap: 2px;
+  display: none;
   min-width: 0;
+
+  @media (min-width: ${theme.breakpoints.md}px) {
+    align-items: center;
+    display: flex;
+    gap: 2px;
+  }
 `;
 
 const SidebarItemLabel = styled.span<{ $active?: boolean }>`
@@ -606,7 +794,7 @@ const SidebarAvatar = styled.div<{
 
 const RightPane = styled.div`
   display: flex;
-  flex: 1 1 auto;
+  flex: 1 1 0;
   flex-direction: column;
   gap: 12px;
   min-height: 0;
@@ -621,18 +809,22 @@ const RightPane = styled.div`
 const NavbarBar = styled.div`
   align-items: center;
   background: transparent;
-  display: flex;
+  display: grid;
   flex: 0 0 32px;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
   height: 32px;
-  justify-content: space-between;
   min-width: 0;
+  width: 100%;
 `;
 
 const Breadcrumb = styled.div`
   align-items: center;
   display: flex;
+  flex: 1 1 auto;
   gap: 2px;
   min-width: 0;
+  overflow: hidden;
 `;
 
 const BreadcrumbTag = styled.div`
@@ -659,12 +851,18 @@ const CrumbLabel = styled.span`
 const NavbarActions = styled.div`
   align-items: center;
   display: flex;
+  flex: 0 1 auto;
   gap: 8px;
+  justify-self: end;
+  max-width: 100%;
+  min-width: 0;
   pointer-events: none;
 `;
 
 const DesktopOnlyNavbarAction = styled.div`
   display: none;
+  flex: 0 1 auto;
+  min-width: 0;
 
   @media (min-width: ${theme.breakpoints.md}px) {
     display: block;
@@ -679,13 +877,15 @@ const NavbarActionButton = styled.div<{ $iconOnly?: boolean }>`
   border: 1px solid ${NAVBAR_ACTION_BORDER};
   border-radius: ${VISUAL_TOKENS.border.radius.sm};
   display: inline-flex;
+  flex: 0 1 auto;
   font-family: ${APP_FONT};
   font-size: ${VISUAL_TOKENS.font.size.md};
   font-weight: ${VISUAL_TOKENS.font.weight.medium};
   gap: ${VISUAL_TOKENS.spacing[1]};
   height: 24px;
   justify-content: center;
-  min-width: ${({ $iconOnly }) => ($iconOnly ? '24px' : 'auto')};
+  min-width: ${({ $iconOnly }) => ($iconOnly ? '24px' : '0')};
+  max-width: 100%;
   padding: ${({ $iconOnly }) =>
     $iconOnly ? '0' : `0 ${VISUAL_TOKENS.spacing[2]}`};
   white-space: nowrap;
@@ -705,7 +905,21 @@ const NavbarActionLabel = styled.span<{ $color?: string }>`
   font-size: inherit;
   font-weight: inherit;
   line-height: 1.4;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
   white-space: nowrap;
+`;
+
+const DesktopOnlyNavbarTrailing = styled.div`
+  align-items: center;
+  display: none;
+  gap: ${VISUAL_TOKENS.spacing[1]};
+  height: 100%;
+
+  @media (min-width: ${theme.breakpoints.md}px) {
+    display: inline-flex;
+  }
 `;
 
 const NavbarActionSeparator = styled.div`
@@ -713,6 +927,37 @@ const NavbarActionSeparator = styled.div`
   border-radius: 56px;
   height: 100%;
   width: 1px;
+`;
+
+const PinnedActionButton = styled(NavbarActionButton)<{
+  $pinnedActionIndex: number;
+}>`
+  animation: pinnedActionIn 340ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: calc(
+    ${({ $pinnedActionIndex }) => $pinnedActionIndex} * 90ms
+  );
+  display: none;
+  gap: 4px;
+  padding: 0 6px;
+
+  @media (min-width: ${theme.breakpoints.md}px) {
+    display: inline-flex;
+  }
+
+  @keyframes pinnedActionIn {
+    from {
+      opacity: 0;
+      transform: translateY(-6px) scale(0.94);
+    }
+    60% {
+      opacity: 1;
+      transform: translateY(1px) scale(1.02);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
 `;
 
 const IndexSurface = styled.div`
@@ -776,12 +1021,16 @@ const TinyDot = styled.div`
 
 const ViewActions = styled.div`
   align-items: center;
-  display: flex;
+  display: none;
   flex: 0 0 auto;
   gap: 2px;
   margin-left: auto;
   position: relative;
   z-index: 1;
+
+  @media (min-width: ${theme.breakpoints.md}px) {
+    display: flex;
+  }
 `;
 
 const ViewAction = styled.span`
@@ -1144,16 +1393,18 @@ const FaviconImage = styled.img`
   width: 100%;
 `;
 
-// -- Icon helpers --
-
 const TABLER_ICON_MAP: Record<string, typeof IconBuildingSkyscraper> = {
   book: IconBook,
   buildingSkyscraper: IconBuildingSkyscraper,
+  calendarEvent: IconCalendarEvent,
   checkbox: IconCheckbox,
   folder: IconFolder,
   layoutDashboard: IconLayoutDashboard,
+  mapPin: IconMapPin,
   notes: IconNotes,
+  planet: IconPlanet,
   playerPlay: IconPlayerPlay,
+  rocket: IconRocket,
   settings: IconSettings,
   settingsAutomation: IconSettingsAutomation,
   targetArrow: IconTargetArrow,
@@ -1168,18 +1419,25 @@ const HEADER_ICON_MAP: Record<string, typeof IconBuildingSkyscraper> = {
   arr: IconMoneybag,
   createdBy: IconCreativeCommonsSa,
   employees: IconUsers,
+  heightMeters: IconRuler,
   icp: IconTarget,
   industry: IconBuildingFactory2,
+  launchDate: IconCalendarEvent,
   linkedin: IconBrandLinkedin,
   mainContact: IconUser,
+  manufacturer: IconBuildingFactory2,
+  massKg: IconWeight,
+  name: IconRocket,
   opportunities: IconTargetArrow,
+  reusable: IconRefresh,
+  serialNumber: IconBarcode,
+  status: IconProgress,
+  targetOrbit: IconPlanet,
   url: IconLink,
 };
 
-// -- Utility functions --
-
-const failedAvatarUrls = new Set<string>();
-const failedFaviconUrls = new Set<string>();
+const failedAvatarUrls = createBoundedFailureCache(256);
+const failedFaviconUrls = createBoundedFailureCache(256);
 
 function getInitials(value: string) {
   return value
@@ -1294,10 +1552,17 @@ function findContainingFolderId(
 function renderPageDefinition(
   page: HeroPageDefinition,
   onNavigateToLabel?: (label: string) => void,
+  pageKey?: string,
 ) {
   switch (page.type) {
     case 'table':
-      return <TablePage page={page} onNavigateToLabel={onNavigateToLabel} />;
+      return (
+        <TablePage
+          key={pageKey}
+          page={page}
+          onNavigateToLabel={onNavigateToLabel}
+        />
+      );
     case 'kanban':
       return PAGE_RENDERERS.kanban(page);
     case 'dashboard':
@@ -1340,7 +1605,7 @@ function renderNavbarAction(
           <ActionIcon
             aria-hidden
             size={VISUAL_TOKENS.icon.size.sm}
-            stroke={VISUAL_TOKENS.icon.stroke.sm}
+            stroke={NAVBAR_ACTION_TABLER_STROKE}
           />
         </NavbarActionIconWrap>
       ) : null}
@@ -1350,12 +1615,12 @@ function renderNavbarAction(
         </NavbarActionLabel>
       ) : null}
       {action.trailingLabel ? (
-        <>
+        <DesktopOnlyNavbarTrailing>
           <NavbarActionSeparator />
           <NavbarActionLabel $color={VISUAL_TOKENS.font.color.light}>
             {action.trailingLabel}
           </NavbarActionLabel>
-        </>
+        </DesktopOnlyNavbarTrailing>
       ) : null}
     </NavbarActionButton>
   );
@@ -1370,8 +1635,6 @@ function renderNavbarAction(
 
   return button;
 }
-
-// -- Small icon wrappers --
 
 type MiniIconProps = {
   color?: string;
@@ -1504,8 +1767,6 @@ function CopyMini({ color = COLORS.textSecondary, size = 14 }: MiniIconProps) {
   );
 }
 
-// -- Favicon logo component --
-
 function FaviconLogo({
   src,
   domain,
@@ -1563,8 +1824,6 @@ function FaviconLogo({
   );
 }
 
-// -- Sidebar icon rendering --
-
 function PersonAvatarContent({ token }: { token: HeroCellPerson }) {
   const [localFailedUrl, setLocalFailedUrl] = useState<string | null>(null);
   const showAvatar =
@@ -1590,13 +1849,17 @@ function PersonAvatarContent({ token }: { token: HeroCellPerson }) {
   return token.shortLabel ?? getInitials(token.name);
 }
 
-function renderSidebarIcon(icon: HeroSidebarIcon): ReactNode {
+function renderSidebarIcon(
+  icon: HeroSidebarIcon,
+  pulse: boolean = false,
+): ReactNode {
   if (icon.kind === 'brand') {
     return (
       <SidebarIconSurface
         $background="transparent"
         $border="transparent"
         $color={COLORS.textSecondary}
+        $pulse={pulse}
       >
         <FaviconLogo
           domain={
@@ -1663,6 +1926,7 @@ function renderSidebarIcon(icon: HeroSidebarIcon): ReactNode {
       $background={tone.background}
       $border={tone.border}
       $color={tone.color}
+      $pulse={pulse}
     >
       {TablerIcon ? (
         <TablerIcon
@@ -1694,8 +1958,6 @@ function renderSidebarIcon(icon: HeroSidebarIcon): ReactNode {
   );
 }
 
-// -- Sidebar item component --
-
 function SidebarItemComponent({
   collapsible = false,
   expanded = false,
@@ -1706,6 +1968,7 @@ function SidebarItemComponent({
   onToggleExpanded,
   onSelect,
   selectedLabel,
+  highlightedItemId,
 }: {
   collapsible?: boolean;
   expanded?: boolean;
@@ -1716,6 +1979,7 @@ function SidebarItemComponent({
   onToggleExpanded?: () => void;
   onSelect?: (label: string) => void;
   selectedLabel?: string;
+  highlightedItemId?: string;
 }) {
   const showBranch = depth > 0;
   const rowSelectable = interactive && item.href === undefined && !collapsible;
@@ -1725,12 +1989,18 @@ function SidebarItemComponent({
     rowSelectable &&
     selectedLabel !== undefined &&
     item.label === selectedLabel;
+  const rowHighlighted = highlightedItemId === item.id;
   const childItems = item.children ?? [];
+  const iconTone =
+    'tone' in item.icon && typeof item.icon.tone === 'string'
+      ? item.icon.tone
+      : 'gray';
+  const highlightRgb = SIDEBAR_TONE_RGB[iconTone] ?? SIDEBAR_TONE_RGB.gray;
   const rowContent = (
     <>
       {showBranch ? <SidebarBranchCell $isLastChild={isLastChild} /> : null}
       <SidebarRowMain $withBranch={showBranch}>
-        {renderSidebarIcon(item.icon)}
+        {renderSidebarIcon(item.icon, rowHighlighted)}
         <SidebarItemText>
           <SidebarItemLabel $active={rowActive}>{item.label}</SidebarItemLabel>
           {item.meta ? <SidebarItemMeta>· {item.meta}</SidebarItemMeta> : null}
@@ -1763,6 +2033,8 @@ function SidebarItemComponent({
         <SidebarItemRow
           $active={rowActive}
           $depth={depth}
+          $highlightRgb={rowHighlighted ? highlightRgb : undefined}
+          $highlighted={rowHighlighted}
           $interactive={rowInteractive}
           $withBranch={showBranch}
           onClick={
@@ -1784,6 +2056,7 @@ function SidebarItemComponent({
             <SidebarItemComponent
               key={child.id}
               depth={depth + 1}
+              highlightedItemId={highlightedItemId}
               isLastChild={index === childItems.length - 1}
               interactive={interactive}
               item={child}
@@ -1796,8 +2069,6 @@ function SidebarItemComponent({
     </>
   );
 }
-
-// -- Cell rendering components --
 
 function PersonTokenCell({
   token,
@@ -1998,11 +2269,7 @@ function renderCellValue(
   }
 }
 
-// -- Main component --
-
 export function HomeVisual({ visual }: { visual: HeroVisualType }) {
-  const shellRef = useRef<HTMLDivElement>(null);
-
   const defaultActiveLabel =
     visual.favoritesNav?.find((item) => item.active)?.label ??
     visual.workspaceNav.find((entry) => !isFolder(entry) && entry.active)
@@ -2011,6 +2278,11 @@ export function HomeVisual({ visual }: { visual: HeroVisualType }) {
     '';
 
   const [activeLabel, setActiveLabel] = useState(defaultActiveLabel);
+  const [createdObjectIds, setCreatedObjectIds] = useState<string[]>([]);
+  const [revealedObjectIds, setRevealedObjectIds] = useState<string[]>([]);
+  const [highlightedItemId, setHighlightedItemId] = useState<string | null>(
+    null,
+  );
   const [openFolderIds, setOpenFolderIds] = useState(() => {
     const activeFolderId = findContainingFolderId(
       visual.workspaceNav,
@@ -2029,7 +2301,6 @@ export function HomeVisual({ visual }: { visual: HeroVisualType }) {
       return [];
     });
   });
-  const [tilt, setTilt] = useState({ x: 0, y: 0 });
   const pageDefaults = useMemo(
     () => ({
       defaultActions: visual.actions ?? [],
@@ -2038,13 +2309,70 @@ export function HomeVisual({ visual }: { visual: HeroVisualType }) {
     [visual.actions, visual.tableWidth],
   );
 
+  const workspaceNav = useMemo<HeroSidebarEntry[]>(() => {
+    if (createdObjectIds.length === 0) {
+      return visual.workspaceNav;
+    }
+
+    const prepended = [...createdObjectIds]
+      .reverse()
+      .map(
+        (id) =>
+          CRM_OBJECT_SEQUENCE.find((entry) => entry.id === id)?.sidebarItem,
+      )
+      .filter((item): item is NonNullable<typeof item> => item !== undefined);
+
+    return [...prepended, ...visual.workspaceNav];
+  }, [createdObjectIds, visual.workspaceNav]);
+
+  const handleObjectCreated = useCallback((id: string) => {
+    setRevealedObjectIds((current) =>
+      current.includes(id) ? current : [...current, id],
+    );
+    if (id === COMPANIES_ITEM_ID) {
+      setActiveLabel(COMPANIES_ITEM_LABEL);
+      setHighlightedItemId(COMPANIES_ITEM_ID);
+      return;
+    }
+    const entry = CRM_OBJECT_SEQUENCE.find((candidate) => candidate.id === id);
+    if (!entry) {
+      return;
+    }
+    setCreatedObjectIds((current) =>
+      current.includes(id) ? current : [...current, id],
+    );
+    setActiveLabel(entry.label);
+    setHighlightedItemId(entry.id);
+  }, []);
+
+  const handleChatReset = useCallback(() => {
+    setCreatedObjectIds([]);
+    setRevealedObjectIds([]);
+    setHighlightedItemId(null);
+    setActiveLabel(defaultActiveLabel);
+  }, [defaultActiveLabel]);
+
+  const handleJumpToConversationEnd = useCallback(() => {
+    setCreatedObjectIds(COMPLETED_CREATED_OBJECT_IDS);
+    setRevealedObjectIds(COMPLETED_REVEALED_OBJECT_IDS);
+    setHighlightedItemId(null);
+    setActiveLabel(COMPLETED_ACTIVE_OBJECT_LABEL);
+  }, []);
+
+  useEffect(() => {
+    if (highlightedItemId === null) {
+      return undefined;
+    }
+    const id = window.setTimeout(() => setHighlightedItemId(null), 2000);
+    return () => window.clearTimeout(id);
+  }, [highlightedItemId]);
+
   const activeItem = useMemo(
     () =>
       (visual.favoritesNav
         ? findActiveItem(visual.favoritesNav, activeLabel, pageDefaults)
-        : undefined) ??
-      findActiveItem(visual.workspaceNav, activeLabel, pageDefaults),
-    [activeLabel, pageDefaults, visual.favoritesNav, visual.workspaceNav],
+        : undefined) ?? findActiveItem(workspaceNav, activeLabel, pageDefaults),
+    [activeLabel, pageDefaults, visual.favoritesNav, workspaceNav],
   );
   const activePage = useMemo(
     () => (activeItem ? normalizeHeroPage(activeItem, pageDefaults) : null),
@@ -2053,6 +2381,10 @@ export function HomeVisual({ visual }: { visual: HeroVisualType }) {
   const activeHeader = activePage?.header;
   const activeActions = activeHeader?.actions ?? [];
   const navbarActions = activeHeader?.navbarActions;
+  const pinnedActions =
+    activeItem && revealedObjectIds.includes(activeItem.id)
+      ? OBJECT_PINNED_ACTIONS[activeItem.id]
+      : undefined;
   const showPageCount = activeHeader?.count !== undefined;
   const showListIcon = activeHeader?.showListIcon ?? false;
   const showViewBar =
@@ -2061,29 +2393,10 @@ export function HomeVisual({ visual }: { visual: HeroVisualType }) {
     activePage.type !== 'dashboard' &&
     activePage.type !== 'workflow';
 
-  const handleShellPointerMove = (event: ReactPointerEvent<HTMLDivElement>) => {
-    if (event.pointerType !== 'mouse' || !shellRef.current) {
-      return;
-    }
-
-    const bounds = shellRef.current.getBoundingClientRect();
-    const horizontal = ((event.clientX - bounds.left) / bounds.width - 0.5) * 2;
-    const vertical = ((event.clientY - bounds.top) / bounds.height - 0.5) * 2;
-
-    setTilt({
-      x: Number((-vertical * 2.2).toFixed(2)),
-      y: Number((horizontal * 3.8).toFixed(2)),
-    });
-  };
-
-  const resetTilt = () => {
-    setTilt({ x: 0, y: 0 });
-  };
-
   const handleSelectLabel = (label: string) => {
     setActiveLabel(label);
 
-    const containingFolderId = findContainingFolderId(visual.workspaceNav, label);
+    const containingFolderId = findContainingFolderId(workspaceNav, label);
 
     if (!containingFolderId) {
       return;
@@ -2110,6 +2423,7 @@ export function HomeVisual({ visual }: { visual: HeroVisualType }) {
         <SidebarItemComponent
           collapsible
           expanded={openFolderIds.includes(entry.id)}
+          highlightedItemId={highlightedItemId ?? undefined}
           key={entry.id}
           item={{
             id: entry.id,
@@ -2127,6 +2441,7 @@ export function HomeVisual({ visual }: { visual: HeroVisualType }) {
 
     return (
       <SidebarItemComponent
+        highlightedItemId={highlightedItemId ?? undefined}
         key={entry.id}
         item={entry}
         onSelect={handleSelectLabel}
@@ -2137,168 +2452,199 @@ export function HomeVisual({ visual }: { visual: HeroVisualType }) {
 
   return (
     <StyledHomeVisual>
-      <ShellScene
-        ref={shellRef}
-        onPointerLeave={resetTilt}
-        onPointerMove={handleShellPointerMove}
-        style={{
-          transform: `perspective(1600px) rotateX(${tilt.x}deg) rotateY(${tilt.y}deg)`,
-        }}
-      >
-        <Frame>
-          <AppLayout>
-            <SidebarPanel>
-              <SidebarTopBar>
-                <WorkspaceMenu>
-                  <WorkspaceIcon>
-                    <WorkspaceIconImage
-                      alt=""
-                      aria-hidden="true"
-                      src={APPLE_WORKSPACE_LOGO_SRC}
-                    />
-                  </WorkspaceIcon>
-                  <WorkspaceLabel>{visual.workspace.name}</WorkspaceLabel>
-                  <ChevronDownMini color={COLORS.textLight} size={12} />
-                </WorkspaceMenu>
-                <SidebarTopActions>
-                  <SidebarIconButton aria-hidden="true">
-                    <SearchMini />
-                  </SidebarIconButton>
-                  <SidebarIconButton aria-hidden="true">
-                    <CollapseSidebarMini />
-                  </SidebarIconButton>
-                </SidebarTopActions>
-              </SidebarTopBar>
-
-              <SidebarControls>
-                <SegmentedRail aria-hidden="true">
-                  <Segment $selected>
-                    <HomeMini />
-                  </Segment>
-                  <Segment>
-                    <CommentMini />
-                  </Segment>
-                </SegmentedRail>
-                <NewChat aria-hidden="true">
-                  <MessageCirclePlusMini />
-                  <NewChatLabel>New chat</NewChatLabel>
-                </NewChat>
-              </SidebarControls>
-
-              <SidebarScroll>
-                {visual.favoritesNav && visual.favoritesNav.length > 0 ? (
-                  <SidebarSection>
-                    <SidebarSectionLabel>Favorites</SidebarSectionLabel>
-                    {visual.favoritesNav.map((item) => (
-                      <SidebarItemComponent
-                        key={item.id}
-                        item={item}
-                        onSelect={handleSelectLabel}
-                        selectedLabel={activeLabel}
+      <ShellScene>
+        <WindowOrderProvider>
+          <DraggableAppWindow>
+            <AppLayout>
+              <SidebarPanel>
+                <SidebarTopBar>
+                  <WorkspaceMenu>
+                    <WorkspaceIcon>
+                      <WorkspaceIconImage
+                        alt=""
+                        aria-hidden="true"
+                        src={APPLE_WORKSPACE_LOGO_SRC}
                       />
-                    ))}
+                    </WorkspaceIcon>
+                    <WorkspaceLabel>{visual.workspace.name}</WorkspaceLabel>
+                    <ChevronDownMini color={COLORS.textLight} size={12} />
+                  </WorkspaceMenu>
+                  <SidebarTopActions>
+                    <SidebarIconButton aria-hidden="true">
+                      <SearchMini />
+                    </SidebarIconButton>
+                    <SidebarIconButton aria-hidden="true">
+                      <CollapseSidebarMini />
+                    </SidebarIconButton>
+                  </SidebarTopActions>
+                </SidebarTopBar>
+
+                <SidebarControls>
+                  <SegmentedRail aria-hidden="true">
+                    <Segment $selected>
+                      <HomeMini />
+                    </Segment>
+                    <Segment>
+                      <CommentMini />
+                    </Segment>
+                  </SegmentedRail>
+                  <NewChat aria-hidden="true">
+                    <MessageCirclePlusMini />
+                    <NewChatLabel>New chat</NewChatLabel>
+                  </NewChat>
+                </SidebarControls>
+
+                <SidebarScroll>
+                  {visual.favoritesNav && visual.favoritesNav.length > 0 ? (
+                    <SidebarSection>
+                      <SidebarSectionLabel>Favorites</SidebarSectionLabel>
+                      {visual.favoritesNav.map((item) => (
+                        <SidebarItemComponent
+                          highlightedItemId={highlightedItemId ?? undefined}
+                          key={item.id}
+                          item={item}
+                          onSelect={handleSelectLabel}
+                          selectedLabel={activeLabel}
+                        />
+                      ))}
+                    </SidebarSection>
+                  ) : null}
+                  <SidebarSection>
+                    <SidebarSectionLabel $workspace>
+                      Workspace
+                    </SidebarSectionLabel>
+                    {workspaceNav.map(renderSidebarEntry)}
                   </SidebarSection>
-                ) : null}
-                <SidebarSection>
-                  <SidebarSectionLabel $workspace>
-                    Workspace
-                  </SidebarSectionLabel>
-                  {visual.workspaceNav.map(renderSidebarEntry)}
-                </SidebarSection>
-              </SidebarScroll>
-            </SidebarPanel>
+                </SidebarScroll>
+              </SidebarPanel>
 
-            <RightPane>
-              <NavbarBar>
-                <Breadcrumb>
-                  <BreadcrumbTag>
-                    {activeItem ? renderSidebarIcon(activeItem.icon) : null}
-                    <CrumbLabel>{activeLabel}</CrumbLabel>
-                  </BreadcrumbTag>
-                </Breadcrumb>
+              <RightPane>
+                <NavbarBar>
+                  <Breadcrumb>
+                    <BreadcrumbTag>
+                      {activeItem ? renderSidebarIcon(activeItem.icon) : null}
+                      <CrumbLabel>{activeLabel}</CrumbLabel>
+                    </BreadcrumbTag>
+                  </Breadcrumb>
 
-                <NavbarActions aria-hidden>
-                  {navbarActions ? (
-                    navbarActions.map(renderNavbarAction)
-                  ) : (
-                    <>
-                      <DesktopOnlyNavbarAction>
+                  <NavbarActions aria-hidden>
+                    {navbarActions ? (
+                      navbarActions.map(renderNavbarAction)
+                    ) : (
+                      <>
+                        {pinnedActions?.map((action, index) => (
+                          <PinnedActionButton
+                            $pinnedActionIndex={index}
+                            key={`pinned-${activeItem?.id}-${action.label}-${index}`}
+                          >
+                            <NavbarActionIconWrap>
+                              {(() => {
+                                const Icon =
+                                  NAVBAR_ACTION_ICON_MAP[action.icon] ??
+                                  IconPlus;
+                                return (
+                                  <Icon
+                                    aria-hidden
+                                    size={VISUAL_TOKENS.icon.size.sm}
+                                    stroke={NAVBAR_ACTION_TABLER_STROKE}
+                                  />
+                                );
+                              })()}
+                            </NavbarActionIconWrap>
+                            <NavbarActionLabel>
+                              {action.label}
+                            </NavbarActionLabel>
+                          </PinnedActionButton>
+                        ))}
+                        <DesktopOnlyNavbarAction>
+                          <NavbarActionButton>
+                            <NavbarActionIconWrap>
+                              <IconPlus
+                                aria-hidden
+                                size={VISUAL_TOKENS.icon.size.sm}
+                                stroke={NAVBAR_ACTION_TABLER_STROKE}
+                              />
+                            </NavbarActionIconWrap>
+                            <NavbarActionLabel>New</NavbarActionLabel>
+                          </NavbarActionButton>
+                        </DesktopOnlyNavbarAction>
                         <NavbarActionButton>
                           <NavbarActionIconWrap>
-                            <IconPlus
+                            <IconDotsVertical
                               aria-hidden
                               size={VISUAL_TOKENS.icon.size.sm}
-                              stroke={VISUAL_TOKENS.icon.stroke.sm}
+                              stroke={NAVBAR_ACTION_TABLER_STROKE}
                             />
                           </NavbarActionIconWrap>
-                          <NavbarActionLabel>New Record</NavbarActionLabel>
+                          <DesktopOnlyNavbarTrailing>
+                            <NavbarActionSeparator />
+                            <NavbarActionLabel
+                              $color={VISUAL_TOKENS.font.color.light}
+                            >
+                              ⌘K
+                            </NavbarActionLabel>
+                          </DesktopOnlyNavbarTrailing>
                         </NavbarActionButton>
-                      </DesktopOnlyNavbarAction>
-                      <NavbarActionButton>
-                        <NavbarActionIconWrap>
-                          <IconDotsVertical
-                            aria-hidden
-                            size={VISUAL_TOKENS.icon.size.sm}
-                            stroke={VISUAL_TOKENS.icon.stroke.sm}
-                          />
-                        </NavbarActionIconWrap>
-                        <NavbarActionSeparator />
-                        <NavbarActionLabel
-                          $color={VISUAL_TOKENS.font.color.light}
-                        >
-                          ⌘K
-                        </NavbarActionLabel>
-                      </NavbarActionButton>
-                    </>
-                  )}
-                </NavbarActions>
-              </NavbarBar>
+                      </>
+                    )}
+                  </NavbarActions>
+                </NavbarBar>
 
-              <IndexSurface>
-                {showViewBar ? (
-                  <ViewbarBar>
-                    <ViewSwitcher aria-hidden="true">
-                      {showListIcon ? (
-                        <>
-                          {activePage?.type === 'kanban' ? (
-                            <KanbanMini />
-                          ) : (
-                            <ListMini />
-                          )}
+                <IndexSurface>
+                  {showViewBar ? (
+                    <ViewbarBar>
+                      <ViewSwitcher aria-hidden="true">
+                        {showListIcon ? (
+                          <>
+                            {activePage?.type === 'kanban' ? (
+                              <KanbanMini />
+                            ) : (
+                              <ListMini />
+                            )}
+                            <ViewName>
+                              {activeHeader?.title ?? activeLabel}
+                            </ViewName>
+                            {showPageCount ? (
+                              <>
+                                <TinyDot />
+                                <ViewCount>{activeHeader?.count}</ViewCount>
+                                <ChevronDownMini color={COLORS.textLight} />
+                              </>
+                            ) : null}
+                          </>
+                        ) : (
                           <ViewName>
                             {activeHeader?.title ?? activeLabel}
                           </ViewName>
-                          {showPageCount ? (
-                            <>
-                              <TinyDot />
-                              <ViewCount>{activeHeader?.count}</ViewCount>
-                              <ChevronDownMini color={COLORS.textLight} />
-                            </>
-                          ) : null}
-                        </>
-                      ) : (
-                        <ViewName>
-                          {activeHeader?.title ?? activeLabel}
-                        </ViewName>
-                      )}
-                    </ViewSwitcher>
-                    {activeActions.length > 0 ? (
-                      <ViewActions>
-                        {activeActions.map((action) => (
-                          <ViewAction key={action}>{action}</ViewAction>
-                        ))}
-                      </ViewActions>
-                    ) : null}
-                  </ViewbarBar>
-                ) : null}
+                        )}
+                      </ViewSwitcher>
+                      {activeActions.length > 0 ? (
+                        <ViewActions>
+                          {activeActions.map((action) => (
+                            <ViewAction key={action}>{action}</ViewAction>
+                          ))}
+                        </ViewActions>
+                      ) : null}
+                    </ViewbarBar>
+                  ) : null}
 
-                {activePage
-                  ? renderPageDefinition(activePage, handleSelectLabel)
-                  : null}
-              </IndexSurface>
-            </RightPane>
-          </AppLayout>
-        </Frame>
+                  {activePage
+                    ? renderPageDefinition(
+                        activePage,
+                        handleSelectLabel,
+                        activeItem?.id ?? activeLabel,
+                      )
+                    : null}
+                </IndexSurface>
+              </RightPane>
+            </AppLayout>
+          </DraggableAppWindow>
+          <DraggableTerminal
+            onObjectCreated={handleObjectCreated}
+            onChatReset={handleChatReset}
+            onJumpToConversationEnd={handleJumpToConversationEnd}
+          />
+        </WindowOrderProvider>
       </ShellScene>
     </StyledHomeVisual>
   );

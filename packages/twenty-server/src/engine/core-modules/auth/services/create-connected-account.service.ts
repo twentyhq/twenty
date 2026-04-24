@@ -7,7 +7,9 @@ import { EntityManager, Repository } from 'typeorm';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { resolveRolePermissionConfig } from 'src/engine/twenty-orm/utils/resolve-role-permission-config.util';
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 export type CreateConnectedAccountInput = {
@@ -47,10 +49,18 @@ export class CreateConnectedAccountService {
     const authContext = buildSystemAuthContext(workspaceId);
 
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+      const workspaceContext = getWorkspaceContext();
+      const rolePermissionConfig = resolveRolePermissionConfig({
+        authContext,
+        userWorkspaceRoleMap: workspaceContext.userWorkspaceRoleMap,
+        apiKeyRoleMap: workspaceContext.apiKeyRoleMap,
+      });
+
       const workspaceMemberRepo =
         await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
           workspaceId,
           'workspaceMember',
+          rolePermissionConfig ?? undefined,
         );
 
       const member = await workspaceMemberRepo.findOne({

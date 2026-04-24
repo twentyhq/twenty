@@ -3,8 +3,8 @@ import {
   RESEND_CONTACT_OBJECT_UNIVERSAL_IDENTIFIER,
   RESEND_EMAILS_ON_CONTACT_FIELD_UNIVERSAL_IDENTIFIER,
   RESEND_EMAIL_OBJECT_UNIVERSAL_IDENTIFIER,
-} from 'src/modules/resend/constants/universal-identifiers';
-import { defineField, FieldType, RelationType } from 'twenty-sdk';
+} from '@modules/resend/constants/universal-identifiers';
+import { defineField, FieldType, RelationType } from 'twenty-sdk/define';
 
 export default defineField({
   universalIdentifier: RESEND_EMAILS_ON_CONTACT_FIELD_UNIVERSAL_IDENTIFIER,

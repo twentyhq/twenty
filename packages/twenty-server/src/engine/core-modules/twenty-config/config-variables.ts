@@ -20,7 +20,6 @@ import { SupportDriver } from 'src/engine/core-modules/twenty-config/interfaces/
 import { ApplicationLogDriver } from 'src/engine/core-modules/application-logs/interfaces/application-log-driver.enum';
 import { CaptchaDriverType } from 'src/engine/core-modules/captcha/interfaces';
 import { CodeInterpreterDriverType } from 'src/engine/core-modules/code-interpreter/code-interpreter.interface';
-import { WebSearchDriverType } from 'src/engine/core-modules/web-search/web-search.interface';
 import { EmailDriver } from 'src/engine/core-modules/email/enums/email-driver.enum';
 import { ExceptionHandlerDriver } from 'src/engine/core-modules/exception-handler/interfaces';
 import { StorageDriverType } from 'src/engine/core-modules/file-storage/interfaces';
@@ -676,35 +675,6 @@ export class ConfigVariables {
   CODE_INTERPRETER_TIMEOUT_MS = 300_000;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.LLM,
-    description:
-      'Web search driver type - EXA for Exa search, DISABLED to turn off',
-    type: ConfigVariableType.STRING,
-    options: Object.values(WebSearchDriverType),
-  })
-  @IsOptional()
-  @CastToUpperSnakeCase()
-  WEB_SEARCH_DRIVER: WebSearchDriverType = WebSearchDriverType.DISABLED;
-
-  @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.LLM,
-    description: 'Exa API key for web search',
-    type: ConfigVariableType.STRING,
-    isSensitive: true,
-  })
-  @ValidateIf((env) => env.WEB_SEARCH_DRIVER === WebSearchDriverType.EXA)
-  EXA_API_KEY?: string;
-
-  @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.LLM,
-    description:
-      'When true, use native provider search (Anthropic/OpenAI) when available. When false, always prefer the configured driver (e.g. Exa).',
-    type: ConfigVariableType.BOOLEAN,
-  })
-  @IsOptional()
-  WEB_SEARCH_PREFER_NATIVE = false;
-
-  @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ANALYTICS_CONFIG,
     description: 'Enable or disable analytics for telemetry',
     type: ConfigVariableType.BOOLEAN,
@@ -783,7 +753,8 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.BILLING_CONFIG,
-    description: 'Amount of credits for the free trial without credit card',
+    description:
+      'Amount of credits for the free trial without credit card (in microCredits)',
     type: ConfigVariableType.NUMBER,
   })
   @CastToPositiveNumber()
@@ -792,7 +763,8 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.BILLING_CONFIG,
-    description: 'Amount of credits for the free trial with credit card',
+    description:
+      'Amount of credits for the free trial with credit card (in microCredits)',
     type: ConfigVariableType.NUMBER,
   })
   @CastToPositiveNumber()
@@ -1129,6 +1101,23 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.SERVER_CONFIG,
     description:
+      'Express "trust proxy" setting. Controls whether X-Forwarded-* ' +
+      'headers are honored — required for request.protocol to return ' +
+      '"https" when TLS is terminated upstream (reverse proxy, ingress, ' +
+      'Cloudflare, etc.). Default trusts loopback + RFC1918/ULA peers, ' +
+      'which is correct when NestJS runs behind a reverse proxy (our ' +
+      'recommended self-host setup). Set to "false" when NestJS is ' +
+      'exposed directly to the internet. Accepts any value Express ' +
+      'supports — see https://expressjs.com/en/guide/behind-proxies.html.',
+    type: ConfigVariableType.STRING,
+    isEnvOnly: true,
+  })
+  @IsOptional()
+  TRUST_PROXY: string = 'loopback, linklocal, uniquelocal';
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.SERVER_CONFIG,
+    description:
       'Unique identifier for this server instance, generated as UUID v4 during database seeding',
     type: ConfigVariableType.STRING,
     isEnvOnly: true,
@@ -1382,6 +1371,15 @@ export class ConfigVariables {
   })
   @IsOptional()
   AI_PROVIDERS: AiProvidersConfig = {};
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.LLM,
+    description:
+      'Storage path for the AI catalog override (e.g. config/ai-catalog.json). When set, the catalog is fetched from the configured storage backend at startup instead of using the built-in ai-providers.json.',
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  AI_CATALOG_STORAGE_PATH?: string;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LLM,

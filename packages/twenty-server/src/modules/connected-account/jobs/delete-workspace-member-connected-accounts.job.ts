@@ -39,6 +39,7 @@ export class DeleteWorkspaceMemberConnectedAccountsCleanupJob {
         await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
           workspaceId,
           'workspaceMember',
+          { shouldBypassPermissionChecks: true },
         );
 
       const member = await workspaceMemberRepo.findOne({

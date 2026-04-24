@@ -1,10 +1,11 @@
 import { useParams } from 'react-router-dom';
 import { useQuery } from '@apollo/client/react';
-import { FindOneAdminApplicationRegistrationDocument } from '~/generated-metadata/graphql';
+import { FindOneAdminApplicationRegistrationDocument } from '~/generated-admin/graphql';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { SettingsPath } from 'twenty-shared/types';
 import { useLingui } from '@lingui/react/macro';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { APPLICATION_REGISTRATION_ADMIN_PATH } from '@/settings/admin-panel/apps/constants/ApplicationRegistrationAdminPath';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import {
@@ -26,6 +27,7 @@ const REGISTRATION_DETAIL_TAB_LIST_ID =
 
 export const SettingsAdminApplicationRegistrationDetail = () => {
   const { t } = useLingui();
+  const apolloAdminClient = useApolloAdminClient();
 
   const activeTabId = useAtomComponentStateValue(
     activeTabIdComponentState,
@@ -39,6 +41,7 @@ export const SettingsAdminApplicationRegistrationDetail = () => {
   const { data, loading } = useQuery(
     FindOneAdminApplicationRegistrationDocument,
     {
+      client: apolloAdminClient,
       variables: { id: applicationRegistrationId },
       skip: !applicationRegistrationId,
     },
@@ -82,7 +85,7 @@ export const SettingsAdminApplicationRegistrationDetail = () => {
         return (
           <SettingsApplicationRegistrationGeneralTab
             registration={registration}
-            displayAdminToggles
+            fromAdmin
           />
         );
     }

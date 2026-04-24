@@ -34,6 +34,7 @@ import { MarketplaceCatalogSyncCommand } from 'src/engine/core-modules/applicati
     MarketplaceCatalogSyncService,
     MarketplaceQueryService,
     MarketplaceCatalogSyncCronCommand,
+    MarketplaceService,
   ],
 })
 export class MarketplaceModule {}

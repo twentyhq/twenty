@@ -14,7 +14,7 @@ import { SupportDriver } from 'src/engine/core-modules/twenty-config/interfaces/
 
 import { MaintenanceModeService } from 'src/engine/core-modules/admin-panel/maintenance-mode.service';
 import {
-  type ClientAIModelConfig,
+  type ClientAiModelConfig,
   type ClientConfig,
   type NativeModelCapabilities,
 } from 'src/engine/core-modules/client-config/client-config.entity';
@@ -76,7 +76,7 @@ export class ClientConfigService {
         ? (resolvedProviders[providerName]?.label ?? providerName)
         : undefined;
 
-    const aiModels: ClientAIModelConfig[] = availableModels.map(
+    const aiModels: ClientAiModelConfig[] = availableModels.map(
       (registeredModel) => {
         const modelConfig = this.aiModelRegistryService.getModelConfig(
           registeredModel.modelId,

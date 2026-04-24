@@ -88,6 +88,7 @@ export default defineConfig(({ mode }) => {
           include: [path.resolve(__dirname, 'src') + '/**/*.{ts,tsx}'],
           exclude: [
             '**/generated-metadata/**',
+            '**/generated-admin/**',
             '**/testing/mock-data/**',
             '**/testing/jest/**',
             '**/testing/hooks/**',

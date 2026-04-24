@@ -9,12 +9,12 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import {
+  AppTooltip,
   H1Title,
   H1TitleFontColor,
   H2Title,
   IconShare,
   IconTrash,
-  AppTooltip,
   TooltipDelay,
 } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
@@ -50,8 +50,10 @@ const StyledDangerButtonGroup = styled.div`
 
 export const SettingsAdminApplicationRegistrationDangerZone = ({
   registration,
+  fromAdmin = false,
 }: {
   registration: ApplicationRegistration;
+  fromAdmin?: boolean;
 }) => {
   const { t } = useLingui();
   const navigate = useNavigateSettings();
@@ -97,7 +99,28 @@ export const SettingsAdminApplicationRegistrationDangerZone = ({
       await deleteRegistration({
         variables: { id: applicationRegistrationId },
       });
-      navigate(SettingsPath.Applications);
+
+      if (fromAdmin) {
+        navigate(
+          SettingsPath.AdminPanel,
+          undefined,
+          undefined,
+          undefined,
+          '#app',
+        );
+      } else {
+        navigate(
+          SettingsPath.Applications,
+          undefined,
+          undefined,
+          undefined,
+          '#developer',
+        );
+      }
+
+      enqueueSuccessSnackBar({
+        message: t`App deleted successfully`,
+      });
     } catch {
       enqueueErrorSnackBar({
         message: t`Error deleting app`,

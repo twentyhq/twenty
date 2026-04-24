@@ -89,7 +89,7 @@ export const computeFlatDefaultRecordPageLayoutToCreate = ({
     const universalConfiguration = isFieldsWidget
       ? {
           configurationType: WidgetConfigurationType.FIELDS,
-          viewId: recordPageFieldsView.universalIdentifier,
+          viewUniversalIdentifier: recordPageFieldsView.universalIdentifier,
         }
       : {
           configurationType:

@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 
-import type { ImageType } from '@/design-system/components/Image/types/Image';
+import type { ImageType } from '@/design-system/components/Image';
 import type { FeatureTileType } from '@/sections/Feature/types/FeatureTile';
 import { theme } from '@/theme';
 

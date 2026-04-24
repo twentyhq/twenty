@@ -80,7 +80,7 @@ export class AdminPanelStatisticsService {
     }
 
     const results = await this.workspaceRepository.manager.query(
-      `SELECT w.id, w."displayName" AS name, w.subdomain, COUNT(uw.id)::int AS "totalUsers"
+      `SELECT w.id, w."displayName" AS name, w.subdomain, w.logo, COUNT(uw.id)::int AS "totalUsers"
        FROM core.workspace w
        LEFT JOIN core."userWorkspace" uw ON uw."workspaceId" = w.id AND uw."deletedAt" IS NULL
        WHERE ${whereClause}
@@ -95,11 +95,13 @@ export class AdminPanelStatisticsService {
         id: string;
         name: string;
         subdomain: string;
+        logo: string | null;
         totalUsers: number;
       }) => ({
         id: row.id,
         name: row.name ?? '',
         subdomain: row.subdomain ?? '',
+        logo: row.logo ?? null,
         totalUsers: row.totalUsers,
       }),
     );

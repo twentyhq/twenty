@@ -1,14 +1,15 @@
+import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { TableSection } from '@/ui/layout/table/components/TableSection';
-import { Table } from '@/ui/layout/table/components/Table';
 import { t } from '@lingui/core/macro';
-import { H2Title } from 'twenty-ui/display';
+import { H2Title, OverflowingTextWithTooltip } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-type SettingsApplicationNameDescriptionTableItem = {
+export type ApplicationNameDescriptionTableRow = {
+  key: string;
   name: string;
   description?: string | null;
 };
@@ -22,7 +23,7 @@ export const SettingsApplicationNameDescriptionTable = ({
   title: string;
   description: string;
   sectionTitle: string;
-  items: SettingsApplicationNameDescriptionTableItem[];
+  items: ApplicationNameDescriptionTableRow[];
 }) => {
   if (items.length === 0) {
     return null;
@@ -38,14 +39,18 @@ export const SettingsApplicationNameDescriptionTable = ({
         </TableRow>
         <TableSection title={sectionTitle}>
           {items.map((item) => (
-            <TableRow key={item.name} gridAutoColumns="180px 1fr">
+            <TableRow key={item.key} gridAutoColumns="180px 1fr">
               <TableCell
                 color={themeCssVariables.font.color.primary}
                 gap={themeCssVariables.spacing[2]}
+                minWidth="0"
+                overflow="hidden"
               >
-                {item.name}
+                <OverflowingTextWithTooltip text={item.name} />
               </TableCell>
-              <TableCell>{item.description ?? ''}</TableCell>
+              <TableCell minWidth="0" overflow="hidden">
+                <OverflowingTextWithTooltip text={item.description ?? ''} />
+              </TableCell>
             </TableRow>
           ))}
         </TableSection>

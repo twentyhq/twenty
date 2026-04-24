@@ -1,4 +1,5 @@
 import { isNonEmptyString } from '@sniptt/guards';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -42,11 +43,13 @@ export const useNavigationMenuItemFolderOpenState = ({
     lastClickedNavigationMenuItemIdState,
   );
 
+  const [isManuallyClosed, setIsManuallyClosed] = useState(false);
+
   const isExplicitlyOpen = openNavigationMenuItemFolderIds.includes(folderId);
   const hasActiveChild = folderChildrenNavigationMenuItems.some((item) =>
     activeNavigationMenuItemIds.includes(item.id),
   );
-  const isOpen = isExplicitlyOpen || hasActiveChild;
+  const isOpen = isExplicitlyOpen || (hasActiveChild && !isManuallyClosed);
 
   const handleToggle = () => {
     if (isMobile) {
@@ -55,10 +58,13 @@ export const useNavigationMenuItemFolderOpenState = ({
       );
     } else {
       setOpenNavigationMenuItemFolderIds((current) =>
-        current.includes(folderId)
+        isOpen
           ? current.filter((id) => id !== folderId)
-          : [...current, folderId],
+          : current.includes(folderId)
+            ? current
+            : [...current, folderId],
       );
+      setIsManuallyClosed(isOpen);
     }
 
     if (!isOpen) {

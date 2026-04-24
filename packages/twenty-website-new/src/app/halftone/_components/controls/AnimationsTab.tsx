@@ -5,7 +5,7 @@ import {
   formatDecimal,
   formatPercent,
 } from '@/app/halftone/_lib/formatters';
-import type { HalftoneStudioSettings } from '@/app/halftone/_lib/state';
+import type { HalftoneStudioSettings } from '@/lib/halftone/state';
 import {
   ColorControlLabel,
   ColorControlRow,

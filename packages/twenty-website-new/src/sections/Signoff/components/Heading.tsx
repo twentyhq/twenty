@@ -1,27 +1,27 @@
 import { styled } from '@linaria/react';
 
 import { Heading as BaseHeading } from '@/design-system/components';
-import type { HeadingType } from '@/design-system/components/Heading/types/Heading';
-import type { Pages } from '@/enums/pages';
+import type { HeadingType } from '@/design-system/components/Heading';
+import type { Page } from '@/lib/pages';
 import { theme } from '@/theme';
 
 const HeadingWrap = styled.div`
   margin-bottom: ${theme.spacing(2)};
   margin-left: auto;
   margin-right: auto;
-  max-width: 921px;
+  max-width: ${theme.layout.editorial};
   min-width: 0;
   width: 100%;
 
   @media (min-width: ${theme.breakpoints.md}px) {
-    &[data-page='partner'] {
+    &[data-page='partners'] {
       white-space: pre-line;
     }
   }
 `;
 
 type HeadingProps = {
-  page?: Pages;
+  page?: Page;
   segments: HeadingType[];
 };
 

@@ -4,6 +4,7 @@ import { SettingsAdminJobDetailsExpandable } from '@/settings/admin-panel/health
 import { SettingsAdminJobStateBadge } from '@/settings/admin-panel/health-status/components/SettingsAdminJobStateBadge';
 import { SettingsAdminQueueJobRowDropdownMenu } from '@/settings/admin-panel/health-status/components/SettingsAdminQueueJobRowDropdownMenu';
 import { SettingsAdminRetryJobsConfirmationModal } from '@/settings/admin-panel/health-status/components/SettingsAdminRetryJobsConfirmationModal';
+import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { useDeleteJobs } from '@/settings/admin-panel/health-status/hooks/useDeleteJobs';
 import { useRetryJobs } from '@/settings/admin-panel/health-status/hooks/useRetryJobs';
 import { Select } from '@/ui/input/components/Select';
@@ -24,7 +25,7 @@ import {
   JobState,
   type QueueJob,
   GetQueueJobsDocument,
-} from '~/generated-metadata/graphql';
+} from '~/generated-admin/graphql';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
 
 type SettingsAdminQueueJobsTableProps = {
@@ -74,6 +75,7 @@ export const SettingsAdminQueueJobsTable = ({
   queueName,
   onRetentionConfigLoaded,
 }: SettingsAdminQueueJobsTableProps) => {
+  const apolloAdminClient = useApolloAdminClient();
   const [page, setPage] = useState(0);
   const [stateFilter, setStateFilter] = useState<JobState>(JobState.COMPLETED);
   const [expandedJobId, setExpandedJobId] = useState<string | null>(null);
@@ -93,6 +95,7 @@ export const SettingsAdminQueueJobsTable = ({
   const offset = page * LIMIT;
 
   const { data, loading, refetch } = useQuery(GetQueueJobsDocument, {
+    client: apolloAdminClient,
     variables: {
       queueName,
       state: stateFilter,

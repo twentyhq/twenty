@@ -208,7 +208,7 @@ export const ENGINE_COMPONENT_KEY_COMPONENT_MAP: Record<
   ),
   [EngineComponentKey.VIEW_PREVIOUS_AI_CHATS]: (
     <HeadlessOpenSidePanelPageEngineCommand
-      page={SidePanelPages.ViewPreviousAIChats}
+      page={SidePanelPages.ViewPreviousAiChats}
       pageTitle={msg`View Previous AI Chats`}
       pageIcon={IconHistory}
     />

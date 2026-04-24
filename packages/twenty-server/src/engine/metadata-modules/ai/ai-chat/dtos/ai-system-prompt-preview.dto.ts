@@ -1,7 +1,7 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
 
-@ObjectType('AISystemPromptSection')
-export class AISystemPromptSectionDTO {
+@ObjectType('AiSystemPromptSection')
+export class AiSystemPromptSectionDTO {
   @Field(() => String)
   title: string;
 
@@ -12,10 +12,10 @@ export class AISystemPromptSectionDTO {
   estimatedTokenCount: number;
 }
 
-@ObjectType('AISystemPromptPreview')
-export class AISystemPromptPreviewDTO {
-  @Field(() => [AISystemPromptSectionDTO])
-  sections: AISystemPromptSectionDTO[];
+@ObjectType('AiSystemPromptPreview')
+export class AiSystemPromptPreviewDTO {
+  @Field(() => [AiSystemPromptSectionDTO])
+  sections: AiSystemPromptSectionDTO[];
 
   @Field(() => Int)
   estimatedTokenCount: number;

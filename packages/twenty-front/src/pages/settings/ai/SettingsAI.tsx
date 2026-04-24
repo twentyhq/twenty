@@ -22,10 +22,10 @@ import {
 } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { UndecoratedLink } from 'twenty-ui/navigation';
-import { SettingsAIMoreTab } from '~/pages/settings/ai/components/SettingsAIMoreTab';
+import { SettingsAiMoreTab } from '~/pages/settings/ai/components/SettingsAiMoreTab';
 import { SettingsAgentToolsTab } from '~/pages/settings/ai/components/SettingsAgentToolsTab';
-import { SettingsAIModelsTab } from './components/SettingsAIModelsTab';
-import { SettingsAIUsageTab } from './components/SettingsAIUsageTab';
+import { SettingsAiModelsTab } from './components/SettingsAiModelsTab';
+import { SettingsAiUsageTab } from './components/SettingsAiUsageTab';
 import { SettingsAgentSkills } from './components/SettingsAgentSkills';
 import { SETTINGS_AI_TABS } from './constants/SettingsAiTabs';
 
@@ -117,7 +117,7 @@ export const SettingsAI = () => {
       title={t`AI`}
       actionButton={
         isSkillsTab ? (
-          <UndecoratedLink to={getSettingsPath(SettingsPath.AINewSkill)}>
+          <UndecoratedLink to={getSettingsPath(SettingsPath.AiNewSkill)}>
             <Button
               Icon={IconPlus}
               title={t`New Skill`}
@@ -149,11 +149,11 @@ export const SettingsAI = () => {
           tabs={tabs}
           componentInstanceId={SETTINGS_AI_TABS.COMPONENT_INSTANCE_ID}
         />
-        {isModelsTab && <SettingsAIModelsTab />}
+        {isModelsTab && <SettingsAiModelsTab />}
         {isSkillsTab && <SettingsAgentSkills />}
         {isToolsTab && <SettingsAgentToolsTab />}
-        {isUsageTab && <SettingsAIUsageTab />}
-        {isMoreTab && <SettingsAIMoreTab />}
+        {isUsageTab && <SettingsAiUsageTab />}
+        {isMoreTab && <SettingsAiMoreTab />}
       </SettingsPageContainer>
     </SubMenuTopBarContainer>
   );

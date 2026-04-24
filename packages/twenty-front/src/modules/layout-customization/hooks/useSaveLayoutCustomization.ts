@@ -16,6 +16,7 @@ import { type DraftPageLayout } from '@/page-layout/types/DraftPageLayout';
 import { type PageLayout } from '@/page-layout/types/PageLayout';
 import { convertPageLayoutDraftToUpdateInput } from '@/page-layout/utils/convertPageLayoutDraftToUpdateInput';
 import { convertPageLayoutToTabLayouts } from '@/page-layout/utils/convertPageLayoutToTabLayouts';
+import { isDefaultPageLayoutId } from '@/page-layout/utils/isDefaultPageLayoutId';
 import { reInjectDynamicRelationWidgetsFromDraft } from '@/page-layout/utils/reInjectDynamicRelationWidgetsFromDraft';
 import { transformPageLayout } from '@/page-layout/utils/transformPageLayout';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -76,6 +77,10 @@ export const useSaveLayoutCustomization = () => {
       let hasAnyFailure = false;
 
       for (const pageLayoutId of activePageLayoutIds) {
+        if (isDefaultPageLayoutId(pageLayoutId)) {
+          continue;
+        }
+
         const draft = store.get(
           pageLayoutDraftComponentState.atomFamily({
             instanceId: pageLayoutId,

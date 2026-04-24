@@ -1,4 +1,4 @@
-import { defineLogicFunction } from 'twenty-sdk';
+import { defineLogicFunction } from 'twenty-sdk/define';
 
 const handler = async (): Promise<{ message: string }> => {
   return { message: 'Hello, World!' };

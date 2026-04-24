@@ -1,4 +1,5 @@
-import { Card } from './Card/Card';
-import { Grid } from './Grid/Grid';
+import { Card } from './Card';
+import { Grid } from './Grid';
+import { Promo } from './Promo';
 
-export const CaseStudyCatalog = { Card, Grid };
+export const CaseStudyCatalog = { Card, Grid, Promo };

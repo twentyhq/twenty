@@ -37,7 +37,7 @@ jest.mock('openid-client', () => ({
 
 describe('OIDCAuthGuard', () => {
   let guard: OIDCAuthGuard;
-  let sSOService: SSOService;
+  let ssoService: SSOService;
   let guardRedirectService: GuardRedirectService;
   let mockExecutionContext: ExecutionContext;
 
@@ -70,7 +70,7 @@ describe('OIDCAuthGuard', () => {
     }).compile();
 
     guard = module.get<OIDCAuthGuard>(OIDCAuthGuard);
-    sSOService = module.get<SSOService>(SSOService);
+    ssoService = module.get<SSOService>(SSOService);
     guardRedirectService =
       module.get<GuardRedirectService>(GuardRedirectService);
 
@@ -88,7 +88,7 @@ describe('OIDCAuthGuard', () => {
 
     mockExecutionContext = createMockExecutionContext(mockedRequest);
 
-    jest.spyOn(sSOService, 'findSSOIdentityProviderById').mockResolvedValue({
+    jest.spyOn(ssoService, 'findSSOIdentityProviderById').mockResolvedValue({
       id: 'test-id',
       issuer: 'https://issuer.example.com',
       workspace: {},
@@ -98,7 +98,7 @@ describe('OIDCAuthGuard', () => {
 
     expect(result).toBe(true);
     expect(guardRedirectService.dispatchErrorFromGuard).not.toHaveBeenCalled();
-    expect(sSOService.findSSOIdentityProviderById).toHaveBeenCalledWith(
+    expect(ssoService.findSSOIdentityProviderById).toHaveBeenCalledWith(
       'test-id',
     );
   });
@@ -111,11 +111,11 @@ describe('OIDCAuthGuard', () => {
     mockExecutionContext = createMockExecutionContext(mockedRequest);
 
     jest
-      .spyOn(sSOService, 'findSSOIdentityProviderById')
+      .spyOn(ssoService, 'findSSOIdentityProviderById')
       .mockResolvedValue(null);
 
     await expect(guard.canActivate(mockExecutionContext)).resolves.toBe(false);
-    expect(sSOService.findSSOIdentityProviderById).toHaveBeenCalledWith(
+    expect(ssoService.findSSOIdentityProviderById).toHaveBeenCalledWith(
       'non-existent-id',
     );
     expect(guardRedirectService.dispatchErrorFromGuard).toHaveBeenCalled();
@@ -129,7 +129,7 @@ describe('OIDCAuthGuard', () => {
     mockExecutionContext = createMockExecutionContext(mockedRequest);
 
     jest
-      .spyOn(sSOService, 'findSSOIdentityProviderById')
+      .spyOn(ssoService, 'findSSOIdentityProviderById')
       .mockResolvedValue(null);
 
     await expect(guard.canActivate(mockExecutionContext)).resolves.toBe(false);

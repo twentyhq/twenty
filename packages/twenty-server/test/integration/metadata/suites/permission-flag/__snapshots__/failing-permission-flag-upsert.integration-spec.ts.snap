@@ -9,7 +9,7 @@ exports[`Permission flag upsert should fail when permissionFlagKeys contains inv
     },
     "userFriendlyMessage": "An error occurred.",
   },
-  "message": "Value \"INVALID_FLAG\" does not exist in \"PermissionFlagType\" enum.",
+  "message": "Value "INVALID_FLAG" does not exist in "PermissionFlagType" enum.",
   "name": "GraphQLError",
 }
 `;
@@ -24,8 +24,8 @@ exports[`Permission flag upsert should fail when role is not editable (system ro
           "errors": [
             {
               "code": "ROLE_BELONGS_TO_ANOTHER_APPLICATION",
-              "message": "Cannot modify permissions on a role owned by another application",
-              "userFriendlyMessage": "Cannot modify permissions on a role owned by another application.",
+              "message": "Cannot target a role owned by another application",
+              "userFriendlyMessage": "Cannot target a role owned by another application.",
             },
             {
               "code": "ROLE_NOT_EDITABLE",

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useRecordId } from 'twenty-sdk';
+import { useRecordId } from 'twenty-sdk/front-component';
 import { CoreApiClient } from 'twenty-sdk/clients';
 import { isDefined } from 'twenty-shared/utils';
 

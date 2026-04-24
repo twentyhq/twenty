@@ -8,21 +8,21 @@ import { PermissionFlagType } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 import { In, type Repository } from 'typeorm';
 
-import { UsageAnalyticsDTO } from 'src/engine/core-modules/usage/dtos/usage-analytics.dto';
-import { UsageAnalyticsInput } from 'src/engine/core-modules/usage/dtos/inputs/usage-analytics.input';
-import {
-  type UsageBreakdownItem,
-  UsageAnalyticsService,
-} from 'src/engine/core-modules/usage/services/usage-analytics.service';
+import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { UsageAnalyticsInput } from 'src/engine/core-modules/usage/dtos/inputs/usage-analytics.input';
+import { UsageAnalyticsDTO } from 'src/engine/core-modules/usage/dtos/usage-analytics.dto';
+import {
+  UsageAnalyticsService,
+  type UsageBreakdownItem,
+} from 'src/engine/core-modules/usage/services/usage-analytics.service';
+import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display-credits.util';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
-import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 
 @MetadataResolver()
 @UseFilters(PreventNestToAutoLogGraphqlErrorsFilter)
@@ -30,7 +30,6 @@ import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorato
 export class UsageResolver {
   constructor(
     private readonly usageAnalyticsService: UsageAnalyticsService,
-    private readonly twentyConfigService: TwentyConfigService,
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
   ) {}
@@ -51,14 +50,12 @@ export class UsageResolver {
 
     const periodStart = input?.periodStart ?? defaultPeriodStart;
     const periodEnd = input?.periodEnd ?? defaultPeriodEnd;
-    const useDollarMode = !this.twentyConfigService.get('IS_BILLING_ENABLED');
 
     const periodParams = {
       workspaceId: workspace.id,
       periodStart,
       periodEnd,
       operationTypes: input?.operationTypes ?? undefined,
-      useDollarMode,
     };
 
     const [usageByUser, usageByOperationType, usageByModel, timeSeries] =
@@ -78,10 +75,22 @@ export class UsageResolver {
     );
 
     const result: UsageAnalyticsDTO = {
-      usageByUser: resolvedUsageByUser,
-      usageByOperationType,
-      usageByModel,
-      timeSeries,
+      usageByUser: resolvedUsageByUser.map((item) => ({
+        ...item,
+        creditsUsed: toDisplayCredits(item.creditsUsed),
+      })),
+      usageByOperationType: usageByOperationType.map((item) => ({
+        ...item,
+        creditsUsed: toDisplayCredits(item.creditsUsed),
+      })),
+      usageByModel: usageByModel.map((item) => ({
+        ...item,
+        creditsUsed: toDisplayCredits(item.creditsUsed),
+      })),
+      timeSeries: timeSeries.map((point) => ({
+        ...point,
+        creditsUsed: toDisplayCredits(point.creditsUsed),
+      })),
       periodStart,
       periodEnd,
     };
@@ -101,7 +110,10 @@ export class UsageResolver {
 
         result.userDailyUsage = {
           userWorkspaceId: input.userWorkspaceId,
-          dailyUsage,
+          dailyUsage: dailyUsage.map((point) => ({
+            ...point,
+            creditsUsed: toDisplayCredits(point.creditsUsed),
+          })),
         };
       }
     }

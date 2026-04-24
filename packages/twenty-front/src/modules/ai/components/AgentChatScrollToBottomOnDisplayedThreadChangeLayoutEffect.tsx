@@ -1,6 +1,6 @@
 import { AI_CHAT_SCROLL_WRAPPER_ID } from '@/ai/constants/AiChatScrollWrapperId';
 import { agentChatIsInitialScrollPendingOnThreadChangeState } from '@/ai/states/agentChatIsInitialScrollPendingOnThreadChangeState';
-import { scrollAIChatToBottom } from '@/ai/utils/scrollAIChatToBottom';
+import { scrollAiChatToBottom } from '@/ai/utils/scrollAiChatToBottom';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useEffect } from 'react';
@@ -37,10 +37,10 @@ export const AgentChatScrollToBottomOnDisplayedThreadChangeLayoutEffect =
           clearTimeout(settleTimeoutId);
         }
 
-        scrollAIChatToBottom();
+        scrollAiChatToBottom();
 
         settleTimeoutId = setTimeout(() => {
-          scrollAIChatToBottom();
+          scrollAiChatToBottom();
           setAgentChatIsInitialScrollPendingOnThreadChange(false);
           mutationObserver.disconnect();
         }, SCROLL_SETTLE_DELAY_MS);

@@ -1,4 +1,5 @@
-import { SettingsAdminTabSkeletonLoader } from '@/settings/admin-panel/components/SettingsAdminTabSkeletonLoader';
+import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
+import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { ConfigVariableFilterContainer } from '@/settings/admin-panel/config-variables/components/ConfigVariableFilterContainer';
 import { ConfigVariableFilterDropdown } from '@/settings/admin-panel/config-variables/components/ConfigVariableFilterDropdown';
 import { SettingsAdminConfigVariablesTable } from '@/settings/admin-panel/config-variables/components/SettingsAdminConfigVariablesTable';
@@ -15,7 +16,7 @@ import { useQuery } from '@apollo/client/react';
 import {
   ConfigSource,
   GetConfigVariablesGroupedDocument,
-} from '~/generated-metadata/graphql';
+} from '~/generated-admin/graphql';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 import { ConfigVariableSearchInput } from './ConfigVariableSearchInput';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
@@ -31,9 +32,11 @@ const StyledTableContainer = styled.div`
 `;
 
 export const SettingsAdminConfigVariables = () => {
+  const apolloAdminClient = useApolloAdminClient();
   const { data: configVariables, loading: configVariablesLoading } = useQuery(
     GetConfigVariablesGroupedDocument,
     {
+      client: apolloAdminClient,
       fetchPolicy: 'network-only',
     },
   );
@@ -157,7 +160,7 @@ export const SettingsAdminConfigVariables = () => {
   }, [filteredVariables, allGroups]);
 
   if (configVariablesLoading) {
-    return <SettingsAdminTabSkeletonLoader />;
+    return <SettingsSectionSkeletonLoader />;
   }
 
   return (
