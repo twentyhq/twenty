@@ -2,25 +2,6 @@
 
 import { type RefObject, useEffect, useState } from 'react';
 
-/**
- * Compute a uniform scale factor that fits a fixed-design-size scene into
- * its container, observed live with ResizeObserver. Returns 0 until the
- * container has a measurable size (so consumers can hide the scene during
- * the very first paint and avoid flashing it at the wrong scale).
- *
- * Why this exists
- * ───────────────
- * The previous implementation used CSS container query units inside
- * `transform: scale(min(100cqw / W, 100cqh / H))`. That works in Chrome
- * but fails on Firefox in this exact tree (`container-type: size` element
- * sitting inside `position: absolute` ancestors that themselves have a
- * `transform`). Firefox would resolve `cqw`/`cqh` against the viewport
- * instead of the query container, blowing the scale up and pushing the
- * visible scene off the right edge of the card.
- *
- * Computing the scale in JS removes the container-query dependency and
- * gives us identical behaviour on every browser, on every breakpoint.
- */
 export function useScaleToFit(
   containerRef: RefObject<HTMLElement | null>,
   designWidth: number,

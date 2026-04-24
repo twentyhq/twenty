@@ -145,13 +145,6 @@ interface RootProps {
   cardBackgroundColor?: string;
 }
 
-/**
- * Match a child by `displayName` against the slot component. Avoids the
- * positional `Children.toArray()[i]` pattern, which silently rebinds
- * cells the moment a consumer reorders, wraps in a fragment, or adds a
- * comment. Returns the *first* matching element — duplicate slots are
- * treated as a developer error and surfaced via a dev-only throw below.
- */
 function findSlot(
   children: ReactNode,
   type: { displayName?: string },

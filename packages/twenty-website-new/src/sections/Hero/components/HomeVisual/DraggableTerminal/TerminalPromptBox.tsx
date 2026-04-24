@@ -8,13 +8,8 @@ import { TerminalPromptChip } from './TerminalPromptChip';
 import { TerminalSendButton } from './TerminalSendButton';
 import { TRAFFIC_LIGHTS_ESCAPE_EVENT } from './TerminalTrafficLights';
 
-// After this many clicks on the "Ask anything…" placeholder the dormant
-// traffic-light dots detach and fly off both windows — the final easter egg.
 const TRAFFIC_LIGHTS_ESCAPE_THRESHOLD = 5;
 
-// Playful placeholders cycled through when a curious visitor clicks the
-// "Ask anything…" placeholder after the first demo chat finishes. The goal is
-// delight without derailing — nothing that looks like a real prompt response.
 const EASTER_EGG_MESSAGES = [
   'Ask me to do something your CRM should have done years ago',
   'Build the thing your admin said was impossible',
@@ -127,8 +122,6 @@ const PromptText = styled.p<{ $isPlaceholder?: boolean }>`
   }
 `;
 
-// flex-wrap stays nowrap so narrow footers shrink the folder chip's label
-// with an ellipsis instead of pushing ActionRow (Send button) to a new line.
 const PromptFooter = styled.div`
   align-items: center;
   display: flex;
@@ -137,8 +130,6 @@ const PromptFooter = styled.div`
   width: 100%;
 `;
 
-// flex: 1 1 auto + min-width: 0 lets this row shrink with the first chip
-// (folder path) rather than push Mythos/Send to the next line.
 const ChipRow = styled.div`
   align-items: center;
   display: flex;
@@ -147,9 +138,6 @@ const ChipRow = styled.div`
   min-width: 0;
 `;
 
-// margin-left: auto keeps the Send button anchored to the right edge whether
-// the footer fits on one line or wraps. Without this, wrapping starts each
-// new line flush-left, pushing the blue Send to the bottom-left.
 const ActionRow = styled.div`
   align-items: center;
   display: flex;
@@ -204,8 +192,6 @@ export const TerminalPromptBox = ({
   const [isWiggling, setIsWiggling] = useState(false);
   const [, setClickCount] = useState(0);
 
-  // Reset the easter egg whenever the conversation is reset so the next demo
-  // viewer starts from the normal placeholder again.
   useEffect(() => {
     if (!isChatFinished) {
       setEasterEggIndex(null);
@@ -226,9 +212,6 @@ export const TerminalPromptBox = ({
 
     setClickCount((prev) => {
       const next = prev + 1;
-      // Fire the escape event every time the threshold is crossed so the
-      // effect is repeatable — each fresh streak of five clicks re-flings
-      // the dots.
       if (next >= TRAFFIC_LIGHTS_ESCAPE_THRESHOLD) {
         window.dispatchEvent(new CustomEvent(TRAFFIC_LIGHTS_ESCAPE_EVENT));
         return 0;

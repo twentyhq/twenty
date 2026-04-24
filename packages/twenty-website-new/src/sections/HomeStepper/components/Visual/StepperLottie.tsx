@@ -64,19 +64,7 @@ export function StepperLottie({ scrollProgress }: StepperLottieProps) {
     }
 
     const onReady = () => {
-      // dotlottie-react's `totalFrames` returns the raw `op - ip` float
-      // from the animation JSON (e.g. 1439.4000244140625 for an `op` of
-      // 1439.4). The frame-map math downstream is integer-shaped — anchors
-      // like `STEP_2_TRANSITION_END = 925` and `lastIndex = totalFrames - 1`
-      // assume integers — so we floor here once at the source and let the
-      // integer flow through state and into `setFrame`. This also makes
-      // the runtime check compare like-for-like with the build-time
-      // `scripts/check-lottie-frames.mjs`, which floors the same way.
       const frames = Math.floor(player.totalFrames);
-      // Frame-map sanity check: a designer re-export with a different `op`
-      // would silently misalign every step. We log loudly in dev/preview
-      // so a mismatch is caught before it hits prod; the build-time script
-      // is the CI-side backstop.
       if (frames > 0 && frames !== HOME_STEPPER_LOTTIE_EXPECTED_TOTAL_FRAMES) {
         console.error(
           `[StepperLottie] Lottie totalFrames mismatch — expected ${HOME_STEPPER_LOTTIE_EXPECTED_TOTAL_FRAMES}, got ${frames} (raw player.totalFrames=${player.totalFrames}). ` +

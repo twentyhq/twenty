@@ -116,12 +116,6 @@ const PARTNER_QUOTE_INITIAL_POSE: HalftoneExportPose = {
 const noopFirstInteraction = () => {};
 const noopPoseChange = (_pose: HalftoneExportPose) => {};
 
-/**
- * Fills the slot reserved by the parent (TestimonialsVisualFrame in
- * MountedTestimonialsVisuals.tsx) so that the canvas — and the empty
- * loading state before geometry resolves — both occupy the exact same
- * footprint, eliminating any layout shift between them.
- */
 const PartnerFill = styled.div`
   height: 100%;
   position: relative;

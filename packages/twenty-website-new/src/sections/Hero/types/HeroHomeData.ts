@@ -1,7 +1,5 @@
 import type { HeroBaseDataType } from '@/sections/Hero/types/HeroBaseData';
 
-// -- Cell value types --
-
 export type HeroCellText = {
   type: 'text';
   targetLabel?: string;
@@ -43,8 +41,6 @@ export type HeroCellValue =
   | HeroCellPerson
   | HeroCellEntity
   | HeroCellRelation;
-
-// -- Column & row --
 
 export type HeroColumnDef = {
   id: string;
@@ -149,8 +145,6 @@ export type HeroPageDefinition =
 
 export type HeroPageType = HeroPageDefinition['type'];
 
-// -- Sidebar icon --
-
 export type HeroSidebarIcon =
   | { kind: 'tabler'; name: string; tone: string; overlay?: 'link' }
   | {
@@ -167,8 +161,6 @@ export type HeroSidebarIcon =
       tone: string;
       shape?: 'circle' | 'square';
     };
-
-// -- Sidebar navigation --
 
 export type HeroSidebarItem = {
   id: string;
@@ -193,8 +185,6 @@ export type HeroSidebarFolder = {
 };
 
 export type HeroSidebarEntry = HeroSidebarItem | HeroSidebarFolder;
-
-// -- Top-level visual --
 
 export type HeroVisualType = {
   workspace: { icon: string; name: string };

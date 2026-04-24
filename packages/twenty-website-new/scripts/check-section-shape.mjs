@@ -1,37 +1,4 @@
 #!/usr/bin/env node
-/**
- * scripts/check-section-shape.mjs
- *
- * Architectural invariants for `src/sections/<Section>/` folders. Run as
- * part of `nx lint twenty-website-new` (sibling to `check-boundaries.mjs`).
- *
- * Sections are the page-agnostic compounds the routes consume. The
- * contract:
- *
- *   1. `<Section>/components/index.{ts,tsx}` exists and is the public
- *      barrel.
- *   2. `<Section>/components/Root.tsx` exists (or the barrel re-exports
- *      a `Root` from a sibling file).
- *   3. No `Children.toArray(children)` positional indexing inside
- *      `Root.tsx` — slots must be matched by `displayName`.
- *   4. Each compound slot exported from the barrel sets a `displayName`
- *      so consumers (and `Root`) can match by name. Detected via static
- *      grep: every `*.tsx` under `<Section>/components/` whose default
- *      shape is a function-component must either set
- *      `<ComponentName>.displayName = '...'` or be exempt (private
- *      helpers, `Root`, layout wrappers without slot semantics).
- *
- *   Rule (4) is the noisy one — it would fire on every styled wrapper
- *   in the codebase. Instead we apply it narrowly: any component whose
- *   *name* appears in the `Section` compound export object is required
- *   to set `displayName`. This catches the only thing that matters
- *   (slot components used by name-based discovery) without lighting up
- *   on internal helpers.
- *
- * The script is intentionally line-based rather than AST-based — the
- * regexes here have to be tight, and a real parser would add a
- * dependency for what amounts to four checks.
- */
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -40,36 +7,14 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..');
 const SECTIONS_DIR = path.join(ROOT, 'src', 'sections');
 
-/**
- * Sections whose `Root` discovers children by `displayName`. The value
- * is the set of *slot* names that Root inspects (i.e. every name that
- * `Root.tsx` will look up by `displayName`). Auxiliary exports from the
- * barrel — leaf primitives consumers may render directly, like
- * `TrustedBy.Logo` rendered inside `TrustedBy.Logos` — are intentionally
- * omitted because they don't participate in slot matching.
- */
 const SECTIONS_USING_NAMED_SLOTS = new Map([
   ['Marquee', new Set(['Heading'])],
   ['TrustedBy', new Set(['Separator', 'Logos', 'ClientCount'])],
 ]);
 
-/**
- * Sections that intentionally do not own a single `<section>` `Root` —
- * they ship a *toolkit* of independently-composable parts that the
- * route stitches together (the slots are siblings inside a route-owned
- * wrapper, not children of a section-owned wrapper). The barrel rule
- * still applies, only the Root + Children-toArray rules are skipped.
- *
- * Adding to this set is a deliberate architectural decision — most
- * sections should own their Root.
- */
 const LEAF_SECTIONS = new Set([
   'CaseStudy',
   'CaseStudyCatalog',
-  // LegalDocument exposes a single page-shaped wrapper (`LegalDocument.Page`)
-  // rather than a Root + slots. The route renders one `<LegalDocument.Page>`
-  // around its own MDX/JSX body. Renaming `Page` -> `Root` would lose the
-  // semantic that this is the *only* shape this section ever takes.
   'LegalDocument',
 ]);
 
@@ -98,11 +43,6 @@ async function readFileOrNull(absPath) {
   }
 }
 
-/**
- * Locate the section barrel. We accept either `components/index.ts` or
- * `components/index.tsx`; both forms exist in the codebase today and
- * they're equivalent at the consumer.
- */
 async function findBarrel(sectionDir) {
   const candidates = [
     path.join(sectionDir, 'components', 'index.ts'),
@@ -114,29 +54,12 @@ async function findBarrel(sectionDir) {
   return null;
 }
 
-/**
- * Locate `Root.tsx`. Sections always own their root component locally;
- * we don't (yet) need to walk imports out of the barrel.
- */
 async function findRoot(sectionDir) {
   const candidate = path.join(sectionDir, 'components', 'Root.tsx');
   if (await fileExists(candidate)) return candidate;
   return null;
 }
 
-/**
- * Parse the slot names exported from a section barrel by reading the
- * `export const <Section> = { Slot1, Slot2, ... };` block. Returns the
- * raw identifier list — caller is responsible for cross-checking that
- * each identifier resolves to a function component with `displayName`
- * set.
- *
- * If the barrel does not match the expected shape we return `null`,
- * which the caller treats as "skip the slot-displayName check for this
- * section". This is intentionally permissive: static parsing of every
- * possible barrel shape is out of scope for this script — the `Root`
- * and `Children.toArray` checks below carry most of the contract.
- */
 function parseSlotIdentifiers(barrelContents) {
   const exportMatch = barrelContents.match(
     /export\s+const\s+\w+\s*=\s*\{([^}]+)\}/m,
@@ -155,14 +78,6 @@ function parseSlotIdentifiers(barrelContents) {
 
 const TOARRAY_REGEX = /Children\.toArray\s*\(/;
 
-/**
- * Strip block comments (`/* ... *​/`) and line comments (`//` to EOL)
- * so subsequent regex checks only look at executable source. The naive
- * pass below is good enough — it doesn't try to honour string literals
- * (we don't expect `"// ..."` to appear inside a Root) and it doesn't
- * preserve line numbers (callers report by file, not line, so that's
- * fine).
- */
 function stripComments(source) {
   let out = source.replace(/\/\*[\s\S]*?\*\//g, '');
   out = out.replace(/(^|[^:])\/\/[^\n]*/g, '$1');
@@ -171,7 +86,6 @@ function stripComments(source) {
 
 async function checkSection(name) {
   const sectionDir = path.join(SECTIONS_DIR, name);
-  /** @type {string[]} */
   const violations = [];
 
   const barrel = await findBarrel(sectionDir);
@@ -241,13 +155,6 @@ async function checkSection(name) {
   return violations;
 }
 
-/**
- * Best-effort source resolution for a slot identifier exported from the
- * barrel. We look for `<components>/<slot>.tsx` first and fall back to
- * any `*.tsx` under `components/` whose default export name matches.
- * This keeps the script side-effect-free without parsing imports — the
- * common case (TrustedBy/Marquee) lives one directory down.
- */
 async function locateSlotFile(sectionDir, slot) {
   const candidates = [
     path.join(sectionDir, 'components', `${slot}.tsx`),
@@ -261,7 +168,6 @@ async function locateSlotFile(sectionDir, slot) {
 
 async function main() {
   const sections = await listSections();
-  /** @type {string[]} */
   const allViolations = [];
   for (const name of sections) {
     const sectionViolations = await checkSection(name);
@@ -283,10 +189,6 @@ async function main() {
   for (const v of allViolations) {
     console.error(`  - ${v}`);
   }
-  console.error('');
-  console.error(
-    '  See ARCHITECTURE.md → "Section contract" for the full rules.',
-  );
   console.error('');
   return 1;
 }

@@ -44,12 +44,6 @@ type RootProps = {
 
 type HeadingElement = ReactElement<{ segments: HeadingType[] }>;
 
-/**
- * Pull the `<Marquee.Heading>` slot out of `children` by `displayName`
- * match. Positional indexing (`Children.toArray()[0]`) is intentionally
- * avoided — it breaks the moment a consumer wraps in a fragment, adds a
- * comment, or reorders.
- */
 function findHeadingSlot(children: ReactNode): HeadingElement | null {
   let found: HeadingElement | null = null;
   Children.forEach(children, (child) => {

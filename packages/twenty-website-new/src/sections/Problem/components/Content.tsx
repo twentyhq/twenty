@@ -1,6 +1,6 @@
-import { theme } from "@/theme";
-import { styled } from "@linaria/react";
-import type { ReactNode } from "react";
+import { theme } from '@/theme';
+import { styled } from '@linaria/react';
+import type { ReactNode } from 'react';
 
 const StyledContent = styled.div`
   display: grid;

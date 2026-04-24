@@ -31,13 +31,6 @@ const APP_FONT = `'Inter', ${theme.font.family.sans}`;
 const FAST_PATH_NOISE_BACKGROUND =
   'url("/images/home/three-cards-feature/fast-path-background-noise.webp")';
 const SCENE_DESIGN_WIDTH = 411;
-/*
- * Scene design height matches the shared CardImageFrame aspect (411 × 508)
- * used by all three feature cards. The PreviewSurface's 552px design height
- * sits inside this box at top = 508 + 92 - 552 = 48px, with the bottom 92px
- * clipped by the frame's overflow:hidden — same visible footprint as before,
- * just expressed in a coordinate system that's identical across cards.
- */
 const SCENE_DESIGN_HEIGHT = 508;
 const TOOLBAR_VERTICAL_PADDING = 16;
 const ACTION_BUTTON_HEIGHT = 24;

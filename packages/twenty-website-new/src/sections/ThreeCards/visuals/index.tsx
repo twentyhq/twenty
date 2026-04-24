@@ -24,12 +24,6 @@ const ProgrammingVisual = () => (
   <PartnerThreeCard modelUrl="/illustrations/partner/three-cards/programming.glb" />
 );
 
-/**
- * Local visual map for the ThreeCards section. Each card's data
- * references a visual by string id; this map resolves the id to the
- * React component to render. Co-located with the section that owns
- * them so unrelated routes are not forced to bundle these scenes.
- */
 export const THREE_CARDS_VISUALS = {
   connect: ConnectVisual,
   diamond: DiamondVisual,

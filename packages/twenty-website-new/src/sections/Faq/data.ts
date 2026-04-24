@@ -24,7 +24,7 @@ export const FAQ_DATA: FaqDataType = {
         fontFamily: 'sans',
       },
       answer: {
-        text: "Yes. Twenty is the #1 open source CRM on GitHub. You can self-host to fully own your infrastructure, or run it on our managed cloud for a zero-ops setup.",
+        text: 'Yes. Twenty is the #1 open source CRM on GitHub. You can self-host to fully own your infrastructure, or run it on our managed cloud for a zero-ops setup.',
       },
     },
     {

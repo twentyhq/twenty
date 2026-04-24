@@ -11,10 +11,7 @@ import { styled } from '@linaria/react';
 import { useCallback, useRef, useState } from 'react';
 import { PricingWindow } from './PricingWindow';
 import { Root } from './Root';
-import {
-  WrongChoicePopup,
-  WRONG_CHOICE_POPUP_WIDTH,
-} from './WrongChoicePopup';
+import { WrongChoicePopup, WRONG_CHOICE_POPUP_WIDTH } from './WrongChoicePopup';
 
 const CopyColumn = styled.div`
   color: ${theme.colors.primary.text[100]};
@@ -116,10 +113,10 @@ const getScatteredPopupPosition = (
   const horizontalRange = Math.max(0, maxLeft - POPUP_MARGIN);
   const verticalRange = Math.max(0, maxTop - POPUP_MARGIN);
 
-  // Low-discrepancy scatter so bulk popups feel sprayed across the window.
   const xSeed = (popupIndex * 0.61803398875 + 0.21) % 1;
   const ySeed = (popupIndex * 0.38196601125 + 0.47) % 1;
-  const offset = popupIndex % 2 === 0 ? POPUP_STACK_OFFSET : -POPUP_STACK_OFFSET;
+  const offset =
+    popupIndex % 2 === 0 ? POPUP_STACK_OFFSET : -POPUP_STACK_OFFSET;
 
   return {
     left: clamp(
@@ -240,7 +237,8 @@ export function Flow({ backgroundColor, body, heading, pricing }: FlowProps) {
       return next;
     });
 
-    const containerRect = rightColumnRef.current?.getBoundingClientRect() ?? null;
+    const containerRect =
+      rightColumnRef.current?.getBoundingClientRect() ?? null;
     const popupSequenceStart = popupSequenceRef.current;
     popupSequenceRef.current += enabledAddons.length;
 

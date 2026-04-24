@@ -10,20 +10,8 @@ import {
 import { useWebGlPolicy } from './use-webgl-policy';
 import { WebGlErrorBoundary } from './webgl-error-boundary';
 
-/**
- * How far outside the viewport we start mounting non-priority scenes.
- * 50vh of head start gives the GLB fetch, DRACO warm-up, and Three.js
- * scene init enough time to finish before the user scrolls into view.
- */
 const NON_PRIORITY_ROOT_MARGIN = '50% 0px 50% 0px';
 
-/**
- * How long a scene that just left the viewport keeps its context slot.
- * Short enough that the page-wide budget recovers under sustained
- * scrolling (the marketing home page has ~10 visuals competing for 8
- * slots), long enough that small scroll oscillations don't trigger a
- * full Three.js teardown + GLB+DRACO refetch on the way back.
- */
 const OUT_OF_VIEW_DISPOSE_MS = 4_000;
 
 const ObserverRoot = styled.div<{ detachFromLayout: boolean }>`
@@ -52,51 +40,11 @@ const ObserverRoot = styled.div<{ detachFromLayout: boolean }>`
 
 type WebGlMountProps = {
   children: ReactNode;
-  /**
-   * Static, on-brand element rendered when the policy denies WebGL,
-   * when the page-wide context budget is exhausted, or (for non-priority
-   * mounts) before the viewport gate has been crossed. Should preserve
-   * the visual footprint of the heavy visual so layout stays stable.
-   */
   fallback?: ReactNode;
   detachFromLayout?: boolean;
-  /**
-   * Above-the-fold visuals: render as soon as the WebGL policy permits
-   * and a budget slot is available, without waiting for an
-   * IntersectionObserver tick. Also disables the out-of-view dispose
-   * timer — these scenes are visible from first paint and there is no
-   * benefit to ever tearing them down.
-   *
-   * Default `false`. Set to `true` for hero / first-screen visuals only.
-   */
   priority?: boolean;
 };
 
-/**
- * The single mount surface for any heavy WebGL visual on the website.
- *
- * Lifecycle, in order:
- *   1. The visual runtime policy decides whether WebGL is usable on this
- *      device at all (kill switch + capability probe).
- *   2. For non-priority mounts, an IntersectionObserver waits until the
- *      element is within ~50vh of the viewport.
- *   3. *Atomically*, this component reserves one slot from the page-wide
- *      WebGL context budget. If no slot is free, the fallback renders
- *      and we keep listening for slot availability so the scene can
- *      hydrate the moment another visual scrolls away and frees one.
- *   4. The child Three.js scene mounts. It can `await` GLB fetches
- *      freely — the slot is already ours and won't be stolen.
- *   5. On unmount (scroll-out-of-view, route change, error), the slot
- *      is released synchronously in cleanup.
- *
- * Tab-visibility pausing is intentionally NOT done here — browsers
- * already throttle `requestAnimationFrame` on hidden tabs to ~1Hz, and
- * forcing a full Three.js teardown on every tab focus would cost orders
- * of magnitude more than the throttled rAF it tries to save.
- *
- * Layout footprint is always preserved — the wrapper stays in the DOM so
- * surrounding sections don't reflow when the inner canvas mounts/unmounts.
- */
 export function WebGlMount({
   children,
   fallback,
@@ -106,14 +54,8 @@ export function WebGlMount({
   const policy = useWebGlPolicy();
   const rootReference = useRef<HTMLDivElement>(null);
 
-  // Priority mounts skip the viewport gate entirely. Non-priority mounts
-  // start hidden and are flipped on by the IntersectionObserver below.
   const [isInViewport, setIsInViewport] = useState(priority);
 
-  // True iff this component currently holds one budget slot. The slot is
-  // reserved atomically below; child scenes only render when this is
-  // true, which guarantees no `createSiteWebGlRenderer` call ever races
-  // against another mount for the last available slot.
   const [hasContextSlot, setHasContextSlot] = useState(false);
 
   useEffect(() => {
@@ -188,8 +130,6 @@ export function WebGlMount({
     tryAcquire();
 
     if (release === null) {
-      // Budget is full. Subscribe to the budget so we acquire the slot
-      // the instant another mount releases one — no polling, no race.
       unsubscribe = subscribeToActiveWebGlContextCount(tryAcquire);
     }
 

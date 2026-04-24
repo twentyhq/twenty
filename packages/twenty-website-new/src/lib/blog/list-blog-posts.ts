@@ -8,12 +8,6 @@ import {
   type BlogPost,
 } from './blog-frontmatter-schema';
 
-/**
- * Locates the blog content directory regardless of how the build is rooted.
- *
- * Mirrors the resolution strategy used by the local release-notes loader so
- * monorepo and single-package Docker builds both work without configuration.
- */
 function resolveBlogDirectory(): string | null {
   const candidates = [
     path.join(process.cwd(), 'src', 'content', 'blog'),
@@ -36,13 +30,6 @@ function resolveBlogDirectory(): string | null {
   return null;
 }
 
-/**
- * Reads all blog posts, parses + validates frontmatter with Zod, drops
- * drafts in production, and returns posts sorted newest-first.
- *
- * Returns an empty list when the content directory is missing or empty —
- * the rest of the site (sitemap, route stubs) is built to handle this.
- */
 export function listBlogPosts(): BlogPost[] {
   const directoryPath = resolveBlogDirectory();
   if (!directoryPath) {
@@ -57,7 +44,6 @@ export function listBlogPosts(): BlogPost[] {
       continue;
     }
 
-    // README.md (or any underscore-prefixed file) is documentation, not a post.
     if (fileName.toLowerCase() === 'readme.md' || fileName.startsWith('_')) {
       continue;
     }
@@ -70,7 +56,10 @@ export function listBlogPosts(): BlogPost[] {
     if (!parsed.success) {
       throw new Error(
         `Invalid blog frontmatter in ${fileName}:\n${parsed.error.issues
-          .map((issue) => `  - ${issue.path.join('.') || '(root)'}: ${issue.message}`)
+          .map(
+            (issue) =>
+              `  - ${issue.path.join('.') || '(root)'}: ${issue.message}`,
+          )
           .join('\n')}`,
       );
     }

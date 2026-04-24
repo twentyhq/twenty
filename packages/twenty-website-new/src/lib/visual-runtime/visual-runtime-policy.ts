@@ -1,22 +1,3 @@
-/**
- * Whether a heavy WebGL visual is *eligible* to mount on this device.
- *
- * Two independent signals:
- *   1. A hard env kill switch (`NEXT_PUBLIC_DISABLE_HEAVY_VISUALS`) for
- *      emergency rollouts.
- *   2. A capability probe — can the browser actually create a WebGL
- *      context? Some Windows + integrated-GPU configs return `null` and
- *      crash on subsequent allocations.
- *
- * The page-wide context budget is NOT part of this policy. It is enforced
- * at mount time by `WebGlMount` via an atomic slot reservation, so the
- * policy stays a pure function of "is WebGL usable here at all?".
- *
- * `prefers-reduced-motion` is exposed for callers that want to opt their
- * own animation out — the policy does not silently deny on it because
- * that would change the design contract without the designer's input.
- */
-
 export type WebGlPolicyDecision =
   | { allowed: true; reducedMotion: boolean }
   | { allowed: false; reason: WebGlPolicyDenialReason; reducedMotion: boolean };
@@ -47,11 +28,6 @@ export function isHeavyVisualsKillSwitchEnabled(): boolean {
 
 let cachedSupportProbe: boolean | null = null;
 
-/**
- * Probe whether the current browser can create a WebGL context at all.
- * Cached because creating a probe canvas costs a context slot on some
- * drivers — we run it exactly once per page load.
- */
 export function detectWebGlSupport(): boolean {
   if (cachedSupportProbe !== null) {
     return cachedSupportProbe;

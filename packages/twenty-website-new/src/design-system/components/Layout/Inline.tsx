@@ -23,7 +23,6 @@ export type InlineJustify =
   | 'space-evenly';
 
 export type InlineProps = {
-  /** Spacing multiplier passed to `theme.spacing(gap)`. */
   gap?: number;
   align?: InlineAlign;
   justify?: InlineJustify;
@@ -51,11 +50,6 @@ const JUSTIFY_TO_FLEX: Record<InlineJustify, string> = {
   'space-evenly': 'space-evenly',
 };
 
-/**
- * Horizontal flex row. Default cross-axis alignment is `center` because
- * that's what 90% of inline rows want; pass `align="start"` for
- * top-aligned rows.
- */
 export function Inline({
   align,
   as,

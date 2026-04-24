@@ -1,39 +1,4 @@
 #!/usr/bin/env node
-/**
- * scripts/check-lottie-frames.mjs
- *
- * Build-time guard for the home-stepper scroll → Lottie frame mapping.
- *
- * The map in
- *   src/sections/HomeStepper/utils/home-stepper-lottie-frame-map.ts
- * hardcodes timeline anchors (e.g. `STEP_2_TRANSITION_END = 925`) tied
- * to the authored animation. A designer re-export with a different
- * `op` (out-point) would silently misalign every step — the type
- * system can't catch it because the asset is a binary `.lottie` file.
- *
- * This script reads the actual frame count straight from
- *   public/lottie/stepper/stepper.lottie
- * and asserts it matches the `HOME_STEPPER_LOTTIE_EXPECTED_TOTAL_FRAMES`
- * constant in the frame-map. Wired into `nx lint twenty-website-new`
- * via `project.json`'s `lint.dependsOn`. There's also a runtime warn
- * in `StepperLottie` for the dev/preview path; the two checks are
- * deliberately redundant — one fails CI before merge, the other fires
- * during local dev if someone bypasses CI.
- *
- * Implementation notes:
- *   - `.lottie` is a ZIP. Rather than pull in a JS unzip dep we shell
- *     out to the system `unzip` binary, which is present on every
- *     supported dev/CI environment (Linux, macOS — `nx` runs the
- *     monorepo on `ubuntu-latest`).
- *   - The expected-frames constant is parsed from the TS file with a
- *     tight regex. Keep the `export const HOME_STEPPER_LOTTIE_EXPECTED_TOTAL_FRAMES = <n>`
- *     line shape stable, or update the regex below in lockstep.
- *   - dotlottie-react's `totalFrames` returns the raw `op - ip` float
- *     (e.g. 1439.4 for the current asset). The frame-map's downstream
- *     math is integer-shaped, so `StepperLottie` floors at the read
- *     site; we floor here too so the build-time and runtime checks
- *     compare the same integer.
- */
 import { execFile } from 'node:child_process';
 import { readFile } from 'node:fs/promises';
 import path from 'node:path';
@@ -89,7 +54,6 @@ async function readActualTotalFrames() {
     const result = await execFileAsync(
       'unzip',
       ['-p', LOTTIE_PATH, ANIMATION_ENTRY],
-      // The animation JSON is ~1.5 MB; give a comfortable ceiling.
       { maxBuffer: 32 * 1024 * 1024, encoding: 'buffer' },
     );
     stdout = result.stdout;
@@ -123,10 +87,6 @@ async function readActualTotalFrames() {
         'Has the Lottie schema changed?',
     );
   }
-  // dotlottie-react's `totalFrames` returns the raw `op - ip` float;
-  // `StepperLottie` floors that on read so the rest of its frame-map
-  // math stays integer-shaped. We floor here too so this build-time
-  // check compares against the same integer as the runtime check.
   return Math.floor(op - ip);
 }
 

@@ -1,32 +1,6 @@
 import path from 'path';
 import withLinaria, { type LinariaConfig } from 'next-with-linaria';
 
-/**
- * Site-wide HTTP security headers. Documented in ARCHITECTURE.md §12.
- *
- * What we ship today:
- * - HSTS (2 years, subdomains, preload-eligible). Removing this is a
- *   one-way door — once browsers cache it, downgrading is hard. Keep
- *   `preload` in the value, but submit to hstspreload.org explicitly
- *   only after confirming every subdomain (docs.*, api.*, …) serves
- *   over HTTPS.
- * - `X-Content-Type-Options: nosniff` to suppress MIME-type guessing.
- * - `Referrer-Policy: strict-origin-when-cross-origin` (Next's default
- *   for navigations is the same; pinning it as a header covers
- *   sub-resources too).
- * - `Permissions-Policy` denying camera / microphone / geolocation /
- *   payment APIs the marketing site has no business asking for.
- * - `X-Frame-Options: DENY` and `frame-ancestors 'none'` — defence in
- *   depth against clickjacking. The site is not embedded anywhere.
- *
- * What we explicitly *don't* ship yet:
- * - A full `Content-Security-Policy` with `script-src` / `style-src`.
- *   Cal.com (`@calcom/embed-react`), Stripe Checkout, and Lottie all
- *   inject external assets at runtime; getting CSP right requires
- *   per-vendor nonce/hash plumbing and is tracked separately.
- *
- * Verify locally with `curl -sI http://localhost:3000/ | head -40`.
- */
 const SECURITY_HEADERS = [
   {
     key: 'Strict-Transport-Security',
@@ -72,8 +46,6 @@ const nextConfig: LinariaConfig = {
   },
   async redirects() {
     return [
-      // Documentation moved to docs.twenty.com (carried over from the
-      // legacy twenty-website Next.js app).
       {
         source: '/user-guide',
         destination: 'https://docs.twenty.com/user-guide/introduction',
@@ -129,10 +101,6 @@ const nextConfig: LinariaConfig = {
         destination: 'https://docs.twenty.com/twenty-ui/:slug',
         permanent: true,
       },
-
-      // Renamed/restructured pages on the new website. Mappings derived
-      // from the old twenty.com sitemap so existing inbound links and
-      // search results keep working.
       {
         source: '/story',
         destination: '/why-twenty',

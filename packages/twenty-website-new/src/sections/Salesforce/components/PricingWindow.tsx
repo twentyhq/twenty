@@ -97,7 +97,6 @@ const PanelWrapper = styled.div`
   width: 100%;
 `;
 
-// 16-point starburst — shallow spikes to keep text readable
 const STARBURST_CLIP = `polygon(
   50% 0%, 55% 18%, 65% 3%, 66% 22%,
   80% 10%, 76% 28%, 93% 22%, 83% 36%,

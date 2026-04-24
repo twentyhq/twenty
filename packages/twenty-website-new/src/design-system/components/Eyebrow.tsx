@@ -1,7 +1,4 @@
-import {
-  Heading,
-  type HeadingType,
-} from '@/design-system/components/Heading';
+import { Heading, type HeadingType } from '@/design-system/components/Heading';
 import { RectangleFillIcon } from '@/icons';
 
 export type EyebrowType = { heading: HeadingType };

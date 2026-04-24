@@ -28,9 +28,6 @@ import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
 import type { Metadata } from 'next';
 
-// Home keeps the default title template + description from the root layout.
-// Only the canonical is set here so social previews resolve to `/` and not
-// to the default OG URL of any deeper page that gets crawled first.
 export const metadata: Metadata = {
   alternates: { canonical: '/' },
 };

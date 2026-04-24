@@ -1,6 +1,9 @@
 'use client';
 
-import { createFrameTimer, createSiteWebGlRenderer } from '@/lib/visual-runtime';
+import {
+  createFrameTimer,
+  createSiteWebGlRenderer,
+} from '@/lib/visual-runtime';
 import { styled } from '@linaria/react';
 import { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
@@ -326,9 +329,6 @@ function getContainedImageRect({
 
   const imageAspect = imageWidth / imageHeight;
 
-  // Width-fit: the shader always stretches the full horizontal span of the
-  // image to the viewport, then letterboxes / crops vertically. Mirror that
-  // here so footprint scaling stays consistent across aspect ratios.
   const fittedWidth = viewportWidth;
   const fittedHeight = viewportWidth / imageAspect;
 
@@ -571,10 +571,6 @@ async function mountHomeBackgroundCanvas({
     const width = Math.max(rect.width, 1);
     const height = Math.max(rect.height, 1);
 
-    // Track the cursor in unclamped container-relative coordinates so the
-    // shader's radial falloff can fade the hover light smoothly as the cursor
-    // approaches or leaves the halftone region, instead of snapping on/off at
-    // the container edge.
     pointer.mouseX = (event.clientX - rect.left) / width;
     pointer.mouseY = (event.clientY - rect.top) / height;
     pointer.pointerInside = true;
@@ -654,8 +650,6 @@ async function mountHomeBackgroundCanvas({
     renderer.render(postScene, orthographicCamera);
   };
 
-  // Use pointer velocity damping constant (reserved for future use to keep
-  // parity with the partner halftone overlay — kept to avoid linter noise).
   void IMAGE_POINTER_VELOCITY_DAMPING;
 
   renderFrame();
@@ -704,8 +698,6 @@ export function HomeBackgroundHalftone() {
           return;
         }
         unmount = dispose;
-        // Wait a frame so the first canvas paint lands before we fade in —
-        // otherwise the transition starts from a blank canvas.
         readyFrameId = window.requestAnimationFrame(() => {
           setIsReady(true);
         });

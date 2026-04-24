@@ -1,18 +1,4 @@
 #!/usr/bin/env node
-/**
- * scripts/check-boundaries.mjs
- *
- * Architectural invariants that oxlint cannot express. Run as part of
- * `nx lint twenty-website-new`. Exit code is non-zero on violation.
- *
- * The rules here are deliberately narrow and high-signal. Layering rules
- * (sections cannot import app, lib cannot import sections, …) are enforced
- * by `no-restricted-imports` overrides in `.oxlintrc.json`. This script
- * handles invariants that need expression-level introspection.
- *
- * Add new rules sparingly — every entry is friction for contributors and
- * should pay for itself.
- */
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -21,44 +7,11 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..');
 const SRC = path.join(ROOT, 'src');
 
-/**
- * @typedef {{
- *   id: string,
- *   description: string,
- *   pattern: RegExp,
- *   appliesTo: (relativePath: string) => boolean,
- *   exempt: (relativePath: string) => boolean,
- *   help: string,
- * }} Rule
- */
-
-/**
- * Known pre-existing violations grandfathered while the codebase is being
- * cleaned up. The check ratchets: any violation outside this set fails the
- * build, and any entry in this set that no longer fires also fails the build
- * (so the list cannot rot out of date).
- *
- * Drive the list to zero, then remove the entry entirely.
- *
- * Format: `<rule-id>:<relative-path>`
- *
- * Note: This is the heavy-handed escape hatch. For a single line that is
- * legitimately exempt (e.g. the line is inside a serialized template, or
- * is in a code-generation tool), prefer the inline directive instead:
- *
- *     // boundary-allow-next-line:<rule-id> -- <reason>
- *     <the line that would otherwise trip the rule>
- *
- * Inline directives sit next to the offending code, document the reason,
- * and ratchet the same way: a directive that no longer matches a real
- * violation fails the build (so they cannot rot either).
- */
 const KNOWN_VIOLATIONS = new Set([]);
 
 const ALLOW_DIRECTIVE_REGEX =
   /\/\/\s*boundary-allow-next-line:([\w-]+)(?:\s+--\s+.+)?/;
 
-/** @type {Rule[]} */
 const RULES = [
   {
     id: 'no-raw-webgl-renderer',
@@ -75,7 +28,7 @@ const RULES = [
       'Use `createSiteWebGlRenderer` from `@/lib/visual-runtime/create-site-webgl-renderer`',
       'instead. The factory enforces the site-wide context cap, attaches the kill',
       'switch (NEXT_PUBLIC_DISABLE_HEAVY_VISUALS), and centralises GPU / power',
-      'preference defaults. See ARCHITECTURE.md → Heavy visuals.',
+      'preference defaults.',
     ].join('\n      '),
   },
 ];
@@ -103,18 +56,8 @@ async function* walk(dir) {
   }
 }
 
-/**
- * @param {string} contents
- * @param {RegExp} pattern
- * @param {string} ruleId
- * @returns {{
- *   matches: Array<{ line: number, column: number, snippet: string, suppressed: boolean }>,
- *   directives: Array<{ line: number, ruleId: string, suppressed: boolean }>,
- * }}
- */
 function findMatches(contents, pattern, ruleId) {
   const matches = [];
-  /** @type {Array<{ line: number, ruleId: string, suppressed: boolean }>} */
   const directives = [];
   const lines = contents.split('\n');
   for (let i = 0; i < lines.length; i++) {
@@ -127,8 +70,6 @@ function findMatches(contents, pattern, ruleId) {
 
     const m = line.match(pattern);
     if (m && m.index != null) {
-      // A directive on the line directly above this one suppresses the match
-      // and gets credited as "used" so it isn't flagged stale.
       const prevDirective = directives.find((d) => d.line === i);
       const suppressed = prevDirective !== undefined;
       if (prevDirective) prevDirective.suppressed = true;
@@ -144,9 +85,7 @@ function findMatches(contents, pattern, ruleId) {
 }
 
 async function main() {
-  /** @type {Array<{ rule: Rule, file: string, line: number, column: number, snippet: string }>} */
   const violations = [];
-  /** @type {Array<{ rule: Rule, file: string, line: number }>} */
   const staleDirectives = [];
 
   for await (const absPath of walk(SRC)) {
@@ -186,9 +125,7 @@ async function main() {
     }
   }
 
-  /** @type {typeof violations} */
   const newViolations = [];
-  /** @type {Set<string>} */
   const seenKnown = new Set();
 
   for (const v of violations) {
@@ -200,7 +137,6 @@ async function main() {
     }
   }
 
-  /** @type {string[]} */
   const staleKnown = [];
   for (const key of KNOWN_VIOLATIONS) {
     if (!seenKnown.has(key)) staleKnown.push(key);
@@ -244,9 +180,8 @@ async function main() {
       `\u001b[31mcheck-boundaries: ${staleKnown.length} stale entry/entries in KNOWN_VIOLATIONS\u001b[0m`,
     );
     console.error(
-      '  Remove the following from KNOWN_VIOLATIONS in scripts/check-boundaries.mjs',
+      '  Remove the following from KNOWN_VIOLATIONS in scripts/check-boundaries.mjs:',
     );
-    console.error('  (the underlying violation no longer exists — good!):');
     console.error('');
     for (const key of staleKnown) {
       console.error(`    - ${key}`);

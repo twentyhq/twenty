@@ -1,12 +1,3 @@
-/**
- * End-to-end test for the partner-application route handler.
- *
- * The handler holds module-level rate-limit state, so each test uses a
- * unique IP to avoid bleeding limits across test cases. Tests that want to
- * exercise rate-limit behaviour explicitly do so with a single, dedicated
- * IP.
- */
-
 const ORIGINAL_FETCH = global.fetch;
 const ORIGINAL_WEBHOOK_URL = process.env.PARTNER_APPLICATION_WEBHOOK_URL;
 
@@ -45,9 +36,6 @@ function buildRequest({
 }
 
 async function loadRoute() {
-  // Re-import per test so module-level rate-limit state starts fresh in
-  // tests that need it. Tests that don't call this share a single warm
-  // module (matching the production serverless model).
   jest.resetModules();
   const mod = await import('@/app/api/partner-application/route');
   return mod;
@@ -262,12 +250,6 @@ describe('POST /api/partner-application', () => {
   });
 
   it('returns 504 when the webhook surfaces an AbortError (timeout path)', async () => {
-    // The route's WEBHOOK_TIMEOUT_MS is intentionally hardcoded inside the
-    // module; rather than wait it out, we simulate the same observable
-    // outcome — fetchWithTimeout returns `{ ok: false, error: 'timeout' }`
-    // — by rejecting with an AbortError immediately. Mapping `timeout → 504`
-    // is the only thing the route owns; the actual timing is covered by
-    // `fetch-with-timeout.test.ts`.
     global.fetch = jest
       .fn()
       .mockRejectedValue(
@@ -288,7 +270,6 @@ describe('POST /api/partner-application', () => {
     const ip = '203.0.113.99';
     const statuses: number[] = [];
 
-    // Capacity is 5. Six rapid-fire requests → fifth allowed, sixth denied.
     for (let i = 0; i < 6; i++) {
       const r = await POST(buildRequest({ ip }));
       statuses.push(r.status);

@@ -32,7 +32,6 @@ export async function generateMetadata({
     ogImage: post.ogImage,
     type: 'article',
     extend: {
-      // Pre-launch: don't index individual posts even if the file exists.
       robots: { index: false, follow: false },
     },
   });
@@ -46,6 +45,5 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
     notFound();
   }
 
-  // Article rendering ships with the prose primitives in a later phase.
   notFound();
 }

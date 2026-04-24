@@ -13,13 +13,6 @@ type WebGlErrorBoundaryState = {
   hasFailed: boolean;
 };
 
-/**
- * Catches errors thrown synchronously during render or in effects from
- * descendant WebGL components and swaps them for a quiet, on-brand fallback.
- *
- * Errors are NOT retried — repeatedly remounting a failing canvas in a
- * tight loop is exactly how driver crashes turn into browser kills.
- */
 export class WebGlErrorBoundary extends Component<
   WebGlErrorBoundaryProps,
   WebGlErrorBoundaryState

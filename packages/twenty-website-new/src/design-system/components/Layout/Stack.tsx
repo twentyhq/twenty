@@ -14,13 +14,8 @@ const StackRoot = styled.div`
 export type StackAlign = 'start' | 'center' | 'end' | 'stretch';
 
 export type StackProps = {
-  /** Spacing multiplier passed to `theme.spacing(gap)`. */
   gap?: number;
   align?: StackAlign;
-  /**
-   * HTML tag the wrapper renders as. Defaults to `div`. Use `'ul'` /
-   * `'ol'` for navigation/menu lists, `'section'` for landmarks, etc.
-   */
   as?: ElementType;
   className?: string;
   style?: CSSProperties;
@@ -34,15 +29,6 @@ const ALIGN_TO_FLEX: Record<StackAlign, string> = {
   stretch: 'stretch',
 };
 
-/**
- * Vertical flex stack. Use as the default scaffolding wrapper instead
- * of an ad-hoc `display: flex; flex-direction: column` block.
- *
- * `gap` is a spacing multiplier (`theme.spacing(gap)`). For more exotic
- * gap values (clamp, vh, etc.) drop the primitive and write a bespoke
- * styled div — the primitive intentionally only covers the recurring
- * `theme.spacing` case.
- */
 export function Stack({
   align,
   as,

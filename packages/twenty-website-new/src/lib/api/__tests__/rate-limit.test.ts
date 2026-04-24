@@ -34,7 +34,6 @@ describe('createRateLimiter', () => {
     const denied = limiter('a');
     expect(denied.allowed).toBe(false);
     if (!denied.allowed) {
-      // Bucket sits at 0 tokens, refilling at 1/sec → 1000 ms to next token.
       expect(denied.retryAfterMs).toBeGreaterThan(0);
       expect(denied.retryAfterMs).toBeLessThanOrEqual(1000);
     }
@@ -54,15 +53,12 @@ describe('createRateLimiter', () => {
     limiter('a');
     expect(limiter('a').allowed).toBe(false);
 
-    // 500 ms passes → +1 token.
     now += 500;
     expect(limiter('a')).toEqual({ allowed: true, remaining: 0 });
 
-    // Another 500 ms → +1 token, but we just spent one, so back to 0.
     now += 500;
     expect(limiter('a')).toEqual({ allowed: true, remaining: 0 });
 
-    // 2 seconds → +4 tokens (capped at capacity = 5; we then spend one).
     now += 2_000;
     const result = limiter('a');
     expect(result.allowed).toBe(true);
@@ -83,7 +79,6 @@ describe('createRateLimiter', () => {
     limiter('a');
     expect(limiter('a').allowed).toBe(false);
 
-    // 60 seconds pass — bucket refills past capacity.
     now += 60_000;
     expect(limiter('a')).toEqual({ allowed: true, remaining: 1 });
     expect(limiter('a')).toEqual({ allowed: true, remaining: 0 });
@@ -113,8 +108,6 @@ describe('createRateLimiter', () => {
     limiter('a');
     limiter('a');
     now -= 60_000;
-    // Without the Math.max(0, …) guard, going backwards would refill the
-    // bucket in surprising ways. We expect: still no tokens, denied.
     expect(limiter('a').allowed).toBe(false);
   });
 });

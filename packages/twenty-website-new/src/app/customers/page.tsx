@@ -18,8 +18,6 @@ import { buildPageMetadata } from '@/lib/seo';
 import { css } from '@linaria/core';
 import type { Metadata } from 'next';
 
-// Defaults from `buildPageMetadata` already cover canonical, openGraph, and
-// twitter — we don't need to repeat them here.
 export const metadata: Metadata = buildPageMetadata({
   path: '/customers',
   title: 'Customers | Twenty',

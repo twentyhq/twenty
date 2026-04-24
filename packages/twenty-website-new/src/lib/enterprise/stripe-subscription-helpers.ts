@@ -1,7 +1,5 @@
 import type Stripe from 'stripe';
 
-// Stripe's generated `Subscription` type can lag the REST shape; the API still
-// exposes period boundaries used for license validity.
 type SubscriptionWithPeriodBounds = Stripe.Subscription & {
   current_period_end?: number;
 };

@@ -1,8 +1,3 @@
-/**
- * Public surface of the customers domain — types and the case-study
- * catalog data, both consumed by the `/customers` route, the case-study
- * pages themselves, and the `CaseStudyCatalog` section.
- */
 export type {
   CaseStudyCatalogEntry,
   CaseStudyContentBlock,

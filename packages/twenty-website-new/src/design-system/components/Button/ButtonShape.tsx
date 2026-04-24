@@ -7,10 +7,6 @@ type ButtonShapeProps = {
   strokeColor: string;
 };
 
-// The bottom-right corner taper is a fixed design element; only the straight
-// vertical segment between top-right arc and the taper changes with height.
-// Reference: at the design's nominal height of 40, the straight segment is
-// 40 - TAPER_TOP_OFFSET - TAPER_HEIGHT = 20.523.
 const TAPER_HEIGHT = 15.477;
 const TAPER_TOP_OFFSET = 4;
 

@@ -15,7 +15,9 @@ const Shell = styled.div`
   overflow: clip;
   padding: ${theme.spacing(4)} ${theme.spacing(10)};
   width: 100%;
-  transition: border-color 0.4s ease, box-shadow 0.4s ease;
+  transition:
+    border-color 0.4s ease,
+    box-shadow 0.4s ease;
 
   &:hover {
     border-color: ${theme.colors.highlight[100]};
@@ -184,12 +186,7 @@ export function CalculatorEmbed({ calculator }: CalculatorEmbedProps) {
         ) : null}
         <Heading as="h3" segments={visual.heading} size="lg" weight="light" />
         <BodyOnDark>
-          <Body
-            body={visual.body}
-            family="sans"
-            size="md"
-            weight="regular"
-          />
+          <Body body={visual.body} family="sans" size="md" weight="regular" />
         </BodyOnDark>
       </VisualColumn>
       <ControlsColumn>

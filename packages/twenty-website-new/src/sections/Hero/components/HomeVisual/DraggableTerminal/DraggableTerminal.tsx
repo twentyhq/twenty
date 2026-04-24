@@ -29,10 +29,6 @@ const INITIAL_PROMPT_TEXT =
   'Scaffold a launch-ops CRM in my workspace with rockets, launches, payloads, customers, and launch sites, with relevant actions for each.';
 const CLEARED_PROMPT_TEXT = 'Ask anything…';
 
-// Initial / minimum dimensions for the Terminal window (Figma mock).
-// Initial height is tuned to hug the prompt box + top bar so there's no
-// large empty area above the prompt before the chat runs — it expands to
-// TERMINAL_CHAT_EXPANDED_HEIGHT once the conversation starts.
 const TERMINAL_INITIAL_WIDTH = 380;
 const TERMINAL_INITIAL_HEIGHT = 220;
 const TERMINAL_CHAT_EXPANDED_HEIGHT = 480;
@@ -42,8 +38,6 @@ const TERMINAL_MIN_WIDTH = 300;
 const TERMINAL_MIN_HEIGHT = 200;
 const TERMINAL_INITIAL_BOTTOM_OFFSET = 96;
 const MIN_EDGE_GAP = 0;
-// Below this parent width, stack Terminal below App Window with a diagonal
-// offset so both windows stay visible and clickable on mobile.
 const MOBILE_PARENT_BREAKPOINT = 640;
 const MOBILE_OFFSET_X = 16;
 const MOBILE_OFFSET_Y = 48;
@@ -142,7 +136,6 @@ const Shell = styled.div<{
     if (!$animationsEnabled) {
       return base;
     }
-    // Spring-like curve (overshoots slightly then settles) for a lively grow.
     const springCurve = 'cubic-bezier(0.34, 1.45, 0.55, 1)';
     const growDuration = '0.42s';
     return `${base}, height ${growDuration} ${springCurve}, width ${growDuration} ${springCurve}, transform ${growDuration} ${springCurve}`;
@@ -342,8 +335,6 @@ export const DraggableTerminal = ({
   const [instantComplete, setInstantComplete] = useState(false);
 
   useEffect(() => {
-    // Defer enabling grow animations until after the initial fade-in so the
-    // first paint positions the window without animating from translate(0,0).
     const timeoutId = window.setTimeout(() => {
       setAnimationsEnabled(true);
     }, 150);
@@ -364,8 +355,6 @@ export const DraggableTerminal = ({
       const parentRect =
         shellRef.current?.parentElement?.getBoundingClientRect() ?? null;
       setSize({ width: targetWidth, height: targetHeight });
-      // Keep whichever corner is closest to the parent edges anchored so the
-      // window grows outward from the corner nearest the page boundary.
       setPosition((pos) => {
         if (!pos) {
           return pos;
@@ -490,9 +479,6 @@ export const DraggableTerminal = ({
     resizeAnchored,
   ]);
 
-  // On mount, measure the hero scene and anchor the window to the
-  // bottom-right corner. Done in a layout effect so we paint into position
-  // without a visible flicker (Shell starts with opacity 0 until ready).
   useLayoutEffect(() => {
     const shell = shellRef.current;
     const parent = shell?.parentElement as HTMLElement | null;
@@ -503,8 +489,6 @@ export const DraggableTerminal = ({
     const parentRect = parent.getBoundingClientRect();
 
     if (parentRect.width < MOBILE_PARENT_BREAKPOINT) {
-      // Mobile: stack Terminal on top of App Window with a small diagonal
-      // offset so the App Window corner stays peeking out and tappable.
       const mobileWidth = Math.min(
         TERMINAL_INITIAL_WIDTH,
         parentRect.width - MOBILE_OFFSET_X,
@@ -562,7 +546,6 @@ export const DraggableTerminal = ({
     [getParentRect],
   );
 
-  // Drag handling.
   const handleDragStart = useCallback(
     (event: ReactPointerEvent<HTMLDivElement>) => {
       if (event.pointerType === 'mouse' && event.button !== 0) {
@@ -595,20 +578,6 @@ export const DraggableTerminal = ({
     [activate, position],
   );
 
-  // Drag/resize hot path: per-`pointermove` we mutate `shell.style.transform`
-  // (and width/height for resize) directly instead of calling `setPosition` /
-  // `setSize`. A 120 Hz pointer can fire ~hundreds of `pointermove`s per
-  // second; routing each through React state would re-render the whole
-  // window subtree every frame. The DOM write is still synchronous and
-  // browsers coalesce style mutations into the next paint, so the visible
-  // motion is identical — just without React in the loop.
-  //
-  // We mirror the latest live values into refs and commit them back to
-  // React state on `pointerup` so the next render (e.g. an external
-  // re-render from `useWindowOrder` while interacting) picks up where the
-  // drag left off. While interacting, JSX falls back to the live ref
-  // values to keep any unexpected mid-interaction render visually
-  // coherent. See ARCHITECTURE.md §15.
   const latestPositionRef = useRef<TerminalPosition | null>(position);
   const latestSizeRef = useRef<TerminalSize>(size);
   useEffect(() => {
@@ -664,7 +633,6 @@ export const DraggableTerminal = ({
     };
   }, [clampPosition, isDragging, size]);
 
-  // Resize handling.
   const startResize = useCallback(
     (handle: ResizeHandle) => (event: ReactPointerEvent<HTMLDivElement>) => {
       if (event.pointerType === 'mouse' && event.button !== 0) {
@@ -770,8 +738,6 @@ export const DraggableTerminal = ({
         }
       }
 
-      // Same hot-path treatment as the drag handler — write directly to
-      // the DOM and only commit React state on `pointerup`.
       latestSizeRef.current = { width: nextWidth, height: nextHeight };
       latestPositionRef.current = { left: nextLeft, top: nextTop };
       const shell = shellRef.current;
@@ -809,10 +775,6 @@ export const DraggableTerminal = ({
     };
   }, [getParentRect, isResizing]);
 
-  // While interacting, prefer the live ref values for the inline style so
-  // an unrelated re-render (e.g. `zIndex` change from `useWindowOrder`)
-  // doesn't snap the window back to the last committed position/size.
-  // When idle, we read from React state — the canonical source.
   const isInteracting = isDragging || isResizing;
   const renderPosition = isInteracting
     ? (latestPositionRef.current ?? position)

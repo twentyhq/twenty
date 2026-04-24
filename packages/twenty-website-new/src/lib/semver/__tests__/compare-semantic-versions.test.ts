@@ -1,10 +1,5 @@
 import { compareSemanticVersions } from '@/lib/semver/compare-semantic-versions';
 
-/**
- * Helper that asserts strict ordering across an arbitrary list. Each
- * adjacent pair is checked both directions, plus reflexivity. Catches
- * sort-instability bugs that single-pair tests miss.
- */
 function expectOrdered(versions: string[]) {
   for (let i = 0; i < versions.length - 1; i++) {
     const a = versions[i];
@@ -39,7 +34,6 @@ describe('compareSemanticVersions', () => {
   });
 
   it('orders pre-release identifiers per the SemVer 2.0.0 spec example', () => {
-    // Verbatim from semver.org §11:
     expectOrdered([
       '1.0.0-alpha',
       '1.0.0-alpha.1',

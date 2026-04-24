@@ -147,9 +147,6 @@ const SIDEBAR_TONES: Record<
   red: { background: '#fdd8d8', border: '#f9c6c6', color: '#DC3D43' },
 };
 
-// RGB tuples for each tone's accent color. Used by the object-appearance
-// animation to tint the highlight/ring to match the newly-created object's
-// sidebar icon (e.g. Rocket = violet, Launch = orange, Payload = teal).
 const hexToRgbTuple = (hex: string): string => {
   const clean = hex.replace('#', '');
   const expanded =
@@ -245,8 +242,6 @@ const PAGE_RENDERERS = {
     page: Extract<HeroPageDefinition, { type: K }>,
   ) => ReactNode;
 };
-
-// -- Styled Components --
 
 const StyledHomeVisual = styled.div`
   isolation: isolate;
@@ -934,11 +929,6 @@ const NavbarActionSeparator = styled.div`
   width: 1px;
 `;
 
-// Pinned action buttons register to the left of the New Record button once
-// the chat reveals an object. Tighter padding/gap than the default navbar
-// buttons so multiple commands can sit side-by-side. Entrance animation
-// cascades left-to-right via --pinned-action-index so buttons feel like
-// they're landing one after the other.
 const PinnedActionButton = styled(NavbarActionButton)<{
   $pinnedActionIndex: number;
 }>`
@@ -1403,8 +1393,6 @@ const FaviconImage = styled.img`
   width: 100%;
 `;
 
-// -- Icon helpers --
-
 const TABLER_ICON_MAP: Record<string, typeof IconBuildingSkyscraper> = {
   book: IconBook,
   buildingSkyscraper: IconBuildingSkyscraper,
@@ -1448,12 +1436,6 @@ const HEADER_ICON_MAP: Record<string, typeof IconBuildingSkyscraper> = {
   url: IconLink,
 };
 
-// -- Utility functions --
-
-// Caps the per-session memory footprint of failed-URL tracking. The
-// visuals load at most a few dozen unique avatars/favicons per render,
-// so 256 is generously above the working set while still bounding a
-// long-running tab. See `lib/visual-runtime/bounded-failure-cache.ts`.
 const failedAvatarUrls = createBoundedFailureCache(256);
 const failedFaviconUrls = createBoundedFailureCache(256);
 
@@ -1654,8 +1636,6 @@ function renderNavbarAction(
   return button;
 }
 
-// -- Small icon wrappers --
-
 type MiniIconProps = {
   color?: string;
   size?: number;
@@ -1787,8 +1767,6 @@ function CopyMini({ color = COLORS.textSecondary, size = 14 }: MiniIconProps) {
   );
 }
 
-// -- Favicon logo component --
-
 function FaviconLogo({
   src,
   domain,
@@ -1845,8 +1823,6 @@ function FaviconLogo({
     </div>
   );
 }
-
-// -- Sidebar icon rendering --
 
 function PersonAvatarContent({ token }: { token: HeroCellPerson }) {
   const [localFailedUrl, setLocalFailedUrl] = useState<string | null>(null);
@@ -1982,8 +1958,6 @@ function renderSidebarIcon(
   );
 }
 
-// -- Sidebar item component --
-
 function SidebarItemComponent({
   collapsible = false,
   expanded = false,
@@ -2017,8 +1991,6 @@ function SidebarItemComponent({
     item.label === selectedLabel;
   const rowHighlighted = highlightedItemId === item.id;
   const childItems = item.children ?? [];
-  // Tint the appearance animation with the item's own tone so Rocket pops
-  // violet, Launch pops orange, Payload pops teal, etc.
   const iconTone =
     'tone' in item.icon && typeof item.icon.tone === 'string'
       ? item.icon.tone
@@ -2097,8 +2069,6 @@ function SidebarItemComponent({
     </>
   );
 }
-
-// -- Cell rendering components --
 
 function PersonTokenCell({
   token,
@@ -2299,8 +2269,6 @@ function renderCellValue(
   }
 }
 
-// -- Main component --
-
 export function HomeVisual({ visual }: { visual: HeroVisualType }) {
   const defaultActiveLabel =
     visual.favoritesNav?.find((item) => item.active)?.label ??
@@ -2311,10 +2279,6 @@ export function HomeVisual({ visual }: { visual: HeroVisualType }) {
 
   const [activeLabel, setActiveLabel] = useState(defaultActiveLabel);
   const [createdObjectIds, setCreatedObjectIds] = useState<string[]>([]);
-  // Objects whose pinned navbar commands have been scaffolded by the chat.
-  // Includes Companies (reused from the standard sidebar) and all newly
-  // created CRM objects. The navbar looks up its pinned actions here so
-  // commands only appear after the assistant announces them.
   const [revealedObjectIds, setRevealedObjectIds] = useState<string[]>([]);
   const [highlightedItemId, setHighlightedItemId] = useState<string | null>(
     null,
@@ -2345,19 +2309,11 @@ export function HomeVisual({ visual }: { visual: HeroVisualType }) {
     [visual.actions, visual.tableWidth],
   );
 
-  // Inject the CRM objects at the top of the workspace sidebar as they are
-  // "created" by the AI chat. The callback chain is:
-  // AssistantResponse -> ConversationPanel -> DraggableTerminal -> here. Each
-  // object streams in one-by-one from the first assistant paragraph; the
-  // workspace mirrors that order, with the most recently created object on top
-  // and surfaced as the active page.
   const workspaceNav = useMemo<HeroSidebarEntry[]>(() => {
     if (createdObjectIds.length === 0) {
       return visual.workspaceNav;
     }
 
-    // Walk the created list from newest-first so the last object streamed sits
-    // on top. Any CRM entry not yet created is simply skipped.
     const prepended = [...createdObjectIds]
       .reverse()
       .map(
@@ -2373,8 +2329,6 @@ export function HomeVisual({ visual }: { visual: HeroVisualType }) {
     setRevealedObjectIds((current) =>
       current.includes(id) ? current : [...current, id],
     );
-    // Companies is reused from the standard sidebar — no prepend, just flash
-    // the existing item and show its index page.
     if (id === COMPANIES_ITEM_ID) {
       setActiveLabel(COMPANIES_ITEM_LABEL);
       setHighlightedItemId(COMPANIES_ITEM_ID);
@@ -2427,9 +2381,6 @@ export function HomeVisual({ visual }: { visual: HeroVisualType }) {
   const activeHeader = activePage?.header;
   const activeActions = activeHeader?.actions ?? [];
   const navbarActions = activeHeader?.navbarActions;
-  // Pinned commands registered by the active object. Surfaced only after the
-  // chat has revealed that object, mirroring how a real workspace would only
-  // gain header actions after the schema / command-menu-items lands.
   const pinnedActions =
     activeItem && revealedObjectIds.includes(activeItem.id)
       ? OBJECT_PINNED_ACTIONS[activeItem.id]

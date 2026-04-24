@@ -3200,15 +3200,6 @@ export function generateReactComponent(
     pose,
     options.previewDistance,
   );
-  // @ts-nocheck is unfortunate but pragmatic here: the serialized runtime
-  // below is several thousand lines of hand-rolled WebGL bookkeeping that
-  // was never written with type annotations. Re-typing it would mean
-  // touching every parameter, every uniform, every shader uniform `.value`
-  // — easily a multi-day effort for code that is regenerated from the
-  // halftone studio. The @generated banner is the contract: do NOT
-  // hand-edit these files; regenerate them from the studio if the runtime
-  // logic changes. Local edits will be silently lost the next time the
-  // studio re-exports.
   const generatedBanner = exportSettings.includeTsNoCheck
     ? `/**
  * @generated halftone-studio

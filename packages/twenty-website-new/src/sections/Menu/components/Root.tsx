@@ -105,13 +105,6 @@ export function Root({
   const [isScrolling, setIsScrolling] = useState(false);
   const scrollTimeoutRef = useRef<number | null>(null);
 
-  // Bespoke scroll listener — kept inline rather than ported to
-  // `useScheduledOnScroll` because it is the only consumer in the
-  // codebase that combines a scrollY-threshold read with an idle-timeout
-  // debounce. Splitting it into two listeners would be strictly more work
-  // than the single handler; folding the "is currently scrolling" debouncer
-  // into a shared primitive without other users would just abstract over a
-  // single call site. Revisit if a second header gains the same behaviour.
   useEffect(() => {
     const handleScroll = () => {
       setHasScrolled(window.scrollY > 8);

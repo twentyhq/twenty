@@ -12,8 +12,8 @@ const DEFAULT_IMAGE_URL =
 
 const FAST_PATH_BACKDROP_CONFIG: Omit<HalftoneImageBackdropConfig, 'imageUrl'> =
   {
-  activeHoverX: 0.16,
-  activeHoverY: 0.46,
+    activeHoverX: 0.16,
+    activeHoverY: 0.46,
     dashColor: '#777777',
     flipImageY: true,
     halftonePower: 0.3,

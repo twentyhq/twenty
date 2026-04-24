@@ -1,11 +1,7 @@
 'use client';
 
 import { LinkButton } from '@/design-system/components';
-import {
-  ArrowRightUpIcon,
-  INFORMATIVE_ICONS,
-  SOCIAL_ICONS,
-} from '@/icons';
+import { ArrowRightUpIcon, INFORMATIVE_ICONS, SOCIAL_ICONS } from '@/icons';
 import type {
   MenuNavItemType,
   MenuScheme,
@@ -402,11 +398,7 @@ export function MenuDrawer({ navItems, scheme, socialLinks }: MenuDrawerProps) {
             {topLevelItems.map((item, index) => (
               <React.Fragment key={item.label}>
                 {item.children ? (
-                  <NavGroup
-                    item={item}
-                    scheme={scheme}
-                    pathname={pathname}
-                  />
+                  <NavGroup item={item} scheme={scheme} pathname={pathname} />
                 ) : item.href ? (
                   <Drawer.Close
                     nativeButton={false}

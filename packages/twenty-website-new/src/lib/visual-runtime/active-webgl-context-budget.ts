@@ -1,20 +1,3 @@
-/**
- * Page-wide budget for live WebGL contexts.
- *
- * Browsers cap the number of WebGL contexts a single page can hold open
- * (Chromium: 16, Safari: ~8 depending on hardware). When a page exceeds
- * the cap, the browser silently evicts the oldest context, which is how
- * the marketing site used to land in "Context Lost" / "Context Restored"
- * loops on the home page (~22 visuals competing for slots).
- *
- * The budget here is an *atomic synchronous reservation* taken at the
- * `WebGlMount` layer — long before any GLB/texture fetch, long before
- * any `THREE.WebGLRenderer` is constructed. That single change kills the
- * race condition the previous design suffered from, where the policy
- * said "yes" at observer-trigger time and then a different mount grabbed
- * the last slot during the awaiting child's asset fetch.
- */
-
 const DEFAULT_MAX_ACTIVE_WEBGL_CONTEXTS = 8;
 
 function readNumberEnv(value: string | undefined, fallback: number): number {
@@ -47,13 +30,6 @@ export function getActiveWebGlContextCount(): number {
   return activeCount;
 }
 
-/**
- * Try to atomically claim one budget slot.
- *
- * Returns a `release` callback when a slot was claimed, or `null` when
- * the budget is full. The caller MUST invoke `release` exactly once
- * (typically in a React effect cleanup); subsequent calls are no-ops.
- */
 export function tryReserveWebGlContextSlot(): (() => void) | null {
   if (activeCount >= getMaxActiveWebGlContexts()) {
     return null;

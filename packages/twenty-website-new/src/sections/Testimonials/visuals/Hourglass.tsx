@@ -6,21 +6,6 @@ import type * as THREE from 'three';
 import { loadImportedGeometryFromUrl } from '@/lib/halftone';
 import { HourglassCanvas } from './HourglassCanvas';
 
-/**
- * Settings, pose, and rendering for the Testimonials hourglass.
- *
- * The bespoke `HourglassCanvas` is intentionally retained — its halftone
- * fragment shader is meaningfully different from `@/lib/halftone`'s
- * `HalftoneCanvas` (row-based dash bars with a pre-blur glow halo and
- * shadow-grouping pass, vs. the dot-grid pattern used by Helped /
- * marketing visuals). See the file header on `HourglassCanvas.tsx` for
- * the design contract.
- *
- * Geometry loading uses the shared `loadImportedGeometryFromUrl` from
- * `@/lib/halftone` — no need for a duplicate FBX/GLTF/DRACO loader stack
- * here.
- */
-
 const GLB_URL = '/illustrations/home/testimonials/hourglass.glb';
 const HOURGLASS_PREVIEW_DISTANCE = 4;
 
@@ -89,12 +74,6 @@ const HOURGLASS_INITIAL_POSE = {
   timeElapsed: 411.9648000000736,
 };
 
-/**
- * Fills the slot reserved by the parent (TestimonialsVisualFrame in
- * MountedTestimonialsVisuals.tsx) so that the canvas — and the empty
- * loading state before geometry resolves — both occupy the exact same
- * footprint, eliminating any layout shift between them.
- */
 const HourglassFill = styled.div`
   height: 100%;
   position: relative;

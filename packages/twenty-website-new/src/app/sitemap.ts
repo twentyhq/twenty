@@ -5,14 +5,6 @@ import { getSiteUrl } from '@/lib/seo';
 
 const SITE_URL = getSiteUrl();
 
-/**
- * The sitemap intentionally omits `/blog` and `/blog/[slug]` while the blog
- * route surface still returns `notFound()` (see `app/(blog)/blog/page.tsx`).
- * Advertising URLs that 404 to crawlers wastes crawl budget and harms SEO.
- *
- * When the blog launches, add `/blog` to STATIC_ROUTES below and re-enable
- * `listBlogPostSitemapEntries` from `@/lib/blog`.
- */
 const STATIC_ROUTES: ReadonlyArray<{
   path: string;
   changeFrequency: MetadataRoute.Sitemap[number]['changeFrequency'];

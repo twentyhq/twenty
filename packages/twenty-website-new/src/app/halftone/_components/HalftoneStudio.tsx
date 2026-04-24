@@ -475,9 +475,6 @@ export function HalftoneStudio() {
     };
   }, [state.settings.halftone, state.settings.sourceMode]);
 
-  // Hydrate from URL hash on first mount. Done in an effect (not the reducer
-  // initializer) so the server-rendered HTML matches the client and we don't
-  // touch `window` during render.
   const hashHydratedReference = useRef(false);
   useEffect(() => {
     if (hashHydratedReference.current) {
@@ -497,9 +494,6 @@ export function HalftoneStudio() {
     setExportName(decoded.exportName);
   }, []);
 
-  // Mirror the current design state to the URL hash so a refresh (and a copy
-  // of the URL) restores the same look. We skip the very first effect run so
-  // the URL stays clean until the user actually changes something.
   const hashSyncInitializedReference = useRef(false);
   useEffect(() => {
     if (!hashSyncInitializedReference.current) {

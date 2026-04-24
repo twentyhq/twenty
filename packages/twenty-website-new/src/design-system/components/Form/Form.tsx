@@ -5,33 +5,6 @@ import { Field } from '@base-ui/react/field';
 import { styled } from '@linaria/react';
 import { type ComponentPropsWithoutRef, type ReactNode } from 'react';
 
-/**
- * Compound Form primitive built on Base UI's `Field`.
- *
- * Base UI's `Field.Root` provides the id + ARIA wiring; we add a thin
- * `<Form.Field label hint error>` sugar layer so consumers don't have
- * to assemble Label + Description + Error themselves when those slots
- * follow the standard layout.
- *
- * ```tsx
- * <Form.Field name="email" label="Email" hint="We never share it." error={emailError}>
- *   <Form.Input type="email" placeholder="you@company.com" />
- * </Form.Field>
- * ```
- *
- * Notes:
- * - Pass `label={null}` (or omit it) when the visual label lives
- *   elsewhere — the input is still ARIA-wired through Base UI's
- *   context. Use `aria-label` on the input if there's no visible label
- *   anywhere.
- * - The `error` slot, when set, also wires `aria-invalid="true"` on
- *   the input. The error message is announced via `aria-describedby`.
- * - This is a layout/wiring primitive only — it doesn't run validation
- *   or own form state. Pass `validate={…}` to `<Form.Field>` to opt
- *   into Base UI's built-in validation, or handle errors via the
- *   parent form's `onSubmit` and pass them down through `error`.
- */
-
 const FieldRootBase = styled(Field.Root)`
   display: flex;
   flex-direction: column;
@@ -97,14 +70,6 @@ function FormField({
   );
 }
 
-/**
- * `Form.Input` renders a styled `<input>` wired to its parent
- * `<Form.Field>`. Field auto-supplies `id`, `aria-describedby`, and
- * `aria-invalid` via Base UI's context — no manual wiring at the call
- * site. The component IS the styled input, so all native input props
- * (`name`, `type`, `placeholder`, `inputMode`, …) flow through Linaria's
- * `styled()` HOC without a wrapper / spread.
- */
 export const FormInput = styled(Field.Control)`
   background: transparent;
   border: 1px solid ${theme.colors.secondary.border[20]};
@@ -175,17 +140,6 @@ export type FormTextareaProps = Omit<
   'render'
 >;
 
-/**
- * `Form.Textarea` is `Field.Control` with `render={<textarea/>}` baked
- * in. We forward consumer props onto Base UI's `Field.Control`, which
- * clones them onto the rendered `<textarea>` together with its own
- * id/aria attributes. The `{...props}` is the entire purpose of this
- * wrapper — see the linked rule discussion below.
- *
- * eslint-disable-next-line: this primitive exists explicitly to be a
- * pass-through over a native element; the rule's own
- * `explicitSpread: ignore` mode is meant to allow this case.
- */
 function FormTextarea(props: FormTextareaProps) {
   // oxlint-disable-next-line eslint-plugin-react(jsx-props-no-spreading)
   return <Field.Control render={TEXTAREA_RENDER} {...props} />;
@@ -195,9 +149,6 @@ export const Form = {
   Field: FormField,
   Input: FormInput,
   Textarea: FormTextarea,
-  /** Re-exported so consumers can render labels/hints/errors directly
-   * when the `<Form.Field label hint error>` sugar isn't enough (e.g.
-   * to insert other markup between them). */
   Label: FieldLabel,
   Hint: FieldHint,
   Error: FieldError,

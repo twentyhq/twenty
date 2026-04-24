@@ -23,7 +23,6 @@ function easeOutQuad(value: number) {
   return 1 - (1 - clampedValue) * (1 - clampedValue);
 }
 
-// Right, left, center for cards 0, 1, 2+
 function cardLeft(
   index: number,
   innerWidth: number,

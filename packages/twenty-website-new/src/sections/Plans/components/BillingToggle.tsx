@@ -122,8 +122,7 @@ export function BillingToggle({
     }
 
     const syncHighlight = () => {
-      const activeButton =
-        billing === 'monthly' ? monthlyButton : yearlyButton;
+      const activeButton = billing === 'monthly' ? monthlyButton : yearlyButton;
       const trackRect = track.getBoundingClientRect();
       const buttonRect = activeButton.getBoundingClientRect();
       const nextHighlight = {

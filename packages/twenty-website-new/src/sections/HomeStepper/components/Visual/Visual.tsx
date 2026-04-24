@@ -5,8 +5,7 @@ import { HomeStepperBackgroundIllustration } from '@/sections/HomeStepper/visual
 import { StepperVisualFrame } from '../StepperVisualFrame';
 import { StepperLottie } from './StepperLottie';
 
-const HOME_STEPPER_BACKGROUND =
-  '/images/home/stepper/download-worker.webp';
+const HOME_STEPPER_BACKGROUND = '/images/home/stepper/download-worker.webp';
 const HOME_STEPPER_SHAPE = '/images/home/stepper/background-shape.webp';
 
 type VisualProps = {

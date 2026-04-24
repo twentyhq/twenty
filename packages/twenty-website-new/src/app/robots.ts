@@ -10,10 +10,6 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: '*',
         allow: '/',
-        // Internal / utility surfaces that shouldn't be indexed. The
-        // halftone studio is a tool page; enterprise activation is reached
-        // by signed link only; api routes serve JSON; the blog route surface
-        // returns 404 until launch (see `app/(blog)/blog/page.tsx`).
         disallow: ['/halftone', '/enterprise/activate', '/api/', '/blog'],
       },
     ],

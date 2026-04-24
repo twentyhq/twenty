@@ -5,7 +5,10 @@ import { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
-import { createFrameTimer, createSiteWebGlRenderer } from '@/lib/visual-runtime';
+import {
+  createFrameTimer,
+  createSiteWebGlRenderer,
+} from '@/lib/visual-runtime';
 import { DRACO_DECODER_PATH } from '@/lib/visual-runtime/draco-decoder-path';
 
 const GLB_URL = '/illustrations/why-twenty/hero/hero.glb';
@@ -20,7 +23,6 @@ const GlbMount = styled.div`
   z-index: 1;
 `;
 
-// Same scanline shader as ProductVisual / IllustrationCardVisual; white uColor for Why Twenty.
 const scanlineVertexShader = /* glsl */ `
   varying vec3 vLocalPosition;
   varying vec3 vWorldPosition;
@@ -261,10 +263,8 @@ export function WhyTwenty() {
         animationFrameId = window.requestAnimationFrame(renderFrame);
         const time = frameTimer.getElapsed();
 
-        // Elegant, breathing float animation
         pivot.position.y = Math.sin(time * 1.5) * 0.06;
 
-        // Fluid, luxurious mouse interaction (damped)
         pivot.rotation.x += (targetRotationX - pivot.rotation.x) * 0.05;
         pivot.rotation.y += (targetRotationY - pivot.rotation.y) * 0.05;
 
@@ -292,7 +292,6 @@ export function WhyTwenty() {
       const x = ((e.clientX - rect.left) / rect.width) * 2 - 1;
       const y = -(((e.clientY - rect.top) / rect.height) * 2 - 1);
 
-      // Subtle tilt ranges
       targetRotationY = x * 0.35;
       targetRotationX = y * 0.25;
     };

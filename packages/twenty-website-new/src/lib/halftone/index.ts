@@ -1,13 +1,3 @@
-/**
- * Public surface of the halftone runtime — the bits sections may depend on.
- *
- * Studio-only modules (`app/halftone/_lib/exporters`, `share`, `formatters`,
- * `imageSvgExport`, `glassEnvironmentData`, `exportNames`) and the studio
- * components stay in `app/halftone/` because no section needs them.
- *
- * Sections should prefer this barrel over deep imports — the deep modules
- * are not part of the supported API and may be reorganised.
- */
 export { HalftoneCanvas } from './halftone-canvas';
 
 export { loadImportedGeometryFromUrl } from './geometry-registry';

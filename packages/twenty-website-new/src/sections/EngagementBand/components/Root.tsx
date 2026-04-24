@@ -34,10 +34,7 @@ export function Root({
   compactBottom = false,
 }: RootProps) {
   return (
-    <StyledSection
-      compactBottom={compactBottom}
-      style={{ backgroundColor }}
-    >
+    <StyledSection compactBottom={compactBottom} style={{ backgroundColor }}>
       <StyledContainer>{children}</StyledContainer>
     </StyledSection>
   );

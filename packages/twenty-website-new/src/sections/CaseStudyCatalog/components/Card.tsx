@@ -14,15 +14,6 @@ type CardLinkBaseProps = ComponentProps<typeof Link> & {
   variant: CardVariant;
 };
 
-/*
- * Linaria's `styled(Component)` factory does not strip transient ($-prefixed)
- * or non-DOM props before forwarding them to the wrapped component — that
- * filtering only happens for HTML element factories like `styled.div`. Without
- * this passthrough wrapper, `$cardIndex` and `variant` reach Next.js's <Link>,
- * which dumps them onto the underlying <a> and triggers a React DOM warning.
- * We consume them here so only valid <Link> props (and the className / style
- * Linaria injects for dynamic interpolations) reach the DOM.
- */
 function CardLinkBase({
   $cardIndex: _cardIndex,
   variant: _variant,

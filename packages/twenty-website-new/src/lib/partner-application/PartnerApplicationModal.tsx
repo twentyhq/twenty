@@ -17,14 +17,6 @@ import { styled } from '@linaria/react';
 import { IconChevronDown } from '@tabler/icons-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-/**
- * The partner-application panel is wider than the default `Modal`
- * popup width (which targets the contact-cal modal). We pick the width
- * via a CSS variable on the popup so the responsive switch stays in
- * CSS — `style` props can't carry media queries, but custom properties
- * defined on the same element the `var()` resolves on cascade
- * naturally.
- */
 const partnerPanelClass = css`
   --modal-panel-width: min(360px, 100%);
 
@@ -357,10 +349,6 @@ export function PartnerApplicationModal({
 
       try {
         const response = await fetch('/api/partner-application', {
-          // Send every field the form collects. The route schema mirrors
-          // this contract; if it doesn't, the user sees a 400 instead of a
-          // silent partial submission. Optional fields are omitted when
-          // empty so the schema's `.optional()` accepts the payload.
           body: JSON.stringify({
             email,
             name,

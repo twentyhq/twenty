@@ -6,31 +6,6 @@ import * as THREE from 'three';
 
 import { createSiteWebGlRenderer } from '@/lib/visual-runtime';
 
-/**
- * Single canvas-fitting halftone gradient backdrop, shared by every
- * "feature card" on the home page (familiar interface, fast path, live
- * data). All three previously lived in their own ~920-line files that
- * were 99% identical. They now compose this one module by passing config.
- *
- * Rendering pipeline
- * ──────────────────
- * One shader, one fragment pass, one fullscreen quad. The shader samples
- * the source image directly per halftone cell and writes the dash pattern
- * to the canvas. There are no intermediate render targets — the previous
- * implementation kept four *unused* gaussian blur passes around (their
- * outputs were never read), which churned GPU memory and tripped Firefox
- * compositing on parents that already use `transform`. Killing them fixes
- * the Firefox rendering regression and makes the per-frame cost ~6× cheaper.
- *
- * Resolution & DPR
- * ────────────────
- * The renderer sizes itself to the container's *actual* CSS pixel box and
- * applies `min(devicePixelRatio, 2)` for the backing buffer, so the dashes
- * stay crisp on retina displays without paying for 3× density on phones.
- * Halftone cell size scales with DPR so visual density is constant across
- * viewports (a 18-CSS-pixel cell is always 18 CSS pixels, not 9 on retina).
- */
-
 const PASS_THROUGH_VERTEX_SHADER = /* glsl */ `
   varying vec2 vUv;
 
@@ -40,19 +15,6 @@ const PASS_THROUGH_VERTEX_SHADER = /* glsl */ `
   }
 `;
 
-/**
- * Single-pass halftone over a source image.
- *
- * Each output fragment maps to a halftone "cell". The cell-center UV is
- * computed in pixel space, transformed through the same letterboxing /
- * zoom / Y-flip the original image-passthrough did, then sampled from
- * the source texture. The dash radius/thickness for that cell is driven
- * by the cell's average luminance plus a hover-light contribution.
- *
- * `imageAlpha` is 0 when the cell-center UV falls outside [0, 1] (i.e.
- * the letterbox/zoom pushed it off-image) — outside that region we draw
- * nothing, matching the original masking behaviour.
- */
 const HALFTONE_FRAGMENT_SHADER = /* glsl */ `
   precision highp float;
 
@@ -221,12 +183,6 @@ function createInteractionState(): InteractionState {
   };
 }
 
-/**
- * Wait for the image's bitmap to be ready in GPU-uploadable form. Using
- * `decode()` (instead of relying on `onload`) eliminates a Firefox-only
- * race where `THREE.Texture(image)` can upload an incomplete bitmap on
- * the very first render frame, producing a corrupted scene texture.
- */
 async function loadDecodedImage(imageUrl: string) {
   const image = new Image();
   image.crossOrigin = 'anonymous';

@@ -2,7 +2,10 @@
 
 import { useEffect, useRef, type CSSProperties } from 'react';
 import * as THREE from 'three';
-import { createFrameTimer, createSiteWebGlRenderer } from '@/lib/visual-runtime';
+import {
+  createFrameTimer,
+  createSiteWebGlRenderer,
+} from '@/lib/visual-runtime';
 
 const IMAGE_SRC = '/images/home/problem/monolith-problem.webp';
 const PREVIEW_DISTANCE = 4;

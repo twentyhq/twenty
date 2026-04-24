@@ -25,11 +25,7 @@ export function Items({ questions }: ItemsProps) {
   return (
     <BaseAccordion.Root render={<AccordionList />}>
       {questions.map((faqQuestion, index) => (
-        <Item
-          key={index}
-          question={faqQuestion}
-          value={`faq-${index}`}
-        />
+        <Item key={index} question={faqQuestion} value={`faq-${index}`} />
       ))}
     </BaseAccordion.Root>
   );

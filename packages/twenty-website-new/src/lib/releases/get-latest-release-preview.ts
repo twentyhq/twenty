@@ -3,13 +3,6 @@ import { loadLocalReleaseNotes } from '@/lib/releases/load-local-release-notes';
 const IMAGE_REGEX_GLOBAL = /!\[[^\]]*\]\(([^)]+)\)/g;
 const HEADING_REGEX_GLOBAL = /^#\s+(.+)$/gm;
 
-/**
- * Shape of a release-preview card. Structurally compatible with
- * `MenuNavChildPreview` from `sections/Menu/types`, so the Menu data
- * layer can drop the result straight into a nav child's `preview` slot
- * without an explicit cast — but defined here so the dependency
- * direction stays `sections/Menu → lib/releases`, never the reverse.
- */
 export type LatestReleasePreview = {
   image: string;
   imageAlt: string;

@@ -22,8 +22,6 @@ export async function GET(request: Request) {
       expand: ['subscription', 'customer'],
     });
 
-    // Subscriptions that begin in a free trial complete with
-    // `payment_status: 'no_payment_required'`, so accept both successful states.
     const SUCCESSFUL_PAYMENT_STATUSES: Array<typeof session.payment_status> = [
       'paid',
       'no_payment_required',

@@ -20,12 +20,8 @@ const WINDOW_ID = 'twenty-app-window';
 const MIN_WIDTH = 640;
 const MIN_HEIGHT = 420;
 const MIN_EDGE_GAP = 0;
-// Initial size cap — the hero scene is 1280×832, so we reuse that ratio to
-// keep the window looking like the Twenty app when it's shrunk to fit.
 const INITIAL_MAX_WIDTH = 1040;
 const INITIAL_ASPECT_RATIO = 1280 / 832;
-// Below this parent width, stack App Window + Terminal with a small diagonal
-// offset so both remain clickable on mobile.
 const MOBILE_PARENT_BREAKPOINT = 640;
 
 type Position = { left: number; top: number };
@@ -196,9 +192,6 @@ export const DraggableAppWindow = ({ children }: DraggableAppWindowProps) => {
 
   const { activate, zIndex } = useWindowOrder(WINDOW_ID);
 
-  // On mount, size the window to match the hero scene so it occupies the
-  // same visual footprint as before. Stored in state so drag/resize can move
-  // and shrink it freely afterwards.
   useLayoutEffect(() => {
     const shell = shellRef.current;
     const parent = shell?.parentElement as HTMLElement | null;
@@ -208,8 +201,6 @@ export const DraggableAppWindow = ({ children }: DraggableAppWindowProps) => {
     const parentRect = parent.getBoundingClientRect();
 
     if (parentRect.width < MOBILE_PARENT_BREAKPOINT) {
-      // Mobile: pin the App Window to the top of the scene. The Terminal sits
-      // tightly on top of it with only a small diagonal offset peeking out.
       const mobileWidth = Math.min(parentRect.width, 320);
       const mobileHeight = Math.min(
         parentRect.height,
@@ -220,9 +211,6 @@ export const DraggableAppWindow = ({ children }: DraggableAppWindowProps) => {
       return;
     }
 
-    // Cap the initial width so the window reads as a macOS app resting inside
-    // the hero rather than filling it edge-to-edge. Height follows the hero's
-    // aspect ratio so the app layout isn't letterboxed.
     const initialWidth = Math.min(parentRect.width, INITIAL_MAX_WIDTH);
     const initialHeight = Math.min(
       parentRect.height,
@@ -290,14 +278,6 @@ export const DraggableAppWindow = ({ children }: DraggableAppWindowProps) => {
     [activate, position],
   );
 
-  // Drag/resize hot path: we mutate `shell.style.transform` (and
-  // width/height for resize) directly per `pointermove` instead of
-  // routing every event through `setPosition` / `setSize`. A 120 Hz
-  // pointer would otherwise re-render the window subtree hundreds of
-  // times per second; the DOM write produces the same paint result
-  // without React in the loop. The latest live values are stashed in
-  // refs and committed back to React state on `pointerup`. See
-  // ARCHITECTURE.md §15.
   const latestPositionRef = useRef<Position | null>(position);
   const latestSizeRef = useRef<Size | null>(size);
   useEffect(() => {
@@ -405,8 +385,6 @@ export const DraggableAppWindow = ({ children }: DraggableAppWindowProps) => {
       const growsFromLeft = LEFT_HANDLES.has(state.handle);
       const growsFromTop = TOP_HANDLES.has(state.handle);
 
-      // Mobile parents can be narrower than MIN_WIDTH; clamp the min against
-      // the parent so resize can't demand more room than exists.
       const effectiveMinWidth = Math.min(
         MIN_WIDTH,
         Math.max(parentRect.width - MIN_EDGE_GAP * 2, 0),
@@ -420,8 +398,6 @@ export const DraggableAppWindow = ({ children }: DraggableAppWindowProps) => {
       let nextLeft = state.startLeft;
       if (affectsWidth) {
         if (growsFromLeft) {
-          // Left edge can't cross past MIN_EDGE_GAP, which caps width at
-          // startLeft + startWidth - MIN_EDGE_GAP.
           const maxWidth = state.startWidth + state.startLeft - MIN_EDGE_GAP;
           nextWidth = Math.min(
             Math.max(state.startWidth - deltaX, effectiveMinWidth),
@@ -495,17 +471,12 @@ export const DraggableAppWindow = ({ children }: DraggableAppWindowProps) => {
     };
   }, [getParentRect, isResizing]);
 
-  // Any pointer-down on the window activates it; the MacWindowBar owns the
-  // drag affordance separately so content clicks don't pull the window.
   const handleShellPointerDown = useCallback(() => {
     activate();
   }, [activate]);
 
   const isReady = position !== null && size !== null;
 
-  // While interacting, prefer the live ref values for the inline style so
-  // an unrelated re-render doesn't snap the window back to the last
-  // committed position/size.
   const isInteracting = isDragging || isResizing;
   const renderPosition = isInteracting
     ? (latestPositionRef.current ?? position)

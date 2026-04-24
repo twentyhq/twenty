@@ -72,8 +72,7 @@ export const SHARED_PEOPLE_AVATAR_URLS = {
   roelofBotha: '/images/shared/people/avatars/roelof-botha.jpg',
   ryanRoslansky: '/images/shared/people/avatars/ryan-roslansky.jpg',
   steveAnavi: '/images/shared/people/avatars/steve-anavi.jpg',
-  stewartButterfield:
-    '/images/shared/people/avatars/stewart-butterfield.jpg',
+  stewartButterfield: '/images/shared/people/avatars/stewart-butterfield.jpg',
   sundarPichai: '/images/shared/people/avatars/sundar-pichai.jpg',
   thomasDohmke: '/images/shared/people/avatars/thomas-dohmke.jpg',
   timCook: '/images/shared/people/avatars/tim-cook.jpg',

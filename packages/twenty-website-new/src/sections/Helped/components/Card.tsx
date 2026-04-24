@@ -81,9 +81,6 @@ const CtaRow = styled.div`
 `;
 
 const LOGO_FILL = theme.colors.secondary.text[100];
-// Slightly desaturated brand colour for the fallback logomark — distinct
-// enough from the LogoRow above so it reads as a stand-in (rather than a
-// duplicated logo), still recognisable as the same customer.
 const FALLBACK_LOGO_FILL = theme.colors.secondary.text[80];
 const FALLBACK_LOGO_WIDTH = 160;
 
@@ -96,12 +93,6 @@ export function Card({ card }: CardProps) {
   const Visual = HELPED_VISUALS[card.illustration];
   const logoWidth = 104;
 
-  // Static fallback for the heavy WebGL visual: a large, centred customer
-  // logomark. Used when the WebGL policy denies (kill switch, no GPU, prior
-  // context loss) or the page-wide context budget is full. Preserves the
-  // 240px footprint so layout is stable, and stays on-brand because it's
-  // literally the customer's logo. No second network request — the icon
-  // is already in the bundle for the LogoRow above.
   const visualFallback = IconComponent ? (
     <VisualFallback aria-hidden="true">
       <IconComponent

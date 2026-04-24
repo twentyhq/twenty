@@ -9,19 +9,6 @@ function safeReleaseNumber(version: string): number | null {
   }
 }
 
-/**
- * Returns the subset of release notes that are safe to show on the marketing
- * site, given the latest tag published on GitHub.
- *
- * The contract is intentionally fail-closed: if we don't have a trustworthy
- * "latest published tag" for any reason (network error, parse error,
- * unrecognised semver format), we return an empty list. The page treats an
- * empty list as a clean "no releases visible yet" empty state.
- *
- * Failing open here would let us announce internal/unpublished versions on
- * the public site whenever GitHub is flaky — which is exactly the failure
- * mode this function exists to prevent.
- */
 export function getVisibleReleaseNotes(
   notes: LocalReleaseNote[],
   latestPublishedTag: string | null,

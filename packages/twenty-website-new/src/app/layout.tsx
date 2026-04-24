@@ -41,10 +41,6 @@ const vt323 = VT323({
   display: 'swap',
 });
 
-// Linaria's `css` tag emits global styles as a side-effect of being evaluated
-// at build time. The returned class name is intentionally unused — what we
-// care about is the `:global(...)` rules being extracted into the CSS bundle.
-// The `_` prefix tells the linter the binding is intentional.
 const _globalStyles = css`
   :global(*),
   :global(*::before),
