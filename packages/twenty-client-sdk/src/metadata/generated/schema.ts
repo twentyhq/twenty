@@ -702,6 +702,7 @@ export interface PageLayoutWidget {
     title: Scalars['String']
     type: WidgetType
     objectMetadataId?: Scalars['UUID']
+    /** @deprecated Use `position` instead. Will be removed in a future release. */
     gridPosition: GridPosition
     position?: PageLayoutWidgetPosition
     configuration: WidgetConfiguration
@@ -2115,6 +2116,7 @@ export interface AgentMessagePart {
     toolInput?: Scalars['JSON']
     toolOutput?: Scalars['JSON']
     state?: Scalars['String']
+    providerExecuted?: Scalars['Boolean']
     errorMessage?: Scalars['String']
     errorDetails?: Scalars['JSON']
     sourceUrlSourceId?: Scalars['String']
@@ -3589,6 +3591,7 @@ export interface PageLayoutWidgetGenqlSelection{
     title?: boolean | number
     type?: boolean | number
     objectMetadataId?: boolean | number
+    /** @deprecated Use `position` instead. Will be removed in a future release. */
     gridPosition?: GridPositionGenqlSelection
     position?: PageLayoutWidgetPositionGenqlSelection
     configuration?: WidgetConfigurationGenqlSelection
@@ -5108,6 +5111,7 @@ export interface AgentMessagePartGenqlSelection{
     toolInput?: boolean | number
     toolOutput?: boolean | number
     state?: boolean | number
+    providerExecuted?: boolean | number
     errorMessage?: boolean | number
     errorDetails?: boolean | number
     sourceUrlSourceId?: boolean | number

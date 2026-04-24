@@ -322,8 +322,6 @@ ${tools
         return 'Dashboard Tools (create/manage dashboards)';
       case ToolCategory.LOGIC_FUNCTION:
         return 'Logic Functions (custom tools)';
-      case ToolCategory.NATIVE_MODEL:
-        return 'Native Model Capabilities (e.g. web search)';
       case ToolCategory.VIEW_FIELD:
         return 'View Field Tools (manage view columns)';
       default:
