@@ -27,14 +27,25 @@ const buildWidgetPosition = (
       return {
         layoutMode: PageLayoutTabLayoutMode.CANVAS,
       };
-    case PageLayoutTabLayoutMode.GRID:
+    case PageLayoutTabLayoutMode.GRID: {
+      if (widget.position?.__typename === 'PageLayoutWidgetGridPosition') {
+        return {
+          layoutMode: PageLayoutTabLayoutMode.GRID,
+          row: widget.position.row,
+          column: widget.position.column,
+          rowSpan: widget.position.rowSpan,
+          columnSpan: widget.position.columnSpan,
+        };
+      }
+
       return {
         layoutMode: PageLayoutTabLayoutMode.GRID,
-        row: widget.gridPosition.row,
-        column: widget.gridPosition.column,
-        rowSpan: widget.gridPosition.rowSpan,
-        columnSpan: widget.gridPosition.columnSpan,
+        row: 0,
+        column: 0,
+        rowSpan: 1,
+        columnSpan: 1,
       };
+    }
   }
 };
 
@@ -67,12 +78,6 @@ export const convertPageLayoutDraftToUpdateInput = (
             title: widget.title,
             type: widget.type,
             objectMetadataId: widget.objectMetadataId ?? null,
-            gridPosition: {
-              row: widget.gridPosition.row,
-              column: widget.gridPosition.column,
-              rowSpan: widget.gridPosition.rowSpan,
-              columnSpan: widget.gridPosition.columnSpan,
-            },
             position: buildWidgetPosition(
               widget,
               widgetIndex,

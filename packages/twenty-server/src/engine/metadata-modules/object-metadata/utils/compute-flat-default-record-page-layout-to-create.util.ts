@@ -108,7 +108,6 @@ export const computeFlatDefaultRecordPageLayoutToCreate = ({
       pageLayoutTabUniversalIdentifier: tabUniversalIdentifier,
       title: widgetProps.title,
       type: widgetProps.type,
-      gridPosition: widgetProps.gridPosition,
       position: widgetProps.position,
       // @ts-expect-error - configurationType is validated but TS can't match to discriminated union
       configuration,

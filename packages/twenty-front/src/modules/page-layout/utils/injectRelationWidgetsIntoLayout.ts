@@ -22,13 +22,6 @@ const getRelationFieldWidgetToInsert = (
   isActive: true,
   type: WidgetType.FIELD,
   objectMetadataId: null,
-  gridPosition: {
-    __typename: 'GridPosition' as const,
-    row: 0,
-    column: 0,
-    rowSpan: 1,
-    columnSpan: 12,
-  },
   position: {
     __typename: 'PageLayoutWidgetGridPosition' as const,
     layoutMode: PageLayoutTabLayoutMode.GRID,

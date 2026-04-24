@@ -13,7 +13,6 @@ const makeWidget = (id: string, index: number): PageLayoutWidget =>
     pageLayoutTabId: 'tab-1',
     title: id,
     type: WidgetType.FIELDS,
-    gridPosition: { row: 0, column: 0, rowSpan: 1, columnSpan: 1 },
     configuration: {
       __typename: 'FieldsConfiguration',
       configurationType: WidgetConfigurationType.FIELDS,

@@ -3,7 +3,6 @@ import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
 import { PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
 import {
-  GRID_POSITIONS,
   TAB_PROPS,
   VERTICAL_LIST_LAYOUT_POSITIONS,
   WIDGET_PROPS,
@@ -26,7 +25,6 @@ const OPPORTUNITY_PAGE_TABS = {
         universalIdentifier: '20202020-ac03-4003-8003-0aa0b1ca1312',
         title: 'Point of Contact',
         type: WidgetType.FIELD,
-        gridPosition: GRID_POSITIONS.FULL_WIDTH,
         position: VERTICAL_LIST_LAYOUT_POSITIONS.SECOND,
         fieldUniversalIdentifier:
           STANDARD_OBJECTS.opportunity.fields.pointOfContact
@@ -36,7 +34,6 @@ const OPPORTUNITY_PAGE_TABS = {
         universalIdentifier: '20202020-ac03-4003-8003-0aa0b1ca1313',
         title: 'Company',
         type: WidgetType.FIELD,
-        gridPosition: GRID_POSITIONS.FULL_WIDTH,
         position: VERTICAL_LIST_LAYOUT_POSITIONS.THIRD,
         fieldUniversalIdentifier:
           STANDARD_OBJECTS.opportunity.fields.company.universalIdentifier,
@@ -45,7 +42,6 @@ const OPPORTUNITY_PAGE_TABS = {
         universalIdentifier: '20202020-ac03-4003-8003-0aa0b1ca1314',
         title: 'Owner',
         type: WidgetType.FIELD,
-        gridPosition: GRID_POSITIONS.FULL_WIDTH,
         position: VERTICAL_LIST_LAYOUT_POSITIONS.FOURTH,
         fieldUniversalIdentifier:
           STANDARD_OBJECTS.opportunity.fields.owner.universalIdentifier,

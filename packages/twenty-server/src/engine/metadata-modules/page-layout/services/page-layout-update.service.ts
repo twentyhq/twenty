@@ -729,8 +729,7 @@ export class PageLayoutUpdateService {
       title: widgetInput.title,
       type: widgetInput.type,
       objectMetadataId: widgetInput.objectMetadataId ?? null,
-      gridPosition: widgetInput.gridPosition,
-      position: widgetInput.position ?? null,
+      position: widgetInput.position,
       configuration,
       pageLayoutTabId: widgetInput.pageLayoutTabId,
     };

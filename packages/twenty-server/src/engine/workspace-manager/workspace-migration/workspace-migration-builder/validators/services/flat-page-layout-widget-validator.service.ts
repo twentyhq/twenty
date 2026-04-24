@@ -5,7 +5,6 @@ import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import {
   PageLayoutTabLayoutMode,
   PageLayoutWidgetPosition,
-  type GridPosition,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -15,7 +14,6 @@ import { PageLayoutTabExceptionCode } from 'src/engine/metadata-modules/page-lay
 import { PageLayoutWidgetExceptionCode } from 'src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget.exception';
 import { validatePageLayoutWidgetGridPosition } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-page-layout-widget-grid-position.util';
 import { validatePageLayoutWidgetVerticalListPosition } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-page-layout-widget-vertical-list-position.util';
-import { validateWidgetGridPosition } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-widget-grid-position.util';
 import { type UniversalFlatPageLayoutTab } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-page-layout-tab.type';
 import {
   FailedFlatEntityValidation,
@@ -82,13 +80,6 @@ export class FlatPageLayoutWidgetValidatorService {
       flatEntityMaps:
         optimisticFlatEntityMapsAndRelatedFlatEntityMaps.flatPageLayoutTabMaps,
     });
-
-    const gridPositionErrors = this.validateGridPosition({
-      gridPosition: updatedFlatPageLayoutWidget.gridPosition,
-      widgetTitle: updatedFlatPageLayoutWidget.title,
-    });
-
-    validationResult.errors.push(...gridPositionErrors);
 
     const positionErrors = this.validatePosition({
       position: updatedFlatPageLayoutWidget.position,
@@ -203,13 +194,6 @@ export class FlatPageLayoutWidgetValidatorService {
       });
     }
 
-    const gridPositionErrors = this.validateGridPosition({
-      gridPosition: flatPageLayoutWidgetToValidate.gridPosition,
-      widgetTitle: flatPageLayoutWidgetToValidate.title,
-    });
-
-    validationResult.errors.push(...gridPositionErrors);
-
     const positionErrors = this.validatePosition({
       position: flatPageLayoutWidgetToValidate.position,
       pageLayoutTab: referencedPageLayoutTab,
@@ -235,26 +219,6 @@ export class FlatPageLayoutWidgetValidatorService {
     return validationResult;
   }
 
-  private validateGridPosition({
-    gridPosition,
-    widgetTitle,
-  }: {
-    gridPosition: GridPosition | undefined;
-    widgetTitle: string;
-  }): FlatEntityValidationError[] {
-    if (!isDefined(gridPosition)) {
-      return [
-        {
-          code: PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
-          message: t`Grid position is required`,
-          userFriendlyMessage: msg`Grid position is required`,
-        },
-      ];
-    }
-
-    return validateWidgetGridPosition(gridPosition, widgetTitle);
-  }
-
   private validatePosition({
     position,
     pageLayoutTab,
@@ -265,7 +229,13 @@ export class FlatPageLayoutWidgetValidatorService {
     widgetTitle: string;
   }): FlatEntityValidationError[] {
     if (!isDefined(position)) {
-      return [];
+      return [
+        {
+          code: PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
+          message: t`Widget position is required`,
+          userFriendlyMessage: msg`Widget position is required`,
+        },
+      ];
     }
 
     const errors: FlatEntityValidationError[] = [];

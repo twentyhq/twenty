@@ -3,7 +3,10 @@ import { type PageLayout } from '@/page-layout/types/PageLayout';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { DYNAMIC_RELATION_WIDGET_ID_PREFIX } from '@/page-layout/utils/isDynamicRelationWidget';
 import { reInjectDynamicRelationWidgetsFromDraft } from '@/page-layout/utils/reInjectDynamicRelationWidgetsFromDraft';
-import { WidgetType } from '~/generated-metadata/graphql';
+import {
+  PageLayoutTabLayoutMode,
+  WidgetType,
+} from '~/generated-metadata/graphql';
 
 const makeWidget = (
   overrides: Partial<PageLayoutWidget> & { id: string },
@@ -12,7 +15,14 @@ const makeWidget = (
     title: 'Widget',
     type: WidgetType.FIELDS,
     pageLayoutTabId: 'tab-1',
-    gridPosition: { row: 0, column: 0, rowSpan: 1, columnSpan: 1 },
+    position: {
+      __typename: 'PageLayoutWidgetGridPosition',
+      layoutMode: PageLayoutTabLayoutMode.GRID,
+      row: 0,
+      column: 0,
+      rowSpan: 1,
+      columnSpan: 1,
+    },
     configuration: {},
     ...overrides,
   }) as PageLayoutWidget;

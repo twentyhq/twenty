@@ -2,6 +2,7 @@ import { isNumber } from '@sniptt/guards';
 import {
   AggregateOperations,
   ObjectRecordGroupByDateGranularity,
+  PageLayoutTabLayoutMode,
 } from 'twenty-shared/types';
 import { z } from 'zod';
 
@@ -171,7 +172,10 @@ const withRangeMinMaxRefinement = <T extends z.ZodType<RangeMinMaxFields>>(
     },
   );
 
-export const gridPositionSchema = z.object({
+export const positionSchema = z.object({
+  layoutMode: z
+    .literal(PageLayoutTabLayoutMode.GRID)
+    .describe('Dashboards always use the GRID layout mode'),
   row: z.number().min(0).describe('Row position (0-based)'),
   column: z
     .number()

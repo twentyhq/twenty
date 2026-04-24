@@ -17,12 +17,17 @@ import { destroyOnePageLayoutWidget } from 'test/integration/metadata/suites/pag
 import { updateOnePageLayoutWidget } from 'test/integration/metadata/suites/page-layout-widget/utils/update-one-page-layout-widget.util';
 import { createOnePageLayout } from 'test/integration/metadata/suites/page-layout/utils/create-one-page-layout.util';
 import { destroyOnePageLayout } from 'test/integration/metadata/suites/page-layout/utils/destroy-one-page-layout.util';
+import {
+  PageLayoutTabLayoutMode,
+  type PageLayoutWidgetGridPosition,
+} from 'twenty-shared/types';
 
 import { type UpdatePageLayoutWidgetInput } from 'src/engine/metadata-modules/page-layout-widget/dtos/inputs/update-page-layout-widget.input';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
 
-const DEFAULT_GRID_POSITION = {
+const DEFAULT_POSITION: PageLayoutWidgetGridPosition = {
+  layoutMode: PageLayoutTabLayoutMode.GRID,
   row: 0,
   column: 0,
   rowSpan: 1,
@@ -85,7 +90,7 @@ describe('Page layout widget update should fail', () => {
           pageLayoutTabId: testPageLayoutTabId,
           type: WidgetType.IFRAME,
           configuration: TEST_IFRAME_CONFIG,
-          gridPosition: DEFAULT_GRID_POSITION,
+          position: DEFAULT_POSITION,
         },
       });
 

@@ -121,7 +121,7 @@ export const useCreatePageLayoutGraphWidget = ({
         id: widgetId,
         pageLayoutTabId: activeTabId,
         title,
-        gridPosition: {
+        position: {
           row: position.y,
           column: position.x,
           rowSpan: position.h,

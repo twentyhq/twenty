@@ -5,6 +5,7 @@ import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { injectRelationWidgetsIntoLayout } from '@/page-layout/utils/injectRelationWidgetsIntoLayout';
 import {
   FieldDisplayMode,
+  PageLayoutTabLayoutMode,
   WidgetConfigurationType,
   WidgetType,
 } from '~/generated-metadata/graphql';
@@ -20,16 +21,9 @@ const createMockWidget = (
     title: `Widget ${id}`,
     type,
     objectMetadataId: null,
-    gridPosition: {
-      __typename: 'GridPosition',
-      row: 0,
-      column: 0,
-      rowSpan: 1,
-      columnSpan: 12,
-    },
     position: {
       __typename: 'PageLayoutWidgetGridPosition',
-      layoutMode: 'GRID',
+      layoutMode: PageLayoutTabLayoutMode.GRID,
       row: 0,
       column: 0,
       rowSpan: 1,

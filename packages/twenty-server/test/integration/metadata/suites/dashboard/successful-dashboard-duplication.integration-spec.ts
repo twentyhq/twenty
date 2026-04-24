@@ -17,6 +17,11 @@ import {
 import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
 import { PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
 
+import {
+  PageLayoutTabLayoutMode,
+  type PageLayoutWidgetGridPosition,
+} from 'twenty-shared/types';
+
 type TestContext = {
   id: string;
   title: string;
@@ -120,12 +125,13 @@ describe('Dashboard duplication should succeed', () => {
               title: 'Test Widget',
               type: WidgetType.IFRAME,
               pageLayoutTabId: testPageLayoutTabId,
-              gridPosition: {
+              position: {
+                layoutMode: PageLayoutTabLayoutMode.GRID,
                 row: 0,
                 column: 0,
                 rowSpan: 1,
                 columnSpan: 1,
-              },
+              } satisfies PageLayoutWidgetGridPosition,
               configuration: TEST_IFRAME_CONFIG,
             },
           });

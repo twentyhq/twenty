@@ -18,12 +18,6 @@ export const convertLayoutsToWidgets = (
 
     return {
       ...widget,
-      gridPosition: {
-        row,
-        column,
-        rowSpan,
-        columnSpan,
-      },
       position: {
         __typename: 'PageLayoutWidgetGridPosition' as const,
         layoutMode: PageLayoutTabLayoutMode.GRID,

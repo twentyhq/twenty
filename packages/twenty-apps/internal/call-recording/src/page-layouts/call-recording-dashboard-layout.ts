@@ -28,7 +28,7 @@ export default definePageLayout({
           type: 'GRAPH',
           objectUniversalIdentifier:
             CALL_RECORDING_OBJECT_UNIVERSAL_IDENTIFIER,
-          gridPosition: { row: 0, column: 0, rowSpan: 2, columnSpan: 3 },
+          position: { layoutMode: PageLayoutTabLayoutMode.CANVAS },
           configuration: {
             configurationType: 'AGGREGATE_CHART',
             aggregateFieldMetadataUniversalIdentifier:
@@ -43,7 +43,7 @@ export default definePageLayout({
           type: 'GRAPH',
           objectUniversalIdentifier:
             CALL_RECORDING_OBJECT_UNIVERSAL_IDENTIFIER,
-          gridPosition: { row: 0, column: 3, rowSpan: 6, columnSpan: 4 },
+          position: { layoutMode: PageLayoutTabLayoutMode.CANVAS },
           configuration: {
             configurationType: 'PIE_CHART',
             aggregateFieldMetadataUniversalIdentifier:
@@ -64,7 +64,7 @@ export default definePageLayout({
           type: 'GRAPH',
           objectUniversalIdentifier:
             CALL_RECORDING_OBJECT_UNIVERSAL_IDENTIFIER,
-          gridPosition: { row: 0, column: 7, rowSpan: 6, columnSpan: 5 },
+          position: { layoutMode: PageLayoutTabLayoutMode.CANVAS },
           configuration: {
             configurationType: 'BAR_CHART',
             aggregateFieldMetadataUniversalIdentifier:
@@ -85,7 +85,7 @@ export default definePageLayout({
           type: 'GRAPH',
           objectUniversalIdentifier:
             CALL_RECORDING_OBJECT_UNIVERSAL_IDENTIFIER,
-          gridPosition: { row: 6, column: 0, rowSpan: 6, columnSpan: 12 },
+          position: { layoutMode: PageLayoutTabLayoutMode.CANVAS },
           configuration: {
             configurationType: 'LINE_CHART',
             aggregateFieldMetadataUniversalIdentifier:

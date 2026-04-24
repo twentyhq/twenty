@@ -3,7 +3,6 @@ import { ObjectType } from '@nestjs/graphql';
 import {
   PageLayoutWidgetConditionalDisplay,
   PageLayoutWidgetPosition,
-  type GridPosition,
   type SerializedRelation,
 } from 'twenty-shared/types';
 import {
@@ -29,7 +28,7 @@ import { type JsonbProperty } from 'src/engine/workspace-manager/workspace-migra
 
 export type PageLayoutWidgetOverrides = {
   title?: string;
-  position?: PageLayoutWidgetPosition | null;
+  position?: PageLayoutWidgetPosition;
   conditionalDisplay?: PageLayoutWidgetConditionalDisplay | null;
   conditionalAvailabilityExpression?: string | null;
   pageLayoutTabId?: SerializedRelation;
@@ -90,10 +89,7 @@ export class PageLayoutWidgetEntity<
   conditionalAvailabilityExpression: string | null;
 
   @Column({ type: 'jsonb', nullable: false })
-  gridPosition: JsonbProperty<GridPosition>;
-
-  @Column({ type: 'jsonb', nullable: true })
-  position: JsonbProperty<PageLayoutWidgetPosition | null>;
+  position: JsonbProperty<PageLayoutWidgetPosition>;
 
   @Column({ type: 'jsonb', nullable: false })
   configuration: JsonbProperty<

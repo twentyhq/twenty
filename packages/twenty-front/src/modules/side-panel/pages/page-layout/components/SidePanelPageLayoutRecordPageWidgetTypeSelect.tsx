@@ -286,13 +286,6 @@ export const SidePanelPageLayoutRecordPageWidgetTypeSelect = () => {
           configurationType: WidgetConfigurationType.FRONT_COMPONENT,
           frontComponentId: frontComponent.id,
         },
-        gridPosition: {
-          __typename: 'GridPosition',
-          row: 0,
-          column: 0,
-          rowSpan: 1,
-          columnSpan: 12,
-        },
         position: {
           __typename: 'PageLayoutWidgetVerticalListPosition',
           layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,

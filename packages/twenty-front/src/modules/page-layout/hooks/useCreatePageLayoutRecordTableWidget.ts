@@ -77,7 +77,7 @@ export const useCreatePageLayoutRecordTableWidget = (
         id: widgetId,
         pageLayoutTabId: activeTabId,
         title: objectMetadata?.labelPlural ?? 'Record Table',
-        gridPosition: {
+        position: {
           row: position.y,
           column: position.x,
           rowSpan: position.h,

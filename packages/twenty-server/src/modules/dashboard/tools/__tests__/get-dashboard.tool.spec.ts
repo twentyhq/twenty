@@ -70,7 +70,13 @@ describe('get_dashboard tool', () => {
               id: 'widget-1',
               title: 'Widget',
               type: 'GRAPH',
-              gridPosition: { row: 0, column: 0, rowSpan: 4, columnSpan: 4 },
+              position: {
+                layoutMode: 'GRID',
+                row: 0,
+                column: 0,
+                rowSpan: 4,
+                columnSpan: 4,
+              },
               objectMetadataId: 'company',
               configuration: {
                 configurationType: WidgetConfigurationType.BAR_CHART,
@@ -85,7 +91,13 @@ describe('get_dashboard tool', () => {
               id: 'widget-2',
               title: 'Widget 2',
               type: 'GRAPH',
-              gridPosition: { row: 4, column: 0, rowSpan: 4, columnSpan: 4 },
+              position: {
+                layoutMode: 'GRID',
+                row: 4,
+                column: 0,
+                rowSpan: 4,
+                columnSpan: 4,
+              },
               objectMetadataId: 'company',
               configuration: {
                 configurationType: WidgetConfigurationType.BAR_CHART,

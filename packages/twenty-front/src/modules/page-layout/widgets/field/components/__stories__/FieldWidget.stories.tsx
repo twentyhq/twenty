@@ -340,8 +340,9 @@ export const TextFieldWidget: Story = {
       type: WidgetType.FIELD,
       title: 'Company Name',
       objectMetadataId: companyObjectMetadataItem.id,
-      gridPosition: {
-        __typename: 'GridPosition',
+      position: {
+        __typename: 'PageLayoutWidgetGridPosition',
+        layoutMode: PageLayoutTabLayoutMode.GRID,
         row: 0,
         column: 0,
         rowSpan: 1,
@@ -435,8 +436,9 @@ export const AddressFieldWidget: Story = {
       type: WidgetType.FIELD,
       title: 'Address',
       objectMetadataId: companyObjectMetadataItem.id,
-      gridPosition: {
-        __typename: 'GridPosition',
+      position: {
+        __typename: 'PageLayoutWidgetGridPosition',
+        layoutMode: PageLayoutTabLayoutMode.GRID,
         row: 1,
         column: 0,
         rowSpan: 1,
@@ -533,8 +535,9 @@ export const NumberFieldWidget: Story = {
       type: WidgetType.FIELD,
       title: 'Employees',
       objectMetadataId: companyObjectMetadataItem.id,
-      gridPosition: {
-        __typename: 'GridPosition',
+      position: {
+        __typename: 'PageLayoutWidgetGridPosition',
+        layoutMode: PageLayoutTabLayoutMode.GRID,
         row: 2,
         column: 0,
         rowSpan: 1,
@@ -628,8 +631,9 @@ export const LinkFieldWidget: Story = {
       type: WidgetType.FIELD,
       title: 'LinkedIn',
       objectMetadataId: companyObjectMetadataItem.id,
-      gridPosition: {
-        __typename: 'GridPosition',
+      position: {
+        __typename: 'PageLayoutWidgetGridPosition',
+        layoutMode: PageLayoutTabLayoutMode.GRID,
         row: 3,
         column: 0,
         rowSpan: 1,
@@ -723,8 +727,9 @@ export const ManyToOneRelationFieldWidget: Story = {
       type: WidgetType.FIELD,
       title: 'Account Owner',
       objectMetadataId: companyObjectMetadataItem.id,
-      gridPosition: {
-        __typename: 'GridPosition',
+      position: {
+        __typename: 'PageLayoutWidgetGridPosition',
+        layoutMode: PageLayoutTabLayoutMode.GRID,
         row: 4,
         column: 0,
         rowSpan: 1,
@@ -828,8 +833,9 @@ export const OneToManyRelationFieldWidget: Story = {
       type: WidgetType.FIELD,
       title: 'People',
       objectMetadataId: companyObjectMetadataItem.id,
-      gridPosition: {
-        __typename: 'GridPosition',
+      position: {
+        __typename: 'PageLayoutWidgetGridPosition',
+        layoutMode: PageLayoutTabLayoutMode.GRID,
         row: 11,
         column: 0,
         rowSpan: 1,
@@ -925,8 +931,9 @@ export const BooleanFieldWidget: Story = {
       type: WidgetType.FIELD,
       title: 'Ideal Customer Profile',
       objectMetadataId: companyObjectMetadataItem.id,
-      gridPosition: {
-        __typename: 'GridPosition',
+      position: {
+        __typename: 'PageLayoutWidgetGridPosition',
+        layoutMode: PageLayoutTabLayoutMode.GRID,
         row: 5,
         column: 0,
         rowSpan: 1,
@@ -1019,8 +1026,9 @@ export const CurrencyFieldWidget: Story = {
       type: WidgetType.FIELD,
       title: 'Annual Recurring Revenue',
       objectMetadataId: companyObjectMetadataItem.id,
-      gridPosition: {
-        __typename: 'GridPosition',
+      position: {
+        __typename: 'PageLayoutWidgetGridPosition',
+        layoutMode: PageLayoutTabLayoutMode.GRID,
         row: 6,
         column: 0,
         rowSpan: 1,
@@ -1113,8 +1121,9 @@ export const EmailsFieldWidget: Story = {
       type: WidgetType.FIELD,
       title: 'Emails',
       objectMetadataId: personObjectMetadataItem.id,
-      gridPosition: {
-        __typename: 'GridPosition',
+      position: {
+        __typename: 'PageLayoutWidgetGridPosition',
+        layoutMode: PageLayoutTabLayoutMode.GRID,
         row: 7,
         column: 0,
         rowSpan: 1,
@@ -1208,8 +1217,9 @@ export const PhonesFieldWidget: Story = {
       type: WidgetType.FIELD,
       title: 'Phones',
       objectMetadataId: personObjectMetadataItem.id,
-      gridPosition: {
-        __typename: 'GridPosition',
+      position: {
+        __typename: 'PageLayoutWidgetGridPosition',
+        layoutMode: PageLayoutTabLayoutMode.GRID,
         row: 8,
         column: 0,
         rowSpan: 1,
@@ -1303,8 +1313,9 @@ export const SelectFieldWidget: Story = {
       type: WidgetType.FIELD,
       title: 'Stage',
       objectMetadataId: opportunityObjectMetadataItem.id,
-      gridPosition: {
-        __typename: 'GridPosition',
+      position: {
+        __typename: 'PageLayoutWidgetGridPosition',
+        layoutMode: PageLayoutTabLayoutMode.GRID,
         row: 9,
         column: 0,
         rowSpan: 1,
@@ -1399,8 +1410,9 @@ export const MultiSelectFieldWidget: Story = {
       type: WidgetType.FIELD,
       title: 'Work Policy',
       objectMetadataId: companyObjectMetadataItem.id,
-      gridPosition: {
-        __typename: 'GridPosition',
+      position: {
+        __typename: 'PageLayoutWidgetGridPosition',
+        layoutMode: PageLayoutTabLayoutMode.GRID,
         row: 10,
         column: 0,
         rowSpan: 1,
@@ -1498,8 +1510,9 @@ export const TimelineActivityRelationFieldWidget: Story = {
       type: WidgetType.FIELD,
       title: 'Workspace Member',
       objectMetadataId: timelineActivityObjectMetadataItem.id,
-      gridPosition: {
-        __typename: 'GridPosition',
+      position: {
+        __typename: 'PageLayoutWidgetGridPosition',
+        layoutMode: PageLayoutTabLayoutMode.GRID,
         row: 12,
         column: 0,
         rowSpan: 1,
@@ -1598,8 +1611,9 @@ export const ManyToOneRelationCardWidget: Story = {
       type: WidgetType.FIELD,
       title: 'Account Owner',
       objectMetadataId: companyObjectMetadataItem.id,
-      gridPosition: {
-        __typename: 'GridPosition',
+      position: {
+        __typename: 'PageLayoutWidgetGridPosition',
+        layoutMode: PageLayoutTabLayoutMode.GRID,
         row: 4,
         column: 0,
         rowSpan: 1,
@@ -1711,8 +1725,9 @@ export const OneToManyRelationCardWidget: Story = {
       type: WidgetType.FIELD,
       title: 'People',
       objectMetadataId: companyObjectMetadataItem.id,
-      gridPosition: {
-        __typename: 'GridPosition',
+      position: {
+        __typename: 'PageLayoutWidgetGridPosition',
+        layoutMode: PageLayoutTabLayoutMode.GRID,
         row: 11,
         column: 0,
         rowSpan: 1,
@@ -1807,8 +1822,9 @@ export const TimelineActivityRelationCardWidget: Story = {
       type: WidgetType.FIELD,
       title: 'Workspace Member',
       objectMetadataId: timelineActivityObjectMetadataItem.id,
-      gridPosition: {
-        __typename: 'GridPosition',
+      position: {
+        __typename: 'PageLayoutWidgetGridPosition',
+        layoutMode: PageLayoutTabLayoutMode.GRID,
         row: 12,
         column: 0,
         rowSpan: 1,
@@ -1969,8 +1985,9 @@ export const OneToManyRelationCardWidgetWithProgressiveLoading: Story = {
       type: WidgetType.FIELD,
       title: 'People',
       objectMetadataId: companyObjectMetadataItem.id,
-      gridPosition: {
-        __typename: 'GridPosition',
+      position: {
+        __typename: 'PageLayoutWidgetGridPosition',
+        layoutMode: PageLayoutTabLayoutMode.GRID,
         row: 11,
         column: 0,
         rowSpan: 1,

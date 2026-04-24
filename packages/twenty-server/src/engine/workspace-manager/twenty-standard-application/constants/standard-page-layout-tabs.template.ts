@@ -1,6 +1,5 @@
 import {
   PageLayoutTabLayoutMode,
-  type GridPosition,
   type PageLayoutWidgetCanvasPosition,
   type PageLayoutWidgetConditionalDisplay,
   type PageLayoutWidgetGridPosition,
@@ -22,27 +21,6 @@ export const CONDITIONAL_AVAILABILITY_EXPRESSION_DEVICE_MOBILE =
 
 export const CONDITIONAL_AVAILABILITY_EXPRESSION_DEVICE_DESKTOP =
   'device == "DESKTOP"';
-
-export const GRID_POSITIONS = {
-  FULL_WIDTH: {
-    row: 0,
-    column: 0,
-    rowSpan: 12,
-    columnSpan: 12,
-  },
-  HALF_HEIGHT: {
-    row: 0,
-    column: 0,
-    rowSpan: 6,
-    columnSpan: 12,
-  },
-  RICH_TEXT: {
-    row: 12,
-    column: 0,
-    rowSpan: 6,
-    columnSpan: 12,
-  },
-} as const satisfies Record<string, GridPosition>;
 
 export const GRID_LAYOUT_POSITIONS = {
   FULL_WIDTH: {
@@ -160,79 +138,66 @@ export const WIDGET_PROPS = {
   fields: {
     title: 'Fields',
     type: WidgetType.FIELDS,
-    gridPosition: GRID_POSITIONS.FULL_WIDTH,
     position: VERTICAL_LIST_LAYOUT_POSITIONS.FIRST,
   },
   timeline: {
     title: 'Timeline',
     type: WidgetType.TIMELINE,
-    gridPosition: GRID_POSITIONS.HALF_HEIGHT,
     position: CANVAS_LAYOUT_POSITIONS.DEFAULT,
   },
   tasks: {
     title: 'Tasks',
     type: WidgetType.TASKS,
-    gridPosition: GRID_POSITIONS.HALF_HEIGHT,
     position: CANVAS_LAYOUT_POSITIONS.DEFAULT,
   },
   notes: {
     title: 'Notes',
     type: WidgetType.NOTES,
-    gridPosition: GRID_POSITIONS.HALF_HEIGHT,
     position: CANVAS_LAYOUT_POSITIONS.DEFAULT,
   },
   files: {
     title: 'Files',
     type: WidgetType.FILES,
-    gridPosition: GRID_POSITIONS.HALF_HEIGHT,
     position: CANVAS_LAYOUT_POSITIONS.DEFAULT,
   },
   emails: {
     title: 'Emails',
     type: WidgetType.EMAILS,
-    gridPosition: GRID_POSITIONS.HALF_HEIGHT,
     position: CANVAS_LAYOUT_POSITIONS.DEFAULT,
   },
   calendar: {
     title: 'Calendar',
     type: WidgetType.CALENDAR,
-    gridPosition: GRID_POSITIONS.HALF_HEIGHT,
     position: CANVAS_LAYOUT_POSITIONS.DEFAULT,
   },
   noteRichText: {
     title: 'Note',
     type: WidgetType.FIELD_RICH_TEXT,
-    gridPosition: GRID_POSITIONS.RICH_TEXT,
     position: VERTICAL_LIST_LAYOUT_POSITIONS.FIRST,
   },
   taskRichText: {
     title: 'Task',
     type: WidgetType.FIELD_RICH_TEXT,
-    gridPosition: GRID_POSITIONS.RICH_TEXT,
     position: VERTICAL_LIST_LAYOUT_POSITIONS.FIRST,
   },
   workflow: {
     title: 'Flow',
     type: WidgetType.WORKFLOW,
-    gridPosition: GRID_POSITIONS.FULL_WIDTH,
     position: CANVAS_LAYOUT_POSITIONS.DEFAULT,
   },
   workflowVersion: {
     title: 'Flow',
     type: WidgetType.WORKFLOW_VERSION,
-    gridPosition: GRID_POSITIONS.FULL_WIDTH,
     position: CANVAS_LAYOUT_POSITIONS.DEFAULT,
   },
   workflowRun: {
     title: 'Flow',
     type: WidgetType.WORKFLOW_RUN,
-    gridPosition: GRID_POSITIONS.FULL_WIDTH,
     position: CANVAS_LAYOUT_POSITIONS.DEFAULT,
   },
   emailThread: {
     title: 'Thread',
     type: WidgetType.EMAIL_THREAD,
-    gridPosition: GRID_POSITIONS.FULL_WIDTH,
     position: VERTICAL_LIST_LAYOUT_POSITIONS.SECOND,
   },
 } as const;

@@ -1,5 +1,4 @@
 import {
-  type GridPosition,
   type PageLayoutTabLayoutMode,
   type PageLayoutWidgetConditionalDisplay,
   type PageLayoutWidgetPosition,
@@ -12,7 +11,6 @@ export type StandardPageLayoutWidgetConfig = {
   universalIdentifier: string;
   title?: string;
   type?: WidgetType;
-  gridPosition?: GridPosition;
   position?: PageLayoutWidgetPosition;
   conditionalDisplay?: PageLayoutWidgetConditionalDisplay | null;
   conditionalAvailabilityExpression?: string | null;
@@ -41,8 +39,7 @@ export type StandardRecordPageWidgetConfig = {
   universalIdentifier: string;
   title: string;
   type: WidgetType;
-  gridPosition: GridPosition;
-  position?: PageLayoutWidgetPosition;
+  position: PageLayoutWidgetPosition;
   conditionalDisplay?: PageLayoutWidgetConditionalDisplay | null;
   conditionalAvailabilityExpression?: string | null;
   fieldUniversalIdentifier?: string;

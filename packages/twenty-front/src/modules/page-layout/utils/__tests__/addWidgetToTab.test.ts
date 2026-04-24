@@ -2,6 +2,7 @@ import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
 import { addWidgetToTab } from '@/page-layout/utils/addWidgetToTab';
 import {
   AggregateOperations,
+  PageLayoutTabLayoutMode,
   WidgetConfigurationType,
   WidgetType,
   type PageLayoutWidget,
@@ -22,7 +23,14 @@ describe('addWidgetToTab', () => {
       aggregateFieldMetadataId: 'id',
       displayDataLabel: false,
     },
-    gridPosition: { row: 0, column: 0, rowSpan: 2, columnSpan: 2 },
+    position: {
+      __typename: 'PageLayoutWidgetGridPosition',
+      layoutMode: PageLayoutTabLayoutMode.GRID,
+      row: 0,
+      column: 0,
+      rowSpan: 2,
+      columnSpan: 2,
+    },
     objectMetadataId: null,
     createdAt: '2024-01-01T00:00:00Z',
     updatedAt: '2024-01-01T00:00:00Z',

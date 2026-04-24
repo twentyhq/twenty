@@ -71,7 +71,6 @@ export const getPageLayoutWidgetDataSeedsV2 = (
           ),
           title: 'Revenue Forecast',
           type: WidgetType.GRAPH,
-          gridPosition: { row: 0, column: 7, rowSpan: 8, columnSpan: 5 },
           position: {
             layoutMode: PageLayoutTabLayoutMode.GRID,
             row: 0,
@@ -108,7 +107,6 @@ export const getPageLayoutWidgetDataSeedsV2 = (
           ),
           title: 'New Customers Over Time',
           type: WidgetType.GRAPH,
-          gridPosition: { row: 0, column: 3, rowSpan: 6, columnSpan: 5 },
           position: {
             layoutMode: PageLayoutTabLayoutMode.GRID,
             row: 0,
@@ -145,7 +143,6 @@ export const getPageLayoutWidgetDataSeedsV2 = (
           ),
           title: 'Revenue Distribution',
           type: WidgetType.GRAPH,
-          gridPosition: { row: 0, column: 4, rowSpan: 2, columnSpan: 3 },
           position: {
             layoutMode: PageLayoutTabLayoutMode.GRID,
             row: 0,
@@ -181,7 +178,6 @@ export const getPageLayoutWidgetDataSeedsV2 = (
           ),
           title: 'Average ARR',
           type: WidgetType.GRAPH,
-          gridPosition: { row: 0, column: 7, rowSpan: 6, columnSpan: 5 },
           position: {
             layoutMode: PageLayoutTabLayoutMode.GRID,
             row: 0,
@@ -215,7 +211,6 @@ export const getPageLayoutWidgetDataSeedsV2 = (
           ),
           title: 'Companies by LinkedIn (Field Permission Test)',
           type: WidgetType.GRAPH,
-          gridPosition: { row: 6, column: 0, rowSpan: 4, columnSpan: 6 },
           position: {
             layoutMode: PageLayoutTabLayoutMode.GRID,
             row: 6,
@@ -252,7 +247,6 @@ export const getPageLayoutWidgetDataSeedsV2 = (
           ),
           title: 'Contact Roles',
           type: WidgetType.GRAPH,
-          gridPosition: { row: 0, column: 0, rowSpan: 4, columnSpan: 6 },
           position: {
             layoutMode: PageLayoutTabLayoutMode.GRID,
             row: 0,

@@ -5,6 +5,7 @@ import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { act, renderHook } from '@testing-library/react';
 import { createStore } from 'jotai';
 import { type ReactNode } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 import {
   PageLayoutTabLayoutMode,
   PageLayoutType,
@@ -26,7 +27,6 @@ const makeWidget = (
     title: id,
     isActive: true,
     type: WidgetType.FIELDS,
-    gridPosition: { column: 0, columnSpan: 1, row: 0, rowSpan: 1 },
     configuration: { __typename: 'FieldsConfiguration' as const },
     position: {
       __typename: 'PageLayoutWidgetVerticalListPosition' as const,
@@ -142,12 +142,9 @@ describe('useMoveWidgetToTab', () => {
 
     const draft = store.get(getDraftAtom());
 
-    const tab1Positions = draft.tabs[0].widgets.map((w) => {
-      if (w.position && 'index' in w.position) {
-        return w.position.index;
-      }
-      return -1;
-    });
+    const tab1Positions = draft.tabs[0].widgets.map((w) =>
+      isDefined(w.position) && 'index' in w.position ? w.position.index : -1,
+    );
 
     expect(tab1Positions).toEqual([0, 1]);
   });

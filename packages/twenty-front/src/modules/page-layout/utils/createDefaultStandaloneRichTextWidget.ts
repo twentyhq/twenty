@@ -1,7 +1,7 @@
 import {
-  type GridPosition,
   PageLayoutTabLayoutMode,
   type PageLayoutWidget,
+  type PageLayoutWidgetGridPosition,
   type RichTextBody,
   WidgetConfigurationType,
   WidgetType,
@@ -11,7 +11,7 @@ export const createDefaultStandaloneRichTextWidget = (
   id: string,
   pageLayoutTabId: string,
   body: RichTextBody,
-  gridPosition: GridPosition,
+  position: Omit<PageLayoutWidgetGridPosition, '__typename' | 'layoutMode'>,
   objectMetadataId?: string | null,
 ): PageLayoutWidget => {
   return {
@@ -26,14 +26,13 @@ export const createDefaultStandaloneRichTextWidget = (
       configurationType: WidgetConfigurationType.STANDALONE_RICH_TEXT,
       body,
     },
-    gridPosition,
     position: {
       __typename: 'PageLayoutWidgetGridPosition',
       layoutMode: PageLayoutTabLayoutMode.GRID,
-      row: gridPosition.row,
-      column: gridPosition.column,
-      rowSpan: gridPosition.rowSpan,
-      columnSpan: gridPosition.columnSpan,
+      row: position.row,
+      column: position.column,
+      rowSpan: position.rowSpan,
+      columnSpan: position.columnSpan,
     },
     objectMetadataId: objectMetadataId ?? null,
     createdAt: new Date().toISOString(),

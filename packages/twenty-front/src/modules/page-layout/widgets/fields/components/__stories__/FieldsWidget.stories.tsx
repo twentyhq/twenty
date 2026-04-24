@@ -167,8 +167,9 @@ const createFieldsWidget = (viewId: string | null): PageLayoutWidget => ({
   type: WidgetType.FIELDS,
   title: 'Fields',
   objectMetadataId: companyObjectMetadataItem.id,
-  gridPosition: {
-    __typename: 'GridPosition',
+  position: {
+    __typename: 'PageLayoutWidgetGridPosition',
+    layoutMode: PageLayoutTabLayoutMode.GRID,
     row: 0,
     column: 0,
     rowSpan: 4,

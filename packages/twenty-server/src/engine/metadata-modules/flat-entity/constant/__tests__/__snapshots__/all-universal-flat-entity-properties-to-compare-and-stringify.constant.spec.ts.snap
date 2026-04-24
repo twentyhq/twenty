@@ -189,7 +189,6 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "title",
       "type",
       "objectMetadataUniversalIdentifier",
-      "gridPosition",
       "position",
       "universalConfiguration",
       "deletedAt",
@@ -199,7 +198,6 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "universalOverrides",
     ],
     "propertiesToStringify": [
-      "gridPosition",
       "position",
       "universalConfiguration",
       "conditionalDisplay",

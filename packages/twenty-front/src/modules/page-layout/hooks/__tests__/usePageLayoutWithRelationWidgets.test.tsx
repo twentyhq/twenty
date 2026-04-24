@@ -53,8 +53,9 @@ describe('usePageLayoutWithRelationWidgets', () => {
             isActive: true,
             type: WidgetType.FIELDS,
             objectMetadataId: null,
-            gridPosition: {
-              __typename: 'GridPosition',
+            position: {
+              __typename: 'PageLayoutWidgetGridPosition',
+              layoutMode: PageLayoutTabLayoutMode.GRID,
               row: 0,
               column: 0,
               rowSpan: 1,
@@ -78,8 +79,9 @@ describe('usePageLayoutWithRelationWidgets', () => {
             isActive: true,
             type: WidgetType.NOTES,
             objectMetadataId: null,
-            gridPosition: {
-              __typename: 'GridPosition',
+            position: {
+              __typename: 'PageLayoutWidgetGridPosition',
+              layoutMode: PageLayoutTabLayoutMode.GRID,
               row: 1,
               column: 0,
               rowSpan: 1,
@@ -102,8 +104,9 @@ describe('usePageLayoutWithRelationWidgets', () => {
             isActive: true,
             type: WidgetType.GRAPH,
             objectMetadataId: null,
-            gridPosition: {
-              __typename: 'GridPosition',
+            position: {
+              __typename: 'PageLayoutWidgetGridPosition',
+              layoutMode: PageLayoutTabLayoutMode.GRID,
               row: 2,
               column: 0,
               rowSpan: 1,
@@ -228,8 +231,9 @@ describe('usePageLayoutWithRelationWidgets', () => {
               isActive: true,
               type: WidgetType.GRAPH,
               objectMetadataId: null,
-              gridPosition: {
-                __typename: 'GridPosition',
+              position: {
+                __typename: 'PageLayoutWidgetGridPosition',
+                layoutMode: PageLayoutTabLayoutMode.GRID,
                 row: 0,
                 column: 0,
                 rowSpan: 1,

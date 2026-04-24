@@ -886,11 +886,6 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toStringify: false,
       universalProperty: 'objectMetadataUniversalIdentifier',
     },
-    gridPosition: {
-      toCompare: true,
-      toStringify: true,
-      universalProperty: undefined,
-    },
     position: {
       toCompare: true,
       toStringify: true,

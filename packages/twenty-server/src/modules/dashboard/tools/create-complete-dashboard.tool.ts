@@ -2,12 +2,10 @@ import { v4 as uuidv4 } from 'uuid';
 import { z } from 'zod';
 
 import { type CreatePageLayoutWidgetInput } from 'src/engine/metadata-modules/page-layout-widget/dtos/inputs/create-page-layout-widget.input';
-import { type WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
-import { type AllPageLayoutWidgetConfiguration } from 'src/engine/metadata-modules/page-layout-widget/types/all-page-layout-widget-configuration.type';
 import { PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import {
-  gridPositionSchema,
+  positionSchema,
   widgetConfigurationSchema,
   widgetTypeSchema,
 } from 'src/modules/dashboard/tools/schemas/widget.schema';
@@ -19,7 +17,9 @@ import {
 const widgetSchema = z.object({
   title: z.string().describe('Widget title displayed in the header'),
   type: widgetTypeSchema.describe('Widget type'),
-  gridPosition: gridPositionSchema.describe('Position in 12-column grid'),
+  position: positionSchema.describe(
+    'Position in 12-column grid (layoutMode must be "GRID")',
+  ),
   objectMetadataId: z
     .string()
     .uuid()
@@ -92,22 +92,9 @@ WIDGET TYPES:
 
 AGGREGATION OPERATIONS: COUNT, SUM, AVG, MIN, MAX, COUNT_EMPTY, COUNT_NOT_EMPTY`,
   inputSchema: createCompleteDashboardSchema,
-  execute: async (parameters: {
-    title: string;
-    tabTitle?: string;
-    widgets?: Array<{
-      title: string;
-      type: WidgetType;
-      gridPosition: {
-        row: number;
-        column: number;
-        rowSpan: number;
-        columnSpan: number;
-      };
-      objectMetadataId?: string;
-      configuration?: AllPageLayoutWidgetConfiguration;
-    }>;
-  }) => {
+  execute: async (
+    parameters: z.infer<typeof createCompleteDashboardSchema>,
+  ) => {
     try {
       const tabTitle = parameters.tabTitle ?? 'Main';
       const widgets = parameters.widgets ?? [];

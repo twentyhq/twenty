@@ -56,7 +56,7 @@ export default definePageLayout({
           title: 'PRs Merged This Week',
           type: 'GRAPH',
           objectUniversalIdentifier: PULL_REQUEST_UNIVERSAL_IDENTIFIER,
-          gridPosition: { row: 0, ...COL_1, rowSpan: 3 },
+          position: { layoutMode: PageLayoutTabLayoutMode.GRID, row: 0, ...COL_1, rowSpan: 3 },
           configuration: {
             configurationType: 'AGGREGATE_CHART',
             aggregateFieldMetadataUniversalIdentifier:
@@ -84,7 +84,7 @@ export default definePageLayout({
           title: 'PR Reviews This Week',
           type: 'GRAPH',
           objectUniversalIdentifier: PULL_REQUEST_REVIEW_UNIVERSAL_IDENTIFIER,
-          gridPosition: { row: 3, ...COL_1, rowSpan: 3 },
+          position: { layoutMode: PageLayoutTabLayoutMode.GRID, row: 3, ...COL_1, rowSpan: 3 },
           configuration: {
             configurationType: 'AGGREGATE_CHART',
             aggregateFieldMetadataUniversalIdentifier:
@@ -112,7 +112,7 @@ export default definePageLayout({
           title: 'PRs Opened This Week',
           type: 'GRAPH',
           objectUniversalIdentifier: PULL_REQUEST_UNIVERSAL_IDENTIFIER,
-          gridPosition: { row: 6, ...COL_1, rowSpan: 3 },
+          position: { layoutMode: PageLayoutTabLayoutMode.GRID, row: 6, ...COL_1, rowSpan: 3 },
           configuration: {
             configurationType: 'AGGREGATE_CHART',
             aggregateFieldMetadataUniversalIdentifier:
@@ -140,7 +140,7 @@ export default definePageLayout({
           title: 'Issues Opened This Week',
           type: 'GRAPH',
           objectUniversalIdentifier: ISSUE_UNIVERSAL_IDENTIFIER,
-          gridPosition: { row: 9, ...COL_1, rowSpan: 3 },
+          position: { layoutMode: PageLayoutTabLayoutMode.GRID, row: 9, ...COL_1, rowSpan: 3 },
           configuration: {
             configurationType: 'AGGREGATE_CHART',
             aggregateFieldMetadataUniversalIdentifier:
@@ -168,7 +168,7 @@ export default definePageLayout({
           title: 'PRs by State',
           type: 'GRAPH',
           objectUniversalIdentifier: PULL_REQUEST_UNIVERSAL_IDENTIFIER,
-          gridPosition: { row: 12, ...COL_1, rowSpan: 6 },
+          position: { layoutMode: PageLayoutTabLayoutMode.GRID, row: 12, ...COL_1, rowSpan: 6 },
           configuration: {
             configurationType: 'PIE_CHART',
             aggregateFieldMetadataUniversalIdentifier:
@@ -187,7 +187,7 @@ export default definePageLayout({
           title: 'PRs Merged per Week',
           type: 'GRAPH',
           objectUniversalIdentifier: PULL_REQUEST_UNIVERSAL_IDENTIFIER,
-          gridPosition: { row: 0, ...COL_2, rowSpan: 6 },
+          position: { layoutMode: PageLayoutTabLayoutMode.GRID, row: 0, ...COL_2, rowSpan: 6 },
           configuration: {
             configurationType: 'BAR_CHART',
             aggregateFieldMetadataUniversalIdentifier:
@@ -210,7 +210,7 @@ export default definePageLayout({
           title: 'PR Reviews per Week',
           type: 'GRAPH',
           objectUniversalIdentifier: PULL_REQUEST_REVIEW_UNIVERSAL_IDENTIFIER,
-          gridPosition: { row: 6, ...COL_2, rowSpan: 6 },
+          position: { layoutMode: PageLayoutTabLayoutMode.GRID, row: 6, ...COL_2, rowSpan: 6 },
           configuration: {
             configurationType: 'BAR_CHART',
             aggregateFieldMetadataUniversalIdentifier:
@@ -233,7 +233,7 @@ export default definePageLayout({
           title: 'Issues per Week',
           type: 'GRAPH',
           objectUniversalIdentifier: ISSUE_UNIVERSAL_IDENTIFIER,
-          gridPosition: { row: 12, ...COL_2, rowSpan: 6 },
+          position: { layoutMode: PageLayoutTabLayoutMode.GRID, row: 12, ...COL_2, rowSpan: 6 },
           configuration: {
             configurationType: 'BAR_CHART',
             aggregateFieldMetadataUniversalIdentifier:
@@ -257,7 +257,7 @@ export default definePageLayout({
           universalIdentifier: '7b3e9c4a-1d52-4f8b-ac76-3e5b8d2f1a9c',
           title: 'Top PR Authors',
           type: 'FRONT_COMPONENT',
-          gridPosition: { row: 0, ...COL_3, rowSpan: 9 },
+          position: { layoutMode: PageLayoutTabLayoutMode.GRID, row: 0, ...COL_3, rowSpan: 9 },
           configuration: {
             configurationType: 'FRONT_COMPONENT',
             frontComponentUniversalIdentifier:
@@ -268,7 +268,7 @@ export default definePageLayout({
           universalIdentifier: '5e4a8c1d-7f93-4b2e-9d6c-3a8f1b5e7d4c',
           title: 'Top Reviewers',
           type: 'FRONT_COMPONENT',
-          gridPosition: { row: 9, ...COL_3, rowSpan: 9 },
+          position: { layoutMode: PageLayoutTabLayoutMode.GRID, row: 9, ...COL_3, rowSpan: 9 },
           configuration: {
             configurationType: 'FRONT_COMPONENT',
             frontComponentUniversalIdentifier:

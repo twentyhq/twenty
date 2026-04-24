@@ -27,7 +27,6 @@ const NOTE_PAGE_TABS = {
         universalIdentifier: '20202020-ac04-4004-8004-a0be5a11a412',
         title: WIDGET_PROPS.noteRichText.title,
         type: WIDGET_PROPS.noteRichText.type,
-        gridPosition: WIDGET_PROPS.noteRichText.gridPosition,
         position: { layoutMode: TAB_PROPS.home.layoutMode, index: 1 },
         conditionalDisplay: CONDITIONAL_DISPLAY_DEVICE_MOBILE,
         conditionalAvailabilityExpression:

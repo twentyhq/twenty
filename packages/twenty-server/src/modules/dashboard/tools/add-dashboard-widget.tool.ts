@@ -1,10 +1,8 @@
 import { z } from 'zod';
 
 import { type CreatePageLayoutWidgetInput } from 'src/engine/metadata-modules/page-layout-widget/dtos/inputs/create-page-layout-widget.input';
-import { type WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
-import { type AllPageLayoutWidgetConfiguration } from 'src/engine/metadata-modules/page-layout-widget/types/all-page-layout-widget-configuration.type';
 import {
-  gridPositionSchema,
+  positionSchema,
   widgetConfigurationSchema,
   widgetTypeSchema,
 } from 'src/modules/dashboard/tools/schemas/widget.schema';
@@ -17,7 +15,9 @@ const addDashboardWidgetSchema = z.object({
   pageLayoutTabId: z.string().uuid().describe('Tab UUID from get_dashboard'),
   title: z.string().describe('Widget title'),
   type: widgetTypeSchema.describe('Widget type'),
-  gridPosition: gridPositionSchema.describe('Position in 12-column grid'),
+  position: positionSchema.describe(
+    'Position in 12-column grid (layoutMode must be "GRID")',
+  ),
   objectMetadataId: z
     .string()
     .uuid()
@@ -42,19 +42,7 @@ For RECORD_TABLE widgets: create a dedicated view first with create_view (type T
 
 See create_complete_dashboard for full configuration examples.`,
   inputSchema: addDashboardWidgetSchema,
-  execute: async (parameters: {
-    pageLayoutTabId: string;
-    title: string;
-    type: WidgetType;
-    gridPosition: {
-      row: number;
-      column: number;
-      rowSpan: number;
-      columnSpan: number;
-    };
-    objectMetadataId?: string;
-    configuration?: AllPageLayoutWidgetConfiguration;
-  }) => {
+  execute: async (parameters: z.infer<typeof addDashboardWidgetSchema>) => {
     try {
       const widget = await deps.pageLayoutWidgetService.create({
         input: parameters as CreatePageLayoutWidgetInput,
@@ -68,7 +56,7 @@ See create_complete_dashboard for full configuration examples.`,
           widgetId: widget.id,
           title: widget.title,
           type: widget.type,
-          gridPosition: widget.gridPosition,
+          position: widget.position,
           pageLayoutTabId: parameters.pageLayoutTabId,
         },
       };

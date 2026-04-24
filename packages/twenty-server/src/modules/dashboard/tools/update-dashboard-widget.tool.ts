@@ -1,10 +1,8 @@
 import { isDefined, isEmptyObject } from 'twenty-shared/utils';
 import { z } from 'zod';
 
-import { type WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
-import { type AllPageLayoutWidgetConfiguration } from 'src/engine/metadata-modules/page-layout-widget/types/all-page-layout-widget-configuration.type';
 import {
-  gridPositionSchema,
+  positionSchema,
   widgetConfigurationSchemaWithoutDefaults,
   widgetTypeSchema,
 } from 'src/modules/dashboard/tools/schemas/widget.schema';
@@ -17,7 +15,7 @@ const updateDashboardWidgetSchema = z.object({
   widgetId: z.string().uuid().describe('The UUID of the widget to update'),
   title: z.string().optional().describe('New widget title'),
   type: widgetTypeSchema.optional().describe('New widget type'),
-  gridPosition: gridPositionSchema
+  position: positionSchema
     .optional()
     .describe('New position and size in the grid layout'),
   objectMetadataId: z
@@ -39,19 +37,7 @@ Use get_dashboard first to find the widgetId.
 
 Only provide fields you want to change - others remain unchanged.`,
   inputSchema: updateDashboardWidgetSchema,
-  execute: async (parameters: {
-    widgetId: string;
-    title?: string;
-    type?: WidgetType;
-    gridPosition?: {
-      row: number;
-      column: number;
-      rowSpan: number;
-      columnSpan: number;
-    };
-    objectMetadataId?: string;
-    configuration?: AllPageLayoutWidgetConfiguration;
-  }) => {
+  execute: async (parameters: z.infer<typeof updateDashboardWidgetSchema>) => {
     try {
       const { widgetId, ...updates } = parameters;
       const updateData = Object.fromEntries(
@@ -80,7 +66,7 @@ Only provide fields you want to change - others remain unchanged.`,
           widgetId: widget.id,
           title: widget.title,
           type: widget.type,
-          gridPosition: widget.gridPosition,
+          position: widget.position,
           configuration: widget.configuration,
         },
       };

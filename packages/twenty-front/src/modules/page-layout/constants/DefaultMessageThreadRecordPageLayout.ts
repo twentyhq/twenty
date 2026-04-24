@@ -40,13 +40,6 @@ export const DEFAULT_MESSAGE_THREAD_RECORD_PAGE_LAYOUT: PageLayout = {
           title: 'Thread',
           type: WidgetType.EMAIL_THREAD,
           objectMetadataId: null,
-          gridPosition: {
-            __typename: 'GridPosition',
-            row: 0,
-            column: 0,
-            rowSpan: 12,
-            columnSpan: 12,
-          },
           position: {
             __typename: 'PageLayoutWidgetVerticalListPosition',
             layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,

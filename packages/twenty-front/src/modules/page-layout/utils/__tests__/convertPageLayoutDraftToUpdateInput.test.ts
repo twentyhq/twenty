@@ -15,7 +15,14 @@ const makeWidget = (
     title: 'Widget',
     type: WidgetType.FIELDS,
     pageLayoutTabId: 'tab-1',
-    gridPosition: { row: 0, column: 0, rowSpan: 1, columnSpan: 1 },
+    position: {
+      __typename: 'PageLayoutWidgetGridPosition',
+      layoutMode: PageLayoutTabLayoutMode.GRID,
+      row: 0,
+      column: 0,
+      rowSpan: 1,
+      columnSpan: 1,
+    },
     configuration: null,
     objectMetadataId: null,
     ...overrides,
@@ -78,23 +85,24 @@ describe('convertPageLayoutDraftToUpdateInput', () => {
     expect(result.tabs[0].widgets.map((w) => w.id)).toEqual(['w1', 'w2']);
   });
 
-  it('should map gridPosition correctly', () => {
+  it('should map grid position correctly', () => {
     const widget = makeWidget({
       id: 'w1',
-      gridPosition: { row: 2, column: 3, rowSpan: 4, columnSpan: 5 },
+      position: {
+        __typename: 'PageLayoutWidgetGridPosition',
+        layoutMode: PageLayoutTabLayoutMode.GRID,
+        row: 2,
+        column: 3,
+        rowSpan: 4,
+        columnSpan: 5,
+      },
     });
     const draft = makeDraft([makeTab('tab-1', [widget])]);
 
     const result = convertPageLayoutDraftToUpdateInput(draft);
 
-    expect(result.tabs[0].widgets[0].gridPosition).toEqual({
-      row: 2,
-      column: 3,
-      rowSpan: 4,
-      columnSpan: 5,
-    });
     expect(result.tabs[0].widgets[0].position).toEqual({
-      layoutMode: 'GRID',
+      layoutMode: PageLayoutTabLayoutMode.GRID,
       row: 2,
       column: 3,
       rowSpan: 4,
@@ -245,11 +253,17 @@ describe('convertPageLayoutDraftToUpdateInput', () => {
     });
   });
 
-  it('should produce GRID position from gridPosition when tab layoutMode is undefined', () => {
+  it('should default to GRID position when tab layoutMode is undefined', () => {
     const widget = makeWidget({
       id: 'w1',
-      position: null,
-      gridPosition: { row: 1, column: 2, rowSpan: 3, columnSpan: 4 },
+      position: {
+        __typename: 'PageLayoutWidgetGridPosition',
+        layoutMode: PageLayoutTabLayoutMode.GRID,
+        row: 1,
+        column: 2,
+        rowSpan: 3,
+        columnSpan: 4,
+      },
     });
     const draft = makeDraft([makeTab('tab-1', [widget])]);
 
@@ -267,7 +281,14 @@ describe('convertPageLayoutDraftToUpdateInput', () => {
   it('should produce GRID position when tab layoutMode is explicitly GRID', () => {
     const widget = makeWidget({
       id: 'w1',
-      gridPosition: { row: 5, column: 6, rowSpan: 7, columnSpan: 8 },
+      position: {
+        __typename: 'PageLayoutWidgetGridPosition',
+        layoutMode: PageLayoutTabLayoutMode.GRID,
+        row: 5,
+        column: 6,
+        rowSpan: 7,
+        columnSpan: 8,
+      },
     });
     const draft = makeDraft([
       makeTab('tab-1', [widget], PageLayoutTabLayoutMode.GRID),
@@ -288,10 +309,13 @@ describe('convertPageLayoutDraftToUpdateInput', () => {
     const widget = makeWidget({
       id: 'w1',
       position: {
-        __typename: 'PageLayoutWidgetCanvasPosition',
-        layoutMode: PageLayoutTabLayoutMode.CANVAS,
+        __typename: 'PageLayoutWidgetGridPosition',
+        layoutMode: PageLayoutTabLayoutMode.GRID,
+        row: 1,
+        column: 2,
+        rowSpan: 3,
+        columnSpan: 4,
       },
-      gridPosition: { row: 1, column: 2, rowSpan: 3, columnSpan: 4 },
     });
     const draft = makeDraft([
       makeTab('tab-1', [widget], PageLayoutTabLayoutMode.GRID),
@@ -320,7 +344,14 @@ describe('convertPageLayoutDraftToUpdateInput', () => {
     const canvasWidget = makeWidget({ id: 'w2' });
     const gridWidget = makeWidget({
       id: 'w3',
-      gridPosition: { row: 1, column: 0, rowSpan: 2, columnSpan: 6 },
+      position: {
+        __typename: 'PageLayoutWidgetGridPosition',
+        layoutMode: PageLayoutTabLayoutMode.GRID,
+        row: 1,
+        column: 0,
+        rowSpan: 2,
+        columnSpan: 6,
+      },
     });
 
     const draft = makeDraft([

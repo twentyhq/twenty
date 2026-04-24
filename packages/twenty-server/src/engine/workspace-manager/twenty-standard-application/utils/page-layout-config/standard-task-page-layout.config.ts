@@ -27,7 +27,6 @@ const TASK_PAGE_TABS = {
         universalIdentifier: '20202020-ac05-4005-8005-ba5ca11a5512',
         title: WIDGET_PROPS.taskRichText.title,
         type: WIDGET_PROPS.taskRichText.type,
-        gridPosition: WIDGET_PROPS.taskRichText.gridPosition,
         position: { layoutMode: TAB_PROPS.home.layoutMode, index: 1 },
         conditionalDisplay: CONDITIONAL_DISPLAY_DEVICE_MOBILE,
         conditionalAvailabilityExpression:

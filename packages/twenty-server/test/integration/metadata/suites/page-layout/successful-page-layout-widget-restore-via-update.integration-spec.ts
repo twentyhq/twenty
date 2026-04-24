@@ -5,7 +5,10 @@ import { createOnePageLayout } from 'test/integration/metadata/suites/page-layou
 import { destroyOnePageLayout } from 'test/integration/metadata/suites/page-layout/utils/destroy-one-page-layout.util';
 import { updateOnePageLayoutWithTabsAndWidgets } from 'test/integration/metadata/suites/page-layout/utils/update-one-page-layout-with-tabs-and-widgets.util';
 import { extractRecordIdsAndDatesAsExpectAny } from 'test/utils/extract-record-ids-and-dates-as-expect-any';
-import { AggregateOperations } from 'twenty-shared/types';
+import {
+  PageLayoutTabLayoutMode,
+  AggregateOperations,
+} from 'twenty-shared/types';
 import { v4 } from 'uuid';
 
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
@@ -84,7 +87,8 @@ describe('Page layout widget restore via bulk update should succeed', () => {
                 title: 'Graph Widget',
                 type: WidgetType.GRAPH,
                 objectMetadataId: testFieldMetadataIds.objectMetadataId,
-                gridPosition: {
+                position: {
+                  layoutMode: PageLayoutTabLayoutMode.GRID,
                   row: 0,
                   column: 0,
                   rowSpan: 1,
@@ -150,7 +154,8 @@ describe('Page layout widget restore via bulk update should succeed', () => {
                 title: 'Restored Graph Widget',
                 type: WidgetType.GRAPH,
                 objectMetadataId: testFieldMetadataIds.objectMetadataId,
-                gridPosition: {
+                position: {
+                  layoutMode: PageLayoutTabLayoutMode.GRID,
                   row: 0,
                   column: 0,
                   rowSpan: 1,
@@ -209,7 +214,8 @@ describe('Page layout widget restore via bulk update should succeed', () => {
                 title: 'Widget To Update',
                 type: WidgetType.IFRAME,
                 objectMetadataId: null,
-                gridPosition: {
+                position: {
+                  layoutMode: PageLayoutTabLayoutMode.GRID,
                   row: 0,
                   column: 0,
                   rowSpan: 1,
@@ -226,7 +232,8 @@ describe('Page layout widget restore via bulk update should succeed', () => {
                 title: 'Widget To Restore',
                 type: WidgetType.GRAPH,
                 objectMetadataId: testFieldMetadataIds.objectMetadataId,
-                gridPosition: {
+                position: {
+                  layoutMode: PageLayoutTabLayoutMode.GRID,
                   row: 1,
                   column: 0,
                   rowSpan: 1,
@@ -265,7 +272,8 @@ describe('Page layout widget restore via bulk update should succeed', () => {
                 title: 'Widget To Update',
                 type: WidgetType.IFRAME,
                 objectMetadataId: null,
-                gridPosition: {
+                position: {
+                  layoutMode: PageLayoutTabLayoutMode.GRID,
                   row: 0,
                   column: 0,
                   rowSpan: 1,
@@ -303,7 +311,8 @@ describe('Page layout widget restore via bulk update should succeed', () => {
                 title: 'Updated Widget Title',
                 type: WidgetType.IFRAME,
                 objectMetadataId: null,
-                gridPosition: {
+                position: {
+                  layoutMode: PageLayoutTabLayoutMode.GRID,
                   row: 0,
                   column: 0,
                   rowSpan: 2,
@@ -320,7 +329,8 @@ describe('Page layout widget restore via bulk update should succeed', () => {
                 title: 'Restored Widget',
                 type: WidgetType.GRAPH,
                 objectMetadataId: testFieldMetadataIds.objectMetadataId,
-                gridPosition: {
+                position: {
+                  layoutMode: PageLayoutTabLayoutMode.GRID,
                   row: 1,
                   column: 0,
                   rowSpan: 1,
@@ -340,7 +350,8 @@ describe('Page layout widget restore via bulk update should succeed', () => {
                 title: 'Brand New Widget',
                 type: WidgetType.IFRAME,
                 objectMetadataId: null,
-                gridPosition: {
+                position: {
+                  layoutMode: PageLayoutTabLayoutMode.GRID,
                   row: 2,
                   column: 0,
                   rowSpan: 1,
@@ -391,11 +402,21 @@ describe('Page layout widget restore via bulk update should succeed', () => {
       tabs: (mixedData.updatePageLayoutWithTabsAndWidgets.tabs ?? []).map(
         (tab) => ({
           ...tab,
-          widgets: [...(tab.widgets ?? [])].sort(
-            (a, b) =>
-              (a.gridPosition?.row ?? 0) - (b.gridPosition?.row ?? 0) ||
-              (a.gridPosition?.column ?? 0) - (b.gridPosition?.column ?? 0),
-          ),
+          widgets: [...(tab.widgets ?? [])].sort((a, b) => {
+            const aGrid =
+              a.position?.layoutMode === PageLayoutTabLayoutMode.GRID
+                ? a.position
+                : undefined;
+            const bGrid =
+              b.position?.layoutMode === PageLayoutTabLayoutMode.GRID
+                ? b.position
+                : undefined;
+
+            return (
+              (aGrid?.row ?? 0) - (bGrid?.row ?? 0) ||
+              (aGrid?.column ?? 0) - (bGrid?.column ?? 0)
+            );
+          }),
         }),
       ),
     };

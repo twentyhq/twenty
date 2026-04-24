@@ -20,6 +20,7 @@ export default definePageLayout({
           universalIdentifier: 'e5c93fce-76b4-41e9-9c5d-9b17e034366c',
           title: 'Summary',
           type: 'FRONT_COMPONENT',
+          position: { layoutMode: PageLayoutTabLayoutMode.CANVAS },
           configuration: {
             configurationType: 'FRONT_COMPONENT',
             frontComponentUniversalIdentifier:
@@ -39,6 +40,7 @@ export default definePageLayout({
           universalIdentifier: 'd5a9f3b7-4e82-4c06-9f1d-2b0a7e6c8d45',
           title: 'Media Player',
           type: 'FRONT_COMPONENT',
+          position: { layoutMode: PageLayoutTabLayoutMode.CANVAS },
           configuration: {
             configurationType: 'FRONT_COMPONENT',
             frontComponentUniversalIdentifier:
@@ -58,6 +60,7 @@ export default definePageLayout({
           universalIdentifier: '23c87a9c-25e3-4e83-84d9-02fb1a6fde76',
           title: 'Timeline',
           type: 'TIMELINE',
+          position: { layoutMode: PageLayoutTabLayoutMode.CANVAS },
           configuration: {
             configurationType: 'TIMELINE',
           },
@@ -75,6 +78,7 @@ export default definePageLayout({
           universalIdentifier: 'ae93482f-384f-42a8-9c06-6bc14b10da6a',
           title: 'Tasks',
           type: 'TASKS',
+          position: { layoutMode: PageLayoutTabLayoutMode.CANVAS },
           configuration: {
             configurationType: 'TASKS',
           },
@@ -92,6 +96,7 @@ export default definePageLayout({
           universalIdentifier: 'e2b6a0c4-1f59-4d73-a684-9c7b4f3d5e12',
           title: 'Notes',
           type: 'NOTES',
+          position: { layoutMode: PageLayoutTabLayoutMode.CANVAS },
           configuration: {
             configurationType: 'NOTES',
           },
@@ -109,6 +114,7 @@ export default definePageLayout({
           universalIdentifier: 'a17bf74a-a7ff-48a0-8628-3fd905539c8d',
           title: 'Files',
           type: 'FILES',
+          position: { layoutMode: PageLayoutTabLayoutMode.CANVAS },
           configuration: {
             configurationType: 'FILES',
           },

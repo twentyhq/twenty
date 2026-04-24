@@ -45,13 +45,6 @@ export const DEFAULT_WORKFLOW_PAGE_LAYOUT: PageLayout = {
           title: 'Flow',
           type: WidgetType.WORKFLOW,
           objectMetadataId: null,
-          gridPosition: {
-            __typename: 'GridPosition',
-            row: 0,
-            column: 0,
-            rowSpan: 12,
-            columnSpan: 12,
-          },
           position: {
             __typename: 'PageLayoutWidgetCanvasPosition',
             layoutMode: PageLayoutTabLayoutMode.CANVAS,

@@ -29,12 +29,7 @@ export default definePageLayout({
             frontComponentUniversalIdentifier:
               RESEND_SYNC_STATUS_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
           },
-          gridPosition: {
-            row: 0,
-            column: 0,
-            rowSpan: 12,
-            columnSpan: 12,
-          },
+          position: { layoutMode: PageLayoutTabLayoutMode.CANVAS },
         },
       ],
     },

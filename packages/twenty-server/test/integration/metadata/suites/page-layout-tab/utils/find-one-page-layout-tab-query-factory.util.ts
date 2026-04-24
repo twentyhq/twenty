@@ -19,11 +19,21 @@ const DEFAULT_PAGE_LAYOUT_TAB_GQL_FIELDS = `
     type
     pageLayoutTabId
     objectMetadataId
-    gridPosition {
-      row
-      column
-      rowSpan
-      columnSpan
+    position {
+      ... on PageLayoutWidgetGridPosition {
+        layoutMode
+        row
+        column
+        rowSpan
+        columnSpan
+      }
+      ... on PageLayoutWidgetVerticalListPosition {
+        layoutMode
+        index
+      }
+      ... on PageLayoutWidgetCanvasPosition {
+        layoutMode
+      }
     }
     configuration
     createdAt

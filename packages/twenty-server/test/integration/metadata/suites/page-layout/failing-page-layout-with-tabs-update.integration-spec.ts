@@ -11,7 +11,12 @@ import {
 import { createOnePageLayout } from 'test/integration/metadata/suites/page-layout/utils/create-one-page-layout.util';
 import { destroyOnePageLayout } from 'test/integration/metadata/suites/page-layout/utils/destroy-one-page-layout.util';
 import { updateOnePageLayoutWithTabsAndWidgets } from 'test/integration/metadata/suites/page-layout/utils/update-one-page-layout-with-tabs-and-widgets.util';
-import { AggregateOperations, FieldMetadataType } from 'twenty-shared/types';
+import {
+  PageLayoutTabLayoutMode,
+  AggregateOperations,
+  FieldMetadataType,
+  type PageLayoutWidgetGridPosition,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
@@ -44,7 +49,13 @@ describe('Page layout with tabs update should fail', () => {
                 title: 'Widget 1',
                 type: WidgetType.FIELDS,
                 objectMetadataId: null,
-                gridPosition: { row: 0, column: 0, rowSpan: 1, columnSpan: 1 },
+                position: {
+                  layoutMode: PageLayoutTabLayoutMode.GRID,
+                  row: 0,
+                  column: 0,
+                  rowSpan: 1,
+                  columnSpan: 1,
+                } satisfies PageLayoutWidgetGridPosition,
                 configuration: {
                   configurationType: WidgetConfigurationType.IFRAME,
                 },
@@ -186,12 +197,13 @@ describe('Page layout with tabs update should fail', () => {
               title: chartTitle,
               type: WidgetType.GRAPH,
               objectMetadataId: testFieldMetadataIds.objectMetadataId,
-              gridPosition: {
+              position: {
+                layoutMode: PageLayoutTabLayoutMode.GRID,
                 row: 0,
                 column: 0,
                 rowSpan: 1,
                 columnSpan: 1,
-              },
+              } satisfies PageLayoutWidgetGridPosition,
               configuration: chartConfiguration,
             },
           ],
@@ -249,9 +261,9 @@ describe('Page layout with tabs update should fail', () => {
       expect(firstError.message).toContain(
         'Please remove or replace this filter rule.',
       );
-      expect(
-        String(firstError.extensions.userFriendlyMessage),
-      ).toContain(`Chart "${chartTitle}":`);
+      expect(String(firstError.extensions.userFriendlyMessage)).toContain(
+        `Chart "${chartTitle}":`,
+      );
     });
   });
 });
