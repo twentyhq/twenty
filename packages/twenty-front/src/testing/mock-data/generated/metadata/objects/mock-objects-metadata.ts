@@ -21434,47 +21434,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
             },
             {
               "__typename": "Field",
-              "id": "5b775671-2f37-4513-9485-c4b76c746156",
-              "universalIdentifier": "20202020-0203-4118-8e2a-05b9bdae6dab",
-              "type": "SELECT",
-              "name": "direction",
-              "label": "Direction",
-              "description": "Message Direction",
-              "icon": "IconDirection",
-              "isCustom": false,
-              "isActive": true,
-              "isSystem": false,
-              "isUIReadOnly": true,
-              "isNullable": false,
-              "isUnique": false,
-              "createdAt": "2026-04-10T08:55:56.200Z",
-              "updatedAt": "2026-04-10T08:55:56.200Z",
-              "defaultValue": "'INCOMING'",
-              "options": [
-                {
-                  "id": "20202020-7b52-47d2-abd8-e96a4295f9a6",
-                  "color": "green",
-                  "label": "Incoming",
-                  "value": "INCOMING",
-                  "position": 0
-                },
-                {
-                  "id": "20202020-11cb-42be-8df7-709ad53f90f9",
-                  "color": "blue",
-                  "label": "Outgoing",
-                  "value": "OUTGOING",
-                  "position": 1
-                }
-              ],
-              "settings": null,
-              "isLabelSyncedWithName": false,
-              "morphId": null,
-              "applicationId": "dd6a5463-023d-4a10-855f-a4abaf32c1ec",
-              "relation": null,
-              "morphRelations": null
-            },
-            {
-              "__typename": "Field",
               "id": "d87675ee-1d19-4658-8037-daec3e00b718",
               "universalIdentifier": "20202020-52d1-4036-b9ae-84bd722bb37a",
               "type": "TEXT",
