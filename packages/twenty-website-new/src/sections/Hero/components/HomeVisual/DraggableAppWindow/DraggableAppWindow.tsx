@@ -290,6 +290,23 @@ export const DraggableAppWindow = ({ children }: DraggableAppWindowProps) => {
     [activate, position],
   );
 
+  // Drag/resize hot path: we mutate `shell.style.transform` (and
+  // width/height for resize) directly per `pointermove` instead of
+  // routing every event through `setPosition` / `setSize`. A 120 Hz
+  // pointer would otherwise re-render the window subtree hundreds of
+  // times per second; the DOM write produces the same paint result
+  // without React in the loop. The latest live values are stashed in
+  // refs and committed back to React state on `pointerup`. See
+  // ARCHITECTURE.md §15.
+  const latestPositionRef = useRef<Position | null>(position);
+  const latestSizeRef = useRef<Size | null>(size);
+  useEffect(() => {
+    latestPositionRef.current = position;
+  }, [position]);
+  useEffect(() => {
+    latestSizeRef.current = size;
+  }, [size]);
+
   useEffect(() => {
     if (!isDragging) {
       return undefined;
@@ -302,7 +319,12 @@ export const DraggableAppWindow = ({ children }: DraggableAppWindowProps) => {
       }
       const nextLeft = state.startLeft + (event.clientX - state.originX);
       const nextTop = state.startTop + (event.clientY - state.originY);
-      setPosition(clampPosition(nextLeft, nextTop, size));
+      const clamped = clampPosition(nextLeft, nextTop, size);
+      latestPositionRef.current = clamped;
+      const shell = shellRef.current;
+      if (shell !== null) {
+        shell.style.transform = `translate3d(${clamped.left}px, ${clamped.top}px, 0)`;
+      }
     };
 
     const stop = (event: PointerEvent) => {
@@ -312,6 +334,10 @@ export const DraggableAppWindow = ({ children }: DraggableAppWindowProps) => {
       }
       dragStateRef.current = null;
       setIsDragging(false);
+      const committed = latestPositionRef.current;
+      if (committed !== null) {
+        setPosition(committed);
+      }
       shellRef.current?.releasePointerCapture?.(event.pointerId);
     };
 
@@ -430,8 +456,14 @@ export const DraggableAppWindow = ({ children }: DraggableAppWindowProps) => {
         }
       }
 
-      setSize({ width: nextWidth, height: nextHeight });
-      setPosition({ left: nextLeft, top: nextTop });
+      latestSizeRef.current = { width: nextWidth, height: nextHeight };
+      latestPositionRef.current = { left: nextLeft, top: nextTop };
+      const shell = shellRef.current;
+      if (shell !== null) {
+        shell.style.width = `${nextWidth}px`;
+        shell.style.height = `${nextHeight}px`;
+        shell.style.transform = `translate3d(${nextLeft}px, ${nextTop}px, 0)`;
+      }
     };
 
     const stop = (event: PointerEvent) => {
@@ -441,6 +473,14 @@ export const DraggableAppWindow = ({ children }: DraggableAppWindowProps) => {
       }
       resizeStateRef.current = null;
       setIsResizing(false);
+      const committedSize = latestSizeRef.current;
+      const committedPosition = latestPositionRef.current;
+      if (committedSize !== null) {
+        setSize(committedSize);
+      }
+      if (committedPosition !== null) {
+        setPosition(committedPosition);
+      }
       shellRef.current?.releasePointerCapture?.(event.pointerId);
     };
 
@@ -463,6 +503,15 @@ export const DraggableAppWindow = ({ children }: DraggableAppWindowProps) => {
 
   const isReady = position !== null && size !== null;
 
+  // While interacting, prefer the live ref values for the inline style so
+  // an unrelated re-render doesn't snap the window back to the last
+  // committed position/size.
+  const isInteracting = isDragging || isResizing;
+  const renderPosition = isInteracting
+    ? (latestPositionRef.current ?? position)
+    : position;
+  const renderSize = isInteracting ? (latestSizeRef.current ?? size) : size;
+
   return (
     <Shell
       $isActive={isReady && zIndex > 2}
@@ -471,11 +520,11 @@ export const DraggableAppWindow = ({ children }: DraggableAppWindowProps) => {
       onPointerDown={handleShellPointerDown}
       ref={shellRef}
       style={{
-        height: size ? `${size.height}px` : undefined,
-        transform: position
-          ? `translate(${position.left}px, ${position.top}px)`
-          : 'translate(0, 0)',
-        width: size ? `${size.width}px` : '100%',
+        height: renderSize ? `${renderSize.height}px` : undefined,
+        transform: renderPosition
+          ? `translate3d(${renderPosition.left}px, ${renderPosition.top}px, 0)`
+          : 'translate3d(0, 0, 0)',
+        width: renderSize ? `${renderSize.width}px` : '100%',
         zIndex,
       }}
     >

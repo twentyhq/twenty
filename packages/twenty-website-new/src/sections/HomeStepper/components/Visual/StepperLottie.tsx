@@ -10,7 +10,10 @@ import {
   useState,
 } from 'react';
 
-import { scrollProgressToHomeStepperLottieFrame } from '@/sections/HomeStepper/utils/home-stepper-lottie-frame-map';
+import {
+  HOME_STEPPER_LOTTIE_EXPECTED_TOTAL_FRAMES,
+  scrollProgressToHomeStepperLottieFrame,
+} from '@/sections/HomeStepper/utils/home-stepper-lottie-frame-map';
 import { theme } from '@/theme';
 
 export const HOME_STEPPER_LOTTIE_SRC =
@@ -62,6 +65,20 @@ export function StepperLottie({ scrollProgress }: StepperLottieProps) {
 
     const onReady = () => {
       const frames = player.totalFrames;
+      // Frame-map sanity check: the scroll → frame mapping in
+      // `home-stepper-lottie-frame-map.ts` hardcodes timeline anchors
+      // (e.g. `STEP_2_TRANSITION_END = 925`) tied to the authored
+      // animation. A re-export with a different `op` would silently
+      // misalign every step. We log loudly in dev/preview so a
+      // mismatch is caught before it hits prod; the build-time
+      // `scripts/check-lottie-frames.mjs` is the matching backstop.
+      if (frames > 0 && frames !== HOME_STEPPER_LOTTIE_EXPECTED_TOTAL_FRAMES) {
+        console.error(
+          `[StepperLottie] Lottie totalFrames mismatch — expected ${HOME_STEPPER_LOTTIE_EXPECTED_TOTAL_FRAMES}, got ${frames}. ` +
+            'The scroll → frame mapping in home-stepper-lottie-frame-map.ts is tied to the authored timeline; ' +
+            'update HOME_STEPPER_LOTTIE_EXPECTED_TOTAL_FRAMES and the STEP_*_END constants together.',
+        );
+      }
       setTotalFrames(frames);
       applyScrollToDotLottie(player, scrollProgressRef.current, frames);
     };

@@ -510,6 +510,14 @@ Some implementation details that have caused real bugs and must not regress.
   at 256 entries) instead of `new Set<string>()`. The reference consumers
   are `Hero/HomeVisual/{HomeVisual,KanbanPage,TablePage}.tsx` and
   `ThreeCards/components/FeatureCard/FamiliarInterfaceVisual.tsx`.
+- **Lottie timelines are validated against the asset.** Anything that
+  hardcodes frame numbers from a `.lottie` (e.g. the home-stepper scroll
+  → frame map) MUST also export an `EXPECTED_TOTAL_FRAMES` constant.
+  Two checks pin them together: a runtime `console.error` in the
+  consuming component and a build-time
+  [`scripts/check-lottie-frames.mjs`](./scripts/check-lottie-frames.mjs)
+  wired into `nx lint`. A designer re-export with a different `op`
+  silently breaks scroll-driven Lottie sections otherwise.
 
 ---
 
@@ -557,19 +565,57 @@ the legacy base (or to per-app configs matching this one), revisit.
 
 ## 14. CI surface
 
-Two GitHub Actions workflows touch this package:
+There is no GitHub Actions workflow for this package yet. The legacy
+[`ci-website.yaml`](../../.github/workflows/ci-website.yaml) builds the
+_old_ `twenty-website` package and is unrelated; it's tracked as a
+follow-up to add a dedicated `ci-website-new.yaml`.
 
-- [`ci-website-new.yaml`](../../.github/workflows/ci-website-new.yaml)
-  runs on every PR that changes `packages/twenty-website-new/**`. The
-  pipeline is `nx lint` → `nx typecheck` → `nx test --configuration=ci`
-  → `nx build`. `nx lint` is the single entry point for _all_ static
-  checks (oxlint + prettier + `check-boundaries.mjs` +
-  `check-section-shape.mjs`); future rule additions inherit CI coverage
-  for free.
-- The legacy [`ci-website.yaml`](../../.github/workflows/ci-website.yaml)
-  builds the _old_ `twenty-website` package and is unrelated.
+When the workflow lands, the canonical entry point is
+`npx nx lint twenty-website-new` — it transitively runs oxlint,
+`prettier . --check`, `check-boundaries.mjs`,
+`check-section-shape.mjs`, and `check-lottie-frames.mjs`. Add new
+static checks as Nx targets wired into `lint`'s `dependsOn` rather
+than as standalone workflow steps, so local `nx lint` and CI stay in
+lockstep.
 
-Don't add ad-hoc shell steps to the workflow that duplicate work the
-Nx targets already do. If a new check needs to run, add it to a target
-(`lint`, `typecheck`, `test`, or a new dedicated target wired into
-`lint`'s `dependsOn`) so local `nx lint` and CI stay aligned.
+---
+
+## 15. Drag / resize hot path
+
+`DraggableTerminal` and `DraggableAppWindow` are the only components
+in the codebase that translate raw `pointermove` events into per-frame
+visual updates. The contract:
+
+- **Per `pointermove`, write to the DOM directly.** Set
+  `shellRef.current.style.transform` (and, for resize,
+  `style.width` / `style.height`) — do **not** call `setPosition` /
+  `setSize`. A 120 Hz pointer fires hundreds of `pointermove`s per
+  second; routing each through React state would re-render the entire
+  window subtree per event.
+- **Mirror the live values into refs.** `latestPositionRef` and
+  `latestSizeRef` are kept in sync with React state via `useEffect`,
+  and mutated alongside each DOM write.
+- **Commit to React state on `pointerup` only.** One `setState` per
+  drag/resize gesture, not per frame. The committed value comes from
+  the live ref so nothing is lost.
+- **JSX inline `style` falls back to the live ref while
+  interacting.** Without this, an unrelated re-render mid-drag (e.g.
+  `useWindowOrder` bumping `zIndex` because a sibling window
+  activated) would snap the element back to its last committed
+  position. The fallback keeps the rendered transform consistent with
+  the live DOM write.
+- **Use `translate3d(...)` for the transform.** It hints the
+  compositor to promote the layer to the GPU, which keeps the drag
+  smooth even when the window contains heavy children (`TerminalEditor`,
+  `FamiliarInterface`).
+- **The Shell's `transition` must exclude `transform` / `width` /
+  `height` while interacting.** Both components already drop those
+  properties from the transition list when `$isDragging` /
+  `$isResizing` is true; if you add a new transitionable property,
+  preserve the same gating, or each frame's direct DOM write will
+  visibly tween across the previous frame.
+
+When adding a new drag/resize surface, copy this contract verbatim.
+The temptation to wrap `setPosition` in `requestAnimationFrame` and
+call it good is a 60 Hz approximation — the per-frame React reconcile
+is still in the hot path.

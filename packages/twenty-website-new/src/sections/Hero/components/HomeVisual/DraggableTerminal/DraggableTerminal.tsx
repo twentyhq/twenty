@@ -595,6 +595,29 @@ export const DraggableTerminal = ({
     [activate, position],
   );
 
+  // Drag/resize hot path: per-`pointermove` we mutate `shell.style.transform`
+  // (and width/height for resize) directly instead of calling `setPosition` /
+  // `setSize`. A 120 Hz pointer can fire ~hundreds of `pointermove`s per
+  // second; routing each through React state would re-render the whole
+  // window subtree every frame. The DOM write is still synchronous and
+  // browsers coalesce style mutations into the next paint, so the visible
+  // motion is identical — just without React in the loop.
+  //
+  // We mirror the latest live values into refs and commit them back to
+  // React state on `pointerup` so the next render (e.g. an external
+  // re-render from `useWindowOrder` while interacting) picks up where the
+  // drag left off. While interacting, JSX falls back to the live ref
+  // values to keep any unexpected mid-interaction render visually
+  // coherent. See ARCHITECTURE.md §15.
+  const latestPositionRef = useRef<TerminalPosition | null>(position);
+  const latestSizeRef = useRef<TerminalSize>(size);
+  useEffect(() => {
+    latestPositionRef.current = position;
+  }, [position]);
+  useEffect(() => {
+    latestSizeRef.current = size;
+  }, [size]);
+
   useEffect(() => {
     if (!isDragging) {
       return undefined;
@@ -608,7 +631,12 @@ export const DraggableTerminal = ({
 
       const nextLeft = state.startLeft + (event.clientX - state.originX);
       const nextTop = state.startTop + (event.clientY - state.originY);
-      setPosition(clampPosition(nextLeft, nextTop, size));
+      const clamped = clampPosition(nextLeft, nextTop, size);
+      latestPositionRef.current = clamped;
+      const shell = shellRef.current;
+      if (shell !== null) {
+        shell.style.transform = `translate3d(${clamped.left}px, ${clamped.top}px, 0)`;
+      }
     };
 
     const stopDragging = (event: PointerEvent) => {
@@ -618,6 +646,10 @@ export const DraggableTerminal = ({
       }
       dragStateRef.current = null;
       setIsDragging(false);
+      const committed = latestPositionRef.current;
+      if (committed !== null) {
+        setPosition(committed);
+      }
       shellRef.current?.releasePointerCapture?.(event.pointerId);
     };
 
@@ -738,8 +770,16 @@ export const DraggableTerminal = ({
         }
       }
 
-      setSize({ width: nextWidth, height: nextHeight });
-      setPosition({ left: nextLeft, top: nextTop });
+      // Same hot-path treatment as the drag handler — write directly to
+      // the DOM and only commit React state on `pointerup`.
+      latestSizeRef.current = { width: nextWidth, height: nextHeight };
+      latestPositionRef.current = { left: nextLeft, top: nextTop };
+      const shell = shellRef.current;
+      if (shell !== null) {
+        shell.style.width = `${nextWidth}px`;
+        shell.style.height = `${nextHeight}px`;
+        shell.style.transform = `translate3d(${nextLeft}px, ${nextTop}px, 0)`;
+      }
     };
 
     const stopResizing = (event: PointerEvent) => {
@@ -749,6 +789,12 @@ export const DraggableTerminal = ({
       }
       resizeStateRef.current = null;
       setIsResizing(false);
+      const committedSize = latestSizeRef.current;
+      const committedPosition = latestPositionRef.current;
+      setSize(committedSize);
+      if (committedPosition !== null) {
+        setPosition(committedPosition);
+      }
       shellRef.current?.releasePointerCapture?.(event.pointerId);
     };
 
@@ -763,6 +809,16 @@ export const DraggableTerminal = ({
     };
   }, [getParentRect, isResizing]);
 
+  // While interacting, prefer the live ref values for the inline style so
+  // an unrelated re-render (e.g. `zIndex` change from `useWindowOrder`)
+  // doesn't snap the window back to the last committed position/size.
+  // When idle, we read from React state — the canonical source.
+  const isInteracting = isDragging || isResizing;
+  const renderPosition = isInteracting
+    ? (latestPositionRef.current ?? position)
+    : position;
+  const renderSize = isInteracting ? latestSizeRef.current : size;
+
   return (
     <Shell
       $animationsEnabled={animationsEnabled}
@@ -773,11 +829,11 @@ export const DraggableTerminal = ({
       onPointerDown={activate}
       ref={shellRef}
       style={{
-        height: `${size.height}px`,
-        transform: position
-          ? `translate(${position.left}px, ${position.top}px)`
-          : 'translate(0, 0)',
-        width: `${size.width}px`,
+        height: `${renderSize.height}px`,
+        transform: renderPosition
+          ? `translate3d(${renderPosition.left}px, ${renderPosition.top}px, 0)`
+          : 'translate3d(0, 0, 0)',
+        width: `${renderSize.width}px`,
         zIndex,
       }}
     >
