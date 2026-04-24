@@ -2,20 +2,16 @@ import { PinnedCommandMenuItemsInlineMeasurements } from '@/command-menu-item/di
 import { PINNED_COMMAND_MENU_ITEMS_GAP } from '@/command-menu-item/display/constants/PinnedCommandMenuItemsGap';
 import { usePinnedCommandMenuItemsInlineLayout } from '@/command-menu-item/display/hooks/usePinnedCommandMenuItemsInlineLayout';
 import { interpolateCommandMenuItemFields } from '@/command-menu-item/display/utils/interpolateCommandMenuItemFields';
-import { commandMenuItemsDraftState } from '@/command-menu-item/edit/states/commandMenuItemsDraftState';
-import { useCommandMenuContextApi } from '@/command-menu-item/hooks/useCommandMenuContextApi';
-import { doesCommandMenuItemMatchObjectMetadataId } from '@/command-menu-item/utils/doesCommandMenuItemMatchObjectMetadataId';
+import { useEditableCommandMenuItems } from '@/command-menu-item/edit/hooks/useEditableCommandMenuItems';
+import { useCurrentCommandMenuContextApi } from '@/command-menu-item/hooks/useCurrentCommandMenuContextApi';
 import { CommandMenuButton } from '@/command-menu/components/CommandMenuButton';
-import { mainContextStoreHasSelectedRecordsSelector } from '@/context-store/states/selectors/mainContextStoreHasSelectedRecordsSelector';
 import { NodeDimension } from '@/ui/utilities/dimensions/components/NodeDimension';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { COMMAND_MENU_DEFAULT_ICON } from '@/workflow/workflow-trigger/constants/CommandMenuDefaultIcon';
 import { styled } from '@linaria/react';
 import { motion } from 'framer-motion';
-import { useContext, useMemo } from 'react';
+import { useContext } from 'react';
 import { useIcons } from 'twenty-ui/display';
 import { ThemeContext } from 'twenty-ui/theme-constants';
-import { CommandMenuItemAvailabilityType } from '~/generated-metadata/graphql';
 
 const StyledCommandMenuItemContainer = styled(motion.div)`
   align-items: center;
@@ -46,36 +42,13 @@ const StyledItemsContainer = styled.div`
 export const PinnedCommandMenuItemButtonsEditMode = () => {
   const { theme } = useContext(ThemeContext);
   const { getIcon } = useIcons();
-  const commandMenuContextApi = useCommandMenuContextApi();
+  const commandMenuContextApi = useCurrentCommandMenuContextApi();
 
-  const currentObjectMetadataItemId =
-    commandMenuContextApi.objectMetadataItem.id;
+  const editableCommandMenuItems = useEditableCommandMenuItems();
 
-  const commandMenuItemsDraft =
-    useAtomStateValue(commandMenuItemsDraftState) ?? [];
-
-  const mainContextStoreHasSelectedRecords = useAtomStateValue(
-    mainContextStoreHasSelectedRecordsSelector,
+  const pinnedCommandMenuItems = editableCommandMenuItems.filter(
+    (item) => item.isPinned,
   );
-
-  const allowedAvailabilityTypes = useMemo(
-    () =>
-      new Set<CommandMenuItemAvailabilityType>([
-        CommandMenuItemAvailabilityType.GLOBAL,
-        CommandMenuItemAvailabilityType.GLOBAL_OBJECT_CONTEXT,
-        mainContextStoreHasSelectedRecords
-          ? CommandMenuItemAvailabilityType.RECORD_SELECTION
-          : CommandMenuItemAvailabilityType.FALLBACK,
-      ]),
-    [mainContextStoreHasSelectedRecords],
-  );
-
-  const pinnedCommandMenuItems = commandMenuItemsDraft
-    .filter(
-      doesCommandMenuItemMatchObjectMetadataId(currentObjectMetadataItemId),
-    )
-    .filter((item) => allowedAvailabilityTypes.has(item.availabilityType))
-    .filter((item) => item.isPinned);
 
   const {
     pinnedInlineCommandMenuItems,

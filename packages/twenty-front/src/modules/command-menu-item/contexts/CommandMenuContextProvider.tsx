@@ -2,7 +2,7 @@ import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type CommandMenuContextType } from '@/command-menu-item/contexts/CommandMenuContext';
-import { useCommandMenuContextApi } from '@/command-menu-item/hooks/useCommandMenuContextApi';
+import { useCurrentCommandMenuContextApi } from '@/command-menu-item/hooks/useCurrentCommandMenuContextApi';
 
 import { CommandMenuContextProviderContent } from './CommandMenuContextProviderContent';
 import { CommandMenuContextProviderWithWorkflowEnrichment } from './CommandMenuContextProviderWithWorkflowEnrichment';
@@ -20,7 +20,7 @@ export const CommandMenuContextProvider = ({
   containerType,
   children,
 }: CommandMenuContextProviderProps) => {
-  const commandMenuContextApiFromHook = useCommandMenuContextApi();
+  const commandMenuContextApiFromHook = useCurrentCommandMenuContextApi();
 
   const commandMenuContextApi = isInSidePanel
     ? { ...commandMenuContextApiFromHook, isInSidePanel: true }
