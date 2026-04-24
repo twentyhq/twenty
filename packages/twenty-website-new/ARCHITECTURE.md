@@ -6,6 +6,8 @@ or — when neither is possible — by code review against this document.
 
 If you're adding a new section, read [`SECTIONS.md`](./SECTIONS.md) instead.
 If you just want to run the site, read [`README.md`](./README.md).
+For pending strategic decisions (e.g. marketing-copy strategy), see
+[`DECISIONS/`](./DECISIONS/).
 
 ---
 
