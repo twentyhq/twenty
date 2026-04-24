@@ -154,8 +154,12 @@ export const SettingsLogicFunctionDetail = () => {
               isTesting={isExecuting}
             />
           )}
-          {isTriggersTab && logicFunction && (
-            <SettingsLogicFunctionTriggersTab logicFunction={logicFunction} />
+          {isTriggersTab && (
+            <SettingsLogicFunctionTriggersTab
+              formValues={formValues}
+              onChange={onChange}
+              readonly={isReadonly}
+            />
           )}
           {isSettingsTab && (
             <SettingsLogicFunctionSettingsTab
@@ -168,6 +172,7 @@ export const SettingsLogicFunctionDetail = () => {
             <SettingsLogicFunctionTestTab
               handleExecute={executeLogicFunction}
               logicFunctionId={logicFunctionId}
+              formValues={formValues}
               isTesting={isExecuting}
             />
           )}
