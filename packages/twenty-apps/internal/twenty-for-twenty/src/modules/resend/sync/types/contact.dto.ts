@@ -1,4 +1,4 @@
-import type { EmailsField } from 'src/modules/resend/shared/types/emails-field';
+import type { EmailsField } from '@modules/resend/shared/types/emails-field';
 
 export type ContactDto = {
   email: EmailsField;
@@ -6,4 +6,6 @@ export type ContactDto = {
   unsubscribed: boolean;
   createdAt: string;
   lastSyncedFromResend: string;
+  personId?: string;
+  segmentId?: string;
 };

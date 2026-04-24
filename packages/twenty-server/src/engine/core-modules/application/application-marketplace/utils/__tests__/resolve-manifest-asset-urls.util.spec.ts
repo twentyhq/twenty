@@ -25,6 +25,7 @@ const buildMinimalManifest = (
   views: [],
   navigationMenuItems: [],
   pageLayouts: [],
+  pageLayoutTabs: [],
 });
 
 describe('resolveManifestAssetUrls', () => {

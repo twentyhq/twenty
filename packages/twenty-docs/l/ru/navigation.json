@@ -4,10 +4,10 @@
       "label": "Начало работы",
       "groups": {
         "welcome": {
-          "label": "Welcome"
+          "label": "Добро пожаловать"
         },
         "coreConcepts": {
-          "label": "Core Concepts"
+          "label": "Основные понятия"
         }
       }
     },
@@ -21,7 +21,7 @@
           "label": "Модель данных",
           "groups": {
             "dataModelReference": {
-              "label": "Reference"
+              "label": "Справочник"
             },
             "dataModelHowTos": {
               "label": "Инструкции"
@@ -32,7 +32,7 @@
           "label": "Миграция данных",
           "groups": {
             "dataMigrationReference": {
-              "label": "Reference"
+              "label": "Справочник"
             },
             "dataMigrationHowTos": {
               "label": "Инструкции"
@@ -43,7 +43,7 @@
           "label": "Календарь и электронная почта",
           "groups": {
             "calendarEmailsReference": {
-              "label": "Reference"
+              "label": "Справочник"
             },
             "calendarEmailsHowTos": {
               "label": "Инструкции"
@@ -54,7 +54,7 @@
           "label": "Рабочие процессы",
           "groups": {
             "workflowsReference": {
-              "label": "Reference"
+              "label": "Справочник"
             },
             "workflowsHowTos": {
               "label": "Инструкции",
@@ -79,7 +79,7 @@
           "label": "ИИ",
           "groups": {
             "aiReference": {
-              "label": "Reference"
+              "label": "Справочник"
             },
             "aiHowTos": {
               "label": "Инструкции"
@@ -90,7 +90,7 @@
           "label": "Макет",
           "groups": {
             "layoutReference": {
-              "label": "Reference",
+              "label": "Справочник",
               "groups": {
                 "layoutViews": {
                   "label": "Представления"
@@ -106,7 +106,7 @@
           "label": "Панели управления",
           "groups": {
             "dashboardsReference": {
-              "label": "Reference"
+              "label": "Справочник"
             },
             "dashboardsHowTos": {
               "label": "Инструкции"
@@ -117,7 +117,7 @@
           "label": "Разрешения и доступ",
           "groups": {
             "permissionsAccessReference": {
-              "label": "Reference"
+              "label": "Справочник"
             },
             "permissionsAccessHowTos": {
               "label": "Инструкции"
@@ -128,7 +128,7 @@
           "label": "Биллинг",
           "groups": {
             "billingReference": {
-              "label": "Reference"
+              "label": "Справочник"
             },
             "billingHowTos": {
               "label": "Инструкции"
@@ -139,7 +139,7 @@
           "label": "Настройки",
           "groups": {
             "settingsReference": {
-              "label": "Reference"
+              "label": "Справочник"
             },
             "settingsHowTos": {
               "label": "Инструкции"

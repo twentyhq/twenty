@@ -57,6 +57,48 @@ const StyledMainContent = styled.div`
   overflow: hidden;
 `;
 
+const StyledMarkdownContent = styled.div`
+  .markdown-section {
+    margin: 0;
+  }
+
+  .markdown-section h4 {
+    font-size: ${themeCssVariables.font.size.lg};
+    font-weight: ${themeCssVariables.font.weight.semiBold};
+    line-height: 1.35;
+    margin-bottom: ${themeCssVariables.spacing[2]};
+    margin-top: ${themeCssVariables.spacing[5]};
+  }
+
+  .markdown-section ul {
+    margin-bottom: ${themeCssVariables.spacing[3]};
+    margin-top: ${themeCssVariables.spacing[2]};
+    padding-left: ${themeCssVariables.spacing[4]};
+  }
+
+  .markdown-section li {
+    margin-bottom: ${themeCssVariables.spacing[1]} !important;
+    padding-bottom: 0 !important;
+    padding-top: 0 !important;
+  }
+
+  .markdown-section .markdown-code-outer-container {
+    margin: ${themeCssVariables.spacing[3]} 0 ${themeCssVariables.spacing[4]};
+  }
+
+  .markdown-section .markdown-block-code {
+    padding: ${themeCssVariables.spacing[3]} ${themeCssVariables.spacing[4]};
+  }
+
+  .markdown-section .markdown-block-code code {
+    color: ${themeCssVariables.font.color.primary};
+    display: block;
+    font-family: ${themeCssVariables.code.font.family}, monospace;
+    font-size: ${themeCssVariables.font.size.sm};
+    line-height: 1.6;
+  }
+`;
+
 export const SettingsApplicationDetailAboutTab = ({
   displayName,
   description,
@@ -161,7 +203,9 @@ export const SettingsApplicationDetailAboutTab = ({
       <StyledContentContainer>
         <StyledMainContent>
           <Section>
-            <LazyMarkdownRenderer text={markdownText} />
+            <StyledMarkdownContent>
+              <LazyMarkdownRenderer text={markdownText} />
+            </StyledMarkdownContent>
           </Section>
         </StyledMainContent>
 

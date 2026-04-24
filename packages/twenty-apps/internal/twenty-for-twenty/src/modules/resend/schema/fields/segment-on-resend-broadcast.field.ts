@@ -3,7 +3,7 @@ import {
   RESEND_BROADCAST_OBJECT_UNIVERSAL_IDENTIFIER,
   RESEND_SEGMENT_OBJECT_UNIVERSAL_IDENTIFIER,
   SEGMENT_ON_RESEND_BROADCAST_FIELD_UNIVERSAL_IDENTIFIER,
-} from 'src/modules/resend/constants/universal-identifiers';
+} from '@modules/resend/constants/universal-identifiers';
 import { defineField, FieldType, RelationType } from 'twenty-sdk/define';
 
 export default defineField({

@@ -1,35 +1,35 @@
 ---
 title: API'ler
 icon: plug
-description: REST and GraphQL APIs generated from your workspace schema.
+description: Çalışma alanı şemanızdan oluşturulan REST ve GraphQL API'leri.
 ---
 
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
-## Schema-per-tenant APIs
+## Kiracı başına şema API'leri
 
-There is no static API reference for Twenty. Each workspace has its own schema — when you add a custom object (say `Invoice`), it immediately gets REST and GraphQL endpoints identical to built-in objects like `Company` or `Person`. The API is generated from the schema, so endpoints use your object and field names directly — no opaque IDs.
+Twenty için statik bir API referansı yoktur. Her çalışma alanının kendine ait bir şeması vardır — özel bir nesne (ör. `Invoice`) eklediğinizde, `Company` veya `Person` gibi yerleşik nesnelerle aynı olan REST ve GraphQL uç noktalarını anında edinir. API şemadan oluşturulur, bu nedenle uç noktalar nesne ve alan adlarınızı doğrudan kullanır — anlaşılmaz kimlikler yoktur.
 
-Your workspace-specific API documentation is available under **Settings → API & Webhooks** after creating an API key. It includes an interactive playground where you can execute real calls against your data.
+Bir API anahtarı oluşturduktan sonra çalışma alanınıza özel API dokümantasyonu **Ayarlar → API ve Webhook'lar** altında mevcuttur. Verilerinize karşı gerçek çağrılar çalıştırabileceğiniz etkileşimli bir deneme alanı içerir.
 
-## Two APIs
+## İki API
 
-**Core API** — `/rest/` and `/graphql/`
+**Çekirdek API** — `/rest/` ve `/graphql/`
 
-CRUD on records: People, Companies, Opportunities, your custom objects. Query, filter, traverse relations.
+Kayıtlar üzerinde CRUD: Kişiler, Şirketler, Fırsatlar ve özel nesneleriniz. Sorgulama, filtreleme, ilişkilerde gezinme.
 
-**Metadata API** — `/rest/metadata/` and `/metadata/`
+**Meta veri API'si** — `/rest/metadata/` ve `/metadata/`
 
-Schema management: create/modify/delete objects, fields, and relations. This is how you programmatically change your data model.
+Şema yönetimi: nesneleri, alanları ve ilişkileri oluşturma/değiştirme/silme. Programatik olarak veri modelinizi bu şekilde değiştirirsiniz.
 
-Both are available as REST and GraphQL. GraphQL adds batch upserts and the ability to traverse relations in a single query. Same underlying data either way.
+Her ikisi de REST ve GraphQL olarak mevcuttur. GraphQL, toplu upsert işlemleri ve ilişkilerde tek bir sorguda gezinme olanağı sağlar. Her iki yöntemde de aynı temel veri kullanılır.
 
-## Base URLs
+## Temel URL'ler
 
-| Ortam       | Temel URL                 |
-| ----------- | ------------------------- |
-| Cloud       | `https://api.twenty.com/` |
-| Self-Hosted | `https://{your-domain}/`  |
+| Ortam              | Temel URL                 |
+| ------------------ | ------------------------- |
+| Bulut              | `https://api.twenty.com/` |
+| Kendi barındırmalı | `https://{your-domain}/`  |
 
 ## Kimlik Doğrulama
 
@@ -37,19 +37,19 @@ Both are available as REST and GraphQL. GraphQL adds batch upserts and the abili
 Authorization: Bearer YOUR_API_KEY
 ```
 
-Create an API key in **Settings → API & Webhooks → + Create key**. Copy it immediately — it's shown once. Keys can be scoped to a specific role under **Settings → Roles → Assignment tab** to limit what they can access.
+**Settings → API & Webhooks → + Create key** bölümünde bir API anahtarı oluşturun. Hemen kopyalayın — yalnızca bir kez gösterilir. Anahtarlar, erişebilecekleri alanları sınırlamak için **Settings → Roles → Assignment** sekmesi altında belirli bir role bağlanabilir.
 
 <VimeoEmbed videoId="928786722" title="API anahtarı oluşturma" />
 
-For OAuth-based access (external apps acting on behalf of users), see [OAuth](/l/tr/developers/extend/oauth).
+OAuth tabanlı erişim (kullanıcılar adına hareket eden harici uygulamalar) için bkz. [OAuth](/l/tr/developers/extend/oauth).
 
-## Batch operations
+## Toplu işlemler
 
-Both REST and GraphQL support batching up to 60 records per request — create, update, or delete. GraphQL also supports batch upsert (create-or-update in one call) using plural names like `CreateCompanies`.
+Hem REST hem de GraphQL, istek başına 60 kayda kadar toplu işlemeyi destekler — oluşturma, güncelleme veya silme. GraphQL ayrıca `CreateCompanies` gibi çoğul adlar kullanarak toplu upsert'i (tek çağrıda oluşturma veya güncelleme) destekler.
 
-## Rate limits
+## Hız sınırları
 
-| Sınır      | Değer                 |
-| ---------- | --------------------- |
-| Requests   | 100 per minute        |
-| Batch size | Çağrı başına 60 kayıt |
+| Sınır        | Değer                 |
+| ------------ | --------------------- |
+| İstekler     | Dakikada 100          |
+| Toplu boyutu | Çağrı başına 60 kayıt |

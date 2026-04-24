@@ -4,10 +4,10 @@
       "label": "Per iniziare",
       "groups": {
         "welcome": {
-          "label": "Welcome"
+          "label": "Benvenuto"
         },
         "coreConcepts": {
-          "label": "Core Concepts"
+          "label": "Concetti chiave"
         }
       }
     },
@@ -21,7 +21,7 @@
           "label": "Modello dati",
           "groups": {
             "dataModelReference": {
-              "label": "Reference"
+              "label": "Riferimento"
             },
             "dataModelHowTos": {
               "label": "Guide pratiche"
@@ -32,7 +32,7 @@
           "label": "Migrazione dei dati",
           "groups": {
             "dataMigrationReference": {
-              "label": "Reference"
+              "label": "Riferimento"
             },
             "dataMigrationHowTos": {
               "label": "Guide pratiche"
@@ -43,7 +43,7 @@
           "label": "Calendario & Email",
           "groups": {
             "calendarEmailsReference": {
-              "label": "Reference"
+              "label": "Riferimento"
             },
             "calendarEmailsHowTos": {
               "label": "Guide pratiche"
@@ -54,7 +54,7 @@
           "label": "Flussi di Lavoro",
           "groups": {
             "workflowsReference": {
-              "label": "Reference"
+              "label": "Riferimento"
             },
             "workflowsHowTos": {
               "label": "Guide pratiche",
@@ -79,7 +79,7 @@
           "label": "AI",
           "groups": {
             "aiReference": {
-              "label": "Reference"
+              "label": "Riferimento"
             },
             "aiHowTos": {
               "label": "Guide pratiche"
@@ -90,7 +90,7 @@
           "label": "Disposizione",
           "groups": {
             "layoutReference": {
-              "label": "Reference",
+              "label": "Riferimento",
               "groups": {
                 "layoutViews": {
                   "label": "Viste"
@@ -106,7 +106,7 @@
           "label": "Cruscotti",
           "groups": {
             "dashboardsReference": {
-              "label": "Reference"
+              "label": "Riferimento"
             },
             "dashboardsHowTos": {
               "label": "Guide pratiche"
@@ -117,7 +117,7 @@
           "label": "Autorizzazioni & Accesso",
           "groups": {
             "permissionsAccessReference": {
-              "label": "Reference"
+              "label": "Riferimento"
             },
             "permissionsAccessHowTos": {
               "label": "Guide pratiche"
@@ -128,7 +128,7 @@
           "label": "Fatturazione",
           "groups": {
             "billingReference": {
-              "label": "Reference"
+              "label": "Riferimento"
             },
             "billingHowTos": {
               "label": "Guide pratiche"
@@ -139,7 +139,7 @@
           "label": "Impostazioni",
           "groups": {
             "settingsReference": {
-              "label": "Reference"
+              "label": "Riferimento"
             },
             "settingsHowTos": {
               "label": "Guide pratiche"

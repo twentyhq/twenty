@@ -1,15 +1,16 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined } from '@utils/is-defined';
 
-import { RESEND_WEBHOOK_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/modules/resend/constants/universal-identifiers';
-import type { WebhookHandlerResult } from 'src/modules/resend/webhooks/types/webhook-handler-result';
-import { findOrCreatePerson } from 'src/modules/resend/shared/utils/find-or-create-person';
-import { findRecordByResendId } from 'src/modules/resend/shared/utils/find-record-by-resend-id';
-import { getResendClient } from 'src/modules/resend/shared/utils/get-resend-client';
-import { mapLastEvent } from 'src/modules/resend/shared/utils/map-last-event';
-import { toEmailsField } from 'src/modules/resend/shared/utils/to-emails-field';
+import { RESEND_WEBHOOK_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from '@modules/resend/constants/universal-identifiers';
+import type { WebhookHandlerResult } from '@modules/resend/webhooks/types/webhook-handler-result';
+import { findOrCreatePerson } from '@modules/resend/shared/utils/find-or-create-person';
+import { findRecordByResendId } from '@modules/resend/shared/utils/find-record-by-resend-id';
+import { findTwentyIdsByResendId } from '@modules/resend/shared/utils/find-twenty-ids-by-resend-id';
+import { getResendClient } from '@modules/resend/shared/utils/get-resend-client';
+import { mapLastEvent } from '@modules/resend/shared/utils/map-last-event';
+import { toEmailsField } from '@modules/resend/shared/utils/to-emails-field';
 
 type ContactEventData = {
   id: string;
@@ -38,7 +39,7 @@ type WebhookPayload = {
   data: ContactEventData | BaseEmailEventData | Record<string, unknown>;
 };
 
-const handleContactCreatedOrUpdated = async (
+export const handleContactCreatedOrUpdated = async (
   client: CoreApiClient,
   data: ContactEventData,
 ): Promise<WebhookHandlerResult> => {
@@ -53,6 +54,24 @@ const handleContactCreatedOrUpdated = async (
     lastName: data.last_name ?? '',
   });
 
+  const firstSegmentResendId = Array.isArray(data.segment_ids)
+    ? data.segment_ids.find(
+        (id): id is string => typeof id === 'string' && id.length > 0,
+      )
+    : undefined;
+
+  let segmentId: string | undefined;
+
+  if (isDefined(firstSegmentResendId)) {
+    const segmentIdMap = await findTwentyIdsByResendId(
+      client,
+      'resendSegments',
+      [firstSegmentResendId],
+    );
+
+    segmentId = segmentIdMap.get(firstSegmentResendId);
+  }
+
   const contactData: Record<string, unknown> = {
     email: toEmailsField(data.email),
     name: {
@@ -62,6 +81,7 @@ const handleContactCreatedOrUpdated = async (
     unsubscribed: data.unsubscribed,
     lastSyncedFromResend: new Date().toISOString(),
     ...(isDefined(personId) && { personId }),
+    ...(isDefined(segmentId) && { segmentId }),
   };
 
   if (isDefined(existingId)) {
@@ -169,7 +189,7 @@ const handleEmailEvent = async (
 };
 
 const handler = async (
-  params: RoutePayload<WebhookPayload>,
+  routePayload: RoutePayload<WebhookPayload>,
 ): Promise<WebhookHandlerResult> => {
   const webhookSecret = process.env.RESEND_WEBHOOK_SECRET;
 
@@ -177,9 +197,9 @@ const handler = async (
     throw new Error('RESEND_WEBHOOK_SECRET environment variable is not set');
   }
 
-  const svixId = params.headers['svix-id'];
-  const svixTimestamp = params.headers['svix-timestamp'];
-  const svixSignature = params.headers['svix-signature'];
+  const svixId = routePayload.headers['svix-id'];
+  const svixTimestamp = routePayload.headers['svix-timestamp'];
+  const svixSignature = routePayload.headers['svix-signature'];
 
   if (
     !isDefined(svixId) ||
@@ -189,12 +209,12 @@ const handler = async (
     return { error: 'Missing webhook signature headers' };
   }
 
-  const resend = getResendClient();
+  const resendClient = getResendClient();
 
   let event;
   try {
-    event = resend.webhooks.verify({
-      payload: JSON.stringify(params.body),
+    event = resendClient.webhooks.verify({
+      payload: JSON.stringify(routePayload.body),
       headers: {
         id: svixId,
         timestamp: svixTimestamp,

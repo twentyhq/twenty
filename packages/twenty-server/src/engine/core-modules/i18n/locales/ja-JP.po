@@ -1168,17 +1168,6 @@ msgstr "読み取り権限なしに書き込み権限は付与できません。
 msgid "Cannot have more than one active workflow version"
 msgstr "複数のアクティブなワークフローバージョンを持つことはできません"
 
-#. js-lingui-id: oCh764
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-belongs-to-caller-application.util.ts
-msgid "Cannot modify permissions on a role owned by another application"
-msgstr ""
-
-#. js-lingui-id: M47UGK
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-belongs-to-caller-application.util.ts
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
-msgid "Cannot modify permissions on a role owned by another application."
-msgstr ""
-
 #. js-lingui-id: DAGexD
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
 msgid "Cannot modify predicate belonging to a different object."
@@ -1253,6 +1242,17 @@ msgstr "サブスクリプション期間は切り替えられません。"
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "Cannot switch subscription plan."
 msgstr "サブスクリプションプランは切り替えられません。"
+
+#. js-lingui-id: jNnzPT
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-belongs-to-caller-application.util.ts
+msgid "Cannot target a role owned by another application"
+msgstr ""
+
+#. js-lingui-id: 2ET75e
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-belongs-to-caller-application.util.ts
+#: src/engine/metadata-modules/permissions/permissions.exception.ts
+msgid "Cannot target a role owned by another application."
+msgstr ""
 
 #. js-lingui-id: fpzw+t
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-validator.service.ts
@@ -3752,15 +3752,15 @@ msgstr "無効な認証コードです。"
 msgid "Invalid verification code. Please try again."
 msgstr "無効な認証コードです。もう一度お試しください。"
 
-#. js-lingui-id: bKmxhF
+#. js-lingui-id: UV7Pll
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-fields-flat-page-layout-widget-for-creation.util.ts
-msgid "Invalid viewId for fields widget"
-msgstr "フィールドウィジェットの viewId が無効です"
+msgid "Invalid viewUniversalIdentifier for fields widget"
+msgstr ""
 
-#. js-lingui-id: DpWmTi
+#. js-lingui-id: Bj1WZ+
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-fields-flat-page-layout-widget-for-creation.util.ts
-msgid "Invalid viewId for fields widget \"{widgetTitle}\". Expected a valid UUID"
-msgstr "フィールドウィジェット \"{widgetTitle}\" の viewId が無効です。有効な UUID である必要があります"
+msgid "Invalid viewUniversalIdentifier for fields widget \"{widgetTitle}\". Expected a valid UUID"
+msgstr ""
 
 #. js-lingui-id: z68tnU
 #: src/engine/metadata-modules/webhook/webhook.exception.ts

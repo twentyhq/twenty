@@ -70,7 +70,14 @@ export {
 } from '@/sdk/define/objects/standard-object-ids';
 
 export { definePageLayout } from '@/sdk/define/page-layouts/define-page-layout';
+export { definePageLayoutTab } from '@/sdk/define/page-layouts/define-page-layout-tab';
 export type { PageLayoutConfig } from '@/sdk/define/page-layouts/page-layout-config';
+export type { PageLayoutTabConfig } from '@/sdk/define/page-layouts/page-layout-tab-config';
+export type {
+  PageLayoutManifest,
+  PageLayoutTabManifest,
+  PageLayoutWidgetManifest,
+} from 'twenty-shared/application';
 
 export { defineRole } from '@/sdk/define/roles/define-role';
 export { PermissionFlag } from '@/sdk/define/roles/permission-flag-type';

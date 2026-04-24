@@ -1,23 +1,24 @@
 ---
 title: Layout
-description: Define views, navigation menu items, and page layouts to shape how your app appears in Twenty.
+description: Defina vistas, itens do menu de navegação e layouts de página para moldar como seu app aparece no Twenty.
 icon: table-columns
 ---
 
-Layout entities control how your app surfaces inside Twenty's UI — what lives in the sidebar, which saved views ship with the app, and how a record detail page is arranged.
+As entidades de layout controlam como seu app aparece na UI do Twenty — o que fica na barra lateral, quais vistas salvas acompanham o app e como uma página de detalhes de registro é organizada.
 
-## Layout concepts
+## Conceitos de layout
 
-| Concept                  | What it controls                                                                  | Entidade                   |
-| ------------------------ | --------------------------------------------------------------------------------- | -------------------------- |
-| **View**                 | A saved list configuration for an object — visible fields, order, filters, groups | `defineView`               |
-| **Navigation Menu Item** | An entry in the left sidebar that links to a view or an external URL              | `defineNavigationMenuItem` |
-| **Page Layout**          | The tabs and widgets that make up a record's detail page                          | `definePageLayout`         |
+| Conceito                      | O que controla                                                                                       | Entidade                   |
+| ----------------------------- | ---------------------------------------------------------------------------------------------------- | -------------------------- |
+| **Vista**                     | Uma configuração de lista salva para um objeto — campos visíveis, ordem, filtros, grupos             | `defineView`               |
+| **Item do menu de navegação** | Uma entrada na barra lateral esquerda que aponta para uma vista ou uma URL externa                   | `defineNavigationMenuItem` |
+| **Layout da Página**          | As abas e widgets que compõem a página de detalhes de um registro                                    | `definePageLayout`         |
+| **Aba Layout da Página**      | Uma aba independente vinculada a um layout de página existente (padrão ou do seu próprio aplicativo) | `definePageLayoutTab`      |
 
-Views, navigation items, and page layouts reference each other by `universalIdentifier`:
+Vistas, itens de navegação e layouts de página referenciam-se mutuamente por `universalIdentifier`:
 
-* A **navigation menu item** of type `VIEW` points at a `defineView` identifier, so the sidebar link opens that saved view.
-* A **page layout** of type `RECORD_PAGE` targets an object and can embed [front components](/l/pt/developers/extend/apps/front-components) inside its tabs as widgets.
+* Um **item do menu de navegação** do tipo `VIEW` aponta para um identificador `defineView`, assim o link da barra lateral abre essa vista salva.
+* Um **layout de página** do tipo `RECORD_PAGE` destina-se a um objeto e pode incorporar [front components](/l/pt/developers/extend/apps/front-components) em suas abas como widgets.
 
 <AccordionGroup>
 <Accordion title="defineView" description="Defina visualizações salvas para objetos">
@@ -126,6 +127,52 @@ Pontos-chave:
 * Cada `tab` define uma seção da página com um `title`, `position` e `layoutMode` (`CANVAS` para layout livre).
 * Cada `widget` dentro de uma aba pode renderizar um componente de front-end, uma lista de relações ou outros tipos de widget incorporados.
 * `position` nas abas controla sua ordem. Use valores mais altos (por exemplo, 50) para colocar abas personalizadas após as nativas.
+
+</Accordion>
+<Accordion title="definePageLayoutTab" description="Adicionar uma aba a um layout de página existente">
+
+`definePageLayoutTab` permite que seu app adicione uma única aba — com widgets opcionais — a um layout de página **existente**. O caso de uso mais comum é adicionar uma aba personalizada (por exemplo, uma aba de análises ou de resumo por IA) a uma das páginas de registro nativas do Twenty, ou a um layout de página que o seu próprio app já fornece.
+
+O layout de página de destino deve ser um layout de página **padrão** do Twenty ou um definido pelo **seu próprio app**; referências entre apps a layouts de página pertencentes a outro app instalado não são compatíveis no momento.
+
+```ts src/page-layouts/example-extra-tab.ts
+import {
+  definePageLayoutTab,
+  PageLayoutTabLayoutMode,
+} from 'twenty-sdk/define';
+import { HELLO_WORLD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER } from '../front-components/hello-world';
+
+const COMPANY_RECORD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER =
+  '20202020-ab01-4001-8001-c0aba11c0100';
+
+export default definePageLayoutTab({
+  universalIdentifier: 'b1b2b3b4-b5b6-4000-8000-000000000001',
+  pageLayoutUniversalIdentifier:
+    COMPANY_RECORD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER,
+  title: 'Hello World',
+  position: 1000,
+  icon: 'IconWorld',
+  layoutMode: PageLayoutTabLayoutMode.CANVAS,
+  widgets: [
+    {
+      universalIdentifier: 'b1b2b3b4-b5b6-4000-8000-000000000002',
+      title: 'Hello World',
+      type: 'FRONT_COMPONENT',
+      configuration: {
+        configurationType: 'FRONT_COMPONENT',
+        frontComponentUniversalIdentifier:
+          HELLO_WORLD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
+      },
+    },
+  ],
+});
+```
+
+Pontos-chave:
+* `pageLayoutUniversalIdentifier` é **obrigatório** ao usar `definePageLayoutTab` e deve apontar para um layout de página que já exista no momento da instalação (padrão ou do seu app). Quando o layout de página pai está ausente, a instalação falha com um erro de validação claro.
+* `widgets` têm escopo apenas para esta aba — eles referenciam componentes de interface, visualizações etc., exatamente como widgets definidos inline em `definePageLayout`.
+* `position` controla a ordenação em relação às abas existentes no layout de destino. Escolha um valor que posicione sua aba onde você deseja em relação às abas nativas.
+* Use isto em vez de `definePageLayout` quando você quiser apenas **adicionar** a um layout existente. Use `definePageLayout` quando você for o proprietário de todo o layout (normalmente uma `RECORD_PAGE` para um objeto que você fornece no seu app, ou uma `STANDALONE_PAGE`).
 
 </Accordion>
 </AccordionGroup>

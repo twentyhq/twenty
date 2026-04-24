@@ -1,74 +1,82 @@
+import { isDefined } from '@utils/is-defined';
+import { CoreApiClient } from 'twenty-client-sdk/core';
 import { MetadataApiClient } from 'twenty-client-sdk/metadata';
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { Command, enqueueSnackbar, updateProgress } from 'twenty-sdk/front-component';
-import { isDefined } from 'twenty-shared/utils';
+import {
+  AppPath,
+  Command,
+  enqueueSnackbar,
+  navigate,
+} from 'twenty-sdk/front-component';
 
+import { APPLICATION_UNIVERSAL_IDENTIFIER } from '@constants/universal-identifiers';
+import { INITIAL_SYNC_MODE_ENV_VAR_NAME } from '@modules/resend/constants/sync-config';
 import {
   SYNC_RESEND_DATA_COMMAND_UNIVERSAL_IDENTIFIER,
   SYNC_RESEND_DATA_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
-  SYNC_RESEND_DATA_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
-} from 'src/modules/resend/constants/universal-identifiers';
+} from '@modules/resend/constants/universal-identifiers';
+import { resolveSyncStatusPageLayoutId } from '@modules/resend/manual-sync/utils/resolve-sync-status-page-layout-id';
+import { resetAllSyncCursors } from '@modules/resend/sync/cursor/utils/reset-all-sync-cursors';
 
-const execute = async () => {
-  await updateProgress(0.1);
-
-  const metadataClient = new MetadataApiClient();
-
-  const { findManyLogicFunctions } = await metadataClient.query({
-    findManyLogicFunctions: {
+const resolveApplicationId = async (
+  metadataClient: MetadataApiClient,
+): Promise<string> => {
+  const { findManyApplications } = await metadataClient.query({
+    findManyApplications: {
       id: true,
       universalIdentifier: true,
     },
   });
 
-  const syncFunction = findManyLogicFunctions.find(
-    (fn) =>
-      fn.universalIdentifier ===
-      SYNC_RESEND_DATA_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
+  const match = findManyApplications.find(
+    (application: { universalIdentifier: string }) =>
+      application.universalIdentifier === APPLICATION_UNIVERSAL_IDENTIFIER,
   );
 
-  if (!isDefined(syncFunction)) {
-    throw new Error('Sync logic function not found');
+  if (!isDefined(match)) {
+    throw new Error('Twenty-for-Twenty application not found');
   }
 
-  await updateProgress(0.3);
+  return match.id;
+};
 
-  const { executeOneLogicFunction } = await metadataClient.mutation({
-    executeOneLogicFunction: {
+const flipInitialSyncModeOn = async (
+  metadataClient: MetadataApiClient,
+  applicationId: string,
+): Promise<void> => {
+  await metadataClient.mutation({
+    updateOneApplicationVariable: {
       __args: {
-        input: {
-          id: syncFunction.id,
-          payload: {} as Record<string, never>,
-        },
+        key: INITIAL_SYNC_MODE_ENV_VAR_NAME,
+        value: 'true',
+        applicationId,
       },
-      status: true,
-      error: true,
     },
   });
+};
 
-  if (executeOneLogicFunction.status !== 'SUCCESS') {
-    const rawMessage =
-      typeof executeOneLogicFunction.error?.errorMessage === 'string'
-        ? executeOneLogicFunction.error.errorMessage
-        : 'Sync logic function execution failed';
+const execute = async () => {
+  const metadataClient = new MetadataApiClient();
+  const coreApiClient = new CoreApiClient();
 
-    const isRateLimit =
-      rawMessage.toLowerCase().includes('rate_limit') ||
-      rawMessage.toLowerCase().includes('rate limit');
+  await resetAllSyncCursors(coreApiClient);
 
-    throw new Error(
-      isRateLimit
-        ? 'Sync failed: Resend API rate limit exceeded. Please try again later.'
-        : `Sync failed: ${rawMessage}`,
-    );
-  }
+  const applicationId = await resolveApplicationId(metadataClient);
 
-  await updateProgress(1);
+  await flipInitialSyncModeOn(metadataClient, applicationId);
+
+  const pageLayoutId = await resolveSyncStatusPageLayoutId(
+    metadataClient,
+    applicationId,
+  );
 
   await enqueueSnackbar({
-    message: 'Resend data sync completed',
+    message:
+      'Sync cursors reset and initial sync triggered — it will run in the background.',
     variant: 'success',
   });
+
+  await navigate(AppPath.PageLayoutPage, { pageLayoutId });
 };
 
 const SyncResendData = () => <Command execute={execute} />;
@@ -76,7 +84,8 @@ const SyncResendData = () => <Command execute={execute} />;
 export default defineFrontComponent({
   universalIdentifier: SYNC_RESEND_DATA_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
   name: 'Sync Resend Data',
-  description: 'Triggers a manual sync of all Resend data',
+  description:
+    'Resets every Resend sync cursor and flips the application into initial sync mode so the scheduled sync handlers restart from scratch on their next run.',
   isHeadless: true,
   component: SyncResendData,
   command: {

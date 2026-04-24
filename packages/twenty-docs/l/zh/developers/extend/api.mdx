@@ -1,35 +1,35 @@
 ---
 title: 接口
 icon: plug
-description: REST and GraphQL APIs generated from your workspace schema.
+description: 由你的工作区架构生成的 REST 和 GraphQL API。
 ---
 
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
-## Schema-per-tenant APIs
+## 租户级架构 API
 
-There is no static API reference for Twenty. Each workspace has its own schema — when you add a custom object (say `Invoice`), it immediately gets REST and GraphQL endpoints identical to built-in objects like `Company` or `Person`. The API is generated from the schema, so endpoints use your object and field names directly — no opaque IDs.
+Twenty 没有静态 API 参考文档。 每个工作区都有自己的架构——当你添加一个自定义对象（例如 `Invoice`）时，它会立即获得与内置对象（如 `Company` 或 `Person`）相同的 REST 和 GraphQL 端点。 API 根据架构生成，因此端点会直接使用你的对象和字段名称——没有不透明的 ID。
 
-Your workspace-specific API documentation is available under **Settings → API & Webhooks** after creating an API key. It includes an interactive playground where you can execute real calls against your data.
+创建 API 密钥后，可在 **设置 → API & Webhooks** 中查看你的工作区专属 API 文档。 其中包含交互式 Playground，可对你的数据执行真实调用。
 
-## Two APIs
+## 两种 API
 
-**Core API** — `/rest/` and `/graphql/`
+**核心 API** — `/rest/` 和 `/graphql/`
 
-CRUD on records: People, Companies, Opportunities, your custom objects. Query, filter, traverse relations.
+对记录执行 CRUD：人员、公司、商机，以及你的自定义对象。 查询、筛选、遍历关系。
 
-**Metadata API** — `/rest/metadata/` and `/metadata/`
+**元数据 API** — `/rest/metadata/` 和 `/metadata/`
 
-Schema management: create/modify/delete objects, fields, and relations. This is how you programmatically change your data model.
+架构管理：创建/修改/删除对象、字段和关系。 这是以编程方式更改数据模型的方法。
 
-Both are available as REST and GraphQL. GraphQL adds batch upserts and the ability to traverse relations in a single query. Same underlying data either way.
+两者均提供 REST 和 GraphQL。 GraphQL 还提供批量 upsert，以及在单个查询中遍历关系的能力。 无论哪种方式，底层数据相同。
 
-## Base URLs
+## 基础 URL
 
-| 环境          | 基础 URL                    |
-| ----------- | ------------------------- |
-| Cloud       | `https://api.twenty.com/` |
-| Self-Hosted | `https://{your-domain}/`  |
+| 环境  | 基础 URL                    |
+| --- | ------------------------- |
+| 云端  | `https://api.twenty.com/` |
+| 自托管 | `https://{your-domain}/`  |
 
 ## 身份验证
 
@@ -37,19 +37,19 @@ Both are available as REST and GraphQL. GraphQL adds batch upserts and the abili
 Authorization: Bearer YOUR_API_KEY
 ```
 
-Create an API key in **Settings → API & Webhooks → + Create key**. Copy it immediately — it's shown once. Keys can be scoped to a specific role under **Settings → Roles → Assignment tab** to limit what they can access.
+在 **Settings → API & Webhooks → + Create key** 中创建 API 密钥。 请立即复制——仅显示一次。 可在 **Settings → Roles → Assignment 选项卡** 下将密钥限定到特定角色，以限制其可访问的范围。
 
 <VimeoEmbed videoId="928786722" title="创建 API 密钥" />
 
-For OAuth-based access (external apps acting on behalf of users), see [OAuth](/l/zh/developers/extend/oauth).
+对于基于 OAuth 的访问（外部应用代表用户执行操作），请参见 [OAuth](/l/zh/developers/extend/oauth)。
 
-## Batch operations
+## 批量操作
 
-Both REST and GraphQL support batching up to 60 records per request — create, update, or delete. GraphQL also supports batch upsert (create-or-update in one call) using plural names like `CreateCompanies`.
+REST 和 GraphQL 均支持每个请求最多批量处理 60 条记录——创建、更新或删除。 GraphQL 还支持批量 upsert（一次调用即可创建或更新），使用诸如 `CreateCompanies` 之类的复数名称。
 
-## Rate limits
+## 速率限制
 
-| 限制         | 值              |
-| ---------- | -------------- |
-| Requests   | 100 per minute |
-| Batch size | 每次调用 60 条记录    |
+| 限制   | 值           |
+| ---- | ----------- |
+| 请求   | 每分钟 100 次请求 |
+| 批量大小 | 每次调用 60 条记录 |

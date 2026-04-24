@@ -14,7 +14,7 @@ const StyledContainer = styled.div`
   display: inline-flex;
   font-size: ${themeCssVariables.font.size.sm};
   font-weight: ${themeCssVariables.font.weight.regular};
-  gap: ${themeCssVariables.spacing[2]};
+  gap: ${themeCssVariables.spacing[1]};
   max-width: 100%;
   min-width: 0;
   overflow: hidden;
@@ -33,7 +33,7 @@ export const AppChip = ({ applicationId, className }: AppChipProps) => {
     <StyledContainer className={className}>
       <Avatar
         type="app"
-        size="md"
+        size="sm"
         placeholder={applicationChipData.name}
         placeholderColorSeed={applicationChipData.seed}
         color={applicationChipData.colors?.color}

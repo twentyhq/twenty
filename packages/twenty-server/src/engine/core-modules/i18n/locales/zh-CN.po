@@ -1168,17 +1168,6 @@ msgstr "没有读取权限时无法授予写入权限。"
 msgid "Cannot have more than one active workflow version"
 msgstr "不能有多个活动中的工作流程版本"
 
-#. js-lingui-id: oCh764
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-belongs-to-caller-application.util.ts
-msgid "Cannot modify permissions on a role owned by another application"
-msgstr ""
-
-#. js-lingui-id: M47UGK
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-belongs-to-caller-application.util.ts
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
-msgid "Cannot modify permissions on a role owned by another application."
-msgstr ""
-
 #. js-lingui-id: DAGexD
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
 msgid "Cannot modify predicate belonging to a different object."
@@ -1253,6 +1242,17 @@ msgstr "无法切换订阅周期。"
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "Cannot switch subscription plan."
 msgstr "无法切换订阅套餐。"
+
+#. js-lingui-id: jNnzPT
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-belongs-to-caller-application.util.ts
+msgid "Cannot target a role owned by another application"
+msgstr ""
+
+#. js-lingui-id: 2ET75e
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-belongs-to-caller-application.util.ts
+#: src/engine/metadata-modules/permissions/permissions.exception.ts
+msgid "Cannot target a role owned by another application."
+msgstr ""
 
 #. js-lingui-id: fpzw+t
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-agent-validator.service.ts
@@ -3752,15 +3752,15 @@ msgstr "验证码无效。"
 msgid "Invalid verification code. Please try again."
 msgstr "无效的验证码。请再试一次。"
 
-#. js-lingui-id: bKmxhF
+#. js-lingui-id: UV7Pll
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-fields-flat-page-layout-widget-for-creation.util.ts
-msgid "Invalid viewId for fields widget"
-msgstr "字段小部件的 viewId 无效"
+msgid "Invalid viewUniversalIdentifier for fields widget"
+msgstr ""
 
-#. js-lingui-id: DpWmTi
+#. js-lingui-id: Bj1WZ+
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-fields-flat-page-layout-widget-for-creation.util.ts
-msgid "Invalid viewId for fields widget \"{widgetTitle}\". Expected a valid UUID"
-msgstr "字段小部件 \"{widgetTitle}\" 的 viewId 无效。应为有效的 UUID"
+msgid "Invalid viewUniversalIdentifier for fields widget \"{widgetTitle}\". Expected a valid UUID"
+msgstr ""
 
 #. js-lingui-id: z68tnU
 #: src/engine/metadata-modules/webhook/webhook.exception.ts

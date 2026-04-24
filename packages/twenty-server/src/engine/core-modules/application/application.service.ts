@@ -354,7 +354,7 @@ export class ApplicationService {
 
     const workspaceCustomApplication = await this.create(
       {
-        description: 'Workspace custom application',
+        description: null,
         name: 'Custom',
         sourcePath: 'workspace-custom',
         version: '1.0.1',

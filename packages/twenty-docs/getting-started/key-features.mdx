@@ -4,84 +4,67 @@ description: A tour of everything Twenty can do — from custom data models to A
 icon: "star"
 ---
 
+import { CardTitle } from "/snippets/card-title.mdx"
+
 Twenty is a full-featured CRM platform. Here's what you can build with it.
 
-## Custom Data Model
+<CardGroup cols={2}>
+  <Card href="/user-guide/data-model/overview" img="/images/user-guide/halftone/data-model.png">
+    <CardTitle>Custom Data Model</CardTitle>
+    Define the exact data structure your business needs.
+    <br />Create custom objects, add custom fields with 20+ field types, and build relationships between any objects.
+  </Card>
 
-Define the exact data structure your business needs. Create custom objects (beyond the standard Companies, People, and Opportunities), add custom fields with 20+ field types, and build relationships between any objects.
+  <Card href="/user-guide/views-pipelines/overview" img="/images/user-guide/halftone/layout.png">
+    <CardTitle>Views & Pipelines</CardTitle>
+    Switch between table views, kanban boards, and calendar views.
+    <br />Filter with AND/OR logic, sort by multiple fields, group records, and save custom views.
+  </Card>
 
-<Card title="Learn more about the Data Model" icon="database" href="/user-guide/data-model/overview">
-  Objects, fields, relations — fully customizable to your business.
-</Card>
+  <Card href="/user-guide/workflows/overview" img="/images/user-guide/halftone/workflows.png">
+    <CardTitle>Workflows & Automation</CardTitle>
+    Automate any business process without writing code.
+    <br />Trigger workflows on record changes, schedules, manual actions, or incoming webhooks.
+  </Card>
 
-## Views & Pipelines
+  <Card href="/user-guide/calendar-emails/overview" img="/images/user-guide/halftone/calendar-emails.png">
+    <CardTitle>Calendar & Email Sync</CardTitle>
+    Connect your Google Workspace or Microsoft 365 account.
+    <br />Emails and calendar events automatically appear on the relevant CRM records.
+  </Card>
 
-See your data the way you want. Switch between table views, kanban boards, and calendar views. Filter with AND/OR logic, sort by multiple fields, group records, and save custom views for your team.
+  <Card href="/user-guide/ai/overview" img="/images/user-guide/halftone/ai.png">
+    <CardTitle>AI</CardTitle>
+    AI agents that work autonomously within your CRM — answering questions, enriching records, and executing multi-step tasks within your permission model.
+  </Card>
 
-<Card title="Explore Views & Pipelines" icon="table" href="/user-guide/views-pipelines/overview">
-  Table, kanban, calendar — all with powerful filtering and sorting.
-</Card>
+  <Card href="/user-guide/dashboards/overview" img="/images/user-guide/halftone/dashboards.png">
+    <CardTitle>Dashboards & Reporting</CardTitle>
+    Build custom dashboards with real-time widgets.
+    <br />Track pipeline metrics, team performance, and business KPIs with configurable charts and filters.
+  </Card>
 
-## Workflows & Automation
+  <Card href="/user-guide/permissions-access/overview" img="/images/user-guide/halftone/permissions.png">
+    <CardTitle>Permissions & Access Control</CardTitle>
+    Role-based access control at every level — objects, fields, and individual records.
+    <br />Configure SSO with SAML or OIDC. Audit logs track who did what.
+  </Card>
 
-Automate any business process without writing code. Trigger workflows on record changes, schedules, manual actions, or incoming webhooks. Chain together actions like creating records, sending emails, calling APIs, running custom JavaScript, and branching with conditions.
+  <Card href="/developers/extend/api" img="/images/user-guide/halftone/dev-api.png">
+    <CardTitle>API & Extensibility</CardTitle>
+    A developer-first API that adapts to your custom data model.
+    <br />Both GraphQL and REST endpoints, with auto-generated documentation per workspace.
+  </Card>
 
-<Card title="Build Workflows" icon="bolt" href="/user-guide/workflows/overview">
-  Triggers, actions, branches, and integrations — all visual.
-</Card>
+  <Card href="/user-guide/data-migration/overview" img="/images/user-guide/halftone/data-migration.png">
+    <CardTitle>Data Import & Export</CardTitle>
+    Import data from CSV files or via API.
+    <br />Field mapping, duplicate detection, and error handling built in. Export your data anytime — no lock-in.
+  </Card>
 
-## Calendar & Email Sync
-
-Connect your Google Workspace or Microsoft 365 account. Emails and calendar events automatically appear on the relevant CRM records. Send emails directly from Twenty and track all communication history.
-
-<Card title="Set up Calendar & Emails" icon="envelope" href="/user-guide/calendar-emails/overview">
-  Sync mailboxes, track activity, send from Twenty.
-</Card>
-
-## AI
-
-Twenty integrates AI agents that can work autonomously within your CRM — answering questions about your data, enriching records, and executing multi-step tasks. AI works within your permission model so it only accesses what it should.
-
-<Card title="Explore AI" icon="robot" href="/user-guide/ai/overview">
-  AI chatbot, autonomous agents, and smart workflows.
-</Card>
-
-## Dashboards & Reporting
-
-Build custom dashboards with real-time widgets. Track pipeline metrics, team performance, and business KPIs. Configure chart types, date ranges, and filters to get the exact view you need.
-
-<Card title="Build Dashboards" icon="chart-bar" href="/user-guide/dashboards/overview">
-  Widgets, charts, and real-time analytics.
-</Card>
-
-## Permissions & Access Control
-
-Role-based access control at every level — objects, fields, and individual records. Configure SSO with SAML or OIDC. Audit logs track who did what.
-
-<Card title="Configure Permissions" icon="lock" href="/user-guide/permissions-access/overview">
-  Roles, SSO, object/field/row-level security.
-</Card>
-
-## API & Extensibility
-
-A developer-first API that adapts to your custom data model. Both GraphQL and REST endpoints, with auto-generated documentation per workspace. Build custom apps, connect via webhooks, or use Zapier.
-
-<Card title="Explore the API" icon="plug" href="/developers/extend/api">
-  GraphQL, REST, webhooks, and custom apps.
-</Card>
-
-## Data Import & Export
-
-Import data from CSV files or via API. Field mapping, duplicate detection, and error handling built in. Export your data anytime — no lock-in.
-
-<Card title="Migrate Your Data" icon="cloud-arrow-up" href="/user-guide/data-migration/overview">
-  CSV import, API import, and migration from other CRMs.
-</Card>
-
-## Self-Hosting
-
-Run Twenty on your own infrastructure with a single Docker Compose command. Full control over your data, updates on your schedule, and no per-seat cloud fees.
-
-<Card title="Self-Host Twenty" icon="server" href="/developers/self-host/self-host">
-  Docker Compose, configuration, and upgrade guides.
-</Card>
+  <Card href="/developers/self-host/self-host" img="/images/user-guide/halftone/dev-self-host.png">
+    <CardTitle>Self-Hosting</CardTitle>
+    Run Twenty on your own infrastructure with a single Docker Compose command.
+    <br />Full control over your data, updates on your schedule.
+  </Card>
+</CardGroup>

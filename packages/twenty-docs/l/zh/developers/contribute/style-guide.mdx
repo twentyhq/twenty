@@ -1,14 +1,14 @@
 ---
 title: 样式指南
-icon: paintbrush
-description: Code conventions and best practices for contributing to Twenty.
+icon: 画笔
+description: 为 Twenty 做出贡献的代码约定和最佳实践。
 ---
 
 ## React
 
-### Functional components only
+### 仅使用函数组件
 
-Always use TSX functional components with named exports.
+始终使用带命名导出的 TSX 函数组件。
 
 ```tsx
 // ❌ Bad
@@ -25,7 +25,7 @@ export function MyComponent() {
 
 ### 属性
 
-Create a type named `{ComponentName}Props`. Use destructuring. Don't use `React.FC`.
+创建一个名为 `{ComponentName}Props` 的类型。 使用解构。 不要使用 `React.FC`。
 
 ```tsx
 type MyComponentProps = {
@@ -35,7 +35,7 @@ type MyComponentProps = {
 export const MyComponent = ({ name }: MyComponentProps) => <div>Hello {name}</div>;
 ```
 
-### No single-variable prop spreading
+### 禁止仅为单个 prop 使用展开
 
 ```tsx
 // ❌ Bad
@@ -47,7 +47,7 @@ const MyComponent = ({ prop1, prop2 }: MyComponentProps) => <Other {...{ prop1, 
 
 ## 状态管理
 
-### Jotai atoms for global state
+### 使用 Jotai 原子管理全局状态
 
 ```tsx
 import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
@@ -59,16 +59,16 @@ export const myAtomState = createAtomState<string>({
 });
 ```
 
-* Prefer atoms over prop drilling
-* Don't use `useRef` for state — use `useState` or atoms
-* Use atom families and selectors for lists
+* 优先使用原子，而非 props 逐层传递
+* 不要将 `useRef` 用于状态 — 使用 `useState` 或原子。
+* 对列表使用原子族和选择器。
 
-### Avoid unnecessary re-renders
+### 避免不必要的重新渲染
 
-* Extract `useEffect` and data fetching into sibling sidecar components
-* Prefer event handlers (`handleClick`, `handleChange`) over `useEffect`
-* Don't use `React.memo()` — fix the root cause instead
-* Limit `useCallback` / `useMemo` usage
+* 将 `useEffect` 和数据获取提取到同级的 sidecar 组件中。
+* 优先使用事件处理器（`handleClick`、`handleChange`）而不是 `useEffect`。
+* 不要使用 `React.memo()` — 请改为修复根本原因。
+* 限制 `useCallback` / `useMemo` 的使用。
 
 ```tsx
 // ❌ Bad — useEffect in the same component causes re-renders
@@ -94,11 +94,11 @@ export const Page = () => {
 
 ## TypeScript
 
-* **`type` over `interface`** — more flexible, easier to compose
-* **String literals over enums** — except for GraphQL codegen enums and internal library APIs
-* **No `any`** — strict TypeScript enforced
-* **No type imports** — use regular imports (enforced by Oxlint `typescript/consistent-type-imports`)
-* **Use [Zod](https://github.com/colinhacks/zod)** for runtime validation of untyped objects
+* **优先用 `type` 而非 `interface`** — 更灵活、更易组合。
+* **优先用字符串字面量而非枚举** — 但 GraphQL 代码生成的枚举和内部库 API 除外。
+* **禁止 `any`** — 强制启用严格的 TypeScript。
+* **不使用类型导入** — 使用常规导入（由 Oxlint `typescript/consistent-type-imports` 强制执行）。
+* **使用 [Zod](https://github.com/colinhacks/zod)** 对无类型对象进行运行时校验。
 
 ## JavaScript
 
@@ -112,17 +112,17 @@ onClick?.();
 
 ## 命名
 
-* **Variables**: camelCase, descriptive (`email` not `value`, `fieldMetadata` not `fm`)
-* **Constants**: SCREAMING_SNAKE_CASE
-* **Types/Classes**: PascalCase
-* **Files/directories**: kebab-case (`.component.tsx`, `.service.ts`, `.entity.ts`)
-* **Event handlers**: `handleClick` (not `onClick` for the handler function)
-* **Component props**: prefix with component name (`ButtonProps`)
-* **Styled components**: prefix with `Styled` (`StyledTitle`)
+* **变量**：使用 camelCase，具描述性（`email` 而非 `value`，`fieldMetadata` 而非 `fm`）。
+* **常量**：SCREAMING_SNAKE_CASE
+* **类型/类**：PascalCase
+* **文件/目录**：kebab-case（`.component.tsx`、`.service.ts`、`.entity.ts`）
+* **事件处理器**：`handleClick`（处理函数不要使用 `onClick` 作为名称）
+* **组件 props**：以组件名作为前缀（`ButtonProps`）。
+* **样式化组件**：以 `Styled` 作为前缀（`StyledTitle`）。
 
 ## 样式
 
-Use [Linaria](https://github.com/callstack/linaria) styled components. Use theme values — avoid hardcoded `px`, `rem`, or colors.
+使用 [Linaria](https://github.com/callstack/linaria) 的样式化组件。 使用主题值 — 避免硬编码 `px`、`rem` 或颜色。
 
 ```tsx
 // ❌ Bad
@@ -142,7 +142,7 @@ const StyledButton = styled.button`
 
 ## 导入
 
-Use aliases instead of relative paths:
+使用别名而不是相对路径：
 
 ```tsx
 // ❌ Bad
@@ -153,7 +153,7 @@ import { Foo } from '~/testing/decorators/Foo';
 import { Bar } from '@/modules/bar/components/Bar';
 ```
 
-## Folder Structure
+## 文件夹架构
 
 ```
 front
@@ -171,6 +171,6 @@ front
 └── ui/              # Reusable UI components (display, input, feedback, ...)
 ```
 
-* Modules can import from other modules, but `ui/` should stay dependency-free
-* Use `internal/` subfolders for module-private code
-* Components under 300 lines, services under 500 lines
+* 模块可以相互导入，但 `ui/` 应保持无依赖
+* 将模块私有代码放在 `internal/` 子文件夹中
+* 组件不超过 300 行，服务不超过 500 行。

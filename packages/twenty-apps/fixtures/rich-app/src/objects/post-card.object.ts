@@ -13,6 +13,13 @@ export const POST_CARD_UNIVERSAL_IDENTIFIER =
 
 export const CONTENT_FIELD_UNIVERSAL_IDENTIFIER =
   '58a0a314-d7ea-4865-9850-7fb84e72f30b';
+
+export const STATUS_FIELD_UNIVERSAL_IDENTIFIER =
+  '87b675b8-dd8c-4448-b4ca-20e5a2234a1e';
+
+export const DELIVERED_AT_FIELD_UNIVERSAL_IDENTIFIER =
+  'e06abe72-5b44-4e7f-93be-afc185a3c433';
+
 export default defineObject({
   universalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
   nameSingular: 'postCard',
@@ -47,7 +54,7 @@ export default defineObject({
       name: 'recipientAddress',
     },
     {
-      universalIdentifier: '87b675b8-dd8c-4448-b4ca-20e5a2234a1e',
+      universalIdentifier: STATUS_FIELD_UNIVERSAL_IDENTIFIER,
       type: FieldType.SELECT,
       label: 'Status',
       icon: 'IconSend',
@@ -92,7 +99,7 @@ export default defineObject({
       name: 'status',
     },
     {
-      universalIdentifier: 'e06abe72-5b44-4e7f-93be-afc185a3c433',
+      universalIdentifier: DELIVERED_AT_FIELD_UNIVERSAL_IDENTIFIER,
       type: FieldType.DATE_TIME,
       label: 'Delivered at',
       icon: 'IconCheck',

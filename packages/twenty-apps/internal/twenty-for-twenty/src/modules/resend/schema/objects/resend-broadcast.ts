@@ -1,6 +1,7 @@
 import {
   BROADCAST_CREATED_AT_FIELD_UNIVERSAL_IDENTIFIER,
   BROADCAST_FROM_ADDRESS_FIELD_UNIVERSAL_IDENTIFIER,
+  BROADCAST_HTML_FIELD_UNIVERSAL_IDENTIFIER,
   BROADCAST_NAME_FIELD_UNIVERSAL_IDENTIFIER,
   BROADCAST_REPLY_TO_FIELD_UNIVERSAL_IDENTIFIER,
   BROADCAST_RESEND_ID_FIELD_UNIVERSAL_IDENTIFIER,
@@ -8,9 +9,10 @@ import {
   BROADCAST_SENT_AT_FIELD_UNIVERSAL_IDENTIFIER,
   BROADCAST_STATUS_FIELD_UNIVERSAL_IDENTIFIER,
   BROADCAST_SUBJECT_FIELD_UNIVERSAL_IDENTIFIER,
+  BROADCAST_TEXT_FIELD_UNIVERSAL_IDENTIFIER,
   PREVIEW_TEXT_FIELD_UNIVERSAL_IDENTIFIER,
   RESEND_BROADCAST_OBJECT_UNIVERSAL_IDENTIFIER,
-} from 'src/modules/resend/constants/universal-identifiers';
+} from '@modules/resend/constants/universal-identifiers';
 import { defineObject, FieldType } from 'twenty-sdk/define';
 
 export default defineObject({
@@ -63,6 +65,22 @@ export default defineObject({
       label: 'Preview text',
       description: 'Preview text shown in email clients',
       icon: 'IconEye',
+    },
+    {
+      universalIdentifier: BROADCAST_HTML_FIELD_UNIVERSAL_IDENTIFIER,
+      type: FieldType.TEXT,
+      name: 'htmlBody',
+      label: 'HTML body',
+      description: 'HTML content of the broadcast',
+      icon: 'IconFileText',
+    },
+    {
+      universalIdentifier: BROADCAST_TEXT_FIELD_UNIVERSAL_IDENTIFIER,
+      type: FieldType.TEXT,
+      name: 'textBody',
+      label: 'Text body',
+      description: 'Plain text content of the broadcast',
+      icon: 'IconAlignLeft',
     },
     {
       universalIdentifier: BROADCAST_STATUS_FIELD_UNIVERSAL_IDENTIFIER,
