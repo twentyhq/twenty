@@ -218,7 +218,15 @@ const buildUsageEventFixtures = (): UsageEventFixture[] => {
           fixtures.push({
             timestamp: formatDateTimeForClickHouse(eventDate),
             workspaceId: SEED_APPLE_WORKSPACE_ID,
-            periodStart: `${eventDate.getUTCFullYear()}-${String(eventDate.getUTCMonth() + 1).padStart(2, '0')}-01`,
+            periodStart: formatDateTimeForClickHouse(
+              new Date(
+                Date.UTC(
+                  eventDate.getUTCFullYear(),
+                  eventDate.getUTCMonth(),
+                  1,
+                ),
+              ),
+            ),
             userWorkspaceId: users[userIdx],
             resourceType: op.resourceType,
             operationType: op.operationType,

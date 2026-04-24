@@ -2,7 +2,7 @@ CREATE TABLE
     IF NOT EXISTS usageEvent_v2 (
         `timestamp` DateTime64 (3) NOT NULL,
         `workspaceId` String NOT NULL,
-        `periodStart` Date,
+        `periodStart` DateTime64 (3),
         `userWorkspaceId` String DEFAULT '',
         `resourceType` LowCardinality (String) NOT NULL,
         `operationType` LowCardinality (String) NOT NULL,

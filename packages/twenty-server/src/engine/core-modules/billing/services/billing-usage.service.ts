@@ -7,7 +7,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { type Repository } from 'typeorm';
 
 import { ClickHouseService } from 'src/database/clickHouse/clickHouse.service';
-import { formatDateForClickHouse } from 'src/database/clickHouse/clickHouse.util';
+import { formatDateTimeForClickHouse } from 'src/database/clickHouse/clickHouse.util';
 import {
   BillingException,
   BillingExceptionCode,
@@ -371,12 +371,12 @@ export class BillingUsageService {
       SELECT sum(creditsUsedMicro) AS total
       FROM usageEvent
       WHERE workspaceId = {workspaceId:String}
-        AND periodStart = {periodStart:Date}
+        AND periodStart = {periodStart:DateTime64(3)}
     `;
 
     const rows = await this.clickHouseService.select<UsageSumRow>(query, {
       workspaceId,
-      periodStart: formatDateForClickHouse(periodStart),
+      periodStart: formatDateTimeForClickHouse(periodStart),
     });
 
     const rawTotal = rows[0]?.total ?? 0;

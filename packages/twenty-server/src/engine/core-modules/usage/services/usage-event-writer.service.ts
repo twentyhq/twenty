@@ -3,10 +3,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { ClickHouseService } from 'src/database/clickHouse/clickHouse.service';
-import {
-  formatDateForClickHouse,
-  formatDateTimeForClickHouse,
-} from 'src/database/clickHouse/clickHouse.util';
+import { formatDateTimeForClickHouse } from 'src/database/clickHouse/clickHouse.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type UsageEvent } from 'src/engine/core-modules/usage/types/usage-event.type';
 
@@ -29,7 +26,7 @@ export class UsageEventWriterService {
     const rows = usageEvents.map((usageEvent) => ({
       timestamp: now,
       workspaceId,
-      periodStart: formatDateForClickHouse(usageEvent.periodStart ?? new Date()),
+      periodStart: formatDateTimeForClickHouse(usageEvent.periodStart ?? new Date()),
       userWorkspaceId: usageEvent.userWorkspaceId ?? '',
       resourceType: usageEvent.resourceType,
       operationType: usageEvent.operationType,
