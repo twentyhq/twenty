@@ -1,5 +1,13 @@
 import { Injectable } from '@nestjs/common';
+import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
+import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { USAGE_RECORDED } from 'src/engine/core-modules/usage/constants/usage-recorded.constant';
+import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
+import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
+import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
+import { type UsageEvent } from 'src/engine/core-modules/usage/types/usage-event.type';
 import {
   type WebSearchCostModel,
   type WebSearchDriver,
@@ -9,14 +17,8 @@ import { type WebSearchOptions } from 'src/engine/core-modules/web-search/types/
 import { type WebSearchResult } from 'src/engine/core-modules/web-search/types/web-search-result.type';
 import { WebSearchDriverFactory } from 'src/engine/core-modules/web-search/web-search-driver.factory';
 import { WebSearchDriverType } from 'src/engine/core-modules/web-search/web-search.interface';
-import { USAGE_RECORDED } from 'src/engine/core-modules/usage/constants/usage-recorded.constant';
-import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
-import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
-import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
-import { type UsageEvent } from 'src/engine/core-modules/usage/types/usage-event.type';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { DOLLAR_TO_CREDIT_MULTIPLIER } from 'src/engine/metadata-modules/ai/ai-billing/constants/dollar-to-credit-multiplier';
+import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 
 @Injectable()
 export class WebSearchService {
@@ -24,6 +26,8 @@ export class WebSearchService {
     private readonly webSearchDriverFactory: WebSearchDriverFactory,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
+    private readonly billingService: BillingService,
+    private readonly billingUsageService: BillingUsageService,
   ) {}
 
   isEnabled(): boolean {
@@ -49,7 +53,7 @@ export class WebSearchService {
     const results = await driver.search(query, options);
 
     if (billingContext) {
-      this.emitUsageEvent(driver, results.length, billingContext);
+      await this.emitUsageEvent(driver, results.length, billingContext);
     }
 
     return results;
@@ -70,11 +74,11 @@ export class WebSearchService {
     );
   }
 
-  private emitUsageEvent(
+  private async emitUsageEvent(
     driver: WebSearchDriver,
     numResults: number,
     billingContext: WebSearchBillingContext,
-  ): void {
+  ): Promise<void> {
     const costDollars = WebSearchService.computeQueryCostDollars(
       driver.costModel,
       numResults,
@@ -82,6 +86,13 @@ export class WebSearchService {
     const creditsUsedMicro = Math.round(
       costDollars * DOLLAR_TO_CREDIT_MULTIPLIER,
     );
+
+    if (this.billingService.isBillingEnabled()) {
+      await this.billingUsageService.decrementAvailableCredits({
+        workspaceId: billingContext.workspaceId,
+        usedCredits: creditsUsedMicro,
+      });
+    }
 
     this.workspaceEventEmitter.emitCustomBatchEvent<UsageEvent>(
       USAGE_RECORDED,

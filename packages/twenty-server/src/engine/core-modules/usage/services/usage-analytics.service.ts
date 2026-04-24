@@ -3,7 +3,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { ClickHouseService } from 'src/database/clickHouse/clickHouse.service';
-import { formatDateForClickHouse } from 'src/database/clickHouse/clickHouse.util';
+import { formatDateTimeForClickHouse } from 'src/database/clickHouse/clickHouse.util';
 import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display-credits.util';
 import { toDollars } from 'src/engine/core-modules/usage/utils/to-dollars.util';
 
@@ -74,8 +74,8 @@ export class UsageAnalyticsService {
     `;
 
     const rows = await this.clickHouseService.select<BreakdownRowMicro>(query, {
-      periodStart: formatDateForClickHouse(params.periodStart),
-      periodEnd: formatDateForClickHouse(params.periodEnd),
+      periodStart: formatDateTimeForClickHouse(params.periodStart),
+      periodEnd: formatDateTimeForClickHouse(params.periodEnd),
       operationTypes: aiOperationTypes,
     });
 
@@ -173,8 +173,8 @@ export class UsageAnalyticsService {
 
     const rows = await this.clickHouseService.select<BreakdownRowMicro>(query, {
       workspaceId,
-      periodStart: formatDateForClickHouse(periodStart),
-      periodEnd: formatDateForClickHouse(periodEnd),
+      periodStart: formatDateTimeForClickHouse(periodStart),
+      periodEnd: formatDateTimeForClickHouse(periodEnd),
       ...(operationTypes && operationTypes.length > 0
         ? { operationTypes }
         : {}),
@@ -221,8 +221,8 @@ export class UsageAnalyticsService {
       query,
       {
         workspaceId,
-        periodStart: formatDateForClickHouse(periodStart),
-        periodEnd: formatDateForClickHouse(periodEnd),
+        periodStart: formatDateTimeForClickHouse(periodStart),
+        periodEnd: formatDateTimeForClickHouse(periodEnd),
         ...(operationTypes && operationTypes.length > 0
           ? { operationTypes }
           : {}),

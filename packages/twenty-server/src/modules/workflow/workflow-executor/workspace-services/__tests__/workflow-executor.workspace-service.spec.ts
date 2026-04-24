@@ -7,6 +7,7 @@ import { USAGE_RECORDED } from 'src/engine/core-modules/usage/constants/usage-re
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
+import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -73,7 +74,11 @@ describe('WorkflowExecutorWorkspaceService', () => {
 
   const mockBillingService = {
     isBillingEnabled: jest.fn().mockReturnValue(true),
-    canBillMeteredProduct: jest.fn().mockReturnValue(true),
+  };
+
+  const mockBillingUsageService = {
+    hasAvailableCredits: jest.fn().mockResolvedValue(true),
+    decrementAvailableCredits: jest.fn().mockResolvedValue(undefined),
   };
 
   const mockExceptionHandlerService = {
@@ -111,6 +116,10 @@ describe('WorkflowExecutorWorkspaceService', () => {
         {
           provide: BillingService,
           useValue: mockBillingService,
+        },
+        {
+          provide: BillingUsageService,
+          useValue: mockBillingUsageService,
         },
         {
           provide: ExceptionHandlerService,
@@ -343,7 +352,7 @@ describe('WorkflowExecutorWorkspaceService', () => {
 
     it('should stop when billing validation fails', async () => {
       mockBillingService.isBillingEnabled.mockReturnValueOnce(true);
-      mockBillingService.canBillMeteredProduct.mockReturnValueOnce(false);
+      mockBillingUsageService.hasAvailableCredits.mockResolvedValueOnce(false);
 
       await service.executeFromSteps({
         workflowRunId: mockWorkflowRunId,
@@ -719,8 +728,8 @@ describe('WorkflowExecutorWorkspaceService', () => {
   });
 
   describe('sendWorkflowNodeRunEvent', () => {
-    it('should emit a billing event', () => {
-      service['sendWorkflowNodeRunEvent']('workspace-id', 'workflow-id');
+    it('should emit a billing event', async () => {
+      await service['sendWorkflowNodeRunEvent']('workspace-id', 'workflow-id');
 
       expect(workspaceEventEmitter.emitCustomBatchEvent).toHaveBeenCalledWith(
         USAGE_RECORDED,
