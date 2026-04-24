@@ -1,4 +1,5 @@
-import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
+import { defineLogicFunction } from 'twenty-sdk/define';
+import { type RoutePayload } from 'twenty-sdk/logic-function';
 import type { GitHubWebhookPayload } from 'src/modules/github/connector/webhook-payload';
 import type { ProjectV2Item } from 'src/modules/github/project-item/types/project-v2-item';
 import { fetchProjectItemByNodeId } from 'src/modules/github/project-item/graphql/github/fetch-project-item-by-node-id';
@@ -43,7 +44,9 @@ async function handlePullRequestEvent(payload: GitHubWebhookPayload) {
 
   const idByLogin = await upsertContributorsByLogin([pr.user, pr.merged_by]);
   const authorId = idByLogin.get(pr.user.login) ?? null;
-  const mergerId = pr.merged_by ? (idByLogin.get(pr.merged_by.login) ?? null) : null;
+  const mergerId = pr.merged_by
+    ? (idByLogin.get(pr.merged_by.login) ?? null)
+    : null;
 
   const canonical = pullRequestFromWebhook(pr, repository.full_name);
 
@@ -81,7 +84,9 @@ async function handlePullRequestReviewEvent(payload: GitHubWebhookPayload) {
     {
       ...prCanonical,
       authorId: idByLogin.get(pr.user.login) ?? null,
-      mergerId: pr.merged_by ? (idByLogin.get(pr.merged_by.login) ?? null) : null,
+      mergerId: pr.merged_by
+        ? (idByLogin.get(pr.merged_by.login) ?? null)
+        : null,
     },
   ]);
 
@@ -175,7 +180,8 @@ async function handleProjectV2ItemEvent(
     return { skipped: true, reason: 'delete not implemented' };
   }
 
-  const node = testProjectItem ?? (await fetchProjectItemByNodeId(item.node_id));
+  const node =
+    testProjectItem ?? (await fetchProjectItemByNodeId(item.node_id));
   if (!node) {
     return { skipped: true, reason: 'project item not found on GitHub' };
   }

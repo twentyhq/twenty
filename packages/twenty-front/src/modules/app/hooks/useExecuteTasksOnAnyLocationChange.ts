@@ -1,5 +1,3 @@
-import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
-import { contextStoreIsPageInEditModeComponentState } from '@/context-store/states/contextStoreIsPageInEditModeComponentState';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { currentPageLayoutIdState } from '@/page-layout/states/currentPageLayoutIdState';
 import { fieldsWidgetEditorModeDraftComponentState } from '@/page-layout/states/fieldsWidgetEditorModeDraftComponentState';
@@ -130,13 +128,6 @@ export const useExecuteTasksOnAnyLocationChange = () => {
 
       store.set(currentPageLayoutIdState.atom, null);
     }
-
-    store.set(
-      contextStoreIsPageInEditModeComponentState.atomFamily({
-        instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
-      }),
-      false,
-    );
   }, [store]);
 
   /**

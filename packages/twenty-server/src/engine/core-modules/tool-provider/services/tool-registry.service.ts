@@ -7,8 +7,6 @@ import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/
 import { type ToolRetrievalOptions } from 'src/engine/core-modules/tool-provider/interfaces/tool-retrieval-options.type';
 
 import { TOOL_PROVIDERS } from 'src/engine/core-modules/tool-provider/constants/tool-providers.token';
-import { ToolCategory } from 'twenty-shared/ai';
-import { NativeToolBinderService } from 'src/engine/core-modules/tool-provider/native/native-tool-binder.service';
 import { compactToolOutput } from 'src/engine/core-modules/tool-provider/output-serialization/compact-tool-output.util';
 import { ToolExecutorService } from 'src/engine/core-modules/tool-provider/services/tool-executor.service';
 import { type LearnToolsAspect } from 'src/engine/core-modules/tool-provider/tools/learn-tools.tool';
@@ -30,7 +28,6 @@ export class ToolRegistryService {
   constructor(
     @Inject(TOOL_PROVIDERS)
     private readonly providers: ToolProvider[],
-    private readonly nativeToolBinder: NativeToolBinderService,
     private readonly toolExecutorService: ToolExecutorService,
   ) {}
 
@@ -326,14 +323,6 @@ export class ToolRegistryService {
       includeLoadingMessage,
       serializeOutput,
     });
-
-    if (categories?.includes(ToolCategory.NATIVE_MODEL)) {
-      if (await this.nativeToolBinder.isAvailable(context)) {
-        const nativeTools = await this.nativeToolBinder.bind(context);
-
-        Object.assign(toolSet, nativeTools);
-      }
-    }
 
     this.logger.log(
       `Generated ${Object.keys(toolSet).length} tools for categories: [${categories?.join(', ') ?? 'all'}]`,

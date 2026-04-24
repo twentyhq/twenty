@@ -31,6 +31,7 @@ export const normalizeManifestForComparison = <T extends Manifest>(
   views: sortById(manifest.views),
   navigationMenuItems: sortById(manifest.navigationMenuItems),
   pageLayouts: sortById(manifest.pageLayouts),
+  pageLayoutTabs: sortById(manifest.pageLayoutTabs ?? []),
   logicFunctions: sortById(
     manifest.logicFunctions?.map((fn) => ({
       ...fn,

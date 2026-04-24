@@ -5,6 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AdminPanelHealthService } from 'src/engine/core-modules/admin-panel/admin-panel-health.service';
 import { AdminPanelQueueService } from 'src/engine/core-modules/admin-panel/admin-panel-queue.service';
 import { AdminPanelResolver } from 'src/engine/core-modules/admin-panel/admin-panel.resolver';
+import { AdminPanelBillingService } from 'src/engine/core-modules/admin-panel/services/admin-panel-billing.service';
 import { AdminPanelChatService } from 'src/engine/core-modules/admin-panel/services/admin-panel-chat.service';
 import { AdminPanelConfigService } from 'src/engine/core-modules/admin-panel/services/admin-panel-config.service';
 import { AdminPanelStatisticsService } from 'src/engine/core-modules/admin-panel/services/admin-panel-statistics.service';
@@ -14,6 +15,9 @@ import { MaintenanceModeService } from 'src/engine/core-modules/admin-panel/main
 import { ApplicationRegistrationModule } from 'src/engine/core-modules/application/application-registration/application-registration.module';
 import { AuditModule } from 'src/engine/core-modules/audit/audit.module';
 import { AuthModule } from 'src/engine/core-modules/auth/auth.module';
+import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
+import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
+import { BillingPriceEntity } from 'src/engine/core-modules/billing/entities/billing-price.entity';
 import { WorkspaceDomainsModule } from 'src/engine/core-modules/domain/workspace-domains/workspace-domains.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { FileModule } from 'src/engine/core-modules/file/file.module';
@@ -47,8 +51,11 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
       FeatureFlagEntity,
       AgentChatThreadEntity,
       AgentMessageEntity,
+      BillingCustomerEntity,
+      BillingPriceEntity,
     ]),
     AuthModule,
+    BillingModule,
     FileModule,
     WorkspaceDomainsModule,
     RedisClientModule,
@@ -69,6 +76,7 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
     AdminPanelResolver,
     AdminPanelUserLookupService,
     AdminPanelStatisticsService,
+    AdminPanelBillingService,
     AdminPanelChatService,
     AdminPanelConfigService,
     AdminPanelVersionService,

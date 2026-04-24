@@ -15,6 +15,7 @@ import { getLogicFunctionBaseFile } from '@/cli/utilities/entity/entity-logic-fu
 import { getNavigationMenuItemBaseFile } from '@/cli/utilities/entity/entity-navigation-menu-item-template';
 import { getObjectBaseFile } from '@/cli/utilities/entity/entity-object-template';
 import { getPageLayoutBaseFile } from '@/cli/utilities/entity/entity-page-layout-template';
+import { getPageLayoutTabBaseFile } from '@/cli/utilities/entity/entity-page-layout-tab-template';
 import { getRecordPageLayoutBaseFile } from '@/cli/utilities/entity/entity-record-page-layout-template';
 import { getRoleBaseFile } from '@/cli/utilities/entity/entity-role-template';
 import { getAgentBaseFile } from '@/cli/utilities/entity/entity-agent-template';
@@ -184,6 +185,15 @@ export class EntityAddCommand {
         const name = await this.getEntityName(entity);
 
         const file = getPageLayoutBaseFile({
+          name,
+        });
+        return { name, file };
+      }
+
+      case SyncableEntity.PageLayoutTab: {
+        const name = await this.getEntityName(entity);
+
+        const file = getPageLayoutTabBaseFile({
           name,
         });
         return { name, file };

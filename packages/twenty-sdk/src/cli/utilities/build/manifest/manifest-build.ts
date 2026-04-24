@@ -11,6 +11,7 @@ import { type ApplicationConfig, type LogicFunctionConfig } from '@/sdk/define';
 import { type FrontComponentConfig } from '@/sdk/define/front-component/front-component-config';
 import { type ObjectConfig } from '@/sdk/define/objects/object-config';
 import { type PageLayoutConfig } from '@/sdk/define/page-layouts/page-layout-config';
+import { type PageLayoutTabConfig } from '@/sdk/define/page-layouts/page-layout-tab-config';
 import { type ViewConfig } from '@/sdk/define/views/view-config';
 import { readFile } from 'node:fs/promises';
 import { basename, extname, relative } from 'path';
@@ -28,6 +29,7 @@ import {
   type NavigationMenuItemManifest,
   type ObjectManifest,
   type PageLayoutManifest,
+  type PageLayoutTabManifest,
   type RoleManifest,
   type SkillManifest,
   type ViewManifest,
@@ -81,6 +83,7 @@ export const buildManifest = async (
   const views: ViewManifest[] = [];
   const navigationMenuItems: NavigationMenuItemManifest[] = [];
   const pageLayouts: PageLayoutManifest[] = [];
+  const pageLayoutTabs: PageLayoutTabManifest[] = [];
   const postInstallLogicFunctions: PostInstallLogicFunctionApplicationManifest[] =
     [];
   const preInstallLogicFunctions: PreInstallLogicFunctionApplicationManifest[] =
@@ -97,6 +100,7 @@ export const buildManifest = async (
   const viewsFilePaths: string[] = [];
   const navigationMenuItemsFilePaths: string[] = [];
   const pageLayoutsFilePaths: string[] = [];
+  const pageLayoutTabsFilePaths: string[] = [];
 
   for (const filePath of filePaths) {
     const fileContent = await readFile(filePath, 'utf-8');
@@ -331,6 +335,21 @@ export const buildManifest = async (
         pageLayoutsFilePaths.push(relativePath);
         break;
       }
+      case ManifestEntityKey.PageLayoutTabs: {
+        const extract = await extractManifestFromFile<PageLayoutTabConfig>({
+          appPath,
+          filePath,
+        });
+
+        const pageLayoutTabManifest: PageLayoutTabManifest = {
+          ...extract.config,
+        };
+
+        pageLayoutTabs.push(pageLayoutTabManifest);
+        errors.push(...extract.errors);
+        pageLayoutTabsFilePaths.push(relativePath);
+        break;
+      }
       case ManifestEntityKey.PublicAssets: {
         // Public assets are handled below
         break;
@@ -407,6 +426,7 @@ export const buildManifest = async (
         views: views.sort(byId),
         navigationMenuItems: navigationMenuItems.sort(byId),
         pageLayouts: pageLayouts.sort(byId),
+        pageLayoutTabs: pageLayoutTabs.sort(byId),
       };
 
   const entityFilePaths: EntityFilePaths = {
@@ -422,6 +442,7 @@ export const buildManifest = async (
     views: viewsFilePaths,
     navigationMenuItems: navigationMenuItemsFilePaths,
     pageLayouts: pageLayoutsFilePaths,
+    pageLayoutTabs: pageLayoutTabsFilePaths,
   };
 
   return { manifest, filePaths: entityFilePaths, errors };

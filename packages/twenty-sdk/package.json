@@ -1,6 +1,6 @@
 {
   "name": "twenty-sdk",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "sideEffects": false,
   "bin": {
     "twenty": "dist/cli.cjs"
@@ -22,6 +22,11 @@
     "development"
   ],
   "exports": {
+    "./billing": {
+      "types": "./dist/billing/index.d.ts",
+      "import": "./dist/billing/index.mjs",
+      "require": "./dist/billing/index.cjs"
+    },
     "./define": {
       "types": "./dist/define/index.d.ts",
       "import": "./dist/define/index.mjs",
@@ -31,6 +36,11 @@
       "types": "./dist/front-component/index.d.ts",
       "import": "./dist/front-component/index.mjs",
       "require": "./dist/front-component/index.cjs"
+    },
+    "./logic-function": {
+      "types": "./dist/logic-function/index.d.ts",
+      "import": "./dist/logic-function/index.mjs",
+      "require": "./dist/logic-function/index.cjs"
     },
     "./ui": {
       "types": "./dist/ui/index.d.ts",
@@ -105,6 +115,9 @@
       ],
       "front-component": [
         "dist/front-component/index.d.ts"
+      ],
+      "logic-function": [
+        "dist/logic-function/index.d.ts"
       ],
       "cli": [
         "dist/cli/operations/index.d.ts"

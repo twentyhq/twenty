@@ -1,4 +1,5 @@
-import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
+import { defineLogicFunction } from 'twenty-sdk/define';
+import { type RoutePayload } from 'twenty-sdk/logic-function';
 import {
   fetchPullRequests,
   type GqlPullRequest,
@@ -51,7 +52,13 @@ const handler = async (event: RoutePayload<FetchPrsPayload>) => {
 
   if (prs.length === 0) {
     console.log(`[fetch-prs] empty page for ${tag}`);
-    return { prCount: 0, reviewCount: 0, totalCount, hasMore: false, endCursor: null };
+    return {
+      prCount: 0,
+      reviewCount: 0,
+      totalCount,
+      hasMore: false,
+      endCursor: null,
+    };
   }
 
   const allUsers = prs.flatMap((pr) => [

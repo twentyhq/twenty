@@ -13,12 +13,13 @@ import {
 const baseStepFields = {
   workflowVersionId: z
     .string()
-    .describe('The ID of the workflow version to add the step to'),
+    .uuid()
+    .describe('The UUID of the workflow version to add the step to'),
   parentStepId: z
     .string()
     .optional()
     .describe(
-      'Optional ID of the parent step this step should come after. If not provided, the step will be added at the end of the workflow.',
+      'Optional ID of the parent step this step should come after (UUID, or "trigger" for the trigger step). If not provided, the step will be added at the end of the workflow.',
     ),
   parentStepConnectionOptions: z
     .object({

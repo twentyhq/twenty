@@ -1,4 +1,5 @@
-import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
+import { defineLogicFunction } from 'twenty-sdk/define';
+import { type RoutePayload } from 'twenty-sdk/logic-function';
 import { getClient } from 'src/modules/shared/twenty-client';
 import { timed } from 'src/modules/shared/timing';
 import { batchUpsertConsolidatedReviews } from 'src/modules/github/pull-request-review/graphql/mutations/batch-upsert';
@@ -128,9 +129,8 @@ const handler = async (_event: RoutePayload<unknown>) => {
 
   let upsertedCount = 0;
   if (rows.length > 0) {
-    const recs = await timed(
-      `recompute-reviews:upsert (${rows.length})`,
-      () => batchUpsertConsolidatedReviews(rows),
+    const recs = await timed(`recompute-reviews:upsert (${rows.length})`, () =>
+      batchUpsertConsolidatedReviews(rows),
     );
     upsertedCount = recs.length;
   }
