@@ -1,9 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import {
-  createAmazonBedrock,
-  type AmazonBedrockProvider,
-} from '@ai-sdk/amazon-bedrock';
+import { createAmazonBedrock } from '@ai-sdk/amazon-bedrock';
 import { createAnthropic, type AnthropicProvider } from '@ai-sdk/anthropic';
 import { createGoogleGenerativeAI } from '@ai-sdk/google';
 import { createMistral } from '@ai-sdk/mistral';
@@ -63,15 +60,6 @@ export class SdkProviderFactoryService {
     }
 
     return instance.rawProvider as T;
-  }
-
-  getRawBedrockProvider(
-    providerName: string,
-  ): AmazonBedrockProvider | undefined {
-    return this.getRawProvider<AmazonBedrockProvider>(
-      providerName,
-      AI_SDK_BEDROCK,
-    );
   }
 
   getRawAnthropicProvider(providerName: string): AnthropicProvider | undefined {

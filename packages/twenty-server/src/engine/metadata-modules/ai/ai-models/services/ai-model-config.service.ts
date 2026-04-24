@@ -63,18 +63,6 @@ export class AiModelConfigService {
 
         break;
       }
-      case AI_SDK_BEDROCK: {
-        const bedrockProvider = model.providerName
-          ? this.sdkProviderFactory.getRawBedrockProvider(model.providerName)
-          : undefined;
-
-        if (bedrockProvider) {
-          tools.web_search =
-            bedrockProvider.tools.webSearch_20250305() as ToolSet[string];
-        }
-
-        break;
-      }
       case AI_SDK_OPENAI: {
         const openaiProvider = model.providerName
           ? this.sdkProviderFactory.getRawOpenAIProvider(model.providerName)
