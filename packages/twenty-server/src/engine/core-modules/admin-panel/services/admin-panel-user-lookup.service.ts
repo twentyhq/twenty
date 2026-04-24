@@ -93,7 +93,10 @@ export class AdminPanelUserLookupService {
             workspaceMember: { avatarUrl: fallbackRaw, id: userId },
           });
 
-        return [userId, isNonEmptyString(fallbackSigned) ? fallbackSigned : null];
+        return [
+          userId,
+          isNonEmptyString(fallbackSigned) ? fallbackSigned : null,
+        ];
       }),
     );
   }

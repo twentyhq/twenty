@@ -67,9 +67,8 @@ export class AdminPanelStatisticsService {
       params,
     )) as RecentUserRow[];
 
-    const signedAvatarByUserId = await this.loadSignedAvatarUrlsByUserId(
-      results,
-    );
+    const signedAvatarByUserId =
+      await this.loadSignedAvatarUrlsByUserId(results);
 
     return results.map((row) => ({
       id: row.id,
@@ -135,8 +134,6 @@ export class AdminPanelStatisticsService {
       totalUsers: row.totalUsers,
     }));
   }
-
-  
 
   private async loadSignedAvatarUrlsByUserId(
     rows: RecentUserRow[],
