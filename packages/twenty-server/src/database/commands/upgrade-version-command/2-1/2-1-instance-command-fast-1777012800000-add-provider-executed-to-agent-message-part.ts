@@ -3,7 +3,7 @@ import { QueryRunner } from 'typeorm';
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
 
-@RegisteredInstanceCommand('2.0.0', 1777012800000)
+@RegisteredInstanceCommand('2.1.0', 1777012800000)
 export class AddProviderExecutedToAgentMessagePartFastInstanceCommand
   implements FastInstanceCommand
 {
