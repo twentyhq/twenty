@@ -12463,6 +12463,11 @@ msgstr "Tallenna"
 msgid "Save as new view"
 msgstr "Tallenna uutena näkymänä"
 
+#. js-lingui-id: 7byqGp
+#: src/modules/layout-customization/hooks/useEnterLayoutCustomizationMode.ts
+msgid "Save or cancel dashboard changes before editing the layout."
+msgstr ""
+
 #. js-lingui-id: gmB6oO
 #: src/modules/workflow/workflow-trigger/components/CronExpressionHelper.tsx
 msgid "Schedule"
