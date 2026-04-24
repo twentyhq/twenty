@@ -2,26 +2,14 @@ import type * as esbuild from 'esbuild';
 
 import * as twentySdkDefine from '@/sdk/define';
 
-// Why we stub:
-//   Logic functions and front-components only need `default.config.handler`
-//   to exist at runtime. The wrappers (`defineLogicFunction`, etc.) and the
-//   enums/helpers re-exported by twenty-sdk/define are build-time concerns
-//   used by the manifest extractor, not by the Lambda runtime. Bundling the
-//   real implementations drags in zod, @sniptt/guards, twenty-shared and a
-//   few hundred KB per logic-function bundle.
+// Everything in twenty-sdk/define is build-time metadata for the manifest
+// extractor and is dead code in the user-app bundle. Stubbing it drops zod,
+// twenty-shared and ~1MB per logic-function bundle.
 //
-// We do NOT hand-maintain a list of exports: it is derived at CLI startup
-// from `Object.keys(twentySdkDefine)`. Adding a new export to
-// `twenty-sdk/define` automatically lands in the stub. A unit test pins the
-// classification to keep behaviour predictable and surface unexpected new
-// exports in PRs (snapshot diff).
-
-// Factory exports preserve `(config) => ({ success: true, config, errors })`
-// because the manifest extractor reads `.config` off the call return value.
-// Anything else can be a no-op Proxy: enums for type-only branding,
-// pure helpers (e.g. `validateFields`) that aren't reachable at Lambda
-// runtime, and re-exported constants (e.g. `STANDARD_OBJECT`) used only
-// during manifest validation.
+// Exports are derived from `Object.keys(twentySdkDefine)` so new ones land
+// in the stub automatically; the unit test snapshots the partition.
+// Factories must keep the `(config) => ({ config, ... })` shape so the
+// manifest extractor can still read `.config`; anything else can be a Proxy.
 export const isDefineFactoryExportName = (name: string): boolean =>
   /^define[A-Z]/.test(name) || name === 'createValidationResult';
 
@@ -86,12 +74,6 @@ const buildStubModuleSource = (): string => {
   return `${STUB_PRELUDE}\n${exportLines.join('\n')}\n`;
 };
 
-// Returns an esbuild plugin that intercepts every `twenty-sdk/define` import
-// in user-app sources and replaces it with a tiny virtual module. Logic
-// functions and front-components keep importing `defineLogicFunction`,
-// `defineFrontComponent`, `FieldType`, etc. from `twenty-sdk/define` for
-// manifest extraction purposes; at bundle time those imports become no-ops
-// instead of pulling in the real (heavy) module.
 export const createStubTwentySdkDefinePlugin = (): esbuild.Plugin => ({
   name: 'twenty-sdk-define-stub',
   setup(build) {
