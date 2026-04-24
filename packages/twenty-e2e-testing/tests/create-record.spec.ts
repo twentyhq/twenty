@@ -64,7 +64,7 @@ test('Create and update record', async ({ page }) => {
     await lastNameInput.press('Enter');
 
     // Focus on recordFieldList
-    const recordFieldList = page.getByTestId('person-widget-fields');
+    const recordFieldList = page.getByTestId('record-fields-widget');
     await expect(recordFieldList).toBeVisible();
     await recordFieldList.getByText('Emails').first().click();
 

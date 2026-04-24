@@ -11,8 +11,8 @@ import { agentChatInputState } from '@/ai/states/agentChatInputState';
 import { agentChatThreadsLoadingState } from '@/ai/states/agentChatThreadsLoadingState';
 import { agentChatThreadsSelector } from '@/ai/states/agentChatThreadsSelector';
 import { agentChatUsageComponentFamilyState } from '@/ai/states/agentChatUsageComponentFamilyState';
-import { currentAIChatThreadState } from '@/ai/states/currentAIChatThreadState';
-import { currentAIChatThreadTitleComponentFamilyState } from '@/ai/states/currentAIChatThreadTitleComponentFamilyState';
+import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
+import { currentAiChatThreadTitleComponentFamilyState } from '@/ai/states/currentAiChatThreadTitleComponentFamilyState';
 import { hasInitializedAgentChatThreadsState } from '@/ai/states/hasInitializedAgentChatThreadsState';
 import { hasTriggeredCreateForDraftState } from '@/ai/states/hasTriggeredCreateForDraftState';
 import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
@@ -36,14 +36,14 @@ export const AgentChatThreadInitializationEffect = () => {
     PermissionFlagType.AI_SETTINGS,
   );
 
-  const currentAIChatThread = useAtomStateValue(currentAIChatThreadState);
-  const setCurrentAIChatThread = useSetAtomState(currentAIChatThreadState);
+  const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
+  const setCurrentAiChatThread = useSetAtomState(currentAiChatThreadState);
   const setAgentChatInput = useSetAtomState(agentChatInputState);
   const setAgentChatThreadsLoading = useSetAtomState(
     agentChatThreadsLoadingState,
   );
   const threadTitleFamilyCallback = useAtomComponentFamilyStateCallbackState(
-    currentAIChatThreadTitleComponentFamilyState,
+    currentAiChatThreadTitleComponentFamilyState,
   );
   const agentChatUsageFamilyCallback = useAtomComponentFamilyStateCallbackState(
     agentChatUsageComponentFamilyState,
@@ -94,7 +94,7 @@ export const AgentChatThreadInitializationEffect = () => {
   useEffect(() => {
     if (
       hasInitializedAgentChatThreads ||
-      (currentAIChatThread !== null && isValidUuid(currentAIChatThread))
+      (currentAiChatThread !== null && isValidUuid(currentAiChatThread))
     ) {
       return;
     }
@@ -115,7 +115,7 @@ export const AgentChatThreadInitializationEffect = () => {
       const draftForThread =
         store.get(agentChatDraftsByThreadIdState.atom)[firstThread.id] ?? '';
 
-      setCurrentAIChatThread(firstThread.id);
+      setCurrentAiChatThread(firstThread.id);
       setAgentChatInput(draftForThread);
 
       const firstThreadFamilyKey = { threadId: firstThread.id };
@@ -145,7 +145,7 @@ export const AgentChatThreadInitializationEffect = () => {
       );
     } else {
       store.set(hasTriggeredCreateForDraftState.atom, false);
-      setCurrentAIChatThread(AGENT_CHAT_NEW_THREAD_DRAFT_KEY);
+      setCurrentAiChatThread(AGENT_CHAT_NEW_THREAD_DRAFT_KEY);
       setAgentChatInput(
         store.get(agentChatDraftsByThreadIdState.atom)[
           AGENT_CHAT_NEW_THREAD_DRAFT_KEY
@@ -154,12 +154,12 @@ export const AgentChatThreadInitializationEffect = () => {
     }
   }, [
     agentChatThreads,
-    currentAIChatThread,
+    currentAiChatThread,
     hasAiSettingsPermission,
     hasInitializedAgentChatThreads,
     setHasInitializedAgentChatThreads,
     storeEntry.status,
-    setCurrentAIChatThread,
+    setCurrentAiChatThread,
     setAgentChatInput,
     store,
     threadTitleFamilyCallback,

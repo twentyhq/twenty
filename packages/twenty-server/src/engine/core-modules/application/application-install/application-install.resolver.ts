@@ -1,4 +1,9 @@
-import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
+import {
+  UseFilters,
+  UseGuards,
+  UseInterceptors,
+  UsePipes,
+} from '@nestjs/common';
 import { Args, Mutation, Query } from '@nestjs/graphql';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
@@ -14,10 +19,12 @@ import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspac
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
 
 @UsePipes(ResolverValidationPipe)
 @MetadataResolver()
 @UseFilters(ApplicationExceptionFilter, AuthGraphqlApiExceptionFilter)
+@UseInterceptors(WorkspaceMigrationGraphqlApiExceptionInterceptor)
 @UseGuards(WorkspaceAuthGuard)
 export class ApplicationInstallResolver {
   constructor(

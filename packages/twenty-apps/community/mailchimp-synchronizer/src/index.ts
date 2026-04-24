@@ -1,10 +1,5 @@
 import axios from 'axios';
-import {
-  type DatabaseEventPayload,
-  type FunctionConfig,
-  type ObjectRecordCreateEvent,
-  type ObjectRecordUpdateEvent,
-} from 'twenty-sdk';
+import { type DatabaseEventPayload, type FunctionConfig, type ObjectRecordCreateEvent, type ObjectRecordUpdateEvent } from 'twenty-sdk/define';
 import Twenty, { type Person } from '../generated';
 
 const MAILCHIMP_API_URL: string =

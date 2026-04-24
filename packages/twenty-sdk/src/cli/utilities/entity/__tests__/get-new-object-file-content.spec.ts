@@ -13,7 +13,7 @@ describe('getNewObjectFileContent', () => {
     });
 
     expect(result).toContain(
-      "import { defineObject, FieldType } from 'twenty-sdk'",
+      "import { defineObject, FieldType } from 'twenty-sdk/define';",
     );
     expect(result).toContain('export default defineObject({');
     expect(result).toContain('export const NAME_FIELD_UNIVERSAL_IDENTIFIER');

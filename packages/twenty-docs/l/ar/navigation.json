@@ -1,24 +1,27 @@
 {
   "tabs": {
+    "gettingStarted": {
+      "label": "البدء",
+      "groups": {
+        "welcome": {
+          "label": "مرحبًا"
+        },
+        "coreConcepts": {
+          "label": "المفاهيم الأساسية"
+        }
+      }
+    },
     "userGuide": {
       "label": "دليل المستخدم",
       "groups": {
-        "discoverTwenty": {
-          "label": "اكتشف Twenty",
-          "groups": {
-            "gettingStartedCapabilities": {
-              "label": "القدرات"
-            },
-            "gettingStartedHowTos": {
-              "label": "الإرشادات"
-            }
-          }
+        "userGuideOverview": {
+          "label": "نظرة عامة"
         },
         "dataModel": {
           "label": "نموذج البيانات",
           "groups": {
-            "dataModelCapabilities": {
-              "label": "القدرات"
+            "dataModelReference": {
+              "label": "مرجع"
             },
             "dataModelHowTos": {
               "label": "الإرشادات"
@@ -28,8 +31,8 @@
         "dataMigration": {
           "label": "ترحيل البيانات",
           "groups": {
-            "dataMigrationCapabilities": {
-              "label": "القدرات"
+            "dataMigrationReference": {
+              "label": "مرجع"
             },
             "dataMigrationHowTos": {
               "label": "الإرشادات"
@@ -39,8 +42,8 @@
         "calendarEmails": {
           "label": "التقويم والبريد الإلكتروني",
           "groups": {
-            "calendarEmailsCapabilities": {
-              "label": "القدرات"
+            "calendarEmailsReference": {
+              "label": "مرجع"
             },
             "calendarEmailsHowTos": {
               "label": "الإرشادات"
@@ -50,8 +53,8 @@
         "workflows": {
           "label": "سير العمل",
           "groups": {
-            "workflowsCapabilities": {
-              "label": "القدرات"
+            "workflowsReference": {
+              "label": "مرجع"
             },
             "workflowsHowTos": {
               "label": "الإرشادات",
@@ -75,21 +78,26 @@
         "ai": {
           "label": "الذكاء الاصطناعي",
           "groups": {
-            "aiCapabilities": {
-              "label": "القدرات"
+            "aiReference": {
+              "label": "مرجع"
             },
             "aiHowTos": {
               "label": "الإرشادات"
             }
           }
         },
-        "viewsPipelines": {
-          "label": "طرق العرض والمسارات",
+        "layout": {
+          "label": "التخطيط",
           "groups": {
-            "viewsPipelinesCapabilities": {
-              "label": "القدرات"
+            "layoutReference": {
+              "label": "مرجع",
+              "groups": {
+                "layoutViews": {
+                  "label": "العروض"
+                }
+              }
             },
-            "viewsPipelinesHowTos": {
+            "layoutHowTos": {
               "label": "الإرشادات"
             }
           }
@@ -97,8 +105,8 @@
         "dashboards": {
           "label": "لوحات القيادة",
           "groups": {
-            "dashboardsCapabilities": {
-              "label": "القدرات"
+            "dashboardsReference": {
+              "label": "مرجع"
             },
             "dashboardsHowTos": {
               "label": "الإرشادات"
@@ -108,8 +116,8 @@
         "permissionsAccess": {
           "label": "الصلاحيات والوصول",
           "groups": {
-            "permissionsAccessCapabilities": {
-              "label": "القدرات"
+            "permissionsAccessReference": {
+              "label": "مرجع"
             },
             "permissionsAccessHowTos": {
               "label": "الإرشادات"
@@ -119,8 +127,8 @@
         "billing": {
           "label": "الفوترة",
           "groups": {
-            "billingCapabilities": {
-              "label": "القدرات"
+            "billingReference": {
+              "label": "مرجع"
             },
             "billingHowTos": {
               "label": "الإرشادات"
@@ -130,8 +138,8 @@
         "settings": {
           "label": "\\ا\\ل\\إ\\ع\\د\\ا\\د\\ا\\ت",
           "groups": {
-            "settingsCapabilities": {
-              "label": "القدرات"
+            "settingsReference": {
+              "label": "مرجع"
             },
             "settingsHowTos": {
               "label": "الإرشادات"
@@ -143,59 +151,20 @@
     "developers": {
       "label": "المطورون",
       "groups": {
-        "developersGroup": {
-          "label": "المطورون"
+        "developersOverview": {
+          "label": "نظرة عامة"
         },
-        "extend": {
-          "label": "التوسيع",
-          "groups": {
-            "apps": {
-              "label": "التطبيقات"
-            }
-          }
+        "apps": {
+          "label": "التطبيقات"
+        },
+        "api": {
+          "label": "واجهة برمجة التطبيقات"
         },
         "selfHost": {
-          "label": "الاستضافة الذاتية",
-          "groups": {
-            "selfHostCapabilities": {
-              "label": "القدرات"
-            }
-          }
+          "label": "الاستضافة الذاتية"
         },
         "contribute": {
-          "label": "المساهمة",
-          "groups": {
-            "contributeCapabilities": {
-              "label": "القدرات",
-              "groups": {
-                "frontendDevelopment": {
-                  "label": "تطوير الواجهة الأمامية",
-                  "groups": {
-                    "twentyUi": {
-                      "label": "Twenty UI",
-                      "groups": {
-                        "display": {
-                          "label": "عرض"
-                        },
-                        "feedback": {
-                          "label": "التغذية الراجعة"
-                        },
-                        "input": {
-                          "label": "إدخال"
-                        },
-                        "navigation": {
-                          "label": "التنقل"
-                        }
-                      }
-                    }
-                  }
-                },
-                "backendDevelopment": {
-                  "label": "تطوير الواجهة الخلفية"
-                }
-              }
-            }
-          }
+          "label": "المساهمة"
         }
       }
     }

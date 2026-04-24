@@ -1,4 +1,4 @@
-import { defineSkill } from 'twenty-sdk';
+import { defineSkill } from 'twenty-sdk/define';
 
 export default defineSkill({
   universalIdentifier: 'a7c3e1f2-8b4d-4e6a-9f01-2d3c4b5a6e7f',

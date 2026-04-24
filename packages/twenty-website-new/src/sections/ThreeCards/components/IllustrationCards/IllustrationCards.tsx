@@ -1,7 +1,8 @@
 'use client';
 
 import { ThreeCardsScrollLayoutEffect } from '@/sections/ThreeCards/effect-components/ThreeCardsScrollLayoutEffect';
-import { ThreeCardsIllustrationCardType } from '@/sections/ThreeCards/types';
+import type { ThreeCardsIllustrationCardType } from '@/sections/ThreeCards/types';
+import type { ThreeCardsScrollLayoutOptions } from '@/sections/ThreeCards/utils/three-cards-scroll-layout';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
 import { useRef } from 'react';
@@ -25,11 +26,13 @@ const CardSlot = styled.div`
 
 type IllustrationCardsProps = {
   illustrationCards: ThreeCardsIllustrationCardType[];
+  layoutOptions?: ThreeCardsScrollLayoutOptions;
   variant?: 'shaped' | 'simple';
 };
 
 export function IllustrationCards({
   illustrationCards,
+  layoutOptions,
   variant = 'shaped',
 }: IllustrationCardsProps) {
   const gridRef = useRef<HTMLDivElement>(null);
@@ -41,6 +44,7 @@ export function IllustrationCards({
         cardCount={illustrationCards.length}
         cardRefs={cardRefs}
         gridRef={gridRef}
+        layoutOptions={layoutOptions}
       />
       {illustrationCards.map((illustrationCard, index) => (
         <CardSlot

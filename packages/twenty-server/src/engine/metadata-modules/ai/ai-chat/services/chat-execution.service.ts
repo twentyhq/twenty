@@ -23,7 +23,6 @@ import { CodeInterpreterService } from 'src/engine/core-modules/code-interpreter
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { COMMON_PRELOAD_TOOLS } from 'src/engine/core-modules/tool-provider/constants/common-preload-tools.const';
-import { wrapToolsWithOutputSerialization } from 'src/engine/core-modules/tool-provider/output-serialization/wrap-tools-with-output-serialization.util';
 import { ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
 import {
   createExecuteToolTool,
@@ -55,11 +54,10 @@ import {
 import { AI_TELEMETRY_CONFIG } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-telemetry.const';
 import {
   AiModelRegistryService,
-  type RegisteredAIModel,
+  type RegisteredAiModel,
 } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { SdkProviderFactoryService } from 'src/engine/metadata-modules/ai/ai-models/services/sdk-provider-factory.service';
-import { type AIModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-config.type';
-import { WebSearchService } from 'src/engine/core-modules/web-search/web-search.service';
+import { type AiModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-config.type';
 import { SkillService } from 'src/engine/metadata-modules/skill/skill.service';
 
 export type ChatExecutionOptions = {
@@ -76,7 +74,7 @@ export type ChatExecutionOptions = {
 
 export type ChatExecutionResult = {
   stream: ReturnType<typeof streamText>;
-  modelConfig: AIModelConfig;
+  modelConfig: AiModelConfig;
 };
 
 @Injectable()
@@ -95,7 +93,6 @@ export class ChatExecutionService {
     private readonly exceptionHandlerService: ExceptionHandlerService,
     private readonly sdkProviderFactory: SdkProviderFactoryService,
     private readonly messagePruningService: MessagePruningService,
-    private readonly webSearchService: WebSearchService,
   ) {}
 
   async streamChat({
@@ -142,16 +139,18 @@ export class ChatExecutionService {
       `Built tool catalog with ${toolCatalog.length} tools, ${skillCatalog.length} skills available`,
     );
 
-    const useNativeSearch = this.webSearchService.shouldUseNativeSearch();
-
-    const toolNamesToPreload = [
-      ...COMMON_PRELOAD_TOOLS,
-      ...(useNativeSearch ? [] : ['web_search']),
-    ];
+    // Preload the Exa app tool (shipped as the `twenty-exa` npm package) so chat
+    // has structured web search ready without discovery. getToolsByName
+    // silently skips the entry when the workspace doesn't have the Exa app
+    // installed (admin hasn't registered it + flipped `isPreInstalled`).
+    // TODO(app-preloading): move this list into the app manifest so any
+    // app can declare `preloadedInChat: true` instead of hardcoding here.
+    const toolNamesToPreload = [...COMMON_PRELOAD_TOOLS, 'app_exa_web_search'];
 
     const preloadedTools = await this.toolRegistry.getToolsByName(
       toolNamesToPreload,
       toolContext,
+      { serializeOutput: true },
     );
 
     const resolvedModelId = modelId ?? workspace.smartModel;
@@ -170,15 +169,17 @@ export class ChatExecutionService {
       registeredModel.modelId,
     );
 
+    // Native web_search is returned when the resolved model's SDK provider
+    // exposes it (Anthropic, OpenAI). Coexists with app_exa_web_search when
+    // both are available — the model picks based on tool descriptions.
     const { tools: nativeSearchTools, callableToolNames: searchToolNames } =
-      useNativeSearch
-        ? this.getNativeWebSearchTools(registeredModel)
-        : { tools: {}, callableToolNames: [] };
+      this.getNativeWebSearchTools(registeredModel);
 
-    // Direct tools: native provider tools + preloaded tools.
-    // These are callable directly AND as fallback through execute_tool.
+    // Tools the model can call directly: preloaded registry tools (already
+    // serialized by the hydrator) plus SDK-native tools (opaque, never
+    // serialized). execute_tool routes discovered tools through the registry.
     const directTools: ToolSet = {
-      ...wrapToolsWithOutputSerialization(preloadedTools),
+      ...preloadedTools,
       ...nativeSearchTools,
     };
 
@@ -188,7 +189,7 @@ export class ChatExecutionService {
     ];
 
     // ToolSet is constant for the entire conversation — no mutation.
-    // learn_tools returns schemas as text; execute_tool dispatches to cached tools.
+    // learn_tools returns schemas as text; execute_tool dispatches via the registry.
     const activeTools: ToolSet = {
       ...directTools,
       [LEARN_TOOLS_TOOL_NAME]: createLearnToolsTool(
@@ -198,7 +199,7 @@ export class ChatExecutionService {
       [EXECUTE_TOOL_TOOL_NAME]: createExecuteToolTool(
         this.toolRegistry,
         toolContext,
-        directTools,
+        { serializeOutput: true },
       ),
       [LOAD_SKILL_TOOL_NAME]: createLoadSkillTool(
         (skillNames) =>
@@ -330,16 +331,13 @@ export class ChatExecutionService {
         userWorkspaceId,
       );
 
-      if (useNativeSearch) {
-        const nativeWebSearchCallCount =
-          countNativeWebSearchCallsFromSteps(steps);
-
-        this.aiBillingService.billNativeWebSearchUsage(
-          nativeWebSearchCallCount,
-          workspace.id,
-          userWorkspaceId,
-        );
-      }
+      // billNativeWebSearchUsage short-circuits when count <= 0, so calling
+      // unconditionally is safe regardless of whether native search fired.
+      this.aiBillingService.billNativeWebSearchUsage(
+        countNativeWebSearchCallsFromSteps(steps),
+        workspace.id,
+        userWorkspaceId,
+      );
     };
 
     const stream = streamText({
@@ -455,7 +453,7 @@ export class ChatExecutionService {
     return context;
   }
 
-  private getNativeWebSearchTools(model: RegisteredAIModel): {
+  private getNativeWebSearchTools(model: RegisteredAiModel): {
     tools: ToolSet;
     callableToolNames: string[];
   } {

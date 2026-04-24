@@ -29,6 +29,7 @@ describe('useColumnDefinitionsFromObjectMetadata', () => {
       workspaceCustomApplication: {
         id: CUSTOM_WORKSPACE_APPLICATION_MOCK.id,
       },
+      installedApplications: [],
       id: '1',
       featureFlags: [],
       allowImpersonation: false,

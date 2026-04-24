@@ -7,9 +7,12 @@ import {
   StepperProgressRail,
 } from '@/design-system/components';
 import { INFORMATIVE_ICONS } from '@/icons';
+import { StepperSwipeDeck } from '@/lib/stepper';
 import type { ProductStepperContentProps } from '@/sections/ProductStepper/types';
+import type { ProductStepperContentStepType } from '@/sections/ProductStepper/types/ProductStepperContentStep';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
+import type { CSSProperties } from 'react';
 
 const ContentRoot = styled.div`
   display: grid;
@@ -55,12 +58,22 @@ const StepBlock = styled.div`
   }
 `;
 
-const IntroBlock = styled.div`
+const SwipeStepBlock = styled.div`
   display: grid;
   grid-template-columns: 1fr;
   row-gap: ${theme.spacing(2)};
-  margin-top: calc(${theme.spacing(2)} - ${theme.spacing(26)});
+`;
+
+const IntroBlock = styled.div`
+  display: grid;
+  grid-template-columns: 1fr;
   margin-bottom: ${theme.spacing(4)};
+  margin-top: 0;
+  row-gap: ${theme.spacing(2)};
+
+  @media (min-width: ${theme.breakpoints.md}px) {
+    margin-top: calc(${theme.spacing(2)} - ${theme.spacing(26)});
+  }
 `;
 
 const StepRowHeader = styled.div`
@@ -86,12 +99,84 @@ const StepIconBox = styled.div`
   }
 `;
 
+function renderProductStepBlock(
+  step: ProductStepperContentStepType,
+  index: number,
+  activeStepIndex: number,
+  localProgress: number,
+  variant: 'scroll' | 'swipe',
+) {
+  const Icon = INFORMATIVE_ICONS[step.icon];
+  const isActive =
+    variant === 'swipe' ? index === activeStepIndex : index <= activeStepIndex;
+  const iconColor = isActive
+    ? theme.colors.highlight[100]
+    : theme.colors.secondary.text[100];
+
+  let opacity = 1;
+  let translateY = 0;
+
+  if (variant === 'scroll') {
+    if (index > activeStepIndex + 1) {
+      opacity = 0;
+      translateY = 300;
+    } else if (index === activeStepIndex + 1) {
+      opacity = 0.4;
+      translateY = 300 * (1 - localProgress);
+    }
+  }
+
+  const inner = (
+    <>
+      <StepRowHeader>
+        <StepIconBox data-active={String(isActive)}>
+          {Icon ? (
+            <Icon
+              color={
+                isActive ? theme.colors.primary.background[100] : iconColor
+              }
+              size={14}
+            />
+          ) : null}
+        </StepIconBox>
+        <Heading segments={step.heading} size="sm" weight="regular" />
+      </StepRowHeader>
+      <Body body={step.body} size="sm" />
+    </>
+  );
+
+  if (variant === 'swipe') {
+    return (
+      <SwipeStepBlock data-active={String(isActive)} key={index}>
+        {inner}
+      </SwipeStepBlock>
+    );
+  }
+
+  return (
+    <StepBlock
+      data-active={String(isActive)}
+      key={index}
+      style={
+        {
+          '--step-opacity': opacity,
+          '--step-translate-y': `${translateY}px`,
+        } as CSSProperties
+      }
+    >
+      {inner}
+    </StepBlock>
+  );
+}
+
 export function Content({
   activeStepIndex,
   body,
   eyebrow,
   heading,
+  layoutMode,
   localProgress,
+  onMobileStepIndexChange,
   steps,
 }: ProductStepperContentProps) {
   return (
@@ -108,54 +193,33 @@ export function Content({
           <Heading segments={heading} size="lg" weight="light" />
           <Body body={body} size="sm" />
         </IntroBlock>
-        {steps.map((step, index) => {
-          const Icon = INFORMATIVE_ICONS[step.icon];
-          const isActive = index <= activeStepIndex;
-          const iconColor = isActive
-            ? theme.colors.highlight[100]
-            : theme.colors.secondary.text[100];
-
-          let opacity = 1;
-          let translateY = 0;
-
-          if (index > activeStepIndex + 1) {
-            opacity = 0;
-            translateY = 300;
-          } else if (index === activeStepIndex + 1) {
-            opacity = 0.4;
-            translateY = 300 * (1 - localProgress);
-          }
-
-          return (
-            <StepBlock
-              data-active={String(isActive)}
-              key={index}
-              style={
-                {
-                  '--step-opacity': opacity,
-                  '--step-translate-y': `${translateY}px`,
-                } as React.CSSProperties
-              }
-            >
-              <StepRowHeader>
-                <StepIconBox data-active={String(isActive)}>
-                  {Icon ? (
-                    <Icon
-                      color={
-                        isActive
-                          ? theme.colors.primary.background[100]
-                          : iconColor
-                      }
-                      size={14}
-                    />
-                  ) : null}
-                </StepIconBox>
-                <Heading segments={step.heading} size="sm" weight="regular" />
-              </StepRowHeader>
-              <Body body={step.body} size="sm" />
-            </StepBlock>
-          );
-        })}
+        {layoutMode === 'swipe' ? (
+          <StepperSwipeDeck
+            activeIndex={activeStepIndex}
+            onActiveIndexChange={onMobileStepIndexChange}
+            stepCount={steps.length}
+          >
+            {(stepIndex) =>
+              renderProductStepBlock(
+                steps[stepIndex],
+                stepIndex,
+                activeStepIndex,
+                localProgress,
+                'swipe',
+              )
+            }
+          </StepperSwipeDeck>
+        ) : (
+          steps.map((step, index) =>
+            renderProductStepBlock(
+              step,
+              index,
+              activeStepIndex,
+              localProgress,
+              'scroll',
+            ),
+          )
+        )}
       </StepsColumn>
     </ContentRoot>
   );

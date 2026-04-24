@@ -45,6 +45,10 @@ export type CurrentWorkspace = Pick<
 > & {
   defaultRole?: Omit<Role, 'workspaceMembers' | 'agents' | 'apiKeys'> | null;
   workspaceCustomApplication: Pick<Application, 'id'> | null;
+  installedApplications: Pick<
+    Application,
+    'id' | 'name' | 'universalIdentifier'
+  >[];
 };
 
 export const currentWorkspaceState = createAtomState<CurrentWorkspace | null>({

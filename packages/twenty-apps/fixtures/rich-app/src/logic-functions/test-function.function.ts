@@ -1,4 +1,4 @@
-import { defineLogicFunction } from 'twenty-sdk';
+import { defineLogicFunction } from 'twenty-sdk/define';
 import { formatFarewell } from '../utils/greeting.util';
 
 const handler = () => {

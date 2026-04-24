@@ -6,10 +6,11 @@ import {
 } from 'src/modules/workflow/workflow-tools/types/workflow-tool-dependencies.type';
 
 const createDraftFromWorkflowVersionSchema = z.object({
-  workflowId: z.string().describe('The ID of the workflow'),
+  workflowId: z.string().uuid().describe('The UUID of the workflow'),
   workflowVersionIdToCopy: z
     .string()
-    .describe('The ID of the workflow version to create a draft from'),
+    .uuid()
+    .describe('The UUID of the workflow version to create a draft from'),
 });
 
 type CreateDraftFromWorkflowVersionInput = z.infer<

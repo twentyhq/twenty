@@ -1,4 +1,4 @@
-import type { CaseStudyVisualBlock } from '@/app/case-studies/_constants/types';
+import type { CaseStudyVisualBlock } from '@/app/customers/_constants/types';
 import { Container } from '@/design-system/components';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
@@ -10,13 +10,16 @@ const Section = styled.section`
   width: 100%;
 `;
 
-const StyledContainer = styled(Container)`
-  padding-bottom: ${theme.spacing(4)};
+const StyledContainer = styled(Container)<{ $isLast: boolean }>`
+  padding-bottom: ${({ $isLast }) =>
+    $isLast ? theme.spacing(20) : theme.spacing(4)};
   padding-left: ${theme.spacing(4)};
   padding-right: ${theme.spacing(4)};
   padding-top: ${theme.spacing(4)};
 
   @media (min-width: ${theme.breakpoints.md}px) {
+    padding-bottom: ${({ $isLast }) =>
+      $isLast ? theme.spacing(32) : theme.spacing(4)};
     padding-left: ${theme.spacing(10)};
     padding-right: ${theme.spacing(10)};
   }
@@ -38,12 +41,13 @@ const Visual = styled.div`
 
 type VisualBlockProps = {
   block: CaseStudyVisualBlock;
+  isLast?: boolean;
 };
 
-export function VisualBlock({ block }: VisualBlockProps) {
+export function VisualBlock({ block, isLast = false }: VisualBlockProps) {
   return (
     <Section>
-      <StyledContainer>
+      <StyledContainer $isLast={isLast}>
         <Visual>
           <Image
             alt={block.alt}

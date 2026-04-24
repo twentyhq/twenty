@@ -13,6 +13,9 @@
 /.next/
 /out/
 
+# generated (e.g. Playwright screenshots)
+/output/
+
 # production
 /build
 
@@ -26,6 +29,7 @@ yarn-debug.log*
 yarn-error.log*
 
 # local env files
+.env
 .env*.local
 
 # vercel

@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 import { useEffect, useState } from 'react';
 import { OAuthApplicationVariables } from 'src/logic-functions/get-oauth-application-variables';
 import { VERIFY_PAGE_PATH } from 'src/logic-functions/get-verify-page';
-import { defineFrontComponent } from 'twenty-sdk';
+import { defineFrontComponent } from 'twenty-sdk/define';
 
 const StyledContainer = styled.div`
   display: flex;

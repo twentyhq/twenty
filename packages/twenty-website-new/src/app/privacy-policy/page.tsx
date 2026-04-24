@@ -8,7 +8,7 @@ import { LegalDocumentPage } from '@/sections/LegalDocument/legal-document-page'
 import { PrivacyPolicyDocument } from './_components';
 
 export const metadata: Metadata = {
-  title: 'Privacy Policy — Twenty',
+  title: 'Privacy Policy | Twenty',
   description:
     'How Twenty collects, uses, safeguards, and discloses information when you use Twenty.com and related services.',
 };

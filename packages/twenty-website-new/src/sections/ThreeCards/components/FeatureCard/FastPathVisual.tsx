@@ -28,6 +28,9 @@ import { FastPathGradientBackdrop } from './FastPathGradientBackdrop';
 const APP_FONT = `'Inter', ${theme.font.family.sans}`;
 const FAST_PATH_NOISE_BACKGROUND =
   'url("/images/home/three-cards-feature/fast-path-background-noise.webp")';
+const SCENE_DESIGN_WIDTH = 411;
+const SCENE_DESIGN_HEIGHT = 524;
+const FAST_PATH_SCALED_SCENE_TRANSFORM = `scale(min(100cqw / ${SCENE_DESIGN_WIDTH}px, 100cqh / ${SCENE_DESIGN_HEIGHT}px))`;
 const TOOLBAR_VERTICAL_PADDING = 16;
 const ACTION_BUTTON_HEIGHT = 24;
 const TOOLBAR_TOTAL_HEIGHT =
@@ -107,6 +110,16 @@ const ConfettiBurstLayer = styled.div`
   overflow: hidden;
   pointer-events: none;
   position: absolute;
+`;
+
+const ScaledScene = styled.div`
+  height: 100%;
+  left: 0;
+  position: absolute;
+  top: 0;
+  transform: ${FAST_PATH_SCALED_SCENE_TRANSFORM};
+  transform-origin: bottom right;
+  width: 100%;
 `;
 
 const ConfettiParticle = styled.div<{
@@ -885,157 +898,162 @@ export function FastPathVisual({
           </ConfettiBurstLayer>
         ))}
       </SceneBackdrop>
-      <PreviewSurface $active={active} ref={previewSurfaceRef}>
-        <ToolbarRow>
-          <ActionButton>
-            <ActionIcon>
-              <IconPlus size={14} stroke={TOOLBAR_TABLER_STROKE} />
-            </ActionIcon>
-            <ActionLabel>New Record</ActionLabel>
-          </ActionButton>
-          <ActionButton $iconOnly>
-            <ActionIcon>
-              <IconChevronUp size={16} stroke={TOOLBAR_TABLER_STROKE} />
-            </ActionIcon>
-          </ActionButton>
-          <ActionButton $iconOnly>
-            <ActionIcon>
-              <IconChevronDown size={16} stroke={TOOLBAR_TABLER_STROKE} />
-            </ActionIcon>
-          </ActionButton>
-          <ActionButton>
-            <ActionIcon>
-              <IconDotsVertical size={14} stroke={TOOLBAR_TABLER_STROKE} />
-            </ActionIcon>
-            <ShortcutDivider />
-            <ActionLabel $muted>⌘K</ActionLabel>
-          </ActionButton>
-        </ToolbarRow>
+      <ScaledScene>
+        <PreviewSurface $active={active} ref={previewSurfaceRef}>
+          <ToolbarRow>
+            <ActionButton>
+              <ActionIcon>
+                <IconPlus size={14} stroke={TOOLBAR_TABLER_STROKE} />
+              </ActionIcon>
+              <ActionLabel>New Record</ActionLabel>
+            </ActionButton>
+            <ActionButton $iconOnly>
+              <ActionIcon>
+                <IconChevronUp size={16} stroke={TOOLBAR_TABLER_STROKE} />
+              </ActionIcon>
+            </ActionButton>
+            <ActionButton $iconOnly>
+              <ActionIcon>
+                <IconChevronDown size={16} stroke={TOOLBAR_TABLER_STROKE} />
+              </ActionIcon>
+            </ActionButton>
+            <ActionButton>
+              <ActionIcon>
+                <IconDotsVertical size={14} stroke={TOOLBAR_TABLER_STROKE} />
+              </ActionIcon>
+              <ShortcutDivider />
+              <ActionLabel $muted>⌘K</ActionLabel>
+            </ActionButton>
+          </ToolbarRow>
 
-        <CommandPalette>
-          <SearchRow>
-            <IconChevronLeft
-              color={COLORS.mutedStrong}
-              size={16}
-              stroke={TOOLBAR_TABLER_STROKE}
-            />
-            <SearchPlaceholder>Type anything...</SearchPlaceholder>
-            <SearchSparkles>
-              <IconSparkles
+          <CommandPalette>
+            <SearchRow>
+              <IconChevronLeft
                 color={COLORS.mutedStrong}
-                size={14}
+                size={16}
                 stroke={TOOLBAR_TABLER_STROKE}
               />
-            </SearchSparkles>
-          </SearchRow>
+              <SearchPlaceholder>Type anything...</SearchPlaceholder>
+              <SearchSparkles>
+                <IconSparkles
+                  color={COLORS.mutedStrong}
+                  size={14}
+                  stroke={TOOLBAR_TABLER_STROKE}
+                />
+              </SearchSparkles>
+            </SearchRow>
 
-          <PaletteBody>
-            <SectionLabel>Record Selection</SectionLabel>
-            <MenuItem onClick={handleCommandClick}>
-              <MenuIconBox>
-                <IconMail size={MENU_ICON_SIZE} stroke={MENU_TABLER_STROKE} />
-              </MenuIconBox>
-              <MenuItemLabel>Send email</MenuItemLabel>
-            </MenuItem>
-            <MenuItem
-              $active
-              data-preview-active="true"
-              onClick={handleCommandClick}
-            >
-              <PreviewCursor data-preview-cursor="true">
-                <PreviewCursorIcon />
-              </PreviewCursor>
-              <MenuIconBox>
-                <IconDatabaseExport
-                  size={MENU_ICON_SIZE}
-                  stroke={MENU_TABLER_STROKE}
-                />
-              </MenuIconBox>
-              <MenuItemLabel>Export selection as CSV</MenuItemLabel>
-            </MenuItem>
-            <MenuItem onClick={handleCommandClick}>
-              <MenuIconBox>
-                <IconTrash size={MENU_ICON_SIZE} stroke={MENU_TABLER_STROKE} />
-              </MenuIconBox>
-              <MenuItemLabel>Delete 8 records</MenuItemLabel>
-            </MenuItem>
+            <PaletteBody>
+              <SectionLabel>Record Selection</SectionLabel>
+              <MenuItem onClick={handleCommandClick}>
+                <MenuIconBox>
+                  <IconMail size={MENU_ICON_SIZE} stroke={MENU_TABLER_STROKE} />
+                </MenuIconBox>
+                <MenuItemLabel>Send email</MenuItemLabel>
+              </MenuItem>
+              <MenuItem
+                $active
+                data-preview-active="true"
+                onClick={handleCommandClick}
+              >
+                <PreviewCursor data-preview-cursor="true">
+                  <PreviewCursorIcon />
+                </PreviewCursor>
+                <MenuIconBox>
+                  <IconDatabaseExport
+                    size={MENU_ICON_SIZE}
+                    stroke={MENU_TABLER_STROKE}
+                  />
+                </MenuIconBox>
+                <MenuItemLabel>Export selection as CSV</MenuItemLabel>
+              </MenuItem>
+              <MenuItem onClick={handleCommandClick}>
+                <MenuIconBox>
+                  <IconTrash
+                    size={MENU_ICON_SIZE}
+                    stroke={MENU_TABLER_STROKE}
+                  />
+                </MenuIconBox>
+                <MenuItemLabel>Delete 8 records</MenuItemLabel>
+              </MenuItem>
 
-            <SectionLabel>&quot;Companies&quot; object</SectionLabel>
-            <MenuItem onClick={handleCommandClick}>
-              <MenuIconBox>
-                <IconDatabaseImport
-                  size={MENU_ICON_SIZE}
-                  stroke={MENU_TABLER_STROKE}
-                />
-              </MenuIconBox>
-              <MenuItemLabel>Import data</MenuItemLabel>
-            </MenuItem>
-            <MenuItem onClick={handleCommandClick}>
-              <MenuIconBox>
-                <IconBuildingSkyscraper
-                  size={MENU_ICON_SIZE}
-                  stroke={MENU_TABLER_STROKE}
-                />
-              </MenuIconBox>
-              <MenuItemLabel>Create company</MenuItemLabel>
-            </MenuItem>
+              <SectionLabel>&quot;Companies&quot; object</SectionLabel>
+              <MenuItem onClick={handleCommandClick}>
+                <MenuIconBox>
+                  <IconDatabaseImport
+                    size={MENU_ICON_SIZE}
+                    stroke={MENU_TABLER_STROKE}
+                  />
+                </MenuIconBox>
+                <MenuItemLabel>Import data</MenuItemLabel>
+              </MenuItem>
+              <MenuItem onClick={handleCommandClick}>
+                <MenuIconBox>
+                  <IconBuildingSkyscraper
+                    size={MENU_ICON_SIZE}
+                    stroke={MENU_TABLER_STROKE}
+                  />
+                </MenuIconBox>
+                <MenuItemLabel>Create company</MenuItemLabel>
+              </MenuItem>
 
-            <SectionLabel>Navigate</SectionLabel>
-            <MenuItem onClick={handleCommandClick}>
-              <MenuIconBox>
-                <IconArrowUpRight
-                  size={MENU_ICON_SIZE}
-                  stroke={MENU_TABLER_STROKE}
-                />
-              </MenuIconBox>
-              <MenuItemLabel>Go to People</MenuItemLabel>
-              <ShortcutHint>
-                <ShortcutKey>G</ShortcutKey>
-                then
-                <ShortcutKey>P</ShortcutKey>
-              </ShortcutHint>
-            </MenuItem>
-            <MenuItem onClick={handleCommandClick}>
-              <MenuIconBox>
-                <IconArrowUpRight
-                  size={MENU_ICON_SIZE}
-                  stroke={MENU_TABLER_STROKE}
-                />
-              </MenuIconBox>
-              <MenuItemLabel>Go to Opportunities</MenuItemLabel>
-              <ShortcutHint>
-                <ShortcutKey>G</ShortcutKey>
-                then
-                <ShortcutKey>O</ShortcutKey>
-              </ShortcutHint>
-            </MenuItem>
+              <SectionLabel>Navigate</SectionLabel>
+              <MenuItem onClick={handleCommandClick}>
+                <MenuIconBox>
+                  <IconArrowUpRight
+                    size={MENU_ICON_SIZE}
+                    stroke={MENU_TABLER_STROKE}
+                  />
+                </MenuIconBox>
+                <MenuItemLabel>Go to People</MenuItemLabel>
+                <ShortcutHint>
+                  <ShortcutKey>G</ShortcutKey>
+                  then
+                  <ShortcutKey>P</ShortcutKey>
+                </ShortcutHint>
+              </MenuItem>
+              <MenuItem onClick={handleCommandClick}>
+                <MenuIconBox>
+                  <IconArrowUpRight
+                    size={MENU_ICON_SIZE}
+                    stroke={MENU_TABLER_STROKE}
+                  />
+                </MenuIconBox>
+                <MenuItemLabel>Go to Opportunities</MenuItemLabel>
+                <ShortcutHint>
+                  <ShortcutKey>G</ShortcutKey>
+                  then
+                  <ShortcutKey>O</ShortcutKey>
+                </ShortcutHint>
+              </MenuItem>
 
-            <SectionLabel>Settings</SectionLabel>
-            <MenuItem onClick={handleCommandClick}>
-              <MenuIconBox>
-                <IconArrowUpRight
-                  size={MENU_ICON_SIZE}
-                  stroke={MENU_TABLER_STROKE}
-                />
-              </MenuIconBox>
-              <MenuItemLabel>Go to settings</MenuItemLabel>
-              <ShortcutHint>
-                <ShortcutKey>G</ShortcutKey>
-                then
-                <ShortcutKey>S</ShortcutKey>
-              </ShortcutHint>
-            </MenuItem>
-            <MenuItem onClick={handleCommandClick}>
-              <MenuIconBox>
-                <IconMoon size={MENU_ICON_SIZE} stroke={MENU_TABLER_STROKE} />
-              </MenuIconBox>
-              <MenuItemLabel>Switch to dark mode</MenuItemLabel>
-            </MenuItem>
-            <SectionSpacer />
-            <SectionSpacer />
-          </PaletteBody>
-        </CommandPalette>
-      </PreviewSurface>
+              <SectionLabel>Settings</SectionLabel>
+              <MenuItem onClick={handleCommandClick}>
+                <MenuIconBox>
+                  <IconArrowUpRight
+                    size={MENU_ICON_SIZE}
+                    stroke={MENU_TABLER_STROKE}
+                  />
+                </MenuIconBox>
+                <MenuItemLabel>Go to settings</MenuItemLabel>
+                <ShortcutHint>
+                  <ShortcutKey>G</ShortcutKey>
+                  then
+                  <ShortcutKey>S</ShortcutKey>
+                </ShortcutHint>
+              </MenuItem>
+              <MenuItem onClick={handleCommandClick}>
+                <MenuIconBox>
+                  <IconMoon size={MENU_ICON_SIZE} stroke={MENU_TABLER_STROKE} />
+                </MenuIconBox>
+                <MenuItemLabel>Switch to dark mode</MenuItemLabel>
+              </MenuItem>
+              <SectionSpacer />
+              <SectionSpacer />
+            </PaletteBody>
+          </CommandPalette>
+        </PreviewSurface>
+      </ScaledScene>
     </VisualRoot>
   );
 }

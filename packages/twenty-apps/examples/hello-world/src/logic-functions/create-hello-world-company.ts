@@ -1,5 +1,5 @@
 import { CoreApiClient } from 'twenty-client-sdk/core';
-import { defineLogicFunction } from 'twenty-sdk';
+import { defineLogicFunction } from 'twenty-sdk/define';
 
 const handler = async (): Promise<{ message: string }> => {
   const client = new CoreApiClient();

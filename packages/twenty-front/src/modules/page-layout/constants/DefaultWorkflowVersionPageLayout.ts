@@ -39,6 +39,7 @@ export const DEFAULT_WORKFLOW_VERSION_PAGE_LAYOUT: PageLayout = {
       widgets: [
         {
           __typename: 'PageLayoutWidget',
+          applicationId: '',
           id: 'workflow-version-widget-fields',
           isActive: true,
           pageLayoutTabId: 'workflow-version-tab-fields',
@@ -80,6 +81,7 @@ export const DEFAULT_WORKFLOW_VERSION_PAGE_LAYOUT: PageLayout = {
       widgets: [
         {
           __typename: 'PageLayoutWidget',
+          applicationId: '',
           id: 'workflow-version-widget-flow',
           isActive: true,
           pageLayoutTabId: 'workflow-version-tab-flow',

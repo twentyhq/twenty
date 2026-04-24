@@ -2,15 +2,13 @@ import { Test, type TestingModule } from '@nestjs/testing';
 
 import { getWorkflowRunContext, StepStatus } from 'twenty-shared/workflow';
 
-import { BILLING_WORKFLOW_EXECUTION_ERROR_MESSAGE } from 'src/engine/core-modules/billing/constants/billing-workflow-execution-error-message.constant';
+import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { USAGE_RECORDED } from 'src/engine/core-modules/usage/constants/usage-recorded.constant';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
-import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
-import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
-import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { WorkflowActionFactory } from 'src/modules/workflow/workflow-executor/factories/workflow-action.factory';
 import { shouldExecuteStep } from 'src/modules/workflow/workflow-executor/utils/should-execute-step.util';
@@ -71,11 +69,6 @@ describe('WorkflowExecutorWorkspaceService', () => {
     getWorkflowRunOrFail: jest.fn(),
   };
 
-  const mockBillingService = {
-    isBillingEnabled: jest.fn().mockReturnValue(true),
-    canBillMeteredProduct: jest.fn().mockReturnValue(true),
-  };
-
   const mockExceptionHandlerService = {
     captureExceptions: jest.fn(),
   };
@@ -107,10 +100,6 @@ describe('WorkflowExecutorWorkspaceService', () => {
         {
           provide: WorkflowRunWorkspaceService,
           useValue: mockWorkflowRunWorkspaceService,
-        },
-        {
-          provide: BillingService,
-          useValue: mockBillingService,
         },
         {
           provide: ExceptionHandlerService,
@@ -213,7 +202,7 @@ describe('WorkflowExecutorWorkspaceService', () => {
           {
             resourceType: UsageResourceType.WORKFLOW,
             operationType: UsageOperationType.WORKFLOW_EXECUTION,
-            creditsUsedMicro: 1,
+            creditsUsedMicro: 100,
             quantity: 1,
             unit: UsageUnit.INVOCATION,
             resourceId: 'workflow-id',
@@ -339,39 +328,6 @@ describe('WorkflowExecutorWorkspaceService', () => {
       expect(workflowActionFactory.get).not.toHaveBeenCalledWith(
         WorkflowActionType.SEND_EMAIL,
       );
-    });
-
-    it('should stop when billing validation fails', async () => {
-      mockBillingService.isBillingEnabled.mockReturnValueOnce(true);
-      mockBillingService.canBillMeteredProduct.mockReturnValueOnce(false);
-
-      await service.executeFromSteps({
-        workflowRunId: mockWorkflowRunId,
-        stepIds: ['step-1'],
-        workspaceId: mockWorkspaceId,
-      });
-
-      expect(workflowActionFactory.get).toHaveBeenCalledTimes(0);
-
-      expect(
-        workflowRunWorkspaceService.updateWorkflowRunStepInfo,
-      ).toHaveBeenCalledTimes(1);
-
-      expect(workflowRunWorkspaceService.endWorkflowRun).toHaveBeenCalledTimes(
-        1,
-      );
-
-      expect(
-        workflowRunWorkspaceService.updateWorkflowRunStepInfo,
-      ).toHaveBeenCalledWith({
-        stepId: 'step-1',
-        stepInfo: {
-          error: BILLING_WORKFLOW_EXECUTION_ERROR_MESSAGE,
-          status: StepStatus.FAILED,
-        },
-        workflowRunId: mockWorkflowRunId,
-        workspaceId: 'workspace-id',
-      });
     });
 
     it('should not emit billing event for skipped steps', async () => {
@@ -728,7 +684,7 @@ describe('WorkflowExecutorWorkspaceService', () => {
           {
             resourceType: UsageResourceType.WORKFLOW,
             operationType: UsageOperationType.WORKFLOW_EXECUTION,
-            creditsUsedMicro: 1,
+            creditsUsedMicro: 100,
             quantity: 1,
             unit: UsageUnit.INVOCATION,
             resourceId: 'workflow-id',

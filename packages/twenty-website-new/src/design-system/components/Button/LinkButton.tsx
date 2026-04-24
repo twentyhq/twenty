@@ -24,15 +24,26 @@ export function LinkButton({
   color,
   href,
   label,
+  leadingIcon,
+  size = 'regular',
   type,
   variant,
 }: LinkButtonProps) {
-  const inner = <BaseButton color={color} label={label} variant={variant} />;
+  const inner = (
+    <BaseButton
+      color={color}
+      label={label}
+      leadingIcon={leadingIcon}
+      size={size}
+      variant={variant}
+    />
+  );
 
   if (type === 'anchor') {
     return (
       <StyledButtonAnchor
         data-color={color}
+        data-size={size}
         data-variant={variant}
         href={href}
         rel="noopener noreferrer"
@@ -44,7 +55,12 @@ export function LinkButton({
   }
 
   return (
-    <StyledButtonLink data-color={color} data-variant={variant} href={href}>
+    <StyledButtonLink
+      data-color={color}
+      data-size={size}
+      data-variant={variant}
+      href={href}
+    >
       {inner}
     </StyledButtonLink>
   );

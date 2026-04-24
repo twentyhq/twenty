@@ -48,4 +48,10 @@ export const colors = {
     },
   },
   highlight: { 100: 'var(--color-blue-100)', 70: 'var(--color-blue-70)' },
+  accent: {
+    blue: { 100: 'var(--color-blue-100)', 70: 'var(--color-blue-70)' },
+    pink: { 100: 'var(--color-pink-100)', 70: 'var(--color-pink-70)' },
+    yellow: { 100: 'var(--color-yellow-100)', 70: 'var(--color-yellow-70)' },
+    green: { 100: 'var(--color-green-100)', 70: 'var(--color-green-70)' },
+  },
 };

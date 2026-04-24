@@ -11,12 +11,14 @@ export const buildDefaultFieldsWidgetGroups = ({
   fields: FieldMetadataItem[];
   labelIdentifierFieldMetadataItemId: string | undefined;
 }): FieldsWidgetGroup[] => {
-  const eligibleFields = fields.filter((field) =>
-    isFieldMetadataEligibleForFieldsWidget({
-      fieldName: field.name,
-      fieldType: field.type,
-      isLabelIdentifierField: field.id === labelIdentifierFieldMetadataItemId,
-    }),
+  const eligibleFields = fields.filter(
+    (field) =>
+      field.isActive &&
+      isFieldMetadataEligibleForFieldsWidget({
+        fieldName: field.name,
+        fieldType: field.type,
+        isLabelIdentifierField: field.id === labelIdentifierFieldMetadataItemId,
+      }),
   );
 
   const standardFields = eligibleFields.filter((field) => !field.isCustom);

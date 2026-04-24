@@ -8,7 +8,7 @@ import { LegalDocumentPage } from '@/sections/LegalDocument/legal-document-page'
 import { TermsDocument } from './_components';
 
 export const metadata: Metadata = {
-  title: 'Terms of Service — Twenty',
+  title: 'Terms of Service | Twenty',
   description:
     'Terms of Service for Twenty.com PBC, including use of Twenty.com, sub-domains, and related services.',
 };

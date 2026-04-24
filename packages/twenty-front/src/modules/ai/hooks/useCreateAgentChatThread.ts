@@ -5,7 +5,7 @@ import {
   agentChatDraftsByThreadIdState,
 } from '@/ai/states/agentChatDraftsByThreadIdState';
 import { agentChatInputState } from '@/ai/states/agentChatInputState';
-import { currentAIChatThreadState } from '@/ai/states/currentAIChatThreadState';
+import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { shouldFocusChatEditorState } from '@/ai/states/shouldFocusChatEditorState';
 import { hasTriggeredCreateForDraftState } from '@/ai/states/hasTriggeredCreateForDraftState';
 import { isCreatingChatThreadState } from '@/ai/states/isCreatingChatThreadState';
@@ -20,7 +20,7 @@ import { useMutation } from '@apollo/client/react';
 import { CreateChatThreadDocument } from '~/generated-metadata/graphql';
 
 export const useCreateAgentChatThread = () => {
-  const setCurrentAIChatThread = useSetAtomState(currentAIChatThreadState);
+  const setCurrentAiChatThread = useSetAtomState(currentAiChatThreadState);
   const setAgentChatInput = useSetAtomState(agentChatInputState);
   const setIsCreatingChatThread = useSetAtomState(isCreatingChatThreadState);
   const setAgentChatDraftsByThreadId = useSetAtomState(
@@ -55,7 +55,7 @@ export const useCreateAgentChatThread = () => {
 
       const newThreadId = data.createChatThread.id;
       const previousDraftKey =
-        store.get(currentAIChatThreadState.atom) ??
+        store.get(currentAiChatThreadState.atom) ??
         AGENT_CHAT_NEW_THREAD_DRAFT_KEY;
       const draftsSnapshot = store.get(agentChatDraftsByThreadIdState.atom);
       const newDraft = draftsSnapshot[AGENT_CHAT_NEW_THREAD_DRAFT_KEY] ?? '';
@@ -79,7 +79,7 @@ export const useCreateAgentChatThread = () => {
         }));
       }
 
-      setCurrentAIChatThread(newThreadId);
+      setCurrentAiChatThread(newThreadId);
       setAgentChatInput(newDraft);
     },
     onError: () => {

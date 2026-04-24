@@ -22,10 +22,10 @@ export const HELPED_DATA: HelpedDataType = {
       icon: 'w3villa',
       heading: { text: 'Ship a product on Twenty', fontFamily: 'sans' },
       body: {
-        text: 'W3villa built W3Grads — AI mock interviews at scale — on Twenty as the operational backbone.',
+        text: 'W3villa built W3Grads for AI mock interviews at scale, with Twenty as the operational backbone.',
       },
       illustration: 'target',
-      href: '/case-studies/w3villa',
+      href: '/customers/w3villa',
     },
     {
       icon: 'act-education',
@@ -34,7 +34,7 @@ export const HELPED_DATA: HelpedDataType = {
         text: 'AC&T replaced a shuttered vendor CRM with self-hosted Twenty and cut CRM costs by more than 90%.',
       },
       illustration: 'spaceship',
-      href: '/case-studies/act-education',
+      href: '/customers/act-education',
     },
     {
       icon: 'netzero',
@@ -43,7 +43,7 @@ export const HELPED_DATA: HelpedDataType = {
         text: 'NetZero runs a modular Twenty setup across carbon credits, ag products, and industrial systems.',
       },
       illustration: 'money',
-      href: '/case-studies/netzero',
+      href: '/customers/netzero',
     },
   ],
 };

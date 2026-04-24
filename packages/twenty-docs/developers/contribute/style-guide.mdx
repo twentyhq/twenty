@@ -1,0 +1,176 @@
+---
+title: Style Guide
+icon: "paintbrush"
+description: Code conventions and best practices for contributing to Twenty.
+---
+
+## React
+
+### Functional components only
+
+Always use TSX functional components with named exports.
+
+```tsx
+// ❌ Bad
+const MyComponent = () => {
+  return <div>Hello World</div>;
+};
+export default MyComponent;
+
+// ✅ Good
+export function MyComponent() {
+  return <div>Hello World</div>;
+};
+```
+
+### Props
+
+Create a type named `{ComponentName}Props`. Use destructuring. Don't use `React.FC`.
+
+```tsx
+type MyComponentProps = {
+  name: string;
+};
+
+export const MyComponent = ({ name }: MyComponentProps) => <div>Hello {name}</div>;
+```
+
+### No single-variable prop spreading
+
+```tsx
+// ❌ Bad
+const MyComponent = (props: MyComponentProps) => <Other {...props} />;
+
+// ✅ Good
+const MyComponent = ({ prop1, prop2 }: MyComponentProps) => <Other {...{ prop1, prop2 }} />;
+```
+
+## State Management
+
+### Jotai atoms for global state
+
+```tsx
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+
+export const myAtomState = createAtomState<string>({
+  key: 'myAtomState',
+  defaultValue: 'default value',
+});
+```
+
+- Prefer atoms over prop drilling
+- Don't use `useRef` for state — use `useState` or atoms
+- Use atom families and selectors for lists
+
+### Avoid unnecessary re-renders
+
+- Extract `useEffect` and data fetching into sibling sidecar components
+- Prefer event handlers (`handleClick`, `handleChange`) over `useEffect`
+- Don't use `React.memo()` — fix the root cause instead
+- Limit `useCallback` / `useMemo` usage
+
+```tsx
+// ❌ Bad — useEffect in the same component causes re-renders
+export const Page = () => {
+  const [data, setData] = useAtomState(dataState);
+  const [dep] = useAtomState(depState);
+  useEffect(() => { setData(dep); }, [dep]);
+  return <div>{data}</div>;
+};
+
+// ✅ Good — extract into sibling
+export const PageData = () => {
+  const [data, setData] = useAtomState(dataState);
+  const [dep] = useAtomState(depState);
+  useEffect(() => { setData(dep); }, [dep]);
+  return <></>;
+};
+export const Page = () => {
+  const [data] = useAtomState(dataState);
+  return <div>{data}</div>;
+};
+```
+
+## TypeScript
+
+- **`type` over `interface`** — more flexible, easier to compose
+- **String literals over enums** — except for GraphQL codegen enums and internal library APIs
+- **No `any`** — strict TypeScript enforced
+- **No type imports** — use regular imports (enforced by Oxlint `typescript/consistent-type-imports`)
+- **Use [Zod](https://github.com/colinhacks/zod)** for runtime validation of untyped objects
+
+## JavaScript
+
+```tsx
+// Use nullish-coalescing (??) instead of ||
+const value = process.env.MY_VALUE ?? 'default';
+
+// Use optional chaining
+onClick?.();
+```
+
+## Naming
+
+- **Variables**: camelCase, descriptive (`email` not `value`, `fieldMetadata` not `fm`)
+- **Constants**: SCREAMING_SNAKE_CASE
+- **Types/Classes**: PascalCase
+- **Files/directories**: kebab-case (`.component.tsx`, `.service.ts`, `.entity.ts`)
+- **Event handlers**: `handleClick` (not `onClick` for the handler function)
+- **Component props**: prefix with component name (`ButtonProps`)
+- **Styled components**: prefix with `Styled` (`StyledTitle`)
+
+## Styling
+
+Use [Linaria](https://github.com/callstack/linaria) styled components. Use theme values — avoid hardcoded `px`, `rem`, or colors.
+
+```tsx
+// ❌ Bad
+const StyledButton = styled.button`
+  color: #333333;
+  font-size: 1rem;
+  margin-left: 4px;
+`;
+
+// ✅ Good
+const StyledButton = styled.button`
+  color: ${({ theme }) => theme.font.color.primary};
+  font-size: ${({ theme }) => theme.font.size.md};
+  margin-left: ${({ theme }) => theme.spacing(1)};
+`;
+```
+
+## Imports
+
+Use aliases instead of relative paths:
+
+```tsx
+// ❌ Bad
+import { Foo } from '../../../../../testing/decorators/Foo';
+
+// ✅ Good
+import { Foo } from '~/testing/decorators/Foo';
+import { Bar } from '@/modules/bar/components/Bar';
+```
+
+## Folder Structure
+
+```
+front
+└── modules/         # Feature modules
+│   └── module1/
+│       ├── components/
+│       ├── constants/
+│       ├── contexts/
+│       ├── graphql/  (fragments, queries, mutations)
+│       ├── hooks/
+│       ├── states/   (atoms, selectors)
+│       ├── types/
+│       └── utils/
+└── pages/           # Route-level components
+└── ui/              # Reusable UI components (display, input, feedback, ...)
+```
+
+- Modules can import from other modules, but `ui/` should stay dependency-free
+- Use `internal/` subfolders for module-private code
+- Components under 300 lines, services under 500 lines

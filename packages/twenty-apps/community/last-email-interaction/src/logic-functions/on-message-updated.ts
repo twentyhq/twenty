@@ -1,8 +1,4 @@
-import {
-  DatabaseEventPayload,
-  defineLogicFunction,
-  ObjectRecordCreateEvent,
-} from 'twenty-sdk';
+import { DatabaseEventPayload, defineLogicFunction, ObjectRecordCreateEvent } from 'twenty-sdk/define';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 import { calculateStatus } from '../shared/calculate-status';
 

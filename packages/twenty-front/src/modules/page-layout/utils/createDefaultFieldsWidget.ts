@@ -21,6 +21,7 @@ export const createDefaultFieldsWidget = ({
   return {
     __typename: 'PageLayoutWidget',
     id,
+    applicationId: '',
     pageLayoutTabId,
     title: 'Fields',
     isActive: true,

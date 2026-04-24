@@ -1,4 +1,4 @@
-import { Object } from 'twenty-sdk';
+import { Object } from 'twenty-sdk/define';
 
 @Object({
   universalIdentifier: 'd1831348-b4a4-4426-9c0b-0af19e7a9c27',

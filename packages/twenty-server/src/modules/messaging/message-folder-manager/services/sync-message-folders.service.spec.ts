@@ -370,7 +370,6 @@ describe('SyncMessageFoldersService', () => {
           id: 'folder-1',
           externalId: 'inbox-ext',
           name: 'INBOX',
-          isSynced: true,
           isSentFolder: false,
           parentFolderId: null,
         });
@@ -378,7 +377,6 @@ describe('SyncMessageFoldersService', () => {
           createMockDiscoveredFolder({
             externalId: 'inbox-ext',
             name: 'INBOX',
-            isSynced: true,
             isSentFolder: false,
             parentFolderId: null,
           }),
@@ -476,7 +474,6 @@ describe('SyncMessageFoldersService', () => {
           createMockDiscoveredFolder({
             externalId: 'unchanged-ext',
             name: 'Unchanged',
-            isSynced: true,
           }),
           createMockDiscoveredFolder({
             externalId: 'new-ext',
@@ -537,7 +534,6 @@ describe('SyncMessageFoldersService', () => {
           createMockDiscoveredFolder({
             externalId: 'inbox-ext',
             name: 'INBOX',
-            isSynced: true,
           }),
         ];
         const messageChannel = createMockMessageChannel({

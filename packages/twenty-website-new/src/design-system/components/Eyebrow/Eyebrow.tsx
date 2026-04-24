@@ -29,23 +29,43 @@ const eyebrowColorSecondary = css`
   color: ${theme.colors.secondary.text[60]};
 `;
 
+const eyebrowLabelClassName = css`
+  &&[data-size='xs'] {
+    font-size: ${theme.font.size(4.5)};
+    line-height: ${theme.lineHeight(6)};
+  }
+`;
+
 type EyebrowProps = {
   heading: HeadingType;
   colorScheme: 'primary' | 'secondary';
+  markerHeight?: number;
+  markerWidth?: number;
 };
 
-export function Eyebrow({ heading, colorScheme }: EyebrowProps) {
+export function Eyebrow({
+  heading,
+  colorScheme,
+  markerHeight,
+  markerWidth,
+}: EyebrowProps) {
   const colorClassName =
     colorScheme === 'primary' ? eyebrowColorPrimary : eyebrowColorSecondary;
+  const headingClassName = [eyebrowLabelClassName, colorClassName].join(' ');
 
   return (
     <EyebrowRow>
       <IconWrapper>
-        <RectangleFillIcon size={14} fillColor={theme.colors.highlight[100]} />
+        <RectangleFillIcon
+          fillColor={theme.colors.highlight[100]}
+          height={markerHeight}
+          size={14}
+          width={markerWidth}
+        />
       </IconWrapper>
       <Heading
         as="h3"
-        className={colorClassName}
+        className={headingClassName}
         segments={{ fontFamily: heading.fontFamily, text: heading.text }}
         size="xs"
         weight="medium"

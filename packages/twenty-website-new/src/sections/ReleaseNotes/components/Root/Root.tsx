@@ -10,15 +10,17 @@ const StyledSection = styled.section`
 `;
 
 const StyledContainer = styled(Container)`
+  max-width: 800px;
   padding-bottom: ${theme.spacing(20)};
   padding-left: ${theme.spacing(4)};
   padding-right: ${theme.spacing(4)};
-  padding-top: ${theme.spacing(4)};
+  padding-top: ${theme.spacing(8)};
 
   @media (min-width: ${theme.breakpoints.md}px) {
     padding-bottom: ${theme.spacing(28)};
     padding-left: ${theme.spacing(10)};
     padding-right: ${theme.spacing(10)};
+    padding-top: ${theme.spacing(10)};
   }
 `;
 
@@ -43,7 +45,7 @@ type RootProps = {
 
 export function Root({ children }: RootProps) {
   return (
-    <StyledSection aria-label="Release notes">
+    <StyledSection aria-label="Releases">
       <StyledContainer>{children}</StyledContainer>
     </StyledSection>
   );

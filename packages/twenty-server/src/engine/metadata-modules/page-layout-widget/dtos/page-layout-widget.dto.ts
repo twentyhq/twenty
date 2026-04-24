@@ -42,6 +42,9 @@ export class PageLayoutWidgetDTO {
   id: string;
 
   @Field(() => UUIDScalarType, { nullable: false })
+  applicationId: string;
+
+  @Field(() => UUIDScalarType, { nullable: false })
   pageLayoutTabId: string;
 
   @Field({ nullable: false })

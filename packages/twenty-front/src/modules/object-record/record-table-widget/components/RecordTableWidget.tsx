@@ -1,3 +1,4 @@
+import { RecordIndexTableContainerEffect } from '@/object-record/record-index/components/RecordIndexTableContainerEffect';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { RecordTableWidgetSetReadOnlyColumnHeadersEffect } from '@/object-record/record-table-widget/components/RecordTableWidgetSetReadOnlyColumnHeadersEffect';
 import { RecordTableWithWrappers } from '@/object-record/record-table/components/RecordTableWithWrappers';
@@ -19,6 +20,7 @@ export const RecordTableWidget = () => {
       <RecordTableWidgetSetReadOnlyColumnHeadersEffect
         recordTableId={recordIndexId}
       />
+      <RecordIndexTableContainerEffect />
       <StyledTableContainer>
         <RecordTableWithWrappers
           recordTableId={recordIndexId}

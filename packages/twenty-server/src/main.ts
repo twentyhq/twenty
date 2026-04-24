@@ -14,6 +14,7 @@ import { setPgDateTypeParser } from 'src/database/pg/set-pg-date-type-parser';
 import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
 import { getSessionStorageOptions } from 'src/engine/core-modules/session-storage/session-storage.module-factory';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { configTransformers } from 'src/engine/core-modules/twenty-config/utils/config-transformers.util';
 import { UnhandledExceptionFilter } from 'src/filters/unhandled-exception.filter';
 
 import { AppModule } from './app.module';
@@ -27,7 +28,9 @@ const bootstrap = async () => {
   setPgDateTypeParser();
 
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
-    cors: true,
+    // Expose WWW-Authenticate so browser-based MCP clients can read the
+    // resource_metadata pointer on 401. Required by MCP authorization spec.
+    cors: { exposedHeaders: ['WWW-Authenticate'] },
     bufferLogs: process.env.LOGGER_IS_BUFFER_ENABLED === 'true',
     // Suppress NestJS bootstrap noise ([InstanceLoader], [RouterExplorer], etc.).
     // These fire before app.useLogger() below and can't be filtered by context.
@@ -47,6 +50,13 @@ const bootstrap = async () => {
   });
   const logger = app.get(LoggerService);
   const twentyConfigService = app.get(TwentyConfigService);
+
+  const trustProxyRaw = twentyConfigService.get('TRUST_PROXY');
+  const trustProxy = /^\d+$/.test(trustProxyRaw)
+    ? Number(trustProxyRaw)
+    : (configTransformers.boolean(trustProxyRaw) ?? trustProxyRaw);
+
+  app.set('trust proxy', trustProxy);
 
   app.use(session(getSessionStorageOptions(twentyConfigService)));
 

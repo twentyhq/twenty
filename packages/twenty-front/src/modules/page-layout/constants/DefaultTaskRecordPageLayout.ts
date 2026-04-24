@@ -33,6 +33,7 @@ export const DEFAULT_TASK_RECORD_PAGE_LAYOUT: PageLayout = {
       widgets: [
         {
           __typename: 'PageLayoutWidget',
+          applicationId: '',
           id: 'task-widget-fields',
           isActive: true,
           pageLayoutTabId: 'task-tab-fields',
@@ -57,6 +58,7 @@ export const DEFAULT_TASK_RECORD_PAGE_LAYOUT: PageLayout = {
         },
         {
           __typename: 'PageLayoutWidget',
+          applicationId: '',
           id: 'task-widget-note',
           isActive: true,
           pageLayoutTabId: 'task-tab-fields',
@@ -104,6 +106,7 @@ export const DEFAULT_TASK_RECORD_PAGE_LAYOUT: PageLayout = {
       widgets: [
         {
           __typename: 'PageLayoutWidget',
+          applicationId: '',
           id: 'task-widget-note',
           isActive: true,
           pageLayoutTabId: 'task-tab-note',
@@ -151,6 +154,7 @@ export const DEFAULT_TASK_RECORD_PAGE_LAYOUT: PageLayout = {
       widgets: [
         {
           __typename: 'PageLayoutWidget',
+          applicationId: '',
           id: 'task-widget-timeline',
           isActive: true,
           pageLayoutTabId: 'task-tab-timeline',
@@ -191,6 +195,7 @@ export const DEFAULT_TASK_RECORD_PAGE_LAYOUT: PageLayout = {
       widgets: [
         {
           __typename: 'PageLayoutWidget',
+          applicationId: '',
           id: 'task-widget-files',
           isActive: true,
           pageLayoutTabId: 'task-tab-files',

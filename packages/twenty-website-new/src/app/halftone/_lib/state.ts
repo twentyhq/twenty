@@ -1,6 +1,7 @@
 export type HalftoneTabId = 'design' | 'animations' | 'export';
 export type HalftoneSourceMode = 'shape' | 'image';
 export type HalftoneMaterialSurface = 'solid' | 'glass';
+export type HalftoneToneTarget = 'light' | 'dark';
 export type HalftoneRotateAxis =
   | 'x'
   | 'y'
@@ -35,6 +36,7 @@ export interface HalftoneEffectSettings {
   enabled: boolean;
   scale: number;
   power: number;
+  toneTarget: HalftoneToneTarget;
   width: number;
   imageContrast: number;
   dashColor: string;
@@ -199,6 +201,7 @@ export const DEFAULT_SHAPE_HALFTONE_SETTINGS: HalftoneEffectSettings = {
   enabled: true,
   scale: 24.72,
   power: -0.07,
+  toneTarget: 'light',
   width: 0.46,
   imageContrast: 1,
   dashColor: '#4A38F5',
@@ -209,6 +212,7 @@ export const DEFAULT_IMAGE_HALFTONE_SETTINGS: HalftoneEffectSettings = {
   enabled: true,
   scale: 24.72,
   power: -0.07,
+  toneTarget: 'light',
   width: 0.46,
   imageContrast: 1,
   dashColor: '#4A38F5',
@@ -407,9 +411,10 @@ export const LEGACY_HALFTONE_SETTING_KEYS = [
 
 export function isRoundedBandHalftoneSettings(value: unknown): value is Omit<
   HalftoneEffectSettings,
-  'hoverDashColor'
+  'hoverDashColor' | 'toneTarget'
 > & {
   hoverDashColor?: string;
+  toneTarget?: HalftoneToneTarget;
 } {
   if (!value || typeof value !== 'object') {
     return false;
@@ -424,6 +429,9 @@ export function isRoundedBandHalftoneSettings(value: unknown): value is Omit<
     typeof candidate.width === 'number' &&
     typeof candidate.imageContrast === 'number' &&
     typeof candidate.dashColor === 'string' &&
+    (candidate.toneTarget === 'light' ||
+      candidate.toneTarget === 'dark' ||
+      typeof candidate.toneTarget === 'undefined') &&
     (typeof candidate.hoverDashColor === 'string' ||
       typeof candidate.hoverDashColor === 'undefined')
   );
@@ -443,6 +451,7 @@ function normalizeHalftoneEffectSettings(
     enabled: settings?.enabled ?? defaults.enabled,
     scale: settings?.scale ?? defaults.scale,
     power: settings?.power ?? defaults.power,
+    toneTarget: settings?.toneTarget ?? defaults.toneTarget,
     width: settings?.width ?? defaults.width,
     imageContrast: settings?.imageContrast ?? defaults.imageContrast,
     dashColor: settings?.dashColor ?? defaults.dashColor,

@@ -123,6 +123,7 @@ export const createTestWidget = (
 ): PageLayoutWidget => ({
   __typename: 'PageLayoutWidget',
   id: 'widget-1',
+  applicationId: 'test-application-id',
   pageLayoutTabId: 'tab-1',
   title: 'Test Widget',
   type: WidgetType.GRAPH,

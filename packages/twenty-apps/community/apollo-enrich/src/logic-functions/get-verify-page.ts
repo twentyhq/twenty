@@ -1,4 +1,4 @@
-import { defineLogicFunction } from "twenty-sdk";
+import { defineLogicFunction } from "twenty-sdk/define";
 
 export const VERIFY_PAGE_PATH = '/oauth/verify';
 

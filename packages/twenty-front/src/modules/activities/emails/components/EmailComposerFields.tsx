@@ -111,7 +111,7 @@ export const EmailComposerFields = ({
         placeholder={t`Type something or press "/" to see commands`}
         minHeight={120}
         maxWidth={600}
-        contentType="json"
+        contentType="html"
       />
       <EmailAttachmentsField
         label={t`Attachments`}

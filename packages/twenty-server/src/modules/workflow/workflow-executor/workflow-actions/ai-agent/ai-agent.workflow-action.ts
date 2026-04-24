@@ -10,7 +10,6 @@ import { AgentAsyncExecutorService } from 'src/engine/metadata-modules/ai/ai-age
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { AiBillingService } from 'src/engine/metadata-modules/ai/ai-billing/services/ai-billing.service';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
-import { WebSearchService } from 'src/engine/core-modules/web-search/web-search.service';
 import { AUTO_SELECT_SMART_MODEL_ID } from 'twenty-shared/constants';
 import {
   WorkflowStepExecutorException,
@@ -28,7 +27,6 @@ export class AiAgentWorkflowAction implements WorkflowAction {
   constructor(
     private readonly aiAgentExecutionService: AgentAsyncExecutorService,
     private readonly aiBillingService: AiBillingService,
-    private readonly webSearchService: WebSearchService,
     private readonly workflowExecutionContextService: WorkflowExecutionContextService,
     @InjectRepository(AgentEntity)
     private readonly agentRepository: Repository<AgentEntity>,
@@ -101,13 +99,13 @@ export class AiAgentWorkflowAction implements WorkflowAction {
       userWorkspaceId,
     );
 
-    if (this.webSearchService.shouldUseNativeSearch()) {
-      this.aiBillingService.billNativeWebSearchUsage(
-        nativeWebSearchCallCount,
-        workspaceId,
-        userWorkspaceId,
-      );
-    }
+    // billNativeWebSearchUsage short-circuits when count <= 0, so calling
+    // unconditionally is safe regardless of whether native search fired.
+    this.aiBillingService.billNativeWebSearchUsage(
+      nativeWebSearchCallCount,
+      workspaceId,
+      userWorkspaceId,
+    );
 
     return {
       result,

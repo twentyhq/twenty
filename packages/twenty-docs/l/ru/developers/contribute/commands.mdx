@@ -1,0 +1,77 @@
+---
+title: Команды
+icon: terminal
+description: Полезные команды для разработки Twenty.
+---
+
+Команды можно запускать из корня репозитория с помощью `npx nx`. Используйте `npx nx run {project}:{command}` для явного указания цели.
+
+## Запуск приложения
+
+```bash
+npx nx start twenty-front          # Frontend dev server (http://localhost:3001)
+npx nx start twenty-server         # Backend server (http://localhost:3000)
+npx nx run twenty-server:worker    # Background worker
+```
+
+## База данных
+
+```bash
+npx nx database:reset twenty-server                          # Reset and seed database
+npx nx run twenty-server:database:migrate:prod               # Run migrations
+npx nx run twenty-server:database:migrate:generate --name <name> --type <fast|slow>  # Generate a migration
+```
+
+## Линтинг
+
+```bash
+npx nx lint:diff-with-main twenty-front    # Lint changed files (fastest)
+npx nx lint:diff-with-main twenty-server
+npx nx lint twenty-front --configuration=fix  # Auto-fix
+```
+
+## Проверка типов
+
+```bash
+npx nx typecheck twenty-front
+npx nx typecheck twenty-server
+```
+
+## Тестирование
+
+```bash
+# Frontend
+npx nx test twenty-front                          # Jest unit tests
+npx nx storybook:build twenty-front               # Build Storybook
+npx nx storybook:test twenty-front                # Storybook tests
+
+# Backend
+npx nx run twenty-server:test:unit                # Unit tests
+npx nx run twenty-server:test:integration         # Integration tests
+npx nx run twenty-server:test:integration:with-db-reset  # Integration with DB reset
+
+# Single file (fastest)
+npx jest path/to/test.test.ts --config=packages/{project}/jest.config.mjs
+```
+
+## GraphQL
+
+```bash
+npx nx run twenty-front:graphql:generate                        # Regenerate types
+npx nx run twenty-front:graphql:generate --configuration=metadata  # Metadata schema
+```
+
+## Переводы
+
+```bash
+npx nx run twenty-front:lingui:extract   # Extract strings
+npx nx run twenty-front:lingui:compile   # Compile translations
+```
+
+## Сборка
+
+```bash
+npx nx build twenty-shared   # Must be built first
+npx nx build twenty-front
+npx nx build twenty-server
+```

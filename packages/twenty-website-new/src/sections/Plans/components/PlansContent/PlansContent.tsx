@@ -1,10 +1,8 @@
 'use client';
 
 import { PLANS_DATA } from '@/app/pricing/_constants/plans';
-import type {
-  PlansBillingPeriod,
-  PlansHostingMode,
-} from '@/sections/Plans/types';
+import { usePricingState } from '@/sections/Plans/context/PricingStateContext';
+import type { PlansBillingPeriod } from '@/sections/Plans/types';
 import { getPlanCard } from '@/sections/Plans/utils';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
@@ -42,7 +40,7 @@ const SelfHostToggleSlot = styled.div`
 
 export function PlansContent() {
   const [billing, setBilling] = useState<PlansBillingPeriod>('yearly');
-  const [hosting, setHosting] = useState<PlansHostingMode>('cloud');
+  const { hosting, setHosting } = usePricingState();
 
   const proCard = getPlanCard(PLANS_DATA, 'pro', hosting, billing);
   const organizationCard = getPlanCard(
@@ -62,10 +60,7 @@ export function PlansContent() {
           <SelfHostToggle hosting={hosting} onHostingChange={setHosting} />
         </SelfHostToggleSlot>
       </ControlsRow>
-      <Cards
-        organization={organizationCard}
-        pro={proCard}
-      />
+      <Cards organization={organizationCard} pro={proCard} />
     </>
   );
 }

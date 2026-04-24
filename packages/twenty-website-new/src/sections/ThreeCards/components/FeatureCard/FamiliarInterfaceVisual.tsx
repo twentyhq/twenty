@@ -8,15 +8,6 @@ import {
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
 import {
-  type PointerEvent as ReactPointerEvent,
-  type RefObject,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from 'react';
-import { FamiliarInterfaceGradientBackdrop } from './FamiliarInterfaceGradientBackdrop';
-import {
   IconBuildingSkyscraper,
   IconCalendarEvent,
   IconChevronDown,
@@ -28,14 +19,22 @@ import {
   IconUser,
   IconUserCircle,
 } from '@tabler/icons-react';
+import {
+  type PointerEvent as ReactPointerEvent,
+  type RefObject,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'react';
+import { FamiliarInterfaceGradientBackdrop } from './FamiliarInterfaceGradientBackdrop';
 
 const APP_FONT = `'Inter', ${theme.font.family.sans}`;
 const TABLER_STROKE = 1.6;
 const SCENE_WIDTH = 411;
 const SCENE_HEIGHT = 508;
-const SCENE_SCALE = 1.025;
-const SCENE_SCALE_MD = SCENE_SCALE * 0.86;
-const SCENE_SCALE_SM = SCENE_SCALE * 0.74;
+const SCENE_BASE_SCALE = 1.025;
+const FAMILIAR_INTERFACE_SCENE_VIEWPORT_TRANSFORM = `translateX(-50%) scale(calc(${SCENE_BASE_SCALE} * min(100cqw / ${SCENE_WIDTH}px, 100cqh / ${SCENE_HEIGHT}px)))`;
 const FIGMA_CARD_WIDTH = 174.301;
 const FIGMA_FIELD_HEIGHT = 22.063;
 const FIGMA_FIELD_GAP = 3.677;
@@ -299,17 +298,9 @@ const SceneViewport = styled.div`
   left: 50%;
   position: absolute;
   top: 0;
-  transform: translateX(-50%) scale(${SCENE_SCALE});
+  transform: ${FAMILIAR_INTERFACE_SCENE_VIEWPORT_TRANSFORM};
   transform-origin: top center;
   width: ${SCENE_WIDTH}px;
-
-  @media (max-width: ${theme.breakpoints.md - 1}px) {
-    transform: translateX(-50%) scale(${SCENE_SCALE_MD});
-  }
-
-  @media (max-width: 640px) {
-    transform: translateX(-50%) scale(${SCENE_SCALE_SM});
-  }
 `;
 
 const SceneFrame = styled.div`

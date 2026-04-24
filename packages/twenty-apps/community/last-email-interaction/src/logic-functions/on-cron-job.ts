@@ -1,4 +1,4 @@
-import { defineLogicFunction } from 'twenty-sdk';
+import { defineLogicFunction } from 'twenty-sdk/define';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 import { calculateStatus } from '../shared/calculate-status';
 

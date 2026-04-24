@@ -20,18 +20,17 @@ const ArticleRow = styled.article`
 const MetaColumn = styled.div`
   align-items: flex-start;
   display: flex;
-  flex-direction: row;
-  justify-content: space-between;
+  flex-direction: column;
   min-width: 0;
+  row-gap: ${theme.spacing(1)};
 
   @media (min-width: ${theme.breakpoints.md}px) {
-    flex-direction: column;
     padding-top: ${theme.spacing(2)};
   }
 `;
 
 const Version = styled.span`
-  color: ${theme.colors.primary.text[100]};
+  color: ${theme.colors.primary.text[80]};
   font-size: ${theme.font.size(5)};
   font-weight: ${theme.font.weight.medium};
   line-height: 1.3;
@@ -41,11 +40,6 @@ const DateText = styled.span`
   color: ${theme.colors.primary.text[60]};
   font-size: ${theme.font.size(3)};
   white-space: nowrap;
-
-  @media (min-width: ${theme.breakpoints.md}px) {
-    margin-top: ${theme.spacing(2)};
-    white-space: normal;
-  }
 `;
 
 const ContentColumn = styled.div`
@@ -65,7 +59,7 @@ export function ReleaseEntry({ content, date, release }: ReleaseEntryProps) {
     <ArticleRow>
       <MetaColumn>
         <Version>{release}</Version>
-        <DateText>{displayDate || '—'}</DateText>
+        <DateText>{displayDate || 'TBD'}</DateText>
       </MetaColumn>
       <ContentColumn>
         <ReleaseMarkdown markdown={content} />

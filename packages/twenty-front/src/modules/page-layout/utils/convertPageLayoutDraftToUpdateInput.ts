@@ -59,6 +59,7 @@ export const convertPageLayoutDraftToUpdateInput = (
           id: tab.id,
           title: tab.title,
           position: tab.position,
+          icon: tab.icon ?? null,
           layoutMode: tab.layoutMode,
           widgets: widgets.map((widget, widgetIndex) => ({
             id: widget.id,

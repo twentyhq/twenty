@@ -23,6 +23,8 @@ export const copyBaseApplicationProject = async ({
 
   await renameDotfiles({ appDirectory });
 
+  await addEmptyPublicDirectory({ appDirectory });
+
   await generateUniversalIdentifiers({
     appDisplayName,
     appDescription,
@@ -47,6 +49,14 @@ const renameDotfiles = async ({ appDirectory }: { appDirectory: string }) => {
       await fs.rename(sourcePath, join(appDirectory, to));
     }
   }
+};
+
+const addEmptyPublicDirectory = async ({
+  appDirectory,
+}: {
+  appDirectory: string;
+}) => {
+  await fs.ensureDir(join(appDirectory, 'public'));
 };
 
 const generateUniversalIdentifiers = async ({

@@ -1,6 +1,6 @@
 import { useKeyboardShortcutMenu } from '@/keyboard-shortcut-menu/hooks/useKeyboardShortcutMenu';
 import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
-import { useOpenAskAIPageInSidePanel } from '@/side-panel/hooks/useOpenAskAIPageInSidePanel';
+import { useOpenAskAiPageInSidePanel } from '@/side-panel/hooks/useOpenAskAiPageInSidePanel';
 import { useOpenRecordsSearchPageInSidePanel } from '@/side-panel/hooks/useOpenRecordsSearchPageInSidePanel';
 import { useSidePanelHistory } from '@/side-panel/hooks/useSidePanelHistory';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
@@ -9,18 +9,16 @@ import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
 import { useGlobalHotkeys } from '@/ui/utilities/hotkey/hooks/useGlobalHotkeys';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { isNonEmptyString } from '@sniptt/guards';
 import { Key } from 'ts-key-enum';
 import { SidePanelPages } from 'twenty-shared/types';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 export const useCommandMenuHotKeys = () => {
   const { toggleSidePanelMenu } = useSidePanelMenu();
 
   const { openRecordsSearchPage } = useOpenRecordsSearchPageInSidePanel();
 
-  const { openAskAIPage } = useOpenAskAIPageInSidePanel();
+  const { openAskAiPage } = useOpenAskAiPageInSidePanel();
 
   const { goBackFromSidePanel, goBackOneSubPageOrMainPage } =
     useSidePanelHistory();
@@ -30,8 +28,6 @@ export const useCommandMenuHotKeys = () => {
   const { closeKeyboardShortcutMenu } = useKeyboardShortcutMenu();
 
   const sidePanelPage = useAtomStateValue(sidePanelPageState);
-
-  const isAiEnabled = useIsFeatureEnabled(FeatureFlagKey.IS_AI_ENABLED);
 
   useGlobalHotkeys({
     keys: ['ctrl+k', 'meta+k'],
@@ -58,12 +54,10 @@ export const useCommandMenuHotKeys = () => {
   useGlobalHotkeys({
     keys: ['@'],
     callback: () => {
-      if (isAiEnabled) {
-        openAskAIPage({ resetNavigationStack: true });
-      }
+      openAskAiPage({ resetNavigationStack: true });
     },
     containsModifier: false,
-    dependencies: [openAskAIPage, isAiEnabled],
+    dependencies: [openAskAiPage],
     options: {
       ignoreModifiers: true,
     },

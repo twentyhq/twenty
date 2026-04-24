@@ -2,7 +2,8 @@
 .DS_Store
 awscliv2.zip
 /.idea
-.claude/settings.json
+.claude/
+.cursor/debug-*.log
 **/**/node_modules/
 .cache
 

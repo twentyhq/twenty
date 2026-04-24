@@ -24,7 +24,8 @@ export function ElevateConsultingIcon({
         fontSize="16"
         fontWeight="600"
         letterSpacing="-0.03em"
-        x="0"
+        textAnchor="middle"
+        x={VIEWBOX_WIDTH / 2}
         y="11"
       >
         Elevate

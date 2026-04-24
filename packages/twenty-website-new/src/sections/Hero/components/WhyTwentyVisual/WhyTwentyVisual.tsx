@@ -20,6 +20,12 @@ const BackgroundLayer = styled.div`
   z-index: 0;
 `;
 
+const ForegroundLayer = styled.div`
+  inset: 0;
+  position: absolute;
+  z-index: 1;
+`;
+
 const backgroundImageClassName = css`
   object-fit: cover;
   object-position: center;
@@ -38,7 +44,9 @@ export function WhyTwentyVisual() {
           src="/images/why-twenty/hero/background.webp"
         />
       </BackgroundLayer>
-      <IllustrationMount illustration="heroWhyTwenty" />
+      <ForegroundLayer>
+        <IllustrationMount illustration="heroWhyTwentyHalftone" />
+      </ForegroundLayer>
     </VisualContainer>
   );
 }

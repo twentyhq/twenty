@@ -1,6 +1,6 @@
 import { conditionalAvailabilityTransformPlugin } from '@/cli/utilities/build/common/conditional-availability/conditional-availability-transform-plugin';
 import { pathExists, remove } from '@/cli/utilities/file/fs-utils';
-import { type ValidationResult } from '@/sdk';
+import { type ValidationResult } from '@/sdk/define';
 import * as esbuild from 'esbuild';
 import { createRequire } from 'module';
 import { mkdtemp, writeFile } from 'node:fs/promises';

@@ -1,7 +1,7 @@
 import type { HeroBaseDataType } from '@/sections/Hero/types';
 
 const PRICING_HERO_SUBTAGLINE = {
-  text: 'Start your free trial today without credit card.',
+  text: 'Start your free trial today\nwithout credit card.',
 };
 
 export const HERO_DATA = {

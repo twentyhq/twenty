@@ -118,6 +118,7 @@ export class McpProtocolService {
     const preloadedTools = await this.toolRegistry.getToolsByName(
       COMMON_PRELOAD_TOOLS,
       toolContext,
+      { includeLoadingMessage: false },
     );
 
     return {
@@ -139,12 +140,9 @@ export class McpProtocolService {
         inputSchema: zodSchema(learnToolsInputSchema),
       },
       [EXECUTE_TOOL_TOOL_NAME]: {
-        ...createExecuteToolTool(
-          this.toolRegistry,
-          toolContext,
-          preloadedTools,
-          MCP_EXCLUDED_TOOLS,
-        ),
+        ...createExecuteToolTool(this.toolRegistry, toolContext, {
+          excludeTools: MCP_EXCLUDED_TOOLS,
+        }),
         inputSchema: executeToolInputSchema,
       },
       [LOAD_SKILL_TOOL_NAME]: {

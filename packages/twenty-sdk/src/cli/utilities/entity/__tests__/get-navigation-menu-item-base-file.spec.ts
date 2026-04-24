@@ -8,7 +8,7 @@ describe('getNavigationMenuItemBaseFile', () => {
     });
 
     expect(result).toContain(
-      "import { defineNavigationMenuItem } from 'twenty-sdk'",
+      "import { defineNavigationMenuItem } from 'twenty-sdk/define';",
     );
     expect(result).toContain('export default defineNavigationMenuItem({');
     expect(result).toContain(

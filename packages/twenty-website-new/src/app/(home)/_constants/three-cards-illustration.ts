@@ -15,25 +15,25 @@ export const THREE_CARDS_ILLUSTRATION_DATA: ThreeCardsIllustrationDataType = {
     {
       heading: { text: 'Production grade quality', fontFamily: 'sans' },
       body: {
-        text: "What stood out with Twenty wasn't just flexibility it was the quality. The system feels stable, polished, and ready for real teams with real stakes.",
+        text: 'W3villa used Twenty as a production-grade framework for the data model, permissions, authentication, and workflow engine they would otherwise have rebuilt themselves.',
       },
       benefits: undefined,
       attribution: {
-        role: { text: 'Head of Engineering' },
-        company: { text: 'Mid-Market Fintech' },
+        role: { text: 'VP of Engineering' },
+        company: { text: 'W3villa Technologies' },
       },
       illustration: 'diamond',
-      caseStudySlug: '9dots',
+      caseStudySlug: 'w3villa',
     },
     {
       heading: { text: 'AI for rapid iterations', fontFamily: 'sans' },
       body: {
-        text: 'Twenty removes friction from iteration and lets us adapt our CRM as the business changes.',
+        text: 'Alternative Partners used agentic AI to compress what would typically be weeks of Salesforce migration work into something a single person could oversee.',
       },
       benefits: undefined,
       attribution: {
-        role: { text: 'Head of Engineering' },
-        company: { text: 'Mid-Market Fintech' },
+        role: { text: 'Principal and Founder' },
+        company: { text: 'Alternative Partners' },
       },
       illustration: 'flash',
       caseStudySlug: 'alternative-partners',
@@ -41,15 +41,15 @@ export const THREE_CARDS_ILLUSTRATION_DATA: ThreeCardsIllustrationDataType = {
     {
       heading: { text: 'Control without drag', fontFamily: 'sans' },
       body: {
-        text: "It's a modern, open-source alternative to Salesforce/Hubspot that lets you manage your customer relationships in a secure + privacy-first way.",
+        text: 'AC&T moved to a self-hosted Twenty instance with no vendor risk, no forced migration, and CRM costs reduced by more than 90%.',
       },
       benefits: undefined,
       attribution: {
-        role: { text: 'Head of Engineering' },
-        company: { text: 'Mid-Market Fintech' },
+        role: { text: 'CRM Engineer' },
+        company: { text: 'AC&T Education Migration' },
       },
       illustration: 'lock',
-      caseStudySlug: 'elevate-consulting',
+      caseStudySlug: 'act-education',
     },
   ],
 };

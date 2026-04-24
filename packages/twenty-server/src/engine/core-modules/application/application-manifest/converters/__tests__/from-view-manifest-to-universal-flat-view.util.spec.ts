@@ -1,4 +1,6 @@
 import {
+  AggregateOperations,
+  ViewCalendarLayout,
   ViewOpenRecordIn,
   ViewType,
   ViewVisibility,
@@ -64,5 +66,70 @@ describe('fromViewManifestToUniversalFlatView', () => {
     expect(result.isCompact).toBe(true);
     expect(result.visibility).toBe(ViewVisibility.UNLISTED);
     expect(result.openRecordIn).toBe(ViewOpenRecordIn.RECORD_PAGE);
+  });
+
+  it('should preserve kanban fields from the manifest', () => {
+    const result = fromViewManifestToUniversalFlatView({
+      viewManifest: {
+        universalIdentifier: 'view-uuid-3',
+        name: 'Kanban Board',
+        objectUniversalIdentifier: 'object-uuid-1',
+        type: ViewType.KANBAN,
+        mainGroupByFieldMetadataUniversalIdentifier: 'field-uuid-status',
+        kanbanAggregateOperation: AggregateOperations.COUNT,
+        kanbanAggregateOperationFieldMetadataUniversalIdentifier:
+          'field-uuid-amount',
+      },
+      applicationUniversalIdentifier,
+      now,
+    });
+
+    expect(result.mainGroupByFieldMetadataUniversalIdentifier).toBe(
+      'field-uuid-status',
+    );
+    expect(result.kanbanAggregateOperation).toBe(AggregateOperations.COUNT);
+    expect(
+      result.kanbanAggregateOperationFieldMetadataUniversalIdentifier,
+    ).toBe('field-uuid-amount');
+  });
+
+  it('should default kanban and calendar fields to null when omitted', () => {
+    const result = fromViewManifestToUniversalFlatView({
+      viewManifest: {
+        universalIdentifier: 'view-uuid-4',
+        name: 'All Records',
+        objectUniversalIdentifier: 'object-uuid-1',
+      },
+      applicationUniversalIdentifier,
+      now,
+    });
+
+    expect(result.mainGroupByFieldMetadataUniversalIdentifier).toBeNull();
+    expect(result.kanbanAggregateOperation).toBeNull();
+    expect(
+      result.kanbanAggregateOperationFieldMetadataUniversalIdentifier,
+    ).toBeNull();
+    expect(result.calendarLayout).toBeNull();
+    expect(result.calendarFieldMetadataUniversalIdentifier).toBeNull();
+  });
+
+  it('should preserve calendar fields from the manifest', () => {
+    const result = fromViewManifestToUniversalFlatView({
+      viewManifest: {
+        universalIdentifier: 'view-uuid-5',
+        name: 'Calendar View',
+        objectUniversalIdentifier: 'object-uuid-1',
+        type: ViewType.CALENDAR,
+        calendarLayout: ViewCalendarLayout.WEEK,
+        calendarFieldMetadataUniversalIdentifier: 'field-uuid-date',
+      },
+      applicationUniversalIdentifier,
+      now,
+    });
+
+    expect(result.calendarLayout).toBe(ViewCalendarLayout.WEEK);
+    expect(result.calendarFieldMetadataUniversalIdentifier).toBe(
+      'field-uuid-date',
+    );
   });
 });
