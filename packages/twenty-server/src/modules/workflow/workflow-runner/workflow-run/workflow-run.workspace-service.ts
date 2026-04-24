@@ -82,6 +82,7 @@ export class WorkflowRunWorkspaceService {
           where: {
             id: workflowVersion.workflowId,
           },
+          withDeleted: true,
         });
 
         if (!workflow) {
