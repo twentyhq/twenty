@@ -1,6 +1,6 @@
 {
   "name": "twenty-sdk",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "sideEffects": false,
   "bin": {
     "twenty": "dist/cli.cjs"
@@ -22,6 +22,11 @@
     "development"
   ],
   "exports": {
+    "./billing": {
+      "types": "./dist/billing/index.d.ts",
+      "import": "./dist/billing/index.mjs",
+      "require": "./dist/billing/index.cjs"
+    },
     "./define": {
       "types": "./dist/define/index.d.ts",
       "import": "./dist/define/index.mjs",

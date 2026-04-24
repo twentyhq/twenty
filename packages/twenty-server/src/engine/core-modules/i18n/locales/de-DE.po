@@ -3752,15 +3752,15 @@ msgstr "Ungültiger Bestätigungscode."
 msgid "Invalid verification code. Please try again."
 msgstr "Ungültiger Bestätigungscode. Bitte versuchen Sie es erneut."
 
-#. js-lingui-id: bKmxhF
+#. js-lingui-id: UV7Pll
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-fields-flat-page-layout-widget-for-creation.util.ts
-msgid "Invalid viewId for fields widget"
-msgstr "Ungültige viewId für Felder-Widget"
+msgid "Invalid viewUniversalIdentifier for fields widget"
+msgstr ""
 
-#. js-lingui-id: DpWmTi
+#. js-lingui-id: Bj1WZ+
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-fields-flat-page-layout-widget-for-creation.util.ts
-msgid "Invalid viewId for fields widget \"{widgetTitle}\". Expected a valid UUID"
-msgstr "Ungültige viewId für Felder-Widget \"{widgetTitle}\". Erwartet wurde eine gültige UUID"
+msgid "Invalid viewUniversalIdentifier for fields widget \"{widgetTitle}\". Expected a valid UUID"
+msgstr ""
 
 #. js-lingui-id: z68tnU
 #: src/engine/metadata-modules/webhook/webhook.exception.ts

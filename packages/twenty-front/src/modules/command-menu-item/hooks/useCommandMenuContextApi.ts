@@ -5,15 +5,17 @@ import { ContextStoreComponentInstanceContext } from '@/context-store/states/con
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { contextStoreCurrentPageTypeComponentState } from '@/context-store/states/contextStoreCurrentPageTypeComponentState';
-import { contextStoreIsPageInEditModeComponentState } from '@/context-store/states/contextStoreIsPageInEditModeComponentState';
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
+import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { hasAnySoftDeleteFilterOnViewComponentSelector } from '@/object-record/record-filter/states/hasAnySoftDeleteFilterOnView';
 import { recordStoreRecordsSelector } from '@/object-record/record-store/states/selectors/recordStoreRecordsSelector';
 import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
+import { currentPageLayoutIdState } from '@/page-layout/states/currentPageLayoutIdState';
+import { isDashboardInEditModeComponentState } from '@/page-layout/states/isDashboardInEditModeComponentState';
 import { SIDE_PANEL_COMPONENT_INSTANCE_ID } from '@/side-panel/constants/SidePanelComponentInstanceId';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
@@ -21,7 +23,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isNonEmptyArray } from '@sniptt/guards';
-import { useStore } from 'jotai';
+import { useAtomValue, useStore } from 'jotai';
 import {
   ContextStorePageType,
   type CommandMenuContextApi,
@@ -78,6 +80,11 @@ export const useCommandMenuContextApi = (): CommandMenuContextApi => {
     { recordIds: recordIds ?? [] },
   );
 
+  const currentPageLayoutId = useAtomStateValue(currentPageLayoutIdState);
+
+  const dashboardPageLayoutIdForCommandMenu =
+    selectedRecords[0]?.pageLayoutId ?? currentPageLayoutId ?? '';
+
   const objectPermissionsFromHook = useObjectPermissionsForObject(
     objectMetadataItem?.id ?? '',
   );
@@ -112,8 +119,14 @@ export const useCommandMenuContextApi = (): CommandMenuContextApi => {
     contextStoreCurrentPageTypeComponentState,
   );
 
-  const contextStoreIsPageInEditMode = useAtomComponentStateValue(
-    contextStoreIsPageInEditModeComponentState,
+  const isDashboardInEditMode = useAtomValue(
+    isDashboardInEditModeComponentState.atomFamily({
+      instanceId: dashboardPageLayoutIdForCommandMenu,
+    }),
+  );
+
+  const isLayoutCustomizationModeEnabled = useAtomStateValue(
+    isLayoutCustomizationModeEnabledState,
   );
 
   const pageType = isDefined(contextStoreCurrentPageType)
@@ -163,7 +176,8 @@ export const useCommandMenuContextApi = (): CommandMenuContextApi => {
   return {
     pageType,
     isInSidePanel,
-    isPageInEditMode: contextStoreIsPageInEditMode,
+    isDashboardPageLayoutInEditMode: isDashboardInEditMode,
+    isLayoutCustomizationModeEnabled,
     favoriteRecordIds,
     isSelectAll,
     hasAnySoftDeleteFilterOnView,

@@ -124,6 +124,12 @@ export class ApplicationRegistrationEntity {
   @Column({ name: 'isFeatured', type: 'boolean', default: false })
   isFeatured: boolean;
 
+  // Auto-installed on every new workspace; existing workspaces are
+  // backfilled by the `install-pre-installed-apps` CLI command.
+  @Field(() => Boolean)
+  @Column({ type: 'boolean', default: false })
+  isPreInstalled: boolean;
+
   @Column({ type: 'jsonb', nullable: true })
   manifest: Manifest | null;
 

@@ -10,7 +10,8 @@ import {
 const updateWorkflowVersionStepSchema = z.object({
   workflowVersionId: z
     .string()
-    .describe('The ID of the workflow version containing the step'),
+    .uuid()
+    .describe('The UUID of the workflow version containing the step'),
   step: z
     .union([workflowActionSchema])
     .describe('The updated step configuration'),

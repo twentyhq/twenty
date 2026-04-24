@@ -5,7 +5,8 @@ import { type ObjectRecord } from './ObjectRecord';
 export type CommandMenuContextApi = {
   pageType: ContextStorePageType;
   isInSidePanel: boolean;
-  isPageInEditMode: boolean;
+  isDashboardPageLayoutInEditMode: boolean;
+  isLayoutCustomizationModeEnabled: boolean;
   favoriteRecordIds: string[];
   isSelectAll: boolean;
   hasAnySoftDeleteFilterOnView: boolean;

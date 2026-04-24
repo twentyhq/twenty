@@ -295,7 +295,7 @@ export const fromPageLayoutWidgetConfigurationToUniversalConfiguration = ({
       return {
         ...rest,
         newFieldDefaultVisibility,
-        viewId: viewUniversalIdentifier,
+        viewUniversalIdentifier,
       };
     }
 
