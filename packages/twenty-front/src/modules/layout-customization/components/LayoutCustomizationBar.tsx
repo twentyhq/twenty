@@ -37,7 +37,7 @@ const StyledContainer = styled.div`
   }
 
   button {
-    --tw-button-color: ${GRAY_SCALE_LIGHT.gray1};
+    --tw-button-color: ${GRAY_SCALE_LIGHT.gray1} !important;
   }
 
   button[type='submit']:not(:disabled):not(:focus) {
