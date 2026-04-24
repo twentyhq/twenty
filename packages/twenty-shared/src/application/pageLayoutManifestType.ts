@@ -21,6 +21,7 @@ export type PageLayoutTabManifest = SyncableEntityOptions & {
   icon?: string;
   layoutMode?: PageLayoutTabLayoutMode;
   widgets?: PageLayoutWidgetManifest[];
+  pageLayoutUniversalIdentifier?: string;
 };
 
 export type PageLayoutManifest = SyncableEntityOptions & {

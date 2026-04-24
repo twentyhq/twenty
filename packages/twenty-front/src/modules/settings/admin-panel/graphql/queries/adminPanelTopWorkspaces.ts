@@ -7,6 +7,7 @@ export const ADMIN_PANEL_TOP_WORKSPACES = gql`
       name
       totalUsers
       subdomain
+      logo
     }
   }
 `;

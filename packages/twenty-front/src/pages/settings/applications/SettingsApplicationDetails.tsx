@@ -40,7 +40,7 @@ import {
   UninstallApplicationDocument,
 } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import { SettingsApplicationDetailSkeletonLoader } from '~/pages/settings/applications/components/SettingsApplicationDetailSkeletonLoader';
+import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
 import { SettingsApplicationDetailTitle } from '~/pages/settings/applications/components/SettingsApplicationDetailTitle';
 import { CUSTOM_APPLICATION_ILLUSTRATIONS } from '~/pages/settings/applications/constants/CustomApplicationIllustrations';
 import { STANDARD_APPLICATION_ILLUSTRATIONS } from '~/pages/settings/applications/constants/StandardApplicationIllustrations';
@@ -241,7 +241,7 @@ export const SettingsApplicationDetails = () => {
 
   const renderActiveTabContent = () => {
     if (!isDefined(application)) {
-      return <SettingsApplicationDetailSkeletonLoader />;
+      return <SettingsSectionSkeletonLoader />;
     }
 
     switch (activeTabId) {

@@ -10,7 +10,8 @@ import {
 const updateWorkflowVersionTriggerSchema = z.object({
   workflowVersionId: z
     .string()
-    .describe('The ID of the workflow version containing the trigger'),
+    .uuid()
+    .describe('The UUID of the workflow version containing the trigger'),
   trigger: workflowTriggerSchema.describe('The updated trigger configuration'),
 });
 
