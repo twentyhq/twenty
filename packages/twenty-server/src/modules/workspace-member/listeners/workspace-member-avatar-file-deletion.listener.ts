@@ -29,7 +29,7 @@ export class WorkspaceMemberAvatarFileDeletionListener {
   ) {
     const fileIdsToDelete = this.getFileIdsToDeleteFromUpdateEvent(payload);
 
-    this.deleteCorePictures(fileIdsToDelete, payload.workspaceId);
+    await this.deleteCorePictures(fileIdsToDelete, payload.workspaceId);
   }
 
   @OnDatabaseBatchEvent('workspaceMember', DatabaseEventAction.DESTROYED)
@@ -80,7 +80,9 @@ export class WorkspaceMemberAvatarFileDeletionListener {
           FileFolder.CorePicture,
         );
 
-        return beforeFileId !== afterFileId ? beforeFileId : undefined;
+        return beforeFileId !== afterFileId && isDefined(afterFileId)
+          ? beforeFileId
+          : undefined;
       })
       .filter(isDefined);
   }
