@@ -9,42 +9,46 @@ import { UpgradeSequenceReaderService } from 'src/engine/core-modules/upgrade/se
 import { type UpgradeMigrationStatus } from 'src/engine/core-modules/upgrade/upgrade-migration.entity';
 import { extractVersionFromCommandName } from 'src/engine/core-modules/upgrade/utils/extract-version-from-command-name.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { UpgradeHealthEnum } from 'twenty-shared/types';
 
-export type UpgradeHealth = 'up-to-date' | 'behind' | 'failed';
-
-export type MigrationCursorStatus = {
-  inferredVersion: string | null;
-  health: UpgradeHealth;
-  latestCommand: {
-    name: string;
-    status: UpgradeMigrationStatus;
-    executedByVersion: string;
-    errorMessage: string | null;
-    createdAt: Date;
-  } | null;
+export type LatestUpgradeCommand = {
+  name: string;
+  status: UpgradeMigrationStatus;
+  executedByVersion: string;
+  errorMessage: string | null;
+  createdAt: Date;
 };
 
-export type WorkspaceStatus = MigrationCursorStatus & {
+export type InstanceUpgradeStatus = {
+  inferredVersion: string | null;
+  health: UpgradeHealthEnum;
+  latestCommand: LatestUpgradeCommand | null;
+};
+
+export type WorkspaceUpgradeStatus = {
   workspaceId: string;
   displayName: string | null;
+  inferredVersion: string | null;
+  health: UpgradeHealthEnum;
+  latestCommand: LatestUpgradeCommand | null;
 };
 
 const deriveHealth = (
   migration: { name: string; status: UpgradeMigrationStatus },
   lastExpectedCommandName: string | null,
-): UpgradeHealth => {
+): UpgradeHealthEnum => {
   if (migration.status === 'failed') {
-    return 'failed';
+    return UpgradeHealthEnum.failed;
   }
 
   if (
     lastExpectedCommandName !== null &&
     migration.name !== lastExpectedCommandName
   ) {
-    return 'behind';
+    return UpgradeHealthEnum.behind;
   }
 
-  return 'up-to-date';
+  return UpgradeHealthEnum.upToDate;
 };
 
 @Injectable()
@@ -58,7 +62,7 @@ export class UpgradeStatusService {
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
   ) {}
 
-  async getInstanceStatus(): Promise<MigrationCursorStatus> {
+  async getInstanceStatus(): Promise<InstanceUpgradeStatus> {
     const migration =
       await this.upgradeMigrationService.getLastAttemptedInstanceCommand();
 
@@ -75,8 +79,9 @@ export class UpgradeStatusService {
 
   async getWorkspaceStatuses(
     filterWorkspaceIds?: string[],
-  ): Promise<WorkspaceStatus[]> {
-    const workspaces = await this.loadWorkspaces(filterWorkspaceIds);
+  ): Promise<WorkspaceUpgradeStatus[]> {
+    const workspaces =
+      await this.loadActiveOrSuspendedWorkspaces(filterWorkspaceIds);
 
     if (filterWorkspaceIds) {
       const foundIds = new Set(workspaces.map((workspace) => workspace.id));
@@ -111,17 +116,15 @@ export class UpgradeStatusService {
   }
 
   private buildCursorStatus(
-    migration: {
-      name: string;
-      status: UpgradeMigrationStatus;
-      executedByVersion: string;
-      errorMessage: string | null;
-      createdAt: Date;
-    } | null,
+    migration: LatestUpgradeCommand | null,
     lastExpectedCommandName: string | null,
-  ): MigrationCursorStatus {
+  ): InstanceUpgradeStatus {
     if (!migration) {
-      return { inferredVersion: null, health: 'behind', latestCommand: null };
+      return {
+        inferredVersion: null,
+        health: UpgradeHealthEnum.behind,
+        latestCommand: null,
+      };
     }
 
     const health = deriveHealth(migration, lastExpectedCommandName);
@@ -139,7 +142,7 @@ export class UpgradeStatusService {
     };
   }
 
-  private async loadWorkspaces(
+  private async loadActiveOrSuspendedWorkspaces(
     workspaceIds?: string[],
   ): Promise<Pick<WorkspaceEntity, 'id' | 'displayName'>[]> {
     return this.workspaceRepository.find({

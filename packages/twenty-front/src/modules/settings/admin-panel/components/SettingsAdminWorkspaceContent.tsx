@@ -1,11 +1,15 @@
-import { SettingsTableCard } from '@/settings/components/SettingsTableCard';
 import { type WorkspaceInfo } from '@/settings/admin-panel/types/WorkspaceInfo';
+import { formatUpgradeCommandName } from '@/settings/admin-panel/utils/formatUpgradeCommandName';
 import { getWorkspaceSchemaName } from '@/settings/admin-panel/utils/getWorkspaceSchemaName';
+import { SettingsTableCard } from '@/settings/components/SettingsTableCard';
 import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceLogo';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { UserContext } from '@/users/contexts/UserContext';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { SettingsPath } from 'twenty-shared/types';
+import { useContext } from 'react';
+import { SettingsPath, UpgradeHealthEnum } from 'twenty-shared/types';
 import {
   getImageAbsoluteURI,
   getSettingsPath,
@@ -20,13 +24,26 @@ import {
   IconLink,
   IconStatusChange,
   IconUser,
+  Status,
 } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
+import { dateLocaleState } from '~/localization/states/dateLocaleState';
+import { formatDateTimeString } from '~/utils/string/formatDateTimeString';
 
 type SettingsAdminWorkspaceContentProps = {
   activeWorkspace: WorkspaceInfo | undefined;
+  workspaceUpgradeStatus?: {
+    health: UpgradeHealthEnum;
+    inferredVersion: string | null;
+    latestCommand: {
+      name: string;
+      status: string;
+      createdAt: string;
+      errorMessage: string | null;
+    } | null;
+  };
 };
 
 const StyledContainer = styled.div`
@@ -36,10 +53,25 @@ const StyledContainer = styled.div`
   margin-top: ${themeCssVariables.spacing[6]};
 `;
 
+const StyledCommandValue = styled.span`
+  word-break: break-word;
+`;
+
 export const SettingsAdminWorkspaceContent = ({
   activeWorkspace,
+  workspaceUpgradeStatus,
 }: SettingsAdminWorkspaceContentProps) => {
   const { t } = useLingui();
+  const { dateFormat, timeFormat, timeZone } = useContext(UserContext);
+  const { localeCatalog } = useAtomStateValue(dateLocaleState);
+
+  const formattedLastUpdated = formatDateTimeString({
+    value: workspaceUpgradeStatus?.latestCommand?.createdAt,
+    timeZone,
+    dateFormat,
+    timeFormat,
+    localeCatalog: localeCatalog,
+  });
 
   const getWorkspaceUrl = (workspaceUrls: WorkspaceInfo['workspaceUrls']) => {
     return workspaceUrls.customUrl ?? workspaceUrls.subdomainUrl;
@@ -125,6 +157,93 @@ export const SettingsAdminWorkspaceContent = ({
           gridAutoColumns="1fr 4fr"
         />
       </Section>
+      {workspaceUpgradeStatus && (
+        <Section>
+          <H2Title
+            title={t`Upgrade Status`}
+            description={t`Workspace upgrade health`}
+          />
+          <SettingsTableCard
+            items={[
+              {
+                Icon: IconStatusChange,
+                label: t`Status`,
+                value: (
+                  <Status
+                    color={
+                      workspaceUpgradeStatus.health ===
+                      UpgradeHealthEnum.upToDate
+                        ? 'green'
+                        : workspaceUpgradeStatus.health ===
+                            UpgradeHealthEnum.behind
+                          ? 'orange'
+                          : workspaceUpgradeStatus.health ===
+                              UpgradeHealthEnum.failed
+                            ? 'red'
+                            : 'gray'
+                    }
+                    text={
+                      workspaceUpgradeStatus.health ===
+                      UpgradeHealthEnum.upToDate
+                        ? t`Up to date`
+                        : workspaceUpgradeStatus.health ===
+                            UpgradeHealthEnum.behind
+                          ? t`Behind`
+                          : workspaceUpgradeStatus.health ===
+                              UpgradeHealthEnum.failed
+                            ? t`Failed`
+                            : t`Unknown`
+                    }
+                    weight="medium"
+                  />
+                ),
+              },
+              {
+                Icon: IconId,
+                label: t`Inferred version`,
+                value: workspaceUpgradeStatus.inferredVersion ?? t`Unknown`,
+              },
+              {
+                Icon: IconCalendar,
+                label: t`Last command`,
+                value: (
+                  <StyledCommandValue>
+                    {formatUpgradeCommandName(
+                      workspaceUpgradeStatus.latestCommand?.name,
+                    ) ?? t`None`}
+                  </StyledCommandValue>
+                ),
+              },
+              {
+                Icon: IconCalendar,
+                label: t`Last updated`,
+                value: isNonEmptyString(formattedLastUpdated)
+                  ? formattedLastUpdated
+                  : t`N/A`,
+              },
+              {
+                Icon: IconStatusChange,
+                label: t`Last command result`,
+                value: workspaceUpgradeStatus.latestCommand?.status
+                  ? workspaceUpgradeStatus.latestCommand.status === 'completed'
+                    ? t`Completed`
+                    : t`Failed`
+                  : t`N/A`,
+              },
+              ...(workspaceUpgradeStatus.latestCommand?.errorMessage
+                ? [
+                    {
+                      Icon: IconStatusChange,
+                      label: t`Last error`,
+                      value: workspaceUpgradeStatus.latestCommand.errorMessage,
+                    },
+                  ]
+                : []),
+            ]}
+            gridAutoColumns="2fr 3fr"
+          />
+        </Section>
+      )}
     </StyledContainer>
   );
 };

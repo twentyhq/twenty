@@ -7,6 +7,7 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 import { type FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
 import { type SlowInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/slow-instance-command.interface';
 import { UpgradeMigrationService } from 'src/engine/core-modules/upgrade/services/upgrade-migration.service';
+import { UpgradeStatusCacheService } from 'src/engine/core-modules/upgrade/services/upgrade-status-cache.service';
 import { WorkspaceVersionService } from 'src/engine/workspace-manager/workspace-version/services/workspace-version.service';
 
 type RunSingleMigrationResult =
@@ -24,6 +25,7 @@ export class InstanceCommandRunnerService {
     private readonly twentyConfigService: TwentyConfigService,
     private readonly upgradeMigrationService: UpgradeMigrationService,
     private readonly workspaceVersionService: WorkspaceVersionService,
+    private readonly upgradeStatusCacheService: UpgradeStatusCacheService,
   ) {}
 
   async runFastInstanceCommand({
@@ -93,14 +95,30 @@ export class InstanceCommandRunnerService {
         error instanceof Error ? error.stack : String(error),
       );
 
+      await this.safeInvalidateUpgradeStatusCache();
+
       return { status: 'failed', error };
     } finally {
       await queryRunner.release();
     }
 
+    await this.safeInvalidateUpgradeStatusCache();
+
     this.logger.log(`${name} executed successfully`);
 
     return { status: 'success' };
+  }
+
+  private async safeInvalidateUpgradeStatusCache(): Promise<void> {
+    try {
+      await this.upgradeStatusCacheService.invalidateAll();
+    } catch (error) {
+      this.logger.warn(
+        `Failed to invalidate upgrade-status cache: ${
+          error instanceof Error ? error.message : String(error)
+        }`,
+      );
+    }
   }
 
   async runSlowInstanceCommand({
@@ -149,6 +167,8 @@ export class InstanceCommandRunnerService {
           `${name} data migration failed`,
           error instanceof Error ? error.stack : String(error),
         );
+
+        await this.safeInvalidateUpgradeStatusCache();
 
         return { status: 'failed', error };
       }

@@ -8,6 +8,8 @@ import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 
+const ADMIN_PANEL_UPGRADE_STATUS_PATH = 'admin-panel/health-status/upgrade-status';
+
 const SettingsGraphQLPlayground = lazy(() =>
   import(
     '~/pages/settings/developers/playground/SettingsGraphQLPlayground'
@@ -401,6 +403,14 @@ const SettingsAdminIndicatorHealthStatus = lazy(() =>
   })),
 );
 
+const SettingsAdminUpgradeStatus = lazy(() =>
+  import('~/pages/settings/admin-panel/SettingsAdminUpgradeStatus').then(
+    (module) => ({
+      default: module.SettingsAdminUpgradeStatus,
+    }),
+  ),
+);
+
 const SettingsAdminQueueDetail = lazy(() =>
   import('~/pages/settings/admin-panel/SettingsAdminQueueDetail').then(
     (module) => ({
@@ -792,6 +802,10 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
           <Route
             path={SettingsPath.AdminPanelIndicatorHealthStatus}
             element={<SettingsAdminIndicatorHealthStatus />}
+          />
+          <Route
+            path={ADMIN_PANEL_UPGRADE_STATUS_PATH}
+            element={<SettingsAdminUpgradeStatus />}
           />
           <Route
             path={SettingsPath.AdminPanelQueueDetail}

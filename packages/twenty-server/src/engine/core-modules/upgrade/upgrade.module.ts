@@ -10,6 +10,7 @@ import { UpgradeCommandRegistryService } from 'src/engine/core-modules/upgrade/s
 import { UpgradeMigrationService } from 'src/engine/core-modules/upgrade/services/upgrade-migration.service';
 import { UpgradeSequenceReaderService } from 'src/engine/core-modules/upgrade/services/upgrade-sequence-reader.service';
 import { UpgradeSequenceRunnerService } from 'src/engine/core-modules/upgrade/services/upgrade-sequence-runner.service';
+import { UpgradeStatusCacheService } from 'src/engine/core-modules/upgrade/services/upgrade-status-cache.service';
 import { UpgradeStatusService } from 'src/engine/core-modules/upgrade/services/upgrade-status.service';
 import { WorkspaceCommandRunnerService } from 'src/engine/core-modules/upgrade/services/workspace-command-runner.service';
 import { UpgradeMigrationEntity } from 'src/engine/core-modules/upgrade/upgrade-migration.entity';
@@ -33,6 +34,7 @@ import { WorkspaceVersionModule } from 'src/engine/workspace-manager/workspace-v
     UpgradeSequenceReaderService,
     UpgradeSequenceRunnerService,
     UpgradeStatusService,
+    UpgradeStatusCacheService,
   ],
   exports: [
     UpgradeMigrationService,
@@ -42,6 +44,7 @@ import { WorkspaceVersionModule } from 'src/engine/workspace-manager/workspace-v
     UpgradeSequenceReaderService,
     UpgradeSequenceRunnerService,
     UpgradeStatusService,
+    UpgradeStatusCacheService,
   ],
 })
 export class UpgradeModule {}

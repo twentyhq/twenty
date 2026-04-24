@@ -2,7 +2,7 @@ import { useParams } from 'react-router-dom';
 
 import { useMutation, useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
-import { SettingsPath } from 'twenty-shared/types';
+import { SettingsPath, UpgradeHealthEnum } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 
 import { currentUserState } from '@/auth/states/currentUserState';
@@ -12,20 +12,21 @@ import { AI_ADMIN_PATH } from '@/settings/admin-panel/ai/constants/AiAdminPath';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { SettingsAdminWorkspaceContent } from '@/settings/admin-panel/components/SettingsAdminWorkspaceContent';
 import { GET_ADMIN_WORKSPACE_CHAT_THREADS } from '@/settings/admin-panel/graphql/queries/getAdminWorkspaceChatThreads';
+import { GET_UPGRADE_STATUS } from '@/settings/admin-panel/graphql/queries/getUpgradeStatus';
 import { WORKSPACE_LOOKUP_ADMIN_PANEL } from '@/settings/admin-panel/graphql/queries/workspaceLookupAdminPanel';
 import { useFeatureFlagState } from '@/settings/admin-panel/hooks/useFeatureFlagState';
 import { useHandleImpersonate } from '@/settings/admin-panel/hooks/useHandleImpersonate';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { TabList } from '@/ui/layout/tab-list/components/TabList';
+import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableBody } from '@/ui/layout/table/components/TableBody';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { TabList } from '@/ui/layout/tab-list/components/TabList';
-import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import {
@@ -97,6 +98,26 @@ export const SettingsAdminWorkspaceDetail = () => {
           effectiveTabId !== WORKSPACE_DETAIL_TAB_IDS.CHATS,
       },
     );
+  const { data: workspaceUpgradeStatusData } = useQuery<{
+    getUpgradeStatus: Array<{
+      workspaceId: string;
+      displayName: string | null;
+      inferredVersion: string | null;
+      health: UpgradeHealthEnum;
+      latestCommand: {
+        name: string;
+        status: string;
+        executedByVersion: string;
+        errorMessage: string | null;
+        createdAt: string;
+      } | null;
+    }>;
+  }>(GET_UPGRADE_STATUS, {
+    client: apolloAdminClient,
+    variables: { workspaceIds: workspaceId ? [workspaceId] : [] },
+    skip: !workspaceId,
+    fetchPolicy: 'network-only',
+  });
 
   const threads = threadsData?.getAdminWorkspaceChatThreads ?? [];
 
@@ -193,7 +214,12 @@ export const SettingsAdminWorkspaceDetail = () => {
         />
 
         {effectiveTabId === WORKSPACE_DETAIL_TAB_IDS.INFO && workspace && (
-          <SettingsAdminWorkspaceContent activeWorkspace={workspace} />
+          <SettingsAdminWorkspaceContent
+            activeWorkspace={workspace}
+            workspaceUpgradeStatus={
+              workspaceUpgradeStatusData?.getUpgradeStatus?.[0]
+            }
+          />
         )}
 
         {effectiveTabId === WORKSPACE_DETAIL_TAB_IDS.MEMBERS && workspace && (
