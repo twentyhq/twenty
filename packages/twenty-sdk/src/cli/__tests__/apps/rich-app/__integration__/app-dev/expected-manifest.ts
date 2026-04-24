@@ -4,13 +4,37 @@ import { PermissionFlagType } from 'twenty-shared/constants';
 import {
   FieldMetadataType,
   NavigationMenuItemType,
+  PageLayoutTabLayoutMode,
   RelationOnDeleteAction,
   RelationType,
+  ViewCalendarLayout,
   ViewType,
 } from 'twenty-shared/types';
 
 export const EXPECTED_MANIFEST: Manifest = {
   pageLayouts: [],
+  pageLayoutTabs: [
+    {
+      universalIdentifier: 'b0b1b2b3-b4b5-4000-8000-000000000010',
+      pageLayoutUniversalIdentifier: 'b0b1b2b3-b4b5-4000-8000-000000000020',
+      title: 'Extra Tab',
+      position: 1000,
+      icon: 'IconLayout',
+      layoutMode: PageLayoutTabLayoutMode.CANVAS,
+      widgets: [
+        {
+          universalIdentifier: 'b0b1b2b3-b4b5-4000-8000-000000000011',
+          title: 'Extra Widget',
+          type: 'FRONT_COMPONENT',
+          configuration: {
+            configurationType: 'FRONT_COMPONENT',
+            frontComponentUniversalIdentifier:
+              '370ae182-743f-4ecb-b625-7ac48e21f0e5',
+          },
+        },
+      ],
+    },
+  ],
   publicAssets: [
     {
       checksum: '99496069dcc2a1488e1cae9f826d2707',
@@ -1472,6 +1496,79 @@ export const EXPECTED_MANIFEST: Manifest = {
       position: 1,
       type: ViewType.TABLE,
       universalIdentifier: 'b1a2b3c4-0002-4a7b-8c9d-0e1f2a3b4c5d',
+    },
+    {
+      fields: [
+        {
+          fieldMetadataUniversalIdentifier:
+            '58a0a314-d7ea-4865-9850-7fb84e72f30b',
+          isVisible: true,
+          position: 0,
+          size: 200,
+          universalIdentifier: 'bf1a2b3c-0005-4a7b-8c9d-0e1f2a3b4c5d',
+        },
+      ],
+      groups: [
+        {
+          fieldValue: 'DRAFT',
+          isVisible: true,
+          position: 0,
+          universalIdentifier: 'bg1a2b3c-0001-4a7b-8c9d-0e1f2a3b4c5d',
+        },
+        {
+          fieldValue: 'SENT',
+          isVisible: true,
+          position: 1,
+          universalIdentifier: 'bg1a2b3c-0002-4a7b-8c9d-0e1f2a3b4c5d',
+        },
+        {
+          fieldValue: 'DELIVERED',
+          isVisible: true,
+          position: 2,
+          universalIdentifier: 'bg1a2b3c-0003-4a7b-8c9d-0e1f2a3b4c5d',
+        },
+        {
+          fieldValue: 'RETURNED',
+          isVisible: true,
+          position: 3,
+          universalIdentifier: 'bg1a2b3c-0004-4a7b-8c9d-0e1f2a3b4c5d',
+        },
+        {
+          fieldValue: 'LOST',
+          isVisible: true,
+          position: 4,
+          universalIdentifier: 'bg1a2b3c-0005-4a7b-8c9d-0e1f2a3b4c5d',
+        },
+      ],
+      icon: 'IconLayoutKanban',
+      mainGroupByFieldMetadataUniversalIdentifier:
+        '87b675b8-dd8c-4448-b4ca-20e5a2234a1e',
+      name: 'By Status',
+      objectUniversalIdentifier: '54b589ca-eeed-4950-a176-358418b85c05',
+      position: 1,
+      type: ViewType.KANBAN,
+      universalIdentifier: 'b1a2b3c4-0004-4a7b-8c9d-0e1f2a3b4c5d',
+    },
+    {
+      calendarFieldMetadataUniversalIdentifier:
+        'e06abe72-5b44-4e7f-93be-afc185a3c433',
+      calendarLayout: ViewCalendarLayout.MONTH,
+      fields: [
+        {
+          fieldMetadataUniversalIdentifier:
+            '58a0a314-d7ea-4865-9850-7fb84e72f30b',
+          isVisible: true,
+          position: 0,
+          size: 200,
+          universalIdentifier: 'bf1a2b3c-0006-4a7b-8c9d-0e1f2a3b4c5d',
+        },
+      ],
+      icon: 'IconCalendarEvent',
+      name: 'By Delivery Date',
+      objectUniversalIdentifier: '54b589ca-eeed-4950-a176-358418b85c05',
+      position: 2,
+      type: ViewType.CALENDAR,
+      universalIdentifier: 'b1a2b3c4-0005-4a7b-8c9d-0e1f2a3b4c5d',
     },
   ],
   navigationMenuItems: [

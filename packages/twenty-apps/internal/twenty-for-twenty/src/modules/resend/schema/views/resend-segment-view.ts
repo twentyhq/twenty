@@ -9,7 +9,7 @@ import {
   RESEND_SEGMENT_VIEW_UNIVERSAL_IDENTIFIER,
   SEGMENT_CREATED_AT_FIELD_UNIVERSAL_IDENTIFIER,
   SEGMENT_NAME_FIELD_UNIVERSAL_IDENTIFIER,
-} from 'src/modules/resend/constants/universal-identifiers';
+} from '@modules/resend/constants/universal-identifiers';
 import { defineView } from 'twenty-sdk/define';
 
 export default defineView({

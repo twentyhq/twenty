@@ -4,19 +4,19 @@ export const EDITORIAL_ONE: EditorialDataType = {
   eyebrow: {
     heading: {
       fontFamily: 'sans',
-      text: 'What must our CRM do that nobody else can?',
+      text: 'The shift',
     },
   },
   heading: [
-    { fontFamily: 'serif', text: 'Packaged CRMs' },
-    { fontFamily: 'sans', text: ' optimize for sameness' },
+    { fontFamily: 'serif', text: 'CRM was a ledger.' },
+    { fontFamily: 'sans', text: ' AI turned it into an operating system.' },
   ],
   body: [
     {
-      text: 'Off-the-shelf CRMs are built for the median workflow. They standardize what an account is, what a pipeline looks like, what stages matter, and what "good" reporting means. They help you keep up with the market, this is beta. But when it is time to generate differentiated value, alpha, they fall short.',
+      text: "For twenty years, CRM meant the same thing: a place to log calls, track deals, and pull reports on Friday. The real work happened in people's heads, in Slack threads, in hallway conversations. The CRM kept score. Nobody expected more from it.",
     },
     {
-      text: 'When every company runs the same objects, the same lifecycle stages, the same routing logic, and the same prepackaged "AI insights," the CRM stops being an advantage. It becomes a cost of entry. You do not just buy software. You inherit assumptions, assumptions that over time become constraints.',
+      text: 'AI agents are starting to draft outreach, score leads, research accounts, write follow-ups, update deal stages. Every one of these actions reads from and writes to the CRM. The scoreboard became the playbook. The database became the brain.',
     },
   ],
 };

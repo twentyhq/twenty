@@ -1,7 +1,7 @@
 import { defineFrontComponent } from 'twenty-sdk/define';
 
-import { RecordHtmlViewer } from 'src/modules/resend/html-viewer/components/RecordHtmlViewer';
-import { TEMPLATE_HTML_VIEWER_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER } from 'src/modules/resend/constants/universal-identifiers';
+import { RecordHtmlViewer } from '@modules/resend/html-viewer/components/RecordHtmlViewer';
+import { TEMPLATE_HTML_VIEWER_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER } from '@modules/resend/constants/universal-identifiers';
 
 const TemplateHtmlViewer = () => (
   <RecordHtmlViewer

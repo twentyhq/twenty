@@ -49,6 +49,18 @@
         "modalities": ["image"]
       },
       {
+        "name": "gpt-5.5",
+        "label": "GPT-5.5",
+        "modelFamily": "GPT",
+        "inputCostPerMillionTokens": 5,
+        "outputCostPerMillionTokens": 30,
+        "cachedInputCostPerMillionTokens": 0.5,
+        "contextWindowTokens": 1050000,
+        "maxOutputTokens": 130000,
+        "modalities": ["image", "pdf"],
+        "supportsReasoning": true
+      },
+      {
         "name": "gpt-5-mini",
         "label": "GPT-5 Mini",
         "modelFamily": "GPT",
@@ -1005,7 +1017,7 @@
         "modelFamily": "GEMINI",
         "inputCostPerMillionTokens": 0.3,
         "outputCostPerMillionTokens": 2.5,
-        "cachedInputCostPerMillionTokens": 0.075,
+        "cachedInputCostPerMillionTokens": 0.03,
         "contextWindowTokens": 1048576,
         "maxOutputTokens": 65536,
         "modalities": ["image", "audio", "video", "pdf"],

@@ -18,7 +18,7 @@ const StyledIconContainer = styled.span`
 `;
 
 const StyledIconChevronRightContainer = styled(StyledIconContainer)`
-  color: ${themeCssVariables.font.color.tertiary};
+  color: ${themeCssVariables.font.color.light};
 `;
 
 export const SettingsLogicFunctionsFieldItemTableRow = ({

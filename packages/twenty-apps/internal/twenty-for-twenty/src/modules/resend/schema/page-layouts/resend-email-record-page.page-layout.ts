@@ -1,5 +1,5 @@
 import {
-  EMAIL_HTML_VIEWER_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
+  EMAIL_BROADCAST_HTML_VIEWER_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
   RESEND_EMAIL_OBJECT_UNIVERSAL_IDENTIFIER,
   RESEND_EMAIL_RECORD_PAGE_FILES_TAB_UNIVERSAL_IDENTIFIER,
   RESEND_EMAIL_RECORD_PAGE_FILES_WIDGET_UNIVERSAL_IDENTIFIER,
@@ -14,7 +14,7 @@ import {
   RESEND_EMAIL_RECORD_PAGE_TASKS_WIDGET_UNIVERSAL_IDENTIFIER,
   RESEND_EMAIL_RECORD_PAGE_TIMELINE_TAB_UNIVERSAL_IDENTIFIER,
   RESEND_EMAIL_RECORD_PAGE_TIMELINE_WIDGET_UNIVERSAL_IDENTIFIER,
-} from 'src/modules/resend/constants/universal-identifiers';
+} from '@modules/resend/constants/universal-identifiers';
 import { definePageLayout, PageLayoutTabLayoutMode } from 'twenty-sdk/define';
 
 export default definePageLayout({
@@ -52,12 +52,12 @@ export default definePageLayout({
         {
           universalIdentifier:
             RESEND_EMAIL_RECORD_PAGE_PREVIEW_WIDGET_UNIVERSAL_IDENTIFIER,
-          title: 'Email Preview',
+          title: 'Broadcast Preview',
           type: 'FRONT_COMPONENT',
           configuration: {
             configurationType: 'FRONT_COMPONENT',
             frontComponentUniversalIdentifier:
-              EMAIL_HTML_VIEWER_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
+              EMAIL_BROADCAST_HTML_VIEWER_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
           },
         },
       ],

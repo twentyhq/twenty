@@ -104,7 +104,7 @@ export type FieldConfiguration = {
 
 export type FieldsConfiguration = {
   configurationType: 'FIELDS';
-  viewId?: string | null;
+  viewId?: SerializedRelation | null;
   newFieldDefaultVisibility?: boolean | null;
   shouldAllowUserToSeeHiddenFields?: boolean;
 };

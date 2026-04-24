@@ -11,7 +11,9 @@ import { PromoMic } from '@/illustrations/CaseStudyCatalog/PromoMic';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
 
-const CORNER_OFFSET = '-6px';
+const CORNER_SIZE = 14;
+const CORNER_OFFSET = '-7px';
+const CONNECTED_TOP_OFFSET = '6px';
 const LINE_INSET = '20px';
 const TRUSTED_BY_BOTTOM_PADDING = 12;
 const TRUSTED_BY_BOTTOM_PADDING_DESKTOP = 16;
@@ -59,12 +61,13 @@ const FrameBoard = styled.div`
   }
 `;
 
-const Frame = styled.div`
+const Frame = styled.div<{ compactTop: boolean }>`
   bottom: ${theme.spacing(12)};
   left: ${theme.spacing(10)};
   position: absolute;
   right: ${theme.spacing(10)};
-  top: ${theme.spacing(12)};
+  top: ${({ compactTop }) =>
+    compactTop ? CONNECTED_TOP_OFFSET : theme.spacing(12)};
 `;
 
 const FrameLine = styled.span`
@@ -86,28 +89,29 @@ const FrameLineBottom = styled(FrameLine)`
   right: ${LINE_INSET};
 `;
 
-const FrameLineLeft = styled(FrameLine)`
+const FrameLineLeft = styled(FrameLine)<{ compactTop: boolean }>`
   bottom: ${LINE_INSET};
   left: 0;
-  top: ${LINE_INSET};
+  top: ${({ compactTop }) => (compactTop ? '0' : LINE_INSET)};
   width: 1px;
 `;
 
-const FrameLineRight = styled(FrameLine)`
+const FrameLineRight = styled(FrameLine)<{ compactTop: boolean }>`
   bottom: ${LINE_INSET};
   right: 0;
-  top: ${LINE_INSET};
+  top: ${({ compactTop }) => (compactTop ? '0' : LINE_INSET)};
   width: 1px;
 `;
 
 const FrameCorner = styled.span`
   align-items: center;
   display: flex;
-  height: 12px;
+  height: ${CORNER_SIZE}px;
   justify-content: center;
+  line-height: 0;
   pointer-events: none;
   position: absolute;
-  width: 12px;
+  width: ${CORNER_SIZE}px;
 `;
 
 const FrameCornerTopLeft = styled(FrameCorner)`
@@ -130,16 +134,20 @@ const FrameCornerBottomRight = styled(FrameCorner)`
   right: ${CORNER_OFFSET};
 `;
 
-const StyledContainer = styled(Container)`
+const StyledContainer = styled(Container)<{ compactTop: boolean }>`
   align-items: center;
   display: grid;
   gap: ${theme.spacing(10)};
   grid-template-columns: 1fr;
   min-height: 520px;
-  padding-bottom: ${theme.spacing(24 + TRUSTED_BY_BOTTOM_PADDING)};
+  padding-bottom: ${({ compactTop }) =>
+    compactTop
+      ? theme.spacing(16)
+      : theme.spacing(24 + TRUSTED_BY_BOTTOM_PADDING)};
   padding-left: ${theme.spacing(4)};
   padding-right: ${theme.spacing(4)};
-  padding-top: ${theme.spacing(20)};
+  padding-top: ${({ compactTop }) =>
+    compactTop ? theme.spacing(16) : theme.spacing(20)};
   position: relative;
   z-index: 1;
 
@@ -147,12 +155,14 @@ const StyledContainer = styled(Container)`
     column-gap: ${theme.spacing(16)};
     grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
     min-height: 500px;
-    padding-bottom: ${theme.spacing(
-      40 + TRUSTED_BY_BOTTOM_PADDING_DESKTOP,
-    )};
+    padding-bottom: ${({ compactTop }) =>
+      compactTop
+        ? `calc(${theme.spacing(24)} + ${theme.spacing(12)} - ${CONNECTED_TOP_OFFSET})`
+        : theme.spacing(40 + TRUSTED_BY_BOTTOM_PADDING_DESKTOP)};
     padding-left: ${theme.spacing(10)};
     padding-right: ${theme.spacing(10)};
-    padding-top: ${theme.spacing(32)};
+    padding-top: ${({ compactTop }) =>
+      compactTop ? theme.spacing(24) : theme.spacing(32)};
   }
 `;
 
@@ -250,41 +260,57 @@ type PromoProps = {
   entries: readonly CaseStudyCatalogEntry[];
   ctaHref?: string;
   ctaLabel?: string;
+  compactTop?: boolean;
 };
 
 export function Promo({
   entries,
   ctaHref = '/customers',
   ctaLabel = 'Explore customer stories',
+  compactTop = false,
 }: PromoProps) {
-  const featured = entries[0];
-
   return (
     <Section aria-label="Customer stories preview">
       <BackgroundLayer aria-hidden>
         <FrameBoard>
-          <Frame>
-            <FrameLineTop />
+          <Frame compactTop={compactTop}>
+            {!compactTop && <FrameLineTop />}
             <FrameLineBottom />
-            <FrameLineLeft />
-            <FrameLineRight />
-            <FrameCornerTopLeft>
-              <PlusIcon size={12} strokeColor={theme.colors.highlight[100]} />
-            </FrameCornerTopLeft>
-            <FrameCornerTopRight>
-              <PlusIcon size={12} strokeColor={theme.colors.highlight[100]} />
-            </FrameCornerTopRight>
+            <FrameLineLeft compactTop={compactTop} />
+            <FrameLineRight compactTop={compactTop} />
+            {!compactTop && (
+              <>
+                <FrameCornerTopLeft>
+                  <PlusIcon
+                    size={CORNER_SIZE}
+                    strokeColor={theme.colors.highlight[100]}
+                  />
+                </FrameCornerTopLeft>
+                <FrameCornerTopRight>
+                  <PlusIcon
+                    size={CORNER_SIZE}
+                    strokeColor={theme.colors.highlight[100]}
+                  />
+                </FrameCornerTopRight>
+              </>
+            )}
             <FrameCornerBottomLeft>
-              <PlusIcon size={12} strokeColor={theme.colors.highlight[100]} />
+              <PlusIcon
+                size={CORNER_SIZE}
+                strokeColor={theme.colors.highlight[100]}
+              />
             </FrameCornerBottomLeft>
             <FrameCornerBottomRight>
-              <PlusIcon size={12} strokeColor={theme.colors.highlight[100]} />
+              <PlusIcon
+                size={CORNER_SIZE}
+                strokeColor={theme.colors.highlight[100]}
+              />
             </FrameCornerBottomRight>
           </Frame>
         </FrameBoard>
       </BackgroundLayer>
 
-      <StyledContainer>
+      <StyledContainer compactTop={compactTop}>
         <VisualColumn>
           <VisualStage>
             <MicFrame aria-hidden>

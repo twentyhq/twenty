@@ -12,7 +12,6 @@ import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNaviga
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useNavigate } from 'react-router-dom';
 import {
   type IconComponent,
@@ -21,7 +20,6 @@ import {
   IconSearch,
 } from 'twenty-ui/display';
 import { NavigationBar } from 'twenty-ui/navigation';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 type NavigationBarItemName = 'main' | 'search' | 'newAiChat';
 
@@ -37,7 +35,6 @@ export const MobileNavigationBar = () => {
   const [currentMobileNavigationDrawer, setCurrentMobileNavigationDrawer] =
     useAtomState(currentMobileNavigationDrawerState);
   const { switchToNewChat } = useSwitchToNewAiChat();
-  const isAiEnabled = useIsFeatureEnabled(FeatureFlagKey.IS_AI_ENABLED);
   const { alphaSortedActiveNonSystemObjectMetadataItems } =
     useFilteredObjectMetadataItems();
 
@@ -92,19 +89,15 @@ export const MobileNavigationBar = () => {
         openRecordsSearchPage();
       },
     },
-    ...(isAiEnabled
-      ? [
-          {
-            name: 'newAiChat' as const,
-            Icon: IconMessageCirclePlus,
-            onClick: () => {
-              setIsNavigationDrawerExpanded(false);
-              closeSidePanelMenu();
-              switchToNewChat();
-            },
-          },
-        ]
-      : []),
+    {
+      name: 'newAiChat' as const,
+      Icon: IconMessageCirclePlus,
+      onClick: () => {
+        setIsNavigationDrawerExpanded(false);
+        closeSidePanelMenu();
+        switchToNewChat();
+      },
+    },
   ];
 
   return <NavigationBar activeItemName={activeItemName} items={items} />;

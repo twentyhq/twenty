@@ -258,6 +258,18 @@ export class WorkspaceResolver {
     }
   }
 
+  @ResolveField(() => [ApplicationDTO])
+  async installedApplications(
+    @Parent() workspace: WorkspaceEntity,
+  ): Promise<ApplicationDTO[]> {
+    const flatApplications =
+      await this.applicationService.findManyInstalledFlatApplications(
+        workspace.id,
+      );
+
+    return flatApplications.map(fromFlatApplicationToApplicationDto);
+  }
+
   @ResolveField(() => BillingSubscriptionEntity, { nullable: true })
   async currentBillingSubscription(
     @Parent() workspace: WorkspaceEntity,

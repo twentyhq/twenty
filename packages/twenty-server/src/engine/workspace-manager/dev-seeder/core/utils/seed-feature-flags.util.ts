@@ -26,11 +26,6 @@ export const seedFeatureFlags = async ({
         value: false,
       },
       {
-        key: FeatureFlagKey.IS_AI_ENABLED,
-        workspaceId: workspaceId,
-        value: true,
-      },
-      {
         key: FeatureFlagKey.IS_PUBLIC_DOMAIN_ENABLED,
         workspaceId: workspaceId,
         value: true,

@@ -1,0 +1,71 @@
+---
+title: Quickstart
+description: Get Twenty up and running in under 5 minutes — on the cloud or self-hosted.
+icon: "play"
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+## Signup
+
+<Steps>
+  <Step title="Create your account">
+    Go to [app.twenty.com](https://app.twenty.com) and sign up with Google, Microsoft, or email.
+  </Step>
+  <Step title="Choose a trial">
+    Pick **30 days** (with card) or **7 days** (without card). Both include full access — unlimited contacts, email integration, custom objects, API. You can change plan or billing interval anytime.
+  </Step>
+  <Step title="Create your workspace">
+    After payment confirmation via Stripe, you'll set up your workspace name and user profile. You can cancel anytime.
+  </Step>
+</Steps>
+
+<VimeoEmbed videoId="1185227242" title="Creating a workspace" />
+
+
+
+
+## Configure your workspace
+
+Once you're in, three steps to make Twenty yours:
+
+### 1. Connect your mailbox
+
+Go to **Settings → Accounts** and connect your Google or Microsoft account. Twenty will import your emails and calendar events, and auto-create contacts from interactions. Using another provider? You can add mailboxes via SMTP or calendars via CalDAV from the same page.
+
+<Note>Start here — connecting a mailbox gives your team immediate value with real data before you customize anything else.</Note>
+<VimeoEmbed videoId="1185416821" title="Connect your mailbox" />
+### 2. Shape your data model
+
+Go to **Settings → Data Model** to create custom objects and fields. A few things to know:
+- Custom objects and fields are **unlimited on all plans** — no upsell.
+- **People, Companies, and Opportunities** are the objects that show synced emails and meetings. Use them as your base and add fields to categorize (e.g., a `Person Type` field) rather than creating separate objects that won't have email history.
+- Two People can't share the same email. Two Companies can't share the same domain.
+- You can deactivate standard fields/objects you don't need, and hide fields from views without deleting them.
+
+[Data Model reference →](/user-guide/data-model/overview)
+<VimeoEmbed videoId="1185416793" title="Shape your data model" />
+
+### 3. Import your data
+
+Use the Command Menu (`Cmd+K` / `Ctrl+K`) to import People, Companies, Opportunities, or any custom object via CSV. Download the sample file first to see the expected format. Limit files to 10k records and deduplicate emails/domains before importing.
+
+[Data Migration guide →](/user-guide/data-migration/overview)
+<VimeoEmbed videoId="1185416775" title="Import your data" />
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Learn the layout" icon="table-columns" href="/getting-started/core-concepts/layout">
+    Navigation, views, command menu, side panel.
+  </Card>
+  <Card title="Build Workflows" icon="bolt" href="/user-guide/workflows/overview">
+    Automate your business processes.
+  </Card>
+  <Card title="Create Views" icon="table" href="/user-guide/layout/overview">
+    Table, kanban, calendar — filter and sort your data.
+  </Card>
+  <Card title="Explore the API" icon="plug" href="/developers/extend/api">
+    Schema-per-tenant REST and GraphQL.
+  </Card>
+</CardGroup>

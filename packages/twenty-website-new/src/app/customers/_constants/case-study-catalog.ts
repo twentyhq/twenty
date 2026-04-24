@@ -120,7 +120,7 @@ export const CASE_STUDY_CATALOG_ENTRIES: CaseStudyCatalogEntry[] = [
         'NetZero uses Twenty as a modular CRM across product lines and countries, with a roadmap into AI-assisted workflows.',
       date: '2025',
       coverImageSrc:
-        'https://images.unsplash.com/photo-1510524474345-1c4bac68d1d0?w=1600&q=80',
+        'https://images.unsplash.com/photo-1744830343976-ce690ba2a67c?w=1600&q=80',
     },
   },
   {

@@ -9,7 +9,6 @@ import {
   WorkflowRunStepInfos,
 } from 'twenty-shared/workflow';
 
-import { BILLING_WORKFLOW_EXECUTION_ERROR_MESSAGE } from 'src/engine/core-modules/billing/constants/billing-workflow-execution-error-message.constant';
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
@@ -377,7 +376,7 @@ export class WorkflowExecutorWorkspaceService {
         {
           resourceType: UsageResourceType.WORKFLOW,
           operationType: UsageOperationType.WORKFLOW_EXECUTION,
-          creditsUsedMicro: 1,
+          creditsUsedMicro: 100,
           quantity: 1,
           unit: UsageUnit.INVOCATION,
           resourceId: workflowId,
@@ -475,14 +474,9 @@ export class WorkflowExecutorWorkspaceService {
     workflowRunId: string;
     workspaceId: string;
   }) {
-    const canBill = await this.canBillWorkflowNodeExecution(workspaceId);
-
-    if (!canBill) {
-      return {
-        error: BILLING_WORKFLOW_EXECUTION_ERROR_MESSAGE,
-      };
-    }
-
+    // TODO: re-enable workflow node execution credit cap once billing limits are revisited.
+    // Previously gated on BillingService.canBillMeteredProduct(WORKFLOW_NODE_EXECUTION);
+    // temporarily disabled so workflows keep running when the period cap is reached.
     const stepId = step.id;
 
     const workflowAction = this.workflowActionFactory.get(step.type);

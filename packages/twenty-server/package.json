@@ -31,7 +31,7 @@
     "@aws-sdk/s3-request-presigner": "3.1001.0",
     "@azure/msal-node": "^3.8.4",
     "@babel/preset-env": "7.26.9",
-    "@blocknote/server-util": "^0.47.1",
+    "@blocknote/server-util": "^0.47.3",
     "@clickhouse/client": "^1.18.1",
     "@dagrejs/dagre": "^1.1.2",
     "@e2b/code-interpreter": "^1.0.4",

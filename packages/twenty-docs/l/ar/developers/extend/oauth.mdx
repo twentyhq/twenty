@@ -1,0 +1,189 @@
+---
+title: OAuth
+icon: المفتاح
+description: تدفق رمز التفويض مع PKCE وبيانات اعتماد العميل للوصول من خادم إلى خادم.
+---
+
+تُطبِّق Twenty بروتوكول OAuth 2.0 باستخدام رمز التفويض + PKCE للتطبيقات المواجهة للمستخدم، وبيانات اعتماد العميل للوصول من خادم إلى خادم. يُجرى تسجيل العملاء ديناميكيًا عبر [RFC 7591](https://datatracker.ietf.org/doc/html/rfc7591) — دون إعداد يدوي في لوحة التحكم.
+
+## متى تستخدم OAuth
+
+| السيناريو                                    | طريقة المصادقة                                                                       |
+| -------------------------------------------- | ------------------------------------------------------------------------------------ |
+| البرامج النصية الداخلية، والأتمتة            | [مفتاح API](/l/ar/developers/extend/api#authentication)                                   |
+| تطبيق خارجي يعمل نيابةً عن مستخدم            | **OAuth — رمز التفويض**                                                              |
+| من خادم إلى خادم، دون سياق مستخدم            | **OAuth — بيانات اعتماد العميل**                                                     |
+| تطبيق Twenty مع امتدادات واجهة المستخدم (UI) | [التطبيقات](/l/ar/developers/extend/apps/getting-started) (يتم التعامل مع OAuth تلقائيًا) |
+
+## تسجيل عميل
+
+تدعم Twenty **التسجيل الديناميكي للعملاء** وفقًا لـ[RFC 7591](https://datatracker.ietf.org/doc/html/rfc7591). لا حاجة إلى إعداد يدوي — سجّل برمجيًا:
+
+```bash
+POST /oauth/register
+Content-Type: application/json
+
+{
+  "client_name": "My Integration",
+  "redirect_uris": ["https://myapp.com/callback"],
+  "grant_types": ["authorization_code"],
+  "token_endpoint_auth_method": "client_secret_post"
+}
+```
+
+**الاستجابة:**
+
+```json
+{
+  "client_id": "abc123",
+  "client_secret": "secret456",
+  "client_name": "My Integration",
+  "redirect_uris": ["https://myapp.com/callback"]
+}
+```
+
+<Warning>
+احفظ `client_secret` بأمان — لا يمكن استرجاعه لاحقًا.
+</Warning>
+
+## النطاقات
+
+| النطاق    | الوصول                                                         |
+| --------- | -------------------------------------------------------------- |
+| `api`     | إمكانية قراءة/كتابة كاملة لواجهات برمجة تطبيقات Core وMetadata |
+| `profile` | قراءة معلومات ملف تعريف المستخدم المُصادَق عليه                |
+
+اطلب النطاقات كسلسلة مفصولة بمسافات: `scope=api profile`
+
+## تدفق رمز التفويض
+
+استخدم هذا التدفق عندما يعمل تطبيقك نيابةً عن مستخدم Twenty.
+
+### 1. أعد توجيه المستخدم للتفويض
+
+```
+GET /oauth/authorize?
+  client_id=YOUR_CLIENT_ID&
+  response_type=code&
+  redirect_uri=https://myapp.com/callback&
+  scope=api&
+  state=random_state_value&
+  code_challenge=CHALLENGE&
+  code_challenge_method=S256
+```
+
+| المعلمة                 | مطلوب    | الوصف                                                    |
+| ----------------------- | -------- | -------------------------------------------------------- |
+| `client_id`             | نعم      | معرّف العميل المسجّل الخاص بك                            |
+| `response_type`         | نعم      | يجب أن يكون `code`                                       |
+| `redirect_uri`          | نعم      | يجب أن يطابق عنوان URI لإعادة التوجيه المسجّل            |
+| `scope`                 | لا       | نطاقات مفصولة بمسافات (القيمة الافتراضية هي `api`)       |
+| `state`                 | مُوصى به | سلسلة عشوائية لمنع هجمات CSRF                            |
+| `code_challenge`        | مُوصى به | تحدّي PKCE (تجزئة SHA-256 لـ verifier، بترميز base64url) |
+| `code_challenge_method` | مُوصى به | يجب أن تكون `S256` عند استخدام PKCE                      |
+
+يرى المستخدم شاشة موافقة ويوافق على الوصول أو يرفضه.
+
+### ٢. معالجة الاستدعاء المرتجع
+
+بعد التفويض، تعيد Twenty التوجيه إلى `redirect_uri` الخاص بك:
+
+```
+https://myapp.com/callback?code=AUTH_CODE&state=random_state_value
+```
+
+تحقّق من أن قيمة `state` تطابق ما أرسلته.
+
+### ٣. استبدِل الرمز بالرموز
+
+```bash
+POST /oauth/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=authorization_code&
+code=AUTH_CODE&
+redirect_uri=https://myapp.com/callback&
+client_id=YOUR_CLIENT_ID&
+client_secret=YOUR_CLIENT_SECRET&
+code_verifier=YOUR_PKCE_VERIFIER
+```
+
+**الاستجابة:**
+
+```json
+{
+  "access_token": "eyJhbG...",
+  "token_type": "Bearer",
+  "expires_in": 3600,
+  "refresh_token": "dGhpcyBpcyBh..."
+}
+```
+
+### 4. استخدم رمز الوصول
+
+```bash
+GET /rest/companies
+Authorization: Bearer ACCESS_TOKEN
+```
+
+### 5. حدِّث عند انتهاء الصلاحية
+
+```bash
+POST /oauth/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=refresh_token&
+refresh_token=YOUR_REFRESH_TOKEN&
+client_id=YOUR_CLIENT_ID&
+client_secret=YOUR_CLIENT_SECRET
+```
+
+## تدفق بيانات اعتماد العميل
+
+لعمليات التكامل من خادم إلى خادم دون تفاعل مستخدم:
+
+```bash
+POST /oauth/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=client_credentials&
+client_id=YOUR_CLIENT_ID&
+client_secret=YOUR_CLIENT_SECRET&
+scope=api
+```
+
+الرمز المُعاد يمتلك وصولًا على مستوى مساحة العمل، وغير مرتبط بأي مستخدم محدّد.
+
+## اكتشاف الخادم
+
+تنشر Twenty إعدادات OAuth الخاصة بها عند نقطة اكتشاف قياسية:
+
+```
+GET /.well-known/oauth-authorization-server
+```
+
+يعيد هذا جميع نقاط النهاية وأنواع المنح المدعومة والنطاقات والقدرات — وهو مفيد لبناء عملاء OAuth عامّين.
+
+## ملخص نقاط نهاية API
+
+| نقطة النهاية                              | الغرض                      |
+| ----------------------------------------- | -------------------------- |
+| `/.well-known/oauth-authorization-server` | اكتشاف بيانات تعريف الخادم |
+| `/oauth/register`                         | التسجيل الديناميكي للعميل  |
+| `/oauth/authorize`                        | تفويض المستخدم             |
+| `/oauth/token`                            | مبادلة الرموز وتحديثها     |
+
+| البيئة                | عنوان URL الأساسي        |
+| --------------------- | ------------------------ |
+| **السحابة**           | `https://api.twenty.com` |
+| **الاستضافة الذاتية** | `https://{your-domain}`  |
+
+## OAuth مقابل مفاتيح API
+
+|                          | مفاتيح واجهة برمجة التطبيقات     | OAuth                                      |
+| ------------------------ | -------------------------------- | ------------------------------------------ |
+| **الإعداد**              | إنشاء من الإعدادات               | تسجيل عميل، وتنفيذ التدفق                  |
+| **سياق المستخدم**        | لا يوجد (على مستوى مساحة العمل)  | أذونات مستخدم محدّد                        |
+| **الأفضل لـ**            | البرامج النصية، الأدوات الداخلية | تطبيقات خارجية، وتكاملات متعددة المستخدمين |
+| **تدوير الرموز**         | يدوي                             | تلقائي عبر رموز التحديث                    |
+| **وصول محدود بالنطاقات** | وصول كامل إلى API                | تفصيلي عبر النطاقات                        |

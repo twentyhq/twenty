@@ -92,6 +92,7 @@ export const SettingsApplicationsTable = ({
                   <IconChevronRight
                     size={theme.icon.size.md}
                     stroke={theme.icon.stroke.sm}
+                    color={theme.font.color.light}
                   />
                 }
                 link={getSettingsPath(SettingsPath.ApplicationDetail, {

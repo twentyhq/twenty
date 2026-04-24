@@ -25,7 +25,7 @@ export const FAQ_DATA: FaqDataType = {
         fontFamily: 'sans',
       },
       answer: {
-        text: "Yes. Twenty is the #1 open-source CRM on GitHub. Most teams run it on our managed cloud for zero-ops setup; self-hosting is always available if you'd rather own the infrastructure.",
+        text: "Yes. Twenty is the #1 open source CRM on GitHub. You can self-host to fully own your infrastructure, or run it on our managed cloud for a zero-ops setup.",
       },
     },
     {
@@ -79,7 +79,7 @@ export const FAQ_DATA: FaqDataType = {
         fontFamily: 'sans',
       },
       answer: {
-        text: 'Cloud Pro is $9/user/month (yearly). Organization is $19/user/month and unlocks SSO and row-level permissions for teams needing enterprise-grade security.',
+        text: 'Cloud Pro is $9/user/month (yearly). Organization is $19/user/month and unlocks SSO and row-level permissions for teams that need finer access control.',
       },
     },
   ],

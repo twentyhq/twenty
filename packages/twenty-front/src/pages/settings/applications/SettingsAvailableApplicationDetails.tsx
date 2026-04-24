@@ -1,3 +1,4 @@
+import { CurrentApplicationContext } from '@/applications/contexts/CurrentApplicationContext';
 import { useInstallMarketplaceApp } from '@/marketplace/hooks/useInstallMarketplaceApp';
 import { useUpgradeApplication } from '@/marketplace/hooks/useUpgradeApplication';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -249,36 +250,41 @@ export const SettingsAvailableApplicationDetails = () => {
   }
 
   return (
-    <SubMenuTopBarContainer
-      links={[
-        {
-          children: t`Workspace`,
-          href: getSettingsPath(SettingsPath.Workspace),
-        },
-        {
-          children: t`Applications`,
-          href: getSettingsPath(SettingsPath.Applications),
-        },
-        { children: displayName },
-      ]}
-      title={
-        <SettingsApplicationDetailTitle
-          displayName={displayName}
-          description={description}
-          logoUrl={app?.logoUrl}
-          isUnlisted={isUnlisted}
-        />
-      }
-    >
-      <SettingsPageContainer>
-        <TabList
-          tabs={tabs}
-          componentInstanceId={AVAILABLE_APPLICATION_DETAIL_ID}
-          behaveAsLinks={false}
-        />
+    <CurrentApplicationContext.Provider value={application?.id ?? null}>
+      <SubMenuTopBarContainer
+        links={[
+          {
+            children: t`Workspace`,
+            href: getSettingsPath(SettingsPath.Workspace),
+          },
+          {
+            children: t`Applications`,
+            href: getSettingsPath(SettingsPath.Applications),
+          },
+          { children: displayName },
+        ]}
+        title={
+          <SettingsApplicationDetailTitle
+            displayName={displayName}
+            description={description}
+            logoUrl={app?.logoUrl}
+            applicationId={application?.id}
+            applicationName={application?.name}
+            universalIdentifier={detail.universalIdentifier}
+            isUnlisted={isUnlisted}
+          />
+        }
+      >
+        <SettingsPageContainer>
+          <TabList
+            tabs={tabs}
+            componentInstanceId={AVAILABLE_APPLICATION_DETAIL_ID}
+            behaveAsLinks={false}
+          />
 
-        {renderActiveTabContent()}
-      </SettingsPageContainer>
-    </SubMenuTopBarContainer>
+          {renderActiveTabContent()}
+        </SettingsPageContainer>
+      </SubMenuTopBarContainer>
+    </CurrentApplicationContext.Provider>
   );
 };

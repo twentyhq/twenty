@@ -2,10 +2,10 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 import { defineLogicFunction, type DatabaseEventPayload, type ObjectRecordCreateEvent } from 'twenty-sdk/define';
 
-import { ON_RESEND_SEGMENT_CREATED_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/modules/resend/constants/universal-identifiers';
-import type { ResendSegmentRecord } from 'src/modules/resend/shared/types/resend-segment-record';
-import { findOrCreateResendSegment } from 'src/modules/resend/sync/utils/find-or-create-resend-segment';
-import { getResendClient } from 'src/modules/resend/shared/utils/get-resend-client';
+import { ON_RESEND_SEGMENT_CREATED_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from '@modules/resend/constants/universal-identifiers';
+import type { ResendSegmentRecord } from '@modules/resend/shared/types/resend-segment-record';
+import { findOrCreateResendSegment } from '@modules/resend/sync/utils/find-or-create-resend-segment';
+import { getResendClient } from '@modules/resend/shared/utils/get-resend-client';
 
 type SegmentCreateEvent = DatabaseEventPayload<
   ObjectRecordCreateEvent<ResendSegmentRecord>
@@ -26,10 +26,10 @@ const handler = async (
     return { skipped: true, reason: 'no name on record' };
   }
 
-  const resend = getResendClient();
+  const resendClient = getResendClient();
   const client = new CoreApiClient();
 
-  const resendId = await findOrCreateResendSegment(resend, client, name);
+  const resendId = await findOrCreateResendSegment(resendClient, client, name);
 
   await client.mutation({
     updateResendSegment: {

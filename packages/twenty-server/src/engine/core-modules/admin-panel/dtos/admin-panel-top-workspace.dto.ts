@@ -15,4 +15,7 @@ export class AdminPanelTopWorkspaceDTO {
 
   @Field(() => String)
   subdomain: string;
+
+  @Field(() => String, { nullable: true })
+  logo: string | null;
 }

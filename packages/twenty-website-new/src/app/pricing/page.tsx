@@ -1,6 +1,10 @@
 import { FAQ_DATA, MENU_DATA } from '@/app/_constants';
 import { TalkToUsButton } from '@/app/components/ContactCalModal';
 import {
+  BecomePartnerButton,
+  PartnerApplicationModalRoot,
+} from '@/app/partners/components/PartnerApplication';
+import {
   ENGAGEMENT_BAND_DATA,
   HERO_DATA,
   PLAN_TABLE_DATA,
@@ -37,7 +41,7 @@ const PricingBannerContainer = styled.div`
 export const metadata: Metadata = {
   title: 'Pricing | Twenty',
   description:
-    'Plans that scale with your team. Compare tiers of the #1 open-source CRM.',
+    'Plans that scale with your team. Compare tiers of the #1 open source CRM.',
 };
 
 export default async function PricingPage() {
@@ -45,7 +49,7 @@ export default async function PricingPage() {
   const menuSocialLinks = mergeSocialLinkLabels(MENU_DATA.socialLinks, stats);
 
   return (
-    <>
+    <PartnerApplicationModalRoot>
       <Menu.Root
         backgroundColor="#F3F3F3"
         scheme="primary"
@@ -90,11 +94,9 @@ export default async function PricingPage() {
                 <EngagementBand.Body body={ENGAGEMENT_BAND_DATA.body} />
               </EngagementBand.Copy>
               <EngagementBand.Actions>
-                <LinkButton
+                <BecomePartnerButton
                   color="secondary"
-                  href="https://app.twenty.com/welcome"
                   label="Find a partner"
-                  type="anchor"
                   variant="outlined"
                 />
               </EngagementBand.Actions>
@@ -137,6 +139,6 @@ export default async function PricingPage() {
         </Faq.Intro>
         <Faq.Items questions={FAQ_DATA.questions} />
       </Faq.Root>
-    </>
+    </PartnerApplicationModalRoot>
   );
 }

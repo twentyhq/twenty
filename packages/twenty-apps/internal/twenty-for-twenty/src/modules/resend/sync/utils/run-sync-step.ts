@@ -1,15 +1,15 @@
-import type { StepOutcome } from 'src/modules/resend/sync/types/step-outcome';
-import type { SyncStepResult } from 'src/modules/resend/sync/types/sync-step-result';
-import { getErrorMessage } from 'src/modules/resend/shared/utils/get-error-message';
+import type { StepOutcome } from '@modules/resend/sync/types/step-outcome';
+import type { SyncStepResult } from '@modules/resend/sync/types/sync-step-result';
+import { getErrorMessage } from '@modules/resend/shared/utils/get-error-message';
 
 export const runSyncStep = async <TValue>(
   name: string,
-  fn: () => Promise<SyncStepResult<TValue>>,
+  executeStep: () => Promise<SyncStepResult<TValue>>,
 ): Promise<StepOutcome<TValue>> => {
   const startedAt = performance.now();
 
   try {
-    const { result, value } = await fn();
+    const { result, value } = await executeStep();
 
     return {
       name,
@@ -28,13 +28,13 @@ export const runSyncStep = async <TValue>(
   }
 };
 
-export const skipDueToFailedDeps = (
+export const skipDueToFailedDependencies = (
   name: string,
-  deps: Record<string, StepOutcome<unknown>>,
+  prerequisiteOutcomes: Record<string, StepOutcome<unknown>>,
 ): StepOutcome<never> => {
-  const failed = Object.entries(deps)
+  const failed = Object.entries(prerequisiteOutcomes)
     .filter(([, outcome]) => outcome.status !== 'ok')
-    .map(([depName]) => depName);
+    .map(([prerequisiteName]) => prerequisiteName);
 
   return {
     name,

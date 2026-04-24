@@ -1,14 +1,14 @@
 import { SIDE_PANEL_COMPONENT_INSTANCE_ID } from '@/side-panel/constants/SidePanelComponentInstanceId';
 import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
 import { useSidePanelCloseAnimationCompleteCleanup } from '@/side-panel/hooks/useSidePanelCloseAnimationCompleteCleanup';
+import { hasUserSelectedSidePanelListItemState } from '@/side-panel/states/hasUserSelectedSidePanelListItemState';
+import { isSidePanelClosingState } from '@/side-panel/states/isSidePanelClosingState';
+import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import { sidePanelNavigationMorphItemsByPageState } from '@/side-panel/states/sidePanelNavigationMorphItemsByPageState';
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
 import { sidePanelPageInfoState } from '@/side-panel/states/sidePanelPageInfoState';
 import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
 import { sidePanelShouldFocusTitleInputComponentState } from '@/side-panel/states/sidePanelShouldFocusTitleInputComponentState';
-import { hasUserSelectedSidePanelListItemState } from '@/side-panel/states/hasUserSelectedSidePanelListItemState';
-import { isSidePanelClosingState } from '@/side-panel/states/isSidePanelClosingState';
-import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useStore } from 'jotai';
@@ -43,10 +43,6 @@ export const useNavigateSidePanel = () => {
       });
     }
 
-    if (isSidePanelOpened) {
-      return;
-    }
-
     pushFocusItemToFocusStack({
       focusId: SIDE_PANEL_FOCUS_ID,
       component: {
@@ -57,6 +53,10 @@ export const useNavigateSidePanel = () => {
         enableGlobalHotkeysConflictingWithKeyboard: false,
       },
     });
+
+    if (isSidePanelOpened) {
+      return;
+    }
 
     store.set(isSidePanelOpenedState.atom, true);
     store.set(hasUserSelectedSidePanelListItemState.atom, false);
