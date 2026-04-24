@@ -120,6 +120,18 @@ ENTRYPOINT ["/app/entrypoint.sh"]
 
 
 # ===========================================================================
+# Target: twenty-server-aws (server only + aws-cli, no frontend)
+#   docker build --target twenty-server-aws -f packages/twenty-docker/twenty/Dockerfile .
+# ===========================================================================
+
+FROM twenty-server AS twenty-server-aws
+
+USER root
+RUN apk add --no-cache aws-cli
+USER 1000
+
+
+# ===========================================================================
 # Target: twenty (server + frontend)
 #   docker build --target twenty -f packages/twenty-docker/twenty/Dockerfile .
 # ===========================================================================
@@ -132,6 +144,18 @@ ENV REACT_APP_SERVER_BASE_URL=$REACT_APP_SERVER_BASE_URL
 COPY --chown=1000 --from=twenty-front-build /app/packages/twenty-front/build /app/packages/twenty-server/dist/front
 
 LABEL org.opencontainers.image.description="Twenty image with backend and frontend."
+
+
+# ===========================================================================
+# Target: twenty-aws (server + frontend + aws-cli)
+#   docker build --target twenty-aws -f packages/twenty-docker/twenty/Dockerfile .
+# ===========================================================================
+
+FROM twenty AS twenty-aws
+
+USER root
+RUN apk add --no-cache aws-cli
+USER 1000
 
 
 # ===========================================================================
