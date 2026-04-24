@@ -702,6 +702,7 @@ export interface PageLayoutWidget {
     title: Scalars['String']
     type: WidgetType
     objectMetadataId?: Scalars['UUID']
+    /** @deprecated Use `position` instead. Will be removed in a future release. */
     gridPosition: GridPosition
     position?: PageLayoutWidgetPosition
     configuration: WidgetConfiguration
@@ -3589,6 +3590,7 @@ export interface PageLayoutWidgetGenqlSelection{
     title?: boolean | number
     type?: boolean | number
     objectMetadataId?: boolean | number
+    /** @deprecated Use `position` instead. Will be removed in a future release. */
     gridPosition?: GridPositionGenqlSelection
     position?: PageLayoutWidgetPositionGenqlSelection
     configuration?: WidgetConfigurationGenqlSelection

@@ -3846,6 +3846,7 @@ export type PageLayoutWidget = {
   configuration: WidgetConfiguration;
   createdAt: Scalars['DateTime'];
   deletedAt?: Maybe<Scalars['DateTime']>;
+  /** @deprecated Use `position` instead. Will be removed in a future release. */
   gridPosition: GridPosition;
   id: Scalars['UUID'];
   isActive: Scalars['Boolean'];
