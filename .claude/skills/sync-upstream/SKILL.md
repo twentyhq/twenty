@@ -113,25 +113,16 @@ railway variable set APP_VERSION=vX.Y.Z --service twenty-worker --environment ua
 
 After the deploy to UAT succeeds, run upgrade migrations via Railway SSH.
 
-**Critical: the `upgrade` command has a version dependency.** It reads the
-`APP_VERSION` from the running server (e.g. 1.20.0) and only runs commands
-for that version. It requires the workspace DB to already be on the *previous*
-minor version (e.g. 1.19.0). If the workspace is further behind, you must
-manually run intermediate-version commands first.
+**Mechanism (post-1.23):** The `core.workspace.version` column was dropped in
+1.23 (by `drop-workspace-version-column` fast instance command). State is now
+tracked in `core.upgradeMigration` — one row per executed command, per workspace
+or per instance. The `upgrade` command reads this table, builds the full sequence
+across `TWENTY_CROSS_UPGRADE_SUPPORTED_VERSIONS` (= previous versions + current),
+and runs only what hasn't been recorded yet. No manual per-version stepping.
 
-#### Check workspace version vs server version
+#### Normal flow
 
-```bash
-railway ssh --environment uat --service twenty -- \
-  'psql "$PG_DATABASE_URL" -c "SELECT id, version FROM core.workspace;"'
-```
-
-Compare to the current server version (`APP_VERSION` env var). If the workspace
-version is two or more minor versions behind, see "Multi-version gap" below.
-
-#### Normal case: workspace is on N-1 (one minor version behind)
-
-Run the `upgrade` command, which handles all N commands and bumps the version:
+Run `upgrade` — it handles the whole cross-version sequence in one go:
 
 ```bash
 railway ssh --environment uat --service twenty -- \
@@ -145,55 +136,41 @@ railway ssh --environment uat --service twenty -- \
   "cd /app/packages/twenty-server && node dist/command/command.js cache:flush"
 ```
 
-#### Multi-version gap: workspace is two or more versions behind
-
-The `upgrade` command will refuse to run ("workspace is below fromWorkspaceVersion").
-You must run intermediate-version commands manually, version by version.
-
-For each missing version (e.g. 1.18 → 1.19 → 1.20):
-
-1. **Run each upgrade command for that version individually:**
-   ```bash
-   railway ssh --environment uat --service twenty -- \
-     "cd /app/packages/twenty-server && node dist/command/command.js upgrade:1-19:fix-invalid-standard-universal-identifiers"
-   # repeat for each upgrade:1-19:* command
-   ```
-   To list all available upgrade commands:
-   ```bash
-   railway ssh --environment uat --service twenty -- \
-     "cd /app/packages/twenty-server && node dist/command/command.js --help 2>&1 | grep 'upgrade:1-'"
-   ```
-   Note: the `--help` global list truncates; test individual commands with `--help` if not shown.
-
-2. **Manually bump the workspace version in the DB:**
-   ```bash
-   railway ssh --environment uat --service twenty -- \
-     'psql "$PG_DATABASE_URL" -c "UPDATE core.workspace SET version = '"'"'1.19.0'"'"';"'
-   ```
-
-3. Repeat for the next version tier, then finish with `upgrade` for the current version.
-
-**Commands that fail with "flat entity to add already exists"** (e.g.
-`backfill-page-layouts`) indicate data was partially created. Log the error,
-skip, and continue — the existing records are sufficient.
-
-Note: the three 1-20 commands that previously failed with "constraint already
-exists" (`make-permission-flag-*-not-nullable`, `make-object-permission-*-not-nullable`,
-`backfill-navigation-menu-item-type`) have been patched to be idempotent and
-should no longer fail.
-
-After all versions are complete, flush the cache:
-
+**Dry-run first if the gap is large:**
 ```bash
 railway ssh --environment uat --service twenty -- \
-  "cd /app/packages/twenty-server && node dist/command/command.js cache:flush"
+  "cd /app/packages/twenty-server && node dist/command/command.js upgrade --dry-run --verbose"
 ```
 
-**Always verify** the workspace version after completing all upgrades:
+#### Inspecting and repairing state
+
+Check what's already run:
 ```bash
 railway ssh --environment uat --service twenty -- \
-  'psql "$PG_DATABASE_URL" -c "SELECT version FROM core.workspace;"'
+  'psql "$PG_DATABASE_URL" -c "SELECT \"executedByVersion\", name, status FROM core.\"upgradeMigration\" ORDER BY \"createdAt\" DESC LIMIT 20;"'
 ```
+
+If a command failed, its row has `status='failed'`. Fix the cause, delete the
+failed row(s), and re-run `upgrade` — it'll re-pick them up.
+
+If you need to force a successful command to run again (e.g. after a data
+correction), delete its row(s) from `upgradeMigration` and re-run `upgrade`.
+
+#### Missing from the sequence
+
+If `upgrade` errors with `Step "X" not found in upgrade sequence. The sequence
+only covers versions [A, B, C]` — the workspace is too far behind the server's
+cross-upgrade window. Options: step the server back to an intermediate version
+first, or sync upstream in smaller hops.
+
+#### Known idempotency issues (historical)
+
+- **"flat entity to add already exists"** (e.g. `backfill-page-layouts`): data
+  was partially created by an earlier attempt. Usually safe to mark complete
+  and move on — the existing records are sufficient.
+- The three 1-20 commands that previously failed with "constraint already exists"
+  (`make-permission-flag-*-not-nullable`, `make-object-permission-*-not-nullable`,
+  `backfill-navigation-menu-item-type`) have since been patched to be idempotent.
 
 ```bash
 git -C /home/clive/_Projects/stratum/twenty/source add -A
@@ -219,12 +196,12 @@ Our customised files and what to preserve in each:
   migrations. Missing them causes server crashes (wrong enum values) or missing
   UI data (stale cache). We were bitten by both: `RICH_TEXT_V2` crash (v1.20)
   and missing sidebar after `backfill-missing-standard-views` (v1.19).
-- **The `upgrade` command only runs the current version's commands.** It does NOT
-  chain through multiple versions. If the workspace is on 1.18 and the server is
-  1.20, you must run 1-19 commands manually and bump the DB version to 1.19 before
-  `upgrade` will work. We discovered this when the Workflows nav item was missing on
-  UAT because `migrate-favorites-to-navigation-menu-items` (1-18) had never run —
-  even though the workspace version said 1.18.1.
+- **Since 1.23, `upgrade` chains the full cross-version sequence in one run**,
+  driven by `core.upgradeMigration` rather than a version column. Pre-1.23 it only
+  ran the current version's commands and required manual version bumps in the DB —
+  that legacy flow is gone. We were bitten by it on v1.18→1.20: `migrate-favorites-to-navigation-menu-items`
+  (1-18) had never run so Workflows nav was missing, even though `core.workspace.version`
+  said 1.18.1.
 - **The Railway container entry point for commands is `dist/command/command.js`**,
   not `dist/main.js`. Using `main.js` fails with `EADDRINUSE` because it tries to
   start the HTTP server.
