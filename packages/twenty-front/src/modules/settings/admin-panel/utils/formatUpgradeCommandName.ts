@@ -1,3 +1,5 @@
+const TRAILING_TIMESTAMP_PATTERN = /^\d+$/;
+
 export const formatUpgradeCommandName = (
   commandName: string | null | undefined,
 ): string | null => {
@@ -11,11 +13,26 @@ export const formatUpgradeCommandName = (
     return commandName;
   }
 
-  const [version, ...remainingParts] = commandNameParts;
+  const version = commandNameParts[0];
+  const timestamp = commandNameParts[commandNameParts.length - 1];
 
-  remainingParts.pop();
+  if (!TRAILING_TIMESTAMP_PATTERN.test(timestamp)) {
+    const [, ...remainingParts] = commandNameParts;
 
-  const commandLabel = remainingParts.join('_').replace(/Command$/, '');
+    remainingParts.pop();
 
-  return `${commandLabel} (${version})`;
+    const commandLabel = remainingParts.join('_').replace(/Command$/, '');
+
+    return `${commandLabel} (${version})`;
+  }
+
+  const className = commandNameParts.slice(1, -1).join('_');
+  const isSlowInstance = className.endsWith('SlowInstanceCommand');
+  const friendlyCommandName = className
+    .replace(/SlowInstanceCommand$/, '')
+    .replace(/FastInstanceCommand$/, '')
+    .replace(/Command$/, '');
+  const slowLabel = isSlowInstance ? ' (slow)' : '';
+
+  return `${friendlyCommandName} ${timestamp} (${version})${slowLabel}`;
 };

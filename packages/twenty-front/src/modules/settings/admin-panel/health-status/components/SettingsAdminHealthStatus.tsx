@@ -7,10 +7,10 @@ import { GET_ALL_WORKSPACES_UPGRADE_STATUS } from '@/settings/admin-panel/health
 import { SettingsAdminMaintenanceModeFetchEffect } from '@/settings/admin-panel/health-status/maintenance-mode/components/SettingsAdminMaintenanceModeFetchEffect';
 import { SettingsAdminMaintenanceMode } from '@/settings/admin-panel/health-status/maintenance-mode/components/SettingsAdminMaintenanceMode';
 import { t } from '@lingui/core/macro';
-import { H2Title } from 'twenty-ui/display';
-import { IconProgressCheck } from 'twenty-ui/display';
+import { H2Title, IconProgressCheck } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
 import { useQuery } from '@apollo/client/react';
+import { UpgradeHealthEnum } from 'twenty-shared/types';
 import { GetSystemHealthStatusDocument } from '~/generated-admin/graphql';
 
 const ADMIN_PANEL_UPGRADE_STATUS_LINK =
@@ -28,7 +28,7 @@ export const SettingsAdminHealthStatus = () => {
   const { data: upgradeStatusData, loading: loadingUpgradeStatus } = useQuery<{
     getAllWorkspacesUpgradeStatus: {
       instanceUpgradeStatus: {
-        health: string;
+        health: UpgradeHealthEnum;
         inferredVersion: string | null;
       };
       totalCount: number;
@@ -75,6 +75,7 @@ export const SettingsAdminHealthStatus = () => {
               {
                 id: 'upgrade-status',
                 label: t`Upgrade status`,
+                instanceHealth: upgradeStatus.instanceUpgradeStatus.health,
                 behindCount: upgradeStatus.behindCount,
                 failedCount: upgradeStatus.failedCount,
               },
@@ -84,6 +85,7 @@ export const SettingsAdminHealthStatus = () => {
             getItemLabel={(item) => item.label}
             RowRightComponent={({ item }) => (
               <SettingsAdminUpgradeStatusRightContainer
+                instanceHealth={item.instanceHealth}
                 behindCount={item.behindCount}
                 failedCount={item.failedCount}
               />

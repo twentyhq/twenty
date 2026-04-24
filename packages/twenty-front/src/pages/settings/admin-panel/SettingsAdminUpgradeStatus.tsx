@@ -182,13 +182,20 @@ export const SettingsAdminUpgradeStatus = () => {
   const instanceHealth = instanceUpgradeStatus?.health;
   const instanceLatestCommand = instanceUpgradeStatus?.latestCommand;
 
-  const formattedInstanceLastUpdated = formatDateTimeString({
-    value: instanceLatestCommand?.createdAt,
-    timeZone,
-    dateFormat,
-    timeFormat,
-    localeCatalog,
-  });
+  const behindCount = upgradeStatus?.behindCount ?? 0;
+  const failedCount = upgradeStatus?.failedCount ?? 0;
+
+  const workspacesRolloutHealth = useMemo((): UpgradeHealthEnum | null => {
+    if (failedCount > 0) {
+      return UpgradeHealthEnum.failed;
+    }
+
+    if (behindCount > 0) {
+      return UpgradeHealthEnum.behind;
+    }
+
+    return UpgradeHealthEnum.upToDate;
+  }, [behindCount, failedCount]);
 
   const instanceStatusLabel =
     instanceHealth === UpgradeHealthEnum.upToDate
@@ -198,8 +205,24 @@ export const SettingsAdminUpgradeStatus = () => {
         : instanceHealth === UpgradeHealthEnum.failed
           ? t`Failed`
           : t`Unknown`;
-  const behindCount = upgradeStatus?.behindCount ?? 0;
-  const failedCount = upgradeStatus?.failedCount ?? 0;
+
+  const workspacesRolloutStatusLabel =
+    workspacesRolloutHealth === UpgradeHealthEnum.upToDate
+      ? t`Up to date`
+      : workspacesRolloutHealth === UpgradeHealthEnum.behind
+        ? t`Behind`
+        : workspacesRolloutHealth === UpgradeHealthEnum.failed
+          ? t`Failed`
+          : t`Unknown`;
+
+  const formattedInstanceLastUpdated = formatDateTimeString({
+    value: instanceLatestCommand?.createdAt,
+    timeZone,
+    dateFormat,
+    timeFormat,
+    localeCatalog,
+  });
+
   const hasBehindWorkspaces = behindCount > 0;
   const hasFailedWorkspaces = failedCount > 0;
 
@@ -266,7 +289,7 @@ export const SettingsAdminUpgradeStatus = () => {
               },
               {
                 Icon: IconProgressCheck,
-                label: t`Instance`,
+                label: t`Instance status`,
                 value: (
                   <Status
                     color={
@@ -279,6 +302,25 @@ export const SettingsAdminUpgradeStatus = () => {
                             : 'gray'
                     }
                     text={instanceStatusLabel}
+                    weight="medium"
+                  />
+                ),
+              },
+              {
+                Icon: IconStatusChange,
+                label: t`Workspaces up to date`,
+                value: (
+                  <Status
+                    color={
+                      workspacesRolloutHealth === UpgradeHealthEnum.upToDate
+                        ? 'green'
+                        : workspacesRolloutHealth === UpgradeHealthEnum.behind
+                          ? 'orange'
+                          : workspacesRolloutHealth === UpgradeHealthEnum.failed
+                            ? 'red'
+                            : 'gray'
+                    }
+                    text={workspacesRolloutStatusLabel}
                     weight="medium"
                   />
                 ),
