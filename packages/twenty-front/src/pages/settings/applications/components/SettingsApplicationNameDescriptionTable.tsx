@@ -1,8 +1,8 @@
 import { Table } from '@/ui/layout/table/components/Table';
+import { TableBody } from '@/ui/layout/table/components/TableBody';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { TableSection } from '@/ui/layout/table/components/TableSection';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
@@ -34,12 +34,10 @@ const StyledNameCellContent = styled.div`
 export const SettingsApplicationNameDescriptionTable = ({
   title,
   description,
-  sectionTitle,
   items,
 }: {
   title: string;
   description: string;
-  sectionTitle: string;
   items: ApplicationNameDescriptionTableRow[];
 }) => {
   const { theme } = useContext(ThemeContext);
@@ -61,7 +59,7 @@ export const SettingsApplicationNameDescriptionTable = ({
           <TableHeader>{t`Description`}</TableHeader>
           {hasAnyLink && <TableHeader></TableHeader>}
         </TableRow>
-        <TableSection title={sectionTitle}>
+        <TableBody>
           {items.map((item) => {
             const Icon = getIcon(item.icon);
 
@@ -107,7 +105,7 @@ export const SettingsApplicationNameDescriptionTable = ({
               </TableRow>
             );
           })}
-        </TableSection>
+        </TableBody>
       </Table>
     </Section>
   );
