@@ -191,12 +191,7 @@ describe('ImapGetAllFoldersService', () => {
       expect(result.find((f) => f.isSentFolder)).toBeUndefined();
     });
 
-    it.each([
-      ['\\Noselect'],
-      ['\\NoSelect'],
-      ['\\NOSELECT'],
-      ['\\noselect'],
-    ])(
+    it.each([['\\Noselect'], ['\\NoSelect'], ['\\NOSELECT'], ['\\noselect']])(
       'should treat %s as non-selectable (RFC 3501 attribute names are case-insensitive)',
       async (flagSpelling) => {
         const mailboxList = [
