@@ -23,7 +23,10 @@ type ReviewEventNode = {
   reviewerId: string | null;
   pullRequestId: string | null;
   reviewer: { ghLogin: string | null } | null;
-  pullRequest: { githubNumber: number | null } | null;
+  pullRequest: {
+    githubNumber: number | null;
+    authorId: string | null;
+  } | null;
 };
 
 type GroupContext = {
@@ -31,6 +34,7 @@ type GroupContext = {
   reviewerId: string | null;
   prNumber: number | null;
   reviewerLogin: string | null;
+  prAuthorId: string | null;
   events: { state: ReviewEventState; submittedAt: string | null }[];
 };
 
@@ -68,7 +72,7 @@ const handler = async (_event: RoutePayload<unknown>) => {
               reviewerId: true,
               pullRequestId: true,
               reviewer: { ghLogin: true },
-              pullRequest: { githubNumber: true },
+              pullRequest: { githubNumber: true, authorId: true },
             },
           },
           pageInfo: { hasNextPage: true, endCursor: true },
@@ -95,6 +99,7 @@ const handler = async (_event: RoutePayload<unknown>) => {
             reviewerId: node.reviewerId,
             prNumber: node.pullRequest?.githubNumber ?? null,
             reviewerLogin: node.reviewer?.ghLogin ?? null,
+            prAuthorId: node.pullRequest?.authorId ?? null,
             events: [],
           };
           groups.set(key, group);
@@ -104,6 +109,9 @@ const handler = async (_event: RoutePayload<unknown>) => {
         }
         if (group.prNumber === null && node.pullRequest?.githubNumber != null) {
           group.prNumber = node.pullRequest.githubNumber;
+        }
+        if (group.prAuthorId === null && node.pullRequest?.authorId) {
+          group.prAuthorId = node.pullRequest.authorId;
         }
         group.events.push({
           state: node.state,
@@ -123,6 +131,7 @@ const handler = async (_event: RoutePayload<unknown>) => {
         prNumber: group.prNumber,
         reviewerLogin: group.reviewerLogin,
         events: group.events,
+        prAuthorId: group.prAuthorId,
       }),
     );
   }
