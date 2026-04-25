@@ -51,11 +51,9 @@ export const SettingsLogicFunctionTriggersTab = ({
 
   return (
     <>
-      {readonly && isDefined(applicationName) && (
+      {readonly && !hasAnyTrigger && isDefined(applicationName) && (
         <StyledAppNotice>
-          {hasAnyTrigger
-            ? t`Triggers for this function are configured by the ${applicationName} application and can't be modified here.`
-            : t`This function is part of the ${applicationName} application. It has no trigger configured, so it can only be invoked from the Test tab or by other functions.`}
+          {t`This function is part of the ${applicationName} application. It has no trigger configured, so it can only be invoked from the Test tab or by other functions.`}
         </StyledAppNotice>
       )}
       {readonly && !hasAnyTrigger ? (

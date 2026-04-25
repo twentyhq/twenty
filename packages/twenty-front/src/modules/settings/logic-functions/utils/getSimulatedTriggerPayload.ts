@@ -29,7 +29,7 @@ const sampleValueForType = (type?: string): unknown => {
   }
 };
 
-const buildToolPayloadFromSchema = (schema?: object): object => {
+export const buildToolPayloadFromSchema = (schema?: object): object => {
   const properties = (schema as ToolInputSchemaShape | undefined)?.properties;
   if (!isDefined(properties)) {
     return {};
@@ -43,7 +43,9 @@ const buildToolPayloadFromSchema = (schema?: object): object => {
   return payload;
 };
 
-const buildHttpPayload = (settings: HttpRouteTriggerSettings): object => {
+export const buildHttpPayload = (
+  settings: HttpRouteTriggerSettings,
+): object => {
   return {
     headers: {},
     queryStringParameters: {},
@@ -59,7 +61,7 @@ const buildHttpPayload = (settings: HttpRouteTriggerSettings): object => {
   };
 };
 
-const buildDatabaseEventPayload = (
+export const buildDatabaseEventPayload = (
   settings: DatabaseEventTriggerSettings,
 ): object => {
   const [object, action] = settings.eventName.split('.');

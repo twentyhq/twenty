@@ -1,3 +1,4 @@
+import { SettingsLogicFunctionTriggerPayloadFormat } from '@/settings/logic-functions/components/triggers/SettingsLogicFunctionTriggerPayloadFormat';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
@@ -83,6 +84,10 @@ export const SettingsLogicFunctionCronTriggerSection = ({
           <StyledHint>
             {t`Format: [Minute] [Hour] [Day of Month] [Month] [Day of Week]`}
           </StyledHint>
+          <SettingsLogicFunctionTriggerPayloadFormat
+            payload={{}}
+            hint={t`Cron triggers pass no payload — the handler is called with an empty object.`}
+          />
         </>
       )}
     </Section>

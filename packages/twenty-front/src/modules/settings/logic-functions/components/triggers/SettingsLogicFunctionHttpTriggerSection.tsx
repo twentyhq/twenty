@@ -1,3 +1,5 @@
+import { SettingsLogicFunctionTriggerPayloadFormat } from '@/settings/logic-functions/components/triggers/SettingsLogicFunctionTriggerPayloadFormat';
+import { buildHttpPayload } from '@/settings/logic-functions/utils/getSimulatedTriggerPayload';
 import { Select } from '@/ui/input/components/Select';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
@@ -158,6 +160,10 @@ export const SettingsLogicFunctionHttpTriggerSection = ({
             />
             <StyledAuthLabel>{t`Require authentication`}</StyledAuthLabel>
           </StyledAuthRow>
+          <SettingsLogicFunctionTriggerPayloadFormat
+            payload={buildHttpPayload(value)}
+            hint={t`Your handler receives this object. The body is empty for GET requests; for POST it contains the parsed JSON sent by the client.`}
+          />
         </StyledFields>
       )}
     </Section>

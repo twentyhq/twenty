@@ -1,4 +1,6 @@
 import { SettingsDatabaseEventsForm } from '@/settings/components/SettingsDatabaseEventsForm';
+import { SettingsLogicFunctionTriggerPayloadFormat } from '@/settings/logic-functions/components/triggers/SettingsLogicFunctionTriggerPayloadFormat';
+import { buildDatabaseEventPayload } from '@/settings/logic-functions/utils/getSimulatedTriggerPayload';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
@@ -79,17 +81,23 @@ export const SettingsLogicFunctionDatabaseEventTriggerSection = ({
         )}
       </StyledHeader>
       {isEnabled && (
-        <SettingsDatabaseEventsForm
-          events={[
-            {
-              object: object || null,
-              action,
-              updatedFields: value.updatedFields,
-            },
-          ]}
-          updateOperation={updateOperation}
-          disabled={readonly}
-        />
+        <>
+          <SettingsDatabaseEventsForm
+            events={[
+              {
+                object: object || null,
+                action,
+                updatedFields: value.updatedFields,
+              },
+            ]}
+            updateOperation={updateOperation}
+            disabled={readonly}
+          />
+          <SettingsLogicFunctionTriggerPayloadFormat
+            payload={buildDatabaseEventPayload(value)}
+            hint={t`Your handler receives this event object. "after" holds the new state, "before" the previous one (null for created), and "updatedFields" lists the field names that changed on update.`}
+          />
+        </>
       )}
     </Section>
   );
