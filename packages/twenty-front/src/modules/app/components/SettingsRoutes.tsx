@@ -180,6 +180,14 @@ const SettingsApplicationDetails = lazy(() =>
   ),
 );
 
+const SettingsApplicationFrontComponentDetail = lazy(() =>
+  import(
+    '~/pages/settings/applications/SettingsApplicationFrontComponentDetail'
+  ).then((module) => ({
+    default: module.SettingsApplicationFrontComponentDetail,
+  })),
+);
+
 const SettingsAdminApplicationRegistrationDetail = lazy(() =>
   import(
     '~/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetail'
@@ -751,6 +759,10 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
         <Route
           path={SettingsPath.ApplicationLogicFunctionDetail}
           element={<SettingsLogicFunctionDetail />}
+        />
+        <Route
+          path={SettingsPath.ApplicationFrontComponentDetail}
+          element={<SettingsApplicationFrontComponentDetail />}
         />
         <Route
           path={SettingsPath.ApplicationRegistrationConfigVariableDetails}

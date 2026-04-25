@@ -22,7 +22,11 @@ type InstalledApplicationForContentTab = Omit<
   'objects' | 'universalIdentifier' | 'frontComponents'
 > & {
   objects: { id: string }[];
-  frontComponents?: { name: string; description?: string | null }[];
+  frontComponents?: {
+    id: string;
+    name: string;
+    description?: string | null;
+  }[];
 };
 
 type SettingsApplicationDetailContentTabProps = {
@@ -107,9 +111,13 @@ export const SettingsApplicationDetailContentTab = ({
     useMemo((): ApplicationNameDescriptionTableRow[] => {
       if (isDefined(installedApplication)) {
         return (installedApplication.frontComponents ?? []).map((fc) => ({
-          key: fc.name,
+          key: fc.id,
           name: fc.name,
           description: fc.description,
+          link: getSettingsPath(SettingsPath.ApplicationFrontComponentDetail, {
+            applicationId,
+            frontComponentId: fc.id,
+          }),
         }));
       }
 
@@ -118,7 +126,7 @@ export const SettingsApplicationDetailContentTab = ({
         name: fc.name ?? fc.universalIdentifier,
         description: fc.description,
       }));
-    }, [installedApplication, manifestContent?.frontComponents]);
+    }, [installedApplication, manifestContent?.frontComponents, applicationId]);
 
   return (
     <>
