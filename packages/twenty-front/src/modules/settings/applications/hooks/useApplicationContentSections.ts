@@ -127,9 +127,15 @@ export const useApplicationContentSections = ({
           key: layout.universalIdentifier,
           name: layout.name,
           secondary: parts.length > 0 ? parts.join(' · ') : undefined,
+          link: isDefined(installedAppId)
+            ? getSettingsPath(SettingsPath.ApplicationPageLayoutDetail, {
+                applicationId: installedAppId,
+                pageLayoutUniversalIdentifier: layout.universalIdentifier,
+              })
+            : undefined,
         };
       }),
-    [manifestContent?.pageLayouts, resolveObjectLabel],
+    [manifestContent?.pageLayouts, resolveObjectLabel, installedAppId],
   );
 
   const viewRows = useMemo(
@@ -147,9 +153,15 @@ export const useApplicationContentSections = ({
           secondary: isDefined(objectLabel)
             ? t`${formattedType} of ${objectLabel}`
             : formattedType,
+          link: isDefined(installedAppId)
+            ? getSettingsPath(SettingsPath.ApplicationViewDetail, {
+                applicationId: installedAppId,
+                viewUniversalIdentifier: view.universalIdentifier,
+              })
+            : undefined,
         };
       }),
-    [manifestContent?.views, resolveObjectLabel],
+    [manifestContent?.views, resolveObjectLabel, installedAppId],
   );
 
   const navigationMenuItemRows = useMemo(
@@ -240,6 +252,16 @@ export const useApplicationContentSections = ({
             name: displayName,
             icon: item.icon ?? undefined,
             secondary,
+            link: isDefined(installedAppId)
+              ? getSettingsPath(
+                  SettingsPath.ApplicationNavigationMenuItemDetail,
+                  {
+                    applicationId: installedAppId,
+                    navigationMenuItemUniversalIdentifier:
+                      item.universalIdentifier,
+                  },
+                )
+              : undefined,
           };
         })
         .filter((row) => isDefined(row.name)),
@@ -248,6 +270,7 @@ export const useApplicationContentSections = ({
       resolveObjectLabel,
       resolvePageLayoutName,
       resolveViewName,
+      installedAppId,
     ],
   );
 

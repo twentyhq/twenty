@@ -188,6 +188,28 @@ const SettingsApplicationFrontComponentDetail = lazy(() =>
   })),
 );
 
+const SettingsLayoutViewDetail = lazy(() =>
+  import('~/pages/settings/layout/SettingsLayoutViewDetail').then((module) => ({
+    default: module.SettingsLayoutViewDetail,
+  })),
+);
+
+const SettingsLayoutPageLayoutDetail = lazy(() =>
+  import('~/pages/settings/layout/SettingsLayoutPageLayoutDetail').then(
+    (module) => ({
+      default: module.SettingsLayoutPageLayoutDetail,
+    }),
+  ),
+);
+
+const SettingsLayoutNavigationMenuItemDetail = lazy(() =>
+  import('~/pages/settings/layout/SettingsLayoutNavigationMenuItemDetail').then(
+    (module) => ({
+      default: module.SettingsLayoutNavigationMenuItemDetail,
+    }),
+  ),
+);
+
 const SettingsAdminApplicationRegistrationDetail = lazy(() =>
   import(
     '~/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetail'
@@ -763,6 +785,18 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
         <Route
           path={SettingsPath.ApplicationFrontComponentDetail}
           element={<SettingsApplicationFrontComponentDetail />}
+        />
+        <Route
+          path={SettingsPath.ApplicationViewDetail}
+          element={<SettingsLayoutViewDetail />}
+        />
+        <Route
+          path={SettingsPath.ApplicationPageLayoutDetail}
+          element={<SettingsLayoutPageLayoutDetail />}
+        />
+        <Route
+          path={SettingsPath.ApplicationNavigationMenuItemDetail}
+          element={<SettingsLayoutNavigationMenuItemDetail />}
         />
         <Route
           path={SettingsPath.ApplicationRegistrationConfigVariableDetails}
