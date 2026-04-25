@@ -105,6 +105,19 @@ describe('fillUsageTimeSeriesGaps', () => {
     expect(result).toEqual([]);
   });
 
+  it('should treat periodEnd as exclusive to match SQL `timestamp < periodEnd` semantics', () => {
+    const result = fillUsageTimeSeriesGaps({
+      rows: [{ date: '2026-04-23', creditsUsed: 10 }],
+      periodStart: new Date('2026-04-22T00:00:00.000Z'),
+      periodEnd: new Date('2026-04-24T00:00:00.000Z'),
+    });
+
+    expect(result).toEqual([
+      { date: '2026-04-22', creditsUsed: 0 },
+      { date: '2026-04-23', creditsUsed: 10 },
+    ]);
+  });
+
   it('should return dates in ascending order', () => {
     const result = fillUsageTimeSeriesGaps({
       rows: [

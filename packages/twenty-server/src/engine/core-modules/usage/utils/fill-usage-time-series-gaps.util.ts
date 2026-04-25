@@ -19,7 +19,8 @@ export const fillUsageTimeSeriesGaps = ({
   periodEnd,
 }: FillUsageTimeSeriesGapsParams): UsageTimeSeriesPoint[] => {
   const startDate = parseToPlainDateOrThrow(periodStart.toISOString());
-  const endDate = parseToPlainDateOrThrow(periodEnd.toISOString());
+  const lastIncludedInstant = new Date(periodEnd.getTime() - 1);
+  const endDate = parseToPlainDateOrThrow(lastIncludedInstant.toISOString());
 
   if (isPlainDateAfter(startDate, endDate)) {
     return [];
