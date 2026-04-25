@@ -146,6 +146,9 @@ export class SyncMessageFoldersService {
 
         if (foldersToUpdate.size > 0) {
           for (const [id, data] of foldersToUpdate.entries()) {
+            // STRATUM-DEBUG: log data passed to update (revert when isSynced reset bug is found)
+            // oxlint-disable-next-line no-console
+            console.error('STRATUM_SYNCMF_UPD ' + JSON.stringify({ id, messageChannelId, workspaceId, data, dataKeys: Object.keys(data as object) }));
             await this.messageFolderRepository.update(
               { id, messageChannelId, workspaceId },
               data as Record<string, unknown>,
@@ -155,6 +158,9 @@ export class SyncMessageFoldersService {
 
         if (foldersToCreate.length > 0) {
           for (const folderToCreate of foldersToCreate) {
+            // STRATUM-DEBUG: log data passed to save (revert when isSynced reset bug is found)
+            // oxlint-disable-next-line no-console
+            console.error('STRATUM_SYNCMF_CRE ' + JSON.stringify({ folderToCreate, dataKeys: Object.keys(folderToCreate) }));
             await this.messageFolderRepository.save({
               ...folderToCreate,
               workspaceId,
