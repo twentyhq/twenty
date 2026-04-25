@@ -1,4 +1,4 @@
-import { stripEmptyValues } from 'src/engine/core-modules/tool-provider/output-serialization/strip-empty-values.util';
+import { stripEmptyValues } from 'src/engine/core-modules/tool-provider/output-transforms/strip-empty-values.util';
 
 describe('stripEmptyValues', () => {
   it('should remove null values', () => {

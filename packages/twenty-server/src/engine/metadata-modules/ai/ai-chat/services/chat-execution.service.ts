@@ -138,7 +138,7 @@ export class ChatExecutionService {
     const preloadedTools = await this.toolRegistry.getToolsByName(
       AI_CHAT_TOOL_NAMES_TO_PRELOAD,
       toolContext,
-      { serializeOutput: true },
+      { compactOutput: true },
     );
 
     const resolvedModelId = modelId ?? workspace.smartModel;
@@ -186,7 +186,7 @@ export class ChatExecutionService {
       [EXECUTE_TOOL_TOOL_NAME]: createExecuteToolTool(
         this.toolRegistry,
         toolContext,
-        { serializeOutput: true },
+        { compactOutput: true },
       ),
       [LOAD_SKILL_TOOL_NAME]: createLoadSkillTool(
         (skillNames) =>
