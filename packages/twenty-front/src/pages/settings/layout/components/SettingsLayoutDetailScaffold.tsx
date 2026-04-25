@@ -52,6 +52,7 @@ export const SettingsLayoutDetailScaffold = ({
   description,
   detailRows,
   isLoading,
+  children,
 }: {
   applicationId: string;
   applicationName: string | undefined;
@@ -60,6 +61,7 @@ export const SettingsLayoutDetailScaffold = ({
   description?: string | null;
   detailRows: DetailRow[];
   isLoading: boolean;
+  children?: ReactNode;
 }) => {
   const trimmedDescription = description?.trim();
 
@@ -121,6 +123,7 @@ export const SettingsLayoutDetailScaffold = ({
                 </TableBody>
               </Table>
             </Section>
+            {children}
           </>
         )}
       </SettingsPageContainer>

@@ -7,6 +7,7 @@ import {
   renderMonoText,
   SettingsLayoutDetailScaffold,
 } from '~/pages/settings/layout/components/SettingsLayoutDetailScaffold';
+import { SettingsLayoutItemTable } from '~/pages/settings/layout/components/SettingsLayoutItemTable';
 import { resolveManifestObjectLabel } from '~/pages/settings/layout/utils/resolveManifestObjectLabel';
 
 export const SettingsLayoutPageLayoutDetail = () => {
@@ -26,17 +27,6 @@ export const SettingsLayoutPageLayoutDetail = () => {
     ? resolveManifestObjectLabel(pageLayout.objectUniversalIdentifier, manifest)
     : undefined;
 
-  const tabSummary =
-    pageLayout?.tabs && pageLayout.tabs.length > 0
-      ? pageLayout.tabs.map((tab) => tab.title).join(', ')
-      : t`No tabs`;
-
-  const totalWidgets =
-    pageLayout?.tabs?.reduce(
-      (sum, tab) => sum + (tab.widgets?.length ?? 0),
-      0,
-    ) ?? 0;
-
   const detailRows: DetailRow[] = isDefined(pageLayout)
     ? [
         {
@@ -55,23 +45,14 @@ export const SettingsLayoutPageLayoutDetail = () => {
           value:
             objectLabel ?? renderMonoText(pageLayout.objectUniversalIdentifier),
         },
-        {
-          key: 'tabsCount',
-          label: t`Tabs`,
-          value: pageLayout.tabs?.length ?? 0,
-        },
-        {
-          key: 'tabsList',
-          label: t`Tab titles`,
-          value: tabSummary,
-        },
-        {
-          key: 'widgets',
-          label: t`Widgets across tabs`,
-          value: totalWidgets,
-        },
       ]
     : [];
+
+  // Tabs sorted by position so the on-page order matches what the user would
+  // see in the actual page layout.
+  const sortedTabs = [...(pageLayout?.tabs ?? [])].sort(
+    (a, b) => a.position - b.position,
+  );
 
   return (
     <SettingsLayoutDetailScaffold
@@ -81,6 +62,43 @@ export const SettingsLayoutPageLayoutDetail = () => {
       entityTypeLabel={t`page layout`}
       detailRows={detailRows}
       isLoading={isLoading}
-    />
+    >
+      {sortedTabs.map((tab, index) => {
+        const widgets = tab.widgets ?? [];
+        const tabNumber = index + 1;
+        const description =
+          isDefined(tab.layoutMode) && widgets.length > 0
+            ? t`Layout mode: ${tab.layoutMode} · ${widgets.length} widget(s)`
+            : isDefined(tab.layoutMode)
+              ? t`Layout mode: ${tab.layoutMode}`
+              : widgets.length > 0
+                ? t`${widgets.length} widget(s)`
+                : t`Empty tab`;
+
+        return (
+          <SettingsLayoutItemTable
+            key={tab.universalIdentifier}
+            title={t`Tab ${tabNumber}: ${tab.title}`}
+            description={description}
+            columns={[
+              { key: 'title', label: t`Widget` },
+              { key: 'type', label: t`Type`, width: '160px' },
+              { key: 'object', label: t`Object`, width: '180px' },
+            ]}
+            rows={widgets.map((widget) => ({
+              key: widget.universalIdentifier,
+              cells: [
+                widget.title,
+                renderMonoText(widget.type),
+                resolveManifestObjectLabel(
+                  widget.objectUniversalIdentifier,
+                  manifest,
+                ) ?? '—',
+              ],
+            }))}
+          />
+        );
+      })}
+    </SettingsLayoutDetailScaffold>
   );
 };

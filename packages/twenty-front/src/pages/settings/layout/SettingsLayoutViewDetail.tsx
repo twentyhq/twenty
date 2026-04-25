@@ -2,12 +2,22 @@ import { t } from '@lingui/core/macro';
 import { useParams } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 import { useApplicationManifest } from '~/pages/settings/layout/hooks/useApplicationManifest';
+import { useFieldLabelByUid } from '~/pages/settings/layout/hooks/useFieldLabelByUid';
 import {
   type DetailRow,
   renderMonoText,
   SettingsLayoutDetailScaffold,
 } from '~/pages/settings/layout/components/SettingsLayoutDetailScaffold';
+import { SettingsLayoutItemTable } from '~/pages/settings/layout/components/SettingsLayoutItemTable';
 import { resolveManifestObjectLabel } from '~/pages/settings/layout/utils/resolveManifestObjectLabel';
+
+const formatFilterValue = (value: unknown): string => {
+  if (typeof value === 'string') return value;
+  if (typeof value === 'number' || typeof value === 'boolean') {
+    return String(value);
+  }
+  return JSON.stringify(value);
+};
 
 export const SettingsLayoutViewDetail = () => {
   const { applicationId = '', viewUniversalIdentifier = '' } = useParams<{
@@ -26,6 +36,10 @@ export const SettingsLayoutViewDetail = () => {
     ? resolveManifestObjectLabel(view.objectUniversalIdentifier, manifest)
     : undefined;
 
+  const fieldLabelByUid = useFieldLabelByUid(manifest);
+  const resolveField = (uid: string) =>
+    fieldLabelByUid.get(uid) ?? renderMonoText(uid);
+
   const detailRows: DetailRow[] = isDefined(view)
     ? [
         {
@@ -33,43 +47,34 @@ export const SettingsLayoutViewDetail = () => {
           label: t`Universal identifier`,
           value: renderMonoText(view.universalIdentifier),
         },
-        {
-          key: 'type',
-          label: t`Type`,
-          value: view.type ?? t`Table`,
-        },
+        { key: 'type', label: t`Type`, value: view.type ?? t`Table` },
         {
           key: 'object',
           label: t`Object`,
           value: objectLabel ?? renderMonoText(view.objectUniversalIdentifier),
         },
-        {
-          key: 'icon',
-          label: t`Icon`,
-          value: renderMonoText(view.icon),
-        },
+        { key: 'icon', label: t`Icon`, value: renderMonoText(view.icon) },
         {
           key: 'visibility',
           label: t`Visibility`,
           value: view.visibility ?? t`Default`,
         },
         {
-          key: 'fields',
-          label: t`Fields`,
-          value: view.fields?.length ?? 0,
-        },
-        {
-          key: 'filters',
-          label: t`Filters`,
-          value: view.filters?.length ?? 0,
-        },
-        {
-          key: 'sorts',
-          label: t`Sorts`,
-          value: view.sorts?.length ?? 0,
+          key: 'openRecordIn',
+          label: t`Open records in`,
+          value: view.openRecordIn ?? t`Default`,
         },
       ]
     : [];
+
+  // Fields are sorted by position so the table reflects the on-screen order
+  // the user would see in the data view.
+  const sortedFields = [...(view?.fields ?? [])].sort(
+    (a, b) => a.position - b.position,
+  );
+
+  const sortedSorts = view?.sorts ?? [];
+  const sortedFilters = view?.filters ?? [];
 
   return (
     <SettingsLayoutDetailScaffold
@@ -79,6 +84,58 @@ export const SettingsLayoutViewDetail = () => {
       entityTypeLabel={t`view`}
       detailRows={detailRows}
       isLoading={isLoading}
-    />
+    >
+      <SettingsLayoutItemTable
+        title={t`Fields`}
+        description={t`Columns shown in this view, in display order`}
+        columns={[
+          { key: 'position', label: t`#`, width: '40px', align: 'right' },
+          { key: 'field', label: t`Field` },
+          { key: 'visible', label: t`Visible`, width: '80px' },
+          { key: 'size', label: t`Size`, width: '80px', align: 'right' },
+        ]}
+        rows={sortedFields.map((field) => ({
+          key: field.universalIdentifier,
+          cells: [
+            field.position,
+            resolveField(field.fieldMetadataUniversalIdentifier),
+            field.isVisible === false ? t`Hidden` : t`Yes`,
+            field.size ?? '—',
+          ],
+        }))}
+      />
+      <SettingsLayoutItemTable
+        title={t`Filters`}
+        description={t`Conditions applied to records before they appear in this view`}
+        columns={[
+          { key: 'field', label: t`Field` },
+          { key: 'operand', label: t`Operand`, width: '160px' },
+          { key: 'value', label: t`Value` },
+        ]}
+        rows={sortedFilters.map((filter) => ({
+          key: filter.universalIdentifier,
+          cells: [
+            resolveField(filter.fieldMetadataUniversalIdentifier),
+            filter.operand,
+            formatFilterValue(filter.value),
+          ],
+        }))}
+      />
+      <SettingsLayoutItemTable
+        title={t`Sorts`}
+        description={t`Order in which records are displayed`}
+        columns={[
+          { key: 'field', label: t`Field` },
+          { key: 'direction', label: t`Direction`, width: '120px' },
+        ]}
+        rows={sortedSorts.map((sort) => ({
+          key: sort.universalIdentifier,
+          cells: [
+            resolveField(sort.fieldMetadataUniversalIdentifier),
+            sort.direction,
+          ],
+        }))}
+      />
+    </SettingsLayoutDetailScaffold>
   );
 };
