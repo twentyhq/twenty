@@ -1,15 +1,13 @@
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { isHiddenSystemField } from '@/object-metadata/utils/isHiddenSystemField';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { t } from '@lingui/core/macro';
 import { useMemo } from 'react';
 import { type Manifest } from 'twenty-shared/application';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { type Application } from '~/generated-metadata/graphql';
-import {
-  type ApplicationFieldRow,
-  type ApplicationObjectRow,
-} from '~/pages/settings/applications/components/SettingsApplicationDataTable';
+import { type ApplicationContentRow } from '~/pages/settings/applications/components/SettingsApplicationContentSubtable';
 import { findObjectNameByUniversalIdentifier } from '~/pages/settings/applications/utils/findObjectNameByUniversalIdentifier';
 
 type InstalledApplicationForObjectRows = Omit<
@@ -37,7 +35,7 @@ export const useObjectAndFieldRows = ({
     [installedApplication?.objects],
   );
 
-  const objectRows = useMemo((): ApplicationObjectRow[] => {
+  const objectRows = useMemo((): ApplicationContentRow[] => {
     if (isDefined(installedApplication)) {
       if (installedApplication.objects.length === 0) {
         return [];
@@ -45,23 +43,27 @@ export const useObjectAndFieldRows = ({
 
       return objectMetadataItems
         .filter((item) => installedObjectIds.has(item.id))
-        .map((item) => ({
-          key: item.nameSingular,
-          labelPlural: item.labelPlural,
-          icon: item.icon ?? undefined,
-          fieldsCount: item.fields.filter((f) => !isHiddenSystemField(f))
-            .length,
-          link: getSettingsPath(SettingsPath.ObjectDetail, {
-            objectNamePlural: item.namePlural,
-          }),
-        }));
+        .map((item) => {
+          const fieldsCount = item.fields.filter(
+            (f) => !isHiddenSystemField(f),
+          ).length;
+          return {
+            key: item.nameSingular,
+            name: item.labelPlural,
+            icon: item.icon ?? undefined,
+            secondary: t`${fieldsCount} fields`,
+            link: getSettingsPath(SettingsPath.ObjectDetail, {
+              objectNamePlural: item.namePlural,
+            }),
+          };
+        });
     }
 
     return (manifestContent?.objects ?? []).map((appObject) => ({
       key: appObject.nameSingular,
-      labelPlural: appObject.labelPlural,
+      name: appObject.labelPlural,
       icon: appObject.icon ?? undefined,
-      fieldsCount: appObject.fields.length,
+      secondary: t`${appObject.fields.length} fields`,
     }));
   }, [
     installedApplication,
@@ -70,7 +72,7 @@ export const useObjectAndFieldRows = ({
     installedObjectIds,
   ]);
 
-  const fieldRows = useMemo((): ApplicationFieldRow[] => {
+  const fieldRows = useMemo((): ApplicationContentRow[] => {
     if (isDefined(installedApplication)) {
       return objectMetadataItems
         .filter(
@@ -83,10 +85,9 @@ export const useObjectAndFieldRows = ({
             .filter((field) => field.applicationId === installedApplication.id)
             .map((field) => ({
               key: `${item.id}-${field.id}`,
-              fieldLabel: field.label,
-              fieldIcon: field.icon ?? undefined,
-              objectLabel: item.labelSingular,
-              objectIcon: item.icon ?? undefined,
+              name: field.label,
+              icon: field.icon ?? undefined,
+              secondary: t`on ${item.labelSingular}`,
               link: getSettingsPath(SettingsPath.ObjectDetail, {
                 objectNamePlural: item.namePlural,
               }),
@@ -112,10 +113,9 @@ export const useObjectAndFieldRows = ({
         if (isDefined(appObject)) {
           return {
             key: `${appObject.nameSingular}-${field.universalIdentifier}`,
-            fieldLabel: field.label ?? field.name,
-            fieldIcon: field.icon ?? undefined,
-            objectLabel: appObject.labelSingular,
-            objectIcon: appObject.icon ?? undefined,
+            name: field.label ?? field.name,
+            icon: field.icon ?? undefined,
+            secondary: t`on ${appObject.labelSingular}`,
           };
         }
 
@@ -134,10 +134,9 @@ export const useObjectAndFieldRows = ({
 
         return {
           key: `${objectMetadataItem.nameSingular}-${field.universalIdentifier}`,
-          fieldLabel: field.label ?? field.name,
-          fieldIcon: field.icon ?? undefined,
-          objectLabel: objectMetadataItem.labelSingular,
-          objectIcon: objectMetadataItem.icon ?? undefined,
+          name: field.label ?? field.name,
+          icon: field.icon ?? undefined,
+          secondary: t`on ${objectMetadataItem.labelSingular}`,
         };
       })
       .filter(isDefined);

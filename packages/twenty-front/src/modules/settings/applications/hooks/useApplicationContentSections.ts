@@ -5,7 +5,7 @@ import { useCallback, useMemo } from 'react';
 import { type Manifest } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 import { type Application } from '~/generated-metadata/graphql';
-import { type ApplicationNameDescriptionTableRow } from '~/pages/settings/applications/components/SettingsApplicationNameDescriptionTable';
+import { type ApplicationContentRow } from '~/pages/settings/applications/components/SettingsApplicationContentSubtable';
 import { findObjectNameByUniversalIdentifier } from '~/pages/settings/applications/utils/findObjectNameByUniversalIdentifier';
 
 type InstalledApplicationForContentSections = Pick<Application, 'agents'>;
@@ -66,37 +66,30 @@ export const useApplicationContentSections = ({
   );
 
   const pageLayoutRows = useMemo(
-    (): ApplicationNameDescriptionTableRow[] =>
+    (): ApplicationContentRow[] =>
       (manifestContent?.pageLayouts ?? []).map((layout) => {
         const objectLabel = resolveObjectLabel(
           layout.objectUniversalIdentifier,
         );
         const tabCount = layout.tabs?.length ?? 0;
 
-        const descriptionParts: string[] = [];
-        if (isDefined(objectLabel)) {
-          descriptionParts.push(t`for ${objectLabel}`);
-        }
+        const parts: string[] = [];
+        if (isDefined(objectLabel)) parts.push(t`for ${objectLabel}`);
         if (tabCount > 0) {
-          descriptionParts.push(
-            tabCount === 1 ? t`1 tab` : t`${tabCount} tabs`,
-          );
+          parts.push(tabCount === 1 ? t`1 tab` : t`${tabCount} tabs`);
         }
 
         return {
           key: layout.universalIdentifier,
           name: layout.name,
-          description:
-            descriptionParts.length > 0
-              ? descriptionParts.join(' · ')
-              : undefined,
+          secondary: parts.length > 0 ? parts.join(' · ') : undefined,
         };
       }),
     [manifestContent?.pageLayouts, resolveObjectLabel],
   );
 
   const viewRows = useMemo(
-    (): ApplicationNameDescriptionTableRow[] =>
+    (): ApplicationContentRow[] =>
       (manifestContent?.views ?? []).map((view) => {
         const objectLabel = resolveObjectLabel(view.objectUniversalIdentifier);
         const viewType = view.type ?? 'TABLE';
@@ -107,7 +100,7 @@ export const useApplicationContentSections = ({
           key: view.universalIdentifier,
           name: view.name,
           icon: view.icon ?? undefined,
-          description: isDefined(objectLabel)
+          secondary: isDefined(objectLabel)
             ? t`${formattedType} of ${objectLabel}`
             : formattedType,
         };
@@ -116,11 +109,11 @@ export const useApplicationContentSections = ({
   );
 
   const navigationMenuItemRows = useMemo(
-    (): ApplicationNameDescriptionTableRow[] =>
+    (): ApplicationContentRow[] =>
       (manifestContent?.navigationMenuItems ?? [])
         .map((item) => {
-          // Resolve the destination once per item so display name and
-          // description don't both walk the manifest arrays.
+          // Resolve the destination once per item so display name and secondary
+          // don't both walk the manifest arrays.
           const destination = (() => {
             switch (item.type) {
               case 'FOLDER':
@@ -160,7 +153,6 @@ export const useApplicationContentSections = ({
               case 'OBJECT':
               case 'PAGE_LAYOUT':
               case 'VIEW':
-                return destination.label;
               case 'FOLDER':
               case 'RECORD':
                 return destination.label;
@@ -169,25 +161,23 @@ export const useApplicationContentSections = ({
             }
           })();
 
-          const description = (() => {
+          const secondary = (() => {
             switch (destination.kind) {
               case 'FOLDER':
                 return t`Folder`;
               case 'LINK':
-                return isDefined(destination.link)
-                  ? t`Link → ${destination.link}`
-                  : t`Link`;
+                return isDefined(destination.link) ? destination.link : t`Link`;
               case 'OBJECT':
                 return isDefined(destination.label)
-                  ? t`Opens the ${destination.label} list`
+                  ? t`${destination.label} list`
                   : t`Object`;
               case 'PAGE_LAYOUT':
                 return isDefined(destination.label)
-                  ? t`Opens the ${destination.label} page layout`
+                  ? t`${destination.label} layout`
                   : t`Page layout`;
               case 'VIEW':
                 return isDefined(destination.label)
-                  ? t`Opens the ${destination.label} view`
+                  ? t`${destination.label} view`
                   : t`View`;
               case 'RECORD':
                 return t`Record`;
@@ -205,7 +195,7 @@ export const useApplicationContentSections = ({
             key: item.universalIdentifier,
             name: displayName,
             icon: item.icon ?? undefined,
-            description,
+            secondary,
           };
         })
         .filter((row) => isDefined(row.name)),
@@ -217,7 +207,7 @@ export const useApplicationContentSections = ({
     ],
   );
 
-  const agentRows = useMemo((): ApplicationNameDescriptionTableRow[] => {
+  const agentRows = useMemo((): ApplicationContentRow[] => {
     if (
       isDefined(installedApplication) &&
       installedApplication.agents.length > 0
@@ -226,7 +216,7 @@ export const useApplicationContentSections = ({
         key: agent.id,
         name: agent.label,
         icon: agent.icon ?? undefined,
-        description: agent.description ?? undefined,
+        secondary: agent.description ?? undefined,
       }));
     }
 
@@ -234,28 +224,28 @@ export const useApplicationContentSections = ({
       key: agent.universalIdentifier,
       name: agent.label,
       icon: agent.icon ?? undefined,
-      description: agent.description ?? undefined,
+      secondary: agent.description ?? undefined,
     }));
   }, [installedApplication, manifestContent?.agents]);
 
   const skillRows = useMemo(
-    (): ApplicationNameDescriptionTableRow[] =>
+    (): ApplicationContentRow[] =>
       (manifestContent?.skills ?? []).map((skill) => ({
         key: skill.universalIdentifier,
         name: skill.label,
         icon: skill.icon ?? undefined,
-        description: skill.description ?? undefined,
+        secondary: skill.description ?? undefined,
       })),
     [manifestContent?.skills],
   );
 
   const roleRows = useMemo(
-    (): ApplicationNameDescriptionTableRow[] =>
+    (): ApplicationContentRow[] =>
       (manifestContent?.roles ?? []).map((role) => ({
         key: role.universalIdentifier,
         name: role.label,
         icon: role.icon ?? undefined,
-        description: role.description ?? undefined,
+        secondary: role.description ?? undefined,
       })),
     [manifestContent?.roles],
   );

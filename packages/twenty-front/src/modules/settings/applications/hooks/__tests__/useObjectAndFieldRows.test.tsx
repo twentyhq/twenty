@@ -45,10 +45,8 @@ describe('useObjectAndFieldRows', () => {
 
       expect(result.current.objectRows).toHaveLength(1);
       expect(result.current.objectRows[0].key).toBe(personObject.nameSingular);
-      expect(result.current.objectRows[0].labelPlural).toBe(
-        personObject.labelPlural,
-      );
-      expect(result.current.objectRows[0].fieldsCount).toBeGreaterThan(0);
+      expect(result.current.objectRows[0].name).toBe(personObject.labelPlural);
+      expect(result.current.objectRows[0].secondary).toMatch(/\d+ fields/);
       expect(result.current.objectRows[0].link).toBeDefined();
     });
 
@@ -99,8 +97,8 @@ describe('useObjectAndFieldRows', () => {
         { wrapper },
       );
 
-      const referencesOwnObject = result.current.fieldRows.some(
-        (row) => row.objectLabel === personObject.labelSingular,
+      const referencesOwnObject = result.current.fieldRows.some((row) =>
+        row.secondary?.includes(personObject.labelSingular),
       );
       expect(referencesOwnObject).toBe(false);
     });
@@ -135,8 +133,10 @@ describe('useObjectAndFieldRows', () => {
 
       const hasDeniedObjectField = result.current.fieldRows.some(
         (row) =>
-          row.objectLabel === timelineActivityObject?.labelSingular ||
-          row.objectLabel === favoriteObject?.labelSingular,
+          row.secondary?.includes(
+            timelineActivityObject?.labelSingular ?? '__never__',
+          ) ||
+          row.secondary?.includes(favoriteObject?.labelSingular ?? '__never__'),
       );
       expect(hasDeniedObjectField).toBe(false);
     });
@@ -169,8 +169,8 @@ describe('useObjectAndFieldRows', () => {
 
       expect(result.current.objectRows).toHaveLength(1);
       expect(result.current.objectRows[0].key).toBe('customObject');
-      expect(result.current.objectRows[0].labelPlural).toBe('Custom Objects');
-      expect(result.current.objectRows[0].fieldsCount).toBe(2);
+      expect(result.current.objectRows[0].name).toBe('Custom Objects');
+      expect(result.current.objectRows[0].secondary).toBe('2 fields');
     });
 
     it('should return one row per field when the parent object lives in the manifest', () => {
@@ -217,13 +217,13 @@ describe('useObjectAndFieldRows', () => {
       );
 
       expect(result.current.fieldRows).toHaveLength(3);
-      expect(result.current.fieldRows.map((r) => r.fieldLabel)).toEqual([
+      expect(result.current.fieldRows.map((r) => r.name)).toEqual([
         'Field 1',
         'Field 2',
         'Field 3',
       ]);
       expect(
-        result.current.fieldRows.every((r) => r.objectLabel === 'Custom'),
+        result.current.fieldRows.every((r) => r.secondary === 'on Custom'),
       ).toBe(true);
     });
 
