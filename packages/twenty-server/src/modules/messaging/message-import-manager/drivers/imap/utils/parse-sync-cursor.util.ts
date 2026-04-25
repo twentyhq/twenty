@@ -4,6 +4,7 @@ export type ImapSyncCursor = {
   highestUid: number;
   uidValidity: number;
   modSeq?: string;
+  firstSyncedUid?: number;
 };
 
 export const parseSyncCursor = (

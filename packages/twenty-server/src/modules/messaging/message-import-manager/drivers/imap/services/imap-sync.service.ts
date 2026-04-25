@@ -65,15 +65,16 @@ export class ImapSyncService {
     const lastSyncedUid = previousCursor?.highestUid ?? 0;
     const { maxUid } = mailboxState;
 
+    // Safety check: if lastSyncedUid is significantly behind maxUid, we might want to batch.
+    // However, for now, we'll focus on robustness.
+
     if (canUseQresync(client, previousCursor, mailboxState)) {
       this.logger.debug(`Using QRESYNC for folder ${folderPath}`);
 
       try {
-        return await this.fetchWithQresync(
-          client,
-          lastSyncedUid,
-          BigInt(previousCursor!.modSeq!),
-        );
+        const lastModSeq = BigInt(previousCursor!.modSeq!);
+
+        return await this.fetchWithQresync(client, lastSyncedUid, lastModSeq);
       } catch (error) {
         this.logger.warn(
           `QRESYNC failed for ${folderPath}, falling back to UID range: ${error.message}`,
@@ -81,7 +82,9 @@ export class ImapSyncService {
       }
     }
 
-    this.logger.debug(`Using UID range fetch for folder ${folderPath}`);
+    this.logger.debug(
+      `Using UID range fetch for folder ${folderPath} (range: ${lastSyncedUid + 1}:${maxUid})`,
+    );
 
     return this.fetchWithUidRange(client, lastSyncedUid, maxUid);
   }
@@ -96,13 +99,22 @@ export class ImapSyncService {
     }
 
     const uidRange = `${lastSyncedUid + 1}:${highestAvailableUid}`;
-    const uids = await client.search({ uid: uidRange }, { uid: true });
 
-    if (!uids || !Array.isArray(uids)) {
+    try {
+      const uids = await client.search({ uid: uidRange }, { uid: true });
+
+      if (!uids || !Array.isArray(uids)) {
+        return [];
+      }
+
+      return uids.map(Number);
+    } catch (error) {
+      this.logger.error(
+        `UID search failed for range ${uidRange}: ${error.message}`,
+      );
+
       return [];
     }
-
-    return uids;
   }
 
   private async fetchWithQresync(
@@ -110,20 +122,25 @@ export class ImapSyncService {
     lastSyncedUid: number,
     lastModSeq: bigint,
   ): Promise<number[]> {
-    const uids = await client.search(
-      {
-        modseq: lastModSeq + BigInt(1),
-        uid: `${lastSyncedUid + 1}:*`,
-      },
-      { uid: true },
-    );
+    try {
+      const uids = await client.search(
+        {
+          modseq: lastModSeq + BigInt(1),
+          uid: `${lastSyncedUid + 1}:*`,
+        },
+        { uid: true },
+      );
 
-    if (!uids || !Array.isArray(uids) || !uids.length) {
-      return [];
+      if (!uids || !Array.isArray(uids) || !uids.length) {
+        return [];
+      }
+
+      this.logger.debug(`QRESYNC found ${uids.length} new/modified messages`);
+
+      return uids.map(Number);
+    } catch (error) {
+      this.logger.error(`QRESYNC search failed: ${error.message}`);
+      throw error;
     }
-
-    this.logger.debug(`QRESYNC found ${uids.length} new/modified messages`);
-
-    return uids;
   }
 }
