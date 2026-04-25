@@ -20,9 +20,6 @@ type Row = {
   cells: ReactNode[];
 };
 
-// Renders a labeled table for one logical group (e.g. "Fields", "Filters",
-// "Sorts") inside a layout detail page. Skips rendering entirely when no rows
-// are provided so callers can drop the section without conditional wrappers.
 export const SettingsLayoutItemTable = ({
   title,
   description,

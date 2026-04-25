@@ -17,15 +17,6 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 export type DetailRow = { key: string; label: string; value: ReactNode };
 
-const StyledMonoText = styled.span`
-  color: ${themeCssVariables.font.color.primary};
-  font-family: ${themeCssVariables.code.font.family}, monospace;
-  font-size: ${themeCssVariables.font.size.sm};
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-`;
-
 const StyledDescription = styled.div`
   color: ${themeCssVariables.font.color.secondary};
   font-size: ${themeCssVariables.font.size.md};
@@ -35,15 +26,8 @@ const StyledDescription = styled.div`
 
 const GRID_TEMPLATE = '220px 1fr';
 
-export const renderMonoText = (value: string | null | undefined): ReactNode => (
-  <StyledMonoText>{value ?? t`Not set`}</StyledMonoText>
-);
-
-// Shared shell for a read-only detail page on an entity owned by an installed
-// application: page chrome (breadcrumbs + title), an optional description
-// block, and a Property/Value table. Centralizing this keeps the new layout
-// pages (View, PageLayout, NavigationMenuItem) visually consistent with the
-// existing FrontComponent detail page.
+// Page chrome + Property/Value details table for a read-only entity detail
+// page; pages add their own subsections via children.
 export const SettingsLayoutDetailScaffold = ({
   applicationId,
   applicationName,

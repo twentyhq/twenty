@@ -5,25 +5,25 @@ import { t } from '@lingui/core/macro';
 import { useCallback, useMemo } from 'react';
 import { type Manifest } from 'twenty-shared/application';
 import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { capitalize, getSettingsPath, isDefined } from 'twenty-shared/utils';
 import {
   type Application,
   FindManySkillsDocument,
   GetRolesDocument,
 } from '~/generated-metadata/graphql';
 import { type ApplicationContentRow } from '~/pages/settings/applications/components/SettingsApplicationContentSubtable';
-import { findObjectNameByUniversalIdentifier } from '~/pages/settings/applications/utils/findObjectNameByUniversalIdentifier';
+import {
+  getNavigationMenuItemDestination,
+  getNavigationMenuItemDestinationSecondary,
+  getNavigationMenuItemDisplayLabel,
+} from '~/pages/settings/layout/utils/getNavigationMenuItemDestination';
+import { resolveManifestObjectLabel } from '~/pages/settings/layout/utils/resolveManifestObjectLabel';
 
 type InstalledApplicationForContentSections = Pick<
   Application,
   'agents' | 'id'
 >;
 
-// Returns row arrays for every "what does this app provide" category beyond
-// data/logic/front-components. Most categories aren't on the GraphQL
-// Application type so they're read from the marketplace manifest the parent
-// loads alongside the installed app; we prefer installed-app data when both
-// sources exist (currently only `agents`).
 export const useApplicationContentSections = ({
   installedApplication,
   manifestContent,
@@ -33,9 +33,10 @@ export const useApplicationContentSections = ({
 }) => {
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
 
-  // Workspace skills + roles let us link manifest entries to their
-  // settings detail pages by id (manifest only carries universalIdentifier).
-  // Both queries are cache-first so revisiting the page doesn't re-fetch.
+  // Skills + roles are loaded so manifest entries can be linked to their
+  // settings detail pages by workspace id (manifest only carries
+  // universalIdentifier). Cache-first; both keyed on the document only so
+  // they share one fetch across the session.
   const installedAppId = isDefined(installedApplication)
     ? installedApplication.id
     : undefined;
@@ -69,44 +70,9 @@ export const useApplicationContentSections = ({
   }, [rolesData?.getRoles]);
 
   const resolveObjectLabel = useCallback(
-    (uid: string | undefined | null): string | undefined => {
-      if (!isDefined(uid)) return undefined;
-
-      const manifestObject = manifestContent?.objects.find(
-        (obj) => obj.universalIdentifier === uid,
-      );
-      if (isDefined(manifestObject)) {
-        return manifestObject.labelSingular;
-      }
-
-      const standardName = findObjectNameByUniversalIdentifier(uid);
-      if (!isDefined(standardName)) return undefined;
-
-      return objectMetadataItems.find(
-        (object) => object.nameSingular === standardName,
-      )?.labelSingular;
-    },
-    [manifestContent?.objects, objectMetadataItems],
-  );
-
-  const resolvePageLayoutName = useCallback(
-    (uid: string | undefined | null): string | undefined => {
-      if (!isDefined(uid)) return undefined;
-      return manifestContent?.pageLayouts?.find(
-        (pl) => pl.universalIdentifier === uid,
-      )?.name;
-    },
-    [manifestContent?.pageLayouts],
-  );
-
-  const resolveViewName = useCallback(
-    (uid: string | undefined | null): string | undefined => {
-      if (!isDefined(uid)) return undefined;
-      return manifestContent?.views?.find(
-        (view) => view.universalIdentifier === uid,
-      )?.name;
-    },
-    [manifestContent?.views],
+    (uid: string | undefined | null): string | undefined =>
+      resolveManifestObjectLabel(uid, manifestContent, objectMetadataItems),
+    [manifestContent, objectMetadataItems],
   );
 
   const pageLayoutRows = useMemo(
@@ -142,9 +108,7 @@ export const useApplicationContentSections = ({
     (): ApplicationContentRow[] =>
       (manifestContent?.views ?? []).map((view) => {
         const objectLabel = resolveObjectLabel(view.objectUniversalIdentifier);
-        const viewType = view.type ?? 'TABLE';
-        const formattedType =
-          viewType.charAt(0) + viewType.slice(1).toLowerCase();
+        const formattedType = capitalize((view.type ?? 'TABLE').toLowerCase());
 
         return {
           key: view.universalIdentifier,
@@ -168,80 +132,12 @@ export const useApplicationContentSections = ({
     (): ApplicationContentRow[] =>
       (manifestContent?.navigationMenuItems ?? [])
         .map((item) => {
-          // Resolve the destination once per item so display name and secondary
-          // don't both walk the manifest arrays.
-          const destination = (() => {
-            switch (item.type) {
-              case 'FOLDER':
-                return { kind: 'FOLDER' as const, label: t`Folder` };
-              case 'LINK':
-                return { kind: 'LINK' as const, link: item.link };
-              case 'OBJECT':
-                return {
-                  kind: 'OBJECT' as const,
-                  label: resolveObjectLabel(
-                    item.targetObjectUniversalIdentifier,
-                  ),
-                };
-              case 'PAGE_LAYOUT':
-                return {
-                  kind: 'PAGE_LAYOUT' as const,
-                  label: resolvePageLayoutName(
-                    item.pageLayoutUniversalIdentifier,
-                  ),
-                };
-              case 'VIEW':
-                return {
-                  kind: 'VIEW' as const,
-                  label: resolveViewName(item.viewUniversalIdentifier),
-                };
-              case 'RECORD':
-                return { kind: 'RECORD' as const, label: t`Record` };
-              default:
-                return { kind: 'UNKNOWN' as const };
-            }
-          })();
-
-          const fallbackName = (() => {
-            switch (destination.kind) {
-              case 'LINK':
-                return destination.link ?? t`Link`;
-              case 'OBJECT':
-              case 'PAGE_LAYOUT':
-              case 'VIEW':
-              case 'FOLDER':
-              case 'RECORD':
-                return destination.label;
-              default:
-                return undefined;
-            }
-          })();
-
-          const secondary = (() => {
-            switch (destination.kind) {
-              case 'FOLDER':
-                return t`Folder`;
-              case 'LINK':
-                return isDefined(destination.link) ? destination.link : t`Link`;
-              case 'OBJECT':
-                return isDefined(destination.label)
-                  ? t`${destination.label} list`
-                  : t`Object`;
-              case 'PAGE_LAYOUT':
-                return isDefined(destination.label)
-                  ? t`${destination.label} layout`
-                  : t`Page layout`;
-              case 'VIEW':
-                return isDefined(destination.label)
-                  ? t`${destination.label} view`
-                  : t`View`;
-              case 'RECORD':
-                return t`Record`;
-              default:
-                return undefined;
-            }
-          })();
-
+          const destination = getNavigationMenuItemDestination(
+            item,
+            manifestContent,
+            objectMetadataItems,
+          );
+          const fallbackName = getNavigationMenuItemDisplayLabel(destination);
           const displayName =
             isDefined(item.name) && item.name !== ''
               ? item.name
@@ -251,7 +147,7 @@ export const useApplicationContentSections = ({
             key: item.universalIdentifier,
             name: displayName,
             icon: item.icon ?? undefined,
-            secondary,
+            secondary: getNavigationMenuItemDestinationSecondary(destination),
             link: isDefined(installedAppId)
               ? getSettingsPath(
                   SettingsPath.ApplicationNavigationMenuItemDetail,
@@ -265,13 +161,7 @@ export const useApplicationContentSections = ({
           };
         })
         .filter((row) => isDefined(row.name)),
-    [
-      manifestContent?.navigationMenuItems,
-      resolveObjectLabel,
-      resolvePageLayoutName,
-      resolveViewName,
-      installedAppId,
-    ],
+    [manifestContent, objectMetadataItems, installedAppId],
   );
 
   const agentRows = useMemo((): ApplicationContentRow[] => {

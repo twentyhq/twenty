@@ -1,3 +1,4 @@
+import { getLogicFunctionTriggerLabel } from '@/logic-functions/utils/getLogicFunctionTriggerLabel';
 import { useApplicationContentSections } from '@/settings/applications/hooks/useApplicationContentSections';
 import { useObjectAndFieldRows } from '@/settings/applications/hooks/useObjectAndFieldRows';
 import { Table } from '@/ui/layout/table/components/Table';
@@ -69,49 +70,20 @@ export const SettingsApplicationDetailContentTab = ({
   });
 
   const logicFunctionRows = useMemo((): ApplicationContentRow[] => {
-    const postInstallUid =
-      manifestContent?.application?.postInstallLogicFunction
-        ?.universalIdentifier;
-    const preInstallUid =
-      manifestContent?.application?.preInstallLogicFunction
-        ?.universalIdentifier;
-
-    const triggerLabel = (lf: {
-      universalIdentifier?: string | null;
-      isTool?: boolean;
-      cronTriggerSettings?: unknown;
-      httpRouteTriggerSettings?: unknown;
-      databaseEventTriggerSettings?: { eventName?: string } | null;
-    }): string => {
-      // Lifecycle hooks are invoked by the install/upgrade flow, not by a
-      // configurable trigger — surface them explicitly so they don't look
-      // like an unconfigured function.
-      if (
-        isDefined(lf.universalIdentifier) &&
-        lf.universalIdentifier === postInstallUid
-      ) {
-        return t`Post-install`;
-      }
-      if (
-        isDefined(lf.universalIdentifier) &&
-        lf.universalIdentifier === preInstallUid
-      ) {
-        return t`Pre-install`;
-      }
-      if (lf.isTool) return t`AI tool`;
-      if (lf.cronTriggerSettings) return t`Cron`;
-      if (lf.httpRouteTriggerSettings) return t`HTTP`;
-      if (lf.databaseEventTriggerSettings) {
-        return lf.databaseEventTriggerSettings.eventName ?? t`Database event`;
-      }
-      return '';
+    const lifecycleOptions = {
+      postInstallUniversalIdentifier:
+        manifestContent?.application?.postInstallLogicFunction
+          ?.universalIdentifier,
+      preInstallUniversalIdentifier:
+        manifestContent?.application?.preInstallLogicFunction
+          ?.universalIdentifier,
     };
 
     if (isDefined(installedApplication)) {
       return (installedApplication.logicFunctions ?? []).map((lf) => ({
         key: lf.id,
         name: lf.name,
-        secondary: triggerLabel(lf),
+        secondary: getLogicFunctionTriggerLabel(lf, lifecycleOptions),
         link: getSettingsPath(SettingsPath.ApplicationLogicFunctionDetail, {
           applicationId,
           logicFunctionId: lf.id,
@@ -122,7 +94,7 @@ export const SettingsApplicationDetailContentTab = ({
     return (manifestContent?.logicFunctions ?? []).map((lf) => ({
       key: lf.universalIdentifier,
       name: lf.name ?? lf.universalIdentifier,
-      secondary: triggerLabel(lf),
+      secondary: getLogicFunctionTriggerLabel(lf, lifecycleOptions),
     }));
   }, [
     installedApplication,
@@ -130,7 +102,6 @@ export const SettingsApplicationDetailContentTab = ({
     manifestContent?.application?.postInstallLogicFunction?.universalIdentifier,
     manifestContent?.application?.preInstallLogicFunction?.universalIdentifier,
     applicationId,
-    t,
   ]);
 
   const frontComponentRows = useMemo((): ApplicationContentRow[] => {
@@ -159,8 +130,6 @@ export const SettingsApplicationDetailContentTab = ({
     [searchTerm],
   );
 
-  // Apply the same filter to every category so search reaches across all 3
-  // sections without forcing per-section search inputs.
   const filtered = {
     objects: filterRows(objectRows, normalizedSearch),
     fields: filterRows(fieldRows, normalizedSearch),

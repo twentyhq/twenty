@@ -6,11 +6,8 @@ import {
   FindOneApplicationDocument,
 } from '~/generated-metadata/graphql';
 
-// Loads the application + its marketplace manifest in two cache-first queries.
-// Both are already used by the application detail page, so revisits hit the
-// Apollo cache. Layout detail pages need the manifest to read entities
-// (views, page layouts, navigation menu items) the GraphQL Application type
-// doesn't expose.
+// Loads the app + its marketplace manifest. Both queries are cache-first since
+// the application detail page already issues them.
 export const useApplicationManifest = (applicationId: string) => {
   const { data: appData, loading: appLoading } = useQuery(
     FindOneApplicationDocument,

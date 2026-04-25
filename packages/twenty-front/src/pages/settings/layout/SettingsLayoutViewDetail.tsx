@@ -3,9 +3,9 @@ import { useParams } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 import { useApplicationManifest } from '~/pages/settings/layout/hooks/useApplicationManifest';
 import { useFieldLabelByUid } from '~/pages/settings/layout/hooks/useFieldLabelByUid';
+import { MonoText } from '~/pages/settings/layout/components/MonoText';
 import {
   type DetailRow,
-  renderMonoText,
   SettingsLayoutDetailScaffold,
 } from '~/pages/settings/layout/components/SettingsLayoutDetailScaffold';
 import { SettingsLayoutItemTable } from '~/pages/settings/layout/components/SettingsLayoutItemTable';
@@ -38,22 +38,24 @@ export const SettingsLayoutViewDetail = () => {
 
   const fieldLabelByUid = useFieldLabelByUid(manifest);
   const resolveField = (uid: string) =>
-    fieldLabelByUid.get(uid) ?? renderMonoText(uid);
+    fieldLabelByUid.get(uid) ?? <MonoText value={uid} />;
 
   const detailRows: DetailRow[] = isDefined(view)
     ? [
         {
           key: 'universalIdentifier',
           label: t`Universal identifier`,
-          value: renderMonoText(view.universalIdentifier),
+          value: <MonoText value={view.universalIdentifier} />,
         },
         { key: 'type', label: t`Type`, value: view.type ?? t`Table` },
         {
           key: 'object',
           label: t`Object`,
-          value: objectLabel ?? renderMonoText(view.objectUniversalIdentifier),
+          value: objectLabel ?? (
+            <MonoText value={view.objectUniversalIdentifier} />
+          ),
         },
-        { key: 'icon', label: t`Icon`, value: renderMonoText(view.icon) },
+        { key: 'icon', label: t`Icon`, value: <MonoText value={view.icon} /> },
         {
           key: 'visibility',
           label: t`Visibility`,
@@ -67,8 +69,6 @@ export const SettingsLayoutViewDetail = () => {
       ]
     : [];
 
-  // Fields are sorted by position so the table reflects the on-screen order
-  // the user would see in the data view.
   const sortedFields = [...(view?.fields ?? [])].sort(
     (a, b) => a.position - b.position,
   );

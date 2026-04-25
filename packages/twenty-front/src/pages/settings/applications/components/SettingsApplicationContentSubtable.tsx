@@ -1,7 +1,10 @@
+import {
+  StyledActionTableCell,
+  StyledNameTableCell,
+} from '@/settings/data-model/object-details/components/SettingsObjectItemTableRowStyledComponents';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { TableSection } from '@/ui/layout/table/components/TableSection';
-import { styled } from '@linaria/react';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -20,13 +23,6 @@ export type ApplicationContentRow = {
 };
 
 const GRID_TEMPLATE_COLUMNS = '1fr auto 32px';
-
-const StyledNameCell = styled.div`
-  align-items: center;
-  display: flex;
-  gap: ${themeCssVariables.spacing[2]};
-  min-width: 0;
-`;
 
 export const SettingsApplicationContentSubtable = ({
   title,
@@ -53,21 +49,12 @@ export const SettingsApplicationContentSubtable = ({
             gridAutoColumns={GRID_TEMPLATE_COLUMNS}
             to={row.link}
           >
-            <TableCell
-              color={themeCssVariables.font.color.primary}
-              minWidth="0"
-              overflow="hidden"
-            >
-              <StyledNameCell>
-                {isDefined(Icon) && (
-                  <Icon
-                    size={theme.icon.size.md}
-                    stroke={theme.icon.stroke.sm}
-                  />
-                )}
-                <OverflowingTextWithTooltip text={row.name} />
-              </StyledNameCell>
-            </TableCell>
+            <StyledNameTableCell minWidth="0" overflow="hidden">
+              {isDefined(Icon) && (
+                <Icon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
+              )}
+              <OverflowingTextWithTooltip text={row.name} />
+            </StyledNameTableCell>
             <TableCell
               align="right"
               color={themeCssVariables.font.color.secondary}
@@ -79,18 +66,15 @@ export const SettingsApplicationContentSubtable = ({
                 <OverflowingTextWithTooltip text={row.secondary} />
               )}
             </TableCell>
-            <TableCell
-              align="center"
-              color={themeCssVariables.font.color.light}
-              padding={`0 ${themeCssVariables.spacing[1]} 0 ${themeCssVariables.spacing[2]}`}
-            >
+            <StyledActionTableCell>
               {isDefined(row.link) && (
                 <IconChevronRight
                   size={theme.icon.size.md}
                   stroke={theme.icon.stroke.sm}
+                  color={theme.font.color.light}
                 />
               )}
-            </TableCell>
+            </StyledActionTableCell>
           </TableRow>
         );
       })}

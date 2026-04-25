@@ -4,10 +4,9 @@ import { useMemo } from 'react';
 import { type Manifest } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
-// Builds a UID → field label lookup from the union of manifest-defined fields
-// (this app's contributions) and workspace fields (standard objects' fields).
-// Detail pages need this to render "fieldMetadataUniversalIdentifier" references
-// in view filters/sorts/fields and widget configurations as readable labels.
+// Map<universalIdentifier, fieldLabel> over manifest fields + workspace fields,
+// for resolving fieldMetadataUniversalIdentifier references in view filters,
+// sorts, fields, and widget configurations.
 export const useFieldLabelByUid = (manifest: Manifest | undefined) => {
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
 

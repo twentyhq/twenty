@@ -2,12 +2,33 @@ import { t } from '@lingui/core/macro';
 import { useParams } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 import { useApplicationManifest } from '~/pages/settings/layout/hooks/useApplicationManifest';
+import { MonoText } from '~/pages/settings/layout/components/MonoText';
 import {
   type DetailRow,
-  renderMonoText,
   SettingsLayoutDetailScaffold,
 } from '~/pages/settings/layout/components/SettingsLayoutDetailScaffold';
-import { resolveManifestObjectLabel } from '~/pages/settings/layout/utils/resolveManifestObjectLabel';
+import { getNavigationMenuItemDestination } from '~/pages/settings/layout/utils/getNavigationMenuItemDestination';
+
+const renderDestinationLabel = (
+  destination: ReturnType<typeof getNavigationMenuItemDestination>,
+) => {
+  switch (destination.kind) {
+    case 'FOLDER':
+      return t`Folder (groups other items)`;
+    case 'LINK':
+      return destination.link ?? t`External link`;
+    case 'OBJECT':
+      return destination.label ?? t`Object`;
+    case 'PAGE_LAYOUT':
+      return destination.label ?? t`Page layout`;
+    case 'VIEW':
+      return destination.label ?? t`View`;
+    case 'RECORD':
+      return t`Single record`;
+    default:
+      return t`Unknown`;
+  }
+};
 
 export const SettingsLayoutNavigationMenuItemDetail = () => {
   const { applicationId = '', navigationMenuItemUniversalIdentifier = '' } =
@@ -23,72 +44,30 @@ export const SettingsLayoutNavigationMenuItemDetail = () => {
     (i) => i.universalIdentifier === navigationMenuItemUniversalIdentifier,
   );
 
-  const destinationLabel = (() => {
-    if (!isDefined(item)) return undefined;
-    switch (item.type) {
-      case 'FOLDER':
-        return t`Folder (groups other items)`;
-      case 'LINK':
-        return item.link ?? t`External link`;
-      case 'OBJECT':
-        return (
-          resolveManifestObjectLabel(
-            item.targetObjectUniversalIdentifier,
-            manifest,
-          ) ?? renderMonoText(item.targetObjectUniversalIdentifier)
-        );
-      case 'PAGE_LAYOUT':
-        return (
-          manifest?.pageLayouts?.find(
-            (pl) =>
-              pl.universalIdentifier === item.pageLayoutUniversalIdentifier,
-          )?.name ?? renderMonoText(item.pageLayoutUniversalIdentifier)
-        );
-      case 'VIEW':
-        return (
-          manifest?.views?.find(
-            (v) => v.universalIdentifier === item.viewUniversalIdentifier,
-          )?.name ?? renderMonoText(item.viewUniversalIdentifier)
-        );
-      case 'RECORD':
-        return t`Single record`;
-      default:
-        return t`Unknown`;
-    }
-  })();
+  const destinationLabel = isDefined(item)
+    ? renderDestinationLabel(getNavigationMenuItemDestination(item, manifest))
+    : undefined;
 
   const detailRows: DetailRow[] = isDefined(item)
     ? [
         {
           key: 'universalIdentifier',
           label: t`Universal identifier`,
-          value: renderMonoText(item.universalIdentifier),
+          value: <MonoText value={item.universalIdentifier} />,
         },
-        {
-          key: 'type',
-          label: t`Type`,
-          value: item.type,
-        },
+        { key: 'type', label: t`Type`, value: item.type },
         {
           key: 'destination',
           label: t`Destination`,
           value: destinationLabel ?? t`None`,
         },
-        {
-          key: 'icon',
-          label: t`Icon`,
-          value: renderMonoText(item.icon),
-        },
+        { key: 'icon', label: t`Icon`, value: <MonoText value={item.icon} /> },
         {
           key: 'color',
           label: t`Color`,
-          value: renderMonoText(item.color),
+          value: <MonoText value={item.color} />,
         },
-        {
-          key: 'position',
-          label: t`Position`,
-          value: item.position,
-        },
+        { key: 'position', label: t`Position`, value: item.position },
       ]
     : [];
 
