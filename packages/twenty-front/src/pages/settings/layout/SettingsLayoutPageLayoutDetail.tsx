@@ -65,6 +65,7 @@ export const SettingsLayoutPageLayoutDetail = () => {
       applicationName={application?.name}
       entityName={pageLayout?.name ?? t`Page layout`}
       entityTypeLabel={t`page layout`}
+      categoryLabel={t`Page layouts`}
       detailRows={detailRows}
       isLoading={isLoading}
     >

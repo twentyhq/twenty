@@ -7,7 +7,10 @@ import {
   type DetailRow,
   SettingsLayoutDetailScaffold,
 } from '~/pages/settings/layout/components/SettingsLayoutDetailScaffold';
-import { getNavigationMenuItemDestination } from '~/pages/settings/layout/utils/getNavigationMenuItemDestination';
+import {
+  getNavigationMenuItemDestination,
+  getNavigationMenuItemDisplayLabel,
+} from '~/pages/settings/layout/utils/getNavigationMenuItemDestination';
 
 const renderDestinationLabel = (
   destination: ReturnType<typeof getNavigationMenuItemDestination>,
@@ -44,9 +47,22 @@ export const SettingsLayoutNavigationMenuItemDetail = () => {
     (i) => i.universalIdentifier === navigationMenuItemUniversalIdentifier,
   );
 
-  const destinationLabel = isDefined(item)
-    ? renderDestinationLabel(getNavigationMenuItemDestination(item, manifest))
+  const destination = isDefined(item)
+    ? getNavigationMenuItemDestination(item, manifest)
     : undefined;
+  const destinationLabel = isDefined(destination)
+    ? renderDestinationLabel(destination)
+    : undefined;
+  // Many app-shipped nav items have an empty display name (especially
+  // type-OBJECT items that just open an object list); fall back to the
+  // resolved destination ("Time entry") rather than the raw enum ("OBJECT").
+  const fallbackName = isDefined(destination)
+    ? getNavigationMenuItemDisplayLabel(destination)
+    : undefined;
+  const titleName =
+    isDefined(item?.name) && item.name !== ''
+      ? item.name
+      : (fallbackName ?? item?.type ?? t`Navigation menu item`);
 
   const detailRows: DetailRow[] = isDefined(item)
     ? [
@@ -75,12 +91,9 @@ export const SettingsLayoutNavigationMenuItemDetail = () => {
     <SettingsLayoutDetailScaffold
       applicationId={applicationId}
       applicationName={application?.name}
-      entityName={
-        item?.name && item.name !== ''
-          ? item.name
-          : (item?.type ?? t`Navigation menu item`)
-      }
+      entityName={titleName}
       entityTypeLabel={t`navigation menu item`}
+      categoryLabel={t`Navigation menu items`}
       detailRows={detailRows}
       isLoading={isLoading}
     />

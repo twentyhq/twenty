@@ -43,6 +43,12 @@ export const SettingsApplicationFrontComponentDetail = () => {
     { id: 'settings', title: t`Settings`, Icon: IconSettings },
   ];
 
+  const applicationContentHref = getSettingsPath(
+    SettingsPath.ApplicationDetail,
+    { applicationId },
+    undefined,
+    'content',
+  );
   const breadcrumbLinks = [
     {
       children: t`Workspace`,
@@ -52,15 +58,8 @@ export const SettingsApplicationFrontComponentDetail = () => {
       children: t`Applications`,
       href: getSettingsPath(SettingsPath.Applications),
     },
-    {
-      children: application?.name ?? '',
-      href: getSettingsPath(
-        SettingsPath.ApplicationDetail,
-        { applicationId },
-        undefined,
-        'content',
-      ),
-    },
+    { children: application?.name ?? '', href: applicationContentHref },
+    { children: t`Front components`, href: applicationContentHref },
     { children: frontComponent?.name ?? '' },
   ];
 

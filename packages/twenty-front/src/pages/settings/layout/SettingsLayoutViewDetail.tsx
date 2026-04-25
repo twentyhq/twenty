@@ -82,6 +82,7 @@ export const SettingsLayoutViewDetail = () => {
       applicationName={application?.name}
       entityName={view?.name ?? t`View`}
       entityTypeLabel={t`view`}
+      categoryLabel={t`Views`}
       detailRows={detailRows}
       isLoading={isLoading}
     >

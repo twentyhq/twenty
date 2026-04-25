@@ -33,6 +33,7 @@ export const SettingsLayoutDetailScaffold = ({
   applicationName,
   entityName,
   entityTypeLabel,
+  categoryLabel,
   description,
   detailRows,
   isLoading,
@@ -42,6 +43,7 @@ export const SettingsLayoutDetailScaffold = ({
   applicationName: string | undefined;
   entityName: string;
   entityTypeLabel: string;
+  categoryLabel: string;
   description?: string | null;
   detailRows: DetailRow[];
   isLoading: boolean;
@@ -49,21 +51,21 @@ export const SettingsLayoutDetailScaffold = ({
 }) => {
   const trimmedDescription = description?.trim();
 
+  const applicationContentHref = getSettingsPath(
+    SettingsPath.ApplicationDetail,
+    { applicationId },
+    undefined,
+    'content',
+  );
+
   const breadcrumbLinks = [
     { children: t`Workspace`, href: getSettingsPath(SettingsPath.Workspace) },
     {
       children: t`Applications`,
       href: getSettingsPath(SettingsPath.Applications),
     },
-    {
-      children: applicationName ?? '',
-      href: getSettingsPath(
-        SettingsPath.ApplicationDetail,
-        { applicationId },
-        undefined,
-        'content',
-      ),
-    },
+    { children: applicationName ?? '', href: applicationContentHref },
+    { children: categoryLabel, href: applicationContentHref },
     { children: entityName },
   ];
 
