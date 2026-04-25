@@ -1,14 +1,23 @@
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { useCallback, useMemo } from 'react';
 import { type Manifest } from 'twenty-shared/application';
-import { isDefined } from 'twenty-shared/utils';
-import { type Application } from '~/generated-metadata/graphql';
+import { SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import {
+  type Application,
+  FindManySkillsDocument,
+  GetRolesDocument,
+} from '~/generated-metadata/graphql';
 import { type ApplicationContentRow } from '~/pages/settings/applications/components/SettingsApplicationContentSubtable';
 import { findObjectNameByUniversalIdentifier } from '~/pages/settings/applications/utils/findObjectNameByUniversalIdentifier';
 
-type InstalledApplicationForContentSections = Pick<Application, 'agents'>;
+type InstalledApplicationForContentSections = Pick<
+  Application,
+  'agents' | 'id'
+>;
 
 // Returns row arrays for every "what does this app provide" category beyond
 // data/logic/front-components. Most categories aren't on the GraphQL
@@ -23,6 +32,41 @@ export const useApplicationContentSections = ({
   manifestContent?: Manifest;
 }) => {
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
+
+  // Workspace skills + roles let us link manifest entries to their
+  // settings detail pages by id (manifest only carries universalIdentifier).
+  // Both queries are cache-first so revisiting the page doesn't re-fetch.
+  const installedAppId = isDefined(installedApplication)
+    ? installedApplication.id
+    : undefined;
+  const { data: skillsData } = useQuery(FindManySkillsDocument, {
+    fetchPolicy: 'cache-first',
+    skip: !isDefined(installedAppId),
+  });
+  const { data: rolesData } = useQuery(GetRolesDocument, {
+    fetchPolicy: 'cache-first',
+    skip: !isDefined(installedAppId),
+  });
+
+  const skillIdByName = useMemo(() => {
+    const map = new Map<string, string>();
+    for (const skill of skillsData?.skills ?? []) {
+      if (skill.applicationId === installedAppId) {
+        map.set(skill.name, skill.id);
+      }
+    }
+    return map;
+  }, [skillsData?.skills, installedAppId]);
+
+  const roleIdByUniversalIdentifier = useMemo(() => {
+    const map = new Map<string, string>();
+    for (const role of rolesData?.getRoles ?? []) {
+      if (isDefined(role.universalIdentifier)) {
+        map.set(role.universalIdentifier, role.id);
+      }
+    }
+    return map;
+  }, [rolesData?.getRoles]);
 
   const resolveObjectLabel = useCallback(
     (uid: string | undefined | null): string | undefined => {
@@ -217,6 +261,9 @@ export const useApplicationContentSections = ({
         name: agent.label,
         icon: agent.icon ?? undefined,
         secondary: agent.description ?? undefined,
+        link: getSettingsPath(SettingsPath.AiAgentDetail, {
+          agentId: agent.id,
+        }),
       }));
     }
 
@@ -230,24 +277,42 @@ export const useApplicationContentSections = ({
 
   const skillRows = useMemo(
     (): ApplicationContentRow[] =>
-      (manifestContent?.skills ?? []).map((skill) => ({
-        key: skill.universalIdentifier,
-        name: skill.label,
-        icon: skill.icon ?? undefined,
-        secondary: skill.description ?? undefined,
-      })),
-    [manifestContent?.skills],
+      (manifestContent?.skills ?? []).map((skill) => {
+        const workspaceSkillId = skillIdByName.get(skill.name);
+        return {
+          key: skill.universalIdentifier,
+          name: skill.label,
+          icon: skill.icon ?? undefined,
+          secondary: skill.description ?? undefined,
+          link: isDefined(workspaceSkillId)
+            ? getSettingsPath(SettingsPath.AiSkillDetail, {
+                skillId: workspaceSkillId,
+              })
+            : undefined,
+        };
+      }),
+    [manifestContent?.skills, skillIdByName],
   );
 
   const roleRows = useMemo(
     (): ApplicationContentRow[] =>
-      (manifestContent?.roles ?? []).map((role) => ({
-        key: role.universalIdentifier,
-        name: role.label,
-        icon: role.icon ?? undefined,
-        secondary: role.description ?? undefined,
-      })),
-    [manifestContent?.roles],
+      (manifestContent?.roles ?? []).map((role) => {
+        const workspaceRoleId = roleIdByUniversalIdentifier.get(
+          role.universalIdentifier,
+        );
+        return {
+          key: role.universalIdentifier,
+          name: role.label,
+          icon: role.icon ?? undefined,
+          secondary: role.description ?? undefined,
+          link: isDefined(workspaceRoleId)
+            ? getSettingsPath(SettingsPath.RoleDetail, {
+                roleId: workspaceRoleId,
+              })
+            : undefined,
+        };
+      }),
+    [manifestContent?.roles, roleIdByUniversalIdentifier],
   );
 
   return {

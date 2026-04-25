@@ -88,8 +88,9 @@ export const useObjectAndFieldRows = ({
               name: field.label,
               icon: field.icon ?? undefined,
               secondary: t`on ${item.labelSingular}`,
-              link: getSettingsPath(SettingsPath.ObjectDetail, {
+              link: getSettingsPath(SettingsPath.ObjectFieldEdit, {
                 objectNamePlural: item.namePlural,
+                fieldName: field.name,
               }),
             })),
         );
