@@ -3,12 +3,15 @@ import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { TableSection } from '@/ui/layout/table/components/TableSection';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 import {
   H2Title,
   IconChevronRight,
   OverflowingTextWithTooltip,
+  useIcons,
 } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
@@ -17,8 +20,16 @@ export type ApplicationNameDescriptionTableRow = {
   key: string;
   name: string;
   description?: string | null;
+  icon?: string;
   link?: string;
 };
+
+const StyledNameCellContent = styled.div`
+  align-items: center;
+  display: flex;
+  gap: ${themeCssVariables.spacing[2]};
+  min-width: 0;
+`;
 
 export const SettingsApplicationNameDescriptionTable = ({
   title,
@@ -32,6 +43,7 @@ export const SettingsApplicationNameDescriptionTable = ({
   items: ApplicationNameDescriptionTableRow[];
 }) => {
   const { theme } = useContext(ThemeContext);
+  const { getIcon } = useIcons();
 
   if (items.length === 0) {
     return null;
@@ -50,39 +62,51 @@ export const SettingsApplicationNameDescriptionTable = ({
           {hasAnyLink && <TableHeader></TableHeader>}
         </TableRow>
         <TableSection title={sectionTitle}>
-          {items.map((item) => (
-            <TableRow
-              key={item.key}
-              gridTemplateColumns={gridTemplate}
-              to={item.link}
-            >
-              <TableCell
-                color={themeCssVariables.font.color.primary}
-                gap={themeCssVariables.spacing[2]}
-                minWidth="0"
-                overflow="hidden"
+          {items.map((item) => {
+            const Icon = getIcon(item.icon);
+
+            return (
+              <TableRow
+                key={item.key}
+                gridTemplateColumns={gridTemplate}
+                to={item.link}
               >
-                <OverflowingTextWithTooltip text={item.name} />
-              </TableCell>
-              <TableCell minWidth="0" overflow="hidden">
-                <OverflowingTextWithTooltip text={item.description ?? ''} />
-              </TableCell>
-              {hasAnyLink && (
                 <TableCell
-                  align="center"
-                  color={themeCssVariables.font.color.light}
-                  padding={`0 ${themeCssVariables.spacing[1]} 0 ${themeCssVariables.spacing[2]}`}
+                  color={themeCssVariables.font.color.primary}
+                  gap={themeCssVariables.spacing[2]}
+                  minWidth="0"
+                  overflow="hidden"
                 >
-                  {item.link !== undefined && (
-                    <IconChevronRight
-                      size={theme.icon.size.md}
-                      stroke={theme.icon.stroke.sm}
-                    />
-                  )}
+                  <StyledNameCellContent>
+                    {isDefined(Icon) && (
+                      <Icon
+                        size={theme.icon.size.md}
+                        stroke={theme.icon.stroke.sm}
+                      />
+                    )}
+                    <OverflowingTextWithTooltip text={item.name} />
+                  </StyledNameCellContent>
                 </TableCell>
-              )}
-            </TableRow>
-          ))}
+                <TableCell minWidth="0" overflow="hidden">
+                  <OverflowingTextWithTooltip text={item.description ?? ''} />
+                </TableCell>
+                {hasAnyLink && (
+                  <TableCell
+                    align="center"
+                    color={themeCssVariables.font.color.light}
+                    padding={`0 ${themeCssVariables.spacing[1]} 0 ${themeCssVariables.spacing[2]}`}
+                  >
+                    {item.link !== undefined && (
+                      <IconChevronRight
+                        size={theme.icon.size.md}
+                        stroke={theme.icon.stroke.sm}
+                      />
+                    )}
+                  </TableCell>
+                )}
+              </TableRow>
+            );
+          })}
         </TableSection>
       </Table>
     </Section>

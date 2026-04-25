@@ -1,3 +1,4 @@
+import { useApplicationContentSections } from '@/settings/applications/hooks/useApplicationContentSections';
 import {
   type LogicFunctionTableRow,
   SettingsLogicFunctionsTable,
@@ -41,6 +42,18 @@ export const SettingsApplicationDetailContentTab = ({
   manifestContent,
 }: SettingsApplicationDetailContentTabProps) => {
   const { objectRows, fieldRows } = useObjectAndFieldRows({
+    installedApplication,
+    manifestContent,
+  });
+
+  const {
+    pageLayoutRows,
+    viewRows,
+    navigationMenuItemRows,
+    agentRows,
+    skillRows,
+    roleRows,
+  } = useApplicationContentSections({
     installedApplication,
     manifestContent,
   });
@@ -149,6 +162,42 @@ export const SettingsApplicationDetailContentTab = ({
         description={t`UI components provided by this app`}
         sectionTitle={t`Front components`}
         items={frontComponentRows}
+      />
+      <SettingsApplicationNameDescriptionTable
+        title={t`Page layouts`}
+        description={t`Layouts that define how records are displayed`}
+        sectionTitle={t`Page layouts`}
+        items={pageLayoutRows}
+      />
+      <SettingsApplicationNameDescriptionTable
+        title={t`Views`}
+        description={t`Saved views provided by this app`}
+        sectionTitle={t`Views`}
+        items={viewRows}
+      />
+      <SettingsApplicationNameDescriptionTable
+        title={t`Navigation`}
+        description={t`Items added to the workspace navigation by this app`}
+        sectionTitle={t`Navigation menu items`}
+        items={navigationMenuItemRows}
+      />
+      <SettingsApplicationNameDescriptionTable
+        title={t`Agents`}
+        description={t`AI agents provided by this app`}
+        sectionTitle={t`Agents`}
+        items={agentRows}
+      />
+      <SettingsApplicationNameDescriptionTable
+        title={t`Skills`}
+        description={t`Reusable AI skills provided by this app`}
+        sectionTitle={t`Skills`}
+        items={skillRows}
+      />
+      <SettingsApplicationNameDescriptionTable
+        title={t`Roles`}
+        description={t`Permission roles defined by this app`}
+        sectionTitle={t`Roles`}
+        items={roleRows}
       />
     </>
   );
