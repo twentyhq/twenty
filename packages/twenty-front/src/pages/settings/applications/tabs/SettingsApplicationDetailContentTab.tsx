@@ -44,9 +44,9 @@ export const SettingsApplicationDetailContentTab = ({
 
   const logicFunctionRows = useMemo((): LogicFunctionTableRow[] => {
     const postInstallUid =
-      manifestContent?.postInstallLogicFunction?.universalIdentifier;
+      manifestContent?.application?.postInstallLogicFunction?.universalIdentifier;
     const preInstallUid =
-      manifestContent?.preInstallLogicFunction?.universalIdentifier;
+      manifestContent?.application?.preInstallLogicFunction?.universalIdentifier;
 
     const computeTrigger = (lf: {
       universalIdentifier?: string | null;
@@ -98,8 +98,8 @@ export const SettingsApplicationDetailContentTab = ({
   }, [
     installedApplication,
     manifestContent?.logicFunctions,
-    manifestContent?.postInstallLogicFunction?.universalIdentifier,
-    manifestContent?.preInstallLogicFunction?.universalIdentifier,
+    manifestContent?.application?.postInstallLogicFunction?.universalIdentifier,
+    manifestContent?.application?.preInstallLogicFunction?.universalIdentifier,
     applicationId,
   ]);
 
