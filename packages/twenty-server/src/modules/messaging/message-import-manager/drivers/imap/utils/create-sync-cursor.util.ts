@@ -10,7 +10,9 @@ export const createSyncCursor = (
   const lastSeenUid = previousCursor?.highestUid ?? 0;
   const firstSyncedUid =
     previousCursor?.firstSyncedUid ??
-    (messageUids.length > 0 ? Math.min(...messageUids) : undefined);
+    (messageUids.length > 0
+      ? messageUids.reduce((min, curr) => Math.min(min, curr), Infinity)
+      : undefined);
 
   let highestUid = lastSeenUid;
 
