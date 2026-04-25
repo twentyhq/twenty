@@ -157,10 +157,9 @@ export class ChatExecutionService {
       registeredModel.modelId,
     );
 
-    const nativeModelTools = this.nativeToolBinder.bindForModel(
-      registeredModel,
-      { webSearchEnabled: true },
-    );
+    const nativeModelTools = this.nativeToolBinder.bind(registeredModel, {
+      webSearchEnabled: true,
+    });
 
     // Tools the model can call directly: preloaded registry tools (already
     // serialized by the hydrator) plus SDK-native tools (opaque, never

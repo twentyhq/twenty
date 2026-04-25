@@ -79,15 +79,6 @@ export class AiModelConfigService {
     return tools;
   }
 
-  getNativeModelToolsForAgent(
-    model: RegisteredAiModel,
-    agent: FlatAgentWithRoleId,
-  ): ToolSet {
-    return this.getNativeModelTools(model, {
-      webSearchEnabled: agent.modelConfiguration?.webSearch?.enabled === true,
-    });
-  }
-
   private getXaiProviderOptions(agent: FlatAgentWithRoleId): ProviderOptions {
     if (
       !agent.modelConfiguration ||

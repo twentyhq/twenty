@@ -150,7 +150,6 @@ export class AgentAsyncExecutorService {
           rolePermissionConfig: effectiveRoleConfig ?? { unionOf: [] },
           authContext,
           actorContext,
-          agent: agent as unknown as ToolProviderContext['agent'],
           userId:
             isDefined(authContext) && isUserAuthContext(authContext)
               ? authContext.user.id
@@ -169,8 +168,10 @@ export class AgentAsyncExecutorService {
           },
         );
 
-        const nativeTools =
-          await this.nativeToolBinder.bind(toolProviderContext);
+        const nativeTools = this.nativeToolBinder.bind(registeredModel, {
+          webSearchEnabled:
+            agent.modelConfiguration?.webSearch?.enabled === true,
+        });
 
         tools = {
           ...registryTools,
