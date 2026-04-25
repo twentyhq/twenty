@@ -8,19 +8,13 @@ import { type Application } from '~/generated-metadata/graphql';
 import { type ApplicationNameDescriptionTableRow } from '~/pages/settings/applications/components/SettingsApplicationNameDescriptionTable';
 import { findObjectNameByUniversalIdentifier } from '~/pages/settings/applications/utils/findObjectNameByUniversalIdentifier';
 
-type InstalledApplicationForContentSections = Pick<Application, 'agents'> & {
-  id: string;
-};
+type InstalledApplicationForContentSections = Pick<Application, 'agents'>;
 
 // Returns row arrays for every "what does this app provide" category beyond
-// data/logic/front-components: page layouts, views, navigation menu items,
-// agents, skills, and roles.
-//
-// The Application GraphQL type only exposes a subset of these as installed
-// data (currently just `agents`); everything else is read from the marketplace
-// manifest, which is loaded by the parent page for both installed and
-// preview-only applications. When both sources are available for a category we
-// prefer the installed-app data since it reflects actual workspace state.
+// data/logic/front-components. Most categories aren't on the GraphQL
+// Application type so they're read from the marketplace manifest the parent
+// loads alongside the installed app; we prefer installed-app data when both
+// sources exist (currently only `agents`).
 export const useApplicationContentSections = ({
   installedApplication,
   manifestContent,
@@ -34,7 +28,6 @@ export const useApplicationContentSections = ({
     (uid: string | undefined | null): string | undefined => {
       if (!isDefined(uid)) return undefined;
 
-      // Manifest-defined objects (this app's own custom objects)
       const manifestObject = manifestContent?.objects.find(
         (obj) => obj.universalIdentifier === uid,
       );
@@ -42,14 +35,12 @@ export const useApplicationContentSections = ({
         return manifestObject.labelSingular;
       }
 
-      // Standard objects (resolved by their well-known universalIdentifier)
       const standardName = findObjectNameByUniversalIdentifier(uid);
       if (!isDefined(standardName)) return undefined;
 
-      const item = objectMetadataItems.find(
+      return objectMetadataItems.find(
         (object) => object.nameSingular === standardName,
-      );
-      return item?.labelSingular;
+      )?.labelSingular;
     },
     [manifestContent?.objects, objectMetadataItems],
   );
@@ -128,20 +119,76 @@ export const useApplicationContentSections = ({
     (): ApplicationNameDescriptionTableRow[] =>
       (manifestContent?.navigationMenuItems ?? [])
         .map((item) => {
-          const fallbackByType = (() => {
+          // Resolve the destination once per item so display name and
+          // description don't both walk the manifest arrays.
+          const destination = (() => {
             switch (item.type) {
+              case 'FOLDER':
+                return { kind: 'FOLDER' as const, label: t`Folder` };
+              case 'LINK':
+                return { kind: 'LINK' as const, link: item.link };
+              case 'OBJECT':
+                return {
+                  kind: 'OBJECT' as const,
+                  label: resolveObjectLabel(
+                    item.targetObjectUniversalIdentifier,
+                  ),
+                };
+              case 'PAGE_LAYOUT':
+                return {
+                  kind: 'PAGE_LAYOUT' as const,
+                  label: resolvePageLayoutName(
+                    item.pageLayoutUniversalIdentifier,
+                  ),
+                };
+              case 'VIEW':
+                return {
+                  kind: 'VIEW' as const,
+                  label: resolveViewName(item.viewUniversalIdentifier),
+                };
+              case 'RECORD':
+                return { kind: 'RECORD' as const, label: t`Record` };
+              default:
+                return { kind: 'UNKNOWN' as const };
+            }
+          })();
+
+          const fallbackName = (() => {
+            switch (destination.kind) {
+              case 'LINK':
+                return destination.link ?? t`Link`;
+              case 'OBJECT':
+              case 'PAGE_LAYOUT':
+              case 'VIEW':
+                return destination.label;
+              case 'FOLDER':
+              case 'RECORD':
+                return destination.label;
+              default:
+                return undefined;
+            }
+          })();
+
+          const description = (() => {
+            switch (destination.kind) {
               case 'FOLDER':
                 return t`Folder`;
               case 'LINK':
-                return item.link ?? t`Link`;
+                return isDefined(destination.link)
+                  ? t`Link → ${destination.link}`
+                  : t`Link`;
               case 'OBJECT':
-                return resolveObjectLabel(item.targetObjectUniversalIdentifier);
+                return isDefined(destination.label)
+                  ? t`Opens the ${destination.label} list`
+                  : t`Object`;
               case 'PAGE_LAYOUT':
-                return resolvePageLayoutName(
-                  item.pageLayoutUniversalIdentifier,
-                );
+                return isDefined(destination.label)
+                  ? t`Opens the ${destination.label} page layout`
+                  : t`Page layout`;
               case 'VIEW':
-                return resolveViewName(item.viewUniversalIdentifier);
+                return isDefined(destination.label)
+                  ? t`Opens the ${destination.label} view`
+                  : t`View`;
               case 'RECORD':
                 return t`Record`;
               default:
@@ -152,42 +199,7 @@ export const useApplicationContentSections = ({
           const displayName =
             isDefined(item.name) && item.name !== ''
               ? item.name
-              : (fallbackByType ?? item.type);
-
-          const description = (() => {
-            switch (item.type) {
-              case 'FOLDER':
-                return t`Folder`;
-              case 'LINK':
-                return isDefined(item.link) ? t`Link → ${item.link}` : t`Link`;
-              case 'OBJECT': {
-                const label = resolveObjectLabel(
-                  item.targetObjectUniversalIdentifier,
-                );
-                return isDefined(label)
-                  ? t`Opens the ${label} list`
-                  : t`Object`;
-              }
-              case 'PAGE_LAYOUT': {
-                const layoutName = resolvePageLayoutName(
-                  item.pageLayoutUniversalIdentifier,
-                );
-                return isDefined(layoutName)
-                  ? t`Opens the ${layoutName} page layout`
-                  : t`Page layout`;
-              }
-              case 'VIEW': {
-                const viewName = resolveViewName(item.viewUniversalIdentifier);
-                return isDefined(viewName)
-                  ? t`Opens the ${viewName} view`
-                  : t`View`;
-              }
-              case 'RECORD':
-                return t`Record`;
-              default:
-                return undefined;
-            }
-          })();
+              : (fallbackName ?? item.type);
 
           return {
             key: item.universalIdentifier,

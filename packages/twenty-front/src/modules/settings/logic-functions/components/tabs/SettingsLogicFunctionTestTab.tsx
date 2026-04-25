@@ -1,9 +1,11 @@
-import { type LogicFunctionFormValues } from '@/logic-functions/hooks/useLogicFunctionUpdateFormState';
 import { LogicFunctionExecutionResult } from '@/logic-functions/components/LogicFunctionExecutionResult';
 import { LogicFunctionLogs } from '@/logic-functions/components/LogicFunctionLogs';
+import { type LogicFunctionFormValues } from '@/logic-functions/hooks/useLogicFunctionUpdateFormState';
 import { useExecuteLogicFunction } from '@/logic-functions/hooks/useExecuteLogicFunction';
 import {
-  getSimulatedTriggerPayload,
+  buildDatabaseEventPayload,
+  buildHttpPayload,
+  buildToolPayloadFromSchema,
   type SimulatedTriggerType,
 } from '@/settings/logic-functions/utils/getSimulatedTriggerPayload';
 import { styled } from '@linaria/react';
@@ -70,28 +72,42 @@ export const SettingsLogicFunctionTestTab = ({
       logicFunctionId,
     });
 
+  const {
+    httpRouteTriggerSettings,
+    cronTriggerSettings,
+    databaseEventTriggerSettings,
+    toolInputSchema,
+    isTool,
+  } = formValues;
+
   const triggers: SimulatedTrigger[] = useMemo(() => {
     const result: SimulatedTrigger[] = [];
 
-    if (isDefined(formValues.httpRouteTriggerSettings)) {
+    if (isDefined(httpRouteTriggerSettings)) {
       result.push({ type: 'http', label: 'HTTP', Icon: IconWebhook });
     }
-    if (isDefined(formValues.cronTriggerSettings)) {
+    if (isDefined(cronTriggerSettings)) {
       result.push({ type: 'cron', label: 'Cron', Icon: IconClock });
     }
-    if (isDefined(formValues.databaseEventTriggerSettings)) {
+    if (isDefined(databaseEventTriggerSettings)) {
       result.push({
         type: 'databaseEvent',
-        label: 'Database event',
+        label: t`Database event`,
         Icon: IconDatabase,
       });
     }
-    if (formValues.isTool) {
-      result.push({ type: 'tool', label: 'AI tool', Icon: IconTool });
+    if (isTool) {
+      result.push({ type: 'tool', label: t`AI tool`, Icon: IconTool });
     }
 
     return result;
-  }, [formValues]);
+  }, [
+    httpRouteTriggerSettings,
+    cronTriggerSettings,
+    databaseEventTriggerSettings,
+    isTool,
+    t,
+  ]);
 
   const onChange = (value: string) => {
     try {
@@ -102,15 +118,23 @@ export const SettingsLogicFunctionTestTab = ({
   };
 
   const handleSimulateTrigger = (triggerType: SimulatedTriggerType) => {
-    updateLogicFunctionInput(
-      getSimulatedTriggerPayload({
-        triggerType,
-        httpRouteTriggerSettings: formValues.httpRouteTriggerSettings,
-        cronTriggerSettings: formValues.cronTriggerSettings,
-        databaseEventTriggerSettings: formValues.databaseEventTriggerSettings,
-        toolInputSchema: formValues.toolInputSchema,
-      }),
-    );
+    const payload = (() => {
+      switch (triggerType) {
+        case 'http':
+          return isDefined(httpRouteTriggerSettings)
+            ? buildHttpPayload(httpRouteTriggerSettings)
+            : {};
+        case 'cron':
+          return {};
+        case 'databaseEvent':
+          return isDefined(databaseEventTriggerSettings)
+            ? buildDatabaseEventPayload(databaseEventTriggerSettings)
+            : {};
+        case 'tool':
+          return buildToolPayloadFromSchema(toolInputSchema);
+      }
+    })();
+    updateLogicFunctionInput(payload);
   };
 
   const hasTriggers = triggers.length > 0;

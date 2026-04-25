@@ -1,27 +1,14 @@
 import { SettingsDatabaseEventsForm } from '@/settings/components/SettingsDatabaseEventsForm';
 import { SettingsLogicFunctionTriggerPayloadFormat } from '@/settings/logic-functions/components/triggers/SettingsLogicFunctionTriggerPayloadFormat';
+import { SettingsLogicFunctionTriggerSection } from '@/settings/logic-functions/components/triggers/SettingsLogicFunctionTriggerSection';
 import { buildDatabaseEventPayload } from '@/settings/logic-functions/utils/getSimulatedTriggerPayload';
-import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useContext } from 'react';
 import { type DatabaseEventTriggerSettings } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
-import { H2Title } from 'twenty-ui/display';
-import { Toggle } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const DEFAULT_DATABASE_EVENT_SETTINGS: DatabaseEventTriggerSettings = {
   eventName: '*.created',
 };
-
-const StyledHeader = styled.div`
-  align-items: center;
-  display: flex;
-  gap: ${themeCssVariables.spacing[3]};
-  justify-content: space-between;
-  margin-bottom: ${themeCssVariables.spacing[4]};
-`;
 
 type SettingsLogicFunctionDatabaseEventTriggerSectionProps = {
   value: DatabaseEventTriggerSettings | null;
@@ -35,19 +22,8 @@ export const SettingsLogicFunctionDatabaseEventTriggerSection = ({
   readonly,
 }: SettingsLogicFunctionDatabaseEventTriggerSectionProps) => {
   const { t } = useLingui();
-  const { theme } = useContext(ThemeContext);
 
-  const isEnabled = isDefined(value);
-
-  if (readonly && !isEnabled) {
-    return null;
-  }
-
-  const handleToggle = (checked: boolean) => {
-    onChange(checked ? DEFAULT_DATABASE_EVENT_SETTINGS : null);
-  };
-
-  const [object, action] = isEnabled
+  const [object, action] = isDefined(value)
     ? value.eventName.split('.')
     : ['', 'created'];
 
@@ -65,22 +41,16 @@ export const SettingsLogicFunctionDatabaseEventTriggerSection = ({
   };
 
   return (
-    <Section>
-      <StyledHeader>
-        <H2Title
-          title={t`Database event`}
-          description={t`Triggers the function when a record changes`}
-        />
-        {!readonly && (
-          <Toggle
-            value={isEnabled}
-            onChange={handleToggle}
-            toggleSize="small"
-            color={theme.color.blue}
-          />
-        )}
-      </StyledHeader>
-      {isEnabled && (
+    <SettingsLogicFunctionTriggerSection
+      title={t`Database event`}
+      description={t`Triggers the function when a record changes`}
+      enabled={isDefined(value)}
+      onEnabledChange={(checked) =>
+        onChange(checked ? DEFAULT_DATABASE_EVENT_SETTINGS : null)
+      }
+      readonly={readonly}
+    >
+      {isDefined(value) && (
         <>
           <SettingsDatabaseEventsForm
             events={[
@@ -99,6 +69,6 @@ export const SettingsLogicFunctionDatabaseEventTriggerSection = ({
           />
         </>
       )}
-    </Section>
+    </SettingsLogicFunctionTriggerSection>
   );
 };

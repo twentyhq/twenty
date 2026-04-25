@@ -1,4 +1,5 @@
 import { SettingsLogicFunctionTriggerPayloadFormat } from '@/settings/logic-functions/components/triggers/SettingsLogicFunctionTriggerPayloadFormat';
+import { SettingsLogicFunctionTriggerSection } from '@/settings/logic-functions/components/triggers/SettingsLogicFunctionTriggerSection';
 import { buildHttpPayload } from '@/settings/logic-functions/utils/getSimulatedTriggerPayload';
 import { Select } from '@/ui/input/components/Select';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
@@ -7,42 +8,33 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
 import { type HttpRouteTriggerSettings } from 'twenty-shared/application';
+import { HTTPMethod } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
-  H2Title,
   IconCopy,
   IconHttpGet,
   IconHttpPost,
   type IconComponent,
 } from 'twenty-ui/display';
 import { Toggle } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
 const HTTP_METHOD_OPTIONS: Array<{
   label: string;
-  value: 'GET' | 'POST';
+  value: HTTPMethod.GET | HTTPMethod.POST;
   Icon: IconComponent;
 }> = [
-  { label: 'GET', value: 'GET', Icon: IconHttpGet },
-  { label: 'POST', value: 'POST', Icon: IconHttpPost },
+  { label: 'GET', value: HTTPMethod.GET, Icon: IconHttpGet },
+  { label: 'POST', value: HTTPMethod.POST, Icon: IconHttpPost },
 ];
 
 const DEFAULT_HTTP_SETTINGS: HttpRouteTriggerSettings = {
   path: '',
-  httpMethod: 'POST',
+  httpMethod: HTTPMethod.POST,
   isAuthRequired: false,
 };
-
-const StyledHeader = styled.div`
-  align-items: center;
-  display: flex;
-  gap: ${themeCssVariables.spacing[3]};
-  justify-content: space-between;
-  margin-bottom: ${themeCssVariables.spacing[4]};
-`;
 
 const StyledFields = styled.div`
   display: flex;
@@ -76,16 +68,6 @@ export const SettingsLogicFunctionHttpTriggerSection = ({
   const { theme } = useContext(ThemeContext);
   const { copyToClipboard } = useCopyToClipboard();
 
-  const isEnabled = isDefined(value);
-
-  if (readonly && !isEnabled) {
-    return null;
-  }
-
-  const handleToggle = (checked: boolean) => {
-    onChange(checked ? DEFAULT_HTTP_SETTINGS : null);
-  };
-
   const updateField = <TKey extends keyof HttpRouteTriggerSettings>(
     key: TKey,
     fieldValue: HttpRouteTriggerSettings[TKey],
@@ -96,34 +78,28 @@ export const SettingsLogicFunctionHttpTriggerSection = ({
     onChange({ ...value, [key]: fieldValue });
   };
 
-  const fullUrl = isEnabled
+  const fullUrl = isDefined(value)
     ? `${REACT_APP_SERVER_BASE_URL}/s${value.path}`
     : '';
 
   return (
-    <Section>
-      <StyledHeader>
-        <H2Title
-          title={t`HTTP`}
-          description={t`Triggers the function with an HTTP request`}
-        />
-        {!readonly && (
-          <Toggle
-            value={isEnabled}
-            onChange={handleToggle}
-            toggleSize="small"
-            color={theme.color.blue}
-          />
-        )}
-      </StyledHeader>
-      {isEnabled && (
+    <SettingsLogicFunctionTriggerSection
+      title={t`HTTP`}
+      description={t`Triggers the function with an HTTP request`}
+      enabled={isDefined(value)}
+      onEnabledChange={(checked) =>
+        onChange(checked ? DEFAULT_HTTP_SETTINGS : null)
+      }
+      readonly={readonly}
+    >
+      {isDefined(value) && (
         <StyledFields>
           <Select
             dropdownId="logic-function-http-trigger-method"
             label={t`Method`}
             fullWidth
             disabled={readonly}
-            value={value.httpMethod as 'GET' | 'POST'}
+            value={value.httpMethod as HTTPMethod.GET | HTTPMethod.POST}
             options={HTTP_METHOD_OPTIONS}
             onChange={(newMethod) => updateField('httpMethod', newMethod)}
             dropdownOffset={{ y: 4 }}
@@ -166,6 +142,6 @@ export const SettingsLogicFunctionHttpTriggerSection = ({
           />
         </StyledFields>
       )}
-    </Section>
+    </SettingsLogicFunctionTriggerSection>
   );
 };

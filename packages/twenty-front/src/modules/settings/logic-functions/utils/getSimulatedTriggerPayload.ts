@@ -1,6 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
+import { HTTPMethod } from 'twenty-shared/types';
 import {
-  type CronTriggerSettings,
   type DatabaseEventTriggerSettings,
   type HttpRouteTriggerSettings,
 } from 'twenty-shared/application';
@@ -50,7 +50,7 @@ export const buildHttpPayload = (
     headers: {},
     queryStringParameters: {},
     pathParameters: {},
-    body: settings.httpMethod === 'GET' ? null : {},
+    body: settings.httpMethod === HTTPMethod.GET ? null : {},
     isBase64Encoded: false,
     requestContext: {
       http: {
@@ -74,33 +74,4 @@ export const buildDatabaseEventPayload = (
       updatedFields: settings.updatedFields ?? [],
     },
   };
-};
-
-export const getSimulatedTriggerPayload = ({
-  triggerType,
-  httpRouteTriggerSettings,
-  cronTriggerSettings: _cronTriggerSettings,
-  databaseEventTriggerSettings,
-  toolInputSchema,
-}: {
-  triggerType: SimulatedTriggerType;
-  httpRouteTriggerSettings: HttpRouteTriggerSettings | null;
-  cronTriggerSettings: CronTriggerSettings | null;
-  databaseEventTriggerSettings: DatabaseEventTriggerSettings | null;
-  toolInputSchema?: object;
-}): object => {
-  switch (triggerType) {
-    case 'http':
-      return isDefined(httpRouteTriggerSettings)
-        ? buildHttpPayload(httpRouteTriggerSettings)
-        : {};
-    case 'cron':
-      return {};
-    case 'databaseEvent':
-      return isDefined(databaseEventTriggerSettings)
-        ? buildDatabaseEventPayload(databaseEventTriggerSettings)
-        : {};
-    case 'tool':
-      return buildToolPayloadFromSchema(toolInputSchema);
-  }
 };

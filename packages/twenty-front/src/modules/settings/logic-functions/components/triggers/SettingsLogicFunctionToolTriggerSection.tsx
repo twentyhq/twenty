@@ -1,20 +1,7 @@
-import { styled } from '@linaria/react';
+import { SettingsLogicFunctionTriggerSection } from '@/settings/logic-functions/components/triggers/SettingsLogicFunctionTriggerSection';
 import { useLingui } from '@lingui/react/macro';
-import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { H2Title } from 'twenty-ui/display';
-import { Toggle } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { SettingsToolParameterTable } from '~/pages/settings/ai/components/SettingsToolParameterTable';
-
-const StyledHeader = styled.div`
-  align-items: center;
-  display: flex;
-  gap: ${themeCssVariables.spacing[3]};
-  justify-content: space-between;
-  margin-bottom: ${themeCssVariables.spacing[4]};
-`;
 
 type ToolInputSchema = {
   properties?: Record<string, unknown>;
@@ -35,11 +22,6 @@ export const SettingsLogicFunctionToolTriggerSection = ({
   readonly,
 }: SettingsLogicFunctionToolTriggerSectionProps) => {
   const { t } = useLingui();
-  const { theme } = useContext(ThemeContext);
-
-  if (readonly && !isTool) {
-    return null;
-  }
 
   const schema = (toolInputSchema as ToolInputSchema | undefined) ?? {};
   const schemaProperties = isDefined(schema.properties)
@@ -50,27 +32,17 @@ export const SettingsLogicFunctionToolTriggerSection = ({
     : {};
 
   return (
-    <Section>
-      <StyledHeader>
-        <H2Title
-          title={t`AI tool`}
-          description={t`Triggers the function when called by an AI agent or workflow`}
-        />
-        {!readonly && (
-          <Toggle
-            value={isTool}
-            onChange={onChange}
-            toggleSize="small"
-            color={theme.color.blue}
-          />
-        )}
-      </StyledHeader>
-      {isTool && (
-        <SettingsToolParameterTable
-          schemaProperties={schemaProperties}
-          requiredFields={schema.required}
-        />
-      )}
-    </Section>
+    <SettingsLogicFunctionTriggerSection
+      title={t`AI tool`}
+      description={t`Triggers the function when called by an AI agent or workflow`}
+      enabled={isTool}
+      onEnabledChange={onChange}
+      readonly={readonly}
+    >
+      <SettingsToolParameterTable
+        schemaProperties={schemaProperties}
+        requiredFields={schema.required}
+      />
+    </SettingsLogicFunctionTriggerSection>
   );
 };

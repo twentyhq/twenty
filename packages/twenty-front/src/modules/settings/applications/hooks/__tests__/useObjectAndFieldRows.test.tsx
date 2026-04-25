@@ -99,7 +99,6 @@ describe('useObjectAndFieldRows', () => {
         { wrapper },
       );
 
-      // Fields on the app's own objects belong in the Objects table, not here.
       const referencesOwnObject = result.current.fieldRows.some(
         (row) => row.objectLabel === personObject.labelSingular,
       );
@@ -127,8 +126,6 @@ describe('useObjectAndFieldRows', () => {
         { wrapper },
       );
 
-      // Deny-listed objects (timelineActivity, favorite) shouldn't surface their
-      // fields here even when they technically carry app-contributed columns.
       const timelineActivityObject = mockObjectMetadataItems.find(
         (item) => item.nameSingular === 'timelineActivity',
       );

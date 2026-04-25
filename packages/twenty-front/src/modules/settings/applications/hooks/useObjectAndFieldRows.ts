@@ -19,10 +19,9 @@ type InstalledApplicationForObjectRows = Omit<
   objects: { id: string }[];
 };
 
-// Objects that always carry app-contributed fields but aren't useful to surface
-// here (timeline events and favorites are framework plumbing rather than
-// user-facing data the app extends).
-const FIELD_GROUP_DENY_LIST = ['timelineActivity', 'favorite'];
+// Framework plumbing that always carries app-contributed fields but isn't
+// useful to show as something the app extends.
+const FIELD_GROUP_DENY_LIST = new Set(['timelineActivity', 'favorite']);
 
 export const useObjectAndFieldRows = ({
   installedApplication,
@@ -34,7 +33,7 @@ export const useObjectAndFieldRows = ({
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
 
   const installedObjectIds = useMemo(
-    () => installedApplication?.objects.map((object) => object.id) ?? [],
+    () => new Set(installedApplication?.objects.map((object) => object.id)),
     [installedApplication?.objects],
   );
 
@@ -45,7 +44,7 @@ export const useObjectAndFieldRows = ({
       }
 
       return objectMetadataItems
-        .filter((item) => installedObjectIds.includes(item.id))
+        .filter((item) => installedObjectIds.has(item.id))
         .map((item) => ({
           key: item.nameSingular,
           labelPlural: item.labelPlural,
@@ -74,13 +73,11 @@ export const useObjectAndFieldRows = ({
   const fieldRows = useMemo((): ApplicationFieldRow[] => {
     if (isDefined(installedApplication)) {
       return objectMetadataItems
-        .filter((item) => {
-          if (installedObjectIds.includes(item.id)) return false;
-          if (FIELD_GROUP_DENY_LIST.includes(item.nameSingular)) return false;
-          return item.fields.some(
-            (field) => field.applicationId === installedApplication.id,
-          );
-        })
+        .filter(
+          (item) =>
+            !installedObjectIds.has(item.id) &&
+            !FIELD_GROUP_DENY_LIST.has(item.nameSingular),
+        )
         .flatMap((item) =>
           item.fields
             .filter((field) => field.applicationId === installedApplication.id)
@@ -102,10 +99,14 @@ export const useObjectAndFieldRows = ({
 
     if (manifestFields.length === 0) return [];
 
+    const manifestObjectByUid = new Map(
+      manifestObjects.map((obj) => [obj.universalIdentifier, obj]),
+    );
+
     return manifestFields
       .map((field) => {
-        const appObject = manifestObjects.find(
-          (obj) => obj.universalIdentifier === field.objectUniversalIdentifier,
+        const appObject = manifestObjectByUid.get(
+          field.objectUniversalIdentifier,
         );
 
         if (isDefined(appObject)) {
@@ -118,8 +119,6 @@ export const useObjectAndFieldRows = ({
           };
         }
 
-        // Field added to a standard object — resolve the object via its known
-        // universal identifier so we can show its label.
         const standardObjectName = findObjectNameByUniversalIdentifier(
           field.objectUniversalIdentifier,
         );

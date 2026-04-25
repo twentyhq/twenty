@@ -6,17 +6,8 @@ import { SettingsLogicFunctionToolTriggerSection } from '@/settings/logic-functi
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
+import { Callout, IconInfoCircle } from 'twenty-ui/display';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-
-const StyledAppNotice = styled.div`
-  background-color: ${themeCssVariables.background.secondary};
-  border: 1px solid ${themeCssVariables.border.color.light};
-  border-radius: ${themeCssVariables.border.radius.sm};
-  color: ${themeCssVariables.font.color.secondary};
-  font-size: ${themeCssVariables.font.size.md};
-  margin-bottom: ${themeCssVariables.spacing[6]};
-  padding: ${themeCssVariables.spacing[3]};
-`;
 
 const StyledEmptyState = styled.div`
   background-color: ${themeCssVariables.background.secondary};
@@ -26,6 +17,10 @@ const StyledEmptyState = styled.div`
   font-size: ${themeCssVariables.font.size.md};
   padding: ${themeCssVariables.spacing[4]};
   text-align: center;
+`;
+
+const StyledCalloutWrapper = styled.div`
+  margin-bottom: ${themeCssVariables.spacing[6]};
 `;
 
 export const SettingsLogicFunctionTriggersTab = ({
@@ -49,48 +44,50 @@ export const SettingsLogicFunctionTriggersTab = ({
     isDefined(formValues.databaseEventTriggerSettings) ||
     formValues.isTool;
 
+  if (readonly && !hasAnyTrigger) {
+    return isDefined(applicationName) ? (
+      <StyledCalloutWrapper>
+        <Callout
+          variant="info"
+          Icon={IconInfoCircle}
+          title={t`Bundled with ${applicationName}`}
+          description={t`This function has no trigger configured, so it can only be invoked from the Test tab or by other functions.`}
+        />
+      </StyledCalloutWrapper>
+    ) : (
+      <StyledEmptyState>
+        {t`No trigger is configured for this function.`}
+      </StyledEmptyState>
+    );
+  }
+
   return (
     <>
-      {readonly && !hasAnyTrigger && isDefined(applicationName) && (
-        <StyledAppNotice>
-          {t`This function is part of the ${applicationName} application. It has no trigger configured, so it can only be invoked from the Test tab or by other functions.`}
-        </StyledAppNotice>
-      )}
-      {readonly && !hasAnyTrigger ? (
-        !isDefined(applicationName) && (
-          <StyledEmptyState>
-            {t`No trigger is configured for this function.`}
-          </StyledEmptyState>
-        )
-      ) : (
-        <>
-          <SettingsLogicFunctionHttpTriggerSection
-            value={formValues.httpRouteTriggerSettings}
-            onChange={onChange('httpRouteTriggerSettings')}
-            readonly={readonly}
-          />
-          <SettingsLogicFunctionCronTriggerSection
-            value={formValues.cronTriggerSettings}
-            onChange={onChange('cronTriggerSettings')}
-            readonly={readonly}
-          />
-          <SettingsLogicFunctionDatabaseEventTriggerSection
-            value={formValues.databaseEventTriggerSettings}
-            onChange={onChange('databaseEventTriggerSettings')}
-            readonly={readonly}
-          />
-          <SettingsLogicFunctionToolTriggerSection
-            isTool={formValues.isTool}
-            toolInputSchema={formValues.toolInputSchema}
-            onChange={onChange('isTool')}
-            readonly={readonly}
-          />
-          {!readonly && !hasAnyTrigger && (
-            <StyledEmptyState>
-              {t`No trigger is enabled. Toggle one of the options above to choose how this function gets invoked.`}
-            </StyledEmptyState>
-          )}
-        </>
+      <SettingsLogicFunctionHttpTriggerSection
+        value={formValues.httpRouteTriggerSettings}
+        onChange={onChange('httpRouteTriggerSettings')}
+        readonly={readonly}
+      />
+      <SettingsLogicFunctionCronTriggerSection
+        value={formValues.cronTriggerSettings}
+        onChange={onChange('cronTriggerSettings')}
+        readonly={readonly}
+      />
+      <SettingsLogicFunctionDatabaseEventTriggerSection
+        value={formValues.databaseEventTriggerSettings}
+        onChange={onChange('databaseEventTriggerSettings')}
+        readonly={readonly}
+      />
+      <SettingsLogicFunctionToolTriggerSection
+        isTool={formValues.isTool}
+        toolInputSchema={formValues.toolInputSchema}
+        onChange={onChange('isTool')}
+        readonly={readonly}
+      />
+      {!readonly && !hasAnyTrigger && (
+        <StyledEmptyState>
+          {t`No trigger is enabled. Toggle one of the options above to choose how this function gets invoked.`}
+        </StyledEmptyState>
       )}
     </>
   );
