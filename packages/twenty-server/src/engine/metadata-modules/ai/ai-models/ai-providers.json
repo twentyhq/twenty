@@ -55,6 +55,12 @@
         "inputCostPerMillionTokens": 5,
         "outputCostPerMillionTokens": 30,
         "cachedInputCostPerMillionTokens": 0.5,
+        "longContextCost": {
+          "inputCostPerMillionTokens": 10,
+          "outputCostPerMillionTokens": 45,
+          "thresholdTokens": 200000,
+          "cachedInputCostPerMillionTokens": 1
+        },
         "contextWindowTokens": 1050000,
         "maxOutputTokens": 130000,
         "modalities": ["image", "pdf"],
