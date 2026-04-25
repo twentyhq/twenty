@@ -159,6 +159,7 @@ export const SettingsLogicFunctionDetail = () => {
               formValues={formValues}
               onChange={onChange}
               readonly={isReadonly}
+              applicationName={applicationName}
             />
           )}
           {isSettingsTab && (

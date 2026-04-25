@@ -22,12 +22,10 @@ import {
 import { Button, CodeEditor, CoreEditorHeader } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { REACT_APP_SERVER_BASE_URL } from '~/config';
 
 type SimulatedTrigger = {
   type: SimulatedTriggerType;
   label: string;
-  description: string;
   Icon: IconComponent;
 };
 
@@ -54,35 +52,6 @@ const StyledTriggerLabel = styled.span`
   font-weight: ${themeCssVariables.font.weight.semiBold};
 `;
 
-const StyledTriggerSummary = styled.div`
-  background-color: ${themeCssVariables.background.secondary};
-  border: 1px solid ${themeCssVariables.border.color.light};
-  border-radius: ${themeCssVariables.border.radius.sm};
-  color: ${themeCssVariables.font.color.secondary};
-  display: flex;
-  flex-direction: column;
-  font-size: ${themeCssVariables.font.size.md};
-  gap: ${themeCssVariables.spacing[1]};
-  padding: ${themeCssVariables.spacing[3]};
-`;
-
-const StyledTriggerSummaryHeading = styled.span`
-  color: ${themeCssVariables.font.color.tertiary};
-  font-size: ${themeCssVariables.font.size.xs};
-  font-weight: ${themeCssVariables.font.weight.semiBold};
-  text-transform: uppercase;
-`;
-
-const StyledEmptyState = styled.div`
-  background-color: ${themeCssVariables.background.secondary};
-  border: 1px dashed ${themeCssVariables.border.color.medium};
-  border-radius: ${themeCssVariables.border.radius.sm};
-  color: ${themeCssVariables.font.color.secondary};
-  font-size: ${themeCssVariables.font.size.md};
-  padding: ${themeCssVariables.spacing[3]};
-  text-align: center;
-`;
-
 export const SettingsLogicFunctionTestTab = ({
   handleExecute,
   logicFunctionId,
@@ -105,41 +74,24 @@ export const SettingsLogicFunctionTestTab = ({
     const result: SimulatedTrigger[] = [];
 
     if (isDefined(formValues.httpRouteTriggerSettings)) {
-      const { httpMethod, path } = formValues.httpRouteTriggerSettings;
-      result.push({
-        type: 'http',
-        label: 'HTTP',
-        description: `${httpMethod} ${REACT_APP_SERVER_BASE_URL}/s${path}`,
-        Icon: IconWebhook,
-      });
+      result.push({ type: 'http', label: 'HTTP', Icon: IconWebhook });
     }
     if (isDefined(formValues.cronTriggerSettings)) {
-      result.push({
-        type: 'cron',
-        label: 'Cron',
-        description: t`Cron schedule ${formValues.cronTriggerSettings.pattern}`,
-        Icon: IconClock,
-      });
+      result.push({ type: 'cron', label: 'Cron', Icon: IconClock });
     }
     if (isDefined(formValues.databaseEventTriggerSettings)) {
       result.push({
         type: 'databaseEvent',
         label: 'Database event',
-        description: t`Database event ${formValues.databaseEventTriggerSettings.eventName}`,
         Icon: IconDatabase,
       });
     }
     if (formValues.isTool) {
-      result.push({
-        type: 'tool',
-        label: 'AI tool',
-        description: t`Invoked by an AI agent or workflow`,
-        Icon: IconTool,
-      });
+      result.push({ type: 'tool', label: 'AI tool', Icon: IconTool });
     }
 
     return result;
-  }, [formValues, t]);
+  }, [formValues]);
 
   const onChange = (value: string) => {
     try {
@@ -167,27 +119,9 @@ export const SettingsLogicFunctionTestTab = ({
     <Section>
       <H2Title
         title={t`Test your function`}
-        description={
-          hasTriggers
-            ? t`Prefill the input with a sample payload from one of this function's triggers, then press "Run Function".`
-            : t`Insert a JSON input, then press "Run Function".`
-        }
+        description={t`Insert a JSON input, then press "Run Function".`}
       />
       <StyledInputsContainer>
-        {hasTriggers ? (
-          <StyledTriggerSummary>
-            <StyledTriggerSummaryHeading>
-              {t`Triggered by`}
-            </StyledTriggerSummaryHeading>
-            {triggers.map((trigger) => (
-              <span key={trigger.type}>{trigger.description}</span>
-            ))}
-          </StyledTriggerSummary>
-        ) : (
-          <StyledEmptyState>
-            {t`No trigger is configured for this function. Add one in the Triggers tab to test it with a realistic payload, or paste a JSON input below.`}
-          </StyledEmptyState>
-        )}
         {hasTriggers && (
           <div>
             <StyledTriggerLabel>{t`Simulate trigger`}</StyledTriggerLabel>
