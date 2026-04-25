@@ -43,12 +43,33 @@ export const SettingsApplicationDetailContentTab = ({
   });
 
   const logicFunctionRows = useMemo((): LogicFunctionTableRow[] => {
+    const postInstallUid =
+      manifestContent?.postInstallLogicFunction?.universalIdentifier;
+    const preInstallUid =
+      manifestContent?.preInstallLogicFunction?.universalIdentifier;
+
     const computeTrigger = (lf: {
+      universalIdentifier?: string | null;
       isTool?: boolean;
       cronTriggerSettings?: unknown;
       httpRouteTriggerSettings?: unknown;
       databaseEventTriggerSettings?: { eventName?: string } | null;
     }): string => {
+      // Lifecycle hooks are invoked by the install/upgrade flow, not by a
+      // configurable trigger — surface them explicitly so they don't look
+      // like an unconfigured function.
+      if (
+        isDefined(lf.universalIdentifier) &&
+        lf.universalIdentifier === postInstallUid
+      ) {
+        return t`Post-install`;
+      }
+      if (
+        isDefined(lf.universalIdentifier) &&
+        lf.universalIdentifier === preInstallUid
+      ) {
+        return t`Pre-install`;
+      }
       if (lf.isTool) return 'Tool';
       if (lf.cronTriggerSettings) return 'Cron';
       if (lf.httpRouteTriggerSettings) return 'Route';
@@ -74,7 +95,13 @@ export const SettingsApplicationDetailContentTab = ({
       name: lf.name ?? lf.universalIdentifier,
       trigger: computeTrigger(lf),
     }));
-  }, [installedApplication, manifestContent?.logicFunctions, applicationId]);
+  }, [
+    installedApplication,
+    manifestContent?.logicFunctions,
+    manifestContent?.postInstallLogicFunction?.universalIdentifier,
+    manifestContent?.preInstallLogicFunction?.universalIdentifier,
+    applicationId,
+  ]);
 
   const frontComponentRows =
     useMemo((): ApplicationNameDescriptionTableRow[] => {
