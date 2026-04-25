@@ -1,9 +1,8 @@
 import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
-import { SETTINGS_OBJECT_TABLE_COLUMN_WIDTH } from '@/settings/data-model/object-details/components/SettingsObjectItemTableRowStyledComponents';
 import { Table } from '@/ui/layout/table/components/Table';
+import { TableBody } from '@/ui/layout/table/components/TableBody';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { TableSection } from '@/ui/layout/table/components/TableSection';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useMemo, useState } from 'react';
@@ -12,74 +11,77 @@ import { SearchInput } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-import { SettingsApplicationDataTableRow } from '~/pages/settings/applications/components/SettingsApplicationDataTableRow';
+import { SettingsApplicationFieldsTableRow } from '~/pages/settings/applications/components/SettingsApplicationFieldsTableRow';
+import { SettingsApplicationObjectsTableRow } from '~/pages/settings/applications/components/SettingsApplicationObjectsTableRow';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 
-export type ApplicationDataTableRow = {
+export type ApplicationObjectRow = {
   key: string;
   labelPlural: string;
   icon?: string;
   fieldsCount: number;
   link?: string;
-  tagItem: {
-    isCustom?: boolean;
-    isRemote?: boolean;
-    applicationId?: string | null;
-  };
 };
 
-const MAIN_ROW_GRID_COLUMNS = `180px 1fr ${SETTINGS_OBJECT_TABLE_COLUMN_WIDTH} 36px`;
+export type ApplicationFieldRow = {
+  key: string;
+  fieldLabel: string;
+  fieldIcon?: string;
+  objectLabel: string;
+  objectIcon?: string;
+  link?: string;
+};
 
-const StyledEmptyHeaderContainer = styled.div`
-  > div {
-    min-width: 0;
-  }
-`;
+const OBJECTS_GRID_COLUMNS = '1fr 100px 36px';
+const FIELDS_GRID_COLUMNS = '1fr 200px 36px';
 
 const StyledSearchInputContainer = styled.div`
   padding-bottom: ${themeCssVariables.spacing[2]};
 `;
 
+const StyledSubsectionTitle = styled.h3`
+  color: ${themeCssVariables.font.color.primary};
+  font-size: ${themeCssVariables.font.size.md};
+  font-weight: ${themeCssVariables.font.weight.medium};
+  margin: ${themeCssVariables.spacing[6]} 0 ${themeCssVariables.spacing[2]};
+`;
+
 export const SettingsApplicationDataTable = ({
   objectRows,
-  fieldGroupRows,
+  fieldRows,
 }: {
-  objectRows: ApplicationDataTableRow[];
-  fieldGroupRows: ApplicationDataTableRow[];
+  objectRows: ApplicationObjectRow[];
+  fieldRows: ApplicationFieldRow[];
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
 
+  const normalizedSearch = useMemo(
+    () => normalizeSearchText(searchTerm),
+    [searchTerm],
+  );
+
   const filteredObjectRows = useMemo(() => {
-    const normalizedSearch = normalizeSearchText(searchTerm);
-
-    if (normalizedSearch === '') {
-      return objectRows;
-    }
-
+    if (normalizedSearch === '') return objectRows;
     return objectRows.filter((row) =>
       normalizeSearchText(row.labelPlural).includes(normalizedSearch),
     );
-  }, [objectRows, searchTerm]);
+  }, [objectRows, normalizedSearch]);
 
-  const filteredFieldGroupRows = useMemo(() => {
-    const normalizedSearch = normalizeSearchText(searchTerm);
-
-    if (normalizedSearch === '') {
-      return fieldGroupRows;
-    }
-
-    return fieldGroupRows.filter((row) =>
-      normalizeSearchText(row.labelPlural).includes(normalizedSearch),
+  const filteredFieldRows = useMemo(() => {
+    if (normalizedSearch === '') return fieldRows;
+    return fieldRows.filter(
+      (row) =>
+        normalizeSearchText(row.fieldLabel).includes(normalizedSearch) ||
+        normalizeSearchText(row.objectLabel).includes(normalizedSearch),
     );
-  }, [fieldGroupRows, searchTerm]);
+  }, [fieldRows, normalizedSearch]);
 
-  const shouldDisplayObjects = filteredObjectRows.length > 0;
-  const shouldDisplayFields = filteredFieldGroupRows.length > 0;
+  const hasObjects = filteredObjectRows.length > 0;
+  const hasFields = filteredFieldRows.length > 0;
   const hasSearchTerm = searchTerm.trim().length > 0;
-  const hasNoResults =
-    hasSearchTerm && !shouldDisplayObjects && !shouldDisplayFields;
+  const hasNoResults = hasSearchTerm && !hasObjects && !hasFields;
 
-  if (objectRows.length === 0 && fieldGroupRows.length === 0) {
+  if (objectRows.length === 0 && fieldRows.length === 0) {
     return null;
   }
 
@@ -91,38 +93,55 @@ export const SettingsApplicationDataTable = ({
       />
       <StyledSearchInputContainer>
         <SearchInput
-          placeholder={t`Search an object...`}
+          placeholder={t`Search...`}
           value={searchTerm}
           onChange={setSearchTerm}
         />
       </StyledSearchInputContainer>
-      {hasNoResults ? (
-        <SettingsEmptyPlaceholder>{t`No object found`}</SettingsEmptyPlaceholder>
-      ) : (
-        <Table>
-          <TableRow gridAutoColumns={MAIN_ROW_GRID_COLUMNS}>
-            <TableHeader>{t`Name`}</TableHeader>
-            <TableHeader>{t`App`}</TableHeader>
-            <TableHeader align="right">{t`Fields`}</TableHeader>
-            <StyledEmptyHeaderContainer>
+      {hasNoResults && (
+        <SettingsEmptyPlaceholder>{t`No match`}</SettingsEmptyPlaceholder>
+      )}
+      {hasObjects && (
+        <>
+          <StyledSubsectionTitle>{t`Objects`}</StyledSubsectionTitle>
+          <Table>
+            <TableRow gridAutoColumns={OBJECTS_GRID_COLUMNS}>
+              <TableHeader>{t`Name`}</TableHeader>
+              <TableHeader align="right">{t`Fields`}</TableHeader>
               <TableHeader />
-            </StyledEmptyHeaderContainer>
-          </TableRow>
-          {shouldDisplayObjects && (
-            <TableSection title={t`Objects`}>
+            </TableRow>
+            <TableBody>
               {filteredObjectRows.map((row) => (
-                <SettingsApplicationDataTableRow key={row.key} row={row} />
+                <SettingsApplicationObjectsTableRow
+                  key={row.key}
+                  row={row}
+                  gridAutoColumns={OBJECTS_GRID_COLUMNS}
+                />
               ))}
-            </TableSection>
-          )}
-          {shouldDisplayFields && (
-            <TableSection title={t`Fields`}>
-              {filteredFieldGroupRows.map((row) => (
-                <SettingsApplicationDataTableRow key={row.key} row={row} />
+            </TableBody>
+          </Table>
+        </>
+      )}
+      {hasFields && (
+        <>
+          <StyledSubsectionTitle>{t`Fields added to other objects`}</StyledSubsectionTitle>
+          <Table>
+            <TableRow gridAutoColumns={FIELDS_GRID_COLUMNS}>
+              <TableHeader>{t`Name`}</TableHeader>
+              <TableHeader>{t`Object`}</TableHeader>
+              <TableHeader />
+            </TableRow>
+            <TableBody>
+              {filteredFieldRows.map((row) => (
+                <SettingsApplicationFieldsTableRow
+                  key={row.key}
+                  row={row}
+                  gridAutoColumns={FIELDS_GRID_COLUMNS}
+                />
               ))}
-            </TableSection>
-          )}
-        </Table>
+            </TableBody>
+          </Table>
+        </>
       )}
     </Section>
   );

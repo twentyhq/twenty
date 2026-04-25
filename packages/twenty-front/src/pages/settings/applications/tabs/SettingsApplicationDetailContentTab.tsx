@@ -40,17 +40,18 @@ export const SettingsApplicationDetailContentTab = ({
   installedApplication,
   manifestContent,
 }: SettingsApplicationDetailContentTabProps) => {
-  const { objectRows, fieldGroupRows } = useObjectAndFieldRows({
-    applicationId,
+  const { objectRows, fieldRows } = useObjectAndFieldRows({
     installedApplication,
     manifestContent,
   });
 
   const logicFunctionRows = useMemo((): LogicFunctionTableRow[] => {
     const postInstallUid =
-      manifestContent?.application?.postInstallLogicFunction?.universalIdentifier;
+      manifestContent?.application?.postInstallLogicFunction
+        ?.universalIdentifier;
     const preInstallUid =
-      manifestContent?.application?.preInstallLogicFunction?.universalIdentifier;
+      manifestContent?.application?.preInstallLogicFunction
+        ?.universalIdentifier;
 
     const computeTrigger = (lf: {
       universalIdentifier?: string | null;
@@ -132,7 +133,7 @@ export const SettingsApplicationDetailContentTab = ({
     <>
       <SettingsApplicationDataTable
         objectRows={objectRows}
-        fieldGroupRows={fieldGroupRows}
+        fieldRows={fieldRows}
       />
       {logicFunctionRows.length > 0 && (
         <Section>

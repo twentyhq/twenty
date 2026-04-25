@@ -38,7 +38,6 @@ describe('useObjectAndFieldRows', () => {
       const { result } = renderHook(
         () =>
           useObjectAndFieldRows({
-            applicationId: APP_ID,
             installedApplication,
           }),
         { wrapper },
@@ -69,7 +68,6 @@ describe('useObjectAndFieldRows', () => {
       const { result } = renderHook(
         () =>
           useObjectAndFieldRows({
-            applicationId: APP_ID,
             installedApplication,
           }),
         { wrapper },
@@ -78,7 +76,7 @@ describe('useObjectAndFieldRows', () => {
       expect(result.current.objectRows).toHaveLength(0);
     });
 
-    it('should return field group rows for fields added to other objects', () => {
+    it("should not include the app's own objects among the field rows", () => {
       const fieldBelongingToApp = companyObject.fields[0];
 
       const installedApplication = {
@@ -96,20 +94,19 @@ describe('useObjectAndFieldRows', () => {
       const { result } = renderHook(
         () =>
           useObjectAndFieldRows({
-            applicationId: installedApplication.id,
             installedApplication,
           }),
         { wrapper },
       );
 
-      // Field group rows should not include the app's own objects
-      const hasOwnObject = result.current.fieldGroupRows.some(
-        (row) => row.key === personObject.nameSingular,
+      // Fields on the app's own objects belong in the Objects table, not here.
+      const referencesOwnObject = result.current.fieldRows.some(
+        (row) => row.objectLabel === personObject.labelSingular,
       );
-      expect(hasOwnObject).toBe(false);
+      expect(referencesOwnObject).toBe(false);
     });
 
-    it('should exclude deny-listed objects from field group rows', () => {
+    it('should exclude deny-listed objects from field rows', () => {
       const installedApplication = {
         id: APP_ID,
         objects: [],
@@ -125,16 +122,26 @@ describe('useObjectAndFieldRows', () => {
       const { result } = renderHook(
         () =>
           useObjectAndFieldRows({
-            applicationId: APP_ID,
             installedApplication,
           }),
         { wrapper },
       );
 
-      const hasDeniedObject = result.current.fieldGroupRows.some(
-        (row) => row.key === 'timelineActivity' || row.key === 'favorite',
+      // Deny-listed objects (timelineActivity, favorite) shouldn't surface their
+      // fields here even when they technically carry app-contributed columns.
+      const timelineActivityObject = mockObjectMetadataItems.find(
+        (item) => item.nameSingular === 'timelineActivity',
       );
-      expect(hasDeniedObject).toBe(false);
+      const favoriteObject = mockObjectMetadataItems.find(
+        (item) => item.nameSingular === 'favorite',
+      );
+
+      const hasDeniedObjectField = result.current.fieldRows.some(
+        (row) =>
+          row.objectLabel === timelineActivityObject?.labelSingular ||
+          row.objectLabel === favoriteObject?.labelSingular,
+      );
+      expect(hasDeniedObjectField).toBe(false);
     });
   });
 
@@ -158,7 +165,6 @@ describe('useObjectAndFieldRows', () => {
       const { result } = renderHook(
         () =>
           useObjectAndFieldRows({
-            applicationId: 'app-uid',
             manifestContent,
           }),
         { wrapper },
@@ -168,12 +174,9 @@ describe('useObjectAndFieldRows', () => {
       expect(result.current.objectRows[0].key).toBe('customObject');
       expect(result.current.objectRows[0].labelPlural).toBe('Custom Objects');
       expect(result.current.objectRows[0].fieldsCount).toBe(2);
-      expect(result.current.objectRows[0].tagItem.applicationId).toBe(
-        'app-uid',
-      );
     });
 
-    it('should return field group rows grouped by object from manifest fields', () => {
+    it('should return one row per field when the parent object lives in the manifest', () => {
       const manifestContent = {
         objects: [
           {
@@ -189,15 +192,21 @@ describe('useObjectAndFieldRows', () => {
         fields: [
           {
             objectUniversalIdentifier: 'custom-obj-uid',
+            universalIdentifier: 'field1-uid',
             name: 'field1',
+            label: 'Field 1',
           },
           {
             objectUniversalIdentifier: 'custom-obj-uid',
+            universalIdentifier: 'field2-uid',
             name: 'field2',
+            label: 'Field 2',
           },
           {
             objectUniversalIdentifier: 'custom-obj-uid',
+            universalIdentifier: 'field3-uid',
             name: 'field3',
+            label: 'Field 3',
           },
         ],
       } as unknown as Manifest;
@@ -205,18 +214,23 @@ describe('useObjectAndFieldRows', () => {
       const { result } = renderHook(
         () =>
           useObjectAndFieldRows({
-            applicationId: 'app-uid',
             manifestContent,
           }),
         { wrapper },
       );
 
-      expect(result.current.fieldGroupRows).toHaveLength(1);
-      expect(result.current.fieldGroupRows[0].key).toBe('customObj');
-      expect(result.current.fieldGroupRows[0].fieldsCount).toBe(3);
+      expect(result.current.fieldRows).toHaveLength(3);
+      expect(result.current.fieldRows.map((r) => r.fieldLabel)).toEqual([
+        'Field 1',
+        'Field 2',
+        'Field 3',
+      ]);
+      expect(
+        result.current.fieldRows.every((r) => r.objectLabel === 'Custom'),
+      ).toBe(true);
     });
 
-    it('should return empty field group rows when manifest has no fields', () => {
+    it('should return empty field rows when manifest has no fields', () => {
       const manifestContent = {
         objects: [],
         fields: [],
@@ -225,26 +239,21 @@ describe('useObjectAndFieldRows', () => {
       const { result } = renderHook(
         () =>
           useObjectAndFieldRows({
-            applicationId: 'app-uid',
             manifestContent,
           }),
         { wrapper },
       );
 
-      expect(result.current.fieldGroupRows).toHaveLength(0);
+      expect(result.current.fieldRows).toHaveLength(0);
     });
 
     it('should return empty rows when no data is provided', () => {
-      const { result } = renderHook(
-        () =>
-          useObjectAndFieldRows({
-            applicationId: 'app-uid',
-          }),
-        { wrapper },
-      );
+      const { result } = renderHook(() => useObjectAndFieldRows({}), {
+        wrapper,
+      });
 
       expect(result.current.objectRows).toHaveLength(0);
-      expect(result.current.fieldGroupRows).toHaveLength(0);
+      expect(result.current.fieldRows).toHaveLength(0);
     });
   });
 
@@ -280,7 +289,6 @@ describe('useObjectAndFieldRows', () => {
       const { result } = renderHook(
         () =>
           useObjectAndFieldRows({
-            applicationId: APP_ID,
             installedApplication,
             manifestContent,
           }),

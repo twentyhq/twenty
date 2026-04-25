@@ -6,7 +6,10 @@ import { type Manifest } from 'twenty-shared/application';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { type Application } from '~/generated-metadata/graphql';
-import { type ApplicationDataTableRow } from '~/pages/settings/applications/components/SettingsApplicationDataTable';
+import {
+  type ApplicationFieldRow,
+  type ApplicationObjectRow,
+} from '~/pages/settings/applications/components/SettingsApplicationDataTable';
 import { findObjectNameByUniversalIdentifier } from '~/pages/settings/applications/utils/findObjectNameByUniversalIdentifier';
 
 type InstalledApplicationForObjectRows = Omit<
@@ -16,12 +19,15 @@ type InstalledApplicationForObjectRows = Omit<
   objects: { id: string }[];
 };
 
+// Objects that always carry app-contributed fields but aren't useful to surface
+// here (timeline events and favorites are framework plumbing rather than
+// user-facing data the app extends).
+const FIELD_GROUP_DENY_LIST = ['timelineActivity', 'favorite'];
+
 export const useObjectAndFieldRows = ({
-  applicationId,
   installedApplication,
   manifestContent,
 }: {
-  applicationId: string;
   installedApplication?: InstalledApplicationForObjectRows;
   manifestContent?: Manifest;
 }) => {
@@ -32,7 +38,7 @@ export const useObjectAndFieldRows = ({
     [installedApplication?.objects],
   );
 
-  const objectRows = useMemo((): ApplicationDataTableRow[] => {
+  const objectRows = useMemo((): ApplicationObjectRow[] => {
     if (isDefined(installedApplication)) {
       if (installedApplication.objects.length === 0) {
         return [];
@@ -49,11 +55,6 @@ export const useObjectAndFieldRows = ({
           link: getSettingsPath(SettingsPath.ObjectDetail, {
             objectNamePlural: item.namePlural,
           }),
-          tagItem: {
-            isCustom: item.isCustom,
-            isRemote: item.isRemote,
-            applicationId: item.applicationId,
-          },
         }));
     }
 
@@ -62,45 +63,38 @@ export const useObjectAndFieldRows = ({
       labelPlural: appObject.labelPlural,
       icon: appObject.icon ?? undefined,
       fieldsCount: appObject.fields.length,
-      tagItem: { applicationId },
     }));
   }, [
     installedApplication,
     manifestContent?.objects,
     objectMetadataItems,
     installedObjectIds,
-    applicationId,
   ]);
 
-  const fieldGroupRows = useMemo((): ApplicationDataTableRow[] => {
+  const fieldRows = useMemo((): ApplicationFieldRow[] => {
     if (isDefined(installedApplication)) {
-      const FIELD_GROUP_DENY_LIST = ['timelineActivity', 'favorite'];
-
       return objectMetadataItems
         .filter((item) => {
           if (installedObjectIds.includes(item.id)) return false;
           if (FIELD_GROUP_DENY_LIST.includes(item.nameSingular)) return false;
-
           return item.fields.some(
             (field) => field.applicationId === installedApplication.id,
           );
         })
-        .map((item) => ({
-          key: item.nameSingular,
-          labelPlural: item.labelPlural,
-          icon: item.icon ?? undefined,
-          fieldsCount: item.fields.filter(
-            (field) => field.applicationId === installedApplication.id,
-          ).length,
-          link: getSettingsPath(SettingsPath.ObjectDetail, {
-            objectNamePlural: item.namePlural,
-          }),
-          tagItem: {
-            isCustom: item.isCustom,
-            isRemote: item.isRemote,
-            applicationId: item.applicationId,
-          },
-        }));
+        .flatMap((item) =>
+          item.fields
+            .filter((field) => field.applicationId === installedApplication.id)
+            .map((field) => ({
+              key: `${item.id}-${field.id}`,
+              fieldLabel: field.label,
+              fieldIcon: field.icon ?? undefined,
+              objectLabel: item.labelSingular,
+              objectIcon: item.icon ?? undefined,
+              link: getSettingsPath(SettingsPath.ObjectDetail, {
+                objectNamePlural: item.namePlural,
+              }),
+            })),
+        );
     }
 
     const manifestFields = manifestContent?.fields ?? [];
@@ -108,45 +102,27 @@ export const useObjectAndFieldRows = ({
 
     if (manifestFields.length === 0) return [];
 
-    const groupMap = new Map<
-      string,
-      { objectUniversalIdentifier: string; count: number }
-    >();
-
-    for (const field of manifestFields) {
-      const objectUid = field.objectUniversalIdentifier;
-      const existing = groupMap.get(objectUid);
-
-      if (isDefined(existing)) {
-        existing.count++;
-      } else {
-        groupMap.set(objectUid, {
-          objectUniversalIdentifier: objectUid,
-          count: 1,
-        });
-      }
-    }
-
-    return Array.from(groupMap.values())
-      .map((group) => {
+    return manifestFields
+      .map((field) => {
         const appObject = manifestObjects.find(
-          (obj) => obj.universalIdentifier === group.objectUniversalIdentifier,
+          (obj) => obj.universalIdentifier === field.objectUniversalIdentifier,
         );
 
         if (isDefined(appObject)) {
           return {
-            key: appObject.nameSingular,
-            labelPlural: appObject.labelPlural,
-            icon: appObject.icon ?? undefined,
-            fieldsCount: group.count,
-            tagItem: { applicationId },
+            key: `${appObject.nameSingular}-${field.universalIdentifier}`,
+            fieldLabel: field.label ?? field.name,
+            fieldIcon: field.icon ?? undefined,
+            objectLabel: appObject.labelSingular,
+            objectIcon: appObject.icon ?? undefined,
           };
         }
 
+        // Field added to a standard object — resolve the object via its known
+        // universal identifier so we can show its label.
         const standardObjectName = findObjectNameByUniversalIdentifier(
-          group.objectUniversalIdentifier,
+          field.objectUniversalIdentifier,
         );
-
         const objectMetadataItem = isDefined(standardObjectName)
           ? objectMetadataItems.find(
               (item) => item.nameSingular === standardObjectName,
@@ -154,15 +130,15 @@ export const useObjectAndFieldRows = ({
           : undefined;
 
         if (!isDefined(objectMetadataItem)) {
-          return;
+          return undefined;
         }
 
         return {
-          key: objectMetadataItem.nameSingular,
-          labelPlural: objectMetadataItem.labelPlural,
-          icon: objectMetadataItem.icon ?? undefined,
-          fieldsCount: group.count,
-          tagItem: {},
+          key: `${objectMetadataItem.nameSingular}-${field.universalIdentifier}`,
+          fieldLabel: field.label ?? field.name,
+          fieldIcon: field.icon ?? undefined,
+          objectLabel: objectMetadataItem.labelSingular,
+          objectIcon: objectMetadataItem.icon ?? undefined,
         };
       })
       .filter(isDefined);
@@ -172,8 +148,7 @@ export const useObjectAndFieldRows = ({
     manifestContent?.objects,
     objectMetadataItems,
     installedObjectIds,
-    applicationId,
   ]);
 
-  return { objectRows, fieldGroupRows };
+  return { objectRows, fieldRows };
 };
