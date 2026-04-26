@@ -6,30 +6,30 @@ export class AddImapSyncFields1777200000000 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     // Add columns to messageChannel
     await queryRunner.query(
-      `ALTER TABLE "core"."messageChannel" ADD "highestUid" integer`,
+      `ALTER TABLE "core"."messageChannel" ADD "highestUid" bigint`,
     );
     await queryRunner.query(
-      `ALTER TABLE "core"."messageChannel" ADD "uidValidity" integer`,
+      `ALTER TABLE "core"."messageChannel" ADD "uidValidity" bigint`,
     );
     await queryRunner.query(
       `ALTER TABLE "core"."messageChannel" ADD "modSeq" character varying`,
     );
     await queryRunner.query(
-      `ALTER TABLE "core"."messageChannel" ADD "firstSyncedUid" integer`,
+      `ALTER TABLE "core"."messageChannel" ADD "firstSyncedUid" bigint`,
     );
 
     // Add columns to messageFolder
     await queryRunner.query(
-      `ALTER TABLE "core"."messageFolder" ADD "highestUid" integer`,
+      `ALTER TABLE "core"."messageFolder" ADD "highestUid" bigint`,
     );
     await queryRunner.query(
-      `ALTER TABLE "core"."messageFolder" ADD "uidValidity" integer`,
+      `ALTER TABLE "core"."messageFolder" ADD "uidValidity" bigint`,
     );
     await queryRunner.query(
       `ALTER TABLE "core"."messageFolder" ADD "modSeq" character varying`,
     );
     await queryRunner.query(
-      `ALTER TABLE "core"."messageFolder" ADD "firstSyncedUid" integer`,
+      `ALTER TABLE "core"."messageFolder" ADD "firstSyncedUid" bigint`,
     );
   }
 

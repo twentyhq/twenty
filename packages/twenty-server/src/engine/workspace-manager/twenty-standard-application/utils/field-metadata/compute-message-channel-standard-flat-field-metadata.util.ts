@@ -704,7 +704,7 @@ export const buildMessageChannelStandardFlatFieldMetadatas = ({
     workspaceId,
     context: {
       fieldName: 'highestUid',
-      type: FieldMetadataType.NUMBER,
+      type: FieldMetadataType.TEXT,
       label: i18nLabel(msg`Highest UID`),
       description: i18nLabel(msg`Highest UID synced`),
       icon: 'IconHash',
@@ -721,7 +721,7 @@ export const buildMessageChannelStandardFlatFieldMetadatas = ({
     workspaceId,
     context: {
       fieldName: 'uidValidity',
-      type: FieldMetadataType.NUMBER,
+      type: FieldMetadataType.TEXT,
       label: i18nLabel(msg`UID Validity`),
       description: i18nLabel(msg`IMAP UID Validity`),
       icon: 'IconHash',
@@ -755,7 +755,7 @@ export const buildMessageChannelStandardFlatFieldMetadatas = ({
     workspaceId,
     context: {
       fieldName: 'firstSyncedUid',
-      type: FieldMetadataType.NUMBER,
+      type: FieldMetadataType.TEXT,
       label: i18nLabel(msg`First Synced UID`),
       description: i18nLabel(msg`First UID synced in current batch`),
       icon: 'IconHash',

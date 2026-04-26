@@ -45,17 +45,17 @@ export class MessageFolderEntity extends WorkspaceRelatedEntity {
   })
   pendingSyncAction: MessageFolderPendingSyncAction;
 
-  @Column({ type: 'integer', nullable: true })
-  highestUid: number | null;
+  @Column({ type: 'bigint', nullable: true })
+  highestUid: string | null;
 
-  @Column({ type: 'integer', nullable: true })
-  uidValidity: number | null;
+  @Column({ type: 'bigint', nullable: true })
+  uidValidity: string | null;
 
-  @Column({ type: 'varchar', nullable: true })
+  @Column({ type: 'character varying', nullable: true })
   modSeq: string | null;
 
-  @Column({ type: 'integer', nullable: true })
-  firstSyncedUid: number | null;
+  @Column({ type: 'bigint', nullable: true })
+  firstSyncedUid: string | null;
 
   @Column({ type: 'uuid', nullable: false })
   messageChannelId: string;

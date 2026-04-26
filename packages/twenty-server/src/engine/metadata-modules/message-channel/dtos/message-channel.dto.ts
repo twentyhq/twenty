@@ -107,25 +107,25 @@ export class MessageChannelDTO {
   @Field(() => Date, { nullable: true })
   throttleRetryAfter: Date | null;
 
-  @IsInt()
+  @IsString()
   @IsOptional()
-  @Field(() => Int, { nullable: true })
-  highestUid: number | null;
+  @Field(() => String, { nullable: true })
+  highestUid: string | null;
 
-  @IsInt()
+  @IsString()
   @IsOptional()
-  @Field(() => Int, { nullable: true })
-  uidValidity: number | null;
+  @Field(() => String, { nullable: true })
+  uidValidity: string | null;
 
   @IsString()
   @IsOptional()
   @Field(() => String, { nullable: true })
   modSeq: string | null;
 
-  @IsInt()
+  @IsString()
   @IsOptional()
-  @Field(() => Int, { nullable: true })
-  firstSyncedUid: number | null;
+  @Field(() => String, { nullable: true })
+  firstSyncedUid: string | null;
 
   @IsUUID()
   @IsNotEmpty()

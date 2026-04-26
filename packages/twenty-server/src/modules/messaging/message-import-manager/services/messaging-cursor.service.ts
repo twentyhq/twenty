@@ -33,10 +33,10 @@ export class MessagingCursorService {
         const parsed = JSON.parse(nextSyncCursor);
 
         extraFields = {
-          highestUid: parsed.highestUid,
-          uidValidity: parsed.uidValidity,
+          highestUid: parsed.highestUid?.toString(),
+          uidValidity: parsed.uidValidity?.toString(),
           modSeq: parsed.modSeq,
-          firstSyncedUid: parsed.firstSyncedUid,
+          firstSyncedUid: parsed.firstSyncedUid?.toString(),
         };
       } catch {
         // Not JSON, ignore extra fields
