@@ -298,7 +298,12 @@ const handler = async (
       const res = await client.query({
         pullRequestReviews: {
           __args: {
-            filter: { reviewerId: { eq: contributorId } },
+            filter: {
+              and: [
+                { reviewerId: { eq: contributorId } },
+                { isSelfReview: { eq: false } },
+              ],
+            },
             orderBy: [{ firstSubmittedAt: 'DescNullsLast' }],
             first: PAGE_SIZE,
             after: cursor,
