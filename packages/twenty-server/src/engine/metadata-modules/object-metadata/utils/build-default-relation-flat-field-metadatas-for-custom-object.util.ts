@@ -48,6 +48,17 @@ const EMPTY_SOURCE_AND_TARGET_FLAT_FIELD_METADATAS_RECORD: SourceAndTargetFlatFi
     standardTargetFlatFieldMetadatas: [],
   };
 
+
+const sourceFieldOverridesByRelationObjectNameSingular = {
+  noteTarget: { label: 'Notes', icon: 'IconNotes' },
+  taskTarget: { label: 'Tasks', icon: 'IconCheckbox' },
+  attachment: { label: 'Attachments', icon: 'IconFileImport' },
+  timelineActivity: { label: 'Timeline Activities', icon: 'IconTimelineEvent' },
+} satisfies Record<
+  (typeof DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS)[number],
+  { label: string; icon: string }
+>;
+
 export const buildDefaultRelationFlatFieldMetadatasForCustomObject = ({
   existingFlatObjectMetadataMaps,
   sourceFlatObjectMetadata,
@@ -107,6 +118,11 @@ export const buildDefaultRelationFlatFieldMetadatasForCustomObject = ({
         const morphId =
           morphIdByRelationObjectNameSingular[objectMetadataNameSingular];
 
+        const sourceFieldOverrides =
+          sourceFieldOverridesByRelationObjectNameSingular[
+          objectMetadataNameSingular
+          ];
+
         const { flatFieldMetadatas } =
           generateMorphOrRelationFlatFieldMetadataPair({
             sourceFlatObjectMetadata,
@@ -119,10 +135,10 @@ export const buildDefaultRelationFlatFieldMetadatasForCustomObject = ({
             morphId,
             targetFieldName: fieldName,
             createFieldInput: {
-              icon: 'IconBuildingSkyscraper',
+              icon: sourceFieldOverrides.icon,
               type: FieldMetadataType.RELATION,
               name: targetFlatObjectMetadata.namePlural,
-              label: capitalize(targetFlatObjectMetadata.labelPlural),
+              label: sourceFieldOverrides.label,
               isSystem: false,
               relationCreationPayload: {
                 type: RelationType.ONE_TO_MANY,

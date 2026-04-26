@@ -54,8 +54,8 @@ const DEFAULT_RELATION_CONFIGS = [
   {
     ...DEFAULT_DEFAULT_RELATION,
     fieldName: 'noteTargets',
-    label: 'Note Targets',
-    icon: 'IconBuildingSkyscraper',
+    label: 'Notes',
+    icon: 'IconNotes',
     targetIcon: 'IconCheckbox',
     targetFieldType: FieldMetadataType.MORPH_RELATION,
     standardObjectKey: 'noteTarget',
@@ -64,8 +64,8 @@ const DEFAULT_RELATION_CONFIGS = [
   {
     ...DEFAULT_DEFAULT_RELATION,
     fieldName: 'taskTargets',
-    label: 'Task Targets',
-    icon: 'IconBuildingSkyscraper',
+    label: 'Tasks',
+    icon: 'IconCheckbox',
     targetIcon: 'IconCheckbox',
     targetFieldType: FieldMetadataType.MORPH_RELATION,
     standardObjectKey: 'taskTarget',
