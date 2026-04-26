@@ -22,7 +22,6 @@ import { AgentTurnEntity } from 'src/engine/metadata-modules/ai/ai-agent-executi
 import { AgentTurnEvaluationDTO } from 'src/engine/metadata-modules/ai/ai-agent-monitor/dtos/agent-turn-evaluation.dto';
 import { RunEvaluationInputJob } from 'src/engine/metadata-modules/ai/ai-agent-monitor/jobs/run-evaluation-input.job';
 import { AgentTurnGraderService } from 'src/engine/metadata-modules/ai/ai-agent-monitor/services/agent-turn-grader.service';
-import { AiCallContextService } from 'src/engine/metadata-modules/ai/ai-call-context/services/ai-call-context.service';
 import { AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
 
 @UseGuards(WorkspaceAuthGuard, SettingsPermissionGuard(PermissionFlagType.AI))
@@ -38,7 +37,6 @@ export class AgentTurnResolver {
     @InjectMessageQueue(MessageQueue.aiQueue)
     private readonly messageQueueService: MessageQueueService,
     private readonly graderService: AgentTurnGraderService,
-    private readonly aiCallContextService: AiCallContextService,
   ) {}
 
   @Query(() => [AgentTurnDTO])
@@ -55,14 +53,10 @@ export class AgentTurnResolver {
   @Mutation(() => AgentTurnEvaluationDTO)
   async evaluateAgentTurn(
     @Args('turnId', { type: () => UUIDScalarType }) turnId: string,
-    @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<AgentTurnEvaluationDTO> {
-    this.aiCallContextService.setContext({
-      workspaceId: workspace.id,
-      turnId,
-    });
+    const evaluation = await this.graderService.evaluateTurn(turnId);
 
-    return this.graderService.evaluateTurn(turnId);
+    return evaluation;
   }
 
   @Mutation(() => AgentTurnDTO)
@@ -72,12 +66,6 @@ export class AgentTurnResolver {
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string,
   ): Promise<AgentTurnEntity> {
-    this.aiCallContextService.setContext({
-      workspaceId: workspace.id,
-      userWorkspaceId,
-      agentId,
-    });
-
     const thread = this.threadRepository.create({
       userWorkspaceId,
       workspaceId: workspace.id,

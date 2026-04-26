@@ -34,7 +34,6 @@ import {
   AiException,
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
-import { AiCallContextService } from 'src/engine/metadata-modules/ai/ai-call-context/services/ai-call-context.service';
 import { AiGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/ai/interceptors/ai-graphql-api-exception.interceptor';
 import { type BrowsingContextType } from 'src/engine/metadata-modules/ai/ai-agent/types/browsingContext.type';
 import { AgentMessageDTO } from 'src/engine/metadata-modules/ai/ai-agent-execution/dtos/agent-message.dto';
@@ -63,7 +62,6 @@ export class AgentChatResolver {
     private readonly twentyConfigService: TwentyConfigService,
     private readonly aiModelRegistryService: AiModelRegistryService,
     private readonly redisClientService: RedisClientService,
-    private readonly aiCallContextService: AiCallContextService,
     @InjectRepository(AgentChatThreadEntity)
     private readonly threadRepository: Repository<AgentChatThreadEntity>,
   ) {}
@@ -122,12 +120,6 @@ export class AgentChatResolver {
     @AuthUserWorkspaceId() userWorkspaceId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<SendChatMessageResultDTO> {
-    this.aiCallContextService.setContext({
-      workspaceId: workspace.id,
-      userWorkspaceId,
-      threadId,
-    });
-
     if (this.aiModelRegistryService.getAvailableModels().length === 0) {
       throw new AiException(
         'No AI models are available. Configure at least one AI provider.',

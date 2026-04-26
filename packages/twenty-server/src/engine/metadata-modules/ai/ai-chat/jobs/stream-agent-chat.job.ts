@@ -16,7 +16,6 @@ import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
 import { computeCostBreakdown } from 'src/engine/metadata-modules/ai/ai-billing/utils/compute-cost-breakdown.util';
-import { AiCallContextService } from 'src/engine/metadata-modules/ai/ai-call-context/services/ai-call-context.service';
 import { convertDollarsToBillingCredits } from 'src/engine/metadata-modules/ai/ai-billing/utils/convert-dollars-to-billing-credits.util';
 import { extractCacheCreationTokens } from 'src/engine/metadata-modules/ai/ai-billing/utils/extract-cache-creation-tokens.util';
 import { AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
@@ -47,96 +46,85 @@ export class StreamAgentChatJob {
     private readonly eventPublisherService: AgentChatEventPublisherService,
     private readonly cancelSubscriberService: AgentChatCancelSubscriberService,
     private readonly agentChatStreamingService: AgentChatStreamingService,
-    private readonly aiCallContextService: AiCallContextService,
   ) {}
 
   @Process(STREAM_AGENT_CHAT_JOB_NAME)
   async handle(data: StreamAgentChatJobData): Promise<void> {
-    return this.aiCallContextService.withContext(
-      {
-        workspaceId: data.workspaceId,
-        userWorkspaceId: data.userWorkspaceId,
+    const workspace = await this.workspaceRepository.findOne({
+      where: { id: data.workspaceId },
+    });
+
+    if (!workspace) {
+      this.logger.error(`Workspace ${data.workspaceId} not found`);
+      await this.eventPublisherService.publish({
         threadId: data.threadId,
-        turnId: data.existingTurnId ?? null,
-      },
-      async () => {
-        const workspace = await this.workspaceRepository.findOne({
-          where: { id: data.workspaceId },
-        });
+        workspaceId: data.workspaceId,
+        event: {
+          type: 'stream-error',
+          code: 'WORKSPACE_NOT_FOUND',
+          message: `Workspace ${data.workspaceId} not found`,
+        },
+      });
 
-        if (!workspace) {
-          this.logger.error(`Workspace ${data.workspaceId} not found`);
-          await this.eventPublisherService.publish({
-            threadId: data.threadId,
-            workspaceId: data.workspaceId,
-            event: {
-              type: 'stream-error',
-              code: 'WORKSPACE_NOT_FOUND',
-              message: `Workspace ${data.workspaceId} not found`,
-            },
+      return;
+    }
+
+    const abortController = new AbortController();
+    const cancelChannel = getCancelChannel(data.threadId);
+
+    await this.cancelSubscriberService.subscribe(cancelChannel, () => {
+      abortController.abort();
+    });
+
+    try {
+      await this.executeStream(data, workspace, abortController.signal);
+    } catch (error) {
+      this.logger.error(
+        `Stream ${data.streamId} failed: ${error instanceof Error ? error.message : String(error)}`,
+      );
+      await this.eventPublisherService
+        .publish({
+          threadId: data.threadId,
+          workspaceId: data.workspaceId,
+          event: {
+            type: 'stream-error',
+            code: 'STREAM_EXECUTION_FAILED',
+            message:
+              error instanceof Error
+                ? error.message
+                : 'Stream execution failed',
+          },
+        })
+        .catch(() => {});
+      throw error;
+    } finally {
+      await this.cancelSubscriberService.unsubscribe(cancelChannel);
+      await this.threadRepository
+        .createQueryBuilder()
+        .update(AgentChatThreadEntity)
+        .set({ activeStreamId: null })
+        .where('id = :id AND "activeStreamId" = :streamId', {
+          id: data.threadId,
+          streamId: data.streamId,
+        })
+        .execute()
+        .catch(() => {});
+
+      if (!abortController.signal.aborted) {
+        await this.agentChatStreamingService
+          .flushNextQueuedMessage(
+            data.threadId,
+            data.userWorkspaceId,
+            data.workspaceId,
+            data.hasTitle,
+          )
+          .catch((error) => {
+            this.logger.error(
+              `Failed to flush queued message for thread ${data.threadId}: ${error instanceof Error ? error.message : String(error)}`,
+            );
           });
-
-          return;
-        }
-
-        const abortController = new AbortController();
-        const cancelChannel = getCancelChannel(data.threadId);
-
-        await this.cancelSubscriberService.subscribe(cancelChannel, () => {
-          abortController.abort();
-        });
-
-        try {
-          await this.executeStream(data, workspace, abortController.signal);
-        } catch (error) {
-          this.logger.error(
-            `Stream ${data.streamId} failed: ${error instanceof Error ? error.message : String(error)}`,
-          );
-          await this.eventPublisherService
-            .publish({
-              threadId: data.threadId,
-              workspaceId: data.workspaceId,
-              event: {
-                type: 'stream-error',
-                code: 'STREAM_EXECUTION_FAILED',
-                message:
-                  error instanceof Error
-                    ? error.message
-                    : 'Stream execution failed',
-              },
-            })
-            .catch(() => {});
-          throw error;
-        } finally {
-          await this.cancelSubscriberService.unsubscribe(cancelChannel);
-          await this.threadRepository
-            .createQueryBuilder()
-            .update(AgentChatThreadEntity)
-            .set({ activeStreamId: null })
-            .where('id = :id AND "activeStreamId" = :streamId', {
-              id: data.threadId,
-              streamId: data.streamId,
-            })
-            .execute()
-            .catch(() => {});
-
-          if (!abortController.signal.aborted) {
-            await this.agentChatStreamingService
-              .flushNextQueuedMessage(
-                data.threadId,
-                data.userWorkspaceId,
-                data.workspaceId,
-                data.hasTitle,
-              )
-              .catch((error) => {
-                this.logger.error(
-                  `Failed to flush queued message for thread ${data.threadId}: ${error instanceof Error ? error.message : String(error)}`,
-                );
-              });
-          }
-        }
-      },
-    );
+      }
+    }
   }
 
   private async executeStream(

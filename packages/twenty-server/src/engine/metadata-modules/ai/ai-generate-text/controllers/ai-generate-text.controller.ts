@@ -13,7 +13,6 @@ import {
   AiException,
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
-import { AiCallContextService } from 'src/engine/metadata-modules/ai/ai-call-context/services/ai-call-context.service';
 import { AiRestApiExceptionFilter } from 'src/engine/metadata-modules/ai/filters/ai-api-exception.filter';
 import { GenerateTextInput } from 'src/engine/metadata-modules/ai/ai-generate-text/dtos/generate-text.input';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
@@ -24,7 +23,6 @@ import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models
 export class AiGenerateTextController {
   constructor(
     private readonly aiModelRegistryService: AiModelRegistryService,
-    private readonly aiCallContextService: AiCallContextService,
   ) {}
 
   @Post('generate-text')
@@ -33,8 +31,6 @@ export class AiGenerateTextController {
     @Body() body: GenerateTextInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ) {
-    this.aiCallContextService.setContext({ workspaceId: workspace.id });
-
     if (this.aiModelRegistryService.getAvailableModels().length === 0) {
       throw new AiException(
         'No AI models are available. Please configure at least one AI provider API key.',

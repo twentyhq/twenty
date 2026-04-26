@@ -1,10 +1,13 @@
 import { Logger } from '@nestjs/common';
 
+import * as Sentry from '@sentry/node';
+
 import { type MessageQueueDriver } from 'src/engine/core-modules/message-queue/drivers/interfaces/message-queue-driver.interface';
 import {
   type MessageQueueJob,
   type MessageQueueJobData,
 } from 'src/engine/core-modules/message-queue/interfaces/message-queue-job.interface';
+import { applyWorkspaceSentryContextFromJobData } from 'src/engine/core-modules/sentry/utils/sentry-workspace-context.util';
 
 import { type MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 
@@ -62,7 +65,12 @@ export class SyncDriver implements MessageQueueDriver {
     const worker = this.workersMap[queueName];
 
     if (worker) {
-      await worker(job);
+      // Mirror the BullMQ driver: isolate the Sentry scope per-job and apply
+      // workspace context so beforeSendSpan can project attributes onto spans.
+      await Sentry.withIsolationScope(async () => {
+        applyWorkspaceSentryContextFromJobData(job.data);
+        await worker(job);
+      });
     } else {
       if (process.env.NODE_ENV !== 'test') {
         this.logger.error(`No handler found for job: ${queueName}`);

@@ -46,15 +46,15 @@ if (process.env.EXCEPTION_HANDLER_DRIVER === ExceptionHandlerDriver.SENTRY) {
     sendDefaultPii: true,
     debug: process.env.NODE_ENV === NodeEnvironment.DEVELOPMENT,
     beforeSendSpan: (span) => {
+      // Project the workspace context set by WorkspaceAuthContextMiddleware
+      // (HTTP/GraphQL/REST) and the queue drivers (BullMQ/Sync) onto every
+      // span produced under that isolation scope. Spans without a workspace
+      // (unauthenticated traffic, system jobs) pass through untouched.
       const twentyContext = Sentry.getIsolationScope().getScopeData().contexts
         ?.twenty as
         | {
             workspace_id?: string;
             user_workspace_id?: string;
-            agent_id?: string;
-            workflow_run_id?: string;
-            thread_id?: string;
-            turn_id?: string;
           }
         | undefined;
 
@@ -68,29 +68,7 @@ if (process.env.EXCEPTION_HANDLER_DRIVER === ExceptionHandlerDriver.SENTRY) {
         ...(twentyContext.user_workspace_id && {
           'twenty.user_workspace.id': twentyContext.user_workspace_id,
         }),
-        ...(twentyContext.agent_id && {
-          'twenty.agent.id': twentyContext.agent_id,
-        }),
-        ...(twentyContext.workflow_run_id && {
-          'twenty.workflow_run.id': twentyContext.workflow_run_id,
-        }),
-        ...(twentyContext.turn_id && {
-          'twenty.turn.id': twentyContext.turn_id,
-        }),
       };
-
-      // gen_ai.conversation.id is an OTel-reserved attribute; keep it scoped to AI spans.
-      // TODO: replace with Sentry.setConversationId once available in @sentry/node
-      // (added in a later 10.x — not yet exported in 10.27).
-      const op = span.op ?? '';
-      const origin = span.origin ?? '';
-
-      if (
-        twentyContext.thread_id &&
-        (op.startsWith('gen_ai.') || origin === 'auto.vercelai.otel')
-      ) {
-        span.data['gen_ai.conversation.id'] = twentyContext.thread_id;
-      }
 
       return span;
     },
