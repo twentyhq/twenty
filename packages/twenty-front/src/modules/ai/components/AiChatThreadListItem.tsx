@@ -7,7 +7,7 @@ import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { AiChatThreadDeleteConfirmationModal } from '@/ai/components/AiChatThreadDeleteConfirmationModal';
 import { AiChatThreadItemMenu } from '@/ai/components/AiChatThreadItemMenu';
-import { AI_CHAT_THREAD_ACTIONS_SCOPE_ID } from '@/ai/constants/AiChatThreadActionsScopeId';
+import { AI_CHAT_THREAD_ACTIONS_SURFACE } from '@/ai/constants/AiChatThreadActionsSurface';
 import { useAiChatThreadClick } from '@/ai/hooks/useAiChatThreadClick';
 import { useAiChatThreadRename } from '@/ai/hooks/useAiChatThreadRename';
 import { TextInput } from '@/ui/input/components/TextInput';
@@ -121,7 +121,7 @@ export const AiChatThreadListItem = ({ thread }: AiChatThreadListItemProps) => {
           <AiChatThreadItemMenu
             threadId={thread.id}
             isArchived={isArchived}
-            scopeId={AI_CHAT_THREAD_ACTIONS_SCOPE_ID.SIDE_PANEL}
+            surface={AI_CHAT_THREAD_ACTIONS_SURFACE.SIDE_PANEL}
             onRenameRequested={startRename}
           />
         </StyledMenuTrigger>
@@ -129,7 +129,7 @@ export const AiChatThreadListItem = ({ thread }: AiChatThreadListItemProps) => {
       <AiChatThreadDeleteConfirmationModal
         threadId={thread.id}
         threadTitle={displayTitle}
-        scopeId={AI_CHAT_THREAD_ACTIONS_SCOPE_ID.SIDE_PANEL}
+        surface={AI_CHAT_THREAD_ACTIONS_SURFACE.SIDE_PANEL}
       />
     </>
   );

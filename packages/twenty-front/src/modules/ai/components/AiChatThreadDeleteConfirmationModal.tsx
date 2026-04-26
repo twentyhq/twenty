@@ -1,30 +1,27 @@
 import { Trans, useLingui } from '@lingui/react/macro';
 
+import { type AiChatThreadActionsSurface } from '@/ai/constants/AiChatThreadActionsSurface';
 import { useDeleteChatThread } from '@/ai/hooks/useDeleteChatThread';
+import { getAiChatThreadDeleteModalId } from '@/ai/utils/getAiChatThreadDeleteModalId';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
-
-export const getAiChatThreadDeleteModalId = (
-  threadId: string,
-  scopeId: string,
-) => `delete-chat-thread-modal-${scopeId}-${threadId}`;
 
 type AiChatThreadDeleteConfirmationModalProps = {
   threadId: string;
   threadTitle: string;
-  scopeId: string;
+  surface: AiChatThreadActionsSurface;
 };
 
 export const AiChatThreadDeleteConfirmationModal = ({
   threadId,
   threadTitle,
-  scopeId,
+  surface,
 }: AiChatThreadDeleteConfirmationModalProps) => {
   const { t } = useLingui();
   const { closeModal } = useModal();
   const { deleteChatThread } = useDeleteChatThread();
 
-  const modalInstanceId = getAiChatThreadDeleteModalId(threadId, scopeId);
+  const modalInstanceId = getAiChatThreadDeleteModalId(threadId, surface);
 
   const handleDelete = async () => {
     await deleteChatThread(threadId);

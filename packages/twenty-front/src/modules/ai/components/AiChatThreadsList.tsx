@@ -6,7 +6,7 @@ import { AiChatThreadListItem } from '@/ai/components/AiChatThreadListItem';
 import { AiChatThreadsListFocusEffect } from '@/ai/components/AiChatThreadsListFocusEffect';
 import { AiChatSkeletonLoader } from '@/ai/components/internal/AiChatSkeletonLoader';
 import { AGENT_CHAT_THREAD_GROUP_BY } from '@/ai/constants/AgentChatThreadGroupBy';
-import { AI_CHAT_THREAD_ACTIONS_SCOPE_ID } from '@/ai/constants/AiChatThreadActionsScopeId';
+import { AI_CHAT_THREAD_ACTIONS_SURFACE } from '@/ai/constants/AiChatThreadActionsSurface';
 import { useChatThreads } from '@/ai/hooks/useChatThreads';
 import { useSwitchToNewAiChat } from '@/ai/hooks/useSwitchToNewAiChat';
 import { agentChatThreadGroupByState } from '@/ai/states/agentChatThreadGroupByState';
@@ -81,25 +81,25 @@ export const AiChatThreadsList = () => {
             alwaysShowRightIcon
             rightIcon={
               <AiChatThreadFilterDropdown
-                scopeId={AI_CHAT_THREAD_ACTIONS_SCOPE_ID.SIDE_PANEL}
+                surface={AI_CHAT_THREAD_ACTIONS_SURFACE.SIDE_PANEL}
               />
             }
           />
-          {isGroupedByDate && groupedThreads !== null
-            ? Object.entries(groupedThreads).map(([title, threadsInGroup]) => (
-                <AiChatThreadGroup
-                  key={title}
-                  title={capitalize(title)}
-                  threads={threadsInGroup}
-                />
-              ))
-            : (
-                <StyledFlatThreadList>
-                  {threads.map((thread) => (
-                    <AiChatThreadListItem key={thread.id} thread={thread} />
-                  ))}
-                </StyledFlatThreadList>
-              )}
+          {isGroupedByDate && groupedThreads !== null ? (
+            Object.entries(groupedThreads).map(([title, threadsInGroup]) => (
+              <AiChatThreadGroup
+                key={title}
+                title={capitalize(title)}
+                threads={threadsInGroup}
+              />
+            ))
+          ) : (
+            <StyledFlatThreadList>
+              {threads.map((thread) => (
+                <AiChatThreadListItem key={thread.id} thread={thread} />
+              ))}
+            </StyledFlatThreadList>
+          )}
           {hasNextPage ? (
             <div ref={fetchMoreRef} style={{ minHeight: 1 }} />
           ) : null}

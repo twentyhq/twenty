@@ -9,8 +9,11 @@ import {
 import { LightIconButton } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
 
+import { type AiChatThreadActionsSurface } from '@/ai/constants/AiChatThreadActionsSurface';
 import { useArchiveChatThread } from '@/ai/hooks/useArchiveChatThread';
-import { getAiChatThreadDeleteModalId } from '@/ai/components/AiChatThreadDeleteConfirmationModal';
+import { useUnarchiveChatThread } from '@/ai/hooks/useUnarchiveChatThread';
+import { getAiChatThreadDeleteModalId } from '@/ai/utils/getAiChatThreadDeleteModalId';
+import { getAiChatThreadItemMenuDropdownId } from '@/ai/utils/getAiChatThreadItemMenuDropdownId';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -20,26 +23,22 @@ import { useModal } from '@/ui/layout/modal/hooks/useModal';
 type AiChatThreadItemMenuProps = {
   threadId: string;
   isArchived: boolean;
-  scopeId: string;
+  surface: AiChatThreadActionsSurface;
   onRenameRequested: () => void;
 };
-
-export const getAiChatThreadItemMenuDropdownId = (
-  threadId: string,
-  scopeId: string,
-) => `ai-chat-thread-item-menu-${scopeId}-${threadId}`;
 
 export const AiChatThreadItemMenu = ({
   threadId,
   isArchived,
-  scopeId,
+  surface,
   onRenameRequested,
 }: AiChatThreadItemMenuProps) => {
   const { t } = useLingui();
-  const dropdownId = getAiChatThreadItemMenuDropdownId(threadId, scopeId);
+  const dropdownId = getAiChatThreadItemMenuDropdownId(threadId, surface);
   const { closeDropdown } = useCloseDropdown();
   const { openModal } = useModal();
-  const { archiveChatThread, unarchiveChatThread } = useArchiveChatThread();
+  const { archiveChatThread } = useArchiveChatThread();
+  const { unarchiveChatThread } = useUnarchiveChatThread();
 
   const handleRename = (event: React.MouseEvent) => {
     event.stopPropagation();
@@ -60,7 +59,7 @@ export const AiChatThreadItemMenu = ({
   const handleDelete = (event: React.MouseEvent) => {
     event.stopPropagation();
     closeDropdown(dropdownId);
-    openModal(getAiChatThreadDeleteModalId(threadId, scopeId));
+    openModal(getAiChatThreadDeleteModalId(threadId, surface));
   };
 
   return (

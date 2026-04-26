@@ -5,7 +5,7 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { AiChatThreadDeleteConfirmationModal } from '@/ai/components/AiChatThreadDeleteConfirmationModal';
 import { AiChatThreadItemMenu } from '@/ai/components/AiChatThreadItemMenu';
-import { AI_CHAT_THREAD_ACTIONS_SCOPE_ID } from '@/ai/constants/AiChatThreadActionsScopeId';
+import { AI_CHAT_THREAD_ACTIONS_SURFACE } from '@/ai/constants/AiChatThreadActionsSurface';
 import { useAiChatThreadRename } from '@/ai/hooks/useAiChatThreadRename';
 import { NavigationDrawerInput } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerInput';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
@@ -79,7 +79,7 @@ export const NavigationDrawerAiChatThreadItem = ({
             <AiChatThreadItemMenu
               threadId={thread.id}
               isArchived={isArchived}
-              scopeId={AI_CHAT_THREAD_ACTIONS_SCOPE_ID.NAV_DRAWER}
+              surface={AI_CHAT_THREAD_ACTIONS_SURFACE.NAV_DRAWER}
               onRenameRequested={startRename}
             />
           </StyledRightOptions>
@@ -88,7 +88,7 @@ export const NavigationDrawerAiChatThreadItem = ({
       <AiChatThreadDeleteConfirmationModal
         threadId={thread.id}
         threadTitle={displayLabel}
-        scopeId={AI_CHAT_THREAD_ACTIONS_SCOPE_ID.NAV_DRAWER}
+        surface={AI_CHAT_THREAD_ACTIONS_SURFACE.NAV_DRAWER}
       />
     </>
   );

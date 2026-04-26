@@ -7,7 +7,7 @@ import { AiChatSkeletonLoader } from '@/ai/components/internal/AiChatSkeletonLoa
 import { NavigationDrawerAiChatThreadDateSection } from '@/ai/components/NavigationDrawerAiChatThreadDateSection';
 import { NavigationDrawerAiChatThreadItem } from '@/ai/components/NavigationDrawerAiChatThreadItem';
 import { AGENT_CHAT_THREAD_GROUP_BY } from '@/ai/constants/AgentChatThreadGroupBy';
-import { AI_CHAT_THREAD_ACTIONS_SCOPE_ID } from '@/ai/constants/AiChatThreadActionsScopeId';
+import { AI_CHAT_THREAD_ACTIONS_SURFACE } from '@/ai/constants/AiChatThreadActionsSurface';
 import { useAiChatThreadClick } from '@/ai/hooks/useAiChatThreadClick';
 import { useChatThreads } from '@/ai/hooks/useChatThreads';
 import { agentChatThreadGroupByState } from '@/ai/states/agentChatThreadGroupByState';
@@ -85,7 +85,7 @@ export const NavigationDrawerAiChatContent = () => {
           alwaysShowRightIcon
           rightIcon={
             <AiChatThreadFilterDropdown
-              scopeId={AI_CHAT_THREAD_ACTIONS_SCOPE_ID.NAV_DRAWER}
+              surface={AI_CHAT_THREAD_ACTIONS_SURFACE.NAV_DRAWER}
             />
           }
         />
