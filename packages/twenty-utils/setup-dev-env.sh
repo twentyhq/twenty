@@ -39,6 +39,11 @@ can_use_docker() {
 }
 
 pg_is_up() {
+  # In Docker mode, check via the container to avoid false positives from a local PG
+  if [ "$USE_DOCKER" = true ] && can_use_docker; then
+    docker compose -f "$COMPOSE_FILE" exec -T db pg_isready -U postgres -q 2>/dev/null
+    return $?
+  fi
   if command -v pg_isready &>/dev/null; then
     pg_isready -h localhost -p 5432 -U postgres -q 2>/dev/null
   elif command -v psql &>/dev/null; then
@@ -138,8 +143,10 @@ if [ "$ACTION" = "reset" ]; then
     sudo -u postgres psql -c 'DROP DATABASE IF EXISTS "default";' 2>/dev/null || true
     sudo -u postgres psql -c 'DROP DATABASE IF EXISTS "test";' 2>/dev/null || true
   fi
-  # Stop Docker with -v to remove volumes
-  stop_docker -v 2>/dev/null || stop_docker
+  # Stop Docker with -v to remove volumes (always attempt, even without running containers)
+  if can_use_docker; then
+    docker compose -f "$COMPOSE_FILE" down -v 2>/dev/null || docker compose -f "$COMPOSE_FILE" down 2>/dev/null || true
+  fi
   # Stop local services
   if [ "$USE_DOCKER" = false ]; then
     stop_local
@@ -208,7 +215,10 @@ ok "Redis on localhost:6379"
 # =============================================================================
 info "Creating databases..."
 run_psql() {
-  if command -v psql &>/dev/null; then
+  # In Docker mode, always run via the container to avoid hitting a local PG
+  if [ "$USE_DOCKER" = true ] && can_use_docker && docker compose -f "$COMPOSE_FILE" ps --quiet db 2>/dev/null | grep -q .; then
+    docker compose -f "$COMPOSE_FILE" exec -T db psql -U postgres -d postgres -c "$1" 2>/dev/null || true
+  elif command -v psql &>/dev/null; then
     PGPASSWORD=postgres psql -h localhost -p 5432 -U postgres -d postgres -c "$1" 2>/dev/null || true
   elif can_use_docker && docker compose -f "$COMPOSE_FILE" ps --quiet db 2>/dev/null | grep -q .; then
     docker compose -f "$COMPOSE_FILE" exec -T db psql -U postgres -d postgres -c "$1" 2>/dev/null || true
