@@ -2760,6 +2760,10 @@ type MessageChannel {
   syncStageStartedAt: DateTime
   throttleFailureCount: Float!
   throttleRetryAfter: DateTime
+  highestUid: String
+  uidValidity: String
+  modSeq: String
+  firstSyncedUid: String
   connectedAccountId: UUID!
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -2820,6 +2824,10 @@ type MessageFolder {
   parentFolderId: String
   externalId: String
   pendingSyncAction: MessageFolderPendingSyncAction!
+  highestUid: String
+  uidValidity: String
+  modSeq: String
+  firstSyncedUid: String
   messageChannelId: UUID!
   createdAt: DateTime!
   updatedAt: DateTime!
