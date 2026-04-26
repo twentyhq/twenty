@@ -38,7 +38,7 @@ export class MessagingCursorService {
           modSeq: parsed.modSeq,
           firstSyncedUid: parsed.firstSyncedUid,
         };
-      } catch (e) {
+      } catch {
         // Not JSON, ignore extra fields
       }
 
