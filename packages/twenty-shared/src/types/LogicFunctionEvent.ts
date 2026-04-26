@@ -17,6 +17,19 @@ export type LogicFunctionEvent<TBody = object> = {
   /** Request body */
   body: TBody | null;
 
+  /**
+   * Original raw request body as a UTF-8 string, before any JSON parsing.
+   *
+   * Useful for verifying HMAC-style signatures (e.g. GitHub's
+   * `X-Hub-Signature-256`) where the signature is computed over the exact
+   * bytes of the request body. The parsed `body` field cannot be re-serialized
+   * to those bytes (key order, whitespace and unicode escaping all matter).
+   *
+   * Undefined when the upstream runtime did not preserve the raw body
+   * (e.g. older server versions).
+   */
+  rawBody?: string;
+
   /** Whether the body is base64 encoded */
   isBase64Encoded: boolean;
 

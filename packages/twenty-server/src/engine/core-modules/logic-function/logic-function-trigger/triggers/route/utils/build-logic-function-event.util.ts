@@ -1,3 +1,4 @@
+import { type RawBodyRequest } from '@nestjs/common';
 import { type Request } from 'express';
 import { type LogicFunctionEvent } from 'twenty-shared/types';
 
@@ -29,6 +30,26 @@ export const filterRequestHeaders = ({
   }
 
   return filteredHeaders;
+};
+
+/**
+ * Extracts the original raw request body as a UTF-8 string, before any JSON
+ * parsing. NestJS preserves it on `request.rawBody` because the app is
+ * bootstrapped with `rawBody: true` (see main.ts).
+ *
+ * Returns undefined when no raw body is available (e.g. empty body, or
+ * unrelated request types). Logic functions that need to verify HMAC-style
+ * signatures (GitHub's `X-Hub-Signature-256`, Stripe, …) read this off the
+ * `LogicFunctionEvent` instead of trying to re-serialize the parsed body.
+ */
+export const extractRawBody = (request: Request): string | undefined => {
+  const rawBody = (request as RawBodyRequest<Request>).rawBody;
+
+  if (!rawBody || rawBody.length === 0) {
+    return undefined;
+  }
+
+  return rawBody.toString('utf-8');
 };
 
 /**
@@ -131,6 +152,8 @@ export const buildLogicFunctionEvent = ({
   pathParameters: Record<string, string | string[] | undefined>;
   forwardedRequestHeaders: string[];
 }): LogicFunctionEvent => {
+  const rawBody = extractRawBody(request);
+
   return {
     headers: filterRequestHeaders({
       requestHeaders: request.headers,
@@ -139,6 +162,7 @@ export const buildLogicFunctionEvent = ({
     queryStringParameters: normalizeQueryStringParameters(request.query),
     pathParameters: normalizePathParameters(pathParameters),
     body: extractBody(request),
+    ...(rawBody !== undefined ? { rawBody } : {}),
     isBase64Encoded: false,
     requestContext: {
       http: {
