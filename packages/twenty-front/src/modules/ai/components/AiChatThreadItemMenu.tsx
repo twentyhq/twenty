@@ -65,7 +65,7 @@ export const AiChatThreadItemMenu = ({
   return (
     <Dropdown
       dropdownId={dropdownId}
-      dropdownPlacement="right-start"
+      dropdownPlacement="bottom-end"
       clickableComponent={
         <LightIconButton
           aria-label={t`Chat actions`}
