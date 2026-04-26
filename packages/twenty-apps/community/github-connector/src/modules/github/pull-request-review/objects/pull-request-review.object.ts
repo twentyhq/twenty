@@ -24,6 +24,9 @@ export const REVIEW_EVENT_COUNT_FIELD_UNIVERSAL_IDENTIFIER =
 export const PULL_REQUEST_REVIEW_CREATED_AT_FIELD_UNIVERSAL_IDENTIFIER =
   'b4d61187-1b78-5d6e-9752-79f994ff6d55';
 
+export const REVIEW_IS_SELF_REVIEW_FIELD_UNIVERSAL_IDENTIFIER =
+  'c1f3e8a2-9b5d-4e7f-8a6c-2d4b6f8e1a93';
+
 enum ReviewState {
   APPROVED = 'APPROVED',
   CHANGES_REQUESTED = 'CHANGES_REQUESTED',
@@ -115,6 +118,16 @@ export default defineObject({
       label: 'Event Count',
       icon: 'IconHash',
       defaultValue: 0,
+    },
+    {
+      universalIdentifier: REVIEW_IS_SELF_REVIEW_FIELD_UNIVERSAL_IDENTIFIER,
+      name: 'isSelfReview',
+      type: FieldType.BOOLEAN,
+      label: 'Self review',
+      description:
+        'True when the reviewer is the same contributor as the PR author. Self reviews are excluded from review-count aggregations (top reviewers, contributor stats, etc.) so contributors are credited only for reviews on other people\u2019s PRs.',
+      icon: 'IconUserCheck',
+      defaultValue: false,
     },
   ],
 });

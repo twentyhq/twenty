@@ -81,6 +81,12 @@ const serializeEvent = (event: unknown): SerializedEventData => {
   if ('pageY' in domEvent) serialized.pageY = domEvent.pageY as number;
   if ('screenX' in domEvent) serialized.screenX = domEvent.screenX as number;
   if ('screenY' in domEvent) serialized.screenY = domEvent.screenY as number;
+  if ('offsetX' in domEvent) serialized.offsetX = domEvent.offsetX as number;
+  if ('offsetY' in domEvent) serialized.offsetY = domEvent.offsetY as number;
+  if ('movementX' in domEvent)
+    serialized.movementX = domEvent.movementX as number;
+  if ('movementY' in domEvent)
+    serialized.movementY = domEvent.movementY as number;
   if ('button' in domEvent) serialized.button = domEvent.button as number;
   if ('buttons' in domEvent) serialized.buttons = domEvent.buttons as number;
 
