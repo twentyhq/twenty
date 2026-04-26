@@ -195,6 +195,7 @@ export class AgentAsyncExecutorService {
         stopWhen: stepCountIs(AGENT_CONFIG.MAX_STEPS),
         providerOptions,
         experimental_telemetry: AI_TELEMETRY_CONFIG,
+        // TODO(billing-pr-6+3): thread billing context once executeAgent accepts workspaceId
         experimental_repairToolCall: async ({
           toolCall,
           tools: toolsForRepair,
