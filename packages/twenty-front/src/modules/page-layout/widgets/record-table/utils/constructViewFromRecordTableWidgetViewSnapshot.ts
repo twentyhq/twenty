@@ -6,8 +6,8 @@ export const constructViewFromRecordTableWidgetViewSnapshot = (
 ): View => ({
   ...snapshot.view,
   viewFields: snapshot.viewFields,
-  viewFilters: [],
-  viewSorts: [],
+  viewFilters: snapshot.viewFilters,
+  viewFilterGroups: snapshot.viewFilterGroups,
+  viewSorts: snapshot.viewSorts,
   viewGroups: [],
-  viewFilterGroups: [],
 });

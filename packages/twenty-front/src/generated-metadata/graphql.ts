@@ -2553,6 +2553,7 @@ export type Mutation = {
   upsertObjectPermissions: Array<ObjectPermission>;
   upsertPermissionFlags: Array<PermissionFlag>;
   upsertRowLevelPermissionPredicates: UpsertRowLevelPermissionPredicatesResult;
+  upsertViewWidget: View;
   validateApprovedAccessDomain: ApprovedAccessDomain;
   verifyEmailAndGetLoginToken: VerifyEmailAndGetLoginToken;
   verifyEmailAndGetWorkspaceAgnosticToken: AvailableWorkspacesAndAccessTokens;
@@ -3525,6 +3526,11 @@ export type MutationUpsertPermissionFlagsArgs = {
 
 export type MutationUpsertRowLevelPermissionPredicatesArgs = {
   input: UpsertRowLevelPermissionPredicatesInput;
+};
+
+
+export type MutationUpsertViewWidgetArgs = {
+  input: UpsertViewWidgetInput;
 };
 
 
@@ -5388,6 +5394,52 @@ export type UpsertRowLevelPermissionPredicatesResult = {
   __typename?: 'UpsertRowLevelPermissionPredicatesResult';
   predicateGroups: Array<RowLevelPermissionPredicateGroup>;
   predicates: Array<RowLevelPermissionPredicate>;
+};
+
+export type UpsertViewWidgetInput = {
+  /** The view fields to upsert. */
+  viewFields?: InputMaybe<Array<UpsertViewWidgetViewFieldInput>>;
+  /** The view filter groups to upsert. */
+  viewFilterGroups?: InputMaybe<Array<UpsertViewWidgetViewFilterGroupInput>>;
+  /** The view filters to upsert. */
+  viewFilters?: InputMaybe<Array<UpsertViewWidgetViewFilterInput>>;
+  /** The view sorts to upsert. */
+  viewSorts?: InputMaybe<Array<UpsertViewWidgetViewSortInput>>;
+  /** The id of the view widget (page layout widget). */
+  widgetId: Scalars['UUID'];
+};
+
+export type UpsertViewWidgetViewFieldInput = {
+  /** The field metadata id. Used to create a new view field when viewFieldId is not provided. */
+  fieldMetadataId?: InputMaybe<Scalars['UUID']>;
+  isVisible: Scalars['Boolean'];
+  position: Scalars['Float'];
+  size?: InputMaybe<Scalars['Float']>;
+  /** The id of an existing view field to update. */
+  viewFieldId?: InputMaybe<Scalars['UUID']>;
+};
+
+export type UpsertViewWidgetViewFilterGroupInput = {
+  id?: InputMaybe<Scalars['UUID']>;
+  logicalOperator?: InputMaybe<ViewFilterGroupLogicalOperator>;
+  parentViewFilterGroupId?: InputMaybe<Scalars['UUID']>;
+  positionInViewFilterGroup?: InputMaybe<Scalars['Float']>;
+};
+
+export type UpsertViewWidgetViewFilterInput = {
+  fieldMetadataId: Scalars['UUID'];
+  id?: InputMaybe<Scalars['UUID']>;
+  operand?: InputMaybe<ViewFilterOperand>;
+  positionInViewFilterGroup?: InputMaybe<Scalars['Float']>;
+  subFieldName?: InputMaybe<Scalars['String']>;
+  value: Scalars['JSON'];
+  viewFilterGroupId?: InputMaybe<Scalars['UUID']>;
+};
+
+export type UpsertViewWidgetViewSortInput = {
+  direction?: InputMaybe<ViewSortDirection>;
+  fieldMetadataId: Scalars['UUID'];
+  id?: InputMaybe<Scalars['UUID']>;
 };
 
 export type UsageAnalytics = {
