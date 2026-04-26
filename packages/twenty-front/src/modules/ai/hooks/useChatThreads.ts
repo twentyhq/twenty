@@ -1,23 +1,25 @@
 import { useAtomValue } from 'jotai';
 import { useMemo } from 'react';
 
-import { agentChatThreadsSelector } from '@/ai/states/agentChatThreadsSelector';
+import { agentChatVisibleThreadsSelector } from '@/ai/states/agentChatVisibleThreadsSelector';
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 export const useChatThreads = () => {
-  const agentChatThreads = useAtomStateValue(agentChatThreadsSelector);
+  const agentChatVisibleThreads = useAtomStateValue(
+    agentChatVisibleThreadsSelector,
+  );
   const storeEntry = useAtomValue(
     metadataStoreState.atomFamily('agentChatThreads'),
   );
 
   const threads = useMemo(
     () =>
-      [...agentChatThreads].sort(
+      [...agentChatVisibleThreads].sort(
         (a, b) =>
           new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime(),
       ),
-    [agentChatThreads],
+    [agentChatVisibleThreads],
   );
 
   return {

@@ -220,6 +220,75 @@ export class AgentChatResolver {
     return true;
   }
 
+  @Mutation(() => AgentChatThreadDTO)
+  async renameChatThread(
+    @Args('id', { type: () => UUIDScalarType }) id: string,
+    @Args('title') title: string,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
+  ): Promise<AgentChatThreadEntity> {
+    return this.agentChatService.updateThreadTitle({
+      threadId: id,
+      userWorkspaceId,
+      title,
+    });
+  }
+
+  @Mutation(() => AgentChatThreadDTO)
+  async archiveChatThread(
+    @Args('id', { type: () => UUIDScalarType }) id: string,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
+  ): Promise<AgentChatThreadEntity> {
+    await this.cancelActiveStreamIfAny(id, userWorkspaceId);
+
+    return this.agentChatService.archiveThread({
+      threadId: id,
+      userWorkspaceId,
+    });
+  }
+
+  @Mutation(() => AgentChatThreadDTO)
+  async unarchiveChatThread(
+    @Args('id', { type: () => UUIDScalarType }) id: string,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
+  ): Promise<AgentChatThreadEntity> {
+    return this.agentChatService.unarchiveThread({
+      threadId: id,
+      userWorkspaceId,
+    });
+  }
+
+  @Mutation(() => Boolean)
+  async deleteChatThread(
+    @Args('id', { type: () => UUIDScalarType }) id: string,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
+  ): Promise<boolean> {
+    await this.cancelActiveStreamIfAny(id, userWorkspaceId);
+
+    await this.agentChatService.softDeleteThread({
+      threadId: id,
+      userWorkspaceId,
+    });
+
+    return true;
+  }
+
+  private async cancelActiveStreamIfAny(
+    threadId: string,
+    userWorkspaceId: string,
+  ): Promise<void> {
+    const thread = await this.threadRepository.findOne({
+      where: { id: threadId, userWorkspaceId },
+    });
+
+    if (!isDefined(thread) || !isDefined(thread.activeStreamId)) {
+      return;
+    }
+
+    const redis = this.redisClientService.getClient();
+
+    await redis.publish(getCancelChannel(threadId), 'cancel');
+  }
+
   @Mutation(() => Boolean)
   async deleteQueuedChatMessage(
     @Args('messageId', { type: () => UUIDScalarType }) messageId: string,

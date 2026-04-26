@@ -59,6 +59,9 @@ export class AgentChatThreadDTO {
   @Field()
   updatedAt: Date;
 
+  @FilterableField(() => Date, { nullable: true })
+  archivedAt: Date | null;
+
   @HideField()
   userWorkspaceId: string;
 }

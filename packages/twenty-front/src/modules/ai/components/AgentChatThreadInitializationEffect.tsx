@@ -8,7 +8,7 @@ import {
 } from '@/ai/states/agentChatDraftsByThreadIdState';
 import { agentChatInputState } from '@/ai/states/agentChatInputState';
 import { agentChatThreadsLoadingState } from '@/ai/states/agentChatThreadsLoadingState';
-import { agentChatThreadsSelector } from '@/ai/states/agentChatThreadsSelector';
+import { agentChatVisibleThreadsSelector } from '@/ai/states/agentChatVisibleThreadsSelector';
 import { agentChatUsageComponentFamilyState } from '@/ai/states/agentChatUsageComponentFamilyState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { currentAiChatThreadTitleComponentFamilyState } from '@/ai/states/currentAiChatThreadTitleComponentFamilyState';
@@ -48,7 +48,9 @@ export const AgentChatThreadInitializationEffect = () => {
     agentChatUsageComponentFamilyState,
   );
   const store = useStore();
-  const agentChatThreads = useAtomStateValue(agentChatThreadsSelector);
+  const agentChatVisibleThreads = useAtomStateValue(
+    agentChatVisibleThreadsSelector,
+  );
   const storeEntry = useAtomValue(
     metadataStoreState.atomFamily('agentChatThreads'),
   );
@@ -104,7 +106,7 @@ export const AgentChatThreadInitializationEffect = () => {
 
     setHasInitializedAgentChatThreads(true);
 
-    const sortedThreads = agentChatThreads.toSorted(
+    const sortedThreads = agentChatVisibleThreads.toSorted(
       (a: FlatAgentChatThread, b: FlatAgentChatThread) =>
         new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime(),
     );
@@ -152,7 +154,7 @@ export const AgentChatThreadInitializationEffect = () => {
       );
     }
   }, [
-    agentChatThreads,
+    agentChatVisibleThreads,
     currentAiChatThread,
     hasAiSettingsPermission,
     hasInitializedAgentChatThreads,

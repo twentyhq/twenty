@@ -34,6 +34,7 @@ const serializeThreadForBroadcast = (thread: AgentChatThreadEntity) => ({
   conversationSize: thread.conversationSize,
   totalInputCredits: thread.totalInputCredits,
   totalOutputCredits: thread.totalOutputCredits,
+  archivedAt: thread.archivedAt ? thread.archivedAt.toISOString() : null,
   createdAt: thread.createdAt.toISOString(),
   updatedAt: thread.updatedAt.toISOString(),
 });
@@ -309,6 +310,134 @@ export class AgentChatService {
     }
 
     return savedTurnId;
+  }
+
+  async updateThreadTitle({
+    threadId,
+    userWorkspaceId,
+    title,
+  }: {
+    threadId: string;
+    userWorkspaceId: string;
+    title: string;
+  }): Promise<AgentChatThreadEntity> {
+    const trimmed = title.trim();
+
+    if (trimmed.length === 0) {
+      throw new AiException(
+        'Chat thread title cannot be empty',
+        AiExceptionCode.INVALID_CHAT_THREAD_TITLE,
+      );
+    }
+
+    await this.getThreadById(threadId, userWorkspaceId);
+
+    await this.threadRepository.update(threadId, { title: trimmed });
+
+    const updated = await this.getThreadById(threadId, userWorkspaceId);
+
+    await this.broadcastThreadUpdated(updated, ['title'], userWorkspaceId);
+
+    return updated;
+  }
+
+  async archiveThread({
+    threadId,
+    userWorkspaceId,
+  }: {
+    threadId: string;
+    userWorkspaceId: string;
+  }): Promise<AgentChatThreadEntity> {
+    const thread = await this.getThreadById(threadId, userWorkspaceId);
+
+    if (thread.archivedAt) {
+      return thread;
+    }
+
+    await this.threadRepository.update(threadId, {
+      archivedAt: new Date(),
+      activeStreamId: null,
+    });
+
+    const updated = await this.getThreadById(threadId, userWorkspaceId);
+
+    await this.broadcastThreadUpdated(updated, ['archivedAt'], userWorkspaceId);
+
+    return updated;
+  }
+
+  async unarchiveThread({
+    threadId,
+    userWorkspaceId,
+  }: {
+    threadId: string;
+    userWorkspaceId: string;
+  }): Promise<AgentChatThreadEntity> {
+    const thread = await this.getThreadById(threadId, userWorkspaceId);
+
+    if (!thread.archivedAt) {
+      return thread;
+    }
+
+    await this.threadRepository.update(threadId, { archivedAt: null });
+
+    const updated = await this.getThreadById(threadId, userWorkspaceId);
+
+    await this.broadcastThreadUpdated(updated, ['archivedAt'], userWorkspaceId);
+
+    return updated;
+  }
+
+  async softDeleteThread({
+    threadId,
+    userWorkspaceId,
+  }: {
+    threadId: string;
+    userWorkspaceId: string;
+  }): Promise<void> {
+    const thread = await this.getThreadById(threadId, userWorkspaceId);
+
+    // Null out activeStreamId so a late-arriving stream worker won't
+    // promote a queued message onto a deleted thread.
+    await this.threadRepository.update(threadId, { activeStreamId: null });
+    await this.threadRepository.softDelete(threadId);
+
+    await this.workspaceEventBroadcaster.broadcast({
+      workspaceId: thread.workspaceId,
+      events: [
+        {
+          type: 'deleted',
+          entityName: 'agentChatThread',
+          recordId: threadId,
+          recipientUserWorkspaceIds: [userWorkspaceId],
+          properties: {
+            before: serializeThreadForBroadcast(thread),
+          },
+        },
+      ],
+    });
+  }
+
+  private async broadcastThreadUpdated(
+    thread: AgentChatThreadEntity,
+    updatedFields: string[],
+    userWorkspaceId: string,
+  ): Promise<void> {
+    await this.workspaceEventBroadcaster.broadcast({
+      workspaceId: thread.workspaceId,
+      events: [
+        {
+          type: 'updated',
+          entityName: 'agentChatThread',
+          recordId: thread.id,
+          recipientUserWorkspaceIds: [userWorkspaceId],
+          properties: {
+            updatedFields,
+            after: serializeThreadForBroadcast(thread),
+          },
+        },
+      ],
+    });
   }
 
   async generateTitleIfNeeded({

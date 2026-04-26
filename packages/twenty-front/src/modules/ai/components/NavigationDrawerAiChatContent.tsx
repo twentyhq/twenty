@@ -2,15 +2,21 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
+import { AiChatThreadFilterDropdown } from '@/ai/components/AiChatThreadFilterDropdown';
 import { AiChatSkeletonLoader } from '@/ai/components/internal/AiChatSkeletonLoader';
 import { NavigationDrawerAiChatThreadDateSection } from '@/ai/components/NavigationDrawerAiChatThreadDateSection';
+import { NavigationDrawerAiChatThreadItem } from '@/ai/components/NavigationDrawerAiChatThreadItem';
+import { AGENT_CHAT_THREAD_GROUP_BY } from '@/ai/constants/AgentChatThreadGroupBy';
+import { AI_CHAT_THREAD_ACTIONS_SCOPE_ID } from '@/ai/constants/AiChatThreadActionsScopeId';
 import { useAiChatThreadClick } from '@/ai/hooks/useAiChatThreadClick';
 import { useChatThreads } from '@/ai/hooks/useChatThreads';
+import { agentChatThreadGroupByState } from '@/ai/states/agentChatThreadGroupByState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { type DateGroupKey } from '@/ai/utils/dateGroupKey';
 import { DATE_GROUP_KEYS } from '@/ai/utils/dateGroupKeys';
 import { getDateGroupTitle } from '@/ai/utils/getDateGroupTitle';
 import { groupThreadsByDate } from '@/ai/utils/groupThreadsByDate';
+import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitle';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 const StyledContainer = styled.div`
@@ -25,6 +31,12 @@ const StyledThreadList = styled.div`
   flex-direction: column;
   padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[0]};
   width: calc(100% - ${themeCssVariables.spacing[2]});
+`;
+
+const StyledFlatList = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing['0.5']};
 `;
 
 const StyledEmptyState = styled.div`
@@ -49,10 +61,9 @@ export const NavigationDrawerAiChatContent = () => {
   const { handleThreadClick } = useAiChatThreadClick({
     resetNavigationStack: true,
   });
+  const agentChatThreadGroupBy = useAtomStateValue(agentChatThreadGroupByState);
 
   const { threads, hasNextPage, loading, fetchMoreRef } = useChatThreads();
-
-  const groupedThreads = groupThreadsByDate(threads);
 
   if (loading && threads.length === 0) {
     return (
@@ -62,31 +73,51 @@ export const NavigationDrawerAiChatContent = () => {
     );
   }
 
-  if (threads.length === 0) {
-    return (
-      <StyledContainer>
-        <StyledEmptyState>{t`No chat`}</StyledEmptyState>
-      </StyledContainer>
-    );
-  }
+  const isGroupedByDate =
+    agentChatThreadGroupBy === AGENT_CHAT_THREAD_GROUP_BY.DATE;
+  const groupedThreads = isGroupedByDate ? groupThreadsByDate(threads) : null;
 
   return (
     <StyledContainer>
       <StyledThreadList>
-        {DATE_GROUP_KEYS.map((key: DateGroupKey) => {
-          const threadsInGroup = groupedThreads[key];
-          if (threadsInGroup.length === 0) return null;
-
-          return (
-            <NavigationDrawerAiChatThreadDateSection
-              key={key}
-              title={getDateGroupTitle(key)}
-              threads={threadsInGroup}
-              currentThreadId={currentAiChatThread}
-              onThreadClick={handleThreadClick}
+        <NavigationDrawerSectionTitle
+          label={t`Recents`}
+          alwaysShowRightIcon
+          rightIcon={
+            <AiChatThreadFilterDropdown
+              scopeId={AI_CHAT_THREAD_ACTIONS_SCOPE_ID.NAV_DRAWER}
             />
-          );
-        })}
+          }
+        />
+        {threads.length === 0 ? (
+          <StyledEmptyState>{t`No chat`}</StyledEmptyState>
+        ) : isGroupedByDate && groupedThreads !== null ? (
+          DATE_GROUP_KEYS.map((key: DateGroupKey) => {
+            const threadsInGroup = groupedThreads[key];
+            if (threadsInGroup.length === 0) return null;
+
+            return (
+              <NavigationDrawerAiChatThreadDateSection
+                key={key}
+                title={getDateGroupTitle(key)}
+                threads={threadsInGroup}
+                currentThreadId={currentAiChatThread}
+                onThreadClick={handleThreadClick}
+              />
+            );
+          })
+        ) : (
+          <StyledFlatList>
+            {threads.map((thread) => (
+              <NavigationDrawerAiChatThreadItem
+                key={thread.id}
+                thread={thread}
+                isActive={currentAiChatThread === thread.id}
+                onClick={handleThreadClick}
+              />
+            ))}
+          </StyledFlatList>
+        )}
         {hasNextPage ? <StyledFetchMoreTrigger ref={fetchMoreRef} /> : null}
       </StyledThreadList>
     </StyledContainer>
