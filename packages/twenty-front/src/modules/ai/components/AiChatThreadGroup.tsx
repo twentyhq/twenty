@@ -1,7 +1,9 @@
 import { styled } from '@linaria/react';
+import { type ReactNode } from 'react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { AiChatThreadListItem } from '@/ai/components/AiChatThreadListItem';
+import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitle';
 import { type AgentChatThread } from '~/generated-metadata/graphql';
 
 const StyledThreadsList = styled.div`
@@ -14,17 +16,14 @@ const StyledDateGroup = styled.div`
   margin-bottom: ${themeCssVariables.spacing[4]};
 `;
 
-const StyledDateHeader = styled.div`
-  color: ${themeCssVariables.font.color.light};
-  font-size: ${themeCssVariables.font.size.xs};
-  font-weight: ${themeCssVariables.font.weight.medium};
-  margin-bottom: ${themeCssVariables.spacing[1]};
-`;
-
 export const AiChatThreadGroup = ({
+  alwaysShowRightIcon = false,
+  rightIcon,
   threads,
   title,
 }: {
+  alwaysShowRightIcon?: boolean;
+  rightIcon?: ReactNode;
   threads: AgentChatThread[];
   title: string;
 }) => {
@@ -34,7 +33,11 @@ export const AiChatThreadGroup = ({
 
   return (
     <StyledDateGroup>
-      <StyledDateHeader>{title}</StyledDateHeader>
+      <NavigationDrawerSectionTitle
+        label={title}
+        alwaysShowRightIcon={alwaysShowRightIcon}
+        rightIcon={rightIcon}
+      />
       <StyledThreadsList>
         {threads.map((thread) => (
           <AiChatThreadListItem key={thread.id} thread={thread} />

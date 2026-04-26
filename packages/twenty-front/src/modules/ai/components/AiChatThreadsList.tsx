@@ -69,35 +69,41 @@ export const AiChatThreadsList = () => {
   const isGroupedByDate =
     agentChatThreadGroupBy === AGENT_CHAT_THREAD_GROUP_BY.DATE;
   const dateGroups = isGroupedByDate ? groupThreadsByDate(threads) : [];
+  const shouldRenderDateGroups = isGroupedByDate && dateGroups.length > 0;
+  const filterDropdown = (
+    <AiChatThreadFilterDropdown
+      surface={AI_CHAT_THREAD_ACTIONS_SURFACE.SIDE_PANEL}
+    />
+  );
 
   return (
     <>
       <AiChatThreadsListFocusEffect focusId={focusId} />
       <StyledContainer>
         <StyledThreadsContainer>
-          <NavigationDrawerSectionTitle
-            label={t`Recents`}
-            alwaysShowRightIcon
-            rightIcon={
-              <AiChatThreadFilterDropdown
-                surface={AI_CHAT_THREAD_ACTIONS_SURFACE.SIDE_PANEL}
-              />
-            }
-          />
-          {isGroupedByDate ? (
-            dateGroups.map((dateGroup) => (
+          {shouldRenderDateGroups ? (
+            dateGroups.map((dateGroup, index) => (
               <AiChatThreadGroup
                 key={dateGroup.id}
                 title={dateGroup.title}
                 threads={dateGroup.threads}
+                rightIcon={index === 0 ? filterDropdown : undefined}
+                alwaysShowRightIcon={index === 0}
               />
             ))
           ) : (
-            <StyledFlatThreadList>
-              {threads.map((thread) => (
-                <AiChatThreadListItem key={thread.id} thread={thread} />
-              ))}
-            </StyledFlatThreadList>
+            <>
+              <NavigationDrawerSectionTitle
+                label={t`Recents`}
+                alwaysShowRightIcon
+                rightIcon={filterDropdown}
+              />
+              <StyledFlatThreadList>
+                {threads.map((thread) => (
+                  <AiChatThreadListItem key={thread.id} thread={thread} />
+                ))}
+              </StyledFlatThreadList>
+            </>
           )}
           {hasNextPage ? (
             <div ref={fetchMoreRef} style={{ minHeight: 1 }} />
