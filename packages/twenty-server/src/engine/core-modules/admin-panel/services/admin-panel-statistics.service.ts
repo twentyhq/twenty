@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import { Brackets, ILike, IsNull, Repository } from 'typeorm';
 
 import { type AdminPanelRecentUserDTO } from 'src/engine/core-modules/admin-panel/dtos/admin-panel-recent-user.dto';
@@ -63,33 +64,26 @@ export class AdminPanelStatisticsService {
 
     const users = await queryBuilder.getMany();
 
-    const recentUsersContext = users.map((user) => {
-      const userWorkspace = user.userWorkspaces[0];
+    const signedAvatarUrlByUserId =
+      await this.buildSignedAvatarUrlByUserId(users);
+
+    return users.map((user) => {
+      const displayWorkspace = user.userWorkspaces[0]?.workspace;
 
       return {
-        user,
-        workspace: userWorkspace?.workspace,
-        fallbackAvatarUrl:
-          userWorkspace?.defaultAvatarUrl ?? user.defaultAvatarUrl ?? null,
+        id: user.id,
+        email: user.email,
+        firstName: user.firstName ?? undefined,
+        lastName: user.lastName ?? undefined,
+        createdAt: user.createdAt,
+        avatarUrl: signedAvatarUrlByUserId.get(user.id) ?? null,
+        workspaceName: displayWorkspace?.displayName ?? null,
+        workspaceId: displayWorkspace?.id ?? null,
+        workspaceLogo: displayWorkspace
+          ? this.fileUrlService.signWorkspaceLogoUrl(displayWorkspace)
+          : null,
       };
     });
-
-    const signedAvatarUrlByUserId =
-      await this.buildSignedAvatarUrlByUserId(recentUsersContext);
-
-    return recentUsersContext.map(({ user, workspace }) => ({
-      id: user.id,
-      email: user.email,
-      firstName: user.firstName ?? undefined,
-      lastName: user.lastName ?? undefined,
-      createdAt: user.createdAt,
-      avatarUrl: signedAvatarUrlByUserId.get(user.id) ?? null,
-      workspaceName: workspace?.displayName ?? null,
-      workspaceId: workspace?.id ?? null,
-      workspaceLogo: workspace
-        ? this.fileUrlService.signWorkspaceLogoUrl(workspace)
-        : null,
-    }));
   }
 
   async getTopWorkspaces(
@@ -147,11 +141,7 @@ export class AdminPanelStatisticsService {
   }
 
   private async buildSignedAvatarUrlByUserId(
-    recentUsersContext: Array<{
-      user: UserEntity;
-      workspace: WorkspaceEntity | undefined;
-      fallbackAvatarUrl: string | null;
-    }>,
+    users: UserEntity[],
   ): Promise<Map<string, string | null>> {
     const signedAvatarUrlByUserId = new Map<string, string | null>();
     const contextsByWorkspaceId = new Map<
@@ -162,18 +152,27 @@ export class AdminPanelStatisticsService {
       }
     >();
 
-    for (const { user, workspace, fallbackAvatarUrl } of recentUsersContext) {
-      if (!workspace) {
-        signedAvatarUrlByUserId.set(user.id, fallbackAvatarUrl);
-        continue;
-      }
-      const entry = contextsByWorkspaceId.get(workspace.id) ?? {
-        workspace,
-        fallbackAvatarUrlsByUserId: new Map(),
-      };
+    for (const user of users) {
+      signedAvatarUrlByUserId.set(user.id, user.defaultAvatarUrl ?? null);
 
-      entry.fallbackAvatarUrlsByUserId.set(user.id, fallbackAvatarUrl);
-      contextsByWorkspaceId.set(workspace.id, entry);
+      for (const userWorkspace of user.userWorkspaces) {
+        const workspace = userWorkspace.workspace;
+
+        if (!workspace) {
+          continue;
+        }
+
+        const entry = contextsByWorkspaceId.get(workspace.id) ?? {
+          workspace,
+          fallbackAvatarUrlsByUserId: new Map(),
+        };
+
+        entry.fallbackAvatarUrlsByUserId.set(
+          user.id,
+          userWorkspace.defaultAvatarUrl ?? user.defaultAvatarUrl ?? null,
+        );
+        contextsByWorkspaceId.set(workspace.id, entry);
+      }
     }
 
     await Promise.all(
@@ -186,7 +185,11 @@ export class AdminPanelStatisticsService {
             });
 
           for (const [userId, signedUrl] of perWorkspaceSigned.entries()) {
-            signedAvatarUrlByUserId.set(userId, signedUrl);
+            const existing = signedAvatarUrlByUserId.get(userId);
+
+            if (!isNonEmptyString(existing) && isNonEmptyString(signedUrl)) {
+              signedAvatarUrlByUserId.set(userId, signedUrl);
+            }
           }
         },
       ),
