@@ -29,7 +29,6 @@ export type NavigationDrawerAiChatThreadSectionProps = {
   onThreadClick: (thread: AgentChatThread) => void;
   rightIcon?: ReactNode;
   alwaysShowRightIcon?: boolean;
-  emptyState?: ReactNode;
 };
 
 export const NavigationDrawerAiChatThreadSection = ({
@@ -40,7 +39,6 @@ export const NavigationDrawerAiChatThreadSection = ({
   onThreadClick,
   rightIcon,
   alwaysShowRightIcon = false,
-  emptyState,
 }: NavigationDrawerAiChatThreadSectionProps) => {
   const { isNavigationSectionOpen, toggleNavigationSection } =
     useNavigationSection(sectionId);
@@ -56,16 +54,14 @@ export const NavigationDrawerAiChatThreadSection = ({
           rightIcon={rightIcon}
         />
       </NavigationDrawerAnimatedCollapseWrapper>
-      <AnimatedExpandableContainer
-        isExpanded={isNavigationSectionOpen}
-        dimension="height"
-        mode="fit-content"
-        containAnimation
-        initial={false}
-      >
-        {threads.length === 0 && emptyState !== undefined ? (
-          emptyState
-        ) : (
+      {threads.length > 0 ? (
+        <AnimatedExpandableContainer
+          isExpanded={isNavigationSectionOpen}
+          dimension="height"
+          mode="fit-content"
+          containAnimation
+          initial={false}
+        >
           <StyledThreadList>
             {threads.map((thread) => (
               <NavigationDrawerAiChatThreadItem
@@ -76,8 +72,8 @@ export const NavigationDrawerAiChatThreadSection = ({
               />
             ))}
           </StyledThreadList>
-        )}
-      </AnimatedExpandableContainer>
+        </AnimatedExpandableContainer>
+      ) : null}
     </StyledSection>
   );
 };

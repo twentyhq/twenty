@@ -38,6 +38,8 @@ export const agentChatVisibleThreadsSelector = createAtomSelector<
       }
 
       if (cutoffMs !== null) {
+        // TODO: use a dedicated conversation activity timestamp once available;
+        // updatedAt also changes for archive/unarchive metadata updates.
         const updatedAtMs = new Date(thread.updatedAt).getTime();
         if (updatedAtMs < cutoffMs) return false;
       }

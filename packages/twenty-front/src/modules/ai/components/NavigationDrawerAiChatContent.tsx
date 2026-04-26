@@ -24,7 +24,9 @@ const StyledContainer = styled.div`
 
 const StyledThreadList = styled.div`
   display: flex;
+  flex: 1;
   flex-direction: column;
+  min-height: 0;
   padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[0]};
   width: calc(100% - ${themeCssVariables.spacing[2]});
 `;
@@ -108,9 +110,11 @@ export const NavigationDrawerAiChatContent = () => {
             onThreadClick={handleThreadClick}
             rightIcon={filterDropdown}
             alwaysShowRightIcon
-            emptyState={<StyledEmptyState>{t`No chat`}</StyledEmptyState>}
           />
         )}
+        {threads.length === 0 ? (
+          <StyledEmptyState>{t`No chat`}</StyledEmptyState>
+        ) : null}
         {hasNextPage ? <StyledFetchMoreTrigger ref={fetchMoreRef} /> : null}
       </StyledThreadList>
       <AiChatThreadDeleteConfirmationModal

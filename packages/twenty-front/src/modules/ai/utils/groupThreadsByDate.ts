@@ -71,6 +71,8 @@ export const groupThreadsByDate = (
   const groupedThreadsByDate = new Map<string, AgentChatThreadDateGroup>();
 
   for (const thread of threads) {
+    // TODO: use a dedicated conversation activity timestamp once available;
+    // updatedAt also changes for archive/unarchive metadata updates.
     const threadDateGroup = getThreadDateGroup(
       new Date(thread.updatedAt),
       today,
