@@ -1,5 +1,5 @@
-import { signEnterpriseKey } from '@/shared/enterprise/enterprise-jwt';
-import { getStripeClient } from '@/shared/enterprise/stripe-client';
+import { signEnterpriseKey } from '@/lib/enterprise/enterprise-jwt';
+import { getStripeClient } from '@/lib/enterprise/stripe-client';
 import { NextResponse } from 'next/server';
 
 export const dynamic = 'force-dynamic';
@@ -22,8 +22,6 @@ export async function GET(request: Request) {
       expand: ['subscription', 'customer'],
     });
 
-    // Subscriptions that begin in a free trial complete with
-    // `payment_status: 'no_payment_required'`, so accept both successful states.
     const SUCCESSFUL_PAYMENT_STATUSES: Array<typeof session.payment_status> = [
       'paid',
       'no_payment_required',

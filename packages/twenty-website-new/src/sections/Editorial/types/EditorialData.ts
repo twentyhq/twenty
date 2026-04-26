@@ -1,6 +1,6 @@
-import { BodyType } from '@/design-system/components/Body/types/Body';
-import { EyebrowType } from '@/design-system/components/Eyebrow/types/Eyebrow';
-import { HeadingType } from '@/design-system/components/Heading/types/Heading';
+import { BodyType } from '@/design-system/components/Body';
+import { EyebrowType } from '@/design-system/components/Eyebrow';
+import { HeadingType } from '@/design-system/components/Heading';
 
 export type EditorialDataType = {
   eyebrow?: EyebrowType;

@@ -1,12 +1,13 @@
 'use client';
 
-import { usePartnerApplicationModal } from '@/app/partners/components/PartnerApplication/PartnerApplicationModalRoot';
 import { ButtonShape } from '@/design-system/components/Button/ButtonShape';
 import { Body, Heading } from '@/design-system/components';
 import { ArrowRightIcon } from '@/icons';
 import { INFORMATIVE_ICONS } from '@/icons/informative';
-import { IllustrationMount } from '@/illustrations';
+import { usePartnerApplicationModal } from '@/lib/partner-application';
+import { WebGlMount } from '@/lib/visual-runtime';
 import type { ThreeCardsIllustrationCardType } from '@/sections/ThreeCards/types';
+import { THREE_CARDS_VISUALS } from '@/sections/ThreeCards/visuals';
 import { theme } from '@/theme';
 import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
@@ -366,6 +367,8 @@ export function IllustrationCard({
   illustrationCard,
   variant = 'shaped',
 }: IllustrationCardProps) {
+  const Visual = THREE_CARDS_VISUALS[illustrationCard.illustration];
+
   return (
     <IllustrationCardContainer>
       {variant === 'shaped' && (
@@ -382,7 +385,9 @@ export function IllustrationCard({
       />
       <CardRule />
       <CardEmbed>
-        <IllustrationMount illustration={illustrationCard.illustration} />
+        <WebGlMount>
+          <Visual />
+        </WebGlMount>
       </CardEmbed>
       <CardRule />
       <CardLowerSection>

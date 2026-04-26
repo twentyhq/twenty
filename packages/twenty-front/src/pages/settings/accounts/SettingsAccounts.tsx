@@ -1,5 +1,5 @@
 import { SettingsPath } from 'twenty-shared/types';
-import { SettingsAccountLoader } from '@/settings/accounts/components/SettingsAccountLoader';
+import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
 import { SettingsAccountsBlocklistSection } from '@/settings/accounts/components/SettingsAccountsBlocklistSection';
 import { SettingsAccountsConnectedAccountsListCard } from '@/settings/accounts/components/SettingsAccountsConnectedAccountsListCard';
 import { SettingsAccountsSettingsSection } from '@/settings/accounts/components/SettingsAccountsSettingsSection';
@@ -29,7 +29,7 @@ export const SettingsAccounts = () => {
     >
       <SettingsPageContainer>
         {loading ? (
-          <SettingsAccountLoader />
+          <SettingsSectionSkeletonLoader />
         ) : (
           <>
             <Section>

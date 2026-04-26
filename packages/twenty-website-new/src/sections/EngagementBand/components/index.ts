@@ -1,9 +1,9 @@
-import { Actions } from './Actions/Actions';
-import { Body } from './Body/Body';
-import { Copy } from './Copy/Copy';
-import { Heading } from './Heading/Heading';
-import { Root } from './Root/Root';
-import { Strip } from './Strip/Strip';
+import { Actions } from './Actions';
+import { Body } from './Body';
+import { Copy } from './Copy';
+import { Heading } from './Heading';
+import { Root } from './Root';
+import { Strip } from './Strip';
 
 export const EngagementBand = {
   Actions,

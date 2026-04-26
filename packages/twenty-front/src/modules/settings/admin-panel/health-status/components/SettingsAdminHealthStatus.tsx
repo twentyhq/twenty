@@ -1,5 +1,5 @@
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
-import { SettingsAdminTabSkeletonLoader } from '@/settings/admin-panel/components/SettingsAdminTabSkeletonLoader';
+import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
 import { SettingsAdminHealthStatusListCard } from '@/settings/admin-panel/health-status/components/SettingsAdminHealthStatusListCard';
 import { SettingsAdminMaintenanceModeFetchEffect } from '@/settings/admin-panel/health-status/maintenance-mode/components/SettingsAdminMaintenanceModeFetchEffect';
 import { SettingsAdminMaintenanceMode } from '@/settings/admin-panel/health-status/maintenance-mode/components/SettingsAdminMaintenanceMode';
@@ -22,7 +22,7 @@ export const SettingsAdminHealthStatus = () => {
   const services = data?.getSystemHealthStatus.services ?? [];
 
   if (loadingHealthStatus) {
-    return <SettingsAdminTabSkeletonLoader />;
+    return <SettingsSectionSkeletonLoader />;
   }
 
   return (

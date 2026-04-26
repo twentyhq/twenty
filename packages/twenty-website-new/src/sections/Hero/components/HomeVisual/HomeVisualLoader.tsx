@@ -30,9 +30,7 @@ type HomeVisualLoaderProps = {
 
 export function HomeVisualLoader({ color }: HomeVisualLoaderProps) {
   return (
-    <StyledLoaderContainer
-      style={color ? { borderColor: color } : undefined}
-    >
+    <StyledLoaderContainer style={color ? { borderColor: color } : undefined}>
       <StyledLoader
         animate={{
           x: [-16, 0, 16],

@@ -1,6 +1,8 @@
 export {
   pageType,
   isInSidePanel,
+  isDashboardPageLayoutInEditMode,
+  isLayoutCustomizationModeEnabled,
   favoriteRecordIds,
   isSelectAll,
   hasAnySoftDeleteFilterOnView,

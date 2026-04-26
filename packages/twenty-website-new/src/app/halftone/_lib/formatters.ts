@@ -10,21 +10,24 @@ export function formatPercent(value: number, digits = 0) {
   return `${(value * 100).toFixed(digits)}%`;
 }
 
-export function formatAnimationName(animation: {
-  autoRotateEnabled: boolean;
-  breatheEnabled: boolean;
-  cameraParallaxEnabled: boolean;
-  dragFlowEnabled: boolean;
-  followHoverEnabled: boolean;
-  followDragEnabled: boolean;
-  floatEnabled: boolean;
-  hoverHalftoneEnabled: boolean;
-  hoverLightEnabled: boolean;
-  lightSweepEnabled: boolean;
-  rotateEnabled: boolean;
-  rotatePreset: string;
-  springReturnEnabled: boolean;
-}, sourceMode: 'shape' | 'image') {
+export function formatAnimationName(
+  animation: {
+    autoRotateEnabled: boolean;
+    breatheEnabled: boolean;
+    cameraParallaxEnabled: boolean;
+    dragFlowEnabled: boolean;
+    followHoverEnabled: boolean;
+    followDragEnabled: boolean;
+    floatEnabled: boolean;
+    hoverHalftoneEnabled: boolean;
+    hoverLightEnabled: boolean;
+    lightSweepEnabled: boolean;
+    rotateEnabled: boolean;
+    rotatePreset: string;
+    springReturnEnabled: boolean;
+  },
+  sourceMode: 'shape' | 'image',
+) {
   const activeModes: string[] = [];
 
   if (sourceMode === 'image') {

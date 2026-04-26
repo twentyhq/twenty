@@ -8,11 +8,12 @@ icon: table-columns
 
 ## مفاهيم التخطيط
 
-| المفهوم                | ما الذي يتحكّم فيه                                                              | كيان                       |
-| ---------------------- | ------------------------------------------------------------------------------- | -------------------------- |
-| **عرض**                | تكوين قائمة محفوظة لكائن — الحقول المرئية، والترتيب، وعوامل التصفية، والمجموعات | `defineView`               |
-| **عنصر قائمة التنقّل** | عنصر في الشريط الجانبي الأيسر يرتبط بعرض أو بعنوان URL خارجي                    | `defineNavigationMenuItem` |
-| **تخطيط الصفحة**       | علامات التبويب وعناصر الواجهة التي تشكّل صفحة تفاصيل السجل                      | `definePageLayout`         |
+| المفهوم                      | ما الذي يتحكّم فيه                                                              | كيان                       |
+| ---------------------------- | ------------------------------------------------------------------------------- | -------------------------- |
+| **عرض**                      | تكوين قائمة محفوظة لكائن — الحقول المرئية، والترتيب، وعوامل التصفية، والمجموعات | `defineView`               |
+| **عنصر قائمة التنقّل**       | عنصر في الشريط الجانبي الأيسر يرتبط بعرض أو بعنوان URL خارجي                    | `defineNavigationMenuItem` |
+| **تخطيط الصفحة**             | علامات التبويب وعناصر الواجهة التي تشكّل صفحة تفاصيل السجل                      | `definePageLayout`         |
+| **علامة تبويب تخطيط الصفحة** | علامة تبويب مستقلة مرفقة بتخطيط صفحة موجودة (قياسي أو خاص بتطبيقك)              | `definePageLayoutTab`      |
 
 تشير العروض، وعناصر التنقّل، وتخطيطات الصفحات إلى بعضها البعض عبر `universalIdentifier`:
 
@@ -126,6 +127,52 @@ export default definePageLayout({
 * يُعرّف كل `tab` قسمًا من الصفحة مع `title` و`position` و`layoutMode` (`CANVAS` لتخطيط حرّ).
 * يمكن لكل `widget` داخل لسان أن يعرض مكوّنًا أماميًا أو قائمة علاقات أو أنواع ويدجت مدمجة أخرى.
 * `position` على الألسنة يتحكّم في ترتيبها. استخدم قيمًا أعلى (مثل 50) لوضع الألسنة المخصّصة بعد الألسنة المدمجة.
+
+</Accordion>
+<Accordion title="definePageLayoutTab" description="إضافة علامة تبويب إلى تخطيط صفحة موجود">
+
+`definePageLayoutTab` يتيح لتطبيقك إرفاق علامة تبويب واحدة — مع عناصر واجهة اختيارية — إلى تخطيط صفحة **موجود**. أشيع حالات الاستخدام هي إضافة علامة تبويب مخصصة (على سبيل المثال، علامة تبويب للتحليلات أو ملخص الذكاء الاصطناعي) إلى إحدى صفحات السجل المضمنة في Twenty، أو إلى تخطيط صفحة يوفره تطبيقك بالفعل.
+
+يجب أن يكون تخطيط الصفحة المستهدف إما تخطيط صفحة Twenty **قياسيًا** أو تخطيطًا مُعرَّفًا بواسطة **تطبيقك أنت**؛ المراجع عبر التطبيقات إلى تخطيطات صفحات مملوكة لتطبيق آخر مُثبّت غير مدعومة حاليًا.
+
+```ts src/page-layouts/example-extra-tab.ts
+import {
+  definePageLayoutTab,
+  PageLayoutTabLayoutMode,
+} from 'twenty-sdk/define';
+import { HELLO_WORLD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER } from '../front-components/hello-world';
+
+const COMPANY_RECORD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER =
+  '20202020-ab01-4001-8001-c0aba11c0100';
+
+export default definePageLayoutTab({
+  universalIdentifier: 'b1b2b3b4-b5b6-4000-8000-000000000001',
+  pageLayoutUniversalIdentifier:
+    COMPANY_RECORD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER,
+  title: 'Hello World',
+  position: 1000,
+  icon: 'IconWorld',
+  layoutMode: PageLayoutTabLayoutMode.CANVAS,
+  widgets: [
+    {
+      universalIdentifier: 'b1b2b3b4-b5b6-4000-8000-000000000002',
+      title: 'Hello World',
+      type: 'FRONT_COMPONENT',
+      configuration: {
+        configurationType: 'FRONT_COMPONENT',
+        frontComponentUniversalIdentifier:
+          HELLO_WORLD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
+      },
+    },
+  ],
+});
+```
+
+النقاط الرئيسية:
+* `pageLayoutUniversalIdentifier` **مطلوب** عند استخدام `definePageLayoutTab` ويجب أن يشير إلى تخطيط صفحة موجود بالفعل وقت التثبيت (سواء قياسيًا أو تابعًا لتطبيقك). عند فقدان تخطيط الصفحة الأب، يفشل التثبيت برسالة خطأ تحقق واضحة.
+* `widgets` نطاقها مقتصر على علامة التبويب هذه فقط — فهي تُشير إلى مكونات الواجهة الأمامية، والعروض، وما إلى ذلك تمامًا مثل عناصر الواجهة المعرّفة مضمّنة داخل `definePageLayout`.
+* `position` يتحكّم في الترتيب مقارنةً بعلامات التبويب الموجودة على التخطيط المستهدف. اختر قيمة تضع علامة التبويب الخاصة بك في الموضع الذي تريده بالنسبة إلى علامات التبويب المضمنة.
+* استخدم هذا بدلًا من `definePageLayout` عندما تريد فقط **الإضافة** إلى تخطيط موجود. استخدم `definePageLayout` عندما تملك التخطيط بأكمله (عادةً ما يكون `RECORD_PAGE` لكائن توفّره في تطبيقك، أو `STANDALONE_PAGE`).
 
 </Accordion>
 </AccordionGroup>

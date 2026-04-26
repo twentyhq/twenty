@@ -3,6 +3,10 @@ import { type CommandMenuContextApi } from 'twenty-shared/types';
 export const pageType = null as unknown as CommandMenuContextApi['pageType'];
 export const isInSidePanel =
   null as unknown as CommandMenuContextApi['isInSidePanel'];
+export const isDashboardPageLayoutInEditMode =
+  null as unknown as CommandMenuContextApi['isDashboardPageLayoutInEditMode'];
+export const isLayoutCustomizationModeEnabled =
+  null as unknown as CommandMenuContextApi['isLayoutCustomizationModeEnabled'];
 export const favoriteRecordIds =
   null as unknown as CommandMenuContextApi['favoriteRecordIds'];
 export const isSelectAll =

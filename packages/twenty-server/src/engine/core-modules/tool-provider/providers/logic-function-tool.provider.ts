@@ -94,7 +94,7 @@ export class LogicFunctionToolProvider implements ToolProvider {
   }
 
   private buildLogicFunctionToolName(functionName: string): string {
-    return `logic_function_${functionName
+    return `app_${functionName
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, '_')
       .replace(/^_+|_+$/g, '')}`;

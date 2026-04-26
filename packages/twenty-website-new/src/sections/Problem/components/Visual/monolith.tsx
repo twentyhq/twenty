@@ -2,7 +2,10 @@
 
 import { useEffect, useRef, type CSSProperties } from 'react';
 import * as THREE from 'three';
-import { createSiteWebGlRenderer } from '@/lib/webgl';
+import {
+  createFrameTimer,
+  createSiteWebGlRenderer,
+} from '@/lib/visual-runtime';
 
 const IMAGE_SRC = '/images/home/problem/monolith-problem.webp';
 const PREVIEW_DISTANCE = 4;
@@ -722,13 +725,13 @@ async function mountHalftoneCanvas(options: MountHalftoneCanvasOptions) {
   canvas.addEventListener('pointerup', handlePointerUp);
   window.addEventListener('blur', handleWindowBlur);
 
-  const clock = new THREE.Clock();
+  const frameTimer = createFrameTimer();
   let animationFrameId = 0;
 
   const renderFrame = () => {
     animationFrameId = window.requestAnimationFrame(renderFrame);
 
-    halftoneMaterial.uniforms.time.value = clock.getElapsedTime();
+    halftoneMaterial.uniforms.time.value = frameTimer.getElapsed();
     halftoneMaterial.uniforms.dashColor.value.set(tuning.halftone.dashColor);
     halftoneMaterial.uniforms.s_3.value = tuning.halftone.power;
     halftoneMaterial.uniforms.s_4.value = tuning.halftone.width;

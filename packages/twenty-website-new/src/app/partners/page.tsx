@@ -1,19 +1,18 @@
-import { FAQ_DATA, MENU_DATA, TRUSTED_BY_DATA } from '@/app/_constants';
-import { TalkToUsButton } from '@/app/components/ContactCalModal';
-import { CASE_STUDY_CATALOG_ENTRIES } from '@/app/customers/_constants';
+import { FAQ_DATA } from '@/sections/Faq/data';
+import { MENU_DATA } from '@/sections/Menu/data';
+import { TRUSTED_BY_DATA } from '@/sections/TrustedBy/data';
+import { TalkToUsButton } from '@/lib/contact-cal';
+import { CASE_STUDY_CATALOG_ENTRIES } from '@/lib/customers';
+import { THREE_CARDS_ILLUSTRATION_DATA } from '@/app/partners/three-cards-illustration.data';
+import { HERO_DATA } from '@/app/partners/hero.data';
+import { SIGNOFF_DATA } from '@/app/partners/signoff.data';
+import { TESTIMONIALS_DATA } from '@/app/partners/testimonials.data';
 import {
-  THREE_CARDS_ILLUSTRATION_DATA,
-  HERO_DATA,
-  SIGNOFF_DATA,
-  TESTIMONIALS_DATA,
-} from '@/app/partners/_constants';
-import {
-  PartnerApplicationModalRoot,
   PartnerHeroCtas,
   PartnerSignoffCtas,
 } from '@/app/partners/components/PartnerApplication';
 import { Body, Eyebrow, Heading, LinkButton } from '@/design-system/components';
-import { Pages } from '@/enums/pages';
+import { Pages } from '@/lib/pages';
 import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';
 import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels';
 import { CaseStudyCatalog } from '@/sections/CaseStudyCatalog/components';
@@ -26,6 +25,7 @@ import { ThreeCards } from '@/sections/ThreeCards/components';
 import { TrustedBy } from '@/sections/TrustedBy/components';
 import type { ThreeCardsScrollLayoutOptions } from '@/sections/ThreeCards/utils/three-cards-scroll-layout';
 import { theme } from '@/theme';
+import { buildPageMetadata } from '@/lib/seo';
 import { styled } from '@linaria/react';
 import type { Metadata } from 'next';
 
@@ -46,18 +46,19 @@ const PromoSpacing = styled.div`
   }
 `;
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildPageMetadata({
+  path: '/partners',
   title: 'Partners | Twenty',
   description:
     'Join our partner ecosystem and grow with us as we build the #1 open source CRM.',
-};
+});
 
 export default async function PartnerPage() {
   const stats = await fetchCommunityStats();
   const menuSocialLinks = mergeSocialLinkLabels(MENU_DATA.socialLinks, stats);
 
   return (
-    <PartnerApplicationModalRoot>
+    <>
       <Menu.Root
         backgroundColor={theme.colors.primary.background[100]}
         scheme="primary"
@@ -89,7 +90,10 @@ export default async function PartnerPage() {
       </TrustedBy.Root>
 
       <PromoSpacing>
-        <CaseStudyCatalog.Promo compactTop entries={CASE_STUDY_CATALOG_ENTRIES} />
+        <CaseStudyCatalog.Promo
+          compactTop
+          entries={CASE_STUDY_CATALOG_ENTRIES}
+        />
       </PromoSpacing>
 
       <ThreeCards.Root backgroundColor={theme.colors.secondary.background[5]}>
@@ -130,14 +134,17 @@ export default async function PartnerPage() {
         color={theme.colors.primary.text[100]}
         page={Pages.Partners}
       >
-        <Signoff.Heading page={Pages.Partners} segments={SIGNOFF_DATA.heading} />
+        <Signoff.Heading
+          page={Pages.Partners}
+          segments={SIGNOFF_DATA.heading}
+        />
         <Signoff.Body body={SIGNOFF_DATA.body} page={Pages.Partners} />
         <Signoff.Cta>
           <PartnerSignoffCtas />
         </Signoff.Cta>
       </Signoff.Root>
 
-      <Faq.Root illustration={FAQ_DATA.illustration}>
+      <Faq.Root>
         <Faq.Intro>
           <Eyebrow colorScheme="secondary" heading={FAQ_DATA.eyebrow.heading} />
           <Faq.Heading segments={FAQ_DATA.heading} />
@@ -158,6 +165,6 @@ export default async function PartnerPage() {
         </Faq.Intro>
         <Faq.Items questions={FAQ_DATA.questions} />
       </Faq.Root>
-    </PartnerApplicationModalRoot>
+    </>
   );
 }

@@ -8,8 +8,8 @@ import { styled } from '@linaria/react';
 import { IconUsersGroup } from '@tabler/icons-react';
 import Image from 'next/image';
 import { type ReactNode, useRef, useState } from 'react';
-import { FastPathVisual } from './FastPathVisual';
 import { FamiliarInterfaceVisual } from './FamiliarInterfaceVisual';
+import { FastPathVisual } from './FastPathVisual';
 import { LiveDataVisual } from './LiveDataVisual';
 
 const FeatureCardContainer = styled.div`
@@ -25,18 +25,31 @@ const FeatureCardContainer = styled.div`
 `;
 
 const CardImage = styled.div`
-  width: 100%;
-  height: 524px;
   box-sizing: border-box;
   padding: 8px 8px 0;
+  width: 100%;
 `;
 
 const CardImageFrame = styled.div`
+  /*
+   * Lock the frame to the scene design aspect (411 × 508). Every illustrated
+   * visual mounted inside renders into a fixed 411 × 508 design box that gets
+   * scaled by cardImageFrame.width / 411, so the frame, the scaled scene, and
+   * any inner content all shrink together — no dead dark strip below the
+   * scene, and identical visual proportions across the three cards at every
+   * breakpoint.
+   *
+   * max-width (not max-height) caps the frame at the design width. With
+   * aspect-ratio + max-height the browser clamps height but leaves width at
+   * 100%, breaking the aspect contract and leaving a dark scene gutter on the
+   * right. Clamping width preserves the ratio and derives the height from it.
+   */
+  aspect-ratio: 411 / 508;
   background-color: ${theme.colors.primary.border[10]};
   border-radius: 2px;
-  container-type: size;
-  height: 100%;
   isolation: isolate;
+  margin: 0 auto;
+  max-width: 411px;
   overflow: hidden;
   position: relative;
   width: 100%;

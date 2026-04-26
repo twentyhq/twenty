@@ -1,6 +1,6 @@
 'use client';
 
-import { TalkToUsButton } from '@/app/components/ContactCalModal';
+import { TalkToUsButton } from '@/lib/contact-cal';
 
 import { BecomePartnerButton } from './BecomePartnerButton';
 

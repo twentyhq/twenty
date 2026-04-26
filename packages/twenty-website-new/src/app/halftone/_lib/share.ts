@@ -3,7 +3,7 @@ import {
   DEFAULT_HALFTONE_SETTINGS,
   normalizeHalftoneStudioSettings,
   type HalftoneStudioSettings,
-} from '@/app/halftone/_lib/state';
+} from '@/lib/halftone/state';
 
 export type ShareableHalftoneState = {
   settings: HalftoneStudioSettings;
@@ -57,9 +57,6 @@ export function encodeShareState(state: ShareableHalftoneState): string {
   return toUrlSafeBase64(encodeUtf8ToBase64(JSON.stringify(payload)));
 }
 
-// Imported geometry only exists in the user's local session, so a shared URL
-// can never reproduce a custom upload — fall back to the default shape if the
-// hash points at one.
 function sanitizeShapeKey(shapeKey: string): string {
   const isBuiltinShape = DEFAULT_GEOMETRY_SPECS.some(
     (spec) => spec.key === shapeKey,

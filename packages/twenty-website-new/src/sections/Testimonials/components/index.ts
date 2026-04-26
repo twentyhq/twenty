@@ -1,11 +1,11 @@
-import { Carousel } from './Carousel/Carousel';
+import { Carousel } from './Carousel';
 import {
   MountedTestimonialsHomeVisual,
   MountedTestimonialsPartnerVisual,
 } from './MountedTestimonialsVisuals';
-import { PartnerCarousel } from './PartnerCarousel/PartnerCarousel';
-import { Root } from './Root/Root';
-import { Separator } from './Separator/Separator';
+import { PartnerCarousel } from './PartnerCarousel';
+import { Root } from './Root';
+import { Separator } from './Separator';
 
 export const Testimonials = {
   Carousel,

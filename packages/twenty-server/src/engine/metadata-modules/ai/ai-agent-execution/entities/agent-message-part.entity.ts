@@ -64,6 +64,12 @@ export class AgentMessagePartEntity {
   @Column({ type: 'varchar', nullable: true })
   state: string | null;
 
+  // True when the tool was executed by the model provider itself
+  // (e.g. Anthropic's server-side web_search). convertToModelMessages
+  // relies on this to emit the correct server-tool wire format.
+  @Column({ type: 'boolean', nullable: true })
+  providerExecuted: boolean | null;
+
   @Column({ type: 'text', nullable: true })
   errorMessage: string | null;
 

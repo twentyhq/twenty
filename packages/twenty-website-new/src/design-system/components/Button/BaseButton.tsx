@@ -98,7 +98,8 @@ export type BaseButtonProps = {
   variant: 'contained' | 'outlined';
 };
 
-const secondaryContainedHoverFillColor = theme.colors.secondary.background.hover;
+const secondaryContainedHoverFillColor =
+  theme.colors.secondary.background.hover;
 const primaryOutlinedHoverFillColor = theme.colors.primary.background[100];
 const primaryOutlinedHoverFillOpacity = 0.05;
 const secondaryOutlinedHoverFillColor = theme.colors.primary.text[100];
@@ -167,8 +168,15 @@ export function BaseButton({
         height={height}
         strokeColor={strokeColor}
       />
-      <HoverFill data-slot="button-hover-fill" style={{ opacity: hoverFillOpacity }}>
-        <ButtonShape fillColor={hoverFillColor} height={height} strokeColor="none" />
+      <HoverFill
+        data-slot="button-hover-fill"
+        style={{ opacity: hoverFillOpacity }}
+      >
+        <ButtonShape
+          fillColor={hoverFillColor}
+          height={height}
+          strokeColor="none"
+        />
       </HoverFill>
       <Content>
         {leadingIcon ? <IconSlot>{leadingIcon}</IconSlot> : null}

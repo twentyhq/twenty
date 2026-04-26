@@ -1,10 +1,6 @@
 type CodeIconProps = { size: number; color: string; strokeWidth?: number };
 
-export function CodeIcon({
-  size,
-  color,
-  strokeWidth = 1.5,
-}: CodeIconProps) {
+export function CodeIcon({ size, color, strokeWidth = 1.5 }: CodeIconProps) {
   return (
     <svg
       width={size}

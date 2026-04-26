@@ -5,11 +5,12 @@ import {
   type ReactExportSettings,
 } from '@/app/halftone/_lib/exporters';
 import { resolveExportArtifactNames } from '@/app/halftone/_lib/exportNames';
+import { REFERENCE_PREVIEW_DISTANCE } from '@/lib/halftone/footprint';
 import {
   DEFAULT_HALFTONE_SETTINGS,
   normalizeHalftoneStudioSettings,
   type HalftoneGeometrySpec,
-} from '@/app/halftone/_lib/state';
+} from '@/lib/halftone/state';
 
 const IMPORTED_GLB_SHAPE: HalftoneGeometrySpec = {
   key: 'userUpload_connect',
@@ -220,5 +221,47 @@ describe('halftone react export presets', () => {
     expect(output).toContain('modelUrl = "./partner-connect.glb"');
     expect(output).toContain('export default function PartnerConnect({');
     expect(output).not.toContain("'use client';");
+  });
+});
+
+describe('parseExportedPreset legacy presets', () => {
+  it('falls back to the reference preview distance for legacy presets', () => {
+    const content = `
+const settings = ${JSON.stringify(DEFAULT_HALFTONE_SETTINGS, null, 2)};
+const shape = ${JSON.stringify(
+      {
+        filename: null,
+        key: 'torusKnot',
+        kind: 'builtin',
+        label: 'Torus Knot',
+        loader: null,
+      },
+      null,
+      2,
+    )};
+const initialPose = ${JSON.stringify(
+      {
+        autoElapsed: 0,
+        rotateElapsed: 0,
+        rotationX: 0,
+        rotationY: 0,
+        rotationZ: 0,
+        targetRotationX: 0,
+        targetRotationY: 0,
+        timeElapsed: 0,
+      },
+      null,
+      2,
+    )};
+const VIRTUAL_RENDER_HEIGHT = 768;
+
+export default function LegacyHalftone() {
+  return null;
+}
+`;
+
+    expect(parseExportedPreset(content).previewDistance).toBe(
+      REFERENCE_PREVIEW_DISTANCE,
+    );
   });
 });

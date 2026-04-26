@@ -36,6 +36,10 @@ const StyledContainer = styled.div`
     color: ${GRAY_SCALE_LIGHT.gray1};
   }
 
+  button {
+    --tw-button-color: ${GRAY_SCALE_LIGHT.gray1} !important;
+  }
+
   button[type='submit']:not(:disabled):not(:focus) {
     border-color: color(display-p3 1 1 1 / 0.5);
   }

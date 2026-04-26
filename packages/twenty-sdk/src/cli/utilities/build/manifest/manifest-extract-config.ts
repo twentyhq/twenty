@@ -14,6 +14,7 @@ export enum TargetFunction {
   DefineView = 'defineView',
   DefineNavigationMenuItem = 'defineNavigationMenuItem',
   DefinePageLayout = 'definePageLayout',
+  DefinePageLayoutTab = 'definePageLayoutTab',
 }
 
 export enum ManifestEntityKey {
@@ -29,6 +30,7 @@ export enum ManifestEntityKey {
   Views = 'views',
   NavigationMenuItems = 'navigationMenuItems',
   PageLayouts = 'pageLayouts',
+  PageLayoutTabs = 'pageLayoutTabs',
 }
 
 export type EntityFilePaths = Record<ManifestEntityKey, string[]>;
@@ -53,6 +55,7 @@ export const TARGET_FUNCTION_TO_ENTITY_KEY_MAPPING: Record<
   [TargetFunction.DefineNavigationMenuItem]:
     ManifestEntityKey.NavigationMenuItems,
   [TargetFunction.DefinePageLayout]: ManifestEntityKey.PageLayouts,
+  [TargetFunction.DefinePageLayoutTab]: ManifestEntityKey.PageLayoutTabs,
 };
 
 const computeIsTargetFunctionCall = (node: ts.Node): string | undefined => {

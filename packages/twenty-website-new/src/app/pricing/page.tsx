@@ -1,17 +1,13 @@
-import { FAQ_DATA, MENU_DATA } from '@/app/_constants';
-import { TalkToUsButton } from '@/app/components/ContactCalModal';
-import {
-  BecomePartnerButton,
-  PartnerApplicationModalRoot,
-} from '@/app/partners/components/PartnerApplication';
-import {
-  ENGAGEMENT_BAND_DATA,
-  HERO_DATA,
-  PLAN_TABLE_DATA,
-  SALESFORCE_DATA,
-} from '@/app/pricing/_constants';
+import { FAQ_DATA } from '@/sections/Faq/data';
+import { MENU_DATA } from '@/sections/Menu/data';
+import { TalkToUsButton } from '@/lib/contact-cal';
+import { BecomePartnerButton } from '@/app/partners/components/PartnerApplication';
+import { ENGAGEMENT_BAND_DATA } from '@/app/pricing/engagement-band.data';
+import { HERO_DATA } from '@/app/pricing/hero.data';
+import { PLAN_TABLE_DATA } from '@/app/pricing/plan-table.data';
+import { SALESFORCE_DATA } from '@/app/pricing/salesforce.data';
 import { Eyebrow, LinkButton } from '@/design-system/components';
-import { Pages } from '@/enums/pages';
+import { Pages } from '@/lib/pages';
 import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';
 import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels';
 import { EngagementBand } from '@/sections/EngagementBand/components';
@@ -23,6 +19,7 @@ import { PricingStateProvider } from '@/sections/Plans/context/PricingStateConte
 import { PlanTable } from '@/sections/PlanTable/components';
 import { Salesforce } from '@/sections/Salesforce/components';
 import { theme } from '@/theme';
+import { buildPageMetadata } from '@/lib/seo';
 import { styled } from '@linaria/react';
 import type { Metadata } from 'next';
 
@@ -38,18 +35,19 @@ const PricingBannerContainer = styled.div`
   width: 100%;
 `;
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildPageMetadata({
+  path: '/pricing',
   title: 'Pricing | Twenty',
   description:
     'Plans that scale with your team. Compare tiers of the #1 open source CRM.',
-};
+});
 
 export default async function PricingPage() {
   const stats = await fetchCommunityStats();
   const menuSocialLinks = mergeSocialLinkLabels(MENU_DATA.socialLinks, stats);
 
   return (
-    <PartnerApplicationModalRoot>
+    <>
       <Menu.Root
         backgroundColor="#F3F3F3"
         scheme="primary"
@@ -118,7 +116,7 @@ export default async function PricingPage() {
         pricing={SALESFORCE_DATA.pricing}
       />
 
-      <Faq.Root illustration={FAQ_DATA.illustration}>
+      <Faq.Root>
         <Faq.Intro>
           <Eyebrow colorScheme="secondary" heading={FAQ_DATA.eyebrow.heading} />
           <Faq.Heading segments={FAQ_DATA.heading} />
@@ -139,6 +137,6 @@ export default async function PricingPage() {
         </Faq.Intro>
         <Faq.Items questions={FAQ_DATA.questions} />
       </Faq.Root>
-    </PartnerApplicationModalRoot>
+    </>
   );
 }

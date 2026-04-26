@@ -1,13 +1,9 @@
 'use client';
 
 import { styled } from '@linaria/react';
-import {
-  useCallback,
-  useRef,
-  useState,
-  useSyncExternalStore,
-  type ReactNode,
-} from 'react';
+import { useCallback, useRef, useState, type ReactNode } from 'react';
+
+import { usePrefersReducedMotion } from '@/lib/motion';
 
 const SWIPE_COMMIT_RATIO = 0.18;
 const EDGE_RESISTANCE = 0.28;
@@ -39,22 +35,6 @@ type StepperSwipeDeckProps = {
   stepCount: number;
 };
 
-function subscribeReducedMotion(callback: () => void) {
-  const mediaQueryList = window.matchMedia('(prefers-reduced-motion: reduce)');
-  mediaQueryList.addEventListener('change', callback);
-  return () => {
-    mediaQueryList.removeEventListener('change', callback);
-  };
-}
-
-function getReducedMotionSnapshot() {
-  return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-}
-
-function getReducedMotionServerSnapshot() {
-  return false;
-}
-
 export function StepperSwipeDeck({
   activeIndex,
   children,
@@ -69,11 +49,7 @@ export function StepperSwipeDeck({
   const dragStartIndexRef = useRef(0);
   const pointerIdRef = useRef<number | null>(null);
 
-  const reduceMotion = useSyncExternalStore(
-    subscribeReducedMotion,
-    getReducedMotionSnapshot,
-    getReducedMotionServerSnapshot,
-  );
+  const reduceMotion = usePrefersReducedMotion();
 
   const readViewportWidthPx = useCallback(() => {
     const width = viewportRef.current?.getBoundingClientRect().width;
