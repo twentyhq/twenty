@@ -11,9 +11,6 @@ import { useAiChatThreadClick } from '@/ai/hooks/useAiChatThreadClick';
 import { useChatThreads } from '@/ai/hooks/useChatThreads';
 import { agentChatThreadGroupByState } from '@/ai/states/agentChatThreadGroupByState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
-import { type DateGroupKey } from '@/ai/utils/dateGroupKey';
-import { DATE_GROUP_KEYS } from '@/ai/utils/dateGroupKeys';
-import { getDateGroupTitle } from '@/ai/utils/getDateGroupTitle';
 import { groupThreadsByDate } from '@/ai/utils/groupThreadsByDate';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
@@ -75,13 +72,7 @@ export const NavigationDrawerAiChatContent = () => {
 
   const isGroupedByDate =
     agentChatThreadGroupBy === AGENT_CHAT_THREAD_GROUP_BY.DATE;
-  const groupedThreads = isGroupedByDate ? groupThreadsByDate(threads) : null;
-  const dateGroupKeysWithThreads =
-    groupedThreads === null
-      ? []
-      : DATE_GROUP_KEYS.filter(
-          (key: DateGroupKey) => groupedThreads[key].length > 0,
-        );
+  const dateGroups = isGroupedByDate ? groupThreadsByDate(threads) : [];
 
   const filterDropdown = (
     <AiChatThreadFilterDropdown
@@ -92,14 +83,14 @@ export const NavigationDrawerAiChatContent = () => {
   return (
     <StyledContainer>
       <StyledThreadList>
-        {dateGroupKeysWithThreads.length > 0 ? (
+        {dateGroups.length > 0 ? (
           <StyledSectionsContainer>
-            {dateGroupKeysWithThreads.map((key, index) => (
+            {dateGroups.map((dateGroup, index) => (
               <NavigationDrawerAiChatThreadSection
-                key={key}
-                sectionId={`AiChatDateGroup:${key}`}
-                title={getDateGroupTitle(key)}
-                threads={groupedThreads?.[key] ?? []}
+                key={dateGroup.id}
+                sectionId={`AiChatDateGroup:${dateGroup.id}`}
+                title={dateGroup.title}
+                threads={dateGroup.threads}
                 currentThreadId={currentAiChatThread}
                 onThreadClick={handleThreadClick}
                 rightIcon={index === 0 ? filterDropdown : undefined}

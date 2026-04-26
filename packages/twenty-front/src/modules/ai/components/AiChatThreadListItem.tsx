@@ -2,7 +2,7 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
 import { Key } from 'ts-key-enum';
-import { IconSparkles } from 'twenty-ui/display';
+import { IconArchive, IconSparkles } from 'twenty-ui/display';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { AiChatThreadDeleteConfirmationModal } from '@/ai/components/AiChatThreadDeleteConfirmationModal';
@@ -32,10 +32,17 @@ const StyledThreadItem = styled.div`
   }
 `;
 
-const StyledSparkleIcon = styled.div`
+const StyledThreadIcon = styled.div<{ $isArchived: boolean }>`
   align-items: center;
-  background: ${themeCssVariables.background.transparent.blue};
+  background: ${({ $isArchived }) =>
+    $isArchived
+      ? themeCssVariables.background.transparent.lighter
+      : themeCssVariables.background.transparent.blue};
   border-radius: ${themeCssVariables.border.radius.sm};
+  color: ${({ $isArchived }) =>
+    $isArchived
+      ? themeCssVariables.font.color.tertiary
+      : themeCssVariables.color.blue};
   display: flex;
   justify-content: center;
   padding: ${themeCssVariables.spacing[1]};
@@ -77,6 +84,7 @@ export const AiChatThreadListItem = ({ thread }: AiChatThreadListItemProps) => {
   } = useAiChatThreadRename(thread);
 
   const isArchived = Boolean(thread.archivedAt);
+  const ThreadIcon = isArchived ? IconArchive : IconSparkles;
   const displayTitle = thread.title ?? t`Untitled`;
 
   return (
@@ -88,9 +96,9 @@ export const AiChatThreadListItem = ({ thread }: AiChatThreadListItemProps) => {
           }
         }}
       >
-        <StyledSparkleIcon>
-          <IconSparkles size={theme.icon.size.md} color={theme.color.blue} />
-        </StyledSparkleIcon>
+        <StyledThreadIcon $isArchived={isArchived}>
+          <ThreadIcon size={theme.icon.size.md} color="currentColor" />
+        </StyledThreadIcon>
         <StyledThreadContent>
           {isRenaming ? (
             <TextInput

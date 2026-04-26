@@ -16,7 +16,6 @@ import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotke
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { t } from '@lingui/core/macro';
 import { Key } from 'ts-key-enum';
-import { capitalize } from 'twenty-shared/utils';
 import { Button } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { getOsControlSymbol } from 'twenty-ui/utilities';
@@ -69,7 +68,7 @@ export const AiChatThreadsList = () => {
 
   const isGroupedByDate =
     agentChatThreadGroupBy === AGENT_CHAT_THREAD_GROUP_BY.DATE;
-  const groupedThreads = isGroupedByDate ? groupThreadsByDate(threads) : null;
+  const dateGroups = isGroupedByDate ? groupThreadsByDate(threads) : [];
 
   return (
     <>
@@ -85,12 +84,12 @@ export const AiChatThreadsList = () => {
               />
             }
           />
-          {isGroupedByDate && groupedThreads !== null ? (
-            Object.entries(groupedThreads).map(([title, threadsInGroup]) => (
+          {isGroupedByDate ? (
+            dateGroups.map((dateGroup) => (
               <AiChatThreadGroup
-                key={title}
-                title={capitalize(title)}
-                threads={threadsInGroup}
+                key={dateGroup.id}
+                title={dateGroup.title}
+                threads={dateGroup.threads}
               />
             ))
           ) : (

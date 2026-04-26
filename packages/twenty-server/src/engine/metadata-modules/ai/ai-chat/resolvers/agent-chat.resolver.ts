@@ -159,6 +159,13 @@ export class AgentChatResolver {
       );
     }
 
+    if (isDefined(thread.archivedAt)) {
+      await this.agentChatService.unarchiveThread({
+        threadId,
+        userWorkspaceId,
+      });
+    }
+
     if (isDefined(thread.activeStreamId)) {
       const queuedMessage = await this.agentChatService.queueMessage({
         threadId,

@@ -13,20 +13,23 @@ import { AGENT_CHAT_SEND_MESSAGE_EVENT_NAME } from '@/ai/constants/AgentChatSend
 import { AGENT_CHAT_STOP_EVENT_NAME } from '@/ai/constants/AgentChatStopEventName';
 import { SEND_CHAT_MESSAGE } from '@/ai/graphql/mutations/sendChatMessage';
 import { STOP_AGENT_CHAT_STREAM } from '@/ai/graphql/mutations/stopAgentChatStream';
+import { useAgentChatModelId } from '@/ai/hooks/useAgentChatModelId';
+import { useApplyAgentChatThreadUpdate } from '@/ai/hooks/useApplyAgentChatThreadUpdate';
+import { useGetBrowsingContext } from '@/ai/hooks/useBrowsingContext';
 import {
   AGENT_CHAT_NEW_THREAD_DRAFT_KEY,
   agentChatDraftsByThreadIdState,
 } from '@/ai/states/agentChatDraftsByThreadIdState';
 import { agentChatErrorComponentFamilyState } from '@/ai/states/agentChatErrorComponentFamilyState';
 import { agentChatInputState } from '@/ai/states/agentChatInputState';
+import { agentChatMessagesComponentFamilyState } from '@/ai/states/agentChatMessagesComponentFamilyState';
 import { agentChatSelectedFilesState } from '@/ai/states/agentChatSelectedFilesState';
 import { agentChatUploadedFilesState } from '@/ai/states/agentChatUploadedFilesState';
-import { agentChatMessagesComponentFamilyState } from '@/ai/states/agentChatMessagesComponentFamilyState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
-import { useGetBrowsingContext } from '@/ai/hooks/useBrowsingContext';
-import { useAgentChatModelId } from '@/ai/hooks/useAgentChatModelId';
 import { useListenToBrowserEvent } from '@/browser-event/hooks/useListenToBrowserEvent';
 import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
+import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
+import { type FlatAgentChatThread } from '@/metadata-store/types/FlatAgentChatThread';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
@@ -36,6 +39,7 @@ export const useAgentChat = (
 ) => {
   const { modelIdForRequest } = useAgentChatModelId();
   const { getBrowsingContext } = useGetBrowsingContext();
+  const { applyAgentChatThreadUpdate } = useApplyAgentChatThreadUpdate();
   const apolloClient = useApolloClient();
   const setCurrentAiChatThread = useSetAtomState(currentAiChatThreadState);
   const store = useStore();
@@ -86,6 +90,25 @@ export const useAgentChat = (
       setPendingThreadIdAfterFirstSend(threadId);
     }
 
+    const agentChatThreadsEntry = store.get(
+      metadataStoreState.atomFamily('agentChatThreads'),
+    );
+    const agentChatThreads = (
+      agentChatThreadsEntry.status === 'draft-pending'
+        ? agentChatThreadsEntry.draft
+        : agentChatThreadsEntry.current
+    ) as FlatAgentChatThread[];
+    const currentAgentChatThread = agentChatThreads.find(
+      (thread) => thread.id === threadId,
+    );
+    const archivedAtBeforeOptimisticUnarchive =
+      currentAgentChatThread?.archivedAt ?? null;
+    const updatedAtBeforeOptimisticUnarchive =
+      currentAgentChatThread?.updatedAt ?? null;
+    const shouldOptimisticallyUnarchiveThread = isDefined(
+      archivedAtBeforeOptimisticUnarchive,
+    );
+
     setAgentChatInput('');
     setAgentChatDraftsByThreadId((prev) => ({
       ...prev,
@@ -94,6 +117,15 @@ export const useAgentChat = (
 
     const browsingContext = getBrowsingContext();
     const messageId = v4();
+    const optimisticMessageCreatedAt = new Date().toISOString();
+
+    if (shouldOptimisticallyUnarchiveThread) {
+      applyAgentChatThreadUpdate({
+        id: threadId,
+        archivedAt: null,
+        updatedAt: optimisticMessageCreatedAt,
+      });
+    }
 
     const optimisticUserMessage: ExtendedUIMessage = {
       id: messageId,
@@ -103,7 +135,7 @@ export const useAgentChat = (
         ...agentChatUploadedFiles,
       ],
       metadata: {
-        createdAt: new Date().toISOString(),
+        createdAt: optimisticMessageCreatedAt,
       },
       status: 'sent',
     };
@@ -167,6 +199,17 @@ export const useAgentChat = (
       const restoredDraftKey =
         draftKey === AGENT_CHAT_NEW_THREAD_DRAFT_KEY ? threadId : draftKey;
 
+      if (
+        shouldOptimisticallyUnarchiveThread &&
+        isDefined(updatedAtBeforeOptimisticUnarchive)
+      ) {
+        applyAgentChatThreadUpdate({
+          id: threadId,
+          archivedAt: archivedAtBeforeOptimisticUnarchive,
+          updatedAt: updatedAtBeforeOptimisticUnarchive,
+        });
+      }
+
       setAgentChatInput(contentToSend);
       setAgentChatDraftsByThreadId((prev) => ({
         ...prev,
@@ -213,6 +256,7 @@ export const useAgentChat = (
     modelIdForRequest,
     setCurrentAiChatThread,
     apolloClient,
+    applyAgentChatThreadUpdate,
   ]);
 
   useListenToBrowserEvent({

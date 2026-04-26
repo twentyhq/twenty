@@ -9,6 +9,7 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 
 const AGENT_CHAT_THREAD_GROUP_BY_OPTIONS = [
@@ -24,6 +25,7 @@ export const AiChatThreadFilterDropdownGroupByMenu = ({
   onBack,
 }: AiChatThreadFilterDropdownGroupByMenuProps) => {
   const { t } = useLingui();
+  const { closeDropdown } = useCloseDropdown();
   const [agentChatThreadGroupBy, setAgentChatThreadGroupBy] = useAtomState(
     agentChatThreadGroupByState,
   );
@@ -48,7 +50,7 @@ export const AiChatThreadFilterDropdownGroupByMenu = ({
             selected={agentChatThreadGroupBy === option}
             onClick={() => {
               setAgentChatThreadGroupBy(option);
-              onBack();
+              closeDropdown();
             }}
           />
         ))}

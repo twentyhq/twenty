@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { IconComment } from 'twenty-ui/display';
+import { IconArchive, IconComment } from 'twenty-ui/display';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { AiChatThreadDeleteConfirmationModal } from '@/ai/components/AiChatThreadDeleteConfirmationModal';
@@ -22,6 +22,12 @@ const StyledTimestamp = styled.span`
   color: ${themeCssVariables.font.color.light};
   font-size: ${themeCssVariables.font.size.xs};
   font-weight: ${themeCssVariables.font.weight.regular};
+`;
+
+const StyledArchivedNavigationDrawerItem = styled(NavigationDrawerItem)`
+  && {
+    color: ${themeCssVariables.font.color.tertiary};
+  }
 `;
 
 type NavigationDrawerAiChatThreadItemProps = {
@@ -46,6 +52,10 @@ export const NavigationDrawerAiChatThreadItem = ({
   } = useAiChatThreadRename(thread);
 
   const isArchived = Boolean(thread.archivedAt);
+  const ThreadIcon = isArchived ? IconArchive : IconComment;
+  const NavigationDrawerThreadItem = isArchived
+    ? StyledArchivedNavigationDrawerItem
+    : NavigationDrawerItem;
   const displayLabel = thread.title || t`New chat`;
   const timestamp = beautifyPastDateRelativeToNowShort(
     thread.updatedAt ?? thread.createdAt,
@@ -54,7 +64,7 @@ export const NavigationDrawerAiChatThreadItem = ({
   if (isRenaming) {
     return (
       <NavigationDrawerInput
-        Icon={IconComment}
+        Icon={ThreadIcon}
         value={draftTitle}
         onChange={setDraftTitle}
         onSubmit={commitRename}
@@ -67,11 +77,12 @@ export const NavigationDrawerAiChatThreadItem = ({
 
   return (
     <>
-      <NavigationDrawerItem
+      <NavigationDrawerThreadItem
         label={displayLabel}
-        Icon={IconComment}
+        Icon={ThreadIcon}
         active={isActive}
         onClick={() => onClick(thread)}
+        variant={isArchived ? 'tertiary' : 'default'}
         alwaysShowRightOptions
         rightOptions={
           <StyledRightOptions>
