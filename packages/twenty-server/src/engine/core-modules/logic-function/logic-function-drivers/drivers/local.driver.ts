@@ -14,6 +14,7 @@ import {
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
 
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { type CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { LOGIC_FUNCTION_EXECUTOR_TMPDIR_FOLDER } from 'src/engine/core-modules/logic-function/logic-function-drivers/constants/logic-function-executor-tmpdir-folder';
 import { ConsoleListener } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/intercept-console';
 import { TemporaryDirManager } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/temporary-dir-manager';
@@ -23,9 +24,20 @@ import { copyYarnEngineAndBuildDependencies } from 'src/engine/core-modules/appl
 import type { LogicFunctionResourceService } from 'src/engine/core-modules/logic-function/logic-function-resource/logic-function-resource.service';
 import type { SdkClientArchiveService } from 'src/engine/core-modules/sdk-client/sdk-client-archive.service';
 
+// Concurrent execute() calls for the same application would otherwise race
+// in `createLayerIfNotExist` / `ensureSdkLayer`: both would observe the layer
+// as missing, both would `fs.rm` and repopulate the same directory, and yarn
+// install running in one call would see its cwd wiped by the other. Use the
+// shared cache-backed lock (same mechanism Lambda driver uses) to serialize
+// layer builds across processes.
+const LAYER_BUILD_LOCK_TTL_MS = 120_000;
+const LAYER_BUILD_LOCK_RETRY_MS = 500;
+const LAYER_BUILD_LOCK_MAX_RETRIES = 240;
+
 export interface LocalDriverOptions {
   logicFunctionResourceService: LogicFunctionResourceService;
   sdkClientArchiveService: SdkClientArchiveService;
+  cacheLockService: CacheLockService;
 }
 
 const pathExists = async (targetPath: string): Promise<boolean> => {
@@ -41,10 +53,12 @@ const pathExists = async (targetPath: string): Promise<boolean> => {
 export class LocalDriver implements LogicFunctionDriver {
   private readonly logicFunctionResourceService: LogicFunctionResourceService;
   private readonly sdkClientArchiveService: SdkClientArchiveService;
+  private readonly cacheLockService: CacheLockService;
 
   constructor(options: LocalDriverOptions) {
     this.logicFunctionResourceService = options.logicFunctionResourceService;
     this.sdkClientArchiveService = options.sdkClientArchiveService;
+    this.cacheLockService = options.cacheLockService;
   }
 
   private getDepsLayerPath(flatApplication: FlatApplication): string {
@@ -77,21 +91,36 @@ export class LocalDriver implements LogicFunctionDriver {
     const depsLayerPath = this.getDepsLayerPath(flatApplication);
     const depsNodeModulesPath = join(depsLayerPath, 'node_modules');
 
-    const nodeModulesExist = await pathExists(depsNodeModulesPath);
-
-    if (nodeModulesExist) {
+    if (await pathExists(depsNodeModulesPath)) {
       return;
     }
 
-    // Wipe any partial leftovers from a previously failed build
-    await fs.rm(depsLayerPath, { recursive: true, force: true });
+    const lockKey = `local-driver-deps-layer:${flatApplication.yarnLockChecksum ?? 'default'}`;
 
-    await this.logicFunctionResourceService.copyDependenciesInMemory({
-      applicationUniversalIdentifier,
-      workspaceId: flatApplication.workspaceId,
-      inMemoryFolderPath: depsLayerPath,
-    });
-    await copyYarnEngineAndBuildDependencies(depsLayerPath);
+    await this.cacheLockService.withLock(
+      async () => {
+        // Re-check inside the lock: another caller may have just built it.
+        if (await pathExists(depsNodeModulesPath)) {
+          return;
+        }
+
+        // Wipe any partial leftovers from a previously failed build
+        await fs.rm(depsLayerPath, { recursive: true, force: true });
+
+        await this.logicFunctionResourceService.copyDependenciesInMemory({
+          applicationUniversalIdentifier,
+          workspaceId: flatApplication.workspaceId,
+          inMemoryFolderPath: depsLayerPath,
+        });
+        await copyYarnEngineAndBuildDependencies(depsLayerPath);
+      },
+      lockKey,
+      {
+        ttl: LAYER_BUILD_LOCK_TTL_MS,
+        ms: LAYER_BUILD_LOCK_RETRY_MS,
+        maxRetries: LAYER_BUILD_LOCK_MAX_RETRIES,
+      },
+    );
   }
 
   private async ensureSdkLayer({
@@ -107,27 +136,49 @@ export class LocalDriver implements LogicFunctionDriver {
     });
     const sdkNodeModulesPath = join(sdkLayerPath, 'node_modules');
 
-    const nodeModulesExist = await pathExists(sdkNodeModulesPath);
-
-    if (nodeModulesExist && !flatApplication.isSdkLayerStale) {
+    if (
+      (await pathExists(sdkNodeModulesPath)) &&
+      !flatApplication.isSdkLayerStale
+    ) {
       return;
     }
 
-    await fs.rm(sdkLayerPath, { recursive: true, force: true });
+    const lockKey = `local-driver-sdk-layer:${flatApplication.workspaceId}:${applicationUniversalIdentifier}`;
 
-    const sdkPackagePath = join(sdkNodeModulesPath, 'twenty-client-sdk');
+    await this.cacheLockService.withLock(
+      async () => {
+        // Re-check inside the lock: another caller may have just refreshed it,
+        // and the staleness flag may have flipped in the meantime.
+        if (
+          (await pathExists(sdkNodeModulesPath)) &&
+          !flatApplication.isSdkLayerStale
+        ) {
+          return;
+        }
 
-    await this.sdkClientArchiveService.downloadAndExtractToPackage({
-      workspaceId: flatApplication.workspaceId,
-      applicationId: flatApplication.id,
-      applicationUniversalIdentifier,
-      targetPackagePath: sdkPackagePath,
-    });
+        await fs.rm(sdkLayerPath, { recursive: true, force: true });
 
-    await this.sdkClientArchiveService.markSdkLayerFresh({
-      applicationId: flatApplication.id,
-      workspaceId: flatApplication.workspaceId,
-    });
+        const sdkPackagePath = join(sdkNodeModulesPath, 'twenty-client-sdk');
+
+        await this.sdkClientArchiveService.downloadAndExtractToPackage({
+          workspaceId: flatApplication.workspaceId,
+          applicationId: flatApplication.id,
+          applicationUniversalIdentifier,
+          targetPackagePath: sdkPackagePath,
+        });
+
+        await this.sdkClientArchiveService.markSdkLayerFresh({
+          applicationId: flatApplication.id,
+          workspaceId: flatApplication.workspaceId,
+        });
+      },
+      lockKey,
+      {
+        ttl: LAYER_BUILD_LOCK_TTL_MS,
+        ms: LAYER_BUILD_LOCK_RETRY_MS,
+        maxRetries: LAYER_BUILD_LOCK_MAX_RETRIES,
+      },
+    );
   }
 
   async transpile({

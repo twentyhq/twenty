@@ -51,6 +51,7 @@ export class LogicFunctionDriverFactory extends DriverFactoryBase<LogicFunctionD
         return new LocalDriver({
           logicFunctionResourceService: this.logicFunctionResourceService,
           sdkClientArchiveService: this.sdkClientArchiveService,
+          cacheLockService: this.cacheLockService,
         });
 
       case LogicFunctionDriverType.LAMBDA: {
