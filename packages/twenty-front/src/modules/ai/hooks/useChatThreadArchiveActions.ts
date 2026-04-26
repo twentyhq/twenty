@@ -1,15 +1,19 @@
-import { useMutation } from '@apollo/client/react';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
+import { useMutation } from '@apollo/client/react';
 
 import { useApplyAgentChatThreadUpdate } from '@/ai/hooks/useApplyAgentChatThreadUpdate';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { ArchiveChatThreadDocument } from '~/generated-metadata/graphql';
+import {
+  ArchiveChatThreadDocument,
+  UnarchiveChatThreadDocument,
+} from '~/generated-metadata/graphql';
 
-export const useArchiveChatThread = () => {
+export const useChatThreadArchiveActions = () => {
   const { applyAgentChatThreadUpdate } = useApplyAgentChatThreadUpdate();
   const { enqueueErrorSnackBar } = useSnackBar();
 
   const [archiveMutation] = useMutation(ArchiveChatThreadDocument);
+  const [unarchiveMutation] = useMutation(UnarchiveChatThreadDocument);
 
   const archiveChatThread = async (id: string) => {
     try {
@@ -29,5 +33,23 @@ export const useArchiveChatThread = () => {
     }
   };
 
-  return { archiveChatThread };
+  const unarchiveChatThread = async (id: string) => {
+    try {
+      const { data } = await unarchiveMutation({ variables: { id } });
+
+      if (data?.unarchiveChatThread) {
+        applyAgentChatThreadUpdate({
+          id: data.unarchiveChatThread.id,
+          archivedAt: data.unarchiveChatThread.archivedAt ?? null,
+          updatedAt: data.unarchiveChatThread.updatedAt,
+        });
+      }
+    } catch (error) {
+      enqueueErrorSnackBar({
+        apolloError: CombinedGraphQLErrors.is(error) ? error : undefined,
+      });
+    }
+  };
+
+  return { archiveChatThread, unarchiveChatThread };
 };

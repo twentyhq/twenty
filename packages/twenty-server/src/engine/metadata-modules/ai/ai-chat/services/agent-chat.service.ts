@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { ExtendedUIMessage } from 'twenty-shared/ai';
-import { In, Repository } from 'typeorm';
+import { In, IsNull, Not, Repository } from 'typeorm';
 import type { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
 import type { UIDataTypes, UIMessagePart, UITools } from 'ai';
@@ -16,11 +16,11 @@ import {
 } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
 import { AgentTurnEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-turn.entity';
 import { mapUIMessagePartsToDBParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/mapUIMessagePartsToDBParts';
+import { AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
 import {
   AiException,
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
-import { AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
 import { WorkspaceEventBroadcaster } from 'src/engine/subscriptions/workspace-event-broadcaster/workspace-event-broadcaster.service';
 
 import { AgentTitleGenerationService } from './agent-title-generation.service';
@@ -330,9 +330,17 @@ export class AgentChatService {
       );
     }
 
-    await this.getThreadById(threadId, userWorkspaceId);
+    const result = await this.threadRepository.update(
+      { id: threadId, userWorkspaceId },
+      { title: trimmed },
+    );
 
-    await this.threadRepository.update(threadId, { title: trimmed });
+    if (result.affected === 0) {
+      throw new AiException(
+        'Thread not found',
+        AiExceptionCode.THREAD_NOT_FOUND,
+      );
+    }
 
     const updated = await this.getThreadById(threadId, userWorkspaceId);
 
@@ -348,22 +356,22 @@ export class AgentChatService {
     threadId: string;
     userWorkspaceId: string;
   }): Promise<AgentChatThreadEntity> {
+    const result = await this.threadRepository.update(
+      { id: threadId, userWorkspaceId, archivedAt: IsNull() },
+      { archivedAt: new Date(), activeStreamId: null },
+    );
+
     const thread = await this.getThreadById(threadId, userWorkspaceId);
 
-    if (thread.archivedAt) {
-      return thread;
+    if ((result.affected ?? 0) > 0) {
+      await this.broadcastThreadUpdated(
+        thread,
+        ['archivedAt'],
+        userWorkspaceId,
+      );
     }
 
-    await this.threadRepository.update(threadId, {
-      archivedAt: new Date(),
-      activeStreamId: null,
-    });
-
-    const updated = await this.getThreadById(threadId, userWorkspaceId);
-
-    await this.broadcastThreadUpdated(updated, ['archivedAt'], userWorkspaceId);
-
-    return updated;
+    return thread;
   }
 
   async unarchiveThread({
@@ -373,19 +381,22 @@ export class AgentChatService {
     threadId: string;
     userWorkspaceId: string;
   }): Promise<AgentChatThreadEntity> {
+    const result = await this.threadRepository.update(
+      { id: threadId, userWorkspaceId, archivedAt: Not(IsNull()) },
+      { archivedAt: null },
+    );
+
     const thread = await this.getThreadById(threadId, userWorkspaceId);
 
-    if (!thread.archivedAt) {
-      return thread;
+    if ((result.affected ?? 0) > 0) {
+      await this.broadcastThreadUpdated(
+        thread,
+        ['archivedAt'],
+        userWorkspaceId,
+      );
     }
 
-    await this.threadRepository.update(threadId, { archivedAt: null });
-
-    const updated = await this.getThreadById(threadId, userWorkspaceId);
-
-    await this.broadcastThreadUpdated(updated, ['archivedAt'], userWorkspaceId);
-
-    return updated;
+    return thread;
   }
 
   async softDeleteThread({
@@ -397,10 +408,10 @@ export class AgentChatService {
   }): Promise<void> {
     const thread = await this.getThreadById(threadId, userWorkspaceId);
 
-    // Null out activeStreamId so a late-arriving stream worker won't
-    // promote a queued message onto a deleted thread.
-    await this.threadRepository.update(threadId, { activeStreamId: null });
-    await this.threadRepository.softDelete(threadId);
+    await this.threadRepository.update(
+      { id: threadId, userWorkspaceId },
+      { activeStreamId: null, deletedAt: new Date() },
+    );
 
     await this.workspaceEventBroadcaster.broadcast({
       workspaceId: thread.workspaceId,

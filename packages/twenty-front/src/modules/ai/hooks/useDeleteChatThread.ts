@@ -1,13 +1,13 @@
-import { useMutation } from '@apollo/client/react';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
+import { useMutation } from '@apollo/client/react';
 import { useStore } from 'jotai';
 
 import { AGENT_CHAT_NEW_THREAD_DRAFT_KEY } from '@/ai/states/agentChatDraftsByThreadIdState';
 import { agentChatInputState } from '@/ai/states/agentChatInputState';
 import { agentChatVisibleThreadsSelector } from '@/ai/states/agentChatVisibleThreadsSelector';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
+import { sortChatThreadsByUpdatedAtDesc } from '@/ai/utils/sortChatThreadsByUpdatedAtDesc';
 import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
-import { type FlatAgentChatThread } from '@/metadata-store/types/FlatAgentChatThread';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { DeleteChatThreadDocument } from '~/generated-metadata/graphql';
@@ -34,13 +34,11 @@ export const useDeleteChatThread = () => {
         return;
       }
 
-      const remaining = store
-        .get(agentChatVisibleThreadsSelector.atom)
-        .filter((thread: FlatAgentChatThread) => thread.id !== id)
-        .toSorted(
-          (a: FlatAgentChatThread, b: FlatAgentChatThread) =>
-            new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime(),
-        );
+      const remaining = sortChatThreadsByUpdatedAtDesc(
+        store
+          .get(agentChatVisibleThreadsSelector.atom)
+          .filter((thread) => thread.id !== id),
+      );
 
       if (remaining.length > 0) {
         setCurrentAiChatThread(remaining[0].id);

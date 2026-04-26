@@ -5,7 +5,6 @@ import { Key } from 'ts-key-enum';
 import { IconArchive, IconSparkles } from 'twenty-ui/display';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
-import { AiChatThreadDeleteConfirmationModal } from '@/ai/components/AiChatThreadDeleteConfirmationModal';
 import { AiChatThreadItemMenu } from '@/ai/components/AiChatThreadItemMenu';
 import { AI_CHAT_THREAD_ACTIONS_SURFACE } from '@/ai/constants/AiChatThreadActionsSurface';
 import { useAiChatThreadClick } from '@/ai/hooks/useAiChatThreadClick';
@@ -88,57 +87,51 @@ export const AiChatThreadListItem = ({ thread }: AiChatThreadListItemProps) => {
   const displayTitle = thread.title ?? t`Untitled`;
 
   return (
-    <>
-      <StyledThreadItem
-        onClick={() => {
-          if (!isRenaming) {
-            handleThreadClick(thread);
-          }
-        }}
-      >
-        <StyledThreadIcon $isArchived={isArchived}>
-          <ThreadIcon size={theme.icon.size.md} color="currentColor" />
-        </StyledThreadIcon>
-        <StyledThreadContent>
-          {isRenaming ? (
-            <TextInput
-              value={draftTitle}
-              onChange={setDraftTitle}
-              onClick={(event) => event.stopPropagation()}
-              onFocus={(event) => event.target.select()}
-              onBlur={() => commitRename(draftTitle)}
-              onKeyDown={(event) => {
-                if (event.key === Key.Enter) {
-                  event.preventDefault();
-                  void commitRename(draftTitle);
-                } else if (event.key === Key.Escape) {
-                  event.preventDefault();
-                  cancelRename();
-                }
-              }}
-              sizeVariant="sm"
-              fullWidth
-              autoFocus
-              aria-label={t`Rename chat`}
-            />
-          ) : (
-            <StyledThreadTitle>{displayTitle}</StyledThreadTitle>
-          )}
-        </StyledThreadContent>
-        <StyledMenuTrigger onClick={(event) => event.stopPropagation()}>
-          <AiChatThreadItemMenu
-            threadId={thread.id}
-            isArchived={isArchived}
-            surface={AI_CHAT_THREAD_ACTIONS_SURFACE.SIDE_PANEL}
-            onRenameRequested={startRename}
+    <StyledThreadItem
+      onClick={() => {
+        if (!isRenaming) {
+          handleThreadClick(thread);
+        }
+      }}
+    >
+      <StyledThreadIcon $isArchived={isArchived}>
+        <ThreadIcon size={theme.icon.size.md} color="currentColor" />
+      </StyledThreadIcon>
+      <StyledThreadContent>
+        {isRenaming ? (
+          <TextInput
+            value={draftTitle}
+            onChange={setDraftTitle}
+            onClick={(event) => event.stopPropagation()}
+            onFocus={(event) => event.target.select()}
+            onBlur={() => commitRename(draftTitle)}
+            onKeyDown={(event) => {
+              if (event.key === Key.Enter) {
+                event.preventDefault();
+                void commitRename(draftTitle);
+              } else if (event.key === Key.Escape) {
+                event.preventDefault();
+                cancelRename();
+              }
+            }}
+            sizeVariant="sm"
+            fullWidth
+            autoFocus
+            aria-label={t`Rename chat`}
           />
-        </StyledMenuTrigger>
-      </StyledThreadItem>
-      <AiChatThreadDeleteConfirmationModal
-        threadId={thread.id}
-        threadTitle={displayTitle}
-        surface={AI_CHAT_THREAD_ACTIONS_SURFACE.SIDE_PANEL}
-      />
-    </>
+        ) : (
+          <StyledThreadTitle>{displayTitle}</StyledThreadTitle>
+        )}
+      </StyledThreadContent>
+      <StyledMenuTrigger onClick={(event) => event.stopPropagation()}>
+        <AiChatThreadItemMenu
+          threadId={thread.id}
+          threadTitle={displayTitle}
+          isArchived={isArchived}
+          surface={AI_CHAT_THREAD_ACTIONS_SURFACE.SIDE_PANEL}
+          onRenameRequested={startRename}
+        />
+      </StyledMenuTrigger>
+    </StyledThreadItem>
   );
 };

@@ -14,8 +14,8 @@ import { AGENT_CHAT_STOP_EVENT_NAME } from '@/ai/constants/AgentChatStopEventNam
 import { SEND_CHAT_MESSAGE } from '@/ai/graphql/mutations/sendChatMessage';
 import { STOP_AGENT_CHAT_STREAM } from '@/ai/graphql/mutations/stopAgentChatStream';
 import { useAgentChatModelId } from '@/ai/hooks/useAgentChatModelId';
-import { useApplyAgentChatThreadUpdate } from '@/ai/hooks/useApplyAgentChatThreadUpdate';
 import { useGetBrowsingContext } from '@/ai/hooks/useBrowsingContext';
+import { useOptimisticallyUnarchiveOnSend } from '@/ai/hooks/useOptimisticallyUnarchiveOnSend';
 import {
   AGENT_CHAT_NEW_THREAD_DRAFT_KEY,
   agentChatDraftsByThreadIdState,
@@ -28,8 +28,6 @@ import { agentChatUploadedFilesState } from '@/ai/states/agentChatUploadedFilesS
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { useListenToBrowserEvent } from '@/browser-event/hooks/useListenToBrowserEvent';
 import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
-import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
-import { type FlatAgentChatThread } from '@/metadata-store/types/FlatAgentChatThread';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
@@ -39,7 +37,7 @@ export const useAgentChat = (
 ) => {
   const { modelIdForRequest } = useAgentChatModelId();
   const { getBrowsingContext } = useGetBrowsingContext();
-  const { applyAgentChatThreadUpdate } = useApplyAgentChatThreadUpdate();
+  const { applyOptimisticUnarchive } = useOptimisticallyUnarchiveOnSend();
   const apolloClient = useApolloClient();
   const setCurrentAiChatThread = useSetAtomState(currentAiChatThreadState);
   const store = useStore();
@@ -90,25 +88,6 @@ export const useAgentChat = (
       setPendingThreadIdAfterFirstSend(threadId);
     }
 
-    const agentChatThreadsEntry = store.get(
-      metadataStoreState.atomFamily('agentChatThreads'),
-    );
-    const agentChatThreads = (
-      agentChatThreadsEntry.status === 'draft-pending'
-        ? agentChatThreadsEntry.draft
-        : agentChatThreadsEntry.current
-    ) as FlatAgentChatThread[];
-    const currentAgentChatThread = agentChatThreads.find(
-      (thread) => thread.id === threadId,
-    );
-    const archivedAtBeforeOptimisticUnarchive =
-      currentAgentChatThread?.archivedAt ?? null;
-    const updatedAtBeforeOptimisticUnarchive =
-      currentAgentChatThread?.updatedAt ?? null;
-    const shouldOptimisticallyUnarchiveThread = isDefined(
-      archivedAtBeforeOptimisticUnarchive,
-    );
-
     setAgentChatInput('');
     setAgentChatDraftsByThreadId((prev) => ({
       ...prev,
@@ -118,14 +97,10 @@ export const useAgentChat = (
     const browsingContext = getBrowsingContext();
     const messageId = v4();
     const optimisticMessageCreatedAt = new Date().toISOString();
-
-    if (shouldOptimisticallyUnarchiveThread) {
-      applyAgentChatThreadUpdate({
-        id: threadId,
-        archivedAt: null,
-        updatedAt: optimisticMessageCreatedAt,
-      });
-    }
+    const rollbackOptimisticUnarchive = applyOptimisticUnarchive(
+      threadId,
+      optimisticMessageCreatedAt,
+    );
 
     const optimisticUserMessage: ExtendedUIMessage = {
       id: messageId,
@@ -199,16 +174,7 @@ export const useAgentChat = (
       const restoredDraftKey =
         draftKey === AGENT_CHAT_NEW_THREAD_DRAFT_KEY ? threadId : draftKey;
 
-      if (
-        shouldOptimisticallyUnarchiveThread &&
-        isDefined(updatedAtBeforeOptimisticUnarchive)
-      ) {
-        applyAgentChatThreadUpdate({
-          id: threadId,
-          archivedAt: archivedAtBeforeOptimisticUnarchive,
-          updatedAt: updatedAtBeforeOptimisticUnarchive,
-        });
-      }
+      rollbackOptimisticUnarchive?.();
 
       setAgentChatInput(contentToSend);
       setAgentChatDraftsByThreadId((prev) => ({
@@ -256,7 +222,7 @@ export const useAgentChat = (
     modelIdForRequest,
     setCurrentAiChatThread,
     apolloClient,
-    applyAgentChatThreadUpdate,
+    applyOptimisticUnarchive,
   ]);
 
   useListenToBrowserEvent({

@@ -10,8 +10,8 @@ import { LightIconButton } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
 
 import { type AiChatThreadActionsSurface } from '@/ai/constants/AiChatThreadActionsSurface';
-import { useArchiveChatThread } from '@/ai/hooks/useArchiveChatThread';
-import { useUnarchiveChatThread } from '@/ai/hooks/useUnarchiveChatThread';
+import { useChatThreadArchiveActions } from '@/ai/hooks/useChatThreadArchiveActions';
+import { aiChatThreadPendingDeleteFamilyState } from '@/ai/states/aiChatThreadPendingDeleteState';
 import { getAiChatThreadDeleteModalId } from '@/ai/utils/getAiChatThreadDeleteModalId';
 import { getAiChatThreadItemMenuDropdownId } from '@/ai/utils/getAiChatThreadItemMenuDropdownId';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
@@ -19,9 +19,11 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 
 type AiChatThreadItemMenuProps = {
   threadId: string;
+  threadTitle: string;
   isArchived: boolean;
   surface: AiChatThreadActionsSurface;
   onRenameRequested: () => void;
@@ -29,6 +31,7 @@ type AiChatThreadItemMenuProps = {
 
 export const AiChatThreadItemMenu = ({
   threadId,
+  threadTitle,
   isArchived,
   surface,
   onRenameRequested,
@@ -37,8 +40,12 @@ export const AiChatThreadItemMenu = ({
   const dropdownId = getAiChatThreadItemMenuDropdownId(threadId, surface);
   const { closeDropdown } = useCloseDropdown();
   const { openModal } = useModal();
-  const { archiveChatThread } = useArchiveChatThread();
-  const { unarchiveChatThread } = useUnarchiveChatThread();
+  const { archiveChatThread, unarchiveChatThread } =
+    useChatThreadArchiveActions();
+  const setAiChatThreadPendingDelete = useSetAtomFamilyState(
+    aiChatThreadPendingDeleteFamilyState,
+    surface,
+  );
 
   const handleRename = (event: React.MouseEvent) => {
     event.stopPropagation();
@@ -59,7 +66,8 @@ export const AiChatThreadItemMenu = ({
   const handleDelete = (event: React.MouseEvent) => {
     event.stopPropagation();
     closeDropdown(dropdownId);
-    openModal(getAiChatThreadDeleteModalId(threadId, surface));
+    setAiChatThreadPendingDelete({ threadId, threadTitle });
+    openModal(getAiChatThreadDeleteModalId(surface));
   };
 
   return (

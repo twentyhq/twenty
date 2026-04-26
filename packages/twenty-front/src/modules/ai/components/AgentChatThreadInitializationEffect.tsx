@@ -8,15 +8,15 @@ import {
 } from '@/ai/states/agentChatDraftsByThreadIdState';
 import { agentChatInputState } from '@/ai/states/agentChatInputState';
 import { agentChatThreadsLoadingState } from '@/ai/states/agentChatThreadsLoadingState';
-import { agentChatVisibleThreadsSelector } from '@/ai/states/agentChatVisibleThreadsSelector';
 import { agentChatUsageComponentFamilyState } from '@/ai/states/agentChatUsageComponentFamilyState';
+import { agentChatVisibleThreadsSelector } from '@/ai/states/agentChatVisibleThreadsSelector';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { currentAiChatThreadTitleComponentFamilyState } from '@/ai/states/currentAiChatThreadTitleComponentFamilyState';
 import { hasInitializedAgentChatThreadsState } from '@/ai/states/hasInitializedAgentChatThreadsState';
 import { hasTriggeredCreateForDraftState } from '@/ai/states/hasTriggeredCreateForDraftState';
+import { sortChatThreadsByUpdatedAtDesc } from '@/ai/utils/sortChatThreadsByUpdatedAtDesc';
 import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
-import { type FlatAgentChatThread } from '@/metadata-store/types/FlatAgentChatThread';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
@@ -106,9 +106,8 @@ export const AgentChatThreadInitializationEffect = () => {
 
     setHasInitializedAgentChatThreads(true);
 
-    const sortedThreads = agentChatVisibleThreads.toSorted(
-      (a: FlatAgentChatThread, b: FlatAgentChatThread) =>
-        new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime(),
+    const sortedThreads = sortChatThreadsByUpdatedAtDesc(
+      agentChatVisibleThreads,
     );
 
     if (sortedThreads.length > 0) {

@@ -16,17 +16,19 @@ const StyledDateGroup = styled.div`
   margin-bottom: ${themeCssVariables.spacing[4]};
 `;
 
+type AiChatThreadGroupProps = {
+  alwaysShowRightIcon?: boolean;
+  rightIcon?: ReactNode;
+  threads: AgentChatThread[];
+  title: string;
+};
+
 export const AiChatThreadGroup = ({
   alwaysShowRightIcon = false,
   rightIcon,
   threads,
   title,
-}: {
-  alwaysShowRightIcon?: boolean;
-  rightIcon?: ReactNode;
-  threads: AgentChatThread[];
-  title: string;
-}) => {
+}: AiChatThreadGroupProps) => {
   if (threads.length === 0) {
     return null;
   }

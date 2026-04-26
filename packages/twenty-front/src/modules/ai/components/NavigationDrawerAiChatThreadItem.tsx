@@ -3,7 +3,6 @@ import { useLingui } from '@lingui/react/macro';
 import { IconArchive, IconComment } from 'twenty-ui/display';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-import { AiChatThreadDeleteConfirmationModal } from '@/ai/components/AiChatThreadDeleteConfirmationModal';
 import { AiChatThreadItemMenu } from '@/ai/components/AiChatThreadItemMenu';
 import { AI_CHAT_THREAD_ACTIONS_SURFACE } from '@/ai/constants/AiChatThreadActionsSurface';
 import { useAiChatThreadRename } from '@/ai/hooks/useAiChatThreadRename';
@@ -22,12 +21,6 @@ const StyledTimestamp = styled.span`
   color: ${themeCssVariables.font.color.light};
   font-size: ${themeCssVariables.font.size.xs};
   font-weight: ${themeCssVariables.font.weight.regular};
-`;
-
-const StyledArchivedNavigationDrawerItem = styled(NavigationDrawerItem)`
-  && {
-    color: ${themeCssVariables.font.color.tertiary};
-  }
 `;
 
 type NavigationDrawerAiChatThreadItemProps = {
@@ -53,9 +46,6 @@ export const NavigationDrawerAiChatThreadItem = ({
 
   const isArchived = Boolean(thread.archivedAt);
   const ThreadIcon = isArchived ? IconArchive : IconComment;
-  const NavigationDrawerThreadItem = isArchived
-    ? StyledArchivedNavigationDrawerItem
-    : NavigationDrawerItem;
   const displayLabel = thread.title || t`New chat`;
   const timestamp = beautifyPastDateRelativeToNowShort(
     thread.updatedAt ?? thread.createdAt,
@@ -76,31 +66,25 @@ export const NavigationDrawerAiChatThreadItem = ({
   }
 
   return (
-    <>
-      <NavigationDrawerThreadItem
-        label={displayLabel}
-        Icon={ThreadIcon}
-        active={isActive}
-        onClick={() => onClick(thread)}
-        variant={isArchived ? 'tertiary' : 'default'}
-        alwaysShowRightOptions
-        rightOptions={
-          <StyledRightOptions>
-            <StyledTimestamp>{timestamp}</StyledTimestamp>
-            <AiChatThreadItemMenu
-              threadId={thread.id}
-              isArchived={isArchived}
-              surface={AI_CHAT_THREAD_ACTIONS_SURFACE.NAV_DRAWER}
-              onRenameRequested={startRename}
-            />
-          </StyledRightOptions>
-        }
-      />
-      <AiChatThreadDeleteConfirmationModal
-        threadId={thread.id}
-        threadTitle={displayLabel}
-        surface={AI_CHAT_THREAD_ACTIONS_SURFACE.NAV_DRAWER}
-      />
-    </>
+    <NavigationDrawerItem
+      label={displayLabel}
+      Icon={ThreadIcon}
+      active={isActive}
+      onClick={() => onClick(thread)}
+      variant={isArchived ? 'tertiary' : 'default'}
+      alwaysShowRightOptions
+      rightOptions={
+        <StyledRightOptions>
+          <StyledTimestamp>{timestamp}</StyledTimestamp>
+          <AiChatThreadItemMenu
+            threadId={thread.id}
+            threadTitle={displayLabel}
+            isArchived={isArchived}
+            surface={AI_CHAT_THREAD_ACTIONS_SURFACE.NAV_DRAWER}
+            onRenameRequested={startRename}
+          />
+        </StyledRightOptions>
+      }
+    />
   );
 };

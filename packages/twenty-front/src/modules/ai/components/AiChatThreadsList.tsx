@@ -1,5 +1,6 @@
 import { styled } from '@linaria/react';
 
+import { AiChatThreadDeleteConfirmationModal } from '@/ai/components/AiChatThreadDeleteConfirmationModal';
 import { AiChatThreadFilterDropdown } from '@/ai/components/AiChatThreadFilterDropdown';
 import { AiChatThreadGroup } from '@/ai/components/AiChatThreadGroup';
 import { AiChatThreadListItem } from '@/ai/components/AiChatThreadListItem';
@@ -44,7 +45,7 @@ const StyledButtonsContainer = styled.div`
   border-top: 1px solid ${themeCssVariables.border.color.medium};
   display: flex;
   justify-content: flex-end;
-  padding: ${themeCssVariables.spacing[2]} 10px;
+  padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[2]};
 `;
 
 export const AiChatThreadsList = () => {
@@ -120,6 +121,9 @@ export const AiChatThreadsList = () => {
           />
         </StyledButtonsContainer>
       </StyledContainer>
+      <AiChatThreadDeleteConfirmationModal
+        surface={AI_CHAT_THREAD_ACTIONS_SURFACE.SIDE_PANEL}
+      />
     </>
   );
 };

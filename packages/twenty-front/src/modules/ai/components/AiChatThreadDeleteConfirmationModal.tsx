@@ -2,30 +2,37 @@ import { Trans, useLingui } from '@lingui/react/macro';
 
 import { type AiChatThreadActionsSurface } from '@/ai/constants/AiChatThreadActionsSurface';
 import { useDeleteChatThread } from '@/ai/hooks/useDeleteChatThread';
+import { aiChatThreadPendingDeleteFamilyState } from '@/ai/states/aiChatThreadPendingDeleteState';
 import { getAiChatThreadDeleteModalId } from '@/ai/utils/getAiChatThreadDeleteModalId';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 
 type AiChatThreadDeleteConfirmationModalProps = {
-  threadId: string;
-  threadTitle: string;
   surface: AiChatThreadActionsSurface;
 };
 
 export const AiChatThreadDeleteConfirmationModal = ({
-  threadId,
-  threadTitle,
   surface,
 }: AiChatThreadDeleteConfirmationModalProps) => {
   const { t } = useLingui();
-  const { closeModal } = useModal();
   const { deleteChatThread } = useDeleteChatThread();
+  const aiChatThreadPendingDelete = useAtomFamilyStateValue(
+    aiChatThreadPendingDeleteFamilyState,
+    surface,
+  );
+  const setAiChatThreadPendingDelete = useSetAtomFamilyState(
+    aiChatThreadPendingDeleteFamilyState,
+    surface,
+  );
 
-  const modalInstanceId = getAiChatThreadDeleteModalId(threadId, surface);
+  const modalInstanceId = getAiChatThreadDeleteModalId(surface);
 
   const handleDelete = async () => {
-    await deleteChatThread(threadId);
-    closeModal(modalInstanceId);
+    if (aiChatThreadPendingDelete === null) return;
+
+    await deleteChatThread(aiChatThreadPendingDelete.threadId);
+    setAiChatThreadPendingDelete(null);
   };
 
   // TODO: server uses TypeORM softDelete (sets deletedAt) but there is no
@@ -38,10 +45,12 @@ export const AiChatThreadDeleteConfirmationModal = ({
       title={t`Delete chat`}
       subtitle={
         <Trans>
-          <strong>{threadTitle}</strong> and all its messages will be removed.
+          <strong>{aiChatThreadPendingDelete?.threadTitle ?? ''}</strong> and
+          all its messages will be removed.
         </Trans>
       }
       onConfirmClick={handleDelete}
+      onClose={() => setAiChatThreadPendingDelete(null)}
       confirmButtonText={t`Delete`}
       confirmButtonAccent="danger"
     />
