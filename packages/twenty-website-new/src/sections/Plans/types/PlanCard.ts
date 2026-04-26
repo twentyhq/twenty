@@ -1,5 +1,5 @@
-import { type HeadingType } from '@/design-system/components/Heading/types/Heading';
-import type { ImageType } from '@/design-system/components/Image/types/Image';
+import { type HeadingType } from '@/design-system/components/Heading';
+import type { ImageType } from '@/design-system/components/Image';
 import { type PlanFeaturesType } from '@/sections/Plans/types/PlanFeatures';
 import { type PlanPriceType } from '@/sections/Plans/types/PlanPrice';
 

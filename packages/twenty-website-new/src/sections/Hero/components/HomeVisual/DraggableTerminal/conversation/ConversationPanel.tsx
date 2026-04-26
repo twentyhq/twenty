@@ -2,6 +2,7 @@
 
 import { styled } from '@linaria/react';
 import { useEffect, useRef } from 'react';
+import { getPrefersReducedMotionSnapshot } from '@/lib/motion';
 import { AssistantResponse } from './AssistantResponse';
 import { UserMessage } from './UserMessage';
 
@@ -37,6 +38,12 @@ const PanelRoot = styled.div`
     background: rgba(0, 0, 0, 0.1);
     border-radius: 999px;
   }
+
+  @media (prefers-reduced-motion: reduce) {
+    /* Auto-scroll on new messages still happens (functional); only the
+       smooth-scroll easing is dropped. */
+    scroll-behavior: auto;
+  }
 `;
 
 export const ConversationPanel = ({
@@ -48,10 +55,6 @@ export const ConversationPanel = ({
 }: ConversationPanelProps) => {
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  // Keep the view pinned to the bottom as content grows — whether that's a
-  // new message landing or the assistant streaming the next character. We
-  // watch the subtree for any DOM / text change and coalesce scrolls into a
-  // single request per animation frame so streaming stays smooth.
   useEffect(() => {
     const element = scrollRef.current;
     if (!element) {
@@ -65,7 +68,8 @@ export const ConversationPanel = ({
       }
       frameId = window.requestAnimationFrame(() => {
         frameId = null;
-        element.scrollTo({ top: element.scrollHeight, behavior: 'smooth' });
+        const behavior = getPrefersReducedMotionSnapshot() ? 'auto' : 'smooth';
+        element.scrollTo({ top: element.scrollHeight, behavior });
       });
     };
 

@@ -1,5 +1,9 @@
 import { isNonEmptyString } from '@sniptt/guards';
-import { defineLogicFunction, type DatabaseEventPayload, type ObjectRecordDestroyEvent } from 'twenty-sdk/define';
+import { defineLogicFunction } from 'twenty-sdk/define';
+import {
+  type DatabaseEventPayload,
+  type ObjectRecordDestroyEvent,
+} from 'twenty-sdk/logic-function';
 import { isDefined } from '@utils/is-defined';
 
 import { ON_RESEND_SEGMENT_DESTROYED_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from '@modules/resend/constants/universal-identifiers';
@@ -39,7 +43,8 @@ const handler = async (
 };
 
 export default defineLogicFunction({
-  universalIdentifier: ON_RESEND_SEGMENT_DESTROYED_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
+  universalIdentifier:
+    ON_RESEND_SEGMENT_DESTROYED_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
   name: 'on-resend-segment-destroyed',
   description:
     'Removes a segment from Resend when a resendSegment record is permanently destroyed in Twenty',

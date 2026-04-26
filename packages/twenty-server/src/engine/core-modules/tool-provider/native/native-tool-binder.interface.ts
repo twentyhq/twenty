@@ -1,5 +1,4 @@
 import { type ToolSet } from 'ai';
-import { type ToolCategory } from 'twenty-shared/ai';
 
 import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
 
@@ -10,9 +9,5 @@ import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/
 // executed by ToolExecutorService. They're merged directly into the ToolSet
 // handed to streamText.
 export interface NativeToolBinder {
-  readonly category: ToolCategory;
-
-  isAvailable(context: ToolProviderContext): Promise<boolean>;
-
   bind(context: ToolProviderContext): Promise<ToolSet>;
 }

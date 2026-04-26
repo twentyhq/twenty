@@ -8,6 +8,7 @@ import {
   buildConsolidatedRow,
   buildReviewKey,
   buildConsolidatedTitle,
+  isSelfReview,
 } from 'src/modules/github/pull-request-review/utils/build-consolidated-row';
 
 const evt = (
@@ -140,6 +141,71 @@ describe('buildConsolidatedRow', () => {
       eventCount: 3,
       reviewerId: 'rev-2',
       pullRequestId: 'pr-1',
+      isSelfReview: false,
     });
+  });
+
+  it('flags isSelfReview when prAuthorId equals reviewerId', () => {
+    const row = buildConsolidatedRow({
+      pullRequestId: 'pr-1',
+      reviewerId: 'alice',
+      prNumber: 7,
+      reviewerLogin: 'alice',
+      prAuthorId: 'alice',
+      events: [evt('COMMENTED', '2025-04-01T10:00:00Z')],
+    });
+    expect(row.isSelfReview).toBe(true);
+  });
+
+  it('does not flag isSelfReview when prAuthorId differs from reviewerId', () => {
+    const row = buildConsolidatedRow({
+      pullRequestId: 'pr-1',
+      reviewerId: 'alice',
+      prNumber: 7,
+      reviewerLogin: 'alice',
+      prAuthorId: 'bob',
+      events: [evt('APPROVED', '2025-04-01T10:00:00Z')],
+    });
+    expect(row.isSelfReview).toBe(false);
+  });
+
+  it('does not flag isSelfReview when prAuthorId is missing', () => {
+    const row = buildConsolidatedRow({
+      pullRequestId: 'pr-1',
+      reviewerId: 'alice',
+      prNumber: 7,
+      reviewerLogin: 'alice',
+      events: [evt('APPROVED', '2025-04-01T10:00:00Z')],
+    });
+    expect(row.isSelfReview).toBe(false);
+  });
+
+  it('does not flag isSelfReview when reviewerId is null (ghost reviewer)', () => {
+    const row = buildConsolidatedRow({
+      pullRequestId: 'pr-1',
+      reviewerId: null,
+      prNumber: 7,
+      reviewerLogin: null,
+      prAuthorId: null,
+      events: [evt('COMMENTED', '2025-04-01T10:00:00Z')],
+    });
+    expect(row.isSelfReview).toBe(false);
+  });
+});
+
+describe('isSelfReview', () => {
+  it('returns true only when both ids are present and equal', () => {
+    expect(isSelfReview('a', 'a')).toBe(true);
+  });
+
+  it('returns false when ids differ', () => {
+    expect(isSelfReview('a', 'b')).toBe(false);
+  });
+
+  it('returns false when either side is null/undefined', () => {
+    expect(isSelfReview(null, 'a')).toBe(false);
+    expect(isSelfReview('a', null)).toBe(false);
+    expect(isSelfReview('a', undefined)).toBe(false);
+    expect(isSelfReview(null, null)).toBe(false);
   });
 });

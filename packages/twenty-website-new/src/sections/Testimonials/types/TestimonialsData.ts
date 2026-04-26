@@ -1,4 +1,4 @@
-import type { EyebrowType } from '@/design-system/components/Eyebrow/types/Eyebrow';
+import type { EyebrowType } from '@/design-system/components/Eyebrow';
 import type { TestimonialCardType } from '@/sections/Testimonials/types/TestimonialCard';
 
 export type TestimonialsDataType = {

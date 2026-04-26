@@ -22,7 +22,7 @@ import { type CodeExecutionStreamEmitter } from 'src/engine/core-modules/tool-pr
 import { CodeInterpreterService } from 'src/engine/core-modules/code-interpreter/code-interpreter.service';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
-import { COMMON_PRELOAD_TOOLS } from 'src/engine/core-modules/tool-provider/constants/common-preload-tools.const';
+import { NativeToolBinderService } from 'src/engine/core-modules/tool-provider/native/native-tool-binder.service';
 import { ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
 import {
   createExecuteToolTool,
@@ -40,6 +40,7 @@ import { repairToolCall } from 'src/engine/metadata-modules/ai/ai-agent/utils/re
 import { AiBillingService } from 'src/engine/metadata-modules/ai/ai-billing/services/ai-billing.service';
 import { countNativeWebSearchCallsFromSteps } from 'src/engine/metadata-modules/ai/ai-billing/utils/count-native-web-search-calls-from-steps.util';
 import { extractCacheCreationTokensFromSteps } from 'src/engine/metadata-modules/ai/ai-billing/utils/extract-cache-creation-tokens.util';
+import { AI_CHAT_TOOL_NAMES_TO_PRELOAD } from 'src/engine/metadata-modules/ai/ai-chat/constants/ai-chat-tool-names-to-preload.const';
 import { MessagePruningService } from 'src/engine/metadata-modules/ai/ai-chat/services/message-pruning.service';
 import { SystemPromptBuilderService } from 'src/engine/metadata-modules/ai/ai-chat/services/system-prompt-builder.service';
 import {
@@ -49,14 +50,9 @@ import {
 import {
   AI_SDK_ANTHROPIC,
   AI_SDK_BEDROCK,
-  AI_SDK_OPENAI,
 } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-sdk-package.const';
 import { AI_TELEMETRY_CONFIG } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-telemetry.const';
-import {
-  AiModelRegistryService,
-  type RegisteredAiModel,
-} from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
-import { SdkProviderFactoryService } from 'src/engine/metadata-modules/ai/ai-models/services/sdk-provider-factory.service';
+import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { type AiModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-config.type';
 import { SkillService } from 'src/engine/metadata-modules/skill/skill.service';
 
@@ -91,7 +87,7 @@ export class ChatExecutionService {
     private readonly codeInterpreterService: CodeInterpreterService,
     private readonly systemPromptBuilder: SystemPromptBuilderService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
-    private readonly sdkProviderFactory: SdkProviderFactoryService,
+    private readonly nativeToolBinder: NativeToolBinderService,
     private readonly messagePruningService: MessagePruningService,
   ) {}
 
@@ -139,16 +135,8 @@ export class ChatExecutionService {
       `Built tool catalog with ${toolCatalog.length} tools, ${skillCatalog.length} skills available`,
     );
 
-    // Preload the Exa app tool (shipped as the `twenty-exa` npm package) so chat
-    // has structured web search ready without discovery. getToolsByName
-    // silently skips the entry when the workspace doesn't have the Exa app
-    // installed (admin hasn't registered it + flipped `isPreInstalled`).
-    // TODO(app-preloading): move this list into the app manifest so any
-    // app can declare `preloadedInChat: true` instead of hardcoding here.
-    const toolNamesToPreload = [...COMMON_PRELOAD_TOOLS, 'app_exa_web_search'];
-
     const preloadedTools = await this.toolRegistry.getToolsByName(
-      toolNamesToPreload,
+      AI_CHAT_TOOL_NAMES_TO_PRELOAD,
       toolContext,
       { serializeOutput: true },
     );
@@ -169,23 +157,22 @@ export class ChatExecutionService {
       registeredModel.modelId,
     );
 
-    // Native web_search is returned when the resolved model's SDK provider
-    // exposes it (Anthropic, OpenAI). Coexists with app_exa_web_search when
-    // both are available — the model picks based on tool descriptions.
-    const { tools: nativeSearchTools, callableToolNames: searchToolNames } =
-      this.getNativeWebSearchTools(registeredModel);
+    const nativeModelTools = this.nativeToolBinder.bindForModel(
+      registeredModel,
+      { webSearchEnabled: true },
+    );
 
     // Tools the model can call directly: preloaded registry tools (already
     // serialized by the hydrator) plus SDK-native tools (opaque, never
     // serialized). execute_tool routes discovered tools through the registry.
     const directTools: ToolSet = {
       ...preloadedTools,
-      ...nativeSearchTools,
+      ...nativeModelTools,
     };
 
     const preloadedToolNames = [
       ...Object.keys(preloadedTools),
-      ...searchToolNames,
+      ...Object.keys(nativeModelTools),
     ];
 
     // ToolSet is constant for the entire conversation — no mutation.
@@ -451,51 +438,6 @@ export class ChatExecutionService {
     context += `\nUse get_view_query_parameters tool with this viewId to get the exact filter/sort parameters for querying records.`;
 
     return context;
-  }
-
-  private getNativeWebSearchTools(model: RegisteredAiModel): {
-    tools: ToolSet;
-    callableToolNames: string[];
-  } {
-    const empty = { tools: {}, callableToolNames: [] };
-    const providerName = model.providerName;
-
-    if (!providerName) {
-      return empty;
-    }
-
-    switch (model.sdkPackage) {
-      case AI_SDK_ANTHROPIC: {
-        const provider =
-          this.sdkProviderFactory.getRawAnthropicProvider(providerName);
-
-        if (!provider) {
-          return empty;
-        }
-
-        return {
-          tools: { web_search: provider.tools.webSearch_20250305() },
-          callableToolNames: ['web_search'],
-        };
-      }
-      case AI_SDK_BEDROCK:
-        return empty;
-      case AI_SDK_OPENAI: {
-        const provider =
-          this.sdkProviderFactory.getRawOpenAIProvider(providerName);
-
-        if (!provider) {
-          return empty;
-        }
-
-        return {
-          tools: { web_search: provider.tools.webSearch() },
-          callableToolNames: ['web_search'],
-        };
-      }
-      default:
-        return empty;
-    }
   }
 
   private async storeExtractedFiles(
