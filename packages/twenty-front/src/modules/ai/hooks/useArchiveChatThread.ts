@@ -1,13 +1,12 @@
 import { useMutation } from '@apollo/client/react';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 
-import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
-import { type FlatAgentChatThread } from '@/metadata-store/types/FlatAgentChatThread';
+import { useApplyAgentChatThreadUpdate } from '@/ai/hooks/useApplyAgentChatThreadUpdate';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ArchiveChatThreadDocument } from '~/generated-metadata/graphql';
 
 export const useArchiveChatThread = () => {
-  const { updateInDraft, applyChanges } = useUpdateMetadataStoreDraft();
+  const { applyAgentChatThreadUpdate } = useApplyAgentChatThreadUpdate();
   const { enqueueErrorSnackBar } = useSnackBar();
 
   const [archiveMutation] = useMutation(ArchiveChatThreadDocument);
@@ -17,14 +16,11 @@ export const useArchiveChatThread = () => {
       const { data } = await archiveMutation({ variables: { id } });
 
       if (data?.archiveChatThread) {
-        updateInDraft('agentChatThreads', [
-          {
-            id: data.archiveChatThread.id,
-            archivedAt: data.archiveChatThread.archivedAt ?? null,
-            updatedAt: data.archiveChatThread.updatedAt,
-          } as FlatAgentChatThread,
-        ]);
-        applyChanges();
+        applyAgentChatThreadUpdate({
+          id: data.archiveChatThread.id,
+          archivedAt: data.archiveChatThread.archivedAt ?? null,
+          updatedAt: data.archiveChatThread.updatedAt,
+        });
       }
     } catch (error) {
       enqueueErrorSnackBar({

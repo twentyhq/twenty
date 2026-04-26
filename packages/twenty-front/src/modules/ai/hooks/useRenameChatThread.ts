@@ -1,13 +1,12 @@
 import { useMutation } from '@apollo/client/react';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 
-import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
-import { type FlatAgentChatThread } from '@/metadata-store/types/FlatAgentChatThread';
+import { useApplyAgentChatThreadUpdate } from '@/ai/hooks/useApplyAgentChatThreadUpdate';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { RenameChatThreadDocument } from '~/generated-metadata/graphql';
 
 export const useRenameChatThread = () => {
-  const { updateInDraft, applyChanges } = useUpdateMetadataStoreDraft();
+  const { applyAgentChatThreadUpdate } = useApplyAgentChatThreadUpdate();
   const { enqueueErrorSnackBar } = useSnackBar();
 
   const [renameChatThreadMutation] = useMutation(RenameChatThreadDocument);
@@ -19,14 +18,11 @@ export const useRenameChatThread = () => {
       });
 
       if (data?.renameChatThread) {
-        updateInDraft('agentChatThreads', [
-          {
-            id: data.renameChatThread.id,
-            title: data.renameChatThread.title ?? null,
-            updatedAt: data.renameChatThread.updatedAt,
-          } as FlatAgentChatThread,
-        ]);
-        applyChanges();
+        applyAgentChatThreadUpdate({
+          id: data.renameChatThread.id,
+          title: data.renameChatThread.title ?? null,
+          updatedAt: data.renameChatThread.updatedAt,
+        });
       }
     } catch (error) {
       enqueueErrorSnackBar({
