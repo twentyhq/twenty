@@ -559,9 +559,7 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
           };
         }
         default:
-          throw new Error(
-            `Unknown operand ${recordFilter.operand} for ${filterType} filter`,
-          );
+          return;
       }
     }
     case 'CURRENCY': {
