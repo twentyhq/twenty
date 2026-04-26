@@ -45,6 +45,9 @@ const applyContext = (context: AiCallContext): void => {
   if (context.turnId) {
     Sentry.setTag('twenty.turn.id', context.turnId);
   }
+  if (context.threadId) {
+    Sentry.setTag('twenty.thread.id', context.threadId);
+  }
 
   // Structured context blob on events; also read back inside beforeSendSpan
   // to attach attributes to gen_ai spans.

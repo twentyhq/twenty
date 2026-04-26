@@ -455,61 +455,63 @@ export class WorkflowExecutorWorkspaceService {
     workflowRunId: string;
     workspaceId: string;
   }) {
-    // TODO: re-enable workflow node execution credit cap once billing limits are revisited.
-    // Previously gated on BillingService.canBillMeteredProduct(WORKFLOW_NODE_EXECUTION);
-    // temporarily disabled so workflows keep running when the period cap is reached.
-    const stepId = step.id;
+    return this.aiCallContextService.withContext(
+      { workspaceId, workflowRunId },
+      async () => {
+        // TODO: re-enable workflow node execution credit cap once billing limits are revisited.
+        // Previously gated on BillingService.canBillMeteredProduct(WORKFLOW_NODE_EXECUTION);
+        // temporarily disabled so workflows keep running when the period cap is reached.
+        const stepId = step.id;
 
-    const workflowAction = this.workflowActionFactory.get(step.type);
+        const workflowAction = this.workflowActionFactory.get(step.type);
 
-    await this.workflowRunWorkspaceService.updateWorkflowRunStepInfo({
-      stepId,
-      stepInfo: {
-        ...stepInfos[stepId],
-        status: StepStatus.RUNNING,
-      },
-      workflowRunId,
-      workspaceId,
-    });
-
-    this.aiCallContextService.setContext({
-      workspaceId,
-      workflowRunId,
-    });
-
-    try {
-      return await workflowAction.execute({
-        currentStepId: stepId,
-        steps,
-        context: getWorkflowRunContext(stepInfos),
-        runInfo: {
+        await this.workflowRunWorkspaceService.updateWorkflowRunStepInfo({
+          stepId,
+          stepInfo: {
+            ...stepInfos[stepId],
+            status: StepStatus.RUNNING,
+          },
           workflowRunId,
           workspaceId,
-        },
-      });
-    } catch (error) {
-      const isUserError =
-        error instanceof WorkflowStepExecutorException &&
-        (error.code === WorkflowStepExecutorExceptionCode.INVALID_STEP_TYPE ||
-          error.code === WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT ||
-          error.code === WorkflowStepExecutorExceptionCode.STEP_NOT_FOUND);
-
-      if (!isUserError) {
-        this.exceptionHandlerService.captureExceptions([error], {
-          workspace: { id: workspaceId },
         });
 
-        await this.metricsService.incrementCounter({
-          key: MetricsKeys.WorkflowRunSystemError,
-          eventId: workflowRunId,
-          debugLog: `[Workflow Run System Error] Workflow run ${workflowRunId} in workspace ${workspaceId} ended with system error`,
-        });
-      }
+        try {
+          return await workflowAction.execute({
+            currentStepId: stepId,
+            steps,
+            context: getWorkflowRunContext(stepInfos),
+            runInfo: {
+              workflowRunId,
+              workspaceId,
+            },
+          });
+        } catch (error) {
+          const isUserError =
+            error instanceof WorkflowStepExecutorException &&
+            (error.code ===
+              WorkflowStepExecutorExceptionCode.INVALID_STEP_TYPE ||
+              error.code ===
+                WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT ||
+              error.code === WorkflowStepExecutorExceptionCode.STEP_NOT_FOUND);
 
-      return {
-        error: error.message ?? 'Execution result error, no data or error',
-      };
-    }
+          if (!isUserError) {
+            this.exceptionHandlerService.captureExceptions([error], {
+              workspace: { id: workspaceId },
+            });
+
+            await this.metricsService.incrementCounter({
+              key: MetricsKeys.WorkflowRunSystemError,
+              eventId: workflowRunId,
+              debugLog: `[Workflow Run System Error] Workflow run ${workflowRunId} in workspace ${workspaceId} ended with system error`,
+            });
+          }
+
+          return {
+            error: error.message ?? 'Execution result error, no data or error',
+          };
+        }
+      },
+    );
   }
 
   async skipAndFailSafelyStepsThenContinue({
