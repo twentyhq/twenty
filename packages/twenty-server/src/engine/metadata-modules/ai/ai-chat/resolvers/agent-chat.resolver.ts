@@ -122,88 +122,85 @@ export class AgentChatResolver {
     @AuthUserWorkspaceId() userWorkspaceId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<SendChatMessageResultDTO> {
-    return this.aiCallContextService.run(
-      {
-        workspaceId: workspace.id,
-        userWorkspaceId,
-        threadId,
-      },
-      async () => {
-        if (this.aiModelRegistryService.getAvailableModels().length === 0) {
-          throw new AiException(
-            'No AI models are available. Configure at least one AI provider.',
-            AiExceptionCode.API_KEY_NOT_CONFIGURED,
-          );
-        }
+    this.aiCallContextService.setContext({
+      workspaceId: workspace.id,
+      userWorkspaceId,
+      threadId,
+    });
 
-        const resolvedModelId = modelId ?? workspace.smartModel;
+    if (this.aiModelRegistryService.getAvailableModels().length === 0) {
+      throw new AiException(
+        'No AI models are available. Configure at least one AI provider.',
+        AiExceptionCode.API_KEY_NOT_CONFIGURED,
+      );
+    }
 
-        this.aiModelRegistryService.validateModelAvailability(
-          resolvedModelId,
-          workspace,
-        );
+    const resolvedModelId = modelId ?? workspace.smartModel;
 
-        if (this.twentyConfigService.get('IS_BILLING_ENABLED')) {
-          const canBill = await this.billingService.canBillMeteredProduct(
-            workspace.id,
-            BillingProductKey.WORKFLOW_NODE_EXECUTION,
-          );
-
-          if (!canBill) {
-            throw new BillingException(
-              'Credits exhausted',
-              BillingExceptionCode.BILLING_CREDITS_EXHAUSTED,
-            );
-          }
-        }
-
-        const thread = await this.threadRepository.findOne({
-          where: { id: threadId, userWorkspaceId },
-        });
-
-        if (!isDefined(thread)) {
-          throw new AiException(
-            'Thread not found',
-            AiExceptionCode.THREAD_NOT_FOUND,
-          );
-        }
-
-        if (isDefined(thread.activeStreamId)) {
-          const queuedMessage = await this.agentChatService.queueMessage({
-            threadId,
-            text,
-            id: messageId,
-            fileIds: fileIds ?? undefined,
-            workspaceId: workspace.id,
-          });
-
-          await this.eventPublisherService.publish({
-            threadId,
-            workspaceId: workspace.id,
-            event: { type: 'queue-updated' },
-          });
-
-          return { messageId: queuedMessage.id, queued: true };
-        }
-
-        const result = await this.agentChatStreamingService.streamAgentChat({
-          threadId,
-          browsingContext: browsingContext ?? null,
-          modelId,
-          userWorkspaceId,
-          workspace,
-          text,
-          messageId,
-          fileIds: fileIds ?? undefined,
-        });
-
-        return {
-          messageId: result.messageId,
-          queued: false,
-          streamId: result.streamId,
-        };
-      },
+    this.aiModelRegistryService.validateModelAvailability(
+      resolvedModelId,
+      workspace,
     );
+
+    if (this.twentyConfigService.get('IS_BILLING_ENABLED')) {
+      const canBill = await this.billingService.canBillMeteredProduct(
+        workspace.id,
+        BillingProductKey.WORKFLOW_NODE_EXECUTION,
+      );
+
+      if (!canBill) {
+        throw new BillingException(
+          'Credits exhausted',
+          BillingExceptionCode.BILLING_CREDITS_EXHAUSTED,
+        );
+      }
+    }
+
+    const thread = await this.threadRepository.findOne({
+      where: { id: threadId, userWorkspaceId },
+    });
+
+    if (!isDefined(thread)) {
+      throw new AiException(
+        'Thread not found',
+        AiExceptionCode.THREAD_NOT_FOUND,
+      );
+    }
+
+    if (isDefined(thread.activeStreamId)) {
+      const queuedMessage = await this.agentChatService.queueMessage({
+        threadId,
+        text,
+        id: messageId,
+        fileIds: fileIds ?? undefined,
+        workspaceId: workspace.id,
+      });
+
+      await this.eventPublisherService.publish({
+        threadId,
+        workspaceId: workspace.id,
+        event: { type: 'queue-updated' },
+      });
+
+      return { messageId: queuedMessage.id, queued: true };
+    }
+
+    const result = await this.agentChatStreamingService.streamAgentChat({
+      threadId,
+      browsingContext: browsingContext ?? null,
+      modelId,
+      userWorkspaceId,
+      workspace,
+      text,
+      messageId,
+      fileIds: fileIds ?? undefined,
+    });
+
+    return {
+      messageId: result.messageId,
+      queued: false,
+      streamId: result.streamId,
+    };
   }
 
   @Mutation(() => Boolean)

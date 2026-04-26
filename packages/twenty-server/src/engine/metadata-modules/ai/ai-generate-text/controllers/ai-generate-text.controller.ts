@@ -33,42 +33,39 @@ export class AiGenerateTextController {
     @Body() body: GenerateTextInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ) {
-    return this.aiCallContextService.run(
-      { workspaceId: workspace.id },
-      async () => {
-        if (this.aiModelRegistryService.getAvailableModels().length === 0) {
-          throw new AiException(
-            'No AI models are available. Please configure at least one AI provider API key.',
-            AiExceptionCode.API_KEY_NOT_CONFIGURED,
-          );
-        }
+    this.aiCallContextService.setContext({ workspaceId: workspace.id });
 
-        const resolvedModelId = body.modelId ?? workspace.fastModel;
+    if (this.aiModelRegistryService.getAvailableModels().length === 0) {
+      throw new AiException(
+        'No AI models are available. Please configure at least one AI provider API key.',
+        AiExceptionCode.API_KEY_NOT_CONFIGURED,
+      );
+    }
 
-        this.aiModelRegistryService.validateModelAvailability(
-          resolvedModelId,
-          workspace,
-        );
+    const resolvedModelId = body.modelId ?? workspace.fastModel;
 
-        const registeredModel =
-          await this.aiModelRegistryService.resolveModelForAgent({
-            modelId: resolvedModelId,
-          });
-
-        const result = await generateText({
-          model: registeredModel.model,
-          system: body.systemPrompt,
-          prompt: body.userPrompt,
-        });
-
-        return {
-          text: result.text,
-          usage: {
-            inputTokens: result.usage?.inputTokens ?? 0,
-            outputTokens: result.usage?.outputTokens ?? 0,
-          },
-        };
-      },
+    this.aiModelRegistryService.validateModelAvailability(
+      resolvedModelId,
+      workspace,
     );
+
+    const registeredModel =
+      await this.aiModelRegistryService.resolveModelForAgent({
+        modelId: resolvedModelId,
+      });
+
+    const result = await generateText({
+      model: registeredModel.model,
+      system: body.systemPrompt,
+      prompt: body.userPrompt,
+    });
+
+    return {
+      text: result.text,
+      usage: {
+        inputTokens: result.usage?.inputTokens ?? 0,
+        outputTokens: result.usage?.outputTokens ?? 0,
+      },
+    };
   }
 }

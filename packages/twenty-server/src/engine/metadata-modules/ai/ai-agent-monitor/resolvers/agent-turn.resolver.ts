@@ -57,17 +57,12 @@ export class AgentTurnResolver {
     @Args('turnId', { type: () => UUIDScalarType }) turnId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<AgentTurnEvaluationDTO> {
-    return this.aiCallContextService.run(
-      {
-        workspaceId: workspace.id,
-        turnId,
-      },
-      async () => {
-        const evaluation = await this.graderService.evaluateTurn(turnId);
+    this.aiCallContextService.setContext({
+      workspaceId: workspace.id,
+      turnId,
+    });
 
-        return evaluation;
-      },
-    );
+    return this.graderService.evaluateTurn(turnId);
   }
 
   @Mutation(() => AgentTurnDTO)
@@ -77,54 +72,51 @@ export class AgentTurnResolver {
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string,
   ): Promise<AgentTurnEntity> {
-    return this.aiCallContextService.run(
-      {
-        workspaceId: workspace.id,
-        userWorkspaceId,
-        agentId,
-      },
-      async () => {
-        const thread = this.threadRepository.create({
-          userWorkspaceId,
-          workspaceId: workspace.id,
-          title: `Eval: ${input.substring(0, 50)}...`,
-        });
-        const savedThread = await this.threadRepository.save(thread);
+    this.aiCallContextService.setContext({
+      workspaceId: workspace.id,
+      userWorkspaceId,
+      agentId,
+    });
 
-        const turn = this.turnRepository.create({
-          threadId: savedThread.id,
-          agentId,
-          workspaceId: workspace.id,
-        });
-        const savedTurn = await this.turnRepository.save(turn);
+    const thread = this.threadRepository.create({
+      userWorkspaceId,
+      workspaceId: workspace.id,
+      title: `Eval: ${input.substring(0, 50)}...`,
+    });
+    const savedThread = await this.threadRepository.save(thread);
 
-        this.messageQueueService.add<{
-          turnId: string;
-          threadId: string;
-          agentId: string;
-          input: string;
-          workspaceId: string;
-        }>(RunEvaluationInputJob.name, {
-          turnId: savedTurn.id,
-          threadId: savedThread.id,
-          agentId,
-          input,
-          workspaceId: workspace.id,
-        });
+    const turn = this.turnRepository.create({
+      threadId: savedThread.id,
+      agentId,
+      workspaceId: workspace.id,
+    });
+    const savedTurn = await this.turnRepository.save(turn);
 
-        const turnWithRelations = await this.turnRepository.findOne({
-          where: { id: savedTurn.id },
-          relations: ['evaluations', 'messages', 'messages.parts'],
-        });
+    this.messageQueueService.add<{
+      turnId: string;
+      threadId: string;
+      agentId: string;
+      input: string;
+      workspaceId: string;
+    }>(RunEvaluationInputJob.name, {
+      turnId: savedTurn.id,
+      threadId: savedThread.id,
+      agentId,
+      input,
+      workspaceId: workspace.id,
+    });
 
-        if (!turnWithRelations) {
-          throw new NotFoundError('Turn not found after creation', {
-            userFriendlyMessage: msg`Failed to create evaluation. Please try again.`,
-          });
-        }
+    const turnWithRelations = await this.turnRepository.findOne({
+      where: { id: savedTurn.id },
+      relations: ['evaluations', 'messages', 'messages.parts'],
+    });
 
-        return turnWithRelations;
-      },
-    );
+    if (!turnWithRelations) {
+      throw new NotFoundError('Turn not found after creation', {
+        userFriendlyMessage: msg`Failed to create evaluation. Please try again.`,
+      });
+    }
+
+    return turnWithRelations;
   }
 }

@@ -472,49 +472,44 @@ export class WorkflowExecutorWorkspaceService {
       workspaceId,
     });
 
-    return this.aiCallContextService.run(
-      {
-        workspaceId,
-        workflowRunId,
-      },
-      async () => {
-        try {
-          return await workflowAction.execute({
-            currentStepId: stepId,
-            steps,
-            context: getWorkflowRunContext(stepInfos),
-            runInfo: {
-              workflowRunId,
-              workspaceId,
-            },
-          });
-        } catch (error) {
-          const isUserError =
-            error instanceof WorkflowStepExecutorException &&
-            (error.code ===
-              WorkflowStepExecutorExceptionCode.INVALID_STEP_TYPE ||
-              error.code ===
-                WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT ||
-              error.code === WorkflowStepExecutorExceptionCode.STEP_NOT_FOUND);
+    this.aiCallContextService.setContext({
+      workspaceId,
+      workflowRunId,
+    });
 
-          if (!isUserError) {
-            this.exceptionHandlerService.captureExceptions([error], {
-              workspace: { id: workspaceId },
-            });
+    try {
+      return await workflowAction.execute({
+        currentStepId: stepId,
+        steps,
+        context: getWorkflowRunContext(stepInfos),
+        runInfo: {
+          workflowRunId,
+          workspaceId,
+        },
+      });
+    } catch (error) {
+      const isUserError =
+        error instanceof WorkflowStepExecutorException &&
+        (error.code === WorkflowStepExecutorExceptionCode.INVALID_STEP_TYPE ||
+          error.code === WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT ||
+          error.code === WorkflowStepExecutorExceptionCode.STEP_NOT_FOUND);
 
-            await this.metricsService.incrementCounter({
-              key: MetricsKeys.WorkflowRunSystemError,
-              eventId: workflowRunId,
-              debugLog: `[Workflow Run System Error] Workflow run ${workflowRunId} in workspace ${workspaceId} ended with system error`,
-            });
-          }
+      if (!isUserError) {
+        this.exceptionHandlerService.captureExceptions([error], {
+          workspace: { id: workspaceId },
+        });
 
-          return {
-            error: error.message ?? 'Execution result error, no data or error',
-          };
-        }
-      },
-    );
+        await this.metricsService.incrementCounter({
+          key: MetricsKeys.WorkflowRunSystemError,
+          eventId: workflowRunId,
+          debugLog: `[Workflow Run System Error] Workflow run ${workflowRunId} in workspace ${workspaceId} ended with system error`,
+        });
+      }
+
+      return {
+        error: error.message ?? 'Execution result error, no data or error',
+      };
+    }
   }
 
   async skipAndFailSafelyStepsThenContinue({

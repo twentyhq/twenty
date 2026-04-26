@@ -39,7 +39,7 @@ export class RunEvaluationInputJob {
 
   @Process(RunEvaluationInputJob.name)
   async handle(data: RunEvaluationInputJobData): Promise<void> {
-    return this.aiCallContextService.run(
+    return this.aiCallContextService.withContext(
       {
         workspaceId: data.workspaceId,
         agentId: data.agentId,

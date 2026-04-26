@@ -52,7 +52,7 @@ export class StreamAgentChatJob {
 
   @Process(STREAM_AGENT_CHAT_JOB_NAME)
   async handle(data: StreamAgentChatJobData): Promise<void> {
-    return this.aiCallContextService.run(
+    return this.aiCallContextService.withContext(
       {
         workspaceId: data.workspaceId,
         userWorkspaceId: data.userWorkspaceId,

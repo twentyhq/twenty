@@ -16,7 +16,6 @@ import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interface
 
 import { ExceptionHandlerDriver } from 'src/engine/core-modules/exception-handler/interfaces';
 import { MeterDriver } from 'src/engine/core-modules/metrics/types/meter-driver.type';
-import { aiCallContextStorage } from 'src/engine/metadata-modules/ai/ai-call-context/storage/ai-call-context.storage';
 import { parseArrayEnvVar } from 'src/utils/parse-array-env-var';
 
 const meterDrivers = parseArrayEnvVar(
@@ -56,34 +55,43 @@ if (process.env.EXCEPTION_HANDLER_DRIVER === ExceptionHandlerDriver.SENTRY) {
         return span;
       }
 
-      const context = aiCallContextStorage.getStore();
+      const twentyContext = Sentry.getIsolationScope().getScopeData().contexts
+        ?.twenty as
+        | {
+            workspace_id?: string;
+            user_workspace_id?: string;
+            agent_id?: string;
+            workflow_run_id?: string;
+            thread_id?: string;
+            turn_id?: string;
+          }
+        | undefined;
 
-      if (!context) {
+      if (!twentyContext?.workspace_id) {
         return span;
       }
 
-      span.data = span.data ?? {};
-      span.data['twenty.workspace_id'] = context.workspaceId;
-
-      if (context.userWorkspaceId != null) {
-        span.data['twenty.user_workspace_id'] = context.userWorkspaceId;
-      }
-
-      if (context.agentId != null) {
-        span.data['twenty.agent_id'] = context.agentId;
-      }
-
-      if (context.workflowRunId != null) {
-        span.data['twenty.workflow_run_id'] = context.workflowRunId;
-      }
-
-      if (context.threadId != null) {
-        span.data['twenty.thread_id'] = context.threadId;
-      }
-
-      if (context.turnId != null) {
-        span.data['twenty.turn_id'] = context.turnId;
-      }
+      span.data = {
+        ...span.data,
+        'twenty.workspace.id': twentyContext.workspace_id,
+        ...(twentyContext.user_workspace_id && {
+          'twenty.user_workspace.id': twentyContext.user_workspace_id,
+        }),
+        ...(twentyContext.agent_id && {
+          'twenty.agent.id': twentyContext.agent_id,
+        }),
+        ...(twentyContext.workflow_run_id && {
+          'twenty.workflow_run.id': twentyContext.workflow_run_id,
+        }),
+        ...(twentyContext.turn_id && {
+          'twenty.turn.id': twentyContext.turn_id,
+        }),
+        // TODO: replace with Sentry.setConversationId once available in @sentry/node
+        // (added in a later 10.x — not yet exported in 10.27).
+        ...(twentyContext.thread_id && {
+          'gen_ai.conversation.id': twentyContext.thread_id,
+        }),
+      };
 
       return span;
     },

@@ -30,7 +30,7 @@ export class EvaluateAgentTurnJob {
       throw new Error('Workspace ID is required');
     }
 
-    return this.aiCallContextService.run(
+    return this.aiCallContextService.withContext(
       {
         workspaceId: data.workspaceId,
         turnId: data.turnId,
