@@ -1,4 +1,10 @@
 import { useLingui } from '@lingui/react/macro';
+import {
+  IconClock,
+  IconLayoutList,
+  IconStatusChange,
+  IconTrash,
+} from 'twenty-ui/display';
 
 import { AGENT_CHAT_THREAD_FILTER_STATUS } from '@/ai/constants/AgentChatThreadFilterStatus';
 import { AGENT_CHAT_THREAD_FILTER_STATUS_LABELS } from '@/ai/constants/AgentChatThreadFilterStatusLabels';
@@ -18,7 +24,7 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
-import { MenuItem, MenuItemSelect } from 'twenty-ui/navigation';
+import { MenuItem } from 'twenty-ui/navigation';
 
 type AiChatThreadFilterDropdownRootMenuProps = {
   dropdownId: string;
@@ -60,33 +66,32 @@ export const AiChatThreadFilterDropdownRootMenu = ({
   return (
     <DropdownContent>
       <DropdownMenuItemsContainer>
-        <MenuItemSelect
+        <MenuItem
+          LeftIcon={IconStatusChange}
           text={t`Status`}
           contextualText={t(
             AGENT_CHAT_THREAD_FILTER_STATUS_LABELS[agentChatThreadFilterStatus],
           )}
           contextualTextPosition="right"
           hasSubMenu
-          selected={false}
-          needIconCheck={false}
           onClick={() =>
             onSelectPage(AI_CHAT_THREAD_FILTER_DROPDOWN_PAGE.STATUS)
           }
         />
-        <MenuItemSelect
+        <MenuItem
+          LeftIcon={IconLayoutList}
           text={t`Group by`}
           contextualText={t(
             AGENT_CHAT_THREAD_GROUP_BY_LABELS[agentChatThreadGroupBy],
           )}
           contextualTextPosition="right"
           hasSubMenu
-          selected={false}
-          needIconCheck={false}
           onClick={() =>
             onSelectPage(AI_CHAT_THREAD_FILTER_DROPDOWN_PAGE.GROUP_BY)
           }
         />
-        <MenuItemSelect
+        <MenuItem
+          LeftIcon={IconClock}
           text={t`Last activity`}
           contextualText={t(
             AGENT_CHAT_THREAD_LAST_ACTIVITY_FILTER_LABELS[
@@ -95,8 +100,6 @@ export const AiChatThreadFilterDropdownRootMenu = ({
           )}
           contextualTextPosition="right"
           hasSubMenu
-          selected={false}
-          needIconCheck={false}
           onClick={() =>
             onSelectPage(AI_CHAT_THREAD_FILTER_DROPDOWN_PAGE.LAST_ACTIVITY)
           }
@@ -104,7 +107,12 @@ export const AiChatThreadFilterDropdownRootMenu = ({
         {!isAtDefaults && (
           <>
             <DropdownMenuSeparator />
-            <MenuItem text={t`Clear filters`} onClick={handleClearFilters} />
+            <MenuItem
+              accent="danger"
+              LeftIcon={IconTrash}
+              text={t`Clear filters`}
+              onClick={handleClearFilters}
+            />
           </>
         )}
       </DropdownMenuItemsContainer>
