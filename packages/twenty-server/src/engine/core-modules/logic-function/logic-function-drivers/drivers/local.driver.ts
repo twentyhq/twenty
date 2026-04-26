@@ -23,6 +23,7 @@ import { LogicFunctionExecutionStatus } from 'src/engine/metadata-modules/logic-
 import { copyYarnEngineAndBuildDependencies } from 'src/engine/core-modules/application/application-package/utils/copy-yarn-engine-and-build-dependencies';
 import type { LogicFunctionResourceService } from 'src/engine/core-modules/logic-function/logic-function-resource/logic-function-resource.service';
 import type { SdkClientArchiveService } from 'src/engine/core-modules/sdk-client/sdk-client-archive.service';
+import type { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 const LAYER_BUILD_LOCK_TTL_MS = 120_000;
 const LAYER_BUILD_LOCK_RETRY_MS = 500;
@@ -33,6 +34,7 @@ export interface LocalDriverOptions {
   logicFunctionResourceService: LogicFunctionResourceService;
   sdkClientArchiveService: SdkClientArchiveService;
   cacheLockService: CacheLockService;
+  workspaceCacheService: WorkspaceCacheService;
 }
 
 const pathExists = async (targetPath: string): Promise<boolean> => {
@@ -49,11 +51,13 @@ export class LocalDriver implements LogicFunctionDriver {
   private readonly logicFunctionResourceService: LogicFunctionResourceService;
   private readonly sdkClientArchiveService: SdkClientArchiveService;
   private readonly cacheLockService: CacheLockService;
+  private readonly workspaceCacheService: WorkspaceCacheService;
 
   constructor(options: LocalDriverOptions) {
     this.logicFunctionResourceService = options.logicFunctionResourceService;
     this.sdkClientArchiveService = options.sdkClientArchiveService;
     this.cacheLockService = options.cacheLockService;
+    this.workspaceCacheService = options.workspaceCacheService;
   }
 
   private getDepsLayerPath(flatApplication: FlatApplication): string {
@@ -145,10 +149,14 @@ export class LocalDriver implements LogicFunctionDriver {
 
     await this.cacheLockService.withLock(
       async () => {
-        const isStale = await this.sdkClientArchiveService.isSdkLayerStale({
-          applicationId: flatApplication.id,
-          workspaceId: flatApplication.workspaceId,
-        });
+        const { flatApplicationMaps } =
+          await this.workspaceCacheService.getOrRecompute(
+            flatApplication.workspaceId,
+            ['flatApplicationMaps'],
+          );
+        const freshFlatApplication =
+          flatApplicationMaps.byId[flatApplication.id];
+        const isStale = freshFlatApplication?.isSdkLayerStale ?? true;
 
         if ((await pathExists(sdkReadySentinelPath)) && !isStale) {
           return;
