@@ -144,7 +144,7 @@ export const SettingsLogicFunctionHttpTriggerSection = ({
           </StyledAuthRow>
           <SettingsLogicFunctionTriggerPayloadFormat
             payload={buildHttpPayload(value)}
-            hint={t`Your handler receives this object. The body is empty for GET requests; for POST it contains the parsed JSON sent by the client.`}
+            hint={t`Your handler receives this object. The body is null for GET requests; for POST/PUT/PATCH/DELETE it contains the parsed JSON sent by the client.`}
           />
         </StyledFields>
       )}
