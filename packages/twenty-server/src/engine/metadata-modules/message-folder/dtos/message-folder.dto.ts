@@ -1,9 +1,10 @@
-import { Field, HideField, ObjectType } from '@nestjs/graphql';
+import { Field, HideField, Int, ObjectType } from '@nestjs/graphql';
 
 import {
   IsBoolean,
   IsDateString,
   IsEnum,
+  IsInt,
   IsNotEmpty,
   IsOptional,
   IsString,
@@ -50,6 +51,26 @@ export class MessageFolderDTO {
   @IsNotEmpty()
   @Field(() => MessageFolderPendingSyncAction)
   pendingSyncAction: MessageFolderPendingSyncAction;
+
+  @IsInt()
+  @IsOptional()
+  @Field(() => Int, { nullable: true })
+  highestUid: number | null;
+
+  @IsInt()
+  @IsOptional()
+  @Field(() => Int, { nullable: true })
+  uidValidity: number | null;
+
+  @IsString()
+  @IsOptional()
+  @Field(() => String, { nullable: true })
+  modSeq: string | null;
+
+  @IsInt()
+  @IsOptional()
+  @Field(() => Int, { nullable: true })
+  firstSyncedUid: number | null;
 
   @IsUUID()
   @IsNotEmpty()

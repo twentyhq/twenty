@@ -27,6 +27,21 @@ export class MessagingCursorService {
     const authContext = buildSystemAuthContext(workspaceId);
 
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+      let extraFields = {};
+
+      try {
+        const parsed = JSON.parse(nextSyncCursor);
+
+        extraFields = {
+          highestUid: parsed.highestUid,
+          uidValidity: parsed.uidValidity,
+          modSeq: parsed.modSeq,
+          firstSyncedUid: parsed.firstSyncedUid,
+        };
+      } catch (e) {
+        // Not JSON, ignore extra fields
+      }
+
       if (!folderId) {
         await this.messageChannelRepository.update(
           { id: messageChannel.id, workspaceId },
@@ -39,6 +54,7 @@ export class MessagingCursorService {
               nextSyncCursor > messageChannel.syncCursor
                 ? nextSyncCursor
                 : messageChannel.syncCursor,
+            ...extraFields,
           },
         );
       } else {
@@ -46,6 +62,7 @@ export class MessagingCursorService {
           { id: folderId, workspaceId },
           {
             syncCursor: nextSyncCursor,
+            ...extraFields,
           },
         );
         await this.messageChannelRepository.update(

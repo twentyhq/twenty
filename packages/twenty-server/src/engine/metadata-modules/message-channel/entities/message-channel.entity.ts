@@ -133,6 +133,18 @@ export class MessageChannelEntity extends WorkspaceRelatedEntity {
   @Column({ type: 'timestamptz', nullable: true })
   throttleRetryAfter: Date | null;
 
+  @Column({ type: 'integer', nullable: true })
+  highestUid: number | null;
+
+  @Column({ type: 'integer', nullable: true })
+  uidValidity: number | null;
+
+  @Column({ type: 'varchar', nullable: true })
+  modSeq: string | null;
+
+  @Column({ type: 'integer', nullable: true })
+  firstSyncedUid: number | null;
+
   @Column({ type: 'uuid', nullable: false })
   connectedAccountId: string;
 

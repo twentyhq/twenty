@@ -141,6 +141,10 @@ export class ImapGetMessageListService {
         nextSyncCursor: JSON.stringify(nextCursor),
         previousSyncCursor: folder.syncCursor,
         folderId: folder.id,
+        highestUid: nextCursor.highestUid,
+        uidValidity: nextCursor.uidValidity,
+        modSeq: nextCursor.modSeq,
+        firstSyncedUid: nextCursor.firstSyncedUid,
       };
     } catch (error) {
       this.logger.error(

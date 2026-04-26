@@ -113,7 +113,7 @@ export class ImapSyncService {
         `UID search failed for range ${uidRange}: ${error.message}`,
       );
 
-      return [];
+      throw error;
     }
   }
 

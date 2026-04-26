@@ -30,6 +30,10 @@ export class MessageFolderWorkspaceEntity extends BaseWorkspaceEntity {
   parentFolderId: string | null;
   externalId: string | null;
   pendingSyncAction: MessageFolderPendingSyncAction;
+  highestUid: number | null;
+  uidValidity: number | null;
+  modSeq: string | null;
+  firstSyncedUid: number | null;
   messageChannelId: string;
   messageChannelMessageAssociationMessageFolders: EntityRelation<
     MessageChannelMessageAssociationMessageFolderWorkspaceEntity[]

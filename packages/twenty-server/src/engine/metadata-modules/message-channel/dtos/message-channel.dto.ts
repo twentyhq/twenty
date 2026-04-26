@@ -1,4 +1,4 @@
-import { Field, HideField, ObjectType } from '@nestjs/graphql';
+import { Field, HideField, Int, ObjectType } from '@nestjs/graphql';
 
 import {
   IsBoolean,
@@ -106,6 +106,26 @@ export class MessageChannelDTO {
   @IsOptional()
   @Field(() => Date, { nullable: true })
   throttleRetryAfter: Date | null;
+
+  @IsInt()
+  @IsOptional()
+  @Field(() => Int, { nullable: true })
+  highestUid: number | null;
+
+  @IsInt()
+  @IsOptional()
+  @Field(() => Int, { nullable: true })
+  uidValidity: number | null;
+
+  @IsString()
+  @IsOptional()
+  @Field(() => String, { nullable: true })
+  modSeq: string | null;
+
+  @IsInt()
+  @IsOptional()
+  @Field(() => Int, { nullable: true })
+  firstSyncedUid: number | null;
 
   @IsUUID()
   @IsNotEmpty()
