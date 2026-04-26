@@ -34,6 +34,7 @@ import {
   AiException,
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
+import { AiCallContextService } from 'src/engine/metadata-modules/ai/ai-call-context/services/ai-call-context.service';
 import { AiGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/ai/interceptors/ai-graphql-api-exception.interceptor';
 import { type BrowsingContextType } from 'src/engine/metadata-modules/ai/ai-agent/types/browsingContext.type';
 import { AgentMessageDTO } from 'src/engine/metadata-modules/ai/ai-agent-execution/dtos/agent-message.dto';
@@ -62,6 +63,7 @@ export class AgentChatResolver {
     private readonly twentyConfigService: TwentyConfigService,
     private readonly aiModelRegistryService: AiModelRegistryService,
     private readonly redisClientService: RedisClientService,
+    private readonly aiCallContextService: AiCallContextService,
     @InjectRepository(AgentChatThreadEntity)
     private readonly threadRepository: Repository<AgentChatThreadEntity>,
   ) {}
@@ -120,79 +122,88 @@ export class AgentChatResolver {
     @AuthUserWorkspaceId() userWorkspaceId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<SendChatMessageResultDTO> {
-    if (this.aiModelRegistryService.getAvailableModels().length === 0) {
-      throw new AiException(
-        'No AI models are available. Configure at least one AI provider.',
-        AiExceptionCode.API_KEY_NOT_CONFIGURED,
-      );
-    }
+    return this.aiCallContextService.run(
+      {
+        workspaceId: workspace.id,
+        userWorkspaceId,
+        threadId,
+      },
+      async () => {
+        if (this.aiModelRegistryService.getAvailableModels().length === 0) {
+          throw new AiException(
+            'No AI models are available. Configure at least one AI provider.',
+            AiExceptionCode.API_KEY_NOT_CONFIGURED,
+          );
+        }
 
-    const resolvedModelId = modelId ?? workspace.smartModel;
+        const resolvedModelId = modelId ?? workspace.smartModel;
 
-    this.aiModelRegistryService.validateModelAvailability(
-      resolvedModelId,
-      workspace,
-    );
-
-    if (this.twentyConfigService.get('IS_BILLING_ENABLED')) {
-      const canBill = await this.billingService.canBillMeteredProduct(
-        workspace.id,
-        BillingProductKey.WORKFLOW_NODE_EXECUTION,
-      );
-
-      if (!canBill) {
-        throw new BillingException(
-          'Credits exhausted',
-          BillingExceptionCode.BILLING_CREDITS_EXHAUSTED,
+        this.aiModelRegistryService.validateModelAvailability(
+          resolvedModelId,
+          workspace,
         );
-      }
-    }
 
-    const thread = await this.threadRepository.findOne({
-      where: { id: threadId, userWorkspaceId },
-    });
+        if (this.twentyConfigService.get('IS_BILLING_ENABLED')) {
+          const canBill = await this.billingService.canBillMeteredProduct(
+            workspace.id,
+            BillingProductKey.WORKFLOW_NODE_EXECUTION,
+          );
 
-    if (!isDefined(thread)) {
-      throw new AiException(
-        'Thread not found',
-        AiExceptionCode.THREAD_NOT_FOUND,
-      );
-    }
+          if (!canBill) {
+            throw new BillingException(
+              'Credits exhausted',
+              BillingExceptionCode.BILLING_CREDITS_EXHAUSTED,
+            );
+          }
+        }
 
-    if (isDefined(thread.activeStreamId)) {
-      const queuedMessage = await this.agentChatService.queueMessage({
-        threadId,
-        text,
-        id: messageId,
-        fileIds: fileIds ?? undefined,
-        workspaceId: workspace.id,
-      });
+        const thread = await this.threadRepository.findOne({
+          where: { id: threadId, userWorkspaceId },
+        });
 
-      await this.eventPublisherService.publish({
-        threadId,
-        workspaceId: workspace.id,
-        event: { type: 'queue-updated' },
-      });
+        if (!isDefined(thread)) {
+          throw new AiException(
+            'Thread not found',
+            AiExceptionCode.THREAD_NOT_FOUND,
+          );
+        }
 
-      return { messageId: queuedMessage.id, queued: true };
-    }
+        if (isDefined(thread.activeStreamId)) {
+          const queuedMessage = await this.agentChatService.queueMessage({
+            threadId,
+            text,
+            id: messageId,
+            fileIds: fileIds ?? undefined,
+            workspaceId: workspace.id,
+          });
 
-    const result = await this.agentChatStreamingService.streamAgentChat({
-      threadId,
-      browsingContext: browsingContext ?? null,
-      modelId,
-      userWorkspaceId,
-      workspace,
-      text,
-      messageId,
-      fileIds: fileIds ?? undefined,
-    });
+          await this.eventPublisherService.publish({
+            threadId,
+            workspaceId: workspace.id,
+            event: { type: 'queue-updated' },
+          });
 
-    return {
-      messageId: result.messageId,
-      queued: false,
-      streamId: result.streamId,
-    };
+          return { messageId: queuedMessage.id, queued: true };
+        }
+
+        const result = await this.agentChatStreamingService.streamAgentChat({
+          threadId,
+          browsingContext: browsingContext ?? null,
+          modelId,
+          userWorkspaceId,
+          workspace,
+          text,
+          messageId,
+          fileIds: fileIds ?? undefined,
+        });
+
+        return {
+          messageId: result.messageId,
+          queued: false,
+          streamId: result.streamId,
+        };
+      },
+    );
   }
 
   @Mutation(() => Boolean)

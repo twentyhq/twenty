@@ -22,6 +22,7 @@ import { AgentTurnEntity } from 'src/engine/metadata-modules/ai/ai-agent-executi
 import { AgentTurnEvaluationDTO } from 'src/engine/metadata-modules/ai/ai-agent-monitor/dtos/agent-turn-evaluation.dto';
 import { RunEvaluationInputJob } from 'src/engine/metadata-modules/ai/ai-agent-monitor/jobs/run-evaluation-input.job';
 import { AgentTurnGraderService } from 'src/engine/metadata-modules/ai/ai-agent-monitor/services/agent-turn-grader.service';
+import { AiCallContextService } from 'src/engine/metadata-modules/ai/ai-call-context/services/ai-call-context.service';
 import { AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
 
 @UseGuards(WorkspaceAuthGuard, SettingsPermissionGuard(PermissionFlagType.AI))
@@ -37,6 +38,7 @@ export class AgentTurnResolver {
     @InjectMessageQueue(MessageQueue.aiQueue)
     private readonly messageQueueService: MessageQueueService,
     private readonly graderService: AgentTurnGraderService,
+    private readonly aiCallContextService: AiCallContextService,
   ) {}
 
   @Query(() => [AgentTurnDTO])
@@ -53,10 +55,19 @@ export class AgentTurnResolver {
   @Mutation(() => AgentTurnEvaluationDTO)
   async evaluateAgentTurn(
     @Args('turnId', { type: () => UUIDScalarType }) turnId: string,
+    @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<AgentTurnEvaluationDTO> {
-    const evaluation = await this.graderService.evaluateTurn(turnId);
+    return this.aiCallContextService.run(
+      {
+        workspaceId: workspace.id,
+        turnId,
+      },
+      async () => {
+        const evaluation = await this.graderService.evaluateTurn(turnId);
 
-    return evaluation;
+        return evaluation;
+      },
+    );
   }
 
   @Mutation(() => AgentTurnDTO)
@@ -66,45 +77,54 @@ export class AgentTurnResolver {
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string,
   ): Promise<AgentTurnEntity> {
-    const thread = this.threadRepository.create({
-      userWorkspaceId,
-      workspaceId: workspace.id,
-      title: `Eval: ${input.substring(0, 50)}...`,
-    });
-    const savedThread = await this.threadRepository.save(thread);
+    return this.aiCallContextService.run(
+      {
+        workspaceId: workspace.id,
+        userWorkspaceId,
+        agentId,
+      },
+      async () => {
+        const thread = this.threadRepository.create({
+          userWorkspaceId,
+          workspaceId: workspace.id,
+          title: `Eval: ${input.substring(0, 50)}...`,
+        });
+        const savedThread = await this.threadRepository.save(thread);
 
-    const turn = this.turnRepository.create({
-      threadId: savedThread.id,
-      agentId,
-      workspaceId: workspace.id,
-    });
-    const savedTurn = await this.turnRepository.save(turn);
+        const turn = this.turnRepository.create({
+          threadId: savedThread.id,
+          agentId,
+          workspaceId: workspace.id,
+        });
+        const savedTurn = await this.turnRepository.save(turn);
 
-    this.messageQueueService.add<{
-      turnId: string;
-      threadId: string;
-      agentId: string;
-      input: string;
-      workspaceId: string;
-    }>(RunEvaluationInputJob.name, {
-      turnId: savedTurn.id,
-      threadId: savedThread.id,
-      agentId,
-      input,
-      workspaceId: workspace.id,
-    });
+        this.messageQueueService.add<{
+          turnId: string;
+          threadId: string;
+          agentId: string;
+          input: string;
+          workspaceId: string;
+        }>(RunEvaluationInputJob.name, {
+          turnId: savedTurn.id,
+          threadId: savedThread.id,
+          agentId,
+          input,
+          workspaceId: workspace.id,
+        });
 
-    const turnWithRelations = await this.turnRepository.findOne({
-      where: { id: savedTurn.id },
-      relations: ['evaluations', 'messages', 'messages.parts'],
-    });
+        const turnWithRelations = await this.turnRepository.findOne({
+          where: { id: savedTurn.id },
+          relations: ['evaluations', 'messages', 'messages.parts'],
+        });
 
-    if (!turnWithRelations) {
-      throw new NotFoundError('Turn not found after creation', {
-        userFriendlyMessage: msg`Failed to create evaluation. Please try again.`,
-      });
-    }
+        if (!turnWithRelations) {
+          throw new NotFoundError('Turn not found after creation', {
+            userFriendlyMessage: msg`Failed to create evaluation. Please try again.`,
+          });
+        }
 
-    return turnWithRelations;
+        return turnWithRelations;
+      },
+    );
   }
 }

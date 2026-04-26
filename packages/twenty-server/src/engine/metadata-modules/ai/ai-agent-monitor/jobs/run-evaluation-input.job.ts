@@ -10,6 +10,7 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { AgentAsyncExecutorService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-async-executor.service';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
+import { AiCallContextService } from 'src/engine/metadata-modules/ai/ai-call-context/services/ai-call-context.service';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 
 import { EvaluateAgentTurnJob } from './evaluate-agent-turn.job';
@@ -33,55 +34,66 @@ export class RunEvaluationInputJob {
     private readonly aiAgentExecutorService: AgentAsyncExecutorService,
     @InjectMessageQueue(MessageQueue.aiQueue)
     private readonly messageQueueService: MessageQueueService,
+    private readonly aiCallContextService: AiCallContextService,
   ) {}
 
   @Process(RunEvaluationInputJob.name)
   async handle(data: RunEvaluationInputJobData): Promise<void> {
-    await this.agentChatService.addMessage({
-      threadId: data.threadId,
-      turnId: data.turnId,
-      uiMessage: {
-        role: 'user',
-        parts: [{ type: 'text', text: data.input }],
+    return this.aiCallContextService.run(
+      {
+        workspaceId: data.workspaceId,
+        agentId: data.agentId,
+        threadId: data.threadId,
+        turnId: data.turnId,
       },
-      workspaceId: data.workspaceId,
-    });
-
-    const agent = await this.agentRepository.findOne({
-      where: { id: data.agentId },
-    });
-
-    if (!agent) {
-      throw new Error(`Agent ${data.agentId} not found`);
-    }
-
-    const executionResult = await this.aiAgentExecutorService.executeAgent({
-      agent,
-      userPrompt: data.input,
-    });
-
-    await this.agentChatService.addMessage({
-      threadId: data.threadId,
-      turnId: data.turnId,
-      agentId: agent.id,
-      uiMessage: {
-        role: 'assistant',
-        parts: [
-          {
-            type: 'text',
-            text: JSON.stringify(executionResult.result) || '',
+      async () => {
+        await this.agentChatService.addMessage({
+          threadId: data.threadId,
+          turnId: data.turnId,
+          uiMessage: {
+            role: 'user',
+            parts: [{ type: 'text', text: data.input }],
           },
-        ],
-      },
-      workspaceId: data.workspaceId,
-    });
+          workspaceId: data.workspaceId,
+        });
 
-    await this.messageQueueService.add<{
-      turnId: string;
-      workspaceId: string;
-    }>(EvaluateAgentTurnJob.name, {
-      turnId: data.turnId,
-      workspaceId: data.workspaceId,
-    });
+        const agent = await this.agentRepository.findOne({
+          where: { id: data.agentId },
+        });
+
+        if (!agent) {
+          throw new Error(`Agent ${data.agentId} not found`);
+        }
+
+        const executionResult = await this.aiAgentExecutorService.executeAgent({
+          agent,
+          userPrompt: data.input,
+        });
+
+        await this.agentChatService.addMessage({
+          threadId: data.threadId,
+          turnId: data.turnId,
+          agentId: agent.id,
+          uiMessage: {
+            role: 'assistant',
+            parts: [
+              {
+                type: 'text',
+                text: JSON.stringify(executionResult.result) || '',
+              },
+            ],
+          },
+          workspaceId: data.workspaceId,
+        });
+
+        await this.messageQueueService.add<{
+          turnId: string;
+          workspaceId: string;
+        }>(EvaluateAgentTurnJob.name, {
+          turnId: data.turnId,
+          workspaceId: data.workspaceId,
+        });
+      },
+    );
   }
 }

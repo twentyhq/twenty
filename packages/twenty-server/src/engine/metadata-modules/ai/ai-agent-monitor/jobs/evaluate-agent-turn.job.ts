@@ -4,6 +4,7 @@ import { Process } from 'src/engine/core-modules/message-queue/decorators/proces
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { AgentTurnGraderService } from 'src/engine/metadata-modules/ai/ai-agent-monitor/services/agent-turn-grader.service';
+import { AiCallContextService } from 'src/engine/metadata-modules/ai/ai-call-context/services/ai-call-context.service';
 
 export type EvaluateAgentTurnJobData = {
   turnId: string;
@@ -14,7 +15,10 @@ export type EvaluateAgentTurnJobData = {
 export class EvaluateAgentTurnJob {
   private readonly logger = new Logger(EvaluateAgentTurnJob.name);
 
-  constructor(private readonly graderService: AgentTurnGraderService) {}
+  constructor(
+    private readonly graderService: AgentTurnGraderService,
+    private readonly aiCallContextService: AiCallContextService,
+  ) {}
 
   @Process(EvaluateAgentTurnJob.name)
   async handle(data: EvaluateAgentTurnJobData): Promise<void> {
@@ -26,10 +30,18 @@ export class EvaluateAgentTurnJob {
       throw new Error('Workspace ID is required');
     }
 
-    const evaluation = await this.graderService.evaluateTurn(data.turnId);
+    return this.aiCallContextService.run(
+      {
+        workspaceId: data.workspaceId,
+        turnId: data.turnId,
+      },
+      async () => {
+        const evaluation = await this.graderService.evaluateTurn(data.turnId);
 
-    this.logger.log(
-      `Evaluation completed for turn ${data.turnId}: score=${evaluation.score}`,
+        this.logger.log(
+          `Evaluation completed for turn ${data.turnId}: score=${evaluation.score}`,
+        );
+      },
     );
   }
 }

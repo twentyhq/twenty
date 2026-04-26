@@ -13,6 +13,7 @@ import {
   AiException,
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
+import { AiCallContextService } from 'src/engine/metadata-modules/ai/ai-call-context/services/ai-call-context.service';
 import { AiRestApiExceptionFilter } from 'src/engine/metadata-modules/ai/filters/ai-api-exception.filter';
 import { GenerateTextInput } from 'src/engine/metadata-modules/ai/ai-generate-text/dtos/generate-text.input';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
@@ -23,6 +24,7 @@ import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models
 export class AiGenerateTextController {
   constructor(
     private readonly aiModelRegistryService: AiModelRegistryService,
+    private readonly aiCallContextService: AiCallContextService,
   ) {}
 
   @Post('generate-text')
@@ -31,37 +33,42 @@ export class AiGenerateTextController {
     @Body() body: GenerateTextInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ) {
-    if (this.aiModelRegistryService.getAvailableModels().length === 0) {
-      throw new AiException(
-        'No AI models are available. Please configure at least one AI provider API key.',
-        AiExceptionCode.API_KEY_NOT_CONFIGURED,
-      );
-    }
+    return this.aiCallContextService.run(
+      { workspaceId: workspace.id },
+      async () => {
+        if (this.aiModelRegistryService.getAvailableModels().length === 0) {
+          throw new AiException(
+            'No AI models are available. Please configure at least one AI provider API key.',
+            AiExceptionCode.API_KEY_NOT_CONFIGURED,
+          );
+        }
 
-    const resolvedModelId = body.modelId ?? workspace.fastModel;
+        const resolvedModelId = body.modelId ?? workspace.fastModel;
 
-    this.aiModelRegistryService.validateModelAvailability(
-      resolvedModelId,
-      workspace,
-    );
+        this.aiModelRegistryService.validateModelAvailability(
+          resolvedModelId,
+          workspace,
+        );
 
-    const registeredModel =
-      await this.aiModelRegistryService.resolveModelForAgent({
-        modelId: resolvedModelId,
-      });
+        const registeredModel =
+          await this.aiModelRegistryService.resolveModelForAgent({
+            modelId: resolvedModelId,
+          });
 
-    const result = await generateText({
-      model: registeredModel.model,
-      system: body.systemPrompt,
-      prompt: body.userPrompt,
-    });
+        const result = await generateText({
+          model: registeredModel.model,
+          system: body.systemPrompt,
+          prompt: body.userPrompt,
+        });
 
-    return {
-      text: result.text,
-      usage: {
-        inputTokens: result.usage?.inputTokens ?? 0,
-        outputTokens: result.usage?.outputTokens ?? 0,
+        return {
+          text: result.text,
+          usage: {
+            inputTokens: result.usage?.inputTokens ?? 0,
+            outputTokens: result.usage?.outputTokens ?? 0,
+          },
+        };
       },
-    };
+    );
   }
 }

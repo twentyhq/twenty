@@ -24,6 +24,7 @@ import { RestApiModule } from 'src/engine/api/rest/rest-api.module';
 import { WorkspaceAuthContextMiddleware } from 'src/engine/core-modules/auth/middlewares/workspace-auth-context.middleware';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { DataloaderModule } from 'src/engine/dataloaders/dataloader.module';
+import { AiCallContextModule } from 'src/engine/metadata-modules/ai/ai-call-context/ai-call-context.module';
 import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/workspace-metadata-version/workspace-metadata-version.module';
 import { GraphQLHydrateRequestFromTokenMiddleware } from 'src/engine/middlewares/graphql-hydrate-request-from-token.middleware';
 import { MiddlewareModule } from 'src/engine/middlewares/middleware.module';
@@ -71,6 +72,7 @@ const MIGRATED_REST_METHODS = [
     McpModule,
     MiddlewareModule,
     WorkspaceMetadataVersionModule,
+    AiCallContextModule,
     // I18n module for translations
     I18nModule,
     // Conditional modules

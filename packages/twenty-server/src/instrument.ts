@@ -16,6 +16,7 @@ import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interface
 
 import { ExceptionHandlerDriver } from 'src/engine/core-modules/exception-handler/interfaces';
 import { MeterDriver } from 'src/engine/core-modules/metrics/types/meter-driver.type';
+import { aiCallContextStorage } from 'src/engine/metadata-modules/ai/ai-call-context/storage/ai-call-context.storage';
 import { parseArrayEnvVar } from 'src/utils/parse-array-env-var';
 
 const meterDrivers = parseArrayEnvVar(
@@ -45,6 +46,47 @@ if (process.env.EXCEPTION_HANDLER_DRIVER === ExceptionHandlerDriver.SENTRY) {
     profilesSampleRate: 0.3,
     sendDefaultPii: true,
     debug: process.env.NODE_ENV === NodeEnvironment.DEVELOPMENT,
+    beforeSendSpan: (span) => {
+      const op = span.op ?? '';
+      const origin = span.origin ?? '';
+      const isGenAiSpan =
+        op.startsWith('gen_ai.') || origin === 'auto.vercelai.otel';
+
+      if (!isGenAiSpan) {
+        return span;
+      }
+
+      const context = aiCallContextStorage.getStore();
+
+      if (!context) {
+        return span;
+      }
+
+      span.data = span.data ?? {};
+      span.data['twenty.workspace_id'] = context.workspaceId;
+
+      if (context.userWorkspaceId != null) {
+        span.data['twenty.user_workspace_id'] = context.userWorkspaceId;
+      }
+
+      if (context.agentId != null) {
+        span.data['twenty.agent_id'] = context.agentId;
+      }
+
+      if (context.workflowRunId != null) {
+        span.data['twenty.workflow_run_id'] = context.workflowRunId;
+      }
+
+      if (context.threadId != null) {
+        span.data['twenty.thread_id'] = context.threadId;
+      }
+
+      if (context.turnId != null) {
+        span.data['twenty.turn_id'] = context.turnId;
+      }
+
+      return span;
+    },
   });
 }
 

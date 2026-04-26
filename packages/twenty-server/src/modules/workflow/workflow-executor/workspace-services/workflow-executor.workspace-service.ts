@@ -16,6 +16,7 @@ import { MessageQueueService } from 'src/engine/core-modules/message-queue/servi
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { USAGE_RECORDED } from 'src/engine/core-modules/usage/constants/usage-recorded.constant';
+import { AiCallContextService } from 'src/engine/metadata-modules/ai/ai-call-context/services/ai-call-context.service';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
@@ -60,6 +61,7 @@ export class WorkflowExecutorWorkspaceService {
     private readonly metricsService: MetricsService,
     @InjectMessageQueue(MessageQueue.workflowQueue)
     private readonly messageQueueService: MessageQueueService,
+    private readonly aiCallContextService: AiCallContextService,
   ) {}
 
   async executeFromSteps({
@@ -470,39 +472,49 @@ export class WorkflowExecutorWorkspaceService {
       workspaceId,
     });
 
-    try {
-      return await workflowAction.execute({
-        currentStepId: stepId,
-        steps,
-        context: getWorkflowRunContext(stepInfos),
-        runInfo: {
-          workflowRunId,
-          workspaceId,
-        },
-      });
-    } catch (error) {
-      const isUserError =
-        error instanceof WorkflowStepExecutorException &&
-        (error.code === WorkflowStepExecutorExceptionCode.INVALID_STEP_TYPE ||
-          error.code === WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT ||
-          error.code === WorkflowStepExecutorExceptionCode.STEP_NOT_FOUND);
+    return this.aiCallContextService.run(
+      {
+        workspaceId,
+        workflowRunId,
+      },
+      async () => {
+        try {
+          return await workflowAction.execute({
+            currentStepId: stepId,
+            steps,
+            context: getWorkflowRunContext(stepInfos),
+            runInfo: {
+              workflowRunId,
+              workspaceId,
+            },
+          });
+        } catch (error) {
+          const isUserError =
+            error instanceof WorkflowStepExecutorException &&
+            (error.code ===
+              WorkflowStepExecutorExceptionCode.INVALID_STEP_TYPE ||
+              error.code ===
+                WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT ||
+              error.code === WorkflowStepExecutorExceptionCode.STEP_NOT_FOUND);
 
-      if (!isUserError) {
-        this.exceptionHandlerService.captureExceptions([error], {
-          workspace: { id: workspaceId },
-        });
+          if (!isUserError) {
+            this.exceptionHandlerService.captureExceptions([error], {
+              workspace: { id: workspaceId },
+            });
 
-        await this.metricsService.incrementCounter({
-          key: MetricsKeys.WorkflowRunSystemError,
-          eventId: workflowRunId,
-          debugLog: `[Workflow Run System Error] Workflow run ${workflowRunId} in workspace ${workspaceId} ended with system error`,
-        });
-      }
+            await this.metricsService.incrementCounter({
+              key: MetricsKeys.WorkflowRunSystemError,
+              eventId: workflowRunId,
+              debugLog: `[Workflow Run System Error] Workflow run ${workflowRunId} in workspace ${workspaceId} ended with system error`,
+            });
+          }
 
-      return {
-        error: error.message ?? 'Execution result error, no data or error',
-      };
-    }
+          return {
+            error: error.message ?? 'Execution result error, no data or error',
+          };
+        }
+      },
+    );
   }
 
   async skipAndFailSafelyStepsThenContinue({
