@@ -105,9 +105,9 @@ export const SettingsLogicFunctionDetail = () => {
             children: t`Applications`,
             href: getSettingsPath(SettingsPath.Applications),
           },
-          { children: `${applicationName}`, href: applicationContentHref },
+          { children: applicationName ?? '', href: applicationContentHref },
           { children: t`Logic functions`, href: applicationContentHref },
-          { children: `${logicFunction?.name}` },
+          { children: logicFunction?.name ?? '' },
         ];
       })()
     : [
@@ -120,7 +120,7 @@ export const SettingsLogicFunctionDetail = () => {
           href: getSettingsPath(SettingsPath.AI),
         },
         { children: t`Logic functions` },
-        { children: `${logicFunction?.name}` },
+        { children: logicFunction?.name ?? '' },
       ];
 
   const files = [
