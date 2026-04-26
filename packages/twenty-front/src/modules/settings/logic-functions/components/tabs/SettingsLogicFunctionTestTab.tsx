@@ -84,10 +84,10 @@ export const SettingsLogicFunctionTestTab = ({
     const result: SimulatedTrigger[] = [];
 
     if (isDefined(httpRouteTriggerSettings)) {
-      result.push({ type: 'http', label: 'HTTP', Icon: IconWebhook });
+      result.push({ type: 'http', label: t`HTTP`, Icon: IconWebhook });
     }
     if (isDefined(cronTriggerSettings)) {
-      result.push({ type: 'cron', label: 'Cron', Icon: IconClock });
+      result.push({ type: 'cron', label: t`Cron`, Icon: IconClock });
     }
     if (isDefined(databaseEventTriggerSettings)) {
       result.push({

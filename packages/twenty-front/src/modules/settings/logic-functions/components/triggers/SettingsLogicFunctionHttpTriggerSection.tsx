@@ -12,8 +12,11 @@ import { HTTPMethod } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
   IconCopy,
+  IconHttpDelete,
   IconHttpGet,
+  IconHttpPatch,
   IconHttpPost,
+  IconHttpPut,
   type IconComponent,
 } from 'twenty-ui/display';
 import { Toggle } from 'twenty-ui/input';
@@ -23,11 +26,14 @@ import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
 const HTTP_METHOD_OPTIONS: Array<{
   label: string;
-  value: HTTPMethod.GET | HTTPMethod.POST;
+  value: HTTPMethod;
   Icon: IconComponent;
 }> = [
   { label: 'GET', value: HTTPMethod.GET, Icon: IconHttpGet },
   { label: 'POST', value: HTTPMethod.POST, Icon: IconHttpPost },
+  { label: 'PUT', value: HTTPMethod.PUT, Icon: IconHttpPut },
+  { label: 'PATCH', value: HTTPMethod.PATCH, Icon: IconHttpPatch },
+  { label: 'DELETE', value: HTTPMethod.DELETE, Icon: IconHttpDelete },
 ];
 
 const DEFAULT_HTTP_SETTINGS: HttpRouteTriggerSettings = {
@@ -99,7 +105,7 @@ export const SettingsLogicFunctionHttpTriggerSection = ({
             label={t`Method`}
             fullWidth
             disabled={readonly}
-            value={value.httpMethod as HTTPMethod.GET | HTTPMethod.POST}
+            value={value.httpMethod as HTTPMethod}
             options={HTTP_METHOD_OPTIONS}
             onChange={(newMethod) => updateField('httpMethod', newMethod)}
             dropdownOffset={{ y: 4 }}

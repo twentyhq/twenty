@@ -61,6 +61,7 @@ export const SettingsLogicFunctionDatabaseEventTriggerSection = ({
               },
             ]}
             updateOperation={updateOperation}
+            removeOperation={() => onChange(null)}
             disabled={readonly}
           />
           <SettingsLogicFunctionTriggerPayloadFormat
