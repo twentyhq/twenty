@@ -8,7 +8,7 @@ export class AdminPanelTopWorkspaceDTO {
   id: string;
 
   @Field(() => String, { nullable: true })
-  logo?: string | null;
+  logoUrl?: string | null;
 
   @Field(() => String)
   name: string;

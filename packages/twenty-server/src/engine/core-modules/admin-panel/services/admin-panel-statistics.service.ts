@@ -136,7 +136,7 @@ export class AdminPanelStatisticsService {
 
     return rows.map((row) => ({
       id: row.id,
-      logo: this.fileUrlService.signWorkspaceLogoUrl({
+      logoUrl: this.fileUrlService.signWorkspaceLogoUrl({
         id: row.id,
         logoFileId: row.logoFileId,
       }),

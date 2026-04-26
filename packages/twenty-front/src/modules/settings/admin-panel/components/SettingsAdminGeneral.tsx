@@ -229,7 +229,7 @@ export const SettingsAdminGeneral = () => {
                         overflow="hidden"
                       >
                         <Avatar
-                          avatarUrl={workspace.logo}
+                          avatarUrl={workspace.logoUrl}
                           placeholder={workspace.name || ''}
                           placeholderColorSeed={workspace.id}
                           size="md"
