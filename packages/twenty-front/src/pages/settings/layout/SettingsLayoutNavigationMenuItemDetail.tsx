@@ -2,7 +2,6 @@ import { t } from '@lingui/core/macro';
 import { useParams } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 import { useApplicationManifest } from '~/pages/settings/layout/hooks/useApplicationManifest';
-import { MonoText } from '~/pages/settings/layout/components/MonoText';
 import {
   type DetailRow,
   SettingsLayoutDetailScaffold,
@@ -69,7 +68,7 @@ export const SettingsLayoutNavigationMenuItemDetail = () => {
         {
           key: 'universalIdentifier',
           label: t`Universal identifier`,
-          value: <MonoText value={item.universalIdentifier} />,
+          value: item.universalIdentifier,
         },
         { key: 'type', label: t`Type`, value: item.type },
         {
@@ -77,12 +76,8 @@ export const SettingsLayoutNavigationMenuItemDetail = () => {
           label: t`Destination`,
           value: destinationLabel ?? t`None`,
         },
-        { key: 'icon', label: t`Icon`, value: <MonoText value={item.icon} /> },
-        {
-          key: 'color',
-          label: t`Color`,
-          value: <MonoText value={item.color} />,
-        },
+        { key: 'icon', label: t`Icon`, value: item.icon ?? t`Not set` },
+        { key: 'color', label: t`Color`, value: item.color ?? t`Not set` },
         { key: 'position', label: t`Position`, value: item.position },
       ]
     : [];

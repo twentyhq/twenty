@@ -1,9 +1,7 @@
 import { t } from '@lingui/core/macro';
-import { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 import { useApplicationManifest } from '~/pages/settings/layout/hooks/useApplicationManifest';
-import { MonoText } from '~/pages/settings/layout/components/MonoText';
 import {
   type DetailRow,
   SettingsLayoutDetailScaffold,
@@ -24,14 +22,6 @@ export const SettingsLayoutPageLayoutDetail = () => {
     (pl) => pl.universalIdentifier === pageLayoutUniversalIdentifier,
   );
 
-  const objectLabelByUid = useMemo(() => {
-    const map = new Map<string, string>();
-    for (const obj of manifest?.objects ?? []) {
-      map.set(obj.universalIdentifier, obj.labelSingular);
-    }
-    return map;
-  }, [manifest?.objects]);
-
   const objectLabel = isDefined(pageLayout)
     ? resolveManifestObjectLabel(pageLayout.objectUniversalIdentifier, manifest)
     : undefined;
@@ -41,22 +31,19 @@ export const SettingsLayoutPageLayoutDetail = () => {
         {
           key: 'universalIdentifier',
           label: t`Universal identifier`,
-          value: <MonoText value={pageLayout.universalIdentifier} />,
+          value: pageLayout.universalIdentifier,
         },
         { key: 'type', label: t`Type`, value: pageLayout.type ?? t`Default` },
         {
           key: 'object',
           label: t`Object`,
-          value: objectLabel ?? (
-            <MonoText value={pageLayout.objectUniversalIdentifier} />
-          ),
+          value: objectLabel ?? pageLayout.objectUniversalIdentifier,
         },
       ]
     : [];
 
-  const sortedTabs = useMemo(
-    () => [...(pageLayout?.tabs ?? [])].sort((a, b) => a.position - b.position),
-    [pageLayout?.tabs],
+  const sortedTabs = [...(pageLayout?.tabs ?? [])].sort(
+    (a, b) => a.position - b.position,
   );
 
   return (
@@ -101,10 +88,11 @@ export const SettingsLayoutPageLayoutDetail = () => {
               key: widget.universalIdentifier,
               cells: [
                 widget.title,
-                <MonoText value={widget.type} />,
-                (isDefined(widget.objectUniversalIdentifier)
-                  ? objectLabelByUid.get(widget.objectUniversalIdentifier)
-                  : undefined) ?? '—',
+                widget.type,
+                resolveManifestObjectLabel(
+                  widget.objectUniversalIdentifier,
+                  manifest,
+                ) ?? '—',
               ],
             }))}
           />
