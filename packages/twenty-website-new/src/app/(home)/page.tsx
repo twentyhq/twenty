@@ -1,16 +1,16 @@
-import {
-  HELPED_DATA,
-  HERO_DATA,
-  HOME_STEPPER_DATA,
-  PROBLEM_DATA,
-  TESTIMONIALS_DATA,
-  THREE_CARDS_FEATURE_DATA,
-  THREE_CARDS_ILLUSTRATION_DATA,
-} from '@/app/(home)/_constants';
-import { TalkToUsButton } from '@/app/components/ContactCalModal';
-import { FAQ_DATA, MENU_DATA, TRUSTED_BY_DATA } from '@/app/_constants';
+import { HELPED_DATA } from '@/app/(home)/helped.data';
+import { HERO_DATA } from '@/app/(home)/hero.data';
+import { HOME_STEPPER_DATA } from '@/app/(home)/home-stepper.data';
+import { PROBLEM_DATA } from '@/app/(home)/problem.data';
+import { TESTIMONIALS_DATA } from '@/app/(home)/testimonials.data';
+import { THREE_CARDS_FEATURE_DATA } from '@/app/(home)/three-cards-feature.data';
+import { THREE_CARDS_ILLUSTRATION_DATA } from '@/app/(home)/three-cards-illustration.data';
+import { TalkToUsButton } from '@/lib/contact-cal';
+import { FAQ_DATA } from '@/sections/Faq/data';
+import { MENU_DATA } from '@/sections/Menu/data';
+import { TRUSTED_BY_DATA } from '@/sections/TrustedBy/data';
 import { Body, Eyebrow, Heading, LinkButton } from '@/design-system/components';
-import { Pages } from '@/enums/pages';
+import { Pages } from '@/lib/pages';
 import { ArrowRightUpIcon } from '@/icons';
 import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';
 import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels';
@@ -29,9 +29,7 @@ import { styled } from '@linaria/react';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Twenty | #1 open source CRM',
-  description:
-    'The #1 open source CRM for modern teams. Modular, scalable, and built to fit your business.',
+  alternates: { canonical: '/' },
 };
 
 const HOME_TOP_BACKGROUND_COLOR = '#F4F4F4';
@@ -129,7 +127,7 @@ const threeCardsIllustrationHeadingClassName = css`
   width: 100%;
 
   @media (min-width: ${theme.breakpoints.md}px) {
-    max-width: 921px;
+    max-width: ${theme.layout.editorial};
   }
 
   [data-family='sans'] {
@@ -151,6 +149,16 @@ export default async function HomePage() {
 
   return (
     <>
+      {/*
+       * Above-the-fold home hero background texture. Preload warms the
+       * HTTP cache so it is ready by the time HomeBackgroundHalftone
+       * binds it to the WebGL pipeline.
+       */}
+      <link
+        as="image"
+        href="/illustrations/generated/home-background-bridge.png"
+        rel="preload"
+      />
       <Menu.Root
         backgroundColor={HOME_TOP_BACKGROUND_COLOR}
         scheme="primary"
@@ -278,7 +286,7 @@ export default async function HomePage() {
         </Testimonials.Carousel>
       </Testimonials.Root>
 
-      <Faq.Root illustration={FAQ_DATA.illustration}>
+      <Faq.Root>
         <Faq.Intro>
           <Eyebrow colorScheme="secondary" heading={FAQ_DATA.eyebrow.heading} />
           <Faq.Heading segments={FAQ_DATA.heading} />

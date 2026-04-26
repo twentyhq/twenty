@@ -1,10 +1,6 @@
 type TagIconProps = { size: number; color: string; strokeWidth?: number };
 
-export function TagIcon({
-  size,
-  color,
-  strokeWidth = 1.5,
-}: TagIconProps) {
+export function TagIcon({ size, color, strokeWidth = 1.5 }: TagIconProps) {
   return (
     <svg
       width={size}

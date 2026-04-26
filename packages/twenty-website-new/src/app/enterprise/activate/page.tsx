@@ -1,22 +1,24 @@
-import { MENU_DATA } from '@/app/_constants';
+import { MENU_DATA } from '@/sections/Menu/data';
 import { EnterpriseActivateClient } from '@/app/enterprise/activate/EnterpriseActivateClient';
 import { Body, Container, Eyebrow } from '@/design-system/components';
-import type { HeadingType } from '@/design-system/components/Heading/types/Heading';
-import { Pages } from '@/enums/pages';
+import type { HeadingType } from '@/design-system/components/Heading';
+import { Pages } from '@/lib/pages';
 import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';
 import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels';
 import { Hero } from '@/sections/Hero/components';
 import { Menu } from '@/sections/Menu/components';
 import { theme } from '@/theme';
+import { buildPageMetadata } from '@/lib/seo';
 import type { Metadata } from 'next';
 import { Suspense } from 'react';
 import { styled } from '@linaria/react';
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildPageMetadata({
+  path: '/enterprise/activate',
   title: 'Enterprise activation | Twenty',
   description:
     'Complete activation for your Twenty self-hosted enterprise license.',
-};
+});
 
 const ENTERPRISE_ACTIVATE_HEADING: HeadingType[] = [
   { text: 'Enterprise ', fontFamily: 'serif' },

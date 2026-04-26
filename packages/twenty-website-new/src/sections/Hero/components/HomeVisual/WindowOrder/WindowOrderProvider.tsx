@@ -10,20 +10,6 @@ import {
   type ReactNode,
 } from 'react';
 
-// Z-order manager for the hero's floating windows. Each window registers on
-// mount and can call `activate()` to jump to the front on click. The provider
-// keeps a stack (first = back, last = front); z-indexes start at 2 so floating
-// windows always sit above the static scene.
-//
-// Split into two contexts on purpose:
-// - `Api`   — stable callbacks (never changes identity) so `useEffect` in the
-//             consumer only runs on mount / unmount.
-// - `Stack` — the reactive ordering; changes every activate, consumers
-//             derive their z-index from it.
-// Without this split, `useEffect(() => context.register(id), [context])`
-// would unregister and re-register on every activate call (because the
-// memoized value reference changes), causing stack churn.
-
 type WindowOrderApi = {
   register: (id: string) => void;
   unregister: (id: string) => void;

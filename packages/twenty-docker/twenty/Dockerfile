@@ -49,8 +49,6 @@ RUN yarn workspaces focus --production twenty-emails twenty-shared twenty-sdk tw
 
 FROM common-deps AS twenty-front-build
 
-ARG REACT_APP_SERVER_BASE_URL
-
 COPY ./packages/twenty-front /app/packages/twenty-front
 COPY ./packages/twenty-front-component-renderer /app/packages/twenty-front-component-renderer
 COPY ./packages/twenty-ui /app/packages/twenty-ui
@@ -70,20 +68,17 @@ RUN if [ -d /app/packages/twenty-front/build ]; then \
 
 
 # ===========================================================================
-# Target: twenty (production)
-#   docker build --target twenty -f packages/twenty-docker/twenty/Dockerfile .
+# Target: twenty-server (server only, no frontend)
+#   docker build --target twenty-server -f packages/twenty-docker/twenty/Dockerfile .
 # ===========================================================================
 
-FROM node:24-alpine AS twenty
+FROM node:24-alpine AS twenty-server
 
 RUN apk add --no-cache curl jq postgresql-client
 
 COPY ./packages/twenty-docker/twenty/entrypoint.sh /app/entrypoint.sh
 RUN chmod +x /app/entrypoint.sh
 WORKDIR /app/packages/twenty-server
-
-ARG REACT_APP_SERVER_BASE_URL
-ENV REACT_APP_SERVER_BASE_URL=$REACT_APP_SERVER_BASE_URL
 
 ARG APP_VERSION
 ENV APP_VERSION=$APP_VERSION
@@ -110,11 +105,8 @@ COPY --chown=1000 --from=twenty-server-build /app/packages/twenty-client-sdk/dis
 COPY --chown=1000 --from=twenty-server-build /app/packages/twenty-ui/package.json /app/packages/twenty-ui/
 COPY --chown=1000 --from=twenty-server-build /app/packages/twenty-front/package.json /app/packages/twenty-front/
 
-# Frontend static build
-COPY --chown=1000 --from=twenty-front-build /app/packages/twenty-front/build /app/packages/twenty-server/dist/front
-
 LABEL org.opencontainers.image.source=https://github.com/twentyhq/twenty
-LABEL org.opencontainers.image.description="Production Twenty image with backend and frontend."
+LABEL org.opencontainers.image.description="Twenty server image (no frontend)."
 
 RUN mkdir -p /app/.local-storage /app/packages/twenty-server/.local-storage && \
     chown 1000:1000 /app/.local-storage /app/packages/twenty-server/.local-storage
@@ -126,8 +118,32 @@ ENTRYPOINT ["/app/entrypoint.sh"]
 
 
 # ===========================================================================
-# Target: twenty-aws
-# docker build --target twenty-aws -f packages/twenty-docker/twenty/Dockerfile .
+# Target: twenty-server-aws (server only + aws-cli, no frontend)
+#   docker build --target twenty-server-aws -f packages/twenty-docker/twenty/Dockerfile .
+# ===========================================================================
+
+FROM twenty-server AS twenty-server-aws
+
+USER root
+RUN apk add --no-cache aws-cli
+USER 1000
+
+
+# ===========================================================================
+# Target: twenty (server + frontend)
+#   docker build --target twenty -f packages/twenty-docker/twenty/Dockerfile .
+# ===========================================================================
+
+FROM twenty-server AS twenty
+
+COPY --chown=1000 --from=twenty-front-build /app/packages/twenty-front/build /app/packages/twenty-server/dist/front
+
+LABEL org.opencontainers.image.description="Twenty image with backend and frontend."
+
+
+# ===========================================================================
+# Target: twenty-aws (server + frontend + aws-cli)
+#   docker build --target twenty-aws -f packages/twenty-docker/twenty/Dockerfile .
 # ===========================================================================
 
 FROM twenty AS twenty-aws
@@ -211,7 +227,6 @@ RUN mkdir -p /data/postgres /data/redis /app/packages/twenty-server/.local-stora
  && chown -R postgres:postgres /data/postgres \
  && chown 1000:1000 /data/redis /app/packages/twenty-server/.local-storage
 
-ARG REACT_APP_SERVER_BASE_URL
 ARG APP_VERSION=0.0.0
 
 ENV S6_KEEP_ENV=1
@@ -220,7 +235,6 @@ ENV PG_DATABASE_URL=postgres://twenty:twenty@localhost:5432/default \
     REDIS_URL=redis://localhost:6379 \
     STORAGE_TYPE=local \
     APP_SECRET=twenty-app-dev-secret-not-for-production \
-    REACT_APP_SERVER_BASE_URL=$REACT_APP_SERVER_BASE_URL \
     APP_VERSION=$APP_VERSION \
     NODE_ENV=development \
     NODE_PORT=2020 \

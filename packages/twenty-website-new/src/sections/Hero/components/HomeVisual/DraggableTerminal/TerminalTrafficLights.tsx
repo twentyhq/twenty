@@ -8,20 +8,15 @@ import {
   type MouseEvent as ReactMouseEvent,
 } from 'react';
 import { createPortal } from 'react-dom';
+import { theme } from '@/theme';
 import { TERMINAL_TOKENS } from './terminalTokens';
 
 const TRAFFIC_LIGHT_DOT_SIZE = 12;
 const TRAFFIC_LIGHT_GAP = 8;
 const DEFAULT_HORIZONTAL_INSET = 6;
 
-// Global event dispatched when the placeholder easter egg crosses its
-// escalation threshold. Listened for by every TerminalTrafficLights on the
-// page so all six dots (three per window) detach and fall at once.
 export const TRAFFIC_LIGHTS_ESCAPE_EVENT = 'twenty-traffic-lights-escape';
 
-// Physics tuned for a slow, floaty fall at ~60fps. Values are pixels per
-// frame (or per frame^2 for gravity). Ground friction is intentionally low
-// so the dots slide a little before settling, which reads as weight.
 const GRAVITY = 0.55;
 const BOUNCE_DAMPING = 0.4;
 const AIR_FRICTION = 0.915;
@@ -108,12 +103,6 @@ const TrafficLightDot = styled.button<{
   }
 `;
 
-// The portal layer renders each flying dot as position: fixed on document.body
-// so the physics loop's coordinates match the viewport. The dots can fall past
-// any overflow: hidden or transformed ancestor because they aren't descendants
-// of those anymore. The container carries the physics transform; the inner
-// ball carries the click-to-return pop animation so scale doesn't fight the
-// physics translate/rotate.
 const FlyingDotContainer = styled.button`
   background: transparent;
   border: none;
@@ -126,7 +115,7 @@ const FlyingDotContainer = styled.button`
   position: fixed;
   top: 0;
   width: ${TRAFFIC_LIGHT_DOT_SIZE}px;
-  z-index: 9999;
+  z-index: ${theme.zIndex.portalTop};
 
   /* Catchable once the physics loop flags the dot as resting. */
   &[data-resting='true'] {
@@ -279,8 +268,6 @@ export const TerminalTrafficLights = ({
 
   useEffect(() => {
     const handleEscape = () => {
-      // Always reset and re-fling so each new streak of placeholder clicks
-      // triggers a fresh escape, even if dots are mid-air or already resting.
       physicsRef.current = originalRefs.current.map((el) => {
         const rect = el?.getBoundingClientRect();
         return {
@@ -295,8 +282,6 @@ export const TerminalTrafficLights = ({
           isResting: false,
         };
       });
-      // Clear any data-resting markers from the previous run so returned dots
-      // can be re-thrown without their cursor: pointer lingering.
       flyingRefs.current.forEach((el) => {
         if (el) el.removeAttribute('data-resting');
       });
@@ -381,9 +366,6 @@ export const TerminalTrafficLights = ({
         (p, i) => p.isResting || !flyingRefs.current[i],
       );
       if (allSettled) {
-        // Every dot has either come to rest or been caught/returned — suspend
-        // the rAF loop. A scroll impulse or a fresh escape re-flings dots and
-        // the tick is restarted from that effect.
         rafId = 0;
         return;
       }
@@ -424,8 +406,6 @@ export const TerminalTrafficLights = ({
   const setFlyingRef = (index: number) => (el: HTMLButtonElement | null) => {
     flyingRefs.current[index] = el;
     if (el) {
-      // Seed with the captured starting position so the first paint before
-      // rAF runs doesn't flash the dot in the top-left corner.
       const p = physicsRef.current[index];
       if (p) {
         el.style.transform = `translate(${p.x}px, ${p.y}px)`;

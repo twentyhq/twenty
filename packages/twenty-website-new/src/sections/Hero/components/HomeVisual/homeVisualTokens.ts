@@ -1,5 +1,3 @@
-// Resolved CSS token values that replace twenty-ui's themeCssVariables.
-// These are the light-theme defaults for Twenty's design system.
 export const VISUAL_TOKENS = {
   font: {
     family: "'Inter', sans-serif",

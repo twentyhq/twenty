@@ -2,8 +2,8 @@ import {
   getContainedImageRect,
   getImageFootprintScale,
   getImagePreviewZoom,
-} from '@/app/halftone/_lib/footprint';
-import type { HalftoneStudioSettings } from '@/app/halftone/_lib/state';
+} from '@/lib/halftone/footprint';
+import type { HalftoneStudioSettings } from '@/lib/halftone/state';
 
 type PixelBounds = {
   maxX: number;
@@ -160,8 +160,7 @@ export function generateImageHalftoneSvg({
   );
   const localPower = clamp(settings.halftone.power, -1.5, 1.5);
   const localWidth = clamp(settings.halftone.width, 0.05, 1.4);
-  const toneTargetMultiplier =
-    settings.halftone.toneTarget === 'dark' ? -1 : 1;
+  const toneTargetMultiplier = settings.halftone.toneTarget === 'dark' ? -1 : 1;
   const lineColor = settings.halftone.dashColor;
   const columns = Math.ceil(width / halftoneSize);
   const rows = Math.ceil(height / halftoneSize);
@@ -183,17 +182,17 @@ export function generateImageHalftoneSvg({
 
       const contrast = settings.halftone.imageContrast;
       const red = clamp(
-        ((pixels[sampleIndex] / 255 - 0.5) * contrast) + 0.5,
+        (pixels[sampleIndex] / 255 - 0.5) * contrast + 0.5,
         0,
         1,
       );
       const green = clamp(
-        ((pixels[sampleIndex + 1] / 255 - 0.5) * contrast) + 0.5,
+        (pixels[sampleIndex + 1] / 255 - 0.5) * contrast + 0.5,
         0,
         1,
       );
       const blue = clamp(
-        ((pixels[sampleIndex + 2] / 255 - 0.5) * contrast) + 0.5,
+        (pixels[sampleIndex + 2] / 255 - 0.5) * contrast + 0.5,
         0,
         1,
       );
@@ -203,8 +202,6 @@ export function generateImageHalftoneSvg({
         toneValue = 1 - toneValue;
       }
 
-      // Preserve the pre-toneTarget light-mode response by keeping the power
-      // bias inside the averaged tone calculation.
       const bandRadius =
         clamp(toneValue + (localPower * Math.SQRT1_2) / 3, 0, 1) * 0.93;
 

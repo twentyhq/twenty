@@ -11,7 +11,7 @@ import {
   type HalftoneBackgroundSettings,
   type HalftoneSourceMode,
   type HalftoneStudioSettings,
-} from '@/app/halftone/_lib/state';
+} from '@/lib/halftone/state';
 import { styled } from '@linaria/react';
 import {
   ColorControlLabel,

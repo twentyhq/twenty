@@ -1,4 +1,5 @@
-import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
+import { defineLogicFunction } from 'twenty-sdk/define';
+import { type RoutePayload } from 'twenty-sdk/logic-function';
 import { fetchProjectItems } from 'src/modules/github/project-item/graphql/github/fetch-project-items';
 import type { ProjectV2Item } from 'src/modules/github/project-item/types/project-v2-item';
 import { batchUpsertProjectItems } from 'src/modules/github/project-item/graphql/mutations/batch-upsert';

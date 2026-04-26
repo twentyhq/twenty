@@ -1,14 +1,12 @@
-import { MENU_DATA } from '@/app/_constants';
-import {
-  EDITORIAL_FOUR,
-  EDITORIAL_ONE,
-  EDITORIAL_THREE,
-  HERO_DATA,
-  MARQUEE_DATA,
-  SIGNOFF_DATA,
-} from '@/app/why-twenty/_constants';
+import { MENU_DATA } from '@/sections/Menu/data';
+import { EDITORIAL_FOUR } from '@/app/why-twenty/editorial-four.data';
+import { EDITORIAL_ONE } from '@/app/why-twenty/editorial-one.data';
+import { EDITORIAL_THREE } from '@/app/why-twenty/editorial-three.data';
+import { HERO_DATA } from '@/app/why-twenty/hero.data';
+import { MARQUEE_DATA } from '@/app/why-twenty/marquee.data';
+import { SIGNOFF_DATA } from '@/app/why-twenty/signoff.data';
 import { LinkButton } from '@/design-system/components';
-import { Pages } from '@/enums/pages';
+import { Pages } from '@/lib/pages';
 import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';
 import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels';
 import { Editorial } from '@/sections/Editorial/components';
@@ -17,6 +15,7 @@ import { Marquee } from '@/sections/Marquee/components';
 import { Menu } from '@/sections/Menu/components';
 import { Signoff } from '@/sections/Signoff/components';
 import { theme } from '@/theme';
+import { buildPageMetadata } from '@/lib/seo';
 import { css } from '@linaria/core';
 import type { Metadata } from 'next';
 
@@ -59,11 +58,12 @@ const sectionCrosshairRight = {
   lineColor: crosshairLineColor,
 };
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildPageMetadata({
+  path: '/why-twenty',
   title: 'Why Twenty | Twenty',
   description:
     'Most packaged software makes companies more similar. Learn why the future of CRM is built, not bought.',
-};
+});
 
 export default async function WhyTwentyPage() {
   const stats = await fetchCommunityStats();
@@ -71,6 +71,16 @@ export default async function WhyTwentyPage() {
 
   return (
     <>
+      {/*
+       * Above-the-fold hero scene. Preload kicks off the GLB fetch in
+       * parallel with the JS chunk download, so the model is already in
+       * the browser cache by the time Three.js asks for it.
+       */}
+      <link
+        as="fetch"
+        href="/illustrations/why-twenty/hero/hero.glb"
+        rel="preload"
+      />
       <Menu.Root
         backgroundColor={theme.colors.secondary.background[100]}
         scheme="secondary"
@@ -100,7 +110,6 @@ export default async function WhyTwentyPage() {
         backgroundColor={theme.colors.secondary.background[100]}
         color={theme.colors.secondary.text[100]}
         crosshair={sectionCrosshairRight}
-        mutedColor={theme.colors.secondary.text[60]}
       >
         <Editorial.Intro className={editorialOneIntroClass}>
           <Editorial.Eyebrow
@@ -109,16 +118,23 @@ export default async function WhyTwentyPage() {
           />
           <Editorial.Heading segments={EDITORIAL_ONE.heading!} />
         </Editorial.Intro>
-        <Editorial.Body body={EDITORIAL_ONE.body} layout="two-column-left" />
+        <Editorial.Body
+          body={EDITORIAL_ONE.body}
+          color={theme.colors.secondary.text[60]}
+          layout="two-column-left"
+        />
       </Editorial.Root>
 
       {/*
       <Editorial.Root
         backgroundColor={theme.colors.secondary.background[100]}
         color={theme.colors.secondary.text[100]}
-        mutedColor={theme.colors.secondary.text[60]}
       >
-        <Editorial.Body body={EDITORIAL_TWO.body} layout="centered" />
+        <Editorial.Body
+          body={EDITORIAL_TWO.body}
+          color={theme.colors.secondary.text[60]}
+          layout="centered"
+        />
       </Editorial.Root>
       */}
 
@@ -126,7 +142,6 @@ export default async function WhyTwentyPage() {
         backgroundColor={theme.colors.secondary.background[100]}
         color={theme.colors.secondary.text[100]}
         crosshair={sectionCrosshairLeft}
-        mutedColor={theme.colors.secondary.text[60]}
       >
         <Editorial.Intro className={editorialRightIntroClass}>
           <Editorial.Eyebrow
@@ -135,7 +150,11 @@ export default async function WhyTwentyPage() {
           />
           <Editorial.Heading segments={EDITORIAL_FOUR.heading!} />
         </Editorial.Intro>
-        <Editorial.Body body={EDITORIAL_FOUR.body} layout="two-column-right" />
+        <Editorial.Body
+          body={EDITORIAL_FOUR.body}
+          color={theme.colors.secondary.text[60]}
+          layout="two-column-right"
+        />
       </Editorial.Root>
 
       {/* <Quote.Root backgroundColor={theme.colors.secondary.background[80]}>
@@ -147,7 +166,6 @@ export default async function WhyTwentyPage() {
         backgroundColor={theme.colors.secondary.background[100]}
         color={theme.colors.secondary.text[100]}
         crosshair={sectionCrosshairRight}
-        mutedColor={theme.colors.secondary.text[60]}
       >
         <Editorial.Intro className={editorialOneIntroClass}>
           <Editorial.Eyebrow
@@ -156,14 +174,19 @@ export default async function WhyTwentyPage() {
           />
           <Editorial.Heading segments={EDITORIAL_THREE.heading!} />
         </Editorial.Intro>
-        <Editorial.Body body={EDITORIAL_THREE.body} layout="two-column-left" />
+        <Editorial.Body
+          body={EDITORIAL_THREE.body}
+          color={theme.colors.secondary.text[60]}
+          layout="two-column-left"
+        />
       </Editorial.Root>
 
       <Marquee.Root
         backgroundColor={theme.colors.secondary.background[100]}
         color={theme.colors.secondary.text[100]}
-        heading={MARQUEE_DATA.heading}
-      />
+      >
+        <Marquee.Heading segments={MARQUEE_DATA.heading} />
+      </Marquee.Root>
 
       <Signoff.Root
         backgroundColor={theme.colors.secondary.background[100]}

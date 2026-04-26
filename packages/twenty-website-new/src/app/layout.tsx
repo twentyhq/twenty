@@ -1,6 +1,10 @@
 import { FooterVisibilityGate } from '@/app/_components/FooterVisibilityGate';
-import { FOOTER_DATA } from '@/app/_constants/footer';
-import { ContactCalModalRoot } from '@/app/components/ContactCalModal';
+import { ScrollToTopOnRouteChange } from '@/app/_components/ScrollToTopOnRouteChange';
+import { FOOTER_DATA } from '@/sections/Footer/data';
+import { ContactCalModalRoot } from '@/lib/contact-cal';
+import { PartnerApplicationModalRoot } from '@/lib/partner-application';
+import { getSiteUrl } from '@/lib/seo';
+import { DRACO_DECODER_ORIGIN } from '@/lib/visual-runtime/draco-decoder-path';
 import { Footer } from '@/sections/Footer/components';
 import { theme } from '@/theme';
 import { cssVariables } from '@/theme/css-variables';
@@ -37,7 +41,7 @@ const vt323 = VT323({
   display: 'swap',
 });
 
-css`
+const _globalStyles = css`
   :global(*),
   :global(*::before),
   :global(*::after) {
@@ -55,7 +59,11 @@ css`
     display: flex;
     font-family: ${theme.font.family.sans};
     flex-direction: column;
+    /* dvh keeps the footer pinned to the visible viewport bottom on mobile
+     * Safari (where 100vh = large viewport with chrome hidden, leaving a
+     * gap when the URL bar is showing). vh fallback for older browsers. */
     min-height: 100vh;
+    min-height: 100dvh;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
@@ -65,10 +73,32 @@ const StyledMain = styled.main`
   flex-grow: 1;
 `;
 
+const SITE_TITLE = 'Twenty | #1 open source CRM';
+const SITE_DESCRIPTION =
+  'The #1 open source CRM for modern teams. Modular, scalable, and built to fit your business.';
+
 export const metadata: Metadata = {
-  title: 'Twenty | #1 open source CRM',
-  description:
-    'The #1 open source CRM for modern teams. Modular, scalable, and built to fit your business.',
+  metadataBase: new URL(getSiteUrl()),
+  title: {
+    default: SITE_TITLE,
+    template: '%s | Twenty',
+  },
+  description: SITE_DESCRIPTION,
+  applicationName: 'Twenty',
+  openGraph: {
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
+    url: '/',
+    siteName: 'Twenty',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
+    site: '@twentycrm',
+    creator: '@twentycrm',
+  },
 };
 
 export default function RootLayout({
@@ -76,22 +106,37 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
+      <head>
+        {/*
+         * Warm up the connection to the DRACO decoder host so the first 3D
+         * model on the page does not pay the full TLS handshake cost the
+         * moment it starts decoding.
+         */}
+        <link
+          crossOrigin="anonymous"
+          href={DRACO_DECODER_ORIGIN}
+          rel="preconnect"
+        />
+      </head>
       <body
         className={`${cssVariables} ${hostGrotesk.variable} ${aleo.variable} ${azeretMono.variable} ${vt323.variable}`}
         suppressHydrationWarning
       >
         <ContactCalModalRoot>
-          <StyledMain>{children}</StyledMain>
-          <FooterVisibilityGate>
-            <Footer.Root illustration={FOOTER_DATA.illustration}>
-              <Footer.Logo />
-              <Footer.Nav groups={FOOTER_DATA.navGroups} />
-              <Footer.Bottom
-                copyright={FOOTER_DATA.bottom.copyright}
-                links={FOOTER_DATA.socialLinks}
-              />
-            </Footer.Root>
-          </FooterVisibilityGate>
+          <PartnerApplicationModalRoot>
+            <ScrollToTopOnRouteChange />
+            <StyledMain>{children}</StyledMain>
+            <FooterVisibilityGate>
+              <Footer.Root>
+                <Footer.Logo />
+                <Footer.Nav groups={FOOTER_DATA.navGroups} />
+                <Footer.Bottom
+                  copyright={FOOTER_DATA.bottom.copyright}
+                  links={FOOTER_DATA.socialLinks}
+                />
+              </Footer.Root>
+            </FooterVisibilityGate>
+          </PartnerApplicationModalRoot>
         </ContactCalModalRoot>
       </body>
     </html>

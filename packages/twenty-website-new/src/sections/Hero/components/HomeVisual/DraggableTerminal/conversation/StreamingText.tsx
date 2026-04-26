@@ -45,9 +45,6 @@ const Caret = styled.span`
   }
 `;
 
-// Reveals a mixed sequence of plain text + JSX nodes character-by-character.
-// Each node occupies `length` characters in the animation (default 1) so the
-// pacing stays uniform even when inline pills / links are sprinkled in.
 export const StreamingText = ({
   segments,
   charDurationMs = 14,
@@ -98,10 +95,6 @@ export const StreamingText = ({
     return () => window.clearTimeout(id);
   }, [charDurationMs, instant, revealed, totalLength]);
 
-  // Fire per-segment `onReveal` callbacks exactly once as each segment becomes
-  // fully revealed by the streamer. Walking segments in order on every
-  // `revealed` tick is cheap (paragraphs are short) and keeps firing order
-  // deterministic.
   useEffect(() => {
     let offset = 0;
     for (let index = 0; index < segments.length; index += 1) {

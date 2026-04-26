@@ -4,9 +4,8 @@ import {
   BaseButton,
   buttonBaseStyles,
 } from '@/design-system/components/Button/BaseButton';
+import { usePartnerApplicationModal } from '@/lib/partner-application';
 import { styled } from '@linaria/react';
-
-import { usePartnerApplicationModal } from './PartnerApplicationModalRoot';
 
 const StyledTrigger = styled.button`
   ${buttonBaseStyles}

@@ -1,5 +1,5 @@
-import type { BodyType } from '@/design-system/components/Body/types/Body';
-import type { ImageType } from '@/design-system/components/Image/types/Image';
+import type { BodyType } from '@/design-system/components/Body';
+import type { ImageType } from '@/design-system/components/Image';
 
 export type TabType = {
   body: BodyType;

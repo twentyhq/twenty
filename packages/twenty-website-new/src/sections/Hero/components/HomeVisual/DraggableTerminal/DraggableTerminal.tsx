@@ -29,10 +29,6 @@ const INITIAL_PROMPT_TEXT =
   'Scaffold a launch-ops CRM in my workspace with rockets, launches, payloads, customers, and launch sites, with relevant actions for each.';
 const CLEARED_PROMPT_TEXT = 'Ask anything…';
 
-// Initial / minimum dimensions for the Terminal window (Figma mock).
-// Initial height is tuned to hug the prompt box + top bar so there's no
-// large empty area above the prompt before the chat runs — it expands to
-// TERMINAL_CHAT_EXPANDED_HEIGHT once the conversation starts.
 const TERMINAL_INITIAL_WIDTH = 380;
 const TERMINAL_INITIAL_HEIGHT = 220;
 const TERMINAL_CHAT_EXPANDED_HEIGHT = 480;
@@ -42,8 +38,6 @@ const TERMINAL_MIN_WIDTH = 300;
 const TERMINAL_MIN_HEIGHT = 200;
 const TERMINAL_INITIAL_BOTTOM_OFFSET = 96;
 const MIN_EDGE_GAP = 0;
-// Below this parent width, stack Terminal below App Window with a diagonal
-// offset so both windows stay visible and clickable on mobile.
 const MOBILE_PARENT_BREAKPOINT = 640;
 const MOBILE_OFFSET_X = 16;
 const MOBILE_OFFSET_Y = 48;
@@ -142,12 +136,20 @@ const Shell = styled.div<{
     if (!$animationsEnabled) {
       return base;
     }
-    // Spring-like curve (overshoots slightly then settles) for a lively grow.
     const springCurve = 'cubic-bezier(0.34, 1.45, 0.55, 1)';
     const growDuration = '0.42s';
     return `${base}, height ${growDuration} ${springCurve}, width ${growDuration} ${springCurve}, transform ${growDuration} ${springCurve}`;
   }};
   will-change: transform, width, height;
+
+  @media (prefers-reduced-motion: reduce) {
+    /* Drop the decorative spring grow; keep the colour / shadow / opacity
+       acknowledgement transitions, which are functional feedback. */
+    transition:
+      background-color 0.22s ease,
+      box-shadow 0.22s ease,
+      opacity 0.1s ease;
+  }
 `;
 
 const Body = styled.div`
@@ -333,8 +335,6 @@ export const DraggableTerminal = ({
   const [instantComplete, setInstantComplete] = useState(false);
 
   useEffect(() => {
-    // Defer enabling grow animations until after the initial fade-in so the
-    // first paint positions the window without animating from translate(0,0).
     const timeoutId = window.setTimeout(() => {
       setAnimationsEnabled(true);
     }, 150);
@@ -355,8 +355,6 @@ export const DraggableTerminal = ({
       const parentRect =
         shellRef.current?.parentElement?.getBoundingClientRect() ?? null;
       setSize({ width: targetWidth, height: targetHeight });
-      // Keep whichever corner is closest to the parent edges anchored so the
-      // window grows outward from the corner nearest the page boundary.
       setPosition((pos) => {
         if (!pos) {
           return pos;
@@ -481,9 +479,6 @@ export const DraggableTerminal = ({
     resizeAnchored,
   ]);
 
-  // On mount, measure the hero scene and anchor the window to the
-  // bottom-right corner. Done in a layout effect so we paint into position
-  // without a visible flicker (Shell starts with opacity 0 until ready).
   useLayoutEffect(() => {
     const shell = shellRef.current;
     const parent = shell?.parentElement as HTMLElement | null;
@@ -494,8 +489,6 @@ export const DraggableTerminal = ({
     const parentRect = parent.getBoundingClientRect();
 
     if (parentRect.width < MOBILE_PARENT_BREAKPOINT) {
-      // Mobile: stack Terminal on top of App Window with a small diagonal
-      // offset so the App Window corner stays peeking out and tappable.
       const mobileWidth = Math.min(
         TERMINAL_INITIAL_WIDTH,
         parentRect.width - MOBILE_OFFSET_X,
@@ -553,7 +546,6 @@ export const DraggableTerminal = ({
     [getParentRect],
   );
 
-  // Drag handling.
   const handleDragStart = useCallback(
     (event: ReactPointerEvent<HTMLDivElement>) => {
       if (event.pointerType === 'mouse' && event.button !== 0) {
@@ -586,6 +578,15 @@ export const DraggableTerminal = ({
     [activate, position],
   );
 
+  const latestPositionRef = useRef<TerminalPosition | null>(position);
+  const latestSizeRef = useRef<TerminalSize>(size);
+  useEffect(() => {
+    latestPositionRef.current = position;
+  }, [position]);
+  useEffect(() => {
+    latestSizeRef.current = size;
+  }, [size]);
+
   useEffect(() => {
     if (!isDragging) {
       return undefined;
@@ -599,7 +600,12 @@ export const DraggableTerminal = ({
 
       const nextLeft = state.startLeft + (event.clientX - state.originX);
       const nextTop = state.startTop + (event.clientY - state.originY);
-      setPosition(clampPosition(nextLeft, nextTop, size));
+      const clamped = clampPosition(nextLeft, nextTop, size);
+      latestPositionRef.current = clamped;
+      const shell = shellRef.current;
+      if (shell !== null) {
+        shell.style.transform = `translate3d(${clamped.left}px, ${clamped.top}px, 0)`;
+      }
     };
 
     const stopDragging = (event: PointerEvent) => {
@@ -609,6 +615,10 @@ export const DraggableTerminal = ({
       }
       dragStateRef.current = null;
       setIsDragging(false);
+      const committed = latestPositionRef.current;
+      if (committed !== null) {
+        setPosition(committed);
+      }
       shellRef.current?.releasePointerCapture?.(event.pointerId);
     };
 
@@ -623,7 +633,6 @@ export const DraggableTerminal = ({
     };
   }, [clampPosition, isDragging, size]);
 
-  // Resize handling.
   const startResize = useCallback(
     (handle: ResizeHandle) => (event: ReactPointerEvent<HTMLDivElement>) => {
       if (event.pointerType === 'mouse' && event.button !== 0) {
@@ -729,8 +738,14 @@ export const DraggableTerminal = ({
         }
       }
 
-      setSize({ width: nextWidth, height: nextHeight });
-      setPosition({ left: nextLeft, top: nextTop });
+      latestSizeRef.current = { width: nextWidth, height: nextHeight };
+      latestPositionRef.current = { left: nextLeft, top: nextTop };
+      const shell = shellRef.current;
+      if (shell !== null) {
+        shell.style.width = `${nextWidth}px`;
+        shell.style.height = `${nextHeight}px`;
+        shell.style.transform = `translate3d(${nextLeft}px, ${nextTop}px, 0)`;
+      }
     };
 
     const stopResizing = (event: PointerEvent) => {
@@ -740,6 +755,12 @@ export const DraggableTerminal = ({
       }
       resizeStateRef.current = null;
       setIsResizing(false);
+      const committedSize = latestSizeRef.current;
+      const committedPosition = latestPositionRef.current;
+      setSize(committedSize);
+      if (committedPosition !== null) {
+        setPosition(committedPosition);
+      }
       shellRef.current?.releasePointerCapture?.(event.pointerId);
     };
 
@@ -754,6 +775,12 @@ export const DraggableTerminal = ({
     };
   }, [getParentRect, isResizing]);
 
+  const isInteracting = isDragging || isResizing;
+  const renderPosition = isInteracting
+    ? (latestPositionRef.current ?? position)
+    : position;
+  const renderSize = isInteracting ? latestSizeRef.current : size;
+
   return (
     <Shell
       $animationsEnabled={animationsEnabled}
@@ -764,11 +791,11 @@ export const DraggableTerminal = ({
       onPointerDown={activate}
       ref={shellRef}
       style={{
-        height: `${size.height}px`,
-        transform: position
-          ? `translate(${position.left}px, ${position.top}px)`
-          : 'translate(0, 0)',
-        width: `${size.width}px`,
+        height: `${renderSize.height}px`,
+        transform: renderPosition
+          ? `translate3d(${renderPosition.left}px, ${renderPosition.top}px, 0)`
+          : 'translate3d(0, 0, 0)',
+        width: `${renderSize.width}px`,
         zIndex,
       }}
     >

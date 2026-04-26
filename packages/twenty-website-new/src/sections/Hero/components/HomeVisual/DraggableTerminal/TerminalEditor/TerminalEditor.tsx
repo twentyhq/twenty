@@ -358,14 +358,9 @@ const renderExplorerNode = (
 };
 
 type TerminalEditorProps = {
-  // When false, hide files scaffolded by the assistant so the editor can be
-  // opened before the chat has run.
   showGeneratedFiles?: boolean;
 };
 
-// Browser-like editor: click files in the tree or tabs in the top bar to swap
-// the visible buffer. Open tabs track files the visitor has touched during
-// this session so they can jump back quickly.
 export const TerminalEditor = ({
   showGeneratedFiles = true,
 }: TerminalEditorProps) => {
@@ -376,9 +371,6 @@ export const TerminalEditor = ({
   const [activeFileId, setActiveFileId] = useState<string>(fallbackFileId);
   const [openFileIds, setOpenFileIds] = useState<string[]>([fallbackFileId]);
 
-  // When chat hasn't run, generated tabs must not be visible. When chat
-  // finishes, pop open the default generated file so the new state is
-  // discoverable without the user hunting for it in the tree.
   useEffect(() => {
     if (!showGeneratedFiles) {
       setOpenFileIds((current) => {
@@ -411,7 +403,6 @@ export const TerminalEditor = ({
       setOpenFileIds((current) => {
         const next = current.filter((id) => id !== fileId);
         if (next.length === 0) {
-          // Keep the fallback file visible so the editor never empties.
           return [fallbackFileId];
         }
         return next;

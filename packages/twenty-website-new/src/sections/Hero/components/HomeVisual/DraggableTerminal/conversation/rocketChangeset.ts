@@ -1,7 +1,3 @@
-// Static diff summary displayed after the assistant scaffolds the launch-ops
-// CRM (Rocket, Launch, Payload, Customer, Launch site). Matches the shape of
-// an IDE / Claude Code changeset.
-
 export type FileChange = {
   path: string;
   added: number;
@@ -105,7 +101,11 @@ export const ROCKET_CHANGESET: ReadonlyArray<FileChange> = [
   { path: 'src/objects/launch.object.ts', added: 237, removed: 0 },
   { path: 'src/objects/payload.object.ts', added: 198, removed: 0 },
   { path: 'src/objects/rocket.object.ts', added: 28, removed: 32 },
-  { path: 'src/page-layouts/rocket-record-page-layout.ts', added: 2, removed: 2 },
+  {
+    path: 'src/page-layouts/rocket-record-page-layout.ts',
+    added: 2,
+    removed: 2,
+  },
   { path: 'src/views/launch-sites.view.ts', added: 49, removed: 0 },
   { path: 'src/views/launches.view.ts', added: 70, removed: 0 },
   { path: 'src/views/past-launches.view.ts', added: 82, removed: 0 },

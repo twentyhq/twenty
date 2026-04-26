@@ -1,9 +1,9 @@
 import type { MetadataRoute } from 'next';
 
-import { CASE_STUDY_CATALOG_ENTRIES } from '@/app/customers/_constants/case-study-catalog';
+import { CASE_STUDY_CATALOG_ENTRIES } from '@/lib/customers';
+import { getSiteUrl } from '@/lib/seo';
 
-const SITE_URL =
-  process.env.NEXT_PUBLIC_WEBSITE_URL?.replace(/\/$/, '') ?? 'https://twenty.com';
+const SITE_URL = getSiteUrl();
 
 const STATIC_ROUTES: ReadonlyArray<{
   path: string;

@@ -1,6 +1,10 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { CoreApiClient } from 'twenty-client-sdk/core';
-import { defineLogicFunction, type DatabaseEventPayload, type ObjectRecordUpdateEvent } from 'twenty-sdk/define';
+import { defineLogicFunction } from 'twenty-sdk/define';
+import {
+  type DatabaseEventPayload,
+  type ObjectRecordUpdateEvent,
+} from 'twenty-sdk/logic-function';
 import { isDefined } from '@utils/is-defined';
 
 import { ON_RESEND_CONTACT_UPDATED_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from '@modules/resend/constants/universal-identifiers';
@@ -106,7 +110,8 @@ const handler = async (
 };
 
 export default defineLogicFunction({
-  universalIdentifier: ON_RESEND_CONTACT_UPDATED_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
+  universalIdentifier:
+    ON_RESEND_CONTACT_UPDATED_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
   name: 'on-resend-contact-updated',
   description:
     'Pushes contact field changes to Resend when a resendContact record is updated in Twenty',
