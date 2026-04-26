@@ -130,6 +130,21 @@ export class SdkClientArchiveService {
     ]);
   }
 
+  async isSdkLayerStale({
+    applicationId,
+    workspaceId,
+  }: {
+    applicationId: string;
+    workspaceId: string;
+  }): Promise<boolean> {
+    const application = await this.applicationRepository.findOne({
+      where: { id: applicationId, workspaceId },
+      select: ['isSdkLayerStale'],
+    });
+
+    return application?.isSdkLayerStale ?? true;
+  }
+
   private async downloadArchiveBufferOrGenerate({
     workspaceId,
     applicationId,

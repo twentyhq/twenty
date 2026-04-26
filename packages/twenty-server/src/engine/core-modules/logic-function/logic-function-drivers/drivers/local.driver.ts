@@ -24,15 +24,10 @@ import { copyYarnEngineAndBuildDependencies } from 'src/engine/core-modules/appl
 import type { LogicFunctionResourceService } from 'src/engine/core-modules/logic-function/logic-function-resource/logic-function-resource.service';
 import type { SdkClientArchiveService } from 'src/engine/core-modules/sdk-client/sdk-client-archive.service';
 
-// Concurrent execute() calls for the same application would otherwise race
-// in `createLayerIfNotExist` / `ensureSdkLayer`: both would observe the layer
-// as missing, both would `fs.rm` and repopulate the same directory, and yarn
-// install running in one call would see its cwd wiped by the other. Use the
-// shared cache-backed lock (same mechanism Lambda driver uses) to serialize
-// layer builds across processes.
 const LAYER_BUILD_LOCK_TTL_MS = 120_000;
 const LAYER_BUILD_LOCK_RETRY_MS = 500;
 const LAYER_BUILD_LOCK_MAX_RETRIES = 240;
+const LAYER_BUILD_READY_SENTINEL = '.twenty-layer-ready';
 
 export interface LocalDriverOptions {
   logicFunctionResourceService: LogicFunctionResourceService;
@@ -89,9 +84,12 @@ export class LocalDriver implements LogicFunctionDriver {
     applicationUniversalIdentifier: string;
   }): Promise<void> {
     const depsLayerPath = this.getDepsLayerPath(flatApplication);
-    const depsNodeModulesPath = join(depsLayerPath, 'node_modules');
+    const depsReadySentinelPath = join(
+      depsLayerPath,
+      LAYER_BUILD_READY_SENTINEL,
+    );
 
-    if (await pathExists(depsNodeModulesPath)) {
+    if (await pathExists(depsReadySentinelPath)) {
       return;
     }
 
@@ -99,12 +97,10 @@ export class LocalDriver implements LogicFunctionDriver {
 
     await this.cacheLockService.withLock(
       async () => {
-        // Re-check inside the lock: another caller may have just built it.
-        if (await pathExists(depsNodeModulesPath)) {
+        if (await pathExists(depsReadySentinelPath)) {
           return;
         }
 
-        // Wipe any partial leftovers from a previously failed build
         await fs.rm(depsLayerPath, { recursive: true, force: true });
 
         await this.logicFunctionResourceService.copyDependenciesInMemory({
@@ -113,6 +109,7 @@ export class LocalDriver implements LogicFunctionDriver {
           inMemoryFolderPath: depsLayerPath,
         });
         await copyYarnEngineAndBuildDependencies(depsLayerPath);
+        await fs.writeFile(depsReadySentinelPath, '');
       },
       lockKey,
       {
@@ -135,9 +132,10 @@ export class LocalDriver implements LogicFunctionDriver {
       applicationUniversalIdentifier,
     });
     const sdkNodeModulesPath = join(sdkLayerPath, 'node_modules');
+    const sdkReadySentinelPath = join(sdkLayerPath, LAYER_BUILD_READY_SENTINEL);
 
     if (
-      (await pathExists(sdkNodeModulesPath)) &&
+      (await pathExists(sdkReadySentinelPath)) &&
       !flatApplication.isSdkLayerStale
     ) {
       return;
@@ -147,12 +145,12 @@ export class LocalDriver implements LogicFunctionDriver {
 
     await this.cacheLockService.withLock(
       async () => {
-        // Re-check inside the lock: another caller may have just refreshed it,
-        // and the staleness flag may have flipped in the meantime.
-        if (
-          (await pathExists(sdkNodeModulesPath)) &&
-          !flatApplication.isSdkLayerStale
-        ) {
+        const isStale = await this.sdkClientArchiveService.isSdkLayerStale({
+          applicationId: flatApplication.id,
+          workspaceId: flatApplication.workspaceId,
+        });
+
+        if ((await pathExists(sdkReadySentinelPath)) && !isStale) {
           return;
         }
 
@@ -171,6 +169,8 @@ export class LocalDriver implements LogicFunctionDriver {
           applicationId: flatApplication.id,
           workspaceId: flatApplication.workspaceId,
         });
+
+        await fs.writeFile(sdkReadySentinelPath, '');
       },
       lockKey,
       {
