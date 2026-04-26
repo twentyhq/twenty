@@ -46,15 +46,6 @@ if (process.env.EXCEPTION_HANDLER_DRIVER === ExceptionHandlerDriver.SENTRY) {
     sendDefaultPii: true,
     debug: process.env.NODE_ENV === NodeEnvironment.DEVELOPMENT,
     beforeSendSpan: (span) => {
-      const op = span.op ?? '';
-      const origin = span.origin ?? '';
-      const isGenAiSpan =
-        op.startsWith('gen_ai.') || origin === 'auto.vercelai.otel';
-
-      if (!isGenAiSpan) {
-        return span;
-      }
-
       const twentyContext = Sentry.getIsolationScope().getScopeData().contexts
         ?.twenty as
         | {
@@ -86,12 +77,20 @@ if (process.env.EXCEPTION_HANDLER_DRIVER === ExceptionHandlerDriver.SENTRY) {
         ...(twentyContext.turn_id && {
           'twenty.turn.id': twentyContext.turn_id,
         }),
-        // TODO: replace with Sentry.setConversationId once available in @sentry/node
-        // (added in a later 10.x — not yet exported in 10.27).
-        ...(twentyContext.thread_id && {
-          'gen_ai.conversation.id': twentyContext.thread_id,
-        }),
       };
+
+      // gen_ai.conversation.id is an OTel-reserved attribute; keep it scoped to AI spans.
+      // TODO: replace with Sentry.setConversationId once available in @sentry/node
+      // (added in a later 10.x — not yet exported in 10.27).
+      const op = span.op ?? '';
+      const origin = span.origin ?? '';
+
+      if (
+        twentyContext.thread_id &&
+        (op.startsWith('gen_ai.') || origin === 'auto.vercelai.otel')
+      ) {
+        span.data['gen_ai.conversation.id'] = twentyContext.thread_id;
+      }
 
       return span;
     },
