@@ -1907,6 +1907,7 @@ export const STANDARD_OBJECTS = {
         universalIdentifier: '20202020-527e-44d6-b1ac-c4158d307b97',
       },
       stage: { universalIdentifier: '20202020-6f76-477d-8551-28cd65b2b4b9' },
+      type: { universalIdentifier: '20202020-a1b2-4c3d-8e4f-5a6b7c8d9e0f' },
       position: {
         universalIdentifier: '20202020-806d-493a-bbc6-6313e62958e2',
       },
@@ -2037,6 +2038,9 @@ export const STANDARD_OBJECTS = {
           },
           stage: {
             universalIdentifier: '20202020-af03-4a03-8a03-0aa0b1ca3203',
+          },
+          type: {
+            universalIdentifier: '20202020-af03-4a03-8a03-0aa0b1ca3211',
           },
           company: {
             universalIdentifier: '20202020-af03-4a03-8a03-0aa0b1ca3204',
