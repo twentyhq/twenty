@@ -8,6 +8,7 @@
 #   1. Starts Postgres + Redis (local services or Docker, auto-detected)
 #   2. Creates 'default' and 'test' databases
 #   3. Copies .env.example -> .env for front and server
+#   4. Initializes database schema (runs migrations + seeds)
 #
 # Usage (from repo root):
 #   bash packages/twenty-utils/setup-dev-env.sh          # start + configure
@@ -239,6 +240,34 @@ else
       ok "$pkg/.env created"
     fi
   done
+fi
+
+# =============================================================================
+# 4. Initialize database schema (build server, run migrations, seed)
+# =============================================================================
+schema_exists() {
+  local query="SELECT 1 FROM information_schema.tables WHERE table_schema = 'core' LIMIT 1;"
+  if command -v psql &>/dev/null; then
+    PGPASSWORD=postgres psql -h localhost -p 5432 -U postgres -d default -tAc "$query" 2>/dev/null | grep -q 1
+  elif can_use_docker && docker compose -f "$COMPOSE_FILE" ps --quiet db 2>/dev/null | grep -q .; then
+    docker compose -f "$COMPOSE_FILE" exec -T db psql -U postgres -d default -tAc "$query" 2>/dev/null | grep -q 1
+  else
+    return 1
+  fi
+}
+
+if command -v npx &>/dev/null && [ -d node_modules ]; then
+  if schema_exists; then
+    ok "Database schema already initialized"
+  else
+    info "Initializing database schema (this may take a minute)..."
+    npx nx database:reset twenty-server
+    ok "Database schema initialized"
+  fi
+else
+  echo ""
+  echo "  NOTE: node_modules not found — skipping database schema initialization."
+  echo "  Run 'yarn install' then 'npx nx database:reset twenty-server' to initialize the schema."
 fi
 
 # =============================================================================
