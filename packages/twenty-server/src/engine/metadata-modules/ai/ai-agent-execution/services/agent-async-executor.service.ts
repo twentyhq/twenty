@@ -16,6 +16,7 @@ import { type Repository } from 'typeorm';
 
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
 import { NativeToolBinderService } from 'src/engine/core-modules/tool-provider/native/native-tool-binder.service';
 import { ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
@@ -69,6 +70,7 @@ export class AgentAsyncExecutorService {
     private readonly toolRegistry: ToolRegistryService,
     private readonly nativeToolBinder: NativeToolBinderService,
     private readonly aiBillingService: AiBillingService,
+    private readonly exceptionHandlerService: ExceptionHandlerService,
     @InjectRepository(RoleTargetEntity)
     private readonly roleTargetRepository: Repository<RoleTargetEntity>,
     @InjectRepository(WorkspaceEntity)
@@ -312,10 +314,9 @@ export class AgentAsyncExecutorService {
           userWorkspaceId,
         );
       } catch (billingError) {
-        this.logger.error(
-          `Failed to bill AI token usage for workspace ${workspaceId}`,
-          billingError instanceof Error ? billingError.stack : billingError,
-        );
+        this.exceptionHandlerService.captureExceptions([billingError], {
+          workspace: { id: workspaceId },
+        });
       }
 
       try {
@@ -325,10 +326,9 @@ export class AgentAsyncExecutorService {
           userWorkspaceId,
         );
       } catch (billingError) {
-        this.logger.error(
-          `Failed to bill native web search usage for workspace ${workspaceId}`,
-          billingError instanceof Error ? billingError.stack : billingError,
-        );
+        this.exceptionHandlerService.captureExceptions([billingError], {
+          workspace: { id: workspaceId },
+        });
       }
     }
   }
