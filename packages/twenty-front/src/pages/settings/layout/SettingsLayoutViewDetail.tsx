@@ -30,7 +30,7 @@ export const SettingsLayoutViewDetail = () => {
   const { application, manifest, isLoading } =
     useApplicationManifest(applicationId);
 
-  const objectMetadataItemsByUniversalIdentifier = useAtomStateValue(
+  const objectMetadataItemsByUniversalIdentifierMap = useAtomStateValue(
     objectMetadataItemsByUniversalIdentifierMapSelector,
   );
   const flattenedFieldMetadataItems = useAtomStateValue(
@@ -50,7 +50,7 @@ export const SettingsLayoutViewDetail = () => {
   const objectLabel = isDefined(view)
     ? resolveObjectLabel(
         view.objectUniversalIdentifier,
-        objectMetadataItemsByUniversalIdentifier,
+        objectMetadataItemsByUniversalIdentifierMap,
       )
     : undefined;
 

@@ -8,7 +8,7 @@ import { isDefined } from 'twenty-shared/utils';
 // custom objects from an app that isn't installed yet.
 export const resolveObjectLabel = (
   uid: string | undefined | null,
-  objectMetadataItemsByUniversalIdentifier: Map<
+  objectMetadataItemsByUniversalIdentifierMap: Map<
     string,
     EnrichedObjectMetadataItem
   >,
@@ -16,7 +16,7 @@ export const resolveObjectLabel = (
 ): string | undefined => {
   if (!isDefined(uid)) return undefined;
 
-  const workspaceObject = objectMetadataItemsByUniversalIdentifier.get(uid);
+  const workspaceObject = objectMetadataItemsByUniversalIdentifierMap.get(uid);
   if (isDefined(workspaceObject)) return workspaceObject.labelSingular;
 
   return manifest?.objects.find((obj) => obj.universalIdentifier === uid)

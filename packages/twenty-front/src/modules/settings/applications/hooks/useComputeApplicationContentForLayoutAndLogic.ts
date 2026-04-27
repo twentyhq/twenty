@@ -17,7 +17,7 @@ export const useComputeApplicationContentForLayoutAndLogic = ({
   installedApplication?: InstalledApplicationForContent;
   manifestContent?: Manifest;
 }) => {
-  const objectMetadataItemsByUniversalIdentifier = useAtomStateValue(
+  const objectMetadataItemsByUniversalIdentifierMap = useAtomStateValue(
     objectMetadataItemsByUniversalIdentifierMapSelector,
   );
 
@@ -26,7 +26,7 @@ export const useComputeApplicationContentForLayoutAndLogic = ({
   const resolveLabel = (uid: string | undefined | null) =>
     resolveObjectLabel(
       uid,
-      objectMetadataItemsByUniversalIdentifier,
+      objectMetadataItemsByUniversalIdentifierMap,
       manifestContent,
     );
 

@@ -20,7 +20,7 @@ export const SettingsLayoutPageLayoutDetail = () => {
   const { application, manifest, isLoading } =
     useApplicationManifest(applicationId);
 
-  const objectMetadataItemsByUniversalIdentifier = useAtomStateValue(
+  const objectMetadataItemsByUniversalIdentifierMap = useAtomStateValue(
     objectMetadataItemsByUniversalIdentifierMapSelector,
   );
 
@@ -31,7 +31,7 @@ export const SettingsLayoutPageLayoutDetail = () => {
   const objectLabel = isDefined(pageLayout)
     ? resolveObjectLabel(
         pageLayout.objectUniversalIdentifier,
-        objectMetadataItemsByUniversalIdentifier,
+        objectMetadataItemsByUniversalIdentifierMap,
       )
     : undefined;
 
@@ -100,7 +100,7 @@ export const SettingsLayoutPageLayoutDetail = () => {
                 widget.type,
                 resolveObjectLabel(
                   widget.objectUniversalIdentifier,
-                  objectMetadataItemsByUniversalIdentifier,
+                  objectMetadataItemsByUniversalIdentifierMap,
                 ) ?? '—',
               ],
             }))}
