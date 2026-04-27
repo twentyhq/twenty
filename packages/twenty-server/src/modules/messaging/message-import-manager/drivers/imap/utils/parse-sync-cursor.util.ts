@@ -15,7 +15,15 @@ export const parseSyncCursor = (
   }
 
   try {
-    return JSON.parse(cursor) as ImapSyncCursor;
+    const parsed = JSON.parse(cursor);
+    return {
+      highestUid: String(parsed.highestUid),
+      uidValidity: String(parsed.uidValidity),
+      modSeq: isDefined(parsed.modSeq) ? String(parsed.modSeq) : undefined,
+      firstSyncedUid: isDefined(parsed.firstSyncedUid)
+        ? String(parsed.firstSyncedUid)
+        : undefined,
+    };
   } catch {
     return null;
   }

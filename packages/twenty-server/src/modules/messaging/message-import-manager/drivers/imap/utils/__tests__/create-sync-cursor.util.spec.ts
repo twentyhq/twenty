@@ -15,60 +15,60 @@ describe('createSyncCursor', () => {
     const cursor = createSyncCursor(messageUids, null, mailboxState);
 
     expect(cursor).toEqual({
-      highestUid: 12,
-      uidValidity: 12345,
+      highestUid: '12',
+      uidValidity: '12345',
       modSeq: '5000',
-      firstSyncedUid: 10,
+      firstSyncedUid: '10',
     });
   });
 
   it('maintains firstSyncedUid in subsequent syncs', () => {
     const previousCursor: ImapSyncCursor = {
-      highestUid: 12,
-      uidValidity: 12345,
+      highestUid: '12',
+      uidValidity: '12345',
       modSeq: '5000',
-      firstSyncedUid: 10,
+      firstSyncedUid: '10',
     };
 
     const newMessageUids = [13, 14];
     const cursor = createSyncCursor(newMessageUids, previousCursor, mailboxState);
 
     expect(cursor).toEqual({
-      highestUid: 14,
-      uidValidity: 12345,
+      highestUid: '14',
+      uidValidity: '12345',
       modSeq: '5000',
-      firstSyncedUid: 10,
+      firstSyncedUid: '10',
     });
   });
 
   it('updates highestUid strictly monotonically', () => {
     const previousCursor: ImapSyncCursor = {
-      highestUid: 12,
-      uidValidity: 12345,
+      highestUid: '12',
+      uidValidity: '12345',
       modSeq: '5000',
     };
 
     const newMessageUids = [11, 10]; // Out of order UIDs or modified messages
     const cursor = createSyncCursor(newMessageUids, previousCursor, mailboxState);
 
-    expect(cursor.highestUid).toBe(12);
+    expect(cursor.highestUid).toBe('12');
   });
 
   it('handles empty message list correctly', () => {
     const previousCursor: ImapSyncCursor = {
-      highestUid: 12,
-      uidValidity: 12345,
+      highestUid: '12',
+      uidValidity: '12345',
       modSeq: '5000',
-      firstSyncedUid: 10,
+      firstSyncedUid: '10',
     };
 
     const cursor = createSyncCursor([], previousCursor, mailboxState);
 
     expect(cursor).toEqual({
-      highestUid: 12,
-      uidValidity: 12345,
+      highestUid: '12',
+      uidValidity: '12345',
       modSeq: '5000',
-      firstSyncedUid: 10,
+      firstSyncedUid: '10',
     });
   });
 });
