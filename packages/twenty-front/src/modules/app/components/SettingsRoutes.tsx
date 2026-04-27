@@ -202,7 +202,6 @@ const SettingsLayoutPageLayoutDetail = lazy(() =>
   ),
 );
 
-
 const SettingsAdminApplicationRegistrationDetail = lazy(() =>
   import(
     '~/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetail'
