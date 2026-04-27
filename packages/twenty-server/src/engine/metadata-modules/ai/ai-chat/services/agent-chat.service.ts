@@ -328,8 +328,10 @@ export class AgentChatService {
       return null;
     }
 
-    const title =
-      await this.titleGenerationService.generateThreadTitle(messageContent);
+    const title = await this.titleGenerationService.generateThreadTitle(
+      messageContent,
+      workspaceId,
+    );
 
     await this.threadRepository.update(threadId, { title });
 
