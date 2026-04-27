@@ -41,7 +41,9 @@ export class ImapSyncService {
     mailboxState: MailboxState,
     folderPath: string,
   ): void {
-    const previousUidValidity = previousCursor?.uidValidity ?? 0;
+    const previousUidValidity = previousCursor?.uidValidity
+      ? Number(previousCursor.uidValidity)
+      : 0;
     const { uidValidity } = mailboxState;
 
     if (previousUidValidity !== 0 && previousUidValidity !== uidValidity) {
@@ -62,7 +64,9 @@ export class ImapSyncService {
     mailboxState: MailboxState,
     folderPath: string,
   ): Promise<number[]> {
-    const lastSyncedUid = previousCursor?.highestUid ?? 0;
+    const lastSyncedUid = previousCursor?.highestUid
+      ? Number(previousCursor.highestUid)
+      : 0;
     const { maxUid } = mailboxState;
 
     // Safety check: if lastSyncedUid is significantly behind maxUid, we might want to batch.

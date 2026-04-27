@@ -184,6 +184,7 @@
     "typeorm": "patch:typeorm@0.3.20#./patches/typeorm+0.3.20.patch",
     "unzipper": "^0.12.3",
     "uuid": "9.0.1",
+    "twenty-emails": "workspace:*",
     "vite-tsconfig-paths": "4.3.2",
     "zod": "^4.1.11"
   },
@@ -230,7 +231,6 @@
     "@yarnpkg/types": "^4.0.0",
     "rimraf": "^5.0.5",
     "twenty-client-sdk": "workspace:*",
-    "twenty-emails": "workspace:*",
     "twenty-shared": "workspace:*"
   },
   "engines": {

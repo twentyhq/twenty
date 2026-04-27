@@ -7,12 +7,13 @@ export const createSyncCursor = (
   mailboxState: MailboxState,
 ): ImapSyncCursor => {
   const { uidValidity, highestModSeq } = mailboxState;
-  const lastSeenUid = previousCursor?.highestUid ?? 0;
+  const lastSeenUid = Number(previousCursor?.highestUid ?? 0);
   const firstSyncedUid =
-    previousCursor?.firstSyncedUid ??
-    (messageUids.length > 0
-      ? messageUids.reduce((min, curr) => Math.min(min, curr), Infinity)
-      : undefined);
+    previousCursor?.firstSyncedUid !== undefined
+      ? Number(previousCursor.firstSyncedUid)
+      : (messageUids.length > 0
+        ? messageUids.reduce((min, curr) => Math.min(min, curr), Infinity)
+        : undefined);
 
   let highestUid = lastSeenUid;
 
@@ -25,9 +26,9 @@ export const createSyncCursor = (
   }
 
   return {
-    highestUid,
-    uidValidity,
+    highestUid: highestUid.toString(),
+    uidValidity: uidValidity.toString(),
     ...(highestModSeq ? { modSeq: highestModSeq.toString() } : {}),
-    ...(firstSyncedUid !== undefined ? { firstSyncedUid } : {}),
+    ...(firstSyncedUid !== undefined ? { firstSyncedUid: firstSyncedUid.toString() } : {}),
   };
 };

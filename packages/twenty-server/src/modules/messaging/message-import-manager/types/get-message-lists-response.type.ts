@@ -4,10 +4,10 @@ export type GetOneMessageListResponse = {
   previousSyncCursor: string | null;
   nextSyncCursor: string;
   folderId: string | undefined;
-  highestUid?: number;
-  uidValidity?: number;
+  highestUid?: string;
+  uidValidity?: string;
   modSeq?: string;
-  firstSyncedUid?: number;
+  firstSyncedUid?: string;
 };
 
 export type GetMessageListsResponse = Array<GetOneMessageListResponse>;

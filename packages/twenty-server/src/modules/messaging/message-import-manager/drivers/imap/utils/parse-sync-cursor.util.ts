@@ -1,10 +1,10 @@
 import { isDefined } from 'twenty-shared/utils';
 
 export type ImapSyncCursor = {
-  highestUid: number;
-  uidValidity: number;
+  highestUid: string;
+  uidValidity: string;
   modSeq?: string;
-  firstSyncedUid?: number;
+  firstSyncedUid?: string;
 };
 
 export const parseSyncCursor = (
