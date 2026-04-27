@@ -62,7 +62,7 @@
           "cachedInputCostPerMillionTokens": 1
         },
         "contextWindowTokens": 1050000,
-        "maxOutputTokens": 130000,
+        "maxOutputTokens": 128000,
         "modalities": ["image", "pdf"],
         "supportsReasoning": true
       },

@@ -82,7 +82,17 @@ describe('verifyGitHubSignature', () => {
 });
 
 describe('getRawBodyForSignature', () => {
-  it('returns the string as-is for string body', () => {
+  it('prefers event.rawBody when the runtime forwarded it', () => {
+    const original = '{ "action": "opened", "number": 42 }';
+    expect(
+      getRawBodyForSignature({
+        body: { action: 'opened', number: 42 },
+        rawBody: original,
+      }),
+    ).toBe(original);
+  });
+
+  it('falls back to string body when rawBody is not provided', () => {
     expect(
       getRawBodyForSignature({ body: '{"a":1}', isBase64Encoded: false }),
     ).toBe('{"a":1}');
@@ -117,5 +127,24 @@ describe('verifyGitHubSignature with parsed body', () => {
       reason:
         'raw request body is unavailable (the runtime parsed it as JSON); HMAC cannot be verified',
     });
+  });
+});
+
+describe('end-to-end: server forwards rawBody, signature verifies', () => {
+  it('verifies a signature when rawBody is present alongside parsed body', () => {
+    const original = '{ "action": "opened", "number": 42 }';
+    const event = {
+      body: { action: 'opened', number: 42 },
+      rawBody: original,
+      isBase64Encoded: false,
+    };
+
+    const rawBody = getRawBodyForSignature(event);
+    const result = verifyGitHubSignature({
+      rawBody,
+      signatureHeader: sign(original),
+      secret: SECRET,
+    });
+    expect(result.ok).toBe(true);
   });
 });
