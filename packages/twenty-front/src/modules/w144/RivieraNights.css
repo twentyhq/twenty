@@ -1,0 +1,33 @@
+/* W144 Riviera Nights Font Family */
+
+@font-face {
+  font-family: 'Riviera Nights';
+  font-weight: 200;
+  font-style: normal;
+  font-display: swap;
+  src: url('./fonts/RivieraNights-Ultralight-WebXL.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Riviera Nights';
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+  src: url('./fonts/RivieraNights-Light-WebXL.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Riviera Nights';
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+  src: url('./fonts/RivieraNights-Regular-WebXL.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Riviera Nights';
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+  src: url('./fonts/RivieraNights-Medium-WebXL.woff2') format('woff2');
+}

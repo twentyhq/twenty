@@ -1,0 +1,343 @@
+/* ═══════════════════════════════════════════
+   W144 Global Theme Override for Twenty
+
+   Maps Twenty's --t-* tokens to W144 brand identity.
+   Loaded last in src/index.tsx so it overrides
+   twenty-ui/theme-light.css.
+
+   Architecture:
+   - W144 tokens (--w144-*) defined as source of truth
+   - Twenty tokens (--t-*) mapped to W144 via .light selector
+   - Tag palette (--t-tag-*) intentionally NOT remapped:
+     it powers user-configurable kanban stage colors,
+     forcing brand semantics there would collapse the palette.
+   - body font-family forced globally to override
+     Twenty's hard-coded body { font-family: Inter }.
+   ═══════════════════════════════════════════ */
+
+@import './RivieraNights.css';
+
+/* ─── W144 source-of-truth tokens ─── */
+:root, .light {
+  /* Surfaces */
+  --w144-bg-deep:     #E8E4DC;
+  --w144-bg-mid:      #EDE9E2;
+  --w144-bg-surface:  #E8E4DC;
+  --w144-bg-elevated: #FFFFFF;
+  --w144-bg-inverted: #1A1A1A;
+  --w144-bg-inverted-soft: #2A2A2A;
+
+  /* Gold ladder — for accent-accent1..12 mapping */
+  --w144-gold-50:  #FFF9EC;
+  --w144-gold-100: #FEF1D2;
+  --w144-gold-200: #FDE3A4;
+  --w144-gold-300: #FBCF66;
+  --w144-gold-400: #F9BE2A;
+  --w144-gold-500: #F2AD0A;   /* primary brand gold */
+  --w144-gold-600: #D4960A;
+  --w144-gold-700: #A87808;
+  --w144-gold-800: #7C5806;
+  --w144-gold-900: #4D3604;
+
+  /* Accent shorthand (kept for backward compat with prior phase) */
+  --w144-accent-gold:       var(--w144-gold-500);
+  --w144-accent-gold-light: var(--w144-gold-400);
+  --w144-accent-gold-muted: rgba(242, 173, 10, 0.32);
+  --w144-accent-gold-glow:  rgba(242, 173, 10, 0.20);
+
+  /* Text */
+  --w144-text-primary:     #1A1A1A;
+  --w144-text-secondary:   rgba(26, 26, 26, 0.65);
+  --w144-text-muted:       rgba(26, 26, 26, 0.46);
+  --w144-text-light:       rgba(26, 26, 26, 0.35);
+  --w144-text-extra-light: rgba(26, 26, 26, 0.20);
+  --w144-text-inverted:    #FFFFFF;
+
+  /* Borders */
+  --w144-border-subtle:  rgba(0, 0, 0, 0.10);
+  --w144-border-visible: rgba(0, 0, 0, 0.16);
+  --w144-border-light:   rgba(0, 0, 0, 0.06);
+
+  /* Semantic */
+  --w144-semantic-teal:  #0E9A68;
+  --w144-semantic-amber: #E88A0A;
+  --w144-semantic-red:   #DC2828;
+  --w144-semantic-blue:  #2E6BD6;
+
+  /* Semantic glow (transparent backgrounds for badges/snackbars) */
+  --w144-semantic-teal-glow:  rgba(14, 154, 104, 0.12);
+  --w144-semantic-amber-glow: rgba(232, 138, 10, 0.14);
+  --w144-semantic-red-glow:   rgba(220, 40, 40, 0.10);
+  --w144-semantic-blue-glow:  rgba(46, 107, 214, 0.10);
+
+  /* Shadow recipes */
+  --w144-shadow-rim:      0 0 0 1px rgba(0, 0, 0, 0.04), 0 1px 1px rgba(0, 2, 15, 0.03);
+  --w144-shadow-floating: 0 1px 2px rgba(0, 2, 15, 0.04), 0 4px 12px rgba(0, 2, 15, 0.06);
+  --w144-shadow-deep:     0 2px 4px rgba(0, 2, 15, 0.05), 0 12px 28px rgba(0, 2, 15, 0.10);
+  --w144-shadow-underline: 0 1px 0 0 rgba(0, 0, 0, 0.16);
+
+  /* W144 Dark Theme Source-of-Truth Tokens */
+  --w144-dark-bg-deep:     #030508;
+  --w144-dark-bg-mid:      #060E1E;
+  --w144-dark-bg-surface:  #060A12;
+  --w144-dark-bg-elevated: #0A1018;
+  --w144-dark-bg-inverted: #F0EDE6;
+  --w144-dark-bg-inverted-soft: #E0DCD3;
+
+  --w144-dark-text-primary:   #F0EDE6;
+  --w144-dark-text-secondary: rgba(240, 237, 230, 0.65);
+  --w144-dark-text-muted:     rgba(240, 237, 230, 0.46);
+  --w144-dark-text-light:     rgba(240, 237, 230, 0.35);
+  --w144-dark-text-extra-light: rgba(240, 237, 230, 0.20);
+  --w144-dark-text-inverted: #1A1A1A;
+
+  --w144-dark-border-subtle:  rgba(255, 255, 255, 0.06);
+  --w144-dark-border-visible: rgba(255, 255, 255, 0.12);
+  --w144-dark-border-light:   rgba(255, 255, 255, 0.04);
+
+  --w144-dark-accent-gold:       #FFD98A;
+  --w144-dark-accent-gold-light: #FFE4A8;
+  --w144-dark-accent-gold-muted: rgba(255, 217, 138, 0.35);
+  --w144-dark-accent-gold-glow:  rgba(255, 217, 138, 0.15);
+
+  --w144-dark-semantic-teal:  #22C88A;
+  --w144-dark-semantic-amber: #E8A940;
+  --w144-dark-semantic-red:   #E85050;
+  --w144-dark-semantic-blue:  #5A9AE0;
+  --w144-dark-semantic-teal-glow:  rgba(34, 200, 138, 0.10);
+  --w144-dark-semantic-amber-glow: rgba(232, 169, 64, 0.10);
+  --w144-dark-semantic-red-glow:   rgba(232, 80, 80, 0.10);
+  --w144-dark-semantic-blue-glow:  rgba(90, 154, 224, 0.10);
+
+  /* W144 Dark Gold Ladder (для accent.accent1..12) */
+  --w144-dark-gold-50:  rgba(255, 217, 138, 0.05);
+  --w144-dark-gold-100: rgba(255, 217, 138, 0.10);
+  --w144-dark-gold-200: rgba(255, 217, 138, 0.18);
+  --w144-dark-gold-300: rgba(255, 217, 138, 0.30);
+  --w144-dark-gold-400: rgba(255, 217, 138, 0.50);
+  --w144-dark-gold-500: #FFD98A;
+  --w144-dark-gold-600: #E8C170;
+  --w144-dark-gold-700: #D4B46E;
+  --w144-dark-gold-800: #BFA058;
+  --w144-dark-gold-900: #A88B45;
+}
+
+/* ─── Map Twenty (--t-*) → W144 (--w144-*) ─── */
+.light {
+  /* — Backgrounds — */
+  --t-background-primary:             var(--w144-bg-elevated);   /* cards, panels */
+  --t-background-secondary:           var(--w144-bg-deep);       /* sidebar, page bg */
+  --t-background-tertiary:            var(--w144-bg-mid);        /* skeletons, subtle */
+  --t-background-quaternary:          rgba(0, 0, 0, 0.04);       /* separators */
+  --t-background-noisy:               var(--w144-bg-deep);       /* main page container (was noise PNG) */
+
+  /* Inverted (used by tooltips, dark chips) */
+  --t-background-inverted-primary:    var(--w144-bg-inverted);
+  --t-background-inverted-secondary:  var(--w144-bg-inverted-soft);
+  --t-background-primary-inverted:        var(--w144-bg-inverted);
+  --t-background-primary-inverted-hover:  var(--w144-bg-inverted-soft);
+
+  /* Danger/info/warn surface tints */
+  --t-background-danger:              var(--w144-semantic-red-glow);
+  --t-background-transparent-danger:  var(--w144-semantic-red-glow);
+  --t-background-transparent-blue:    var(--w144-semantic-blue-glow);
+  --t-background-transparent-orange:  var(--w144-semantic-amber-glow);
+  --t-background-transparent-success: var(--w144-semantic-teal-glow);
+
+  /* Hover/active translucents */
+  --t-background-transparent-strong:    rgba(0, 0, 0, 0.08);
+  --t-background-transparent-medium:    rgba(0, 0, 0, 0.04);
+  --t-background-transparent-light:     rgba(0, 0, 0, 0.02);
+  --t-background-transparent-lighter:   rgba(0, 0, 0, 0.012);
+  --t-background-transparent-primary:   rgba(255, 255, 255, 0.95);
+  --t-background-transparent-secondary: rgba(255, 255, 255, 0.85);
+
+  /* Modal/dropdown backdrops */
+  --t-background-overlay-primary:   rgba(26, 26, 26, 0.55);
+  --t-background-overlay-secondary: rgba(26, 26, 26, 0.32);
+  --t-background-overlay-tertiary:  rgba(26, 26, 26, 0.08);
+
+  /* — Text — */
+  --t-font-color-primary:     var(--w144-text-primary);
+  --t-font-color-secondary:   var(--w144-text-secondary);
+  --t-font-color-tertiary:    var(--w144-text-muted);
+  --t-font-color-light:       var(--w144-text-light);
+  --t-font-color-extra-light: var(--w144-text-extra-light);
+  --t-font-color-inverted:    var(--w144-text-inverted);
+  --t-font-color-danger:      var(--w144-semantic-red);
+
+  /* Force Riviera Nights at the token level too (defense-in-depth) */
+  --t-font-family: 'Riviera Nights', 'SF Pro Display', -apple-system, 'Segoe UI', system-ui, sans-serif;
+
+  /* — Borders — */
+  --t-border-color-medium:             var(--w144-border-subtle);
+  --t-border-color-light:              var(--w144-border-light);
+  --t-border-color-strong:             var(--w144-border-visible);
+  --t-border-color-secondary-inverted: rgba(255, 255, 255, 0.30);
+  --t-border-color-inverted:           rgba(255, 255, 255, 0.55);
+  --t-border-color-danger:             var(--w144-semantic-red);
+  --t-border-color-blue:               var(--w144-semantic-blue);
+  --t-border-color-transparent-strong: rgba(0, 0, 0, 0.07);
+
+  /* Larger, softer corners — W144 prefers 10px on cards/buttons */
+  --t-border-radius-md: 10px;
+
+  /* — Accent gold ladder (drives primary CTAs, focus rings, active states) — */
+  --t-accent-primary:    var(--w144-gold-500);
+  --t-accent-secondary:  var(--w144-gold-400);
+  --t-accent-tertiary:   var(--w144-accent-gold-muted);
+  --t-accent-quaternary: var(--w144-accent-gold-glow);
+
+  /* accent-accent1..12 — Twenty uses Radix-style 1=lightest, 12=darkest */
+  --t-accent-accent1:  var(--w144-gold-50);
+  --t-accent-accent2:  var(--w144-gold-100);
+  --t-accent-accent3:  var(--w144-gold-200);
+  --t-accent-accent4:  var(--w144-gold-300);
+  --t-accent-accent5:  var(--w144-gold-400);
+  --t-accent-accent6:  var(--w144-gold-500);
+  --t-accent-accent7:  var(--w144-gold-600);
+  --t-accent-accent8:  var(--w144-gold-700);
+  --t-accent-accent9:  var(--w144-gold-700);   /* Radix "9" = solid action color */
+  --t-accent-accent10: var(--w144-gold-800);   /* hover of 9 */
+  --t-accent-accent11: var(--w144-gold-800);
+  --t-accent-accent12: var(--w144-gold-900);
+
+  /* Twenty's "accent3570 / accent4060" are alias for accent8 — keep consistent */
+  --t-accent-accent3570: var(--w144-gold-700);
+  --t-accent-accent4060: var(--w144-gold-700);
+
+  /* — Buttons — */
+  --t-buttons-secondary-text-color: var(--w144-text-primary);
+
+  /* — Box shadows — */
+  --t-box-shadow-color:       rgba(0, 0, 0, 0.04);
+  --t-box-shadow-light:       var(--w144-shadow-floating);
+  --t-box-shadow-strong:      var(--w144-shadow-deep);
+  --t-box-shadow-underline:   var(--w144-shadow-underline);
+  --t-box-shadow-super-heavy: var(--w144-shadow-deep);
+
+  /* — Snack-bar — */
+  --t-snack-bar-success-color:            var(--w144-semantic-teal);
+  --t-snack-bar-success-background-color: var(--w144-semantic-teal-glow);
+  --t-snack-bar-error-color:              var(--w144-semantic-red);
+  --t-snack-bar-error-background-color:   var(--w144-semantic-red-glow);
+  --t-snack-bar-warning-color:            var(--w144-semantic-amber);
+  --t-snack-bar-warning-background-color: var(--w144-semantic-amber-glow);
+  --t-snack-bar-info-color:               var(--w144-semantic-blue);
+  --t-snack-bar-info-background-color:    var(--w144-semantic-blue-glow);
+  --t-snack-bar-default-color:            var(--w144-text-primary);
+  --t-snack-bar-default-background-color: rgba(0, 0, 0, 0.04);
+}
+
+/* ─── Dark theme — parallel to .light, mapped to W144 dark tokens ─── */
+.dark {
+  /* Backgrounds */
+  --t-background-primary:           var(--w144-dark-bg-elevated);
+  --t-background-secondary:         var(--w144-dark-bg-deep);
+  --t-background-tertiary:          var(--w144-dark-bg-mid);
+  --t-background-quaternary:        rgba(255, 255, 255, 0.04);
+  --t-background-noisy:             var(--w144-dark-bg-deep);
+  --t-background-inverted-primary:  var(--w144-dark-bg-inverted);
+  --t-background-inverted-secondary: var(--w144-dark-bg-inverted-soft);
+  --t-background-primary-inverted:  var(--w144-dark-bg-inverted);
+  --t-background-primary-inverted-hover: var(--w144-dark-bg-inverted-soft);
+  --t-background-danger:            var(--w144-dark-semantic-red-glow);
+  --t-background-transparent-danger: var(--w144-dark-semantic-red-glow);
+  --t-background-transparent-blue:  var(--w144-dark-semantic-blue-glow);
+  --t-background-transparent-orange: var(--w144-dark-semantic-amber-glow);
+  --t-background-transparent-success: var(--w144-dark-semantic-teal-glow);
+  --t-background-transparent-strong: rgba(255, 255, 255, 0.08);
+  --t-background-transparent-medium: rgba(255, 255, 255, 0.04);
+  --t-background-transparent-light:  rgba(255, 255, 255, 0.02);
+  --t-background-transparent-lighter: rgba(255, 255, 255, 0.012);
+  --t-background-transparent-primary: rgba(10, 16, 24, 0.95);
+  --t-background-transparent-secondary: rgba(10, 16, 24, 0.85);
+  --t-background-overlay-primary:   rgba(0, 0, 0, 0.65);
+  --t-background-overlay-secondary: rgba(0, 0, 0, 0.40);
+  --t-background-overlay-tertiary:  rgba(0, 0, 0, 0.15);
+
+  /* Text */
+  --t-font-color-primary:     var(--w144-dark-text-primary);
+  --t-font-color-secondary:   var(--w144-dark-text-secondary);
+  --t-font-color-tertiary:    var(--w144-dark-text-muted);
+  --t-font-color-light:       var(--w144-dark-text-light);
+  --t-font-color-extra-light: var(--w144-dark-text-extra-light);
+  --t-font-color-inverted:    var(--w144-dark-text-inverted);
+  --t-font-color-danger:      var(--w144-dark-semantic-red);
+  --t-font-family: 'Riviera Nights', 'SF Pro Display', -apple-system, 'Segoe UI', system-ui, sans-serif;
+
+  /* Borders */
+  --t-border-color-medium: var(--w144-dark-border-subtle);
+  --t-border-color-light:  var(--w144-dark-border-light);
+  --t-border-color-strong: var(--w144-dark-border-visible);
+  --t-border-color-secondary-inverted: rgba(0, 0, 0, 0.30);
+  --t-border-color-inverted: rgba(0, 0, 0, 0.55);
+  --t-border-color-danger:  var(--w144-dark-semantic-red);
+  --t-border-color-blue:    var(--w144-dark-semantic-blue);
+  --t-border-color-transparent-strong: rgba(255, 255, 255, 0.07);
+
+  --t-border-radius-md: 10px;
+
+  /* Accent — W144 dark gold */
+  --t-accent-primary:    var(--w144-dark-gold-500);
+  --t-accent-secondary:  var(--w144-dark-gold-400);
+  --t-accent-tertiary:   var(--w144-dark-accent-gold-muted);
+  --t-accent-quaternary: var(--w144-dark-accent-gold-glow);
+
+  /* Gold ladder accent.accent1..12 */
+  --t-accent-accent1:  var(--w144-dark-gold-50);
+  --t-accent-accent2:  var(--w144-dark-gold-100);
+  --t-accent-accent3:  var(--w144-dark-gold-200);
+  --t-accent-accent4:  var(--w144-dark-gold-300);
+  --t-accent-accent5:  var(--w144-dark-gold-400);
+  --t-accent-accent6:  var(--w144-dark-gold-500);
+  --t-accent-accent7:  var(--w144-dark-gold-600);
+  --t-accent-accent8:  var(--w144-dark-gold-600);
+  --t-accent-accent9:  var(--w144-dark-gold-700);
+  --t-accent-accent10: var(--w144-dark-gold-800);
+  --t-accent-accent11: var(--w144-dark-gold-900);
+  --t-accent-accent12: var(--w144-dark-gold-900);
+  --t-accent-accent3570: var(--w144-dark-gold-300);
+  --t-accent-accent4060: var(--w144-dark-gold-400);
+
+  /* Box shadows — softer for dark theme */
+  --t-box-shadow-light:  0 1px 2px rgba(0, 0, 0, 0.40), 0 4px 12px rgba(0, 0, 0, 0.50);
+  --t-box-shadow-strong: 0 2px 4px rgba(0, 0, 0, 0.45), 0 8px 20px rgba(0, 0, 0, 0.55);
+  --t-box-shadow-color:    0 0 12px rgba(255, 217, 138, 0.20);
+  --t-box-shadow-underline: 0 1px 0 0 rgba(255, 255, 255, 0.10);
+  --t-box-shadow-super-heavy: 0 10px 40px rgba(0, 0, 0, 0.70);
+
+  /* Snack-bar semantic */
+  --t-snack-bar-success-color:            var(--w144-dark-semantic-teal);
+  --t-snack-bar-success-background-color: var(--w144-dark-semantic-teal-glow);
+  --t-snack-bar-error-color:              var(--w144-dark-semantic-red);
+  --t-snack-bar-error-background-color:   var(--w144-dark-semantic-red-glow);
+  --t-snack-bar-warning-color:            var(--w144-dark-semantic-amber);
+  --t-snack-bar-warning-background-color: var(--w144-dark-semantic-amber-glow);
+  --t-snack-bar-info-color:               var(--w144-dark-semantic-blue);
+  --t-snack-bar-info-background-color:    var(--w144-dark-semantic-blue-glow);
+  --t-snack-bar-default-color:            var(--w144-dark-text-primary);
+  --t-snack-bar-default-background-color: var(--w144-dark-bg-elevated);
+
+  /* Buttons */
+  --t-buttons-secondary-text-color: var(--w144-dark-text-primary);
+}
+
+/* ─── Twenty media-query fallbacks (theme-light-* / theme-dark-*) ─── */
+:root {
+  --theme-light-background-tertiary: var(--w144-bg-deep);
+  --theme-dark-background-tertiary:  var(--w144-dark-bg-deep);
+}
+
+/* ─── Force Riviera Nights globally — overrides body { font-family: 'Inter' } ─── */
+body,
+body * {
+  font-family: 'Riviera Nights', 'SF Pro Display', -apple-system, 'Segoe UI', system-ui, sans-serif !important;
+}
+
+/* Preserve monospace in code contexts */
+code, pre, kbd, samp,
+[class*="monospace"],
+[class*="code"] {
+  font-family: 'SF Mono', 'Menlo', 'Monaco', 'Courier New', monospace !important;
+}
