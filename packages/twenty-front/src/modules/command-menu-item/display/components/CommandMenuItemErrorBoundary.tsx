@@ -29,6 +29,12 @@ export const CommandMenuItemErrorBoundary = ({
         const { captureException } = await import('@sentry/react');
         captureException(error, (scope) => {
           scope.setTag('component', 'CommandMenuItem');
+          scope.setTag('commandMenuItemId', commandMenuItemId);
+          scope.setLevel('warning');
+          scope.setFingerprint([
+            'command-menu-item-error',
+            error.message,
+          ]);
 
           return scope;
         });
