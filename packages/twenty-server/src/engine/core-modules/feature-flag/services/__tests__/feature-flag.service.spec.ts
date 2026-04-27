@@ -1,4 +1,4 @@
-import { Test, type TestingModule } from '@nestjs/testing';
+import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { FeatureFlagKey } from 'twenty-shared/types';
@@ -8,10 +8,12 @@ import {
   FeatureFlagException,
   FeatureFlagExceptionCode,
 } from 'src/engine/core-modules/feature-flag/feature-flag.exception';
+import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { featureFlagValidator } from 'src/engine/core-modules/feature-flag/validates/feature-flag.validate';
 import { publicFeatureFlagValidator } from 'src/engine/core-modules/feature-flag/validates/is-public-feature-flag.validate';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 jest.mock(
   'src/engine/core-modules/feature-flag/validates/is-public-feature-flag.validate',
@@ -35,12 +37,16 @@ describe('FeatureFlagService', () => {
     getOrRecompute: jest.fn(),
     invalidateAndRecompute: jest.fn(),
   };
+  const mockTwentyConfigService = {
+    get: jest.fn().mockReturnValue(NodeEnvironment.PRODUCTION),
+  };
 
   const workspaceId = 'workspace-id';
   const featureFlag = FeatureFlagKey.IS_AI_ENABLED;
 
   beforeEach(async () => {
     jest.clearAllMocks();
+    mockTwentyConfigService.get.mockReturnValue(NodeEnvironment.PRODUCTION);
 
     (
       publicFeatureFlagValidator.assertIsPublicFeatureFlag as jest.Mock
@@ -57,6 +63,10 @@ describe('FeatureFlagService', () => {
         {
           provide: WorkspaceCacheService,
           useValue: mockWorkspaceCacheService,
+        },
+        {
+          provide: TwentyConfigService,
+          useValue: mockTwentyConfigService,
         },
       ],
     }).compile();
@@ -114,6 +124,22 @@ describe('FeatureFlagService', () => {
       // Assert
       expect(result).toBe(false);
     });
+
+    it('should force default product flags on in development', async () => {
+      mockTwentyConfigService.get.mockReturnValueOnce(
+        NodeEnvironment.DEVELOPMENT,
+      );
+      mockWorkspaceCacheService.getOrRecompute.mockResolvedValue({
+        featureFlagsMap: {},
+      });
+
+      const result = await service.isFeatureEnabled(
+        FeatureFlagKey.IS_AI_ENABLED,
+        workspaceId,
+      );
+
+      expect(result).toBe(true);
+    });
   });
 
   describe('getWorkspaceFeatureFlags', () => {
@@ -143,11 +169,11 @@ describe('FeatureFlagService', () => {
   describe('getWorkspaceFeatureFlagsMap', () => {
     it('should return a map of feature flags for a workspace', async () => {
       // Prepare
-      const mockFeatureFlags = [
-        { key: FeatureFlagKey.IS_AI_ENABLED, value: false, workspaceId },
-      ];
-
-      mockFeatureFlagRepository.find.mockResolvedValue(mockFeatureFlags);
+      mockWorkspaceCacheService.getOrRecompute.mockResolvedValue({
+        featureFlagsMap: {
+          [FeatureFlagKey.IS_AI_ENABLED]: false,
+        },
+      });
 
       // Act
       const result = await service.getWorkspaceFeatureFlagsMap(workspaceId);

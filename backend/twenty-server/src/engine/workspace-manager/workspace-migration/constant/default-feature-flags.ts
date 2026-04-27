@@ -1,3 +1,19 @@
-import { type FeatureFlagKey } from 'twenty-shared/types';
+import { FeatureFlagKey } from 'twenty-shared/types';
 
-export const DEFAULT_FEATURE_FLAGS = [] as const satisfies FeatureFlagKey[];
+export const DEFAULT_FEATURE_FLAGS = [
+  FeatureFlagKey.IS_UNIQUE_INDEXES_ENABLED,
+  FeatureFlagKey.IS_JSON_FILTER_ENABLED,
+  FeatureFlagKey.IS_AI_ENABLED,
+  FeatureFlagKey.IS_MARKETPLACE_ENABLED,
+  FeatureFlagKey.IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED,
+  FeatureFlagKey.IS_PUBLIC_DOMAIN_ENABLED,
+  FeatureFlagKey.IS_EMAILING_DOMAIN_ENABLED,
+  FeatureFlagKey.IS_JUNCTION_RELATIONS_ENABLED,
+  FeatureFlagKey.IS_COMMAND_MENU_ITEM_ENABLED,
+  FeatureFlagKey.IS_DRAFT_EMAIL_ENABLED,
+  FeatureFlagKey.IS_USAGE_ANALYTICS_ENABLED,
+  FeatureFlagKey.IS_DIRECT_GRAPHQL_EXECUTION_ENABLED,
+  FeatureFlagKey.IS_RECORD_PAGE_LAYOUT_GLOBAL_EDITION_ENABLED,
+  FeatureFlagKey.IS_GRAPHQL_QUERY_TIMING_ENABLED,
+  FeatureFlagKey.IS_RECORD_TABLE_WIDGET_ENABLED,
+] as const satisfies FeatureFlagKey[];

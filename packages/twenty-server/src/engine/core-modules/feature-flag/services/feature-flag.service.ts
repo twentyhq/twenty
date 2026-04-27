@@ -12,9 +12,12 @@ import {
   FeatureFlagException,
   FeatureFlagExceptionCode,
 } from 'src/engine/core-modules/feature-flag/feature-flag.exception';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 import { featureFlagValidator } from 'src/engine/core-modules/feature-flag/validates/feature-flag.validate';
 import { publicFeatureFlagValidator } from 'src/engine/core-modules/feature-flag/validates/is-public-feature-flag.validate';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { DEFAULT_FEATURE_FLAGS } from 'src/engine/workspace-manager/workspace-migration/constant/default-feature-flags';
 
 @Injectable()
 export class FeatureFlagService {
@@ -22,6 +25,7 @@ export class FeatureFlagService {
     @InjectRepository(FeatureFlagEntity)
     private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
     private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
   public async isFeatureEnabled(
@@ -36,10 +40,9 @@ export class FeatureFlagService {
   public async getWorkspaceFeatureFlags(
     workspaceId: string,
   ): Promise<FeatureFlagDTO[]> {
-    const { featureFlagsMap: workspaceFeatureFlagsMap } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'featureFlagsMap',
-      ]);
+    const workspaceFeatureFlagsMap = await this.getWorkspaceFeatureFlagsMap(
+      workspaceId,
+    );
 
     return Object.entries(workspaceFeatureFlagsMap).map(([key, value]) => ({
       key: key as FeatureFlagKey,
@@ -55,7 +58,18 @@ export class FeatureFlagService {
         'featureFlagsMap',
       ]);
 
-    return workspaceFeatureFlagsMap;
+    if (this.twentyConfigService.get('NODE_ENV') !== NodeEnvironment.DEVELOPMENT) {
+      return workspaceFeatureFlagsMap;
+    }
+
+    const defaultEnabledFeatureFlags = Object.fromEntries(
+      DEFAULT_FEATURE_FLAGS.map((featureFlag) => [featureFlag, true]),
+    );
+
+    return {
+      ...workspaceFeatureFlagsMap,
+      ...defaultEnabledFeatureFlags,
+    } as FeatureFlagMap;
   }
 
   public async enableFeatureFlags(
