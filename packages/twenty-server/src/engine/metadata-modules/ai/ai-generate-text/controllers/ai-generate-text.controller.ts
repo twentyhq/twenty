@@ -4,6 +4,13 @@ import { generateText } from 'ai';
 import { PermissionFlagType } from 'twenty-shared/constants';
 
 import { RestApiExceptionFilter } from 'src/engine/api/rest/rest-api-exception.filter';
+import {
+  BillingException,
+  BillingExceptionCode,
+} from 'src/engine/core-modules/billing/billing.exception';
+import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing-product-key.enum';
+import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import type { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { JwtAuthGuard } from 'src/engine/guards/jwt-auth.guard';
@@ -23,6 +30,8 @@ import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models
 export class AiGenerateTextController {
   constructor(
     private readonly aiModelRegistryService: AiModelRegistryService,
+    private readonly billingService: BillingService,
+    private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
   @Post('generate-text')
@@ -36,6 +45,20 @@ export class AiGenerateTextController {
         'No AI models are available. Please configure at least one AI provider API key.',
         AiExceptionCode.API_KEY_NOT_CONFIGURED,
       );
+    }
+
+    if (this.twentyConfigService.get('IS_BILLING_ENABLED')) {
+      const canBill = await this.billingService.canBillMeteredProduct(
+        workspace.id,
+        BillingProductKey.WORKFLOW_NODE_EXECUTION,
+      );
+
+      if (!canBill) {
+        throw new BillingException(
+          'Credits exhausted',
+          BillingExceptionCode.BILLING_CREDITS_EXHAUSTED,
+        );
+      }
     }
 
     const resolvedModelId = body.modelId ?? workspace.fastModel;

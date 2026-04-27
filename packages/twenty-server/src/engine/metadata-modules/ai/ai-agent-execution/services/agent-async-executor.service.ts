@@ -14,9 +14,16 @@ import { type Repository } from 'typeorm';
 
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import {
+  BillingException,
+  BillingExceptionCode,
+} from 'src/engine/core-modules/billing/billing.exception';
+import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing-product-key.enum';
+import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
 import { NativeToolBinderService } from 'src/engine/core-modules/tool-provider/native/native-tool-binder.service';
 import { ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WORKFLOW_AGENT_REGISTRY_TOOL_CATEGORIES } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/workflow-agent-registry-tool-categories.const';
 import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
@@ -49,6 +56,8 @@ export class AgentAsyncExecutorService {
     private readonly aiModelConfigService: AiModelConfigService,
     private readonly toolRegistry: ToolRegistryService,
     private readonly nativeToolBinder: NativeToolBinderService,
+    private readonly billingService: BillingService,
+    private readonly twentyConfigService: TwentyConfigService,
     @InjectRepository(RoleTargetEntity)
     private readonly roleTargetRepository: Repository<RoleTargetEntity>,
     @InjectRepository(WorkspaceEntity)
@@ -113,6 +122,20 @@ export class AgentAsyncExecutorService {
     rolePermissionConfig?: RolePermissionConfig;
     authContext?: WorkspaceAuthContext;
   }): Promise<AgentExecutionResult> {
+    if (agent && this.twentyConfigService.get('IS_BILLING_ENABLED')) {
+      const canBill = await this.billingService.canBillMeteredProduct(
+        agent.workspaceId,
+        BillingProductKey.WORKFLOW_NODE_EXECUTION,
+      );
+
+      if (!canBill) {
+        throw new BillingException(
+          'Credits exhausted',
+          BillingExceptionCode.BILLING_CREDITS_EXHAUSTED,
+        );
+      }
+    }
+
     try {
       if (agent) {
         const workspace = await this.workspaceRepository.findOneBy({
