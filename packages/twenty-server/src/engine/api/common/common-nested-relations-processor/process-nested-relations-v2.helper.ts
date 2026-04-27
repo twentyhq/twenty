@@ -203,6 +203,12 @@ export class ProcessNestedRelationsV2Helper {
         ? `${targetRelation.settings?.joinColumnName}`
         : `${targetRelationName}Id`;
 
+    // For MANY_TO_ONE relations, include soft-deleted records so that
+    // the frontend can distinguish "deleted" from "RLS-blocked" and
+    // avoid showing a misleading "Not shared" indicator.
+    const includeSoftDeletedRecords =
+      relationType !== RelationType.ONE_TO_MANY;
+
     const { relationResults, relationAggregatedFieldsResult } =
       await this.findRelations({
         referenceQueryBuilder: targetObjectQueryBuilder,
@@ -215,6 +221,7 @@ export class ProcessNestedRelationsV2Helper {
         aggregate,
         sourceFieldName,
         targetObjectNameSingular,
+        includeSoftDeletedRecords,
       });
 
     this.assignRelationResults({
@@ -322,6 +329,7 @@ export class ProcessNestedRelationsV2Helper {
     aggregate,
     sourceFieldName,
     targetObjectNameSingular,
+    includeSoftDeletedRecords = false,
   }: {
     // oxlint-disable-next-line @typescripttypescript/no-explicit-any
     referenceQueryBuilder: WorkspaceSelectQueryBuilder<any>;
@@ -333,6 +341,7 @@ export class ProcessNestedRelationsV2Helper {
     aggregate: Record<string, any>;
     sourceFieldName: string;
     targetObjectNameSingular: string;
+    includeSoftDeletedRecords?: boolean;
     // oxlint-disable-next-line @typescripttypescript/no-explicit-any
   }): Promise<{ relationResults: any[]; relationAggregatedFieldsResult: any }> {
     if (ids.length === 0) {
@@ -377,7 +386,7 @@ export class ProcessNestedRelationsV2Helper {
     const queryBuilderOptions = referenceQueryBuilder.getFindOptions();
     const columnWithoutQuotes = column.replace(/["']/g, '');
 
-    const result = await referenceQueryBuilder
+    let resultQueryBuilder = referenceQueryBuilder
       .setFindOptions({
         ...queryBuilderOptions,
         select: { ...queryBuilderOptions.select, [columnWithoutQuotes]: true },
@@ -385,8 +394,13 @@ export class ProcessNestedRelationsV2Helper {
       .where(`${column} IN (:...ids)`, {
         ids,
       })
-      .take(limit)
-      .getMany();
+      .take(limit);
+
+    if (includeSoftDeletedRecords) {
+      resultQueryBuilder = resultQueryBuilder.withDeleted();
+    }
+
+    const result = await resultQueryBuilder.getMany();
 
     return { relationResults: result, relationAggregatedFieldsResult };
   }
