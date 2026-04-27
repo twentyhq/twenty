@@ -1,4 +1,4 @@
-import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
+import { objectMetadataItemsByUniversalIdentifierMapSelector } from '@/object-metadata/states/objectMetadataItemsByUniversalIdentifierMapSelector';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { t } from '@lingui/core/macro';
 import { useParams } from 'react-router-dom';
@@ -20,7 +20,9 @@ export const SettingsLayoutPageLayoutDetail = () => {
   const { application, manifest, isLoading } =
     useApplicationManifest(applicationId);
 
-  const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
+  const objectMetadataItemsByUniversalIdentifier = useAtomStateValue(
+    objectMetadataItemsByUniversalIdentifierMapSelector,
+  );
 
   const pageLayout = manifest?.pageLayouts?.find(
     (pl) => pl.universalIdentifier === pageLayoutUniversalIdentifier,
@@ -29,7 +31,7 @@ export const SettingsLayoutPageLayoutDetail = () => {
   const objectLabel = isDefined(pageLayout)
     ? resolveObjectLabel(
         pageLayout.objectUniversalIdentifier,
-        objectMetadataItems,
+        objectMetadataItemsByUniversalIdentifier,
       )
     : undefined;
 
@@ -98,7 +100,7 @@ export const SettingsLayoutPageLayoutDetail = () => {
                 widget.type,
                 resolveObjectLabel(
                   widget.objectUniversalIdentifier,
-                  objectMetadataItems,
+                  objectMetadataItemsByUniversalIdentifier,
                 ) ?? '—',
               ],
             }))}

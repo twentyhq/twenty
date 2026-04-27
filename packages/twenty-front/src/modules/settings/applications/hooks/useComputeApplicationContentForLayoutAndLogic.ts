@@ -1,4 +1,4 @@
-import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
+import { objectMetadataItemsByUniversalIdentifierMapSelector } from '@/object-metadata/states/objectMetadataItemsByUniversalIdentifierMapSelector';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { t } from '@lingui/core/macro';
 import { type Manifest } from 'twenty-shared/application';
@@ -17,12 +17,18 @@ export const useComputeApplicationContentForLayoutAndLogic = ({
   installedApplication?: InstalledApplicationForContent;
   manifestContent?: Manifest;
 }) => {
-  const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
+  const objectMetadataItemsByUniversalIdentifier = useAtomStateValue(
+    objectMetadataItemsByUniversalIdentifierMapSelector,
+  );
 
   const installedAppId = installedApplication?.id;
 
   const resolveLabel = (uid: string | undefined | null) =>
-    resolveObjectLabel(uid, objectMetadataItems, manifestContent);
+    resolveObjectLabel(
+      uid,
+      objectMetadataItemsByUniversalIdentifier,
+      manifestContent,
+    );
 
   const pageLayoutRows: ApplicationContentRow[] = (
     manifestContent?.pageLayouts ?? []

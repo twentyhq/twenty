@@ -101,8 +101,7 @@ export const useComputeObjectAndFieldsContentForApplication = ({
 
             const objectMetadataItem = objectMetadataItems.find(
               (item) =>
-                item.universalIdentifier ===
-                field.objectUniversalIdentifier,
+                item.universalIdentifier === field.objectUniversalIdentifier,
             );
 
             if (!isDefined(objectMetadataItem)) {

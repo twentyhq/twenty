@@ -35,8 +35,18 @@ const resolvePermissionIds = (
   const objectUniversalIdToIdMap: Record<string, string> = {};
   const fieldUniversalIdToIdMap: Record<string, string> = {};
 
-  const allObjectUniversalIds = new Set<string>();
+  const objectsByUid = new Map(
+    objectMetadataItems.map((item) => [item.universalIdentifier, item]),
+  );
+  const fieldsByUid = new Map(
+    objectMetadataItems.flatMap((item) =>
+      item.fields.map(
+        (field) => [field.universalIdentifier, field] as const,
+      ),
+    ),
+  );
 
+  const allObjectUniversalIds = new Set<string>();
   for (const permission of defaultRole.objectPermissions ?? []) {
     allObjectUniversalIds.add(permission.objectUniversalIdentifier);
   }
@@ -45,25 +55,14 @@ const resolvePermissionIds = (
   }
 
   for (const universalId of allObjectUniversalIds) {
-    const workspaceObject = objectMetadataItems.find(
-      (item) => item.universalIdentifier === universalId,
-    );
-
+    const workspaceObject = objectsByUid.get(universalId);
     if (isDefined(workspaceObject)) {
       objectUniversalIdToIdMap[universalId] = workspaceObject.id;
     }
   }
 
   for (const permission of defaultRole.fieldPermissions ?? []) {
-    const workspaceObject = objectMetadataItems.find(
-      (item) =>
-        item.universalIdentifier === permission.objectUniversalIdentifier,
-    );
-    const workspaceField = workspaceObject?.fields.find(
-      (field) =>
-        field.universalIdentifier === permission.fieldUniversalIdentifier,
-    );
-
+    const workspaceField = fieldsByUid.get(permission.fieldUniversalIdentifier);
     if (isDefined(workspaceField)) {
       fieldUniversalIdToIdMap[permission.fieldUniversalIdentifier] =
         workspaceField.id;

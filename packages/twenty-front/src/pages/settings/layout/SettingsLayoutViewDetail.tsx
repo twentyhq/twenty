@@ -1,6 +1,8 @@
-import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
+import { objectMetadataItemsByUniversalIdentifierMapSelector } from '@/object-metadata/states/objectMetadataItemsByUniversalIdentifierMapSelector';
+import { flattenedFieldMetadataItemsSelector } from '@/object-metadata/states/flattenedFieldMetadataItemsSelector';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { t } from '@lingui/core/macro';
+import { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 import { useApplicationManifest } from '~/pages/settings/layout/hooks/useApplicationManifest';
@@ -28,25 +30,32 @@ export const SettingsLayoutViewDetail = () => {
   const { application, manifest, isLoading } =
     useApplicationManifest(applicationId);
 
-  const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
+  const objectMetadataItemsByUniversalIdentifier = useAtomStateValue(
+    objectMetadataItemsByUniversalIdentifierMapSelector,
+  );
+  const flattenedFieldMetadataItems = useAtomStateValue(
+    flattenedFieldMetadataItemsSelector,
+  );
+
+  const fieldsByUniversalIdentifier = useMemo(
+    () =>
+      new Map(flattenedFieldMetadataItems.map((field) => [field.universalIdentifier, field])),
+    [flattenedFieldMetadataItems],
+  );
 
   const view = manifest?.views?.find(
     (v) => v.universalIdentifier === viewUniversalIdentifier,
   );
 
   const objectLabel = isDefined(view)
-    ? resolveObjectLabel(view.objectUniversalIdentifier, objectMetadataItems)
+    ? resolveObjectLabel(
+        view.objectUniversalIdentifier,
+        objectMetadataItemsByUniversalIdentifier,
+      )
     : undefined;
 
-  const resolveFieldLabel = (uid: string): string => {
-    for (const item of objectMetadataItems) {
-      const workspaceField = item.fields.find(
-        (f) => f.universalIdentifier === uid,
-      );
-      if (isDefined(workspaceField)) return workspaceField.label;
-    }
-    return uid;
-  };
+  const resolveFieldLabel = (uid: string): string =>
+    fieldsByUniversalIdentifier.get(uid)?.label ?? uid;
 
   const detailRows: DetailRow[] = isDefined(view)
     ? [
