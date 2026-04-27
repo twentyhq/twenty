@@ -295,12 +295,12 @@ describe('extractRawBody', () => {
     expect(extractRawBody({} as Request)).toBeUndefined();
   });
 
-  it('returns undefined when rawBody is empty', () => {
+  it('returns empty string when rawBody is an empty buffer', () => {
     const request = {
       rawBody: Buffer.alloc(0),
     } as unknown as Request;
 
-    expect(extractRawBody(request)).toBeUndefined();
+    expect(extractRawBody(request)).toBe('');
   });
 });
 
