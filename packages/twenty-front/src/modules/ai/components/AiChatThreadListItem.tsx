@@ -104,7 +104,7 @@ export const AiChatThreadListItem = ({ thread }: AiChatThreadListItemProps) => {
     thread.id,
     AI_CHAT_THREAD_ACTIONS_SURFACE.SIDE_PANEL,
   );
-  const isItemMenuDropdownOpen = useAtomComponentStateValue(
+  const isDropdownOpen = useAtomComponentStateValue(
     isDropdownOpenComponentState,
     itemMenuDropdownId,
   );
@@ -147,7 +147,7 @@ export const AiChatThreadListItem = ({ thread }: AiChatThreadListItemProps) => {
         )}
       </StyledThreadContent>
       <StyledMenuTrigger
-        $isDropdownOpen={isItemMenuDropdownOpen}
+        $isDropdownOpen={isDropdownOpen}
         onClick={(event) => event.stopPropagation()}
       >
         <AiChatThreadItemMenu

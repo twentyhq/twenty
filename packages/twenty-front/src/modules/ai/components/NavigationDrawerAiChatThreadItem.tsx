@@ -36,12 +36,12 @@ const StyledTimestamp = styled.span<{ $isDropdownOpen: boolean }>`
 `;
 
 const StyledMenuTrigger = styled.div<{ $isDropdownOpen: boolean }>`
-  position: absolute;
-  right: 0;
-  top: 0;
   opacity: ${({ $isDropdownOpen }) => ($isDropdownOpen ? 1 : 0)};
   pointer-events: ${({ $isDropdownOpen }) =>
     $isDropdownOpen ? 'auto' : 'none'};
+  position: absolute;
+  right: 0;
+  top: 0;
   transition: opacity 150ms;
 
   .navigation-drawer-item:hover & {
@@ -81,7 +81,7 @@ export const NavigationDrawerAiChatThreadItem = ({
     thread.id,
     AI_CHAT_THREAD_ACTIONS_SURFACE.NAV_DRAWER,
   );
-  const isItemMenuDropdownOpen = useAtomComponentStateValue(
+  const isDropdownOpen = useAtomComponentStateValue(
     isDropdownOpenComponentState,
     itemMenuDropdownId,
   );
@@ -110,10 +110,10 @@ export const NavigationDrawerAiChatThreadItem = ({
       alwaysShowRightOptions
       rightOptions={
         <StyledRightOptions>
-          <StyledTimestamp $isDropdownOpen={isItemMenuDropdownOpen}>
+          <StyledTimestamp $isDropdownOpen={isDropdownOpen}>
             {timestamp}
           </StyledTimestamp>
-          <StyledMenuTrigger $isDropdownOpen={isItemMenuDropdownOpen}>
+          <StyledMenuTrigger $isDropdownOpen={isDropdownOpen}>
             <AiChatThreadItemMenu
               threadId={thread.id}
               threadTitle={displayLabel}
