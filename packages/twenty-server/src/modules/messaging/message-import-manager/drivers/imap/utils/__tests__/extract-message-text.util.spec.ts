@@ -295,19 +295,9 @@ Developer Support`);
 
     const result = service.extractTextWithoutReplyQuotations(parsed);
 
-    expect(result).toEqual(`Hi Sarah,
-
-
-I wanted to quickly follow up regarding the Q3 marketing campaign results.  
-We’ve seen a 14% increase in engagement compared to last quarter, but conversions are still slightly below target.  
-
-
-Let’s schedule a short call early next week to discuss adjustments before the Q4 push.  
-Would Monday 10 AM work for you?
-
-
-Best regards,  
-John`);
+    expect(result).toEqual(
+      `Hi Sarah,\n\nI wanted to quickly follow up regarding the Q3 marketing campaign results.  \nWe’ve seen a 14% increase in engagement compared to last quarter, but conversions are still slightly below target.  \n\nLet’s schedule a short call early next week to discuss adjustments before the Q4 push.  \nWould Monday 10 AM work for you?\n\nBest regards,  \nJohn`,
+    );
   });
 
   it('should prefer text over html when both are available', () => {
