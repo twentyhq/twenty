@@ -288,7 +288,7 @@ export class BillingUsageService {
     usedCredits: number;
   }): Promise<number | undefined> {
     const {
-      billingSubscription: { currentPeriodStart },
+      billingSubscription: { currentPeriodStart, currentPeriodEnd },
     } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
       'billingSubscription',
     ]);
@@ -304,6 +304,15 @@ export class BillingUsageService {
           workspaceId,
           currentPeriodStart,
         });
+
+    if (!isDefined(cachedAvailableCredits)) {
+      await this.warmAvailableCredits(
+        workspaceId,
+        currentPeriodStart,
+        currentPeriodEnd,
+        availableCredits,
+      );
+    }
 
     await this.billingUsageCacheStorage.incrBy(
       buildBillingUsageAvailableCreditsCacheKey(
