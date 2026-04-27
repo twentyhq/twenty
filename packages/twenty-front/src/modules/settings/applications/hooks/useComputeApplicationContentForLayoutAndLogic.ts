@@ -133,7 +133,7 @@ export const useComputeApplicationContentForLayoutAndLogic = ({
   });
 
   const agentRows: ApplicationContentRow[] = isDefined(installedApplication)
-    ? installedApplication.agents.map((agent) => ({
+    ? (installedApplication.agents ?? []).map((agent) => ({
         key: agent.id,
         name: agent.label,
         icon: agent.icon ?? undefined,
