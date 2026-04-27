@@ -78,6 +78,13 @@ jobs:
           tag: scope:backend
           tasks: lint,typecheck
 
+  server-previous-version-upgrade-mutation-guard:
+    needs: changed-files-check
+    if: >
+      github.event_name == 'pull_request' &&
+      needs.changed-files-check.outputs.any_changed == 'true'
+    uses: ./.github/workflows/upgrade-version-guard.yaml
+
   server-validation:
     needs: server-build
     timeout-minutes: 30
@@ -311,6 +318,7 @@ jobs:
         changed-files-check,
         server-build,
         server-lint-typecheck,
+        server-upgrade-version-guard,
         server-validation,
         server-test,
         server-integration-test,
