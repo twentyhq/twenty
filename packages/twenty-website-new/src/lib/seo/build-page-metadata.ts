@@ -21,8 +21,12 @@ export type BuildPageMetadataInput = {
 const normalizePath = (path: string): string =>
   path.startsWith('/') ? path : `/${path}`;
 
-const localizePath = (locale: AppLocale, normalizedPath: string): string =>
-  normalizedPath === '/' ? `/${locale}` : `/${locale}${normalizedPath}`;
+const localizePath = (locale: AppLocale, normalizedPath: string): string => {
+  if (locale === SOURCE_LOCALE) {
+    return normalizedPath;
+  }
+  return normalizedPath === '/' ? `/${locale}` : `/${locale}${normalizedPath}`;
+};
 
 const buildLanguageAlternates = (
   normalizedPath: string,

@@ -11,7 +11,7 @@ afterAll(() => {
 });
 
 describe('buildPageMetadata', () => {
-  it('produces a baseline with locale-prefixed canonical, openGraph, and twitter populated', () => {
+  it('emits an unprefixed canonical for the default locale (English at root)', () => {
     const metadata = buildPageMetadata({
       locale: 'en',
       path: '/product',
@@ -19,11 +19,11 @@ describe('buildPageMetadata', () => {
       description: 'Product page description.',
     });
 
-    expect(metadata.alternates).toMatchObject({ canonical: '/en/product' });
+    expect(metadata.alternates).toMatchObject({ canonical: '/product' });
     expect(metadata.openGraph).toMatchObject({
       title: 'Product | Twenty',
       description: 'Product page description.',
-      url: '/en/product',
+      url: '/product',
       siteName: 'Twenty',
       locale: 'en',
       type: 'website',
@@ -35,7 +35,18 @@ describe('buildPageMetadata', () => {
     });
   });
 
-  it('emits hreflang language alternates for every supported locale plus x-default', () => {
+  it('emits a prefixed canonical for non-default locales', () => {
+    const metadata = buildPageMetadata({
+      locale: 'fr-FR',
+      path: '/product',
+      title: 't',
+      description: 'd',
+    });
+
+    expect(metadata.alternates).toMatchObject({ canonical: '/fr-FR/product' });
+  });
+
+  it('emits hreflang language alternates: English unprefixed, others prefixed, x-default unprefixed', () => {
     const metadata = buildPageMetadata({
       locale: 'fr-FR',
       path: '/pricing',
@@ -46,10 +57,10 @@ describe('buildPageMetadata', () => {
     const languages = metadata.alternates?.languages as
       | Record<string, string>
       | undefined;
-    expect(languages?.en).toBe('/en/pricing');
+    expect(languages?.en).toBe('/pricing');
     expect(languages?.['fr-FR']).toBe('/fr-FR/pricing');
     expect(languages?.['zh-CN']).toBe('/zh-CN/pricing');
-    expect(languages?.['x-default']).toBe('/en/pricing');
+    expect(languages?.['x-default']).toBe('/pricing');
   });
 
   it('localizes the root path correctly (no trailing slash duplication)', () => {
@@ -65,7 +76,8 @@ describe('buildPageMetadata', () => {
       | Record<string, string>
       | undefined;
     expect(languages?.['de-DE']).toBe('/de-DE');
-    expect(languages?.['x-default']).toBe('/en');
+    expect(languages?.en).toBe('/');
+    expect(languages?.['x-default']).toBe('/');
   });
 
   it('absolutises a root-relative ogImage against the configured site URL', () => {
@@ -112,7 +124,7 @@ describe('buildPageMetadata', () => {
     expect(metadata.openGraph).toMatchObject({
       title: 'Override OG title',
       description: 'Default description',
-      url: '/en/x',
+      url: '/x',
       siteName: 'Twenty',
       images: [{ url: 'https://example.test/og/default.png' }],
     });
@@ -156,7 +168,7 @@ describe('buildPageMetadata', () => {
     const languages = metadata.alternates?.languages as
       | Record<string, string>
       | undefined;
-    expect(languages?.en).toBe('/en/x');
+    expect(languages?.en).toBe('/x');
   });
 
   it('shallow-merges unrelated top-level keys (e.g. robots)', () => {
@@ -171,6 +183,6 @@ describe('buildPageMetadata', () => {
     });
 
     expect(metadata.robots).toEqual({ index: false, follow: false });
-    expect(metadata.alternates).toMatchObject({ canonical: '/en/x' });
+    expect(metadata.alternates).toMatchObject({ canonical: '/x' });
   });
 });

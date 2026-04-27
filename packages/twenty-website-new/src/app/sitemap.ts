@@ -26,8 +26,9 @@ const STATIC_ROUTES: readonly StaticRoute[] = [
 ];
 
 const buildLocalizedUrl = (locale: AppLocale, path: string): string => {
-  if (path === '/') return `${SITE_URL}/${locale}`;
-  return `${SITE_URL}/${locale}${path}`;
+  const prefix = locale === SOURCE_LOCALE ? '' : `/${locale}`;
+  const tail = path === '/' ? '' : path;
+  return `${SITE_URL}${prefix}${tail}`;
 };
 
 const buildLanguageAlternates = (path: string): Record<string, string> => {

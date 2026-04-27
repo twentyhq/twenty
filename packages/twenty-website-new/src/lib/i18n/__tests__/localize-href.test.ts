@@ -1,11 +1,16 @@
 import { localizeHref, stripLocale } from '../localize-href';
 
 describe('localizeHref', () => {
-  it('prefixes the active locale onto an internal absolute path', () => {
+  it('prefixes a non-default locale onto an internal absolute path', () => {
     expect(localizeHref('fr-FR', '/pricing')).toBe('/fr-FR/pricing');
   });
 
-  it('prefixes the active locale onto the root path', () => {
+  it('returns paths unprefixed for the default locale (English at root)', () => {
+    expect(localizeHref('en', '/pricing')).toBe('/pricing');
+    expect(localizeHref('en', '/')).toBe('/');
+  });
+
+  it('prefixes a non-default locale onto the root path', () => {
     expect(localizeHref('fr-FR', '/')).toBe('/fr-FR/');
   });
 
@@ -13,11 +18,26 @@ describe('localizeHref', () => {
     expect(localizeHref('de-DE', '/customers?ref=hero#top')).toBe(
       '/de-DE/customers?ref=hero#top',
     );
+    expect(localizeHref('en', '/customers?ref=hero#top')).toBe(
+      '/customers?ref=hero#top',
+    );
   });
 
-  it('does not double-prefix paths that already start with a known locale', () => {
-    expect(localizeHref('fr-FR', '/en/why-twenty')).toBe('/en/why-twenty');
+  it('does not double-prefix paths that already start with a non-default locale', () => {
+    expect(localizeHref('fr-FR', '/de-DE/why-twenty')).toBe(
+      '/de-DE/why-twenty',
+    );
     expect(localizeHref('fr-FR', '/fr-FR/pricing')).toBe('/fr-FR/pricing');
+  });
+
+  it('strips a redundant /en prefix when targeting the default locale', () => {
+    expect(localizeHref('en', '/en/why-twenty')).toBe('/why-twenty');
+    expect(localizeHref('en', '/en')).toBe('/');
+  });
+
+  it('rewrites an /en-prefixed path onto the active non-default locale', () => {
+    expect(localizeHref('fr-FR', '/en/why-twenty')).toBe('/fr-FR/why-twenty');
+    expect(localizeHref('fr-FR', '/en')).toBe('/fr-FR/');
   });
 
   it('passes external https URLs through unchanged', () => {
