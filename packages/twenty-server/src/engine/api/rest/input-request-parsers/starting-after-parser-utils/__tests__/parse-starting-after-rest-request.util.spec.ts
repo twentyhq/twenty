@@ -52,4 +52,36 @@ describe('parseStartingAfterRestRequest', () => {
 
     expect(parseStartingAfterRestRequest(request)).toEqual(undefined);
   });
+
+  it('should throw when starting_after is an array', () => {
+    const request: any = { query: { starting_after: ['uuid1', 'uuid2'] } };
+
+    expect(() => parseStartingAfterRestRequest(request)).toThrow(
+      RestInputRequestParserException,
+    );
+  });
+
+  it('should throw when starting_after is a number', () => {
+    const request: any = { query: { starting_after: 123 } };
+
+    expect(() => parseStartingAfterRestRequest(request)).toThrow(
+      RestInputRequestParserException,
+    );
+  });
+
+  it('should throw when cursor alias is an array', () => {
+    const request: any = { query: { cursor: ['uuid1', 'uuid2'] } };
+
+    expect(() => parseStartingAfterRestRequest(request)).toThrow(
+      RestInputRequestParserException,
+    );
+  });
+
+  it('should throw when cursor alias is a number', () => {
+    const request: any = { query: { cursor: 123 } };
+
+    expect(() => parseStartingAfterRestRequest(request)).toThrow(
+      RestInputRequestParserException,
+    );
+  });
 });

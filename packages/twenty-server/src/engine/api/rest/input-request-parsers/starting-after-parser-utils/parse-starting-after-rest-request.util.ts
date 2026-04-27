@@ -24,9 +24,34 @@ export const parseStartingAfterRestRequest = (
     return startingAfter;
   }
 
+  if (startingAfter !== undefined) {
+    if (Array.isArray(startingAfter)) {
+      throw new RestInputRequestParserException(
+        `Invalid 'starting_after' parameter. Expected a single string value.`,
+        RestInputRequestParserExceptionCode.INVALID_STARTING_AFTER_CURSOR_QUERY_PARAM,
+      );
+    }
+    throw new RestInputRequestParserException(
+      `Invalid 'starting_after' parameter. Expected a string.`,
+      RestInputRequestParserExceptionCode.INVALID_STARTING_AFTER_CURSOR_QUERY_PARAM,
+    );
+  }
+
   for (const alias of STARTING_AFTER_ALIASES) {
     const aliasValue = query?.[alias];
-    if (typeof aliasValue === 'string') {
+    if (aliasValue !== undefined) {
+      if (Array.isArray(aliasValue)) {
+        throw new RestInputRequestParserException(
+          `Invalid cursor parameter '${alias}'. Use 'starting_after' for pagination.`,
+          RestInputRequestParserExceptionCode.INVALID_STARTING_AFTER_CURSOR_QUERY_PARAM,
+        );
+      }
+      if (typeof aliasValue !== 'string') {
+        throw new RestInputRequestParserException(
+          `Invalid cursor parameter '${alias}'. Use 'starting_after' for pagination.`,
+          RestInputRequestParserExceptionCode.INVALID_STARTING_AFTER_CURSOR_QUERY_PARAM,
+        );
+      }
       throw new RestInputRequestParserException(
         `Invalid cursor parameter '${alias}'. Use 'starting_after' for pagination.`,
         RestInputRequestParserExceptionCode.INVALID_STARTING_AFTER_CURSOR_QUERY_PARAM,

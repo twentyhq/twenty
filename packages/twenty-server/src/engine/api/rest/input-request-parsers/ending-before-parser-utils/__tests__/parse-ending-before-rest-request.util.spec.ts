@@ -60,4 +60,36 @@ describe('parseEndingBeforeRestRequest', () => {
 
     expect(parseEndingBeforeRestRequest(request)).toEqual(undefined);
   });
+
+  it('should throw when ending_before is an array', () => {
+    const request: any = { query: { ending_before: ['uuid1', 'uuid2'] } };
+
+    expect(() => parseEndingBeforeRestRequest(request)).toThrow(
+      RestInputRequestParserException,
+    );
+  });
+
+  it('should throw when ending_before is a number', () => {
+    const request: any = { query: { ending_before: 123 } };
+
+    expect(() => parseEndingBeforeRestRequest(request)).toThrow(
+      RestInputRequestParserException,
+    );
+  });
+
+  it('should throw when cursor alias is an array', () => {
+    const request: any = { query: { cursor: ['uuid1', 'uuid2'] } };
+
+    expect(() => parseEndingBeforeRestRequest(request)).toThrow(
+      RestInputRequestParserException,
+    );
+  });
+
+  it('should throw when cursor alias is a number', () => {
+    const request: any = { query: { cursor: 123 } };
+
+    expect(() => parseEndingBeforeRestRequest(request)).toThrow(
+      RestInputRequestParserException,
+    );
+  });
 });
