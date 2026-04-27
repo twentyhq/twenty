@@ -150,8 +150,6 @@ export const MainNavigationDrawerTabsRow = () => {
 
   const isExpanded = isNavigationDrawerExpanded || isMobile;
 
-  // The row only contains AI controls (chat history tab + new chat button),
-  // so without AI access there is nothing to render.
   if (!hasAiSettingsPermission) {
     return null;
   }

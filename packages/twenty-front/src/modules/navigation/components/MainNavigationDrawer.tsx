@@ -20,10 +20,6 @@ export const MainNavigationDrawer = ({ className }: { className?: string }) => {
     PermissionFlagType.AI_SETTINGS,
   );
 
-  // Even if the active tab is AI_CHAT_HISTORY (e.g. carried over from a
-  // previous session or impersonation), render the navigation menu when the
-  // user lacks AI access — the tabs row itself is hidden in that case so
-  // there is no way to switch back.
   const showAiChatContent =
     hasAiSettingsPermission &&
     navigationDrawerActiveTab === NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY;
