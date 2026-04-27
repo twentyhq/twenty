@@ -8,7 +8,6 @@
 #   1. Starts Postgres + Redis (local services or Docker, auto-detected)
 #   2. Creates 'default' and 'test' databases
 #   3. Copies .env.example -> .env for front and server
-#   4. Initializes database schema (migrations + seed data)
 #
 # Usage (from repo root):
 #   bash packages/twenty-utils/setup-dev-env.sh          # start + configure
@@ -78,16 +77,6 @@ wait_for_redis() {
     if [ "$retries" -le 0 ]; then fail "Redis did not start in time"; exit 1; fi
     sleep 1
   done
-}
-
-schema_exists() {
-  if command -v psql &>/dev/null; then
-    PGPASSWORD=postgres psql -h localhost -p 5432 -U postgres -d default -t -c "SELECT 1 FROM information_schema.schemata WHERE schema_name = 'core'" 2>/dev/null | grep -q 1
-  elif can_use_docker && docker compose -f "$COMPOSE_FILE" ps --quiet db 2>/dev/null | grep -q .; then
-    docker compose -f "$COMPOSE_FILE" exec -T db psql -U postgres -d default -t -c "SELECT 1 FROM information_schema.schemata WHERE schema_name = 'core'" 2>/dev/null | grep -q 1
-  else
-    return 1
-  fi
 }
 
 # --------------- parse flags ---------------
@@ -250,23 +239,6 @@ else
       ok "$pkg/.env created"
     fi
   done
-fi
-
-# =============================================================================
-# 4. Initialize database schema
-# =============================================================================
-if command -v npx &>/dev/null && [ -d node_modules ]; then
-  if schema_exists; then
-    ok "Database schema already initialized"
-  else
-    info "Initializing database schema (migrations + seed)..."
-    npx nx database:reset twenty-server
-    ok "Database schema initialized"
-  fi
-elif [ -d node_modules ]; then
-  info "Run 'npx nx database:reset twenty-server' to initialize schema"
-else
-  info "Run 'npx nx database:reset twenty-server' manually to initialize schema"
 fi
 
 # =============================================================================
