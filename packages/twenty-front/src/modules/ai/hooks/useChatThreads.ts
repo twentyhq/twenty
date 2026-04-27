@@ -1,6 +1,6 @@
 import { useAtomValue } from 'jotai';
 
-import { agentChatVisibleThreadsSelector } from '@/ai/states/agentChatVisibleThreadsSelector';
+import { agentChatVisibleThreadsSelector } from '@/ai/states/selectors/agentChatVisibleThreadsSelector';
 import { sortChatThreadsByUpdatedAtDesc } from '@/ai/utils/sortChatThreadsByUpdatedAtDesc';
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';

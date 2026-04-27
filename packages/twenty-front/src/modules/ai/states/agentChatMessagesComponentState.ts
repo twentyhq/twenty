@@ -1,4 +1,4 @@
-import { AgentChatComponentInstanceContext } from '@/ai/states/AgentChatComponentInstanceContext';
+import { AgentChatComponentInstanceContext } from '@/ai/contexts/AgentChatComponentInstanceContext';
 import { createAtomComponentState } from '@/ui/utilities/state/jotai/utils/createAtomComponentState';
 import { type ExtendedUIMessage } from 'twenty-shared/ai';
 

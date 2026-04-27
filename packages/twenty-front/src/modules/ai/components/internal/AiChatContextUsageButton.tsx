@@ -8,7 +8,7 @@ import { ProgressBar } from 'twenty-ui/feedback';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { ContextUsageProgressRing } from '@/ai/components/internal/ContextUsageProgressRing';
-import { agentChatHasMessageComponentSelector } from '@/ai/states/agentChatHasMessageComponentSelector';
+import { agentChatHasMessageComponentSelector } from '@/ai/states/selectors/agentChatHasMessageComponentSelector';
 import {
   agentChatUsageComponentFamilyState,
   type AgentChatLastMessageUsage,

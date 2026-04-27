@@ -7,7 +7,7 @@ import {
   agentChatDraftsByThreadIdState,
 } from '@/ai/states/agentChatDraftsByThreadIdState';
 import { agentChatInputState } from '@/ai/states/agentChatInputState';
-import { agentChatVisibleThreadsSelector } from '@/ai/states/agentChatVisibleThreadsSelector';
+import { agentChatVisibleThreadsSelector } from '@/ai/states/selectors/agentChatVisibleThreadsSelector';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { sortChatThreadsByUpdatedAtDesc } from '@/ai/utils/sortChatThreadsByUpdatedAtDesc';
 import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';

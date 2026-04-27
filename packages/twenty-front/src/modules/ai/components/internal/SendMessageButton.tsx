@@ -1,5 +1,5 @@
 import { AGENT_CHAT_STOP_EVENT_NAME } from '@/ai/constants/AgentChatStopEventName';
-import { agentChatInputIsEmptySelector } from '@/ai/states/agentChatInputIsEmptySelector';
+import { agentChatInputIsEmptySelector } from '@/ai/states/selectors/agentChatInputIsEmptySelector';
 import { agentChatIsLoadingState } from '@/ai/states/agentChatIsLoadingState';
 import { agentChatIsStreamingComponentFamilyState } from '@/ai/states/agentChatIsStreamingComponentFamilyState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';

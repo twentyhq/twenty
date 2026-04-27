@@ -1,11 +1,12 @@
-import { AgentChatComponentInstanceContext } from '@/ai/states/AgentChatComponentInstanceContext';
+import { AgentChatComponentInstanceContext } from '@/ai/contexts/AgentChatComponentInstanceContext';
 import { agentChatMessagesComponentFamilyState } from '@/ai/states/agentChatMessagesComponentFamilyState';
 import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
 import { createAtomComponentSelector } from '@/ui/utilities/state/jotai/utils/createAtomComponentSelector';
+import { isNonEmptyArray } from '@sniptt/guards';
 
-export const agentChatNonLastMessageIdsComponentSelector =
-  createAtomComponentSelector<string[]>({
-    key: 'agentChatNonLastMessageIdsComponentSelector',
+export const agentChatHasMessageComponentSelector =
+  createAtomComponentSelector<boolean>({
+    key: 'agentChatHasMessageComponentSelector',
     componentInstanceContext: AgentChatComponentInstanceContext,
     get:
       ({ instanceId }) =>
@@ -17,9 +18,6 @@ export const agentChatNonLastMessageIdsComponentSelector =
           familyKey: { threadId: currentThreadId },
         });
 
-        return messages.slice(0, -1).map((message) => message.id);
+        return isNonEmptyArray(messages);
       },
-    areEqual: (previous, next) =>
-      previous.length === next.length &&
-      previous.every((id, index) => id === next[index]),
   });
