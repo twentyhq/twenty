@@ -1,11 +1,4 @@
-import {
-  Body,
-  Controller,
-  Logger,
-  Post,
-  UseFilters,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Post, UseFilters, UseGuards } from '@nestjs/common';
 
 import { generateText } from 'ai';
 import { PermissionFlagType } from 'twenty-shared/constants';
@@ -31,8 +24,6 @@ import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models
 @UseGuards(JwtAuthGuard, WorkspaceAuthGuard)
 @UseFilters(AiRestApiExceptionFilter, RestApiExceptionFilter)
 export class AiGenerateTextController {
-  private readonly logger = new Logger(AiGenerateTextController.name);
-
   constructor(
     private readonly aiModelRegistryService: AiModelRegistryService,
     private readonly aiBillingService: AiBillingService,
@@ -82,25 +73,18 @@ export class AiGenerateTextController {
       };
     } finally {
       if (result) {
-        try {
-          this.aiBillingService.calculateAndBillUsage(
-            resolvedModelId,
-            {
-              usage: result.usage,
-              cacheCreationTokens:
-                result.usage.inputTokenDetails?.cacheWriteTokens ?? 0,
-            },
-            workspace.id,
-            UsageOperationType.AI_WORKFLOW_TOKEN,
-            null,
-            userWorkspaceId,
-          );
-        } catch (billingError) {
-          this.logger.error(
-            `Failed to bill AI usage for workspace ${workspace.id}`,
-            billingError,
-          );
-        }
+        this.aiBillingService.calculateAndBillUsage(
+          resolvedModelId,
+          {
+            usage: result.usage,
+            cacheCreationTokens:
+              result.usage.inputTokenDetails?.cacheWriteTokens ?? 0,
+          },
+          workspace.id,
+          UsageOperationType.AI_WORKFLOW_TOKEN,
+          null,
+          userWorkspaceId,
+        );
       }
     }
   }
