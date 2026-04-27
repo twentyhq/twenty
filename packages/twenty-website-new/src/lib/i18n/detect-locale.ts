@@ -12,7 +12,7 @@ const parseAcceptLanguage = (header: string): AcceptLanguageEntry[] =>
     .flatMap((part): AcceptLanguageEntry[] => {
       const [rawTag, ...params] = part.trim().split(';');
       if (rawTag === undefined || rawTag.length === 0) return [];
-      const qParam = params.find((p) => p.trim().startsWith('q='));
+      const qParam = params.find((p) => p.trim().startsWith('q='))?.trim();
       const parsedQuality =
         qParam !== undefined ? Number.parseFloat(qParam.slice(2)) : 1;
       return [

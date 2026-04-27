@@ -2,7 +2,7 @@ import type { MetadataRoute } from 'next';
 import { SOURCE_LOCALE, type AppLocale } from 'twenty-shared/translations';
 
 import { CASE_STUDY_CATALOG_ENTRIES } from '@/lib/customers';
-import { APP_LOCALE_LIST } from '@/lib/i18n';
+import { PUBLIC_APP_LOCALE_LIST } from '@/lib/i18n';
 import { getSiteUrl } from '@/lib/seo';
 
 const SITE_URL = getSiteUrl();
@@ -33,7 +33,7 @@ const buildLocalizedUrl = (locale: AppLocale, path: string): string => {
 
 const buildLanguageAlternates = (path: string): Record<string, string> => {
   const alternates: Record<string, string> = {};
-  for (const locale of APP_LOCALE_LIST) {
+  for (const locale of PUBLIC_APP_LOCALE_LIST) {
     alternates[locale] = buildLocalizedUrl(locale, path);
   }
   alternates['x-default'] = buildLocalizedUrl(SOURCE_LOCALE, path);
@@ -45,7 +45,7 @@ const localize = (
   changeFrequency: MetadataRoute.Sitemap[number]['changeFrequency'],
   priority: number,
 ): MetadataRoute.Sitemap =>
-  APP_LOCALE_LIST.map((locale) => ({
+  PUBLIC_APP_LOCALE_LIST.map((locale) => ({
     url: buildLocalizedUrl(locale, path),
     changeFrequency,
     priority,

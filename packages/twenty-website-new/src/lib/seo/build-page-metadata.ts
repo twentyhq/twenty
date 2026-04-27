@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { SOURCE_LOCALE, type AppLocale } from 'twenty-shared/translations';
 
-import { APP_LOCALE_LIST } from '@/lib/i18n/app-locale-set';
+import { PUBLIC_APP_LOCALE_LIST } from '@/lib/i18n/app-locale-set';
 
 import { getSiteUrl } from './site-url';
 
@@ -32,7 +32,7 @@ const buildLanguageAlternates = (
   normalizedPath: string,
 ): Record<string, string> => {
   const languages: Record<string, string> = {};
-  for (const locale of APP_LOCALE_LIST) {
+  for (const locale of PUBLIC_APP_LOCALE_LIST) {
     languages[locale] = localizePath(locale, normalizedPath);
   }
   languages['x-default'] = localizePath(SOURCE_LOCALE, normalizedPath);

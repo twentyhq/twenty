@@ -63,6 +63,20 @@ describe('buildPageMetadata', () => {
     expect(languages?.['x-default']).toBe('/pricing');
   });
 
+  it('omits pseudo locales from hreflang language alternates', () => {
+    const metadata = buildPageMetadata({
+      locale: 'en',
+      path: '/pricing',
+      title: 't',
+      description: 'd',
+    });
+
+    const languages = metadata.alternates?.languages as
+      | Record<string, string>
+      | undefined;
+    expect(languages?.['pseudo-en']).toBeUndefined();
+  });
+
   it('localizes the root path correctly (no trailing slash duplication)', () => {
     const metadata = buildPageMetadata({
       locale: 'de-DE',

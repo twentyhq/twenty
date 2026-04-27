@@ -62,4 +62,12 @@ describe('detectLocale', () => {
       }),
     ).toBe('de-DE');
   });
+
+  it('parses quality values when parameters carry leading whitespace around the semicolon', () => {
+    expect(
+      detectLocale({
+        acceptLanguageHeader: 'en;q=0.1, fr-FR ; q=0.9, de-DE ; q=0.5',
+      }),
+    ).toBe('fr-FR');
+  });
 });

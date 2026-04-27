@@ -64,6 +64,18 @@ describe('localizeHref', () => {
     expect(localizeHref('en', './sibling')).toBe('./sibling');
     expect(localizeHref('en', '../parent')).toBe('../parent');
   });
+
+  it('handles a locale segment immediately followed by a query string', () => {
+    expect(localizeHref('en', '/en?ref=hero')).toBe('/?ref=hero');
+    expect(localizeHref('fr-FR', '/en?ref=hero')).toBe('/fr-FR/?ref=hero');
+    expect(localizeHref('fr-FR', '/de-DE?ref=hero')).toBe('/de-DE?ref=hero');
+  });
+
+  it('handles a locale segment immediately followed by a hash fragment', () => {
+    expect(localizeHref('en', '/en#anchor')).toBe('/#anchor');
+    expect(localizeHref('fr-FR', '/en#anchor')).toBe('/fr-FR/#anchor');
+    expect(localizeHref('fr-FR', '/de-DE#anchor')).toBe('/de-DE#anchor');
+  });
 });
 
 describe('stripLocale', () => {
@@ -85,5 +97,13 @@ describe('stripLocale', () => {
   it('returns the pathname unchanged when the input does not start with a slash', () => {
     expect(stripLocale('not-a-path')).toBe('not-a-path');
     expect(stripLocale('')).toBe('');
+  });
+
+  it('preserves query and hash when the locale segment is immediately followed by them', () => {
+    expect(stripLocale('/en?ref=hero')).toBe('/?ref=hero');
+    expect(stripLocale('/fr-FR#anchor')).toBe('/#anchor');
+    expect(stripLocale('/fr-FR/customers?ref=hero#top')).toBe(
+      '/customers?ref=hero#top',
+    );
   });
 });
