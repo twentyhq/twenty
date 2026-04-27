@@ -10,9 +10,7 @@ export const NavigateToNextRecordSingleRecordCommand = () => {
   const recordId = selectedRecords[0]?.id;
 
   if (!isDefined(recordId) || !isDefined(objectMetadataItem)) {
-    throw new Error(
-      'Record ID and object metadata are required to navigate to next record',
-    );
+    return null;
   }
 
   const { navigateToNextRecord, isLoadingPagination } =
