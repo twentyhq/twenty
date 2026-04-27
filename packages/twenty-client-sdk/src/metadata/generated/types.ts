@@ -5273,6 +5273,9 @@ export default {
             "updatedAt": [
                 4
             ],
+            "archivedAt": [
+                4
+            ],
             "__typename": [
                 1
             ]
@@ -6506,6 +6509,9 @@ export default {
                 45
             ],
             "updatedAt": [
+                327
+            ],
+            "archivedAt": [
                 327
             ],
             "__typename": [
@@ -7838,6 +7844,46 @@ export default {
                 6,
                 {
                     "threadId": [
+                        3,
+                        "UUID!"
+                    ]
+                }
+            ],
+            "renameChatThread": [
+                289,
+                {
+                    "id": [
+                        3,
+                        "UUID!"
+                    ],
+                    "title": [
+                        1,
+                        "String!"
+                    ]
+                }
+            ],
+            "archiveChatThread": [
+                289,
+                {
+                    "id": [
+                        3,
+                        "UUID!"
+                    ]
+                }
+            ],
+            "unarchiveChatThread": [
+                289,
+                {
+                    "id": [
+                        3,
+                        "UUID!"
+                    ]
+                }
+            ],
+            "deleteChatThread": [
+                6,
+                {
+                    "id": [
                         3,
                         "UUID!"
                     ]

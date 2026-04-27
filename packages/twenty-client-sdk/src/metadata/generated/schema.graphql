@@ -2620,6 +2620,7 @@ type AgentChatThread {
   totalOutputCredits: Float!
   createdAt: DateTime!
   updatedAt: DateTime!
+  archivedAt: DateTime
 }
 
 type AgentMessage {
@@ -3062,6 +3063,7 @@ input AgentChatThreadFilter {
   or: [AgentChatThreadFilter!]
   id: UUIDFilterComparison
   updatedAt: DateFieldComparison
+  archivedAt: DateFieldComparison
 }
 
 input DateFieldComparison {
@@ -3093,6 +3095,7 @@ input AgentChatThreadSort {
 enum AgentChatThreadSortFields {
   id
   updatedAt
+  archivedAt
 }
 
 """Sort Directions"""
@@ -3291,6 +3294,10 @@ type Mutation {
   createChatThread: AgentChatThread!
   sendChatMessage(threadId: UUID!, text: String!, messageId: UUID!, browsingContext: JSON, modelId: String, fileIds: [UUID!]): SendChatMessageResult!
   stopAgentChatStream(threadId: UUID!): Boolean!
+  renameChatThread(id: UUID!, title: String!): AgentChatThread!
+  archiveChatThread(id: UUID!): AgentChatThread!
+  unarchiveChatThread(id: UUID!): AgentChatThread!
+  deleteChatThread(id: UUID!): Boolean!
   deleteQueuedChatMessage(messageId: UUID!): Boolean!
   createSkill(input: CreateSkillInput!): Skill!
   updateSkill(input: UpdateSkillInput!): Skill!

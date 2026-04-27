@@ -2315,6 +2315,7 @@ export interface AgentChatThread {
     totalOutputCredits: Scalars['Float']
     createdAt: Scalars['DateTime']
     updatedAt: Scalars['DateTime']
+    archivedAt?: Scalars['DateTime']
     __typename: 'AgentChatThread'
 }
 
@@ -2633,7 +2634,7 @@ export interface Query {
     __typename: 'Query'
 }
 
-export type AgentChatThreadSortFields = 'id' | 'updatedAt'
+export type AgentChatThreadSortFields = 'id' | 'updatedAt' | 'archivedAt'
 
 
 /** Sort Directions */
@@ -2773,6 +2774,10 @@ export interface Mutation {
     createChatThread: AgentChatThread
     sendChatMessage: SendChatMessageResult
     stopAgentChatStream: Scalars['Boolean']
+    renameChatThread: AgentChatThread
+    archiveChatThread: AgentChatThread
+    unarchiveChatThread: AgentChatThread
+    deleteChatThread: Scalars['Boolean']
     deleteQueuedChatMessage: Scalars['Boolean']
     createSkill: Skill
     updateSkill: Skill
@@ -5329,6 +5334,7 @@ export interface AgentChatThreadGenqlSelection{
     totalOutputCredits?: boolean | number
     createdAt?: boolean | number
     updatedAt?: boolean | number
+    archivedAt?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -5675,7 +5681,7 @@ export interface AgentIdInput {
 /** The id of the agent. */
 id: Scalars['UUID']}
 
-export interface AgentChatThreadFilter {and?: (AgentChatThreadFilter[] | null),or?: (AgentChatThreadFilter[] | null),id?: (UUIDFilterComparison | null),updatedAt?: (DateFieldComparison | null)}
+export interface AgentChatThreadFilter {and?: (AgentChatThreadFilter[] | null),or?: (AgentChatThreadFilter[] | null),id?: (UUIDFilterComparison | null),updatedAt?: (DateFieldComparison | null),archivedAt?: (DateFieldComparison | null)}
 
 export interface DateFieldComparison {is?: (Scalars['Boolean'] | null),isNot?: (Scalars['Boolean'] | null),eq?: (Scalars['DateTime'] | null),neq?: (Scalars['DateTime'] | null),gt?: (Scalars['DateTime'] | null),gte?: (Scalars['DateTime'] | null),lt?: (Scalars['DateTime'] | null),lte?: (Scalars['DateTime'] | null),in?: (Scalars['DateTime'][] | null),notIn?: (Scalars['DateTime'][] | null),between?: (DateFieldComparisonBetween | null),notBetween?: (DateFieldComparisonBetween | null)}
 
@@ -5823,6 +5829,10 @@ export interface MutationGenqlSelection{
     createChatThread?: AgentChatThreadGenqlSelection
     sendChatMessage?: (SendChatMessageResultGenqlSelection & { __args: {threadId: Scalars['UUID'], text: Scalars['String'], messageId: Scalars['UUID'], browsingContext?: (Scalars['JSON'] | null), modelId?: (Scalars['String'] | null), fileIds?: (Scalars['UUID'][] | null)} })
     stopAgentChatStream?: { __args: {threadId: Scalars['UUID']} }
+    renameChatThread?: (AgentChatThreadGenqlSelection & { __args: {id: Scalars['UUID'], title: Scalars['String']} })
+    archiveChatThread?: (AgentChatThreadGenqlSelection & { __args: {id: Scalars['UUID']} })
+    unarchiveChatThread?: (AgentChatThreadGenqlSelection & { __args: {id: Scalars['UUID']} })
+    deleteChatThread?: { __args: {id: Scalars['UUID']} }
     deleteQueuedChatMessage?: { __args: {messageId: Scalars['UUID']} }
     createSkill?: (SkillGenqlSelection & { __args: {input: CreateSkillInput} })
     updateSkill?: (SkillGenqlSelection & { __args: {input: UpdateSkillInput} })
@@ -8824,7 +8834,8 @@ export const enumAllMetadataName = {
 
 export const enumAgentChatThreadSortFields = {
    id: 'id' as const,
-   updatedAt: 'updatedAt' as const
+   updatedAt: 'updatedAt' as const,
+   archivedAt: 'archivedAt' as const
 }
 
 export const enumSortDirection = {
