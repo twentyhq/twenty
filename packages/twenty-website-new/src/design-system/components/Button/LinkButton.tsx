@@ -1,6 +1,6 @@
 import type { LinkButtonType } from '@/design-system/components/Button/types/LinkButtonType';
+import { LocalizedLink } from '@/lib/i18n';
 import { styled } from '@linaria/react';
-import Link from 'next/link';
 import {
   BaseButton,
   type BaseButtonProps,
@@ -11,7 +11,7 @@ const StyledButtonAnchor = styled.a`
   ${buttonBaseStyles}
 `;
 
-const StyledButtonLink = styled(Link)`
+const StyledButtonLink = styled(LocalizedLink)`
   ${buttonBaseStyles}
 `;
 

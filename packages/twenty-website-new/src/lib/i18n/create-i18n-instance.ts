@@ -1,7 +1,5 @@
 import { createI18nInstanceFactory } from 'twenty-shared/i18n';
 
-import { messages as enMessages } from '@/locales/generated/en';
+import { MESSAGES_BY_LOCALE } from './messages-by-locale';
 
-export const createI18nInstance = createI18nInstanceFactory({
-  en: enMessages,
-});
+export const createI18nInstance = createI18nInstanceFactory(MESSAGES_BY_LOCALE);

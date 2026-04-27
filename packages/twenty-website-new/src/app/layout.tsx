@@ -1,11 +1,5 @@
-import { FooterVisibilityGate } from '@/app/_components/FooterVisibilityGate';
-import { ScrollToTopOnRouteChange } from '@/app/_components/ScrollToTopOnRouteChange';
-import { FOOTER_DATA } from '@/sections/Footer/data';
-import { ContactCalModalRoot } from '@/lib/contact-cal';
-import { PartnerApplicationModalRoot } from '@/lib/partner-application';
 import { getSiteUrl } from '@/lib/seo';
 import { DRACO_DECODER_ORIGIN } from '@/lib/visual-runtime/draco-decoder-path';
-import { Footer } from '@/sections/Footer/components';
 import { theme } from '@/theme';
 import { cssVariables } from '@/theme/css-variables';
 import { css } from '@linaria/core';
@@ -107,11 +101,6 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        {/*
-         * Warm up the connection to the DRACO decoder host so the first 3D
-         * model on the page does not pay the full TLS handshake cost the
-         * moment it starts decoding.
-         */}
         <link
           crossOrigin="anonymous"
           href={DRACO_DECODER_ORIGIN}
@@ -122,22 +111,7 @@ export default function RootLayout({
         className={`${cssVariables} ${hostGrotesk.variable} ${aleo.variable} ${azeretMono.variable} ${vt323.variable}`}
         suppressHydrationWarning
       >
-        <ContactCalModalRoot>
-          <PartnerApplicationModalRoot>
-            <ScrollToTopOnRouteChange />
-            <StyledMain>{children}</StyledMain>
-            <FooterVisibilityGate>
-              <Footer.Root>
-                <Footer.Logo />
-                <Footer.Nav groups={FOOTER_DATA.navGroups} />
-                <Footer.Bottom
-                  copyright={FOOTER_DATA.bottom.copyright}
-                  links={FOOTER_DATA.socialLinks}
-                />
-              </Footer.Root>
-            </FooterVisibilityGate>
-          </PartnerApplicationModalRoot>
-        </ContactCalModalRoot>
+        <StyledMain>{children}</StyledMain>
       </body>
     </html>
   );
