@@ -351,6 +351,79 @@ describe('convertPageLayoutDraftToUpdateInput', () => {
     });
   });
 
+  it('should exclude inactive tabs', () => {
+    const draft = makeDraft([
+      makeTab('active-tab', [makeWidget({ id: 'w1' })], undefined, {
+        isActive: true,
+      }),
+      makeTab('inactive-tab', [makeWidget({ id: 'w2' })], undefined, {
+        isActive: false,
+      }),
+    ]);
+
+    const result = convertPageLayoutDraftToUpdateInput(draft);
+
+    expect(result.tabs).toHaveLength(1);
+    expect(result.tabs[0].id).toBe('active-tab');
+  });
+
+  it('should return no tabs when all tabs are inactive', () => {
+    const draft = makeDraft([
+      makeTab('tab-1', [makeWidget({ id: 'w1' })], undefined, {
+        isActive: false,
+      }),
+      makeTab('tab-2', [makeWidget({ id: 'w2' })], undefined, {
+        isActive: false,
+      }),
+    ]);
+
+    const result = convertPageLayoutDraftToUpdateInput(draft);
+
+    expect(result.tabs).toHaveLength(0);
+  });
+
+  it('should map widget configuration and conditionalAvailabilityExpression', () => {
+    const widget = makeWidget({
+      id: 'w1',
+      configuration: {
+        __typename: 'RecordTableConfiguration',
+        configurationType: 'RECORD_TABLE',
+        viewId: 'view-123',
+      } as PageLayoutWidget['configuration'],
+      conditionalAvailabilityExpression: 'someExpression',
+    });
+
+    const draft = makeDraft([makeTab('tab-1', [widget])]);
+
+    const result = convertPageLayoutDraftToUpdateInput(draft);
+
+    expect(result.tabs[0].widgets[0].configuration).toEqual({
+      __typename: 'RecordTableConfiguration',
+      configurationType: 'RECORD_TABLE',
+      viewId: 'view-123',
+    });
+    expect(result.tabs[0].widgets[0].conditionalAvailabilityExpression).toBe(
+      'someExpression',
+    );
+  });
+
+  it('should coalesce undefined configuration and conditionalAvailabilityExpression to null', () => {
+    const widget = makeWidget({
+      id: 'w1',
+      configuration: undefined as unknown as PageLayoutWidget['configuration'],
+      conditionalAvailabilityExpression: undefined,
+    });
+
+    const draft = makeDraft([makeTab('tab-1', [widget])]);
+
+    const result = convertPageLayoutDraftToUpdateInput(draft);
+
+    expect(result.tabs[0].widgets[0].configuration).toBeNull();
+    expect(
+      result.tabs[0].widgets[0].conditionalAvailabilityExpression,
+    ).toBeNull();
+  });
+
   describe('shouldFilterDynamicRelationWidgets', () => {
     it('should filter out dynamic relation widgets when shouldFilterDynamicRelationWidgets is true', () => {
       const regularWidget = makeWidget({ id: 'w1' });
