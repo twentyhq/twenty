@@ -39,7 +39,12 @@ export const SettingsLayoutViewDetail = () => {
 
   const fieldsByUniversalIdentifier = useMemo(
     () =>
-      new Map(flattenedFieldMetadataItems.map((field) => [field.universalIdentifier, field])),
+      new Map(
+        flattenedFieldMetadataItems.map((field) => [
+          field.universalIdentifier,
+          field,
+        ]),
+      ),
     [flattenedFieldMetadataItems],
   );
 

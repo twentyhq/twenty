@@ -40,9 +40,7 @@ const resolvePermissionIds = (
   );
   const fieldsByUid = new Map(
     objectMetadataItems.flatMap((item) =>
-      item.fields.map(
-        (field) => [field.universalIdentifier, field] as const,
-      ),
+      item.fields.map((field) => [field.universalIdentifier, field] as const),
     ),
   );
 
