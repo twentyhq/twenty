@@ -6,6 +6,7 @@ import {
   type MessageWithParticipants,
 } from 'src/modules/messaging/message-import-manager/types/message';
 import { type PersistSentMessageInput } from 'src/modules/messaging/message-outbound-manager/types/persist-sent-message-input.type';
+import { resolveOutboundThreadExternalId } from 'src/modules/messaging/message-outbound-manager/utils/resolve-outbound-thread-external-id.util';
 
 export const formatSentMessage = (
   input: PersistSentMessageInput,
@@ -35,10 +36,15 @@ export const formatSentMessage = (
     })),
   ];
 
+  const headerMessageId = input.sendResult.headerMessageId;
+
   return {
-    externalId: input.sendResult.messageExternalId ?? '',
-    headerMessageId: input.sendResult.headerMessageId,
-    messageThreadExternalId: input.sendResult.threadExternalId ?? '',
+    externalId: input.sendResult.messageExternalId ?? headerMessageId,
+    headerMessageId,
+    messageThreadExternalId: resolveOutboundThreadExternalId({
+      sendResult: input.sendResult,
+      inReplyTo: input.inReplyTo,
+    }),
     subject: input.subject,
     text: input.body,
     receivedAt: new Date(),

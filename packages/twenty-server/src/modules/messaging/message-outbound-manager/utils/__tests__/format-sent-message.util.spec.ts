@@ -63,7 +63,7 @@ describe('formatSentMessage', () => {
     });
   });
 
-  it('should fall back to empty strings when the provider omits external ids', () => {
+  it('should fall back to the headerMessageId when the provider omits external ids so unrelated sends do not collide on a shared empty thread key', () => {
     const message = formatSentMessage(
       buildInput({
         sendResult: {
@@ -74,8 +74,8 @@ describe('formatSentMessage', () => {
       }),
     );
 
-    expect(message.externalId).toBe('');
-    expect(message.messageThreadExternalId).toBe('');
+    expect(message.externalId).toBe('<msg-2@mail.example>');
+    expect(message.messageThreadExternalId).toBe('<msg-2@mail.example>');
     expect(message.headerMessageId).toBe('<msg-2@mail.example>');
   });
 
