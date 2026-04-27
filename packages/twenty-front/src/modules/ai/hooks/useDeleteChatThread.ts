@@ -2,7 +2,10 @@ import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useMutation } from '@apollo/client/react';
 import { useStore } from 'jotai';
 
-import { AGENT_CHAT_NEW_THREAD_DRAFT_KEY } from '@/ai/states/agentChatDraftsByThreadIdState';
+import {
+  AGENT_CHAT_NEW_THREAD_DRAFT_KEY,
+  agentChatDraftsByThreadIdState,
+} from '@/ai/states/agentChatDraftsByThreadIdState';
 import { agentChatInputState } from '@/ai/states/agentChatInputState';
 import { agentChatVisibleThreadsSelector } from '@/ai/states/agentChatVisibleThreadsSelector';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
@@ -39,13 +42,18 @@ export const useDeleteChatThread = () => {
           .get(agentChatVisibleThreadsSelector.atom)
           .filter((thread) => thread.id !== id),
       );
+      const draftsByThreadId = store.get(agentChatDraftsByThreadIdState.atom);
 
       if (remaining.length > 0) {
-        setCurrentAiChatThread(remaining[0].id);
-        setAgentChatInput('');
+        const nextThreadId = remaining[0].id;
+
+        setCurrentAiChatThread(nextThreadId);
+        setAgentChatInput(draftsByThreadId[nextThreadId] ?? '');
       } else {
         setCurrentAiChatThread(AGENT_CHAT_NEW_THREAD_DRAFT_KEY);
-        setAgentChatInput('');
+        setAgentChatInput(
+          draftsByThreadId[AGENT_CHAT_NEW_THREAD_DRAFT_KEY] ?? '',
+        );
       }
     } catch (error) {
       enqueueErrorSnackBar({

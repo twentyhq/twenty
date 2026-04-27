@@ -9,7 +9,10 @@ import { AiChatThreadItemMenu } from '@/ai/components/AiChatThreadItemMenu';
 import { AI_CHAT_THREAD_ACTIONS_SURFACE } from '@/ai/constants/AiChatThreadActionsSurface';
 import { useAiChatThreadClick } from '@/ai/hooks/useAiChatThreadClick';
 import { useAiChatThreadRename } from '@/ai/hooks/useAiChatThreadRename';
+import { getAiChatThreadItemMenuDropdownId } from '@/ai/utils/getAiChatThreadItemMenuDropdownId';
 import { TextInput } from '@/ui/input/components/TextInput';
+import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { type AgentChatThread } from '~/generated-metadata/graphql';
 
 const StyledThreadItem = styled.div`
@@ -61,8 +64,20 @@ const StyledThreadTitle = styled.div`
   white-space: nowrap;
 `;
 
-const StyledMenuTrigger = styled.div`
-  flex-shrink: 0;
+const StyledMenuTrigger = styled.div<{ $isDropdownOpen: boolean }>`
+  opacity: ${({ $isDropdownOpen }) => ($isDropdownOpen ? 1 : 0)};
+  pointer-events: ${({ $isDropdownOpen }) =>
+    $isDropdownOpen ? 'auto' : 'none'};
+  position: absolute;
+  right: ${themeCssVariables.spacing[1]};
+  top: 50%;
+  transform: translateY(-50%);
+  transition: opacity 150ms;
+
+  ${StyledThreadItem}:hover & {
+    opacity: 1;
+    pointer-events: auto;
+  }
 `;
 
 type AiChatThreadListItemProps = {
@@ -85,6 +100,14 @@ export const AiChatThreadListItem = ({ thread }: AiChatThreadListItemProps) => {
   const isArchived = Boolean(thread.archivedAt);
   const ThreadIcon = isArchived ? IconArchive : IconSparkles;
   const displayTitle = thread.title ?? t`Untitled`;
+  const itemMenuDropdownId = getAiChatThreadItemMenuDropdownId(
+    thread.id,
+    AI_CHAT_THREAD_ACTIONS_SURFACE.SIDE_PANEL,
+  );
+  const isItemMenuDropdownOpen = useAtomComponentStateValue(
+    isDropdownOpenComponentState,
+    itemMenuDropdownId,
+  );
 
   return (
     <StyledThreadItem
@@ -123,7 +146,10 @@ export const AiChatThreadListItem = ({ thread }: AiChatThreadListItemProps) => {
           <StyledThreadTitle>{displayTitle}</StyledThreadTitle>
         )}
       </StyledThreadContent>
-      <StyledMenuTrigger onClick={(event) => event.stopPropagation()}>
+      <StyledMenuTrigger
+        $isDropdownOpen={isItemMenuDropdownOpen}
+        onClick={(event) => event.stopPropagation()}
+      >
         <AiChatThreadItemMenu
           threadId={thread.id}
           threadTitle={displayTitle}

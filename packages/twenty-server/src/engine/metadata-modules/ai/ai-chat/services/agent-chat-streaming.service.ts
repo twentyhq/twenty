@@ -139,10 +139,8 @@ export class AgentChatStreamingService {
     workspaceId: string,
     hasTitle: boolean,
   ): Promise<void> {
-    // Stream cancellation is async (redis pub/sub), so a worker's `finally`
-    // block can land here after the thread was archived or soft-deleted.
-    // Bail before promoting a queued message onto a thread the user no
-    // longer sees.
+    // Async stream cancellation: a worker's `finally` may land here after
+    // the thread was archived or soft-deleted.
     const threadStatus = await this.threadRepository.findOne({
       where: { id: threadId },
       withDeleted: true,

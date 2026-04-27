@@ -406,12 +406,26 @@ export class AgentChatService {
     threadId: string;
     userWorkspaceId: string;
   }): Promise<void> {
-    const thread = await this.getThreadById(threadId, userWorkspaceId);
+    const thread = await this.threadRepository.findOne({
+      where: { id: threadId, userWorkspaceId },
+      withDeleted: true,
+    });
 
-    await this.threadRepository.update(
-      { id: threadId, userWorkspaceId },
+    if (!thread) {
+      throw new AiException(
+        'Thread not found',
+        AiExceptionCode.THREAD_NOT_FOUND,
+      );
+    }
+
+    const result = await this.threadRepository.update(
+      { id: threadId, userWorkspaceId, deletedAt: IsNull() },
       { activeStreamId: null, deletedAt: new Date() },
     );
+
+    if ((result.affected ?? 0) === 0) {
+      return;
+    }
 
     await this.workspaceEventBroadcaster.broadcast({
       workspaceId: thread.workspaceId,
