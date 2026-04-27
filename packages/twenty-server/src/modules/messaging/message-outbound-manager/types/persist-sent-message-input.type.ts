@@ -6,7 +6,7 @@ export type PersistSentMessageInput = {
   subject: string;
   body: string;
   recipients: { to: string[]; cc: string[]; bcc: string[] };
-  connectedAccount: ConnectedAccountEntity;
+  connectedAccount: Pick<ConnectedAccountEntity, 'id' | 'handle'>;
   messageChannelId: string;
   inReplyTo?: string;
   workspaceId: string;

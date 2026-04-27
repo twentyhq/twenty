@@ -1,3 +1,4 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { MessageParticipantRole } from 'twenty-shared/types';
 
 import { MessageDirection } from 'src/modules/messaging/common/enums/message-direction.enum';
@@ -39,7 +40,9 @@ export const formatSentMessage = (
   const headerMessageId = input.sendResult.headerMessageId;
 
   return {
-    externalId: input.sendResult.messageExternalId ?? headerMessageId,
+    externalId: isNonEmptyString(input.sendResult.messageExternalId)
+      ? input.sendResult.messageExternalId
+      : headerMessageId,
     headerMessageId,
     messageThreadExternalId: resolveOutboundThreadExternalId({
       sendResult: input.sendResult,

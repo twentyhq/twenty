@@ -1,3 +1,5 @@
+import { isNonEmptyString } from '@sniptt/guards';
+
 import { type SendMessageResult } from 'src/modules/messaging/message-outbound-manager/types/send-message-result.type';
 
 export const resolveOutboundThreadExternalId = ({
@@ -7,13 +9,13 @@ export const resolveOutboundThreadExternalId = ({
   sendResult: SendMessageResult;
   inReplyTo?: string;
 }): string => {
-  if (sendResult.threadExternalId) {
+  if (isNonEmptyString(sendResult.threadExternalId)) {
     return sendResult.threadExternalId;
   }
 
   // IMAP/SMTP have no server-side thread id. Reuse the parent's Message-ID so
   // the reply attaches to the same thread the parent stored under.
-  if (inReplyTo) {
+  if (isNonEmptyString(inReplyTo)) {
     return inReplyTo;
   }
 

@@ -17,9 +17,12 @@ export class SentMessagePersistenceService {
   ) {}
 
   async persistSentMessage(input: PersistSentMessageInput): Promise<void> {
-    const messageChannel = await this.messageChannelRepository.findOneByOrFail({
-      id: input.messageChannelId,
-      workspaceId: input.workspaceId,
+    const messageChannel = await this.messageChannelRepository.findOneOrFail({
+      where: {
+        id: input.messageChannelId,
+        workspaceId: input.workspaceId,
+      },
+      relations: { connectedAccount: true },
     });
 
     const messageToSave = formatSentMessage(input);
@@ -27,7 +30,7 @@ export class SentMessagePersistenceService {
     await this.saveMessagesAndEnqueueContactCreationService.saveMessagesAndEnqueueContactCreation(
       [messageToSave],
       messageChannel,
-      input.connectedAccount,
+      messageChannel.connectedAccount,
       input.workspaceId,
     );
   }
