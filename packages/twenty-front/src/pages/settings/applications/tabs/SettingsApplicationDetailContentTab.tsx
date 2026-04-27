@@ -1,6 +1,6 @@
 import { getLogicFunctionTriggerLabel } from '@/logic-functions/utils/getLogicFunctionTriggerLabel';
-import { useApplicationContentSections } from '@/settings/applications/hooks/useApplicationContentSections';
-import { useObjectAndFieldRows } from '@/settings/applications/hooks/useObjectAndFieldRows';
+import { useComputeApplicationContentForLayoutAndLogic } from '@/settings/applications/hooks/useComputeApplicationContentForLayoutAndLogic';
+import { useComputeObjectAndFieldsContentForApplication } from '@/settings/applications/hooks/useComputeObjectAndFieldsContentForApplication';
 import { Table } from '@/ui/layout/table/components/Table';
 import { useLingui } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
@@ -52,10 +52,11 @@ export const SettingsApplicationDetailContentTab = ({
 }: SettingsApplicationDetailContentTabProps) => {
   const { t } = useLingui();
 
-  const { objectRows, fieldRows } = useObjectAndFieldRows({
-    installedApplication,
-    manifestContent,
-  });
+  const { objectRows, fieldRows } =
+    useComputeObjectAndFieldsContentForApplication({
+      installedApplication,
+      manifestContent,
+    });
 
   const {
     pageLayoutRows,
@@ -64,7 +65,7 @@ export const SettingsApplicationDetailContentTab = ({
     agentRows,
     skillRows,
     roleRows,
-  } = useApplicationContentSections({
+  } = useComputeApplicationContentForLayoutAndLogic({
     installedApplication,
     manifestContent,
   });

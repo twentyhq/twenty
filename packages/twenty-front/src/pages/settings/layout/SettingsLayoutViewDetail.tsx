@@ -1,8 +1,9 @@
+import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { t } from '@lingui/core/macro';
 import { useParams } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 import { useApplicationManifest } from '~/pages/settings/layout/hooks/useApplicationManifest';
-import { useFieldLabelByUid } from '~/pages/settings/layout/hooks/useFieldLabelByUid';
 import {
   type DetailRow,
   SettingsLayoutDetailScaffold,
@@ -27,6 +28,8 @@ export const SettingsLayoutViewDetail = () => {
   const { application, manifest, isLoading } =
     useApplicationManifest(applicationId);
 
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
+
   const view = manifest?.views?.find(
     (v) => v.universalIdentifier === viewUniversalIdentifier,
   );
@@ -35,8 +38,21 @@ export const SettingsLayoutViewDetail = () => {
     ? resolveManifestObjectLabel(view.objectUniversalIdentifier, manifest)
     : undefined;
 
-  const fieldLabelByUid = useFieldLabelByUid(manifest);
-  const resolveField = (uid: string): string => fieldLabelByUid.get(uid) ?? uid;
+  const resolveFieldLabel = (uid: string): string => {
+    const manifestField = manifest?.fields.find(
+      (f) => f.universalIdentifier === uid,
+    );
+    if (isDefined(manifestField)) {
+      return manifestField.label ?? manifestField.name;
+    }
+    for (const item of objectMetadataItems) {
+      const workspaceField = item.fields.find(
+        (f) => f.universalIdentifier === uid,
+      );
+      if (isDefined(workspaceField)) return workspaceField.label;
+    }
+    return uid;
+  };
 
   const detailRows: DetailRow[] = isDefined(view)
     ? [
@@ -69,9 +85,6 @@ export const SettingsLayoutViewDetail = () => {
     (a, b) => a.position - b.position,
   );
 
-  const sortedSorts = view?.sorts ?? [];
-  const sortedFilters = view?.filters ?? [];
-
   return (
     <SettingsLayoutDetailScaffold
       applicationId={applicationId}
@@ -95,7 +108,7 @@ export const SettingsLayoutViewDetail = () => {
           key: field.universalIdentifier,
           cells: [
             field.position,
-            resolveField(field.fieldMetadataUniversalIdentifier),
+            resolveFieldLabel(field.fieldMetadataUniversalIdentifier),
             field.isVisible === false ? t`Hidden` : t`Yes`,
             field.size ?? '—',
           ],
@@ -109,10 +122,10 @@ export const SettingsLayoutViewDetail = () => {
           { key: 'operand', label: t`Operand`, width: '160px' },
           { key: 'value', label: t`Value` },
         ]}
-        rows={sortedFilters.map((filter) => ({
+        rows={(view?.filters ?? []).map((filter) => ({
           key: filter.universalIdentifier,
           cells: [
-            resolveField(filter.fieldMetadataUniversalIdentifier),
+            resolveFieldLabel(filter.fieldMetadataUniversalIdentifier),
             filter.operand,
             formatFilterValue(filter.value),
           ],
@@ -125,10 +138,10 @@ export const SettingsLayoutViewDetail = () => {
           { key: 'field', label: t`Field` },
           { key: 'direction', label: t`Direction`, width: '120px' },
         ]}
-        rows={sortedSorts.map((sort) => ({
+        rows={(view?.sorts ?? []).map((sort) => ({
           key: sort.universalIdentifier,
           cells: [
-            resolveField(sort.fieldMetadataUniversalIdentifier),
+            resolveFieldLabel(sort.fieldMetadataUniversalIdentifier),
             sort.direction,
           ],
         }))}

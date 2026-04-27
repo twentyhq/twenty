@@ -21,9 +21,6 @@ const StyledHint = styled.span`
   font-size: ${themeCssVariables.font.size.sm};
 `;
 
-// Read-only preview of the payload the function will receive when triggered.
-// Updates as the trigger settings change so users can see how route, method,
-// or event name affect the input shape.
 export const SettingsLogicFunctionTriggerPayloadFormat = ({
   payload,
   hint,

@@ -1,6 +1,6 @@
 import { SettingsLogicFunctionTriggerPayloadFormat } from '@/settings/logic-functions/components/triggers/SettingsLogicFunctionTriggerPayloadFormat';
 import { SettingsLogicFunctionTriggerSection } from '@/settings/logic-functions/components/triggers/SettingsLogicFunctionTriggerSection';
-import { buildHttpPayload } from '@/settings/logic-functions/utils/getSimulatedTriggerPayload';
+import { buildHttpPayload } from '@/settings/logic-functions/utils/getTriggerSamplePayload';
 import { Select } from '@/ui/input/components/Select';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
@@ -144,7 +144,11 @@ export const SettingsLogicFunctionHttpTriggerSection = ({
           </StyledAuthRow>
           <SettingsLogicFunctionTriggerPayloadFormat
             payload={buildHttpPayload(value)}
-            hint={t`Your handler receives this object. The body is null for GET requests; for POST/PUT/PATCH/DELETE it contains the parsed JSON sent by the client.`}
+            hint={
+              value.httpMethod === HTTPMethod.GET
+                ? t`Your handler receives this object. The body is empty because GET requests carry no payload.`
+                : t`Your handler receives this object. The body holds the parsed JSON sent by the client.`
+            }
           />
         </StyledFields>
       )}

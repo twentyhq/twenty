@@ -10,7 +10,6 @@ export const SKILL_FRAGMENT = gql`
     content
     isCustom
     isActive
-    applicationId
     createdAt
     updatedAt
   }

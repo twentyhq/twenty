@@ -1,6 +1,6 @@
 import { renderHook } from '@testing-library/react';
 
-import { useObjectAndFieldRows } from '@/settings/applications/hooks/useObjectAndFieldRows';
+import { useComputeObjectAndFieldsContentForApplication } from '@/settings/applications/hooks/useComputeObjectAndFieldsContentForApplication';
 import { type Manifest } from 'twenty-shared/application';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
@@ -20,7 +20,7 @@ const wrapper = getJestMetadataAndApolloMocksWrapper({
   apolloMocks: [],
 });
 
-describe('useObjectAndFieldRows', () => {
+describe('useComputeObjectAndFieldsContentForApplication', () => {
   describe('with installed application', () => {
     it('should return object rows for installed application objects', () => {
       const installedApplication = {
@@ -37,7 +37,7 @@ describe('useObjectAndFieldRows', () => {
 
       const { result } = renderHook(
         () =>
-          useObjectAndFieldRows({
+          useComputeObjectAndFieldsContentForApplication({
             installedApplication,
           }),
         { wrapper },
@@ -65,7 +65,7 @@ describe('useObjectAndFieldRows', () => {
 
       const { result } = renderHook(
         () =>
-          useObjectAndFieldRows({
+          useComputeObjectAndFieldsContentForApplication({
             installedApplication,
           }),
         { wrapper },
@@ -91,7 +91,7 @@ describe('useObjectAndFieldRows', () => {
 
       const { result } = renderHook(
         () =>
-          useObjectAndFieldRows({
+          useComputeObjectAndFieldsContentForApplication({
             installedApplication,
           }),
         { wrapper },
@@ -118,7 +118,7 @@ describe('useObjectAndFieldRows', () => {
 
       const { result } = renderHook(
         () =>
-          useObjectAndFieldRows({
+          useComputeObjectAndFieldsContentForApplication({
             installedApplication,
           }),
         { wrapper },
@@ -161,7 +161,7 @@ describe('useObjectAndFieldRows', () => {
 
       const { result } = renderHook(
         () =>
-          useObjectAndFieldRows({
+          useComputeObjectAndFieldsContentForApplication({
             manifestContent,
           }),
         { wrapper },
@@ -210,7 +210,7 @@ describe('useObjectAndFieldRows', () => {
 
       const { result } = renderHook(
         () =>
-          useObjectAndFieldRows({
+          useComputeObjectAndFieldsContentForApplication({
             manifestContent,
           }),
         { wrapper },
@@ -235,7 +235,7 @@ describe('useObjectAndFieldRows', () => {
 
       const { result } = renderHook(
         () =>
-          useObjectAndFieldRows({
+          useComputeObjectAndFieldsContentForApplication({
             manifestContent,
           }),
         { wrapper },
@@ -245,9 +245,12 @@ describe('useObjectAndFieldRows', () => {
     });
 
     it('should return empty rows when no data is provided', () => {
-      const { result } = renderHook(() => useObjectAndFieldRows({}), {
-        wrapper,
-      });
+      const { result } = renderHook(
+        () => useComputeObjectAndFieldsContentForApplication({}),
+        {
+          wrapper,
+        },
+      );
 
       expect(result.current.objectRows).toHaveLength(0);
       expect(result.current.fieldRows).toHaveLength(0);
@@ -285,7 +288,7 @@ describe('useObjectAndFieldRows', () => {
 
       const { result } = renderHook(
         () =>
-          useObjectAndFieldRows({
+          useComputeObjectAndFieldsContentForApplication({
             installedApplication,
             manifestContent,
           }),

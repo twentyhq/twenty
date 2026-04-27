@@ -1,7 +1,7 @@
 import { SettingsDatabaseEventsForm } from '@/settings/components/SettingsDatabaseEventsForm';
 import { SettingsLogicFunctionTriggerPayloadFormat } from '@/settings/logic-functions/components/triggers/SettingsLogicFunctionTriggerPayloadFormat';
 import { SettingsLogicFunctionTriggerSection } from '@/settings/logic-functions/components/triggers/SettingsLogicFunctionTriggerSection';
-import { buildDatabaseEventPayload } from '@/settings/logic-functions/utils/getSimulatedTriggerPayload';
+import { buildDatabaseEventPayload } from '@/settings/logic-functions/utils/getTriggerSamplePayload';
 import { useLingui } from '@lingui/react/macro';
 import { type DatabaseEventTriggerSettings } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
@@ -27,14 +27,14 @@ export const SettingsLogicFunctionDatabaseEventTriggerSection = ({
     ? value.eventName.split('.')
     : ['', 'created'];
 
-  const updateOperation = (
-    _index: number,
-    field: 'object' | 'action',
-    fieldValue: string | null,
-  ) => {
-    if (!isDefined(value)) {
-      return;
-    }
+  const updateEventNamePart = ({
+    field,
+    fieldValue,
+  }: {
+    field: 'object' | 'action';
+    fieldValue: string | null;
+  }) => {
+    if (!isDefined(value)) return;
     const nextObject = field === 'object' ? (fieldValue ?? '') : object;
     const nextAction = field === 'action' ? (fieldValue ?? action) : action;
     onChange({ ...value, eventName: `${nextObject}.${nextAction}` });
@@ -60,7 +60,9 @@ export const SettingsLogicFunctionDatabaseEventTriggerSection = ({
                 updatedFields: value.updatedFields,
               },
             ]}
-            updateOperation={updateOperation}
+            updateOperation={(_, field, fieldValue) =>
+              updateEventNamePart({ field, fieldValue })
+            }
             removeOperation={() => onChange(null)}
             disabled={readonly}
           />

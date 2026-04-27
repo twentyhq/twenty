@@ -9,10 +9,6 @@ type LogicFunctionLike = {
   databaseEventTriggerSettings?: { eventName?: string } | null;
 };
 
-// Lifecycle hook universalIdentifiers come from the application manifest
-// (postInstallLogicFunction / preInstallLogicFunction). When the function
-// matches one of those, the install/upgrade flow invokes it directly — it
-// has no configurable trigger and shouldn't be labeled as such.
 export const getLogicFunctionTriggerLabel = (
   lf: LogicFunctionLike,
   options: {

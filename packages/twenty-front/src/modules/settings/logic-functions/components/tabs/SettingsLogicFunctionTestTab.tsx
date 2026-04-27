@@ -6,11 +6,10 @@ import {
   buildDatabaseEventPayload,
   buildHttpPayload,
   buildToolPayloadFromSchema,
-  type SimulatedTriggerType,
-} from '@/settings/logic-functions/utils/getSimulatedTriggerPayload';
+  type TriggerKind,
+} from '@/settings/logic-functions/utils/getTriggerSamplePayload';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import {
   H2Title,
@@ -25,8 +24,8 @@ import { Button, CodeEditor, CoreEditorHeader } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-type SimulatedTrigger = {
-  type: SimulatedTriggerType;
+type TriggerButton = {
+  kind: TriggerKind;
   label: string;
   Icon: IconComponent;
 };
@@ -80,34 +79,23 @@ export const SettingsLogicFunctionTestTab = ({
     isTool,
   } = formValues;
 
-  const triggers: SimulatedTrigger[] = useMemo(() => {
-    const result: SimulatedTrigger[] = [];
-
-    if (isDefined(httpRouteTriggerSettings)) {
-      result.push({ type: 'http', label: t`HTTP`, Icon: IconWebhook });
-    }
-    if (isDefined(cronTriggerSettings)) {
-      result.push({ type: 'cron', label: t`Cron`, Icon: IconClock });
-    }
-    if (isDefined(databaseEventTriggerSettings)) {
-      result.push({
-        type: 'databaseEvent',
-        label: t`Database event`,
-        Icon: IconDatabase,
-      });
-    }
-    if (isTool) {
-      result.push({ type: 'tool', label: t`AI tool`, Icon: IconTool });
-    }
-
-    return result;
-  }, [
-    httpRouteTriggerSettings,
-    cronTriggerSettings,
-    databaseEventTriggerSettings,
-    isTool,
-    t,
-  ]);
+  const triggerButtons: TriggerButton[] = [];
+  if (isDefined(httpRouteTriggerSettings)) {
+    triggerButtons.push({ kind: 'http', label: t`HTTP`, Icon: IconWebhook });
+  }
+  if (isDefined(cronTriggerSettings)) {
+    triggerButtons.push({ kind: 'cron', label: t`Cron`, Icon: IconClock });
+  }
+  if (isDefined(databaseEventTriggerSettings)) {
+    triggerButtons.push({
+      kind: 'databaseEvent',
+      label: t`Database event`,
+      Icon: IconDatabase,
+    });
+  }
+  if (isTool) {
+    triggerButtons.push({ kind: 'tool', label: t`AI tool`, Icon: IconTool });
+  }
 
   const onChange = (value: string) => {
     try {
@@ -117,9 +105,9 @@ export const SettingsLogicFunctionTestTab = ({
     }
   };
 
-  const handleSimulateTrigger = (triggerType: SimulatedTriggerType) => {
+  const fillSamplePayload = (kind: TriggerKind) => {
     const payload = (() => {
-      switch (triggerType) {
+      switch (kind) {
         case 'http':
           return isDefined(httpRouteTriggerSettings)
             ? buildHttpPayload(httpRouteTriggerSettings)
@@ -137,8 +125,6 @@ export const SettingsLogicFunctionTestTab = ({
     updateLogicFunctionInput(payload);
   };
 
-  const hasTriggers = triggers.length > 0;
-
   return (
     <Section>
       <H2Title
@@ -146,18 +132,18 @@ export const SettingsLogicFunctionTestTab = ({
         description={t`Insert a JSON input, then press "Run Function".`}
       />
       <StyledInputsContainer>
-        {hasTriggers && (
+        {triggerButtons.length > 0 && (
           <div>
-            <StyledTriggerLabel>{t`Simulate trigger`}</StyledTriggerLabel>
+            <StyledTriggerLabel>{t`Fill with sample input from`}</StyledTriggerLabel>
             <StyledTriggerButtonRow>
-              {triggers.map((trigger) => (
+              {triggerButtons.map((trigger) => (
                 <Button
-                  key={trigger.type}
+                  key={trigger.kind}
                   Icon={trigger.Icon}
                   title={trigger.label}
                   variant="secondary"
                   size="small"
-                  onClick={() => handleSimulateTrigger(trigger.type)}
+                  onClick={() => fillSamplePayload(trigger.kind)}
                 />
               ))}
             </StyledTriggerButtonRow>

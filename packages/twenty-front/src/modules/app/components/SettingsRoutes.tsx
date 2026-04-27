@@ -202,13 +202,6 @@ const SettingsLayoutPageLayoutDetail = lazy(() =>
   ),
 );
 
-const SettingsLayoutNavigationMenuItemDetail = lazy(() =>
-  import('~/pages/settings/layout/SettingsLayoutNavigationMenuItemDetail').then(
-    (module) => ({
-      default: module.SettingsLayoutNavigationMenuItemDetail,
-    }),
-  ),
-);
 
 const SettingsAdminApplicationRegistrationDetail = lazy(() =>
   import(
@@ -793,10 +786,6 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
         <Route
           path={SettingsPath.ApplicationPageLayoutDetail}
           element={<SettingsLayoutPageLayoutDetail />}
-        />
-        <Route
-          path={SettingsPath.ApplicationNavigationMenuItemDetail}
-          element={<SettingsLayoutNavigationMenuItemDetail />}
         />
         <Route
           path={SettingsPath.ApplicationRegistrationConfigVariableDetails}
