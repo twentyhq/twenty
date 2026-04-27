@@ -53,9 +53,9 @@ Per prima cosa, crea l'oggetto intermedio che conterrà i collegamenti.
 1. Vai a **Impostazioni → Modello dati**
 2. Fai clic su **+ Nuovo oggetto**
 3. Assegnagli un nome descrittivo (ad es., "Assegnazione al progetto", "Membro del team", "Ordine del prodotto")
-4. Toggle "Skip creating a Name field" on
+4. Attiva l'opzione "Salta la creazione di un campo Nome"
 
-<img src="/images/user-guide/fields/new-pivot-object.png" alt="New pivot object" />
+<img src="/images/user-guide/fields/new-pivot-object.png" alt="Nuovo oggetto pivot" />
 
 5. Clicca su **Salva**
 
@@ -63,27 +63,27 @@ Per prima cosa, crea l'oggetto intermedio che conterrà i collegamenti.
 **Convenzione di denominazione**: Usa un nome che descriva la relazione, come "Assegnazione al progetto" o "Appartenenza al team". Questo rende il modello di dati più facile da comprendere.
 </Tip>
 
-## Step 2: Create Relations Between Objects and the Junction
+## Passaggio 2: Crea relazioni tra gli oggetti e l'oggetto di giunzione
 
-Add relation fields from each of your two objects to the junction object.
+Aggiungi campi di relazione da ciascuno dei due oggetti all'oggetto di giunzione.
 
-### First Relation (Object A → Junction)
+### Prima relazione (Oggetto A → Oggetto di giunzione)
 
-1. Select your first object in **Settings → Data Model**
-2. Click **+ Add Relation**
-3. Select the junction object (e.g., "Project Assignments")
-4. Set the relation type to **One-To-Many** (one person can link to many assignments)
+1. Seleziona il tuo primo oggetto in **Impostazioni → Modello dati**
+2. Fai clic su **+ Aggiungi relazione**
+3. Seleziona l'oggetto di giunzione (ad es., "Assegnazioni al progetto")
+4. Imposta il tipo di relazione su **Uno-a-molti** (una persona può collegarsi a molte assegnazioni)
 5. Assegna un nome ai campi:
    * Campo su Persone: ad es., "Assegnazioni ai progetti"
    * Campo sull'oggetto di giunzione: ad es., "Persona"
 6. Clicca su **Salva**
 
-### Second Relation (Object B → Junction)
+### Seconda relazione (Oggetto B → Oggetto di giunzione)
 
-1. Select your second object in **Settings → Data Model**
-2. Click **+ Add Relation**
-3. Select the junction object (e.g., "Project Assignments")
-4. Set the relation type to **One-To-Many** (one project can link to many assignments)
+1. Seleziona il tuo secondo oggetto in **Impostazioni → Modello dati**
+2. Fai clic su **+ Aggiungi relazione**
+3. Seleziona l'oggetto di giunzione (ad es., "Assegnazioni al progetto")
+4. Imposta il tipo di relazione su **Uno-a-molti** (un progetto può collegarsi a molte assegnazioni)
 5. Abilita **"Questa è una relazione con un oggetto di giunzione"**
 
 <img src="/images/user-guide/fields/junction-relation-toggle.png" style={{width:'100%'}} />
@@ -125,13 +125,13 @@ Ecco una procedura completa:
 
 ### Aggiungi relazioni
 
-1. **People → Project Assignment**
-   * Type: One-to-Many
+1. **Persone → Assegnazione al progetto**
+   * Tipo: Uno-a-molti
    * Campo su Persone: "Assegnazioni ai progetti"
    * Campo su Assegnazione: "Persona"
 
-2. **Projects → Project Assignment**
-   * Type: One-to-Many
+2. **Progetti → Assegnazione al progetto**
+   * Tipo: Uno-a-molti
    * Campo su Progetti: "Membri del team"
    * Campo su Assegnazione: "Progetto"
 

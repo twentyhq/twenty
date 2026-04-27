@@ -53,9 +53,9 @@ People ←→ Project Assignments ←→ Projects
 1. اذهب إلى **الإعدادات → نموذج البيانات**
 2. انقر **+ كائن جديد**
 3. سمِّه تسمية وصفية (مثلًا: "تعيين مشروع"، "عضو فريق"، "طلب منتج")
-4. Toggle "Skip creating a Name field" on
+4. فعِّل خيار "تخطي إنشاء حقل الاسم"
 
-<img src="/images/user-guide/fields/new-pivot-object.png" alt="New pivot object" />
+<img src="/images/user-guide/fields/new-pivot-object.png" alt="كائن ربط جديد" />
 
 5. انقر على **حفظ**
 
@@ -63,27 +63,27 @@ People ←→ Project Assignments ←→ Projects
 **اتفاقية التسمية**: استخدم اسمًا يصف العلاقة، مثل "تعيين مشروع" أو "عضوية الفريق". هذا يجعل نموذج البيانات أسهل في الفهم.
 </Tip>
 
-## Step 2: Create Relations Between Objects and the Junction
+## الخطوة 2: إنشاء علاقات بين الكائنات وكائن الربط
 
-Add relation fields from each of your two objects to the junction object.
+أضف حقول العلاقة من كلٍ من الكائنين لديك إلى كائن الربط.
 
-### First Relation (Object A → Junction)
+### العلاقة الأولى (الكائن A → كائن الربط)
 
-1. Select your first object in **Settings → Data Model**
-2. Click **+ Add Relation**
-3. Select the junction object (e.g., "Project Assignments")
-4. Set the relation type to **One-To-Many** (one person can link to many assignments)
+1. حدِّد الكائن الأول لديك في **الإعدادات → نموذج البيانات**
+2. انقر **+ إضافة علاقة**
+3. اختر كائن الربط (مثلًا، "تعيينات المشروع")
+4. عيِّن نوع العلاقة إلى **واحد-إلى-متعدد** (يمكن لشخص واحد الارتباط بالعديد من التعيينات)
 5. قم بتسمية الحقول:
    * الحقل على الأشخاص: مثلًا، "تعيينات المشروع"
    * الحقل على كائن الربط: مثلًا، "شخص"
 6. انقر على **حفظ**
 
-### Second Relation (Object B → Junction)
+### العلاقة الثانية (الكائن B → كائن الربط)
 
-1. Select your second object in **Settings → Data Model**
-2. Click **+ Add Relation**
-3. Select the junction object (e.g., "Project Assignments")
-4. Set the relation type to **One-To-Many** (one project can link to many assignments)
+1. حدِّد الكائن الثاني لديك في **الإعدادات → نموذج البيانات**
+2. انقر **+ إضافة علاقة**
+3. اختر كائن الربط (مثلًا، "تعيينات المشروع")
+4. عيِّن نوع العلاقة إلى **واحد-إلى-متعدد** (يمكن لمشروع واحد الارتباط بالعديد من التعيينات)
 5. فعّل **"هذه علاقة بكائن ربط"**
 
 <img src="/images/user-guide/fields/junction-relation-toggle.png" style={{width:'100%'}} />
@@ -125,13 +125,13 @@ Add relation fields from each of your two objects to the junction object.
 
 ### إضافة علاقات
 
-1. **People → Project Assignment**
-   * Type: One-to-Many
+1. **الأشخاص → تعيين مشروع**
+   * النوع: واحد-إلى-متعدد
    * الحقل على الأشخاص: "تعيينات المشروع"
    * الحقل على التعيين: "شخص"
 
-2. **Projects → Project Assignment**
-   * Type: One-to-Many
+2. **المشاريع → تعيين مشروع**
+   * النوع: واحد-إلى-متعدد
    * الحقل على المشاريع: "أعضاء الفريق"
    * الحقل على التعيين: "مشروع"
 
