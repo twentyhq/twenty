@@ -16,7 +16,6 @@ import { type Repository } from 'typeorm';
 
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
-import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
 import { NativeToolBinderService } from 'src/engine/core-modules/tool-provider/native/native-tool-binder.service';
 import { ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
@@ -70,7 +69,6 @@ export class AgentAsyncExecutorService {
     private readonly toolRegistry: ToolRegistryService,
     private readonly nativeToolBinder: NativeToolBinderService,
     private readonly aiBillingService: AiBillingService,
-    private readonly exceptionHandlerService: ExceptionHandlerService,
     @InjectRepository(RoleTargetEntity)
     private readonly roleTargetRepository: Repository<RoleTargetEntity>,
     @InjectRepository(WorkspaceEntity)
@@ -304,32 +302,20 @@ export class AgentAsyncExecutorService {
         AiExceptionCode.AGENT_EXECUTION_FAILED,
       );
     } finally {
-      try {
-        this.aiBillingService.calculateAndBillUsage(
-          agent?.modelId ?? AUTO_SELECT_SMART_MODEL_ID,
-          { usage: accumulatedUsage, cacheCreationTokens },
-          workspaceId,
-          operationType,
-          agent?.id ?? null,
-          userWorkspaceId,
-        );
-      } catch (billingError) {
-        this.exceptionHandlerService.captureExceptions([billingError], {
-          workspace: { id: workspaceId },
-        });
-      }
+      this.aiBillingService.calculateAndBillUsage(
+        agent?.modelId ?? AUTO_SELECT_SMART_MODEL_ID,
+        { usage: accumulatedUsage, cacheCreationTokens },
+        workspaceId,
+        operationType,
+        agent?.id ?? null,
+        userWorkspaceId,
+      );
 
-      try {
-        this.aiBillingService.billNativeWebSearchUsage(
-          nativeWebSearchCallCount,
-          workspaceId,
-          userWorkspaceId,
-        );
-      } catch (billingError) {
-        this.exceptionHandlerService.captureExceptions([billingError], {
-          workspace: { id: workspaceId },
-        });
-      }
+      this.aiBillingService.billNativeWebSearchUsage(
+        nativeWebSearchCallCount,
+        workspaceId,
+        userWorkspaceId,
+      );
     }
   }
 }
