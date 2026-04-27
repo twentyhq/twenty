@@ -6511,7 +6511,7 @@ export type FindManyAvailablePackagesQuery = { __typename?: 'Query', getAvailabl
 export type FindManyLogicFunctionsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type FindManyLogicFunctionsQuery = { __typename?: 'Query', findManyLogicFunctions: Array<{ __typename?: 'LogicFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, sourceHandlerPath: string, handlerName: string, toolInputSchema?: any | null, isTool: boolean, cronTriggerSettings?: any | null, databaseEventTriggerSettings?: any | null, httpRouteTriggerSettings?: any | null, applicationId?: string | null, createdAt: string, updatedAt: string }> };
+export type FindManyLogicFunctionsQuery = { __typename?: 'Query', findManyLogicFunctions: Array<{ __typename?: 'LogicFunction', id: string, name: string, description?: string | null, runtime: string, timeoutSeconds: number, sourceHandlerPath: string, handlerName: string, toolInputSchema?: any | null, isTool: boolean, cronTriggerSettings?: any | null, databaseEventTriggerSettings?: any | null, httpRouteTriggerSettings?: any | null, applicationId?: string | null, universalIdentifier?: string | null, createdAt: string, updatedAt: string }> };
 
 export type FindOneLogicFunctionQueryVariables = Exact<{
   input: LogicFunctionIdInput;
