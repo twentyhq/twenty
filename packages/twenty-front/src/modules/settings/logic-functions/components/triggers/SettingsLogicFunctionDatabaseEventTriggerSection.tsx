@@ -23,9 +23,9 @@ export const SettingsLogicFunctionDatabaseEventTriggerSection = ({
 }: SettingsLogicFunctionDatabaseEventTriggerSectionProps) => {
   const { t } = useLingui();
 
-  const [object, action] = isDefined(value)
+  const [object = '', action = 'created'] = isDefined(value)
     ? value.eventName.split('.')
-    : ['', 'created'];
+    : [];
 
   const updateEventNamePart = ({
     field,
