@@ -60912,6 +60912,12 @@ __metadata:
     "@gsap/react": "npm:2.1.2"
     "@linaria/core": "npm:^7.0.0"
     "@linaria/react": "npm:^7.0.1"
+    "@lingui/cli": "npm:^5.1.2"
+    "@lingui/conf": "npm:5.1.2"
+    "@lingui/core": "npm:^5.1.2"
+    "@lingui/format-po": "npm:5.1.2"
+    "@lingui/react": "npm:^5.1.2"
+    "@lingui/swc-plugin": "npm:^5.11.0"
     "@lottiefiles/dotlottie-react": "npm:^0.18.10"
     "@react-three/drei": "npm:^10.7.7"
     "@react-three/fiber": "npm:^9.5.0"
@@ -60933,6 +60939,7 @@ __metadata:
     sharp: "npm:^0.33.5"
     stripe: "npm:^20.3.1"
     three: "npm:^0.183.2"
+    twenty-shared: "workspace:*"
     zod: "npm:^4.1.11"
   languageName: unknown
   linkType: soft

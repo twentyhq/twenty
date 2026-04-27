@@ -66,6 +66,11 @@
       "import": "./dist/database-events.mjs",
       "require": "./dist/database-events.cjs"
     },
+    "./i18n": {
+      "types": "./dist/i18n/index.d.ts",
+      "import": "./dist/i18n.mjs",
+      "require": "./dist/i18n.cjs"
+    },
     "./logic-function": {
       "types": "./dist/logic-function/index.d.ts",
       "import": "./dist/logic-function.mjs",
@@ -118,6 +123,7 @@
     "application",
     "constants",
     "database-events",
+    "i18n",
     "logic-function",
     "metadata",
     "testing",
@@ -141,6 +147,9 @@
       ],
       "database-events": [
         "dist/database-events/index.d.ts"
+      ],
+      "i18n": [
+        "dist/i18n/index.d.ts"
       ],
       "logic-function": [
         "dist/logic-function/index.d.ts"
