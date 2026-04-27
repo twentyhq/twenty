@@ -46,10 +46,6 @@ if (process.env.EXCEPTION_HANDLER_DRIVER === ExceptionHandlerDriver.SENTRY) {
     sendDefaultPii: true,
     debug: process.env.NODE_ENV === NodeEnvironment.DEVELOPMENT,
     beforeSendSpan: (span) => {
-      // Project the workspace context set by WorkspaceAuthContextMiddleware
-      // (HTTP/GraphQL/REST) and the queue drivers (BullMQ/Sync) onto every
-      // span produced under that isolation scope. Spans without a workspace
-      // (unauthenticated traffic, system jobs) pass through untouched.
       const twentyContext = Sentry.getIsolationScope().getScopeData().contexts
         ?.twenty as
         | {

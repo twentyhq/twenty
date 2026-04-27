@@ -29,7 +29,7 @@ import { type MessageQueue } from 'src/engine/core-modules/message-queue/message
 import { getJobKey } from 'src/engine/core-modules/message-queue/utils/get-job-key.util';
 import { type MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
-import { applyWorkspaceSentryContextFromJobData } from 'src/engine/core-modules/sentry/utils/sentry-workspace-context.util';
+import { applyWorkspaceSentryContextFromJobData } from 'src/engine/core-modules/sentry/utils/apply-workspace-sentry-context-from-job-data.util';
 
 export type BullMQDriverOptions = QueueOptions;
 
@@ -111,10 +111,6 @@ export class BullMQDriver
     this.workerMap[queueName] = new Worker(
       queueName,
       async (job) =>
-        // Each job runs in its own Sentry isolation scope so the workspace
-        // context applied below stays scoped to this job and is read back by
-        // beforeSendSpan when projecting attributes onto every span produced
-        // during the job.
         Sentry.withIsolationScope(async () => {
           applyWorkspaceSentryContextFromJobData(job.data);
 
