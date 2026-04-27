@@ -55,25 +55,18 @@ export class AgentTitleGenerationService {
       return this.generateFallbackTitle(messageContent);
     } finally {
       if (usage) {
-        try {
-          const cacheCreationTokens = steps
-            ? extractCacheCreationTokensFromSteps(steps)
-            : 0;
+        const cacheCreationTokens = steps
+          ? extractCacheCreationTokensFromSteps(steps)
+          : 0;
 
-          this.aiBillingService.calculateAndBillUsage(
-            defaultModel.modelId,
-            { usage, cacheCreationTokens },
-            workspaceId,
-            UsageOperationType.AI_CHAT_TOKEN,
-            null,
-            userWorkspaceId,
-          );
-        } catch (billingError) {
-          this.logger.error(
-            'Failed to bill title generation usage:',
-            billingError,
-          );
-        }
+        this.aiBillingService.calculateAndBillUsage(
+          defaultModel.modelId,
+          { usage, cacheCreationTokens },
+          workspaceId,
+          UsageOperationType.AI_CHAT_TOKEN,
+          null,
+          userWorkspaceId,
+        );
       }
     }
   }

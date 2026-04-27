@@ -106,22 +106,18 @@ export const repairToolCall = async ({
     return null;
   } finally {
     if (billingContext && usage) {
-      try {
-        const cacheCreationTokens = steps
-          ? extractCacheCreationTokensFromSteps(steps)
-          : 0;
+      const cacheCreationTokens = steps
+        ? extractCacheCreationTokensFromSteps(steps)
+        : 0;
 
-        billingContext.aiBillingService.calculateAndBillUsage(
-          billingContext.modelId,
-          { usage, cacheCreationTokens },
-          billingContext.workspaceId,
-          billingContext.operationType,
-          null,
-          billingContext.userWorkspaceId,
-        );
-      } catch {
-        // Swallow billing errors so they never break tool repair
-      }
+      billingContext.aiBillingService.calculateAndBillUsage(
+        billingContext.modelId,
+        { usage, cacheCreationTokens },
+        billingContext.workspaceId,
+        billingContext.operationType,
+        null,
+        billingContext.userWorkspaceId,
+      );
     }
   }
 };
