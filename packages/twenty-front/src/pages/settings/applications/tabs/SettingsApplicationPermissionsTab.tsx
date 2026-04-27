@@ -15,12 +15,9 @@ import {
   type ObjectManifest,
   type RoleManifest,
 } from 'twenty-shared/application';
-import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
-
-import { findObjectNameByUniversalIdentifier } from '~/pages/settings/applications/utils/findObjectNameByUniversalIdentifier';
 
 type SettingsApplicationPermissionsTabProps = {
   defaultRoleId?: string | null;
@@ -48,51 +45,28 @@ const resolvePermissionIds = (
   }
 
   for (const universalId of allObjectUniversalIds) {
-    const standardObjectName = findObjectNameByUniversalIdentifier(universalId);
+    const workspaceObject = objectMetadataItems.find(
+      (item) => item.universalIdentifier === universalId,
+    );
 
-    if (isDefined(standardObjectName)) {
-      const workspaceObject = objectMetadataItems.find(
-        (item) => item.nameSingular === standardObjectName,
-      );
-
-      if (isDefined(workspaceObject)) {
-        objectUniversalIdToIdMap[universalId] = workspaceObject.id;
-      }
+    if (isDefined(workspaceObject)) {
+      objectUniversalIdToIdMap[universalId] = workspaceObject.id;
     }
   }
 
   for (const permission of defaultRole.fieldPermissions ?? []) {
-    const objectName = findObjectNameByUniversalIdentifier(
-      permission.objectUniversalIdentifier,
+    const workspaceObject = objectMetadataItems.find(
+      (item) =>
+        item.universalIdentifier === permission.objectUniversalIdentifier,
+    );
+    const workspaceField = workspaceObject?.fields.find(
+      (field) =>
+        field.universalIdentifier === permission.fieldUniversalIdentifier,
     );
 
-    if (isDefined(objectName)) {
-      const standardObject =
-        STANDARD_OBJECTS[objectName as keyof typeof STANDARD_OBJECTS];
-
-      if (isDefined(standardObject)) {
-        for (const [fieldName, fieldDef] of Object.entries(
-          standardObject.fields,
-        )) {
-          if (
-            (fieldDef as { universalIdentifier: string })
-              .universalIdentifier === permission.fieldUniversalIdentifier
-          ) {
-            const workspaceObject = objectMetadataItems.find(
-              (item) => item.nameSingular === objectName,
-            );
-            const workspaceField = workspaceObject?.fields.find(
-              (field) => field.name === fieldName,
-            );
-
-            if (isDefined(workspaceField)) {
-              fieldUniversalIdToIdMap[permission.fieldUniversalIdentifier] =
-                workspaceField.id;
-            }
-            break;
-          }
-        }
-      }
+    if (isDefined(workspaceField)) {
+      fieldUniversalIdToIdMap[permission.fieldUniversalIdentifier] =
+        workspaceField.id;
     }
   }
 

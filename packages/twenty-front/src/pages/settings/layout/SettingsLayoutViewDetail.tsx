@@ -9,7 +9,7 @@ import {
   SettingsLayoutDetailScaffold,
 } from '~/pages/settings/layout/components/SettingsLayoutDetailScaffold';
 import { SettingsLayoutItemTable } from '~/pages/settings/layout/components/SettingsLayoutItemTable';
-import { resolveManifestObjectLabel } from '~/pages/settings/layout/utils/resolveManifestObjectLabel';
+import { resolveObjectLabel } from '~/pages/settings/layout/utils/resolveObjectLabel';
 
 const formatFilterValue = (value: unknown): string => {
   if (typeof value === 'string') return value;
@@ -35,16 +35,10 @@ export const SettingsLayoutViewDetail = () => {
   );
 
   const objectLabel = isDefined(view)
-    ? resolveManifestObjectLabel(view.objectUniversalIdentifier, manifest)
+    ? resolveObjectLabel(view.objectUniversalIdentifier, objectMetadataItems)
     : undefined;
 
   const resolveFieldLabel = (uid: string): string => {
-    const manifestField = manifest?.fields.find(
-      (f) => f.universalIdentifier === uid,
-    );
-    if (isDefined(manifestField)) {
-      return manifestField.label ?? manifestField.name;
-    }
     for (const item of objectMetadataItems) {
       const workspaceField = item.fields.find(
         (f) => f.universalIdentifier === uid,

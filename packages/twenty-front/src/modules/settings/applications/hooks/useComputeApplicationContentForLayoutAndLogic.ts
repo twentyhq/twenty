@@ -6,7 +6,7 @@ import { SettingsPath } from 'twenty-shared/types';
 import { capitalize, getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { type Application } from '~/generated-metadata/graphql';
 import { type ApplicationContentRow } from '~/pages/settings/applications/components/SettingsApplicationContentSubtable';
-import { resolveManifestObjectLabel } from '~/pages/settings/layout/utils/resolveManifestObjectLabel';
+import { resolveObjectLabel } from '~/pages/settings/layout/utils/resolveObjectLabel';
 
 type InstalledApplicationForContent = Pick<Application, 'agents' | 'id'>;
 
@@ -21,13 +21,13 @@ export const useComputeApplicationContentForLayoutAndLogic = ({
 
   const installedAppId = installedApplication?.id;
 
-  const resolveObjectLabel = (uid: string | undefined | null) =>
-    resolveManifestObjectLabel(uid, manifestContent, objectMetadataItems);
+  const resolveLabel = (uid: string | undefined | null) =>
+    resolveObjectLabel(uid, objectMetadataItems, manifestContent);
 
   const pageLayoutRows: ApplicationContentRow[] = (
     manifestContent?.pageLayouts ?? []
   ).map((layout) => {
-    const objectLabel = resolveObjectLabel(layout.objectUniversalIdentifier);
+    const objectLabel = resolveLabel(layout.objectUniversalIdentifier);
     const tabCount = layout.tabs?.length ?? 0;
 
     const parts: string[] = [];
@@ -51,7 +51,7 @@ export const useComputeApplicationContentForLayoutAndLogic = ({
 
   const viewRows: ApplicationContentRow[] = (manifestContent?.views ?? []).map(
     (view) => {
-      const objectLabel = resolveObjectLabel(view.objectUniversalIdentifier);
+      const objectLabel = resolveLabel(view.objectUniversalIdentifier);
       const formattedType = capitalize((view.type ?? 'TABLE').toLowerCase());
 
       return {
@@ -83,9 +83,7 @@ export const useComputeApplicationContentForLayoutAndLogic = ({
           return { label: link, displayName: link };
         }
         case 'OBJECT': {
-          const label = resolveObjectLabel(
-            item.targetObjectUniversalIdentifier,
-          );
+          const label = resolveLabel(item.targetObjectUniversalIdentifier);
           return {
             label: isDefined(label) ? t`${label} list` : t`Object`,
             displayName: label,

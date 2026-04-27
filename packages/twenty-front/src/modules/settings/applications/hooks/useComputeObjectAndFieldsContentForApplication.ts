@@ -7,7 +7,6 @@ import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { type Application } from '~/generated-metadata/graphql';
 import { type ApplicationContentRow } from '~/pages/settings/applications/components/SettingsApplicationContentSubtable';
-import { findObjectNameByUniversalIdentifier } from '~/pages/settings/applications/utils/findObjectNameByUniversalIdentifier';
 
 type InstalledApplicationForObjectAndFields = Omit<
   Application,
@@ -100,14 +99,11 @@ export const useComputeObjectAndFieldsContentForApplication = ({
               };
             }
 
-            const standardObjectName = findObjectNameByUniversalIdentifier(
-              field.objectUniversalIdentifier,
+            const objectMetadataItem = objectMetadataItems.find(
+              (item) =>
+                item.universalIdentifier ===
+                field.objectUniversalIdentifier,
             );
-            const objectMetadataItem = isDefined(standardObjectName)
-              ? objectMetadataItems.find(
-                  (item) => item.nameSingular === standardObjectName,
-                )
-              : undefined;
 
             if (!isDefined(objectMetadataItem)) {
               return undefined;

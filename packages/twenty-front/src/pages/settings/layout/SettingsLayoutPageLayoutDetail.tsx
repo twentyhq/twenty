@@ -1,3 +1,5 @@
+import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { t } from '@lingui/core/macro';
 import { useParams } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
@@ -7,7 +9,7 @@ import {
   SettingsLayoutDetailScaffold,
 } from '~/pages/settings/layout/components/SettingsLayoutDetailScaffold';
 import { SettingsLayoutItemTable } from '~/pages/settings/layout/components/SettingsLayoutItemTable';
-import { resolveManifestObjectLabel } from '~/pages/settings/layout/utils/resolveManifestObjectLabel';
+import { resolveObjectLabel } from '~/pages/settings/layout/utils/resolveObjectLabel';
 
 export const SettingsLayoutPageLayoutDetail = () => {
   const { applicationId = '', pageLayoutUniversalIdentifier = '' } = useParams<{
@@ -18,12 +20,17 @@ export const SettingsLayoutPageLayoutDetail = () => {
   const { application, manifest, isLoading } =
     useApplicationManifest(applicationId);
 
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
+
   const pageLayout = manifest?.pageLayouts?.find(
     (pl) => pl.universalIdentifier === pageLayoutUniversalIdentifier,
   );
 
   const objectLabel = isDefined(pageLayout)
-    ? resolveManifestObjectLabel(pageLayout.objectUniversalIdentifier, manifest)
+    ? resolveObjectLabel(
+        pageLayout.objectUniversalIdentifier,
+        objectMetadataItems,
+      )
     : undefined;
 
   const detailRows: DetailRow[] = isDefined(pageLayout)
@@ -89,9 +96,9 @@ export const SettingsLayoutPageLayoutDetail = () => {
               cells: [
                 widget.title,
                 widget.type,
-                resolveManifestObjectLabel(
+                resolveObjectLabel(
                   widget.objectUniversalIdentifier,
-                  manifest,
+                  objectMetadataItems,
                 ) ?? '—',
               ],
             }))}
