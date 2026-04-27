@@ -10,11 +10,12 @@ import {
   makeSlowInstance,
   makeStep,
   makeWorkspace,
+  migrationRecordToKey,
   resetSeedSequenceCounter,
   seedInstanceMigration,
   seedWorkspaceMigration,
   setMockActiveWorkspaceIds,
-  testGetLatestMigrationForCommand,
+  testGetExecutedMigrationsInOrder,
   WS_1,
   WS_2,
 } from 'test/integration/upgrade/utils/upgrade-sequence-runner-integration-test.util';
@@ -198,13 +199,15 @@ describe('UpgradeSequenceRunnerService — failing sequence (integration)', () =
       }),
     ).rejects.toThrow('fast command exploded');
 
-    const ic2 = await testGetLatestMigrationForCommand(context.dataSource, {
-      name: 'Ic2',
-    });
+    const executed = await testGetExecutedMigrationsInOrder(context.dataSource);
 
-    expect(ic2).toEqual(
-      expect.objectContaining({ name: 'Ic2', status: 'failed' }),
-    );
+    expect(executed.map(migrationRecordToKey)).toStrictEqual([
+      // Seeds
+      'Ic1:instance:completed:1',
+
+      // Ic2 attempted and failed
+      'Ic2:instance:failed:1',
+    ]);
   });
 
   it('should record failure in DB when a slow instance command fails', async () => {
@@ -238,13 +241,17 @@ describe('UpgradeSequenceRunnerService — failing sequence (integration)', () =
       }),
     ).rejects.toThrow('slow data migration exploded');
 
-    const ic2 = await testGetLatestMigrationForCommand(context.dataSource, {
-      name: 'Ic2',
-    });
+    const executed = await testGetExecutedMigrationsInOrder(context.dataSource);
 
-    expect(ic2).toEqual(
-      expect.objectContaining({ name: 'Ic2', status: 'failed' }),
-    );
+    expect(executed.map(migrationRecordToKey)).toStrictEqual([
+      // Seeds
+      'Ic1:instance:completed:1',
+      `Ic1:${WS_1}:completed:1`,
+
+      // Ic2 attempted and failed
+      'Ic2:instance:failed:1',
+      `Ic2:${WS_1}:failed:1`,
+    ]);
   });
 
   it('should abort and report failures when workspace commands fail, without running subsequent instance steps', async () => {
@@ -270,20 +277,15 @@ describe('UpgradeSequenceRunnerService — failing sequence (integration)', () =
     expect(report.totalFailures).toBe(1);
     expect(report.totalSuccesses).toBe(0);
 
-    const ic1 = await testGetLatestMigrationForCommand(context.dataSource, {
-      name: 'Ic1',
-    });
+    const executed = await testGetExecutedMigrationsInOrder(context.dataSource);
 
-    expect(ic1).toBeNull();
+    expect(executed.map(migrationRecordToKey)).toStrictEqual([
+      // Seeds
+      `Wc1:${WS_1}:failed:1`,
 
-    const wc1 = await testGetLatestMigrationForCommand(context.dataSource, {
-      name: 'Wc1',
-      workspaceId: WS_1,
-    });
-
-    expect(wc1).toEqual(
-      expect.objectContaining({ status: 'failed', attempt: 2 }),
-    );
+      // Runner retries Wc1, still fails — Ic1 never reached
+      `Wc1:${WS_1}:failed:2`,
+    ]);
   });
 
   it('should abort at workspace failure in a multi-segment sequence with two workspaces starting aligned', async () => {
@@ -337,39 +339,23 @@ describe('UpgradeSequenceRunnerService — failing sequence (integration)', () =
     expect(report.totalSuccesses).toBe(1);
     expect(report.totalFailures).toBe(1);
 
-    // WS_1 succeeded Wc2
-    const ws1Wc2 = await testGetLatestMigrationForCommand(context.dataSource, {
-      name: 'Wc2',
-      workspaceId: WS_1,
-    });
+    const executed = await testGetExecutedMigrationsInOrder(context.dataSource);
 
-    expect(ws1Wc2).toEqual(
-      expect.objectContaining({ name: 'Wc2', status: 'completed' }),
-    );
+    expect(executed.map(migrationRecordToKey)).toStrictEqual([
+      // Seeds
+      `Wc0:${WS_1}:completed:1`,
+      `Wc0:${WS_2}:completed:1`,
+      'Ic1:instance:completed:1',
+      `Ic1:${WS_1}:completed:1`,
+      `Ic1:${WS_2}:completed:1`,
+      `Wc1:${WS_1}:completed:1`,
+      `Wc1:${WS_2}:completed:1`,
 
-    // WS_2 failed Wc2
-    const ws2Wc2 = await testGetLatestMigrationForCommand(context.dataSource, {
-      name: 'Wc2',
-      workspaceId: WS_2,
-    });
+      // WS_1 succeeds Wc2, WS_2 fails Wc2
+      `Wc2:${WS_1}:completed:1`,
+      `Wc2:${WS_2}:failed:1`,
 
-    expect(ws2Wc2).toEqual(
-      expect.objectContaining({ name: 'Wc2', status: 'failed' }),
-    );
-
-    // Ic2 never ran — runner aborted at the workspace segment failure
-    const ic2 = await testGetLatestMigrationForCommand(context.dataSource, {
-      name: 'Ic2',
-    });
-
-    expect(ic2).toBeNull();
-
-    // Wc3 never ran either
-    const ws1Wc3 = await testGetLatestMigrationForCommand(context.dataSource, {
-      name: 'Wc3',
-      workspaceId: WS_1,
-    });
-
-    expect(ws1Wc3).toBeNull();
+      // Ic2 and Wc3 never reached — runner aborted at workspace failure
+    ]);
   });
 });

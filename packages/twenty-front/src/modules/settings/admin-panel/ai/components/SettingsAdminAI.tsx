@@ -62,7 +62,8 @@ export const SettingsAdminAI = () => {
   const billing = useAtomStateValue(billingState);
   const isBillingEnabled = billing?.isBillingEnabled ?? false;
   const hasEnterpriseAccess =
-    isBillingEnabled || currentWorkspace?.hasValidEnterpriseKey === true;
+    isBillingEnabled ||
+    currentWorkspace?.hasValidEnterpriseValidityToken === true;
   const [usagePeriod, setUsagePeriod] = useState<PeriodPreset>('30d');
   const periodOptions = getPeriodOptions();
   const usageDates = getPeriodDates(usagePeriod);

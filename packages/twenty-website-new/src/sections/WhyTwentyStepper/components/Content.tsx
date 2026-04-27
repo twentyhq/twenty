@@ -1,0 +1,150 @@
+'use client';
+
+import { Body, Heading, StepperProgressRail } from '@/design-system/components';
+import type { BodyType } from '@/design-system/components/Body';
+import type { HeadingType } from '@/design-system/components/Heading';
+import { StepperSwipeDeck } from '@/lib/stepper';
+import { theme } from '@/theme';
+import { styled } from '@linaria/react';
+
+const ContentRoot = styled.div`
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: ${theme.spacing(6)};
+  min-width: 0;
+
+  @media (min-width: ${theme.breakpoints.md}px) {
+    align-self: stretch;
+    gap: ${theme.spacing(20)};
+    margin-left: calc(-1 * ${theme.spacing(4)});
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    align-items: center;
+  }
+`;
+
+const StepsColumn = styled.div`
+  display: grid;
+  gap: ${theme.spacing(6)};
+  grid-template-columns: 1fr;
+  min-width: 0;
+
+  @media (min-width: ${theme.breakpoints.md}px) {
+    height: max-content;
+    max-width: 556px;
+  }
+`;
+
+const HeadingBlock = styled.div`
+  display: grid;
+  grid-template-columns: 1fr;
+  row-gap: ${theme.spacing(4)};
+`;
+
+const StepBlock = styled.div<{ $opacity: number; $translateY: number }>`
+  display: grid;
+  grid-template-columns: 1fr;
+  opacity: 1;
+  row-gap: ${theme.spacing(4)};
+  transition:
+    opacity 0.4s ease,
+    transform 0.4s ease;
+
+  @media (min-width: ${theme.breakpoints.md}px) {
+    opacity: ${({ $opacity }) => $opacity};
+    row-gap: ${theme.spacing(6)};
+    transform: translateY(${({ $translateY }) => `${$translateY}px`});
+  }
+`;
+
+const SwipeStepBlock = styled.div`
+  display: grid;
+  grid-template-columns: 1fr;
+  row-gap: ${theme.spacing(4)};
+`;
+
+export type WhyTwentyStepperLayoutMode = 'scroll' | 'swipe';
+
+export type WhyTwentyStepperContentProps = {
+  activeStepIndex: number;
+  body: BodyType[];
+  heading: HeadingType;
+  layoutMode: WhyTwentyStepperLayoutMode;
+  localProgress: number;
+  onMobileStepIndexChange: (nextIndex: number) => void;
+};
+
+export function Content({
+  activeStepIndex,
+  body,
+  heading,
+  layoutMode,
+  localProgress,
+  onMobileStepIndexChange,
+}: WhyTwentyStepperContentProps) {
+  const stepCount = body.length;
+
+  return (
+    <ContentRoot>
+      <StepperProgressRail
+        activeStepIndex={activeStepIndex}
+        inactiveColor={theme.colors.primary.text[20]}
+        localProgress={localProgress}
+        stepCount={stepCount}
+      />
+      <StepsColumn>
+        <HeadingBlock>
+          <Heading as="h2" segments={heading} size="xl" weight="light" />
+        </HeadingBlock>
+        {layoutMode === 'swipe' ? (
+          <StepperSwipeDeck
+            activeIndex={activeStepIndex}
+            onActiveIndexChange={onMobileStepIndexChange}
+            stepCount={stepCount}
+          >
+            {(stepIndex) => (
+              <SwipeStepBlock>
+                <Body
+                  body={body[stepIndex]}
+                  family="sans"
+                  size="md"
+                  weight="regular"
+                />
+              </SwipeStepBlock>
+            )}
+          </StepperSwipeDeck>
+        ) : (
+          body.map((bodyItem, index) => {
+            let opacity = 1;
+            let translateY = 0;
+
+            if (index > activeStepIndex + 1) {
+              opacity = 0;
+              translateY = 300;
+            } else if (index === activeStepIndex + 1) {
+              opacity = 0.4;
+              translateY = 300 * (1 - localProgress);
+            }
+
+            return (
+              <StepBlock
+                $opacity={opacity}
+                $translateY={translateY}
+                data-active={String(index <= activeStepIndex)}
+                key={index}
+              >
+                <Body
+                  body={bodyItem}
+                  family="sans"
+                  size="md"
+                  weight="regular"
+                />
+              </StepBlock>
+            );
+          })
+        )}
+      </StepsColumn>
+    </ContentRoot>
+  );
+}

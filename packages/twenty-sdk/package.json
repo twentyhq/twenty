@@ -37,6 +37,11 @@
       "import": "./dist/front-component/index.mjs",
       "require": "./dist/front-component/index.cjs"
     },
+    "./logic-function": {
+      "types": "./dist/logic-function/index.d.ts",
+      "import": "./dist/logic-function/index.mjs",
+      "require": "./dist/logic-function/index.cjs"
+    },
     "./ui": {
       "types": "./dist/ui/index.d.ts",
       "import": "./dist/ui/index.mjs",
@@ -110,6 +115,9 @@
       ],
       "front-component": [
         "dist/front-component/index.d.ts"
+      ],
+      "logic-function": [
+        "dist/logic-function/index.d.ts"
       ],
       "cli": [
         "dist/cli/operations/index.d.ts"

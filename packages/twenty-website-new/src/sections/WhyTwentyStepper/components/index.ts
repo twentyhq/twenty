@@ -1,6 +1,6 @@
-import { Content } from './Content/Content';
-import { Flow } from './Flow/Flow';
-import { Root } from './Root/Root';
+import { Content } from './Content';
+import { Flow } from './Flow';
+import { Root } from './Root';
 
 export const WhyTwentyStepper = {
   Content,

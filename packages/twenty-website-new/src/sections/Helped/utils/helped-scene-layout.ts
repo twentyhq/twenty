@@ -1,7 +1,8 @@
 import type { RefObject } from 'react';
 
+import { getPrefersReducedMotionSnapshot } from '@/lib/motion';
+import { getStepperMdUpSnapshot } from '@/lib/stepper';
 import type { HeadingCardType } from '@/sections/Helped/types/HeadingCard';
-import { theme } from '@/theme';
 
 const CARD_WIDTH_DESKTOP = 443;
 const CARD_WIDTH_MOBILE = 360;
@@ -22,7 +23,6 @@ function easeOutQuad(value: number) {
   return 1 - (1 - clampedValue) * (1 - clampedValue);
 }
 
-// Right, left, center for cards 0, 1, 2+
 function cardLeft(
   index: number,
   innerWidth: number,
@@ -83,12 +83,8 @@ export function applyHelpedSceneLayout(
     return;
   }
 
-  const reducedMotion = window.matchMedia(
-    '(prefers-reduced-motion: reduce)',
-  ).matches;
-  const isDesktop = window.matchMedia(
-    `(min-width: ${theme.breakpoints.md}px)`,
-  ).matches;
+  const reducedMotion = getPrefersReducedMotionSnapshot();
+  const isDesktop = getStepperMdUpSnapshot();
   const sectionRect = section.getBoundingClientRect();
 
   const scrollRange = Math.max(1, section.offsetHeight - window.innerHeight);

@@ -1,7 +1,8 @@
 'use client';
 
 import dynamic from 'next/dynamic';
-import { getSharedCompanyLogoUrlFromDomainName } from '@/lib/shared-asset-paths';
+import { getSharedCompanyLogoUrlFromDomainName } from '@/content/site/asset-paths';
+import { createBoundedFailureCache } from '@/lib/visual-runtime';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
 import {
@@ -63,7 +64,6 @@ import {
   useEffect,
   useMemo,
   useState,
-  type CSSProperties,
   type ReactNode,
 } from 'react';
 import type {
@@ -147,9 +147,6 @@ const SIDEBAR_TONES: Record<
   red: { background: '#fdd8d8', border: '#f9c6c6', color: '#DC3D43' },
 };
 
-// RGB tuples for each tone's accent color. Used by the object-appearance
-// animation to tint the highlight/ring to match the newly-created object's
-// sidebar icon (e.g. Rocket = violet, Launch = orange, Payload = teal).
 const hexToRgbTuple = (hex: string): string => {
   const clean = hex.replace('#', '');
   const expanded =
@@ -245,8 +242,6 @@ const PAGE_RENDERERS = {
     page: Extract<HeroPageDefinition, { type: K }>,
   ) => ReactNode;
 };
-
-// -- Styled Components --
 
 const StyledHomeVisual = styled.div`
   isolation: isolate;
@@ -515,7 +510,9 @@ const SidebarItemRow = styled.div<{
   $interactive?: boolean;
   $withBranch?: boolean;
   $highlighted?: boolean;
+  $highlightRgb?: string;
 }>`
+  --hero-highlight-rgb: ${({ $highlightRgb }) => $highlightRgb ?? '237, 95, 0'};
   align-items: center;
   background: ${({ $active }) =>
     $active ? VISUAL_TOKENS.background.transparent.medium : 'transparent'};
@@ -932,14 +929,13 @@ const NavbarActionSeparator = styled.div`
   width: 1px;
 `;
 
-// Pinned action buttons register to the left of the New Record button once
-// the chat reveals an object. Tighter padding/gap than the default navbar
-// buttons so multiple commands can sit side-by-side. Entrance animation
-// cascades left-to-right via --pinned-action-index so buttons feel like
-// they're landing one after the other.
-const PinnedActionButton = styled(NavbarActionButton)`
+const PinnedActionButton = styled(NavbarActionButton)<{
+  $pinnedActionIndex: number;
+}>`
   animation: pinnedActionIn 340ms cubic-bezier(0.22, 1, 0.36, 1) both;
-  animation-delay: calc(var(--pinned-action-index, 0) * 90ms);
+  animation-delay: calc(
+    ${({ $pinnedActionIndex }) => $pinnedActionIndex} * 90ms
+  );
   display: none;
   gap: 4px;
   padding: 0 6px;
@@ -1397,8 +1393,6 @@ const FaviconImage = styled.img`
   width: 100%;
 `;
 
-// -- Icon helpers --
-
 const TABLER_ICON_MAP: Record<string, typeof IconBuildingSkyscraper> = {
   book: IconBook,
   buildingSkyscraper: IconBuildingSkyscraper,
@@ -1442,10 +1436,8 @@ const HEADER_ICON_MAP: Record<string, typeof IconBuildingSkyscraper> = {
   url: IconLink,
 };
 
-// -- Utility functions --
-
-const failedAvatarUrls = new Set<string>();
-const failedFaviconUrls = new Set<string>();
+const failedAvatarUrls = createBoundedFailureCache(256);
+const failedFaviconUrls = createBoundedFailureCache(256);
 
 function getInitials(value: string) {
   return value
@@ -1644,8 +1636,6 @@ function renderNavbarAction(
   return button;
 }
 
-// -- Small icon wrappers --
-
 type MiniIconProps = {
   color?: string;
   size?: number;
@@ -1777,8 +1767,6 @@ function CopyMini({ color = COLORS.textSecondary, size = 14 }: MiniIconProps) {
   );
 }
 
-// -- Favicon logo component --
-
 function FaviconLogo({
   src,
   domain,
@@ -1835,8 +1823,6 @@ function FaviconLogo({
     </div>
   );
 }
-
-// -- Sidebar icon rendering --
 
 function PersonAvatarContent({ token }: { token: HeroCellPerson }) {
   const [localFailedUrl, setLocalFailedUrl] = useState<string | null>(null);
@@ -1972,8 +1958,6 @@ function renderSidebarIcon(
   );
 }
 
-// -- Sidebar item component --
-
 function SidebarItemComponent({
   collapsible = false,
   expanded = false,
@@ -2007,16 +1991,11 @@ function SidebarItemComponent({
     item.label === selectedLabel;
   const rowHighlighted = highlightedItemId === item.id;
   const childItems = item.children ?? [];
-  // Tint the appearance animation with the item's own tone so Rocket pops
-  // violet, Launch pops orange, Payload pops teal, etc.
   const iconTone =
     'tone' in item.icon && typeof item.icon.tone === 'string'
       ? item.icon.tone
       : 'gray';
   const highlightRgb = SIDEBAR_TONE_RGB[iconTone] ?? SIDEBAR_TONE_RGB.gray;
-  const highlightStyle = rowHighlighted
-    ? ({ '--hero-highlight-rgb': highlightRgb } as React.CSSProperties)
-    : undefined;
   const rowContent = (
     <>
       {showBranch ? <SidebarBranchCell $isLastChild={isLastChild} /> : null}
@@ -2054,6 +2033,7 @@ function SidebarItemComponent({
         <SidebarItemRow
           $active={rowActive}
           $depth={depth}
+          $highlightRgb={rowHighlighted ? highlightRgb : undefined}
           $highlighted={rowHighlighted}
           $interactive={rowInteractive}
           $withBranch={showBranch}
@@ -2064,10 +2044,7 @@ function SidebarItemComponent({
                 ? () => onSelect?.(item.label)
                 : undefined
           }
-          style={{
-            cursor: rowInteractive ? 'pointer' : 'default',
-            ...highlightStyle,
-          }}
+          style={{ cursor: rowInteractive ? 'pointer' : 'default' }}
         >
           {rowContent}
         </SidebarItemRow>
@@ -2092,8 +2069,6 @@ function SidebarItemComponent({
     </>
   );
 }
-
-// -- Cell rendering components --
 
 function PersonTokenCell({
   token,
@@ -2294,8 +2269,6 @@ function renderCellValue(
   }
 }
 
-// -- Main component --
-
 export function HomeVisual({ visual }: { visual: HeroVisualType }) {
   const defaultActiveLabel =
     visual.favoritesNav?.find((item) => item.active)?.label ??
@@ -2306,10 +2279,6 @@ export function HomeVisual({ visual }: { visual: HeroVisualType }) {
 
   const [activeLabel, setActiveLabel] = useState(defaultActiveLabel);
   const [createdObjectIds, setCreatedObjectIds] = useState<string[]>([]);
-  // Objects whose pinned navbar commands have been scaffolded by the chat.
-  // Includes Companies (reused from the standard sidebar) and all newly
-  // created CRM objects. The navbar looks up its pinned actions here so
-  // commands only appear after the assistant announces them.
   const [revealedObjectIds, setRevealedObjectIds] = useState<string[]>([]);
   const [highlightedItemId, setHighlightedItemId] = useState<string | null>(
     null,
@@ -2340,19 +2309,11 @@ export function HomeVisual({ visual }: { visual: HeroVisualType }) {
     [visual.actions, visual.tableWidth],
   );
 
-  // Inject the CRM objects at the top of the workspace sidebar as they are
-  // "created" by the AI chat. The callback chain is:
-  // AssistantResponse -> ConversationPanel -> DraggableTerminal -> here. Each
-  // object streams in one-by-one from the first assistant paragraph; the
-  // workspace mirrors that order, with the most recently created object on top
-  // and surfaced as the active page.
   const workspaceNav = useMemo<HeroSidebarEntry[]>(() => {
     if (createdObjectIds.length === 0) {
       return visual.workspaceNav;
     }
 
-    // Walk the created list from newest-first so the last object streamed sits
-    // on top. Any CRM entry not yet created is simply skipped.
     const prepended = [...createdObjectIds]
       .reverse()
       .map(
@@ -2368,8 +2329,6 @@ export function HomeVisual({ visual }: { visual: HeroVisualType }) {
     setRevealedObjectIds((current) =>
       current.includes(id) ? current : [...current, id],
     );
-    // Companies is reused from the standard sidebar — no prepend, just flash
-    // the existing item and show its index page.
     if (id === COMPANIES_ITEM_ID) {
       setActiveLabel(COMPANIES_ITEM_LABEL);
       setHighlightedItemId(COMPANIES_ITEM_ID);
@@ -2422,9 +2381,6 @@ export function HomeVisual({ visual }: { visual: HeroVisualType }) {
   const activeHeader = activePage?.header;
   const activeActions = activeHeader?.actions ?? [];
   const navbarActions = activeHeader?.navbarActions;
-  // Pinned commands registered by the active object. Surfaced only after the
-  // chat has revealed that object, mirroring how a real workspace would only
-  // gain header actions after the schema / command-menu-items lands.
   const pinnedActions =
     activeItem && revealedObjectIds.includes(activeItem.id)
       ? OBJECT_PINNED_ACTIONS[activeItem.id]
@@ -2578,12 +2534,8 @@ export function HomeVisual({ visual }: { visual: HeroVisualType }) {
                       <>
                         {pinnedActions?.map((action, index) => (
                           <PinnedActionButton
+                            $pinnedActionIndex={index}
                             key={`pinned-${activeItem?.id}-${action.label}-${index}`}
-                            style={
-                              {
-                                '--pinned-action-index': index,
-                              } as CSSProperties
-                            }
                           >
                             <NavbarActionIconWrap>
                               {(() => {

@@ -53,38 +53,45 @@ People ←→ Project Assignments ←→ Projects
 1. Перейдите в **Настройки → Модель данных**
 2. Нажмите **+ Новый объект**
 3. Дайте ему понятное имя (например, "Project Assignment", "Team Member", "Product Order")
-4. Нажмите **Сохранить**
+4. Toggle "Skip creating a Name field" on
+
+<img src="/images/user-guide/fields/new-pivot-object.png" alt="New pivot object" />
+
+5. Нажмите **Сохранить**
 
 <Tip>
 **Рекомендации по именованию**: Используйте название, описывающее связь, например "Project Assignment" или "Team Membership". Так модель данных становится более понятной.
 </Tip>
 
-## Шаг 2: Создайте связи из объекта-связки
+## Step 2: Create Relations Between Objects and the Junction
 
-Добавьте поля связи из объекта-связки к обоим объектам, которые вы хотите соединить.
+Add relation fields from each of your two objects to the junction object.
 
-### Первая связь (Объект-связка → Объект A)
+### First Relation (Object A → Junction)
 
-1. Выберите ваш объект-связку в **Настройки → Модель данных**
-2. Нажмите **+ Добавить поле**
-3. Выберите тип поля **Связь**
-4. Выберите первый объект (например, "Люди")
-5. Установите тип связи **Многие-к-одному** (много назначений могут ссылаться на одного человека)
-6. Назовите поля:
-   * Поле на объекте-связке: например, "Person"
-   * Поле в объекте Люди: например, "Project Assignments"
-7. Нажмите **Сохранить**
-
-### Вторая связь (Объект-связка → Объект B)
-
-1. Оставаясь на объекте-связке, нажмите **+ Добавить поле**
-2. Выберите тип поля **Связь**
-3. Выберите второй объект (например, "Проекты")
-4. Установите тип связи **Многие-к-одному**
+1. Select your first object in **Settings → Data Model**
+2. Click **+ Add Relation**
+3. Select the junction object (e.g., "Project Assignments")
+4. Set the relation type to **One-To-Many** (one person can link to many assignments)
 5. Назовите поля:
+   * Поле в объекте Люди: например, "Project Assignments"
+   * Поле на объекте-связке: например, "Person"
+6. Нажмите **Сохранить**
+
+### Second Relation (Object B → Junction)
+
+1. Select your second object in **Settings → Data Model**
+2. Click **+ Add Relation**
+3. Select the junction object (e.g., "Project Assignments")
+4. Set the relation type to **One-To-Many** (one project can link to many assignments)
+5. Включите **"Это связь с объектом-связкой"**
+
+<img src="/images/user-guide/fields/junction-relation-toggle.png" style={{width:'100%'}} />
+
+6. Назовите поля:
    * Поле на объекте-связке: например, "Project"
    * Поле в объекте Проекты: например, "Team Members"
-6. Нажмите **Сохранить**
+7. Нажмите **Сохранить**
 
 ## Шаг 3: Настройте отображение связи через объект-связку
 
@@ -97,18 +104,6 @@ People ←→ Project Assignments ←→ Projects
 5. Включите **"Это связь с объектом-связкой"**
 6. Выберите **Целевую связь** (например, "Project" — поле на объекте-связке, указывающее на другую сторону)
 7. Нажмите **Сохранить**
-
-{/* TODO: Add image
-<img src="/images/user-guide/fields/junction-relation-toggle.png" style={{width:'100%'}}/>
-*/}
-
-Повторите для другого объекта:
-
-1. Выберите "Проекты" в Модели данных
-2. Отредактируйте поле связи "Team Members"
-3. Включите переключатель объекта-связки
-4. Выберите "Person" как целевую связь
-5. Сохранить
 
 ## Результат
 
@@ -130,15 +125,15 @@ People ←→ Project Assignments ←→ Projects
 
 ### Добавьте связи
 
-1. **Project Assignment → Люди**
-   * Тип: Многие-к-одному
-   * Поле в объекте Assignment: "Person"
+1. **People → Project Assignment**
+   * Type: One-to-Many
    * Поле в объекте Люди: "Project Assignments"
+   * Поле в объекте Assignment: "Person"
 
-2. **Project Assignment → Проекты**
-   * Тип: Многие-к-одному
-   * Поле в объекте Assignment: "Project"
+2. **Projects → Project Assignment**
+   * Type: One-to-Many
    * Поле в объекте Проекты: "Team Members"
+   * Поле в объекте Assignment: "Project"
 
 ### Настройте отображение объекта-связки
 

@@ -1,5 +1,5 @@
-import { Heading } from './Heading/Heading';
-import { Root } from './Root/Root';
-import { Visual } from './Visual/Visual';
+import { Heading } from './Heading';
+import { Root } from './Root';
+import { Visual } from './Visual';
 
 export const Quote = { Heading, Root, Visual };

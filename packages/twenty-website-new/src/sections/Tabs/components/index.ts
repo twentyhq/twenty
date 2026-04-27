@@ -1,11 +1,11 @@
-import { Body } from './Body/Body';
-import { Heading } from './Heading/Heading';
-import { Root } from './Root/Root';
-import { TabButton } from './TabButton/TabButton';
-import { TabButtons } from './TabButtons/TabButtons';
-import { TabGroup } from './TabGroup/TabGroup';
-import { TabVisual } from './TabVisual/TabVisual';
-import { TabVisuals } from './TabVisuals/TabVisuals';
+import { Body } from './Body';
+import { Heading } from './Heading';
+import { Root } from './Root';
+import { TabButton } from './TabButton';
+import { TabButtons } from './TabButtons';
+import { TabGroup } from './TabGroup';
+import { TabVisual } from './TabVisual';
+import { TabVisuals } from './TabVisuals';
 
 export const Tabs = {
   Root,

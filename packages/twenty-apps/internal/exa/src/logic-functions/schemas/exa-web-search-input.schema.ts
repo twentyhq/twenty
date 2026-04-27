@@ -1,4 +1,4 @@
-import { type InputJsonSchema } from 'twenty-shared/logic-function';
+import { type InputJsonSchema } from 'twenty-sdk/logic-function';
 
 import { DEFAULT_NUM_RESULTS } from '../constants/default-num-results.constant';
 import { EXA_CATEGORIES } from '../constants/exa-categories.constant';
