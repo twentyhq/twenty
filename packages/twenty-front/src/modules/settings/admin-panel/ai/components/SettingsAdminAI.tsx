@@ -25,7 +25,7 @@ import { GET_AI_PROVIDERS } from '@/settings/admin-panel/ai/graphql/queries/getA
 import { type GetAiProvidersResult } from '@/settings/admin-panel/ai/types/GetAiProvidersResult';
 import { parseProviderItems } from '@/settings/admin-panel/ai/utils/parseProviderItems';
 import { getModelIcon } from '@/settings/ai/utils/getModelIcon';
-import { SettingsAdminTabSkeletonLoader } from '@/settings/admin-panel/components/SettingsAdminTabSkeletonLoader';
+import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
 import { SettingsEnterpriseFeatureGateCard } from '@/settings/components/SettingsEnterpriseFeatureGateCard';
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
 import { useUsageValueFormatter } from '@/settings/usage/hooks/useUsageValueFormatter';
@@ -62,7 +62,8 @@ export const SettingsAdminAI = () => {
   const billing = useAtomStateValue(billingState);
   const isBillingEnabled = billing?.isBillingEnabled ?? false;
   const hasEnterpriseAccess =
-    isBillingEnabled || currentWorkspace?.hasValidEnterpriseKey === true;
+    isBillingEnabled ||
+    currentWorkspace?.hasValidEnterpriseValidityToken === true;
   const [usagePeriod, setUsagePeriod] = useState<PeriodPreset>('30d');
   const periodOptions = getPeriodOptions();
   const usageDates = getPeriodDates(usagePeriod);
@@ -128,7 +129,7 @@ export const SettingsAdminAI = () => {
   );
 
   if (isLoadingProviders || isLoadingModels) {
-    return <SettingsAdminTabSkeletonLoader />;
+    return <SettingsSectionSkeletonLoader />;
   }
 
   const handleRecommendedToggle = async (

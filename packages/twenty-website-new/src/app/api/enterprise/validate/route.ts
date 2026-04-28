@@ -1,9 +1,9 @@
 import {
   signValidityToken,
   verifyEnterpriseKey,
-} from '@/shared/enterprise/enterprise-jwt';
-import { getStripeClient } from '@/shared/enterprise/stripe-client';
-import { getSubscriptionCurrentPeriodEnd } from '@/shared/enterprise/stripe-subscription-helpers';
+} from '@/lib/enterprise/enterprise-jwt';
+import { getStripeClient } from '@/lib/enterprise/stripe-client';
+import { getSubscriptionCurrentPeriodEnd } from '@/lib/enterprise/stripe-subscription-helpers';
 import { NextResponse } from 'next/server';
 
 export const dynamic = 'force-dynamic';

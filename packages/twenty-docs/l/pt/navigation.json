@@ -4,10 +4,10 @@
       "label": "Primeiros passos",
       "groups": {
         "welcome": {
-          "label": "Welcome"
+          "label": "Boas-vindas"
         },
         "coreConcepts": {
-          "label": "Core Concepts"
+          "label": "Conceitos essenciais"
         }
       }
     },
@@ -21,7 +21,7 @@
           "label": "Modelo de dados",
           "groups": {
             "dataModelReference": {
-              "label": "Reference"
+              "label": "Referência"
             },
             "dataModelHowTos": {
               "label": "How-Tos"
@@ -32,7 +32,7 @@
           "label": "Data Migration",
           "groups": {
             "dataMigrationReference": {
-              "label": "Reference"
+              "label": "Referência"
             },
             "dataMigrationHowTos": {
               "label": "How-Tos"
@@ -43,7 +43,7 @@
           "label": "Calendar & Emails",
           "groups": {
             "calendarEmailsReference": {
-              "label": "Reference"
+              "label": "Referência"
             },
             "calendarEmailsHowTos": {
               "label": "How-Tos"
@@ -54,7 +54,7 @@
           "label": "Fluxos de trabalho",
           "groups": {
             "workflowsReference": {
-              "label": "Reference"
+              "label": "Referência"
             },
             "workflowsHowTos": {
               "label": "How-Tos",
@@ -79,7 +79,7 @@
           "label": "IA",
           "groups": {
             "aiReference": {
-              "label": "Reference"
+              "label": "Referência"
             },
             "aiHowTos": {
               "label": "How-Tos"
@@ -90,7 +90,7 @@
           "label": "Layout",
           "groups": {
             "layoutReference": {
-              "label": "Reference",
+              "label": "Referência",
               "groups": {
                 "layoutViews": {
                   "label": "Visualizações"
@@ -98,7 +98,7 @@
               }
             },
             "layoutHowTos": {
-              "label": "How-Tos"
+              "label": "Tutoriais"
             }
           }
         },
@@ -106,7 +106,7 @@
           "label": "Painéis",
           "groups": {
             "dashboardsReference": {
-              "label": "Reference"
+              "label": "Referência"
             },
             "dashboardsHowTos": {
               "label": "How-Tos"
@@ -117,7 +117,7 @@
           "label": "Permissions & Access",
           "groups": {
             "permissionsAccessReference": {
-              "label": "Reference"
+              "label": "Referência"
             },
             "permissionsAccessHowTos": {
               "label": "How-Tos"
@@ -128,7 +128,7 @@
           "label": "Faturação",
           "groups": {
             "billingReference": {
-              "label": "Reference"
+              "label": "Referência"
             },
             "billingHowTos": {
               "label": "How-Tos"
@@ -139,7 +139,7 @@
           "label": "Configurações",
           "groups": {
             "settingsReference": {
-              "label": "Reference"
+              "label": "Referência"
             },
             "settingsHowTos": {
               "label": "How-Tos"

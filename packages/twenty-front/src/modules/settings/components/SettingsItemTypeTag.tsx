@@ -28,7 +28,7 @@ export const SettingsItemTypeTag = ({
         leftComponent={
           <Avatar
             type="app"
-            size="md"
+            size="sm"
             placeholder="Remote"
             placeholderColorSeed="Remote"
           />

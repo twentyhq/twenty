@@ -1,5 +1,5 @@
 import { Resend } from 'resend';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined } from '@utils/is-defined';
 
 export const getResendClient = (): Resend => {
   const apiKey = process.env.RESEND_API_KEY;

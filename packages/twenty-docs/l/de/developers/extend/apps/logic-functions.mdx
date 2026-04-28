@@ -1,10 +1,10 @@
 ---
 title: Logikfunktionen
-description: Define server-side TypeScript functions with HTTP, cron, and database event triggers.
+description: Definieren Sie serverseitige TypeScript-Funktionen mit HTTP-, cron- und Datenbankereignis-Triggern.
 icon: bolt
 ---
 
-Logic functions are server-side TypeScript functions that run on the Twenty platform. They can be triggered by HTTP requests, cron schedules, or database events — and can also be exposed as tools for AI agents.
+Logikfunktionen sind serverseitige TypeScript-Funktionen, die auf der Twenty-Plattform ausgeführt werden. Sie können durch HTTP-Anfragen, cron-Zeitpläne oder Datenbankereignisse ausgelöst werden — und außerdem als Tools für KI-Agenten bereitgestellt werden.
 
 <AccordionGroup>
 <Accordion title="defineLogicFunction" description="Logikfunktionen und deren Trigger definieren">
@@ -94,15 +94,16 @@ const handler = async (event: RoutePayload) => {
 
 Der Typ `RoutePayload` hat die folgende Struktur:
 
-  | Eigenschaft                  | Typ                                                     | Beschreibung                                                     | Beispiel                                                                   |
-  | ---------------------------- | ------------------------------------------------------- | ---------------------------------------------------------------- | -------------------------------------------------------------------------- |
-  | `headers`                    | `Record\<string, string \| undefined>` | HTTP-Header (nur die in `forwardedRequestHeaders` aufgelisteten) | siehe Abschnitt unten                                                      |
-  | `queryStringParameters`      | `Record\<string, string \| undefined>` | Query-String-Parameter (mehrere Werte mit Kommas verbunden)      | `/users?ids=1&ids=2&ids=3&name=Alice` -> `{ ids: '1,2,3', name: 'Alice' }` |
-  | `pathParameters`             | `Record\<string, string \| undefined>` | Aus dem Routenmuster extrahierte Pfadparameter                   | `/users/:id`, `/users/123` -> `{ id: '123' }`                              |
-  | `body`                       | `object \| null`                                        | Geparster Request-Body (JSON)                                    | `{ id: 1 }` -> `{ id: 1 }`                                                 |
-  | `isBase64Encoded`            | `boolean`                                               | Gibt an, ob der Body Base64-codiert ist                          |                                                                            |
-  | `requestContext.http.method` | `Zeichenkette`                                          | HTTP-Methode (GET, POST, PUT, PATCH, DELETE)                     |                                                                            |
-  | `requestContext.http.path`   | `Zeichenkette`                                          | Rohpfad der Anfrage                                              |                                                                            |
+  | Eigenschaft                  | Typ                                                     | Beschreibung                                                                                                                                                                                                                           | Beispiel                                                                   |
+  | ---------------------------- | ------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
+  | `headers`                    | `Record\<string, string \| undefined>` | HTTP-Header (nur die in `forwardedRequestHeaders` aufgelisteten)                                                                                                                                                                       | siehe Abschnitt unten                                                      |
+  | `queryStringParameters`      | `Record\<string, string \| undefined>` | Query-String-Parameter (mehrere Werte mit Kommas verbunden)                                                                                                                                                                            | `/users?ids=1&ids=2&ids=3&name=Alice` -> `{ ids: '1,2,3', name: 'Alice' }` |
+  | `pathParameters`             | `Record\<string, string \| undefined>` | Aus dem Routenmuster extrahierte Pfadparameter                                                                                                                                                                                         | `/users/:id`, `/users/123` -> `{ id: '123' }`                              |
+  | `body`                       | `object \| null`                                        | Geparster Request-Body (JSON)                                                                                                                                                                                                          | `{ id: 1 }` -> `{ id: 1 }`                                                 |
+  | `rawBody`                    | `string \| undefined`                                   | Ursprünglicher UTF-8-Request-Body vor dem JSON-Parsing. Nützlich zur Verifizierung von Webhook-Signaturen im HMAC-Stil (z. B. GitHubs `X-Hub-Signature-256`, Stripe). `undefined`, wenn die Laufzeitumgebung es nicht beibehalten hat. |                                                                            |
+  | `isBase64Encoded`            | `boolean`                                               | Gibt an, ob der Body Base64-codiert ist                                                                                                                                                                                                |                                                                            |
+  | `requestContext.http.method` | `Zeichenkette`                                          | HTTP-Methode (GET, POST, PUT, PATCH, DELETE)                                                                                                                                                                                           |                                                                            |
+  | `requestContext.http.path`   | `Zeichenkette`                                          | Rohpfad der Anfrage                                                                                                                                                                                                                    |                                                                            |
 
 
 #### forwardedRequestHeaders
@@ -387,7 +388,7 @@ export default definePreInstallLogicFunction({
 
 **Faustregel:**
 
-| You want to...                                                                                                                  | Verwenden                                                                              |
+| Sie möchten ...                                                                                                                 | Verwenden                                                                              |
 | ------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
 | Standarddaten befüllen, den Workspace konfigurieren, externe Ressourcen registrieren                                            | `post-install`                                                                         |
 | Lang laufendes Seeding oder Drittanbieteraufrufe ausführen, die die Installationsantwort nicht blockieren sollten               | `post-install` (Standard — `shouldRunSynchronously: false`, mit Worker-Wiederholungen) |

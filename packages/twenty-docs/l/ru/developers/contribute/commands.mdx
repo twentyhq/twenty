@@ -1,12 +1,12 @@
 ---
-title: Commands
+title: Команды
 icon: terminal
-description: Useful commands for developing Twenty.
+description: Полезные команды для разработки Twenty.
 ---
 
-Commands can be run from the repository root using `npx nx`. Use `npx nx run {project}:{command}` for explicit targeting.
+Команды можно запускать из корня репозитория с помощью `npx nx`. Используйте `npx nx run {project}:{command}` для явного указания цели.
 
-## Starting the App
+## Запуск приложения
 
 ```bash
 npx nx start twenty-front          # Frontend dev server (http://localhost:3001)
@@ -14,7 +14,7 @@ npx nx start twenty-server         # Backend server (http://localhost:3000)
 npx nx run twenty-server:worker    # Background worker
 ```
 
-## Database
+## База данных
 
 ```bash
 npx nx database:reset twenty-server                          # Reset and seed database
@@ -22,7 +22,7 @@ npx nx run twenty-server:database:migrate:prod               # Run migrations
 npx nx run twenty-server:database:migrate:generate --name <name> --type <fast|slow>  # Generate a migration
 ```
 
-## Linting
+## Линтинг
 
 ```bash
 npx nx lint:diff-with-main twenty-front    # Lint changed files (fastest)
@@ -30,7 +30,7 @@ npx nx lint:diff-with-main twenty-server
 npx nx lint twenty-front --configuration=fix  # Auto-fix
 ```
 
-## Type Checking
+## Проверка типов
 
 ```bash
 npx nx typecheck twenty-front
@@ -68,7 +68,7 @@ npx nx run twenty-front:lingui:extract   # Extract strings
 npx nx run twenty-front:lingui:compile   # Compile translations
 ```
 
-## Build
+## Сборка
 
 ```bash
 npx nx build twenty-shared   # Must be built first

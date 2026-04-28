@@ -63,13 +63,21 @@ export type { InputJsonSchema } from 'twenty-shared/logic-function';
 export { defineNavigationMenuItem } from '@/sdk/define/navigation-menu-items/define-navigation-menu-item';
 
 export { defineObject } from '@/sdk/define/objects/define-object';
+export { generateDefaultFieldUniversalIdentifier } from '@/sdk/define/objects/generate-default-field-universal-identifier';
 export {
   STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS as STANDARD_OBJECT,
   STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
 } from '@/sdk/define/objects/standard-object-ids';
 
 export { definePageLayout } from '@/sdk/define/page-layouts/define-page-layout';
+export { definePageLayoutTab } from '@/sdk/define/page-layouts/define-page-layout-tab';
 export type { PageLayoutConfig } from '@/sdk/define/page-layouts/page-layout-config';
+export type { PageLayoutTabConfig } from '@/sdk/define/page-layouts/page-layout-tab-config';
+export type {
+  PageLayoutManifest,
+  PageLayoutTabManifest,
+  PageLayoutWidgetManifest,
+} from 'twenty-shared/application';
 
 export { defineRole } from '@/sdk/define/roles/define-role';
 export { PermissionFlag } from '@/sdk/define/roles/permission-flag-type';
@@ -100,6 +108,7 @@ export {
   NumberDataType,
   ObjectRecordGroupByDateGranularity,
   PageLayoutTabLayoutMode,
+  ViewCalendarLayout,
   ViewFilterGroupLogicalOperator,
   ViewFilterOperand,
   ViewOpenRecordIn,

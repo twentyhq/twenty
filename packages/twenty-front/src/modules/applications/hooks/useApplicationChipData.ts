@@ -3,11 +3,12 @@ import {
   useApplicationAvatarColors,
   type ApplicationAvatarColors,
 } from '@/applications/hooks/useApplicationAvatarColors';
+import { isTwentyStandardApplication } from '@/applications/utils/isTwentyStandardApplication';
+import { isWorkspaceCustomApplication } from '@/applications/utils/isWorkspaceCustomApplication';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
-import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
 type UseApplicationChipDataArgs = {
@@ -48,20 +49,11 @@ export const useApplicationChipData = ({
   const isCurrent =
     isDefined(currentApplicationId) && currentApplicationId === applicationId;
 
-  const isStandard =
-    isDefined(application.universalIdentifier) &&
-    application.universalIdentifier ===
-      TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER;
-
-  const isCustom =
-    isDefined(currentWorkspace?.workspaceCustomApplication?.id) &&
-    currentWorkspace.workspaceCustomApplication.id === application.id;
-
   const displayName = isCurrent
     ? t`This app`
-    : isStandard
+    : isTwentyStandardApplication(application)
       ? t`Standard`
-      : isCustom
+      : isWorkspaceCustomApplication(application, currentWorkspace)
         ? t`Custom`
         : application.name;
 

@@ -1,5 +1,5 @@
-import { EyebrowType } from '@/design-system/components/Eyebrow/types/Eyebrow';
-import { HeadingType } from '@/design-system/components/Heading/types/Heading';
+import { EyebrowType } from '@/design-system/components/Eyebrow';
+import { HeadingType } from '@/design-system/components/Heading';
 
 export type ThreeCardsBaseDataType = {
   eyebrow: EyebrowType;

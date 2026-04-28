@@ -1,10 +1,10 @@
 ---
 title: 逻辑函数
-description: Define server-side TypeScript functions with HTTP, cron, and database event triggers.
+description: 定义具有 HTTP、cron 和数据库事件触发器的服务端 TypeScript 函数。
 icon: bolt
 ---
 
-Logic functions are server-side TypeScript functions that run on the Twenty platform. They can be triggered by HTTP requests, cron schedules, or database events — and can also be exposed as tools for AI agents.
+逻辑函数是在 Twenty 平台上运行的服务端 TypeScript 函数。 它们可以由 HTTP 请求、cron 调度或数据库事件触发——也可以作为工具暴露给 AI 代理。
 
 <AccordionGroup>
 <Accordion title="defineLogicFunction" description="定义逻辑函数及其触发器">
@@ -95,15 +95,16 @@ const handler = async (event: RoutePayload) => {
 
 `RoutePayload` 类型具有以下结构：
 
-  | 属性                           | 类型                                                      | 描述                                            | 示例                                                                         |
-  | ---------------------------- | ------------------------------------------------------- | --------------------------------------------- | -------------------------------------------------------------------------- |
-  | `headers`                    | `Record\<string, string \| undefined>` | HTTP 请求头（仅限 `forwardedRequestHeaders` 中列出的那些） | 见下文                                                                        |
-  | `queryStringParameters`      | `Record\<string, string \| undefined>` | 查询字符串参数（多个值以逗号连接）                             | `/users?ids=1&ids=2&ids=3&name=Alice` -> `{ ids: '1,2,3', name: 'Alice' }` |
-  | `pathParameters`             | `Record\<string, string \| undefined>` | 从路由模式中提取的路径参数                                 | `/users/:id`，`/users/123` -> `{ id: '123' }`                               |
-  | `body`                       | `object \| null`                                        | 已解析的请求体（JSON）                                 | `{ id: 1 }` -> `{ id: 1 }`                                                 |
-  | `isBase64Encoded`            | `boolean`                                               | 请求体是否为 base64 编码                              |                                                                            |
-  | `requestContext.http.method` | `string`                                                | HTTP 方法（GET、POST、PUT、PATCH、DELETE）            |                                                                            |
-  | `requestContext.http.path`   | `string`                                                | 原始请求路径                                        |                                                                            |
+  | 属性                           | 类型                                                      | 描述                                                                                                                    | 示例                                                                         |
+  | ---------------------------- | ------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
+  | `headers`                    | `Record\<string, string \| undefined>` | HTTP 请求头（仅限 `forwardedRequestHeaders` 中列出的那些）                                                                         | 见下文                                                                        |
+  | `queryStringParameters`      | `Record\<string, string \| undefined>` | 查询字符串参数（多个值以逗号连接）                                                                                                     | `/users?ids=1&ids=2&ids=3&name=Alice` -> `{ ids: '1,2,3', name: 'Alice' }` |
+  | `pathParameters`             | `Record\<string, string \| undefined>` | 从路由模式中提取的路径参数                                                                                                         | `/users/:id`，`/users/123` -> `{ id: '123' }`                               |
+  | `body`                       | `object \| null`                                        | 已解析的请求体（JSON）                                                                                                         | `{ id: 1 }` -> `{ id: 1 }`                                                 |
+  | `rawBody`                    | `string \| undefined`                                   | 在 JSON 解析之前的原始 UTF-8 请求体。 用于验证 HMAC 风格的 Webhook 签名（例如 GitHub 的 `X-Hub-Signature-256`、Stripe）。 当运行时未保留它时为 `undefined`。 |                                                                            |
+  | `isBase64Encoded`            | `boolean`                                               | 请求体是否为 base64 编码                                                                                                      |                                                                            |
+  | `requestContext.http.method` | `string`                                                | HTTP 方法（GET、POST、PUT、PATCH、DELETE）                                                                                    |                                                                            |
+  | `requestContext.http.path`   | `string`                                                | 原始请求路径                                                                                                                |                                                                            |
 
 
 #### forwardedRequestHeaders
@@ -388,7 +389,7 @@ export default definePreInstallLogicFunction({
 
 **经验法则：**
 
-| You want to...          | 使用                                                            |
+| 你想要...                  | 使用                                                            |
 | ----------------------- | ------------------------------------------------------------- |
 | 预填充默认数据、配置工作区、注册外部资源    | `post-install`                                                |
 | 运行不应阻塞安装响应的长时间预填充或第三方调用 | `post-install` (默认 — `shouldRunSynchronously: false`，由工作线程重试) |

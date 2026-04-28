@@ -1,35 +1,35 @@
 ---
 title: APIs
 icon: plug
-description: REST and GraphQL APIs generated from your workspace schema.
+description: Vom Schema Ihres Arbeitsbereichs generierte REST- und GraphQL-APIs.
 ---
 
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
-## Schema-per-tenant APIs
+## Schema-pro-Mandant-APIs
 
-There is no static API reference for Twenty. Each workspace has its own schema — when you add a custom object (say `Invoice`), it immediately gets REST and GraphQL endpoints identical to built-in objects like `Company` or `Person`. The API is generated from the schema, so endpoints use your object and field names directly — no opaque IDs.
+Es gibt keine statische API-Referenz für Twenty. Jeder Arbeitsbereich hat sein eigenes Schema — wenn Sie ein benutzerdefiniertes Objekt hinzufügen (z. B. `Invoice`), erhält es sofort REST- und GraphQL-Endpunkte, die mit den integrierten Objekten wie `Company` oder `Person` identisch sind. Die API wird aus dem Schema generiert, daher verwenden die Endpunkte Ihre Objekt- und Feldnamen direkt — keine undurchsichtigen IDs.
 
-Your workspace-specific API documentation is available under **Settings → API & Webhooks** after creating an API key. It includes an interactive playground where you can execute real calls against your data.
+Ihre arbeitsbereichsspezifische API-Dokumentation ist nach dem Erstellen eines API-Schlüssels unter **Einstellungen → API & Webhooks** verfügbar. Sie umfasst einen interaktiven Playground, in dem Sie echte Aufrufe gegen Ihre Daten ausführen können.
 
-## Two APIs
+## Zwei APIs
 
-**Core API** — `/rest/` and `/graphql/`
+**Core-API** — `/rest/` und `/graphql/`
 
-CRUD on records: People, Companies, Opportunities, your custom objects. Query, filter, traverse relations.
+CRUD für Datensätze: Personen, Unternehmen, Verkaufschancen, Ihre benutzerdefinierten Objekte. Abfragen, filtern, Beziehungen durchlaufen.
 
-**Metadata API** — `/rest/metadata/` and `/metadata/`
+**Metadaten-API** — `/rest/metadata/` und `/metadata/`
 
-Schema management: create/modify/delete objects, fields, and relations. This is how you programmatically change your data model.
+Schemaverwaltung: Objekte, Felder und Beziehungen erstellen/ändern/löschen. So ändern Sie Ihr Datenmodell programmatisch.
 
-Both are available as REST and GraphQL. GraphQL adds batch upserts and the ability to traverse relations in a single query. Same underlying data either way.
+Beide sind als REST und GraphQL verfügbar. GraphQL bietet Batch-Upserts und die Möglichkeit, Beziehungen in einer einzigen Abfrage zu durchlaufen. Die zugrunde liegenden Daten sind in beiden Fällen gleich.
 
-## Base URLs
+## Basis-URLs
 
-| Umgebung    | Basis-URL                 |
-| ----------- | ------------------------- |
-| Cloud       | `https://api.twenty.com/` |
-| Self-Hosted | `https://{your-domain}/`  |
+| Umgebung      | Basis-URL                 |
+| ------------- | ------------------------- |
+| Cloud         | `https://api.twenty.com/` |
+| Selbsthosting | `https://{your-domain}/`  |
 
 ## Authentifizierung
 
@@ -37,19 +37,19 @@ Both are available as REST and GraphQL. GraphQL adds batch upserts and the abili
 Authorization: Bearer YOUR_API_KEY
 ```
 
-Create an API key in **Settings → API & Webhooks → + Create key**. Copy it immediately — it's shown once. Keys can be scoped to a specific role under **Settings → Roles → Assignment tab** to limit what they can access.
+Erstellen Sie einen API-Schlüssel unter **Settings > APIs & Webhooks > + Create key**. Kopieren Sie ihn sofort — er wird nur einmal angezeigt. Schlüssel können unter **Settings > Roles > Assignment tab** auf eine bestimmte Rolle beschränkt werden, um ihren Zugriff einzuschränken.
 
 <VimeoEmbed videoId="928786722" title="API-Schlüssel erstellen" />
 
-For OAuth-based access (external apps acting on behalf of users), see [OAuth](/l/de/developers/extend/oauth).
+Für OAuth-basierten Zugriff (externe Apps, die im Namen von Nutzern handeln), siehe [OAuth](/l/de/developers/extend/oauth).
 
-## Batch operations
+## Batch-Vorgänge
 
-Both REST and GraphQL support batching up to 60 records per request — create, update, or delete. GraphQL also supports batch upsert (create-or-update in one call) using plural names like `CreateCompanies`.
+Sowohl REST als auch GraphQL unterstützen Batching von bis zu 60 Datensätzen pro Anfrage — erstellen, aktualisieren oder löschen. GraphQL unterstützt außerdem Batch-Upsert (Erstellen-oder-Aktualisieren in einem Aufruf) mit Pluralnamen wie `CreateCompanies`.
 
-## Rate limits
+## Rate Limits
 
-| Limit      | Wert                     |
-| ---------- | ------------------------ |
-| Requests   | 100 per minute           |
-| Batch size | 60 Datensätze pro Aufruf |
+| Limit       | Wert                     |
+| ----------- | ------------------------ |
+| Anfragen    | 100 Aufrufe pro Minute   |
+| Batch-Größe | 60 Datensätze pro Aufruf |

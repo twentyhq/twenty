@@ -1,10 +1,6 @@
 type SearchIconProps = { size: number; color: string; strokeWidth?: number };
 
-export function SearchIcon({
-  size,
-  color,
-  strokeWidth = 2,
-}: SearchIconProps) {
+export function SearchIcon({ size, color, strokeWidth = 2 }: SearchIconProps) {
   return (
     <svg
       width={size}

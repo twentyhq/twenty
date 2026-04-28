@@ -1,10 +1,10 @@
 ---
 title: Mantıksal işlevler
-description: Define server-side TypeScript functions with HTTP, cron, and database event triggers.
+description: Sunucu tarafı TypeScript işlevlerini HTTP, cron ve veritabanı olay tetikleyicileriyle tanımlayın.
 icon: bolt
 ---
 
-Logic functions are server-side TypeScript functions that run on the Twenty platform. They can be triggered by HTTP requests, cron schedules, or database events — and can also be exposed as tools for AI agents.
+Mantık işlevleri, Twenty platformunda çalışan sunucu tarafı TypeScript işlevleridir. HTTP istekleri, cron zamanlamaları veya veritabanı olayları tarafından tetiklenebilirler — ve ayrıca yapay zekâ ajanları için araçlar olarak sunulabilirler.
 
 <AccordionGroup>
 <Accordion title="defineLogicFunction" description="Mantık fonksiyonlarını ve tetikleyicilerini tanımlayın">
@@ -95,15 +95,16 @@ const handler = async (event: RoutePayload) => {
 
 `RoutePayload` türünün yapısı şu şekildedir:
 
-  | Özellik                      | Tür                                                     | Açıklama                                                                   | Örnek                                                                      |
-  | ---------------------------- | ------------------------------------------------------- | -------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
-  | `headers`                    | `Record\<string, string \| undefined>` | HTTP başlıkları (`forwardedRequestHeaders` içinde listelenenlerle sınırlı) | aşağıdaki bölüme bakın                                                     |
-  | `queryStringParameters`      | `Record\<string, string \| undefined>` | Sorgu dizesi parametreleri (birden çok değer virgülle birleştirilir)       | `/users?ids=1&ids=2&ids=3&name=Alice` -> `{ ids: '1,2,3', name: 'Alice' }` |
-  | `pathParameters`             | `Record\<string, string \| undefined>` | Rota deseninden çıkarılan yol parametreleri                                | `/users/:id`, `/users/123` -> `{ id: '123' }`                              |
-  | `body`                       | `object \| null`                                        | Ayrıştırılmış istek gövdesi (JSON)                                         | `{ id: 1 }` -> `{ id: 1 }`                                                 |
-  | `isBase64Encoded`            | `boolean`                                               | Gövdenin base64 ile kodlanıp kodlanmadığı                                  |                                                                            |
-  | `requestContext.http.method` | `string`                                                | HTTP yöntemi (GET, POST, PUT, PATCH, DELETE)                               |                                                                            |
-  | `requestContext.http.path`   | `string`                                                | Ham istek yolu                                                             |                                                                            |
+  | Özellik                      | Tür                                                     | Açıklama                                                                                                                                                                                                             | Örnek                                                                      |
+  | ---------------------------- | ------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
+  | `headers`                    | `Record\<string, string \| undefined>` | HTTP başlıkları (`forwardedRequestHeaders` içinde listelenenlerle sınırlı)                                                                                                                                           | aşağıdaki bölüme bakın                                                     |
+  | `queryStringParameters`      | `Record\<string, string \| undefined>` | Sorgu dizesi parametreleri (birden çok değer virgülle birleştirilir)                                                                                                                                                 | `/users?ids=1&ids=2&ids=3&name=Alice` -> `{ ids: '1,2,3', name: 'Alice' }` |
+  | `pathParameters`             | `Record\<string, string \| undefined>` | Rota deseninden çıkarılan yol parametreleri                                                                                                                                                                          | `/users/:id`, `/users/123` -> `{ id: '123' }`                              |
+  | `body`                       | `object \| null`                                        | Ayrıştırılmış istek gövdesi (JSON)                                                                                                                                                                                   | `{ id: 1 }` -> `{ id: 1 }`                                                 |
+  | `rawBody`                    | `string \| undefined`                                   | JSON ayrıştırılmadan önceki özgün UTF-8 istek gövdesi. HMAC tarzı webhook imzalarını doğrulamak için kullanışlıdır (ör. GitHub'ın `X-Hub-Signature-256`, Stripe). Çalışma zamanı onu korumadığında `undefined` olur. |                                                                            |
+  | `isBase64Encoded`            | `boolean`                                               | Gövdenin base64 ile kodlanıp kodlanmadığı                                                                                                                                                                            |                                                                            |
+  | `requestContext.http.method` | `string`                                                | HTTP yöntemi (GET, POST, PUT, PATCH, DELETE)                                                                                                                                                                         |                                                                            |
+  | `requestContext.http.path`   | `string`                                                | Ham istek yolu                                                                                                                                                                                                       |                                                                            |
 
 
 #### forwardedRequestHeaders
@@ -388,7 +389,7 @@ export default definePreInstallLogicFunction({
 
 **Kural olarak:**
 
-| You want to...                                                                                         | Kullan                                                                                      |
+| Şunu yapmak istiyorsunuz...                                                                            | Kullan                                                                                      |
 | ------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------- |
 | Varsayılan verileri tohumlamak, çalışma alanını yapılandırmak, harici kaynakları kaydetmek             | `post-install`                                                                              |
 | Kurulum yanıtını engellememesi gereken uzun süreli tohumlama veya üçüncü taraf çağrılarını çalıştırmak | `post-install` (varsayılan — `shouldRunSynchronously: false`, worker yeniden denemeleriyle) |

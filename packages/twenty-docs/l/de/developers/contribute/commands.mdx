@@ -1,12 +1,12 @@
 ---
-title: Commands
+title: Befehle
 icon: terminal
-description: Useful commands for developing Twenty.
+description: Nützliche Befehle für die Entwicklung von Twenty.
 ---
 
-Commands can be run from the repository root using `npx nx`. Use `npx nx run {project}:{command}` for explicit targeting.
+Befehle können vom Repository-Stammverzeichnis mit `npx nx` ausgeführt werden. Verwende `npx nx run {project}:{command}` für eine explizite Zielangabe.
 
-## Starting the App
+## Die App starten
 
 ```bash
 npx nx start twenty-front          # Frontend dev server (http://localhost:3001)
@@ -14,7 +14,7 @@ npx nx start twenty-server         # Backend server (http://localhost:3000)
 npx nx run twenty-server:worker    # Background worker
 ```
 
-## Database
+## Datenbank
 
 ```bash
 npx nx database:reset twenty-server                          # Reset and seed database
@@ -30,7 +30,7 @@ npx nx lint:diff-with-main twenty-server
 npx nx lint twenty-front --configuration=fix  # Auto-fix
 ```
 
-## Type Checking
+## Typprüfung
 
 ```bash
 npx nx typecheck twenty-front

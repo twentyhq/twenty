@@ -1,16 +1,16 @@
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
-import { SettingsAdminTabSkeletonLoader } from '@/settings/admin-panel/components/SettingsAdminTabSkeletonLoader';
-import { SettingsListCard } from '@/settings/components/SettingsListCard';
 import { SettingsAdminHealthStatusListCard } from '@/settings/admin-panel/health-status/components/SettingsAdminHealthStatusListCard';
 import { SettingsAdminUpgradeStatusRightContainer } from '@/settings/admin-panel/health-status/components/SettingsAdminUpgradeStatusRightContainer';
 import { GET_ALL_WORKSPACES_UPGRADE_STATUS } from '@/settings/admin-panel/health-status/graphql/queries/getAllWorkspacesUpgradeStatus';
-import { SettingsAdminMaintenanceModeFetchEffect } from '@/settings/admin-panel/health-status/maintenance-mode/components/SettingsAdminMaintenanceModeFetchEffect';
 import { SettingsAdminMaintenanceMode } from '@/settings/admin-panel/health-status/maintenance-mode/components/SettingsAdminMaintenanceMode';
+import { SettingsAdminMaintenanceModeFetchEffect } from '@/settings/admin-panel/health-status/maintenance-mode/components/SettingsAdminMaintenanceModeFetchEffect';
+import { SettingsListCard } from '@/settings/components/SettingsListCard';
+import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
+import { useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
+import { UpgradeHealthEnum } from 'twenty-shared/types';
 import { H2Title, IconProgressCheck } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
-import { useQuery } from '@apollo/client/react';
-import { UpgradeHealthEnum } from 'twenty-shared/types';
 import { GetSystemHealthStatusDocument } from '~/generated-admin/graphql';
 
 const ADMIN_PANEL_UPGRADE_STATUS_LINK =
@@ -48,7 +48,7 @@ export const SettingsAdminHealthStatus = () => {
   const upgradeStatus = upgradeStatusData?.getAllWorkspacesUpgradeStatus;
 
   if (loadingHealthStatus || loadingUpgradeStatus) {
-    return <SettingsAdminTabSkeletonLoader />;
+    return <SettingsSectionSkeletonLoader />;
   }
 
   return (

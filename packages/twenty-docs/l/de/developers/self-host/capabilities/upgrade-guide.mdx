@@ -5,37 +5,37 @@ icon: arrow-up-right-dots
 
 ## Allgemeine Richtlinien
 
-**Always back up your database before starting the upgrade process** by running:
+**Sichern Sie Ihre Datenbank immer, bevor Sie den Upgrade-Vorgang starten**, indem Sie Folgendes ausführen:
 
 ```bash
 docker exec -it {db_container_name_or_id} pg_dumpall -U {postgres_user} > databases_backup.sql
 ```
 
-To restore from backup:
+Aus Sicherung wiederherstellen:
 
 ```bash
 cat databases_backup.sql | docker exec -i {db_container_name_or_id} psql -U {postgres_user}
 ```
 
-If you use Docker Compose, follow these steps:
+Wenn Sie Docker Compose verwenden, befolgen Sie diese Schritte:
 
-1. Stop Twenty: `docker compose down`
-2. Change the `TAG` value in the `.env` file next to your `docker-compose.yml`
-3. Start Twenty: `docker compose up -d`
+1. Twenty stoppen: `docker compose down`
+2. Ändern Sie den Wert von `TAG` in der Datei `.env` neben Ihrer `docker-compose.yml`
+3. Twenty starten: `docker compose up -d`
 
-The server runs all required upgrade migrations automatically on startup. No manual command is needed.
+Der Server führt beim Start alle erforderlichen Upgrade-Migrationen automatisch aus. Kein manueller Befehl erforderlich.
 
-## Cross-version upgrades (v1.22+)
+## Versionsübergreifende Upgrades (v1.22+)
 
-Starting from **v1.22**, Twenty supports cross-version upgrades. You can jump directly from any supported version to the latest release without stepping through each intermediate version.
+Ab **v1.22** unterstützt Twenty versionsübergreifende Upgrades. Sie können direkt von jeder unterstützten Version auf die neueste Version wechseln, ohne jede Zwischenversion durchlaufen zu müssen.
 
-For example, upgrading from v1.22 straight to v2.0 is fully supported.
+Zum Beispiel wird ein Upgrade direkt von v1.22 auf v2.0 vollständig unterstützt.
 
-## Checking upgrade status
+## Upgrade-Status prüfen
 
-The `upgrade:status` command lets you inspect the current state of your instance and workspace migrations. It is useful for debugging upgrade issues or when filing a support request.
+Mit dem Befehl `upgrade:status` können Sie den aktuellen Status Ihrer Instanz und der Workspace-Migrationen prüfen. Er ist nützlich zum Debuggen von Upgrade-Problemen oder beim Erstellen einer Support-Anfrage.
 
-Run it from the server container:
+Führen Sie ihn im Server-Container aus:
 
 ```bash
 docker exec -it {server_container_name_or_id} yarn command:prod upgrade:status
@@ -68,23 +68,23 @@ Summary
 
 ### Optionen
 
-| Flag                      | Beschreibung                                                     |
-| ------------------------- | ---------------------------------------------------------------- |
-| `-w, --workspace-id <id>` | Filter to a specific workspace. Can be passed multiple times.    |
-| `-f, --failed-only`       | Hide up-to-date workspaces, only show behind and failed entries. |
+| Flag                      | Beschreibung                                                                                              |
+| ------------------------- | --------------------------------------------------------------------------------------------------------- |
+| `-w, --workspace-id <id>` | Auf einen bestimmten Workspace filtern. Kann mehrfach übergeben werden.                                   |
+| `-f, --failed-only`       | Workspaces auf dem neuesten Stand ausblenden, nur zurückliegende und fehlgeschlagene Workspaces anzeigen. |
 
 ## Fehlerbehebung
 
-If the upgrade fails on some workspaces, the server will not advance past the failing step. Restarting the server (`docker compose up -d`) will retry the upgrade from where it left off.
+Wenn das Upgrade in einigen Workspaces fehlschlägt, wird der Server nicht über den fehlschlagenden Schritt hinaus fortfahren. Ein Neustart des Servers (`docker compose up -d`) führt das Upgrade ab der zuletzt erreichten Stelle erneut aus.
 
-To quickly identify problems, run:
+Um Probleme schnell zu identifizieren, führen Sie Folgendes aus:
 
 ```bash
 docker exec -it {server_container_name_or_id} yarn command:prod upgrade:status --failed-only
 ```
 
-This shows only workspaces that are behind or have failed, along with the error message for each failure.
+Dies zeigt nur Workspaces, die zurückliegen oder fehlgeschlagen sind, zusammen mit der Fehlermeldung für jeden Fehlschlag.
 
-## Before v1.22
+## Vor v1.22
 
-If your instance is older than v1.22, you must upgrade incrementally through each major tagged version (v1.6 to v1.7, then v1.7 to v1.8, and so on) until you reach v1.22. From there, you can jump directly to the latest version.
+Wenn Ihre Instanz älter als v1.22 ist, müssen Sie schrittweise über jede größere getaggte Version ein Upgrade durchführen (von v1.6 auf v1.7, dann von v1.7 auf v1.8 usw.), bis Sie v1.22 erreichen. Danach können Sie direkt auf die neueste Version wechseln.

@@ -1,18 +1,17 @@
 'use client';
 
-import { usePathname } from 'next/navigation';
 import type { ReactNode } from 'react';
+
+import { useUnlocalizedPathname } from '@/lib/i18n';
 
 type FooterVisibilityGateProps = {
   children: ReactNode;
 };
 
-export function FooterVisibilityGate({
-  children,
-}: FooterVisibilityGateProps) {
-  const pathname = usePathname();
+export function FooterVisibilityGate({ children }: FooterVisibilityGateProps) {
+  const route = useUnlocalizedPathname();
 
-  if (pathname === '/halftone') {
+  if (route === '/halftone') {
     return null;
   }
 

@@ -6,7 +6,7 @@ import {
   NAME_FIELD_UNIVERSAL_IDENTIFIER,
   RESEND_CONTACT_OBJECT_UNIVERSAL_IDENTIFIER,
   UNSUBSCRIBED_FIELD_UNIVERSAL_IDENTIFIER,
-} from 'src/modules/resend/constants/universal-identifiers';
+} from '@modules/resend/constants/universal-identifiers';
 import { defineObject, FieldType } from 'twenty-sdk/define';
 
 export default defineObject({
@@ -16,7 +16,7 @@ export default defineObject({
   labelSingular: 'Resend contact',
   labelPlural: 'Resend contacts',
   description: 'A contact from Resend',
-  icon: 'IconAddressBook',
+  icon: 'IconUser',
   labelIdentifierFieldMetadataUniversalIdentifier:
     NAME_FIELD_UNIVERSAL_IDENTIFIER,
   fields: [

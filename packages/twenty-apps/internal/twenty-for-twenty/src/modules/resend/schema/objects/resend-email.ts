@@ -5,16 +5,13 @@ import {
   EMAIL_LAST_SYNCED_FROM_RESEND_FIELD_UNIVERSAL_IDENTIFIER,
   EMAIL_RESEND_ID_FIELD_UNIVERSAL_IDENTIFIER,
   FROM_ADDRESS_FIELD_UNIVERSAL_IDENTIFIER,
-  HTML_BODY_FIELD_UNIVERSAL_IDENTIFIER,
   LAST_EVENT_FIELD_UNIVERSAL_IDENTIFIER,
   REPLY_TO_ADDRESSES_FIELD_UNIVERSAL_IDENTIFIER,
   RESEND_EMAIL_OBJECT_UNIVERSAL_IDENTIFIER,
   SCHEDULED_AT_FIELD_UNIVERSAL_IDENTIFIER,
   SUBJECT_FIELD_UNIVERSAL_IDENTIFIER,
-  TAGS_FIELD_UNIVERSAL_IDENTIFIER,
-  TEXT_BODY_FIELD_UNIVERSAL_IDENTIFIER,
   TO_ADDRESSES_FIELD_UNIVERSAL_IDENTIFIER,
-} from 'src/modules/resend/constants/universal-identifiers';
+} from '@modules/resend/constants/universal-identifiers';
 import { defineObject, FieldType } from 'twenty-sdk/define';
 
 export default defineObject({
@@ -51,22 +48,6 @@ export default defineObject({
       label: 'To',
       description: 'Recipient email addresses',
       icon: 'IconUsers',
-    },
-    {
-      universalIdentifier: HTML_BODY_FIELD_UNIVERSAL_IDENTIFIER,
-      type: FieldType.TEXT,
-      name: 'htmlBody',
-      label: 'HTML body',
-      description: 'HTML content of the email',
-      icon: 'IconFileText',
-    },
-    {
-      universalIdentifier: TEXT_BODY_FIELD_UNIVERSAL_IDENTIFIER,
-      type: FieldType.TEXT,
-      name: 'textBody',
-      label: 'Text body',
-      description: 'Plain text content of the email',
-      icon: 'IconAlignLeft',
     },
     {
       universalIdentifier: CC_ADDRESSES_FIELD_UNIVERSAL_IDENTIFIER,
@@ -216,14 +197,6 @@ export default defineObject({
       label: 'Scheduled at',
       description: 'When the email is scheduled to be sent',
       icon: 'IconCalendarEvent',
-    },
-    {
-      universalIdentifier: TAGS_FIELD_UNIVERSAL_IDENTIFIER,
-      type: FieldType.RAW_JSON,
-      name: 'tags',
-      label: 'Tags',
-      description: 'Custom tags attached to the email',
-      icon: 'IconTag',
     },
     {
       universalIdentifier:

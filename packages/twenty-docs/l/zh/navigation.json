@@ -4,10 +4,10 @@
       "label": "开始使用",
       "groups": {
         "welcome": {
-          "label": "Welcome"
+          "label": "欢迎"
         },
         "coreConcepts": {
-          "label": "Core Concepts"
+          "label": "核心概念"
         }
       }
     },
@@ -21,7 +21,7 @@
           "label": "数据模型",
           "groups": {
             "dataModelReference": {
-              "label": "Reference"
+              "label": "参考"
             },
             "dataModelHowTos": {
               "label": "操作指南"
@@ -32,7 +32,7 @@
           "label": "数据迁移",
           "groups": {
             "dataMigrationReference": {
-              "label": "Reference"
+              "label": "参考"
             },
             "dataMigrationHowTos": {
               "label": "操作指南"
@@ -43,7 +43,7 @@
           "label": "日历与电子邮件",
           "groups": {
             "calendarEmailsReference": {
-              "label": "Reference"
+              "label": "参考"
             },
             "calendarEmailsHowTos": {
               "label": "操作指南"
@@ -54,7 +54,7 @@
           "label": "工作流",
           "groups": {
             "workflowsReference": {
-              "label": "Reference"
+              "label": "参考"
             },
             "workflowsHowTos": {
               "label": "操作指南",
@@ -79,7 +79,7 @@
           "label": "AI",
           "groups": {
             "aiReference": {
-              "label": "Reference"
+              "label": "参考"
             },
             "aiHowTos": {
               "label": "操作指南"
@@ -90,7 +90,7 @@
           "label": "布局",
           "groups": {
             "layoutReference": {
-              "label": "Reference",
+              "label": "参考",
               "groups": {
                 "layoutViews": {
                   "label": "视图"
@@ -106,7 +106,7 @@
           "label": "仪表板",
           "groups": {
             "dashboardsReference": {
-              "label": "Reference"
+              "label": "参考"
             },
             "dashboardsHowTos": {
               "label": "操作指南"
@@ -117,7 +117,7 @@
           "label": "权限与访问",
           "groups": {
             "permissionsAccessReference": {
-              "label": "Reference"
+              "label": "参考"
             },
             "permissionsAccessHowTos": {
               "label": "操作指南"
@@ -128,7 +128,7 @@
           "label": "账单",
           "groups": {
             "billingReference": {
-              "label": "Reference"
+              "label": "参考"
             },
             "billingHowTos": {
               "label": "操作指南"
@@ -139,7 +139,7 @@
           "label": "设置",
           "groups": {
             "settingsReference": {
-              "label": "Reference"
+              "label": "参考"
             },
             "settingsHowTos": {
               "label": "操作指南"

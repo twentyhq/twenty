@@ -71,6 +71,9 @@ export const mapDBPartToUIMessagePart = (
             output: part.toolOutput,
             errorText: part.errorMessage!,
             state: part.state,
+            ...(part.providerExecuted != null && {
+              providerExecuted: part.providerExecuted,
+            }),
           } as ToolUIPart;
         }
       }

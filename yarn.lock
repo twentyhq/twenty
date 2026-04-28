@@ -78,14 +78,14 @@ __metadata:
   linkType: hard
 
 "@ai-sdk/google@npm:^3.0.30":
-  version: 3.0.31
-  resolution: "@ai-sdk/google@npm:3.0.31"
+  version: 3.0.64
+  resolution: "@ai-sdk/google@npm:3.0.64"
   dependencies:
     "@ai-sdk/provider": "npm:3.0.8"
-    "@ai-sdk/provider-utils": "npm:4.0.15"
+    "@ai-sdk/provider-utils": "npm:4.0.23"
   peerDependencies:
     zod: ^3.25.76 || ^4.1.8
-  checksum: 10c0/dbf8ea1cbc876e03dde6a355f14c2bd08186b76586ac3454c4829b708af9c280ff7cd28699cec3170b26ec71db47c4ebf73a06f6a9322a2e7ddbb1f0a4a58737
+  checksum: 10c0/d85f1142021dc984fd174a6d0fdbed39e07235348db1cf423edbe3adddda2033e59939b797b7bd540bb2f40a6b6704e27f924cf18698ab17712aa961504eeec6
   languageName: node
   linkType: hard
 
@@ -3709,9 +3709,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@blocknote/core@npm:0.47.1":
-  version: 0.47.1
-  resolution: "@blocknote/core@npm:0.47.1"
+"@blocknote/core@npm:0.47.3":
+  version: 0.47.3
+  resolution: "@blocknote/core@npm:0.47.3"
   dependencies:
     "@emoji-mart/data": "npm:^1.2.1"
     "@handlewithcare/prosemirror-inputrules": "npm:^0.1.4"
@@ -3732,7 +3732,6 @@ __metadata:
     emoji-mart: "npm:^5.6.0"
     fast-deep-equal: "npm:^3.1.3"
     hast-util-from-dom: "npm:^5.0.1"
-    prosemirror-dropcursor: "npm:^1.8.2"
     prosemirror-highlight: "npm:^0.13.0"
     prosemirror-model: "npm:^1.25.4"
     prosemirror-state: "npm:^1.4.4"
@@ -3753,21 +3752,16 @@ __metadata:
     y-prosemirror: "npm:^1.3.7"
     y-protocols: "npm:^1.0.6"
     yjs: "npm:^13.6.27"
-  peerDependencies:
-    "@hocuspocus/provider": ^2.15.2 || ^3.0.0
-  peerDependenciesMeta:
-    "@hocuspocus/provider":
-      optional: true
-  checksum: 10c0/60f5e2116c86b5f61d9b41c7f8be1a03e0bfe565697f6fab46669f622e2dc2c1252256816500569345cec6cfb532fd6407d05120f48a8dfacea40443e5b816a5
+  checksum: 10c0/196b407f899b00c050e53b1e9e197e7b1d023873ab243490bdd0276bcdc33c3edad6106345ddd02044ca19d3d503014da424dc2acc1a6702b069dd7456df4a49
   languageName: node
   linkType: hard
 
-"@blocknote/mantine@npm:^0.47.1":
-  version: 0.47.1
-  resolution: "@blocknote/mantine@npm:0.47.1"
+"@blocknote/mantine@npm:^0.47.3":
+  version: 0.47.3
+  resolution: "@blocknote/mantine@npm:0.47.3"
   dependencies:
-    "@blocknote/core": "npm:0.47.1"
-    "@blocknote/react": "npm:0.47.1"
+    "@blocknote/core": "npm:0.47.3"
+    "@blocknote/react": "npm:0.47.3"
     react-icons: "npm:^5.5.0"
   peerDependencies:
     "@mantine/core": ^8.3.11
@@ -3775,15 +3769,15 @@ __metadata:
     "@mantine/utils": ^6.0.22
     react: ^18.0 || ^19.0 || >= 19.0.0-rc
     react-dom: ^18.0 || ^19.0 || >= 19.0.0-rc
-  checksum: 10c0/69627e84811f21c72501febf456b6f20deabea96c189e135a36362d21e250f7f32ca53ad9a9197a140e54bda457585dd32f71df7781f4cef72b1fe91bf6f00e0
+  checksum: 10c0/7b9ec1a64fb142befed4dddf6a9daee8aeee8c9ae28057b16c14908e895e00c48cef5dd419468474cd9032da2fd5671a246673c9a8991a09bdf992826fa16d81
   languageName: node
   linkType: hard
 
-"@blocknote/react@npm:0.47.1, @blocknote/react@npm:^0.47.1":
-  version: 0.47.1
-  resolution: "@blocknote/react@npm:0.47.1"
+"@blocknote/react@npm:0.47.3, @blocknote/react@npm:^0.47.3":
+  version: 0.47.3
+  resolution: "@blocknote/react@npm:0.47.3"
   dependencies:
-    "@blocknote/core": "npm:0.47.1"
+    "@blocknote/core": "npm:0.47.3"
     "@emoji-mart/data": "npm:^1.2.1"
     "@floating-ui/react": "npm:^0.27.18"
     "@floating-ui/utils": "npm:^0.2.10"
@@ -3800,16 +3794,16 @@ __metadata:
   peerDependencies:
     react: ^18.0 || ^19.0 || >= 19.0.0-rc
     react-dom: ^18.0 || ^19.0 || >= 19.0.0-rc
-  checksum: 10c0/2dcb1c09e04db25f609a5972d7712ba0a0c2010aee7c3059c9873d08b7f26309b3b0495b1c816aaaccc3fd6d5709d2b2ee71bc7d42efc8eee6c26b3684302c9f
+  checksum: 10c0/0674dc4db7a67f8e83ace8ee5b5ffb1320d2be1fb6f4f7c60d9bea9acae51c6367c98c78d73e4fb2f98a32669f2d51a7c5fd7e19a98c5014128fdf8bf1d1c771
   languageName: node
   linkType: hard
 
-"@blocknote/server-util@npm:^0.47.1":
-  version: 0.47.1
-  resolution: "@blocknote/server-util@npm:0.47.1"
+"@blocknote/server-util@npm:^0.47.3":
+  version: 0.47.3
+  resolution: "@blocknote/server-util@npm:0.47.3"
   dependencies:
-    "@blocknote/core": "npm:0.47.1"
-    "@blocknote/react": "npm:0.47.1"
+    "@blocknote/core": "npm:0.47.3"
+    "@blocknote/react": "npm:0.47.3"
     "@tiptap/core": "npm:^3.13.0"
     "@tiptap/pm": "npm:^3.13.0"
     jsdom: "npm:^25.0.1"
@@ -3819,32 +3813,32 @@ __metadata:
   peerDependencies:
     react: ^18.0 || ^19.0 || >= 19.0.0-rc
     react-dom: ^18.0 || ^19.0 || >= 19.0.0-rc
-  checksum: 10c0/0a19d39acf2677d94738b2ad40914569e61431baf085f30518662a6d3737997ba707791ba1c11f6c0272dc6519a498789330f3a88151f78f8e6f8ae8ab4d2db9
+  checksum: 10c0/db591a9c4dd5d928ba06f217a3b976a3154bb384ce8e08e635598afe4e9dd82bc600563e09c75a4ccae8c16e8a826519311e559426ef14d728438b965d350c2e
   languageName: node
   linkType: hard
 
-"@blocknote/xl-docx-exporter@npm:^0.47.1":
-  version: 0.47.1
-  resolution: "@blocknote/xl-docx-exporter@npm:0.47.1"
+"@blocknote/xl-docx-exporter@npm:^0.47.3":
+  version: 0.47.3
+  resolution: "@blocknote/xl-docx-exporter@npm:0.47.3"
   dependencies:
-    "@blocknote/core": "npm:0.47.1"
-    "@blocknote/xl-multi-column": "npm:0.47.1"
+    "@blocknote/core": "npm:0.47.3"
+    "@blocknote/xl-multi-column": "npm:0.47.3"
     buffer: "npm:^6.0.3"
     docx: "npm:^9.5.1"
     image-meta: "npm:^0.2.2"
   peerDependencies:
     react: ^18.0 || ^19.0 || >= 19.0.0-rc
     react-dom: ^18.0 || ^19.0 || >= 19.0.0-rc
-  checksum: 10c0/650134a12ae062f1a6010c58e62ce358515e69df48ad0dadc41905d1a6edb01737ec3968648c3725883ec167230c71c790ac02a5ac1ae20b903f638e053256bd
+  checksum: 10c0/e152cc696183e2b6a64ffe4736ba7e9a7cca93b4e74617ba0edec1fd5196be51519aa37eb61ba297b23fea0c67f82e73a962237b23f6dcf5cab6085302d0ee02
   languageName: node
   linkType: hard
 
-"@blocknote/xl-multi-column@npm:0.47.1":
-  version: 0.47.1
-  resolution: "@blocknote/xl-multi-column@npm:0.47.1"
+"@blocknote/xl-multi-column@npm:0.47.3":
+  version: 0.47.3
+  resolution: "@blocknote/xl-multi-column@npm:0.47.3"
   dependencies:
-    "@blocknote/core": "npm:0.47.1"
-    "@blocknote/react": "npm:0.47.1"
+    "@blocknote/core": "npm:0.47.3"
+    "@blocknote/react": "npm:0.47.3"
     "@tiptap/core": "npm:^3.13.0"
     prosemirror-model: "npm:^1.25.4"
     prosemirror-state: "npm:^1.4.4"
@@ -3855,24 +3849,24 @@ __metadata:
   peerDependencies:
     react: ^18.0 || ^19.0 || >= 19.0.0-rc
     react-dom: ^18.0 || ^19.0 || >= 19.0.0-rc
-  checksum: 10c0/781176043664f1c461054e97bedaa198739d005d52d8e81d786a8d343619a3d4f91257b8b790dba6aa41447531ddc012f87c245aae8ae19316ce2b8042a3bb45
+  checksum: 10c0/563137c01e88a3bd4348a6da99208e3dd7a8a703dee71b00e4f7615ad76244001237c262995d7afcf5b92ef15be9a6b4e0859027b3807c64f2cc80d6d5ea2f8e
   languageName: node
   linkType: hard
 
-"@blocknote/xl-pdf-exporter@npm:^0.47.1":
-  version: 0.47.1
-  resolution: "@blocknote/xl-pdf-exporter@npm:0.47.1"
+"@blocknote/xl-pdf-exporter@npm:^0.47.3":
+  version: 0.47.3
+  resolution: "@blocknote/xl-pdf-exporter@npm:0.47.3"
   dependencies:
-    "@blocknote/core": "npm:0.47.1"
-    "@blocknote/react": "npm:0.47.1"
-    "@blocknote/xl-multi-column": "npm:0.47.1"
+    "@blocknote/core": "npm:0.47.3"
+    "@blocknote/react": "npm:0.47.3"
+    "@blocknote/xl-multi-column": "npm:0.47.3"
     "@react-pdf/renderer": "npm:^4.3.0"
     buffer: "npm:^6.0.3"
     docx: "npm:^9.5.1"
   peerDependencies:
     react: ^18.0 || ^19.0 || >= 19.0.0-rc
     react-dom: ^18.0 || ^19.0 || >= 19.0.0-rc
-  checksum: 10c0/f09bff063c5640ab6290a241ea2a78cc5e3f67b634cbdca090421871670b24fa0ff9a7663f4a884b25744906335a1c3e781222344cb13dc6beef5a620aecd953
+  checksum: 10c0/1fa0898f607ec0a500f7de5035aa90e4760476cae020293350f5e105fe13e5b26f8a1cbc361bde6ee62e090966c97d4bf10673c39a722a9f5ca4dc3bd6486fe0
   languageName: node
   linkType: hard
 
@@ -40721,13 +40715,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"gsap@npm:^3.14.2":
-  version: 3.14.2
-  resolution: "gsap@npm:3.14.2"
-  checksum: 10c0/8f7d93d58d43c23a8de22630539364fac270e0d1dd8b8747064275dcc177e9c3c944a2eb54a10684e2902011dad0ba9ca3eb5c2a0a3bdb815d4f5401f14519e6
-  languageName: node
-  linkType: hard
-
 "gtoken@npm:^6.1.0":
   version: 6.1.2
   resolution: "gtoken@npm:6.1.2"
@@ -53200,7 +53187,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prosemirror-dropcursor@npm:^1.8.1, prosemirror-dropcursor@npm:^1.8.2":
+"prosemirror-dropcursor@npm:^1.8.1":
   version: 1.8.2
   resolution: "prosemirror-dropcursor@npm:1.8.2"
   dependencies:
@@ -60460,10 +60447,10 @@ __metadata:
   resolution: "twenty-front@workspace:packages/twenty-front"
   dependencies:
     "@apollo/client": "npm:^4.0.0"
-    "@blocknote/mantine": "npm:^0.47.1"
-    "@blocknote/react": "npm:^0.47.1"
-    "@blocknote/xl-docx-exporter": "npm:^0.47.1"
-    "@blocknote/xl-pdf-exporter": "npm:^0.47.1"
+    "@blocknote/mantine": "npm:^0.47.3"
+    "@blocknote/react": "npm:^0.47.3"
+    "@blocknote/xl-docx-exporter": "npm:^0.47.3"
+    "@blocknote/xl-pdf-exporter": "npm:^0.47.3"
     "@calcom/embed-react": "npm:^1.5.3"
     "@cyntler/react-doc-viewer": "npm:^1.17.0"
     "@dagrejs/dagre": "npm:^1.1.8"
@@ -60640,7 +60627,7 @@ __metadata:
     "@aws-sdk/s3-request-presigner": "npm:3.1001.0"
     "@azure/msal-node": "npm:^3.8.4"
     "@babel/preset-env": "npm:7.26.9"
-    "@blocknote/server-util": "npm:^0.47.1"
+    "@blocknote/server-util": "npm:^0.47.3"
     "@clickhouse/client": "npm:^1.18.1"
     "@dagrejs/dagre": "npm:^1.1.2"
     "@e2b/code-interpreter": "npm:^1.0.4"
@@ -60925,6 +60912,12 @@ __metadata:
     "@gsap/react": "npm:2.1.2"
     "@linaria/core": "npm:^7.0.0"
     "@linaria/react": "npm:^7.0.1"
+    "@lingui/cli": "npm:^5.1.2"
+    "@lingui/conf": "npm:5.1.2"
+    "@lingui/core": "npm:^5.1.2"
+    "@lingui/format-po": "npm:5.1.2"
+    "@lingui/react": "npm:^5.1.2"
+    "@lingui/swc-plugin": "npm:^5.11.0"
     "@lottiefiles/dotlottie-react": "npm:^0.18.10"
     "@react-three/drei": "npm:^10.7.7"
     "@react-three/fiber": "npm:^9.5.0"
@@ -60937,7 +60930,6 @@ __metadata:
     axios: "npm:^1.14.0"
     babel-plugin-react-compiler: "npm:1.0.0"
     gray-matter: "npm:^4.0.3"
-    gsap: "npm:^3.14.2"
     next: "npm:16.1.7"
     next-with-linaria: "npm:^1.3.0"
     react: "npm:19.2.3"
@@ -60947,6 +60939,7 @@ __metadata:
     sharp: "npm:^0.33.5"
     stripe: "npm:^20.3.1"
     three: "npm:^0.183.2"
+    twenty-shared: "workspace:*"
     zod: "npm:^4.1.11"
   languageName: unknown
   linkType: soft

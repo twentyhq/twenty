@@ -15,6 +15,7 @@ import { useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useContext, useMemo, useState } from 'react';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import {
@@ -29,7 +30,6 @@ import {
 } from 'twenty-ui/display';
 import { Button, SearchInput } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import {
   type ApplicationRegistrationFragmentFragment,
@@ -42,6 +42,7 @@ import {
   APPLICATION_TABLE_ROW_GRID_TEMPLATE_COLUMNS,
   SettingsApplicationTableRow,
 } from '~/pages/settings/applications/components/SettingsApplicationTableRow';
+import { getApplicationDescriptionSummary } from '~/pages/settings/applications/utils/getApplicationDescriptionSummary';
 
 const StyledButtonContainer = styled.div`
   display: flex;
@@ -276,7 +277,9 @@ export const SettingsApplicationsDeveloperTab = () => {
                           whiteSpace="nowrap"
                         >
                           <OverflowingTextWithTooltip
-                            text={application.description}
+                            text={getApplicationDescriptionSummary(
+                              application.description,
+                            )}
                           />
                         </TableCell>
                         <StyledActionTableCell>

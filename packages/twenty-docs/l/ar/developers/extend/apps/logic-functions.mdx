@@ -1,10 +1,10 @@
 ---
 title: الوظائف المنطقية
-description: Define server-side TypeScript functions with HTTP, cron, and database event triggers.
+description: عرّف دوال TypeScript على جانب الخادم مع HTTP وcron ومشغّلات أحداث قاعدة البيانات.
 icon: bolt
 ---
 
-Logic functions are server-side TypeScript functions that run on the Twenty platform. They can be triggered by HTTP requests, cron schedules, or database events — and can also be exposed as tools for AI agents.
+دوال المنطق هي دوال TypeScript على جانب الخادم تعمل على منصة Twenty. يمكن تشغيلها بواسطة طلبات HTTP أو جداول cron أو أحداث قاعدة البيانات — كما يمكن إتاحتها كأدوات لوكلاء الذكاء الاصطناعي.
 
 <AccordionGroup>
 <Accordion title="defineLogicFunction" description="عرّف الدوال المنطقية ومشغّلاتها">
@@ -94,15 +94,16 @@ const handler = async (event: RoutePayload) => {
 
 يحتوي نوع `RoutePayload` على البنية التالية:
 
-  | الخاصية                      | النوع                                                   | الوصف                                                        | مثال                                                                       |
-  | ---------------------------- | ------------------------------------------------------- | ------------------------------------------------------------ | -------------------------------------------------------------------------- |
-  | `headers`                    | `Record\<string, string \| undefined>` | رؤوس HTTP (فقط تلك المدرجة في `forwardedRequestHeaders`)     | انظر القسم أدناه                                                           |
-  | `queryStringParameters`      | `Record\<string, string \| undefined>` | معلمات سلسلة الاستعلام (تُضمّ القيم المتعددة باستخدام فواصل) | `/users?ids=1&ids=2&ids=3&name=Alice` -> `{ ids: '1,2,3', name: 'Alice' }` |
-  | `pathParameters`             | `Record\<string, string \| undefined>` | معلمات المسار المستخرجة من نمط المسار                        | `/users/:id`, `/users/123` -> `{ id: '123' }`                              |
-  | `body`                       | `object \| null`                                        | جسم الطلب المُحلَّل (JSON)                                   | `{ id: 1 }` -> `{ id: 1 }`                                                 |
-  | `isBase64Encoded`            | `boolean`                                               | ما إذا كان جسم الطلب مُرمَّزًا بترميز base64                 |                                                                            |
-  | `requestContext.http.method` | `string`                                                | طريقة HTTP (GET, POST, PUT, PATCH, DELETE)                   |                                                                            |
-  | `requestContext.http.path`   | `string`                                                | المسار الخام للطلب                                           |                                                                            |
+  | الخاصية                      | النوع                                                   | الوصف                                                                                                                                                                                                 | مثال                                                                       |
+  | ---------------------------- | ------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
+  | `headers`                    | `Record\<string, string \| undefined>` | رؤوس HTTP (فقط تلك المدرجة في `forwardedRequestHeaders`)                                                                                                                                              | انظر القسم أدناه                                                           |
+  | `queryStringParameters`      | `Record\<string, string \| undefined>` | معلمات سلسلة الاستعلام (تُضمّ القيم المتعددة باستخدام فواصل)                                                                                                                                          | `/users?ids=1&ids=2&ids=3&name=Alice` -> `{ ids: '1,2,3', name: 'Alice' }` |
+  | `pathParameters`             | `Record\<string, string \| undefined>` | معلمات المسار المستخرجة من نمط المسار                                                                                                                                                                 | `/users/:id`, `/users/123` -> `{ id: '123' }`                              |
+  | `body`                       | `object \| null`                                        | جسم الطلب المُحلَّل (JSON)                                                                                                                                                                            | `{ id: 1 }` -> `{ id: 1 }`                                                 |
+  | `rawBody`                    | `string \| undefined`                                   | Original UTF-8 request body, before JSON parsing. Useful for verifying HMAC-style webhook signatures (e.g. GitHub's `X-Hub-Signature-256`, Stripe). `undefined` when the runtime did not preserve it. |                                                                            |
+  | `isBase64Encoded`            | `boolean`                                               | ما إذا كان جسم الطلب مُرمَّزًا بترميز base64                                                                                                                                                          |                                                                            |
+  | `requestContext.http.method` | `string`                                                | طريقة HTTP (GET, POST, PUT, PATCH, DELETE)                                                                                                                                                            |                                                                            |
+  | `requestContext.http.path`   | `string`                                                | المسار الخام للطلب                                                                                                                                                                                    |                                                                            |
 
 
 #### forwardedRequestHeaders
@@ -387,7 +388,7 @@ export default definePreInstallLogicFunction({
 
 **قاعدة عامة:**
 
-| You want to...                                                                 | استخدام                                                                                          |
+| ترغب في...                                                                     | استخدام                                                                                          |
 | ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------ |
 | بذر بيانات افتراضية، تهيئة مساحة العمل، تسجيل موارد خارجية                     | `post-install`                                                                                   |
 | تشغيل بذر طويل الأمد أو استدعاءات أطراف ثالثة لا ينبغي أن تحجب استجابة التثبيت | `post-install` (الإعداد الافتراضي — `shouldRunSynchronously: false`، مع محاولات إعادة من العامل) |

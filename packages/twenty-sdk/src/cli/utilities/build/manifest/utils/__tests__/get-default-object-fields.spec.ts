@@ -1,6 +1,6 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 import { getDefaultObjectFields } from '@/cli/utilities/build/manifest/utils/get-default-object-fields';
-import { generateDefaultFieldUniversalIdentifier } from '@/cli/utilities/build/manifest/utils/generate-default-field-universal-identifier';
+import { generateDefaultFieldUniversalIdentifier } from '@/sdk/define/objects/generate-default-field-universal-identifier';
 import type { ObjectConfig } from '@/sdk/define/objects/object-config';
 
 const mockObjectConfig: ObjectConfig = {
@@ -14,7 +14,7 @@ const mockObjectConfig: ObjectConfig = {
 
 const expectedUniversalId = (fieldName: string) =>
   generateDefaultFieldUniversalIdentifier({
-    objectConfig: mockObjectConfig,
+    objectUniversalIdentifier: mockObjectConfig.universalIdentifier,
     fieldName,
   });
 

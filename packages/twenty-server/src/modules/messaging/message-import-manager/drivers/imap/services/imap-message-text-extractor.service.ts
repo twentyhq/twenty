@@ -1,21 +1,14 @@
 import { Injectable } from '@nestjs/common';
 
-import createDOMPurify from 'dompurify';
-import { convert } from 'html-to-text';
-import { JSDOM } from 'jsdom';
 import * as planer from 'planer';
 import { safeDecodeURIComponent } from 'twenty-shared/utils';
 import { type Email as ParsedEmail } from 'postal-mime';
 
+import { createHtmlToTextConverter } from 'src/modules/messaging/message-import-manager/utils/create-html-to-text-converter.util';
+
 @Injectable()
 export class ImapMessageTextExtractorService {
-  private readonly jsdomInstance: JSDOM;
-  private readonly purify: ReturnType<typeof createDOMPurify>;
-
-  constructor() {
-    this.jsdomInstance = new JSDOM('');
-    this.purify = createDOMPurify(this.jsdomInstance.window);
-  }
+  private readonly convertHtmlToText = createHtmlToTextConverter();
 
   extractTextWithoutReplyQuotations(parsed: ParsedEmail): string {
     if (parsed.text) {
@@ -25,21 +18,7 @@ export class ImapMessageTextExtractorService {
     }
 
     if (parsed.html) {
-      const sanitizedHtml = this.purify.sanitize(parsed.html);
-
-      const cleanedHtml = planer.extractFromHtml(
-        sanitizedHtml,
-        this.jsdomInstance.window.document,
-      );
-
-      const text = convert(cleanedHtml, {
-        wordwrap: false,
-        preserveNewlines: true,
-      }).trim();
-
-      const processedText = text.replace(/\u00A0/g, ' ');
-
-      return safeDecodeURIComponent(processedText);
+      return safeDecodeURIComponent(this.convertHtmlToText(parsed.html));
     }
 
     return '';

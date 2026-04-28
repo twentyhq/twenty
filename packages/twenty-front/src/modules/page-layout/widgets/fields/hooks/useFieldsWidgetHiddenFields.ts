@@ -27,11 +27,15 @@ export const useFieldsWidgetHiddenFields = ({
       return [];
     }
 
+    const activeFields = objectMetadataItem.fields.filter(
+      (field) => field.isActive,
+    );
+
     if (isDefined(view) && isNonEmptyArray(view.viewFieldGroups)) {
       const groups: FieldsWidgetGroup[] = view.viewFieldGroups.map((group) => {
         const fields: FieldsWidgetGroupField[] = (group.viewFields ?? [])
           .map((viewField) => {
-            const fieldMetadataItem = objectMetadataItem.fields.find(
+            const fieldMetadataItem = activeFields.find(
               (f) => f.id === viewField.fieldMetadataId,
             );
 
@@ -67,7 +71,7 @@ export const useFieldsWidgetHiddenFields = ({
         .sort((a, b) => a.position - b.position)
         .filter((viewField) => !viewField.isVisible)
         .map((viewField) => {
-          const fieldMetadataItem = objectMetadataItem.fields.find(
+          const fieldMetadataItem = activeFields.find(
             (f) => f.id === viewField.fieldMetadataId,
           );
 

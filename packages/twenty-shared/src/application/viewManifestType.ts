@@ -2,6 +2,7 @@ import { type SyncableEntityOptions } from '@/application/syncableEntityOptionsT
 import {
   type ViewKey,
   type AggregateOperations,
+  type ViewCalendarLayout,
   type ViewFilterGroupLogicalOperator,
   type ViewFilterOperand,
   type ViewOpenRecordIn,
@@ -68,6 +69,11 @@ export type ViewManifest = SyncableEntityOptions & {
   isCompact?: boolean;
   visibility?: ViewVisibility;
   openRecordIn?: ViewOpenRecordIn;
+  mainGroupByFieldMetadataUniversalIdentifier?: string;
+  kanbanAggregateOperation?: AggregateOperations;
+  kanbanAggregateOperationFieldMetadataUniversalIdentifier?: string;
+  calendarLayout?: ViewCalendarLayout;
+  calendarFieldMetadataUniversalIdentifier?: string;
   fields?: ViewFieldManifest[];
   filters?: ViewFilterManifest[];
   filterGroups?: ViewFilterGroupManifest[];

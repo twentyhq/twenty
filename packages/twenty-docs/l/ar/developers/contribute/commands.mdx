@@ -1,12 +1,12 @@
 ---
-title: Commands
+title: أوامر
 icon: terminal
-description: Useful commands for developing Twenty.
+description: أوامر مفيدة لتطوير Twenty.
 ---
 
-Commands can be run from the repository root using `npx nx`. Use `npx nx run {project}:{command}` for explicit targeting.
+يمكن تشغيل الأوامر من جذر المستودع باستخدام `npx nx`. استخدم `npx nx run {project}:{command}` للاستهداف الصريح.
 
-## Starting the App
+## بدء التطبيق
 
 ```bash
 npx nx start twenty-front          # Frontend dev server (http://localhost:3001)
@@ -14,7 +14,7 @@ npx nx start twenty-server         # Backend server (http://localhost:3000)
 npx nx run twenty-server:worker    # Background worker
 ```
 
-## Database
+## قاعدة البيانات
 
 ```bash
 npx nx database:reset twenty-server                          # Reset and seed database
@@ -22,7 +22,7 @@ npx nx run twenty-server:database:migrate:prod               # Run migrations
 npx nx run twenty-server:database:migrate:generate --name <name> --type <fast|slow>  # Generate a migration
 ```
 
-## Linting
+## فحص الشيفرة
 
 ```bash
 npx nx lint:diff-with-main twenty-front    # Lint changed files (fastest)
@@ -30,7 +30,7 @@ npx nx lint:diff-with-main twenty-server
 npx nx lint twenty-front --configuration=fix  # Auto-fix
 ```
 
-## Type Checking
+## التحقق من الأنواع
 
 ```bash
 npx nx typecheck twenty-front
@@ -68,7 +68,7 @@ npx nx run twenty-front:lingui:extract   # Extract strings
 npx nx run twenty-front:lingui:compile   # Compile translations
 ```
 
-## Build
+## البناء
 
 ```bash
 npx nx build twenty-shared   # Must be built first

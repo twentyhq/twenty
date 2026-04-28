@@ -3,8 +3,8 @@ import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadat
 import { filterReadableActiveObjectMetadataItems } from '@/object-metadata/utils/filterReadableActiveObjectMetadataItems';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useUpdatePageLayoutWidget } from '@/page-layout/hooks/useUpdatePageLayoutWidget';
-import { useCreateViewForRecordTableWidget } from '@/page-layout/widgets/record-table/hooks/useCreateViewForRecordTableWidget';
-import { useDeleteViewForRecordTableWidget } from '@/page-layout/widgets/record-table/hooks/useDeleteViewForRecordTableWidget';
+import { useAddDraftViewForRecordTableWidget } from '@/page-layout/widgets/record-table/hooks/useAddDraftViewForRecordTableWidget';
+import { useRemoveDraftViewForRecordTableWidget } from '@/page-layout/widgets/record-table/hooks/useRemoveDraftViewForRecordTableWidget';
 import { usePageLayoutIdFromContextStore } from '@/side-panel/pages/page-layout/hooks/usePageLayoutIdFromContextStore';
 import { useUpdateCurrentWidgetConfig } from '@/side-panel/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
 import { useWidgetInEditMode } from '@/side-panel/pages/page-layout/hooks/useWidgetInEditMode';
@@ -47,11 +47,11 @@ export const RecordTableDataSourceDropdownContent = () => {
   const { updateCurrentWidgetConfig } =
     useUpdateCurrentWidgetConfig(pageLayoutId);
 
-  const { createViewForRecordTableWidget } =
-    useCreateViewForRecordTableWidget(pageLayoutId);
+  const { addDraftViewForRecordTableWidget } =
+    useAddDraftViewForRecordTableWidget(pageLayoutId);
 
-  const { deleteViewForRecordTableWidget } =
-    useDeleteViewForRecordTableWidget();
+  const { removeDraftViewForRecordTableWidget } =
+    useRemoveDraftViewForRecordTableWidget(pageLayoutId);
 
   const { updatePageLayoutWidget } = useUpdatePageLayoutWidget(pageLayoutId);
 
@@ -77,20 +77,14 @@ export const RecordTableDataSourceDropdownContent = () => {
     getSearchableValues: (item) => [item.labelPlural, item.namePlural],
   });
 
-  const currentViewId =
-    widgetInEditMode?.configuration &&
-    'viewId' in widgetInEditMode.configuration
-      ? (widgetInEditMode.configuration.viewId as string | undefined)
-      : undefined;
-
-  const handleSelectSource = async (newObjectMetadataItemId: string) => {
+  const handleSelectSource = (newObjectMetadataItemId: string) => {
     if (currentObjectMetadataItemId === newObjectMetadataItemId) {
       closeDropdown();
       return;
     }
 
-    if (isDefined(currentViewId)) {
-      await deleteViewForRecordTableWidget(currentViewId);
+    if (isDefined(widgetInEditMode)) {
+      removeDraftViewForRecordTableWidget(widgetInEditMode.id);
     }
 
     updateCurrentWidgetConfig({
@@ -105,7 +99,7 @@ export const RecordTableDataSourceDropdownContent = () => {
     );
 
     if (isDefined(selectedObjectMetadataItem) && isDefined(widgetInEditMode)) {
-      await createViewForRecordTableWidget(
+      addDraftViewForRecordTableWidget(
         widgetInEditMode.id,
         selectedObjectMetadataItem,
       );

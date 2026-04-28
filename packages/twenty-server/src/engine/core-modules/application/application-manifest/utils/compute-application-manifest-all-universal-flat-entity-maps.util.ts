@@ -397,5 +397,42 @@ export const computeApplicationManifestAllUniversalFlatEntityMaps = ({
     }
   }
 
+  for (const pageLayoutTabManifest of manifest.pageLayoutTabs ?? []) {
+    if (!isDefined(pageLayoutTabManifest.pageLayoutUniversalIdentifier)) {
+      throw new Error(
+        `Top-level pageLayoutTab "${pageLayoutTabManifest.universalIdentifier}" is missing required pageLayoutUniversalIdentifier`,
+      );
+    }
+
+    addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
+      universalFlatEntity:
+        fromPageLayoutTabManifestToUniversalFlatPageLayoutTab({
+          pageLayoutTabManifest,
+          pageLayoutUniversalIdentifier:
+            pageLayoutTabManifest.pageLayoutUniversalIdentifier,
+          applicationUniversalIdentifier,
+          now,
+        }),
+      universalFlatEntityMapsToMutate:
+        allUniversalFlatEntityMaps.flatPageLayoutTabMaps,
+    });
+
+    for (const pageLayoutWidgetManifest of pageLayoutTabManifest.widgets ??
+      []) {
+      addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
+        universalFlatEntity:
+          fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget({
+            pageLayoutWidgetManifest,
+            pageLayoutTabUniversalIdentifier:
+              pageLayoutTabManifest.universalIdentifier,
+            applicationUniversalIdentifier,
+            now,
+          }),
+        universalFlatEntityMapsToMutate:
+          allUniversalFlatEntityMaps.flatPageLayoutWidgetMaps,
+      });
+    }
+  }
+
   return allUniversalFlatEntityMaps;
 };

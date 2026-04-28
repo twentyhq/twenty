@@ -1,10 +1,10 @@
 ---
 title: Funzioni logiche
-description: Define server-side TypeScript functions with HTTP, cron, and database event triggers.
+description: Definisci funzioni TypeScript lato server con trigger HTTP, cron e trigger di eventi del database.
 icon: bolt
 ---
 
-Logic functions are server-side TypeScript functions that run on the Twenty platform. They can be triggered by HTTP requests, cron schedules, or database events — and can also be exposed as tools for AI agents.
+Le funzioni logiche sono funzioni TypeScript lato server che vengono eseguite sulla piattaforma Twenty. Possono essere attivate da richieste HTTP, pianificazioni cron o eventi del database — e possono anche essere esposte come strumenti per agenti di IA.
 
 <AccordionGroup>
 <Accordion title="defineLogicFunction" description="Definisci funzioni logiche e i relativi trigger">
@@ -94,15 +94,16 @@ const handler = async (event: RoutePayload) => {
 
 Il tipo `RoutePayload` ha la seguente struttura:
 
-  | Proprietà                    | Tipo                                                    | Descrizione                                                           | Esempio                                                                    |
-  | ---------------------------- | ------------------------------------------------------- | --------------------------------------------------------------------- | -------------------------------------------------------------------------- |
-  | `headers`                    | `Record\<string, string \| undefined>` | Intestazioni HTTP (solo quelle elencate in `forwardedRequestHeaders`) | vedi la sezione sotto                                                      |
-  | `queryStringParameters`      | `Record\<string, string \| undefined>` | Parametri della query string (valori multipli uniti da virgole)       | `/users?ids=1&ids=2&ids=3&name=Alice` -> `{ ids: '1,2,3', name: 'Alice' }` |
-  | `pathParameters`             | `Record\<string, string \| undefined>` | Parametri di percorso estratti dal pattern della route                | `/users/:id`, `/users/123` -> `{ id: '123' }`                              |
-  | `body`                       | `object \| null`                                        | Corpo della richiesta analizzato (JSON)                               | `{ id: 1 }` -> `{ id: 1 }`                                                 |
-  | `isBase64Encoded`            | `boolean`                                               | Indica se il corpo è codificato in base64                             |                                                                            |
-  | `requestContext.http.method` | `string`                                                | Metodo HTTP (GET, POST, PUT, PATCH, DELETE)                           |                                                                            |
-  | `requestContext.http.path`   | `string`                                                | Percorso della richiesta non elaborato                                |                                                                            |
+  | Proprietà                    | Tipo                                                    | Descrizione                                                                                                                                                                                           | Esempio                                                                    |
+  | ---------------------------- | ------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
+  | `headers`                    | `Record\<string, string \| undefined>` | Intestazioni HTTP (solo quelle elencate in `forwardedRequestHeaders`)                                                                                                                                 | vedi la sezione sotto                                                      |
+  | `queryStringParameters`      | `Record\<string, string \| undefined>` | Parametri della query string (valori multipli uniti da virgole)                                                                                                                                       | `/users?ids=1&ids=2&ids=3&name=Alice` -> `{ ids: '1,2,3', name: 'Alice' }` |
+  | `pathParameters`             | `Record\<string, string \| undefined>` | Parametri di percorso estratti dal pattern della route                                                                                                                                                | `/users/:id`, `/users/123` -> `{ id: '123' }`                              |
+  | `body`                       | `object \| null`                                        | Corpo della richiesta analizzato (JSON)                                                                                                                                                               | `{ id: 1 }` -> `{ id: 1 }`                                                 |
+  | `rawBody`                    | `string \| undefined`                                   | Original UTF-8 request body, before JSON parsing. Useful for verifying HMAC-style webhook signatures (e.g. GitHub's `X-Hub-Signature-256`, Stripe). `undefined` when the runtime did not preserve it. |                                                                            |
+  | `isBase64Encoded`            | `boolean`                                               | Indica se il corpo è codificato in base64                                                                                                                                                             |                                                                            |
+  | `requestContext.http.method` | `string`                                                | Metodo HTTP (GET, POST, PUT, PATCH, DELETE)                                                                                                                                                           |                                                                            |
+  | `requestContext.http.path`   | `string`                                                | Percorso della richiesta non elaborato                                                                                                                                                                |                                                                            |
 
 
 #### forwardedRequestHeaders
@@ -387,7 +388,7 @@ export default definePreInstallLogicFunction({
 
 **Regola generale:**
 
-| You want to...                                                                                                               | Usa                                                                                  |
+| Vuoi...                                                                                                                      | Usa                                                                                  |
 | ---------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
 | Popolare dati predefiniti, configurare il workspace, registrare risorse esterne                                              | `post-install`                                                                       |
 | Eseguire seeding di lunga durata o chiamate a terze parti che non dovrebbero bloccare la risposta dell'installazione         | `post-install` (predefinito — `shouldRunSynchronously: false`, con retry del worker) |

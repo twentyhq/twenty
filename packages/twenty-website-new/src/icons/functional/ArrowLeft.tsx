@@ -1,5 +1,4 @@
-const ARROW_LEFT_PATH =
-  "M.5 5.75H14m-13.5 0L5.75 11M.5 5.75 5.75.5";
+const ARROW_LEFT_PATH = 'M.5 5.75H14m-13.5 0L5.75 11M.5 5.75 5.75.5';
 
 interface ArrowLeftIconProps {
   size: number;

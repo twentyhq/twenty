@@ -1,6 +1,6 @@
 ---
 title: Stylová příručka
-icon: paintbrush},{
+icon: paintbrush
 description: Konvence kódu a osvědčené postupy pro přispívání do Twenty.
 ---
 
@@ -25,7 +25,7 @@ export function MyComponent() {
 
 ### Vlastnosti
 
-Vytvořte typ s názvem `{ComponentName}Props`. Používejte destrukturování. Nepoužívejte `React.FC`.
+Vytvořte typ s názvem `{ComponentName}Props`. Používejte destrukturalizaci. Nepoužívejte `React.FC`.
 
 ```tsx
 type MyComponentProps = {
@@ -35,7 +35,7 @@ type MyComponentProps = {
 export const MyComponent = ({ name }: MyComponentProps) => <div>Hello {name}</div>;
 ```
 
-### Žádné rozprostření jediné proměnné do props
+### Nepoužívejte prop spreading jediné proměnné
 
 ```tsx
 // ❌ Bad
@@ -65,7 +65,7 @@ export const myAtomState = createAtomState<string>({
 
 ### Vyhněte se zbytečnému opakovanému vykreslování
 
-* Vytáhněte `useEffect` a načítání dat do sourozeneckých sidecar komponent
+* Přesuňte `useEffect` a načítání dat do sesterských sidecar komponent
 * Upřednostňujte obslužné funkce událostí (`handleClick`, `handleChange`) před `useEffect`
 * Nepoužívejte `React.memo()` — místo toho opravte kořenovou příčinu
 * Omezte používání `useCallback` / `useMemo`
@@ -97,7 +97,7 @@ export const Page = () => {
 * **`type` místo `interface`** — flexibilnější, lépe kombinovatelný
 * **Řetězcové literály místo výčtů** — s výjimkou enumů GraphQL codegenu a interních API knihoven
 * **Žádné `any`** — vynucený přísný TypeScript
-* **Žádné type imports** — používejte běžné importy (vynuceno nástrojem Oxlint `typescript/consistent-type-imports`)
+* **Žádné importy typů** — používejte běžné importy (vynuceno nástrojem Oxlint `typescript/consistent-type-imports`)
 * **Používejte [Zod](https://github.com/colinhacks/zod)** pro runtime validaci netypovaných objektů
 
 ## JavaScript
@@ -172,5 +172,5 @@ front
 ```
 
 * Moduly mohou importovat z jiných modulů, ale `ui/` by mělo zůstat bez závislostí
-* Používejte podadresáře `internal/` pro kód soukromý pro modul
+* Používejte podadresáře `internal/` pro interní kód modulu
 * Komponenty do 300 řádků, služby do 500 řádků

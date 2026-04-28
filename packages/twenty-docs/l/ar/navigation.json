@@ -4,10 +4,10 @@
       "label": "البدء",
       "groups": {
         "welcome": {
-          "label": "Welcome"
+          "label": "مرحبًا"
         },
         "coreConcepts": {
-          "label": "Core Concepts"
+          "label": "المفاهيم الأساسية"
         }
       }
     },
@@ -21,7 +21,7 @@
           "label": "نموذج البيانات",
           "groups": {
             "dataModelReference": {
-              "label": "Reference"
+              "label": "مرجع"
             },
             "dataModelHowTos": {
               "label": "الإرشادات"
@@ -32,7 +32,7 @@
           "label": "ترحيل البيانات",
           "groups": {
             "dataMigrationReference": {
-              "label": "Reference"
+              "label": "مرجع"
             },
             "dataMigrationHowTos": {
               "label": "الإرشادات"
@@ -43,7 +43,7 @@
           "label": "التقويم والبريد الإلكتروني",
           "groups": {
             "calendarEmailsReference": {
-              "label": "Reference"
+              "label": "مرجع"
             },
             "calendarEmailsHowTos": {
               "label": "الإرشادات"
@@ -54,7 +54,7 @@
           "label": "سير العمل",
           "groups": {
             "workflowsReference": {
-              "label": "Reference"
+              "label": "مرجع"
             },
             "workflowsHowTos": {
               "label": "الإرشادات",
@@ -79,7 +79,7 @@
           "label": "الذكاء الاصطناعي",
           "groups": {
             "aiReference": {
-              "label": "Reference"
+              "label": "مرجع"
             },
             "aiHowTos": {
               "label": "الإرشادات"
@@ -90,7 +90,7 @@
           "label": "التخطيط",
           "groups": {
             "layoutReference": {
-              "label": "Reference",
+              "label": "مرجع",
               "groups": {
                 "layoutViews": {
                   "label": "العروض"
@@ -106,7 +106,7 @@
           "label": "لوحات القيادة",
           "groups": {
             "dashboardsReference": {
-              "label": "Reference"
+              "label": "مرجع"
             },
             "dashboardsHowTos": {
               "label": "الإرشادات"
@@ -117,7 +117,7 @@
           "label": "الصلاحيات والوصول",
           "groups": {
             "permissionsAccessReference": {
-              "label": "Reference"
+              "label": "مرجع"
             },
             "permissionsAccessHowTos": {
               "label": "الإرشادات"
@@ -128,7 +128,7 @@
           "label": "الفوترة",
           "groups": {
             "billingReference": {
-              "label": "Reference"
+              "label": "مرجع"
             },
             "billingHowTos": {
               "label": "الإرشادات"
@@ -139,7 +139,7 @@
           "label": "\\ا\\ل\\إ\\ع\\د\\ا\\د\\ا\\ت",
           "groups": {
             "settingsReference": {
-              "label": "Reference"
+              "label": "مرجع"
             },
             "settingsHowTos": {
               "label": "الإرشادات"

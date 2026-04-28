@@ -14,6 +14,7 @@ import {
   AiModelRegistryService,
   RegisteredAiModel,
 } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
+import { type NativeModelToolOptions } from 'src/engine/metadata-modules/ai/ai-models/types/native-model-tool-options.type';
 import { SdkProviderFactoryService } from 'src/engine/metadata-modules/ai/ai-models/services/sdk-provider-factory.service';
 import { FlatAgentWithRoleId } from 'src/engine/metadata-modules/flat-agent/types/flat-agent.type';
 
@@ -42,52 +43,37 @@ export class AiModelConfigService {
 
   getNativeModelTools(
     model: RegisteredAiModel,
-    agent: FlatAgentWithRoleId,
+    options: NativeModelToolOptions,
   ): ToolSet {
     const tools: ToolSet = {};
 
-    if (!agent.modelConfiguration) {
+    if (!options.webSearchEnabled) {
       return tools;
     }
 
     switch (model.sdkPackage) {
-      case AI_SDK_ANTHROPIC:
-        if (agent.modelConfiguration.webSearch?.enabled) {
-          const anthropicProvider = model.providerName
-            ? this.sdkProviderFactory.getRawAnthropicProvider(
-                model.providerName,
-              )
-            : undefined;
+      case AI_SDK_ANTHROPIC: {
+        const anthropicProvider = model.providerName
+          ? this.sdkProviderFactory.getRawAnthropicProvider(model.providerName)
+          : undefined;
 
-          if (anthropicProvider) {
-            tools.web_search = anthropicProvider.tools.webSearch_20250305();
-          }
+        if (anthropicProvider) {
+          tools.web_search = anthropicProvider.tools.webSearch_20250305();
         }
-        break;
-      case AI_SDK_BEDROCK: {
-        if (agent.modelConfiguration.webSearch?.enabled) {
-          const bedrockProvider = model.providerName
-            ? this.sdkProviderFactory.getRawBedrockProvider(model.providerName)
-            : undefined;
 
-          if (bedrockProvider) {
-            tools.web_search =
-              bedrockProvider.tools.webSearch_20250305() as ToolSet[string];
-          }
-        }
         break;
       }
-      case AI_SDK_OPENAI:
-        if (agent.modelConfiguration.webSearch?.enabled) {
-          const openaiProvider = model.providerName
-            ? this.sdkProviderFactory.getRawOpenAIProvider(model.providerName)
-            : undefined;
+      case AI_SDK_OPENAI: {
+        const openaiProvider = model.providerName
+          ? this.sdkProviderFactory.getRawOpenAIProvider(model.providerName)
+          : undefined;
 
-          if (openaiProvider) {
-            tools.web_search = openaiProvider.tools.webSearch();
-          }
+        if (openaiProvider) {
+          tools.web_search = openaiProvider.tools.webSearch();
         }
+
         break;
+      }
     }
 
     return tools;

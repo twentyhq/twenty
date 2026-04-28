@@ -10,6 +10,7 @@ import {
 } from 'class-validator';
 import {
   AggregateOperations,
+  ViewCalendarLayout,
   ViewOpenRecordIn,
   ViewType,
   ViewVisibility,
@@ -17,7 +18,6 @@ import {
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { IsValidMetadataName } from 'src/engine/decorators/metadata/is-valid-metadata-name.decorator';
-import { ViewCalendarLayout } from 'src/engine/metadata-modules/view/enums/view-calendar-layout.enum';
 
 // TODO: this should be refactored like for view-field.input.ts
 // This is a temporary fix as we were extending the CreateViewInput class which was adding default values for the non filled fields
