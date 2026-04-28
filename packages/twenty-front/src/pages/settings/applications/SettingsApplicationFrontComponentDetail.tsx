@@ -24,7 +24,7 @@ export const SettingsApplicationFrontComponentDetail = () => {
 
   const { data, loading } = useQuery(FindOneApplicationDocument, {
     variables: { id: applicationId },
-    skip: !isDefined(applicationId),
+    skip: !applicationId,
   });
 
   const application = data?.findOneApplication;
