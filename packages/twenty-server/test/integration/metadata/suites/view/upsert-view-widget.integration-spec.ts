@@ -5,18 +5,36 @@ import {
   VIEW_GQL_FIELDS,
   VIEW_SORT_GQL_FIELDS,
 } from 'test/integration/constants/view-gql-fields.constants';
+import { createOnePageLayoutTab } from 'test/integration/metadata/suites/page-layout-tab/utils/create-one-page-layout-tab.util';
+import { destroyOnePageLayoutTab } from 'test/integration/metadata/suites/page-layout-tab/utils/destroy-one-page-layout-tab.util';
+import { createOnePageLayoutWidget } from 'test/integration/metadata/suites/page-layout-widget/utils/create-one-page-layout-widget.util';
+import { destroyOnePageLayoutWidget } from 'test/integration/metadata/suites/page-layout-widget/utils/destroy-one-page-layout-widget.util';
+import {
+  fetchTestFieldMetadataIds,
+  type TestFieldMetadataIds,
+} from 'test/integration/metadata/suites/page-layout-widget/utils/fetch-test-field-metadata-ids.util';
+import { createOnePageLayout } from 'test/integration/metadata/suites/page-layout/utils/create-one-page-layout.util';
+import { destroyOnePageLayout } from 'test/integration/metadata/suites/page-layout/utils/destroy-one-page-layout.util';
 import { findViewFields } from 'test/integration/metadata/suites/view-field/utils/find-view-fields.util';
 import { findViewFilters } from 'test/integration/metadata/suites/view-filter/utils/find-view-filters.util';
 import { findViewSorts } from 'test/integration/metadata/suites/view-sort/utils/find-view-sorts.util';
+import { createOneView } from 'test/integration/metadata/suites/view/utils/create-one-view.util';
+import { destroyOneView } from 'test/integration/metadata/suites/view/utils/destroy-one-view.util';
 import { upsertViewWidget } from 'test/integration/metadata/suites/view/utils/upsert-view-widget.util';
 import {
   ViewFilterGroupLogicalOperator,
   ViewFilterOperand,
   ViewSortDirection,
+  ViewType,
 } from 'twenty-shared/types';
 import { v4 as uuidv4 } from 'uuid';
 
+import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
+import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
+
 type ViewWidgetTestSetup = {
+  pageLayoutId: string;
+  pageLayoutTabId: string;
   widgetId: string;
   viewId: string;
   viewFields: Array<{
@@ -44,62 +62,98 @@ const VIEW_WITH_ALL_RELATIONS_GQL_FIELDS = `
   }
 `;
 
-const fetchViewWidgetTestSetup = async (): Promise<ViewWidgetTestSetup> => {
-  // TODO refactor should not use global source for that
-  const widgets = await global.testDataSource.query(
-    `SELECT id, configuration->>'viewId' AS "viewId"
-     FROM core."pageLayoutWidget"
-     WHERE type = 'RECORD_TABLE'
-       AND "deletedAt" IS NULL
-     LIMIT 1`,
-  );
-
-  expect(widgets.length).toBeGreaterThan(0);
-
-  const { id: widgetId, viewId } = widgets[0];
-
-  expect(widgetId).toBeDefined();
-  expect(viewId).toBeDefined();
-
-  const { data } = await findViewFields({
-    viewId,
-    gqlFields: 'id fieldMetadataId position isVisible',
-    expectToFail: false,
-  });
-
-  const viewFields = data.getViewFields;
-
-  // TODO refactor should not use global source for that
-  const views = await global.testDataSource.query(
-    `SELECT v."objectMetadataId"
-     FROM core."view" v
-     WHERE v.id = $1`,
-    [viewId],
-  );
-
-  const objectMetadataId = views[0]?.objectMetadataId;
-
-  const fieldMetadataRows = await global.testDataSource.query(
-    `SELECT id FROM core."fieldMetadata"
-     WHERE "objectMetadataId" = $1
-       AND "isActive" = true
-       AND "deletedAt" IS NULL
-     LIMIT 5`,
-    [objectMetadataId],
-  );
-
-  const fieldMetadataIds = fieldMetadataRows.map(
-    (row: { id: string }) => row.id,
-  );
-
-  return { widgetId, viewId, viewFields, fieldMetadataIds };
-};
-
 describe('upsertViewWidget', () => {
   let testSetup: ViewWidgetTestSetup;
 
   beforeAll(async () => {
-    testSetup = await fetchViewWidgetTestSetup();
+    const testFieldMetadataIds: TestFieldMetadataIds =
+      await fetchTestFieldMetadataIds();
+
+    const { data: layoutData } = await createOnePageLayout({
+      expectToFail: false,
+      input: { name: 'Test Page Layout For View Widget' },
+    });
+
+    const pageLayoutId = layoutData.createPageLayout.id;
+
+    const { data: tabData } = await createOnePageLayoutTab({
+      expectToFail: false,
+      input: {
+        title: 'Test Tab For View Widget',
+        pageLayoutId,
+      },
+    });
+
+    const pageLayoutTabId = tabData.createPageLayoutTab.id;
+
+    const { data: viewData } = await createOneView({
+      expectToFail: false,
+      input: {
+        name: 'testViewWidgetView',
+        objectMetadataId: testFieldMetadataIds.objectMetadataId,
+        icon: 'IconTable',
+        type: ViewType.TABLE,
+      },
+    });
+
+    const viewId = viewData.createView.id;
+
+    const { data: widgetData } = await createOnePageLayoutWidget({
+      expectToFail: false,
+      input: {
+        title: 'Test Record Table Widget',
+        type: WidgetType.RECORD_TABLE,
+        pageLayoutTabId,
+        objectMetadataId: testFieldMetadataIds.objectMetadataId,
+        gridPosition: { row: 0, column: 0, rowSpan: 1, columnSpan: 1 },
+        configuration: {
+          configurationType: WidgetConfigurationType.RECORD_TABLE,
+          viewId,
+        },
+      },
+    });
+
+    const widgetId = widgetData.createPageLayoutWidget.id;
+
+    const { data: fieldsData } = await findViewFields({
+      viewId,
+      gqlFields: 'id fieldMetadataId position isVisible',
+      expectToFail: false,
+    });
+
+    const fieldMetadataIds = [
+      testFieldMetadataIds.fieldMetadataId1,
+      testFieldMetadataIds.fieldMetadataId2,
+      testFieldMetadataIds.fieldMetadataId3,
+    ];
+
+    testSetup = {
+      pageLayoutId,
+      pageLayoutTabId,
+      widgetId,
+      viewId,
+      viewFields: fieldsData.getViewFields,
+      fieldMetadataIds,
+    };
+  });
+
+  afterAll(async () => {
+    await destroyOnePageLayoutWidget({
+      expectToFail: false,
+      input: { id: testSetup.widgetId },
+    });
+    await destroyOneView({
+      expectToFail: false,
+      viewId: testSetup.viewId,
+    });
+    await destroyOnePageLayoutTab({
+      expectToFail: false,
+      input: { id: testSetup.pageLayoutTabId },
+    });
+    await destroyOnePageLayout({
+      expectToFail: false,
+      input: { id: testSetup.pageLayoutId },
+    });
   });
 
   describe('view fields', () => {
