@@ -54,6 +54,9 @@ export const SentryInitEffect = () => {
             tracesSampleRate: 1.0,
             replaysSessionSampleRate: 0.1,
             replaysOnErrorSampleRate: 1.0,
+            ignoreErrors: [
+              /Failed to set the 'value' property on 'HTMLInputElement'/,
+            ],
           });
 
           setIsSentryInitialized(true);
