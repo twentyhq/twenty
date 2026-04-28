@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { type FetchMessageObject, type ImapFlow } from 'imapflow';
+import { chunk } from 'lodash';
 import PostalMime, { type Email as ParsedEmail } from 'postal-mime';
 
 export type MessageParseResult = {
@@ -17,6 +18,7 @@ export type FolderParseResult = {
 @Injectable()
 export class ImapMessageParserService {
   private readonly logger = new Logger(ImapMessageParserService.name);
+  private readonly BATCH_SIZE = 10;
 
   async parseMessagesFromFolder(
     messageUids: number[],
@@ -35,21 +37,29 @@ export class ImapMessageParserService {
           ? client.mailbox.uidValidity
           : null;
 
-      const uidSet = messageUids.join(',');
       const startTime = Date.now();
-
-      const messages = await client.fetchAll(
-        uidSet,
-        { uid: true, source: true },
-        { uid: true },
-      );
-
-      const fetchedUids = new Set<number>();
       const results: MessageParseResult[] = [];
+      const fetchedUids = new Set<number>();
 
-      for (const message of messages) {
-        fetchedUids.add(message.uid);
-        results.push(await this.parseMessage(message));
+      const batches = chunk(messageUids, this.BATCH_SIZE);
+
+      for (const batch of batches) {
+        const uidSet = batch.join(',');
+
+        this.logger.debug(
+          `Fetching batch of ${batch.length} messages from ${folderPath}`,
+        );
+
+        const messages = await client.fetchAll(
+          uidSet,
+          { uid: true, source: true },
+          { uid: true },
+        );
+
+        for (const message of messages) {
+          fetchedUids.add(message.uid);
+          results.push(await this.parseMessage(message));
+        }
       }
 
       for (const uid of messageUids) {

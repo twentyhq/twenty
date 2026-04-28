@@ -21,6 +21,7 @@ export class ImapClientProvider {
 
   private static readonly CONNECTION_TIMEOUT_MS = 30000;
   private static readonly GREETING_TIMEOUT_MS = 16000;
+  private static readonly RESPONSE_TIMEOUT_MS = 30000;
 
   constructor(
     private readonly secureHttpClientService: SecureHttpClientService,
@@ -92,6 +93,7 @@ export class ImapClientProvider {
       },
       connectionTimeout: ImapClientProvider.CONNECTION_TIMEOUT_MS,
       greetingTimeout: ImapClientProvider.GREETING_TIMEOUT_MS,
+      responseTimeout: ImapClientProvider.RESPONSE_TIMEOUT_MS,
     });
 
     try {
