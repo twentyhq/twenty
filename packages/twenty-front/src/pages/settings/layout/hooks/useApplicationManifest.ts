@@ -1,6 +1,5 @@
 import { useQuery } from '@apollo/client/react';
 import { type Manifest } from 'twenty-shared/application';
-import { isDefined } from 'twenty-shared/utils';
 import {
   FindMarketplaceAppDetailDocument,
   FindOneApplicationDocument,
@@ -14,7 +13,7 @@ export const useApplicationManifest = (applicationId: string) => {
     {
       variables: { id: applicationId },
       fetchPolicy: 'cache-first',
-      skip: !isDefined(applicationId) || applicationId === '',
+      skip: !applicationId,
     },
   );
 
@@ -27,7 +26,7 @@ export const useApplicationManifest = (applicationId: string) => {
         universalIdentifier: application?.universalIdentifier ?? '',
       },
       fetchPolicy: 'cache-first',
-      skip: !isDefined(application?.universalIdentifier),
+      skip: !application?.universalIdentifier,
     },
   );
 
