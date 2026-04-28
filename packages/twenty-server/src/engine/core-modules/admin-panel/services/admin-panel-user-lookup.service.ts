@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { msg } from '@lingui/core/macro';
-import { FeatureFlagKey, FileFolder } from 'twenty-shared/types';
+import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
@@ -16,6 +16,7 @@ import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { userValidator } from 'src/engine/core-modules/user/user.validate';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
@@ -24,6 +25,7 @@ export class AdminPanelUserLookupService {
   constructor(
     private readonly workspaceDomainsService: WorkspaceDomainsService,
     private readonly fileUrlService: FileUrlService,
+    private readonly userService: UserService,
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
     @InjectRepository(WorkspaceEntity)
@@ -33,6 +35,21 @@ export class AdminPanelUserLookupService {
     @InjectRepository(FeatureFlagEntity)
     private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
   ) {}
+
+  private buildFallbackAvatarUrlsByUserId(
+    workspaceUsers: UserWorkspaceEntity[],
+  ): Map<string, string | null> {
+    return new Map(
+      workspaceUsers
+        .filter((workspaceUser) => isDefined(workspaceUser.user))
+        .map((workspaceUser) => [
+          workspaceUser.user.id,
+          workspaceUser.defaultAvatarUrl ??
+            workspaceUser.user.defaultAvatarUrl ??
+            null,
+        ]),
+    );
+  }
 
   async userLookup(userIdentifier: string): Promise<UserLookup> {
     const isEmail = userIdentifier.includes('@');
@@ -65,6 +82,53 @@ export class AdminPanelUserLookupService {
 
     const allFeatureFlagKeys = Object.values(FeatureFlagKey);
 
+    const workspaces = await Promise.all(
+      targetUser.userWorkspaces.map(async (userWorkspace) => {
+        const workspaceUsers = userWorkspace.workspace.workspaceUsers.filter(
+          (workspaceUser) => isDefined(workspaceUser.user),
+        );
+        const avatarUrlsByUserId =
+          await this.userService.loadSignedAvatarUrlsByUserId({
+            workspace: userWorkspace.workspace,
+            fallbackAvatarUrlsByUserId:
+              this.buildFallbackAvatarUrlsByUserId(workspaceUsers),
+          });
+
+        return {
+          id: userWorkspace.workspace.id,
+          name: userWorkspace.workspace.displayName ?? '',
+          totalUsers: workspaceUsers.length,
+          activationStatus: userWorkspace.workspace.activationStatus,
+          createdAt: userWorkspace.workspace.createdAt,
+          logo:
+            this.fileUrlService.signWorkspaceLogoUrl(userWorkspace.workspace) ??
+            undefined,
+          allowImpersonation: userWorkspace.workspace.allowImpersonation,
+          workspaceUrls: this.workspaceDomainsService.getWorkspaceUrls({
+            subdomain: userWorkspace.workspace.subdomain,
+            customDomain: userWorkspace.workspace.customDomain,
+            isCustomDomainEnabled:
+              userWorkspace.workspace.isCustomDomainEnabled,
+          }),
+          users: workspaceUsers.map((workspaceUser) => ({
+            id: workspaceUser.user.id,
+            email: workspaceUser.user.email,
+            firstName: workspaceUser.user.firstName,
+            lastName: workspaceUser.user.lastName,
+            avatarUrl: avatarUrlsByUserId.get(workspaceUser.user.id) ?? null,
+            createdAt: workspaceUser.user.createdAt,
+          })),
+          featureFlags: allFeatureFlagKeys.map((key) => ({
+            key,
+            value:
+              userWorkspace.workspace.featureFlags?.find(
+                (flag) => flag.key === key,
+              )?.value ?? false,
+          })),
+        };
+      }),
+    );
+
     return {
       user: {
         id: targetUser.id,
@@ -73,42 +137,7 @@ export class AdminPanelUserLookupService {
         lastName: targetUser.lastName,
         createdAt: targetUser.createdAt,
       },
-      workspaces: targetUser.userWorkspaces.map((userWorkspace) => ({
-        id: userWorkspace.workspace.id,
-        name: userWorkspace.workspace.displayName ?? '',
-        totalUsers: userWorkspace.workspace.workspaceUsers.length,
-        activationStatus: userWorkspace.workspace.activationStatus,
-        createdAt: userWorkspace.workspace.createdAt,
-        logo: isDefined(userWorkspace.workspace.logoFileId)
-          ? this.fileUrlService.signFileByIdUrl({
-              fileId: userWorkspace.workspace.logoFileId,
-              workspaceId: userWorkspace.workspace.id,
-              fileFolder: FileFolder.CorePicture,
-            })
-          : undefined,
-        allowImpersonation: userWorkspace.workspace.allowImpersonation,
-        workspaceUrls: this.workspaceDomainsService.getWorkspaceUrls({
-          subdomain: userWorkspace.workspace.subdomain,
-          customDomain: userWorkspace.workspace.customDomain,
-          isCustomDomainEnabled: userWorkspace.workspace.isCustomDomainEnabled,
-        }),
-        users: userWorkspace.workspace.workspaceUsers
-          .filter((workspaceUser) => isDefined(workspaceUser.user))
-          .map((workspaceUser) => ({
-            id: workspaceUser.user.id,
-            email: workspaceUser.user.email,
-            firstName: workspaceUser.user.firstName,
-            lastName: workspaceUser.user.lastName,
-            createdAt: workspaceUser.user.createdAt,
-          })),
-        featureFlags: allFeatureFlagKeys.map((key) => ({
-          key,
-          value:
-            userWorkspace.workspace.featureFlags?.find(
-              (flag) => flag.key === key,
-            )?.value ?? false,
-        })),
-      })),
+      workspaces,
     };
   }
 
@@ -138,6 +167,16 @@ export class AdminPanelUserLookupService {
     ]);
 
     const allFeatureFlagKeys = Object.values(FeatureFlagKey);
+    const definedWorkspaceUsers = workspaceUsers.filter((wu) =>
+      isDefined(wu.user),
+    );
+    const avatarUrlsByUserId =
+      await this.userService.loadSignedAvatarUrlsByUserId({
+        workspace,
+        fallbackAvatarUrlsByUserId: this.buildFallbackAvatarUrlsByUserId(
+          definedWorkspaceUsers,
+        ),
+      });
 
     const workspaceInfo = {
       id: workspace.id,
@@ -145,28 +184,21 @@ export class AdminPanelUserLookupService {
       totalUsers: workspaceUsers.length,
       activationStatus: workspace.activationStatus,
       createdAt: workspace.createdAt,
-      logo: isDefined(workspace.logoFileId)
-        ? this.fileUrlService.signFileByIdUrl({
-            fileId: workspace.logoFileId,
-            workspaceId: workspace.id,
-            fileFolder: FileFolder.CorePicture,
-          })
-        : undefined,
+      logo: this.fileUrlService.signWorkspaceLogoUrl(workspace) ?? undefined,
       allowImpersonation: workspace.allowImpersonation,
       workspaceUrls: this.workspaceDomainsService.getWorkspaceUrls({
         subdomain: workspace.subdomain,
         customDomain: workspace.customDomain,
         isCustomDomainEnabled: workspace.isCustomDomainEnabled,
       }),
-      users: workspaceUsers
-        .filter((wu) => isDefined(wu.user))
-        .map((wu) => ({
-          id: wu.user.id,
-          email: wu.user.email,
-          firstName: wu.user.firstName,
-          lastName: wu.user.lastName,
-          createdAt: wu.user.createdAt,
-        })),
+      users: definedWorkspaceUsers.map((wu) => ({
+        id: wu.user.id,
+        email: wu.user.email,
+        firstName: wu.user.firstName,
+        lastName: wu.user.lastName,
+        avatarUrl: avatarUrlsByUserId.get(wu.user.id) ?? null,
+        createdAt: wu.user.createdAt,
+      })),
       featureFlags: allFeatureFlagKeys.map((key) => ({
         key,
         value: featureFlags.find((flag) => flag.key === key)?.value ?? false,
@@ -181,6 +213,9 @@ export class AdminPanelUserLookupService {
         email: firstUser?.email ?? '',
         firstName: firstUser?.firstName,
         lastName: firstUser?.lastName,
+        avatarUrl: firstUser
+          ? (avatarUrlsByUserId.get(firstUser.id) ?? null)
+          : null,
         createdAt: firstUser?.createdAt ?? new Date(),
       },
       workspaces: [workspaceInfo],

@@ -7,9 +7,11 @@ export const ADMIN_PANEL_RECENT_USERS = gql`
       email
       firstName
       lastName
+      avatarUrl
       createdAt
       workspaceName
       workspaceId
+      workspaceLogo
     }
   }
 `;

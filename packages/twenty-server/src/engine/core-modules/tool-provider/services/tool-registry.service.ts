@@ -7,7 +7,7 @@ import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/
 import { type ToolRetrievalOptions } from 'src/engine/core-modules/tool-provider/interfaces/tool-retrieval-options.type';
 
 import { TOOL_PROVIDERS } from 'src/engine/core-modules/tool-provider/constants/tool-providers.token';
-import { compactToolOutput } from 'src/engine/core-modules/tool-provider/output-serialization/compact-tool-output.util';
+import { compactToolOutput } from 'src/engine/core-modules/tool-provider/output-transforms/compact-tool-output.util';
 import { ToolExecutorService } from 'src/engine/core-modules/tool-provider/services/tool-executor.service';
 import { type LearnToolsAspect } from 'src/engine/core-modules/tool-provider/tools/learn-tools.tool';
 import { type ToolContext } from 'src/engine/core-modules/tool-provider/types/tool-context.type';
@@ -107,12 +107,12 @@ export class ToolRegistryService {
     options?: {
       wrapWithErrorContext?: boolean;
       includeLoadingMessage?: boolean;
-      serializeOutput?: boolean;
+      compactOutput?: boolean;
     },
   ): ToolSet {
     const toolSet: ToolSet = {};
     const includeLoadingMessage = options?.includeLoadingMessage ?? true;
-    const serializeOutput = options?.serializeOutput ?? false;
+    const compactOutput = options?.compactOutput ?? false;
 
     for (const descriptor of descriptors) {
       const baseSchema = descriptor.inputSchema as Record<string, unknown>;
@@ -133,7 +133,7 @@ export class ToolRegistryService {
           context,
         );
 
-        return serializeOutput
+        return compactOutput
           ? (compactToolOutput(result) as ToolOutput)
           : result;
       };
@@ -170,7 +170,7 @@ export class ToolRegistryService {
     context: ToolContext,
     options?: {
       includeLoadingMessage?: boolean;
-      serializeOutput?: boolean;
+      compactOutput?: boolean;
     },
   ): Promise<ToolSet> {
     const fullContext = this.buildContextFromToolContext(context);
@@ -190,7 +190,7 @@ export class ToolRegistryService {
 
     return this.hydrateToolSet(descriptors, fullContext, {
       includeLoadingMessage: options?.includeLoadingMessage,
-      serializeOutput: options?.serializeOutput,
+      compactOutput: options?.compactOutput,
     });
   }
 
@@ -236,7 +236,7 @@ export class ToolRegistryService {
     toolName: string,
     args: Record<string, unknown> | undefined,
     context: ToolContext,
-    options?: { serializeOutput?: boolean },
+    options?: { compactOutput?: boolean },
   ): Promise<ToolOutput> {
     try {
       const fullContext = this.buildContextFromToolContext(context);
@@ -258,7 +258,7 @@ export class ToolRegistryService {
         fullContext,
       );
 
-      return options?.serializeOutput
+      return options?.compactOutput
         ? (compactToolOutput(result) as ToolOutput)
         : result;
     } catch (error) {
@@ -286,7 +286,7 @@ export class ToolRegistryService {
       excludeTools,
       wrapWithErrorContext,
       includeLoadingMessage,
-      serializeOutput,
+      compactOutput,
     } = options;
     const categorySet = categories ? new Set(categories) : undefined;
 
@@ -321,7 +321,7 @@ export class ToolRegistryService {
     const toolSet = this.hydrateToolSet(filteredDescriptors, context, {
       wrapWithErrorContext,
       includeLoadingMessage,
-      serializeOutput,
+      compactOutput,
     });
 
     this.logger.log(

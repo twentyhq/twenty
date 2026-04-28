@@ -1,6 +1,7 @@
 import { type ToolSet } from 'ai';
 
-import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
+import { type RegisteredAiModel } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
+import { type NativeModelToolOptions } from 'src/engine/metadata-modules/ai/ai-models/types/native-model-tool-options.type';
 
 // Parallel to ToolProvider, not a variant of it. A binder produces SDK-native
 // tool objects (Anthropic webSearch, OpenAI webSearch, etc.) that the AI SDK
@@ -9,5 +10,5 @@ import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/
 // executed by ToolExecutorService. They're merged directly into the ToolSet
 // handed to streamText.
 export interface NativeToolBinder {
-  bind(context: ToolProviderContext): Promise<ToolSet>;
+  bind(model: RegisteredAiModel, options: NativeModelToolOptions): ToolSet;
 }

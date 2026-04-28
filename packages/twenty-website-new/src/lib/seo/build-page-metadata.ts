@@ -1,4 +1,7 @@
 import type { Metadata } from 'next';
+import { SOURCE_LOCALE, type AppLocale } from 'twenty-shared/translations';
+
+import { PUBLIC_APP_LOCALE_LIST } from '@/lib/i18n/app-locale-set';
 
 import { getSiteUrl } from './site-url';
 
@@ -6,6 +9,7 @@ const SITE_NAME = 'Twenty';
 const TWITTER_HANDLE = '@twentycrm';
 
 export type BuildPageMetadataInput = {
+  locale: AppLocale;
   path: string;
   title: string;
   description: string;
@@ -14,7 +18,29 @@ export type BuildPageMetadataInput = {
   extend?: Metadata;
 };
 
+const normalizePath = (path: string): string =>
+  path.startsWith('/') ? path : `/${path}`;
+
+const localizePath = (locale: AppLocale, normalizedPath: string): string => {
+  if (locale === SOURCE_LOCALE) {
+    return normalizedPath;
+  }
+  return normalizedPath === '/' ? `/${locale}` : `/${locale}${normalizedPath}`;
+};
+
+const buildLanguageAlternates = (
+  normalizedPath: string,
+): Record<string, string> => {
+  const languages: Record<string, string> = {};
+  for (const locale of PUBLIC_APP_LOCALE_LIST) {
+    languages[locale] = localizePath(locale, normalizedPath);
+  }
+  languages['x-default'] = localizePath(SOURCE_LOCALE, normalizedPath);
+  return languages;
+};
+
 export function buildPageMetadata({
+  locale,
   path,
   title,
   description,
@@ -23,7 +49,8 @@ export function buildPageMetadata({
   extend,
 }: BuildPageMetadataInput): Metadata {
   const siteUrl = getSiteUrl();
-  const canonical = path.startsWith('/') ? path : `/${path}`;
+  const normalizedPath = normalizePath(path);
+  const canonical = localizePath(locale, normalizedPath);
 
   const ogImages =
     ogImage === undefined
@@ -39,12 +66,16 @@ export function buildPageMetadata({
   const baseMetadata: Metadata = {
     title,
     description,
-    alternates: { canonical },
+    alternates: {
+      canonical,
+      languages: buildLanguageAlternates(normalizedPath),
+    },
     openGraph: {
       title,
       description,
       url: canonical,
       siteName: SITE_NAME,
+      locale,
       type,
       ...(ogImages && { images: ogImages }),
     },

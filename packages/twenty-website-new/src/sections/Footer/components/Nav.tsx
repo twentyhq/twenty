@@ -1,10 +1,10 @@
 import { FooterNavCta } from '@/sections/Footer/components/FooterNavCta';
 import { PlusIcon, RectangleFillIcon } from '@/icons';
+import { LocalizedLink } from '@/lib/i18n';
 import type { FooterNavGroupType } from '@/sections/Footer/types';
 import { theme } from '@/theme';
 import { NavigationMenu } from '@base-ui/react/navigation-menu';
 import { styled } from '@linaria/react';
-import Link from 'next/link';
 import React from 'react';
 
 const FooterNav = styled.nav`
@@ -161,7 +161,7 @@ export function Nav({ groups }: NavProps) {
                           rel="noopener noreferrer"
                         />
                       ) : (
-                        <Link href={link.href} />
+                        <LocalizedLink href={link.href} />
                       )
                     }
                   >

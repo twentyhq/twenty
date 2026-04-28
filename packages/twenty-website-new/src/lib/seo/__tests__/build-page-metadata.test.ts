@@ -11,19 +11,21 @@ afterAll(() => {
 });
 
 describe('buildPageMetadata', () => {
-  it('produces a baseline with canonical, openGraph, and twitter populated', () => {
+  it('emits an unprefixed canonical for the default locale (English at root)', () => {
     const metadata = buildPageMetadata({
+      locale: 'en',
       path: '/product',
       title: 'Product | Twenty',
       description: 'Product page description.',
     });
 
-    expect(metadata.alternates).toEqual({ canonical: '/product' });
+    expect(metadata.alternates).toMatchObject({ canonical: '/product' });
     expect(metadata.openGraph).toMatchObject({
       title: 'Product | Twenty',
       description: 'Product page description.',
       url: '/product',
       siteName: 'Twenty',
+      locale: 'en',
       type: 'website',
     });
     expect(metadata.twitter).toMatchObject({
@@ -33,8 +35,68 @@ describe('buildPageMetadata', () => {
     });
   });
 
+  it('emits a prefixed canonical for non-default locales', () => {
+    const metadata = buildPageMetadata({
+      locale: 'fr-FR',
+      path: '/product',
+      title: 't',
+      description: 'd',
+    });
+
+    expect(metadata.alternates).toMatchObject({ canonical: '/fr-FR/product' });
+  });
+
+  it('emits hreflang language alternates: English unprefixed, others prefixed, x-default unprefixed', () => {
+    const metadata = buildPageMetadata({
+      locale: 'fr-FR',
+      path: '/pricing',
+      title: 't',
+      description: 'd',
+    });
+
+    const languages = metadata.alternates?.languages as
+      | Record<string, string>
+      | undefined;
+    expect(languages?.en).toBe('/pricing');
+    expect(languages?.['fr-FR']).toBe('/fr-FR/pricing');
+    expect(languages?.['zh-CN']).toBe('/zh-CN/pricing');
+    expect(languages?.['x-default']).toBe('/pricing');
+  });
+
+  it('omits pseudo locales from hreflang language alternates', () => {
+    const metadata = buildPageMetadata({
+      locale: 'en',
+      path: '/pricing',
+      title: 't',
+      description: 'd',
+    });
+
+    const languages = metadata.alternates?.languages as
+      | Record<string, string>
+      | undefined;
+    expect(languages?.['pseudo-en']).toBeUndefined();
+  });
+
+  it('localizes the root path correctly (no trailing slash duplication)', () => {
+    const metadata = buildPageMetadata({
+      locale: 'de-DE',
+      path: '/',
+      title: 't',
+      description: 'd',
+    });
+
+    expect(metadata.alternates).toMatchObject({ canonical: '/de-DE' });
+    const languages = metadata.alternates?.languages as
+      | Record<string, string>
+      | undefined;
+    expect(languages?.['de-DE']).toBe('/de-DE');
+    expect(languages?.en).toBe('/');
+    expect(languages?.['x-default']).toBe('/');
+  });
+
   it('absolutises a root-relative ogImage against the configured site URL', () => {
     const metadata = buildPageMetadata({
+      locale: 'en',
       path: '/x',
       title: 't',
       description: 'd',
@@ -49,6 +111,7 @@ describe('buildPageMetadata', () => {
 
   it('passes through an absolute ogImage unchanged', () => {
     const metadata = buildPageMetadata({
+      locale: 'en',
       path: '/x',
       title: 't',
       description: 'd',
@@ -62,6 +125,7 @@ describe('buildPageMetadata', () => {
 
   it('deep-merges openGraph: extending title preserves description, url, and images', () => {
     const metadata = buildPageMetadata({
+      locale: 'en',
       path: '/x',
       title: 'Default title',
       description: 'Default description',
@@ -82,6 +146,7 @@ describe('buildPageMetadata', () => {
 
   it('deep-merges twitter: extending card preserves handle, title, images', () => {
     const metadata = buildPageMetadata({
+      locale: 'en',
       path: '/x',
       title: 't',
       description: 'd',
@@ -100,24 +165,29 @@ describe('buildPageMetadata', () => {
     });
   });
 
-  it('deep-merges alternates so canonical survives a languages override', () => {
+  it('deep-merges alternates so canonical and languages survive an override of one field', () => {
     const metadata = buildPageMetadata({
+      locale: 'en',
       path: '/x',
       title: 't',
       description: 'd',
       extend: {
-        alternates: { languages: { fr: '/fr/x' } },
+        alternates: { canonical: '/custom-canonical' },
       },
     });
 
-    expect(metadata.alternates).toEqual({
-      canonical: '/x',
-      languages: { fr: '/fr/x' },
+    expect(metadata.alternates).toMatchObject({
+      canonical: '/custom-canonical',
     });
+    const languages = metadata.alternates?.languages as
+      | Record<string, string>
+      | undefined;
+    expect(languages?.en).toBe('/x');
   });
 
   it('shallow-merges unrelated top-level keys (e.g. robots)', () => {
     const metadata = buildPageMetadata({
+      locale: 'en',
       path: '/x',
       title: 't',
       description: 'd',
@@ -127,6 +197,6 @@ describe('buildPageMetadata', () => {
     });
 
     expect(metadata.robots).toEqual({ index: false, follow: false });
-    expect(metadata.alternates).toEqual({ canonical: '/x' });
+    expect(metadata.alternates).toMatchObject({ canonical: '/x' });
   });
 });
