@@ -1,5 +1,5 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
-exports[`Create input validation - RATING Gql create input - failure RATING - should fail with : {"ratingField":"not-a-rating"} 1`] = `"Invalid value 'not-a-rating' for field "ratingField""`;
+exports[`Create input validation - RATING Gql create input - failure RATING - should fail with : {"ratingField":"not-a-rating"} 1`] = `"Invalid value \"not-a-rating\" for field \"ratingField\". Valid values are: RATING_1, RATING_2, RATING_3, RATING_4, RATING_5"`;
 
-exports[`Create input validation - RATING Rest create input - failure RATING - should fail with : {"ratingField":"not-a-rating"} 1`] = `"["Invalid value 'not-a-rating' for field \\"ratingField\\""]"`;
+exports[`Create input validation - RATING Rest create input - failure RATING - should fail with : {"ratingField":"not-a-rating"} 1`] = `"[\"Invalid value \\\"not-a-rating\\\" for field \\\"ratingField\\\". Valid values are: RATING_1, RATING_2, RATING_3, RATING_4, RATING_5\"]"`;

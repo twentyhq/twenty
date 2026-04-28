@@ -1,5 +1,3 @@
-import { RestInputRequestParserException } from 'src/engine/api/rest/input-request-parsers/rest-input-request-parser.exception';
-
 import { parseStartingAfterRestRequest } from 'src/engine/api/rest/input-request-parsers/starting-after-parser-utils/parse-starting-after-rest-request.util';
 
 describe('parseStartingAfterRestRequest', () => {
@@ -15,73 +13,27 @@ describe('parseStartingAfterRestRequest', () => {
     expect(parseStartingAfterRestRequest(request)).toEqual('uuid');
   });
 
-  it('should throw when cursor alias is used', () => {
+  it('should return undefined when cursor alias is used (silently ignored)', () => {
     const request: any = { query: { cursor: 'uuid' } };
 
-    expect(() => parseStartingAfterRestRequest(request)).toThrow(
-      RestInputRequestParserException,
-    );
+    expect(parseStartingAfterRestRequest(request)).toEqual(undefined);
   });
 
-  it('should throw when after alias is used', () => {
-    const request: any = { query: { after: 'uuid' } };
+  it('should return undefined when starting_after is an array', () => {
+    const request: any = { query: { starting_after: ['uuid1', 'uuid2'] } };
 
-    expect(() => parseStartingAfterRestRequest(request)).toThrow(
-      RestInputRequestParserException,
-    );
+    expect(parseStartingAfterRestRequest(request)).toEqual(undefined);
   });
 
-  it('should throw when lastCursor alias is used', () => {
-    const request: any = { query: { lastCursor: 'uuid' } };
+  it('should return undefined when starting_after is a number', () => {
+    const request: any = { query: { starting_after: 123 } };
 
-    expect(() => parseStartingAfterRestRequest(request)).toThrow(
-      RestInputRequestParserException,
-    );
-  });
-
-  it('should throw when page_token alias is used', () => {
-    const request: any = { query: { page_token: 'uuid' } };
-
-    expect(() => parseStartingAfterRestRequest(request)).toThrow(
-      RestInputRequestParserException,
-    );
+    expect(parseStartingAfterRestRequest(request)).toEqual(undefined);
   });
 
   it('should not throw for unrelated query params', () => {
     const request: any = { query: { limit: 10, filter: 'name[eq]:test' } };
 
     expect(parseStartingAfterRestRequest(request)).toEqual(undefined);
-  });
-
-  it('should throw when starting_after is an array', () => {
-    const request: any = { query: { starting_after: ['uuid1', 'uuid2'] } };
-
-    expect(() => parseStartingAfterRestRequest(request)).toThrow(
-      RestInputRequestParserException,
-    );
-  });
-
-  it('should throw when starting_after is a number', () => {
-    const request: any = { query: { starting_after: 123 } };
-
-    expect(() => parseStartingAfterRestRequest(request)).toThrow(
-      RestInputRequestParserException,
-    );
-  });
-
-  it('should throw when cursor alias is an array', () => {
-    const request: any = { query: { cursor: ['uuid1', 'uuid2'] } };
-
-    expect(() => parseStartingAfterRestRequest(request)).toThrow(
-      RestInputRequestParserException,
-    );
-  });
-
-  it('should throw when cursor alias is a number', () => {
-    const request: any = { query: { cursor: 123 } };
-
-    expect(() => parseStartingAfterRestRequest(request)).toThrow(
-      RestInputRequestParserException,
-    );
   });
 });

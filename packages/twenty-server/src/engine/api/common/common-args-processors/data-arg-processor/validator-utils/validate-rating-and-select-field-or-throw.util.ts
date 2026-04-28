@@ -29,7 +29,7 @@ export const validateRatingAndSelectFieldOrThrow = (
       `Invalid value "${preValidatedValue}" for field "${fieldName}". Valid values are: ${options.join(', ')}`,
       CommonQueryRunnerExceptionCode.INVALID_ARGS_DATA,
       {
-        userFriendlyMessage: msg`Invalid value "${preValidatedValue}" for field "${fieldName}". Valid values are: ${options.join(', ')}`,
+        userFriendlyMessage: msg`Invalid value for field "${fieldName}"`,
       },
     );
   }
