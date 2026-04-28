@@ -73,6 +73,10 @@ export class InstanceCommandRunnerService {
       });
 
       await queryRunner.commitTransaction();
+
+      this.logger.log(`${name} executed successfully`);
+
+      return { status: 'success' };
     } catch (error) {
       if (queryRunner.isTransactionActive) {
         await queryRunner.rollbackTransaction();
@@ -95,18 +99,11 @@ export class InstanceCommandRunnerService {
         error instanceof Error ? error.stack : String(error),
       );
 
-      await this.safeInvalidateUpgradeStatusCache();
-
       return { status: 'failed', error };
     } finally {
       await queryRunner.release();
+      await this.safeInvalidateUpgradeStatusCache();
     }
-
-    await this.safeInvalidateUpgradeStatusCache();
-
-    this.logger.log(`${name} executed successfully`);
-
-    return { status: 'success' };
   }
 
   private async safeInvalidateUpgradeStatusCache(): Promise<void> {
