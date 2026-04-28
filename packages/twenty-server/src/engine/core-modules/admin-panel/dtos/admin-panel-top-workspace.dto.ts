@@ -7,6 +7,9 @@ export class AdminPanelTopWorkspaceDTO {
   @Field(() => UUIDScalarType)
   id: string;
 
+  @Field(() => String, { nullable: true })
+  logoUrl?: string | null;
+
   @Field(() => String)
   name: string;
 
@@ -15,7 +18,4 @@ export class AdminPanelTopWorkspaceDTO {
 
   @Field(() => String)
   subdomain: string;
-
-  @Field(() => String, { nullable: true })
-  logo: string | null;
 }

@@ -11,8 +11,7 @@ import { theme } from '@/theme';
 import { Drawer } from '@base-ui/react/drawer';
 import { Separator } from '@base-ui/react/separator';
 import { styled } from '@linaria/react';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { LocalizedLink, useUnlocalizedPathname } from '@/lib/i18n';
 import React, { useState } from 'react';
 
 const StyledDrawerContent = styled.div`
@@ -93,7 +92,7 @@ const navItemStyles = `
   }
 `;
 
-const NavItem = styled(Link)`
+const NavItem = styled(LocalizedLink)`
   ${navItemStyles}
 `;
 
@@ -169,7 +168,7 @@ const NavChildItemStyles = `
   }
 `;
 
-const NavChildItem = styled(Link)`
+const NavChildItem = styled(LocalizedLink)`
   ${NavChildItemStyles}
 `;
 
@@ -284,14 +283,14 @@ const Divider = styled(Separator)`
 
 type NavGroupProps = {
   item: MenuNavItemType;
-  pathname: string | null;
+  pathname: string;
   scheme: MenuScheme;
 };
 
 function NavGroup({ item, pathname, scheme }: NavGroupProps) {
   const hasActiveChild =
     item.children?.some(
-      (child) => !child.external && pathname?.startsWith(child.href),
+      (child) => !child.external && pathname.startsWith(child.href),
     ) ?? false;
   const [isOpen, setIsOpen] = useState(hasActiveChild);
 
@@ -345,9 +344,7 @@ function NavGroup({ item, pathname, scheme }: NavGroupProps) {
                   ) : (
                     <NavChildItem
                       data-scheme={scheme}
-                      data-active={
-                        pathname?.startsWith(child.href) || undefined
-                      }
+                      data-active={pathname.startsWith(child.href) || undefined}
                       href={child.href}
                     />
                   )
@@ -375,7 +372,7 @@ type MenuDrawerProps = {
 };
 
 export function MenuDrawer({ navItems, scheme, socialLinks }: MenuDrawerProps) {
-  const pathname = usePathname();
+  const pathname = useUnlocalizedPathname();
   const buttonColor = scheme === 'primary' ? 'secondary' : 'primary';
 
   const iconFillColor =
@@ -406,7 +403,7 @@ export function MenuDrawer({ navItems, scheme, socialLinks }: MenuDrawerProps) {
                       <NavItem
                         data-scheme={scheme}
                         data-active={
-                          pathname?.startsWith(item.href) || undefined
+                          pathname.startsWith(item.href) || undefined
                         }
                         href={item.href}
                       />

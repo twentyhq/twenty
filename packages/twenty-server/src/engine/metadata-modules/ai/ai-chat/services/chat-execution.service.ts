@@ -138,7 +138,7 @@ export class ChatExecutionService {
     const preloadedTools = await this.toolRegistry.getToolsByName(
       AI_CHAT_TOOL_NAMES_TO_PRELOAD,
       toolContext,
-      { serializeOutput: true },
+      { compactOutput: true },
     );
 
     const resolvedModelId = modelId ?? workspace.smartModel;
@@ -157,10 +157,9 @@ export class ChatExecutionService {
       registeredModel.modelId,
     );
 
-    const nativeModelTools = this.nativeToolBinder.bindForModel(
-      registeredModel,
-      { webSearchEnabled: true },
-    );
+    const nativeModelTools = this.nativeToolBinder.bind(registeredModel, {
+      webSearchEnabled: true,
+    });
 
     // Tools the model can call directly: preloaded registry tools (already
     // serialized by the hydrator) plus SDK-native tools (opaque, never
@@ -186,7 +185,7 @@ export class ChatExecutionService {
       [EXECUTE_TOOL_TOOL_NAME]: createExecuteToolTool(
         this.toolRegistry,
         toolContext,
-        { serializeOutput: true },
+        { compactOutput: true },
       ),
       [LOAD_SKILL_TOOL_NAME]: createLoadSkillTool(
         (skillNames) =>
@@ -349,6 +348,13 @@ export class ChatExecutionService {
           inputSchema,
           error,
           model: registeredModel.model,
+          billingContext: {
+            aiBillingService: this.aiBillingService,
+            modelId: registeredModel.modelId,
+            workspaceId: workspace.id,
+            userWorkspaceId,
+            operationType: UsageOperationType.AI_CHAT_TOKEN,
+          },
         });
       },
     });

@@ -36,6 +36,19 @@ const nextConfig: LinariaConfig = {
     configFile: path.resolve(__dirname, 'wyw-in-js.config.cjs'),
   },
   reactCompiler: true,
+  experimental: {
+    swcPlugins: [
+      [
+        '@lingui/swc-plugin',
+        {
+          runtimeModules: {
+            i18n: ['@lingui/core', 'i18n'],
+            trans: ['@lingui/react', 'Trans'],
+          },
+        },
+      ],
+    ],
+  },
   async headers() {
     return [
       {

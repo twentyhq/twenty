@@ -68,6 +68,19 @@ export class UpgradeSequenceRunnerService {
       const step = sequence[cursor];
 
       if (step.kind === 'fast-instance' || step.kind === 'slow-instance') {
+        if (
+          isDefined(options.workspaceIds) &&
+          options.workspaceIds.length > 0
+        ) {
+          this.logger.log(
+            `Stopping before instance step "${step.name}": ` +
+              'upgrade was run with workspace filter (-w). ' +
+              'Instance commands require all workspaces to be aligned.',
+          );
+
+          break;
+        }
+
         const previousStep = cursor > 0 ? sequence[cursor - 1] : undefined;
 
         if (previousStep?.kind === 'workspace') {

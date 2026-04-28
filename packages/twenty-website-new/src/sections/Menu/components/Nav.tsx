@@ -10,9 +10,8 @@ import { theme } from '@/theme';
 import { NavigationMenu } from '@base-ui/react/navigation-menu';
 import { Separator } from '@base-ui/react/separator';
 import { styled } from '@linaria/react';
+import { LocalizedLink, useUnlocalizedPathname } from '@/lib/i18n';
 import Image from 'next/image';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
 import React, { useState } from 'react';
 
 const NavList = styled(NavigationMenu.List)`
@@ -412,7 +411,7 @@ const DropdownDescription = styled.span`
 
 type DropdownContentProps = {
   items: MenuNavChildItemType[];
-  pathname: string | null;
+  pathname: string;
   scheme: MenuScheme;
 };
 
@@ -451,7 +450,7 @@ function DropdownContent({ items, pathname, scheme }: DropdownContentProps) {
               <DropdownLink
                 data-scheme={scheme}
                 data-active={
-                  !child.external && pathname?.startsWith(child.href)
+                  !child.external && pathname.startsWith(child.href)
                     ? true
                     : undefined
                 }
@@ -463,7 +462,7 @@ function DropdownContent({ items, pathname, scheme }: DropdownContentProps) {
                       rel="noopener noreferrer"
                     />
                   ) : (
-                    <Link href={child.href} />
+                    <LocalizedLink href={child.href} />
                   )
                 }
               >
@@ -533,7 +532,7 @@ type NavProps = {
 };
 
 export function Nav({ navItems, scheme }: NavProps) {
-  const pathname = usePathname();
+  const pathname = useUnlocalizedPathname();
 
   const hasDropdown = navItems.some((item) => item.children);
 
@@ -553,7 +552,7 @@ export function Nav({ navItems, scheme }: NavProps) {
                       data-active={
                         item.children.some(
                           (child) =>
-                            !child.external && pathname?.startsWith(child.href),
+                            !child.external && pathname.startsWith(child.href),
                         ) || undefined
                       }
                     >
@@ -588,8 +587,8 @@ export function Nav({ navItems, scheme }: NavProps) {
                   item.href && (
                     <NavLink
                       data-scheme={scheme}
-                      data-active={pathname?.startsWith(item.href) || undefined}
-                      render={<Link href={item.href} />}
+                      data-active={pathname.startsWith(item.href) || undefined}
+                      render={<LocalizedLink href={item.href} />}
                     >
                       {item.label}
                     </NavLink>

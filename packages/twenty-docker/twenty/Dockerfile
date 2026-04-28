@@ -49,8 +49,6 @@ RUN yarn workspaces focus --production twenty-emails twenty-shared twenty-sdk tw
 
 FROM common-deps AS twenty-front-build
 
-ARG REACT_APP_SERVER_BASE_URL
-
 COPY ./packages/twenty-front /app/packages/twenty-front
 COPY ./packages/twenty-front-component-renderer /app/packages/twenty-front-component-renderer
 COPY ./packages/twenty-ui /app/packages/twenty-ui
@@ -137,9 +135,6 @@ USER 1000
 # ===========================================================================
 
 FROM twenty-server AS twenty
-
-ARG REACT_APP_SERVER_BASE_URL
-ENV REACT_APP_SERVER_BASE_URL=$REACT_APP_SERVER_BASE_URL
 
 COPY --chown=1000 --from=twenty-front-build /app/packages/twenty-front/build /app/packages/twenty-server/dist/front
 
@@ -232,7 +227,6 @@ RUN mkdir -p /data/postgres /data/redis /app/packages/twenty-server/.local-stora
  && chown -R postgres:postgres /data/postgres \
  && chown 1000:1000 /data/redis /app/packages/twenty-server/.local-storage
 
-ARG REACT_APP_SERVER_BASE_URL
 ARG APP_VERSION=0.0.0
 
 ENV S6_KEEP_ENV=1
@@ -241,7 +235,6 @@ ENV PG_DATABASE_URL=postgres://twenty:twenty@localhost:5432/default \
     REDIS_URL=redis://localhost:6379 \
     STORAGE_TYPE=local \
     APP_SECRET=twenty-app-dev-secret-not-for-production \
-    REACT_APP_SERVER_BASE_URL=$REACT_APP_SERVER_BASE_URL \
     APP_VERSION=$APP_VERSION \
     NODE_ENV=development \
     NODE_PORT=2020 \

@@ -20,6 +20,9 @@ export class UserInfoDTO {
   @Field(() => String, { nullable: true })
   lastName?: string;
 
+  @Field(() => String, { nullable: true })
+  avatarUrl?: string | null;
+
   @Field(() => Date)
   createdAt: Date;
 }
