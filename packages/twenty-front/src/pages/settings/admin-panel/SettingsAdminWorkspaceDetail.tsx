@@ -216,9 +216,9 @@ export const SettingsAdminWorkspaceDetail = () => {
         {effectiveTabId === WORKSPACE_DETAIL_TAB_IDS.INFO && workspace && (
           <SettingsAdminWorkspaceContent
             activeWorkspace={workspace}
-            workspaceUpgradeStatus={
-              workspaceUpgradeStatusData?.getUpgradeStatus?.[0]
-            }
+            workspaceUpgradeStatus={workspaceUpgradeStatusData?.getUpgradeStatus?.find(
+              (status) => status?.workspaceId === workspaceId,
+            )}
           />
         )}
 

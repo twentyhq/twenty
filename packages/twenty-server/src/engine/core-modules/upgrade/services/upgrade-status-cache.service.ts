@@ -97,16 +97,16 @@ export class UpgradeStatusCacheService {
     const missingIndexes: number[] = [];
     const missingIds: string[] = [];
 
-    for (let i = 0; i < workspaceIds.length; i++) {
-      const cached = cachedStatuses[i];
+    for (const [index, workspaceId] of workspaceIds.entries()) {
+      const cached = cachedStatuses[index];
 
       if (isDefined(cached)) {
-        result[i] = this.rehydrateWorkspaceStatus(cached);
+        result[index] = this.rehydrateWorkspaceStatus(cached);
         continue;
       }
 
-      missingIndexes.push(i);
-      missingIds.push(workspaceIds[i]);
+      missingIndexes.push(index);
+      missingIds.push(workspaceId);
     }
 
     if (missingIds.length === 0) {
@@ -116,12 +116,11 @@ export class UpgradeStatusCacheService {
     const recomputed = await Promise.all(
       missingIds.map((workspaceId) => this.recomputeWorkspace(workspaceId)),
     );
-
-    for (let i = 0; i < missingIndexes.length; i++) {
-      const status = recomputed[i];
+    for (const index of missingIndexes.keys()) {
+      const status = recomputed[index];
 
       if (isDefined(status)) {
-        result[missingIndexes[i]] = status;
+        result[missingIndexes[index]] = status;
       }
     }
 
