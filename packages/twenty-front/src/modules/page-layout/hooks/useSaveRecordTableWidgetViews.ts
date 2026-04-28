@@ -65,9 +65,8 @@ export const useSaveRecordTableWidgetViews = () => {
             input: {
               widgetId: widget.id,
               viewFields: widgetViewDraft.viewFields.map((field) => ({
-                ...(isDefined(field.id)
-                  ? { viewFieldId: field.id }
-                  : { fieldMetadataId: field.fieldMetadataId }),
+                ...(isDefined(field.id) ? { viewFieldId: field.id } : {}),
+                fieldMetadataId: field.fieldMetadataId,
                 isVisible: field.isVisible,
                 position: field.position,
                 size: field.size,
