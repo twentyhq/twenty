@@ -1,0 +1,949 @@
+import {
+  VIEW_FIELD_GQL_FIELDS,
+  VIEW_FILTER_GQL_FIELDS,
+  VIEW_FILTER_GROUP_GQL_FIELDS,
+  VIEW_GQL_FIELDS,
+  VIEW_SORT_GQL_FIELDS,
+} from 'test/integration/constants/view-gql-fields.constants';
+import { findViewFields } from 'test/integration/metadata/suites/view-field/utils/find-view-fields.util';
+import { findViewFilters } from 'test/integration/metadata/suites/view-filter/utils/find-view-filters.util';
+import { findViewSorts } from 'test/integration/metadata/suites/view-sort/utils/find-view-sorts.util';
+import { upsertViewWidget } from 'test/integration/metadata/suites/view/utils/upsert-view-widget.util';
+import {
+  ViewFilterGroupLogicalOperator,
+  ViewFilterOperand,
+  ViewSortDirection,
+} from 'twenty-shared/types';
+import { v4 as uuidv4 } from 'uuid';
+
+type ViewWidgetTestSetup = {
+  widgetId: string;
+  viewId: string;
+  viewFields: Array<{
+    id: string;
+    fieldMetadataId: string;
+    position: number;
+    isVisible: boolean;
+  }>;
+  fieldMetadataIds: string[];
+};
+
+const VIEW_WITH_ALL_RELATIONS_GQL_FIELDS = `
+  ${VIEW_GQL_FIELDS}
+  viewFields {
+    ${VIEW_FIELD_GQL_FIELDS}
+  }
+  viewFilters {
+    ${VIEW_FILTER_GQL_FIELDS}
+  }
+  viewFilterGroups {
+    ${VIEW_FILTER_GROUP_GQL_FIELDS}
+  }
+  viewSorts {
+    ${VIEW_SORT_GQL_FIELDS}
+  }
+`;
+
+const fetchViewWidgetTestSetup = async (): Promise<ViewWidgetTestSetup> => {
+  // TODO refactor should not use global source for that
+  const widgets = await global.testDataSource.query(
+    `SELECT id, configuration->>'viewId' AS "viewId"
+     FROM core."pageLayoutWidget"
+     WHERE type = 'RECORD_TABLE'
+       AND "deletedAt" IS NULL
+     LIMIT 1`,
+  );
+
+  expect(widgets.length).toBeGreaterThan(0);
+
+  const { id: widgetId, viewId } = widgets[0];
+
+  expect(widgetId).toBeDefined();
+  expect(viewId).toBeDefined();
+
+  const { data } = await findViewFields({
+    viewId,
+    gqlFields: 'id fieldMetadataId position isVisible',
+    expectToFail: false,
+  });
+
+  const viewFields = data.getViewFields;
+
+  // TODO refactor should not use global source for that
+  const views = await global.testDataSource.query(
+    `SELECT v."objectMetadataId"
+     FROM core."view" v
+     WHERE v.id = $1`,
+    [viewId],
+  );
+
+  const objectMetadataId = views[0]?.objectMetadataId;
+
+  const fieldMetadataRows = await global.testDataSource.query(
+    `SELECT id FROM core."fieldMetadata"
+     WHERE "objectMetadataId" = $1
+       AND "isActive" = true
+       AND "deletedAt" IS NULL
+     LIMIT 5`,
+    [objectMetadataId],
+  );
+
+  const fieldMetadataIds = fieldMetadataRows.map(
+    (row: { id: string }) => row.id,
+  );
+
+  return { widgetId, viewId, viewFields, fieldMetadataIds };
+};
+
+describe('upsertViewWidget', () => {
+  let testSetup: ViewWidgetTestSetup;
+
+  beforeAll(async () => {
+    testSetup = await fetchViewWidgetTestSetup();
+  });
+
+  describe('view fields', () => {
+    it('should create a new view field via fieldMetadataId', async () => {
+      const existingFieldMetadataIds = new Set(
+        testSetup.viewFields.map((f) => f.fieldMetadataId),
+      );
+      const newFieldMetadataId = testSetup.fieldMetadataIds.find(
+        (id) => !existingFieldMetadataIds.has(id),
+      );
+
+      expect(newFieldMetadataId).toBeDefined();
+
+      const { data, errors } = await upsertViewWidget({
+        expectToFail: false,
+        input: {
+          widgetId: testSetup.widgetId,
+          viewFields: [
+            ...testSetup.viewFields.map((f) => ({
+              viewFieldId: f.id,
+              fieldMetadataId: f.fieldMetadataId,
+              isVisible: f.isVisible,
+              position: f.position,
+            })),
+            {
+              fieldMetadataId: newFieldMetadataId!,
+              isVisible: true,
+              position: 99,
+            },
+          ],
+        },
+        gqlFields: VIEW_WITH_ALL_RELATIONS_GQL_FIELDS,
+      });
+
+      expect(errors).toBeUndefined();
+      expect(data.upsertViewWidget).toBeDefined();
+
+      const { data: fieldsData } = await findViewFields({
+        viewId: testSetup.viewId,
+        gqlFields: 'id fieldMetadataId position isVisible',
+        expectToFail: false,
+      });
+
+      const createdField = fieldsData.getViewFields.find(
+        (f: { fieldMetadataId: string }) =>
+          f.fieldMetadataId === newFieldMetadataId!,
+      );
+
+      expect(createdField).toBeDefined();
+      expect(createdField!.isVisible).toBe(true);
+      expect(createdField!.position).toBe(99);
+    });
+
+    it('should update an existing view field position and visibility', async () => {
+      const targetField = testSetup.viewFields[0];
+
+      await upsertViewWidget({
+        expectToFail: false,
+        input: {
+          widgetId: testSetup.widgetId,
+          viewFields: [
+            {
+              viewFieldId: targetField.id,
+              fieldMetadataId: targetField.fieldMetadataId,
+              isVisible: false,
+              position: 42,
+            },
+          ],
+        },
+      });
+
+      const { data: fieldsData } = await findViewFields({
+        viewId: testSetup.viewId,
+        gqlFields: 'id isVisible position',
+        expectToFail: false,
+      });
+
+      const updatedField = fieldsData.getViewFields.find(
+        (f: { id: string }) => f.id === targetField.id,
+      );
+
+      expect(updatedField).toBeDefined();
+      expect(updatedField!.isVisible).toBe(false);
+      expect(updatedField!.position).toBe(42);
+    });
+
+    it('should not modify fields when viewFields is omitted', async () => {
+      const { data: fieldsBefore } = await findViewFields({
+        viewId: testSetup.viewId,
+        gqlFields: 'id position isVisible',
+        expectToFail: false,
+      });
+
+      await upsertViewWidget({
+        expectToFail: false,
+        input: {
+          widgetId: testSetup.widgetId,
+          viewSorts: [],
+        },
+      });
+
+      const { data: fieldsAfter } = await findViewFields({
+        viewId: testSetup.viewId,
+        gqlFields: 'id position isVisible',
+        expectToFail: false,
+      });
+
+      expect(fieldsAfter.getViewFields.length).toBe(
+        fieldsBefore.getViewFields.length,
+      );
+    });
+  });
+
+  describe('view filter groups', () => {
+    it('should create a new filter group', async () => {
+      const filterGroupId = uuidv4();
+
+      const { data, errors } = await upsertViewWidget({
+        expectToFail: false,
+        input: {
+          widgetId: testSetup.widgetId,
+          viewFilterGroups: [
+            {
+              id: filterGroupId,
+              logicalOperator: ViewFilterGroupLogicalOperator.AND,
+            },
+          ],
+        },
+        gqlFields: VIEW_WITH_ALL_RELATIONS_GQL_FIELDS,
+      });
+
+      expect(errors).toBeUndefined();
+      expect(data.upsertViewWidget).toBeDefined();
+
+      const filterGroups = await global.testDataSource.query(
+        `SELECT id, "logicalOperator"
+         FROM core."viewFilterGroup"
+         WHERE id = $1 AND "deletedAt" IS NULL`,
+        [filterGroupId],
+      );
+
+      expect(filterGroups.length).toBe(1);
+      expect(filterGroups[0].logicalOperator).toBe(
+        ViewFilterGroupLogicalOperator.AND,
+      );
+    });
+
+    it('should update an existing filter group logical operator', async () => {
+      const filterGroupId = uuidv4();
+
+      await upsertViewWidget({
+        expectToFail: false,
+        input: {
+          widgetId: testSetup.widgetId,
+          viewFilterGroups: [
+            {
+              id: filterGroupId,
+              logicalOperator: ViewFilterGroupLogicalOperator.AND,
+            },
+          ],
+        },
+      });
+
+      await upsertViewWidget({
+        expectToFail: false,
+        input: {
+          widgetId: testSetup.widgetId,
+          viewFilterGroups: [
+            {
+              id: filterGroupId,
+              logicalOperator: ViewFilterGroupLogicalOperator.OR,
+            },
+          ],
+        },
+      });
+
+      const filterGroups = await global.testDataSource.query(
+        `SELECT id, "logicalOperator"
+         FROM core."viewFilterGroup"
+         WHERE id = $1 AND "deletedAt" IS NULL`,
+        [filterGroupId],
+      );
+
+      expect(filterGroups.length).toBe(1);
+      expect(filterGroups[0].logicalOperator).toBe(
+        ViewFilterGroupLogicalOperator.OR,
+      );
+    });
+
+    it('should remove filter groups not included in the input', async () => {
+      const groupToKeepId = uuidv4();
+      const groupToRemoveId = uuidv4();
+
+      await upsertViewWidget({
+        expectToFail: false,
+        input: {
+          widgetId: testSetup.widgetId,
+          viewFilterGroups: [
+            {
+              id: groupToKeepId,
+              logicalOperator: ViewFilterGroupLogicalOperator.AND,
+            },
+            {
+              id: groupToRemoveId,
+              logicalOperator: ViewFilterGroupLogicalOperator.OR,
+            },
+          ],
+        },
+      });
+
+      await upsertViewWidget({
+        expectToFail: false,
+        input: {
+          widgetId: testSetup.widgetId,
+          viewFilterGroups: [
+            {
+              id: groupToKeepId,
+              logicalOperator: ViewFilterGroupLogicalOperator.AND,
+            },
+          ],
+        },
+      });
+
+      const removedGroup = await global.testDataSource.query(
+        `SELECT id FROM core."viewFilterGroup"
+         WHERE id = $1 AND "deletedAt" IS NULL`,
+        [groupToRemoveId],
+      );
+
+      expect(removedGroup.length).toBe(0);
+
+      const keptGroup = await global.testDataSource.query(
+        `SELECT id FROM core."viewFilterGroup"
+         WHERE id = $1 AND "deletedAt" IS NULL`,
+        [groupToKeepId],
+      );
+
+      expect(keptGroup.length).toBe(1);
+    });
+
+    it('should create a nested filter group with parent reference', async () => {
+      const parentGroupId = uuidv4();
+      const childGroupId = uuidv4();
+
+      const { errors } = await upsertViewWidget({
+        expectToFail: false,
+        input: {
+          widgetId: testSetup.widgetId,
+          viewFilterGroups: [
+            {
+              id: parentGroupId,
+              logicalOperator: ViewFilterGroupLogicalOperator.AND,
+            },
+            {
+              id: childGroupId,
+              logicalOperator: ViewFilterGroupLogicalOperator.OR,
+              parentViewFilterGroupId: parentGroupId,
+            },
+          ],
+        },
+      });
+
+      expect(errors).toBeUndefined();
+
+      const childGroup = await global.testDataSource.query(
+        `SELECT id, "parentViewFilterGroupId"
+         FROM core."viewFilterGroup"
+         WHERE id = $1 AND "deletedAt" IS NULL`,
+        [childGroupId],
+      );
+
+      expect(childGroup.length).toBe(1);
+      expect(childGroup[0].parentViewFilterGroupId).toBe(parentGroupId);
+    });
+  });
+
+  describe('view filters', () => {
+    it('should create a new filter', async () => {
+      const fieldMetadataId = testSetup.fieldMetadataIds[0];
+
+      const { data, errors } = await upsertViewWidget({
+        expectToFail: false,
+        input: {
+          widgetId: testSetup.widgetId,
+          viewFilters: [
+            {
+              fieldMetadataId,
+              operand: ViewFilterOperand.CONTAINS,
+              value: 'test-value',
+            },
+          ],
+        },
+        gqlFields: VIEW_WITH_ALL_RELATIONS_GQL_FIELDS,
+      });
+
+      expect(errors).toBeUndefined();
+      expect(data.upsertViewWidget).toBeDefined();
+
+      const { data: filtersData } = await findViewFilters({
+        viewId: testSetup.viewId,
+        gqlFields: 'id fieldMetadataId operand value',
+        expectToFail: false,
+      });
+
+      const createdFilter = filtersData.getViewFilters.find(
+        (f: { fieldMetadataId: string; value: unknown }) =>
+          f.fieldMetadataId === fieldMetadataId && f.value === 'test-value',
+      );
+
+      expect(createdFilter).toBeDefined();
+      expect(createdFilter!.operand).toBe(ViewFilterOperand.CONTAINS);
+    });
+
+    it('should update an existing filter value and operand', async () => {
+      const filterId = uuidv4();
+      const fieldMetadataId = testSetup.fieldMetadataIds[0];
+
+      await upsertViewWidget({
+        expectToFail: false,
+        input: {
+          widgetId: testSetup.widgetId,
+          viewFilters: [
+            {
+              id: filterId,
+              fieldMetadataId,
+              operand: ViewFilterOperand.CONTAINS,
+              value: 'initial',
+            },
+          ],
+        },
+      });
+
+      await upsertViewWidget({
+        expectToFail: false,
+        input: {
+          widgetId: testSetup.widgetId,
+          viewFilters: [
+            {
+              id: filterId,
+              fieldMetadataId,
+              operand: ViewFilterOperand.IS,
+              value: 'updated',
+            },
+          ],
+        },
+      });
+
+      const { data: filtersData } = await findViewFilters({
+        viewId: testSetup.viewId,
+        gqlFields: 'id operand value',
+        expectToFail: false,
+      });
+
+      const updatedFilter = filtersData.getViewFilters.find(
+        (f: { id: string }) => f.id === filterId,
+      );
+
+      expect(updatedFilter).toBeDefined();
+      expect(updatedFilter!.operand).toBe(ViewFilterOperand.IS);
+      expect(updatedFilter!.value).toBe('updated');
+    });
+
+    it('should remove filters not included in the input', async () => {
+      const filterToKeepId = uuidv4();
+      const filterToRemoveId = uuidv4();
+      const fieldMetadataId = testSetup.fieldMetadataIds[0];
+
+      await upsertViewWidget({
+        expectToFail: false,
+        input: {
+          widgetId: testSetup.widgetId,
+          viewFilters: [
+            {
+              id: filterToKeepId,
+              fieldMetadataId,
+              operand: ViewFilterOperand.CONTAINS,
+              value: 'keep',
+            },
+            {
+              id: filterToRemoveId,
+              fieldMetadataId,
+              operand: ViewFilterOperand.CONTAINS,
+              value: 'remove',
+            },
+          ],
+        },
+      });
+
+      await upsertViewWidget({
+        expectToFail: false,
+        input: {
+          widgetId: testSetup.widgetId,
+          viewFilters: [
+            {
+              id: filterToKeepId,
+              fieldMetadataId,
+              operand: ViewFilterOperand.CONTAINS,
+              value: 'keep',
+            },
+          ],
+        },
+      });
+
+      const { data: filtersData } = await findViewFilters({
+        viewId: testSetup.viewId,
+        gqlFields: 'id',
+        expectToFail: false,
+      });
+
+      const keptFilter = filtersData.getViewFilters.find(
+        (f: { id: string }) => f.id === filterToKeepId,
+      );
+
+      expect(keptFilter).toBeDefined();
+
+      const removedFilter = filtersData.getViewFilters.find(
+        (f: { id: string }) => f.id === filterToRemoveId,
+      );
+
+      expect(removedFilter).toBeUndefined();
+    });
+
+    it('should create a filter within a filter group', async () => {
+      const filterGroupId = uuidv4();
+      const filterId = uuidv4();
+      const fieldMetadataId = testSetup.fieldMetadataIds[0];
+
+      await upsertViewWidget({
+        expectToFail: false,
+        input: {
+          widgetId: testSetup.widgetId,
+          viewFilterGroups: [
+            {
+              id: filterGroupId,
+              logicalOperator: ViewFilterGroupLogicalOperator.AND,
+            },
+          ],
+          viewFilters: [
+            {
+              id: filterId,
+              fieldMetadataId,
+              operand: ViewFilterOperand.CONTAINS,
+              value: 'grouped-filter',
+              viewFilterGroupId: filterGroupId,
+            },
+          ],
+        },
+      });
+
+      const filters = await global.testDataSource.query(
+        `SELECT id, "viewFilterGroupId"
+         FROM core."viewFilter"
+         WHERE id = $1 AND "deletedAt" IS NULL`,
+        [filterId],
+      );
+
+      expect(filters.length).toBe(1);
+      expect(filters[0].viewFilterGroupId).toBe(filterGroupId);
+    });
+  });
+
+  describe('view sorts', () => {
+    it('should create a new sort', async () => {
+      const fieldMetadataId = testSetup.fieldMetadataIds[0];
+
+      await upsertViewWidget({
+        expectToFail: false,
+        input: {
+          widgetId: testSetup.widgetId,
+          viewSorts: [
+            {
+              fieldMetadataId,
+              direction: ViewSortDirection.DESC,
+            },
+          ],
+        },
+      });
+
+      const { data: sortsData } = await findViewSorts({
+        viewId: testSetup.viewId,
+        gqlFields: 'id fieldMetadataId direction',
+        expectToFail: false,
+      });
+
+      const createdSort = sortsData.getViewSorts.find(
+        (s: { fieldMetadataId: string }) =>
+          s.fieldMetadataId === fieldMetadataId,
+      );
+
+      expect(createdSort).toBeDefined();
+      expect(createdSort!.direction).toBe(ViewSortDirection.DESC);
+    });
+
+    it('should update an existing sort direction', async () => {
+      const sortId = uuidv4();
+      const fieldMetadataId = testSetup.fieldMetadataIds[0];
+
+      await upsertViewWidget({
+        expectToFail: false,
+        input: {
+          widgetId: testSetup.widgetId,
+          viewSorts: [
+            {
+              id: sortId,
+              fieldMetadataId,
+              direction: ViewSortDirection.ASC,
+            },
+          ],
+        },
+      });
+
+      await upsertViewWidget({
+        expectToFail: false,
+        input: {
+          widgetId: testSetup.widgetId,
+          viewSorts: [
+            {
+              id: sortId,
+              fieldMetadataId,
+              direction: ViewSortDirection.DESC,
+            },
+          ],
+        },
+      });
+
+      const { data: sortsData } = await findViewSorts({
+        viewId: testSetup.viewId,
+        gqlFields: 'id direction',
+        expectToFail: false,
+      });
+
+      const updatedSort = sortsData.getViewSorts.find(
+        (s: { id: string }) => s.id === sortId,
+      );
+
+      expect(updatedSort).toBeDefined();
+      expect(updatedSort!.direction).toBe(ViewSortDirection.DESC);
+    });
+
+    it('should remove sorts not included in the input', async () => {
+      const sortToKeepId = uuidv4();
+      const sortToRemoveId = uuidv4();
+      const fieldMetadataId = testSetup.fieldMetadataIds[0];
+      const secondFieldMetadataId =
+        testSetup.fieldMetadataIds[1] ?? fieldMetadataId;
+
+      await upsertViewWidget({
+        expectToFail: false,
+        input: {
+          widgetId: testSetup.widgetId,
+          viewSorts: [
+            {
+              id: sortToKeepId,
+              fieldMetadataId,
+              direction: ViewSortDirection.ASC,
+            },
+            {
+              id: sortToRemoveId,
+              fieldMetadataId: secondFieldMetadataId,
+              direction: ViewSortDirection.DESC,
+            },
+          ],
+        },
+      });
+
+      await upsertViewWidget({
+        expectToFail: false,
+        input: {
+          widgetId: testSetup.widgetId,
+          viewSorts: [
+            {
+              id: sortToKeepId,
+              fieldMetadataId,
+              direction: ViewSortDirection.ASC,
+            },
+          ],
+        },
+      });
+
+      const { data: sortsData } = await findViewSorts({
+        viewId: testSetup.viewId,
+        gqlFields: 'id',
+        expectToFail: false,
+      });
+
+      const keptSort = sortsData.getViewSorts.find(
+        (s: { id: string }) => s.id === sortToKeepId,
+      );
+
+      expect(keptSort).toBeDefined();
+
+      const removedSort = sortsData.getViewSorts.find(
+        (s: { id: string }) => s.id === sortToRemoveId,
+      );
+
+      expect(removedSort).toBeUndefined();
+    });
+  });
+
+  describe('combined operations', () => {
+    it('should upsert view fields, filters, filter groups, and sorts in a single call', async () => {
+      const filterGroupId = uuidv4();
+      const filterId = uuidv4();
+      const sortId = uuidv4();
+      const fieldMetadataId = testSetup.fieldMetadataIds[0];
+      const targetField = testSetup.viewFields[0];
+
+      const { data, errors } = await upsertViewWidget({
+        expectToFail: false,
+        input: {
+          widgetId: testSetup.widgetId,
+          viewFields: [
+            {
+              viewFieldId: targetField.id,
+              fieldMetadataId: targetField.fieldMetadataId,
+              isVisible: true,
+              position: 0,
+            },
+          ],
+          viewFilterGroups: [
+            {
+              id: filterGroupId,
+              logicalOperator: ViewFilterGroupLogicalOperator.AND,
+            },
+          ],
+          viewFilters: [
+            {
+              id: filterId,
+              fieldMetadataId,
+              operand: ViewFilterOperand.CONTAINS,
+              value: 'combined-test',
+              viewFilterGroupId: filterGroupId,
+            },
+          ],
+          viewSorts: [
+            {
+              id: sortId,
+              fieldMetadataId,
+              direction: ViewSortDirection.DESC,
+            },
+          ],
+        },
+        gqlFields: VIEW_WITH_ALL_RELATIONS_GQL_FIELDS,
+      });
+
+      expect(errors).toBeUndefined();
+      expect(data.upsertViewWidget).toBeDefined();
+      expect(data.upsertViewWidget.id).toBeDefined();
+
+      const filterGroups = await global.testDataSource.query(
+        `SELECT id FROM core."viewFilterGroup"
+         WHERE id = $1 AND "deletedAt" IS NULL`,
+        [filterGroupId],
+      );
+
+      expect(filterGroups.length).toBe(1);
+
+      const { data: filtersData } = await findViewFilters({
+        viewId: testSetup.viewId,
+        gqlFields: 'id value viewFilterGroupId',
+        expectToFail: false,
+      });
+
+      const createdFilter = filtersData.getViewFilters.find(
+        (f: { id: string }) => f.id === filterId,
+      );
+
+      expect(createdFilter).toBeDefined();
+      expect(createdFilter!.value).toBe('combined-test');
+
+      const { data: sortsData } = await findViewSorts({
+        viewId: testSetup.viewId,
+        gqlFields: 'id direction',
+        expectToFail: false,
+      });
+
+      const createdSort = sortsData.getViewSorts.find(
+        (s: { id: string }) => s.id === sortId,
+      );
+
+      expect(createdSort).toBeDefined();
+      expect(createdSort!.direction).toBe(ViewSortDirection.DESC);
+    });
+  });
+
+  describe('validation', () => {
+    it('should fail when widget id does not exist', async () => {
+      const { errors } = await upsertViewWidget({
+        expectToFail: true,
+        input: {
+          widgetId: uuidv4(),
+          viewFields: [
+            {
+              viewFieldId: testSetup.viewFields[0].id,
+              fieldMetadataId: testSetup.viewFields[0].fieldMetadataId,
+              isVisible: true,
+              position: 0,
+            },
+          ],
+        },
+      });
+
+      expect(errors).toBeDefined();
+      expect(errors.length).toBeGreaterThan(0);
+    });
+
+    it('should return the view without changes when no sub-entity arrays are provided', async () => {
+      const { data, errors } = await upsertViewWidget({
+        expectToFail: false,
+        input: {
+          widgetId: testSetup.widgetId,
+        },
+        gqlFields: VIEW_GQL_FIELDS,
+      });
+
+      expect(errors).toBeUndefined();
+      expect(data.upsertViewWidget).toBeDefined();
+      expect(data.upsertViewWidget.id).toBeDefined();
+    });
+
+    it('should remove all filters when an empty array is provided', async () => {
+      const filterId = uuidv4();
+      const fieldMetadataId = testSetup.fieldMetadataIds[0];
+
+      await upsertViewWidget({
+        expectToFail: false,
+        input: {
+          widgetId: testSetup.widgetId,
+          viewFilters: [
+            {
+              id: filterId,
+              fieldMetadataId,
+              operand: ViewFilterOperand.CONTAINS,
+              value: 'to-be-removed',
+            },
+          ],
+        },
+      });
+
+      const { data: filtersBefore } = await findViewFilters({
+        viewId: testSetup.viewId,
+        gqlFields: 'id',
+        expectToFail: false,
+      });
+
+      const filterExistsBefore = filtersBefore.getViewFilters.find(
+        (f: { id: string }) => f.id === filterId,
+      );
+
+      expect(filterExistsBefore).toBeDefined();
+
+      await upsertViewWidget({
+        expectToFail: false,
+        input: {
+          widgetId: testSetup.widgetId,
+          viewFilters: [],
+        },
+      });
+
+      const { data: filtersAfter } = await findViewFilters({
+        viewId: testSetup.viewId,
+        gqlFields: 'id',
+        expectToFail: false,
+      });
+
+      const filterExistsAfter = filtersAfter.getViewFilters.find(
+        (f: { id: string }) => f.id === filterId,
+      );
+
+      expect(filterExistsAfter).toBeUndefined();
+    });
+
+    it('should remove all sorts when an empty array is provided', async () => {
+      const sortId = uuidv4();
+      const fieldMetadataId = testSetup.fieldMetadataIds[0];
+
+      await upsertViewWidget({
+        expectToFail: false,
+        input: {
+          widgetId: testSetup.widgetId,
+          viewSorts: [
+            {
+              id: sortId,
+              fieldMetadataId,
+              direction: ViewSortDirection.ASC,
+            },
+          ],
+        },
+      });
+
+      await upsertViewWidget({
+        expectToFail: false,
+        input: {
+          widgetId: testSetup.widgetId,
+          viewSorts: [],
+        },
+      });
+
+      const { data: sortsAfter } = await findViewSorts({
+        viewId: testSetup.viewId,
+        gqlFields: 'id',
+        expectToFail: false,
+      });
+
+      const sortExists = sortsAfter.getViewSorts.find(
+        (s: { id: string }) => s.id === sortId,
+      );
+
+      expect(sortExists).toBeUndefined();
+    });
+  });
+
+  describe('return type', () => {
+    it('should return a view with the expected fields and relations', async () => {
+      const targetField = testSetup.viewFields[0];
+
+      const { data } = await upsertViewWidget({
+        expectToFail: false,
+        input: {
+          widgetId: testSetup.widgetId,
+          viewFields: [
+            {
+              viewFieldId: targetField.id,
+              fieldMetadataId: targetField.fieldMetadataId,
+              isVisible: true,
+              position: 0,
+            },
+          ],
+        },
+        gqlFields: VIEW_WITH_ALL_RELATIONS_GQL_FIELDS,
+      });
+
+      const view = data.upsertViewWidget;
+
+      expect(view.id).toBeDefined();
+      expect(view.name).toBeDefined();
+      expect(view.objectMetadataId).toBeDefined();
+      expect(view.workspaceId).toBeDefined();
+      expect(view.createdAt).toBeDefined();
+      expect(view.updatedAt).toBeDefined();
+      expect(Array.isArray(view.viewFields)).toBe(true);
+      expect(Array.isArray(view.viewFilters)).toBe(true);
+      expect(Array.isArray(view.viewFilterGroups)).toBe(true);
+      expect(Array.isArray(view.viewSorts)).toBe(true);
+    });
+  });
+});
