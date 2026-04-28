@@ -19,9 +19,15 @@ type HelpedSceneLayoutMeasurements = {
   innerHeight: number;
   innerWidth: number;
   isDesktop: boolean;
+  progressMetrics: HelpedSceneProgressMetrics | null;
   progressScale: number;
   sectionHeight: number;
   viewportHeight: number;
+};
+
+type HelpedSceneProgressMetrics = {
+  exitTargetTop: number;
+  lastCardHeight: number;
 };
 
 export type HelpedSceneLayoutState = {
@@ -78,30 +84,65 @@ export type HelpedSceneLayoutRefs = {
   sectionRef: RefObject<HTMLElement | null>;
 };
 
-function getProgressScale(
+function toStableLayoutMetric(value: number) {
+  return Math.round(value * 100) / 100;
+}
+
+function readProgressScaleMetrics(
+  refs: HelpedSceneLayoutRefs,
   cards: readonly HeadingCardType[],
-  cardRefs: RefObject<(HTMLDivElement | null)[]>,
   inner: HTMLDivElement,
-  innerHeight: number,
-) {
+): HelpedSceneProgressMetrics | null {
   const exitTargetNode = inner.querySelector('[data-helped-exit-target]');
-  const lastCardNode = cardRefs.current[cards.length - 1];
+  const lastCardNode = refs.cardRefs.current[cards.length - 1];
 
   if (!(exitTargetNode instanceof HTMLElement) || !lastCardNode) {
-    return 1;
+    return null;
   }
 
   const exitTargetTop =
     exitTargetNode.getBoundingClientRect().top -
     inner.getBoundingClientRect().top;
-  const lastCardHeight = lastCardNode.offsetHeight;
+
+  return {
+    exitTargetTop: toStableLayoutMetric(exitTargetTop),
+    lastCardHeight: lastCardNode.offsetHeight,
+  };
+}
+
+function getProgressScale(
+  cards: readonly HeadingCardType[],
+  innerHeight: number,
+  progressMetrics: HelpedSceneProgressMetrics | null,
+) {
+  if (progressMetrics === null) {
+    return 1;
+  }
+
   const lastCardStart =
     CARD_TRAVEL_START + (cards.length - 1) * CARD_TRAVEL_STEP;
   const requiredTravel = clamp01(
-    (innerHeight * 1.1 + lastCardHeight - exitTargetTop) / (innerHeight * 1.4),
+    (innerHeight * 1.1 +
+      progressMetrics.lastCardHeight -
+      progressMetrics.exitTargetTop) /
+      (innerHeight * 1.4),
   );
 
   return lastCardStart + requiredTravel * CARD_TRAVEL_RANGE;
+}
+
+function areProgressMetricsEqual(
+  left: HelpedSceneProgressMetrics | null,
+  right: HelpedSceneProgressMetrics | null,
+) {
+  if (left === null || right === null) {
+    return left === right;
+  }
+
+  return (
+    left.exitTargetTop === right.exitTargetTop &&
+    left.lastCardHeight === right.lastCardHeight
+  );
 }
 
 function getCardWidth(innerWidth: number, isDesktop: boolean) {
@@ -126,6 +167,10 @@ function shouldRecomputeMeasurements(
     measurements.innerHeight !== nextMeasurements.innerHeight ||
     measurements.innerWidth !== nextMeasurements.innerWidth ||
     measurements.isDesktop !== nextMeasurements.isDesktop ||
+    !areProgressMetricsEqual(
+      measurements.progressMetrics,
+      nextMeasurements.progressMetrics,
+    ) ||
     measurements.sectionHeight !== nextMeasurements.sectionHeight ||
     measurements.viewportHeight !== nextMeasurements.viewportHeight
   );
@@ -155,14 +200,16 @@ function measureHelpedSceneLayout(
     setStyleProperty(node, 'zIndex', String(10 + index));
   });
 
+  const progressMetrics = readProgressScaleMetrics(refs, cards, inner);
+
   return {
     ...nextMeasurements,
     cardWidth,
+    progressMetrics,
     progressScale: getProgressScale(
       cards,
-      refs.cardRefs,
-      inner,
       nextMeasurements.innerHeight,
+      progressMetrics,
     ),
   };
 }
@@ -189,6 +236,7 @@ export function applyHelpedSceneLayout(
     innerHeight: inner.clientHeight,
     innerWidth: inner.clientWidth,
     isDesktop,
+    progressMetrics: readProgressScaleMetrics(refs, cards, inner),
     sectionHeight: sectionRect.height,
     viewportHeight,
   };
