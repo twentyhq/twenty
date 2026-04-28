@@ -1,5 +1,10 @@
 import { useGetOneLogicFunction } from '@/logic-functions/hooks/useGetOneLogicFunction';
-import { type Dispatch, type SetStateAction, useEffect, useState } from 'react';
+import {
+  type Dispatch,
+  type SetStateAction,
+  useLayoutEffect,
+  useState,
+} from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import {
   type CronTriggerSettings,
@@ -58,7 +63,7 @@ export const useLogicFunctionUpdateFormState = ({
       id: logicFunctionId,
     });
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (isDefined(logicFunction)) {
       setFormValues((prevState) => ({
         ...prevState,
@@ -81,7 +86,7 @@ export const useLogicFunctionUpdateFormState = ({
     }
   }, [logicFunction]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (isDefined(sourceHandlerCode)) {
       setFormValues((prev) => ({
         ...prev,
