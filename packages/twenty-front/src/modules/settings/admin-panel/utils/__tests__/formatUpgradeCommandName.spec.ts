@@ -1,4 +1,4 @@
-import { formatUpgradeCommandName } from '../formatUpgradeCommandName';
+import { formatUpgradeCommandName } from '@/settings/admin-panel/utils/formatUpgradeCommandName';
 
 describe('formatUpgradeCommandName', () => {
   it('should format fast instance command with timestamp before version', () => {

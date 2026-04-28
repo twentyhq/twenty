@@ -18,7 +18,7 @@ import { DropWorkspaceVersionColumnFastInstanceCommand } from 'src/database/comm
 import { AddIsPreInstalledToApplicationRegistrationFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-1/2-1-instance-command-fast-1776886452831-add-is-pre-installed-to-application-registration';
 import { AddProviderExecutedToAgentMessagePartFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-1/2-1-instance-command-fast-1777012800000-add-provider-executed-to-agent-message-part';
 import { BackfillPageLayoutWidgetPositionSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-1/2-1-instance-command-slow-1795000002000-backfill-page-layout-widget-position';
-import { AddUpgradeMigrationWorkspaceIdIndexFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-2/2-2-instance-command-fast-1777308014234-addUpgradeMigrationWorkspaceIdIndex';
+import { AddUpgradeMigrationWorkspaceIdIndexFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-2/2-2-instance-command-fast-1777308014234-add-upgrade-migration-workspace-id-index';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,

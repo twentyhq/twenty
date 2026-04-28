@@ -4,12 +4,18 @@ import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decor
 import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
 
 @RegisteredInstanceCommand('2.2.0', 1777308014234)
-export class AddUpgradeMigrationWorkspaceIdIndexFastInstanceCommand implements FastInstanceCommand {
+export class AddUpgradeMigrationWorkspaceIdIndexFastInstanceCommand
+  implements FastInstanceCommand
+{
   public async up(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query('CREATE INDEX "IDX_upgradeMigration_workspaceId_name_attempt" ON "core"."upgradeMigration" ("workspaceId", "name", "attempt") WHERE "workspaceId" IS NOT NULL');
+    await queryRunner.query(
+      'CREATE INDEX "IDX_upgradeMigration_workspaceId_name_attempt" ON "core"."upgradeMigration" ("workspaceId", "name", "attempt") WHERE "workspaceId" IS NOT NULL',
+    );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query('DROP INDEX "core"."IDX_upgradeMigration_workspaceId_name_attempt"');
+    await queryRunner.query(
+      'DROP INDEX "core"."IDX_upgradeMigration_workspaceId_name_attempt"',
+    );
   }
 }

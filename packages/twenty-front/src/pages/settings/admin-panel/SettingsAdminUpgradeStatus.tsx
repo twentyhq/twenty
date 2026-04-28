@@ -39,8 +39,8 @@ import { formatDateTimeString } from '~/utils/string/formatDateTimeString';
 const StyledRefreshButtonContainer = styled.div`
   display: flex;
   justify-content: flex-end;
-  margin-top: ${themeCssVariables.spacing[3]};
   margin-bottom: ${themeCssVariables.spacing[4]};
+  margin-top: ${themeCssVariables.spacing[3]};
 `;
 
 const StyledCommandValue = styled.span`

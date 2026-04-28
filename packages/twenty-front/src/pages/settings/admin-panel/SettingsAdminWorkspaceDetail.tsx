@@ -2,7 +2,7 @@ import { useParams } from 'react-router-dom';
 
 import { useMutation, useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
-import { SettingsPath, UpgradeHealthEnum } from 'twenty-shared/types';
+import { SettingsPath, type UpgradeHealthEnum } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 
 import { currentUserState } from '@/auth/states/currentUserState';

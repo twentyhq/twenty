@@ -8,7 +8,7 @@ import { SettingsListCard } from '@/settings/components/SettingsListCard';
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
 import { useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
-import { UpgradeHealthEnum } from 'twenty-shared/types';
+import { type UpgradeHealthEnum } from 'twenty-shared/types';
 import { H2Title, IconProgressCheck } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
 import { GetSystemHealthStatusDocument } from '~/generated-admin/graphql';
