@@ -1,6 +1,8 @@
 import { Test } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
+import { UpgradeHealthEnum } from 'twenty-shared/types';
+
 import { UpgradeMigrationService } from 'src/engine/core-modules/upgrade/services/upgrade-migration.service';
 import { UpgradeSequenceReaderService } from 'src/engine/core-modules/upgrade/services/upgrade-sequence-reader.service';
 import { UpgradeStatusService } from 'src/engine/core-modules/upgrade/services/upgrade-status.service';
@@ -65,7 +67,7 @@ describe('UpgradeStatusService', () => {
 
       const result = await service.getInstanceStatus();
 
-      expect(result.health).toBe('up-to-date');
+      expect(result.health).toBe(UpgradeHealthEnum.upToDate);
       expect(result.inferredVersion).toBe('1.23.0');
     });
 
@@ -80,7 +82,7 @@ describe('UpgradeStatusService', () => {
 
       const result = await service.getInstanceStatus();
 
-      expect(result.health).toBe('behind');
+      expect(result.health).toBe(UpgradeHealthEnum.behind);
       expect(result.inferredVersion).toBe('1.22.0');
     });
 
@@ -95,7 +97,7 @@ describe('UpgradeStatusService', () => {
 
       const result = await service.getInstanceStatus();
 
-      expect(result.health).toBe('failed');
+      expect(result.health).toBe(UpgradeHealthEnum.failed);
       expect(result.latestCommand?.errorMessage).toBe('column does not exist');
     });
 
@@ -104,7 +106,7 @@ describe('UpgradeStatusService', () => {
 
       const result = await service.getInstanceStatus();
 
-      expect(result.health).toBe('behind');
+      expect(result.health).toBe(UpgradeHealthEnum.behind);
       expect(result.inferredVersion).toBeNull();
       expect(result.latestCommand).toBeNull();
     });
@@ -133,7 +135,7 @@ describe('UpgradeStatusService', () => {
       const results = await service.getWorkspaceStatuses();
 
       expect(results).toHaveLength(1);
-      expect(results[0].health).toBe('up-to-date');
+      expect(results[0].health).toBe(UpgradeHealthEnum.upToDate);
     });
 
     it('should return behind for workspace not at last command', async () => {
@@ -172,8 +174,8 @@ describe('UpgradeStatusService', () => {
       const results = await service.getWorkspaceStatuses();
 
       expect(results).toHaveLength(2);
-      expect(results[0].health).toBe('up-to-date');
-      expect(results[1].health).toBe('behind');
+      expect(results[0].health).toBe(UpgradeHealthEnum.upToDate);
+      expect(results[1].health).toBe(UpgradeHealthEnum.behind);
     });
 
     it('should return behind for workspace with no migration history', async () => {
@@ -184,7 +186,7 @@ describe('UpgradeStatusService', () => {
       const results = await service.getWorkspaceStatuses();
 
       expect(results).toHaveLength(1);
-      expect(results[0].health).toBe('behind');
+      expect(results[0].health).toBe(UpgradeHealthEnum.behind);
       expect(results[0].latestCommand).toBeNull();
     });
 

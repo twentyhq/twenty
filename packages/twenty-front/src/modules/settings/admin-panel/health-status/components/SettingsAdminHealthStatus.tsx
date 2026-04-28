@@ -8,13 +8,15 @@ import { SettingsListCard } from '@/settings/components/SettingsListCard';
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
 import { useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
-import { type UpgradeHealthEnum } from 'twenty-shared/types';
+import { SettingsPath, type UpgradeHealthEnum } from 'twenty-shared/types';
+import { getSettingsPath } from 'twenty-shared/utils';
 import { H2Title, IconProgressCheck } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
 import { GetSystemHealthStatusDocument } from '~/generated-admin/graphql';
 
-const ADMIN_PANEL_UPGRADE_STATUS_LINK =
-  '/settings/admin-panel/health-status/upgrade-status';
+const ADMIN_PANEL_UPGRADE_STATUS_LINK = getSettingsPath(
+  SettingsPath.AdminPanelUpgradeStatus,
+);
 
 export const SettingsAdminHealthStatus = () => {
   const apolloAdminClient = useApolloAdminClient();

@@ -9,13 +9,13 @@ export class AddUpgradeMigrationWorkspaceIdIndexFastInstanceCommand
 {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      'CREATE INDEX "IDX_upgradeMigration_workspaceId_name_attempt" ON "core"."upgradeMigration" ("workspaceId", "name", "attempt") WHERE "workspaceId" IS NOT NULL',
+      'CREATE INDEX IF NOT EXISTS "IDX_upgradeMigration_workspaceId_name_attempt" ON "core"."upgradeMigration" ("workspaceId", "name", "attempt") WHERE "workspaceId" IS NOT NULL',
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      'DROP INDEX "core"."IDX_upgradeMigration_workspaceId_name_attempt"',
+      'DROP INDEX IF EXISTS "core"."IDX_upgradeMigration_workspaceId_name_attempt"',
     );
   }
 }

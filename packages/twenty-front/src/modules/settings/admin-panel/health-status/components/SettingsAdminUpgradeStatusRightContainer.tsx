@@ -39,9 +39,7 @@ export const SettingsAdminUpgradeStatusRightContainer = ({
   if (!instanceOk) {
     return (
       <Status
-        color={
-          instanceHealth === UpgradeHealthEnum.failed ? 'red' : 'orange'
-        }
+        color={instanceHealth === UpgradeHealthEnum.failed ? 'red' : 'orange'}
         text={t`Instance not up to date`}
         weight="medium"
       />

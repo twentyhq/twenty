@@ -61,6 +61,12 @@ const WORKSPACE_KEY_PREFIX = `${UPGRADE_STATUS_KEY_PREFIX}:workspace`;
 
 const CACHE_TTL_MS = 60 * 60 * 1000;
 
+const AGGREGATE_KEYS = [
+  ALL_WORKSPACES_SUMMARY_KEY,
+  ALL_WORKSPACES_BEHIND_KEY,
+  ALL_WORKSPACES_FAILED_KEY,
+];
+
 @Injectable()
 export class UpgradeStatusCacheService {
   private readonly logger = new Logger(UpgradeStatusCacheService.name);
@@ -88,40 +94,27 @@ export class UpgradeStatusCacheService {
       return [];
     }
 
-    const cachedStatuses =
-      await this.cacheStorage.mget<CachedWorkspaceUpgradeStatus>(
-        workspaceIds.map(this.workspaceKey),
-      );
+    const { result, missingIndexesByWorkspaceId } =
+      await this.readCachedWorkspaceStatuses(workspaceIds);
 
-    const result: WorkspaceUpgradeStatus[] = new Array(workspaceIds.length);
-    const missingIndexes: number[] = [];
-    const missingIds: string[] = [];
-
-    for (const [index, workspaceId] of workspaceIds.entries()) {
-      const cached = cachedStatuses[index];
-
-      if (isDefined(cached)) {
-        result[index] = this.rehydrateWorkspaceStatus(cached);
-        continue;
-      }
-
-      missingIndexes.push(index);
-      missingIds.push(workspaceId);
+    if (missingIndexesByWorkspaceId.size === 0) {
+      return result.filter(isDefined);
     }
 
-    if (missingIds.length === 0) {
-      return result;
+    const recomputedByWorkspaceId = await this.recomputeMissingWorkspaceCaches([
+      ...missingIndexesByWorkspaceId.keys(),
+    ]);
+
+    for (const [workspaceId, recomputedStatus] of recomputedByWorkspaceId) {
+      for (const index of missingIndexesByWorkspaceId.get(workspaceId) ?? []) {
+        result[index] = recomputedStatus;
+      }
     }
 
-    const recomputed = await Promise.all(
-      missingIds.map((workspaceId) => this.recomputeWorkspace(workspaceId)),
-    );
-    for (const index of missingIndexes.keys()) {
-      const status = recomputed[index];
-
-      if (isDefined(status)) {
-        result[missingIndexes[index]] = status;
-      }
+    if (recomputedByWorkspaceId.size > 0) {
+      await this.reconcileAggregatesForWorkspaces([
+        ...recomputedByWorkspaceId.values(),
+      ]);
     }
 
     return result.filter(isDefined);
@@ -161,12 +154,6 @@ export class UpgradeStatusCacheService {
       computedAt: new Date(),
     };
 
-    const result: AllWorkspacesStatus = {
-      ...summary,
-      workspacesBehindIds,
-      workspacesFailedIds,
-    };
-
     await Promise.all([
       this.cacheStorage.set(
         ALL_WORKSPACES_SUMMARY_KEY,
@@ -192,10 +179,78 @@ export class UpgradeStatusCacheService {
       ),
     ]);
 
-    return result;
+    return {
+      ...summary,
+      workspacesBehindIds,
+      workspacesFailedIds,
+    };
   }
 
-  async recomputeWorkspace(
+  async invalidateWorkspace(workspaceId: string): Promise<void> {
+    await this.cacheStorage.del(this.workspaceKey(workspaceId));
+    await this.invalidateAllWorkspacesAggregate();
+  }
+
+  async invalidateAllWorkspacesAggregate(): Promise<void> {
+    await this.cacheStorage.mdel(AGGREGATE_KEYS);
+  }
+
+  async invalidateAll(): Promise<void> {
+    await this.cacheStorage.flushByPattern(`${UPGRADE_STATUS_KEY_PREFIX}:*`);
+  }
+
+  private async readCachedWorkspaceStatuses(workspaceIds: string[]): Promise<{
+    result: (WorkspaceUpgradeStatus | undefined)[];
+    missingIndexesByWorkspaceId: Map<string, number[]>;
+  }> {
+    const cachedStatuses =
+      await this.cacheStorage.mget<CachedWorkspaceUpgradeStatus>(
+        workspaceIds.map(this.workspaceKey),
+      );
+
+    const result: (WorkspaceUpgradeStatus | undefined)[] = new Array(
+      workspaceIds.length,
+    );
+    const missingIndexesByWorkspaceId = new Map<string, number[]>();
+
+    for (const [index, workspaceId] of workspaceIds.entries()) {
+      const cached = cachedStatuses[index];
+
+      if (isDefined(cached)) {
+        result[index] = this.rehydrateWorkspaceStatus(cached);
+        continue;
+      }
+
+      const indexes = missingIndexesByWorkspaceId.get(workspaceId) ?? [];
+
+      indexes.push(index);
+      missingIndexesByWorkspaceId.set(workspaceId, indexes);
+    }
+
+    return { result, missingIndexesByWorkspaceId };
+  }
+
+  private async recomputeMissingWorkspaceCaches(
+    workspaceIds: string[],
+  ): Promise<Map<string, WorkspaceUpgradeStatus>> {
+    const recomputed = await Promise.all(
+      workspaceIds.map((workspaceId) =>
+        this.recomputeWorkspaceCache(workspaceId),
+      ),
+    );
+
+    const recomputedByWorkspaceId = new Map<string, WorkspaceUpgradeStatus>();
+
+    for (const [index, status] of recomputed.entries()) {
+      if (isDefined(status)) {
+        recomputedByWorkspaceId.set(workspaceIds[index], status);
+      }
+    }
+
+    return recomputedByWorkspaceId;
+  }
+
+  private async recomputeWorkspaceCache(
     workspaceId: string,
   ): Promise<WorkspaceUpgradeStatus | null> {
     const [status] = await this.upgradeStatusService.getWorkspaceStatuses([
@@ -203,7 +258,7 @@ export class UpgradeStatusCacheService {
     ]);
 
     if (!isDefined(status)) {
-      await this.invalidateWorkspace(workspaceId);
+      await this.cacheStorage.del(this.workspaceKey(workspaceId));
 
       return null;
     }
@@ -214,29 +269,7 @@ export class UpgradeStatusCacheService {
       CACHE_TTL_MS,
     );
 
-    await this.reconcileAggregatesForWorkspace({
-      workspaceId,
-      newHealth: status.health,
-    });
-
     return status;
-  }
-
-  async invalidateWorkspace(workspaceId: string): Promise<void> {
-    await this.cacheStorage.del(this.workspaceKey(workspaceId));
-    await this.invalidateAllWorkspacesAggregate();
-  }
-
-  async invalidateAllWorkspacesAggregate(): Promise<void> {
-    await this.cacheStorage.mdel([
-      ALL_WORKSPACES_SUMMARY_KEY,
-      ALL_WORKSPACES_BEHIND_KEY,
-      ALL_WORKSPACES_FAILED_KEY,
-    ]);
-  }
-
-  async invalidateAll(): Promise<void> {
-    await this.cacheStorage.flushByPattern(`${UPGRADE_STATUS_KEY_PREFIX}:*`);
   }
 
   private async readAllWorkspacesStatusFromCache(): Promise<
@@ -265,13 +298,19 @@ export class UpgradeStatusCacheService {
     };
   }
 
-  private async reconcileAggregatesForWorkspace({
-    workspaceId,
-    newHealth,
-  }: {
-    workspaceId: string;
-    newHealth: UpgradeHealthEnum;
-  }): Promise<void> {
+  // Single batched read → compute → write of summary/behindIds/failedIds for
+  // all workspaces refreshed in this call. Concurrent calls from different
+  // requests can still race, but each individual getWorkspacesStatus call
+  // performs at most one reconciliation regardless of how many workspaces it
+  // refreshed. If the aggregate is not present we bail out: the next
+  // getAllWorkspacesStatus will fully recompute it.
+  private async reconcileAggregatesForWorkspaces(
+    statuses: WorkspaceUpgradeStatus[],
+  ): Promise<void> {
+    if (statuses.length === 0) {
+      return;
+    }
+
     const [summary, behindIds, failedIds] = await Promise.all([
       this.cacheStorage.get<CachedAllWorkspacesStatusSummary>(
         ALL_WORKSPACES_SUMMARY_KEY,
@@ -284,16 +323,22 @@ export class UpgradeStatusCacheService {
       return;
     }
 
-    const nextBehind = behindIds.filter((id) => id !== workspaceId);
-    const nextFailed = failedIds.filter((id) => id !== workspaceId);
+    const updatedWorkspaceIds = new Set(
+      statuses.map((status) => status.workspaceId),
+    );
 
-    switch (newHealth) {
-      case UpgradeHealthEnum.behind:
-        nextBehind.push(workspaceId);
-        break;
-      case UpgradeHealthEnum.failed:
-        nextFailed.push(workspaceId);
-        break;
+    const nextBehind = behindIds.filter((id) => !updatedWorkspaceIds.has(id));
+    const nextFailed = failedIds.filter((id) => !updatedWorkspaceIds.has(id));
+
+    for (const status of statuses) {
+      switch (status.health) {
+        case UpgradeHealthEnum.behind:
+          nextBehind.push(status.workspaceId);
+          break;
+        case UpgradeHealthEnum.failed:
+          nextFailed.push(status.workspaceId);
+          break;
+      }
     }
 
     const nextSummary: CachedAllWorkspacesStatusSummary = {
