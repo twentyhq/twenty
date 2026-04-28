@@ -1,5 +1,5 @@
 import { renderHook, waitFor } from '@testing-library/react';
-import { type MockedResponse } from '@apollo/client/testing/react';
+import { type MockedResponse } from '@apollo/client/testing';
 import { useApplicationManifest } from '~/pages/settings/layout/hooks/useApplicationManifest';
 import {
   FindMarketplaceAppDetailDocument,
