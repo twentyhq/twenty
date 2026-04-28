@@ -1,0 +1,15 @@
+import { QueryRunner } from 'typeorm';
+
+import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
+import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
+
+@RegisteredInstanceCommand('2.1.0', 1777308014234)
+export class AddUpgradeMigrationWorkspaceIdIndexFastInstanceCommand implements FastInstanceCommand {
+  public async up(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query('CREATE INDEX "IDX_upgradeMigration_workspaceId_name_attempt" ON "core"."upgradeMigration" ("workspaceId", "name", "attempt") WHERE "workspaceId" IS NOT NULL');
+  }
+
+  public async down(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query('DROP INDEX "core"."IDX_upgradeMigration_workspaceId_name_attempt"');
+  }
+}
