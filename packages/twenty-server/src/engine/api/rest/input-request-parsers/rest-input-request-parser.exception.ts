@@ -12,8 +12,6 @@ export enum RestInputRequestParserExceptionCode {
   INVALID_DEPTH_QUERY_PARAM = 'INVALID_DEPTH_QUERY_PARAM',
   INVALID_LIMIT_QUERY_PARAM = 'INVALID_LIMIT_QUERY_PARAM',
   INVALID_FILTER_QUERY_PARAM = 'INVALID_FILTER_QUERY_PARAM',
-  INVALID_STARTING_AFTER_CURSOR_QUERY_PARAM = 'INVALID_STARTING_AFTER_CURSOR_QUERY_PARAM',
-  INVALID_ENDING_BEFORE_CURSOR_QUERY_PARAM = 'INVALID_ENDING_BEFORE_CURSOR_QUERY_PARAM',
 }
 
 const getRestInputRequestParserExceptionUserFriendlyMessage = (
@@ -34,10 +32,7 @@ const getRestInputRequestParserExceptionUserFriendlyMessage = (
       return msg`Invalid limit parameter.`;
     case RestInputRequestParserExceptionCode.INVALID_FILTER_QUERY_PARAM:
       return msg`Invalid filter parameter.`;
-    case RestInputRequestParserExceptionCode.INVALID_STARTING_AFTER_CURSOR_QUERY_PARAM:
-      return msg`Invalid cursor parameter. Use 'starting_after' for pagination.`;
-    case RestInputRequestParserExceptionCode.INVALID_ENDING_BEFORE_CURSOR_QUERY_PARAM:
-      return msg`Invalid cursor parameter. Use 'ending_before' for pagination.`;
+
     default:
       assertUnreachable(code);
   }

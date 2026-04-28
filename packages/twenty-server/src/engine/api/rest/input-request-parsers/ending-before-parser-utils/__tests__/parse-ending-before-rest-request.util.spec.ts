@@ -18,28 +18,4 @@ describe('parseEndingBeforeRestRequest', () => {
 
     expect(parseEndingBeforeRestRequest(request)).toEqual(undefined);
   });
-
-  it('should return undefined when cursor alias is used (silently ignored)', () => {
-    const request: any = { query: { cursor: 'uuid' } };
-
-    expect(parseEndingBeforeRestRequest(request)).toEqual(undefined);
-  });
-
-  it('should return undefined when ending_before is an array', () => {
-    const request: any = { query: { ending_before: ['uuid1', 'uuid2'] } };
-
-    expect(parseEndingBeforeRestRequest(request)).toEqual(undefined);
-  });
-
-  it('should return undefined when ending_before is a number', () => {
-    const request: any = { query: { ending_before: 123 } };
-
-    expect(parseEndingBeforeRestRequest(request)).toEqual(undefined);
-  });
-
-  it('should not throw for unrelated query params', () => {
-    const request: any = { query: { limit: 10, filter: 'name[eq]:test' } };
-
-    expect(parseEndingBeforeRestRequest(request)).toEqual(undefined);
-  });
 });
