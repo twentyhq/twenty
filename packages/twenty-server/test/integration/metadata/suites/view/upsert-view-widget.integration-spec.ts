@@ -129,7 +129,6 @@ describe('upsertViewWidget', () => {
       `SELECT id FROM core."fieldMetadata"
        WHERE "objectMetadataId" = $1
          AND "isActive" = true
-         AND "deletedAt" IS NULL
        ORDER BY id
        LIMIT 10`,
       [testFieldMetadataIds.objectMetadataId],
