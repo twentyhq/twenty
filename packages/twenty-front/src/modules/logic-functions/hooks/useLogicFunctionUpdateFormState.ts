@@ -71,7 +71,8 @@ export const useLogicFunctionUpdateFormState = ({
         cronTriggerSettings: logicFunction.cronTriggerSettings ?? null,
         databaseEventTriggerSettings:
           logicFunction.databaseEventTriggerSettings ?? null,
-        httpRouteTriggerSettings: logicFunction.httpRouteTriggerSettings ?? null,
+        httpRouteTriggerSettings:
+          logicFunction.httpRouteTriggerSettings ?? null,
       }));
     }
   }, [logicFunction]);

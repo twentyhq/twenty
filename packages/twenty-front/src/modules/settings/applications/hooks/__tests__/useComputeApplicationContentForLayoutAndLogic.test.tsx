@@ -34,7 +34,10 @@ describe('useComputeApplicationContentForLayoutAndLogic', () => {
             universalIdentifier: 'pl-1',
             name: 'Person dashboard',
             objectUniversalIdentifier: personObject.universalIdentifier,
-            tabs: [{ universalIdentifier: 't1' }, { universalIdentifier: 't2' }],
+            tabs: [
+              { universalIdentifier: 't1' },
+              { universalIdentifier: 't2' },
+            ],
           },
         ],
       } as unknown as Manifest;

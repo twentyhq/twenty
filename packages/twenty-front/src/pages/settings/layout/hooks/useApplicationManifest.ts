@@ -30,7 +30,7 @@ export const useApplicationManifest = (applicationId: string) => {
     },
   );
 
-  const manifest = detailData?.findMarketplaceAppDetail.manifest as
+  const manifest = detailData?.findMarketplaceAppDetail?.manifest as
     | Manifest
     | undefined;
 
