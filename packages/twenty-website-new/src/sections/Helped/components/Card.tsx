@@ -91,11 +91,7 @@ export function Card({ card }: CardProps) {
       </LogoRow>
       <Rule aria-hidden="true" />
       <VisualShell>
-        <WebGlMount
-          disposeDelayMs={1_500}
-          mountPriority="priority"
-          rootMargin="600% 0px 600% 0px"
-        >
+        <WebGlMount loading="eager">
           <Visual />
         </WebGlMount>
       </VisualShell>

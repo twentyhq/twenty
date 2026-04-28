@@ -43,7 +43,7 @@ describe('createVisualMountScheduler', () => {
 
     scheduler.schedule(callback);
 
-    expect(scheduler.pendingCount()).toBe(1);
+    expect(callback).not.toHaveBeenCalled();
     expect(host.requestIdleCallback).toHaveBeenCalledWith(
       expect.any(Function),
       { timeout: 80 },
@@ -52,7 +52,6 @@ describe('createVisualMountScheduler', () => {
     host.runIdle(1);
 
     expect(callback).toHaveBeenCalledTimes(1);
-    expect(scheduler.pendingCount()).toBe(0);
   });
 
   it('cancels pending visual mounts before they run', () => {
@@ -67,7 +66,6 @@ describe('createVisualMountScheduler', () => {
 
     expect(host.cancelIdleCallback).toHaveBeenCalledWith(1);
     expect(callback).not.toHaveBeenCalled();
-    expect(scheduler.pendingCount()).toBe(0);
   });
 
   it('processes one visual mount per idle slot', () => {

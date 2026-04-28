@@ -19,6 +19,7 @@ import { WebGlErrorBoundary } from './webgl-error-boundary';
 
 const NON_PRIORITY_ROOT_MARGIN = '50% 0px 50% 0px';
 const PRIORITY_ROOT_MARGIN = '125% 0px 125% 0px';
+const EAGER_ROOT_MARGIN = '600% 0px 600% 0px';
 
 const OUT_OF_VIEW_DISPOSE_MS = 4_000;
 const PRIORITY_OUT_OF_VIEW_DISPOSE_MS = 1_500;
@@ -47,24 +48,22 @@ const ObserverRoot = styled.div<{ detachFromLayout: boolean }>`
   `}
 `;
 
+type WebGlMountLoading = 'lazy' | 'eager';
+
 type WebGlMountProps = {
   children: ReactNode;
   fallback?: ReactNode;
   detachFromLayout?: boolean;
-  disposeDelayMs?: number;
-  mountPriority?: VisualMountPriority;
+  loading?: WebGlMountLoading;
   priority?: boolean;
-  rootMargin?: string;
 };
 
 export function WebGlMount({
   children,
   fallback,
   detachFromLayout = false,
-  disposeDelayMs,
-  mountPriority,
+  loading = 'lazy',
   priority = false,
-  rootMargin,
 }: WebGlMountProps) {
   const policy = useWebGlPolicy();
   const rootReference = useRef<HTMLDivElement>(null);
@@ -83,9 +82,16 @@ export function WebGlMount({
       return;
     }
 
+    const isEager = loading === 'eager';
     const effectiveDisposeDelayMs =
-      disposeDelayMs ??
-      (priority ? PRIORITY_OUT_OF_VIEW_DISPOSE_MS : OUT_OF_VIEW_DISPOSE_MS);
+      priority || isEager
+        ? PRIORITY_OUT_OF_VIEW_DISPOSE_MS
+        : OUT_OF_VIEW_DISPOSE_MS;
+    const effectiveRootMargin = isEager
+      ? EAGER_ROOT_MARGIN
+      : priority
+        ? PRIORITY_ROOT_MARGIN
+        : NON_PRIORITY_ROOT_MARGIN;
     let disposeTimer: ReturnType<typeof setTimeout> | null = null;
     const clearDisposeTimer = () => {
       if (disposeTimer !== null) {
@@ -111,9 +117,7 @@ export function WebGlMount({
       },
       {
         root: null,
-        rootMargin:
-          rootMargin ??
-          (priority ? PRIORITY_ROOT_MARGIN : NON_PRIORITY_ROOT_MARGIN),
+        rootMargin: effectiveRootMargin,
         threshold: 0,
       },
     );
@@ -122,7 +126,7 @@ export function WebGlMount({
       clearDisposeTimer();
       stopObservingVisibility();
     };
-  }, [disposeDelayMs, priority, rootMargin]);
+  }, [loading, priority]);
 
   useEffect(() => {
     const element = rootReference.current;
@@ -148,8 +152,8 @@ export function WebGlMount({
 
   const wantsScene = policy.allowed && isInViewport;
   const wantsContextSlot = wantsScene && isMountReady;
-  const effectiveMountPriority =
-    mountPriority ?? (priority ? 'priority' : 'normal');
+  const effectiveMountPriority: VisualMountPriority =
+    priority || loading === 'eager' ? 'priority' : 'normal';
 
   useEffect(() => {
     setIsMountReady(false);

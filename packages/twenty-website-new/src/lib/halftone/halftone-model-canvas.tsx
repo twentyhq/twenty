@@ -31,7 +31,6 @@ type HalftoneModelCanvasProps = {
   loader?: HalftoneModelLoader;
   modelLabel?: string;
   modelUrl: string;
-  maxFramesPerSecond?: number;
   onFirstInteraction?: () => void;
   onGeometryLoadError?: (error: Error) => void;
   onPoseChange?: (pose: HalftoneExportPose) => void;
@@ -123,7 +122,6 @@ export function HalftoneModelCanvas({
   loader = 'glb',
   modelLabel,
   modelUrl,
-  maxFramesPerSecond,
   onFirstInteraction = noopFirstInteraction,
   onGeometryLoadError,
   onPoseChange = noopPoseChange,
@@ -151,7 +149,6 @@ export function HalftoneModelCanvas({
       geometry={geometry}
       imageElement={null}
       initialPose={initialPose}
-      maxFramesPerSecond={maxFramesPerSecond}
       onFirstInteraction={onFirstInteraction}
       onPoseChange={onPoseChange}
       previewDistance={previewDistance}

@@ -20,7 +20,6 @@ export type ScheduleVisualMountOptions = {
 };
 
 export type VisualMountScheduler = {
-  pendingCount: () => number;
   schedule: (
     callback: () => void,
     options?: ScheduleVisualMountOptions,
@@ -94,10 +93,6 @@ function removeJob(queue: VisualMountJob[], job: VisualMountJob) {
   }
 
   queue.splice(index, 1);
-}
-
-function countActiveJobs(queue: ReadonlyArray<VisualMountJob>) {
-  return queue.filter((job) => !job.cancelled).length;
 }
 
 export function createVisualMountScheduler(
@@ -178,7 +173,6 @@ export function createVisualMountScheduler(
   };
 
   return {
-    pendingCount: () => countActiveJobs(queue),
     schedule: (callback, options = {}) => {
       const priority = options.priority ?? 'normal';
       const job: VisualMountJob = {

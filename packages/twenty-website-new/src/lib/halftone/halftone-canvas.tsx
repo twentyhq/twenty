@@ -331,7 +331,6 @@ type HalftoneCanvasProps = {
   imageElement: HTMLImageElement | null;
   imageFit?: HalftoneImageFit;
   imageInteraction?: Partial<HalftoneImageInteractionSettings>;
-  maxFramesPerSecond?: number;
   onFirstInteraction: () => void;
   onPoseChange: (pose: HalftoneExportPose) => void;
   previewDistance: number;
@@ -558,7 +557,6 @@ export function HalftoneCanvas({
   imageElement,
   imageFit = 'contain',
   imageInteraction,
-  maxFramesPerSecond,
   onFirstInteraction,
   onPoseChange,
   previewDistance,
@@ -2026,7 +2024,6 @@ export function HalftoneCanvas({
         );
 
         renderLoop = createVisualRenderLoop({
-          maxFramesPerSecond,
           renderFrame,
           shouldRender: () => !cancelled,
           target: container,
@@ -2086,7 +2083,6 @@ export function HalftoneCanvas({
       cleanup();
     };
   }, [
-    maxFramesPerSecond,
     onFirstInteraction,
     poseChangeReference,
     renderStrategy,

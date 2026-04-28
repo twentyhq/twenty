@@ -146,36 +146,6 @@ describe('createVisualRenderLoop', () => {
     expect(scheduler.requestAnimationFrame).toHaveBeenCalledTimes(1);
   });
 
-  it('throttles rendering while continuing to observe animation frames', () => {
-    const scheduler = createAnimationFrameScheduler();
-    const renderFrame = jest.fn();
-    const loop = createVisualRenderLoop({
-      cancelAnimationFrame: scheduler.cancelAnimationFrame,
-      document: null,
-      maxFramesPerSecond: 30,
-      renderFrame,
-      requestAnimationFrame: scheduler.requestAnimationFrame,
-    });
-
-    loop.start();
-    scheduler.runFrame(1, 0);
-    scheduler.runFrame(2, 16);
-    scheduler.runFrame(3, 34);
-
-    expect(renderFrame).toHaveBeenCalledTimes(2);
-    expect(renderFrame).toHaveBeenNthCalledWith(1, 0, {
-      deltaSeconds: 0,
-      elapsedSeconds: 0,
-      timestamp: 0,
-    });
-    expect(renderFrame).toHaveBeenNthCalledWith(2, 34, {
-      deltaSeconds: 0.034,
-      elapsedSeconds: 0.034,
-      timestamp: 34,
-    });
-    expect(scheduler.requestAnimationFrame).toHaveBeenCalledTimes(4);
-  });
-
   it('pauses and resumes with document visibility', () => {
     const scheduler = createAnimationFrameScheduler();
     const { documentStub, setHidden } = createDocumentVisibilityStub();

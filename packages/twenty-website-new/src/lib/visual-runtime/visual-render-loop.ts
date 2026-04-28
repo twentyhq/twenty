@@ -37,7 +37,6 @@ export type VisualRenderLoopFrameRenderer = (
 export type CreateVisualRenderLoopOptions = {
   cancelAnimationFrame?: VisualRenderLoopCanceller;
   document?: VisualRenderLoopDocument | null;
-  maxFramesPerSecond?: number;
   onFrameError?: VisualRenderLoopErrorHandler;
   pauseWhenDocumentHidden?: boolean;
   renderFrame: VisualRenderLoopFrameRenderer;
@@ -72,7 +71,6 @@ function cancelAnimationFrameFromWindow(handle: number) {
 export function createVisualRenderLoop({
   cancelAnimationFrame = cancelAnimationFrameFromWindow,
   document: documentReference = getDefaultDocument(),
-  maxFramesPerSecond,
   onFrameError = reportVisualRenderLoopErrorInDevelopment,
   pauseWhenDocumentHidden = true,
   renderFrame,
@@ -90,10 +88,6 @@ export function createVisualRenderLoop({
   let firstFrameAt: DOMHighResTimeStamp | null = null;
   let previousFrameAt: DOMHighResTimeStamp | null = null;
   let wantsRunning = false;
-  const minFrameIntervalMs =
-    typeof maxFramesPerSecond === 'number' && maxFramesPerSecond > 0
-      ? 1000 / maxFramesPerSecond
-      : 0;
 
   const cleanupTasks: Array<() => void> = [];
 
@@ -129,15 +123,6 @@ export function createVisualRenderLoop({
       try {
         if (firstFrameAt === null) {
           firstFrameAt = timestamp;
-        }
-
-        if (
-          minFrameIntervalMs > 0 &&
-          previousFrameAt !== null &&
-          timestamp - previousFrameAt < minFrameIntervalMs
-        ) {
-          scheduleNextFrame();
-          return;
         }
 
         const deltaSeconds =
