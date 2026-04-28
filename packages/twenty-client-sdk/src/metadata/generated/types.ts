@@ -7807,6 +7807,15 @@ export default {
             "createChatThread": [
                 289
             ],
+            "deleteChatThread": [
+                6,
+                {
+                    "id": [
+                        3,
+                        "UUID!"
+                    ]
+                }
+            ],
             "sendChatMessage": [
                 294,
                 {
