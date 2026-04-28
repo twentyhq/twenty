@@ -348,6 +348,13 @@ export class ChatExecutionService {
           inputSchema,
           error,
           model: registeredModel.model,
+          billingContext: {
+            aiBillingService: this.aiBillingService,
+            modelId: registeredModel.modelId,
+            workspaceId: workspace.id,
+            userWorkspaceId,
+            operationType: UsageOperationType.AI_CHAT_TOKEN,
+          },
         });
       },
     });

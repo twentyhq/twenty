@@ -53,9 +53,9 @@ Bağlantı ilişkisi anahtarını etkinleştirdiğinizde, Twenty aradaki bağlan
 1. **Ayarlar → Veri Modeli** bölümüne gidin
 2. **+ Yeni nesne**'ye tıklayın
 3. Açıklayıcı bir ad verin (örn. "Project Assignment", "Team Member", "Product Order")
-4. Toggle "Skip creating a Name field" on
+4. "Ad alanı oluşturmayı atla" seçeneğini açın
 
-<img src="/images/user-guide/fields/new-pivot-object.png" alt="New pivot object" />
+<img src="/images/user-guide/fields/new-pivot-object.png" alt="Yeni pivot nesnesi" />
 
 5. **Kaydet**'e tıklayın
 
@@ -63,27 +63,27 @@ Bağlantı ilişkisi anahtarını etkinleştirdiğinizde, Twenty aradaki bağlan
 **Adlandırma kuralı**: "Project Assignment" veya "Team Membership" gibi ilişkiyi tanımlayan bir ad kullanın. Bu, veri modelinin anlaşılmasını kolaylaştırır.
 </Tip>
 
-## Step 2: Create Relations Between Objects and the Junction
+## Adım 2: Nesneler ile Bağlantı nesnesi arasında ilişkiler oluşturun
 
-Add relation fields from each of your two objects to the junction object.
+İki nesnenizin her birinden bağlantı nesnesine ilişki alanları ekleyin.
 
-### First Relation (Object A → Junction)
+### İlk İlişki (Nesne A → Bağlantı)
 
-1. Select your first object in **Settings → Data Model**
-2. Click **+ Add Relation**
-3. Select the junction object (e.g., "Project Assignments")
-4. Set the relation type to **One-To-Many** (one person can link to many assignments)
+1. İlk nesnenizi **Ayarlar → Veri Modeli**'nde seçin
+2. **+ İlişki Ekle**'ye tıklayın
+3. Bağlantı nesnesini seçin (örn. "Project Assignments")
+4. İlişki türünü **Birden-Çoğa** olarak ayarlayın (bir kişi birçok atamaya bağlanabilir)
 5. Alanları adlandırın:
    * People üzerindeki alan: örn. "Project Assignments"
    * Bağlantı üzerindeki alan: örn. "Person"
 6. **Kaydet**'e tıklayın
 
-### Second Relation (Object B → Junction)
+### İkinci İlişki (Nesne B → Bağlantı)
 
-1. Select your second object in **Settings → Data Model**
-2. Click **+ Add Relation**
-3. Select the junction object (e.g., "Project Assignments")
-4. Set the relation type to **One-To-Many** (one project can link to many assignments)
+1. İkinci nesnenizi **Ayarlar → Veri Modeli**'nde seçin
+2. **+ İlişki Ekle**'ye tıklayın
+3. Bağlantı nesnesini seçin (örn. "Project Assignments")
+4. İlişki türünü **Birden-Çoğa** olarak ayarlayın (bir proje birçok atamaya bağlanabilir)
 5. **"Bu, bir bağlantı nesnesine kurulan bir ilişkidir"** seçeneğini etkinleştirin
 
 <img src="/images/user-guide/fields/junction-relation-toggle.png" style={{width:'100%'}} />
@@ -126,12 +126,12 @@ Bağlantı nesnesi hâlâ mevcuttur ve bağlantıları saklar, ancak kullanıcı
 ### İlişkiler Ekleyin
 
 1. **People → Project Assignment**
-   * Type: One-to-Many
+   * Tür: Birden-Çoğa
    * People üzerindeki alan: "Project Assignments"
    * Assignment üzerindeki alan: "Person"
 
 2. **Projects → Project Assignment**
-   * Type: One-to-Many
+   * Tür: Birden-Çoğa
    * Projects üzerindeki alan: "Team Members"
    * Assignment üzerindeki alan: "Project"
 

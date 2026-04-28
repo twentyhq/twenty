@@ -53,9 +53,9 @@ Erstellen Sie zunächst das Zwischenobjekt, das die Verknüpfungen speichert.
 1. Gehen Sie zu **Einstellungen → Datenmodell**
 2. Klicken Sie auf **+ Neues Objekt**
 3. Benennen Sie es aussagekräftig (z. B. "Projektzuweisung", "Teammitglied", "Produktbestellung")
-4. Toggle "Skip creating a Name field" on
+4. Schalten Sie "Erstellen eines Namensfelds überspringen" ein
 
-<img src="/images/user-guide/fields/new-pivot-object.png" alt="New pivot object" />
+<img src="/images/user-guide/fields/new-pivot-object.png" alt="Neues Verknüpfungsobjekt" />
 
 5. Klicken Sie auf **Speichern**
 
@@ -63,27 +63,27 @@ Erstellen Sie zunächst das Zwischenobjekt, das die Verknüpfungen speichert.
 **Namenskonvention**: Verwenden Sie einen Namen, der die Beziehung beschreibt, z. B. "Projektzuweisung" oder "Teammitgliedschaft". Das macht das Datenmodell leichter verständlich.
 </Tip>
 
-## Step 2: Create Relations Between Objects and the Junction
+## Schritt 2: Beziehungen zwischen Objekten und dem Verknüpfungsobjekt erstellen
 
-Add relation fields from each of your two objects to the junction object.
+Fügen Sie für jedes Ihrer beiden Objekte Beziehungsfelder zum Verknüpfungsobjekt hinzu.
 
-### First Relation (Object A → Junction)
+### Erste Beziehung (Objekt A → Verknüpfung)
 
-1. Select your first object in **Settings → Data Model**
-2. Click **+ Add Relation**
-3. Select the junction object (e.g., "Project Assignments")
-4. Set the relation type to **One-To-Many** (one person can link to many assignments)
+1. Wählen Sie Ihr erstes Objekt unter **Einstellungen → Datenmodell** aus
+2. Klicken Sie auf **+ Beziehung hinzufügen**
+3. Wählen Sie das Verknüpfungsobjekt aus (z. B. "Projektzuweisungen")
+4. Legen Sie den Beziehungstyp auf **Eins-zu-Viele** fest (eine Person kann mit vielen Zuweisungen verknüpft werden)
 5. Benennen Sie die Felder:
    * Feld bei Personen: z. B. "Projektzuweisungen"
    * Feld auf der Verknüpfung: z. B. "Person"
 6. Klicken Sie auf **Speichern**
 
-### Second Relation (Object B → Junction)
+### Zweite Beziehung (Objekt B → Verknüpfung)
 
-1. Select your second object in **Settings → Data Model**
-2. Click **+ Add Relation**
-3. Select the junction object (e.g., "Project Assignments")
-4. Set the relation type to **One-To-Many** (one project can link to many assignments)
+1. Wählen Sie Ihr zweites Objekt unter **Einstellungen → Datenmodell** aus
+2. Klicken Sie auf **+ Beziehung hinzufügen**
+3. Wählen Sie das Verknüpfungsobjekt aus (z. B. "Projektzuweisungen")
+4. Legen Sie den Beziehungstyp auf **Eins-zu-Viele** fest (ein Projekt kann mit vielen Zuweisungen verknüpft werden)
 5. Aktivieren Sie **"Dies ist eine Beziehung zu einem Verknüpfungsobjekt"**
 
 <img src="/images/user-guide/fields/junction-relation-toggle.png" style={{width:'100%'}} />
@@ -125,13 +125,13 @@ Hier ist eine vollständige Schritt-für-Schritt-Anleitung:
 
 ### Beziehungen hinzufügen
 
-1. **People → Project Assignment**
-   * Type: One-to-Many
+1. **Personen → Projektzuweisung**
+   * Typ: Eins-zu-Viele
    * Feld bei Personen: "Projektzuweisungen"
    * Feld bei Zuweisung: "Person"
 
-2. **Projects → Project Assignment**
-   * Type: One-to-Many
+2. **Projekte → Projektzuweisung**
+   * Typ: Eins-zu-Viele
    * Feld bei Projekten: "Teammitglieder"
    * Feld bei Zuweisung: "Projekt"
 
