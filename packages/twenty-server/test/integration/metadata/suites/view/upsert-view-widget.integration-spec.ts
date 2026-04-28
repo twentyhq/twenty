@@ -125,24 +125,38 @@ describe('upsertViewWidget', () => {
     const labelIdentifierFieldMetadataId =
       objectMetadataRows[0]?.labelIdentifierFieldMetadataId ?? null;
 
-    const allFieldMetadataIds = [
-      testFieldMetadataIds.fieldMetadataId1,
-      testFieldMetadataIds.fieldMetadataId2,
-      testFieldMetadataIds.fieldMetadataId3,
-    ];
+    const allFieldMetadataRows = await global.testDataSource.query(
+      `SELECT id FROM core."fieldMetadata"
+       WHERE "objectMetadataId" = $1
+         AND "isActive" = true
+         AND "deletedAt" IS NULL
+       ORDER BY id
+       LIMIT 10`,
+      [testFieldMetadataIds.objectMetadataId],
+    );
 
-    const sortedFieldMetadataIds = [...allFieldMetadataIds].sort((a, b) => {
-      if (a === labelIdentifierFieldMetadataId) return -1;
-      if (b === labelIdentifierFieldMetadataId) return 1;
+    const allFieldMetadataIds: string[] = allFieldMetadataRows.map(
+      (row: { id: string }) => row.id,
+    );
 
-      return 0;
-    });
+    if (labelIdentifierFieldMetadataId) {
+      const idx = allFieldMetadataIds.indexOf(labelIdentifierFieldMetadataId);
+
+      if (idx > 0) {
+        allFieldMetadataIds.splice(idx, 1);
+        allFieldMetadataIds.unshift(labelIdentifierFieldMetadataId);
+      } else if (idx === -1) {
+        allFieldMetadataIds.unshift(labelIdentifierFieldMetadataId);
+      }
+    }
+
+    const seedFieldMetadataIds = allFieldMetadataIds.slice(0, 3);
 
     await upsertViewWidget({
       expectToFail: false,
       input: {
         widgetId,
-        viewFields: sortedFieldMetadataIds.map((fmId, index) => ({
+        viewFields: seedFieldMetadataIds.map((fmId, index) => ({
           fieldMetadataId: fmId,
           isVisible: true,
           position: index,
@@ -163,7 +177,7 @@ describe('upsertViewWidget', () => {
       viewId,
       labelIdentifierFieldMetadataId,
       viewFields: fieldsData.getViewFields,
-      fieldMetadataIds: sortedFieldMetadataIds,
+      fieldMetadataIds: allFieldMetadataIds,
     };
   });
 
@@ -245,11 +259,26 @@ describe('upsertViewWidget', () => {
 
       expect(targetField).toBeDefined();
 
+      const labelIdentifierField = testSetup.viewFields.find(
+        (field) =>
+          field.fieldMetadataId === testSetup.labelIdentifierFieldMetadataId,
+      );
+
       await upsertViewWidget({
         expectToFail: false,
         input: {
           widgetId: testSetup.widgetId,
           viewFields: [
+            ...(labelIdentifierField
+              ? [
+                  {
+                    viewFieldId: labelIdentifierField.id,
+                    fieldMetadataId: labelIdentifierField.fieldMetadataId,
+                    isVisible: true,
+                    position: 0,
+                  },
+                ]
+              : []),
             {
               viewFieldId: targetField.id,
               fieldMetadataId: targetField.fieldMetadataId,
@@ -664,6 +693,16 @@ describe('upsertViewWidget', () => {
   });
 
   describe('view sorts', () => {
+    afterEach(async () => {
+      await upsertViewWidget({
+        expectToFail: false,
+        input: {
+          widgetId: testSetup.widgetId,
+          viewSorts: [],
+        },
+      });
+    });
+
     it('should create a new sort', async () => {
       const sortId = uuidv4();
       const fieldMetadataId = testSetup.fieldMetadataIds[0];
@@ -807,11 +846,26 @@ describe('upsertViewWidget', () => {
 
       expect(targetField).toBeDefined();
 
+      const labelIdentifierField = testSetup.viewFields.find(
+        (field) =>
+          field.fieldMetadataId === testSetup.labelIdentifierFieldMetadataId,
+      );
+
       const { data, errors } = await upsertViewWidget({
         expectToFail: false,
         input: {
           widgetId: testSetup.widgetId,
           viewFields: [
+            ...(labelIdentifierField
+              ? [
+                  {
+                    viewFieldId: labelIdentifierField.id,
+                    fieldMetadataId: labelIdentifierField.fieldMetadataId,
+                    isVisible: true,
+                    position: 0,
+                  },
+                ]
+              : []),
             {
               viewFieldId: targetField.id,
               fieldMetadataId: targetField.fieldMetadataId,
@@ -874,6 +928,16 @@ describe('upsertViewWidget', () => {
 
       expect(sorts.length).toBe(1);
       expect(sorts[0].direction).toBe(ViewSortDirection.DESC);
+
+      await upsertViewWidget({
+        expectToFail: false,
+        input: {
+          widgetId: testSetup.widgetId,
+          viewSorts: [],
+          viewFilters: [],
+          viewFilterGroups: [],
+        },
+      });
     });
   });
 
@@ -965,7 +1029,7 @@ describe('upsertViewWidget', () => {
 
     it('should remove all sorts when an empty array is provided', async () => {
       const sortId = uuidv4();
-      const fieldMetadataId = testSetup.fieldMetadataIds[2];
+      const fieldMetadataId = testSetup.fieldMetadataIds[3];
 
       await upsertViewWidget({
         expectToFail: false,
@@ -1008,11 +1072,26 @@ describe('upsertViewWidget', () => {
 
       expect(targetField).toBeDefined();
 
+      const labelIdentifierField = testSetup.viewFields.find(
+        (field) =>
+          field.fieldMetadataId === testSetup.labelIdentifierFieldMetadataId,
+      );
+
       const { data } = await upsertViewWidget({
         expectToFail: false,
         input: {
           widgetId: testSetup.widgetId,
           viewFields: [
+            ...(labelIdentifierField
+              ? [
+                  {
+                    viewFieldId: labelIdentifierField.id,
+                    fieldMetadataId: labelIdentifierField.fieldMetadataId,
+                    isVisible: true,
+                    position: 0,
+                  },
+                ]
+              : []),
             {
               viewFieldId: targetField.id,
               fieldMetadataId: targetField.fieldMetadataId,
