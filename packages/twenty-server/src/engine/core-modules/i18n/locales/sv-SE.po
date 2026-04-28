@@ -3667,6 +3667,11 @@ msgstr "Ogiltigt värde för datum: \"{inspectedValue}\". Förväntat format: 'Y
 msgid "Invalid value for emails."
 msgstr "Ogiltigt värde för e-postadresser."
 
+#. js-lingui-id: qvqNco
+#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-rating-and-select-field-or-throw.util.ts
+msgid "Invalid value for field \"{fieldName}\""
+msgstr ""
+
 #. js-lingui-id: tfoEIq
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-files-field-or-throw.util.ts
 msgid "Invalid value for FILES field \"{fieldName}\" - {errorMessage}"
@@ -3719,11 +3724,6 @@ msgstr "Ogiltigt värde för position: \"{inspectedValue}\""
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-rich-text-field-or-throw.util.ts
 msgid "Invalid value for rich text."
 msgstr "Ogiltigt värde för formaterad text."
-
-#. js-lingui-id: 9lVA5C
-#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-rating-and-select-field-or-throw.util.ts
-msgid "Invalid value for select: \"{inspectedValue}\""
-msgstr "Ogiltigt värde för urvalsfält: \"{inspectedValue}\""
 
 #. js-lingui-id: ZjemzY
 #: src/engine/api/common/common-args-processors/filter-arg-processor/validator-utils/validate-uuid-field-or-throw.util.ts
