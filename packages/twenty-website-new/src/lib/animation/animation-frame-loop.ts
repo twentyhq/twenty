@@ -22,8 +22,17 @@ export function createAnimationFrameLoop({
   requestAnimationFrame = requestAnimationFrameFromWindow,
 }: CreateAnimationFrameLoopOptions): AnimationFrameLoopController {
   let animationFrameId: number | null = null;
+  let isLoopRunning = false;
+  let runToken = 0;
 
   const stop = () => {
+    if (!isLoopRunning && animationFrameId === null) {
+      return;
+    }
+
+    isLoopRunning = false;
+    runToken += 1;
+
     if (animationFrameId === null) {
       return;
     }
@@ -32,24 +41,42 @@ export function createAnimationFrameLoop({
     animationFrameId = null;
   };
 
-  const start = () => {
-    if (animationFrameId !== null) {
-      return;
-    }
-
+  const scheduleNextFrame = (token: number) => {
     animationFrameId = requestAnimationFrame((timestamp) => {
       animationFrameId = null;
 
-      if (onFrame(timestamp) === false) {
+      if (!isLoopRunning || token !== runToken) {
         return;
       }
 
-      start();
+      if (onFrame(timestamp) === false) {
+        if (token === runToken) {
+          isLoopRunning = false;
+        }
+
+        return;
+      }
+
+      if (!isLoopRunning || token !== runToken) {
+        return;
+      }
+
+      scheduleNextFrame(token);
     });
   };
 
+  const start = () => {
+    if (isLoopRunning) {
+      return;
+    }
+
+    isLoopRunning = true;
+    runToken += 1;
+    scheduleNextFrame(runToken);
+  };
+
   return {
-    isRunning: () => animationFrameId !== null,
+    isRunning: () => isLoopRunning,
     start,
     stop,
   };

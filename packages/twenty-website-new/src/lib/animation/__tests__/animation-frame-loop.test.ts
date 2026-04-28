@@ -77,4 +77,26 @@ describe('createAnimationFrameLoop', () => {
     expect(scheduler.cancelAnimationFrame).toHaveBeenCalledWith(1);
     expect(loop.isRunning()).toBe(false);
   });
+
+  it('does not reschedule when stopped during onFrame', () => {
+    const scheduler = createAnimationFrameScheduler();
+    let loop: ReturnType<typeof createAnimationFrameLoop>;
+    const onFrame = jest.fn(() => {
+      loop.stop();
+    });
+
+    loop = createAnimationFrameLoop({
+      cancelAnimationFrame: scheduler.cancelAnimationFrame,
+      onFrame,
+      requestAnimationFrame: scheduler.requestAnimationFrame,
+    });
+
+    loop.start();
+    scheduler.runFrame(1, 16);
+
+    expect(onFrame).toHaveBeenCalledWith(16);
+    expect(scheduler.requestAnimationFrame).toHaveBeenCalledTimes(1);
+    expect(scheduler.callbacks.size).toBe(0);
+    expect(loop.isRunning()).toBe(false);
+  });
 });
