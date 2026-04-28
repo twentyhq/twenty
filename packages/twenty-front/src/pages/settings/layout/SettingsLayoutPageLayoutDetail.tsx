@@ -1,4 +1,4 @@
-import { objectMetadataItemsByUniversalIdentifierMapSelector } from '@/object-metadata/states/objectMetadataItemsByUniversalIdentifierMapSelector';
+import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { t } from '@lingui/core/macro';
 import { useParams } from 'react-router-dom';
@@ -9,7 +9,6 @@ import {
   SettingsLayoutDetailScaffold,
 } from '~/pages/settings/layout/components/SettingsLayoutDetailScaffold';
 import { SettingsLayoutItemTable } from '~/pages/settings/layout/components/SettingsLayoutItemTable';
-import { resolveObjectLabel } from '~/pages/settings/layout/utils/resolveObjectLabel';
 
 export const SettingsLayoutPageLayoutDetail = () => {
   const { applicationId = '', pageLayoutUniversalIdentifier = '' } = useParams<{
@@ -20,19 +19,18 @@ export const SettingsLayoutPageLayoutDetail = () => {
   const { application, manifest, isLoading } =
     useApplicationManifest(applicationId);
 
-  const objectMetadataItemsByUniversalIdentifierMap = useAtomStateValue(
-    objectMetadataItemsByUniversalIdentifierMapSelector,
-  );
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
+
+  const findObjectLabel = (uid: string) =>
+    objectMetadataItems.find((o) => o.universalIdentifier === uid)
+      ?.labelSingular;
 
   const pageLayout = manifest?.pageLayouts?.find(
     (pl) => pl.universalIdentifier === pageLayoutUniversalIdentifier,
   );
 
   const objectLabel = isDefined(pageLayout)
-    ? resolveObjectLabel(
-        pageLayout.objectUniversalIdentifier,
-        objectMetadataItemsByUniversalIdentifierMap,
-      )
+    ? findObjectLabel(pageLayout.objectUniversalIdentifier)
     : undefined;
 
   const detailRows: DetailRow[] = isDefined(pageLayout)
@@ -98,10 +96,7 @@ export const SettingsLayoutPageLayoutDetail = () => {
               cells: [
                 widget.title,
                 widget.type,
-                resolveObjectLabel(
-                  widget.objectUniversalIdentifier,
-                  objectMetadataItemsByUniversalIdentifierMap,
-                ) ?? '—',
+                findObjectLabel(widget.objectUniversalIdentifier) ?? '—',
               ],
             }))}
           />

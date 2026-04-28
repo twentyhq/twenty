@@ -1,4 +1,4 @@
-import { objectMetadataItemsByUniversalIdentifierMapSelector } from '@/object-metadata/states/objectMetadataItemsByUniversalIdentifierMapSelector';
+import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { t } from '@lingui/core/macro';
 import { type Manifest } from 'twenty-shared/application';
@@ -6,7 +6,6 @@ import { SettingsPath } from 'twenty-shared/types';
 import { capitalize, getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { type Application } from '~/generated-metadata/graphql';
 import { type ApplicationContentRow } from '~/pages/settings/applications/components/SettingsApplicationContentSubtable';
-import { resolveObjectLabel } from '~/pages/settings/layout/utils/resolveObjectLabel';
 
 type InstalledApplicationForContent = Pick<Application, 'agents' | 'id'>;
 
@@ -17,18 +16,21 @@ export const useComputeApplicationContentForLayoutAndLogic = ({
   installedApplication?: InstalledApplicationForContent;
   manifestContent?: Manifest;
 }) => {
-  const objectMetadataItemsByUniversalIdentifierMap = useAtomStateValue(
-    objectMetadataItemsByUniversalIdentifierMapSelector,
-  );
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
 
   const installedAppId = installedApplication?.id;
 
-  const resolveLabel = (uid: string | undefined | null) =>
-    resolveObjectLabel(
-      uid,
-      objectMetadataItemsByUniversalIdentifierMap,
-      manifestContent,
+  // Workspace metadata covers standard + installed-app objects; the manifest
+  // fallback only matters when previewing an uninstalled marketplace app.
+  const resolveLabel = (uid: string | undefined | null) => {
+    if (!isDefined(uid)) return undefined;
+    return (
+      objectMetadataItems.find((o) => o.universalIdentifier === uid)
+        ?.labelSingular ??
+      manifestContent?.objects.find((o) => o.universalIdentifier === uid)
+        ?.labelSingular
     );
+  };
 
   const pageLayoutRows: ApplicationContentRow[] = (
     manifestContent?.pageLayouts ?? []

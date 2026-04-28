@@ -3,7 +3,7 @@ import { useComputeApplicationContentForLayoutAndLogic } from '@/settings/applic
 import { useComputeObjectAndFieldsContentForApplication } from '@/settings/applications/hooks/useComputeObjectAndFieldsContentForApplication';
 import { Table } from '@/ui/layout/table/components/Table';
 import { useLingui } from '@lingui/react/macro';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { type Manifest } from 'twenty-shared/application';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
@@ -70,18 +70,19 @@ export const SettingsApplicationDetailContentTab = ({
     manifestContent,
   });
 
-  const logicFunctionRows = useMemo((): ApplicationContentRow[] => {
-    const lifecycleOptions = {
-      postInstallUniversalIdentifier:
-        manifestContent?.application?.postInstallLogicFunction
-          ?.universalIdentifier,
-      preInstallUniversalIdentifier:
-        manifestContent?.application?.preInstallLogicFunction
-          ?.universalIdentifier,
-    };
+  const lifecycleOptions = {
+    postInstallUniversalIdentifier:
+      manifestContent?.application?.postInstallLogicFunction
+        ?.universalIdentifier,
+    preInstallUniversalIdentifier:
+      manifestContent?.application?.preInstallLogicFunction
+        ?.universalIdentifier,
+  };
 
-    if (isDefined(installedApplication)) {
-      return (installedApplication.logicFunctions ?? []).map((lf) => ({
+  const logicFunctionRows: ApplicationContentRow[] = isDefined(
+    installedApplication,
+  )
+    ? (installedApplication.logicFunctions ?? []).map((lf) => ({
         key: lf.id,
         name: lf.name,
         secondary: getLogicFunctionTriggerLabel(lf, lifecycleOptions),
@@ -89,25 +90,17 @@ export const SettingsApplicationDetailContentTab = ({
           applicationId,
           logicFunctionId: lf.id,
         }),
+      }))
+    : (manifestContent?.logicFunctions ?? []).map((lf) => ({
+        key: lf.universalIdentifier,
+        name: lf.name ?? lf.universalIdentifier,
+        secondary: getLogicFunctionTriggerLabel(lf, lifecycleOptions),
       }));
-    }
 
-    return (manifestContent?.logicFunctions ?? []).map((lf) => ({
-      key: lf.universalIdentifier,
-      name: lf.name ?? lf.universalIdentifier,
-      secondary: getLogicFunctionTriggerLabel(lf, lifecycleOptions),
-    }));
-  }, [
+  const frontComponentRows: ApplicationContentRow[] = isDefined(
     installedApplication,
-    manifestContent?.logicFunctions,
-    manifestContent?.application?.postInstallLogicFunction?.universalIdentifier,
-    manifestContent?.application?.preInstallLogicFunction?.universalIdentifier,
-    applicationId,
-  ]);
-
-  const frontComponentRows = useMemo((): ApplicationContentRow[] => {
-    if (isDefined(installedApplication)) {
-      return (installedApplication.frontComponents ?? []).map((fc) => ({
+  )
+    ? (installedApplication.frontComponents ?? []).map((fc) => ({
         key: fc.id,
         name: fc.name,
         secondary: fc.description ?? undefined,
@@ -115,21 +108,15 @@ export const SettingsApplicationDetailContentTab = ({
           applicationId,
           frontComponentId: fc.id,
         }),
+      }))
+    : (manifestContent?.frontComponents ?? []).map((fc) => ({
+        key: fc.universalIdentifier,
+        name: fc.name ?? fc.universalIdentifier,
+        secondary: fc.description ?? undefined,
       }));
-    }
-
-    return (manifestContent?.frontComponents ?? []).map((fc) => ({
-      key: fc.universalIdentifier,
-      name: fc.name ?? fc.universalIdentifier,
-      secondary: fc.description ?? undefined,
-    }));
-  }, [installedApplication, manifestContent?.frontComponents, applicationId]);
 
   const [searchTerm, setSearchTerm] = useState('');
-  const normalizedSearch = useMemo(
-    () => normalizeSearchText(searchTerm),
-    [searchTerm],
-  );
+  const normalizedSearch = normalizeSearchText(searchTerm);
 
   const filtered = {
     objects: filterRows(objectRows, normalizedSearch),

@@ -1,8 +1,7 @@
-import { objectMetadataItemsByUniversalIdentifierMapSelector } from '@/object-metadata/states/objectMetadataItemsByUniversalIdentifierMapSelector';
 import { flattenedFieldMetadataItemsSelector } from '@/object-metadata/states/flattenedFieldMetadataItemsSelector';
+import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { t } from '@lingui/core/macro';
-import { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 import { useApplicationManifest } from '~/pages/settings/layout/hooks/useApplicationManifest';
@@ -11,7 +10,6 @@ import {
   SettingsLayoutDetailScaffold,
 } from '~/pages/settings/layout/components/SettingsLayoutDetailScaffold';
 import { SettingsLayoutItemTable } from '~/pages/settings/layout/components/SettingsLayoutItemTable';
-import { resolveObjectLabel } from '~/pages/settings/layout/utils/resolveObjectLabel';
 
 const formatFilterValue = (value: unknown): string => {
   if (typeof value === 'string') return value;
@@ -30,22 +28,9 @@ export const SettingsLayoutViewDetail = () => {
   const { application, manifest, isLoading } =
     useApplicationManifest(applicationId);
 
-  const objectMetadataItemsByUniversalIdentifierMap = useAtomStateValue(
-    objectMetadataItemsByUniversalIdentifierMapSelector,
-  );
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
   const flattenedFieldMetadataItems = useAtomStateValue(
     flattenedFieldMetadataItemsSelector,
-  );
-
-  const fieldsByUniversalIdentifier = useMemo(
-    () =>
-      new Map(
-        flattenedFieldMetadataItems.map((field) => [
-          field.universalIdentifier,
-          field,
-        ]),
-      ),
-    [flattenedFieldMetadataItems],
   );
 
   const view = manifest?.views?.find(
@@ -53,14 +38,14 @@ export const SettingsLayoutViewDetail = () => {
   );
 
   const objectLabel = isDefined(view)
-    ? resolveObjectLabel(
-        view.objectUniversalIdentifier,
-        objectMetadataItemsByUniversalIdentifierMap,
-      )
+    ? objectMetadataItems.find(
+        (o) => o.universalIdentifier === view.objectUniversalIdentifier,
+      )?.labelSingular
     : undefined;
 
   const resolveFieldLabel = (uid: string): string =>
-    fieldsByUniversalIdentifier.get(uid)?.label ?? uid;
+    flattenedFieldMetadataItems.find((f) => f.universalIdentifier === uid)
+      ?.label ?? uid;
 
   const detailRows: DetailRow[] = isDefined(view)
     ? [

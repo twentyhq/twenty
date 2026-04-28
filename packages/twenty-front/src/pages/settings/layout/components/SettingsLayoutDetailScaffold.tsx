@@ -26,8 +26,6 @@ const StyledDescription = styled.div`
 
 const GRID_TEMPLATE = '220px 1fr';
 
-// Page chrome + Property/Value details table for a read-only entity detail
-// page; pages add their own subsections via children.
 export const SettingsLayoutDetailScaffold = ({
   applicationId,
   applicationName,

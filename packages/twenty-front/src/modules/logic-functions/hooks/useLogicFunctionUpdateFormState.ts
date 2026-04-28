@@ -1,10 +1,5 @@
 import { useGetOneLogicFunction } from '@/logic-functions/hooks/useGetOneLogicFunction';
-import {
-  type Dispatch,
-  type SetStateAction,
-  useLayoutEffect,
-  useState,
-} from 'react';
+import { type Dispatch, type SetStateAction, useEffect, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import {
   type CronTriggerSettings,
@@ -63,7 +58,7 @@ export const useLogicFunctionUpdateFormState = ({
       id: logicFunctionId,
     });
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (isDefined(logicFunction)) {
       setFormValues((prevState) => ({
         ...prevState,
@@ -73,20 +68,15 @@ export const useLogicFunctionUpdateFormState = ({
         timeoutSeconds: logicFunction.timeoutSeconds ?? 300,
         toolInputSchema:
           logicFunction.toolInputSchema || DEFAULT_TOOL_INPUT_SCHEMA,
-        cronTriggerSettings:
-          (logicFunction.cronTriggerSettings as CronTriggerSettings | null) ??
-          null,
+        cronTriggerSettings: logicFunction.cronTriggerSettings ?? null,
         databaseEventTriggerSettings:
-          (logicFunction.databaseEventTriggerSettings as DatabaseEventTriggerSettings | null) ??
-          null,
-        httpRouteTriggerSettings:
-          (logicFunction.httpRouteTriggerSettings as HttpRouteTriggerSettings | null) ??
-          null,
+          logicFunction.databaseEventTriggerSettings ?? null,
+        httpRouteTriggerSettings: logicFunction.httpRouteTriggerSettings ?? null,
       }));
     }
   }, [logicFunction]);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (isDefined(sourceHandlerCode)) {
       setFormValues((prev) => ({
         ...prev,
