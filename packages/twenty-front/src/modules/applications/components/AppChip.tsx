@@ -34,6 +34,7 @@ export const AppChip = ({ applicationId, className }: AppChipProps) => {
       <Avatar
         type="app"
         size="sm"
+        avatarUrl={applicationChipData.logo}
         placeholder={applicationChipData.name}
         placeholderColorSeed={applicationChipData.seed}
         color={applicationChipData.colors?.color}

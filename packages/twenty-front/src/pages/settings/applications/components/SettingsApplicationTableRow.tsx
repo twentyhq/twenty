@@ -17,7 +17,7 @@ export type SettingsApplicationTableRowProps = {
     name?: string | null;
     universalIdentifier?: string | null;
     description?: string | null;
-    logoUrl?: string | null;
+    logo?: string | null;
     applicationRegistration?: {
       logoUrl?: string | null;
     } | null;

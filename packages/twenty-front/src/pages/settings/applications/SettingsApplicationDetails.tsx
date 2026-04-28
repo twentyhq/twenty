@@ -89,7 +89,10 @@ export const SettingsApplicationDetails = () => {
     app?.displayName ?? application?.name ?? t`Application details`;
   const description = app?.description ?? resolvedDescription;
   const logoUrl =
-    app?.logoUrl ?? application?.applicationRegistration?.logoUrl ?? undefined;
+    app?.logoUrl ??
+    application?.logo ??
+    application?.applicationRegistration?.logoUrl ??
+    undefined;
 
   const getScreenshots = () => {
     if (app?.screenshots?.length) return app.screenshots;

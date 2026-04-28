@@ -1,14 +1,14 @@
 import { useApplicationAvatarColors } from '@/applications/hooks/useApplicationAvatarColors';
 import { Avatar, OverflowingTextWithTooltip } from 'twenty-ui/display';
+import { buildApplicationLogoUrl } from '@/applications/utils/buildApplicationLogoUrl';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 
 type ApplicationDisplayData = {
   id?: string | null;
   name?: string | null;
   universalIdentifier?: string | null;
-  logoUrl?: string | null;
-  applicationRegistration?: {
-    logoUrl?: string | null;
-  } | null;
+  logo?: string | null;
 };
 
 type ApplicationDisplayProps = {
@@ -18,17 +18,24 @@ type ApplicationDisplayProps = {
 export const ApplicationDisplay = ({
   application,
 }: ApplicationDisplayProps) => {
+  console.log('application', application);
   const colors = useApplicationAvatarColors(application);
   const name = application.name ?? '';
-  const logoUrl =
-    application.logoUrl ?? application.applicationRegistration?.logoUrl;
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
+  const logoUrl = buildApplicationLogoUrl({
+    applicationId: application.id,
+    logo: application.logo,
+    workspaceId: currentWorkspace?.id,
+  });
+
+  console.log('logoUrl', logoUrl);
 
   return (
     <>
       <Avatar
         type="app"
         size="md"
-        avatarUrl={logoUrl ?? undefined}
+        avatarUrl={logoUrl}
         placeholder={name}
         placeholderColorSeed={application.universalIdentifier ?? name}
         color={colors?.color}

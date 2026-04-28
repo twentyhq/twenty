@@ -141,6 +141,7 @@ export class ApplicationInstallService {
       existingApplication,
       universalIdentifier,
       name: resolvedPackage.manifest.application.displayName,
+      logo: resolvedPackage.manifest.application.logoUrl ?? null,
       workspaceId: params.workspaceId,
       applicationRegistrationId: appRegistration.id,
       sourceType: appRegistration.sourceType,
@@ -506,6 +507,7 @@ export class ApplicationInstallService {
     existingApplication: ApplicationEntity | null;
     universalIdentifier: string;
     name: string;
+    logo: string | null;
     workspaceId: string;
     applicationRegistrationId: string;
     sourceType: ApplicationRegistrationSourceType;
@@ -517,6 +519,7 @@ export class ApplicationInstallService {
     return await this.applicationService.create({
       universalIdentifier: params.universalIdentifier,
       name: params.name,
+      logo: params.logo,
       sourcePath: params.universalIdentifier,
       sourceType: params.sourceType,
       applicationRegistrationId: params.applicationRegistrationId,

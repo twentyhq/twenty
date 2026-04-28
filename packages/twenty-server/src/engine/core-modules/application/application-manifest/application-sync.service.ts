@@ -159,6 +159,7 @@ export class ApplicationSyncService {
     return await this.applicationService.update(application.id, {
       name,
       description: manifest.application.description,
+      logo: manifest.application.logoUrl ?? null,
       version: packageJson.version,
       packageJsonChecksum: manifest.application.packageJsonChecksum,
       yarnLockChecksum: manifest.application.yarnLockChecksum,

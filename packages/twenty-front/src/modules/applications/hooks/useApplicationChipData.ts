@@ -1,7 +1,7 @@
 import { CurrentApplicationContext } from '@/applications/contexts/CurrentApplicationContext';
 import {
-  useApplicationAvatarColors,
   type ApplicationAvatarColors,
+  useApplicationAvatarColors,
 } from '@/applications/hooks/useApplicationAvatarColors';
 import { isTwentyStandardApplication } from '@/applications/utils/isTwentyStandardApplication';
 import { isWorkspaceCustomApplication } from '@/applications/utils/isWorkspaceCustomApplication';
@@ -10,6 +10,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { buildApplicationLogoUrl } from '@/applications/utils/buildApplicationLogoUrl';
 
 type UseApplicationChipDataArgs = {
   applicationId: string;
@@ -19,6 +20,7 @@ type ApplicationChipData = {
   name: string;
   seed: string;
   colors?: ApplicationAvatarColors;
+  logo?: string;
 };
 
 type UseApplicationChipDataReturnType = {
@@ -57,11 +59,17 @@ export const useApplicationChipData = ({
         ? t`Custom`
         : application.name;
 
+  console.log('application', application);
   return {
     applicationChipData: {
       name: displayName,
       seed: application.universalIdentifier ?? application.name,
       colors,
+      logo: buildApplicationLogoUrl({
+        applicationId: application.id,
+        logo: application.logo,
+        workspaceId: currentWorkspace?.id,
+      }),
     },
   };
 };

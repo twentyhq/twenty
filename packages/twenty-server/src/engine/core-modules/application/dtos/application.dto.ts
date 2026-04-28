@@ -37,6 +37,11 @@ export class ApplicationDTO {
   @IsOptional()
   @IsString()
   @Field({ nullable: true })
+  logo?: string;
+
+  @IsOptional()
+  @IsString()
+  @Field({ nullable: true })
   version?: string;
 
   @IsString()
