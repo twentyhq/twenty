@@ -39,7 +39,9 @@ describe('validateRatingAndSelectFieldOrThrow', () => {
           'testField',
           validOptions,
         ),
-      ).toThrow('Invalid value "invalidOption" for field "testField". Valid values are: option1, option2, option3');
+      ).toThrow(
+        'Invalid value "invalidOption" for field "testField". Valid values are: option1, option2, option3',
+      );
     });
 
     it('should throw when value is a number', () => {
