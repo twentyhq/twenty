@@ -21,9 +21,11 @@ export const SettingsLayoutPageLayoutDetail = () => {
 
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
 
-  const findObjectLabel = (uid: string) =>
-    objectMetadataItems.find((o) => o.universalIdentifier === uid)
-      ?.labelSingular;
+  const findObjectLabel = (uid: string | undefined) =>
+    isDefined(uid)
+      ? objectMetadataItems.find((o) => o.universalIdentifier === uid)
+          ?.labelSingular
+      : undefined;
 
   const pageLayout = manifest?.pageLayouts?.find(
     (pl) => pl.universalIdentifier === pageLayoutUniversalIdentifier,
