@@ -4,18 +4,10 @@ import { RatingStarIcon } from '@/icons';
 import {
   SHARED_COMPANY_LOGO_URLS,
   SHARED_PEOPLE_AVATAR_URLS,
-} from '@/lib/shared-asset-paths';
+} from '@/content/site/asset-paths';
+import { WebGlMount, createBoundedFailureCache } from '@/lib/visual-runtime';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
-import {
-  type PointerEvent as ReactPointerEvent,
-  type RefObject,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from 'react';
-import { FamiliarInterfaceGradientBackdrop } from './FamiliarInterfaceGradientBackdrop';
 import {
   IconBuildingSkyscraper,
   IconCalendarEvent,
@@ -28,14 +20,21 @@ import {
   IconUser,
   IconUserCircle,
 } from '@tabler/icons-react';
+import {
+  type PointerEvent as ReactPointerEvent,
+  type RefObject,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'react';
+import { useScaleToFit } from '@/sections/ThreeCards/utils/use-scale-to-fit';
+import { FamiliarInterfaceGradientBackdrop } from './FamiliarInterfaceGradientBackdrop';
 
 const APP_FONT = `'Inter', ${theme.font.family.sans}`;
 const TABLER_STROKE = 1.6;
 const SCENE_WIDTH = 411;
 const SCENE_HEIGHT = 508;
-const SCENE_SCALE = 1.025;
-const SCENE_SCALE_MD = SCENE_SCALE * 0.86;
-const SCENE_SCALE_SM = SCENE_SCALE * 0.74;
 const FIGMA_CARD_WIDTH = 174.301;
 const FIGMA_FIELD_HEIGHT = 22.063;
 const FIGMA_FIELD_GAP = 3.677;
@@ -139,8 +138,8 @@ type OpportunityCardData = {
   recordId: string;
 };
 
-const failedAvatarUrls = new Set<string>();
-const failedFaviconUrls = new Set<string>();
+const failedAvatarUrls = createBoundedFailureCache(256);
+const failedFaviconUrls = createBoundedFailureCache(256);
 
 const GITHUB_CARD: OpportunityCardData = {
   id: 'github',
@@ -294,22 +293,14 @@ const VisualRoot = styled.div`
   width: 100%;
 `;
 
-const SceneViewport = styled.div`
+const SceneViewport = styled.div<{ $sceneScale: number }>`
   height: ${SCENE_HEIGHT}px;
   left: 50%;
   position: absolute;
   top: 0;
-  transform: translateX(-50%) scale(${SCENE_SCALE});
+  transform: translateX(-50%) scale(${({ $sceneScale }) => $sceneScale});
   transform-origin: top center;
   width: ${SCENE_WIDTH}px;
-
-  @media (max-width: ${theme.breakpoints.md - 1}px) {
-    transform: translateX(-50%) scale(${SCENE_SCALE_MD});
-  }
-
-  @media (max-width: 640px) {
-    transform: translateX(-50%) scale(${SCENE_SCALE_SM});
-  }
 `;
 
 const SceneFrame = styled.div`
@@ -346,6 +337,10 @@ const BoardGroup = styled.div<{ $active: boolean }>`
   width: 412.302px;
   will-change: transform;
   z-index: 1;
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
 `;
 
 const BoardSurface = styled.div`
@@ -745,6 +740,10 @@ const DragCursor = styled.div<{ $active: boolean }>`
   @media (hover: none) {
     display: none;
   }
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
 `;
 
 const DragCursorInner = styled.div<{ $active: boolean }>`
@@ -760,6 +759,10 @@ const DragCursorInner = styled.div<{ $active: boolean }>`
     );
   transition: transform 520ms cubic-bezier(0.18, 0.9, 0.22, 1.18);
   will-change: transform;
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
 `;
 
 const LaneDraggableCard = styled.div<{ $dragging: boolean }>`
@@ -1187,6 +1190,7 @@ export function FamiliarInterfaceVisual({
   const rootRef = useRef<HTMLDivElement>(null);
   const sceneFrameRef = useRef<HTMLDivElement>(null);
   const interactionLayerRef = useRef<HTMLDivElement>(null);
+  const sceneScale = useScaleToFit(rootRef, SCENE_WIDTH, SCENE_HEIGHT);
   const laneBodyRefs = useRef<(HTMLDivElement | null)[]>([]);
   const laneCardRefs = useRef<Partial<Record<CardId, HTMLDivElement | null>>>(
     {},
@@ -1583,16 +1587,18 @@ export function FamiliarInterfaceVisual({
 
   return (
     <VisualRoot aria-hidden="true" ref={rootRef}>
-      <SceneViewport>
+      <SceneViewport $sceneScale={sceneScale}>
         <SceneFrame ref={sceneFrameRef}>
           <SceneBackdrop
             $backgroundImageRotationDeg={backgroundImageRotationDeg}
           >
-            <FamiliarInterfaceGradientBackdrop
-              active={active}
-              imageUrl={backgroundImageSrc}
-              pointerTargetRef={pointerTargetRef ?? rootRef}
-            />
+            <WebGlMount detachFromLayout>
+              <FamiliarInterfaceGradientBackdrop
+                active={active}
+                imageUrl={backgroundImageSrc}
+                pointerTargetRef={pointerTargetRef ?? rootRef}
+              />
+            </WebGlMount>
           </SceneBackdrop>
           <BoardGroup $active={active}>
             <BoardSurface>

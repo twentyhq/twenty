@@ -11,7 +11,9 @@ import {
 } from 'class-validator';
 import {
   AggregateOperations,
+  ViewCalendarLayout,
   ViewOpenRecordIn,
+  ViewRoadmapZoom,
   ViewKey,
   ViewType,
   ViewVisibility,
@@ -19,8 +21,6 @@ import {
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { IsValidMetadataName } from 'src/engine/decorators/metadata/is-valid-metadata-name.decorator';
-import { ViewCalendarLayout } from 'src/engine/metadata-modules/view/enums/view-calendar-layout.enum';
-import { ViewRoadmapZoom } from 'src/engine/metadata-modules/view/enums/view-roadmap-zoom.enum';
 
 @InputType()
 export class CreateViewInput {

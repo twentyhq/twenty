@@ -21,7 +21,8 @@ export function NetZeroIcon({ size, fillColor }: ClientIconProps) {
         fontSize="15"
         fontWeight="600"
         letterSpacing="-0.02em"
-        x="0"
+        textAnchor="middle"
+        x={VIEWBOX_WIDTH / 2}
         y="11"
       >
         NetZero

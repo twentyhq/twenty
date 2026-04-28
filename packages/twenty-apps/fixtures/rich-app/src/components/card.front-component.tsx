@@ -1,4 +1,4 @@
-import { defineFrontComponent } from 'twenty-sdk';
+import { defineFrontComponent } from 'twenty-sdk/define';
 import { CardDisplay } from '../utils/card-display.component';
 
 export default defineFrontComponent({

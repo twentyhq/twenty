@@ -4,9 +4,11 @@ import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { createOneView } from 'test/integration/metadata/suites/view/utils/create-one-view.util';
 import { generateRecordName } from 'test/integration/utils/generate-record-name';
-import { FieldMetadataType, ViewType } from 'twenty-shared/types';
-
-import { ViewRoadmapZoom } from 'src/engine/metadata-modules/view/enums/view-roadmap-zoom.enum';
+import {
+  FieldMetadataType,
+  ViewRoadmapZoom,
+  ViewType,
+} from 'twenty-shared/types';
 
 const VIEW_WITH_ROADMAP_FIELDS = `
   id

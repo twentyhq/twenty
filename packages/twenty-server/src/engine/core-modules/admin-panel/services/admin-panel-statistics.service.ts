@@ -1,16 +1,24 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { Repository } from 'typeorm';
+import { isNonEmptyString } from '@sniptt/guards';
+import { Brackets, ILike, IsNull, Repository } from 'typeorm';
 
 import { type AdminPanelRecentUserDTO } from 'src/engine/core-modules/admin-panel/dtos/admin-panel-recent-user.dto';
 import { type AdminPanelTopWorkspaceDTO } from 'src/engine/core-modules/admin-panel/dtos/admin-panel-top-workspace.dto';
+import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
+import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+
+const RECENT_USERS_LIMIT = 10;
+const TOP_WORKSPACES_LIMIT = 10;
 
 @Injectable()
 export class AdminPanelStatisticsService {
   constructor(
+    private readonly fileUrlService: FileUrlService,
+    private readonly userService: UserService,
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
     @InjectRepository(WorkspaceEntity)
@@ -20,88 +28,173 @@ export class AdminPanelStatisticsService {
   async getRecentUsers(
     searchTerm?: string,
   ): Promise<AdminPanelRecentUserDTO[]> {
-    let whereClause = 'u."deletedAt" IS NULL';
-    const params: unknown[] = [];
+    const trimmedSearch = searchTerm?.trim();
 
-    if (searchTerm && searchTerm.trim().length > 0) {
-      const term = `%${searchTerm.trim()}%`;
+    const queryBuilder = this.userRepository
+      .createQueryBuilder('user')
+      .leftJoinAndSelect(
+        'user.userWorkspaces',
+        'userWorkspace',
+        '"userWorkspace"."deletedAt" IS NULL',
+      )
+      .leftJoinAndSelect(
+        'userWorkspace.workspace',
+        'workspace',
+        '"workspace"."deletedAt" IS NULL',
+      )
+      .where({ deletedAt: IsNull() })
+      .orderBy('user.createdAt', 'DESC')
+      .addOrderBy('userWorkspace.createdAt', 'DESC')
+      .take(RECENT_USERS_LIMIT);
 
-      whereClause += ` AND (u.email ILIKE $1 OR CONCAT(u."firstName", ' ', u."lastName") ILIKE $1 OR u.id::text ILIKE $1)`;
-      params.push(term);
+    if (trimmedSearch && trimmedSearch.length > 0) {
+      const like = `%${trimmedSearch}%`;
+
+      queryBuilder.andWhere(
+        new Brackets((qb) => {
+          qb.where({ email: ILike(like) })
+            .orWhere(
+              `CONCAT("user"."firstName", ' ', "user"."lastName") ILIKE :like`,
+              { like },
+            )
+            .orWhere('"user"."id"::text ILIKE :like', { like });
+        }),
+      );
     }
 
-    const results = await this.userRepository.manager.query(
-      `SELECT * FROM (
-         SELECT DISTINCT ON (u.id) u.id, u.email, u."firstName", u."lastName", u."createdAt",
-                w."displayName" AS "workspaceName", w.id AS "workspaceId"
-         FROM core."user" u
-         LEFT JOIN core."userWorkspace" uw ON uw."userId" = u.id AND uw."deletedAt" IS NULL
-         LEFT JOIN core.workspace w ON w.id = uw."workspaceId" AND w."deletedAt" IS NULL
-         WHERE ${whereClause}
-         ORDER BY u.id, u."createdAt" DESC
-       ) sub
-       ORDER BY sub."createdAt" DESC
-       LIMIT 10`,
-      params,
-    );
+    const users = await queryBuilder.getMany();
 
-    return results.map(
-      (row: {
-        id: string;
-        email: string;
-        firstName: string | null;
-        lastName: string | null;
-        createdAt: Date;
-        workspaceName: string | null;
-        workspaceId: string | null;
-      }) => ({
-        id: row.id,
-        email: row.email,
-        firstName: row.firstName || null,
-        lastName: row.lastName || null,
-        createdAt: row.createdAt,
-        workspaceName: row.workspaceName ?? null,
-        workspaceId: row.workspaceId ?? null,
-      }),
-    );
+    const signedAvatarUrlByUserId =
+      await this.buildSignedAvatarUrlByUserId(users);
+
+    return users.map((user) => {
+      const displayWorkspace = user.userWorkspaces[0]?.workspace;
+
+      return {
+        id: user.id,
+        email: user.email,
+        firstName: user.firstName ?? undefined,
+        lastName: user.lastName ?? undefined,
+        createdAt: user.createdAt,
+        avatarUrl: signedAvatarUrlByUserId.get(user.id) ?? null,
+        workspaceName: displayWorkspace?.displayName ?? null,
+        workspaceId: displayWorkspace?.id ?? null,
+        workspaceLogo: displayWorkspace
+          ? this.fileUrlService.signWorkspaceLogoUrl(displayWorkspace)
+          : null,
+      };
+    });
   }
 
   async getTopWorkspaces(
     searchTerm?: string,
   ): Promise<AdminPanelTopWorkspaceDTO[]> {
-    let whereClause = 'w."deletedAt" IS NULL';
-    const params: unknown[] = [];
+    const trimmedSearch = searchTerm?.trim();
 
-    if (searchTerm && searchTerm.trim().length > 0) {
-      const term = `%${searchTerm.trim()}%`;
+    const queryBuilder = this.workspaceRepository
+      .createQueryBuilder('workspace')
+      .leftJoin(
+        'workspace.workspaceUsers',
+        'userWorkspace',
+        '"userWorkspace"."deletedAt" IS NULL',
+      )
+      .select('workspace.id', 'id')
+      .addSelect('workspace.displayName', 'name')
+      .addSelect('workspace.subdomain', 'subdomain')
+      .addSelect('workspace.logoFileId', 'logoFileId')
+      .addSelect('COUNT("userWorkspace"."id")::int', 'totalUsers')
+      .where({ deletedAt: IsNull() })
+      .groupBy('workspace.id')
+      .orderBy('"totalUsers"', 'DESC')
+      .limit(TOP_WORKSPACES_LIMIT);
 
-      whereClause += ` AND (w."displayName" ILIKE $1 OR w.subdomain ILIKE $1 OR w.id::text ILIKE $1)`;
-      params.push(term);
+    if (trimmedSearch && trimmedSearch.length > 0) {
+      const like = `%${trimmedSearch}%`;
+
+      queryBuilder.andWhere(
+        new Brackets((qb) => {
+          qb.where('"workspace"."displayName" ILIKE :like', { like })
+            .orWhere('"workspace"."subdomain" ILIKE :like', { like })
+            .orWhere('"workspace"."id"::text ILIKE :like', { like });
+        }),
+      );
     }
 
-    const results = await this.workspaceRepository.manager.query(
-      `SELECT w.id, w."displayName" AS name, w.subdomain, COUNT(uw.id)::int AS "totalUsers"
-       FROM core.workspace w
-       LEFT JOIN core."userWorkspace" uw ON uw."workspaceId" = w.id AND uw."deletedAt" IS NULL
-       WHERE ${whereClause}
-       GROUP BY w.id
-       ORDER BY "totalUsers" DESC
-       LIMIT 10`,
-      params,
+    const rows: Array<{
+      id: string;
+      name: string | null;
+      subdomain: string | null;
+      logoFileId: string | null;
+      totalUsers: number;
+    }> = await queryBuilder.getRawMany();
+
+    return rows.map((row) => ({
+      id: row.id,
+      logoUrl: this.fileUrlService.signWorkspaceLogoUrl({
+        id: row.id,
+        logoFileId: row.logoFileId,
+      }),
+      name: row.name ?? '',
+      subdomain: row.subdomain ?? '',
+      totalUsers: row.totalUsers,
+    }));
+  }
+
+  private async buildSignedAvatarUrlByUserId(
+    users: UserEntity[],
+  ): Promise<Map<string, string | null>> {
+    const signedAvatarUrlByUserId = new Map<string, string | null>();
+    const contextsByWorkspaceId = new Map<
+      string,
+      {
+        workspace: WorkspaceEntity;
+        fallbackAvatarUrlsByUserId: Map<string, string | null>;
+      }
+    >();
+
+    for (const user of users) {
+      signedAvatarUrlByUserId.set(user.id, user.defaultAvatarUrl ?? null);
+
+      for (const userWorkspace of user.userWorkspaces) {
+        const workspace = userWorkspace.workspace;
+
+        if (!workspace) {
+          continue;
+        }
+
+        const entry = contextsByWorkspaceId.get(workspace.id) ?? {
+          workspace,
+          fallbackAvatarUrlsByUserId: new Map(),
+        };
+
+        entry.fallbackAvatarUrlsByUserId.set(
+          user.id,
+          userWorkspace.defaultAvatarUrl ?? user.defaultAvatarUrl ?? null,
+        );
+        contextsByWorkspaceId.set(workspace.id, entry);
+      }
+    }
+
+    await Promise.all(
+      Array.from(contextsByWorkspaceId.values()).map(
+        async ({ workspace, fallbackAvatarUrlsByUserId }) => {
+          const perWorkspaceSigned =
+            await this.userService.loadSignedAvatarUrlsByUserId({
+              workspace,
+              fallbackAvatarUrlsByUserId,
+            });
+
+          for (const [userId, signedUrl] of perWorkspaceSigned.entries()) {
+            const existing = signedAvatarUrlByUserId.get(userId);
+
+            if (!isNonEmptyString(existing) && isNonEmptyString(signedUrl)) {
+              signedAvatarUrlByUserId.set(userId, signedUrl);
+            }
+          }
+        },
+      ),
     );
 
-    return results.map(
-      (row: {
-        id: string;
-        name: string;
-        subdomain: string;
-        totalUsers: number;
-      }) => ({
-        id: row.id,
-        name: row.name ?? '',
-        subdomain: row.subdomain ?? '',
-        totalUsers: row.totalUsers,
-      }),
-    );
+    return signedAvatarUrlByUserId;
   }
 }

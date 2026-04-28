@@ -7,7 +7,10 @@ import {
   IsOptional,
   IsUUID,
 } from 'class-validator';
-import { type FieldsConfiguration } from 'twenty-shared/types';
+import {
+  type FieldsConfiguration,
+  type SerializedRelation,
+} from 'twenty-shared/types';
 
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 
@@ -21,7 +24,7 @@ export class FieldsConfigurationDTO implements FieldsConfiguration {
   @Field(() => String, { nullable: true })
   @IsOptional()
   @IsUUID()
-  viewId: string | null;
+  viewId: SerializedRelation | null;
 
   @Field(() => Boolean, { nullable: true })
   @IsOptional()

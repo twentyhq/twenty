@@ -3,11 +3,10 @@ import { Test, type TestingModule } from '@nestjs/testing';
 import {
   FieldMetadataType,
   OrderByDirection,
+  ViewCalendarLayout,
   ViewType,
   ViewVisibility,
 } from 'twenty-shared/types';
-
-import { ViewCalendarLayout } from 'src/engine/metadata-modules/view/enums/view-calendar-layout.enum';
 
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { ViewFieldService } from 'src/engine/metadata-modules/view-field/services/view-field.service';

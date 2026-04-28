@@ -25,6 +25,7 @@ import { fromViewFilterGroupManifestToUniversalFlatViewFilterGroup } from 'src/e
 import { fromViewFilterManifestToUniversalFlatViewFilter } from 'src/engine/core-modules/application/application-manifest/converters/from-view-filter-manifest-to-universal-flat-view-filter.util';
 import { fromViewGroupManifestToUniversalFlatViewGroup } from 'src/engine/core-modules/application/application-manifest/converters/from-view-group-manifest-to-universal-flat-view-group.util';
 import { fromViewManifestToUniversalFlatView } from 'src/engine/core-modules/application/application-manifest/converters/from-view-manifest-to-universal-flat-view.util';
+import { fromViewSortManifestToUniversalFlatViewSort } from 'src/engine/core-modules/application/application-manifest/converters/from-view-sort-manifest-to-universal-flat-view-sort.util';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { fromAgentManifestToUniversalFlatAgent } from 'src/engine/core-modules/application/utils/from-agent-manifest-to-universal-flat-agent.util';
 import { createEmptyAllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-all-flat-entity-maps.constant';
@@ -325,6 +326,19 @@ export const computeApplicationManifestAllUniversalFlatEntityMaps = ({
           allUniversalFlatEntityMaps.flatViewGroupMaps,
       });
     }
+
+    for (const viewSortManifest of viewManifest.sorts ?? []) {
+      addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
+        universalFlatEntity: fromViewSortManifestToUniversalFlatViewSort({
+          viewSortManifest,
+          viewUniversalIdentifier: viewManifest.universalIdentifier,
+          applicationUniversalIdentifier,
+          now,
+        }),
+        universalFlatEntityMapsToMutate:
+          allUniversalFlatEntityMaps.flatViewSortMaps,
+      });
+    }
   }
 
   for (const navigationMenuItemManifest of manifest.navigationMenuItems ?? []) {
@@ -380,6 +394,43 @@ export const computeApplicationManifestAllUniversalFlatEntityMaps = ({
             allUniversalFlatEntityMaps.flatPageLayoutWidgetMaps,
         });
       }
+    }
+  }
+
+  for (const pageLayoutTabManifest of manifest.pageLayoutTabs ?? []) {
+    if (!isDefined(pageLayoutTabManifest.pageLayoutUniversalIdentifier)) {
+      throw new Error(
+        `Top-level pageLayoutTab "${pageLayoutTabManifest.universalIdentifier}" is missing required pageLayoutUniversalIdentifier`,
+      );
+    }
+
+    addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
+      universalFlatEntity:
+        fromPageLayoutTabManifestToUniversalFlatPageLayoutTab({
+          pageLayoutTabManifest,
+          pageLayoutUniversalIdentifier:
+            pageLayoutTabManifest.pageLayoutUniversalIdentifier,
+          applicationUniversalIdentifier,
+          now,
+        }),
+      universalFlatEntityMapsToMutate:
+        allUniversalFlatEntityMaps.flatPageLayoutTabMaps,
+    });
+
+    for (const pageLayoutWidgetManifest of pageLayoutTabManifest.widgets ??
+      []) {
+      addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
+        universalFlatEntity:
+          fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget({
+            pageLayoutWidgetManifest,
+            pageLayoutTabUniversalIdentifier:
+              pageLayoutTabManifest.universalIdentifier,
+            applicationUniversalIdentifier,
+            now,
+          }),
+        universalFlatEntityMapsToMutate:
+          allUniversalFlatEntityMaps.flatPageLayoutWidgetMaps,
+      });
     }
   }
 

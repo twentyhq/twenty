@@ -17,11 +17,13 @@ const StyledHeaderTitle = styled.div`
 type SettingsLogicFunctionLabelContainerProps = {
   value: string;
   onChange: (value: string) => void;
+  readonly?: boolean;
 };
 
 export const SettingsLogicFunctionLabelContainer = ({
   value,
   onChange,
+  readonly = false,
 }: SettingsLogicFunctionLabelContainerProps) => {
   return (
     <StyledHeaderTitle>
@@ -31,6 +33,7 @@ export const SettingsLogicFunctionLabelContainer = ({
         value={value}
         onChange={onChange}
         placeholder={t`Function name`}
+        disabled={readonly}
       />
     </StyledHeaderTitle>
   );

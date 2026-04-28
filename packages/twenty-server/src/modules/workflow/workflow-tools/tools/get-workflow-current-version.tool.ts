@@ -15,7 +15,8 @@ import {
 const getWorkflowCurrentVersionSchema = z.object({
   workflowId: z
     .string()
-    .describe('The ID of the workflow to get the current version for'),
+    .uuid()
+    .describe('The UUID of the workflow to get the current version for'),
 });
 
 type GetWorkflowCurrentVersionInput = z.infer<

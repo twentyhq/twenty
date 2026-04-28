@@ -14,7 +14,7 @@ export enum SidePanelPages {
   WorkflowRunStepView = 'workflow-run-step-view',
   SearchRecords = 'search-records',
   AskAI = 'ask-ai',
-  ViewPreviousAIChats = 'view-previous-ai-chats',
+  ViewPreviousAiChats = 'view-previous-ai-chats',
   PageLayoutDashboardWidgetTypeSelect = 'page-layout-dashboard-widget-type-select',
   PageLayoutTabSettings = 'page-layout-tab-settings',
   DashboardChartSettings = 'dashboard-chart-settings',

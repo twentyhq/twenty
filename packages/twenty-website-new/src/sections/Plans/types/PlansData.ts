@@ -1,14 +1,12 @@
-import type { BodyType } from '@/design-system/components/Body/types/Body';
-import type { HeadingType } from '@/design-system/components/Heading/types/Heading';
+import type { BodyType } from '@/design-system/components/Body';
+import type { HeadingType } from '@/design-system/components/Heading';
 import type { PlanIconType } from './PlanCard';
 import type { PlanPriceType } from './PlanPrice';
 
-// Same literals as UI toggles when reading cells.
 export type PlansHostingMode = 'cloud' | 'selfHost';
 export type PlansBillingPeriod = 'monthly' | 'yearly';
 export type PlansTierId = 'pro' | 'organization';
 
-// Varies per hosting × billing (eight leaves per tier).
 export type PlansTierCellType = {
   featureBullets: BodyType[];
   price: PlanPriceType;
@@ -24,7 +22,6 @@ export type PlansTierCellsType = {
   selfHost: PlansTierBillingMatrixType;
 };
 
-// Shared across all eight combinations for this tier.
 export type PlansTierType = {
   cells: PlansTierCellsType;
   heading: HeadingType;

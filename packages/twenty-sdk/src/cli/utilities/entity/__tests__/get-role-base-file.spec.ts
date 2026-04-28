@@ -7,7 +7,7 @@ describe('getRoleBaseFile', () => {
       universalIdentifier: '71e45a58-41da-4ae4-8b73-a543c0a9d3d4',
     });
 
-    expect(result).toContain("import { defineRole } from 'twenty-sdk'");
+    expect(result).toContain("import { defineRole } from 'twenty-sdk/define';");
     expect(result).toContain('export default defineRole({');
 
     expect(result).toContain(

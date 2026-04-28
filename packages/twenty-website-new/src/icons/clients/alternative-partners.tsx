@@ -3,10 +3,7 @@ import type { ClientIconProps } from './client-icon-props';
 const VIEWBOX_WIDTH = 132;
 const VIEWBOX_HEIGHT = 22;
 
-export function AlternativePartnersIcon({
-  size,
-  fillColor,
-}: ClientIconProps) {
+export function AlternativePartnersIcon({ size, fillColor }: ClientIconProps) {
   const height = size * (VIEWBOX_HEIGHT / VIEWBOX_WIDTH);
 
   return (
@@ -24,7 +21,8 @@ export function AlternativePartnersIcon({
         fontSize="13"
         fontWeight="600"
         letterSpacing="-0.02em"
-        x="0"
+        textAnchor="middle"
+        x={VIEWBOX_WIDTH / 2}
         y="11"
       >
         Alternative

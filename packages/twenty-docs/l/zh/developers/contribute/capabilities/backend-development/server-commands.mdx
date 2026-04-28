@@ -1,5 +1,6 @@
 ---
 title: 后端命令
+icon: terminal
 ---
 
 ## 实用命令
@@ -43,6 +44,13 @@ npx nx run twenty-server:database:reset
 ```
 
 ### 迁移
+
+#### 适用于 Core/Metadata 模式中的对象 (TypeORM)
+
+```bash
+npx nx run twenty-server:database:migrate:generate
+```
+
 ## 技术栈
 
 Twenty 主要使用 NestJS 作为后端。

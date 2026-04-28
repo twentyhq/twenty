@@ -152,9 +152,9 @@ const SettingsAI = lazy(() =>
   })),
 );
 
-const SettingsAIUsageUserDetail = lazy(() =>
-  import('~/pages/settings/ai/SettingsAIUsageUserDetail').then((module) => ({
-    default: module.SettingsAIUsageUserDetail,
+const SettingsAiUsageUserDetail = lazy(() =>
+  import('~/pages/settings/ai/SettingsAiUsageUserDetail').then((module) => ({
+    default: module.SettingsAiUsageUserDetail,
   })),
 );
 
@@ -176,6 +176,28 @@ const SettingsApplicationDetails = lazy(() =>
   import('~/pages/settings/applications/SettingsApplicationDetails').then(
     (module) => ({
       default: module.SettingsApplicationDetails,
+    }),
+  ),
+);
+
+const SettingsApplicationFrontComponentDetail = lazy(() =>
+  import(
+    '~/pages/settings/applications/SettingsApplicationFrontComponentDetail'
+  ).then((module) => ({
+    default: module.SettingsApplicationFrontComponentDetail,
+  })),
+);
+
+const SettingsLayoutViewDetail = lazy(() =>
+  import('~/pages/settings/layout/SettingsLayoutViewDetail').then((module) => ({
+    default: module.SettingsLayoutViewDetail,
+  })),
+);
+
+const SettingsLayoutPageLayoutDetail = lazy(() =>
+  import('~/pages/settings/layout/SettingsLayoutPageLayoutDetail').then(
+    (module) => ({
+      default: module.SettingsLayoutPageLayoutDetail,
     }),
   ),
 );
@@ -230,9 +252,9 @@ const SettingsSkillForm = lazy(() =>
   })),
 );
 
-const SettingsAIPrompts = lazy(() =>
-  import('~/pages/settings/ai/SettingsAIPrompts').then((module) => ({
-    default: module.SettingsAIPrompts,
+const SettingsAiPrompts = lazy(() =>
+  import('~/pages/settings/ai/SettingsAiPrompts').then((module) => ({
+    default: module.SettingsAiPrompts,
   })),
 );
 
@@ -564,33 +586,33 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
           element={<SettingsApiWebhooks />}
         />
         <Route path={SettingsPath.AI} element={<SettingsAI />} />
-        <Route path={SettingsPath.AIPrompts} element={<SettingsAIPrompts />} />
+        <Route path={SettingsPath.AiPrompts} element={<SettingsAiPrompts />} />
         <Route
-          path={SettingsPath.AINewAgent}
+          path={SettingsPath.AiNewAgent}
           element={<SettingsAgentForm mode="create" />}
         />
         <Route
-          path={SettingsPath.AIAgentDetail}
+          path={SettingsPath.AiAgentDetail}
           element={<SettingsAgentForm mode="edit" />}
         />
         <Route
-          path={SettingsPath.AIAgentTurnDetail}
+          path={SettingsPath.AiAgentTurnDetail}
           element={<SettingsAgentTurnDetail />}
         />
         <Route
-          path={SettingsPath.AINewSkill}
+          path={SettingsPath.AiNewSkill}
           element={<SettingsSkillForm mode="create" />}
         />
         <Route
-          path={SettingsPath.AISkillDetail}
+          path={SettingsPath.AiSkillDetail}
           element={<SettingsSkillForm mode="edit" />}
         />
         <Route
-          path={SettingsPath.AIUsageUserDetail}
-          element={<SettingsAIUsageUserDetail />}
+          path={SettingsPath.AiUsageUserDetail}
+          element={<SettingsAiUsageUserDetail />}
         />
         <Route
-          path={SettingsPath.AIToolDetail}
+          path={SettingsPath.AiToolDetail}
           element={<SettingsToolDetail />}
         />
         <Route
@@ -751,6 +773,18 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
         <Route
           path={SettingsPath.ApplicationLogicFunctionDetail}
           element={<SettingsLogicFunctionDetail />}
+        />
+        <Route
+          path={SettingsPath.ApplicationFrontComponentDetail}
+          element={<SettingsApplicationFrontComponentDetail />}
+        />
+        <Route
+          path={SettingsPath.ApplicationViewDetail}
+          element={<SettingsLayoutViewDetail />}
+        />
+        <Route
+          path={SettingsPath.ApplicationPageLayoutDetail}
+          element={<SettingsLayoutPageLayoutDetail />}
         />
         <Route
           path={SettingsPath.ApplicationRegistrationConfigVariableDetails}

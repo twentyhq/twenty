@@ -25,7 +25,8 @@
     "vite.config.ts",
     "vite.config.node.ts",
     "vite.config.browser.ts",
-    "vite.config.sdk.ts",
+    "vite.config.define.ts",
+    "vite.config.front-component.ts",
     "jest.config.mjs"
   ]
 }

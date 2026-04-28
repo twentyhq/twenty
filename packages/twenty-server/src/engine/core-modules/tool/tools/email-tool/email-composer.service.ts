@@ -1,9 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { render, toPlainText } from '@react-email/render';
+import { toPlainText } from '@react-email/render';
 import DOMPurify from 'dompurify';
-import { reactMarkupFromJSON } from 'twenty-emails';
 import { MAX_EMAIL_RECIPIENTS } from 'twenty-shared/constants';
 import {
   ConnectedAccountProvider,
@@ -31,7 +30,6 @@ import { MessagingAccountAuthenticationService } from 'src/modules/messaging/mes
 import { type MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import { type MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
 import { type MessageAttachment } from 'src/modules/messaging/message-import-manager/types/message';
-import { parseEmailBody } from 'src/utils/parse-email-body';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 @Injectable()
 export class EmailComposerService {
@@ -391,15 +389,12 @@ export class EmailComposerService {
       options.attachmentsFileFolder,
     );
 
-    const parsedBody = parseEmailBody(body);
-    const reactMarkup = reactMarkupFromJSON(parsedBody);
-    const htmlBody = await render(reactMarkup);
-    const plainTextBody = toPlainText(htmlBody);
-
     const { JSDOM } = await import('jsdom');
     const window = new JSDOM('').window;
     const purify = DOMPurify(window);
-    const sanitizedHtmlBody = purify.sanitize(htmlBody || '');
+
+    const sanitizedHtmlBody = purify.sanitize(body || '');
+    const plainTextBody = toPlainText(sanitizedHtmlBody);
     const sanitizedSubject = purify.sanitize(subject || '');
 
     let threadExternalId: string | undefined;

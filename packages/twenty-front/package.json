@@ -3,8 +3,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "NODE_ENV=production NODE_OPTIONS=--max-old-space-size=8192 npx vite build && sh ./scripts/inject-runtime-env.sh",
-    "build:sourcemaps": "NODE_ENV=production VITE_BUILD_SOURCEMAP=true NODE_OPTIONS=--max-old-space-size=8192 npx vite build && sh ./scripts/inject-runtime-env.sh",
+    "build": "NODE_ENV=production NODE_OPTIONS=--max-old-space-size=8192 npx vite build",
+    "build:sourcemaps": "NODE_ENV=production VITE_BUILD_SOURCEMAP=true NODE_OPTIONS=--max-old-space-size=8192 npx vite build",
     "start:prod": "NODE_ENV=production npx serve -s build",
     "tsup": "npx tsup"
   },
@@ -30,10 +30,10 @@
   },
   "dependencies": {
     "@apollo/client": "^4.0.0",
-    "@blocknote/mantine": "^0.47.1",
-    "@blocknote/react": "^0.47.1",
-    "@blocknote/xl-docx-exporter": "^0.47.1",
-    "@blocknote/xl-pdf-exporter": "^0.47.1",
+    "@blocknote/mantine": "^0.47.3",
+    "@blocknote/react": "^0.47.3",
+    "@blocknote/xl-docx-exporter": "^0.47.3",
+    "@blocknote/xl-pdf-exporter": "^0.47.3",
     "@calcom/embed-react": "^1.5.3",
     "@cyntler/react-doc-viewer": "^1.17.0",
     "@dagrejs/dagre": "^1.1.8",

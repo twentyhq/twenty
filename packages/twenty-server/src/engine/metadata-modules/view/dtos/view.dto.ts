@@ -3,7 +3,9 @@ import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 import { IDField } from '@ptc-org/nestjs-query-graphql';
 import {
   AggregateOperations,
+  ViewCalendarLayout,
   ViewOpenRecordIn,
+  ViewRoadmapZoom,
   ViewType,
   ViewVisibility,
   ViewKey,
@@ -16,8 +18,6 @@ import { ViewFilterGroupDTO } from 'src/engine/metadata-modules/view-filter-grou
 import { ViewFilterDTO } from 'src/engine/metadata-modules/view-filter/dtos/view-filter.dto';
 import { ViewGroupDTO } from 'src/engine/metadata-modules/view-group/dtos/view-group.dto';
 import { ViewSortDTO } from 'src/engine/metadata-modules/view-sort/dtos/view-sort.dto';
-import { ViewCalendarLayout } from 'src/engine/metadata-modules/view/enums/view-calendar-layout.enum';
-import { ViewRoadmapZoom } from 'src/engine/metadata-modules/view/enums/view-roadmap-zoom.enum';
 
 registerEnumType(ViewOpenRecordIn, { name: 'ViewOpenRecordIn' });
 registerEnumType(ViewType, { name: 'ViewType' });

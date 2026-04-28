@@ -1,7 +1,6 @@
-import { ViewType, ViewKey } from 'twenty-shared/types';
+import { ViewKey, ViewRoadmapZoom, ViewType } from 'twenty-shared/types';
 
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
-import { ViewRoadmapZoom } from 'src/engine/metadata-modules/view/enums/view-roadmap-zoom.enum';
 import {
   createStandardViewFlatMetadata,
   type CreateStandardViewArgs,

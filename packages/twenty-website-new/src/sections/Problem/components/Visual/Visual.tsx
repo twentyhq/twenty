@@ -1,4 +1,5 @@
-import { IllustrationMount } from '@/illustrations';
+import { WebGlMount } from '@/lib/visual-runtime';
+import { ProblemMonolithIllustration } from '@/sections/Problem/visuals/ProblemMonolithIllustration';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
 
@@ -53,7 +54,9 @@ export function Visual() {
     <StyledVisual>
       <StyledMasked>
         <StyledHalftoneLayer>
-          <IllustrationMount illustration="problemMonolith" />
+          <WebGlMount>
+            <ProblemMonolithIllustration />
+          </WebGlMount>
         </StyledHalftoneLayer>
       </StyledMasked>
     </StyledVisual>

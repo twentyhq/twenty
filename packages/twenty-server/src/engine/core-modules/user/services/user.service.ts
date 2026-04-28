@@ -4,10 +4,11 @@ import assert from 'assert';
 
 import { msg } from '@lingui/core/macro';
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
+import { isNonEmptyString } from '@sniptt/guards';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { isWorkspaceActiveOrSuspended } from 'twenty-shared/workspace';
-import { type QueryRunner, IsNull, Not, Repository } from 'typeorm';
+import { type QueryRunner, In, IsNull, Not, Repository } from 'typeorm';
 
 import {
   AuthException,
@@ -42,6 +43,7 @@ import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/co
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { WorkspaceMemberTranspiler } from 'src/engine/core-modules/user/services/workspace-member-transpiler.service';
 
 // oxlint-disable-next-line twenty/inject-workspace-repository
 export class UserService extends TypeOrmQueryService<UserEntity> {
@@ -57,6 +59,7 @@ export class UserService extends TypeOrmQueryService<UserEntity> {
     @InjectMessageQueue(MessageQueue.workspaceQueue)
     private readonly workspaceQueueService: MessageQueueService,
     private readonly coreEntityCacheService: CoreEntityCacheService,
+    private readonly workspaceMemberTranspiler: WorkspaceMemberTranspiler,
   ) {
     super(userRepository);
   }
@@ -111,6 +114,92 @@ export class UserService extends TypeOrmQueryService<UserEntity> {
 
         return await workspaceMemberRepository.find({
           withDeleted: withDeleted,
+        });
+      },
+      authContext,
+    );
+  }
+
+  async loadSignedAvatarUrlsByUserId({
+    workspace,
+    fallbackAvatarUrlsByUserId,
+  }: {
+    workspace: Pick<WorkspaceEntity, 'id' | 'activationStatus'>;
+    fallbackAvatarUrlsByUserId: Map<string, string | null>;
+  }): Promise<Map<string, string | null>> {
+    const userIds = Array.from(fallbackAvatarUrlsByUserId.keys());
+
+    if (userIds.length === 0) {
+      return new Map();
+    }
+
+    const workspaceMembers = await this.loadWorkspaceMembersByUserIds({
+      workspace,
+      userIds,
+    });
+    const memberByUserId = new Map(
+      workspaceMembers.map((member) => [member.userId, member]),
+    );
+
+    return new Map(
+      userIds.map((userId) => {
+        const member = memberByUserId.get(userId);
+        const memberSigned = isDefined(member)
+          ? this.workspaceMemberTranspiler.generateSignedAvatarUrl({
+              workspaceId: workspace.id,
+              workspaceMember: member,
+            })
+          : '';
+
+        if (isNonEmptyString(memberSigned)) {
+          return [userId, memberSigned];
+        }
+
+        const fallbackAvatarUrl = fallbackAvatarUrlsByUserId.get(userId);
+
+        if (!isNonEmptyString(fallbackAvatarUrl)) {
+          return [userId, null];
+        }
+
+        const fallbackSigned =
+          this.workspaceMemberTranspiler.generateSignedAvatarUrl({
+            workspaceId: workspace.id,
+            workspaceMember: { avatarUrl: fallbackAvatarUrl, id: userId },
+          });
+
+        return [
+          userId,
+          isNonEmptyString(fallbackSigned) ? fallbackSigned : fallbackAvatarUrl,
+        ];
+      }),
+    );
+  }
+
+  async loadWorkspaceMembersByUserIds({
+    workspace,
+    userIds,
+  }: {
+    workspace: Pick<WorkspaceEntity, 'id' | 'activationStatus'>;
+    userIds: string[];
+  }): Promise<WorkspaceMemberWorkspaceEntity[]> {
+    if (!isWorkspaceActiveOrSuspended(workspace) || userIds.length === 0) {
+      return [];
+    }
+
+    const authContext = buildSystemAuthContext(workspace.id);
+
+    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      async () => {
+        const workspaceMemberRepository =
+          await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
+            workspace.id,
+            'workspaceMember',
+            { shouldBypassPermissionChecks: true },
+          );
+
+        return await workspaceMemberRepository.find({
+          select: ['id', 'userId', 'avatarUrl'],
+          where: { userId: In(userIds) },
         });
       },
       authContext,

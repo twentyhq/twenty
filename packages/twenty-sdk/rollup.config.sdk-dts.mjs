@@ -1,26 +1,45 @@
 import dts from 'rollup-plugin-dts';
 
-// Generates a self-contained SDK declaration file directly from source,
-// inlining types from twenty-shared so npm consumers don't need it.
-export default {
-  input: 'src/sdk/index.ts',
-  output: {
-    file: 'dist/sdk/index.d.ts',
-    format: 'es',
-  },
-  external: (id) => {
-    if (id === 'twenty-shared' || id.startsWith('twenty-shared/')) {
-      return false;
-    }
-    if (id.startsWith('@/')) {
-      return false;
-    }
-    return !id.startsWith('.') && !id.startsWith('/');
-  },
-  plugins: [
-    dts({
-      tsconfig: './tsconfig.lib.json',
-      respectExternal: true,
-    }),
-  ],
+const external = (id) => {
+  if (id === 'twenty-shared' || id.startsWith('twenty-shared/')) {
+    return false;
+  }
+  if (id.startsWith('@/')) {
+    return false;
+  }
+  return !id.startsWith('.') && !id.startsWith('/');
 };
+
+const plugins = [
+  dts({
+    tsconfig: './tsconfig.lib.json',
+    respectExternal: true,
+  }),
+];
+
+export default [
+  {
+    input: 'src/sdk/define/index.ts',
+    output: { file: 'dist/define/index.d.ts', format: 'es' },
+    external,
+    plugins,
+  },
+  {
+    input: 'src/sdk/front-component/index.ts',
+    output: { file: 'dist/front-component/index.d.ts', format: 'es' },
+    external,
+    plugins,
+  },
+  {
+    input: 'src/sdk/billing/index.ts',
+    output: { file: 'dist/billing/index.d.ts', format: 'es' },
+    external,
+    plugins,
+  },
+  {
+    input: 'src/sdk/logic-function/index.ts',
+    output: { file: 'dist/logic-function/index.d.ts', format: 'es' },
+    external,
+    plugins,
+  },
+];

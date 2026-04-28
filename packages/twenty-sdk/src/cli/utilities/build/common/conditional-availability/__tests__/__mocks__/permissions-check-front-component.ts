@@ -1,4 +1,5 @@
-import { defineFrontComponent, isInSidePanel, objectPermissions } from '@/sdk';
+import { defineFrontComponent } from '@/sdk/define';
+import { isInSidePanel, objectPermissions } from '@/sdk/front-component';
 
 const MyComponent = () => null;
 

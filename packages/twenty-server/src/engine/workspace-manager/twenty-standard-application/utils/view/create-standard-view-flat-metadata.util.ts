@@ -2,13 +2,12 @@ import { isDefined } from 'class-validator';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import {
   type AggregateOperations,
-  type ViewType,
   type ViewKey,
   ViewOpenRecordIn,
+  type ViewRoadmapZoom,
+  type ViewType,
   ViewVisibility,
 } from 'twenty-shared/types';
-
-import { type ViewRoadmapZoom } from 'src/engine/metadata-modules/view/enums/view-roadmap-zoom.enum';
 
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';

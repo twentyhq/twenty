@@ -17,6 +17,9 @@ import { AddPageLayoutIdToCommandMenuItemFastInstanceCommand } from 'src/databas
 import { AddConditionalAvailabilityExpressionToPageLayoutWidgetFastInstanceCommand } from 'src/database/commands/upgrade-version-command/1-23/1-23-instance-command-fast-1775654781000-add-conditional-availability-expression-to-page-layout-widget';
 import { AddOpportunityMilestoneAndRoadmapExtensionsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/1-23/1-23-instance-command-fast-1777388184036-add-opportunity-milestone-and-roadmap-extensions';
 import { AddRoadmapPlannedStartFastInstanceCommand } from 'src/database/commands/upgrade-version-command/1-23/1-23-instance-command-fast-1777393924993-add-roadmap-planned-start';
+import { AddIsPreInstalledToApplicationRegistrationFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-1/2-1-instance-command-fast-1776886452831-add-is-pre-installed-to-application-registration';
+import { AddProviderExecutedToAgentMessagePartFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-1/2-1-instance-command-fast-1777012800000-add-provider-executed-to-agent-message-part';
+import { BackfillPageLayoutWidgetPositionSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-1/2-1-instance-command-slow-1795000002000-backfill-page-layout-widget-position';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -36,4 +39,7 @@ export const INSTANCE_COMMANDS = [
   AddConditionalAvailabilityExpressionToPageLayoutWidgetFastInstanceCommand,
   AddOpportunityMilestoneAndRoadmapExtensionsFastInstanceCommand,
   AddRoadmapPlannedStartFastInstanceCommand,
+  AddIsPreInstalledToApplicationRegistrationFastInstanceCommand,
+  AddProviderExecutedToAgentMessagePartFastInstanceCommand,
+  BackfillPageLayoutWidgetPositionSlowInstanceCommand,
 ];

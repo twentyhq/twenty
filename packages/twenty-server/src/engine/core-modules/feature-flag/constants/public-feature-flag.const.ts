@@ -13,14 +13,6 @@ export type PublicFeatureFlag = {
 
 export const PUBLIC_FEATURE_FLAGS: PublicFeatureFlag[] = [
   {
-    key: FeatureFlagKey.IS_AI_ENABLED,
-    metadata: {
-      label: 'AI',
-      description: 'Enable AI-powered features including the agent chat',
-      imagePath: 'https://twenty.com/images/lab/is-ai-enabled.png',
-    },
-  },
-  {
     key: FeatureFlagKey.IS_JUNCTION_RELATIONS_ENABLED,
     metadata: {
       label: 'Junction Relations',

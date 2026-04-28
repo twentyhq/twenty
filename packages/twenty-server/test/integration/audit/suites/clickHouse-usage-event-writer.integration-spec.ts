@@ -6,7 +6,7 @@ import {
   createClient,
 } from '@clickhouse/client';
 
-import { formatDateForClickHouse } from 'src/database/clickHouse/clickHouse.util';
+import { formatDateTimeForClickHouse } from 'src/database/clickHouse/clickHouse.util';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
@@ -24,7 +24,7 @@ const buildUsageEventRow = (
     resourceContext: string;
   }> = {},
 ) => ({
-  timestamp: formatDateForClickHouse(new Date()),
+  timestamp: formatDateTimeForClickHouse(new Date()),
   workspaceId,
   userWorkspaceId: overrides.userWorkspaceId ?? '',
   resourceType: overrides.resourceType ?? UsageResourceType.AI,

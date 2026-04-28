@@ -17,9 +17,9 @@ import {
 import { AgentTurnEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-turn.entity';
 import { mapUIMessagePartsToDBParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/mapUIMessagePartsToDBParts';
 import {
-  AgentException,
-  AgentExceptionCode,
-} from 'src/engine/metadata-modules/ai/ai-agent/agent.exception';
+  AiException,
+  AiExceptionCode,
+} from 'src/engine/metadata-modules/ai/ai.exception';
 import { AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
 import { WorkspaceEventBroadcaster } from 'src/engine/subscriptions/workspace-event-broadcaster/workspace-event-broadcaster.service';
 
@@ -76,6 +76,7 @@ export class AgentChatService {
           type: 'created',
           entityName: 'agentChatThread',
           recordId: savedThread.id,
+          recipientUserWorkspaceIds: [userWorkspaceId],
           properties: {
             after: serializeThreadForBroadcast(savedThread),
           },
@@ -95,9 +96,9 @@ export class AgentChatService {
     });
 
     if (!thread) {
-      throw new AgentException(
+      throw new AiException(
         'Thread not found',
-        AgentExceptionCode.AGENT_EXECUTION_FAILED,
+        AiExceptionCode.THREAD_NOT_FOUND,
       );
     }
 
@@ -178,9 +179,9 @@ export class AgentChatService {
     });
 
     if (!thread) {
-      throw new AgentException(
+      throw new AiException(
         'Thread not found',
-        AgentExceptionCode.AGENT_EXECUTION_FAILED,
+        AiExceptionCode.THREAD_NOT_FOUND,
       );
     }
 
@@ -327,8 +328,11 @@ export class AgentChatService {
       return null;
     }
 
-    const title =
-      await this.titleGenerationService.generateThreadTitle(messageContent);
+    const title = await this.titleGenerationService.generateThreadTitle(
+      messageContent,
+      workspaceId,
+      thread.userWorkspaceId,
+    );
 
     await this.threadRepository.update(threadId, { title });
 
@@ -339,6 +343,7 @@ export class AgentChatService {
           type: 'updated',
           entityName: 'agentChatThread',
           recordId: threadId,
+          recipientUserWorkspaceIds: [thread.userWorkspaceId],
           properties: {
             updatedFields: ['title'],
             after: serializeThreadForBroadcast({ ...thread, title }),

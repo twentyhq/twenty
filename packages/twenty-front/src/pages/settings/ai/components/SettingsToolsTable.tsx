@@ -115,7 +115,7 @@ export const SettingsToolsTable = () => {
   const isCustom = (item: ToolItem) => isDefined(item.applicationId);
 
   const getToolLink = (item: ToolItem) =>
-    getSettingsPath(SettingsPath.AIToolDetail, {
+    getSettingsPath(SettingsPath.AiToolDetail, {
       toolIdentifier: item.identifier,
     });
 

@@ -1,13 +1,17 @@
 'use client';
 
+import { createAnimationFrameLoop } from '@/lib/animation';
+import { useTimeoutRegistry } from '@/lib/react';
+import { WebGlMount } from '@/lib/visual-runtime';
+import { useScaleToFit } from '@/sections/ThreeCards/utils/use-scale-to-fit';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
 import {
-  IconBuildingSkyscraper,
   IconChevronDown,
+  IconHeartHandshake,
   IconList,
-  IconMail,
   IconPlus,
+  IconUser,
   IconX,
 } from '@tabler/icons-react';
 import { type RefObject, useEffect, useRef, useState } from 'react';
@@ -17,9 +21,6 @@ import { LiveDataHeroTable } from './LiveDataHeroTable';
 const APP_FONT = `'Inter', ${theme.font.family.sans}`;
 const SCENE_HEIGHT = 508;
 const SCENE_WIDTH = 411;
-const SCENE_SCALE = 1;
-const SCENE_SCALE_MD = 0.86;
-const SCENE_SCALE_SM = 0.74;
 const TABLE_PANEL_HOVER_SCALE = 1.012;
 const TABLER_STROKE = 1.65;
 const FILTER_ICON_STROKE = 1.33;
@@ -123,22 +124,23 @@ const VisualRoot = styled.div`
   width: 100%;
 `;
 
-const SceneViewport = styled.div`
-  bottom: 0;
+const SceneViewport = styled.div<{ $sceneScale: number }>`
+  /*
+   * Fixed 411 × 508 design box. The previous "width: 101%; top: 0; bottom: 0"
+   * sizing made the viewport responsive AND we then applied a scale on top —
+   * a double-responsive coupling that shrank the visual quadratically with
+   * card width and made absolute-positioned children (TablePanel etc.) drift
+   * around as the card resized. Locking the box to design size means inner
+   * content lives in a stable 411 × 508 coordinate system; only the single
+   * uniform scale changes with the card.
+   */
+  height: ${SCENE_HEIGHT}px;
   left: 50%;
   position: absolute;
   top: 0;
-  transform: translateX(-50%) scale(${SCENE_SCALE});
+  transform: translateX(-50%) scale(${({ $sceneScale }) => $sceneScale});
   transform-origin: top center;
-  width: 101%;
-
-  @media (max-width: ${theme.breakpoints.md - 1}px) {
-    transform: translateX(-50%) scale(${SCENE_SCALE_MD});
-  }
-
-  @media (max-width: 640px) {
-    transform: translateX(-50%) scale(${SCENE_SCALE_SM});
-  }
+  width: ${SCENE_WIDTH}px;
 `;
 
 const SceneFrame = styled.div`
@@ -338,6 +340,14 @@ const FilterChip = styled.div<{ $pressed?: boolean; $removing?: boolean }>`
       opacity: 0;
       transform: scale(0.64) translate3d(18px, -6px, 0);
     }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    /* Snap-hide the chip when removing — animation-end still fires (the
+       parent uses it as the removal signal) but the decorative pop is
+       collapsed to a single frame. */
+    animation-duration: 1ms;
+    animation-timing-function: linear;
   }
 `;
 
@@ -708,8 +718,10 @@ export function LiveDataVisual({
   pointerTargetRef,
 }: LiveDataVisualProps) {
   const rootRef = useRef<HTMLDivElement>(null);
-  const companyFilterRef = useRef<HTMLDivElement>(null);
-  const opensFilterRef = useRef<HTMLDivElement>(null);
+  const typeFilterRef = useRef<HTMLDivElement>(null);
+  const employeesFilterRef = useRef<HTMLDivElement>(null);
+  const sceneScale = useScaleToFit(rootRef, SCENE_WIDTH, SCENE_HEIGHT);
+  const timeoutRegistry = useTimeoutRegistry();
   const [isBobHovered, setIsBobHovered] = useState(false);
   const [isTomHovered, setIsTomHovered] = useState(false);
   const [phase, setPhase] = useState<LiveDataPhase>('idle');
@@ -725,42 +737,46 @@ export function LiveDataVisual({
       return;
     }
 
-    const timeoutIds: number[] = [];
+    const cancelSequenceSteps: Array<() => void> = [];
     setPhase('move-to-tag');
 
     for (const step of LIVE_DATA_SEQUENCE.slice(1)) {
-      const timeoutId = window.setTimeout(() => {
-        setPhase(step.phase);
-      }, step.delay);
-
-      timeoutIds.push(timeoutId);
+      cancelSequenceSteps.push(
+        timeoutRegistry.schedule(() => {
+          setPhase(step.phase);
+        }, step.delay),
+      );
     }
 
     return () => {
-      for (const timeoutId of timeoutIds) {
-        window.clearTimeout(timeoutId);
-      }
+      cancelSequenceSteps.forEach((cancelSequenceStep) => cancelSequenceStep());
     };
-  }, [active]);
+  }, [active, timeoutRegistry]);
 
   useEffect(() => {
     if (phase === 'rename-tag') {
       setTypedTagLabel(EDITED_TAG_LABEL.slice(0, 1));
 
       let nextIndex = 2;
-      const intervalId = window.setInterval(() => {
-        setTypedTagLabel(EDITED_TAG_LABEL.slice(0, nextIndex));
+      const cancelTypingSteps: Array<() => void> = [];
 
-        if (nextIndex >= EDITED_TAG_LABEL.length) {
-          window.clearInterval(intervalId);
-          return;
-        }
+      const scheduleNextTypingStep = () => {
+        const cancelTypingStep = timeoutRegistry.schedule(() => {
+          setTypedTagLabel(EDITED_TAG_LABEL.slice(0, nextIndex));
+          nextIndex += 1;
 
-        nextIndex += 1;
-      }, TYPING_STEP_MS);
+          if (nextIndex <= EDITED_TAG_LABEL.length) {
+            scheduleNextTypingStep();
+          }
+        }, TYPING_STEP_MS);
+
+        cancelTypingSteps.push(cancelTypingStep);
+      };
+
+      scheduleNextTypingStep();
 
       return () => {
-        window.clearInterval(intervalId);
+        cancelTypingSteps.forEach((cancelTypingStep) => cancelTypingStep());
       };
     }
 
@@ -777,22 +793,33 @@ export function LiveDataVisual({
     }
 
     setTypedTagLabel('');
-  }, [phase]);
+  }, [phase, timeoutRegistry]);
 
   useEffect(() => {
-    const measureAddFilterLefts = () => {
-      const companyFilter = companyFilterRef.current;
-      const opensFilter = opensFilterRef.current;
+    let isMounted = true;
 
-      if (!companyFilter || !opensFilter || opensFilter.offsetWidth === 0) {
+    const measureAddFilterLefts = () => {
+      if (!isMounted) {
+        return;
+      }
+
+      const typeFilter = typeFilterRef.current;
+      const employeesFilter = employeesFilterRef.current;
+
+      if (
+        !typeFilter ||
+        !employeesFilter ||
+        employeesFilter.offsetWidth === 0
+      ) {
         return;
       }
 
       const nextLefts = {
-        docked:
-          companyFilter.offsetLeft + companyFilter.offsetWidth + FILTER_ROW_GAP,
+        docked: typeFilter.offsetLeft + typeFilter.offsetWidth + FILTER_ROW_GAP,
         parked:
-          opensFilter.offsetLeft + opensFilter.offsetWidth + FILTER_ROW_GAP,
+          employeesFilter.offsetLeft +
+          employeesFilter.offsetWidth +
+          FILTER_ROW_GAP,
       };
 
       setAddFilterLefts((current) =>
@@ -803,12 +830,20 @@ export function LiveDataVisual({
       );
     };
 
-    const frameId = window.requestAnimationFrame(measureAddFilterLefts);
+    const measureTask = createAnimationFrameLoop({
+      onFrame: () => {
+        measureAddFilterLefts();
+        return false;
+      },
+    });
+
+    measureTask.start();
     window.addEventListener('resize', measureAddFilterLefts);
     void document.fonts?.ready.then(measureAddFilterLefts);
 
     return () => {
-      window.cancelAnimationFrame(frameId);
+      isMounted = false;
+      measureTask.stop();
       window.removeEventListener('resize', measureAddFilterLefts);
     };
   }, []);
@@ -830,10 +865,10 @@ export function LiveDataVisual({
     phase === 'return-bob' ||
     phase === 'settle';
   const isBobCursorVisible = active;
-  const isOpensFilterRemoving = phase === 'remove-filter';
-  const isOpensFilterVisible =
+  const isEmployeesFilterRemoving = phase === 'remove-filter';
+  const isEmployeesFilterVisible =
     phase !== 'remove-filter' && phase !== 'return-bob' && phase !== 'settle';
-  const hasOpensFilterBeenRemoved =
+  const hasEmployeesFilterBeenRemoved =
     phase === 'remove-filter' || phase === 'return-bob' || phase === 'settle';
   const isFirstTagRenamed =
     phase === 'rename-tag' ||
@@ -850,18 +885,20 @@ export function LiveDataVisual({
   const addFilterLeft = isAddFilterDocked
     ? (addFilterLefts?.docked ?? DEFAULT_ADD_FILTER_LEFTS.docked)
     : (addFilterLefts?.parked ?? DEFAULT_ADD_FILTER_LEFTS.parked);
-  const viewCount = hasOpensFilterBeenRemoved ? 11 : 9;
+  const viewCount = hasEmployeesFilterBeenRemoved ? 11 : 9;
 
   return (
     <VisualRoot aria-hidden ref={rootRef}>
-      <SceneViewport>
+      <SceneViewport $sceneScale={sceneScale}>
         <SceneFrame>
           <SceneBackdrop>
-            <LiveDataGradientBackdrop
-              active={active}
-              imageUrl={backgroundImageSrc}
-              pointerTargetRef={pointerTargetRef ?? rootRef}
-            />
+            <WebGlMount detachFromLayout>
+              <LiveDataGradientBackdrop
+                active={active}
+                imageUrl={backgroundImageSrc}
+                pointerTargetRef={pointerTargetRef ?? rootRef}
+              />
+            </WebGlMount>
           </SceneBackdrop>
           <SceneContent>
             <AnimatedMarkerGroup
@@ -914,7 +951,7 @@ export function LiveDataVisual({
                         stroke={TABLER_STROKE}
                       />
                     </ViewSwitcherIcon>
-                    <ViewLabel>All contacts</ViewLabel>
+                    <ViewLabel>All</ViewLabel>
                     <ViewDot />
                     <ViewCount>{viewCount}</ViewCount>
                   </ViewSwitcherLeft>
@@ -930,19 +967,19 @@ export function LiveDataVisual({
               </ViewRow>
 
               <FilterRow>
-                <FilterChip ref={companyFilterRef}>
+                <FilterChip ref={typeFilterRef}>
                   <FilterChipLabel>
                     <FilterChipIcon>
-                      <IconBuildingSkyscraper
+                      <IconHeartHandshake
                         aria-hidden
                         color={COLORS.blue}
                         size={14}
                         stroke={FILTER_ICON_STROKE}
                       />
                     </FilterChipIcon>
-                    <FilterName>Company</FilterName>
+                    <FilterName>Type</FilterName>
                   </FilterChipLabel>
-                  <FilterValue>is Resend</FilterValue>
+                  <FilterValue>is Customer</FilterValue>
                   <FilterCloseButton type="button">
                     <IconX
                       aria-hidden
@@ -954,26 +991,26 @@ export function LiveDataVisual({
                 </FilterChip>
 
                 <FilterChipMotion
-                  ref={opensFilterRef}
-                  $removing={isOpensFilterRemoving}
-                  $visible={isOpensFilterVisible}
+                  ref={employeesFilterRef}
+                  $removing={isEmployeesFilterRemoving}
+                  $visible={isEmployeesFilterVisible}
                 >
                   <FilterChip
                     $pressed={phase === 'remove-filter'}
-                    $removing={isOpensFilterRemoving}
+                    $removing={isEmployeesFilterRemoving}
                   >
                     <FilterChipLabel>
                       <FilterChipIcon>
-                        <IconMail
+                        <IconUser
                           aria-hidden
                           color={COLORS.blue}
                           size={14}
                           stroke={FILTER_ICON_STROKE}
                         />
                       </FilterChipIcon>
-                      <FilterName>Opens</FilterName>
+                      <FilterName>Employees</FilterName>
                     </FilterChipLabel>
-                    <FilterValue>{'>5'}</FilterValue>
+                    <FilterValue>{'>500'}</FilterValue>
                     <FilterCloseButton
                       $pressed={phase === 'remove-filter'}
                       type="button"
@@ -1010,7 +1047,7 @@ export function LiveDataVisual({
                   editedStatusLabel={isFirstTagRenamed ? typedTagLabel : ''}
                   isFirstTagEdited={isFirstTagEdited}
                   isFirstTagHoveredByAlice={isFirstTagHoveredByAlice}
-                  showExtendedRows={hasOpensFilterBeenRemoved}
+                  showExtendedRows={hasEmployeesFilterBeenRemoved}
                 />
               </TableBodyArea>
             </TablePanel>

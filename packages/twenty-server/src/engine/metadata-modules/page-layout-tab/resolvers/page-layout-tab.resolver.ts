@@ -16,6 +16,7 @@ import {
 import { PermissionFlagType } from 'twenty-shared/constants';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { type I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
@@ -41,18 +42,27 @@ export class PageLayoutTabResolver {
   constructor(
     private readonly pageLayoutTabService: PageLayoutTabService,
     private readonly i18nService: I18nService,
+    private readonly applicationService: ApplicationService,
   ) {}
 
   @ResolveField(() => String)
   async title(
     @Parent() tab: PageLayoutTabDTO,
     @Context() context: I18nContext,
+    @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<string> {
     const i18n = this.i18nService.getI18nInstance(context.req.locale);
+
+    const { twentyStandardFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspace },
+      );
 
     return resolvePageLayoutTabTitle({
       title: tab.title,
       applicationId: tab.applicationId,
+      twentyStandardApplicationId: twentyStandardFlatApplication.id,
+      overrides: tab.overrides,
       i18nInstance: i18n,
     });
   }

@@ -3,10 +3,7 @@ import type { ClientIconProps } from './client-icon-props';
 const VIEWBOX_WIDTH = 88;
 const VIEWBOX_HEIGHT = 22;
 
-export function ElevateConsultingIcon({
-  size,
-  fillColor,
-}: ClientIconProps) {
+export function ElevateConsultingIcon({ size, fillColor }: ClientIconProps) {
   const height = size * (VIEWBOX_HEIGHT / VIEWBOX_WIDTH);
 
   return (
@@ -24,7 +21,8 @@ export function ElevateConsultingIcon({
         fontSize="16"
         fontWeight="600"
         letterSpacing="-0.03em"
-        x="0"
+        textAnchor="middle"
+        x={VIEWBOX_WIDTH / 2}
         y="11"
       >
         Elevate

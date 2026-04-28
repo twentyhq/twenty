@@ -29,7 +29,7 @@ import { useExecuteLogicFunction } from '@/logic-functions/hooks/useExecuteLogic
 const LOGIC_FUNCTION_DETAIL_ID = 'logic-function-detail';
 
 export const SettingsLogicFunctionDetail = () => {
-  const { logicFunctionId = '', applicationId = '' } = useParams();
+  const { logicFunctionId = '', applicationId } = useParams();
 
   const navigate = useNavigate();
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
@@ -37,8 +37,8 @@ export const SettingsLogicFunctionDetail = () => {
   const { data, loading: applicationLoading } = useQuery(
     FindOneApplicationDocument,
     {
-      variables: { id: applicationId },
-      skip: !applicationId,
+      variables: { id: applicationId ?? '' },
+      skip: !isDefined(applicationId),
     },
   );
 
@@ -47,7 +47,8 @@ export const SettingsLogicFunctionDetail = () => {
   const workspaceCustomApplicationId =
     currentWorkspace?.workspaceCustomApplication?.id;
 
-  const isManaged = applicationId !== workspaceCustomApplicationId;
+  const isReadonly =
+    isDefined(applicationId) && applicationId !== workspaceCustomApplicationId;
 
   const instanceId = `${LOGIC_FUNCTION_DETAIL_ID}-${logicFunctionId}`;
 
@@ -74,8 +75,8 @@ export const SettingsLogicFunctionDetail = () => {
       id: 'editor',
       title: t`Editor`,
       Icon: IconCode,
-      disabled: isManaged,
-      hide: isManaged,
+      disabled: isReadonly,
+      hide: isReadonly,
     },
     { id: 'settings', title: t`Settings`, Icon: IconSettings },
     { id: 'test', title: t`Test`, Icon: IconPlayerPlay },
@@ -87,9 +88,15 @@ export const SettingsLogicFunctionDetail = () => {
   const isSettingsTab = activeTabId === 'settings';
   const isTestTab = activeTabId === 'test';
 
-  const breadcrumbLinks =
-    isDefined(applicationId) && applicationId !== ''
-      ? [
+  const breadcrumbLinks = isDefined(applicationId)
+    ? (() => {
+        const applicationContentHref = getSettingsPath(
+          SettingsPath.ApplicationDetail,
+          { applicationId },
+          undefined,
+          'content',
+        );
+        return [
           {
             children: t`Workspace`,
             href: getSettingsPath(SettingsPath.Workspace),
@@ -98,30 +105,23 @@ export const SettingsLogicFunctionDetail = () => {
             children: t`Applications`,
             href: getSettingsPath(SettingsPath.Applications),
           },
-          {
-            children: `${applicationName}`,
-            href: getSettingsPath(
-              SettingsPath.ApplicationDetail,
-              {
-                applicationId,
-              },
-              undefined,
-              'content',
-            ),
-          },
-          { children: `${logicFunction?.name}` },
-        ]
-      : [
-          {
-            children: t`Workspace`,
-            href: getSettingsPath(SettingsPath.Workspace),
-          },
-          {
-            children: t`AI`,
-            href: getSettingsPath(SettingsPath.AI),
-          },
-          { children: `${logicFunction?.name}` },
+          { children: applicationName ?? '', href: applicationContentHref },
+          { children: t`Logic functions`, href: applicationContentHref },
+          { children: logicFunction?.name ?? '' },
         ];
+      })()
+    : [
+        {
+          children: t`Workspace`,
+          href: getSettingsPath(SettingsPath.Workspace),
+        },
+        {
+          children: t`AI`,
+          href: getSettingsPath(SettingsPath.AI),
+        },
+        { children: t`Logic functions` },
+        { children: logicFunction?.name ?? '' },
+      ];
 
   const files = [
     {
@@ -139,6 +139,7 @@ export const SettingsLogicFunctionDetail = () => {
           <SettingsLogicFunctionLabelContainer
             value={formValues.name}
             onChange={onChange('name')}
+            readonly={isReadonly}
           />
         }
         links={breadcrumbLinks}
@@ -153,19 +154,26 @@ export const SettingsLogicFunctionDetail = () => {
               isTesting={isExecuting}
             />
           )}
-          {isTriggersTab && logicFunction && (
-            <SettingsLogicFunctionTriggersTab logicFunction={logicFunction} />
+          {isTriggersTab && (
+            <SettingsLogicFunctionTriggersTab
+              formValues={formValues}
+              onChange={onChange}
+              readonly={isReadonly}
+              applicationName={applicationName}
+            />
           )}
           {isSettingsTab && (
             <SettingsLogicFunctionSettingsTab
               formValues={formValues}
               onChange={onChange}
+              readonly={isReadonly}
             />
           )}
           {isTestTab && (
             <SettingsLogicFunctionTestTab
               handleExecute={executeLogicFunction}
               logicFunctionId={logicFunctionId}
+              formValues={formValues}
               isTesting={isExecuting}
             />
           )}

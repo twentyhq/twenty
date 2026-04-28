@@ -1,4 +1,4 @@
-const CLOSE_PATH = "m.5.5 9.546 9.546m-9.546 0L10.046.5";
+const CLOSE_PATH = 'm.5.5 9.546 9.546m-9.546 0L10.046.5';
 
 interface CloseIconProps {
   size: number;

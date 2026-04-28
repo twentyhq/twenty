@@ -359,6 +359,7 @@ export class MigrateMessagingInfrastructureToMetadataCommand extends ActiveOrSus
       await this.twentyORMGlobalManager.getRepository<WorkspaceMemberWorkspaceEntity>(
         workspaceId,
         'workspaceMember',
+        { shouldBypassPermissionChecks: true },
       );
 
     const workspaceMembers = await workspaceMemberRepository.find();

@@ -279,10 +279,13 @@ export type {
 export { StepLogicalOperator } from './StepFilters';
 export { TwoFactorAuthenticationStrategy } from './TwoFactorAuthenticationStrategy';
 export { IsValidGraphQLEnumName } from './validators/is-valid-graphql-enum-name.validator';
+export { ViewRoadmapZoom } from './view-roadmap-zoom.enum';
+export { ViewCalendarLayout } from './ViewCalendarLayout';
 export { ViewFilterGroupLogicalOperator } from './ViewFilterGroupLogicalOperator';
 export { ViewFilterOperand } from './ViewFilterOperand';
 export { ViewFilterOperandDeprecated } from './ViewFilterOperandDeprecated';
 export { ViewKey } from './ViewKey';
 export { ViewOpenRecordIn } from './ViewOpenRecordIn';
+export { ViewSortDirection } from './ViewSortDirection';
 export { ViewType } from './ViewType';
 export { ViewVisibility } from './ViewVisibility';

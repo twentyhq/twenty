@@ -24,7 +24,10 @@ export const SettingsApplicationVersionContainer = ({
   latestAvailableVersion,
   appRegistrationId,
 }: {
-  application?: Omit<Application, 'objects' | 'universalIdentifier'> & {
+  application?: Omit<
+    Application,
+    'objects' | 'universalIdentifier' | 'frontComponents'
+  > & {
     objects: { id: string }[];
   };
   latestAvailableVersion?: string | null;

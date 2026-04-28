@@ -3,8 +3,6 @@ import { AuthGuard } from '@nestjs/passport';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
-import { FeatureFlagKey } from 'twenty-shared/types';
-
 import {
   AuthException,
   AuthExceptionCode,
@@ -13,7 +11,6 @@ import { GoogleAPIsOauthExchangeCodeForTokenStrategy } from 'src/engine/core-mod
 import { TransientTokenService } from 'src/engine/core-modules/auth/token/services/transient-token.service';
 import { setRequestExtraParams } from 'src/engine/core-modules/auth/utils/google-apis-set-request-extra-params.util';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -29,7 +26,6 @@ export class GoogleAPIsOauthExchangeCodeForTokenGuard extends AuthGuard(
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
     private readonly workspaceDomainsService: WorkspaceDomainsService,
-    private readonly featureFlagService: FeatureFlagService,
   ) {
     super();
   }
@@ -49,21 +45,11 @@ export class GoogleAPIsOauthExchangeCodeForTokenGuard extends AuthGuard(
         );
       }
 
-      const { workspaceId } =
-        await this.transientTokenService.verifyTransientToken(
-          state.transientToken,
-        );
-
-      const isDraftEmailEnabled =
-        await this.featureFlagService.isFeatureEnabled(
-          FeatureFlagKey.IS_DRAFT_EMAIL_ENABLED,
-          workspaceId,
-        );
-
-      new GoogleAPIsOauthExchangeCodeForTokenStrategy(
-        this.twentyConfigService,
-        isDraftEmailEnabled,
+      await this.transientTokenService.verifyTransientToken(
+        state.transientToken,
       );
+
+      new GoogleAPIsOauthExchangeCodeForTokenStrategy(this.twentyConfigService);
 
       setRequestExtraParams(request, {
         transientToken: state.transientToken,

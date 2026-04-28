@@ -87,6 +87,7 @@ const mockWorkspace = {
   useRecommendedModels: true,
   workspaceCustomApplication: CUSTOM_WORKSPACE_APPLICATION_MOCK,
   workspaceCustomApplicationId: CUSTOM_WORKSPACE_APPLICATION_MOCK.id,
+  installedApplications: [],
 };
 
 const createMockOptions = (): Options => ({

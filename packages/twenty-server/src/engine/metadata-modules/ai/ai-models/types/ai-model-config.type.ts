@@ -2,8 +2,7 @@ import { type AiSdkPackage, type DataResidency } from 'twenty-shared/ai';
 import { type LongContextCost } from 'src/engine/metadata-modules/ai/ai-models/types/long-context-cost.type';
 import { type ModelFamily } from 'src/engine/metadata-modules/ai/ai-models/types/model-family.enum';
 
-// TODO: rename to AiModelConfig for consistency with service naming (AiModelRegistryService, etc.)
-export type AIModelConfig = {
+export type AiModelConfig = {
   // Composite model id (`provider/modelName`) used in the registry and GraphQL; same shape as SDK routing when applicable.
   modelId: string;
   sdkPackage: AiSdkPackage;

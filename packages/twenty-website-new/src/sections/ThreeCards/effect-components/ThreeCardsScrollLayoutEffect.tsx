@@ -1,11 +1,12 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useCallback } from 'react';
 
+import { useScheduledOnScroll } from '@/lib/scroll';
 import {
   applyThreeCardsScrollLayout,
-  type ThreeCardsScrollLayoutRefs,
   type ThreeCardsScrollLayoutOptions,
+  type ThreeCardsScrollLayoutRefs,
 } from '@/sections/ThreeCards/utils/three-cards-scroll-layout';
 
 type ThreeCardsScrollLayoutEffectProps = ThreeCardsScrollLayoutRefs & {
@@ -19,34 +20,15 @@ export function ThreeCardsScrollLayoutEffect({
   gridRef,
   layoutOptions,
 }: ThreeCardsScrollLayoutEffectProps) {
-  useEffect(() => {
-    const refs: ThreeCardsScrollLayoutRefs = { cardRefs, gridRef };
-
-    let rafId: number | null = null;
-
-    const flushLayout = () => {
-      rafId = null;
-      applyThreeCardsScrollLayout(refs, cardCount, layoutOptions);
-    };
-
-    const scheduleLayout = () => {
-      if (rafId !== null) {
-        return;
-      }
-      rafId = window.requestAnimationFrame(flushLayout);
-    };
-
-    applyThreeCardsScrollLayout(refs, cardCount, layoutOptions);
-    window.addEventListener('scroll', scheduleLayout, { passive: true });
-    window.addEventListener('resize', scheduleLayout);
-    return () => {
-      window.removeEventListener('scroll', scheduleLayout);
-      window.removeEventListener('resize', scheduleLayout);
-      if (rafId !== null) {
-        window.cancelAnimationFrame(rafId);
-      }
-    };
+  const runLayout = useCallback(() => {
+    applyThreeCardsScrollLayout(
+      { cardRefs, gridRef },
+      cardCount,
+      layoutOptions,
+    );
   }, [cardCount, cardRefs, gridRef, layoutOptions]);
+
+  useScheduledOnScroll(runLayout);
 
   return null;
 }

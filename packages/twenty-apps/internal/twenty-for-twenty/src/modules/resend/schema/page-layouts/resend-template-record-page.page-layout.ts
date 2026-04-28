@@ -14,8 +14,8 @@ import {
   RESEND_TEMPLATE_RECORD_PAGE_TIMELINE_TAB_UNIVERSAL_IDENTIFIER,
   RESEND_TEMPLATE_RECORD_PAGE_TIMELINE_WIDGET_UNIVERSAL_IDENTIFIER,
   TEMPLATE_HTML_VIEWER_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
-} from 'src/modules/resend/constants/universal-identifiers';
-import { definePageLayout, PageLayoutTabLayoutMode } from 'twenty-sdk';
+} from '@modules/resend/constants/universal-identifiers';
+import { definePageLayout, PageLayoutTabLayoutMode } from 'twenty-sdk/define';
 
 export default definePageLayout({
   universalIdentifier: RESEND_TEMPLATE_RECORD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER,

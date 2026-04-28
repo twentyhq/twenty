@@ -19,10 +19,9 @@ import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { destroyOneView } from 'test/integration/metadata/suites/view/utils/destroy-one-view.util';
 import { assertViewSortStructure } from 'test/integration/utils/view-test.util';
-import { FieldMetadataType } from 'twenty-shared/types';
+import { FieldMetadataType, ViewSortDirection } from 'twenty-shared/types';
 
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
-import { ViewSortDirection } from 'src/engine/metadata-modules/view-sort/enums/view-sort-direction';
 import {
   generateViewSortExceptionMessage,
   ViewSortExceptionMessageKey,

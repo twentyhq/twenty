@@ -1,3 +1,11 @@
+import { isDefined } from '@utils/is-defined';
+
+import {
+  RATE_LIMIT_BASE_DELAY_MS,
+  RATE_LIMIT_MAX_RETRIES,
+  RATE_LIMIT_MIN_INTERVAL_MS,
+} from '@modules/resend/constants/sync-config';
+
 const sleep = (ms: number) =>
   new Promise<void>((resolve) => setTimeout(resolve, ms));
 
@@ -7,7 +15,9 @@ const isRateLimitError = (error: unknown): boolean => {
       ? error.message
       : typeof error === 'object' && error !== null
         ? JSON.stringify(error)
-        : '';
+        : typeof error === 'string'
+          ? error
+          : '';
   const lower = text.toLowerCase();
 
   return (
@@ -17,31 +27,63 @@ const isRateLimitError = (error: unknown): boolean => {
   );
 };
 
-const MAX_RETRIES = 5;
-const BASE_DELAY_MS = 1000;
-const MIN_INTERVAL_MS = 220;
+const isResendErrorResponse = (
+  value: unknown,
+): value is { error: unknown; data?: unknown } => {
+  if (typeof value !== 'object' || value === null) return false;
 
-let lastCallTimestamp = 0;
+  return (
+    'error' in value &&
+    isDefined((value as { error: unknown }).error)
+  );
+};
+
+const lastCallTimestampByChannel = new Map<string, number>();
+const DEFAULT_CHANNEL = 'default';
 
 export const withRateLimitRetry = async <T>(
   fn: () => Promise<T>,
+  options?: { channel?: string },
 ): Promise<T> => {
-  for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+  const channel = options?.channel ?? DEFAULT_CHANNEL;
+
+  for (let attempt = 0; attempt <= RATE_LIMIT_MAX_RETRIES; attempt++) {
+    const lastCallTimestamp = lastCallTimestampByChannel.get(channel) ?? 0;
     const elapsed = Date.now() - lastCallTimestamp;
 
-    if (elapsed < MIN_INTERVAL_MS) await sleep(MIN_INTERVAL_MS - elapsed);
+    if (elapsed < RATE_LIMIT_MIN_INTERVAL_MS) {
+      await sleep(RATE_LIMIT_MIN_INTERVAL_MS - elapsed);
+    }
 
-    lastCallTimestamp = Date.now();
+    lastCallTimestampByChannel.set(channel, Date.now());
 
     try {
-      return await fn();
-    } catch (error) {
-      if (!isRateLimitError(error) || attempt === MAX_RETRIES) throw error;
+      const result = await fn();
 
-      const delayMs = BASE_DELAY_MS * 2 ** attempt;
+      if (
+        isResendErrorResponse(result) &&
+        isRateLimitError(result.error) &&
+        attempt < RATE_LIMIT_MAX_RETRIES
+      ) {
+        const delayMs = RATE_LIMIT_BASE_DELAY_MS * 2 ** attempt;
+
+        console.warn(
+          `[resend] Rate limited (response.error), retrying in ${delayMs}ms (attempt ${attempt + 1}/${RATE_LIMIT_MAX_RETRIES})`,
+        );
+        await sleep(delayMs);
+        continue;
+      }
+
+      return result;
+    } catch (error) {
+      if (!isRateLimitError(error) || attempt === RATE_LIMIT_MAX_RETRIES) {
+        throw error;
+      }
+
+      const delayMs = RATE_LIMIT_BASE_DELAY_MS * 2 ** attempt;
 
       console.warn(
-        `[resend] Rate limited, retrying in ${delayMs}ms (attempt ${attempt + 1}/${MAX_RETRIES})`,
+        `[resend] Rate limited (thrown), retrying in ${delayMs}ms (attempt ${attempt + 1}/${RATE_LIMIT_MAX_RETRIES})`,
       );
       await sleep(delayMs);
     }

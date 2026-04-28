@@ -1,0 +1,69 @@
+---
+title: Dovednosti a agenti
+description: Definujte dovednosti a agenty AI pro svou aplikaci.
+icon: robot
+---
+
+<Warning>
+  Dovednosti a agenti jsou aktuálně v alfa fázi. Funkce funguje, ale stále se vyvíjí.
+</Warning>
+
+Aplikace mohou definovat schopnosti AI, které fungují přímo v pracovním prostoru — znovupoužitelné pokyny pro dovednosti a agenty s vlastními systémovými prompty.
+
+<AccordionGroup>
+<Accordion title="defineSkill" description="Definujte dovednosti agenta AI">
+
+Dovednosti definují znovupoužitelné pokyny a schopnosti, které mohou agenti AI používat ve vašem pracovním prostoru. K definování dovedností s vestavěnou validací použijte `defineSkill()`:
+
+```ts src/skills/example-skill.ts
+import { defineSkill } from 'twenty-sdk/define';
+
+export default defineSkill({
+  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  name: 'sales-outreach',
+  label: 'Sales Outreach',
+  description: 'Guides the AI agent through a structured sales outreach process',
+  icon: 'IconBrain',
+  content: `You are a sales outreach assistant. When reaching out to a prospect:
+1. Research the company and recent news
+2. Identify the prospect's role and likely pain points
+3. Draft a personalized message referencing specific details
+4. Keep the tone professional but conversational`,
+});
+```
+
+Hlavní body:
+* `name` je jedinečný identifikátor dovednosti (doporučuje se kebab-case).
+* `label` je uživatelsky čitelný název zobrazovaný v UI.
+* `content` obsahuje pokyny dovednosti — je to text, který agent AI používá.
+* `icon` (volitelné) nastavuje ikonu zobrazovanou v UI.
+* `description` (volitelné) poskytuje doplňující kontext o účelu dovednosti.
+
+</Accordion>
+<Accordion title="defineAgent" description="Definujte AI agenty s vlastními prompty">
+
+Agenti jsou asistenti AI, kteří běží ve vašem pracovním prostoru. K vytvoření agentů s vlastním systémovým promptem použijte `defineAgent()`:
+
+```ts src/agents/example-agent.ts
+import { defineAgent } from 'twenty-sdk/define';
+
+export default defineAgent({
+  universalIdentifier: 'b3c4d5e6-f7a8-9012-bcde-f34567890123',
+  name: 'sales-assistant',
+  label: 'Sales Assistant',
+  description: 'Helps the sales team draft outreach emails and research prospects',
+  icon: 'IconRobot',
+  prompt: 'You are a helpful sales assistant. Help users with their questions and tasks.',
+});
+```
+
+Hlavní body:
+* `name` je jedinečný identifikátor agenta (doporučuje se kebab-case).
+* `label` je zobrazovaný název v UI.
+* `prompt` je systémový prompt, který definuje chování agenta.
+* `description` (volitelné) poskytuje kontext o tom, co agent dělá.
+* `icon` (volitelné) nastavuje ikonu zobrazovanou v UI.
+* `modelId` (volitelné) přepíše výchozí model AI používaný agentem.
+
+</Accordion>
+</AccordionGroup>

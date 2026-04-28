@@ -1092,6 +1092,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/prop-types@npm:*":
+  version: 15.7.15
+  resolution: "@types/prop-types@npm:15.7.15"
+  checksum: 10c0/b59aad1ad19bf1733cf524fd4e618196c6c7690f48ee70a327eb450a42aab8e8a063fbe59ca0a5701aebe2d92d582292c0fb845ea57474f6a15f6994b0e260b2
+  languageName: node
+  linkType: hard
+
 "@types/qs@npm:^6.9.0":
   version: 6.15.0
   resolution: "@types/qs@npm:6.15.0"
@@ -1099,12 +1106,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:^19.0.0":
-  version: 19.2.14
-  resolution: "@types/react@npm:19.2.14"
+"@types/react@npm:^18.2.0":
+  version: 18.3.28
+  resolution: "@types/react@npm:18.3.28"
   dependencies:
+    "@types/prop-types": "npm:*"
     csstype: "npm:^3.2.2"
-  checksum: 10c0/7d25bf41b57719452d86d2ac0570b659210402707313a36ee612666bf11275a1c69824f8c3ee1fdca077ccfe15452f6da8f1224529b917050eb2d861e52b59b7
+  checksum: 10c0/683e19cd12b5c691215529af2e32b5ffbaccae3bf0ba93bfafa0e460e8dfee18423afed568be2b8eadf4b837c3749dd296a4f64e2d79f68fa66962c05f5af661
   languageName: node
   linkType: hard
 
@@ -2684,6 +2692,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"js-tokens@npm:^3.0.0 || ^4.0.0":
+  version: 4.0.0
+  resolution: "js-tokens@npm:4.0.0"
+  checksum: 10c0/e248708d377aa058eacf2037b07ded847790e6de892bbad3dac0abba2e759cb9f121b00099a65195616badcb6eca8d14d975cb3e89eb1cfda644756402c8aeed
+  languageName: node
+  linkType: hard
+
 "js-tokens@npm:^9.0.1":
   version: 9.0.1
   resolution: "js-tokens@npm:9.0.1"
@@ -2805,6 +2820,17 @@ __metadata:
     cli-cursor: "npm:^2.0.0"
     wrap-ansi: "npm:^3.0.1"
   checksum: 10c0/9bf21b138801ab4770a2bfa735161cf005b869360eaf5003a84ba64ddc5f5c3ce7217f4f1fa79d9c1f510d792213b2c9800327228e94df05859d19b716215d90
+  languageName: node
+  linkType: hard
+
+"loose-envify@npm:^1.1.0":
+  version: 1.4.0
+  resolution: "loose-envify@npm:1.4.0"
+  dependencies:
+    js-tokens: "npm:^3.0.0 || ^4.0.0"
+  bin:
+    loose-envify: cli.js
+  checksum: 10c0/655d110220983c1a4b9c0c679a2e8016d4b67f6e9c7b5435ff5979ecdb20d0813f4dec0a08674fcbdd4846a3f07edbb50a36811fd37930b94aaa0d9daceb017e
   languageName: node
   linkType: hard
 
@@ -3386,6 +3412,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-dom@npm:^18.2.0":
+  version: 18.3.1
+  resolution: "react-dom@npm:18.3.1"
+  dependencies:
+    loose-envify: "npm:^1.1.0"
+    scheduler: "npm:^0.23.2"
+  peerDependencies:
+    react: ^18.3.1
+  checksum: 10c0/a752496c1941f958f2e8ac56239172296fcddce1365ce45222d04a1947e0cc5547df3e8447f855a81d6d39f008d7c32eab43db3712077f09e3f67c4874973e85
+  languageName: node
+  linkType: hard
+
 "react-dom@npm:^19.0.0":
   version: 19.2.5
   resolution: "react-dom@npm:19.2.5"
@@ -3405,6 +3443,15 @@ __metadata:
   peerDependencies:
     react: ^19.2.0
   checksum: 10c0/3f7b27ea8d0ff4c8bf0e402a285e1af9b7d0e6f4c1a70a28f4384938bc1130bc82a90a31df0b79ef5e380e2e55e2598bd90b4dbf802b1203d735ba0355817d3a
+  languageName: node
+  linkType: hard
+
+"react@npm:^18.2.0":
+  version: 18.3.1
+  resolution: "react@npm:18.3.1"
+  dependencies:
+    loose-envify: "npm:^1.1.0"
+  checksum: 10c0/283e8c5efcf37802c9d1ce767f302dd569dd97a70d9bb8c7be79a789b9902451e0d16334b05d73299b20f048cbc3c7d288bbbde10b701fa194e2089c237dbea3
   languageName: node
   linkType: hard
 
@@ -3457,24 +3504,6 @@ __metadata:
   checksum: 10c0/bb837b126c80ad555b46ce0b1a580d2a6fc858ff80ca2d9ed50ecb588ae7e827008ab87caf0e79ef078379c083aa5cb8f39ec86bdee09da8ca73fb7a030811f5
   languageName: node
   linkType: hard
-
-"twenty-for-twenty@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "twenty-for-twenty@workspace:."
-  dependencies:
-    "@types/node": "npm:^24.7.2"
-    "@types/react": "npm:^19.0.0"
-    oxlint: "npm:^0.16.0"
-    react: "npm:^19.0.0"
-    react-dom: "npm:^19.0.0"
-    resend: "npm:^6.12.0"
-    twenty-client-sdk: "npm:1.22.0"
-    twenty-sdk: "npm:1.22.0"
-    typescript: "npm:^5.9.3"
-    vite-tsconfig-paths: "npm:^4.2.1"
-    vitest: "npm:^3.1.1"
-  languageName: unknown
-  linkType: soft
 
 "resolve-from@npm:5.0.0":
   version: 5.0.0
@@ -3649,6 +3678,15 @@ __metadata:
   version: 2.1.2
   resolution: "safer-buffer@npm:2.1.2"
   checksum: 10c0/7e3c8b2e88a1841c9671094bbaeebd94448111dd90a81a1f606f3f67708a6ec57763b3b47f06da09fc6054193e0e6709e77325415dc8422b04497a8070fa02d4
+  languageName: node
+  linkType: hard
+
+"scheduler@npm:^0.23.2":
+  version: 0.23.2
+  resolution: "scheduler@npm:0.23.2"
+  dependencies:
+    loose-envify: "npm:^1.1.0"
+  checksum: 10c0/26383305e249651d4c58e6705d5f8425f153211aef95f15161c151f7b8de885f24751b377e4a0b3dd42cce09aad3f87a61dab7636859c0d89b7daf1a1e2a5c78
   languageName: node
   linkType: hard
 
@@ -4116,21 +4154,51 @@ __metadata:
   languageName: node
   linkType: hard
 
-"twenty-client-sdk@npm:1.22.0":
-  version: 1.22.0
-  resolution: "twenty-client-sdk@npm:1.22.0"
+"twenty-client-sdk@npm:2.0.0":
+  version: 2.0.0
+  resolution: "twenty-client-sdk@npm:2.0.0"
   dependencies:
     "@genql/cli": "npm:^3.0.3"
     "@genql/runtime": "npm:^2.10.0"
     esbuild: "npm:^0.25.0"
     graphql: "npm:^16.8.1"
-  checksum: 10c0/243e95203a35e8feeab568de99dd2f844251d5d16c13c6c9850dd1b4fc3e14a3f752a5a2e9ff654f920fca5c0617974139383b7e74ae3a11718f15a933992a36
+  checksum: 10c0/f8cbeef32d72febe562387b881b89b8edf3eb92ab4268b47d24286b3c291e032b6cc065d9e9cd7e42a7ea0f27741651d3a270623f5c0478782eafbe3b62f30f8
   languageName: node
   linkType: hard
 
-"twenty-sdk@npm:1.22.0":
-  version: 1.22.0
-  resolution: "twenty-sdk@npm:1.22.0"
+"twenty-client-sdk@npm:twenty-client-sdk@1.23.0-canary.1":
+  version: 1.23.0-canary.1
+  resolution: "twenty-client-sdk@npm:1.23.0-canary.1"
+  dependencies:
+    "@genql/cli": "npm:^3.0.3"
+    "@genql/runtime": "npm:^2.10.0"
+    esbuild: "npm:^0.25.0"
+    graphql: "npm:^16.8.1"
+  checksum: 10c0/fdf4fbb736c9a8e218ed34cc941a20562990be138e27b462ffed9953bbeeed6ac77b15a4a6f664341fabe8c83b78d273f79d3b8c720c8472db9f7db939f49491
+  languageName: node
+  linkType: hard
+
+"twenty-for-twenty@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "twenty-for-twenty@workspace:."
+  dependencies:
+    "@types/node": "npm:^24.7.2"
+    "@types/react": "npm:^18.2.0"
+    oxlint: "npm:^0.16.0"
+    react: "npm:^18.2.0"
+    react-dom: "npm:^18.2.0"
+    resend: "npm:^6.12.0"
+    twenty-client-sdk: "npm:twenty-client-sdk@1.23.0-canary.1"
+    twenty-sdk: "npm:twenty-sdk@2.0.0"
+    typescript: "npm:^5.9.3"
+    vite-tsconfig-paths: "npm:^4.2.1"
+    vitest: "npm:^3.1.1"
+  languageName: unknown
+  linkType: soft
+
+"twenty-sdk@npm:twenty-sdk@2.0.0":
+  version: 2.0.0
+  resolution: "twenty-sdk@npm:2.0.0"
   dependencies:
     "@genql/cli": "npm:^3.0.3"
     "@genql/runtime": "npm:^2.10.0"
@@ -4150,7 +4218,7 @@ __metadata:
     react: "npm:^19.0.0"
     react-dom: "npm:^19.0.0"
     tinyglobby: "npm:^0.2.15"
-    twenty-client-sdk: "npm:1.22.0"
+    twenty-client-sdk: "npm:2.0.0"
     typescript: "npm:^5.9.2"
     uuid: "npm:^13.0.0"
     vite: "npm:^7.0.0"
@@ -4158,7 +4226,7 @@ __metadata:
     zod: "npm:^4.1.11"
   bin:
     twenty: dist/cli.cjs
-  checksum: 10c0/1415577597137998e5ffbc8319a9fd24359ca8023af365fe04c684ba1eae1fd4977f64943742e20a5f815ccaf8d7baf6d9246f99df83ef2b772c57b135c3a87e
+  checksum: 10c0/ea0d50a002e88b177555987840fa9dfeda0f3482f42240bda04a79485f69e9717492a265de8080f599e03960859cbcab0e686c6b6bf8fe0872139f9dc1645dd5
   languageName: node
   linkType: hard
 

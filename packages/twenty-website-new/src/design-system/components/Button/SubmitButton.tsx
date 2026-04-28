@@ -16,17 +16,26 @@ export type SubmitButtonProps = Omit<BaseButtonProps, 'label'> &
 export function SubmitButton({
   color,
   label,
+  leadingIcon,
   onClick,
+  size = 'regular',
   variant,
 }: SubmitButtonProps) {
   return (
     <StyledSubmitButton
       data-color={color}
+      data-size={size}
       data-variant={variant}
-      type="submit"
       onClick={onClick}
+      type="submit"
     >
-      <BaseButton color={color} label={label} variant={variant} />
+      <BaseButton
+        color={color}
+        label={label}
+        leadingIcon={leadingIcon}
+        size={size}
+        variant={variant}
+      />
     </StyledSubmitButton>
   );
 }

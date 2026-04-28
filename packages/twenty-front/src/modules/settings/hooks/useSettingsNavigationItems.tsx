@@ -12,7 +12,6 @@ import {
   type NavigationDrawerItemModifier,
 } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import {
@@ -39,10 +38,7 @@ import {
   IconUsers,
   IconWorld,
 } from 'twenty-ui/display';
-import {
-  FeatureFlagKey,
-  PermissionFlagType,
-} from '~/generated-metadata/graphql';
+import { PermissionFlagType } from '~/generated-metadata/graphql';
 
 export type SettingsNavigationSection = {
   label: string;
@@ -74,7 +70,6 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
   const isAdminEnabled =
     (currentUser?.canImpersonate || currentUser?.canAccessFullAdminPanel) ??
     false;
-  const isAIEnabled = useIsFeatureEnabled(FeatureFlagKey.IS_AI_ENABLED);
   const isSupportChatConfigured =
     supportChat?.supportDriver === 'FRONT' &&
     isNonEmptyString(supportChat.supportFrontChatId);
@@ -182,8 +177,7 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           label: t`AI`,
           path: SettingsPath.AI,
           Icon: IconSparkles,
-          isHidden:
-            !isAIEnabled || !permissionMap[PermissionFlagType.WORKSPACE],
+          isHidden: !permissionMap[PermissionFlagType.WORKSPACE],
           modifier: 'new',
         },
         {

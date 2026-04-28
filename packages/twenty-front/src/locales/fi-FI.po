@@ -158,11 +158,17 @@ msgstr "{0, plural, one {Sinulla ei ole oikeuksia käyttää kenttää {fieldsLi
 msgid "{0} - Config"
 msgstr ""
 
-#. js-lingui-id: dNIJYp
-#. placeholder {0}: formatNumber(datum.value)
-#: src/modules/settings/usage/components/UsagePieChart.tsx
-msgid "{0} credits"
-msgstr "{0} krediittiä"
+#. js-lingui-id: stCODw
+#. placeholder {0}: appObject.fields.length
+#: src/modules/settings/applications/hooks/useComputeObjectAndFieldsContentForApplication.ts
+msgid "{0} fields"
+msgstr ""
+
+#. js-lingui-id: T8aKxO
+#. placeholder {0}: layout.name
+#: src/modules/settings/applications/hooks/useComputeApplicationContentForLayoutAndLogic.ts
+msgid "{0} layout"
+msgstr ""
 
 #. js-lingui-id: Zo6POu
 #. placeholder {0}: recordPageLayoutObject.labelPlural
@@ -184,6 +190,18 @@ msgstr ""
 #. placeholder {0}: formatUsageValue(totalCredits)
 #: src/pages/settings/SettingsUsageUserDetail.tsx
 msgid "{0} used"
+msgstr ""
+
+#. js-lingui-id: izNf/z
+#. placeholder {0}: view.name
+#: src/modules/settings/applications/hooks/useComputeApplicationContentForLayoutAndLogic.ts
+msgid "{0} view"
+msgstr ""
+
+#. js-lingui-id: /ZFL82
+#. placeholder {0}: widgets.length
+#: src/pages/settings/layout/SettingsLayoutPageLayoutDetail.tsx
+msgid "{0} widgets"
 msgstr ""
 
 #. js-lingui-id: qdQhzv
@@ -212,7 +230,7 @@ msgid "{appName} wants to access your account"
 msgstr "{appName} haluaa käyttää tiliäsi"
 
 #. js-lingui-id: SU5Crx
-#: src/modules/ai/components/internal/AIChatContextUsageButton.tsx
+#: src/modules/ai/components/internal/AiChatContextUsageButton.tsx
 msgid "{cachedPercent}% cached"
 msgstr "{cachedPercent}% välimuistissa"
 
@@ -274,7 +292,7 @@ msgid "{eventAction} a related {eventObject}"
 msgstr "{eventAction} siihen liittyvän {eventObject}"
 
 #. js-lingui-id: POhzPf
-#: src/modules/ai/hooks/useAIChatFileUpload.ts
+#: src/modules/ai/hooks/useAiChatFileUpload.ts
 msgid "{failedCount} file(s) failed to upload"
 msgstr "{failedCount} tiedosto(a) ei voitu ladata"
 
@@ -282,6 +300,11 @@ msgstr "{failedCount} tiedosto(a) ei voitu ladata"
 #: src/modules/activities/timeline-activities/rows/main-object/components/EventRowMainObjectUpdated.tsx
 msgid "{fieldCount} fields on {recordLabel}"
 msgstr "{fieldCount} kenttää kohteessa {recordLabel}"
+
+#. js-lingui-id: fO/Qa9
+#: src/modules/settings/applications/hooks/useComputeObjectAndFieldsContentForApplication.ts
+msgid "{fieldsCount} fields"
+msgstr ""
 
 #. js-lingui-id: /9/Y5z
 #: src/modules/spreadsheet-import/steps/components/UploadStep/components/DropZone.tsx
@@ -297,6 +320,11 @@ msgstr "{filterRulesCount, plural, one {{filterRulesCount} sääntö} other {{fi
 #: src/modules/spreadsheet-import/steps/components/ImportDataStep.tsx
 msgid "{formattedCreatedRecordsProgress} out of {formattedRecordsToImportCount} records imported."
 msgstr "{formattedCreatedRecordsProgress} {formattedRecordsToImportCount} tietueesta tuotu."
+
+#. js-lingui-id: iokIra
+#: src/modules/settings/applications/hooks/useComputeApplicationContentForLayoutAndLogic.ts
+msgid "{formattedType} of {objectLabel}"
+msgstr ""
 
 #. js-lingui-id: YF/a2j
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsTableRow.tsx
@@ -337,6 +365,11 @@ msgstr "{jobCount, plural, one {Tämä poistaa sen pysyvästi jonosta. Tämä to
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminRetryJobsConfirmationModal.tsx
 msgid "{jobCount, plural, one {This will retry the selected job. It will be re-executed from the beginning.} other {This will retry the selected jobs. They will be re-executed from the beginning.}}"
 msgstr "{jobCount, plural, one {Tämä yrittää valittua työtä uudelleen. Se suoritetaan alusta alkaen uudelleen.} other {Tämä yrittää valittuja töitä uudelleen. Ne suoritetaan alusta alkaen uudelleen.}}"
+
+#. js-lingui-id: FdY/eP
+#: src/modules/settings/applications/hooks/useComputeApplicationContentForLayoutAndLogic.ts
+msgid "{label} list"
+msgstr ""
 
 #. js-lingui-id: Y32cMj
 #: src/modules/page-layout/widgets/email-thread/components/EmailThreadIntermediaryMessages.tsx
@@ -440,10 +473,10 @@ msgstr "{stepCount, plural, one {# askel} other {# askelta}}"
 msgid "{stepNumber}. Calendar"
 msgstr "{stepNumber}. Kalenteri"
 
-#. js-lingui-id: A9Y2Sy
-#: src/modules/ai/components/RoutingDebugDisplay.tsx
-msgid "{totalCost} credits"
-msgstr "{totalCost} hyvitystä"
+#. js-lingui-id: bI/mcH
+#: src/modules/settings/applications/hooks/useComputeApplicationContentForLayoutAndLogic.ts
+msgid "{tabCount} tabs"
+msgstr ""
 
 #. js-lingui-id: p38XKy
 #: src/modules/side-panel/components/SidePanelMultipleRecordsInfo.tsx
@@ -471,6 +504,11 @@ msgstr "{workflowRunIteratorSubStepIterationsCount, plural, one {# kohde} other 
 msgid "{workspaceMemberName} will be unassigned from the following role:"
 msgstr "{workspaceMemberName} poistetaan seuraavasta roolista:"
 
+#. js-lingui-id: XxzXhf
+#: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
+msgid "#"
+msgstr ""
+
 #. js-lingui-id: CwstSL
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
@@ -481,8 +519,8 @@ msgstr "••••••••"
 #. js-lingui-id: SMgdEJ
 #. placeholder {0}: formatNumber(preview.estimatedTokenCount, { abbreviate: true, decimals: 1, })
 #. placeholder {0}: formatNumber( section.estimatedTokenCount, { abbreviate: true, decimals: 1, }, )
-#: src/pages/settings/ai/SettingsAIPrompts.tsx
-#: src/pages/settings/ai/SettingsAIPrompts.tsx
+#: src/pages/settings/ai/SettingsAiPrompts.tsx
+#: src/pages/settings/ai/SettingsAiPrompts.tsx
 msgid "~ {0} tokens"
 msgstr ""
 
@@ -503,6 +541,16 @@ msgstr "0 */1 * * *"
 #: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 msgid "1 day"
 msgstr "1 päivä"
+
+#. js-lingui-id: W/OU4i
+#: src/modules/settings/applications/hooks/useComputeApplicationContentForLayoutAndLogic.ts
+msgid "1 tab"
+msgstr ""
+
+#. js-lingui-id: m60AP0
+#: src/pages/settings/layout/SettingsLayoutPageLayoutDetail.tsx
+msgid "1 widget"
+msgstr ""
 
 #. js-lingui-id: tEdOxj
 #: src/pages/settings/accounts/SettingsAccountsConfigurationStepEmail.tsx
@@ -525,11 +573,6 @@ msgstr "1. Valitse objekti"
 #: src/modules/settings/data-model/components/SettingsDataModelNewFieldBreadcrumbDropDown.tsx
 msgid "1. Type"
 msgstr "1. Kirjoita"
-
-#. js-lingui-id: 7IIx+y
-#: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
-msgid "10,000 workflow node executions"
-msgstr "10 000 työnkulun solmun suoritusta"
 
 #. js-lingui-id: rU05hS
 #: src/modules/settings/experience/components/DateTimeSettingsTimeFormatSelect.tsx
@@ -586,6 +629,11 @@ msgstr "2FA-menetelmä on poistettu onnistuneesti."
 #: src/modules/settings/two-factor-authentication/components/DeleteTwoFactorAuthenticationMethod.tsx
 msgid "2FA Method Reset"
 msgstr "2FA-menetelmän nollaus"
+
+#. js-lingui-id: 2Lvxm0
+#: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
+msgid "50,000 workflow node executions"
+msgstr ""
 
 #. js-lingui-id: 4lbHin
 #: src/modules/logic-functions/components/LogicFunctionExecutionResult.tsx
@@ -663,10 +711,11 @@ msgid "Abort"
 msgstr "Keskeytä"
 
 #. js-lingui-id: uyJsf6
+#: src/pages/settings/layout/components/SettingsLayoutDetailScaffold.tsx
 #: src/pages/settings/data-model/SettingsNewObject.tsx
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
-#: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentSettingsTab.tsx
 #: src/pages/settings/ai/SettingsSkillForm.tsx
 #: src/modules/settings/logic-functions/components/SettingsLogicFunctionNewForm.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
@@ -710,14 +759,9 @@ msgid "Access workspace data"
 msgstr "Pääsy työtilan tietoihin"
 
 #. js-lingui-id: c2UA7k
-#: src/pages/settings/ai/components/SettingsAIMCP.tsx
+#: src/pages/settings/ai/components/SettingsAiMCP.tsx
 msgid "Access your workspace data from your favorite MCP client like Claude Desktop, Windsurf or Cursor."
 msgstr ""
-
-#. js-lingui-id: u2Cycw
-#: src/modules/settings/logic-functions/components/SettingsLogicFunctionTabEnvironmentVariablesSection.tsx
-msgid "Accessible in your function via process.env.KEY"
-msgstr "Käytettävissä funktiossasi process.env.KEY:n kautta"
 
 #. js-lingui-id: AeXO77
 #: src/pages/settings/accounts/SettingsAccountsConfigurationStepEmail.tsx
@@ -804,7 +848,7 @@ msgstr "Toiminnot, joita käyttäjät voivat suorittaa tällä kohteella"
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/ai/SettingsSkillForm.tsx
 #: src/pages/settings/ai/components/SettingsSkillInactiveMenuDropDown.tsx
-#: src/pages/settings/ai/components/SettingsAIUsageTab.tsx
+#: src/pages/settings/ai/components/SettingsAiUsageTab.tsx
 #: src/modules/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu.tsx
 #: src/modules/settings/data-model/objects/components/SettingsObjectInactiveMenuDropDown.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
@@ -927,7 +971,7 @@ msgid "Add custom endpoints, private gateways, or additional regions."
 msgstr "Lisää mukautettuja päätepisteitä, yksityisiä yhdyskäytäviä tai lisäalueita."
 
 #. js-lingui-id: GuJvBr
-#: src/pages/settings/ai/components/SettingsAIMoreTab.tsx
+#: src/pages/settings/ai/components/SettingsAiMoreTab.tsx
 msgid "Add custom instructions specific to your workspace (appended to system prompt)"
 msgstr "Lisää työtilaasi koskevia mukautettuja ohjeita (lisätään järjestelmäkehotteeseen)"
 
@@ -1276,6 +1320,11 @@ msgstr ""
 msgid "Advanced"
 msgstr "Edistynyt"
 
+#. js-lingui-id: cBdysG
+#: src/modules/settings/enterprise/components/EnterprisePlanModal.tsx
+msgid "Advanced Encryption"
+msgstr ""
+
 #. js-lingui-id: +uqBul
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectIndexes.tsx
 msgid "Advanced feature to improve the performance of queries and to enforce unicity constraints."
@@ -1319,6 +1368,7 @@ msgstr "Myöhemmin tai sama"
 
 #. js-lingui-id: fcYF58
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
+#: src/pages/settings/applications/SettingsApplicationDetails.tsx
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "agent"
 msgstr "agentti"
@@ -1359,26 +1409,15 @@ msgstr "Agentin tokenit"
 
 #. js-lingui-id: ftfADk
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
+#: src/pages/settings/applications/SettingsApplicationDetails.tsx
 msgid "agents"
 msgstr ""
 
 #. js-lingui-id: 8Uv5e6
-#: src/pages/settings/applications/tabs/SettingsAvailableApplicationDetailContentTab.tsx
-#: src/pages/settings/applications/tabs/SettingsAvailableApplicationDetailContentTab.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
 msgid "Agents"
 msgstr "Agentit"
-
-#. js-lingui-id: wFe+5D
-#: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
-msgid "Agents powering this app"
-msgstr "Tämän sovelluksen taustalla toimivat agentit"
-
-#. js-lingui-id: zaHvxQ
-#: src/pages/settings/applications/tabs/SettingsAvailableApplicationDetailContentTab.tsx
-msgid "Agents provided by this app"
-msgstr ""
 
 #. js-lingui-id: sPQ5qN
 #: src/modules/side-panel/pages/page-layout/constants/GraphTypeInformation.ts
@@ -1391,12 +1430,12 @@ msgstr ""
 #: src/pages/settings/logic-functions/SettingsLogicFunctionDetail.tsx
 #: src/pages/settings/ai/SettingsToolDetail.tsx
 #: src/pages/settings/ai/SettingsSkillForm.tsx
+#: src/pages/settings/ai/SettingsAiUsageUserDetail.tsx
+#: src/pages/settings/ai/SettingsAiPrompts.tsx
 #: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
 #: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
 #: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
 #: src/pages/settings/ai/SettingsAgentForm.tsx
-#: src/pages/settings/ai/SettingsAIUsageUserDetail.tsx
-#: src/pages/settings/ai/SettingsAIPrompts.tsx
 #: src/pages/settings/ai/SettingsAI.tsx
 #: src/pages/settings/ai/SettingsAI.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
@@ -1424,18 +1463,18 @@ msgid "AI consumption across all workspaces."
 msgstr ""
 
 #. js-lingui-id: kkfXGh
-#: src/pages/settings/ai/components/SettingsAIUsageTab.tsx
+#: src/pages/settings/ai/components/SettingsAiUsageTab.tsx
 msgid "AI consumption over time."
 msgstr ""
 
 #. js-lingui-id: kNfr85
-#: src/pages/settings/ai/forms/components/SettingsAIAgentForm.tsx
+#: src/pages/settings/ai/forms/components/SettingsAiAgentForm.tsx
 #: src/pages/settings/ai/components/SettingsAgentSettingsTab.tsx
 msgid "AI Model"
 msgstr "AI-malli"
 
 #. js-lingui-id: Sfwld8
-#: src/modules/ai/components/AIChatApiKeyNotConfiguredMessage.tsx
+#: src/modules/ai/components/AiChatApiKeyNotConfiguredMessage.tsx
 msgid "AI not configured. Set OPENAI_API_KEY, ANTHROPIC_API_KEY, or XAI_API_KEY in your environment."
 msgstr "AI ei ole määritetty. Aseta ympäristöösi OPENAI_API_KEY, ANTHROPIC_API_KEY tai XAI_API_KEY."
 
@@ -1444,12 +1483,19 @@ msgstr "AI ei ole määritetty. Aseta ympäristöösi OPENAI_API_KEY, ANTHROPIC_
 msgid "AI request prep"
 msgstr "AI-pyynnön valmistelu"
 
+#. js-lingui-id: X5Mx4I
+#: src/modules/settings/logic-functions/components/triggers/SettingsLogicFunctionToolTriggerSection.tsx
+#: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTestTab.tsx
+#: src/modules/logic-functions/utils/getLogicFunctionTriggerLabel.ts
+msgid "AI tool"
+msgstr ""
+
 #. js-lingui-id: tzhisR
-#: src/pages/settings/ai/SettingsAIUsageUserDetail.tsx
-#: src/pages/settings/ai/components/SettingsAIUsageTab.tsx
-#: src/pages/settings/ai/components/SettingsAIUsageTab.tsx
-#: src/pages/settings/ai/components/SettingsAIUsageTab.tsx
-#: src/pages/settings/ai/components/SettingsAIUsageTab.tsx
+#: src/pages/settings/ai/SettingsAiUsageUserDetail.tsx
+#: src/pages/settings/ai/components/SettingsAiUsageTab.tsx
+#: src/pages/settings/ai/components/SettingsAiUsageTab.tsx
+#: src/pages/settings/ai/components/SettingsAiUsageTab.tsx
+#: src/pages/settings/ai/components/SettingsAiUsageTab.tsx
 msgid "AI Usage"
 msgstr ""
 
@@ -1459,34 +1505,34 @@ msgid "AI usage analytics across workspaces is available with an Enterprise key.
 msgstr ""
 
 #. js-lingui-id: zkptxb
-#: src/pages/settings/ai/components/SettingsAIUsageTab.tsx
+#: src/pages/settings/ai/components/SettingsAiUsageTab.tsx
 msgid "AI usage analytics is available with an Enterprise key."
 msgstr ""
 
 #. js-lingui-id: U2F/HK
-#: src/pages/settings/ai/components/SettingsAIUsageTab.tsx
+#: src/pages/settings/ai/components/SettingsAiUsageTab.tsx
 msgid "AI usage analytics requires ClickHouse. Contact your administrator."
 msgstr ""
 
 #. js-lingui-id: KgAAyO
-#: src/pages/settings/ai/components/SettingsAIUsageTab.tsx
+#: src/pages/settings/ai/components/SettingsAiUsageTab.tsx
 msgid "AI usage analytics will appear here once you start using AI features."
 msgstr ""
 
 #. js-lingui-id: SknniY
-#: src/pages/settings/ai/SettingsAIUsageUserDetail.tsx
-#: src/pages/settings/ai/components/SettingsAIUsageTab.tsx
+#: src/pages/settings/ai/SettingsAiUsageUserDetail.tsx
+#: src/pages/settings/ai/components/SettingsAiUsageTab.tsx
 msgid "AI Usage by Model"
 msgstr ""
 
 #. js-lingui-id: ehjYr9
-#: src/pages/settings/ai/SettingsAIUsageUserDetail.tsx
-#: src/pages/settings/ai/components/SettingsAIUsageTab.tsx
+#: src/pages/settings/ai/SettingsAiUsageUserDetail.tsx
+#: src/pages/settings/ai/components/SettingsAiUsageTab.tsx
 msgid "AI Usage by Type"
 msgstr ""
 
 #. js-lingui-id: X2afmM
-#: src/pages/settings/ai/components/SettingsAIUsageTab.tsx
+#: src/pages/settings/ai/components/SettingsAiUsageTab.tsx
 msgid "AI Usage by User"
 msgstr ""
 
@@ -1496,7 +1542,7 @@ msgid "AI Usage by Workspace"
 msgstr ""
 
 #. js-lingui-id: KLyZ6L
-#: src/pages/settings/ai/SettingsAIUsageUserDetail.tsx
+#: src/pages/settings/ai/SettingsAiUsageUserDetail.tsx
 msgid "AI User Usage"
 msgstr ""
 
@@ -1761,7 +1807,7 @@ msgid "An error occurred while checking user existence"
 msgstr "Tapahtui virhe tarkistettaessa käyttäjän olemassaoloa"
 
 #. js-lingui-id: I/scZd
-#: src/modules/ai/components/AIChatErrorMessage.tsx
+#: src/modules/ai/components/AiChatErrorMessage.tsx
 msgid "An error occurred while processing your message"
 msgstr "Virhe viestin käsittelyssä"
 
@@ -1876,14 +1922,13 @@ msgstr "Rajapinta"
 #. js-lingui-id: 0RqpZr
 #: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
 #: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
-#: src/modules/settings/enterprise/components/EnterprisePlanModal.tsx
 msgid "API & Webhooks"
 msgstr "API & Webhooks"
 
 #. js-lingui-id: yRnk5W
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
-#: src/pages/settings/ai/components/SettingsAIMCP.tsx
+#: src/pages/settings/ai/components/SettingsAiMCP.tsx
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
@@ -1984,7 +2029,6 @@ msgstr ""
 #. js-lingui-id: LMUw1U
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
-#: src/pages/settings/applications/components/SettingsApplicationDataTable.tsx
 #: src/pages/settings/ai/components/SettingsToolsTable.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectRelationsTable.tsx
 msgid "App"
@@ -2016,11 +2060,6 @@ msgstr "Soveltuvuus"
 msgid "Application"
 msgstr "Sovellus"
 
-#. js-lingui-id: bw50Pz
-#: src/modules/settings/logic-functions/components/SettingsLogicFunctionTabEnvironmentVariablesSection.tsx
-msgid "application detail page"
-msgstr "sovelluksen tietosivu"
-
 #. js-lingui-id: vdieHo
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
 msgid "Application details"
@@ -2042,7 +2081,7 @@ msgid "Application not listed on the marketplace. It was shared via a direct lin
 msgstr ""
 
 #. js-lingui-id: +tE2x9
-#: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
+#: src/pages/settings/applications/SettingsApplicationDetails.tsx
 msgid "Application successfully uninstalled."
 msgstr ""
 
@@ -2053,9 +2092,11 @@ msgstr "Sovellus päivitetty onnistuneesti."
 
 #. js-lingui-id: fL7WXr
 #: src/pages/settings/logic-functions/SettingsLogicFunctionDetail.tsx
+#: src/pages/settings/layout/components/SettingsLayoutDetailScaffold.tsx
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
 #: src/pages/settings/applications/SettingsApplications.tsx
 #: src/pages/settings/applications/SettingsApplications.tsx
+#: src/pages/settings/applications/SettingsApplicationFrontComponentDetail.tsx
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
 #: src/modules/side-panel/pages/workflow/action/components/SidePanelWorkflowSelectAction.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
@@ -2195,15 +2236,15 @@ msgid "Ascending"
 msgstr "Nouseva"
 
 #. js-lingui-id: xWEvuo
-#: src/modules/side-panel/hooks/useOpenAskAIPageInSidePanel.ts
-#: src/modules/side-panel/components/SidePanelAskAIInfo.tsx
+#: src/modules/side-panel/hooks/useOpenAskAiPageInSidePanel.ts
+#: src/modules/side-panel/components/SidePanelAskAiInfo.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 #: src/modules/command-menu-item/engine-command/constants/EngineComponentKeyHeadlessComponentMap.tsx
 msgid "Ask AI"
 msgstr "Kysy AI:lta"
 
 #. js-lingui-id: mc9nK2
-#: src/modules/ai/hooks/useAIChatEditor.ts
+#: src/modules/ai/hooks/useAiChatEditor.ts
 msgid "Ask, search or make anything..."
 msgstr "Kysy, hae tai tee mitä vain..."
 
@@ -2369,11 +2410,6 @@ msgstr "Tarkastuslokit edellyttävät, että ClickHouse on määritetty. Ota yht
 msgid "Auth"
 msgstr "Tunnistautuminen"
 
-#. js-lingui-id: DzqB0O
-#: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTriggersTab.tsx
-msgid "Auth Required"
-msgstr "Todennus vaaditaan"
-
 #. js-lingui-id: P8fBlG
 #: src/pages/settings/security/SettingsSecurity.tsx
 msgid "Authentication"
@@ -2449,21 +2485,21 @@ msgstr "Luo automaattisesti yhteystiedot henkilöille."
 msgid "Automatically create People records when receiving or sending emails"
 msgstr "Luo automaattisesti henkilötietueita viestejä vastaanottaessa tai lähettäessä"
 
+#. js-lingui-id: BJgDIM
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
+msgid "Automation, AI, and access this app provides"
+msgstr ""
+
 #. js-lingui-id: lXkUEV
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManual.tsx
 msgid "Availability"
 msgstr "Saatavuus"
 
 #. js-lingui-id: csDS2L
-#: src/pages/settings/ai/components/SettingsAIModelsTab.tsx
+#: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
 #: src/modules/settings/data-model/new-object/components/SettingsAvailableStandardObjectsSection.tsx
 msgid "Available"
 msgstr "Saatavilla"
-
-#. js-lingui-id: 06gA3L
-#: src/modules/settings/logic-functions/components/SettingsLogicFunctionNewForm.tsx
-msgid "Available as tool"
-msgstr "Saatavilla työkaluna"
 
 #. js-lingui-id: oD38t2
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
@@ -2556,7 +2592,7 @@ msgid "Before"
 msgstr "Ennen"
 
 #. js-lingui-id: KYr9vA
-#: src/pages/settings/ai/components/SettingsAIModelsTab.tsx
+#: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
 msgid "Best"
 msgstr ""
 
@@ -2585,8 +2621,10 @@ msgstr "kuukauden {startOrdinal} ja {endOrdinal} päivän välillä"
 #: src/pages/settings/SettingsUsage.tsx
 #: src/pages/settings/SettingsBilling.tsx
 #: src/pages/settings/SettingsBilling.tsx
+#: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
 msgid "Billing"
 msgstr "Laskutus"
 
@@ -2597,6 +2635,7 @@ msgstr "Laskutushistoria"
 
 #. js-lingui-id: nJGwRf
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
 msgid "Billing interval"
 msgstr "Laskutusväli"
 
@@ -2646,8 +2685,8 @@ msgid "Both"
 msgstr "Molemmat"
 
 #. js-lingui-id: 1hGdwj
-#: src/pages/settings/ai/SettingsAIUsageUserDetail.tsx
-#: src/pages/settings/ai/components/SettingsAIUsageTab.tsx
+#: src/pages/settings/ai/SettingsAiUsageUserDetail.tsx
+#: src/pages/settings/ai/components/SettingsAiUsageTab.tsx
 msgid "Breakdown across AI models."
 msgstr ""
 
@@ -2670,6 +2709,16 @@ msgstr "Ruskea"
 #: src/modules/ai/components/suggested-prompts/default-suggested-prompts.ts
 msgid "Build a dashboard that shows: (1) total pipeline value by stage for the last 3 months, (2) count of deals won vs lost per month, (3) average deal size. Use our standard pipeline stages."
 msgstr "Rakenna koontinäyttö, joka näyttää: (1) myyntiputken kokonaisarvon vaiheittain viimeisten 3 kuukauden ajalta, (2) voitettujen vs. hävittyjen diilien lukumäärän per kuukausi, (3) diilien keskimääräisen koon. Käytä vakiomyyntiputken vaiheita."
+
+#. js-lingui-id: pN5hZf
+#: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentSettingsTab.tsx
+msgid "Build and runtime metadata for this component"
+msgstr ""
+
+#. js-lingui-id: f2qxNx
+#: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentSettingsTab.tsx
+msgid "Build checksum"
+msgstr ""
 
 #. js-lingui-id: alSW5d
 #: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationJunctionForm.tsx
@@ -2699,6 +2748,11 @@ msgstr ""
 #. js-lingui-id: s1c0ja
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "Bullet List"
+msgstr ""
+
+#. js-lingui-id: 9emr42
+#: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTriggersTab.tsx
+msgid "Bundled with {applicationName}"
 msgstr ""
 
 #. js-lingui-id: 8ds4Hj
@@ -2764,7 +2818,6 @@ msgstr "caldav.example.com"
 #. js-lingui-id: AjVXBS
 #: src/modules/views/view-picker/constants/ViewPickerTypeSelectOptions.ts
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
-#: src/modules/page-layout/constants/StandardPageLayoutTabTitleTranslations.ts
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 msgid "Calendar"
 msgstr "Kalenteri"
@@ -2902,10 +2955,25 @@ msgstr "Peruuta tilauksesi"
 msgid "Canceled"
 msgstr "Peruttu"
 
+#. js-lingui-id: dC0BTo
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
+msgid "Canceled at"
+msgstr ""
+
 #. js-lingui-id: y4uH7j
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Cancelling"
 msgstr "Peruutetaan"
+
+#. js-lingui-id: zbbpgB
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
+msgid "Cancels at"
+msgstr ""
+
+#. js-lingui-id: 2CAby/
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
+msgid "Cancels at period end"
+msgstr ""
 
 #. js-lingui-id: WbPx+C
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -2955,7 +3023,7 @@ msgid "Catalan"
 msgstr "Katalaani"
 
 #. js-lingui-id: K7tIrx
-#: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
+#: src/modules/settings/applications/components/SettingsApplicationAboutSidebar.tsx
 msgid "Category"
 msgstr "Luokka"
 
@@ -3163,7 +3231,7 @@ msgid "Clear the field or \"X\" to revert to environment/default value."
 msgstr "Tyhjennä kenttä tai \"X\" palataksesi ympäristön/oletusarvoon."
 
 #. js-lingui-id: Gt8ndY
-#: src/pages/settings/ai/components/SettingsAIUsageTab.tsx
+#: src/pages/settings/ai/components/SettingsAiUsageTab.tsx
 #: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx
 msgid "Click a user to see their daily breakdown."
 msgstr "Klikkaa käyttäjää, niin näet päivittäisen erittelyn."
@@ -3205,7 +3273,7 @@ msgstr "Tarkastuslokit edellyttävät ClickHousea. Ota yhteyttä järjestelmänv
 
 #. js-lingui-id: CTdw8/
 #: src/pages/settings/security/event-logs/SettingsEventLogs.tsx
-#: src/pages/settings/ai/components/SettingsAIUsageTab.tsx
+#: src/pages/settings/ai/components/SettingsAiUsageTab.tsx
 #: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx
 msgid "ClickHouse Not Configured"
 msgstr "ClickHouse ei ole määritetty"
@@ -3320,6 +3388,11 @@ msgstr "sarakedata ei ole yhteensopiva monivalinnan kanssa. Vaadittu muoto on '[
 msgid "Columns not matched:"
 msgstr "Sarakkeita ei ole yhdistetty:"
 
+#. js-lingui-id: efhuJR
+#: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
+msgid "Columns shown in this view, in display order"
+msgstr ""
+
 #. js-lingui-id: pOJNDA
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
 msgid "command"
@@ -3397,6 +3470,11 @@ msgstr "Valmis"
 msgid "Completed jobs kept for {completedDuration}, failed jobs kept for {failedDuration} (max {maxCount} each)"
 msgstr "Valmiit työt säilytetään {completedDuration}, epäonnistuneet työt säilytetään {failedDuration} (enintään {maxCount} kutakin)"
 
+#. js-lingui-id: 3pJ7V5
+#: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentSettingsTab.tsx
+msgid "Component name"
+msgstr ""
+
 #. js-lingui-id: 0CuAor
 #: src/modules/workflow/workflow-steps/workflow-actions/if-else-action/components/WorkflowEditActionIfElseBody.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowEditActionFilterBody.tsx
@@ -3404,6 +3482,11 @@ msgstr "Valmiit työt säilytetään {completedDuration}, epäonnistuneet työt 
 #: src/modules/side-panel/pages/page-layout/components/record-table-settings/RecordTableSettingsFilters.tsx
 msgid "Conditions"
 msgstr "Ehdot"
+
+#. js-lingui-id: IfvM+Z
+#: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
+msgid "Conditions applied to records before they appear in this view"
+msgstr ""
 
 #. js-lingui-id: 14PdY0
 #: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
@@ -3493,13 +3576,8 @@ msgstr "Määritä nämä DNS-tietueet verkkotunnuksen tarjoajallasi"
 msgid "Configure this widget to display fields"
 msgstr "Määritä tämä pienoisohjelma näyttämään kenttiä"
 
-#. js-lingui-id: NF6Bfa
-#: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTriggersTab.tsx
-msgid "Configure when this function should be executed"
-msgstr "Määritä, milloin tämä funktio suoritetaan"
-
 #. js-lingui-id: hzDiM0
-#: src/pages/settings/ai/components/SettingsAIModelsTab.tsx
+#: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
 msgid "Configure your default AI model"
 msgstr ""
 
@@ -3526,6 +3604,7 @@ msgstr "Määritetty"
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
 msgid "Confirm"
 msgstr "Vahvista"
 
@@ -3622,8 +3701,8 @@ msgstr "Sisältää"
 
 #. js-lingui-id: 4b3oEV
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
-#: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
+#: src/modules/settings/applications/components/SettingsApplicationAboutSidebar.tsx
 msgid "Content"
 msgstr "Sisältö"
 
@@ -3655,7 +3734,7 @@ msgstr "Kontekstin koko"
 
 #. js-lingui-id: LXIm4m
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
-#: src/modules/ai/components/internal/AIChatContextUsageButton.tsx
+#: src/modules/ai/components/internal/AiChatContextUsageButton.tsx
 msgid "Context window"
 msgstr "Konteksti-ikkuna"
 
@@ -3706,7 +3785,7 @@ msgid "Control which types of entities this role can be assigned to"
 msgstr "Ohjaa, minkä tyyppisille yksiköille tämä rooli voidaan määrittää"
 
 #. js-lingui-id: YyNOE7
-#: src/modules/ai/components/internal/AIChatContextUsageButton.tsx
+#: src/modules/ai/components/internal/AiChatContextUsageButton.tsx
 msgid "Conversation"
 msgstr "Keskustelu"
 
@@ -3821,18 +3900,18 @@ msgstr "Ydinobjektit"
 
 #. js-lingui-id: I99Miw
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
-#: src/modules/ai/components/internal/AIChatContextUsageButton.tsx
+#: src/modules/ai/components/internal/AiChatContextUsageButton.tsx
 msgid "Cost"
 msgstr "Kustannus"
-
-#. js-lingui-id: iX2opZ
-#: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
-msgid "Cost per 1k Extra Credits"
-msgstr "Kustannus per 1k ylimääräiset hyvitykset"
 
 #. js-lingui-id: Z9Z9PX
 #: src/modules/settings/ai/components/SettingsAiModelHoverCard.tsx
 msgid "Cost per 1M tokens"
+msgstr ""
+
+#. js-lingui-id: HUPoL8
+#: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
+msgid "Cost per Extra Credits"
 msgstr ""
 
 #. js-lingui-id: 3X5ngu
@@ -3871,7 +3950,7 @@ msgid "Couldn't copy to clipboard"
 msgstr "Ei voitu kopioida leikepöydälle"
 
 #. js-lingui-id: S2XvS+
-#: src/modules/ai/hooks/useAIChatFileUpload.ts
+#: src/modules/ai/hooks/useAiChatFileUpload.ts
 msgid "Couldn't upload the file."
 msgstr "Tiedoston lataaminen epäonnistui."
 
@@ -4061,6 +4140,7 @@ msgid "Create, edit, and delete workspace views"
 msgstr "Luo, muokkaa ja poista työtilan näkymiä"
 
 #. js-lingui-id: d+F6q9
+#: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentSettingsTab.tsx
 #: src/pages/settings/admin-panel/SettingsAdminUserDetail.tsx
 #: src/modules/settings/components/SettingsDatabaseEventsForm.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
@@ -4074,7 +4154,7 @@ msgid "Created {beautifiedCreatedAt}"
 msgstr ""
 
 #. js-lingui-id: NCIYDF
-#: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
+#: src/modules/settings/applications/components/SettingsApplicationAboutSidebar.tsx
 msgid "Created by"
 msgstr "Luonut"
 
@@ -4099,6 +4179,11 @@ msgstr "Tunnistetiedot"
 msgid "Credentials and scopes for OAuth authorization flows"
 msgstr "OAuth-valtuutusvirtojen tunnistetiedot ja käyttöoikeuslaajuudet"
 
+#. js-lingui-id: 3hkXRB
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
+msgid "Credit balance"
+msgstr ""
+
 #. js-lingui-id: 7iwYAn
 #: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx
 msgid "Credit consumption over time."
@@ -4108,6 +4193,11 @@ msgstr "Krediittikulutus ajan mittaan."
 #: src/modules/settings/billing/components/internal/MeteredPriceSelector.tsx
 msgid "Credit Plan"
 msgstr "Krediittisuunnitelma"
+
+#. js-lingui-id: qtEx+T
+#: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
+msgid "Credit plan upgraded."
+msgstr ""
 
 #. js-lingui-id: c1ojkj
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
@@ -4119,6 +4209,11 @@ msgstr "Krediittien käyttäminen"
 #: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx
 msgid "Credit usage breakdown for your workspace."
 msgstr "Työtilasi krediittikulutuksen erittely."
+
+#. js-lingui-id: UQ4Hjl
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
+msgid "credits"
+msgstr ""
 
 #. js-lingui-id: lDIOek
 #: src/pages/settings/SettingsUsageUserDetail.tsx
@@ -4132,19 +4227,34 @@ msgid "Credits by period"
 msgstr "Hyvitykset kaudelta"
 
 #. js-lingui-id: EABlI0
-#: src/modules/ai/components/AIChatCreditsExhaustedMessage.tsx
+#: src/modules/ai/components/AiChatCreditsExhaustedMessage.tsx
 msgid "Credits exhausted. Please contact your workspace admin to upgrade."
 msgstr "Krediitit on käytetty. Ota yhteyttä työtilasi ylläpitäjään päivitystä varten."
 
 #. js-lingui-id: JIXvMy
-#: src/modules/ai/components/AIChatCreditsExhaustedMessage.tsx
+#: src/modules/ai/components/AiChatCreditsExhaustedMessage.tsx
 msgid "Credits exhausted. Upgrade your plan to get more credits."
 msgstr "Krediitit on käytetty. Päivitä tilauksesi saadaksesi lisää krediittejä."
+
+#. js-lingui-id: iSuLEw
+#: src/modules/information-banner/components/billing/InformationBannerNoMoreCredits.tsx
+msgid "Credits limit reached. Contact your admin to resume Workflows and AI."
+msgstr ""
+
+#. js-lingui-id: 2rAG3K
+#: src/modules/information-banner/components/billing/InformationBannerNoMoreCredits.tsx
+msgid "Credits limit reached. Update your credit plan to keep Workflows and AI running."
+msgstr ""
 
 #. js-lingui-id: n3kKrs
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
 msgid "Credits Used"
 msgstr "Käytetyt krediitit"
+
+#. js-lingui-id: 5oMPMN
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
+msgid "credits/period"
+msgstr ""
 
 #. js-lingui-id: e73uuf
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
@@ -4152,9 +4262,16 @@ msgid "Crimson"
 msgstr "Karmiininpunainen"
 
 #. js-lingui-id: 6Oaeoc
-#: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTriggersTab.tsx
+#: src/modules/settings/logic-functions/components/triggers/SettingsLogicFunctionCronTriggerSection.tsx
+#: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTestTab.tsx
+#: src/modules/logic-functions/utils/getLogicFunctionTriggerLabel.ts
 msgid "Cron"
 msgstr "Ajastin"
+
+#. js-lingui-id: rV1+uS
+#: src/modules/settings/logic-functions/components/triggers/SettingsLogicFunctionCronTriggerSection.tsx
+msgid "Cron triggers pass no payload — the handler is called with an empty object."
+msgstr ""
 
 #. js-lingui-id: zovbHa
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
@@ -4188,10 +4305,20 @@ msgid "Currency Code"
 msgstr "Valuuttakoodi"
 
 #. js-lingui-id: Hp1l6f
-#: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
 #: src/modules/settings/billing/components/internal/SubscriptionInfoRowContainer.tsx
+#: src/modules/settings/applications/components/SettingsApplicationAboutSidebar.tsx
 msgid "Current"
 msgstr "Nykyinen"
+
+#. js-lingui-id: nSK0mT
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
+msgid "Current period"
+msgstr ""
+
+#. js-lingui-id: C6vAhD
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
+msgid "Current subscription state and line items"
+msgstr ""
 
 #. js-lingui-id: 6YzXhC
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
@@ -4215,8 +4342,14 @@ msgstr "Nykyistä työtilan jäsentä ei löytynyt."
 #: src/pages/settings/ai/components/SettingsToolsTable.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelObjectPicker.tsx
 #: src/modules/settings/data-model/fields/forms/date/utils/getDisplayFormatLabel.ts
+#: src/modules/applications/hooks/useApplicationChipData.ts
 msgid "Custom"
 msgstr "Mukautettu"
+
+#. js-lingui-id: +V9e6z
+#: src/modules/settings/enterprise/components/EnterprisePlanModal.tsx
+msgid "Custom AI Models"
+msgstr ""
 
 #. js-lingui-id: XQ681Q
 #: src/modules/settings/domains/components/SettingsWorkspaceDomainCard.tsx
@@ -4239,7 +4372,6 @@ msgstr "Mukautetun mallin tunnus"
 #. js-lingui-id: 8skTDV
 #: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
 #: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
-#: src/modules/settings/enterprise/components/EnterprisePlanModal.tsx
 msgid "Custom objects"
 msgstr "Mukautetut objektit"
 
@@ -4257,6 +4389,11 @@ msgstr "Mukautetut tarjoajat"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 msgid "Custom View"
 msgstr "Mukautettu näkymä"
+
+#. js-lingui-id: 876pfE
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
+msgid "Customer"
+msgstr ""
 
 #. js-lingui-id: MNGIVW
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx
@@ -4322,8 +4459,8 @@ msgid "Czech"
 msgstr "Tšekki"
 
 #. js-lingui-id: ShUrwO
-#: src/pages/settings/ai/SettingsAIUsageUserDetail.tsx
-#: src/pages/settings/ai/components/SettingsAIUsageTab.tsx
+#: src/pages/settings/ai/SettingsAiUsageUserDetail.tsx
+#: src/pages/settings/ai/components/SettingsAiUsageTab.tsx
 msgid "Daily AI Usage"
 msgstr ""
 
@@ -4366,7 +4503,7 @@ msgid "Dashboard duplicated successfully"
 msgstr "Hallintapaneeli monistettiin onnistuneesti"
 
 #. js-lingui-id: HKH+W+
-#: src/pages/settings/applications/components/SettingsApplicationDataTable.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
 #: src/modules/side-panel/pages/workflow/trigger-type/components/SidePanelWorkflowSelectTriggerTypeContent.tsx
 #: src/modules/side-panel/pages/workflow/action/components/SidePanelWorkflowSelectAction.tsx
 #: src/modules/side-panel/pages/page-layout/constants/ChartSettingsHeadings.ts
@@ -4445,7 +4582,9 @@ msgid "Database configuration is currently disabled."
 msgstr "Tietokannan määritys on tällä hetkellä poistettu käytöstä."
 
 #. js-lingui-id: lP42oc
-#: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTriggersTab.tsx
+#: src/modules/settings/logic-functions/components/triggers/SettingsLogicFunctionDatabaseEventTriggerSection.tsx
+#: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTestTab.tsx
+#: src/modules/logic-functions/utils/getLogicFunctionTriggerLabel.ts
 msgid "Database event"
 msgstr "Tietokantatapahtuma"
 
@@ -4585,7 +4724,10 @@ msgid "default"
 msgstr ""
 
 #. js-lingui-id: ovBPCi
-#: src/pages/settings/ai/components/SettingsAIModelsTab.tsx
+#: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
+#: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
+#: src/pages/settings/layout/SettingsLayoutPageLayoutDetail.tsx
+#: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
 #: src/modules/settings/data-model/fields/forms/date/utils/getDisplayFormatLabel.ts
 #: src/modules/settings/data-model/fields/forms/address/components/MultiSelectAddressFields.tsx
 msgid "Default"
@@ -4953,7 +5095,6 @@ msgstr "Kuvaile mitä haluat, että tekoäly tekee..."
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
 #: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
-#: src/pages/settings/applications/components/SettingsApplicationNameDescriptionTable.tsx
 #: src/pages/settings/ai/SettingsToolDetail.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsTableHeader.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
@@ -4963,6 +5104,12 @@ msgstr "Kuvaile mitä haluat, että tekoäly tekee..."
 #: src/modules/settings/config-variables/components/ConfigVariableTable.tsx
 msgid "Description"
 msgstr "Kuvaus"
+
+#. js-lingui-id: C8lmDv
+#: src/pages/settings/layout/components/SettingsLayoutDetailScaffold.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentSettingsTab.tsx
+msgid "Description provided by the application"
+msgstr ""
 
 #. js-lingui-id: BBqGS9
 #: src/modules/side-panel/pages/page-layout/hooks/useVisibilityLabels.ts
@@ -4993,6 +5140,8 @@ msgstr "Irrota"
 
 #. js-lingui-id: URmyfc
 #: src/pages/settings/security/event-logs/utils/getColumnsForEventLogTable.ts
+#: src/pages/settings/layout/components/SettingsLayoutDetailScaffold.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentSettingsTab.tsx
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
 msgid "Details"
 msgstr "Tiedot"
@@ -5003,9 +5152,14 @@ msgid "Developer"
 msgstr "Kehittäjä"
 
 #. js-lingui-id: irW7LP
-#: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
+#: src/modules/settings/applications/components/SettingsApplicationAboutSidebar.tsx
 msgid "Developers links"
 msgstr "Kehittäjien linkit"
+
+#. js-lingui-id: MRB7nI
+#: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
+msgid "Direction"
+msgstr ""
 
 #. js-lingui-id: E/QGRL
 #: src/modules/page-layout/components/PageLayoutTabListNewTabDropdownContent.tsx
@@ -5287,7 +5441,7 @@ msgid "e.g. OpenAI EU"
 msgstr "esim. OpenAI EU"
 
 #. js-lingui-id: p5P8NB
-#: src/pages/settings/ai/components/SettingsAIMoreTab.tsx
+#: src/pages/settings/ai/components/SettingsAiMoreTab.tsx
 msgid "E.g., \"We are a B2B SaaS company. Always use formal language...\""
 msgstr "Esim. \"Olemme B2B SaaS -yritys. Käytä aina muodollista kieltä...\""
 
@@ -5525,7 +5679,7 @@ msgid "Email sent successfully"
 msgstr ""
 
 #. js-lingui-id: jvneza
-#: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
+#: src/modules/settings/applications/components/SettingsApplicationAboutSidebar.tsx
 msgid "Email support"
 msgstr ""
 
@@ -5581,7 +5735,6 @@ msgstr "Sähköpostitoimialueet"
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
-#: src/modules/page-layout/constants/StandardPageLayoutTabTitleTranslations.ts
 msgid "Emails"
 msgstr "Sähköpostit"
 
@@ -5660,6 +5813,7 @@ msgid "Empty Object"
 msgstr "Tyhjä objekti"
 
 #. js-lingui-id: 7A0K1Y
+#: src/pages/settings/layout/SettingsLayoutPageLayoutDetail.tsx
 #: src/modules/page-layout/components/PageLayoutTabListNewTabDropdownContent.tsx
 msgid "Empty tab"
 msgstr ""
@@ -5756,7 +5910,7 @@ msgid "Enter a value to store in database"
 msgstr "Anna arvo tallennettavaksi tietokantaan"
 
 #. js-lingui-id: P/e64M
-#: src/pages/settings/ai/forms/components/SettingsAIAgentForm.tsx
+#: src/pages/settings/ai/forms/components/SettingsAiAgentForm.tsx
 #: src/pages/settings/ai/components/SettingsAgentSettingsTab.tsx
 msgid "Enter agent name*"
 msgstr "Syötä agentin nimi*"
@@ -5900,7 +6054,7 @@ msgid "Enter the infos to set the connection"
 msgstr "Anna tiedot yhteyden luomiseksi"
 
 #. js-lingui-id: 3EF9HN
-#: src/pages/settings/ai/forms/components/SettingsAIAgentForm.tsx
+#: src/pages/settings/ai/forms/components/SettingsAiAgentForm.tsx
 #: src/pages/settings/ai/components/SettingsAgentSettingsTab.tsx
 msgid "Enter the system prompt that defines this agent's behavior and capabilities"
 msgstr "Anna järjestelmän kehote, joka määrittää tämän agentin käyttäytymisen ja ominaisuudet"
@@ -5936,7 +6090,7 @@ msgstr "Anna API-avaimesi"
 #: src/pages/settings/security/SettingsSecurity.tsx
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
-#: src/pages/settings/ai/components/SettingsAIUsageTab.tsx
+#: src/pages/settings/ai/components/SettingsAiUsageTab.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminContent.tsx
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
@@ -5945,7 +6099,7 @@ msgstr "Yritys"
 
 #. js-lingui-id: rmZVdg
 #: src/pages/settings/security/SettingsSecurity.tsx
-#: src/pages/settings/ai/components/SettingsAIUsageTab.tsx
+#: src/pages/settings/ai/components/SettingsAiUsageTab.tsx
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
 msgid "Enterprise feature"
 msgstr ""
@@ -5990,16 +6144,6 @@ msgstr "Ympäristömuuttujan valinnat"
 #: src/modules/settings/admin-panel/config-variables/utils/useSourceContent.ts
 msgid "Environment variable"
 msgstr "Ympäristömuuttuja"
-
-#. js-lingui-id: wqJ4zc
-#: src/modules/settings/logic-functions/components/SettingsLogicFunctionTabEnvironmentVariablesSection.tsx
-msgid "Environment Variables"
-msgstr "Ympäristömuuttujat"
-
-#. js-lingui-id: AP93Bl
-#: src/modules/settings/logic-functions/components/SettingsLogicFunctionTabEnvironmentVariablesSection.tsx
-msgid "Environment variables are defined at application level for all functions. Please check <0/>."
-msgstr "Ympäristömuuttujat määritellään sovellustasolla kaikille funktioille. Tarkista <0/>."
 
 #. js-lingui-id: BlLvRP
 #: src/pages/settings/security/SettingsSecurity.tsx
@@ -6107,7 +6251,7 @@ msgid "Error rotating client secret"
 msgstr "Virhe asiakassalasanaa vaihdettaessa"
 
 #. js-lingui-id: 5Vy8D1
-#: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
+#: src/pages/settings/applications/SettingsApplicationDetails.tsx
 msgid "Error uninstalling application."
 msgstr ""
 
@@ -6445,7 +6589,7 @@ msgstr "Vie CSV"
 
 #. js-lingui-id: 1JBTZV
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
-#: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTriggersTab.tsx
+#: src/modules/settings/logic-functions/components/triggers/SettingsLogicFunctionCronTriggerSection.tsx
 msgid "Expression"
 msgstr "Ilmaisu"
 
@@ -6537,7 +6681,7 @@ msgid "Failed to execute evaluation input"
 msgstr ""
 
 #. js-lingui-id: Ukrbw5
-#: src/modules/ai/components/AIChatErrorMessage.tsx
+#: src/modules/ai/components/AiChatErrorMessage.tsx
 msgid "Failed to get response"
 msgstr "Vastausta ei saatu"
 
@@ -6598,7 +6742,7 @@ msgid "Failed to save role permissions: {errorMessage}"
 msgstr ""
 
 #. js-lingui-id: 9ryUyP
-#: src/pages/settings/ai/components/SettingsAIMoreTab.tsx
+#: src/pages/settings/ai/components/SettingsAiMoreTab.tsx
 msgid "Failed to save workspace instructions"
 msgstr "Työtilan ohjeiden tallentaminen epäonnistui"
 
@@ -6624,13 +6768,13 @@ msgid "Failed to update default model"
 msgstr "Oletusmallin päivittäminen epäonnistui"
 
 #. js-lingui-id: 1R13Ov
-#: src/pages/settings/ai/components/SettingsAIModelsTab.tsx
+#: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
 msgid "Failed to update model"
 msgstr "Mallin päivittäminen epäonnistui"
 
 #. js-lingui-id: W7Ff/4
-#: src/pages/settings/ai/components/SettingsAIModelsTab.tsx
-#: src/pages/settings/ai/components/SettingsAIModelsTab.tsx
+#: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
+#: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
 msgid "Failed to update model availability"
@@ -6647,7 +6791,7 @@ msgid "Failed to update model recommendations"
 msgstr ""
 
 #. js-lingui-id: rCUG3c
-#: src/pages/settings/ai/components/SettingsAIModelsTab.tsx
+#: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
 msgid "Failed to update model selection mode"
 msgstr "Mallin valintatilan päivittäminen epäonnistui"
 
@@ -6665,6 +6809,11 @@ msgstr "Tietueiden päivittäminen epäonnistui. Yritä uudelleen."
 #: src/modules/settings/members/components/MemberPermissionsTab.tsx
 msgid "Failed to update role"
 msgstr "Roolin päivitys epäonnistui"
+
+#. js-lingui-id: 204Qo2
+#: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
+msgid "Failed to upgrade credit plan."
+msgstr ""
 
 #. js-lingui-id: pBEL6J
 #: src/modules/marketplace/hooks/useUpgradeApplication.ts
@@ -6684,7 +6833,7 @@ msgid "Failed to upload file \"{fileNameForError}\": {errorMessage}"
 msgstr "Tiedoston \"{fileNameForError}\" lähetys epäonnistui: {errorMessage}"
 
 #. js-lingui-id: cQPyHI
-#: src/modules/ai/hooks/useAIChatFileUpload.ts
+#: src/modules/ai/hooks/useAiChatFileUpload.ts
 msgid "Failed to upload file: {fileName}"
 msgstr "Tiedostoa ei voitu ladata: {fileName}"
 
@@ -6707,7 +6856,6 @@ msgstr ""
 #: src/modules/ui/field/display/components/BooleanDisplay.tsx
 #: src/modules/side-panel/pages/page-layout/hooks/useChartSettingsValues.ts
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartRatioOptionValueSelectionDropdownContent.tsx
-#: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTriggersTab.tsx
 #: src/modules/settings/data-model/fields/forms/boolean/constants/BooleanDataModelSelectOptions.ts
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownBooleanSelect.tsx
@@ -6715,7 +6863,7 @@ msgid "False"
 msgstr "Väärä"
 
 #. js-lingui-id: XVIZ7v
-#: src/pages/settings/ai/components/SettingsAIModelsTab.tsx
+#: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
 msgid "Fast Model"
 msgstr "Nopea malli"
@@ -6743,11 +6891,15 @@ msgstr "Vain suositellut"
 
 #. js-lingui-id: 2lOBKV
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
+#: src/pages/settings/applications/SettingsApplicationDetails.tsx
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "field"
 msgstr "kenttä"
 
 #. js-lingui-id: AXjA78
+#: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
+#: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
+#: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsSelect.tsx
 #: src/modules/side-panel/pages/page-layout/utils/getFieldLabelWithSubField.ts
 #: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutRecordPageWidgetTypeSelect.tsx
@@ -6792,15 +6944,15 @@ msgstr ""
 
 #. js-lingui-id: RnX5oc
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
+#: src/pages/settings/applications/SettingsApplicationDetails.tsx
 msgid "fields"
 msgstr "kentät"
 
 #. js-lingui-id: vF68cg
+#: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
-#: src/pages/settings/applications/components/SettingsApplicationDataTable.tsx
-#: src/pages/settings/applications/components/SettingsApplicationDataTable.tsx
 #: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutRecordPageWidgetTypeSelect.tsx
 #: src/modules/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardRecordTableSettings.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectFieldMenu.tsx
@@ -6816,6 +6968,11 @@ msgstr "Kentät"
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerDatabaseEventForm.tsx
 msgid "Fields (Optional)"
 msgstr "Kentät (valinnainen)"
+
+#. js-lingui-id: h5NDR9
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
+msgid "Fields added to other objects"
+msgstr ""
 
 #. js-lingui-id: Tnz22x
 #: src/modules/object-record/record-merge/components/MergeSettingsTab.tsx
@@ -6896,10 +7053,10 @@ msgstr ""
 msgid "File upload failed"
 msgstr "Tiedoston lähetys epäonnistui"
 
-#. js-lingui-id: sER+bs
-#: src/modules/page-layout/constants/StandardPageLayoutTabTitleTranslations.ts
-msgid "Files"
-msgstr "Tiedostot"
+#. js-lingui-id: BZGmTs
+#: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTestTab.tsx
+msgid "Fill with sample input from"
+msgstr ""
 
 #. js-lingui-id: o7J4JM
 #: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords.tsx
@@ -6939,6 +7096,7 @@ msgid "filtering"
 msgstr ""
 
 #. js-lingui-id: cSev+j
+#: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
 #: src/modules/side-panel/utils/getSidePanelSubPageTitle.ts
 #: src/modules/side-panel/utils/getSidePanelSubPageTitle.ts
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
@@ -7019,12 +7177,13 @@ msgstr "Korjaa maksuongelma pitääksesi Enterprise-ominaisuudet aktiivisina."
 #. js-lingui-id: ylQd2j
 #: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
 #: src/modules/side-panel/pages/workflow/action/components/SidePanelWorkflowSelectAction.tsx
-#: src/modules/page-layout/constants/StandardPageLayoutTabTitleTranslations.ts
 msgid "Flow"
 msgstr "Virtaus"
 
 #. js-lingui-id: kNqMMd
 #: src/modules/side-panel/components/SidePanelFolderInfo.tsx
+#: src/modules/settings/applications/hooks/useComputeApplicationContentForLayoutAndLogic.ts
+#: src/modules/settings/applications/hooks/useComputeApplicationContentForLayoutAndLogic.ts
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemMainMenu.tsx
 msgid "Folder"
 msgstr "Kansio"
@@ -7039,6 +7198,11 @@ msgstr "Kansion nimi"
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelEditFolderPickerSubPage.tsx
 msgid "Folders"
 msgstr "Kansiot"
+
+#. js-lingui-id: Ghistm
+#: src/modules/settings/applications/hooks/useComputeApplicationContentForLayoutAndLogic.ts
+msgid "for {objectLabel}"
+msgstr ""
 
 #. js-lingui-id: glx6on
 #: src/modules/auth/sign-in-up/components/SignInUpWorkspaceScopeForm.tsx
@@ -7062,7 +7226,7 @@ msgid "Format e.g. d-MMM-y (qqq''yy)"
 msgstr "Muoto esim. p-kkk-v (qqq''vv)"
 
 #. js-lingui-id: xMJhWJ
-#: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTriggersTab.tsx
+#: src/modules/settings/logic-functions/components/triggers/SettingsLogicFunctionCronTriggerSection.tsx
 msgid "Format: [Minute] [Hour] [Day of Month] [Month] [Day of Week]"
 msgstr "Muoto: [Minuutti] [Tunti] [Kuukauden päivä] [Kuukausi] [Viikonpäivä]"
 
@@ -7082,7 +7246,7 @@ msgid "Fourth"
 msgstr "Neljäs"
 
 #. js-lingui-id: aUj1gh
-#: src/modules/ai/components/AIChatCreditsExhaustedMessage.tsx
+#: src/modules/ai/components/AiChatCreditsExhaustedMessage.tsx
 msgid "Free trial credits exhausted. Subscribe now to continue using AI features."
 msgstr "Kokeilujakson krediitit on käytetty. Tilaa nyt jatkaaksesi AI-ominaisuuksien käyttöä."
 
@@ -7102,13 +7266,25 @@ msgid "from {startDay} to {endDay}"
 msgstr "{startDay}-päivästä {endDay}-päivään"
 
 #. js-lingui-id: zaEHSY
+#: src/pages/settings/applications/SettingsApplicationDetails.tsx
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "front component"
 msgstr "käyttöliittymäkomponentti"
 
+#. js-lingui-id: 7skoga
+#: src/pages/settings/applications/SettingsApplicationFrontComponentDetail.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentSettingsTab.tsx
+msgid "Front component"
+msgstr ""
+
+#. js-lingui-id: +M+QLN
+#: src/pages/settings/applications/SettingsApplicationDetails.tsx
+msgid "front components"
+msgstr ""
+
 #. js-lingui-id: IvIKDS
-#: src/pages/settings/applications/tabs/SettingsAvailableApplicationDetailContentTab.tsx
-#: src/pages/settings/applications/tabs/SettingsAvailableApplicationDetailContentTab.tsx
+#: src/pages/settings/applications/SettingsApplicationFrontComponentDetail.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
 msgid "Front components"
 msgstr "Käyttöliittymäkomponentit"
 
@@ -7198,6 +7374,11 @@ msgstr "Hanki Enterprise"
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Get Enterprise Key"
 msgstr "Hanki Enterprise-avain"
+
+#. js-lingui-id: Et23WT
+#: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
+msgid "Get more credits"
+msgstr ""
 
 #. js-lingui-id: NXEW3h
 #: src/pages/onboarding/InviteTeam.tsx
@@ -7384,6 +7565,16 @@ msgstr ""
 msgid "Heading 3"
 msgstr ""
 
+#. js-lingui-id: 6Ef36Q
+#: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentSettingsTab.tsx
+msgid "Headless"
+msgstr ""
+
+#. js-lingui-id: oEpvJo
+#: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentPreviewTab.tsx
+msgid "Headless component"
+msgstr ""
+
 #. js-lingui-id: UPqS9C
 #: src/modules/settings/admin-panel/components/SettingsAdminContent.tsx
 msgid "Health"
@@ -7400,6 +7591,7 @@ msgid "Hebrew"
 msgstr "Heprea"
 
 #. js-lingui-id: D+zLDD
+#: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupsContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownHiddenRecordGroupsContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownHiddenRecordGroupsContent.tsx
@@ -7453,7 +7645,6 @@ msgid "Hide label"
 msgstr ""
 
 #. js-lingui-id: i0qMbr
-#: src/modules/page-layout/constants/StandardPageLayoutTabTitleTranslations.ts
 #: src/modules/navigation/components/MainNavigationDrawerTabsRow.tsx
 msgid "Home"
 msgstr "Koti"
@@ -7462,6 +7653,34 @@ msgstr "Koti"
 #: src/modules/side-panel/pages/page-layout/constants/GraphTypeInformation.ts
 #: src/modules/page-layout/utils/getWidgetTitle.ts
 msgid "Horizontal Bar Chart"
+msgstr ""
+
+#. js-lingui-id: WOXdI6
+#: src/pages/settings/applications/utils/getCustomApplicationDescription.ts
+msgid ""
+"Host your workspace's customizations and overrides.\n"
+"\n"
+"#### What it includes\n"
+"Every extension you create on top of the standard app is grouped under Custom. It keeps your schema changes, interface changes, and workspace-specific logic in one place.\n"
+"\n"
+"- Custom objects and fields for your own data model\n"
+"- Views, navigation items, and record layouts that shape how your team works\n"
+"- Logic functions, front components, and agents that automate or extend the workspace\n"
+"\n"
+"#### Why it exists\n"
+"Use this app for workspace-specific customization that should stay local to this workspace.\n"
+"\n"
+"If you are shaping one workspace for one business, keep it here. If you are building a reusable business app with its own data model, UI, and automation that should be versioned, shared, or installed across workspaces, create a dedicated app instead.\n"
+"\n"
+"#### Build your own app\n"
+"\n"
+"Scaffold a new app in one command:\n"
+"\n"
+"```bash\n"
+"npx create-twenty-app@latest my-twenty-app\n"
+"```\n"
+"\n"
+"See the [Getting Started guide](https://twenty.com/developers/extend/apps/getting-started) for the full walkthrough, and [Building Apps](https://twenty.com/developers/extend/apps/building) for the `defineApplication` / `defineEntity` APIs."
 msgstr ""
 
 #. js-lingui-id: yY8wAv
@@ -7474,6 +7693,16 @@ msgstr "Tunnit"
 msgid "Hours between triggers"
 msgstr "Tunnit liipaisimien välillä"
 
+#. js-lingui-id: xUNmcx
+#: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
+msgid "How credits work"
+msgstr ""
+
+#. js-lingui-id: WC32k6
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
+msgid "How records, pages, and navigation are displayed"
+msgstr ""
+
 #. js-lingui-id: B06Bgk
 #: src/pages/onboarding/CreateProfile.tsx
 msgid "How you'll be identified on the app."
@@ -7484,10 +7713,12 @@ msgstr "Näin sinut tunnistetaan sovelluksessa."
 msgid "How your system is doing"
 msgstr "Miten järjestelmäsi toimii"
 
-#. js-lingui-id: gwfyXo
-#: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTriggersTab.tsx
-msgid "Http"
-msgstr "Http"
+#. js-lingui-id: LUTGt0
+#: src/modules/settings/logic-functions/components/triggers/SettingsLogicFunctionHttpTriggerSection.tsx
+#: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTestTab.tsx
+#: src/modules/logic-functions/utils/getLogicFunctionTriggerLabel.ts
+msgid "HTTP"
+msgstr ""
 
 #. js-lingui-id: DUhAFW
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerWebhookForm.tsx
@@ -7571,6 +7802,7 @@ msgid "IAM role (instance profile)"
 msgstr ""
 
 #. js-lingui-id: wwu18a
+#: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 msgid "Icon"
 msgstr "Kuvake"
@@ -7810,7 +8042,7 @@ msgid "Info"
 msgstr "Info"
 
 #. js-lingui-id: iaXnN5
-#: src/pages/settings/ai/SettingsAIPrompts.tsx
+#: src/pages/settings/ai/SettingsAiPrompts.tsx
 msgid "Information about the current user (auto-generated and included in each request)"
 msgstr "Tietoja nykyisestä käyttäjästä (luodaan automaattisesti ja liitetään jokaiseen pyyntöön)"
 
@@ -7854,18 +8086,18 @@ msgid "Input settings"
 msgstr "Syöteasetukset"
 
 #. js-lingui-id: cjbZw+
-#: src/modules/ai/components/internal/AIChatContextUsageButton.tsx
-#: src/modules/ai/components/internal/AIChatContextUsageButton.tsx
+#: src/modules/ai/components/internal/AiChatContextUsageButton.tsx
+#: src/modules/ai/components/internal/AiChatContextUsageButton.tsx
 msgid "Input tokens"
 msgstr "Syötetokenit"
 
-#. js-lingui-id: T8avpe
+#. js-lingui-id: Dlxuac
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTestTab.tsx
-msgid "Insert a JSON input, then press \"Run\" to test your function."
-msgstr "Lisää JSON-syöte ja paina sitten \"Suorita\" testataksesi toimintoasi."
+msgid "Insert a JSON input, then press \"Run Function\"."
+msgstr ""
 
 #. js-lingui-id: TKQ7K+
-#: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationShareLinkButtons.tsx
 msgid "Install"
 msgstr "Asenna"
@@ -7881,8 +8113,8 @@ msgid "Install Stats"
 msgstr "Asennustilastot"
 
 #. js-lingui-id: eQkgKV
-#: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
 #: src/pages/settings/applications/SettingsApplications.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
 msgid "Installed"
 msgstr "Asennettu"
@@ -7893,7 +8125,7 @@ msgid "Installed apps"
 msgstr ""
 
 #. js-lingui-id: wJJ+Wy
-#: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationShareLinkButtons.tsx
 msgid "Installing..."
 msgstr "Asennetaan..."
@@ -8402,7 +8634,7 @@ msgid "Last 90 days"
 msgstr "Viimeiset 90 päivää"
 
 #. js-lingui-id: c5zxSg
-#: src/modules/ai/components/internal/AIChatContextUsageButton.tsx
+#: src/modules/ai/components/internal/AiChatContextUsageButton.tsx
 msgid "Last message"
 msgstr "Viimeisin viesti"
 
@@ -8440,7 +8672,7 @@ msgid "Last payment failed. Please update your billing details."
 msgstr "Viimeinen maksu epäonnistui. Päivitä laskutustietosi."
 
 #. js-lingui-id: wL3cK8
-#: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
+#: src/modules/settings/applications/components/SettingsApplicationAboutSidebar.tsx
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 msgid "Latest"
 msgstr "Viimeisin"
@@ -8469,6 +8701,7 @@ msgstr "Käynnistä manuaalisesti"
 
 #. js-lingui-id: rdU729
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
 #: src/modules/side-panel/utils/getSidePanelSubPageTitle.ts
 #: src/modules/side-panel/pages/page-layout/components/record-page/SidePanelRecordPageFieldsSettings.tsx
 #: src/modules/side-panel/pages/page-layout/components/record-page/SidePanelRecordPageFieldSettings.tsx
@@ -8486,6 +8719,12 @@ msgstr ""
 #. js-lingui-id: euTsq6
 #: src/modules/layout-customization/components/LayoutCustomizationBarMenuDropdown.tsx
 msgid "Layout customization menu"
+msgstr ""
+
+#. js-lingui-id: uQ0+Yc
+#. placeholder {0}: tab.layoutMode
+#: src/pages/settings/layout/SettingsLayoutPageLayoutDetail.tsx
+msgid "Layout mode: {0}"
 msgstr ""
 
 #. js-lingui-id: yU0QVO
@@ -8611,6 +8850,7 @@ msgstr "Viivakaavio"
 
 #. js-lingui-id: yzF66j
 #: src/modules/side-panel/components/SidePanelLinkInfo.tsx
+#: src/modules/settings/applications/hooks/useComputeApplicationContentForLayoutAndLogic.ts
 #: src/modules/settings/admin-panel/health-status/maintenance-mode/components/SettingsAdminMaintenanceMode.tsx
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemMainMenu.tsx
 msgid "Link"
@@ -8670,6 +8910,7 @@ msgstr "Luettelot"
 
 #. js-lingui-id: C5bVie
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerWebhookForm.tsx
+#: src/modules/settings/logic-functions/components/triggers/SettingsLogicFunctionHttpTriggerSection.tsx
 msgid "Live URL"
 msgstr "Live-URL-osoite"
 
@@ -8757,7 +8998,7 @@ msgid "Loading..."
 msgstr "Ladataan..."
 
 #. js-lingui-id: 8NbHF7
-#: src/pages/settings/ai/SettingsAIPrompts.tsx
+#: src/pages/settings/ai/SettingsAiPrompts.tsx
 msgid "Locale"
 msgstr "Kielialue"
 
@@ -8790,30 +9031,23 @@ msgstr ""
 
 #. js-lingui-id: sTlKkx
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
+#: src/pages/settings/applications/SettingsApplicationDetails.tsx
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "logic function"
 msgstr "logiikkafunktio"
 
 #. js-lingui-id: qqnB9E
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
+#: src/pages/settings/applications/SettingsApplicationDetails.tsx
 msgid "logic functions"
 msgstr ""
 
 #. js-lingui-id: QTVVDd
-#: src/pages/settings/applications/tabs/SettingsAvailableApplicationDetailContentTab.tsx
-#: src/pages/settings/applications/tabs/SettingsAvailableApplicationDetailContentTab.tsx
-msgid "Logic functions"
-msgstr "Logiikkafunktiot"
-
-#. js-lingui-id: RXhDe7
+#: src/pages/settings/logic-functions/SettingsLogicFunctionDetail.tsx
+#: src/pages/settings/logic-functions/SettingsLogicFunctionDetail.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
-msgid "Logic functions powering this app"
-msgstr "Tämän sovelluksen taustalla toimivat logiikkafunktiot"
-
-#. js-lingui-id: Fr4G59
-#: src/pages/settings/applications/tabs/SettingsAvailableApplicationDetailContentTab.tsx
-msgid "Logic functions provided by this app"
-msgstr "Tämän sovelluksen tarjoamat logiikkafunktiot"
+msgid "Logic functions"
+msgstr ""
 
 #. js-lingui-id: VLuNNu
 #: src/modules/auth/components/TwoFactorAuthenticationProvisionEffect.tsx
@@ -8921,11 +9155,6 @@ msgstr "Hallitse näkymiä"
 msgid "Manage workflows"
 msgstr "Hallitse työnkulkuja"
 
-#. js-lingui-id: cbzOP7
-#: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
-msgid "Manage your app"
-msgstr "Hallitse sovellustasi"
-
 #. js-lingui-id: FyFNsd
 #: src/pages/settings/accounts/SettingsAccounts.tsx
 msgid "Manage your internet accounts."
@@ -9011,12 +9240,12 @@ msgid "Maximum values"
 msgstr "Arvojen enimmäismäärä"
 
 #. js-lingui-id: NvQoNb
-#: src/pages/settings/ai/components/SettingsAIMCP.tsx
+#: src/pages/settings/ai/components/SettingsAiMCP.tsx
 msgid "MCP Configuration copied to clipboard"
 msgstr "MCP-konfiguraatio kopioitu leikepöydälle"
 
 #. js-lingui-id: 8CWirf
-#: src/pages/settings/ai/components/SettingsAIMCP.tsx
+#: src/pages/settings/ai/components/SettingsAiMCP.tsx
 msgid "MCP Server"
 msgstr "MCP-palvelin"
 
@@ -9134,7 +9363,7 @@ msgid "Metered tier switching has been cancelled."
 msgstr "Mitattu taso on peruutettu."
 
 #. js-lingui-id: fiPesM
-#: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTriggersTab.tsx
+#: src/modules/settings/logic-functions/components/triggers/SettingsLogicFunctionHttpTriggerSection.tsx
 msgid "Method"
 msgstr "Menetelmä"
 
@@ -9226,7 +9455,7 @@ msgid "Models"
 msgstr "Mallit"
 
 #. js-lingui-id: oHM560
-#: src/pages/settings/ai/components/SettingsAIModelsTab.tsx
+#: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
 msgid "Models available in the chat model picker"
 msgstr "Keskustelumallivalitsimessa käytettävissä olevat mallit"
 
@@ -9253,6 +9482,7 @@ msgstr "Valvo sähköpostien synkronointitehtävän suorittamista"
 
 #. js-lingui-id: kY2ll9
 #: src/modules/settings/billing/hooks/useBillingWording.ts
+#: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
 msgid "month"
 msgstr "kuukausi"
 
@@ -9276,6 +9506,7 @@ msgstr "kuukausittain"
 
 #. js-lingui-id: +8Nek/
 #: src/modules/settings/enterprise/components/EnterprisePlanModal.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
 msgid "Monthly"
 msgstr ""
 
@@ -9423,8 +9654,6 @@ msgstr "mySkill"
 #: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
 #: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
-#: src/pages/settings/applications/components/SettingsApplicationNameDescriptionTable.tsx
-#: src/pages/settings/applications/components/SettingsApplicationDataTable.tsx
 #: src/pages/settings/ai/constants/SettingsSkillTableMetadata.ts
 #: src/pages/settings/ai/constants/SettingsAiAgentTableMetadata.ts
 #: src/pages/settings/ai/components/SettingsToolsTable.tsx
@@ -9446,7 +9675,6 @@ msgstr "mySkill"
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
 #: src/modules/settings/roles/components/SettingsRolesTableHeader.tsx
 #: src/modules/settings/members/components/MemberInfosTab.tsx
-#: src/modules/settings/logic-functions/components/SettingsLogicFunctionsTable.tsx
 #: src/modules/settings/logic-functions/components/SettingsLogicFunctionNewForm.tsx
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTabEnvironmentVariableTableRow.tsx
 #: src/modules/settings/developers/components/SettingsApiKeysTable.tsx
@@ -9493,23 +9721,13 @@ msgstr "Työtilasi nimi"
 msgid "Navbar"
 msgstr "Ylävalikko"
 
-#. js-lingui-id: Vn3jYy
-#: src/pages/settings/applications/tabs/SettingsAvailableApplicationDetailContentTab.tsx
-msgid "Navigation items"
-msgstr ""
-
-#. js-lingui-id: 9o7X1c
-#: src/pages/settings/applications/tabs/SettingsAvailableApplicationDetailContentTab.tsx
-msgid "Navigation items added by this app"
-msgstr ""
-
 #. js-lingui-id: FpO6v4
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "navigation menu item"
 msgstr "navigointivalikon kohta"
 
 #. js-lingui-id: jRptK+
-#: src/pages/settings/applications/tabs/SettingsAvailableApplicationDetailContentTab.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
 msgid "Navigation menu items"
 msgstr ""
 
@@ -9576,8 +9794,8 @@ msgstr "Uusi Hyväksytty Pääsytunnusalue"
 #. js-lingui-id: hIQkLb
 #: src/modules/navigation/components/MainNavigationDrawerTabsRow.tsx
 #: src/modules/navigation/components/MainNavigationDrawerTabsRow.tsx
-#: src/modules/ai/components/NavigationDrawerAIChatThreadDateSection.tsx
-#: src/modules/ai/components/AIChatThreadsList.tsx
+#: src/modules/ai/components/NavigationDrawerAiChatThreadDateSection.tsx
+#: src/modules/ai/components/AiChatThreadsList.tsx
 msgid "New chat"
 msgstr "Uusi keskustelu"
 
@@ -9728,6 +9946,8 @@ msgid "Ninth"
 msgstr "Yhdeksäs"
 
 #. js-lingui-id: 1UzENP
+#: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentSettingsTab.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentSettingsTab.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelUpdateFieldsValueForObject.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSeeFieldsValueForObject.tsx
@@ -9760,6 +9980,11 @@ msgstr "Ei {label}"
 msgid "No {objectLabelSingular} found"
 msgstr "Yhtään {objectLabelSingular} ei löytynyt"
 
+#. js-lingui-id: glQp+P
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
+msgid "No active subscription."
+msgstr ""
+
 #. js-lingui-id: aXFOuf
 #: src/modules/activities/timeline-activities/components/TimelineCard.tsx
 msgid "No activity yet"
@@ -9781,7 +10006,7 @@ msgid "No agents match your search"
 msgstr "Yksikään agentti ei vastaa hakua"
 
 #. js-lingui-id: nPalt1
-#: src/pages/settings/ai/SettingsAIUsageUserDetail.tsx
+#: src/pages/settings/ai/SettingsAiUsageUserDetail.tsx
 msgid "No AI consumption recorded for this user."
 msgstr ""
 
@@ -9825,6 +10050,11 @@ msgstr "Ei valittavissa olevia kenttiä"
 msgid "No available tabs"
 msgstr ""
 
+#. js-lingui-id: 8whThc
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
+msgid "No billing data is available for this workspace."
+msgstr ""
+
 #. js-lingui-id: V/RzSE
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/BodyInput.tsx
 msgid "No body"
@@ -9836,7 +10066,7 @@ msgid "No calling code"
 msgstr "Ei suuntanumeroa"
 
 #. js-lingui-id: d14J3J
-#: src/modules/ai/components/NavigationDrawerAIChatContent.tsx
+#: src/modules/ai/components/NavigationDrawerAiChatContent.tsx
 msgid "No chat"
 msgstr ""
 
@@ -9952,7 +10182,7 @@ msgid "No deleted records matching the filter criteria were found."
 msgstr "Poistettuja tietueita, jotka vastaavat suodatuskriteereitä, ei löytynyt."
 
 #. js-lingui-id: RRRePs
-#: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
 msgid "No description available for this application"
 msgstr ""
 
@@ -10098,7 +10328,7 @@ msgid "No metrics data available"
 msgstr "Ei metriikkatietoja saatavilla"
 
 #. js-lingui-id: UWZZdQ
-#: src/pages/settings/ai/forms/components/SettingsAIAgentForm.tsx
+#: src/pages/settings/ai/forms/components/SettingsAiAgentForm.tsx
 #: src/pages/settings/ai/components/SettingsAgentSettingsTab.tsx
 msgid "No models available. Please configure AI models in your workspace settings."
 msgstr "Malitavoa ei ole saatavilla. Konfiguroi AI-mallit työtilan asetuksista."
@@ -10107,11 +10337,6 @@ msgstr "Malitavoa ei ole saatavilla. Konfiguroi AI-mallit työtilan asetuksista.
 #: src/modules/activities/notes/components/NotesCard.tsx
 msgid "No notes"
 msgstr "Ei muistiinpanoja"
-
-#. js-lingui-id: 14uqQk
-#: src/pages/settings/applications/components/SettingsApplicationDataTable.tsx
-msgid "No object found"
-msgstr "Objektia ei löytynyt"
 
 #. js-lingui-id: YFHO2u
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemViewObjectPickerSubView.tsx
@@ -10245,19 +10470,24 @@ msgstr ""
 msgid "No system objects with views found"
 msgstr ""
 
-#. js-lingui-id: fBsRs5
+#. js-lingui-id: ZCTuAQ
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTriggersTab.tsx
-msgid "No triggers configured for this function."
-msgstr "Tälle funktiolle ei ole määritetty laukaisimia."
+msgid "No trigger is configured for this function."
+msgstr ""
+
+#. js-lingui-id: g/fpDP
+#: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTriggersTab.tsx
+msgid "No trigger is enabled. Toggle one of the options above to choose how this function gets invoked."
+msgstr ""
 
 #. js-lingui-id: WwlPOG
 #: src/pages/settings/SettingsUsageUserDetail.tsx
-#: src/pages/settings/ai/SettingsAIUsageUserDetail.tsx
+#: src/pages/settings/ai/SettingsAiUsageUserDetail.tsx
 msgid "No usage data"
 msgstr "Ei käyttötietoja"
 
 #. js-lingui-id: TayaS7
-#: src/pages/settings/ai/components/SettingsAIUsageTab.tsx
+#: src/pages/settings/ai/components/SettingsAiUsageTab.tsx
 #: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx
 msgid "No usage data yet"
 msgstr ""
@@ -10362,7 +10592,9 @@ msgid "Not Found"
 msgstr "Ei löytynyt"
 
 #. js-lingui-id: MTqQMG
+#: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationConfigTab.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentSettingsTab.tsx
 msgid "Not set"
 msgstr "Ei asetettu"
 
@@ -10383,16 +10615,6 @@ msgstr "Ei jaettu käyttäjän {notSharedByFullName} toimesta"
 msgid "Not synced"
 msgstr "Ei synkronoitu"
 
-#. js-lingui-id: KiJn9B
-#: src/modules/page-layout/constants/StandardPageLayoutTabTitleTranslations.ts
-msgid "Note"
-msgstr "Muistiinpano"
-
-#. js-lingui-id: 1DBGsz
-#: src/modules/page-layout/constants/StandardPageLayoutTabTitleTranslations.ts
-msgid "Notes"
-msgstr "Muistiinpanot"
-
 #. js-lingui-id: DYCPYF
 #: src/modules/page-layout/widgets/components/StandaloneWidgetPlaceholder.tsx
 msgid "Nothing to see"
@@ -10405,7 +10627,7 @@ msgid "now"
 msgstr "nyt"
 
 #. js-lingui-id: OduKuG
-#: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
+#: src/modules/settings/applications/components/SettingsApplicationAboutSidebar.tsx
 msgid "Npm package"
 msgstr ""
 
@@ -10465,18 +10687,22 @@ msgstr ""
 #. js-lingui-id: b/j06W
 #: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationOAuthTab.tsx
-#: src/pages/settings/ai/components/SettingsAIMCP.tsx
+#: src/pages/settings/ai/components/SettingsAiMCP.tsx
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetail.tsx
 msgid "OAuth"
 msgstr "OAuth"
 
 #. js-lingui-id: pNEViR
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
+#: src/pages/settings/applications/SettingsApplicationDetails.tsx
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "object"
 msgstr "objekti"
 
 #. js-lingui-id: W0i24j
+#: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
+#: src/pages/settings/layout/SettingsLayoutPageLayoutDetail.tsx
+#: src/pages/settings/layout/SettingsLayoutPageLayoutDetail.tsx
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManual.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsRecordPicker.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords.tsx
@@ -10487,6 +10713,7 @@ msgstr "objekti"
 #: src/modules/side-panel/components/SidePanelObjectViewRecordInfo.tsx
 #: src/modules/side-panel/components/SidePanelObjectFilterDropdownContent.tsx
 #: src/modules/settings/developers/components/WebhookEntitySelect.tsx
+#: src/modules/settings/applications/hooks/useComputeApplicationContentForLayoutAndLogic.ts
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemMainMenu.tsx
 msgid "Object"
 msgstr "Objekti"
@@ -10544,6 +10771,7 @@ msgstr "Objektikohtaisesti"
 
 #. js-lingui-id: Oq4fl6
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
+#: src/pages/settings/applications/SettingsApplicationDetails.tsx
 msgid "objects"
 msgstr "objektit"
 
@@ -10555,18 +10783,13 @@ msgstr "objektit"
 #: src/pages/settings/data-model/SettingsNewObject.tsx
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldSelect.tsx
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
-#: src/pages/settings/applications/components/SettingsApplicationDataTable.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsObjectsList.tsx
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelObjectPickerSubView.tsx
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemViewObjectPickerSubView.tsx
 msgid "Objects"
 msgstr "Objektit"
-
-#. js-lingui-id: tmyEbd
-#: src/pages/settings/applications/components/SettingsApplicationDataTable.tsx
-msgid "Objects and fields managed by this app"
-msgstr "Tämän sovelluksen hallinnoimat objektit ja kentät"
 
 #. js-lingui-id: /8Yh6y
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
@@ -10597,6 +10820,16 @@ msgstr "Vanhemmat"
 #: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 msgid "Omit zero values"
 msgstr "Jätä nollarvot pois"
+
+#. js-lingui-id: UCQiqt
+#. placeholder {0}: item.labelSingular
+#. placeholder {0}: appObject.labelSingular
+#. placeholder {0}: objectMetadataItem.labelSingular
+#: src/modules/settings/applications/hooks/useComputeObjectAndFieldsContentForApplication.ts
+#: src/modules/settings/applications/hooks/useComputeObjectAndFieldsContentForApplication.ts
+#: src/modules/settings/applications/hooks/useComputeObjectAndFieldsContentForApplication.ts
+msgid "on {0}"
+msgstr ""
 
 #. js-lingui-id: jcwJgk
 #: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getDayOfMonthDescription.ts
@@ -10739,6 +10972,11 @@ msgstr "Avaa Roolit-näkymässä"
 msgid "Open Outlook"
 msgstr "Avaa Outlookissa"
 
+#. js-lingui-id: p9J4lB
+#: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
+msgid "Open records in"
+msgstr ""
+
 #. js-lingui-id: bY2Xkv
 #: src/modules/side-panel/components/SidePanelToggleButton.tsx
 msgid "Open side panel"
@@ -10748,6 +10986,11 @@ msgstr "Avaa sivupaneeli"
 #: src/modules/navigation-menu-item/display/sections/components/NavigationDrawerOpenedSection.tsx
 msgid "Opened"
 msgstr "Avattu"
+
+#. js-lingui-id: Fzfj4N
+#: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
+msgid "Operand"
+msgstr ""
 
 #. js-lingui-id: 8m1COB
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminHealthStatusRightContainer.tsx
@@ -10794,6 +11037,11 @@ msgstr "Tai"
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Orange"
 msgstr "Oranssi"
+
+#. js-lingui-id: I/EsFC
+#: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
+msgid "Order in which records are displayed"
+msgstr ""
 
 #. js-lingui-id: VWupWc
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
@@ -10892,8 +11140,8 @@ msgid "Output"
 msgstr "Tulos"
 
 #. js-lingui-id: i1+tKD
-#: src/modules/ai/components/internal/AIChatContextUsageButton.tsx
-#: src/modules/ai/components/internal/AIChatContextUsageButton.tsx
+#: src/modules/ai/components/internal/AiChatContextUsageButton.tsx
+#: src/modules/ai/components/internal/AiChatContextUsageButton.tsx
 msgid "Output tokens"
 msgstr "Tulostokenit"
 
@@ -10935,9 +11183,16 @@ msgid "Page"
 msgstr "Sivu"
 
 #. js-lingui-id: SZgFyi
+#: src/pages/settings/layout/SettingsLayoutPageLayoutDetail.tsx
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "page layout"
 msgstr "sivun asettelu"
+
+#. js-lingui-id: kbnS+K
+#: src/pages/settings/layout/SettingsLayoutPageLayoutDetail.tsx
+#: src/modules/settings/applications/hooks/useComputeApplicationContentForLayoutAndLogic.ts
+msgid "Page layout"
+msgstr ""
 
 #. js-lingui-id: HFlGEK
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
@@ -10950,14 +11205,9 @@ msgid "page layout widget"
 msgstr "sivun asettelun widget"
 
 #. js-lingui-id: ckYXHz
-#: src/pages/settings/applications/tabs/SettingsAvailableApplicationDetailContentTab.tsx
-#: src/pages/settings/applications/tabs/SettingsAvailableApplicationDetailContentTab.tsx
+#: src/pages/settings/layout/SettingsLayoutPageLayoutDetail.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
 msgid "Page layouts"
-msgstr ""
-
-#. js-lingui-id: gUojnO
-#: src/pages/settings/applications/tabs/SettingsAvailableApplicationDetailContentTab.tsx
-msgid "Page layouts defined by this app"
 msgstr ""
 
 #. js-lingui-id: IVBjIH
@@ -11035,7 +11285,7 @@ msgid "Paste your enterprise key here"
 msgstr "Liitä Enterprise-avaimesi tähän"
 
 #. js-lingui-id: I6gXOa
-#: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTriggersTab.tsx
+#: src/modules/settings/logic-functions/components/triggers/SettingsLogicFunctionHttpTriggerSection.tsx
 msgid "Path"
 msgstr "Polku"
 
@@ -11067,7 +11317,7 @@ msgid "People I’ve sent emails to."
 msgstr "Henkilöt, joille olen lähettänyt sähköposteja."
 
 #. js-lingui-id: qMTN0w
-#: src/pages/settings/ai/SettingsAIUsageUserDetail.tsx
+#: src/pages/settings/ai/SettingsAiUsageUserDetail.tsx
 msgid "Per-day AI consumption."
 msgstr ""
 
@@ -11222,6 +11472,7 @@ msgstr ""
 
 #. js-lingui-id: GdgCoi
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
 msgid "Plan"
 msgstr "Suunnitelma"
 
@@ -11341,10 +11592,25 @@ msgstr "sijoituksen mukaan laskevasti"
 msgid "Post Code"
 msgstr "Postinumero"
 
+#. js-lingui-id: VFf6Bm
+#: src/modules/logic-functions/utils/getLogicFunctionTriggerLabel.ts
+msgid "Post-install"
+msgstr ""
+
 #. js-lingui-id: OKJUcC
 #: src/modules/settings/data-model/fields/forms/address/constants/DefaultSelectionAddressWithMessages.ts
 msgid "Postcode"
 msgstr "Postinumero"
+
+#. js-lingui-id: W88dRa
+#: src/modules/logic-functions/utils/getLogicFunctionTriggerLabel.ts
+msgid "Pre-install"
+msgstr ""
+
+#. js-lingui-id: q+Xhwx
+#: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
+msgid "Pre-installed only"
+msgstr ""
 
 #. js-lingui-id: /v6Rp9
 #: src/pages/onboarding/CreateWorkspace.tsx
@@ -11362,6 +11628,7 @@ msgid "Prevent from assigning the same value to different records"
 msgstr "Estä käyttäjiä antamasta samaa arvoa eri tietueille"
 
 #. js-lingui-id: rdUucN
+#: src/pages/settings/applications/SettingsApplicationFrontComponentDetail.tsx
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectSettingsFormCard.tsx
 #: src/modules/settings/data-model/components/SettingsDataModelPreviewFormCard.tsx
 msgid "Preview"
@@ -11476,6 +11743,12 @@ msgstr ""
 #: src/pages/settings/security/event-logs/utils/getColumnsForEventLogTable.ts
 msgid "Properties"
 msgstr "Ominaisuudet"
+
+#. js-lingui-id: 8B+pY5
+#: src/pages/settings/layout/components/SettingsLayoutDetailScaffold.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentSettingsTab.tsx
+msgid "Property"
+msgstr ""
 
 #. js-lingui-id: 56xUL1
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/BodyInput.tsx
@@ -11640,18 +11913,18 @@ msgid "Read documentation"
 msgstr "Lue dokumentaatio"
 
 #. js-lingui-id: U26cMX
-#: src/pages/settings/ai/components/SettingsAIMoreTab.tsx
+#: src/pages/settings/ai/components/SettingsAiMoreTab.tsx
 msgid "Read system prompts"
 msgstr ""
 
 #. js-lingui-id: EKsFda
-#: src/pages/settings/ai/components/SettingsAIMoreTab.tsx
+#: src/pages/settings/ai/components/SettingsAiMoreTab.tsx
 msgid "Read the system prompts to understand how the AI works"
 msgstr ""
 
 #. js-lingui-id: 0URVx8
 #. placeholder {0}: formatNumber( systemPromptTokenCount, { abbreviate: true, decimals: 1, }, )
-#: src/pages/settings/ai/components/SettingsAIMoreTab.tsx
+#: src/pages/settings/ai/components/SettingsAiMoreTab.tsx
 msgid "Read the system prompts to understand how the AI works (~{0} tokens)"
 msgstr ""
 
@@ -11661,9 +11934,14 @@ msgid "Read your profile"
 msgstr "Lue profiilisi"
 
 #. js-lingui-id: 6pSHJ5
-#: src/pages/settings/ai/SettingsAIPrompts.tsx
-#: src/pages/settings/ai/SettingsAIPrompts.tsx
+#: src/pages/settings/ai/SettingsAiPrompts.tsx
+#: src/pages/settings/ai/SettingsAiPrompts.tsx
 msgid "Read-only"
+msgstr ""
+
+#. js-lingui-id: 6wOBcu
+#: src/pages/settings/layout/components/SettingsLayoutDetailScaffold.tsx
+msgid "Read-only {entityTypeLabel} definition shipped by this app"
 msgstr ""
 
 #. js-lingui-id: W+ApAD
@@ -11717,6 +11995,8 @@ msgstr "tietue"
 #: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionUpdateRecord.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionDeleteRecord.tsx
+#: src/modules/settings/applications/hooks/useComputeApplicationContentForLayoutAndLogic.ts
+#: src/modules/settings/applications/hooks/useComputeApplicationContentForLayoutAndLogic.ts
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemMainMenu.tsx
 #: src/modules/navigation-menu-item/display/object/components/NavigationDrawerItemForObjectMetadataItem.tsx
 msgid "Record"
@@ -12057,15 +12337,20 @@ msgstr "Vastaa kaikille"
 msgid "Reply..."
 msgstr ""
 
-#. js-lingui-id: tbmZmI
-#: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
-msgid "Report and issue"
+#. js-lingui-id: Q3LOVJ
+#: src/modules/settings/applications/components/SettingsApplicationAboutSidebar.tsx
+msgid "Report an issue"
 msgstr ""
 
 #. js-lingui-id: /laZGZ
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/HttpRequestExecutionResult.tsx
 msgid "Request Failed"
 msgstr "Pyyntö epäonnistui"
+
+#. js-lingui-id: +gFBV8
+#: src/modules/settings/logic-functions/components/triggers/SettingsLogicFunctionHttpTriggerSection.tsx
+msgid "Require authentication"
+msgstr ""
 
 #. js-lingui-id: TMLAx2
 #: src/pages/settings/ai/components/SettingsToolParameterTable.tsx
@@ -12184,7 +12469,7 @@ msgid "Restore {objectLabel}"
 msgstr ""
 
 #. js-lingui-id: hO3AfV
-#: src/pages/settings/ai/components/SettingsAIModelsTab.tsx
+#: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
 msgid "Restrict available models to a curated list"
 msgstr "Rajoita käytettävissä olevat mallit kuratoituun luetteloon"
 
@@ -12290,8 +12575,7 @@ msgstr ""
 
 #. js-lingui-id: 5dJK4M
 #: src/pages/settings/roles/SettingsRoleAddObjectLevel.tsx
-#: src/pages/settings/applications/tabs/SettingsAvailableApplicationDetailContentTab.tsx
-#: src/pages/settings/applications/tabs/SettingsAvailableApplicationDetailContentTab.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
@@ -12300,11 +12584,6 @@ msgstr ""
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Roles"
 msgstr "Roolit"
-
-#. js-lingui-id: ys6cUp
-#: src/pages/settings/applications/tabs/SettingsAvailableApplicationDetailContentTab.tsx
-msgid "Roles defined by this app"
-msgstr ""
 
 #. js-lingui-id: Qz0FZ3
 #: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
@@ -12392,6 +12671,11 @@ msgstr "Suoritetaan..."
 msgid "Russian"
 msgstr "Venäjä"
 
+#. js-lingui-id: 3hNFUc
+#: src/modules/settings/logic-functions/components/triggers/SettingsLogicFunctionTriggerPayloadFormat.tsx
+msgid "Sample input"
+msgstr ""
+
 #. js-lingui-id: +5kO8P
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsCalendarStartDaySelect.tsx
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsCalendarStartDaySelect.tsx
@@ -12407,6 +12691,11 @@ msgstr "Tallenna"
 #: src/modules/views/components/UpdateViewButtonGroup.tsx
 msgid "Save as new view"
 msgstr "Tallenna uutena näkymänä"
+
+#. js-lingui-id: 7byqGp
+#: src/modules/layout-customization/hooks/useEnterLayoutCustomizationMode.ts
+msgid "Save or cancel dashboard changes before editing the layout."
+msgstr ""
 
 #. js-lingui-id: gmB6oO
 #: src/modules/workflow/workflow-trigger/components/CronExpressionHelper.tsx
@@ -12432,6 +12721,11 @@ msgstr "Skeema"
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "Schema name"
 msgstr "Skeeman nimi"
+
+#. js-lingui-id: IYEdtc
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
+msgid "Schema this app contributes to your workspace"
+msgstr ""
 
 #. js-lingui-id: N/rFzD
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationOAuthTab.tsx
@@ -12486,7 +12780,7 @@ msgid "Search a folder..."
 msgstr ""
 
 #. js-lingui-id: 8J0e5B
-#: src/pages/settings/ai/components/SettingsAIModelsTab.tsx
+#: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
 msgid "Search a model..."
 msgstr "Etsi mallia..."
@@ -12538,7 +12832,7 @@ msgid "Search agents"
 msgstr "Etsi agentteja"
 
 #. js-lingui-id: 4fd0q+
-#: src/pages/settings/ai/components/SettingsAIAgentsTable.tsx
+#: src/pages/settings/ai/components/SettingsAiAgentsTable.tsx
 msgid "Search an agent..."
 msgstr "Etsi agenttia..."
 
@@ -12566,7 +12860,6 @@ msgid "Search an object"
 msgstr "Etsi objekti"
 
 #. js-lingui-id: BoNHR0
-#: src/pages/settings/applications/components/SettingsApplicationDataTable.tsx
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelObjectPickerSubView.tsx
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemViewObjectPickerSubView.tsx
 msgid "Search an object..."
@@ -12684,6 +12977,7 @@ msgid "Search registrations..."
 msgstr "Hae rekisteröintejä..."
 
 #. js-lingui-id: YIix5Y
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
 #: src/modules/settings/developers/components/WebhookEntitySelect.tsx
 msgid "Search..."
 msgstr "Haku..."
@@ -12721,6 +13015,11 @@ msgstr "paikka / kuukausi"
 #: src/modules/settings/billing/components/SubscriptionPrice.tsx
 msgid "seat / month - billed yearly"
 msgstr "paikka / kuukausi - laskutetaan vuosittain"
+
+#. js-lingui-id: MpFIca
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
+msgid "seats"
+msgstr ""
 
 #. js-lingui-id: grt0Pu
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -12986,11 +13285,6 @@ msgstr "Valitse vaihe"
 msgid "Select the default value for this boolean field"
 msgstr "Valitse tämän loogisen kentän oletusarvo"
 
-#. js-lingui-id: E3D4LZ
-#: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTriggersTab.tsx
-msgid "Select the events that should trigger the function"
-msgstr "Valitse tapahtumat, jotka aktivoivat toiminnon"
-
 #. js-lingui-id: xraglu
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "Select the events you wish to send to this endpoint"
@@ -13174,7 +13468,7 @@ msgstr "Asetetaan tietokantaasi..."
 #. js-lingui-id: Tz0i8g
 #: src/pages/settings/logic-functions/SettingsLogicFunctionDetail.tsx
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
-#: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
+#: src/pages/settings/applications/SettingsApplicationFrontComponentDetail.tsx
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
 #: src/pages/settings/ai/SettingsAgentForm.tsx
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
@@ -13351,6 +13645,11 @@ msgstr "Yksikön ja monikon nimien on oltava erilaisia"
 msgid "Sixth"
 msgstr "Kuudes"
 
+#. js-lingui-id: Cj2Gtd
+#: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
+msgid "Size"
+msgstr ""
+
 #. js-lingui-id: Nbjq/v
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
 msgid "sk-..."
@@ -13396,17 +13695,11 @@ msgid "skills"
 msgstr ""
 
 #. js-lingui-id: PCSkw2
-#: src/pages/settings/applications/tabs/SettingsAvailableApplicationDetailContentTab.tsx
-#: src/pages/settings/applications/tabs/SettingsAvailableApplicationDetailContentTab.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
 #: src/pages/settings/ai/SettingsAI.tsx
 #: src/pages/settings/ai/components/SettingsAgentSkills.tsx
 msgid "Skills"
 msgstr "Taidot"
-
-#. js-lingui-id: B3q6I4
-#: src/pages/settings/applications/tabs/SettingsAvailableApplicationDetailContentTab.tsx
-msgid "Skills provided by this app"
-msgstr ""
 
 #. js-lingui-id: 6Uau97
 #: src/pages/onboarding/InviteTeam.tsx
@@ -13435,7 +13728,7 @@ msgid "Small section heading"
 msgstr ""
 
 #. js-lingui-id: 5J8ZFl
-#: src/pages/settings/ai/components/SettingsAIModelsTab.tsx
+#: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
 msgid "Smart Model"
 msgstr "Älykäs malli"
@@ -13540,6 +13833,7 @@ msgid "sorting"
 msgstr ""
 
 #. js-lingui-id: 0pWTum
+#: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
 #: src/modules/side-panel/utils/getSidePanelSubPageTitle.ts
 #: src/modules/side-panel/pages/page-layout/components/record-table-settings/RecordTableSettingsSorts.tsx
 msgid "Sorts"
@@ -13615,6 +13909,7 @@ msgstr "Vaiheet"
 #: src/pages/settings/ai/components/SettingsToolsTable.tsx
 #: src/pages/settings/ai/components/SettingsToolsTable.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelObjectPicker.tsx
+#: src/modules/applications/hooks/useApplicationChipData.ts
 msgid "Standard"
 msgstr "Standardi"
 
@@ -13645,6 +13940,7 @@ msgstr "Aloituspäivä"
 
 #. js-lingui-id: s+K73L
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
 msgid "Start Your Subscription"
 msgstr "Aloita tilauksesi"
 
@@ -13672,6 +13968,7 @@ msgstr "Tila"
 #: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
 #: src/modules/settings/components/SettingsDnsRecordsTable.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
 #: src/modules/settings/accounts/components/SettingsConnectedAccountsTableHeader.tsx
 msgid "Status"
 msgstr "Tila"
@@ -13709,6 +14006,21 @@ msgstr "Katuosoite 2"
 #. js-lingui-id: UJNV7l
 #: src/pages/settings/ai/components/SettingsAgentResponseFormat.tsx
 msgid "String"
+msgstr ""
+
+#. js-lingui-id: zHJ27S
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
+msgid "Stripe customer"
+msgstr ""
+
+#. js-lingui-id: Zk8585
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
+msgid "Stripe customer linked to this workspace"
+msgstr ""
+
+#. js-lingui-id: Yiplcx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
+msgid "Stripe subscription"
 msgstr ""
 
 #. js-lingui-id: 1CalO6
@@ -13797,12 +14109,14 @@ msgstr "Tilaa"
 
 #. js-lingui-id: ShbDuS
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
-#: src/modules/ai/components/AIChatCreditsExhaustedMessage.tsx
+#: src/modules/ai/components/AiChatCreditsExhaustedMessage.tsx
+#: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
 msgid "Subscribe Now"
 msgstr "Tilaa nyt"
 
 #. js-lingui-id: WVzGc2
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
 msgid "Subscription"
 msgstr "Tilaus"
 
@@ -13988,13 +14302,13 @@ msgid "System objects"
 msgstr ""
 
 #. js-lingui-id: FHPe8O
-#: src/pages/settings/ai/SettingsAIPrompts.tsx
-#: src/pages/settings/ai/SettingsAIPrompts.tsx
-#: src/pages/settings/ai/SettingsAIPrompts.tsx
-#: src/pages/settings/ai/forms/components/SettingsAIAgentForm.tsx
+#: src/pages/settings/ai/SettingsAiPrompts.tsx
+#: src/pages/settings/ai/SettingsAiPrompts.tsx
+#: src/pages/settings/ai/SettingsAiPrompts.tsx
+#: src/pages/settings/ai/forms/components/SettingsAiAgentForm.tsx
+#: src/pages/settings/ai/components/SettingsAiMoreTab.tsx
+#: src/pages/settings/ai/components/SettingsAiMoreTab.tsx
 #: src/pages/settings/ai/components/SettingsAgentSettingsTab.tsx
-#: src/pages/settings/ai/components/SettingsAIMoreTab.tsx
-#: src/pages/settings/ai/components/SettingsAIMoreTab.tsx
 msgid "System Prompt"
 msgstr "Järjestelmäkehotus"
 
@@ -14030,6 +14344,12 @@ msgstr "Järjestelmän asetukset - {systemTimeFormatLabel}"
 msgid "Tab"
 msgstr "Välilehti"
 
+#. js-lingui-id: eDW3Jm
+#. placeholder {0}: tab.title
+#: src/pages/settings/layout/SettingsLayoutPageLayoutDetail.tsx
+msgid "Tab {tabNumber}: {0}"
+msgstr ""
+
 #. js-lingui-id: zr20ox
 #: src/modules/side-panel/pages/page-layout/utils/getPageLayoutPageTitle.ts
 msgid "Tab Settings"
@@ -14037,6 +14357,7 @@ msgstr "Välilehden asetukset"
 
 #. js-lingui-id: 4hJhzz
 #: src/pages/settings/security/event-logs/components/EventLogTableSelector.tsx
+#: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
 #: src/modules/views/view-picker/constants/ViewPickerTypeSelectOptions.ts
 #: src/modules/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardRecordTableSettings.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
@@ -14064,18 +14385,13 @@ msgstr "Tehtävän otsikko"
 msgid "Task Title"
 msgstr "Tehtävän otsikko"
 
-#. js-lingui-id: GtycJ/
-#: src/modules/page-layout/constants/StandardPageLayoutTabTitleTranslations.ts
-msgid "Tasks"
-msgstr "Tehtävät"
-
 #. js-lingui-id: lKXcJz
 #: src/pages/settings/emailing-domains/utils/getEmailingDomainStatusText.ts
 msgid "Temporary Failure"
 msgstr "Väliaikainen epäonnistuminen"
 
 #. js-lingui-id: h0xgxg
-#: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
+#: src/modules/settings/applications/components/SettingsApplicationAboutSidebar.tsx
 msgid "Terms / Privacy"
 msgstr "Käyttöehdot / Tietosuoja"
 
@@ -14138,6 +14454,41 @@ msgstr "OpenAI-yhteensopivan tarjoajasi API-päätepiste"
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
 msgid "The AWS region for Bedrock"
 msgstr "AWS-alue Bedrockille"
+
+#. js-lingui-id: HP7per
+#: src/pages/settings/applications/utils/getStandardApplicationDescription.ts
+msgid ""
+"The base data model every Twenty workspace runs on.\n"
+"\n"
+"#### What \"foundation\" means\n"
+"\n"
+"Every Twenty workspace starts with this set of objects. They define the shape of your CRM, including relationships, activity, and reporting. Everything else, including marketplace apps, AI agents, and custom objects, plugs into them.\n"
+"\n"
+"#### Included objects\n"
+"- **People & Companies**: contact and account records\n"
+"- **Opportunities**: your sales pipeline\n"
+"- **Notes & Tasks**: activity and follow-ups\n"
+"- **Workflows & Dashboards**: automation and reporting\n"
+"\n"
+"Remove this app and the rest of Twenty has nothing to hang off.\n"
+"\n"
+"#### Build your own app\n"
+"\n"
+"Extend Twenty with your own objects, fields, logic functions, or AI skills. Scaffold a new app in one command:\n"
+"\n"
+"```bash\n"
+"npx create-twenty-app@latest my-twenty-app\n"
+"```\n"
+"\n"
+"Then inside the folder:\n"
+"\n"
+"```bash\n"
+"cd my-twenty-app\n"
+"yarn twenty dev\n"
+"```\n"
+"\n"
+"See the [Getting Started guide](https://twenty.com/developers/extend/apps/getting-started) for the full walkthrough, and [Building Apps](https://twenty.com/developers/extend/apps/building) for the `defineApplication` / `defineEntity` APIs."
+msgstr ""
 
 #. js-lingui-id: 1xQkU9
 #: src/modules/settings/data-model/fields/forms/phones/components/SettingsDataModelFieldPhonesForm.tsx
@@ -14364,9 +14715,14 @@ msgstr "Tämä toiminto poistaa tämän kansion ja kaikki {2} navigointivalikon 
 msgid "This action will delete this folder and the navigation menu item inside. Do you want to continue?"
 msgstr "Tämä toiminto poistaa tämän kansion ja sen sisällä olevan navigointivalikon valikkokohdan. Haluatko jatkaa?"
 
-#. js-lingui-id: D8qhoN
-#: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
-msgid "This application is required for your workspace to function properly and cannot be uninstalled."
+#. js-lingui-id: 6jJt3O
+#: src/modules/applications/hooks/useApplicationChipData.ts
+msgid "This app"
+msgstr ""
+
+#. js-lingui-id: WCa/7U
+#: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentPreviewTab.tsx
+msgid "This component runs without a UI and renders nothing here."
 msgstr ""
 
 #. js-lingui-id: SLIRqz
@@ -14393,6 +14749,11 @@ msgstr "Tätä tiedostotyyppiä ei voi esikatsella. Lataa tiedosto, jotta voit t
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder.tsx
 msgid "This form will appear in workflow runs."
 msgstr "Tämä lomake näkyy työnkulun suorituksissa."
+
+#. js-lingui-id: 2UWdFd
+#: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTriggersTab.tsx
+msgid "This function has no trigger configured, so it can only be invoked from the Test tab or by other functions."
+msgstr ""
 
 #. js-lingui-id: njWene
 #: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationJunctionForm.tsx
@@ -14558,7 +14919,6 @@ msgid "Time zone"
 msgstr "Aikavyöhyke"
 
 #. js-lingui-id: cklVjM
-#: src/modules/page-layout/constants/StandardPageLayoutTabTitleTranslations.ts
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCalendarViewContent.tsx
 msgid "Timeline"
 msgstr "Aikajana"
@@ -14583,7 +14943,7 @@ msgid "Timestamp and participants will be shared with your team."
 msgstr "Aikaleima ja osallistujat jaetaan tiimisi kanssa."
 
 #. js-lingui-id: 40Gx0U
-#: src/pages/settings/ai/SettingsAIPrompts.tsx
+#: src/pages/settings/ai/SettingsAiPrompts.tsx
 msgid "Timezone"
 msgstr "Aikavyöhyke"
 
@@ -14638,7 +14998,7 @@ msgid "Token limits for context and output"
 msgstr "Token-rajoitukset kontekstille ja tulosteelle"
 
 #. js-lingui-id: WOr+hW
-#: src/modules/ai/components/internal/AIChatContextUsageButton.tsx
+#: src/modules/ai/components/internal/AiChatContextUsageButton.tsx
 msgid "tokens"
 msgstr "tokenit"
 
@@ -14724,7 +15084,7 @@ msgstr "Saatavilla yhteensä"
 
 #. js-lingui-id: hg5QeV
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
-#: src/modules/ai/components/internal/AIChatContextUsageButton.tsx
+#: src/modules/ai/components/internal/AiChatContextUsageButton.tsx
 msgid "Total cost"
 msgstr "Kokonaiskustannus"
 
@@ -14739,9 +15099,9 @@ msgid "Total time"
 msgstr "Aika yhteensä"
 
 #. js-lingui-id: BxecEJ
-#: src/pages/settings/ai/components/SettingsAIUsageTab.tsx
-#: src/pages/settings/ai/components/SettingsAIUsageTab.tsx
-#: src/pages/settings/ai/components/SettingsAIUsageTab.tsx
+#: src/pages/settings/ai/components/SettingsAiUsageTab.tsx
+#: src/pages/settings/ai/components/SettingsAiUsageTab.tsx
+#: src/pages/settings/ai/components/SettingsAiUsageTab.tsx
 msgid "Track AI consumption across your workspace."
 msgstr ""
 
@@ -14778,13 +15138,17 @@ msgstr "Kokeilujakso on päättynyt. Ota yhteyttä ylläpitäjääsi"
 msgid "Trial expired. Please update your billing details."
 msgstr "Kokeilujakso päättynyt. Päivitä laskutustietosi."
 
+#. js-lingui-id: 67waeA
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
+msgid "Trial period"
+msgstr ""
+
 #. js-lingui-id: H2Sfhg
 #: src/modules/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramEmptyTriggerReadonly.tsx
 #: src/modules/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramEmptyTriggerEditable.tsx
 #: src/modules/side-panel/components/SidePanelWorkflowStepInfo.tsx
 #: src/modules/side-panel/components/SidePanelWorkflowStepInfo.tsx
 #: src/modules/side-panel/components/SidePanelWorkflowStepInfo.tsx
-#: src/modules/settings/logic-functions/components/SettingsLogicFunctionsTable.tsx
 msgid "Trigger"
 msgstr "Laukaisin"
 
@@ -14812,25 +15176,33 @@ msgstr "Laukaisijan tyyppi"
 
 #. js-lingui-id: 34nxyb
 #: src/pages/settings/logic-functions/SettingsLogicFunctionDetail.tsx
-#: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTriggersTab.tsx
 msgid "Triggers"
 msgstr "Laukaisimet"
 
 #. js-lingui-id: zk64Yo
-#: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTriggersTab.tsx
+#: src/modules/settings/logic-functions/components/triggers/SettingsLogicFunctionCronTriggerSection.tsx
 msgid "Triggers the function at regular intervals"
 msgstr "Aktivoi toiminnon säännöllisin väliajoin"
 
-#. js-lingui-id: juqoz0
-#: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTriggersTab.tsx
-msgid "Triggers the function with Http request"
-msgstr "Aktivoi toiminnon Http-pyynnöllä"
+#. js-lingui-id: /oEL03
+#: src/modules/settings/logic-functions/components/triggers/SettingsLogicFunctionDatabaseEventTriggerSection.tsx
+msgid "Triggers the function when a record changes"
+msgstr ""
+
+#. js-lingui-id: OIRkpM
+#: src/modules/settings/logic-functions/components/triggers/SettingsLogicFunctionToolTriggerSection.tsx
+msgid "Triggers the function when called by an AI agent or workflow"
+msgstr ""
+
+#. js-lingui-id: YdQqyX
+#: src/modules/settings/logic-functions/components/triggers/SettingsLogicFunctionHttpTriggerSection.tsx
+msgid "Triggers the function with an HTTP request"
+msgstr ""
 
 #. js-lingui-id: c+xCSz
 #: src/modules/ui/field/display/components/BooleanDisplay.tsx
 #: src/modules/side-panel/pages/page-layout/hooks/useChartSettingsValues.ts
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartRatioOptionValueSelectionDropdownContent.tsx
-#: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTriggersTab.tsx
 #: src/modules/settings/data-model/fields/forms/boolean/constants/BooleanDataModelSelectOptions.ts
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownBooleanSelect.tsx
@@ -14930,6 +15302,9 @@ msgid "Two-factor authentication setup completed successfully!"
 msgstr "Kaksivaiheisen todennuksen asennus on valmis!"
 
 #. js-lingui-id: +zy2Nq
+#: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
+#: src/pages/settings/layout/SettingsLayoutPageLayoutDetail.tsx
+#: src/pages/settings/layout/SettingsLayoutPageLayoutDetail.tsx
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx
 #: src/pages/settings/ai/constants/SettingsSkillTableMetadata.ts
 #: src/pages/settings/ai/constants/SettingsAiAgentTableMetadata.ts
@@ -14967,11 +15342,6 @@ msgstr ""
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
 msgid "Types of content this model can process besides text"
 msgstr "Sisältötyypit, joita tämä malli voi käsitellä tekstin lisäksi"
-
-#. js-lingui-id: 4KcBEY
-#: src/pages/settings/applications/tabs/SettingsAvailableApplicationDetailContentTab.tsx
-msgid "UI components provided by this app"
-msgstr "Tämän sovelluksen tarjoamat käyttöliittymäkomponentit"
 
 #. js-lingui-id: V9+2pH
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
@@ -15039,9 +15409,9 @@ msgstr ""
 msgid "Uninstall this app from all workspaces before deleting it"
 msgstr "Poista tämän sovelluksen asennus kaikista työtiloista ennen sen poistamista"
 
-#. js-lingui-id: u+6vfA
+#. js-lingui-id: ItfvBz
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
-msgid "Uninstall this application"
+msgid "Uninstalling..."
 msgstr ""
 
 #. js-lingui-id: wSXm5S
@@ -15067,9 +15437,15 @@ msgstr "yksikkö"
 msgid "Universal ID"
 msgstr "Universaali tunniste"
 
+#. js-lingui-id: sd9apq
+#: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
+#: src/pages/settings/layout/SettingsLayoutPageLayoutDetail.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentSettingsTab.tsx
+msgid "Universal identifier"
+msgstr ""
+
 #. js-lingui-id: Ef7StM
 #: src/pages/settings/emailing-domains/utils/getEmailingDomainStatusText.ts
-#: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
 #: src/pages/settings/applications/components/SettingsApplicationVersionContainer.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminVersionContainer.tsx
 msgid "Unknown"
@@ -15127,6 +15503,11 @@ msgstr "Avaa Enterprise-ominaisuudet, kuten SSO, rivitason suojaus ja tarkastusl
 msgid "Unnamed API Key"
 msgstr ""
 
+#. js-lingui-id: a3Hy65
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
+msgid "Unnamed product"
+msgstr ""
+
 #. js-lingui-id: eQMhFX
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "unordered"
@@ -15152,7 +15533,7 @@ msgstr ""
 #: src/modules/object-record/components/RecordChip.tsx
 #: src/modules/mention/components/MentionRecordChip.tsx
 #: src/modules/ai/components/RecordLink.tsx
-#: src/modules/ai/components/AIChatThreadGroup.tsx
+#: src/modules/ai/components/AiChatThreadGroup.tsx
 #: src/modules/ai/components/internal/AgentChatFilePreview.tsx
 #: src/modules/activities/timeline-activities/rows/activity/components/EventRowActivity.tsx
 msgid "Untitled"
@@ -15184,6 +15565,11 @@ msgstr "Nimetön rooli"
 msgid "Untitled Workflow"
 msgstr "Nimetön työnkulku"
 
+#. js-lingui-id: TnJsyB
+#: src/modules/settings/billing/components/SettingsBillingCreditsSection.tsx
+msgid "Unused credits from the previous period. Expired at the end of the period."
+msgstr ""
+
 #. js-lingui-id: hmc//6
 #: src/modules/workflow/workflow-trigger/components/CronExpressionHelper.tsx
 msgid "Upcoming execution time ({timeZone})"
@@ -15211,6 +15597,11 @@ msgstr "Päivitä {contextStoreNumberOfSelectedRecords} tietuetta"
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Update payment method"
 msgstr "Päivitä maksutapa"
+
+#. js-lingui-id: tIoZo5
+#: src/modules/information-banner/components/billing/InformationBannerNoMoreCredits.tsx
+msgid "Update plan"
+msgstr ""
 
 #. js-lingui-id: 0KAL3W
 #: src/modules/side-panel/hooks/useOpenUpdateMultipleRecordsPageInSidePanel.tsx
@@ -15240,6 +15631,7 @@ msgid "updated"
 msgstr "päivitetty"
 
 #. js-lingui-id: +b7T3G
+#: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentSettingsTab.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
 #: src/modules/settings/components/SettingsDatabaseEventsForm.tsx
 msgid "Updated"
@@ -15261,19 +15653,26 @@ msgstr "Päivitykset"
 #: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelSection.tsx
 #: src/modules/settings/billing/components/internal/MeteredPriceSelector.tsx
 #: src/modules/settings/billing/components/internal/MeteredPriceSelector.tsx
+#: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
+#: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
 msgid "Upgrade"
 msgstr "Päivitys"
 
 #. js-lingui-id: 7aHRdp
-#: src/modules/ai/components/AIChatCreditsExhaustedMessage.tsx
+#: src/modules/ai/components/AiChatCreditsExhaustedMessage.tsx
 msgid "Upgrade Plan"
 msgstr "Päivitä tilaus"
 
 #. js-lingui-id: pKCx2F
-#: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
 #: src/pages/settings/applications/components/SettingsApplicationVersionContainer.tsx
 msgid "Upgrade to {latestAvailableVersion}"
 msgstr "Päivitä versioon {latestAvailableVersion}"
+
+#. js-lingui-id: tLOGrv
+#: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
+msgid "Upgrade to {nextTierCredits} credits for ${nextTierPrice}/{nextTierInterval}."
+msgstr ""
 
 #. js-lingui-id: ggd+Ee
 #: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelSection.tsx
@@ -15286,7 +15685,7 @@ msgid "Upgrade to Enterprise to access audit logs."
 msgstr ""
 
 #. js-lingui-id: +Gi3x1
-#: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
 #: src/pages/settings/applications/components/SettingsApplicationVersionContainer.tsx
 msgid "Upgrading..."
 msgstr "Päivitetään..."
@@ -15356,6 +15755,11 @@ msgstr ""
 msgid "URL"
 msgstr "Verkko-osoite"
 
+#. js-lingui-id: UtDm3q
+#: src/modules/settings/logic-functions/components/triggers/SettingsLogicFunctionHttpTriggerSection.tsx
+msgid "URL copied to clipboard"
+msgstr ""
+
 #. js-lingui-id: pphDjD
 #: src/modules/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardIframeSettings.tsx
 msgid "URL to Embed"
@@ -15419,7 +15823,7 @@ msgid "Use authenticator apps and browser extensions like 1Password, Authy, Micr
 msgstr "Käytä todennussovelluksia ja selainlaajennuksia, kuten 1Password, Authy, Microsoft Authenticator luomaan kertakäyttösalasanoja"
 
 #. js-lingui-id: hCZsJ0
-#: src/pages/settings/ai/components/SettingsAIModelsTab.tsx
+#: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
 msgid "Use best models only"
 msgstr "Käytä vain parhaita malleja"
 
@@ -15440,12 +15844,12 @@ msgid "Use our API or add your first {objectLabel} manually"
 msgstr "Käytä APIamme tai lisää ensimmäinen {objectLabel} käsin"
 
 #. js-lingui-id: 664z2C
-#: src/pages/settings/ai/components/SettingsAIModelsTab.tsx
+#: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
 msgid "Used for chats, agents, and complex reasoning"
 msgstr "Käytetään keskusteluja, agentteja ja monimutkaista päättelyä varten"
 
 #. js-lingui-id: C41qgx
-#: src/pages/settings/ai/components/SettingsAIModelsTab.tsx
+#: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
 msgid "Used for lightweight tasks like title generation"
 msgstr "Käytetään kevyisiin tehtäviin, kuten otsikoiden luomiseen"
 
@@ -15461,8 +15865,8 @@ msgstr "Hyödyllinen pivot-/liitostauluille"
 #: src/pages/settings/security/event-logs/utils/getColumnsForEventLogTable.ts
 #: src/pages/settings/security/event-logs/utils/getColumnsForEventLogTable.ts
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
+#: src/pages/settings/ai/SettingsAiPrompts.tsx
 #: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
-#: src/pages/settings/ai/SettingsAIPrompts.tsx
 #: src/pages/settings/accounts/SettingsNewAccount.tsx
 #: src/pages/settings/accounts/SettingsAccountsEmails.tsx
 #: src/pages/settings/accounts/SettingsAccountsConfigurationStepEmail.tsx
@@ -15476,7 +15880,7 @@ msgid "User"
 msgstr "Käyttäjä"
 
 #. js-lingui-id: zw/lpB
-#: src/pages/settings/ai/SettingsAIPrompts.tsx
+#: src/pages/settings/ai/SettingsAiPrompts.tsx
 msgid "User Context"
 msgstr "Käyttäjän konteksti"
 
@@ -15486,7 +15890,7 @@ msgid "User Info"
 msgstr "Käyttäjän tiedot"
 
 #. js-lingui-id: J5T9NW
-#: src/pages/settings/ai/SettingsAIPrompts.tsx
+#: src/pages/settings/ai/SettingsAiPrompts.tsx
 msgid "User Information"
 msgstr "Käyttäjätiedot"
 
@@ -15509,6 +15913,11 @@ msgstr "Käyttäjän käyttö"
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
 msgid "Users"
 msgstr "Käyttäjät"
+
+#. js-lingui-id: mnudjQ
+#: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentSettingsTab.tsx
+msgid "Uses SDK client"
+msgstr ""
 
 #. js-lingui-id: vUr1/5
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
@@ -15537,6 +15946,9 @@ msgid "Validity token refreshed successfully"
 msgstr "Voimassaolotunnus päivitettiin onnistuneesti"
 
 #. js-lingui-id: wMHvYH
+#: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
+#: src/pages/settings/layout/components/SettingsLayoutDetailScaffold.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentSettingsTab.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailEnvironmentVariablesTable.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/KeyValuePairInput.tsx
 #: src/modules/side-panel/pages/page-layout/hooks/useGraphXSortOptionLabels.ts
@@ -15623,16 +16035,19 @@ msgid "Vietnamese"
 msgstr "Vietnam"
 
 #. js-lingui-id: jUNY/d
+#: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "view"
 msgstr "näkymä"
 
 #. js-lingui-id: jpctdh
+#: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
 #: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutDashboardWidgetTypeSelect.tsx
 #: src/modules/side-panel/components/SidePanelObjectViewRecordInfo.tsx
 #: src/modules/side-panel/components/hooks/usePageLayoutHeaderInfo.ts
 #: src/modules/settings/developers/components/WebhookEntitySelect.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
+#: src/modules/settings/applications/hooks/useComputeApplicationContentForLayoutAndLogic.ts
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemMainMenu.tsx
 msgid "View"
 msgstr "Näkymä"
@@ -15665,7 +16080,7 @@ msgid "View billing details"
 msgstr "Näytä laskutustiedot"
 
 #. js-lingui-id: SXCuo2
-#: src/modules/ai/components/AIChatApiKeyNotConfiguredMessage.tsx
+#: src/modules/ai/components/AiChatApiKeyNotConfiguredMessage.tsx
 msgid "View Docs"
 msgstr "Näytä dokumentaatio"
 
@@ -15760,16 +16175,11 @@ msgid "View workspace activity logs"
 msgstr "Näytä työtilan toimintalokit"
 
 #. js-lingui-id: 1I6UoR
-#: src/pages/settings/applications/tabs/SettingsAvailableApplicationDetailContentTab.tsx
-#: src/pages/settings/applications/tabs/SettingsAvailableApplicationDetailContentTab.tsx
+#: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemViewPickerSubView.tsx
 msgid "Views"
 msgstr "Näkymät"
-
-#. js-lingui-id: xF9sRg
-#: src/pages/settings/applications/tabs/SettingsAvailableApplicationDetailContentTab.tsx
-msgid "Views created by this app"
-msgstr ""
 
 #. js-lingui-id: eedtPL
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
@@ -15777,6 +16187,7 @@ msgid "Violet"
 msgstr "Violetti"
 
 #. js-lingui-id: 2q/Q7x
+#: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownVisibilityContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
@@ -15791,6 +16202,11 @@ msgstr ""
 #. js-lingui-id: gkAApJ
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsManageSection.tsx
 msgid "Visibility Restriction"
+msgstr ""
+
+#. js-lingui-id: oh8+os
+#: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
+msgid "Visible"
 msgstr ""
 
 #. js-lingui-id: zYTdqe
@@ -15867,6 +16283,7 @@ msgstr "Tuemme neliön muotoisia PNG-, JPEG- ja GIF-kuvia, jotka ovat alle 10MB"
 
 #. js-lingui-id: 4pcfmN
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
+#: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
 msgid "We will activate your paid plan. Do you want to proceed?"
 msgstr "Aktivoimme maksullisen suunnitelman. Haluatko jatkaa?"
 
@@ -15943,7 +16360,7 @@ msgid "Webhooks"
 msgstr "Webhookit"
 
 #. js-lingui-id: On0aF2
-#: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
+#: src/modules/settings/applications/components/SettingsApplicationAboutSidebar.tsx
 msgid "Website"
 msgstr "Verkkosivusto"
 
@@ -15981,7 +16398,7 @@ msgid "Welcome, {workspaceName}."
 msgstr "Tervetuloa, {workspaceName}."
 
 #. js-lingui-id: Itn+J7
-#: src/modules/ai/components/suggested-prompts/AIChatSuggestedPrompts.tsx
+#: src/modules/ai/components/suggested-prompts/AiChatSuggestedPrompts.tsx
 msgid "What can I help you with?"
 msgstr "Miten voin auttaa sinua?"
 
@@ -16005,11 +16422,6 @@ msgstr "Kun uusi liidi luodaan lähteellä \"Website\", osoita se myyntiedustaja
 #: src/modules/ai/components/suggested-prompts/default-suggested-prompts.ts
 msgid "When any deal with amount over $100,000 has its stage or amount updated, send a notification to the sales channel with the deal name, company, new stage, amount and owner."
 msgstr "Kun minkä tahansa diilin, jonka summa on yli $100,000, vaihetta tai summaa päivitetään, lähetä ilmoitus myyntikanavaan sisältäen diilin nimen, yrityksen, uuden vaiheen, summan ja omistajan."
-
-#. js-lingui-id: 8jc/Xn
-#: src/modules/settings/logic-functions/components/SettingsLogicFunctionNewForm.tsx
-msgid "When enabled, AI agents and workflow automations can discover and call this function"
-msgstr "Kun tämä on käytössä, tekoälyagentit ja työnkulkuautomaatiot voivat löytää ja kutsua tätä funktiota"
 
 #. js-lingui-id: C51ilI
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
@@ -16037,6 +16449,11 @@ msgstr "Tukeeko tämä malli ajatusketju-päättelyä"
 #. js-lingui-id: dmoPOu
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
 msgid "widget"
+msgstr ""
+
+#. js-lingui-id: AHXN2z
+#: src/pages/settings/layout/SettingsLayoutPageLayoutDetail.tsx
+msgid "Widget"
 msgstr ""
 
 #. js-lingui-id: fANaAS
@@ -16076,7 +16493,7 @@ msgid "Worker"
 msgstr "Työntekijä"
 
 #. js-lingui-id: Kqs5vQ
-#: src/pages/settings/ai/components/SettingsAIAgentsTable.tsx
+#: src/pages/settings/ai/components/SettingsAiAgentsTable.tsx
 msgid "Workflow agents"
 msgstr ""
 
@@ -16110,6 +16527,7 @@ msgstr "Työnkulut"
 #: src/pages/settings/members/SettingsWorkspaceMember.tsx
 #: src/pages/settings/logic-functions/SettingsLogicFunctionDetail.tsx
 #: src/pages/settings/logic-functions/SettingsLogicFunctionDetail.tsx
+#: src/pages/settings/layout/components/SettingsLayoutDetailScaffold.tsx
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 #: src/pages/settings/emailing-domains/SettingsNewEmailingDomain.tsx
 #: src/pages/settings/emailing-domains/SettingsEmailingDomainDetail.tsx
@@ -16130,16 +16548,17 @@ msgstr "Työnkulut"
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
 #: src/pages/settings/applications/SettingsApplications.tsx
 #: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/SettingsApplicationFrontComponentDetail.tsx
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationConfigVariableDetail.tsx
 #: src/pages/settings/ai/SettingsToolDetail.tsx
 #: src/pages/settings/ai/SettingsSkillForm.tsx
+#: src/pages/settings/ai/SettingsAiUsageUserDetail.tsx
+#: src/pages/settings/ai/SettingsAiPrompts.tsx
 #: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
 #: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
 #: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
 #: src/pages/settings/ai/SettingsAgentForm.tsx
-#: src/pages/settings/ai/SettingsAIUsageUserDetail.tsx
-#: src/pages/settings/ai/SettingsAIPrompts.tsx
 #: src/pages/settings/ai/SettingsAI.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceChatThread.tsx
 #: src/modules/views/view-picker/components/ViewPickerListContent.tsx
@@ -16190,8 +16609,8 @@ msgid "Workspace Info"
 msgstr "Työtilan tiedot"
 
 #. js-lingui-id: BYrMT0
-#: src/pages/settings/ai/components/SettingsAIMoreTab.tsx
-#: src/pages/settings/ai/components/SettingsAIMoreTab.tsx
+#: src/pages/settings/ai/components/SettingsAiMoreTab.tsx
+#: src/pages/settings/ai/components/SettingsAiMoreTab.tsx
 msgid "Workspace Instructions"
 msgstr "Työtilan ohjeet"
 
@@ -16246,7 +16665,7 @@ msgid "Write a description"
 msgstr "Kirjoita kuvaus"
 
 #. js-lingui-id: 7QXVrh
-#: src/pages/settings/ai/forms/components/SettingsAIAgentForm.tsx
+#: src/pages/settings/ai/forms/components/SettingsAiAgentForm.tsx
 #: src/pages/settings/ai/components/SettingsAgentSettingsTab.tsx
 msgid "Write a description for this agent"
 msgstr "Kirjoita kuvaus tälle agentille"
@@ -16276,6 +16695,7 @@ msgstr "Y-akseli"
 
 #. js-lingui-id: 7qI8sJ
 #: src/modules/settings/billing/hooks/useBillingWording.ts
+#: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
 msgid "year"
 msgstr "vuosi"
 
@@ -16291,6 +16711,7 @@ msgstr "vuosittain"
 
 #. js-lingui-id: zkWmBh
 #: src/modules/settings/enterprise/components/EnterprisePlanModal.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
 msgid "Yearly"
 msgstr ""
 
@@ -16315,8 +16736,12 @@ msgid "yes"
 msgstr "kyllä"
 
 #. js-lingui-id: l75CjT
+#: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentSettingsTab.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentSettingsTab.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
 #: src/pages/settings/ai/components/SettingsToolParameterTable.tsx
+#: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 msgid "Yes"
 msgstr "Kyllä"
@@ -16407,6 +16832,25 @@ msgstr "Menetät kaikki yhdistämisesi."
 msgid "You're about to change your workspace subdomain. This action will log out all users."
 msgstr "Olet muuttamassa työtilan aliavaa. Tämä toimenpide kirjautuu ulos kaikista käyttäjistä."
 
+#. js-lingui-id: Z5uTAF
+#: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
+msgid ""
+"You've hit your usage limit. \n"
+"Reach to our support team to upgrade."
+msgstr ""
+
+#. js-lingui-id: UUaKVD
+#: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
+msgid ""
+"You've hit your usage limit. \n"
+"Upgrade to {nextTierCredits} credits for ${nextTierPrice}/{nextTierInterval}."
+msgstr ""
+
+#. js-lingui-id: yZ0wRS
+#: src/modules/ai/components/AIChatNoMoreBillingCreditsBanner.tsx
+msgid "You've hit your usage limit. Subscribe for more usage."
+msgstr ""
+
 #. js-lingui-id: nIF+FL
 #: src/pages/onboarding/PaymentSuccess.tsx
 msgid "Your account has been activated."
@@ -16456,6 +16900,21 @@ msgstr ""
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Your enterprise subscription has been canceled."
 msgstr "Enterprise-tilauksesi on peruttu."
+
+#. js-lingui-id: leFkCA
+#: src/modules/settings/logic-functions/components/triggers/SettingsLogicFunctionDatabaseEventTriggerSection.tsx
+msgid "Your handler receives this event object. \"after\" holds the new state, \"before\" the previous one (null for created), and \"updatedFields\" lists the field names that changed on update."
+msgstr ""
+
+#. js-lingui-id: aNI1bz
+#: src/modules/settings/logic-functions/components/triggers/SettingsLogicFunctionHttpTriggerSection.tsx
+msgid "Your handler receives this object. The body holds the parsed JSON sent by the client."
+msgstr ""
+
+#. js-lingui-id: GJewTO
+#: src/modules/settings/logic-functions/components/triggers/SettingsLogicFunctionHttpTriggerSection.tsx
+msgid "Your handler receives this object. The body is empty because GET requests carry no payload."
+msgstr ""
 
 #. js-lingui-id: 9ivpwk
 #: src/pages/settings/SettingsProfile.tsx

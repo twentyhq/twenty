@@ -1,4 +1,4 @@
-import type { StepOutcome } from 'src/modules/resend/sync/types/step-outcome';
+import type { StepOutcome } from '@modules/resend/sync/types/step-outcome';
 
 export const logStepOutcome = (outcome: StepOutcome<unknown>): void => {
   if (outcome.status === 'ok') {
