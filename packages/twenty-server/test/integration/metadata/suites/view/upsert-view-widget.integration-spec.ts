@@ -36,6 +36,7 @@ type ViewWidgetTestSetup = {
   pageLayoutTabId: string;
   widgetId: string;
   viewId: string;
+  labelIdentifierFieldMetadataId: string | null;
   viewFields: Array<{
     id: string;
     fieldMetadataId: string;
@@ -114,17 +115,34 @@ describe('upsertViewWidget', () => {
 
     const widgetId = widgetData.createPageLayoutWidget.id;
 
-    const fieldMetadataIds = [
+    const objectMetadataRows = await global.testDataSource.query(
+      `SELECT "labelIdentifierFieldMetadataId"
+       FROM core."objectMetadata"
+       WHERE id = $1`,
+      [testFieldMetadataIds.objectMetadataId],
+    );
+
+    const labelIdentifierFieldMetadataId =
+      objectMetadataRows[0]?.labelIdentifierFieldMetadataId ?? null;
+
+    const allFieldMetadataIds = [
       testFieldMetadataIds.fieldMetadataId1,
       testFieldMetadataIds.fieldMetadataId2,
       testFieldMetadataIds.fieldMetadataId3,
     ];
 
+    const sortedFieldMetadataIds = [...allFieldMetadataIds].sort((a, b) => {
+      if (a === labelIdentifierFieldMetadataId) return -1;
+      if (b === labelIdentifierFieldMetadataId) return 1;
+
+      return 0;
+    });
+
     await upsertViewWidget({
       expectToFail: false,
       input: {
         widgetId,
-        viewFields: fieldMetadataIds.map((fmId, index) => ({
+        viewFields: sortedFieldMetadataIds.map((fmId, index) => ({
           fieldMetadataId: fmId,
           isVisible: true,
           position: index,
@@ -143,8 +161,9 @@ describe('upsertViewWidget', () => {
       pageLayoutTabId,
       widgetId,
       viewId,
+      labelIdentifierFieldMetadataId,
       viewFields: fieldsData.getViewFields,
-      fieldMetadataIds,
+      fieldMetadataIds: sortedFieldMetadataIds,
     };
   });
 
@@ -219,7 +238,12 @@ describe('upsertViewWidget', () => {
     });
 
     it('should update an existing view field position and visibility', async () => {
-      const targetField = testSetup.viewFields[0];
+      const targetField = testSetup.viewFields.find(
+        (field) =>
+          field.fieldMetadataId !== testSetup.labelIdentifierFieldMetadataId,
+      )!;
+
+      expect(targetField).toBeDefined();
 
       await upsertViewWidget({
         expectToFail: false,
@@ -776,7 +800,12 @@ describe('upsertViewWidget', () => {
       const filterId = uuidv4();
       const sortId = uuidv4();
       const fieldMetadataId = testSetup.fieldMetadataIds[2];
-      const targetField = testSetup.viewFields[0];
+      const targetField = testSetup.viewFields.find(
+        (field) =>
+          field.fieldMetadataId !== testSetup.labelIdentifierFieldMetadataId,
+      )!;
+
+      expect(targetField).toBeDefined();
 
       const { data, errors } = await upsertViewWidget({
         expectToFail: false,
@@ -787,7 +816,7 @@ describe('upsertViewWidget', () => {
               viewFieldId: targetField.id,
               fieldMetadataId: targetField.fieldMetadataId,
               isVisible: true,
-              position: 0,
+              position: 1,
             },
           ],
           viewFilterGroups: [
@@ -972,7 +1001,12 @@ describe('upsertViewWidget', () => {
 
   describe('return type', () => {
     it('should return a view with the expected fields and relations', async () => {
-      const targetField = testSetup.viewFields[0];
+      const targetField = testSetup.viewFields.find(
+        (field) =>
+          field.fieldMetadataId !== testSetup.labelIdentifierFieldMetadataId,
+      )!;
+
+      expect(targetField).toBeDefined();
 
       const { data } = await upsertViewWidget({
         expectToFail: false,
@@ -983,7 +1017,7 @@ describe('upsertViewWidget', () => {
               viewFieldId: targetField.id,
               fieldMetadataId: targetField.fieldMetadataId,
               isVisible: true,
-              position: 0,
+              position: 1,
             },
           ],
         },
