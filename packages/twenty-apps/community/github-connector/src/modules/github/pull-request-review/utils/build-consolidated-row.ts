@@ -12,6 +12,7 @@ export type ConsolidatedReviewUpsertInput = {
   eventCount: number;
   reviewerId: string | null;
   pullRequestId: string;
+  isSelfReview: boolean;
 };
 
 export type BuildConsolidatedRowParams = {
@@ -20,7 +21,22 @@ export type BuildConsolidatedRowParams = {
   prNumber: number | null;
   reviewerLogin: string | null;
   events: ReviewEventForConsolidation[];
+  /**
+   * Author of the PR being reviewed. When non-null and equal to `reviewerId`
+   * the consolidated row is flagged as a self-review so downstream
+   * aggregations (top reviewers, contributor stats, etc.) can exclude it.
+   */
+  prAuthorId?: string | null;
 };
+
+export const isSelfReview = (
+  reviewerId: string | null,
+  prAuthorId: string | null | undefined,
+): boolean =>
+  reviewerId !== null &&
+  prAuthorId !== null &&
+  prAuthorId !== undefined &&
+  reviewerId === prAuthorId;
 
 export const buildReviewKey = (
   pullRequestId: string,
@@ -49,5 +65,6 @@ export const buildConsolidatedRow = (
     eventCount: verdict.eventCount,
     reviewerId: params.reviewerId,
     pullRequestId: params.pullRequestId,
+    isSelfReview: isSelfReview(params.reviewerId, params.prAuthorId ?? null),
   };
 };

@@ -198,6 +198,7 @@ const handler = async (
             const res = await client.query({
               pullRequestReviews: {
                 __args: {
+                  filter: { isSelfReview: { eq: false } },
                   orderBy: [{ firstSubmittedAt: 'DescNullsLast' }],
                   first: PAGE_SIZE,
                   after: cursor,

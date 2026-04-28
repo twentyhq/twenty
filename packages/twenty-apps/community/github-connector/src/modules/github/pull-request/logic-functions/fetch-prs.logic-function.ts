@@ -110,8 +110,15 @@ const handler = async (event: RoutePayload<FetchPrsPayload>) => {
     reviewerId: string | null;
     prNumber: number;
     reviewerLogin: string | null;
+    prAuthorId: string | null;
     events: { state: ReviewEventState; submittedAt: string | null }[];
   };
+
+  const authorIdByPullRequestId = new Map<string, string | null>();
+  for (const pr of prData) {
+    const id = prIdByNumber.get(pr.githubNumber);
+    if (id) authorIdByPullRequestId.set(id, pr.authorId);
+  }
 
   let skippedReviews = 0;
   const reviewEventData: ReviewEventInput[] = [];
@@ -141,6 +148,7 @@ const handler = async (event: RoutePayload<FetchPrsPayload>) => {
           reviewerId,
           prNumber: pr.number,
           reviewerLogin: review.author?.login ?? null,
+          prAuthorId: authorIdByPullRequestId.get(pullRequestId) ?? null,
           events: [],
         };
         groups.set(key, group);
@@ -177,6 +185,7 @@ const handler = async (event: RoutePayload<FetchPrsPayload>) => {
         prNumber: group.prNumber,
         reviewerLogin: group.reviewerLogin,
         events: group.events,
+        prAuthorId: group.prAuthorId,
       }),
     );
     const consolidatedRecords = await timed(

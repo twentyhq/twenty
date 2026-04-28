@@ -17,6 +17,7 @@ exports[`stub-twenty-sdk-define plugin > matches the recorded export partition 1
     "RelationType",
     "STANDARD_OBJECT",
     "STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS",
+    "ViewCalendarLayout",
     "ViewFilterGroupLogicalOperator",
     "ViewFilterOperand",
     "ViewKey",

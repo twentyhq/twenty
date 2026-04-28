@@ -9,9 +9,9 @@ import { WebGlMount } from '@/lib/visual-runtime';
 import type { ThreeCardsIllustrationCardType } from '@/sections/ThreeCards/types';
 import { THREE_CARDS_VISUALS } from '@/sections/ThreeCards/visuals';
 import { theme } from '@/theme';
+import { LocalizedLink } from '@/lib/i18n';
 import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
-import Link from 'next/link';
 import { ThreeCardsCardShape } from './CardShape';
 
 const CARD_OUTLINE_COLOR = theme.colors.primary.border[20];
@@ -212,7 +212,7 @@ const PartnerActionIconButton = styled.button`
   }
 `;
 
-const PartnerActionIconLink = styled(Link)`
+const PartnerActionIconLink = styled(LocalizedLink)`
   align-items: center;
   appearance: none;
   background: transparent;

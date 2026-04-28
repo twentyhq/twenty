@@ -13,6 +13,7 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 import { type UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
+import { WorkspaceMemberTranspiler } from 'src/engine/core-modules/user/services/workspace-member-transpiler.service';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -101,6 +102,12 @@ describe('UserService', () => {
           provide: CoreEntityCacheService,
           useValue: {
             invalidate: jest.fn(),
+          },
+        },
+        {
+          provide: WorkspaceMemberTranspiler,
+          useValue: {
+            generateSignedAvatarUrl: jest.fn().mockReturnValue(''),
           },
         },
       ],

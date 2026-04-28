@@ -1,15 +1,15 @@
 import type { CaseStudyCatalogEntry } from '@/lib/customers';
 import { ArrowRightIcon, CLIENT_ICONS } from '@/icons';
+import { LocalizedLink } from '@/lib/i18n';
 import { CustomerCasesCover } from '@/sections/CaseStudyCatalog/visuals/CustomerCasesCover';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
 import Image from 'next/image';
-import Link from 'next/link';
 import { type ComponentProps } from 'react';
 
 type CardVariant = 'default' | 'large';
 
-type CardLinkBaseProps = ComponentProps<typeof Link> & {
+type CardLinkBaseProps = ComponentProps<typeof LocalizedLink> & {
   $cardIndex: number;
   variant: CardVariant;
 };
@@ -19,7 +19,7 @@ function CardLinkBase({
   variant: _variant,
   ...linkProps
 }: CardLinkBaseProps) {
-  return <Link {...linkProps} />;
+  return <LocalizedLink {...linkProps} />;
 }
 
 const CardLink = styled(CardLinkBase)<{

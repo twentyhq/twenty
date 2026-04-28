@@ -78,6 +78,83 @@ jobs:
           tag: scope:backend
           tasks: lint,typecheck
 
+  server-previous-version-upgrade-mutation-guard:
+    timeout-minutes: 5
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fetch custom Github Actions and base branch history
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 10
+      - name: Get changed upgrade-version-command files
+        id: changed-files
+        uses: tj-actions/changed-files@v45
+        with:
+          files: |
+            packages/twenty-server/src/database/commands/upgrade-version-command/**
+      - name: Check upgrade version commands are in current version only
+        if: >
+          steps.changed-files.outputs.any_changed == 'true' &&
+          !contains(github.event.pull_request.labels.*.name, 'ci:allow-previous-version-upgrade-mutation')
+        run: |
+          VERSION_CONSTANT_FILE="packages/twenty-server/src/engine/core-modules/upgrade/constants/twenty-current-version.constant.ts"
+
+          CURRENT_VERSION=$(sed -n "s/.*TWENTY_CURRENT_VERSION = '\([0-9.]*\)'.*/\1/p" "$VERSION_CONSTANT_FILE")
+
+          if [ -z "$CURRENT_VERSION" ]; then
+            echo "::error::Could not extract TWENTY_CURRENT_VERSION from $VERSION_CONSTANT_FILE"
+            exit 1
+          fi
+
+          CURRENT_DIR=$(echo "$CURRENT_VERSION" | sed -E 's/^([0-9]+)\.([0-9]+)\..*/\1-\2/')
+
+          echo "Current version: $CURRENT_VERSION (directory: $CURRENT_DIR)"
+
+          ADDED_OFFENDERS=""
+          MODIFIED_OFFENDERS=""
+
+          check_files() {
+            local category="$1"
+            shift
+            for file in "$@"; do
+              VERSION_DIR=$(echo "$file" | sed -n 's|.*upgrade-version-command/\([0-9]*-[0-9]*\)/.*|\1|p')
+
+              if [ -n "$VERSION_DIR" ] && [ "$VERSION_DIR" != "$CURRENT_DIR" ]; then
+                if [ "$category" = "added" ]; then
+                  ADDED_OFFENDERS="$ADDED_OFFENDERS\n  - $file (version directory: $VERSION_DIR)"
+                else
+                  MODIFIED_OFFENDERS="$MODIFIED_OFFENDERS\n  - $file (version directory: $VERSION_DIR)"
+                fi
+              fi
+            done
+          }
+
+          check_files "added" ${{ steps.changed-files.outputs.added_files }}
+          check_files "modified" ${{ steps.changed-files.outputs.modified_files }}
+
+          if [ -n "$ADDED_OFFENDERS" ] || [ -n "$MODIFIED_OFFENDERS" ]; then
+            echo "This PR touches upgrade command files outside the current version directory ($CURRENT_DIR / $CURRENT_VERSION)."
+
+            if [ -n "$ADDED_OFFENDERS" ]; then
+              echo ""
+              echo "New files added to non-current version directories:"
+              echo -e "$ADDED_OFFENDERS"
+            fi
+
+            if [ -n "$MODIFIED_OFFENDERS" ]; then
+              echo ""
+              echo "Existing files modified in non-current version directories:"
+              echo -e "$MODIFIED_OFFENDERS"
+            fi
+
+            echo ""
+            echo "If this is intentional, add the label 'ci:allow-previous-version-upgrade-mutation' to this PR and re-run CI."
+            echo "Otherwise, please move your changes to the current version directory ($CURRENT_DIR)."
+
+            echo "::error::Upgrade commands were added or modified in non-current version directories."
+            exit 1
+          fi
+
   server-validation:
     needs: server-build
     timeout-minutes: 30
@@ -311,6 +388,7 @@ jobs:
         changed-files-check,
         server-build,
         server-lint-typecheck,
+        server-previous-version-upgrade-mutation-guard,
         server-validation,
         server-test,
         server-integration-test,
