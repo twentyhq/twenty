@@ -39,11 +39,21 @@ export const FileUploadProvider = ({
 
       try {
         if (!isDefined(files) || files.length === 0) {
+          // oxlint-disable-next-line no-console
+          console.debug('File upload cancelled by user');
           currentOptions.onCancel?.();
         } else {
           const filesArray = Array.from(files);
+          // oxlint-disable-next-line no-console
+          console.debug(
+            `File upload started: ${filesArray.length} file(s) selected`,
+          );
           await currentOptions.onUpload(filesArray);
         }
+      } catch (error) {
+        // oxlint-disable-next-line no-console
+        console.error('File upload error:', error);
+        throw error;
       } finally {
         if (isDefined(fileInputRef.current)) {
           fileInputRef.current.value = '';
@@ -62,7 +72,12 @@ export const FileUploadProvider = ({
     }
 
     try {
+      // oxlint-disable-next-line no-console
+      console.debug('File upload dialog cancelled');
       currentOptions.onCancel?.();
+    } catch (error) {
+      // oxlint-disable-next-line no-console
+      console.error('Error handling file upload cancel:', error);
     } finally {
       if (isDefined(fileInputRef.current)) {
         fileInputRef.current.value = '';

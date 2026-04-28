@@ -29,6 +29,12 @@ export const SentryInitEffect = () => {
         setIsSentryInitializing(true);
 
         try {
+          // oxlint-disable-next-line no-console
+          console.debug(
+            'Initializing Sentry with DSN ending in:',
+            sentryConfig?.dsn?.slice(-8),
+          );
+
           const {
             init,
             browserTracingIntegration,
@@ -59,6 +65,8 @@ export const SentryInitEffect = () => {
             ],
           });
 
+          // oxlint-disable-next-line no-console
+          console.debug('Sentry initialized successfully');
           setIsSentryInitialized(true);
         } catch (error) {
           // oxlint-disable-next-line no-console
@@ -76,6 +84,12 @@ export const SentryInitEffect = () => {
         !isSentryUserDefined
       ) {
         try {
+          // oxlint-disable-next-line no-console
+          console.debug(
+            'Setting Sentry user context for user:',
+            currentUser?.id,
+          );
+
           const { setUser } = await import('@sentry/react');
           setUser({
             email: currentUser?.email,
@@ -83,6 +97,7 @@ export const SentryInitEffect = () => {
             workspaceId: currentWorkspace?.id,
             workspaceMemberId: currentWorkspaceMember?.id,
           });
+
           setIsSentryUserDefined(true);
         } catch (error) {
           // oxlint-disable-next-line no-console
@@ -90,6 +105,9 @@ export const SentryInitEffect = () => {
         }
       } else if (!isDefined(currentUser) && isSentryInitialized) {
         try {
+          // oxlint-disable-next-line no-console
+          console.debug('Clearing Sentry user context');
+
           const { setUser } = await import('@sentry/react');
           setUser(null);
         } catch (error) {
