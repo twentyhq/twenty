@@ -1,5 +1,4 @@
 import { type FlatViewField } from '@/metadata-store/types/FlatViewField';
-import { hasInitializedRecordTableWidgetViewDraftComponentState } from '@/page-layout/states/hasInitializedRecordTableWidgetViewDraftComponentState';
 import { recordTableWidgetViewDraftComponentState } from '@/page-layout/states/recordTableWidgetViewDraftComponentState';
 import { recordTableWidgetViewPersistedComponentState } from '@/page-layout/states/recordTableWidgetViewPersistedComponentState';
 import { type RecordTableWidgetViewSnapshot } from '@/page-layout/widgets/record-table/types/RecordTableWidgetViewSnapshot';
@@ -26,30 +25,16 @@ export const useInitializeRecordTableWidgetViewDraft = ({
       recordTableWidgetViewPersistedComponentState,
     );
 
-  const hasInitializedState = useAtomComponentStateCallbackState(
-    hasInitializedRecordTableWidgetViewDraftComponentState,
-  );
-
   const store = useStore();
 
   const initializeDraft = useCallback(() => {
-    const hasInitialized = store.get(hasInitializedState);
+    const currentDraft = store.get(recordTableWidgetViewDraftState);
 
-    if (hasInitialized[widgetId]) {
+    if (widgetId in currentDraft) {
       return;
     }
 
     if (!view || view.viewFields.length === 0) {
-      return;
-    }
-
-    const currentDraft = store.get(recordTableWidgetViewDraftState);
-
-    if (widgetId in currentDraft) {
-      store.set(hasInitializedState, (prev) => ({
-        ...prev,
-        [widgetId]: true,
-      }));
       return;
     }
 
@@ -74,13 +59,7 @@ export const useInitializeRecordTableWidgetViewDraft = ({
       ...prev,
       [widgetId]: snapshot,
     }));
-
-    store.set(hasInitializedState, (prev) => ({
-      ...prev,
-      [widgetId]: true,
-    }));
   }, [
-    hasInitializedState,
     recordTableWidgetViewDraftState,
     recordTableWidgetViewPersistedState,
     widgetId,
