@@ -14,6 +14,7 @@ import {
   type WorkspaceUpgradeStep,
 } from 'src/engine/core-modules/upgrade/services/upgrade-sequence-reader.service';
 import { UpgradeSequenceRunnerService } from 'src/engine/core-modules/upgrade/services/upgrade-sequence-runner.service';
+import { UpgradeStatusCacheService } from 'src/engine/core-modules/upgrade/services/upgrade-status-cache.service';
 import { WorkspaceCommandRunnerService } from 'src/engine/core-modules/upgrade/services/workspace-command-runner.service';
 import { UpgradeMigrationEntity } from 'src/engine/core-modules/upgrade/upgrade-migration.entity';
 import {
@@ -140,6 +141,13 @@ export const createUpgradeSequenceRunnerIntegrationTestModule = async () => {
       {
         provide: UpgradeSequenceReaderService,
         useFactory: () => new UpgradeSequenceReaderService({} as any),
+      },
+      {
+        provide: UpgradeStatusCacheService,
+        useValue: {
+          invalidateAll: jest.fn().mockResolvedValue(undefined),
+          invalidateWorkspace: jest.fn().mockResolvedValue(undefined),
+        },
       },
       InstanceCommandRunnerService,
       WorkspaceCommandRunnerService,
