@@ -71,11 +71,12 @@ export class UpgradeSequenceRunnerService {
         if (
           (isDefined(options.workspaceIds) &&
             options.workspaceIds.length > 0) ||
-          isDefined(options.startFromWorkspaceId)
+          isDefined(options.startFromWorkspaceId) ||
+          isDefined(options.workspaceCountLimit)
         ) {
           this.logger.log(
             `Stopping before instance step "${step.name}": ` +
-              'upgrade was run with a workspace filter (-w or --start-from-workspace-id). ' +
+              'upgrade was run with a workspace filter (-w, --start-from-workspace-id, or --workspace-count-limit). ' +
               'Instance commands require all workspaces to be aligned.',
           );
 
