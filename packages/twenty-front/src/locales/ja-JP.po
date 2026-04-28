@@ -158,6 +158,18 @@ msgstr "{0, plural, other {フィールド {fieldsList} にアクセスする権
 msgid "{0} - Config"
 msgstr ""
 
+#. js-lingui-id: stCODw
+#. placeholder {0}: appObject.fields.length
+#: src/modules/settings/applications/hooks/useComputeObjectAndFieldsContentForApplication.ts
+msgid "{0} fields"
+msgstr ""
+
+#. js-lingui-id: T8aKxO
+#. placeholder {0}: layout.name
+#: src/modules/settings/applications/hooks/useComputeApplicationContentForLayoutAndLogic.ts
+msgid "{0} layout"
+msgstr ""
+
 #. js-lingui-id: Zo6POu
 #. placeholder {0}: recordPageLayoutObject.labelPlural
 #: src/modules/layout-customization/components/LayoutCustomizationBar.tsx
@@ -178,6 +190,18 @@ msgstr ""
 #. placeholder {0}: formatUsageValue(totalCredits)
 #: src/pages/settings/SettingsUsageUserDetail.tsx
 msgid "{0} used"
+msgstr ""
+
+#. js-lingui-id: izNf/z
+#. placeholder {0}: view.name
+#: src/modules/settings/applications/hooks/useComputeApplicationContentForLayoutAndLogic.ts
+msgid "{0} view"
+msgstr ""
+
+#. js-lingui-id: /ZFL82
+#. placeholder {0}: widgets.length
+#: src/pages/settings/layout/SettingsLayoutPageLayoutDetail.tsx
+msgid "{0} widgets"
 msgstr ""
 
 #. js-lingui-id: qdQhzv
@@ -277,6 +301,11 @@ msgstr "{failedCount} ファイルのアップロードに失敗しました"
 msgid "{fieldCount} fields on {recordLabel}"
 msgstr "{recordLabel} のフィールド数 {fieldCount}"
 
+#. js-lingui-id: fO/Qa9
+#: src/modules/settings/applications/hooks/useComputeObjectAndFieldsContentForApplication.ts
+msgid "{fieldsCount} fields"
+msgstr ""
+
 #. js-lingui-id: /9/Y5z
 #: src/modules/spreadsheet-import/steps/components/UploadStep/components/DropZone.tsx
 msgid "{fileName} upload rejected"
@@ -291,6 +320,11 @@ msgstr "{filterRulesCount, plural, one {{filterRulesCount} 件のルール} othe
 #: src/modules/spreadsheet-import/steps/components/ImportDataStep.tsx
 msgid "{formattedCreatedRecordsProgress} out of {formattedRecordsToImportCount} records imported."
 msgstr "{formattedRecordsToImportCount} 件中 {formattedCreatedRecordsProgress} 件のレコードがインポートされました。"
+
+#. js-lingui-id: iokIra
+#: src/modules/settings/applications/hooks/useComputeApplicationContentForLayoutAndLogic.ts
+msgid "{formattedType} of {objectLabel}"
+msgstr ""
 
 #. js-lingui-id: YF/a2j
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsTableRow.tsx
@@ -331,6 +365,11 @@ msgstr "{jobCount, plural, other {これによりキューから永久に削除�
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminRetryJobsConfirmationModal.tsx
 msgid "{jobCount, plural, one {This will retry the selected job. It will be re-executed from the beginning.} other {This will retry the selected jobs. They will be re-executed from the beginning.}}"
 msgstr "{jobCount, plural, other {選択されたジョブを再試行します。最初から再実行されます。}}"
+
+#. js-lingui-id: FdY/eP
+#: src/modules/settings/applications/hooks/useComputeApplicationContentForLayoutAndLogic.ts
+msgid "{label} list"
+msgstr ""
 
 #. js-lingui-id: Y32cMj
 #: src/modules/page-layout/widgets/email-thread/components/EmailThreadIntermediaryMessages.tsx
@@ -434,6 +473,11 @@ msgstr "{stepCount, plural, one {# ステップ} other {# ステップ}}"
 msgid "{stepNumber}. Calendar"
 msgstr "{stepNumber}. カレンダー"
 
+#. js-lingui-id: bI/mcH
+#: src/modules/settings/applications/hooks/useComputeApplicationContentForLayoutAndLogic.ts
+msgid "{tabCount} tabs"
+msgstr ""
+
 #. js-lingui-id: p38XKy
 #: src/modules/side-panel/components/SidePanelMultipleRecordsInfo.tsx
 msgid "{totalCount} selected"
@@ -459,6 +503,11 @@ msgstr "{workflowRunIteratorSubStepIterationsCount, plural, other {# アイテ�
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentConfirmationModalSubtitle.tsx
 msgid "{workspaceMemberName} will be unassigned from the following role:"
 msgstr "{workspaceMemberName}が次の役割から割り当て解除されます："
+
+#. js-lingui-id: XxzXhf
+#: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
+msgid "#"
+msgstr ""
 
 #. js-lingui-id: CwstSL
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
@@ -492,6 +541,16 @@ msgstr "0 */1 * * *"
 #: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 msgid "1 day"
 msgstr "1 日"
+
+#. js-lingui-id: W/OU4i
+#: src/modules/settings/applications/hooks/useComputeApplicationContentForLayoutAndLogic.ts
+msgid "1 tab"
+msgstr ""
+
+#. js-lingui-id: m60AP0
+#: src/pages/settings/layout/SettingsLayoutPageLayoutDetail.tsx
+msgid "1 widget"
+msgstr ""
 
 #. js-lingui-id: tEdOxj
 #: src/pages/settings/accounts/SettingsAccountsConfigurationStepEmail.tsx
@@ -652,9 +711,11 @@ msgid "Abort"
 msgstr "中止"
 
 #. js-lingui-id: uyJsf6
+#: src/pages/settings/layout/components/SettingsLayoutDetailScaffold.tsx
 #: src/pages/settings/data-model/SettingsNewObject.tsx
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentSettingsTab.tsx
 #: src/pages/settings/ai/SettingsSkillForm.tsx
 #: src/modules/settings/logic-functions/components/SettingsLogicFunctionNewForm.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
@@ -701,11 +762,6 @@ msgstr "ワークスペースのデータにアクセス"
 #: src/pages/settings/ai/components/SettingsAiMCP.tsx
 msgid "Access your workspace data from your favorite MCP client like Claude Desktop, Windsurf or Cursor."
 msgstr ""
-
-#. js-lingui-id: u2Cycw
-#: src/modules/settings/logic-functions/components/SettingsLogicFunctionTabEnvironmentVariablesSection.tsx
-msgid "Accessible in your function via process.env.KEY"
-msgstr "process.env.KEY を通じて関数内からアクセスできます"
 
 #. js-lingui-id: AeXO77
 #: src/pages/settings/accounts/SettingsAccountsConfigurationStepEmail.tsx
@@ -1358,6 +1414,7 @@ msgid "agents"
 msgstr ""
 
 #. js-lingui-id: 8Uv5e6
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
 msgid "Agents"
 msgstr "エージェントたち"
@@ -1425,6 +1482,13 @@ msgstr "AI が構成されていません。環境変数に OPENAI_API_KEY、ANT
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
 msgid "AI request prep"
 msgstr "AI リクエストの準備"
+
+#. js-lingui-id: X5Mx4I
+#: src/modules/settings/logic-functions/components/triggers/SettingsLogicFunctionToolTriggerSection.tsx
+#: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTestTab.tsx
+#: src/modules/logic-functions/utils/getLogicFunctionTriggerLabel.ts
+msgid "AI tool"
+msgstr ""
 
 #. js-lingui-id: tzhisR
 #: src/pages/settings/ai/SettingsAiUsageUserDetail.tsx
@@ -1965,7 +2029,6 @@ msgstr ""
 #. js-lingui-id: LMUw1U
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
-#: src/pages/settings/applications/components/SettingsApplicationDataTable.tsx
 #: src/pages/settings/ai/components/SettingsToolsTable.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectRelationsTable.tsx
 msgid "App"
@@ -1996,11 +2059,6 @@ msgstr "適用範囲"
 #: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
 msgid "Application"
 msgstr "アプリケーション"
-
-#. js-lingui-id: bw50Pz
-#: src/modules/settings/logic-functions/components/SettingsLogicFunctionTabEnvironmentVariablesSection.tsx
-msgid "application detail page"
-msgstr "アプリケーション詳細ページ"
 
 #. js-lingui-id: vdieHo
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
@@ -2034,9 +2092,11 @@ msgstr "アプリケーションのアップグレードに成功しました。
 
 #. js-lingui-id: fL7WXr
 #: src/pages/settings/logic-functions/SettingsLogicFunctionDetail.tsx
+#: src/pages/settings/layout/components/SettingsLayoutDetailScaffold.tsx
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
 #: src/pages/settings/applications/SettingsApplications.tsx
 #: src/pages/settings/applications/SettingsApplications.tsx
+#: src/pages/settings/applications/SettingsApplicationFrontComponentDetail.tsx
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
 #: src/modules/side-panel/pages/workflow/action/components/SidePanelWorkflowSelectAction.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
@@ -2350,11 +2410,6 @@ msgstr "監査ログには ClickHouse の設定が必要です。ClickHouse の�
 msgid "Auth"
 msgstr "認証"
 
-#. js-lingui-id: DzqB0O
-#: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTriggersTab.tsx
-msgid "Auth Required"
-msgstr "認証が必要です"
-
 #. js-lingui-id: P8fBlG
 #: src/pages/settings/security/SettingsSecurity.tsx
 msgid "Authentication"
@@ -2430,6 +2485,11 @@ msgstr "人々のために自動的に連絡先を作成する。"
 msgid "Automatically create People records when receiving or sending emails"
 msgstr "メールの受信・送信時に自動的に人物レコードを作成"
 
+#. js-lingui-id: BJgDIM
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
+msgid "Automation, AI, and access this app provides"
+msgstr ""
+
 #. js-lingui-id: lXkUEV
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManual.tsx
 msgid "Availability"
@@ -2440,11 +2500,6 @@ msgstr "利用可能"
 #: src/modules/settings/data-model/new-object/components/SettingsAvailableStandardObjectsSection.tsx
 msgid "Available"
 msgstr "利用可能"
-
-#. js-lingui-id: 06gA3L
-#: src/modules/settings/logic-functions/components/SettingsLogicFunctionNewForm.tsx
-msgid "Available as tool"
-msgstr "ツールとして利用可能"
 
 #. js-lingui-id: oD38t2
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
@@ -2655,6 +2710,16 @@ msgstr "茶色"
 msgid "Build a dashboard that shows: (1) total pipeline value by stage for the last 3 months, (2) count of deals won vs lost per month, (3) average deal size. Use our standard pipeline stages."
 msgstr "次を表示するダッシュボードを作成してください：（1）直近3か月のステージ別パイプライン合計金額、（2）月ごとの成約件数と失注件数、（3）平均案件金額。標準のパイプラインステージを使用してください。"
 
+#. js-lingui-id: pN5hZf
+#: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentSettingsTab.tsx
+msgid "Build and runtime metadata for this component"
+msgstr ""
+
+#. js-lingui-id: f2qxNx
+#: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentSettingsTab.tsx
+msgid "Build checksum"
+msgstr ""
+
 #. js-lingui-id: alSW5d
 #: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationJunctionForm.tsx
 msgid "Build many-to-many relations"
@@ -2683,6 +2748,11 @@ msgstr ""
 #. js-lingui-id: s1c0ja
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
 msgid "Bullet List"
+msgstr ""
+
+#. js-lingui-id: 9emr42
+#: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTriggersTab.tsx
+msgid "Bundled with {applicationName}"
 msgstr ""
 
 #. js-lingui-id: 8ds4Hj
@@ -3318,6 +3388,11 @@ msgstr "列データはマルチセレクトと互換性がありません。必
 msgid "Columns not matched:"
 msgstr "一致しない列："
 
+#. js-lingui-id: efhuJR
+#: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
+msgid "Columns shown in this view, in display order"
+msgstr ""
+
 #. js-lingui-id: pOJNDA
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
 msgid "command"
@@ -3395,6 +3470,11 @@ msgstr "完了"
 msgid "Completed jobs kept for {completedDuration}, failed jobs kept for {failedDuration} (max {maxCount} each)"
 msgstr "完了したジョブの保持期間: {completedDuration}、失敗したジョブの保持期間: {failedDuration} (最大 {maxCount} 件)"
 
+#. js-lingui-id: 3pJ7V5
+#: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentSettingsTab.tsx
+msgid "Component name"
+msgstr ""
+
 #. js-lingui-id: 0CuAor
 #: src/modules/workflow/workflow-steps/workflow-actions/if-else-action/components/WorkflowEditActionIfElseBody.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/filter-action/components/WorkflowEditActionFilterBody.tsx
@@ -3402,6 +3482,11 @@ msgstr "完了したジョブの保持期間: {completedDuration}、失敗した
 #: src/modules/side-panel/pages/page-layout/components/record-table-settings/RecordTableSettingsFilters.tsx
 msgid "Conditions"
 msgstr "条件"
+
+#. js-lingui-id: IfvM+Z
+#: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
+msgid "Conditions applied to records before they appear in this view"
+msgstr ""
 
 #. js-lingui-id: 14PdY0
 #: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
@@ -3490,11 +3575,6 @@ msgstr "ドメインプロバイダーでこれらのDNSレコードを設定す
 #: src/modules/page-layout/widgets/fields/components/FieldsWidget.tsx
 msgid "Configure this widget to display fields"
 msgstr "フィールドを表示するには、このウィジェットを設定してください"
-
-#. js-lingui-id: NF6Bfa
-#: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTriggersTab.tsx
-msgid "Configure when this function should be executed"
-msgstr "この関数が実行されるタイミングを設定します"
 
 #. js-lingui-id: hzDiM0
 #: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
@@ -4060,6 +4140,7 @@ msgid "Create, edit, and delete workspace views"
 msgstr "ワークスペースビューの作成、編集、削除"
 
 #. js-lingui-id: d+F6q9
+#: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentSettingsTab.tsx
 #: src/pages/settings/admin-panel/SettingsAdminUserDetail.tsx
 #: src/modules/settings/components/SettingsDatabaseEventsForm.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
@@ -4181,9 +4262,16 @@ msgid "Crimson"
 msgstr "クリムゾン"
 
 #. js-lingui-id: 6Oaeoc
-#: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTriggersTab.tsx
+#: src/modules/settings/logic-functions/components/triggers/SettingsLogicFunctionCronTriggerSection.tsx
+#: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTestTab.tsx
+#: src/modules/logic-functions/utils/getLogicFunctionTriggerLabel.ts
 msgid "Cron"
 msgstr "クロン"
+
+#. js-lingui-id: rV1+uS
+#: src/modules/settings/logic-functions/components/triggers/SettingsLogicFunctionCronTriggerSection.tsx
+msgid "Cron triggers pass no payload — the handler is called with an empty object."
+msgstr ""
 
 #. js-lingui-id: zovbHa
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
@@ -4415,7 +4503,7 @@ msgid "Dashboard duplicated successfully"
 msgstr "ダッシュボードが正常に複製されました"
 
 #. js-lingui-id: HKH+W+
-#: src/pages/settings/applications/components/SettingsApplicationDataTable.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
 #: src/modules/side-panel/pages/workflow/trigger-type/components/SidePanelWorkflowSelectTriggerTypeContent.tsx
 #: src/modules/side-panel/pages/workflow/action/components/SidePanelWorkflowSelectAction.tsx
 #: src/modules/side-panel/pages/page-layout/constants/ChartSettingsHeadings.ts
@@ -4494,7 +4582,9 @@ msgid "Database configuration is currently disabled."
 msgstr "データベース設定は現在無効です。"
 
 #. js-lingui-id: lP42oc
-#: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTriggersTab.tsx
+#: src/modules/settings/logic-functions/components/triggers/SettingsLogicFunctionDatabaseEventTriggerSection.tsx
+#: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTestTab.tsx
+#: src/modules/logic-functions/utils/getLogicFunctionTriggerLabel.ts
 msgid "Database event"
 msgstr "データベースイベント"
 
@@ -4634,6 +4724,9 @@ msgid "default"
 msgstr ""
 
 #. js-lingui-id: ovBPCi
+#: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
+#: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
+#: src/pages/settings/layout/SettingsLayoutPageLayoutDetail.tsx
 #: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
 #: src/modules/settings/data-model/fields/forms/date/utils/getDisplayFormatLabel.ts
 #: src/modules/settings/data-model/fields/forms/address/components/MultiSelectAddressFields.tsx
@@ -5002,7 +5095,6 @@ msgstr "AIにさせたいことを説明してください..."
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
 #: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
-#: src/pages/settings/applications/components/SettingsApplicationNameDescriptionTable.tsx
 #: src/pages/settings/ai/SettingsToolDetail.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsTableHeader.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
@@ -5012,6 +5104,12 @@ msgstr "AIにさせたいことを説明してください..."
 #: src/modules/settings/config-variables/components/ConfigVariableTable.tsx
 msgid "Description"
 msgstr "説明"
+
+#. js-lingui-id: C8lmDv
+#: src/pages/settings/layout/components/SettingsLayoutDetailScaffold.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentSettingsTab.tsx
+msgid "Description provided by the application"
+msgstr ""
 
 #. js-lingui-id: BBqGS9
 #: src/modules/side-panel/pages/page-layout/hooks/useVisibilityLabels.ts
@@ -5042,6 +5140,8 @@ msgstr "関連付けを解除"
 
 #. js-lingui-id: URmyfc
 #: src/pages/settings/security/event-logs/utils/getColumnsForEventLogTable.ts
+#: src/pages/settings/layout/components/SettingsLayoutDetailScaffold.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentSettingsTab.tsx
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
 msgid "Details"
 msgstr "詳細"
@@ -5055,6 +5155,11 @@ msgstr "開発者"
 #: src/modules/settings/applications/components/SettingsApplicationAboutSidebar.tsx
 msgid "Developers links"
 msgstr "開発者向けリンク"
+
+#. js-lingui-id: MRB7nI
+#: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
+msgid "Direction"
+msgstr ""
 
 #. js-lingui-id: E/QGRL
 #: src/modules/page-layout/components/PageLayoutTabListNewTabDropdownContent.tsx
@@ -5708,6 +5813,7 @@ msgid "Empty Object"
 msgstr "空のオブジェクト"
 
 #. js-lingui-id: 7A0K1Y
+#: src/pages/settings/layout/SettingsLayoutPageLayoutDetail.tsx
 #: src/modules/page-layout/components/PageLayoutTabListNewTabDropdownContent.tsx
 msgid "Empty tab"
 msgstr ""
@@ -6038,16 +6144,6 @@ msgstr "環境変数のオプション"
 #: src/modules/settings/admin-panel/config-variables/utils/useSourceContent.ts
 msgid "Environment variable"
 msgstr "環境変数"
-
-#. js-lingui-id: wqJ4zc
-#: src/modules/settings/logic-functions/components/SettingsLogicFunctionTabEnvironmentVariablesSection.tsx
-msgid "Environment Variables"
-msgstr "環境変数"
-
-#. js-lingui-id: AP93Bl
-#: src/modules/settings/logic-functions/components/SettingsLogicFunctionTabEnvironmentVariablesSection.tsx
-msgid "Environment variables are defined at application level for all functions. Please check <0/>."
-msgstr "環境変数はすべての関数に対してアプリケーションレベルで定義されています。<0/> をご確認ください。"
 
 #. js-lingui-id: BlLvRP
 #: src/pages/settings/security/SettingsSecurity.tsx
@@ -6493,7 +6589,7 @@ msgstr "CSVをエクスポート"
 
 #. js-lingui-id: 1JBTZV
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
-#: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTriggersTab.tsx
+#: src/modules/settings/logic-functions/components/triggers/SettingsLogicFunctionCronTriggerSection.tsx
 msgid "Expression"
 msgstr "式"
 
@@ -6760,7 +6856,6 @@ msgstr ""
 #: src/modules/ui/field/display/components/BooleanDisplay.tsx
 #: src/modules/side-panel/pages/page-layout/hooks/useChartSettingsValues.ts
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartRatioOptionValueSelectionDropdownContent.tsx
-#: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTriggersTab.tsx
 #: src/modules/settings/data-model/fields/forms/boolean/constants/BooleanDataModelSelectOptions.ts
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownBooleanSelect.tsx
@@ -6802,6 +6897,9 @@ msgid "field"
 msgstr "フィールド"
 
 #. js-lingui-id: AXjA78
+#: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
+#: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
+#: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsSelect.tsx
 #: src/modules/side-panel/pages/page-layout/utils/getFieldLabelWithSubField.ts
 #: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutRecordPageWidgetTypeSelect.tsx
@@ -6851,11 +6949,10 @@ msgid "fields"
 msgstr "フィールド"
 
 #. js-lingui-id: vF68cg
+#: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
-#: src/pages/settings/applications/components/SettingsApplicationDataTable.tsx
-#: src/pages/settings/applications/components/SettingsApplicationDataTable.tsx
 #: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutRecordPageWidgetTypeSelect.tsx
 #: src/modules/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardRecordTableSettings.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectFieldMenu.tsx
@@ -6871,6 +6968,11 @@ msgstr "フィールド"
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerDatabaseEventForm.tsx
 msgid "Fields (Optional)"
 msgstr "フィールド（任意）"
+
+#. js-lingui-id: h5NDR9
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
+msgid "Fields added to other objects"
+msgstr ""
 
 #. js-lingui-id: Tnz22x
 #: src/modules/object-record/record-merge/components/MergeSettingsTab.tsx
@@ -6951,6 +7053,11 @@ msgstr ""
 msgid "File upload failed"
 msgstr "ファイルのアップロードに失敗しました"
 
+#. js-lingui-id: BZGmTs
+#: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTestTab.tsx
+msgid "Fill with sample input from"
+msgstr ""
+
 #. js-lingui-id: o7J4JM
 #: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords.tsx
 #: src/modules/views/components/ViewBarFilterDropdownFieldSelectMenu.tsx
@@ -6989,6 +7096,7 @@ msgid "filtering"
 msgstr ""
 
 #. js-lingui-id: cSev+j
+#: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
 #: src/modules/side-panel/utils/getSidePanelSubPageTitle.ts
 #: src/modules/side-panel/utils/getSidePanelSubPageTitle.ts
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
@@ -7074,6 +7182,8 @@ msgstr "フロー"
 
 #. js-lingui-id: kNqMMd
 #: src/modules/side-panel/components/SidePanelFolderInfo.tsx
+#: src/modules/settings/applications/hooks/useComputeApplicationContentForLayoutAndLogic.ts
+#: src/modules/settings/applications/hooks/useComputeApplicationContentForLayoutAndLogic.ts
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemMainMenu.tsx
 msgid "Folder"
 msgstr "フォルダー"
@@ -7088,6 +7198,11 @@ msgstr "フォルダー名"
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelEditFolderPickerSubPage.tsx
 msgid "Folders"
 msgstr "フォルダー"
+
+#. js-lingui-id: Ghistm
+#: src/modules/settings/applications/hooks/useComputeApplicationContentForLayoutAndLogic.ts
+msgid "for {objectLabel}"
+msgstr ""
 
 #. js-lingui-id: glx6on
 #: src/modules/auth/sign-in-up/components/SignInUpWorkspaceScopeForm.tsx
@@ -7111,7 +7226,7 @@ msgid "Format e.g. d-MMM-y (qqq''yy)"
 msgstr "例: d-MMM-y (qqq''yy) 形式"
 
 #. js-lingui-id: xMJhWJ
-#: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTriggersTab.tsx
+#: src/modules/settings/logic-functions/components/triggers/SettingsLogicFunctionCronTriggerSection.tsx
 msgid "Format: [Minute] [Hour] [Day of Month] [Month] [Day of Week]"
 msgstr "形式：[分] [時] [日] [月] [曜日]"
 
@@ -7156,13 +7271,19 @@ msgstr "{startDay} から {endDay} へ"
 msgid "front component"
 msgstr "フロントエンドコンポーネント"
 
+#. js-lingui-id: 7skoga
+#: src/pages/settings/applications/SettingsApplicationFrontComponentDetail.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentSettingsTab.tsx
+msgid "Front component"
+msgstr ""
+
 #. js-lingui-id: +M+QLN
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
 msgid "front components"
 msgstr ""
 
 #. js-lingui-id: IvIKDS
-#: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
+#: src/pages/settings/applications/SettingsApplicationFrontComponentDetail.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
 msgid "Front components"
 msgstr "フロントエンドコンポーネント"
@@ -7444,6 +7565,16 @@ msgstr ""
 msgid "Heading 3"
 msgstr ""
 
+#. js-lingui-id: 6Ef36Q
+#: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentSettingsTab.tsx
+msgid "Headless"
+msgstr ""
+
+#. js-lingui-id: oEpvJo
+#: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentPreviewTab.tsx
+msgid "Headless component"
+msgstr ""
+
 #. js-lingui-id: UPqS9C
 #: src/modules/settings/admin-panel/components/SettingsAdminContent.tsx
 msgid "Health"
@@ -7460,6 +7591,7 @@ msgid "Hebrew"
 msgstr "ヘブライ語"
 
 #. js-lingui-id: D+zLDD
+#: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownRecordGroupsContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownHiddenRecordGroupsContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownHiddenRecordGroupsContent.tsx
@@ -7566,6 +7698,11 @@ msgstr "トリガー間の時間"
 msgid "How credits work"
 msgstr ""
 
+#. js-lingui-id: WC32k6
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
+msgid "How records, pages, and navigation are displayed"
+msgstr ""
+
 #. js-lingui-id: B06Bgk
 #: src/pages/onboarding/CreateProfile.tsx
 msgid "How you'll be identified on the app."
@@ -7576,10 +7713,12 @@ msgstr "アプリ上での識別名です。"
 msgid "How your system is doing"
 msgstr "システムの動作状況"
 
-#. js-lingui-id: gwfyXo
-#: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTriggersTab.tsx
-msgid "Http"
-msgstr "http"
+#. js-lingui-id: LUTGt0
+#: src/modules/settings/logic-functions/components/triggers/SettingsLogicFunctionHttpTriggerSection.tsx
+#: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTestTab.tsx
+#: src/modules/logic-functions/utils/getLogicFunctionTriggerLabel.ts
+msgid "HTTP"
+msgstr ""
 
 #. js-lingui-id: DUhAFW
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerWebhookForm.tsx
@@ -7663,6 +7802,7 @@ msgid "IAM role (instance profile)"
 msgstr ""
 
 #. js-lingui-id: wwu18a
+#: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm.tsx
 msgid "Icon"
 msgstr "アイコン"
@@ -7951,10 +8091,10 @@ msgstr "入力設定"
 msgid "Input tokens"
 msgstr "入力トークン"
 
-#. js-lingui-id: T8avpe
+#. js-lingui-id: Dlxuac
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTestTab.tsx
-msgid "Insert a JSON input, then press \"Run\" to test your function."
-msgstr "JSON入力を挿入し、「実行」を押して関数をテストします。"
+msgid "Insert a JSON input, then press \"Run Function\"."
+msgstr ""
 
 #. js-lingui-id: TKQ7K+
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
@@ -8561,6 +8701,7 @@ msgstr "手動で起動"
 
 #. js-lingui-id: rdU729
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
 #: src/modules/side-panel/utils/getSidePanelSubPageTitle.ts
 #: src/modules/side-panel/pages/page-layout/components/record-page/SidePanelRecordPageFieldsSettings.tsx
 #: src/modules/side-panel/pages/page-layout/components/record-page/SidePanelRecordPageFieldSettings.tsx
@@ -8578,6 +8719,12 @@ msgstr "レイアウトのカスタマイズ"
 #. js-lingui-id: euTsq6
 #: src/modules/layout-customization/components/LayoutCustomizationBarMenuDropdown.tsx
 msgid "Layout customization menu"
+msgstr ""
+
+#. js-lingui-id: uQ0+Yc
+#. placeholder {0}: tab.layoutMode
+#: src/pages/settings/layout/SettingsLayoutPageLayoutDetail.tsx
+msgid "Layout mode: {0}"
 msgstr ""
 
 #. js-lingui-id: yU0QVO
@@ -8703,6 +8850,7 @@ msgstr "ラインチャート"
 
 #. js-lingui-id: yzF66j
 #: src/modules/side-panel/components/SidePanelLinkInfo.tsx
+#: src/modules/settings/applications/hooks/useComputeApplicationContentForLayoutAndLogic.ts
 #: src/modules/settings/admin-panel/health-status/maintenance-mode/components/SettingsAdminMaintenanceMode.tsx
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemMainMenu.tsx
 msgid "Link"
@@ -8762,6 +8910,7 @@ msgstr "リスト"
 
 #. js-lingui-id: C5bVie
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerWebhookForm.tsx
+#: src/modules/settings/logic-functions/components/triggers/SettingsLogicFunctionHttpTriggerSection.tsx
 msgid "Live URL"
 msgstr "ライブ URL"
 
@@ -8893,10 +9042,12 @@ msgstr "ロジック関数"
 msgid "logic functions"
 msgstr ""
 
-#. js-lingui-id: RXhDe7
+#. js-lingui-id: QTVVDd
+#: src/pages/settings/logic-functions/SettingsLogicFunctionDetail.tsx
+#: src/pages/settings/logic-functions/SettingsLogicFunctionDetail.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
-msgid "Logic functions powering this app"
-msgstr "このアプリを支えるロジック関数"
+msgid "Logic functions"
+msgstr ""
 
 #. js-lingui-id: VLuNNu
 #: src/modules/auth/components/TwoFactorAuthenticationProvisionEffect.tsx
@@ -9212,7 +9363,7 @@ msgid "Metered tier switching has been cancelled."
 msgstr "メーター制ティア切替がキャンセルされました。"
 
 #. js-lingui-id: fiPesM
-#: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTriggersTab.tsx
+#: src/modules/settings/logic-functions/components/triggers/SettingsLogicFunctionHttpTriggerSection.tsx
 msgid "Method"
 msgstr "メソッド"
 
@@ -9503,8 +9654,6 @@ msgstr "mySkill"
 #: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
 #: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
-#: src/pages/settings/applications/components/SettingsApplicationNameDescriptionTable.tsx
-#: src/pages/settings/applications/components/SettingsApplicationDataTable.tsx
 #: src/pages/settings/ai/constants/SettingsSkillTableMetadata.ts
 #: src/pages/settings/ai/constants/SettingsAiAgentTableMetadata.ts
 #: src/pages/settings/ai/components/SettingsToolsTable.tsx
@@ -9526,7 +9675,6 @@ msgstr "mySkill"
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
 #: src/modules/settings/roles/components/SettingsRolesTableHeader.tsx
 #: src/modules/settings/members/components/MemberInfosTab.tsx
-#: src/modules/settings/logic-functions/components/SettingsLogicFunctionsTable.tsx
 #: src/modules/settings/logic-functions/components/SettingsLogicFunctionNewForm.tsx
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTabEnvironmentVariableTableRow.tsx
 #: src/modules/settings/developers/components/SettingsApiKeysTable.tsx
@@ -9577,6 +9725,11 @@ msgstr "ナビバー"
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "navigation menu item"
 msgstr "ナビゲーションメニュー項目"
+
+#. js-lingui-id: jRptK+
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
+msgid "Navigation menu items"
+msgstr ""
 
 #. js-lingui-id: s2HXiD
 #: src/modules/navigation/components/MainNavigationDrawerTabsRow.tsx
@@ -9793,6 +9946,8 @@ msgid "Ninth"
 msgstr "第九"
 
 #. js-lingui-id: 1UzENP
+#: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentSettingsTab.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentSettingsTab.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelUpdateFieldsValueForObject.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSeeFieldsValueForObject.tsx
@@ -10183,11 +10338,6 @@ msgstr "モデルが利用可能ではありません。ワークスペース設
 msgid "No notes"
 msgstr "ノートなし"
 
-#. js-lingui-id: 14uqQk
-#: src/pages/settings/applications/components/SettingsApplicationDataTable.tsx
-msgid "No object found"
-msgstr "オブジェクトが見つかりません"
-
 #. js-lingui-id: YFHO2u
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemViewObjectPickerSubView.tsx
 msgid "No objects with views found"
@@ -10320,10 +10470,15 @@ msgstr "利用可能なシステムオブジェクトはありません"
 msgid "No system objects with views found"
 msgstr "ビューのあるシステムオブジェクトが見つかりません"
 
-#. js-lingui-id: fBsRs5
+#. js-lingui-id: ZCTuAQ
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTriggersTab.tsx
-msgid "No triggers configured for this function."
-msgstr "この関数にはトリガーが設定されていません。"
+msgid "No trigger is configured for this function."
+msgstr ""
+
+#. js-lingui-id: g/fpDP
+#: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTriggersTab.tsx
+msgid "No trigger is enabled. Toggle one of the options above to choose how this function gets invoked."
+msgstr ""
 
 #. js-lingui-id: WwlPOG
 #: src/pages/settings/SettingsUsageUserDetail.tsx
@@ -10437,7 +10592,9 @@ msgid "Not Found"
 msgstr "見つかりません"
 
 #. js-lingui-id: MTqQMG
+#: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationConfigTab.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentSettingsTab.tsx
 msgid "Not set"
 msgstr "未設定"
 
@@ -10543,6 +10700,9 @@ msgid "object"
 msgstr "オブジェクト"
 
 #. js-lingui-id: W0i24j
+#: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
+#: src/pages/settings/layout/SettingsLayoutPageLayoutDetail.tsx
+#: src/pages/settings/layout/SettingsLayoutPageLayoutDetail.tsx
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManual.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsRecordPicker.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/find-records-action/components/WorkflowEditActionFindRecords.tsx
@@ -10553,6 +10713,7 @@ msgstr "オブジェクト"
 #: src/modules/side-panel/components/SidePanelObjectViewRecordInfo.tsx
 #: src/modules/side-panel/components/SidePanelObjectFilterDropdownContent.tsx
 #: src/modules/settings/developers/components/WebhookEntitySelect.tsx
+#: src/modules/settings/applications/hooks/useComputeApplicationContentForLayoutAndLogic.ts
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemMainMenu.tsx
 msgid "Object"
 msgstr "オブジェクト"
@@ -10622,18 +10783,13 @@ msgstr "オブジェクト"
 #: src/pages/settings/data-model/SettingsNewObject.tsx
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldSelect.tsx
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
-#: src/pages/settings/applications/components/SettingsApplicationDataTable.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionsObjectsList.tsx
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelObjectPickerSubView.tsx
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemViewObjectPickerSubView.tsx
 msgid "Objects"
 msgstr "オブジェクト"
-
-#. js-lingui-id: tmyEbd
-#: src/pages/settings/applications/components/SettingsApplicationDataTable.tsx
-msgid "Objects and fields managed by this app"
-msgstr "このアプリで管理されているオブジェクトとフィールド"
 
 #. js-lingui-id: /8Yh6y
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
@@ -10664,6 +10820,16 @@ msgstr "以前"
 #: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 msgid "Omit zero values"
 msgstr "ゼロ値を省略する"
+
+#. js-lingui-id: UCQiqt
+#. placeholder {0}: item.labelSingular
+#. placeholder {0}: appObject.labelSingular
+#. placeholder {0}: objectMetadataItem.labelSingular
+#: src/modules/settings/applications/hooks/useComputeObjectAndFieldsContentForApplication.ts
+#: src/modules/settings/applications/hooks/useComputeObjectAndFieldsContentForApplication.ts
+#: src/modules/settings/applications/hooks/useComputeObjectAndFieldsContentForApplication.ts
+msgid "on {0}"
+msgstr ""
 
 #. js-lingui-id: jcwJgk
 #: src/modules/workflow/workflow-trigger/utils/cron-to-human/descriptors/getDayOfMonthDescription.ts
@@ -10806,6 +10972,11 @@ msgstr "役割で開く"
 msgid "Open Outlook"
 msgstr "Outlookで開く"
 
+#. js-lingui-id: p9J4lB
+#: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
+msgid "Open records in"
+msgstr ""
+
 #. js-lingui-id: bY2Xkv
 #: src/modules/side-panel/components/SidePanelToggleButton.tsx
 msgid "Open side panel"
@@ -10815,6 +10986,11 @@ msgstr "サイドパネルを開く"
 #: src/modules/navigation-menu-item/display/sections/components/NavigationDrawerOpenedSection.tsx
 msgid "Opened"
 msgstr "開いた"
+
+#. js-lingui-id: Fzfj4N
+#: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
+msgid "Operand"
+msgstr ""
 
 #. js-lingui-id: 8m1COB
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminHealthStatusRightContainer.tsx
@@ -10861,6 +11037,11 @@ msgstr "または"
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Orange"
 msgstr "オレンジ"
+
+#. js-lingui-id: I/EsFC
+#: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
+msgid "Order in which records are displayed"
+msgstr ""
 
 #. js-lingui-id: VWupWc
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
@@ -11002,9 +11183,16 @@ msgid "Page"
 msgstr "ページ"
 
 #. js-lingui-id: SZgFyi
+#: src/pages/settings/layout/SettingsLayoutPageLayoutDetail.tsx
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "page layout"
 msgstr "ページレイアウト"
+
+#. js-lingui-id: kbnS+K
+#: src/pages/settings/layout/SettingsLayoutPageLayoutDetail.tsx
+#: src/modules/settings/applications/hooks/useComputeApplicationContentForLayoutAndLogic.ts
+msgid "Page layout"
+msgstr ""
 
 #. js-lingui-id: HFlGEK
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
@@ -11015,6 +11203,12 @@ msgstr "ページレイアウトタブ"
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "page layout widget"
 msgstr "ページレイアウトウィジェット"
+
+#. js-lingui-id: ckYXHz
+#: src/pages/settings/layout/SettingsLayoutPageLayoutDetail.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
+msgid "Page layouts"
+msgstr ""
 
 #. js-lingui-id: IVBjIH
 #: src/pages/settings/security/event-logs/components/EventLogFilters.tsx
@@ -11091,7 +11285,7 @@ msgid "Paste your enterprise key here"
 msgstr "ここに Enterprise キーを貼り付けてください"
 
 #. js-lingui-id: I6gXOa
-#: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTriggersTab.tsx
+#: src/modules/settings/logic-functions/components/triggers/SettingsLogicFunctionHttpTriggerSection.tsx
 msgid "Path"
 msgstr "パス"
 
@@ -11398,10 +11592,20 @@ msgstr "位置の降順"
 msgid "Post Code"
 msgstr "郵便番号"
 
+#. js-lingui-id: VFf6Bm
+#: src/modules/logic-functions/utils/getLogicFunctionTriggerLabel.ts
+msgid "Post-install"
+msgstr ""
+
 #. js-lingui-id: OKJUcC
 #: src/modules/settings/data-model/fields/forms/address/constants/DefaultSelectionAddressWithMessages.ts
 msgid "Postcode"
 msgstr "郵便番号"
+
+#. js-lingui-id: W88dRa
+#: src/modules/logic-functions/utils/getLogicFunctionTriggerLabel.ts
+msgid "Pre-install"
+msgstr ""
 
 #. js-lingui-id: q+Xhwx
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
@@ -11424,6 +11628,7 @@ msgid "Prevent from assigning the same value to different records"
 msgstr "異なるレコードに同じ値を割り当てるのを防ぐ"
 
 #. js-lingui-id: rdUucN
+#: src/pages/settings/applications/SettingsApplicationFrontComponentDetail.tsx
 #: src/modules/settings/data-model/objects/forms/components/SettingsDataModelObjectSettingsFormCard.tsx
 #: src/modules/settings/data-model/components/SettingsDataModelPreviewFormCard.tsx
 msgid "Preview"
@@ -11538,6 +11743,12 @@ msgstr ""
 #: src/pages/settings/security/event-logs/utils/getColumnsForEventLogTable.ts
 msgid "Properties"
 msgstr "プロパティ"
+
+#. js-lingui-id: 8B+pY5
+#: src/pages/settings/layout/components/SettingsLayoutDetailScaffold.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentSettingsTab.tsx
+msgid "Property"
+msgstr ""
 
 #. js-lingui-id: 56xUL1
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/BodyInput.tsx
@@ -11728,6 +11939,11 @@ msgstr "プロフィールを読み取る"
 msgid "Read-only"
 msgstr ""
 
+#. js-lingui-id: 6wOBcu
+#: src/pages/settings/layout/components/SettingsLayoutDetailScaffold.tsx
+msgid "Read-only {entityTypeLabel} definition shipped by this app"
+msgstr ""
+
 #. js-lingui-id: W+ApAD
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
 msgid "Reauthorize"
@@ -11779,6 +11995,8 @@ msgstr "レコード"
 #: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionUpdateRecord.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionDeleteRecord.tsx
+#: src/modules/settings/applications/hooks/useComputeApplicationContentForLayoutAndLogic.ts
+#: src/modules/settings/applications/hooks/useComputeApplicationContentForLayoutAndLogic.ts
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemMainMenu.tsx
 #: src/modules/navigation-menu-item/display/object/components/NavigationDrawerItemForObjectMetadataItem.tsx
 msgid "Record"
@@ -12129,6 +12347,11 @@ msgstr ""
 msgid "Request Failed"
 msgstr "リクエスト失敗"
 
+#. js-lingui-id: +gFBV8
+#: src/modules/settings/logic-functions/components/triggers/SettingsLogicFunctionHttpTriggerSection.tsx
+msgid "Require authentication"
+msgstr ""
+
 #. js-lingui-id: TMLAx2
 #: src/pages/settings/ai/components/SettingsToolParameterTable.tsx
 msgid "Required"
@@ -12352,6 +12575,7 @@ msgstr ""
 
 #. js-lingui-id: 5dJK4M
 #: src/pages/settings/roles/SettingsRoleAddObjectLevel.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
 #: src/modules/settings/roles/role/components/SettingsRole.tsx
@@ -12447,6 +12671,11 @@ msgstr "実行中..."
 msgid "Russian"
 msgstr "ロシア語"
 
+#. js-lingui-id: 3hNFUc
+#: src/modules/settings/logic-functions/components/triggers/SettingsLogicFunctionTriggerPayloadFormat.tsx
+msgid "Sample input"
+msgstr ""
+
 #. js-lingui-id: +5kO8P
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsCalendarStartDaySelect.tsx
 #: src/pages/settings/profile/appearance/components/DateTimeSettingsCalendarStartDaySelect.tsx
@@ -12492,6 +12721,11 @@ msgstr "スキーマ"
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "Schema name"
 msgstr "スキーマ名"
+
+#. js-lingui-id: IYEdtc
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
+msgid "Schema this app contributes to your workspace"
+msgstr ""
 
 #. js-lingui-id: N/rFzD
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationOAuthTab.tsx
@@ -12626,7 +12860,6 @@ msgid "Search an object"
 msgstr "オブジェクトを検索"
 
 #. js-lingui-id: BoNHR0
-#: src/pages/settings/applications/components/SettingsApplicationDataTable.tsx
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelObjectPickerSubView.tsx
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemViewObjectPickerSubView.tsx
 msgid "Search an object..."
@@ -12744,6 +12977,7 @@ msgid "Search registrations..."
 msgstr "登録を検索..."
 
 #. js-lingui-id: YIix5Y
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
 #: src/modules/settings/developers/components/WebhookEntitySelect.tsx
 msgid "Search..."
 msgstr "検索..."
@@ -13051,11 +13285,6 @@ msgstr "ステップを選択"
 msgid "Select the default value for this boolean field"
 msgstr "このブールフィールドのデフォルト値を選択します"
 
-#. js-lingui-id: E3D4LZ
-#: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTriggersTab.tsx
-msgid "Select the events that should trigger the function"
-msgstr "関数をトリガーするイベントを選択してください"
-
 #. js-lingui-id: xraglu
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "Select the events you wish to send to this endpoint"
@@ -13239,6 +13468,7 @@ msgstr "データベースのセットアップ..."
 #. js-lingui-id: Tz0i8g
 #: src/pages/settings/logic-functions/SettingsLogicFunctionDetail.tsx
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
+#: src/pages/settings/applications/SettingsApplicationFrontComponentDetail.tsx
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
 #: src/pages/settings/ai/SettingsAgentForm.tsx
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
@@ -13415,6 +13645,11 @@ msgstr "単数形と複数形の名前は異なる必要があります"
 msgid "Sixth"
 msgstr "第六"
 
+#. js-lingui-id: Cj2Gtd
+#: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
+msgid "Size"
+msgstr ""
+
 #. js-lingui-id: Nbjq/v
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
 msgid "sk-..."
@@ -13460,6 +13695,7 @@ msgid "skills"
 msgstr ""
 
 #. js-lingui-id: PCSkw2
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
 #: src/pages/settings/ai/SettingsAI.tsx
 #: src/pages/settings/ai/components/SettingsAgentSkills.tsx
 msgid "Skills"
@@ -13597,6 +13833,7 @@ msgid "sorting"
 msgstr ""
 
 #. js-lingui-id: 0pWTum
+#: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
 #: src/modules/side-panel/utils/getSidePanelSubPageTitle.ts
 #: src/modules/side-panel/pages/page-layout/components/record-table-settings/RecordTableSettingsSorts.tsx
 msgid "Sorts"
@@ -14107,6 +14344,12 @@ msgstr "システム設定 - {systemTimeFormatLabel}"
 msgid "Tab"
 msgstr "タブ"
 
+#. js-lingui-id: eDW3Jm
+#. placeholder {0}: tab.title
+#: src/pages/settings/layout/SettingsLayoutPageLayoutDetail.tsx
+msgid "Tab {tabNumber}: {0}"
+msgstr ""
+
 #. js-lingui-id: zr20ox
 #: src/modules/side-panel/pages/page-layout/utils/getPageLayoutPageTitle.ts
 msgid "Tab Settings"
@@ -14114,6 +14357,7 @@ msgstr "タブ設定"
 
 #. js-lingui-id: 4hJhzz
 #: src/pages/settings/security/event-logs/components/EventLogTableSelector.tsx
+#: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
 #: src/modules/views/view-picker/constants/ViewPickerTypeSelectOptions.ts
 #: src/modules/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardRecordTableSettings.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
@@ -14476,6 +14720,11 @@ msgstr "このフォルダーと中のナビゲーションメニュー項目が
 msgid "This app"
 msgstr ""
 
+#. js-lingui-id: WCa/7U
+#: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentPreviewTab.tsx
+msgid "This component runs without a UI and renders nothing here."
+msgstr ""
+
 #. js-lingui-id: SLIRqz
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
 msgid "This database value overrides environment settings. "
@@ -14500,6 +14749,11 @@ msgstr "このファイル形式はプレビューできません。表示する
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder.tsx
 msgid "This form will appear in workflow runs."
 msgstr "このフォームはワークフローの実行時に表示されます。"
+
+#. js-lingui-id: 2UWdFd
+#: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTriggersTab.tsx
+msgid "This function has no trigger configured, so it can only be invoked from the Test tab or by other functions."
+msgstr ""
 
 #. js-lingui-id: njWene
 #: src/modules/settings/data-model/fields/forms/morph-relation/components/SettingsDataModelFieldRelationJunctionForm.tsx
@@ -14895,7 +15149,6 @@ msgstr ""
 #: src/modules/side-panel/components/SidePanelWorkflowStepInfo.tsx
 #: src/modules/side-panel/components/SidePanelWorkflowStepInfo.tsx
 #: src/modules/side-panel/components/SidePanelWorkflowStepInfo.tsx
-#: src/modules/settings/logic-functions/components/SettingsLogicFunctionsTable.tsx
 msgid "Trigger"
 msgstr "トリガー"
 
@@ -14923,25 +15176,33 @@ msgstr "トリガータイプ"
 
 #. js-lingui-id: 34nxyb
 #: src/pages/settings/logic-functions/SettingsLogicFunctionDetail.tsx
-#: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTriggersTab.tsx
 msgid "Triggers"
 msgstr "トリガー"
 
 #. js-lingui-id: zk64Yo
-#: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTriggersTab.tsx
+#: src/modules/settings/logic-functions/components/triggers/SettingsLogicFunctionCronTriggerSection.tsx
 msgid "Triggers the function at regular intervals"
 msgstr "定期的に関数をトリガーします"
 
-#. js-lingui-id: juqoz0
-#: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTriggersTab.tsx
-msgid "Triggers the function with Http request"
-msgstr "Httpリクエストで関数をトリガーします"
+#. js-lingui-id: /oEL03
+#: src/modules/settings/logic-functions/components/triggers/SettingsLogicFunctionDatabaseEventTriggerSection.tsx
+msgid "Triggers the function when a record changes"
+msgstr ""
+
+#. js-lingui-id: OIRkpM
+#: src/modules/settings/logic-functions/components/triggers/SettingsLogicFunctionToolTriggerSection.tsx
+msgid "Triggers the function when called by an AI agent or workflow"
+msgstr ""
+
+#. js-lingui-id: YdQqyX
+#: src/modules/settings/logic-functions/components/triggers/SettingsLogicFunctionHttpTriggerSection.tsx
+msgid "Triggers the function with an HTTP request"
+msgstr ""
 
 #. js-lingui-id: c+xCSz
 #: src/modules/ui/field/display/components/BooleanDisplay.tsx
 #: src/modules/side-panel/pages/page-layout/hooks/useChartSettingsValues.ts
 #: src/modules/side-panel/pages/page-layout/components/dropdown-content/ChartRatioOptionValueSelectionDropdownContent.tsx
-#: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTriggersTab.tsx
 #: src/modules/settings/data-model/fields/forms/boolean/constants/BooleanDataModelSelectOptions.ts
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 #: src/modules/object-record/object-filter-dropdown/components/ObjectFilterDropdownBooleanSelect.tsx
@@ -15041,6 +15302,9 @@ msgid "Two-factor authentication setup completed successfully!"
 msgstr "二要素認証のセットアップが正常に完了しました！"
 
 #. js-lingui-id: +zy2Nq
+#: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
+#: src/pages/settings/layout/SettingsLayoutPageLayoutDetail.tsx
+#: src/pages/settings/layout/SettingsLayoutPageLayoutDetail.tsx
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx
 #: src/pages/settings/ai/constants/SettingsSkillTableMetadata.ts
 #: src/pages/settings/ai/constants/SettingsAiAgentTableMetadata.ts
@@ -15078,11 +15342,6 @@ msgstr "入力してレコードを検索"
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
 msgid "Types of content this model can process besides text"
 msgstr "このモデルがテキスト以外に処理できるコンテンツの種類"
-
-#. js-lingui-id: 4KcBEY
-#: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
-msgid "UI components provided by this app"
-msgstr "このアプリが提供するUIコンポーネント"
 
 #. js-lingui-id: V9+2pH
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
@@ -15177,6 +15436,13 @@ msgstr "単位"
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
 msgid "Universal ID"
 msgstr "ユニバーサルID"
+
+#. js-lingui-id: sd9apq
+#: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
+#: src/pages/settings/layout/SettingsLayoutPageLayoutDetail.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentSettingsTab.tsx
+msgid "Universal identifier"
+msgstr ""
 
 #. js-lingui-id: Ef7StM
 #: src/pages/settings/emailing-domains/utils/getEmailingDomainStatusText.ts
@@ -15365,6 +15631,7 @@ msgid "updated"
 msgstr "更新済み"
 
 #. js-lingui-id: +b7T3G
+#: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentSettingsTab.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
 #: src/modules/settings/components/SettingsDatabaseEventsForm.tsx
 msgid "Updated"
@@ -15487,6 +15754,11 @@ msgstr ""
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
 msgid "URL"
 msgstr "URL"
+
+#. js-lingui-id: UtDm3q
+#: src/modules/settings/logic-functions/components/triggers/SettingsLogicFunctionHttpTriggerSection.tsx
+msgid "URL copied to clipboard"
+msgstr ""
 
 #. js-lingui-id: pphDjD
 #: src/modules/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardIframeSettings.tsx
@@ -15642,6 +15914,11 @@ msgstr "ユーザーの利用状況"
 msgid "Users"
 msgstr "ユーザー"
 
+#. js-lingui-id: mnudjQ
+#: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentSettingsTab.tsx
+msgid "Uses SDK client"
+msgstr ""
+
 #. js-lingui-id: vUr1/5
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
 msgid "Using default application value. Configure via environment variables."
@@ -15669,6 +15946,9 @@ msgid "Validity token refreshed successfully"
 msgstr "有効性トークンを正常に更新しました"
 
 #. js-lingui-id: wMHvYH
+#: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
+#: src/pages/settings/layout/components/SettingsLayoutDetailScaffold.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentSettingsTab.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailEnvironmentVariablesTable.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/KeyValuePairInput.tsx
 #: src/modules/side-panel/pages/page-layout/hooks/useGraphXSortOptionLabels.ts
@@ -15755,16 +16035,19 @@ msgid "Vietnamese"
 msgstr "ベトナム語"
 
 #. js-lingui-id: jUNY/d
+#: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
 msgid "view"
 msgstr "ビュー"
 
 #. js-lingui-id: jpctdh
+#: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
 #: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutDashboardWidgetTypeSelect.tsx
 #: src/modules/side-panel/components/SidePanelObjectViewRecordInfo.tsx
 #: src/modules/side-panel/components/hooks/usePageLayoutHeaderInfo.ts
 #: src/modules/settings/developers/components/WebhookEntitySelect.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
+#: src/modules/settings/applications/hooks/useComputeApplicationContentForLayoutAndLogic.ts
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemMainMenu.tsx
 msgid "View"
 msgstr "ビュー"
@@ -15892,6 +16175,8 @@ msgid "View workspace activity logs"
 msgstr "ワークスペースのアクティビティログを表示"
 
 #. js-lingui-id: 1I6UoR
+#: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemViewPickerSubView.tsx
 msgid "Views"
 msgstr "ビュー"
@@ -15902,6 +16187,7 @@ msgid "Violet"
 msgstr "バイオレット"
 
 #. js-lingui-id: 2q/Q7x
+#: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownVisibilityContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
@@ -15916,6 +16202,11 @@ msgstr ""
 #. js-lingui-id: gkAApJ
 #: src/modules/side-panel/pages/page-layout/components/WidgetSettingsManageSection.tsx
 msgid "Visibility Restriction"
+msgstr ""
+
+#. js-lingui-id: oh8+os
+#: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
+msgid "Visible"
 msgstr ""
 
 #. js-lingui-id: zYTdqe
@@ -16132,11 +16423,6 @@ msgstr "ソースが \"Website\" の新しいリードが作成されたとき�
 msgid "When any deal with amount over $100,000 has its stage or amount updated, send a notification to the sales channel with the deal name, company, new stage, amount and owner."
 msgstr "金額が $100,000 を超える案件でステージまたは金額が更新されたとき、案件名、会社名、新しいステージ、金額、オーナーを含めて営業チャネルに通知を送信してください。"
 
-#. js-lingui-id: 8jc/Xn
-#: src/modules/settings/logic-functions/components/SettingsLogicFunctionNewForm.tsx
-msgid "When enabled, AI agents and workflow automations can discover and call this function"
-msgstr "有効にすると、AIエージェントやワークフローの自動化がこの関数を検出して呼び出せるようになります"
-
 #. js-lingui-id: C51ilI
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
 msgid "When the API key will expire."
@@ -16163,6 +16449,11 @@ msgstr "このモデルが Chain-of-Thought（思考の連鎖）による推論�
 #. js-lingui-id: dmoPOu
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
 msgid "widget"
+msgstr ""
+
+#. js-lingui-id: AHXN2z
+#: src/pages/settings/layout/SettingsLayoutPageLayoutDetail.tsx
+msgid "Widget"
 msgstr ""
 
 #. js-lingui-id: fANaAS
@@ -16236,6 +16527,7 @@ msgstr "ワークフロー"
 #: src/pages/settings/members/SettingsWorkspaceMember.tsx
 #: src/pages/settings/logic-functions/SettingsLogicFunctionDetail.tsx
 #: src/pages/settings/logic-functions/SettingsLogicFunctionDetail.tsx
+#: src/pages/settings/layout/components/SettingsLayoutDetailScaffold.tsx
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 #: src/pages/settings/emailing-domains/SettingsNewEmailingDomain.tsx
 #: src/pages/settings/emailing-domains/SettingsEmailingDomainDetail.tsx
@@ -16256,6 +16548,7 @@ msgstr "ワークフロー"
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
 #: src/pages/settings/applications/SettingsApplications.tsx
 #: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
+#: src/pages/settings/applications/SettingsApplicationFrontComponentDetail.tsx
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationConfigVariableDetail.tsx
 #: src/pages/settings/ai/SettingsToolDetail.tsx
@@ -16443,6 +16736,9 @@ msgid "yes"
 msgstr "はい"
 
 #. js-lingui-id: l75CjT
+#: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentSettingsTab.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentSettingsTab.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
 #: src/pages/settings/ai/components/SettingsToolParameterTable.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
@@ -16604,6 +16900,21 @@ msgstr ""
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Your enterprise subscription has been canceled."
 msgstr "Enterprise サブスクリプションはキャンセルされました。"
+
+#. js-lingui-id: leFkCA
+#: src/modules/settings/logic-functions/components/triggers/SettingsLogicFunctionDatabaseEventTriggerSection.tsx
+msgid "Your handler receives this event object. \"after\" holds the new state, \"before\" the previous one (null for created), and \"updatedFields\" lists the field names that changed on update."
+msgstr ""
+
+#. js-lingui-id: aNI1bz
+#: src/modules/settings/logic-functions/components/triggers/SettingsLogicFunctionHttpTriggerSection.tsx
+msgid "Your handler receives this object. The body holds the parsed JSON sent by the client."
+msgstr ""
+
+#. js-lingui-id: GJewTO
+#: src/modules/settings/logic-functions/components/triggers/SettingsLogicFunctionHttpTriggerSection.tsx
+msgid "Your handler receives this object. The body is empty because GET requests carry no payload."
+msgstr ""
 
 #. js-lingui-id: 9ivpwk
 #: src/pages/settings/SettingsProfile.tsx
