@@ -53,38 +53,45 @@ Nejprve vytvořte mezilehlý objekt, který bude uchovávat propojení.
 1. Přejděte do **Nastavení → Datový model**
 2. Klikněte na **+ New object**
 3. Pojmenujte jej výstižně (např. "Project Assignment", "Team Member", "Product Order")
-4. Klikněte na **Uložit**
+4. Přepněte "Přeskočit vytvoření pole Název" na zapnuto
+
+<img src="/images/user-guide/fields/new-pivot-object.png" alt="Nový spojovací objekt" />
+
+5. Klikněte na **Uložit**
 
 <Tip>
 **Konvence pojmenování**: Použijte název, který popisuje vztah, například "Project Assignment" nebo "Team Membership". Tím bude datový model srozumitelnější.
 </Tip>
 
-## Krok 2: Vytvořte vztahy ze spojovacího objektu
+## Krok 2: Vytvořte vztahy mezi objekty a spojovacím objektem
 
-Přidejte relační pole ze spojovacího objektu do obou objektů, které chcete propojit.
+Přidejte vztahová pole z obou objektů do spojovacího objektu.
 
-### První vztah (Junction → Objekt A)
+### První vztah (Objekt A → Junction)
 
-1. Vyberte svůj spojovací objekt v **Settings → Data Model**
-2. Klikněte na **+ Add Field**
-3. Zvolte **Relation** jako typ pole
-4. Vyberte první objekt (např. "People")
-5. Nastavte typ vztahu na **Many-to-One** (mnoho přiřazení může odkazovat na jednu osobu)
-6. Pojmenujte pole:
-   * Pole na spojovacím objektu: např. "Person"
-   * Pole na People: např. "Project Assignments"
-7. Klikněte na **Uložit**
-
-### Druhý vztah (Junction → Objekt B)
-
-1. Stále na spojovacím objektu klikněte na **+ Add Field**
-2. Zvolte **Relation** jako typ pole
-3. Vyberte druhý objekt (např. "Projects")
-4. Nastavte typ vztahu na **Many-to-One**
+1. Vyberte svůj první objekt v **Settings → Data Model**
+2. Klikněte na **+ Přidat vztah**
+3. Vyberte spojovací objekt (např. "Project Assignments")
+4. Nastavte typ vztahu na **One-To-Many** (jedna osoba může být propojena s mnoha přiřazeními)
 5. Pojmenujte pole:
+   * Pole na People: např. "Project Assignments"
+   * Pole na spojovacím objektu: např. "Person"
+6. Klikněte na **Uložit**
+
+### Druhý vztah (Objekt B → Junction)
+
+1. Vyberte svůj druhý objekt v **Settings → Data Model**
+2. Klikněte na **+ Přidat vztah**
+3. Vyberte spojovací objekt (např. "Project Assignments")
+4. Nastavte typ vztahu na **One-To-Many** (jeden projekt může být propojen s mnoha přiřazeními)
+5. Povolte **"This is a relation to a Junction Object"**
+
+<img src="/images/user-guide/fields/junction-relation-toggle.png" style={{width:'100%'}} />
+
+6. Pojmenujte pole:
    * Pole na spojovacím objektu: např. "Project"
    * Pole na Projects: např. "Team Members"
-6. Klikněte na **Uložit**
+7. Klikněte na **Uložit**
 
 ## Krok 3: Nakonfigurujte zobrazení vztahu přes spojovací objekt
 
@@ -97,18 +104,6 @@ Nyní nakonfigurujte zdrojové objekty tak, aby zobrazovaly propojené záznamy 
 5. Povolte **"This is a relation to a Junction Object"**
 6. Vyberte **Target relation** (např. "Project" — pole na spojovacím objektu, které ukazuje na druhou stranu)
 7. Klikněte na **Uložit**
-
-{/* TODO: Add image
-<img src="/images/user-guide/fields/junction-relation-toggle.png" style={{width:'100%'}}/>
-*/}
-
-Opakujte pro druhý objekt:
-
-1. Vyberte "Projects" v Data Model
-2. Upravte relační pole "Team Members"
-3. Povolte přepínač pro vztah přes spojovací objekt
-4. Vyberte "Person" jako cílový vztah
-5. Uložit
 
 ## Výsledek
 
@@ -130,15 +125,15 @@ Zde je kompletní postup:
 
 ### Přidejte vztahy
 
-1. **Project Assignment → People**
-   * Typ: Many-to-One
-   * Pole na Assignment: "Person"
+1. **People → Project Assignment**
+   * Typ: One-to-Many
    * Pole na People: "Project Assignments"
+   * Pole na Assignment: "Person"
 
-2. **Project Assignment → Projects**
-   * Typ: Many-to-One
-   * Pole na Assignment: "Project"
+2. **Projects → Project Assignment**
+   * Typ: One-to-Many
    * Pole na Projects: "Team Members"
+   * Pole na Assignment: "Project"
 
 ### Nakonfigurujte zobrazení spojovacího objektu
 

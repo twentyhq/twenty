@@ -1,16 +1,16 @@
 import { Logo as LogoIcon } from '@/icons';
+import { LocalizedLink } from '@/lib/i18n';
 import type { MenuScheme } from '@/sections/Menu/types';
 import { theme } from '@/theme';
 import { Drawer } from '@base-ui/react/drawer';
 import { styled } from '@linaria/react';
-import Link from 'next/link';
 
 const LogoContainer = styled.div`
   align-items: center;
   display: grid;
 `;
 
-const LogoLink = styled(Link)`
+const LogoLink = styled(LocalizedLink)`
   display: grid;
   text-decoration: none;
 

@@ -1,12 +1,12 @@
 import type { CaseStudyData } from '@/lib/customers';
 import { Container, Heading } from '@/design-system/components';
 import { CLIENT_ICONS } from '@/icons';
+import { LocalizedLink } from '@/lib/i18n';
 import { CustomerCasesCover } from '@/sections/CaseStudyCatalog/visuals/CustomerCasesCover';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
 import { IconArrowLeft, IconClock } from '@tabler/icons-react';
 import Image from 'next/image';
-import Link from 'next/link';
 
 const CATALOG_LOGO_WIDTHS: Record<string, number> = {
   'nine-dots': 72,
@@ -46,7 +46,7 @@ const StyledContainer = styled(Container)`
   }
 `;
 
-const BackLink = styled(Link)`
+const BackLink = styled(LocalizedLink)`
   align-items: center;
   color: ${theme.colors.secondary.text[80]};
   display: inline-flex;

@@ -108,6 +108,7 @@ export {
   NumberDataType,
   ObjectRecordGroupByDateGranularity,
   PageLayoutTabLayoutMode,
+  ViewCalendarLayout,
   ViewFilterGroupLogicalOperator,
   ViewFilterOperand,
   ViewOpenRecordIn,

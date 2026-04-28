@@ -5,6 +5,7 @@ import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePat
 import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
 import { currentMobileNavigationDrawerState } from '@/navigation/states/currentMobileNavigationDrawerState';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
+import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useOpenRecordsSearchPageInSidePanel } from '@/side-panel/hooks/useOpenRecordsSearchPageInSidePanel';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
@@ -20,6 +21,7 @@ import {
   IconSearch,
 } from 'twenty-ui/display';
 import { NavigationBar } from 'twenty-ui/navigation';
+import { PermissionFlagType } from '~/generated-metadata/graphql';
 
 type NavigationBarItemName = 'main' | 'search' | 'newAiChat';
 
@@ -37,6 +39,9 @@ export const MobileNavigationBar = () => {
   const { switchToNewChat } = useSwitchToNewAiChat();
   const { alphaSortedActiveNonSystemObjectMetadataItems } =
     useFilteredObjectMetadataItems();
+  const hasAiSettingsPermission = useHasPermissionFlag(
+    PermissionFlagType.AI_SETTINGS,
+  );
 
   const setContextStoreCurrentObjectMetadataItemId = useSetAtomComponentState(
     contextStoreCurrentObjectMetadataItemIdComponentState,
@@ -89,15 +94,19 @@ export const MobileNavigationBar = () => {
         openRecordsSearchPage();
       },
     },
-    {
-      name: 'newAiChat' as const,
-      Icon: IconMessageCirclePlus,
-      onClick: () => {
-        setIsNavigationDrawerExpanded(false);
-        closeSidePanelMenu();
-        switchToNewChat();
-      },
-    },
+    ...(hasAiSettingsPermission
+      ? [
+          {
+            name: 'newAiChat' as const,
+            Icon: IconMessageCirclePlus,
+            onClick: () => {
+              setIsNavigationDrawerExpanded(false);
+              closeSidePanelMenu();
+              switchToNewChat();
+            },
+          },
+        ]
+      : []),
   ];
 
   return <NavigationBar activeItemName={activeItemName} items={items} />;
