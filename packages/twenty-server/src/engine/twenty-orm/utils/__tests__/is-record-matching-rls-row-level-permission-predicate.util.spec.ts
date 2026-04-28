@@ -76,7 +76,7 @@ describe('isRecordMatchingRLSRowLevelPermissionPredicate', () => {
       roadmapEndViewIds: [],
       roadmapGroupViewIds: [],
       roadmapColorViewIds: [],
-      roadmapLabelViewIds: [],
+      roadmapLabelViewIds: [],      roadmapPlannedStartViewIds: [],      roadmapPlannedEndViewIds: [],      roadmapStatusViewIds: [],      roadmapBlockedByViewIds: [],
       mainGroupByFieldMetadataViewIds: [],
       applicationId: null,
       settings,

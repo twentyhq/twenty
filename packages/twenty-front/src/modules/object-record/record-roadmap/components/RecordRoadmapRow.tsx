@@ -10,6 +10,10 @@ type RecordRoadmapRowProps = {
   label: string;
   startDate: Temporal.PlainDate;
   endDate: Temporal.PlainDate;
+  plannedStartDate?: Temporal.PlainDate | null;
+  plannedEndDate?: Temporal.PlainDate | null;
+  status?: string | null;
+  blockedBy?: string | null;
   viewportStart: Temporal.PlainDate;
   dayWidthPx: number;
   color: string | null;
@@ -51,6 +55,10 @@ export const RecordRoadmapRow = ({
   label,
   startDate,
   endDate,
+  plannedStartDate,
+  plannedEndDate,
+  status,
+  blockedBy,
   viewportStart,
   dayWidthPx,
   color,
@@ -67,6 +75,10 @@ export const RecordRoadmapRow = ({
       label={label}
       startDate={startDate}
       endDate={endDate}
+      plannedStartDate={plannedStartDate}
+      plannedEndDate={plannedEndDate}
+      status={status}
+      blockedBy={blockedBy}
       viewportStart={viewportStart}
       dayWidthPx={dayWidthPx}
       color={color}

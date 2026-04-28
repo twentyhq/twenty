@@ -109,6 +109,21 @@ export class ViewDTO {
   @Field(() => UUIDScalarType, { nullable: true })
   roadmapFieldLabelId?: string | null;
 
+  @Field(() => UUIDScalarType, { nullable: true })
+  roadmapFieldPlannedStartId?: string | null;
+
+  @Field(() => UUIDScalarType, { nullable: true })
+  roadmapFieldPlannedEndId?: string | null;
+
+  @Field(() => UUIDScalarType, { nullable: true })
+  roadmapFieldStatusId?: string | null;
+
+  @Field(() => UUIDScalarType, { nullable: true })
+  roadmapFieldBlockedById?: string | null;
+
+  @Field({ nullable: false, defaultValue: false })
+  roadmapShowDeviation: boolean;
+
   @Field()
   createdAt: Date;
 

@@ -38,9 +38,14 @@ export type View = {
   roadmapFieldGroupId?: string | null;
   roadmapFieldColorId?: string | null;
   roadmapFieldLabelId?: string | null;
+  roadmapFieldPlannedStartId?: string | null;
+  roadmapFieldPlannedEndId?: string | null;
+  roadmapFieldStatusId?: string | null;
+  roadmapFieldBlockedById?: string | null;
   roadmapDefaultZoom?: ViewRoadmapZoom | null;
   roadmapShowToday?: boolean | null;
   roadmapShowWeekends?: boolean | null;
+  roadmapShowDeviation?: boolean | null;
   position: number;
   icon: string;
   openRecordIn: ViewOpenRecordIn;

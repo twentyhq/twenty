@@ -101,7 +101,7 @@ export const fromFieldManifestToUniversalFlatFieldMetadata = ({
     roadmapEndViewUniversalIdentifiers: [],
     roadmapGroupViewUniversalIdentifiers: [],
     roadmapColorViewUniversalIdentifiers: [],
-    roadmapLabelViewUniversalIdentifiers: [],
+    roadmapLabelViewUniversalIdentifiers: [],    roadmapPlannedStartViewUniversalIdentifiers: [],    roadmapPlannedEndViewUniversalIdentifiers: [],    roadmapStatusViewUniversalIdentifiers: [],    roadmapBlockedByViewUniversalIdentifiers: [],
     mainGroupByFieldMetadataViewUniversalIdentifiers: [],
     viewSortUniversalIdentifiers: [],
     createdAt: now,

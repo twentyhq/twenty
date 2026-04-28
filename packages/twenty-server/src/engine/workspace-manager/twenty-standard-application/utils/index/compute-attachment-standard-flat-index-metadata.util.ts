@@ -76,6 +76,18 @@ export const buildAttachmentStandardFlatIndexMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
+  opportunityMilestoneIdIndex: createStandardIndexFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      indexName: 'opportunityMilestoneIdIndex',
+      relatedFieldNames: ['targetOpportunityMilestone'],
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
   dashboardIdIndex: createStandardIndexFlatMetadata({
     objectName,
     workspaceId,

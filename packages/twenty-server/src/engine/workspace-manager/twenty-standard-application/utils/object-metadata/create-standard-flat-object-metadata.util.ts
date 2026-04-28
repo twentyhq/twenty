@@ -568,6 +568,66 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
       twentyStandardApplicationId,
       now,
     }),
+  opportunityMilestone: ({
+    now,
+    workspaceId,
+    standardObjectMetadataRelatedEntityIds,
+    twentyStandardApplicationId,
+    dependencyFlatEntityMaps,
+  }: Omit<
+    CreateStandardObjectArgs<'opportunityMilestone'>,
+    'context' | 'objectName'
+  >) =>
+    createStandardObjectFlatMetadata({
+      objectName: 'opportunityMilestone',
+      dependencyFlatEntityMaps,
+      context: {
+        universalIdentifier:
+          STANDARD_OBJECTS.opportunityMilestone.universalIdentifier,
+        nameSingular: 'opportunityMilestone',
+        namePlural: 'opportunityMilestones',
+        labelSingular: i18nLabel(msg`Milestone`),
+        labelPlural: i18nLabel(msg`Milestones`),
+        description: i18nLabel(msg`A milestone of an opportunity`),
+        icon: 'IconFlag',
+        labelIdentifierFieldMetadataName: 'name',
+      },
+      workspaceId,
+      standardObjectMetadataRelatedEntityIds,
+      twentyStandardApplicationId,
+      now,
+    }),
+  opportunityMilestoneDependency: ({
+    now,
+    workspaceId,
+    standardObjectMetadataRelatedEntityIds,
+    twentyStandardApplicationId,
+    dependencyFlatEntityMaps,
+  }: Omit<
+    CreateStandardObjectArgs<'opportunityMilestoneDependency'>,
+    'context' | 'objectName'
+  >) =>
+    createStandardObjectFlatMetadata({
+      objectName: 'opportunityMilestoneDependency',
+      dependencyFlatEntityMaps,
+      context: {
+        universalIdentifier:
+          STANDARD_OBJECTS.opportunityMilestoneDependency.universalIdentifier,
+        nameSingular: 'opportunityMilestoneDependency',
+        namePlural: 'opportunityMilestoneDependencies',
+        labelSingular: i18nLabel(msg`Milestone Dependency`),
+        labelPlural: i18nLabel(msg`Milestone Dependencies`),
+        description: i18nLabel(
+          msg`A precedence edge between two opportunity milestones`,
+        ),
+        icon: 'IconArrowFork',
+        labelIdentifierFieldMetadataName: 'id',
+      },
+      workspaceId,
+      standardObjectMetadataRelatedEntityIds,
+      twentyStandardApplicationId,
+      now,
+    }),
   person: ({
     now,
     workspaceId,

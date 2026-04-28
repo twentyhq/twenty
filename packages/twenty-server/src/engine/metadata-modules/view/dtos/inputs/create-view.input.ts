@@ -146,6 +146,31 @@ export class CreateViewInput {
   roadmapFieldLabelId?: string;
 
   @IsOptional()
+  @IsUUID()
+  @Field(() => UUIDScalarType, { nullable: true })
+  roadmapFieldPlannedStartId?: string;
+
+  @IsOptional()
+  @IsUUID()
+  @Field(() => UUIDScalarType, { nullable: true })
+  roadmapFieldPlannedEndId?: string;
+
+  @IsOptional()
+  @IsUUID()
+  @Field(() => UUIDScalarType, { nullable: true })
+  roadmapFieldStatusId?: string;
+
+  @IsOptional()
+  @IsUUID()
+  @Field(() => UUIDScalarType, { nullable: true })
+  roadmapFieldBlockedById?: string;
+
+  @IsOptional()
+  @IsBoolean()
+  @Field({ nullable: true, defaultValue: false })
+  roadmapShowDeviation?: boolean;
+
+  @IsOptional()
   @IsEnum(ViewVisibility)
   @Field(() => ViewVisibility, {
     nullable: true,

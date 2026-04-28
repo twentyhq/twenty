@@ -39,6 +39,18 @@ export class MinimalViewDTO {
   @Field(() => UUIDScalarType, { nullable: true })
   roadmapFieldLabelId: string | null;
 
+  @Field(() => UUIDScalarType, { nullable: true })
+  roadmapFieldPlannedStartId: string | null;
+
+  @Field(() => UUIDScalarType, { nullable: true })
+  roadmapFieldPlannedEndId: string | null;
+
+  @Field(() => UUIDScalarType, { nullable: true })
+  roadmapFieldStatusId: string | null;
+
+  @Field(() => UUIDScalarType, { nullable: true })
+  roadmapFieldBlockedById: string | null;
+
   @Field(() => ViewRoadmapZoom, { nullable: true })
   roadmapDefaultZoom: ViewRoadmapZoom | null;
 
@@ -47,4 +59,7 @@ export class MinimalViewDTO {
 
   @Field(() => Boolean, { nullable: true })
   roadmapShowWeekends: boolean | null;
+
+  @Field(() => Boolean, { nullable: true })
+  roadmapShowDeviation: boolean | null;
 }

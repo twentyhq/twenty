@@ -13,6 +13,7 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 
+import { RecordRoadmapDependencyConnectors } from '@/object-record/record-roadmap/components/RecordRoadmapDependencyConnectors';
 import { RecordRoadmapNameColumn } from '@/object-record/record-roadmap/components/RecordRoadmapNameColumn';
 import { RecordRoadmapRow } from '@/object-record/record-roadmap/components/RecordRoadmapRow';
 import { RecordRoadmapSwimlane } from '@/object-record/record-roadmap/components/RecordRoadmapSwimlane';
@@ -21,9 +22,13 @@ import { RecordRoadmapTodayLine } from '@/object-record/record-roadmap/component
 import { RecordRoadmapWeekendsOverlay } from '@/object-record/record-roadmap/components/RecordRoadmapWeekendsOverlay';
 import { ROADMAP_DAY_WIDTH_BY_ZOOM } from '@/object-record/record-roadmap/constants/RoadmapZoomLevels';
 import { useRecordRoadmapContextOrThrow } from '@/object-record/record-roadmap/contexts/RecordRoadmapContext';
-import { ROADMAP_NAME_COLUMN_WIDTH } from '@/object-record/record-roadmap/constants/RoadmapDimensions';
+import {
+  ROADMAP_NAME_COLUMN_FIELD_WIDTH,
+  ROADMAP_NAME_COLUMN_WIDTH,
+} from '@/object-record/record-roadmap/constants/RoadmapDimensions';
 import { useOpenRecordFromIndexView } from '@/object-record/record-index/hooks/useOpenRecordFromIndexView';
 import { useRecordRoadmapCreateOnDoubleClick } from '@/object-record/record-roadmap/hooks/useRecordRoadmapCreateOnDoubleClick';
+import { useRecordRoadmapDependencies } from '@/object-record/record-roadmap/hooks/useRecordRoadmapDependencies';
 import { useRecordRoadmapFetchRecords } from '@/object-record/record-roadmap/hooks/useRecordRoadmapFetchRecords';
 import {
   ROADMAP_UNCATEGORIZED_SWIMLANE_KEY,
@@ -31,15 +36,23 @@ import {
 } from '@/object-record/record-roadmap/hooks/useRecordRoadmapSwimlanes';
 import { useRecordRoadmapUpdateDates } from '@/object-record/record-roadmap/hooks/useRecordRoadmapUpdateDates';
 import { useRecordRoadmapWheelZoom } from '@/object-record/record-roadmap/hooks/useRecordRoadmapWheelZoom';
+import { recordIndexRoadmapFieldBlockedByIdState } from '@/object-record/record-index/states/recordIndexRoadmapFieldBlockedByIdState';
 import { recordIndexRoadmapFieldColorIdState } from '@/object-record/record-index/states/recordIndexRoadmapFieldColorIdState';
+import { recordIndexRoadmapFieldEndIdState } from '@/object-record/record-index/states/recordIndexRoadmapFieldEndIdState';
 import { recordIndexRoadmapFieldLabelIdState } from '@/object-record/record-index/states/recordIndexRoadmapFieldLabelIdState';
+import { recordIndexRoadmapFieldPlannedEndIdState } from '@/object-record/record-index/states/recordIndexRoadmapFieldPlannedEndIdState';
+import { recordIndexRoadmapFieldPlannedStartIdState } from '@/object-record/record-index/states/recordIndexRoadmapFieldPlannedStartIdState';
+import { recordIndexRoadmapFieldStartIdState } from '@/object-record/record-index/states/recordIndexRoadmapFieldStartIdState';
+import { recordIndexRoadmapFieldStatusIdState } from '@/object-record/record-index/states/recordIndexRoadmapFieldStatusIdState';
 import { recordIndexRoadmapShowTodayState } from '@/object-record/record-index/states/recordIndexRoadmapShowTodayState';
 import { recordIndexRoadmapShowWeekendsState } from '@/object-record/record-index/states/recordIndexRoadmapShowWeekendsState';
 import { recordRoadmapViewportStartComponentState } from '@/object-record/record-roadmap/states/recordRoadmapViewportStartComponentState';
 import { recordRoadmapZoomComponentState } from '@/object-record/record-roadmap/states/recordRoadmapZoomComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { computeRoadmapBarLayouts } from '@/object-record/record-roadmap/utils/computeRoadmapBarLayouts';
 import { computeRoadmapViewportDays } from '@/object-record/record-roadmap/utils/computeRoadmapViewportDays';
+import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { parseRoadmapDateValue } from '@/object-record/record-roadmap/utils/computeRoadmapBarPosition';
 import { computeNewPositionOfDraggedRecord } from '@/object-record/utils/computeNewPositionOfDraggedRecord';
 
@@ -119,11 +132,29 @@ export const RecordRoadmapTimeline = () => {
   const recordIndexRoadmapShowWeekends = useAtomStateValue(
     recordIndexRoadmapShowWeekendsState,
   );
+  const recordIndexRoadmapFieldStartId = useAtomStateValue(
+    recordIndexRoadmapFieldStartIdState,
+  );
+  const recordIndexRoadmapFieldEndId = useAtomStateValue(
+    recordIndexRoadmapFieldEndIdState,
+  );
   const recordIndexRoadmapFieldLabelId = useAtomStateValue(
     recordIndexRoadmapFieldLabelIdState,
   );
   const recordIndexRoadmapFieldColorId = useAtomStateValue(
     recordIndexRoadmapFieldColorIdState,
+  );
+  const recordIndexRoadmapFieldPlannedStartId = useAtomStateValue(
+    recordIndexRoadmapFieldPlannedStartIdState,
+  );
+  const recordIndexRoadmapFieldPlannedEndId = useAtomStateValue(
+    recordIndexRoadmapFieldPlannedEndIdState,
+  );
+  const recordIndexRoadmapFieldStatusId = useAtomStateValue(
+    recordIndexRoadmapFieldStatusIdState,
+  );
+  const recordIndexRoadmapFieldBlockedById = useAtomStateValue(
+    recordIndexRoadmapFieldBlockedByIdState,
   );
 
   const dayWidthPx = ROADMAP_DAY_WIDTH_BY_ZOOM[recordRoadmapZoom];
@@ -199,6 +230,34 @@ export const RecordRoadmapTimeline = () => {
     );
   }, [recordIndexRoadmapFieldColorId, objectMetadataItem]);
 
+  const plannedStartFieldMetadataItem = useMemo(() => {
+    if (!isDefined(recordIndexRoadmapFieldPlannedStartId)) return undefined;
+    return objectMetadataItem.fields.find(
+      (field) => field.id === recordIndexRoadmapFieldPlannedStartId,
+    );
+  }, [recordIndexRoadmapFieldPlannedStartId, objectMetadataItem]);
+
+  const plannedEndFieldMetadataItem = useMemo(() => {
+    if (!isDefined(recordIndexRoadmapFieldPlannedEndId)) return undefined;
+    return objectMetadataItem.fields.find(
+      (field) => field.id === recordIndexRoadmapFieldPlannedEndId,
+    );
+  }, [recordIndexRoadmapFieldPlannedEndId, objectMetadataItem]);
+
+  const statusFieldMetadataItem = useMemo(() => {
+    if (!isDefined(recordIndexRoadmapFieldStatusId)) return undefined;
+    return objectMetadataItem.fields.find(
+      (field) => field.id === recordIndexRoadmapFieldStatusId,
+    );
+  }, [recordIndexRoadmapFieldStatusId, objectMetadataItem]);
+
+  const blockedByFieldMetadataItem = useMemo(() => {
+    if (!isDefined(recordIndexRoadmapFieldBlockedById)) return undefined;
+    return objectMetadataItem.fields.find(
+      (field) => field.id === recordIndexRoadmapFieldBlockedById,
+    );
+  }, [recordIndexRoadmapFieldBlockedById, objectMetadataItem]);
+
   const placedRecords = useMemo(() => {
     if (
       !isDefined(startFieldMetadataItem) ||
@@ -211,8 +270,22 @@ export const RecordRoadmapTimeline = () => {
       .map((record) => {
         const startValue = record[startFieldMetadataItem.name];
         const endValue = record[endFieldMetadataItem.name];
-        const startDate = parseRoadmapDateValue(startValue);
-        const endDate = parseRoadmapDateValue(endValue);
+        // When the configured `start`/`end` fields are empty (e.g.
+        // milestone not started yet so actualStart/actualEnd are null),
+        // fall back to plannedStart/plannedEnd so the bar still renders.
+        // No-op for views that don't configure plannedStart/plannedEnd.
+        let startDate = parseRoadmapDateValue(startValue);
+        if (startDate === null && plannedStartFieldMetadataItem !== undefined) {
+          startDate = parseRoadmapDateValue(
+            record[plannedStartFieldMetadataItem.name],
+          );
+        }
+        let endDate = parseRoadmapDateValue(endValue);
+        if (endDate === null && plannedEndFieldMetadataItem !== undefined) {
+          endDate = parseRoadmapDateValue(
+            record[plannedEndFieldMetadataItem.name],
+          );
+        }
         if (startDate === null || endDate === null) {
           return null;
         }
@@ -229,7 +302,43 @@ export const RecordRoadmapTimeline = () => {
               null;
           }
         }
-        return { record, startDate, endDate, label, color };
+        const plannedStartDate =
+          plannedStartFieldMetadataItem !== undefined
+            ? parseRoadmapDateValue(
+                record[plannedStartFieldMetadataItem.name],
+              )
+            : null;
+        const plannedEndDate =
+          plannedEndFieldMetadataItem !== undefined
+            ? parseRoadmapDateValue(
+                record[plannedEndFieldMetadataItem.name],
+              )
+            : null;
+        const status =
+          statusFieldMetadataItem !== undefined
+            ? (() => {
+                const raw = record[statusFieldMetadataItem.name];
+                return typeof raw === 'string' && raw.length > 0 ? raw : null;
+              })()
+            : null;
+        const blockedBy =
+          blockedByFieldMetadataItem !== undefined
+            ? (() => {
+                const raw = record[blockedByFieldMetadataItem.name];
+                return typeof raw === 'string' && raw.length > 0 ? raw : null;
+              })()
+            : null;
+        return {
+          record,
+          startDate,
+          endDate,
+          label,
+          color,
+          plannedStartDate,
+          plannedEndDate,
+          status,
+          blockedBy,
+        };
       })
       .filter(isDefined);
   }, [
@@ -238,10 +347,86 @@ export const RecordRoadmapTimeline = () => {
     endFieldMetadataItem,
     labelFieldMetadataItem,
     colorFieldMetadataItem,
+    plannedStartFieldMetadataItem,
+    plannedEndFieldMetadataItem,
+    statusFieldMetadataItem,
+    blockedByFieldMetadataItem,
   ]);
 
   const { swimlanes, groupFieldName, supportsCrossSwimlaneDrop } =
     useRecordRoadmapSwimlanes({ placedRecords });
+
+  const { currentView } = useGetCurrentViewOnly();
+
+  // Visible view-fields define the columns the name column renders next to
+  // each milestone label. Skip the configured `start`/`end` (rendered as the
+  // bar itself) and the `label` (rendered as the row title) — those are
+  // already represented elsewhere on the timeline.
+  const nameColumnFields = useMemo(() => {
+    if (!currentView?.viewFields) return [];
+    const labelOrAnchorIds = new Set(
+      [
+        recordIndexRoadmapFieldStartId,
+        recordIndexRoadmapFieldEndId,
+        recordIndexRoadmapFieldLabelId,
+        labelFieldMetadataItem?.id,
+      ].filter(isDefined),
+    );
+    return currentView.viewFields
+      .filter((viewField) => viewField.isVisible)
+      .filter((viewField) => !labelOrAnchorIds.has(viewField.fieldMetadataId))
+      .slice()
+      .sort((a, b) => a.position - b.position)
+      .map((viewField) =>
+        objectMetadataItem.fields.find(
+          (field) => field.id === viewField.fieldMetadataId,
+        ),
+      )
+      .filter(isDefined);
+  }, [
+    currentView?.viewFields,
+    recordIndexRoadmapFieldStartId,
+    recordIndexRoadmapFieldEndId,
+    recordIndexRoadmapFieldLabelId,
+    labelFieldMetadataItem?.id,
+    objectMetadataItem.fields,
+  ]);
+
+  // Bar layouts indexed by recordId. Mirrors the deterministic vertical
+  // stacking the swimlane CSS uses, so the SVG connector overlay aligns
+  // pixel-for-pixel with the bars without DOM measurement.
+  const barLayouts = useMemo(
+    () =>
+      computeRoadmapBarLayouts({
+        swimlanes,
+        viewportStart: renderedDaysStart,
+        dayWidthPx,
+      }),
+    [swimlanes, renderedDaysStart, dayWidthPx],
+  );
+
+  // Dependencies are only meaningful when the underlying object is
+  // OpportunityMilestone (where the schema lives). The hook is gated by
+  // `enabled` so other objects don't pay for an extra fetch.
+  const isMilestoneObject =
+    objectMetadataItem.nameSingular === 'opportunityMilestone';
+  const milestoneRecordIds = useMemo(
+    () => placedRecords.map(({ record }) => record.id),
+    [placedRecords],
+  );
+  const { dependencies } = useRecordRoadmapDependencies({
+    recordIds: milestoneRecordIds,
+    enabled: isMilestoneObject,
+  });
+
+  const swimlaneStackHeightPx = useMemo(() => {
+    let total = 0;
+    for (const swimlane of swimlanes) {
+      total += 28 + swimlane.records.length * 40;
+    }
+    return total;
+  }, [swimlanes]);
+  const canvasHeightPx = 48 + swimlaneStackHeightPx;
 
   // Keep scrollLeft stable whenever `daysBefore` grows (new days prepended to
   // the canvas push existing content right by the delta's pixel equivalent).
@@ -482,11 +667,16 @@ export const RecordRoadmapTimeline = () => {
       <StyledScrollRow>
         <StyledNameColumnScroller
           ref={nameColumnScrollerRef}
-          style={{ width: ROADMAP_NAME_COLUMN_WIDTH }}
+          style={{
+            width:
+              ROADMAP_NAME_COLUMN_WIDTH +
+              nameColumnFields.length * ROADMAP_NAME_COLUMN_FIELD_WIDTH,
+          }}
         >
           <RecordRoadmapNameColumn
             swimlanes={swimlanes}
             onOpenRecord={handleOpenRecord}
+            extraFields={nameColumnFields}
           />
         </StyledNameColumnScroller>
         <StyledTimelineCanvas ref={canvasRef} onScroll={handleCanvasScroll}>
@@ -513,13 +703,27 @@ export const RecordRoadmapTimeline = () => {
                 }
               >
                 {swimlane.records.map(
-                  ({ record, startDate, endDate, label, color }) => (
+                  ({
+                    record,
+                    startDate,
+                    endDate,
+                    label,
+                    color,
+                    plannedStartDate,
+                    plannedEndDate,
+                    status,
+                    blockedBy,
+                  }) => (
                     <RecordRoadmapRow
                       key={record.id}
                       recordId={record.id}
                       label={label}
                       startDate={startDate}
                       endDate={endDate}
+                      plannedStartDate={plannedStartDate}
+                      plannedEndDate={plannedEndDate}
+                      status={status}
+                      blockedBy={blockedBy}
                       viewportStart={renderedDaysStart}
                       dayWidthPx={dayWidthPx}
                       color={color}
@@ -536,6 +740,14 @@ export const RecordRoadmapTimeline = () => {
               <RecordRoadmapTodayLine
                 viewportStart={renderedDaysStart}
                 dayWidthPx={dayWidthPx}
+              />
+            )}
+            {isMilestoneObject && (
+              <RecordRoadmapDependencyConnectors
+                dependencies={dependencies}
+                barLayouts={barLayouts}
+                canvasWidthPx={canvasWidthPx}
+                canvasHeightPx={canvasHeightPx}
               />
             )}
           </StyledTimelineInner>

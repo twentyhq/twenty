@@ -12,6 +12,8 @@ export { STANDARD_MESSAGE_FOLDER_PAGE_LAYOUT_CONFIG } from './standard-message-f
 export { STANDARD_MESSAGE_PARTICIPANT_PAGE_LAYOUT_CONFIG } from './standard-message-participant-page-layout.config';
 export { STANDARD_MESSAGE_THREAD_PAGE_LAYOUT_CONFIG } from './standard-message-thread-page-layout.config';
 export { STANDARD_NOTE_PAGE_LAYOUT_CONFIG } from './standard-note-page-layout.config';
+export { STANDARD_OPPORTUNITY_MILESTONE_DEPENDENCY_PAGE_LAYOUT_CONFIG } from './standard-opportunity-milestone-dependency-page-layout.config';
+export { STANDARD_OPPORTUNITY_MILESTONE_PAGE_LAYOUT_CONFIG } from './standard-opportunity-milestone-page-layout.config';
 export { STANDARD_OPPORTUNITY_PAGE_LAYOUT_CONFIG } from './standard-opportunity-page-layout.config';
 export {
   type StandardPageLayoutConfig,

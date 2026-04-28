@@ -41,8 +41,24 @@ export const ObjectOptionsDropdownContent = () => {
       return <ObjectOptionsDropdownRoadmapFieldPickerContent role="start" />;
     case 'roadmapEndField':
       return <ObjectOptionsDropdownRoadmapFieldPickerContent role="end" />;
+    case 'roadmapGroupField':
+      return <ObjectOptionsDropdownRoadmapFieldPickerContent role="group" />;
     case 'roadmapColorField':
       return <ObjectOptionsDropdownRoadmapFieldPickerContent role="color" />;
+    case 'roadmapPlannedStartField':
+      return (
+        <ObjectOptionsDropdownRoadmapFieldPickerContent role="plannedStart" />
+      );
+    case 'roadmapPlannedEndField':
+      return (
+        <ObjectOptionsDropdownRoadmapFieldPickerContent role="plannedEnd" />
+      );
+    case 'roadmapStatusField':
+      return <ObjectOptionsDropdownRoadmapFieldPickerContent role="status" />;
+    case 'roadmapBlockedByField':
+      return (
+        <ObjectOptionsDropdownRoadmapFieldPickerContent role="blockedBy" />
+      );
     case 'visibility':
       return <ObjectOptionsDropdownVisibilityContent />;
     default:

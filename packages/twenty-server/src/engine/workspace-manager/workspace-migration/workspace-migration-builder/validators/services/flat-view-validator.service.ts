@@ -178,6 +178,65 @@ const collectRoadmapValidationErrors = ({
     }
   }
 
+  if (isDefined(flatView.roadmapFieldPlannedStartUniversalIdentifier)) {
+    const plannedStartField = findFlatEntityByUniversalIdentifier({
+      universalIdentifier:
+        flatView.roadmapFieldPlannedStartUniversalIdentifier,
+      flatEntityMaps: flatFieldMetadataMaps,
+    });
+    if (!isDefined(plannedStartField)) {
+      errors.push({
+        code: ViewExceptionCode.INVALID_VIEW_DATA,
+        message: t`Roadmap planned start field metadata not found`,
+        userFriendlyMessage: msg`Roadmap planned start field metadata not found`,
+      });
+    } else if (!isFieldMetadataDateKind(plannedStartField.type)) {
+      errors.push({
+        code: ViewExceptionCode.INVALID_VIEW_DATA,
+        message: t`Roadmap planned start field must be a DATE or DATE_TIME field`,
+        userFriendlyMessage: msg`Roadmap planned start field must be a date field`,
+      });
+    }
+  }
+
+  if (isDefined(flatView.roadmapFieldPlannedEndUniversalIdentifier)) {
+    const plannedEndField = findFlatEntityByUniversalIdentifier({
+      universalIdentifier: flatView.roadmapFieldPlannedEndUniversalIdentifier,
+      flatEntityMaps: flatFieldMetadataMaps,
+    });
+    if (!isDefined(plannedEndField)) {
+      errors.push({
+        code: ViewExceptionCode.INVALID_VIEW_DATA,
+        message: t`Roadmap planned end field metadata not found`,
+        userFriendlyMessage: msg`Roadmap planned end field metadata not found`,
+      });
+    } else if (!isFieldMetadataDateKind(plannedEndField.type)) {
+      errors.push({
+        code: ViewExceptionCode.INVALID_VIEW_DATA,
+        message: t`Roadmap planned end field must be a DATE or DATE_TIME field`,
+        userFriendlyMessage: msg`Roadmap planned end field must be a date field`,
+      });
+    }
+  }
+
+  validateOptionalField(
+    flatView.roadmapFieldStatusUniversalIdentifier,
+    [FieldMetadataType.SELECT],
+    t`Roadmap status field metadata not found`,
+    msg`Roadmap status field metadata not found`,
+    t`Roadmap status field must be a SELECT field`,
+    msg`Roadmap status field must be a select field`,
+  );
+
+  validateOptionalField(
+    flatView.roadmapFieldBlockedByUniversalIdentifier,
+    [FieldMetadataType.SELECT],
+    t`Roadmap blocked-by field metadata not found`,
+    msg`Roadmap blocked-by field metadata not found`,
+    t`Roadmap blocked-by field must be a SELECT field`,
+    msg`Roadmap blocked-by field must be a select field`,
+  );
+
   return errors;
 };
 
@@ -322,7 +381,14 @@ export class FlatViewValidatorService {
         flatEntityUpdate.roadmapFieldEndUniversalIdentifier !== undefined ||
         flatEntityUpdate.roadmapFieldGroupUniversalIdentifier !== undefined ||
         flatEntityUpdate.roadmapFieldColorUniversalIdentifier !== undefined ||
-        flatEntityUpdate.roadmapFieldLabelUniversalIdentifier !== undefined);
+        flatEntityUpdate.roadmapFieldLabelUniversalIdentifier !== undefined ||
+        flatEntityUpdate.roadmapFieldPlannedStartUniversalIdentifier !==
+          undefined ||
+        flatEntityUpdate.roadmapFieldPlannedEndUniversalIdentifier !==
+          undefined ||
+        flatEntityUpdate.roadmapFieldStatusUniversalIdentifier !== undefined ||
+        flatEntityUpdate.roadmapFieldBlockedByUniversalIdentifier !==
+          undefined);
 
     if (viewBecomesRoadmap || roadmapFieldChanged) {
       validationResult.errors.push(

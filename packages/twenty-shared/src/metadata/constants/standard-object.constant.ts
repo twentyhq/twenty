@@ -47,6 +47,9 @@ export const STANDARD_OBJECTS = {
       targetOpportunity: {
         universalIdentifier: '20202020-7374-499d-bea3-9354890755b5',
       },
+      targetOpportunityMilestone: {
+        universalIdentifier: '20202020-7f10-4f10-8a10-1aa0b1ca7a10',
+      },
       targetDashboard: {
         universalIdentifier: '20202020-5324-43f3-9dbf-1a33e7de0ce6',
       },
@@ -78,6 +81,9 @@ export const STANDARD_OBJECTS = {
       },
       opportunityIdIndex: {
         universalIdentifier: '8cc162d1-c127-4981-878d-f78622f8f12d',
+      },
+      opportunityMilestoneIdIndex: {
+        universalIdentifier: '20202020-7f11-4f11-8a11-1aa0b1ca7a11',
       },
       dashboardIdIndex: {
         universalIdentifier: 'c10eba2d-ff1a-4eab-9285-50481c12a003',
@@ -1927,6 +1933,9 @@ export const STANDARD_OBJECTS = {
       noteTargets: {
         universalIdentifier: '20202020-dd3f-42d5-a382-db58aabf43d3',
       },
+      milestones: {
+        universalIdentifier: '20202020-7f00-4dc0-8a00-1aa0b1ca7000',
+      },
       attachments: {
         universalIdentifier: '20202020-87c7-4118-83d6-2f4031005209',
       },
@@ -2070,6 +2079,196 @@ export const STANDARD_OBJECTS = {
           },
           timelineActivities: {
             universalIdentifier: '20202020-af03-4a03-8a03-0aa0b1ca3210',
+          },
+        },
+      },
+    },
+  },
+  opportunityMilestone: {
+    universalIdentifier: '20202020-9550-49de-b2b3-883999db8939',
+    fields: {
+      id: { universalIdentifier: '20202020-7f01-4dc1-8a01-1aa0b1ca7100' },
+      createdAt: {
+        universalIdentifier: '20202020-7f01-4dc1-8a01-1aa0b1ca7101',
+      },
+      updatedAt: {
+        universalIdentifier: '20202020-7f01-4dc1-8a01-1aa0b1ca7102',
+      },
+      deletedAt: {
+        universalIdentifier: '20202020-7f01-4dc1-8a01-1aa0b1ca7103',
+      },
+      name: { universalIdentifier: '20202020-7f01-4dc1-8a01-1aa0b1ca7104' },
+      description: {
+        universalIdentifier: '20202020-7f01-4dc1-8a01-1aa0b1ca7105',
+      },
+      plannedStartDate: {
+        universalIdentifier: '20202020-7f01-4dc1-8a01-1aa0b1ca7106',
+      },
+      plannedEndDate: {
+        universalIdentifier: '20202020-7f01-4dc1-8a01-1aa0b1ca7107',
+      },
+      actualStartDate: {
+        universalIdentifier: '20202020-7f01-4dc1-8a01-1aa0b1ca7108',
+      },
+      actualEndDate: {
+        universalIdentifier: '20202020-7f01-4dc1-8a01-1aa0b1ca7109',
+      },
+      status: { universalIdentifier: '20202020-7f01-4dc1-8a01-1aa0b1ca710a' },
+      blockedBy: {
+        universalIdentifier: '20202020-7f01-4dc1-8a01-1aa0b1ca710b',
+      },
+      position: {
+        universalIdentifier: '20202020-7f01-4dc1-8a01-1aa0b1ca710c',
+      },
+      createdBy: {
+        universalIdentifier: '20202020-7f01-4dc1-8a01-1aa0b1ca710d',
+      },
+      updatedBy: {
+        universalIdentifier: '20202020-7f01-4dc1-8a01-1aa0b1ca710e',
+      },
+      opportunity: {
+        universalIdentifier: '20202020-7f01-4dc1-8a01-1aa0b1ca710f',
+      },
+      assignee: {
+        universalIdentifier: '20202020-7f14-4f14-8a14-1aa0b1ca7a14',
+      },
+      attachments: {
+        universalIdentifier: '20202020-7f15-4f15-8a15-1aa0b1ca7a15',
+      },
+      timelineActivities: {
+        universalIdentifier: '20202020-7f16-4f16-8a16-1aa0b1ca7a16',
+      },
+      dependsOnEdges: {
+        universalIdentifier: '20202020-7f18-4f18-8a18-1aa0b1ca7a18',
+      },
+      requiredByEdges: {
+        universalIdentifier: '20202020-7f19-4f19-8a19-1aa0b1ca7a19',
+      },
+      searchVector: {
+        universalIdentifier: '20202020-7f01-4dc1-8a01-1aa0b1ca7110',
+      },
+    },
+    indexes: {
+      opportunityIdIndex: {
+        universalIdentifier: '20202020-7f02-4dc2-8a02-2aa0b1ca7201',
+      },
+      statusIndex: {
+        universalIdentifier: '20202020-7f02-4dc2-8a02-2aa0b1ca7202',
+      },
+      searchVectorGinIndex: {
+        universalIdentifier: '20202020-7f02-4dc2-8a02-2aa0b1ca7203',
+      },
+    },
+    views: {
+      allOpportunityMilestones: {
+        universalIdentifier: '20202020-a005-4a05-8a05-0aa0b1ca1ba0',
+        viewFields: {
+          name: {
+            universalIdentifier: '20202020-af05-4a05-8a05-0aa0b1ca7301',
+          },
+          status: {
+            universalIdentifier: '20202020-af05-4a05-8a05-0aa0b1ca7302',
+          },
+          opportunity: {
+            universalIdentifier: '20202020-af05-4a05-8a05-0aa0b1ca7303',
+          },
+          plannedStartDate: {
+            universalIdentifier: '20202020-af05-4a05-8a05-0aa0b1ca7304',
+          },
+          plannedEndDate: {
+            universalIdentifier: '20202020-af05-4a05-8a05-0aa0b1ca7305',
+          },
+          actualEndDate: {
+            universalIdentifier: '20202020-af05-4a05-8a05-0aa0b1ca7306',
+          },
+          blockedBy: {
+            universalIdentifier: '20202020-af05-4a05-8a05-0aa0b1ca7307',
+          },
+        },
+      },
+      roadmapByOpportunity: {
+        universalIdentifier: '20202020-a006-4a06-8a06-0aa0b1ca1bb0',
+        viewFields: {
+          name: {
+            universalIdentifier: '20202020-af06-4a06-8a06-0aa0b1ca7401',
+          },
+          status: {
+            universalIdentifier: '20202020-af06-4a06-8a06-0aa0b1ca7402',
+          },
+          opportunity: {
+            universalIdentifier: '20202020-af06-4a06-8a06-0aa0b1ca7403',
+          },
+          plannedEndDate: {
+            universalIdentifier: '20202020-af06-4a06-8a06-0aa0b1ca7404',
+          },
+          actualEndDate: {
+            universalIdentifier: '20202020-af06-4a06-8a06-0aa0b1ca7405',
+          },
+          blockedBy: {
+            universalIdentifier: '20202020-af06-4a06-8a06-0aa0b1ca7406',
+          },
+        },
+      },
+    },
+  },
+  opportunityMilestoneDependency: {
+    universalIdentifier: '20202020-9551-49df-b2b4-883999db893a',
+    fields: {
+      id: { universalIdentifier: '20202020-7f30-4dc0-8a30-1aa0b1ca7300' },
+      createdAt: {
+        universalIdentifier: '20202020-7f30-4dc0-8a30-1aa0b1ca7301',
+      },
+      updatedAt: {
+        universalIdentifier: '20202020-7f30-4dc0-8a30-1aa0b1ca7302',
+      },
+      deletedAt: {
+        universalIdentifier: '20202020-7f30-4dc0-8a30-1aa0b1ca7303',
+      },
+      description: {
+        universalIdentifier: '20202020-7f30-4dc0-8a30-1aa0b1ca7304',
+      },
+      position: {
+        universalIdentifier: '20202020-7f30-4dc0-8a30-1aa0b1ca7305',
+      },
+      createdBy: {
+        universalIdentifier: '20202020-7f30-4dc0-8a30-1aa0b1ca7306',
+      },
+      updatedBy: {
+        universalIdentifier: '20202020-7f30-4dc0-8a30-1aa0b1ca7307',
+      },
+      dependentMilestone: {
+        universalIdentifier: '20202020-7f30-4dc0-8a30-1aa0b1ca7308',
+      },
+      requiredMilestone: {
+        universalIdentifier: '20202020-7f30-4dc0-8a30-1aa0b1ca7309',
+      },
+      searchVector: {
+        universalIdentifier: '20202020-7f30-4dc0-8a30-1aa0b1ca730a',
+      },
+    },
+    indexes: {
+      dependentMilestoneIdIndex: {
+        universalIdentifier: '20202020-7f31-4dc1-8a31-1aa0b1ca7401',
+      },
+      requiredMilestoneIdIndex: {
+        universalIdentifier: '20202020-7f31-4dc1-8a31-1aa0b1ca7402',
+      },
+    },
+    views: {
+      allOpportunityMilestoneDependencies: {
+        universalIdentifier: '20202020-a007-4a07-8a07-0aa0b1ca1bc0',
+        viewFields: {
+          dependentMilestone: {
+            universalIdentifier: '20202020-af07-4a07-8a07-0aa0b1ca7501',
+          },
+          requiredMilestone: {
+            universalIdentifier: '20202020-af07-4a07-8a07-0aa0b1ca7502',
+          },
+          description: {
+            universalIdentifier: '20202020-af07-4a07-8a07-0aa0b1ca7503',
+          },
+          createdAt: {
+            universalIdentifier: '20202020-af07-4a07-8a07-0aa0b1ca7504',
           },
         },
       },
@@ -2572,6 +2771,9 @@ export const STANDARD_OBJECTS = {
       targetOpportunity: {
         universalIdentifier: '20202020-7664-4a35-a3df-580d389fd527',
       },
+      targetOpportunityMilestone: {
+        universalIdentifier: '20202020-7f12-4f12-8a12-1aa0b1ca7a12',
+      },
       targetTask: {
         universalIdentifier: '20202020-b2f5-415c-9135-a31dfe49501b',
       },
@@ -2627,6 +2829,9 @@ export const STANDARD_OBJECTS = {
       },
       opportunityIdIndex: {
         universalIdentifier: '9294f9a3-0225-4e7b-9f6a-23d4e25d6d24',
+      },
+      opportunityMilestoneIdIndex: {
+        universalIdentifier: '20202020-7f17-4f17-8a17-1aa0b1ca7a17',
       },
       noteIdIndex: {
         universalIdentifier: '995db1d8-0d3e-40f7-b0eb-5e6897bc9966',
@@ -3132,6 +3337,9 @@ export const STANDARD_OBJECTS = {
       },
       assignedTasks: {
         universalIdentifier: '20202020-61dc-4a1c-99e8-38ebf8d2bbeb',
+      },
+      assignedMilestones: {
+        universalIdentifier: '20202020-7f13-4f13-8a13-1aa0b1ca7a13',
       },
       ownedOpportunities: {
         universalIdentifier: '20202020-9e4d-4b3a-8c1f-6d7e8f9a0b1c',

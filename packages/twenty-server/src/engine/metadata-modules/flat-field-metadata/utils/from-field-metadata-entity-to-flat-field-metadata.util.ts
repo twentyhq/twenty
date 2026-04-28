@@ -111,6 +111,14 @@ export const fromFieldMetadataEntityToFlatFieldMetadata = ({
       fieldMetadataEntity.roadmapColorViews?.map(({ id }) => id) ?? [],
     roadmapLabelViewIds:
       fieldMetadataEntity.roadmapLabelViews?.map(({ id }) => id) ?? [],
+    roadmapPlannedStartViewIds:
+      fieldMetadataEntity.roadmapPlannedStartViews?.map(({ id }) => id) ?? [],
+    roadmapPlannedEndViewIds:
+      fieldMetadataEntity.roadmapPlannedEndViews?.map(({ id }) => id) ?? [],
+    roadmapStatusViewIds:
+      fieldMetadataEntity.roadmapStatusViews?.map(({ id }) => id) ?? [],
+    roadmapBlockedByViewIds:
+      fieldMetadataEntity.roadmapBlockedByViews?.map(({ id }) => id) ?? [],
     mainGroupByFieldMetadataViewIds:
       fieldMetadataEntity.mainGroupByFieldMetadataViews?.map(({ id }) => id) ??
       [],
@@ -153,6 +161,22 @@ export const fromFieldMetadataEntityToFlatFieldMetadata = ({
       ) ?? [],
     roadmapLabelViewUniversalIdentifiers:
       fieldMetadataEntity.roadmapLabelViews?.map(
+        ({ universalIdentifier }) => universalIdentifier,
+      ) ?? [],
+    roadmapPlannedStartViewUniversalIdentifiers:
+      fieldMetadataEntity.roadmapPlannedStartViews?.map(
+        ({ universalIdentifier }) => universalIdentifier,
+      ) ?? [],
+    roadmapPlannedEndViewUniversalIdentifiers:
+      fieldMetadataEntity.roadmapPlannedEndViews?.map(
+        ({ universalIdentifier }) => universalIdentifier,
+      ) ?? [],
+    roadmapStatusViewUniversalIdentifiers:
+      fieldMetadataEntity.roadmapStatusViews?.map(
+        ({ universalIdentifier }) => universalIdentifier,
+      ) ?? [],
+    roadmapBlockedByViewUniversalIdentifiers:
+      fieldMetadataEntity.roadmapBlockedByViews?.map(
         ({ universalIdentifier }) => universalIdentifier,
       ) ?? [],
     mainGroupByFieldMetadataViewUniversalIdentifiers:

@@ -52,6 +52,10 @@ export const fromCreateViewInputToFlatViewToCreate = ({
     roadmapFieldGroupUniversalIdentifier,
     roadmapFieldColorUniversalIdentifier,
     roadmapFieldLabelUniversalIdentifier,
+    roadmapFieldPlannedStartUniversalIdentifier,
+    roadmapFieldPlannedEndUniversalIdentifier,
+    roadmapFieldStatusUniversalIdentifier,
+    roadmapFieldBlockedByUniversalIdentifier,
   } = resolveEntityRelationUniversalIdentifiers({
     metadataName: 'view',
     foreignKeyValues: {
@@ -65,6 +69,10 @@ export const fromCreateViewInputToFlatViewToCreate = ({
       roadmapFieldGroupId: createViewInput.roadmapFieldGroupId,
       roadmapFieldColorId: createViewInput.roadmapFieldColorId,
       roadmapFieldLabelId: createViewInput.roadmapFieldLabelId,
+      roadmapFieldPlannedStartId: createViewInput.roadmapFieldPlannedStartId,
+      roadmapFieldPlannedEndId: createViewInput.roadmapFieldPlannedEndId,
+      roadmapFieldStatusId: createViewInput.roadmapFieldStatusId,
+      roadmapFieldBlockedById: createViewInput.roadmapFieldBlockedById,
     },
     flatEntityMaps: { flatObjectMetadataMaps, flatFieldMetadataMaps },
   });
@@ -91,6 +99,11 @@ export const fromCreateViewInputToFlatViewToCreate = ({
     roadmapFieldGroupUniversalIdentifier,
     roadmapFieldColorUniversalIdentifier,
     roadmapFieldLabelUniversalIdentifier,
+    roadmapFieldPlannedStartUniversalIdentifier,
+    roadmapFieldPlannedEndUniversalIdentifier,
+    roadmapFieldStatusUniversalIdentifier,
+    roadmapFieldBlockedByUniversalIdentifier,
+    roadmapShowDeviation: createViewInput.roadmapShowDeviation ?? false,
     icon: createViewInput.icon,
     isCompact: createViewInput.isCompact ?? false,
     shouldHideEmptyGroups: createViewInput.shouldHideEmptyGroups ?? false,

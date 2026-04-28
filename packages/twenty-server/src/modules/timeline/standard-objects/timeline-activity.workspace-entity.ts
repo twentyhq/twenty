@@ -7,6 +7,7 @@ import { type EntityRelation } from 'src/engine/workspace-manager/workspace-migr
 import { type CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
 import { type DashboardWorkspaceEntity } from 'src/modules/dashboard/standard-objects/dashboard.workspace-entity';
 import { type NoteWorkspaceEntity } from 'src/modules/note/standard-objects/note.workspace-entity';
+import { type OpportunityMilestoneWorkspaceEntity } from 'src/modules/opportunity/standard-objects/opportunity-milestone.workspace-entity';
 import { type OpportunityWorkspaceEntity } from 'src/modules/opportunity/standard-objects/opportunity.workspace-entity';
 import { type PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 import { type TaskWorkspaceEntity } from 'src/modules/task/standard-objects/task.workspace-entity';
@@ -36,6 +37,8 @@ export class TimelineActivityWorkspaceEntity extends BaseWorkspaceEntity {
   targetCompanyId: string | null;
   targetOpportunity: EntityRelation<OpportunityWorkspaceEntity> | null;
   targetOpportunityId: string | null;
+  targetOpportunityMilestone: EntityRelation<OpportunityMilestoneWorkspaceEntity> | null;
+  targetOpportunityMilestoneId: string | null;
   targetNote: EntityRelation<NoteWorkspaceEntity> | null;
   targetNoteId: string | null;
   targetTask: EntityRelation<TaskWorkspaceEntity> | null;

@@ -36,9 +36,14 @@ export const VIEW_FRAGMENT = gql`
     roadmapFieldGroupId
     roadmapFieldColorId
     roadmapFieldLabelId
+    roadmapFieldPlannedStartId
+    roadmapFieldPlannedEndId
+    roadmapFieldStatusId
+    roadmapFieldBlockedById
     roadmapDefaultZoom
     roadmapShowToday
     roadmapShowWeekends
+    roadmapShowDeviation
     visibility
     createdByUserWorkspaceId
     viewFields {

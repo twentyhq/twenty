@@ -119,6 +119,18 @@ export const ALL_MANY_TO_ONE_METADATA_FOREIGN_KEY = {
     roadmapFieldLabel: {
       foreignKey: 'roadmapFieldLabelId',
     },
+    roadmapFieldPlannedStart: {
+      foreignKey: 'roadmapFieldPlannedStartId',
+    },
+    roadmapFieldPlannedEnd: {
+      foreignKey: 'roadmapFieldPlannedEndId',
+    },
+    roadmapFieldStatus: {
+      foreignKey: 'roadmapFieldStatusId',
+    },
+    roadmapFieldBlockedBy: {
+      foreignKey: 'roadmapFieldBlockedById',
+    },
   },
   viewField: {
     fieldMetadata: {

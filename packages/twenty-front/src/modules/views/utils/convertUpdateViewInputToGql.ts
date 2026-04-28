@@ -39,5 +39,44 @@ export const convertUpdateViewInputToGql = (
     ...(view.mainGroupByFieldMetadataId !== undefined && {
       mainGroupByFieldMetadataId: view.mainGroupByFieldMetadataId,
     }),
+    ...(view.roadmapFieldStartId !== undefined && {
+      roadmapFieldStartId: view.roadmapFieldStartId,
+    }),
+    ...(view.roadmapFieldEndId !== undefined && {
+      roadmapFieldEndId: view.roadmapFieldEndId,
+    }),
+    ...(view.roadmapFieldGroupId !== undefined && {
+      roadmapFieldGroupId: view.roadmapFieldGroupId,
+    }),
+    ...(view.roadmapFieldColorId !== undefined && {
+      roadmapFieldColorId: view.roadmapFieldColorId,
+    }),
+    ...(view.roadmapFieldLabelId !== undefined && {
+      roadmapFieldLabelId: view.roadmapFieldLabelId,
+    }),
+    ...(view.roadmapFieldPlannedStartId !== undefined && {
+      roadmapFieldPlannedStartId: view.roadmapFieldPlannedStartId,
+    }),
+    ...(view.roadmapFieldPlannedEndId !== undefined && {
+      roadmapFieldPlannedEndId: view.roadmapFieldPlannedEndId,
+    }),
+    ...(view.roadmapFieldStatusId !== undefined && {
+      roadmapFieldStatusId: view.roadmapFieldStatusId,
+    }),
+    ...(view.roadmapFieldBlockedById !== undefined && {
+      roadmapFieldBlockedById: view.roadmapFieldBlockedById,
+    }),
+    ...(isDefined(view.roadmapDefaultZoom) && {
+      roadmapDefaultZoom: view.roadmapDefaultZoom,
+    }),
+    ...(isDefined(view.roadmapShowToday) && {
+      roadmapShowToday: view.roadmapShowToday,
+    }),
+    ...(isDefined(view.roadmapShowWeekends) && {
+      roadmapShowWeekends: view.roadmapShowWeekends,
+    }),
+    ...(isDefined(view.roadmapShowDeviation) && {
+      roadmapShowDeviation: view.roadmapShowDeviation,
+    }),
   };
 };

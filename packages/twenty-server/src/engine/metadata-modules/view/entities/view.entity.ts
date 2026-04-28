@@ -237,6 +237,65 @@ export class ViewEntity extends SyncableEntity implements Required<ViewEntity> {
   roadmapFieldLabel: Relation<FieldMetadataEntity> | null;
 
   @Column({ nullable: true, type: 'uuid' })
+  roadmapFieldPlannedStartId: string | null;
+
+  @ManyToOne(
+    () => FieldMetadataEntity,
+    (fieldMetadata) => fieldMetadata.roadmapPlannedStartViews,
+    {
+      onDelete: 'SET NULL',
+      nullable: true,
+    },
+  )
+  @JoinColumn({ name: 'roadmapFieldPlannedStartId' })
+  roadmapFieldPlannedStart: Relation<FieldMetadataEntity> | null;
+
+  @Column({ nullable: true, type: 'uuid' })
+  roadmapFieldPlannedEndId: string | null;
+
+  @ManyToOne(
+    () => FieldMetadataEntity,
+    (fieldMetadata) => fieldMetadata.roadmapPlannedEndViews,
+    {
+      onDelete: 'SET NULL',
+      nullable: true,
+    },
+  )
+  @JoinColumn({ name: 'roadmapFieldPlannedEndId' })
+  roadmapFieldPlannedEnd: Relation<FieldMetadataEntity> | null;
+
+  @Column({ nullable: true, type: 'uuid' })
+  roadmapFieldStatusId: string | null;
+
+  @ManyToOne(
+    () => FieldMetadataEntity,
+    (fieldMetadata) => fieldMetadata.roadmapStatusViews,
+    {
+      onDelete: 'SET NULL',
+      nullable: true,
+    },
+  )
+  @JoinColumn({ name: 'roadmapFieldStatusId' })
+  roadmapFieldStatus: Relation<FieldMetadataEntity> | null;
+
+  @Column({ nullable: true, type: 'uuid' })
+  roadmapFieldBlockedById: string | null;
+
+  @ManyToOne(
+    () => FieldMetadataEntity,
+    (fieldMetadata) => fieldMetadata.roadmapBlockedByViews,
+    {
+      onDelete: 'SET NULL',
+      nullable: true,
+    },
+  )
+  @JoinColumn({ name: 'roadmapFieldBlockedById' })
+  roadmapFieldBlockedBy: Relation<FieldMetadataEntity> | null;
+
+  @Column({ nullable: false, default: false, type: 'boolean' })
+  roadmapShowDeviation: boolean;
+
+  @Column({ nullable: true, type: 'uuid' })
   mainGroupByFieldMetadataId: string | null;
 
   @ManyToOne(

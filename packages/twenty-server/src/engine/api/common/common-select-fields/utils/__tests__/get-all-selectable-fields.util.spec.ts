@@ -29,7 +29,7 @@ describe('getAllSelectableFields', () => {
       roadmapEndViewIds: [],
       roadmapGroupViewIds: [],
       roadmapColorViewIds: [],
-      roadmapLabelViewIds: [],
+      roadmapLabelViewIds: [],      roadmapPlannedStartViewIds: [],      roadmapPlannedEndViewIds: [],      roadmapStatusViewIds: [],      roadmapBlockedByViewIds: [],
       applicationId: null,
       label: overrides.name,
       ...overrides,

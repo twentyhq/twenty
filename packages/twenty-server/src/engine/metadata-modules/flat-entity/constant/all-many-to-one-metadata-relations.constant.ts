@@ -224,6 +224,34 @@ export const ALL_MANY_TO_ONE_METADATA_RELATIONS = {
       isNullable: true,
       universalForeignKey: 'roadmapFieldLabelUniversalIdentifier',
     },
+    roadmapFieldPlannedStart: {
+      metadataName: 'fieldMetadata',
+      foreignKey: 'roadmapFieldPlannedStartId',
+      inverseOneToManyProperty: 'roadmapPlannedStartViews',
+      isNullable: true,
+      universalForeignKey: 'roadmapFieldPlannedStartUniversalIdentifier',
+    },
+    roadmapFieldPlannedEnd: {
+      metadataName: 'fieldMetadata',
+      foreignKey: 'roadmapFieldPlannedEndId',
+      inverseOneToManyProperty: 'roadmapPlannedEndViews',
+      isNullable: true,
+      universalForeignKey: 'roadmapFieldPlannedEndUniversalIdentifier',
+    },
+    roadmapFieldStatus: {
+      metadataName: 'fieldMetadata',
+      foreignKey: 'roadmapFieldStatusId',
+      inverseOneToManyProperty: 'roadmapStatusViews',
+      isNullable: true,
+      universalForeignKey: 'roadmapFieldStatusUniversalIdentifier',
+    },
+    roadmapFieldBlockedBy: {
+      metadataName: 'fieldMetadata',
+      foreignKey: 'roadmapFieldBlockedById',
+      inverseOneToManyProperty: 'roadmapBlockedByViews',
+      isNullable: true,
+      universalForeignKey: 'roadmapFieldBlockedByUniversalIdentifier',
+    },
   },
   viewField: {
     fieldMetadata: {

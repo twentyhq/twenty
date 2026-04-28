@@ -100,6 +100,39 @@ export const ObjectOptionsDropdownLayoutContent = () => {
       )
     : undefined;
 
+  const roadmapGroupFieldMetadata = currentView?.roadmapFieldGroupId
+    ? objectMetadataItem.fields.find(
+        (field) => field.id === currentView.roadmapFieldGroupId,
+      )
+    : undefined;
+
+  const roadmapPlannedStartFieldMetadata =
+    currentView?.roadmapFieldPlannedStartId
+      ? objectMetadataItem.fields.find(
+          (field) => field.id === currentView.roadmapFieldPlannedStartId,
+        )
+      : undefined;
+
+  const roadmapPlannedEndFieldMetadata = currentView?.roadmapFieldPlannedEndId
+    ? objectMetadataItem.fields.find(
+        (field) => field.id === currentView.roadmapFieldPlannedEndId,
+      )
+    : undefined;
+
+  const roadmapStatusFieldMetadata = currentView?.roadmapFieldStatusId
+    ? objectMetadataItem.fields.find(
+        (field) => field.id === currentView.roadmapFieldStatusId,
+      )
+    : undefined;
+
+  const roadmapBlockedByFieldMetadata = currentView?.roadmapFieldBlockedById
+    ? objectMetadataItem.fields.find(
+        (field) => field.id === currentView.roadmapFieldBlockedById,
+      )
+    : undefined;
+
+  const roadmapShowDeviation = currentView?.roadmapShowDeviation ?? false;
+
   const { setAndPersistViewType } = useSetViewTypeFromLayoutOptionsMenu();
   const { availableFieldsForGrouping, navigateToSelectSettings } =
     useGetAvailableFieldsToGroupRecordsBy();
@@ -164,7 +197,17 @@ export const ObjectOptionsDropdownLayoutContent = () => {
       ? ['CalendarView', 'CalendarDateField']
       : []),
     ...(currentView?.type === ViewType.ROADMAP
-      ? ['RoadmapStartField', 'RoadmapEndField', 'RoadmapColorField']
+      ? [
+          'RoadmapStartField',
+          'RoadmapEndField',
+          'RoadmapPlannedStartField',
+          'RoadmapPlannedEndField',
+          'RoadmapGroupField',
+          'RoadmapColorField',
+          'RoadmapStatusField',
+          'RoadmapBlockedByField',
+          'RoadmapShowDeviation',
+        ]
       : []),
     ...(currentView?.type !== ViewType.TABLE ? ['Compact view'] : []),
   ];
@@ -354,6 +397,54 @@ export const ObjectOptionsDropdownLayoutContent = () => {
                   />
                 </SelectableListItem>
                 <SelectableListItem
+                  itemId="RoadmapPlannedStartField"
+                  onEnter={() =>
+                    onContentChange('roadmapPlannedStartField')
+                  }
+                >
+                  <MenuItem
+                    focused={
+                      selectedItemId === 'RoadmapPlannedStartField'
+                    }
+                    onClick={() =>
+                      onContentChange('roadmapPlannedStartField')
+                    }
+                    LeftIcon={IconArrowRight}
+                    text={t`Planned start field`}
+                    contextualText={roadmapPlannedStartFieldMetadata?.label}
+                    contextualTextPosition="right"
+                    hasSubMenu
+                  />
+                </SelectableListItem>
+                <SelectableListItem
+                  itemId="RoadmapPlannedEndField"
+                  onEnter={() => onContentChange('roadmapPlannedEndField')}
+                >
+                  <MenuItem
+                    focused={selectedItemId === 'RoadmapPlannedEndField'}
+                    onClick={() => onContentChange('roadmapPlannedEndField')}
+                    LeftIcon={IconArrowLeft}
+                    text={t`Planned end field`}
+                    contextualText={roadmapPlannedEndFieldMetadata?.label}
+                    contextualTextPosition="right"
+                    hasSubMenu
+                  />
+                </SelectableListItem>
+                <SelectableListItem
+                  itemId="RoadmapGroupField"
+                  onEnter={() => onContentChange('roadmapGroupField')}
+                >
+                  <MenuItem
+                    focused={selectedItemId === 'RoadmapGroupField'}
+                    onClick={() => onContentChange('roadmapGroupField')}
+                    LeftIcon={IconLayoutList}
+                    text={t`Group field`}
+                    contextualText={roadmapGroupFieldMetadata?.label}
+                    contextualTextPosition="right"
+                    hasSubMenu
+                  />
+                </SelectableListItem>
+                <SelectableListItem
                   itemId="RoadmapColorField"
                   onEnter={() => onContentChange('roadmapColorField')}
                 >
@@ -365,6 +456,54 @@ export const ObjectOptionsDropdownLayoutContent = () => {
                     contextualText={roadmapColorFieldMetadata?.label}
                     contextualTextPosition="right"
                     hasSubMenu
+                  />
+                </SelectableListItem>
+                <SelectableListItem
+                  itemId="RoadmapStatusField"
+                  onEnter={() => onContentChange('roadmapStatusField')}
+                >
+                  <MenuItem
+                    focused={selectedItemId === 'RoadmapStatusField'}
+                    onClick={() => onContentChange('roadmapStatusField')}
+                    LeftIcon={IconBaselineDensitySmall}
+                    text={t`Status field`}
+                    contextualText={roadmapStatusFieldMetadata?.label}
+                    contextualTextPosition="right"
+                    hasSubMenu
+                  />
+                </SelectableListItem>
+                <SelectableListItem
+                  itemId="RoadmapBlockedByField"
+                  onEnter={() => onContentChange('roadmapBlockedByField')}
+                >
+                  <MenuItem
+                    focused={selectedItemId === 'RoadmapBlockedByField'}
+                    onClick={() => onContentChange('roadmapBlockedByField')}
+                    LeftIcon={IconBaselineDensitySmall}
+                    text={t`Blocked-by field`}
+                    contextualText={roadmapBlockedByFieldMetadata?.label}
+                    contextualTextPosition="right"
+                    hasSubMenu
+                  />
+                </SelectableListItem>
+                <SelectableListItem
+                  itemId="RoadmapShowDeviation"
+                  onEnter={() =>
+                    updateCurrentView({
+                      roadmapShowDeviation: !roadmapShowDeviation,
+                    })
+                  }
+                >
+                  <MenuItemToggle
+                    LeftIcon={IconBaselineDensitySmall}
+                    onToggleChange={() =>
+                      updateCurrentView({
+                        roadmapShowDeviation: !roadmapShowDeviation,
+                      })
+                    }
+                    toggled={roadmapShowDeviation}
+                    text={t`Show deviation badge`}
+                    toggleSize="small"
                   />
                 </SelectableListItem>
               </>

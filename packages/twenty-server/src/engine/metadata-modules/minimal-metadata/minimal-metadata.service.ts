@@ -137,9 +137,15 @@ export class MinimalMetadataService {
         roadmapFieldGroupId: flatView.roadmapFieldGroupId ?? null,
         roadmapFieldColorId: flatView.roadmapFieldColorId ?? null,
         roadmapFieldLabelId: flatView.roadmapFieldLabelId ?? null,
+        roadmapFieldPlannedStartId:
+          flatView.roadmapFieldPlannedStartId ?? null,
+        roadmapFieldPlannedEndId: flatView.roadmapFieldPlannedEndId ?? null,
+        roadmapFieldStatusId: flatView.roadmapFieldStatusId ?? null,
+        roadmapFieldBlockedById: flatView.roadmapFieldBlockedById ?? null,
         roadmapDefaultZoom: flatView.roadmapDefaultZoom ?? null,
         roadmapShowToday: flatView.roadmapShowToday ?? null,
         roadmapShowWeekends: flatView.roadmapShowWeekends ?? null,
+        roadmapShowDeviation: flatView.roadmapShowDeviation ?? null,
       }));
 
     return {

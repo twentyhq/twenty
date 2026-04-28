@@ -131,6 +131,26 @@ export const fromViewEntityToFlatView = ({
       viewEntity.roadmapFieldLabelId,
       'roadmapFieldLabel',
     );
+  const roadmapFieldPlannedStartUniversalIdentifier =
+    resolveRoadmapFieldUniversalIdentifier(
+      viewEntity.roadmapFieldPlannedStartId,
+      'roadmapFieldPlannedStart',
+    );
+  const roadmapFieldPlannedEndUniversalIdentifier =
+    resolveRoadmapFieldUniversalIdentifier(
+      viewEntity.roadmapFieldPlannedEndId,
+      'roadmapFieldPlannedEnd',
+    );
+  const roadmapFieldStatusUniversalIdentifier =
+    resolveRoadmapFieldUniversalIdentifier(
+      viewEntity.roadmapFieldStatusId,
+      'roadmapFieldStatus',
+    );
+  const roadmapFieldBlockedByUniversalIdentifier =
+    resolveRoadmapFieldUniversalIdentifier(
+      viewEntity.roadmapFieldBlockedById,
+      'roadmapFieldBlockedBy',
+    );
 
   return {
     ...viewEntityWithoutRelations,
@@ -153,6 +173,10 @@ export const fromViewEntityToFlatView = ({
     roadmapFieldGroupUniversalIdentifier,
     roadmapFieldColorUniversalIdentifier,
     roadmapFieldLabelUniversalIdentifier,
+    roadmapFieldPlannedStartUniversalIdentifier,
+    roadmapFieldPlannedEndUniversalIdentifier,
+    roadmapFieldStatusUniversalIdentifier,
+    roadmapFieldBlockedByUniversalIdentifier,
     viewFieldUniversalIdentifiers: viewEntity.viewFields.map(
       ({ universalIdentifier }) => universalIdentifier,
     ),

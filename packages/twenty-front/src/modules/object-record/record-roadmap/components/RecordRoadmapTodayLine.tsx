@@ -7,14 +7,19 @@ type RecordRoadmapTodayLineProps = {
   dayWidthPx: number;
 };
 
-const StyledLine = styled.div`
-  background-color: ${themeCssVariables.accent.secondary};
+// "Today" highlight: a full-width column tinted with the brand blue so the
+// current day pops at any zoom level. The left edge still draws a 2px solid
+// stripe to anchor the eye when the column itself is narrow (DAY zoom in).
+// Renders behind the bars (zIndex 0) so milestone content stays readable;
+// the label badge sits above on zIndex 3 where it can't be obscured.
+const StyledColumn = styled.div`
+  background-color: ${themeCssVariables.background.transparent.blue};
+  border-left: 0px solid ${themeCssVariables.accent.secondary};
   bottom: 0;
   pointer-events: none;
   position: absolute;
   top: 0;
-  width: 1px;
-  z-index: 2;
+  z-index: 0;
 `;
 
 const StyledLabel = styled.div`
@@ -22,10 +27,13 @@ const StyledLabel = styled.div`
   border-radius: 2px;
   color: ${themeCssVariables.font.color.inverted};
   font-size: ${themeCssVariables.font.size.xs};
+  font-weight: ${themeCssVariables.font.weight.medium};
+  left: 0;
   padding: 0 ${themeCssVariables.spacing[1]};
   position: absolute;
   top: -18px;
-  transform: translateX(-50%);
+  white-space: nowrap;
+  z-index: 3;
 `;
 
 export const RecordRoadmapTodayLine = ({
@@ -39,8 +47,8 @@ export const RecordRoadmapTodayLine = ({
   const leftPx = daysFromStart * dayWidthPx;
 
   return (
-    <StyledLine style={{ left: leftPx }}>
+    <StyledColumn style={{ left: leftPx, width: dayWidthPx }}>
       <StyledLabel>Today</StyledLabel>
-    </StyledLine>
+    </StyledColumn>
   );
 };

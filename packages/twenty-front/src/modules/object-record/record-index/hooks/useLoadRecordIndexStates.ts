@@ -19,8 +19,13 @@ import { recordIndexRoadmapDefaultZoomState } from '@/object-record/record-index
 import { recordIndexRoadmapFieldColorIdState } from '@/object-record/record-index/states/recordIndexRoadmapFieldColorIdState';
 import { recordIndexRoadmapFieldEndIdState } from '@/object-record/record-index/states/recordIndexRoadmapFieldEndIdState';
 import { recordIndexRoadmapFieldGroupIdState } from '@/object-record/record-index/states/recordIndexRoadmapFieldGroupIdState';
+import { recordIndexRoadmapFieldBlockedByIdState } from '@/object-record/record-index/states/recordIndexRoadmapFieldBlockedByIdState';
 import { recordIndexRoadmapFieldLabelIdState } from '@/object-record/record-index/states/recordIndexRoadmapFieldLabelIdState';
+import { recordIndexRoadmapFieldPlannedEndIdState } from '@/object-record/record-index/states/recordIndexRoadmapFieldPlannedEndIdState';
+import { recordIndexRoadmapFieldPlannedStartIdState } from '@/object-record/record-index/states/recordIndexRoadmapFieldPlannedStartIdState';
 import { recordIndexRoadmapFieldStartIdState } from '@/object-record/record-index/states/recordIndexRoadmapFieldStartIdState';
+import { recordIndexRoadmapFieldStatusIdState } from '@/object-record/record-index/states/recordIndexRoadmapFieldStatusIdState';
+import { recordIndexRoadmapShowDeviationState } from '@/object-record/record-index/states/recordIndexRoadmapShowDeviationState';
 import { recordIndexRoadmapShowTodayState } from '@/object-record/record-index/states/recordIndexRoadmapShowTodayState';
 import { recordIndexRoadmapShowWeekendsState } from '@/object-record/record-index/states/recordIndexRoadmapShowWeekendsState';
 import { recordIndexGroupAggregateFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupAggregateFieldMetadataItemComponentState';
@@ -296,6 +301,22 @@ export const useLoadRecordIndexStates = () => {
             view.roadmapFieldLabelId ?? null,
           );
           batchSet(
+            recordIndexRoadmapFieldPlannedStartIdState.atom,
+            view.roadmapFieldPlannedStartId ?? null,
+          );
+          batchSet(
+            recordIndexRoadmapFieldPlannedEndIdState.atom,
+            view.roadmapFieldPlannedEndId ?? null,
+          );
+          batchSet(
+            recordIndexRoadmapFieldStatusIdState.atom,
+            view.roadmapFieldStatusId ?? null,
+          );
+          batchSet(
+            recordIndexRoadmapFieldBlockedByIdState.atom,
+            view.roadmapFieldBlockedById ?? null,
+          );
+          batchSet(
             recordIndexRoadmapDefaultZoomState.atom,
             view.roadmapDefaultZoom ?? null,
           );
@@ -306,6 +327,10 @@ export const useLoadRecordIndexStates = () => {
           batchSet(
             recordIndexRoadmapShowWeekendsState.atom,
             view.roadmapShowWeekends ?? true,
+          );
+          batchSet(
+            recordIndexRoadmapShowDeviationState.atom,
+            view.roadmapShowDeviation ?? false,
           );
 
           batchSet(

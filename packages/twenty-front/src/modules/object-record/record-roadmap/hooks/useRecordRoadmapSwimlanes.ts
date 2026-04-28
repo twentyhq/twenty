@@ -17,6 +17,20 @@ export type RoadmapPlacedRecord = {
   label: string;
   /** SELECT-option color resolved from the view's `roadmapFieldColorId`. */
   color: string | null;
+  /** Originally planned start date — pairs with `plannedEndDate` to
+      draw the dashed ghost bar showing the original plan range.
+      Null when the view has no `roadmapFieldPlannedStart` configured. */
+  plannedStartDate: Temporal.PlainDate | null;
+  /** Originally planned end date — null when the view has no
+      `roadmapFieldPlannedEnd` configured or the record is missing one.
+      Drives the dashed ghost bar + overdue indicator (Fase 6.4). */
+  plannedEndDate: Temporal.PlainDate | null;
+  /** Raw SELECT value of the status field — null when unconfigured. Used
+      to gate the overdue indicator (DONE/CANCELLED never glow red). */
+  status: string | null;
+  /** Raw SELECT value of the blockedBy field — null when unconfigured or
+      'NONE'. Drives the lock badge + tinted overlay (Fase 6.4). */
+  blockedBy: string | null;
 };
 
 export type RoadmapSwimlane = {
@@ -117,9 +131,68 @@ export const useRecordRoadmapSwimlanes = ({
     const supportsCrossSwimlaneDrop =
       groupField.type === FieldMetadataType.SELECT;
 
+    if (groupField.type === FieldMetadataType.RELATION) {
+      // RELATION grouping: one swimlane per distinct related record. Reads
+      // `record[fieldName].id` for the bucket key and `record[fieldName].name`
+      // for the label (the fetch hook requests `{id,name}` for RELATION group
+      // fields explicitly). Cross-swimlane drop is disabled because changing
+      // a milestone's parent Opportunity from a Gantt drag is rarely the
+      // intended action — users edit the relation from the record drawer.
+      const byRelationId = new Map<
+        string,
+        { label: string; records: RoadmapPlacedRecord[] }
+      >();
+      const uncategorized: RoadmapPlacedRecord[] = [];
+
+      for (const placed of placedRecords) {
+        const rawValue = placed.record[groupField.name];
+        if (
+          rawValue !== null &&
+          typeof rawValue === 'object' &&
+          'id' in rawValue &&
+          typeof (rawValue as { id: unknown }).id === 'string'
+        ) {
+          const relatedId = (rawValue as { id: string }).id;
+          const relatedName =
+            'name' in rawValue && typeof (rawValue as { name: unknown }).name === 'string'
+              ? (rawValue as { name: string }).name
+              : relatedId;
+          const bucket = byRelationId.get(relatedId) ?? {
+            label: relatedName,
+            records: [],
+          };
+          bucket.records.push(placed);
+          byRelationId.set(relatedId, bucket);
+        } else {
+          uncategorized.push(placed);
+        }
+      }
+
+      const swimlanes: RoadmapSwimlane[] = Array.from(byRelationId.entries())
+        .sort(([, a], [, b]) => a.label.localeCompare(b.label))
+        .map(([relatedId, bucket]) => ({
+          key: relatedId,
+          label: bucket.label,
+          records: bucket.records.slice().sort(sortByPositionThenLabel),
+        }));
+
+      if (uncategorized.length > 0) {
+        swimlanes.push({
+          key: ROADMAP_UNCATEGORIZED_SWIMLANE_KEY,
+          label: 'Uncategorized',
+          records: uncategorized.slice().sort(sortByPositionThenLabel),
+        });
+      }
+
+      return {
+        swimlanes,
+        groupFieldName: groupField.name,
+        supportsCrossSwimlaneDrop: false,
+      };
+    }
+
     if (groupField.type !== FieldMetadataType.SELECT) {
-      // RELATION grouping is treated as a single informational swimlane in
-      // Fase 4b — the PRD defers full RELATION-aware rendering to v2.
+      // Other field types fall back to a single bucket (Fase 4b legacy).
       return {
         swimlanes: [
           {

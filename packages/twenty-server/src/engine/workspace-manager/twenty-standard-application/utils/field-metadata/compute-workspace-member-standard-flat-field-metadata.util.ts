@@ -476,6 +476,31 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
+  assignedMilestones: createStandardRelationFieldFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
+      fieldName: 'assignedMilestones',
+      label: i18nLabel(msg`Assigned milestones`),
+      description: i18nLabel(
+        msg`Opportunity milestones assigned to the workspace member`,
+      ),
+      icon: 'IconFlag',
+      isNullable: false,
+      isUIReadOnly: true,
+      targetObjectName: 'opportunityMilestone',
+      targetFieldName: 'assignee',
+      settings: {
+        relationType: RelationType.ONE_TO_MANY,
+      },
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
   accountOwnerForCompanies: createStandardRelationFieldFlatMetadata({
     objectName,
     workspaceId,

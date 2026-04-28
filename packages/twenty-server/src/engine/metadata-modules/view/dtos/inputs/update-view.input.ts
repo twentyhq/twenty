@@ -140,4 +140,29 @@ export class UpdateViewInput {
   @IsUUID()
   @Field(() => UUIDScalarType, { nullable: true })
   roadmapFieldLabelId?: string | null;
+
+  @IsOptional()
+  @IsUUID()
+  @Field(() => UUIDScalarType, { nullable: true })
+  roadmapFieldPlannedStartId?: string | null;
+
+  @IsOptional()
+  @IsUUID()
+  @Field(() => UUIDScalarType, { nullable: true })
+  roadmapFieldPlannedEndId?: string | null;
+
+  @IsOptional()
+  @IsUUID()
+  @Field(() => UUIDScalarType, { nullable: true })
+  roadmapFieldStatusId?: string | null;
+
+  @IsOptional()
+  @IsUUID()
+  @Field(() => UUIDScalarType, { nullable: true })
+  roadmapFieldBlockedById?: string | null;
+
+  @IsOptional()
+  @IsBoolean()
+  @Field({ nullable: true })
+  roadmapShowDeviation?: boolean;
 }

@@ -101,6 +101,30 @@ export const ALL_ONE_TO_MANY_METADATA_RELATIONS = {
       universalFlatEntityForeignKeyAggregator:
         'roadmapLabelViewUniversalIdentifiers',
     },
+    roadmapPlannedStartViews: {
+      metadataName: 'view',
+      flatEntityForeignKeyAggregator: 'roadmapPlannedStartViewIds',
+      universalFlatEntityForeignKeyAggregator:
+        'roadmapPlannedStartViewUniversalIdentifiers',
+    },
+    roadmapPlannedEndViews: {
+      metadataName: 'view',
+      flatEntityForeignKeyAggregator: 'roadmapPlannedEndViewIds',
+      universalFlatEntityForeignKeyAggregator:
+        'roadmapPlannedEndViewUniversalIdentifiers',
+    },
+    roadmapStatusViews: {
+      metadataName: 'view',
+      flatEntityForeignKeyAggregator: 'roadmapStatusViewIds',
+      universalFlatEntityForeignKeyAggregator:
+        'roadmapStatusViewUniversalIdentifiers',
+    },
+    roadmapBlockedByViews: {
+      metadataName: 'view',
+      flatEntityForeignKeyAggregator: 'roadmapBlockedByViewIds',
+      universalFlatEntityForeignKeyAggregator:
+        'roadmapBlockedByViewUniversalIdentifiers',
+    },
     mainGroupByFieldMetadataViews: {
       metadataName: 'view',
       flatEntityForeignKeyAggregator: 'mainGroupByFieldMetadataViewIds',

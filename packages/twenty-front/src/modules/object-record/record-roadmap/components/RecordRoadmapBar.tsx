@@ -1,13 +1,17 @@
 import { styled } from '@linaria/react';
-import { type Temporal } from 'temporal-polyfill';
+import { Temporal } from 'temporal-polyfill';
 import { type ThemeColor } from 'twenty-ui/theme';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { IconLock } from 'twenty-ui/display';
 
 import {
   ROADMAP_BAR_HEIGHT,
   ROADMAP_BAR_VERTICAL_PADDING,
+  ROADMAP_ROW_HEIGHT,
 } from '@/object-record/record-roadmap/constants/RoadmapDimensions';
+import { getRoadmapBlockedByColor } from '@/object-record/record-roadmap/constants/roadmapBlockedByColorMap';
 import { useRecordRoadmapBarInteraction } from '@/object-record/record-roadmap/hooks/useRecordRoadmapBarInteraction';
+import { computeRoadmapDeviation } from '@/object-record/record-roadmap/hooks/useRecordRoadmapDeviation';
 import { computeRoadmapBarPosition } from '@/object-record/record-roadmap/utils/computeRoadmapBarPosition';
 
 const RESIZE_HANDLE_WIDTH = 6;
@@ -87,11 +91,82 @@ const StyledLabel = styled.span`
   white-space: nowrap;
 `;
 
+// Ghost bar shows the originally planned range. It's taller than the
+// live bar so its top + bottom slivers stay visible even when the actual
+// range overlaps it, and it's drawn on a higher z-index than the row
+// background so it doesn't get washed out by the canvas grid. The dashed
+// border + diagonal hash is the canonical Gantt "planned" convention.
+const StyledGhostBar = styled.div`
+  background: repeating-linear-gradient(
+    -45deg,
+    ${themeCssVariables.background.transparent.strong} 0px,
+    ${themeCssVariables.background.transparent.strong} 4px,
+    transparent 4px,
+    transparent 8px
+  );
+  border: 1.5px dashed ${themeCssVariables.font.color.tertiary};
+  border-radius: 4px;
+  box-sizing: border-box;
+  height: ${ROADMAP_ROW_HEIGHT - 4}px;
+  pointer-events: none;
+  position: absolute;
+  top: 2px;
+  z-index: 0;
+`;
+
+// Vertical caps anchored at planned start / planned end. They span the
+// whole row and sit on a z-index above the live bar, so the planned
+// boundaries stay readable even when the actual range fully covers the
+// ghost rectangle. The triangle "flag" on top makes the date easy to
+// spot without a tooltip.
+const StyledGhostMarker = styled.div`
+  border-left: 2px dashed ${themeCssVariables.font.color.tertiary};
+  height: ${ROADMAP_ROW_HEIGHT}px;
+  pointer-events: none;
+  position: absolute;
+  top: 0;
+  width: 0;
+  z-index: 2;
+
+  &::before {
+    background-color: ${themeCssVariables.font.color.tertiary};
+    border-radius: 50%;
+    content: '';
+    height: 6px;
+    left: -4px;
+    position: absolute;
+    top: 0;
+    width: 6px;
+  }
+`;
+
+const StyledLockIcon = styled.span`
+  align-items: center;
+  display: inline-flex;
+  flex-shrink: 0;
+  margin-right: ${themeCssVariables.spacing[1]};
+  pointer-events: none;
+`;
+
 type RecordRoadmapBarProps = {
   recordId: string;
   label: string;
   startDate: Temporal.PlainDate;
   endDate: Temporal.PlainDate;
+  /** Planned start date — paired with `plannedEndDate`, draws the
+      dashed ghost bar over the original plan range. Falls back to
+      `startDate` when null so a ghost bar still appears when only
+      `plannedEndDate` is configured. */
+  plannedStartDate?: Temporal.PlainDate | null;
+  /** Planned end date — when set and ≠ endDate, draws a dashed ghost
+      bar showing the original plan. */
+  plannedEndDate?: Temporal.PlainDate | null;
+  /** SELECT value of status. DONE/CANCELLED suppress the overdue glow
+      even if today > end. */
+  status?: string | null;
+  /** SELECT value of blockedBy (NONE/CLIENT/INTERNAL/EXTERNAL_VENDOR or
+      a custom value). Drives the lock badge + tinted bar color. */
+  blockedBy?: string | null;
   viewportStart: Temporal.PlainDate;
   dayWidthPx: number;
   /** SELECT-option color name (e.g. 'blue'). Null when the view has no
@@ -132,6 +207,10 @@ export const RecordRoadmapBar = ({
   label,
   startDate,
   endDate,
+  plannedStartDate,
+  plannedEndDate,
+  status,
+  blockedBy,
   viewportStart,
   dayWidthPx,
   color,
@@ -178,17 +257,87 @@ export const RecordRoadmapBar = ({
 
   const hasError = durationDays < 0;
 
+  // Overdue / deviation are computed from the *planned* dates, never the
+  // drag preview, so dragging an in-progress bar doesn't flicker the red
+  // border. `today` is the wall-clock day at first paint — fine here
+  // because the bar is shallow and re-mounts cheaply.
+  const today = Temporal.Now.plainDateISO();
+  const { isOverdue, deviationDays } = computeRoadmapDeviation({
+    plannedEndDate: plannedEndDate ?? null,
+    actualEndDate: endDate,
+    status: status ?? null,
+    today,
+  });
+
+  // Ghost bar shows the originally planned range. We render it whenever
+  // the plan diverges from the live bar in any direction — either start
+  // or end. plannedStart falls back to the live start so views that only
+  // configure `plannedEnd` still get a meaningful ghost.
+  const ghostStart =
+    plannedStartDate !== null && plannedStartDate !== undefined
+      ? plannedStartDate
+      : startDate;
+  const ghostEnd =
+    plannedEndDate !== null && plannedEndDate !== undefined
+      ? plannedEndDate
+      : null;
+  const hasGhostBar =
+    ghostEnd !== null &&
+    (Temporal.PlainDate.compare(ghostStart, startDate) !== 0 ||
+      Temporal.PlainDate.compare(ghostEnd, endDate) !== 0);
+
+  const ghostBarLayout = hasGhostBar
+    ? computeRoadmapBarPosition({
+        startDate: ghostStart,
+        endDate: ghostEnd as Temporal.PlainDate,
+        viewportStart,
+        dayWidthPx,
+      })
+    : null;
+
+  const blockedByColorToken = getRoadmapBlockedByColor(blockedBy);
+  const blockedByBackground =
+    blockedByColorToken !== null
+      ? (themeCssVariables.tag.background as Record<ThemeColor, string>)[
+          blockedByColorToken
+        ]
+      : null;
+  const blockedByAccent =
+    blockedByColorToken !== null
+      ? (themeCssVariables.tag.text as Record<ThemeColor, string>)[
+          blockedByColorToken
+        ]
+      : null;
+
   // Color wins over the default bar tokens unless the bar is in an error
   // state — red border should stay dominant. Dragging slightly bumps
   // opacity; the inline override here leaves base CSS untouched for other
-  // states (hover, non-colored bars).
+  // states (hover, non-colored bars). `blockedBy` overrides `color` so the
+  // responsibility tint is always visible (an OPEN milestone blocked by
+  // the client should look orange, not stage-color).
   const colorTokens = getColorTokensFor(color);
   const colorStyle =
-    colorTokens !== null && !hasError
+    blockedByBackground !== null && blockedByAccent !== null && !hasError
       ? {
-          backgroundColor: colorTokens.background,
-          borderColor: colorTokens.accent,
-          color: colorTokens.accent,
+          backgroundColor: blockedByBackground,
+          borderColor: blockedByAccent,
+          color: blockedByAccent,
+        }
+      : colorTokens !== null && !hasError
+        ? {
+            backgroundColor: colorTokens.background,
+            borderColor: colorTokens.accent,
+            color: colorTokens.accent,
+          }
+        : {};
+
+  // Overdue takes priority for the border once we're past the error /
+  // blocked tints — a 2px solid danger stripe so the user can spot
+  // late-running bars at a glance even when scrolled out.
+  const overdueBorderStyle =
+    isOverdue && !hasError
+      ? {
+          border: `2px solid ${themeCssVariables.border.color.danger}`,
         }
       : {};
 
@@ -206,35 +355,74 @@ export const RecordRoadmapBar = ({
       }
     : {};
 
+  const tooltipParts = [`${label} (${previewStart.toString()} → ${previewEnd.toString()})`];
+  if (isOverdue) {
+    tooltipParts.push(`${deviationDays} day${deviationDays === 1 ? '' : 's'} overdue`);
+  }
+  if (blockedBy && blockedBy !== 'NONE') {
+    tooltipParts.push(`Blocked by: ${blockedBy}`);
+  }
+  const tooltipText = hasError
+    ? `End date is before start date (${previewStart.toString()} → ${previewEnd.toString()})`
+    : tooltipParts.join(' — ');
+
   return (
-    <StyledBar
-      hasError={hasError}
-      isDragging={mode !== null}
-      data-roadmap-bar
-      style={{
-        left: leftPx,
-        width: widthPx,
-        ...colorStyle,
-        ...dragStyle,
-        // Read-only mode: behave like a link (pointer cursor, no grabbing)
-        // since drag/resize are disabled.
-        ...(readOnly ? { cursor: 'pointer' } : {}),
-      }}
-      onPointerDown={readOnly ? undefined : onPointerDownMove}
-      onClick={readOnly ? () => onClick?.(recordId) : undefined}
-      title={
-        hasError
-          ? `End date is before start date (${previewStart.toString()} → ${previewEnd.toString()})`
-          : `${label} (${previewStart.toString()} → ${previewEnd.toString()})`
-      }
-    >
-      {!readOnly && (
-        <StyledResizeHandleLeft onPointerDown={onPointerDownResizeStart} />
+    <>
+      {ghostBarLayout !== null && (
+        <>
+          <StyledGhostBar
+            aria-hidden
+            style={{
+              left: ghostBarLayout.leftPx,
+              width: ghostBarLayout.widthPx,
+            }}
+            title={`Planned: ${ghostStart.toString()} → ${plannedEndDate?.toString() ?? ''}`}
+          />
+          <StyledGhostMarker
+            aria-hidden
+            style={{ left: ghostBarLayout.leftPx }}
+            title={`Planned start: ${ghostStart.toString()}`}
+          />
+          <StyledGhostMarker
+            aria-hidden
+            style={{
+              left: ghostBarLayout.leftPx + ghostBarLayout.widthPx,
+            }}
+            title={`Planned end: ${plannedEndDate?.toString() ?? ''}`}
+          />
+        </>
       )}
-      <StyledLabel>{label}</StyledLabel>
-      {!readOnly && (
-        <StyledResizeHandleRight onPointerDown={onPointerDownResizeEnd} />
-      )}
-    </StyledBar>
+      <StyledBar
+        hasError={hasError}
+        isDragging={mode !== null}
+        data-roadmap-bar
+        style={{
+          left: leftPx,
+          width: widthPx,
+          ...colorStyle,
+          ...overdueBorderStyle,
+          ...dragStyle,
+          // Read-only mode: behave like a link (pointer cursor, no grabbing)
+          // since drag/resize are disabled.
+          ...(readOnly ? { cursor: 'pointer' } : {}),
+        }}
+        onPointerDown={readOnly ? undefined : onPointerDownMove}
+        onClick={readOnly ? () => onClick?.(recordId) : undefined}
+        title={tooltipText}
+      >
+        {!readOnly && (
+          <StyledResizeHandleLeft onPointerDown={onPointerDownResizeStart} />
+        )}
+        {blockedBy && blockedBy !== 'NONE' && (
+          <StyledLockIcon>
+            <IconLock size={12} />
+          </StyledLockIcon>
+        )}
+        <StyledLabel>{label}</StyledLabel>
+        {!readOnly && (
+          <StyledResizeHandleRight onPointerDown={onPointerDownResizeEnd} />
+        )}
+      </StyledBar>
+    </>
   );
 };

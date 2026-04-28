@@ -75,7 +75,7 @@ describe('getFieldMetadataIdToColumnNamesMap', () => {
       roadmapEndViewIds: [],
       roadmapGroupViewIds: [],
       roadmapColorViewIds: [],
-      roadmapLabelViewIds: [],
+      roadmapLabelViewIds: [],      roadmapPlannedStartViewIds: [],      roadmapPlannedEndViewIds: [],      roadmapStatusViewIds: [],      roadmapBlockedByViewIds: [],
       mainGroupByFieldMetadataViewIds: [],
       applicationId: null,
     }) as unknown as FlatFieldMetadata;

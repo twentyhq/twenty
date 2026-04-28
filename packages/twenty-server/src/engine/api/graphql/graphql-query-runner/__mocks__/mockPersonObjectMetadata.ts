@@ -32,7 +32,7 @@ const mockFieldMetadatas: FlatFieldMetadata[] = [
     roadmapEndViewIds: [],
     roadmapGroupViewIds: [],
     roadmapColorViewIds: [],
-    roadmapLabelViewIds: [],
+    roadmapLabelViewIds: [],    roadmapPlannedStartViewIds: [],    roadmapPlannedEndViewIds: [],    roadmapStatusViewIds: [],    roadmapBlockedByViewIds: [],
     applicationId: null,
   } as unknown as FlatFieldMetadata,
   {
@@ -58,7 +58,7 @@ const mockFieldMetadatas: FlatFieldMetadata[] = [
     roadmapEndViewIds: [],
     roadmapGroupViewIds: [],
     roadmapColorViewIds: [],
-    roadmapLabelViewIds: [],
+    roadmapLabelViewIds: [],    roadmapPlannedStartViewIds: [],    roadmapPlannedEndViewIds: [],    roadmapStatusViewIds: [],    roadmapBlockedByViewIds: [],
     applicationId: null,
   } as unknown as FlatFieldMetadata,
   {
@@ -85,7 +85,7 @@ const mockFieldMetadatas: FlatFieldMetadata[] = [
     roadmapEndViewIds: [],
     roadmapGroupViewIds: [],
     roadmapColorViewIds: [],
-    roadmapLabelViewIds: [],
+    roadmapLabelViewIds: [],    roadmapPlannedStartViewIds: [],    roadmapPlannedEndViewIds: [],    roadmapStatusViewIds: [],    roadmapBlockedByViewIds: [],
     applicationId: null,
   } as unknown as FlatFieldMetadata,
   {
@@ -108,7 +108,7 @@ const mockFieldMetadatas: FlatFieldMetadata[] = [
     roadmapEndViewIds: [],
     roadmapGroupViewIds: [],
     roadmapColorViewIds: [],
-    roadmapLabelViewIds: [],
+    roadmapLabelViewIds: [],    roadmapPlannedStartViewIds: [],    roadmapPlannedEndViewIds: [],    roadmapStatusViewIds: [],    roadmapBlockedByViewIds: [],
     applicationId: null,
   } as unknown as FlatFieldMetadata,
 ];

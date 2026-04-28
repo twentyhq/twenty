@@ -154,7 +154,7 @@ export const buildDefaultFlatFieldMetadatasForCustomObject = ({
           roadmapEndViewUniversalIdentifiers: [],
           roadmapGroupViewUniversalIdentifiers: [],
           roadmapColorViewUniversalIdentifiers: [],
-          roadmapLabelViewUniversalIdentifiers: [],
+          roadmapLabelViewUniversalIdentifiers: [],          roadmapPlannedStartViewUniversalIdentifiers: [],          roadmapPlannedEndViewUniversalIdentifiers: [],          roadmapStatusViewUniversalIdentifiers: [],          roadmapBlockedByViewUniversalIdentifiers: [],
           mainGroupByFieldMetadataViewUniversalIdentifiers: [],
           fieldPermissionUniversalIdentifiers: [],
           universalSettings: null,

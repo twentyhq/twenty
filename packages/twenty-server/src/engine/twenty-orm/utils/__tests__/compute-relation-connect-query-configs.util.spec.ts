@@ -29,7 +29,7 @@ describe('computeRelationConnectQueryConfigs', () => {
       roadmapEndViewIds: [],
       roadmapGroupViewIds: [],
       roadmapColorViewIds: [],
-      roadmapLabelViewIds: [],
+      roadmapLabelViewIds: [],      roadmapPlannedStartViewIds: [],      roadmapPlannedEndViewIds: [],      roadmapStatusViewIds: [],      roadmapBlockedByViewIds: [],
       applicationId: null,
     } as unknown as FlatFieldMetadata,
     {
@@ -51,7 +51,7 @@ describe('computeRelationConnectQueryConfigs', () => {
       roadmapEndViewIds: [],
       roadmapGroupViewIds: [],
       roadmapColorViewIds: [],
-      roadmapLabelViewIds: [],
+      roadmapLabelViewIds: [],      roadmapPlannedStartViewIds: [],      roadmapPlannedEndViewIds: [],      roadmapStatusViewIds: [],      roadmapBlockedByViewIds: [],
       applicationId: null,
     } as unknown as FlatFieldMetadata,
     {
@@ -73,7 +73,7 @@ describe('computeRelationConnectQueryConfigs', () => {
       roadmapEndViewIds: [],
       roadmapGroupViewIds: [],
       roadmapColorViewIds: [],
-      roadmapLabelViewIds: [],
+      roadmapLabelViewIds: [],      roadmapPlannedStartViewIds: [],      roadmapPlannedEndViewIds: [],      roadmapStatusViewIds: [],      roadmapBlockedByViewIds: [],
       applicationId: null,
       relationTargetObjectMetadataId: 'company-object-metadata-id',
       relationTargetFieldMetadataId: 'company-id-field-id',
@@ -101,7 +101,7 @@ describe('computeRelationConnectQueryConfigs', () => {
       roadmapEndViewIds: [],
       roadmapGroupViewIds: [],
       roadmapColorViewIds: [],
-      roadmapLabelViewIds: [],
+      roadmapLabelViewIds: [],      roadmapPlannedStartViewIds: [],      roadmapPlannedEndViewIds: [],      roadmapStatusViewIds: [],      roadmapBlockedByViewIds: [],
       applicationId: null,
       relationTargetObjectMetadataId: 'company-object-metadata-id',
       relationTargetFieldMetadataId: 'company-id-field-id',
@@ -132,7 +132,7 @@ describe('computeRelationConnectQueryConfigs', () => {
       roadmapEndViewIds: [],
       roadmapGroupViewIds: [],
       roadmapColorViewIds: [],
-      roadmapLabelViewIds: [],
+      roadmapLabelViewIds: [],      roadmapPlannedStartViewIds: [],      roadmapPlannedEndViewIds: [],      roadmapStatusViewIds: [],      roadmapBlockedByViewIds: [],
       applicationId: null,
     } as unknown as FlatFieldMetadata,
     {
@@ -154,7 +154,7 @@ describe('computeRelationConnectQueryConfigs', () => {
       roadmapEndViewIds: [],
       roadmapGroupViewIds: [],
       roadmapColorViewIds: [],
-      roadmapLabelViewIds: [],
+      roadmapLabelViewIds: [],      roadmapPlannedStartViewIds: [],      roadmapPlannedEndViewIds: [],      roadmapStatusViewIds: [],      roadmapBlockedByViewIds: [],
       applicationId: null,
     } as unknown as FlatFieldMetadata,
     {
@@ -176,7 +176,7 @@ describe('computeRelationConnectQueryConfigs', () => {
       roadmapEndViewIds: [],
       roadmapGroupViewIds: [],
       roadmapColorViewIds: [],
-      roadmapLabelViewIds: [],
+      roadmapLabelViewIds: [],      roadmapPlannedStartViewIds: [],      roadmapPlannedEndViewIds: [],      roadmapStatusViewIds: [],      roadmapBlockedByViewIds: [],
       applicationId: null,
     } as unknown as FlatFieldMetadata,
     {
@@ -198,7 +198,7 @@ describe('computeRelationConnectQueryConfigs', () => {
       roadmapEndViewIds: [],
       roadmapGroupViewIds: [],
       roadmapColorViewIds: [],
-      roadmapLabelViewIds: [],
+      roadmapLabelViewIds: [],      roadmapPlannedStartViewIds: [],      roadmapPlannedEndViewIds: [],      roadmapStatusViewIds: [],      roadmapBlockedByViewIds: [],
       applicationId: null,
     } as unknown as FlatFieldMetadata,
     {
@@ -220,7 +220,7 @@ describe('computeRelationConnectQueryConfigs', () => {
       roadmapEndViewIds: [],
       roadmapGroupViewIds: [],
       roadmapColorViewIds: [],
-      roadmapLabelViewIds: [],
+      roadmapLabelViewIds: [],      roadmapPlannedStartViewIds: [],      roadmapPlannedEndViewIds: [],      roadmapStatusViewIds: [],      roadmapBlockedByViewIds: [],
       applicationId: null,
     } as unknown as FlatFieldMetadata,
   ];

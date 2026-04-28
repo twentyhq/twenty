@@ -40,7 +40,7 @@ describe('RestToCommonSelectedFieldsHandler', () => {
       roadmapEndViewIds: [],
       roadmapGroupViewIds: [],
       roadmapColorViewIds: [],
-      roadmapLabelViewIds: [],
+      roadmapLabelViewIds: [],      roadmapPlannedStartViewIds: [],      roadmapPlannedEndViewIds: [],      roadmapStatusViewIds: [],      roadmapBlockedByViewIds: [],
       applicationId: null,
       label: overrides.name,
       settings: null,

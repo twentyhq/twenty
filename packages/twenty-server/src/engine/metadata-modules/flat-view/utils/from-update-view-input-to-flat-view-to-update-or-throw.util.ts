@@ -185,6 +185,63 @@ export const fromUpdateViewInputToFlatViewToUpdateOrThrow = ({
       roadmapFieldLabelUniversalIdentifier;
   }
 
+  if (updatedEditableFieldProperties.roadmapFieldPlannedStartId !== undefined) {
+    const { roadmapFieldPlannedStartUniversalIdentifier } =
+      resolveEntityRelationUniversalIdentifiers({
+        metadataName: 'view',
+        foreignKeyValues: {
+          roadmapFieldPlannedStartId:
+            flatViewToUpdate.roadmapFieldPlannedStartId,
+        },
+        flatEntityMaps: { flatFieldMetadataMaps },
+      });
+
+    flatViewToUpdate.roadmapFieldPlannedStartUniversalIdentifier =
+      roadmapFieldPlannedStartUniversalIdentifier;
+  }
+
+  if (updatedEditableFieldProperties.roadmapFieldPlannedEndId !== undefined) {
+    const { roadmapFieldPlannedEndUniversalIdentifier } =
+      resolveEntityRelationUniversalIdentifiers({
+        metadataName: 'view',
+        foreignKeyValues: {
+          roadmapFieldPlannedEndId: flatViewToUpdate.roadmapFieldPlannedEndId,
+        },
+        flatEntityMaps: { flatFieldMetadataMaps },
+      });
+
+    flatViewToUpdate.roadmapFieldPlannedEndUniversalIdentifier =
+      roadmapFieldPlannedEndUniversalIdentifier;
+  }
+
+  if (updatedEditableFieldProperties.roadmapFieldStatusId !== undefined) {
+    const { roadmapFieldStatusUniversalIdentifier } =
+      resolveEntityRelationUniversalIdentifiers({
+        metadataName: 'view',
+        foreignKeyValues: {
+          roadmapFieldStatusId: flatViewToUpdate.roadmapFieldStatusId,
+        },
+        flatEntityMaps: { flatFieldMetadataMaps },
+      });
+
+    flatViewToUpdate.roadmapFieldStatusUniversalIdentifier =
+      roadmapFieldStatusUniversalIdentifier;
+  }
+
+  if (updatedEditableFieldProperties.roadmapFieldBlockedById !== undefined) {
+    const { roadmapFieldBlockedByUniversalIdentifier } =
+      resolveEntityRelationUniversalIdentifiers({
+        metadataName: 'view',
+        foreignKeyValues: {
+          roadmapFieldBlockedById: flatViewToUpdate.roadmapFieldBlockedById,
+        },
+        flatEntityMaps: { flatFieldMetadataMaps },
+      });
+
+    flatViewToUpdate.roadmapFieldBlockedByUniversalIdentifier =
+      roadmapFieldBlockedByUniversalIdentifier;
+  }
+
   // If changing visibility from WORKSPACE to UNLISTED, ensure createdByUserWorkspaceId is set
   // This prevents the view from disappearing for the user making the change
   if (

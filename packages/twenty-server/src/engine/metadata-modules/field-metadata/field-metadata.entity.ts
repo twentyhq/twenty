@@ -220,6 +220,18 @@ export class FieldMetadataEntity<
   @OneToMany(() => ViewEntity, (view) => view.roadmapFieldLabel)
   roadmapLabelViews: Relation<ViewEntity[]>;
 
+  @OneToMany(() => ViewEntity, (view) => view.roadmapFieldPlannedStart)
+  roadmapPlannedStartViews: Relation<ViewEntity[]>;
+
+  @OneToMany(() => ViewEntity, (view) => view.roadmapFieldPlannedEnd)
+  roadmapPlannedEndViews: Relation<ViewEntity[]>;
+
+  @OneToMany(() => ViewEntity, (view) => view.roadmapFieldStatus)
+  roadmapStatusViews: Relation<ViewEntity[]>;
+
+  @OneToMany(() => ViewEntity, (view) => view.roadmapFieldBlockedBy)
+  roadmapBlockedByViews: Relation<ViewEntity[]>;
+
   @OneToMany(() => ViewEntity, (view) => view.mainGroupByFieldMetadata)
   mainGroupByFieldMetadataViews: Relation<ViewEntity[]>;
 

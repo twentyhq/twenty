@@ -64,6 +64,18 @@ export const buildTimelineActivityStandardFlatIndexMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
+  opportunityMilestoneIdIndex: createStandardIndexFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      indexName: 'opportunityMilestoneIdIndex',
+      relatedFieldNames: ['targetOpportunityMilestone'],
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
   noteIdIndex: createStandardIndexFlatMetadata({
     objectName,
     workspaceId,

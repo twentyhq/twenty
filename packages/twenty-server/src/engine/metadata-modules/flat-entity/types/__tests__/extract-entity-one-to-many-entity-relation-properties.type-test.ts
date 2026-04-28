@@ -33,6 +33,10 @@ type Assertions = [
       | 'roadmapGroupViews'
       | 'roadmapColorViews'
       | 'roadmapLabelViews'
+      | 'roadmapPlannedStartViews'
+      | 'roadmapPlannedEndViews'
+      | 'roadmapStatusViews'
+      | 'roadmapBlockedByViews'
       | 'mainGroupByFieldMetadataViews'
       | 'viewSorts'
     >
@@ -52,6 +56,10 @@ type Assertions = [
       | 'roadmapGroupViews'
       | 'roadmapColorViews'
       | 'roadmapLabelViews'
+      | 'roadmapPlannedStartViews'
+      | 'roadmapPlannedEndViews'
+      | 'roadmapStatusViews'
+      | 'roadmapBlockedByViews'
       | 'mainGroupByFieldMetadataViews'
       | 'viewSorts'
     >

@@ -68,7 +68,7 @@ describe('deleteUniversalFlatEntityFromUniversalFlatEntityAndRelatedEntityMapsTh
       roadmapEndViewUniversalIdentifiers: [],
       roadmapGroupViewUniversalIdentifiers: [],
       roadmapColorViewUniversalIdentifiers: [],
-      roadmapLabelViewUniversalIdentifiers: [],
+      roadmapLabelViewUniversalIdentifiers: [],      roadmapPlannedStartViewUniversalIdentifiers: [],      roadmapPlannedEndViewUniversalIdentifiers: [],      roadmapStatusViewUniversalIdentifiers: [],      roadmapBlockedByViewUniversalIdentifiers: [],
       mainGroupByFieldMetadataViewUniversalIdentifiers: [],
       kanbanAggregateOperationViewUniversalIdentifiers: [],
       createdAt: '2024-01-01T00:00:00.000Z',
@@ -196,7 +196,7 @@ describe('deleteUniversalFlatEntityFromUniversalFlatEntityAndRelatedEntityMapsTh
       roadmapEndViewUniversalIdentifiers: [],
       roadmapGroupViewUniversalIdentifiers: [],
       roadmapColorViewUniversalIdentifiers: [],
-      roadmapLabelViewUniversalIdentifiers: [],
+      roadmapLabelViewUniversalIdentifiers: [],      roadmapPlannedStartViewUniversalIdentifiers: [],      roadmapPlannedEndViewUniversalIdentifiers: [],      roadmapStatusViewUniversalIdentifiers: [],      roadmapBlockedByViewUniversalIdentifiers: [],
     });
   });
 });

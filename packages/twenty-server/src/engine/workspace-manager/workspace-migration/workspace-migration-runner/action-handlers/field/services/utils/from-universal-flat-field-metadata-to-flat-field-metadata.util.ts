@@ -136,7 +136,7 @@ export const fromUniversalFlatFieldMetadataToFlatFieldMetadata = ({
     roadmapEndViewIds: [],
     roadmapGroupViewIds: [],
     roadmapColorViewIds: [],
-    roadmapLabelViewIds: [],
+    roadmapLabelViewIds: [],    roadmapPlannedStartViewIds: [],    roadmapPlannedEndViewIds: [],    roadmapStatusViewIds: [],    roadmapBlockedByViewIds: [],
     mainGroupByFieldMetadataViewIds: [],
     kanbanAggregateOperationViewIds: [],
     viewSortIds: [],

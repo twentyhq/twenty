@@ -47,7 +47,7 @@ describe('resetUniversalFlatEntityForeignKeyAggregators', () => {
       roadmapEndViewUniversalIdentifiers: [],
       roadmapGroupViewUniversalIdentifiers: [],
       roadmapColorViewUniversalIdentifiers: [],
-      roadmapLabelViewUniversalIdentifiers: [],
+      roadmapLabelViewUniversalIdentifiers: [],      roadmapPlannedStartViewUniversalIdentifiers: [],      roadmapPlannedEndViewUniversalIdentifiers: [],      roadmapStatusViewUniversalIdentifiers: [],      roadmapBlockedByViewUniversalIdentifiers: [],
       kanbanAggregateOperationViewUniversalIdentifiers: [],
       mainGroupByFieldMetadataViewUniversalIdentifiers: [],
     });

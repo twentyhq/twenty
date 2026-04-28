@@ -60,7 +60,7 @@ export const getDefaultFlatFieldMetadata = ({
     roadmapEndViewUniversalIdentifiers: [],
     roadmapGroupViewUniversalIdentifiers: [],
     roadmapColorViewUniversalIdentifiers: [],
-    roadmapLabelViewUniversalIdentifiers: [],
+    roadmapLabelViewUniversalIdentifiers: [],    roadmapPlannedStartViewUniversalIdentifiers: [],    roadmapPlannedEndViewUniversalIdentifiers: [],    roadmapStatusViewUniversalIdentifiers: [],    roadmapBlockedByViewUniversalIdentifiers: [],
     mainGroupByFieldMetadataViewUniversalIdentifiers: [],
     universalSettings: settings ?? null,
     viewSortUniversalIdentifiers: [],

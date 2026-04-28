@@ -358,6 +358,31 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toStringify: false,
       universalProperty: 'roadmapFieldLabelUniversalIdentifier',
     },
+    roadmapFieldPlannedStartId: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: 'roadmapFieldPlannedStartUniversalIdentifier',
+    },
+    roadmapFieldPlannedEndId: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: 'roadmapFieldPlannedEndUniversalIdentifier',
+    },
+    roadmapFieldStatusId: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: 'roadmapFieldStatusUniversalIdentifier',
+    },
+    roadmapFieldBlockedById: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: 'roadmapFieldBlockedByUniversalIdentifier',
+    },
+    roadmapShowDeviation: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
     visibility: {
       toCompare: true,
       toStringify: false,

@@ -36,6 +36,10 @@ non-ROADMAP views pay no cost:
 | `roadmapDefaultZoom` | `view_roadmap_zoom_enum` | Default zoom when the view loads; enum has `DAY / WEEK / MONTH / QUARTER` though `DAY` is hidden in the UI. |
 | `roadmapShowToday` | bool, default `true` | Toggles the vertical "Today" line. |
 | `roadmapShowWeekends` | bool, default `true` | Toggles the weekend-column overlay. |
+| `roadmapFieldPlannedEndId` | FK → `fieldMetadata` (ON DELETE SET NULL) | **Optional (Fase 6).** DATE/DATE_TIME field that powers the dashed "ghost" bar — when its value differs from the live `end`, the planned span is rendered behind the live one so slip is visible at a glance. |
+| `roadmapFieldStatusId` | FK → `fieldMetadata` (ON DELETE SET NULL) | **Optional (Fase 6).** SELECT field used **only** for deviation logic. Records whose status is `DONE` or `CANCELLED` never show the red overdue border, even if today is past `end`. Does **not** paint the bar — that's still `roadmapFieldColorId`. |
+| `roadmapFieldBlockedById` | FK → `fieldMetadata` (ON DELETE SET NULL) | **Optional (Fase 6).** SELECT field that drives the lock badge + tinted color when its value is anything other than `NONE`. Default mapping in `roadmapBlockedByColorMap.ts`: `CLIENT → orange`, `INTERNAL → red`, `EXTERNAL_VENDOR → purple`. |
+| `roadmapShowDeviation` | bool, default `false` | **Optional (Fase 6).** Toggles the cumulative-slip "+Nd" pill badge in each swimlane header. The badge sums `deviationDays` across the swimlane's records using `useRecordRoadmapDeviation`. |
 
 Integrity is enforced server-side by `CHK_VIEW_ROADMAP_INTEGRITY`:
 `type != 'ROADMAP' OR (start IS NOT NULL AND end IS NOT NULL AND start != end)`.
@@ -167,4 +171,15 @@ Adding a new field role (e.g. an assignee filter):
 6. Add a sub-page to `ObjectOptionsDropdownRoadmapFieldPickerContent` (or a dedicated picker) and wire a new entry in `ObjectOptionsDropdownLayoutContent`.
 
 When in doubt, follow the `roadmapFieldColorId` chain end-to-end — it's the
-most recent addition and was intentionally made to mirror `roadmapFieldGroupId`.
+canonical field role and was intentionally made to mirror `roadmapFieldGroupId`.
+
+## Fase 6 deviation indicators
+
+The Fase 6 roles (`PlannedEnd` / `Status` / `BlockedBy` / `ShowDeviation`)
+were added in lockstep using the same chain. The first real consumer is
+`OpportunityMilestone` (a SPOTVISION-owned standard object): its TABLE
+view ships from the standard application; the Roadmap view is created
+on-demand from the view picker once the user has at least two DATE fields
+to use as start/end. A future follow-up will extend
+`createStandardViewFlatMetadata` to resolve the new roadmap field names
+to IDs so the Roadmap view can ship pre-configured too.
