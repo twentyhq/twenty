@@ -32,7 +32,6 @@ const getRestInputRequestParserExceptionUserFriendlyMessage = (
       return msg`Invalid limit parameter.`;
     case RestInputRequestParserExceptionCode.INVALID_FILTER_QUERY_PARAM:
       return msg`Invalid filter parameter.`;
-
     default:
       assertUnreachable(code);
   }

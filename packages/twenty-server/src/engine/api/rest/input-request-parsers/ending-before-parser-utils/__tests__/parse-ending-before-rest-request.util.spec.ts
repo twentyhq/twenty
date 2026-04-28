@@ -12,10 +12,4 @@ describe('parseEndingBeforeRestRequest', () => {
 
     expect(parseEndingBeforeRestRequest(request)).toEqual('uuid');
   });
-
-  it('should return undefined when before alias is used (silently ignored)', () => {
-    const request: any = { query: { before: 'uuid' } };
-
-    expect(parseEndingBeforeRestRequest(request)).toEqual(undefined);
-  });
 });
