@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import crypto from 'crypto';
 import { promises as fs } from 'fs';
-import { dirname, join } from 'path';
+import path, { dirname, join } from 'path';
 import { type QueryRunner } from 'typeorm';
 
 import { FileFolder } from 'twenty-shared/types';
@@ -10,6 +10,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { FileStorageExceptionCode } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
 
+import { SEED_DEPENDENCIES_DIRNAME } from 'src/engine/core-modules/application/application-package/constants/seed-dependencies-dirname';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import {
   getLogicFunctionSeedProjectFiles,
@@ -257,24 +258,45 @@ export class LogicFunctionResourceService {
     workspaceId: string;
     inMemoryFolderPath: string;
   }) {
-    const yarnLockExists = await this.fileStorageService.checkFileExists({
-      workspaceId,
-      applicationUniversalIdentifier,
-      fileFolder: FileFolder.Dependencies,
-      resourcePath: 'yarn.lock',
-    });
-
-    const promises = [];
-
-    promises.push(
-      this.fileStorageService.downloadFile({
+    const [packageJsonExists, yarnLockExists] = await Promise.all([
+      this.fileStorageService.checkFileExists({
         workspaceId,
         applicationUniversalIdentifier,
         fileFolder: FileFolder.Dependencies,
         resourcePath: 'package.json',
-        localPath: join(inMemoryFolderPath, 'package.json'),
       }),
-    );
+      this.fileStorageService.checkFileExists({
+        workspaceId,
+        applicationUniversalIdentifier,
+        fileFolder: FileFolder.Dependencies,
+        resourcePath: 'yarn.lock',
+      }),
+    ]);
+
+    const promises = [];
+
+    if (packageJsonExists) {
+      promises.push(
+        this.fileStorageService.downloadFile({
+          workspaceId,
+          applicationUniversalIdentifier,
+          fileFolder: FileFolder.Dependencies,
+          resourcePath: 'package.json',
+          localPath: join(inMemoryFolderPath, 'package.json'),
+        }),
+      );
+    } else {
+      const packageJsonPath = join(inMemoryFolderPath, 'package.json');
+
+      promises.push(
+        fs.mkdir(dirname(packageJsonPath), { recursive: true }).then(() =>
+          fs.copyFile(
+            path.join(SEED_DEPENDENCIES_DIRNAME, 'package.json'),
+            packageJsonPath,
+          ),
+        ),
+      );
+    }
 
     if (yarnLockExists) {
       promises.push(
