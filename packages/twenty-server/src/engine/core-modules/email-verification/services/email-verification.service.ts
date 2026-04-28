@@ -59,7 +59,14 @@ export class EmailVerificationService {
     verifyEmailRedirectPath?: string;
     verificationTrigger?: EmailVerificationTrigger;
   }) {
-    if (!this.twentyConfigService.get('IS_EMAIL_VERIFICATION_REQUIRED')) {
+    const isEmailVerificationRequired = this.twentyConfigService.get(
+      'IS_EMAIL_VERIFICATION_REQUIRED',
+    );
+
+    if (
+      !isEmailVerificationRequired &&
+      verificationTrigger !== EmailVerificationTrigger.EMAIL_UPDATE
+    ) {
       return { success: false };
     }
 
