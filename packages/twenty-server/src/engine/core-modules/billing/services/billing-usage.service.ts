@@ -286,7 +286,7 @@ export class BillingUsageService {
   }: {
     workspaceId: string;
     usedCredits: number;
-  }): Promise<number | undefined> {
+  }): Promise<void> {
     const {
       billingSubscription: { currentPeriodStart, currentPeriodEnd },
     } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
@@ -314,24 +314,21 @@ export class BillingUsageService {
       );
     }
 
-    await this.billingUsageCacheStorage.incrBy(
-      buildBillingUsageAvailableCreditsCacheKey(
-        workspaceId,
-        currentPeriodStart,
-      ),
-      -usedCredits,
-    );
+    const decrementedAvailableCredits =
+      await this.billingUsageCacheStorage.incrBy(
+        buildBillingUsageAvailableCreditsCacheKey(
+          workspaceId,
+          currentPeriodStart,
+        ),
+        -usedCredits,
+      );
 
-    const newAvailableCredits = availableCredits - usedCredits;
-
-    if (newAvailableCredits <= 0) {
-      await this.billingUsageCapService.setMeteredBillingSubscriptionItemCap(
+    if (decrementedAvailableCredits <= 0) {
+      await this.billingUsageCapService.setSubscriptionItemHasReachedCap(
         workspaceId,
         true,
       );
     }
-
-    return newAvailableCredits;
   }
 
   async invalidateAvailableCredits(

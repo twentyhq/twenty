@@ -386,13 +386,6 @@ export class WorkflowExecutorWorkspaceService {
     }
   }
 
-  private async canBillWorkflowNodeExecution(workspaceId: string) {
-    return (
-      !this.billingService.isBillingEnabled() ||
-      (await this.billingUsageService.hasAvailableCredits(workspaceId))
-    );
-  }
-
   private async processStepExecutionResult({
     actionOutput,
     stepId,

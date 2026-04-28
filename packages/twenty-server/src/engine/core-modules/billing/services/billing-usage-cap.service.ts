@@ -12,9 +12,10 @@ import {
 import { BillingSubscriptionItemEntity } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
 import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing-product-key.enum';
+import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
 import { MeteredCreditService } from 'src/engine/core-modules/billing/services/metered-credit.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { Raw, Repository } from 'typeorm';
+import { Not, Raw, Repository } from 'typeorm';
 
 export type BillingCapEvaluation =
   | {
@@ -121,14 +122,17 @@ export class BillingUsageCapService {
     return results;
   }
 
-  async setMeteredBillingSubscriptionItemCap(
+  async setSubscriptionItemHasReachedCap(
     workspaceId: string,
     hasReachedCap: boolean,
   ): Promise<void> {
     const billingSubscriptionItems =
       await this.billingSubscriptionItemRepository.find({
         where: {
-          billingSubscription: { workspaceId },
+          billingSubscription: {
+            workspaceId,
+            status: Not(SubscriptionStatus.Canceled),
+          },
           billingProduct: {
             metadata: Raw((alias) => `${alias} @> :metadata::jsonb`, {
               metadata: JSON.stringify({
