@@ -17,7 +17,6 @@ import { createOnePageLayout } from 'test/integration/metadata/suites/page-layou
 import { destroyOnePageLayout } from 'test/integration/metadata/suites/page-layout/utils/destroy-one-page-layout.util';
 import { findViewFields } from 'test/integration/metadata/suites/view-field/utils/find-view-fields.util';
 import { findViewFilters } from 'test/integration/metadata/suites/view-filter/utils/find-view-filters.util';
-import { findViewSorts } from 'test/integration/metadata/suites/view-sort/utils/find-view-sorts.util';
 import { createOneView } from 'test/integration/metadata/suites/view/utils/create-one-view.util';
 import { destroyOneView } from 'test/integration/metadata/suites/view/utils/destroy-one-view.util';
 import { upsertViewWidget } from 'test/integration/metadata/suites/view/utils/upsert-view-widget.util';
@@ -115,17 +114,29 @@ describe('upsertViewWidget', () => {
 
     const widgetId = widgetData.createPageLayoutWidget.id;
 
-    const { data: fieldsData } = await findViewFields({
-      viewId,
-      gqlFields: 'id fieldMetadataId position isVisible',
-      expectToFail: false,
-    });
-
     const fieldMetadataIds = [
       testFieldMetadataIds.fieldMetadataId1,
       testFieldMetadataIds.fieldMetadataId2,
       testFieldMetadataIds.fieldMetadataId3,
     ];
+
+    await upsertViewWidget({
+      expectToFail: false,
+      input: {
+        widgetId,
+        viewFields: fieldMetadataIds.map((fmId, index) => ({
+          fieldMetadataId: fmId,
+          isVisible: true,
+          position: index,
+        })),
+      },
+    });
+
+    const { data: fieldsData } = await findViewFields({
+      viewId,
+      gqlFields: 'id fieldMetadataId position isVisible',
+      expectToFail: false,
+    });
 
     testSetup = {
       pageLayoutId,
@@ -398,6 +409,19 @@ describe('upsertViewWidget', () => {
       const parentGroupId = uuidv4();
       const childGroupId = uuidv4();
 
+      await upsertViewWidget({
+        expectToFail: false,
+        input: {
+          widgetId: testSetup.widgetId,
+          viewFilterGroups: [
+            {
+              id: parentGroupId,
+              logicalOperator: ViewFilterGroupLogicalOperator.AND,
+            },
+          ],
+        },
+      });
+
       const { errors } = await upsertViewWidget({
         expectToFail: false,
         input: {
@@ -617,6 +641,7 @@ describe('upsertViewWidget', () => {
 
   describe('view sorts', () => {
     it('should create a new sort', async () => {
+      const sortId = uuidv4();
       const fieldMetadataId = testSetup.fieldMetadataIds[0];
 
       await upsertViewWidget({
@@ -625,6 +650,7 @@ describe('upsertViewWidget', () => {
           widgetId: testSetup.widgetId,
           viewSorts: [
             {
+              id: sortId,
               fieldMetadataId,
               direction: ViewSortDirection.DESC,
             },
@@ -632,24 +658,21 @@ describe('upsertViewWidget', () => {
         },
       });
 
-      const { data: sortsData } = await findViewSorts({
-        viewId: testSetup.viewId,
-        gqlFields: 'id fieldMetadataId direction',
-        expectToFail: false,
-      });
-
-      const createdSort = sortsData.getViewSorts.find(
-        (s: { fieldMetadataId: string }) =>
-          s.fieldMetadataId === fieldMetadataId,
+      const sorts = await global.testDataSource.query(
+        `SELECT id, "fieldMetadataId", direction
+         FROM core."viewSort"
+         WHERE id = $1 AND "deletedAt" IS NULL`,
+        [sortId],
       );
 
-      expect(createdSort).toBeDefined();
-      expect(createdSort!.direction).toBe(ViewSortDirection.DESC);
+      expect(sorts.length).toBe(1);
+      expect(sorts[0].fieldMetadataId).toBe(fieldMetadataId);
+      expect(sorts[0].direction).toBe(ViewSortDirection.DESC);
     });
 
     it('should update an existing sort direction', async () => {
       const sortId = uuidv4();
-      const fieldMetadataId = testSetup.fieldMetadataIds[0];
+      const fieldMetadataId = testSetup.fieldMetadataIds[1];
 
       await upsertViewWidget({
         expectToFail: false,
@@ -679,26 +702,22 @@ describe('upsertViewWidget', () => {
         },
       });
 
-      const { data: sortsData } = await findViewSorts({
-        viewId: testSetup.viewId,
-        gqlFields: 'id direction',
-        expectToFail: false,
-      });
-
-      const updatedSort = sortsData.getViewSorts.find(
-        (s: { id: string }) => s.id === sortId,
+      const sorts = await global.testDataSource.query(
+        `SELECT id, direction
+         FROM core."viewSort"
+         WHERE id = $1 AND "deletedAt" IS NULL`,
+        [sortId],
       );
 
-      expect(updatedSort).toBeDefined();
-      expect(updatedSort!.direction).toBe(ViewSortDirection.DESC);
+      expect(sorts.length).toBe(1);
+      expect(sorts[0].direction).toBe(ViewSortDirection.DESC);
     });
 
     it('should remove sorts not included in the input', async () => {
       const sortToKeepId = uuidv4();
       const sortToRemoveId = uuidv4();
       const fieldMetadataId = testSetup.fieldMetadataIds[0];
-      const secondFieldMetadataId =
-        testSetup.fieldMetadataIds[1] ?? fieldMetadataId;
+      const secondFieldMetadataId = testSetup.fieldMetadataIds[1];
 
       await upsertViewWidget({
         expectToFail: false,
@@ -733,23 +752,21 @@ describe('upsertViewWidget', () => {
         },
       });
 
-      const { data: sortsData } = await findViewSorts({
-        viewId: testSetup.viewId,
-        gqlFields: 'id',
-        expectToFail: false,
-      });
-
-      const keptSort = sortsData.getViewSorts.find(
-        (s: { id: string }) => s.id === sortToKeepId,
+      const keptSort = await global.testDataSource.query(
+        `SELECT id FROM core."viewSort"
+         WHERE id = $1 AND "deletedAt" IS NULL`,
+        [sortToKeepId],
       );
 
-      expect(keptSort).toBeDefined();
+      expect(keptSort.length).toBe(1);
 
-      const removedSort = sortsData.getViewSorts.find(
-        (s: { id: string }) => s.id === sortToRemoveId,
+      const removedSort = await global.testDataSource.query(
+        `SELECT id FROM core."viewSort"
+         WHERE id = $1 AND "deletedAt" IS NULL`,
+        [sortToRemoveId],
       );
 
-      expect(removedSort).toBeUndefined();
+      expect(removedSort.length).toBe(0);
     });
   });
 
@@ -758,7 +775,7 @@ describe('upsertViewWidget', () => {
       const filterGroupId = uuidv4();
       const filterId = uuidv4();
       const sortId = uuidv4();
-      const fieldMetadataId = testSetup.fieldMetadataIds[0];
+      const fieldMetadataId = testSetup.fieldMetadataIds[2];
       const targetField = testSetup.viewFields[0];
 
       const { data, errors } = await upsertViewWidget({
@@ -811,31 +828,23 @@ describe('upsertViewWidget', () => {
 
       expect(filterGroups.length).toBe(1);
 
-      const { data: filtersData } = await findViewFilters({
-        viewId: testSetup.viewId,
-        gqlFields: 'id value viewFilterGroupId',
-        expectToFail: false,
-      });
-
-      const createdFilter = filtersData.getViewFilters.find(
-        (f: { id: string }) => f.id === filterId,
+      const filters = await global.testDataSource.query(
+        `SELECT id, value FROM core."viewFilter"
+         WHERE id = $1 AND "deletedAt" IS NULL`,
+        [filterId],
       );
 
-      expect(createdFilter).toBeDefined();
-      expect(createdFilter!.value).toBe('combined-test');
+      expect(filters.length).toBe(1);
+      expect(filters[0].value).toBe('combined-test');
 
-      const { data: sortsData } = await findViewSorts({
-        viewId: testSetup.viewId,
-        gqlFields: 'id direction',
-        expectToFail: false,
-      });
-
-      const createdSort = sortsData.getViewSorts.find(
-        (s: { id: string }) => s.id === sortId,
+      const sorts = await global.testDataSource.query(
+        `SELECT id, direction FROM core."viewSort"
+         WHERE id = $1 AND "deletedAt" IS NULL`,
+        [sortId],
       );
 
-      expect(createdSort).toBeDefined();
-      expect(createdSort!.direction).toBe(ViewSortDirection.DESC);
+      expect(sorts.length).toBe(1);
+      expect(sorts[0].direction).toBe(ViewSortDirection.DESC);
     });
   });
 
@@ -847,8 +856,7 @@ describe('upsertViewWidget', () => {
           widgetId: uuidv4(),
           viewFields: [
             {
-              viewFieldId: testSetup.viewFields[0].id,
-              fieldMetadataId: testSetup.viewFields[0].fieldMetadataId,
+              fieldMetadataId: testSetup.fieldMetadataIds[0],
               isVisible: true,
               position: 0,
             },
@@ -928,7 +936,7 @@ describe('upsertViewWidget', () => {
 
     it('should remove all sorts when an empty array is provided', async () => {
       const sortId = uuidv4();
-      const fieldMetadataId = testSetup.fieldMetadataIds[0];
+      const fieldMetadataId = testSetup.fieldMetadataIds[2];
 
       await upsertViewWidget({
         expectToFail: false,
@@ -952,17 +960,13 @@ describe('upsertViewWidget', () => {
         },
       });
 
-      const { data: sortsAfter } = await findViewSorts({
-        viewId: testSetup.viewId,
-        gqlFields: 'id',
-        expectToFail: false,
-      });
-
-      const sortExists = sortsAfter.getViewSorts.find(
-        (s: { id: string }) => s.id === sortId,
+      const sortsAfter = await global.testDataSource.query(
+        `SELECT id FROM core."viewSort"
+         WHERE id = $1 AND "deletedAt" IS NULL`,
+        [sortId],
       );
 
-      expect(sortExists).toBeUndefined();
+      expect(sortsAfter.length).toBe(0);
     });
   });
 
