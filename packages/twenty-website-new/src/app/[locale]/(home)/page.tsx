@@ -22,18 +22,13 @@ import { Menu } from '@/sections/Menu/components';
 import { Problem } from '@/sections/Problem/components';
 import { Testimonials } from '@/sections/Testimonials/components';
 import { ThreeCards } from '@/sections/ThreeCards/components';
-import { buildLocalizedMetadata } from '@/lib/seo';
+import { buildRouteMetadata } from '@/lib/seo';
 import { TrustedBy } from '@/sections/TrustedBy/components';
 import { theme } from '@/theme';
 import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
 
-export const generateMetadata = buildLocalizedMetadata({
-  path: '/',
-  title: 'Twenty | #1 open source CRM',
-  description:
-    'The #1 open source CRM for modern teams. Modular, scalable, and built to fit your business.',
-});
+export const generateMetadata = buildRouteMetadata('home');
 
 const HOME_TOP_BACKGROUND_COLOR = '#F4F4F4';
 const PRODUCT_HUNT_LAUNCH_URL =

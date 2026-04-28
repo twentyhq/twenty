@@ -5,7 +5,12 @@ import { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 
 import { getPrefersReducedMotionSnapshot } from '@/lib/motion';
-import { createSiteWebGlRenderer } from '@/lib/visual-runtime';
+import { observeElementSize } from '@/lib/dom/observe-element-size';
+import {
+  createVisualRenderLoop,
+  tryCreateSiteWebGlRenderer,
+  type VisualRenderLoop,
+} from '@/lib/visual-runtime';
 
 const PREVIEW_DISTANCE = 3.2;
 const SOURCE_PREVIEW_DISTANCE = 6.1;
@@ -445,11 +450,20 @@ async function mountHalftoneOverlay({
       1,
     );
 
-  const renderer = createSiteWebGlRenderer({
+  let renderLoop: VisualRenderLoop | null = null;
+  const renderer = tryCreateSiteWebGlRenderer({
     alpha: true,
     antialias: false,
+    onContextLost: () => {
+      renderLoop?.stop();
+    },
     powerPreference: 'high-performance',
   });
+
+  if (renderer === null) {
+    return () => {};
+  }
+
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.setPixelRatio(1);
   renderer.setClearColor(0x000000, 0);
@@ -597,8 +611,7 @@ async function mountHalftoneOverlay({
     });
   };
 
-  const resizeObserver = new ResizeObserver(syncSize);
-  resizeObserver.observe(container);
+  const stopObservingSize = observeElementSize(container, syncSize);
 
   const updatePointerPosition = (
     event: PointerEvent,
@@ -659,11 +672,9 @@ async function mountHalftoneOverlay({
   canvas.addEventListener('pointermove', handlePointerMove);
   canvas.addEventListener('pointerleave', handlePointerLeave);
 
-  let animationFrameId = 0;
   let previousTimestamp = 0;
 
   const renderFrame = (timestamp: number) => {
-    animationFrameId = window.requestAnimationFrame(renderFrame);
     halftoneMaterial.uniforms.time.value = timestamp / 1000;
     const hoverScale = getHoverScale();
     const deltaSeconds =
@@ -719,11 +730,16 @@ async function mountHalftoneOverlay({
     renderer.render(postScene, orthographicCamera);
   };
 
-  renderFrame(0);
+  renderLoop = createVisualRenderLoop({
+    renderFrame,
+    target: container,
+    targetVisibilityOptions: { rootMargin: '100px' },
+  });
+  renderLoop.start();
 
   return () => {
-    window.cancelAnimationFrame(animationFrameId);
-    resizeObserver.disconnect();
+    renderLoop?.dispose();
+    stopObservingSize();
     canvas.removeEventListener('pointermove', handlePointerMove);
     canvas.removeEventListener('pointerleave', handlePointerLeave);
     halftoneMaterial.dispose();

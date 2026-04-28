@@ -7,7 +7,7 @@ import { DIFF_TOTALS } from './TerminalDiff/diffData';
 import { EDITOR_TOKENS } from './TerminalEditor/editorTokens';
 import { TERMINAL_TOKENS } from './terminalTokens';
 import { TerminalToggle, type TerminalToggleValue } from './TerminalToggle';
-import { TerminalTrafficLights } from './TerminalTrafficLights';
+import { TerminalTrafficLights } from './TerminalTrafficLights/TerminalTrafficLights';
 
 type TerminalTopBarProps = {
   onDragStart: (event: ReactPointerEvent<HTMLDivElement>) => void;

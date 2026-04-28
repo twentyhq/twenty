@@ -15,7 +15,7 @@ import { Marquee } from '@/sections/Marquee/components';
 import { Menu } from '@/sections/Menu/components';
 import { Signoff } from '@/sections/Signoff/components';
 import { theme } from '@/theme';
-import { buildLocalizedMetadata } from '@/lib/seo';
+import { buildRouteMetadata } from '@/lib/seo';
 import { css } from '@linaria/core';
 
 const editorialOneIntroClass = css`
@@ -57,12 +57,7 @@ const sectionCrosshairRight = {
   lineColor: crosshairLineColor,
 };
 
-export const generateMetadata = buildLocalizedMetadata({
-  path: '/why-twenty',
-  title: 'Why Twenty | Twenty',
-  description:
-    'Most packaged software makes companies more similar. Learn why the future of CRM is built, not bought.',
-});
+export const generateMetadata = buildRouteMetadata('whyTwenty');
 
 export default async function WhyTwentyPage() {
   const stats = await fetchCommunityStats();
@@ -155,11 +150,6 @@ export default async function WhyTwentyPage() {
           layout="two-column-right"
         />
       </Editorial.Root>
-
-      {/* <Quote.Root backgroundColor={theme.colors.secondary.background[80]}>
-        <Quote.Visual illustration={QUOTE_DATA.illustration} />
-        <Quote.Heading segments={QUOTE_DATA.heading} />
-      </Quote.Root>*/}
 
       <Editorial.Root
         backgroundColor={theme.colors.secondary.background[100]}

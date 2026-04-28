@@ -31,6 +31,26 @@ const RULES = [
       'preference defaults.',
     ].join('\n      '),
   },
+  {
+    id: 'no-raw-animation-frame',
+    description:
+      '`requestAnimationFrame(...)` / `cancelAnimationFrame(...)` may only be used inside shared runtime primitives.',
+    pattern: /\b(?:window\.)?(?:requestAnimationFrame|cancelAnimationFrame)\s*\(/,
+    appliesTo: (rel) =>
+      rel.startsWith('src/') && /\.(ts|tsx|mjs|js|jsx)$/.test(rel),
+    exempt: (rel) =>
+      rel.startsWith('src/lib/animation/') ||
+      rel.startsWith('src/lib/visual-runtime/') ||
+      rel.includes('__tests__') ||
+      rel === 'src/app/[locale]/halftone/_lib/exporters.ts' ||
+      rel.endsWith('.d.ts'),
+    help: [
+      'Use `createAnimationFrameLoop` from `@/lib/animation` for one-shot',
+      'or UI frame scheduling. Use `createVisualRenderLoop` from',
+      '`@/lib/visual-runtime` for canvas/WebGL renderers so tab visibility,',
+      'element visibility, cleanup, and render failures are handled consistently.',
+    ].join('\n      '),
+  },
 ];
 
 const SKIP_DIRS = new Set([
