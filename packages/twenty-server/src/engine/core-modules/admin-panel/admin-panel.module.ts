@@ -33,6 +33,7 @@ import { SecureHttpClientModule } from 'src/engine/core-modules/secure-http-clie
 import { TelemetryModule } from 'src/engine/core-modules/telemetry/telemetry.module';
 import { UsageModule } from 'src/engine/core-modules/usage/usage.module';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import { UserModule } from 'src/engine/core-modules/user/user.module';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { UserVarsModule } from 'src/engine/core-modules/user/user-vars/user-vars.module';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
@@ -71,6 +72,7 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
     UsageModule,
     KeyValuePairModule,
     UserVarsModule,
+    UserModule,
   ],
   providers: [
     AdminPanelResolver,

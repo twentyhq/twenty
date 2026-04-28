@@ -12,6 +12,7 @@ import { useIsMobile } from 'twenty-ui/utilities';
 import { useContext } from 'react';
 
 import { useSwitchToNewAiChat } from '@/ai/hooks/useSwitchToNewAiChat';
+import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerAnimatedCollapseWrapper';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { navigationDrawerActiveTabState } from '@/ui/navigation/states/navigationDrawerActiveTabState';
@@ -22,6 +23,7 @@ import {
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { PermissionFlagType } from '~/generated-metadata/graphql';
 
 const StyledRow = styled.div<{ isExpanded: boolean }>`
   align-items: center;
@@ -142,8 +144,15 @@ export const MainNavigationDrawerTabsRow = () => {
   const setIsNavigationDrawerExpanded = useSetAtomState(
     isNavigationDrawerExpandedState,
   );
+  const hasAiSettingsPermission = useHasPermissionFlag(
+    PermissionFlagType.AI_SETTINGS,
+  );
 
   const isExpanded = isNavigationDrawerExpanded || isMobile;
+
+  if (!hasAiSettingsPermission) {
+    return null;
+  }
 
   const handleTabClick = (tab: NavigationDrawerActiveTab) => () => {
     setNavigationDrawerActiveTab(tab);

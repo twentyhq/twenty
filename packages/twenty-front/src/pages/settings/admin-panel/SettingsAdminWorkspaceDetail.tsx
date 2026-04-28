@@ -32,11 +32,13 @@ import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBa
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import {
+  Avatar,
   H2Title,
   IconCreditCard,
   IconEyeShare,
   IconFlag,
   IconMessage,
+  OverflowingTextWithTooltip,
   IconSettings2,
   IconUsers,
 } from 'twenty-ui/display';
@@ -241,9 +243,27 @@ export const SettingsAdminWorkspaceDetail = () => {
                         userId,
                       })}
                     >
-                      <TableCell color={themeCssVariables.font.color.primary}>
-                        {`${user.firstName || ''} ${user.lastName || ''}`.trim() ||
-                          '\u2014'}
+                      <TableCell
+                        color={themeCssVariables.font.color.primary}
+                        gap={themeCssVariables.spacing[2]}
+                        overflow="hidden"
+                      >
+                        <Avatar
+                          avatarUrl={user.avatarUrl}
+                          placeholder={
+                            `${user.firstName || ''} ${user.lastName || ''}`.trim() ||
+                            user.email
+                          }
+                          placeholderColorSeed={user.id}
+                          size="md"
+                          type="rounded"
+                        />
+                        <OverflowingTextWithTooltip
+                          text={
+                            `${user.firstName || ''} ${user.lastName || ''}`.trim() ||
+                            '\u2014'
+                          }
+                        />
                       </TableCell>
                       <TableCell>{user.email}</TableCell>
                       <TableCell align="right">
