@@ -25,8 +25,10 @@ helpers.
   pdfplumber, reportlab.
 - **HTTP** — requests (user code calls back into Twenty's API via
   `TWENTY_SERVER_URL` + `TWENTY_API_TOKEN` injected by the driver).
-- **Pre-seeded scripts** at `/home/user/scripts/` covering docx/pdf/pptx/xlsx
-  helpers (validation, packing/unpacking, redlining, form fills).
+- **Pre-seeded scripts** at `/opt/sandbox-scripts/` covering docx/pdf/pptx/xlsx
+  helpers (validation, packing/unpacking, redlining, form fills). Made
+  importable via `PYTHONPATH=/opt/sandbox-scripts` baked into the image, so
+  user code can `from <script> import …` without juggling `sys.path`.
 - **Non-root `user`** uid 1000 with home `/home/user`.
 
 ## How the driver uses it
@@ -34,10 +36,10 @@ helpers.
 The driver creates one container per code-interpreter call:
 
 1. Stages a host work directory at `$DOCKER_SANDBOX_WORK_DIR/run-*`.
-2. Bind-mounts that dir at `/home/user` inside the container, shadowing the
-   baked-in home (the pre-seeded scripts at `/home/user/scripts/` are still
-   visible via the same bind mount — they're part of the image layer below
-   the mount point).
+2. Bind-mounts that dir at `/home/user` inside the container. The bind
+   mount fully shadows the baked `/home/user` content from the image, which
+   is why the pre-seeded scripts live at `/opt/sandbox-scripts/` instead —
+   that path is outside the bind point and remains visible.
 3. Writes input files to the host side of the bind.
 4. `exec`s `python -u -c <user-code>` inside the already-running container.
 5. Reads output files from the host side of the bind.

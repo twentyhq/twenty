@@ -51,9 +51,11 @@ RUN pip install \
 # cases where no bind mount is supplied.
 RUN useradd --uid 1000 --create-home --home-dir /home/user user
 
-# Pre-seed the office-document helpers. Copied from twenty-server's
-# code-interpreter module (see build command above).
-COPY --chown=user:user sandbox-scripts/ /home/user/scripts/
+# Pre-seed the office-document helpers under /opt so the driver's bind mount
+# at /home/user does not shadow them. Made importable via PYTHONPATH so user
+# code can `from <script> import …` without juggling sys.path.
+COPY --chown=user:user sandbox-scripts/ /opt/sandbox-scripts/
+ENV PYTHONPATH=/opt/sandbox-scripts
 
 USER user
 WORKDIR /home/user

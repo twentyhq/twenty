@@ -7,7 +7,7 @@ import {
   rm,
   writeFile,
 } from 'node:fs/promises';
-import { join } from 'node:path';
+import { basename, join } from 'node:path';
 import { PassThrough } from 'node:stream';
 
 import Dockerode from 'dockerode';
@@ -38,6 +38,25 @@ export type DockerDriverOptions = {
 
 const CONTAINER_WORK_DIR = '/home/user';
 const OUTPUT_SUBDIR = 'output';
+
+// Caller-provided filenames are written verbatim to the host work dir, so a
+// value containing '..' or path separators would escape the sandbox staging
+// area. Require a single basename without traversal sequences or NUL bytes.
+const assertSafeInputFilename = (filename: string): void => {
+  if (
+    !filename ||
+    filename === '.' ||
+    filename === '..' ||
+    filename !== basename(filename) ||
+    filename.includes('\0')
+  ) {
+    throw new Error(
+      `Invalid input filename ${JSON.stringify(
+        filename,
+      )}: must be a single path component without traversal sequences`,
+    );
+  }
+};
 
 // Lines that arrive on stdout/stderr are invoked on the consumer's callbacks
 // so the UI can stream tokens as they appear. We buffer partial lines across
@@ -103,13 +122,15 @@ export class DockerDriver implements CodeInterpreterDriver {
     try {
       await mkdir(hostOutputDir);
       for (const file of files ?? []) {
+        assertSafeInputFilename(file.filename);
         await writeFile(join(hostDir, file.filename), file.content);
       }
       // World-writable + sticky so container-root can write and host-uid can
-      // later rm -rf. Upstream note: a follow-up should use User-namespace
-      // remap instead.
-      await chmod(hostDir, 0o777);
-      await chmod(hostOutputDir, 0o777);
+      // later rm -rf. The sticky bit (0o1000) prevents one container from
+      // unlinking another's files in the rare case two runs share a root.
+      // Upstream note: a follow-up should use User-namespace remap instead.
+      await chmod(hostDir, 0o1777);
+      await chmod(hostOutputDir, 0o1777);
 
       // 2. Create a placeholder-Cmd container so exec() can run the user
       //    code while the container stays alive. AutoRemove is off because
@@ -168,6 +189,14 @@ export class DockerDriver implements CodeInterpreterDriver {
       }, timeoutMs);
       try {
         await execDone;
+      } catch (err) {
+        // The kill triggered by the timeout typically rejects execDone via a
+        // stream error. That path must still surface the timeout result, not
+        // the generic exitCode-1 envelope from the outer catch — so swallow
+        // the error when timedOut is set, and re-throw otherwise.
+        if (!timedOut) {
+          throw err;
+        }
       } finally {
         clearTimeout(timeoutHandle);
       }
@@ -175,18 +204,23 @@ export class DockerDriver implements CodeInterpreterDriver {
       stdoutLines.flush();
       stderrLines.flush();
 
-      const { ExitCode } = await exec.inspect();
+      // exec.inspect() can also reject if the container was killed mid-call.
+      // Treat absent/failed inspect as 137 (SIGKILL'd) and let timedOut win.
+      let exitCode: number;
+      try {
+        const inspect = await exec.inspect();
+        exitCode = inspect.ExitCode ?? 137;
+      } catch {
+        exitCode = 137;
+      }
 
       // 5. Harvest outputs from the host side of the bind mount.
-      const outputFiles = await this.harvestOutputs(
-        hostOutputDir,
-        callbacks,
-      );
+      const outputFiles = await this.harvestOutputs(hostOutputDir, callbacks);
 
       return {
         stdout: stdout.replace(/\n$/, ''),
         stderr: stderr.replace(/\n$/, ''),
-        exitCode: ExitCode ?? (timedOut ? 124 : 0),
+        exitCode: timedOut ? 124 : exitCode,
         files: outputFiles,
         error: timedOut ? 'Execution timed out' : undefined,
       };

@@ -683,7 +683,7 @@ export class ConfigVariables {
   @ValidateIf(
     (env) => env.CODE_INTERPRETER_TYPE === CodeInterpreterDriverType.DOCKER,
   )
-  @IsOptional()
+  @IsDefined()
   DOCKER_SANDBOX_NETWORK?: string;
 
   @ConfigVariablesMetadata({
@@ -700,8 +700,7 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.CODE_INTERPRETER_CONFIG,
-    description:
-      'Memory limit per sandbox container in MB (default: 512)',
+    description: 'Memory limit per sandbox container in MB (default: 512)',
     type: ConfigVariableType.NUMBER,
   })
   @IsOptional()
@@ -730,7 +729,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.CODE_INTERPRETER_CONFIG,
     description:
-      'Override URL the sandbox uses to reach Twenty\'s MCP endpoint. Needed when the sandbox runs on a network that cannot resolve the public SERVER_URL (e.g. DOCKER driver with internal-only sandbox network). Falls back to SERVER_URL when unset.',
+      "Override URL the sandbox uses to reach Twenty's MCP endpoint. Needed when the sandbox runs on a network that cannot resolve the public SERVER_URL (e.g. DOCKER driver with internal-only sandbox network). Falls back to SERVER_URL when unset.",
     type: ConfigVariableType.STRING,
   })
   @IsOptional()

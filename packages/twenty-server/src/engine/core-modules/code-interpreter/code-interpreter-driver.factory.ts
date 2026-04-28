@@ -29,7 +29,9 @@ export class CodeInterpreterDriverFactory extends DriverFactoryBase<CodeInterpre
       driverType === CodeInterpreterDriverType.E_2_B ||
       driverType === CodeInterpreterDriverType.DOCKER
     ) {
-      return `${driverType.toLowerCase()}|${this.configGroupHashService.computeHash(ConfigVariablesGroup.CODE_INTERPRETER_CONFIG)}`;
+      return `${driverType.toLowerCase()}|${this.configGroupHashService.computeHash(
+        ConfigVariablesGroup.CODE_INTERPRETER_CONFIG,
+      )}`;
     }
 
     return driverType;
