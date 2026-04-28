@@ -49,6 +49,3 @@ jobs:
           script: |
             # Sagt Kubernetes, dass es das Image neu ziehen und die Pods nacheinander neu starten soll
             kubectl rollout restart deployment twenty-crm
-            
-            # Falls du auch einen Worker-Pod hast, kommentiere diese Zeile ein:
-            # kubectl rollout restart deployment twenty-worker
