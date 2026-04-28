@@ -20,7 +20,7 @@ const workspaceKey = (workspaceId: string) =>
 class FakeCacheStorage {
   store = new Map<string, unknown>();
 
-  get = jest.fn(async <T,>(key: string): Promise<T | undefined> => {
+  get = jest.fn(async <T>(key: string): Promise<T | undefined> => {
     return this.store.get(key) as T | undefined;
   });
 
@@ -32,7 +32,7 @@ class FakeCacheStorage {
     this.store.delete(key);
   });
 
-  mget = jest.fn(async <T,>(keys: string[]): Promise<(T | undefined)[]> => {
+  mget = jest.fn(async <T>(keys: string[]): Promise<(T | undefined)[]> => {
     return keys.map((key) => this.store.get(key) as T | undefined);
   });
 
@@ -53,7 +53,7 @@ class FakeCacheStorage {
   });
 
   flushByPattern = jest.fn(async (pattern: string): Promise<void> => {
-    const matcher = new RegExp(`^${pattern.replace('*', '.*')}$`);
+    const matcher = new RegExp(`^${pattern.replace(/\*/g, '.*')}$`);
 
     for (const key of [...this.store.keys()]) {
       if (matcher.test(key)) {
