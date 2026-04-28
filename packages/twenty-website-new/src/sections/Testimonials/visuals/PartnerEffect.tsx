@@ -1,6 +1,7 @@
 'use client';
 
 import { HalftoneCanvas, type HalftoneStudioSettings } from '@/lib/halftone';
+import { loadVisualImage } from '@/lib/visual-runtime';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
 import { useEffect, useRef, useState } from 'react';
@@ -160,29 +161,20 @@ export function PartnerEffect({ alt, fallback, src }: PartnerEffectProps) {
 
     setImageElement(null);
 
-    const image = new Image();
-    image.decoding = 'async';
-    image.onload = () => {
-      if (cancelled) {
-        return;
-      }
-
-      setImageElement(image);
-    };
-    image.onerror = () => {
-      if (cancelled) {
-        return;
-      }
-
-      console.error(`Failed to load testimonial portrait: ${src}`);
-    };
-    image.src = src;
+    void loadVisualImage(src, { label: 'testimonial portrait' })
+      .then((image) => {
+        if (!cancelled) {
+          setImageElement(image);
+        }
+      })
+      .catch((error: unknown) => {
+        if (!cancelled) {
+          console.error(error);
+        }
+      });
 
     return () => {
       cancelled = true;
-      image.onload = null;
-      image.onerror = null;
-      image.src = '';
     };
   }, [src]);
 

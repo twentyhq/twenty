@@ -14,7 +14,11 @@ import {
   loadImportedGeometryFromUrl,
   type ImportedGeometryNormalizationOptions,
 } from './geometry-registry';
-import { HalftoneCanvas, type HalftoneSnapshotFn } from './halftone-canvas';
+import {
+  HalftoneCanvas,
+  type HalftoneRenderStrategy,
+  type HalftoneSnapshotFn,
+} from './halftone-canvas';
 import type {
   HalftoneExportPose,
   HalftoneModelLoader,
@@ -27,10 +31,12 @@ type HalftoneModelCanvasProps = {
   loader?: HalftoneModelLoader;
   modelLabel?: string;
   modelUrl: string;
+  maxFramesPerSecond?: number;
   onFirstInteraction?: () => void;
   onGeometryLoadError?: (error: Error) => void;
   onPoseChange?: (pose: HalftoneExportPose) => void;
   previewDistance: number;
+  renderStrategy?: HalftoneRenderStrategy;
   settings: HalftoneStudioSettings;
   snapshotRef?: MutableRefObject<HalftoneSnapshotFn | null>;
   virtualRenderHeight?: number;
@@ -117,10 +123,12 @@ export function HalftoneModelCanvas({
   loader = 'glb',
   modelLabel,
   modelUrl,
+  maxFramesPerSecond,
   onFirstInteraction = noopFirstInteraction,
   onGeometryLoadError,
   onPoseChange = noopPoseChange,
   previewDistance,
+  renderStrategy,
   settings,
   snapshotRef,
   virtualRenderHeight,
@@ -143,9 +151,11 @@ export function HalftoneModelCanvas({
       geometry={geometry}
       imageElement={null}
       initialPose={initialPose}
+      maxFramesPerSecond={maxFramesPerSecond}
       onFirstInteraction={onFirstInteraction}
       onPoseChange={onPoseChange}
       previewDistance={previewDistance}
+      renderStrategy={renderStrategy}
       settings={settings}
       snapshotRef={snapshotRef}
       virtualRenderHeight={virtualRenderHeight}

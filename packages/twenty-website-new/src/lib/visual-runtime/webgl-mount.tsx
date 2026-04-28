@@ -9,12 +9,19 @@ import {
   subscribeToActiveWebGlContextCount,
   tryReserveWebGlContextSlot,
 } from './active-webgl-context-budget';
+import { SITE_WEBGL_CONTEXT_LOST_EVENT } from './create-site-webgl-renderer';
+import {
+  scheduleVisualMount,
+  type VisualMountPriority,
+} from './visual-mount-scheduler';
 import { useWebGlPolicy } from './use-webgl-policy';
 import { WebGlErrorBoundary } from './webgl-error-boundary';
 
 const NON_PRIORITY_ROOT_MARGIN = '50% 0px 50% 0px';
+const PRIORITY_ROOT_MARGIN = '125% 0px 125% 0px';
 
 const OUT_OF_VIEW_DISPOSE_MS = 4_000;
+const PRIORITY_OUT_OF_VIEW_DISPOSE_MS = 1_500;
 
 const ObserverRoot = styled.div<{ detachFromLayout: boolean }>`
   height: 100%;
@@ -44,32 +51,41 @@ type WebGlMountProps = {
   children: ReactNode;
   fallback?: ReactNode;
   detachFromLayout?: boolean;
+  disposeDelayMs?: number;
+  mountPriority?: VisualMountPriority;
   priority?: boolean;
+  rootMargin?: string;
 };
 
 export function WebGlMount({
   children,
   fallback,
   detachFromLayout = false,
+  disposeDelayMs,
+  mountPriority,
   priority = false,
+  rootMargin,
 }: WebGlMountProps) {
   const policy = useWebGlPolicy();
   const rootReference = useRef<HTMLDivElement>(null);
 
   const [isInViewport, setIsInViewport] = useState(priority);
 
+  const [isMountReady, setIsMountReady] = useState(false);
+
   const [hasContextSlot, setHasContextSlot] = useState(false);
 
-  useEffect(() => {
-    if (priority) {
-      return;
-    }
+  const [contextEpoch, setContextEpoch] = useState(0);
 
+  useEffect(() => {
     const element = rootReference.current;
     if (!element) {
       return;
     }
 
+    const effectiveDisposeDelayMs =
+      disposeDelayMs ??
+      (priority ? PRIORITY_OUT_OF_VIEW_DISPOSE_MS : OUT_OF_VIEW_DISPOSE_MS);
     let disposeTimer: ReturnType<typeof setTimeout> | null = null;
     const clearDisposeTimer = () => {
       if (disposeTimer !== null) {
@@ -91,21 +107,64 @@ export function WebGlMount({
         disposeTimer = setTimeout(() => {
           setIsInViewport(false);
           disposeTimer = null;
-        }, OUT_OF_VIEW_DISPOSE_MS);
+        }, effectiveDisposeDelayMs);
       },
-      { root: null, rootMargin: NON_PRIORITY_ROOT_MARGIN, threshold: 0 },
+      {
+        root: null,
+        rootMargin:
+          rootMargin ??
+          (priority ? PRIORITY_ROOT_MARGIN : NON_PRIORITY_ROOT_MARGIN),
+        threshold: 0,
+      },
     );
 
     return () => {
       clearDisposeTimer();
       stopObservingVisibility();
     };
-  }, [priority]);
-
-  const wantsScene = policy.allowed && isInViewport;
+  }, [disposeDelayMs, priority, rootMargin]);
 
   useEffect(() => {
+    const element = rootReference.current;
+    if (!element) {
+      return;
+    }
+
+    const handleContextLost = () => {
+      setHasContextSlot(false);
+      setIsMountReady(false);
+      setContextEpoch((epoch) => epoch + 1);
+    };
+
+    element.addEventListener(SITE_WEBGL_CONTEXT_LOST_EVENT, handleContextLost);
+
+    return () => {
+      element.removeEventListener(
+        SITE_WEBGL_CONTEXT_LOST_EVENT,
+        handleContextLost,
+      );
+    };
+  }, []);
+
+  const wantsScene = policy.allowed && isInViewport;
+  const wantsContextSlot = wantsScene && isMountReady;
+  const effectiveMountPriority =
+    mountPriority ?? (priority ? 'priority' : 'normal');
+
+  useEffect(() => {
+    setIsMountReady(false);
+
     if (!wantsScene) {
+      return;
+    }
+
+    return scheduleVisualMount(() => setIsMountReady(true), {
+      priority: effectiveMountPriority,
+    });
+  }, [contextEpoch, effectiveMountPriority, wantsScene]);
+
+  useEffect(() => {
+    if (!wantsContextSlot) {
       return;
     }
 
@@ -145,14 +204,16 @@ export function WebGlMount({
       }
       setHasContextSlot(false);
     };
-  }, [wantsScene]);
+  }, [wantsContextSlot]);
 
-  const renderInner = wantsScene && hasContextSlot;
+  const renderInner = wantsContextSlot && hasContextSlot;
 
   return (
     <ObserverRoot ref={rootReference} detachFromLayout={detachFromLayout}>
       {renderInner ? (
-        <WebGlErrorBoundary fallback={fallback}>{children}</WebGlErrorBoundary>
+        <WebGlErrorBoundary key={contextEpoch} fallback={fallback}>
+          {children}
+        </WebGlErrorBoundary>
       ) : (
         (fallback ?? null)
       )}

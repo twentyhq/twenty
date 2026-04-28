@@ -4,6 +4,8 @@ export type SiteWebGlRendererParameters = THREE.WebGLRendererParameters & {
   onContextLost?: (event: WebGLContextEvent) => void;
 };
 
+export const SITE_WEBGL_CONTEXT_LOST_EVENT = 'sitewebglcontextlost';
+
 export function createSiteWebGlRenderer(
   parameters?: SiteWebGlRendererParameters,
 ): THREE.WebGLRenderer {
@@ -41,6 +43,10 @@ export function createSiteWebGlRenderer(
         console.error('onContextLost callback threw:', callbackError);
       }
     }
+
+    canvas.dispatchEvent(
+      new CustomEvent(SITE_WEBGL_CONTEXT_LOST_EVENT, { bubbles: true }),
+    );
 
     safeDispose();
   };

@@ -125,6 +125,57 @@ describe('createVisualRenderLoop', () => {
     expect(scheduler.requestAnimationFrame).toHaveBeenCalledTimes(2);
   });
 
+  it('does not reschedule when stopped during a frame callback', () => {
+    const scheduler = createAnimationFrameScheduler();
+    let loop: ReturnType<typeof createVisualRenderLoop>;
+    const renderFrame = jest.fn(() => {
+      loop.stop();
+    });
+    loop = createVisualRenderLoop({
+      cancelAnimationFrame: scheduler.cancelAnimationFrame,
+      document: null,
+      renderFrame,
+      requestAnimationFrame: scheduler.requestAnimationFrame,
+    });
+
+    loop.start();
+    scheduler.runFrame(1, 16);
+
+    expect(renderFrame).toHaveBeenCalledTimes(1);
+    expect(loop.isRunning()).toBe(false);
+    expect(scheduler.requestAnimationFrame).toHaveBeenCalledTimes(1);
+  });
+
+  it('throttles rendering while continuing to observe animation frames', () => {
+    const scheduler = createAnimationFrameScheduler();
+    const renderFrame = jest.fn();
+    const loop = createVisualRenderLoop({
+      cancelAnimationFrame: scheduler.cancelAnimationFrame,
+      document: null,
+      maxFramesPerSecond: 30,
+      renderFrame,
+      requestAnimationFrame: scheduler.requestAnimationFrame,
+    });
+
+    loop.start();
+    scheduler.runFrame(1, 0);
+    scheduler.runFrame(2, 16);
+    scheduler.runFrame(3, 34);
+
+    expect(renderFrame).toHaveBeenCalledTimes(2);
+    expect(renderFrame).toHaveBeenNthCalledWith(1, 0, {
+      deltaSeconds: 0,
+      elapsedSeconds: 0,
+      timestamp: 0,
+    });
+    expect(renderFrame).toHaveBeenNthCalledWith(2, 34, {
+      deltaSeconds: 0.034,
+      elapsedSeconds: 0.034,
+      timestamp: 34,
+    });
+    expect(scheduler.requestAnimationFrame).toHaveBeenCalledTimes(4);
+  });
+
   it('pauses and resumes with document visibility', () => {
     const scheduler = createAnimationFrameScheduler();
     const { documentStub, setHidden } = createDocumentVisibilityStub();
