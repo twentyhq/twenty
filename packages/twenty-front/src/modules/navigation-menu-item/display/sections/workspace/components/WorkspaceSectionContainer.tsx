@@ -69,23 +69,10 @@ export const WorkspaceSectionContainer = ({
   const isAddToNavigationDropTargetVisible =
     addToNavigationFallbackDestination?.droppableId ===
     NavigationMenuItemDroppableIds.WORKSPACE_ORPHAN_NAVIGATION_MENU_ITEMS;
-  const folderChildrenById = items.reduce<Map<string, NavigationMenuItem[]>>(
-    (acc, item) => {
-      const folderId = item.folderId;
-      if (isDefined(folderId)) {
-        const children = acc.get(folderId) ?? [];
-        children.push(item);
-        acc.set(folderId, children);
-      }
-      return acc;
-    },
-    new Map(),
-  );
 
-  const filteredItems = flatItems.filter((item) => {
+  const isObjectBackedItemAccessible = (item: NavigationMenuItem): boolean => {
     const itemType = item.type;
     if (
-      itemType === NavigationMenuItemType.FOLDER ||
       itemType === NavigationMenuItemType.LINK ||
       itemType === NavigationMenuItemType.PAGE_LAYOUT
     ) {
@@ -108,6 +95,48 @@ export const WorkspaceSectionContainer = ({
           objectMetadataItem.id,
         ).canReadObjectRecords
       );
+    }
+    return false;
+  };
+
+  const folderChildrenById = items.reduce<Map<string, NavigationMenuItem[]>>(
+    (acc, item) => {
+      const folderId = item.folderId;
+      if (isDefined(folderId)) {
+        const children = acc.get(folderId) ?? [];
+        children.push(item);
+        acc.set(folderId, children);
+      }
+      return acc;
+    },
+    new Map(),
+  );
+
+  const filteredFolderChildrenById = new Map(
+    Array.from(folderChildrenById.entries()).map(([folderId, children]) => [
+      folderId,
+      children.filter(isObjectBackedItemAccessible),
+    ]),
+  );
+
+  const filteredItems = flatItems.filter((item) => {
+    const itemType = item.type;
+    if (itemType === NavigationMenuItemType.FOLDER) {
+      const visibleChildren = filteredFolderChildrenById.get(item.id) ?? [];
+      return visibleChildren.length > 0;
+    }
+    if (
+      itemType === NavigationMenuItemType.LINK ||
+      itemType === NavigationMenuItemType.PAGE_LAYOUT
+    ) {
+      return true;
+    }
+    if (
+      itemType === NavigationMenuItemType.OBJECT ||
+      itemType === NavigationMenuItemType.VIEW ||
+      itemType === NavigationMenuItemType.RECORD
+    ) {
+      return isObjectBackedItemAccessible(item);
     }
     return false;
   });
@@ -181,7 +210,7 @@ export const WorkspaceSectionContainer = ({
       ) : (
         <WorkspaceSectionListReadOnly
           filteredItems={filteredItems}
-          folderChildrenById={folderChildrenById}
+          folderChildrenById={filteredFolderChildrenById}
           onActiveObjectMetadataItemClick={onActiveObjectMetadataItemClick}
         />
       )}
