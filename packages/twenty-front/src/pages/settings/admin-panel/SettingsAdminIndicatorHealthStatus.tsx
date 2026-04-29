@@ -1,3 +1,4 @@
+import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { SettingsAdminHealthStatusRightContainer } from '@/settings/admin-panel/health-status/components/SettingsAdminHealthStatusRightContainer';
 import { SettingsAdminIndicatorHealthStatusContent } from '@/settings/admin-panel/health-status/components/SettingsAdminIndicatorHealthStatusContent';
 import { SettingsAdminIndicatorHealthContext } from '@/settings/admin-panel/health-status/contexts/SettingsAdminIndicatorHealthContext';
@@ -17,7 +18,7 @@ import {
   AdminPanelHealthServiceStatus,
   HealthIndicatorId,
   GetIndicatorHealthStatusDocument,
-} from '~/generated-metadata/graphql';
+} from '~/generated-admin/graphql';
 
 const StyledTitleContainer = styled.div`
   align-items: center;
@@ -29,9 +30,11 @@ const StyledTitleContainer = styled.div`
 export const SettingsAdminIndicatorHealthStatus = () => {
   const { t } = useLingui();
   const { indicatorId } = useParams();
+  const apolloAdminClient = useApolloAdminClient();
   const { data, loading: loadingIndicatorHealthStatus } = useQuery(
     GetIndicatorHealthStatusDocument,
     {
+      client: apolloAdminClient,
       variables: {
         indicatorId: indicatorId as HealthIndicatorId,
       },
@@ -51,11 +54,7 @@ export const SettingsAdminIndicatorHealthStatus = () => {
           href: getSettingsPath(SettingsPath.AdminPanel),
         },
         {
-          children: t`Admin Panel`,
-          href: getSettingsPath(SettingsPath.AdminPanel),
-        },
-        {
-          children: t`Health Status`,
+          children: t`Admin Panel - Health`,
           href: getSettingsPath(SettingsPath.AdminPanelHealthStatus),
         },
         { children: `${data?.getIndicatorHealthStatus?.label}` },

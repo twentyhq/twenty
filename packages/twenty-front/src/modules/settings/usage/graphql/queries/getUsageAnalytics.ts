@@ -12,6 +12,10 @@ export const GET_USAGE_ANALYTICS = gql`
         key
         creditsUsed
       }
+      usageByModel {
+        key
+        creditsUsed
+      }
       timeSeries {
         date
         creditsUsed

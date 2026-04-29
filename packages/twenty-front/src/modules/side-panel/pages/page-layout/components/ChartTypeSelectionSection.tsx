@@ -1,7 +1,5 @@
 import { GRAPH_TYPE_INFORMATION } from '@/side-panel/pages/page-layout/constants/GraphTypeInformation';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { styled } from '@linaria/react';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 import { GraphType } from '@/side-panel/pages/page-layout/types/GraphType';
 import { t } from '@lingui/core/macro';
@@ -32,31 +30,23 @@ export const ChartTypeSelectionSection = ({
   currentGraphType,
   setCurrentGraphType,
 }: ChartTypeSelectionSectionProps) => {
-  const isDashboardV2Enabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_DASHBOARD_V2_ENABLED,
-  );
-
   return (
     <StyledChartTypeSelectionContainer>
-      {graphTypeOptions
-        .filter(
-          (graphType) => isDashboardV2Enabled || graphType !== GraphType.GAUGE,
-        )
-        .map((graphType) => {
-          return (
-            <MenuPicker
-              id={graphType}
-              selected={currentGraphType === graphType}
-              key={graphType}
-              icon={GRAPH_TYPE_INFORMATION[graphType].icon}
-              onClick={() => {
-                setCurrentGraphType(graphType);
-              }}
-              showLabel
-              tooltipContent={t(GRAPH_TYPE_INFORMATION[graphType].label)}
-            />
-          );
-        })}
+      {graphTypeOptions.map((graphType) => {
+        return (
+          <MenuPicker
+            id={graphType}
+            selected={currentGraphType === graphType}
+            key={graphType}
+            icon={GRAPH_TYPE_INFORMATION[graphType].icon}
+            onClick={() => {
+              setCurrentGraphType(graphType);
+            }}
+            showLabel
+            tooltipContent={t(GRAPH_TYPE_INFORMATION[graphType].label)}
+          />
+        );
+      })}
     </StyledChartTypeSelectionContainer>
   );
 };

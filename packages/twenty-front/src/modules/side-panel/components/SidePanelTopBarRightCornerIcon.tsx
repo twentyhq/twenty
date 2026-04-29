@@ -1,17 +1,15 @@
-import { useSwitchToNewAIChat } from '@/ai/hooks/useSwitchToNewAIChat';
+import { useSwitchToNewAiChat } from '@/ai/hooks/useSwitchToNewAiChat';
 import { SidePanelObjectFilterDropdown } from '@/side-panel/components/SidePanelObjectFilterDropdown';
 import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
 import { sidePanelSearchObjectFilterState } from '@/side-panel/states/sidePanelSearchObjectFilterState';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { SidePanelPages } from 'twenty-shared/types';
 import { IconEdit } from 'twenty-ui/display';
 import { IconButton } from 'twenty-ui/input';
 import { useIsMobile } from 'twenty-ui/utilities';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledIconButtonContainer = styled.div`
@@ -20,9 +18,8 @@ const StyledIconButtonContainer = styled.div`
 
 export const SidePanelTopBarRightCornerIcon = () => {
   const isMobile = useIsMobile();
-  const isAiEnabled = useIsFeatureEnabled(FeatureFlagKey.IS_AI_ENABLED);
   const sidePanelPage = useAtomStateValue(sidePanelPageState);
-  const { switchToNewChat } = useSwitchToNewAIChat();
+  const { switchToNewChat } = useSwitchToNewAiChat();
   const [sidePanelSearchObjectFilter, setSidePanelSearchObjectFilter] =
     useAtomState(sidePanelSearchObjectFilterState);
 
@@ -37,12 +34,12 @@ export const SidePanelTopBarRightCornerIcon = () => {
     );
   }
 
-  const isOnAskAIPage = [
+  const isOnAskAiPage = [
     SidePanelPages.AskAI,
-    SidePanelPages.ViewPreviousAIChats,
+    SidePanelPages.ViewPreviousAiChats,
   ].includes(sidePanelPage);
 
-  if (isMobile || !isAiEnabled || !isOnAskAIPage) {
+  if (isMobile || !isOnAskAiPage) {
     return null;
   }
 

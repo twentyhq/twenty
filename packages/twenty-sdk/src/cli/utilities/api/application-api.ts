@@ -5,6 +5,44 @@ import { type Manifest } from 'twenty-shared/application';
 export class ApplicationApi {
   constructor(private readonly client: AxiosInstance) {}
 
+  async syncMarketplaceCatalog(): Promise<ApiResponse<boolean>> {
+    try {
+      const query = `
+        mutation SyncMarketplaceCatalog {
+          syncMarketplaceCatalog
+        }
+      `;
+
+      const response = await this.client.post(
+        '/metadata',
+        { query },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: '*/*',
+          },
+        },
+      );
+
+      if (response.data.errors) {
+        return {
+          success: false,
+          error: response.data.errors[0],
+        };
+      }
+
+      return {
+        success: true,
+        data: response.data.data.syncMarketplaceCatalog,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error,
+      };
+    }
+  }
+
   async findApplicationRegistrationByUniversalIdentifier(
     universalIdentifier: string,
   ): Promise<
@@ -63,7 +101,6 @@ export class ApplicationApi {
 
   async createApplicationRegistration(input: {
     name: string;
-    description?: string;
     universalIdentifier: string;
   }): Promise<
     ApiResponse<{
@@ -113,6 +150,51 @@ export class ApplicationApi {
       return {
         success: true,
         data: response.data.data.createApplicationRegistration,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error,
+      };
+    }
+  }
+
+  async rotateApplicationRegistrationClientSecret(
+    id: string,
+  ): Promise<ApiResponse<{ clientSecret: string }>> {
+    try {
+      const mutation = `
+        mutation RotateApplicationRegistrationClientSecret($id: String!) {
+          rotateApplicationRegistrationClientSecret(id: $id) {
+            clientSecret
+          }
+        }
+      `;
+
+      const response = await this.client.post(
+        '/metadata',
+        {
+          query: mutation,
+          variables: { id },
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: '*/*',
+          },
+        },
+      );
+
+      if (response.data.errors) {
+        return {
+          success: false,
+          error: response.data.errors[0],
+        };
+      }
+
+      return {
+        success: true,
+        data: response.data.data.rotateApplicationRegistrationClientSecret,
       };
     } catch (error) {
       return {

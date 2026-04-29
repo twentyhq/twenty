@@ -3,6 +3,7 @@ import { type Request } from 'express';
 import {
   buildLogicFunctionEvent,
   extractBody,
+  extractRawBody,
   filterRequestHeaders,
   normalizePathParameters,
   normalizeQueryStringParameters,
@@ -272,6 +273,37 @@ describe('normalizePathParameters', () => {
   });
 });
 
+describe('extractRawBody', () => {
+  it('returns the raw body as utf-8 string when present', () => {
+    const request = {
+      rawBody: Buffer.from('{"a":1}', 'utf-8'),
+    } as unknown as Request;
+
+    expect(extractRawBody(request)).toBe('{"a":1}');
+  });
+
+  it('preserves byte-exact representation, including whitespace', () => {
+    const original = '{ "a" : 1,\n  "b": "héllo"\n}';
+    const request = {
+      rawBody: Buffer.from(original, 'utf-8'),
+    } as unknown as Request;
+
+    expect(extractRawBody(request)).toBe(original);
+  });
+
+  it('returns undefined when rawBody is missing', () => {
+    expect(extractRawBody({} as Request)).toBeUndefined();
+  });
+
+  it('returns empty string when rawBody is an empty buffer', () => {
+    const request = {
+      rawBody: Buffer.alloc(0),
+    } as unknown as Request;
+
+    expect(extractRawBody(request)).toBe('');
+  });
+});
+
 describe('buildLogicFunctionEvent', () => {
   const createMockRequest = (overrides: Partial<Request> = {}): Request =>
     ({
@@ -414,6 +446,44 @@ describe('buildLogicFunctionEvent', () => {
     });
 
     expect(result.isBase64Encoded).toBe(false);
+  });
+
+  it('should forward rawBody when NestJS preserves it on the request', () => {
+    const original = '{"action":"opened","number":42}';
+    const request = createMockRequest({
+      method: 'POST',
+      body: { action: 'opened', number: 42 },
+    });
+
+    (request as unknown as { rawBody: Buffer }).rawBody = Buffer.from(
+      original,
+      'utf-8',
+    );
+
+    const result = buildLogicFunctionEvent({
+      request,
+      pathParameters: {},
+      forwardedRequestHeaders: [],
+    });
+
+    expect(result.rawBody).toBe(original);
+    expect(result.body).toEqual({ action: 'opened', number: 42 });
+  });
+
+  it('should omit rawBody when the request has none', () => {
+    const request = createMockRequest({
+      method: 'POST',
+      body: { data: 'test' },
+    });
+
+    const result = buildLogicFunctionEvent({
+      request,
+      pathParameters: {},
+      forwardedRequestHeaders: [],
+    });
+
+    expect(result.rawBody).toBeUndefined();
+    expect('rawBody' in result).toBe(false);
   });
 
   it('should handle complex path parameters', () => {

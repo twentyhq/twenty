@@ -1,27 +1,31 @@
 import { formatPath } from '@/cli/utilities/file/file-path';
 import chalk from 'chalk';
 import type { Command } from 'commander';
-import { AppBuildCommand } from './build';
-import { AppDevCommand } from './dev';
-import { AppInstallCommand } from './install';
-import { AppPublishCommand } from './publish';
-import { AppTypecheckCommand } from './typecheck';
-import { AppUninstallCommand } from './uninstall';
-import { DeployCommand } from './deploy';
-import { LogicFunctionExecuteCommand } from './exec';
-import { LogicFunctionLogsCommand } from './logs';
+import { SyncableEntity } from 'twenty-shared/application';
 import { EntityAddCommand } from './add';
+import { AppBuildCommand } from './build';
+import { CatalogSyncCommand } from './catalog-sync';
+import { DeployCommand } from './deploy';
+import { AppDevCommand } from './dev';
+import { LogicFunctionExecuteCommand } from './exec';
+import { AppInstallCommand } from './install';
+import { LogicFunctionLogsCommand } from './logs';
+import { AppPublishCommand } from './publish';
 import { registerRemoteCommands } from './remote';
 import { registerServerCommands } from './server';
-import { SyncableEntity } from 'twenty-shared/application';
+import { AppDevOnceCommand } from './dev-once';
+import { AppTypecheckCommand } from './typecheck';
+import { AppUninstallCommand } from './uninstall';
 
 export const registerCommands = (program: Command): void => {
   const buildCommand = new AppBuildCommand();
   const devCommand = new AppDevCommand();
+  const devOnceCommand = new AppDevOnceCommand();
   const installCommand = new AppInstallCommand();
   const publishCommand = new AppPublishCommand();
   const typecheckCommand = new AppTypecheckCommand();
   const uninstallCommand = new AppUninstallCommand();
+  const catalogSyncCommand = new CatalogSyncCommand();
   const deployCommand = new DeployCommand();
   const addCommand = new EntityAddCommand();
   const logsCommand = new LogicFunctionLogsCommand();
@@ -29,11 +33,40 @@ export const registerCommands = (program: Command): void => {
 
   program
     .command('dev [appPath]')
-    .description('Watch and sync local application changes')
-    .action(async (appPath) => {
-      await devCommand.execute({
+    .description(
+      'Build and sync local application changes (watches by default; use --once for a one-shot sync)',
+    )
+    .option(
+      '-w, --watch',
+      'Watch source files and re-sync on every change (default behavior)',
+    )
+    .option(
+      '-o, --once',
+      'Build and sync once, then exit (useful for CI, scripts, and pre-commit hooks)',
+    )
+    .option('-v, --verbose', 'Show detailed logs')
+    .option('-d, --debug', 'Show detailed logs (alias for --verbose)')
+    .action(async (appPath, options) => {
+      if (options.once && options.watch) {
+        console.error(
+          chalk.red(
+            'Error: --once and --watch are mutually exclusive. Watch mode is the default.',
+          ),
+        );
+        process.exit(1);
+      }
+
+      const commonOptions = {
         appPath: formatPath(appPath),
-      });
+        verbose: options.verbose || options.debug,
+      };
+
+      if (options.once) {
+        await devOnceCommand.execute(commonOptions);
+        return;
+      }
+
+      await devCommand.execute(commonOptions);
     });
 
   program
@@ -81,6 +114,16 @@ export const registerCommands = (program: Command): void => {
     });
 
   program
+    .command('catalog-sync')
+    .description('Trigger marketplace catalog sync on the server')
+    .option('-r, --remote <name>', 'Sync on a specific remote')
+    .action(async (options) => {
+      await catalogSyncCommand.execute({
+        remote: options.remote,
+      });
+    });
+
+  program
     .command('typecheck [appPath]')
     .description('Run TypeScript type checking on the application')
     .action(async (appPath) => {
@@ -121,6 +164,7 @@ export const registerCommands = (program: Command): void => {
   program
     .command('exec [appPath]')
     .option('--postInstall', 'Execute post-install logic function if defined')
+    .option('--preInstall', 'Execute pre-install logic function if defined')
     .option(
       '-p, --payload <payload>',
       'JSON payload to send to the function',
@@ -140,6 +184,7 @@ export const registerCommands = (program: Command): void => {
         appPath?: string,
         options?: {
           postInstall?: boolean;
+          preInstall?: boolean;
           payload?: string;
           functionUniversalIdentifier?: string;
           functionName?: string;
@@ -147,12 +192,13 @@ export const registerCommands = (program: Command): void => {
       ) => {
         if (
           !options?.postInstall &&
+          !options?.preInstall &&
           !options?.functionUniversalIdentifier &&
           !options?.functionName
         ) {
           console.error(
             chalk.red(
-              'Error: Either --postInstall or --functionName (-n) or --functionUniversalIdentifier (-u) is required.',
+              'Error: Either --postInstall, --preInstall, --functionName (-n), or --functionUniversalIdentifier (-u) is required.',
             ),
           );
           process.exit(1);

@@ -1,4 +1,9 @@
-import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
+import {
+  Field,
+  GraphQLISODateTime,
+  ObjectType,
+  registerEnumType,
+} from '@nestjs/graphql';
 
 import { type AiSdkPackage } from 'twenty-shared/ai';
 import { FeatureFlagKey } from 'twenty-shared/types';
@@ -34,7 +39,7 @@ export class NativeModelCapabilities {
 }
 
 @ObjectType()
-export class ClientAIModelConfig {
+export class ClientAiModelConfig {
   @Field(() => String)
   // Composite model id (`provider/modelName`) for this workspace; matches registry and admin APIs.
   modelId: ModelId;
@@ -51,11 +56,11 @@ export class ClientAIModelConfig {
   @Field(() => String, { nullable: true })
   sdkPackage: AiSdkPackage | null;
 
-  @Field(() => Number)
-  inputCostPerMillionTokensInCredits: number;
+  @Field(() => Number, { nullable: true })
+  inputCostPerMillionTokens?: number;
 
-  @Field(() => Number)
-  outputCostPerMillionTokensInCredits: number;
+  @Field(() => Number, { nullable: true })
+  outputCostPerMillionTokens?: number;
 
   @Field(() => NativeModelCapabilities, { nullable: true })
   nativeCapabilities?: NativeModelCapabilities;
@@ -70,11 +75,20 @@ export class ClientAIModelConfig {
   providerName?: string;
 
   @Field(() => String, { nullable: true })
+  providerLabel?: string;
+
+  @Field(() => Number, { nullable: true })
+  contextWindowTokens?: number;
+
+  @Field(() => Number, { nullable: true })
+  maxOutputTokens?: number;
+
+  @Field(() => String, { nullable: true })
   dataResidency?: string;
 }
 
 @ObjectType()
-export class AdminAIModelConfig {
+export class AdminAiModelConfig {
   @Field(() => String)
   // Composite model id (`provider/modelName`) used for toggles, defaults, and registry lookups.
   modelId: string;
@@ -129,10 +143,10 @@ export class AdminAIModelConfig {
   dataResidency?: string;
 }
 
-@ObjectType('AdminAIModels')
-export class AdminAIModelsDTO {
-  @Field(() => [AdminAIModelConfig])
-  models: AdminAIModelConfig[];
+@ObjectType('AdminAiModels')
+export class AdminAiModelsDTO {
+  @Field(() => [AdminAiModelConfig])
+  models: AdminAiModelConfig[];
 
   @Field(() => String, { nullable: true })
   // Composite model id for the default “smart” role (`provider/modelName`).
@@ -213,6 +227,18 @@ export class PublicFeatureFlag {
 }
 
 @ObjectType()
+export class ClientConfigMaintenanceMode {
+  @Field(() => GraphQLISODateTime)
+  startAt: Date;
+
+  @Field(() => GraphQLISODateTime)
+  endAt: Date;
+
+  @Field(() => String, { nullable: true })
+  link?: string;
+}
+
+@ObjectType()
 export class ClientConfig {
   @Field(() => String, { nullable: true })
   appVersion?: string;
@@ -223,8 +249,8 @@ export class ClientConfig {
   @Field(() => Billing, { nullable: false })
   billing: Billing;
 
-  @Field(() => [ClientAIModelConfig])
-  aiModels: ClientAIModelConfig[];
+  @Field(() => [ClientAiModelConfig])
+  aiModels: ClientAiModelConfig[];
 
   @Field(() => Boolean)
   signInPrefilled: boolean;
@@ -294,4 +320,10 @@ export class ClientConfig {
 
   @Field(() => Boolean)
   isClickHouseConfigured: boolean;
+
+  @Field(() => Boolean)
+  isWorkspaceSchemaDDLLocked: boolean;
+
+  @Field(() => ClientConfigMaintenanceMode, { nullable: true })
+  maintenance?: ClientConfigMaintenanceMode;
 }

@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common';
 
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 
-import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
-import { type MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
+import { type MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
+import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import {
   MessageImportDriverException,
   MessageImportDriverExceptionCode,
@@ -26,18 +26,18 @@ export class MessagingGetMessagesService {
   public async getMessages(
     messageIds: string[],
     connectedAccount: Pick<
-      ConnectedAccountWorkspaceEntity,
+      ConnectedAccountEntity,
       | 'provider'
       | 'accessToken'
       | 'refreshToken'
       | 'id'
       | 'handle'
       | 'handleAliases'
-      | 'accountOwnerId'
+      | 'userWorkspaceId'
       | 'connectionParameters'
     >,
     messageChannel: Pick<
-      MessageChannelWorkspaceEntity,
+      MessageChannelEntity,
       'messageFolders' | 'messageFolderImportPolicy'
     >,
   ): Promise<GetMessagesResponse> {

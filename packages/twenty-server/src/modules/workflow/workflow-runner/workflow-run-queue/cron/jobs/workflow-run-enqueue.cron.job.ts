@@ -1,9 +1,12 @@
 import { Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 
+import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
+import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
+import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { SentryCronMonitor } from 'src/engine/core-modules/cron/sentry-cron-monitor.decorator';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
@@ -12,17 +15,16 @@ import { Processor } from 'src/engine/core-modules/message-queue/decorators/proc
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
-import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
-import { WorkflowRunWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
-import { NOT_STARTED_RUNS_FIND_OPTIONS } from 'src/modules/workflow/workflow-runner/workflow-run-queue/constants/not-started-runs-find-options';
+import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
+import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import {
   WorkflowRunEnqueueJob,
   WorkflowRunEnqueueJobData,
 } from 'src/modules/workflow/workflow-runner/workflow-run-queue/jobs/workflow-run-enqueue.job';
+export const WORKFLOW_RUN_ENQUEUE_CRON_PATTERN = '* * * * *';
 
-export const WORKFLOW_RUN_ENQUEUE_CRON_PATTERN = '*/5 * * * *';
-
+const LAST_PARTITION_CACHE_KEY = 'workflow-run-enqueue:last-partition';
+const NUMBER_OF_PARTITIONS = 10;
 const WORKSPACE_BATCH_SIZE = 10;
 
 @Processor(MessageQueue.cronQueue)
@@ -30,12 +32,15 @@ export class WorkflowRunEnqueueCronJob {
   private readonly logger = new Logger(WorkflowRunEnqueueCronJob.name);
 
   constructor(
+    @InjectDataSource()
+    private readonly coreDataSource: DataSource,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
     @InjectMessageQueue(MessageQueue.workflowQueue)
     private readonly messageQueueService: MessageQueueService,
-    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     private readonly exceptionHandlerService: ExceptionHandlerService,
+    @InjectCacheStorage(CacheStorageNamespace.ModuleWorkflow)
+    private readonly cacheStorageService: CacheStorageService,
   ) {}
 
   @Process(WorkflowRunEnqueueCronJob.name)
@@ -46,21 +51,27 @@ export class WorkflowRunEnqueueCronJob {
   async handle() {
     this.logger.log('Starting WorkflowRunEnqueueCronJob cron');
 
-    const activeWorkspaces = await this.workspaceRepository.find({
+    const allActiveWorkspaces = await this.workspaceRepository.find({
       where: {
         activationStatus: WorkspaceActivationStatus.ACTIVE,
       },
       select: ['id'],
+      order: { id: 'ASC' },
     });
+
+    const partition = await this.getAndIncrementPartition();
+    const workspacesForThisRun = allActiveWorkspaces.filter(
+      (_, index) => index % NUMBER_OF_PARTITIONS === partition,
+    );
 
     let enqueuedCount = 0;
 
     for (
       let workspaceIndex = 0;
-      workspaceIndex < activeWorkspaces.length;
+      workspaceIndex < workspacesForThisRun.length;
       workspaceIndex += WORKSPACE_BATCH_SIZE
     ) {
-      const batch = activeWorkspaces.slice(
+      const batch = workspacesForThisRun.slice(
         workspaceIndex,
         workspaceIndex + WORKSPACE_BATCH_SIZE,
       );
@@ -83,7 +94,7 @@ export class WorkflowRunEnqueueCronJob {
     }
 
     this.logger.log(
-      `Completed WorkflowRunEnqueueCronJob cron, enqueued ${enqueuedCount} jobs`,
+      `Completed WorkflowRunEnqueueCronJob cron (partition ${partition}/${NUMBER_OF_PARTITIONS}), enqueued ${enqueuedCount} jobs`,
     );
   }
 
@@ -102,24 +113,29 @@ export class WorkflowRunEnqueueCronJob {
     return false;
   }
 
-  private async hasNotStartedRuns(workspaceId: string): Promise<boolean> {
-    const authContext = buildSystemAuthContext(workspaceId);
-
-    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      async () => {
-        const workflowRunRepository =
-          await this.globalWorkspaceOrmManager.getRepository(
-            workspaceId,
-            WorkflowRunWorkspaceEntity,
-            { shouldBypassPermissionChecks: true },
-          );
-
-        return workflowRunRepository.exists({
-          where: NOT_STARTED_RUNS_FIND_OPTIONS,
-        });
-      },
-      authContext,
-      { lite: true },
+  private async getAndIncrementPartition(): Promise<number> {
+    const lastPartition = await this.cacheStorageService.get<number>(
+      LAST_PARTITION_CACHE_KEY,
     );
+
+    const partition =
+      lastPartition !== undefined
+        ? (lastPartition + 1) % NUMBER_OF_PARTITIONS
+        : 0;
+
+    await this.cacheStorageService.set(LAST_PARTITION_CACHE_KEY, partition);
+
+    return partition;
+  }
+
+  private async hasNotStartedRuns(workspaceId: string): Promise<boolean> {
+    const schemaName = getWorkspaceSchemaName(workspaceId);
+
+    const result = await this.coreDataSource.query(
+      `SELECT 1 FROM ${schemaName}."workflowRun" WHERE "status" = $1 LIMIT 1`,
+      [WorkflowRunStatus.NOT_STARTED],
+    );
+
+    return result.length > 0;
   }
 }

@@ -7,8 +7,9 @@ import {
   OverflowingTextWithTooltip,
   type IconComponent,
 } from '@ui/display';
-import { type ReactNode, useContext } from 'react';
+import { type ThemeColor } from '@ui/theme';
 import { ThemeContext, themeCssVariables } from '@ui/theme-constants';
+import { useContext, type ReactNode } from 'react';
 import { MenuItemLeftContent } from '../internals/components/MenuItemLeftContent';
 import {
   StyledMenuItemLabel,
@@ -60,6 +61,7 @@ export const StyledMenuItemSelect = styled.div<{
 
 type MenuItemSelectProps = {
   LeftIcon?: IconComponent | null | undefined;
+  leftIconColor?: ThemeColor | null;
   withIconContainer?: boolean;
   selected: boolean;
   needIconCheck?: boolean;
@@ -75,6 +77,7 @@ type MenuItemSelectProps = {
 
 export const MenuItemSelect = ({
   LeftIcon,
+  leftIconColor,
   withIconContainer = false,
   text,
   selected,
@@ -101,6 +104,7 @@ export const MenuItemSelect = ({
     >
       <MenuItemLeftContent
         LeftIcon={LeftIcon}
+        iconThemeColor={leftIconColor}
         text={text}
         contextualText={
           contextualTextPosition === 'left' ? contextualText : null

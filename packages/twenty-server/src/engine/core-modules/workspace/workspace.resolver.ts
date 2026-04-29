@@ -15,9 +15,10 @@ import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
-import { ApplicationDTO } from 'src/engine/core-modules/application/dtos/application.dto';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { ApplicationDTO } from 'src/engine/core-modules/application/dtos/application.dto';
 import { fromFlatApplicationToApplicationDto } from 'src/engine/core-modules/application/utils/from-flat-application-to-application-dto.util';
+import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { BillingEntitlementDTO } from 'src/engine/core-modules/billing/dtos/billing-entitlement.dto';
 import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
@@ -34,11 +35,11 @@ import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
-import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { ActivateWorkspaceInput } from 'src/engine/core-modules/workspace/dtos/activate-workspace-input';
 import {
   type AuthProvidersDTO,
   PublicWorkspaceDataDTO,
+  PublicWorkspaceDataSummaryDTO,
 } from 'src/engine/core-modules/workspace/dtos/public-workspace-data.dto';
 import { UpdateWorkspaceInput } from 'src/engine/core-modules/workspace/dtos/update-workspace-input';
 import { WorkspaceUrlsDTO } from 'src/engine/core-modules/workspace/dtos/workspace-urls.dto';
@@ -69,6 +70,7 @@ import { fromRoleEntityToRoleDto } from 'src/engine/metadata-modules/role/utils/
 import { ViewDTO } from 'src/engine/metadata-modules/view/dtos/view.dto';
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
 import { getRequest } from 'src/utils/extract-request';
+import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 const OriginHeader = createParamDecorator(
   (_: unknown, ctx: ExecutionContext) => {
     const request = getRequest(ctx);
@@ -256,6 +258,18 @@ export class WorkspaceResolver {
     }
   }
 
+  @ResolveField(() => [ApplicationDTO])
+  async installedApplications(
+    @Parent() workspace: WorkspaceEntity,
+  ): Promise<ApplicationDTO[]> {
+    const flatApplications =
+      await this.applicationService.findManyInstalledFlatApplications(
+        workspace.id,
+      );
+
+    return flatApplications.map(fromFlatApplicationToApplicationDto);
+  }
+
   @ResolveField(() => BillingSubscriptionEntity, { nullable: true })
   async currentBillingSubscription(
     @Parent() workspace: WorkspaceEntity,
@@ -391,15 +405,12 @@ export class WorkspaceResolver {
 
       let workspaceLogoWithToken = '';
 
-      if (workspace.logo) {
-        try {
-          workspaceLogoWithToken = this.fileService.signFileUrl({
-            url: workspace.logo,
-            workspaceId: workspace.id,
-          });
-        } catch {
-          workspaceLogoWithToken = workspace.logo;
-        }
+      if (isDefined(workspace.logoFileId)) {
+        workspaceLogoWithToken = this.fileUrlService.signFileByIdUrl({
+          fileId: workspace.logoFileId,
+          workspaceId: workspace.id,
+          fileFolder: FileFolder.CorePicture,
+        });
       }
 
       return {
@@ -415,6 +426,39 @@ export class WorkspaceResolver {
           workspace,
           systemEnabledProviders,
         }),
+      };
+    } catch (err) {
+      workspaceGraphqlApiExceptionHandler(err);
+    }
+  }
+
+  @Query(() => PublicWorkspaceDataSummaryDTO)
+  @UseGuards(PublicEndpointGuard, NoPermissionGuard)
+  async getPublicWorkspaceDataById(
+    @Args({
+      name: 'id',
+      type: () => UUIDScalarType,
+      nullable: false,
+    })
+    id: string,
+  ): Promise<PublicWorkspaceDataSummaryDTO | undefined> {
+    try {
+      const workspace = await this.workspaceService.findOneWorkspaceById(id);
+
+      assertIsDefinedOrThrow(workspace, WorkspaceNotFoundDefaultError);
+
+      const logo = isDefined(workspace.logoFileId)
+        ? this.fileUrlService.signFileByIdUrl({
+            fileId: workspace.logoFileId,
+            workspaceId: workspace.id,
+            fileFolder: FileFolder.CorePicture,
+          })
+        : (workspace.logo ?? '');
+
+      return {
+        id: workspace.id,
+        logo,
+        displayName: workspace.displayName,
       };
     } catch (err) {
       workspaceGraphqlApiExceptionHandler(err);

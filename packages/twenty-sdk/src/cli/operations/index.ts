@@ -11,6 +11,8 @@ export { appBuild } from './build';
 export type { AppBuildOptions, AppBuildResult } from './build';
 export { appDeploy } from './deploy';
 export type { AppDeployOptions, AppDeployResult } from './deploy';
+export { appDevOnce } from './dev-once';
+export type { AppDevOnceOptions, AppDevOnceResult } from './dev-once';
 export { appInstall } from './install';
 export type { AppInstallOptions } from './install';
 export { appPublish } from './publish';
@@ -25,6 +27,10 @@ export type { FunctionExecuteOptions } from './execute';
 // Server
 export { serverStart } from './server-start';
 export type { ServerStartOptions, ServerStartResult } from './server-start';
+export { detectLocalServer } from '@/cli/utilities/server/detect-local-server';
+
+// Config
+export { ConfigService } from '@/cli/utilities/config/config-service';
 
 // Shared types and error codes
 export {

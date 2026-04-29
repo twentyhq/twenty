@@ -1,11 +1,15 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { type ToolSet } from 'ai';
+import { type AggregateOperations } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
-import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
+import { type ObjectRecordGroupBy } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
+
+import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
+import { fromUserEntityToFlat } from 'src/engine/core-modules/user/utils/from-user-entity-to-flat.util';
+import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
 
 import {
   AuthException,
@@ -18,45 +22,28 @@ import { CreateManyRecordsService } from 'src/engine/core-modules/record-crud/se
 import { CreateRecordService } from 'src/engine/core-modules/record-crud/services/create-record.service';
 import { DeleteRecordService } from 'src/engine/core-modules/record-crud/services/delete-record.service';
 import { FindRecordsService } from 'src/engine/core-modules/record-crud/services/find-records.service';
+import { GroupByRecordsService } from 'src/engine/core-modules/record-crud/services/group-by-records.service';
+import { type FindRecordsParams } from 'src/engine/core-modules/record-crud/types/find-records-params.type';
 import { UpdateManyRecordsService } from 'src/engine/core-modules/record-crud/services/update-many-records.service';
 import { UpdateRecordService } from 'src/engine/core-modules/record-crud/services/update-record.service';
-import { type ToolCategory } from 'src/engine/core-modules/tool-provider/enums/tool-category.enum';
-import {
-  type ToolDescriptor,
-  type ToolIndexEntry,
-} from 'src/engine/core-modules/tool-provider/types/tool-descriptor.type';
-import { type ToolInput } from 'src/engine/core-modules/tool/types/tool-input.type';
-import { stripLoadingMessage } from 'src/engine/core-modules/tool/utils/wrap-tool-for-execution.util';
+import { TOOL_PROVIDERS } from 'src/engine/core-modules/tool-provider/constants/tool-providers.token';
+import { type ToolProvider } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
+import { type ToolDescriptor } from 'src/engine/core-modules/tool-provider/types/tool-descriptor.type';
+import { type ToolExecutionRef } from 'src/engine/core-modules/tool-provider/types/tool-execution-ref.type';
+import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-index-entry.type';
+import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
-import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-
-// Handler for individually registered static tools (e.g., action tools)
-export interface StaticToolHandler {
-  execute(args: ToolInput, context: ToolProviderContext): Promise<unknown>;
-}
-
-// Generator that produces a ToolSet on demand for a category (workflow, view, etc.)
-// Used as a fallback when no per-tool handler is registered.
-export type CategoryToolGenerator = (
-  context: ToolProviderContext,
-) => Promise<ToolSet>;
 
 @Injectable()
 export class ToolExecutorService {
   private readonly logger = new Logger(ToolExecutorService.name);
 
-  // Per-tool handlers (action tools, etc.)
-  private readonly staticToolHandlers = new Map<string, StaticToolHandler>();
-
-  // Category-level ToolSet generators (workflow, view, dashboard, metadata)
-  private readonly categoryGenerators = new Map<
-    ToolCategory,
-    CategoryToolGenerator
-  >();
-
   constructor(
+    @Inject(TOOL_PROVIDERS)
+    private readonly providers: ToolProvider[],
     private readonly findRecordsService: FindRecordsService,
+    private readonly groupByRecordsService: GroupByRecordsService,
     private readonly createRecordService: CreateRecordService,
     private readonly createManyRecordsService: CreateManyRecordsService,
     private readonly updateRecordService: UpdateRecordService,
@@ -68,47 +55,36 @@ export class ToolExecutorService {
     private readonly userRepository: Repository<UserEntity>,
   ) {}
 
-  registerStaticHandler(toolId: string, handler: StaticToolHandler): void {
-    this.staticToolHandlers.set(toolId, handler);
-  }
-
-  registerCategoryGenerator(
-    category: ToolCategory,
-    generator: CategoryToolGenerator,
-  ): void {
-    this.categoryGenerators.set(category, generator);
-  }
-
   async dispatch(
     descriptor: ToolIndexEntry | ToolDescriptor,
-    args: Record<string, unknown>,
+    args: Record<string, unknown> | undefined,
     context: ToolProviderContext,
-  ): Promise<unknown> {
-    const cleanArgs = stripLoadingMessage(args);
+  ): Promise<ToolOutput> {
+    const safeArgs = args ?? {};
 
     switch (descriptor.executionRef.kind) {
       case 'database_crud':
         return this.dispatchDatabaseCrud(
           descriptor.executionRef,
-          cleanArgs,
+          safeArgs,
           context,
         );
       case 'static':
-        return this.dispatchStaticTool(descriptor, cleanArgs, context);
+        return this.dispatchStaticTool(descriptor, safeArgs, context);
       case 'logic_function':
         return this.dispatchLogicFunction(
           descriptor.executionRef,
-          cleanArgs,
+          safeArgs,
           context,
         );
     }
   }
 
   private async dispatchDatabaseCrud(
-    ref: { objectNameSingular: string; operation: string },
+    ref: Extract<ToolExecutionRef, { kind: 'database_crud' }>,
     args: Record<string, unknown>,
     context: ToolProviderContext,
-  ): Promise<unknown> {
+  ): Promise<ToolOutput> {
     const authContext =
       context.authContext ?? (await this.buildAuthContext(context));
 
@@ -119,7 +95,7 @@ export class ToolExecutorService {
         return this.findRecordsService.execute({
           objectName: ref.objectNameSingular,
           filter,
-          orderBy: orderBy as never,
+          orderBy: orderBy as FindRecordsParams['orderBy'],
           limit: limit as number | undefined,
           offset: offset as number | undefined,
           authContext,
@@ -191,8 +167,30 @@ export class ToolExecutorService {
           soft: true,
         });
 
-      default:
-        throw new Error(`Unknown database_crud operation: ${ref.operation}`);
+      case 'group_by': {
+        const {
+          groupBy,
+          aggregateOperation,
+          aggregateFieldName,
+          limit: groupByLimit,
+          orderBy: groupByOrderBy,
+          ...groupByFilter
+        } = args;
+
+        return this.groupByRecordsService.execute({
+          objectName: ref.objectNameSingular,
+          groupBy: groupBy as ObjectRecordGroupBy,
+          aggregateOperation: aggregateOperation as
+            | keyof typeof AggregateOperations
+            | undefined,
+          aggregateFieldName: aggregateFieldName as string | undefined,
+          limit: groupByLimit as number | undefined,
+          orderBy: groupByOrderBy as 'ASC' | 'DESC' | undefined,
+          filter: groupByFilter,
+          authContext,
+          rolePermissionConfig: context.rolePermissionConfig,
+        });
+      }
     }
   }
 
@@ -200,49 +198,44 @@ export class ToolExecutorService {
     descriptor: ToolIndexEntry | ToolDescriptor,
     args: Record<string, unknown>,
     context: ToolProviderContext,
-  ): Promise<unknown> {
+  ): Promise<ToolOutput> {
     if (descriptor.executionRef.kind !== 'static') {
       throw new Error('Expected static executionRef');
     }
 
-    // Per-tool handler first (action tools)
-    const handler = this.staticToolHandlers.get(descriptor.executionRef.toolId);
+    const provider = this.providers.find(
+      (candidate) => candidate.category === descriptor.category,
+    );
 
-    if (handler) {
-      return handler.execute(args, context);
-    }
-
-    // Category-level generator fallback (workflow, view, dashboard, metadata)
-    const generator = this.categoryGenerators.get(descriptor.category);
-
-    if (!generator) {
+    if (!provider) {
       throw new Error(
-        `No handler or generator for static tool: ${descriptor.executionRef.toolId}`,
+        `No provider registered for category "${descriptor.category}" (tool: ${descriptor.executionRef.toolId})`,
       );
     }
 
-    const toolSet = await generator(context);
-    const tool = toolSet[descriptor.name];
-
-    if (!tool?.execute) {
-      throw new Error(
-        `Tool ${descriptor.name} not found in generated ToolSet for category ${descriptor.category}`,
-      );
+    // Defense-in-depth: catalog and by-name lookups already filter by
+    // `isAvailable`, but re-verify at dispatch so the gate is enforced in
+    // one place regardless of how the descriptor reached us.
+    if (!(await provider.isAvailable(context))) {
+      return {
+        success: false,
+        message: `Tool "${descriptor.name}" is not available`,
+        error: `Tool "${descriptor.name}" is not available in this context. Use get_tool_catalog to see available tools.`,
+      };
     }
 
-    // The tool's execute expects (args, ToolExecutionOptions). Pass args with
-    // a dummy loadingMessage since the tool's internal strip is harmless.
-    return tool.execute(
-      { loadingMessage: '', ...args },
-      { toolCallId: '', messages: [] },
+    return provider.executeStaticTool(
+      descriptor.executionRef.toolId,
+      args,
+      context,
     );
   }
 
   private async dispatchLogicFunction(
-    ref: { logicFunctionId: string },
+    ref: Extract<ToolExecutionRef, { kind: 'logic_function' }>,
     args: Record<string, unknown>,
     context: ToolProviderContext,
-  ): Promise<unknown> {
+  ): Promise<ToolOutput> {
     const result = await this.logicFunctionExecutorService.execute({
       logicFunctionId: ref.logicFunctionId,
       workspaceId: context.workspaceId,
@@ -252,13 +245,15 @@ export class ToolExecutorService {
     if (result.error) {
       return {
         success: false,
+        message: 'Logic function execution failed',
         error: result.error.errorMessage,
       };
     }
 
     return {
       success: true,
-      result: result.data,
+      message: 'Logic function executed successfully',
+      result: result.data ?? undefined,
     };
   }
 
@@ -303,9 +298,9 @@ export class ToolExecutorService {
     }
 
     return buildUserAuthContext({
-      workspace: { id: context.workspaceId } as WorkspaceEntity,
+      workspace: { id: context.workspaceId } as FlatWorkspace,
       userWorkspaceId: context.userWorkspaceId,
-      user,
+      user: fromUserEntityToFlat(user),
       workspaceMemberId,
       workspaceMember,
     });

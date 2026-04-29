@@ -1,14 +1,12 @@
+import { type CalendarChannel } from '@/accounts/types/CalendarChannel';
+import { type MessageChannel } from '@/accounts/types/MessageChannel';
+import { SyncStatus } from '@/settings/accounts/constants/SyncStatus';
 import {
-  type CalendarChannel,
   CalendarChannelSyncStage,
   CalendarChannelSyncStatus,
-} from '@/accounts/types/CalendarChannel';
-import {
-  type MessageChannel,
   MessageChannelSyncStage,
   MessageChannelSyncStatus,
-} from '@/accounts/types/MessageChannel';
-import { SyncStatus } from '@/settings/accounts/constants/SyncStatus';
+} from 'twenty-shared/types';
 
 export const computeSyncStatus = (
   messageChannel?: Pick<MessageChannel, 'syncStatus' | 'syncStage'>,

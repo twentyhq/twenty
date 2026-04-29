@@ -5,6 +5,7 @@ export const StyledMarkdownContainer = styled.div`
   border-radius: ${themeCssVariables.border.radius.sm};
   line-height: 150%;
   margin: ${themeCssVariables.spacing['1.5']} 0;
+  overflow-x: auto;
   position: relative;
   scroll-margin-bottom: ${themeCssVariables.spacing[10]};
   scroll-margin-top: ${themeCssVariables.spacing[10]};
@@ -134,6 +135,7 @@ export const StyledMarkdownContainer = styled.div`
     background-color: ${themeCssVariables.background.secondary};
     border: 1px solid ${themeCssVariables.border.color.medium};
     border-radius: ${themeCssVariables.border.radius.md} !important;
+    overflow-x: auto;
   }
 
   .markdown-block-code * {

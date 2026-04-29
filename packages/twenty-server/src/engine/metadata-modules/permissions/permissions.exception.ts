@@ -49,6 +49,7 @@ export enum PermissionsExceptionCode {
   ROLE_MUST_HAVE_AT_LEAST_ONE_TARGET = 'ROLE_MUST_HAVE_AT_LEAST_ONE_TARGET',
   ROLE_CANNOT_BE_ASSIGNED_TO_USERS = 'ROLE_CANNOT_BE_ASSIGNED_TO_USERS',
   APPLICATION_ROLE_NOT_FOUND = 'APPLICATION_ROLE_NOT_FOUND',
+  ROLE_BELONGS_TO_ANOTHER_APPLICATION = 'ROLE_BELONGS_TO_ANOTHER_APPLICATION',
 }
 
 const getPermissionsExceptionUserFriendlyMessage = (
@@ -143,6 +144,8 @@ const getPermissionsExceptionUserFriendlyMessage = (
       return msg`This role cannot be assigned to users.`;
     case PermissionsExceptionCode.APPLICATION_ROLE_NOT_FOUND:
       return msg`No role assigned to the application.`;
+    case PermissionsExceptionCode.ROLE_BELONGS_TO_ANOTHER_APPLICATION:
+      return msg`Cannot target a role owned by another application.`;
     default:
       assertUnreachable(code);
   }

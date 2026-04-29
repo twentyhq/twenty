@@ -2,10 +2,10 @@ import { Module } from '@nestjs/common';
 import { DiscoveryModule } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/workspace-iterator.module';
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/workspace-metadata-version/workspace-metadata-version.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
@@ -19,7 +19,6 @@ import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/wo
   imports: [
     FeatureFlagModule,
     TypeORMModule,
-    DataSourceModule,
     WorkspaceMetadataVersionModule,
     WorkspaceSchemaMigrationRunnerActionHandlersModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
@@ -27,6 +26,7 @@ import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/wo
     WorkspaceCacheStorageModule,
     WorkspaceCacheModule,
     TypeOrmModule.forFeature([WorkspaceEntity]),
+    WorkspaceIteratorModule,
   ],
   providers: [
     WorkspaceMigrationRunnerService,

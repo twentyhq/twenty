@@ -4,6 +4,7 @@ import { msg } from '@lingui/core/macro';
 import {
   compositeTypeDefinitions,
   FieldMetadataType,
+  RelationType,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -16,11 +17,13 @@ import {
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
 import { type CompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/composite-field-metadata-type.type';
+import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
+import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 @Injectable()
@@ -109,7 +112,9 @@ export class FilterArgProcessorService {
     fieldIdByName: Record<string, string>,
     fieldIdByJoinColumnName: Record<string, string>,
   ): Record<string, unknown> {
-    const fieldMetadataId = fieldIdByName[key] || fieldIdByJoinColumnName[key];
+    const resolvedByName = fieldIdByName[key];
+    const resolvedByJoinColumn = fieldIdByJoinColumnName[key];
+    const fieldMetadataId = resolvedByName ?? resolvedByJoinColumn;
 
     if (!isDefined(fieldMetadataId)) {
       const nameSingular = flatObjectMetadata.nameSingular;
@@ -135,6 +140,38 @@ export class FilterArgProcessorService {
         `Field metadata not found for field ${key}`,
         CommonQueryRunnerExceptionCode.INVALID_ARGS_FILTER,
         { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
+      );
+    }
+
+    if (
+      isDefined(resolvedByName) &&
+      !isDefined(resolvedByJoinColumn) &&
+      (isFlatFieldMetadataOfType(fieldMetadata, FieldMetadataType.RELATION) ||
+        isFlatFieldMetadataOfType(
+          fieldMetadata,
+          FieldMetadataType.MORPH_RELATION,
+        ))
+    ) {
+      if (fieldMetadata.settings?.relationType === RelationType.MANY_TO_ONE) {
+        const joinColumnName = computeMorphOrRelationFieldJoinColumnName({
+          name: key,
+        });
+
+        throw new CommonQueryRunnerException(
+          `Cannot filter by relation field "${key}": use "${joinColumnName}" instead`,
+          CommonQueryRunnerExceptionCode.INVALID_ARGS_FILTER,
+          {
+            userFriendlyMessage: msg`Invalid filter: use "${joinColumnName}" to filter by this relation field`,
+          },
+        );
+      }
+
+      throw new CommonQueryRunnerException(
+        `Cannot filter by relation field "${key}"`,
+        CommonQueryRunnerExceptionCode.INVALID_ARGS_FILTER,
+        {
+          userFriendlyMessage: msg`Invalid filter: filtering by relation field "${key}" is not supported`,
+        },
       );
     }
 

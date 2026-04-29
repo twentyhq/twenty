@@ -11,12 +11,10 @@ import { searchRecordStoreFamilyState } from '@/object-record/record-picker/mult
 import { type RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useCallback } from 'react';
 import { useStore } from 'jotai';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 type UpdateActivityTargetFromCellProps = {
   recordPickerInstanceId: string;
@@ -54,17 +52,6 @@ export const useUpdateActivityTargetFromCell = ({
         ? activityObjectNameSingular
         : joinObjectNameSingular,
   });
-  const isNoteTargetMigrated = useIsFeatureEnabled(
-    FeatureFlagKey.IS_NOTE_TARGET_MIGRATED,
-  );
-  const isTaskTargetMigrated = useIsFeatureEnabled(
-    FeatureFlagKey.IS_TASK_TARGET_MIGRATED,
-  );
-  const isMorphRelation =
-    activityObjectNameSingular === CoreObjectNameSingular.Task
-      ? isTaskTargetMigrated
-      : isNoteTargetMigrated;
-
   const store = useStore();
   const setRecordStore = useSetAtomFamilyState(
     recordStoreFamilyState,
@@ -96,7 +83,6 @@ export const useUpdateActivityTargetFromCell = ({
         activityObjectNameSingular,
         targetObjectMetadataId: morphItem.objectMetadataId,
         objectMetadataItems,
-        isMorphRelation,
       });
 
       if (!isDefined(targetFieldName)) {
@@ -211,7 +197,6 @@ export const useUpdateActivityTargetFromCell = ({
       activityObjectNameSingular,
       createOneActivityTarget,
       deleteOneActivityTarget,
-      isMorphRelation,
       setRecordStore,
     ],
   );

@@ -1,13 +1,15 @@
 import { HealthIndicatorService } from '@nestjs/terminus';
 import { Test, type TestingModule } from '@nestjs/testing';
 
+import {
+  CalendarChannelSyncStatus,
+  MessageChannelSyncStatus,
+} from 'twenty-shared/types';
 import { HEALTH_ERROR_MESSAGES } from 'src/engine/core-modules/admin-panel/constants/health-error-messages.constants';
 import { HEALTH_INDICATORS_TIMEOUT } from 'src/engine/core-modules/admin-panel/constants/health-indicators-timeout.conts';
 import { METRICS_FAILURE_RATE_THRESHOLD } from 'src/engine/core-modules/admin-panel/constants/metrics-failure-rate-threshold.const';
 import { ConnectedAccountHealth } from 'src/engine/core-modules/admin-panel/indicators/connected-account.health';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
-import { CalendarChannelSyncStatus } from 'src/modules/calendar/common/standard-objects/calendar-channel.workspace-entity';
-import { MessageChannelSyncStatus } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 
 describe('ConnectedAccountHealth', () => {
   let service: ConnectedAccountHealth;

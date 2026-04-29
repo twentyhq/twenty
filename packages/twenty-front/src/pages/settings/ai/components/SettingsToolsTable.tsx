@@ -1,30 +1,72 @@
 import { styled } from '@linaria/react';
+import { gql } from '@apollo/client';
+import { useQuery } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
-import { useContext, useMemo, useState } from 'react';
-import Skeleton from 'react-loading-skeleton';
+import { type ReactNode, useContext, useMemo, useState } from 'react';
+import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 
 import { useGetToolIndex } from '@/ai/hooks/useGetToolIndex';
-import { usePersistLogicFunction } from '@/logic-functions/hooks/usePersistLogicFunction';
-import { logicFunctionsState } from '@/settings/logic-functions/states/logicFunctionsState';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { logicFunctionsSelector } from '@/logic-functions/states/logicFunctionsSelector';
+import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
-import { useNavigate } from 'react-router-dom';
+import { TableRow } from '@/ui/layout/table/components/TableRow';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { H2Title, IconChevronRight, IconPlus } from 'twenty-ui/display';
-import { Button, SearchInput } from 'twenty-ui/input';
+import {
+  H2Title,
+  IconChevronRight,
+  IconLock,
+  IconPuzzle,
+  IconTool,
+} from 'twenty-ui/display';
+import { SearchInput } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
+import { MenuItemToggle } from 'twenty-ui/navigation';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
+import { ToolCategory } from 'twenty-shared/ai';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
-import { SettingsSystemToolTableRow } from './SettingsSystemToolTableRow';
-import { TableRow } from '@/ui/layout/table/components/TableRow';
+import { SettingsToolIcon } from './SettingsToolIcon';
 import {
-  TOOL_TABLE_ROW_GRID_TEMPLATE_COLUMNS,
   SettingsToolTableRow,
+  TOOL_TABLE_ROW_GRID_TEMPLATE_COLUMNS,
 } from './SettingsToolTableRow';
+
+type ToolItem = {
+  identifier: string;
+  name: string;
+  description?: string | null;
+  category?: string;
+  objectName?: string | null;
+  icon?: string | null;
+  applicationId?: string | null;
+};
+
+const FIND_MANY_APPLICATIONS_FOR_TOOL_TABLE = gql`
+  query FindManyApplicationsForToolTable {
+    findManyApplications {
+      id
+      name
+      universalIdentifier
+    }
+  }
+`;
+
+const FIND_MANY_MARKETPLACE_APPS_FOR_TOOL_TABLE = gql`
+  query FindManyMarketplaceAppsForToolTable {
+    findManyMarketplaceApps {
+      id
+      universalIdentifier
+      icon
+      logo
+    }
+  }
+`;
 
 const StyledSearchContainer = styled.div`
   padding-bottom: ${themeCssVariables.spacing[2]};
@@ -34,207 +76,223 @@ const StyledTableHeaderRowContainer = styled.div`
   margin-bottom: ${themeCssVariables.spacing[2]};
 `;
 
-const StyledFooterContainer = styled.div`
-  align-items: center;
-  display: flex;
-  justify-content: flex-end;
-  margin-top: ${themeCssVariables.spacing[4]};
-`;
-
 export const SettingsToolsTable = () => {
   const { theme } = useContext(ThemeContext);
-  const logicFunctions = useAtomStateValue(logicFunctionsState);
-  const { toolIndex, loading: toolIndexLoading } = useGetToolIndex();
-  const { createLogicFunction } = usePersistLogicFunction();
-
+  const logicFunctions = useAtomStateValue(logicFunctionsSelector);
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
+  const {
+    toolIndex,
+    loading: toolIndexLoading,
+    error: toolIndexError,
+  } = useGetToolIndex();
+  const { data: applicationsData } = useQuery<{
+    findManyApplications: Array<{
+      id: string;
+      name: string;
+      universalIdentifier: string;
+    }>;
+  }>(FIND_MANY_APPLICATIONS_FOR_TOOL_TABLE);
+  const { data: marketplaceAppsData } = useQuery<{
+    findManyMarketplaceApps: Array<{
+      id: string;
+      universalIdentifier: string;
+      icon: string;
+      logo?: string | null;
+    }>;
+  }>(FIND_MANY_MARKETPLACE_APPS_FOR_TOOL_TABLE);
   const { t } = useLingui();
-  const navigate = useNavigate();
-  const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
-  const [customSearchTerm, setCustomSearchTerm] = useState('');
-  const [builtInSearchTerm, setBuiltInSearchTerm] = useState('');
-  const [isCreating, setIsCreating] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [showCustomTools, setShowCustomTools] = useState(true);
+  const [showManagedTools, setShowManagedTools] = useState(true);
+  const [showStandardTools, setShowStandardTools] = useState(true);
 
-  const tools = useMemo(
-    () => logicFunctions.filter((fn) => fn.isTool === true),
-    [logicFunctions],
-  );
+  const workspaceCustomApplicationId =
+    currentWorkspace?.workspaceCustomApplication?.id;
 
-  const filteredTools = useMemo(
-    () =>
-      tools.filter((tool) => {
-        const searchNormalized = normalizeSearchText(customSearchTerm);
-        const matchesSearch =
-          normalizeSearchText(tool.name).includes(searchNormalized) ||
-          normalizeSearchText(tool.description ?? '').includes(
-            searchNormalized,
-          );
+  const isManaged = (applicationId?: string | null) =>
+    isDefined(applicationId) && applicationId !== workspaceCustomApplicationId;
 
-        return matchesSearch;
-      }),
-    [tools, customSearchTerm],
-  );
+  const isCustom = (item: ToolItem) => isDefined(item.applicationId);
 
-  const systemTools = useMemo(
-    () =>
-      toolIndex.filter(
-        (systemTool) => systemTool.category !== 'LOGIC_FUNCTION',
-      ),
-    [toolIndex],
-  );
-
-  const filteredSystemTools = useMemo(
-    () =>
-      systemTools.filter((systemTool) => {
-        const searchNormalized = normalizeSearchText(builtInSearchTerm);
-        const matchesSearch =
-          normalizeSearchText(systemTool.name).includes(searchNormalized) ||
-          normalizeSearchText(systemTool.description).includes(
-            searchNormalized,
-          );
-
-        return matchesSearch;
-      }),
-    [systemTools, builtInSearchTerm],
-  );
-
-  const showSkeleton = toolIndexLoading && tools.length === 0;
-
-  const handleCreateTool = async () => {
-    setIsCreating(true);
-    try {
-      const result = await createLogicFunction({
-        input: {
-          name: 'new-tool',
-          isTool: true,
-        },
-      });
-
-      if (result.status === 'successful' && isDefined(result.response?.data)) {
-        const newLogicFunction = result.response.data.createOneLogicFunction;
-        enqueueSuccessSnackBar({ message: t`Tool created` });
-
-        const applicationId = (newLogicFunction as { applicationId?: string })
-          .applicationId;
-        if (isDefined(applicationId)) {
-          navigate(
-            getSettingsPath(SettingsPath.ApplicationLogicFunctionDetail, {
-              applicationId,
-              logicFunctionId: newLogicFunction.id,
-            }),
-          );
-        } else {
-          navigate(
-            getSettingsPath(SettingsPath.LogicFunctionDetail, {
-              logicFunctionId: newLogicFunction.id,
-            }),
-          );
-        }
-      }
-    } catch {
-      enqueueErrorSnackBar({ message: t`Failed to create tool` });
-    } finally {
-      setIsCreating(false);
-    }
-  };
-
-  const getToolLink = (tool: (typeof tools)[0]) => {
-    const applicationId = (tool as { applicationId?: string }).applicationId;
-    if (isDefined(applicationId)) {
-      return getSettingsPath(SettingsPath.ApplicationLogicFunctionDetail, {
-        applicationId,
-        logicFunctionId: tool.id,
-      });
-    }
-    return getSettingsPath(SettingsPath.LogicFunctionDetail, {
-      logicFunctionId: tool.id,
+  const getToolLink = (item: ToolItem) =>
+    getSettingsPath(SettingsPath.AiToolDetail, {
+      toolIdentifier: item.identifier,
     });
-  };
+
+  const allTools: ToolItem[] = useMemo(
+    () => [
+      ...logicFunctions
+        .filter((fn) => fn.isTool === true)
+        .map((fn) => ({
+          identifier: fn.id,
+          name: fn.name,
+          description: fn.description,
+          applicationId: fn.applicationId,
+        })),
+      ...toolIndex
+        .filter((tool) => tool.category !== ToolCategory.LOGIC_FUNCTION)
+        .map((tool) => ({
+          identifier: tool.name,
+          name: tool.name,
+          description: tool.description,
+          category: tool.category,
+          objectName: tool.objectName,
+          icon: tool.icon,
+        })),
+    ],
+    [logicFunctions, toolIndex],
+  );
+
+  const applicationById = new Map(
+    (applicationsData?.findManyApplications ?? []).map((application) => [
+      application.id,
+      application,
+    ]),
+  );
+  const marketplaceAppByUniversalIdentifier = new Map(
+    (marketplaceAppsData?.findManyMarketplaceApps ?? []).map(
+      (marketplaceApp) => [marketplaceApp.universalIdentifier, marketplaceApp],
+    ),
+  );
+
+  const filteredTools = allTools
+    .filter((item) => {
+      const searchNormalized = normalizeSearchText(searchTerm);
+
+      const matchesSearch =
+        normalizeSearchText(item.name).includes(searchNormalized) ||
+        normalizeSearchText(item.description ?? '').includes(searchNormalized);
+
+      if (!matchesSearch) {
+        return false;
+      }
+
+      if (!isCustom(item)) {
+        return showStandardTools;
+      }
+
+      if (isManaged(item.applicationId)) {
+        return showManagedTools;
+      }
+
+      return showCustomTools;
+    })
+    .sort((a, b) => a.name.localeCompare(b.name));
+
+  const showSkeleton = toolIndexLoading && !toolIndexError;
 
   return (
-    <>
-      <Section>
-        <H2Title
-          title={t`Custom`}
-          description={t`Custom tools created in your workspace`}
+    <Section>
+      <H2Title
+        title={t`Tools`}
+        description={t`Use filter to see existing tools or create your own`}
+      />
+      <StyledSearchContainer>
+        <SearchInput
+          placeholder={t`Search a tool...`}
+          value={searchTerm}
+          onChange={setSearchTerm}
+          filterDropdown={(filterButton: ReactNode) => (
+            <Dropdown
+              dropdownId="settings-tools-filter-dropdown"
+              dropdownPlacement="bottom-end"
+              dropdownOffset={{ x: 0, y: 8 }}
+              clickableComponent={filterButton}
+              dropdownComponents={
+                <DropdownContent>
+                  <DropdownMenuItemsContainer>
+                    <MenuItemToggle
+                      LeftIcon={IconTool}
+                      onToggleChange={() =>
+                        setShowCustomTools(!showCustomTools)
+                      }
+                      toggled={showCustomTools}
+                      text={t`Custom`}
+                      toggleSize="small"
+                    />
+                    <MenuItemToggle
+                      LeftIcon={IconLock}
+                      onToggleChange={() =>
+                        setShowManagedTools(!showManagedTools)
+                      }
+                      toggled={showManagedTools}
+                      text={t`Managed`}
+                      toggleSize="small"
+                    />
+                    <MenuItemToggle
+                      LeftIcon={IconPuzzle}
+                      onToggleChange={() =>
+                        setShowStandardTools(!showStandardTools)
+                      }
+                      toggled={showStandardTools}
+                      text={t`Standard`}
+                      toggleSize="small"
+                    />
+                  </DropdownMenuItemsContainer>
+                </DropdownContent>
+              }
+            />
+          )}
         />
-        <StyledSearchContainer>
-          <SearchInput
-            placeholder={t`Search a custom tool...`}
-            value={customSearchTerm}
-            onChange={setCustomSearchTerm}
-          />
-        </StyledSearchContainer>
-        <Table>
-          <StyledTableHeaderRowContainer>
-            <TableRow
-              gridTemplateColumns={TOOL_TABLE_ROW_GRID_TEMPLATE_COLUMNS}
-            >
-              <TableHeader>{t`Name`}</TableHeader>
-              <TableHeader align="right">{t`Type`}</TableHeader>
-              <TableHeader />
-            </TableRow>
-          </StyledTableHeaderRowContainer>
-          {showSkeleton
-            ? Array.from({ length: 3 }).map((_, index) => (
-                <Skeleton height={32} borderRadius={4} key={index} />
-              ))
-            : filteredTools.map((tool) => (
+      </StyledSearchContainer>
+      <Table>
+        <StyledTableHeaderRowContainer>
+          <TableRow gridTemplateColumns={TOOL_TABLE_ROW_GRID_TEMPLATE_COLUMNS}>
+            <TableHeader>{t`Name`}</TableHeader>
+            <TableHeader>{t`App`}</TableHeader>
+            <TableHeader />
+          </TableRow>
+        </StyledTableHeaderRowContainer>
+        {showSkeleton
+          ? Array.from({ length: 3 }).map((_, index) => (
+              <SkeletonTheme
+                key={index}
+                baseColor={theme.background.tertiary}
+                highlightColor={theme.background.transparent.lighter}
+                borderRadius={4}
+              >
+                <Skeleton height={32} borderRadius={4} />
+              </SkeletonTheme>
+            ))
+          : filteredTools.map((item) => {
+              const application = isDefined(item.applicationId)
+                ? applicationById.get(item.applicationId)
+                : undefined;
+              const marketplaceApp = isDefined(application)
+                ? marketplaceAppByUniversalIdentifier.get(
+                    application.universalIdentifier,
+                  )
+                : undefined;
+
+              const appLabel = isCustom(item)
+                ? (application?.name ?? t`Custom`)
+                : t`Standard`;
+
+              return (
                 <SettingsToolTableRow
-                  key={tool.id}
-                  tool={tool}
+                  key={item.identifier}
+                  leftIcon={
+                    <SettingsToolIcon
+                      icon={item.icon}
+                      toolName={item.name}
+                      objectName={item.objectName ?? undefined}
+                      application={application}
+                      marketplaceApp={marketplaceApp}
+                    />
+                  }
+                  name={item.name}
+                  appLabel={appLabel}
                   action={
                     <IconChevronRight
                       size={theme.icon.size.md}
                       stroke={theme.icon.stroke.sm}
                     />
                   }
-                  link={getToolLink(tool)}
+                  link={getToolLink(item)}
                 />
-              ))}
-        </Table>
-
-        <StyledFooterContainer>
-          <Button
-            Icon={IconPlus}
-            title={t`New Tool`}
-            size="small"
-            variant="secondary"
-            onClick={handleCreateTool}
-            disabled={isCreating}
-          />
-        </StyledFooterContainer>
-      </Section>
-
-      <Section>
-        <H2Title
-          title={t`Built-in`}
-          description={t`Standard tools available to AI agents`}
-        />
-        <StyledSearchContainer>
-          <SearchInput
-            placeholder={t`Search a built-in tool...`}
-            value={builtInSearchTerm}
-            onChange={setBuiltInSearchTerm}
-          />
-        </StyledSearchContainer>
-        <Table>
-          <StyledTableHeaderRowContainer>
-            <TableRow
-              gridTemplateColumns={TOOL_TABLE_ROW_GRID_TEMPLATE_COLUMNS}
-            >
-              <TableHeader>{t`Name`}</TableHeader>
-              <TableHeader align="right">{t`Type`}</TableHeader>
-              <TableHeader />
-            </TableRow>
-          </StyledTableHeaderRowContainer>
-          {filteredSystemTools.map((systemTool) => (
-            <SettingsSystemToolTableRow
-              key={systemTool.name}
-              tool={systemTool}
-            />
-          ))}
-        </Table>
-      </Section>
-    </>
+              );
+            })}
+      </Table>
+    </Section>
   );
 };

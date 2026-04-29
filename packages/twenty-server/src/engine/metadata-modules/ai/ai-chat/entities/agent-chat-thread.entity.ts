@@ -13,12 +13,21 @@ import {
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { AgentMessageEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
 import { AgentTurnEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-turn.entity';
+import type { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { EntityRelation } from 'src/engine/workspace-manager/workspace-migration/types/entity-relation.interface';
 
-@Entity('agentChatThread')
+@Entity({ name: 'agentChatThread', schema: 'core' })
 export class AgentChatThreadEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
+
+  @Column({ nullable: false, type: 'uuid' })
+  @Index()
+  workspaceId: string;
+
+  @ManyToOne('WorkspaceEntity', { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'workspaceId' })
+  workspace: EntityRelation<WorkspaceEntity>;
 
   @Column({ nullable: false, type: 'uuid' })
   @Index()
@@ -50,6 +59,9 @@ export class AgentChatThreadEntity {
 
   @Column({ type: 'bigint', default: 0 })
   totalOutputCredits: number;
+
+  @Column({ type: 'varchar', nullable: true })
+  activeStreamId: string | null;
 
   @OneToMany(() => AgentTurnEntity, (turn) => turn.thread)
   turns: EntityRelation<AgentTurnEntity[]>;

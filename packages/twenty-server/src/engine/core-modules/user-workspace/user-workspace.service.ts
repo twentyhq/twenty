@@ -7,6 +7,7 @@ import { FileFolder } from 'twenty-shared/types';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { IsNull, Not, type QueryRunner, type Repository } from 'typeorm';
 
+import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { FileStorageExceptionCode } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
 
 import { type AppTokenEntity } from 'src/engine/core-modules/app-token/app-token.entity';
@@ -19,11 +20,10 @@ import { type AvailableWorkspace } from 'src/engine/core-modules/auth/dto/availa
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { FileCorePictureService } from 'src/engine/core-modules/file/file-core-picture/services/file-core-picture.service';
+import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { extractFileIdFromUrl } from 'src/engine/core-modules/file/files-field/utils/extract-file-id-from-url.util';
-import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
-import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
@@ -61,10 +61,37 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     private readonly userRoleService: UserRoleService,
     private readonly fileCorePictureService: FileCorePictureService,
-    private readonly fileService: FileService,
+    private readonly fileUrlService: FileUrlService,
     private readonly onboardingService: OnboardingService,
+    private readonly coreEntityCacheService: CoreEntityCacheService,
   ) {
     super(userWorkspaceRepository);
+  }
+
+  async updateUserWorkspaceLocaleForUserWorkspace({
+    locale,
+    userWorkspaceId,
+  }: {
+    locale: UserWorkspaceEntity['locale'];
+    userWorkspaceId: string;
+  }): Promise<void> {
+    const userWorkspace = await this.userWorkspaceRepository.findOne({
+      where: {
+        id: userWorkspaceId,
+      },
+    });
+
+    if (!isDefined(userWorkspace)) {
+      return;
+    }
+
+    userWorkspace.locale = locale;
+    await this.userWorkspaceRepository.save(userWorkspace);
+
+    await this.coreEntityCacheService.invalidate(
+      'userWorkspaceEntity',
+      userWorkspaceId,
+    );
   }
 
   async create(
@@ -103,7 +130,13 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
       : this.userWorkspaceRepository.save(userWorkspace);
   }
 
-  async createWorkspaceMember(workspaceId: string, user: AuthContextUser) {
+  async createWorkspaceMember(
+    workspaceId: string,
+    user: Pick<
+      UserEntity,
+      'id' | 'firstName' | 'lastName' | 'email' | 'locale'
+    >,
+  ) {
     const authContext = buildSystemAuthContext(workspaceId);
 
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
@@ -498,12 +531,13 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
       id: workspace.id,
       displayName: workspace.displayName,
       workspaceUrls: this.workspaceDomainsService.getWorkspaceUrls(workspace),
-      logo: workspace.logo
-        ? this.fileService.signFileUrl({
-            url: workspace.logo,
+      logo: isDefined(workspace.logoFileId)
+        ? this.fileUrlService.signFileByIdUrl({
+            fileId: workspace.logoFileId,
             workspaceId: workspace.id,
+            fileFolder: FileFolder.CorePicture,
           })
-        : workspace.logo,
+        : '',
       sso:
         workspace.workspaceSSOIdentityProviders?.reduce(
           (acc, identityProvider) =>
@@ -536,7 +570,7 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
         appToken?: AppTokenEntity;
       }>;
     },
-    user: AuthContextUser,
+    user: Pick<UserEntity, 'email'>,
     authProvider: AuthProviderEnum,
   ) {
     return {

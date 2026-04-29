@@ -99,6 +99,7 @@ describe('ClientConfigController', () => {
         allowRequestsToTwentyIcons: true,
         isCloudflareIntegrationEnabled: false,
         isClickHouseConfigured: false,
+        isWorkspaceSchemaDDLLocked: false,
       };
 
       jest

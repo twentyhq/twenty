@@ -11,11 +11,9 @@ import { StandaloneRichTextEditorContent } from '@/page-layout/widgets/standalon
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
 import {
-  FeatureFlagKey,
   PageLayoutType,
   type StandaloneRichTextConfiguration,
 } from '~/generated-metadata/graphql';
@@ -47,15 +45,11 @@ export const StandaloneRichTextWidget = ({
   );
 
   const { targetRecordIdentifier, layoutType } = useLayoutRenderingContext();
-  const isAttachmentMigrated = useIsFeatureEnabled(
-    FeatureFlagKey.IS_ATTACHMENT_MIGRATED,
-  );
 
   const isDashboard = layoutType === PageLayoutType.DASHBOARD;
   const dashboardId = isDashboard ? targetRecordIdentifier?.id : undefined;
   const attachmentTargetFieldIdName = getActivityTargetObjectFieldIdName({
     nameSingular: CoreObjectNameSingular.Dashboard,
-    isMorphRelation: isAttachmentMigrated,
   });
 
   const configuration = widget.configuration as

@@ -143,13 +143,13 @@ const createPageLayoutWithWidget = (
   tabs: [
     {
       __typename: 'PageLayoutTab',
+      isActive: true,
       applicationId: '',
       id: TAB_ID_OVERVIEW,
       title: 'Overview',
       position: 0,
       pageLayoutId: PAGE_LAYOUT_TEST_INSTANCE_ID,
       widgets: [widget],
-      isOverridden: false,
       createdAt: '2024-01-01T00:00:00Z',
       updatedAt: '2024-01-01T00:00:00Z',
       deletedAt: null,
@@ -253,6 +253,8 @@ export const WithNumberChart: Story = {
   render: () => {
     const widget: PageLayoutWidget = {
       __typename: 'PageLayoutWidget',
+      applicationId: '',
+      isActive: true,
       id: WIDGET_ID_NUMBER_CHART,
       pageLayoutTabId: TAB_ID_OVERVIEW,
       type: WidgetType.GRAPH,
@@ -272,7 +274,6 @@ export const WithNumberChart: Story = {
         aggregateFieldMetadataId: idField.id,
         displayDataLabel: true,
       },
-      isOverridden: false,
       createdAt: '2024-01-01T00:00:00Z',
       updatedAt: '2024-01-01T00:00:00Z',
       deletedAt: null,
@@ -340,6 +341,8 @@ export const WithGaugeChart: Story = {
   render: () => {
     const widget: PageLayoutWidget = {
       __typename: 'PageLayoutWidget',
+      applicationId: '',
+      isActive: true,
       id: WIDGET_ID_GAUGE_CHART,
       pageLayoutTabId: TAB_ID_OVERVIEW,
       type: WidgetType.GRAPH,
@@ -359,7 +362,6 @@ export const WithGaugeChart: Story = {
         aggregateFieldMetadataId: idField.id,
         displayDataLabel: false,
       },
-      isOverridden: false,
       createdAt: '2024-01-01T00:00:00Z',
       updatedAt: '2024-01-01T00:00:00Z',
       deletedAt: null,
@@ -427,6 +429,8 @@ export const WithBarChart: Story = {
   render: () => {
     const widget: PageLayoutWidget = {
       __typename: 'PageLayoutWidget',
+      applicationId: '',
+      isActive: true,
       id: WIDGET_ID_BAR_CHART,
       pageLayoutTabId: TAB_ID_OVERVIEW,
       type: WidgetType.GRAPH,
@@ -450,7 +454,6 @@ export const WithBarChart: Story = {
         axisNameDisplay: AxisNameDisplay.BOTH,
         displayDataLabel: false,
       },
-      isOverridden: false,
       createdAt: '2024-01-01T00:00:00Z',
       updatedAt: '2024-01-01T00:00:00Z',
       deletedAt: null,
@@ -525,6 +528,8 @@ export const SmallWidget: Story = {
   render: () => {
     const widget: PageLayoutWidget = {
       __typename: 'PageLayoutWidget',
+      applicationId: '',
+      isActive: true,
       id: WIDGET_ID_SMALL,
       pageLayoutTabId: TAB_ID_OVERVIEW,
       type: WidgetType.GRAPH,
@@ -544,7 +549,6 @@ export const SmallWidget: Story = {
         aggregateFieldMetadataId: idField.id,
         displayDataLabel: true,
       },
-      isOverridden: false,
       createdAt: '2024-01-01T00:00:00Z',
       updatedAt: '2024-01-01T00:00:00Z',
       deletedAt: null,
@@ -619,6 +623,8 @@ export const MediumWidget: Story = {
   render: () => {
     const widget: PageLayoutWidget = {
       __typename: 'PageLayoutWidget',
+      applicationId: '',
+      isActive: true,
       id: WIDGET_ID_MEDIUM,
       pageLayoutTabId: TAB_ID_OVERVIEW,
       type: WidgetType.GRAPH,
@@ -642,7 +648,6 @@ export const MediumWidget: Story = {
         axisNameDisplay: AxisNameDisplay.BOTH,
         displayDataLabel: false,
       },
-      isOverridden: false,
       createdAt: '2024-01-01T00:00:00Z',
       updatedAt: '2024-01-01T00:00:00Z',
       deletedAt: null,
@@ -717,6 +722,8 @@ export const LargeWidget: Story = {
   render: () => {
     const widget: PageLayoutWidget = {
       __typename: 'PageLayoutWidget',
+      applicationId: '',
+      isActive: true,
       id: WIDGET_ID_LARGE,
       pageLayoutTabId: TAB_ID_OVERVIEW,
       type: WidgetType.GRAPH,
@@ -740,7 +747,6 @@ export const LargeWidget: Story = {
         axisNameDisplay: AxisNameDisplay.BOTH,
         displayDataLabel: false,
       },
-      isOverridden: false,
       createdAt: '2024-01-01T00:00:00Z',
       updatedAt: '2024-01-01T00:00:00Z',
       deletedAt: null,
@@ -815,6 +821,8 @@ export const WideWidget: Story = {
   render: () => {
     const widget: PageLayoutWidget = {
       __typename: 'PageLayoutWidget',
+      applicationId: '',
+      isActive: true,
       id: WIDGET_ID_WIDE,
       pageLayoutTabId: TAB_ID_OVERVIEW,
       type: WidgetType.GRAPH,
@@ -834,7 +842,6 @@ export const WideWidget: Story = {
         aggregateFieldMetadataId: idField.id,
         displayDataLabel: true,
       },
-      isOverridden: false,
       createdAt: '2024-01-01T00:00:00Z',
       updatedAt: '2024-01-01T00:00:00Z',
       deletedAt: null,
@@ -909,6 +916,8 @@ export const TallWidget: Story = {
   render: () => {
     const widget: PageLayoutWidget = {
       __typename: 'PageLayoutWidget',
+      applicationId: '',
+      isActive: true,
       id: WIDGET_ID_TALL,
       pageLayoutTabId: TAB_ID_OVERVIEW,
       type: WidgetType.GRAPH,
@@ -932,7 +941,6 @@ export const TallWidget: Story = {
         axisNameDisplay: AxisNameDisplay.BOTH,
         displayDataLabel: false,
       },
-      isOverridden: false,
       createdAt: '2024-01-01T00:00:00Z',
       updatedAt: '2024-01-01T00:00:00Z',
       deletedAt: null,
@@ -1008,6 +1016,8 @@ export const WithManyToOneRelationFieldWidget: Story = {
   render: () => {
     const widget: PageLayoutWidget = {
       __typename: 'PageLayoutWidget',
+      applicationId: '',
+      isActive: true,
       id: WIDGET_ID_MANY_TO_ONE_RELATION,
       pageLayoutTabId: TAB_ID_OVERVIEW,
       type: WidgetType.FIELD,
@@ -1026,7 +1036,6 @@ export const WithManyToOneRelationFieldWidget: Story = {
         fieldMetadataId: accountOwnerField.id,
         fieldDisplayMode: FieldDisplayMode.FIELD,
       },
-      isOverridden: false,
       createdAt: '2024-01-01T00:00:00Z',
       updatedAt: '2024-01-01T00:00:00Z',
       deletedAt: null,
@@ -1127,6 +1136,8 @@ export const WithOneToManyRelationFieldWidget: Story = {
   render: () => {
     const widget: PageLayoutWidget = {
       __typename: 'PageLayoutWidget',
+      applicationId: '',
+      isActive: true,
       id: WIDGET_ID_ONE_TO_MANY_RELATION,
       pageLayoutTabId: TAB_ID_OVERVIEW,
       type: WidgetType.FIELD,
@@ -1145,7 +1156,6 @@ export const WithOneToManyRelationFieldWidget: Story = {
         fieldMetadataId: companyPeopleField.id,
         fieldDisplayMode: FieldDisplayMode.FIELD,
       },
-      isOverridden: false,
       createdAt: '2024-01-01T00:00:00Z',
       updatedAt: '2024-01-01T00:00:00Z',
       deletedAt: null,
@@ -1238,6 +1248,8 @@ export const OneToManyRelationFieldWidgetWithSeeAllButton: Story = {
   render: () => {
     const widget: PageLayoutWidget = {
       __typename: 'PageLayoutWidget',
+      applicationId: '',
+      isActive: true,
       id: WIDGET_ID_ONE_TO_MANY_RELATION,
       pageLayoutTabId: TAB_ID_OVERVIEW,
       type: WidgetType.FIELD,
@@ -1256,7 +1268,6 @@ export const OneToManyRelationFieldWidgetWithSeeAllButton: Story = {
         fieldMetadataId: companyPeopleField.id,
         fieldDisplayMode: FieldDisplayMode.FIELD,
       },
-      isOverridden: false,
       createdAt: '2024-01-01T00:00:00Z',
       updatedAt: '2024-01-01T00:00:00Z',
       deletedAt: null,
@@ -1375,6 +1386,8 @@ export const OnMobile: Story = {
   render: () => {
     const widget: PageLayoutWidget = {
       __typename: 'PageLayoutWidget',
+      applicationId: '',
+      isActive: true,
       id: 'widget-mobile',
       pageLayoutTabId: TAB_ID_OVERVIEW,
       type: WidgetType.GRAPH,
@@ -1394,7 +1407,6 @@ export const OnMobile: Story = {
         aggregateFieldMetadataId: idField.id,
         displayDataLabel: true,
       },
-      isOverridden: false,
       createdAt: '2024-01-01T00:00:00Z',
       updatedAt: '2024-01-01T00:00:00Z',
       deletedAt: null,
@@ -1473,6 +1485,8 @@ export const InSidePanel: Story = {
   render: () => {
     const widget: PageLayoutWidget = {
       __typename: 'PageLayoutWidget',
+      applicationId: '',
+      isActive: true,
       id: 'widget-side-panel',
       pageLayoutTabId: TAB_ID_OVERVIEW,
       type: WidgetType.GRAPH,
@@ -1492,7 +1506,6 @@ export const InSidePanel: Story = {
         aggregateFieldMetadataId: idField.id,
         displayDataLabel: true,
       },
-      isOverridden: false,
       createdAt: '2024-01-01T00:00:00Z',
       updatedAt: '2024-01-01T00:00:00Z',
       deletedAt: null,
@@ -1631,6 +1644,8 @@ export const Catalog: CatalogStory<Story, typeof WidgetRenderer> = {
 
     const widget: PageLayoutWidget = {
       __typename: 'PageLayoutWidget',
+      applicationId: '',
+      isActive: true,
       id: WIDGET_ID_CATALOG,
       pageLayoutTabId:
         variant === 'side-column' ? 'pinned-tab' : TAB_ID_OVERVIEW,
@@ -1651,7 +1666,6 @@ export const Catalog: CatalogStory<Story, typeof WidgetRenderer> = {
         aggregateFieldMetadataId: idField.id,
         displayDataLabel: true,
       },
-      isOverridden: false,
       createdAt: '2024-01-01T00:00:00Z',
       updatedAt: '2024-01-01T00:00:00Z',
       deletedAt: null,
@@ -1738,26 +1752,26 @@ export const Catalog: CatalogStory<Story, typeof WidgetRenderer> = {
           ? [
               {
                 __typename: 'PageLayoutTab',
+                isActive: true,
                 applicationId: '',
                 id: 'pinned-tab',
                 title: 'Pinned Tab',
                 position: 0,
                 pageLayoutId: PAGE_LAYOUT_TEST_INSTANCE_ID,
                 widgets: [widget],
-                isOverridden: false,
                 createdAt: '2024-01-01T00:00:00Z',
                 updatedAt: '2024-01-01T00:00:00Z',
                 deletedAt: null,
               },
               {
                 __typename: 'PageLayoutTab',
+                isActive: true,
                 applicationId: '',
                 id: 'other-tab',
                 title: 'Other Tab',
                 position: 1,
                 pageLayoutId: PAGE_LAYOUT_TEST_INSTANCE_ID,
                 widgets: [],
-                isOverridden: false,
                 createdAt: '2024-01-01T00:00:00Z',
                 updatedAt: '2024-01-01T00:00:00Z',
                 deletedAt: null,
@@ -1766,13 +1780,13 @@ export const Catalog: CatalogStory<Story, typeof WidgetRenderer> = {
           : [
               {
                 __typename: 'PageLayoutTab',
+                isActive: true,
                 applicationId: '',
                 id: TAB_ID_OVERVIEW,
                 title: 'Overview',
                 position: 0,
                 pageLayoutId: PAGE_LAYOUT_TEST_INSTANCE_ID,
                 widgets: [widget],
-                isOverridden: false,
                 createdAt: '2024-01-01T00:00:00Z',
                 updatedAt: '2024-01-01T00:00:00Z',
                 deletedAt: null,

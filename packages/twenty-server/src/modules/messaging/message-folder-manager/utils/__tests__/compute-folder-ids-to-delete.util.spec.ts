@@ -1,4 +1,4 @@
-import { MessageFolderPendingSyncAction } from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
+import { MessageFolderPendingSyncAction } from 'twenty-shared/types';
 import { computeFolderIdsToDelete } from 'src/modules/messaging/message-folder-manager/utils/compute-folder-ids-to-delete.util';
 
 describe('computeFolderIdsToDelete', () => {

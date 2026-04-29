@@ -386,10 +386,22 @@ describe('Page layout widget restore via bulk update should succeed', () => {
       deletedAt: null,
     });
 
-    expect(mixedData.updatePageLayoutWithTabsAndWidgets).toMatchSnapshot(
-      extractRecordIdsAndDatesAsExpectAny({
-        ...mixedData.updatePageLayoutWithTabsAndWidgets,
-      }),
+    const sortedMixedResult = {
+      ...mixedData.updatePageLayoutWithTabsAndWidgets,
+      tabs: (mixedData.updatePageLayoutWithTabsAndWidgets.tabs ?? []).map(
+        (tab) => ({
+          ...tab,
+          widgets: [...(tab.widgets ?? [])].sort(
+            (a, b) =>
+              (a.gridPosition?.row ?? 0) - (b.gridPosition?.row ?? 0) ||
+              (a.gridPosition?.column ?? 0) - (b.gridPosition?.column ?? 0),
+          ),
+        }),
+      ),
+    };
+
+    expect(sortedMixedResult).toMatchSnapshot(
+      extractRecordIdsAndDatesAsExpectAny(sortedMixedResult),
     );
   });
 });

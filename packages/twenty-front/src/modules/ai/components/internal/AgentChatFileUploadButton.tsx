@@ -1,10 +1,10 @@
-import { useAIChatFileUpload } from '@/ai/hooks/useAIChatFileUpload';
+import { useAiChatFileUpload } from '@/ai/hooks/useAiChatFileUpload';
 import { agentChatSelectedFilesState } from '@/ai/states/agentChatSelectedFilesState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import React, { useRef } from 'react';
-import { IconPlus } from 'twenty-ui/display';
+import { IconPaperclip } from 'twenty-ui/display';
 import { IconButton } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -23,7 +23,7 @@ export const AgentChatFileUploadButton = () => {
     agentChatSelectedFilesState,
   );
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const { uploadFiles } = useAIChatFileUpload();
+  const { uploadFiles } = useAiChatFileUpload();
 
   const handleFileInputChange = (
     event: React.ChangeEvent<HTMLInputElement>,
@@ -52,7 +52,7 @@ export const AgentChatFileUploadButton = () => {
         onClick={() => {
           fileInputRef.current?.click();
         }}
-        Icon={IconPlus}
+        Icon={IconPaperclip}
         ariaLabel={t`Attach files`}
       />
     </StyledFileUploadContainer>

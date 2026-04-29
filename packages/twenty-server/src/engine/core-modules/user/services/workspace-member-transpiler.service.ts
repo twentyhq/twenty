@@ -3,7 +3,8 @@ import { Injectable } from '@nestjs/common';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
-import { FileService } from 'src/engine/core-modules/file/services/file.service';
+import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
+import { extractFileIdFromUrl } from 'src/engine/core-modules/file/files-field/utils/extract-file-id-from-url.util';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { type DeletedWorkspaceMemberDTO } from 'src/engine/core-modules/user/dtos/deleted-workspace-member.dto';
 import { type WorkspaceMemberDTO } from 'src/engine/core-modules/user/dtos/workspace-member.dto';
@@ -15,6 +16,7 @@ import {
   type WorkspaceMemberTimeFormatEnum,
   type WorkspaceMemberWorkspaceEntity,
 } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { FileFolder } from 'twenty-shared/types';
 
 export type ToWorkspaceMemberDtoArgs = {
   workspaceMemberEntity: WorkspaceMemberWorkspaceEntity;
@@ -24,7 +26,7 @@ export type ToWorkspaceMemberDtoArgs = {
 
 @Injectable()
 export class WorkspaceMemberTranspiler {
-  constructor(private readonly fileService: FileService) {}
+  constructor(private readonly fileUrlService: FileUrlService) {}
 
   generateSignedAvatarUrl({
     workspaceId,
@@ -40,9 +42,19 @@ export class WorkspaceMemberTranspiler {
       return '';
     }
 
-    return this.fileService.signFileUrl({
-      url: workspaceMember.avatarUrl,
+    const fileId = extractFileIdFromUrl(
+      workspaceMember.avatarUrl,
+      FileFolder.CorePicture,
+    );
+
+    if (!isDefined(fileId)) {
+      return '';
+    }
+
+    return this.fileUrlService.signFileByIdUrl({
+      fileId,
       workspaceId,
+      fileFolder: FileFolder.CorePicture,
     });
   }
 

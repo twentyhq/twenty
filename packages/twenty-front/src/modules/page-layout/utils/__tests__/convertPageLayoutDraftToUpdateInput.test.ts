@@ -34,6 +34,7 @@ const makeTab = (
   id: string,
   widgets: PageLayoutWidget[],
   layoutMode?: PageLayoutTabLayoutMode,
+  overrides?: Partial<DraftPageLayout['tabs'][number]>,
 ): DraftPageLayout['tabs'][number] =>
   ({
     id,
@@ -41,8 +42,10 @@ const makeTab = (
     position: 0,
     pageLayoutId: 'layout-1',
     applicationId: 'app-1',
+    isActive: true,
     layoutMode,
     widgets,
+    ...overrides,
   }) as DraftPageLayout['tabs'][number];
 
 describe('convertPageLayoutDraftToUpdateInput', () => {
@@ -106,6 +109,26 @@ describe('convertPageLayoutDraftToUpdateInput', () => {
     const result = convertPageLayoutDraftToUpdateInput(draft);
 
     expect(result.objectMetadataId).toBeNull();
+  });
+
+  it('should propagate tab icon to the update input', () => {
+    const draft = makeDraft([
+      makeTab('tab-1', [], PageLayoutTabLayoutMode.GRID, {
+        icon: 'IconHome',
+      }),
+    ]);
+
+    const result = convertPageLayoutDraftToUpdateInput(draft);
+
+    expect(result.tabs[0].icon).toBe('IconHome');
+  });
+
+  it('should send null icon when tab icon is undefined', () => {
+    const draft = makeDraft([makeTab('tab-1', [])]);
+
+    const result = convertPageLayoutDraftToUpdateInput(draft);
+
+    expect(result.tabs[0].icon).toBeNull();
   });
 
   it('should handle multiple tabs', () => {

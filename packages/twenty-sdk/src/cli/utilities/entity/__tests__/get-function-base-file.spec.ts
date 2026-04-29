@@ -8,7 +8,7 @@ describe('getFunctionBaseFile', () => {
     });
 
     expect(result).toContain(
-      "import { defineLogicFunction } from 'twenty-sdk'",
+      "import { defineLogicFunction } from 'twenty-sdk/define';",
     );
     expect(result).toContain('export default defineLogicFunction({');
 

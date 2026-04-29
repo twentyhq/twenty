@@ -6,6 +6,9 @@ import { QueryResultFieldValue } from 'src/engine/api/graphql/workspace-query-ru
 
 import { DataArgProcessorService } from 'src/engine/api/common/common-args-processors/data-arg-processor/data-arg-processor.service';
 import { FilterArgProcessorService } from 'src/engine/api/common/common-args-processors/filter-arg-processor/filter-arg-processor.service';
+import { GroupByArgProcessorService } from 'src/engine/api/common/common-args-processors/group-by-arg-processor/group-by-arg-processor.service';
+import { OrderByArgProcessorService } from 'src/engine/api/common/common-args-processors/order-by-arg-processor/order-by-arg-processor.service';
+import { OrderByWithGroupByArgProcessorService } from 'src/engine/api/common/common-args-processors/order-by-with-group-by-arg-processor/order-by-with-group-by-arg-processor.service';
 import { QueryRunnerArgsFactory } from 'src/engine/api/common/common-args-processors/query-runner-args.factory';
 import { ProcessNestedRelationsHelper } from 'src/engine/api/common/common-nested-relations-processor/process-nested-relations.helper';
 import {
@@ -22,7 +25,10 @@ import {
   CommonQueryArgs,
   CommonQueryNames,
 } from 'src/engine/api/common/types/common-query-args.type';
-import { CommonQueryResult } from 'src/engine/api/common/types/common-query-result.type';
+import {
+  CommonQueryExecutionResult,
+  CommonQueryResult,
+} from 'src/engine/api/common/types/common-query-result.type';
 import { CommonSelectedFieldsResult } from 'src/engine/api/common/types/common-selected-fields-result.type';
 import { OBJECTS_WITH_SETTINGS_PERMISSIONS_REQUIREMENTS } from 'src/engine/api/graphql/graphql-query-runner/constants/objects-with-settings-permissions-requirements';
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
@@ -64,6 +70,12 @@ export abstract class CommonBaseQueryRunnerService<
   @Inject()
   protected readonly filterArgProcessor: FilterArgProcessorService;
   @Inject()
+  protected readonly groupByArgProcessor: GroupByArgProcessorService;
+  @Inject()
+  protected readonly orderByArgProcessor: OrderByArgProcessorService;
+  @Inject()
+  protected readonly orderByWithGroupByArgProcessor: OrderByWithGroupByArgProcessorService;
+  @Inject()
   protected readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager;
   @Inject()
   protected readonly processNestedRelationsHelper: ProcessNestedRelationsHelper;
@@ -89,7 +101,7 @@ export abstract class CommonBaseQueryRunnerService<
   public async execute(
     args: CommonInput<Args>,
     queryRunnerContext: CommonBaseQueryRunnerContext,
-  ): Promise<Output> {
+  ): Promise<CommonQueryExecutionResult<Output, Args>> {
     const {
       authContext,
       flatObjectMetadata,
@@ -118,26 +130,32 @@ export abstract class CommonBaseQueryRunnerService<
       args.selectedFields,
     );
 
-    this.validateQueryComplexity(
-      selectedFieldsResult,
-      args,
-      queryRunnerContext,
-    );
-
     const processedArgs = {
       ...(await this.processArgs(args, queryRunnerContext, this.operationName)),
       selectedFieldsResult,
     } as CommonExtendedInput<Args>;
 
-    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      async () =>
-        this.executeQueryAndEnrichResults(
-          processedArgs,
-          queryRunnerContext,
-          commonQueryParser,
-        ),
-      authContext,
+    this.validateQueryComplexity(
+      selectedFieldsResult,
+      processedArgs,
+      queryRunnerContext,
     );
+
+    const results =
+      await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+        async () =>
+          this.executeQueryAndEnrichResults(
+            processedArgs,
+            queryRunnerContext,
+            commonQueryParser,
+          ),
+        authContext,
+      );
+
+    return {
+      results,
+      args: processedArgs,
+    };
   }
 
   protected abstract run(
@@ -165,7 +183,7 @@ export abstract class CommonBaseQueryRunnerService<
 
   protected computeQueryComplexity(
     selectedFieldsResult: CommonSelectedFieldsResult,
-    _args: CommonInput<Args>,
+    _args: CommonExtendedInput<Args>,
     _queryRunnerContext: CommonBaseQueryRunnerContext,
   ): number {
     const simpleFieldsComplexity = 1;
@@ -378,7 +396,7 @@ export abstract class CommonBaseQueryRunnerService<
 
   private validateQueryComplexity(
     selectedFieldsResult: CommonSelectedFieldsResult,
-    args: CommonInput<Args>,
+    args: CommonExtendedInput<Args>,
     queryRunnerContext: CommonBaseQueryRunnerContext,
   ) {
     const maximumComplexity = this.twentyConfigService.get(

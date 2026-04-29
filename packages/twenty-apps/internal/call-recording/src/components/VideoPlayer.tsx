@@ -1,6 +1,8 @@
 import styled from '@emotion/styled';
 
-import { SerializedEventData } from 'twenty-sdk/dist/sdk/front-component-api';
+type SerializedMediaEventData = {
+  currentTime?: number;
+};
 
 const StyledVideoWrapper = styled.div`
   border-radius: 12px;
@@ -31,7 +33,7 @@ export const VideoPlayer = ({
       <StyledVideo
         controls
         onTimeUpdate={(event: unknown) => {
-          const currentTime = (event as CustomEvent<SerializedEventData>)
+          const currentTime = (event as CustomEvent<SerializedMediaEventData>)
             .detail.currentTime;
 
           if (typeof currentTime === 'number') {

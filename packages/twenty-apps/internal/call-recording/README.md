@@ -5,7 +5,7 @@ This is a [Twenty](https://twenty.com) application project bootstrapped with [`c
 First, authenticate to your workspace:
 
 ```bash
-yarn twenty remote add http://localhost:2020 --as local
+yarn twenty remote add --api-url http://localhost:2020 --as local
 ```
 
 Then, start development mode to sync your app and watch for changes:
@@ -22,7 +22,7 @@ Run `yarn twenty help` to list all available commands. Common commands:
 
 ```bash
 # Remotes & Authentication
-yarn twenty remote add http://localhost:2020 --as local     # Authenticate with Twenty
+yarn twenty remote add --api-url http://localhost:2020 --as local     # Authenticate with Twenty
 yarn twenty remote status         # Check auth status
 yarn twenty remote switch         # Switch default remote
 yarn twenty remote list           # List all configured remotes

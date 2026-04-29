@@ -7,7 +7,7 @@ import { CustomError, isDefined } from 'twenty-shared/utils';
 import { GoogleOAuth2ClientManagerService } from 'src/modules/connected-account/oauth2-client-manager/drivers/google/google-oauth2-client-manager.service';
 import { MicrosoftOAuth2ClientManagerService } from 'src/modules/connected-account/oauth2-client-manager/drivers/microsoft/microsoft-oauth2-client-manager.service';
 import { OAuth2ClientManagerExceptionCode } from 'src/modules/connected-account/oauth2-client-manager/exceptions/oauth2-client-manager.exceptions';
-import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 
 @Injectable()
 export class OAuth2ClientManagerService {
@@ -17,10 +17,7 @@ export class OAuth2ClientManagerService {
   ) {}
 
   public async getGoogleOAuth2Client(
-    connectedAccount: Pick<
-      ConnectedAccountWorkspaceEntity,
-      'provider' | 'refreshToken'
-    >,
+    connectedAccount: Pick<ConnectedAccountEntity, 'provider' | 'refreshToken'>,
   ): Promise<Auth.OAuth2Client> {
     if (!isDefined(connectedAccount.refreshToken)) {
       throw new CustomError(
@@ -35,10 +32,7 @@ export class OAuth2ClientManagerService {
   }
 
   public async getMicrosoftOAuth2Client(
-    connectedAccount: Pick<
-      ConnectedAccountWorkspaceEntity,
-      'provider' | 'accessToken'
-    >,
+    connectedAccount: Pick<ConnectedAccountEntity, 'provider' | 'accessToken'>,
   ): Promise<Client> {
     if (!isDefined(connectedAccount.accessToken)) {
       throw new CustomError(

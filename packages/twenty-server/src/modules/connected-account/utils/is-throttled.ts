@@ -8,6 +8,19 @@ export const isThrottled = (
   throttleFailureCount: number,
   throttleRetryAfter?: string | null,
 ): boolean => {
+  const now = new Date();
+
+  const retryAfterCandidate = isDefined(throttleRetryAfter)
+    ? new Date(throttleRetryAfter)
+    : null;
+  const retryAfterDate = isValidDate(retryAfterCandidate)
+    ? retryAfterCandidate
+    : null;
+
+  if (isDefined(retryAfterDate) && retryAfterDate > now) {
+    return true;
+  }
+
   if (!syncStageStartedAt) {
     return false;
   }
@@ -16,25 +29,12 @@ export const isThrottled = (
     return false;
   }
 
-  const now = new Date();
-
   const exponentialBackoffUntil = computeThrottlePauseUntil(
     syncStageStartedAt,
     throttleFailureCount,
   );
-  const retryAfterCandidate = isDefined(throttleRetryAfter)
-    ? new Date(throttleRetryAfter)
-    : null;
-  const retryAfterDate = isValidDate(retryAfterCandidate)
-    ? retryAfterCandidate
-    : null;
 
-  const effectiveUntil =
-    isDefined(retryAfterDate) && retryAfterDate > exponentialBackoffUntil
-      ? retryAfterDate
-      : exponentialBackoffUntil;
-
-  return effectiveUntil > now;
+  return exponentialBackoffUntil > now;
 };
 
 const computeThrottlePauseUntil = (

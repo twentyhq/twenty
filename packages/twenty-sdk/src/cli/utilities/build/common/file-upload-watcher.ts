@@ -39,15 +39,18 @@ export class FileUploadWatcher {
   }
 
   async start(): Promise<void> {
-    const rootPaths = this.watchPaths.map((watchPath) =>
-      join(this.appPath, watchPath),
-    );
+    const rootPaths = (
+      await Promise.all(
+        this.watchPaths.map(async (watchPath) => {
+          const fullPath = join(this.appPath, watchPath);
 
-    for (const rootPath of rootPaths) {
-      const exists = await pathExists(rootPath);
-      if (!exists) {
-        return;
-      }
+          return (await pathExists(fullPath)) ? fullPath : null;
+        }),
+      )
+    ).filter((p): p is string => p !== null);
+
+    if (rootPaths.length === 0) {
+      return;
     }
 
     this.watcher = chokidar.watch(rootPaths, {

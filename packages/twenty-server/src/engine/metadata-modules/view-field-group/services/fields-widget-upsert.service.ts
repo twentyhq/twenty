@@ -2,17 +2,26 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { t } from '@lingui/core/macro';
-import { isDefined } from 'twenty-shared/utils';
+import {
+  isDefined,
+  isFieldMetadataEligibleForFieldsWidget,
+} from 'twenty-shared/utils';
 import { IsNull, Repository } from 'typeorm';
+import { v4 } from 'uuid';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { resolveEntityRelationUniversalIdentifiers } from 'src/engine/metadata-modules/flat-entity/utils/resolve-entity-relation-universal-identifiers.util';
+import { splitEntitiesByRemovalStrategy } from 'src/engine/metadata-modules/flat-entity/utils/split-entities-by-removal-strategy.util';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { isFlatPageLayoutWidgetConfigurationOfType } from 'src/engine/metadata-modules/flat-page-layout-widget/utils/is-flat-page-layout-widget-configuration-of-type.util';
 import { type FlatViewFieldGroupMaps } from 'src/engine/metadata-modules/flat-view-field-group/types/flat-view-field-group-maps.type';
 import { type FlatViewFieldGroup } from 'src/engine/metadata-modules/flat-view-field-group/types/flat-view-field-group.type';
+import { DEFAULT_VIEW_FIELD_SIZE } from 'src/engine/metadata-modules/flat-view-field/constants/default-view-field-size.constant';
 import { type FlatViewField } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field.type';
 import { fromViewFieldOverridesToUniversalOverrides } from 'src/engine/metadata-modules/flat-view-field/utils/from-view-field-overrides-to-universal-overrides.util';
 import { type FlatViewMaps } from 'src/engine/metadata-modules/flat-view/types/flat-view-maps.type';
@@ -66,6 +75,8 @@ export class FieldsWidgetUpsertService {
 
     const {
       flatPageLayoutWidgetMaps,
+      flatFieldMetadataMaps,
+      flatObjectMetadataMaps,
       flatViewFieldGroupMaps,
       flatViewFieldMaps,
       flatViewMaps,
@@ -75,6 +86,8 @@ export class FieldsWidgetUpsertService {
           workspaceId,
           flatMapsKeys: [
             'flatPageLayoutWidgetMaps',
+            'flatFieldMetadataMaps',
+            'flatObjectMetadataMaps',
             'flatViewFieldGroupMaps',
             'flatViewFieldMaps',
             'flatViewMaps',
@@ -109,21 +122,33 @@ export class FieldsWidgetUpsertService {
       );
     }
 
+    const flatView = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: viewId,
+      flatEntityMaps: flatViewMaps,
+    });
+
+    const objectMetadata = isDefined(flatView)
+      ? findFlatEntityByIdInFlatEntityMaps({
+          flatEntityId: flatView.objectMetadataId,
+          flatEntityMaps:
+            flatObjectMetadataMaps as FlatEntityMaps<FlatObjectMetadata>,
+        })
+      : undefined;
+
+    const labelIdentifierFieldMetadataId =
+      objectMetadata?.labelIdentifierFieldMetadataId ?? null;
+
     const existingGroups = Object.values(
       flatViewFieldGroupMaps.byUniversalIdentifier,
     )
       .filter(isDefined)
-      .filter(
-        (group) => !isDefined(group.deletedAt) && group.viewId === viewId,
-      );
+      .filter((group) => group.isActive && group.viewId === viewId);
 
     const existingViewFields = Object.values(
       flatViewFieldMaps.byUniversalIdentifier,
     )
       .filter(isDefined)
-      .filter(
-        (field) => !isDefined(field.deletedAt) && field.viewId === viewId,
-      );
+      .filter((field) => field.isActive && field.viewId === viewId);
 
     if (hasGroups) {
       await this.upsertFieldsWidgetWithGroups({
@@ -135,6 +160,8 @@ export class FieldsWidgetUpsertService {
         applicationId: workspaceCustomFlatApplication.id,
         applicationUniversalIdentifier:
           workspaceCustomFlatApplication.universalIdentifier,
+        labelIdentifierFieldMetadataId,
+        flatFieldMetadataMaps,
         flatViewMaps,
         flatViewFieldGroupMaps,
       });
@@ -143,9 +170,14 @@ export class FieldsWidgetUpsertService {
         inputFields: input.fields!,
         existingGroups,
         existingViewFields,
+        viewId,
         workspaceId,
+        applicationId: workspaceCustomFlatApplication.id,
         applicationUniversalIdentifier:
           workspaceCustomFlatApplication.universalIdentifier,
+        labelIdentifierFieldMetadataId,
+        flatFieldMetadataMaps,
+        flatViewMaps,
       });
     }
 
@@ -171,6 +203,8 @@ export class FieldsWidgetUpsertService {
     workspaceId,
     applicationId,
     applicationUniversalIdentifier,
+    labelIdentifierFieldMetadataId,
+    flatFieldMetadataMaps,
     flatViewMaps,
     flatViewFieldGroupMaps,
   }: {
@@ -181,6 +215,8 @@ export class FieldsWidgetUpsertService {
     workspaceId: string;
     applicationId: string;
     applicationUniversalIdentifier: string;
+    labelIdentifierFieldMetadataId: string | null;
+    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
     flatViewMaps: FlatViewMaps;
     flatViewFieldGroupMaps: FlatViewFieldGroupMaps;
   }): Promise<void> {
@@ -189,7 +225,7 @@ export class FieldsWidgetUpsertService {
 
     const groupsToCreate: FlatViewFieldGroup[] = [];
     const groupsToUpdate: FlatViewFieldGroup[] = [];
-    const groupsToDelete: FlatViewFieldGroup[] = [];
+    const groupsToDeactivate: FlatViewFieldGroup[] = [];
 
     for (const inputGroup of inputGroups) {
       const existingGroup = existingGroups.find((g) => g.id === inputGroup.id);
@@ -238,7 +274,7 @@ export class FieldsWidgetUpsertService {
 
     for (const existingGroup of existingGroups) {
       if (!inputGroupIds.has(existingGroup.id)) {
-        groupsToDelete.push(existingGroup);
+        groupsToDeactivate.push(existingGroup);
       }
     }
 
@@ -362,15 +398,153 @@ export class FieldsWidgetUpsertService {
       return [updatedField];
     });
 
-    const fieldsWithStaleGroupOverrides =
-      this.buildFieldUpdatesForStaleGroupOverrides({
-        existingViewFields,
-        groupsToDelete,
-        alreadyUpdatedFieldIds: new Set(
-          viewFieldsToUpdate.map((field) => field.id),
-        ),
-        now,
-      });
+    const viewFieldsToCreate: FlatViewField[] = [];
+
+    for (const inputGroup of inputGroups) {
+      for (const inputField of inputGroup.fields) {
+        if (
+          isDefined(inputField.viewFieldId) ||
+          !isDefined(inputField.fieldMetadataId)
+        ) {
+          continue;
+        }
+
+        const existingField = existingViewFields.find(
+          (field) => field.fieldMetadataId === inputField.fieldMetadataId,
+        );
+
+        if (isDefined(existingField)) {
+          const {
+            viewFieldGroupUniversalIdentifier:
+              newViewFieldGroupUniversalIdentifier,
+          } = resolveEntityRelationUniversalIdentifiers({
+            metadataName: 'viewField',
+            foreignKeyValues: {
+              viewFieldGroupId: inputGroup.id,
+            },
+            flatEntityMaps: {
+              flatViewFieldGroupMaps: optimisticFlatViewFieldGroupMaps,
+            },
+          });
+
+          const shouldOverride = isCallerOverridingEntity({
+            callerApplicationUniversalIdentifier:
+              applicationUniversalIdentifier,
+            entityApplicationUniversalIdentifier:
+              existingField.applicationUniversalIdentifier,
+            workspaceCustomApplicationUniversalIdentifier:
+              applicationUniversalIdentifier,
+          });
+
+          const { overrides, updatedEditableProperties: sanitizedFieldProps } =
+            sanitizeOverridableEntityInput({
+              metadataName: 'viewField',
+              existingFlatEntity: existingField,
+              updatedEditableProperties: {
+                isVisible: inputField.isVisible,
+                position: inputField.position,
+                viewFieldGroupId: inputGroup.id,
+              },
+              shouldOverride,
+            });
+
+          const updatedField: FlatViewField = {
+            ...existingField,
+            ...sanitizedFieldProps,
+            overrides,
+            updatedAt: now,
+          };
+
+          if (sanitizedFieldProps.viewFieldGroupId !== undefined) {
+            updatedField.viewFieldGroupUniversalIdentifier =
+              newViewFieldGroupUniversalIdentifier;
+          }
+
+          if (isDefined(overrides)) {
+            updatedField.universalOverrides =
+              fromViewFieldOverridesToUniversalOverrides({
+                overrides,
+                viewFieldGroupUniversalIdentifierById:
+                  optimisticFlatViewFieldGroupMaps.universalIdentifierById,
+              });
+          } else {
+            updatedField.universalOverrides = null;
+          }
+
+          viewFieldsToUpdate.push(updatedField);
+          continue;
+        }
+
+        const fieldMetadata = findFlatEntityByIdInFlatEntityMaps({
+          flatEntityId: inputField.fieldMetadataId,
+          flatEntityMaps: flatFieldMetadataMaps,
+        });
+
+        if (
+          !isDefined(fieldMetadata) ||
+          !isFieldMetadataEligibleForFieldsWidget({
+            fieldName: fieldMetadata.name,
+            fieldType: fieldMetadata.type,
+            isLabelIdentifierField:
+              fieldMetadata.id === labelIdentifierFieldMetadataId,
+          })
+        ) {
+          continue;
+        }
+
+        const {
+          fieldMetadataUniversalIdentifier,
+          viewUniversalIdentifier,
+          viewFieldGroupUniversalIdentifier,
+        } = resolveEntityRelationUniversalIdentifiers({
+          metadataName: 'viewField',
+          foreignKeyValues: {
+            fieldMetadataId: inputField.fieldMetadataId,
+            viewId,
+            viewFieldGroupId: inputGroup.id,
+          },
+          flatEntityMaps: {
+            flatFieldMetadataMaps,
+            flatViewMaps,
+            flatViewFieldGroupMaps: optimisticFlatViewFieldGroupMaps,
+          },
+        });
+
+        viewFieldsToCreate.push({
+          id: v4(),
+          workspaceId,
+          applicationId,
+          universalIdentifier: v4(),
+          applicationUniversalIdentifier,
+          fieldMetadataId: inputField.fieldMetadataId,
+          fieldMetadataUniversalIdentifier,
+          viewId,
+          viewUniversalIdentifier,
+          viewFieldGroupId: inputGroup.id,
+          viewFieldGroupUniversalIdentifier,
+          isVisible: inputField.isVisible,
+          size: DEFAULT_VIEW_FIELD_SIZE,
+          position: inputField.position,
+          aggregateOperation: null,
+          overrides: null,
+          universalOverrides: null,
+          isActive: true,
+          createdAt: now,
+          updatedAt: now,
+          deletedAt: null,
+        });
+      }
+    }
+
+    const {
+      toHardDelete: customGroupsToDelete,
+      toDeactivate: deactivatedGroupUpdates,
+    } = splitEntitiesByRemovalStrategy({
+      entitiesToRemove: groupsToDeactivate,
+      workspaceCustomApplicationUniversalIdentifier:
+        applicationUniversalIdentifier,
+      now,
+    });
 
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
@@ -378,16 +552,16 @@ export class FieldsWidgetUpsertService {
           allFlatEntityOperationByMetadataName: {
             viewFieldGroup: {
               flatEntityToCreate: groupsToCreate,
-              flatEntityToDelete: groupsToDelete,
-              flatEntityToUpdate: groupsToUpdate,
+              flatEntityToDelete: customGroupsToDelete,
+              flatEntityToUpdate: [
+                ...groupsToUpdate,
+                ...deactivatedGroupUpdates,
+              ],
             },
             viewField: {
-              flatEntityToCreate: [],
+              flatEntityToCreate: viewFieldsToCreate,
               flatEntityToDelete: [],
-              flatEntityToUpdate: [
-                ...viewFieldsToUpdate,
-                ...fieldsWithStaleGroupOverrides,
-              ],
+              flatEntityToUpdate: viewFieldsToUpdate,
             },
           },
           workspaceId,
@@ -408,18 +582,28 @@ export class FieldsWidgetUpsertService {
     inputFields,
     existingGroups,
     existingViewFields,
+    viewId,
     workspaceId,
+    applicationId,
     applicationUniversalIdentifier,
+    labelIdentifierFieldMetadataId,
+    flatFieldMetadataMaps,
+    flatViewMaps,
   }: {
     inputFields: UpsertFieldsWidgetFieldInput[];
     existingGroups: FlatViewFieldGroup[];
     existingViewFields: FlatViewField[];
+    viewId: string;
     workspaceId: string;
+    applicationId: string;
     applicationUniversalIdentifier: string;
+    labelIdentifierFieldMetadataId: string | null;
+    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+    flatViewMaps: FlatViewMaps;
   }): Promise<void> {
     const now = new Date().toISOString();
 
-    const groupsToDelete: FlatViewFieldGroup[] = [...existingGroups];
+    const groupsToDeactivate: FlatViewFieldGroup[] = [...existingGroups];
 
     const viewFieldsToUpdate = existingViewFields.flatMap((existingField) => {
       const inputField = inputFields.find(
@@ -494,15 +678,130 @@ export class FieldsWidgetUpsertService {
       return [updatedField];
     });
 
-    const fieldsWithStaleGroupOverrides =
-      this.buildFieldUpdatesForStaleGroupOverrides({
-        existingViewFields,
-        groupsToDelete,
-        alreadyUpdatedFieldIds: new Set(
-          viewFieldsToUpdate.map((field) => field.id),
-        ),
-        now: new Date().toISOString(),
+    const viewFieldsToCreate: FlatViewField[] = [];
+
+    for (const inputField of inputFields) {
+      if (
+        isDefined(inputField.viewFieldId) ||
+        !isDefined(inputField.fieldMetadataId)
+      ) {
+        continue;
+      }
+
+      const existingField = existingViewFields.find(
+        (field) => field.fieldMetadataId === inputField.fieldMetadataId,
+      );
+
+      if (isDefined(existingField)) {
+        const shouldOverride = isCallerOverridingEntity({
+          callerApplicationUniversalIdentifier: applicationUniversalIdentifier,
+          entityApplicationUniversalIdentifier:
+            existingField.applicationUniversalIdentifier,
+          workspaceCustomApplicationUniversalIdentifier:
+            applicationUniversalIdentifier,
+        });
+
+        const { overrides, updatedEditableProperties: sanitizedFieldProps } =
+          sanitizeOverridableEntityInput({
+            metadataName: 'viewField',
+            existingFlatEntity: existingField,
+            updatedEditableProperties: {
+              isVisible: inputField.isVisible,
+              position: inputField.position,
+              viewFieldGroupId: null,
+            },
+            shouldOverride,
+          });
+
+        const updatedField: FlatViewField = {
+          ...existingField,
+          ...sanitizedFieldProps,
+          overrides,
+          updatedAt: now,
+        };
+
+        if (sanitizedFieldProps.viewFieldGroupId !== undefined) {
+          updatedField.viewFieldGroupUniversalIdentifier = null;
+        }
+
+        if (isDefined(overrides)) {
+          updatedField.universalOverrides =
+            fromViewFieldOverridesToUniversalOverrides({
+              overrides,
+              viewFieldGroupUniversalIdentifierById: {},
+            });
+        } else {
+          updatedField.universalOverrides = null;
+        }
+
+        viewFieldsToUpdate.push(updatedField);
+        continue;
+      }
+
+      const fieldMetadata = findFlatEntityByIdInFlatEntityMaps({
+        flatEntityId: inputField.fieldMetadataId,
+        flatEntityMaps: flatFieldMetadataMaps,
       });
+
+      if (
+        !isDefined(fieldMetadata) ||
+        !isFieldMetadataEligibleForFieldsWidget({
+          fieldName: fieldMetadata.name,
+          fieldType: fieldMetadata.type,
+          isLabelIdentifierField:
+            fieldMetadata.id === labelIdentifierFieldMetadataId,
+        })
+      ) {
+        continue;
+      }
+
+      const { fieldMetadataUniversalIdentifier, viewUniversalIdentifier } =
+        resolveEntityRelationUniversalIdentifiers({
+          metadataName: 'viewField',
+          foreignKeyValues: {
+            fieldMetadataId: inputField.fieldMetadataId,
+            viewId,
+          },
+          flatEntityMaps: {
+            flatFieldMetadataMaps,
+            flatViewMaps,
+          },
+        });
+
+      viewFieldsToCreate.push({
+        id: v4(),
+        workspaceId,
+        applicationId,
+        universalIdentifier: v4(),
+        applicationUniversalIdentifier,
+        fieldMetadataId: inputField.fieldMetadataId,
+        fieldMetadataUniversalIdentifier,
+        viewId,
+        viewUniversalIdentifier,
+        viewFieldGroupId: null,
+        viewFieldGroupUniversalIdentifier: null,
+        isVisible: inputField.isVisible,
+        size: DEFAULT_VIEW_FIELD_SIZE,
+        position: inputField.position,
+        aggregateOperation: null,
+        overrides: null,
+        universalOverrides: null,
+        isActive: true,
+        createdAt: now,
+        updatedAt: now,
+        deletedAt: null,
+      });
+    }
+
+    const {
+      toHardDelete: customGroupsToDelete,
+      toDeactivate: deactivatedGroupUpdates,
+    } = splitEntitiesByRemovalStrategy({
+      entitiesToRemove: groupsToDeactivate,
+      workspaceCustomApplicationUniversalIdentifier:
+        applicationUniversalIdentifier,
+      now,
+    });
 
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
@@ -510,16 +809,13 @@ export class FieldsWidgetUpsertService {
           allFlatEntityOperationByMetadataName: {
             viewFieldGroup: {
               flatEntityToCreate: [],
-              flatEntityToDelete: groupsToDelete,
-              flatEntityToUpdate: [],
+              flatEntityToDelete: customGroupsToDelete,
+              flatEntityToUpdate: deactivatedGroupUpdates,
             },
             viewField: {
-              flatEntityToCreate: [],
+              flatEntityToCreate: viewFieldsToCreate,
               flatEntityToDelete: [],
-              flatEntityToUpdate: [
-                ...viewFieldsToUpdate,
-                ...fieldsWithStaleGroupOverrides,
-              ],
+              flatEntityToUpdate: viewFieldsToUpdate,
             },
           },
           workspaceId,
@@ -534,111 +830,6 @@ export class FieldsWidgetUpsertService {
         'Multiple validation errors occurred while upserting fields widget',
       );
     }
-  }
-
-  private buildFieldUpdatesForStaleGroupOverrides({
-    existingViewFields,
-    groupsToDelete,
-    alreadyUpdatedFieldIds,
-    now,
-  }: {
-    existingViewFields: FlatViewField[];
-    groupsToDelete: FlatViewFieldGroup[];
-    alreadyUpdatedFieldIds: Set<string>;
-    now: string;
-  }): FlatViewField[] {
-    if (groupsToDelete.length === 0) {
-      return [];
-    }
-
-    const deletedGroupIds = new Set(groupsToDelete.map((group) => group.id));
-
-    return existingViewFields
-      .filter((field) => {
-        if (alreadyUpdatedFieldIds.has(field.id)) {
-          return false;
-        }
-
-        const overriddenGroupId = field.overrides?.viewFieldGroupId;
-
-        const hasStaleOverride =
-          isDefined(overriddenGroupId) &&
-          typeof overriddenGroupId === 'string' &&
-          deletedGroupIds.has(overriddenGroupId);
-
-        const hasStaleBase =
-          overriddenGroupId === undefined &&
-          isDefined(field.viewFieldGroupId) &&
-          deletedGroupIds.has(field.viewFieldGroupId);
-
-        const hasStaleBaseHiddenByNullOverride =
-          overriddenGroupId === null &&
-          isDefined(field.viewFieldGroupId) &&
-          deletedGroupIds.has(field.viewFieldGroupId);
-
-        return (
-          hasStaleOverride || hasStaleBase || hasStaleBaseHiddenByNullOverride
-        );
-      })
-      .map((field) => {
-        const overriddenGroupId = field.overrides?.viewFieldGroupId;
-        const hasStaleOverride =
-          isDefined(overriddenGroupId) &&
-          typeof overriddenGroupId === 'string' &&
-          deletedGroupIds.has(overriddenGroupId);
-
-        if (hasStaleOverride) {
-          const { viewFieldGroupId: _, ...remainingOverrides } =
-            field.overrides!;
-
-          const cleanedOverrides =
-            Object.keys(remainingOverrides).length > 0
-              ? (remainingOverrides as typeof field.overrides)
-              : null;
-
-          const baseGroupIsAlsoStale =
-            isDefined(field.viewFieldGroupId) &&
-            deletedGroupIds.has(field.viewFieldGroupId);
-
-          return {
-            ...field,
-            ...(baseGroupIsAlsoStale
-              ? {
-                  viewFieldGroupId: null,
-                  viewFieldGroupUniversalIdentifier: null,
-                }
-              : {}),
-            overrides: cleanedOverrides,
-            universalOverrides: isDefined(cleanedOverrides)
-              ? fromViewFieldOverridesToUniversalOverrides({
-                  overrides: cleanedOverrides,
-                  viewFieldGroupUniversalIdentifierById: {},
-                })
-              : null,
-            updatedAt: now,
-          };
-        }
-
-        if (
-          overriddenGroupId === null &&
-          isDefined(field.viewFieldGroupId) &&
-          deletedGroupIds.has(field.viewFieldGroupId)
-        ) {
-          return {
-            ...field,
-            viewFieldGroupId: null,
-            viewFieldGroupUniversalIdentifier: null,
-            updatedAt: now,
-          };
-        }
-
-        return {
-          ...field,
-          viewFieldGroupId: null,
-          viewFieldGroupUniversalIdentifier: null,
-          updatedAt: now,
-        };
-      });
   }
 
   private buildGroupToCreate({
@@ -676,6 +867,7 @@ export class FieldsWidgetUpsertService {
       isVisible: inputGroup.isVisible,
       viewId,
       viewUniversalIdentifier,
+      isActive: true,
       overrides: null,
       createdAt: now,
       updatedAt: now,

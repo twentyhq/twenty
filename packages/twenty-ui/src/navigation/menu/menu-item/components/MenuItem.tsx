@@ -11,6 +11,7 @@ import {
 
 import { styled } from '@linaria/react';
 import { MenuItemHotKeys } from '@ui/navigation/menu/menu-item/components/MenuItemHotKeys';
+import { type ThemeColor } from '@ui/theme';
 import { ThemeContext } from '@ui/theme-constants';
 import { motion } from 'framer-motion';
 import { type Nullable } from 'twenty-shared/types';
@@ -39,6 +40,7 @@ export type MenuItemProps = {
   isIconDisplayedOnHoverOnly?: boolean;
   isTooltipOpen?: boolean;
   LeftIcon?: IconComponent | null;
+  iconThemeColor?: ThemeColor | null;
   LeftComponent?: ReactNode;
   RightIcon?: IconComponent | null;
   RightComponent?: ReactNode;
@@ -71,6 +73,7 @@ export const MenuItem = ({
   iconButtons,
   isIconDisplayedOnHoverOnly = true,
   LeftIcon,
+  iconThemeColor,
   LeftComponent,
   RightIcon,
   RightComponent,
@@ -113,6 +116,7 @@ export const MenuItem = ({
     >
       <MenuItemLeftContent
         LeftIcon={LeftIcon ?? undefined}
+        iconThemeColor={iconThemeColor}
         LeftComponent={LeftComponent}
         withIconContainer={withIconContainer}
         withIconContainerBackground={withIconContainerBackground}
@@ -135,12 +139,13 @@ export const MenuItem = ({
           <RightIcon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
         )}
         {RightComponent}
-        {hasSubMenu && !disabled && (
+        {hasSubMenu && (
           <StyledSubMenuIcon
             animate={{ rotate: isSubMenuOpened ? 90 : 0 }}
             transition={{
               duration: theme.animation.duration.normal,
             }}
+            style={{ visibility: disabled ? 'hidden' : 'visible' }}
           >
             <IconChevronRight
               size={theme.icon.size.sm}

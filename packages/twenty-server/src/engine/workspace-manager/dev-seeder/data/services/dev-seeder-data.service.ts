@@ -5,9 +5,10 @@ import { readFile } from 'fs/promises';
 import { join } from 'path';
 
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
-import { FileFolder, FeatureFlagKey } from 'twenty-shared/types';
+import { FeatureFlagKey, FileFolder } from 'twenty-shared/types';
 import { DataSource } from 'typeorm';
 
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -20,10 +21,6 @@ import {
   type AttachmentFileSeedMetadata,
   generateAttachmentSeedsForWorkspace,
 } from 'src/engine/workspace-manager/dev-seeder/data/constants/attachment-data-seeds.constant';
-import {
-  CALENDAR_CHANNEL_DATA_SEED_COLUMNS,
-  CALENDAR_CHANNEL_DATA_SEEDS,
-} from 'src/engine/workspace-manager/dev-seeder/data/constants/calendar-channel-data-seeds.constant';
 import {
   CALENDAR_CHANNEL_EVENT_ASSOCIATION_DATA_SEED_COLUMNS,
   CALENDAR_CHANNEL_EVENT_ASSOCIATION_DATA_SEEDS,
@@ -56,10 +53,6 @@ import {
   MESSAGE_CHANNEL_DATA_SEED_COLUMNS,
   MESSAGE_CHANNEL_DATA_SEEDS,
 } from 'src/engine/workspace-manager/dev-seeder/data/constants/message-channel-data-seeds.constant';
-import {
-  MESSAGE_FOLDER_DATA_SEED_COLUMNS,
-  MESSAGE_FOLDER_DATA_SEEDS,
-} from 'src/engine/workspace-manager/dev-seeder/data/constants/message-folder-data-seeds.constant';
 import {
   MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_DATA_SEED_COLUMNS,
   MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_DATA_SEEDS,
@@ -121,11 +114,11 @@ import {
   WORKSPACE_MEMBER_DATA_SEED_COLUMNS,
 } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 import { TimelineActivitySeederService } from 'src/engine/workspace-manager/dev-seeder/data/services/timeline-activity-seeder.service';
+import { prefillFrontComponentCommandMenuItems } from 'src/engine/workspace-manager/standard-objects-prefill-data/utils/prefill-front-component-command-menu-items.util';
 import { prefillWorkflowCommandMenuItems } from 'src/engine/workspace-manager/standard-objects-prefill-data/utils/prefill-workflow-command-menu-items.util';
-import { getCreateCompanyWhenAddingNewPersonCodeStepLogicFunctionDefinitions } from 'src/engine/workspace-manager/standard-objects-prefill-data/utils/prefill-workflow-code-step-logic-functions.util';
 import { prefillWorkflows } from 'src/engine/workspace-manager/standard-objects-prefill-data/utils/prefill-workflows.util';
-import { PrefillLogicFunctionService } from 'src/engine/workspace-manager/standard-objects-prefill-data/services/prefill-logic-function.service';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
+import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
 type RecordSeedConfig = {
   tableName: string;
@@ -166,18 +159,18 @@ const getRecordSeedsBatches = (
       recordSeeds: COMPANY_DATA_SEEDS,
     },
     {
-      tableName: 'connectedAccount',
-      pgColumns: CONNECTED_ACCOUNT_DATA_SEED_COLUMNS,
-      recordSeeds: CONNECTED_ACCOUNT_DATA_SEEDS,
-    },
-    {
       tableName: 'dashboard',
       pgColumns: DASHBOARD_DATA_SEED_COLUMNS,
       recordSeeds: getDashboardDataSeeds(workspaceId),
     },
+    {
+      tableName: 'connectedAccount',
+      pgColumns: CONNECTED_ACCOUNT_DATA_SEED_COLUMNS,
+      recordSeeds: CONNECTED_ACCOUNT_DATA_SEEDS,
+    },
   ];
 
-  // Batch 3: Depends on company and connectedAccount
+  // Batch 3: Depends on company, connectedAccount
   const batch3: RecordSeedConfig[] = [
     {
       tableName: 'person',
@@ -190,11 +183,6 @@ const getRecordSeedsBatches = (
       recordSeeds: PET_DATA_SEEDS,
     },
     {
-      tableName: 'calendarChannel',
-      pgColumns: CALENDAR_CHANNEL_DATA_SEED_COLUMNS,
-      recordSeeds: CALENDAR_CHANNEL_DATA_SEEDS,
-    },
-    {
       tableName: 'messageChannel',
       pgColumns: MESSAGE_CHANNEL_DATA_SEED_COLUMNS,
       recordSeeds: MESSAGE_CHANNEL_DATA_SEEDS,
@@ -203,11 +191,6 @@ const getRecordSeedsBatches = (
 
   // Batch 4: Depends on person/company/messageChannel or independent
   const batch4: RecordSeedConfig[] = [
-    {
-      tableName: 'messageFolder',
-      pgColumns: MESSAGE_FOLDER_DATA_SEED_COLUMNS,
-      recordSeeds: MESSAGE_FOLDER_DATA_SEEDS,
-    },
     {
       tableName: 'opportunity',
       pgColumns: OPPORTUNITY_DATA_SEED_COLUMNS,
@@ -306,7 +289,8 @@ export class DevSeederDataService {
     private readonly timelineActivitySeederService: TimelineActivitySeederService,
     private readonly fileStorageService: FileStorageService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
-    private readonly prefillLogicFunctionService: PrefillLogicFunctionService,
+    private readonly applicationService: ApplicationService,
+    private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
   ) {}
 
   public async seed({
@@ -333,14 +317,6 @@ export class DevSeederDataService {
 
     const { seeds: attachmentSeeds, fileSeedMetadata: attachmentFileMeta } =
       generateAttachmentSeedsForWorkspace(workspaceId);
-
-    await this.prefillLogicFunctionService.ensureSeeded({
-      workspaceId,
-      definitions:
-        getCreateCompanyWhenAddingNewPersonCodeStepLogicFunctionDefinitions(
-          workspaceId,
-        ),
-    });
 
     await this.coreDataSource.transaction(
       async (entityManager: WorkspaceEntityManager) => {
@@ -375,10 +351,24 @@ export class DevSeederDataService {
           flatObjectMetadataMaps,
           flatFieldMetadataMaps,
         );
-
-        await prefillWorkflowCommandMenuItems(entityManager, workspaceId);
       },
     );
+
+    await prefillWorkflowCommandMenuItems({
+      workspaceId,
+      applicationService: this.applicationService,
+      flatEntityMapsCacheService: this.flatEntityMapsCacheService,
+      workspaceMigrationValidateBuildAndRunService:
+        this.workspaceMigrationValidateBuildAndRunService,
+    });
+
+    await prefillFrontComponentCommandMenuItems({
+      workspaceId,
+      applicationService: this.applicationService,
+      flatEntityMapsCacheService: this.flatEntityMapsCacheService,
+      workspaceMigrationValidateBuildAndRunService:
+        this.workspaceMigrationValidateBuildAndRunService,
+    });
   }
 
   private async seedRecordsInBatches({

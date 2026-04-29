@@ -24,7 +24,7 @@ const StyledDiv = styled.div`
   justify-content: center;
   overflow: hidden;
   padding: ${themeCssVariables.spacing[0]} 5px;
-  :hover {
+  &:hover {
     background: ${themeCssVariables.background.transparent.light};
   }
 `;

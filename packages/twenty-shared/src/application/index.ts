@@ -18,6 +18,8 @@ export { DEFAULT_APP_ACCESS_TOKEN_NAME } from './constants/DefaultAppAccessToken
 export { GENERATED_DIR } from './constants/GeneratedDirectory';
 export { NODE_ESM_CJS_BANNER } from './constants/NodeEsmCjsBanner';
 export { OUTPUT_DIR } from './constants/OutputDirectory';
+export { TWENTY_STANDARD_APPLICATION_NAME } from './constants/TwentyStandardApplicationName';
+export { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from './constants/TwentyStandardApplicationUniversalIdentifier';
 export { SyncableEntity } from './enums/syncable-entities.enum';
 export type {
   RegularFieldManifest,
@@ -44,9 +46,12 @@ export type {
   PageLayoutTabManifest,
   PageLayoutManifest,
 } from './pageLayoutManifestType';
+export type { PostInstallLogicFunctionApplicationManifest } from './postInstallLogicFunctionApplicationType';
+export type { PreInstallLogicFunctionApplicationManifest } from './preInstallLogicFunctionApplicationType';
 export type {
   ObjectPermissionManifest,
   FieldPermissionManifest,
+  PermissionFlagManifest,
   RoleManifest,
 } from './roleManifestType';
 export type { ServerVariables } from './server-variables.type';
@@ -59,5 +64,6 @@ export type {
   ViewFilterGroupManifest,
   ViewGroupManifest,
   ViewFieldGroupManifest,
+  ViewSortManifest,
   ViewManifest,
 } from './viewManifestType';

@@ -29,12 +29,13 @@ export const SettingsApplicationDetailEnvironmentVariablesTable = ({
     },
     250,
   );
+  const description =
+    editedEnvVariables.length > 0
+      ? t`Set your application configuration variables`
+      : t`No variables to set for this application`;
   return (
     <Section>
-      <H2Title
-        title={t`Configuration`}
-        description={t`Set your application configuration variables`}
-      />
+      <H2Title title={t`Configuration`} description={description} />
       <StyledContainer>
         {editedEnvVariables.map((editedEnvVariable) => (
           <TextInput

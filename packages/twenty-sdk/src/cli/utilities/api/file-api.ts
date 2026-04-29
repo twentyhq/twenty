@@ -161,8 +161,7 @@ export class FileApi {
       if (response.data.errors) {
         return {
           success: false,
-          error:
-            response.data.errors[0]?.message || 'Failed to install application',
+          error: response.data.errors[0] || 'Failed to install application',
         };
       }
 

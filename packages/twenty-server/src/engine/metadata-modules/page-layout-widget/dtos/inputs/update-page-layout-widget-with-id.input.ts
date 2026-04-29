@@ -48,7 +48,10 @@ export class UpdatePageLayoutWidgetWithIdInput {
   @IsOptional()
   objectMetadataId: string | null;
 
-  @Field(() => GridPositionInput)
+  @Field(() => GridPositionInput, {
+    deprecationReason:
+      'Use `position` instead. Will be removed in a future release.',
+  })
   @ValidateNested()
   @Type(() => GridPositionInput)
   @IsNotEmpty()
@@ -68,4 +71,9 @@ export class UpdatePageLayoutWidgetWithIdInput {
   @IsObject()
   @IsOptional()
   conditionalDisplay?: PageLayoutWidgetConditionalDisplay | null;
+
+  @Field(() => String, { nullable: true })
+  @IsString()
+  @IsOptional()
+  conditionalAvailabilityExpression?: string | null;
 }

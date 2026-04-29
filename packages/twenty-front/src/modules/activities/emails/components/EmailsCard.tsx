@@ -3,7 +3,9 @@ import { styled } from '@linaria/react';
 import { ActivityList } from '@/activities/components/ActivityList';
 import { CustomResolverFetchMoreLoader } from '@/activities/components/CustomResolverFetchMoreLoader';
 import { SkeletonLoader } from '@/activities/components/SkeletonLoader';
+import { ComposeEmailButton } from '@/activities/emails/components/ComposeEmailButton';
 import { EmailThreadPreview } from '@/activities/emails/components/EmailThreadPreview';
+import { EmptyInboxPlaceholder } from '@/activities/emails/components/EmptyInboxPlaceholder';
 import { TIMELINE_THREADS_DEFAULT_PAGE_SIZE } from '@/activities/emails/constants/Messaging';
 import { getTimelineThreadsFromCompanyId } from '@/activities/emails/graphql/queries/getTimelineThreadsFromCompanyId';
 import { getTimelineThreadsFromOpportunityId } from '@/activities/emails/graphql/queries/getTimelineThreadsFromOpportunityId';
@@ -13,15 +15,7 @@ import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { Trans } from '@lingui/react/macro';
 import { H1Title, H1TitleFontColor } from 'twenty-ui/display';
-import {
-  AnimatedPlaceholder,
-  AnimatedPlaceholderEmptyContainer,
-  AnimatedPlaceholderEmptySubTitle,
-  AnimatedPlaceholderEmptyTextContainer,
-  AnimatedPlaceholderEmptyTitle,
-  EMPTY_PLACEHOLDER_TRANSITION_PROPS,
-  Section,
-} from 'twenty-ui/layout';
+import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   type TimelineThread,
@@ -38,11 +32,17 @@ const StyledContainer = styled.div`
     ${themeCssVariables.spacing[2]};
 `;
 
-const StyledH1TitleWrapper = styled.div`
-  > h2 {
-    display: flex;
-    gap: ${themeCssVariables.spacing[2]};
-  }
+const StyledHeaderRow = styled.div`
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: ${themeCssVariables.spacing[4]};
+`;
+
+const StyledH1Title = styled(H1Title)`
+  display: flex;
+  gap: ${themeCssVariables.spacing[2]};
+  margin-bottom: 0;
 `;
 
 const StyledEmailCount = styled.span`
@@ -89,28 +89,17 @@ export const EmailsCard = () => {
 
   if (!firstQueryLoading && !timelineThreads?.length) {
     return (
-      <AnimatedPlaceholderEmptyContainer
-        // oxlint-disable-next-line react/jsx-props-no-spreading
-        {...EMPTY_PLACEHOLDER_TRANSITION_PROPS}
-      >
-        <AnimatedPlaceholder type="emptyInbox" />
-        <AnimatedPlaceholderEmptyTextContainer>
-          <AnimatedPlaceholderEmptyTitle>
-            <Trans>Empty Inbox</Trans>
-          </AnimatedPlaceholderEmptyTitle>
-          <AnimatedPlaceholderEmptySubTitle>
-            <Trans>No email exchange has occurred with this record yet.</Trans>
-          </AnimatedPlaceholderEmptySubTitle>
-        </AnimatedPlaceholderEmptyTextContainer>
-      </AnimatedPlaceholderEmptyContainer>
+      <StyledContainer>
+        <EmptyInboxPlaceholder />
+      </StyledContainer>
     );
   }
 
   return (
     <StyledContainer>
       <Section>
-        <StyledH1TitleWrapper>
-          <H1Title
+        <StyledHeaderRow>
+          <StyledH1Title
             title={
               <>
                 <Trans>Inbox</Trans>{' '}
@@ -119,7 +108,8 @@ export const EmailsCard = () => {
             }
             fontColor={H1TitleFontColor.Primary}
           />
-        </StyledH1TitleWrapper>
+          <ComposeEmailButton />
+        </StyledHeaderRow>
         {!firstQueryLoading && (
           <ActivityList>
             {timelineThreads?.map((thread: TimelineThread) => (

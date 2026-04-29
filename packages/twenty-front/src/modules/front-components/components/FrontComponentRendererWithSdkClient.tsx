@@ -6,7 +6,7 @@ import {
   FrontComponentRenderer as SharedFrontComponentRenderer,
   type FrontComponentExecutionContext,
   type FrontComponentHostCommunicationApi,
-} from 'twenty-sdk/front-component-renderer';
+} from 'twenty-front-component-renderer';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 
 type FrontComponentRendererWithSdkClientProps = {

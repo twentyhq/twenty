@@ -1,10 +1,11 @@
+import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { filterReadableActiveObjectMetadataItems } from '@/object-metadata/utils/filterReadableActiveObjectMetadataItems';
+import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { usePageLayoutIdFromContextStore } from '@/side-panel/pages/page-layout/hooks/usePageLayoutIdFromContextStore';
 import { useResetChartDraftFiltersSettings } from '@/side-panel/pages/page-layout/hooks/useResetChartDraftFiltersSettings';
 import { useUpdateCurrentWidgetConfig } from '@/side-panel/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
 import { useWidgetInEditMode } from '@/side-panel/pages/page-layout/hooks/useWidgetInEditMode';
-import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { filterReadableActiveObjectMetadataItems } from '@/object-metadata/utils/filterReadableActiveObjectMetadataItems';
-import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -21,7 +22,7 @@ import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { IconChevronLeft, IconSettings, useIcons } from 'twenty-ui/display';
+import { IconChevronLeft, IconSettings } from 'twenty-ui/display';
 import { MenuItem, MenuItemSelect } from 'twenty-ui/navigation';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 
@@ -73,8 +74,6 @@ export const ChartDataSourceDropdownContent = () => {
     useUpdateCurrentWidgetConfig(pageLayoutId);
 
   const { closeDropdown } = useCloseDropdown();
-
-  const { getIcon } = useIcons();
 
   const { resetChartDraftFiltersSettings } =
     useResetChartDraftFiltersSettings();
@@ -162,7 +161,9 @@ export const ChartDataSourceDropdownContent = () => {
                 text={objectMetadataItem.labelPlural}
                 selected={currentObjectMetadataItemId === objectMetadataItem.id}
                 focused={selectedItemId === objectMetadataItem.id}
-                LeftIcon={getIcon(objectMetadataItem.icon)}
+                LeftIcon={() => (
+                  <ObjectMetadataIcon objectMetadataItem={objectMetadataItem} />
+                )}
                 onClick={() => {
                   handleSelectSource(objectMetadataItem.id);
                 }}

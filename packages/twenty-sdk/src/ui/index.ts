@@ -497,6 +497,7 @@ export type {
   AvatarProps,
   AvatarSize,
   AvatarType,
+  BannerColor,
   BannerVariant,
   CalloutProps,
   CalloutVariant,

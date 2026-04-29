@@ -1,8 +1,10 @@
+import { isDDLLockedState } from '@/client-config/states/isDDLLockedState';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 
 import { SettingsObjectCoverImage } from '@/settings/data-model/objects/components/SettingsObjectCoverImage';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
@@ -16,19 +18,30 @@ export const SettingsObjects = () => {
   const { t } = useLingui();
 
   const { objectMetadataItems } = useFilteredObjectMetadataItems();
+  const isDDLLocked = useAtomStateValue(isDDLLockedState);
 
   return (
     <SubMenuTopBarContainer
       title={t`Data model`}
       actionButton={
-        <UndecoratedLink to={getSettingsPath(SettingsPath.NewObject)}>
+        isDDLLocked ? (
           <Button
             Icon={IconPlus}
             title={t`Add object`}
             accent="blue"
             size="small"
+            disabled
           />
-        </UndecoratedLink>
+        ) : (
+          <UndecoratedLink to={getSettingsPath(SettingsPath.NewObject)}>
+            <Button
+              Icon={IconPlus}
+              title={t`Add object`}
+              accent="blue"
+              size="small"
+            />
+          </UndecoratedLink>
+        )
       }
       links={[
         {

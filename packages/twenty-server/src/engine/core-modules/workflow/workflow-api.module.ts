@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { ToolModule } from 'src/engine/core-modules/tool/tool.module';
 import { WorkflowTriggerController } from 'src/engine/core-modules/workflow/controllers/workflow-trigger.controller';
 import { WorkflowBuilderResolver } from 'src/engine/core-modules/workflow/resolvers/workflow-builder.resolver';
@@ -24,7 +23,6 @@ import { WorkflowTriggerModule } from 'src/modules/workflow/workflow-trigger/wor
 @Module({
   imports: [
     TypeOrmModule.forFeature([WorkspaceEntity]),
-    FeatureFlagModule,
     WorkflowTriggerModule,
     WorkflowBuilderModule,
     WorkflowCommonModule,

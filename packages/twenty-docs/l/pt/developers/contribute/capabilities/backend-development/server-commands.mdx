@@ -1,5 +1,6 @@
 ---
 title: Comandos de Backend
+icon: terminal
 ---
 
 ## Comandos Úteis
@@ -47,24 +48,8 @@ npx nx run twenty-server:database:reset
 #### Para objetos nos esquemas Core/Metadata (TypeORM)
 
 ```bash
-npx nx run twenty-server:typeorm migration:generate src/database/typeorm/core/migrations/nameOfYourMigration -d src/database/typeorm/core/core.datasource.ts
+npx nx run twenty-server:database:migrate:generate
 ```
-
-#### For Workspace objects
-
-Não há arquivos de migração, as migrações são geradas automaticamente para cada espaço de trabalho, armazenadas no banco de dados e aplicadas com este comando
-
-```bash
-npx nx run twenty-server:command workspace:sync-metadata -f
-```
-
-<Warning>
-
-Isso excluirá o banco de dados e reexecutará as migrações e seeds.
-
-Certifique-se de fazer backup de todos os dados que deseja manter antes de executar este comando.
-
-</Warning>
 
 ## Pilha de Tecnologias
 

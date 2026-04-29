@@ -18,6 +18,8 @@ import { type MessageQueueWorkerOptions } from 'src/engine/core-modules/message-
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { MessageQueueMetadataAccessor } from 'src/engine/core-modules/message-queue/message-queue-metadata.accessor';
 import { type MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { type MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { QUEUE_WORKER_OPTIONS } from 'src/engine/core-modules/message-queue/message-queue-worker-options.constant';
 import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-queue-token.util';
 import { shouldCaptureException } from 'src/engine/utils/global-exception-handler.util';
 
@@ -67,6 +69,7 @@ export class MessageQueueExplorer implements OnModuleInit {
       this.handleProcessorGroupCollection(
         processorGroupCollection,
         messageQueueService,
+        QUEUE_WORKER_OPTIONS[queueName as MessageQueue],
       );
     }
   }

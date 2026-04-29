@@ -3,8 +3,6 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
-import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
-
 type ObjectMetadataColorUpdate = {
   idToUpdate: string;
   color: string;
@@ -12,10 +10,10 @@ type ObjectMetadataColorUpdate = {
 
 export const getObjectMetadataColorUpdates = ({
   draft,
-  objectMetadataItems,
+  currentItems,
 }: {
   draft: NavigationMenuItem[];
-  objectMetadataItems: EnrichedObjectMetadataItem[];
+  currentItems: NavigationMenuItem[];
 }): ObjectMetadataColorUpdate[] => {
   const updates: ObjectMetadataColorUpdate[] = [];
 
@@ -30,15 +28,9 @@ export const getObjectMetadataColorUpdates = ({
       continue;
     }
 
-    const objectMetadataItem = objectMetadataItems.find(
-      (item) => item.id === draftItem.targetObjectMetadataId,
-    );
+    const currentItem = currentItems.find((item) => item.id === draftItem.id);
 
-    if (!isDefined(objectMetadataItem)) {
-      continue;
-    }
-
-    if (objectMetadataItem.color === draftItem.color) {
+    if (currentItem?.color === draftItem.color) {
       continue;
     }
 

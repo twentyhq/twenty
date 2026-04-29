@@ -19,6 +19,7 @@ import {
   SdkClientException,
   SdkClientExceptionCode,
 } from 'src/engine/core-modules/sdk-client/exceptions/sdk-client.exception';
+import { fromWorkspaceEntityToFlat } from 'src/engine/core-modules/workspace/utils/from-workspace-entity-to-flat.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
@@ -32,6 +33,8 @@ export class SdkClientGenerationService {
     private readonly fileStorageService: FileStorageService,
     @InjectRepository(ApplicationEntity)
     private readonly applicationRepository: Repository<ApplicationEntity>,
+    @InjectRepository(WorkspaceEntity)
+    private readonly workspaceRepository: Repository<WorkspaceEntity>,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly workspaceSchemaFactory: WorkspaceSchemaFactory,
   ) {}
@@ -45,8 +48,12 @@ export class SdkClientGenerationService {
     applicationId: string;
     applicationUniversalIdentifier: string;
   }): Promise<Buffer> {
+    const workspaceEntity = await this.workspaceRepository.findOneByOrFail({
+      id: workspaceId,
+    });
+
     const graphqlSchema = await this.workspaceSchemaFactory.createGraphQLSchema(
-      { id: workspaceId } as WorkspaceEntity,
+      fromWorkspaceEntityToFlat(workspaceEntity),
       applicationId,
     );
 

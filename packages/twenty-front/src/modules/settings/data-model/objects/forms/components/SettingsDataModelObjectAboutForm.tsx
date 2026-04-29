@@ -7,9 +7,9 @@ import { IconPicker } from '@/ui/input/components/IconPicker';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { TextArea } from '@/ui/input/components/TextArea';
 import { styled } from '@linaria/react';
-import { useContext } from 'react';
 import { useLingui } from '@lingui/react/macro';
 import { plural } from 'pluralize';
+import { useContext } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 import { SettingsPath } from 'twenty-shared/types';
 import { capitalize, isDefined } from 'twenty-shared/utils';
@@ -19,10 +19,11 @@ import {
   IconLink,
   IconRefresh,
   TooltipDelay,
+  InlineBanner,
 } from 'twenty-ui/display';
-import { Button } from 'twenty-ui/input';
 import { Card } from 'twenty-ui/layout';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { parseThemeColor } from 'twenty-ui/utilities';
 import { type StringKeyOf } from 'type-fest';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { computeMetadataNamesFromLabels } from '~/pages/settings/data-model/utils/computeMetadataNamesFromLabels';
@@ -72,42 +73,6 @@ const StyledLabel = styled.span`
   margin-bottom: ${themeCssVariables.spacing[1]};
 `;
 
-const StyledConflictBanner = styled.div`
-  align-items: center;
-  background-color: ${themeCssVariables.accent.secondary};
-  border-radius: ${themeCssVariables.border.radius.md};
-  box-sizing: border-box;
-  display: flex;
-  gap: ${themeCssVariables.spacing[2]};
-  margin-bottom: ${themeCssVariables.spacing[2]};
-  padding: ${themeCssVariables.spacing[2]};
-`;
-
-const StyledBannerContent = styled.div`
-  align-items: center;
-  display: flex;
-  flex: 1;
-  gap: ${themeCssVariables.spacing[2]};
-`;
-
-const StyledBannerText = styled.span`
-  color: ${themeCssVariables.color.blue};
-  flex: 1;
-`;
-
-const StyledConflictButtonContainer = styled.div`
-  > button {
-    border-color: ${themeCssVariables.color.blue};
-    color: ${themeCssVariables.color.blue};
-    &:hover {
-      background: ${themeCssVariables.accent.secondary};
-    }
-    &:focus-visible {
-      box-shadow: 0 0 0 3px ${themeCssVariables.accent.tertiary};
-    }
-  }
-`;
-
 const infoCircleElementId = 'info-circle-id';
 
 export const SettingsDataModelObjectAboutForm = ({
@@ -127,8 +92,12 @@ export const SettingsDataModelObjectAboutForm = ({
   const labelPlural = watch('labelPlural');
   const isStandardObject =
     isDefined(objectMetadataItem?.isCustom) && !objectMetadataItem.isCustom;
+  const showObjectColorInIconPicker =
+    !isStandardObject &&
+    (!isDefined(objectMetadataItem) || objectMetadataItem.isCustom);
   watch('description');
   watch('icon');
+  const objectIconColor = watch('color');
 
   const apiNameTooltipText =
     !isDefined(objectMetadataItem) || objectMetadataItem.isCustom
@@ -186,6 +155,25 @@ export const SettingsDataModelObjectAboutForm = ({
               <IconPicker
                 selectedIconKey={value}
                 disabled={disableEdition}
+                dropdownId={
+                  isDefined(objectMetadataItem)
+                    ? `settings-object-about-icon-${objectMetadataItem.id}`
+                    : 'settings-new-object-about-icon'
+                }
+                iconColorPicker={
+                  showObjectColorInIconPicker
+                    ? {
+                        selectedColor: parseThemeColor(objectIconColor),
+                        onColorChange: (nextColor) => {
+                          setValue('color', nextColor, {
+                            shouldDirty: true,
+                            shouldValidate: true,
+                          });
+                          onNewDirtyField?.();
+                        },
+                      }
+                    : undefined
+                }
                 onChange={({ iconKey }) => {
                   if (disableEdition) {
                     return;
@@ -269,31 +257,18 @@ export const SettingsDataModelObjectAboutForm = ({
         <StyledAdvancedSettingsContainer>
           <StyledAdvancedSettingsSectionInputWrapper>
             {isDefined(conflictingObjectMetadataItem) && (
-              <StyledConflictBanner>
-                <StyledBannerContent>
-                  <IconInfoCircle
-                    color={theme.color.blue}
-                    size={theme.icon.size.md}
-                  />
-                  <StyledBannerText>
-                    {t`An object with this name already exists`}
-                  </StyledBannerText>
-                </StyledBannerContent>
-                <StyledConflictButtonContainer>
-                  <Button
-                    size="small"
-                    variant="secondary"
-                    accent="blue"
-                    title={t`Open`}
-                    onClick={() =>
-                      navigateSettings(SettingsPath.ObjectDetail, {
-                        objectNamePlural:
-                          conflictingObjectMetadataItem.namePlural,
-                      })
-                    }
-                  />
-                </StyledConflictButtonContainer>
-              </StyledConflictBanner>
+              <InlineBanner
+                color={'blue'}
+                message={t`An object with this name already exists`}
+                button={{
+                  title: t`Open`,
+                  onClick: () =>
+                    navigateSettings(SettingsPath.ObjectDetail, {
+                      objectNamePlural:
+                        conflictingObjectMetadataItem.namePlural,
+                    }),
+                }}
+              />
             )}
             {[
               {

@@ -4,6 +4,8 @@ import axios, { type AxiosInstance, type CreateAxiosDefaults } from 'axios';
 import axiosRetry from 'axios-retry';
 import { isDefined } from 'twenty-shared/utils';
 
+import { buildAxiosFetch } from '@lifeomic/axios-fetch';
+
 import { createSsrfSafeAgent } from 'src/engine/core-modules/secure-http-client/utils/create-ssrf-safe-agent.util';
 import { resolveAndValidateHostname } from 'src/engine/core-modules/secure-http-client/utils/resolve-and-validate-hostname.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -101,24 +103,20 @@ export class SecureHttpClientService {
     return axios.create(config);
   }
 
+  createSsrfSafeFetch(): typeof globalThis.fetch {
+    if (!this.isSafeModeEnabled()) {
+      return globalThis.fetch;
+    }
+
+    return buildAxiosFetch(this.getHttpClient()) as typeof globalThis.fetch;
+  }
+
   async getValidatedHost(hostnameOrUrl: string): Promise<string> {
     if (!this.isSafeModeEnabled()) {
       return hostnameOrUrl;
     }
 
     return resolveAndValidateHostname(hostnameOrUrl);
-  }
-
-  async getValidatedUrl(serverUrl: string): Promise<string> {
-    if (!this.isSafeModeEnabled()) {
-      return serverUrl;
-    }
-    const resolvedIp = await resolveAndValidateHostname(serverUrl);
-    const url = new URL(serverUrl);
-
-    url.hostname = resolvedIp;
-
-    return url.toString();
   }
 
   private isSafeModeEnabled(): boolean {

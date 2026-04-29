@@ -9,20 +9,19 @@ import {
   WorkflowRunStepInfos,
 } from 'twenty-shared/workflow';
 
-import { BILLING_WORKFLOW_EXECUTION_ERROR_MESSAGE } from 'src/engine/core-modules/billing/constants/billing-workflow-execution-error-message.constant';
-import { USAGE_RECORDED } from 'src/engine/core-modules/usage/constants/usage-recorded.constant';
-import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing-product-key.enum';
-import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
-import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
-import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
+import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
-import { type UsageEvent } from 'src/engine/core-modules/usage/types/usage-event.type';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
+import { USAGE_RECORDED } from 'src/engine/core-modules/usage/constants/usage-recorded.constant';
+import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
+import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
+import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
+import { type UsageEvent } from 'src/engine/core-modules/usage/types/usage-event.type';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { workflowHasRunningSteps } from 'src/modules/workflow/common/utils/workflow-has-running-steps.util';
@@ -60,6 +59,7 @@ export class WorkflowExecutorWorkspaceService {
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
     private readonly workflowRunWorkspaceService: WorkflowRunWorkspaceService,
     private readonly billingService: BillingService,
+    private readonly billingUsageService: BillingUsageService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
     private readonly metricsService: MetricsService,
     @InjectMessageQueue(MessageQueue.workflowQueue)
@@ -177,8 +177,12 @@ export class WorkflowExecutorWorkspaceService {
     const isError =
       isDefined(actionOutput.error) && !actionOutput.shouldFailSafely;
 
-    if (!isError && !actionOutput.shouldFailSafely) {
-      this.sendWorkflowNodeRunEvent(workspaceId, workflowRun.workflowId);
+    if (
+      !isError &&
+      !actionOutput.shouldFailSafely &&
+      !actionOutput.shouldSkipStepExecution
+    ) {
+      await this.sendWorkflowNodeRunEvent(workspaceId, workflowRun.workflowId);
     }
 
     const { shouldProcessNextSteps } = await this.processStepExecutionResult({
@@ -355,14 +359,17 @@ export class WorkflowExecutorWorkspaceService {
     });
   }
 
-  private sendWorkflowNodeRunEvent(workspaceId: string, workflowId: string) {
+  private async sendWorkflowNodeRunEvent(
+    workspaceId: string,
+    workflowId: string,
+  ) {
     this.workspaceEventEmitter.emitCustomBatchEvent<UsageEvent>(
       USAGE_RECORDED,
       [
         {
           resourceType: UsageResourceType.WORKFLOW,
           operationType: UsageOperationType.WORKFLOW_EXECUTION,
-          creditsUsedMicro: 1,
+          creditsUsedMicro: 100,
           quantity: 1,
           unit: UsageUnit.INVOCATION,
           resourceId: workflowId,
@@ -370,16 +377,13 @@ export class WorkflowExecutorWorkspaceService {
       ],
       workspaceId,
     );
-  }
 
-  private async canBillWorkflowNodeExecution(workspaceId: string) {
-    return (
-      !this.billingService.isBillingEnabled() ||
-      (await this.billingService.canBillMeteredProduct(
+    if (this.billingService.isBillingEnabled()) {
+      await this.billingUsageService.decrementAvailableCredits({
         workspaceId,
-        BillingProductKey.WORKFLOW_NODE_EXECUTION,
-      ))
-    );
+        usedCredits: 100,
+      });
+    }
   }
 
   private async processStepExecutionResult({
@@ -463,14 +467,9 @@ export class WorkflowExecutorWorkspaceService {
     workflowRunId: string;
     workspaceId: string;
   }) {
-    const canBill = await this.canBillWorkflowNodeExecution(workspaceId);
-
-    if (!canBill) {
-      return {
-        error: BILLING_WORKFLOW_EXECUTION_ERROR_MESSAGE,
-      };
-    }
-
+    // TODO: re-enable workflow node execution credit cap once billing limits are revisited.
+    // Previously gated on BillingService.canBillMeteredProduct(WORKFLOW_NODE_EXECUTION);
+    // temporarily disabled so workflows keep running when the period cap is reached.
     const stepId = step.id;
 
     const workflowAction = this.workflowActionFactory.get(step.type);

@@ -1,9 +1,4 @@
-import {
-  useApolloClient,
-  useLazyQuery,
-  useMutation,
-} from '@apollo/client/react';
-import { CombinedGraphQLErrors } from '@apollo/client/errors';
+import { useLazyQuery, useMutation } from '@apollo/client/react';
 import { useCallback } from 'react';
 import { AppPath } from 'twenty-shared/types';
 
@@ -29,16 +24,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
 import { isAppEffectRedirectEnabledState } from '@/app/states/isAppEffectRedirectEnabledState';
-import { availableWorkspacesState } from '@/auth/states/availableWorkspacesState';
-import { currentUserState } from '@/auth/states/currentUserState';
-import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
-import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useSignUpInNewWorkspace } from '@/auth/sign-in-up/hooks/useSignUpInNewWorkspace';
-import { useLoadMockedMetadata } from '@/metadata-store/hooks/useLoadMockedMetadata';
-import { preloadMockedMetadata } from '@/metadata-store/utils/preloadMockedMetadata';
-import { lastAuthenticatedMethodState } from '@/auth/states/lastAuthenticatedMethodState';
 import { loginTokenState } from '@/auth/states/loginTokenState';
 import {
   SignInUpStep,
@@ -50,23 +36,19 @@ import {
   countAvailableWorkspaces,
   getFirstAvailableWorkspaces,
 } from '@/auth/utils/availableWorkspacesUtils';
-import { useRequestFreshCaptchaToken } from '@/captcha/hooks/useRequestFreshCaptchaToken';
-import { isCaptchaScriptLoadedState } from '@/captcha/states/isCaptchaScriptLoadedState';
 import { isEmailVerificationRequiredState } from '@/client-config/states/isEmailVerificationRequiredState';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { useLastAuthenticatedWorkspaceDomain } from '@/domain-manager/hooks/useLastAuthenticatedWorkspaceDomain';
 import { useOrigin } from '@/domain-manager/hooks/useOrigin';
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
-import { domainConfigurationState } from '@/domain-manager/states/domainConfigurationState';
-import { useClearSseClient } from '@/sse-db-event/hooks/useClearSseClient';
 import { useLoadCurrentUser } from '@/users/hooks/useLoadCurrentUser';
-import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
 import { i18n } from '@lingui/core';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
+import { isGraphqlErrorOfType } from '~/utils/is-graphql-error-of-type.util';
 import { useStore } from 'jotai';
 
 export const useAuth = () => {
@@ -78,8 +60,6 @@ export const useAuth = () => {
   );
 
   const { origin } = useOrigin();
-  const { requestFreshCaptchaToken } = useRequestFreshCaptchaToken();
-  const isCaptchaScriptLoaded = useAtomStateValue(isCaptchaScriptLoadedState);
   const isMultiWorkspaceEnabled = useAtomStateValue(
     isMultiWorkspaceEnabledState,
   );
@@ -87,9 +67,7 @@ export const useAuth = () => {
     isEmailVerificationRequiredState,
   );
   const { loadCurrentUser } = useLoadCurrentUser();
-  const { clearSseClient } = useClearSseClient();
 
-  const { applyMockedMetadata } = useLoadMockedMetadata();
   const { createWorkspace } = useSignUpInNewWorkspace();
 
   const setSignInUpStep = useSetAtomState(signInUpStepState);
@@ -121,64 +99,17 @@ export const useAuth = () => {
     CheckUserExistsDocument,
   );
 
-  const client = useApolloClient();
-
   const [, setSearchParams] = useSearchParams();
 
   const navigate = useNavigate();
 
-  const clearSession = useCallback(async () => {
-    clearSseClient();
-    store.set(isAppEffectRedirectEnabledState.atom, false);
-
-    const mockedData = await preloadMockedMetadata();
-
-    const authProvidersValue = store.get(workspaceAuthProvidersState.atom);
-    const domainConfigurationValue = store.get(domainConfigurationState.atom);
-    const workspacePublicDataValue = store.get(workspacePublicDataState.atom);
-    const lastAuthenticatedMethod = store.get(
-      lastAuthenticatedMethodState.atom,
-    );
-    const isCaptchaScriptLoadedValue = store.get(
-      isCaptchaScriptLoadedState.atom,
-    );
-
+  const clearSession = useCallback(() => {
     sessionStorage.clear();
     clearSessionLocalStorageKeys();
-
-    store.set(workspaceAuthProvidersState.atom, authProvidersValue);
-    store.set(workspacePublicDataState.atom, workspacePublicDataValue);
-    store.set(domainConfigurationState.atom, domainConfigurationValue);
-    store.set(isCaptchaScriptLoadedState.atom, isCaptchaScriptLoadedValue);
-    store.set(lastAuthenticatedMethodState.atom, lastAuthenticatedMethod);
-
     store.set(tokenPairState.atom, null);
-    store.set(currentUserState.atom, null);
-    store.set(currentWorkspaceState.atom, null);
-    store.set(currentUserWorkspaceState.atom, null);
-    store.set(currentWorkspaceMemberState.atom, null);
-    store.set(currentWorkspaceMembersState.atom, []);
-    store.set(availableWorkspacesState.atom, {
-      availableWorkspacesForSignIn: [],
-      availableWorkspacesForSignUp: [],
-    });
-    store.set(loginTokenState.atom, null);
-    store.set(signInUpStepState.atom, SignInUpStep.Init);
-
-    applyMockedMetadata(mockedData);
-
-    await client.clearStore();
     setLastAuthenticateWorkspaceDomain(null);
-    navigate(AppPath.SignInUp);
-    store.set(isAppEffectRedirectEnabledState.atom, true);
-  }, [
-    clearSseClient,
-    client,
-    setLastAuthenticateWorkspaceDomain,
-    applyMockedMetadata,
-    navigate,
-    store,
-  ]);
+    window.location.assign(AppPath.SignInUp);
+  }, [store, setLastAuthenticateWorkspaceDomain]);
 
   const handleSetAuthTokens = useCallback(
     (tokens: AuthTokenPair) => {
@@ -208,11 +139,7 @@ export const useAuth = () => {
 
         return getLoginTokenResult.data.getLoginTokenFromCredentials;
       } catch (error) {
-        // TODO: Get intellisense for graphql error extensions code (codegen?)
-        if (
-          CombinedGraphQLErrors.is(error) &&
-          error.errors[0]?.extensions?.subCode === 'EMAIL_NOT_VERIFIED'
-        ) {
+        if (isGraphqlErrorOfType(error, 'EMAIL_NOT_VERIFIED')) {
           setSearchParams({ email });
           setSignInUpStep(SignInUpStep.EmailVerification);
           throw error;
@@ -334,9 +261,10 @@ export const useAuth = () => {
         );
       } catch (error) {
         if (
-          CombinedGraphQLErrors.is(error) &&
-          error.errors[0]?.extensions?.subCode ===
-            'TWO_FACTOR_AUTHENTICATION_PROVISION_REQUIRED'
+          isGraphqlErrorOfType(
+            error,
+            'TWO_FACTOR_AUTHENTICATION_PROVISION_REQUIRED',
+          )
         ) {
           handleSetLoginToken(loginToken);
           navigate(AppPath.SignInUp);
@@ -344,9 +272,10 @@ export const useAuth = () => {
         }
 
         if (
-          CombinedGraphQLErrors.is(error) &&
-          error.errors[0]?.extensions?.subCode ===
-            'TWO_FACTOR_AUTHENTICATION_VERIFICATION_REQUIRED'
+          isGraphqlErrorOfType(
+            error,
+            'TWO_FACTOR_AUTHENTICATION_VERIFICATION_REQUIRED',
+          )
         ) {
           handleSetLoginToken(loginToken);
           navigate(AppPath.SignInUp);
@@ -399,10 +328,7 @@ export const useAuth = () => {
           setSignInUpStep(SignInUpStep.WorkspaceSelection);
         },
         onError: (error) => {
-          if (
-            CombinedGraphQLErrors.is(error) &&
-            error.errors[0]?.extensions?.subCode === 'EMAIL_NOT_VERIFIED'
-          ) {
+          if (isGraphqlErrorOfType(error, 'EMAIL_NOT_VERIFIED')) {
             setSearchParams({ email });
             setSignInUpStep(SignInUpStep.EmailVerification);
             throw error;
@@ -480,11 +406,10 @@ export const useAuth = () => {
     [handleGetLoginTokenFromCredentials, handleGetAuthTokensFromLoginToken],
   );
 
-  const handleSignOut = useCallback(async () => {
+  const handleSignOut = useCallback(() => {
     broadcastSignOutToOtherTabs();
-    await clearSession();
-    if (isCaptchaScriptLoaded) await requestFreshCaptchaToken();
-  }, [clearSession, isCaptchaScriptLoaded, requestFreshCaptchaToken]);
+    clearSession();
+  }, [clearSession]);
 
   const handleCredentialsSignUpInWorkspace = useCallback(
     async ({

@@ -1,5 +1,5 @@
 import { CALL_RECORDING_VIEW_UNIVERSAL_IDENTIFIER } from 'src/views/call-recording-view';
-import { defineNavigationMenuItem } from 'twenty-sdk';
+import { defineNavigationMenuItem } from 'twenty-sdk/define';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 
 export default defineNavigationMenuItem({

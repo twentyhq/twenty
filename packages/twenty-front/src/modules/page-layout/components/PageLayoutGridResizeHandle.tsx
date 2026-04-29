@@ -6,8 +6,7 @@ import {
   IconRadiusTopLeft,
   IconRadiusTopRight,
 } from 'twenty-ui/display';
-import { ResizeHandle } from 'twenty-ui/layout';
-import { themeCssVariables, ThemeContext } from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 type WidgetHandleAxis = 'n' | 's' | 'e' | 'w' | 'ne' | 'nw' | 'se' | 'sw';
 type WidgetHorizontalHandleAxis = 'n' | 's';
 type WidgetVerticalHandleAxis = 'e' | 'w';
@@ -32,28 +31,28 @@ const StyledCornerIconWrapper = styled.div<{
   justify-content: center;
   width: ${themeCssVariables.spacing[4]};
 
-  & svg {
+  & > svg {
     color: transparent;
     flex-shrink: 0;
     pointer-events: none;
     transform: ${({ position }) => {
       if (position === 'se') {
-        return `translate(-${themeCssVariables.spacing[2]}, -${themeCssVariables.spacing[2]})`;
+        return `translate(calc(-1 * ${themeCssVariables.spacing[2]}), calc(-1 * ${themeCssVariables.spacing[2]}))`;
       }
       if (position === 'sw') {
-        return `translate(${themeCssVariables.spacing[2]}, -${themeCssVariables.spacing[2]})`;
+        return `translate(${themeCssVariables.spacing[2]}, calc(-1 * ${themeCssVariables.spacing[2]}))`;
       }
       if (position === 'ne') {
-        return `translate(-${themeCssVariables.spacing[2]}, ${themeCssVariables.spacing[2]})`;
+        return `translate(calc(-1 * ${themeCssVariables.spacing[2]}), ${themeCssVariables.spacing[2]})`;
       }
       if (position === 'nw') {
-        return `translate(${themeCssVariables.spacing[2]}, ${themeCssVariables.spacing[2]})`;
+        return `translate( ${themeCssVariables.spacing[2]}, ${themeCssVariables.spacing[2]})`;
       }
       return '';
     }};
   }
 
-  :hover {
+  &:hover {
     svg {
       color: ${themeCssVariables.font.color.tertiary};
     }
@@ -63,7 +62,7 @@ const StyledCornerIconWrapper = styled.div<{
 const StyledVerticalHandle = styled.div`
   border-radius: ${themeCssVariables.border.radius.sm};
   height: ${themeCssVariables.spacing[5]};
-  width: ${themeCssVariables.icon.stroke.lg}px;
+  width: calc(${themeCssVariables.icon.stroke.lg} * 1px);
 `;
 
 const StyledVerticalHandleWrapper = styled.div<{
@@ -75,8 +74,29 @@ const StyledVerticalHandleWrapper = styled.div<{
   transform: ${({ widgetHandleAxis }) =>
     widgetHandleAxis === 'w' ? 'translateX(-50%)' : 'translateX(50%)'};
 
-  :hover {
+  &:hover {
     & > div {
+      background-color: ${themeCssVariables.font.color.tertiary};
+    }
+  }
+`;
+
+const StyledHorizontalHandle = styled.div`
+  border-radius: ${themeCssVariables.border.radius.sm};
+  height: calc(${themeCssVariables.icon.stroke.lg} * 1px);
+  width: ${themeCssVariables.spacing[5]};
+`;
+
+const StyledHorizontalHandleWrapper = styled.div<{
+  widgetHandleAxis: WidgetHorizontalHandleAxis;
+}>`
+  border-radius: ${themeCssVariables.border.radius.sm};
+  cursor: row-resize;
+  padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[2]};
+  transform: ${({ widgetHandleAxis }) =>
+    widgetHandleAxis === 'n' ? 'translateY(-50%)' : 'translateY(50%)'};
+  &:hover {
+    & div {
       background-color: ${themeCssVariables.font.color.tertiary};
     }
   }
@@ -124,11 +144,11 @@ const StyledResizeHandleWrapper = styled.div<{
       case 'se':
         return `translate(${themeCssVariables.spacing[1]}, ${themeCssVariables.spacing[1]})`;
       case 'sw':
-        return `translate(-${themeCssVariables.spacing[1]}, ${themeCssVariables.spacing[1]})`;
+        return `translate(calc(-1 * ${themeCssVariables.spacing[1]}), ${themeCssVariables.spacing[1]})`;
       case 'ne':
-        return `translate(${themeCssVariables.spacing[1]}, -${themeCssVariables.spacing[1]})`;
+        return `translate(${themeCssVariables.spacing[1]}, calc(-1 * ${themeCssVariables.spacing[1]}))`;
       case 'nw':
-        return `translate(-${themeCssVariables.spacing[1]}, -${themeCssVariables.spacing[1]})`;
+        return `translate(calc(-1 * ${themeCssVariables.spacing[1]}), calc(-1 * ${themeCssVariables.spacing[1]}))`;
       default:
         return 'none';
     }
@@ -178,15 +198,9 @@ export const PageLayoutGridResizeHandle = forwardRef<
           </StyledVerticalHandleWrapper>
         )}
         {isHorizontalHandle(widgetHandleAxis) && (
-          <ResizeHandle
-            style={{
-              cursor: 'row-resize',
-              transform:
-                widgetHandleAxis === 'n'
-                  ? 'translateY(-50%)'
-                  : 'translateY(50%)',
-            }}
-          />
+          <StyledHorizontalHandleWrapper widgetHandleAxis={widgetHandleAxis}>
+            <StyledHorizontalHandle />
+          </StyledHorizontalHandleWrapper>
         )}
         {widgetHandleAxis === 'ne' && (
           <StyledCornerIconWrapper cursor="nesw-resize" position="ne">

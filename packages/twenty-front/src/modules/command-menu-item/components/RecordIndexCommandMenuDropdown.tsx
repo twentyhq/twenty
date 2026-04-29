@@ -1,11 +1,9 @@
-import { CommandMenuItemComponent } from '@/command-menu-item/display/components/CommandMenuItemComponent';
-import { CommandMenuItemScope } from '@/command-menu-item/types/CommandMenuItemScope';
-import { CommandMenuItemType } from '@/command-menu-item/types/CommandMenuItemType';
 import { COMMAND_MENU_DROPDOWN_CLICK_OUTSIDE_ID } from '@/command-menu-item/constants/CommandMenuDropdownClickOutsideId';
 import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
-import { CommandMenuComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuComponentInstanceContext';
+import { CommandMenuItemRenderer } from '@/command-menu-item/display/components/CommandMenuItemRenderer';
 import { recordIndexCommandMenuDropdownPositionComponentState } from '@/command-menu-item/states/recordIndexCommandMenuDropdownPositionComponentState';
 import { getCommandMenuDropdownIdFromCommandMenuId } from '@/command-menu-item/utils/getCommandMenuDropdownIdFromCommandMenuId';
+import { CommandMenuComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuComponentInstanceContext';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -21,6 +19,7 @@ import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
 import { IconLayoutSidebarRightExpand } from 'twenty-ui/display';
 import { MenuItem } from 'twenty-ui/navigation';
+import { CommandMenuItemAvailabilityType } from '~/generated-metadata/graphql';
 
 const StyledDropdownMenuContainer = styled.div`
   align-items: center;
@@ -36,10 +35,10 @@ export const RecordIndexCommandMenuDropdown = () => {
   const { t } = useLingui();
   const { commandMenuItems } = useContext(CommandMenuContext);
 
-  const recordIndexActions = commandMenuItems.filter(
-    (action) =>
-      action.type === CommandMenuItemType.Standard &&
-      action.scope === CommandMenuItemScope.RecordSelection,
+  const recordIndexCommandMenuItems = commandMenuItems.filter(
+    (item) =>
+      item.availabilityType ===
+      CommandMenuItemAvailabilityType.RECORD_SELECTION,
   );
 
   const commandMenuId = useAvailableComponentInstanceIdOrThrow(
@@ -57,7 +56,7 @@ export const RecordIndexCommandMenuDropdown = () => {
   const { openSidePanelMenu } = useSidePanelMenu();
 
   const selectedItemIdArray = [
-    ...recordIndexActions.map((action) => action.key),
+    ...recordIndexCommandMenuItems.map((item) => item.id),
     'more-actions',
   ];
 
@@ -87,8 +86,8 @@ export const RecordIndexCommandMenuDropdown = () => {
                 selectableItemIdArray={selectedItemIdArray}
                 selectableListInstanceId={dropdownId}
               >
-                {recordIndexActions.map((action) => (
-                  <CommandMenuItemComponent action={action} key={action.key} />
+                {recordIndexCommandMenuItems.map((item) => (
+                  <CommandMenuItemRenderer item={item} key={item.id} />
                 ))}
                 <SelectableListItem
                   itemId="more-actions"

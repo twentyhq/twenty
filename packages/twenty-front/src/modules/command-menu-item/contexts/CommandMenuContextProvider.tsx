@@ -1,44 +1,63 @@
+import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
+
 import { type CommandMenuContextType } from '@/command-menu-item/contexts/CommandMenuContext';
-import { CommandMenuContextProviderLegacy } from '@/command-menu-item/contexts/CommandMenuContextProviderLegacy';
-import { CommandMenuContextProviderServerItems } from '@/command-menu-item/server-items/common/contexts/CommandMenuContextProviderServerItems';
-import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
+import { useCommandMenuContextApi } from '@/command-menu-item/hooks/useCommandMenuContextApi';
+
+import { CommandMenuContextProviderContent } from './CommandMenuContextProviderContent';
+import { CommandMenuContextProviderWithWorkflowEnrichment } from './CommandMenuContextProviderWithWorkflowEnrichment';
+
+type CommandMenuContextProviderProps = {
+  isInSidePanel: boolean;
+  displayType: CommandMenuContextType['displayType'];
+  containerType: CommandMenuContextType['containerType'];
+  children: React.ReactNode;
+};
 
 export const CommandMenuContextProvider = ({
-  children,
   isInSidePanel,
   displayType,
   containerType,
-  objectMetadataItemOverride,
-}: Omit<CommandMenuContextType, 'commandMenuItems'> & {
-  children: React.ReactNode;
-  objectMetadataItemOverride?: EnrichedObjectMetadataItem;
-}) => {
-  const isCommandMenuItemEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_COMMAND_MENU_ITEM_ENABLED,
-  );
+  children,
+}: CommandMenuContextProviderProps) => {
+  const commandMenuContextApiFromHook = useCommandMenuContextApi();
 
-  if (isCommandMenuItemEnabled) {
+  const commandMenuContextApi = isInSidePanel
+    ? { ...commandMenuContextApiFromHook, isInSidePanel: true }
+    : commandMenuContextApiFromHook;
+
+  const currentObjectNameSingular =
+    commandMenuContextApi.objectMetadataItem.nameSingular;
+
+  const isWorkflow =
+    currentObjectNameSingular === CoreObjectNameSingular.Workflow;
+
+  const selectedWorkflowRecordIds = isWorkflow
+    ? commandMenuContextApi.selectedRecords
+        .map((record) => record.id)
+        .filter(isDefined)
+    : [];
+
+  if (selectedWorkflowRecordIds.length > 0) {
     return (
-      <CommandMenuContextProviderServerItems
-        isInSidePanel={isInSidePanel}
+      <CommandMenuContextProviderWithWorkflowEnrichment
         displayType={displayType}
         containerType={containerType}
+        commandMenuContextApi={commandMenuContextApi}
+        selectedWorkflowRecordIds={selectedWorkflowRecordIds}
       >
         {children}
-      </CommandMenuContextProviderServerItems>
+      </CommandMenuContextProviderWithWorkflowEnrichment>
     );
   }
 
   return (
-    <CommandMenuContextProviderLegacy
-      isInSidePanel={isInSidePanel}
+    <CommandMenuContextProviderContent
       displayType={displayType}
       containerType={containerType}
-      objectMetadataItemOverride={objectMetadataItemOverride}
+      commandMenuContextApi={commandMenuContextApi}
     >
       {children}
-    </CommandMenuContextProviderLegacy>
+    </CommandMenuContextProviderContent>
   );
 };

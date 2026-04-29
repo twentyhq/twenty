@@ -2,7 +2,7 @@ import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomStat
 import {
   type FrontComponentExecutionContext,
   type FrontComponentHostCommunicationApi,
-} from 'twenty-sdk/front-component-renderer';
+} from 'twenty-front-component-renderer';
 import { type AppPath, type EnqueueSnackbarParams } from 'twenty-shared/types';
 
 import { currentUserState } from '@/auth/states/currentUserState';
@@ -14,7 +14,6 @@ import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
@@ -24,9 +23,11 @@ import { useNavigateApp } from '~/hooks/useNavigateApp';
 export const useFrontComponentExecutionContext = ({
   frontComponentId,
   commandMenuItemId,
+  recordId,
 }: {
   frontComponentId: string;
   commandMenuItemId?: string;
+  recordId?: string;
 }): {
   executionContext: FrontComponentExecutionContext;
   frontComponentHostCommunicationApi: FrontComponentHostCommunicationApi;
@@ -123,12 +124,10 @@ export const useFrontComponentExecutionContext = ({
       }
     };
 
-  const { targetRecordIdentifier } = useLayoutRenderingContext();
-
   const executionContext: FrontComponentExecutionContext = {
     frontComponentId,
     userId: currentUser?.id ?? null,
-    recordId: targetRecordIdentifier?.id ?? null,
+    recordId: recordId ?? null,
   };
 
   const unmountFrontComponent: FrontComponentHostCommunicationApi['unmountFrontComponent'] =

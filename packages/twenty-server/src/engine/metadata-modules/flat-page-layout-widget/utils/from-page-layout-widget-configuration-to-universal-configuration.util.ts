@@ -295,7 +295,7 @@ export const fromPageLayoutWidgetConfigurationToUniversalConfiguration = ({
       return {
         ...rest,
         newFieldDefaultVisibility,
-        viewId: viewUniversalIdentifier,
+        viewUniversalIdentifier,
       };
     }
 
@@ -378,6 +378,7 @@ export const fromPageLayoutWidgetConfigurationToUniversalConfiguration = ({
     case WidgetConfigurationType.WORKFLOW_RUN:
     case WidgetConfigurationType.IFRAME:
     case WidgetConfigurationType.STANDALONE_RICH_TEXT:
+    case WidgetConfigurationType.EMAIL_THREAD:
       return configuration;
   }
 };

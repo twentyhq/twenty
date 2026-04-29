@@ -13,8 +13,8 @@ export class AgentMessageDTO {
   @Field(() => UUIDScalarType)
   threadId: string;
 
-  @Field(() => UUIDScalarType)
-  turnId: string;
+  @Field(() => UUIDScalarType, { nullable: true })
+  turnId: string | null;
 
   @Field(() => UUIDScalarType, { nullable: true })
   agentId: string | null;
@@ -22,8 +22,15 @@ export class AgentMessageDTO {
   @Field()
   role: 'system' | 'user' | 'assistant';
 
+  @Field()
+  status: 'queued' | 'sent';
+
   @Field(() => [AgentMessagePartDTO])
   parts: AgentMessagePartDTO[];
+
+  @IsDateString()
+  @Field(() => Date, { nullable: true })
+  processedAt: Date | null;
 
   @IsDateString()
   @Field()

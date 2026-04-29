@@ -26,7 +26,7 @@ type CalendarEventRowProps = {
 const StyledContainer = styled.div<{ showTitle?: boolean }>`
   align-items: center;
   cursor: ${({ showTitle }) => (showTitle ? 'pointer' : 'not-allowed')};
-  display: inline-flex;
+  display: flex;
   gap: ${themeCssVariables.spacing[3]};
   height: ${themeCssVariables.spacing[6]};
   position: relative;

@@ -1,4 +1,4 @@
-import { getNodeTypename } from '@/object-record/cache/utils/getNodeTypename';
+import { getNodeTypename } from 'twenty-shared/utils';
 
 export const getRefName = (objectNameSingular: string, id: string) => {
   const nodeTypeName = getNodeTypename(objectNameSingular);

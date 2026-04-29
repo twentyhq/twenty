@@ -153,19 +153,30 @@ export class WorkflowRunEnqueueWorkspaceService {
         authContext,
       );
     } catch (error) {
-      this.metricsService.incrementCounter({
-        key: MetricsKeys.WorkflowRunFailedToEnqueue,
-        eventId: workspaceId,
-      });
+      try {
+        await this.metricsService.incrementCounter({
+          key: MetricsKeys.WorkflowRunFailedToEnqueue,
+          eventId: workspaceId,
+        });
+      } catch {
+        // Metrics may fail if Redis is shutting down — safe to ignore
+      }
 
       this.logger.error(
         `Failed to enqueue workflow runs for workspace: ${workspaceId}`,
         error,
       );
     } finally {
-      await this.workflowThrottlingWorkspaceService.releaseWorkflowEnqueueLock(
-        workspaceId,
-      );
+      try {
+        await this.workflowThrottlingWorkspaceService.releaseWorkflowEnqueueLock(
+          workspaceId,
+        );
+      } catch (releaseError) {
+        this.logger.warn(
+          `Failed to release workflow enqueue lock for workspace: ${workspaceId}`,
+          releaseError,
+        );
+      }
     }
   }
 }

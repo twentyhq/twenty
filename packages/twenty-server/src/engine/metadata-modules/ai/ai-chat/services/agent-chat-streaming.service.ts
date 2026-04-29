@@ -1,59 +1,74 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { createUIMessageStream, pipeUIMessageStreamToResponse } from 'ai';
-import { type Response } from 'express';
+import { generateId } from 'ai';
 import {
-  type CodeExecutionData,
-  type ExtendedUIMessage,
+  type ExtendedFileUIPart,
+  type ExtendedUIMessagePart,
+  isExtendedFileUIPart,
 } from 'twenty-shared/ai';
-import { type Repository } from 'typeorm';
+import { FileFolder } from 'twenty-shared/types';
+import { In, Like, type Repository } from 'typeorm';
 
+import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
+import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
+import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
 import {
-  AgentException,
-  AgentExceptionCode,
-} from 'src/engine/metadata-modules/ai/ai-agent/agent.exception';
+  AgentMessageRole,
+  AgentMessageStatus,
+} from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
+import { mapDBPartsToUIMessageParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/mapDBPartsToUIMessageParts';
+import {
+  AiException,
+  AiExceptionCode,
+} from 'src/engine/metadata-modules/ai/ai.exception';
 import { type BrowsingContextType } from 'src/engine/metadata-modules/ai/ai-agent/types/browsingContext.type';
-import { computeCostBreakdown } from 'src/engine/metadata-modules/ai/ai-billing/utils/compute-cost-breakdown.util';
-import { convertDollarsToBillingCredits } from 'src/engine/metadata-modules/ai/ai-billing/utils/convert-dollars-to-billing-credits.util';
-import { extractCacheCreationTokens } from 'src/engine/metadata-modules/ai/ai-billing/utils/extract-cache-creation-tokens.util';
-import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display-credits.util';
-import { type AIModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-config.type';
 import { AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
-
-import { AgentChatService } from './agent-chat.service';
-import { ChatExecutionService } from './chat-execution.service';
+import { STREAM_AGENT_CHAT_JOB_NAME } from 'src/engine/metadata-modules/ai/ai-chat/jobs/stream-agent-chat-job-name.constant';
+import { type StreamAgentChatJobData } from 'src/engine/metadata-modules/ai/ai-chat/jobs/stream-agent-chat-job.types';
+import { AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-event-publisher.service';
+import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 
 export type StreamAgentChatOptions = {
   threadId: string;
   userWorkspaceId: string;
   workspace: WorkspaceEntity;
-  response: Response;
-  messages: ExtendedUIMessage[];
+  text: string;
   browsingContext: BrowsingContextType | null;
   modelId?: string;
+  messageId?: string;
+  fileIds?: string[];
 };
 
 @Injectable()
 export class AgentChatStreamingService {
+  private readonly logger = new Logger(AgentChatStreamingService.name);
+
   constructor(
     @InjectRepository(AgentChatThreadEntity)
     private readonly threadRepository: Repository<AgentChatThreadEntity>,
+    @InjectRepository(FileEntity)
+    private readonly fileRepository: Repository<FileEntity>,
+    @InjectMessageQueue(MessageQueue.aiStreamQueue)
+    private readonly messageQueueService: MessageQueueService,
     private readonly agentChatService: AgentChatService,
-    private readonly chatExecutionService: ChatExecutionService,
+    private readonly eventPublisherService: AgentChatEventPublisherService,
+    private readonly fileUrlService: FileUrlService,
   ) {}
 
   async streamAgentChat({
     threadId,
     userWorkspaceId,
     workspace,
-    messages,
+    text,
     browsingContext,
-    response,
     modelId,
-  }: StreamAgentChatOptions) {
+    messageId,
+    fileIds,
+  }: StreamAgentChatOptions): Promise<{ streamId: string; messageId: string }> {
     const thread = await this.threadRepository.findOne({
       where: {
         id: threadId,
@@ -62,221 +77,214 @@ export class AgentChatStreamingService {
     });
 
     if (!thread) {
-      throw new AgentException(
+      throw new AiException(
         'Thread not found',
-        AgentExceptionCode.AGENT_EXECUTION_FAILED,
+        AiExceptionCode.THREAD_NOT_FOUND,
       );
     }
 
-    // Fire user-message save without awaiting to avoid delaying time-to-first-letter.
-    // The promise is awaited inside onFinish where we need the turnId.
-    const lastUserMessage = messages[messages.length - 1];
-    const lastUserText =
-      lastUserMessage?.parts.find((part) => part.type === 'text')?.text ?? '';
+    const fileParts = await this.buildFilePartsFromIds(fileIds, workspace.id);
 
-    const userMessagePromise = this.agentChatService.addMessage({
-      threadId: thread.id,
+    const userMessageParts: ExtendedUIMessagePart[] = [
+      { type: 'text' as const, text },
+      ...fileParts,
+    ];
+
+    const savedUserMessage = await this.agentChatService.addMessage({
+      threadId,
+      id: messageId,
       uiMessage: {
         role: AgentMessageRole.USER,
-        parts:
-          lastUserMessage?.parts.filter(
-            (part) => part.type === 'text' || part.type === 'file',
-          ) ?? [],
+        parts: userMessageParts,
+      },
+      workspaceId: workspace.id,
+    });
+
+    const previousMessages = await this.loadMessagesFromDB(
+      threadId,
+      userWorkspaceId,
+      workspace.id,
+    );
+
+    const streamId = generateId();
+
+    await this.messageQueueService.add<StreamAgentChatJobData>(
+      STREAM_AGENT_CHAT_JOB_NAME,
+      {
+        threadId: thread.id,
+        streamId,
+        userWorkspaceId,
+        workspaceId: workspace.id,
+        messages: previousMessages,
+        browsingContext,
+        modelId,
+        lastUserMessageText: text,
+        lastUserMessageParts: userMessageParts,
+        hasTitle: !!thread.title,
+        conversationSizeTokens: thread.conversationSize,
+        existingTurnId: savedUserMessage.turnId ?? undefined,
+      },
+    );
+
+    await this.threadRepository.update(thread.id, {
+      activeStreamId: streamId,
+    });
+
+    return { streamId, messageId: savedUserMessage.id };
+  }
+
+  async flushNextQueuedMessage(
+    threadId: string,
+    userWorkspaceId: string,
+    workspaceId: string,
+    hasTitle: boolean,
+  ): Promise<void> {
+    const queuedMessages =
+      await this.agentChatService.getQueuedMessages(threadId);
+
+    const nextQueued = queuedMessages[0];
+
+    if (!nextQueued) {
+      return;
+    }
+
+    const textPart = nextQueued.parts?.find((part) => part.type === 'text');
+    const messageText = textPart?.textContent ?? '';
+    const fileParts = (nextQueued.parts ?? [])
+      .filter((part) => part.type === 'file')
+      .map(
+        (part): ExtendedFileUIPart => ({
+          type: 'file',
+          mediaType: part.file?.mimeType ?? 'application/octet-stream',
+          filename: part.fileFilename ?? '',
+          url: '',
+          fileId: part.fileId ?? '',
+        }),
+      );
+
+    if (messageText === '' && fileParts.length === 0) {
+      await this.agentChatService.deleteQueuedMessage(nextQueued.id);
+
+      return;
+    }
+
+    const turnId = await this.agentChatService.promoteQueuedMessage(
+      nextQueued.id,
+      threadId,
+      workspaceId,
+    );
+
+    if (turnId === null) {
+      return;
+    }
+
+    await this.eventPublisherService.publish({
+      threadId,
+      workspaceId,
+      event: { type: 'queue-updated' },
+    });
+
+    await this.eventPublisherService.publish({
+      threadId,
+      workspaceId,
+      event: { type: 'message-persisted', messageId: nextQueued.id },
+    });
+
+    const [uiMessages, thread] = await Promise.all([
+      this.loadMessagesFromDB(threadId, userWorkspaceId, workspaceId),
+      this.threadRepository.findOneByOrFail({ id: threadId }),
+    ]);
+
+    const streamId = generateId();
+
+    const lastUserMessageParts: ExtendedUIMessagePart[] = [
+      ...(messageText !== ''
+        ? [{ type: 'text' as const, text: messageText }]
+        : []),
+      ...fileParts,
+    ];
+
+    await this.messageQueueService.add<StreamAgentChatJobData>(
+      STREAM_AGENT_CHAT_JOB_NAME,
+      {
+        threadId,
+        streamId,
+        userWorkspaceId,
+        workspaceId,
+        messages: uiMessages,
+        browsingContext: null,
+        lastUserMessageText: messageText,
+        lastUserMessageParts,
+        hasTitle,
+        conversationSizeTokens: thread.conversationSize,
+        existingTurnId: turnId,
+      },
+    );
+
+    await this.threadRepository.update(threadId, {
+      activeStreamId: streamId,
+    });
+  }
+
+  private async loadMessagesFromDB(
+    threadId: string,
+    userWorkspaceId: string,
+    workspaceId: string,
+  ) {
+    const allMessages = await this.agentChatService.getMessagesForThread(
+      threadId,
+      userWorkspaceId,
+    );
+
+    return allMessages
+      .filter((message) => message.status !== AgentMessageStatus.QUEUED)
+      .map((message) => ({
+        id: message.id,
+        role: message.role as 'user' | 'assistant' | 'system',
+        parts: mapDBPartsToUIMessageParts(message.parts ?? []).map((part) => {
+          if (isExtendedFileUIPart(part as Record<string, unknown>)) {
+            const filePart = part as ExtendedFileUIPart;
+
+            return {
+              ...filePart,
+              url: this.fileUrlService.signFileByIdUrl({
+                fileId: filePart.fileId,
+                workspaceId,
+                fileFolder: FileFolder.AgentChat,
+              }),
+            } as ExtendedFileUIPart;
+          }
+
+          return part;
+        }),
+        createdAt: message.createdAt,
+      }));
+  }
+
+  private async buildFilePartsFromIds(
+    fileIds: string[] | undefined,
+    workspaceId: string,
+  ): Promise<ExtendedUIMessagePart[]> {
+    if (!fileIds || fileIds.length === 0) {
+      return [];
+    }
+
+    const files = await this.fileRepository.find({
+      where: {
+        id: In(fileIds),
+        workspaceId,
+        path: Like(`%/${FileFolder.AgentChat}/%`),
       },
     });
 
-    // Prevent unhandled rejection if onFinish never runs (e.g. stream
-    // setup error or empty response early-return). The real error still
-    // surfaces when awaited in onFinish.
-    userMessagePromise.catch(() => {});
-
-    // Title generation runs in parallel with AI streaming so it's
-    // typically ready by the time onFinish fires
-    const titlePromise = thread.title
-      ? Promise.resolve(null)
-      : this.agentChatService
-          .generateTitleIfNeeded(thread.id, lastUserText)
-          .catch(() => null);
-
-    try {
-      const uiStream = createUIMessageStream<ExtendedUIMessage>({
-        execute: async ({ writer }) => {
-          const onCodeExecutionUpdate = (data: CodeExecutionData) => {
-            writer.write({
-              type: 'data-code-execution' as const,
-              id: `code-execution-${data.executionId}`,
-              data,
-            });
-          };
-
-          const { stream, modelConfig } =
-            await this.chatExecutionService.streamChat({
-              workspace,
-              userWorkspaceId,
-              messages,
-              browsingContext,
-              onCodeExecutionUpdate,
-              modelId,
-            });
-
-          let streamUsage = {
-            inputTokens: 0,
-            outputTokens: 0,
-            inputCredits: 0,
-            outputCredits: 0,
-          };
-          let lastStepConversationSize = 0;
-          let totalCacheCreationTokens = 0;
-
-          writer.merge(
-            stream.toUIMessageStream({
-              onError: (error) => {
-                return error instanceof Error ? error.message : String(error);
-              },
-              sendStart: false,
-              messageMetadata: ({ part }) => {
-                if (part.type === 'finish-step') {
-                  const stepInput = part.usage?.inputTokens ?? 0;
-                  const stepCached =
-                    part.usage?.inputTokenDetails?.cacheReadTokens ?? 0;
-                  const stepCacheCreation = extractCacheCreationTokens(
-                    (
-                      part as {
-                        providerMetadata?: Record<
-                          string,
-                          Record<string, unknown> | undefined
-                        >;
-                      }
-                    ).providerMetadata,
-                  );
-
-                  totalCacheCreationTokens += stepCacheCreation;
-                  lastStepConversationSize =
-                    stepInput + stepCached + stepCacheCreation;
-                }
-
-                if (part.type === 'finish') {
-                  const { inputCredits, outputCredits, tokenCounts } =
-                    computeStreamCosts(
-                      modelConfig,
-                      part.totalUsage,
-                      totalCacheCreationTokens,
-                    );
-
-                  streamUsage = {
-                    inputTokens: tokenCounts.totalInputTokens,
-                    outputTokens: tokenCounts.outputTokens,
-                    inputCredits,
-                    outputCredits,
-                  };
-
-                  return {
-                    createdAt: new Date().toISOString(),
-                    usage: {
-                      inputTokens: tokenCounts.totalInputTokens,
-                      outputTokens: tokenCounts.outputTokens,
-                      cachedInputTokens: tokenCounts.cachedInputTokens,
-                      inputCredits: toDisplayCredits(inputCredits),
-                      outputCredits: toDisplayCredits(outputCredits),
-                      conversationSize: lastStepConversationSize,
-                    },
-                    model: {
-                      contextWindowTokens: modelConfig.contextWindowTokens,
-                    },
-                  };
-                }
-
-                return undefined;
-              },
-              onFinish: async ({ responseMessage }) => {
-                if (responseMessage.parts.length === 0) {
-                  return;
-                }
-
-                const userMessage = await userMessagePromise;
-
-                await this.agentChatService.addMessage({
-                  threadId: thread.id,
-                  uiMessage: responseMessage,
-                  turnId: userMessage.turnId,
-                });
-
-                await this.threadRepository.update(thread.id, {
-                  totalInputTokens: () =>
-                    `"totalInputTokens" + ${streamUsage.inputTokens}`,
-                  totalOutputTokens: () =>
-                    `"totalOutputTokens" + ${streamUsage.outputTokens}`,
-                  totalInputCredits: () =>
-                    `"totalInputCredits" + ${streamUsage.inputCredits}`,
-                  totalOutputCredits: () =>
-                    `"totalOutputCredits" + ${streamUsage.outputCredits}`,
-                  contextWindowTokens: modelConfig.contextWindowTokens,
-                  conversationSize: lastStepConversationSize,
-                });
-
-                const generatedTitle = await titlePromise;
-
-                if (generatedTitle) {
-                  writer.write({
-                    type: 'data-thread-title' as const,
-                    id: `thread-title-${thread.id}`,
-                    data: { title: generatedTitle },
-                  });
-                }
-              },
-              sendReasoning: true,
-            }),
-          );
-        },
-      });
-
-      pipeUIMessageStreamToResponse({
-        stream: uiStream,
-        response,
-        // Consume the stream independently so onFinish fires even if
-        // the client disconnects (e.g., page refresh mid-stream)
-        consumeSseStream: ({ stream }) => {
-          stream.pipeTo(new WritableStream()).catch(() => {});
-        },
-      });
-    } catch (error) {
-      response.end();
-      throw error;
-    }
+    return files.map(
+      (file): ExtendedFileUIPart => ({
+        type: 'file' as const,
+        mediaType: file.mimeType,
+        filename: file.path.split('/').pop() ?? file.path,
+        url: '',
+        fileId: file.id,
+      }),
+    );
   }
-}
-
-function computeStreamCosts(
-  modelConfig: AIModelConfig,
-  totalUsage:
-    | {
-        inputTokens?: number;
-        outputTokens?: number;
-        inputTokenDetails?: { cacheReadTokens?: number };
-        outputTokenDetails?: { reasoningTokens?: number };
-      }
-    | undefined,
-  cacheCreationTokens: number,
-) {
-  const breakdown = computeCostBreakdown(modelConfig, {
-    inputTokens: totalUsage?.inputTokens,
-    outputTokens: totalUsage?.outputTokens,
-    cachedInputTokens: totalUsage?.inputTokenDetails?.cacheReadTokens,
-    reasoningTokens: totalUsage?.outputTokenDetails?.reasoningTokens,
-    cacheCreationTokens,
-  });
-
-  return {
-    inputCredits: Math.round(
-      convertDollarsToBillingCredits(breakdown.inputCostInDollars),
-    ),
-    outputCredits: Math.round(
-      convertDollarsToBillingCredits(breakdown.outputCostInDollars),
-    ),
-    tokenCounts: {
-      totalInputTokens: breakdown.tokenCounts.totalInputTokens,
-      outputTokens: totalUsage?.outputTokens ?? 0,
-      cachedInputTokens: breakdown.tokenCounts.cachedInputTokens,
-    },
-  };
 }

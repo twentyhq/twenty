@@ -8,7 +8,7 @@ import { render } from '@react-email/render';
 import { addMilliseconds } from 'date-fns';
 import ms from 'ms';
 import { SendInviteLinkEmail } from 'twenty-emails';
-import { AppPath } from 'twenty-shared/types';
+import { AppPath, FileFolder } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
 import { IsNull, Repository } from 'typeorm';
 
@@ -22,7 +22,7 @@ import {
 } from 'src/engine/core-modules/auth/auth.exception';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
-import { FileService } from 'src/engine/core-modules/file/services/file.service';
+import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
@@ -52,8 +52,8 @@ export class WorkspaceInvitationService {
     private readonly onboardingService: OnboardingService,
     private readonly workspaceDomainsService: WorkspaceDomainsService,
     private readonly i18nService: I18nService,
-    private readonly fileService: FileService,
     private readonly throttlerService: ThrottlerService,
+    private readonly fileUrlService: FileUrlService,
   ) {}
 
   async validatePersonalInvitation({
@@ -318,12 +318,13 @@ export class WorkspaceInvitationService {
           link: link.toString(),
           workspace: {
             name: workspace.displayName,
-            logo: workspace.logo
-              ? this.fileService.signFileUrl({
-                  url: workspace.logo,
+            logo: isDefined(workspace.logoFileId)
+              ? this.fileUrlService.signFileByIdUrl({
+                  fileId: workspace.logoFileId,
                   workspaceId: workspace.id,
+                  fileFolder: FileFolder.CorePicture,
                 })
-              : workspace.logo,
+              : undefined,
           },
           sender: {
             email: sender.userEmail,

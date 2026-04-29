@@ -4,6 +4,7 @@ import {
   type Billing,
   type Captcha,
   type ClientAiModelConfig,
+  type ClientConfigMaintenanceMode,
   type PublicFeatureFlag,
   type Sentry,
   type Support,
@@ -33,10 +34,12 @@ export type ClientConfig = {
   isEmailingDomainsEnabled: boolean;
   isCloudflareIntegrationEnabled: boolean;
   isClickHouseConfigured: boolean;
+  isWorkspaceSchemaDDLLocked: boolean;
   publicFeatureFlags: Array<PublicFeatureFlag>;
   sentry: Sentry;
   signInPrefilled: boolean;
   support: Support;
   isTwoFactorAuthenticationEnabled: boolean;
   allowRequestsToTwentyIcons: boolean;
+  maintenance?: ClientConfigMaintenanceMode;
 };

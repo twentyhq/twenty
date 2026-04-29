@@ -1,0 +1,178 @@
+---
+title: التخطيط
+description: عرّف طرق العرض، وعناصر قائمة التنقّل، وتخطيطات الصفحات لتشكيل كيفية ظهور تطبيقك في Twenty.
+icon: table-columns
+---
+
+تتحكّم كيانات التخطيط في كيفية ظهور تطبيقك داخل واجهة مستخدم Twenty — ما الذي يوجد في الشريط الجانبي، وأي العروض المحفوظة تأتي مع التطبيق، وكيف يتم ترتيب صفحة تفاصيل السجل.
+
+## مفاهيم التخطيط
+
+| المفهوم                      | ما الذي يتحكّم فيه                                                              | كيان                       |
+| ---------------------------- | ------------------------------------------------------------------------------- | -------------------------- |
+| **عرض**                      | تكوين قائمة محفوظة لكائن — الحقول المرئية، والترتيب، وعوامل التصفية، والمجموعات | `defineView`               |
+| **عنصر قائمة التنقّل**       | عنصر في الشريط الجانبي الأيسر يرتبط بعرض أو بعنوان URL خارجي                    | `defineNavigationMenuItem` |
+| **تخطيط الصفحة**             | علامات التبويب وعناصر الواجهة التي تشكّل صفحة تفاصيل السجل                      | `definePageLayout`         |
+| **علامة تبويب تخطيط الصفحة** | علامة تبويب مستقلة مرفقة بتخطيط صفحة موجودة (قياسي أو خاص بتطبيقك)              | `definePageLayoutTab`      |
+
+تشير العروض، وعناصر التنقّل، وتخطيطات الصفحات إلى بعضها البعض عبر `universalIdentifier`:
+
+* يشير **عنصر قائمة التنقّل** من النوع `VIEW` إلى معرّف `defineView`، بحيث يفتح رابط الشريط الجانبي ذلك العرض المحفوظ.
+* يستهدف **تخطيط الصفحة** من النوع `RECORD_PAGE` كائنًا ويمكنه تضمين [مكوّنات الواجهة الأمامية](/l/ar/developers/extend/apps/front-components) داخل علامات التبويب الخاصة به بوصفها عناصر واجهة.
+
+<AccordionGroup>
+<Accordion title="defineView" description="تعريف العروض المحفوظة للكائنات">
+
+العروض هي تكوينات محفوظة لكيفية عرض سجلات كائن ما — بما في ذلك الحقول المرئية وترتيبها وأي مرشّحات أو مجموعات مُطبَّقة. استخدم `defineView()` لتضمين عروض مُهيّأة مسبقًا مع تطبيقك:
+
+```ts src/views/example-view.ts
+import { defineView, ViewKey } from 'twenty-sdk/define';
+import { EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER } from '../objects/example-object';
+import { NAME_FIELD_UNIVERSAL_IDENTIFIER } from '../objects/example-object';
+
+export default defineView({
+  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  name: 'All example items',
+  objectUniversalIdentifier: EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER,
+  icon: 'IconList',
+  key: ViewKey.INDEX,
+  position: 0,
+  fields: [
+    {
+      universalIdentifier: 'f926bdb7-6af7-4683-9a09-adbca56c29f0',
+      fieldMetadataUniversalIdentifier: NAME_FIELD_UNIVERSAL_IDENTIFIER,
+      position: 0,
+      isVisible: true,
+      size: 200,
+    },
+  ],
+});
+```
+
+النقاط الرئيسية:
+* `objectUniversalIdentifier` يحدّد الكائن الذي ينطبق عليه هذا العرض.
+* `key` يحدّد نوع العرض (مثل `ViewKey.INDEX` لعرض القائمة الرئيسي).
+* `fields` يتحكّم في الأعمدة الظاهرة وترتيبها. يشير كل حقل إلى `fieldMetadataUniversalIdentifier`.
+* يمكنك أيضًا تعريف `filters` و`filterGroups` و`groups` و`fieldGroups` لمزيد من التكوينات المتقدمة.
+* `position` يتحكّم في الترتيب عند وجود عدة عروض لنفس الكائن.
+
+</Accordion>
+<Accordion title="defineNavigationMenuItem" description="تعريف روابط التنقل في الشريط الجانبي">
+
+تضيف عناصر قائمة التنقل إدخالات مخصّصة إلى الشريط الجانبي لمساحة العمل. استخدم `defineNavigationMenuItem()` للارتباط بالعروض أو عناوين URL خارجية أو الكائنات:
+
+```ts src/navigation-menu-items/example-navigation-menu-item.ts
+import { defineNavigationMenuItem, NavigationMenuItemType } from 'twenty-sdk/define';
+import { EXAMPLE_VIEW_UNIVERSAL_IDENTIFIER } from '../views/example-view';
+
+export default defineNavigationMenuItem({
+  universalIdentifier: '9327db91-afa1-41b6-bd9d-2b51a26efb4c',
+  name: 'example-navigation-menu-item',
+  icon: 'IconList',
+  color: 'blue',
+  position: 0,
+  type: NavigationMenuItemType.VIEW,
+  viewUniversalIdentifier: EXAMPLE_VIEW_UNIVERSAL_IDENTIFIER,
+});
+```
+
+النقاط الرئيسية:
+* `type` يحدّد إلى ماذا يرتبط عنصر القائمة: `NavigationMenuItemType.VIEW` لعرض محفوظ، أو `NavigationMenuItemType.LINK` لعنوان URL خارجي.
+* لروابط العروض، عيِّن `viewUniversalIdentifier`. لروابط خارجية، عيِّن `link`.
+* `position` يتحكّم في الترتيب ضمن الشريط الجانبي.
+* `icon` و`color` (اختياريان) يخصّصان المظهر.
+
+</Accordion>
+<Accordion title="definePageLayout" description="عرّف تخطيطات صفحات مخصّصة لعرض السجلات">
+
+تتيح لك تخطيطات الصفحات تخصيص مظهر صفحة تفاصيل السجل — ما الألسنة التي تظهر، وما الويدجتات داخل كل لسان، وكيف يتم ترتيبها. استخدم `definePageLayout()` لتضمين تخطيطات مخصّصة مع تطبيقك:
+
+```ts src/page-layouts/example-record-page-layout.ts
+import { definePageLayout, PageLayoutTabLayoutMode } from 'twenty-sdk/define';
+import { EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER } from '../objects/example-object';
+import { HELLO_WORLD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER } from '../front-components/hello-world';
+
+export default definePageLayout({
+  universalIdentifier: '203aeb94-6701-46d6-9af1-be2bbcc9e134',
+  name: 'Example Record Page',
+  type: 'RECORD_PAGE',
+  objectUniversalIdentifier: EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER,
+  tabs: [
+    {
+      universalIdentifier: '6ed26b60-a51d-4ad7-86dd-1c04c7f3cac5',
+      title: 'Hello World',
+      position: 50,
+      icon: 'IconWorld',
+      layoutMode: PageLayoutTabLayoutMode.CANVAS,
+      widgets: [
+        {
+          universalIdentifier: 'aa4234e0-2e5f-4c02-a96a-573449e2351d',
+          title: 'Hello World',
+          type: 'FRONT_COMPONENT',
+          configuration: {
+            configurationType: 'FRONT_COMPONENT',
+            frontComponentUniversalIdentifier:
+              HELLO_WORLD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
+          },
+        },
+      ],
+    },
+  ],
+});
+```
+
+النقاط الرئيسية:
+* `type` يكون عادة `'RECORD_PAGE'` لتخصيص عرض التفاصيل لكائن محدّد.
+* `objectUniversalIdentifier` يحدّد الكائن الذي ينطبق عليه هذا التخطيط.
+* يُعرّف كل `tab` قسمًا من الصفحة مع `title` و`position` و`layoutMode` (`CANVAS` لتخطيط حرّ).
+* يمكن لكل `widget` داخل لسان أن يعرض مكوّنًا أماميًا أو قائمة علاقات أو أنواع ويدجت مدمجة أخرى.
+* `position` على الألسنة يتحكّم في ترتيبها. استخدم قيمًا أعلى (مثل 50) لوضع الألسنة المخصّصة بعد الألسنة المدمجة.
+
+</Accordion>
+<Accordion title="definePageLayoutTab" description="إضافة علامة تبويب إلى تخطيط صفحة موجود">
+
+`definePageLayoutTab` يتيح لتطبيقك إرفاق علامة تبويب واحدة — مع عناصر واجهة اختيارية — إلى تخطيط صفحة **موجود**. أشيع حالات الاستخدام هي إضافة علامة تبويب مخصصة (على سبيل المثال، علامة تبويب للتحليلات أو ملخص الذكاء الاصطناعي) إلى إحدى صفحات السجل المضمنة في Twenty، أو إلى تخطيط صفحة يوفره تطبيقك بالفعل.
+
+يجب أن يكون تخطيط الصفحة المستهدف إما تخطيط صفحة Twenty **قياسيًا** أو تخطيطًا مُعرَّفًا بواسطة **تطبيقك أنت**؛ المراجع عبر التطبيقات إلى تخطيطات صفحات مملوكة لتطبيق آخر مُثبّت غير مدعومة حاليًا.
+
+```ts src/page-layouts/example-extra-tab.ts
+import {
+  definePageLayoutTab,
+  PageLayoutTabLayoutMode,
+} from 'twenty-sdk/define';
+import { HELLO_WORLD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER } from '../front-components/hello-world';
+
+const COMPANY_RECORD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER =
+  '20202020-ab01-4001-8001-c0aba11c0100';
+
+export default definePageLayoutTab({
+  universalIdentifier: 'b1b2b3b4-b5b6-4000-8000-000000000001',
+  pageLayoutUniversalIdentifier:
+    COMPANY_RECORD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER,
+  title: 'Hello World',
+  position: 1000,
+  icon: 'IconWorld',
+  layoutMode: PageLayoutTabLayoutMode.CANVAS,
+  widgets: [
+    {
+      universalIdentifier: 'b1b2b3b4-b5b6-4000-8000-000000000002',
+      title: 'Hello World',
+      type: 'FRONT_COMPONENT',
+      configuration: {
+        configurationType: 'FRONT_COMPONENT',
+        frontComponentUniversalIdentifier:
+          HELLO_WORLD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
+      },
+    },
+  ],
+});
+```
+
+النقاط الرئيسية:
+* `pageLayoutUniversalIdentifier` **مطلوب** عند استخدام `definePageLayoutTab` ويجب أن يشير إلى تخطيط صفحة موجود بالفعل وقت التثبيت (سواء قياسيًا أو تابعًا لتطبيقك). عند فقدان تخطيط الصفحة الأب، يفشل التثبيت برسالة خطأ تحقق واضحة.
+* `widgets` نطاقها مقتصر على علامة التبويب هذه فقط — فهي تُشير إلى مكونات الواجهة الأمامية، والعروض، وما إلى ذلك تمامًا مثل عناصر الواجهة المعرّفة مضمّنة داخل `definePageLayout`.
+* `position` يتحكّم في الترتيب مقارنةً بعلامات التبويب الموجودة على التخطيط المستهدف. اختر قيمة تضع علامة التبويب الخاصة بك في الموضع الذي تريده بالنسبة إلى علامات التبويب المضمنة.
+* استخدم هذا بدلًا من `definePageLayout` عندما تريد فقط **الإضافة** إلى تخطيط موجود. استخدم `definePageLayout` عندما تملك التخطيط بأكمله (عادةً ما يكون `RECORD_PAGE` لكائن توفّره في تطبيقك، أو `STANDALONE_PAGE`).
+
+</Accordion>
+</AccordionGroup>

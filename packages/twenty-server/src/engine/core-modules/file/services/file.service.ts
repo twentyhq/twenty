@@ -3,24 +3,15 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { type Readable } from 'stream';
 
-import { isNonEmptyString } from '@sniptt/guards';
 import { FileFolder } from 'twenty-shared/types';
-import {
-  buildSignedPath,
-  extractFolderPathFilenameAndTypeOrThrow,
-} from 'twenty-shared/utils';
 import { Like, Repository } from 'typeorm';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
-import {
-  type FileTokenJwtPayloadLegacy,
-  JwtTokenTypeEnum,
-} from 'src/engine/core-modules/auth/types/auth-context.type';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
-import { removeFileFolderFromFileEntityPath } from 'src/engine/core-modules/file/utils/remove-file-folder-from-file-entity-path.utils';
 import { type FileResponse } from 'src/engine/core-modules/file/types/file-response.type';
 import { getContentDisposition } from 'src/engine/core-modules/file/utils/get-content-disposition.utils';
+import { removeFileFolderFromFileEntityPath } from 'src/engine/core-modules/file/utils/remove-file-folder-from-file-entity-path.utils';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
@@ -198,44 +189,7 @@ export class FileService {
     };
   }
 
-  signFileUrl({ url, workspaceId }: { url: string; workspaceId: string }) {
-    if (!isNonEmptyString(url)) {
-      return url;
-    }
-
-    return buildSignedPath({
-      path: url,
-      token: this.encodeFileToken({
-        filename: extractFolderPathFilenameAndTypeOrThrow(url).filename,
-        workspaceId,
-      }),
-    });
-  }
-
-  encodeFileToken(
-    payloadToEncode: Omit<FileTokenJwtPayloadLegacy, 'type' | 'sub'>,
-  ) {
-    const fileTokenExpiresIn = this.twentyConfigService.get(
-      'FILE_TOKEN_EXPIRES_IN',
-    );
-
-    const payload: FileTokenJwtPayloadLegacy = {
-      ...payloadToEncode,
-      sub: payloadToEncode.workspaceId,
-      type: JwtTokenTypeEnum.FILE,
-    };
-
-    const secret = this.jwtWrapperService.generateAppSecret(
-      payload.type,
-      payloadToEncode.workspaceId,
-    );
-
-    return this.jwtWrapperService.sign(payload, {
-      secret,
-      expiresIn: fileTokenExpiresIn,
-    });
-  }
-
+  /** @deprecated Use FileStorageService.deleteByFileId instead */
   async deleteFile({
     folderPath,
     filename,
@@ -253,6 +207,7 @@ export class FileService {
     });
   }
 
+  /** @deprecated */
   async deleteWorkspaceFolder(workspaceId: string) {
     const workspaceFolderPath = `workspace-${workspaceId}`;
 

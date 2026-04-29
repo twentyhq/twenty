@@ -1,10 +1,11 @@
-import { useSwitchToNewAIChat } from '@/ai/hooks/useSwitchToNewAIChat';
+import { useSwitchToNewAiChat } from '@/ai/hooks/useSwitchToNewAiChat';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
 import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
 import { currentMobileNavigationDrawerState } from '@/navigation/states/currentMobileNavigationDrawerState';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
+import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useOpenRecordsSearchPageInSidePanel } from '@/side-panel/hooks/useOpenRecordsSearchPageInSidePanel';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
@@ -12,7 +13,6 @@ import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNaviga
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useNavigate } from 'react-router-dom';
 import {
   type IconComponent,
@@ -21,9 +21,9 @@ import {
   IconSearch,
 } from 'twenty-ui/display';
 import { NavigationBar } from 'twenty-ui/navigation';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
+import { PermissionFlagType } from '~/generated-metadata/graphql';
 
-type NavigationBarItemName = 'main' | 'search' | 'newAIChat';
+type NavigationBarItemName = 'main' | 'search' | 'newAiChat';
 
 export const MobileNavigationBar = () => {
   const navigate = useNavigate();
@@ -36,10 +36,12 @@ export const MobileNavigationBar = () => {
     useAtomState(isNavigationDrawerExpandedState);
   const [currentMobileNavigationDrawer, setCurrentMobileNavigationDrawer] =
     useAtomState(currentMobileNavigationDrawerState);
-  const { switchToNewChat } = useSwitchToNewAIChat();
-  const isAiEnabled = useIsFeatureEnabled(FeatureFlagKey.IS_AI_ENABLED);
+  const { switchToNewChat } = useSwitchToNewAiChat();
   const { alphaSortedActiveNonSystemObjectMetadataItems } =
     useFilteredObjectMetadataItems();
+  const hasAiSettingsPermission = useHasPermissionFlag(
+    PermissionFlagType.AI_SETTINGS,
+  );
 
   const setContextStoreCurrentObjectMetadataItemId = useSetAtomComponentState(
     contextStoreCurrentObjectMetadataItemIdComponentState,
@@ -92,10 +94,10 @@ export const MobileNavigationBar = () => {
         openRecordsSearchPage();
       },
     },
-    ...(isAiEnabled
+    ...(hasAiSettingsPermission
       ? [
           {
-            name: 'newAIChat' as const,
+            name: 'newAiChat' as const,
             Icon: IconMessageCirclePlus,
             onClick: () => {
               setIsNavigationDrawerExpanded(false);

@@ -22,6 +22,11 @@ import { AllPageLayoutWidgetConfiguration } from 'src/engine/metadata-modules/pa
 
 @InputType()
 export class UpdatePageLayoutWidgetInput {
+  @Field(() => UUIDScalarType, { nullable: true })
+  @IsUUID()
+  @IsOptional()
+  pageLayoutTabId?: string;
+
   @Field({ nullable: true })
   @IsString()
   @IsOptional()
@@ -37,7 +42,11 @@ export class UpdatePageLayoutWidgetInput {
   @IsOptional()
   objectMetadataId?: string | null;
 
-  @Field(() => GridPositionInput, { nullable: true })
+  @Field(() => GridPositionInput, {
+    nullable: true,
+    deprecationReason:
+      'Use `position` instead. Will be removed in a future release.',
+  })
   @ValidateNested()
   @Type(() => GridPositionInput)
   @IsOptional()
@@ -57,4 +66,9 @@ export class UpdatePageLayoutWidgetInput {
   @IsObject()
   @IsOptional()
   conditionalDisplay?: PageLayoutWidgetConditionalDisplay | null;
+
+  @Field(() => String, { nullable: true })
+  @IsString()
+  @IsOptional()
+  conditionalAvailabilityExpression?: string | null;
 }

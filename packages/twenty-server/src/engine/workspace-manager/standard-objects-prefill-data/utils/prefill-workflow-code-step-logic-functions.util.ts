@@ -56,53 +56,13 @@ const FIND_MATCHING_COMPANY_BY_DOMAIN_TOOL_INPUT_SCHEMA = {
   required: ['companies', 'domain'],
 };
 
-const EXTRACT_DOMAIN_LOGIC_FUNCTION_SOURCE = `const MULTI_PART_SUFFIXES = new Set([
-  'ac.uk',
-  'co.in',
-  'co.jp',
-  'co.kr',
-  'co.nz',
-  'co.uk',
-  'co.za',
-  'com.ar',
-  'com.au',
-  'com.br',
-  'com.cn',
-  'com.hk',
-  'com.mx',
-  'com.sg',
-  'com.tr',
-  'com.tw',
-  'com.ua',
-  'gov.uk',
-  'ne.jp',
-  'net.au',
-  'org.au',
-  'org.uk',
-]);
-
-const getRegistrableDomain = (host) => {
-  const normalizedHost = host.toLowerCase().replace(/^www\\./, '');
-  const parts = normalizedHost.split('.').filter(Boolean);
-
-  if (parts.length <= 2) {
-    return normalizedHost;
-  }
-
-  const lastTwo = parts.slice(-2).join('.');
-
-  if (MULTI_PART_SUFFIXES.has(lastTwo) && parts.length >= 3) {
-    return parts.slice(-3).join('.');
-  }
-
-  return lastTwo;
-};
+const EXTRACT_DOMAIN_LOGIC_FUNCTION_SOURCE = `const psl = require('psl');
 
 export const main = async (params) => {
   const email =
     typeof params?.email === 'string' ? params.email.trim().toLowerCase() : '';
-  const domainFromEmail = email.split('@')[1] ?? '';
-  const domain = domainFromEmail ? getRegistrableDomain(domainFromEmail) : '';
+  const host = email.split('@')[1] ?? '';
+  const domain = host ? (psl.get(host) ?? host) : '';
 
   return {
     url: domain ? \`https://\${domain}\` : '',
@@ -110,30 +70,7 @@ export const main = async (params) => {
   };
 };`;
 
-const IS_PERSONAL_EMAIL_LOGIC_FUNCTION_SOURCE = `const MULTI_PART_SUFFIXES = new Set([
-  'ac.uk',
-  'co.in',
-  'co.jp',
-  'co.kr',
-  'co.nz',
-  'co.uk',
-  'co.za',
-  'com.ar',
-  'com.au',
-  'com.br',
-  'com.cn',
-  'com.hk',
-  'com.mx',
-  'com.sg',
-  'com.tr',
-  'com.tw',
-  'com.ua',
-  'gov.uk',
-  'ne.jp',
-  'net.au',
-  'org.au',
-  'org.uk',
-]);
+const IS_PERSONAL_EMAIL_LOGIC_FUNCTION_SOURCE = `const psl = require('psl');
 
 const PERSONAL_EMAIL_DOMAINS = new Set([
   'aol.com',
@@ -172,23 +109,6 @@ const PERSONAL_EMAIL_DOMAINS = new Set([
   'gmail.com',
 ]);
 
-const getRegistrableDomain = (host) => {
-  const normalizedHost = host.toLowerCase().replace(/^www\\./, '');
-  const parts = normalizedHost.split('.').filter(Boolean);
-
-  if (parts.length <= 2) {
-    return normalizedHost;
-  }
-
-  const lastTwo = parts.slice(-2).join('.');
-
-  if (MULTI_PART_SUFFIXES.has(lastTwo) && parts.length >= 3) {
-    return parts.slice(-3).join('.');
-  }
-
-  return lastTwo;
-};
-
 export const main = async (params) => {
   const email =
     typeof params?.primaryEmail === 'string'
@@ -200,7 +120,7 @@ export const main = async (params) => {
   }
 
   const host = email.split('@')[1] ?? '';
-  const registrableDomain = host ? getRegistrableDomain(host) : '';
+  const registrableDomain = host ? (psl.get(host) ?? '') : '';
 
   return {
     isPersonal:
@@ -210,30 +130,7 @@ export const main = async (params) => {
   };
 };`;
 
-const FIND_MATCHING_COMPANY_BY_DOMAIN_LOGIC_FUNCTION_SOURCE = `const MULTI_PART_SUFFIXES = new Set([
-  'ac.uk',
-  'co.in',
-  'co.jp',
-  'co.kr',
-  'co.nz',
-  'co.uk',
-  'co.za',
-  'com.ar',
-  'com.au',
-  'com.br',
-  'com.cn',
-  'com.hk',
-  'com.mx',
-  'com.sg',
-  'com.tr',
-  'com.tw',
-  'com.ua',
-  'gov.uk',
-  'ne.jp',
-  'net.au',
-  'org.au',
-  'org.uk',
-]);
+const FIND_MATCHING_COMPANY_BY_DOMAIN_LOGIC_FUNCTION_SOURCE = `const psl = require('psl');
 
 const normalizeHost = (value) => {
   if (typeof value !== 'string') {
@@ -252,20 +149,13 @@ const normalizeHost = (value) => {
 };
 
 const getRegistrableDomain = (value) => {
-  const normalizedHost = normalizeHost(value);
-  const parts = normalizedHost.split('.').filter(Boolean);
+  const host = normalizeHost(value);
 
-  if (parts.length <= 2) {
-    return normalizedHost;
+  if (!host) {
+    return '';
   }
 
-  const lastTwo = parts.slice(-2).join('.');
-
-  if (MULTI_PART_SUFFIXES.has(lastTwo) && parts.length >= 3) {
-    return parts.slice(-3).join('.');
-  }
-
-  return lastTwo;
+  return psl.get(host) ?? host;
 };
 
 export const main = async (params) => {

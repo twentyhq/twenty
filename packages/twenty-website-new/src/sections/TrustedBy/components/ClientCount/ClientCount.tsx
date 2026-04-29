@@ -1,52 +1,28 @@
-import { UsersIcon } from "@/icons/informative/Users";
-import { theme } from "@/theme";
-import { styled } from "@linaria/react";
-import { ClientCountShape } from "./ClientCountShape";
+import { theme } from '@/theme';
+import { styled } from '@linaria/react';
+import NextImage from 'next/image';
 
-const StyledBlock = styled.div`
-  display: flex;
+const StyledChip = styled.div`
   align-items: center;
-  gap: ${theme.spacing(2)};
-  padding-top: ${theme.spacing(1)};
-  padding-right: ${theme.spacing(3.75)};
-  padding-bottom: ${theme.spacing(1)};
-  padding-left: ${theme.spacing(1)};
-  border-radius: ${theme.radius(2)};
-  position: relative;
-  overflow: clip;
+  display: inline-flex;
   flex-shrink: 0;
+  gap: ${theme.spacing(2)};
+
+  img {
+    filter: grayscale(1);
+    opacity: 0.72;
+  }
 `;
 
-const ShapeWrapper = styled.div`
-  position: absolute;
-  top: 50%;
-  right: 0;
-  transform: translateY(-50%);
-  height: 48px;
-  width: 234px;
-  z-index: 0;
-`;
-
-const IconWrapper = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 40px;
-  height: 40px;
-  background-color: ${theme.colors.primary.text[5]};
-  border-radius: ${theme.radius(1)};
-  position: relative;
-  overflow: clip;
-`;
-
-const StyledText = styled.p`
+const StyledText = styled.span`
+  color: ${theme.colors.primary.text[80]};
+  font-family: ${theme.font.family.mono};
+  font-size: ${theme.font.size(3)};
   font-weight: ${theme.font.weight.medium};
-  font-size: ${theme.font.size(4)};
-  line-height: ${theme.lineHeight(5.5)};
-  color: ${theme.colors.primary.text[100]};
+  letter-spacing: 0.02em;
+  line-height: 1;
+  text-transform: uppercase;
   white-space: nowrap;
-  position: relative;
-  z-index: 1;
 `;
 
 type ClientCountProps = {
@@ -55,14 +31,17 @@ type ClientCountProps = {
 
 export function ClientCount({ label }: ClientCountProps) {
   return (
-    <StyledBlock>
-      <ShapeWrapper>
-        <ClientCountShape strokeColor={theme.colors.highlight[70]} />
-      </ShapeWrapper>
-      <IconWrapper>
-        <UsersIcon size={22} fillColor={theme.colors.highlight[100]} />
-      </IconWrapper>
+    <StyledChip>
+      <NextImage
+        alt=""
+        height={14}
+        src="/images/home/logo-bar/others-icon.svg"
+        unoptimized
+        width={14}
+      />
       <StyledText>{label}</StyledText>
-    </StyledBlock>
+    </StyledChip>
   );
 }
+
+ClientCount.displayName = 'TrustedBy.ClientCount';

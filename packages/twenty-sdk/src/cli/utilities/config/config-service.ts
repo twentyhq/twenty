@@ -8,9 +8,16 @@ import { getConfigPath } from '@/cli/utilities/config/get-config-path';
 export type RemoteConfig = {
   apiUrl: string;
   apiKey?: string;
-  accessToken?: string;
-  refreshToken?: string;
-  oauthClientId?: string;
+  // CLI OAuth app credentials (from `yarn twenty remote add`)
+  twentyCLIRegistrationId?: string;
+  twentyCLIRegistrationClientId?: string;
+  twentyCLIAccessToken?: string;
+  twentyCLIRefreshToken?: string;
+  // App registration credentials (from `createApplicationRegistration`)
+  appRegistrationId?: string;
+  appRegistrationClientId?: string;
+  appAccessToken?: string;
+  appRefreshToken?: string;
 };
 
 type PersistedConfig = {
@@ -27,8 +34,8 @@ export class ConfigService {
   private readonly configPath: string;
   private static activeRemote = DEFAULT_REMOTE_NAME;
 
-  constructor() {
-    this.configPath = getConfigPath();
+  constructor(options?: { configPath?: string }) {
+    this.configPath = options?.configPath ?? getConfigPath();
   }
 
   static setActiveRemote(name?: string) {
@@ -53,7 +60,7 @@ export class ConfigService {
 
   // TODO: Remove after 2026-04-30 — migrates legacy config format
   // (profiles, top-level keys, applicationAccessToken/applicationRefreshToken)
-  // to the current format (remotes, accessToken/refreshToken)
+  // to the current format (remotes, twentyCLIAccessToken/twentyCLIRefreshToken)
   private async migrateConfigIfNeeded(
     raw: Record<string, unknown>,
   ): Promise<PersistedConfig> {
@@ -78,11 +85,20 @@ export class ConfigService {
     ): RemoteConfig => ({
       apiUrl: str(source.apiUrl) ?? '',
       apiKey: str(source.apiKey),
-      accessToken:
-        str(source.accessToken) ?? str(source.applicationAccessToken),
-      refreshToken:
-        str(source.refreshToken) ?? str(source.applicationRefreshToken),
-      oauthClientId: str(source.oauthClientId),
+      twentyCLIRegistrationClientId:
+        str(source.twentyCLIRegistrationClientId) ?? str(source.oauthClientId),
+      twentyCLIAccessToken:
+        str(source.twentyCLIAccessToken) ??
+        str(source.accessToken) ??
+        str(source.applicationAccessToken),
+      twentyCLIRefreshToken:
+        str(source.twentyCLIRefreshToken) ??
+        str(source.refreshToken) ??
+        str(source.applicationRefreshToken),
+      appRegistrationId: str(source.appRegistrationId),
+      appRegistrationClientId: str(source.appRegistrationClientId),
+      appAccessToken: str(source.appAccessToken),
+      appRefreshToken: str(source.appRefreshToken),
     });
 
     const profiles =
@@ -127,13 +143,6 @@ export class ConfigService {
   }
 
   async getConfig(): Promise<RemoteConfig> {
-    if (process.env.TWENTY_TOKEN && process.env.TWENTY_API_URL) {
-      return {
-        apiUrl: process.env.TWENTY_API_URL,
-        accessToken: process.env.TWENTY_TOKEN,
-      };
-    }
-
     return this.getConfigForRemote(this.getActiveRemoteName());
   }
 
@@ -149,11 +158,17 @@ export class ConfigService {
       }
 
       return {
-        apiUrl: remoteConfig.apiUrl ?? defaultConfig.apiUrl,
+        apiUrl: remoteConfig.apiUrl || defaultConfig.apiUrl,
         apiKey: remoteConfig.apiKey,
-        accessToken: remoteConfig.accessToken,
-        refreshToken: remoteConfig.refreshToken,
-        oauthClientId: remoteConfig.oauthClientId,
+        twentyCLIRegistrationId: remoteConfig.twentyCLIRegistrationId,
+        twentyCLIRegistrationClientId:
+          remoteConfig.twentyCLIRegistrationClientId,
+        twentyCLIAccessToken: remoteConfig.twentyCLIAccessToken,
+        twentyCLIRefreshToken: remoteConfig.twentyCLIRefreshToken,
+        appRegistrationId: remoteConfig.appRegistrationId,
+        appRegistrationClientId: remoteConfig.appRegistrationClientId,
+        appAccessToken: remoteConfig.appAccessToken,
+        appRefreshToken: remoteConfig.appRefreshToken,
       };
     } catch {
       return defaultConfig;
@@ -170,7 +185,7 @@ export class ConfigService {
       raw.remotes = {};
     }
 
-    const currentRemote = raw.remotes[remote] || { apiUrl: '' };
+    const currentRemote = raw.remotes[remote] ?? this.getDefaultConfig();
 
     raw.remotes[remote] = { ...currentRemote, ...config };
 

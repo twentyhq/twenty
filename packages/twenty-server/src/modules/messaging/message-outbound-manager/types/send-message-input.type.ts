@@ -13,4 +13,5 @@ export type SendMessageInput = {
     contentType: string;
   }[];
   inReplyTo?: string;
+  threadExternalId?: string;
 };

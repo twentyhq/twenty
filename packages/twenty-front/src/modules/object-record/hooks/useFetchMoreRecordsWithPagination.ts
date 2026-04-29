@@ -29,8 +29,12 @@ import { hasNextPageFamilyState } from '@/object-record/states/hasNextPageFamily
 import { isFetchingMoreRecordsFamilyState } from '@/object-record/states/isFetchingMoreRecordsFamilyState';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
-import { capitalize, isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { useStore } from 'jotai';
+import {
+  getConnectionTypename,
+  isDefined,
+  isNonEmptyArray,
+} from 'twenty-shared/utils';
 
 export type UseFindManyRecordsParams<T> = ObjectMetadataItemIdentifier &
   RecordGqlOperationVariables & {
@@ -168,9 +172,9 @@ export const useFetchMoreRecordsWithPagination = <
 
             return Object.assign({}, prev, {
               [objectMetadataItem.namePlural]: {
-                __typename: `${capitalize(
+                __typename: getConnectionTypename(
                   objectMetadataItem.nameSingular,
-                )}Connection`,
+                ),
                 edges: newEdges,
                 pageInfo:
                   fetchMoreResult?.[objectMetadataItem.namePlural].pageInfo,

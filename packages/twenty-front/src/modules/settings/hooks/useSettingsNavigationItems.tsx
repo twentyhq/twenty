@@ -12,7 +12,6 @@ import {
   type NavigationDrawerItemModifier,
 } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import {
@@ -22,7 +21,6 @@ import {
   IconCalendarEvent,
   IconColorSwatch,
   type IconComponent,
-  IconChartBar,
   IconCurrencyDollar,
   IconDoorEnter,
   IconHelpCircle,
@@ -40,10 +38,7 @@ import {
   IconUsers,
   IconWorld,
 } from 'twenty-ui/display';
-import {
-  FeatureFlagKey,
-  PermissionFlagType,
-} from '~/generated-metadata/graphql';
+import { PermissionFlagType } from '~/generated-metadata/graphql';
 
 export type SettingsNavigationSection = {
   label: string;
@@ -75,13 +70,6 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
   const isAdminEnabled =
     (currentUser?.canImpersonate || currentUser?.canAccessFullAdminPanel) ??
     false;
-  const isAIEnabled = useIsFeatureEnabled(FeatureFlagKey.IS_AI_ENABLED);
-  const isApplicationEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_APPLICATION_ENABLED,
-  );
-  const isUsageAnalyticsEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_USAGE_ANALYTICS_ENABLED,
-  );
   const isSupportChatConfigured =
     supportChat?.supportDriver === 'FRONT' &&
     isNonEmptyString(supportChat.supportFrontChatId);
@@ -166,15 +154,6 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
             !isBillingEnabled || !permissionMap[PermissionFlagType.WORKSPACE],
         },
         {
-          label: t`Usage`,
-          path: SettingsPath.Usage,
-          Icon: IconChartBar,
-          isHidden:
-            !isUsageAnalyticsEnabled ||
-            isBillingEnabled ||
-            !permissionMap[PermissionFlagType.WORKSPACE],
-        },
-        {
           label: t`APIs & Webhooks`,
           path: SettingsPath.ApiWebhooks,
           Icon: IconApi,
@@ -191,17 +170,14 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           label: t`Apps`,
           path: SettingsPath.Applications,
           Icon: IconPlug,
-          isHidden:
-            !isApplicationEnabled ||
-            !permissionMap[PermissionFlagType.WORKSPACE],
+          isHidden: !permissionMap[PermissionFlagType.APPLICATIONS],
           modifier: 'new',
         },
         {
           label: t`AI`,
           path: SettingsPath.AI,
           Icon: IconSparkles,
-          isHidden:
-            !isAIEnabled || !permissionMap[PermissionFlagType.WORKSPACE],
+          isHidden: !permissionMap[PermissionFlagType.WORKSPACE],
           modifier: 'new',
         },
         {

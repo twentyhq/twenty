@@ -10,6 +10,8 @@ import { AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { resolveEntityRelationUniversalIdentifiers } from 'src/engine/metadata-modules/flat-entity/utils/resolve-entity-relation-universal-identifiers.util';
+import { splitEntitiesByRemovalStrategy } from 'src/engine/metadata-modules/flat-entity/utils/split-entities-by-removal-strategy.util';
 import { FLAT_PAGE_LAYOUT_TAB_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-page-layout-tab/constants/flat-page-layout-tab-editable-properties.constant';
 import { type FlatPageLayoutTabMaps } from 'src/engine/metadata-modules/flat-page-layout-tab/types/flat-page-layout-tab-maps.type';
 import { type FlatPageLayoutTab } from 'src/engine/metadata-modules/flat-page-layout-tab/types/flat-page-layout-tab.type';
@@ -17,6 +19,7 @@ import { FLAT_PAGE_LAYOUT_WIDGET_EDITABLE_PROPERTIES } from 'src/engine/metadata
 import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
 import { buildFlatPageLayoutWidgetCommonProperties } from 'src/engine/metadata-modules/flat-page-layout-widget/utils/build-flat-page-layout-widget-common-properties.util';
 import { fromPageLayoutWidgetConfigurationToUniversalConfiguration } from 'src/engine/metadata-modules/flat-page-layout-widget/utils/from-page-layout-widget-configuration-to-universal-configuration.util';
+import { fromPageLayoutWidgetOverridesToUniversalOverrides } from 'src/engine/metadata-modules/flat-page-layout-widget/utils/from-page-layout-widget-overrides-to-universal-overrides.util';
 import { type FlatPageLayout } from 'src/engine/metadata-modules/flat-page-layout/types/flat-page-layout.type';
 import { reconstructFlatPageLayoutWithTabsAndWidgets } from 'src/engine/metadata-modules/flat-page-layout/utils/reconstruct-flat-page-layout-with-tabs-and-widgets.util';
 import { UpdatePageLayoutTabWithWidgetsInput } from 'src/engine/metadata-modules/page-layout-tab/dtos/inputs/update-page-layout-tab-with-widgets.input';
@@ -32,6 +35,9 @@ import {
   generatePageLayoutExceptionMessage,
 } from 'src/engine/metadata-modules/page-layout/exceptions/page-layout.exception';
 import { fromFlatPageLayoutWithTabsAndWidgetsToPageLayoutDto } from 'src/engine/metadata-modules/page-layout/utils/from-flat-page-layout-with-tabs-and-widgets-to-page-layout-dto.util';
+import { isCallerOverridingEntity } from 'src/engine/metadata-modules/utils/is-caller-overriding-entity.util';
+import { resolveFlatEntityOverridableProperties } from 'src/engine/metadata-modules/utils/resolve-flat-entity-overridable-properties.util';
+import { sanitizeOverridableEntityInput } from 'src/engine/metadata-modules/utils/sanitize-overridable-entity-input.util';
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
@@ -167,9 +173,12 @@ export class PageLayoutUpdateService {
         flatViewMaps,
       });
 
-    const orphanedViewIds = this.collectOrphanedViewIdsFromDeletedWidgets({
+    const orphanedViewIds = this.collectOrphanedViewIdsFromRemovedWidgets({
+      widgetsToCreate,
       widgetsToUpdate,
+      widgetsToDelete,
       tabsToUpdate,
+      tabsToDelete,
       flatPageLayoutWidgetMaps,
     });
 
@@ -274,18 +283,23 @@ export class PageLayoutUpdateService {
       .filter(isDefined)
       .filter((tab) => tab.pageLayoutId === existingPageLayout.id);
 
+    const resolvedExistingTabs = existingTabs.map(
+      resolveFlatEntityOverridableProperties,
+    );
+
     const {
       toCreate: entitiesToCreate,
       toUpdate: entitiesToUpdate,
       toRestoreAndUpdate: entitiesToRestoreAndUpdate,
-      idsToDelete,
+      idsToRemove,
     } = computeDiffBetweenObjects<
       FlatPageLayoutTab,
       UpdatePageLayoutTabWithWidgetsInput
     >({
-      existingObjects: existingTabs,
+      existingObjects: resolvedExistingTabs,
       receivedObjects: tabs,
       propertiesToCompare: FLAT_PAGE_LAYOUT_TAB_EDITABLE_PROPERTIES,
+      isEntityIncluded: (entity) => entity.isActive,
     });
 
     const now = new Date();
@@ -313,6 +327,7 @@ export class PageLayoutUpdateService {
           icon: null,
           layoutMode: tabInput.layoutMode ?? PageLayoutTabLayoutMode.GRID,
           overrides: null,
+          isActive: true,
         };
       },
     );
@@ -324,11 +339,33 @@ export class PageLayoutUpdateService {
           flatEntityMaps: flatPageLayoutTabMaps,
         });
 
-        return {
-          ...existingTab,
+        const shouldOverride = isCallerOverridingEntity({
+          callerApplicationUniversalIdentifier:
+            workspaceCustomApplicationUniversalIdentifier,
+          entityApplicationUniversalIdentifier:
+            existingTab.applicationUniversalIdentifier,
+          workspaceCustomApplicationUniversalIdentifier,
+        });
+
+        const editableProperties = {
           title: tabInput.title,
           position: tabInput.position,
+          ...(tabInput.icon !== undefined && { icon: tabInput.icon }),
           layoutMode: tabInput.layoutMode ?? existingTab.layoutMode,
+        };
+
+        const { overrides, updatedEditableProperties } =
+          sanitizeOverridableEntityInput({
+            metadataName: 'pageLayoutTab',
+            existingFlatEntity: existingTab,
+            updatedEditableProperties: editableProperties,
+            shouldOverride,
+          });
+
+        return {
+          ...existingTab,
+          ...updatedEditableProperties,
+          overrides,
           updatedAt: now.toISOString(),
         };
       },
@@ -341,43 +378,61 @@ export class PageLayoutUpdateService {
           flatEntityMaps: flatPageLayoutTabMaps,
         });
 
-        return {
-          ...existingTab,
+        const shouldOverride = isCallerOverridingEntity({
+          callerApplicationUniversalIdentifier:
+            workspaceCustomApplicationUniversalIdentifier,
+          entityApplicationUniversalIdentifier:
+            existingTab.applicationUniversalIdentifier,
+          workspaceCustomApplicationUniversalIdentifier,
+        });
+
+        const editableProperties = {
           title: tabInput.title,
           position: tabInput.position,
+          ...(tabInput.icon !== undefined && { icon: tabInput.icon }),
           layoutMode: tabInput.layoutMode ?? existingTab.layoutMode,
-          deletedAt: null,
+        };
+
+        const { overrides, updatedEditableProperties } =
+          sanitizeOverridableEntityInput({
+            metadataName: 'pageLayoutTab',
+            existingFlatEntity: existingTab,
+            updatedEditableProperties: editableProperties,
+            shouldOverride,
+          });
+
+        return {
+          ...existingTab,
+          ...updatedEditableProperties,
+          overrides,
+          isActive: true,
           updatedAt: now.toISOString(),
         };
       });
 
-    const tabsToDelete: FlatPageLayoutTab[] = idsToDelete
-      .map((tabId) => {
-        const existingTab = findFlatEntityByIdInFlatEntityMaps({
+    const tabsToRemove = idsToRemove
+      .map((tabId) =>
+        findFlatEntityByIdInFlatEntityMaps({
           flatEntityId: tabId,
           flatEntityMaps: flatPageLayoutTabMaps,
-        });
-
-        if (!isDefined(existingTab)) {
-          return null;
-        }
-
-        return {
-          ...existingTab,
-          deletedAt: now.toISOString(),
-          updatedAt: now.toISOString(),
-        };
-      })
+        }),
+      )
       .filter(isDefined);
+
+    const { toHardDelete, toDeactivate } = splitEntitiesByRemovalStrategy({
+      entitiesToRemove: tabsToRemove,
+      workspaceCustomApplicationUniversalIdentifier,
+      now: now.toISOString(),
+    });
 
     return {
       tabsToCreate,
       tabsToUpdate: [
         ...tabsToUpdate,
         ...tabsToRestoreAndUpdate,
-        ...tabsToDelete,
+        ...toDeactivate,
       ],
-      tabsToDelete: [],
+      tabsToDelete: toHardDelete,
     };
   }
 
@@ -414,12 +469,18 @@ export class PageLayoutUpdateService {
   } {
     const allWidgetsToCreate: FlatPageLayoutWidget[] = [];
     const allWidgetsToUpdate: FlatPageLayoutWidget[] = [];
+    const allWidgetsToDelete: FlatPageLayoutWidget[] = [];
+
+    const widgetIdsAcrossAllTabs = new Set(
+      tabs.flatMap((tab) => tab.widgets.map((widget) => widget.id)),
+    );
 
     for (const tabInput of tabs) {
-      const { widgetsToCreate, widgetsToUpdate } =
+      const { widgetsToCreate, widgetsToUpdate, widgetsToDelete } =
         this.computeWidgetOperationsForTab({
           tabId: tabInput.id,
           widgets: tabInput.widgets,
+          widgetIdsAcrossAllTabs,
           flatPageLayoutWidgetMaps,
           flatPageLayoutTabMaps,
           flatObjectMetadataMaps,
@@ -434,18 +495,20 @@ export class PageLayoutUpdateService {
 
       allWidgetsToCreate.push(...widgetsToCreate);
       allWidgetsToUpdate.push(...widgetsToUpdate);
+      allWidgetsToDelete.push(...widgetsToDelete);
     }
 
     return {
       widgetsToCreate: allWidgetsToCreate,
       widgetsToUpdate: allWidgetsToUpdate,
-      widgetsToDelete: [],
+      widgetsToDelete: allWidgetsToDelete,
     };
   }
 
   private computeWidgetOperationsForTab({
     tabId,
     widgets,
+    widgetIdsAcrossAllTabs,
     flatPageLayoutWidgetMaps,
     flatPageLayoutTabMaps,
     flatObjectMetadataMaps,
@@ -459,6 +522,7 @@ export class PageLayoutUpdateService {
   }: {
     tabId: string;
     widgets: UpdatePageLayoutWidgetWithIdInput[];
+    widgetIdsAcrossAllTabs: Set<string>;
     workspaceId: string;
     workspaceCustomApplicationId: string;
     workspaceCustomApplicationUniversalIdentifier: string;
@@ -474,6 +538,7 @@ export class PageLayoutUpdateService {
   >): {
     widgetsToCreate: FlatPageLayoutWidget[];
     widgetsToUpdate: FlatPageLayoutWidget[];
+    widgetsToDelete: FlatPageLayoutWidget[];
   } {
     for (const widgetInput of widgets) {
       this.validateChartFieldReferences({
@@ -483,24 +548,33 @@ export class PageLayoutUpdateService {
       });
     }
 
-    const existingWidgets = Object.values(
-      flatPageLayoutWidgetMaps.byUniversalIdentifier,
-    )
-      .filter(isDefined)
-      .filter((widget) => widget.pageLayoutTabId === tabId);
+    const widgetIdsInCurrentTabInput = new Set(
+      widgets.map((widget) => widget.id),
+    );
+
+    const existingWidgets = this.findWidgetsInTabOrMovingToTab({
+      tabId,
+      widgetIdsInCurrentTabInput,
+      flatPageLayoutWidgetMaps,
+    });
+
+    const resolvedExistingWidgets = existingWidgets.map(
+      resolveFlatEntityOverridableProperties,
+    );
 
     const {
       toCreate: entitiesToCreate,
       toUpdate: entitiesToUpdate,
       toRestoreAndUpdate: entitiesToRestoreAndUpdate,
-      idsToDelete,
+      idsToRemove,
     } = computeDiffBetweenObjects<
       FlatPageLayoutWidget,
       UpdatePageLayoutWidgetWithIdInput
     >({
-      existingObjects: existingWidgets,
+      existingObjects: resolvedExistingWidgets,
       receivedObjects: widgets,
       propertiesToCompare: FLAT_PAGE_LAYOUT_WIDGET_EDITABLE_PROPERTIES,
+      isEntityIncluded: (entity) => entity.isActive,
     });
 
     const now = new Date();
@@ -525,8 +599,12 @@ export class PageLayoutUpdateService {
           applicationId: workspaceCustomApplicationId,
           applicationUniversalIdentifier:
             workspaceCustomApplicationUniversalIdentifier,
-          conditionalDisplay: null,
+          conditionalDisplay: widgetInput.conditionalDisplay ?? null,
+          conditionalAvailabilityExpression:
+            widgetInput.conditionalAvailabilityExpression ?? null,
           overrides: null,
+          universalOverrides: null,
+          isActive: true,
           universalConfiguration:
             fromPageLayoutWidgetConfigurationToUniversalConfiguration({
               configuration: widgetInput.configuration,
@@ -543,104 +621,229 @@ export class PageLayoutUpdateService {
     );
 
     const widgetsToUpdate: FlatPageLayoutWidget[] = entitiesToUpdate.map(
-      (widgetInput) => {
-        const existingWidget = findFlatEntityByIdInFlatEntityMapsOrThrow({
-          flatEntityId: widgetInput.id,
-          flatEntityMaps: flatPageLayoutWidgetMaps,
-        });
-
-        const updatedConfiguration = widgetInput.configuration ?? null;
-
-        return {
-          ...existingWidget,
-          ...buildFlatPageLayoutWidgetCommonProperties({
-            widgetInput,
-            flatPageLayoutTabMaps,
-            flatObjectMetadataMaps,
-          }),
-          configuration: updatedConfiguration,
-          updatedAt: now.toISOString(),
-          ...(isDefined(updatedConfiguration) && {
-            universalConfiguration:
-              fromPageLayoutWidgetConfigurationToUniversalConfiguration({
-                configuration: updatedConfiguration,
-                fieldMetadataUniversalIdentifierById:
-                  flatFieldMetadataMaps.universalIdentifierById,
-                frontComponentUniversalIdentifierById:
-                  flatFrontComponentMaps.universalIdentifierById,
-                viewFieldGroupUniversalIdentifierById:
-                  flatViewFieldGroupMaps.universalIdentifierById,
-                viewUniversalIdentifierById:
-                  flatViewMaps.universalIdentifierById,
-              }),
-          }),
-        };
-      },
+      (widgetInput) =>
+        this.buildUpdatedFlatPageLayoutWidget({
+          widgetInput,
+          flatPageLayoutWidgetMaps,
+          flatPageLayoutTabMaps,
+          flatObjectMetadataMaps,
+          flatFieldMetadataMaps,
+          flatFrontComponentMaps,
+          flatViewFieldGroupMaps,
+          flatViewMaps,
+          workspaceCustomApplicationUniversalIdentifier,
+          now,
+        }),
     );
 
     const widgetsToRestoreAndUpdate: FlatPageLayoutWidget[] =
-      entitiesToRestoreAndUpdate.map((widgetInput) => {
-        const existingWidget = findFlatEntityByIdInFlatEntityMapsOrThrow({
-          flatEntityId: widgetInput.id,
-          flatEntityMaps: flatPageLayoutWidgetMaps,
-        });
+      entitiesToRestoreAndUpdate.map((widgetInput) => ({
+        ...this.buildUpdatedFlatPageLayoutWidget({
+          widgetInput,
+          flatPageLayoutWidgetMaps,
+          flatPageLayoutTabMaps,
+          flatObjectMetadataMaps,
+          flatFieldMetadataMaps,
+          flatFrontComponentMaps,
+          flatViewFieldGroupMaps,
+          flatViewMaps,
+          workspaceCustomApplicationUniversalIdentifier,
+          now,
+        }),
+        isActive: true,
+      }));
 
-        const restoredConfiguration = widgetInput.configuration ?? null;
-
-        return {
-          ...existingWidget,
-          ...buildFlatPageLayoutWidgetCommonProperties({
-            widgetInput,
-            flatPageLayoutTabMaps,
-            flatObjectMetadataMaps,
-          }),
-          configuration: restoredConfiguration,
-          deletedAt: null,
-          updatedAt: now.toISOString(),
-          ...(isDefined(restoredConfiguration) && {
-            universalConfiguration:
-              fromPageLayoutWidgetConfigurationToUniversalConfiguration({
-                configuration: restoredConfiguration,
-                fieldMetadataUniversalIdentifierById:
-                  flatFieldMetadataMaps.universalIdentifierById,
-                frontComponentUniversalIdentifierById:
-                  flatFrontComponentMaps.universalIdentifierById,
-                viewFieldGroupUniversalIdentifierById:
-                  flatViewFieldGroupMaps.universalIdentifierById,
-                viewUniversalIdentifierById:
-                  flatViewMaps.universalIdentifierById,
-              }),
-          }),
-        };
+    const widgetIdsToRemoveExcludingMovedToOtherTabs =
+      this.excludeWidgetsMovedToOtherTabs({
+        idsToRemove,
+        widgetIdsAcrossAllTabs,
       });
 
-    const widgetsToDelete: FlatPageLayoutWidget[] = idsToDelete
-      .map((widgetId) => {
-        const existingWidget = findFlatEntityByIdInFlatEntityMaps({
+    const widgetsToRemove = widgetIdsToRemoveExcludingMovedToOtherTabs
+      .map((widgetId) =>
+        findFlatEntityByIdInFlatEntityMaps({
           flatEntityId: widgetId,
           flatEntityMaps: flatPageLayoutWidgetMaps,
-        });
-
-        if (!isDefined(existingWidget)) {
-          return null;
-        }
-
-        return {
-          ...existingWidget,
-          deletedAt: now.toISOString(),
-          updatedAt: now.toISOString(),
-        };
-      })
+        }),
+      )
       .filter(isDefined);
+
+    const { toHardDelete, toDeactivate } = splitEntitiesByRemovalStrategy({
+      entitiesToRemove: widgetsToRemove,
+      workspaceCustomApplicationUniversalIdentifier,
+      now: now.toISOString(),
+    });
 
     return {
       widgetsToCreate,
       widgetsToUpdate: [
         ...widgetsToUpdate,
         ...widgetsToRestoreAndUpdate,
-        ...widgetsToDelete,
+        ...toDeactivate,
       ],
+      widgetsToDelete: toHardDelete,
     };
+  }
+
+  private buildUpdatedFlatPageLayoutWidget({
+    widgetInput,
+    flatPageLayoutWidgetMaps,
+    flatPageLayoutTabMaps,
+    flatObjectMetadataMaps,
+    flatFieldMetadataMaps,
+    flatFrontComponentMaps,
+    flatViewFieldGroupMaps,
+    flatViewMaps,
+    workspaceCustomApplicationUniversalIdentifier,
+    now,
+  }: {
+    widgetInput: UpdatePageLayoutWidgetWithIdInput;
+    workspaceCustomApplicationUniversalIdentifier: string;
+    now: Date;
+  } & Pick<
+    AllFlatEntityMaps,
+    | 'flatObjectMetadataMaps'
+    | 'flatFieldMetadataMaps'
+    | 'flatFrontComponentMaps'
+    | 'flatViewFieldGroupMaps'
+    | 'flatViewMaps'
+    | 'flatPageLayoutTabMaps'
+    | 'flatPageLayoutWidgetMaps'
+  >): FlatPageLayoutWidget {
+    const existingWidget = findFlatEntityByIdInFlatEntityMapsOrThrow({
+      flatEntityId: widgetInput.id,
+      flatEntityMaps: flatPageLayoutWidgetMaps,
+    });
+
+    const shouldOverride = isCallerOverridingEntity({
+      callerApplicationUniversalIdentifier:
+        workspaceCustomApplicationUniversalIdentifier,
+      entityApplicationUniversalIdentifier:
+        existingWidget.applicationUniversalIdentifier,
+      workspaceCustomApplicationUniversalIdentifier,
+    });
+
+    const configuration = widgetInput.configuration ?? null;
+
+    const editableProperties: Partial<FlatPageLayoutWidget> = {
+      title: widgetInput.title,
+      type: widgetInput.type,
+      objectMetadataId: widgetInput.objectMetadataId ?? null,
+      gridPosition: widgetInput.gridPosition,
+      position: widgetInput.position ?? null,
+      configuration,
+      pageLayoutTabId: widgetInput.pageLayoutTabId,
+    };
+
+    if (widgetInput.conditionalDisplay !== undefined) {
+      editableProperties.conditionalDisplay =
+        widgetInput.conditionalDisplay ?? null;
+    }
+
+    if (widgetInput.conditionalAvailabilityExpression !== undefined) {
+      editableProperties.conditionalAvailabilityExpression =
+        widgetInput.conditionalAvailabilityExpression ?? null;
+    }
+
+    const { overrides, updatedEditableProperties } =
+      sanitizeOverridableEntityInput({
+        metadataName: 'pageLayoutWidget',
+        existingFlatEntity: existingWidget,
+        updatedEditableProperties: editableProperties,
+        shouldOverride,
+      });
+
+    const updatedWidget: FlatPageLayoutWidget = {
+      ...existingWidget,
+      ...updatedEditableProperties,
+      overrides,
+      updatedAt: now.toISOString(),
+    };
+
+    if (updatedEditableProperties.pageLayoutTabId !== undefined) {
+      const { pageLayoutTabUniversalIdentifier } =
+        resolveEntityRelationUniversalIdentifiers({
+          metadataName: 'pageLayoutWidget',
+          foreignKeyValues: {
+            pageLayoutTabId: updatedWidget.pageLayoutTabId,
+          },
+          flatEntityMaps: { flatPageLayoutTabMaps },
+        });
+
+      updatedWidget.pageLayoutTabUniversalIdentifier =
+        pageLayoutTabUniversalIdentifier;
+    }
+
+    if (updatedEditableProperties.objectMetadataId !== undefined) {
+      const { objectMetadataUniversalIdentifier } =
+        resolveEntityRelationUniversalIdentifiers({
+          metadataName: 'pageLayoutWidget',
+          foreignKeyValues: {
+            objectMetadataId: updatedWidget.objectMetadataId,
+          },
+          flatEntityMaps: { flatObjectMetadataMaps },
+        });
+
+      updatedWidget.objectMetadataUniversalIdentifier =
+        objectMetadataUniversalIdentifier;
+    }
+
+    if (isDefined(overrides)) {
+      updatedWidget.universalOverrides =
+        fromPageLayoutWidgetOverridesToUniversalOverrides({
+          overrides,
+          pageLayoutTabUniversalIdentifierById:
+            flatPageLayoutTabMaps.universalIdentifierById,
+        });
+    } else {
+      updatedWidget.universalOverrides = null;
+    }
+
+    if (isDefined(configuration)) {
+      updatedWidget.universalConfiguration =
+        fromPageLayoutWidgetConfigurationToUniversalConfiguration({
+          configuration,
+          fieldMetadataUniversalIdentifierById:
+            flatFieldMetadataMaps.universalIdentifierById,
+          frontComponentUniversalIdentifierById:
+            flatFrontComponentMaps.universalIdentifierById,
+          viewFieldGroupUniversalIdentifierById:
+            flatViewFieldGroupMaps.universalIdentifierById,
+          viewUniversalIdentifierById: flatViewMaps.universalIdentifierById,
+        });
+    }
+
+    return updatedWidget;
+  }
+
+  private findWidgetsInTabOrMovingToTab({
+    tabId,
+    widgetIdsInCurrentTabInput,
+    flatPageLayoutWidgetMaps,
+  }: {
+    tabId: string;
+    widgetIdsInCurrentTabInput: Set<string>;
+    flatPageLayoutWidgetMaps: AllFlatEntityMaps['flatPageLayoutWidgetMaps'];
+  }): FlatPageLayoutWidget[] {
+    return Object.values(flatPageLayoutWidgetMaps.byUniversalIdentifier)
+      .filter(isDefined)
+      .filter(
+        (widget) =>
+          widget.pageLayoutTabId === tabId ||
+          widgetIdsInCurrentTabInput.has(widget.id),
+      );
+  }
+
+  private excludeWidgetsMovedToOtherTabs({
+    idsToRemove,
+    widgetIdsAcrossAllTabs,
+  }: {
+    idsToRemove: string[];
+    widgetIdsAcrossAllTabs: Set<string>;
+  }): string[] {
+    return idsToRemove.filter(
+      (widgetId) => !widgetIdsAcrossAllTabs.has(widgetId),
+    );
   }
 
   private validateChartFieldReferences({
@@ -665,47 +868,53 @@ export class PageLayoutUpdateService {
     });
   }
 
-  private collectOrphanedViewIdsFromDeletedWidgets({
+  private collectOrphanedViewIdsFromRemovedWidgets({
+    widgetsToCreate,
     widgetsToUpdate,
+    widgetsToDelete,
     tabsToUpdate,
+    tabsToDelete,
     flatPageLayoutWidgetMaps,
   }: {
+    widgetsToCreate: FlatPageLayoutWidget[];
     widgetsToUpdate: FlatPageLayoutWidget[];
+    widgetsToDelete: FlatPageLayoutWidget[];
     tabsToUpdate: FlatPageLayoutTab[];
+    tabsToDelete: FlatPageLayoutTab[];
     flatPageLayoutWidgetMaps: Pick<
       AllFlatEntityMaps,
       'flatPageLayoutWidgetMaps'
     >['flatPageLayoutWidgetMaps'];
   }): string[] {
     const viewIdsToDelete = new Set<string>();
-    const directlyDeletedWidgetIds = new Set<string>();
+    const directlyRemovedWidgetIds = new Set<string>();
 
-    for (const widget of widgetsToUpdate) {
-      if (isDefined(widget.deletedAt)) {
-        directlyDeletedWidgetIds.add(widget.id);
-        const viewId = this.getViewIdFromFieldsWidget(widget);
+    for (const widget of widgetsToDelete) {
+      directlyRemovedWidgetIds.add(widget.id);
+      const viewId = this.getViewIdFromFieldsWidget(widget);
 
-        if (isDefined(viewId)) {
-          viewIdsToDelete.add(viewId);
-        }
+      if (isDefined(viewId)) {
+        viewIdsToDelete.add(viewId);
       }
     }
 
-    const deletedTabIds = new Set(
-      tabsToUpdate
-        .filter((tab) => isDefined(tab.deletedAt))
-        .map((tab) => tab.id),
-    );
+    for (const widget of widgetsToUpdate) {
+      if (!widget.isActive) {
+        directlyRemovedWidgetIds.add(widget.id);
+      }
+    }
+
+    const removedTabIds = new Set([
+      ...tabsToUpdate.filter((tab) => !tab.isActive).map((tab) => tab.id),
+      ...tabsToDelete.map((tab) => tab.id),
+    ]);
 
     const allExistingWidgets = Object.values(
       flatPageLayoutWidgetMaps.byUniversalIdentifier,
     ).filter(isDefined);
 
     for (const widget of allExistingWidgets) {
-      if (
-        !isDefined(widget.deletedAt) &&
-        deletedTabIds.has(widget.pageLayoutTabId)
-      ) {
+      if (widget.isActive && removedTabIds.has(widget.pageLayoutTabId)) {
         const viewId = this.getViewIdFromFieldsWidget(widget);
 
         if (isDefined(viewId)) {
@@ -716,15 +925,23 @@ export class PageLayoutUpdateService {
 
     for (const widget of allExistingWidgets) {
       if (
-        !isDefined(widget.deletedAt) &&
-        !directlyDeletedWidgetIds.has(widget.id) &&
-        !deletedTabIds.has(widget.pageLayoutTabId)
+        widget.isActive &&
+        !directlyRemovedWidgetIds.has(widget.id) &&
+        !removedTabIds.has(widget.pageLayoutTabId)
       ) {
         const viewId = this.getViewIdFromFieldsWidget(widget);
 
         if (isDefined(viewId)) {
           viewIdsToDelete.delete(viewId);
         }
+      }
+    }
+
+    for (const widget of widgetsToCreate) {
+      const viewId = this.getViewIdFromFieldsWidget(widget);
+
+      if (isDefined(viewId)) {
+        viewIdsToDelete.delete(viewId);
       }
     }
 

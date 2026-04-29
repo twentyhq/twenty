@@ -1,9 +1,11 @@
 import { Module } from '@nestjs/common';
-import { HttpAdapterHost } from '@nestjs/core';
+import { APP_FILTER, HttpAdapterHost } from '@nestjs/core';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 
 import { WorkspaceQueryRunnerModule } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-runner.module';
 import { ActorModule } from 'src/engine/core-modules/actor/actor.module';
+import { ApplicationLogsModule } from 'src/engine/core-modules/application-logs/application-logs.module';
+import { applicationLogsModuleFactory } from 'src/engine/core-modules/application-logs/application-logs.module-factory';
 import { AdminPanelModule } from 'src/engine/core-modules/admin-panel/admin-panel.module';
 import { ApiKeyModule } from 'src/engine/core-modules/api-key/api-key.module';
 import { AppTokenModule } from 'src/engine/core-modules/app-token/app-token.module';
@@ -14,10 +16,13 @@ import { ApplicationOAuthModule } from 'src/engine/core-modules/application/appl
 import { ApplicationRegistrationModule } from 'src/engine/core-modules/application/application-registration/application-registration.module';
 import { ApplicationUpgradeModule } from 'src/engine/core-modules/application/application-upgrade/application-upgrade.module';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
+import { PreInstalledAppsModule } from 'src/engine/core-modules/application/pre-installed-apps/pre-installed-apps.module';
 import { ApprovedAccessDomainModule } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.module';
 import { AuthModule } from 'src/engine/core-modules/auth/auth.module';
 import { BillingWebhookModule } from 'src/engine/core-modules/billing-webhook/billing-webhook.module';
+import { AppBillingModule } from 'src/engine/core-modules/billing/app-billing/app-billing.module';
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
+import { BillingGraphqlApiExceptionFilter } from 'src/engine/core-modules/billing/filters/billing-graphql-api-exception.filter';
 import { CacheStorageModule } from 'src/engine/core-modules/cache-storage/cache-storage.module';
 import { TimelineCalendarEventModule } from 'src/engine/core-modules/calendar/timeline-calendar-event.module';
 import { CaptchaModule } from 'src/engine/core-modules/captcha/captcha.module';
@@ -69,6 +74,7 @@ import { TrashCleanupModule } from 'src/engine/trash-cleanup/trash-cleanup.modul
 import { WorkspaceEventEmitterModule } from 'src/engine/workspace-event-emitter/workspace-event-emitter.module';
 import { ChannelSyncModule } from 'src/modules/connected-account/channel-sync/channel-sync.module';
 import { DashboardModule } from 'src/modules/dashboard/dashboard.module';
+import { SendEmailModule } from 'src/modules/messaging/message-outbound-manager/send-email.module';
 import { AuditModule } from './audit/audit.module';
 import { ClientConfigModule } from './client-config/client-config.module';
 import { EventLogsModule } from './event-logs/event-logs.module';
@@ -122,6 +128,7 @@ import { FileModule } from './file/file.module';
     SubscriptionsModule,
     ImapSmtpCaldavModule,
     ChannelSyncModule,
+    SendEmailModule,
     FileStorageModule.forRoot(),
     LoggerModule.forRootAsync({
       useFactory: loggerModuleFactory,
@@ -135,6 +142,10 @@ import { FileModule } from './file/file.module';
     ExceptionHandlerModule.forRootAsync({
       useFactory: exceptionHandlerModuleFactory,
       inject: [TwentyConfigService, HttpAdapterHost],
+    }),
+    ApplicationLogsModule.forRootAsync({
+      useFactory: applicationLogsModuleFactory,
+      inject: [TwentyConfigService],
     }),
     EmailModule.forRoot(),
     CaptchaModule.forRoot(),
@@ -153,6 +164,14 @@ import { FileModule } from './file/file.module';
     TrashCleanupModule,
     DashboardModule,
     EventLogsModule,
+    PreInstalledAppsModule,
+    AppBillingModule,
+  ],
+  providers: [
+    {
+      provide: APP_FILTER,
+      useClass: BillingGraphqlApiExceptionFilter,
+    },
   ],
   exports: [
     AuditModule,

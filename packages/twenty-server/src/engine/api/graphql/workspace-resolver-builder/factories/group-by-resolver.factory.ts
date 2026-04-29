@@ -50,7 +50,7 @@ export class GroupByResolverFactory
             resolverContext.objectIdByNameSingular,
           );
 
-        const results = await this.commonGroupByQueryRunnerService.execute(
+        const { results } = await this.commonGroupByQueryRunnerService.execute(
           { ...args, selectedFields, includeRecords: shouldIncludeRecords },
           resolverContext,
         );

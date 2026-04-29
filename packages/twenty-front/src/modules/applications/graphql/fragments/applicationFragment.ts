@@ -18,6 +18,7 @@ export const APPLICATION_FRAGMENT = gql`
       id
       latestAvailableVersion
       sourceType
+      logoUrl
     }
     canBeUninstalled
     defaultRoleId
@@ -32,6 +33,19 @@ export const APPLICATION_FRAGMENT = gql`
     }
     agents {
       ...AgentFields
+    }
+    frontComponents {
+      id
+      name
+      description
+      applicationId
+      componentName
+      builtComponentChecksum
+      universalIdentifier
+      isHeadless
+      usesSdkClient
+      createdAt
+      updatedAt
     }
     objects {
       ...ObjectMetadataFields

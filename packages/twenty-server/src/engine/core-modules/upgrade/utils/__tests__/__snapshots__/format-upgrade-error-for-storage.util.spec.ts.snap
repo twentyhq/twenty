@@ -1,0 +1,52 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`formatUpgradeErrorForStorage should format a CustomError with code 1`] = `
+"[CustomError] Workspace not found
+Code: WORKSPACE_NOT_FOUND"
+`;
+
+exports[`formatUpgradeErrorForStorage should format a QueryFailedError with driver details 1`] = `
+"[QueryFailedError] duplicate key value violates unique constraint "UQ_name"
+PostgreSQL code: 23505
+Detail: Key (name)=(foo) already exists.
+Query: INSERT INTO "core"."upgradeMigration" VALUES ($1)"
+`;
+
+exports[`formatUpgradeErrorForStorage should format a QueryFailedError without driver code or detail 1`] = `
+"[QueryFailedError] relation "missing_table" does not exist
+Query: SELECT * FROM "missing_table""
+`;
+
+exports[`formatUpgradeErrorForStorage should format a WorkspaceMigrationBuilderException 1`] = `
+"[WorkspaceMigrationBuilderException] Workspace migration builder failed
+Report: {
+  "objectMetadata": [
+    {
+      "validationErrors": [
+        "name must not be empty"
+      ]
+    }
+  ]
+}"
+`;
+
+exports[`formatUpgradeErrorForStorage should format a WorkspaceMigrationRunnerException with EXECUTION_FAILED 1`] = `
+"[WorkspaceMigrationRunnerException] Migration action 'create' for 'objectMetadata' failed
+Code: EXECUTION_FAILED
+Action: create on objectMetadata
+Metadata error: column "label" cannot be null
+Schema error: table already exists"
+`;
+
+exports[`formatUpgradeErrorForStorage should format a WorkspaceMigrationRunnerException with INTERNAL_SERVER_ERROR 1`] = `
+"[WorkspaceMigrationRunnerException] Something went wrong internally
+Code: INTERNAL_SERVER_ERROR"
+`;
+
+exports[`formatUpgradeErrorForStorage should format a generic Error 1`] = `"[Error] Something unexpected happened"`;
+
+exports[`formatUpgradeErrorForStorage should format a number value 1`] = `"42"`;
+
+exports[`formatUpgradeErrorForStorage should format a string value 1`] = `"raw string error"`;
+
+exports[`formatUpgradeErrorForStorage should format an undefined value 1`] = `"undefined"`;

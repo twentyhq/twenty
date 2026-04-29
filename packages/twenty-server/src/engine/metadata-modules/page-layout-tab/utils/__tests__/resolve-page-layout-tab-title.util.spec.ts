@@ -2,13 +2,14 @@ import { type I18n } from '@lingui/core';
 
 import { generateMessageId } from 'src/engine/core-modules/i18n/utils/generateMessageId';
 import { resolvePageLayoutTabTitle } from 'src/engine/metadata-modules/page-layout-tab/utils/resolve-page-layout-tab-title.util';
-import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
 
 jest.mock('src/engine/core-modules/i18n/utils/generateMessageId');
 
 const mockGenerateMessageId = generateMessageId as jest.MockedFunction<
   typeof generateMessageId
 >;
+
+const STANDARD_APPLICATION_ID = 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa';
 
 describe('resolvePageLayoutTabTitle', () => {
   let mockI18n: jest.Mocked<I18n>;
@@ -26,7 +27,8 @@ describe('resolvePageLayoutTabTitle', () => {
 
     const result = resolvePageLayoutTabTitle({
       title: 'Home',
-      applicationId: TWENTY_STANDARD_APPLICATION.universalIdentifier,
+      applicationId: STANDARD_APPLICATION_ID,
+      twentyStandardApplicationId: STANDARD_APPLICATION_ID,
       i18nInstance: mockI18n,
     });
 
@@ -41,7 +43,8 @@ describe('resolvePageLayoutTabTitle', () => {
 
     const result = resolvePageLayoutTabTitle({
       title: 'My Custom Tab',
-      applicationId: TWENTY_STANDARD_APPLICATION.universalIdentifier,
+      applicationId: STANDARD_APPLICATION_ID,
+      twentyStandardApplicationId: STANDARD_APPLICATION_ID,
       i18nInstance: mockI18n,
     });
 
@@ -56,7 +59,8 @@ describe('resolvePageLayoutTabTitle', () => {
 
     const result = resolvePageLayoutTabTitle({
       title: '',
-      applicationId: TWENTY_STANDARD_APPLICATION.universalIdentifier,
+      applicationId: STANDARD_APPLICATION_ID,
+      twentyStandardApplicationId: STANDARD_APPLICATION_ID,
       i18nInstance: mockI18n,
     });
 
@@ -83,7 +87,8 @@ describe('resolvePageLayoutTabTitle', () => {
 
       const result = resolvePageLayoutTabTitle({
         title: source,
-        applicationId: TWENTY_STANDARD_APPLICATION.universalIdentifier,
+        applicationId: STANDARD_APPLICATION_ID,
+        twentyStandardApplicationId: STANDARD_APPLICATION_ID,
         i18nInstance: mockI18n,
       });
 
@@ -100,11 +105,46 @@ describe('resolvePageLayoutTabTitle', () => {
     const result = resolvePageLayoutTabTitle({
       title: 'Home',
       applicationId: customAppId,
+      twentyStandardApplicationId: STANDARD_APPLICATION_ID,
       i18nInstance: mockI18n,
     });
 
     expect(mockGenerateMessageId).not.toHaveBeenCalled();
     expect(mockI18n._).not.toHaveBeenCalled();
     expect(result).toBe('Home');
+  });
+
+  it('should not translate title when overrides.title is defined', () => {
+    mockGenerateMessageId.mockReturnValue('abc123');
+    mockI18n._.mockReturnValue('Accueil');
+
+    const result = resolvePageLayoutTabTitle({
+      title: 'Home',
+      applicationId: STANDARD_APPLICATION_ID,
+      twentyStandardApplicationId: STANDARD_APPLICATION_ID,
+      overrides: { title: 'Home' },
+      i18nInstance: mockI18n,
+    });
+
+    expect(mockGenerateMessageId).not.toHaveBeenCalled();
+    expect(mockI18n._).not.toHaveBeenCalled();
+    expect(result).toBe('Home');
+  });
+
+  it('should translate title when overrides is defined but overrides.title is not', () => {
+    mockGenerateMessageId.mockReturnValue('abc123');
+    mockI18n._.mockReturnValue('Accueil');
+
+    const result = resolvePageLayoutTabTitle({
+      title: 'Home',
+      applicationId: STANDARD_APPLICATION_ID,
+      twentyStandardApplicationId: STANDARD_APPLICATION_ID,
+      overrides: { icon: 'IconCustom' },
+      i18nInstance: mockI18n,
+    });
+
+    expect(mockGenerateMessageId).toHaveBeenCalledWith('Home');
+    expect(mockI18n._).toHaveBeenCalledWith('abc123');
+    expect(result).toBe('Accueil');
   });
 });

@@ -7,7 +7,6 @@ import {
 import {
   Args,
   Context,
-  Float,
   Mutation,
   Parent,
   Query,
@@ -15,9 +14,9 @@ import {
 } from '@nestjs/graphql';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
-import { isDefined } from 'twenty-shared/utils';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { type I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
@@ -32,7 +31,6 @@ import { PageLayoutTabDTO } from 'src/engine/metadata-modules/page-layout-tab/dt
 import { PageLayoutTabService } from 'src/engine/metadata-modules/page-layout-tab/services/page-layout-tab.service';
 import { resolvePageLayoutTabTitle } from 'src/engine/metadata-modules/page-layout-tab/utils/resolve-page-layout-tab-title.util';
 import { PageLayoutGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/page-layout/utils/page-layout-graphql-api-exception.filter';
-import { resolveOverridableEntityProperty } from 'src/engine/metadata-modules/utils/resolve-overridable-entity-property.util';
 import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
 
 @MetadataResolver(() => PageLayoutTabDTO)
@@ -44,36 +42,29 @@ export class PageLayoutTabResolver {
   constructor(
     private readonly pageLayoutTabService: PageLayoutTabService,
     private readonly i18nService: I18nService,
+    private readonly applicationService: ApplicationService,
   ) {}
 
   @ResolveField(() => String)
   async title(
     @Parent() tab: PageLayoutTabDTO,
     @Context() context: I18nContext,
+    @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<string> {
-    const resolvedTitle = resolveOverridableEntityProperty(tab, 'title');
     const i18n = this.i18nService.getI18nInstance(context.req.locale);
 
+    const { twentyStandardFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspace },
+      );
+
     return resolvePageLayoutTabTitle({
-      title: resolvedTitle,
+      title: tab.title,
       applicationId: tab.applicationId,
+      twentyStandardApplicationId: twentyStandardFlatApplication.id,
+      overrides: tab.overrides,
       i18nInstance: i18n,
     });
-  }
-
-  @ResolveField(() => Float)
-  position(@Parent() tab: PageLayoutTabDTO): number {
-    return resolveOverridableEntityProperty(tab, 'position');
-  }
-
-  @ResolveField(() => String, { nullable: true })
-  icon(@Parent() tab: PageLayoutTabDTO): string | null | undefined {
-    return resolveOverridableEntityProperty(tab, 'icon');
-  }
-
-  @ResolveField(() => Boolean)
-  isOverridden(@Parent() tab: PageLayoutTabDTO): boolean {
-    return isDefined(tab.overrides) && Object.keys(tab.overrides).length > 0;
   }
 
   @Query(() => [PageLayoutTabDTO])

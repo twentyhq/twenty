@@ -5,6 +5,7 @@ import {
   useAiModelLabel,
   useAiModelOptions,
 } from '@/ai/hooks/useAiModelOptions';
+import { SettingsAgentModelCapabilities } from '@/ai/components/SettingsAgentModelCapabilities';
 import { aiModelsState } from '@/client-config/states/aiModelsState';
 import { IconPicker } from '@/ui/input/components/IconPicker';
 import { Select } from '@/ui/input/components/Select';
@@ -20,8 +21,7 @@ import { type Agent } from '~/generated-metadata/graphql';
 import { SettingsAgentDeleteConfirmationModal } from '~/pages/settings/ai/components/SettingsAgentDeleteConfirmationModal';
 import { SettingsAgentResponseFormat } from '~/pages/settings/ai/components/SettingsAgentResponseFormat';
 import { computeMetadataNameFromLabel } from '~/pages/settings/data-model/utils/computeMetadataNameFromLabel';
-import { SettingsAgentModelCapabilities } from '~/pages/settings/ai/components/SettingsAgentModelCapabilities';
-import { type SettingsAIAgentFormValues } from '~/pages/settings/ai/hooks/useSettingsAgentFormState';
+import { type SettingsAiAgentFormValues } from '~/pages/settings/ai/hooks/useSettingsAgentFormState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 const StyledFormContainer = styled.div`
@@ -49,10 +49,10 @@ const StyledErrorMessage = styled.div`
 const DELETE_AGENT_MODAL_ID = 'delete-agent-modal';
 
 type SettingsAgentSettingsTabProps = {
-  formValues: SettingsAIAgentFormValues;
+  formValues: SettingsAiAgentFormValues;
   onFieldChange: (
-    field: keyof SettingsAIAgentFormValues,
-    value: SettingsAIAgentFormValues[keyof SettingsAIAgentFormValues],
+    field: keyof SettingsAiAgentFormValues,
+    value: SettingsAiAgentFormValues[keyof SettingsAiAgentFormValues],
   ) => void;
   disabled: boolean;
   agent?: Agent;
@@ -68,7 +68,7 @@ export const SettingsAgentSettingsTab = ({
   const { openModal } = useModal();
 
   const aiModels = useAtomStateValue(aiModelsState);
-  const activeModelOptions = useAiModelOptions();
+  const { options: activeModelOptions } = useAiModelOptions();
   const currentModelLabel = useAiModelLabel(formValues.modelId);
 
   const currentModel = aiModels.find((m) => m.modelId === formValues.modelId);

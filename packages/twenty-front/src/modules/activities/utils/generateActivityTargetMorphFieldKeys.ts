@@ -3,7 +3,6 @@ import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/Enriche
 
 export const generateActivityTargetMorphFieldKeys = (
   objectMetadataItems: EnrichedObjectMetadataItem[],
-  isMorphRelation: boolean,
 ) => {
   const targetableObjectMetadataItems = objectMetadataItems.filter(
     (objectMetadataItem) =>
@@ -14,7 +13,6 @@ export const generateActivityTargetMorphFieldKeys = (
     targetableObjectMetadataItems.map((objectMetadataItem) => {
       const targetFieldIdName = getActivityTargetObjectFieldIdName({
         nameSingular: objectMetadataItem.nameSingular,
-        isMorphRelation,
       });
 
       return [targetFieldIdName.replace(/Id$/, ''), true];
@@ -25,7 +23,6 @@ export const generateActivityTargetMorphFieldKeys = (
     targetableObjectMetadataItems.map((objectMetadataItem) => {
       const targetFieldIdName = getActivityTargetObjectFieldIdName({
         nameSingular: objectMetadataItem.nameSingular,
-        isMorphRelation,
       });
 
       return [targetFieldIdName, true];

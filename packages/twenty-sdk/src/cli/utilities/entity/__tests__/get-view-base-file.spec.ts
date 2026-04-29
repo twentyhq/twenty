@@ -8,7 +8,7 @@ describe('getViewBaseFile', () => {
       objectUniversalIdentifier: 'obj-abc-123',
     });
 
-    expect(result).toContain("import { defineView } from 'twenty-sdk'");
+    expect(result).toContain("import { defineView } from 'twenty-sdk/define';");
     expect(result).toContain('export default defineView({');
     expect(result).toContain(
       "universalIdentifier: '71e45a58-41da-4ae4-8b73-a543c0a9d3d4'",
@@ -27,13 +27,14 @@ describe('getViewBaseFile', () => {
     expect(result).toContain("objectUniversalIdentifier: 'fill-later'");
   });
 
-  it('should include commented fields and filters when no fields provided', () => {
+  it('should include commented fields, filters and sorts when no fields provided', () => {
     const result = getViewBaseFile({
       name: 'empty-view',
     });
 
     expect(result).toContain('// fields: [');
     expect(result).toContain('// filters: [');
+    expect(result).toContain('// sorts: [');
   });
 
   it('should render fields block when fields are provided', () => {
@@ -71,8 +72,8 @@ describe('getViewBaseFile', () => {
     });
 
     // Default isVisible is true, default size is 200
-    expect(result).toContain('"isVisible": true');
-    expect(result).toContain('"size": 200');
+    expect(result).toContain('isVisible: true');
+    expect(result).toContain('size: 200');
   });
 
   it('should generate unique UUID when not provided', () => {
@@ -111,5 +112,42 @@ describe('getViewBaseFile', () => {
 
     // At least 2 UUIDs: one for the view and one for the field
     expect(matches!.length).toBeGreaterThanOrEqual(2);
+  });
+
+  it('should emit a generateDefaultFieldUniversalIdentifier call for fields using defaultFieldName', () => {
+    const result = getViewBaseFile({
+      name: 'view-default-field',
+      objectUniversalIdentifier: 'obj-abc-123',
+      fields: [
+        {
+          defaultFieldName: 'createdAt',
+          position: 0,
+        },
+      ],
+    });
+
+    expect(result).toContain(
+      "import {\n  defineView,\n  generateDefaultFieldUniversalIdentifier,\n} from 'twenty-sdk/define';",
+    );
+    expect(result).toContain(
+      'fieldMetadataUniversalIdentifier: generateDefaultFieldUniversalIdentifier({',
+    );
+    expect(result).toContain("objectUniversalIdentifier: 'obj-abc-123'");
+    expect(result).toContain("fieldName: 'createdAt'");
+  });
+
+  it('should not import generateDefaultFieldUniversalIdentifier when no field uses defaultFieldName', () => {
+    const result = getViewBaseFile({
+      name: 'view-literal-only',
+      fields: [
+        {
+          fieldMetadataUniversalIdentifier: 'field-uuid-1',
+          position: 0,
+        },
+      ],
+    });
+
+    expect(result).not.toContain('generateDefaultFieldUniversalIdentifier');
+    expect(result).toContain("import { defineView } from 'twenty-sdk/define';");
   });
 });

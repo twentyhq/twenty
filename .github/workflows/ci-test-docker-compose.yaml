@@ -121,7 +121,7 @@ jobs:
       - name: Start container
         run: |
           docker run -d --name twenty-app-dev \
-            -p 3000:3000 \
+            -p 2020:2020 \
             twenty-app-dev-ci
           docker logs twenty-app-dev -f &
       - name: Wait for server health
@@ -129,10 +129,10 @@ jobs:
           echo "Waiting for twenty-app-dev to become healthy..."
           count=0
           while true; do
-            status=$(curl -s -o /dev/null -w '%{http_code}' http://localhost:3000/healthz 2>/dev/null || echo "000")
+            status=$(curl -s -o /dev/null -w '%{http_code}' http://localhost:2020/healthz 2>/dev/null || echo "000")
             if [ "$status" = "200" ]; then
               echo "Server is healthy!"
-              curl -s http://localhost:3000/healthz
+              curl -s http://localhost:2020/healthz
               break
             fi
 

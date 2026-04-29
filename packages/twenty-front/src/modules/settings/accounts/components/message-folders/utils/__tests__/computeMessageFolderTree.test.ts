@@ -8,6 +8,7 @@ describe('computeMessageFolderTree', () => {
     parentFolderId: string | null = null,
     externalId: string | null = null,
   ): MessageFolder => ({
+    __typename: 'MessageFolder',
     id,
     name,
     parentFolderId,
@@ -15,8 +16,8 @@ describe('computeMessageFolderTree', () => {
     isSentFolder: false,
     isSynced: false,
     messageChannelId: '20202020-1c25-4d02-bf25-6aeccf7ea419',
-    __typename: 'MessageFolder',
-    syncCursor: '',
+    createdAt: '2026-01-01T00:00:00Z',
+    updatedAt: '2026-01-01T00:00:00Z',
   });
 
   it('should return empty array for empty input', () => {
@@ -147,7 +148,7 @@ describe('computeMessageFolderTree', () => {
     expect(result[0].children[1].folder.name).toBe('Projects');
   });
 
-  it('should resolve parent-child when parentFolderId references parent id instead of externalId', () => {
+  it('should resolve parent-child when parentFolderId references parent externalId', () => {
     const parent = createFolder(
       '20202020-aaaa-bbbb-cccc-000000000001',
       'custom folder',
@@ -157,7 +158,7 @@ describe('computeMessageFolderTree', () => {
     const child = createFolder(
       '20202020-aaaa-bbbb-cccc-000000000002',
       'child folder',
-      '20202020-aaaa-bbbb-cccc-000000000001',
+      'Label_5900090362003645629',
       'Label_7713410187110265162',
     );
     const result = computeMessageFolderTree([parent, child]);

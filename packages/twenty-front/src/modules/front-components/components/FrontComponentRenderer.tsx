@@ -8,7 +8,7 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { t } from '@lingui/core/macro';
 import { useCallback, useContext, useEffect } from 'react';
-import { FrontComponentRenderer as SharedFrontComponentRenderer } from 'twenty-sdk/front-component-renderer';
+import { FrontComponentRenderer as SharedFrontComponentRenderer } from 'twenty-front-component-renderer';
 import { isDefined } from 'twenty-shared/utils';
 import { ThemeContext } from 'twenty-ui/theme-constants';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
@@ -18,11 +18,13 @@ import { FindOneFrontComponentDocument } from '~/generated-metadata/graphql';
 type FrontComponentRendererProps = {
   frontComponentId: string;
   commandMenuItemId?: string;
+  recordId?: string;
 };
 
 export const FrontComponentRenderer = ({
   frontComponentId,
   commandMenuItemId,
+  recordId,
 }: FrontComponentRendererProps) => {
   const { colorScheme } = useContext(ThemeContext);
   const { enqueueErrorSnackBar } = useSnackBar();
@@ -33,7 +35,11 @@ export const FrontComponentRenderer = ({
   );
 
   const { executionContext, frontComponentHostCommunicationApi } =
-    useFrontComponentExecutionContext({ frontComponentId, commandMenuItemId });
+    useFrontComponentExecutionContext({
+      frontComponentId,
+      commandMenuItemId,
+      recordId,
+    });
 
   const handleError = useCallback(
     (error?: Error) => {

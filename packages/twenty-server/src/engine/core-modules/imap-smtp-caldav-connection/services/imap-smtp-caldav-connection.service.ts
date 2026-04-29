@@ -1,12 +1,15 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import { msg } from '@lingui/core/macro';
 import { ImapFlow } from 'imapflow';
 import { createTransport } from 'nodemailer';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
+import { Repository } from 'typeorm';
 
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
-import { ConnectedAccountDataAccessService } from 'src/engine/metadata-modules/connected-account/data-access/services/connected-account-data-access.service';
+import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
+import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import {
   type AccountType,
   type ConnectionParameters,
@@ -14,7 +17,6 @@ import {
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { CalDAVClient } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/lib/caldav.client';
-import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 
 @Injectable()
 export class ImapSmtpCaldavService {
@@ -22,15 +24,20 @@ export class ImapSmtpCaldavService {
 
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
-    private readonly connectedAccountDataAccessService: ConnectedAccountDataAccessService,
+    @InjectRepository(ConnectedAccountEntity)
+    private readonly connectedAccountRepository: Repository<ConnectedAccountEntity>,
+    private readonly secureHttpClientService: SecureHttpClientService,
   ) {}
 
   async testImapConnection(
     handle: string,
     params: ConnectionParameters,
   ): Promise<boolean> {
+    const validatedHost = await this.secureHttpClientService.getValidatedHost(
+      params.host,
+    );
     const client = new ImapFlow({
-      host: params.host,
+      host: validatedHost,
       port: params.port,
       secure: params.secure ?? true,
       auth: {
@@ -91,8 +98,11 @@ export class ImapSmtpCaldavService {
     handle: string,
     params: ConnectionParameters,
   ): Promise<boolean> {
+    const validatedHost = await this.secureHttpClientService.getValidatedHost(
+      params.host,
+    );
     const transport = createTransport({
-      host: params.host,
+      host: validatedHost,
       port: params.port,
       auth: {
         user: params.username ?? handle,
@@ -122,10 +132,12 @@ export class ImapSmtpCaldavService {
     handle: string,
     params: ConnectionParameters,
   ): Promise<boolean> {
+    const ssrfSafeFetch = this.secureHttpClientService.createSsrfSafeFetch();
     const client = new CalDAVClient({
       serverUrl: params.host,
       username: params.username ?? handle,
       password: params.password,
+      fetch: ssrfSafeFetch,
     });
 
     try {
@@ -185,20 +197,20 @@ export class ImapSmtpCaldavService {
   async getImapSmtpCaldav(
     workspaceId: string,
     connectionId: string,
-  ): Promise<ConnectedAccountWorkspaceEntity | null> {
+  ): Promise<ConnectedAccountEntity | null> {
     const authContext = buildSystemAuthContext(workspaceId);
 
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
       async () => {
-        const connectedAccount =
-          await this.connectedAccountDataAccessService.findOne(workspaceId, {
-            where: {
-              id: connectionId,
-              provider: ConnectedAccountProvider.IMAP_SMTP_CALDAV,
-            },
-          });
+        const connectedAccount = await this.connectedAccountRepository.findOne({
+          where: {
+            id: connectionId,
+            provider: ConnectedAccountProvider.IMAP_SMTP_CALDAV,
+            workspaceId,
+          },
+        });
 
-        return connectedAccount as ConnectedAccountWorkspaceEntity | null;
+        return connectedAccount;
       },
       authContext,
     );

@@ -24,11 +24,13 @@ const StyledAddButtonContainer = styled.div`
 type RecordTableSettingsSortsContentProps = {
   sortableFieldOptions: Array<SelectOption<string>>;
   directionOptions: Array<SelectOption<ViewSortDirection>>;
+  onUpdate?: () => void;
 };
 
 export const RecordTableSettingsSortsContent = ({
   sortableFieldOptions,
   directionOptions,
+  onUpdate,
 }: RecordTableSettingsSortsContentProps) => {
   const [currentRecordSorts, setCurrentRecordSorts] = useAtomComponentState(
     currentRecordSortsComponentState,
@@ -48,12 +50,14 @@ export const RecordTableSettingsSortsContent = ({
     };
 
     setCurrentRecordSorts([...currentRecordSorts, newSort]);
+    onUpdate?.();
   };
 
   const handleRemoveSort = (sortId: string) => {
     setCurrentRecordSorts(
       currentRecordSorts.filter((sort) => sort.id !== sortId),
     );
+    onUpdate?.();
   };
 
   const handleFieldChange = (sortId: string, fieldMetadataId: string) => {
@@ -62,6 +66,7 @@ export const RecordTableSettingsSortsContent = ({
         sort.id === sortId ? { ...sort, fieldMetadataId } : sort,
       ),
     );
+    onUpdate?.();
   };
 
   const handleDirectionChange = (
@@ -73,6 +78,7 @@ export const RecordTableSettingsSortsContent = ({
         sort.id === sortId ? { ...sort, direction } : sort,
       ),
     );
+    onUpdate?.();
   };
 
   return (

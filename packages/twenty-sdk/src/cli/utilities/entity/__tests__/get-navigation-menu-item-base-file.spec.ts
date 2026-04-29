@@ -8,7 +8,7 @@ describe('getNavigationMenuItemBaseFile', () => {
     });
 
     expect(result).toContain(
-      "import { defineNavigationMenuItem } from 'twenty-sdk'",
+      "import { defineNavigationMenuItem, NavigationMenuItemType } from 'twenty-sdk/define';",
     );
     expect(result).toContain('export default defineNavigationMenuItem({');
     expect(result).toContain(
@@ -26,7 +26,7 @@ describe('getNavigationMenuItemBaseFile', () => {
       viewUniversalIdentifier: 'view-uuid-123',
     });
 
-    expect(result).toContain("type: 'VIEW'");
+    expect(result).toContain('type: NavigationMenuItemType.VIEW');
     expect(result).toContain("viewUniversalIdentifier: 'view-uuid-123'");
   });
 
@@ -35,7 +35,7 @@ describe('getNavigationMenuItemBaseFile', () => {
       name: 'unlinked-item',
     });
 
-    expect(result).toContain("type: 'VIEW'");
+    expect(result).toContain('type: NavigationMenuItemType.VIEW');
     expect(result).toContain('// viewUniversalIdentifier:');
   });
 
@@ -46,7 +46,7 @@ describe('getNavigationMenuItemBaseFile', () => {
       targetObjectUniversalIdentifier: 'obj-uuid-123',
     });
 
-    expect(result).toContain("type: 'OBJECT'");
+    expect(result).toContain('type: NavigationMenuItemType.OBJECT');
     expect(result).toContain("targetObjectUniversalIdentifier: 'obj-uuid-123'");
   });
 

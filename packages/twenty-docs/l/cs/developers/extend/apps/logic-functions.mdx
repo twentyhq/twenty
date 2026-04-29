@@ -1,0 +1,561 @@
+---
+title: Logické funkce
+description: Definujte serverové funkce v TypeScriptu se spouštěči pro HTTP, cron a databázové události.
+icon: bolt
+---
+
+Logické funkce jsou serverové funkce v TypeScriptu, které běží na platformě Twenty. Mohou být spouštěny požadavky HTTP, plány cronu nebo databázovými událostmi — a lze je také zpřístupnit jako nástroje pro agenty AI.
+
+<AccordionGroup>
+<Accordion title="defineLogicFunction" description="Definujte logické funkce a jejich spouštěče">
+
+Každý soubor funkce používá `defineLogicFunction()` k exportu konfigurace s obslužnou funkcí (handlerem) a volitelnými spouštěči.
+
+```ts src/logic-functions/createPostCard.logic-function.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import type { DatabaseEventPayload, ObjectRecordCreateEvent, CronPayload, RoutePayload } from 'twenty-sdk/define';
+import { CoreApiClient, type Person } from 'twenty-client-sdk/core';
+
+const handler = async (params: RoutePayload) => {
+  const client = new CoreApiClient();
+  const name = 'name' in params.queryStringParameters
+    ? params.queryStringParameters.name ?? process.env.DEFAULT_RECIPIENT_NAME ?? 'Hello world'
+    : 'Hello world';
+
+  const result = await client.mutation({
+    createPostCard: {
+      __args: { data: { name } },
+      id: true,
+      name: true,
+    },
+  });
+  return result;
+};
+
+export default defineLogicFunction({
+  universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
+  name: 'create-new-post-card',
+  timeoutSeconds: 2,
+  handler,
+  httpRouteTriggerSettings: {
+    path: '/post-card/create',
+    httpMethod: 'GET',
+    isAuthRequired: true,
+  },
+  /*databaseEventTriggerSettings: {
+    eventName: 'people.created',
+  },*/
+  /*cronTriggerSettings: {
+    pattern: '0 0 1 1 *',
+  },*/
+});
+```
+
+Dostupné typy spouštěčů:
+* **httpRoute**: Zpřístupní vaši funkci na HTTP cestě a metodě **pod koncovým bodem `/s/`**:
+> např. `path: '/post-card/create'` je volatelné na `https://your-twenty-server.com/s/post-card/create`
+* **cron**: Spouští vaši funkci podle plánu pomocí výrazu CRON.
+* **databaseEvent**: Spouští se při událostech životního cyklu objektů v pracovním prostoru. Když je operace události `updated`, lze konkrétní sledovaná pole určit v poli `updatedFields`. Pokud zůstane nedefinované nebo prázdné, spustí funkci jakákoli aktualizace.
+> např. `person.updated`, `*.created`, `company.*`
+
+<Note>
+Funkci můžete také spustit ručně pomocí CLI:
+
+```bash filename="Terminal"
+yarn twenty exec -n create-new-post-card -p '{"key": "value"}'
+```
+
+```bash filename="Terminal"
+yarn twenty exec -y e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf
+```
+
+Logy můžete sledovat pomocí:
+
+```bash filename="Terminal"
+yarn twenty logs
+```
+</Note>
+
+#### Payload spouštěče trasy
+
+Když spouštěč typu route vyvolá vaši logickou funkci, ta obdrží objekt `RoutePayload`, který odpovídá
+[AWS HTTP API v2 formátu](https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-develop-integrations-lambda.html).
+Importujte typ `RoutePayload` z `twenty-sdk`:
+
+```ts
+import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
+
+const handler = async (event: RoutePayload) => {
+  const { headers, queryStringParameters, pathParameters, body } = event;
+  const { method, path } = event.requestContext.http;
+
+  return { message: 'Success' };
+};
+```
+
+Typ `RoutePayload` má následující strukturu:
+
+  | Vlastnost                    | Typ                                                     | Popis                                                                                                                                                                                                 | Příklad                                                                    |
+  | ---------------------------- | ------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
+  | `headers`                    | `Record\<string, string \| undefined>` | Záhlaví HTTP (pouze ta uvedená v `forwardedRequestHeaders`)                                                                                                                                           | viz sekci níže                                                             |
+  | `queryStringParameters`      | `Record\<string, string \| undefined>` | Parametry query stringu (více hodnot spojených čárkami)                                                                                                                                               | `/users?ids=1&ids=2&ids=3&name=Alice` -> `{ ids: '1,2,3', name: 'Alice' }` |
+  | `pathParameters`             | `Record\<string, string \| undefined>` | Parametry cesty extrahované ze vzoru trasy                                                                                                                                                            | `/users/:id`, `/users/123` -> `{ id: '123' }`                              |
+  | `body`                       | `object \| null`                                        | Parsované tělo požadavku (JSON)                                                                                                                                                                       | `{ id: 1 }` -> `{ id: 1 }`                                                 |
+  | `rawBody`                    | `string \| undefined`                                   | Original UTF-8 request body, before JSON parsing. Useful for verifying HMAC-style webhook signatures (e.g. GitHub's `X-Hub-Signature-256`, Stripe). `undefined` when the runtime did not preserve it. |                                                                            |
+  | `isBase64Encoded`            | `boolean`                                               | Zda je tělo kódováno base64                                                                                                                                                                           |                                                                            |
+  | `requestContext.http.method` | `string`                                                | Metoda HTTP (GET, POST, PUT, PATCH, DELETE)                                                                                                                                                           |                                                                            |
+  | `requestContext.http.path`   | `string`                                                | Nezpracovaná cesta požadavku                                                                                                                                                                          |                                                                            |
+
+
+#### forwardedRequestHeaders
+
+Ve výchozím nastavení se záhlaví HTTP z příchozích požadavků z bezpečnostních důvodů do vaší logické funkce **ne** předávají.
+Chcete-li zpřístupnit konkrétní záhlaví, výslovně je uveďte v poli `forwardedRequestHeaders`:
+
+```ts
+export default defineLogicFunction({
+  universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
+  name: 'webhook-handler',
+  handler,
+  httpRouteTriggerSettings: {
+    path: '/webhook',
+    httpMethod: 'POST',
+    isAuthRequired: false,
+    forwardedRequestHeaders: ['x-webhook-signature', 'content-type'],
+  },
+});
+```
+
+Ve vašem handleru k přeposlaným záhlavím přistupujte takto:
+
+```ts
+const handler = async (event: RoutePayload) => {
+  const signature = event.headers['x-webhook-signature'];
+  const contentType = event.headers['content-type'];
+
+  // Validate webhook signature...
+  return { received: true };
+};
+```
+
+<Note>
+Názvy záhlaví jsou normalizovány na malá písmena. Přistupujte k nim pomocí klíčů s malými písmeny (například `event.headers['content-type']`).
+</Note>
+
+#### Zpřístupnění funkce jako nástroje
+
+Logické funkce lze zpřístupnit jako **nástroje** pro agenty AI a pracovní postupy. Když je funkce označena jako nástroj, stane se dohledatelnou funkcemi AI produktu Twenty a lze ji použít v automatizacích pracovních postupů.
+
+Chcete-li označit logickou funkci jako nástroj, nastavte `isTool: true`:
+
+```ts src/logic-functions/enrich-company.logic-function.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import { CoreApiClient } from 'twenty-client-sdk/core';
+
+const handler = async (params: { companyName: string; domain?: string }) => {
+  const client = new CoreApiClient();
+
+  const result = await client.mutation({
+    createTask: {
+      __args: {
+        data: {
+          title: `Enrich data for ${params.companyName}`,
+          body: `Domain: ${params.domain ?? 'unknown'}`,
+        },
+      },
+      id: true,
+    },
+  });
+
+  return { taskId: result.createTask.id };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: 'f47ac10b-58cc-4372-a567-0e02b2c3d479',
+  name: 'enrich-company',
+  description: 'Enrich a company record with external data',
+  timeoutSeconds: 10,
+  handler,
+  isTool: true,
+});
+```
+
+Hlavní body:
+
+* Můžete kombinovat `isTool` se spouštěči — funkce může být zároveň nástrojem (volatelným agenty AI) a současně se spouštět událostmi.
+* **`toolInputSchema`** (volitelné): Objekt JSON Schema, který popisuje parametry, jež vaše funkce přijímá. Schéma se určuje automaticky ze statické analýzy zdrojového kódu, ale můžete ho nastavit i explicitně:
+
+```ts
+export default defineLogicFunction({
+  ...,
+  toolInputSchema: {
+    type: 'object',
+    properties: {
+      companyName: {
+        type: 'string',
+        description: 'The name of the company to enrich',
+      },
+      domain: {
+        type: 'string',
+        description: 'The company website domain (optional)',
+      },
+    },
+    required: ['companyName'],
+  },
+});
+```
+
+<Note>
+**Napište kvalitní `description`.** Agenti AI se spoléhají na pole funkce `description` při rozhodování, kdy nástroj použít. Buďte konkrétní ohledně toho, co nástroj dělá a kdy se má volat.
+</Note>
+
+</Accordion>
+<Accordion title="definePostInstallLogicFunction" description="Definujte postinstalační logickou funkci (jedna na aplikaci)">
+
+Postinstalační funkce je logická funkce, která se spustí automaticky, jakmile je instalace vaší aplikace v pracovním prostoru dokončena. Server ji provede **poté**, co byla synchronizována metadata aplikace a vygenerován klient SDK, takže je pracovní prostor plně připraven k použití a nové schéma je zavedeno. Mezi typické případy použití patří naplnění výchozími daty, vytvoření počátečních záznamů, konfigurace nastavení pracovního prostoru nebo zřizování prostředků ve službách třetích stran.
+
+```ts src/logic-functions/post-install.ts
+import { definePostInstallLogicFunction, type InstallPayload } from 'twenty-sdk/define';
+
+const handler = async (payload: InstallPayload): Promise<void> => {
+  console.log('Post install logic function executed successfully!', payload.previousVersion);
+};
+
+export default definePostInstallLogicFunction({
+  universalIdentifier: 'f7a2b9c1-3d4e-5678-abcd-ef9876543210',
+  name: 'post-install',
+  description: 'Runs after installation to set up the application.',
+  timeoutSeconds: 300,
+  shouldRunOnVersionUpgrade: false,
+  shouldRunSynchronously: false,
+  handler,
+});
+```
+
+Postinstalační funkci můžete také kdykoli spustit ručně pomocí CLI:
+
+```bash filename="Terminal"
+yarn twenty exec --postInstall
+```
+
+Hlavní body:
+* Postinstalační funkce používají `definePostInstallLogicFunction()` — specializovanou variantu, která vynechává nastavení spouštěčů (`cronTriggerSettings`, `databaseEventTriggerSettings`, `httpRouteTriggerSettings`, `isTool`).
+* Obslužná funkce obdrží `InstallPayload` s `{ previousVersion?: string; newVersion: string }` — `newVersion` je verze, která se instaluje, a `previousVersion` je verze, která byla nainstalována dříve (nebo `undefined` při čisté instalaci). Tyto hodnoty použijte k rozlišení čistých instalací od aktualizací a ke spuštění migrační logiky specifické pro verzi.
+* **Kdy se hook spouští**: ve výchozím nastavení pouze při čistých instalacích. Předejte `shouldRunOnVersionUpgrade: true`, pokud chcete, aby se spouštěl i při aktualizaci aplikace z předchozí verze. Pokud je vynechán, příznak má výchozí hodnotu `false` a při aktualizacích se hook přeskočí.
+* **Model provádění — ve výchozím nastavení asynchronní, synchronní volitelně**: příznak `shouldRunSynchronously` určuje *jak* se spouští post-install.
+  * `shouldRunSynchronously: false` *(výchozí)* — hook je **zařazen do fronty zpráv** s `retryLimit: 3` a běží asynchronně ve workeru. Odezva instalace se vrátí hned po zařazení úlohy do fronty, takže pomalá nebo chybující obslužná funkce neblokuje volajícího. Worker se pokusí o opakování až třikrát. **Použijte pro dlouho běžící úlohy** — plnění velkých datových sad, volání pomalých externích API, zřizování externích prostředků, cokoli, co by mohlo přesáhnout rozumné časové okno HTTP odezvy.
+  * `shouldRunSynchronously: true` — hook se provádí **inline během instalačního procesu** (stejný vykonavatel jako pre-install). Instalační požadavek blokuje, dokud obslužná funkce nedokončí, a pokud vyvolá výjimku, volající instalace obdrží `POST_INSTALL_ERROR`. Žádné automatické opakování. **Použijte pro rychlé úlohy, které se musí dokončit před odpovědí** — například vrácení validační chyby uživateli nebo rychlé nastavení, na kterém bude klient záviset ihned po návratu volání instalace. Mějte na paměti, že v době, kdy se spustí post-install, už byla migrace metadat aplikována, takže selhání v synchronním režimu změny schématu **ne**vrací zpět — pouze odhalí chybu.
+* Ujistěte se, že vaše obslužná funkce je idempotentní. V asynchronním režimu se může fronta pokusit až třikrát; v obou režimech se může hook znovu spustit při aktualizacích, pokud je `shouldRunOnVersionUpgrade: true`.
+* Proměnné prostředí `APPLICATION_ID`, `APP_ACCESS_TOKEN` a `API_URL` jsou dostupné uvnitř obslužné funkce (stejně jako u jakékoli jiné logické funkce), takže můžete volat Twenty API s aplikačním přístupovým tokenem omezeným na vaši aplikaci.
+* Na jednu aplikaci je povolena pouze jedna postinstalační funkce. Sestavení manifestu skončí chybou, pokud je zjištěna více než jedna.
+* Atributy funkce `universalIdentifier`, `shouldRunOnVersionUpgrade` a `shouldRunSynchronously` jsou během buildu automaticky připojeny k manifestu aplikace do pole `postInstallLogicFunction` — není potřeba je uvádět v `defineApplication()`.
+* Výchozí časový limit je nastaven na 300 sekund (5 minut), aby umožnil delší úlohy nastavení, jako je naplnění daty.
+* **Nespouští se v režimu dev**: když je aplikace registrována lokálně (pomocí `yarn twenty dev`), server zcela přeskočí instalační tok a synchronizuje soubory přímo prostřednictvím sledovače CLI — takže se post-install v režimu dev nikdy nespustí bez ohledu na `shouldRunSynchronously`. Použijte `yarn twenty exec --postInstall` k ručnímu spuštění nad běžícím pracovním prostorem.
+
+</Accordion>
+<Accordion title="definePreInstallLogicFunction" description="Definujte předinstalační logickou funkci (jedna na aplikaci)">
+
+Funkce pre-install je logická funkce, která se během instalace spouští automaticky, **před aplikováním migrace metadat pracovního prostoru**. Má stejný tvar payloadu jako post-install (`InstallPayload`), ale je zařazena dříve v instalačním toku, aby mohla připravit stav, na němž nadcházející migrace závisí — typické použití zahrnuje zálohování dat, ověření kompatibility s novým schématem nebo archivaci záznamů, které se chystají přeuspořádat nebo odstranit.
+
+```ts src/logic-functions/pre-install.ts
+import { definePreInstallLogicFunction, type InstallPayload } from 'twenty-sdk/define';
+
+const handler = async (payload: InstallPayload): Promise<void> => {
+  console.log('Pre install logic function executed successfully!', payload.previousVersion);
+};
+
+export default definePreInstallLogicFunction({
+  universalIdentifier: 'a1b2c3d4-5678-90ab-cdef-1234567890ab',
+  name: 'pre-install',
+  description: 'Runs before installation to prepare the application.',
+  timeoutSeconds: 300,
+  shouldRunOnVersionUpgrade: true,
+  handler,
+});
+```
+
+Předinstalační funkci můžete také kdykoli spustit ručně pomocí CLI:
+
+```bash filename="Terminal"
+yarn twenty exec --preInstall
+```
+
+Hlavní body:
+* Funkce pre-install používají `definePreInstallLogicFunction()` — stejné specializované nastavení jako u post-install, pouze připojené k jiné fázi životního cyklu.
+* Obě obslužné funkce pre- i post-install přijímají stejný typ `InstallPayload`: `{ previousVersion?: string; newVersion: string }`. Importujte jej jednou a znovu použijte pro oba hooky.
+* **Kdy se hook spouští**: umístěn těsně před migrací metadat pracovního prostoru (`synchronizeFromManifest`). Před spuštěním server provede čistě aditivní "zjednodušenou synchronizaci", která v metadatech pracovního prostoru zaregistruje pre-install funkci **nové** verze — ničeho dalšího se nedotkne — a poté ji spustí. Protože tato synchronizace je pouze aditivní, objekty, pole a data předchozí verze zůstávají při spuštění vaší obslužné funkce zachována: můžete bezpečně číst a zálohovat stav před migrací.
+* **Model provádění**: pre-install se provádí **synchronně** a **blokuje instalaci**. Pokud obslužná funkce vyvolá výjimku, instalace se přeruší ještě před aplikováním jakýchkoli změn schématu — pracovní prostor zůstane na předchozí verzi v konzistentním stavu. Je to záměrné: pre-install je vaše poslední šance odmítnout rizikovou aktualizaci.
+* Stejně jako u post-install je na jednu aplikaci povolena pouze jedna funkce pre-install. Během buildu je automaticky připojena k manifestu aplikace pod `preInstallLogicFunction`.
+* **Nespouští se v režimu dev**: stejně jako u post-install — u lokálně registrovaných aplikací je instalační tok zcela přeskočen, takže se pre-install pod `yarn twenty dev` nikdy nespustí. Použijte `yarn twenty exec --preInstall` k ručnímu spuštění.
+
+</Accordion>
+<Accordion title="Pre-install vs post-install: kdy použít který" description="Výběr správného instalačního hooku">
+
+Oba hooky jsou součástí téhož instalačního toku a přijímají stejný `InstallPayload`. Rozdíl je v tom, **kdy** se spouštějí vzhledem k migraci metadat pracovního prostoru, a to určuje, jakých dat se mohou bezpečně dotýkat.
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│ install flow                                                │
+│                                                             │
+│   upload package → [pre-install] → metadata migration →     │
+│   generate SDK → [post-install]                             │
+│                                                             │
+│                  old schema visible    new schema visible   │
+└─────────────────────────────────────────────────────────────┘
+```
+
+Pre-install je vždy **synchronní** (blokuje instalaci a může ji přerušit). Post-install je **ve výchozím nastavení asynchronní** — zařazen do workeru s automatickými pokusy o opakování — ale může přejít na synchronní provádění pomocí `shouldRunSynchronously: true`. Viz accordion `definePostInstallLogicFunction` výše, kdy použít jednotlivé režimy.
+
+**Použijte `post-install` pro cokoli, co vyžaduje existenci nového schématu.** To je běžný případ:
+
+* Plnění výchozími daty (vytváření počátečních záznamů, výchozích pohledů, demo obsahu) vůči nově přidaným objektům a polím.
+* Registrace webhooků u služeb třetích stran poté, co má aplikace své přihlašovací údaje.
+* Volání vlastního API k dokončení nastavení, které závisí na synchronizovaných metadatech.
+* Idempotentní logika "zajisti, že to existuje", která má při každé aktualizaci uvést stav do souladu — kombinujte s `shouldRunOnVersionUpgrade: true`.
+
+Příklad — po instalaci naplňte výchozí záznam `PostCard`:
+
+```ts src/logic-functions/post-install.ts
+import { definePostInstallLogicFunction, type InstallPayload } from 'twenty-sdk/define';
+import { createClient } from './generated/client';
+
+const handler = async ({ previousVersion }: InstallPayload): Promise<void> => {
+  if (previousVersion) return; // fresh installs only
+
+  const client = createClient();
+  await client.postCard.create({
+    data: { title: 'Welcome to Postcard', content: 'Your first card!' },
+  });
+};
+
+export default definePostInstallLogicFunction({
+  universalIdentifier: 'f7a2b9c1-3d4e-5678-abcd-ef9876543210',
+  name: 'post-install',
+  description: 'Seeds a welcome post card after install.',
+  timeoutSeconds: 300,
+  shouldRunOnVersionUpgrade: false,
+  handler,
+});
+```
+
+**Použijte `pre-install`, pokud by migrace jinak zničila nebo poškodila existující data.** Protože pre-install běží proti *předchozímu* schématu a jeho selhání vrací aktualizaci zpět, je to správné místo pro cokoli rizikového:
+
+* **Zálohování dat, která se chystají odstranit nebo přeuspořádat** — např. odstraňujete pole ve verzi v2 a potřebujete jeho hodnoty zkopírovat do jiného pole nebo je před spuštěním migrace exportovat do úložiště.
+* **Archivace záznamů, které by nové omezení zneplatnilo** — např. pole se stává `NOT NULL` a je třeba nejprve smazat nebo opravit řádky s hodnotami null.
+* **Ověření kompatibility a odmítnutí aktualizace, pokud nelze aktuální data čistě migrovat** — vyhoďte výjimku z obslužné funkce a instalace se ukončí bez provedených změn. Je to bezpečnější, než zjistit nekompatibilitu uprostřed migrace.
+* **Přejmenování nebo změna klíčů dat** před změnou schématu, která by ztratila vazby.
+
+Příklad — archivujte záznamy před destruktivní migrací:
+
+```ts src/logic-functions/pre-install.ts
+import { definePreInstallLogicFunction, type InstallPayload } from 'twenty-sdk/define';
+import { createClient } from './generated/client';
+
+const handler = async ({ previousVersion, newVersion }: InstallPayload): Promise<void> => {
+  // Only the 1.x → 2.x upgrade drops the legacy `notes` field.
+  if (!previousVersion?.startsWith('1.') || !newVersion.startsWith('2.')) {
+    return;
+  }
+
+  const client = createClient();
+  const legacyRecords = await client.postCard.findMany({
+    where: { notes: { isNotNull: true } },
+  });
+
+  if (legacyRecords.length === 0) return;
+
+  // Copy legacy `notes` into the new `description` field before the migration
+  // drops the `notes` column. If this fails, the upgrade is aborted and the
+  // workspace stays on v1 with all data intact.
+  await Promise.all(
+    legacyRecords.map((record) =>
+      client.postCard.update({
+        where: { id: record.id },
+        data: { description: record.notes },
+      }),
+    ),
+  );
+};
+
+export default definePreInstallLogicFunction({
+  universalIdentifier: 'a1b2c3d4-5678-90ab-cdef-1234567890ab',
+  name: 'pre-install',
+  description: 'Backs up legacy notes into description before the v2 migration.',
+  timeoutSeconds: 300,
+  shouldRunOnVersionUpgrade: true,
+  handler,
+});
+```
+
+**Zlaté pravidlo:**
+
+| Chcete...                                                                                         | Použít                                                                                   |
+| ------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| Naplňte výchozí data, nakonfigurujte pracovní prostor, zaregistrujte externí prostředky           | `post-install`                                                                           |
+| Spusťte dlouho běžící plnění nebo volání třetích stran, která by neměla blokovat odezvu instalace | `post-install` (výchozí — `shouldRunSynchronously: false`, s opakovanými pokusy workeru) |
+| Spusťte rychlé nastavení, na které bude volající spoléhat ihned po návratu volání instalace       | `post-install` s `shouldRunSynchronously: true`                                          |
+| Čtěte nebo zálohujte data, která by nadcházející migrace ztratila                                 | `pre-install`                                                                            |
+| Odmítněte aktualizaci, která by poškodila existující data                                         | `pre-install` (vyhoďte výjimku z obslužné funkce)                                        |
+| Spouštějte srovnání stavu při každé aktualizaci                                                   | `post-install` s `shouldRunOnVersionUpgrade: true`                                       |
+| Proveďte jednorázové nastavení pouze při první instalaci                                          | `post-install` s `shouldRunOnVersionUpgrade: false` (výchozí)                            |
+
+<Note>
+Pokud si nejste jisti, výchozí volbou je **post-install**. Po pre-install sáhněte pouze tehdy, když je samotná migrace destruktivní a potřebujete zachytit předchozí stav, než zmizí.
+</Note>
+
+</Accordion>
+</AccordionGroup>
+
+## Typovaní klienti API (twenty-client-sdk)
+
+Balíček `twenty-client-sdk` poskytuje dva typované klienty GraphQL pro práci s Twenty API z vašich logických funkcí a frontendových komponent.
+
+| Klient              | Importovat                   | Koncový bod                                                      | Generováno?                    |
+| ------------------- | ---------------------------- | ---------------------------------------------------------------- | ------------------------------ |
+| `CoreApiClient`     | `twenty-client-sdk/core`     | `/graphql` — data pracovního prostoru (záznamy, objekty)         | Ano, při vývoji/sestavení      |
+| `MetadataApiClient` | `twenty-client-sdk/metadata` | `/metadata` — konfigurace pracovního prostoru, nahrávání souborů | Ne, dodává se předem sestavený |
+
+<AccordionGroup>
+<Accordion title="CoreApiClient" description="Dotazování a změny dat pracovního prostoru (záznamy, objekty)">
+
+`CoreApiClient` je hlavní klient pro dotazování a mutace dat pracovního prostoru. Generuje se z vašeho schématu pracovního prostoru během `yarn twenty dev` nebo `yarn twenty build`, takže je plně typovaný tak, aby odpovídal vašim objektům a polím.
+
+```ts
+import { CoreApiClient } from 'twenty-client-sdk/core';
+
+const client = new CoreApiClient();
+
+// Query records
+const { companies } = await client.query({
+  companies: {
+    edges: {
+      node: {
+        id: true,
+        name: true,
+        domainName: {
+          primaryLinkLabel: true,
+          primaryLinkUrl: true,
+        },
+      },
+    },
+  },
+});
+
+// Create a record
+const { createCompany } = await client.mutation({
+  createCompany: {
+    __args: {
+      data: {
+        name: 'Acme Corp',
+      },
+    },
+    id: true,
+    name: true,
+  },
+});
+```
+
+Klient používá syntaxi výběrové sady (selection-set): předáním `true` zahrnete pole, pro argumenty použijte `__args` a pro relace vnořujte objekty. Získáte plné automatické doplňování a kontrolu typů založené na schématu vašeho pracovního prostoru.
+
+<Note>
+**CoreApiClient je generován při vývoji/sestavení.** Pokud jej použijete bez předchozího spuštění `yarn twenty dev` nebo `yarn twenty build`, vyvolá chybu. Generování probíhá automaticky — CLI prozkoumá GraphQL schéma vašeho pracovního prostoru a vygeneruje typovaného klienta pomocí `@genql/cli`.
+</Note>
+
+#### Použití CoreSchema pro anotace typů
+
+`CoreSchema` poskytuje typy TypeScriptu odpovídající objektům vašeho pracovního prostoru — hodí se pro typování stavu komponent nebo parametrů funkcí:
+
+```ts
+import { CoreApiClient, CoreSchema } from 'twenty-client-sdk/core';
+import { useState } from 'react';
+
+const [company, setCompany] = useState<
+  Pick<CoreSchema.Company, 'id' | 'name'> | undefined
+>(undefined);
+
+const client = new CoreApiClient();
+const result = await client.query({
+  company: {
+    __args: { filter: { position: { eq: 1 } } },
+    id: true,
+    name: true,
+  },
+});
+setCompany(result.company);
+```
+
+</Accordion>
+<Accordion title="MetadataApiClient" description="Konfigurace pracovního prostoru, aplikace a nahrávání souborů">
+
+`MetadataApiClient` je dodáván předem sestavený v rámci SDK (není vyžadováno žádné generování). Odesílá dotazy na endpoint `/metadata` pro konfiguraci pracovního prostoru, aplikace a nahrávání souborů.
+
+```ts
+import { MetadataApiClient } from 'twenty-client-sdk/metadata';
+
+const metadataClient = new MetadataApiClient();
+
+// List first 10 objects in the workspace
+const { objects } = await metadataClient.query({
+  objects: {
+    edges: {
+      node: {
+        id: true,
+        nameSingular: true,
+        namePlural: true,
+        labelSingular: true,
+        isCustom: true,
+      },
+    },
+    __args: {
+      filter: {},
+      paging: { first: 10 },
+    },
+  },
+});
+```
+
+#### Nahrávání souborů
+
+`MetadataApiClient` obsahuje metodu `uploadFile` pro připojování souborů k polím typu souboru:
+
+```ts
+import { MetadataApiClient } from 'twenty-client-sdk/metadata';
+import * as fs from 'fs';
+
+const metadataClient = new MetadataApiClient();
+
+const fileBuffer = fs.readFileSync('./invoice.pdf');
+
+const uploadedFile = await metadataClient.uploadFile(
+  fileBuffer,                                         // file contents as a Buffer
+  'invoice.pdf',                                      // filename
+  'application/pdf',                                  // MIME type
+  '58a0a314-d7ea-4865-9850-7fb84e72f30b',            // field universalIdentifier
+);
+
+console.log(uploadedFile);
+// { id: '...', path: '...', size: 12345, createdAt: '...', url: 'https://...' }
+```
+
+| Parametr                           | Typ      | Popis                                                               |
+| ---------------------------------- | -------- | ------------------------------------------------------------------- |
+| `fileBuffer`                       | `Buffer` | Surový obsah souboru                                                |
+| `filename`                         | `string` | Název souboru (používá se pro ukládání a zobrazení)                 |
+| `contentType`                      | `string` | Typ MIME (pokud je vynechán, výchozí je `application/octet-stream`) |
+| `fieldMetadataUniversalIdentifier` | `string` | `universalIdentifier` pole typu souboru ve vašem objektu            |
+
+Hlavní body:
+* Používá `universalIdentifier` pole (nikoli jeho ID specifické pro pracovní prostor), takže váš kód pro nahrávání funguje v jakémkoli pracovním prostoru, kde je vaše aplikace nainstalována.
+* Vrácená hodnota `url` je podepsaná adresa URL, kterou můžete použít k přístupu k nahranému souboru.
+
+</Accordion>
+</AccordionGroup>
+
+<Note>
+  Když váš kód běží na Twenty (logické funkce nebo frontendové komponenty), platforma vloží přihlašovací údaje jako proměnné prostředí:
+
+  * `TWENTY_API_URL` — Základní URL Twenty API
+  * `TWENTY_APP_ACCESS_TOKEN` — krátkodobý klíč s rozsahem omezeným na výchozí roli funkce vaší aplikace
+
+  Není nutné je předávat klientům — čtou je automaticky z `process.env`. Oprávnění API klíče jsou určena rolí uvedenou v `defaultRoleUniversalIdentifier` ve vašem `application-config.ts`.
+</Note>

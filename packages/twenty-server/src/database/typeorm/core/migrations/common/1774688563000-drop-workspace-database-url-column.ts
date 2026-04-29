@@ -11,13 +11,13 @@ export class DropWorkspaceDatabaseUrlColumn1774688563000
     );
 
     await queryRunner.query(
-      `UPDATE "core"."workspace" SET "databaseSchema" = NULL WHERE "databaseSchema" = ''`,
-    );
-    await queryRunner.query(
       `ALTER TABLE "core"."workspace" ALTER COLUMN "databaseSchema" DROP NOT NULL`,
     );
     await queryRunner.query(
       `ALTER TABLE "core"."workspace" ALTER COLUMN "databaseSchema" DROP DEFAULT`,
+    );
+    await queryRunner.query(
+      `UPDATE "core"."workspace" SET "databaseSchema" = NULL WHERE "databaseSchema" = ''`,
     );
   }
 

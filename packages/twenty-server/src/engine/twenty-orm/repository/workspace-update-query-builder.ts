@@ -1,6 +1,6 @@
 import { msg } from '@lingui/core/macro';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
-import { FeatureFlagKey, type ObjectsPermissions } from 'twenty-shared/types';
+import { type ObjectsPermissions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
   UpdateQueryBuilder,
@@ -136,7 +136,9 @@ export class WorkspaceUpdateQueryBuilder<
         objectMetadata.isCustom,
       );
 
-      const before = await eventSelectQueryBuilder.getMany();
+      const before = await eventSelectQueryBuilder.getMany({
+        noFormatting: true,
+      });
 
       if (before.length > QUERY_MAX_RECORDS) {
         throw new TwentyORMException(
@@ -236,7 +238,9 @@ export class WorkspaceUpdateQueryBuilder<
         await this.filesFieldSync.updateFileEntityRecords(filesFieldFileIds);
       }
 
-      const after = await eventSelectQueryBuilder.getMany();
+      const after = await eventSelectQueryBuilder.getMany({
+        noFormatting: true,
+      });
 
       const formattedAfter = formatResult<T[]>(
         after,
@@ -338,7 +342,9 @@ export class WorkspaceUpdateQueryBuilder<
         this.manyInputs.map((input) => input.criteria),
       );
 
-      const beforeRecords = await eventSelectQueryBuilder.getMany();
+      const beforeRecords = await eventSelectQueryBuilder.getMany({
+        noFormatting: true,
+      });
 
       const formattedBefore = formatResult<T[]>(
         beforeRecords,
@@ -447,7 +453,9 @@ export class WorkspaceUpdateQueryBuilder<
         await this.filesFieldSync.updateFileEntityRecords(filesFieldFileIds);
       }
 
-      const afterRecords = await eventSelectQueryBuilder.getMany();
+      const afterRecords = await eventSelectQueryBuilder.getMany({
+        noFormatting: true,
+      });
 
       const formattedAfter = formatResult<T[]>(
         afterRecords,
@@ -615,14 +623,6 @@ export class WorkspaceUpdateQueryBuilder<
   }
 
   private applyRowLevelPermissionPredicates(): void {
-    if (
-      this.featureFlagMap[
-        FeatureFlagKey.IS_ROW_LEVEL_PERMISSION_PREDICATES_ENABLED
-      ] !== true
-    ) {
-      return;
-    }
-
     if (this.shouldBypassPermissionChecks) {
       return;
     }
@@ -648,14 +648,6 @@ export class WorkspaceUpdateQueryBuilder<
   }: {
     updatedRecords: T[];
   }): void {
-    if (
-      this.featureFlagMap[
-        FeatureFlagKey.IS_ROW_LEVEL_PERMISSION_PREDICATES_ENABLED
-      ] !== true
-    ) {
-      return;
-    }
-
     const mainAliasTarget = this.getMainAliasTarget();
     const objectMetadata = getObjectMetadataFromEntityTarget(
       mainAliasTarget,

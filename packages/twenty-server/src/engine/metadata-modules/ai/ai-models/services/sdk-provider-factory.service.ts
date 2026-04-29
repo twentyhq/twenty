@@ -1,14 +1,13 @@
 import { Injectable } from '@nestjs/common';
 
-import {
-  createAmazonBedrock,
-  type AmazonBedrockProvider,
-} from '@ai-sdk/amazon-bedrock';
+import { createAmazonBedrock } from '@ai-sdk/amazon-bedrock';
 import { createAnthropic, type AnthropicProvider } from '@ai-sdk/anthropic';
 import { createGoogleGenerativeAI } from '@ai-sdk/google';
 import { createMistral } from '@ai-sdk/mistral';
 import { createOpenAI, type OpenAIProvider } from '@ai-sdk/openai';
+import { createOpenAICompatible } from '@ai-sdk/openai-compatible';
 import { createXai } from '@ai-sdk/xai';
+import { fromNodeProviderChain } from '@aws-sdk/credential-providers';
 import { type LanguageModel } from 'ai';
 import { type AiSdkPackage } from 'twenty-shared/ai';
 
@@ -63,15 +62,6 @@ export class SdkProviderFactoryService {
     return instance.rawProvider as T;
   }
 
-  getRawBedrockProvider(
-    providerName: string,
-  ): AmazonBedrockProvider | undefined {
-    return this.getRawProvider<AmazonBedrockProvider>(
-      providerName,
-      AI_SDK_BEDROCK,
-    );
-  }
-
   getRawAnthropicProvider(providerName: string): AnthropicProvider | undefined {
     return this.getRawProvider<AnthropicProvider>(
       providerName,
@@ -80,11 +70,7 @@ export class SdkProviderFactoryService {
   }
 
   getRawOpenAIProvider(providerName: string): OpenAIProvider | undefined {
-    return this.getRawProvider<OpenAIProvider>(
-      providerName,
-      AI_SDK_OPENAI,
-      AI_SDK_OPENAI_COMPATIBLE,
-    );
+    return this.getRawProvider<OpenAIProvider>(providerName, AI_SDK_OPENAI);
   }
 
   clearCache(): void {
@@ -108,7 +94,7 @@ export class SdkProviderFactoryService {
       case AI_SDK_BEDROCK:
         return this.buildBedrockProvider(config);
       case AI_SDK_OPENAI_COMPATIBLE:
-        return this.buildOpenAICompatibleProvider(config);
+        return this.buildOpenAiCompatibleProvider(config);
       default:
         throw new Error(`Unsupported SDK package: ${config.npm}`);
     }
@@ -134,9 +120,27 @@ export class SdkProviderFactoryService {
   private buildBedrockProvider(
     config: AiProviderConfig,
   ): AiSdkProviderInstance {
+    const region = config.region ?? 'us-east-1';
+    const useRoleCredentials = config.authType === 'role';
+    const awsCredentialProvider = useRoleCredentials
+      ? fromNodeProviderChain({ clientConfig: { region } })
+      : undefined;
+
     const provider = createAmazonBedrock({
-      region: config.region ?? 'us-east-1',
-      ...(config.accessKeyId &&
+      region,
+      ...(awsCredentialProvider && {
+        credentialProvider: async () => {
+          const credentials = await awsCredentialProvider();
+
+          return {
+            accessKeyId: credentials.accessKeyId,
+            secretAccessKey: credentials.secretAccessKey,
+            sessionToken: credentials.sessionToken,
+          };
+        },
+      }),
+      ...(!useRoleCredentials &&
+        config.accessKeyId &&
         config.secretAccessKey && {
           accessKeyId: config.accessKeyId,
           secretAccessKey: config.secretAccessKey,
@@ -151,16 +155,17 @@ export class SdkProviderFactoryService {
     };
   }
 
-  private buildOpenAICompatibleProvider(
+  private buildOpenAiCompatibleProvider(
     config: AiProviderConfig,
   ): AiSdkProviderInstance {
     if (!config.baseUrl) {
       throw new Error('baseUrl is required for openai-compatible providers');
     }
 
-    const provider = createOpenAI({
+    const provider = createOpenAICompatible({
+      name: config.name ?? 'openai-compatible',
       baseURL: config.baseUrl,
-      apiKey: config.apiKey ?? '',
+      ...(config.apiKey && { apiKey: config.apiKey }),
     });
 
     return {

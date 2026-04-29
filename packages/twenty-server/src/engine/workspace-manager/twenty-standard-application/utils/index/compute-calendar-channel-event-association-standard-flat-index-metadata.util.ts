@@ -24,7 +24,7 @@ export const buildCalendarChannelEventAssociationStandardFlatIndexMetadatas = ({
     workspaceId,
     context: {
       indexName: 'calendarChannelIdIndex',
-      relatedFieldNames: ['calendarChannel'],
+      relatedFieldNames: ['calendarChannelId'],
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,

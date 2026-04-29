@@ -22,7 +22,9 @@ const addDashboardWidgetSchema = z.object({
     .string()
     .uuid()
     .optional()
-    .describe('Required for GRAPH widgets: object UUID to aggregate'),
+    .describe(
+      'Required for GRAPH and RECORD_TABLE widgets: object UUID to aggregate or display',
+    ),
   configuration: widgetConfigurationSchema,
 });
 
@@ -36,7 +38,9 @@ export const createAddDashboardWidgetTool = (
 Use get_dashboard first to get pageLayoutTabId and existing widget positions.
 Use list_object_metadata_items to get objectMetadataId and field IDs for GRAPH widgets.
 
-See create_complete_dashboard for configuration examples.`,
+For RECORD_TABLE widgets: create a dedicated view first with create_view (type TABLE), then pass its viewId in configuration. Never reuse an existing record index view.
+
+See create_complete_dashboard for full configuration examples.`,
   inputSchema: addDashboardWidgetSchema,
   execute: async (parameters: {
     pageLayoutTabId: string;

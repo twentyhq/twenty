@@ -36,16 +36,17 @@ export class RestApiMergeManyHandler extends RestApiBaseHandler {
         authContext,
       });
 
-      const record = await this.commonMergeManyQueryRunnerService.execute(
-        { ...restArgs, selectedFields },
-        {
-          authContext,
-          flatObjectMetadata,
-          flatObjectMetadataMaps,
-          flatFieldMetadataMaps,
-          objectIdByNameSingular,
-        },
-      );
+      const { results: record } =
+        await this.commonMergeManyQueryRunnerService.execute(
+          { ...restArgs, selectedFields },
+          {
+            authContext,
+            flatObjectMetadata,
+            flatObjectMetadataMaps,
+            flatFieldMetadataMaps,
+            objectIdByNameSingular,
+          },
+        );
 
       return this.formatRestResponse(record, flatObjectMetadata.nameSingular);
     } catch (error) {

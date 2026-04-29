@@ -2,14 +2,13 @@ import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { RecordCrudModule } from 'src/engine/core-modules/record-crud/record-crud.module';
-import { ToolGeneratorModule } from 'src/engine/core-modules/tool-generator/tool-generator.module';
 import { TOOL_PROVIDERS } from 'src/engine/core-modules/tool-provider/constants/tool-providers.token';
 import { ActionToolProvider } from 'src/engine/core-modules/tool-provider/providers/action-tool.provider';
 import { DashboardToolProvider } from 'src/engine/core-modules/tool-provider/providers/dashboard-tool.provider';
 import { DatabaseToolProvider } from 'src/engine/core-modules/tool-provider/providers/database-tool.provider';
 import { LogicFunctionToolProvider } from 'src/engine/core-modules/tool-provider/providers/logic-function-tool.provider';
 import { MetadataToolProvider } from 'src/engine/core-modules/tool-provider/providers/metadata-tool.provider';
-import { NativeModelToolProvider } from 'src/engine/core-modules/tool-provider/providers/native-model-tool.provider';
+import { NativeToolBinderService } from 'src/engine/core-modules/tool-provider/native/native-tool-binder.service';
 import { ViewFieldToolProvider } from 'src/engine/core-modules/tool-provider/providers/view-field-tool.provider';
 import { ViewToolProvider } from 'src/engine/core-modules/tool-provider/providers/view-tool.provider';
 import { WorkflowToolProvider } from 'src/engine/core-modules/tool-provider/providers/workflow-tool.provider';
@@ -25,6 +24,8 @@ import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadat
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
 import { ViewFieldModule } from 'src/engine/metadata-modules/view-field/view-field.module';
+import { ViewFilterModule } from 'src/engine/metadata-modules/view-filter/view-filter.module';
+import { ViewSortModule } from 'src/engine/metadata-modules/view-sort/view-sort.module';
 import { ViewModule } from 'src/engine/metadata-modules/view/view.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
@@ -39,7 +40,6 @@ import { ToolRegistryService } from './services/tool-registry.service';
 @Module({
   imports: [
     ToolModule,
-    ToolGeneratorModule,
     RecordCrudModule,
     AiModelsModule,
     forwardRef(() => AiAgentExecutionModule),
@@ -48,6 +48,8 @@ import { ToolRegistryService } from './services/tool-registry.service';
     PermissionsModule,
     ViewModule,
     ViewFieldModule,
+    ViewFilterModule,
+    ViewSortModule,
     WorkspaceCacheModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
     LogicFunctionModule,
@@ -61,14 +63,16 @@ import { ToolRegistryService } from './services/tool-registry.service';
     DashboardToolProvider,
     DatabaseToolProvider,
     MetadataToolProvider,
-    NativeModelToolProvider,
+    NativeToolBinderService,
     LogicFunctionToolProvider,
     ViewFieldToolProvider,
     ViewToolProvider,
     WorkflowToolProvider,
     {
-      // TOOL_PROVIDERS contains only providers implementing ToolProvider (generateDescriptors).
-      // NativeModelToolProvider is excluded -- it's injected separately in the registry.
+      // TOOL_PROVIDERS contains only providers implementing ToolProvider
+      // (registry tools with descriptors). The native tool binder is a
+      // parallel concept and is exported for surfaces that bind SDK-native
+      // tools directly into their model ToolSet.
       provide: TOOL_PROVIDERS,
       useFactory: (
         actionProvider: ActionToolProvider,
@@ -102,6 +106,6 @@ import { ToolRegistryService } from './services/tool-registry.service';
     },
     ToolRegistryService,
   ],
-  exports: [ToolRegistryService],
+  exports: [NativeToolBinderService, ToolRegistryService],
 })
 export class ToolProviderModule {}

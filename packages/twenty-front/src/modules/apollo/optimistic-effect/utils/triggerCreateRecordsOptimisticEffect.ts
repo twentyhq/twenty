@@ -4,19 +4,17 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { triggerUpdateRelationsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerUpdateRelationsOptimisticEffect';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type RecordGqlRefEdge } from '@/object-record/cache/types/RecordGqlRefEdge';
-import { getEdgeTypename } from '@/object-record/cache/utils/getEdgeTypename';
-import { isObjectRecordConnectionWithRefs } from '@/object-record/cache/utils/isObjectRecordConnectionWithRefs';
-import { type RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode';
-import { isRecordMatchingFilter } from '@/object-record/record-filter/utils/isRecordMatchingFilter';
-
+import { type ObjectPermissions } from 'twenty-shared/types';
+import { getEdgeTypename, isDefined } from 'twenty-shared/utils';
 import { triggerUpdateGroupByQueriesOptimisticEffect } from '@/apollo/optimistic-effect/group-by/utils/triggerUpdateGroupByQueriesOptimisticEffect';
 import { type CachedObjectRecordQueryVariables } from '@/apollo/types/CachedObjectRecordQueryVariables';
 import { encodeCursor } from '@/apollo/utils/encodeCursor';
 import { getRecordFromCache } from '@/object-record/cache/utils/getRecordFromCache';
 import { getRecordNodeFromRecord } from '@/object-record/cache/utils/getRecordNodeFromRecord';
+import { isObjectRecordConnectionWithRefs } from '@/object-record/cache/utils/isObjectRecordConnectionWithRefs';
+import { type RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { type ObjectPermissions } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isRecordMatchingFilter } from '@/object-record/record-filter/utils/isRecordMatchingFilter';
 import { parseApolloStoreFieldName } from '~/utils/parseApolloStoreFieldName';
 
 /*

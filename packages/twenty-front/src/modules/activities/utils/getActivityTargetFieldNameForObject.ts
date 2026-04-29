@@ -9,14 +9,12 @@ type GetActivityTargetFieldNameForObjectArgs = {
     | CoreObjectNameSingular.Task;
   targetObjectMetadataId: string;
   objectMetadataItems: EnrichedObjectMetadataItem[];
-  isMorphRelation?: boolean;
 };
 
 export const getActivityTargetFieldNameForObject = ({
   activityObjectNameSingular,
   targetObjectMetadataId,
   objectMetadataItems,
-  isMorphRelation = false,
 }: GetActivityTargetFieldNameForObjectArgs): string | undefined => {
   const activityTargetObjectNameSingular =
     activityObjectNameSingular === CoreObjectNameSingular.Task
@@ -36,17 +34,13 @@ export const getActivityTargetFieldNameForObject = ({
     (objectMetadataItem) => objectMetadataItem.id === targetObjectMetadataId,
   );
 
-  if (isMorphRelation && isDefined(targetObjectMetadataItem)) {
-    const fieldIdName = getActivityTargetObjectFieldIdName({
-      nameSingular: targetObjectMetadataItem.nameSingular,
-      isMorphRelation: true,
-    });
-
-    return fieldIdName.replace(/Id$/, '');
+  if (!isDefined(targetObjectMetadataItem)) {
+    return undefined;
   }
 
-  return activityTargetObjectMetadata.fields.find(
-    (field) =>
-      field.relation?.targetObjectMetadata.id === targetObjectMetadataId,
-  )?.name;
+  const fieldIdName = getActivityTargetObjectFieldIdName({
+    nameSingular: targetObjectMetadataItem.nameSingular,
+  });
+
+  return fieldIdName.replace(/Id$/, '');
 };

@@ -57,7 +57,7 @@ export class ImapSmtpCaldavResolver {
       handle: connectedAccount.handle,
       provider: connectedAccount.provider,
       connectionParameters: connectedAccount.connectionParameters,
-      accountOwnerId: connectedAccount.accountOwnerId,
+      userWorkspaceId: connectedAccount.userWorkspaceId,
     };
   }
 

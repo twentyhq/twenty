@@ -5,8 +5,10 @@ import {
 import { type EntityMetadata } from 'typeorm';
 
 import { type ResolverNameMapEntry } from 'src/engine/api/graphql/direct-execution/utils/build-resolver-name-map.util';
+import { type FlatApiKey } from 'src/engine/core-modules/api-key/types/flat-api-key.type';
 import { type ApplicationVariableCacheMaps } from 'src/engine/core-modules/application/application-variable/types/application-variable-cache-maps.type';
 import { type FlatApplicationCacheMaps } from 'src/engine/core-modules/application/types/flat-application-cache-maps.type';
+import { type FlatBillingSubscription } from 'src/engine/core-modules/billing/types/flat-billing-subscription.type';
 import { type FlatWorkspaceMemberMaps } from 'src/engine/core-modules/user/types/flat-workspace-member-maps.type';
 import { type FlatRoleTargetByAgentIdMaps } from 'src/engine/metadata-modules/flat-agent/types/flat-role-target-by-agent-id-maps.type';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
@@ -52,8 +54,10 @@ export const WORKSPACE_CACHE_KEYS_V2 = {
   flatFrontComponentMaps: 'flat-maps:front-component',
   flatWebhookMaps: 'flat-maps:webhook',
   flatWorkspaceMemberMaps: 'flat-maps:workspace-member',
+  apiKeyMap: 'cache:api-key-map',
   applicationVariableMaps: 'cache:application-variable',
   graphQLResolverNameMap: 'direct-execution:graphql-resolver-name-map',
+  billingSubscription: 'billing:subscription',
 } as const satisfies Record<WorkspaceCacheKeyName, string>;
 
 export type AdditionalCacheDataMaps = {
@@ -61,6 +65,7 @@ export type AdditionalCacheDataMaps = {
   rolesPermissions: ObjectsPermissionsByRoleId;
   userWorkspaceRoleMap: UserWorkspaceRoleMap;
   apiKeyRoleMap: Record<string, string>;
+  apiKeyMap: Record<string, FlatApiKey>;
   flatApplicationMaps: FlatApplicationCacheMaps;
   ORMEntityMetadatas: EntityMetadata[];
   flatRoleTargetByAgentIdMaps: FlatRoleTargetByAgentIdMaps;
@@ -69,6 +74,7 @@ export type AdditionalCacheDataMaps = {
   flatWorkspaceMemberMaps: FlatWorkspaceMemberMaps;
   applicationVariableMaps: ApplicationVariableCacheMaps;
   graphQLResolverNameMap: Record<string, ResolverNameMapEntry>;
+  billingSubscription: FlatBillingSubscription;
 };
 
 export type WorkspaceCacheDataMap = AllFlatEntityMaps<true> &

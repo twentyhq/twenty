@@ -146,16 +146,18 @@ export const GraphWidgetGaugeChart = ({
           </StyledH1TitleWrapper>
         )}
       </StyledChartContainer>
-      <GraphWidgetLegend
-        show={showLegend}
-        items={[
-          {
-            id: 'gauge',
-            label: data.label || t`Value`,
-            color: colorScheme.solid,
-          },
-        ]}
-      />
+      {showLegend && (
+        <GraphWidgetLegend
+          show
+          items={[
+            {
+              id: 'gauge',
+              label: data.label || t`Value`,
+              color: colorScheme.solid,
+            },
+          ]}
+        />
+      )}
     </StyledContainer>
   );
 };

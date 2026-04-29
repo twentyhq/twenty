@@ -14,4 +14,5 @@ export const MOVING_IMAGE: Record<string, string> = {
   error500: '/images/placeholders/moving-image/500.png',
   noDeletedRecord: '/images/placeholders/moving-image/no_deleted_record.png',
   noWidgets: '/images/placeholders/moving-image/no_widgets.png',
+  notShared: '/images/placeholders/moving-image/not_shared.png',
 };

@@ -14,8 +14,9 @@ const MARKETPLACE_QUERY = `
       author
       sourcePackage
       icon
-      version
       category
+      logo
+      isFeatured
     }
   }
 `;
@@ -58,7 +59,7 @@ describe('Marketplace Catalog Sync (integration)', () => {
     name: string;
     sourcePackage: string;
     latestAvailableVersion?: string;
-    marketplaceDisplayData?: Record<string, unknown>;
+    manifest?: Record<string, unknown>;
   }): Promise<string> => {
     const id = crypto.randomUUID();
     const oAuthClientId = crypto.randomUUID();
@@ -68,7 +69,7 @@ describe('Marketplace Catalog Sync (integration)', () => {
         (id, "universalIdentifier", name, "oAuthClientId",
          "oAuthRedirectUris", "oAuthScopes", "workspaceId",
          "sourceType", "sourcePackage", "latestAvailableVersion",
-         "marketplaceDisplayData", "isListed")
+         "manifest", "isListed")
        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)`,
       [
         id,
@@ -81,9 +82,7 @@ describe('Marketplace Catalog Sync (integration)', () => {
         'npm',
         params.sourcePackage,
         params.latestAvailableVersion ?? '1.0.0',
-        params.marketplaceDisplayData
-          ? JSON.stringify(params.marketplaceDisplayData)
-          : null,
+        params.manifest ? JSON.stringify(params.manifest) : null,
         true,
       ],
     );
@@ -134,10 +133,11 @@ describe('Marketplace Catalog Sync (integration)', () => {
         universalIdentifier: curatedUid,
         name: 'Data Enrichment',
         sourcePackage: '@twentyhq/app-data-enrichment',
-        marketplaceDisplayData: {
-          icon: 'IconSparkles',
-          version: '1.0.0',
-          category: 'Data',
+        manifest: {
+          application: {
+            icon: 'IconSparkles',
+            category: 'Data',
+          },
         },
       });
     });

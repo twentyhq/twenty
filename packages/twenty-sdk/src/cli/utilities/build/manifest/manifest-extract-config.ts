@@ -4,8 +4,8 @@ export enum TargetFunction {
   DefineApplication = 'defineApplication',
   DefineField = 'defineField',
   DefineLogicFunction = 'defineLogicFunction',
-  DefinePreInstallLogicFunction = 'definePreInstallLogicFunction',
   DefinePostInstallLogicFunction = 'definePostInstallLogicFunction',
+  DefinePreInstallLogicFunction = 'definePreInstallLogicFunction',
   DefineObject = 'defineObject',
   DefineRole = 'defineRole',
   DefineSkill = 'defineSkill',
@@ -14,6 +14,7 @@ export enum TargetFunction {
   DefineView = 'defineView',
   DefineNavigationMenuItem = 'defineNavigationMenuItem',
   DefinePageLayout = 'definePageLayout',
+  DefinePageLayoutTab = 'definePageLayoutTab',
 }
 
 export enum ManifestEntityKey {
@@ -29,6 +30,7 @@ export enum ManifestEntityKey {
   Views = 'views',
   NavigationMenuItems = 'navigationMenuItems',
   PageLayouts = 'pageLayouts',
+  PageLayoutTabs = 'pageLayoutTabs',
 }
 
 export type EntityFilePaths = Record<ManifestEntityKey, string[]>;
@@ -40,9 +42,9 @@ export const TARGET_FUNCTION_TO_ENTITY_KEY_MAPPING: Record<
   [TargetFunction.DefineApplication]: ManifestEntityKey.Application,
   [TargetFunction.DefineField]: ManifestEntityKey.Fields,
   [TargetFunction.DefineLogicFunction]: ManifestEntityKey.LogicFunctions,
-  [TargetFunction.DefinePreInstallLogicFunction]:
-    ManifestEntityKey.LogicFunctions,
   [TargetFunction.DefinePostInstallLogicFunction]:
+    ManifestEntityKey.LogicFunctions,
+  [TargetFunction.DefinePreInstallLogicFunction]:
     ManifestEntityKey.LogicFunctions,
   [TargetFunction.DefineObject]: ManifestEntityKey.Objects,
   [TargetFunction.DefineRole]: ManifestEntityKey.Roles,
@@ -53,6 +55,7 @@ export const TARGET_FUNCTION_TO_ENTITY_KEY_MAPPING: Record<
   [TargetFunction.DefineNavigationMenuItem]:
     ManifestEntityKey.NavigationMenuItems,
   [TargetFunction.DefinePageLayout]: ManifestEntityKey.PageLayouts,
+  [TargetFunction.DefinePageLayoutTab]: ManifestEntityKey.PageLayoutTabs,
 };
 
 const computeIsTargetFunctionCall = (node: ts.Node): string | undefined => {

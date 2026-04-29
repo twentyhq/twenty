@@ -8,4 +8,5 @@ export type SingleTabProps<T extends string = string> = {
   disabled?: boolean;
   pill?: string | React.ReactElement;
   logo?: string;
+  tooltipContent?: string;
 };

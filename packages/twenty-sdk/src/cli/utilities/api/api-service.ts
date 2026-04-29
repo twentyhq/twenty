@@ -52,6 +52,16 @@ export class ApiService {
     return this.applicationApi.createApplicationRegistration(...args);
   }
 
+  rotateApplicationRegistrationClientSecret(
+    ...args: Parameters<
+      ApplicationApi['rotateApplicationRegistrationClientSecret']
+    >
+  ) {
+    return this.applicationApi.rotateApplicationRegistrationClientSecret(
+      ...args,
+    );
+  }
+
   createDevelopmentApplication(
     ...args: Parameters<ApplicationApi['createDevelopmentApplication']>
   ) {
@@ -66,12 +76,18 @@ export class ApiService {
     return this.applicationApi.uninstallApplication(universalIdentifier);
   }
 
-  getSchema(options?: { authToken?: string }): Promise<ApiResponse<string>> {
+  syncMarketplaceCatalog(): Promise<ApiResponse<boolean>> {
+    return this.applicationApi.syncMarketplaceCatalog();
+  }
+
+  getSchema(options?: {
+    appAccessToken?: string;
+  }): Promise<ApiResponse<string>> {
     return this.schemaApi.getSchema(options);
   }
 
   getMetadataSchema(options?: {
-    authToken?: string;
+    appAccessToken?: string;
   }): Promise<ApiResponse<string>> {
     return this.schemaApi.getMetadataSchema(options);
   }

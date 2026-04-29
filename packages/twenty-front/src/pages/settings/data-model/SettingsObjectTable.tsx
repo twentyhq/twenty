@@ -1,4 +1,5 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { isDDLLockedState } from '@/client-config/states/isDDLLockedState';
 import { useDeleteOneObjectMetadataItem } from '@/object-metadata/hooks/useDeleteOneObjectMetadataItem';
 import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdateOneObjectMetadataItem';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
@@ -12,7 +13,6 @@ import {
   StyledStickyFirstCell,
 } from '@/settings/data-model/object-details/components/SettingsObjectItemTableRowStyledComponents';
 import { SettingsObjectInactiveMenuDropDown } from '@/settings/data-model/objects/components/SettingsObjectInactiveMenuDropDown';
-import { getItemTagInfo } from '@/settings/data-model/utils/getItemTagInfo';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -71,6 +71,7 @@ export const SettingsObjectTable = ({
   const { t } = useLingui();
 
   const isAdvancedModeEnabled = useAtomStateValue(isAdvancedModeEnabledState);
+  const isDDLLocked = useAtomStateValue(isDDLLockedState);
 
   const [searchTerm, setSearchTerm] = useState('');
   const [showDeactivated, setShowDeactivated] = useState(true);
@@ -84,6 +85,7 @@ export const SettingsObjectTable = ({
     useCombinedGetTotalCount();
 
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
+  const installedApplications = currentWorkspace?.installedApplications;
 
   const allObjectSettingsArray = useMemo(
     () =>
@@ -92,11 +94,11 @@ export const SettingsObjectTable = ({
           ({
             objectMetadataItem,
             labelPlural: objectMetadataItem.labelPlural,
-            objectTypeLabel: getItemTagInfo({
-              item: objectMetadataItem,
-              workspaceCustomApplicationId:
-                currentWorkspace?.workspaceCustomApplication?.id,
-            }).labelText,
+            objectTypeLabel:
+              installedApplications?.find(
+                (application) =>
+                  application.id === objectMetadataItem.applicationId,
+              )?.name ?? (objectMetadataItem.isRemote ? 'Remote' : ''),
             fieldsCount: objectMetadataItem.fields.filter(
               (field) => !isHiddenSystemField(field),
             ).length,
@@ -109,7 +111,7 @@ export const SettingsObjectTable = ({
     [
       objectMetadataItems,
       totalCountByObjectMetadataItemNamePlural,
-      currentWorkspace,
+      installedApplications,
     ],
   );
 
@@ -246,7 +248,7 @@ export const SettingsObjectTable = ({
                           stroke={theme.icon.stroke.sm}
                         />
                       </StyledIconChevronRightContainer>
-                    ) : (
+                    ) : isDDLLocked ? null : (
                       <SettingsObjectInactiveMenuDropDown
                         isCustomObject={
                           objectSettingsItem.objectMetadataItem.isCustom

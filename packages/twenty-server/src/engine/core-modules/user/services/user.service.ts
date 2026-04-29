@@ -4,10 +4,11 @@ import assert from 'assert';
 
 import { msg } from '@lingui/core/macro';
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
+import { isNonEmptyString } from '@sniptt/guards';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { isWorkspaceActiveOrSuspended } from 'twenty-shared/workspace';
-import { type QueryRunner, IsNull, Not, Repository } from 'typeorm';
+import { type QueryRunner, In, IsNull, Not, Repository } from 'typeorm';
 
 import {
   AuthException,
@@ -38,9 +39,11 @@ import {
   PermissionsExceptionMessage,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
+import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { WorkspaceMemberTranspiler } from 'src/engine/core-modules/user/services/workspace-member-transpiler.service';
 
 // oxlint-disable-next-line twenty/inject-workspace-repository
 export class UserService extends TypeOrmQueryService<UserEntity> {
@@ -55,11 +58,16 @@ export class UserService extends TypeOrmQueryService<UserEntity> {
     private readonly userWorkspaceService: UserWorkspaceService,
     @InjectMessageQueue(MessageQueue.workspaceQueue)
     private readonly workspaceQueueService: MessageQueueService,
+    private readonly coreEntityCacheService: CoreEntityCacheService,
+    private readonly workspaceMemberTranspiler: WorkspaceMemberTranspiler,
   ) {
     super(userRepository);
   }
 
-  async loadWorkspaceMember(user: AuthContextUser, workspace: WorkspaceEntity) {
+  async loadWorkspaceMember(
+    user: Pick<AuthContextUser, 'id'>,
+    workspace: Pick<WorkspaceEntity, 'id' | 'activationStatus'>,
+  ) {
     if (!isWorkspaceActiveOrSuspended(workspace)) {
       return null;
     }
@@ -85,7 +93,10 @@ export class UserService extends TypeOrmQueryService<UserEntity> {
     );
   }
 
-  async loadWorkspaceMembers(workspace: WorkspaceEntity, withDeleted = false) {
+  async loadWorkspaceMembers(
+    workspace: Pick<WorkspaceEntity, 'id' | 'activationStatus'>,
+    withDeleted = false,
+  ) {
     if (!isWorkspaceActiveOrSuspended(workspace)) {
       return [];
     }
@@ -109,7 +120,95 @@ export class UserService extends TypeOrmQueryService<UserEntity> {
     );
   }
 
-  async loadDeletedWorkspaceMembersOnly(workspace: WorkspaceEntity) {
+  async loadSignedAvatarUrlsByUserId({
+    workspace,
+    fallbackAvatarUrlsByUserId,
+  }: {
+    workspace: Pick<WorkspaceEntity, 'id' | 'activationStatus'>;
+    fallbackAvatarUrlsByUserId: Map<string, string | null>;
+  }): Promise<Map<string, string | null>> {
+    const userIds = Array.from(fallbackAvatarUrlsByUserId.keys());
+
+    if (userIds.length === 0) {
+      return new Map();
+    }
+
+    const workspaceMembers = await this.loadWorkspaceMembersByUserIds({
+      workspace,
+      userIds,
+    });
+    const memberByUserId = new Map(
+      workspaceMembers.map((member) => [member.userId, member]),
+    );
+
+    return new Map(
+      userIds.map((userId) => {
+        const member = memberByUserId.get(userId);
+        const memberSigned = isDefined(member)
+          ? this.workspaceMemberTranspiler.generateSignedAvatarUrl({
+              workspaceId: workspace.id,
+              workspaceMember: member,
+            })
+          : '';
+
+        if (isNonEmptyString(memberSigned)) {
+          return [userId, memberSigned];
+        }
+
+        const fallbackAvatarUrl = fallbackAvatarUrlsByUserId.get(userId);
+
+        if (!isNonEmptyString(fallbackAvatarUrl)) {
+          return [userId, null];
+        }
+
+        const fallbackSigned =
+          this.workspaceMemberTranspiler.generateSignedAvatarUrl({
+            workspaceId: workspace.id,
+            workspaceMember: { avatarUrl: fallbackAvatarUrl, id: userId },
+          });
+
+        return [
+          userId,
+          isNonEmptyString(fallbackSigned) ? fallbackSigned : fallbackAvatarUrl,
+        ];
+      }),
+    );
+  }
+
+  async loadWorkspaceMembersByUserIds({
+    workspace,
+    userIds,
+  }: {
+    workspace: Pick<WorkspaceEntity, 'id' | 'activationStatus'>;
+    userIds: string[];
+  }): Promise<WorkspaceMemberWorkspaceEntity[]> {
+    if (!isWorkspaceActiveOrSuspended(workspace) || userIds.length === 0) {
+      return [];
+    }
+
+    const authContext = buildSystemAuthContext(workspace.id);
+
+    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      async () => {
+        const workspaceMemberRepository =
+          await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
+            workspace.id,
+            'workspaceMember',
+            { shouldBypassPermissionChecks: true },
+          );
+
+        return await workspaceMemberRepository.find({
+          select: ['id', 'userId', 'avatarUrl'],
+          where: { userId: In(userIds) },
+        });
+      },
+      authContext,
+    );
+  }
+
+  async loadDeletedWorkspaceMembersOnly(
+    workspace: Pick<WorkspaceEntity, 'id' | 'activationStatus'>,
+  ) {
     if (!isWorkspaceActiveOrSuspended(workspace)) {
       return [];
     }
@@ -151,6 +250,7 @@ export class UserService extends TypeOrmQueryService<UserEntity> {
     }
 
     await this.userRepository.softDelete({ id: userId });
+    await this.coreEntityCacheService.invalidate('user', userId);
 
     return await this.userRepository.findOne({
       where: {
@@ -190,6 +290,7 @@ export class UserService extends TypeOrmQueryService<UserEntity> {
 
     if (user.userWorkspaces.length === 1) {
       await this.userRepository.softDelete(userId);
+      await this.coreEntityCacheService.invalidate('user', userId);
     }
 
     return userWorkspace;

@@ -1,5 +1,6 @@
 import { DashboardPageLayoutEditModeProvider } from '@/page-layout/components/DashboardPageLayoutEditModeProvider';
 import { RecordPageLayoutEditModeProvider } from '@/page-layout/components/RecordPageLayoutEditModeProvider';
+import { PageLayoutEditModeProviderContext } from '@/page-layout/contexts/PageLayoutEditModeContext';
 import { type ReactNode } from 'react';
 import { PageLayoutType } from '~/generated-metadata/graphql';
 
@@ -14,9 +15,17 @@ export const PageLayoutEditModeProvider = ({
   pageLayoutId,
   children,
 }: PageLayoutEditModeProviderProps) => {
+  if (layoutType === PageLayoutType.STANDALONE_PAGE) {
+    return (
+      <PageLayoutEditModeProviderContext value={{ isInEditMode: false }}>
+        {children}
+      </PageLayoutEditModeProviderContext>
+    );
+  }
+
   if (layoutType === PageLayoutType.RECORD_PAGE) {
     return (
-      <RecordPageLayoutEditModeProvider>
+      <RecordPageLayoutEditModeProvider pageLayoutId={pageLayoutId}>
         {children}
       </RecordPageLayoutEditModeProvider>
     );

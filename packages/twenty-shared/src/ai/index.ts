@@ -14,10 +14,12 @@ export type { DataResidency } from './constants/data-residency.const';
 export { DATA_RESIDENCY_KEYS } from './constants/data-residency.const';
 export type { NativeAiSdkProviderId } from './constants/native-ai-sdk-provider-ids.const';
 export { NATIVE_AI_SDK_PROVIDER_IDS } from './constants/native-ai-sdk-provider-ids.const';
+export { ToolCategory } from './constants/tool-category.const';
 export type {
   AgentResponseFieldType,
   AgentResponseSchema,
 } from './types/agent-response-schema.type';
+export type { AgentChatSubscriptionEvent } from './types/AgentChatSubscriptionEvent';
 export type {
   CodeExecutionFile,
   ExtendedFileUIPart,
@@ -27,8 +29,8 @@ export type {
 } from './types/DataMessagePart';
 export { isExtendedFileUIPart } from './types/DataMessagePart';
 export type {
-  AIChatUsageMetadata,
-  AIChatModelMetadata,
+  AiChatUsageMetadata,
+  AiChatModelMetadata,
   ExtendedUIMessage,
 } from './types/ExtendedUIMessage';
 export type { ExtendedUIMessagePart } from './types/ExtendedUIMessagePart';

@@ -16,7 +16,10 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
-import { AgentException, AgentExceptionCode } from './agent.exception';
+import {
+  AiException,
+  AiExceptionCode,
+} from 'src/engine/metadata-modules/ai/ai.exception';
 
 import { AgentEntity } from './entities/agent.entity';
 
@@ -63,9 +66,9 @@ export class AgentService {
     if (!agent) {
       const identifier = `name "${name}"`;
 
-      throw new AgentException(
+      throw new AiException(
         `Agent with ${identifier} not found`,
-        AgentExceptionCode.AGENT_NOT_FOUND,
+        AiExceptionCode.AGENT_NOT_FOUND,
       );
     }
 
@@ -91,10 +94,7 @@ export class AgentService {
     });
 
     if (!isDefined(flatAgent)) {
-      throw new AgentException(
-        `Agent not found`,
-        AgentExceptionCode.AGENT_NOT_FOUND,
-      );
+      throw new AiException(`Agent not found`, AiExceptionCode.AGENT_NOT_FOUND);
     }
 
     const roleId = flatRoleTargetByAgentIdMaps[flatAgent.id]?.roleId;
@@ -281,9 +281,9 @@ export class AgentService {
     });
 
     if (deletedAgents.length !== 1) {
-      throw new AgentException(
+      throw new AiException(
         'Could not retrieve deleted agent',
-        AgentExceptionCode.AGENT_NOT_FOUND,
+        AiExceptionCode.AGENT_NOT_FOUND,
       );
     }
 

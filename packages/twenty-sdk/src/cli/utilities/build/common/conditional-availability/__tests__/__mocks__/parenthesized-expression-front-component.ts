@@ -1,9 +1,9 @@
+import { defineFrontComponent } from '@/sdk/define';
 import {
-  defineFrontComponent,
   favoriteRecordIds,
   objectMetadataItem,
   pageType,
-} from '@/sdk';
+} from '@/sdk/front-component';
 
 const MyComponent = () => null;
 

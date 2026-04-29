@@ -2,12 +2,13 @@ import { useHasAccessTokenPair } from '@/auth/hooks/useHasAccessTokenPair';
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
 import { useOnboardingStatus } from '@/onboarding/hooks/useOnboardingStatus';
 import { useIsWorkspaceActivationStatusEqualsTo } from '@/workspace/hooks/useIsWorkspaceActivationStatusEqualsTo';
+import { useQuery } from '@apollo/client/react';
 import { useParams } from 'react-router-dom';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 
-import { OnboardingStatus } from '~/generated-metadata/graphql';
+import { OnboardingStatus, PageLayoutType } from '~/generated-metadata/graphql';
 
 import { useIsCurrentLocationOnAWorkspace } from '@/domain-manager/hooks/useIsCurrentLocationOnAWorkspace';
 import { usePageChangeEffectNavigateLocation } from '~/hooks/usePageChangeEffectNavigateLocation';
@@ -58,11 +59,23 @@ const setupMockIsOnAWorkspace = (isOnAWorkspace: boolean) => {
   });
 };
 
+jest.mock('@apollo/client/react');
+const setupMockUseQuery = (result?: { data?: unknown; loading?: boolean }) => {
+  jest.mocked(useQuery).mockReturnValueOnce({
+    data: result?.data ?? undefined,
+    loading: result?.loading ?? false,
+  } as ReturnType<typeof useQuery>);
+};
+
 jest.mock('react-router-dom');
-const setupMockUseParams = (objectNamePlural?: string) => {
-  jest
-    .mocked(useParams)
-    .mockReturnValueOnce({ objectNamePlural: objectNamePlural ?? '' });
+const setupMockUseParams = (
+  objectNamePlural?: string,
+  pageLayoutId?: string,
+) => {
+  jest.mocked(useParams).mockReturnValueOnce({
+    objectNamePlural: objectNamePlural ?? '',
+    pageLayoutId,
+  });
 };
 
 jest.mock('@/ui/utilities/state/jotai/hooks/useAtomStateValue');
@@ -92,6 +105,8 @@ const testCases: {
   objectNamePluralFromMetadata?: string;
   verifyEmailRedirectPath?: string;
   returnToPath?: string;
+  pageLayoutId?: string;
+  useQueryResult?: { data?: unknown; loading?: boolean };
 }[] = [
   { loc: AppPath.Verify, hasAccessTokenPair: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.PLAN_REQUIRED, res: AppPath.PlanRequired },
   { loc: AppPath.Verify, hasAccessTokenPair: true, isWorkspaceSuspended: true, onboardingStatus: OnboardingStatus.COMPLETED, res: getSettingsPath(SettingsPath.Billing) },
@@ -277,6 +292,20 @@ const testCases: {
   { loc: AppPath.RecordShowPage, hasAccessTokenPair: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.BOOK_ONBOARDING, res: AppPath.BookCallDecision },
   { loc: AppPath.RecordShowPage, hasAccessTokenPair: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.COMPLETED, res: undefined },
 
+  { loc: AppPath.PageLayoutPage, hasAccessTokenPair: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.PLAN_REQUIRED, res: AppPath.PlanRequired },
+  { loc: AppPath.PageLayoutPage, hasAccessTokenPair: true, isWorkspaceSuspended: true, onboardingStatus: OnboardingStatus.COMPLETED, res: getSettingsPath(SettingsPath.Billing) },
+  { loc: AppPath.PageLayoutPage, hasAccessTokenPair: false, isWorkspaceSuspended: false, onboardingStatus: undefined, res: AppPath.SignInUp },
+  { loc: AppPath.PageLayoutPage, hasAccessTokenPair: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.WORKSPACE_ACTIVATION, res: AppPath.CreateWorkspace },
+  { loc: AppPath.PageLayoutPage, hasAccessTokenPair: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.PROFILE_CREATION, res: AppPath.CreateProfile },
+  { loc: AppPath.PageLayoutPage, hasAccessTokenPair: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.SYNC_EMAIL, res: AppPath.SyncEmails },
+  { loc: AppPath.PageLayoutPage, hasAccessTokenPair: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.INVITE_TEAM, res: AppPath.InviteTeam },
+  { loc: AppPath.PageLayoutPage, hasAccessTokenPair: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.BOOK_ONBOARDING, res: AppPath.BookCallDecision },
+  { loc: AppPath.PageLayoutPage, hasAccessTokenPair: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.COMPLETED, res: undefined },
+  { loc: AppPath.PageLayoutPage, hasAccessTokenPair: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.COMPLETED, res: undefined, pageLayoutId: 'valid-id', useQueryResult: { loading: true } },
+  { loc: AppPath.PageLayoutPage, hasAccessTokenPair: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.COMPLETED, res: AppPath.NotFound, pageLayoutId: 'non-existent-id', useQueryResult: { data: { getPageLayout: null }, loading: false } },
+  { loc: AppPath.PageLayoutPage, hasAccessTokenPair: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.COMPLETED, res: AppPath.NotFound, pageLayoutId: 'wrong-type-id', useQueryResult: { data: { getPageLayout: { type: PageLayoutType.RECORD_PAGE } }, loading: false } },
+  { loc: AppPath.PageLayoutPage, hasAccessTokenPair: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.COMPLETED, res: undefined, pageLayoutId: 'valid-standalone-id', useQueryResult: { data: { getPageLayout: { type: PageLayoutType.STANDALONE_PAGE } }, loading: false } },
+
   { loc: AppPath.SettingsCatchAll, hasAccessTokenPair: true, isWorkspaceSuspended: false, onboardingStatus: OnboardingStatus.PLAN_REQUIRED, res: AppPath.PlanRequired },
   { loc: AppPath.SettingsCatchAll, hasAccessTokenPair: true, isWorkspaceSuspended: true, onboardingStatus: OnboardingStatus.COMPLETED, res: undefined },
   { loc: AppPath.SettingsCatchAll, hasAccessTokenPair: false, isWorkspaceSuspended: false, onboardingStatus: undefined, res: AppPath.SignInUp },
@@ -350,6 +379,8 @@ describe('usePageChangeEffectNavigateLocation', () => {
       objectNamePluralFromMetadata,
       verifyEmailRedirectPath,
       returnToPath,
+      pageLayoutId,
+      useQueryResult,
       res,
     }) => {
       setupMockIsMatchingLocation(loc);
@@ -357,7 +388,8 @@ describe('usePageChangeEffectNavigateLocation', () => {
       setupMockIsWorkspaceActivationStatusEqualsTo(isWorkspaceSuspended);
       setupMockHasAccessTokenPair(hasAccessTokenPair);
       setupMockIsOnAWorkspace(isOnAWorkspace ?? true);
-      setupMockUseParams(objectNamePluralFromParams);
+      setupMockUseQuery(useQueryResult);
+      setupMockUseParams(objectNamePluralFromParams, pageLayoutId);
       setupMockState(
         objectNamePluralFromMetadata,
         verifyEmailRedirectPath,
@@ -379,6 +411,12 @@ describe('usePageChangeEffectNavigateLocation', () => {
           ['nonExistingObjectInParam', 'existingObjectInParam:false'].length +
           ['caseWithRedirectionToVerifyEmailRedirectPath', 'caseWithout']
             .length +
+          [
+            'pageLayout:loading',
+            'pageLayout:missing',
+            'pageLayout:wrongType',
+            'pageLayout:validStandalone',
+          ].length +
           ['returnToPath:verify', 'returnToPath:signInUp', 'returnToPath:index']
             .length +
           ['notOnWorkspace:verify', 'notOnWorkspace:signInUp'].length,

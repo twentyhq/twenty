@@ -1,6 +1,8 @@
 import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { CalendarChannelDataAccessModule } from 'src/engine/metadata-modules/calendar-channel/data-access/calendar-channel-data-access.module';
+import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { BlocklistItemDeleteCalendarEventsJob } from 'src/modules/calendar/blocklist-manager/jobs/blocklist-item-delete-calendar-events.job';
 import { BlocklistReimportCalendarEventsJob } from 'src/modules/calendar/blocklist-manager/jobs/blocklist-reimport-calendar-events.job';
 import { CalendarBlocklistListener } from 'src/modules/calendar/blocklist-manager/listeners/calendar-blocklist.listener';
@@ -11,7 +13,7 @@ import { CalendarCommonModule } from 'src/modules/calendar/common/calendar-commo
   imports: [
     CalendarEventCleanerModule,
     CalendarCommonModule,
-    CalendarChannelDataAccessModule,
+    TypeOrmModule.forFeature([CalendarChannelEntity, UserWorkspaceEntity]),
   ],
   providers: [
     CalendarBlocklistListener,

@@ -1,61 +1,46 @@
 import { Injectable } from '@nestjs/common';
 
+import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
-import { OBJECT_METADATA_STANDARD_OVERRIDES_PROPERTIES } from 'src/engine/metadata-modules/object-metadata/constants/object-metadata-standard-overrides-properties.constant';
+import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { NavigationMenuItemRecordIdentifierService } from 'src/engine/metadata-modules/navigation-menu-item/services/navigation-menu-item-record-identifier.service';
+import { OBJECT_METADATA_STANDARD_OVERRIDES_PROPERTIES } from 'src/engine/metadata-modules/object-metadata/constants/object-metadata-standard-overrides-properties.constant';
 import { type MetadataEventBatch } from 'src/engine/subscriptions/metadata-event/types/metadata-event-batch.type';
-import { type EventStreamPayload } from 'src/engine/subscriptions/types/event-stream-payload.type';
-import { EventStreamService } from 'src/engine/subscriptions/event-stream.service';
-import { SubscriptionService } from 'src/engine/subscriptions/subscription.service';
+import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
+import { enrichCommandMenuItemEventWithResolvedNavigation } from 'src/engine/subscriptions/metadata-event/utils/enrich-command-menu-item-event-with-resolved-navigation.util';
 import { enrichFieldMetadataEventWithRelations } from 'src/engine/subscriptions/metadata-event/utils/enrich-field-metadata-event-with-relations.util';
+import { resolveOverridableEntityEventBatchOverrides } from 'src/engine/subscriptions/metadata-event/utils/sanitize-overridable-entity-event-batch.util';
+import { WorkspaceEventBroadcaster } from 'src/engine/subscriptions/workspace-event-broadcaster/workspace-event-broadcaster.service';
 
 @Injectable()
 export class MetadataEventPublisher {
   constructor(
-    private readonly subscriptionService: SubscriptionService,
-    private readonly eventStreamService: EventStreamService,
+    private readonly workspaceEventBroadcaster: WorkspaceEventBroadcaster,
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly navigationMenuItemRecordIdentifierService: NavigationMenuItemRecordIdentifierService,
+    private readonly i18nService: I18nService,
   ) {}
 
   async publish(metadataEventBatch: MetadataEventBatch): Promise<void> {
-    const workspaceId = metadataEventBatch.workspaceId;
-
-    const activeStreamIds =
-      await this.eventStreamService.getActiveStreamIds(workspaceId);
-
-    if (activeStreamIds.length === 0) {
+    if (!isNonEmptyArray(metadataEventBatch.events)) {
       return;
     }
-
-    const streamsData = await this.eventStreamService.getStreamsData(
-      workspaceId,
-      activeStreamIds,
-    );
 
     const enrichedBatch =
       await this.enrichMetadataEventBatch(metadataEventBatch);
 
-    const streamIdsToRemove: string[] = [];
-
-    for (const [streamChannelId, streamData] of streamsData) {
-      if (!isDefined(streamData)) {
-        streamIdsToRemove.push(streamChannelId);
-        continue;
-      }
-
-      await this.publishToStream({
-        streamChannelId,
-        metadataEventBatch: enrichedBatch,
-      });
-    }
-
-    await this.eventStreamService.removeFromActiveStreams(
-      workspaceId,
-      streamIdsToRemove,
-    );
+    await this.workspaceEventBroadcaster.broadcast({
+      workspaceId: enrichedBatch.workspaceId,
+      updatedCollectionHash: enrichedBatch.updatedCollectionHash,
+      events: enrichedBatch.events.map((event) => ({
+        type: event.type,
+        entityName: event.metadataName,
+        recordId: event.recordId,
+        properties: event.properties as Record<string, unknown>,
+      })),
+    });
   }
 
   private async enrichMetadataEventBatch(
@@ -70,41 +55,17 @@ export class MetadataEventPublisher {
         return this.enrichNavigationMenuItemEventsWithTargetRecordIdentifier(
           metadataEventBatch as MetadataEventBatch<'navigationMenuItem'>,
         );
+      case 'commandMenuItem':
+        return this.enrichCommandMenuItemEventsWithResolvedNavigation(
+          metadataEventBatch as MetadataEventBatch<'commandMenuItem'>,
+        );
       case 'objectMetadata':
         return this.resolveObjectMetadataStandardOverrides(
           metadataEventBatch as MetadataEventBatch<'objectMetadata'>,
         );
       default:
-        return metadataEventBatch;
+        return resolveOverridableEntityEventBatchOverrides(metadataEventBatch);
     }
-  }
-
-  private async publishToStream({
-    streamChannelId,
-    metadataEventBatch,
-  }: {
-    streamChannelId: string;
-    metadataEventBatch: MetadataEventBatch;
-  }): Promise<void> {
-    if (!isNonEmptyArray(metadataEventBatch.events)) {
-      return;
-    }
-
-    const metadataEvents = metadataEventBatch.events.map((metadataEvent) => ({
-      ...metadataEvent,
-      updatedCollectionHash: metadataEventBatch.updatedCollectionHash,
-    }));
-
-    const payload: EventStreamPayload = {
-      objectRecordEventsWithQueryIds: [],
-      metadataEvents,
-    };
-
-    await this.subscriptionService.publishToEventStream({
-      workspaceId: metadataEventBatch.workspaceId,
-      eventStreamChannelId: streamChannelId,
-      payload,
-    });
   }
 
   private async enrichFieldMetadataEventsWithRelations(
@@ -130,6 +91,46 @@ export class MetadataEventPublisher {
         record: event.properties.after as Record<string, unknown>,
         flatFieldMetadataMaps,
         flatObjectMetadataMaps,
+      });
+
+      return {
+        ...event,
+        properties: {
+          ...event.properties,
+          after: enrichedAfter,
+        },
+      } as typeof event;
+    });
+
+    return { ...metadataEventBatch, events: enrichedEvents };
+  }
+
+  private async enrichCommandMenuItemEventsWithResolvedNavigation(
+    metadataEventBatch: MetadataEventBatch<'commandMenuItem'>,
+  ): Promise<MetadataEventBatch<'commandMenuItem'>> {
+    const { flatObjectMetadataMaps } =
+      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId: metadataEventBatch.workspaceId,
+          flatMapsKeys: ['flatObjectMetadataMaps'],
+        },
+      );
+
+    const i18nInstance = this.i18nService.getI18nInstance(SOURCE_LOCALE);
+
+    const enrichedEvents = metadataEventBatch.events.map((event) => {
+      if (
+        !('after' in event.properties) ||
+        !isDefined(event.properties.after)
+      ) {
+        return event;
+      }
+
+      const enrichedAfter = enrichCommandMenuItemEventWithResolvedNavigation({
+        record: event.properties.after as FlatCommandMenuItem,
+        flatObjectMetadataMaps,
+        locale: SOURCE_LOCALE,
+        i18nInstance,
       });
 
       return {
