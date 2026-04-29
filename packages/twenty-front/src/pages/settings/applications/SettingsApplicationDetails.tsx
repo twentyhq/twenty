@@ -286,6 +286,12 @@ export const SettingsApplicationDetails = () => {
             applicationId={application.id}
             installedApplication={application}
             manifestContent={manifest}
+            applicationInfo={{
+              id: application.id,
+              name: displayName,
+              logo: application.logo,
+              universalIdentifier: application.universalIdentifier,
+            }}
           />
         );
       case 'permissions':

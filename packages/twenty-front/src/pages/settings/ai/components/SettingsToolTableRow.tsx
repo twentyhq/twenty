@@ -6,16 +6,12 @@ import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { OverflowingTextWithTooltip } from 'twenty-ui/display';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { ApplicationDisplay } from '@/applications/components/ApplicationDisplay';
+import { type ApplicationDisplayData } from '@/applications/types/applicationDisplayData.type';
 
 export type SettingsToolTableRowProps = {
   leftIcon: ReactNode;
   name: string;
-  application?: {
-    id?: string | null;
-    name?: string | null;
-    universalIdentifier?: string | null;
-    logo?: string | null;
-  };
+  application?: ApplicationDisplayData;
   action?: ReactNode;
   link?: string;
 };

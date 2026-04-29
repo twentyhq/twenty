@@ -9,15 +9,12 @@ import { Tag } from 'twenty-ui/components';
 import { OverflowingTextWithTooltip } from 'twenty-ui/display';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { getApplicationDescriptionSummary } from '~/pages/settings/applications/utils/getApplicationDescriptionSummary';
+import { type ApplicationDisplayData } from '@/applications/types/applicationDisplayData.type';
 
 export type SettingsApplicationTableRowProps = {
   action: ReactNode;
-  application: {
-    id?: string | null;
-    name?: string | null;
-    universalIdentifier?: string | null;
+  application: ApplicationDisplayData & {
     description?: string | null;
-    logo?: string | null;
   };
   hasUpdate?: boolean;
   link?: string;

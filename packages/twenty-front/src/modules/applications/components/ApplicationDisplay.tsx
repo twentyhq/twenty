@@ -3,13 +3,7 @@ import { Avatar, OverflowingTextWithTooltip } from 'twenty-ui/display';
 import { buildApplicationLogoUrl } from '@/applications/utils/buildApplicationLogoUrl';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-
-type ApplicationDisplayData = {
-  id?: string | null;
-  name?: string | null;
-  universalIdentifier?: string | null;
-  logo?: string | null;
-};
+import { type ApplicationDisplayData } from '@/applications/types/applicationDisplayData.type';
 
 type ApplicationDisplayProps = {
   application?: ApplicationDisplayData;

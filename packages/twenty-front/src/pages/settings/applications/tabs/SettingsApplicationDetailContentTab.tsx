@@ -10,6 +10,7 @@ import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { H2Title } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
+import { type ApplicationDisplayData } from '@/applications/types/applicationDisplayData.type';
 import { type Application } from '~/generated-metadata/graphql';
 import { SettingsApplicationDataTable } from '~/pages/settings/applications/components/SettingsApplicationDataTable';
 import {
@@ -19,7 +20,7 @@ import {
 
 type InstalledApplicationForContentTab = Omit<
   Application,
-  'objects' | 'universalIdentifier' | 'frontComponents'
+  'objects' | 'frontComponents'
 > & {
   objects: { id: string }[];
   frontComponents?: { name: string; description?: string | null }[];
@@ -29,17 +30,20 @@ type SettingsApplicationDetailContentTabProps = {
   applicationId: string;
   installedApplication?: InstalledApplicationForContentTab;
   manifestContent?: Manifest;
+  applicationInfo: ApplicationDisplayData;
 };
 
 export const SettingsApplicationDetailContentTab = ({
   applicationId,
   installedApplication,
   manifestContent,
+  applicationInfo,
 }: SettingsApplicationDetailContentTabProps) => {
   const { objectRows, fieldGroupRows } = useObjectAndFieldRows({
     applicationId,
     installedApplication,
     manifestContent,
+    applicationInfo,
   });
 
   const logicFunctionRows = useMemo((): LogicFunctionTableRow[] => {

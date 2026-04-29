@@ -59,7 +59,6 @@ export const useApplicationChipData = ({
         ? t`Custom`
         : application.name;
 
-  console.log('application', application);
   return {
     applicationChipData: {
       name: displayName,

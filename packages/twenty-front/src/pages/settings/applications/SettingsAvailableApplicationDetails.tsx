@@ -230,6 +230,11 @@ export const SettingsAvailableApplicationDetails = () => {
           <SettingsApplicationDetailContentTab
             applicationId={detail.universalIdentifier}
             manifestContent={manifest}
+            applicationInfo={{
+              name: displayName,
+              logo: app?.logoUrl,
+              universalIdentifier: detail.universalIdentifier,
+            }}
           />
         );
       case 'permissions':

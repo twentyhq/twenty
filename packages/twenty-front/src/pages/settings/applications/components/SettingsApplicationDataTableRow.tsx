@@ -1,4 +1,4 @@
-import { SettingsItemTypeTag } from '@/settings/components/SettingsItemTypeTag';
+import { ApplicationDisplay } from '@/applications/components/ApplicationDisplay';
 import {
   StyledActionTableCell,
   StyledNameTableCell,
@@ -11,7 +11,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { IconChevronRight, useIcons } from 'twenty-ui/display';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
-import { type ApplicationDataTableRow } from '~/pages/settings/applications/components/SettingsApplicationDataTable';
+import { type ApplicationDataTableRow } from '~/pages/settings/applications/types/applicationDataTableRow';
 
 const MAIN_ROW_GRID_COLUMNS = '180px 1fr 98.7px 36px';
 
@@ -52,7 +52,7 @@ export const SettingsApplicationDataTableRow = ({
         </StyledNameContainer>
       </StyledNameTableCell>
       <TableCell minWidth="0" overflow="hidden">
-        <SettingsItemTypeTag item={row.tagItem} />
+        <ApplicationDisplay application={row.application} />
       </TableCell>
       <TableCell align="right">{row.fieldsCount}</TableCell>
       <StyledActionTableCell>

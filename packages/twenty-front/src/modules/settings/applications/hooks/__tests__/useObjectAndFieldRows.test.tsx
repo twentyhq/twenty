@@ -25,8 +25,10 @@ describe('useObjectAndFieldRows', () => {
     it('should return object rows for installed application objects', () => {
       const installedApplication = {
         id: APP_ID,
+        universalIdentifier: APP_ID,
         objects: [{ id: personObject.id }],
         name: 'Test App',
+        logo: null,
         canBeUninstalled: true,
         availablePackages: {},
         applicationVariables: [],
@@ -56,8 +58,10 @@ describe('useObjectAndFieldRows', () => {
     it('should return empty object rows when application has no objects', () => {
       const installedApplication = {
         id: APP_ID,
+        universalIdentifier: APP_ID,
         objects: [],
         name: 'Test App',
+        logo: null,
         canBeUninstalled: true,
         availablePackages: {},
         applicationVariables: [],
@@ -83,8 +87,10 @@ describe('useObjectAndFieldRows', () => {
 
       const installedApplication = {
         id: fieldBelongingToApp.applicationId ?? APP_ID,
+        universalIdentifier: fieldBelongingToApp.applicationId ?? APP_ID,
         objects: [{ id: personObject.id }],
         name: 'Test App',
+        logo: null,
         canBeUninstalled: true,
         availablePackages: {},
         applicationVariables: [],
@@ -112,8 +118,10 @@ describe('useObjectAndFieldRows', () => {
     it('should exclude deny-listed objects from field group rows', () => {
       const installedApplication = {
         id: APP_ID,
+        universalIdentifier: APP_ID,
         objects: [],
         name: 'Test App',
+        logo: null,
         canBeUninstalled: true,
         availablePackages: {},
         applicationVariables: [],
@@ -155,11 +163,19 @@ describe('useObjectAndFieldRows', () => {
         fields: [],
       } as unknown as Manifest;
 
+      const applicationInfo = {
+        id: 'app-uid',
+        name: 'Test App',
+        universalIdentifier: 'app-uid',
+        logo: null,
+      };
+
       const { result } = renderHook(
         () =>
           useObjectAndFieldRows({
             applicationId: 'app-uid',
             manifestContent,
+            applicationInfo,
           }),
         { wrapper },
       );
@@ -168,9 +184,7 @@ describe('useObjectAndFieldRows', () => {
       expect(result.current.objectRows[0].key).toBe('customObject');
       expect(result.current.objectRows[0].labelPlural).toBe('Custom Objects');
       expect(result.current.objectRows[0].fieldsCount).toBe(2);
-      expect(result.current.objectRows[0].tagItem.applicationId).toBe(
-        'app-uid',
-      );
+      expect(result.current.objectRows[0].application.id).toBe('app-uid');
     });
 
     it('should return field group rows grouped by object from manifest fields', () => {
@@ -252,8 +266,10 @@ describe('useObjectAndFieldRows', () => {
     it('should use installed application data when both sources are provided', () => {
       const installedApplication = {
         id: APP_ID,
+        universalIdentifier: APP_ID,
         objects: [{ id: personObject.id }],
         name: 'Test App',
+        logo: null,
         canBeUninstalled: true,
         availablePackages: {},
         applicationVariables: [],
