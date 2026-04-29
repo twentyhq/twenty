@@ -55,3 +55,7 @@ TRANSLATION_QA_REPORT.md
 .playwright-mcp/
 .playwright-cli/
 output/playwright/
+
+# Local env backups
+*.env.bak
+.env.bak
