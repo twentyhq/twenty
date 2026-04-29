@@ -643,7 +643,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.CODE_INTERPRETER_CONFIG,
     description:
-      'Code interpreter driver type - LOCAL for development (unsafe), E2B for sandboxed execution',
+      'Code interpreter driver type - LOCAL for development (unsafe), E2B for SaaS sandboxed execution, DOCKER for self-hosted sandboxed execution via the host Docker daemon',
     type: ConfigVariableType.STRING,
     options: Object.values(CodeInterpreterDriverType),
   })
@@ -664,6 +664,76 @@ export class ConfigVariables {
     (env) => env.CODE_INTERPRETER_TYPE === CodeInterpreterDriverType.E_2_B,
   )
   E2B_API_KEY?: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.CODE_INTERPRETER_CONFIG,
+    description:
+      'Docker image used for sandboxed code execution when CODE_INTERPRETER_TYPE=DOCKER',
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  DOCKER_SANDBOX_IMAGE = 'twentycrm/sandbox:latest';
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.CODE_INTERPRETER_CONFIG,
+    description:
+      'Docker network the sandbox container joins. Should be an internal (no-egress) network shared with the server container. Required when CODE_INTERPRETER_TYPE=DOCKER',
+    type: ConfigVariableType.STRING,
+  })
+  @ValidateIf(
+    (env) => env.CODE_INTERPRETER_TYPE === CodeInterpreterDriverType.DOCKER,
+  )
+  @IsDefined()
+  DOCKER_SANDBOX_NETWORK?: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.CODE_INTERPRETER_CONFIG,
+    description:
+      'Host path shared between the server container and sandbox containers for staging bind-mounted work directories. Must resolve to the same path on the host Docker daemon. Required when CODE_INTERPRETER_TYPE=DOCKER',
+    type: ConfigVariableType.STRING,
+  })
+  @ValidateIf(
+    (env) => env.CODE_INTERPRETER_TYPE === CodeInterpreterDriverType.DOCKER,
+  )
+  @IsOptional()
+  DOCKER_SANDBOX_WORK_DIR = '/var/run/twenty-sandbox';
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.CODE_INTERPRETER_CONFIG,
+    description: 'Memory limit per sandbox container in MB (default: 512)',
+    type: ConfigVariableType.NUMBER,
+  })
+  @IsOptional()
+  @CastToPositiveNumber()
+  DOCKER_SANDBOX_MEMORY_MB = 512;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.CODE_INTERPRETER_CONFIG,
+    description:
+      'Maximum number of processes inside each sandbox container (default: 256)',
+    type: ConfigVariableType.NUMBER,
+  })
+  @IsOptional()
+  @CastToPositiveNumber()
+  DOCKER_SANDBOX_PIDS_LIMIT = 256;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.CODE_INTERPRETER_CONFIG,
+    description:
+      'Docker runtime used to launch sandbox containers. Leave unset to use the default runc runtime. Set to "runsc" to route sandboxes through gVisor (user-space kernel) or "sysbox-runc" for Sysbox. The runtime must be registered on the host Docker daemon (/etc/docker/daemon.json). Only applies when CODE_INTERPRETER_TYPE=DOCKER.',
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  DOCKER_SANDBOX_RUNTIME?: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.CODE_INTERPRETER_CONFIG,
+    description:
+      "Override URL the sandbox uses to reach Twenty's MCP endpoint. Needed when the sandbox runs on a network that cannot resolve the public SERVER_URL (e.g. DOCKER driver with internal-only sandbox network). Falls back to SERVER_URL when unset.",
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  CODE_INTERPRETER_SERVER_URL?: string;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.CODE_INTERPRETER_CONFIG,

@@ -109,7 +109,13 @@ export class CodeInterpreterTool implements Tool {
         this.buildExecutionState(executionId, 'running', code, '', '', []),
       );
 
-      const serverUrl = this.twentyConfigService.get('SERVER_URL');
+      // CODE_INTERPRETER_SERVER_URL overrides SERVER_URL for the sandbox's
+      // MCP callback URL. Needed when the sandbox runs on a network that
+      // can't resolve the public SERVER_URL (e.g. the DOCKER driver's
+      // internal sandbox network). Falls back to SERVER_URL otherwise.
+      const serverUrl =
+        this.twentyConfigService.get('CODE_INTERPRETER_SERVER_URL') ||
+        this.twentyConfigService.get('SERVER_URL');
       const sessionToken = this.generateSessionToken(
         workspaceId,
         userId,
