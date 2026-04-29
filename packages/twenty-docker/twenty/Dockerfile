@@ -39,7 +39,7 @@ COPY ./packages/twenty-shared/package.json /app/packages/twenty-shared/
 COPY ./packages/twenty-sdk/package.json /app/packages/twenty-sdk/
 COPY ./packages/twenty-client-sdk/package.json /app/packages/twenty-client-sdk/
 
-RUN yarn workspaces focus twenty-server twenty-emails twenty-shared twenty-sdk twenty-client-sdk twenty-ui && yarn cache clean
+RUN yarn workspaces focus twenty twenty-server twenty-emails twenty-shared twenty-sdk twenty-client-sdk twenty-ui && yarn cache clean
 
 
 FROM server-deps AS twenty-server-build
