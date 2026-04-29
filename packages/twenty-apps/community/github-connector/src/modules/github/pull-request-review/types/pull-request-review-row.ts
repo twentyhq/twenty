@@ -8,4 +8,5 @@ export type PullRequestReviewRow = {
   eventCount?: number | null;
   reviewerId?: string | null;
   pullRequestId?: string | null;
+  isSelfReview?: boolean | null;
 };

@@ -77,6 +77,7 @@ describe('PullRequestReview object', () => {
     expect(names).toContain('firstSubmittedAt');
     expect(names).toContain('lastSubmittedAt');
     expect(names).toContain('eventCount');
+    expect(names).toContain('isSelfReview');
     expect(names).toContain('reviewer');
     expect(names).toContain('pullRequest');
     expect(names).toContain('reviewEvents');

@@ -4,12 +4,18 @@ import {
   VIRTUAL_RENDER_HEIGHT,
   getImageFootprintScale,
   getImagePreviewZoom,
-} from '@/app/halftone/_lib/footprint';
+} from '@/lib/halftone';
+import { observeElementSize } from '@/lib/dom/observe-element-size';
+import { getPrefersReducedMotionSnapshot } from '@/lib/motion';
+import {
+  createVisualRenderLoop,
+  tryCreateSiteWebGlRenderer,
+  type VisualRenderLoop,
+} from '@/lib/visual-runtime';
 import { styled } from '@linaria/react';
-import { STEPPER_VISUAL_POINTER_ROOT_SELECTOR } from '../StepperVisualFrame/StepperVisualFrame';
 import { useEffect, useRef } from 'react';
 import * as THREE from 'three';
-import { createSiteWebGlRenderer } from '@/lib/webgl';
+import { STEPPER_VISUAL_POINTER_ROOT_SELECTOR } from '../StepperVisualFrame';
 
 const PREVIEW_DISTANCE = 4;
 const HOVER_FADE_IN = 18;
@@ -311,11 +317,20 @@ async function mountHalftoneCanvas({
     return;
   }
 
-  const renderer = createSiteWebGlRenderer({
+  let renderLoop: VisualRenderLoop | null = null;
+  const renderer = tryCreateSiteWebGlRenderer({
     alpha: true,
     antialias: false,
+    onContextLost: () => {
+      renderLoop?.stop();
+    },
     powerPreference: 'high-performance',
   });
+
+  if (renderer === null) {
+    return undefined;
+  }
+
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.setClearColor(0x000000, 0);
   renderer.setPixelRatio(1);
@@ -446,8 +461,7 @@ async function mountHalftoneCanvas({
     updateViewportUniforms(virtualWidth, virtualHeight);
   };
 
-  const resizeObserver = new ResizeObserver(syncSize);
-  resizeObserver.observe(container);
+  const stopObservingSize = observeElementSize(container, syncSize);
 
   const updatePointerPosition = (
     event: PointerEvent,
@@ -510,10 +524,8 @@ async function mountHalftoneCanvas({
 
   const clock = new THREE.Timer();
   clock.connect(document);
-  let animationFrameId = 0;
 
   const renderFrame = (timestamp?: number) => {
-    animationFrameId = window.requestAnimationFrame(renderFrame);
     clock.update(timestamp);
     const deltaSeconds = clock.getDelta();
     const hoverEasing =
@@ -570,12 +582,17 @@ async function mountHalftoneCanvas({
     renderer.render(postScene, orthographicCamera);
   };
 
-  renderFrame(0);
+  renderLoop = createVisualRenderLoop({
+    renderFrame,
+    target: container,
+    targetVisibilityOptions: { rootMargin: '100px' },
+  });
+  renderLoop.start();
 
   return () => {
-    window.cancelAnimationFrame(animationFrameId);
+    renderLoop?.dispose();
     clock.dispose();
-    resizeObserver.disconnect();
+    stopObservingSize();
     interactionTarget.removeEventListener('pointerleave', handlePointerLeave);
     interactionTarget.removeEventListener('pointermove', handlePointerMove);
     fullScreenGeometry.dispose();
@@ -601,7 +618,7 @@ export function StepperBackgroundHalftone({
   const mountReference = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    if (getPrefersReducedMotionSnapshot()) {
       return;
     }
 

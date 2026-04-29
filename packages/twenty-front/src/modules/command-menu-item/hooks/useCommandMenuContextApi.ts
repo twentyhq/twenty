@@ -1,3 +1,4 @@
+import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { objectPermissionsFamilySelector } from '@/auth/states/objectPermissionsFamilySelector';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
@@ -142,6 +143,14 @@ export const useCommandMenuContextApi = (): CommandMenuContextApi => {
     featureFlags[flag.key] = flag.value === true;
   }
 
+  const currentUserWorkspace = useAtomStateValue(currentUserWorkspaceState);
+
+  const permissionFlags: Record<string, boolean> = {};
+
+  for (const flag of currentUserWorkspace?.permissionFlags ?? []) {
+    permissionFlags[flag] = true;
+  }
+
   const targetObjectReadPermissions: Record<string, boolean> = {};
   const targetObjectWritePermissions: Record<string, boolean> = {};
 
@@ -176,6 +185,7 @@ export const useCommandMenuContextApi = (): CommandMenuContextApi => {
     objectPermissions,
     selectedRecords,
     featureFlags,
+    permissionFlags,
     targetObjectReadPermissions,
     targetObjectWritePermissions,
     objectMetadataItem: objectMetadataItem ?? {},

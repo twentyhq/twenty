@@ -1,4 +1,4 @@
-import type { ImageType } from '@/design-system/components/Image/types/Image';
+import type { ImageType } from '@/design-system/components/Image';
 
 export type ProductStepperVisualProps = {
   activeStepIndex: number;

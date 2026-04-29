@@ -3,85 +3,29 @@
 import { styled } from '@linaria/react';
 import {
   useCallback,
-  useEffect,
   useLayoutEffect,
   useRef,
   useState,
-  type PointerEvent as ReactPointerEvent,
   type ReactNode,
 } from 'react';
 import { theme } from '@/theme';
-import { VISUAL_TOKENS } from '../homeVisualTokens';
+import { VISUAL_TOKENS } from '../Shared/homeVisualTokens';
+import { useWindowPointerInteractions } from '../WindowInteraction/use-window-pointer-interactions';
+import type {
+  WindowPosition as Position,
+  WindowSize as Size,
+} from '../WindowInteraction/window-geometry';
 import { useWindowOrder } from '../WindowOrder/WindowOrderProvider';
-import { WINDOW_SHADOWS } from '../windowShadows';
+import { WINDOW_SHADOWS } from '../Shared/windowShadows';
 import { MacWindowBar } from './MacWindowBar';
 
 const WINDOW_ID = 'twenty-app-window';
 const MIN_WIDTH = 640;
 const MIN_HEIGHT = 420;
 const MIN_EDGE_GAP = 0;
-// Initial size cap — the hero scene is 1280×832, so we reuse that ratio to
-// keep the window looking like the Twenty app when it's shrunk to fit.
 const INITIAL_MAX_WIDTH = 1040;
 const INITIAL_ASPECT_RATIO = 1280 / 832;
-// Below this parent width, stack App Window + Terminal with a small diagonal
-// offset so both remain clickable on mobile.
 const MOBILE_PARENT_BREAKPOINT = 640;
-
-type Position = { left: number; top: number };
-type Size = { width: number; height: number };
-
-type DragState = {
-  pointerId: number;
-  originX: number;
-  originY: number;
-  startLeft: number;
-  startTop: number;
-};
-
-type ResizeCorner = 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
-
-type ResizeEdge = 'top' | 'right' | 'bottom' | 'left';
-
-type ResizeHandle = ResizeCorner | ResizeEdge;
-
-type ResizeState = {
-  pointerId: number;
-  originX: number;
-  originY: number;
-  startWidth: number;
-  startHeight: number;
-  startLeft: number;
-  startTop: number;
-  handle: ResizeHandle;
-};
-
-const HORIZONTAL_HANDLES: ReadonlySet<ResizeHandle> = new Set([
-  'top-left',
-  'top-right',
-  'bottom-left',
-  'bottom-right',
-  'left',
-  'right',
-]);
-const VERTICAL_HANDLES: ReadonlySet<ResizeHandle> = new Set([
-  'top-left',
-  'top-right',
-  'bottom-left',
-  'bottom-right',
-  'top',
-  'bottom',
-]);
-const LEFT_HANDLES: ReadonlySet<ResizeHandle> = new Set([
-  'top-left',
-  'bottom-left',
-  'left',
-]);
-const TOP_HANDLES: ReadonlySet<ResizeHandle> = new Set([
-  'top-left',
-  'top-right',
-  'top',
-]);
 
 const Shell = styled.div<{
   $isResizing: boolean;
@@ -186,19 +130,12 @@ type DraggableAppWindowProps = {
 
 export const DraggableAppWindow = ({ children }: DraggableAppWindowProps) => {
   const shellRef = useRef<HTMLDivElement>(null);
-  const dragStateRef = useRef<DragState | null>(null);
-  const resizeStateRef = useRef<ResizeState | null>(null);
 
   const [position, setPosition] = useState<Position | null>(null);
   const [size, setSize] = useState<Size | null>(null);
-  const [isDragging, setIsDragging] = useState(false);
-  const [isResizing, setIsResizing] = useState(false);
 
   const { activate, zIndex } = useWindowOrder(WINDOW_ID);
 
-  // On mount, size the window to match the hero scene so it occupies the
-  // same visual footprint as before. Stored in state so drag/resize can move
-  // and shrink it freely afterwards.
   useLayoutEffect(() => {
     const shell = shellRef.current;
     const parent = shell?.parentElement as HTMLElement | null;
@@ -208,8 +145,6 @@ export const DraggableAppWindow = ({ children }: DraggableAppWindowProps) => {
     const parentRect = parent.getBoundingClientRect();
 
     if (parentRect.width < MOBILE_PARENT_BREAKPOINT) {
-      // Mobile: pin the App Window to the top of the scene. The Terminal sits
-      // tightly on top of it with only a small diagonal offset peeking out.
       const mobileWidth = Math.min(parentRect.width, 320);
       const mobileHeight = Math.min(
         parentRect.height,
@@ -220,9 +155,6 @@ export const DraggableAppWindow = ({ children }: DraggableAppWindowProps) => {
       return;
     }
 
-    // Cap the initial width so the window reads as a macOS app resting inside
-    // the hero rather than filling it edge-to-edge. Height follows the hero's
-    // aspect ratio so the app layout isn't letterboxed.
     const initialWidth = Math.min(parentRect.width, INITIAL_MAX_WIDTH);
     const initialHeight = Math.min(
       parentRect.height,
@@ -241,227 +173,38 @@ export const DraggableAppWindow = ({ children }: DraggableAppWindowProps) => {
     return parent?.getBoundingClientRect() ?? null;
   }, []);
 
-  const clampPosition = useCallback(
-    (candidateLeft: number, candidateTop: number, currentSize: Size) => {
-      const parentRect = getParentRect();
-      if (!parentRect) {
-        return { left: candidateLeft, top: candidateTop };
-      }
-      const maxLeft = parentRect.width - currentSize.width - MIN_EDGE_GAP;
-      const maxTop = parentRect.height - currentSize.height - MIN_EDGE_GAP;
-      return {
-        left: Math.min(Math.max(candidateLeft, MIN_EDGE_GAP), maxLeft),
-        top: Math.min(Math.max(candidateTop, MIN_EDGE_GAP), maxTop),
-      };
-    },
-    [getParentRect],
-  );
+  const {
+    handleDragStart,
+    isDragging,
+    isResizing,
+    latestPositionRef,
+    latestSizeRef,
+    startResize,
+  } = useWindowPointerInteractions({
+    activate,
+    blockedDragTargetSelector:
+      'button, a, input, textarea, select, [role="button"]',
+    edgeGap: MIN_EDGE_GAP,
+    getBounds: getParentRect,
+    minSize: { width: MIN_WIDTH, height: MIN_HEIGHT },
+    position,
+    setPosition,
+    setSize,
+    shellRef,
+    size,
+  });
 
-  const handleDragStart = useCallback(
-    (event: ReactPointerEvent<HTMLDivElement>) => {
-      if (event.pointerType === 'mouse' && event.button !== 0) {
-        return;
-      }
-      const target = event.target as HTMLElement | null;
-      if (
-        target &&
-        target.closest('button, a, input, textarea, select, [role="button"]')
-      ) {
-        return;
-      }
-      if (!position) {
-        return;
-      }
-
-      event.preventDefault();
-      activate();
-
-      const shell = shellRef.current;
-      shell?.setPointerCapture?.(event.pointerId);
-      dragStateRef.current = {
-        pointerId: event.pointerId,
-        originX: event.clientX,
-        originY: event.clientY,
-        startLeft: position.left,
-        startTop: position.top,
-      };
-      setIsDragging(true);
-    },
-    [activate, position],
-  );
-
-  useEffect(() => {
-    if (!isDragging) {
-      return undefined;
-    }
-
-    const handleMove = (event: PointerEvent) => {
-      const state = dragStateRef.current;
-      if (!state || state.pointerId !== event.pointerId || !size) {
-        return;
-      }
-      const nextLeft = state.startLeft + (event.clientX - state.originX);
-      const nextTop = state.startTop + (event.clientY - state.originY);
-      setPosition(clampPosition(nextLeft, nextTop, size));
-    };
-
-    const stop = (event: PointerEvent) => {
-      const state = dragStateRef.current;
-      if (!state || state.pointerId !== event.pointerId) {
-        return;
-      }
-      dragStateRef.current = null;
-      setIsDragging(false);
-      shellRef.current?.releasePointerCapture?.(event.pointerId);
-    };
-
-    window.addEventListener('pointermove', handleMove);
-    window.addEventListener('pointerup', stop);
-    window.addEventListener('pointercancel', stop);
-
-    return () => {
-      window.removeEventListener('pointermove', handleMove);
-      window.removeEventListener('pointerup', stop);
-      window.removeEventListener('pointercancel', stop);
-    };
-  }, [clampPosition, isDragging, size]);
-
-  const startResize = useCallback(
-    (handle: ResizeHandle) => (event: ReactPointerEvent<HTMLDivElement>) => {
-      if (event.pointerType === 'mouse' && event.button !== 0) {
-        return;
-      }
-      if (!position || !size) {
-        return;
-      }
-
-      event.preventDefault();
-      event.stopPropagation();
-      activate();
-
-      const shell = shellRef.current;
-      shell?.setPointerCapture?.(event.pointerId);
-      resizeStateRef.current = {
-        pointerId: event.pointerId,
-        originX: event.clientX,
-        originY: event.clientY,
-        startWidth: size.width,
-        startHeight: size.height,
-        startLeft: position.left,
-        startTop: position.top,
-        handle,
-      };
-      setIsResizing(true);
-    },
-    [activate, position, size],
-  );
-
-  useEffect(() => {
-    if (!isResizing) {
-      return undefined;
-    }
-
-    const handleMove = (event: PointerEvent) => {
-      const state = resizeStateRef.current;
-      if (!state || state.pointerId !== event.pointerId) {
-        return;
-      }
-      const parentRect = getParentRect();
-      if (!parentRect) {
-        return;
-      }
-
-      const deltaX = event.clientX - state.originX;
-      const deltaY = event.clientY - state.originY;
-
-      const affectsWidth = HORIZONTAL_HANDLES.has(state.handle);
-      const affectsHeight = VERTICAL_HANDLES.has(state.handle);
-      const growsFromLeft = LEFT_HANDLES.has(state.handle);
-      const growsFromTop = TOP_HANDLES.has(state.handle);
-
-      // Mobile parents can be narrower than MIN_WIDTH; clamp the min against
-      // the parent so resize can't demand more room than exists.
-      const effectiveMinWidth = Math.min(
-        MIN_WIDTH,
-        Math.max(parentRect.width - MIN_EDGE_GAP * 2, 0),
-      );
-      const effectiveMinHeight = Math.min(
-        MIN_HEIGHT,
-        Math.max(parentRect.height - MIN_EDGE_GAP * 2, 0),
-      );
-
-      let nextWidth = state.startWidth;
-      let nextLeft = state.startLeft;
-      if (affectsWidth) {
-        if (growsFromLeft) {
-          // Left edge can't cross past MIN_EDGE_GAP, which caps width at
-          // startLeft + startWidth - MIN_EDGE_GAP.
-          const maxWidth = state.startWidth + state.startLeft - MIN_EDGE_GAP;
-          nextWidth = Math.min(
-            Math.max(state.startWidth - deltaX, effectiveMinWidth),
-            Math.max(maxWidth, effectiveMinWidth),
-          );
-          nextLeft = state.startLeft + state.startWidth - nextWidth;
-        } else {
-          const maxWidth = parentRect.width - state.startLeft - MIN_EDGE_GAP;
-          nextWidth = Math.min(
-            Math.max(state.startWidth + deltaX, effectiveMinWidth),
-            Math.max(maxWidth, effectiveMinWidth),
-          );
-        }
-      }
-
-      let nextHeight = state.startHeight;
-      let nextTop = state.startTop;
-      if (affectsHeight) {
-        if (growsFromTop) {
-          const maxHeight = state.startHeight + state.startTop - MIN_EDGE_GAP;
-          nextHeight = Math.min(
-            Math.max(state.startHeight - deltaY, effectiveMinHeight),
-            Math.max(maxHeight, effectiveMinHeight),
-          );
-          nextTop = state.startTop + state.startHeight - nextHeight;
-        } else {
-          const maxHeight = parentRect.height - state.startTop - MIN_EDGE_GAP;
-          nextHeight = Math.min(
-            Math.max(state.startHeight + deltaY, effectiveMinHeight),
-            Math.max(maxHeight, effectiveMinHeight),
-          );
-        }
-      }
-
-      setSize({ width: nextWidth, height: nextHeight });
-      setPosition({ left: nextLeft, top: nextTop });
-    };
-
-    const stop = (event: PointerEvent) => {
-      const state = resizeStateRef.current;
-      if (!state || state.pointerId !== event.pointerId) {
-        return;
-      }
-      resizeStateRef.current = null;
-      setIsResizing(false);
-      shellRef.current?.releasePointerCapture?.(event.pointerId);
-    };
-
-    window.addEventListener('pointermove', handleMove);
-    window.addEventListener('pointerup', stop);
-    window.addEventListener('pointercancel', stop);
-
-    return () => {
-      window.removeEventListener('pointermove', handleMove);
-      window.removeEventListener('pointerup', stop);
-      window.removeEventListener('pointercancel', stop);
-    };
-  }, [getParentRect, isResizing]);
-
-  // Any pointer-down on the window activates it; the MacWindowBar owns the
-  // drag affordance separately so content clicks don't pull the window.
   const handleShellPointerDown = useCallback(() => {
     activate();
   }, [activate]);
 
   const isReady = position !== null && size !== null;
+
+  const isInteracting = isDragging || isResizing;
+  const renderPosition = isInteracting
+    ? (latestPositionRef.current ?? position)
+    : position;
+  const renderSize = isInteracting ? (latestSizeRef.current ?? size) : size;
 
   return (
     <Shell
@@ -471,11 +214,11 @@ export const DraggableAppWindow = ({ children }: DraggableAppWindowProps) => {
       onPointerDown={handleShellPointerDown}
       ref={shellRef}
       style={{
-        height: size ? `${size.height}px` : undefined,
-        transform: position
-          ? `translate(${position.left}px, ${position.top}px)`
-          : 'translate(0, 0)',
-        width: size ? `${size.width}px` : '100%',
+        height: renderSize ? `${renderSize.height}px` : undefined,
+        transform: renderPosition
+          ? `translate3d(${renderPosition.left}px, ${renderPosition.top}px, 0)`
+          : 'translate3d(0, 0, 0)',
+        width: renderSize ? `${renderSize.width}px` : '100%',
         zIndex,
       }}
     >

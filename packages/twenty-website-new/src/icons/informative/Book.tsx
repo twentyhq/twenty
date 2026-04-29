@@ -1,10 +1,6 @@
 type BookIconProps = { size: number; color: string; strokeWidth?: number };
 
-export function BookIcon({
-  size,
-  color,
-  strokeWidth = 1.5,
-}: BookIconProps) {
+export function BookIcon({ size, color, strokeWidth = 1.5 }: BookIconProps) {
   return (
     <svg
       width={size}
