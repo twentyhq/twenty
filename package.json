@@ -7,7 +7,10 @@
     "@nx/storybook": "22.5.4",
     "@nx/vite": "22.5.4",
     "@nx/web": "22.5.4",
-    "nx": "22.5.4"
+    "concurrently": "^8.2.2",
+    "http-server": "^14.1.1",
+    "nx": "22.5.4",
+    "verdaccio": "^6.3.1"
   },
   "engines": {
     "node": "^24.5.0",
