@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import React, { type ReactNode } from 'react';
 
-import { type ButtonPosition, type ButtonProps } from './Button/Button';
+import { type ButtonPosition, type ButtonProps } from './Button/Button.types';
 import { themeCssVariables } from '@ui/theme-constants';
 import { isDefined } from 'twenty-shared/utils';
 
