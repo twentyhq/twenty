@@ -284,9 +284,7 @@ export const SettingsAvailableApplicationDetails = () => {
           <TabList
             tabs={tabs}
             componentInstanceId={AVAILABLE_APPLICATION_DETAIL_ID}
-            behaveAsLinks={false}
           />
-
           {renderActiveTabContent()}
         </SettingsPageContainer>
       </SubMenuTopBarContainer>
