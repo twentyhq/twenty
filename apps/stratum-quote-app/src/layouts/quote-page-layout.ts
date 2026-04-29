@@ -1,4 +1,4 @@
-import { definePageLayout, PageLayoutTabLayoutMode } from 'twenty-sdk';
+import { definePageLayout, PageLayoutTabLayoutMode } from 'twenty-sdk/define';
 
 import {
   QUOTE_OBJECT_UNIVERSAL_IDENTIFIER,

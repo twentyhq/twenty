@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 
-import { defineFrontComponent, useRecordId } from 'twenty-sdk';
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { useRecordId } from 'twenty-sdk/front-component';
 
 import { QUOTE_SECTIONS_PANEL_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 
