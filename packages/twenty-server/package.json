@@ -195,6 +195,7 @@
     "@nestjs/devtools-integration": "^0.2.1",
     "@nestjs/schematics": "^11.0.9",
     "@nestjs/testing": "11.1.16",
+    "@swc/cli": "^0.7.10",
     "@swc/core": "^1.15.11",
     "@swc/jest": "^0.2.39",
     "@types/addressparser": "^1.0.3",
