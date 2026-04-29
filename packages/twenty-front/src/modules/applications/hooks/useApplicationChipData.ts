@@ -56,20 +56,15 @@ export const useApplicationChipData = ({
     };
   }
 
-  const isCurrent =
-    isDefined(currentApplicationId) && currentApplicationId === applicationId;
-
   const isStandard = isTwentyStandardApplication(application);
 
   const isCustom = isWorkspaceCustomApplication(application, currentWorkspace);
 
-  const displayName = isCurrent
-    ? t`This app`
-    : isStandard
-      ? t`Standard`
-      : isCustom
-        ? t`Custom`
-        : application.name;
+  const displayName = isStandard
+    ? t`Standard`
+    : isCustom
+      ? t`Custom`
+      : application.name;
 
   const logo = isStandard
     ? new URL(StandardLogo, window.location.href).toString()
@@ -84,7 +79,7 @@ export const useApplicationChipData = ({
   return {
     applicationChipData: {
       name: displayName,
-      seed: application.universalIdentifier ?? application.name,
+      seed: application.name,
       colors,
       logo,
     },
