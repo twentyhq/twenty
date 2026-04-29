@@ -20,7 +20,7 @@ COPY ./packages/twenty-front-component-renderer/package.json /app/packages/twent
 COPY ./packages/twenty-sdk/package.json /app/packages/twenty-sdk/
 COPY ./packages/twenty-client-sdk/package.json /app/packages/twenty-client-sdk/
 
-RUN yarn && yarn cache clean
+RUN yarn && yarn cache clean && npx nx reset
 
 
 FROM node:24-alpine AS server-deps
@@ -51,8 +51,10 @@ COPY ./packages/twenty-sdk /app/packages/twenty-sdk
 COPY ./packages/twenty-client-sdk /app/packages/twenty-client-sdk
 COPY ./packages/twenty-server /app/packages/twenty-server
 
-RUN npx nx run-many -t lingui:extract -p twenty-server twenty-emails && \
-    npx nx run-many -t lingui:compile -p twenty-server twenty-emails
+RUN npx nx run twenty-server:lingui:extract && \
+    npx nx run twenty-server:lingui:compile && \
+    npx nx run twenty-emails:lingui:extract && \
+    npx nx run twenty-emails:lingui:compile
 
 RUN npx nx run twenty-server:build
 
