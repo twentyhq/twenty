@@ -1,3 +1,6 @@
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
+
 const jestConfig = {
   // For more information please have a look to official docs https://jestjs.io/docs/configuration/#prettierpath-string
   // Prettier v3 should be supported in jest v30 https://github.com/jestjs/jest/releases/tag/v30.0.0-alpha.1
@@ -44,7 +47,7 @@ const jestConfig = {
   moduleNameMapper: {
     '^src/(.*)': '<rootDir>/src/$1',
     '^test/(.*)': '<rootDir>/test/$1',
-    '^file-type$': '<rootDir>/node_modules/file-type/index.js',
+    '^file-type$': require.resolve('file-type'),
   },
   moduleFileExtensions: ['js', 'json', 'ts'],
   modulePathIgnorePatterns: ['<rootDir>/dist'],

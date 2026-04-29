@@ -137,6 +137,7 @@
     "@babel/preset-typescript": "^7.24.6",
     "@chromatic-com/storybook": "^4.1.3",
     "@graphql-codegen/cli": "^3.3.1",
+    "@graphql-codegen/typed-document-node": "^5.0.9",
     "@graphql-codegen/typescript": "^3.0.4",
     "@graphql-codegen/typescript-operations": "^3.0.4",
     "@lingui/cli": "^5.1.2",
