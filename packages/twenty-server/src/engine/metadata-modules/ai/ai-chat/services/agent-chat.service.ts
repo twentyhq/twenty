@@ -30,16 +30,16 @@ const serializeThreadForBroadcast = (thread: AgentChatThreadEntity) => ({
   title: thread.title,
   totalInputTokens: thread.totalInputTokens,
   totalOutputTokens: thread.totalOutputTokens,
+  totalCacheReadTokens: thread.totalCacheReadTokens,
+  totalCacheCreationTokens: thread.totalCacheCreationTokens,
   contextWindowTokens: thread.contextWindowTokens,
   conversationSize: thread.conversationSize,
   totalInputCredits: thread.totalInputCredits,
   totalOutputCredits: thread.totalOutputCredits,
-  archivedAt: thread.archivedAt ? thread.archivedAt.toISOString() : null,
-  lastMessageAt: thread.lastMessageAt
-    ? thread.lastMessageAt.toISOString()
-    : null,
-  createdAt: thread.createdAt.toISOString(),
-  updatedAt: thread.updatedAt.toISOString(),
+  archivedAt: thread.archivedAt,
+  lastMessageAt: thread.lastMessageAt,
+  createdAt: thread.createdAt,
+  updatedAt: thread.updatedAt,
 });
 
 @Injectable()
