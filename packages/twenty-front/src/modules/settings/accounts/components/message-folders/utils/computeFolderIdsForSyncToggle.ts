@@ -54,9 +54,7 @@ export const computeFolderIdsForSyncToggle = ({
   const childIds = collectChildren(folderId);
 
   if (isSynced) {
-    const parentIds = collectParents(folderId).map((folder) => folder.id);
-
-    return [...new Set([...childIds, ...parentIds])];
+    return [...new Set(childIds)];
   }
 
   const idsToUnsync = new Set(childIds);
