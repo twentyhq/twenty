@@ -15,6 +15,8 @@ import { type PartialUserWithPicture } from 'src/engine/core-modules/auth/types/
 import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-up.service';
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
+import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
@@ -47,6 +49,8 @@ export class SupabaseJwtAuthStrategy extends PassportStrategy(
     private readonly userRepository: Repository<UserEntity>,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
+    @InjectRepository(UserWorkspaceEntity)
+    private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
     private readonly signInUpService: SignInUpService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly coreEntityCacheService: CoreEntityCacheService,
@@ -263,7 +267,7 @@ export class SupabaseJwtAuthStrategy extends PassportStrategy(
       if (!profile?.company_id) {
         throw new UnauthorizedException('User has no W144 company');
       }
-      this.logger.log(
+      this.logger.debug(
         `validate: profile lookup OK, company_id=${profile.company_id}`,
       );
 
@@ -284,7 +288,7 @@ export class SupabaseJwtAuthStrategy extends PassportStrategy(
       if (!connection?.workspace_id) {
         throw new UnauthorizedException('CRM Hub not activated');
       }
-      this.logger.log(
+      this.logger.debug(
         `validate: hub_connection lookup OK, workspace_id=${connection.workspace_id}`,
       );
 
@@ -295,7 +299,7 @@ export class SupabaseJwtAuthStrategy extends PassportStrategy(
       if (!isDefined(workspace)) {
         throw new UnauthorizedException('Twenty workspace not found');
       }
-      this.logger.log(`validate: workspace lookup OK, id=${workspace.id}`);
+      this.logger.debug(`validate: workspace lookup OK, id=${workspace.id}`);
 
       const existingUser = await this.userRepository.findOne({
         where: { email: payload.email },
@@ -308,7 +312,7 @@ export class SupabaseJwtAuthStrategy extends PassportStrategy(
             newUserWithPicture: this.buildPartialUser(payload),
           });
 
-      this.logger.log(
+      this.logger.debug(
         `validate: calling signInUpOnExistingWorkspace (userData.type=${userData.type})`,
       );
       const user = await this.signInUpService.signInUpOnExistingWorkspace({
@@ -343,11 +347,37 @@ export class SupabaseJwtAuthStrategy extends PassportStrategy(
         ? flatWorkspaceMemberMaps.byId[workspaceMemberId]
         : undefined;
 
+      const userWorkspaceRow = await this.userWorkspaceRepository.findOne({
+        where: { userId: user.id, workspaceId: workspace.id },
+      });
+
+      if (!isDefined(userWorkspaceRow)) {
+        throw new UnauthorizedException('UserWorkspace link not found');
+      }
+
+      const flatUserWorkspace = await this.coreEntityCacheService.get(
+        'userWorkspaceEntity',
+        userWorkspaceRow.id,
+      );
+
+      if (!isDefined(flatUserWorkspace)) {
+        throw new UnauthorizedException(
+          'UserWorkspace not available in cache',
+        );
+      }
+
+      this.logger.log(
+        `validate: returning AuthContext (userId=${user.id}, workspaceId=${workspace.id}, authProvider=SSO)`,
+      );
+
       return {
         user: flatUser,
         workspace: flatWorkspace,
         workspaceMember,
         workspaceMemberId,
+        userWorkspace: flatUserWorkspace,
+        userWorkspaceId: flatUserWorkspace.id,
+        authProvider: AuthProviderEnum.SSO,
       };
     } catch (error) {
       const err = error as Error;
