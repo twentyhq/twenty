@@ -5,7 +5,10 @@ import { type Request, type Response } from 'express';
 import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 
-import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
+import {
+  AuthException,
+  AuthExceptionCode,
+} from 'src/engine/core-modules/auth/auth.exception';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { getAuthExceptionRestStatus } from 'src/engine/core-modules/auth/utils/get-auth-exception-rest-status.util';
@@ -106,11 +109,17 @@ export class MiddlewareService {
       : undefined;
 
     if (!data.workspace) {
-      throw new Error('No data sources found');
+      throw new AuthException(
+        'Workspace not found in auth context',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      );
     }
 
     if (!isNonEmptyString(data.workspace.databaseSchema)) {
-      throw new Error('No data sources found');
+      throw new AuthException(
+        'Workspace database schema is not configured',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      );
     }
 
     bindDataToRequestObject(data, request, metadataVersion);
