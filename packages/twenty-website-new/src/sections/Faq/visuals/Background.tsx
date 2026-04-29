@@ -7,9 +7,13 @@ import { useEffect, useLayoutEffect, useRef } from 'react';
 import * as THREE from 'three';
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { createAnimationFrameLoop } from '@/lib/animation';
+import { observeElementSize } from '@/lib/dom/observe-element-size';
 import {
-  createFrameTimer,
-  createSiteWebGlRenderer,
+  createVisualRenderLoop,
+  tryCreateSiteWebGlRenderer,
+  type VisualRenderLoop,
+  type VisualRenderLoopFrame,
 } from '@/lib/visual-runtime';
 import { DRACO_DECODER_PATH } from '@/lib/visual-runtime/draco-decoder-path';
 
@@ -606,22 +610,25 @@ export function FaqBackground() {
     shell.style.bottom = 'auto';
     shell.style.height = `${initialHeight}px`;
 
-    let resizeFrameId = 0;
-
-    const handleWindowResize = () => {
-      window.cancelAnimationFrame(resizeFrameId);
-      resizeFrameId = window.requestAnimationFrame(() => {
+    const resizeTask = createAnimationFrameLoop({
+      onFrame: () => {
         const currentViewportHeight =
           window.innerHeight || initialViewportHeight;
         const ratio = currentViewportHeight / initialViewportHeight;
         shell.style.height = `${Math.round(initialHeight * ratio)}px`;
-      });
+        return false;
+      },
+    });
+
+    const handleWindowResize = () => {
+      resizeTask.stop();
+      resizeTask.start();
     };
 
     window.addEventListener('resize', handleWindowResize);
 
     return () => {
-      window.cancelAnimationFrame(resizeFrameId);
+      resizeTask.stop();
       window.removeEventListener('resize', handleWindowResize);
     };
   }, []);
@@ -634,7 +641,7 @@ export function FaqBackground() {
     }
 
     let cancelled = false;
-    let animationFrameId = 0;
+    let renderLoop: VisualRenderLoop | null = null;
     let rotateElapsed = INITIAL_ROTATE_ELAPSED;
 
     const getWidth = () => Math.max(container.clientWidth, 1);
@@ -648,7 +655,18 @@ export function FaqBackground() {
         1,
       );
 
-    const renderer = createSiteWebGlRenderer({ antialias: false, alpha: true });
+    const renderer = tryCreateSiteWebGlRenderer({
+      antialias: false,
+      alpha: true,
+      onContextLost: () => {
+        renderLoop?.stop();
+      },
+    });
+
+    if (renderer === null) {
+      return;
+    }
+
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.setPixelRatio(1);
     renderer.setClearColor(0x000000, 0);
@@ -807,8 +825,7 @@ export function FaqBackground() {
     };
 
     applySize();
-    const resizeObserver = new ResizeObserver(applySize);
-    resizeObserver.observe(container);
+    const stopObservingSize = observeElementSize(container, applySize);
 
     loadFaqGeometry(GLB_URL)
       .then((geometry) => {
@@ -825,17 +842,16 @@ export function FaqBackground() {
         console.error(error);
       });
 
-    const frameTimer = createFrameTimer();
-
-    const renderFrame = () => {
+    const renderFrame = (
+      _timestamp: DOMHighResTimeStamp,
+      { elapsedSeconds }: VisualRenderLoopFrame,
+    ) => {
       if (cancelled) {
         return;
       }
 
-      animationFrameId = window.requestAnimationFrame(renderFrame);
-
       const delta = 1 / 60;
-      const elapsedTime = INITIAL_TIME_ELAPSED + frameTimer.getElapsed();
+      const elapsedTime = INITIAL_TIME_ELAPSED + elapsedSeconds;
       halftoneMaterial.uniforms.time.value = elapsedTime;
 
       rotateElapsed += delta;
@@ -907,12 +923,18 @@ export function FaqBackground() {
       renderer.render(postScene, orthographicCamera);
     };
 
-    renderFrame();
+    renderLoop = createVisualRenderLoop({
+      renderFrame,
+      shouldRender: () => !cancelled,
+      target: container,
+      targetVisibilityOptions: { rootMargin: '100px' },
+    });
+    renderLoop.start();
 
     return () => {
       cancelled = true;
-      resizeObserver.disconnect();
-      window.cancelAnimationFrame(animationFrameId);
+      renderLoop?.dispose();
+      stopObservingSize();
       blurHorizontalMaterial.dispose();
       blurVerticalMaterial.dispose();
       halftoneMaterial.dispose();

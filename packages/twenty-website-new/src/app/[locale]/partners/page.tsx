@@ -25,7 +25,7 @@ import { ThreeCards } from '@/sections/ThreeCards/components';
 import { TrustedBy } from '@/sections/TrustedBy/components';
 import type { ThreeCardsScrollLayoutOptions } from '@/sections/ThreeCards/utils/three-cards-scroll-layout';
 import { theme } from '@/theme';
-import { buildLocalizedMetadata } from '@/lib/seo';
+import { buildRouteMetadata } from '@/lib/seo';
 import { styled } from '@linaria/react';
 
 const PARTNER_ILLUSTRATION_CARDS_SCROLL_LAYOUT_OPTIONS: ThreeCardsScrollLayoutOptions =
@@ -45,12 +45,7 @@ const PromoSpacing = styled.div`
   }
 `;
 
-export const generateMetadata = buildLocalizedMetadata({
-  path: '/partners',
-  title: 'Partners | Twenty',
-  description:
-    'Join our partner ecosystem and grow with us as we build the #1 open source CRM.',
-});
+export const generateMetadata = buildRouteMetadata('partners');
 
 export default async function PartnerPage() {
   const stats = await fetchCommunityStats();

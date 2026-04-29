@@ -1,9 +1,13 @@
 'use client';
 
+import { createAnimationFrameLoop } from '@/lib/animation';
 import {
-  createFrameTimer,
-  createSiteWebGlRenderer,
+  createVisualRenderLoop,
+  tryCreateSiteWebGlRenderer,
+  type VisualRenderLoopFrame,
+  type VisualRenderLoop,
 } from '@/lib/visual-runtime';
+import { observeElementSize } from '@/lib/dom/observe-element-size';
 import { styled } from '@linaria/react';
 import { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
@@ -438,11 +442,20 @@ async function mountHomeBackgroundCanvas({
       1,
     );
 
-  const renderer = createSiteWebGlRenderer({
+  let renderLoop: VisualRenderLoop | null = null;
+  const renderer = tryCreateSiteWebGlRenderer({
     alpha: true,
     antialias: false,
+    onContextLost: () => {
+      renderLoop?.stop();
+    },
     powerPreference: 'high-performance',
   });
+
+  if (renderer === null) {
+    return () => {};
+  }
+
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.setPixelRatio(1);
   renderer.setClearColor(0x000000, 0);
@@ -554,8 +567,7 @@ async function mountHomeBackgroundCanvas({
     );
   };
 
-  const resizeObserver = new ResizeObserver(syncSize);
-  resizeObserver.observe(container);
+  const stopObservingSize = observeElementSize(container, syncSize);
 
   const pointer: PointerState = {
     hoverStrength: 0,
@@ -593,9 +605,6 @@ async function mountHomeBackgroundCanvas({
   window.addEventListener('pointerleave', handlePointerLeave);
   window.addEventListener('blur', handlePointerLeave);
 
-  const frameTimer = createFrameTimer();
-  let animationFrameId = 0;
-
   const getHalftoneFootprintScale = () =>
     getImageFootprintScale({
       imageHeight: image.height,
@@ -605,10 +614,10 @@ async function mountHomeBackgroundCanvas({
       viewportWidth: getVirtualWidth(),
     });
 
-  const renderFrame = () => {
-    animationFrameId = window.requestAnimationFrame(renderFrame);
-    const deltaSeconds = frameTimer.tick();
-
+  const renderFrame = (
+    _timestamp: DOMHighResTimeStamp,
+    { deltaSeconds }: VisualRenderLoopFrame,
+  ) => {
     const hoverEasing =
       1 -
       Math.exp(
@@ -652,11 +661,16 @@ async function mountHomeBackgroundCanvas({
 
   void IMAGE_POINTER_VELOCITY_DAMPING;
 
-  renderFrame();
+  renderLoop = createVisualRenderLoop({
+    renderFrame,
+    target: container,
+    targetVisibilityOptions: { rootMargin: '100px' },
+  });
+  renderLoop.start();
 
   return () => {
-    window.cancelAnimationFrame(animationFrameId);
-    resizeObserver.disconnect();
+    renderLoop?.dispose();
+    stopObservingSize();
     window.removeEventListener('pointermove', handlePointerMove);
     window.removeEventListener('pointerleave', handlePointerLeave);
     window.removeEventListener('blur', handlePointerLeave);
@@ -686,7 +700,12 @@ export function HomeBackgroundHalftone() {
 
     let disposed = false;
     let unmount: (() => void) | null = null;
-    let readyFrameId = 0;
+    const readyTask = createAnimationFrameLoop({
+      onFrame: () => {
+        setIsReady(true);
+        return false;
+      },
+    });
 
     mountHomeBackgroundCanvas({
       container,
@@ -698,9 +717,7 @@ export function HomeBackgroundHalftone() {
           return;
         }
         unmount = dispose;
-        readyFrameId = window.requestAnimationFrame(() => {
-          setIsReady(true);
-        });
+        readyTask.start();
       })
       .catch((error) => {
         console.error(error);
@@ -708,7 +725,7 @@ export function HomeBackgroundHalftone() {
 
     return () => {
       disposed = true;
-      window.cancelAnimationFrame(readyFrameId);
+      readyTask.stop();
       unmount?.();
     };
   }, []);

@@ -20,10 +20,24 @@ export { WebGlErrorBoundary } from './webgl-error-boundary';
 export { WebGlMount } from './webgl-mount';
 export {
   createSiteWebGlRenderer,
+  reportSiteWebGlRendererCreationFailure,
+  tryCreateSiteWebGlRenderer,
+  type SiteWebGlRendererCreationFailureHandler,
   type SiteWebGlRendererParameters,
 } from './create-site-webgl-renderer';
 
-export { createFrameTimer, type FrameTimer } from './frame-timer';
+export {
+  createVisualRenderLoop,
+  reportVisualRenderLoopErrorInDevelopment,
+  type CreateVisualRenderLoopOptions,
+  type VisualRenderLoop,
+  type VisualRenderLoopCanceller,
+  type VisualRenderLoopDocument,
+  type VisualRenderLoopErrorHandler,
+  type VisualRenderLoopFrame,
+  type VisualRenderLoopFrameRenderer,
+  type VisualRenderLoopScheduler,
+} from './visual-render-loop';
 
 export {
   createBoundedFailureCache,

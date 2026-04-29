@@ -1,46 +1,46 @@
 import { detectLocale } from '../detect-locale';
 
 describe('detectLocale', () => {
-  it('returns the cookie value when it is a supported locale', () => {
+  it('returns the cookie value when it is a published website locale', () => {
     expect(
       detectLocale({
-        cookieValue: 'fr-FR',
+        cookieValue: 'en',
         acceptLanguageHeader: 'de-DE,de;q=0.9',
       }),
-    ).toBe('fr-FR');
+    ).toBe('en');
   });
 
-  it('ignores an unsupported cookie value and falls back to Accept-Language', () => {
+  it('ignores unsupported cookie and Accept-Language values', () => {
     expect(
       detectLocale({
         cookieValue: 'xx-YY',
         acceptLanguageHeader: 'de-DE,de;q=0.9',
       }),
-    ).toBe('de-DE');
+    ).toBe('en');
   });
 
-  it('matches the highest-quality Accept-Language entry first', () => {
+  it('matches the highest-quality published Accept-Language entry first', () => {
     expect(
       detectLocale({
         acceptLanguageHeader: 'en;q=0.5,fr-FR;q=0.9,de;q=0.7',
       }),
-    ).toBe('fr-FR');
+    ).toBe('en');
   });
 
-  it('falls back from a regional tag to the language family', () => {
+  it('falls back to the source locale when a regional language is not published', () => {
     expect(
       detectLocale({
         acceptLanguageHeader: 'fr-CA',
       }),
-    ).toBe('fr-FR');
+    ).toBe('en');
   });
 
-  it('falls back from a bare language tag to the first matching regional locale', () => {
+  it('falls back to the source locale when a bare language is not published', () => {
     expect(
       detectLocale({
         acceptLanguageHeader: 'pt;q=1.0,en;q=0.5',
       }),
-    ).toBe('pt-BR');
+    ).toBe('en');
   });
 
   it('returns the source locale when no input is provided', () => {
@@ -60,7 +60,7 @@ describe('detectLocale', () => {
       detectLocale({
         acceptLanguageHeader: 'fr-FR;q=not-a-number,de-DE;q=0.5',
       }),
-    ).toBe('de-DE');
+    ).toBe('en');
   });
 
   it('parses quality values when parameters carry leading whitespace around the semicolon', () => {
@@ -68,6 +68,6 @@ describe('detectLocale', () => {
       detectLocale({
         acceptLanguageHeader: 'en;q=0.1, fr-FR ; q=0.9, de-DE ; q=0.5',
       }),
-    ).toBe('fr-FR');
+    ).toBe('en');
   });
 });

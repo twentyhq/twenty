@@ -40,6 +40,7 @@ import {
 } from '@/lib/halftone/state';
 import { Logo as LogoIcon } from '@/icons';
 import { LocalizedLink } from '@/lib/i18n';
+import { useTimeoutRegistry } from '@/lib/react';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
 import {
@@ -57,6 +58,7 @@ const DESKTOP_CONTROLS_PANEL_WIDTH = 320;
 const DESKTOP_CONTROLS_PANEL_OFFSET = 20;
 const DESKTOP_CONTROLS_PANEL_FOOTPRINT =
   DESKTOP_CONTROLS_PANEL_WIDTH + DESKTOP_CONTROLS_PANEL_OFFSET;
+const STATUS_CLEAR_DELAY_MS = 2000;
 
 const StudioShell = styled.div<{ $background: string }>`
   background: ${(props) => props.$background};
@@ -389,6 +391,14 @@ export function HalftoneStudio() {
     shape: { ...DEFAULT_SHAPE_HALFTONE_SETTINGS },
     image: { ...DEFAULT_IMAGE_HALFTONE_SETTINGS },
   });
+  const timeoutRegistry = useTimeoutRegistry();
+
+  const clearStatusLater = useCallback(() => {
+    timeoutRegistry.schedule(
+      () => dispatch({ type: 'clearStatus' }),
+      STATUS_CLEAR_DELAY_MS,
+    );
+  }, [timeoutRegistry]);
 
   const selectedShape = useMemo(
     () =>
@@ -525,7 +535,7 @@ export function HalftoneStudio() {
       .writeText(url)
       .then(() => {
         dispatch({ type: 'setStatus', message: 'Link copied to clipboard.' });
-        window.setTimeout(() => dispatch({ type: 'clearStatus' }), 2000);
+        clearStatusLater();
       })
       .catch(() => {
         dispatch({
@@ -534,7 +544,7 @@ export function HalftoneStudio() {
           isError: true,
         });
       });
-  }, [exportName, previewDistance, state.settings]);
+  }, [clearStatusLater, exportName, previewDistance, state.settings]);
 
   const handleCopyHalftoneImage = useCallback(
     async (width: number, height: number) => {
@@ -580,7 +590,7 @@ export function HalftoneStudio() {
           type: 'setStatus',
           message: 'Image copied to clipboard.',
         });
-        window.setTimeout(() => dispatch({ type: 'clearStatus' }), 2000);
+        clearStatusLater();
       } catch {
         dispatch({
           type: 'setStatus',
@@ -589,7 +599,7 @@ export function HalftoneStudio() {
         });
       }
     },
-    [exportBackground, state.settings.background.color],
+    [clearStatusLater, exportBackground, state.settings.background.color],
   );
 
   useEffect(() => {
@@ -623,75 +633,81 @@ export function HalftoneStudio() {
     };
   }, [handleCopyHalftoneImage]);
 
-  const openFilePicker = useCallback((accept: string) => {
-    return new Promise<File | null>((resolve) => {
-      const input = fileInputReference.current;
+  const openFilePicker = useCallback(
+    (accept: string) => {
+      return new Promise<File | null>((resolve) => {
+        const input = fileInputReference.current;
 
-      if (!input) {
-        resolve(null);
-        return;
-      }
+        if (!input) {
+          resolve(null);
+          return;
+        }
 
-      pendingFilePickerReference.current = { resolve };
-      input.accept = accept;
+        pendingFilePickerReference.current = { resolve };
+        input.accept = accept;
 
-      const handleWindowFocus = () => {
-        window.setTimeout(() => {
-          const pendingPicker = pendingFilePickerReference.current;
-          const currentInput = fileInputReference.current;
+        const handleWindowFocus = () => {
+          timeoutRegistry.schedule(() => {
+            const pendingPicker = pendingFilePickerReference.current;
+            const currentInput = fileInputReference.current;
 
-          if (!pendingPicker) {
-            return;
-          }
+            if (!pendingPicker) {
+              return;
+            }
 
-          if (currentInput?.files?.length) {
-            return;
-          }
+            if (currentInput?.files?.length) {
+              return;
+            }
 
-          pendingFilePickerReference.current = null;
-          pendingPicker.resolve(null);
-        }, 300);
-      };
+            pendingFilePickerReference.current = null;
+            pendingPicker.resolve(null);
+          }, 300);
+        };
 
-      window.addEventListener('focus', handleWindowFocus, { once: true });
-      input.click();
-    });
-  }, []);
+        window.addEventListener('focus', handleWindowFocus, { once: true });
+        input.click();
+      });
+    },
+    [timeoutRegistry],
+  );
 
-  const openPresetPicker = useCallback((accept: string) => {
-    return new Promise<File[]>((resolve) => {
-      const input = presetFileInputReference.current;
+  const openPresetPicker = useCallback(
+    (accept: string) => {
+      return new Promise<File[]>((resolve) => {
+        const input = presetFileInputReference.current;
 
-      if (!input) {
-        resolve([]);
-        return;
-      }
+        if (!input) {
+          resolve([]);
+          return;
+        }
 
-      pendingPresetPickerReference.current = { resolve };
-      input.accept = accept;
+        pendingPresetPickerReference.current = { resolve };
+        input.accept = accept;
 
-      const handleWindowFocus = () => {
-        window.setTimeout(() => {
-          const pendingPicker = pendingPresetPickerReference.current;
-          const currentInput = presetFileInputReference.current;
+        const handleWindowFocus = () => {
+          timeoutRegistry.schedule(() => {
+            const pendingPicker = pendingPresetPickerReference.current;
+            const currentInput = presetFileInputReference.current;
 
-          if (!pendingPicker) {
-            return;
-          }
+            if (!pendingPicker) {
+              return;
+            }
 
-          if (currentInput?.files?.length) {
-            return;
-          }
+            if (currentInput?.files?.length) {
+              return;
+            }
 
-          pendingPresetPickerReference.current = null;
-          pendingPicker.resolve([]);
-        }, 300);
-      };
+            pendingPresetPickerReference.current = null;
+            pendingPicker.resolve([]);
+          }, 300);
+        };
 
-      window.addEventListener('focus', handleWindowFocus, { once: true });
-      input.click();
-    });
-  }, []);
+        window.addEventListener('focus', handleWindowFocus, { once: true });
+        input.click();
+      });
+    },
+    [timeoutRegistry],
+  );
 
   const handleFileInputChange = useCallback(() => {
     const input = fileInputReference.current;
@@ -844,7 +860,7 @@ export function HalftoneStudio() {
         type: 'setStatus',
         message: 'Image pasted from clipboard.',
       });
-      window.setTimeout(() => dispatch({ type: 'clearStatus' }), 2000);
+      clearStatusLater();
     };
 
     window.addEventListener('paste', handlePaste);
@@ -852,7 +868,7 @@ export function HalftoneStudio() {
     return () => {
       window.removeEventListener('paste', handlePaste);
     };
-  }, [activateUploadedImage]);
+  }, [activateUploadedImage, clearStatusLater]);
 
   const handleUploadSource = useCallback(async () => {
     const file = await openFilePicker(
@@ -1204,9 +1220,9 @@ export function HalftoneStudio() {
         type: 'setStatus',
         message: 'Halftone SVG downloaded.',
       });
-      window.setTimeout(() => dispatch({ type: 'clearStatus' }), 2000);
+      clearStatusLater();
     },
-    [buildHalftoneSvg, exportArtifactNames.fileBaseName],
+    [buildHalftoneSvg, clearStatusLater, exportArtifactNames.fileBaseName],
   );
 
   const handleCopyHalftoneSvg = useCallback(
@@ -1239,7 +1255,7 @@ export function HalftoneStudio() {
             type: 'setStatus',
             message: 'SVG copied to clipboard.',
           });
-          window.setTimeout(() => dispatch({ type: 'clearStatus' }), 2000);
+          clearStatusLater();
           return;
         } catch {
           // Fall through to plain-text clipboard copy below.
@@ -1253,7 +1269,7 @@ export function HalftoneStudio() {
             type: 'setStatus',
             message: 'SVG markup copied to clipboard as text.',
           });
-          window.setTimeout(() => dispatch({ type: 'clearStatus' }), 2000);
+          clearStatusLater();
           return;
         } catch {
           dispatch({
@@ -1271,7 +1287,7 @@ export function HalftoneStudio() {
         isError: true,
       });
     },
-    [buildHalftoneSvg],
+    [buildHalftoneSvg, clearStatusLater],
   );
 
   const handleExportHtml = useCallback(async () => {

@@ -39,6 +39,13 @@ export const APPLICATION_FRAGMENT = gql`
       name
       description
       applicationId
+      componentName
+      builtComponentChecksum
+      universalIdentifier
+      isHeadless
+      usesSdkClient
+      createdAt
+      updatedAt
     }
     objects {
       ...ObjectMetadataFields

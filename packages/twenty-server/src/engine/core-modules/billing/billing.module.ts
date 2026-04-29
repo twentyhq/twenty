@@ -34,6 +34,7 @@ import { BillingUsageCapService } from 'src/engine/core-modules/billing/services
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { MeteredCreditService } from 'src/engine/core-modules/billing/services/metered-credit.service';
+import { WorkspaceBillingSubscriptionCacheService } from 'src/engine/core-modules/billing/services/workspace-billing-subscription-cache.service';
 import { StripeModule } from 'src/engine/core-modules/billing/stripe/stripe.module';
 import { WorkspaceDomainsModule } from 'src/engine/core-modules/domain/workspace-domains/workspace-domains.module';
 import { EnterpriseModule } from 'src/engine/core-modules/enterprise/enterprise.module';
@@ -43,9 +44,8 @@ import { MessageQueueModule } from 'src/engine/core-modules/message-queue/messag
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { AiBillingModule } from 'src/engine/metadata-modules/ai/ai-billing/ai-billing.module';
-import { AiModelsModule } from 'src/engine/metadata-modules/ai/ai-models/ai-models.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
+import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
 @Module({
   imports: [
@@ -54,8 +54,7 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
     StripeModule,
     MessageQueueModule,
     PermissionsModule,
-    AiBillingModule,
-    AiModelsModule,
+    WorkspaceCacheModule,
     WorkspaceDomainsModule,
     TypeOrmModule.forFeature([
       BillingSubscriptionEntity,
@@ -96,6 +95,7 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
     MeteredCreditService,
     BillingGaugeService,
     EnforceUsageCapCronCommand,
+    WorkspaceBillingSubscriptionCacheService,
   ],
   exports: [
     BillingSubscriptionService,

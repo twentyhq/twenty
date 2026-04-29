@@ -4,8 +4,10 @@ import {
   getImageFootprintScale,
   getImagePreviewZoom,
   getMeshFootprintScale,
+  type HalftoneImageFit,
   VIRTUAL_RENDER_HEIGHT,
 } from '@/lib/halftone/footprint';
+import { observeElementSize } from '@/lib/dom/observe-element-size';
 import {
   applyHalftoneMaterialSettings,
   createHalftoneMaterial,
@@ -15,11 +17,24 @@ import {
   type HalftoneTransmissionMaterial,
   renderHalftoneMaterialScene,
 } from '@/lib/halftone/materials';
+import {
+  applySpringStep,
+  createHalftoneInteractionState,
+  resetHalftoneInteractionState,
+  type HalftoneInteractionState,
+} from '@/lib/halftone/interaction-state';
 import type {
   HalftoneExportPose,
   HalftoneStudioSettings,
 } from '@/lib/halftone/state';
-import { createSiteWebGlRenderer } from '@/lib/visual-runtime';
+import { runCleanupTasks } from '@/lib/lifecycle/run-cleanup-tasks';
+import { useLatestRef } from '@/lib/react';
+import {
+  createSiteWebGlRenderer,
+  createVisualRenderLoop,
+  evaluateWebGlPolicy,
+  type VisualRenderLoop,
+} from '@/lib/visual-runtime';
 import { styled } from '@linaria/react';
 import { type MutableRefObject, useEffect, useRef } from 'react';
 import * as THREE from 'three';
@@ -73,6 +88,7 @@ const imagePassthroughFragmentShader = `
   uniform vec2 viewportSize;
   uniform float zoom;
   uniform float contrast;
+  uniform float imageFit;
 
   varying vec2 vUv;
 
@@ -84,10 +100,18 @@ const imagePassthroughFragmentShader = `
 
     if (imageAspect > viewAspect) {
       float scale = viewAspect / imageAspect;
-      uv.y = (uv.y - 0.5) / scale + 0.5;
+      if (imageFit > 0.5) {
+        uv.x = (uv.x - 0.5) * scale + 0.5;
+      } else {
+        uv.y = (uv.y - 0.5) / scale + 0.5;
+      }
     } else {
       float scale = imageAspect / viewAspect;
-      uv.x = (uv.x - 0.5) / scale + 0.5;
+      if (imageFit > 0.5) {
+        uv.y = (uv.y - 0.5) * scale + 0.5;
+      } else {
+        uv.x = (uv.x - 0.5) / scale + 0.5;
+      }
     }
 
     uv = (uv - 0.5) / zoom + 0.5;
@@ -285,15 +309,32 @@ export type HalftoneSnapshotFn = (
   },
 ) => Promise<Blob | null>;
 
+export type HalftoneImageInteractionSettings = {
+  hoverFadeIn: number;
+  hoverFadeOut: number;
+  pointerFollow: number;
+  pointerVelocityDamping: number;
+};
+
+const DEFAULT_IMAGE_INTERACTION_SETTINGS: HalftoneImageInteractionSettings = {
+  hoverFadeIn: IMAGE_HOVER_FADE_IN,
+  hoverFadeOut: IMAGE_HOVER_FADE_OUT,
+  pointerFollow: IMAGE_POINTER_FOLLOW,
+  pointerVelocityDamping: IMAGE_POINTER_VELOCITY_DAMPING,
+};
+
 type HalftoneCanvasProps = {
   geometry: THREE.BufferGeometry | null;
   initialPose?: Partial<HalftoneExportPose>;
   imageElement: HTMLImageElement | null;
+  imageFit?: HalftoneImageFit;
+  imageInteraction?: Partial<HalftoneImageInteractionSettings>;
   onFirstInteraction: () => void;
   onPoseChange: (pose: HalftoneExportPose) => void;
   previewDistance: number;
   settings: HalftoneStudioSettings;
   snapshotRef?: MutableRefObject<HalftoneSnapshotFn | null>;
+  virtualRenderHeight?: number;
 };
 
 type SceneResources = {
@@ -325,33 +366,6 @@ type SceneResources = {
   transmissionTarget: THREE.WebGLRenderTarget;
 };
 
-type InteractionState = {
-  activePointerId: number | null;
-  autoElapsed: number;
-  dragging: boolean;
-  hoverStrength: number;
-  mouseX: number;
-  mouseY: number;
-  pointerInside: boolean;
-  pointerVelocityX: number;
-  pointerVelocityY: number;
-  pointerX: number;
-  pointerY: number;
-  rotateElapsed: number;
-  rotationX: number;
-  rotationVelocityX: number;
-  rotationY: number;
-  rotationVelocityY: number;
-  rotationZ: number;
-  rotationVelocityZ: number;
-  smoothedMouseX: number;
-  smoothedMouseY: number;
-  targetRotationX: number;
-  targetRotationY: number;
-  velocityX: number;
-  velocityY: number;
-};
-
 type PixelBounds = {
   maxX: number;
   maxY: number;
@@ -365,6 +379,15 @@ function createRenderTarget(width: number, height: number) {
     magFilter: THREE.LinearFilter,
     format: THREE.RGBAFormat,
   });
+}
+
+function resolveImageInteractionSettings(
+  settings?: Partial<HalftoneImageInteractionSettings>,
+): HalftoneImageInteractionSettings {
+  return {
+    ...DEFAULT_IMAGE_INTERACTION_SETTINGS,
+    ...settings,
+  };
 }
 
 function syncImageElementTexture(
@@ -397,37 +420,6 @@ function syncImageElementTexture(
     imageElement.naturalWidth,
     imageElement.naturalHeight,
   );
-}
-
-function createInteractionState(
-  initialPose?: Partial<HalftoneExportPose>,
-): InteractionState {
-  return {
-    activePointerId: null,
-    autoElapsed: initialPose?.autoElapsed ?? 0,
-    dragging: false,
-    hoverStrength: 0,
-    mouseX: 0.5,
-    mouseY: 0.5,
-    pointerInside: false,
-    pointerVelocityX: 0,
-    pointerVelocityY: 0,
-    pointerX: 0,
-    pointerY: 0,
-    rotateElapsed: initialPose?.rotateElapsed ?? 0,
-    rotationX: initialPose?.rotationX ?? 0,
-    rotationVelocityX: 0,
-    rotationY: initialPose?.rotationY ?? 0,
-    rotationVelocityY: 0,
-    rotationZ: initialPose?.rotationZ ?? 0,
-    rotationVelocityZ: 0,
-    smoothedMouseX: 0.5,
-    smoothedMouseY: 0.5,
-    targetRotationX: initialPose?.targetRotationX ?? 0,
-    targetRotationY: initialPose?.targetRotationY ?? 0,
-    velocityX: 0,
-    velocityY: 0,
-  };
 }
 
 function getAlphaCropBounds(
@@ -556,82 +548,42 @@ function syncResources(
   updateHalftone(resources, settings);
 }
 
-function applySpringStep(
-  current: number,
-  target: number,
-  velocity: number,
-  strength: number,
-  damping: number,
-) {
-  const nextVelocity = (velocity + (target - current) * strength) * damping;
-  const nextValue = current + nextVelocity;
-
-  return {
-    value: nextValue,
-    velocity: nextVelocity,
-  };
-}
-
-function resetInteractionState(
-  interactionState: InteractionState,
-  animation: HalftoneStudioSettings['animation'],
-) {
-  interactionState.activePointerId = null;
-  interactionState.dragging = false;
-  interactionState.hoverStrength = 0;
-  interactionState.mouseX = 0.5;
-  interactionState.mouseY = 0.5;
-  interactionState.pointerInside = false;
-  interactionState.pointerVelocityX = 0;
-  interactionState.pointerVelocityY = 0;
-  interactionState.smoothedMouseX = 0.5;
-  interactionState.smoothedMouseY = 0.5;
-  interactionState.targetRotationX = 0;
-  interactionState.targetRotationY = 0;
-  interactionState.velocityX = 0;
-  interactionState.velocityY = 0;
-  interactionState.rotationVelocityX = 0;
-  interactionState.rotationVelocityY = 0;
-  interactionState.rotationVelocityZ = 0;
-
-  if (animation.autoRotateEnabled) {
-    interactionState.autoElapsed = 0;
-  }
-}
-
 export function HalftoneCanvas({
   geometry,
   initialPose,
   imageElement,
+  imageFit = 'contain',
+  imageInteraction,
   onFirstInteraction,
   onPoseChange,
   previewDistance,
   settings,
   snapshotRef,
+  virtualRenderHeight = VIRTUAL_RENDER_HEIGHT,
 }: HalftoneCanvasProps) {
   const mountReference = useRef<HTMLDivElement>(null);
   const resourcesReference = useRef<SceneResources | null>(null);
   const settingsReference = useRef(settings);
-  const interactionReference = useRef<InteractionState>(
-    createInteractionState(initialPose),
+  const interactionReference = useRef<HalftoneInteractionState>(
+    createHalftoneInteractionState(initialPose),
   );
   const animationReference = useRef(settings.animation);
   const didInteractReference = useRef(false);
   const initialPoseReference = useRef(initialPose);
-  const poseChangeReference = useRef(onPoseChange);
+  const poseChangeReference = useLatestRef(onPoseChange);
   const previewDistanceReference = useRef(previewDistance);
   const geometryReference = useRef(geometry);
   const imageElementReference = useRef(imageElement);
-  const snapshotReference = useRef(snapshotRef);
+  const imageFitReference = useRef(imageFit);
+  const imageInteractionReference = useRef(
+    resolveImageInteractionSettings(imageInteraction),
+  );
+  const snapshotReference = useLatestRef(snapshotRef);
 
   useEffect(() => {
     initialPoseReference.current = initialPose;
-    interactionReference.current = createInteractionState(initialPose);
+    interactionReference.current = createHalftoneInteractionState(initialPose);
   }, [initialPose]);
-
-  useEffect(() => {
-    poseChangeReference.current = onPoseChange;
-  }, [onPoseChange]);
 
   useEffect(() => {
     previewDistanceReference.current = previewDistance;
@@ -666,7 +618,7 @@ export function HalftoneCanvas({
       prev.hoverLightEnabled !== next.hoverLightEnabled ||
       prev.dragFlowEnabled !== next.dragFlowEnabled
     ) {
-      resetInteractionState(interactionReference.current, next);
+      resetHalftoneInteractionState(interactionReference.current, next);
     }
 
     if (
@@ -697,10 +649,6 @@ export function HalftoneCanvas({
   }, [geometry]);
 
   useEffect(() => {
-    snapshotReference.current = snapshotRef;
-  }, [snapshotRef]);
-
-  useEffect(() => {
     imageElementReference.current = imageElement;
 
     const resources = resourcesReference.current;
@@ -713,6 +661,24 @@ export function HalftoneCanvas({
   }, [imageElement]);
 
   useEffect(() => {
+    imageFitReference.current = imageFit;
+
+    const resources = resourcesReference.current;
+
+    if (!resources) {
+      return;
+    }
+
+    resources.imageMaterial.uniforms.imageFit.value =
+      imageFit === 'cover' ? 1 : 0;
+  }, [imageFit]);
+
+  useEffect(() => {
+    imageInteractionReference.current =
+      resolveImageInteractionSettings(imageInteraction);
+  }, [imageInteraction]);
+
+  useEffect(() => {
     const container = mountReference.current;
     const initialSettings = settingsReference.current;
     const initialPreviewDistance = previewDistanceReference.current;
@@ -722,15 +688,12 @@ export function HalftoneCanvas({
       return;
     }
 
-    let animationFrameId = 0;
     let cancelled = false;
-    let isVisible = typeof document === 'undefined' ? true : !document.hidden;
-    let isIntersecting = true;
-    const shouldRender = () => isVisible && isIntersecting;
+    let renderLoop: VisualRenderLoop | null = null;
 
     const getWidth = () => Math.max(container.clientWidth, 1);
     const getHeight = () => Math.max(container.clientHeight, 1);
-    const getVirtualHeight = () => Math.max(VIRTUAL_RENDER_HEIGHT, getHeight());
+    const getVirtualHeight = () => Math.max(virtualRenderHeight, getHeight());
     const getVirtualWidth = () =>
       Math.max(
         Math.round(
@@ -745,7 +708,30 @@ export function HalftoneCanvas({
     const getRenderWidth = () =>
       Math.max(Math.round(getVirtualWidth() * getRenderScale()), 1);
 
-    const renderer = createSiteWebGlRenderer({ antialias: false, alpha: true });
+    const webGlPolicy = evaluateWebGlPolicy();
+
+    if (!webGlPolicy.allowed) {
+      return;
+    }
+
+    let renderer: THREE.WebGLRenderer;
+
+    try {
+      renderer = createSiteWebGlRenderer({
+        antialias: false,
+        alpha: true,
+        onContextLost: () => {
+          renderLoop?.stop();
+        },
+      });
+    } catch (error) {
+      if (process.env.NODE_ENV !== 'production') {
+        console.error('Halftone renderer failed:', error);
+      }
+
+      return;
+    }
+
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.setPixelRatio(1);
     renderer.setClearColor(0x000000, 0);
@@ -760,16 +746,22 @@ export function HalftoneCanvas({
     container.appendChild(canvas);
 
     let cleanup = () => {
-      renderer.dispose();
-      resourcesReference.current = null;
-
-      if (activeSnapshotRef) {
-        activeSnapshotRef.current = null;
-      }
-
-      if (canvas.parentNode === container) {
-        container.removeChild(canvas);
-      }
+      runCleanupTasks([
+        () => renderer.dispose(),
+        () => {
+          resourcesReference.current = null;
+        },
+        () => {
+          if (activeSnapshotRef) {
+            activeSnapshotRef.current = null;
+          }
+        },
+        () => {
+          if (canvas.parentNode === container) {
+            container.removeChild(canvas);
+          }
+        },
+      ]);
     };
 
     void (async () => {
@@ -943,6 +935,7 @@ export function HalftoneCanvas({
           },
           zoom: { value: getImagePreviewZoom(initialPreviewDistance) },
           contrast: { value: initialSettings.halftone.imageContrast },
+          imageFit: { value: imageFitReference.current === 'cover' ? 1 : 0 },
         },
         vertexShader: passThroughVertexShader,
         fragmentShader: imagePassthroughFragmentShader,
@@ -1015,6 +1008,7 @@ export function HalftoneCanvas({
 
         return getImageFootprintScale({
           imageHeight: imageSize.y,
+          imageFit: imageFitReference.current,
           imageWidth: imageSize.x,
           previewDistance: activePreviewDistance,
           viewportHeight,
@@ -1318,8 +1312,7 @@ export function HalftoneCanvas({
         );
       };
 
-      const resizeObserver = new ResizeObserver(syncSize);
-      resizeObserver.observe(container);
+      const stopObservingSize = observeElementSize(container, syncSize);
 
       const updatePointerPosition = (
         event: PointerEvent,
@@ -1568,9 +1561,6 @@ export function HalftoneCanvas({
           return;
         }
 
-        animationFrameId = shouldRender()
-          ? window.requestAnimationFrame(renderFrame)
-          : 0;
         clock.update(timestamp);
 
         const interaction = interactionReference.current;
@@ -1601,13 +1591,14 @@ export function HalftoneCanvas({
         halftoneMaterial.uniforms.cropToBounds.value = isImageMode ? 1 : 0;
 
         if (isImageMode) {
+          const imageInteractionSettings = imageInteractionReference.current;
           const hoverEasing =
             1 -
             Math.exp(
               -delta *
                 (interaction.pointerInside
-                  ? IMAGE_HOVER_FADE_IN
-                  : IMAGE_HOVER_FADE_OUT),
+                  ? imageInteractionSettings.hoverFadeIn
+                  : imageInteractionSettings.hoverFadeOut),
             );
           interaction.hoverStrength +=
             ((interaction.pointerInside ? 1 : 0) - interaction.hoverStrength) *
@@ -1615,12 +1606,14 @@ export function HalftoneCanvas({
 
           interaction.smoothedMouseX +=
             (interaction.mouseX - interaction.smoothedMouseX) *
-            IMAGE_POINTER_FOLLOW;
+            imageInteractionSettings.pointerFollow;
           interaction.smoothedMouseY +=
             (interaction.mouseY - interaction.smoothedMouseY) *
-            IMAGE_POINTER_FOLLOW;
-          interaction.pointerVelocityX *= IMAGE_POINTER_VELOCITY_DAMPING;
-          interaction.pointerVelocityY *= IMAGE_POINTER_VELOCITY_DAMPING;
+            imageInteractionSettings.pointerFollow;
+          interaction.pointerVelocityX *=
+            imageInteractionSettings.pointerVelocityDamping;
+          interaction.pointerVelocityY *=
+            imageInteractionSettings.pointerVelocityDamping;
 
           halftoneMaterial.uniforms.interactionUv.value.set(
             interaction.smoothedMouseX,
@@ -1842,27 +1835,27 @@ export function HalftoneCanvas({
           }
 
           if (activeSettings.animation.springReturnEnabled) {
-            const springX = applySpringStep(
-              interaction.rotationX,
-              targetX,
-              interaction.rotationVelocityX,
-              activeSettings.animation.springStrength,
-              activeSettings.animation.springDamping,
-            );
-            const springY = applySpringStep(
-              interaction.rotationY,
-              targetY,
-              interaction.rotationVelocityY,
-              activeSettings.animation.springStrength,
-              activeSettings.animation.springDamping,
-            );
-            const springZ = applySpringStep(
-              interaction.rotationZ,
-              baseRotationZ,
-              interaction.rotationVelocityZ,
-              activeSettings.animation.springStrength,
-              activeSettings.animation.springDamping,
-            );
+            const springX = applySpringStep({
+              current: interaction.rotationX,
+              damping: activeSettings.animation.springDamping,
+              strength: activeSettings.animation.springStrength,
+              target: targetX,
+              velocity: interaction.rotationVelocityX,
+            });
+            const springY = applySpringStep({
+              current: interaction.rotationY,
+              damping: activeSettings.animation.springDamping,
+              strength: activeSettings.animation.springStrength,
+              target: targetY,
+              velocity: interaction.rotationVelocityY,
+            });
+            const springZ = applySpringStep({
+              current: interaction.rotationZ,
+              damping: activeSettings.animation.springDamping,
+              strength: activeSettings.animation.springStrength,
+              target: baseRotationZ,
+              velocity: interaction.rotationVelocityZ,
+            });
 
             interaction.rotationX = springX.value;
             interaction.rotationY = springY.value;
@@ -1992,82 +1985,61 @@ export function HalftoneCanvas({
         renderer.render(postScene, orthographicCamera);
       };
 
-      const resumeIfNeeded = () => {
-        if (!cancelled && shouldRender() && animationFrameId === 0) {
-          animationFrameId = window.requestAnimationFrame(renderFrame);
-        }
-      };
-
-      const handleVisibilityChange = () => {
-        isVisible = !document.hidden;
-        if (!shouldRender() && animationFrameId !== 0) {
-          window.cancelAnimationFrame(animationFrameId);
-          animationFrameId = 0;
-        } else {
-          resumeIfNeeded();
-        }
-      };
-      document.addEventListener('visibilitychange', handleVisibilityChange);
-
-      const intersectionObserver = new IntersectionObserver(
-        (entries) => {
-          isIntersecting = entries.some((entry) => entry.isIntersecting);
-          if (!shouldRender() && animationFrameId !== 0) {
-            window.cancelAnimationFrame(animationFrameId);
-            animationFrameId = 0;
-          } else {
-            resumeIfNeeded();
-          }
-        },
-        { rootMargin: '100px' },
-      );
-      intersectionObserver.observe(container);
-
-      renderFrame();
+      renderLoop = createVisualRenderLoop({
+        renderFrame,
+        shouldRender: () => !cancelled,
+        target: container,
+        targetVisibilityOptions: { rootMargin: '100px' },
+      });
+      renderLoop.start();
 
       cleanup = () => {
-        resizeObserver.disconnect();
-        intersectionObserver.disconnect();
-        document.removeEventListener(
-          'visibilitychange',
-          handleVisibilityChange,
-        );
-        canvas.removeEventListener('pointermove', handlePointerMove);
-        canvas.removeEventListener('pointerleave', handlePointerLeave);
-        canvas.removeEventListener('pointerup', handlePointerUp);
-        canvas.removeEventListener('pointercancel', handlePointerCancel);
-        window.removeEventListener('blur', handleWindowBlur);
-        canvas.removeEventListener('pointerdown', handlePointerDown);
-        window.cancelAnimationFrame(animationFrameId);
-        clock.dispose();
+        runCleanupTasks([
+          () => stopObservingSize(),
+          () => renderLoop?.dispose(),
+          () => canvas.removeEventListener('pointermove', handlePointerMove),
+          () => canvas.removeEventListener('pointerleave', handlePointerLeave),
+          () => canvas.removeEventListener('pointerup', handlePointerUp),
+          () =>
+            canvas.removeEventListener('pointercancel', handlePointerCancel),
+          () => window.removeEventListener('blur', handleWindowBlur),
+          () => canvas.removeEventListener('pointerdown', handlePointerDown),
+          () => clock.dispose(),
 
-        blurHorizontalMaterial.dispose();
-        blurVerticalMaterial.dispose();
-        halftoneMaterial.dispose();
-        imageMaterial.dispose();
+          () => blurHorizontalMaterial.dispose(),
+          () => blurVerticalMaterial.dispose(),
+          () => halftoneMaterial.dispose(),
+          () => imageMaterial.dispose(),
 
-        if (resources.imageTexture) {
-          resources.imageTexture.dispose();
-        }
+          () => {
+            if (resources.imageTexture) {
+              resources.imageTexture.dispose();
+            }
+          },
 
-        fullScreenGeometry.dispose();
-        material.dispose();
-        sceneTarget.dispose();
-        transmissionBacksideTarget.dispose();
-        transmissionTarget.dispose();
-        blurTargetA.dispose();
-        blurTargetB.dispose();
-        disposeHalftoneMaterialAssets(materialAssets);
-        renderer.dispose();
-        resourcesReference.current = null;
-
-        if (activeSnapshotRef) {
-          activeSnapshotRef.current = null;
-        }
-
-        if (canvas.parentNode === container) {
-          container.removeChild(canvas);
-        }
+          () => fullScreenGeometry.dispose(),
+          () => material.dispose(),
+          () => sceneTarget.dispose(),
+          () => transmissionBacksideTarget.dispose(),
+          () => transmissionTarget.dispose(),
+          () => blurTargetA.dispose(),
+          () => blurTargetB.dispose(),
+          () => disposeHalftoneMaterialAssets(materialAssets),
+          () => renderer.dispose(),
+          () => {
+            resourcesReference.current = null;
+          },
+          () => {
+            if (activeSnapshotRef) {
+              activeSnapshotRef.current = null;
+            }
+          },
+          () => {
+            if (canvas.parentNode === container) {
+              container.removeChild(canvas);
+            }
+          },
+        ]);
       };
     })();
 
@@ -2075,7 +2047,12 @@ export function HalftoneCanvas({
       cancelled = true;
       cleanup();
     };
-  }, [onFirstInteraction]);
+  }, [
+    onFirstInteraction,
+    poseChangeReference,
+    snapshotReference,
+    virtualRenderHeight,
+  ]);
 
   return (
     <CanvasMount

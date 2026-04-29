@@ -1,28 +1,32 @@
-import {
-  type LogicFunctionTableRow,
-  SettingsLogicFunctionsTable,
-} from '@/settings/logic-functions/components/SettingsLogicFunctionsTable';
-import { useObjectAndFieldRows } from '@/settings/applications/hooks/useObjectAndFieldRows';
-import { t } from '@lingui/core/macro';
-import { useMemo } from 'react';
+import { getLogicFunctionTriggerLabel } from '@/logic-functions/utils/getLogicFunctionTriggerLabel';
+import { useComputeApplicationContentForLayoutAndLogic } from '@/settings/applications/hooks/useComputeApplicationContentForLayoutAndLogic';
+import { useComputeObjectAndFieldsContentForApplication } from '@/settings/applications/hooks/useComputeObjectAndFieldsContentForApplication';
+import { Table } from '@/ui/layout/table/components/Table';
+import { useLingui } from '@lingui/react/macro';
+import { useState } from 'react';
 import { type Manifest } from 'twenty-shared/application';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { H2Title } from 'twenty-ui/display';
+import { SearchInput } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { type Application } from '~/generated-metadata/graphql';
-import { SettingsApplicationDataTable } from '~/pages/settings/applications/components/SettingsApplicationDataTable';
 import {
-  type ApplicationNameDescriptionTableRow,
-  SettingsApplicationNameDescriptionTable,
-} from '~/pages/settings/applications/components/SettingsApplicationNameDescriptionTable';
+  type ApplicationContentRow,
+  SettingsApplicationContentSubtable,
+} from '~/pages/settings/applications/components/SettingsApplicationContentSubtable';
+import { normalizeSearchText } from '~/utils/normalizeSearchText';
 
 type InstalledApplicationForContentTab = Omit<
   Application,
   'objects' | 'universalIdentifier' | 'frontComponents'
 > & {
   objects: { id: string }[];
-  frontComponents?: { name: string; description?: string | null }[];
+  frontComponents?: {
+    id: string;
+    name: string;
+    description?: string | null;
+  }[];
 };
 
 type SettingsApplicationDetailContentTabProps = {
@@ -31,89 +35,200 @@ type SettingsApplicationDetailContentTabProps = {
   manifestContent?: Manifest;
 };
 
+const filterRows = (rows: ApplicationContentRow[], normalizedSearch: string) =>
+  normalizedSearch === ''
+    ? rows
+    : rows.filter(
+        (row) =>
+          normalizeSearchText(row.name).includes(normalizedSearch) ||
+          (isDefined(row.secondary) &&
+            normalizeSearchText(row.secondary).includes(normalizedSearch)),
+      );
+
 export const SettingsApplicationDetailContentTab = ({
   applicationId,
   installedApplication,
   manifestContent,
 }: SettingsApplicationDetailContentTabProps) => {
-  const { objectRows, fieldGroupRows } = useObjectAndFieldRows({
-    applicationId,
+  const { t } = useLingui();
+
+  const { objectRows, fieldRows } =
+    useComputeObjectAndFieldsContentForApplication({
+      installedApplication,
+      manifestContent,
+    });
+
+  const {
+    pageLayoutRows,
+    viewRows,
+    navigationMenuItemRows,
+    agentRows,
+    skillRows,
+    roleRows,
+  } = useComputeApplicationContentForLayoutAndLogic({
     installedApplication,
     manifestContent,
   });
 
-  const logicFunctionRows = useMemo((): LogicFunctionTableRow[] => {
-    const computeTrigger = (lf: {
-      isTool?: boolean;
-      cronTriggerSettings?: unknown;
-      httpRouteTriggerSettings?: unknown;
-      databaseEventTriggerSettings?: { eventName?: string } | null;
-    }): string => {
-      if (lf.isTool) return 'Tool';
-      if (lf.cronTriggerSettings) return 'Cron';
-      if (lf.httpRouteTriggerSettings) return 'Route';
-      if (lf.databaseEventTriggerSettings)
-        return lf.databaseEventTriggerSettings.eventName ?? '';
-      return '';
-    };
+  const lifecycleOptions = {
+    postInstallUniversalIdentifier:
+      manifestContent?.application?.postInstallLogicFunction
+        ?.universalIdentifier,
+    preInstallUniversalIdentifier:
+      manifestContent?.application?.preInstallLogicFunction
+        ?.universalIdentifier,
+  };
 
-    if (isDefined(installedApplication)) {
-      return (installedApplication.logicFunctions ?? []).map((lf) => ({
+  const logicFunctionRows: ApplicationContentRow[] = isDefined(
+    installedApplication,
+  )
+    ? (installedApplication.logicFunctions ?? []).map((lf) => ({
         key: lf.id,
         name: lf.name,
-        trigger: computeTrigger(lf),
+        secondary: getLogicFunctionTriggerLabel(lf, lifecycleOptions),
         link: getSettingsPath(SettingsPath.ApplicationLogicFunctionDetail, {
           applicationId,
           logicFunctionId: lf.id,
         }),
+      }))
+    : (manifestContent?.logicFunctions ?? []).map((lf) => ({
+        key: lf.universalIdentifier,
+        name: lf.name ?? lf.universalIdentifier,
+        secondary: getLogicFunctionTriggerLabel(lf, lifecycleOptions),
       }));
-    }
 
-    return (manifestContent?.logicFunctions ?? []).map((lf) => ({
-      key: lf.universalIdentifier,
-      name: lf.name ?? lf.universalIdentifier,
-      trigger: computeTrigger(lf),
-    }));
-  }, [installedApplication, manifestContent?.logicFunctions, applicationId]);
-
-  const frontComponentRows =
-    useMemo((): ApplicationNameDescriptionTableRow[] => {
-      if (isDefined(installedApplication)) {
-        return (installedApplication.frontComponents ?? []).map((fc) => ({
-          key: fc.name,
-          name: fc.name,
-          description: fc.description,
-        }));
-      }
-
-      return (manifestContent?.frontComponents ?? []).map((fc) => ({
+  const frontComponentRows: ApplicationContentRow[] = isDefined(
+    installedApplication,
+  )
+    ? (installedApplication.frontComponents ?? []).map((fc) => ({
+        key: fc.id,
+        name: fc.name,
+        secondary: fc.description ?? undefined,
+        link: getSettingsPath(SettingsPath.ApplicationFrontComponentDetail, {
+          applicationId,
+          frontComponentId: fc.id,
+        }),
+      }))
+    : (manifestContent?.frontComponents ?? []).map((fc) => ({
         key: fc.universalIdentifier,
         name: fc.name ?? fc.universalIdentifier,
-        description: fc.description,
+        secondary: fc.description ?? undefined,
       }));
-    }, [installedApplication, manifestContent?.frontComponents]);
+
+  const [searchTerm, setSearchTerm] = useState('');
+  const normalizedSearch = normalizeSearchText(searchTerm);
+
+  const filtered = {
+    objects: filterRows(objectRows, normalizedSearch),
+    fields: filterRows(fieldRows, normalizedSearch),
+    pageLayouts: filterRows(pageLayoutRows, normalizedSearch),
+    views: filterRows(viewRows, normalizedSearch),
+    navigation: filterRows(navigationMenuItemRows, normalizedSearch),
+    frontComponents: filterRows(frontComponentRows, normalizedSearch),
+    logicFunctions: filterRows(logicFunctionRows, normalizedSearch),
+    agents: filterRows(agentRows, normalizedSearch),
+    skills: filterRows(skillRows, normalizedSearch),
+    roles: filterRows(roleRows, normalizedSearch),
+  };
+
+  const hasData = filtered.objects.length > 0 || filtered.fields.length > 0;
+  const hasLayout =
+    filtered.pageLayouts.length > 0 ||
+    filtered.views.length > 0 ||
+    filtered.navigation.length > 0 ||
+    filtered.frontComponents.length > 0;
+  const hasLogic =
+    filtered.logicFunctions.length > 0 ||
+    filtered.agents.length > 0 ||
+    filtered.skills.length > 0 ||
+    filtered.roles.length > 0;
+
+  if (!hasData && !hasLayout && !hasLogic && normalizedSearch === '') {
+    return null;
+  }
 
   return (
     <>
-      <SettingsApplicationDataTable
-        objectRows={objectRows}
-        fieldGroupRows={fieldGroupRows}
-      />
-      {logicFunctionRows.length > 0 && (
+      <Section>
+        <SearchInput
+          placeholder={t`Search...`}
+          value={searchTerm}
+          onChange={setSearchTerm}
+        />
+      </Section>
+
+      {hasData && (
+        <Section>
+          <H2Title
+            title={t`Data`}
+            description={t`Schema this app contributes to your workspace`}
+          />
+          <Table>
+            <SettingsApplicationContentSubtable
+              title={t`Objects`}
+              rows={filtered.objects}
+            />
+            <SettingsApplicationContentSubtable
+              title={t`Fields added to other objects`}
+              rows={filtered.fields}
+            />
+          </Table>
+        </Section>
+      )}
+
+      {hasLayout && (
+        <Section>
+          <H2Title
+            title={t`Layout`}
+            description={t`How records, pages, and navigation are displayed`}
+          />
+          <Table>
+            <SettingsApplicationContentSubtable
+              title={t`Page layouts`}
+              rows={filtered.pageLayouts}
+            />
+            <SettingsApplicationContentSubtable
+              title={t`Views`}
+              rows={filtered.views}
+            />
+            <SettingsApplicationContentSubtable
+              title={t`Navigation menu items`}
+              rows={filtered.navigation}
+            />
+            <SettingsApplicationContentSubtable
+              title={t`Front components`}
+              rows={filtered.frontComponents}
+            />
+          </Table>
+        </Section>
+      )}
+
+      {hasLogic && (
         <Section>
           <H2Title
             title={t`Logic`}
-            description={t`Logic functions powering this app`}
+            description={t`Automation, AI, and access this app provides`}
           />
-          <SettingsLogicFunctionsTable logicFunctions={logicFunctionRows} />
+          <Table>
+            <SettingsApplicationContentSubtable
+              title={t`Logic functions`}
+              rows={filtered.logicFunctions}
+            />
+            <SettingsApplicationContentSubtable
+              title={t`Agents`}
+              rows={filtered.agents}
+            />
+            <SettingsApplicationContentSubtable
+              title={t`Skills`}
+              rows={filtered.skills}
+            />
+            <SettingsApplicationContentSubtable
+              title={t`Roles`}
+              rows={filtered.roles}
+            />
+          </Table>
         </Section>
       )}
-      <SettingsApplicationNameDescriptionTable
-        title={t`Front components`}
-        description={t`UI components provided by this app`}
-        sectionTitle={t`Front components`}
-        items={frontComponentRows}
-      />
     </>
   );
 };

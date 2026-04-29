@@ -1,5 +1,6 @@
 'use client';
 
+import { observeElementsSize } from '@/lib/dom/observe-element-size';
 import type { PlansBillingPeriod } from '@/sections/Plans/types';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
@@ -146,13 +147,13 @@ export function BillingToggle({
 
     syncHighlight();
 
-    const resizeObserver = new ResizeObserver(syncHighlight);
-    resizeObserver.observe(track);
-    resizeObserver.observe(monthlyButton);
-    resizeObserver.observe(yearlyButton);
+    const stopObservingSize = observeElementsSize(
+      [track, monthlyButton, yearlyButton],
+      syncHighlight,
+    );
 
     return () => {
-      resizeObserver.disconnect();
+      stopObservingSize();
     };
   }, [billing]);
 

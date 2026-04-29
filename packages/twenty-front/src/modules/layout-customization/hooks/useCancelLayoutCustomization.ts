@@ -1,5 +1,4 @@
 import { useExitLayoutCustomizationMode } from '@/layout-customization/hooks/useExitLayoutCustomizationMode';
-import { type DraftPageLayout } from '@/page-layout/types/DraftPageLayout';
 import { activeCustomizationPageLayoutIdsState } from '@/layout-customization/states/activeCustomizationPageLayoutIdsState';
 import { fieldsWidgetEditorModeDraftComponentState } from '@/page-layout/states/fieldsWidgetEditorModeDraftComponentState';
 import { fieldsWidgetEditorModePersistedComponentState } from '@/page-layout/states/fieldsWidgetEditorModePersistedComponentState';
@@ -10,6 +9,9 @@ import { fieldsWidgetUngroupedFieldsPersistedComponentState } from '@/page-layou
 import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutPersistedComponentState } from '@/page-layout/states/pageLayoutPersistedComponentState';
+import { recordTableWidgetViewDraftComponentState } from '@/page-layout/states/recordTableWidgetViewDraftComponentState';
+import { recordTableWidgetViewPersistedComponentState } from '@/page-layout/states/recordTableWidgetViewPersistedComponentState';
+import { type DraftPageLayout } from '@/page-layout/types/DraftPageLayout';
 import { convertPageLayoutToTabLayouts } from '@/page-layout/utils/convertPageLayoutToTabLayouts';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
@@ -89,6 +91,18 @@ export const useCancelLayoutCustomization = () => {
           instanceId: pageLayoutId,
         }),
         fieldsWidgetEditorModePersisted,
+      );
+
+      const recordTableWidgetViewPersisted = store.get(
+        recordTableWidgetViewPersistedComponentState.atomFamily({
+          instanceId: pageLayoutId,
+        }),
+      );
+      store.set(
+        recordTableWidgetViewDraftComponentState.atomFamily({
+          instanceId: pageLayoutId,
+        }),
+        recordTableWidgetViewPersisted,
       );
     }
 

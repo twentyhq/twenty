@@ -1,7 +1,7 @@
 import { Logger } from '@nestjs/common';
 
 import { ClickHouseService } from 'src/database/clickHouse/clickHouse.service';
-import { formatDateForClickHouse } from 'src/database/clickHouse/clickHouse.util';
+import { formatDateTimeForClickHouse } from 'src/database/clickHouse/clickHouse.util';
 import { type ApplicationLogEntry } from 'src/engine/core-modules/application-logs/interfaces/application-log-entry.interface';
 import { type ApplicationLogDriverInterface } from 'src/engine/core-modules/application-logs/interfaces/application-log-driver.interface';
 
@@ -18,7 +18,7 @@ export class ClickHouseApplicationLogDriver
     }
 
     const rows = entries.map((entry) => ({
-      timestamp: formatDateForClickHouse(entry.timestamp),
+      timestamp: formatDateTimeForClickHouse(entry.timestamp),
       workspaceId: entry.workspaceId,
       applicationId: entry.applicationId,
       logicFunctionId: entry.logicFunctionId,

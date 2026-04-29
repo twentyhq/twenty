@@ -6,8 +6,10 @@ import * as THREE from 'three';
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import {
-  createFrameTimer,
-  createSiteWebGlRenderer,
+  createVisualRenderLoop,
+  tryCreateSiteWebGlRenderer,
+  type VisualRenderLoop,
+  type VisualRenderLoopFrame,
 } from '@/lib/visual-runtime';
 import { DRACO_DECODER_PATH } from '@/lib/visual-runtime/draco-decoder-path';
 
@@ -195,7 +197,7 @@ export function WhyTwenty() {
     if (!container) return;
 
     let cancelled = false;
-    let animationFrameId = 0;
+    let renderLoop: VisualRenderLoop | null = null;
 
     const scene = new THREE.Scene();
     const width = container.clientWidth;
@@ -204,7 +206,18 @@ export function WhyTwenty() {
     const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 100);
     camera.position.set(0, 0, 5.2);
 
-    const renderer = createSiteWebGlRenderer({ alpha: true, antialias: true });
+    const renderer = tryCreateSiteWebGlRenderer({
+      alpha: true,
+      antialias: true,
+      onContextLost: () => {
+        renderLoop?.stop();
+      },
+    });
+
+    if (renderer === null) {
+      return;
+    }
+
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.setSize(width, height);
     renderer.setClearColor(0x000000, 0);
@@ -216,7 +229,6 @@ export function WhyTwenty() {
     canvas.style.width = '100%';
     container.appendChild(canvas);
 
-    const frameTimer = createFrameTimer();
     const lightDirectionWorld = new THREE.Vector3(4, 8, 6).normalize();
     const cameraWorldPosition = new THREE.Vector3();
 
@@ -257,34 +269,40 @@ export function WhyTwenty() {
 
       pivot.position.x = 0.25;
 
-      const renderFrame = () => {
-        if (cancelled) return;
+      renderLoop = createVisualRenderLoop({
+        renderFrame: (
+          _timestamp: DOMHighResTimeStamp,
+          { elapsedSeconds }: VisualRenderLoopFrame,
+        ) => {
+          if (cancelled) return;
 
-        animationFrameId = window.requestAnimationFrame(renderFrame);
-        const time = frameTimer.getElapsed();
+          const time = elapsedSeconds;
 
-        pivot.position.y = Math.sin(time * 1.5) * 0.06;
+          pivot.position.y = Math.sin(time * 1.5) * 0.06;
 
-        pivot.rotation.x += (targetRotationX - pivot.rotation.x) * 0.05;
-        pivot.rotation.y += (targetRotationY - pivot.rotation.y) * 0.05;
+          pivot.rotation.x += (targetRotationX - pivot.rotation.x) * 0.05;
+          pivot.rotation.y += (targetRotationY - pivot.rotation.y) * 0.05;
 
-        camera.getWorldPosition(cameraWorldPosition);
-        modelRoot.traverse((sceneObject) => {
-          if (
-            sceneObject instanceof THREE.Mesh &&
-            sceneObject.material instanceof THREE.ShaderMaterial &&
-            sceneObject.material.uniforms.uCameraPosition
-          ) {
-            sceneObject.material.uniforms.uCameraPosition.value.copy(
-              cameraWorldPosition,
-            );
-          }
-        });
+          camera.getWorldPosition(cameraWorldPosition);
+          modelRoot.traverse((sceneObject) => {
+            if (
+              sceneObject instanceof THREE.Mesh &&
+              sceneObject.material instanceof THREE.ShaderMaterial &&
+              sceneObject.material.uniforms.uCameraPosition
+            ) {
+              sceneObject.material.uniforms.uCameraPosition.value.copy(
+                cameraWorldPosition,
+              );
+            }
+          });
 
-        renderer.render(scene, camera);
-      };
+          renderer.render(scene, camera);
+        },
+        target: container,
+        targetVisibilityOptions: { rootMargin: '100px' },
+      });
 
-      renderFrame();
+      renderLoop.start();
     });
 
     const handlePointerMove = (e: PointerEvent) => {
@@ -319,7 +337,7 @@ export function WhyTwenty() {
       window.removeEventListener('resize', handleResize);
       canvas.removeEventListener('pointermove', handlePointerMove);
       canvas.removeEventListener('pointerleave', handlePointerLeave);
-      window.cancelAnimationFrame(animationFrameId);
+      renderLoop?.dispose();
       disposeObjectSubtree(scene);
       renderer.dispose();
       dracoLoader.dispose();

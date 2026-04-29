@@ -29,10 +29,19 @@ export function useWebGlPolicy(): WebGlPolicyDecision {
       '(prefers-reduced-motion: reduce)',
     );
     const handleMotionChange = () => setDecision(evaluateWebGlPolicy());
-    mediaQueryList.addEventListener('change', handleMotionChange);
+
+    if (typeof mediaQueryList.addEventListener === 'function') {
+      mediaQueryList.addEventListener('change', handleMotionChange);
+
+      return () => {
+        mediaQueryList.removeEventListener('change', handleMotionChange);
+      };
+    }
+
+    mediaQueryList.addListener(handleMotionChange);
 
     return () => {
-      mediaQueryList.removeEventListener('change', handleMotionChange);
+      mediaQueryList.removeListener(handleMotionChange);
     };
   }, []);
 

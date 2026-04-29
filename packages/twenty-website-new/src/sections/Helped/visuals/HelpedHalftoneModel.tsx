@@ -19,9 +19,12 @@ import * as THREE from 'three';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { observeElementSize } from '@/lib/dom/observe-element-size';
 import {
-  createFrameTimer,
-  createSiteWebGlRenderer,
+  createVisualRenderLoop,
+  tryCreateSiteWebGlRenderer,
+  type VisualRenderLoop,
+  type VisualRenderLoopFrame,
 } from '@/lib/visual-runtime';
 import { DRACO_DECODER_PATH } from '@/lib/visual-runtime/draco-decoder-path';
 
@@ -827,7 +830,7 @@ function HelpedHalftoneCanvas({
       return;
     }
 
-    let animationFrameId = 0;
+    let renderLoop: VisualRenderLoop | null = null;
 
     const getWidth = () => Math.max(container.clientWidth, 1);
     const getHeight = () => Math.max(container.clientHeight, 1);
@@ -840,7 +843,18 @@ function HelpedHalftoneCanvas({
         1,
       );
 
-    const renderer = createSiteWebGlRenderer({ antialias: false, alpha: true });
+    const renderer = tryCreateSiteWebGlRenderer({
+      antialias: false,
+      alpha: true,
+      onContextLost: () => {
+        renderLoop?.stop();
+      },
+    });
+
+    if (renderer === null) {
+      return;
+    }
+
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.setPixelRatio(1);
     renderer.setClearColor(0x000000, 0);
@@ -1026,8 +1040,7 @@ function HelpedHalftoneCanvas({
       );
     };
 
-    const resizeObserver = new ResizeObserver(syncSize);
-    resizeObserver.observe(container);
+    const stopObservingSize = observeElementSize(container, syncSize);
 
     const updatePointerPosition = (event: PointerEvent) => {
       const rect = canvas.getBoundingClientRect();
@@ -1128,13 +1141,12 @@ function HelpedHalftoneCanvas({
     window.addEventListener('pointermove', handleWindowPointerMove);
     window.addEventListener('pointerup', handlePointerUp);
 
-    const frameTimer = createFrameTimer();
-
-    const renderFrame = () => {
-      animationFrameId = window.requestAnimationFrame(renderFrame);
-
-      const delta = frameTimer.tick();
-      const elapsedTime = initialPose.timeElapsed + frameTimer.getElapsed();
+    const renderFrame = (
+      _timestamp: DOMHighResTimeStamp,
+      { deltaSeconds, elapsedSeconds }: VisualRenderLoopFrame,
+    ) => {
+      const delta = deltaSeconds;
+      const elapsedTime = initialPose.timeElapsed + elapsedSeconds;
       halftoneMaterial.uniforms.time.value = elapsedTime;
 
       let baseRotationX = 0;
@@ -1378,11 +1390,16 @@ function HelpedHalftoneCanvas({
       renderer.render(postScene, orthographicCamera);
     };
 
-    renderFrame();
+    renderLoop = createVisualRenderLoop({
+      renderFrame,
+      target: container,
+      targetVisibilityOptions: { rootMargin: '100px' },
+    });
+    renderLoop.start();
 
     return () => {
-      window.cancelAnimationFrame(animationFrameId);
-      resizeObserver.disconnect();
+      renderLoop?.dispose();
+      stopObservingSize();
       canvas.removeEventListener('pointerdown', handlePointerDown);
       canvas.removeEventListener('pointerleave', handlePointerLeave);
       canvas.removeEventListener('pointermove', handlePointerMove);

@@ -3,9 +3,9 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { ClickHouseService } from 'src/database/clickHouse/clickHouse.service';
-import { formatDateForClickHouse } from 'src/database/clickHouse/clickHouse.util';
-import { type UsageEvent } from 'src/engine/core-modules/usage/types/usage-event.type';
+import { formatDateTimeForClickHouse } from 'src/database/clickHouse/clickHouse.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { type UsageEvent } from 'src/engine/core-modules/usage/types/usage-event.type';
 
 @Injectable()
 export class UsageEventWriterService {
@@ -21,11 +21,14 @@ export class UsageEventWriterService {
       return;
     }
 
-    const now = formatDateForClickHouse(new Date());
+    const now = formatDateTimeForClickHouse(new Date());
 
     const rows = usageEvents.map((usageEvent) => ({
       timestamp: now,
       workspaceId,
+      periodStart: usageEvent.periodStart
+        ? formatDateTimeForClickHouse(usageEvent.periodStart)
+        : undefined,
       userWorkspaceId: usageEvent.userWorkspaceId ?? '',
       resourceType: usageEvent.resourceType,
       operationType: usageEvent.operationType,

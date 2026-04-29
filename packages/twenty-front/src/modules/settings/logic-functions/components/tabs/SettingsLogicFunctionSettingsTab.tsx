@@ -1,5 +1,4 @@
 import { SettingsLogicFunctionNewForm } from '@/settings/logic-functions/components/SettingsLogicFunctionNewForm';
-import { SettingsLogicFunctionTabEnvironmentVariablesSection } from '@/settings/logic-functions/components/SettingsLogicFunctionTabEnvironmentVariablesSection';
 import { type LogicFunctionFormValues } from '@/logic-functions/hooks/useLogicFunctionUpdateFormState';
 
 export const SettingsLogicFunctionSettingsTab = ({
@@ -14,13 +13,10 @@ export const SettingsLogicFunctionSettingsTab = ({
   readonly?: boolean;
 }) => {
   return (
-    <>
-      <SettingsLogicFunctionNewForm
-        formValues={formValues}
-        onChange={onChange}
-        readonly={readonly}
-      />
-      <SettingsLogicFunctionTabEnvironmentVariablesSection />
-    </>
+    <SettingsLogicFunctionNewForm
+      formValues={formValues}
+      onChange={onChange}
+      readonly={readonly}
+    />
   );
 };

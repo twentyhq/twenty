@@ -89,28 +89,27 @@ export const SettingsLogicFunctionDetail = () => {
   const isTestTab = activeTabId === 'test';
 
   const breadcrumbLinks = isDefined(applicationId)
-    ? [
-        {
-          children: t`Workspace`,
-          href: getSettingsPath(SettingsPath.Workspace),
-        },
-        {
-          children: t`Applications`,
-          href: getSettingsPath(SettingsPath.Applications),
-        },
-        {
-          children: `${applicationName}`,
-          href: getSettingsPath(
-            SettingsPath.ApplicationDetail,
-            {
-              applicationId,
-            },
-            undefined,
-            'content',
-          ),
-        },
-        { children: `${logicFunction?.name}` },
-      ]
+    ? (() => {
+        const applicationContentHref = getSettingsPath(
+          SettingsPath.ApplicationDetail,
+          { applicationId },
+          undefined,
+          'content',
+        );
+        return [
+          {
+            children: t`Workspace`,
+            href: getSettingsPath(SettingsPath.Workspace),
+          },
+          {
+            children: t`Applications`,
+            href: getSettingsPath(SettingsPath.Applications),
+          },
+          { children: applicationName ?? '', href: applicationContentHref },
+          { children: t`Logic functions`, href: applicationContentHref },
+          { children: logicFunction?.name ?? '' },
+        ];
+      })()
     : [
         {
           children: t`Workspace`,
@@ -120,7 +119,8 @@ export const SettingsLogicFunctionDetail = () => {
           children: t`AI`,
           href: getSettingsPath(SettingsPath.AI),
         },
-        { children: `${logicFunction?.name}` },
+        { children: t`Logic functions` },
+        { children: logicFunction?.name ?? '' },
       ];
 
   const files = [
@@ -154,8 +154,13 @@ export const SettingsLogicFunctionDetail = () => {
               isTesting={isExecuting}
             />
           )}
-          {isTriggersTab && logicFunction && (
-            <SettingsLogicFunctionTriggersTab logicFunction={logicFunction} />
+          {isTriggersTab && (
+            <SettingsLogicFunctionTriggersTab
+              formValues={formValues}
+              onChange={onChange}
+              readonly={isReadonly}
+              applicationName={applicationName}
+            />
           )}
           {isSettingsTab && (
             <SettingsLogicFunctionSettingsTab
@@ -168,6 +173,7 @@ export const SettingsLogicFunctionDetail = () => {
             <SettingsLogicFunctionTestTab
               handleExecute={executeLogicFunction}
               logicFunctionId={logicFunctionId}
+              formValues={formValues}
               isTesting={isExecuting}
             />
           )}

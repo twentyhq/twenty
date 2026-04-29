@@ -6,6 +6,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { isDefined } from 'twenty-shared/utils';
 import { type Repository } from 'typeorm';
 
+import { ClickHouseService } from 'src/database/clickHouse/clickHouse.service';
+import { formatDateTimeForClickHouse } from 'src/database/clickHouse/clickHouse.util';
 import {
   BillingException,
   BillingExceptionCode,
@@ -16,11 +18,22 @@ import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entit
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
 import { BillingSubscriptionItemService } from 'src/engine/core-modules/billing/services/billing-subscription-item.service';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
+import { BillingUsageCapService } from 'src/engine/core-modules/billing/services/billing-usage-cap.service';
+import { MeteredCreditService } from 'src/engine/core-modules/billing/services/metered-credit.service';
 import { StripeBillingMeterEventService } from 'src/engine/core-modules/billing/stripe/services/stripe-billing-meter-event.service';
 import { StripeCreditGrantService } from 'src/engine/core-modules/billing/stripe/services/stripe-credit-grant.service';
-import { type UsageEvent } from 'src/engine/core-modules/usage/types/usage-event.type';
+import { buildBillingUsageAvailableCreditsCacheKey } from 'src/engine/core-modules/billing/utils/build-billing-usage-available-credits-cache-key.util';
+import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
+import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
+import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { type UsageEvent } from 'src/engine/core-modules/usage/types/usage-event.type';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+
+type UsageSumRow = {
+  total: string | number | null;
+};
 
 @Injectable()
 export class BillingUsageService {
@@ -33,6 +46,14 @@ export class BillingUsageService {
     private readonly twentyConfigService: TwentyConfigService,
     private readonly billingSubscriptionItemService: BillingSubscriptionItemService,
     private readonly stripeCreditGrantService: StripeCreditGrantService,
+    @InjectCacheStorage(CacheStorageNamespace.EngineBillingUsage)
+    private readonly billingUsageCacheStorage: CacheStorageService,
+    @InjectRepository(BillingSubscriptionEntity)
+    private readonly billingSubscriptionRepository: Repository<BillingSubscriptionEntity>,
+    private readonly meteredCreditService: MeteredCreditService,
+    private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly clickHouseService: ClickHouseService,
+    private readonly billingUsageCapService: BillingUsageCapService,
   ) {}
 
   async canFeatureBeUsed(workspaceId: string): Promise<boolean> {
@@ -48,6 +69,7 @@ export class BillingUsageService {
     return !!billingSubscription;
   }
 
+  //TODO: TO be deprecated
   async billUsage({
     workspaceId,
     usageEvents,
@@ -86,6 +108,7 @@ export class BillingUsageService {
     }
   }
 
+  //TODO: TO be deprecated
   async getMeteredProductsUsage(
     workspace: WorkspaceEntity,
   ): Promise<BillingMeteredProductUsageDTO[]> {
@@ -113,6 +136,7 @@ export class BillingUsageService {
     );
   }
 
+  //TODO: TO be deprecated
   private getSubscriptionPeriod(subscription: BillingSubscriptionEntity): {
     periodStart: Date;
     periodEnd: Date;
@@ -135,6 +159,7 @@ export class BillingUsageService {
     };
   }
 
+  //TODO: TO be deprecated
   private async buildMeteredProductUsage(
     subscription: BillingSubscriptionEntity,
     item: Awaited<
@@ -174,5 +199,195 @@ export class BillingUsageService {
       totalGrantedCredits: grantedCredits + rolloverCredits,
       unitPriceCents: item.unitPriceCents,
     };
+  }
+
+  async flushAvailableCreditsFromCache(workspaceId: string): Promise<void> {
+    await this.billingUsageCacheStorage.flushByPattern(
+      `available-credits:${workspaceId}:*`,
+    );
+  }
+
+  private async warmAvailableCredits(
+    workspaceId: string,
+    periodStart: Date | string,
+    periodEnd: Date | string,
+    availableCredits: number,
+  ): Promise<void> {
+    const ttlMs = Math.max(new Date(periodEnd).getTime() - Date.now(), 0);
+
+    await this.billingUsageCacheStorage.set(
+      buildBillingUsageAvailableCreditsCacheKey(workspaceId, periodStart),
+      availableCredits,
+      ttlMs,
+    );
+  }
+
+  private async getAvailableCreditsFromCache(
+    workspaceId: string,
+    periodStart: Date | string,
+  ): Promise<number | undefined> {
+    return this.billingUsageCacheStorage.get<number>(
+      buildBillingUsageAvailableCreditsCacheKey(workspaceId, periodStart),
+    );
+  }
+
+  private async getAvailableCreditsFromClickHouse({
+    workspaceId,
+    currentPeriodStart,
+  }: {
+    workspaceId: string;
+    currentPeriodStart: Date | string;
+  }): Promise<number> {
+    const subscription = await this.billingSubscriptionRepository.findOne({
+      where: { workspaceId, currentPeriodStart: new Date(currentPeriodStart) },
+      relations: [
+        'billingSubscriptionItems',
+        'billingSubscriptionItems.billingProduct',
+        'billingSubscriptionItems.billingProduct.billingPrices',
+      ],
+    });
+
+    if (!isDefined(subscription)) {
+      throw new BillingException(
+        `Subscription not found for workspace ${workspaceId}`,
+        BillingExceptionCode.BILLING_SUBSCRIPTION_NOT_FOUND,
+      );
+    }
+
+    const meteredPricingInfo =
+      this.meteredCreditService.extractMeteredPricingInfoFromSubscription(
+        subscription,
+      );
+
+    if (!meteredPricingInfo) {
+      throw new BillingException(
+        `No metered item found for workspace ${workspaceId}`,
+        BillingExceptionCode.BILLING_SUBSCRIPTION_ITEM_NOT_FOUND,
+      );
+    }
+
+    const [creditBalance, usage] = await Promise.all([
+      this.meteredCreditService.getCreditBalance(
+        subscription.stripeCustomerId,
+        meteredPricingInfo.unitPriceCents,
+      ),
+      this.getCurrentPeriodCreditsUsed(
+        subscription.workspaceId,
+        subscription.currentPeriodStart,
+      ),
+    ]);
+
+    return meteredPricingInfo.tierCap + creditBalance - usage;
+  }
+
+  async decrementAvailableCredits({
+    workspaceId,
+    usedCredits,
+  }: {
+    workspaceId: string;
+    usedCredits: number;
+  }): Promise<void> {
+    const {
+      billingSubscription: { currentPeriodStart, currentPeriodEnd },
+    } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
+      'billingSubscription',
+    ]);
+
+    const cachedAvailableCredits = await this.getAvailableCreditsFromCache(
+      workspaceId,
+      currentPeriodStart,
+    );
+
+    const availableCredits = isDefined(cachedAvailableCredits)
+      ? cachedAvailableCredits
+      : await this.getAvailableCreditsFromClickHouse({
+          workspaceId,
+          currentPeriodStart,
+        });
+
+    if (!isDefined(cachedAvailableCredits)) {
+      await this.warmAvailableCredits(
+        workspaceId,
+        currentPeriodStart,
+        currentPeriodEnd,
+        availableCredits,
+      );
+    }
+
+    const decrementedAvailableCredits =
+      await this.billingUsageCacheStorage.incrBy(
+        buildBillingUsageAvailableCreditsCacheKey(
+          workspaceId,
+          currentPeriodStart,
+        ),
+        -usedCredits,
+      );
+
+    if (decrementedAvailableCredits <= 0) {
+      await this.billingUsageCapService.setSubscriptionItemHasReachedCap(
+        workspaceId,
+        true,
+      );
+    }
+  }
+
+  async invalidateAvailableCredits(
+    workspaceId: string,
+    periodStart: Date,
+  ): Promise<void> {
+    await this.billingUsageCacheStorage.del(
+      buildBillingUsageAvailableCreditsCacheKey(workspaceId, periodStart),
+    );
+  }
+
+  async hasAvailableCredits(workspaceId: string): Promise<boolean> {
+    const { billingSubscription: subscription } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'billingSubscription',
+      ]);
+    const cached = await this.getAvailableCreditsFromCache(
+      subscription.workspaceId,
+      subscription.currentPeriodStart,
+    );
+
+    if (isDefined(cached)) {
+      return cached > 0;
+    }
+
+    const availableCredits = await this.getAvailableCreditsFromClickHouse({
+      workspaceId: subscription.workspaceId,
+      currentPeriodStart: subscription.currentPeriodStart,
+    });
+
+    await this.warmAvailableCredits(
+      subscription.workspaceId,
+      subscription.currentPeriodStart,
+      subscription.currentPeriodEnd,
+      availableCredits,
+    );
+
+    return availableCredits > 0;
+  }
+
+  async getCurrentPeriodCreditsUsed(
+    workspaceId: string,
+    periodStart: Date,
+  ): Promise<number> {
+    const query = `
+      SELECT sum(creditsUsedMicro) AS total
+      FROM usageEvent
+      WHERE workspaceId = {workspaceId:String}
+        AND periodStart = {periodStart:DateTime64(3)}
+    `;
+
+    const rows = await this.clickHouseService.select<UsageSumRow>(query, {
+      workspaceId,
+      periodStart: formatDateTimeForClickHouse(periodStart),
+    });
+
+    const rawTotal = rows[0]?.total ?? 0;
+    const total = typeof rawTotal === 'string' ? Number(rawTotal) : rawTotal;
+
+    return Number.isFinite(total) ? total : 0;
   }
 }

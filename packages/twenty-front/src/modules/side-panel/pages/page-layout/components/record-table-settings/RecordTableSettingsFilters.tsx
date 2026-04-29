@@ -3,9 +3,9 @@ import { AdvancedFilterSidePanelContainer } from '@/object-record/advanced-filte
 import { RecordFilterGroupsComponentInstanceContext } from '@/object-record/record-filter-group/states/context/RecordFilterGroupsComponentInstanceContext';
 import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
 import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
+import { useRecordTableWidgetViewForDisplay } from '@/page-layout/widgets/record-table/hooks/useRecordTableWidgetViewForDisplay';
 import { RecordTableSettingsFiltersInitializeStateEffect } from '@/side-panel/pages/page-layout/components/record-table-settings/RecordTableSettingsFiltersInitializeStateEffect';
 import { InputLabel } from '@/ui/input/components/InputLabel';
-import { useViewById } from '@/views/hooks/useViewById';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
@@ -20,14 +20,22 @@ const StyledFilterSettingsContainer = styled.div`
 
 type RecordTableSettingsFiltersProps = {
   viewId: string;
+  widgetId: string;
+  pageLayoutId: string;
   objectMetadataId: string;
 };
 
 export const RecordTableSettingsFilters = ({
   viewId,
+  widgetId,
+  pageLayoutId,
   objectMetadataId,
 }: RecordTableSettingsFiltersProps) => {
-  const { view } = useViewById(viewId);
+  const { view } = useRecordTableWidgetViewForDisplay({
+    viewId,
+    widgetId,
+    pageLayoutId,
+  });
   const { objectMetadataItem } = useObjectMetadataItemById({
     objectId: objectMetadataId,
   });

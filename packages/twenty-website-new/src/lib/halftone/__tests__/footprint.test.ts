@@ -25,6 +25,24 @@ describe('halftone footprint helpers', () => {
     });
   });
 
+  it('computes the visible covered image rect', () => {
+    expect(
+      getContainedImageRect({
+        imageFit: 'cover',
+        imageHeight: 500,
+        imageWidth: 1000,
+        viewportHeight: 800,
+        viewportWidth: 800,
+        zoom: 1,
+      }),
+    ).toEqual({
+      x: 0,
+      y: 0,
+      width: 800,
+      height: 800,
+    });
+  });
+
   it('derives image footprint scale from preview distance', () => {
     expect(
       getImageFootprintScale({
@@ -82,6 +100,7 @@ return { getContainedImageRect, getImageFootprintScale, getMeshFootprintScale };
     };
 
     const imageArgs = {
+      imageFit: 'cover' as const,
       imageHeight: 1000,
       imageWidth: 1600,
       previewDistance: 6,

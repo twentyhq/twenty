@@ -5,6 +5,7 @@ import { currentRecordFiltersComponentState } from '@/object-record/record-filte
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
+import { recordTableWidgetViewDraftComponentState } from '@/page-layout/states/recordTableWidgetViewDraftComponentState';
 import { useMapRecordFieldToViewFieldWithCurrentAggregateOperation } from '@/page-layout/widgets/record-table/hooks/useMapRecordFieldToViewFieldWithCurrentAggregateOperation';
 import { computeViewFieldsToCreateAndUpdate } from '@/page-layout/widgets/record-table/utils/computeViewFieldsToCreateAndUpdate';
 import { usePerformViewFieldAPIPersist } from '@/views/hooks/internal/usePerformViewFieldAPIPersist';
@@ -65,6 +66,11 @@ export const useSaveRecordTableWidgetsViewDataOnDashboardSave = () => {
       );
       const views = store.get(viewsSelector.atom);
       const objectMetadataItems = store.get(objectMetadataItemsSelector.atom);
+      const recordTableWidgetViewDraft = store.get(
+        recordTableWidgetViewDraftComponentState.atomFamily({
+          instanceId: pageLayoutId,
+        }),
+      );
 
       const recordTableWidgets = pageLayoutDraft.tabs.flatMap((tab) =>
         tab.widgets.filter(
@@ -182,16 +188,21 @@ export const useSaveRecordTableWidgetsViewDataOnDashboardSave = () => {
           }),
         );
 
-        const newViewFields = currentRecordFields.map(
+        const recordIndexViewFields = currentRecordFields.map(
           mapRecordFieldToViewFieldWithCurrentAggregateOperation,
         );
 
-        const existingViewFields = currentView.viewFields ?? [];
+        const draftSnapshot = recordTableWidgetViewDraft[widget.id];
+        const draftViewFields = draftSnapshot?.viewFields ?? [];
+        const metadataStoreViewFields =
+          draftViewFields.length > 0
+            ? draftViewFields
+            : (currentView.viewFields ?? []);
 
         const { viewFieldsToCreate, viewFieldsToUpdate } =
           computeViewFieldsToCreateAndUpdate({
-            newViewFields,
-            existingViewFields,
+            newViewFields: metadataStoreViewFields,
+            existingViewFields: recordIndexViewFields,
             viewId,
           });
 

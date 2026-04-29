@@ -2,7 +2,7 @@
 
 import { styled } from '@linaria/react';
 import type { PointerEvent as ReactPointerEvent } from 'react';
-import { TerminalTrafficLights } from '../DraggableTerminal/TerminalTrafficLights';
+import { TerminalTrafficLights } from '../DraggableTerminal/TerminalTrafficLights/TerminalTrafficLights';
 
 type MacWindowBarProps = {
   title?: string;

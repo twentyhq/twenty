@@ -1,6 +1,9 @@
 import { SOURCE_LOCALE, type AppLocale } from 'twenty-shared/translations';
 
-import { APP_LOCALE_BY_RAW } from './app-locale-set';
+import {
+  KNOWN_PUBLIC_APP_LOCALE_BY_RAW,
+  isPublicAppLocale,
+} from './app-locale-set';
 
 const findFirstSegmentEnd = (path: string): number => {
   for (let i = 1; i < path.length; i += 1) {
@@ -22,18 +25,16 @@ export const localizeHref = (locale: AppLocale, href: string): string => {
 
   const segmentEnd = findFirstSegmentEnd(href);
   const firstSegment = href.slice(1, segmentEnd);
-  const existingLocale = APP_LOCALE_BY_RAW.get(firstSegment);
-
-  if (existingLocale !== undefined && existingLocale !== SOURCE_LOCALE) {
-    return href;
-  }
+  const existingLocale = KNOWN_PUBLIC_APP_LOCALE_BY_RAW.get(firstSegment);
 
   const unprefixed =
-    existingLocale === SOURCE_LOCALE
+    existingLocale !== undefined
       ? buildTailFromSegmentEnd(href, segmentEnd)
       : href;
 
-  return locale === SOURCE_LOCALE ? unprefixed : `/${locale}${unprefixed}`;
+  return locale === SOURCE_LOCALE || !isPublicAppLocale(locale)
+    ? unprefixed
+    : `/${locale}${unprefixed}`;
 };
 
 export const stripLocale = (pathname: string): string => {
@@ -41,7 +42,7 @@ export const stripLocale = (pathname: string): string => {
 
   const segmentEnd = findFirstSegmentEnd(pathname);
   const firstSegment = pathname.slice(1, segmentEnd);
-  if (!APP_LOCALE_BY_RAW.has(firstSegment)) return pathname;
+  if (!KNOWN_PUBLIC_APP_LOCALE_BY_RAW.has(firstSegment)) return pathname;
 
   return buildTailFromSegmentEnd(pathname, segmentEnd);
 };

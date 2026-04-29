@@ -266,7 +266,7 @@ export class ChatExecutionService {
 
     const modelMessages = pruningResult.messages;
 
-    const billUsageFromSteps = (steps: StepResult<ToolSet>[]) => {
+    const billUsageFromSteps = async (steps: StepResult<ToolSet>[]) => {
       const usage = steps.reduce<LanguageModelUsage>(
         (acc, step) => ({
           inputTokens: (acc.inputTokens ?? 0) + (step.usage.inputTokens ?? 0),
@@ -308,7 +308,7 @@ export class ChatExecutionService {
 
       const cacheCreationTokens = extractCacheCreationTokensFromSteps(steps);
 
-      this.aiBillingService.calculateAndBillUsage(
+      await this.aiBillingService.calculateAndBillUsage(
         registeredModel.modelId,
         { usage, cacheCreationTokens },
         workspace.id,
@@ -333,8 +333,8 @@ export class ChatExecutionService {
       abortSignal,
       stopWhen: stepCountIs(AGENT_CONFIG.MAX_STEPS),
       experimental_telemetry: AI_TELEMETRY_CONFIG,
-      onAbort: ({ steps }) => {
-        billUsageFromSteps(steps);
+      onAbort: async ({ steps }) => {
+        await billUsageFromSteps(steps);
       },
       experimental_repairToolCall: async ({
         toolCall,
@@ -360,8 +360,8 @@ export class ChatExecutionService {
     });
 
     Promise.all([stream.usage, stream.steps])
-      .then(([, steps]) => {
-        billUsageFromSteps(steps);
+      .then(async ([, steps]) => {
+        await billUsageFromSteps(steps);
       })
       .catch((error) => {
         if (error?.name === 'AbortError') {

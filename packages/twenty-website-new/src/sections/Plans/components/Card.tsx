@@ -5,10 +5,12 @@ import NextImage from 'next/image';
 
 import { Body, Heading, LinkButton } from '@/design-system/components';
 import { CheckIcon } from '@/icons/informative/Check';
+import { useAnimatedNumber } from '@/lib/animation';
+import { useTimeoutRegistry } from '@/lib/react';
 import type { PlanCardType } from '@/sections/Plans/types';
 import { theme } from '@/theme';
 import { css } from '@linaria/core';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const StyledCard = styled.div`
   background-color: ${theme.colors.primary.background[100]};
@@ -245,44 +247,8 @@ type CardProps = {
   maxBullets: number;
 };
 
-const PRICE_ROLL_DURATION_MS = 500;
 const PRICE_NUMBER_FORMATTER = new Intl.NumberFormat('en-US');
 const PRICE_HEADING_NUMBER_REGEX = /^(.*?)(\d[\d,]*)(.*)$/;
-
-const useAnimatedNumber = (target: number) => {
-  const [display, setDisplay] = useState(target);
-  const previousValueRef = useRef(target);
-
-  useEffect(() => {
-    const from = previousValueRef.current;
-    previousValueRef.current = target;
-
-    if (from === target) {
-      return;
-    }
-
-    const start = performance.now();
-    let animationFrameId = 0;
-
-    const tick = (now: number) => {
-      const progress = Math.min((now - start) / PRICE_ROLL_DURATION_MS, 1);
-      const eased = 1 - (1 - progress) ** 3;
-      setDisplay(Math.round(from + (target - from) * eased));
-
-      if (progress < 1) {
-        animationFrameId = requestAnimationFrame(tick);
-      }
-    };
-
-    animationFrameId = requestAnimationFrame(tick);
-
-    return () => {
-      cancelAnimationFrame(animationFrameId);
-    };
-  }, [target]);
-
-  return display;
-};
 
 function getHeadingSegments(heading: PlanCardType['price']['heading']) {
   return Array.isArray(heading) ? heading : [heading];
@@ -360,6 +326,7 @@ function getFeaturesAnimationMinHeight(maxBullets: number) {
 }
 
 export function Card({ card, highlighted = false, maxBullets }: CardProps) {
+  const timeoutRegistry = useTimeoutRegistry();
   const iconWidth = card.icon.width ?? 80;
   const targetPriceValue = getPriceHeadingNumericValue(card.price.heading);
   const animatedPriceValue = useAnimatedNumber(targetPriceValue ?? 0);
@@ -401,7 +368,7 @@ export function Card({ card, highlighted = false, maxBullets }: CardProps) {
       return;
     }
 
-    const timeoutId = window.setTimeout(
+    return timeoutRegistry.schedule(
       () => {
         setComparisonBullets(visibleBullets);
         setVisibleBullets(queuedBullets);
@@ -411,18 +378,14 @@ export function Card({ card, highlighted = false, maxBullets }: CardProps) {
       FEATURES_SWITCH_ANIMATION_MS +
         FEATURE_ITEM_STAGGER_MS * visibleBullets.length,
     );
-
-    return () => {
-      window.clearTimeout(timeoutId);
-    };
-  }, [featuresPhase, queuedBullets, visibleBullets]);
+  }, [featuresPhase, queuedBullets, timeoutRegistry, visibleBullets]);
 
   useEffect(() => {
     if (featuresPhase !== 'entering') {
       return;
     }
 
-    const timeoutId = window.setTimeout(
+    return timeoutRegistry.schedule(
       () => {
         setComparisonBullets(null);
         setFeaturesPhase('stable');
@@ -430,11 +393,7 @@ export function Card({ card, highlighted = false, maxBullets }: CardProps) {
       FEATURES_SWITCH_ANIMATION_MS +
         FEATURE_ITEM_STAGGER_MS * visibleBullets.length,
     );
-
-    return () => {
-      window.clearTimeout(timeoutId);
-    };
-  }, [featuresPhase, visibleBullets]);
+  }, [featuresPhase, timeoutRegistry, visibleBullets]);
 
   const comparisonBulletTexts = new Set(
     (featuresPhase === 'exiting' ? queuedBullets : comparisonBullets)?.map(

@@ -1,6 +1,7 @@
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { RecordTableWidget } from '@/object-record/record-table-widget/components/RecordTableWidget';
 import { RecordTableWidgetProvider } from '@/object-record/record-table-widget/components/RecordTableWidgetProvider';
+import { RecordTableWidgetViewDraftInitEffect } from '@/page-layout/widgets/record-table/components/RecordTableWidgetViewDraftInitEffect';
 
 type RecordTableWidgetRendererContentProps = {
   objectMetadataId: string;
@@ -18,12 +19,18 @@ export const RecordTableWidgetRendererContent = ({
   });
 
   return (
-    <RecordTableWidgetProvider
-      objectNameSingular={objectMetadataItem.nameSingular}
-      viewId={viewId}
-      widgetId={widgetId}
-    >
-      <RecordTableWidget />
-    </RecordTableWidgetProvider>
+    <>
+      <RecordTableWidgetViewDraftInitEffect
+        widgetId={widgetId}
+        viewId={viewId}
+      />
+      <RecordTableWidgetProvider
+        objectNameSingular={objectMetadataItem.nameSingular}
+        viewId={viewId}
+        widgetId={widgetId}
+      >
+        <RecordTableWidget />
+      </RecordTableWidgetProvider>
+    </>
   );
 };

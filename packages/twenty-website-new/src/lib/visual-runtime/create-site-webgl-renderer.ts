@@ -52,3 +52,24 @@ export function createSiteWebGlRenderer(
 
   return renderer;
 }
+
+export type SiteWebGlRendererCreationFailureHandler = (error: unknown) => void;
+
+export const reportSiteWebGlRendererCreationFailure: SiteWebGlRendererCreationFailureHandler =
+  (error) => {
+    if (process.env.NODE_ENV !== 'production') {
+      console.error('WebGL renderer creation failed:', error);
+    }
+  };
+
+export function tryCreateSiteWebGlRenderer(
+  parameters?: SiteWebGlRendererParameters,
+  onError: SiteWebGlRendererCreationFailureHandler = reportSiteWebGlRendererCreationFailure,
+): THREE.WebGLRenderer | null {
+  try {
+    return createSiteWebGlRenderer(parameters);
+  } catch (error) {
+    onError(error);
+    return null;
+  }
+}
