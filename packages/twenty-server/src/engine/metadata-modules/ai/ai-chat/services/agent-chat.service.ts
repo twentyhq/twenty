@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { ExtendedUIMessage } from 'twenty-shared/ai';
@@ -44,6 +44,8 @@ const serializeThreadForBroadcast = (thread: AgentChatThreadEntity) => ({
 
 @Injectable()
 export class AgentChatService {
+  private readonly logger = new Logger(AgentChatService.name);
+
   constructor(
     @InjectRepository(AgentChatThreadEntity)
     private readonly threadRepository: Repository<AgentChatThreadEntity>,
@@ -177,7 +179,16 @@ export class AgentChatService {
   }
 
   private async touchThreadLastMessageAt(threadId: string): Promise<void> {
-    await this.threadRepository.update(threadId, { lastMessageAt: new Date() });
+    try {
+      await this.threadRepository.update(threadId, {
+        lastMessageAt: new Date(),
+      });
+    } catch (error) {
+      this.logger.error(
+        `Failed to touch lastMessageAt for thread ${threadId}:`,
+        error,
+      );
+    }
   }
 
   async getMessagesForThread(threadId: string, userWorkspaceId: string) {
@@ -445,6 +456,10 @@ export class AgentChatService {
     });
 
     if ((result.affected ?? 0) === 0) {
+      this.logger.warn(
+        `hardDeleteThread: thread ${threadId} vanished between fetch and delete`,
+      );
+
       return;
     }
 
