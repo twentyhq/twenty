@@ -2315,7 +2315,7 @@ export interface AgentChatThread {
     totalOutputCredits: Scalars['Float']
     createdAt: Scalars['DateTime']
     updatedAt: Scalars['DateTime']
-    archivedAt?: Scalars['DateTime']
+    deletedAt?: Scalars['DateTime']
     __typename: 'AgentChatThread'
 }
 
@@ -2634,7 +2634,7 @@ export interface Query {
     __typename: 'Query'
 }
 
-export type AgentChatThreadSortFields = 'id' | 'updatedAt' | 'archivedAt'
+export type AgentChatThreadSortFields = 'id' | 'updatedAt' | 'deletedAt'
 
 
 /** Sort Directions */
@@ -5335,7 +5335,7 @@ export interface AgentChatThreadGenqlSelection{
     totalOutputCredits?: boolean | number
     createdAt?: boolean | number
     updatedAt?: boolean | number
-    archivedAt?: boolean | number
+    deletedAt?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -5682,7 +5682,7 @@ export interface AgentIdInput {
 /** The id of the agent. */
 id: Scalars['UUID']}
 
-export interface AgentChatThreadFilter {and?: (AgentChatThreadFilter[] | null),or?: (AgentChatThreadFilter[] | null),id?: (UUIDFilterComparison | null),updatedAt?: (DateFieldComparison | null),archivedAt?: (DateFieldComparison | null)}
+export interface AgentChatThreadFilter {and?: (AgentChatThreadFilter[] | null),or?: (AgentChatThreadFilter[] | null),id?: (UUIDFilterComparison | null),updatedAt?: (DateFieldComparison | null),deletedAt?: (DateFieldComparison | null)}
 
 export interface DateFieldComparison {is?: (Scalars['Boolean'] | null),isNot?: (Scalars['Boolean'] | null),eq?: (Scalars['DateTime'] | null),neq?: (Scalars['DateTime'] | null),gt?: (Scalars['DateTime'] | null),gte?: (Scalars['DateTime'] | null),lt?: (Scalars['DateTime'] | null),lte?: (Scalars['DateTime'] | null),in?: (Scalars['DateTime'][] | null),notIn?: (Scalars['DateTime'][] | null),between?: (DateFieldComparisonBetween | null),notBetween?: (DateFieldComparisonBetween | null)}
 
@@ -8861,7 +8861,7 @@ export const enumAllMetadataName = {
 export const enumAgentChatThreadSortFields = {
    id: 'id' as const,
    updatedAt: 'updatedAt' as const,
-   archivedAt: 'archivedAt' as const
+   deletedAt: 'deletedAt' as const
 }
 
 export const enumSortDirection = {

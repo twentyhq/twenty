@@ -22,7 +22,7 @@ export const useChatThreadArchiveActions = () => {
       if (data?.archiveChatThread) {
         applyAgentChatThreadUpdate({
           id: data.archiveChatThread.id,
-          archivedAt: data.archiveChatThread.archivedAt ?? null,
+          deletedAt: data.archiveChatThread.deletedAt ?? null,
           updatedAt: data.archiveChatThread.updatedAt,
         });
       }
@@ -40,7 +40,7 @@ export const useChatThreadArchiveActions = () => {
       if (data?.unarchiveChatThread) {
         applyAgentChatThreadUpdate({
           id: data.unarchiveChatThread.id,
-          archivedAt: data.unarchiveChatThread.archivedAt ?? null,
+          deletedAt: data.unarchiveChatThread.deletedAt ?? null,
           updatedAt: data.unarchiveChatThread.updatedAt,
         });
       }

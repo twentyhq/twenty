@@ -71,7 +71,7 @@ export const NavigationDrawerAiChatThreadItem = ({
     commitRename,
   } = useAiChatThreadRename(thread);
 
-  const isArchived = Boolean(thread.archivedAt);
+  const isArchived = Boolean(thread.deletedAt);
   const ThreadIcon = isArchived ? IconArchive : IconComment;
   const displayLabel = thread.title || t`New chat`;
   const timestamp = beautifyPastDateRelativeToNowShort(

@@ -60,7 +60,7 @@ export class AgentChatThreadDTO {
   updatedAt: Date;
 
   @FilterableField(() => Date, { nullable: true })
-  archivedAt: Date | null;
+  deletedAt: Date | null;
 
   @FilterableField(() => Date, { nullable: true })
   lastMessageAt: Date | null;

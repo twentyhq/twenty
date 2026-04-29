@@ -28,10 +28,10 @@ export const agentChatVisibleThreadsSelector = createAtomSelector<
     return allThreads.filter((thread) => {
       switch (filterStatus) {
         case AGENT_CHAT_THREAD_FILTER_STATUS.ACTIVE:
-          if (thread.archivedAt) return false;
+          if (thread.deletedAt) return false;
           break;
         case AGENT_CHAT_THREAD_FILTER_STATUS.ARCHIVED:
-          if (!thread.archivedAt) return false;
+          if (!thread.deletedAt) return false;
           break;
         case AGENT_CHAT_THREAD_FILTER_STATUS.ALL:
           break;

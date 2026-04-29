@@ -5273,7 +5273,7 @@ export default {
             "updatedAt": [
                 4
             ],
-            "archivedAt": [
+            "deletedAt": [
                 4
             ],
             "__typename": [
@@ -6511,7 +6511,7 @@ export default {
             "updatedAt": [
                 327
             ],
-            "archivedAt": [
+            "deletedAt": [
                 327
             ],
             "__typename": [

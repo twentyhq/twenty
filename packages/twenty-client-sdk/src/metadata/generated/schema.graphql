@@ -2620,7 +2620,7 @@ type AgentChatThread {
   totalOutputCredits: Float!
   createdAt: DateTime!
   updatedAt: DateTime!
-  archivedAt: DateTime
+  deletedAt: DateTime
 }
 
 type AgentMessage {
@@ -3063,7 +3063,7 @@ input AgentChatThreadFilter {
   or: [AgentChatThreadFilter!]
   id: UUIDFilterComparison
   updatedAt: DateFieldComparison
-  archivedAt: DateFieldComparison
+  deletedAt: DateFieldComparison
 }
 
 input DateFieldComparison {
@@ -3095,7 +3095,7 @@ input AgentChatThreadSort {
 enum AgentChatThreadSortFields {
   id
   updatedAt
-  archivedAt
+  deletedAt
 }
 
 """Sort Directions"""

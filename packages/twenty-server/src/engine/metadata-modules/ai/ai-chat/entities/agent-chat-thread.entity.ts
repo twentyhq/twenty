@@ -17,6 +17,7 @@ import type { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspac
 import { EntityRelation } from 'src/engine/workspace-manager/workspace-migration/types/entity-relation.interface';
 
 @Entity({ name: 'agentChatThread', schema: 'core' })
+@Index('IDX_AGENT_CHAT_THREAD_ID_DELETED_AT', ['id', 'deletedAt'])
 export class AgentChatThreadEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -76,7 +77,7 @@ export class AgentChatThreadEntity {
   messages: EntityRelation<AgentMessageEntity[]>;
 
   @Column({ type: 'timestamptz', nullable: true })
-  archivedAt: Date | null;
+  deletedAt: Date | null;
 
   @Column({ type: 'timestamptz', nullable: true })
   lastMessageAt: Date | null;

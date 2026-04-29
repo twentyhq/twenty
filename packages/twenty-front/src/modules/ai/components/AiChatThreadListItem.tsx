@@ -97,7 +97,7 @@ export const AiChatThreadListItem = ({ thread }: AiChatThreadListItemProps) => {
     commitRename,
   } = useAiChatThreadRename(thread);
 
-  const isArchived = Boolean(thread.archivedAt);
+  const isArchived = Boolean(thread.deletedAt);
   const ThreadIcon = isArchived ? IconArchive : IconSparkles;
   const displayTitle = thread.title ?? t`Untitled`;
   const itemMenuDropdownId = getAiChatThreadItemMenuDropdownId(

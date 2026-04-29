@@ -36,7 +36,7 @@ const serializeThreadForBroadcast = (thread: AgentChatThreadEntity) => ({
   conversationSize: thread.conversationSize,
   totalInputCredits: thread.totalInputCredits,
   totalOutputCredits: thread.totalOutputCredits,
-  archivedAt: thread.archivedAt,
+  deletedAt: thread.deletedAt,
   lastMessageAt: thread.lastMessageAt,
   createdAt: thread.createdAt,
   updatedAt: thread.updatedAt,
@@ -369,25 +369,25 @@ export class AgentChatService {
   }): Promise<AgentChatThreadEntity> {
     const thread = await this.getThreadById(threadId, userWorkspaceId);
 
-    if (thread.archivedAt) {
+    if (thread.deletedAt) {
       return thread;
     }
 
-    const archivedAt = new Date();
+    const deletedAt = new Date();
 
     const result = await this.threadRepository.update(
-      { id: threadId, userWorkspaceId, archivedAt: IsNull() },
-      { archivedAt, activeStreamId: null },
+      { id: threadId, userWorkspaceId, deletedAt: IsNull() },
+      { deletedAt, activeStreamId: null },
     );
 
     if ((result.affected ?? 0) === 0) {
       return thread;
     }
 
-    thread.archivedAt = archivedAt;
+    thread.deletedAt = deletedAt;
     thread.activeStreamId = null;
 
-    await this.broadcastThreadUpdated(thread, ['archivedAt'], userWorkspaceId);
+    await this.broadcastThreadUpdated(thread, ['deletedAt'], userWorkspaceId);
 
     return thread;
   }
@@ -401,22 +401,22 @@ export class AgentChatService {
   }): Promise<AgentChatThreadEntity> {
     const thread = await this.getThreadById(threadId, userWorkspaceId);
 
-    if (!thread.archivedAt) {
+    if (!thread.deletedAt) {
       return thread;
     }
 
     const result = await this.threadRepository.update(
-      { id: threadId, userWorkspaceId, archivedAt: Not(IsNull()) },
-      { archivedAt: null },
+      { id: threadId, userWorkspaceId, deletedAt: Not(IsNull()) },
+      { deletedAt: null },
     );
 
     if ((result.affected ?? 0) === 0) {
       return thread;
     }
 
-    thread.archivedAt = null;
+    thread.deletedAt = null;
 
-    await this.broadcastThreadUpdated(thread, ['archivedAt'], userWorkspaceId);
+    await this.broadcastThreadUpdated(thread, ['deletedAt'], userWorkspaceId);
 
     return thread;
   }

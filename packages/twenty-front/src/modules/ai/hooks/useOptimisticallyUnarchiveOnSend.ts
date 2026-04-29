@@ -18,23 +18,23 @@ export const useOptimisticallyUnarchiveOnSend = () => {
     ) as FlatAgentChatThread[];
     const thread = threads.find((t) => t.id === threadId);
 
-    if (!thread?.archivedAt) {
+    if (!thread?.deletedAt) {
       return null;
     }
 
-    const previousArchivedAt = thread.archivedAt;
+    const previousDeletedAt = thread.deletedAt;
     const previousUpdatedAt = thread.updatedAt;
 
     applyAgentChatThreadUpdate({
       id: threadId,
-      archivedAt: null,
+      deletedAt: null,
       updatedAt: optimisticUpdatedAt,
     });
 
     return () => {
       applyAgentChatThreadUpdate({
         id: threadId,
-        archivedAt: previousArchivedAt,
+        deletedAt: previousDeletedAt,
         updatedAt: previousUpdatedAt,
       });
     };

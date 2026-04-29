@@ -451,10 +451,10 @@ export class StreamAgentChatJob {
 
     const threadStatus = await this.threadRepository.findOne({
       where: { id: threadId },
-      select: ['id', 'archivedAt'],
+      select: ['id', 'deletedAt'],
     });
 
-    if (!threadStatus || threadStatus.archivedAt) {
+    if (!threadStatus || threadStatus.deletedAt) {
       return;
     }
 

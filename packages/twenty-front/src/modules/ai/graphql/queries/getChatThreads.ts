@@ -13,7 +13,7 @@ export const GET_CHAT_THREADS = gql`
           conversationSize
           totalInputCredits
           totalOutputCredits
-          archivedAt
+          deletedAt
           lastMessageAt
           createdAt
           updatedAt
