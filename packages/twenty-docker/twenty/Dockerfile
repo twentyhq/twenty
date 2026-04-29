@@ -34,19 +34,17 @@ COPY ./.yarn/patches /app/.yarn/patches
 COPY ./packages/twenty-emails/package.json /app/packages/twenty-emails/
 COPY ./packages/twenty-server/package.json /app/packages/twenty-server/
 COPY ./packages/twenty-server/patches /app/packages/twenty-server/patches
-COPY ./packages/twenty-ui/package.json /app/packages/twenty-ui/
 COPY ./packages/twenty-shared/package.json /app/packages/twenty-shared/
 COPY ./packages/twenty-sdk/package.json /app/packages/twenty-sdk/
 COPY ./packages/twenty-client-sdk/package.json /app/packages/twenty-client-sdk/
 
-RUN yarn workspaces focus twenty twenty-server twenty-emails twenty-shared twenty-sdk twenty-client-sdk twenty-ui && yarn cache clean
+RUN yarn workspaces focus twenty twenty-server twenty-emails twenty-shared twenty-sdk twenty-client-sdk && yarn cache clean
 
 
 FROM server-deps AS twenty-server-build
 
 COPY ./packages/twenty-emails /app/packages/twenty-emails
 COPY ./packages/twenty-shared /app/packages/twenty-shared
-COPY ./packages/twenty-ui /app/packages/twenty-ui
 COPY ./packages/twenty-sdk /app/packages/twenty-sdk
 COPY ./packages/twenty-client-sdk /app/packages/twenty-client-sdk
 COPY ./packages/twenty-server /app/packages/twenty-server
@@ -121,7 +119,6 @@ COPY --chown=1000 --from=twenty-server-build /app/packages/twenty-emails/dist /a
 COPY --chown=1000 --from=twenty-server-build /app/packages/twenty-sdk/package.json /app/packages/twenty-sdk/
 COPY --chown=1000 --from=twenty-server-build /app/packages/twenty-client-sdk/package.json /app/packages/twenty-client-sdk/
 COPY --chown=1000 --from=twenty-server-build /app/packages/twenty-client-sdk/dist /app/packages/twenty-client-sdk/dist
-COPY --chown=1000 --from=twenty-server-build /app/packages/twenty-ui/package.json /app/packages/twenty-ui/
 COPY --chown=1000 ./packages/twenty-front/package.json /app/packages/twenty-front/
 
 LABEL org.opencontainers.image.source=https://github.com/twentyhq/twenty
@@ -230,7 +227,6 @@ COPY --from=twenty-server-build /app/packages/twenty-emails/dist /app/packages/t
 COPY --from=twenty-server-build /app/packages/twenty-sdk/package.json /app/packages/twenty-sdk/
 COPY --from=twenty-server-build /app/packages/twenty-client-sdk/package.json /app/packages/twenty-client-sdk/
 COPY --from=twenty-server-build /app/packages/twenty-client-sdk/dist /app/packages/twenty-client-sdk/dist
-COPY --from=twenty-server-build /app/packages/twenty-ui/package.json /app/packages/twenty-ui/
 COPY ./packages/twenty-front/package.json /app/packages/twenty-front/
 
 # Frontend static build
