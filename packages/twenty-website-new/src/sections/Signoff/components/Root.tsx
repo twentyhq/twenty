@@ -2,12 +2,12 @@ import { styled } from '@linaria/react';
 import type { ReactNode } from 'react';
 
 import { Container, GuideCrosshair } from '@/design-system/components';
-import { Pages } from '@/enums/pages';
-import { SignoffShape } from '@/sections/Signoff/SignoffShape';
+import { type Page, Pages } from '@/lib/pages';
+import { SignoffShape } from '@/sections/Signoff/components/SignoffShape';
 import { theme } from '@/theme';
 
 const GUIDE_CROSSHAIR_BY_PAGE: Partial<
-  Record<Pages, { crossX: string; crossY: string; lineColor?: string }>
+  Record<Page, { crossX: string; crossY: string; lineColor?: string }>
 > = {
   [Pages.Partners]: { crossX: 'calc(50% + 334px)', crossY: '198px' },
 };
@@ -67,7 +67,7 @@ type RootPropsSimple = {
   centerContent?: boolean;
   children: ReactNode;
   color: string;
-  page?: Pages;
+  page?: Page;
   variant?: 'simple';
 };
 
@@ -76,7 +76,7 @@ type RootPropsShaped = {
   centerContent?: boolean;
   children: ReactNode;
   color: string;
-  page?: Pages;
+  page?: Page;
   shapeFillColor: string;
   variant: 'shaped';
 };

@@ -43,3 +43,5 @@ export function ClientCount({ label }: ClientCountProps) {
     </StyledChip>
   );
 }
+
+ClientCount.displayName = 'TrustedBy.ClientCount';

@@ -53,38 +53,45 @@ Primeiro, crie o objeto intermediário que manterá as conexões.
 1. Vá a **Definições → Modelo de Dados**
 2. Clique em **+ Novo objeto**
 3. Dê um nome descritivo (por exemplo, "Atribuição de Projeto", "Membro da Equipe", "Pedido de Produto")
-4. Clique em **Salvar**
+4. Ative a opção "Ignorar a criação de um campo Nome"
+
+<img src="/images/user-guide/fields/new-pivot-object.png" alt="Novo objeto pivô" />
+
+5. Clique em **Salvar**
 
 <Tip>
 **Convenção de nomenclatura**: Use um nome que descreva a relação, como "Atribuição de Projeto" ou "Participação na Equipe". Isso torna o modelo de dados mais fácil de entender.
 </Tip>
 
-## Etapa 2: Criar Relações a partir do Objeto de Junção
+## Etapa 2: Crie relações entre os objetos e o objeto de junção
 
-Adicione campos de relação do objeto de junção para ambos os objetos que deseja conectar.
+Adicione campos de relação de cada um dos seus dois objetos ao objeto de junção.
 
-### Primeira Relação (Junção → Objeto A)
+### Primeira Relação (Objeto A → Junção)
 
-1. Selecione seu objeto de junção em **Settings → Data Model**
-2. Clique em **+ Adicionar campo**
-3. Escolha **Relação** como o tipo de campo
-4. Selecione o primeiro objeto (por exemplo, "Pessoas")
-5. Defina o tipo de relação como **Muitos-para-um** (muitas atribuições podem se vincular a uma pessoa)
-6. Nomeie os campos:
-   * Campo na junção: por exemplo, "Pessoa"
-   * Campo em Pessoas: por exemplo, "Atribuições de Projeto"
-7. Clique em **Salvar**
-
-### Segunda Relação (Junção → Objeto B)
-
-1. Ainda no objeto de junção, clique em **+ Add Field**
-2. Escolha **Relação** como o tipo de campo
-3. Selecione o segundo objeto (por exemplo, "Projetos")
-4. Defina o tipo de relação como **Muitos-para-um**
+1. Selecione seu primeiro objeto em **Settings → Data Model**
+2. Clique em **+ Adicionar relação**
+3. Selecione o objeto de junção (por exemplo, "Atribuições de Projeto")
+4. Defina o tipo de relação como **Um-para-muitos** (uma pessoa pode se vincular a muitas atribuições)
 5. Nomeie os campos:
+   * Campo em Pessoas: por exemplo, "Atribuições de Projeto"
+   * Campo na junção: por exemplo, "Pessoa"
+6. Clique em **Salvar**
+
+### Segunda Relação (Objeto B → Junção)
+
+1. Selecione seu segundo objeto em **Settings → Data Model**
+2. Clique em **+ Adicionar relação**
+3. Selecione o objeto de junção (por exemplo, "Atribuições de Projeto")
+4. Defina o tipo de relação como **Um-para-muitos** (um projeto pode se vincular a muitas atribuições)
+5. Ative **"Esta é uma relação com um objeto de junção"**
+
+<img src="/images/user-guide/fields/junction-relation-toggle.png" style={{width:'100%'}} />
+
+6. Nomeie os campos:
    * Campo na junção: por exemplo, "Projeto"
    * Campo em Projetos: por exemplo, "Membros da Equipe"
-6. Clique em **Salvar**
+7. Clique em **Salvar**
 
 ## Etapa 3: Configurar a Exibição da Relação de Junção
 
@@ -97,18 +104,6 @@ Agora configure os objetos de origem para exibir diretamente os registros vincul
 5. Ative **"Esta é uma relação com um objeto de junção"**
 6. Selecione a **Relação de destino** (por exemplo, "Projeto" — o campo na junção que aponta para o outro lado)
 7. Clique em **Salvar**
-
-{/* TODO: Add image
-<img src="/images/user-guide/fields/junction-relation-toggle.png" style={{width:'100%'}}/>
-*/}
-
-Repita para o outro objeto:
-
-1. Selecione "Projetos" em Data Model
-2. Edite o campo de relação "Membros da Equipe"
-3. Ative o alternador de junção
-4. Selecione "Pessoa" como a relação de destino
-5. Salvar
 
 ## Resultado
 
@@ -130,15 +125,15 @@ Aqui está um passo a passo completo:
 
 ### Adicionar Relações
 
-1. **Atribuição de Projeto → Pessoas**
-   * Tipo: Muitos-para-um
-   * Campo em Atribuição: "Pessoa"
+1. **Pessoas → Atribuição de Projeto**
+   * Tipo: Um-para-muitos
    * Campo em Pessoas: "Atribuições de Projeto"
+   * Campo em Atribuição: "Pessoa"
 
-2. **Atribuição de Projeto → Projetos**
-   * Tipo: Muitos-para-um
-   * Campo em Atribuição: "Projeto"
+2. **Projetos → Atribuição de Projeto**
+   * Tipo: Um-para-muitos
    * Campo em Projetos: "Membros da Equipe"
+   * Campo em Atribuição: "Projeto"
 
 ### Configurar Exibição de Junção
 

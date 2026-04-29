@@ -4,6 +4,8 @@ import { USAGE_RECORDED } from 'src/engine/core-modules/usage/constants/usage-re
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
+import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
+import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
 import { AiBillingService } from 'src/engine/metadata-modules/ai/ai-billing/services/ai-billing.service';
 import { ModelFamily } from 'src/engine/metadata-modules/ai/ai-models/types/model-family.enum';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
@@ -72,6 +74,18 @@ describe('AiBillingService', () => {
         {
           provide: AiModelRegistryService,
           useValue: mockAiModelRegistryMethods,
+        },
+        {
+          provide: BillingService,
+          useValue: {
+            isBillingEnabled: jest.fn().mockReturnValue(false),
+          },
+        },
+        {
+          provide: BillingUsageService,
+          useValue: {
+            decrementAvailableCredits: jest.fn().mockResolvedValue(undefined),
+          },
         },
       ],
     }).compile();

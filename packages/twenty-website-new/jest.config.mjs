@@ -6,8 +6,9 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-const tsConfigPath = resolve(__dirname, './tsconfig.json');
-const tsConfig = JSON.parse(readFileSync(tsConfigPath, 'utf8'));
+const tsConfig = JSON.parse(
+  readFileSync(resolve(__dirname, './tsconfig.json'), 'utf8'),
+);
 
 const jestConfig = {
   displayName: 'twenty-website-new',

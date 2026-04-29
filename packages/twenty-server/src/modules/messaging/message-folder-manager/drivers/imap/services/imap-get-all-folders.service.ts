@@ -138,7 +138,21 @@ export class ImapGetAllFoldersService implements MessageFolderDriver {
   }
 
   private isMailboxSelectable(mailbox: ListResponse): boolean {
-    return !mailbox.flags?.has('\\Noselect');
+    // Per RFC 3501, IMAP attribute names are case-insensitive. Different
+    // servers vary the spelling (Dovecot: \Noselect, Stalwart: \NoSelect),
+    // so we compare lowercased to avoid attempting SELECT on a virtual
+    // namespace placeholder, which the server would reject as NONEXISTENT.
+    if (!mailbox.flags) {
+      return true;
+    }
+
+    for (const flag of mailbox.flags) {
+      if (flag.toLowerCase() === '\\noselect') {
+        return false;
+      }
+    }
+
+    return true;
   }
 
   private isValidMailbox(

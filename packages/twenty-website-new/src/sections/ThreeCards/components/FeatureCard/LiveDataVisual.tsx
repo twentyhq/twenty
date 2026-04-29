@@ -1,5 +1,9 @@
 'use client';
 
+import { createAnimationFrameLoop } from '@/lib/animation';
+import { useTimeoutRegistry } from '@/lib/react';
+import { WebGlMount } from '@/lib/visual-runtime';
+import { useScaleToFit } from '@/sections/ThreeCards/utils/use-scale-to-fit';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
 import {
@@ -17,7 +21,6 @@ import { LiveDataHeroTable } from './LiveDataHeroTable';
 const APP_FONT = `'Inter', ${theme.font.family.sans}`;
 const SCENE_HEIGHT = 508;
 const SCENE_WIDTH = 411;
-const LIVE_DATA_SCENE_VIEWPORT_TRANSFORM = `translateX(-50%) scale(min(100cqw / ${SCENE_WIDTH}px, 100cqh / ${SCENE_HEIGHT}px))`;
 const TABLE_PANEL_HOVER_SCALE = 1.012;
 const TABLER_STROKE = 1.65;
 const FILTER_ICON_STROKE = 1.33;
@@ -121,14 +124,23 @@ const VisualRoot = styled.div`
   width: 100%;
 `;
 
-const SceneViewport = styled.div`
-  bottom: 0;
+const SceneViewport = styled.div<{ $sceneScale: number }>`
+  /*
+   * Fixed 411 × 508 design box. The previous "width: 101%; top: 0; bottom: 0"
+   * sizing made the viewport responsive AND we then applied a scale on top —
+   * a double-responsive coupling that shrank the visual quadratically with
+   * card width and made absolute-positioned children (TablePanel etc.) drift
+   * around as the card resized. Locking the box to design size means inner
+   * content lives in a stable 411 × 508 coordinate system; only the single
+   * uniform scale changes with the card.
+   */
+  height: ${SCENE_HEIGHT}px;
   left: 50%;
   position: absolute;
   top: 0;
-  transform: ${LIVE_DATA_SCENE_VIEWPORT_TRANSFORM};
+  transform: translateX(-50%) scale(${({ $sceneScale }) => $sceneScale});
   transform-origin: top center;
-  width: 101%;
+  width: ${SCENE_WIDTH}px;
 `;
 
 const SceneFrame = styled.div`
@@ -328,6 +340,14 @@ const FilterChip = styled.div<{ $pressed?: boolean; $removing?: boolean }>`
       opacity: 0;
       transform: scale(0.64) translate3d(18px, -6px, 0);
     }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    /* Snap-hide the chip when removing — animation-end still fires (the
+       parent uses it as the removal signal) but the decorative pop is
+       collapsed to a single frame. */
+    animation-duration: 1ms;
+    animation-timing-function: linear;
   }
 `;
 
@@ -700,6 +720,8 @@ export function LiveDataVisual({
   const rootRef = useRef<HTMLDivElement>(null);
   const typeFilterRef = useRef<HTMLDivElement>(null);
   const employeesFilterRef = useRef<HTMLDivElement>(null);
+  const sceneScale = useScaleToFit(rootRef, SCENE_WIDTH, SCENE_HEIGHT);
+  const timeoutRegistry = useTimeoutRegistry();
   const [isBobHovered, setIsBobHovered] = useState(false);
   const [isTomHovered, setIsTomHovered] = useState(false);
   const [phase, setPhase] = useState<LiveDataPhase>('idle');
@@ -715,42 +737,46 @@ export function LiveDataVisual({
       return;
     }
 
-    const timeoutIds: number[] = [];
+    const cancelSequenceSteps: Array<() => void> = [];
     setPhase('move-to-tag');
 
     for (const step of LIVE_DATA_SEQUENCE.slice(1)) {
-      const timeoutId = window.setTimeout(() => {
-        setPhase(step.phase);
-      }, step.delay);
-
-      timeoutIds.push(timeoutId);
+      cancelSequenceSteps.push(
+        timeoutRegistry.schedule(() => {
+          setPhase(step.phase);
+        }, step.delay),
+      );
     }
 
     return () => {
-      for (const timeoutId of timeoutIds) {
-        window.clearTimeout(timeoutId);
-      }
+      cancelSequenceSteps.forEach((cancelSequenceStep) => cancelSequenceStep());
     };
-  }, [active]);
+  }, [active, timeoutRegistry]);
 
   useEffect(() => {
     if (phase === 'rename-tag') {
       setTypedTagLabel(EDITED_TAG_LABEL.slice(0, 1));
 
       let nextIndex = 2;
-      const intervalId = window.setInterval(() => {
-        setTypedTagLabel(EDITED_TAG_LABEL.slice(0, nextIndex));
+      const cancelTypingSteps: Array<() => void> = [];
 
-        if (nextIndex >= EDITED_TAG_LABEL.length) {
-          window.clearInterval(intervalId);
-          return;
-        }
+      const scheduleNextTypingStep = () => {
+        const cancelTypingStep = timeoutRegistry.schedule(() => {
+          setTypedTagLabel(EDITED_TAG_LABEL.slice(0, nextIndex));
+          nextIndex += 1;
 
-        nextIndex += 1;
-      }, TYPING_STEP_MS);
+          if (nextIndex <= EDITED_TAG_LABEL.length) {
+            scheduleNextTypingStep();
+          }
+        }, TYPING_STEP_MS);
+
+        cancelTypingSteps.push(cancelTypingStep);
+      };
+
+      scheduleNextTypingStep();
 
       return () => {
-        window.clearInterval(intervalId);
+        cancelTypingSteps.forEach((cancelTypingStep) => cancelTypingStep());
       };
     }
 
@@ -767,10 +793,16 @@ export function LiveDataVisual({
     }
 
     setTypedTagLabel('');
-  }, [phase]);
+  }, [phase, timeoutRegistry]);
 
   useEffect(() => {
+    let isMounted = true;
+
     const measureAddFilterLefts = () => {
+      if (!isMounted) {
+        return;
+      }
+
       const typeFilter = typeFilterRef.current;
       const employeesFilter = employeesFilterRef.current;
 
@@ -798,12 +830,20 @@ export function LiveDataVisual({
       );
     };
 
-    const frameId = window.requestAnimationFrame(measureAddFilterLefts);
+    const measureTask = createAnimationFrameLoop({
+      onFrame: () => {
+        measureAddFilterLefts();
+        return false;
+      },
+    });
+
+    measureTask.start();
     window.addEventListener('resize', measureAddFilterLefts);
     void document.fonts?.ready.then(measureAddFilterLefts);
 
     return () => {
-      window.cancelAnimationFrame(frameId);
+      isMounted = false;
+      measureTask.stop();
       window.removeEventListener('resize', measureAddFilterLefts);
     };
   }, []);
@@ -849,14 +889,16 @@ export function LiveDataVisual({
 
   return (
     <VisualRoot aria-hidden ref={rootRef}>
-      <SceneViewport>
+      <SceneViewport $sceneScale={sceneScale}>
         <SceneFrame>
           <SceneBackdrop>
-            <LiveDataGradientBackdrop
-              active={active}
-              imageUrl={backgroundImageSrc}
-              pointerTargetRef={pointerTargetRef ?? rootRef}
-            />
+            <WebGlMount detachFromLayout>
+              <LiveDataGradientBackdrop
+                active={active}
+                imageUrl={backgroundImageSrc}
+                pointerTargetRef={pointerTargetRef ?? rootRef}
+              />
+            </WebGlMount>
           </SceneBackdrop>
           <SceneContent>
             <AnimatedMarkerGroup

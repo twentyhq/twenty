@@ -27,6 +27,7 @@ type CalendarCredentials = {
   username: string;
   password: string;
   serverUrl: string;
+  fetch?: typeof globalThis.fetch;
 };
 
 type SimpleCalendar = {
@@ -61,15 +62,20 @@ type CalDAVGetEventsResponse = {
 export class CalDAVClient {
   private credentials: CalendarCredentials;
   private logger: Logger;
-  private headers: Record<string, string>;
 
   constructor(credentials: CalendarCredentials) {
     this.credentials = credentials;
     this.logger = new Logger(CalDAVClient.name);
-    this.headers = getBasicAuthHeaders({
-      username: credentials.username,
-      password: credentials.password,
-    });
+  }
+
+  private getTsdavRequestConfig() {
+    return {
+      headers: getBasicAuthHeaders({
+        username: this.credentials.username,
+        password: this.credentials.password,
+      }),
+      fetch: this.credentials.fetch,
+    };
   }
 
   private hasFileExtension(url: string): boolean {
@@ -104,7 +110,7 @@ export class CalDAVClient {
           password: this.credentials.password,
         },
       },
-      headers: this.headers,
+      ...this.getTsdavRequestConfig(),
     });
   }
 
@@ -114,7 +120,7 @@ export class CalDAVClient {
 
       const calendars = (await fetchCalendars({
         account,
-        headers: this.headers,
+        ...this.getTsdavRequestConfig(),
       })) as (Omit<DAVCalendar, 'displayName'> & {
         displayName?: string | Record<string, unknown>;
       })[];
@@ -150,7 +156,7 @@ export class CalDAVClient {
 
     const calendars = await fetchCalendars({
       account,
-      headers: this.headers,
+      ...this.getTsdavRequestConfig(),
     });
 
     const eventCalendar = calendars.find((calendar) =>
@@ -359,7 +365,7 @@ export class CalDAVClient {
           },
           syncLevel: 1,
           ...(syncToken ? { syncToken } : {}),
-          headers: this.headers,
+          ...this.getTsdavRequestConfig(),
         });
 
         const allEvents: FetchedCalendarEvent[] = [];
@@ -378,7 +384,7 @@ export class CalDAVClient {
               },
               objectUrls: objectUrls,
               depth: '1',
-              headers: this.headers,
+              ...this.getTsdavRequestConfig(),
             });
 
             for (const calendarObject of calendarObjects) {
@@ -426,7 +432,7 @@ export class CalDAVClient {
           const account = await this.getAccount();
           const updatedCalendars = await fetchCalendars({
             account,
-            headers: this.headers,
+            ...this.getTsdavRequestConfig(),
           });
           const updatedCalendar = updatedCalendars.find(
             (cal) => cal.url === calendar.url,

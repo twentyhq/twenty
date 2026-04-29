@@ -8,11 +8,8 @@ import { type Repository } from 'typeorm';
 
 import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { type BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
-import { type BillingProductKey } from 'src/engine/core-modules/billing/enums/billing-product-key.enum';
-import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
 import { BillingProductService } from 'src/engine/core-modules/billing/services/billing-product.service';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
-import { getPlanKeyFromSubscription } from 'src/engine/core-modules/billing/utils/get-plan-key-from-subscription.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 @Injectable()
@@ -65,42 +62,5 @@ export class BillingService {
       await this.hasWorkspaceAnySubscription(workspaceId);
 
     return !hasAnySubscription;
-  }
-
-  async canBillMeteredProduct(
-    workspaceId: string,
-    productKey: BillingProductKey,
-  ): Promise<boolean> {
-    const subscription =
-      await this.billingSubscriptionService.getCurrentBillingSubscriptionOrThrow(
-        { workspaceId },
-      );
-
-    const billableStatuses = [
-      SubscriptionStatus.Active,
-      SubscriptionStatus.Trialing,
-    ];
-
-    if (!billableStatuses.includes(subscription.status)) {
-      return false;
-    }
-
-    const planKey = getPlanKeyFromSubscription(subscription);
-    const products =
-      await this.billingProductService.getProductsByPlan(planKey);
-
-    const targetProduct = products.find(
-      ({ metadata }) => metadata.productKey === productKey,
-    );
-
-    if (!targetProduct) {
-      return false;
-    }
-
-    const subscriptionItem = subscription.billingSubscriptionItems.find(
-      (item) => item.stripeProductId === targetProduct.stripeProductId,
-    );
-
-    return subscriptionItem?.hasReachedCurrentPeriodCap === false;
   }
 }

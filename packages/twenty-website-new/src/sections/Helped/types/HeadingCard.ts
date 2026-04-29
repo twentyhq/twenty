@@ -1,10 +1,11 @@
-import type { BodyType } from '@/design-system/components/Body/types/Body';
-import type { HeadingType } from '@/design-system/components/Heading/types/Heading';
-import type { IllustrationId } from '@/illustrations';
+import type { BodyType } from '@/design-system/components/Body';
+import type { HeadingType } from '@/design-system/components/Heading';
+
+export type HelpedVisualId = 'money' | 'spaceship' | 'target';
 
 export type HeadingCardType = {
   icon: string;
-  illustration: IllustrationId;
+  illustration: HelpedVisualId;
   heading: HeadingType;
   body: BodyType;
   href: string;

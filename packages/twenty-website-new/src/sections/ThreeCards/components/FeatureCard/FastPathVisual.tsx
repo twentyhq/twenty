@@ -1,5 +1,8 @@
 'use client';
 
+import { useTimeoutRegistry } from '@/lib/react';
+import { WebGlMount } from '@/lib/visual-runtime';
+import { useScaleToFit } from '@/sections/ThreeCards/utils/use-scale-to-fit';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
 import {
@@ -29,8 +32,7 @@ const APP_FONT = `'Inter', ${theme.font.family.sans}`;
 const FAST_PATH_NOISE_BACKGROUND =
   'url("/images/home/three-cards-feature/fast-path-background-noise.webp")';
 const SCENE_DESIGN_WIDTH = 411;
-const SCENE_DESIGN_HEIGHT = 524;
-const FAST_PATH_SCALED_SCENE_TRANSFORM = `scale(min(100cqw / ${SCENE_DESIGN_WIDTH}px, 100cqh / ${SCENE_DESIGN_HEIGHT}px))`;
+const SCENE_DESIGN_HEIGHT = 508;
 const TOOLBAR_VERTICAL_PADDING = 16;
 const ACTION_BUTTON_HEIGHT = 24;
 const TOOLBAR_TOTAL_HEIGHT =
@@ -112,14 +114,21 @@ const ConfettiBurstLayer = styled.div`
   position: absolute;
 `;
 
-const ScaledScene = styled.div`
-  height: 100%;
-  left: 0;
+const ScaledScene = styled.div<{ $sceneScale: number }>`
+  /*
+   * Fixed 411 × 508 design box, centered, scaled uniformly. Matches the
+   * SceneViewport of FamiliarInterface and LiveData so all three feature
+   * cards render their scenes at pixel-identical proportions. The
+   * PreviewSurface inside uses bottom: -92px / right: -82px to extend past
+   * the scene box; the excess is clipped by CardImageFrame's overflow:hidden.
+   */
+  height: ${SCENE_DESIGN_HEIGHT}px;
+  left: 50%;
   position: absolute;
   top: 0;
-  transform: ${FAST_PATH_SCALED_SCENE_TRANSFORM};
-  transform-origin: bottom right;
-  width: 100%;
+  transform: translateX(-50%) scale(${({ $sceneScale }) => $sceneScale});
+  transform-origin: top center;
+  width: ${SCENE_DESIGN_WIDTH}px;
 `;
 
 const ConfettiParticle = styled.div<{
@@ -172,6 +181,13 @@ const ConfettiParticle = styled.div<{
         )
         rotate(var(--confetti-rotation)) scale(1);
     }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    /* Confetti is purely decorative — the form-submit success state is still
+       conveyed by the surrounding visual change. */
+    animation: none;
+    opacity: 0;
   }
 `;
 
@@ -814,10 +830,16 @@ export function FastPathVisual({
 }: FastPathVisualProps) {
   const rootRef = useRef<HTMLDivElement>(null);
   const previewSurfaceRef = useRef<HTMLDivElement>(null);
+  const timeoutRegistry = useTimeoutRegistry();
   const [confettiBursts, setConfettiBursts] = useState<
     Array<{ id: number; left: number; top: number }>
   >([]);
   const [nextConfettiBurstId, setNextConfettiBurstId] = useState(1);
+  const sceneScale = useScaleToFit(
+    rootRef,
+    SCENE_DESIGN_WIDTH,
+    SCENE_DESIGN_HEIGHT,
+  );
 
   const handleCommandClick = (event: ReactMouseEvent<HTMLDivElement>) => {
     const burstId = nextConfettiBurstId;
@@ -853,7 +875,7 @@ export function FastPathVisual({
       { id: burstId, left: burstLeft, top: burstTop },
     ]);
 
-    window.setTimeout(() => {
+    timeoutRegistry.schedule(() => {
       setConfettiBursts((currentBursts) =>
         currentBursts.filter((currentBurst) => currentBurst.id !== burstId),
       );
@@ -865,11 +887,13 @@ export function FastPathVisual({
       <AnimatedBackdrop
         $backgroundImageRotationDeg={backgroundImageRotationDeg}
       >
-        <FastPathGradientBackdrop
-          active={active}
-          imageUrl={backgroundImageSrc}
-          pointerTargetRef={pointerTargetRef ?? rootRef}
-        />
+        <WebGlMount detachFromLayout>
+          <FastPathGradientBackdrop
+            active={active}
+            imageUrl={backgroundImageSrc}
+            pointerTargetRef={pointerTargetRef ?? rootRef}
+          />
+        </WebGlMount>
       </AnimatedBackdrop>
       <SceneBackdrop>
         {confettiBursts.map((burst) => (
@@ -898,7 +922,7 @@ export function FastPathVisual({
           </ConfettiBurstLayer>
         ))}
       </SceneBackdrop>
-      <ScaledScene>
+      <ScaledScene $sceneScale={sceneScale}>
         <PreviewSurface $active={active} ref={previewSurfaceRef}>
           <ToolbarRow>
             <ActionButton>

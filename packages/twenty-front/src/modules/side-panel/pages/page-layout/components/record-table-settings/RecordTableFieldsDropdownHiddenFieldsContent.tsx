@@ -20,12 +20,19 @@ type RecordTableFieldsDropdownHiddenFieldsContentProps = {
   objectMetadataId: string;
   recordIndexId: string;
   onBack: () => void;
+  onFieldUpdated?: (
+    viewFieldId: string,
+    update: Partial<{ isVisible: boolean }>,
+  ) => void;
+  onFieldCreated?: (recordField: RecordField) => void;
 };
 
 export const RecordTableFieldsDropdownHiddenFieldsContent = ({
   objectMetadataId,
   recordIndexId,
   onBack,
+  onFieldUpdated,
+  onFieldCreated,
 }: RecordTableFieldsDropdownHiddenFieldsContentProps) => {
   const { objectMetadataItem } = useObjectMetadataItemById({
     objectId: objectMetadataId,
@@ -61,6 +68,7 @@ export const RecordTableFieldsDropdownHiddenFieldsContent = ({
 
     if (isDefined(existingRecordField)) {
       updateRecordField(fieldMetadataId, { isVisible: true });
+      onFieldUpdated?.(existingRecordField.id, { isVisible: true });
     } else {
       const lastPosition =
         currentRecordFields.toSorted(sortByProperty('position', 'desc'))?.[0]
@@ -75,6 +83,7 @@ export const RecordTableFieldsDropdownHiddenFieldsContent = ({
       };
 
       upsertRecordField(newRecordField);
+      onFieldCreated?.(newRecordField);
     }
   };
 

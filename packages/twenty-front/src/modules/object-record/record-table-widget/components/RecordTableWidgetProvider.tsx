@@ -98,6 +98,7 @@ export const RecordTableWidgetProvider = ({
           >
             <RecordTableWidgetViewLoadEffect
               viewId={viewId}
+              widgetId={widgetId}
               objectMetadataItem={objectMetadataItem}
             />
             {children}

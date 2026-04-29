@@ -24,7 +24,7 @@ import {
   getFirstDayOfTheWeekAsANumberForDateFNS,
   isDefined,
   type RelativeDateFilter,
-  safeParseRelativeDateFilterJSONStringified,
+  safeParseRelativeDateFilterJsonStringified,
   subUnitFromDateTime,
 } from 'twenty-shared/utils';
 
@@ -38,7 +38,7 @@ export const parseAndEvaluateRelativeDateFilter = ({
   relativeDateString: string;
 }): boolean => {
   const relativeDateFilterValue =
-    safeParseRelativeDateFilterJSONStringified(relativeDateString);
+    safeParseRelativeDateFilterJsonStringified(relativeDateString);
 
   if (!relativeDateFilterValue) {
     return false;

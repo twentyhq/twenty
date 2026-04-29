@@ -2,7 +2,14 @@
 
 import { useEffect, useRef, type CSSProperties } from 'react';
 import * as THREE from 'three';
-import { createSiteWebGlRenderer } from '@/lib/webgl';
+import { observeElementSize } from '@/lib/dom/observe-element-size';
+import {
+  createVisualRenderLoop,
+  loadVisualImage,
+  tryCreateSiteWebGlRenderer,
+  type VisualRenderLoop,
+  type VisualRenderLoopFrame,
+} from '@/lib/visual-runtime';
 
 const IMAGE_SRC = '/images/home/problem/monolith-problem.webp';
 const PREVIEW_DISTANCE = 4;
@@ -439,38 +446,24 @@ function createAbortError() {
   return new DOMException('Aborted', 'AbortError');
 }
 
-function loadImage(imageUrl: string, signal: AbortSignal) {
-  return new Promise<HTMLImageElement>((resolve, reject) => {
+function createAbortTask(signal: AbortSignal) {
+  let cleanup = () => {};
+  const promise = new Promise<never>((_, reject) => {
     if (signal.aborted) {
       reject(createAbortError());
       return;
     }
 
-    const image = new Image();
-    image.decoding = 'async';
-
-    const cleanup = () => {
-      image.onload = null;
-      image.onerror = null;
-      signal.removeEventListener('abort', handleAbort);
-    };
     const handleAbort = () => {
-      cleanup();
-      image.src = '';
       reject(createAbortError());
     };
-
-    image.onload = () => {
-      cleanup();
-      resolve(image);
-    };
-    image.onerror = () => {
-      cleanup();
-      reject(new Error(`Failed to load image: ${imageUrl}`));
-    };
     signal.addEventListener('abort', handleAbort, { once: true });
-    image.src = imageUrl;
+    cleanup = () => {
+      signal.removeEventListener('abort', handleAbort);
+    };
   });
+
+  return { cleanup, promise };
 }
 
 async function mountHalftoneCanvas(options: MountHalftoneCanvasOptions) {
@@ -486,13 +479,29 @@ async function mountHalftoneCanvas(options: MountHalftoneCanvasOptions) {
       1,
     );
 
-  const image = await loadImage(imageUrl, signal);
+  const abortTask = createAbortTask(signal);
+  const image = await Promise.race([
+    loadVisualImage(imageUrl, { label: 'problem monolith image' }),
+    abortTask.promise,
+  ]).finally(abortTask.cleanup);
 
   if (signal.aborted) {
     return undefined;
   }
 
-  const renderer = createSiteWebGlRenderer({ alpha: true, antialias: false });
+  let renderLoop: VisualRenderLoop | null = null;
+  const renderer = tryCreateSiteWebGlRenderer({
+    alpha: true,
+    antialias: false,
+    onContextLost: () => {
+      renderLoop?.stop();
+    },
+  });
+
+  if (renderer === null) {
+    return undefined;
+  }
+
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.setClearColor(0x000000, 0);
   renderer.setPixelRatio(1);
@@ -645,8 +654,7 @@ async function mountHalftoneCanvas(options: MountHalftoneCanvasOptions) {
     );
   };
 
-  const resizeObserver = new ResizeObserver(syncSize);
-  resizeObserver.observe(container);
+  const stopObservingSize = observeElementSize(container, syncSize);
 
   const updatePointerPosition = (
     event: PointerEvent,
@@ -722,13 +730,11 @@ async function mountHalftoneCanvas(options: MountHalftoneCanvasOptions) {
   canvas.addEventListener('pointerup', handlePointerUp);
   window.addEventListener('blur', handleWindowBlur);
 
-  const clock = new THREE.Clock();
-  let animationFrameId = 0;
-
-  const renderFrame = () => {
-    animationFrameId = window.requestAnimationFrame(renderFrame);
-
-    halftoneMaterial.uniforms.time.value = clock.getElapsedTime();
+  const renderFrame = (
+    _timestamp: DOMHighResTimeStamp,
+    { elapsedSeconds }: VisualRenderLoopFrame,
+  ) => {
+    halftoneMaterial.uniforms.time.value = elapsedSeconds;
     halftoneMaterial.uniforms.dashColor.value.set(tuning.halftone.dashColor);
     halftoneMaterial.uniforms.s_3.value = tuning.halftone.power;
     halftoneMaterial.uniforms.s_4.value = tuning.halftone.width;
@@ -788,11 +794,17 @@ async function mountHalftoneCanvas(options: MountHalftoneCanvasOptions) {
     renderer.render(postScene, orthographicCamera);
   };
 
-  renderFrame();
+  renderLoop = createVisualRenderLoop({
+    renderFrame,
+    shouldRender: () => !signal.aborted,
+    target: container,
+    targetVisibilityOptions: { rootMargin: '100px' },
+  });
+  renderLoop.start();
 
   return () => {
-    window.cancelAnimationFrame(animationFrameId);
-    resizeObserver.disconnect();
+    renderLoop?.dispose();
+    stopObservingSize();
     canvas.removeEventListener('pointerdown', handlePointerDown);
     canvas.removeEventListener('pointerleave', handlePointerLeave);
     canvas.removeEventListener('pointermove', handlePointerMove);

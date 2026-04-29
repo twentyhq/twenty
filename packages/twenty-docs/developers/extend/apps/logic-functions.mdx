@@ -101,6 +101,7 @@ The `RoutePayload` type has the following structure:
   | `queryStringParameters` | `Record<string, string \| undefined>` | Query string parameters (multiple values joined with commas)  | `/users?ids=1&ids=2&ids=3&name=Alice` -> `{ ids: '1,2,3', name: 'Alice' }`|
   | `pathParameters` | `Record<string, string \| undefined>` | Path parameters extracted from the route pattern | `/users/:id`, `/users/123` -> `{ id: '123' }` |
   | `body` | `object \| null` | Parsed request body (JSON) | `{ id: 1 }` -> `{ id: 1 }` |
+  | `rawBody` | `string \| undefined` | Original UTF-8 request body, before JSON parsing. Useful for verifying HMAC-style webhook signatures (e.g. GitHub's `X-Hub-Signature-256`, Stripe). `undefined` when the runtime did not preserve it. | |
   | `isBase64Encoded` | `boolean` | Whether the body is base64 encoded | |
   | `requestContext.http.method` | `string` | HTTP method (GET, POST, PUT, PATCH, DELETE) | |
   | `requestContext.http.path` | `string` | Raw request path | |

@@ -911,13 +911,6 @@ type RichTextBody {
   markdown: String
 }
 
-type GridPosition {
-  row: Float!
-  column: Float!
-  rowSpan: Float!
-  columnSpan: Float!
-}
-
 type PageLayoutWidget {
   id: UUID!
   applicationId: UUID!
@@ -925,8 +918,7 @@ type PageLayoutWidget {
   title: String!
   type: WidgetType!
   objectMetadataId: UUID
-  gridPosition: GridPosition! @deprecated(reason: "Use `position` instead. Will be removed in a future release.")
-  position: PageLayoutWidgetPosition
+  position: PageLayoutWidgetPosition!
   configuration: WidgetConfiguration!
   conditionalDisplay: JSON
   conditionalAvailabilityExpression: String
@@ -3193,6 +3185,7 @@ type Mutation {
   updateView(id: String!, input: UpdateViewInput!): View!
   deleteView(id: String!): Boolean!
   destroyView(id: String!): Boolean!
+  upsertViewWidget(input: UpsertViewWidgetInput!): View!
   createViewSort(input: CreateViewSortInput!): ViewSort!
   updateViewSort(input: UpdateViewSortInput!): ViewSort!
   deleteViewSort(input: DeleteViewSortInput!): Boolean!
@@ -3510,6 +3503,59 @@ input UpdateViewInput {
   shouldHideEmptyGroups: Boolean
 }
 
+input UpsertViewWidgetInput {
+  """The id of the view widget (page layout widget)."""
+  widgetId: UUID!
+
+  """The view fields to upsert."""
+  viewFields: [UpsertViewWidgetViewFieldInput!]
+
+  """The view filters to upsert."""
+  viewFilters: [UpsertViewWidgetViewFilterInput!]
+
+  """The view filter groups to upsert."""
+  viewFilterGroups: [UpsertViewWidgetViewFilterGroupInput!]
+
+  """The view sorts to upsert."""
+  viewSorts: [UpsertViewWidgetViewSortInput!]
+}
+
+input UpsertViewWidgetViewFieldInput {
+  """The id of an existing view field to update."""
+  viewFieldId: UUID
+
+  """
+  The field metadata id. Used to create a new view field when viewFieldId is not provided.
+  """
+  fieldMetadataId: UUID
+  isVisible: Boolean!
+  position: Float!
+  size: Float
+}
+
+input UpsertViewWidgetViewFilterInput {
+  id: UUID
+  fieldMetadataId: UUID!
+  operand: ViewFilterOperand = CONTAINS
+  value: JSON!
+  viewFilterGroupId: UUID
+  positionInViewFilterGroup: Float
+  subFieldName: String
+}
+
+input UpsertViewWidgetViewFilterGroupInput {
+  id: UUID
+  parentViewFilterGroupId: UUID
+  logicalOperator: ViewFilterGroupLogicalOperator = AND
+  positionInViewFilterGroup: Float
+}
+
+input UpsertViewWidgetViewSortInput {
+  id: UUID
+  fieldMetadataId: UUID!
+  direction: ViewSortDirection = ASC
+}
+
 input CreateViewSortInput {
   id: UUID
   fieldMetadataId: UUID!
@@ -3729,18 +3775,10 @@ input UpdatePageLayoutWidgetWithIdInput {
   title: String!
   type: WidgetType!
   objectMetadataId: UUID
-  gridPosition: GridPositionInput!
-  position: JSON
+  position: JSON!
   configuration: JSON
   conditionalDisplay: JSON
   conditionalAvailabilityExpression: String
-}
-
-input GridPositionInput {
-  row: Float!
-  column: Float!
-  rowSpan: Float!
-  columnSpan: Float!
 }
 
 input CreatePageLayoutWidgetInput {
@@ -3748,8 +3786,7 @@ input CreatePageLayoutWidgetInput {
   title: String!
   type: WidgetType!
   objectMetadataId: UUID
-  gridPosition: GridPositionInput!
-  position: JSON
+  position: JSON!
   configuration: JSON!
 }
 
@@ -3758,7 +3795,6 @@ input UpdatePageLayoutWidgetInput {
   title: String
   type: WidgetType
   objectMetadataId: UUID
-  gridPosition: GridPositionInput
   position: JSON
   configuration: JSON
   conditionalDisplay: JSON

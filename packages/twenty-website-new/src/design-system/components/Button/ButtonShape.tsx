@@ -7,11 +7,8 @@ type ButtonShapeProps = {
   strokeColor: string;
 };
 
-// The bottom-right corner taper is a fixed design element; only the straight
-// vertical segment between top-right arc and the taper changes with height.
 const TAPER_HEIGHT = 15.477;
 const TAPER_TOP_OFFSET = 4;
-const STRAIGHT_V_AT_FORTY = 20.523;
 
 function getLeftFillPath(height: number) {
   return `M4 0 A4 4 0 0 0 0 4 V${height - 4} A4 4 0 0 0 4 ${height} Z`;
@@ -22,22 +19,14 @@ function getLeftOutlinePath(height: number) {
 }
 
 function getRightFillPath(height: number) {
-  const straight = Math.max(
-    height - TAPER_TOP_OFFSET - TAPER_HEIGHT,
-    0,
-  );
+  const straight = Math.max(height - TAPER_TOP_OFFSET - TAPER_HEIGHT, 0);
   return `M0 0 h11 a4 4 0 0 1 4 4 v${straight} a6 6 0 0 1 -1.544 4.019 l-8.548 9.477 A6 6 0 0 1 0.453 ${height} H0 Z`;
 }
 
 function getRightOutlinePath(height: number) {
-  const straight = Math.max(
-    height - TAPER_TOP_OFFSET - TAPER_HEIGHT,
-    0,
-  );
+  const straight = Math.max(height - TAPER_TOP_OFFSET - TAPER_HEIGHT, 0);
   return `M0 0.5 h11 a3.5 3.5 0 0 1 3.5 3.5 v${straight} a5.5 5.5 0 0 1 -1.416 3.684 l-8.547 9.477 a5.5 5.5 0 0 1 -4.084 1.816 H0`;
 }
-
-void STRAIGHT_V_AT_FORTY;
 
 const ShapeContainer = styled.div`
   display: flex;

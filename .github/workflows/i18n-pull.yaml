@@ -58,6 +58,7 @@ jobs:
           npx nx run twenty-server:lingui:compile --strict
           npx nx run twenty-emails:lingui:compile --strict
           npx nx run twenty-front:lingui:compile --strict
+          npx nx run twenty-website-new:lingui:compile --strict
         continue-on-error: true
 
       - name: Stash any changes before pulling translations
@@ -115,6 +116,7 @@ jobs:
           npx nx run twenty-server:lingui:compile
           npx nx run twenty-emails:lingui:compile
           npx nx run twenty-front:lingui:compile
+          npx nx run twenty-website-new:lingui:compile
           git status
           git add .
           if ! git diff --staged --quiet --exit-code; then

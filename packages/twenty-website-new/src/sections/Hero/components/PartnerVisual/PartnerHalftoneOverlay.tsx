@@ -3,7 +3,15 @@
 import { styled } from '@linaria/react';
 import { useEffect, useRef } from 'react';
 import * as THREE from 'three';
-import { createSiteWebGlRenderer } from '@/lib/webgl';
+
+import { getPrefersReducedMotionSnapshot } from '@/lib/motion';
+import { observeElementSize } from '@/lib/dom/observe-element-size';
+import {
+  createVisualRenderLoop,
+  loadVisualImage,
+  tryCreateSiteWebGlRenderer,
+  type VisualRenderLoop,
+} from '@/lib/visual-runtime';
 
 const PREVIEW_DISTANCE = 3.2;
 const SOURCE_PREVIEW_DISTANCE = 6.1;
@@ -414,17 +422,6 @@ function createRenderTarget(width: number, height: number) {
   });
 }
 
-function loadImage(imageUrl: string): Promise<HTMLImageElement> {
-  return new Promise((resolve, reject) => {
-    const image = new Image();
-    image.decoding = 'async';
-    image.onload = () => resolve(image);
-    image.onerror = () =>
-      reject(new Error(`Failed to load hero image: ${imageUrl}`));
-    image.src = imageUrl;
-  });
-}
-
 async function mountHalftoneOverlay({
   container,
   imageUrl,
@@ -432,7 +429,9 @@ async function mountHalftoneOverlay({
   container: HTMLDivElement;
   imageUrl: string;
 }): Promise<() => void> {
-  const image = await loadImage(imageUrl);
+  const image = await loadVisualImage(imageUrl, {
+    label: 'partner hero image',
+  });
 
   const getWidth = () => Math.max(container.clientWidth, 1);
   const getHeight = () => Math.max(container.clientHeight, 1);
@@ -443,11 +442,20 @@ async function mountHalftoneOverlay({
       1,
     );
 
-  const renderer = createSiteWebGlRenderer({
+  let renderLoop: VisualRenderLoop | null = null;
+  const renderer = tryCreateSiteWebGlRenderer({
     alpha: true,
     antialias: false,
+    onContextLost: () => {
+      renderLoop?.stop();
+    },
     powerPreference: 'high-performance',
   });
+
+  if (renderer === null) {
+    return () => {};
+  }
+
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.setPixelRatio(1);
   renderer.setClearColor(0x000000, 0);
@@ -595,8 +603,7 @@ async function mountHalftoneOverlay({
     });
   };
 
-  const resizeObserver = new ResizeObserver(syncSize);
-  resizeObserver.observe(container);
+  const stopObservingSize = observeElementSize(container, syncSize);
 
   const updatePointerPosition = (
     event: PointerEvent,
@@ -657,11 +664,9 @@ async function mountHalftoneOverlay({
   canvas.addEventListener('pointermove', handlePointerMove);
   canvas.addEventListener('pointerleave', handlePointerLeave);
 
-  let animationFrameId = 0;
   let previousTimestamp = 0;
 
   const renderFrame = (timestamp: number) => {
-    animationFrameId = window.requestAnimationFrame(renderFrame);
     halftoneMaterial.uniforms.time.value = timestamp / 1000;
     const hoverScale = getHoverScale();
     const deltaSeconds =
@@ -717,11 +722,16 @@ async function mountHalftoneOverlay({
     renderer.render(postScene, orthographicCamera);
   };
 
-  renderFrame(0);
+  renderLoop = createVisualRenderLoop({
+    renderFrame,
+    target: container,
+    targetVisibilityOptions: { rootMargin: '100px' },
+  });
+  renderLoop.start();
 
   return () => {
-    window.cancelAnimationFrame(animationFrameId);
-    resizeObserver.disconnect();
+    renderLoop?.dispose();
+    stopObservingSize();
     canvas.removeEventListener('pointermove', handlePointerMove);
     canvas.removeEventListener('pointerleave', handlePointerLeave);
     halftoneMaterial.dispose();
@@ -747,7 +757,7 @@ export function PartnerHalftoneOverlay({
   const mountRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    if (getPrefersReducedMotionSnapshot()) {
       return;
     }
 
