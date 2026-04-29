@@ -1142,9 +1142,10 @@ export type CreatePageLayoutTabInput = {
 
 export type CreatePageLayoutWidgetInput = {
   configuration: Scalars['JSON'];
+  gridPosition?: InputMaybe<GridPositionInput>;
   objectMetadataId?: InputMaybe<Scalars['UUID']>;
   pageLayoutTabId: Scalars['UUID'];
-  position: Scalars['JSON'];
+  position?: InputMaybe<Scalars['JSON']>;
   title: Scalars['String'];
   type: WidgetType;
 };
@@ -1901,6 +1902,21 @@ export enum GraphOrderBy {
   VALUE_ASC = 'VALUE_ASC',
   VALUE_DESC = 'VALUE_DESC'
 }
+
+export type GridPosition = {
+  __typename?: 'GridPosition';
+  column: Scalars['Float'];
+  columnSpan: Scalars['Float'];
+  row: Scalars['Float'];
+  rowSpan: Scalars['Float'];
+};
+
+export type GridPositionInput = {
+  column: Scalars['Float'];
+  columnSpan: Scalars['Float'];
+  row: Scalars['Float'];
+  rowSpan: Scalars['Float'];
+};
 
 export enum IdentityProviderType {
   OIDC = 'OIDC',
@@ -3837,6 +3853,8 @@ export type PageLayoutWidget = {
   configuration: WidgetConfiguration;
   createdAt: Scalars['DateTime'];
   deletedAt?: Maybe<Scalars['DateTime']>;
+  /** @deprecated Use `position` instead. Will be removed in a future release. */
+  gridPosition: GridPosition;
   id: Scalars['UUID'];
   isActive: Scalars['Boolean'];
   /** @deprecated isOverridden is deprecated */
@@ -5127,6 +5145,7 @@ export type UpdatePageLayoutWidgetInput = {
   conditionalAvailabilityExpression?: InputMaybe<Scalars['String']>;
   conditionalDisplay?: InputMaybe<Scalars['JSON']>;
   configuration?: InputMaybe<Scalars['JSON']>;
+  gridPosition?: InputMaybe<GridPositionInput>;
   objectMetadataId?: InputMaybe<Scalars['UUID']>;
   pageLayoutTabId?: InputMaybe<Scalars['UUID']>;
   position?: InputMaybe<Scalars['JSON']>;
@@ -5138,10 +5157,11 @@ export type UpdatePageLayoutWidgetWithIdInput = {
   conditionalAvailabilityExpression?: InputMaybe<Scalars['String']>;
   conditionalDisplay?: InputMaybe<Scalars['JSON']>;
   configuration?: InputMaybe<Scalars['JSON']>;
+  gridPosition?: InputMaybe<GridPositionInput>;
   id: Scalars['UUID'];
   objectMetadataId?: InputMaybe<Scalars['UUID']>;
   pageLayoutTabId: Scalars['UUID'];
-  position: Scalars['JSON'];
+  position?: InputMaybe<Scalars['JSON']>;
   title: Scalars['String'];
   type: WidgetType;
 };
