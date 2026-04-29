@@ -1,6 +1,9 @@
 import { Command } from 'nest-commander';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
-import { FieldMetadataType, type FieldMetadataSettings } from 'twenty-shared/types';
+import {
+  FieldMetadataType,
+  type FieldMetadataSettings,
+} from 'twenty-shared/types';
 
 import { ActiveOrSuspendedWorkspaceCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
@@ -45,8 +48,7 @@ export class SetCalendarEventDescriptionDisplayedMaxRowsCommand extends ActiveOr
       findFlatEntityByUniversalIdentifier<FlatFieldMetadata>({
         flatEntityMaps: flatFieldMetadataMaps,
         universalIdentifier:
-          STANDARD_OBJECTS.calendarEvent.fields.description
-            .universalIdentifier,
+          STANDARD_OBJECTS.calendarEvent.fields.description.universalIdentifier,
       });
 
     if (!descriptionField) {
