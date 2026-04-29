@@ -21,13 +21,14 @@ export const useAiChatThreadRename = (thread: AgentChatThread) => {
 
   const commitRename = async (nextTitle: string) => {
     const trimmed = nextTitle.trim();
-    setIsRenaming(false);
 
     if (trimmed.length === 0 || trimmed === (thread.title ?? '')) {
+      setIsRenaming(false);
       return;
     }
 
     await renameChatThread(thread.id, trimmed);
+    setIsRenaming(false);
   };
 
   return {
