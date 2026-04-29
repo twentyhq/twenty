@@ -149,7 +149,10 @@ export const useResetDraftPageLayoutToPersistedPageLayout = ({
       const recordTableWidgetViewPersisted = store.get(
         recordTableWidgetViewPersistedState,
       );
-      store.set(recordTableWidgetViewDraftState, recordTableWidgetViewPersisted);
+      store.set(
+        recordTableWidgetViewDraftState,
+        recordTableWidgetViewPersisted,
+      );
     }
   }, [
     pageLayoutDraftState,
