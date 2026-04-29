@@ -1,8 +1,8 @@
 # ===========================================================================
-# Shared build stages (used by both targets)
+# Dependency stages
 # ===========================================================================
 
-FROM node:24-alpine AS common-deps
+FROM node:24-alpine AS front-deps
 
 WORKDIR /app
 
@@ -20,10 +20,29 @@ COPY ./packages/twenty-front-component-renderer/package.json /app/packages/twent
 COPY ./packages/twenty-sdk/package.json /app/packages/twenty-sdk/
 COPY ./packages/twenty-client-sdk/package.json /app/packages/twenty-client-sdk/
 
-RUN yarn && yarn cache clean && npx nx reset
+RUN yarn && yarn cache clean
 
 
-FROM common-deps AS twenty-server-build
+FROM node:24-alpine AS server-deps
+
+WORKDIR /app
+
+COPY ./package.json ./yarn.lock ./.yarnrc.yml ./tsconfig.base.json ./nx.json /app/
+COPY ./.yarn/releases /app/.yarn/releases
+COPY ./.yarn/patches /app/.yarn/patches
+
+COPY ./packages/twenty-emails/package.json /app/packages/twenty-emails/
+COPY ./packages/twenty-server/package.json /app/packages/twenty-server/
+COPY ./packages/twenty-server/patches /app/packages/twenty-server/patches
+COPY ./packages/twenty-ui/package.json /app/packages/twenty-ui/
+COPY ./packages/twenty-shared/package.json /app/packages/twenty-shared/
+COPY ./packages/twenty-sdk/package.json /app/packages/twenty-sdk/
+COPY ./packages/twenty-client-sdk/package.json /app/packages/twenty-client-sdk/
+
+RUN yarn workspaces focus twenty-server twenty-emails twenty-shared twenty-sdk twenty-client-sdk twenty-ui && yarn cache clean
+
+
+FROM server-deps AS twenty-server-build
 
 COPY ./packages/twenty-emails /app/packages/twenty-emails
 COPY ./packages/twenty-shared /app/packages/twenty-shared
@@ -32,10 +51,8 @@ COPY ./packages/twenty-sdk /app/packages/twenty-sdk
 COPY ./packages/twenty-client-sdk /app/packages/twenty-client-sdk
 COPY ./packages/twenty-server /app/packages/twenty-server
 
-RUN npx nx run twenty-server:lingui:extract && \
-    npx nx run twenty-server:lingui:compile && \
-    npx nx run twenty-emails:lingui:extract && \
-    npx nx run twenty-emails:lingui:compile
+RUN npx nx run-many -t lingui:extract -p twenty-server twenty-emails && \
+    npx nx run-many -t lingui:compile -p twenty-server twenty-emails
 
 RUN npx nx run twenty-server:build
 
@@ -47,7 +64,7 @@ RUN find /app/packages/twenty-server/dist -name '*.d.ts' -delete \
 RUN yarn workspaces focus --production twenty-emails twenty-shared twenty-sdk twenty-client-sdk twenty-server
 
 
-FROM common-deps AS twenty-front-build
+FROM front-deps AS twenty-front-build
 
 COPY ./packages/twenty-front /app/packages/twenty-front
 COPY ./packages/twenty-front-component-renderer /app/packages/twenty-front-component-renderer
@@ -103,7 +120,7 @@ COPY --chown=1000 --from=twenty-server-build /app/packages/twenty-sdk/package.js
 COPY --chown=1000 --from=twenty-server-build /app/packages/twenty-client-sdk/package.json /app/packages/twenty-client-sdk/
 COPY --chown=1000 --from=twenty-server-build /app/packages/twenty-client-sdk/dist /app/packages/twenty-client-sdk/dist
 COPY --chown=1000 --from=twenty-server-build /app/packages/twenty-ui/package.json /app/packages/twenty-ui/
-COPY --chown=1000 --from=twenty-server-build /app/packages/twenty-front/package.json /app/packages/twenty-front/
+COPY --chown=1000 ./packages/twenty-front/package.json /app/packages/twenty-front/
 
 LABEL org.opencontainers.image.source=https://github.com/twentyhq/twenty
 LABEL org.opencontainers.image.description="Twenty server image (no frontend)."
@@ -212,7 +229,7 @@ COPY --from=twenty-server-build /app/packages/twenty-sdk/package.json /app/packa
 COPY --from=twenty-server-build /app/packages/twenty-client-sdk/package.json /app/packages/twenty-client-sdk/
 COPY --from=twenty-server-build /app/packages/twenty-client-sdk/dist /app/packages/twenty-client-sdk/dist
 COPY --from=twenty-server-build /app/packages/twenty-ui/package.json /app/packages/twenty-ui/
-COPY --from=twenty-server-build /app/packages/twenty-front/package.json /app/packages/twenty-front/
+COPY ./packages/twenty-front/package.json /app/packages/twenty-front/
 
 # Frontend static build
 COPY --from=twenty-front-build /app/packages/twenty-front/build /app/packages/twenty-server/dist/front
