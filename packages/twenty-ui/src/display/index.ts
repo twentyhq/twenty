@@ -32,6 +32,7 @@ export type {
 } from './color/components/ColorSample';
 export { ColorSample } from './color/components/ColorSample';
 export { CommandBlock } from './command-block/components/CommandBlock';
+export { LinkifiedText } from './components/LinkifiedText';
 export type { IconProps } from './icon/components/Icon';
 export { Icon } from './icon/components/Icon';
 export { IconAddressBook } from './icon/components/IconAddressBook';

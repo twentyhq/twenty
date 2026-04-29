@@ -48,9 +48,10 @@ import {
   type ExtractedFile,
 } from 'src/engine/metadata-modules/ai/ai-chat/utils/extract-code-interpreter-files.util';
 import {
-  AI_SDK_ANTHROPIC,
-  AI_SDK_BEDROCK,
-} from 'src/engine/metadata-modules/ai/ai-models/constants/ai-sdk-package.const';
+  injectCacheBreakpoint,
+  getCacheProviderOptions,
+  getCallLevelCacheProviderOptions,
+} from 'src/engine/metadata-modules/ai/ai-chat/utils/inject-cache-breakpoint.util';
 import { AI_TELEMETRY_CONFIG } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-telemetry.const';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { type AiModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-config.type';
@@ -237,12 +238,7 @@ export class ChatExecutionService {
     const systemMessage: SystemModelMessage = {
       role: 'system',
       content: systemPrompt,
-      providerOptions:
-        registeredModel.sdkPackage === AI_SDK_ANTHROPIC
-          ? { anthropic: { cacheControl: { type: 'ephemeral' } } }
-          : registeredModel.sdkPackage === AI_SDK_BEDROCK
-            ? { bedrock: { cacheControl: { type: 'ephemeral' } } }
-            : undefined,
+      providerOptions: getCacheProviderOptions(registeredModel.sdkPackage),
     };
 
     const rawModelMessages = await convertToModelMessages(processedMessages);
@@ -333,6 +329,12 @@ export class ChatExecutionService {
       abortSignal,
       stopWhen: stepCountIs(AGENT_CONFIG.MAX_STEPS),
       experimental_telemetry: AI_TELEMETRY_CONFIG,
+      providerOptions: getCallLevelCacheProviderOptions(
+        registeredModel.sdkPackage,
+      ),
+      prepareStep: ({ messages }) => ({
+        messages: injectCacheBreakpoint(messages, registeredModel.sdkPackage),
+      }),
       onAbort: async ({ steps }) => {
         await billUsageFromSteps(steps);
       },
