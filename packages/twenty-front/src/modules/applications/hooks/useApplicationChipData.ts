@@ -13,7 +13,11 @@ import { isDefined } from 'twenty-shared/utils';
 import { buildApplicationLogoUrl } from '@/applications/utils/buildApplicationLogoUrl';
 
 type UseApplicationChipDataArgs = {
-  applicationId: string;
+  applicationId?: string | null;
+  fallbackApplicationData?: {
+    logo?: string | null;
+    name?: string | null;
+  };
 };
 
 type ApplicationChipData = {
@@ -29,6 +33,7 @@ type UseApplicationChipDataReturnType = {
 
 export const useApplicationChipData = ({
   applicationId,
+  fallbackApplicationData,
 }: UseApplicationChipDataArgs): UseApplicationChipDataReturnType => {
   const currentApplicationId = useContext(CurrentApplicationContext);
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
@@ -42,8 +47,9 @@ export const useApplicationChipData = ({
   if (!isDefined(application)) {
     return {
       applicationChipData: {
-        name: '',
-        seed: applicationId,
+        name: fallbackApplicationData?.name ?? '',
+        logo: fallbackApplicationData?.logo ?? '',
+        seed: fallbackApplicationData?.name ?? '',
       },
     };
   }

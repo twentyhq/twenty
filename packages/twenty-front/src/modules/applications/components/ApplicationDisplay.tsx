@@ -1,39 +1,20 @@
-import { useApplicationAvatarColors } from '@/applications/hooks/useApplicationAvatarColors';
-import { Avatar, OverflowingTextWithTooltip } from 'twenty-ui/display';
-import { buildApplicationLogoUrl } from '@/applications/utils/buildApplicationLogoUrl';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { type ApplicationDisplayData } from '@/applications/types/applicationDisplayData.type';
+import { AppChip } from '@/applications/components/AppChip';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { styled } from '@linaria/react';
 
 type ApplicationDisplayProps = {
   application?: ApplicationDisplayData;
 };
 
+const StyledAppChip = styled(AppChip)`
+  color: ${themeCssVariables.font.color.primary};
+  gap: ${themeCssVariables.spacing[2]};
+  font-size: ${themeCssVariables.font.size.md};
+`;
+
 export const ApplicationDisplay = ({
   application,
 }: ApplicationDisplayProps) => {
-  const colors = useApplicationAvatarColors(application);
-  const name = application?.name ?? '';
-  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
-  const logoUrl = buildApplicationLogoUrl({
-    applicationId: application?.id,
-    logo: application?.logo,
-    workspaceId: currentWorkspace?.id,
-  });
-
-  return (
-    <>
-      <Avatar
-        type="app"
-        size="md"
-        avatarUrl={logoUrl}
-        placeholder={name}
-        placeholderColorSeed={application?.universalIdentifier ?? name}
-        color={colors?.color}
-        backgroundColor={colors?.backgroundColor}
-        borderColor={colors?.borderColor}
-      />
-      <OverflowingTextWithTooltip text={name} />
-    </>
-  );
+  return <StyledAppChip size="md" applicationId={application?.id ?? ''} />;
 };

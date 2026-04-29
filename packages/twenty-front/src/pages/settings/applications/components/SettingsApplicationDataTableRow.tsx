@@ -1,4 +1,3 @@
-import { ApplicationDisplay } from '@/applications/components/ApplicationDisplay';
 import {
   StyledActionTableCell,
   StyledNameTableCell,
@@ -12,6 +11,7 @@ import { IconChevronRight, useIcons } from 'twenty-ui/display';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { type ApplicationDataTableRow } from '~/pages/settings/applications/types/applicationDataTableRow';
+import { AppChip } from '@/applications/components/AppChip';
 
 const MAIN_ROW_GRID_COLUMNS = '180px 1fr 98.7px 36px';
 
@@ -51,9 +51,12 @@ export const SettingsApplicationDataTableRow = ({
           </StyledNameLabel>
         </StyledNameContainer>
       </StyledNameTableCell>
-      <TableCell minWidth="0" overflow="hidden">
-        <ApplicationDisplay application={row.application} />
-      </TableCell>
+      <StyledNameTableCell minWidth="0" overflow="hidden">
+        <AppChip
+          applicationId={row.application?.id}
+          fallbackApplicationData={row.application}
+        />
+      </StyledNameTableCell>
       <TableCell align="right">{row.fieldsCount}</TableCell>
       <StyledActionTableCell>
         {row.link && (

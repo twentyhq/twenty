@@ -9,7 +9,8 @@ import { Tag } from 'twenty-ui/components';
 import { OverflowingTextWithTooltip } from 'twenty-ui/display';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { getApplicationDescriptionSummary } from '~/pages/settings/applications/utils/getApplicationDescriptionSummary';
-import { type ApplicationDisplayData } from '@/applications/types/applicationDisplayData.type';
+import { ApplicationDisplayData } from '@/applications/types/applicationDisplayData.type';
+import { StyledNameTableCell } from '@/settings/data-model/object-details/components/SettingsObjectItemTableRowStyledComponents';
 
 export type SettingsApplicationTableRowProps = {
   action: ReactNode;
@@ -39,14 +40,9 @@ export const SettingsApplicationTableRow = ({
       key={application.id}
       to={link}
     >
-      <TableCell
-        color={themeCssVariables.font.color.primary}
-        gap={themeCssVariables.spacing[2]}
-        minWidth="0"
-        overflow="hidden"
-      >
+      <StyledNameTableCell minWidth="0" overflow="hidden">
         <ApplicationDisplay application={application} />
-      </TableCell>
+      </StyledNameTableCell>
       <TableCell gap={themeCssVariables.spacing[2]} minWidth="0">
         <OverflowingTextWithTooltip text={descriptionSummary} />
         {hasUpdate === true && (

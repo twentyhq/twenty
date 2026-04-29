@@ -36,6 +36,7 @@ import {
   SettingsToolTableRow,
   TOOL_TABLE_ROW_GRID_TEMPLATE_COLUMNS,
 } from './SettingsToolTableRow';
+import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 
 type ToolItem = {
   identifier: string;
@@ -120,6 +121,20 @@ export const SettingsToolsTable = () => {
     getSettingsPath(SettingsPath.AiToolDetail, {
       toolIdentifier: item.identifier,
     });
+
+  const getToolApplicationId = (item: ToolItem) => {
+    if (isDefined(item.applicationId)) {
+      return item.applicationId;
+    }
+
+    return (
+      currentWorkspace?.installedApplications?.find(
+        (app) =>
+          app.universalIdentifier ===
+          TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+      )?.id ?? ''
+    );
+  };
 
   const allTools: ToolItem[] = useMemo(
     () => [
@@ -266,12 +281,6 @@ export const SettingsToolsTable = () => {
                   )
                 : undefined;
 
-              const defaultApplication = {
-                name: isCustom(item)
-                  ? (application?.name ?? t`Custom`)
-                  : t`Standard`,
-              };
-
               return (
                 <SettingsToolTableRow
                   key={item.identifier}
@@ -285,7 +294,7 @@ export const SettingsToolsTable = () => {
                     />
                   }
                   name={item.name}
-                  application={application ?? defaultApplication}
+                  applicationId={getToolApplicationId(item)}
                   action={
                     <IconChevronRight
                       size={theme.icon.size.md}
