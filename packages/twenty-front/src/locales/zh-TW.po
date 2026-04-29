@@ -12057,16 +12057,16 @@ msgstr "記錄類型"
 msgid "Record-level"
 msgstr "記錄層級"
 
+#. js-lingui-id: X5BjmT
+#: src/modules/command-menu-item/edit/components/CommandMenuItemEditRecordSelectionDropdown.tsx
+#: src/modules/command-menu-item/edit/components/CommandMenuItemEditRecordSelectionDropdown.tsx
+msgid "Record(s) selected"
+msgstr ""
+
 #. js-lingui-id: PWlTvh
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelTableHeader.tsx
 msgid "Records"
 msgstr "紀錄"
-
-#. js-lingui-id: J+Qyf2
-#: src/modules/command-menu-item/edit/components/CommandMenuItemEditRecordSelectionDropdown.tsx
-#: src/modules/command-menu-item/edit/components/CommandMenuItemEditRecordSelectionDropdown.tsx
-msgid "Records selected"
-msgstr ""
 
 #. js-lingui-id: wRTiSD
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
