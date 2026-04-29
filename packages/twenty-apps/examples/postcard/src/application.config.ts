@@ -8,7 +8,6 @@ export default defineApplication({
   universalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
   displayName: 'Postcard App',
   description: 'Send postcards easily with Twenty',
-  icon: 'IconWorld',
   applicationVariables: {
     DEFAULT_RECIPIENT_NAME: {
       universalIdentifier: '19e94e59-d4fe-4251-8981-b96d0a9f74de',
