@@ -9,6 +9,19 @@ import { ATTENDEES_EDITOR_FRONT_COMPONENT_UID } from 'src/constants/universal-id
 
 // Inline styles only — Linaria/emotion break in the front-component sandbox
 // (lesson #6). JSX restricted to div / span / input / button.
+//
+// IMPORTANT: the sandbox's <input> onChange surfaces the value at
+// `event.detail.value`, NOT `event.target.value`. The standard React
+// pattern silently drops every keystroke (lesson observed in
+// extract-tasks-panel.tsx). Use the helper below.
+
+const readInputValue = (e: unknown): string | null => {
+  const detail = (e as { detail?: { value?: unknown } }).detail;
+  if (typeof detail?.value === 'string') {
+    return detail.value;
+  }
+  return null;
+};
 
 const containerStyle: React.CSSProperties = {
   background: '#ffffff',
@@ -420,33 +433,8 @@ const AttendeesEditor = () => {
     setIsMutating(false);
   };
 
-  if (loadError != null) {
-    return (
-      <div style={containerStyle}>
-        <div style={labelStyle}>
-          <span>Attendees</span>
-        </div>
-        <div style={hintStyle}>
-          <span>Failed to load: {loadError}</span>
-        </div>
-      </div>
-    );
-  }
-
-  if (attendees == null) {
-    return (
-      <div style={containerStyle}>
-        <div style={labelStyle}>
-          <span>Attendees</span>
-        </div>
-        <div style={hintStyle}>
-          <span>Loading…</span>
-        </div>
-      </div>
-    );
-  }
-
   const trimmedQuery = searchInput.trim();
+  const isLoadingAttendees = attendees == null && loadError == null;
 
   return (
     <div style={containerStyle}>
@@ -455,10 +443,14 @@ const AttendeesEditor = () => {
       </div>
 
       <div style={chipsRowStyle}>
-        {attendees.length === 0 ? (
+        {loadError != null ? (
+          <span style={hintStyle}>Failed to load: {loadError}</span>
+        ) : isLoadingAttendees ? (
+          <span style={hintStyle}>Loading…</span>
+        ) : (attendees ?? []).length === 0 ? (
           <span style={hintStyle}>No attendees yet</span>
         ) : (
-          attendees.map((row) => (
+          (attendees ?? []).map((row) => (
             <span key={row.attendeeRecordId} style={chipStyle}>
               <span>{row.personDisplayName}</span>
               <button
@@ -478,7 +470,10 @@ const AttendeesEditor = () => {
         style={searchInputStyle}
         type="text"
         value={searchInput}
-        onChange={(e) => setSearchInput(e.target.value)}
+        onChange={(e) => {
+          const v = readInputValue(e);
+          if (v !== null) setSearchInput(v);
+        }}
         placeholder="Search People to add (min 3 chars)…"
         disabled={isMutating}
       />
