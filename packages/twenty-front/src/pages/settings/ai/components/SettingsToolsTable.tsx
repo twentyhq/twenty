@@ -53,6 +53,7 @@ const FIND_MANY_APPLICATIONS_FOR_TOOL_TABLE = gql`
       id
       name
       universalIdentifier
+      logo
     }
   }
 `;
@@ -90,6 +91,7 @@ export const SettingsToolsTable = () => {
       id: string;
       name: string;
       universalIdentifier: string;
+      logo?: string | null;
     }>;
   }>(FIND_MANY_APPLICATIONS_FOR_TOOL_TABLE);
   const { data: marketplaceAppsData } = useQuery<{
@@ -264,9 +266,11 @@ export const SettingsToolsTable = () => {
                   )
                 : undefined;
 
-              const appLabel = isCustom(item)
-                ? (application?.name ?? t`Custom`)
-                : t`Standard`;
+              const defaultApplication = {
+                name: isCustom(item)
+                  ? (application?.name ?? t`Custom`)
+                  : t`Standard`,
+              };
 
               return (
                 <SettingsToolTableRow
@@ -281,7 +285,7 @@ export const SettingsToolsTable = () => {
                     />
                   }
                   name={item.name}
-                  appLabel={appLabel}
+                  application={application ?? defaultApplication}
                   action={
                     <IconChevronRight
                       size={theme.icon.size.md}

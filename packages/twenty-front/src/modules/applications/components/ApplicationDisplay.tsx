@@ -12,23 +12,20 @@ type ApplicationDisplayData = {
 };
 
 type ApplicationDisplayProps = {
-  application: ApplicationDisplayData;
+  application?: ApplicationDisplayData;
 };
 
 export const ApplicationDisplay = ({
   application,
 }: ApplicationDisplayProps) => {
-  console.log('application', application);
   const colors = useApplicationAvatarColors(application);
-  const name = application.name ?? '';
+  const name = application?.name ?? '';
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const logoUrl = buildApplicationLogoUrl({
-    applicationId: application.id,
-    logo: application.logo,
+    applicationId: application?.id,
+    logo: application?.logo,
     workspaceId: currentWorkspace?.id,
   });
-
-  console.log('logoUrl', logoUrl);
 
   return (
     <>
@@ -37,7 +34,7 @@ export const ApplicationDisplay = ({
         size="md"
         avatarUrl={logoUrl}
         placeholder={name}
-        placeholderColorSeed={application.universalIdentifier ?? name}
+        placeholderColorSeed={application?.universalIdentifier ?? name}
         color={colors?.color}
         backgroundColor={colors?.backgroundColor}
         borderColor={colors?.borderColor}
