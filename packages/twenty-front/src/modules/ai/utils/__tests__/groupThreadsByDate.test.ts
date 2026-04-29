@@ -95,10 +95,6 @@ describe('groupThreadsByDate', () => {
     expect(group.id).toBe('yesterday');
   });
 
-  // Timezone behaviour: groupings use local-calendar-day differences, so a
-  // thread last touched a few hours before midnight local time still lands
-  // in the same calendar bucket as a thread touched moments after midnight,
-  // regardless of UTC offset.
   describe('timezone handling', () => {
     it('keeps a thread last touched a few hours ago in Today across DST/midnight boundaries', () => {
       const todayLate = new Date('2026-04-26T23:30:00');

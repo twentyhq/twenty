@@ -4,8 +4,6 @@ import { useApplyAgentChatThreadUpdate } from '@/ai/hooks/useApplyAgentChatThrea
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import { type FlatAgentChatThread } from '@/metadata-store/types/FlatAgentChatThread';
 
-// Returns a rollback closure if the thread was archived; null otherwise.
-// Caller must invoke the rollback on send failure to restore the prior state.
 export const useOptimisticallyUnarchiveOnSend = () => {
   const { applyAgentChatThreadUpdate } = useApplyAgentChatThreadUpdate();
   const store = useStore();
