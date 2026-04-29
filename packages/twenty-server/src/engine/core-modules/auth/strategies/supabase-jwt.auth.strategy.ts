@@ -99,7 +99,7 @@ export class SupabaseJwtAuthStrategy extends PassportStrategy(
   }
 
   async verifyAndExtractContext(rawJwt: string): Promise<AuthContext> {
-    this.logger.log(`verifyAndExtractContext: starting`);
+    this.logger.debug(`verifyAndExtractContext: starting`);
     try {
       const verifiedPayload = await new Promise<SupabaseJwtPayload>(
         (resolve, reject) => {
@@ -240,7 +240,7 @@ export class SupabaseJwtAuthStrategy extends PassportStrategy(
   }
 
   async validate(payload: SupabaseJwtPayload): Promise<AuthContext> {
-    this.logger.log(
+    this.logger.debug(
       `validate: payload sub=${payload.sub} email=${payload.email}`,
     );
     try {
@@ -320,7 +320,7 @@ export class SupabaseJwtAuthStrategy extends PassportStrategy(
         userData,
       });
 
-      this.logger.log(`validate: signInUpOnExistingWorkspace OK, userId=${user.id}`);
+      this.logger.debug(`validate: signInUpOnExistingWorkspace OK, userId=${user.id}`);
 
       const flatUser = await this.coreEntityCacheService.get('user', user.id);
 
