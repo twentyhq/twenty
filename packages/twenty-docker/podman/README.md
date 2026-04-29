@@ -8,7 +8,14 @@ maintains support for docker deployment.
 ## How to use
 
 1. Edit `.env` file. At the minimum set `POSTGRES_PASSWORD`, `SERVER_URL`, and `APP_SECRET`.
-2. Start twenty by running `podman-compose up -d`.
+2. Start twenty by running `podman-compose up -d --build`.
+
+The UI is served on `http://localhost:8080`. The backend stays on port `3000`
+inside the stack and is proxied by nginx, so the browser only needs one port.
+
+This stack builds `server`, `worker`, and `frontend` from local source. It does
+not rely on `twentycrm/twenty:latest` or a pre-existing frontend `build/`
+folder.
 
 If you need to stop twenty, you can do so by running `podman-compose down`.
 
@@ -44,5 +51,3 @@ If you started it previously, bring it down using:
 These files should be compatible with podman 4.3+.
 
 I have tested this on Debian GNU/Linux 12 (bookworm) and with the podman that is distributed with the official Debian stable mirrors (podman v4.3.1+ds1-8+deb12u1, podman-compose v1.0.3-3).
-
-
