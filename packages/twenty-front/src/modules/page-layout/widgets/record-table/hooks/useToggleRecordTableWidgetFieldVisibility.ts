@@ -34,7 +34,10 @@ export const useToggleRecordTableWidgetFieldVisibility = ({
           [widgetId]: {
             ...widgetViewDraft,
             viewFields: widgetViewDraft.viewFields.map((field) =>
-              field.id === viewFieldId ? { ...field, isVisible } : field,
+              field.id === viewFieldId ||
+              field.clientRecordFieldId === viewFieldId
+                ? { ...field, isVisible }
+                : field,
             ),
           },
         };

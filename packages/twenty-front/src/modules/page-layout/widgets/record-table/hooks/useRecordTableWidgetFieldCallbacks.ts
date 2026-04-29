@@ -38,7 +38,10 @@ export const useRecordTableWidgetFieldCallbacks = ({
         [widgetId]: {
           ...widgetViewDraft,
           viewFields: widgetViewDraft.viewFields.map((field) =>
-            field.id === viewFieldId ? { ...field, ...update } : field,
+            field.id === viewFieldId ||
+            field.clientRecordFieldId === viewFieldId
+              ? { ...field, ...update }
+              : field,
           ),
         },
       };
@@ -60,13 +63,13 @@ export const useRecordTableWidgetFieldCallbacks = ({
           viewFields: [
             ...widgetViewDraft.viewFields,
             {
-              id: recordField.id,
               fieldMetadataId: recordField.fieldMetadataItemId,
               position: recordField.position,
               isVisible: recordField.isVisible,
               size: recordField.size,
               isActive: true,
               viewId,
+              clientRecordFieldId: recordField.id,
             },
           ],
         },
