@@ -329,7 +329,9 @@ export class ChatExecutionService {
       abortSignal,
       stopWhen: stepCountIs(AGENT_CONFIG.MAX_STEPS),
       experimental_telemetry: AI_TELEMETRY_CONFIG,
-      providerOptions: getCallLevelCacheProviderOptions(registeredModel.sdkPackage),
+      providerOptions: getCallLevelCacheProviderOptions(
+        registeredModel.sdkPackage,
+      ),
       prepareStep: ({ messages }) => ({
         messages: injectCacheBreakpoint(messages, registeredModel.sdkPackage),
       }),

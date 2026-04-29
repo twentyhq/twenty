@@ -16,7 +16,6 @@ export const getCallLevelCacheProviderOptions = (
   return undefined;
 };
 
-
 export const getCacheProviderOptions = (
   sdkPackage: string,
 ): ProviderOptions | undefined => {
