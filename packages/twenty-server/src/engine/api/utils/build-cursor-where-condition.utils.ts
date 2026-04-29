@@ -44,12 +44,14 @@ export const buildCursorWhereCondition = ({
   isForwardPagination,
   isEqualityCondition = false,
 }: BuildCursorWhereConditionParams): Record<string, unknown> => {
-  const { fieldIdByName } = buildFieldMapsFromFlatObjectMetadata(
-    flatFieldMetadataMaps,
-    flatObjectMetadata,
-  );
+  const { fieldIdByName, fieldIdByJoinColumnName } =
+    buildFieldMapsFromFlatObjectMetadata(
+      flatFieldMetadataMaps,
+      flatObjectMetadata,
+    );
 
-  const fieldMetadataId = fieldIdByName[cursorKey];
+  const fieldMetadataId =
+    fieldIdByName[cursorKey] ?? fieldIdByJoinColumnName[cursorKey];
 
   const fieldMetadata = findFlatEntityByIdInFlatEntityMaps({
     flatEntityMaps: flatFieldMetadataMaps,

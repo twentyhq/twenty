@@ -1,4 +1,8 @@
-import { FieldMetadataType, OrderByDirection } from 'twenty-shared/types';
+import {
+  FieldMetadataType,
+  OrderByDirection,
+  RelationType,
+} from 'twenty-shared/types';
 
 import { GraphqlQueryRunnerException } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { computeCursorArgFilter } from 'src/engine/api/utils/compute-cursor-arg-filter.utils';
@@ -48,6 +52,18 @@ describe('computeCursorArgFilter', () => {
     label: 'Age',
   });
 
+  const companyField = createMockField({
+    id: 'company-id',
+    type: FieldMetadataType.RELATION,
+    name: 'company',
+    label: 'Company',
+    settings: { relationType: RelationType.MANY_TO_ONE },
+  } as Partial<FlatFieldMetadata> & {
+    id: string;
+    name: string;
+    type: FieldMetadataType;
+  });
+
   const fullNameField = createMockField({
     id: 'fullname-id',
     type: FieldMetadataType.FULL_NAME,
@@ -80,6 +96,7 @@ describe('computeCursorArgFilter', () => {
   const flatFieldMetadataMaps = buildFlatFieldMetadataMaps([
     nameField,
     ageField,
+    companyField,
     fullNameField,
   ]);
 
@@ -101,7 +118,7 @@ describe('computeCursorArgFilter', () => {
     createdAt: new Date(),
     updatedAt: new Date(),
     universalIdentifier: objectMetadataId,
-    fieldIds: ['name-id', 'age-id', 'fullname-id'],
+    fieldIds: ['name-id', 'age-id', 'company-id', 'fullname-id'],
     indexMetadataIds: [],
     viewIds: [],
     applicationId: null,
@@ -133,6 +150,31 @@ describe('computeCursorArgFilter', () => {
       );
 
       expect(result).toEqual([{ name: { gt: 'John' } }]);
+    });
+
+    it('should resolve relation field join column name in cursor', () => {
+      const cursor = {
+        companyId: '6d093f0f-b5f5-42e2-936d-c3375c407cea',
+      };
+      const orderBy = [
+        { companyId: OrderByDirection.AscNullsLast },
+      ];
+
+      const result = computeCursorArgFilter(
+        cursor,
+        orderBy,
+        flatObjectMetadata,
+        flatFieldMetadataMaps,
+        true,
+      );
+
+      expect(result).toEqual([
+        {
+          companyId: {
+            gt: '6d093f0f-b5f5-42e2-936d-c3375c407cea',
+          },
+        },
+      ]);
     });
 
     it('should compute backward pagination filter for single field', () => {
