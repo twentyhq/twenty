@@ -1,5 +1,6 @@
 import { Command } from 'nest-commander';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import { FieldMetadataType, type FieldMetadataSettings } from 'twenty-shared/types';
 
 import { ActiveOrSuspendedWorkspaceCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
@@ -56,7 +57,10 @@ export class SetCalendarEventDescriptionDisplayedMaxRowsCommand extends ActiveOr
       return;
     }
 
-    if (descriptionField.settings?.displayedMaxRows === DISPLAYED_MAX_ROWS) {
+    const textSettings =
+      descriptionField.settings as FieldMetadataSettings<FieldMetadataType.TEXT>;
+
+    if (textSettings?.displayedMaxRows === DISPLAYED_MAX_ROWS) {
       this.logger.log(
         `calendarEvent.description displayedMaxRows already set for workspace ${workspaceId}, skipping`,
       );
@@ -80,7 +84,7 @@ export class SetCalendarEventDescriptionDisplayedMaxRowsCommand extends ActiveOr
     const fieldToUpdate = {
       ...descriptionField,
       settings: {
-        ...descriptionField.settings,
+        ...textSettings,
         displayedMaxRows: DISPLAYED_MAX_ROWS,
       },
     };
