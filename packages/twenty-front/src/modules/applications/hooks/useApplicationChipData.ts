@@ -11,6 +11,8 @@ import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { buildApplicationLogoUrl } from '@/applications/utils/buildApplicationLogoUrl';
+import CustomLogo from '~/pages/settings/applications/assets/custom-illustrations/custom-logo.webp';
+import StandardLogo from '~/pages/settings/applications/assets/standard-illustrations/standard-logo.webp';
 
 type UseApplicationChipDataArgs = {
   applicationId?: string | null;
@@ -57,24 +59,34 @@ export const useApplicationChipData = ({
   const isCurrent =
     isDefined(currentApplicationId) && currentApplicationId === applicationId;
 
+  const isStandard = isTwentyStandardApplication(application);
+
+  const isCustom = isWorkspaceCustomApplication(application, currentWorkspace);
+
   const displayName = isCurrent
     ? t`This app`
-    : isTwentyStandardApplication(application)
+    : isStandard
       ? t`Standard`
-      : isWorkspaceCustomApplication(application, currentWorkspace)
+      : isCustom
         ? t`Custom`
         : application.name;
+
+  const logo = isStandard
+    ? new URL(StandardLogo, window.location.href).toString()
+    : isCustom
+      ? new URL(CustomLogo, window.location.href).toString()
+      : buildApplicationLogoUrl({
+          applicationId: application.id,
+          logo: application.logo,
+          workspaceId: currentWorkspace?.id,
+        });
 
   return {
     applicationChipData: {
       name: displayName,
       seed: application.universalIdentifier ?? application.name,
       colors,
-      logo: buildApplicationLogoUrl({
-        applicationId: application.id,
-        logo: application.logo,
-        workspaceId: currentWorkspace?.id,
-      }),
+      logo,
     },
   };
 };
