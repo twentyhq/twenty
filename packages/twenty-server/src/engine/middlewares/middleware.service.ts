@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import { type Request, type Response } from 'express';
@@ -7,6 +7,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
+import { SupabaseJwtAuthStrategy } from 'src/engine/core-modules/auth/strategies/supabase-jwt.auth.strategy';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { getAuthExceptionRestStatus } from 'src/engine/core-modules/auth/utils/get-auth-exception-rest-status.util';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
@@ -24,18 +25,28 @@ import { type CustomException } from 'src/utils/custom-exception';
 
 @Injectable()
 export class MiddlewareService {
+  private readonly logger = new Logger(MiddlewareService.name);
+
   constructor(
     private readonly accessTokenService: AccessTokenService,
     private readonly workspaceStorageCacheService: WorkspaceCacheStorageService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
     private readonly jwtWrapperService: JwtWrapperService,
+    private readonly supabaseStrategy: SupabaseJwtAuthStrategy,
   ) {}
 
   public isTokenPresent(request: Request): boolean {
     const token = this.jwtWrapperService.extractJwtFromRequest()(request);
 
-    return !!token;
+    if (token) return true;
+
+    const supabaseToken = SupabaseJwtAuthStrategy.extractAccessTokenFromCookie(
+      request,
+      this.supabaseStrategy.cookieName,
+    );
+
+    return supabaseToken !== null;
   }
 
   // oxlint-disable-next-line @typescripttypescript/no-explicit-any
@@ -98,7 +109,7 @@ export class MiddlewareService {
   }
 
   public async hydrateRestRequest(request: Request) {
-    const data = await this.accessTokenService.validateTokenByRequest(request);
+    const data = await this.resolveAuthContext(request);
     const metadataVersion = data.workspace
       ? await this.workspaceStorageCacheService.getMetadataVersion(
           data.workspace.id,
@@ -125,7 +136,7 @@ export class MiddlewareService {
       return;
     }
 
-    const data = await this.accessTokenService.validateTokenByRequest(request);
+    const data = await this.resolveAuthContext(request);
     const metadataVersion = data.workspace
       ? await this.workspaceStorageCacheService.getMetadataVersion(
           data.workspace.id,
@@ -133,6 +144,31 @@ export class MiddlewareService {
       : undefined;
 
     bindDataToRequestObject(data, request, metadataVersion);
+  }
+
+  private async resolveAuthContext(request: Request) {
+    const supabaseToken = SupabaseJwtAuthStrategy.extractAccessTokenFromCookie(
+      request,
+      this.supabaseStrategy.cookieName,
+    );
+
+    if (supabaseToken) {
+      try {
+        return await this.supabaseStrategy.verifyAndExtractContext(
+          supabaseToken,
+        );
+      } catch (error) {
+        const err = error as Error;
+
+        this.logger.error(
+          `resolveAuthContext supabase path FAILED: ${err.message}`,
+          err.stack,
+        );
+        throw error;
+      }
+    }
+
+    return this.accessTokenService.validateTokenByRequest(request);
   }
 
   private hasErrorStatus(error: unknown): error is { status: number } {

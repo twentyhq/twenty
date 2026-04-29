@@ -28,6 +28,7 @@ import { ResetPasswordService } from 'src/engine/core-modules/auth/services/rese
 import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-up.service';
 import { UpdateConnectedAccountOnReconnectService } from 'src/engine/core-modules/auth/services/update-connected-account-on-reconnect.service';
 import { SamlAuthStrategy } from 'src/engine/core-modules/auth/strategies/saml.auth.strategy';
+import { SupabaseJwtAuthStrategy } from 'src/engine/core-modules/auth/strategies/supabase-jwt.auth.strategy';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 import { RefreshTokenService } from 'src/engine/core-modules/auth/token/services/refresh-token.service';
@@ -134,6 +135,7 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
     AuthService,
     JwtAuthStrategy,
     SamlAuthStrategy,
+    SupabaseJwtAuthStrategy,
     AuthResolver,
     GoogleAPIsService,
     GoogleAPIScopesService,
@@ -162,6 +164,7 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
     RefreshTokenService,
     CreateMessageChannelService,
     CreateCalendarChannelService,
+    SupabaseJwtAuthStrategy,
   ],
 })
 export class AuthModule {}

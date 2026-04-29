@@ -23260,6 +23260,75 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@supabase/auth-js@npm:2.105.0":
+  version: 2.105.0
+  resolution: "@supabase/auth-js@npm:2.105.0"
+  dependencies:
+    tslib: "npm:2.8.1"
+  checksum: 10c0/2c8ab32d245cdf3afef0b07e513b7762ff9c1c4d648070e5ae9f0aef1adb98fc0e0a75c83290822fe6c9c863fcb83ee8ed45cc42815a8e555f807bcd96bc09ed
+  languageName: node
+  linkType: hard
+
+"@supabase/functions-js@npm:2.105.0":
+  version: 2.105.0
+  resolution: "@supabase/functions-js@npm:2.105.0"
+  dependencies:
+    tslib: "npm:2.8.1"
+  checksum: 10c0/2dcb10ffa10e0842cdfe85fc5195fefaf46daaffaab0c4678f9dc3449db345f972c4b89c778f16026667427ab8142a90f6f71f09eb602553333ced0b642f46a5
+  languageName: node
+  linkType: hard
+
+"@supabase/phoenix@npm:^0.4.0":
+  version: 0.4.0
+  resolution: "@supabase/phoenix@npm:0.4.0"
+  checksum: 10c0/67973ccace7c8ca2ecdc13dc14f9e80f8b957daa56e75642c6265302287e7124ced3aa9df740dd31e6905e51f0f60d271351117a9e946743ad30ec21210a9421
+  languageName: node
+  linkType: hard
+
+"@supabase/postgrest-js@npm:2.105.0":
+  version: 2.105.0
+  resolution: "@supabase/postgrest-js@npm:2.105.0"
+  dependencies:
+    tslib: "npm:2.8.1"
+  checksum: 10c0/ada7a82265a6efe9f7bd29774471bbf4388a5f7ceef8676c155e798a9c5d0c422a47b2c04dd2b26253c3741217acf6235e13dc5ec6449796abb03eb8629a049a
+  languageName: node
+  linkType: hard
+
+"@supabase/realtime-js@npm:2.105.0":
+  version: 2.105.0
+  resolution: "@supabase/realtime-js@npm:2.105.0"
+  dependencies:
+    "@supabase/phoenix": "npm:^0.4.0"
+    "@types/ws": "npm:^8.18.1"
+    tslib: "npm:2.8.1"
+    ws: "npm:^8.18.2"
+  checksum: 10c0/1d0400adae1d82dfc897fab6d0b5b45646e49b713a72e009e8d65679d708783fd67207aef9e051aa73f8d4dd234420f3246efec4634a8fefc8a96665d0d14451
+  languageName: node
+  linkType: hard
+
+"@supabase/storage-js@npm:2.105.0":
+  version: 2.105.0
+  resolution: "@supabase/storage-js@npm:2.105.0"
+  dependencies:
+    iceberg-js: "npm:^0.8.1"
+    tslib: "npm:2.8.1"
+  checksum: 10c0/16f7e5f5d83b06c6b1310ef16e6c72de1ad9d587e3e40f8361ea468cb0dcff76beaddf4992e45f9978c928f36d429b36f91cd3429c753d24f8b1bf249afa1cdb
+  languageName: node
+  linkType: hard
+
+"@supabase/supabase-js@npm:^2.105.0":
+  version: 2.105.0
+  resolution: "@supabase/supabase-js@npm:2.105.0"
+  dependencies:
+    "@supabase/auth-js": "npm:2.105.0"
+    "@supabase/functions-js": "npm:2.105.0"
+    "@supabase/postgrest-js": "npm:2.105.0"
+    "@supabase/realtime-js": "npm:2.105.0"
+    "@supabase/storage-js": "npm:2.105.0"
+  checksum: 10c0/9c1a2c6a1ec6f69601fb783ba51c935b0a1f34052d535c87ec07232e71b0212c8d76e8b52b772e1717b80b0930854f47d7bb650fd791cda5cdb7b79c48c18c3f
+  languageName: node
+  linkType: hard
+
 "@svgr/babel-plugin-add-jsx-attribute@npm:8.0.0":
   version: 8.0.0
   resolution: "@svgr/babel-plugin-add-jsx-attribute@npm:8.0.0"
@@ -25266,7 +25335,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/jsonwebtoken@npm:9.0.10":
+"@types/jsonwebtoken@npm:9.0.10, @types/jsonwebtoken@npm:^9.0.4":
   version: 9.0.10
   resolution: "@types/jsonwebtoken@npm:9.0.10"
   dependencies:
@@ -41983,6 +42052,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"iceberg-js@npm:^0.8.1":
+  version: 0.8.1
+  resolution: "iceberg-js@npm:0.8.1"
+  checksum: 10c0/e504da64cc26e8ad7c5344353a7203c671a740c14eb6086f20505f5e9739cab774493e616032530c962df97f2a855115cc2e89a47dd81581df5917b21a69ec48
+  languageName: node
+  linkType: hard
+
 "ico-endec@npm:*":
   version: 0.1.6
   resolution: "ico-endec@npm:0.1.6"
@@ -45271,6 +45347,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"jose@npm:^6.1.3":
+  version: 6.2.3
+  resolution: "jose@npm:6.2.3"
+  checksum: 10c0/aa91bccba22cc84d86308f833749bcb0b00441e35c24e0ac79abeac5f76dc62d47bdef9c1da6a0c609f5da6478595f52b252085888b89dbdb163861e40ea4188
+  languageName: node
+  linkType: hard
+
 "jotai@npm:^2.17.1":
   version: 2.17.1
   resolution: "jotai@npm:2.17.1"
@@ -45872,6 +45955,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"jwks-rsa@npm:^4.0.1":
+  version: 4.0.1
+  resolution: "jwks-rsa@npm:4.0.1"
+  dependencies:
+    "@types/jsonwebtoken": "npm:^9.0.4"
+    debug: "npm:^4.3.4"
+    jose: "npm:^6.1.3"
+    limiter: "npm:^1.1.5"
+    lru-memoizer: "npm:^3.0.0"
+  checksum: 10c0/aeca4b1de959707002150556f4f08ed3677fe9dd12bd0be0aa01220a86b88867357c7d2241f4975de9f53125d41cc3f5e4c5e929a8922f257b61634b208d7e3c
+  languageName: node
+  linkType: hard
+
 "jws@npm:^3.2.2":
   version: 3.2.3
   resolution: "jws@npm:3.2.3"
@@ -46162,6 +46258,13 @@ __metadata:
   version: 3.1.3
   resolution: "lilconfig@npm:3.1.3"
   checksum: 10c0/f5604e7240c5c275743561442fbc5abf2a84ad94da0f5adc71d25e31fa8483048de3dcedcb7a44112a942fed305fd75841cdf6c9681c7f640c63f1049e9a5dcc
+  languageName: node
+  linkType: hard
+
+"limiter@npm:^1.1.5":
+  version: 1.1.5
+  resolution: "limiter@npm:1.1.5"
+  checksum: 10c0/ebe2b20a820d1f67b8e1724051246434c419b2da041a7e9cd943f6daf113b8d17a52a1bd88fb79be5b624c10283ecb737f50edb5c1c88c71f4cd367108c97300
   languageName: node
   linkType: hard
 
@@ -47004,6 +47107,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"lru-cache@npm:^11.0.1":
+  version: 11.3.5
+  resolution: "lru-cache@npm:11.3.5"
+  checksum: 10c0/5b54ef7b88afb4bd25b7a778f1b2b1cde32d9770913e530da34ab203cf0442413bcaa6e372800cbab9562557a4480e4d8bf32e3a368bb5a91b12218eca085c66
+  languageName: node
+  linkType: hard
+
 "lru-cache@npm:^5.1.1":
   version: 5.1.1
   resolution: "lru-cache@npm:5.1.1"
@@ -47019,6 +47129,16 @@ __metadata:
   dependencies:
     yallist: "npm:^4.0.0"
   checksum: 10c0/cb53e582785c48187d7a188d3379c181b5ca2a9c78d2bce3e7dee36f32761d1c42983da3fe12b55cb74e1779fa94cdc2e5367c028a9b35317184ede0c07a30a9
+  languageName: node
+  linkType: hard
+
+"lru-memoizer@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "lru-memoizer@npm:3.0.0"
+  dependencies:
+    lodash.clonedeep: "npm:^4.5.0"
+    lru-cache: "npm:^11.0.1"
+  checksum: 10c0/d4d1abedd56a79da6416e0c1ae736c6bc084155d45efe427182d4a8318a1054c5fbd9bba154e6dfe8a8b7de7630392186b81faa84f15746eb5459dc0567f181c
   languageName: node
   linkType: hard
 
@@ -60689,6 +60809,7 @@ __metadata:
     "@sentry/node": "npm:^10.27.0"
     "@sentry/profiling-node": "npm:^10.27.0"
     "@sniptt/guards": "npm:0.2.0"
+    "@supabase/supabase-js": "npm:^2.105.0"
     "@types/archiver": "npm:^6.0.0"
     "@types/babel__preset-env": "npm:7.10.0"
     "@types/bytes": "npm:^3.1.1"
@@ -60771,6 +60892,7 @@ __metadata:
     jsdom: "npm:^26.1.0"
     json-schema: "npm:0.4.0"
     jsonwebtoken: "npm:9.0.2"
+    jwks-rsa: "npm:^4.0.1"
     libphonenumber-js: "npm:1.11.5"
     lodash.camelcase: "npm:4.3.0"
     lodash.chunk: "npm:4.2.0"
@@ -64115,6 +64237,21 @@ __metadata:
     utf-8-validate:
       optional: true
   checksum: 10c0/4b50f67931b8c6943c893f59c524f0e4905bbd183016cfb0f2b8653aa7f28dad4e456b9d99d285bbb67cca4fedd9ce90dfdfaa82b898a11414ebd66ee99141e4
+  languageName: node
+  linkType: hard
+
+"ws@npm:^8.18.2":
+  version: 8.20.0
+  resolution: "ws@npm:8.20.0"
+  peerDependencies:
+    bufferutil: ^4.0.1
+    utf-8-validate: ">=5.0.2"
+  peerDependenciesMeta:
+    bufferutil:
+      optional: true
+    utf-8-validate:
+      optional: true
+  checksum: 10c0/956ac5f11738c914089b65878b9223692ace77337ba55379ae68e1ecbeae9b47a0c6eb9403688f609999a58c80d83d99865fe0029b229d308b08c1ef93d4ea14
   languageName: node
   linkType: hard
 
