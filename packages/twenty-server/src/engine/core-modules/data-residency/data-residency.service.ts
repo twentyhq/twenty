@@ -87,9 +87,9 @@ export class DataResidencyService {
     }
 
     await this.drRepo.update(workspaceId, {
-      requestedRegion: null,
+      requestedRegion: undefined,
       status: DataResidencyStatus.ACTIVE,
-    });
+    } as any);
 
     return this.getWorkspaceConfig(workspaceId);
   }
@@ -121,7 +121,7 @@ export class DataResidencyService {
       await this.drRepo.update(workspaceId, {
         status: DataResidencyStatus.MIGRATING,
         migrationStartedAt: new Date(),
-        migrationError: null,
+        migrationError: undefined as unknown as string,
       });
 
       console.log(`Starting data migration for workspace ${workspaceId} to ${newRegion}`);
@@ -130,7 +130,7 @@ export class DataResidencyService {
 
       await this.drRepo.update(workspaceId, {
         currentRegion: newRegion,
-        requestedRegion: null,
+        requestedRegion: undefined,
         status: DataResidencyStatus.ACTIVE,
         migrationCompletedAt: new Date(),
       });

@@ -49,7 +49,7 @@ export class SamlAuthStrategy extends PassportStrategy(
               ) {
                 // IdP metadata XML typically has whitespace-formatted certificates
                 const sanitizedCertificate =
-                  identityProvider.certificate.replace(/\s/g, '');
+                  (identityProvider.certificate ?? '').replace(/\s/g, '');
 
                 const config: SamlConfig = {
                   entryPoint: identityProvider.ssoURL,

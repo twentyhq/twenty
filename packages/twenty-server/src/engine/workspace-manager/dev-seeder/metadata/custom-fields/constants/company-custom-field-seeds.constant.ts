@@ -75,10 +75,5 @@ export const COMPANY_CUSTOM_FIELD_SEEDS: FieldMetadataSeed[] = [
     isActive: true,
     isNullable: true,
     isUnique: false,
-    relation: {
-      direction: 'toMany',
-      entity: 'company',
-      jointable: { schemaName: 'company', tableName: 'company', name: 'companies' },
-    },
   },
 ];

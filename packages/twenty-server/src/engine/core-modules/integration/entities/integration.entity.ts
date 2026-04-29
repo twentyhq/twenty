@@ -18,7 +18,7 @@ registerEnumType(IntegrationStatus, {
 @ObjectType('Integration')
 @Index('IDX_INTEGRATION_WORKSPACE_PROVIDER', ['workspaceId', 'provider'], { unique: true })
 export class IntegrationEntity {
-  @IDField(() => UUIDScalarType)
+  @Field(() => UUIDScalarType)
   @PrimaryGeneratedColumn('uuid')
   id: string;
 

@@ -201,13 +201,13 @@ export class BillingPlanService {
           amount: prices.monthly.amount,
           currency: prices.monthly.currency,
           formatted: prices.monthly.formatted,
-          savings: prices.monthly.savings,
+          savings: 'savings' in prices.monthly ? (prices.monthly as Record<string, unknown>).savings as string : undefined,
         },
         yearly: {
           amount: prices.yearly.amount,
           currency: prices.yearly.currency,
           formatted: prices.yearly.formatted,
-          savings: prices.yearly.savings,
+          savings: 'savings' in prices.yearly ? (prices.yearly as Record<string, unknown>).savings as string : undefined,
         },
       },
     };

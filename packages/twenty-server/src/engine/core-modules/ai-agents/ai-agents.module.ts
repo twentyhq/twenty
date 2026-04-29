@@ -13,6 +13,10 @@ import { ProspectResearch, ProspectingResearchAgent } from './prospecting-resear
 import { ProspectingResearchAgentService } from './prospecting-research-agent/prospecting-research-agent.service';
 import { SdrAgent } from './sdr-agent/sdr-agent.entity';
 import { SdrAgentService } from './sdr-agent/sdr-agent.service';
+import { CompetitiveIntelligenceAgent } from './competitive-intelligence-agent/competitive-intelligence-agent.entity';
+import { CompetitiveIntelligenceAgentService } from './competitive-intelligence-agent/competitive-intelligence-agent.service';
+import { ContractIntelligenceAgent, ContractExtractionEntity } from './contract-intelligence-agent/contract-intelligence-agent.entity';
+import { ContractIntelligenceAgentService } from './contract-intelligence-agent/contract-intelligence-agent.service';
 
 @Module({
   imports: [
@@ -28,6 +32,9 @@ import { SdrAgentService } from './sdr-agent/sdr-agent.service';
         MeetingTranscript,
         ProspectingResearchAgent,
         ProspectResearch,
+        CompetitiveIntelligenceAgent,
+        ContractIntelligenceAgent,
+        ContractExtractionEntity,
       ],
       'core',
     ),
@@ -39,6 +46,8 @@ import { SdrAgentService } from './sdr-agent/sdr-agent.service';
     DealQualificationAgentService,
     MeetingNotesAgentService,
     ProspectingResearchAgentService,
+    CompetitiveIntelligenceAgentService,
+    ContractIntelligenceAgentService,
   ],
   exports: [
     SdrAgentService,
@@ -47,6 +56,8 @@ import { SdrAgentService } from './sdr-agent/sdr-agent.service';
     DealQualificationAgentService,
     MeetingNotesAgentService,
     ProspectingResearchAgentService,
+    CompetitiveIntelligenceAgentService,
+    ContractIntelligenceAgentService,
   ],
 })
 export class AiAgentsModule {}

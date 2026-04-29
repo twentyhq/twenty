@@ -82,11 +82,6 @@ export const OPPORTUNITY_CUSTOM_FIELD_SEEDS: FieldMetadataSeed[] = [
     isActive: true,
     isNullable: true,
     isUnique: false,
-    relation: {
-      direction: 'toOne',
-      entity: 'competitor',
-      jointable: { schemaName: 'core', tableName: 'competitor', name: 'competitor' },
-    },
   },
   {
     type: FieldMetadataType.SELECT,

@@ -122,7 +122,7 @@ export class SecurityService {
     
     await this.deviceRepo.update(
       { userId, workspaceId },
-      updateData,
+      updateData as any,
     );
   }
 

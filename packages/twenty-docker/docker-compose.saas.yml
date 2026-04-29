@@ -1,0 +1,162 @@
+version: '3.8'
+
+# CCG Central SaaS - Production Deployment
+# Usage: docker compose -f docker-compose.saas.yml up -d
+
+services:
+  # ==================== API GATEWAY (Nginx) ====================
+  gateway:
+    image: nginx:alpine
+    container_name: ccg-gateway
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./gateway/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./gateway/conf.d:/etc/nginx/conf.d:ro
+      - ./certs:/etc/nginx/certs:ro
+    depends_on:
+      - twenty-server
+    restart: always
+    networks:
+      - ccg-network
+
+  # ==================== TWENTY CRM (Core + All Modules) ====================
+  twenty-server:
+    image: twentycrm/twenty:latest
+    container_name: ccg-crm
+    build:
+      context: ../..
+      dockerfile: packages/twenty-docker/twenty/Dockerfile
+    environment:
+      # Database
+      PG_DATABASE_URL: postgresql://${PG_USER}:${PG_PASSWORD}@postgres:5432/${PG_DATABASE}
+      REDIS_URL: redis://redis:6379
+      # Auth
+      ACCESS_TOKEN_SECRET: ${ACCESS_TOKEN_SECRET}
+      LOGIN_TOKEN_SECRET: ${LOGIN_TOKEN_SECRET}
+      REFRESH_TOKEN_SECRET: ${REFRESH_TOKEN_SECRET}
+      # Storage
+      STORAGE_TYPE: s3
+      STORAGE_S3_REGION: ${DO_SPACES_REGION}
+      STORAGE_S3_NAME: ${DO_SPACES_BUCKET}
+      STORAGE_S3_ENDPOINT: ${DO_SPACES_ENDPOINT}
+      STORAGE_S3_ACCESS_KEY_ID: ${DO_SPACES_KEY}
+      STORAGE_S3_SECRET_ACCESS_KEY: ${DO_SPACES_SECRET}
+      # Server
+      SERVER_URL: ${SERVER_URL}
+      FRONT_BASE_URL: ${FRONT_BASE_URL}
+      PORT: 3000
+      # Push notifications
+      FCM_SERVER_KEY: ${FCM_SERVER_KEY}
+      APNS_BUNDLE_ID: ${APNS_BUNDLE_ID}
+      APNS_AUTH_KEY: ${APNS_AUTH_KEY}
+    volumes:
+      - twenty-data:/app/data
+    restart: always
+    networks:
+      - ccg-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/healthz"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # ==================== TWENTY WORKER (BullMQ Jobs) ====================
+  twenty-worker:
+    image: twentycrm/twenty:latest
+    container_name: ccg-worker
+    command: ["node", "dist/src/queue-worker.js"]
+    environment:
+      PG_DATABASE_URL: postgresql://${PG_USER}:${PG_PASSWORD}@postgres:5432/${PG_DATABASE}
+      REDIS_URL: redis://redis:6379
+      STORAGE_TYPE: s3
+      STORAGE_S3_REGION: ${DO_SPACES_REGION}
+      STORAGE_S3_NAME: ${DO_SPACES_BUCKET}
+      STORAGE_S3_ENDPOINT: ${DO_SPACES_ENDPOINT}
+      STORAGE_S3_ACCESS_KEY_ID: ${DO_SPACES_KEY}
+      STORAGE_S3_SECRET_ACCESS_KEY: ${DO_SPACES_SECRET}
+    restart: always
+    networks:
+      - ccg-network
+
+  # ==================== TWENTY FRONTEND ====================
+  twenty-front:
+    image: twentycrm/twenty-front:latest
+    container_name: ccg-front
+    environment:
+      REACT_APP_SERVER_BASE_URL: ${SERVER_URL}
+    restart: always
+    networks:
+      - ccg-network
+
+  # ==================== ASTERISK PBX ====================
+  asterisk:
+    image: andrius/asterisk:latest-ari
+    container_name: ccg-asterisk
+    ports:
+      - "5060:5060/udp"      # SIP signaling
+      - "5060:5060/tcp"      # SIP TCP
+      - "8088:8088"          # ARI REST API
+      - "5038:5038"          # AMI
+      - "10000-10100:10000-10100/udp"  # RTP media (keep range small)
+    volumes:
+      - ./asterisk/sip.conf:/etc/asterisk/sip.conf:ro
+      - ./asterisk/extensions.conf:/etc/asterisk/extensions.conf:ro
+      - ./asterisk/ari.conf:/etc/asterisk/ari.conf:ro
+      - ./asterisk/manager.conf:/etc/asterisk/manager.conf:ro
+      - asterisk-recordings:/var/spool/asterisk/monitor
+    environment:
+      - ARI_USER=${ARI_USER}
+      - ARI_PASSWORD=${ARI_PASSWORD}
+    restart: always
+    networks:
+      - ccg-network
+
+  # ==================== POSTGRESQL ====================
+  postgres:
+    image: postgres:16-alpine
+    container_name: ccg-postgres
+    environment:
+      POSTGRES_USER: ${PG_USER}
+      POSTGRES_PASSWORD: ${PG_PASSWORD}
+      POSTGRES_DB: ${PG_DATABASE}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
+    restart: always
+    networks:
+      - ccg-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${PG_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ==================== REDIS ====================
+  redis:
+    image: redis:7-alpine
+    container_name: ccg-redis
+    command: redis-server --maxmemory 256mb --maxmemory-policy allkeys-lru
+    volumes:
+      - redis-data:/data
+    restart: always
+    networks:
+      - ccg-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres-data:
+  redis-data:
+  twenty-data:
+  asterisk-recordings:
+
+networks:
+  ccg-network:
+    driver: bridge

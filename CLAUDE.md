@@ -221,3 +221,99 @@ This handles everything: starts Postgres + Redis (auto-detects local services vs
 - `tsconfig.base.json` - Base TypeScript configuration
 - `package.json` - Root package with workspace definitions
 - `.cursor/rules/` - Detailed development guidelines and best practices
+
+## CCG Central — Enterprise Modules (Fork)
+
+This fork extends Twenty CRM with 33 enterprise modules for a multi-tenant SaaS platform targeting LATAM markets. All modules are pure expansion — zero core modifications.
+
+### Architecture
+
+- **33 NestJS modules** registered in `core-engine.module.ts`
+- **0 cross-module dependencies** — each module extractable to microservice
+- **workspaceId on every entity** — multi-tenant via RLS
+- **Feature flags** for module activation per workspace (`FeatureFlagKey.ts`)
+- **Event bus bridge** via `SaaSPlatformService.emitEvent()`
+- **175 TypeScript files, 0 compilation errors**
+
+### Enterprise Module Map
+
+```
+engine/core-modules/
+├── sales-execution/        # Quotas, territories, deal blueprints
+├── customer-success/       # Health score, NPS, playbooks, QBR
+├── cpq/                    # Price books, quotes, line items
+├── abm/                    # Target accounts, ABM campaigns
+├── omnicanal/              # Sequences, WhatsApp, SMS, unified inbox, chat widget
+├── ai-ml/                  # Lead scoring, sentiment, NLP, NBA, enrichment
+├── bi-analytics/           # Dashboard widgets, real SQL queries
+├── ai-agents/              # SDR, CSM, Deal Qual, Meeting Notes, CI, Contract
+├── accounts-receivable/    # Invoicing, payments, dunning, disputes, portal
+├── it-asset-management/    # Assets, licenses, depreciation, ITSM
+├── trade-import/           # POs, shipments, customs, landed cost, OCR, carbon
+├── accounting-integration/ # ERP sync, tax rules, revenue recognition, commissions
+├── fintech/                # Embedded payments, e-invoicing DIAN/SAT, partners
+├── hrm/                    # Employees, recruitment, payroll CO, performance, leaves
+├── contract-lifecycle/     # CLM, redlining, signatures, risk scoring
+├── field-service/          # Work orders, technicians, dispatch, service contracts
+├── procurement/            # Purchase requests, RFQ, vendor scorecards
+├── event-management/       # Events, registrations, QR check-in, ROI
+├── lms/                    # Courses, enrollments, quizzes, certifications
+├── fleet/                  # Vehicles, drivers, routes, fuel, maintenance, ePOD
+├── asterisk/               # VoIP, SIP, call logs, IVR, auto-dialer, queues
+├── prm/                    # Partner lifecycle, deal registration, MDF, SPIFFs
+├── ecommerce/              # Products, orders, carts, subscriptions, loyalty, CLV
+├── saas-platform/          # Tenant provisioning, module activation, billing, events
+├── data-residency/         # Regional hosting, migration
+├── mobile/                 # Apps, push notifications (APNS/FCM)
+├── offline-sync/           # Change tracking, conflict resolution
+└── sandbox/                # Test environments
+
+modules/
+├── support-ticket/         # Helpdesk, SLA, comments, CSAT
+├── knowledge-base/         # Articles, categories, search, deflection
+├── inventory/              # Stock, warehouses, movements, suppliers
+├── marketing-campaign/     # Campaigns, lead scoring, attribution
+├── gamification/           # Leaderboards, badges, challenges
+└── project/                # Projects, tasks, time tracking, Gantt, P&L
+```
+
+### SaaS Deployment
+
+```bash
+# Production deploy with all services
+cd packages/twenty-docker
+cp docker-compose.saas.env .env
+# Edit .env with real credentials
+docker compose -f docker-compose.saas.yml up -d
+```
+
+Stack: Nginx Gateway + Twenty Server + Worker + Frontend + Asterisk + PostgreSQL + Redis
+
+### Module Activation (per tenant)
+
+Modules activate via `SaaSPlatformService`:
+```typescript
+await saas.provisionTenant(workspaceId, { companyName: 'Acme', country: CountryCode.CO, plan: SubscriptionPlan.PROFESSIONAL });
+await saas.activateModule(workspaceId, 'inventory');
+await saas.activateModule(workspaceId, 'asterisk');
+```
+
+### LATAM Fiscal Support
+
+| Country | Provider | Tax | Status |
+|---------|----------|-----|--------|
+| Colombia | DIAN (UBL 2.1, XAdES) | IVA 19% | Ready |
+| Mexico | SAT (CFDI 4.0 via PAC) | IVA 16% | Ready |
+| Rep. Dominicana | DGII (e-CF, SOAP) | ITBIS 18% | Ready |
+| Chile | SII (DTE, REST) | IVA 19% | Config |
+| Peru | SUNAT (UBL, CDR) | IGV 18% | Config |
+| Argentina | AFIP | IVA 21% | Config |
+| Brazil | NF-e (SEFAZ) | ICMS/ISS | Config |
+
+### Key Files
+
+- `core-engine.module.ts` — All module registrations
+- `packages/twenty-shared/src/types/FeatureFlagKey.ts` — Module + fiscal flags
+- `packages/twenty-docker/docker-compose.saas.yml` — Production deploy
+- `packages/twenty-docker/gateway/nginx.conf` — API Gateway config
+- `packages/twenty-docker/init-db.sql` — RLS + audit triggers
