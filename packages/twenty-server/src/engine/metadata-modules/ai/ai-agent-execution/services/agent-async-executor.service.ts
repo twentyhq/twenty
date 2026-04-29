@@ -141,11 +141,7 @@ export class AgentAsyncExecutorService {
     userWorkspaceId?: string | null;
     operationType?: UsageOperationType;
   }): Promise<AgentExecutionResult> {
-    if (isDefined(agent)) {
-      await this.billingUsageService.hasAvailableCreditsOrThrow(
-        agent.workspaceId,
-      );
-    }
+    await this.billingUsageService.hasAvailableCreditsOrThrow(workspaceId);
 
     let accumulatedUsage: LanguageModelUsage = EMPTY_USAGE;
     let cacheCreationTokens = 0;
