@@ -26,3 +26,11 @@ export const ROADMAP_NAME_COLUMN_FIELD_WIDTH = 140;
 // column honor it so their rows stay row-for-row aligned.
 // oxlint-disable-next-line twenty/max-consts-per-file
 export const ROADMAP_SWIMLANE_HEADER_HEIGHT = 28;
+// Diameter of the connection-point dots rendered at each bar's start/end
+// edge. They double as a visual affordance for "this is a dependency
+// port" and as the geometric anchor the SVG dependency arrows aterrize on.
+// 8px reads as a port without crowding a 24px-tall bar; the connector
+// shortens by `radius` on each side so the arrowhead lands on the dot's
+// outer edge instead of being hidden behind it.
+// oxlint-disable-next-line twenty/max-consts-per-file
+export const ROADMAP_CONNECTION_DOT_DIAMETER = 8;

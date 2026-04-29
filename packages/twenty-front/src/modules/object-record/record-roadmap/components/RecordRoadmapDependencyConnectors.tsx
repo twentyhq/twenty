@@ -1,5 +1,6 @@
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
+import { ROADMAP_CONNECTION_DOT_DIAMETER } from '@/object-record/record-roadmap/constants/RoadmapDimensions';
 import { type RoadmapDependency } from '@/object-record/record-roadmap/hooks/useRecordRoadmapDependencies';
 import { type RoadmapBarLayout } from '@/object-record/record-roadmap/utils/computeRoadmapBarLayouts';
 
@@ -14,6 +15,11 @@ type RecordRoadmapDependencyConnectorsProps = {
 // dropping vertically. Keeps the line readable when the dependent bar
 // starts directly under the required one.
 const HORIZONTAL_OFFSET_PX = 12;
+
+// Half the dot diameter — the path stops `radius` px short of the bar
+// edge on each side so the arrowhead lands on the dot's outer edge
+// instead of being hidden behind it.
+const DOT_RADIUS_PX = ROADMAP_CONNECTION_DOT_DIAMETER / 2;
 
 // SVG overlay that draws elbow-style arrows from each `requiredMilestone`
 // bar's right edge to its dependent `dependentMilestone` bar's left
@@ -66,9 +72,13 @@ export const RecordRoadmapDependencyConnectors = ({
           return null;
         }
 
-        const fromX = required.leftPx + required.widthPx;
+        // Start at the OUTER edge of the required-bar's end dot and end
+        // at the OUTER edge of the dependent-bar's start dot, so the
+        // arrowhead visually lands on the port instead of being eaten
+        // by the dot's fill.
+        const fromX = required.leftPx + required.widthPx + DOT_RADIUS_PX;
         const fromY = required.topPx + required.heightPx / 2;
-        const toX = dependent.leftPx;
+        const toX = dependent.leftPx - DOT_RADIUS_PX;
         const toY = dependent.topPx + dependent.heightPx / 2;
 
         // Two-segment elbow path: horizontal-then-vertical-then-horizontal.

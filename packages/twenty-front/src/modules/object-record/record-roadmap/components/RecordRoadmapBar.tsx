@@ -7,6 +7,7 @@ import { IconLock } from 'twenty-ui/display';
 import {
   ROADMAP_BAR_HEIGHT,
   ROADMAP_BAR_VERTICAL_PADDING,
+  ROADMAP_CONNECTION_DOT_DIAMETER,
   ROADMAP_ROW_HEIGHT,
 } from '@/object-record/record-roadmap/constants/RoadmapDimensions';
 import { getRoadmapBlockedByColor } from '@/object-record/record-roadmap/constants/roadmapBlockedByColorMap';
@@ -146,6 +147,28 @@ const StyledLockIcon = styled.span`
   flex-shrink: 0;
   margin-right: ${themeCssVariables.spacing[1]};
   pointer-events: none;
+`;
+
+// Connection-point dot anchored on the bar's start or end edge. Doubles as
+// a visual affordance for "this bar has a dependency port here" and as the
+// geometric anchor the SVG arrows land on. Background is set inline from
+// the bar's accent so the dot inherits color/blockedBy/overdue styling.
+// `pointer-events: none` keeps drag/resize on the bar itself; the dot is
+// purely decorative for now (clickable port wiring is a follow-up).
+const StyledConnectionDot = styled.div`
+  background-color: currentColor;
+  border-radius: 50%;
+  height: ${ROADMAP_CONNECTION_DOT_DIAMETER}px;
+  pointer-events: none;
+  position: absolute;
+  top: ${ROADMAP_BAR_VERTICAL_PADDING +
+    ROADMAP_BAR_HEIGHT / 2 -
+    ROADMAP_CONNECTION_DOT_DIAMETER / 2}px;
+  width: ${ROADMAP_CONNECTION_DOT_DIAMETER}px;
+  /* Sits above the bar so the bar's overflow:hidden doesn't clip it,
+     and below the SVG connector overlay (zIndex 2) so the arrowhead
+     visually lands on the dot. */
+  z-index: 1;
 `;
 
 type RecordRoadmapBarProps = {
@@ -355,6 +378,18 @@ export const RecordRoadmapBar = ({
       }
     : {};
 
+  // Resolve the accent the connection dots use as their fill. Mirrors the
+  // bar's effective border/text color so the port reads as part of the bar
+  // and not as a stray decoration. Order matches the bar's own precedence:
+  // error/overdue red wins, then blockedBy tint, then SELECT color, then
+  // the neutral blue default.
+  const dotAccentColor =
+    hasError || isOverdue
+      ? themeCssVariables.border.color.danger
+      : (blockedByAccent ??
+        colorTokens?.accent ??
+        themeCssVariables.tag.text.blue);
+
   const tooltipParts = [`${label} (${previewStart.toString()} → ${previewEnd.toString()})`];
   if (isOverdue) {
     tooltipParts.push(`${deviationDays} day${deviationDays === 1 ? '' : 's'} overdue`);
@@ -423,6 +458,30 @@ export const RecordRoadmapBar = ({
           <StyledResizeHandleRight onPointerDown={onPointerDownResizeEnd} />
         )}
       </StyledBar>
+      {/* Connection-point dots. Centered on each bar edge so dependency
+          arrows visually attach to a defined port instead of the bare
+          rectangle. Hidden during drag/resize so the user gets a clean
+          ghost outline while moving the bar. */}
+      {mode === null && (
+        <>
+          <StyledConnectionDot
+            aria-hidden
+            data-roadmap-bar-port="start"
+            style={{
+              color: dotAccentColor,
+              left: leftPx - ROADMAP_CONNECTION_DOT_DIAMETER / 2,
+            }}
+          />
+          <StyledConnectionDot
+            aria-hidden
+            data-roadmap-bar-port="end"
+            style={{
+              color: dotAccentColor,
+              left: leftPx + widthPx - ROADMAP_CONNECTION_DOT_DIAMETER / 2,
+            }}
+          />
+        </>
+      )}
     </>
   );
 };
