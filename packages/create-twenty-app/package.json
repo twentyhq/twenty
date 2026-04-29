@@ -40,12 +40,17 @@
     "uuid": "^13.0.0"
   },
   "devDependencies": {
+    "@swc/core": "^1.15.11",
+    "@swc/jest": "^0.2.39",
     "@types/fs-extra": "^11.0.0",
     "@types/inquirer": "^9.0.0",
+    "@types/jest": "^30.0.0",
     "@types/lodash.camelcase": "^4.3.7",
     "@types/lodash.kebabcase": "^4.1.7",
     "@types/lodash.startcase": "^4",
     "@types/node": "^20.0.0",
+    "jest": "29.7.0",
+    "jest-environment-node": "^29.4.1",
     "twenty-shared": "workspace:*",
     "typescript": "^5.9.2",
     "vite": "^7.0.0",

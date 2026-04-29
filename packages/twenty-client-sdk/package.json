@@ -46,6 +46,8 @@
     "graphql": "^16.8.1"
   },
   "devDependencies": {
+    "@typescript/native-preview": "^7.0.0-dev.20260116.1",
+    "tsc-alias": "^1.8.16",
     "twenty-shared": "workspace:*",
     "typescript": "^5.9.2",
     "vite": "^7.0.0",
