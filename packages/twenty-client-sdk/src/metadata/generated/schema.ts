@@ -1941,7 +1941,6 @@ export interface MarketplaceApp {
     id: Scalars['String']
     name: Scalars['String']
     description: Scalars['String']
-    icon: Scalars['String']
     author: Scalars['String']
     category: Scalars['String']
     logo?: Scalars['String']
@@ -4925,7 +4924,6 @@ export interface MarketplaceAppGenqlSelection{
     id?: boolean | number
     name?: boolean | number
     description?: boolean | number
-    icon?: boolean | number
     author?: boolean | number
     category?: boolean | number
     logo?: boolean | number

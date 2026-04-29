@@ -73,6 +73,11 @@ export const SettingsApplicationDetailContentTab = ({
     manifestContent,
   });
 
+  const fallbackApplicationData = {
+    logo: applicationInfo?.logo,
+    name: applicationInfo?.name,
+  };
+
   const lifecycleOptions = {
     postInstallUniversalIdentifier:
       manifestContent?.application?.postInstallLogicFunction
@@ -170,10 +175,14 @@ export const SettingsApplicationDetailContentTab = ({
             <SettingsApplicationContentSubtable
               title={t`Objects`}
               rows={filtered.objects}
+              applicationId={applicationId}
+              fallbackApplicationData={fallbackApplicationData}
             />
             <SettingsApplicationContentSubtable
               title={t`Fields added to other objects`}
               rows={filtered.fields}
+              applicationId={applicationId}
+              fallbackApplicationData={fallbackApplicationData}
             />
           </Table>
         </Section>
@@ -189,18 +198,26 @@ export const SettingsApplicationDetailContentTab = ({
             <SettingsApplicationContentSubtable
               title={t`Page layouts`}
               rows={filtered.pageLayouts}
+              applicationId={applicationId}
+              fallbackApplicationData={fallbackApplicationData}
             />
             <SettingsApplicationContentSubtable
               title={t`Views`}
               rows={filtered.views}
+              applicationId={applicationId}
+              fallbackApplicationData={fallbackApplicationData}
             />
             <SettingsApplicationContentSubtable
               title={t`Navigation menu items`}
               rows={filtered.navigation}
+              applicationId={applicationId}
+              fallbackApplicationData={fallbackApplicationData}
             />
             <SettingsApplicationContentSubtable
               title={t`Front components`}
               rows={filtered.frontComponents}
+              applicationId={applicationId}
+              fallbackApplicationData={fallbackApplicationData}
             />
           </Table>
         </Section>
@@ -216,18 +233,26 @@ export const SettingsApplicationDetailContentTab = ({
             <SettingsApplicationContentSubtable
               title={t`Logic functions`}
               rows={filtered.logicFunctions}
+              applicationId={applicationId}
+              fallbackApplicationData={fallbackApplicationData}
             />
             <SettingsApplicationContentSubtable
               title={t`Agents`}
               rows={filtered.agents}
+              applicationId={applicationId}
+              fallbackApplicationData={fallbackApplicationData}
             />
             <SettingsApplicationContentSubtable
               title={t`Skills`}
               rows={filtered.skills}
+              applicationId={applicationId}
+              fallbackApplicationData={fallbackApplicationData}
             />
             <SettingsApplicationContentSubtable
               title={t`Roles`}
               rows={filtered.roles}
+              applicationId={applicationId}
+              fallbackApplicationData={fallbackApplicationData}
             />
           </Table>
         </Section>
