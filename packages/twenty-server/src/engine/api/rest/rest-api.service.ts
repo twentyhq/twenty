@@ -1,6 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+} from '@nestjs/common';
 
-import { type AxiosResponse } from 'axios';
+import { type AxiosResponse, isAxiosError } from 'axios';
 
 import { type Query } from 'src/engine/api/rest/core/types/query.type';
 import { RestApiException } from 'src/engine/api/rest/errors/RestApiException';
@@ -14,6 +18,8 @@ export enum GraphqlApiType {
 
 @Injectable()
 export class RestApiService {
+  private readonly logger = new Logger(RestApiService.name);
+
   constructor(
     private readonly secureHttpClientService: SecureHttpClientService,
   ) {}
@@ -41,7 +47,17 @@ export class RestApiService {
         },
       });
     } catch (err) {
-      throw new RestApiException(err.response.data.errors);
+      if (isAxiosError(err) && err.response?.data?.errors) {
+        throw new RestApiException(err.response.data.errors);
+      }
+
+      this.logger.error(
+        `Failed to reach internal GraphQL endpoint at ${url}: ${err.message}`,
+      );
+
+      throw new InternalServerErrorException(
+        `Internal GraphQL request failed: ${err.message}`,
+      );
     }
 
     if (response.data.errors?.length) {
