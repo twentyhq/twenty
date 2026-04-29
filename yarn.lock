@@ -60838,6 +60838,7 @@ __metadata:
     "@sniptt/guards": "npm:^0.2.0"
     "@types/babel__preset-env": "npm:^7"
     "@types/handlebars": "npm:^4.1.0"
+    ai: "npm:6.0.97"
     babel-plugin-module-resolver: "npm:^5.0.2"
     class-validator: "npm:^0.14.0"
     expr-eval-fork: "npm:3.0.3"

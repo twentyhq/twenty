@@ -30,6 +30,7 @@
   },
   "dependencies": {
     "@sniptt/guards": "^0.2.0",
+    "ai": "6.0.97",
     "class-validator": "^0.14.0",
     "expr-eval-fork": "3.0.3",
     "handlebars": "^4.7.9",
