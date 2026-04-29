@@ -1,5 +1,7 @@
 import { createHash } from 'crypto';
 
+import { Logger } from '@nestjs/common';
+
 import RedisStore from 'connect-redis';
 import { createClient } from 'redis';
 
@@ -7,6 +9,8 @@ import type session from 'express-session';
 
 import { CacheStorageType } from 'src/engine/core-modules/cache-storage/types/cache-storage-type.enum';
 import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+
+const logger = new Logger('SessionStorage');
 
 export const getSessionStorageOptions = (
   twentyConfigService: TwentyConfigService,
@@ -57,10 +61,28 @@ export const getSessionStorageOptions = (
 
       const redisClient = createClient({
         url: connectionString,
+        pingInterval: 30_000,
+        socket: {
+          reconnectStrategy: (retries: number) => {
+            const delay = Math.min(retries * 500, 5000);
+
+            logger.warn(
+              `Redis session storage reconnecting (attempt ${retries}, next retry in ${delay}ms)`,
+            );
+
+            return delay;
+          },
+        },
+      });
+
+      redisClient.on('error', (err) => {
+        logger.error(`Redis session storage error: ${err.message}`);
       });
 
       redisClient.connect().catch((err) => {
-        throw new Error(`Redis connection failed: ${err}`);
+        logger.error(
+          `Redis session storage initial connection failed: ${err.message}`,
+        );
       });
 
       return {
