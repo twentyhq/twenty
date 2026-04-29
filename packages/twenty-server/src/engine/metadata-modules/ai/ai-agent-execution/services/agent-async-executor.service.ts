@@ -4,10 +4,12 @@ import { InjectRepository } from '@nestjs/typeorm';
 import {
   generateText,
   jsonSchema,
+  type LanguageModelUsage,
   Output,
   stepCountIs,
   type ToolSet,
 } from 'ai';
+import { AUTO_SELECT_SMART_MODEL_ID } from 'twenty-shared/constants';
 import { type ActorMetadata } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type Repository } from 'typeorm';
@@ -17,9 +19,11 @@ import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/wo
 import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
 import { NativeToolBinderService } from 'src/engine/core-modules/tool-provider/native/native-tool-binder.service';
 import { ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
+import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WORKFLOW_AGENT_REGISTRY_TOOL_CATEGORIES } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/workflow-agent-registry-tool-categories.const';
 import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
+import { AiBillingService } from 'src/engine/metadata-modules/ai/ai-billing/services/ai-billing.service';
 import { countNativeWebSearchCallsFromSteps } from 'src/engine/metadata-modules/ai/ai-billing/utils/count-native-web-search-calls-from-steps.util';
 import { extractCacheCreationTokensFromSteps } from 'src/engine/metadata-modules/ai/ai-billing/utils/extract-cache-creation-tokens.util';
 import { mergeLanguageModelUsage } from 'src/engine/metadata-modules/ai/ai-billing/utils/merge-language-model-usage.util';
@@ -37,6 +41,21 @@ import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 
+const EMPTY_USAGE: LanguageModelUsage = {
+  inputTokens: 0,
+  outputTokens: 0,
+  totalTokens: 0,
+  inputTokenDetails: {
+    noCacheTokens: 0,
+    cacheReadTokens: 0,
+    cacheWriteTokens: 0,
+  },
+  outputTokenDetails: {
+    textTokens: 0,
+    reasoningTokens: 0,
+  },
+};
+
 // Agent execution within workflows uses registry tools plus native model tools.
 // Workflow registry tools are intentionally excluded to avoid circular
 // dependencies and recursive workflow execution.
@@ -49,6 +68,7 @@ export class AgentAsyncExecutorService {
     private readonly aiModelConfigService: AiModelConfigService,
     private readonly toolRegistry: ToolRegistryService,
     private readonly nativeToolBinder: NativeToolBinderService,
+    private readonly aiBillingService: AiBillingService,
     @InjectRepository(RoleTargetEntity)
     private readonly roleTargetRepository: Repository<RoleTargetEntity>,
     @InjectRepository(WorkspaceEntity)
@@ -106,13 +126,23 @@ export class AgentAsyncExecutorService {
     actorContext,
     rolePermissionConfig,
     authContext,
+    workspaceId,
+    userWorkspaceId,
+    operationType = UsageOperationType.AI_WORKFLOW_TOKEN,
   }: {
     agent: AgentEntity | null;
     userPrompt: string;
     actorContext?: ActorMetadata;
     rolePermissionConfig?: RolePermissionConfig;
     authContext?: WorkspaceAuthContext;
+    workspaceId: string;
+    userWorkspaceId?: string | null;
+    operationType?: UsageOperationType;
   }): Promise<AgentExecutionResult> {
+    let accumulatedUsage: LanguageModelUsage = EMPTY_USAGE;
+    let cacheCreationTokens = 0;
+    let nativeWebSearchCallCount = 0;
+
     try {
       if (agent) {
         const workspace = await this.workspaceRepository.findOneBy({
@@ -212,11 +242,11 @@ export class AgentAsyncExecutorService {
         },
       });
 
-      const cacheCreationTokens = extractCacheCreationTokensFromSteps(
+      accumulatedUsage = textResponse.usage;
+      cacheCreationTokens = extractCacheCreationTokensFromSteps(
         textResponse.steps,
       );
-
-      const nativeWebSearchCallCount = countNativeWebSearchCallsFromSteps(
+      nativeWebSearchCallCount = countNativeWebSearchCallsFromSteps(
         textResponse.steps,
       );
 
@@ -246,6 +276,11 @@ export class AgentAsyncExecutorService {
         experimental_telemetry: AI_TELEMETRY_CONFIG,
       });
 
+      accumulatedUsage = mergeLanguageModelUsage(
+        textResponse.usage,
+        structuredResult.usage,
+      );
+
       if (structuredResult.output == null) {
         throw new AiException(
           'Failed to generate structured output from execution results',
@@ -255,10 +290,7 @@ export class AgentAsyncExecutorService {
 
       return {
         result: structuredResult.output as object,
-        usage: mergeLanguageModelUsage(
-          textResponse.usage,
-          structuredResult.usage,
-        ),
+        usage: accumulatedUsage,
         cacheCreationTokens,
         nativeWebSearchCallCount,
       };
@@ -269,6 +301,21 @@ export class AgentAsyncExecutorService {
       throw new AiException(
         error instanceof Error ? error.message : 'Agent execution failed',
         AiExceptionCode.AGENT_EXECUTION_FAILED,
+      );
+    } finally {
+      this.aiBillingService.calculateAndBillUsage(
+        agent?.modelId ?? AUTO_SELECT_SMART_MODEL_ID,
+        { usage: accumulatedUsage, cacheCreationTokens },
+        workspaceId,
+        operationType,
+        agent?.id ?? null,
+        userWorkspaceId,
+      );
+
+      this.aiBillingService.billNativeWebSearchUsage(
+        nativeWebSearchCallCount,
+        workspaceId,
+        userWorkspaceId,
       );
     }
   }

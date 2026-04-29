@@ -3,6 +3,8 @@
 import { styled } from '@linaria/react';
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 
+import { observeElementVisibility } from '@/lib/dom/observe-element-visibility';
+
 import {
   subscribeToActiveWebGlContextCount,
   tryReserveWebGlContextSlot,
@@ -76,9 +78,10 @@ export function WebGlMount({
       }
     };
 
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
+    const stopObservingVisibility = observeElementVisibility(
+      element,
+      (isIntersecting) => {
+        if (isIntersecting) {
           clearDisposeTimer();
           setIsInViewport(true);
           return;
@@ -93,11 +96,9 @@ export function WebGlMount({
       { root: null, rootMargin: NON_PRIORITY_ROOT_MARGIN, threshold: 0 },
     );
 
-    observer.observe(element);
-
     return () => {
       clearDisposeTimer();
-      observer.disconnect();
+      stopObservingVisibility();
     };
   }, [priority]);
 

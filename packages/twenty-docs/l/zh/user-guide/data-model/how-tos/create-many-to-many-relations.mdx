@@ -53,9 +53,9 @@ People ←→ Project Assignments ←→ Projects
 1. 进入 **设置 → 数据模型**
 2. 点击 **+ 新建对象**
 3. 使用描述性名称（例如，"Project Assignment"、"Team Member"、"Product Order"）
-4. Toggle "Skip creating a Name field" on
+4. 将“跳过创建名称字段”切换为开启
 
-<img src="/images/user-guide/fields/new-pivot-object.png" alt="New pivot object" />
+<img src="/images/user-guide/fields/new-pivot-object.png" alt="新建连接对象" />
 
 5. 单击 **保存**
 
@@ -63,27 +63,27 @@ People ←→ Project Assignments ←→ Projects
 **命名约定**：使用能描述关系的名称，例如 "Project Assignment" 或 "Team Membership"。 这会让数据模型更易理解。
 </Tip>
 
-## Step 2: Create Relations Between Objects and the Junction
+## 第 2 步：在对象与连接对象之间创建关系
 
-Add relation fields from each of your two objects to the junction object.
+从您的两个对象分别向连接对象添加关系字段。
 
-### First Relation (Object A → Junction)
+### 第一条关系（对象 A → 连接对象）
 
-1. Select your first object in **Settings → Data Model**
-2. Click **+ Add Relation**
-3. Select the junction object (e.g., "Project Assignments")
-4. Set the relation type to **One-To-Many** (one person can link to many assignments)
+1. 在 **Settings → Data Model** 中选择您的第一个对象
+2. 单击 **+ 添加关系**
+3. 选择连接对象（例如，"Project Assignments"）
+4. 将关系类型设置为 **One-To-Many**（一个人可以关联到多个分配）
 5. 为这些字段命名：
    * People 上的字段：例如，"Project Assignments"
    * 连接对象上的字段：例如，"Person"
 6. 单击 **保存**
 
-### Second Relation (Object B → Junction)
+### 第二条关系（对象 B → 连接对象）
 
-1. Select your second object in **Settings → Data Model**
-2. Click **+ Add Relation**
-3. Select the junction object (e.g., "Project Assignments")
-4. Set the relation type to **One-To-Many** (one project can link to many assignments)
+1. 在 **Settings → Data Model** 中选择您的第二个对象
+2. 单击 **+ 添加关系**
+3. 选择连接对象（例如，"Project Assignments"）
+4. 将关系类型设置为 **One-To-Many**（一个项目可以关联到多个分配）
 5. 启用 **"This is a relation to a Junction Object"**
 
 <img src="/images/user-guide/fields/junction-relation-toggle.png" style={{width:'100%'}} />
@@ -126,12 +126,12 @@ Add relation fields from each of your two objects to the junction object.
 ### 添加关系
 
 1. **People → Project Assignment**
-   * Type: One-to-Many
+   * 类型：One-to-Many
    * People 上的字段："Project Assignments"
    * Assignment 上的字段："Person"
 
 2. **Projects → Project Assignment**
-   * Type: One-to-Many
+   * 类型：One-to-Many
    * Projects 上的字段："Team Members"
    * Assignment 上的字段："Project"
 

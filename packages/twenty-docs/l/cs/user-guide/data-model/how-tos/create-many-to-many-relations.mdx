@@ -53,9 +53,9 @@ Nejprve vytvořte mezilehlý objekt, který bude uchovávat propojení.
 1. Přejděte do **Nastavení → Datový model**
 2. Klikněte na **+ New object**
 3. Pojmenujte jej výstižně (např. "Project Assignment", "Team Member", "Product Order")
-4. Toggle "Skip creating a Name field" on
+4. Přepněte "Přeskočit vytvoření pole Název" na zapnuto
 
-<img src="/images/user-guide/fields/new-pivot-object.png" alt="New pivot object" />
+<img src="/images/user-guide/fields/new-pivot-object.png" alt="Nový spojovací objekt" />
 
 5. Klikněte na **Uložit**
 
@@ -63,27 +63,27 @@ Nejprve vytvořte mezilehlý objekt, který bude uchovávat propojení.
 **Konvence pojmenování**: Použijte název, který popisuje vztah, například "Project Assignment" nebo "Team Membership". Tím bude datový model srozumitelnější.
 </Tip>
 
-## Step 2: Create Relations Between Objects and the Junction
+## Krok 2: Vytvořte vztahy mezi objekty a spojovacím objektem
 
-Add relation fields from each of your two objects to the junction object.
+Přidejte vztahová pole z obou objektů do spojovacího objektu.
 
-### First Relation (Object A → Junction)
+### První vztah (Objekt A → Junction)
 
-1. Select your first object in **Settings → Data Model**
-2. Click **+ Add Relation**
-3. Select the junction object (e.g., "Project Assignments")
-4. Set the relation type to **One-To-Many** (one person can link to many assignments)
+1. Vyberte svůj první objekt v **Settings → Data Model**
+2. Klikněte na **+ Přidat vztah**
+3. Vyberte spojovací objekt (např. "Project Assignments")
+4. Nastavte typ vztahu na **One-To-Many** (jedna osoba může být propojena s mnoha přiřazeními)
 5. Pojmenujte pole:
    * Pole na People: např. "Project Assignments"
    * Pole na spojovacím objektu: např. "Person"
 6. Klikněte na **Uložit**
 
-### Second Relation (Object B → Junction)
+### Druhý vztah (Objekt B → Junction)
 
-1. Select your second object in **Settings → Data Model**
-2. Click **+ Add Relation**
-3. Select the junction object (e.g., "Project Assignments")
-4. Set the relation type to **One-To-Many** (one project can link to many assignments)
+1. Vyberte svůj druhý objekt v **Settings → Data Model**
+2. Klikněte na **+ Přidat vztah**
+3. Vyberte spojovací objekt (např. "Project Assignments")
+4. Nastavte typ vztahu na **One-To-Many** (jeden projekt může být propojen s mnoha přiřazeními)
 5. Povolte **"This is a relation to a Junction Object"**
 
 <img src="/images/user-guide/fields/junction-relation-toggle.png" style={{width:'100%'}} />
@@ -126,12 +126,12 @@ Zde je kompletní postup:
 ### Přidejte vztahy
 
 1. **People → Project Assignment**
-   * Type: One-to-Many
+   * Typ: One-to-Many
    * Pole na People: "Project Assignments"
    * Pole na Assignment: "Person"
 
 2. **Projects → Project Assignment**
-   * Type: One-to-Many
+   * Typ: One-to-Many
    * Pole na Projects: "Team Members"
    * Pole na Assignment: "Project"
 
