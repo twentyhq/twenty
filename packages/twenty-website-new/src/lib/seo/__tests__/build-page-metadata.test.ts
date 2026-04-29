@@ -19,6 +19,7 @@ describe('buildPageMetadata', () => {
       description: 'Product page description.',
     });
 
+    expect(metadata.title).toEqual({ absolute: 'Product | Twenty' });
     expect(metadata.alternates).toMatchObject({ canonical: '/product' });
     expect(metadata.openGraph).toMatchObject({
       title: 'Product | Twenty',
@@ -35,7 +36,7 @@ describe('buildPageMetadata', () => {
     });
   });
 
-  it('emits a prefixed canonical for non-default locales', () => {
+  it('falls back to the source canonical for locales the website does not publish', () => {
     const metadata = buildPageMetadata({
       locale: 'fr-FR',
       path: '/product',
@@ -43,10 +44,11 @@ describe('buildPageMetadata', () => {
       description: 'd',
     });
 
-    expect(metadata.alternates).toMatchObject({ canonical: '/fr-FR/product' });
+    expect(metadata.alternates).toMatchObject({ canonical: '/product' });
+    expect(metadata.openGraph).toMatchObject({ locale: 'en' });
   });
 
-  it('emits hreflang language alternates: English unprefixed, others prefixed, x-default unprefixed', () => {
+  it('emits hreflang alternates only for published website locales', () => {
     const metadata = buildPageMetadata({
       locale: 'fr-FR',
       path: '/pricing',
@@ -58,8 +60,8 @@ describe('buildPageMetadata', () => {
       | Record<string, string>
       | undefined;
     expect(languages?.en).toBe('/pricing');
-    expect(languages?.['fr-FR']).toBe('/fr-FR/pricing');
-    expect(languages?.['zh-CN']).toBe('/zh-CN/pricing');
+    expect(languages?.['fr-FR']).toBeUndefined();
+    expect(languages?.['zh-CN']).toBeUndefined();
     expect(languages?.['x-default']).toBe('/pricing');
   });
 
@@ -85,11 +87,11 @@ describe('buildPageMetadata', () => {
       description: 'd',
     });
 
-    expect(metadata.alternates).toMatchObject({ canonical: '/de-DE' });
+    expect(metadata.alternates).toMatchObject({ canonical: '/' });
     const languages = metadata.alternates?.languages as
       | Record<string, string>
       | undefined;
-    expect(languages?.['de-DE']).toBe('/de-DE');
+    expect(languages?.['de-DE']).toBeUndefined();
     expect(languages?.en).toBe('/');
     expect(languages?.['x-default']).toBe('/');
   });

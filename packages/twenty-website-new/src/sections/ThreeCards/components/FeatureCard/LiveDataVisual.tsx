@@ -1,5 +1,7 @@
 'use client';
 
+import { createAnimationFrameLoop } from '@/lib/animation';
+import { useTimeoutRegistry } from '@/lib/react';
 import { WebGlMount } from '@/lib/visual-runtime';
 import { useScaleToFit } from '@/sections/ThreeCards/utils/use-scale-to-fit';
 import { theme } from '@/theme';
@@ -719,6 +721,7 @@ export function LiveDataVisual({
   const typeFilterRef = useRef<HTMLDivElement>(null);
   const employeesFilterRef = useRef<HTMLDivElement>(null);
   const sceneScale = useScaleToFit(rootRef, SCENE_WIDTH, SCENE_HEIGHT);
+  const timeoutRegistry = useTimeoutRegistry();
   const [isBobHovered, setIsBobHovered] = useState(false);
   const [isTomHovered, setIsTomHovered] = useState(false);
   const [phase, setPhase] = useState<LiveDataPhase>('idle');
@@ -734,42 +737,46 @@ export function LiveDataVisual({
       return;
     }
 
-    const timeoutIds: number[] = [];
+    const cancelSequenceSteps: Array<() => void> = [];
     setPhase('move-to-tag');
 
     for (const step of LIVE_DATA_SEQUENCE.slice(1)) {
-      const timeoutId = window.setTimeout(() => {
-        setPhase(step.phase);
-      }, step.delay);
-
-      timeoutIds.push(timeoutId);
+      cancelSequenceSteps.push(
+        timeoutRegistry.schedule(() => {
+          setPhase(step.phase);
+        }, step.delay),
+      );
     }
 
     return () => {
-      for (const timeoutId of timeoutIds) {
-        window.clearTimeout(timeoutId);
-      }
+      cancelSequenceSteps.forEach((cancelSequenceStep) => cancelSequenceStep());
     };
-  }, [active]);
+  }, [active, timeoutRegistry]);
 
   useEffect(() => {
     if (phase === 'rename-tag') {
       setTypedTagLabel(EDITED_TAG_LABEL.slice(0, 1));
 
       let nextIndex = 2;
-      const intervalId = window.setInterval(() => {
-        setTypedTagLabel(EDITED_TAG_LABEL.slice(0, nextIndex));
+      const cancelTypingSteps: Array<() => void> = [];
 
-        if (nextIndex >= EDITED_TAG_LABEL.length) {
-          window.clearInterval(intervalId);
-          return;
-        }
+      const scheduleNextTypingStep = () => {
+        const cancelTypingStep = timeoutRegistry.schedule(() => {
+          setTypedTagLabel(EDITED_TAG_LABEL.slice(0, nextIndex));
+          nextIndex += 1;
 
-        nextIndex += 1;
-      }, TYPING_STEP_MS);
+          if (nextIndex <= EDITED_TAG_LABEL.length) {
+            scheduleNextTypingStep();
+          }
+        }, TYPING_STEP_MS);
+
+        cancelTypingSteps.push(cancelTypingStep);
+      };
+
+      scheduleNextTypingStep();
 
       return () => {
-        window.clearInterval(intervalId);
+        cancelTypingSteps.forEach((cancelTypingStep) => cancelTypingStep());
       };
     }
 
@@ -786,10 +793,16 @@ export function LiveDataVisual({
     }
 
     setTypedTagLabel('');
-  }, [phase]);
+  }, [phase, timeoutRegistry]);
 
   useEffect(() => {
+    let isMounted = true;
+
     const measureAddFilterLefts = () => {
+      if (!isMounted) {
+        return;
+      }
+
       const typeFilter = typeFilterRef.current;
       const employeesFilter = employeesFilterRef.current;
 
@@ -817,12 +830,20 @@ export function LiveDataVisual({
       );
     };
 
-    const frameId = window.requestAnimationFrame(measureAddFilterLefts);
+    const measureTask = createAnimationFrameLoop({
+      onFrame: () => {
+        measureAddFilterLefts();
+        return false;
+      },
+    });
+
+    measureTask.start();
     window.addEventListener('resize', measureAddFilterLefts);
     void document.fonts?.ready.then(measureAddFilterLefts);
 
     return () => {
-      window.cancelAnimationFrame(frameId);
+      isMounted = false;
+      measureTask.stop();
       window.removeEventListener('resize', measureAddFilterLefts);
     };
   }, []);

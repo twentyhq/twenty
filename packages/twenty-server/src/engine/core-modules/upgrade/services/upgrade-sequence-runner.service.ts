@@ -69,12 +69,14 @@ export class UpgradeSequenceRunnerService {
 
       if (step.kind === 'fast-instance' || step.kind === 'slow-instance') {
         if (
-          isDefined(options.workspaceIds) &&
-          options.workspaceIds.length > 0
+          (isDefined(options.workspaceIds) &&
+            options.workspaceIds.length > 0) ||
+          isDefined(options.startFromWorkspaceId) ||
+          isDefined(options.workspaceCountLimit)
         ) {
           this.logger.log(
             `Stopping before instance step "${step.name}": ` +
-              'upgrade was run with workspace filter (-w). ' +
+              'upgrade was run with a workspace filter (-w, --start-from-workspace-id, or --workspace-count-limit). ' +
               'Instance commands require all workspaces to be aligned.',
           );
 
@@ -303,15 +305,13 @@ export class UpgradeSequenceRunnerService {
     allActiveOrSuspendedWorkspaceIds: string[];
     options: ParsedUpgradeCommandOptions;
   }): Promise<WorkspaceIteratorReport> {
-    const workspaceIds =
-      isDefined(options.workspaceIds) && options.workspaceIds.length > 0
-        ? options.workspaceIds
-        : allActiveOrSuspendedWorkspaceIds;
+    const workspaceIds = this.deriveWorkspaceIdsToProcess({
+      allActiveOrSuspendedWorkspaceIds,
+      options,
+    });
 
     return this.workspaceIteratorService.iterate({
       workspaceIds,
-      startFromWorkspaceId: options.startFromWorkspaceId,
-      workspaceCountLimit: options.workspaceCountLimit,
       dryRun: options.dryRun,
       callback: async (context) => {
         const workspaceCursor = workspaceCursors.get(context.workspaceId);
@@ -335,6 +335,32 @@ export class UpgradeSequenceRunnerService {
         });
       },
     });
+  }
+
+  private deriveWorkspaceIdsToProcess({
+    allActiveOrSuspendedWorkspaceIds,
+    options,
+  }: {
+    allActiveOrSuspendedWorkspaceIds: string[];
+    options: ParsedUpgradeCommandOptions;
+  }): string[] {
+    if (isDefined(options.workspaceIds) && options.workspaceIds.length > 0) {
+      return options.workspaceIds;
+    }
+
+    let workspaceIds = allActiveOrSuspendedWorkspaceIds;
+
+    if (isDefined(options.startFromWorkspaceId)) {
+      workspaceIds = workspaceIds.filter(
+        (id) => id >= options.startFromWorkspaceId!,
+      );
+    }
+
+    if (isDefined(options.workspaceCountLimit)) {
+      workspaceIds = workspaceIds.slice(0, options.workspaceCountLimit);
+    }
+
+    return workspaceIds;
   }
 
   private enforceWorkspacesCompletedPreviousWorkspaceSegment({

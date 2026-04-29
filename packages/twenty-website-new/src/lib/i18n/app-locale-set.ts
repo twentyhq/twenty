@@ -1,14 +1,30 @@
-import { APP_LOCALES, type AppLocale } from 'twenty-shared/translations';
+import {
+  APP_LOCALES,
+  SOURCE_LOCALE,
+  type AppLocale,
+} from 'twenty-shared/translations';
 
 const APP_LOCALE_VALUES: readonly AppLocale[] = Object.values(APP_LOCALES);
 
-export const isPublicAppLocale = (locale: AppLocale): boolean =>
+const isKnownPublicLocale = (locale: AppLocale): boolean =>
   !locale.startsWith('pseudo-');
+
+export const KNOWN_PUBLIC_APP_LOCALE_LIST: readonly AppLocale[] =
+  APP_LOCALE_VALUES.filter(isKnownPublicLocale);
+
+export const WEBSITE_LOCALE_LIST: readonly AppLocale[] = [SOURCE_LOCALE];
+
+const WEBSITE_LOCALE_SET: ReadonlySet<AppLocale> = new Set(WEBSITE_LOCALE_LIST);
+
+export const isPublicAppLocale = (locale: AppLocale): boolean =>
+  WEBSITE_LOCALE_SET.has(locale);
 
 export const APP_LOCALE_LIST: readonly AppLocale[] = APP_LOCALE_VALUES;
 
-export const PUBLIC_APP_LOCALE_LIST: readonly AppLocale[] =
-  APP_LOCALE_VALUES.filter(isPublicAppLocale);
+export const PUBLIC_APP_LOCALE_LIST: readonly AppLocale[] = WEBSITE_LOCALE_LIST;
+
+export const KNOWN_PUBLIC_APP_LOCALE_BY_RAW: ReadonlyMap<string, AppLocale> =
+  new Map(KNOWN_PUBLIC_APP_LOCALE_LIST.map((locale) => [locale, locale]));
 
 export const APP_LOCALE_BY_RAW: ReadonlyMap<string, AppLocale> = new Map(
   PUBLIC_APP_LOCALE_LIST.map((locale) => [locale, locale]),
