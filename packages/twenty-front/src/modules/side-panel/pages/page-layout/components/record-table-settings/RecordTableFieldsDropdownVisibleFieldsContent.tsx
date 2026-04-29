@@ -21,7 +21,10 @@ type RecordTableFieldsDropdownVisibleFieldsContentProps = {
   objectMetadataId: string;
   recordIndexId: string;
   onShowHiddenFields: () => void;
-  onFieldUpdated?: (viewFieldId: string, update: Partial<{ position: number; isVisible: boolean }>) => void;
+  onFieldUpdated?: (
+    viewFieldId: string,
+    update: Partial<{ position: number; isVisible: boolean }>,
+  ) => void;
 };
 
 export const RecordTableFieldsDropdownVisibleFieldsContent = ({

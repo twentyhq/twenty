@@ -9,7 +9,10 @@ import { useState } from 'react';
 type RecordTableFieldsDropdownContentProps = {
   viewId: string;
   objectMetadataId: string;
-  onFieldUpdated?: (viewFieldId: string, update: Partial<{ position: number; isVisible: boolean }>) => void;
+  onFieldUpdated?: (
+    viewFieldId: string,
+    update: Partial<{ position: number; isVisible: boolean }>,
+  ) => void;
   onFieldCreated?: (recordField: RecordField) => void;
 };
 

@@ -20,7 +20,10 @@ type RecordTableFieldsDropdownHiddenFieldsContentProps = {
   objectMetadataId: string;
   recordIndexId: string;
   onBack: () => void;
-  onFieldUpdated?: (viewFieldId: string, update: Partial<{ isVisible: boolean }>) => void;
+  onFieldUpdated?: (
+    viewFieldId: string,
+    update: Partial<{ isVisible: boolean }>,
+  ) => void;
   onFieldCreated?: (recordField: RecordField) => void;
 };
 
