@@ -379,14 +379,23 @@ export const computeApplicationManifestAllUniversalFlatEntityMaps = ({
           allUniversalFlatEntityMaps.flatPageLayoutTabMaps,
       });
 
-      for (const pageLayoutWidgetManifest of pageLayoutTabManifest.widgets ??
-        []) {
+      const widgets = pageLayoutTabManifest.widgets ?? [];
+
+      for (
+        let widgetIndexInTab = 0;
+        widgetIndexInTab < widgets.length;
+        widgetIndexInTab++
+      ) {
+        const pageLayoutWidgetManifest = widgets[widgetIndexInTab];
+
         addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
           universalFlatEntity:
             fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget({
               pageLayoutWidgetManifest,
               pageLayoutTabUniversalIdentifier:
                 pageLayoutTabManifest.universalIdentifier,
+              pageLayoutTabLayoutMode: pageLayoutTabManifest.layoutMode,
+              widgetIndexInTab,
               applicationUniversalIdentifier,
               now,
             }),
@@ -417,14 +426,23 @@ export const computeApplicationManifestAllUniversalFlatEntityMaps = ({
         allUniversalFlatEntityMaps.flatPageLayoutTabMaps,
     });
 
-    for (const pageLayoutWidgetManifest of pageLayoutTabManifest.widgets ??
-      []) {
+    const widgets = pageLayoutTabManifest.widgets ?? [];
+
+    for (
+      let widgetIndexInTab = 0;
+      widgetIndexInTab < widgets.length;
+      widgetIndexInTab++
+    ) {
+      const pageLayoutWidgetManifest = widgets[widgetIndexInTab];
+
       addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
         universalFlatEntity:
           fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget({
             pageLayoutWidgetManifest,
             pageLayoutTabUniversalIdentifier:
               pageLayoutTabManifest.universalIdentifier,
+            pageLayoutTabLayoutMode: pageLayoutTabManifest.layoutMode,
+            widgetIndexInTab,
             applicationUniversalIdentifier,
             now,
           }),

@@ -11,7 +11,7 @@ export type PageLayoutWidgetManifest = SyncableEntityOptions & {
   type: string;
   objectUniversalIdentifier?: string;
   conditionalDisplay?: PageLayoutWidgetConditionalDisplay;
-  position: PageLayoutWidgetPosition;
+  position?: PageLayoutWidgetPosition;
   configuration: PageLayoutWidgetUniversalConfiguration;
 };
 

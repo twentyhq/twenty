@@ -117,7 +117,6 @@ export {
   ViewVisibility,
 } from 'twenty-shared/types';
 export type {
-  GridPosition,
   PageLayoutWidgetConditionalDisplay,
   PageLayoutWidgetUniversalConfiguration,
 } from 'twenty-shared/types';

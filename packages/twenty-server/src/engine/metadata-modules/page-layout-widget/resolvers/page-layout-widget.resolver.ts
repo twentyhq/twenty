@@ -14,20 +14,24 @@ import {
 } from '@nestjs/graphql';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
+import { PageLayoutTabLayoutMode } from 'twenty-shared/types';
 
+import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { type I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { CreatePageLayoutWidgetInput } from 'src/engine/metadata-modules/page-layout-widget/dtos/inputs/create-page-layout-widget.input';
 import { UpdatePageLayoutWidgetInput } from 'src/engine/metadata-modules/page-layout-widget/dtos/inputs/update-page-layout-widget.input';
-import { PageLayoutWidgetDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/page-layout-widget.dto';
+import {
+  GridPositionDTO,
+  PageLayoutWidgetDTO,
+} from 'src/engine/metadata-modules/page-layout-widget/dtos/page-layout-widget.dto';
 import { WidgetConfiguration } from 'src/engine/metadata-modules/page-layout-widget/dtos/widget-configuration.interface';
 import { PageLayoutWidgetService } from 'src/engine/metadata-modules/page-layout-widget/services/page-layout-widget.service';
 import { resolvePageLayoutWidgetTitle } from 'src/engine/metadata-modules/page-layout-widget/utils/resolve-page-layout-widget-title.util';
@@ -133,5 +137,19 @@ export class PageLayoutWidgetResolver {
   @ResolveField(() => WidgetConfiguration, { nullable: true })
   configuration(@Parent() widget: PageLayoutWidgetDTO) {
     return widget.configuration;
+  }
+
+  @ResolveField(() => GridPositionDTO)
+  gridPosition(@Parent() widget: PageLayoutWidgetDTO): GridPositionDTO {
+    if (widget.position?.layoutMode === PageLayoutTabLayoutMode.GRID) {
+      return {
+        row: widget.position.row,
+        column: widget.position.column,
+        rowSpan: widget.position.rowSpan,
+        columnSpan: widget.position.columnSpan,
+      };
+    }
+
+    return { row: 0, column: 0, rowSpan: 1, columnSpan: 1 };
   }
 }

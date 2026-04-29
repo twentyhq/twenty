@@ -21,6 +21,21 @@ import { AllPageLayoutWidgetConfiguration } from 'src/engine/metadata-modules/pa
 
 registerEnumType(WidgetType, { name: 'WidgetType' });
 
+@ObjectType('GridPosition')
+export class GridPositionDTO {
+  @Field()
+  row: number;
+
+  @Field()
+  column: number;
+
+  @Field()
+  rowSpan: number;
+
+  @Field()
+  columnSpan: number;
+}
+
 @ObjectType('PageLayoutWidget')
 export class PageLayoutWidgetDTO {
   @IDField(() => UUIDScalarType)
@@ -40,6 +55,15 @@ export class PageLayoutWidgetDTO {
 
   @Field(() => UUIDScalarType, { nullable: true })
   objectMetadataId?: string;
+
+  // Resolved from `position` by the resolver — kept on the schema for legacy
+  // clients still querying `gridPosition`.
+  @Field(() => GridPositionDTO, {
+    nullable: false,
+    deprecationReason:
+      'Use `position` instead. Will be removed in a future release.',
+  })
+  gridPosition?: GridPositionDTO;
 
   @Field(() => PageLayoutWidgetPositionUnion, { nullable: false })
   position: PageLayoutWidgetPosition;

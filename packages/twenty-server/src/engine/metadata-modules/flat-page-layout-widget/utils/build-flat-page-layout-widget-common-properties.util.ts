@@ -44,6 +44,8 @@ export const buildFlatPageLayoutWidgetCommonProperties = ({
     type: widgetInput.type,
     objectMetadataId: widgetInput.objectMetadataId ?? null,
     objectMetadataUniversalIdentifier,
-    position: widgetInput.position,
+    // Validator rejects flat widgets with no position; passing undefined here
+    // is just a transient state surfaced through normal validation.
+    position: widgetInput.position!,
   };
 };

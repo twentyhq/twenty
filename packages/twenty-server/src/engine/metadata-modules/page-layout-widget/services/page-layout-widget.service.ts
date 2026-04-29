@@ -28,6 +28,7 @@ import {
 } from 'src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget.exception';
 import { type AllPageLayoutWidgetConfiguration } from 'src/engine/metadata-modules/page-layout-widget/types/all-page-layout-widget-configuration.type';
 import { fromFlatPageLayoutWidgetToPageLayoutWidgetDto } from 'src/engine/metadata-modules/page-layout-widget/utils/from-flat-page-layout-widget-to-page-layout-widget-dto.util';
+import { normalizePageLayoutWidgetInputPosition } from 'src/engine/metadata-modules/page-layout-widget/utils/normalize-page-layout-widget-input-position.util';
 import { validateChartConfigurationFieldReferencesOrThrow } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-chart-configuration-field-references.util';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
@@ -209,14 +210,16 @@ export class PageLayoutWidgetService {
     input: CreatePageLayoutWidgetInput;
     workspaceId: string;
   }): Promise<PageLayoutWidgetDTO> {
-    const createInput = isDefined(input.configuration)
+    const normalizedInput = normalizePageLayoutWidgetInputPosition(input);
+
+    const createInput = isDefined(normalizedInput.configuration)
       ? {
-          ...input,
+          ...normalizedInput,
           configuration: await this.enrichRichTextConfigurationBody(
-            input.configuration,
+            normalizedInput.configuration,
           ),
         }
-      : input;
+      : normalizedInput;
 
     const { workspaceCustomFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
@@ -340,20 +343,23 @@ export class PageLayoutWidgetService {
       ),
     ]);
 
+    const normalizedUpdateData =
+      normalizePageLayoutWidgetInputPosition(updateData);
+
     const isConfigurationBeingUpdated = Object.prototype.hasOwnProperty.call(
-      updateData,
+      normalizedUpdateData,
       'configuration',
     );
 
     const processedUpdateData =
-      isConfigurationBeingUpdated && isDefined(updateData.configuration)
+      isConfigurationBeingUpdated && isDefined(normalizedUpdateData.configuration)
         ? {
-            ...updateData,
+            ...normalizedUpdateData,
             configuration: await this.enrichRichTextConfigurationBody(
-              updateData.configuration,
+              normalizedUpdateData.configuration,
             ),
           }
-        : updateData;
+        : normalizedUpdateData;
 
     const updatePageLayoutWidgetInput: UpdatePageLayoutWidgetInputWithId = {
       id,

@@ -25,6 +25,7 @@ import { reconstructFlatPageLayoutWithTabsAndWidgets } from 'src/engine/metadata
 import { UpdatePageLayoutTabWithWidgetsInput } from 'src/engine/metadata-modules/page-layout-tab/dtos/inputs/update-page-layout-tab-with-widgets.input';
 import { UpdatePageLayoutWidgetWithIdInput } from 'src/engine/metadata-modules/page-layout-widget/dtos/inputs/update-page-layout-widget-with-id.input';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
+import { normalizePageLayoutWidgetInputPosition } from 'src/engine/metadata-modules/page-layout-widget/utils/normalize-page-layout-widget-input-position.util';
 import { validateChartConfigurationFieldReferencesOrThrow } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-chart-configuration-field-references.util';
 import { UpdatePageLayoutWithTabsInput } from 'src/engine/metadata-modules/page-layout/dtos/inputs/update-page-layout-with-tabs.input';
 import { PageLayoutDTO } from 'src/engine/metadata-modules/page-layout/dtos/page-layout.dto';
@@ -476,10 +477,17 @@ export class PageLayoutUpdateService {
     );
 
     for (const tabInput of tabs) {
+      const normalizedWidgets = tabInput.widgets.map(
+        (widget) =>
+          normalizePageLayoutWidgetInputPosition(
+            widget,
+          ) as UpdatePageLayoutWidgetWithIdInput,
+      );
+
       const { widgetsToCreate, widgetsToUpdate, widgetsToDelete } =
         this.computeWidgetOperationsForTab({
           tabId: tabInput.id,
-          widgets: tabInput.widgets,
+          widgets: normalizedWidgets,
           widgetIdsAcrossAllTabs,
           flatPageLayoutWidgetMaps,
           flatPageLayoutTabMaps,

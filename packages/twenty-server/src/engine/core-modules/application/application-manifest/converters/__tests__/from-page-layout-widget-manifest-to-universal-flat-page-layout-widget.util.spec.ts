@@ -18,6 +18,8 @@ describe('fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget', () => {
         configuration: { configurationType: 'VIEW' },
       },
       pageLayoutTabUniversalIdentifier,
+      pageLayoutTabLayoutMode: PageLayoutTabLayoutMode.CANVAS,
+      widgetIndexInTab: 0,
       applicationUniversalIdentifier,
       now,
     });
@@ -61,6 +63,8 @@ describe('fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget', () => {
         },
       },
       pageLayoutTabUniversalIdentifier,
+      pageLayoutTabLayoutMode: PageLayoutTabLayoutMode.GRID,
+      widgetIndexInTab: 0,
       applicationUniversalIdentifier,
       now,
     });
@@ -94,6 +98,8 @@ describe('fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget', () => {
         configuration: { configurationType: 'VIEW' },
       },
       pageLayoutTabUniversalIdentifier,
+      pageLayoutTabLayoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+      widgetIndexInTab: 0,
       applicationUniversalIdentifier,
       now,
     });
@@ -101,6 +107,121 @@ describe('fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget', () => {
     expect(result.position).toEqual({
       layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
       index: 2,
+    });
+  });
+
+  it('should default position to a CANVAS shape when manifest position is missing on a CANVAS tab', () => {
+    const result = fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget({
+      pageLayoutWidgetManifest: {
+        universalIdentifier: 'widget-uuid-4',
+        title: 'Front Component Widget',
+        type: 'FRONT_COMPONENT',
+        configuration: {
+          configurationType: 'FRONT_COMPONENT',
+          frontComponentUniversalIdentifier: 'fc-uuid-1',
+        },
+      },
+      pageLayoutTabUniversalIdentifier,
+      pageLayoutTabLayoutMode: PageLayoutTabLayoutMode.CANVAS,
+      widgetIndexInTab: 0,
+      applicationUniversalIdentifier,
+      now,
+    });
+
+    expect(result.position).toEqual({
+      layoutMode: PageLayoutTabLayoutMode.CANVAS,
+    });
+  });
+
+  it('should default position to a VERTICAL_LIST shape using the widget index when missing', () => {
+    const result = fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget({
+      pageLayoutWidgetManifest: {
+        universalIdentifier: 'widget-uuid-5',
+        title: 'Vertical List Widget',
+        type: WidgetType.VIEW,
+        configuration: { configurationType: 'VIEW' },
+      },
+      pageLayoutTabUniversalIdentifier,
+      pageLayoutTabLayoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+      widgetIndexInTab: 3,
+      applicationUniversalIdentifier,
+      now,
+    });
+
+    expect(result.position).toEqual({
+      layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+      index: 3,
+    });
+  });
+
+  it('should default position to a GRID shape when missing and tab layoutMode is unspecified', () => {
+    const result = fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget({
+      pageLayoutWidgetManifest: {
+        universalIdentifier: 'widget-uuid-6',
+        title: 'Grid Default Widget',
+        type: WidgetType.VIEW,
+        configuration: { configurationType: 'VIEW' },
+      },
+      pageLayoutTabUniversalIdentifier,
+      widgetIndexInTab: 0,
+      applicationUniversalIdentifier,
+      now,
+    });
+
+    expect(result.position).toEqual({
+      layoutMode: PageLayoutTabLayoutMode.GRID,
+      row: 0,
+      column: 0,
+      rowSpan: 1,
+      columnSpan: 1,
+    });
+  });
+
+  it('should advance the GRID default column by widgetIndexInTab', () => {
+    const result = fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget({
+      pageLayoutWidgetManifest: {
+        universalIdentifier: 'widget-uuid-7',
+        title: 'Grid Default Widget Index 5',
+        type: WidgetType.VIEW,
+        configuration: { configurationType: 'VIEW' },
+      },
+      pageLayoutTabUniversalIdentifier,
+      pageLayoutTabLayoutMode: PageLayoutTabLayoutMode.GRID,
+      widgetIndexInTab: 5,
+      applicationUniversalIdentifier,
+      now,
+    });
+
+    expect(result.position).toEqual({
+      layoutMode: PageLayoutTabLayoutMode.GRID,
+      row: 0,
+      column: 5,
+      rowSpan: 1,
+      columnSpan: 1,
+    });
+  });
+
+  it('should wrap GRID defaults to the next row past the column limit', () => {
+    const result = fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget({
+      pageLayoutWidgetManifest: {
+        universalIdentifier: 'widget-uuid-8',
+        title: 'Grid Default Widget Wrapping',
+        type: WidgetType.VIEW,
+        configuration: { configurationType: 'VIEW' },
+      },
+      pageLayoutTabUniversalIdentifier,
+      pageLayoutTabLayoutMode: PageLayoutTabLayoutMode.GRID,
+      widgetIndexInTab: 13,
+      applicationUniversalIdentifier,
+      now,
+    });
+
+    expect(result.position).toEqual({
+      layoutMode: PageLayoutTabLayoutMode.GRID,
+      row: 1,
+      column: 1,
+      rowSpan: 1,
+      columnSpan: 1,
     });
   });
 });
