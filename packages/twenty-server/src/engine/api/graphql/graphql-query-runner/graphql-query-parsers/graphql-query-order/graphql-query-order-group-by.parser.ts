@@ -45,6 +45,7 @@ export class GraphqlQueryOrderGroupByParser {
   private flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   private flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
   private fieldIdByName: Record<string, string>;
+  private fieldIdByJoinColumnName: Record<string, string>;
 
   constructor(
     flatObjectMetadata: FlatObjectMetadata,
@@ -61,6 +62,7 @@ export class GraphqlQueryOrderGroupByParser {
     );
 
     this.fieldIdByName = fieldMaps.fieldIdByName;
+    this.fieldIdByJoinColumnName = fieldMaps.fieldIdByJoinColumnName;
   }
 
   parse({
@@ -99,7 +101,9 @@ export class GraphqlQueryOrderGroupByParser {
       }
 
       const fieldName = Object.keys(orderByArg)[0];
-      const fieldMetadataId = this.fieldIdByName[fieldName];
+      const fieldMetadataId =
+        this.fieldIdByName[fieldName] ||
+        this.fieldIdByJoinColumnName[fieldName];
       const fieldMetadata = findFlatEntityByIdInFlatEntityMaps({
         flatEntityId: fieldMetadataId,
         flatEntityMaps: this.flatFieldMetadataMaps,
