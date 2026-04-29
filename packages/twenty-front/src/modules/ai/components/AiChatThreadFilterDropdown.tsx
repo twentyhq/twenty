@@ -4,11 +4,9 @@ import { IconAdjustments } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
 
 import { AiChatThreadFilterDropdownContent } from '@/ai/components/AiChatThreadFilterDropdownContent';
-import { type AiChatThreadActionsSurface } from '@/ai/constants/AiChatThreadActionsSurface';
-import {
-  AI_CHAT_THREAD_FILTER_DROPDOWN_PAGE,
-  type AiChatThreadFilterDropdownPage,
-} from '@/ai/constants/AiChatThreadFilterDropdownPage';
+import { AI_CHAT_THREAD_FILTER_DROPDOWN_PAGE } from '@/ai/constants/AiChatThreadFilterDropdownPage';
+import { type AiChatThreadActionsSurface } from '@/ai/types/AiChatThreadActionsSurface';
+import { type AiChatThreadFilterDropdownPage } from '@/ai/types/AiChatThreadFilterDropdownPage';
 import { getAiChatThreadFilterDropdownId } from '@/ai/utils/getAiChatThreadFilterDropdownId';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 

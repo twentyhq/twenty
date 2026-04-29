@@ -12,18 +12,8 @@ export type AgentChatThreadDateGroup = {
 const getLocalDayDifference = (date: Date, today: Date) =>
   differenceInCalendarDays(today, date);
 
-const getLocalDateGroupId = (date: Date) =>
-  `date:${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
-
 const getMonthGroupId = (date: Date) =>
   `month:${date.getFullYear()}-${date.getMonth() + 1}`;
-
-const formatDateGroupTitle = (date: Date, today: Date) =>
-  new Intl.DateTimeFormat(undefined, {
-    day: 'numeric',
-    month: 'short',
-    ...(date.getFullYear() === today.getFullYear() ? {} : { year: 'numeric' }),
-  }).format(date);
 
 const formatMonthGroupTitle = (date: Date) =>
   new Intl.DateTimeFormat(undefined, {
@@ -32,10 +22,10 @@ const formatMonthGroupTitle = (date: Date) =>
   }).format(date);
 
 const getThreadDateGroup = (
-  threadUpdatedAt: Date,
+  threadActivityAt: Date,
   today: Date,
 ): Omit<AgentChatThreadDateGroup, 'threads'> => {
-  const localDayDifference = getLocalDayDifference(threadUpdatedAt, today);
+  const localDayDifference = getLocalDayDifference(threadActivityAt, today);
 
   if (localDayDifference === 0) {
     return {
@@ -53,14 +43,14 @@ const getThreadDateGroup = (
 
   if (localDayDifference >= 2 && localDayDifference <= 7) {
     return {
-      id: getLocalDateGroupId(threadUpdatedAt),
-      title: formatDateGroupTitle(threadUpdatedAt, today),
+      id: 'previous-7-days',
+      title: t`Previous 7 days`,
     };
   }
 
   return {
-    id: getMonthGroupId(threadUpdatedAt),
-    title: formatMonthGroupTitle(threadUpdatedAt),
+    id: getMonthGroupId(threadActivityAt),
+    title: formatMonthGroupTitle(threadActivityAt),
   };
 };
 
@@ -71,10 +61,8 @@ export const groupThreadsByDate = (
   const groupedThreadsByDate = new Map<string, AgentChatThreadDateGroup>();
 
   for (const thread of threads) {
-    // TODO: use a dedicated conversation activity timestamp once available;
-    // updatedAt also changes for archive/unarchive metadata updates.
     const threadDateGroup = getThreadDateGroup(
-      new Date(thread.updatedAt),
+      new Date(thread.lastMessageAt ?? thread.updatedAt),
       today,
     );
     const existingThreadDateGroup = groupedThreadsByDate.get(

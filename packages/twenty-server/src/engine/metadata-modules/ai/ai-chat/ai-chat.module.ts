@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { SortDirection } from '@ptc-org/nestjs-query-core';
+import { SortDirection, SortNulls } from '@ptc-org/nestjs-query-core';
 import {
   NestjsQueryGraphQLModule,
   PagingStrategies,
@@ -66,6 +66,11 @@ import { SystemPromptBuilderService } from './services/system-prompt-builder.ser
           pagingStrategy: PagingStrategies.CURSOR,
           read: {
             defaultSort: [
+              {
+                field: 'lastMessageAt',
+                direction: SortDirection.DESC,
+                nulls: SortNulls.NULLS_LAST,
+              },
               { field: 'updatedAt', direction: SortDirection.DESC },
             ],
             one: { disabled: true },

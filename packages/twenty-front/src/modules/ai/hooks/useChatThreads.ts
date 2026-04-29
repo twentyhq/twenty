@@ -1,7 +1,7 @@
 import { useAtomValue } from 'jotai';
 
 import { agentChatVisibleThreadsSelector } from '@/ai/states/selectors/agentChatVisibleThreadsSelector';
-import { sortChatThreadsByUpdatedAtDesc } from '@/ai/utils/sortChatThreadsByUpdatedAtDesc';
+import { sortChatThreadsByLastActivityDesc } from '@/ai/utils/sortChatThreadsByLastActivityDesc';
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
@@ -14,7 +14,7 @@ export const useChatThreads = () => {
   );
 
   return {
-    threads: sortChatThreadsByUpdatedAtDesc(agentChatVisibleThreads),
+    threads: sortChatThreadsByLastActivityDesc(agentChatVisibleThreads),
     hasNextPage: false,
     loading: storeEntry.status === 'empty',
     fetchMoreRef: undefined,

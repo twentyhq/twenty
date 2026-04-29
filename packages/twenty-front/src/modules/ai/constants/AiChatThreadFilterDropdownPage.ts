@@ -4,6 +4,3 @@ export const AI_CHAT_THREAD_FILTER_DROPDOWN_PAGE = {
   GROUP_BY: 'groupBy',
   LAST_ACTIVITY: 'lastActivity',
 } as const;
-
-export type AiChatThreadFilterDropdownPage =
-  (typeof AI_CHAT_THREAD_FILTER_DROPDOWN_PAGE)[keyof typeof AI_CHAT_THREAD_FILTER_DROPDOWN_PAGE];

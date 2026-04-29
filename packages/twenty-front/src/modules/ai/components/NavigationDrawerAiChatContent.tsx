@@ -76,6 +76,7 @@ export const NavigationDrawerAiChatContent = () => {
   const isGroupedByDate =
     agentChatThreadGroupBy === AGENT_CHAT_THREAD_GROUP_BY.DATE;
   const dateGroups = isGroupedByDate ? groupThreadsByDate(threads) : [];
+  const shouldRenderDateGroups = isGroupedByDate && dateGroups.length > 0;
 
   const filterDropdown = (
     <AiChatThreadFilterDropdown
@@ -86,7 +87,7 @@ export const NavigationDrawerAiChatContent = () => {
   return (
     <StyledContainer>
       <StyledThreadList>
-        {dateGroups.length > 0 ? (
+        {shouldRenderDateGroups ? (
           <StyledSectionsContainer>
             {dateGroups.map((dateGroup, index) => (
               <NavigationDrawerAiChatThreadSection

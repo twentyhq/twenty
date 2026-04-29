@@ -2,10 +2,8 @@ import { AiChatThreadFilterDropdownGroupByMenu } from '@/ai/components/AiChatThr
 import { AiChatThreadFilterDropdownLastActivityMenu } from '@/ai/components/AiChatThreadFilterDropdownLastActivityMenu';
 import { AiChatThreadFilterDropdownRootMenu } from '@/ai/components/AiChatThreadFilterDropdownRootMenu';
 import { AiChatThreadFilterDropdownStatusMenu } from '@/ai/components/AiChatThreadFilterDropdownStatusMenu';
-import {
-  AI_CHAT_THREAD_FILTER_DROPDOWN_PAGE,
-  type AiChatThreadFilterDropdownPage,
-} from '@/ai/constants/AiChatThreadFilterDropdownPage';
+import { AI_CHAT_THREAD_FILTER_DROPDOWN_PAGE } from '@/ai/constants/AiChatThreadFilterDropdownPage';
+import { type AiChatThreadFilterDropdownPage } from '@/ai/types/AiChatThreadFilterDropdownPage';
 
 type AiChatThreadFilterDropdownContentProps = {
   page: AiChatThreadFilterDropdownPage;

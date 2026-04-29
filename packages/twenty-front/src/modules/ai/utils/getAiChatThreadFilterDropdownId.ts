@@ -1,4 +1,4 @@
-import { type AiChatThreadActionsSurface } from '@/ai/constants/AiChatThreadActionsSurface';
+import { type AiChatThreadActionsSurface } from '@/ai/types/AiChatThreadActionsSurface';
 
 export const getAiChatThreadFilterDropdownId = (
   surface: AiChatThreadActionsSurface,

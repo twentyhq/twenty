@@ -1,7 +1,5 @@
-import {
-  AGENT_CHAT_THREAD_GROUP_BY,
-  type AgentChatThreadGroupBy,
-} from '@/ai/constants/AgentChatThreadGroupBy';
+import { AGENT_CHAT_THREAD_GROUP_BY } from '@/ai/constants/AgentChatThreadGroupBy';
+import { type AgentChatThreadGroupBy } from '@/ai/types/AgentChatThreadGroupBy';
 import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 
 export const agentChatThreadGroupByState =

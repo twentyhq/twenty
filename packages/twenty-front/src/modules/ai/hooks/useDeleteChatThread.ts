@@ -9,7 +9,7 @@ import {
 import { agentChatInputState } from '@/ai/states/agentChatInputState';
 import { agentChatVisibleThreadsSelector } from '@/ai/states/selectors/agentChatVisibleThreadsSelector';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
-import { sortChatThreadsByUpdatedAtDesc } from '@/ai/utils/sortChatThreadsByUpdatedAtDesc';
+import { sortChatThreadsByLastActivityDesc } from '@/ai/utils/sortChatThreadsByLastActivityDesc';
 import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
@@ -37,7 +37,7 @@ export const useDeleteChatThread = () => {
         return;
       }
 
-      const remaining = sortChatThreadsByUpdatedAtDesc(
+      const remaining = sortChatThreadsByLastActivityDesc(
         store
           .get(agentChatVisibleThreadsSelector.atom)
           .filter((thread) => thread.id !== id),

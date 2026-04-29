@@ -17,7 +17,10 @@ describe('groupThreadsByDate', () => {
   const eightDaysAgo = getDateDaysAgo(8);
   const fourteenDaysAgo = getDateDaysAgo(14);
 
-  const baseThread: Omit<AgentChatThread, 'updatedAt' | 'id'> = {
+  const baseThread: Omit<
+    AgentChatThread,
+    'updatedAt' | 'id' | 'lastMessageAt'
+  > = {
     title: 'Test Thread',
     createdAt: twoDaysAgo.toISOString(),
     totalInputTokens: 0,
@@ -28,28 +31,31 @@ describe('groupThreadsByDate', () => {
     totalOutputCredits: 0,
   };
 
-  const threads: AgentChatThread[] = [
-    { ...baseThread, id: '1', updatedAt: today.toISOString() },
-    { ...baseThread, id: '2', updatedAt: yesterday.toISOString() },
-    { ...baseThread, id: '3', updatedAt: twoDaysAgo.toISOString() },
-    { ...baseThread, id: '4', updatedAt: sevenDaysAgo.toISOString() },
-    { ...baseThread, id: '5', updatedAt: eightDaysAgo.toISOString() },
-    { ...baseThread, id: '6', updatedAt: fourteenDaysAgo.toISOString() },
-  ];
+  const buildThread = (id: string, lastMessageAt: Date): AgentChatThread => ({
+    ...baseThread,
+    id,
+    lastMessageAt: lastMessageAt.toISOString(),
+    updatedAt: lastMessageAt.toISOString(),
+  });
 
-  it('groups threads into relative, exact date, and month sections', () => {
-    const exactDateFormatter = new Intl.DateTimeFormat(undefined, {
-      day: 'numeric',
-      month: 'short',
-    });
+  it('groups threads into Today, Yesterday, Previous 7 days, and month sections', () => {
     const monthFormatter = new Intl.DateTimeFormat(undefined, {
       month: 'long',
       year: 'numeric',
     });
 
+    const threads: AgentChatThread[] = [
+      buildThread('1', today),
+      buildThread('2', yesterday),
+      buildThread('3', twoDaysAgo),
+      buildThread('4', sevenDaysAgo),
+      buildThread('5', eightDaysAgo),
+      buildThread('6', fourteenDaysAgo),
+    ];
+
     const result = groupThreadsByDate(threads, today);
 
-    expect(result).toHaveLength(5);
+    expect(result).toHaveLength(4);
     expect(result[0]).toMatchObject({
       id: 'today',
       title: 'Today',
@@ -61,16 +67,11 @@ describe('groupThreadsByDate', () => {
       threads: [{ id: '2' }],
     });
     expect(result[2]).toMatchObject({
-      id: 'date:2026-4-24',
-      title: exactDateFormatter.format(twoDaysAgo),
-      threads: [{ id: '3' }],
+      id: 'previous-7-days',
+      title: 'Previous 7 days',
+      threads: [{ id: '3' }, { id: '4' }],
     });
     expect(result[3]).toMatchObject({
-      id: 'date:2026-4-19',
-      title: exactDateFormatter.format(sevenDaysAgo),
-      threads: [{ id: '4' }],
-    });
-    expect(result[4]).toMatchObject({
       id: 'month:2026-4',
       title: monthFormatter.format(eightDaysAgo),
       threads: [{ id: '5' }, { id: '6' }],
@@ -78,8 +79,63 @@ describe('groupThreadsByDate', () => {
   });
 
   it('returns no groups if no threads', () => {
-    const result = groupThreadsByDate([], today);
+    expect(groupThreadsByDate([], today)).toEqual([]);
+  });
 
-    expect(result).toEqual([]);
+  it('falls back to updatedAt when lastMessageAt is null (pre-backfill rows)', () => {
+    const thread: AgentChatThread = {
+      ...baseThread,
+      id: '1',
+      lastMessageAt: null,
+      updatedAt: yesterday.toISOString(),
+    };
+
+    const [group] = groupThreadsByDate([thread], today);
+
+    expect(group.id).toBe('yesterday');
+  });
+
+  // Timezone behaviour: groupings use local-calendar-day differences, so a
+  // thread last touched a few hours before midnight local time still lands
+  // in the same calendar bucket as a thread touched moments after midnight,
+  // regardless of UTC offset.
+  describe('timezone handling', () => {
+    it('keeps a thread last touched a few hours ago in Today across DST/midnight boundaries', () => {
+      const todayLate = new Date('2026-04-26T23:30:00');
+      const todayEarly = new Date('2026-04-26T00:15:00');
+
+      const result = groupThreadsByDate(
+        [buildThread('late', todayLate), buildThread('early', todayEarly)],
+        today,
+      );
+
+      expect(result).toHaveLength(1);
+      expect(result[0]).toMatchObject({
+        id: 'today',
+        threads: [{ id: 'late' }, { id: 'early' }],
+      });
+    });
+
+    it('places a thread last touched late yesterday in the Yesterday bucket', () => {
+      const yesterdayJustBeforeMidnight = new Date('2026-04-25T23:59:00');
+
+      const [group] = groupThreadsByDate(
+        [buildThread('y', yesterdayJustBeforeMidnight)],
+        today,
+      );
+
+      expect(group.id).toBe('yesterday');
+    });
+
+    it('does not slip a thread from yesterday into Today when local times differ by hours', () => {
+      const yesterdayMorning = new Date('2026-04-25T08:00:00');
+
+      const [group] = groupThreadsByDate(
+        [buildThread('y', yesterdayMorning)],
+        today,
+      );
+
+      expect(group.id).toBe('yesterday');
+    });
   });
 });

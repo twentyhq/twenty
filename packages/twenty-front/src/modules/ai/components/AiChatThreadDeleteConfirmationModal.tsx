@@ -1,6 +1,6 @@
 import { Trans, useLingui } from '@lingui/react/macro';
 
-import { type AiChatThreadActionsSurface } from '@/ai/constants/AiChatThreadActionsSurface';
+import { type AiChatThreadActionsSurface } from '@/ai/types/AiChatThreadActionsSurface';
 import { useDeleteChatThread } from '@/ai/hooks/useDeleteChatThread';
 import { aiChatThreadPendingDeleteFamilyState } from '@/ai/states/aiChatThreadPendingDeleteState';
 import { getAiChatThreadDeleteModalId } from '@/ai/utils/getAiChatThreadDeleteModalId';
@@ -35,10 +35,6 @@ export const AiChatThreadDeleteConfirmationModal = ({
     setAiChatThreadPendingDelete(null);
   };
 
-  // TODO: server uses TypeORM softDelete (sets deletedAt) but there is no
-  // restore UI and no cron purges deleted agent chat threads. Once a recovery
-  // flow lands (filter for "Deleted" + restoreChatThread mutation + retention
-  // job), update the copy below to reflect the actual retention window.
   return (
     <ConfirmationModal
       modalInstanceId={modalInstanceId}

@@ -1,4 +1,4 @@
-import { type AiChatThreadActionsSurface } from '@/ai/constants/AiChatThreadActionsSurface';
+import { type AiChatThreadActionsSurface } from '@/ai/types/AiChatThreadActionsSurface';
 import { createAtomFamilyState } from '@/ui/utilities/state/jotai/utils/createAtomFamilyState';
 
 type AiChatThreadPendingDelete = {

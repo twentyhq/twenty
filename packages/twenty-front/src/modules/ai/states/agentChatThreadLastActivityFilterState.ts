@@ -1,7 +1,5 @@
-import {
-  AGENT_CHAT_THREAD_LAST_ACTIVITY_FILTER,
-  type AgentChatThreadLastActivityFilter,
-} from '@/ai/constants/AgentChatThreadLastActivityFilter';
+import { AGENT_CHAT_THREAD_LAST_ACTIVITY_FILTER } from '@/ai/constants/AgentChatThreadLastActivityFilter';
+import { type AgentChatThreadLastActivityFilter } from '@/ai/types/AgentChatThreadLastActivityFilter';
 import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
 
 export const agentChatThreadLastActivityFilterState =

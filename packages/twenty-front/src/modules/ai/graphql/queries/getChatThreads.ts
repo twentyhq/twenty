@@ -14,6 +14,7 @@ export const GET_CHAT_THREADS = gql`
           totalInputCredits
           totalOutputCredits
           archivedAt
+          lastMessageAt
           createdAt
           updatedAt
         }

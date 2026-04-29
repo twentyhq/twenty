@@ -1,4 +1,4 @@
-import { type AgentChatThreadLastActivityFilter } from '@/ai/constants/AgentChatThreadLastActivityFilter';
+import { type AgentChatThreadLastActivityFilter } from '@/ai/types/AgentChatThreadLastActivityFilter';
 
 export const AGENT_CHAT_THREAD_LAST_ACTIVITY_FILTER_DAYS: Record<
   AgentChatThreadLastActivityFilter,

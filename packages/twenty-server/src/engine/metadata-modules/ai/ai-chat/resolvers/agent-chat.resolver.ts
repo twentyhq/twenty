@@ -269,7 +269,7 @@ export class AgentChatResolver {
   ): Promise<boolean> {
     await this.cancelActiveStreamIfAny(id, userWorkspaceId);
 
-    await this.agentChatService.softDeleteThread({
+    await this.agentChatService.hardDeleteThread({
       threadId: id,
       userWorkspaceId,
     });

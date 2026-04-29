@@ -139,15 +139,12 @@ export class AgentChatStreamingService {
     workspaceId: string,
     hasTitle: boolean,
   ): Promise<void> {
-    // Async stream cancellation: a worker's `finally` may land here after
-    // the thread was archived or soft-deleted.
     const threadStatus = await this.threadRepository.findOne({
       where: { id: threadId },
-      withDeleted: true,
-      select: ['id', 'archivedAt', 'deletedAt'],
+      select: ['id', 'archivedAt'],
     });
 
-    if (!threadStatus || threadStatus.archivedAt || threadStatus.deletedAt) {
+    if (!threadStatus || threadStatus.archivedAt) {
       return;
     }
 

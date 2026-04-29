@@ -35,6 +35,9 @@ const serializeThreadForBroadcast = (thread: AgentChatThreadEntity) => ({
   totalInputCredits: thread.totalInputCredits,
   totalOutputCredits: thread.totalOutputCredits,
   archivedAt: thread.archivedAt ? thread.archivedAt.toISOString() : null,
+  lastMessageAt: thread.lastMessageAt
+    ? thread.lastMessageAt.toISOString()
+    : null,
   createdAt: thread.createdAt.toISOString(),
   updatedAt: thread.updatedAt.toISOString(),
 });
@@ -160,6 +163,8 @@ export class AgentChatService {
       );
     }
 
+    await this.touchThreadLastMessageAt(threadId);
+
     return {
       id: savedMessageId,
       threadId,
@@ -169,6 +174,10 @@ export class AgentChatService {
       processedAt: new Date(),
       workspaceId,
     } as AgentMessageEntity;
+  }
+
+  private async touchThreadLastMessageAt(threadId: string): Promise<void> {
+    await this.threadRepository.update(threadId, { lastMessageAt: new Date() });
   }
 
   async getMessagesForThread(threadId: string, userWorkspaceId: string) {
@@ -246,6 +255,8 @@ export class AgentChatService {
     ];
 
     await this.messagePartRepository.insert(parts);
+
+    await this.touchThreadLastMessageAt(threadId);
 
     return {
       id: savedMessageId,
@@ -356,20 +367,27 @@ export class AgentChatService {
     threadId: string;
     userWorkspaceId: string;
   }): Promise<AgentChatThreadEntity> {
-    const result = await this.threadRepository.update(
-      { id: threadId, userWorkspaceId, archivedAt: IsNull() },
-      { archivedAt: new Date(), activeStreamId: null },
-    );
-
     const thread = await this.getThreadById(threadId, userWorkspaceId);
 
-    if ((result.affected ?? 0) > 0) {
-      await this.broadcastThreadUpdated(
-        thread,
-        ['archivedAt'],
-        userWorkspaceId,
-      );
+    if (thread.archivedAt) {
+      return thread;
     }
+
+    const archivedAt = new Date();
+
+    const result = await this.threadRepository.update(
+      { id: threadId, userWorkspaceId, archivedAt: IsNull() },
+      { archivedAt, activeStreamId: null },
+    );
+
+    if ((result.affected ?? 0) === 0) {
+      return thread;
+    }
+
+    thread.archivedAt = archivedAt;
+    thread.activeStreamId = null;
+
+    await this.broadcastThreadUpdated(thread, ['archivedAt'], userWorkspaceId);
 
     return thread;
   }
@@ -381,25 +399,29 @@ export class AgentChatService {
     threadId: string;
     userWorkspaceId: string;
   }): Promise<AgentChatThreadEntity> {
+    const thread = await this.getThreadById(threadId, userWorkspaceId);
+
+    if (!thread.archivedAt) {
+      return thread;
+    }
+
     const result = await this.threadRepository.update(
       { id: threadId, userWorkspaceId, archivedAt: Not(IsNull()) },
       { archivedAt: null },
     );
 
-    const thread = await this.getThreadById(threadId, userWorkspaceId);
-
-    if ((result.affected ?? 0) > 0) {
-      await this.broadcastThreadUpdated(
-        thread,
-        ['archivedAt'],
-        userWorkspaceId,
-      );
+    if ((result.affected ?? 0) === 0) {
+      return thread;
     }
+
+    thread.archivedAt = null;
+
+    await this.broadcastThreadUpdated(thread, ['archivedAt'], userWorkspaceId);
 
     return thread;
   }
 
-  async softDeleteThread({
+  async hardDeleteThread({
     threadId,
     userWorkspaceId,
   }: {
@@ -408,7 +430,6 @@ export class AgentChatService {
   }): Promise<void> {
     const thread = await this.threadRepository.findOne({
       where: { id: threadId, userWorkspaceId },
-      withDeleted: true,
     });
 
     if (!thread) {
@@ -418,10 +439,10 @@ export class AgentChatService {
       );
     }
 
-    const result = await this.threadRepository.update(
-      { id: threadId, userWorkspaceId, deletedAt: IsNull() },
-      { activeStreamId: null, deletedAt: new Date() },
-    );
+    const result = await this.threadRepository.delete({
+      id: threadId,
+      userWorkspaceId,
+    });
 
     if ((result.affected ?? 0) === 0) {
       return;
