@@ -328,6 +328,14 @@ const SettingsSecurity = lazy(() =>
   })),
 );
 
+const SettingsEnterpriseModules = lazy(() =>
+  import(
+    '~/pages/settings/modules/components/SettingsEnterpriseModules'
+  ).then((module) => ({
+    default: module.SettingsEnterpriseModules,
+  })),
+);
+
 const SettingsSecuritySSOIdentifyProvider = lazy(() =>
   import('~/pages/settings/security/SettingsSecuritySSOIdentifyProvider').then(
     (module) => ({
@@ -783,6 +791,15 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
       >
         <Route path={SettingsPath.Updates} element={<SettingsUpdates />} />
       </Route>
+
+      <Route
+        path={SettingsPath.EnterpriseModules}
+        element={<SettingsEnterpriseModules />}
+      />
+      <Route
+        path={SettingsPath.EnterpriseModuleDetail}
+        element={<SettingsEnterpriseModules />}
+      />
     </Routes>
   </Suspense>
 );

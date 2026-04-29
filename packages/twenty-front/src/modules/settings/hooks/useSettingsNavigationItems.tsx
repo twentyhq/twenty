@@ -38,6 +38,7 @@ import {
   IconUserCircle,
   IconUsers,
   IconWorld,
+  IconPackage,
 } from 'twenty-ui/display';
 import {
   FeatureFlagKey,
@@ -184,6 +185,12 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           Icon: IconSparkles,
           isHidden:
             !isAIEnabled || !permissionMap[PermissionFlagType.WORKSPACE],
+          modifier: 'new',
+        },
+        {
+          label: t`Enterprise Modules`,
+          path: SettingsPath.EnterpriseModules,
+          Icon: IconPackage,
           modifier: 'new',
         },
         {

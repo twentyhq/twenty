@@ -69,6 +69,19 @@ export enum SettingsPath {
   AdminPanelAiProviderDetail = 'admin-panel/ai/providers/:providerName',
   AdminPanelNewAiModel = 'admin-panel/ai/providers/:providerName/new-model',
 
+  // Enterprise Modules
+  EnterpriseModules = 'modules',
+  EnterpriseModuleDetail = 'modules/:moduleCode',
+  EnterpriseFiscal = 'modules/fiscal',
+  EnterpriseFiscalCountry = 'modules/fiscal/:countryCode',
+  EnterpriseBilling = 'modules/billing',
+  EnterpriseVoIP = 'modules/voip',
+  EnterpriseHRM = 'modules/hrm',
+  EnterpriseInventory = 'modules/inventory',
+  EnterpriseFleet = 'modules/fleet',
+  EnterpriseECommerce = 'modules/ecommerce',
+  EnterprisePRM = 'modules/partners',
+
   Roles = 'roles',
   RoleCreate = 'roles/create',
   RoleDetail = 'roles/:roleId',
