@@ -18,6 +18,7 @@ import { AddConditionalAvailabilityExpressionToPageLayoutWidgetFastInstanceComma
 import { AddIsPreInstalledToApplicationRegistrationFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-1/2-1-instance-command-fast-1776886452831-add-is-pre-installed-to-application-registration';
 import { AddProviderExecutedToAgentMessagePartFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-1/2-1-instance-command-fast-1777012800000-add-provider-executed-to-agent-message-part';
 import { BackfillPageLayoutWidgetPositionSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-1/2-1-instance-command-slow-1795000002000-backfill-page-layout-widget-position';
+import { AddCacheTokensToAgentChatThreadFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-2/2-2-instance-command-fast-1777455269302-add-cache-tokens-to-agent-chat-thread';
 import { AddArchivedAndLastMessageAtToAgentChatThreadSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-2/2-2-instance-command-slow-1777680000000-add-archived-and-last-message-at-to-agent-chat-thread';
 
 export const INSTANCE_COMMANDS = [
@@ -39,5 +40,6 @@ export const INSTANCE_COMMANDS = [
   AddIsPreInstalledToApplicationRegistrationFastInstanceCommand,
   AddProviderExecutedToAgentMessagePartFastInstanceCommand,
   BackfillPageLayoutWidgetPositionSlowInstanceCommand,
+  AddCacheTokensToAgentChatThreadFastInstanceCommand,
   AddArchivedAndLastMessageAtToAgentChatThreadSlowInstanceCommand,
 ];

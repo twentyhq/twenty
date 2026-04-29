@@ -326,6 +326,7 @@ export const buildCalendarEventStandardFlatFieldMetadatas = ({
       icon: 'IconFileDescription',
       isNullable: true,
       isUIReadOnly: true,
+      settings: { displayedMaxRows: 99 },
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,

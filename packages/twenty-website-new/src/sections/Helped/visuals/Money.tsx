@@ -5,8 +5,8 @@ import {
   type HelpedHalftonePose,
   type HelpedHalftoneSettings,
 } from './HelpedHalftoneModel';
+import { HELPED_VISUAL_MODEL_URLS } from './helped-visual-models';
 
-const GLB_URL = '/illustrations/home/helped/money.glb';
 const MONEY_PREVIEW_DISTANCE = 5;
 
 const MONEY_SETTINGS: HelpedHalftoneSettings = {
@@ -105,9 +105,8 @@ export function Money() {
     <HelpedHalftoneModel
       initialPose={MONEY_INITIAL_POSE}
       label="money.glb"
-      modelUrl={GLB_URL}
+      modelUrl={HELPED_VISUAL_MODEL_URLS.money}
       previewDistance={MONEY_PREVIEW_DISTANCE}
-      renderer="studio"
       settings={MONEY_SETTINGS}
     />
   );

@@ -4,7 +4,9 @@ import { CommandMenuItemEditButton } from '@/command-menu-item/edit/components/C
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
+import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useIsMobile } from 'twenty-ui/utilities';
 
 export const RecordShowCommandMenu = () => {
@@ -23,6 +25,9 @@ export const RecordShowCommandMenu = () => {
     contextStoreTargetedRecordsRule.selectedRecordIds.length === 1;
 
   const isMobile = useIsMobile();
+  const isLayoutCustomizationModeEnabled = useAtomStateValue(
+    isLayoutCustomizationModeEnabledState,
+  );
 
   return (
     <>
@@ -32,6 +37,7 @@ export const RecordShowCommandMenu = () => {
             isInSidePanel={false}
             displayType="button"
             containerType="show-page-header"
+            isInPreviewMode={isLayoutCustomizationModeEnabled}
           >
             {!isMobile && <PinnedCommandMenuItemButtons />}
           </CommandMenuContextProvider>

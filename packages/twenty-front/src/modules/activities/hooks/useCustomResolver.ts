@@ -58,15 +58,14 @@ export const useCustomResolver = <
     pageSize,
   };
 
-  const {
-    data,
-    loading: firstQueryLoading,
-    fetchMore,
-    error,
-  } = useQuery<CustomResolverQueryResult<T>>(query, {
+  const { data, loading, fetchMore, error } = useQuery<
+    CustomResolverQueryResult<T>
+  >(query, {
     client: apolloCoreClient,
     variables: queryVariables,
   });
+
+  const firstQueryLoading = loading && !data;
 
   useSnackBarOnQueryError(error);
 

@@ -309,6 +309,8 @@ export type HalftoneSnapshotFn = (
   },
 ) => Promise<Blob | null>;
 
+export type HalftoneRenderStrategy = 'continuous' | 'static';
+
 export type HalftoneImageInteractionSettings = {
   hoverFadeIn: number;
   hoverFadeOut: number;
@@ -332,6 +334,7 @@ type HalftoneCanvasProps = {
   onFirstInteraction: () => void;
   onPoseChange: (pose: HalftoneExportPose) => void;
   previewDistance: number;
+  renderStrategy?: HalftoneRenderStrategy;
   settings: HalftoneStudioSettings;
   snapshotRef?: MutableRefObject<HalftoneSnapshotFn | null>;
   virtualRenderHeight?: number;
@@ -557,6 +560,7 @@ export function HalftoneCanvas({
   onFirstInteraction,
   onPoseChange,
   previewDistance,
+  renderStrategy = 'continuous',
   settings,
   snapshotRef,
   virtualRenderHeight = VIRTUAL_RENDER_HEIGHT,
@@ -738,10 +742,14 @@ export function HalftoneCanvas({
     renderer.setSize(getRenderWidth(), getRenderHeight(), false);
 
     const canvas = renderer.domElement;
-    canvas.style.cursor = getCanvasCursor(settingsReference.current, false);
+    canvas.style.cursor =
+      renderStrategy === 'static'
+        ? 'default'
+        : getCanvasCursor(settingsReference.current, false);
     canvas.style.display = 'block';
     canvas.style.height = '100%';
-    canvas.style.touchAction = 'none';
+    canvas.style.pointerEvents = renderStrategy === 'static' ? 'none' : 'auto';
+    canvas.style.touchAction = renderStrategy === 'static' ? 'auto' : 'none';
     canvas.style.width = '100%';
     container.appendChild(canvas);
 
@@ -1312,8 +1320,6 @@ export function HalftoneCanvas({
         );
       };
 
-      const stopObservingSize = observeElementSize(container, syncSize);
-
       const updatePointerPosition = (
         event: PointerEvent,
         options?: { resetVelocity?: boolean },
@@ -1545,13 +1551,6 @@ export function HalftoneCanvas({
       const handleWindowBlur = () => {
         handlePointerCancel();
       };
-
-      canvas.addEventListener('pointermove', handlePointerMove);
-      canvas.addEventListener('pointerleave', handlePointerLeave);
-      canvas.addEventListener('pointerup', handlePointerUp);
-      canvas.addEventListener('pointercancel', handlePointerCancel);
-      window.addEventListener('blur', handleWindowBlur);
-      canvas.addEventListener('pointerdown', handlePointerDown);
 
       const clock = new THREE.Timer();
       clock.connect(document);
@@ -1985,18 +1984,36 @@ export function HalftoneCanvas({
         renderer.render(postScene, orthographicCamera);
       };
 
-      renderLoop = createVisualRenderLoop({
-        renderFrame,
-        shouldRender: () => !cancelled,
-        target: container,
-        targetVisibilityOptions: { rootMargin: '100px' },
-      });
-      renderLoop.start();
+      const renderCurrentFrame = () => {
+        renderFrame(
+          typeof performance === 'undefined' ? undefined : performance.now(),
+        );
+      };
 
-      cleanup = () => {
-        runCleanupTasks([
-          () => stopObservingSize(),
-          () => renderLoop?.dispose(),
+      const syncSizeAndRenderIfStatic = () => {
+        syncSize();
+
+        if (renderStrategy === 'static') {
+          renderCurrentFrame();
+        }
+      };
+
+      const stopObservingSize = observeElementSize(
+        container,
+        syncSizeAndRenderIfStatic,
+      );
+
+      const interactionCleanupTasks: Array<() => void> = [];
+
+      if (renderStrategy !== 'static') {
+        canvas.addEventListener('pointermove', handlePointerMove);
+        canvas.addEventListener('pointerleave', handlePointerLeave);
+        canvas.addEventListener('pointerup', handlePointerUp);
+        canvas.addEventListener('pointercancel', handlePointerCancel);
+        window.addEventListener('blur', handleWindowBlur);
+        canvas.addEventListener('pointerdown', handlePointerDown);
+
+        interactionCleanupTasks.push(
           () => canvas.removeEventListener('pointermove', handlePointerMove),
           () => canvas.removeEventListener('pointerleave', handlePointerLeave),
           () => canvas.removeEventListener('pointerup', handlePointerUp),
@@ -2004,6 +2021,24 @@ export function HalftoneCanvas({
             canvas.removeEventListener('pointercancel', handlePointerCancel),
           () => window.removeEventListener('blur', handleWindowBlur),
           () => canvas.removeEventListener('pointerdown', handlePointerDown),
+        );
+
+        renderLoop = createVisualRenderLoop({
+          renderFrame,
+          shouldRender: () => !cancelled,
+          target: container,
+          targetVisibilityOptions: { rootMargin: '100px' },
+        });
+        renderLoop.start();
+      } else {
+        renderCurrentFrame();
+      }
+
+      cleanup = () => {
+        runCleanupTasks([
+          () => stopObservingSize(),
+          () => renderLoop?.dispose(),
+          ...interactionCleanupTasks,
           () => clock.dispose(),
 
           () => blurHorizontalMaterial.dispose(),
@@ -2050,6 +2085,7 @@ export function HalftoneCanvas({
   }, [
     onFirstInteraction,
     poseChangeReference,
+    renderStrategy,
     snapshotReference,
     virtualRenderHeight,
   ]);

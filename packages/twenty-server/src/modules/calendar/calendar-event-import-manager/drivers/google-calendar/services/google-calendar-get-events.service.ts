@@ -47,6 +47,7 @@ export class GoogleCalendarGetEventsService {
         .list({
           calendarId: 'primary',
           maxResults: 500,
+          singleEvents: true,
           syncToken: syncCursor,
           pageToken: nextPageToken,
           showDeleted: true,

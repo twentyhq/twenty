@@ -60,6 +60,12 @@ export class AgentChatThreadEntity {
   @Column({ type: 'bigint', default: 0 })
   totalOutputCredits: number;
 
+  @Column({ type: 'bigint', default: 0 })
+  totalCacheReadTokens: number;
+
+  @Column({ type: 'bigint', default: 0 })
+  totalCacheCreationTokens: number;
+
   @Column({ type: 'varchar', nullable: true })
   activeStreamId: string | null;
 
