@@ -5,9 +5,10 @@ import type {
   SalesforcePricingPanelType,
   SalesforceRichTextPartType,
 } from '@/sections/Salesforce/types';
+import { useAnimatedNumber } from '@/lib/animation';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
-import { useEffect, useRef, useState } from 'react';
+import { useRef } from 'react';
 
 const formatPriceAmount = (amount: number) =>
   `$${new Intl.NumberFormat('en-US').format(amount)}`;
@@ -51,40 +52,6 @@ const calculatePriceAmounts = (
     perSeatPriceAmount,
     totalPriceAmount,
   };
-};
-
-const ANIMATION_DURATION_MS = 500;
-
-const useAnimatedNumber = (target: number) => {
-  const [display, setDisplay] = useState(target);
-  const prevRef = useRef(target);
-
-  useEffect(() => {
-    const from = prevRef.current;
-    prevRef.current = target;
-
-    if (from === target) {
-      return;
-    }
-
-    const start = performance.now();
-    let rafId: number;
-
-    const tick = (now: number) => {
-      const progress = Math.min((now - start) / ANIMATION_DURATION_MS, 1);
-      const eased = 1 - (1 - progress) ** 3;
-      setDisplay(Math.round(from + (target - from) * eased));
-
-      if (progress < 1) {
-        rafId = requestAnimationFrame(tick);
-      }
-    };
-
-    rafId = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(rafId);
-  }, [target]);
-
-  return display;
 };
 
 const PANEL_BACKGROUND = '#c9c9c9';

@@ -59,6 +59,8 @@ export const viewGraphqlApiExceptionHandler = (error: Error, i18n: I18n) => {
         throw new ForbiddenError(error.message, {
           userFriendlyMessage: error.userFriendlyMessage,
         });
+      case ViewExceptionCode.VIEW_WIDGET_NOT_FOUND:
+        throw new NotFoundError(error.message);
       default: {
         return assertUnreachable(error.code);
       }

@@ -46,6 +46,9 @@ describe('useLogicFunctionUpdateFormState', () => {
         properties: {},
         type: 'object',
       },
+      cronTriggerSettings: null,
+      databaseEventTriggerSettings: null,
+      httpRouteTriggerSettings: null,
     });
   });
 });

@@ -2,9 +2,12 @@
 
 import { useEffect, useRef, type CSSProperties } from 'react';
 import * as THREE from 'three';
+import { observeElementSize } from '@/lib/dom/observe-element-size';
 import {
-  createFrameTimer,
-  createSiteWebGlRenderer,
+  createVisualRenderLoop,
+  tryCreateSiteWebGlRenderer,
+  type VisualRenderLoop,
+  type VisualRenderLoopFrame,
 } from '@/lib/visual-runtime';
 
 const IMAGE_SRC = '/images/home/problem/monolith-problem.webp';
@@ -495,7 +498,19 @@ async function mountHalftoneCanvas(options: MountHalftoneCanvasOptions) {
     return undefined;
   }
 
-  const renderer = createSiteWebGlRenderer({ alpha: true, antialias: false });
+  let renderLoop: VisualRenderLoop | null = null;
+  const renderer = tryCreateSiteWebGlRenderer({
+    alpha: true,
+    antialias: false,
+    onContextLost: () => {
+      renderLoop?.stop();
+    },
+  });
+
+  if (renderer === null) {
+    return undefined;
+  }
+
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.setClearColor(0x000000, 0);
   renderer.setPixelRatio(1);
@@ -648,8 +663,7 @@ async function mountHalftoneCanvas(options: MountHalftoneCanvasOptions) {
     );
   };
 
-  const resizeObserver = new ResizeObserver(syncSize);
-  resizeObserver.observe(container);
+  const stopObservingSize = observeElementSize(container, syncSize);
 
   const updatePointerPosition = (
     event: PointerEvent,
@@ -725,13 +739,11 @@ async function mountHalftoneCanvas(options: MountHalftoneCanvasOptions) {
   canvas.addEventListener('pointerup', handlePointerUp);
   window.addEventListener('blur', handleWindowBlur);
 
-  const frameTimer = createFrameTimer();
-  let animationFrameId = 0;
-
-  const renderFrame = () => {
-    animationFrameId = window.requestAnimationFrame(renderFrame);
-
-    halftoneMaterial.uniforms.time.value = frameTimer.getElapsed();
+  const renderFrame = (
+    _timestamp: DOMHighResTimeStamp,
+    { elapsedSeconds }: VisualRenderLoopFrame,
+  ) => {
+    halftoneMaterial.uniforms.time.value = elapsedSeconds;
     halftoneMaterial.uniforms.dashColor.value.set(tuning.halftone.dashColor);
     halftoneMaterial.uniforms.s_3.value = tuning.halftone.power;
     halftoneMaterial.uniforms.s_4.value = tuning.halftone.width;
@@ -791,11 +803,17 @@ async function mountHalftoneCanvas(options: MountHalftoneCanvasOptions) {
     renderer.render(postScene, orthographicCamera);
   };
 
-  renderFrame();
+  renderLoop = createVisualRenderLoop({
+    renderFrame,
+    shouldRender: () => !signal.aborted,
+    target: container,
+    targetVisibilityOptions: { rootMargin: '100px' },
+  });
+  renderLoop.start();
 
   return () => {
-    window.cancelAnimationFrame(animationFrameId);
-    resizeObserver.disconnect();
+    renderLoop?.dispose();
+    stopObservingSize();
     canvas.removeEventListener('pointerdown', handlePointerDown);
     canvas.removeEventListener('pointerleave', handlePointerLeave);
     canvas.removeEventListener('pointermove', handlePointerMove);
