@@ -4,13 +4,7 @@ import { generateText } from 'ai';
 import { PermissionFlagType } from 'twenty-shared/constants';
 
 import { RestApiExceptionFilter } from 'src/engine/api/rest/rest-api-exception.filter';
-import {
-  BillingException,
-  BillingExceptionCode,
-} from 'src/engine/core-modules/billing/billing.exception';
-import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing-product-key.enum';
-import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import type { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
@@ -34,8 +28,7 @@ export class AiGenerateTextController {
   constructor(
     private readonly aiModelRegistryService: AiModelRegistryService,
     private readonly aiBillingService: AiBillingService,
-    private readonly billingService: BillingService,
-    private readonly twentyConfigService: TwentyConfigService,
+    private readonly billingUsageService: BillingUsageService,
   ) {}
 
   @Post('generate-text')
@@ -52,19 +45,7 @@ export class AiGenerateTextController {
       );
     }
 
-    if (this.twentyConfigService.get('IS_BILLING_ENABLED')) {
-      const canBill = await this.billingService.canBillMeteredProduct(
-        workspace.id,
-        BillingProductKey.WORKFLOW_NODE_EXECUTION,
-      );
-
-      if (!canBill) {
-        throw new BillingException(
-          'Credits exhausted',
-          BillingExceptionCode.BILLING_CREDITS_EXHAUSTED,
-        );
-      }
-    }
+    await this.billingUsageService.hasAvailableCreditsOrThrow(workspace.id);
 
     const resolvedModelId = body.modelId ?? workspace.fastModel;
 
