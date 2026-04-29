@@ -2,7 +2,6 @@ import { currentRecordSortsComponentState } from '@/object-record/record-sort/st
 import { recordTableWidgetViewDraftComponentState } from '@/page-layout/states/recordTableWidgetViewDraftComponentState';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useStore } from 'jotai';
-import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 type UseRecordTableWidgetSortCallbacksParams = {
@@ -30,7 +29,7 @@ export const useRecordTableWidgetSortCallbacks = ({
 
   const store = useStore();
 
-  const handleSortUpdate = useCallback(() => {
+  const handleSortUpdate = () => {
     const currentRecordSorts = store.get(currentRecordSortsState);
 
     store.set(recordTableWidgetViewDraftState, (prev) => {
@@ -53,13 +52,7 @@ export const useRecordTableWidgetSortCallbacks = ({
         },
       };
     });
-  }, [
-    store,
-    currentRecordSortsState,
-    recordTableWidgetViewDraftState,
-    widgetId,
-    viewId,
-  ]);
+  };
 
   return { handleSortUpdate };
 };

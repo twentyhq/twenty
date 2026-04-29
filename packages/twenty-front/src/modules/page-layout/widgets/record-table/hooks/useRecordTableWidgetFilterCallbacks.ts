@@ -4,7 +4,6 @@ import { recordTableWidgetViewDraftComponentState } from '@/page-layout/states/r
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { type ViewFilterGroupLogicalOperator } from '@/views/types/ViewFilterGroupLogicalOperator';
 import { useStore } from 'jotai';
-import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 type UseRecordTableWidgetFilterCallbacksParams = {
@@ -37,7 +36,7 @@ export const useRecordTableWidgetFilterCallbacks = ({
 
   const store = useStore();
 
-  const handleFilterUpdate = useCallback(() => {
+  const handleFilterUpdate = () => {
     const currentRecordFilters = store.get(currentRecordFiltersState);
     const currentRecordFilterGroups = store.get(currentRecordFilterGroupsState);
 
@@ -78,14 +77,7 @@ export const useRecordTableWidgetFilterCallbacks = ({
         },
       };
     });
-  }, [
-    store,
-    currentRecordFiltersState,
-    currentRecordFilterGroupsState,
-    recordTableWidgetViewDraftState,
-    widgetId,
-    viewId,
-  ]);
+  };
 
   return { handleFilterUpdate };
 };
