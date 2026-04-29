@@ -158,7 +158,7 @@ export const Avatar = ({
       backgroundColor={
         Icon ? 'inherit' : showBackgroundColor ? fixedBackgroundColor : 'none'
       }
-      borderColor={showBorderColor ? fixedBorderColor : 'none'}
+      borderColor={showBorderColor ? fixedBorderColor : undefined}
       color={fixedColor}
       clickable={!isUndefined(onClick)}
       rounded={type === 'rounded'}

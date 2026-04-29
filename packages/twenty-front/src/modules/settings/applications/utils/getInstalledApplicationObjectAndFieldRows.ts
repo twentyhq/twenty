@@ -15,12 +15,10 @@ type InstalledApplication = Omit<Application, 'objects' | 'frontComponents'> & {
 export const getInstalledApplicationObjectAndFieldRows = ({
   installedApplication,
   objectMetadataItems,
-  applicationInfo,
   installedApplications,
 }: {
   installedApplication: InstalledApplication;
   objectMetadataItems: EnrichedObjectMetadataItem[];
-  applicationInfo?: ApplicationDisplayData;
   installedApplications?: ApplicationDisplayData[];
 }): {
   objectRows: ApplicationDataTableRow[];

@@ -12,12 +12,10 @@ export const getManifestObjectAndFieldRows = ({
   manifestContent,
   objectMetadataItems,
   applicationInfo,
-  installedApplications,
 }: {
   manifestContent?: Manifest;
   objectMetadataItems: EnrichedObjectMetadataItem[];
   applicationInfo?: ApplicationDisplayData;
-  installedApplications?: ApplicationDisplayData[];
 }): {
   objectRows: ApplicationDataTableRow[];
   fieldGroupRows: ApplicationDataTableRow[];
@@ -95,10 +93,7 @@ export const getManifestObjectAndFieldRows = ({
         labelPlural: objectMetadataItem.labelPlural,
         icon: objectMetadataItem.icon ?? undefined,
         fieldsCount: group.count,
-        application:
-          installedApplications?.find(
-            (app) => app.id === objectMetadataItem.applicationId,
-          ) ?? {},
+        application: applicationInfo ?? {},
       };
     })
     .filter(isDefined);

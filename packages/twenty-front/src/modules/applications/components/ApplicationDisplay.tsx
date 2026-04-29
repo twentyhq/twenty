@@ -9,12 +9,21 @@ type ApplicationDisplayProps = {
 
 const StyledAppChip = styled(AppChip)`
   color: ${themeCssVariables.font.color.primary};
-  gap: ${themeCssVariables.spacing[2]};
   font-size: ${themeCssVariables.font.size.md};
+  gap: ${themeCssVariables.spacing[2]};
 `;
 
 export const ApplicationDisplay = ({
   application,
 }: ApplicationDisplayProps) => {
-  return <StyledAppChip size="md" applicationId={application?.id ?? ''} />;
+  return (
+    <StyledAppChip
+      size="md"
+      applicationId={application?.id}
+      fallbackApplicationData={{
+        logo: application?.logo,
+        name: application?.name,
+      }}
+    />
+  );
 };

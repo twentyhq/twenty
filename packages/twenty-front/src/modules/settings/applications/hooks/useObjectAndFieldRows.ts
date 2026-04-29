@@ -35,7 +35,6 @@ export const useObjectAndFieldRows = ({
       return getInstalledApplicationObjectAndFieldRows({
         installedApplication,
         objectMetadataItems,
-        applicationInfo,
         installedApplications,
       });
     }
@@ -44,7 +43,6 @@ export const useObjectAndFieldRows = ({
       manifestContent,
       objectMetadataItems,
       applicationInfo,
-      installedApplications,
     });
   }, [
     installedApplication,

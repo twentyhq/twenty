@@ -9,7 +9,7 @@ import { Tag } from 'twenty-ui/components';
 import { OverflowingTextWithTooltip } from 'twenty-ui/display';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { getApplicationDescriptionSummary } from '~/pages/settings/applications/utils/getApplicationDescriptionSummary';
-import { ApplicationDisplayData } from '@/applications/types/applicationDisplayData.type';
+import { type ApplicationDisplayData } from '@/applications/types/applicationDisplayData.type';
 import { StyledNameTableCell } from '@/settings/data-model/object-details/components/SettingsObjectItemTableRowStyledComponents';
 
 export type SettingsApplicationTableRowProps = {

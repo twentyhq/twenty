@@ -2,7 +2,7 @@ import { useApplicationChipData } from '@/applications/hooks/useApplicationChipD
 import { styled } from '@linaria/react';
 import {
   Avatar,
-  AvatarSize,
+  type AvatarSize,
   OverflowingTextWithTooltip,
 } from 'twenty-ui/display';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
