@@ -6,9 +6,12 @@ import { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { observeElementSize } from '@/lib/dom/observe-element-size';
 import {
-  createFrameTimer,
-  createSiteWebGlRenderer,
+  createVisualRenderLoop,
+  tryCreateSiteWebGlRenderer,
+  type VisualRenderLoop,
+  type VisualRenderLoopFrame,
 } from '@/lib/visual-runtime';
 import { DRACO_DECODER_PATH } from '@/lib/visual-runtime/draco-decoder-path';
 
@@ -627,7 +630,7 @@ export function FooterBackground() {
     }
 
     let cancelled = false;
-    let animationFrameId = 0;
+    let renderLoop: VisualRenderLoop | null = null;
 
     const getWidth = () => Math.max(container.clientWidth, 1);
     const getHeight = () => Math.max(container.clientHeight, 1);
@@ -640,7 +643,18 @@ export function FooterBackground() {
         1,
       );
 
-    const renderer = createSiteWebGlRenderer({ antialias: false, alpha: true });
+    const renderer = tryCreateSiteWebGlRenderer({
+      antialias: false,
+      alpha: true,
+      onContextLost: () => {
+        renderLoop?.stop();
+      },
+    });
+
+    if (renderer === null) {
+      return;
+    }
+
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.setPixelRatio(1);
     renderer.setClearColor(0x000000, 0);
@@ -802,8 +816,7 @@ export function FooterBackground() {
       );
     };
 
-    const resizeObserver = new ResizeObserver(syncSize);
-    resizeObserver.observe(container);
+    const stopObservingSize = observeElementSize(container, syncSize);
 
     const updatePointerPosition = (event: PointerEvent) => {
       const rect = canvas.getBoundingClientRect();
@@ -894,16 +907,15 @@ export function FooterBackground() {
         console.error(error);
       });
 
-    const frameTimer = createFrameTimer();
-
-    const renderFrame = () => {
+    const renderFrame = (
+      _timestamp: DOMHighResTimeStamp,
+      { elapsedSeconds }: VisualRenderLoopFrame,
+    ) => {
       if (cancelled) {
         return;
       }
 
-      animationFrameId = window.requestAnimationFrame(renderFrame);
-
-      const elapsedTime = INITIAL_TIME_ELAPSED + frameTimer.getElapsed();
+      const elapsedTime = INITIAL_TIME_ELAPSED + elapsedSeconds;
       halftoneMaterial.uniforms.time.value = elapsedTime;
       halftoneMaterial.uniforms.interactionUv.value.set(
         interaction.mouseX,
@@ -965,18 +977,24 @@ export function FooterBackground() {
       renderer.render(postScene, orthographicCamera);
     };
 
-    renderFrame();
+    renderLoop = createVisualRenderLoop({
+      renderFrame,
+      shouldRender: () => !cancelled,
+      target: container,
+      targetVisibilityOptions: { rootMargin: '100px' },
+    });
+    renderLoop.start();
 
     return () => {
       cancelled = true;
-      resizeObserver.disconnect();
+      renderLoop?.dispose();
+      stopObservingSize();
       canvas.removeEventListener('pointermove', handlePointerMove);
       canvas.removeEventListener('pointerleave', handlePointerLeave);
       canvas.removeEventListener('pointerdown', handlePointerDown);
       window.removeEventListener('pointerup', handlePointerUp);
       window.removeEventListener('pointermove', handleWindowPointerMove);
       window.removeEventListener('blur', handleWindowBlur);
-      window.cancelAnimationFrame(animationFrameId);
       blurHorizontalMaterial.dispose();
       blurVerticalMaterial.dispose();
       halftoneMaterial.dispose();

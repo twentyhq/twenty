@@ -28,6 +28,7 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { RowLevelPermissionModule } from 'src/engine/metadata-modules/row-level-permission-predicate/row-level-permission.module';
+import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
 @Module({
   imports: [
@@ -37,6 +38,7 @@ import { RowLevelPermissionModule } from 'src/engine/metadata-modules/row-level-
     PermissionsModule,
     WorkspaceModule,
     BillingModule,
+    WorkspaceCacheModule,
     TypeOrmModule.forFeature([
       BillingSubscriptionEntity,
       BillingSubscriptionItemEntity,

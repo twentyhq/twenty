@@ -2675,6 +2675,7 @@ export interface Mutation {
     updateView: View
     deleteView: Scalars['Boolean']
     destroyView: Scalars['Boolean']
+    upsertViewWidget: View
     createViewSort: ViewSort
     updateViewSort: ViewSort
     deleteViewSort: Scalars['Boolean']
@@ -5725,6 +5726,7 @@ export interface MutationGenqlSelection{
     updateView?: (ViewGenqlSelection & { __args: {id: Scalars['String'], input: UpdateViewInput} })
     deleteView?: { __args: {id: Scalars['String']} }
     destroyView?: { __args: {id: Scalars['String']} }
+    upsertViewWidget?: (ViewGenqlSelection & { __args: {input: UpsertViewWidgetInput} })
     createViewSort?: (ViewSortGenqlSelection & { __args: {input: CreateViewSortInput} })
     updateViewSort?: (ViewSortGenqlSelection & { __args: {input: UpdateViewSortInput} })
     deleteViewSort?: { __args: {input: DeleteViewSortInput} }
@@ -5943,6 +5945,30 @@ id: Scalars['UUID']}
 export interface CreateViewInput {id?: (Scalars['UUID'] | null),name: Scalars['String'],objectMetadataId: Scalars['UUID'],type?: (ViewType | null),key?: (ViewKey | null),icon: Scalars['String'],position?: (Scalars['Float'] | null),isCompact?: (Scalars['Boolean'] | null),shouldHideEmptyGroups?: (Scalars['Boolean'] | null),openRecordIn?: (ViewOpenRecordIn | null),kanbanAggregateOperation?: (AggregateOperations | null),kanbanAggregateOperationFieldMetadataId?: (Scalars['UUID'] | null),anyFieldFilterValue?: (Scalars['String'] | null),calendarLayout?: (ViewCalendarLayout | null),calendarFieldMetadataId?: (Scalars['UUID'] | null),mainGroupByFieldMetadataId?: (Scalars['UUID'] | null),visibility?: (ViewVisibility | null)}
 
 export interface UpdateViewInput {id?: (Scalars['UUID'] | null),name?: (Scalars['String'] | null),type?: (ViewType | null),icon?: (Scalars['String'] | null),position?: (Scalars['Float'] | null),isCompact?: (Scalars['Boolean'] | null),openRecordIn?: (ViewOpenRecordIn | null),kanbanAggregateOperation?: (AggregateOperations | null),kanbanAggregateOperationFieldMetadataId?: (Scalars['UUID'] | null),anyFieldFilterValue?: (Scalars['String'] | null),calendarLayout?: (ViewCalendarLayout | null),calendarFieldMetadataId?: (Scalars['UUID'] | null),visibility?: (ViewVisibility | null),mainGroupByFieldMetadataId?: (Scalars['UUID'] | null),shouldHideEmptyGroups?: (Scalars['Boolean'] | null)}
+
+export interface UpsertViewWidgetInput {
+/** The id of the view widget (page layout widget). */
+widgetId: Scalars['UUID'],
+/** The view fields to upsert. */
+viewFields?: (UpsertViewWidgetViewFieldInput[] | null),
+/** The view filters to upsert. */
+viewFilters?: (UpsertViewWidgetViewFilterInput[] | null),
+/** The view filter groups to upsert. */
+viewFilterGroups?: (UpsertViewWidgetViewFilterGroupInput[] | null),
+/** The view sorts to upsert. */
+viewSorts?: (UpsertViewWidgetViewSortInput[] | null)}
+
+export interface UpsertViewWidgetViewFieldInput {
+/** The id of an existing view field to update. */
+viewFieldId?: (Scalars['UUID'] | null),
+/** The field metadata id. Used to create a new view field when viewFieldId is not provided. */
+fieldMetadataId?: (Scalars['UUID'] | null),isVisible: Scalars['Boolean'],position: Scalars['Float'],size?: (Scalars['Float'] | null)}
+
+export interface UpsertViewWidgetViewFilterInput {id?: (Scalars['UUID'] | null),fieldMetadataId: Scalars['UUID'],operand?: (ViewFilterOperand | null),value: Scalars['JSON'],viewFilterGroupId?: (Scalars['UUID'] | null),positionInViewFilterGroup?: (Scalars['Float'] | null),subFieldName?: (Scalars['String'] | null)}
+
+export interface UpsertViewWidgetViewFilterGroupInput {id?: (Scalars['UUID'] | null),parentViewFilterGroupId?: (Scalars['UUID'] | null),logicalOperator?: (ViewFilterGroupLogicalOperator | null),positionInViewFilterGroup?: (Scalars['Float'] | null)}
+
+export interface UpsertViewWidgetViewSortInput {id?: (Scalars['UUID'] | null),fieldMetadataId: Scalars['UUID'],direction?: (ViewSortDirection | null)}
 
 export interface CreateViewSortInput {id?: (Scalars['UUID'] | null),fieldMetadataId: Scalars['UUID'],direction?: (ViewSortDirection | null),viewId: Scalars['UUID']}
 
