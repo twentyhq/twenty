@@ -27,10 +27,6 @@ export class MarketplaceAppDTO {
 
   @IsString()
   @Field()
-  icon: string;
-
-  @IsString()
-  @Field()
   author: string;
 
   @IsString()

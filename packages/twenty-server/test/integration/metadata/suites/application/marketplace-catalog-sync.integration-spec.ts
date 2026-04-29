@@ -13,7 +13,6 @@ const MARKETPLACE_QUERY = `
       description
       author
       sourcePackage
-      icon
       category
       logo
       isFeatured

@@ -71,7 +71,6 @@ export const SettingsApplicationDetailContentTab = ({
   } = useComputeApplicationContentForLayoutAndLogic({
     installedApplication,
     manifestContent,
-    applicationInfo,
   });
 
   const lifecycleOptions = {

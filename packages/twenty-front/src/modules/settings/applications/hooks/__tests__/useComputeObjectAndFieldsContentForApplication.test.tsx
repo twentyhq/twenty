@@ -167,18 +167,10 @@ describe('useComputeObjectAndFieldsContentForApplication', () => {
         fields: [],
       } as unknown as Manifest;
 
-      const applicationInfo = {
-        id: 'app-uid',
-        name: 'Test App',
-        universalIdentifier: 'app-uid',
-        logo: null,
-      };
-
       const { result } = renderHook(
         () =>
           useComputeObjectAndFieldsContentForApplication({
             manifestContent,
-            applicationInfo,
           }),
         { wrapper },
       );
