@@ -7,6 +7,7 @@ export type RoadmapDependency = {
   id: string;
   dependentMilestoneId: string;
   requiredMilestoneId: string;
+  description: string | null;
 };
 
 type UseRecordRoadmapDependenciesArgs = {
@@ -31,8 +32,9 @@ export const useRecordRoadmapDependencies = ({
 }: UseRecordRoadmapDependenciesArgs): {
   dependencies: RoadmapDependency[];
   loading: boolean;
+  refetch: () => Promise<unknown>;
 } => {
-  const { records, loading } = useFindManyRecords<RoadmapDependency>({
+  const { records, loading, refetch } = useFindManyRecords<RoadmapDependency>({
     objectNameSingular: 'opportunityMilestoneDependency',
     filter:
       recordIds.length > 0
@@ -43,6 +45,7 @@ export const useRecordRoadmapDependencies = ({
       id: true,
       dependentMilestoneId: true,
       requiredMilestoneId: true,
+      description: true,
     },
   });
 
@@ -53,9 +56,10 @@ export const useRecordRoadmapDependencies = ({
         id: record.id,
         dependentMilestoneId: record.dependentMilestoneId,
         requiredMilestoneId: record.requiredMilestoneId,
+        description: record.description ?? null,
       })),
     [records],
   );
 
-  return { dependencies, loading };
+  return { dependencies, loading, refetch };
 };

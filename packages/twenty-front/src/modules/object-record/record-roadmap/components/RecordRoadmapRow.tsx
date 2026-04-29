@@ -26,6 +26,7 @@ type RecordRoadmapRowProps = {
     targetSwimlaneKey?: string | null;
   }) => void;
   onOpenRecord?: (recordId: string) => void;
+  onPortClick?: (args: { recordId: string; port: 'start' | 'end' }) => void;
 };
 
 // Must match `StyledNameRow` in RecordRoadmapNameColumn pixel-for-pixel so
@@ -66,6 +67,7 @@ export const RecordRoadmapRow = ({
   readOnly,
   onCommit,
   onOpenRecord,
+  onPortClick,
 }: RecordRoadmapRowProps) => (
   // `data-roadmap-record-id` is read by the bar drag hook to resolve the
   // target row via elementFromPoint, enabling vertical reorder-by-position.
@@ -86,6 +88,7 @@ export const RecordRoadmapRow = ({
       readOnly={readOnly}
       onCommit={onCommit}
       onClick={onOpenRecord}
+      onPortClick={onPortClick}
     />
   </StyledRow>
 );

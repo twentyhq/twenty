@@ -34,6 +34,13 @@ const StyledBar = styled.div<{ hasError: boolean; isDragging: boolean }>`
         ? themeCssVariables.border.color.danger
         : themeCssVariables.tag.text.blue};
   border-radius: 4px;
+  /* border-box is non-negotiable for the connection-port dots and the
+     dependency arrow geometry: timeline math gives us widthPx as the
+     visual span the bar should occupy on the day grid. With the default
+     content-box, the 1px border + 8px horizontal padding pushed the
+     actual right edge ~10px past widthPx, so the end-port dot floated
+     inside the bar instead of sitting flush on its right edge. */
+  box-sizing: border-box;
   color: ${themeCssVariables.tag.text.blue};
   cursor: grab;
   display: flex;
@@ -97,6 +104,8 @@ const StyledLabel = styled.span`
 // range overlaps it, and it's drawn on a higher z-index than the row
 // background so it doesn't get washed out by the canvas grid. The dashed
 // border + diagonal hash is the canonical Gantt "planned" convention.
+// Opacity is intentionally low so the actual bar (and any overdue/
+// dependency overlays) stays visually dominant.
 const StyledGhostBar = styled.div`
   background: repeating-linear-gradient(
     -45deg,
@@ -109,6 +118,7 @@ const StyledGhostBar = styled.div`
   border-radius: 4px;
   box-sizing: border-box;
   height: ${ROADMAP_ROW_HEIGHT - 4}px;
+  opacity: 0.3;
   pointer-events: none;
   position: absolute;
   top: 2px;
@@ -119,10 +129,12 @@ const StyledGhostBar = styled.div`
 // whole row and sit on a z-index above the live bar, so the planned
 // boundaries stay readable even when the actual range fully covers the
 // ghost rectangle. The triangle "flag" on top makes the date easy to
-// spot without a tooltip.
+// spot without a tooltip. Opacity matches the ghost bar so the planned
+// overlay reads as a single faded layer.
 const StyledGhostMarker = styled.div`
   border-left: 2px dashed ${themeCssVariables.font.color.tertiary};
   height: ${ROADMAP_ROW_HEIGHT}px;
+  opacity: 0.3;
   pointer-events: none;
   position: absolute;
   top: 0;
@@ -151,24 +163,31 @@ const StyledLockIcon = styled.span`
 
 // Connection-point dot anchored on the bar's start or end edge. Doubles as
 // a visual affordance for "this bar has a dependency port here" and as the
-// geometric anchor the SVG arrows land on. Background is set inline from
-// the bar's accent so the dot inherits color/blockedBy/overdue styling.
-// `pointer-events: none` keeps drag/resize on the bar itself; the dot is
-// purely decorative for now (clickable port wiring is a follow-up).
+// click target that begins authoring a new dependency. Background is set
+// inline from the bar's accent so the dot inherits color/blockedBy/overdue
+// styling. The vertical `top` is also inline because Linaria can't always
+// fold arithmetic expressions over imported numeric constants reliably,
+// and an off-by-one here breaks the "centered port" affordance.
 const StyledConnectionDot = styled.div`
   background-color: currentColor;
   border-radius: 50%;
+  /* Subtle ring helps the dot read as a clickable port even when the
+     bar's accent matches the canvas background (e.g. faded zoom levels). */
+  box-shadow: 0 0 0 2px ${themeCssVariables.background.primary};
+  cursor: crosshair;
   height: ${ROADMAP_CONNECTION_DOT_DIAMETER}px;
-  pointer-events: none;
+  pointer-events: auto;
   position: absolute;
-  top: ${ROADMAP_BAR_VERTICAL_PADDING +
-    ROADMAP_BAR_HEIGHT / 2 -
-    ROADMAP_CONNECTION_DOT_DIAMETER / 2}px;
+  transition: transform 80ms ease-out;
   width: ${ROADMAP_CONNECTION_DOT_DIAMETER}px;
   /* Sits above the bar so the bar's overflow:hidden doesn't clip it,
      and below the SVG connector overlay (zIndex 2) so the arrowhead
      visually lands on the dot. */
   z-index: 1;
+
+  &:hover {
+    transform: scale(1.4);
+  }
 `;
 
 type RecordRoadmapBarProps = {
@@ -204,6 +223,10 @@ type RecordRoadmapBarProps = {
     targetSwimlaneKey?: string | null;
   }) => void;
   onClick?: (recordId: string) => void;
+  /** Fires when a connection-point dot is clicked. Timeline owns the
+      pending-connection state and the mutation; the bar just reports
+      which dot was hit. */
+  onPortClick?: (args: { recordId: string; port: 'start' | 'end' }) => void;
 };
 
 // Pull both the fill and the stronger accent straight from the existing Tag
@@ -241,6 +264,7 @@ export const RecordRoadmapBar = ({
   readOnly = false,
   onCommit,
   onClick,
+  onPortClick,
 }: RecordRoadmapBarProps) => {
   const {
     deltaDays,
@@ -458,10 +482,15 @@ export const RecordRoadmapBar = ({
           <StyledResizeHandleRight onPointerDown={onPointerDownResizeEnd} />
         )}
       </StyledBar>
-      {/* Connection-point dots. Centered on each bar edge so dependency
-          arrows visually attach to a defined port instead of the bare
-          rectangle. Hidden during drag/resize so the user gets a clean
-          ghost outline while moving the bar. */}
+      {/* Connection-point dots. Vertically centered on the bar's left
+          and right edges so dependency arrows visually attach to a
+          defined port. Click to begin authoring a dependency; click a
+          second dot on another bar to commit it. Hidden during
+          drag/resize so the user gets a clean ghost outline while
+          moving the bar. The `top` is inline rather than a Linaria
+          interpolation because the wyw-in-js compiler doesn't always
+          fold arithmetic across imported constants — an off-by-one
+          there left the dots stuck at the row's top edge. */}
       {mode === null && (
         <>
           <StyledConnectionDot
@@ -470,7 +499,23 @@ export const RecordRoadmapBar = ({
             style={{
               color: dotAccentColor,
               left: leftPx - ROADMAP_CONNECTION_DOT_DIAMETER / 2,
+              top:
+                ROADMAP_BAR_VERTICAL_PADDING +
+                ROADMAP_BAR_HEIGHT / 2 -
+                ROADMAP_CONNECTION_DOT_DIAMETER / 2,
             }}
+            onPointerDown={
+              readOnly || onPortClick === undefined
+                ? undefined
+                : (event) => {
+                    // Stop propagation so the bar's drag handler and the
+                    // canvas's "cancel pending connection" listener don't
+                    // fire — clicking a dot is a port commit, not a drag
+                    // start or a cancel.
+                    event.stopPropagation();
+                    onPortClick({ recordId, port: 'start' });
+                  }
+            }
           />
           <StyledConnectionDot
             aria-hidden
@@ -478,7 +523,19 @@ export const RecordRoadmapBar = ({
             style={{
               color: dotAccentColor,
               left: leftPx + widthPx - ROADMAP_CONNECTION_DOT_DIAMETER / 2,
+              top:
+                ROADMAP_BAR_VERTICAL_PADDING +
+                ROADMAP_BAR_HEIGHT / 2 -
+                ROADMAP_CONNECTION_DOT_DIAMETER / 2,
             }}
+            onPointerDown={
+              readOnly || onPortClick === undefined
+                ? undefined
+                : (event) => {
+                    event.stopPropagation();
+                    onPortClick({ recordId, port: 'end' });
+                  }
+            }
           />
         </>
       )}

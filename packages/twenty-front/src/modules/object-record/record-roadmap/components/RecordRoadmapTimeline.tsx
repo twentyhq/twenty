@@ -13,7 +13,12 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 
-import { RecordRoadmapDependencyConnectors } from '@/object-record/record-roadmap/components/RecordRoadmapDependencyConnectors';
+import { RecordRoadmapConnectionPreview } from '@/object-record/record-roadmap/components/RecordRoadmapConnectionPreview';
+import {
+  type DependencyClickPayload,
+  RecordRoadmapDependencyConnectors,
+} from '@/object-record/record-roadmap/components/RecordRoadmapDependencyConnectors';
+import { RecordRoadmapDependencyPopover } from '@/object-record/record-roadmap/components/RecordRoadmapDependencyPopover';
 import { RecordRoadmapNameColumn } from '@/object-record/record-roadmap/components/RecordRoadmapNameColumn';
 import { RecordRoadmapRow } from '@/object-record/record-roadmap/components/RecordRoadmapRow';
 import { RecordRoadmapSwimlane } from '@/object-record/record-roadmap/components/RecordRoadmapSwimlane';
@@ -46,10 +51,16 @@ import { recordIndexRoadmapFieldStartIdState } from '@/object-record/record-inde
 import { recordIndexRoadmapFieldStatusIdState } from '@/object-record/record-index/states/recordIndexRoadmapFieldStatusIdState';
 import { recordIndexRoadmapShowTodayState } from '@/object-record/record-index/states/recordIndexRoadmapShowTodayState';
 import { recordIndexRoadmapShowWeekendsState } from '@/object-record/record-index/states/recordIndexRoadmapShowWeekendsState';
+import { recordRoadmapPendingConnectionState } from '@/object-record/record-roadmap/states/recordRoadmapPendingConnectionState';
 import { recordRoadmapViewportStartComponentState } from '@/object-record/record-roadmap/states/recordRoadmapViewportStartComponentState';
 import { recordRoadmapZoomComponentState } from '@/object-record/record-roadmap/states/recordRoadmapZoomComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
+import { useDestroyOneRecord } from '@/object-record/hooks/useDestroyOneRecord';
+import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { computeRoadmapBarLayouts } from '@/object-record/record-roadmap/utils/computeRoadmapBarLayouts';
 import { computeRoadmapViewportDays } from '@/object-record/record-roadmap/utils/computeRoadmapViewportDays';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
@@ -414,10 +425,214 @@ export const RecordRoadmapTimeline = () => {
     () => placedRecords.map(({ record }) => record.id),
     [placedRecords],
   );
-  const { dependencies } = useRecordRoadmapDependencies({
-    recordIds: milestoneRecordIds,
-    enabled: isMilestoneObject,
+  const { dependencies, refetch: refetchDependencies } =
+    useRecordRoadmapDependencies({
+      recordIds: milestoneRecordIds,
+      enabled: isMilestoneObject,
+    });
+
+  // Connection authoring: clicking a dot on bar A captures the start
+  // anchor; clicking another bar's dot commits the dependency edge. The
+  // preview line follows the cursor in inner-canvas coordinates while
+  // pending. Escape (or click on the empty canvas) clears the state.
+  const [recordRoadmapPendingConnection, setRecordRoadmapPendingConnection] = useAtomState(
+    recordRoadmapPendingConnectionState,
+  );
+  const [connectionCursor, setConnectionCursor] = useState<{
+    xPx: number;
+    yPx: number;
+  } | null>(null);
+  const { enqueueErrorSnackBar } = useSnackBar();
+  const { createOneRecord: createOneDependency } = useCreateOneRecord({
+    objectNameSingular: 'opportunityMilestoneDependency',
   });
+  const { destroyOneRecord: destroyOneDependency } = useDestroyOneRecord({
+    objectNameSingular: 'opportunityMilestoneDependency',
+  });
+  const { updateOneRecord: updateOneRecordGeneric } = useUpdateOneRecord();
+
+  // The selected dependency drives the popover render. `null` means
+  // nothing is open. The Timeline owns this state because the popover
+  // sits above the SVG overlay and needs the full inner-canvas
+  // coordinate system to position itself.
+  const [selectedDependency, setSelectedDependency] =
+    useState<DependencyClickPayload | null>(null);
+
+  const handleDependencyClick = useCallback(
+    (payload: DependencyClickPayload) => {
+      setSelectedDependency(payload);
+    },
+    [],
+  );
+
+  const handleDependencyClosePopover = useCallback(() => {
+    setSelectedDependency(null);
+  }, []);
+
+  const handleDependencyDelete = useCallback(async () => {
+    if (selectedDependency === null) return;
+    try {
+      await destroyOneDependency(selectedDependency.dependency.id);
+      await refetchDependencies();
+    } catch (error) {
+      enqueueErrorSnackBar({
+        message:
+          error instanceof Error ? error.message : 'Could not delete dependency',
+      });
+    } finally {
+      setSelectedDependency(null);
+    }
+  }, [
+    selectedDependency,
+    destroyOneDependency,
+    refetchDependencies,
+    enqueueErrorSnackBar,
+  ]);
+
+  const handleDependencyDescriptionSave = useCallback(
+    async (nextDescription: string | null) => {
+      if (selectedDependency === null) return;
+      try {
+        await updateOneRecordGeneric({
+          objectNameSingular: 'opportunityMilestoneDependency',
+          idToUpdate: selectedDependency.dependency.id,
+          updateOneRecordInput: { description: nextDescription },
+        });
+        await refetchDependencies();
+      } catch (error) {
+        enqueueErrorSnackBar({
+          message:
+            error instanceof Error
+              ? error.message
+              : 'Could not update dependency',
+        });
+      }
+    },
+    [
+      selectedDependency,
+      updateOneRecordGeneric,
+      refetchDependencies,
+      enqueueErrorSnackBar,
+    ],
+  );
+
+  const handlePortClick = useCallback(
+    ({ recordId, port }: { recordId: string; port: 'start' | 'end' }) => {
+      const layout = barLayouts.get(recordId);
+      if (!isDefined(layout)) return;
+
+      // Clicked-port anchor in inner-canvas coordinates. Matches the
+      // dot's center so the preview line shoots out from where the
+      // cursor was when the user pressed down.
+      const anchorXPx =
+        port === 'start'
+          ? layout.leftPx
+          : layout.leftPx + layout.widthPx;
+      const anchorYPx = layout.topPx + layout.heightPx / 2;
+
+      // First click — capture the origin port.
+      if (recordRoadmapPendingConnection === null) {
+        setRecordRoadmapPendingConnection({ recordId, port, anchorXPx, anchorYPx });
+        setConnectionCursor({ xPx: anchorXPx, yPx: anchorYPx });
+        return;
+      }
+
+      // Second click on the same record cancels (no self-loops anyway).
+      if (recordRoadmapPendingConnection.recordId === recordId) {
+        setRecordRoadmapPendingConnection(null);
+        setConnectionCursor(null);
+        return;
+      }
+
+      // Second click on a different record commits the edge. Convention:
+      // first-clicked = required (predecessor), second-clicked = dependent
+      // (successor). This matches the visual "draw an arrow from end of A
+      // to start of B = B depends on A" mental model.
+      void (async () => {
+        try {
+          await createOneDependency({
+            requiredMilestoneId: recordRoadmapPendingConnection.recordId,
+            dependentMilestoneId: recordId,
+          });
+          // Force a refetch — the optimistic-create effect doesn't
+          // reliably match queries filtered by `{ in: [...] }` on a
+          // foreign-key column, so the new edge is invisible until the
+          // next render that hits the server. An explicit refetch on
+          // success keeps the SVG arrow in lockstep with the DB.
+          await refetchDependencies();
+        } catch (error) {
+          // Backend cycle validator + uniqueness checks surface here.
+          // Snackbar message comes from the GraphQLError so the user
+          // gets the friendly "would create a cycle" copy when relevant.
+          enqueueErrorSnackBar({
+            message:
+              error instanceof Error
+                ? error.message
+                : 'Could not create dependency',
+          });
+        } finally {
+          setRecordRoadmapPendingConnection(null);
+          setConnectionCursor(null);
+        }
+      })();
+    },
+    [
+      barLayouts,
+      recordRoadmapPendingConnection,
+      setRecordRoadmapPendingConnection,
+      createOneDependency,
+      refetchDependencies,
+      enqueueErrorSnackBar,
+    ],
+  );
+
+  // Track cursor in inner-canvas coords while a connection is pending so
+  // the preview line follows the pointer. Listening on the canvas (not
+  // window) keeps the math simple — clientX/Y minus the canvas bounding
+  // rect, plus the canvas's own scroll, gives inner-content coordinates.
+  const handleCanvasPointerMove = useCallback(
+    (event: React.PointerEvent<HTMLDivElement>) => {
+      if (recordRoadmapPendingConnection === null) return;
+      const canvas = canvasRef.current;
+      if (canvas === null) return;
+      const rect = canvas.getBoundingClientRect();
+      setConnectionCursor({
+        xPx: event.clientX - rect.left + canvas.scrollLeft,
+        yPx: event.clientY - rect.top + canvas.scrollTop,
+      });
+    },
+    [recordRoadmapPendingConnection],
+  );
+
+  // Click anywhere on the canvas that's NOT a port dot cancels the in-
+  // progress connection. The dots stop propagation in their own handler,
+  // so reaching this handler implies the click landed on empty timeline,
+  // a swimlane, or a bar body.
+  const handleCanvasPointerDownCapture = useCallback(
+    (event: React.PointerEvent<HTMLDivElement>) => {
+      if (recordRoadmapPendingConnection === null) return;
+      const target = event.target as HTMLElement | null;
+      if (target?.closest('[data-roadmap-bar-port]')) return;
+      setRecordRoadmapPendingConnection(null);
+      setConnectionCursor(null);
+    },
+    [recordRoadmapPendingConnection, setRecordRoadmapPendingConnection],
+  );
+
+  // Escape always cancels — global listener is fine here, the atom is
+  // null for the vast majority of the session so we attach the handler
+  // only while pending.
+  useEffect(() => {
+    if (recordRoadmapPendingConnection === null) return;
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setRecordRoadmapPendingConnection(null);
+        setConnectionCursor(null);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [recordRoadmapPendingConnection, setRecordRoadmapPendingConnection]);
 
   const swimlaneStackHeightPx = useMemo(() => {
     let total = 0;
@@ -679,7 +894,12 @@ export const RecordRoadmapTimeline = () => {
             extraFields={nameColumnFields}
           />
         </StyledNameColumnScroller>
-        <StyledTimelineCanvas ref={canvasRef} onScroll={handleCanvasScroll}>
+        <StyledTimelineCanvas
+          ref={canvasRef}
+          onScroll={handleCanvasScroll}
+          onPointerMove={handleCanvasPointerMove}
+          onPointerDownCapture={handleCanvasPointerDownCapture}
+        >
           <StyledTimelineInner style={{ width: canvasWidthPx }}>
             <RecordRoadmapTimeHeader
               days={days}
@@ -731,6 +951,9 @@ export const RecordRoadmapTimeline = () => {
                       readOnly={readOnly}
                       onCommit={handleBarCommit}
                       onOpenRecord={handleOpenRecord}
+                      onPortClick={
+                        isMilestoneObject ? handlePortClick : undefined
+                      }
                     />
                   ),
                 )}
@@ -748,6 +971,30 @@ export const RecordRoadmapTimeline = () => {
                 barLayouts={barLayouts}
                 canvasWidthPx={canvasWidthPx}
                 canvasHeightPx={canvasHeightPx}
+                onDependencyClick={
+                  readOnly ? undefined : handleDependencyClick
+                }
+              />
+            )}
+            {isMilestoneObject && (
+              <RecordRoadmapConnectionPreview
+                anchorXPx={recordRoadmapPendingConnection?.anchorXPx ?? null}
+                anchorYPx={recordRoadmapPendingConnection?.anchorYPx ?? null}
+                cursorXPx={connectionCursor?.xPx ?? null}
+                cursorYPx={connectionCursor?.yPx ?? null}
+                canvasWidthPx={canvasWidthPx}
+                canvasHeightPx={canvasHeightPx}
+              />
+            )}
+            {isMilestoneObject && selectedDependency !== null && (
+              <RecordRoadmapDependencyPopover
+                dependency={selectedDependency.dependency}
+                anchorXPx={selectedDependency.anchorXPx}
+                anchorYPx={selectedDependency.anchorYPx}
+                canvasWidthPx={canvasWidthPx}
+                onClose={handleDependencyClosePopover}
+                onDelete={handleDependencyDelete}
+                onDescriptionSave={handleDependencyDescriptionSave}
               />
             )}
           </StyledTimelineInner>
