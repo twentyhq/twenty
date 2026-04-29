@@ -192,6 +192,30 @@ describe('evaluateFilterConditions', () => {
         expect(result).toBe(false); // Objects are different references
       });
 
+      it('should return true when left operand is non-empty (IS_NOT_NULL RELATION)', () => {
+        const filter = createFilter(
+          ViewFilterOperand.IS_NOT_NULL,
+          '550e8400-e29b-41d4-a716-446655440000',
+          '',
+          'RELATION',
+        );
+        const result = evaluateFilterConditions({ filters: [filter] });
+
+        expect(result).toBe(true);
+      });
+
+      it('should return false when left operand is empty (IS_NOT_NULL RELATION)', () => {
+        const filter = createFilter(
+          ViewFilterOperand.IS_NOT_NULL,
+          '',
+          '',
+          'RELATION',
+        );
+        const result = evaluateFilterConditions({ filters: [filter] });
+
+        expect(result).toBe(false);
+      });
+
       it('should throw error for unsupported relation filter operand', () => {
         const uuid1 = '550e8400-e29b-41d4-a716-446655440000';
         const uuid2 = '6ba7b810-9dad-11d1-80b4-00c04fd430c8';
