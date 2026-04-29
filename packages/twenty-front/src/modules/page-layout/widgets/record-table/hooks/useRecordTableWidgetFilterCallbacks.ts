@@ -2,7 +2,7 @@ import { currentRecordFilterGroupsComponentState } from '@/object-record/record-
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { recordTableWidgetViewDraftComponentState } from '@/page-layout/states/recordTableWidgetViewDraftComponentState';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
-import { type ViewFilterGroupLogicalOperator } from '@/views/types/ViewFilterGroupLogicalOperator';
+import { mapRecordFilterGroupToViewFilterGroup } from '@/views/utils/mapRecordFilterGroupToViewFilterGroup';
 import { useStore } from 'jotai';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -62,16 +62,10 @@ export const useRecordTableWidgetFilterCallbacks = ({
               recordFilter.positionInRecordFilterGroup ?? null,
             subFieldName: recordFilter.subFieldName ?? null,
           })),
-          viewFilterGroups: currentRecordFilterGroups.map(
-            (recordFilterGroup) => ({
-              id: recordFilterGroup.id,
-              viewId,
-              parentViewFilterGroupId:
-                recordFilterGroup.parentRecordFilterGroupId ?? null,
-              logicalOperator:
-                recordFilterGroup.logicalOperator as unknown as ViewFilterGroupLogicalOperator,
-              positionInViewFilterGroup:
-                recordFilterGroup.positionInRecordFilterGroup ?? null,
+          viewFilterGroups: currentRecordFilterGroups.map((recordFilterGroup) =>
+            mapRecordFilterGroupToViewFilterGroup({
+              recordFilterGroup,
+              view: { id: viewId },
             }),
           ),
         },
