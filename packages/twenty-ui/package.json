@@ -17,6 +17,7 @@
     "@storybook-community/storybook-addon-cookie": "^5.0.0",
     "@storybook/addon-coverage": "^3.0.0",
     "@storybook/addon-links": "^10.3.3",
+    "@storybook/react-vite": "^10.3.3",
     "@swc/core": "^1.15.11",
     "@swc/jest": "^0.2.39",
     "@testing-library/dom": "^10.4.0",
