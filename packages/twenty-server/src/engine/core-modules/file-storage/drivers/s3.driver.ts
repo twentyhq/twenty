@@ -57,12 +57,24 @@ export class S3Driver implements StorageDriver {
       return;
     }
 
-    this.s3Client = new S3({ ...s3Options, region, endpoint });
+    this.s3Client = new S3({
+      ...s3Options,
+      region,
+      endpoint,
+      maxAttempts: 5,
+      retryMode: 'adaptive',
+    });
     this.bucketName = bucketName;
 
     if (presignEnabled) {
       this.presignClient = presignEndpoint
-        ? new S3({ ...s3Options, region, endpoint: presignEndpoint })
+        ? new S3({
+            ...s3Options,
+            region,
+            endpoint: presignEndpoint,
+            maxAttempts: 5,
+            retryMode: 'adaptive',
+          })
         : this.s3Client;
     }
   }
@@ -109,7 +121,14 @@ export class S3Driver implements StorageDriver {
       Bucket: this.bucketName,
     });
 
-    await this.s3Client.send(command);
+    try {
+      await this.s3Client.send(command);
+    } catch (error) {
+      this.logger.error(
+        `S3 writeFile failed for key "${params.filePath}": ${error.name ?? 'UnknownError'} - ${error.message}`,
+      );
+      throw error;
+    }
   }
 
   private async createFolder(path: string) {
