@@ -11,8 +11,7 @@ jest.mock(
   'src/modules/calendar/calendar-event-import-manager/drivers/caldav/lib/caldav.client',
   () => ({
     CalDAVClient: jest.fn().mockImplementation(() => ({
-      listCalendars: jest.fn().mockResolvedValue([]),
-      validateSyncCollectionSupport: jest.fn().mockResolvedValue(undefined),
+      detectServerCapability: jest.fn().mockResolvedValue('sync-collection'),
     })),
   }),
 );
