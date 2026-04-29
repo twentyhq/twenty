@@ -2621,6 +2621,7 @@ type AgentChatThread {
   createdAt: DateTime!
   updatedAt: DateTime!
   deletedAt: DateTime
+  lastMessageAt: DateTime
 }
 
 type AgentMessage {
@@ -3008,7 +3009,7 @@ type Query {
     filter: AgentChatThreadFilter! = {}
 
     """Specify to sort results."""
-    sorting: [AgentChatThreadSort!]! = [{field: updatedAt, direction: DESC}]
+    sorting: [AgentChatThreadSort!]! = [{field: lastMessageAt, direction: DESC, nulls: NULLS_LAST}, {field: updatedAt, direction: DESC}]
   ): AgentChatThreadConnection!
   agentTurns(agentId: UUID!): [AgentTurn!]!
   checkUserExists(email: String!, captchaToken: String): CheckUserExist!
@@ -3064,6 +3065,7 @@ input AgentChatThreadFilter {
   id: UUIDFilterComparison
   updatedAt: DateFieldComparison
   deletedAt: DateFieldComparison
+  lastMessageAt: DateFieldComparison
 }
 
 input DateFieldComparison {
@@ -3096,6 +3098,7 @@ enum AgentChatThreadSortFields {
   id
   updatedAt
   deletedAt
+  lastMessageAt
 }
 
 """Sort Directions"""

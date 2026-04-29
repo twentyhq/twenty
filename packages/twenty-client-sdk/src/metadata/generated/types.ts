@@ -5276,6 +5276,9 @@ export default {
             "deletedAt": [
                 4
             ],
+            "lastMessageAt": [
+                4
+            ],
             "__typename": [
                 1
             ]
@@ -6512,6 +6515,9 @@ export default {
                 327
             ],
             "deletedAt": [
+                327
+            ],
+            "lastMessageAt": [
                 327
             ],
             "__typename": [

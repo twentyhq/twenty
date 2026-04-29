@@ -56,10 +56,10 @@ export type AgentChatEvent = {
 
 export type AgentChatThread = {
   __typename?: 'AgentChatThread';
-  deletedAt?: Maybe<Scalars['DateTime']>;
   contextWindowTokens?: Maybe<Scalars['Int']>;
   conversationSize: Scalars['Int'];
   createdAt: Scalars['DateTime'];
+  deletedAt?: Maybe<Scalars['DateTime']>;
   id: Scalars['UUID'];
   lastMessageAt?: Maybe<Scalars['DateTime']>;
   title?: Maybe<Scalars['String']>;
