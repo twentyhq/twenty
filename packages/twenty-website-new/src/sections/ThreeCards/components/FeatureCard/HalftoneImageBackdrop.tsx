@@ -4,7 +4,13 @@ import { styled } from '@linaria/react';
 import { type RefObject, useEffect, useRef } from 'react';
 import * as THREE from 'three';
 
-import { createSiteWebGlRenderer } from '@/lib/visual-runtime';
+import { observeElementSize } from '@/lib/dom/observe-element-size';
+import {
+  createVisualRenderLoop,
+  loadVisualImage,
+  tryCreateSiteWebGlRenderer,
+  type VisualRenderLoop,
+} from '@/lib/visual-runtime';
 
 const PASS_THROUGH_VERTEX_SHADER = /* glsl */ `
   varying vec2 vUv;
@@ -183,14 +189,6 @@ function createInteractionState(): InteractionState {
   };
 }
 
-async function loadDecodedImage(imageUrl: string) {
-  const image = new Image();
-  image.crossOrigin = 'anonymous';
-  image.src = imageUrl;
-  await image.decode();
-  return image;
-}
-
 function getImagePreviewZoom(previewDistance: number) {
   return REFERENCE_PREVIEW_DISTANCE / Math.max(previewDistance, 0.001);
 }
@@ -213,13 +211,28 @@ async function mountHalftoneImageBackdrop({
   isExternallyActive: () => boolean;
   pointerTarget?: HTMLElement | null;
 }) {
-  const image = await loadDecodedImage(config.imageUrl);
+  const image = await loadVisualImage(config.imageUrl, {
+    crossOrigin: 'anonymous',
+    label: 'halftone image backdrop',
+  });
 
-  const renderer = createSiteWebGlRenderer({
+  let renderLoop: VisualRenderLoop | null = null;
+  const renderer = tryCreateSiteWebGlRenderer({
     alpha: true,
     antialias: false,
+    onContextLost: () => {
+      renderLoop?.stop();
+    },
     premultipliedAlpha: false,
   });
+
+  if (renderer === null) {
+    return {
+      dispose: () => {},
+      wake: () => {},
+    };
+  }
+
   renderer.setClearColor(0x000000, 0);
   const pixelRatio = getDevicePixelRatio();
   renderer.setPixelRatio(pixelRatio);
@@ -274,7 +287,6 @@ async function mountHalftoneImageBackdrop({
   scene.add(fullScreenMesh);
 
   const interaction = createInteractionState();
-  let animationFrameId: number | null = null;
   let lastFrameTime: number | null = null;
 
   const renderFrame = (deltaSeconds: number) => {
@@ -371,8 +383,6 @@ async function mountHalftoneImageBackdrop({
   };
 
   const runFrame = (timestamp: number) => {
-    animationFrameId = null;
-
     const deltaSeconds =
       lastFrameTime === null
         ? 1 / 60
@@ -381,18 +391,15 @@ async function mountHalftoneImageBackdrop({
     lastFrameTime = timestamp;
 
     if (renderFrame(deltaSeconds)) {
-      animationFrameId = window.requestAnimationFrame(runFrame);
-      return;
+      return true;
     }
 
     lastFrameTime = null;
+    return false;
   };
 
   const ensureAnimationLoop = () => {
-    if (animationFrameId !== null) {
-      return;
-    }
-    animationFrameId = window.requestAnimationFrame(runFrame);
+    renderLoop?.start();
   };
 
   const syncSize = () => {
@@ -409,13 +416,18 @@ async function mountHalftoneImageBackdrop({
       1,
     );
 
-    if (animationFrameId === null) {
+    if (!renderLoop?.isRunning()) {
       renderFrame(0);
     }
   };
 
-  const resizeObserver = new ResizeObserver(syncSize);
-  resizeObserver.observe(container);
+  renderLoop = createVisualRenderLoop({
+    renderFrame: runFrame,
+    target: container,
+    targetVisibilityOptions: { rootMargin: '100px' },
+  });
+
+  const stopObservingSize = observeElementSize(container, syncSize);
   syncSize();
 
   const updatePointerPosition = (
@@ -483,11 +495,8 @@ async function mountHalftoneImageBackdrop({
 
   return {
     dispose: () => {
-      if (animationFrameId !== null) {
-        window.cancelAnimationFrame(animationFrameId);
-      }
-
-      resizeObserver.disconnect();
+      renderLoop?.dispose();
+      stopObservingSize();
       trackingElement.removeEventListener('pointermove', handlePointerMove);
       trackingElement.removeEventListener('pointerleave', handlePointerLeave);
 
@@ -526,6 +535,22 @@ export function HalftoneImageBackdrop({
   const mountRef = useRef<HTMLDivElement>(null);
   const activeRef = useRef(active);
   const wakeRef = useRef<VoidFunction | null>(null);
+  const {
+    activeHoverX,
+    activeHoverY,
+    dashColor,
+    flipImageY,
+    halftonePower,
+    halftoneScalePx,
+    halftoneWidth,
+    hoverDashColor,
+    hoverHalftoneRadius,
+    hoverLightIntensity,
+    hoverLightRadius,
+    imageContrast,
+    imageUrl,
+    previewDistance,
+  } = config;
 
   activeRef.current = active;
 
@@ -539,7 +564,22 @@ export function HalftoneImageBackdrop({
     let cancelled = false;
 
     void mountHalftoneImageBackdrop({
-      config,
+      config: {
+        activeHoverX,
+        activeHoverY,
+        dashColor,
+        flipImageY,
+        halftonePower,
+        halftoneScalePx,
+        halftoneWidth,
+        hoverDashColor,
+        hoverHalftoneRadius,
+        hoverLightIntensity,
+        hoverLightRadius,
+        imageContrast,
+        imageUrl,
+        previewDistance,
+      },
       container,
       isExternallyActive: () => activeRef.current,
       pointerTarget: pointerTargetRef?.current,
@@ -564,20 +604,20 @@ export function HalftoneImageBackdrop({
       dispose?.();
     };
   }, [
-    config.activeHoverX,
-    config.activeHoverY,
-    config.dashColor,
-    config.flipImageY,
-    config.halftonePower,
-    config.halftoneScalePx,
-    config.halftoneWidth,
-    config.hoverDashColor,
-    config.hoverHalftoneRadius,
-    config.hoverLightIntensity,
-    config.hoverLightRadius,
-    config.imageContrast,
-    config.imageUrl,
-    config.previewDistance,
+    activeHoverX,
+    activeHoverY,
+    dashColor,
+    flipImageY,
+    halftonePower,
+    halftoneScalePx,
+    halftoneWidth,
+    hoverDashColor,
+    hoverHalftoneRadius,
+    hoverLightIntensity,
+    hoverLightRadius,
+    imageContrast,
+    imageUrl,
+    previewDistance,
     pointerTargetRef,
   ]);
 

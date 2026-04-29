@@ -1,8 +1,9 @@
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { currentRecordFieldsComponentState } from '@/object-record/record-field/states/currentRecordFieldsComponentState';
+import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
 import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useViewById } from '@/views/hooks/useViewById';
 import { t } from '@lingui/core/macro';
@@ -45,22 +46,20 @@ export const useRecordTableSettingsDescriptions = ({
     recordIndexId,
   );
 
-  const currentRecordFields = useAtomComponentStateValue(
-    currentRecordFieldsComponentState,
+  const visibleRecordFields = useAtomComponentSelectorValue(
+    visibleRecordFieldsComponentSelector,
     recordIndexId,
   );
 
   const hasViewId = isDefined(viewId);
 
   const activeVisibleFieldLabels: Array<string | undefined> = hasViewId
-    ? currentRecordFields
-        .filter((field) => field.isVisible)
-        .map(
-          (field) =>
-            sourceObjectMetadataItem?.fields.find(
-              (metaField) => metaField.id === field.fieldMetadataItemId,
-            )?.label,
-        )
+    ? visibleRecordFields.map(
+        (field) =>
+          sourceObjectMetadataItem?.fields.find(
+            (metaField) => metaField.id === field.fieldMetadataItemId,
+          )?.label,
+      )
     : [];
 
   const activeFilterLabels: Array<string | undefined> =

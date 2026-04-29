@@ -11,12 +11,21 @@ import { isSelectedItemIdComponentFamilyState } from '@/ui/layout/selectable-lis
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { COMMAND_MENU_DEFAULT_ICON } from '@/workflow/workflow-trigger/constants/CommandMenuDefaultIcon';
+import { styled } from '@linaria/react';
 import { useContext } from 'react';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
 import { Loader } from 'twenty-ui/feedback';
 import { MenuItem } from 'twenty-ui/navigation';
 import { type CommandMenuItemFieldsFragment } from '~/generated-metadata/graphql';
+
+const StyledPreviewWrapper = styled.div`
+  cursor: not-allowed;
+
+  & * {
+    pointer-events: none;
+  }
+`;
 
 type CommandMenuItemRendererProps = {
   item: CommandMenuItemFieldsFragment;
@@ -27,7 +36,8 @@ type CommandMenuItemButtonRendererProps = CommandMenuItemRendererProps;
 const CommandMenuItemButtonRenderer = ({
   item,
 }: CommandMenuItemButtonRendererProps) => {
-  const { commandMenuContextApi } = useContext(CommandMenuContext);
+  const { commandMenuContextApi, isInPreviewMode } =
+    useContext(CommandMenuContext);
   const { getIcon } = useIcons();
 
   const { iconKey, label, shortLabel } = interpolateCommandMenuItemFields(
@@ -43,14 +53,19 @@ const CommandMenuItemButtonRenderer = ({
     label,
   });
 
+  const command = { key: item.id, label, shortLabel, Icon };
+
+  if (isInPreviewMode) {
+    return (
+      <StyledPreviewWrapper>
+        <CommandMenuButton command={command} />
+      </StyledPreviewWrapper>
+    );
+  }
+
   return (
     <CommandMenuButton
-      command={{
-        key: item.id,
-        label,
-        shortLabel,
-        Icon,
-      }}
+      command={command}
       onClick={disabled ? undefined : handleClick}
       disabled={disabled}
     />

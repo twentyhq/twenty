@@ -14,15 +14,10 @@ import { Menu } from '@/sections/Menu/components';
 import { Signoff } from '@/sections/Signoff/components';
 import { TrustedBy } from '@/sections/TrustedBy/components';
 import { theme } from '@/theme';
-import { buildLocalizedMetadata } from '@/lib/seo';
+import { buildRouteMetadata } from '@/lib/seo';
 import { css } from '@linaria/core';
 
-export const generateMetadata = buildLocalizedMetadata({
-  path: '/customers',
-  title: 'Customers | Twenty',
-  description:
-    'Meet the teams running their business on Twenty. Real customer stories on how they shaped the CRM to fit their workflow.',
-});
+export const generateMetadata = buildRouteMetadata('customers');
 
 const HERO_HEADING = [
   { text: 'See how teams ', fontFamily: 'serif' as const },

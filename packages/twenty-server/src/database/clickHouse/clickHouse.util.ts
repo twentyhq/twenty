@@ -3,9 +3,12 @@
  * ClickHouse expects: YYYY-MM-DD HH:mm:ss.SSS (no 'T' separator, no 'Z' suffix)
  * JavaScript toISOString() returns: YYYY-MM-DDTHH:mm:ss.SSSZ
  */
-export const formatDateForClickHouse = (date: Date | string): string => {
+export const formatDateTimeForClickHouse = (date: Date | string): string => {
   const iso = typeof date === 'string' ? date : date.toISOString();
 
   // Extract date (YYYY-MM-DD) and time with milliseconds (HH:mm:ss.SSS)
   return `${iso.slice(0, 10)} ${iso.slice(11, 23)}`;
 };
+
+export const formatDateForClickHouse = (date: Date): string =>
+  date.toISOString().slice(0, 10);

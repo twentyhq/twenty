@@ -11,7 +11,6 @@ import { MENU_DATA } from '@/sections/Menu/data';
 import { TRUSTED_BY_DATA } from '@/sections/TrustedBy/data';
 import { Body, Eyebrow, Heading, LinkButton } from '@/design-system/components';
 import { Pages } from '@/lib/pages';
-import { ArrowRightUpIcon } from '@/icons';
 import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';
 import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels';
 import { Faq } from '@/sections/Faq/components';
@@ -22,23 +21,15 @@ import { Menu } from '@/sections/Menu/components';
 import { Problem } from '@/sections/Problem/components';
 import { Testimonials } from '@/sections/Testimonials/components';
 import { ThreeCards } from '@/sections/ThreeCards/components';
-import { buildLocalizedMetadata } from '@/lib/seo';
+import { buildRouteMetadata } from '@/lib/seo';
 import { TrustedBy } from '@/sections/TrustedBy/components';
 import { theme } from '@/theme';
 import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
 
-export const generateMetadata = buildLocalizedMetadata({
-  path: '/',
-  title: 'Twenty | #1 open source CRM',
-  description:
-    'The #1 open source CRM for modern teams. Modular, scalable, and built to fit your business.',
-});
+export const generateMetadata = buildRouteMetadata('home');
 
 const HOME_TOP_BACKGROUND_COLOR = '#F4F4F4';
-const PRODUCT_HUNT_LAUNCH_URL =
-  'https://www.producthunt.com/products/twenty-crm?launch=twenty-2-0';
-const PRODUCT_HUNT_BRAND_COLOR = '#DA552F';
 
 const HeroHeadingGroup = styled.div`
   align-items: center;
@@ -50,58 +41,6 @@ const HeroHeadingGroup = styled.div`
   > *:last-child {
     margin-top: 0;
   }
-`;
-
-const HeroLaunchChip = styled.a`
-  align-items: center;
-  background: ${theme.colors.primary.background[100]};
-  border: 1px solid ${theme.colors.primary.border[10]};
-  border-radius: 999px;
-  color: ${theme.colors.primary.text[100]};
-  display: inline-flex;
-  font-family: ${theme.font.family.mono};
-  font-size: ${theme.font.size(2.5)};
-  font-weight: ${theme.font.weight.medium};
-  gap: ${theme.spacing(2)};
-  line-height: ${theme.lineHeight(3)};
-  padding: ${theme.spacing(2)} ${theme.spacing(3)};
-  text-decoration: none;
-  text-transform: uppercase;
-  transition:
-    border-color 180ms ease,
-    color 180ms ease,
-    transform 180ms ease;
-  white-space: nowrap;
-
-  &:is(:hover, :focus-visible) {
-    border-color: ${PRODUCT_HUNT_BRAND_COLOR};
-    color: ${PRODUCT_HUNT_BRAND_COLOR};
-    transform: translateY(-1px);
-  }
-
-  &:focus-visible {
-    outline: 1px solid ${theme.colors.highlight[100]};
-    outline-offset: 2px;
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    transition: none;
-  }
-`;
-
-const HeroLaunchChipDot = styled.span`
-  background: ${PRODUCT_HUNT_BRAND_COLOR};
-  border-radius: 999px;
-  display: block;
-  flex-shrink: 0;
-  height: ${theme.spacing(2)};
-  width: ${theme.spacing(2)};
-`;
-
-const HeroLaunchChipLabel = styled.span`
-  align-items: center;
-  display: inline-flex;
-  gap: ${theme.spacing(1.5)};
 `;
 
 const HeroIntroGroup = styled.div`
@@ -177,17 +116,6 @@ export default async function HomePage() {
       <Hero.Root backgroundColor={HOME_TOP_BACKGROUND_COLOR} showHomeBackground>
         <HeroIntroGroup data-halftone-exclude>
           <HeroHeadingGroup>
-            <HeroLaunchChip
-              href={PRODUCT_HUNT_LAUNCH_URL}
-              rel="noopener noreferrer"
-              target="_blank"
-            >
-              <HeroLaunchChipDot />
-              <HeroLaunchChipLabel>
-                Live on Product Hunt
-                <ArrowRightUpIcon size={8} strokeColor="currentColor" />
-              </HeroLaunchChipLabel>
-            </HeroLaunchChip>
             <Hero.Heading page={Pages.Home} segments={HERO_DATA.heading} />
             <Hero.Body page={Pages.Home} body={HERO_DATA.body} size="sm" />
           </HeroHeadingGroup>

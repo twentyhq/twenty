@@ -19,6 +19,31 @@ interface HalftoneGeometrySpec {
 
 type GeometryCacheEntry = THREE.BufferGeometry | Promise<THREE.BufferGeometry>;
 
+export type ImportedGeometryNormalizationOptions = {
+  postRotateZ?: number;
+  scaleTarget?: number;
+  useLegacyNormalization?: boolean;
+};
+
+const LEGACY_IMPORTED_GEOMETRY_SCALE_TARGET = 2.75;
+const importedGeometryCache = new Map<string, GeometryCacheEntry>();
+
+function getImportedGeometryCacheKey({
+  geometryOptions,
+  loader,
+  modelUrl,
+}: {
+  geometryOptions?: ImportedGeometryNormalizationOptions;
+  loader: HalftoneModelLoader;
+  modelUrl: string;
+}) {
+  return JSON.stringify({
+    geometryOptions: geometryOptions ?? null,
+    loader,
+    modelUrl,
+  });
+}
+
 function mergeGeometries(geometries: THREE.BufferGeometry[]) {
   if (geometries.length === 1) {
     return geometries[0];
@@ -117,7 +142,16 @@ function mergeGeometries(geometries: THREE.BufferGeometry[]) {
 const EMPTY_TEXTURE_DATA_URL =
   'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO8B7Q8AAAAASUVORK5CYII=';
 
-function normalizeImportedGeometry(geometry: THREE.BufferGeometry) {
+function normalizeImportedGeometry(
+  geometry: THREE.BufferGeometry,
+  options: ImportedGeometryNormalizationOptions = {},
+) {
+  const {
+    postRotateZ = 0,
+    scaleTarget,
+    useLegacyNormalization = false,
+  } = options;
+
   geometry.computeBoundingBox();
 
   let boundingBox = geometry.boundingBox;
@@ -128,20 +162,25 @@ function normalizeImportedGeometry(geometry: THREE.BufferGeometry) {
   boundingBox?.getSize(size);
   geometry.translate(-center.x, -center.y, -center.z);
 
-  const dimensions = [size.x, size.y, size.z];
-  const thinnestAxis = dimensions.indexOf(Math.min(...dimensions));
+  if (!useLegacyNormalization) {
+    const dimensions = [size.x, size.y, size.z];
+    const thinnestAxis = dimensions.indexOf(Math.min(...dimensions));
 
-  if (thinnestAxis === 0) {
-    geometry.applyMatrix4(new THREE.Matrix4().makeRotationY(Math.PI / 2));
-  } else if (thinnestAxis === 1) {
-    geometry.applyMatrix4(new THREE.Matrix4().makeRotationX(Math.PI / 2));
+    if (thinnestAxis === 0) {
+      geometry.applyMatrix4(new THREE.Matrix4().makeRotationY(Math.PI / 2));
+    } else if (thinnestAxis === 1) {
+      geometry.applyMatrix4(new THREE.Matrix4().makeRotationX(Math.PI / 2));
+    }
   }
 
   geometry.computeBoundingBox();
   geometry.computeBoundingSphere();
 
   const radius = geometry.boundingSphere?.radius || 1;
-  const scale = 1.6 / radius;
+  const scale = useLegacyNormalization
+    ? (scaleTarget ?? LEGACY_IMPORTED_GEOMETRY_SCALE_TARGET) /
+      Math.max(size.x, size.y, size.z, 0.001)
+    : (scaleTarget ?? 1.6) / radius;
   geometry.scale(scale, scale, scale);
 
   geometry.computeBoundingBox();
@@ -149,6 +188,10 @@ function normalizeImportedGeometry(geometry: THREE.BufferGeometry) {
   center = new THREE.Vector3();
   boundingBox?.getCenter(center);
   geometry.translate(-center.x, -center.y, -center.z);
+
+  if (postRotateZ !== 0) {
+    geometry.rotateZ(postRotateZ);
+  }
 
   geometry.computeVertexNormals();
   geometry.computeBoundingBox();
@@ -166,7 +209,11 @@ function createLoadingManager() {
   return loadingManager;
 }
 
-function extractMergedGeometry(root: THREE.Object3D, emptyMessage: string) {
+function extractMergedGeometry(
+  root: THREE.Object3D,
+  emptyMessage: string,
+  geometryOptions?: ImportedGeometryNormalizationOptions,
+) {
   root.updateMatrixWorld(true);
 
   const geometries: THREE.BufferGeometry[] = [];
@@ -190,13 +237,17 @@ function extractMergedGeometry(root: THREE.Object3D, emptyMessage: string) {
     throw new Error(emptyMessage);
   }
 
-  return normalizeImportedGeometry(mergeGeometries(geometries));
+  return normalizeImportedGeometry(
+    mergeGeometries(geometries),
+    geometryOptions,
+  );
 }
 
 function parseFbxGeometry(
   buffer: ArrayBuffer,
   resourcePath: string,
   label: string,
+  geometryOptions?: ImportedGeometryNormalizationOptions,
 ) {
   const originalWarn = console.warn;
 
@@ -217,6 +268,7 @@ function parseFbxGeometry(
     return extractMergedGeometry(
       root,
       `${label} did not contain any mesh geometry.`,
+      geometryOptions,
     );
   } finally {
     console.warn = originalWarn;
@@ -227,6 +279,7 @@ function parseGlbGeometry(
   buffer: ArrayBuffer,
   resourcePath: string,
   label: string,
+  geometryOptions?: ImportedGeometryNormalizationOptions,
 ) {
   const dracoLoader = new DRACOLoader();
   dracoLoader.setDecoderPath(DRACO_DECODER_PATH);
@@ -244,6 +297,7 @@ function parseGlbGeometry(
             extractMergedGeometry(
               gltf.scene,
               `${label} did not contain any mesh geometry.`,
+              geometryOptions,
             ),
           );
         } catch (error) {
@@ -275,20 +329,46 @@ export async function loadImportedGeometryFromUrl(
   loader: HalftoneModelLoader,
   modelUrl: string,
   label: string,
+  geometryOptions?: ImportedGeometryNormalizationOptions,
 ) {
-  const response = await fetch(modelUrl);
+  const cacheKey = getImportedGeometryCacheKey({
+    geometryOptions,
+    loader,
+    modelUrl,
+  });
+  const cachedGeometry = importedGeometryCache.get(cacheKey);
 
-  if (!response.ok) {
-    throw new Error(`Unable to load ${label} from ${modelUrl}.`);
+  if (cachedGeometry) {
+    return (await cachedGeometry).clone();
   }
 
-  const buffer = await response.arrayBuffer();
+  const geometryPromise = (async () => {
+    const response = await fetch(modelUrl);
 
-  if (loader === 'fbx') {
-    return parseFbxGeometry(buffer, '', label);
+    if (!response.ok) {
+      throw new Error(`Unable to load ${label} from ${modelUrl}.`);
+    }
+
+    const buffer = await response.arrayBuffer();
+
+    if (loader === 'fbx') {
+      return parseFbxGeometry(buffer, '', label, geometryOptions);
+    }
+
+    return parseGlbGeometry(buffer, '', label, geometryOptions);
+  })();
+  importedGeometryCache.set(cacheKey, geometryPromise);
+
+  try {
+    const geometry = await geometryPromise;
+
+    importedGeometryCache.set(cacheKey, geometry);
+
+    return geometry.clone();
+  } catch (error) {
+    importedGeometryCache.delete(cacheKey);
+    throw error;
   }
-
-  return parseGlbGeometry(buffer, '', label);
 }
 
 function makePolarShape(

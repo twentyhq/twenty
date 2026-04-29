@@ -1,10 +1,8 @@
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutPersistedComponentState } from '@/page-layout/states/pageLayoutPersistedComponentState';
 import { recordTableWidgetViewDraftComponentState } from '@/page-layout/states/recordTableWidgetViewDraftComponentState';
-import { recordTableWidgetViewPersistedComponentState } from '@/page-layout/states/recordTableWidgetViewPersistedComponentState';
 import { getWidgetConfigurationViewId } from '@/page-layout/utils/getWidgetConfigurationViewId';
 import { usePerformViewAPIPersist } from '@/views/hooks/internal/usePerformViewAPIPersist';
-import { usePerformViewFieldAPIPersist } from '@/views/hooks/internal/usePerformViewFieldAPIPersist';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -13,7 +11,6 @@ import { WidgetType } from '~/generated-metadata/graphql';
 export const useCreatePendingRecordTableWidgetViews = () => {
   const { performViewAPICreate, performViewAPIDestroy } =
     usePerformViewAPIPersist();
-  const { performViewFieldAPICreate } = usePerformViewFieldAPIPersist();
   const store = useStore();
 
   const createPendingRecordTableWidgetViews = useCallback(
@@ -101,19 +98,6 @@ export const useCreatePendingRecordTableWidgetViews = () => {
             `Failed to create view for RECORD_TABLE widget ${widget.id}`,
           );
         }
-
-        const viewFieldInputs = widgetViewDraft.viewFields.map((field) => ({
-          id: field.id,
-          viewId: field.viewId,
-          fieldMetadataId: field.fieldMetadataId,
-          position: field.position,
-          size: field.size,
-          isVisible: field.isVisible,
-        }));
-
-        if (viewFieldInputs.length > 0) {
-          await performViewFieldAPICreate({ inputs: viewFieldInputs });
-        }
       }
 
       for (const [widgetId, viewId] of persistedRecordTableWidgets) {
@@ -121,20 +105,8 @@ export const useCreatePendingRecordTableWidgetViews = () => {
           await performViewAPIDestroy({ id: viewId });
         }
       }
-
-      store.set(
-        recordTableWidgetViewPersistedComponentState.atomFamily({
-          instanceId: pageLayoutId,
-        }),
-        recordTableWidgetViewDraft,
-      );
     },
-    [
-      performViewAPICreate,
-      performViewAPIDestroy,
-      performViewFieldAPICreate,
-      store,
-    ],
+    [performViewAPICreate, performViewAPIDestroy, store],
   );
 
   return { createPendingRecordTableWidgetViews };

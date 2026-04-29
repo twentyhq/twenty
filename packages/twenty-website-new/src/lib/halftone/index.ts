@@ -1,6 +1,17 @@
-export { HalftoneCanvas } from './halftone-canvas';
+export {
+  HalftoneCanvas,
+  type HalftoneImageInteractionSettings,
+  type HalftoneRenderStrategy,
+  type HalftoneSnapshotFn,
+} from './halftone-canvas';
+export { HalftoneImageCanvas } from './halftone-image-canvas';
+export { HalftoneModelCanvas } from './halftone-model-canvas';
 
-export { loadImportedGeometryFromUrl } from './geometry-registry';
+export {
+  createFallbackGeometry,
+  loadImportedGeometryFromUrl,
+  type ImportedGeometryNormalizationOptions,
+} from './geometry-registry';
 
 export {
   DEFAULT_GLASS_ANIMATION_SETTINGS,
@@ -27,6 +38,7 @@ export type {
   HalftoneMaterialSettings,
   HalftoneMaterialSurface,
   HalftoneStudioSettings,
+  HalftoneStudioSettingsOverrides,
   HalftoneToneTarget,
 } from './state';
 
@@ -35,6 +47,7 @@ export {
   getImageFootprintScale,
   getImagePreviewZoom,
   getMeshFootprintScale,
+  type HalftoneImageFit,
   HALFTONE_FOOTPRINT_RUNTIME_SOURCE,
   REFERENCE_PREVIEW_DISTANCE,
   VIRTUAL_RENDER_HEIGHT,

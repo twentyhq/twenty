@@ -125,6 +125,7 @@ export const StandalonePageCommandMenu = () => {
         containerType: 'standalone-page-header',
         commandMenuItems: filteredCommandMenuItems,
         commandMenuContextApi,
+        isInPreviewMode: false,
       }}
     >
       {!isMobile && <PinnedCommandMenuItemButtons />}

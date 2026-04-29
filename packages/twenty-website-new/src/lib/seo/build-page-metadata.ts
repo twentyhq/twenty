@@ -1,7 +1,10 @@
 import type { Metadata } from 'next';
 import { SOURCE_LOCALE, type AppLocale } from 'twenty-shared/translations';
 
-import { PUBLIC_APP_LOCALE_LIST } from '@/lib/i18n/app-locale-set';
+import {
+  PUBLIC_APP_LOCALE_LIST,
+  isPublicAppLocale,
+} from '@/lib/i18n/app-locale-set';
 
 import { getSiteUrl } from './site-url';
 
@@ -22,7 +25,7 @@ const normalizePath = (path: string): string =>
   path.startsWith('/') ? path : `/${path}`;
 
 const localizePath = (locale: AppLocale, normalizedPath: string): string => {
-  if (locale === SOURCE_LOCALE) {
+  if (locale === SOURCE_LOCALE || !isPublicAppLocale(locale)) {
     return normalizedPath;
   }
   return normalizedPath === '/' ? `/${locale}` : `/${locale}${normalizedPath}`;
@@ -50,7 +53,8 @@ export function buildPageMetadata({
 }: BuildPageMetadataInput): Metadata {
   const siteUrl = getSiteUrl();
   const normalizedPath = normalizePath(path);
-  const canonical = localizePath(locale, normalizedPath);
+  const metadataLocale = isPublicAppLocale(locale) ? locale : SOURCE_LOCALE;
+  const canonical = localizePath(metadataLocale, normalizedPath);
 
   const ogImages =
     ogImage === undefined
@@ -64,7 +68,7 @@ export function buildPageMetadata({
         ];
 
   const baseMetadata: Metadata = {
-    title,
+    title: { absolute: title },
     description,
     alternates: {
       canonical,
@@ -75,7 +79,7 @@ export function buildPageMetadata({
       description,
       url: canonical,
       siteName: SITE_NAME,
-      locale,
+      locale: metadataLocale,
       type,
       ...(ogImages && { images: ogImages }),
     },

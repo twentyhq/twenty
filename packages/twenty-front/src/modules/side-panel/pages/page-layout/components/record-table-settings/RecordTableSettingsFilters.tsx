@@ -3,6 +3,7 @@ import { AdvancedFilterSidePanelContainer } from '@/object-record/advanced-filte
 import { RecordFilterGroupsComponentInstanceContext } from '@/object-record/record-filter-group/states/context/RecordFilterGroupsComponentInstanceContext';
 import { RecordFiltersComponentInstanceContext } from '@/object-record/record-filter/states/context/RecordFiltersComponentInstanceContext';
 import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
+import { useRecordTableWidgetFilterCallbacks } from '@/page-layout/widgets/record-table/hooks/useRecordTableWidgetFilterCallbacks';
 import { useRecordTableWidgetViewForDisplay } from '@/page-layout/widgets/record-table/hooks/useRecordTableWidgetViewForDisplay';
 import { RecordTableSettingsFiltersInitializeStateEffect } from '@/side-panel/pages/page-layout/components/record-table-settings/RecordTableSettingsFiltersInitializeStateEffect';
 import { InputLabel } from '@/ui/input/components/InputLabel';
@@ -45,6 +46,13 @@ export const RecordTableSettingsFilters = ({
     viewId,
   );
 
+  const { handleFilterUpdate } = useRecordTableWidgetFilterCallbacks({
+    pageLayoutId,
+    widgetId,
+    viewId,
+    recordIndexId,
+  });
+
   if (!isDefined(view)) {
     return null;
   }
@@ -61,6 +69,7 @@ export const RecordTableSettingsFilters = ({
           <AdvancedFilterSidePanelContainer
             objectMetadataItem={objectMetadataItem}
             isWorkflowFindRecords={false}
+            onUpdate={handleFilterUpdate}
           />
           <RecordTableSettingsFiltersInitializeStateEffect
             view={view}
