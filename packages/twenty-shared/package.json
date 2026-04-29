@@ -26,7 +26,8 @@
     "typescript": "^5.9.2",
     "vite": "^7.0.0",
     "vite-plugin-dts": "3.8.1",
-    "vite-tsconfig-paths": "^4.2.1"
+    "vite-tsconfig-paths": "^4.2.1",
+    "slash": "^5.1.0"
   },
   "dependencies": {
     "@sniptt/guards": "^0.2.0",
@@ -36,8 +37,11 @@
     "handlebars": "^4.7.9",
     "libphonenumber-js": "^1.10.26",
     "lodash.camelcase": "^4.3.0",
+    "lodash.escaperegexp": "^4.1.2",
+    "microdiff": "^1.3.2",
     "qs": "^6.11.2",
     "react-router-dom": "^6.4.4",
+    "temporal-polyfill": "^0.3.0",
     "transliteration": "^2.3.5",
     "zod": "^4.1.11"
   },
