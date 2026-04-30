@@ -1,6 +1,8 @@
 import { type DraftPageLayout } from '@/page-layout/types/DraftPageLayout';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { isDynamicRelationWidget } from '@/page-layout/utils/isDynamicRelationWidget';
+import { isGridPosition } from '@/page-layout/utils/isGridPosition';
+import { isVerticalListPosition } from '@/page-layout/utils/isVerticalListPosition';
 import {
   PageLayoutTabLayoutMode,
   type UpdatePageLayoutWithTabsInput,
@@ -14,7 +16,7 @@ const buildWidgetPosition = (
   switch (tabLayoutMode) {
     case PageLayoutTabLayoutMode.VERTICAL_LIST: {
       const index =
-        widget.position?.__typename === 'PageLayoutWidgetVerticalListPosition'
+        widget.position && isVerticalListPosition(widget.position)
           ? widget.position.index
           : widgetIndex;
 
@@ -28,7 +30,7 @@ const buildWidgetPosition = (
         layoutMode: PageLayoutTabLayoutMode.CANVAS,
       };
     case PageLayoutTabLayoutMode.GRID: {
-      if (widget.position?.__typename === 'PageLayoutWidgetGridPosition') {
+      if (widget.position && isGridPosition(widget.position)) {
         return {
           layoutMode: PageLayoutTabLayoutMode.GRID,
           row: widget.position.row,
