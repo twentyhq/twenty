@@ -7,6 +7,7 @@ import {
   SALES_NOTE_STATUS_FIELD_UID,
   SALES_NOTE_STATUS_FINAL_OPTION_ID,
   SALES_NOTE_SUMMARY_FIELD_UID,
+  SALES_NOTE_VOICENOTES_ID_FIELD_UID,
 } from 'src/constants/universal-identifiers';
 import { defineObject, FieldType } from 'twenty-sdk/define';
 
@@ -81,6 +82,17 @@ export default defineObject({
         'Optional voice memo. Reserved for issue #103 (Whisper transcription) — no UI in v1.',
       icon: 'IconMicrophone',
       universalSettings: { maxNumberOfValues: 1 },
+    },
+    {
+      universalIdentifier: SALES_NOTE_VOICENOTES_ID_FIELD_UID,
+      type: FieldType.TEXT,
+      name: 'voicenotesId',
+      label: 'Voicenotes id',
+      description:
+        'External id from the Voicenotes webhook source (when the salesNote was ingested via that path). Used as an idempotency key for retries and to match update/summary events back to the right salesNote.',
+      icon: 'IconMicrophone',
+      isNullable: true,
+      isUnique: true,
     },
     // NOTE: createdAt is provided automatically by Twenty as a system field;
     // do NOT redefine it here (doing so leaves the DB column NULL because the

@@ -22,6 +22,11 @@ export const SALES_NOTE_STATUS_FIELD_UID =
   'cd766ae8-e7c0-4b50-a357-5f1e7153f14c';
 export const SALES_NOTE_AUDIO_FILE_FIELD_UID =
   '331de1be-f4e2-47c8-a09b-8f1b98d5a977';
+// v0.3.0 — Voicenotes integration. External id from the inbound webhook;
+// used as the idempotency key on retries and to match update / summary
+// events back to the right salesNote.
+export const SALES_NOTE_VOICENOTES_ID_FIELD_UID =
+  'fbec23d9-40f6-4511-a3af-cdd78411e29f';
 
 // New widget UIDs for the Notes-editor tab added in v0.1.2
 export const SALES_NOTE_TAB_NOTES_EDITOR_UID =
@@ -165,6 +170,14 @@ export const SALES_NOTE_SUMMARIZATION_SKILL_UID =
 // patches `ownerId` if the rep didn't pick one themselves.
 export const ON_SALES_NOTE_CREATED_LOGIC_FUNCTION_UID =
   '4b0c7a2f-1d8e-4d7c-9c1f-31a7e2b4d8a5';
+
+// v0.3.0 — inbound HTTP webhook from Voicenotes. POST to
+// /s/webhook/voicenotes/:userToken creates a salesNote from the recording
+// payload, updates it on `creation.summary`, and patches it on
+// `recording.updated`. Handler body lands in Phase D once the probe captures
+// the real payload shape; Phase C wires the route only.
+export const VOICENOTES_WEBHOOK_LOGIC_FUNCTION_UID =
+  'a9521bf0-8ccf-4f33-bd86-a3e67c2e053d';
 
 // ─── Front-components: "+ Sales note" buttons on standard records ───────────
 // v0.1.9 — pinned actions on Person / Company / Opportunity record detail

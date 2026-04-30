@@ -6,6 +6,7 @@ import {
 } from 'twenty-sdk/logic-function';
 
 import { ON_SALES_NOTE_CREATED_LOGIC_FUNCTION_UID } from 'src/constants/universal-identifiers';
+import { linkCreatorAsAttendee } from 'src/utils/link-creator-as-attendee';
 
 // Shape of the relevant fields off a freshly-created salesNote. Only fields
 // we read need to be listed.
@@ -28,74 +29,14 @@ type SalesNoteCreateEvent = DatabaseEventPayload<
 // workspaceMember to get userEmail, then finds a Person whose primary email
 // matches. If no Person matches, logs the reason and continues — most reps
 // aren't in their own CRM as a contact, so this is expected for some users.
+// Implementation lives in src/utils/link-creator-as-attendee.ts so the
+// upcoming voicenotes-webhook handler can re-use it.
 //
 // Logging note: console.* output goes to LocalDriver child stdout/stderr,
 // which only surfaces to railway logs when twenty-worker has
 // APPLICATION_LOG_DRIVER=CONSOLE (default is DISABLED, which silently drops
 // the lines). See plan-file lesson #11. We log on patch and on error so
 // the steady-state worker log isn't flooded.
-
-const linkCreatorAsAttendee = async (
-  client: InstanceType<typeof CoreApiClient>,
-  salesNoteId: string,
-  workspaceMemberId: string,
-): Promise<{ added: boolean; reason?: string }> => {
-  // 1. Resolve workspaceMember → userEmail
-  const wmResp = (await client.query({
-    workspaceMembers: {
-      __args: { filter: { id: { eq: workspaceMemberId } } },
-      edges: { node: { id: true, userEmail: true } },
-    },
-  })) as {
-    workspaceMembers?: {
-      edges?: {
-        node?: { id?: string | null; userEmail?: string | null } | null;
-      }[] | null;
-    } | null;
-  };
-
-  const userEmail = wmResp?.workspaceMembers?.edges?.[0]?.node?.userEmail;
-
-  if (typeof userEmail !== 'string' || userEmail.length === 0) {
-    return { added: false, reason: 'no userEmail on workspaceMember' };
-  }
-
-  // 2. Resolve userEmail → Person.id (case-insensitive equality)
-  const personResp = (await client.query({
-    people: {
-      __args: {
-        filter: { emails: { primaryEmail: { ilike: userEmail } } },
-      },
-      edges: { node: { id: true } },
-    },
-  })) as {
-    people?: {
-      edges?: { node?: { id?: string | null } | null }[] | null;
-    } | null;
-  };
-
-  const personId = personResp?.people?.edges?.[0]?.node?.id;
-
-  if (typeof personId !== 'string' || personId.length === 0) {
-    return {
-      added: false,
-      reason: `no Person matching userEmail=${userEmail}`,
-    };
-  }
-
-  // 3. Insert salesNoteAttendee linking that Person to the new salesNote.
-  // No idempotency check here — duplicates are rare (only when the rep clicks
-  // "+ Sales note" from their own Person page) and harmless. If it becomes a
-  // problem, query existing attendees first.
-  await client.mutation({
-    createSalesNoteAttendee: {
-      __args: { data: { salesNoteId, personId } },
-      id: true,
-    },
-  });
-
-  return { added: true };
-};
 
 const handler = async (
   event: SalesNoteCreateEvent,
@@ -138,15 +79,59 @@ const handler = async (
     throw err;
   }
 
-  // Attendee link — best effort. Failures here are logged but don't propagate
-  // (the owner patch already succeeded, which is the main contract).
+  // Attendee link — best effort. Failures here are logged by the util but
+  // don't propagate (the owner patch already succeeded, which is the main
+  // contract). We fetch the workspaceMember (id + userEmail + name) here
+  // and pass the object to the util so it doesn't have to do the lookup
+  // itself — same shape the voicenotes-webhook handler will pass.
   let attendeeOutcome: { added: boolean; reason?: string };
   try {
-    attendeeOutcome = await linkCreatorAsAttendee(
-      client,
-      event.recordId,
-      workspaceMemberId,
-    );
+    const wmResp = (await client.query({
+      workspaceMembers: {
+        __args: { filter: { id: { eq: workspaceMemberId } } },
+        edges: {
+          node: {
+            id: true,
+            userEmail: true,
+            name: { firstName: true, lastName: true },
+          },
+        },
+      },
+    })) as {
+      workspaceMembers?: {
+        edges?:
+          | {
+              node?: {
+                id?: string | null;
+                userEmail?: string | null;
+                name?: {
+                  firstName?: string | null;
+                  lastName?: string | null;
+                } | null;
+              } | null;
+            }[]
+          | null;
+      } | null;
+    };
+
+    const wmNode = wmResp?.workspaceMembers?.edges?.[0]?.node;
+
+    if (wmNode == null || typeof wmNode.id !== 'string' || wmNode.id.length === 0) {
+      attendeeOutcome = {
+        added: false,
+        reason: `workspaceMember not found for id=${workspaceMemberId}`,
+      };
+    } else {
+      attendeeOutcome = await linkCreatorAsAttendee(
+        client,
+        {
+          id: wmNode.id,
+          userEmail: wmNode.userEmail ?? null,
+          name: wmNode.name ?? null,
+        },
+        event.recordId,
+      );
+    }
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
     attendeeOutcome = { added: false, reason: `error: ${message}` };
