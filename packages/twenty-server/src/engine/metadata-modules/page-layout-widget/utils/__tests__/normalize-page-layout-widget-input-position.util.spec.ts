@@ -43,7 +43,7 @@ describe('normalizePageLayoutWidgetInputPosition', () => {
   });
 
   it('returns input unchanged when neither field is provided', () => {
-    const input = { title: 'no position' };
+    const input: { position?: undefined; gridPosition?: undefined } = {};
 
     expect(normalizePageLayoutWidgetInputPosition(input)).toEqual(input);
   });

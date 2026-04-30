@@ -352,7 +352,8 @@ export class PageLayoutWidgetService {
     );
 
     const processedUpdateData =
-      isConfigurationBeingUpdated && isDefined(normalizedUpdateData.configuration)
+      isConfigurationBeingUpdated &&
+      isDefined(normalizedUpdateData.configuration)
         ? {
             ...normalizedUpdateData,
             configuration: await this.enrichRichTextConfigurationBody(

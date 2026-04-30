@@ -14,7 +14,7 @@ export const assertPageLayoutWidgetStructure = (
   expect(pageLayoutWidget.type).toBeDefined();
   expect(pageLayoutWidget.pageLayoutTabId).toEqual(expect.any(String));
   expect(pageLayoutWidget.position).toBeDefined();
-  expect(pageLayoutWidget.position.layoutMode).toEqual(expect.any(String));
+  expect(pageLayoutWidget.position?.layoutMode).toEqual(expect.any(String));
   expect(pageLayoutWidget.createdAt).toEqual(expect.any(String));
   expect(pageLayoutWidget.updatedAt).toEqual(expect.any(String));
 

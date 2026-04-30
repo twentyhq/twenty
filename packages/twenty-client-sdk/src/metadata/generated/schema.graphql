@@ -925,8 +925,8 @@ type PageLayoutWidget {
   title: String!
   type: WidgetType!
   objectMetadataId: UUID
-  gridPosition: GridPosition! @deprecated(reason: "Use `position` instead. Will be removed in a future release.")
-  position: PageLayoutWidgetPosition!
+  gridPosition: GridPosition @deprecated(reason: "Use `position` instead. Will be removed in a future release.")
+  position: PageLayoutWidgetPosition
   configuration: WidgetConfiguration!
   conditionalDisplay: JSON
   conditionalAvailabilityExpression: String

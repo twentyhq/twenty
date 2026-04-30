@@ -703,8 +703,8 @@ export interface PageLayoutWidget {
     type: WidgetType
     objectMetadataId?: Scalars['UUID']
     /** @deprecated Use `position` instead. Will be removed in a future release. */
-    gridPosition: GridPosition
-    position: PageLayoutWidgetPosition
+    gridPosition?: GridPosition
+    position?: PageLayoutWidgetPosition
     configuration: WidgetConfiguration
     conditionalDisplay?: Scalars['JSON']
     conditionalAvailabilityExpression?: Scalars['String']

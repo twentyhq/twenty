@@ -56,17 +56,15 @@ export class PageLayoutWidgetDTO {
   @Field(() => UUIDScalarType, { nullable: true })
   objectMetadataId?: string;
 
-  // Resolved from `position` by the resolver — kept on the schema for legacy
-  // clients still querying `gridPosition`.
   @Field(() => GridPositionDTO, {
-    nullable: false,
+    nullable: true,
     deprecationReason:
       'Use `position` instead. Will be removed in a future release.',
   })
   gridPosition?: GridPositionDTO;
 
-  @Field(() => PageLayoutWidgetPositionUnion, { nullable: false })
-  position: PageLayoutWidgetPosition;
+  @Field(() => PageLayoutWidgetPositionUnion, { nullable: true })
+  position?: PageLayoutWidgetPosition | null;
 
   @Field(() => WidgetConfiguration, { nullable: false })
   configuration: AllPageLayoutWidgetConfiguration;
