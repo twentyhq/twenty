@@ -7,6 +7,17 @@ inputs:
 runs:
   using: 'composite'
   steps:
+    - name: Free disk space for install
+      if: runner.os == 'Linux'
+      shell: bash
+      run: |
+        # Default GitHub images ship large SDKs this repo does not use; removing
+        # them avoids ENOSPC when restoring or linking a full Yarn node_modules.
+        sudo rm -rf /usr/share/dotnet
+        sudo rm -rf /usr/local/lib/android
+        sudo rm -rf /opt/ghc
+        sudo rm -rf /opt/hostedtoolcache/CodeQL
+        df -h
     - name: Cache primary key builder
       id: globals
       shell: bash

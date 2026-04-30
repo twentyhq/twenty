@@ -414,6 +414,7 @@ export interface Application {
     id: Scalars['UUID']
     name: Scalars['String']
     description?: Scalars['String']
+    logo?: Scalars['String']
     version?: Scalars['String']
     universalIdentifier: Scalars['String']
     packageJsonChecksum?: Scalars['String']
@@ -1940,7 +1941,6 @@ export interface MarketplaceApp {
     id: Scalars['String']
     name: Scalars['String']
     description: Scalars['String']
-    icon: Scalars['String']
     author: Scalars['String']
     category: Scalars['String']
     logo?: Scalars['String']
@@ -3294,6 +3294,7 @@ export interface ApplicationGenqlSelection{
     id?: boolean | number
     name?: boolean | number
     description?: boolean | number
+    logo?: boolean | number
     version?: boolean | number
     universalIdentifier?: boolean | number
     packageJsonChecksum?: boolean | number
@@ -4903,7 +4904,6 @@ export interface MarketplaceAppGenqlSelection{
     id?: boolean | number
     name?: boolean | number
     description?: boolean | number
-    icon?: boolean | number
     author?: boolean | number
     category?: boolean | number
     logo?: boolean | number
