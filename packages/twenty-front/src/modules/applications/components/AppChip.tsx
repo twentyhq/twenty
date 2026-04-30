@@ -1,10 +1,19 @@
 import { useApplicationChipData } from '@/applications/hooks/useApplicationChipData';
 import { styled } from '@linaria/react';
-import { Avatar } from 'twenty-ui/display';
+import {
+  Avatar,
+  type AvatarSize,
+  OverflowingTextWithTooltip,
+} from 'twenty-ui/display';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type AppChipProps = {
-  applicationId: string;
+  size?: AvatarSize;
+  applicationId?: string | null;
+  fallbackApplicationData?: {
+    logo?: string | null;
+    name?: string | null;
+  };
   className?: string;
 };
 
@@ -20,29 +29,30 @@ const StyledContainer = styled.div`
   overflow: hidden;
 `;
 
-const StyledLabel = styled.span`
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-`;
-
-export const AppChip = ({ applicationId, className }: AppChipProps) => {
-  const { applicationChipData } = useApplicationChipData({ applicationId });
+export const AppChip = ({
+  applicationId,
+  size = 'sm',
+  fallbackApplicationData,
+  className,
+}: AppChipProps) => {
+  const { applicationChipData } = useApplicationChipData({
+    applicationId,
+    fallbackApplicationData,
+  });
 
   return (
     <StyledContainer className={className}>
       <Avatar
         type="app"
-        size="sm"
+        size={size}
+        avatarUrl={applicationChipData.logo}
         placeholder={applicationChipData.name}
         placeholderColorSeed={applicationChipData.seed}
         color={applicationChipData.colors?.color}
         backgroundColor={applicationChipData.colors?.backgroundColor}
         borderColor={applicationChipData.colors?.borderColor}
       />
-      <StyledLabel title={applicationChipData.name}>
-        {applicationChipData.name}
-      </StyledLabel>
+      <OverflowingTextWithTooltip text={applicationChipData.name} />
     </StyledContainer>
   );
 };

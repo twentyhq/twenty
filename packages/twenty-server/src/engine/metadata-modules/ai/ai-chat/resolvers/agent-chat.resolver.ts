@@ -16,13 +16,8 @@ import { Repository } from 'typeorm';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import {
-  BillingException,
-  BillingExceptionCode,
-} from 'src/engine/core-modules/billing/billing.exception';
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
 import { RedisClientService } from 'src/engine/core-modules/redis-client/redis-client.service';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display-credits.util';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
@@ -58,12 +53,16 @@ export class AgentChatResolver {
     private readonly eventPublisherService: AgentChatEventPublisherService,
     private readonly systemPromptBuilderService: SystemPromptBuilderService,
     private readonly billingUsageService: BillingUsageService,
-    private readonly twentyConfigService: TwentyConfigService,
     private readonly aiModelRegistryService: AiModelRegistryService,
     private readonly redisClientService: RedisClientService,
     @InjectRepository(AgentChatThreadEntity)
     private readonly threadRepository: Repository<AgentChatThreadEntity>,
   ) {}
+
+  @Query(() => [AgentChatThreadDTO])
+  async chatThreads(@AuthUserWorkspaceId() userWorkspaceId: string) {
+    return this.agentChatService.getThreadsForUser(userWorkspaceId);
+  }
 
   @Query(() => AgentChatThreadDTO)
   async chatThread(
@@ -133,18 +132,7 @@ export class AgentChatResolver {
       workspace,
     );
 
-    if (this.twentyConfigService.get('IS_BILLING_ENABLED')) {
-      const canBill = await this.billingUsageService.hasAvailableCredits(
-        workspace.id,
-      );
-
-      if (!canBill) {
-        throw new BillingException(
-          'Credits exhausted',
-          BillingExceptionCode.BILLING_CREDITS_EXHAUSTED,
-        );
-      }
-    }
+    await this.billingUsageService.hasAvailableCreditsOrThrow(workspace.id);
 
     const thread = await this.threadRepository.findOne({
       where: { id: threadId, userWorkspaceId },
@@ -157,6 +145,13 @@ export class AgentChatResolver {
       );
     }
 
+    if (isDefined(thread.deletedAt)) {
+      await this.agentChatService.unarchiveThread({
+        threadId,
+        userWorkspaceId,
+      });
+    }
+
     if (isDefined(thread.activeStreamId)) {
       const queuedMessage = await this.agentChatService.queueMessage({
         threadId,
@@ -164,6 +159,7 @@ export class AgentChatResolver {
         id: messageId,
         fileIds: fileIds ?? undefined,
         workspaceId: workspace.id,
+        userWorkspaceId,
       });
 
       await this.eventPublisherService.publish({
@@ -216,6 +212,75 @@ export class AgentChatResolver {
     );
 
     return true;
+  }
+
+  @Mutation(() => AgentChatThreadDTO)
+  async renameChatThread(
+    @Args('id', { type: () => UUIDScalarType }) id: string,
+    @Args('title') title: string,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
+  ): Promise<AgentChatThreadEntity> {
+    return this.agentChatService.updateThreadTitle({
+      threadId: id,
+      userWorkspaceId,
+      title,
+    });
+  }
+
+  @Mutation(() => AgentChatThreadDTO)
+  async archiveChatThread(
+    @Args('id', { type: () => UUIDScalarType }) id: string,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
+  ): Promise<AgentChatThreadEntity> {
+    await this.cancelActiveStreamIfAny(id, userWorkspaceId);
+
+    return this.agentChatService.archiveThread({
+      threadId: id,
+      userWorkspaceId,
+    });
+  }
+
+  @Mutation(() => AgentChatThreadDTO)
+  async unarchiveChatThread(
+    @Args('id', { type: () => UUIDScalarType }) id: string,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
+  ): Promise<AgentChatThreadEntity> {
+    return this.agentChatService.unarchiveThread({
+      threadId: id,
+      userWorkspaceId,
+    });
+  }
+
+  @Mutation(() => Boolean)
+  async deleteChatThread(
+    @Args('id', { type: () => UUIDScalarType }) id: string,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
+  ): Promise<boolean> {
+    await this.cancelActiveStreamIfAny(id, userWorkspaceId);
+
+    await this.agentChatService.hardDeleteThread({
+      threadId: id,
+      userWorkspaceId,
+    });
+
+    return true;
+  }
+
+  private async cancelActiveStreamIfAny(
+    threadId: string,
+    userWorkspaceId: string,
+  ): Promise<void> {
+    const thread = await this.threadRepository.findOne({
+      where: { id: threadId, userWorkspaceId },
+    });
+
+    if (!isDefined(thread) || !isDefined(thread.activeStreamId)) {
+      return;
+    }
+
+    const redis = this.redisClientService.getClient();
+
+    await redis.publish(getCancelChannel(threadId), 'cancel');
   }
 
   @Mutation(() => Boolean)
@@ -277,5 +342,17 @@ export class AgentChatResolver {
   @ResolveField(() => Float)
   totalOutputCredits(@Parent() thread: AgentChatThreadEntity): number {
     return toDisplayCredits(thread.totalOutputCredits);
+  }
+
+  @ResolveField('lastMessageAt', () => Date, { nullable: true })
+  async lastMessageAt(
+    @Parent()
+    thread: AgentChatThreadEntity & { lastMessageAt?: Date | null },
+  ): Promise<Date | null> {
+    if (thread.lastMessageAt !== undefined) {
+      return thread.lastMessageAt;
+    }
+
+    return this.agentChatService.getLastMessageAtForThread(thread.id);
   }
 }

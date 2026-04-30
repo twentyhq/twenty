@@ -9,10 +9,10 @@ import {
   DAVNamespaceShort,
   type DAVObject,
   fetchCalendars,
-  getBasicAuthHeaders,
   syncCollection,
 } from 'tsdav';
 
+import { createBasicDigestAuthFetch } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/lib/auth/create-basic-digest-auth-fetch';
 import { icalDataExtractPropertyValue } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/lib/utils/icalDataExtractPropertyValue';
 import { CalDavGetEventsService } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/services/caldav-get-events.service';
 import { CalendarEventParticipantResponseStatus } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
@@ -62,20 +62,16 @@ type CalDAVGetEventsResponse = {
 export class CalDAVClient {
   private credentials: CalendarCredentials;
   private logger: Logger;
+  private fetchOverride: typeof fetch;
 
   constructor(credentials: CalendarCredentials) {
     this.credentials = credentials;
     this.logger = new Logger(CalDAVClient.name);
-  }
-
-  private getTsdavRequestConfig() {
-    return {
-      headers: getBasicAuthHeaders({
-        username: this.credentials.username,
-        password: this.credentials.password,
-      }),
-      fetch: this.credentials.fetch,
-    };
+    this.fetchOverride = createBasicDigestAuthFetch(
+      credentials.username,
+      credentials.password,
+      credentials.fetch ?? globalThis.fetch,
+    );
   }
 
   private hasFileExtension(url: string): boolean {
@@ -110,7 +106,7 @@ export class CalDAVClient {
           password: this.credentials.password,
         },
       },
-      ...this.getTsdavRequestConfig(),
+      fetch: this.fetchOverride,
     });
   }
 
@@ -120,7 +116,7 @@ export class CalDAVClient {
 
       const calendars = (await fetchCalendars({
         account,
-        ...this.getTsdavRequestConfig(),
+        fetch: this.fetchOverride,
       })) as (Omit<DAVCalendar, 'displayName'> & {
         displayName?: string | Record<string, unknown>;
       })[];
@@ -156,7 +152,7 @@ export class CalDAVClient {
 
     const calendars = await fetchCalendars({
       account,
-      ...this.getTsdavRequestConfig(),
+      fetch: this.fetchOverride,
     });
 
     const eventCalendar = calendars.find((calendar) =>
@@ -365,7 +361,7 @@ export class CalDAVClient {
           },
           syncLevel: 1,
           ...(syncToken ? { syncToken } : {}),
-          ...this.getTsdavRequestConfig(),
+          fetch: this.fetchOverride,
         });
 
         const allEvents: FetchedCalendarEvent[] = [];
@@ -384,7 +380,7 @@ export class CalDAVClient {
               },
               objectUrls: objectUrls,
               depth: '1',
-              ...this.getTsdavRequestConfig(),
+              fetch: this.fetchOverride,
             });
 
             for (const calendarObject of calendarObjects) {
@@ -432,7 +428,7 @@ export class CalDAVClient {
           const account = await this.getAccount();
           const updatedCalendars = await fetchCalendars({
             account,
-            ...this.getTsdavRequestConfig(),
+            fetch: this.fetchOverride,
           });
           const updatedCalendar = updatedCalendars.find(
             (cal) => cal.url === calendar.url,

@@ -5,6 +5,8 @@ import { promises as fs } from 'fs';
 import { resolve } from 'path';
 
 import semver from 'semver';
+import { extractFileInfo } from 'src/engine/core-modules/file/utils/extract-file-info.utils';
+import { sanitizeFile } from 'src/engine/core-modules/file/utils/sanitize-file.utils';
 import { Manifest } from 'twenty-shared/application';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -141,6 +143,7 @@ export class ApplicationInstallService {
       existingApplication,
       universalIdentifier,
       name: resolvedPackage.manifest.application.displayName,
+      logo: resolvedPackage.manifest.application.logoUrl ?? null,
       workspaceId: params.workspaceId,
       applicationRegistrationId: appRegistration.id,
       sourceType: appRegistration.sourceType,
@@ -454,11 +457,15 @@ export class ApplicationInstallService {
         );
       }
 
-      // TODO: mimeType should be defined, default to application/octet-stream, which won't be displayed
-      // inline by the browser (forced download) due to Content-Disposition security headers.
+      const { mimeType, ext } = await extractFileInfo({
+        file: content,
+        filename: relativePath,
+      });
+      const sanitizedContent = sanitizeFile({ file: content, ext, mimeType });
+
       await this.fileStorageService.writeFile({
-        sourceFile: content,
-        mimeType: undefined,
+        sourceFile: sanitizedContent,
+        mimeType,
         fileFolder,
         applicationUniversalIdentifier,
         workspaceId,
@@ -506,6 +513,7 @@ export class ApplicationInstallService {
     existingApplication: ApplicationEntity | null;
     universalIdentifier: string;
     name: string;
+    logo: string | null;
     workspaceId: string;
     applicationRegistrationId: string;
     sourceType: ApplicationRegistrationSourceType;
@@ -517,6 +525,7 @@ export class ApplicationInstallService {
     return await this.applicationService.create({
       universalIdentifier: params.universalIdentifier,
       name: params.name,
+      logo: params.logo,
       sourcePath: params.universalIdentifier,
       sourceType: params.sourceType,
       applicationRegistrationId: params.applicationRegistrationId,
