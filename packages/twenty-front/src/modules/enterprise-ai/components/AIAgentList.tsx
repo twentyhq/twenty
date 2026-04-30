@@ -1,18 +1,17 @@
+import { useMutation, useQuery } from '@apollo/client';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 
-import { AgentStatus, AIAgentData } from '../types/ai.types';
+import {
+  GET_ACTIVE_MODULES,
+  TOGGLE_AI_MODULE,
+} from '../hooks/useAI';
 
-const MOCK_AGENTS: AIAgentData[] = [
-  { id: 'AG1', name: 'Lead Qualifier', description: 'Scores and qualifies inbound leads', status: 'active', model: 'claude-3.5-sonnet', totalCalls: 12500, avgLatencyMs: 850, lastActiveAt: '2026-04-29T10:00:00Z' },
-  { id: 'AG2', name: 'Email Responder', description: 'Drafts customer email replies', status: 'active', model: 'claude-3.5-haiku', totalCalls: 8200, avgLatencyMs: 420, lastActiveAt: '2026-04-29T09:45:00Z' },
-  { id: 'AG3', name: 'Contract Analyzer', description: 'Extracts key terms from contracts', status: 'paused', model: 'claude-3.5-sonnet', totalCalls: 3100, avgLatencyMs: 2100, lastActiveAt: '2026-04-25T14:00:00Z' },
-  { id: 'AG4', name: 'Sentiment Monitor', description: 'Analyzes customer sentiment from tickets', status: 'error', model: 'claude-3.5-haiku', totalCalls: 950, avgLatencyMs: 380, lastActiveAt: '2026-04-28T16:00:00Z' },
-];
+type ModuleStatus = 'active' | 'paused' | 'error' | 'training';
 
-const STATUS_COLORS: Record<AgentStatus, string> = {
+const STATUS_COLORS: Record<ModuleStatus, string> = {
   active: themeCssVariables.color.turquoise,
   paused: themeCssVariables.color.yellow,
   error: themeCssVariables.color.red,
@@ -36,7 +35,6 @@ const StyledGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: ${themeCssVariables.spacing[3]};
-
   @media (max-width: ${MOBILE_VIEWPORT}px) {
     grid-template-columns: 1fr;
   }
@@ -91,27 +89,103 @@ const StyledModel = styled.span`
   align-self: flex-start;
 `;
 
+const StyledToggle = styled.button<{ isActive: boolean }>`
+  padding: 4px 12px;
+  border: 1px solid ${themeCssVariables.border.color.medium};
+  border-radius: 4px;
+  background: ${({ isActive }) =>
+    isActive ? themeCssVariables.color.turquoise : themeCssVariables.color.gray50};
+  color: ${themeCssVariables.font.color.inverted};
+  cursor: pointer;
+  font-size: ${themeCssVariables.font.size.xs};
+`;
+
+const StyledLoading = styled.div`
+  padding: ${themeCssVariables.spacing[4]};
+  color: ${themeCssVariables.font.color.tertiary};
+`;
+
+const StyledError = styled.div`
+  padding: ${themeCssVariables.spacing[4]};
+  color: ${themeCssVariables.color.red};
+`;
+
 export const AIAgentList = () => {
   useLingui();
+
+  const { data, loading, error, refetch } = useQuery(GET_ACTIVE_MODULES);
+
+  const [toggleModule] = useMutation(TOGGLE_AI_MODULE, {
+    onCompleted: () => refetch(),
+  });
+
+  const handleToggle = (moduleId: string, currentStatus: string) => {
+    const isCurrentlyActive = currentStatus === 'active';
+    toggleModule({
+      variables: { moduleId, enabled: !isCurrentlyActive },
+    });
+  };
+
+  if (loading) return <StyledLoading>{t`Loading...`}</StyledLoading>;
+  if (error) return <StyledError>{t`Error: ${error.message}`}</StyledError>;
+
+  const modules = data?.activeAIModules ?? [];
 
   return (
     <StyledContainer>
       <StyledTitle>{t`AI Agents`}</StyledTitle>
       <StyledGrid>
-        {MOCK_AGENTS.map((agent) => (
-          <StyledCard key={agent.id}>
-            <StyledHeader>
-              <StyledName>{agent.name}</StyledName>
-              <StyledDot color={STATUS_COLORS[agent.status]} />
-            </StyledHeader>
-            <StyledDetail>{agent.description}</StyledDetail>
-            <StyledModel>{agent.model}</StyledModel>
-            <StyledRow>
-              <span>{t`Calls`}: {agent.totalCalls.toLocaleString()}</span>
-              <span>{t`Latency`}: {agent.avgLatencyMs}ms</span>
-            </StyledRow>
-          </StyledCard>
-        ))}
+        {modules.map(
+          (agent: {
+            id: string;
+            moduleName: string;
+            description: string;
+            status: ModuleStatus;
+            modelProvider: string;
+            modelName: string;
+            monthlyTokenUsage: number;
+            monthlyCost: number;
+            activatedAt: string;
+          }) => (
+            <StyledCard key={agent.id}>
+              <StyledHeader>
+                <StyledName>{agent.moduleName}</StyledName>
+                <StyledDot
+                  color={
+                    STATUS_COLORS[agent.status] ??
+                    themeCssVariables.color.gray50
+                  }
+                />
+              </StyledHeader>
+              <StyledDetail>{agent.description}</StyledDetail>
+              <StyledModel>
+                {agent.modelProvider} / {agent.modelName}
+              </StyledModel>
+              <StyledRow>
+                <span>
+                  {t`Tokens`}: {(agent.monthlyTokenUsage ?? 0).toLocaleString()}
+                </span>
+                <span>
+                  {t`Cost`}: ${(agent.monthlyCost ?? 0).toFixed(2)}
+                </span>
+              </StyledRow>
+              <StyledRow>
+                <span>
+                  {t`Since`}:{' '}
+                  {agent.activatedAt
+                    ? new Date(agent.activatedAt).toLocaleDateString()
+                    : '---'}
+                </span>
+                <StyledToggle
+                  isActive={agent.status === 'active'}
+                  onClick={() => handleToggle(agent.id, agent.status)}
+                >
+                  {agent.status === 'active' ? t`Pause` : t`Activate`}
+                </StyledToggle>
+              </StyledRow>
+            </StyledCard>
+          ),
+        )}
       </StyledGrid>
     </StyledContainer>
   );

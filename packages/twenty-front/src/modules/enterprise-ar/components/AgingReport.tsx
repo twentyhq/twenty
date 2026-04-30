@@ -1,10 +1,8 @@
+import { useQuery } from '@apollo/client';
 import { styled } from '@linaria/atomic';
 
-import { AgingBucket, AgingReportEntry } from '../types/ar.types';
-
-type AgingReportProps = {
-  entries: AgingReportEntry[];
-};
+import { GET_AGING_REPORT } from '../hooks/useAccountsReceivable';
+import { AgingBucket } from '../types/ar.types';
 
 const BUCKET_LABELS: Record<AgingBucket, string> = {
   current: 'Current',
@@ -78,31 +76,37 @@ const Td = styled.td`
   }
 `;
 
-export const AgingReport = ({ entries }: AgingReportProps) => {
+const LoadingMessage = styled.div`
+  padding: 16px;
+  color: #6b7280;
+`;
+
+const ErrorMessage = styled.div`
+  padding: 16px;
+  color: #ef4444;
+`;
+
+export const AgingReport = () => {
+  const { data, loading, error } = useQuery(GET_AGING_REPORT);
+
   const formatAmount = (amount: number) =>
     new Intl.NumberFormat('en-US', {
       style: 'currency',
       currency: 'USD',
     }).format(amount);
 
-  const totals = entries.reduce(
-    (accumulator, entry) => ({
-      current: accumulator.current + entry.current,
-      days1to30: accumulator.days1to30 + entry.days1to30,
-      days31to60: accumulator.days31to60 + entry.days31to60,
-      days61to90: accumulator.days61to90 + entry.days61to90,
-      days90plus: accumulator.days90plus + entry.days90plus,
-      total: accumulator.total + entry.total,
-    }),
-    {
-      current: 0,
-      days1to30: 0,
-      days31to60: 0,
-      days61to90: 0,
-      days90plus: 0,
-      total: 0,
-    },
-  );
+  if (loading) return <LoadingMessage>Loading...</LoadingMessage>;
+  if (error) return <ErrorMessage>Error: {error.message}</ErrorMessage>;
+
+  const entries = data?.agingReport?.entries ?? [];
+  const totals = data?.agingReport?.totals ?? {
+    current: 0,
+    days1to30: 0,
+    days31to60: 0,
+    days61to90: 0,
+    days90plus: 0,
+    total: 0,
+  };
 
   const bucketTotals: [AgingBucket, number][] = [
     ['current', totals.current],
@@ -136,7 +140,16 @@ export const AgingReport = ({ entries }: AgingReportProps) => {
           </tr>
         </thead>
         <tbody>
-          {entries.map((entry) => (
+          {entries.map((entry: {
+            customerId: string;
+            customerName: string;
+            current: number;
+            days1to30: number;
+            days31to60: number;
+            days61to90: number;
+            days90plus: number;
+            total: number;
+          }) => (
             <tr key={entry.customerId}>
               <Td>{entry.customerName}</Td>
               <Td>{formatAmount(entry.current)}</Td>

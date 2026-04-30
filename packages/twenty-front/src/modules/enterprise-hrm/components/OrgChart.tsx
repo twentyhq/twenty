@@ -1,25 +1,11 @@
+import { useQuery } from '@apollo/client';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { OrgNode } from '../types/hrm.types';
-
-const MOCK_ORG: OrgNode = {
-  id: 'O1', name: 'Laura Jimenez', title: 'CEO', department: 'operations',
-  children: [
-    { id: 'O2', name: 'Maria Lopez', title: 'HR Director', department: 'hr', children: [
-      { id: 'O5', name: 'Pedro Ruiz', title: 'Recruiter', department: 'hr', children: [] },
-    ]},
-    { id: 'O3', name: 'Ana Torres', title: 'VP Engineering', department: 'engineering', children: [
-      { id: 'O6', name: 'Diego Vargas', title: 'Frontend Lead', department: 'engineering', children: [] },
-      { id: 'O7', name: 'Camila Ortiz', title: 'Backend Lead', department: 'engineering', children: [] },
-    ]},
-    { id: 'O4', name: 'Carlos Mendez', title: 'Sales Director', department: 'sales', children: [
-      { id: 'O8', name: 'Sofia Garcia', title: 'Account Executive', department: 'sales', children: [] },
-    ]},
-  ],
-};
+import { GET_ORG_CHART } from '../hooks/useHRM';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -91,7 +77,7 @@ const renderNode = (node: OrgNode): JSX.Element => (
       <StyledNodeName>{node.name}</StyledNodeName>
       <StyledNodeTitle>{node.title}</StyledNodeTitle>
     </StyledNode>
-    {node.children.length > 0 && (
+    {node.children && node.children.length > 0 && (
       <>
         <StyledConnector />
         <StyledChildren>
@@ -105,10 +91,17 @@ const renderNode = (node: OrgNode): JSX.Element => (
 export const OrgChart = () => {
   useLingui();
 
+  const { data, loading, error } = useQuery(GET_ORG_CHART);
+
+  if (loading) return <StyledContainer>{t`Loading...`}</StyledContainer>;
+  if (error) return <StyledContainer>{t`Error loading data`}</StyledContainer>;
+
+  const orgData: OrgNode | undefined = data?.orgChart;
+
   return (
     <StyledContainer>
       <StyledTitle>{t`Organization Chart`}</StyledTitle>
-      {renderNode(MOCK_ORG)}
+      {orgData && renderNode(orgData)}
     </StyledContainer>
   );
 };

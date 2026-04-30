@@ -1,16 +1,16 @@
+import { useMutation, useQuery } from '@apollo/client';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
+import { useState } from 'react';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 
-import { TicketData, TicketPriority, TicketStatus } from '../types/ticket.types';
-
-const MOCK_TICKETS: TicketData[] = [
-  { id: 'T-1001', subject: 'Cannot access dashboard', description: '', status: 'open', priority: 'high', category: 'technical', channel: 'email', assignee: 'Ana Torres', requester: 'Carlos Mendez', createdAt: '2026-04-28T10:00:00Z', updatedAt: '2026-04-28T12:00:00Z', slaDeadline: '2026-04-29T10:00:00Z', comments: [] },
-  { id: 'T-1002', subject: 'Billing discrepancy Q1', description: '', status: 'in_progress', priority: 'medium', category: 'billing', channel: 'phone', assignee: 'Luis Reyes', requester: 'Maria Lopez', createdAt: '2026-04-27T08:00:00Z', updatedAt: '2026-04-28T09:00:00Z', slaDeadline: '2026-04-30T08:00:00Z', comments: [] },
-  { id: 'T-1003', subject: 'Feature request: dark mode', description: '', status: 'waiting', priority: 'low', category: 'feature_request', channel: 'portal', assignee: 'Ana Torres', requester: 'Pedro Ruiz', createdAt: '2026-04-25T14:00:00Z', updatedAt: '2026-04-26T14:00:00Z', slaDeadline: '2026-05-02T14:00:00Z', comments: [] },
-  { id: 'T-1004', subject: 'App crashes on export', description: '', status: 'open', priority: 'urgent', category: 'bug', channel: 'chat', assignee: 'Luis Reyes', requester: 'Sofia Garcia', createdAt: '2026-04-28T15:00:00Z', updatedAt: '2026-04-28T15:30:00Z', slaDeadline: '2026-04-28T19:00:00Z', comments: [] },
-];
+import {
+  ASSIGN_TICKET,
+  CREATE_TICKET,
+  GET_TICKETS,
+} from '../hooks/useTickets';
+import { TicketPriority, TicketStatus } from '../types/ticket.types';
 
 const PRIORITY_COLORS: Record<TicketPriority, string> = {
   low: themeCssVariables.color.gray50,
@@ -19,13 +19,13 @@ const PRIORITY_COLORS: Record<TicketPriority, string> = {
   urgent: themeCssVariables.color.red,
 };
 
-const STATUS_LABELS: Record<TicketStatus, string> = {
-  open: 'Open',
-  in_progress: 'In Progress',
-  waiting: 'Waiting',
-  resolved: 'Resolved',
-  closed: 'Closed',
-};
+const STATUS_OPTIONS: TicketStatus[] = [
+  'open',
+  'in_progress',
+  'waiting',
+  'resolved',
+  'closed',
+];
 
 const StyledContainer = styled.div`
   display: flex;
@@ -34,10 +34,37 @@ const StyledContainer = styled.div`
   gap: ${themeCssVariables.spacing[2]};
 `;
 
-const StyledTitle = styled.h2`
-  font-size: ${themeCssVariables.font.size.lg};
-  color: ${themeCssVariables.font.color.primary};
-  margin: 0;
+const StyledToolbar = styled.div`
+  display: flex;
+  gap: ${themeCssVariables.spacing[2]};
+  flex-wrap: wrap;
+  align-items: center;
+`;
+
+const StyledSelect = styled.select`
+  padding: 6px 10px;
+  border: 1px solid ${themeCssVariables.border.color.medium};
+  border-radius: 4px;
+  font-size: ${themeCssVariables.font.size.sm};
+`;
+
+const StyledButton = styled.button`
+  padding: 6px 14px;
+  border: none;
+  border-radius: 4px;
+  background: ${themeCssVariables.color.blue};
+  color: ${themeCssVariables.font.color.inverted};
+  cursor: pointer;
+  font-size: ${themeCssVariables.font.size.sm};
+`;
+
+const StyledInput = styled.input`
+  padding: 6px 10px;
+  border: 1px solid ${themeCssVariables.border.color.medium};
+  border-radius: 4px;
+  font-size: ${themeCssVariables.font.size.sm};
+  flex: 1;
+  min-width: 140px;
 `;
 
 const StyledTable = styled.table`
@@ -69,13 +96,7 @@ const StyledBadge = styled.span<{ color: string }>`
   color: ${themeCssVariables.font.color.inverted};
 `;
 
-const StyledSlaTimer = styled.span<{ isOverdue: boolean }>`
-  color: ${({ isOverdue }) =>
-    isOverdue ? themeCssVariables.color.red : themeCssVariables.font.color.secondary};
-  font-size: ${themeCssVariables.font.size.sm};
-`;
-
-const StyledResponsiveHide = styled.td`
+const StyledHideMobile = styled.td`
   padding: ${themeCssVariables.spacing[2]};
   font-size: ${themeCssVariables.font.size.md};
   color: ${themeCssVariables.font.color.primary};
@@ -85,7 +106,7 @@ const StyledResponsiveHide = styled.td`
   }
 `;
 
-const StyledResponsiveHideHeader = styled.th`
+const StyledHideMobileHeader = styled.th`
   text-align: left;
   padding: ${themeCssVariables.spacing[2]};
   font-size: ${themeCssVariables.font.size.sm};
@@ -96,13 +117,121 @@ const StyledResponsiveHideHeader = styled.th`
   }
 `;
 
+const StyledForm = styled.div`
+  display: flex;
+  gap: ${themeCssVariables.spacing[2]};
+  flex-wrap: wrap;
+  padding: ${themeCssVariables.spacing[3]};
+  border: 1px solid ${themeCssVariables.border.color.medium};
+  border-radius: 8px;
+`;
+
+const StyledLoading = styled.div`
+  padding: ${themeCssVariables.spacing[4]};
+  color: ${themeCssVariables.font.color.tertiary};
+`;
+
+const StyledError = styled.div`
+  padding: ${themeCssVariables.spacing[4]};
+  color: ${themeCssVariables.color.red};
+`;
+
 export const TicketList = () => {
   useLingui();
-  const now = new Date();
+
+  const [statusFilter, setStatusFilter] = useState<string>('');
+  const [showForm, setShowForm] = useState(false);
+  const [subject, setSubject] = useState('');
+  const [priority, setPriority] = useState<TicketPriority>('medium');
+  const [assigneeId, setAssigneeId] = useState('');
+
+  const { data, loading, error, refetch } = useQuery(GET_TICKETS, {
+    variables: {
+      status: statusFilter || undefined,
+      limit: 50,
+      offset: 0,
+    },
+  });
+
+  const [createTicket, { loading: creating }] = useMutation(CREATE_TICKET, {
+    onCompleted: () => {
+      setSubject('');
+      setShowForm(false);
+      refetch();
+    },
+  });
+
+  const [assignTicket] = useMutation(ASSIGN_TICKET, {
+    onCompleted: () => refetch(),
+  });
+
+  const handleCreate = () => {
+    if (!subject.trim()) return;
+    createTicket({
+      variables: {
+        input: { subject, priority, category: 'general' },
+      },
+    });
+  };
+
+  const handleAssign = (ticketId: string) => {
+    const id = prompt('Enter assignee ID:');
+    if (id) {
+      assignTicket({ variables: { ticketId, assigneeId: id } });
+    }
+  };
+
+  if (loading) return <StyledLoading>{t`Loading...`}</StyledLoading>;
+  if (error) return <StyledError>{t`Error: ${error.message}`}</StyledError>;
+
+  const tickets =
+    data?.tickets?.edges?.map(
+      (edge: { node: Record<string, unknown> }) => edge.node,
+    ) ?? [];
 
   return (
     <StyledContainer>
-      <StyledTitle>{t`Support Tickets`}</StyledTitle>
+      <StyledToolbar>
+        <StyledSelect
+          value={statusFilter}
+          onChange={(event) => setStatusFilter(event.target.value)}
+        >
+          <option value="">{t`All statuses`}</option>
+          {STATUS_OPTIONS.map((status) => (
+            <option key={status} value={status}>
+              {status.replace('_', ' ')}
+            </option>
+          ))}
+        </StyledSelect>
+        <StyledButton onClick={() => setShowForm(!showForm)}>
+          {showForm ? t`Cancel` : t`New Ticket`}
+        </StyledButton>
+      </StyledToolbar>
+
+      {showForm && (
+        <StyledForm>
+          <StyledInput
+            placeholder={t`Subject`}
+            value={subject}
+            onChange={(event) => setSubject(event.target.value)}
+          />
+          <StyledSelect
+            value={priority}
+            onChange={(event) =>
+              setPriority(event.target.value as TicketPriority)
+            }
+          >
+            <option value="low">{t`Low`}</option>
+            <option value="medium">{t`Medium`}</option>
+            <option value="high">{t`High`}</option>
+            <option value="urgent">{t`Urgent`}</option>
+          </StyledSelect>
+          <StyledButton onClick={handleCreate} disabled={creating}>
+            {creating ? t`Creating...` : t`Create`}
+          </StyledButton>
+        </StyledForm>
+      )}
+
       <StyledTable>
         <thead>
           <tr>
@@ -110,34 +239,45 @@ export const TicketList = () => {
             <StyledTh>{t`Subject`}</StyledTh>
             <StyledTh>{t`Status`}</StyledTh>
             <StyledTh>{t`Priority`}</StyledTh>
-            <StyledResponsiveHideHeader>{t`Assignee`}</StyledResponsiveHideHeader>
-            <StyledResponsiveHideHeader>{t`SLA`}</StyledResponsiveHideHeader>
+            <StyledHideMobileHeader>{t`Assignee`}</StyledHideMobileHeader>
+            <StyledHideMobileHeader>{t`Actions`}</StyledHideMobileHeader>
           </tr>
         </thead>
         <tbody>
-          {MOCK_TICKETS.map((ticket) => {
-            const slaDate = new Date(ticket.slaDeadline);
-            const isOverdue = slaDate < now;
-            const hoursLeft = Math.round((slaDate.getTime() - now.getTime()) / 3600000);
-            return (
+          {tickets.map(
+            (ticket: {
+              id: string;
+              ticketNumber: string;
+              subject: string;
+              status: TicketStatus;
+              priority: TicketPriority;
+              assigneeName: string;
+            }) => (
               <tr key={ticket.id}>
-                <StyledTd>{ticket.id}</StyledTd>
+                <StyledTd>{ticket.ticketNumber}</StyledTd>
                 <StyledTd>{ticket.subject}</StyledTd>
-                <StyledTd>{STATUS_LABELS[ticket.status]}</StyledTd>
+                <StyledTd>{ticket.status.replace('_', ' ')}</StyledTd>
                 <StyledTd>
-                  <StyledBadge color={PRIORITY_COLORS[ticket.priority]}>
+                  <StyledBadge
+                    color={
+                      PRIORITY_COLORS[ticket.priority] ??
+                      themeCssVariables.color.gray50
+                    }
+                  >
                     {ticket.priority}
                   </StyledBadge>
                 </StyledTd>
-                <StyledResponsiveHide>{ticket.assignee}</StyledResponsiveHide>
-                <StyledResponsiveHide>
-                  <StyledSlaTimer isOverdue={isOverdue}>
-                    {isOverdue ? t`Overdue` : t`${hoursLeft}h left`}
-                  </StyledSlaTimer>
-                </StyledResponsiveHide>
+                <StyledHideMobile>
+                  {ticket.assigneeName ?? '---'}
+                </StyledHideMobile>
+                <StyledHideMobile>
+                  <StyledButton onClick={() => handleAssign(ticket.id)}>
+                    {t`Assign`}
+                  </StyledButton>
+                </StyledHideMobile>
               </tr>
-            );
-          })}
+            ),
+          )}
         </tbody>
       </StyledTable>
     </StyledContainer>

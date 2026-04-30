@@ -1,16 +1,11 @@
+import { useQuery } from '@apollo/client';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { RedlineEntry } from '../types/clm.types';
-
-const MOCK_REDLINES: RedlineEntry[] = [
-  { id: 'R1', version: 1, author: 'Maria Lopez', timestamp: '2026-04-20T10:00:00Z', changesSummary: 'Initial draft created', status: 'accepted' },
-  { id: 'R2', version: 2, author: 'Bancolombia Legal', timestamp: '2026-04-22T14:00:00Z', changesSummary: 'Modified liability cap in Section 8.2', status: 'accepted' },
-  { id: 'R3', version: 3, author: 'Carlos Mendez', timestamp: '2026-04-25T09:00:00Z', changesSummary: 'Updated payment terms to Net-30', status: 'pending' },
-  { id: 'R4', version: 4, author: 'Bancolombia Legal', timestamp: '2026-04-27T11:00:00Z', changesSummary: 'Added data residency clause', status: 'pending' },
-];
+import { GET_CONTRACT_ANALYTICS } from '../hooks/useCLM';
 
 const STATUS_COLORS: Record<string, string> = {
   pending: themeCssVariables.color.yellow,
@@ -91,6 +86,13 @@ const StyledBadge = styled.span<{ color: string }>`
 export const ContractEditor = () => {
   useLingui();
 
+  const { data, loading, error } = useQuery(GET_CONTRACT_ANALYTICS);
+
+  if (loading) return <StyledContainer>{t`Loading...`}</StyledContainer>;
+  if (error) return <StyledContainer>{t`Error loading data`}</StyledContainer>;
+
+  const redlines: RedlineEntry[] = data?.contractAnalytics?.redlines ?? [];
+
   return (
     <StyledContainer>
       <StyledTitle>{t`SaaS License Agreement`}</StyledTitle>
@@ -98,12 +100,12 @@ export const ContractEditor = () => {
         {t`This Software-as-a-Service License Agreement ("Agreement") is entered into as of January 1, 2026, by and between the parties. The Licensor grants the Licensee a non-exclusive, non-transferable right to use the Software...`}
       </StyledContent>
       <StyledSectionTitle>{t`Redline History`}</StyledSectionTitle>
-      {MOCK_REDLINES.map((entry) => (
-        <StyledRedline key={entry.id} statusColor={STATUS_COLORS[entry.status]}>
+      {redlines.map((entry) => (
+        <StyledRedline key={entry.id} statusColor={STATUS_COLORS[entry.status] ?? themeCssVariables.color.gray50}>
           <StyledVersion>v{entry.version}</StyledVersion>
           <StyledChange>{entry.changesSummary}</StyledChange>
           <StyledAuthor>{entry.author} - {new Date(entry.timestamp).toLocaleDateString()}</StyledAuthor>
-          <StyledBadge color={STATUS_COLORS[entry.status]}>{entry.status}</StyledBadge>
+          <StyledBadge color={STATUS_COLORS[entry.status] ?? themeCssVariables.color.gray50}>{entry.status}</StyledBadge>
         </StyledRedline>
       ))}
     </StyledContainer>

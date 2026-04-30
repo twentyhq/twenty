@@ -1,16 +1,16 @@
+import { useMutation } from '@apollo/client';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
+import { useState } from 'react';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 
+import { REGISTER_DEAL } from '../hooks/usePRM';
 import { DealRegistration } from '../types/prm.types';
 
-const MOCK_DEALS: DealRegistration[] = [
-  { id: 'DR1', partnerId: 'PR1', partnerName: 'TechSolutions CO', dealName: 'Enterprise CRM - Bancolombia', value: 850000, currency: 'COP', status: 'approved', submittedAt: '2026-04-15', expiresAt: '2026-07-15' },
-  { id: 'DR2', partnerId: 'PR2', partnerName: 'DataPros Inc', dealName: 'Analytics Suite - Ecopetrol', value: 420000, currency: 'COP', status: 'submitted', submittedAt: '2026-04-25', expiresAt: '2026-07-25' },
-  { id: 'DR3', partnerId: 'PR1', partnerName: 'TechSolutions CO', dealName: 'Cloud Migration - Avianca', value: 1200000, currency: 'COP', status: 'won', submittedAt: '2026-02-10', expiresAt: '2026-05-10' },
-  { id: 'DR4', partnerId: 'PR3', partnerName: 'CloudFirst SAS', dealName: 'SaaS Platform - ISA', value: 300000, currency: 'COP', status: 'rejected', submittedAt: '2026-04-01', expiresAt: '2026-07-01' },
-];
+type DealRegistrationsProps = {
+  deals?: DealRegistration[];
+};
 
 const STATUS_COLORS: Record<string, string> = {
   submitted: themeCssVariables.color.yellow,
@@ -78,12 +78,64 @@ const StyledHideMobileHeader = styled.th`
   @media (max-width: ${MOBILE_VIEWPORT}px) { display: none; }
 `;
 
-export const DealRegistrations = () => {
+const StyledButton = styled.button`
+  padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[4]};
+  background: ${themeCssVariables.color.blue};
+  color: ${themeCssVariables.font.color.inverted};
+  border: none;
+  border-radius: 4px;
+  font-size: ${themeCssVariables.font.size.sm};
+  cursor: pointer;
+  align-self: flex-start;
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+`;
+
+const StyledError = styled.div`
+  color: ${themeCssVariables.color.red};
+  font-size: ${themeCssVariables.font.size.sm};
+`;
+
+const StyledSuccess = styled.div`
+  color: ${themeCssVariables.color.turquoise};
+  font-size: ${themeCssVariables.font.size.sm};
+`;
+
+export const DealRegistrations = ({ deals = [] }: DealRegistrationsProps) => {
   useLingui();
+  const [successMessage, setSuccessMessage] = useState('');
+
+  const [registerDeal, { loading: registering, error }] = useMutation(REGISTER_DEAL);
+
+  const handleRegisterDeal = async () => {
+    try {
+      await registerDeal({
+        variables: {
+          input: {
+            dealName: 'New Deal',
+            value: 0,
+            currency: 'COP',
+          },
+        },
+      });
+      setSuccessMessage(t`Deal registered successfully`);
+      setTimeout(() => setSuccessMessage(''), 3000);
+    } catch {
+      // error captured by mutation hook
+    }
+  };
 
   return (
     <StyledContainer>
       <StyledTitle>{t`Deal Registrations`}</StyledTitle>
+      <StyledButton onClick={handleRegisterDeal} disabled={registering}>
+        {registering ? t`Registering...` : t`Register New Deal`}
+      </StyledButton>
+      {error && <StyledError>{t`Error`}: {error.message}</StyledError>}
+      {successMessage && <StyledSuccess>{successMessage}</StyledSuccess>}
       <StyledTable>
         <thead>
           <tr>
@@ -95,7 +147,7 @@ export const DealRegistrations = () => {
           </tr>
         </thead>
         <tbody>
-          {MOCK_DEALS.map((deal) => (
+          {deals.map((deal) => (
             <tr key={deal.id}>
               <StyledTd>{deal.dealName}</StyledTd>
               <StyledTd>{deal.partnerName}</StyledTd>

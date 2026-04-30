@@ -1,15 +1,10 @@
+import { useQuery } from '@apollo/client';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 
-import { ActiveCallData } from '../types/voip.types';
-
-const MOCK_ACTIVE: ActiveCallData[] = [
-  { id: 'AC1', agentName: 'Ana Torres', callerName: 'Sofia Garcia', callerNumber: '+573002223344', direction: 'inbound', startedAt: '2026-04-29T10:30:00Z', elapsedSeconds: 185, queue: 'Sales' },
-  { id: 'AC2', agentName: 'Luis Reyes', callerName: 'Carlos Ruiz', callerNumber: '+573009876543', direction: 'outbound', startedAt: '2026-04-29T10:35:00Z', elapsedSeconds: 92, queue: 'Support' },
-  { id: 'AC3', agentName: 'Pedro Gomez', callerName: 'Maria Lopez', callerNumber: '+573001234567', direction: 'inbound', startedAt: '2026-04-29T10:38:00Z', elapsedSeconds: 45, queue: 'Sales' },
-];
+import { GET_ACTIVE_CALLS } from '../hooks/useVoIP';
 
 const formatElapsed = (seconds: number): string => {
   const minutes = Math.floor(seconds / 60);
@@ -89,24 +84,51 @@ const StyledDirection = styled.span<{ isInbound: boolean }>`
   align-self: flex-start;
 `;
 
+const StyledLoading = styled.div`
+  padding: ${themeCssVariables.spacing[4]};
+  color: ${themeCssVariables.font.color.tertiary};
+`;
+
+const StyledError = styled.div`
+  padding: ${themeCssVariables.spacing[4]};
+  color: ${themeCssVariables.color.red};
+`;
+
 export const ActiveCalls = () => {
   useLingui();
+
+  const { data, loading, error } = useQuery(GET_ACTIVE_CALLS, {
+    pollInterval: 5000,
+  });
+
+  if (loading) return <StyledLoading>{t`Loading...`}</StyledLoading>;
+  if (error) return <StyledError>{t`Error: ${error.message}`}</StyledError>;
+
+  const calls = data?.activeCalls ?? [];
 
   return (
     <StyledContainer>
       <StyledTitle>{t`Active Calls`}</StyledTitle>
-      <StyledCount>{MOCK_ACTIVE.length} {t`calls in progress`}</StyledCount>
+      <StyledCount>{calls.length} {t`calls in progress`}</StyledCount>
       <StyledGrid>
-        {MOCK_ACTIVE.map((call) => (
-          <StyledCard key={call.id}>
+        {calls.map((call: {
+          callId: string;
+          direction: string;
+          agentName: string;
+          fromNumber: string;
+          toNumber: string;
+          duration: number;
+          queueName: string;
+        }) => (
+          <StyledCard key={call.callId}>
             <StyledDirection isInbound={call.direction === 'inbound'}>
               {call.direction}
             </StyledDirection>
             <StyledAgent>{call.agentName}</StyledAgent>
-            <StyledCaller>{call.callerName} ({call.callerNumber})</StyledCaller>
+            <StyledCaller>{call.direction === 'inbound' ? call.fromNumber : call.toNumber}</StyledCaller>
             <StyledRow>
-              <span>{t`Queue`}: {call.queue}</span>
-              <StyledElapsed>{formatElapsed(call.elapsedSeconds)}</StyledElapsed>
+              <span>{t`Queue`}: {call.queueName ?? '---'}</span>
+              <StyledElapsed>{formatElapsed(call.duration ?? 0)}</StyledElapsed>
             </StyledRow>
           </StyledCard>
         ))}

@@ -1,17 +1,17 @@
+import { useMutation } from '@apollo/client';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
 import { useState } from 'react';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 
+import { LOG_TIME } from '../hooks/useProjects';
 import { TimeEntry } from '../types/project.types';
 
-const MOCK_ENTRIES: TimeEntry[] = [
-  { id: 'T1', projectId: 'P1', projectName: 'CRM Migration', taskDescription: 'API integration', hours: 4, date: '2026-04-28', user: 'Ana Torres' },
-  { id: 'T2', projectId: 'P1', projectName: 'CRM Migration', taskDescription: 'Data mapping', hours: 3, date: '2026-04-28', user: 'Diego Vargas' },
-  { id: 'T3', projectId: 'P2', projectName: 'Mobile App v2', taskDescription: 'UI mockups', hours: 6, date: '2026-04-27', user: 'Diego Vargas' },
-  { id: 'T4', projectId: 'P4', projectName: 'Security Audit', taskDescription: 'Pen testing', hours: 8, date: '2026-04-27', user: 'Maria Lopez' },
-];
+type TimeTrackerProps = {
+  projectId: string;
+  entries?: TimeEntry[];
+};
 
 const StyledContainer = styled.div`
   display: flex;
@@ -65,6 +65,11 @@ const StyledButton = styled.button`
   font-size: ${themeCssVariables.font.size.md};
   cursor: pointer;
   align-self: flex-start;
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
 `;
 
 const StyledEntryRow = styled.div`
@@ -86,16 +91,50 @@ const StyledHours = styled.span`
   color: ${themeCssVariables.color.blue};
 `;
 
-export const TimeTracker = () => {
+const StyledError = styled.div`
+  color: ${themeCssVariables.color.red};
+  font-size: ${themeCssVariables.font.size.sm};
+`;
+
+const StyledSuccess = styled.div`
+  color: ${themeCssVariables.color.turquoise};
+  font-size: ${themeCssVariables.font.size.sm};
+`;
+
+export const TimeTracker = ({ projectId, entries = [] }: TimeTrackerProps) => {
   useLingui();
   const [task, setTask] = useState('');
   const [hours, setHours] = useState('');
+  const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
+  const [successMessage, setSuccessMessage] = useState('');
 
-  const handleSubmit = (event: React.FormEvent) => {
+  const [logTime, { loading: submitting, error }] = useMutation(LOG_TIME);
+
+  const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
+    if (!task || !hours) return;
+
+    try {
+      await logTime({
+        variables: {
+          input: {
+            projectId,
+            taskDescription: task,
+            hours: parseFloat(hours),
+            date,
+          },
+        },
+      });
+      setTask('');
+      setHours('');
+      setSuccessMessage(t`Time logged successfully`);
+      setTimeout(() => setSuccessMessage(''), 3000);
+    } catch {
+      // error is captured by the mutation hook
+    }
   };
 
-  const totalHours = MOCK_ENTRIES.reduce((sum, entry) => sum + entry.hours, 0);
+  const totalHours = entries.reduce((sum, entry) => sum + entry.hours, 0);
 
   return (
     <StyledContainer>
@@ -112,13 +151,17 @@ export const TimeTracker = () => {
           </StyledField>
           <StyledField>
             <StyledLabel>{t`Date`}</StyledLabel>
-            <StyledInput type="date" defaultValue="2026-04-29" />
+            <StyledInput type="date" value={date} onChange={(e) => setDate(e.target.value)} />
           </StyledField>
         </StyledRow>
-        <StyledButton type="submit">{t`Log Time`}</StyledButton>
+        <StyledButton type="submit" disabled={submitting}>
+          {submitting ? t`Logging...` : t`Log Time`}
+        </StyledButton>
       </form>
+      {error && <StyledError>{t`Error`}: {error.message}</StyledError>}
+      {successMessage && <StyledSuccess>{successMessage}</StyledSuccess>}
       <StyledLabel>{t`Recent Entries`} ({t`Total`}: {totalHours}h)</StyledLabel>
-      {MOCK_ENTRIES.map((entry) => (
+      {entries.map((entry) => (
         <StyledEntryRow key={entry.id}>
           <span>{entry.projectName} - {entry.taskDescription}</span>
           <span>{entry.user} | {entry.date}</span>

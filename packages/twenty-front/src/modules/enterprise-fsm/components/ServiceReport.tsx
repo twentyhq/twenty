@@ -1,27 +1,11 @@
+import { useQuery } from '@apollo/client';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { ServiceReportData } from '../types/fsm.types';
-
-const MOCK_REPORT: ServiceReportData = {
-  id: 'SR-201',
-  workOrderId: 'WO-104',
-  technicianName: 'Juan Perez',
-  arrivalTime: '2026-04-28T09:00:00Z',
-  completionTime: '2026-04-28T11:30:00Z',
-  checklist: [
-    { id: 'CK1', label: 'Visual inspection of panels', checked: true },
-    { id: 'CK2', label: 'Sensor calibration', checked: true },
-    { id: 'CK3', label: 'Alarm test (all zones)', checked: true },
-    { id: 'CK4', label: 'Sprinkler pressure check', checked: false },
-    { id: 'CK5', label: 'Emergency lighting test', checked: true },
-  ],
-  notes: 'Sprinkler pressure check deferred — valve replacement needed. Parts ordered, ETA 3 business days.',
-  photoCount: 4,
-  customerSignature: true,
-};
+import { GET_FSM_ANALYTICS } from '../hooks/useFSM';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -41,10 +25,7 @@ const StyledMeta = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
   gap: ${themeCssVariables.spacing[2]};
-
-  @media (max-width: ${MOBILE_VIEWPORT}px) {
-    grid-template-columns: 1fr;
-  }
+  @media (max-width: ${MOBILE_VIEWPORT}px) { grid-template-columns: 1fr; }
 `;
 
 const StyledMetaItem = styled.div`
@@ -107,7 +88,15 @@ const StyledPhotoBadge = styled.span`
 
 export const ServiceReport = () => {
   useLingui();
-  const report = MOCK_REPORT;
+
+  const { data, loading, error } = useQuery(GET_FSM_ANALYTICS);
+
+  if (loading) return <StyledContainer>{t`Loading...`}</StyledContainer>;
+  if (error) return <StyledContainer>{t`Error loading data`}</StyledContainer>;
+
+  const report: ServiceReportData | undefined = data?.fsmAnalytics?.latestReport;
+
+  if (!report) return <StyledContainer>{t`No report available`}</StyledContainer>;
 
   return (
     <StyledContainer>
@@ -131,7 +120,7 @@ export const ServiceReport = () => {
         </StyledMetaItem>
       </StyledMeta>
       <StyledSectionTitle>{t`Checklist`}</StyledSectionTitle>
-      {report.checklist.map((item) => (
+      {report.checklist?.map((item) => (
         <StyledCheckItem key={item.id} checked={item.checked}>
           <StyledCheckbox checked={item.checked} />
           {item.label}

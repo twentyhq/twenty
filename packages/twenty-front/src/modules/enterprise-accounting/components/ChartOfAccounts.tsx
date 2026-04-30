@@ -1,23 +1,11 @@
+import { useQuery } from '@apollo/client';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { AccountData } from '../types/accounting.types';
-
-const MOCK_ACCOUNTS: AccountData[] = [
-  { id: '1', code: '1000', name: 'Assets', type: 'asset', balance: 520000, currency: 'COP', children: [
-    { id: '1a', code: '1100', name: 'Cash', type: 'asset', balance: 180000, currency: 'COP' },
-    { id: '1b', code: '1200', name: 'Accounts Receivable', type: 'asset', balance: 340000, currency: 'COP' },
-  ]},
-  { id: '2', code: '2000', name: 'Liabilities', type: 'liability', balance: 150000, currency: 'COP', children: [
-    { id: '2a', code: '2100', name: 'Accounts Payable', type: 'liability', balance: 95000, currency: 'COP' },
-    { id: '2b', code: '2200', name: 'Loans Payable', type: 'liability', balance: 55000, currency: 'COP' },
-  ]},
-  { id: '3', code: '3000', name: 'Equity', type: 'equity', balance: 370000, currency: 'COP' },
-  { id: '4', code: '4000', name: 'Revenue', type: 'revenue', balance: 890000, currency: 'COP' },
-  { id: '5', code: '5000', name: 'Expenses', type: 'expense', balance: 420000, currency: 'COP' },
-];
+import { GET_TRIAL_BALANCE } from '../hooks/useAccounting';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -75,11 +63,19 @@ const renderAccount = (account: AccountData, depth: number) => (
 
 export const ChartOfAccounts = () => {
   useLingui();
+  const { data, loading, error } = useQuery(GET_TRIAL_BALANCE, {
+    variables: { asOfDate: new Date().toISOString().slice(0, 10) },
+  });
+
+  if (loading) return <StyledContainer>{t`Loading...`}</StyledContainer>;
+  if (error) return <StyledContainer>{t`Error loading data`}</StyledContainer>;
+
+  const accounts: AccountData[] = data?.trialBalance?.accounts ?? [];
 
   return (
     <StyledContainer>
       <StyledTitle>{t`Chart of Accounts`}</StyledTitle>
-      {MOCK_ACCOUNTS.map((account) => renderAccount(account, 0))}
+      {accounts.map((account) => renderAccount(account, 0))}
     </StyledContainer>
   );
 };

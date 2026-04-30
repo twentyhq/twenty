@@ -1,22 +1,20 @@
+import { useMutation, useQuery } from '@apollo/client';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
+import { useState } from 'react';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 
-import { StockItem } from '../types/inventory.types';
+import {
+  ADD_STOCK,
+  GET_LOW_STOCK_ALERTS,
+  GET_STOCK_VALUATION,
+} from '../hooks/useInventory';
 
-const MOCK_STOCK: StockItem[] = [
-  { id: '1', sku: 'SKU-001', name: 'Widget A', warehouseId: 'W1', quantity: 250, reorderPoint: 50, level: 'in_stock', unitCost: 12.5 },
-  { id: '2', sku: 'SKU-002', name: 'Widget B', warehouseId: 'W1', quantity: 15, reorderPoint: 30, level: 'low_stock', unitCost: 8.0 },
-  { id: '3', sku: 'SKU-003', name: 'Gadget C', warehouseId: 'W2', quantity: 0, reorderPoint: 20, level: 'out_of_stock', unitCost: 45.0 },
-  { id: '4', sku: 'SKU-004', name: 'Part D', warehouseId: 'W2', quantity: 500, reorderPoint: 100, level: 'in_stock', unitCost: 3.25 },
-  { id: '5', sku: 'SKU-005', name: 'Component E', warehouseId: 'W1', quantity: 22, reorderPoint: 25, level: 'low_stock', unitCost: 19.0 },
-];
-
-const LEVEL_COLORS: Record<string, string> = {
-  in_stock: themeCssVariables.color.turquoise,
-  low_stock: themeCssVariables.color.orange,
-  out_of_stock: themeCssVariables.color.red,
+const SEVERITY_COLORS: Record<string, string> = {
+  critical: themeCssVariables.color.red,
+  warning: themeCssVariables.color.orange,
+  normal: themeCssVariables.color.turquoise,
 };
 
 const StyledContainer = styled.div`
@@ -26,17 +24,52 @@ const StyledContainer = styled.div`
   gap: ${themeCssVariables.spacing[3]};
 `;
 
-const StyledTitle = styled.h2`
-  font-size: ${themeCssVariables.font.size.lg};
+const StyledToolbar = styled.div`
+  display: flex;
+  gap: ${themeCssVariables.spacing[2]};
+  flex-wrap: wrap;
+  align-items: center;
+`;
+
+const StyledButton = styled.button`
+  padding: 6px 14px;
+  border: none;
+  border-radius: 4px;
+  background: ${themeCssVariables.color.blue};
+  color: ${themeCssVariables.font.color.inverted};
+  cursor: pointer;
+  font-size: ${themeCssVariables.font.size.sm};
+`;
+
+const StyledInput = styled.input`
+  padding: 6px 10px;
+  border: 1px solid ${themeCssVariables.border.color.medium};
+  border-radius: 4px;
+  font-size: ${themeCssVariables.font.size.sm};
+  width: 120px;
+`;
+
+const StyledForm = styled.div`
+  display: flex;
+  gap: ${themeCssVariables.spacing[2]};
+  flex-wrap: wrap;
+  padding: ${themeCssVariables.spacing[3]};
+  border: 1px solid ${themeCssVariables.border.color.medium};
+  border-radius: 8px;
+`;
+
+const StyledValuation = styled.div`
+  padding: ${themeCssVariables.spacing[3]};
+  border: 1px solid ${themeCssVariables.border.color.medium};
+  border-radius: 8px;
+  font-size: ${themeCssVariables.font.size.md};
   color: ${themeCssVariables.font.color.primary};
-  margin: 0;
 `;
 
 const StyledGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: ${themeCssVariables.spacing[3]};
-
   @media (max-width: ${MOBILE_VIEWPORT}px) {
     grid-template-columns: 1fr;
   }
@@ -76,32 +109,149 @@ const StyledAlert = styled.span`
   font-weight: ${themeCssVariables.font.weight.medium};
 `;
 
+const StyledLoading = styled.div`
+  padding: ${themeCssVariables.spacing[4]};
+  color: ${themeCssVariables.font.color.tertiary};
+`;
+
+const StyledError = styled.div`
+  padding: ${themeCssVariables.spacing[4]};
+  color: ${themeCssVariables.color.red};
+`;
+
 export const StockDashboard = () => {
   useLingui();
 
-  const alerts = MOCK_STOCK.filter((item) => item.level !== 'in_stock');
+  const [showForm, setShowForm] = useState(false);
+  const [productId, setProductId] = useState('');
+  const [warehouseId, setWarehouseId] = useState('');
+  const [quantity, setQuantity] = useState('');
+
+  const {
+    data: alertsData,
+    loading,
+    error,
+    refetch: refetchAlerts,
+  } = useQuery(GET_LOW_STOCK_ALERTS);
+  const { data: valuationData } = useQuery(GET_STOCK_VALUATION);
+
+  const [addStock, { loading: adding }] = useMutation(ADD_STOCK, {
+    onCompleted: () => {
+      setProductId('');
+      setWarehouseId('');
+      setQuantity('');
+      setShowForm(false);
+      refetchAlerts();
+    },
+  });
+
+  const handleAddStock = () => {
+    if (!productId || !quantity) return;
+    addStock({
+      variables: {
+        input: {
+          productId,
+          warehouseId: warehouseId || undefined,
+          quantity: Number(quantity),
+        },
+      },
+    });
+  };
+
+  if (loading) return <StyledLoading>{t`Loading...`}</StyledLoading>;
+  if (error) return <StyledError>{t`Error: ${error.message}`}</StyledError>;
+
+  const alerts = alertsData?.lowStockAlerts ?? [];
+  const valuation = valuationData?.stockValuation;
 
   return (
     <StyledContainer>
-      <StyledTitle>{t`Stock Levels`}</StyledTitle>
-      {alerts.length > 0 && (
-        <StyledAlert>{t`${alerts.length} items need attention`}</StyledAlert>
+      <StyledToolbar>
+        <StyledName>{t`Stock Levels`}</StyledName>
+        <StyledButton onClick={() => setShowForm(!showForm)}>
+          {showForm ? t`Cancel` : t`Add Stock`}
+        </StyledButton>
+      </StyledToolbar>
+
+      {showForm && (
+        <StyledForm>
+          <StyledInput
+            placeholder={t`Product ID`}
+            value={productId}
+            onChange={(event) => setProductId(event.target.value)}
+          />
+          <StyledInput
+            placeholder={t`Warehouse ID`}
+            value={warehouseId}
+            onChange={(event) => setWarehouseId(event.target.value)}
+          />
+          <StyledInput
+            type="number"
+            placeholder={t`Quantity`}
+            value={quantity}
+            onChange={(event) => setQuantity(event.target.value)}
+          />
+          <StyledButton onClick={handleAddStock} disabled={adding}>
+            {adding ? t`Adding...` : t`Submit`}
+          </StyledButton>
+        </StyledForm>
       )}
+
+      {valuation && (
+        <StyledValuation>
+          {t`Total Valuation`}: {valuation.currency}{' '}
+          {valuation.totalValue?.toLocaleString()} ({valuation.itemCount}{' '}
+          {t`items`})
+        </StyledValuation>
+      )}
+
+      {alerts.length > 0 && (
+        <StyledAlert>
+          {t`${alerts.length} items need attention`}
+        </StyledAlert>
+      )}
+
       <StyledGrid>
-        {MOCK_STOCK.map((item) => (
-          <StyledCard key={item.id} borderColor={LEVEL_COLORS[item.level]}>
-            <StyledSku>{item.sku}</StyledSku>
-            <StyledName>{item.name}</StyledName>
-            <StyledRow>
-              <span>{t`Qty`}: {item.quantity}</span>
-              <span>{t`Reorder`}: {item.reorderPoint}</span>
-            </StyledRow>
-            <StyledRow>
-              <span>{t`Cost`}: ${item.unitCost.toFixed(2)}</span>
-              <span>{item.level.replace('_', ' ')}</span>
-            </StyledRow>
-          </StyledCard>
-        ))}
+        {alerts.map(
+          (item: {
+            id: string;
+            sku: string;
+            productName: string;
+            currentStock: number;
+            reorderPoint: number;
+            severity: string;
+            daysUntilStockout: number;
+            warehouseName: string;
+          }) => (
+            <StyledCard
+              key={item.id}
+              borderColor={
+                SEVERITY_COLORS[item.severity] ?? themeCssVariables.color.orange
+              }
+            >
+              <StyledSku>{item.sku}</StyledSku>
+              <StyledName>{item.productName}</StyledName>
+              <StyledRow>
+                <span>
+                  {t`Qty`}: {item.currentStock}
+                </span>
+                <span>
+                  {t`Reorder`}: {item.reorderPoint}
+                </span>
+              </StyledRow>
+              <StyledRow>
+                <span>
+                  {t`Warehouse`}: {item.warehouseName}
+                </span>
+                <span>
+                  {item.daysUntilStockout != null
+                    ? t`${item.daysUntilStockout}d to stockout`
+                    : item.severity}
+                </span>
+              </StyledRow>
+            </StyledCard>
+          ),
+        )}
       </StyledGrid>
     </StyledContainer>
   );

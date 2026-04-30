@@ -1,9 +1,11 @@
+import { useMutation } from '@apollo/client';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
 import { useState } from 'react';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 
+import { CREATE_TICKET, GET_TICKETS } from '../hooks/useTickets';
 import { TicketCategory, TicketChannel, TicketPriority } from '../types/ticket.types';
 
 const StyledContainer = styled.div`
@@ -80,6 +82,18 @@ const StyledButton = styled.button`
   align-self: flex-start;
 `;
 
+const StyledError = styled.div`
+  padding: ${themeCssVariables.spacing[2]};
+  color: ${themeCssVariables.color.red};
+  font-size: ${themeCssVariables.font.size.sm};
+`;
+
+const StyledSuccess = styled.div`
+  padding: ${themeCssVariables.spacing[2]};
+  color: ${themeCssVariables.color.turquoise};
+  font-size: ${themeCssVariables.font.size.sm};
+`;
+
 const PRIORITIES: TicketPriority[] = ['low', 'medium', 'high', 'urgent'];
 const CATEGORIES: TicketCategory[] = ['billing', 'technical', 'general', 'feature_request', 'bug'];
 const CHANNELS: TicketChannel[] = ['email', 'phone', 'chat', 'portal', 'social'];
@@ -92,14 +106,26 @@ export const TicketForm = () => {
   const [category, setCategory] = useState<TicketCategory>('general');
   const [channel, setChannel] = useState<TicketChannel>('email');
 
+  const [createTicket, { loading, error, data }] = useMutation(CREATE_TICKET, {
+    refetchQueries: [{ query: GET_TICKETS, variables: { limit: 50, offset: 0 } }],
+  });
+
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
-    // placeholder for future GraphQL mutation
+    createTicket({
+      variables: {
+        input: { subject, description, priority, category, channel },
+      },
+    });
   };
 
   return (
     <StyledContainer>
       <StyledTitle>{t`Create Ticket`}</StyledTitle>
+      {error && <StyledError>{t`Error: ${error.message}`}</StyledError>}
+      {data?.createTicket && (
+        <StyledSuccess>{t`Ticket ${data.createTicket.ticketNumber} created successfully`}</StyledSuccess>
+      )}
       <form onSubmit={handleSubmit}>
         <StyledFieldGroup>
           <StyledLabel>{t`Subject`}</StyledLabel>
@@ -129,7 +155,9 @@ export const TicketForm = () => {
             </StyledSelect>
           </StyledFieldGroup>
         </StyledRow>
-        <StyledButton type="submit">{t`Submit Ticket`}</StyledButton>
+        <StyledButton type="submit" disabled={loading}>
+          {loading ? t`Submitting...` : t`Submit Ticket`}
+        </StyledButton>
       </form>
     </StyledContainer>
   );

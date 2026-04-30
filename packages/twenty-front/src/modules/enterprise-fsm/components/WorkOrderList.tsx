@@ -1,16 +1,11 @@
+import { useQuery } from '@apollo/client';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { WorkOrderData, WorkOrderPriority, WorkOrderStatus } from '../types/fsm.types';
-
-const MOCK_WORK_ORDERS: WorkOrderData[] = [
-  { id: 'WO-101', title: 'HVAC Repair', description: 'AC unit not cooling', status: 'in_progress', priority: 'high', technicianId: 'T1', technicianName: 'Juan Perez', customerName: 'Bancolombia HQ', location: 'Bogota, Calle 72', scheduledDate: '2026-04-29' },
-  { id: 'WO-102', title: 'Elevator Inspection', description: 'Annual certification', status: 'assigned', priority: 'medium', technicianId: 'T2', technicianName: 'Pedro Gomez', customerName: 'Torre Colpatria', location: 'Bogota Centro', scheduledDate: '2026-04-30' },
-  { id: 'WO-103', title: 'Generator Emergency', description: 'Backup generator failure', status: 'open', priority: 'emergency', technicianId: '', technicianName: '', customerName: 'Hospital San Jose', location: 'Bogota Sur', scheduledDate: '2026-04-29' },
-  { id: 'WO-104', title: 'Fire System Check', description: 'Quarterly inspection', status: 'completed', priority: 'low', technicianId: 'T1', technicianName: 'Juan Perez', customerName: 'Centro Comercial Andino', location: 'Bogota Norte', scheduledDate: '2026-04-28', completedDate: '2026-04-28' },
-];
+import { GET_FSM_ANALYTICS } from '../hooks/useFSM';
 
 const PRIORITY_COLORS: Record<WorkOrderPriority, string> = {
   low: themeCssVariables.color.gray50,
@@ -88,6 +83,13 @@ const StyledHideMobileHeader = styled.th`
 export const WorkOrderList = () => {
   useLingui();
 
+  const { data, loading, error } = useQuery(GET_FSM_ANALYTICS);
+
+  if (loading) return <StyledContainer>{t`Loading...`}</StyledContainer>;
+  if (error) return <StyledContainer>{t`Error loading data`}</StyledContainer>;
+
+  const workOrders: WorkOrderData[] = data?.fsmAnalytics?.workOrders ?? [];
+
   return (
     <StyledContainer>
       <StyledTitle>{t`Work Orders`}</StyledTitle>
@@ -103,7 +105,7 @@ export const WorkOrderList = () => {
           </tr>
         </thead>
         <tbody>
-          {MOCK_WORK_ORDERS.map((wo) => (
+          {workOrders.map((wo) => (
             <tr key={wo.id}>
               <StyledTd>{wo.id}</StyledTd>
               <StyledTd>{wo.title}</StyledTd>

@@ -1,30 +1,25 @@
+import { useMutation, useQuery } from '@apollo/client';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
+import { useState } from 'react';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 
-import { CallRecord, CallStatus } from '../types/voip.types';
-
-const MOCK_CALLS: CallRecord[] = [
-  { id: 'CL1', direction: 'inbound', status: 'completed', callerName: 'Maria Lopez', callerNumber: '+573001234567', agentName: 'Ana Torres', duration: 245, startedAt: '2026-04-29T09:15:00Z', recordingUrl: '/recordings/cl1.mp3' },
-  { id: 'CL2', direction: 'outbound', status: 'completed', callerName: 'Carlos Ruiz', callerNumber: '+573009876543', agentName: 'Luis Reyes', duration: 180, startedAt: '2026-04-29T09:30:00Z', recordingUrl: '/recordings/cl2.mp3' },
-  { id: 'CL3', direction: 'inbound', status: 'missed', callerName: 'Unknown', callerNumber: '+573005551234', agentName: '', duration: 0, startedAt: '2026-04-29T10:00:00Z' },
-  { id: 'CL4', direction: 'outbound', status: 'voicemail', callerName: 'Pedro Gomez', callerNumber: '+573007778899', agentName: 'Ana Torres', duration: 30, startedAt: '2026-04-29T10:15:00Z' },
-  { id: 'CL5', direction: 'inbound', status: 'completed', callerName: 'Sofia Garcia', callerNumber: '+573002223344', agentName: 'Luis Reyes', duration: 420, startedAt: '2026-04-29T10:30:00Z', recordingUrl: '/recordings/cl5.mp3' },
-];
-
-const STATUS_COLORS: Record<CallStatus, string> = {
-  completed: themeCssVariables.color.turquoise,
-  missed: themeCssVariables.color.red,
-  voicemail: themeCssVariables.color.yellow,
-  busy: themeCssVariables.color.orange,
-  failed: themeCssVariables.color.red,
-};
+import {
+  CLICK_TO_CALL,
+  GET_ACTIVE_CALLS,
+  GET_CALL_ANALYTICS,
+} from '../hooks/useVoIP';
 
 const formatDuration = (seconds: number): string => {
   const minutes = Math.floor(seconds / 60);
   const secs = seconds % 60;
   return `${minutes}:${secs.toString().padStart(2, '0')}`;
+};
+
+const DIRECTION_ICONS: Record<string, string> = {
+  inbound: '\u2B07',
+  outbound: '\u2B06',
 };
 
 const StyledContainer = styled.div`
@@ -34,10 +29,47 @@ const StyledContainer = styled.div`
   gap: ${themeCssVariables.spacing[2]};
 `;
 
-const StyledTitle = styled.h2`
-  font-size: ${themeCssVariables.font.size.lg};
-  color: ${themeCssVariables.font.color.primary};
-  margin: 0;
+const StyledToolbar = styled.div`
+  display: flex;
+  gap: ${themeCssVariables.spacing[2]};
+  flex-wrap: wrap;
+  align-items: center;
+`;
+
+const StyledButton = styled.button`
+  padding: 6px 14px;
+  border: none;
+  border-radius: 4px;
+  background: ${themeCssVariables.color.blue};
+  color: ${themeCssVariables.font.color.inverted};
+  cursor: pointer;
+  font-size: ${themeCssVariables.font.size.sm};
+`;
+
+const StyledCallButton = styled.button`
+  padding: 6px 14px;
+  border: none;
+  border-radius: 4px;
+  background: ${themeCssVariables.color.turquoise};
+  color: ${themeCssVariables.font.color.inverted};
+  cursor: pointer;
+  font-size: ${themeCssVariables.font.size.sm};
+`;
+
+const StyledInput = styled.input`
+  padding: 6px 10px;
+  border: 1px solid ${themeCssVariables.border.color.medium};
+  border-radius: 4px;
+  font-size: ${themeCssVariables.font.size.sm};
+  min-width: 160px;
+`;
+
+const StyledMetrics = styled.div`
+  display: flex;
+  gap: ${themeCssVariables.spacing[3]};
+  font-size: ${themeCssVariables.font.size.sm};
+  color: ${themeCssVariables.font.color.secondary};
+  flex-wrap: wrap;
 `;
 
 const StyledTable = styled.table`
@@ -68,24 +100,14 @@ const StyledBadge = styled.span<{ color: string }>`
   color: ${themeCssVariables.font.color.inverted};
 `;
 
-const StyledDirection = styled.span<{ isInbound: boolean }>`
-  font-size: ${themeCssVariables.font.size.xs};
-  color: ${({ isInbound }) =>
-    isInbound ? themeCssVariables.color.blue : themeCssVariables.color.orange};
-`;
-
-const StyledLink = styled.span`
-  font-size: ${themeCssVariables.font.size.xs};
-  color: ${themeCssVariables.color.blue};
-  cursor: pointer;
-`;
-
 const StyledHideMobile = styled.td`
   padding: ${themeCssVariables.spacing[2]};
   font-size: ${themeCssVariables.font.size.md};
   color: ${themeCssVariables.font.color.primary};
   border-bottom: 1px solid ${themeCssVariables.border.color.light};
-  @media (max-width: ${MOBILE_VIEWPORT}px) { display: none; }
+  @media (max-width: ${MOBILE_VIEWPORT}px) {
+    display: none;
+  }
 `;
 
 const StyledHideMobileHeader = styled.th`
@@ -94,45 +116,134 @@ const StyledHideMobileHeader = styled.th`
   font-size: ${themeCssVariables.font.size.sm};
   color: ${themeCssVariables.font.color.tertiary};
   border-bottom: 1px solid ${themeCssVariables.border.color.medium};
-  @media (max-width: ${MOBILE_VIEWPORT}px) { display: none; }
+  @media (max-width: ${MOBILE_VIEWPORT}px) {
+    display: none;
+  }
+`;
+
+const StyledLoading = styled.div`
+  padding: ${themeCssVariables.spacing[4]};
+  color: ${themeCssVariables.font.color.tertiary};
+`;
+
+const StyledError = styled.div`
+  padding: ${themeCssVariables.spacing[4]};
+  color: ${themeCssVariables.color.red};
 `;
 
 export const CallLog = () => {
   useLingui();
 
+  const [phoneNumber, setPhoneNumber] = useState('');
+
+  const { data, loading, error } = useQuery(GET_CALL_ANALYTICS);
+  const { data: activeData } = useQuery(GET_ACTIVE_CALLS, {
+    pollInterval: 5000,
+  });
+
+  const [clickToCall, { loading: calling }] = useMutation(CLICK_TO_CALL);
+
+  const handleCall = () => {
+    if (!phoneNumber.trim()) return;
+    clickToCall({
+      variables: { input: { toNumber: phoneNumber } },
+    });
+    setPhoneNumber('');
+  };
+
+  if (loading) return <StyledLoading>{t`Loading...`}</StyledLoading>;
+  if (error) return <StyledError>{t`Error: ${error.message}`}</StyledError>;
+
+  const analytics = data?.callAnalytics;
+  const agentStats = analytics?.byAgent ?? [];
+  const directionStats = analytics?.byDirection ?? [];
+  const activeCalls = activeData?.activeCalls ?? [];
+
   return (
     <StyledContainer>
-      <StyledTitle>{t`Call Log`}</StyledTitle>
+      <StyledToolbar>
+        <StyledInput
+          placeholder={t`Phone number`}
+          value={phoneNumber}
+          onChange={(event) => setPhoneNumber(event.target.value)}
+        />
+        <StyledCallButton onClick={handleCall} disabled={calling}>
+          {calling ? t`Calling...` : t`Call`}
+        </StyledCallButton>
+      </StyledToolbar>
+
+      {analytics && (
+        <StyledMetrics>
+          <span>
+            {t`Total`}: {analytics.totalCalls}
+          </span>
+          <span>
+            {t`Answered`}: {analytics.answeredCalls}
+          </span>
+          <span>
+            {t`Missed`}: {analytics.missedCalls}
+          </span>
+          <span>
+            {t`Avg Duration`}: {formatDuration(analytics.averageDuration ?? 0)}
+          </span>
+          {directionStats.map(
+            (direction: {
+              direction: string;
+              count: number;
+              averageDuration: number;
+            }) => (
+              <span key={direction.direction}>
+                {DIRECTION_ICONS[direction.direction] ?? ''}{' '}
+                {direction.direction}: {direction.count}
+              </span>
+            ),
+          )}
+        </StyledMetrics>
+      )}
+
+      {activeCalls.length > 0 && (
+        <StyledBadge color={themeCssVariables.color.turquoise}>
+          {t`${activeCalls.length} active calls`}
+        </StyledBadge>
+      )}
+
       <StyledTable>
         <thead>
           <tr>
-            <StyledTh>{t`Dir`}</StyledTh>
-            <StyledTh>{t`Caller`}</StyledTh>
-            <StyledTh>{t`Status`}</StyledTh>
-            <StyledTh>{t`Duration`}</StyledTh>
-            <StyledHideMobileHeader>{t`Agent`}</StyledHideMobileHeader>
-            <StyledHideMobileHeader>{t`Recording`}</StyledHideMobileHeader>
+            <StyledTh>{t`Agent`}</StyledTh>
+            <StyledTh>{t`Total Calls`}</StyledTh>
+            <StyledTh>{t`Answered`}</StyledTh>
+            <StyledTh>{t`Avg Duration`}</StyledTh>
+            <StyledHideMobileHeader>{t`Avg Wait`}</StyledHideMobileHeader>
           </tr>
         </thead>
         <tbody>
-          {MOCK_CALLS.map((call) => (
-            <tr key={call.id}>
-              <StyledTd>
-                <StyledDirection isInbound={call.direction === 'inbound'}>
-                  {call.direction === 'inbound' ? 'IN' : 'OUT'}
-                </StyledDirection>
-              </StyledTd>
-              <StyledTd>{call.callerName}</StyledTd>
-              <StyledTd>
-                <StyledBadge color={STATUS_COLORS[call.status]}>{call.status}</StyledBadge>
-              </StyledTd>
-              <StyledTd>{formatDuration(call.duration)}</StyledTd>
-              <StyledHideMobile>{call.agentName || '—'}</StyledHideMobile>
-              <StyledHideMobile>
-                {call.recordingUrl ? <StyledLink>{t`Play`}</StyledLink> : '—'}
-              </StyledHideMobile>
-            </tr>
-          ))}
+          {agentStats.map(
+            (agent: {
+              agentId: string;
+              agentName: string;
+              totalCalls: number;
+              answeredCalls: number;
+              averageDuration: number;
+              averageWaitTime: number;
+            }) => (
+              <tr key={agent.agentId}>
+                <StyledTd>{agent.agentName}</StyledTd>
+                <StyledTd>{agent.totalCalls}</StyledTd>
+                <StyledTd>
+                  <StyledBadge color={themeCssVariables.color.turquoise}>
+                    {agent.answeredCalls}
+                  </StyledBadge>
+                </StyledTd>
+                <StyledTd>
+                  {formatDuration(agent.averageDuration ?? 0)}
+                </StyledTd>
+                <StyledHideMobile>
+                  {formatDuration(agent.averageWaitTime ?? 0)}
+                </StyledHideMobile>
+              </tr>
+            ),
+          )}
         </tbody>
       </StyledTable>
     </StyledContainer>
