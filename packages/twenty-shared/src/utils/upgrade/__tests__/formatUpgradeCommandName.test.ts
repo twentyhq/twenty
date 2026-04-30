@@ -6,9 +6,7 @@ describe('formatUpgradeCommandName', () => {
       formatUpgradeCommandName(
         '1.23.0_DropWorkspaceVersionColumnFastInstanceCommand_1785000000000',
       ),
-    ).toBe(
-      'DropWorkspaceVersionColumn 1785000000000 (1.23.0) (instance fast)',
-    );
+    ).toBe('DropWorkspaceVersionColumn 1785000000000 (1.23.0) (instance fast)');
   });
 
   it('should append (instance slow) for slow instance commands', () => {
