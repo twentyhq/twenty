@@ -341,6 +341,10 @@ export class BillingUsageService {
   }
 
   async hasAvailableCredits(workspaceId: string): Promise<boolean> {
+    if (!this.twentyConfigService.get('IS_BILLING_ENABLED')) {
+      return true;
+    }
+
     const { billingSubscription: subscription } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'billingSubscription',
@@ -367,6 +371,17 @@ export class BillingUsageService {
     );
 
     return availableCredits > 0;
+  }
+
+  async hasAvailableCreditsOrThrow(workspaceId: string): Promise<void> {
+    const hasCredits = await this.hasAvailableCredits(workspaceId);
+
+    if (!hasCredits) {
+      throw new BillingException(
+        'Credits exhausted',
+        BillingExceptionCode.BILLING_CREDITS_EXHAUSTED,
+      );
+    }
   }
 
   async getCurrentPeriodCreditsUsed(

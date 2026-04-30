@@ -230,6 +230,11 @@ export const SettingsAvailableApplicationDetails = () => {
           <SettingsApplicationDetailContentTab
             applicationId={detail.universalIdentifier}
             manifestContent={manifest}
+            applicationInfo={{
+              name: displayName,
+              logo: app?.logoUrl,
+              universalIdentifier: detail.universalIdentifier,
+            }}
           />
         );
       case 'permissions':
@@ -267,10 +272,7 @@ export const SettingsAvailableApplicationDetails = () => {
           <SettingsApplicationDetailTitle
             displayName={displayName}
             description={description}
-            logoUrl={app?.logoUrl}
             applicationId={application?.id}
-            applicationName={application?.name}
-            universalIdentifier={detail.universalIdentifier}
             isUnlisted={isUnlisted}
           />
         }
@@ -279,9 +281,7 @@ export const SettingsAvailableApplicationDetails = () => {
           <TabList
             tabs={tabs}
             componentInstanceId={AVAILABLE_APPLICATION_DETAIL_ID}
-            behaveAsLinks={false}
           />
-
           {renderActiveTabContent()}
         </SettingsPageContainer>
       </SubMenuTopBarContainer>

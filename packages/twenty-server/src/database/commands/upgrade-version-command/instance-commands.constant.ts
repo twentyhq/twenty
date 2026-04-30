@@ -20,6 +20,7 @@ import { AddProviderExecutedToAgentMessagePartFastInstanceCommand } from 'src/da
 import { BackfillPageLayoutWidgetPositionSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-1/2-1-instance-command-slow-1795000002000-backfill-page-layout-widget-position';
 import { AddCacheTokensToAgentChatThreadFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-2/2-2-instance-command-fast-1777455269302-add-cache-tokens-to-agent-chat-thread';
 import { MakePageLayoutWidgetGridPositionNullableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-2/2-2-instance-command-fast-1777473592000-make-page-layout-widget-grid-position-nullable';
+import { AddLogoToApplicationFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-2/2-2-instance-command-fast-1777539664664-add-logo-to-application';
 import { BackfillPageLayoutWidgetPositionAgainSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-2/2-2-instance-command-slow-1795000003000-backfill-page-layout-widget-position-again';
 
 export const INSTANCE_COMMANDS = [
@@ -44,4 +45,5 @@ export const INSTANCE_COMMANDS = [
   MakePageLayoutWidgetGridPositionNullableFastInstanceCommand,
   BackfillPageLayoutWidgetPositionAgainSlowInstanceCommand,
   AddCacheTokensToAgentChatThreadFastInstanceCommand,
+  AddLogoToApplicationFastInstanceCommand,
 ];

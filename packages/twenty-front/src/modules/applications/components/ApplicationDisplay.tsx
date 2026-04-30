@@ -1,41 +1,29 @@
-import { useApplicationAvatarColors } from '@/applications/hooks/useApplicationAvatarColors';
-import { Avatar, OverflowingTextWithTooltip } from 'twenty-ui/display';
-
-type ApplicationDisplayData = {
-  id?: string | null;
-  name?: string | null;
-  universalIdentifier?: string | null;
-  logoUrl?: string | null;
-  applicationRegistration?: {
-    logoUrl?: string | null;
-  } | null;
-};
+import { type ApplicationDisplayData } from '@/applications/types/applicationDisplayData.type';
+import { AppChip } from '@/applications/components/AppChip';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { styled } from '@linaria/react';
 
 type ApplicationDisplayProps = {
-  application: ApplicationDisplayData;
+  application?: ApplicationDisplayData;
 };
+
+const StyledAppChip = styled(AppChip)`
+  color: ${themeCssVariables.font.color.primary};
+  font-size: ${themeCssVariables.font.size.md};
+  gap: ${themeCssVariables.spacing[2]};
+`;
 
 export const ApplicationDisplay = ({
   application,
 }: ApplicationDisplayProps) => {
-  const colors = useApplicationAvatarColors(application);
-  const name = application.name ?? '';
-  const logoUrl =
-    application.logoUrl ?? application.applicationRegistration?.logoUrl;
-
   return (
-    <>
-      <Avatar
-        type="app"
-        size="md"
-        avatarUrl={logoUrl ?? undefined}
-        placeholder={name}
-        placeholderColorSeed={application.universalIdentifier ?? name}
-        color={colors?.color}
-        backgroundColor={colors?.backgroundColor}
-        borderColor={colors?.borderColor}
-      />
-      <OverflowingTextWithTooltip text={name} />
-    </>
+    <StyledAppChip
+      size="md"
+      applicationId={application?.id}
+      fallbackApplicationData={{
+        logo: application?.logo,
+        name: application?.name,
+      }}
+    />
   );
 };
