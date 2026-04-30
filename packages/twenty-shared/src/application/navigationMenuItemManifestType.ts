@@ -11,4 +11,5 @@ export type NavigationMenuItemManifest = SyncableEntityOptions & {
   link?: string;
   folderUniversalIdentifier?: string;
   targetObjectUniversalIdentifier?: string;
+  pageLayoutUniversalIdentifier?: string;
 };

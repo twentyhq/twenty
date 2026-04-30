@@ -64,6 +64,7 @@ const mixedGraphsPageLayoutMocks = {
   tabs: [
     {
       __typename: 'PageLayoutTab',
+      isActive: true,
       id: 'mixed-tab',
       title: 'Mixed Graphs',
       position: 0,
@@ -74,6 +75,8 @@ const mixedGraphsPageLayoutMocks = {
       widgets: [
         {
           __typename: 'PageLayoutWidget',
+          applicationId: '',
+          isActive: true,
           id: 'number-widget',
           pageLayoutTabId: 'mixed-tab',
           type: WidgetType.GRAPH,
@@ -98,6 +101,8 @@ const mixedGraphsPageLayoutMocks = {
         } satisfies PageLayoutWidget,
         {
           __typename: 'PageLayoutWidget',
+          applicationId: '',
+          isActive: true,
           id: 'gauge-widget',
           pageLayoutTabId: 'mixed-tab',
           type: WidgetType.GRAPH,
@@ -123,6 +128,8 @@ const mixedGraphsPageLayoutMocks = {
         } satisfies PageLayoutWidget,
         {
           __typename: 'PageLayoutWidget',
+          applicationId: '',
+          isActive: true,
           id: 'pie-widget',
           pageLayoutTabId: 'mixed-tab',
           type: WidgetType.GRAPH,
@@ -149,6 +156,8 @@ const mixedGraphsPageLayoutMocks = {
         } satisfies PageLayoutWidget,
         {
           __typename: 'PageLayoutWidget',
+          applicationId: '',
+          isActive: true,
           id: 'bar-widget',
           pageLayoutTabId: 'mixed-tab',
           type: WidgetType.GRAPH,

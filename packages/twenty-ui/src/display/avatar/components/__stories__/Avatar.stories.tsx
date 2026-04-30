@@ -39,3 +39,12 @@ export const NoAvatarPictureSquared: Story = {
     ...Squared.args,
   },
 };
+
+export const App: Story = {
+  args: {
+    type: 'app',
+    avatarUrl: '',
+    placeholder: 'Acme',
+    placeholderColorSeed: 'acme-app',
+  },
+};

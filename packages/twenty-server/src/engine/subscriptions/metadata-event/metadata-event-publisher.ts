@@ -11,7 +11,7 @@ import { type MetadataEventBatch } from 'src/engine/subscriptions/metadata-event
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
 import { enrichCommandMenuItemEventWithResolvedNavigation } from 'src/engine/subscriptions/metadata-event/utils/enrich-command-menu-item-event-with-resolved-navigation.util';
 import { enrichFieldMetadataEventWithRelations } from 'src/engine/subscriptions/metadata-event/utils/enrich-field-metadata-event-with-relations.util';
-import { sanitizeOverridableEntityEventBatch } from 'src/engine/subscriptions/metadata-event/utils/sanitize-overridable-entity-event-batch.util';
+import { resolveOverridableEntityEventBatchOverrides } from 'src/engine/subscriptions/metadata-event/utils/sanitize-overridable-entity-event-batch.util';
 import { WorkspaceEventBroadcaster } from 'src/engine/subscriptions/workspace-event-broadcaster/workspace-event-broadcaster.service';
 
 @Injectable()
@@ -64,7 +64,7 @@ export class MetadataEventPublisher {
           metadataEventBatch as MetadataEventBatch<'objectMetadata'>,
         );
       default:
-        return sanitizeOverridableEntityEventBatch(metadataEventBatch);
+        return resolveOverridableEntityEventBatchOverrides(metadataEventBatch);
     }
   }
 

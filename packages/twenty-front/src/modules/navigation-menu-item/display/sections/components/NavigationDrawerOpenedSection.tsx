@@ -1,6 +1,4 @@
-import { useParams } from 'react-router-dom';
-
-import { useWorkspaceNavigationMenuItems } from '@/navigation-menu-item/display/hooks/useWorkspaceNavigationMenuItems';
+import { useIdentifyActiveNavigationMenuItems } from '@/navigation-menu-item/display/hooks/useIdentifyActiveNavigationMenuItems';
 import { NavigationDrawerSectionForObjectMetadataItems } from '@/object-metadata/components/NavigationDrawerSectionForObjectMetadataItems';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useLingui } from '@lingui/react/macro';
@@ -12,21 +10,14 @@ export const NavigationDrawerOpenedSection = () => {
 
   const { activeObjectMetadataItems } = useFilteredObjectMetadataItems();
 
-  const { objectMetadataIdsInWorkspaceNav } = useWorkspaceNavigationMenuItems();
-
-  const {
-    objectNamePlural: currentObjectNamePlural,
-    objectNameSingular: currentObjectNameSingular,
-  } = useParams();
+  const { objectMetadataIdForOpenedSection } =
+    useIdentifyActiveNavigationMenuItems();
 
   const objectMetadataItem = activeObjectMetadataItems.find(
-    (item) =>
-      item.namePlural === currentObjectNamePlural ||
-      item.nameSingular === currentObjectNameSingular,
+    (item) => item.id === objectMetadataIdForOpenedSection,
   );
-  const shouldShowOpenedSection = isDefined(objectMetadataItem)
-    ? !objectMetadataIdsInWorkspaceNav.has(objectMetadataItem.id)
-    : false;
+
+  const shouldShowOpenedSection = isDefined(objectMetadataItem);
 
   return (
     <AnimatedExpandableContainer isExpanded={shouldShowOpenedSection}>

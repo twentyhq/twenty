@@ -23,9 +23,7 @@ import { findObjectNameByUniversalIdentifier } from 'src/engine/workspace-manage
 export type BuildStandardFlatPageLayoutWidgetMetadataMapsArgs = Omit<
   CreateStandardPageLayoutWidgetArgs,
   'context'
-> & {
-  shouldIncludeRecordPageLayouts?: boolean;
-};
+>;
 
 const RECORD_PAGE_LAYOUT_WIDGET_TYPES = [
   WidgetType.FIELDS,
@@ -74,8 +72,6 @@ const RECORD_PAGE_FIELDS_VIEW_NAME_BY_OBJECT: Partial<
   calendarEventParticipant: 'calendarEventParticipantRecordPageFields',
   company: 'companyRecordPageFields',
   connectedAccount: 'connectedAccountRecordPageFields',
-  favorite: 'favoriteRecordPageFields',
-  favoriteFolder: 'favoriteFolderRecordPageFields',
   messageChannel: 'messageChannelRecordPageFields',
   messageChannelMessageAssociation:
     'messageChannelMessageAssociationRecordPageFields',
@@ -164,7 +160,7 @@ const buildFieldsWidgetConfiguration = ({
       },
       universalConfiguration: {
         configurationType: WidgetConfigurationType.FIELDS,
-        viewId: null,
+        viewUniversalIdentifier: null,
         newFieldDefaultVisibility: true,
       },
     };
@@ -201,7 +197,7 @@ const buildFieldsWidgetConfiguration = ({
     },
     universalConfiguration: {
       configurationType: WidgetConfigurationType.FIELDS,
-      viewId: viewUniversalIdentifier,
+      viewUniversalIdentifier,
       newFieldDefaultVisibility: true,
     },
   };
@@ -338,9 +334,7 @@ export const buildStandardFlatPageLayoutWidgetMetadataMaps = (
 ): FlatEntityMaps<FlatPageLayoutWidget> => {
   const allWidgetMetadatas: FlatPageLayoutWidget[] = [
     ...computeMyFirstDashboardWidgets(args),
-    ...(args.shouldIncludeRecordPageLayouts
-      ? computeRecordPageWidgets(args)
-      : []),
+    ...computeRecordPageWidgets(args),
   ];
 
   let flatPageLayoutWidgetMaps = createEmptyFlatEntityMaps();

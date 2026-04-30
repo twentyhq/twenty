@@ -12,6 +12,7 @@ export const mapColumnDefinitionsToViewFields = (
     position: columnDefinition.position,
     size: columnDefinition.size,
     isVisible: columnDefinition.isVisible ?? true,
+    isActive: true,
     definition: columnDefinition,
   }));
 };

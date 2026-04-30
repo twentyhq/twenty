@@ -1,0 +1,178 @@
+---
+title: Layout
+description: Define views, navigation menu items, and page layouts to shape how your app appears in Twenty.
+icon: "table-columns"
+---
+
+Layout entities control how your app surfaces inside Twenty's UI — what lives in the sidebar, which saved views ship with the app, and how a record detail page is arranged.
+
+## Layout concepts
+
+| Concept | What it controls | Entity |
+|---------|------------------|--------|
+| **View** | A saved list configuration for an object — visible fields, order, filters, groups | `defineView` |
+| **Navigation Menu Item** | An entry in the left sidebar that links to a view or an external URL | `defineNavigationMenuItem` |
+| **Page Layout** | The tabs and widgets that make up a record's detail page | `definePageLayout` |
+| **Page Layout Tab** | A standalone tab attached to an existing page layout (standard or your own app's) | `definePageLayoutTab` |
+
+Views, navigation items, and page layouts reference each other by `universalIdentifier`:
+
+- A **navigation menu item** of type `VIEW` points at a `defineView` identifier, so the sidebar link opens that saved view.
+- A **page layout** of type `RECORD_PAGE` targets an object and can embed [front components](/developers/extend/apps/front-components) inside its tabs as widgets.
+
+<AccordionGroup>
+<Accordion title="defineView" description="Define saved views for objects">
+
+Views are saved configurations for how records of an object are displayed — including which fields are visible, their order, and any filters or groups applied. Use `defineView()` to ship pre-configured views with your app:
+
+```ts src/views/example-view.ts
+import { defineView, ViewKey } from 'twenty-sdk/define';
+import { EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER } from '../objects/example-object';
+import { NAME_FIELD_UNIVERSAL_IDENTIFIER } from '../objects/example-object';
+
+export default defineView({
+  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  name: 'All example items',
+  objectUniversalIdentifier: EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER,
+  icon: 'IconList',
+  key: ViewKey.INDEX,
+  position: 0,
+  fields: [
+    {
+      universalIdentifier: 'f926bdb7-6af7-4683-9a09-adbca56c29f0',
+      fieldMetadataUniversalIdentifier: NAME_FIELD_UNIVERSAL_IDENTIFIER,
+      position: 0,
+      isVisible: true,
+      size: 200,
+    },
+  ],
+});
+```
+
+Key points:
+- `objectUniversalIdentifier` specifies which object this view applies to.
+- `key` determines the view type (e.g., `ViewKey.INDEX` for the main list view).
+- `fields` controls which columns appear and their order. Each field references a `fieldMetadataUniversalIdentifier`.
+- You can also define `filters`, `filterGroups`, `groups`, and `fieldGroups` for more advanced configurations.
+- `position` controls the ordering when multiple views exist for the same object.
+
+</Accordion>
+<Accordion title="defineNavigationMenuItem" description="Define sidebar navigation links">
+
+Navigation menu items add custom entries to the workspace sidebar. Use `defineNavigationMenuItem()` to link to views, external URLs, or objects:
+
+```ts src/navigation-menu-items/example-navigation-menu-item.ts
+import { defineNavigationMenuItem, NavigationMenuItemType } from 'twenty-sdk/define';
+import { EXAMPLE_VIEW_UNIVERSAL_IDENTIFIER } from '../views/example-view';
+
+export default defineNavigationMenuItem({
+  universalIdentifier: '9327db91-afa1-41b6-bd9d-2b51a26efb4c',
+  name: 'example-navigation-menu-item',
+  icon: 'IconList',
+  color: 'blue',
+  position: 0,
+  type: NavigationMenuItemType.VIEW,
+  viewUniversalIdentifier: EXAMPLE_VIEW_UNIVERSAL_IDENTIFIER,
+});
+```
+
+Key points:
+- `type` determines what the menu item links to: `NavigationMenuItemType.VIEW` for a saved view, or `NavigationMenuItemType.LINK` for an external URL.
+- For view links, set `viewUniversalIdentifier`. For external links, set `link`.
+- `position` controls the ordering in the sidebar.
+- `icon` and `color` (optional) customize the appearance.
+
+</Accordion>
+<Accordion title="definePageLayout" description="Define custom page layouts for record views">
+
+Page layouts let you customize how a record detail page looks — which tabs appear, what widgets are inside each tab, and how they are arranged. Use `definePageLayout()` to ship custom layouts with your app:
+
+```ts src/page-layouts/example-record-page-layout.ts
+import { definePageLayout, PageLayoutTabLayoutMode } from 'twenty-sdk/define';
+import { EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER } from '../objects/example-object';
+import { HELLO_WORLD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER } from '../front-components/hello-world';
+
+export default definePageLayout({
+  universalIdentifier: '203aeb94-6701-46d6-9af1-be2bbcc9e134',
+  name: 'Example Record Page',
+  type: 'RECORD_PAGE',
+  objectUniversalIdentifier: EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER,
+  tabs: [
+    {
+      universalIdentifier: '6ed26b60-a51d-4ad7-86dd-1c04c7f3cac5',
+      title: 'Hello World',
+      position: 50,
+      icon: 'IconWorld',
+      layoutMode: PageLayoutTabLayoutMode.CANVAS,
+      widgets: [
+        {
+          universalIdentifier: 'aa4234e0-2e5f-4c02-a96a-573449e2351d',
+          title: 'Hello World',
+          type: 'FRONT_COMPONENT',
+          configuration: {
+            configurationType: 'FRONT_COMPONENT',
+            frontComponentUniversalIdentifier:
+              HELLO_WORLD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
+          },
+        },
+      ],
+    },
+  ],
+});
+```
+
+Key points:
+- `type` is typically `'RECORD_PAGE'` to customize the detail view of a specific object.
+- `objectUniversalIdentifier` specifies which object this layout applies to.
+- Each `tab` defines a section of the page with a `title`, `position`, and `layoutMode` (`CANVAS` for free-form layout).
+- Each `widget` inside a tab can render a front component, a relation list, or other built-in widget types.
+- `position` on tabs controls their order. Use higher values (e.g., 50) to place custom tabs after built-in ones.
+
+</Accordion>
+<Accordion title="definePageLayoutTab" description="Add a tab to an existing page layout">
+
+`definePageLayoutTab` lets your app attach a single tab — with optional widgets — to an **existing** page layout. The most common use case is adding a custom tab (for example, an analytics or AI summary tab) to one of Twenty's built-in record pages, or to a page layout your own app already ships.
+
+The targeted page layout must be either a **standard** Twenty page layout or one defined by **your own app**; cross-app references to page layouts owned by another installed app are not supported today.
+
+```ts src/page-layouts/example-extra-tab.ts
+import {
+  definePageLayoutTab,
+  PageLayoutTabLayoutMode,
+} from 'twenty-sdk/define';
+import { HELLO_WORLD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER } from '../front-components/hello-world';
+
+const COMPANY_RECORD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER =
+  '20202020-ab01-4001-8001-c0aba11c0100';
+
+export default definePageLayoutTab({
+  universalIdentifier: 'b1b2b3b4-b5b6-4000-8000-000000000001',
+  pageLayoutUniversalIdentifier:
+    COMPANY_RECORD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER,
+  title: 'Hello World',
+  position: 1000,
+  icon: 'IconWorld',
+  layoutMode: PageLayoutTabLayoutMode.CANVAS,
+  widgets: [
+    {
+      universalIdentifier: 'b1b2b3b4-b5b6-4000-8000-000000000002',
+      title: 'Hello World',
+      type: 'FRONT_COMPONENT',
+      configuration: {
+        configurationType: 'FRONT_COMPONENT',
+        frontComponentUniversalIdentifier:
+          HELLO_WORLD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
+      },
+    },
+  ],
+});
+```
+
+Key points:
+- `pageLayoutUniversalIdentifier` is **required** when using `definePageLayoutTab` and must point to a page layout that already exists at install time (standard or your app's). When the parent page layout is missing, installation fails with a clear validation error.
+- `widgets` are scoped to this tab only — they reference front components, views, etc. exactly like widgets defined inline in `definePageLayout`.
+- `position` controls ordering against existing tabs on the targeted layout. Pick a value that places your tab where you want it relative to built-in tabs.
+- Use this instead of `definePageLayout` when you only want to **add** to an existing layout. Use `definePageLayout` when you own the entire layout (typically a `RECORD_PAGE` for an object you ship in your app, or a `STANDALONE_PAGE`).
+
+</Accordion>
+</AccordionGroup>

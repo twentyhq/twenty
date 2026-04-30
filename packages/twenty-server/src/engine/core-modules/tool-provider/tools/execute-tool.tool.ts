@@ -1,4 +1,4 @@
-import { jsonSchema, type ToolExecutionOptions, type ToolSet } from 'ai';
+import { jsonSchema } from 'ai';
 import { type JSONSchema7 } from 'json-schema';
 import { z } from 'zod';
 
@@ -41,22 +41,24 @@ export const executeToolInputSchema = jsonSchema<ExecuteToolInput>(
   },
 );
 
+// All invocations route through the registry — there is no fast path for
+// preloaded or native tools. Native tools are exposed to the model directly
+// via the top-level ToolSet passed to streamText, not through this meta-tool.
 export const createExecuteToolTool = (
   toolRegistry: ToolRegistryService,
   context: ToolContext,
-  directTools?: ToolSet,
-  excludeTools?: Set<string>,
+  options?: {
+    excludeTools?: Set<string>;
+    compactOutput?: boolean;
+  },
 ) => ({
   description:
     'STEP 3: Execute a tool by name with arguments. You MUST call get_tool_catalog (step 1) and learn_tools (step 2) first to discover the tool name and its required input schema.',
   inputSchema: executeToolInputSchema,
-  execute: async (
-    parameters: ExecuteToolInput,
-    options: ToolExecutionOptions,
-  ): Promise<ToolOutput> => {
-    const { toolName, arguments: args } = parameters;
+  execute: async (parameters: ExecuteToolInput): Promise<ToolOutput> => {
+    const { toolName, arguments: args = {} } = parameters;
 
-    if (excludeTools?.has(toolName)) {
+    if (options?.excludeTools?.has(toolName)) {
       return {
         success: false,
         message: `Tool "${toolName}" is not available`,
@@ -64,12 +66,8 @@ export const createExecuteToolTool = (
       };
     }
 
-    const directTool = directTools?.[toolName];
-
-    if (directTool?.execute) {
-      return directTool.execute(args, options) as Promise<ToolOutput>;
-    }
-
-    return toolRegistry.resolveAndExecute(toolName, args, context, options);
+    return toolRegistry.resolveAndExecute(toolName, args, context, {
+      compactOutput: options?.compactOutput,
+    });
   },
 });

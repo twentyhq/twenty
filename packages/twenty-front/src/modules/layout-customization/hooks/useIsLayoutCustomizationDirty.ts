@@ -1,6 +1,5 @@
-import { useCommandMenuItemsDraftState } from '@/command-menu-item/server-items/common/hooks/useCommandMenuItemsDraftState';
+import { useCommandMenuItemsDraftState } from '@/command-menu-item/hooks/useCommandMenuItemsDraftState';
 import { activeCustomizationPageLayoutIdsState } from '@/layout-customization/states/activeCustomizationPageLayoutIdsState';
-import { type DraftPageLayout } from '@/page-layout/types/DraftPageLayout';
 import { useNavigationMenuItemsDraftState } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemsDraftState';
 import { fieldsWidgetGroupsDraftComponentState } from '@/page-layout/states/fieldsWidgetGroupsDraftComponentState';
 import { fieldsWidgetGroupsPersistedComponentState } from '@/page-layout/states/fieldsWidgetGroupsPersistedComponentState';
@@ -8,6 +7,9 @@ import { fieldsWidgetUngroupedFieldsDraftComponentState } from '@/page-layout/st
 import { fieldsWidgetUngroupedFieldsPersistedComponentState } from '@/page-layout/states/fieldsWidgetUngroupedFieldsPersistedComponentState';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutPersistedComponentState } from '@/page-layout/states/pageLayoutPersistedComponentState';
+import { recordTableWidgetViewDraftComponentState } from '@/page-layout/states/recordTableWidgetViewDraftComponentState';
+import { recordTableWidgetViewPersistedComponentState } from '@/page-layout/states/recordTableWidgetViewPersistedComponentState';
+import { type DraftPageLayout } from '@/page-layout/types/DraftPageLayout';
 import { atom, useAtomValue } from 'jotai';
 import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -84,6 +86,26 @@ export const useIsLayoutCustomizationDirty = () => {
           );
 
           if (!isDeeplyEqual(ungroupedFieldsDraft, ungroupedFieldsPersisted)) {
+            return true;
+          }
+
+          const recordTableWidgetViewDraft = get(
+            recordTableWidgetViewDraftComponentState.atomFamily({
+              instanceId: pageLayoutId,
+            }),
+          );
+          const recordTableWidgetViewPersisted = get(
+            recordTableWidgetViewPersistedComponentState.atomFamily({
+              instanceId: pageLayoutId,
+            }),
+          );
+
+          if (
+            !isDeeplyEqual(
+              recordTableWidgetViewDraft,
+              recordTableWidgetViewPersisted,
+            )
+          ) {
             return true;
           }
         }

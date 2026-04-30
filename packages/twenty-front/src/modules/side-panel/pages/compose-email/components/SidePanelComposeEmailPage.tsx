@@ -58,7 +58,7 @@ export const SidePanelComposeEmailPage = () => {
     if (composerState.canSend) {
       composerState.handleSend();
     }
-  }, [composerState.canSend, composerState.handleSend]);
+  }, [composerState]);
 
   useHotkeysOnFocusedElement({
     keys: ['ctrl+Enter,meta+Enter'],

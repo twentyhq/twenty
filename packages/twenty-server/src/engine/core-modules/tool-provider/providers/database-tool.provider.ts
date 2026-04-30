@@ -19,10 +19,14 @@ import { generateUpdateRecordInputSchema } from 'src/engine/core-modules/record-
 import { DeleteToolInputSchema } from 'src/engine/core-modules/record-crud/zod-schemas/delete-tool.zod-schema';
 import { FindOneToolInputSchema } from 'src/engine/core-modules/record-crud/zod-schemas/find-one-tool.zod-schema';
 import { generateFindToolInputSchema } from 'src/engine/core-modules/record-crud/zod-schemas/find-tool.zod-schema';
+import {
+  generateGroupByToolInputSchema,
+  hasGroupByToolInputSchema,
+} from 'src/engine/core-modules/record-crud/zod-schemas/group-by-tool.zod-schema';
 import { ToolCategory } from 'twenty-shared/ai';
 import { type ToolDescriptor } from 'src/engine/core-modules/tool-provider/types/tool-descriptor.type';
 import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-index-entry.type';
-import { isFavoriteRelatedObject } from 'src/engine/metadata-modules/ai/ai-agent/utils/is-favorite-related-object.util';
+import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { isWorkflowRelatedObject } from 'src/engine/metadata-modules/ai/ai-agent/utils/is-workflow-related-object.util';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { computePermissionIntersection } from 'src/engine/twenty-orm/utils/compute-permission-intersection.util';
@@ -39,6 +43,20 @@ export class DatabaseToolProvider implements ToolProvider {
 
   async isAvailable(_context: ToolProviderContext): Promise<boolean> {
     return true;
+  }
+
+  // Database CRUD tools emit `executionRef.kind === 'database_crud'` descriptors
+  // and are dispatched inline by ToolExecutorService. The static-tool path is
+  // unreachable for this provider; this method exists only to satisfy the
+  // interface.
+  async executeStaticTool(
+    toolName: string,
+    _args: Record<string, unknown>,
+    _context: ToolProviderContext,
+  ): Promise<ToolOutput> {
+    throw new Error(
+      `DatabaseToolProvider does not emit static-kind descriptors (tool: ${toolName})`,
+    );
   }
 
   async generateDescriptors(
@@ -77,10 +95,7 @@ export class DatabaseToolProvider implements ToolProvider {
       .filter((obj) => obj.isActive);
 
     for (const flatObject of allFlatObjects) {
-      if (
-        isWorkflowRelatedObject(flatObject) ||
-        isFavoriteRelatedObject(flatObject)
-      ) {
+      if (isWorkflowRelatedObject(flatObject)) {
         continue;
       }
 
@@ -138,6 +153,33 @@ export class DatabaseToolProvider implements ToolProvider {
           icon: flatObject.icon ?? undefined,
           operation: 'find_one',
         });
+
+        const groupBySchema = includeSchemas
+          ? generateGroupByToolInputSchema(objectMetadata, restrictedFields)
+          : null;
+        const hasGroupBySchema =
+          groupBySchema !== null ||
+          hasGroupByToolInputSchema(objectMetadata, restrictedFields);
+
+        if (hasGroupBySchema) {
+          descriptors.push({
+            name: `group_by_${snakePlural}`,
+            description: `Group ${objectMetadata.labelPlural} records by one or two fields and compute an aggregate (COUNT, SUM, AVG, MIN, MAX, etc.). Use for questions like "how many deals per stage?" or "total revenue by company". Returns groups with dimension values and aggregate results, ordered by the aggregate value.`,
+            category: ToolCategory.DATABASE_CRUD,
+            ...(includeSchemas &&
+              groupBySchema && {
+                inputSchema: z.toJSONSchema(groupBySchema),
+              }),
+            executionRef: {
+              kind: 'database_crud',
+              objectNameSingular: objectMetadata.nameSingular,
+              operation: 'group_by',
+            },
+            objectName: objectMetadata.nameSingular,
+            icon: flatObject.icon ?? undefined,
+            operation: 'group_by',
+          });
+        }
       }
 
       if (permission.canUpdateObjectRecords) {

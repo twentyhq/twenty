@@ -1,11 +1,12 @@
-import { type CommandMenuContextApiPageType } from './CommandMenuContextApiPageType';
+import { type ContextStorePageType } from './ContextStorePageType';
 import { type ObjectPermissions } from './ObjectPermissions';
 import { type ObjectRecord } from './ObjectRecord';
 
 export type CommandMenuContextApi = {
-  pageType: CommandMenuContextApiPageType;
+  pageType: ContextStorePageType;
   isInSidePanel: boolean;
-  isPageInEditMode: boolean;
+  isDashboardPageLayoutInEditMode: boolean;
+  isLayoutCustomizationModeEnabled: boolean;
   favoriteRecordIds: string[];
   isSelectAll: boolean;
   hasAnySoftDeleteFilterOnView: boolean;
@@ -13,6 +14,7 @@ export type CommandMenuContextApi = {
   objectPermissions: ObjectPermissions & { objectMetadataId: string };
   selectedRecords: ObjectRecord[];
   featureFlags: Record<string, boolean>;
+  permissionFlags: Record<string, boolean>;
   targetObjectReadPermissions: Record<string, boolean>;
   targetObjectWritePermissions: Record<string, boolean>;
   objectMetadataItem: Record<string, unknown>;

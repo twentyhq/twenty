@@ -133,6 +133,7 @@ import { MessagingMonitoringModule } from 'src/modules/messaging/monitoring/mess
     MessagingInboundEmailPollCronCommand,
     MessagingProcessGroupEmailActionsService,
     InboundEmailImportService,
+    MessagingSaveMessagesAndEnqueueContactCreationService,
   ],
 })
 export class MessagingImportManagerModule {}

@@ -10,6 +10,7 @@ export const VIEW_FIELD_FRAGMENT = gql`
     size
     aggregateOperation
     viewFieldGroupId
+    isActive
     createdAt
     updatedAt
     deletedAt

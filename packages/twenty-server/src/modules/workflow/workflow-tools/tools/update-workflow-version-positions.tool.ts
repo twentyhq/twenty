@@ -7,7 +7,10 @@ import {
 } from 'src/modules/workflow/workflow-tools/types/workflow-tool-dependencies.type';
 
 const updateWorkflowVersionPositionsSchema = z.object({
-  workflowVersionId: z.string().describe('The ID of the workflow version'),
+  workflowVersionId: z
+    .string()
+    .uuid()
+    .describe('The UUID of the workflow version'),
   positions: z
     .array(
       z.object({

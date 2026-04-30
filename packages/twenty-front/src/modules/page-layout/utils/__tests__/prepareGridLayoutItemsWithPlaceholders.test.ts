@@ -10,6 +10,8 @@ import {
 describe('prepareGridLayoutItemsWithPlaceholders', () => {
   const createMockWidget = (id: string): PageLayoutWidget => ({
     id,
+    applicationId: '',
+    isActive: true,
     pageLayoutTabId: 'tab-1',
     title: `Test Widget ${id}`,
     type: WidgetType.GRAPH,
@@ -215,6 +217,7 @@ describe('prepareGridLayoutItemsWithPlaceholders', () => {
         expect(resultWidget.createdAt).toBe(widget.createdAt);
         expect(resultWidget.updatedAt).toBe(widget.updatedAt);
         expect(resultWidget.deletedAt).toBe(widget.deletedAt);
+        expect(resultWidget.isActive).toBe(widget.isActive);
       }
     });
   });

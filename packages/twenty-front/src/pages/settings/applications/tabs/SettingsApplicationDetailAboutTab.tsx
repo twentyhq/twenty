@@ -1,113 +1,241 @@
-import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
-import { t } from '@lingui/core/macro';
-import { isDefined } from 'twenty-shared/utils';
-import { H2Title, IconTrash } from 'twenty-ui/display';
-import { Section } from 'twenty-ui/layout';
-import { SettingsApplicationVersionContainer } from '~/pages/settings/applications/components/SettingsApplicationVersionContainer';
-import { Button } from 'twenty-ui/input';
+import { LazyMarkdownRenderer } from '@/ai/components/LazyMarkdownRenderer';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
-import { Trans } from '@lingui/react/macro';
-import { SettingsPath } from 'twenty-shared/types';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
-import { useState } from 'react';
-import { useMutation } from '@apollo/client/react';
+import { styled } from '@linaria/react';
+import { t } from '@lingui/core/macro';
+import { Trans } from '@lingui/react/macro';
+import { isDefined } from 'twenty-shared/utils';
 import {
-  type Application,
-  UninstallApplicationDocument,
-} from '~/generated-metadata/graphql';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { useNavigateSettings } from '~/hooks/useNavigateSettings';
+  IconCheck,
+  IconDownload,
+  IconTrash,
+  IconUpload,
+} from 'twenty-ui/display';
+import { Button } from 'twenty-ui/input';
+import { Section } from 'twenty-ui/layout';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  type ContentEntry,
+  type DeveloperLinks,
+  SettingsApplicationAboutSidebar,
+} from '@/settings/applications/components/SettingsApplicationAboutSidebar';
+import { SettingsApplicationScreenshotGallery } from '@/settings/applications/components/SettingsApplicationScreenshotGallery';
 
 const UNINSTALL_APPLICATION_MODAL_ID = 'uninstall-application-modal';
 
-export const SettingsApplicationDetailAboutTab = ({
-  application,
-}: {
-  application?: Omit<Application, 'objects'> & {
-    objects: { id: string }[];
-  };
-}) => {
-  const { openModal } = useModal();
+type SettingsApplicationDetailAboutTabProps = {
+  displayName: string;
+  description?: string;
+  aboutDescription?: string;
+  screenshots?: string[];
+  author?: string;
+  category?: string;
+  contentEntries?: ContentEntry[];
+  currentVersion?: string;
+  latestAvailableVersion?: string;
+  developerLinks?: DeveloperLinks;
+  isInstalled: boolean;
+  canInstallMarketplaceApps?: boolean;
+  onInstall?: () => void;
+  isInstalling?: boolean;
+  hasUpdate?: boolean;
+  onUpgrade?: () => void;
+  isUpgrading?: boolean;
+  canBeUninstalled?: boolean;
+  onUninstall?: () => void;
+  isUninstalling?: boolean;
+};
 
-  const [isLoading, setIsLoading] = useState(false);
+const StyledContentContainer = styled.div`
+  display: flex;
+  gap: ${themeCssVariables.spacing[4]};
+`;
 
-  const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
+const StyledMainContent = styled.div`
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+`;
 
-  const [uninstallApplication] = useMutation(UninstallApplicationDocument);
-
-  const navigate = useNavigateSettings();
-
-  const registrationId = application?.applicationRegistrationId;
-
-  const latestAvailableVersion =
-    application?.applicationRegistration?.latestAvailableVersion ?? null;
-
-  if (!isDefined(application)) {
-    return null;
+const StyledMarkdownContent = styled.div`
+  .markdown-section {
+    margin: 0;
   }
 
-  const { id, name, description } = application;
+  .markdown-section h4 {
+    font-size: ${themeCssVariables.font.size.lg};
+    font-weight: ${themeCssVariables.font.weight.semiBold};
+    line-height: 1.35;
+    margin-bottom: ${themeCssVariables.spacing[2]};
+    margin-top: ${themeCssVariables.spacing[5]};
+  }
 
-  const handleUninstallApplication = async () => {
-    setIsLoading(true);
-    try {
-      await uninstallApplication({
-        variables: { universalIdentifier: application.universalIdentifier },
-      });
+  .markdown-section ul {
+    margin-bottom: ${themeCssVariables.spacing[3]};
+    margin-top: ${themeCssVariables.spacing[2]};
+    padding-left: ${themeCssVariables.spacing[4]};
+  }
 
-      enqueueSuccessSnackBar({
-        message: t`Application successfully uninstalled.`,
-      });
-      navigate(SettingsPath.Applications);
-    } catch {
-      enqueueErrorSnackBar({ message: t`Error uninstalling application.` });
-    } finally {
-      setIsLoading(false);
+  .markdown-section li {
+    margin-bottom: ${themeCssVariables.spacing[1]} !important;
+    padding-bottom: 0 !important;
+    padding-top: 0 !important;
+  }
+
+  .markdown-section .markdown-code-outer-container {
+    margin: ${themeCssVariables.spacing[3]} 0 ${themeCssVariables.spacing[4]};
+  }
+
+  .markdown-section .markdown-block-code {
+    padding: ${themeCssVariables.spacing[3]} ${themeCssVariables.spacing[4]};
+  }
+
+  .markdown-section .markdown-block-code code {
+    color: ${themeCssVariables.font.color.primary};
+    display: block;
+    font-family: ${themeCssVariables.code.font.family}, monospace;
+    font-size: ${themeCssVariables.font.size.sm};
+    line-height: 1.6;
+  }
+`;
+
+export const SettingsApplicationDetailAboutTab = ({
+  displayName,
+  description,
+  aboutDescription,
+  screenshots,
+  author,
+  category,
+  contentEntries,
+  currentVersion,
+  latestAvailableVersion,
+  developerLinks,
+  isInstalled,
+  canInstallMarketplaceApps,
+  onInstall,
+  isInstalling,
+  hasUpdate,
+  onUpgrade,
+  isUpgrading,
+  canBeUninstalled,
+  onUninstall,
+  isUninstalling,
+}: SettingsApplicationDetailAboutTabProps) => {
+  const { openModal } = useModal();
+
+  const hasScreenshots = isDefined(screenshots) && screenshots.length > 0;
+
+  const markdownText =
+    aboutDescription ??
+    description ??
+    t`No description available for this application`;
+
+  const getActionButton = () => {
+    if (!canInstallMarketplaceApps) {
+      return null;
     }
+
+    if (!isInstalled) {
+      return (
+        <Button
+          Icon={IconDownload}
+          title={isInstalling ? t`Installing...` : t`Install`}
+          variant={'primary'}
+          accent={'blue'}
+          onClick={onInstall}
+          disabled={isInstalling}
+        />
+      );
+    }
+
+    if (hasUpdate) {
+      return (
+        <Button
+          Icon={IconUpload}
+          title={
+            isUpgrading
+              ? t`Upgrading...`
+              : t`Upgrade to ${latestAvailableVersion}`
+          }
+          variant={'secondary'}
+          accent={'blue'}
+          onClick={onUpgrade}
+          disabled={isUpgrading}
+        />
+      );
+    }
+
+    if (canBeUninstalled) {
+      return (
+        <Button
+          Icon={IconTrash}
+          title={isUninstalling ? t`Uninstalling...` : t`Uninstall`}
+          variant={'secondary'}
+          accent={'danger'}
+          onClick={() => openModal(UNINSTALL_APPLICATION_MODAL_ID)}
+          disabled={isUninstalling}
+        />
+      );
+    }
+
+    return (
+      <Button
+        Icon={IconCheck}
+        title={t`Installed`}
+        variant={'secondary'}
+        accent={'default'}
+        disabled={true}
+      />
+    );
   };
 
   const confirmationValue = t`yes`;
 
   return (
     <>
-      <Section>
-        <SettingsApplicationVersionContainer
-          application={application}
-          latestAvailableVersion={latestAvailableVersion}
-          appRegistrationId={registrationId}
+      {hasScreenshots && (
+        <SettingsApplicationScreenshotGallery
+          screenshots={screenshots}
+          displayName={displayName}
         />
-      </Section>
-      {application.canBeUninstalled && (
-        <>
+      )}
+
+      <StyledContentContainer>
+        <StyledMainContent>
           <Section>
-            <H2Title
-              title={t`Manage your app`}
-              description={t`Uninstall this application`}
-            />
-            <Button
-              accent="danger"
-              variant="secondary"
-              title={t`Uninstall`}
-              Icon={IconTrash}
-              onClick={() => openModal(UNINSTALL_APPLICATION_MODAL_ID)}
-            />
+            <StyledMarkdownContent>
+              <LazyMarkdownRenderer text={markdownText} />
+            </StyledMarkdownContent>
           </Section>
-          <ConfirmationModal
-            confirmationPlaceholder={confirmationValue}
-            confirmationValue={confirmationValue}
-            modalInstanceId={UNINSTALL_APPLICATION_MODAL_ID}
-            title={t`Uninstall Application?`}
-            subtitle={
-              <Trans>
-                Please type {`"${confirmationValue}"`} to confirm you want to
-                uninstall this application.
-              </Trans>
-            }
-            onConfirmClick={handleUninstallApplication}
-            confirmButtonText={t`Uninstall`}
-            loading={isLoading}
-          />
-        </>
+        </StyledMainContent>
+
+        <SettingsApplicationAboutSidebar
+          actionButton={getActionButton()}
+          author={author}
+          category={category}
+          contentEntries={contentEntries}
+          currentVersion={currentVersion}
+          latestAvailableVersion={latestAvailableVersion}
+          developerLinks={developerLinks}
+        />
+      </StyledContentContainer>
+
+      {canBeUninstalled && isDefined(onUninstall) && (
+        <ConfirmationModal
+          confirmationPlaceholder={confirmationValue}
+          confirmationValue={confirmationValue}
+          modalInstanceId={UNINSTALL_APPLICATION_MODAL_ID}
+          title={t`Uninstall Application?`}
+          subtitle={
+            <Trans>
+              Please type {`"${confirmationValue}"`} to confirm you want to
+              uninstall this application.
+            </Trans>
+          }
+          onConfirmClick={onUninstall}
+          confirmButtonText={t`Uninstall`}
+          loading={isUninstalling}
+        />
       )}
     </>
   );

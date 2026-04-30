@@ -50,10 +50,6 @@ export const mockedPersonRecords: ObjectRecord[] =
       "primaryEmail": "jeffery.griffin@example.com",
       "additionalEmails": []
     },
-    "favorites": {
-      "__typename": "FavoriteConnection",
-      "edges": []
-    },
     "id": "20202020-b000-4485-94de-70c2a98daef2",
     "intro": "",
     "jobTitle": "Embryologist, clinical",
@@ -236,10 +232,6 @@ export const mockedPersonRecords: ObjectRecord[] =
       "primaryEmail": "terry.melendez@example.com",
       "additionalEmails": []
     },
-    "favorites": {
-      "__typename": "FavoriteConnection",
-      "edges": []
-    },
     "id": "20202020-b003-415a-9051-133248495f7f",
     "intro": "",
     "jobTitle": "Public relations officer",
@@ -411,10 +403,6 @@ export const mockedPersonRecords: ObjectRecord[] =
       "__typename": "Emails",
       "primaryEmail": "lee.jones@example.com",
       "additionalEmails": []
-    },
-    "favorites": {
-      "__typename": "FavoriteConnection",
-      "edges": []
     },
     "id": "20202020-b00e-4bc1-87c8-00aeb49c10f8",
     "intro": "",
@@ -603,10 +591,6 @@ export const mockedPersonRecords: ObjectRecord[] =
       "__typename": "Emails",
       "primaryEmail": "sarah.hernandez@example.com",
       "additionalEmails": []
-    },
-    "favorites": {
-      "__typename": "FavoriteConnection",
-      "edges": []
     },
     "id": "20202020-b012-44c1-9fdc-90f110962d07",
     "intro": "",
@@ -797,10 +781,6 @@ export const mockedPersonRecords: ObjectRecord[] =
       "__typename": "Emails",
       "primaryEmail": "suzanne.rodriguez@example.com",
       "additionalEmails": []
-    },
-    "favorites": {
-      "__typename": "FavoriteConnection",
-      "edges": []
     },
     "id": "20202020-b017-4ae0-9ece-01dcfa9627e8",
     "intro": "",
@@ -1000,10 +980,6 @@ export const mockedPersonRecords: ObjectRecord[] =
       "primaryEmail": "christy.hall@example.com",
       "additionalEmails": []
     },
-    "favorites": {
-      "__typename": "FavoriteConnection",
-      "edges": []
-    },
     "id": "20202020-b018-492d-89de-f9cd4ee80437",
     "intro": "",
     "jobTitle": "Pension scheme manager",
@@ -1177,10 +1153,6 @@ export const mockedPersonRecords: ObjectRecord[] =
       "primaryEmail": "jacqueline.martin@example.com",
       "additionalEmails": []
     },
-    "favorites": {
-      "__typename": "FavoriteConnection",
-      "edges": []
-    },
     "id": "20202020-b01b-46cc-85b9-93b884b7cebe",
     "intro": "",
     "jobTitle": "Product manager",
@@ -1344,10 +1316,6 @@ export const mockedPersonRecords: ObjectRecord[] =
       "__typename": "Emails",
       "primaryEmail": "brenda.brown@example.com",
       "additionalEmails": []
-    },
-    "favorites": {
-      "__typename": "FavoriteConnection",
-      "edges": []
     },
     "id": "20202020-b01b-49bf-85eb-8b1694edc057",
     "intro": "",
@@ -1537,10 +1505,6 @@ export const mockedPersonRecords: ObjectRecord[] =
       "primaryEmail": "anthony.green@example.com",
       "additionalEmails": []
     },
-    "favorites": {
-      "__typename": "FavoriteConnection",
-      "edges": []
-    },
     "id": "20202020-b01d-4aa3-afec-0b97a593b28d",
     "intro": "",
     "jobTitle": "Land",
@@ -1721,10 +1685,6 @@ export const mockedPersonRecords: ObjectRecord[] =
       "__typename": "Emails",
       "primaryEmail": "ronald.smith@example.com",
       "additionalEmails": []
-    },
-    "favorites": {
-      "__typename": "FavoriteConnection",
-      "edges": []
     },
     "id": "20202020-b01e-4011-979d-33f260f97529",
     "intro": "",

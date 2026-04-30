@@ -123,6 +123,7 @@ export const createTestWidget = (
 ): PageLayoutWidget => ({
   __typename: 'PageLayoutWidget',
   id: 'widget-1',
+  applicationId: 'test-application-id',
   pageLayoutTabId: 'tab-1',
   title: 'Test Widget',
   type: WidgetType.GRAPH,
@@ -133,4 +134,5 @@ export const createTestWidget = (
   updatedAt: '2024-01-01',
   deletedAt: null,
   ...overrides,
+  isActive: overrides.isActive ?? true,
 });

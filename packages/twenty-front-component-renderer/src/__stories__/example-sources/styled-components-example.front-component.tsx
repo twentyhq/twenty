@@ -1,6 +1,6 @@
+import { defineFrontComponent } from 'twenty-sdk/define';
 import { useState } from 'react';
 import styled from 'styled-components';
-import { defineFrontComponent } from '@/sdk';
 
 const Card = styled.div`
   padding: 24px;

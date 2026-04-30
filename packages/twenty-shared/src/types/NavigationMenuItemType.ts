@@ -4,4 +4,5 @@ export enum NavigationMenuItemType {
   LINK = 'LINK',
   OBJECT = 'OBJECT',
   RECORD = 'RECORD',
+  PAGE_LAYOUT = 'PAGE_LAYOUT',
 }

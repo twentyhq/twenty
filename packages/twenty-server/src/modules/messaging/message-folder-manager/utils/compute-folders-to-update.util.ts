@@ -1,5 +1,5 @@
 import { isNonEmptyString } from '@sniptt/guards';
-import deepEqual from 'deep-equal';
+import { fastDeepEqual } from 'twenty-shared/utils';
 
 import {
   type DiscoveredMessageFolder,
@@ -48,7 +48,7 @@ export const computeFoldersToUpdate = ({
         : null,
     };
 
-    if (!deepEqual(discoveredFolderData, existingFolderData)) {
+    if (!fastDeepEqual(discoveredFolderData, existingFolderData)) {
       foldersToUpdate.set(existingFolder.id, discoveredFolderData);
     }
   }

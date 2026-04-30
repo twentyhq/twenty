@@ -14,6 +14,8 @@ export enum LogicFunctionExceptionCode {
   LOGIC_FUNCTION_CREATE_FAILED = 'LOGIC_FUNCTION_CREATE_FAILED',
   LOGIC_FUNCTION_COMPILATION_FAILED = 'LOGIC_FUNCTION_COMPILATION_FAILED',
   LOGIC_FUNCTION_EXECUTION_TIMEOUT = 'LOGIC_FUNCTION_EXECUTION_TIMEOUT',
+  LOGIC_FUNCTION_EXECUTION_FAILED = 'LOGIC_FUNCTION_EXECUTION_FAILED',
+  LOGIC_FUNCTION_LAYER_BUILD_FAILED = 'LOGIC_FUNCTION_LAYER_BUILD_FAILED',
   LOGIC_FUNCTION_DISABLED = 'LOGIC_FUNCTION_DISABLED',
   LOGIC_FUNCTION_INVALID_SEED_PROJECT = 'LOGIC_FUNCTION_INVALID_SEED_PROJECT',
 }
@@ -40,6 +42,10 @@ const getLogicFunctionExceptionUserFriendlyMessage = (
       return msg`Function code failed to compile.`;
     case LogicFunctionExceptionCode.LOGIC_FUNCTION_EXECUTION_TIMEOUT:
       return msg`Function execution timed out.`;
+    case LogicFunctionExceptionCode.LOGIC_FUNCTION_EXECUTION_FAILED:
+      return msg`Function execution failed.`;
+    case LogicFunctionExceptionCode.LOGIC_FUNCTION_LAYER_BUILD_FAILED:
+      return msg`Failed to build function dependencies.`;
     case LogicFunctionExceptionCode.LOGIC_FUNCTION_DISABLED:
       return msg`Logic function execution is disabled.`;
     case LogicFunctionExceptionCode.LOGIC_FUNCTION_INVALID_SEED_PROJECT:

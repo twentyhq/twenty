@@ -24,6 +24,9 @@ import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/appli
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { validateRedirectUri } from 'src/engine/core-modules/auth/utils/validate-redirect-uri.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.service';
+import { MARKETPLACE_CURATED_APPLICATIONS } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-curated-applications.constant';
+
 const BCRYPT_SALT_ROUNDS = 10;
 
 @Injectable()
@@ -35,6 +38,7 @@ export class ApplicationRegistrationService {
     private readonly applicationRepository: Repository<ApplicationEntity>,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
+    private readonly applicationRegistrationVariableService: ApplicationRegistrationVariableService,
   ) {}
 
   async findMany(
@@ -267,10 +271,7 @@ export class ApplicationRegistrationService {
       | 'sourceType'
       | 'sourcePackage'
       | 'latestAvailableVersion'
-      | 'isListed'
-      | 'isFeatured'
       | 'manifest'
-      | 'ownerWorkspaceId'
     >,
   ): Promise<void> {
     const existing = await this.findOneByUniversalIdentifier(
@@ -285,29 +286,50 @@ export class ApplicationRegistrationService {
         sourcePackage: params.sourcePackage,
         latestAvailableVersion: params.latestAvailableVersion,
         manifest: params.manifest,
-        isListed: params.isListed,
-        isFeatured: params.isFeatured,
+      });
+    } else {
+      const curatedIdentifiers = new Set(
+        MARKETPLACE_CURATED_APPLICATIONS.map(
+          (entry) => entry.universalIdentifier,
+        ),
+      );
+
+      const isFeatured = curatedIdentifiers.has(params.universalIdentifier);
+
+      const registration = this.applicationRegistrationRepository.create({
+        universalIdentifier: params.universalIdentifier,
+        name: params.name,
+        sourceType: params.sourceType,
+        sourcePackage: params.sourcePackage,
+        latestAvailableVersion: params.latestAvailableVersion,
+        isListed: true,
+        isFeatured,
+        manifest: params.manifest,
+        oAuthClientId: v4(),
+        oAuthRedirectUris: [],
+        oAuthScopes: [],
+        ownerWorkspaceId: null,
       });
 
+      await this.applicationRegistrationRepository.save(registration);
+    }
+
+    if (!isDefined(params.manifest?.application?.serverVariables)) {
       return;
     }
 
-    const registration = this.applicationRegistrationRepository.create({
-      universalIdentifier: params.universalIdentifier,
-      name: params.name,
-      sourceType: params.sourceType,
-      sourcePackage: params.sourcePackage,
-      latestAvailableVersion: params.latestAvailableVersion,
-      isListed: params.isListed,
-      isFeatured: params.isFeatured,
-      manifest: params.manifest,
-      oAuthClientId: v4(),
-      oAuthRedirectUris: [],
-      oAuthScopes: [],
-      ownerWorkspaceId: params.ownerWorkspaceId,
-    });
+    const registration = await this.findOneByUniversalIdentifier(
+      params.universalIdentifier,
+    );
 
-    await this.applicationRegistrationRepository.save(registration);
+    if (!isDefined(registration)) {
+      return;
+    }
+
+    await this.applicationRegistrationVariableService.syncVariableSchemas(
+      registration.id,
+      params.manifest.application.serverVariables,
+    );
   }
 
   async createCliRegistrationIfNotExists(): Promise<ApplicationRegistrationEntity | null> {
@@ -337,7 +359,10 @@ export class ApplicationRegistrationService {
 
   async findManyListed(): Promise<ApplicationRegistrationEntity[]> {
     return this.applicationRegistrationRepository.find({
-      where: { isListed: true },
+      where: {
+        isListed: true,
+        sourceType: ApplicationRegistrationSourceType.NPM,
+      },
     });
   }
 

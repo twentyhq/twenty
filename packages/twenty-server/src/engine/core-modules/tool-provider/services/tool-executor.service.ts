@@ -1,8 +1,11 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { type AggregateOperations } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
+
+import { type ObjectRecordGroupBy } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
 import { fromUserEntityToFlat } from 'src/engine/core-modules/user/utils/from-user-entity-to-flat.util';
@@ -19,17 +22,16 @@ import { CreateManyRecordsService } from 'src/engine/core-modules/record-crud/se
 import { CreateRecordService } from 'src/engine/core-modules/record-crud/services/create-record.service';
 import { DeleteRecordService } from 'src/engine/core-modules/record-crud/services/delete-record.service';
 import { FindRecordsService } from 'src/engine/core-modules/record-crud/services/find-records.service';
+import { GroupByRecordsService } from 'src/engine/core-modules/record-crud/services/group-by-records.service';
 import { type FindRecordsParams } from 'src/engine/core-modules/record-crud/types/find-records-params.type';
 import { UpdateManyRecordsService } from 'src/engine/core-modules/record-crud/services/update-many-records.service';
 import { UpdateRecordService } from 'src/engine/core-modules/record-crud/services/update-record.service';
-import { type ToolCategory } from 'twenty-shared/ai';
-import { type StaticToolHandler } from 'src/engine/core-modules/tool-provider/interfaces/static-tool-handler.interface';
-import { type CategoryToolGenerator } from 'src/engine/core-modules/tool-provider/types/category-tool-generator.type';
+import { TOOL_PROVIDERS } from 'src/engine/core-modules/tool-provider/constants/tool-providers.token';
+import { type ToolProvider } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
 import { type ToolDescriptor } from 'src/engine/core-modules/tool-provider/types/tool-descriptor.type';
 import { type ToolExecutionRef } from 'src/engine/core-modules/tool-provider/types/tool-execution-ref.type';
 import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-index-entry.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
-import { stripLoadingMessage } from 'src/engine/core-modules/tool/utils/wrap-tool-for-execution.util';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
@@ -37,17 +39,11 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 export class ToolExecutorService {
   private readonly logger = new Logger(ToolExecutorService.name);
 
-  // Per-tool handlers (action tools, etc.)
-  private readonly staticToolHandlers = new Map<string, StaticToolHandler>();
-
-  // Category-level ToolSet generators (workflow, view, dashboard, metadata)
-  private readonly categoryGenerators = new Map<
-    ToolCategory,
-    CategoryToolGenerator
-  >();
-
   constructor(
+    @Inject(TOOL_PROVIDERS)
+    private readonly providers: ToolProvider[],
     private readonly findRecordsService: FindRecordsService,
+    private readonly groupByRecordsService: GroupByRecordsService,
     private readonly createRecordService: CreateRecordService,
     private readonly createManyRecordsService: CreateManyRecordsService,
     private readonly updateRecordService: UpdateRecordService,
@@ -59,37 +55,26 @@ export class ToolExecutorService {
     private readonly userRepository: Repository<UserEntity>,
   ) {}
 
-  registerStaticHandler(toolId: string, handler: StaticToolHandler): void {
-    this.staticToolHandlers.set(toolId, handler);
-  }
-
-  registerCategoryGenerator(
-    category: ToolCategory,
-    generator: CategoryToolGenerator,
-  ): void {
-    this.categoryGenerators.set(category, generator);
-  }
-
   async dispatch(
     descriptor: ToolIndexEntry | ToolDescriptor,
-    args: Record<string, unknown>,
+    args: Record<string, unknown> | undefined,
     context: ToolProviderContext,
   ): Promise<ToolOutput> {
-    const cleanArgs = stripLoadingMessage(args);
+    const safeArgs = args ?? {};
 
     switch (descriptor.executionRef.kind) {
       case 'database_crud':
         return this.dispatchDatabaseCrud(
           descriptor.executionRef,
-          cleanArgs,
+          safeArgs,
           context,
         );
       case 'static':
-        return this.dispatchStaticTool(descriptor, cleanArgs, context);
+        return this.dispatchStaticTool(descriptor, safeArgs, context);
       case 'logic_function':
         return this.dispatchLogicFunction(
           descriptor.executionRef,
-          cleanArgs,
+          safeArgs,
           context,
         );
     }
@@ -181,6 +166,31 @@ export class ToolExecutorService {
           rolePermissionConfig: context.rolePermissionConfig,
           soft: true,
         });
+
+      case 'group_by': {
+        const {
+          groupBy,
+          aggregateOperation,
+          aggregateFieldName,
+          limit: groupByLimit,
+          orderBy: groupByOrderBy,
+          ...groupByFilter
+        } = args;
+
+        return this.groupByRecordsService.execute({
+          objectName: ref.objectNameSingular,
+          groupBy: groupBy as ObjectRecordGroupBy,
+          aggregateOperation: aggregateOperation as
+            | keyof typeof AggregateOperations
+            | undefined,
+          aggregateFieldName: aggregateFieldName as string | undefined,
+          limit: groupByLimit as number | undefined,
+          orderBy: groupByOrderBy as 'ASC' | 'DESC' | undefined,
+          filter: groupByFilter,
+          authContext,
+          rolePermissionConfig: context.rolePermissionConfig,
+        });
+      }
     }
   }
 
@@ -193,35 +203,32 @@ export class ToolExecutorService {
       throw new Error('Expected static executionRef');
     }
 
-    // Per-tool handler first (action tools)
-    const handler = this.staticToolHandlers.get(descriptor.executionRef.toolId);
+    const provider = this.providers.find(
+      (candidate) => candidate.category === descriptor.category,
+    );
 
-    if (handler) {
-      return handler.execute(args, context);
-    }
-
-    // Category-level generator fallback (workflow, view, dashboard, metadata)
-    const generator = this.categoryGenerators.get(descriptor.category);
-
-    if (!generator) {
+    if (!provider) {
       throw new Error(
-        `No handler or generator for static tool: ${descriptor.executionRef.toolId}`,
+        `No provider registered for category "${descriptor.category}" (tool: ${descriptor.executionRef.toolId})`,
       );
     }
 
-    const toolSet = await generator(context);
-    const tool = toolSet[descriptor.name];
-
-    if (!tool?.execute) {
-      throw new Error(
-        `Tool ${descriptor.name} not found in generated ToolSet for category ${descriptor.category}`,
-      );
+    // Defense-in-depth: catalog and by-name lookups already filter by
+    // `isAvailable`, but re-verify at dispatch so the gate is enforced in
+    // one place regardless of how the descriptor reached us.
+    if (!(await provider.isAvailable(context))) {
+      return {
+        success: false,
+        message: `Tool "${descriptor.name}" is not available`,
+        error: `Tool "${descriptor.name}" is not available in this context. Use get_tool_catalog to see available tools.`,
+      };
     }
 
-    return tool.execute(
-      { loadingMessage: '', ...args },
-      { toolCallId: '', messages: [] },
-    ) as Promise<ToolOutput>;
+    return provider.executeStaticTool(
+      descriptor.executionRef.toolId,
+      args,
+      context,
+    );
   }
 
   private async dispatchLogicFunction(

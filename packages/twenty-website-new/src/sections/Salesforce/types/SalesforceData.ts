@@ -1,5 +1,5 @@
-import type { BodyType } from '@/design-system/components/Body/types/Body';
-import type { HeadingType } from '@/design-system/components/Heading/types/Heading';
+import type { BodyType } from '@/design-system/components/Body';
+import type { HeadingType } from '@/design-system/components/Heading';
 
 export type SalesforceWrongChoicePopupType = {
   body: string;
@@ -9,6 +9,11 @@ export type SalesforceWrongChoicePopupType = {
 export type SalesforceRichTextPartType = {
   strike?: boolean;
   text: string;
+};
+
+export type SalesforceAddonTooltipType = {
+  body: string;
+  title: string;
 };
 
 export type SalesforceAddonRowType = {
@@ -23,6 +28,7 @@ export type SalesforceAddonRowType = {
   rightLabelParts?: SalesforceRichTextPartType[][];
   rightLabel: string;
   sharedCostKey?: string;
+  tooltip?: SalesforceAddonTooltipType;
 };
 
 export type SalesforcePricingPanelType = {
@@ -33,6 +39,7 @@ export type SalesforcePricingPanelType = {
   windowTitle: string;
   productTitle: string;
   priceSuffix: string;
+  promoTag?: string;
   featureSectionHeading: string;
   addons: SalesforceAddonRowType[];
   secondaryCtaNote?: string;

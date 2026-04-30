@@ -1,12 +1,16 @@
 import { SettingsTableCard } from '@/settings/components/SettingsTableCard';
+import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { SettingsAdminVersionDisplay } from '@/settings/admin-panel/components/SettingsAdminVersionDisplay';
 import { t } from '@lingui/core/macro';
 import { IconCircleDot, IconStatusChange } from 'twenty-ui/display';
 import { useQuery } from '@apollo/client/react';
-import { GetVersionInfoDocument } from '~/generated-metadata/graphql';
+import { GetVersionInfoDocument } from '~/generated-admin/graphql';
 
 export const SettingsAdminVersionContainer = () => {
-  const { data, loading } = useQuery(GetVersionInfoDocument);
+  const apolloAdminClient = useApolloAdminClient();
+  const { data, loading } = useQuery(GetVersionInfoDocument, {
+    client: apolloAdminClient,
+  });
   const { currentVersion, latestVersion } = data?.versionInfo ?? {};
 
   const versionItems = [

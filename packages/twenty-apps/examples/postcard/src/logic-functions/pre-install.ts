@@ -1,4 +1,4 @@
-import { definePreInstallLogicFunction } from 'twenty-sdk';
+import { definePreInstallLogicFunction } from 'twenty-sdk/define';
 
 const handler = async (params: any) => {
   console.log(

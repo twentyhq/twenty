@@ -65,6 +65,8 @@ export const buildNavigationFlatCommandMenuItem = ({
     workflowVersionId: null,
     availabilityObjectMetadataId: null,
     availabilityObjectMetadataUniversalIdentifier: null,
+    pageLayoutId: null,
+    pageLayoutUniversalIdentifier: null,
     createdAt: now,
     updatedAt: now,
   };

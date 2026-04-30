@@ -22,7 +22,9 @@ export const generateFieldFilterZodSchema = (
             .array(z.string().uuid())
             .optional()
             .describe('In array of values'),
-          is: NullCheckEnum.optional().describe('Is null or not null'),
+          is: NullCheckEnum.optional().describe(
+            'Check for missing or empty values. Use "NULL" to find records with no value, "NOT_NULL" for records with a value',
+          ),
         })
         .optional()
         .describe(`Filter by ${field.name} (UUID field)`);
@@ -44,7 +46,9 @@ export const generateFieldFilterZodSchema = (
             .describe('Case-insensitive pattern match (use % for wildcards)'),
           startsWith: z.string().optional().describe('Starts with'),
           endsWith: z.string().optional().describe('Ends with'),
-          is: NullCheckEnum.optional().describe('Is null or not null'),
+          is: NullCheckEnum.optional().describe(
+            'Check for missing or empty values. Use "NULL" to find records with no value, "NOT_NULL" for records with a value',
+          ),
         })
         .optional()
         .describe(`Filter by ${field.name} (text field)`);
@@ -61,7 +65,9 @@ export const generateFieldFilterZodSchema = (
           lt: z.number().optional().describe('Less than'),
           lte: z.number().optional().describe('Less than or equal'),
           in: z.array(z.number()).optional().describe('In array of values'),
-          is: NullCheckEnum.optional().describe('Is null or not null'),
+          is: NullCheckEnum.optional().describe(
+            'Check for missing or empty values. Use "NULL" to find records with no value, "NOT_NULL" for records with a value',
+          ),
         })
         .optional()
         .describe(`Filter by ${field.name} (number field)`);
@@ -70,7 +76,9 @@ export const generateFieldFilterZodSchema = (
       return z
         .object({
           eq: z.boolean().optional().describe('Equals'),
-          is: NullCheckEnum.optional().describe('Is null or not null'),
+          is: NullCheckEnum.optional().describe(
+            'Check for missing or empty values. Use "NULL" to find records with no value, "NOT_NULL" for records with a value',
+          ),
         })
         .optional()
         .describe(`Filter by ${field.name} (boolean field)`);
@@ -113,7 +121,9 @@ export const generateFieldFilterZodSchema = (
             .array(z.string().datetime())
             .optional()
             .describe('In array of values (ISO datetime strings)'),
-          is: NullCheckEnum.optional().describe('Is null or not null'),
+          is: NullCheckEnum.optional().describe(
+            'Check for missing or empty values. Use "NULL" to find records with no value, "NOT_NULL" for records with a value',
+          ),
         })
         .optional()
         .describe(`Filter by ${field.name} (date field)`);
@@ -133,7 +143,9 @@ export const generateFieldFilterZodSchema = (
           eq: selectEnum.optional().describe('Equals'),
           neq: selectEnum.optional().describe('Not equals'),
           in: z.array(selectEnum).optional().describe('In array of values'),
-          is: NullCheckEnum.optional().describe('Is null or not null'),
+          is: NullCheckEnum.optional().describe(
+            'Check for missing or empty values. Use "NULL" to find records with no value, "NOT_NULL" for records with a value',
+          ),
         })
         .optional()
         .describe(`Filter by ${field.name} (select field)`);
@@ -155,7 +167,9 @@ export const generateFieldFilterZodSchema = (
             .array(multiSelectEnum)
             .optional()
             .describe('Contains any of these values'),
-          is: NullCheckEnum.optional().describe('Is null or not null'),
+          is: NullCheckEnum.optional().describe(
+            'Check for missing or empty values. Use "NULL" to find records with no value, "NOT_NULL" for records with a value',
+          ),
           isEmptyArray: z.boolean().optional().describe('Is empty array'),
         })
         .optional()
@@ -176,7 +190,9 @@ export const generateFieldFilterZodSchema = (
         .object({
           eq: ratingEnum.optional().describe('Equals'),
           in: z.array(ratingEnum).optional().describe('In array of values'),
-          is: NullCheckEnum.optional().describe('Is null or not null'),
+          is: NullCheckEnum.optional().describe(
+            'Check for missing or empty values. Use "NULL" to find records with no value, "NOT_NULL" for records with a value',
+          ),
         })
         .optional()
         .describe(`Filter by ${field.name} (rating field)`);
@@ -189,7 +205,9 @@ export const generateFieldFilterZodSchema = (
             .string()
             .optional()
             .describe('Contains case-insensitive substring'),
-          is: NullCheckEnum.optional().describe('Is null or not null'),
+          is: NullCheckEnum.optional().describe(
+            'Check for missing or empty values. Use "NULL" to find records with no value, "NOT_NULL" for records with a value',
+          ),
           isEmptyArray: z.boolean().optional().describe('Is empty array'),
         })
         .optional()
@@ -214,7 +232,7 @@ export const generateFieldFilterZodSchema = (
                 .optional()
                 .describe('Amount in array of values'),
               is: NullCheckEnum.optional().describe(
-                'Amount is null or not null',
+                'Check for missing or empty amount. Use "NULL" to find records with no amount, "NOT_NULL" for records with an amount',
               ),
             })
             .optional()
@@ -228,7 +246,7 @@ export const generateFieldFilterZodSchema = (
                 .optional()
                 .describe('Currency code in array of values'),
               is: NullCheckEnum.optional().describe(
-                'Currency code is null or not null',
+                'Check for missing or empty currency code. Use "NULL" to find records with no currency code, "NOT_NULL" for records with a currency code',
               ),
             })
             .optional()
@@ -258,7 +276,7 @@ export const generateFieldFilterZodSchema = (
                 .describe('First name starts with'),
               endsWith: z.string().optional().describe('First name ends with'),
               is: NullCheckEnum.optional().describe(
-                'First name is null or not null',
+                'Check for missing or empty first name. Use "NULL" to find records with no first name, "NOT_NULL" for records with a first name',
               ),
             })
             .optional()
@@ -281,7 +299,7 @@ export const generateFieldFilterZodSchema = (
                 .describe('Last name starts with'),
               endsWith: z.string().optional().describe('Last name ends with'),
               is: NullCheckEnum.optional().describe(
-                'Last name is null or not null',
+                'Check for missing or empty last name. Use "NULL" to find records with no last name, "NOT_NULL" for records with a last name',
               ),
             })
             .optional()
@@ -306,7 +324,7 @@ export const generateFieldFilterZodSchema = (
                 .optional()
                 .describe('Street 1 case-insensitive pattern match'),
               is: NullCheckEnum.optional().describe(
-                'Street 1 is null or not null',
+                'Check for missing or empty street 1. Use "NULL" to find records with no street 1, "NOT_NULL" for records with a street 1',
               ),
             })
             .optional()
@@ -323,7 +341,9 @@ export const generateFieldFilterZodSchema = (
                 .string()
                 .optional()
                 .describe('City case-insensitive pattern match'),
-              is: NullCheckEnum.optional().describe('City is null or not null'),
+              is: NullCheckEnum.optional().describe(
+                'Check for missing or empty city. Use "NULL" to find records with no city, "NOT_NULL" for records with a city',
+              ),
             })
             .optional()
             .describe('Filter by city'),
@@ -340,7 +360,7 @@ export const generateFieldFilterZodSchema = (
                 .optional()
                 .describe('Country case-insensitive pattern match'),
               is: NullCheckEnum.optional().describe(
-                'Country is null or not null',
+                'Check for missing or empty country. Use "NULL" to find records with no country, "NOT_NULL" for records with a country',
               ),
             })
             .optional()
@@ -373,7 +393,7 @@ export const generateFieldFilterZodSchema = (
                 .optional()
                 .describe('Primary email case-insensitive pattern match'),
               is: NullCheckEnum.optional().describe(
-                'Primary email is null or not null',
+                'Check for missing or empty primary email. Use "NULL" to find records with no primary email, "NOT_NULL" for records with a primary email',
               ),
             })
             .optional()
@@ -403,7 +423,7 @@ export const generateFieldFilterZodSchema = (
                   'Primary phone number case-insensitive pattern match',
                 ),
               is: NullCheckEnum.optional().describe(
-                'Primary phone number is null or not null',
+                'Check for missing or empty primary phone number. Use "NULL" to find records with no primary phone number, "NOT_NULL" for records with a primary phone number',
               ),
             })
             .optional()
@@ -436,7 +456,7 @@ export const generateFieldFilterZodSchema = (
                 .optional()
                 .describe('Primary link URL case-insensitive pattern match'),
               is: NullCheckEnum.optional().describe(
-                'Primary link URL is null or not null',
+                'Check for missing or empty primary link URL. Use "NULL" to find records with no primary link URL, "NOT_NULL" for records with a primary link URL',
               ),
             })
             .optional()
@@ -469,7 +489,7 @@ export const generateFieldFilterZodSchema = (
               .optional()
               .describe('Related record ID in array of values'),
             is: NullCheckEnum.optional().describe(
-              'Related record ID is null or not null',
+              'Check for missing or empty related record. Use "NULL" to find records with no relation, "NOT_NULL" for records with a relation',
             ),
           })
           .optional()
@@ -492,7 +512,9 @@ export const generateFieldFilterZodSchema = (
             .string()
             .optional()
             .describe('Raw JSON case-insensitive pattern match'),
-          is: NullCheckEnum.optional().describe('Raw JSON is null or not null'),
+          is: NullCheckEnum.optional().describe(
+            'Check for missing or empty values. Use "NULL" to find records with no value, "NOT_NULL" for records with a value',
+          ),
         })
         .optional()
         .describe(`Filter by ${field.name} (raw JSON field)`);
@@ -507,7 +529,9 @@ export const generateFieldFilterZodSchema = (
             .string()
             .optional()
             .describe('Case-insensitive pattern match'),
-          is: NullCheckEnum.optional().describe('Is null or not null'),
+          is: NullCheckEnum.optional().describe(
+            'Check for missing or empty values. Use "NULL" to find records with no value, "NOT_NULL" for records with a value',
+          ),
         })
         .optional()
         .describe(`Filter by ${field.name} (string field)`);

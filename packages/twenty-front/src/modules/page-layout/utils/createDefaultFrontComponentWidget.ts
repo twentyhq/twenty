@@ -16,8 +16,10 @@ export const createDefaultFrontComponentWidget = (
   return {
     __typename: 'PageLayoutWidget',
     id,
+    applicationId: '',
     pageLayoutTabId,
     title,
+    isActive: true,
     type: WidgetType.FRONT_COMPONENT,
     configuration: {
       __typename: 'FrontComponentConfiguration',

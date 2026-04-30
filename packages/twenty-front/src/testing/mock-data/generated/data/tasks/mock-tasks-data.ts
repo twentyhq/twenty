@@ -47,10 +47,6 @@ export const mockedTaskRecords: ObjectRecord[] =
     },
     "deletedAt": null,
     "dueAt": "2026-03-02T01:17:25.389Z",
-    "favorites": {
-      "__typename": "FavoriteConnection",
-      "edges": []
-    },
     "id": "20202020-0001-4e7c-8001-123456789def",
     "position": 1,
     "status": "TODO",
@@ -142,10 +138,6 @@ export const mockedTaskRecords: ObjectRecord[] =
     },
     "deletedAt": null,
     "dueAt": "2026-03-04T01:17:25.389Z",
-    "favorites": {
-      "__typename": "FavoriteConnection",
-      "edges": []
-    },
     "id": "20202020-0002-4e7c-8001-123456789def",
     "position": 2,
     "status": "IN_PROGRESS",
@@ -237,10 +229,6 @@ export const mockedTaskRecords: ObjectRecord[] =
     },
     "deletedAt": null,
     "dueAt": "2026-03-06T01:17:25.389Z",
-    "favorites": {
-      "__typename": "FavoriteConnection",
-      "edges": []
-    },
     "id": "20202020-0003-4e7c-8001-123456789def",
     "position": 3,
     "status": "TODO",
@@ -332,10 +320,6 @@ export const mockedTaskRecords: ObjectRecord[] =
     },
     "deletedAt": null,
     "dueAt": "2026-03-01T01:17:25.389Z",
-    "favorites": {
-      "__typename": "FavoriteConnection",
-      "edges": []
-    },
     "id": "20202020-0004-4e7c-8001-123456789def",
     "position": 4,
     "status": "TODO",
@@ -427,10 +411,6 @@ export const mockedTaskRecords: ObjectRecord[] =
     },
     "deletedAt": null,
     "dueAt": null,
-    "favorites": {
-      "__typename": "FavoriteConnection",
-      "edges": []
-    },
     "id": "20202020-0005-4e7c-8001-123456789def",
     "position": 5,
     "status": "DONE",
@@ -522,10 +502,6 @@ export const mockedTaskRecords: ObjectRecord[] =
     },
     "deletedAt": null,
     "dueAt": "2026-03-03T01:17:25.389Z",
-    "favorites": {
-      "__typename": "FavoriteConnection",
-      "edges": []
-    },
     "id": "20202020-0006-4e7c-8001-123456789def",
     "position": 6,
     "status": "IN_PROGRESS",
@@ -617,10 +593,6 @@ export const mockedTaskRecords: ObjectRecord[] =
     },
     "deletedAt": null,
     "dueAt": "2026-03-05T01:17:25.390Z",
-    "favorites": {
-      "__typename": "FavoriteConnection",
-      "edges": []
-    },
     "id": "20202020-0007-4e7c-8001-123456789def",
     "position": 7,
     "status": "TODO",
@@ -712,10 +684,6 @@ export const mockedTaskRecords: ObjectRecord[] =
     },
     "deletedAt": null,
     "dueAt": "2026-03-07T01:17:25.390Z",
-    "favorites": {
-      "__typename": "FavoriteConnection",
-      "edges": []
-    },
     "id": "20202020-0008-4e7c-8001-123456789def",
     "position": 8,
     "status": "TODO",
@@ -807,10 +775,6 @@ export const mockedTaskRecords: ObjectRecord[] =
     },
     "deletedAt": null,
     "dueAt": "2026-03-02T01:17:25.390Z",
-    "favorites": {
-      "__typename": "FavoriteConnection",
-      "edges": []
-    },
     "id": "20202020-0009-4e7c-8001-123456789def",
     "position": 9,
     "status": "TODO",
@@ -902,10 +866,6 @@ export const mockedTaskRecords: ObjectRecord[] =
     },
     "deletedAt": null,
     "dueAt": "2026-03-04T01:17:25.390Z",
-    "favorites": {
-      "__typename": "FavoriteConnection",
-      "edges": []
-    },
     "id": "20202020-000a-4e7c-8001-123456789def",
     "position": 10,
     "status": "IN_PROGRESS",

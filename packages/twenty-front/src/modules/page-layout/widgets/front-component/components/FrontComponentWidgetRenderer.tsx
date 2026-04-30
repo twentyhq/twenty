@@ -7,6 +7,7 @@ import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutIn
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { PageLayoutWidgetNoDataDisplay } from '@/page-layout/widgets/components/PageLayoutWidgetNoDataDisplay';
 import { isWidgetConfigurationOfType } from '@/side-panel/pages/page-layout/utils/isWidgetConfigurationOfType';
+import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 
 const StyledContainer = styled.div<{ isInEditMode: boolean }>`
   height: 100%;
@@ -29,6 +30,7 @@ export const FrontComponentWidgetRenderer = ({
   widget,
 }: FrontComponentWidgetRendererProps) => {
   const isPageLayoutInEditMode = useIsPageLayoutInEditMode();
+  const { targetRecordIdentifier } = useLayoutRenderingContext();
 
   const configuration = widget.configuration;
 
@@ -44,7 +46,10 @@ export const FrontComponentWidgetRenderer = ({
   return (
     <StyledContainer isInEditMode={isPageLayoutInEditMode}>
       <Suspense fallback={null}>
-        <FrontComponentRenderer frontComponentId={frontComponentId} />
+        <FrontComponentRenderer
+          frontComponentId={frontComponentId}
+          recordId={targetRecordIdentifier?.id}
+        />
       </Suspense>
     </StyledContainer>
   );

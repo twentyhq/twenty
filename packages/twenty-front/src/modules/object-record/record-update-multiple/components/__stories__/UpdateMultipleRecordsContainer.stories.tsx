@@ -1,10 +1,10 @@
+import { EMPTY_COMMAND_MENU_CONTEXT_API } from '@/command-menu-item/constants/EmptyCommandMenuContextApi';
 import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { ApolloCoreClientContext } from '@/object-metadata/contexts/ApolloCoreClientContext';
 import { UpdateMultipleRecordsContainer } from '@/object-record/record-update-multiple/components/UpdateMultipleRecordsContainer';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
-import { useEffect } from 'react';
 import { ApolloClient, InMemoryCache } from '@apollo/client';
 import { MockLink } from '@apollo/client/testing';
 import {
@@ -13,6 +13,7 @@ import {
   type StoryObj,
 } from '@storybook/react-vite';
 import gql from 'graphql-tag';
+import { useEffect } from 'react';
 import { expect, userEvent, within } from 'storybook/test';
 import { ContextStoreDecorator } from '~/testing/decorators/ContextStoreDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
@@ -78,7 +79,8 @@ const meta: Meta<typeof UpdateMultipleRecordsContainer> = {
             commandMenuItems: [],
             containerType: 'index-page-dropdown',
             displayType: 'dropdownItem',
-            isInSidePanel: true,
+            commandMenuContextApi: EMPTY_COMMAND_MENU_CONTEXT_API,
+            isInPreviewMode: false,
           }}
         >
           <Story />

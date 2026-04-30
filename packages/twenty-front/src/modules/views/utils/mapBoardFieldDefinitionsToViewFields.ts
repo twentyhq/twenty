@@ -12,6 +12,7 @@ export const mapBoardFieldDefinitionsToViewFields = (
       size: 0,
       position: fieldDefinition.position,
       isVisible: fieldDefinition.isVisible ?? true,
+      isActive: true,
       definition: fieldDefinition,
     }),
   );

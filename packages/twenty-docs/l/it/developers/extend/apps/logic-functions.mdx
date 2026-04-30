@@ -1,0 +1,560 @@
+---
+title: Funzioni logiche
+description: Definisci funzioni TypeScript lato server con trigger HTTP, cron e trigger di eventi del database.
+icon: bolt
+---
+
+Le funzioni logiche sono funzioni TypeScript lato server che vengono eseguite sulla piattaforma Twenty. Possono essere attivate da richieste HTTP, pianificazioni cron o eventi del database — e possono anche essere esposte come strumenti per agenti di IA.
+
+<AccordionGroup>
+<Accordion title="defineLogicFunction" description="Definisci funzioni logiche e i relativi trigger">
+
+Ogni file di funzione usa `defineLogicFunction()` per esportare una configurazione con un handler e trigger opzionali.
+
+```ts src/logic-functions/createPostCard.logic-function.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import type { DatabaseEventPayload, ObjectRecordCreateEvent, CronPayload, RoutePayload } from 'twenty-sdk/define';
+import { CoreApiClient, type Person } from 'twenty-client-sdk/core';
+
+const handler = async (params: RoutePayload) => {
+  const client = new CoreApiClient();
+  const name = 'name' in params.queryStringParameters
+    ? params.queryStringParameters.name ?? process.env.DEFAULT_RECIPIENT_NAME ?? 'Hello world'
+    : 'Hello world';
+
+  const result = await client.mutation({
+    createPostCard: {
+      __args: { data: { name } },
+      id: true,
+      name: true,
+    },
+  });
+  return result;
+};
+
+export default defineLogicFunction({
+  universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
+  name: 'create-new-post-card',
+  timeoutSeconds: 2,
+  handler,
+  httpRouteTriggerSettings: {
+    path: '/post-card/create',
+    httpMethod: 'GET',
+    isAuthRequired: true,
+  },
+  /*databaseEventTriggerSettings: {
+    eventName: 'people.created',
+  },*/
+  /*cronTriggerSettings: {
+    pattern: '0 0 1 1 *',
+  },*/
+});
+```
+
+Tipi di trigger disponibili:
+* **httpRoute**: Espone la tua funzione su un percorso e metodo HTTP **sotto l'endpoint `/s/`**:
+> ad es. `path: '/post-card/create'` è invocabile su `https://your-twenty-server.com/s/post-card/create`
+* **cron**: Esegue la tua funzione secondo una pianificazione utilizzando un'espressione CRON.
+* **databaseEvent**: Viene eseguito sugli eventi del ciclo di vita degli oggetti dello spazio di lavoro. Quando l'operazione dell'evento è `updated`, è possibile specificare campi specifici da monitorare nell'array `updatedFields`. Se lasciato non definito o vuoto, qualsiasi aggiornamento attiverà la funzione.
+> ad es. `person.updated`, `*.created`, `company.*`
+
+<Note>
+Puoi anche eseguire manualmente una funzione utilizzando la CLI:
+
+```bash filename="Terminal"
+yarn twenty exec -n create-new-post-card -p '{"key": "value"}'
+```
+
+```bash filename="Terminal"
+yarn twenty exec -y e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf
+```
+
+Puoi osservare i log con:
+
+```bash filename="Terminal"
+yarn twenty logs
+```
+</Note>
+
+#### Payload del trigger di route
+
+Quando un trigger di tipo route invoca la tua funzione logica, questa riceve un oggetto `RoutePayload` che segue il [formato AWS HTTP API v2](https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-develop-integrations-lambda.html).
+Importa il tipo `RoutePayload` da `twenty-sdk`:
+
+```ts
+import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
+
+const handler = async (event: RoutePayload) => {
+  const { headers, queryStringParameters, pathParameters, body } = event;
+  const { method, path } = event.requestContext.http;
+
+  return { message: 'Success' };
+};
+```
+
+Il tipo `RoutePayload` ha la seguente struttura:
+
+  | Proprietà                    | Tipo                                                    | Descrizione                                                                                                                                                                                           | Esempio                                                                    |
+  | ---------------------------- | ------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
+  | `headers`                    | `Record\<string, string \| undefined>` | Intestazioni HTTP (solo quelle elencate in `forwardedRequestHeaders`)                                                                                                                                 | vedi la sezione sotto                                                      |
+  | `queryStringParameters`      | `Record\<string, string \| undefined>` | Parametri della query string (valori multipli uniti da virgole)                                                                                                                                       | `/users?ids=1&ids=2&ids=3&name=Alice` -> `{ ids: '1,2,3', name: 'Alice' }` |
+  | `pathParameters`             | `Record\<string, string \| undefined>` | Parametri di percorso estratti dal pattern della route                                                                                                                                                | `/users/:id`, `/users/123` -> `{ id: '123' }`                              |
+  | `body`                       | `object \| null`                                        | Corpo della richiesta analizzato (JSON)                                                                                                                                                               | `{ id: 1 }` -> `{ id: 1 }`                                                 |
+  | `rawBody`                    | `string \| undefined`                                   | Original UTF-8 request body, before JSON parsing. Useful for verifying HMAC-style webhook signatures (e.g. GitHub's `X-Hub-Signature-256`, Stripe). `undefined` when the runtime did not preserve it. |                                                                            |
+  | `isBase64Encoded`            | `boolean`                                               | Indica se il corpo è codificato in base64                                                                                                                                                             |                                                                            |
+  | `requestContext.http.method` | `string`                                                | Metodo HTTP (GET, POST, PUT, PATCH, DELETE)                                                                                                                                                           |                                                                            |
+  | `requestContext.http.path`   | `string`                                                | Percorso della richiesta non elaborato                                                                                                                                                                |                                                                            |
+
+
+#### forwardedRequestHeaders
+
+Per impostazione predefinita, le intestazioni HTTP delle richieste in ingresso **non** vengono passate alla tua funzione logica per motivi di sicurezza.
+Per accedere a intestazioni specifiche, elencale nell'array `forwardedRequestHeaders`:
+
+```ts
+export default defineLogicFunction({
+  universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
+  name: 'webhook-handler',
+  handler,
+  httpRouteTriggerSettings: {
+    path: '/webhook',
+    httpMethod: 'POST',
+    isAuthRequired: false,
+    forwardedRequestHeaders: ['x-webhook-signature', 'content-type'],
+  },
+});
+```
+
+Nel tuo handler, accedi alle intestazioni inoltrate in questo modo:
+
+```ts
+const handler = async (event: RoutePayload) => {
+  const signature = event.headers['x-webhook-signature'];
+  const contentType = event.headers['content-type'];
+
+  // Validate webhook signature...
+  return { received: true };
+};
+```
+
+<Note>
+I nomi delle intestazioni vengono normalizzati in minuscolo. Accedile usando chiavi in minuscolo (ad es., `event.headers['content-type']`).
+</Note>
+
+#### Esporre una funzione come strumento
+
+Le funzioni logiche possono essere esposte come **strumenti** per gli agenti di IA e i flussi di lavoro. Quando una funzione è contrassegnata come strumento, diventa individuabile dalle funzionalità di IA di Twenty e può essere utilizzata nelle automazioni dei flussi di lavoro.
+
+Per contrassegnare una funzione logica come strumento, imposta `isTool: true`:
+
+```ts src/logic-functions/enrich-company.logic-function.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import { CoreApiClient } from 'twenty-client-sdk/core';
+
+const handler = async (params: { companyName: string; domain?: string }) => {
+  const client = new CoreApiClient();
+
+  const result = await client.mutation({
+    createTask: {
+      __args: {
+        data: {
+          title: `Enrich data for ${params.companyName}`,
+          body: `Domain: ${params.domain ?? 'unknown'}`,
+        },
+      },
+      id: true,
+    },
+  });
+
+  return { taskId: result.createTask.id };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: 'f47ac10b-58cc-4372-a567-0e02b2c3d479',
+  name: 'enrich-company',
+  description: 'Enrich a company record with external data',
+  timeoutSeconds: 10,
+  handler,
+  isTool: true,
+});
+```
+
+Punti chiave:
+
+* Puoi combinare `isTool` con i trigger — una funzione può essere sia uno strumento (invocabile dagli agenti IA) sia attivata da eventi allo stesso tempo.
+* **`toolInputSchema`** (opzionale): un oggetto JSON Schema che descrive i parametri accettati dalla funzione. Lo schema viene calcolato automaticamente dall'analisi statica del codice sorgente, ma puoi impostarlo esplicitamente:
+
+```ts
+export default defineLogicFunction({
+  ...,
+  toolInputSchema: {
+    type: 'object',
+    properties: {
+      companyName: {
+        type: 'string',
+        description: 'The name of the company to enrich',
+      },
+      domain: {
+        type: 'string',
+        description: 'The company website domain (optional)',
+      },
+    },
+    required: ['companyName'],
+  },
+});
+```
+
+<Note>
+**Scrivi una buona `description`.** Gli agenti IA fanno affidamento sul campo `description` della funzione per decidere quando usare lo strumento. Sii specifico su cosa fa lo strumento e quando dovrebbe essere invocato.
+</Note>
+
+</Accordion>
+<Accordion title="definePostInstallLogicFunction" description="Definisci una funzione logica di post-installazione (una per app)">
+
+Una funzione post-installazione è una funzione logica che viene eseguita automaticamente dopo che la tua app è stata installata in uno spazio di lavoro. Il server la esegue **dopo** che i metadati dell'app sono stati sincronizzati e il client SDK è stato generato, così lo spazio di lavoro è completamente pronto per l'uso e il nuovo schema è attivo. I casi d'uso tipici includono il popolamento di dati predefiniti, la creazione di record iniziali, la configurazione delle impostazioni dello spazio di lavoro o il provisioning di risorse su servizi di terze parti.
+
+```ts src/logic-functions/post-install.ts
+import { definePostInstallLogicFunction, type InstallPayload } from 'twenty-sdk/define';
+
+const handler = async (payload: InstallPayload): Promise<void> => {
+  console.log('Post install logic function executed successfully!', payload.previousVersion);
+};
+
+export default definePostInstallLogicFunction({
+  universalIdentifier: 'f7a2b9c1-3d4e-5678-abcd-ef9876543210',
+  name: 'post-install',
+  description: 'Runs after installation to set up the application.',
+  timeoutSeconds: 300,
+  shouldRunOnVersionUpgrade: false,
+  shouldRunSynchronously: false,
+  handler,
+});
+```
+
+Puoi anche eseguire manualmente la funzione di post-installazione in qualsiasi momento utilizzando la CLI:
+
+```bash filename="Terminal"
+yarn twenty exec --postInstall
+```
+
+Punti chiave:
+* Le funzioni di post-installazione utilizzano `definePostInstallLogicFunction()` — una variante specializzata che omette le impostazioni dei trigger (`cronTriggerSettings`, `databaseEventTriggerSettings`, `httpRouteTriggerSettings`, `isTool`).
+* L'handler riceve un `InstallPayload` con `{ previousVersion?: string; newVersion: string }` — `newVersion` è la versione in fase di installazione e `previousVersion` è la versione installata in precedenza (oppure `undefined` in caso di nuova installazione). Usa questi valori per distinguere le nuove installazioni dagli aggiornamenti e per eseguire logiche di migrazione specifiche per versione.
+* **Quando viene eseguito l'hook**: solo sulle nuove installazioni, per impostazione predefinita. Passa `shouldRunOnVersionUpgrade: true` se vuoi che venga eseguito anche quando l'app viene aggiornata da una versione precedente. Se omesso, il flag è `false` per impostazione predefinita e gli aggiornamenti saltano l'hook.
+* **Modello di esecuzione — asincrono per impostazione predefinita, sincrono su richiesta**: il flag `shouldRunSynchronously` controlla *come* viene eseguito il post-install.
+  * `shouldRunSynchronously: false` *(default)* — l'hook viene **messo in coda nella coda dei messaggi** con `retryLimit: 3` ed eseguito in modo asincrono in un worker. La risposta di installazione viene restituita non appena il job è messo in coda, quindi un handler lento o in errore non blocca il chiamante. Il worker riproverà fino a tre volte. **Usalo per job di lunga durata** — popolamento di dataset di grandi dimensioni, chiamate a API di terze parti lente, provisioning di risorse esterne, qualsiasi cosa che possa superare una finestra di risposta HTTP ragionevole.
+  * `shouldRunSynchronously: true` — l'hook viene eseguito **inline durante il flusso di installazione** (stesso executor del pre-install). La richiesta di installazione rimane bloccata finché l'handler non termina e, se genera un'eccezione, il chiamante dell'installazione riceve un `POST_INSTALL_ERROR`. Nessun tentativo automatico. **Usalo per attività rapide che devono completarsi prima della risposta** — ad esempio, emettere un errore di validazione all'utente, oppure un setup rapido di cui il client avrà bisogno immediatamente dopo il ritorno della chiamata di installazione. Tieni presente che la migrazione dei metadati è già stata applicata quando viene eseguito il post-install, quindi un errore in modalità sincrona **non** annulla le modifiche allo schema — si limita a far emergere l'errore.
+* Assicurati che il tuo handler sia idempotente. In modalità asincrona la coda può riprovare fino a tre volte; in entrambe le modalità l'hook può essere eseguito di nuovo durante gli aggiornamenti quando `shouldRunOnVersionUpgrade: true`.
+* Le variabili d'ambiente `APPLICATION_ID`, `APP_ACCESS_TOKEN` e `API_URL` sono disponibili all'interno dell'handler (come in qualsiasi altra funzione logica), quindi puoi chiamare le API di Twenty con un token di accesso applicativo con ambito sulla tua app.
+* È consentita una sola funzione di post-installazione per applicazione. La build del manifesto genererà un errore se ne viene rilevata più di una.
+* I campi `universalIdentifier`, `shouldRunOnVersionUpgrade` e `shouldRunSynchronously` della funzione vengono associati automaticamente al manifest dell'applicazione nel campo `postInstallLogicFunction` durante la build — non è necessario referenziarli in `defineApplication()`.
+* Il timeout predefinito è impostato a 300 secondi (5 minuti) per consentire attività di configurazione più lunghe, come il popolamento dei dati.
+* **Non eseguito in modalità dev**: quando un'app è registrata in locale (tramite `yarn twenty dev`), il server salta completamente il flusso di installazione e sincronizza i file direttamente tramite il watcher della CLI — quindi il post-install non viene mai eseguito in modalità dev, indipendentemente da `shouldRunSynchronously`. Usa `yarn twenty exec --postInstall` per attivarlo manualmente su un workspace in esecuzione.
+
+</Accordion>
+<Accordion title="definePreInstallLogicFunction" description="Definisci una funzione logica di pre-installazione (una per app)">
+
+Una funzione di pre-install è una funzione logica che viene eseguita automaticamente durante l'installazione, **prima che venga applicata la migrazione dei metadati del workspace**. Condivide la stessa struttura di payload del post-install (`InstallPayload`), ma è posizionata prima nel flusso di installazione così da poter preparare lo stato da cui dipenderà la migrazione imminente — usi tipici includono il backup dei dati, la validazione della compatibilità con il nuovo schema o l'archiviazione di record che stanno per essere ristrutturati o eliminati.
+
+```ts src/logic-functions/pre-install.ts
+import { definePreInstallLogicFunction, type InstallPayload } from 'twenty-sdk/define';
+
+const handler = async (payload: InstallPayload): Promise<void> => {
+  console.log('Pre install logic function executed successfully!', payload.previousVersion);
+};
+
+export default definePreInstallLogicFunction({
+  universalIdentifier: 'a1b2c3d4-5678-90ab-cdef-1234567890ab',
+  name: 'pre-install',
+  description: 'Runs before installation to prepare the application.',
+  timeoutSeconds: 300,
+  shouldRunOnVersionUpgrade: true,
+  handler,
+});
+```
+
+Puoi anche eseguire manualmente la funzione di pre-installazione in qualsiasi momento utilizzando la CLI:
+
+```bash filename="Terminal"
+yarn twenty exec --preInstall
+```
+
+Punti chiave:
+* Le funzioni di pre-install usano `definePreInstallLogicFunction()` — stessa configurazione specialistica del post-install, solo agganciata a uno slot di ciclo di vita diverso.
+* Sia gli handler di pre- sia quelli di post-install ricevono lo stesso tipo `InstallPayload`: `{ previousVersion?: string; newVersion: string }`. Importalo una volta e riutilizzalo per entrambi gli hook.
+* **Quando viene eseguito l'hook**: posizionato appena prima della migrazione dei metadati del workspace (`synchronizeFromManifest`). Prima dell'esecuzione, il server esegue una "sincronizzazione ridotta" puramente additiva che registra nei metadati del workspace la funzione di pre-install della versione **nuova** — nient'altro viene toccato — e poi la esegue. Poiché questa sincronizzazione è solo additiva, gli oggetti, i campi e i dati della versione precedente restano intatti quando il tuo handler viene eseguito: puoi leggere ed eseguire in sicurezza il backup dello stato pre-migrazione.
+* **Modello di esecuzione**: il pre-install è eseguito **in modo sincrono** e **blocca l'installazione**. Se l'handler genera un'eccezione, l'installazione viene interrotta prima che vengano applicate modifiche allo schema — il workspace rimane sulla versione precedente in uno stato coerente. Questo è intenzionale: il pre-install è la tua ultima possibilità per rifiutare un aggiornamento rischioso.
+* Come per il post-install, è consentita una sola funzione di pre-installazione per applicazione. Viene collegata automaticamente al manifest dell'applicazione nel campo `preInstallLogicFunction` durante la build.
+* **Non eseguito in modalità dev**: come per il post-install — il flusso di installazione viene completamente saltato per le app registrate localmente, quindi il pre-install non viene mai eseguito con `yarn twenty dev`. Usa `yarn twenty exec --preInstall` per attivarlo manualmente.
+
+</Accordion>
+<Accordion title="Pre-install vs post-install: quando usare l'uno o l'altro" description="Scegliere l'hook di installazione giusto">
+
+Entrambi gli hook fanno parte dello stesso flusso di installazione e ricevono lo stesso `InstallPayload`. La differenza è **quando** vengono eseguiti rispetto alla migrazione dei metadati del workspace, e questo modifica quali dati possono gestire in sicurezza.
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│ install flow                                                │
+│                                                             │
+│   upload package → [pre-install] → metadata migration →     │
+│   generate SDK → [post-install]                             │
+│                                                             │
+│                  old schema visible    new schema visible   │
+└─────────────────────────────────────────────────────────────┘
+```
+
+Il pre-install è sempre **sincrono** (blocca l'installazione e può interromperla). Il post-install è **asincrono per impostazione predefinita** — messo in coda su un worker con retry automatici — ma può optare per l'esecuzione sincrona con `shouldRunSynchronously: true`. Vedi l'accordion `definePostInstallLogicFunction` sopra per quando usare ciascuna modalità.
+
+**Usa `post-install` per tutto ciò che richiede l'esistenza del nuovo schema.** Questo è il caso più comune:
+
+* Popolamento di dati predefiniti (creazione di record iniziali, viste predefinite, contenuti demo) su oggetti e campi appena aggiunti.
+* Registrazione di webhook con servizi di terze parti ora che l'app ha le proprie credenziali.
+* Chiamare la tua API per completare il setup che dipende dai metadati sincronizzati.
+* Logica idempotente di "ensure this exists" che dovrebbe riconciliare lo stato a ogni aggiornamento — da combinare con `shouldRunOnVersionUpgrade: true`.
+
+Esempio — eseguire il seeding di un record `PostCard` predefinito dopo l'installazione:
+
+```ts src/logic-functions/post-install.ts
+import { definePostInstallLogicFunction, type InstallPayload } from 'twenty-sdk/define';
+import { createClient } from './generated/client';
+
+const handler = async ({ previousVersion }: InstallPayload): Promise<void> => {
+  if (previousVersion) return; // fresh installs only
+
+  const client = createClient();
+  await client.postCard.create({
+    data: { title: 'Welcome to Postcard', content: 'Your first card!' },
+  });
+};
+
+export default definePostInstallLogicFunction({
+  universalIdentifier: 'f7a2b9c1-3d4e-5678-abcd-ef9876543210',
+  name: 'post-install',
+  description: 'Seeds a welcome post card after install.',
+  timeoutSeconds: 300,
+  shouldRunOnVersionUpgrade: false,
+  handler,
+});
+```
+
+**Usa `pre-install` quando una migrazione altrimenti distruggerebbe o corromperebbe i dati esistenti.** Poiché il pre-install viene eseguito contro lo schema *precedente* e un suo fallimento annulla l'aggiornamento, è il posto giusto per qualsiasi operazione rischiosa:
+
+* **Eseguire il backup dei dati che stanno per essere eliminati o ristrutturati** — ad esempio, stai rimuovendo un campo nella v2 e devi copiarne i valori in un altro campo o esportarli su uno storage prima che venga eseguita la migrazione.
+* **Archiviare i record che un nuovo vincolo renderebbe non validi** — ad esempio, un campo sta diventando `NOT NULL` e devi prima eliminare o correggere le righe con valori nulli.
+* **Validare la compatibilità e rifiutare l'aggiornamento se i dati attuali non possono essere migrati correttamente** — genera un'eccezione dall'handler e l'installazione si interrompe senza applicare modifiche. Questo è più sicuro che scoprire l'incompatibilità a migrazione in corso.
+* **Rinominare o rigenerare le chiavi dei dati** prima di una modifica dello schema che farebbe perdere l'associazione.
+
+Esempio — archiviare i record prima di una migrazione distruttiva:
+
+```ts src/logic-functions/pre-install.ts
+import { definePreInstallLogicFunction, type InstallPayload } from 'twenty-sdk/define';
+import { createClient } from './generated/client';
+
+const handler = async ({ previousVersion, newVersion }: InstallPayload): Promise<void> => {
+  // Only the 1.x → 2.x upgrade drops the legacy `notes` field.
+  if (!previousVersion?.startsWith('1.') || !newVersion.startsWith('2.')) {
+    return;
+  }
+
+  const client = createClient();
+  const legacyRecords = await client.postCard.findMany({
+    where: { notes: { isNotNull: true } },
+  });
+
+  if (legacyRecords.length === 0) return;
+
+  // Copy legacy `notes` into the new `description` field before the migration
+  // drops the `notes` column. If this fails, the upgrade is aborted and the
+  // workspace stays on v1 with all data intact.
+  await Promise.all(
+    legacyRecords.map((record) =>
+      client.postCard.update({
+        where: { id: record.id },
+        data: { description: record.notes },
+      }),
+    ),
+  );
+};
+
+export default definePreInstallLogicFunction({
+  universalIdentifier: 'a1b2c3d4-5678-90ab-cdef-1234567890ab',
+  name: 'pre-install',
+  description: 'Backs up legacy notes into description before the v2 migration.',
+  timeoutSeconds: 300,
+  shouldRunOnVersionUpgrade: true,
+  handler,
+});
+```
+
+**Regola generale:**
+
+| Vuoi...                                                                                                                      | Usa                                                                                  |
+| ---------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
+| Popolare dati predefiniti, configurare il workspace, registrare risorse esterne                                              | `post-install`                                                                       |
+| Eseguire seeding di lunga durata o chiamate a terze parti che non dovrebbero bloccare la risposta dell'installazione         | `post-install` (predefinito — `shouldRunSynchronously: false`, con retry del worker) |
+| Eseguire un setup rapido di cui il chiamante farà affidamento immediatamente dopo il ritorno della chiamata di installazione | `post-install` con `shouldRunSynchronously: true`                                    |
+| Leggere o eseguire il backup dei dati che la prossima migrazione perderebbe                                                  | `pre-install`                                                                        |
+| Rifiutare un aggiornamento che corromperebbe i dati esistenti                                                                | `pre-install` (genera un'eccezione dall'handler)                                     |
+| Eseguire la riconciliazione a ogni aggiornamento                                                                             | `post-install` con `shouldRunOnVersionUpgrade: true`                                 |
+| Eseguire un setup una tantum solo alla prima installazione                                                                   | `post-install` con `shouldRunOnVersionUpgrade: false` (predefinito)                  |
+
+<Note>
+In caso di dubbio, usa **post-install**. Ricorri al pre-install solo quando la migrazione stessa è distruttiva e devi intercettare lo stato precedente prima che vada perso.
+</Note>
+
+</Accordion>
+</AccordionGroup>
+
+## Client API tipizzati (twenty-client-sdk)
+
+Il pacchetto `twenty-client-sdk` fornisce due client GraphQL tipizzati per interagire con l'API di Twenty dalle tue funzioni logiche e dai componenti front-end.
+
+| Client              | Importa                      | Endpoint                                                                 | Generato?                  |
+| ------------------- | ---------------------------- | ------------------------------------------------------------------------ | -------------------------- |
+| `CoreApiClient`     | `twenty-client-sdk/core`     | `/graphql` — dati dello spazio di lavoro (record, oggetti)               | Sì, in fase di dev/build   |
+| `MetadataApiClient` | `twenty-client-sdk/metadata` | `/metadata` — configurazione dello spazio di lavoro, caricamenti di file | No, fornito pronto all'uso |
+
+<AccordionGroup>
+<Accordion title="CoreApiClient" description="Esegui query e modifica i dati dello spazio di lavoro (record, oggetti)">
+
+`CoreApiClient` è il client principale per interrogare e modificare i dati dello spazio di lavoro. Viene **generato dallo schema del tuo spazio di lavoro** durante `yarn twenty dev` o `yarn twenty build`, quindi è completamente tipizzato per corrispondere ai tuoi oggetti e campi.
+
+```ts
+import { CoreApiClient } from 'twenty-client-sdk/core';
+
+const client = new CoreApiClient();
+
+// Query records
+const { companies } = await client.query({
+  companies: {
+    edges: {
+      node: {
+        id: true,
+        name: true,
+        domainName: {
+          primaryLinkLabel: true,
+          primaryLinkUrl: true,
+        },
+      },
+    },
+  },
+});
+
+// Create a record
+const { createCompany } = await client.mutation({
+  createCompany: {
+    __args: {
+      data: {
+        name: 'Acme Corp',
+      },
+    },
+    id: true,
+    name: true,
+  },
+});
+```
+
+Il client utilizza una sintassi a selection-set: passa `true` per includere un campo, usa `__args` per gli argomenti e annida oggetti per le relazioni. Ottieni completamento automatico e controllo dei tipi completi basati sullo schema del tuo spazio di lavoro.
+
+<Note>
+**CoreApiClient viene generato in fase di dev/build.** Se lo usi senza eseguire prima `yarn twenty dev` o `yarn twenty build`, genera un errore. La generazione avviene automaticamente — la CLI esegue l'introspezione dello schema GraphQL del tuo spazio di lavoro e genera un client tipizzato usando `@genql/cli`.
+</Note>
+
+#### Utilizzo di CoreSchema per le annotazioni di tipo
+
+`CoreSchema` fornisce tipi TypeScript corrispondenti agli oggetti del tuo spazio di lavoro — utile per tipizzare lo stato dei componenti o i parametri delle funzioni:
+
+```ts
+import { CoreApiClient, CoreSchema } from 'twenty-client-sdk/core';
+import { useState } from 'react';
+
+const [company, setCompany] = useState<
+  Pick<CoreSchema.Company, 'id' | 'name'> | undefined
+>(undefined);
+
+const client = new CoreApiClient();
+const result = await client.query({
+  company: {
+    __args: { filter: { position: { eq: 1 } } },
+    id: true,
+    name: true,
+  },
+});
+setCompany(result.company);
+```
+
+</Accordion>
+<Accordion title="MetadataApiClient" description="Configurazione dello spazio di lavoro, applicazioni e caricamenti di file">
+
+`MetadataApiClient` è fornito pronto all'uso con l'SDK (nessuna generazione richiesta). Interroga l'endpoint `/metadata` per la configurazione dello spazio di lavoro, le applicazioni e i caricamenti di file.
+
+```ts
+import { MetadataApiClient } from 'twenty-client-sdk/metadata';
+
+const metadataClient = new MetadataApiClient();
+
+// List first 10 objects in the workspace
+const { objects } = await metadataClient.query({
+  objects: {
+    edges: {
+      node: {
+        id: true,
+        nameSingular: true,
+        namePlural: true,
+        labelSingular: true,
+        isCustom: true,
+      },
+    },
+    __args: {
+      filter: {},
+      paging: { first: 10 },
+    },
+  },
+});
+```
+
+#### Caricamento dei file
+
+`MetadataApiClient` include un metodo `uploadFile` per allegare file ai campi di tipo file:
+
+```ts
+import { MetadataApiClient } from 'twenty-client-sdk/metadata';
+import * as fs from 'fs';
+
+const metadataClient = new MetadataApiClient();
+
+const fileBuffer = fs.readFileSync('./invoice.pdf');
+
+const uploadedFile = await metadataClient.uploadFile(
+  fileBuffer,                                         // file contents as a Buffer
+  'invoice.pdf',                                      // filename
+  'application/pdf',                                  // MIME type
+  '58a0a314-d7ea-4865-9850-7fb84e72f30b',            // field universalIdentifier
+);
+
+console.log(uploadedFile);
+// { id: '...', path: '...', size: 12345, createdAt: '...', url: 'https://...' }
+```
+
+| Parametro                          | Tipo     | Descrizione                                                            |
+| ---------------------------------- | -------- | ---------------------------------------------------------------------- |
+| `fileBuffer`                       | `Buffer` | Il contenuto grezzo del file                                           |
+| `filename`                         | `string` | Il nome del file (utilizzato per l'archiviazione e la visualizzazione) |
+| `contentType`                      | `string` | Tipo MIME (predefinito su `application/octet-stream` se omesso)        |
+| `fieldMetadataUniversalIdentifier` | `string` | L'`universalIdentifier` del campo di tipo file nel tuo oggetto         |
+
+Punti chiave:
+* Usa l'`universalIdentifier` del campo (non il suo ID specifico dello spazio di lavoro), quindi il tuo codice di upload funziona in qualsiasi spazio di lavoro in cui la tua app è installata.
+* L'`url` restituito è un URL firmato che puoi usare per accedere al file caricato.
+
+</Accordion>
+</AccordionGroup>
+
+<Note>
+  Quando il tuo codice viene eseguito su Twenty (funzioni logiche o componenti front-end), la piattaforma inietta le credenziali come variabili d'ambiente:
+
+  * `TWENTY_API_URL` — URL di base dell'API di Twenty
+  * `TWENTY_APP_ACCESS_TOKEN` — Chiave a breve durata con ambito al ruolo funzione predefinito della tua applicazione
+
+  Non è **necessario** passarle ai client — vengono lette automaticamente da `process.env`. I permessi della chiave API sono determinati dal ruolo referenziato in `defaultRoleUniversalIdentifier` nel tuo `application-config.ts`.
+</Note>

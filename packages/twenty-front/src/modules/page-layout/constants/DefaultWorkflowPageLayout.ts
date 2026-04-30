@@ -26,6 +26,7 @@ export const DEFAULT_WORKFLOW_PAGE_LAYOUT: PageLayout = {
       __typename: 'PageLayoutTab',
       applicationId: '',
       id: 'workflow-tab-flow',
+      isActive: true,
       title: 'Flow',
       position: 100,
       layoutMode: PageLayoutTabLayoutMode.CANVAS,
@@ -37,7 +38,9 @@ export const DEFAULT_WORKFLOW_PAGE_LAYOUT: PageLayout = {
       widgets: [
         {
           __typename: 'PageLayoutWidget',
+          applicationId: '',
           id: 'workflow-widget-flow',
+          isActive: true,
           pageLayoutTabId: 'workflow-tab-flow',
           title: 'Flow',
           type: WidgetType.WORKFLOW,
@@ -48,6 +51,10 @@ export const DEFAULT_WORKFLOW_PAGE_LAYOUT: PageLayout = {
             column: 0,
             rowSpan: 12,
             columnSpan: 12,
+          },
+          position: {
+            __typename: 'PageLayoutWidgetCanvasPosition',
+            layoutMode: PageLayoutTabLayoutMode.CANVAS,
           },
           configuration: {
             __typename: 'FieldsConfiguration',

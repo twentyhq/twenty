@@ -1,11 +1,12 @@
-import { Product as ProductVisual } from '@/illustrations/Hero/Product';
-import { PartnerVisual } from '@/sections/Hero/components/PartnerVisual/PartnerVisual';
-import { WhyTwentyVisual } from '@/sections/Hero/components/WhyTwentyVisual/WhyTwentyVisual';
-import { Body } from './Body/Body';
-import { Cta } from './Cta/Cta';
-import { Heading } from './Heading/Heading';
+import { Body } from './Body';
+import { Cta } from './Cta';
+import { Heading } from './Heading';
 import { HomeVisual } from './HomeVisual/HomeVisual';
-import { Root } from './Root/Root';
+import { PartnerVisual } from './PartnerVisual/PartnerVisual';
+import { ProductVisual } from './ProductVisual';
+import { ReleaseNotesVisual } from './ReleaseNotesVisual';
+import { Root } from './Root';
+import { WhyTwentyVisual } from './WhyTwentyVisual';
 
 export const Hero = {
   Root,
@@ -14,6 +15,7 @@ export const Hero = {
   Cta,
   HomeVisual,
   ProductVisual,
+  ReleaseNotesVisual,
   PartnerVisual,
   WhyTwentyVisual,
 };

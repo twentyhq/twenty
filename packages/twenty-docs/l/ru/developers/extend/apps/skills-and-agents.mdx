@@ -1,0 +1,69 @@
+---
+title: Навыки и агенты
+description: Определите навыки и агентов ИИ для вашего приложения.
+icon: robot
+---
+
+<Warning>
+  Навыки и агенты сейчас проходят альфа-тестирование. Функция работает, но продолжает развиваться.
+</Warning>
+
+Приложения могут определять возможности ИИ, которые находятся внутри рабочего пространства — повторно используемые инструкции для навыков и агенты с настраиваемыми системными подсказками.
+
+<AccordionGroup>
+<Accordion title="defineSkill" description="Определяйте навыки ИИ-агентов">
+
+Навыки определяют многократно используемые инструкции и возможности, которые агенты ИИ могут использовать в вашем рабочем пространстве. Используйте `defineSkill()` для определения навыков со встроенной валидацией:
+
+```ts src/skills/example-skill.ts
+import { defineSkill } from 'twenty-sdk/define';
+
+export default defineSkill({
+  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  name: 'sales-outreach',
+  label: 'Sales Outreach',
+  description: 'Guides the AI agent through a structured sales outreach process',
+  icon: 'IconBrain',
+  content: `You are a sales outreach assistant. When reaching out to a prospect:
+1. Research the company and recent news
+2. Identify the prospect's role and likely pain points
+3. Draft a personalized message referencing specific details
+4. Keep the tone professional but conversational`,
+});
+```
+
+Основные моменты:
+* `name` — уникальная строка-идентификатор навыка (рекомендуется kebab-case).
+* `label` — читаемое человеком отображаемое имя, показываемое в UI.
+* `content` содержит инструкции навыка — это текст, который использует агент ИИ.
+* `icon` (необязательно) задаёт значок, отображаемый в UI.
+* `description` (необязательно) предоставляет дополнительный контекст о назначении навыка.
+
+</Accordion>
+<Accordion title="defineAgent" description="Определяйте ИИ-агентов с пользовательскими промптами">
+
+Агенты — это ИИ-помощники, работающие в вашем рабочем пространстве. Используйте `defineAgent()` для создания агентов с пользовательским системным промптом:
+
+```ts src/agents/example-agent.ts
+import { defineAgent } from 'twenty-sdk/define';
+
+export default defineAgent({
+  universalIdentifier: 'b3c4d5e6-f7a8-9012-bcde-f34567890123',
+  name: 'sales-assistant',
+  label: 'Sales Assistant',
+  description: 'Helps the sales team draft outreach emails and research prospects',
+  icon: 'IconRobot',
+  prompt: 'You are a helpful sales assistant. Help users with their questions and tasks.',
+});
+```
+
+Основные моменты:
+* `name` — уникальная строка-идентификатор агента (рекомендуется kebab-case).
+* `label` — отображаемое имя, показываемое в UI.
+* `prompt` — это системный промпт, определяющий поведение агента.
+* `description` (необязательно) предоставляет контекст о том, что делает агент.
+* `icon` (необязательно) задаёт значок, отображаемый в UI.
+* `modelId` (необязательно) переопределяет модель ИИ по умолчанию, используемую агентом.
+
+</Accordion>
+</AccordionGroup>

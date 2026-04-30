@@ -8,6 +8,7 @@ import { pageLayoutPersistedComponentState } from '@/page-layout/states/pageLayo
 import { type PageLayout } from '@/page-layout/types/PageLayout';
 import { convertPageLayoutToTabLayouts } from '@/page-layout/utils/convertPageLayoutToTabLayouts';
 import { isPageLayoutEmpty } from '@/page-layout/utils/isPageLayoutEmpty';
+import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useFeatureFlagsMap } from '@/workspace/hooks/useFeatureFlagsMap';
@@ -21,23 +22,15 @@ type PageLayoutInitializationQueryEffectProps = {
   pageLayoutId: string;
 };
 
-export const PageLayoutInitializationQueryEffect = ({
+const PageLayoutInitializationEffect = ({
   pageLayoutId,
-}: PageLayoutInitializationQueryEffectProps) => {
+  pageLayout,
+}: {
+  pageLayoutId: string;
+  pageLayout: PageLayout | undefined;
+}) => {
   const [pageLayoutIsInitialized, setPageLayoutIsInitialized] =
     useAtomComponentState(pageLayoutIsInitializedComponentState);
-
-  const featureFlags = useFeatureFlagsMap();
-  const isRecordPageLayoutEditingEnabled =
-    featureFlags[FeatureFlagKey.IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED];
-
-  const basePageLayout = useBasePageLayout(pageLayoutId);
-  const pageLayoutWithRelationWidgets =
-    usePageLayoutWithRelationWidgets(basePageLayout);
-
-  const pageLayout = isRecordPageLayoutEditingEnabled
-    ? basePageLayout
-    : pageLayoutWithRelationWidgets;
 
   const { setIsPageLayoutInEditMode } =
     useSetIsPageLayoutInEditMode(pageLayoutId);
@@ -55,8 +48,6 @@ export const PageLayoutInitializationQueryEffect = ({
 
   const initializePageLayout = useCallback(
     (layout: PageLayout) => {
-      const isRecordPageLayout = layout.type === PageLayoutType.RECORD_PAGE;
-
       const currentPersisted = store.get(
         pageLayoutPersistedComponentCallbackState,
       );
@@ -78,7 +69,9 @@ export const PageLayoutInitializationQueryEffect = ({
       const tabLayouts = convertPageLayoutToTabLayouts(layout);
       store.set(pageLayoutCurrentLayoutsComponentCallbackState, tabLayouts);
 
-      if (!isRecordPageLayout) {
+      const isDashboardLayout = layout.type === PageLayoutType.DASHBOARD;
+
+      if (isDashboardLayout) {
         const shouldEnterDashboardEditMode = isPageLayoutEmpty(layout);
         setIsPageLayoutInEditMode(shouldEnterDashboardEditMode);
       }
@@ -105,4 +98,54 @@ export const PageLayoutInitializationQueryEffect = ({
   ]);
 
   return null;
+};
+
+const PageLayoutInitializationWithRelationWidgets = ({
+  pageLayoutId,
+  basePageLayout,
+}: {
+  pageLayoutId: string;
+  basePageLayout: PageLayout | undefined;
+}) => {
+  const pageLayout = usePageLayoutWithRelationWidgets(basePageLayout);
+
+  return (
+    <PageLayoutInitializationEffect
+      pageLayoutId={pageLayoutId}
+      pageLayout={pageLayout}
+    />
+  );
+};
+
+// oxlint-disable-next-line twenty/effect-components
+export const PageLayoutInitializationQueryEffect = ({
+  pageLayoutId,
+}: PageLayoutInitializationQueryEffectProps) => {
+  const { layoutType } = useLayoutRenderingContext();
+
+  const featureFlags = useFeatureFlagsMap();
+  const isRecordPageLayoutEditingEnabled =
+    featureFlags[FeatureFlagKey.IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED];
+
+  const basePageLayout = useBasePageLayout(pageLayoutId);
+
+  const needsRelationWidgets =
+    layoutType === PageLayoutType.RECORD_PAGE &&
+    !isRecordPageLayoutEditingEnabled;
+
+  if (needsRelationWidgets) {
+    return (
+      <PageLayoutInitializationWithRelationWidgets
+        pageLayoutId={pageLayoutId}
+        basePageLayout={basePageLayout}
+      />
+    );
+  }
+
+  return (
+    <PageLayoutInitializationEffect
+      pageLayoutId={pageLayoutId}
+      pageLayout={basePageLayout}
+    />
+  );
 };

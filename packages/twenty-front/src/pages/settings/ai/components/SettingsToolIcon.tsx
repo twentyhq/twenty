@@ -1,19 +1,19 @@
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
 
-import { getNavigationMenuItemIconStyleFromColor } from '@/navigation-menu-item/common/utils/getNavigationMenuItemIconStyleFromColor';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { getObjectColorWithFallback } from '@/object-metadata/utils/getObjectColorWithFallback';
 import { isDefined } from 'twenty-shared/utils';
 import {
   Avatar,
-  type IconComponent,
+  getIconTileColorShades,
   IconCode,
   IconEdit,
   IconPlus,
   IconSearch,
   IconTrash,
   useIcons,
+  type IconComponent,
 } from 'twenty-ui/display';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -134,9 +134,7 @@ export const SettingsToolIcon = ({
     : undefined;
 
   const objectStyle = isDefined(objectMetadata)
-    ? getNavigationMenuItemIconStyleFromColor(
-        getObjectColorWithFallback(objectMetadata),
-      )
+    ? getIconTileColorShades(getObjectColorWithFallback(objectMetadata))
     : null;
 
   if (isDefined(OperationIcon)) {

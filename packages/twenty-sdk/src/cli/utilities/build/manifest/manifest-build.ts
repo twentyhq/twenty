@@ -7,14 +7,12 @@ import {
 } from '@/cli/utilities/build/manifest/manifest-extract-config';
 import { extractManifestFromFile } from '@/cli/utilities/build/manifest/manifest-extract-config-from-file';
 import { getDefaultFieldsInObjectFields } from '@/cli/utilities/build/manifest/utils/get-default-fields-in-object-fields';
-import {
-  type ApplicationConfig,
-  type FrontComponentConfig,
-  type LogicFunctionConfig,
-} from '@/sdk';
-import { type ObjectConfig } from '@/sdk/objects/object-config';
-import { type PageLayoutConfig } from '@/sdk/page-layouts/page-layout-config';
-import { type ViewConfig } from '@/sdk/views/view-config';
+import { type ApplicationConfig, type LogicFunctionConfig } from '@/sdk/define';
+import { type FrontComponentConfig } from '@/sdk/define/front-component/front-component-config';
+import { type ObjectConfig } from '@/sdk/define/objects/object-config';
+import { type PageLayoutConfig } from '@/sdk/define/page-layouts/page-layout-config';
+import { type PageLayoutTabConfig } from '@/sdk/define/page-layouts/page-layout-tab-config';
+import { type ViewConfig } from '@/sdk/define/views/view-config';
 import { readFile } from 'node:fs/promises';
 import { basename, extname, relative } from 'path';
 import { glob } from 'tinyglobby';
@@ -31,6 +29,7 @@ import {
   type NavigationMenuItemManifest,
   type ObjectManifest,
   type PageLayoutManifest,
+  type PageLayoutTabManifest,
   type RoleManifest,
   type SkillManifest,
   type ViewManifest,
@@ -40,10 +39,10 @@ import {
 import { getInputSchemaFromSourceCode } from 'twenty-shared/logic-function';
 import { assertUnreachable } from 'twenty-shared/utils';
 import { addMissingFieldOptionIds } from '@/cli/utilities/build/manifest/utils/add-missing-field-option-ids';
-import { type PostInstallLogicFunctionConfig } from '@/sdk/logic-functions/post-install-logic-function-config';
-import { type PreInstallLogicFunctionConfig } from '@/sdk/logic-functions/pre-install-logic-function-config';
+import { type PostInstallLogicFunctionConfig } from '@/sdk/define/logic-functions/post-install-logic-function-config';
+import { type PreInstallLogicFunctionConfig } from '@/sdk/define/logic-functions/pre-install-logic-function-config';
 import { fromRoleConfigToRoleManifest } from '@/cli/utilities/build/manifest/utils/from-role-config-to-role-manifest';
-import { type RoleConfig } from '@/sdk/roles/role-config';
+import { type RoleConfig } from '@/sdk/define/roles/role-config';
 
 const loadSources = async (appPath: string): Promise<string[]> => {
   return await glob(['**/*.ts', '**/*.tsx'], {
@@ -84,6 +83,7 @@ export const buildManifest = async (
   const views: ViewManifest[] = [];
   const navigationMenuItems: NavigationMenuItemManifest[] = [];
   const pageLayouts: PageLayoutManifest[] = [];
+  const pageLayoutTabs: PageLayoutTabManifest[] = [];
   const postInstallLogicFunctions: PostInstallLogicFunctionApplicationManifest[] =
     [];
   const preInstallLogicFunctions: PreInstallLogicFunctionApplicationManifest[] =
@@ -100,6 +100,7 @@ export const buildManifest = async (
   const viewsFilePaths: string[] = [];
   const navigationMenuItemsFilePaths: string[] = [];
   const pageLayoutsFilePaths: string[] = [];
+  const pageLayoutTabsFilePaths: string[] = [];
 
   for (const filePath of filePaths) {
     const fileContent = await readFile(filePath, 'utf-8');
@@ -334,6 +335,21 @@ export const buildManifest = async (
         pageLayoutsFilePaths.push(relativePath);
         break;
       }
+      case ManifestEntityKey.PageLayoutTabs: {
+        const extract = await extractManifestFromFile<PageLayoutTabConfig>({
+          appPath,
+          filePath,
+        });
+
+        const pageLayoutTabManifest: PageLayoutTabManifest = {
+          ...extract.config,
+        };
+
+        pageLayoutTabs.push(pageLayoutTabManifest);
+        errors.push(...extract.errors);
+        pageLayoutTabsFilePaths.push(relativePath);
+        break;
+      }
       case ManifestEntityKey.PublicAssets: {
         // Public assets are handled below
         break;
@@ -410,6 +426,7 @@ export const buildManifest = async (
         views: views.sort(byId),
         navigationMenuItems: navigationMenuItems.sort(byId),
         pageLayouts: pageLayouts.sort(byId),
+        pageLayoutTabs: pageLayoutTabs.sort(byId),
       };
 
   const entityFilePaths: EntityFilePaths = {
@@ -425,6 +442,7 @@ export const buildManifest = async (
     views: viewsFilePaths,
     navigationMenuItems: navigationMenuItemsFilePaths,
     pageLayouts: pageLayoutsFilePaths,
+    pageLayoutTabs: pageLayoutTabsFilePaths,
   };
 
   return { manifest, filePaths: entityFilePaths, errors };

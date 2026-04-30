@@ -27,19 +27,25 @@ const StyledSectionLabel = styled.div`
 
 type RecordTableSettingsFieldVisibilityProps = {
   viewId: string;
+  widgetId: string;
+  pageLayoutId: string;
 };
 
 export const RecordTableSettingsFieldVisibility = ({
   viewId,
+  widgetId,
+  pageLayoutId,
 }: RecordTableSettingsFieldVisibilityProps) => {
   const { recordTableWidgetViewFieldItems } =
-    useRecordTableWidgetViewFieldItems(viewId);
+    useRecordTableWidgetViewFieldItems({ viewId, widgetId, pageLayoutId });
 
   const { toggleRecordTableWidgetFieldVisibility } =
-    useToggleRecordTableWidgetFieldVisibility();
+    useToggleRecordTableWidgetFieldVisibility({ pageLayoutId, widgetId });
 
-  const { reorderRecordTableWidgetFields } =
-    useReorderRecordTableWidgetFields();
+  const { reorderRecordTableWidgetFields } = useReorderRecordTableWidgetFields({
+    pageLayoutId,
+    widgetId,
+  });
 
   const { getIcon } = useIcons();
 

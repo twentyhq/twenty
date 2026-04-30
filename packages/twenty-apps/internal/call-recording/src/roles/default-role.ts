@@ -1,4 +1,4 @@
-import { defineRole } from 'twenty-sdk';
+import { defineRole } from 'twenty-sdk/define';
 import { PermissionFlagType } from 'twenty-shared/constants';
 
 export const DEFAULT_ROLE_UNIVERSAL_IDENTIFIER =

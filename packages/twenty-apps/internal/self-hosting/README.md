@@ -1,44 +1,11 @@
-# Self Hosting
+This is a [Twenty](https://twenty.com) application bootstrapped with [`create-twenty-app`](https://www.npmjs.com/package/create-twenty-app).
 
-Used to manage billing and telemetry of self-hosted instances
+## Getting Started
 
-## Features
+Run `yarn twenty help` to list all available commands.
 
-### Telemetry Webhook
+## Learn More
 
-Receives user signup telemetry events from self-hosted Twenty instances and creates/updates selfHostingUser records.
-
-**Endpoint:** `POST /webhook/telemetry`
-
-**Payload Structure:**
-```json
-{
-  "action": "user_signup",
-  "timestamp": "2025-11-21T...",
-  "version": "1",
-  "payload": {
-    "userId": "uuid",
-    "workspaceId": "uuid",
-    "payload": {
-      "events": [
-        {
-          "userEmail": "user@example.com",
-          "userId": "uuid",
-          "userFirstName": "John",
-          "userLastName": "Doe",
-          "locale": "en",
-          "serverUrl": "https://self-hosted.example.com"
-        }
-      ]
-    }
-  }
-}
-```
-
-**Response:**
-```json
-{
-  "success": true,
-  "message": "Self hosting user created/updated: uuid"
-}
-```
+- [Twenty Apps documentation](https://docs.twenty.com/developers/extend/apps/getting-started)
+- [twenty-sdk CLI reference](https://www.npmjs.com/package/twenty-sdk)
+- [Discord](https://discord.gg/cx5n4Jzs57)

@@ -255,11 +255,8 @@ export const fromUniversalConfigurationToFlatPageLayoutWidgetConfiguration = ({
     }
 
     case WidgetConfigurationType.FIELDS: {
-      const {
-        viewId: viewUniversalIdentifier,
-        newFieldDefaultVisibility,
-        ...rest
-      } = universalConfiguration;
+      const { viewUniversalIdentifier, newFieldDefaultVisibility, ...rest } =
+        universalConfiguration;
 
       let viewId: string | null = null;
 

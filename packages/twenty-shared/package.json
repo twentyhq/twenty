@@ -30,6 +30,7 @@
   },
   "dependencies": {
     "@sniptt/guards": "^0.2.0",
+    "ai": "6.0.97",
     "class-validator": "^0.14.0",
     "expr-eval-fork": "3.0.3",
     "handlebars": "^4.7.9",
@@ -65,6 +66,11 @@
       "types": "./dist/database-events/index.d.ts",
       "import": "./dist/database-events.mjs",
       "require": "./dist/database-events.cjs"
+    },
+    "./i18n": {
+      "types": "./dist/i18n/index.d.ts",
+      "import": "./dist/i18n.mjs",
+      "require": "./dist/i18n.cjs"
     },
     "./logic-function": {
       "types": "./dist/logic-function/index.d.ts",
@@ -118,6 +124,7 @@
     "application",
     "constants",
     "database-events",
+    "i18n",
     "logic-function",
     "metadata",
     "testing",
@@ -141,6 +148,9 @@
       ],
       "database-events": [
         "dist/database-events/index.d.ts"
+      ],
+      "i18n": [
+        "dist/i18n/index.d.ts"
       ],
       "logic-function": [
         "dist/logic-function/index.d.ts"

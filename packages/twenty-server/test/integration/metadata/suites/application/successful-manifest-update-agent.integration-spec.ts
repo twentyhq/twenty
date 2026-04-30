@@ -1,8 +1,8 @@
+import { findAgents } from 'test/integration/metadata/suites/agent/utils/find-agents.util';
 import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
+import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
-import { uninstallApplication } from 'test/integration/metadata/suites/application/utils/uninstall-application.util';
-import { findAgents } from 'test/integration/metadata/suites/agent/utils/find-agents.util';
 import { type Manifest } from 'twenty-shared/application';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -25,8 +25,7 @@ const findAppAgents = async () => {
   });
 
   return data.findManyAgents.filter(
-    (agent) =>
-      agent.name === 'sales-assistant' || agent.name === 'support-bot',
+    (agent) => agent.name === 'sales-assistant' || agent.name === 'support-bot',
   );
 };
 
@@ -41,38 +40,9 @@ describe('Manifest update - agents', () => {
   }, 60000);
 
   afterEach(async () => {
-    try {
-      await uninstallApplication({
-        universalIdentifier: TEST_APP_ID,
-        expectToFail: false,
-      });
-    } catch {
-      // May fail if the test didn't fully install/sync
-    }
-
-    await globalThis.testDataSource.query(
-      `DELETE FROM core."role" WHERE "universalIdentifier" = $1`,
-      [TEST_ROLE_ID],
-    );
-
-    await globalThis.testDataSource.query(
-      `DELETE FROM core."file" WHERE "applicationId" IN (
-        SELECT id FROM core."application" WHERE "universalIdentifier" = $1
-      )`,
-      [TEST_APP_ID],
-    );
-
-    await globalThis.testDataSource.query(
-      `DELETE FROM core."application"
-       WHERE "universalIdentifier" = $1`,
-      [TEST_APP_ID],
-    );
-
-    await globalThis.testDataSource.query(
-      `DELETE FROM core."applicationRegistration"
-       WHERE "universalIdentifier" = $1`,
-      [TEST_APP_ID],
-    );
+    await cleanupApplicationAndAppRegistration({
+      applicationUniversalIdentifier: TEST_APP_ID,
+    });
   });
 
   it('should create a new agent when added to manifest on second sync', async () => {
@@ -201,9 +171,7 @@ describe('Manifest update - agents', () => {
 
     expect(agentsAfterFirstSync).toHaveLength(2);
     expect(
-      agentsAfterFirstSync.find(
-        (agent) => agent.name === 'sales-assistant',
-      ),
+      agentsAfterFirstSync.find((agent) => agent.name === 'sales-assistant'),
     ).toBeDefined();
     expect(
       agentsAfterFirstSync.find((agent) => agent.name === 'support-bot'),

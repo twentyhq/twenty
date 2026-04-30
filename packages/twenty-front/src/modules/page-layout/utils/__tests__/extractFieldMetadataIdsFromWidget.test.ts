@@ -23,6 +23,8 @@ const createMockWidget = (
   },
 ): PageLayoutWidget => ({
   id: 'widget-1',
+  applicationId: '',
+  isActive: true,
   type: WidgetType.GRAPH,
   title: 'Test',
   objectMetadataId: null,

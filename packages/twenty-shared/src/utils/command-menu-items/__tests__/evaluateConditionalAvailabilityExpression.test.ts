@@ -1,15 +1,13 @@
-import {
-  CommandMenuContextApiPageType,
-  type CommandMenuContextApi,
-} from '@/types';
+import { ContextStorePageType, type CommandMenuContextApi } from '@/types';
 import { evaluateConditionalAvailabilityExpression } from '../evaluateConditionalAvailabilityExpression';
 
 const buildContext = (
   overrides: Partial<CommandMenuContextApi> = {},
 ): CommandMenuContextApi => ({
-  pageType: CommandMenuContextApiPageType.INDEX_PAGE,
+  pageType: ContextStorePageType.Index,
   isInSidePanel: false,
-  isPageInEditMode: false,
+  isDashboardPageLayoutInEditMode: false,
+  isLayoutCustomizationModeEnabled: false,
   favoriteRecordIds: [],
   isSelectAll: false,
   hasAnySoftDeleteFilterOnView: false,
@@ -26,6 +24,7 @@ const buildContext = (
   },
   selectedRecords: [],
   featureFlags: {},
+  permissionFlags: {},
   targetObjectReadPermissions: {},
   targetObjectWritePermissions: {},
   objectMetadataItem: {},
@@ -453,6 +452,60 @@ describe('evaluateConditionalAvailabilityExpression', () => {
       expect(
         evaluateConditionalAvailabilityExpression(
           activateWorkflowExpression,
+          context,
+        ),
+      ).toBe(true);
+    });
+  });
+
+  describe('permissionFlags gating', () => {
+    it('should hide exportRecords when EXPORT_CSV permission flag is missing', () => {
+      const context = buildContext({ permissionFlags: {} });
+
+      expect(
+        evaluateConditionalAvailabilityExpression(
+          'permissionFlags.EXPORT_CSV',
+          context,
+        ),
+      ).toBe(false);
+    });
+
+    it('should show exportRecords when EXPORT_CSV permission flag is present', () => {
+      const context = buildContext({
+        permissionFlags: { EXPORT_CSV: true },
+      });
+
+      expect(
+        evaluateConditionalAvailabilityExpression(
+          'permissionFlags.EXPORT_CSV',
+          context,
+        ),
+      ).toBe(true);
+    });
+
+    it('should hide importRecords when IMPORT_CSV permission flag is missing even if soft-delete filter is off', () => {
+      const context = buildContext({
+        hasAnySoftDeleteFilterOnView: false,
+        permissionFlags: {},
+      });
+
+      expect(
+        evaluateConditionalAvailabilityExpression(
+          'not hasAnySoftDeleteFilterOnView and permissionFlags.IMPORT_CSV',
+          context,
+        ),
+      ).toBe(false);
+    });
+
+    it('should show importRecords when IMPORT_CSV permission flag is present and soft-delete filter is off', () => {
+      const context = buildContext({
+        hasAnySoftDeleteFilterOnView: false,
+        permissionFlags: { IMPORT_CSV: true },
+      });
+
+      expect(
+        evaluateConditionalAvailabilityExpression(
+          'not hasAnySoftDeleteFilterOnView and permissionFlags.IMPORT_CSV',
           context,
         ),
       ).toBe(true);

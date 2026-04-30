@@ -39,7 +39,6 @@ import { DomainServerConfigModule } from 'src/engine/core-modules/domain/domain-
     ThrottlerModule,
     TwentyConfigModule,
     WorkspaceCacheStorageModule,
-    DomainServerConfigModule,
   ],
   controllers: [
     OAuthTokenController,

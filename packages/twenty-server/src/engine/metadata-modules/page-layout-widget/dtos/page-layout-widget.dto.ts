@@ -42,6 +42,9 @@ export class PageLayoutWidgetDTO {
   id: string;
 
   @Field(() => UUIDScalarType, { nullable: false })
+  applicationId: string;
+
+  @Field(() => UUIDScalarType, { nullable: false })
   pageLayoutTabId: string;
 
   @Field({ nullable: false })
@@ -53,7 +56,11 @@ export class PageLayoutWidgetDTO {
   @Field(() => UUIDScalarType, { nullable: true })
   objectMetadataId?: string;
 
-  @Field(() => GridPositionDTO, { nullable: false })
+  @Field(() => GridPositionDTO, {
+    nullable: false,
+    deprecationReason:
+      'Use `position` instead. Will be removed in a future release.',
+  })
   gridPosition: GridPositionDTO;
 
   @Field(() => PageLayoutWidgetPositionUnion, { nullable: true })
@@ -73,6 +80,9 @@ export class PageLayoutWidgetDTO {
 
   @Field()
   updatedAt: Date;
+
+  @Field(() => Boolean, { nullable: false })
+  isActive: boolean;
 
   @Field(() => Date, { nullable: true })
   deletedAt?: Date;

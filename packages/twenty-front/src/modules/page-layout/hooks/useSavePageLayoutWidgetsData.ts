@@ -1,18 +1,18 @@
 import { useHasFieldsWidgetChanges } from '@/page-layout/hooks/useHasFieldsWidgetChanges';
-import { useHasRecordTableWidgets } from '@/page-layout/hooks/useHasRecordTableWidgets';
+import { useHasRecordTableWidgetViewChanges } from '@/page-layout/hooks/useHasRecordTableWidgetViewChanges';
 import { useSaveFieldsWidgetGroups } from '@/page-layout/hooks/useSaveFieldsWidgetGroups';
-import { useSaveRecordTableWidgetsViewDataOnDashboardSave } from '@/page-layout/widgets/record-table/hooks/useSaveRecordTableWidgetsViewDataOnDashboardSave';
+import { useSaveRecordTableWidgetViews } from '@/page-layout/hooks/useSaveRecordTableWidgetViews';
 import { useCallback } from 'react';
 
 export const useSavePageLayoutWidgetsData = () => {
   const { hasFieldsWidgetChanges } = useHasFieldsWidgetChanges();
 
-  const { hasRecordTableWidgets } = useHasRecordTableWidgets();
+  const { hasRecordTableWidgetViewChanges } =
+    useHasRecordTableWidgetViewChanges();
 
   const { saveFieldsWidgetGroups } = useSaveFieldsWidgetGroups();
 
-  const { saveRecordTableWidgetsViewDataOnDashboardSave } =
-    useSaveRecordTableWidgetsViewDataOnDashboardSave();
+  const { saveRecordTableWidgetViews } = useSaveRecordTableWidgetViews();
 
   const savePageLayoutWidgetsData = useCallback(
     async (pageLayoutId: string) => {
@@ -20,15 +20,15 @@ export const useSavePageLayoutWidgetsData = () => {
         await saveFieldsWidgetGroups(pageLayoutId);
       }
 
-      if (hasRecordTableWidgets(pageLayoutId)) {
-        await saveRecordTableWidgetsViewDataOnDashboardSave(pageLayoutId);
+      if (hasRecordTableWidgetViewChanges(pageLayoutId)) {
+        await saveRecordTableWidgetViews(pageLayoutId);
       }
     },
     [
       hasFieldsWidgetChanges,
+      hasRecordTableWidgetViewChanges,
       saveFieldsWidgetGroups,
-      saveRecordTableWidgetsViewDataOnDashboardSave,
-      hasRecordTableWidgets,
+      saveRecordTableWidgetViews,
     ],
   );
 

@@ -5,9 +5,11 @@ import chalk from 'chalk';
 import { Command, CommandRunner, Option } from 'nest-commander';
 import { DataSource } from 'typeorm';
 
-import { CoreEngineVersionService } from 'src/engine/core-engine-version/services/core-engine-version.service';
-import { InstanceUpgradeService } from 'src/engine/core-modules/upgrade/services/instance-upgrade.service';
+import { TWENTY_PREVIOUS_VERSIONS } from 'src/engine/core-modules/upgrade/constants/twenty-previous-versions.constant';
+import { InstanceCommandRunnerService } from 'src/engine/core-modules/upgrade/services/instance-command-runner.service';
 import { UpgradeCommandRegistryService } from 'src/engine/core-modules/upgrade/services/upgrade-command-registry.service';
+import { UpgradeMigrationService } from 'src/engine/core-modules/upgrade/services/upgrade-migration.service';
+import { UpgradeSequenceReaderService } from 'src/engine/core-modules/upgrade/services/upgrade-sequence-reader.service';
 import { WorkspaceVersionService } from 'src/engine/workspace-manager/workspace-version/services/workspace-version.service';
 
 type RunInstanceCommandsOptions = {
@@ -15,6 +17,7 @@ type RunInstanceCommandsOptions = {
   includeSlow?: boolean;
 };
 
+// TODO should be replaced by a specific call to the upgrade
 @Command({
   name: 'run-instance-commands',
   description:
@@ -26,10 +29,11 @@ export class RunInstanceCommandsCommand extends CommandRunner {
   constructor(
     @InjectDataSource()
     private readonly dataSource: DataSource,
-    private readonly coreEngineVersionService: CoreEngineVersionService,
     private readonly workspaceVersionService: WorkspaceVersionService,
     private readonly upgradeCommandRegistryService: UpgradeCommandRegistryService,
-    private readonly instanceUpgradeService: InstanceUpgradeService,
+    private readonly upgradeSequenceReaderService: UpgradeSequenceReaderService,
+    private readonly instanceUpgradeService: InstanceCommandRunnerService,
+    private readonly upgradeMigrationService: UpgradeMigrationService,
   ) {
     super();
   }
@@ -60,35 +64,30 @@ export class RunInstanceCommandsCommand extends CommandRunner {
       await this.checkWorkspaceVersionSafety(options);
       await this.runLegacyPendingTypeOrmMigrations();
 
-      for (const {
-        command,
-        name,
-      } of this.upgradeCommandRegistryService.getAllFastInstanceCommands()) {
-        const result = await this.instanceUpgradeService.runFastInstanceCommand(
-          {
-            command,
-            name,
-          },
-        );
+      const activeOrSuspendedWorkspaceIds =
+        await this.workspaceVersionService.getActiveOrSuspendedWorkspaceIds();
 
-        if (result.status === 'failed') {
-          throw result.error;
+      const sequence = this.upgradeSequenceReaderService.getUpgradeSequence();
+
+      for (const step of sequence) {
+        if (step.kind === 'fast-instance') {
+          const result =
+            await this.instanceUpgradeService.runFastInstanceCommand({
+              command: step.command,
+              name: step.name,
+            });
+
+          if (result.status === 'failed') {
+            throw result.error;
+          }
         }
-      }
 
-      if (options.includeSlow) {
-        const hasWorkspaces =
-          await this.workspaceVersionService.hasActiveOrSuspendedWorkspaces();
-
-        for (const {
-          command,
-          name,
-        } of this.upgradeCommandRegistryService.getAllSlowInstanceCommands()) {
+        if (step.kind === 'slow-instance' && options.includeSlow) {
           const result =
             await this.instanceUpgradeService.runSlowInstanceCommand({
-              command,
-              name,
-              skipDataMigration: !hasWorkspaces,
+              command: step.command,
+              name: step.name,
+              skipDataMigration: activeOrSuspendedWorkspaceIds.length === 0,
             });
 
           if (result.status === 'failed') {
@@ -106,6 +105,52 @@ export class RunInstanceCommandsCommand extends CommandRunner {
     }
   }
 
+  private async checkWorkspaceVersionSafety(
+    options: RunInstanceCommandsOptions,
+  ): Promise<void> {
+    if (options.force) {
+      this.logger.warn(
+        chalk.yellow('Skipping workspace version check (--force flag used)'),
+      );
+
+      return;
+    }
+
+    const activeOrSuspendedWorkspaceIds =
+      await this.workspaceVersionService.getActiveOrSuspendedWorkspaceIds();
+
+    if (activeOrSuspendedWorkspaceIds.length === 0) {
+      return;
+    }
+
+    const previousVersion =
+      TWENTY_PREVIOUS_VERSIONS[TWENTY_PREVIOUS_VERSIONS.length - 1];
+
+    const lastWorkspaceCommand =
+      this.upgradeCommandRegistryService.getLastWorkspaceCommandForVersion(
+        previousVersion,
+      );
+
+    if (!lastWorkspaceCommand) {
+      return;
+    }
+
+    const allAtPreviousVersion =
+      await this.upgradeMigrationService.areAllWorkspacesAtCommand({
+        commandName: lastWorkspaceCommand.name,
+        workspaceIds: activeOrSuspendedWorkspaceIds,
+      });
+
+    if (!allAtPreviousVersion) {
+      throw new Error(
+        'Unable to run instance commands. Some workspace(s) have not completed ' +
+          `the last workspace command for ${previousVersion} ("${lastWorkspaceCommand.name}").\n` +
+          'Please ensure all workspaces are upgraded to at least the previous version before running migrations.\n' +
+          'Use --force to bypass this check (not recommended).',
+      );
+    }
+  }
+
   private async runLegacyPendingTypeOrmMigrations(): Promise<void> {
     this.logger.log('Running legacy TypeORM migrations...');
 
@@ -118,41 +163,6 @@ export class RunInstanceCommandsCommand extends CommandRunner {
     } else {
       this.logger.log(
         `Executed ${migrations.length} legacy migration(s): ${migrations.map((migration) => migration.name).join(', ')}`,
-      );
-    }
-  }
-
-  private async checkWorkspaceVersionSafety(
-    options: RunInstanceCommandsOptions,
-  ): Promise<void> {
-    if (options.force) {
-      this.logger.warn(
-        chalk.yellow('Skipping workspace version check (--force flag used)'),
-      );
-
-      return;
-    }
-
-    const previousVersion = this.coreEngineVersionService.getPreviousVersion();
-
-    const workspacesBelow =
-      await this.workspaceVersionService.getWorkspacesBelowVersion(
-        previousVersion.version,
-      );
-
-    if (workspacesBelow.length > 0) {
-      for (const workspace of workspacesBelow) {
-        this.logger.error(
-          chalk.red(
-            `Workspace ${workspace.id} (${workspace.displayName}) is at version ${workspace.version ?? 'undefined'}, which is below the minimum required version.`,
-          ),
-        );
-      }
-
-      throw new Error(
-        'Unable to run instance commands. Some workspace(s) are below the minimum required version.\n' +
-          'Please ensure all workspaces are on at least the previous minor version before running migrations.\n' +
-          'Use --force to bypass this check (not recommended).',
       );
     }
   }

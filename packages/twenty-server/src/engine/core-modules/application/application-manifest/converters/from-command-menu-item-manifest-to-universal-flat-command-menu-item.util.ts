@@ -9,6 +9,7 @@ const AVAILABILITY_TYPE_MAP: Record<
   CommandMenuItemAvailabilityType
 > = {
   GLOBAL: CommandMenuItemAvailabilityType.GLOBAL,
+  GLOBAL_OBJECT_CONTEXT: CommandMenuItemAvailabilityType.GLOBAL_OBJECT_CONTEXT,
   RECORD_SELECTION: CommandMenuItemAvailabilityType.RECORD_SELECTION,
   FALLBACK: CommandMenuItemAvailabilityType.FALLBACK,
 };
@@ -43,6 +44,7 @@ export const fromCommandMenuItemManifestToUniversalFlatCommandMenuItem = ({
     payload: null,
     hotKeys: null,
     workflowVersionId: null,
+    pageLayoutUniversalIdentifier: null,
     createdAt: now,
     updatedAt: now,
   };

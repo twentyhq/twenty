@@ -1,8 +1,8 @@
 import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
 import { buildDefaultObjectManifest } from 'test/integration/metadata/suites/application/utils/build-default-object-manifest.util';
+import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
-import { uninstallApplication } from 'test/integration/metadata/suites/application/utils/uninstall-application.util';
 import { findManyObjectMetadataWithIndexes } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata-with-indexes.util';
 import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
 import { findRoles } from 'test/integration/metadata/suites/role/utils/find-roles.util';
@@ -71,38 +71,9 @@ describe('syncApplication', () => {
   }, 60000);
 
   afterEach(async () => {
-    try {
-      await uninstallApplication({
-        universalIdentifier: TEST_APP_ID,
-        expectToFail: false,
-      });
-    } catch {
-      // May fail if the test didn't fully install/sync
-    }
-
-    await globalThis.testDataSource.query(
-      `DELETE FROM core."role" WHERE "universalIdentifier" = $1`,
-      [TEST_ROLE_ID],
-    );
-
-    await globalThis.testDataSource.query(
-      `DELETE FROM core."file" WHERE "applicationId" IN (
-        SELECT id FROM core."application" WHERE "universalIdentifier" = $1
-      )`,
-      [TEST_APP_ID],
-    );
-
-    await globalThis.testDataSource.query(
-      `DELETE FROM core."application"
-       WHERE "universalIdentifier" = $1`,
-      [TEST_APP_ID],
-    );
-
-    await globalThis.testDataSource.query(
-      `DELETE FROM core."applicationRegistration"
-       WHERE "universalIdentifier" = $1`,
-      [TEST_APP_ID],
-    );
+    await cleanupApplicationAndAppRegistration({
+      applicationUniversalIdentifier: TEST_APP_ID,
+    });
   });
 
   it('should return workspace migration actions on initial sync then on second sync with field rename and new role', async () => {

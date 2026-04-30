@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { HttpAdapterHost } from '@nestjs/core';
+import { APP_FILTER, HttpAdapterHost } from '@nestjs/core';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 
 import { WorkspaceQueryRunnerModule } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-runner.module';
@@ -16,16 +16,18 @@ import { ApplicationOAuthModule } from 'src/engine/core-modules/application/appl
 import { ApplicationRegistrationModule } from 'src/engine/core-modules/application/application-registration/application-registration.module';
 import { ApplicationUpgradeModule } from 'src/engine/core-modules/application/application-upgrade/application-upgrade.module';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
+import { PreInstalledAppsModule } from 'src/engine/core-modules/application/pre-installed-apps/pre-installed-apps.module';
 import { ApprovedAccessDomainModule } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.module';
 import { AuthModule } from 'src/engine/core-modules/auth/auth.module';
 import { BillingWebhookModule } from 'src/engine/core-modules/billing-webhook/billing-webhook.module';
+import { AppBillingModule } from 'src/engine/core-modules/billing/app-billing/app-billing.module';
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
+import { BillingGraphqlApiExceptionFilter } from 'src/engine/core-modules/billing/filters/billing-graphql-api-exception.filter';
 import { CacheStorageModule } from 'src/engine/core-modules/cache-storage/cache-storage.module';
 import { TimelineCalendarEventModule } from 'src/engine/core-modules/calendar/timeline-calendar-event.module';
 import { CaptchaModule } from 'src/engine/core-modules/captcha/captcha.module';
 import { CloudflareModule } from 'src/engine/core-modules/cloudflare/cloudflare.module';
 import { CodeInterpreterModule } from 'src/engine/core-modules/code-interpreter/code-interpreter.module';
-import { WebSearchModule } from 'src/engine/core-modules/web-search/web-search.module';
 import { DnsManagerModule } from 'src/engine/core-modules/dns-manager/dns-manager.module';
 import { EmailModule } from 'src/engine/core-modules/email/email.module';
 import { EmailingDomainModule } from 'src/engine/core-modules/emailing-domain/emailing-domain.module';
@@ -155,7 +157,6 @@ import { FileModule } from './file/file.module';
     AiBillingModule,
     LogicFunctionModule.forRoot(),
     CodeInterpreterModule.forRoot(),
-    WebSearchModule.forRoot(),
     SearchModule,
     ApiKeyModule,
     PageLayoutModule,
@@ -163,6 +164,14 @@ import { FileModule } from './file/file.module';
     TrashCleanupModule,
     DashboardModule,
     EventLogsModule,
+    PreInstalledAppsModule,
+    AppBillingModule,
+  ],
+  providers: [
+    {
+      provide: APP_FILTER,
+      useClass: BillingGraphqlApiExceptionFilter,
+    },
   ],
   exports: [
     AuditModule,

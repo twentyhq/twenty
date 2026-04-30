@@ -1,4 +1,4 @@
-import { defineField, FieldType } from 'twenty-sdk';
+import { defineField, FieldType } from 'twenty-sdk/define';
 import { POST_CARD_UNIVERSAL_IDENTIFIER } from '../objects/post-card.object';
 
 export default defineField({

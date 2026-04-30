@@ -26,11 +26,17 @@ export class ViewFieldGroupDTO {
   @Field(() => UUIDScalarType, { nullable: false })
   workspaceId: string;
 
+  @HideField()
+  applicationId: string;
+
   @Field()
   createdAt: Date;
 
   @Field()
   updatedAt: Date;
+
+  @Field(() => Boolean, { nullable: false })
+  isActive: boolean;
 
   @Field(() => Date, { nullable: true })
   deletedAt?: Date | null;

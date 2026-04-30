@@ -1,4 +1,4 @@
-import { UseGuards } from '@nestjs/common';
+import { UseGuards, UseInterceptors } from '@nestjs/common';
 import {
   Args,
   Float,
@@ -9,55 +9,42 @@ import {
 } from '@nestjs/graphql';
 
 import { InjectRepository } from '@nestjs/typeorm';
+import GraphQLJSON from 'graphql-type-json';
 import { PermissionFlagType } from 'twenty-shared/constants';
-import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
-import GraphQLJSON from 'graphql-type-json';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import {
-  BillingException,
-  BillingExceptionCode,
-} from 'src/engine/core-modules/billing/billing.exception';
-import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing-product-key.enum';
-import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
+import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
 import { RedisClientService } from 'src/engine/core-modules/redis-client/redis-client.service';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display-credits.util';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import {
-  FeatureFlagGuard,
-  RequireFeatureFlag,
-} from 'src/engine/guards/feature-flag.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
-import {
-  AgentException,
-  AgentExceptionCode,
-} from 'src/engine/metadata-modules/ai/ai-agent/agent.exception';
-import { type BrowsingContextType } from 'src/engine/metadata-modules/ai/ai-agent/types/browsingContext.type';
 import { AgentMessageDTO } from 'src/engine/metadata-modules/ai/ai-agent-execution/dtos/agent-message.dto';
+import { type BrowsingContextType } from 'src/engine/metadata-modules/ai/ai-agent/types/browsingContext.type';
 import { AgentChatThreadDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/agent-chat-thread.dto';
-import { AISystemPromptPreviewDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/ai-system-prompt-preview.dto';
+import { AiSystemPromptPreviewDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/ai-system-prompt-preview.dto';
 import { ChatStreamCatchupChunksDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/chat-stream-catchup-chunks.dto';
 import { SendChatMessageResultDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/send-chat-message-result.dto';
 import { AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
 import { AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-event-publisher.service';
 import { AgentChatStreamingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-streaming.service';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
-import { getCancelChannel } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-cancel-channel.util';
 import { SystemPromptBuilderService } from 'src/engine/metadata-modules/ai/ai-chat/services/system-prompt-builder.service';
+import { getCancelChannel } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-cancel-channel.util';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
+import {
+  AiException,
+  AiExceptionCode,
+} from 'src/engine/metadata-modules/ai/ai.exception';
+import { AiGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/ai/interceptors/ai-graphql-api-exception.interceptor';
 
-@UseGuards(
-  WorkspaceAuthGuard,
-  FeatureFlagGuard,
-  SettingsPermissionGuard(PermissionFlagType.AI),
-)
+@UseGuards(WorkspaceAuthGuard, SettingsPermissionGuard(PermissionFlagType.AI))
+@UseInterceptors(AiGraphqlApiExceptionInterceptor)
 @MetadataResolver(() => AgentChatThreadDTO)
 export class AgentChatResolver {
   constructor(
@@ -65,8 +52,7 @@ export class AgentChatResolver {
     private readonly agentChatStreamingService: AgentChatStreamingService,
     private readonly eventPublisherService: AgentChatEventPublisherService,
     private readonly systemPromptBuilderService: SystemPromptBuilderService,
-    private readonly billingService: BillingService,
-    private readonly twentyConfigService: TwentyConfigService,
+    private readonly billingUsageService: BillingUsageService,
     private readonly aiModelRegistryService: AiModelRegistryService,
     private readonly redisClientService: RedisClientService,
     @InjectRepository(AgentChatThreadEntity)
@@ -74,7 +60,6 @@ export class AgentChatResolver {
   ) {}
 
   @Query(() => AgentChatThreadDTO)
-  @RequireFeatureFlag(FeatureFlagKey.IS_AI_ENABLED)
   async chatThread(
     @Args('id', { type: () => UUIDScalarType }) id: string,
     @AuthUserWorkspaceId() userWorkspaceId: string,
@@ -83,7 +68,6 @@ export class AgentChatResolver {
   }
 
   @Query(() => [AgentMessageDTO])
-  @RequireFeatureFlag(FeatureFlagKey.IS_AI_ENABLED)
   async chatMessages(
     @Args('threadId', { type: () => UUIDScalarType }) threadId: string,
     @AuthUserWorkspaceId() userWorkspaceId: string,
@@ -95,7 +79,6 @@ export class AgentChatResolver {
   }
 
   @Query(() => ChatStreamCatchupChunksDTO)
-  @RequireFeatureFlag(FeatureFlagKey.IS_AI_ENABLED)
   async chatStreamCatchupChunks(
     @Args('threadId', { type: () => UUIDScalarType }) threadId: string,
     @AuthUserWorkspaceId() userWorkspaceId: string,
@@ -106,7 +89,6 @@ export class AgentChatResolver {
   }
 
   @Mutation(() => AgentChatThreadDTO)
-  @RequireFeatureFlag(FeatureFlagKey.IS_AI_ENABLED)
   async createChatThread(
     @AuthUserWorkspaceId() userWorkspaceId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -118,7 +100,6 @@ export class AgentChatResolver {
   }
 
   @Mutation(() => SendChatMessageResultDTO)
-  @RequireFeatureFlag(FeatureFlagKey.IS_AI_ENABLED)
   async sendChatMessage(
     @Args('threadId', { type: () => UUIDScalarType }) threadId: string,
     @Args('text') text: string,
@@ -133,9 +114,9 @@ export class AgentChatResolver {
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<SendChatMessageResultDTO> {
     if (this.aiModelRegistryService.getAvailableModels().length === 0) {
-      throw new AgentException(
+      throw new AiException(
         'No AI models are available. Configure at least one AI provider.',
-        AgentExceptionCode.API_KEY_NOT_CONFIGURED,
+        AiExceptionCode.API_KEY_NOT_CONFIGURED,
       );
     }
 
@@ -146,28 +127,16 @@ export class AgentChatResolver {
       workspace,
     );
 
-    if (this.twentyConfigService.get('IS_BILLING_ENABLED')) {
-      const canBill = await this.billingService.canBillMeteredProduct(
-        workspace.id,
-        BillingProductKey.WORKFLOW_NODE_EXECUTION,
-      );
-
-      if (!canBill) {
-        throw new BillingException(
-          'Credits exhausted',
-          BillingExceptionCode.BILLING_CREDITS_EXHAUSTED,
-        );
-      }
-    }
+    await this.billingUsageService.hasAvailableCreditsOrThrow(workspace.id);
 
     const thread = await this.threadRepository.findOne({
       where: { id: threadId, userWorkspaceId },
     });
 
     if (!isDefined(thread)) {
-      throw new AgentException(
+      throw new AiException(
         'Thread not found',
-        AgentExceptionCode.AGENT_EXECUTION_FAILED,
+        AiExceptionCode.THREAD_NOT_FOUND,
       );
     }
 
@@ -208,7 +177,6 @@ export class AgentChatResolver {
   }
 
   @Mutation(() => Boolean)
-  @RequireFeatureFlag(FeatureFlagKey.IS_AI_ENABLED)
   async stopAgentChatStream(
     @Args('threadId', { type: () => UUIDScalarType }) threadId: string,
     @AuthUserWorkspaceId() userWorkspaceId: string,
@@ -234,7 +202,6 @@ export class AgentChatResolver {
   }
 
   @Mutation(() => Boolean)
-  @RequireFeatureFlag(FeatureFlagKey.IS_AI_ENABLED)
   async deleteQueuedChatMessage(
     @Args('messageId', { type: () => UUIDScalarType }) messageId: string,
     @AuthUserWorkspaceId() userWorkspaceId: string,
@@ -243,9 +210,9 @@ export class AgentChatResolver {
     const message = await this.agentChatService.findQueuedMessage(messageId);
 
     if (!isDefined(message)) {
-      throw new AgentException(
+      throw new AiException(
         'Queued message not found',
-        AgentExceptionCode.AGENT_EXECUTION_FAILED,
+        AiExceptionCode.MESSAGE_NOT_FOUND,
       );
     }
 
@@ -254,9 +221,9 @@ export class AgentChatResolver {
     });
 
     if (!isDefined(thread)) {
-      throw new AgentException(
+      throw new AiException(
         'Thread not found',
-        AgentExceptionCode.AGENT_EXECUTION_FAILED,
+        AiExceptionCode.THREAD_NOT_FOUND,
       );
     }
 
@@ -273,9 +240,8 @@ export class AgentChatResolver {
     return deleted;
   }
 
-  @Query(() => AISystemPromptPreviewDTO)
-  @RequireFeatureFlag(FeatureFlagKey.IS_AI_ENABLED)
-  async getAISystemPromptPreview(
+  @Query(() => AiSystemPromptPreviewDTO)
+  async getAiSystemPromptPreview(
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string,
   ) {

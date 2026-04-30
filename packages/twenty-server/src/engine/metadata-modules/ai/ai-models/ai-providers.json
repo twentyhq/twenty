@@ -49,6 +49,24 @@
         "modalities": ["image"]
       },
       {
+        "name": "gpt-5.5",
+        "label": "GPT-5.5",
+        "modelFamily": "GPT",
+        "inputCostPerMillionTokens": 5,
+        "outputCostPerMillionTokens": 30,
+        "cachedInputCostPerMillionTokens": 0.5,
+        "longContextCost": {
+          "inputCostPerMillionTokens": 10,
+          "outputCostPerMillionTokens": 45,
+          "thresholdTokens": 200000,
+          "cachedInputCostPerMillionTokens": 1
+        },
+        "contextWindowTokens": 1050000,
+        "maxOutputTokens": 128000,
+        "modalities": ["image", "pdf"],
+        "supportsReasoning": true
+      },
+      {
         "name": "gpt-5-mini",
         "label": "GPT-5 Mini",
         "modelFamily": "GPT",
@@ -298,17 +316,6 @@
         "supportsReasoning": true
       },
       {
-        "name": "codex-mini-latest",
-        "label": "Codex Mini",
-        "modelFamily": "GPT",
-        "inputCostPerMillionTokens": 1.5,
-        "outputCostPerMillionTokens": 6,
-        "cachedInputCostPerMillionTokens": 0.375,
-        "contextWindowTokens": 200000,
-        "maxOutputTokens": 100000,
-        "supportsReasoning": true
-      },
-      {
         "name": "gpt-4",
         "label": "GPT-4",
         "modelFamily": "GPT",
@@ -426,6 +433,22 @@
         "contextWindowTokens": 400000,
         "maxOutputTokens": 128000,
         "modalities": ["image"],
+        "supportsReasoning": true
+      },
+      {
+        "name": "gpt-5.5-pro",
+        "label": "GPT-5.5 Pro",
+        "modelFamily": "GPT",
+        "inputCostPerMillionTokens": 30,
+        "outputCostPerMillionTokens": 180,
+        "longContextCost": {
+          "inputCostPerMillionTokens": 60,
+          "outputCostPerMillionTokens": 270,
+          "thresholdTokens": 200000
+        },
+        "contextWindowTokens": 1050000,
+        "maxOutputTokens": 128000,
+        "modalities": ["image", "pdf"],
         "supportsReasoning": true
       },
       {
@@ -577,6 +600,19 @@
         "cacheCreationCostPerMillionTokens": 18.75,
         "contextWindowTokens": 200000,
         "maxOutputTokens": 32000,
+        "modalities": ["image", "pdf"],
+        "supportsReasoning": true
+      },
+      {
+        "name": "claude-opus-4-7",
+        "label": "Claude Opus 4.7",
+        "modelFamily": "CLAUDE",
+        "inputCostPerMillionTokens": 5,
+        "outputCostPerMillionTokens": 25,
+        "cachedInputCostPerMillionTokens": 0.5,
+        "cacheCreationCostPerMillionTokens": 6.25,
+        "contextWindowTokens": 1000000,
+        "maxOutputTokens": 128000,
         "modalities": ["image", "pdf"],
         "supportsReasoning": true
       },
@@ -949,7 +985,13 @@
         "modelFamily": "GEMINI",
         "inputCostPerMillionTokens": 1.25,
         "outputCostPerMillionTokens": 10,
-        "cachedInputCostPerMillionTokens": 0.31,
+        "cachedInputCostPerMillionTokens": 0.125,
+        "longContextCost": {
+          "inputCostPerMillionTokens": 2.5,
+          "outputCostPerMillionTokens": 15,
+          "thresholdTokens": 200000,
+          "cachedInputCostPerMillionTokens": 0.25
+        },
         "contextWindowTokens": 1048576,
         "maxOutputTokens": 65536,
         "modalities": ["image", "audio", "video", "pdf"],
@@ -997,7 +1039,7 @@
         "modelFamily": "GEMINI",
         "inputCostPerMillionTokens": 0.3,
         "outputCostPerMillionTokens": 2.5,
-        "cachedInputCostPerMillionTokens": 0.075,
+        "cachedInputCostPerMillionTokens": 0.03,
         "contextWindowTokens": 1048576,
         "maxOutputTokens": 65536,
         "modalities": ["image", "audio", "video", "pdf"],

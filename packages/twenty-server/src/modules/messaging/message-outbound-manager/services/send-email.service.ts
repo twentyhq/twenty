@@ -44,7 +44,7 @@ export class SendEmailService {
         body: data.plainTextBody,
         recipients: data.recipients,
         connectedAccount: data.connectedAccount,
-        messageChannelId: data.messageChannelId,
+        messageChannelId: data.messageChannelId!,
         inReplyTo: data.inReplyTo,
         workspaceId,
       });

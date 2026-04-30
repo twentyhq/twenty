@@ -1,18 +1,44 @@
 import { styled } from '@linaria/react';
 import type { ReactNode } from 'react';
 
-import { Container } from '@/design-system/components';
-import { SignoffShape } from '@/sections/Signoff/SignoffShape';
+import { Container, GuideCrosshair } from '@/design-system/components';
+import { type Page, Pages } from '@/lib/pages';
+import { SignoffShape } from '@/sections/Signoff/components/SignoffShape';
 import { theme } from '@/theme';
+
+const GUIDE_CROSSHAIR_BY_PAGE: Partial<
+  Record<Page, { crossX: string; crossY: string; lineColor?: string }>
+> = {
+  [Pages.Partners]: { crossX: 'calc(50% + 334px)', crossY: '198px' },
+};
 
 const StyledSection = styled.section`
   min-width: 0;
   width: 100%;
 
+  &[data-page='partners'] {
+    position: relative;
+  }
+
   &[data-shaped] {
     isolation: isolate;
     overflow: hidden;
     position: relative;
+  }
+
+  @media (min-width: ${theme.breakpoints.md}px) {
+    &[data-page='partners'][data-center='true'] {
+      min-height: 759px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    &[data-page='partners'][data-center='true'] > div {
+      justify-content: center;
+      min-height: 759px;
+      padding-bottom: 0;
+      padding-top: 0;
+    }
   }
 `;
 
@@ -38,15 +64,19 @@ const StyledContainer = styled(Container)`
 
 type RootPropsSimple = {
   backgroundColor: string;
+  centerContent?: boolean;
   children: ReactNode;
   color: string;
+  page?: Page;
   variant?: 'simple';
 };
 
 type RootPropsShaped = {
   backgroundColor: string;
+  centerContent?: boolean;
   children: ReactNode;
   color: string;
+  page?: Page;
   shapeFillColor: string;
   variant: 'shaped';
 };
@@ -54,17 +84,27 @@ type RootPropsShaped = {
 type RootProps = RootPropsSimple | RootPropsShaped;
 
 export function Root(props: RootProps) {
-  const { backgroundColor, children, color } = props;
+  const { backgroundColor, centerContent, children, color, page } = props;
   const isShaped = props.variant === 'shaped';
   const shapeFillColor = isShaped ? props.shapeFillColor : undefined;
+  const shouldCenterContent = centerContent ?? page === Pages.Partners;
 
   return (
     <StyledSection
+      data-center={shouldCenterContent ? 'true' : undefined}
+      data-page={page}
       data-shaped={isShaped ? '' : undefined}
       style={{ backgroundColor, color }}
     >
       {isShaped && shapeFillColor ? (
         <SignoffShape fillColor={shapeFillColor} />
+      ) : null}
+      {page && GUIDE_CROSSHAIR_BY_PAGE[page] ? (
+        <GuideCrosshair
+          crossX={GUIDE_CROSSHAIR_BY_PAGE[page]!.crossX}
+          crossY={GUIDE_CROSSHAIR_BY_PAGE[page]!.crossY}
+          lineColor={GUIDE_CROSSHAIR_BY_PAGE[page]!.lineColor}
+        />
       ) : null}
       <StyledContainer>{children}</StyledContainer>
     </StyledSection>

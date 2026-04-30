@@ -12,6 +12,8 @@ describe('getTabsWithVisibleWidgets', () => {
   ): PageLayoutTab['widgets'][0] => ({
     __typename: 'PageLayoutWidget',
     id,
+    applicationId: '',
+    isActive: true,
     pageLayoutTabId: 'tab-1',
     title: `Widget ${id}`,
     type: WidgetType.FIELDS,
@@ -41,6 +43,7 @@ describe('getTabsWithVisibleWidgets', () => {
     __typename: 'PageLayoutTab',
     applicationId: '',
     id,
+    isActive: true,
     pageLayoutId: 'page-layout-1',
     title: `Tab ${id}`,
     position: 0,

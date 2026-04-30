@@ -3,7 +3,8 @@
 import { Injectable } from '@nestjs/common';
 
 import { ClickHouseService } from 'src/database/clickHouse/clickHouse.service';
-import { formatDateForClickHouse } from 'src/database/clickHouse/clickHouse.util';
+import { formatDateTimeForClickHouse } from 'src/database/clickHouse/clickHouse.util';
+import { fillUsageTimeSeriesGaps } from 'src/engine/core-modules/usage/utils/fill-usage-time-series-gaps.util';
 import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display-credits.util';
 import { toDollars } from 'src/engine/core-modules/usage/utils/to-dollars.util';
 
@@ -33,7 +34,6 @@ type PeriodParams = {
   periodStart: Date;
   periodEnd: Date;
   operationTypes?: string[];
-  useDollarMode?: boolean;
 };
 
 const ALLOWED_GROUP_BY_FIELDS = [
@@ -75,8 +75,8 @@ export class UsageAnalyticsService {
     `;
 
     const rows = await this.clickHouseService.select<BreakdownRowMicro>(query, {
-      periodStart: formatDateForClickHouse(params.periodStart),
-      periodEnd: formatDateForClickHouse(params.periodEnd),
+      periodStart: formatDateTimeForClickHouse(params.periodStart),
+      periodEnd: formatDateTimeForClickHouse(params.periodEnd),
       operationTypes: aiOperationTypes,
     });
 
@@ -137,7 +137,6 @@ export class UsageAnalyticsService {
     periodEnd,
     groupByField,
     operationTypes,
-    useDollarMode = false,
     extraWhere = '',
     extraParams,
   }: PeriodParams & {
@@ -173,12 +172,10 @@ export class UsageAnalyticsService {
       LIMIT ${BREAKDOWN_QUERY_LIMIT}
     `;
 
-    const convert = useDollarMode ? toDollars : toDisplayCredits;
-
     const rows = await this.clickHouseService.select<BreakdownRowMicro>(query, {
       workspaceId,
-      periodStart: formatDateForClickHouse(periodStart),
-      periodEnd: formatDateForClickHouse(periodEnd),
+      periodStart: formatDateTimeForClickHouse(periodStart),
+      periodEnd: formatDateTimeForClickHouse(periodEnd),
       ...(operationTypes && operationTypes.length > 0
         ? { operationTypes }
         : {}),
@@ -187,7 +184,7 @@ export class UsageAnalyticsService {
 
     return rows.map((row) => ({
       key: row.key,
-      creditsUsed: convert(row.creditsUsedMicro),
+      creditsUsed: row.creditsUsedMicro,
     }));
   }
 
@@ -196,7 +193,6 @@ export class UsageAnalyticsService {
     periodStart,
     periodEnd,
     operationTypes,
-    useDollarMode = false,
     extraWhere = '',
     extraParams,
   }: PeriodParams & {
@@ -222,14 +218,12 @@ export class UsageAnalyticsService {
       ORDER BY date ASC
     `;
 
-    const convert = useDollarMode ? toDollars : toDisplayCredits;
-
     const rows = await this.clickHouseService.select<TimeSeriesRowMicro>(
       query,
       {
         workspaceId,
-        periodStart: formatDateForClickHouse(periodStart),
-        periodEnd: formatDateForClickHouse(periodEnd),
+        periodStart: formatDateTimeForClickHouse(periodStart),
+        periodEnd: formatDateTimeForClickHouse(periodEnd),
         ...(operationTypes && operationTypes.length > 0
           ? { operationTypes }
           : {}),
@@ -237,9 +231,15 @@ export class UsageAnalyticsService {
       },
     );
 
-    return rows.map((row) => ({
+    const points = rows.map((row) => ({
       date: row.date,
-      creditsUsed: convert(row.creditsUsedMicro),
+      creditsUsed: row.creditsUsedMicro,
     }));
+
+    return fillUsageTimeSeriesGaps({
+      rows: points,
+      periodStart,
+      periodEnd,
+    });
   }
 }

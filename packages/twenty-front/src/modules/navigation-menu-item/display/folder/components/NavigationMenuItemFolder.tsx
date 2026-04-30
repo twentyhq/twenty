@@ -47,7 +47,8 @@ export const NavigationMenuItemFolder = ({
   const folderName = item.name ?? 'Folder';
   const folderIconKey = item.icon;
   const folderColor = 'color' in item ? (item.color as string | null) : null;
-  const navigationMenuItems = folderChildrenById.get(folderId) ?? [];
+  const folderChildrenNavigationMenuItems =
+    folderChildrenById.get(folderId) ?? [];
   const isGroup = folderCount > 1;
 
   if (readOnly) {
@@ -57,7 +58,7 @@ export const NavigationMenuItemFolder = ({
         folderName={folderName}
         folderIconKey={folderIconKey}
         folderColor={folderColor}
-        navigationMenuItems={navigationMenuItems}
+        navigationMenuItems={folderChildrenNavigationMenuItems}
         isGroup={isGroup}
       />
     );
@@ -71,7 +72,7 @@ export const NavigationMenuItemFolder = ({
           folderName={folderName}
           folderIconKey={folderIconKey}
           folderColor={folderColor}
-          navigationMenuItems={navigationMenuItems}
+          navigationMenuItems={folderChildrenNavigationMenuItems}
           isGroup={isGroup}
         />
       }
@@ -81,7 +82,7 @@ export const NavigationMenuItemFolder = ({
         folderName={folderName}
         folderIconKey={folderIconKey}
         folderColor={folderColor}
-        navigationMenuItems={navigationMenuItems}
+        navigationMenuItems={folderChildrenNavigationMenuItems}
         isGroup={isGroup}
         isEditInPlace={isEditInPlace}
         editModeProps={editModeProps}
@@ -115,8 +116,11 @@ const NavigationMenuItemFolderReadOnlyContent = ({
   const { theme } = useContext(ThemeContext);
   const FolderIcon = getIcon(folderIconKey ?? FOLDER_ICON_DEFAULT);
 
-  const { isOpen, handleToggle, selectedNavigationMenuItemIndex } =
-    useNavigationMenuItemFolderOpenState({ folderId, navigationMenuItems });
+  const { isOpen, handleToggle, hasActiveChild } =
+    useNavigationMenuItemFolderOpenState({
+      folderId,
+      folderChildrenNavigationMenuItems: navigationMenuItems,
+    });
 
   return (
     <NavigationMenuItemFolderLayout
@@ -129,7 +133,7 @@ const NavigationMenuItemFolderReadOnlyContent = ({
               ? folderColor
               : DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER
           }
-          active={!isOpen && selectedNavigationMenuItemIndex >= 0}
+          active={!isOpen && hasActiveChild}
           onClick={handleToggle}
           className="navigation-drawer-item"
           triggerEvent="CLICK"
@@ -161,7 +165,6 @@ const NavigationMenuItemFolderReadOnlyContent = ({
           navigationMenuItem={navigationMenuItem}
           index={index}
           arrayLength={navigationMenuItems.length}
-          selectedNavigationMenuItemIndex={selectedNavigationMenuItemIndex}
           isDragging={false}
         />
       ))}

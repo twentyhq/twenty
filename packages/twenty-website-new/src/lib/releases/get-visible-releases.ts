@@ -14,18 +14,18 @@ export function getVisibleReleaseNotes(
   latestPublishedTag: string | null,
 ): LocalReleaseNote[] {
   if (!latestPublishedTag) {
-    return notes;
+    return [];
   }
 
   const publishedNumber = safeReleaseNumber(latestPublishedTag);
   if (publishedNumber === null) {
-    return notes;
+    return [];
   }
 
   return notes.filter((note) => {
     const noteNumber = safeReleaseNumber(note.release);
     if (noteNumber === null) {
-      return true;
+      return false;
     }
     return noteNumber <= publishedNumber;
   });

@@ -15,6 +15,7 @@ export const LOGIC_FUNCTION_FRAGMENT = gql`
     databaseEventTriggerSettings
     httpRouteTriggerSettings
     applicationId
+    universalIdentifier
     createdAt
     updatedAt
   }

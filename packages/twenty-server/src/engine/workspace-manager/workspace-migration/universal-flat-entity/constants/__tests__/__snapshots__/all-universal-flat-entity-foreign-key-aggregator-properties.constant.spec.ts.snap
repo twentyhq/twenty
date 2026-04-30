@@ -55,6 +55,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_FOREIGN_KEY_AGGREGATOR_PROPERTIES should matc
     "viewFilterGroupUniversalIdentifiers",
     "viewGroupUniversalIdentifiers",
     "viewFieldGroupUniversalIdentifiers",
+    "viewSortUniversalIdentifiers",
   ],
   "viewField": [],
   "viewFieldGroup": [

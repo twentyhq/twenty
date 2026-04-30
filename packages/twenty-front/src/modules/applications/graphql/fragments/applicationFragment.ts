@@ -34,6 +34,19 @@ export const APPLICATION_FRAGMENT = gql`
     agents {
       ...AgentFields
     }
+    frontComponents {
+      id
+      name
+      description
+      applicationId
+      componentName
+      builtComponentChecksum
+      universalIdentifier
+      isHeadless
+      usesSdkClient
+      createdAt
+      updatedAt
+    }
     objects {
       ...ObjectMetadataFields
     }

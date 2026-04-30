@@ -1,15 +1,6 @@
-const USERS_PATH =
-  "M5.499 9a7.52 7.52 0 0 1 4.492 1.502c.939.694 1.176 1.744.895 2.646h2.523c.28-.014.42-.06.48-.091a1 1 0 0 0-.11-.354 2.8 2.8 0 0 0-.709-.885 2 2 0 0 0-.396-.261.5.5 0 0 0-.175-.057v-2c.72 0 1.382.392 1.85.78.495.412.948.965 1.232 1.554.266.552.487 1.363.113 2.123-.405.824-1.277 1.145-2.2 1.19l-.024.001H8.427v-.153q-.06.004-.121.005H2.692a2.7 2.7 0 0 1-2.49-1.605c-.41-.952-.22-2.135.805-2.893A7.52 7.52 0 0 1 5.499 9m0 2c-1.213 0-2.347.404-3.303 1.11-.136.101-.175.19-.188.245a.4.4 0 0 0 .03.247c.09.205.32.398.654.398h5.614a.7.7 0 0 0 .654-.398.4.4 0 0 0 .03-.248c-.013-.054-.052-.143-.188-.244-.956-.706-2.09-1.11-3.303-1.11m.373-11a3.873 3.873 0 1 1 0 7.747 3.873 3.873 0 0 1 0-7.747m5.387.742a3.132 3.132 0 1 1-.648 6.195V4.799a1.133 1.133 0 0 0 1.78-.926 1.132 1.132 0 0 0-1.78-.928V.81q.315-.067.648-.068M5.872 2a1.873 1.873 0 1 0 0 3.746 1.873 1.873 0 0 0 0-3.746";
+type UsersIconProps = { size: number; color: string; strokeWidth?: number };
 
-interface UsersIconProps {
-  size: number;
-  fillColor: string;
-}
-
-export function UsersIcon({
-  size,
-  fillColor,
-}: UsersIconProps) {
+export function UsersIcon({ size, color, strokeWidth = 1.5 }: UsersIconProps) {
   return (
     <svg
       width={size}
@@ -17,12 +8,27 @@ export function UsersIcon({
       viewBox="0 0 16 16"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
+      aria-hidden
     >
+      <circle cx={6} cy={5.5} r={2} stroke={color} strokeWidth={strokeWidth} />
       <path
-        fillRule="evenodd"
-        clipRule="evenodd"
-        d={USERS_PATH}
-        fill={fillColor}
+        d="M2.5 13c0-1.9 1.6-3.5 3.5-3.5s3.5 1.6 3.5 3.5"
+        stroke={color}
+        strokeWidth={strokeWidth}
+        strokeLinecap="round"
+      />
+      <circle
+        cx={11.5}
+        cy={6}
+        r={1.5}
+        stroke={color}
+        strokeWidth={strokeWidth}
+      />
+      <path
+        d="M10.5 9.5c1.9.2 3.3 1.8 3 3.5"
+        stroke={color}
+        strokeWidth={strokeWidth}
+        strokeLinecap="round"
       />
     </svg>
   );

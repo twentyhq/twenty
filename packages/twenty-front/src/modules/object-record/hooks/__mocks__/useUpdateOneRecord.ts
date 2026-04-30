@@ -34,9 +34,6 @@ const basePerson = {
 };
 
 const connectedObjects = {
-  favorites: {
-    edges: [],
-  },
   opportunities: {
     edges: [],
   },

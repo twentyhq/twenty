@@ -1,18 +1,65 @@
 import type { RefObject } from 'react';
 
+import { getPrefersReducedMotionSnapshot } from '@/lib/motion';
+import { getStepperMdUpSnapshot } from '@/lib/stepper';
 import type { HeadingCardType } from '@/sections/Helped/types/HeadingCard';
-import { theme } from '@/theme';
 
 const CARD_WIDTH_DESKTOP = 443;
 const CARD_WIDTH_MOBILE = 360;
-const PROGRESS_SCALE = 1.25;
 const FADE_FRACTION = 0.15;
+const PRE_STICKY_REVEAL_VIEWPORT_FRACTION = 0.35;
+const CARD_TRAVEL_RANGE = 0.5;
+const CARD_TRAVEL_START = 0.05;
+const CARD_TRAVEL_STEP = 0.3;
+const POST_STICKY_PARALLAX_DISTANCE = 0.7;
+
+type HelpedSceneLayoutMeasurements = {
+  cardCount: number;
+  cardWidth: number;
+  innerHeight: number;
+  innerWidth: number;
+  isDesktop: boolean;
+  progressMetrics: HelpedSceneProgressMetrics | null;
+  progressScale: number;
+  sectionHeight: number;
+  viewportHeight: number;
+};
+
+type HelpedSceneProgressMetrics = {
+  exitTargetTop: number;
+  lastCardHeight: number;
+};
+
+export type HelpedSceneLayoutState = {
+  measurements: HelpedSceneLayoutMeasurements | null;
+};
+
+export function createHelpedSceneLayoutState(): HelpedSceneLayoutState {
+  return { measurements: null };
+}
 
 function clamp01(value: number) {
   return Math.min(1, Math.max(0, value));
 }
 
-// Right, left, center for cards 0, 1, 2+
+function easeOutQuad(value: number) {
+  const clampedValue = clamp01(value);
+
+  return 1 - (1 - clampedValue) * (1 - clampedValue);
+}
+
+function setStyleProperty(
+  node: HTMLElement,
+  property: 'opacity' | 'transform' | 'width' | 'zIndex',
+  value: string,
+) {
+  if (node.style[property] === value) {
+    return;
+  }
+
+  node.style[property] = value;
+}
+
 function cardLeft(
   index: number,
   innerWidth: number,
@@ -37,32 +84,110 @@ export type HelpedSceneLayoutRefs = {
   sectionRef: RefObject<HTMLElement | null>;
 };
 
-export function applyHelpedSceneLayout(
+function toStableLayoutMetric(value: number) {
+  return Math.round(value * 100) / 100;
+}
+
+function readProgressScaleMetrics(
   refs: HelpedSceneLayoutRefs,
   cards: readonly HeadingCardType[],
-): void {
-  const section = refs.sectionRef.current;
-  const inner = refs.innerRef.current;
-  if (!section || !inner) {
-    return;
+  inner: HTMLDivElement,
+): HelpedSceneProgressMetrics | null {
+  const exitTargetNode = inner.querySelector('[data-helped-exit-target]');
+  const lastCardNode = refs.cardRefs.current[cards.length - 1];
+
+  if (!(exitTargetNode instanceof HTMLElement) || !lastCardNode) {
+    return null;
   }
 
-  const reducedMotion = window.matchMedia(
-    '(prefers-reduced-motion: reduce)',
-  ).matches;
-  const isDesktop = window.matchMedia(
-    `(min-width: ${theme.breakpoints.md}px)`,
-  ).matches;
+  const exitTargetTop =
+    exitTargetNode.getBoundingClientRect().top -
+    inner.getBoundingClientRect().top;
 
-  const scrollRange = Math.max(1, section.offsetHeight - window.innerHeight);
-  const progress =
-    clamp01(-section.getBoundingClientRect().top / scrollRange) * PROGRESS_SCALE;
+  return {
+    exitTargetTop: toStableLayoutMetric(exitTargetTop),
+    lastCardHeight: lastCardNode.offsetHeight,
+  };
+}
 
-  const innerWidth = inner.offsetWidth;
-  const innerHeight = inner.offsetHeight;
-  const cardWidth = Math.min(
-    isDesktop ? CARD_WIDTH_DESKTOP : CARD_WIDTH_MOBILE,
-    innerWidth - 64,
+function getProgressScale(
+  cards: readonly HeadingCardType[],
+  innerHeight: number,
+  progressMetrics: HelpedSceneProgressMetrics | null,
+) {
+  if (progressMetrics === null) {
+    return 1;
+  }
+
+  const lastCardStart =
+    CARD_TRAVEL_START + (cards.length - 1) * CARD_TRAVEL_STEP;
+  const requiredTravel = clamp01(
+    (innerHeight * 1.1 +
+      progressMetrics.lastCardHeight -
+      progressMetrics.exitTargetTop) /
+      (innerHeight * 1.4),
+  );
+
+  return lastCardStart + requiredTravel * CARD_TRAVEL_RANGE;
+}
+
+function areProgressMetricsEqual(
+  left: HelpedSceneProgressMetrics | null,
+  right: HelpedSceneProgressMetrics | null,
+) {
+  if (left === null || right === null) {
+    return left === right;
+  }
+
+  return (
+    left.exitTargetTop === right.exitTargetTop &&
+    left.lastCardHeight === right.lastCardHeight
+  );
+}
+
+function getCardWidth(innerWidth: number, isDesktop: boolean) {
+  return Math.max(
+    0,
+    Math.min(
+      isDesktop ? CARD_WIDTH_DESKTOP : CARD_WIDTH_MOBILE,
+      innerWidth - 64,
+    ),
+  );
+}
+
+function shouldRecomputeMeasurements(
+  measurements: HelpedSceneLayoutMeasurements,
+  nextMeasurements: Omit<
+    HelpedSceneLayoutMeasurements,
+    'cardWidth' | 'progressScale'
+  >,
+) {
+  return (
+    measurements.cardCount !== nextMeasurements.cardCount ||
+    measurements.innerHeight !== nextMeasurements.innerHeight ||
+    measurements.innerWidth !== nextMeasurements.innerWidth ||
+    measurements.isDesktop !== nextMeasurements.isDesktop ||
+    !areProgressMetricsEqual(
+      measurements.progressMetrics,
+      nextMeasurements.progressMetrics,
+    ) ||
+    measurements.sectionHeight !== nextMeasurements.sectionHeight ||
+    measurements.viewportHeight !== nextMeasurements.viewportHeight
+  );
+}
+
+function measureHelpedSceneLayout(
+  refs: HelpedSceneLayoutRefs,
+  cards: readonly HeadingCardType[],
+  inner: HTMLDivElement,
+  nextMeasurements: Omit<
+    HelpedSceneLayoutMeasurements,
+    'cardWidth' | 'progressScale'
+  >,
+): HelpedSceneLayoutMeasurements {
+  const cardWidth = getCardWidth(
+    nextMeasurements.innerWidth,
+    nextMeasurements.isDesktop,
   );
 
   cards.forEach((_, index) => {
@@ -71,26 +196,103 @@ export function applyHelpedSceneLayout(
       return;
     }
 
-    node.style.width = `${cardWidth}px`;
-    node.style.zIndex = String(10 + index);
-    node.style.left = `${cardLeft(index, innerWidth, cardWidth, isDesktop)}px`;
+    setStyleProperty(node, 'width', `${cardWidth}px`);
+    setStyleProperty(node, 'zIndex', String(10 + index));
+  });
 
-    if (reducedMotion) {
-      node.style.opacity = '1';
-      node.style.top = `${innerHeight * (0.15 + index * 0.25)}px`;
+  const progressMetrics = readProgressScaleMetrics(refs, cards, inner);
+
+  return {
+    ...nextMeasurements,
+    cardWidth,
+    progressMetrics,
+    progressScale: getProgressScale(
+      cards,
+      nextMeasurements.innerHeight,
+      progressMetrics,
+    ),
+  };
+}
+
+export function applyHelpedSceneLayout(
+  refs: HelpedSceneLayoutRefs,
+  cards: readonly HeadingCardType[],
+  state: HelpedSceneLayoutState = createHelpedSceneLayoutState(),
+): void {
+  const section = refs.sectionRef.current;
+  const inner = refs.innerRef.current;
+  if (!section || !inner) {
+    return;
+  }
+
+  const reducedMotion = getPrefersReducedMotionSnapshot();
+  const isDesktop = getStepperMdUpSnapshot();
+  const sectionRect = section.getBoundingClientRect();
+  const viewportHeight = window.innerHeight;
+  const preStickyRevealOffset =
+    viewportHeight * PRE_STICKY_REVEAL_VIEWPORT_FRACTION;
+  const nextMeasurements = {
+    cardCount: cards.length,
+    innerHeight: inner.clientHeight,
+    innerWidth: inner.clientWidth,
+    isDesktop,
+    progressMetrics: readProgressScaleMetrics(refs, cards, inner),
+    sectionHeight: sectionRect.height,
+    viewportHeight,
+  };
+
+  let measurements = state.measurements;
+  if (
+    measurements === null ||
+    shouldRecomputeMeasurements(measurements, nextMeasurements)
+  ) {
+    measurements = measureHelpedSceneLayout(
+      refs,
+      cards,
+      inner,
+      nextMeasurements,
+    );
+    state.measurements = measurements;
+  }
+
+  const { cardWidth, innerHeight, innerWidth, progressScale, sectionHeight } =
+    measurements;
+  const scrollRange = Math.max(1, sectionHeight - viewportHeight);
+  const progress =
+    clamp01(
+      (preStickyRevealOffset - sectionRect.top) /
+        (scrollRange + preStickyRevealOffset),
+    ) * progressScale;
+  const postStickyParallaxOffset =
+    easeOutQuad((viewportHeight - sectionRect.bottom) / viewportHeight) *
+    innerHeight *
+    POST_STICKY_PARALLAX_DISTANCE;
+
+  cards.forEach((_, index) => {
+    const node = refs.cardRefs.current[index];
+    if (!node) {
       return;
     }
 
-    // Card 1: 0.05–0.55, Card 2: 0.35–0.85, Card 3: 0.65–1.15
-    const cardStart = 0.05 + index * 0.3;
-    const travel = clamp01((progress - cardStart) / 0.5);
+    if (reducedMotion) {
+      const x = cardLeft(index, innerWidth, cardWidth, isDesktop);
+      const y = innerHeight * (0.15 + index * 0.25);
 
-    node.style.top = `${innerHeight * (1.1 - travel * 1.4)}px`;
-    node.style.opacity = String(
-      Math.min(
-        clamp01(travel / FADE_FRACTION),
-        clamp01((1 - travel) / FADE_FRACTION),
-      ),
+      setStyleProperty(node, 'opacity', '1');
+      setStyleProperty(node, 'transform', `translate3d(${x}px, ${y}px, 0)`);
+      return;
+    }
+
+    const cardStart = CARD_TRAVEL_START + index * CARD_TRAVEL_STEP;
+    const travel = clamp01((progress - cardStart) / CARD_TRAVEL_RANGE);
+    const x = cardLeft(index, innerWidth, cardWidth, isDesktop);
+    const y = innerHeight * (1.1 - travel * 1.4) - postStickyParallaxOffset;
+    const opacity = Math.min(
+      clamp01(travel / FADE_FRACTION),
+      clamp01((1 - travel) / FADE_FRACTION),
     );
+
+    setStyleProperty(node, 'opacity', String(opacity));
+    setStyleProperty(node, 'transform', `translate3d(${x}px, ${y}px, 0)`);
   });
 }

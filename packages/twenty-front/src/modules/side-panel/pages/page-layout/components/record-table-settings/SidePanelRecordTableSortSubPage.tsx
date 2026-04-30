@@ -32,6 +32,8 @@ export const SidePanelRecordTableSortSubPage = () => {
   return (
     <RecordTableSettingsSorts
       viewId={viewId}
+      widgetId={widgetInEditMode.id}
+      pageLayoutId={pageLayoutId}
       objectMetadataId={widgetInEditMode.objectMetadataId}
     />
   );

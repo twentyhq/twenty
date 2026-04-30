@@ -6,12 +6,9 @@ import { type Repository } from 'typeorm';
 
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
+import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { AgentAsyncExecutorService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-async-executor.service';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
-import { AiBillingService } from 'src/engine/metadata-modules/ai/ai-billing/services/ai-billing.service';
-import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
-import { WebSearchService } from 'src/engine/core-modules/web-search/web-search.service';
-import { AUTO_SELECT_SMART_MODEL_ID } from 'twenty-shared/constants';
 import {
   WorkflowStepExecutorException,
   WorkflowStepExecutorExceptionCode,
@@ -27,8 +24,6 @@ import { isWorkflowAiAgentAction } from './guards/is-workflow-ai-agent-action.gu
 export class AiAgentWorkflowAction implements WorkflowAction {
   constructor(
     private readonly aiAgentExecutionService: AgentAsyncExecutorService,
-    private readonly aiBillingService: AiBillingService,
-    private readonly webSearchService: WebSearchService,
     private readonly workflowExecutionContextService: WorkflowExecutionContextService,
     @InjectRepository(AgentEntity)
     private readonly agentRepository: Repository<AgentEntity>,
@@ -81,33 +76,18 @@ export class AiAgentWorkflowAction implements WorkflowAction {
         ? executionContext.authContext.userWorkspaceId
         : null;
 
-    const { result, usage, cacheCreationTokens, nativeWebSearchCallCount } =
-      await this.aiAgentExecutionService.executeAgent({
-        agent,
-        userPrompt: resolveInput(prompt, context) as string,
-        actorContext: executionContext.isActingOnBehalfOfUser
-          ? executionContext.initiator
-          : undefined,
-        rolePermissionConfig: executionContext.rolePermissionConfig,
-        authContext: executionContext.authContext,
-      });
-
-    await this.aiBillingService.calculateAndBillUsage(
-      agent?.modelId ?? AUTO_SELECT_SMART_MODEL_ID,
-      { usage, cacheCreationTokens },
+    const { result } = await this.aiAgentExecutionService.executeAgent({
+      agent,
+      userPrompt: resolveInput(prompt, context) as string,
+      actorContext: executionContext.isActingOnBehalfOfUser
+        ? executionContext.initiator
+        : undefined,
+      rolePermissionConfig: executionContext.rolePermissionConfig,
+      authContext: executionContext.authContext,
       workspaceId,
-      UsageOperationType.AI_WORKFLOW_TOKEN,
-      agent?.id || null,
       userWorkspaceId,
-    );
-
-    if (this.webSearchService.shouldUseNativeSearch()) {
-      this.aiBillingService.billNativeWebSearchUsage(
-        nativeWebSearchCallCount,
-        workspaceId,
-        userWorkspaceId,
-      );
-    }
+      operationType: UsageOperationType.AI_WORKFLOW_TOKEN,
+    });
 
     return {
       result,

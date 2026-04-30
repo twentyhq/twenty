@@ -1,15 +1,13 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 
-import { type ToolExecutionOptions, type ToolSet, jsonSchema } from 'ai';
+import { type ToolSet, jsonSchema } from 'ai';
 
-import { type NativeToolProvider } from 'src/engine/core-modules/tool-provider/interfaces/native-tool-provider.interface';
 import { type ToolProvider } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
 import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
 import { type ToolRetrievalOptions } from 'src/engine/core-modules/tool-provider/interfaces/tool-retrieval-options.type';
 
 import { TOOL_PROVIDERS } from 'src/engine/core-modules/tool-provider/constants/tool-providers.token';
-import { ToolCategory } from 'twenty-shared/ai';
-import { NativeModelToolProvider } from 'src/engine/core-modules/tool-provider/providers/native-model-tool.provider';
+import { compactToolOutput } from 'src/engine/core-modules/tool-provider/output-transforms/compact-tool-output.util';
 import { ToolExecutorService } from 'src/engine/core-modules/tool-provider/services/tool-executor.service';
 import { type LearnToolsAspect } from 'src/engine/core-modules/tool-provider/tools/learn-tools.tool';
 import { type ToolContext } from 'src/engine/core-modules/tool-provider/types/tool-context.type';
@@ -17,7 +15,10 @@ import { type ToolDescriptor } from 'src/engine/core-modules/tool-provider/types
 import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-index-entry.type';
 import { wrapWithErrorHandler } from 'src/engine/core-modules/tool-provider/utils/tool-error.util';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
-import { wrapJsonSchemaForExecution } from 'src/engine/core-modules/tool/utils/wrap-tool-for-execution.util';
+import {
+  stripLoadingMessage,
+  wrapJsonSchemaForExecution,
+} from 'src/engine/core-modules/tool/utils/wrap-tool-for-execution.util';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 
 @Injectable()
@@ -27,7 +28,6 @@ export class ToolRegistryService {
   constructor(
     @Inject(TOOL_PROVIDERS)
     private readonly providers: ToolProvider[],
-    private readonly nativeModelToolProvider: NativeModelToolProvider,
     private readonly toolExecutorService: ToolExecutorService,
   ) {}
 
@@ -104,23 +104,43 @@ export class ToolRegistryService {
   hydrateToolSet(
     descriptors: ToolDescriptor[],
     context: ToolProviderContext,
-    options?: { wrapWithErrorContext?: boolean },
+    options?: {
+      wrapWithErrorContext?: boolean;
+      includeLoadingMessage?: boolean;
+      compactOutput?: boolean;
+    },
   ): ToolSet {
     const toolSet: ToolSet = {};
+    const includeLoadingMessage = options?.includeLoadingMessage ?? true;
+    const compactOutput = options?.compactOutput ?? false;
 
     for (const descriptor of descriptors) {
-      const schemaWithLoading = wrapJsonSchemaForExecution(
-        descriptor.inputSchema as Record<string, unknown>,
-      );
+      const baseSchema = descriptor.inputSchema as Record<string, unknown>;
+      const schema = includeLoadingMessage
+        ? wrapJsonSchemaForExecution(baseSchema)
+        : baseSchema;
 
       const executeFn = async (
         args: Record<string, unknown>,
-      ): Promise<ToolOutput> =>
-        this.toolExecutorService.dispatch(descriptor, args, context);
+      ): Promise<ToolOutput> => {
+        const cleanArgs = includeLoadingMessage
+          ? stripLoadingMessage(args ?? {})
+          : (args ?? {});
+
+        const result = await this.toolExecutorService.dispatch(
+          descriptor,
+          cleanArgs,
+          context,
+        );
+
+        return compactOutput
+          ? (compactToolOutput(result) as ToolOutput)
+          : result;
+      };
 
       toolSet[descriptor.name] = {
         description: descriptor.description,
-        inputSchema: jsonSchema(schemaWithLoading),
+        inputSchema: jsonSchema(schema),
         execute: options?.wrapWithErrorContext
           ? wrapWithErrorHandler(descriptor.name, executeFn)
           : executeFn,
@@ -148,6 +168,10 @@ export class ToolRegistryService {
   async getToolsByName(
     names: string[],
     context: ToolContext,
+    options?: {
+      includeLoadingMessage?: boolean;
+      compactOutput?: boolean;
+    },
   ): Promise<ToolSet> {
     const fullContext = this.buildContextFromToolContext(context);
 
@@ -164,7 +188,10 @@ export class ToolRegistryService {
         inputSchema: schemas.get(entry.name)!,
       }));
 
-    return this.hydrateToolSet(descriptors, fullContext);
+    return this.hydrateToolSet(descriptors, fullContext, {
+      includeLoadingMessage: options?.includeLoadingMessage,
+      compactOutput: options?.compactOutput,
+    });
   }
 
   async getToolInfo(
@@ -207,9 +234,9 @@ export class ToolRegistryService {
 
   async resolveAndExecute(
     toolName: string,
-    args: Record<string, unknown>,
+    args: Record<string, unknown> | undefined,
     context: ToolContext,
-    _options: ToolExecutionOptions,
+    options?: { compactOutput?: boolean },
   ): Promise<ToolOutput> {
     try {
       const fullContext = this.buildContextFromToolContext(context);
@@ -225,7 +252,15 @@ export class ToolRegistryService {
         };
       }
 
-      return await this.toolExecutorService.dispatch(entry, args, fullContext);
+      const result = await this.toolExecutorService.dispatch(
+        entry,
+        args,
+        fullContext,
+      );
+
+      return options?.compactOutput
+        ? (compactToolOutput(result) as ToolOutput)
+        : result;
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : String(error);
@@ -246,7 +281,13 @@ export class ToolRegistryService {
     context: ToolProviderContext,
     options: ToolRetrievalOptions = {},
   ): Promise<ToolSet> {
-    const { categories, excludeTools, wrapWithErrorContext } = options;
+    const {
+      categories,
+      excludeTools,
+      wrapWithErrorContext,
+      includeLoadingMessage,
+      compactOutput,
+    } = options;
     const categorySet = categories ? new Set(categories) : undefined;
 
     const results = await Promise.all(
@@ -279,17 +320,9 @@ export class ToolRegistryService {
 
     const toolSet = this.hydrateToolSet(filteredDescriptors, context, {
       wrapWithErrorContext,
+      includeLoadingMessage,
+      compactOutput,
     });
-
-    if (categories?.includes(ToolCategory.NATIVE_MODEL)) {
-      if (await this.nativeModelToolProvider.isAvailable(context)) {
-        const nativeTools = await (
-          this.nativeModelToolProvider as NativeToolProvider
-        ).generateTools(context);
-
-        Object.assign(toolSet, nativeTools);
-      }
-    }
 
     this.logger.log(
       `Generated ${Object.keys(toolSet).length} tools for categories: [${categories?.join(', ') ?? 'all'}]`,

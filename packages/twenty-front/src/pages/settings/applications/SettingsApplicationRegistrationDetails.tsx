@@ -1,55 +1,47 @@
-import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { TabList } from '@/ui/layout/tab-list/components/TabList';
-import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useQuery } from '@apollo/client/react';
-import { useLingui } from '@lingui/react/macro';
 import { useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { IconInfoCircle, IconKey, IconWorld } from 'twenty-ui/display';
+import { FindOneApplicationRegistrationDocument } from '~/generated-metadata/graphql';
+import { useLingui } from '@lingui/react/macro';
+import { Tag } from 'twenty-ui/components';
+import { TabList } from '@/ui/layout/tab-list/components/TabList';
+import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import {
-  FindApplicationRegistrationStatsDocument,
-  FindOneApplicationRegistrationDocument,
-} from '~/generated-metadata/graphql';
-import { type ApplicationRegistrationData } from '~/pages/settings/applications/tabs/types/ApplicationRegistrationData';
-import { SettingsApplicationRegistrationGeneralTab } from '~/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab';
+  IconInfoCircle,
+  IconKey,
+  IconSettings,
+  IconWorld,
+} from 'twenty-ui/display';
+import { SettingsApplicationRegistrationConfigTab } from '~/pages/settings/applications/tabs/SettingsApplicationRegistrationConfigTab';
 import { SettingsApplicationRegistrationOAuthTab } from '~/pages/settings/applications/tabs/SettingsApplicationRegistrationOAuthTab';
 import { SettingsApplicationRegistrationDistributionTab } from '~/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab';
+import { SettingsApplicationRegistrationGeneralTab } from '~/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 
 const REGISTRATION_DETAIL_TAB_LIST_ID =
   'application-registration-detail-tab-list';
 
 export const SettingsApplicationRegistrationDetails = () => {
   const { t } = useLingui();
-  const { applicationRegistrationId = '' } = useParams<{
-    applicationRegistrationId: string;
-  }>();
 
   const activeTabId = useAtomComponentStateValue(
     activeTabIdComponentState,
     REGISTRATION_DETAIL_TAB_LIST_ID,
   );
 
+  const { applicationRegistrationId = '' } = useParams<{
+    applicationRegistrationId: string;
+  }>();
+
   const { data, loading } = useQuery(FindOneApplicationRegistrationDocument, {
     variables: { id: applicationRegistrationId },
     skip: !applicationRegistrationId,
   });
 
-  const { data: statsData } = useQuery(
-    FindApplicationRegistrationStatsDocument,
-    {
-      variables: { id: applicationRegistrationId },
-      skip: !applicationRegistrationId,
-    },
-  );
-
-  const registration = data?.findOneApplicationRegistration as
-    | ApplicationRegistrationData
-    | undefined;
-  const stats = statsData?.findApplicationRegistrationStats;
-  const hasActiveInstalls = (stats?.activeInstalls ?? 0) > 0;
+  const registration = data?.findOneApplicationRegistration;
 
   if (loading || !isDefined(registration)) {
     return null;
@@ -59,10 +51,17 @@ export const SettingsApplicationRegistrationDetails = () => {
     { id: 'general', title: t`General`, Icon: IconInfoCircle },
     { id: 'oauth', title: t`OAuth`, Icon: IconKey },
     { id: 'distribution', title: t`Distribution`, Icon: IconWorld },
+    { id: 'config', title: t`Config`, Icon: IconSettings },
   ];
 
   const renderActiveTabContent = () => {
     switch (activeTabId) {
+      case 'config':
+        return (
+          <SettingsApplicationRegistrationConfigTab
+            registration={registration}
+          />
+        );
       case 'oauth':
         return (
           <SettingsApplicationRegistrationOAuthTab
@@ -80,7 +79,6 @@ export const SettingsApplicationRegistrationDetails = () => {
         return (
           <SettingsApplicationRegistrationGeneralTab
             registration={registration}
-            hasActiveInstalls={hasActiveInstalls}
           />
         );
     }
@@ -89,14 +87,20 @@ export const SettingsApplicationRegistrationDetails = () => {
   return (
     <SubMenuTopBarContainer
       title={registration.name}
+      tag={<Tag text={t`Owner`} color={'gray'} />}
       links={[
         {
           children: t`Workspace`,
           href: getSettingsPath(SettingsPath.Workspace),
         },
         {
-          children: t`Applications`,
-          href: getSettingsPath(SettingsPath.Applications),
+          children: t`Applications - Developer`,
+          href: getSettingsPath(
+            SettingsPath.Applications,
+            undefined,
+            undefined,
+            'developer',
+          ),
         },
         { children: registration.name },
       ]}

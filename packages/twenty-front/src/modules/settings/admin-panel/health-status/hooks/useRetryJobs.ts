@@ -1,16 +1,20 @@
+import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { plural, t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useMutation } from '@apollo/client/react';
-import { RetryJobsDocument } from '~/generated-metadata/graphql';
+import { RetryJobsDocument } from '~/generated-admin/graphql';
 import { getErrorMessageFromApolloError } from '~/utils/get-error-message-from-apollo-error.util';
 
 export const useRetryJobs = (queueName: string, onSuccess?: () => void) => {
+  const apolloAdminClient = useApolloAdminClient();
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
   const [isRetrying, setIsRetrying] = useState(false);
-  const [retryJobsMutation] = useMutation(RetryJobsDocument);
+  const [retryJobsMutation] = useMutation(RetryJobsDocument, {
+    client: apolloAdminClient,
+  });
 
   const retryJobs = async (jobIds: string[]) => {
     setIsRetrying(true);

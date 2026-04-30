@@ -21,6 +21,7 @@ export const DEFAULT_RECORD_PAGE_LAYOUT: PageLayout = {
       __typename: 'PageLayoutTab',
       applicationId: '',
       id: 'default-tab-fields',
+      isActive: true,
       title: 'Home',
       icon: 'IconHome',
       position: 100,
@@ -32,7 +33,9 @@ export const DEFAULT_RECORD_PAGE_LAYOUT: PageLayout = {
       widgets: [
         {
           __typename: 'PageLayoutWidget',
+          applicationId: '',
           id: 'default-widget-fields',
+          isActive: true,
           pageLayoutTabId: 'default-tab-fields',
           title: 'Fields',
           type: WidgetType.FIELDS,
@@ -43,6 +46,11 @@ export const DEFAULT_RECORD_PAGE_LAYOUT: PageLayout = {
             column: 0,
             rowSpan: 12,
             columnSpan: 12,
+          },
+          position: {
+            __typename: 'PageLayoutWidgetVerticalListPosition',
+            layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+            index: 0,
           },
           configuration: {
             __typename: 'FieldsConfiguration',
@@ -59,6 +67,7 @@ export const DEFAULT_RECORD_PAGE_LAYOUT: PageLayout = {
       __typename: 'PageLayoutTab',
       applicationId: '',
       id: 'default-tab-timeline',
+      isActive: true,
       title: 'Timeline',
       icon: 'IconTimelineEvent',
       position: 200,
@@ -70,7 +79,9 @@ export const DEFAULT_RECORD_PAGE_LAYOUT: PageLayout = {
       widgets: [
         {
           __typename: 'PageLayoutWidget',
+          applicationId: '',
           id: 'default-widget-timeline',
+          isActive: true,
           pageLayoutTabId: 'default-tab-timeline',
           title: 'Timeline',
           type: WidgetType.TIMELINE,
@@ -81,6 +92,10 @@ export const DEFAULT_RECORD_PAGE_LAYOUT: PageLayout = {
             column: 0,
             rowSpan: 6,
             columnSpan: 12,
+          },
+          position: {
+            __typename: 'PageLayoutWidgetCanvasPosition',
+            layoutMode: PageLayoutTabLayoutMode.CANVAS,
           },
           configuration: {
             __typename: 'FieldsConfiguration',
@@ -97,6 +112,7 @@ export const DEFAULT_RECORD_PAGE_LAYOUT: PageLayout = {
       __typename: 'PageLayoutTab',
       applicationId: '',
       id: 'default-tab-tasks',
+      isActive: true,
       title: 'Tasks',
       icon: 'IconCheckbox',
       position: 300,
@@ -108,7 +124,9 @@ export const DEFAULT_RECORD_PAGE_LAYOUT: PageLayout = {
       widgets: [
         {
           __typename: 'PageLayoutWidget',
+          applicationId: '',
           id: 'default-widget-tasks',
+          isActive: true,
           pageLayoutTabId: 'default-tab-tasks',
           title: 'Tasks',
           type: WidgetType.TASKS,
@@ -119,6 +137,10 @@ export const DEFAULT_RECORD_PAGE_LAYOUT: PageLayout = {
             column: 0,
             rowSpan: 6,
             columnSpan: 12,
+          },
+          position: {
+            __typename: 'PageLayoutWidgetCanvasPosition',
+            layoutMode: PageLayoutTabLayoutMode.CANVAS,
           },
           configuration: {
             __typename: 'FieldsConfiguration',
@@ -135,6 +157,7 @@ export const DEFAULT_RECORD_PAGE_LAYOUT: PageLayout = {
       __typename: 'PageLayoutTab',
       applicationId: '',
       id: 'default-tab-notes',
+      isActive: true,
       title: 'Notes',
       icon: 'IconNotes',
       position: 400,
@@ -146,7 +169,9 @@ export const DEFAULT_RECORD_PAGE_LAYOUT: PageLayout = {
       widgets: [
         {
           __typename: 'PageLayoutWidget',
+          applicationId: '',
           id: 'default-widget-notes',
+          isActive: true,
           pageLayoutTabId: 'default-tab-notes',
           title: 'Notes',
           type: WidgetType.NOTES,
@@ -157,6 +182,10 @@ export const DEFAULT_RECORD_PAGE_LAYOUT: PageLayout = {
             column: 0,
             rowSpan: 6,
             columnSpan: 12,
+          },
+          position: {
+            __typename: 'PageLayoutWidgetCanvasPosition',
+            layoutMode: PageLayoutTabLayoutMode.CANVAS,
           },
           configuration: {
             __typename: 'FieldsConfiguration',
@@ -173,6 +202,7 @@ export const DEFAULT_RECORD_PAGE_LAYOUT: PageLayout = {
       __typename: 'PageLayoutTab',
       applicationId: '',
       id: 'default-tab-files',
+      isActive: true,
       title: 'Files',
       icon: 'IconPaperclip',
       position: 500,
@@ -184,7 +214,9 @@ export const DEFAULT_RECORD_PAGE_LAYOUT: PageLayout = {
       widgets: [
         {
           __typename: 'PageLayoutWidget',
+          applicationId: '',
           id: 'default-widget-files',
+          isActive: true,
           pageLayoutTabId: 'default-tab-files',
           title: 'Files',
           type: WidgetType.FILES,
@@ -195,6 +227,10 @@ export const DEFAULT_RECORD_PAGE_LAYOUT: PageLayout = {
             column: 0,
             rowSpan: 6,
             columnSpan: 12,
+          },
+          position: {
+            __typename: 'PageLayoutWidgetCanvasPosition',
+            layoutMode: PageLayoutTabLayoutMode.CANVAS,
           },
           configuration: {
             __typename: 'FieldsConfiguration',

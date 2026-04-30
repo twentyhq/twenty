@@ -6,10 +6,7 @@ import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLo
 import { SettingPublicDomain } from '@/settings/domains/components/SettingPublicDomain';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import {
-  FeatureFlagKey,
-  PermissionFlagType,
-} from '~/generated-metadata/graphql';
+import { PermissionFlagType } from '~/generated-metadata/graphql';
 
 const SettingsGraphQLPlayground = lazy(() =>
   import(
@@ -163,9 +160,9 @@ const SettingsAI = lazy(() =>
   })),
 );
 
-const SettingsAIUsageUserDetail = lazy(() =>
-  import('~/pages/settings/ai/SettingsAIUsageUserDetail').then((module) => ({
-    default: module.SettingsAIUsageUserDetail,
+const SettingsAiUsageUserDetail = lazy(() =>
+  import('~/pages/settings/ai/SettingsAiUsageUserDetail').then((module) => ({
+    default: module.SettingsAiUsageUserDetail,
   })),
 );
 
@@ -191,6 +188,36 @@ const SettingsApplicationDetails = lazy(() =>
   ),
 );
 
+const SettingsApplicationFrontComponentDetail = lazy(() =>
+  import(
+    '~/pages/settings/applications/SettingsApplicationFrontComponentDetail'
+  ).then((module) => ({
+    default: module.SettingsApplicationFrontComponentDetail,
+  })),
+);
+
+const SettingsLayoutViewDetail = lazy(() =>
+  import('~/pages/settings/layout/SettingsLayoutViewDetail').then((module) => ({
+    default: module.SettingsLayoutViewDetail,
+  })),
+);
+
+const SettingsLayoutPageLayoutDetail = lazy(() =>
+  import('~/pages/settings/layout/SettingsLayoutPageLayoutDetail').then(
+    (module) => ({
+      default: module.SettingsLayoutPageLayoutDetail,
+    }),
+  ),
+);
+
+const SettingsAdminApplicationRegistrationDetail = lazy(() =>
+  import(
+    '~/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetail'
+  ).then((module) => ({
+    default: module.SettingsAdminApplicationRegistrationDetail,
+  })),
+);
+
 const SettingsAvailableApplicationDetails = lazy(() =>
   import(
     '~/pages/settings/applications/SettingsAvailableApplicationDetails'
@@ -204,6 +231,14 @@ const SettingsApplicationRegistrationDetails = lazy(() =>
     '~/pages/settings/applications/SettingsApplicationRegistrationDetails'
   ).then((module) => ({
     default: module.SettingsApplicationRegistrationDetails,
+  })),
+);
+
+const SettingsApplicationRegistrationConfigVariableDetail = lazy(() =>
+  import(
+    '~/pages/settings/applications/components/SettingsApplicationRegistrationConfigVariableDetail'
+  ).then((module) => ({
+    default: module.SettingsApplicationRegistrationConfigVariableDetail,
   })),
 );
 
@@ -225,9 +260,9 @@ const SettingsSkillForm = lazy(() =>
   })),
 );
 
-const SettingsAIPrompts = lazy(() =>
-  import('~/pages/settings/ai/SettingsAIPrompts').then((module) => ({
-    default: module.SettingsAIPrompts,
+const SettingsAiPrompts = lazy(() =>
+  import('~/pages/settings/ai/SettingsAiPrompts').then((module) => ({
+    default: module.SettingsAiPrompts,
   })),
 );
 
@@ -436,6 +471,30 @@ const SettingsAdminNewAiModel = lazy(() =>
   ),
 );
 
+const SettingsAdminUserDetail = lazy(() =>
+  import('~/pages/settings/admin-panel/SettingsAdminUserDetail').then(
+    (module) => ({
+      default: module.SettingsAdminUserDetail,
+    }),
+  ),
+);
+
+const SettingsAdminWorkspaceDetail = lazy(() =>
+  import('~/pages/settings/admin-panel/SettingsAdminWorkspaceDetail').then(
+    (module) => ({
+      default: module.SettingsAdminWorkspaceDetail,
+    }),
+  ),
+);
+
+const SettingsAdminWorkspaceChatThread = lazy(() =>
+  import('~/pages/settings/admin-panel/SettingsAdminWorkspaceChatThread').then(
+    (module) => ({
+      default: module.SettingsAdminWorkspaceChatThread,
+    }),
+  ),
+);
+
 const SettingsUpdates = lazy(() =>
   import('~/pages/settings/updates/SettingsUpdates').then((module) => ({
     default: module.SettingsUpdates,
@@ -539,33 +598,33 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
           element={<SettingsApiWebhooks />}
         />
         <Route path={SettingsPath.AI} element={<SettingsAI />} />
-        <Route path={SettingsPath.AIPrompts} element={<SettingsAIPrompts />} />
+        <Route path={SettingsPath.AiPrompts} element={<SettingsAiPrompts />} />
         <Route
-          path={SettingsPath.AINewAgent}
+          path={SettingsPath.AiNewAgent}
           element={<SettingsAgentForm mode="create" />}
         />
         <Route
-          path={SettingsPath.AIAgentDetail}
+          path={SettingsPath.AiAgentDetail}
           element={<SettingsAgentForm mode="edit" />}
         />
         <Route
-          path={SettingsPath.AIAgentTurnDetail}
+          path={SettingsPath.AiAgentTurnDetail}
           element={<SettingsAgentTurnDetail />}
         />
         <Route
-          path={SettingsPath.AINewSkill}
+          path={SettingsPath.AiNewSkill}
           element={<SettingsSkillForm mode="create" />}
         />
         <Route
-          path={SettingsPath.AISkillDetail}
+          path={SettingsPath.AiSkillDetail}
           element={<SettingsSkillForm mode="edit" />}
         />
         <Route
-          path={SettingsPath.AIUsageUserDetail}
-          element={<SettingsAIUsageUserDetail />}
+          path={SettingsPath.AiUsageUserDetail}
+          element={<SettingsAiUsageUserDetail />}
         />
         <Route
-          path={SettingsPath.AIToolDetail}
+          path={SettingsPath.AiToolDetail}
           element={<SettingsToolDetail />}
         />
         <Route
@@ -573,19 +632,11 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
           element={<SettingsLogicFunctionDetail />}
         />
         <Route path={SettingsPath.Billing} element={<SettingsBilling />} />
+        <Route path={SettingsPath.Usage} element={<SettingsUsage />} />
         <Route
-          element={
-            <SettingsProtectedRouteWrapper
-              requiredFeatureFlag={FeatureFlagKey.IS_USAGE_ANALYTICS_ENABLED}
-            />
-          }
-        >
-          <Route path={SettingsPath.Usage} element={<SettingsUsage />} />
-          <Route
-            path={SettingsPath.UsageUserDetail}
-            element={<SettingsUsageUserDetail />}
-          />
-        </Route>
+          path={SettingsPath.UsageUserDetail}
+          element={<SettingsUsageUserDetail />}
+        />
         <Route
           path={SettingsPath.Subdomain}
           element={<SettingsSubdomainPage />}
@@ -735,6 +786,22 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
           path={SettingsPath.ApplicationLogicFunctionDetail}
           element={<SettingsLogicFunctionDetail />}
         />
+        <Route
+          path={SettingsPath.ApplicationFrontComponentDetail}
+          element={<SettingsApplicationFrontComponentDetail />}
+        />
+        <Route
+          path={SettingsPath.ApplicationViewDetail}
+          element={<SettingsLayoutViewDetail />}
+        />
+        <Route
+          path={SettingsPath.ApplicationPageLayoutDetail}
+          element={<SettingsLayoutPageLayoutDetail />}
+        />
+        <Route
+          path={SettingsPath.ApplicationRegistrationConfigVariableDetails}
+          element={<SettingsApplicationRegistrationConfigVariableDetail />}
+        />
       </Route>
 
       <Route
@@ -792,6 +859,22 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
           <Route
             path={SettingsPath.AdminPanelAiProviderDetail}
             element={<SettingsAdminAiProviderDetail />}
+          />
+          <Route
+            path={SettingsPath.AdminPanelUserDetail}
+            element={<SettingsAdminUserDetail />}
+          />
+          <Route
+            path={SettingsPath.AdminPanelWorkspaceDetail}
+            element={<SettingsAdminWorkspaceDetail />}
+          />
+          <Route
+            path={SettingsPath.AdminPanelApplicationRegistrationDetail}
+            element={<SettingsAdminApplicationRegistrationDetail />}
+          />
+          <Route
+            path={SettingsPath.AdminPanelWorkspaceChatThread}
+            element={<SettingsAdminWorkspaceChatThread />}
           />
         </>
       )}

@@ -117,10 +117,10 @@
     },
     "worker": {
       "executor": "nx:run-commands",
-      "dependsOn": ["build"],
+      "dependsOn": ["^build"],
       "options": {
         "cwd": "packages/twenty-server",
-        "command": "node dist/queue-worker/queue-worker.js"
+        "command": "NODE_ENV=development nest start --watch --entryFile queue-worker/queue-worker"
       }
     },
     "ts-node": {
@@ -202,13 +202,26 @@
         "command": "node dist/command/command.js run-instance-commands --force"
       }
     },
+    "database:init": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["build"],
+      "options": {
+        "cwd": "packages/twenty-server",
+        "commands": [
+          "node dist/database/scripts/setup-db.js",
+          "nx database:migrate -- --include-slow"
+        ],
+        "parallel": false
+      }
+    },
     "database:migrate:generate": {
       "executor": "nx:run-commands",
       "dependsOn": ["build"],
       "options": {
         "cwd": "packages/twenty-server",
         "command": "node dist/command/command.js generate:instance-command"
-      }
+      },
+      "cache": false
     },
     "generate:integration-test": {
       "executor": "nx:run-commands",
@@ -228,8 +241,7 @@
           "cwd": "packages/twenty-server",
           "commands": [
             "node dist/database/scripts/truncate-db.js",
-            "node dist/database/scripts/setup-db.js",
-            "nx database:migrate",
+            "nx database:init",
             "nx command-no-deps -- cache:flush"
           ],
           "parallel": false
@@ -238,8 +250,7 @@
           "cwd": "packages/twenty-server",
           "commands": [
             "node dist/database/scripts/truncate-db.js",
-            "node dist/database/scripts/setup-db.js",
-            "nx database:migrate",
+            "nx database:init",
             "nx command-no-deps -- cache:flush",
             "nx command-no-deps -- workspace:seed:dev"
           ],
