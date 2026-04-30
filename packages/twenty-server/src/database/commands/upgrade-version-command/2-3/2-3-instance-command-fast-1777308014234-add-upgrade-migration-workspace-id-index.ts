@@ -3,7 +3,7 @@ import { QueryRunner } from 'typeorm';
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
 
-@RegisteredInstanceCommand('2.2.0', 1777308014234)
+@RegisteredInstanceCommand('2.3.0', 1777308014234)
 export class AddUpgradeMigrationWorkspaceIdIndexFastInstanceCommand
   implements FastInstanceCommand
 {
