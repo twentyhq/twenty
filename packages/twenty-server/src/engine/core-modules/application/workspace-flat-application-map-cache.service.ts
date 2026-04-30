@@ -50,7 +50,7 @@ export class WorkspaceFlatApplicationMapCacheService extends WorkspaceCacheProvi
         createdAt: true,
         updatedAt: true,
         deletedAt: true,
-      } as FindOptionsSelect<ApplicationEntity>,
+      } as unknown as FindOptionsSelect<ApplicationEntity>,
       withDeleted: true,
     });
 
