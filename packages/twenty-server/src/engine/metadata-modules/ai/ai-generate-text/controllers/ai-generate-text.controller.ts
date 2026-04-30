@@ -4,6 +4,7 @@ import { generateText } from 'ai';
 import { PermissionFlagType } from 'twenty-shared/constants';
 
 import { RestApiExceptionFilter } from 'src/engine/api/rest/rest-api-exception.filter';
+import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import type { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
@@ -27,6 +28,7 @@ export class AiGenerateTextController {
   constructor(
     private readonly aiModelRegistryService: AiModelRegistryService,
     private readonly aiBillingService: AiBillingService,
+    private readonly billingUsageService: BillingUsageService,
   ) {}
 
   @Post('generate-text')
@@ -42,6 +44,8 @@ export class AiGenerateTextController {
         AiExceptionCode.API_KEY_NOT_CONFIGURED,
       );
     }
+
+    await this.billingUsageService.hasAvailableCreditsOrThrow(workspace.id);
 
     const resolvedModelId = body.modelId ?? workspace.fastModel;
 
