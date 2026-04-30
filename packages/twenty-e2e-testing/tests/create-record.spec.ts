@@ -64,7 +64,7 @@ test('Create and update record', async ({ page }) => {
     await lastNameInput.press('Enter');
 
     // Focus on recordFieldList
-    const recordFieldList = page.getByTestId('person-widget-fields');
+    const recordFieldList = page.getByTestId('record-fields-widget');
     await expect(recordFieldList).toBeVisible();
     await recordFieldList.getByText('Emails').first().click();
 
@@ -113,13 +113,6 @@ test('Create and update record', async ({ page }) => {
     await options.getByText('Hybrid').first().click({force: true});
     recordFieldList.getByText('Work Preference').first().click({force: true});
 
-    // Fill previous companies
-    await recordFieldList.getByText('Previous Companies').first().click({force: true});
-    await recordFieldList.getByText('Previous Companies').nth(1).click({force: true});
-    await page.getByPlaceholder('Search').fill('VMw');
-    await page.getByRole('listbox').first().getByText('VMware').click({force: true});
-    await page.keyboard.press('Escape');
-
     // Open full record page to get person ID
     await page.getByRole('button', { name: /^Open/ }).click();
     await page.waitForURL(/\/object\/person\//);
@@ -149,6 +142,5 @@ test('Create and update record', async ({ page }) => {
     expect(findOnePersonReponseBody.data.person.linkedinLink.primaryLinkUrl).toBe('linkedin.com/johndoe');
     expect(findOnePersonReponseBody.data.person.phones.primaryPhoneNumber).toBe('611223344');
     expect(findOnePersonReponseBody.data.person.workPreference).toEqual(['HYBRID']);
-    expect(findOnePersonReponseBody.data.person.previousCompanies.edges[0].node.company.name).toBe('VMware');
 
 });

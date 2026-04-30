@@ -1,4 +1,5 @@
 import { useLingui } from '@lingui/react/macro';
+import { NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
   Avatar,
@@ -6,19 +7,18 @@ import {
   IconFolder,
   IconLink,
   IconTable,
+  TintedIconTile,
 } from 'twenty-ui/display';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
-import { NavigationMenuItemStyleIcon } from '@/navigation-menu-item/display/components/NavigationMenuItemStyleIcon';
-import { NavigationMenuItemType } from 'twenty-shared/types';
 import { pendingInsertionNavigationMenuItemState } from '@/navigation-menu-item/common/states/pendingInsertionNavigationMenuItemState';
+import { useAddFolderToNavigationMenu } from '@/navigation-menu-item/edit/side-panel/hooks/useAddFolderToNavigationMenu';
+import { useAddLinkToNavigationMenu } from '@/navigation-menu-item/edit/side-panel/hooks/useAddLinkToNavigationMenu';
 import { SidePanelAddToNavigationDroppable } from '@/side-panel/components/SidePanelAddToNavigationDroppable';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelItemWithAddToNavigationDrag } from '@/side-panel/components/SidePanelItemWithAddToNavigationDrag';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
-import { useAddFolderToNavigationMenu } from '@/navigation-menu-item/edit/side-panel/hooks/useAddFolderToNavigationMenu';
-import { useAddLinkToNavigationMenu } from '@/navigation-menu-item/edit/side-panel/hooks/useAddLinkToNavigationMenu';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
@@ -60,7 +60,7 @@ export const SidePanelNewSidebarItemMainMenu = ({
   return (
     <SidePanelAddToNavigationDroppable>
       {({ innerRef, droppableProps, placeholder }) => (
-        <SidePanelList commandGroups={[]} selectableItemIds={selectableItemIds}>
+        <SidePanelList selectableItemIds={selectableItemIds}>
           {/* eslint-disable-next-line react/jsx-props-no-spreading */}
           <div ref={innerRef} {...droppableProps}>
             <SidePanelGroup heading={t`Data`}>
@@ -70,7 +70,7 @@ export const SidePanelNewSidebarItemMainMenu = ({
               >
                 <CommandMenuItem
                   Icon={() => (
-                    <NavigationMenuItemStyleIcon
+                    <TintedIconTile
                       Icon={IconBuildingSkyscraper}
                       color="blue"
                     />
@@ -86,12 +86,7 @@ export const SidePanelNewSidebarItemMainMenu = ({
                 onEnter={onSelectView}
               >
                 <CommandMenuItem
-                  Icon={() => (
-                    <NavigationMenuItemStyleIcon
-                      Icon={IconTable}
-                      color="gray"
-                    />
-                  )}
+                  Icon={() => <TintedIconTile Icon={IconTable} />}
                   label={t`View`}
                   id={NavigationMenuItemType.VIEW}
                   hasSubMenu={true}

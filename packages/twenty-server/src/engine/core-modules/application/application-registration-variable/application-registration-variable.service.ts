@@ -90,6 +90,10 @@ export class ApplicationRegistrationVariableService {
       updateData.encryptedValue = this.encryptionService.encrypt(update.value);
     }
 
+    if (isDefined(update.resetValue) && update.resetValue) {
+      updateData.encryptedValue = '';
+    }
+
     if (isDefined(update.description)) {
       updateData.description = update.description;
     }

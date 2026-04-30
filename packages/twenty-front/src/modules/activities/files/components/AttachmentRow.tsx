@@ -11,7 +11,7 @@ import { getFileCategoryFromExtension } from '@/object-record/record-field/ui/ut
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { styled } from '@linaria/react';
 import { useState, useContext } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { getSafeUrl, isDefined } from 'twenty-shared/utils';
 
 import { type AttachmentWithFile } from '@/activities/files/utils/filterAttachmentsWithFile';
 import { FileIcon } from '@/file/components/FileIcon';
@@ -186,7 +186,7 @@ export const AttachmentRow = ({
             <StyledLinkContainer>
               <StyledLink
                 onClick={handleOpenDocument}
-                href={fileUrl}
+                href={getSafeUrl(fileUrl)}
                 target="_blank"
                 rel="noopener noreferrer"
               >

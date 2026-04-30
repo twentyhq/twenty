@@ -1,6 +1,6 @@
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
@@ -53,9 +53,7 @@ export const RecordInlineCellAnchoredPortal = ({
     prefix: instanceIdPrefix,
   });
 
-  const anchorElement = document.body.querySelector<HTMLAnchorElement>(
-    `#${fieldInstanceId}`,
-  );
+  const anchorElement = document.getElementById(fieldInstanceId);
 
   const isRecordFieldReadOnly = useIsRecordFieldReadOnly({
     fieldMetadataId: fieldMetadataItem.id,

@@ -19,6 +19,7 @@ export const CREATE_ONE_OBJECT_METADATA_ITEM = gql`
       labelIdentifierFieldMetadataId
       imageIdentifierFieldMetadataId
       isLabelSyncedWithName
+      applicationId
       fieldsList {
         id
         universalIdentifier
@@ -207,6 +208,7 @@ export const UPDATE_ONE_OBJECT_METADATA_ITEM = gql`
       labelIdentifierFieldMetadataId
       imageIdentifierFieldMetadataId
       isLabelSyncedWithName
+      applicationId
     }
   }
 `;
@@ -230,6 +232,7 @@ export const DELETE_ONE_OBJECT_METADATA_ITEM = gql`
       labelIdentifierFieldMetadataId
       imageIdentifierFieldMetadataId
       isLabelSyncedWithName
+      applicationId
     }
   }
 `;

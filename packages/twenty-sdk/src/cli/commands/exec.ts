@@ -8,12 +8,14 @@ export class LogicFunctionExecuteCommand {
   async execute({
     appPath = CURRENT_EXECUTION_DIRECTORY,
     postInstall = false,
+    preInstall = false,
     functionUniversalIdentifier,
     functionName,
     payload = '{}',
   }: {
     appPath?: string;
     postInstall?: boolean;
+    preInstall?: boolean;
     functionUniversalIdentifier?: string;
     functionName?: string;
     payload?: string;
@@ -30,16 +32,20 @@ export class LogicFunctionExecuteCommand {
 
     const identifier = postInstall
       ? 'post install'
-      : (functionUniversalIdentifier ?? functionName);
+      : preInstall
+        ? 'pre install'
+        : (functionUniversalIdentifier ?? functionName);
 
     console.log(chalk.blue(`🚀 Executing function "${identifier}"...`));
     console.log(chalk.gray(`   Payload: ${JSON.stringify(parsedPayload)}\n`));
 
     const executeOptions = postInstall
       ? { appPath, postInstall: true as const, payload: parsedPayload }
-      : functionUniversalIdentifier
-        ? { appPath, functionUniversalIdentifier, payload: parsedPayload }
-        : { appPath, functionName: functionName!, payload: parsedPayload };
+      : preInstall
+        ? { appPath, preInstall: true as const, payload: parsedPayload }
+        : functionUniversalIdentifier
+          ? { appPath, functionUniversalIdentifier, payload: parsedPayload }
+          : { appPath, functionName: functionName!, payload: parsedPayload };
 
     const result = await functionExecute(executeOptions);
 

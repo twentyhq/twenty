@@ -65,7 +65,9 @@ export const UpdateMultipleRecordsForm = ({
           const value = values[fieldNameOrRelationIdName];
 
           const handleValueChange = (newValue: any) => {
-            if (isUpdateRecordValueEmpty(newValue)) {
+            if (newValue === null) {
+              onChange(fieldNameOrRelationIdName, null);
+            } else if (isUpdateRecordValueEmpty(newValue)) {
               onChange(fieldNameOrRelationIdName, undefined);
             } else {
               onChange(fieldNameOrRelationIdName, newValue);
@@ -79,6 +81,7 @@ export const UpdateMultipleRecordsForm = ({
               field={fieldDefinition}
               defaultValue={value}
               onChange={handleValueChange}
+              onClear={() => onChange(fieldNameOrRelationIdName, undefined)}
             />
           );
         })}

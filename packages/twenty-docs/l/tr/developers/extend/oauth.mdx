@@ -1,0 +1,189 @@
+---
+title: OAuth
+icon: anahtar
+description: PKCE'li yetkilendirme kodu akışı ve sunucudan sunucuya erişim için istemci kimlik bilgileri.
+---
+
+Twenty, kullanıcıya dönük uygulamalar için yetkilendirme kodu + PKCE'yi ve sunucudan sunucuya erişim için istemci kimlik bilgilerini kullanarak OAuth 2.0'ı uygular. İstemciler [RFC 7591](https://datatracker.ietf.org/doc/html/rfc7591) aracılığıyla dinamik olarak kaydedilir — bir kontrol panelinde manuel kurulum gerekmez.
+
+## OAuth Ne Zaman Kullanılır
+
+| Senaryo                                             | Kimlik Doğrulama Yöntemi                                                                 |
+| --------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| Dahili betikler, otomasyon                          | [API Anahtarı](/l/tr/developers/extend/api#authentication)                                    |
+| Bir kullanıcının adına hareket eden harici uygulama | **OAuth — Yetkilendirme Kodu**                                                           |
+| Sunucudan sunucuya, kullanıcı bağlamı yok           | **OAuth — İstemci Kimlik Bilgileri**                                                     |
+| UI uzantılarına sahip Twenty Uygulaması             | [Uygulamalar](/l/tr/developers/extend/apps/getting-started) (OAuth otomatik olarak yönetilir) |
+
+## Bir İstemci Kaydedin
+
+Twenty, [RFC 7591](https://datatracker.ietf.org/doc/html/rfc7591) uyarınca **dinamik istemci kaydını** destekler. Manuel kurulum gerekmez — programatik olarak kaydedin:
+
+```bash
+POST /oauth/register
+Content-Type: application/json
+
+{
+  "client_name": "My Integration",
+  "redirect_uris": ["https://myapp.com/callback"],
+  "grant_types": ["authorization_code"],
+  "token_endpoint_auth_method": "client_secret_post"
+}
+```
+
+**Yanıt:**
+
+```json
+{
+  "client_id": "abc123",
+  "client_secret": "secret456",
+  "client_name": "My Integration",
+  "redirect_uris": ["https://myapp.com/callback"]
+}
+```
+
+<Warning>
+`client_secret` değerini güvenli bir şekilde saklayın — daha sonra geri alınamaz.
+</Warning>
+
+## Kapsamlar
+
+| Kapsam    | Erişim                                                     |
+| --------- | ---------------------------------------------------------- |
+| `api`     | Core ve Metadata API'lerine tam okuma/yazma erişimi        |
+| `profile` | Kimliği doğrulanmış kullanıcının profil bilgilerini okuyun |
+
+Kapsamları boşlukla ayrılmış bir dize olarak isteyin: `scope=api profile`
+
+## Yetkilendirme Kodu Akışı
+
+Uygulamanız bir Twenty kullanıcısı adına hareket ettiğinde bu akışı kullanın.
+
+### 1. Kullanıcıyı yetkilendirmek için yönlendirin
+
+```
+GET /oauth/authorize?
+  client_id=YOUR_CLIENT_ID&
+  response_type=code&
+  redirect_uri=https://myapp.com/callback&
+  scope=api&
+  state=random_state_value&
+  code_challenge=CHALLENGE&
+  code_challenge_method=S256
+```
+
+| Parametre               | Zorunlu  | Açıklama                                                                 |
+| ----------------------- | -------- | ------------------------------------------------------------------------ |
+| `client_id`             | Evet     | Kayıtlı istemci kimliğiniz                                               |
+| `response_type`         | Evet     | `code` olmalıdır                                                         |
+| `redirect_uri`          | Evet     | Kayıtlı bir yönlendirme URI'siyle eşleşmelidir                           |
+| `scope`                 | Hayır    | Boşlukla ayrılmış kapsamlar (varsayılan: `api`)                          |
+| `state`                 | Önerilen | CSRF saldırılarını önlemek için rastgele bir dize                        |
+| `code_challenge`        | Önerilen | PKCE challenge (doğrulayıcının SHA-256 karması, base64url ile kodlanmış) |
+| `code_challenge_method` | Önerilen | PKCE kullanılırken `S256` olmalıdır                                      |
+
+Kullanıcı bir onay ekranı görür ve erişimi onaylar veya reddeder.
+
+### 2. Geri dönüşü işleyin
+
+Yetkilendirmeden sonra, Twenty `redirect_uri` adresinize geri yönlendirir:
+
+```
+https://myapp.com/callback?code=AUTH_CODE&state=random_state_value
+```
+
+`state` değerinin gönderdiğinizle eşleştiğini doğrulayın.
+
+### 3. Kodu belirteçlerle değiş tokuş edin
+
+```bash
+POST /oauth/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=authorization_code&
+code=AUTH_CODE&
+redirect_uri=https://myapp.com/callback&
+client_id=YOUR_CLIENT_ID&
+client_secret=YOUR_CLIENT_SECRET&
+code_verifier=YOUR_PKCE_VERIFIER
+```
+
+**Yanıt:**
+
+```json
+{
+  "access_token": "eyJhbG...",
+  "token_type": "Bearer",
+  "expires_in": 3600,
+  "refresh_token": "dGhpcyBpcyBh..."
+}
+```
+
+### 4. Erişim belirtecini kullanın
+
+```bash
+GET /rest/companies
+Authorization: Bearer ACCESS_TOKEN
+```
+
+### 5. Süresi dolduğunda yenileyin
+
+```bash
+POST /oauth/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=refresh_token&
+refresh_token=YOUR_REFRESH_TOKEN&
+client_id=YOUR_CLIENT_ID&
+client_secret=YOUR_CLIENT_SECRET
+```
+
+## İstemci Kimlik Bilgileri Akışı
+
+Sunucudan sunucuya, kullanıcı etkileşimi olmayan entegrasyonlar için:
+
+```bash
+POST /oauth/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=client_credentials&
+client_id=YOUR_CLIENT_ID&
+client_secret=YOUR_CLIENT_SECRET&
+scope=api
+```
+
+Döndürülen belirteç, belirli bir kullanıcıya bağlı olmayan, çalışma alanı düzeyinde erişime sahiptir.
+
+## Sunucu Keşfi
+
+Twenty, OAuth yapılandırmasını standart bir keşif uç noktasında yayımlar:
+
+```
+GET /.well-known/oauth-authorization-server
+```
+
+Bu, tüm uç noktaları, desteklenen grant türlerini, kapsamları ve yetenekleri döndürür — genel OAuth istemcileri oluşturmak için kullanışlıdır.
+
+## API Uç Noktaları Özeti
+
+| Uç nokta                                  | Amaç                          |
+| ----------------------------------------- | ----------------------------- |
+| `/.well-known/oauth-authorization-server` | Sunucu üstverisi keşfi        |
+| `/oauth/register`                         | Dinamik istemci kaydı         |
+| `/oauth/authorize`                        | Kullanıcı yetkilendirmesi     |
+| `/oauth/token`                            | Belirteç değişimi ve yenileme |
+
+| Ortam                        | Temel URL                |
+| ---------------------------- | ------------------------ |
+| **Bulut**                    | `https://api.twenty.com` |
+| **Kendi Kendine Barındırma** | `https://{your-domain}`  |
+
+## OAuth ve API Anahtarları
+
+|                           | API Anahtarları            | OAuth                                              |
+| ------------------------- | -------------------------- | -------------------------------------------------- |
+| **Kurulum**               | Ayarlar'da oluşturun       | Bir istemci kaydedin, akışı uygulayın              |
+| **Kullanıcı bağlamı**     | Yok (çalışma alanı düzeyi) | Belirli bir kullanıcının izinleri                  |
+| **En uygun**              | Betikler, dahili araçlar   | Harici uygulamalar, çok kullanıcılı entegrasyonlar |
+| **Belirteç döndürme**     | Manuel                     | Yenileme belirteçleri aracılığıyla otomatik olarak |
+| **Kapsama dayalı erişim** | Tam API erişimi            | Kapsamlar aracılığıyla ayrıntılı                   |

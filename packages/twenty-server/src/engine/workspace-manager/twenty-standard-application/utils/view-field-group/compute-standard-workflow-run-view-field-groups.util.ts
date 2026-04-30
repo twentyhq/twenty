@@ -20,28 +20,18 @@ export const computeStandardWorkflowRunViewFieldGroups = (
           isVisible: true,
         },
       }),
-    workflowRunRecordPageFieldsAdditional:
-      createStandardViewFieldGroupFlatMetadata({
+    workflowRunRecordPageFieldsSystem: createStandardViewFieldGroupFlatMetadata(
+      {
         ...args,
         objectName: 'workflowRun',
         context: {
           viewName: 'workflowRunRecordPageFields',
-          viewFieldGroupName: 'additional',
-          name: 'Additional',
+          viewFieldGroupName: 'system',
+          name: 'System',
           position: 1,
           isVisible: true,
         },
-      }),
-    workflowRunRecordPageFieldsOther: createStandardViewFieldGroupFlatMetadata({
-      ...args,
-      objectName: 'workflowRun',
-      context: {
-        viewName: 'workflowRunRecordPageFields',
-        viewFieldGroupName: 'other',
-        name: 'Other',
-        position: 2,
-        isVisible: true,
       },
-    }),
+    ),
   };
 };

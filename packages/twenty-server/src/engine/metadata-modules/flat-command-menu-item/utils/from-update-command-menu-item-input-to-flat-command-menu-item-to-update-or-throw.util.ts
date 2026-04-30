@@ -18,12 +18,13 @@ export const fromUpdateCommandMenuItemInputToFlatCommandMenuItemToUpdateOrThrow 
     flatCommandMenuItemMaps,
     updateCommandMenuItemInput,
     flatObjectMetadataMaps,
+    flatPageLayoutMaps,
   }: {
     flatCommandMenuItemMaps: FlatCommandMenuItemMaps;
     updateCommandMenuItemInput: UpdateCommandMenuItemInput;
   } & Pick<
     AllFlatEntityMaps,
-    'flatObjectMetadataMaps'
+    'flatObjectMetadataMaps' | 'flatPageLayoutMaps'
   >): FlatCommandMenuItem => {
     const existingFlatCommandMenuItem = findFlatEntityByIdInFlatEntityMaps({
       flatEntityId: updateCommandMenuItemInput.id,
@@ -61,6 +62,20 @@ export const fromUpdateCommandMenuItemInputToFlatCommandMenuItemToUpdateOrThrow 
 
       flatCommandMenuItemToUpdate.availabilityObjectMetadataUniversalIdentifier =
         availabilityObjectMetadataUniversalIdentifier;
+    }
+
+    if (updates.pageLayoutId !== undefined) {
+      const { pageLayoutUniversalIdentifier } =
+        resolveEntityRelationUniversalIdentifiers({
+          metadataName: 'commandMenuItem',
+          foreignKeyValues: {
+            pageLayoutId: flatCommandMenuItemToUpdate.pageLayoutId,
+          },
+          flatEntityMaps: { flatPageLayoutMaps },
+        });
+
+      flatCommandMenuItemToUpdate.pageLayoutUniversalIdentifier =
+        pageLayoutUniversalIdentifier;
     }
 
     return flatCommandMenuItemToUpdate;

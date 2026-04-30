@@ -1,4 +1,4 @@
-const MENU_PATH = "M.5.5H14M.5 5.75H14M.5 11H14";
+const MENU_PATH = 'M.5.5H14M.5 5.75H14M.5 11H14';
 
 interface MenuIconProps {
   size: number;

@@ -20,7 +20,6 @@ export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, __dirname, '');
 
   const {
-    REACT_APP_SERVER_BASE_URL,
     VITE_BUILD_SOURCEMAP,
     VITE_HOST,
     SSL_CERT_PATH,
@@ -88,6 +87,7 @@ export default defineConfig(({ mode }) => {
           include: [path.resolve(__dirname, 'src') + '/**/*.{ts,tsx}'],
           exclude: [
             '**/generated-metadata/**',
+            '**/generated-admin/**',
             '**/testing/mock-data/**',
             '**/testing/jest/**',
             '**/testing/hooks/**',
@@ -231,11 +231,7 @@ export default defineConfig(({ mode }) => {
     envPrefix: 'REACT_APP_',
 
     define: {
-      _env_: {
-        REACT_APP_SERVER_BASE_URL,
-      },
       'process.env': {
-        REACT_APP_SERVER_BASE_URL,
         IS_DEBUG_MODE,
         IS_DEV_ENV: mode === 'development' ? 'true' : 'false',
       },

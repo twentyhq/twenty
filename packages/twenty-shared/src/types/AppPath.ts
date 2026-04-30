@@ -23,6 +23,7 @@ export enum AppPath {
 
   RecordIndexPage = '/objects/:objectNamePlural',
   RecordShowPage = '/object/:objectNameSingular/:objectRecordId',
+  PageLayoutPage = '/page/:pageLayoutId',
 
   Settings = `settings`,
   SettingsCatchAll = `/${Settings}/*`,

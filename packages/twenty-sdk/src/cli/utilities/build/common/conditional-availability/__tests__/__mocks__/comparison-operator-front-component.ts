@@ -1,4 +1,5 @@
-import { defineFrontComponent, numberOfSelectedRecords } from '@/sdk';
+import { defineFrontComponent } from '@/sdk/define';
+import { numberOfSelectedRecords } from '@/sdk/front-component';
 
 const MyComponent = () => null;
 

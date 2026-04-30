@@ -6,7 +6,7 @@ import { isDefined } from 'twenty-shared/utils';
 import type SMTPConnection from 'nodemailer/lib/smtp-connection';
 
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
-import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 
 @Injectable()
 export class SmtpClientProvider {
@@ -16,7 +16,7 @@ export class SmtpClientProvider {
 
   public async getSmtpClient(
     connectedAccount: Pick<
-      ConnectedAccountWorkspaceEntity,
+      ConnectedAccountEntity,
       'connectionParameters' | 'handle'
     >,
   ): Promise<Transporter> {

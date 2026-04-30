@@ -1,5 +1,4 @@
 import { createOnePageLayoutTab } from 'test/integration/metadata/suites/page-layout-tab/utils/create-one-page-layout-tab.util';
-import { destroyOnePageLayoutTab } from 'test/integration/metadata/suites/page-layout-tab/utils/destroy-one-page-layout-tab.util';
 import { fetchTestFieldMetadataIds } from 'test/integration/metadata/suites/page-layout-widget/utils/fetch-test-field-metadata-ids.util';
 import { createOnePageLayout } from 'test/integration/metadata/suites/page-layout/utils/create-one-page-layout.util';
 import { destroyOnePageLayout } from 'test/integration/metadata/suites/page-layout/utils/destroy-one-page-layout.util';
@@ -193,14 +192,6 @@ describe('Page layout with tabs update should succeed', () => {
   });
 
   afterEach(async () => {
-    await destroyOnePageLayoutTab({
-      expectToFail: false,
-      input: { id: testTabId1 },
-    });
-    await destroyOnePageLayoutTab({
-      expectToFail: false,
-      input: { id: testTabId2 },
-    });
     await destroyOnePageLayout({
       expectToFail: false,
       input: { id: testPageLayoutId },

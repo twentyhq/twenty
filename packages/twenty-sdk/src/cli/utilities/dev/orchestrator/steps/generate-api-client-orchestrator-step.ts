@@ -1,3 +1,4 @@
+import { ensureAppAccessTokenIsValidOrRefresh } from '@/cli/utilities/auth';
 import { type ClientService } from '@/cli/utilities/client/client-service';
 import { type ConfigService } from '@/cli/utilities/config/config-service';
 import { type OrchestratorState } from '@/cli/utilities/dev/orchestrator/dev-mode-orchestrator-state';
@@ -25,18 +26,24 @@ export class GenerateApiClientOrchestratorStep {
     this.notify = notify;
   }
 
-  async execute(input: { appPath: string }): Promise<void> {
+  async execute(input: {
+    appPath: string;
+    credentials?: { clientId: string; clientSecret: string };
+  }): Promise<void> {
     const step = this.state.steps.generateApiClient;
 
     step.status = 'in_progress';
     this.notify();
 
     try {
-      const config = await this.configService.getConfig();
+      const appAccessToken = await ensureAppAccessTokenIsValidOrRefresh(
+        this.configService,
+        input.credentials,
+      );
 
       await this.clientService.generateCoreClient({
         appPath: input.appPath,
-        authToken: config.accessToken,
+        appAccessToken,
       });
 
       step.status = 'done';

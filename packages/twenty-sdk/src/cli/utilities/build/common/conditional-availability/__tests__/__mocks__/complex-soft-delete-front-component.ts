@@ -1,10 +1,10 @@
+import { defineFrontComponent } from '@/sdk/define';
 import {
-  defineFrontComponent,
   none,
   numberOfSelectedRecords,
   objectPermissions,
   selectedRecords,
-} from '@/sdk';
+} from '@/sdk/front-component';
 
 const MyComponent = () => null;
 

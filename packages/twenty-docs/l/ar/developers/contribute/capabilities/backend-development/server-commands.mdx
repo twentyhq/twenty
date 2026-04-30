@@ -1,5 +1,6 @@
 ---
 title: الأوامر الخلفية
+icon: terminal
 ---
 
 ## الأوامر المفيدة
@@ -47,25 +48,8 @@ npx nx run twenty-server:database:reset
 #### للكائنات داخل مخططات Core/Metadata (TypeORM)
 
 ```bash
-npx nx run twenty-server:typeorm migration:generate src/database/typeorm/core/migrations/nameOfYourMigration -d src/database/typeorm/core/core.datasource.ts
+npx nx run twenty-server:database:migrate:generate
 ```
-
-#### لكائنات مساحة العمل
-
-لا توجد ملفات هجيرات، يتم إنشاء الهجيرات تلقائيًا لكل مساحة عمل،
-مخزنة في قاعدة البيانات، ويتم تطبيقها مع هذا الأمر
-
-```bash
-npx nx run twenty-server:command workspace:sync-metadata -f
-```
-
-<Warning>
-
-سيؤدي هذا إلى إسقاط قاعدة البيانات وإعادة تشغيل الهجرات والبذور.
-
-تأكد من عمل نسخة احتياطية لأي بيانات تريد الاحتفاظ بها قبل تشغيل هذا الأمر.
-
-</Warning>
 
 ## "التقنية المستخدمة"
 

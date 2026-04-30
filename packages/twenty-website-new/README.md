@@ -1,4 +1,9 @@
-# Twenty-Website
+# twenty-website-new
 
-This is used for the marketing website (twenty.com).
-This is not related in any way to the main app, which you can find in twenty-front and twenty-server.
+```bash
+yarn install
+yarn nx run twenty-website-new:dev
+yarn nx run twenty-website-new:build
+yarn nx run twenty-website-new:lint
+yarn nx run twenty-website-new:typecheck
+```

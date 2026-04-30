@@ -1,42 +1,110 @@
 import { SERVER_ERROR_CODES, type CommandResult } from '@/cli/types';
 import { ConfigService } from '@/cli/utilities/config/config-service';
+import { getConfigPath } from '@/cli/utilities/config/get-config-path';
 import { runSafe } from '@/cli/utilities/run-safe';
 import {
   checkDockerRunning,
   CONTAINER_NAME,
   containerExists,
   DEFAULT_PORT,
+  DEFAULT_TEST_PORT,
   getContainerPort,
   IMAGE,
   isContainerRunning,
+  TEST_CONTAINER_NAME,
 } from '@/cli/utilities/server/docker-container';
 import {
   checkServerHealth,
   detectLocalServer,
 } from '@/cli/utilities/server/detect-local-server';
-import { execSync, spawnSync } from 'node:child_process';
+import { execSync, spawn, spawnSync } from 'node:child_process';
+import chalk from 'chalk';
 
 const HEALTH_POLL_INTERVAL_MS = 2000;
 const HEALTH_TIMEOUT_MS = 180 * 1000;
+const MILESTONE_START = '==> START ';
+const MILESTONE_DONE = '==> DONE';
 
-const waitForHealthy = async (port: number): Promise<boolean> => {
+const waitForHealthy = async (
+  port: number,
+  containerName: string,
+): Promise<boolean> => {
   const startTime = Date.now();
+  const onProgress = (message: string) =>
+    process.stdout.write(chalk.gray(message));
 
-  while (Date.now() - startTime < HEALTH_TIMEOUT_MS) {
-    if (await checkServerHealth(port)) {
-      return true;
+  const logStream = spawn(
+    'docker',
+    ['logs', '-f', '--since', '1s', containerName],
+    { stdio: ['ignore', 'pipe', 'pipe'] },
+  );
+
+  logStream.on('error', () => {});
+
+  let hasPendingStep = false;
+
+  const handleLogLine = (line: string) => {
+    const trimmed = line.trim();
+    const startIndex = trimmed.indexOf(MILESTONE_START);
+    const doneIndex = trimmed.indexOf(MILESTONE_DONE);
+
+    if (startIndex !== -1) {
+      if (hasPendingStep) {
+        onProgress('Done\n');
+      }
+
+      const message = trimmed.slice(startIndex + MILESTONE_START.length);
+
+      onProgress(`==>  ${message}... `);
+      hasPendingStep = true;
+    } else if (doneIndex !== -1 && hasPendingStep) {
+      onProgress('Done\n');
+      hasPendingStep = false;
+    }
+  };
+
+  let logBuffer = '';
+
+  const onData = (chunk: Buffer) => {
+    logBuffer += chunk.toString();
+
+    const lines = logBuffer.split('\n');
+
+    logBuffer = lines.pop() ?? '';
+    lines.forEach(handleLogLine);
+  };
+
+  logStream.stdout?.on('data', onData);
+  logStream.stderr?.on('data', onData);
+
+  try {
+    while (Date.now() - startTime < HEALTH_TIMEOUT_MS) {
+      if (await checkServerHealth(port)) {
+        if (hasPendingStep) {
+          onProgress('Done\n');
+        }
+
+        return true;
+      }
+
+      await new Promise((resolve) =>
+        setTimeout(resolve, HEALTH_POLL_INTERVAL_MS),
+      );
     }
 
-    await new Promise((resolve) =>
-      setTimeout(resolve, HEALTH_POLL_INTERVAL_MS),
-    );
-  }
+    if (hasPendingStep) {
+      onProgress('Failed\n');
+    }
 
-  return false;
+    return false;
+  } finally {
+    logStream.kill();
+  }
 };
 
 export type ServerStartOptions = {
   port?: number;
+  test?: boolean;
   onProgress?: (message: string) => void;
 };
 
@@ -48,12 +116,23 @@ export type ServerStartResult = {
 const innerServerStart = async (
   options: ServerStartOptions = {},
 ): Promise<CommandResult<ServerStartResult>> => {
-  const { onProgress } = options;
+  const { onProgress, test: isTest } = options;
 
-  const existingUrl = await detectLocalServer(options.port);
+  const containerName = isTest ? TEST_CONTAINER_NAME : CONTAINER_NAME;
+  const defaultPort = isTest ? DEFAULT_TEST_PORT : DEFAULT_PORT;
+  const volumeData = isTest
+    ? 'twenty-app-dev-test-data'
+    : 'twenty-app-dev-data';
+  const volumeStorage = isTest
+    ? 'twenty-app-dev-test-storage'
+    : 'twenty-app-dev-storage';
+
+  const existingUrl = await detectLocalServer(options.port ?? defaultPort);
 
   if (existingUrl) {
-    const configService = new ConfigService();
+    const configService = new ConfigService(
+      isTest ? { configPath: getConfigPath(true) } : undefined,
+    );
 
     ConfigService.setActiveRemote('local');
     await configService.setConfig({ apiUrl: existingUrl });
@@ -78,12 +157,12 @@ const innerServerStart = async (
     };
   }
 
-  if (isContainerRunning()) {
-    const port = getContainerPort();
+  if (isContainerRunning(containerName)) {
+    const port = getContainerPort(containerName);
 
     onProgress?.('Container is running, waiting for it to become healthy...');
 
-    const healthy = await waitForHealthy(port);
+    const healthy = await waitForHealthy(port, containerName);
 
     if (!healthy) {
       return {
@@ -98,7 +177,9 @@ const innerServerStart = async (
     }
 
     const url = `http://localhost:${port}`;
-    const configService = new ConfigService();
+    const configService = new ConfigService(
+      isTest ? { configPath: getConfigPath(true) } : undefined,
+    );
 
     ConfigService.setActiveRemote('local');
     await configService.setConfig({ apiUrl: url });
@@ -108,25 +189,23 @@ const innerServerStart = async (
     return { success: true, data: { port, url } };
   }
 
-  let port = options.port ?? DEFAULT_PORT;
+  let port = options.port ?? defaultPort;
 
-  if (containerExists()) {
-    const existingPort = getContainerPort();
+  if (containerExists(containerName)) {
+    const existingPort = getContainerPort(containerName);
 
     if (existingPort !== port) {
       onProgress?.(
-        `Existing container uses port ${existingPort}. Run 'yarn twenty server reset' first to change ports.`,
+        `Existing container uses port ${existingPort}. Run 'yarn twenty server reset${isTest ? ' --test' : ''}' first to change ports.`,
       );
     }
 
     port = existingPort;
 
     onProgress?.('Starting existing container...');
-    execSync(`docker start ${CONTAINER_NAME}`, { stdio: 'ignore' });
+    execSync(`docker start ${containerName}`, { stdio: 'ignore' });
   } else {
     onProgress?.('Starting Twenty container...');
-
-    const serverUrl = `http://localhost:${port}`;
 
     const runResult = spawnSync(
       'docker',
@@ -134,15 +213,17 @@ const innerServerStart = async (
         'run',
         '-d',
         '--name',
-        CONTAINER_NAME,
-        '-e',
-        `SERVER_URL=${serverUrl}`,
+        containerName,
         '-p',
-        `${port}:3000`,
+        `${port}:${port}`,
+        '-e',
+        `NODE_PORT=${port}`,
+        '-e',
+        `SERVER_URL=http://localhost:${port}`,
         '-v',
-        'twenty-app-dev-data:/data/postgres',
+        `${volumeData}:/data/postgres`,
         '-v',
-        'twenty-app-dev-storage:/app/.local-storage',
+        `${volumeStorage}:/app/packages/twenty-server/.local-storage`,
         IMAGE,
       ],
       { stdio: 'inherit' },
@@ -161,7 +242,7 @@ const innerServerStart = async (
 
   onProgress?.('Waiting for Twenty to be ready...');
 
-  const healthy = await waitForHealthy(port);
+  const healthy = await waitForHealthy(port, containerName);
 
   if (!healthy) {
     return {
@@ -176,7 +257,9 @@ const innerServerStart = async (
   }
 
   const url = `http://localhost:${port}`;
-  const configService = new ConfigService();
+  const configService = new ConfigService(
+    isTest ? { configPath: getConfigPath(true) } : undefined,
+  );
 
   ConfigService.setActiveRemote('local');
   await configService.setConfig({ apiUrl: url });

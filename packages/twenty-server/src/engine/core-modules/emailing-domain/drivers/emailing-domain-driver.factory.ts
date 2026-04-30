@@ -9,23 +9,25 @@ import { AwsSesHandleErrorService } from 'src/engine/core-modules/emailing-domai
 import { EmailingDomainDriver } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain';
 import { DriverFactoryBase } from 'src/engine/core-modules/twenty-config/dynamic-factory.base';
 import { ConfigVariablesGroup } from 'src/engine/core-modules/twenty-config/enums/config-variables-group.enum';
+import { ConfigGroupHashService } from 'src/engine/core-modules/twenty-config/services/config-group-hash.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 @Injectable()
 export class EmailingDomainDriverFactory extends DriverFactoryBase<EmailingDomainDriverInterface> {
   constructor(
     twentyConfigService: TwentyConfigService,
+    configGroupHashService: ConfigGroupHashService,
     private readonly awsSesClientProvider: AwsSesClientProvider,
     private readonly awsSesHandleErrorService: AwsSesHandleErrorService,
   ) {
-    super(twentyConfigService);
+    super(twentyConfigService, configGroupHashService);
   }
 
   protected buildConfigKey(): string {
     const driver = EmailingDomainDriver.AWS_SES;
 
     if (driver === EmailingDomainDriver.AWS_SES) {
-      const awsConfigHash = this.getConfigGroupHash(
+      const awsConfigHash = this.configGroupHashService.computeHash(
         ConfigVariablesGroup.AWS_SES_SETTINGS,
       );
 

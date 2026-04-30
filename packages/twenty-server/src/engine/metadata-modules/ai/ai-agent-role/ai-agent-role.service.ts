@@ -5,9 +5,9 @@ import { isDefined } from 'twenty-shared/utils';
 import { In, IsNull, Not, Repository } from 'typeorm';
 
 import {
-  AgentException,
-  AgentExceptionCode,
-} from 'src/engine/metadata-modules/ai/ai-agent/agent.exception';
+  AiException,
+  AiExceptionCode,
+} from 'src/engine/metadata-modules/ai/ai.exception';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { RoleTargetService } from 'src/engine/metadata-modules/role-target/services/role-target.service';
@@ -69,9 +69,9 @@ export class AiAgentRoleService {
     });
 
     if (!isDefined(existingRoleTarget)) {
-      throw new AgentException(
+      throw new AiException(
         `Role target not found for agent ${agentId}`,
-        AgentExceptionCode.ROLE_NOT_FOUND,
+        AiExceptionCode.ROLE_NOT_FOUND,
       );
     }
 
@@ -125,9 +125,9 @@ export class AiAgentRoleService {
     });
 
     if (!agent) {
-      throw new AgentException(
+      throw new AiException(
         `Agent with id ${agentId} not found in workspace`,
-        AgentExceptionCode.AGENT_NOT_FOUND,
+        AiExceptionCode.AGENT_NOT_FOUND,
       );
     }
 
@@ -136,16 +136,16 @@ export class AiAgentRoleService {
     });
 
     if (!role) {
-      throw new AgentException(
+      throw new AiException(
         `Role with id ${roleId} not found in workspace`,
-        AgentExceptionCode.ROLE_NOT_FOUND,
+        AiExceptionCode.ROLE_NOT_FOUND,
       );
     }
 
     if (!role.canBeAssignedToAgents) {
-      throw new AgentException(
+      throw new AiException(
         `Role "${role.label}" cannot be assigned to agents`,
-        AgentExceptionCode.ROLE_CANNOT_BE_ASSIGNED_TO_AGENTS,
+        AiExceptionCode.ROLE_CANNOT_BE_ASSIGNED_TO_AGENTS,
       );
     }
 

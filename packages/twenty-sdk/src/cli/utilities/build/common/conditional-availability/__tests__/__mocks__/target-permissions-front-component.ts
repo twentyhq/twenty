@@ -1,8 +1,5 @@
-import {
-  defineFrontComponent,
-  pageType,
-  targetObjectWritePermissions,
-} from '@/sdk';
+import { defineFrontComponent } from '@/sdk/define';
+import { pageType, targetObjectWritePermissions } from '@/sdk/front-component';
 
 const MyComponent = () => null;
 

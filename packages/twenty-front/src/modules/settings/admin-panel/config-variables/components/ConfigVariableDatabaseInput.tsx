@@ -12,7 +12,7 @@ import { CustomError } from 'twenty-shared/utils';
 import { CodeEditor } from 'twenty-ui/input';
 import { MenuItemMultiSelect } from 'twenty-ui/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { ConfigVariableType } from '~/generated-metadata/graphql';
+import { ConfigVariableType } from '~/generated-admin/graphql';
 import { type ConfigVariableOptions } from '@/settings/admin-panel/config-variables/types/ConfigVariableOptions';
 
 const StyledJsonEditorContainer = styled.div`

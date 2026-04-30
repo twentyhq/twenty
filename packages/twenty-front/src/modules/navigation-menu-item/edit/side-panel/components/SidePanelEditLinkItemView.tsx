@@ -76,7 +76,7 @@ export const SidePanelEditLinkItemView = ({
   };
 
   return (
-    <SidePanelList commandGroups={[]} selectableItemIds={selectableItemIds}>
+    <SidePanelList selectableItemIds={selectableItemIds}>
       <SidePanelGroup heading={t`Customize`}>
         <TextInput
           fullWidth

@@ -19,25 +19,36 @@ export const computeStandardPersonViewFieldGroups = (
         isVisible: true,
       },
     }),
-    personRecordPageFieldsAdditional: createStandardViewFieldGroupFlatMetadata({
+    personRecordPageFieldsWork: createStandardViewFieldGroupFlatMetadata({
       ...args,
       objectName: 'person',
       context: {
         viewName: 'personRecordPageFields',
-        viewFieldGroupName: 'additional',
-        name: 'Additional',
+        viewFieldGroupName: 'work',
+        name: 'Work',
         position: 1,
         isVisible: true,
       },
     }),
-    personRecordPageFieldsOther: createStandardViewFieldGroupFlatMetadata({
+    personRecordPageFieldsSocial: createStandardViewFieldGroupFlatMetadata({
       ...args,
       objectName: 'person',
       context: {
         viewName: 'personRecordPageFields',
-        viewFieldGroupName: 'other',
-        name: 'Other',
+        viewFieldGroupName: 'social',
+        name: 'Social',
         position: 2,
+        isVisible: true,
+      },
+    }),
+    personRecordPageFieldsSystem: createStandardViewFieldGroupFlatMetadata({
+      ...args,
+      objectName: 'person',
+      context: {
+        viewName: 'personRecordPageFields',
+        viewFieldGroupName: 'system',
+        name: 'System',
+        position: 3,
         isVisible: true,
       },
     }),

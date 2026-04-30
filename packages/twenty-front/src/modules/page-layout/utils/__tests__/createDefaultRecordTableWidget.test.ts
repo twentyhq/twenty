@@ -1,9 +1,9 @@
+import { createDefaultRecordTableWidget } from '@/page-layout/utils/createDefaultRecordTableWidget';
 import {
   PageLayoutTabLayoutMode,
   WidgetConfigurationType,
   WidgetType,
 } from '~/generated-metadata/graphql';
-import { createDefaultRecordTableWidget } from '@/page-layout/utils/createDefaultRecordTableWidget';
 
 describe('createDefaultRecordTableWidget', () => {
   const widgetId = 'widget-id-1';
@@ -11,12 +11,12 @@ describe('createDefaultRecordTableWidget', () => {
   const title = 'My Record Table';
   const gridPosition = { row: 1, column: 2, rowSpan: 3, columnSpan: 4 };
 
-  const widget = createDefaultRecordTableWidget(
-    widgetId,
+  const widget = createDefaultRecordTableWidget({
+    id: widgetId,
     pageLayoutTabId,
     title,
     gridPosition,
-  );
+  });
 
   it('should return correct shape with all required fields', () => {
     expect(widget.__typename).toBe('PageLayoutWidget');
@@ -50,8 +50,7 @@ describe('createDefaultRecordTableWidget', () => {
     });
   });
 
-  it('should set objectMetadataId to null and isOverridden to false', () => {
+  it('should set objectMetadataId to null', () => {
     expect(widget.objectMetadataId).toBeNull();
-    expect(widget.isOverridden).toBe(false);
   });
 });

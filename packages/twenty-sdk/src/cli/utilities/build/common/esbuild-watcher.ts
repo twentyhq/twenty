@@ -2,6 +2,7 @@ import { cleanupRemovedFiles } from '@/cli/utilities/build/common/cleanup-remove
 import { processEsbuildResult } from '@/cli/utilities/build/common/esbuild-result-processor';
 import { FRONT_COMPONENT_EXTERNAL_MODULES } from '@/cli/utilities/build/common/front-component-build/constants/front-component-external-modules';
 import { getFrontComponentBuildPlugins } from '@/cli/utilities/build/common/front-component-build/utils/get-front-component-build-plugins';
+import { createStubTwentySdkDefinePlugin } from '@/cli/utilities/build/common/plugins/stub-twenty-sdk-define.plugin';
 import {
   type OnBuildErrorCallback,
   type OnFileBuiltCallback,
@@ -202,6 +203,7 @@ export const createLogicFunctionsWatcher = (
       platform: 'node',
       extraPlugins: [
         createTypecheckPlugin(options.appPath, options.shouldSkipTypecheck),
+        createStubTwentySdkDefinePlugin(),
       ],
       banner: NODE_ESM_CJS_BANNER,
     },
@@ -219,6 +221,7 @@ export const createFrontComponentsWatcher = (
       extraPlugins: [
         createTypecheckPlugin(options.appPath, options.shouldSkipTypecheck),
         ...getFrontComponentBuildPlugins(),
+        createStubTwentySdkDefinePlugin(),
       ],
     },
   });

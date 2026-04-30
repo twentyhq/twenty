@@ -1,4 +1,4 @@
-import { defineLogicFunction } from 'twenty-sdk';
+import { defineLogicFunction } from 'twenty-sdk/define';
 
 export const ADD_NUMBERS_UNIVERSAL_IDENTIFIER =
   'f9e5589c-e951-4d99-85db-0a305ab53502';

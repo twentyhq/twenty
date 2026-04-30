@@ -295,7 +295,9 @@ export const SettingsSecurity = () => {
               </Card>
             ) : (
               <SettingsEnterpriseFeatureGateCard
+                title={t`Enterprise feature`}
                 description={t`Upgrade to Enterprise to access audit logs.`}
+                buttonTitle={t`Activate`}
               />
             )}
           </Section>

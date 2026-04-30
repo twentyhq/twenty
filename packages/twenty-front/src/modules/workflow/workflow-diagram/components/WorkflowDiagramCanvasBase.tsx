@@ -1,9 +1,10 @@
 import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
-import { sidePanelWidthState } from '@/side-panel/states/sidePanelWidthState';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
+import { sidePanelWidthState } from '@/side-panel/states/sidePanelWidthState';
 import { useListenToSidePanelClosing } from '@/ui/layout/side-panel/hooks/useListenToSidePanelClosing';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { WorkflowDiagramRightClickCommandMenu } from '@/workflow/workflow-diagram/components/WorkflowDiagramRightClickCommandMenu';
 import { WORKFLOW_DIAGRAM_EMPTY_NODE_DEFINITION } from '@/workflow/workflow-diagram/constants/WorkflowDiagramEmptyNodeDefinition';
@@ -51,6 +52,7 @@ import {
   type OnReconnect,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
+import { useStore } from 'jotai';
 import React, {
   useCallback,
   useContext,
@@ -59,11 +61,9 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isDefined } from 'twenty-shared/utils';
 import { Tag, type TagColor } from 'twenty-ui/components';
-import { useStore } from 'jotai';
-import { themeCssVariables, ThemeContext } from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 const StyledResetReactflowStyles = styled.div`
   --xy-node-background-color: none;
   --xy-node-border: none;
@@ -256,7 +256,8 @@ export const WorkflowDiagramCanvasBase = ({
   }, [workflowDiagram, workflowInsertStepIds]);
 
   const isSidePanelOpened = useAtomStateValue(isSidePanelOpenedState);
-  const { isInSidePanel } = useContext(CommandMenuContext);
+  const { commandMenuContextApi } = useContext(CommandMenuContext);
+  const isInSidePanel = commandMenuContextApi.isInSidePanel;
 
   const handleEdgesChange = (
     edgeChanges: Array<EdgeChange<WorkflowDiagramEdge>>,

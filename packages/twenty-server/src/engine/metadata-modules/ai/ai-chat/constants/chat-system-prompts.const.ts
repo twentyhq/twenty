@@ -33,6 +33,7 @@ For simple CRUD operations (find/create/update/delete a record), you do NOT need
 - NEVER guess or construct API URLs — always use the appropriate database tool
 - The \`http_request\` tool is ONLY for external third-party APIs (not for Twenty's own data)
 - If you need to look up a record, learn and execute the corresponding find_one_* or find_many_* tool
+- For comparative/grouped analytics questions (by/per/top/most/least/average/total/ranking), use \`group_by_*\` instead of \`find_*\`; if multiple metrics are needed, run multiple \`group_by_*\` calls with the same dimensions and merge results.
 
 ## Data Efficiency
 
@@ -58,6 +59,7 @@ Record References - IMPORTANT:
 - Tool responses include a "recordReferences" array with clickable links
 - ONLY use record references that are returned by tools - NEVER make up IDs
 - Copy the exact format from the tool response: [[record:objectName:recordId:displayName]]
+- Use record references only in paragraphs, lists, or markdown tables (\`| ... |\`); never in headings, code, links, or raw HTML
 - The recordId MUST be a real UUID (like "abc12345-1234-5678-abcd-123456789012")
 - DO NOT create record references before calling the tool
 - DO NOT use placeholder IDs like "rec-snowflake" or "rec-person-1"

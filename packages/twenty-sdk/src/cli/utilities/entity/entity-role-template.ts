@@ -10,7 +10,7 @@ export const getRoleBaseFile = ({
 }) => {
   const kebabCaseName = kebabCase(name);
 
-  return `import { defineRole } from 'twenty-sdk';
+  return `import { defineRole } from 'twenty-sdk/define';
 
 export const ${kebabCaseName.toUpperCase().replace(/-/g, '_')}_ROLE_UNIVERSAL_IDENTIFIER =
   '${universalIdentifier}';

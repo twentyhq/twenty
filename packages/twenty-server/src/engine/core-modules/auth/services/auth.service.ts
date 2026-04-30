@@ -9,11 +9,7 @@ import { addMilliseconds } from 'date-fns';
 import ms from 'ms';
 import { PasswordUpdateNotifyEmail } from 'twenty-emails';
 import { PermissionFlagType } from 'twenty-shared/constants';
-import {
-  AppPath,
-  ConnectedAccountProvider,
-  FeatureFlagKey,
-} from 'twenty-shared/types';
+import { AppPath, ConnectedAccountProvider } from 'twenty-shared/types';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { IsNull, Repository } from 'typeorm';
 
@@ -524,6 +520,19 @@ export class AuthService {
     if (!authorizeAppInput.redirectUrl) {
       throw new AuthException(
         `redirectUrl not provided for '${clientId}'`,
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      );
+    }
+
+    // OAuth 2.1 / MCP auth spec: PKCE is mandatory for public clients
+    // (clients registered with token_endpoint_auth_method=none, i.e. no
+    // client secret hash). Confidential clients are authenticated at the
+    // token endpoint instead.
+    const isPublicClient = !applicationRegistration.oAuthClientSecretHash;
+
+    if (isPublicClient && !codeChallenge) {
+      throw new AuthException(
+        `code_challenge is required for public clients (PKCE S256, per OAuth 2.1)`,
         AuthExceptionCode.FORBIDDEN_EXCEPTION,
       );
     }
@@ -1081,19 +1090,6 @@ export class AuthService {
     oidcTokenClaims?: Record<string, unknown>;
     connectedAccountProvider?: ConnectedAccountProvider;
   }): Promise<void> {
-    const isConnectedAccountMigrated =
-      await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IS_CONNECTED_ACCOUNT_MIGRATED,
-        input.workspaceId,
-      );
-
-    // const willBeEnabledByDefault = DEFAULT_FEATURE_FLAGS.includes(FeatureFlagKey.IS_CONNECTED_ACCOUNT_MIGRATED);
-    const willBeEnabledByDefault = false;
-
-    if (!isConnectedAccountMigrated && !willBeEnabledByDefault) {
-      return;
-    }
-
     const provider =
       input.connectedAccountProvider ??
       this.mapAuthProviderToConnectedAccountProvider(input.authProvider);

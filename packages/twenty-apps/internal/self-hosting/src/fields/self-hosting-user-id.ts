@@ -1,9 +1,4 @@
-import {
-  defineField,
-  FieldType,
-  RelationType,
-  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
-} from 'twenty-sdk';
+import { defineField, FieldType, RelationType, STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-sdk/define';
 import { UNIVERSAL_IDENTIFIERS } from 'src/constants/universal-identifiers.constant';
 
 export const SELF_HOSTING_USER_ID_UNIVERSAL_IDENTIFIER =

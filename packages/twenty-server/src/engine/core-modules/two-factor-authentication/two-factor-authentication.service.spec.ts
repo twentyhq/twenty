@@ -191,6 +191,7 @@ describe('TwoFactorAuthenticationService', () => {
       );
       expect(repository.save).toHaveBeenCalledWith({
         id: undefined,
+        workspaceId: workspace.id,
         userWorkspace: mockUserWorkspace,
         secret: encryptedSecret,
         status: 'PENDING',

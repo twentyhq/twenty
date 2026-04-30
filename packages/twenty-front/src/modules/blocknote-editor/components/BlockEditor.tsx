@@ -130,6 +130,14 @@ const StyledEditor = styled.div`
     font-size: 0.9rem;
     padding: 2px 4px;
   }
+
+  & .bn-mantine {
+    container-type: inline-size;
+  }
+
+  & .bn-mantine .bn-panel {
+    width: min(500px, 100cqi);
+  }
 `;
 
 export const BlockEditor = ({

@@ -5,6 +5,8 @@ import { initialize, mswLoader } from 'msw-storybook-addon';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
 // oxlint-disable-next-line no-restricted-imports
+import { FileUploadProvider } from '../src/modules/file-upload/components/FileUploadProvider';
+// oxlint-disable-next-line no-restricted-imports
 import { RootDecorator } from '../src/testing/decorators/RootDecorator';
 // oxlint-disable-next-line no-restricted-imports
 import { resetJotaiStore } from '../src/modules/ui/utilities/state/jotai/jotaiStore';
@@ -63,11 +65,13 @@ const preview: Preview = {
       return (
         <I18nProvider i18n={i18n}>
           <ThemeProvider colorScheme="light">
-            <ClickOutsideListenerContext.Provider
-              value={{ excludedClickOutsideId: undefined }}
-            >
-              <Story />
-            </ClickOutsideListenerContext.Provider>
+            <FileUploadProvider>
+              <ClickOutsideListenerContext.Provider
+                value={{ excludedClickOutsideId: undefined }}
+              >
+                <Story />
+              </ClickOutsideListenerContext.Provider>
+            </FileUploadProvider>
           </ThemeProvider>
         </I18nProvider>
       );

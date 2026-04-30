@@ -11,6 +11,7 @@ import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTab
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import React, { useCallback } from 'react';
+import { MessageChannelSyncStage } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -27,7 +28,13 @@ export const SettingsAccountsMessageChannelsContainer = () => {
     settingsAccountsSelectedMessageChannelState,
   );
 
-  const { channels: messageChannels } = useMyMessageChannels();
+  const { channels: allMessageChannels } = useMyMessageChannels();
+
+  const messageChannels = allMessageChannels.filter(
+    (channel) =>
+      channel.isSyncEnabled &&
+      channel.syncStage !== MessageChannelSyncStage.PENDING_CONFIGURATION,
+  );
 
   const tabs = messageChannels.map((messageChannel) => ({
     id: messageChannel.id,

@@ -73,6 +73,8 @@ export const RecordTableCellFieldContextLabelIdentifier = ({
               isUIReadOnly: fieldDefinition.metadata.isUIReadOnly ?? false,
               isCustom: fieldDefinition.metadata.isCustom ?? false,
             },
+            fieldDefinition,
+            objectPermissionsByObjectMetadataId,
           }),
         maxWidth: recordField.size,
         onRecordChipClick: handleChipClick,

@@ -1,36 +1,132 @@
 ---
 title: 发布
+icon: 上传
 description: 将你的 Twenty 应用分发到应用市场，或进行内部部署。
 ---
-
-<Warning>
-应用目前处于 Alpha 测试阶段。 该功能可用，但仍在演进中。
-</Warning>
 
 ## 概览
 
 一旦你的应用已[在本地构建并完成测试](/l/zh/developers/extend/apps/building)，你可以通过两种方式进行分发：
 
-* **发布到 npm** — 将你的应用在 Twenty 应用市场上架，供任何工作区发现并安装。
 * **部署 tar 包** — 直接将你的应用上传到特定的 Twenty 服务器，以供内部或私有使用。
+* **发布到 npm** — 将你的应用在 Twenty 应用市场上架，供任何工作区发现并安装。
 
 两种路径都从同一个**构建**步骤开始。
 
 ## 构建你的应用
 
-`build` 命令会编译你的 TypeScript 源码，转译逻辑函数和前端组件，并生成一个描述你应用内容的 `manifest.json`：
+Run the build command to compile your app and generate a distribution-ready `manifest.json`:
 
 ```bash filename="Terminal"
 yarn twenty build
 ```
 
-输出将写入 `.twenty/output/`。 此目录包含分发所需的一切：已编译的代码、资源、清单，以及你的 `package.json` 副本。
+This compiles TypeScript sources, transpiles logic functions and front components, and writes everything to `.twenty/output/`. Add `--tarball` to also produce a `.tgz` package for manual distribution or the deploy command.
 
-要同时创建一个 `.tgz` 压缩包（由部署命令在内部使用，或用于手动分发）：
+## 部署到服务器（tar 包）
+
+对于你不希望公开的应用（专有工具、仅供企业使用的集成或实验性构建），你可以将 tar 包直接部署到某台 Twenty 服务器。
+
+### 先决条件
+
+在部署之前，你需要配置一个指向目标服务器的远程。 远程会将服务器 URL 和身份验证凭据本地存储在 `~/.twenty/config.json` 中。
+
+添加远程：
 
 ```bash filename="Terminal"
-yarn twenty build --tarball
+yarn twenty remote add --api-url https://your-twenty-server.com --as production
 ```
+
+### 部署
+
+一步构建并将你的应用上传到服务器：
+
+```bash filename="Terminal"
+yarn twenty deploy
+# To deploy to a specific remote:
+# yarn twenty deploy --remote production
+```
+
+### 共享已部署的应用
+
+<Warning>
+在多个工作区之间共享私有（tarball）应用是一项 **Enterprise** 功能。 在您的工作区拥有有效的 Enterprise 密钥之前，**Distribution** 选项卡将显示升级提示，而不是共享控件。 请前往 [设置 > 管理面板 > Enterprise](/settings/admin-panel#enterprise) 以启用。
+</Warning>
+
+通过 tar 包分发的应用不会出现在公共市场中，因此同一服务器上的其他工作区无法通过浏览发现它们。 一旦您的工作区升级到企业版计划，您就可以像这样分享已部署的应用：
+
+1. 前往 **Settings > Applications > Registrations** 并打开你的应用
+2. 在 **Distribution** 选项卡中，点击 **Copy share link**
+3. 将此链接分享给其他工作区的用户 — 它会将他们直接带到该应用的安装页面
+
+该分享链接使用服务器的基础 URL（不包含任何工作区子域），因此适用于该服务器上的任意工作区。
+
+### 版本管理
+
+在更新已部署的 tarball 应用时，服务器要求 `package.json` 中的 `version` 必须**严格高于**（按[语义化版本](https://semver.org)排序）当前已部署的版本。 在 tar 包存储之前，重新部署相同版本或推送更低版本都会被拒绝 — 你会在 CLI 中看到 `VERSION_ALREADY_EXISTS` 错误。
+
+要发布更新：
+
+1. 将 `package.json` 中的 `version` 字段递增（例如：`1.2.3` → `1.2.4`、`1.3.0` 或 `2.0.0`）
+2. Run `yarn twenty deploy` (or `yarn twenty deploy --remote production`)
+3. 已安装该应用的工作区会在其设置中看到可用的升级
+
+<Note>
+预发布标签按预期工作：将 `1.0.0-rc.1` 递增为 `1.0.0-rc.2` 是允许的，并且像 `1.0.0` 这样的正式发布会被正确识别为高于 `1.0.0-rc.5`。 `package.json` 中的版本本身必须是有效的 SemVer 字符串。
+</Note>
+
+{/* TODO: add screenshot of the Upgrade button */}
+
+## 自动化 CI/CD（脚手架生成的工作流）
+
+使用 `create-twenty-app` 生成的应用开箱即带有两个 GitHub Actions 工作流，位于 `.github/workflows/`。 当你将仓库推送到 GitHub 后即可运行——CI 无需额外设置，CD 只需要一个机密。
+
+### CI — `ci.yml`
+
+它会在每次向 `main` 推送以及拉取请求上自动运行你的集成测试。
+
+**作用:**
+
+1. 检出你的应用源代码。
+2. 使用 `twentyhq/twenty/.github/actions/spawn-twenty-app-dev-test@main` 组合 action 启动一个隔离的 Twenty 测试实例（相当于 CI 中的 `yarn twenty server start --test`）。
+3. 启用 Corepack，从你的 `.nvmrc` 设置 Node.js，并使用 `yarn install --immutable` 安装依赖。
+4. 运行 `yarn test`，并从启动的实例传入 `TWENTY_API_URL` 和 `TWENTY_API_KEY`，以便你的测试可以与真实服务器通信。
+
+**配置选项:**
+
+* `TWENTY_VERSION`（环境变量，默认 `latest`）— 通过在 `ci.yml` 中编辑它来固定 CI 使用的 Twenty 服务器版本。
+* 并发按 `github.ref` 分组，并会在有新的推送时取消进行中的运行。
+
+不需要任何机密——测试实例是临时的，只在作业持续期间存在。
+
+### CD — `cd.yml`
+
+在每次向 `main` 推送时将你的应用部署到已配置的 Twenty 服务器；当为拉取请求添加 `deploy` 标签时，也可从该拉取请求进行部署。
+
+**作用:**
+
+1. 检出 PR 的 head（针对已加标签的 PR），或被推送的提交。
+2. 运行 `twentyhq/twenty/.github/actions/deploy-twenty-app@main`——相当于 CI 中的 `yarn twenty deploy`。
+3. 运行 `twentyhq/twenty/.github/actions/install-twenty-app@main`，将新部署的版本安装到目标工作区。
+
+**必需的配置:**
+
+| 设置                      | 位置                                                       | 目的                                       |
+| ----------------------- | -------------------------------------------------------- | ---------------------------------------- |
+| `TWENTY_DEPLOY_URL`     | `cd.yml` 中的 `env`（默认值为 `http://localhost:3000`）          | 要部署到的 Twenty 服务器。 首次使用前将其更改为你真实的服务器 URL。 |
+| `TWENTY_DEPLOY_API_KEY` | GitHub 仓库 **Settings → Secrets and variables → Actions** | 在目标服务器上具有部署权限的 API 密钥。                   |
+
+<Note>
+默认的 `TWENTY_DEPLOY_URL` 值 `http://localhost:3000` 只是占位符——从 GitHub 托管的 runner 无法访问任何资源。 在启用 CD 之前，将其更新为你服务器的公网 URL（或使用具有网络访问权限的自托管 runner）。
+</Note>
+
+**从 PR 触发预览部署:**
+
+为拉取请求添加 `deploy` 标签。 在 `cd.yml` 中的 `if:` 守卫会使用该 PR 的 head 提交为其运行作业，使你能在合并前在目标服务器上验证更改。
+
+### 固定可复用的 actions
+
+两个工作流都引用了位于 `@main` 的可复用 actions，因此会自动获取 `twentyhq/twenty` 仓库中的 action 更新。 如果你希望构建具有确定性，请在每个 `uses:` 行中将 `@main` 替换为某个提交的 SHA 或发行标签。
 
 ## 发布到 npm
 
@@ -39,40 +135,41 @@ yarn twenty build --tarball
 ### 要求
 
 * 一个 [npm](https://www.npmjs.com) 账户
-* 在你的 `package.json` 的 `keywords` 数组中**必须**包含 `twenty-app` 关键字
-
-### 添加所需关键字
-
-Twenty 市场通过在 npm 注册表中搜索带有 `twenty-app` 关键字的包来发现应用。 将其添加到你的 `package.json`：
+* 你在 `package.json` 的 `keywords` 数组中的 `twenty-app` 关键字（需要手动添加 — 在 `create-twenty-app` 模板中默认不包含）
 
 ```json filename="package.json"
 {
   "name": "twenty-app-postcard-sender",
   "version": "1.0.0",
-  "keywords": ["twenty-app"],
-  ...
+  "keywords": ["twenty-app"]
 }
 ```
 
-<Note>
-该市场会在 npm 注册表中搜索 `keywords:twenty-app`。 没有此关键字，即使包名带有 `twenty-app-` 前缀，你的包也不会出现在市场中。
-</Note>
+### 应用市场元数据
 
-### 步骤
+The `defineApplication()` config supports optional fields that control how your app appears in the marketplace. Use `logoUrl` and `screenshots` to reference images from the `public/` folder:
 
-1. **构建你的应用：**
-
-```bash filename="Terminal"
-yarn twenty build
+```ts src/application-config.ts
+export default defineApplication({
+  universalIdentifier: '...',
+  displayName: 'My App',
+  description: 'A great app',
+  defaultRoleUniversalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
+  logoUrl: 'public/logo.png',
+  screenshots: [
+    'public/screenshot-1.png',
+    'public/screenshot-2.png',
+  ],
+});
 ```
 
-2. **发布到 npm：**
+See the [defineApplication accordion](/l/zh/developers/extend/apps/building#defineentity-functions) in the Building Apps page for the full list of marketplace fields (`author`, `category`, `aboutDescription`, `websiteUrl`, `termsUrl`, etc.).
+
+### Publish
 
 ```bash filename="Terminal"
 yarn twenty publish
 ```
-
-这会在 `.twenty/output/` 目录下运行 `npm publish`。
 
 要在特定的 dist-tag（例如 `beta` 或 `next`）下发布：
 
@@ -82,25 +179,17 @@ yarn twenty publish --tag beta
 
 ### 应用市场的发现机制如何运作
 
-Twenty 服务器会**每小时**从 npm 注册表同步其市场目录：
+The Twenty server syncs its marketplace catalog from the npm registry **every hour**.
 
-1. 它会搜索所有带有 `keywords:twenty-app` 关键字的 npm 包
-2. 对于每个包，它会从 npm CDN 获取 `manifest.json`
-3. 应用的元数据（名称、描述、作者、徽标、屏幕截图、类别）将从清单中提取，并显示在市场中
-
-发布后，你的应用最多可能需要一小时才会出现在市场中。 要立即触发同步，而无需等待下一次每小时同步：
+You can trigger the sync immediately instead of waiting:
 
 ```bash filename="Terminal"
 yarn twenty catalog-sync
+# To target a specific remote:
+# yarn twenty catalog-sync --remote production
 ```
 
-要指定特定的远程：
-
-```bash filename="Terminal"
-yarn twenty catalog-sync -r production
-```
-
-市场中显示的元数据来自你在应用源代码中调用的 `defineApplication()` —— 诸如 `displayName`、`description`、`author`、`category`、`logoUrl`、`screenshots`、`aboutDescription`、`websiteUrl` 和 `termsUrl` 等字段。
+The metadata shown in the marketplace comes from your `defineApplication()` config — fields like `displayName`, `description`, `author`, `category`, `logoUrl`, `screenshots`, `aboutDescription`, `websiteUrl`, and `termsUrl`.
 
 <Note>
 如果您的应用未在 `defineApplication()` 中定义 `aboutDescription`，市场将自动使用 npm 上您的软件包的 `README.md` 作为关于页面内容。 这意味着您可以为 npm 和 Twenty 市场维护同一个 README。 如果您希望在市场中使用不同的描述，请显式设置 `aboutDescription`。
@@ -108,7 +197,7 @@ yarn twenty catalog-sync -r production
 
 ### CI 发布
 
-脚手架项目包含一个 GitHub Actions 工作流，会在每次发版时自动发布：
+Use this GitHub Actions workflow to publish automatically on every release (uses [OIDC](https://docs.npmjs.com/trusted-publishers)):
 
 ```yaml filename=".github/workflows/publish.yml"
 name: Publish
@@ -133,121 +222,33 @@ jobs:
       - run: npx twenty build
       - run: npm publish --provenance --access public
         working-directory: .twenty/output
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 ```
 
 对于其他 CI 系统（GitLab CI、CircleCI 等），同样适用以下三条命令：`yarn install`、`yarn twenty build`，然后在 `.twenty/output` 目录下执行 `npm publish`。
 
-<Tip>
+<Note>
 **npm provenance** 可选，但建议启用。 使用 `--provenance` 发布会在你的 npm 列表中添加可信徽章，使用户可以验证该包是由公共 CI 流水线中的特定提交构建的。 有关设置说明，请参见 [npm provenance 文档](https://docs.npmjs.com/generating-provenance-statements)。
-</Tip>
-
-## 部署到服务器（tar 包）
-
-对于你不希望公开的应用（专有工具、仅供企业使用的集成或实验性构建），你可以将 tar 包直接部署到某台 Twenty 服务器。
-
-### 先决条件
-
-在部署之前，你需要配置一个指向目标服务器的远程。 远程会将服务器 URL 和身份验证凭据本地存储在 `~/.twenty/config.json` 中。
-
-添加远程：
-
-```bash filename="Terminal"
-yarn twenty remote add --url https://your-twenty-server.com --as production
-```
-
-对于本地开发服务器：
-
-```bash filename="Terminal"
-yarn twenty remote add --local --as local
-```
-
-对于非交互式环境，你也可以使用 API 密钥进行身份验证：
-
-```bash filename="Terminal"
-yarn twenty remote add --url https://your-twenty-server.com --token <api-key> --as production
-```
-
-管理你的远程：
-
-```bash filename="Terminal"
-yarn twenty remote list       # List all configured remotes
-yarn twenty remote switch prod # Set the default remote
-yarn twenty remote status     # Show active remote and auth status
-yarn twenty remote remove old # Remove a remote
-```
-
-### 部署
-
-一步构建并将你的应用上传到服务器：
-
-```bash filename="Terminal"
-yarn twenty deploy
-```
-
-这会使用 `--tarball` 构建应用，然后通过 GraphQL 多部分上传将该 tar 包上传到默认远程。
-
-部署到特定远程：
-
-```bash filename="Terminal"
-yarn twenty deploy -r production
-```
-
-### 共享已部署的应用
-
-通过 tar 包分发的应用不会出现在公共市场中，因此同一服务器上的其他工作区无法通过浏览发现它们。 要共享已部署的应用：
-
-1. 前往 **Settings > Applications > Registrations** 并打开你的应用
-2. 在 **Distribution** 选项卡中，点击 **Copy share link**
-3. 将此链接分享给其他工作区的用户 — 它会将他们直接带到该应用的安装页面
-
-该分享链接使用服务器的基础 URL（不包含任何工作区子域），因此适用于该服务器上的任意工作区。
-
-### 版本管理
-
-要发布更新：
-
-1. 更新 `package.json` 中的 `version` 字段
-2. 运行 `yarn twenty deploy`（或 `yarn twenty deploy -r production`）
-3. 已安装该应用的工作区会在其设置中看到可用的升级
+</Note>
 
 ## 安装应用
 
-一旦应用已发布（npm）或已部署（tar 包），各工作区即可通过 UI 进行安装：
+Once an app is published (npm) or deployed (tarball), workspaces can install it through the UI.
+
+Go to the **Settings > Applications** page in Twenty, where both marketplace and tarball-deployed apps can be browsed and installed.
+
+{/* TODO: add screenshot of the UI when the app is registered */}
+
+You can also install apps from the command line:
 
 ```bash filename="Terminal"
 yarn twenty install
 ```
 
-或者在 Twenty UI 的 **Settings > Applications** 页面中浏览并安装来自市场或通过 tar 包部署的应用。
+<Note>
+服务器在安装时强制执行 SemVer 版本控制，与部署时的规则一致：
 
-## 应用分发类别
+* 尝试安装与工作区中已安装版本相同的版本将被拒绝，并返回 `APP_ALREADY_INSTALLED` 错误。
+* 尝试安装低于当前已安装版本的版本将被拒绝，并返回 `CANNOT_DOWNGRADE_APPLICATION` 错误。
 
-Twenty 会根据分发方式将应用归为三类：
-
-| 类别            | 工作原理                                               | 在应用市场中可见？ |
-| ------------- | -------------------------------------------------- | --------- |
-| **开发**        | 通过 `yarn twenty dev` 运行的本地开发模式应用。 用于构建和测试。         | 否         |
-| **已发布（npm）**  | 发布到 npm 且包含 `twenty-app` 关键字的应用。 在应用市场上架，供任何工作区安装。 | 是         |
-| **内部（tar 包）** | 通过 tar 包部署到特定服务器的应用。 仅通过分享链接对该服务器上的工作区可用。          | 否         |
-
-<Tip>
-在构建你的应用时，从**开发**模式开始。 准备就绪后，选择用于广泛分发的**已发布**（npm），或用于私有部署的**内部**（tar 包）。
-</Tip>
-
-## CLI 参考
-
-| 命令                          | 描述               | 关键选项                                        |
-| --------------------------- | ---------------- | ------------------------------------------- |
-| `yarn twenty build`         | 编译应用并生成清单        | `--tarball` — 同时创建一个 `.tgz` 包               |
-| `yarn twenty publish`       | 构建并发布到 npm       | `--tag <tag>` — npm 分发标签（例如 `beta`、`next`）  |
-| `yarn twenty deploy`        | 构建并将 tar 包上传到服务器 | `-r, --remote <name>` — 目标远程                |
-| `yarn twenty catalog-sync`  | 在服务器上触发市场目录同步    | `-r, --remote <name>` — 目标远程                |
-| `yarn twenty install`       | 在某个工作区安装已部署的应用   | `-r, --remote <name>` — 目标远程                |
-| `yarn twenty dev`           | 监听并同步本地更改        | 使用默认远程                                      |
-| `yarn twenty remote add`    | 添加服务器连接          | `--url`，`--token`，`--as`，`--local`，`--port` |
-| `yarn twenty remote list`   | 列出已配置的远程         | —                                           |
-| `yarn twenty remote switch` | 设置默认远程           | —                                           |
-| `yarn twenty remote status` | 显示连接状态           | —                                           |
-| `yarn twenty remote remove` | 移除远程             | —                                           |
+若要安装较新的版本，请先部署或发布它，然后重新运行 `yarn twenty install`。
+</Note>

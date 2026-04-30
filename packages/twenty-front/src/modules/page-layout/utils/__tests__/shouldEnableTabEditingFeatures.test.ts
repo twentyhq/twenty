@@ -7,6 +7,13 @@ describe('shouldEnableTabEditingFeatures', () => {
     expect(result).toBe(true);
   });
 
+  it('should return true for STANDALONE_PAGE layout type', () => {
+    const result = shouldEnableTabEditingFeatures(
+      PageLayoutType.STANDALONE_PAGE,
+    );
+    expect(result).toBe(true);
+  });
+
   it('should return false for RECORD_PAGE layout type without flag', () => {
     const result = shouldEnableTabEditingFeatures(PageLayoutType.RECORD_PAGE);
     expect(result).toBe(false);
@@ -42,10 +49,14 @@ describe('shouldEnableTabEditingFeatures', () => {
   });
 
   describe('behavior validation', () => {
-    it('should enable tab editing features only for dashboards and record pages with flag', () => {
+    it('should enable tab editing features only for dashboards, standalone pages, and record pages with flag', () => {
       expect(shouldEnableTabEditingFeatures(PageLayoutType.DASHBOARD)).toBe(
         true,
       );
+
+      expect(
+        shouldEnableTabEditingFeatures(PageLayoutType.STANDALONE_PAGE),
+      ).toBe(true);
 
       expect(shouldEnableTabEditingFeatures(PageLayoutType.RECORD_PAGE)).toBe(
         false,

@@ -3,7 +3,7 @@ import { useDebouncedCallback } from 'use-debounce';
 
 import { CoreObjectNameSingular, SettingsPath } from 'twenty-shared/types';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
-import { useImpersonationAuth } from '@/settings/admin-panel/hooks/useImpersonationAuth';
+import { useImpersonationSession } from '@/auth/hooks/useImpersonationSession';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsRolesQueryEffect } from '@/settings/roles/components/SettingsRolesQueryEffect';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
@@ -50,7 +50,7 @@ export const SettingsWorkspaceMember = () => {
   const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
   const { openModal, closeModal } = useModal();
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
-  const { executeImpersonationAuth } = useImpersonationAuth();
+  const { startImpersonating } = useImpersonationSession();
   const [impersonate] = useMutation(ImpersonateDocument);
   const isImpersonating = useAtomStateValue(isImpersonatingState);
   const canImpersonate =
@@ -150,7 +150,7 @@ export const SettingsWorkspaceMember = () => {
       },
       onCompleted: async (data) => {
         const { loginToken } = data.impersonate;
-        await executeImpersonationAuth(loginToken.token);
+        await startImpersonating(loginToken.token);
       },
       onError: () => {
         enqueueErrorSnackBar({

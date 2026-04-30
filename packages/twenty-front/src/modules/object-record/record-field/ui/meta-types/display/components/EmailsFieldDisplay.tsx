@@ -1,3 +1,4 @@
+import { useOpenEmailInAppOrFallback } from '@/activities/emails/hooks/useOpenEmailInAppOrFallback';
 import { useEmailsFieldDisplay } from '@/object-record/record-field/ui/meta-types/hooks/useEmailsFieldDisplay';
 import { EmailsDisplay } from '@/ui/field/display/components/EmailsDisplay';
 import { useLingui } from '@lingui/react/macro';
@@ -10,7 +11,14 @@ export const EmailsFieldDisplay = () => {
   const { copyToClipboard } = useCopyToClipboard();
   const { t } = useLingui();
 
-  const onClickAction = fieldDefinition.metadata.settings?.clickAction;
+  const onClickAction =
+    fieldDefinition.metadata.settings?.clickAction ??
+    FieldMetadataSettingsOnClickAction.OPEN_IN_APP;
+
+  const isOpenInApp =
+    onClickAction === FieldMetadataSettingsOnClickAction.OPEN_IN_APP;
+
+  const { openEmail } = useOpenEmailInAppOrFallback({ skip: !isOpenInApp });
 
   const handleEmailClick = (
     email: string,
@@ -19,6 +27,15 @@ export const EmailsFieldDisplay = () => {
     if (onClickAction === FieldMetadataSettingsOnClickAction.COPY) {
       event.preventDefault();
       copyToClipboard(email, t`Email copied to clipboard`);
+
+      return;
+    }
+
+    if (isOpenInApp) {
+      event.preventDefault();
+      openEmail(email);
+
+      return;
     }
   };
 

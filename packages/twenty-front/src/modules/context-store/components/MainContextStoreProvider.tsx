@@ -47,6 +47,7 @@ export const MainContextStoreProvider = () => {
     AppPath.RecordIndexPage,
   );
   const isRecordShowPage = isMatchingLocation(location, AppPath.RecordShowPage);
+  const isStandalonePage = isMatchingLocation(location, AppPath.PageLayoutPage);
   const isSettingsPage = useIsSettingsPage();
   const showAuthModal = useShowAuthModal();
 
@@ -118,6 +119,7 @@ export const MainContextStoreProvider = () => {
   const shouldComputeContextStore =
     (isRecordIndexPage ||
       isRecordShowPage ||
+      isStandalonePage ||
       isSettingsPage ||
       showAuthModal) &&
     metadataStore.status === 'up-to-date';
@@ -132,6 +134,7 @@ export const MainContextStoreProvider = () => {
       objectMetadataItem={objectMetadataItem}
       isRecordIndexPage={isRecordIndexPage}
       isRecordShowPage={isRecordShowPage}
+      isStandalonePage={isStandalonePage}
       isSettingsPage={isSettingsPage}
     />
   );

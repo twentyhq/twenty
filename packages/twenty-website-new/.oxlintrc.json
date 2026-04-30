@@ -2,9 +2,9 @@
   "$schema": "./node_modules/oxlint/configuration_schema.json",
   "plugins": ["react", "typescript", "import", "unicorn"],
   "categories": {
-    "correctness": "off"
+    "correctness": "error"
   },
-  "ignorePatterns": ["node_modules"],
+  "ignorePatterns": ["node_modules", "src/locales/generated"],
   "rules": {
     "func-style": ["error", "declaration", { "allowArrowFunctions": true }],
     "no-console": "off",
@@ -17,23 +17,32 @@
     "import/no-duplicates": "error",
     "typescript/no-redeclare": "error",
     "typescript/ban-ts-comment": "error",
-    "typescript/consistent-type-imports": ["error", {
-      "prefer": "type-imports",
-      "fixStyle": "inline-type-imports"
-    }],
+    "typescript/consistent-type-imports": [
+      "error",
+      {
+        "prefer": "type-imports",
+        "fixStyle": "inline-type-imports"
+      }
+    ],
     "typescript/explicit-function-return-type": "off",
     "typescript/explicit-module-boundary-types": "off",
-    "typescript/no-empty-object-type": ["error", {
-      "allowInterfaces": "with-single-extends"
-    }],
+    "typescript/no-empty-object-type": [
+      "error",
+      {
+        "allowInterfaces": "with-single-extends"
+      }
+    ],
     "typescript/no-empty-function": "off",
     "typescript/no-explicit-any": "off",
-    "typescript/no-unused-vars": ["warn", {
-      "vars": "all",
-      "varsIgnorePattern": "^_",
-      "args": "after-used",
-      "argsIgnorePattern": "^_"
-    }],
+    "typescript/no-unused-vars": [
+      "warn",
+      {
+        "vars": "all",
+        "varsIgnorePattern": "^_",
+        "args": "after-used",
+        "argsIgnorePattern": "^_"
+      }
+    ],
     "react/no-unescaped-entities": "off",
     "react/prop-types": "off",
     "react/jsx-key": "off",
@@ -44,5 +53,55 @@
     "react/jsx-props-no-spreading": ["error", { "explicitSpread": "ignore" }],
     "react-hooks/rules-of-hooks": "error",
     "react-hooks/exhaustive-deps": "warn"
-  }
+  },
+  "overrides": [
+    {
+      "files": ["**/sections/**/*.ts", "**/sections/**/*.tsx"],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "group": ["@/app/**"],
+                "message": "Sections are page-agnostic primitives — they must not depend on a specific route. Move shared halftone primitives into `src/lib/halftone/`, shared types into `src/sections/<Section>/types/`, and shared data into `src/lib/`. (See ARCHITECTURE.md → Layering rules.)"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "files": ["**/lib/**/*.ts", "**/lib/**/*.tsx"],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "group": ["@/app/**", "@/sections/**"],
+                "message": "`lib/` is the leaf layer. It must not depend on routes (`app/`) or page sections (`sections/`). Invert the dependency: have the consumer pass values in. (See ARCHITECTURE.md → Layering rules.)"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "files": ["**/design-system/**/*.ts", "**/design-system/**/*.tsx"],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "group": ["@/app/**", "@/sections/**", "@/lib/**"],
+                "message": "Design-system primitives must only depend on `@/theme` (and `@/icons` for components that legitimately render an icon). They must not reach into routes, sections, or lib. (See ARCHITECTURE.md → Layering rules.)"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
 }

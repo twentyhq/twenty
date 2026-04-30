@@ -117,19 +117,11 @@
     },
     "worker": {
       "executor": "nx:run-commands",
-      "dependsOn": ["build"],
+      "dependsOn": ["^build"],
       "options": {
         "cwd": "packages/twenty-server",
-        "command": "node dist/queue-worker/queue-worker.js"
+        "command": "NODE_ENV=development nest start --watch --entryFile queue-worker/queue-worker"
       }
-    },
-    "typeorm": {
-      "executor": "nx:run-commands",
-      "options": {
-        "cwd": "packages/twenty-server",
-        "command": "ts-node --transpile-only -P tsconfig.json ../../node_modules/typeorm/cli.js"
-      },
-      "dependsOn": ["^build"]
     },
     "ts-node": {
       "executor": "nx:run-commands",
@@ -204,30 +196,32 @@
     },
     "database:migrate": {
       "executor": "nx:run-commands",
-      "dependsOn": ["^build"],
+      "dependsOn": ["build"],
+      "options": {
+        "cwd": "packages/twenty-server",
+        "command": "node dist/command/command.js run-instance-commands --force"
+      }
+    },
+    "database:init": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["build"],
       "options": {
         "cwd": "packages/twenty-server",
         "commands": [
-          "nx typeorm -- migration:run -d src/database/typeorm/core/core.datasource"
-        ]
+          "node dist/database/scripts/setup-db.js",
+          "nx database:migrate -- --include-slow"
+        ],
+        "parallel": false
       }
     },
     "database:migrate:generate": {
       "executor": "nx:run-commands",
+      "dependsOn": ["build"],
       "options": {
         "cwd": "packages/twenty-server",
-        "command": "npx nx typeorm -- migration:generate src/database/typeorm/core/migrations/common/{args.migrationName} -d src/database/typeorm/core/core.datasource.ts"
-      }
-    },
-    "database:migrate:revert": {
-      "executor": "nx:run-commands",
-      "dependsOn": ["^build"],
-      "options": {
-        "cwd": "packages/twenty-server",
-        "commands": [
-          "nx typeorm -- migration:revert -d src/database/typeorm/core/core.datasource"
-        ]
-      }
+        "command": "node dist/command/command.js generate:instance-command"
+      },
+      "cache": false
     },
     "generate:integration-test": {
       "executor": "nx:run-commands",
@@ -247,8 +241,7 @@
           "cwd": "packages/twenty-server",
           "commands": [
             "node dist/database/scripts/truncate-db.js",
-            "node dist/database/scripts/setup-db.js",
-            "nx database:migrate",
+            "nx database:init",
             "nx command-no-deps -- cache:flush"
           ],
           "parallel": false
@@ -257,8 +250,7 @@
           "cwd": "packages/twenty-server",
           "commands": [
             "node dist/database/scripts/truncate-db.js",
-            "node dist/database/scripts/setup-db.js",
-            "nx database:migrate",
+            "nx database:init",
             "nx command-no-deps -- cache:flush",
             "nx command-no-deps -- workspace:seed:dev"
           ],

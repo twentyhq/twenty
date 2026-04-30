@@ -1,15 +1,13 @@
-import {
-  CommandMenuContextApiPageType,
-  type CommandMenuContextApi,
-} from '@/types';
+import { ContextStorePageType, type CommandMenuContextApi } from '@/types';
 import { evaluateConditionalAvailabilityExpression } from '../evaluateConditionalAvailabilityExpression';
 
 const buildContext = (
   overrides: Partial<CommandMenuContextApi> = {},
 ): CommandMenuContextApi => ({
-  pageType: CommandMenuContextApiPageType.INDEX_PAGE,
+  pageType: ContextStorePageType.Index,
   isInSidePanel: false,
-  isPageInEditMode: false,
+  isDashboardPageLayoutInEditMode: false,
+  isLayoutCustomizationModeEnabled: false,
   favoriteRecordIds: [],
   isSelectAll: false,
   hasAnySoftDeleteFilterOnView: false,
@@ -26,9 +24,11 @@ const buildContext = (
   },
   selectedRecords: [],
   featureFlags: {},
+  permissionFlags: {},
   targetObjectReadPermissions: {},
   targetObjectWritePermissions: {},
   objectMetadataItem: {},
+  objectMetadataLabel: '',
   ...overrides,
 });
 
@@ -306,6 +306,81 @@ describe('evaluateConditionalAvailabilityExpression', () => {
     });
   });
 
+  describe('isSelectAll bypasses selectedRecords array checks', () => {
+    it('should return true for "isSelectAll or noneDefined(...)" when isSelectAll is true and selectedRecords is empty', () => {
+      const context = buildContext({
+        isSelectAll: true,
+        selectedRecords: [],
+      });
+
+      expect(
+        evaluateConditionalAvailabilityExpression(
+          'isSelectAll or noneDefined(selectedRecords, "deletedAt")',
+          context,
+        ),
+      ).toBe(true);
+    });
+
+    it('should return true for "isSelectAll or everyDefined(...)" when isSelectAll is true and selectedRecords is empty', () => {
+      const context = buildContext({
+        isSelectAll: true,
+        selectedRecords: [],
+      });
+
+      expect(
+        evaluateConditionalAvailabilityExpression(
+          'isSelectAll or everyDefined(selectedRecords, "deletedAt")',
+          context,
+        ),
+      ).toBe(true);
+    });
+
+    it('should evaluate the full deleteRecords expression to true in select-all mode', () => {
+      const expression =
+        'numberOfSelectedRecords >= 1 and not hasAnySoftDeleteFilterOnView and objectPermissions.canSoftDeleteObjectRecords and (isSelectAll or noneDefined(selectedRecords, "deletedAt"))';
+
+      const context = buildContext({
+        isSelectAll: true,
+        selectedRecords: [],
+        numberOfSelectedRecords: 50,
+        hasAnySoftDeleteFilterOnView: false,
+        objectPermissions: {
+          objectMetadataId: '',
+          canReadObjectRecords: true,
+          canUpdateObjectRecords: true,
+          canSoftDeleteObjectRecords: true,
+          canDestroyObjectRecords: false,
+          restrictedFields: {},
+          rowLevelPermissionPredicates: [],
+          rowLevelPermissionPredicateGroups: [],
+        },
+      });
+
+      expect(
+        evaluateConditionalAvailabilityExpression(expression, context),
+      ).toBe(true);
+    });
+
+    it('should still respect noneDefined when isSelectAll is false and records are present', () => {
+      const expression =
+        'isSelectAll or noneDefined(selectedRecords, "deletedAt")';
+
+      const contextWithDeletedRecord = buildContext({
+        isSelectAll: false,
+        selectedRecords: [
+          { id: 'id-1', createdAt: '', updatedAt: '', deletedAt: '2024-01-01' },
+        ],
+      });
+
+      expect(
+        evaluateConditionalAvailabilityExpression(
+          expression,
+          contextWithDeletedRecord,
+        ),
+      ).toBe(false);
+    });
+  });
+
   describe('activateWorkflow expression regression', () => {
     const activateWorkflowExpression =
       'everyDefined(selectedRecords, "currentVersion.trigger") and everyDefined(selectedRecords, "currentVersion.steps") and every(selectedRecords, "currentVersion.steps.length") and (everyEquals(selectedRecords, "currentVersion.status", "DRAFT") or includesNone(selectedRecords, "statuses", "ACTIVE")) and noneDefined(selectedRecords, "deletedAt")';
@@ -377,6 +452,60 @@ describe('evaluateConditionalAvailabilityExpression', () => {
       expect(
         evaluateConditionalAvailabilityExpression(
           activateWorkflowExpression,
+          context,
+        ),
+      ).toBe(true);
+    });
+  });
+
+  describe('permissionFlags gating', () => {
+    it('should hide exportRecords when EXPORT_CSV permission flag is missing', () => {
+      const context = buildContext({ permissionFlags: {} });
+
+      expect(
+        evaluateConditionalAvailabilityExpression(
+          'permissionFlags.EXPORT_CSV',
+          context,
+        ),
+      ).toBe(false);
+    });
+
+    it('should show exportRecords when EXPORT_CSV permission flag is present', () => {
+      const context = buildContext({
+        permissionFlags: { EXPORT_CSV: true },
+      });
+
+      expect(
+        evaluateConditionalAvailabilityExpression(
+          'permissionFlags.EXPORT_CSV',
+          context,
+        ),
+      ).toBe(true);
+    });
+
+    it('should hide importRecords when IMPORT_CSV permission flag is missing even if soft-delete filter is off', () => {
+      const context = buildContext({
+        hasAnySoftDeleteFilterOnView: false,
+        permissionFlags: {},
+      });
+
+      expect(
+        evaluateConditionalAvailabilityExpression(
+          'not hasAnySoftDeleteFilterOnView and permissionFlags.IMPORT_CSV',
+          context,
+        ),
+      ).toBe(false);
+    });
+
+    it('should show importRecords when IMPORT_CSV permission flag is present and soft-delete filter is off', () => {
+      const context = buildContext({
+        hasAnySoftDeleteFilterOnView: false,
+        permissionFlags: { IMPORT_CSV: true },
+      });
+
+      expect(
+        evaluateConditionalAvailabilityExpression(
+          'not hasAnySoftDeleteFilterOnView and permissionFlags.IMPORT_CSV',
           context,
         ),
       ).toBe(true);

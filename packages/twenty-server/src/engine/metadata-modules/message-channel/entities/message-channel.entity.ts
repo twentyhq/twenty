@@ -1,3 +1,5 @@
+import { registerEnumType } from '@nestjs/graphql';
+
 import {
   Column,
   CreateDateColumn,
@@ -23,6 +25,26 @@ import {
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { type MessageFolderEntity } from 'src/engine/metadata-modules/message-folder/entities/message-folder.entity';
 import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/workspace-related-entity';
+
+registerEnumType(MessageChannelVisibility, {
+  name: 'MessageChannelVisibility',
+});
+registerEnumType(MessageChannelSyncStatus, {
+  name: 'MessageChannelSyncStatus',
+});
+registerEnumType(MessageChannelSyncStage, {
+  name: 'MessageChannelSyncStage',
+});
+registerEnumType(MessageChannelType, { name: 'MessageChannelType' });
+registerEnumType(MessageChannelContactAutoCreationPolicy, {
+  name: 'MessageChannelContactAutoCreationPolicy',
+});
+registerEnumType(MessageFolderImportPolicy, {
+  name: 'MessageFolderImportPolicy',
+});
+registerEnumType(MessageChannelPendingGroupEmailsAction, {
+  name: 'MessageChannelPendingGroupEmailsAction',
+});
 
 @Entity({ name: 'messageChannel', schema: 'core' })
 export class MessageChannelEntity extends WorkspaceRelatedEntity {

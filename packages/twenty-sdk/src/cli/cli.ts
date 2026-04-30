@@ -40,9 +40,6 @@ registerCommands(program);
 
 program.exitOverride();
 
-const isExitPromptError = (error: unknown): boolean =>
-  error instanceof Error && error.name === 'ExitPromptError';
-
 try {
   program.parse();
 } catch (error) {

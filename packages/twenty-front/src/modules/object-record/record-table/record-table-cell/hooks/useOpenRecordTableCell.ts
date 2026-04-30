@@ -24,6 +24,9 @@ import { useFocusedRecordTableRow } from '@/object-record/record-table/hooks/use
 import { useFocusRecordTableCell } from '@/object-record/record-table/record-table-cell/hooks/useFocusRecordTableCell';
 import { isRecordTableRowFocusActiveComponentState } from '@/object-record/record-table/states/isRecordTableRowFocusActiveComponentState';
 import { clickOutsideListenerIsActivatedComponentState } from '@/ui/utilities/pointer-event/states/clickOutsideListenerIsActivatedComponentState';
+import { useGoBackToPreviousDropdownFocusId } from '@/ui/layout/dropdown/hooks/useGoBackToPreviousDropdownFocusId';
+import { useRemoveLastFocusItemFromFocusStackByComponentType } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackByComponentType';
+import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
@@ -60,6 +63,12 @@ export const useOpenRecordTableCell = (recordTableId: string) => {
     useSetActiveDropdownFocusIdAndMemorizePrevious();
 
   const { openFieldInput } = useOpenFieldInputEditMode();
+
+  const { goBackToPreviousDropdownFocusId } =
+    useGoBackToPreviousDropdownFocusId();
+
+  const { removeLastFocusItemFromFocusStackByComponentType } =
+    useRemoveLastFocusItemFromFocusStackByComponentType();
 
   const { activateRecordTableRow, deactivateRecordTableRow } =
     useActiveRecordTableRow(recordTableId);
@@ -137,6 +146,13 @@ export const useOpenRecordTableCell = (recordTableId: string) => {
         fieldDefinition,
         recordId,
         prefix: RECORD_TABLE_CELL_INPUT_ID_PREFIX,
+        onFileUploadClose: () => {
+          setRecordTableCellEditModePosition(null);
+          goBackToPreviousDropdownFocusId();
+          removeLastFocusItemFromFocusStackByComponentType({
+            componentType: FocusComponentType.OPENED_FIELD_INPUT,
+          });
+        },
       });
 
       setRecordTableCellEditModePosition(cellPosition);
@@ -170,6 +186,8 @@ export const useOpenRecordTableCell = (recordTableId: string) => {
       setDragSelectionStartEnabled,
       openFieldInput,
       setRecordTableCellEditModePosition,
+      goBackToPreviousDropdownFocusId,
+      removeLastFocusItemFromFocusStackByComponentType,
       initDraftValue,
       toggleClickOutside,
       setActiveDropdownFocusIdAndMemorizePrevious,

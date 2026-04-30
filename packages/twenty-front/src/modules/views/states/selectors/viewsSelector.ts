@@ -24,7 +24,7 @@ export const viewsSelector = createAtomSelector<ViewWithRelations[]>({
       flatObjectMetadataItems.map((item) => [item.id, item]),
     );
 
-    const flatViewFields = get(metadataStoreState, 'viewFields')
+    const allFlatViewFields = get(metadataStoreState, 'viewFields')
       .current as FlatViewField[];
     const flatViewFilters = get(metadataStoreState, 'viewFilters')
       .current as FlatViewFilter[];
@@ -34,8 +34,13 @@ export const viewsSelector = createAtomSelector<ViewWithRelations[]>({
       .current as FlatViewGroup[];
     const flatViewFilterGroups = get(metadataStoreState, 'viewFilterGroups')
       .current as FlatViewFilterGroup[];
-    const flatViewFieldGroups = get(metadataStoreState, 'viewFieldGroups')
+    const allFlatViewFieldGroups = get(metadataStoreState, 'viewFieldGroups')
       .current as FlatViewFieldGroup[];
+
+    const flatViewFields = allFlatViewFields.filter((field) => field.isActive);
+    const flatViewFieldGroups = allFlatViewFieldGroups.filter(
+      (group) => group.isActive,
+    );
 
     const viewFieldsByViewId = new Map<string, FlatViewField[]>();
     const viewFiltersByViewId = new Map<string, FlatViewFilter[]>();

@@ -95,6 +95,12 @@ const BookCall = lazy(() =>
   })),
 );
 
+const StandalonePageLayoutPage = lazy(() =>
+  import('~/pages/page-layout/StandalonePageLayoutPage').then((module) => ({
+    default: module.StandalonePageLayoutPage,
+  })),
+);
+
 const NotFound = lazy(() =>
   import('~/pages/not-found/NotFound').then((module) => ({
     default: module.NotFound,
@@ -119,7 +125,7 @@ export const useCreateAppRouter = (
           <Route
             path={AppPath.SignInUp}
             element={
-              <LazyRoute>
+              <LazyRoute fallback={null}>
                 <SignInUp />
               </LazyRoute>
             }
@@ -127,7 +133,7 @@ export const useCreateAppRouter = (
           <Route
             path={AppPath.Invite}
             element={
-              <LazyRoute>
+              <LazyRoute fallback={null}>
                 <SignInUp />
               </LazyRoute>
             }
@@ -135,7 +141,7 @@ export const useCreateAppRouter = (
           <Route
             path={AppPath.ResetPassword}
             element={
-              <LazyRoute>
+              <LazyRoute fallback={null}>
                 <PasswordReset />
               </LazyRoute>
             }
@@ -143,7 +149,7 @@ export const useCreateAppRouter = (
           <Route
             path={AppPath.CreateWorkspace}
             element={
-              <LazyRoute>
+              <LazyRoute fallback={null}>
                 <CreateWorkspace />
               </LazyRoute>
             }
@@ -151,7 +157,7 @@ export const useCreateAppRouter = (
           <Route
             path={AppPath.CreateProfile}
             element={
-              <LazyRoute>
+              <LazyRoute fallback={null}>
                 <CreateProfile />
               </LazyRoute>
             }
@@ -159,7 +165,7 @@ export const useCreateAppRouter = (
           <Route
             path={AppPath.SyncEmails}
             element={
-              <LazyRoute>
+              <LazyRoute fallback={null}>
                 <SyncEmails />
               </LazyRoute>
             }
@@ -167,7 +173,7 @@ export const useCreateAppRouter = (
           <Route
             path={AppPath.InviteTeam}
             element={
-              <LazyRoute>
+              <LazyRoute fallback={null}>
                 <InviteTeam />
               </LazyRoute>
             }
@@ -175,7 +181,7 @@ export const useCreateAppRouter = (
           <Route
             path={AppPath.PlanRequired}
             element={
-              <LazyRoute>
+              <LazyRoute fallback={null}>
                 <ChooseYourPlan />
               </LazyRoute>
             }
@@ -183,7 +189,7 @@ export const useCreateAppRouter = (
           <Route
             path={AppPath.PlanRequiredSuccess}
             element={
-              <LazyRoute>
+              <LazyRoute fallback={null}>
                 <PaymentSuccess />
               </LazyRoute>
             }
@@ -191,7 +197,7 @@ export const useCreateAppRouter = (
           <Route
             path={AppPath.BookCallDecision}
             element={
-              <LazyRoute>
+              <LazyRoute fallback={null}>
                 <BookCallDecision />
               </LazyRoute>
             }
@@ -199,7 +205,7 @@ export const useCreateAppRouter = (
           <Route
             path={AppPath.BookCall}
             element={
-              <LazyRoute>
+              <LazyRoute fallback={null}>
                 <BookCall />
               </LazyRoute>
             }
@@ -218,6 +224,14 @@ export const useCreateAppRouter = (
             element={
               <LazyRoute>
                 <RecordShowPage />
+              </LazyRoute>
+            }
+          />
+          <Route
+            path={AppPath.PageLayoutPage}
+            element={
+              <LazyRoute>
+                <StandalonePageLayoutPage />
               </LazyRoute>
             }
           />

@@ -3,7 +3,7 @@ import { msg } from '@lingui/core/macro';
 import { type Agent } from '~/generated-metadata/graphql';
 
 export const SETTINGS_AI_AGENT_TABLE_METADATA: TableMetadata<Agent> = {
-  tableId: 'settingsAIAgent',
+  tableId: 'settingsAiAgent',
   fields: [
     {
       fieldLabel: msg`Name`,

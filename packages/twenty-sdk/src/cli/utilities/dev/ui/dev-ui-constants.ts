@@ -102,6 +102,7 @@ export const ENTITY_LABELS: Record<SyncableEntity, string> = {
   [SyncableEntity.View]: 'Views',
   [SyncableEntity.NavigationMenuItem]: 'Navigation menu items',
   [SyncableEntity.PageLayout]: 'Page layouts',
+  [SyncableEntity.PageLayoutTab]: 'Page layout tabs',
   [SyncableEntity.Agent]: 'Agents',
 };
 

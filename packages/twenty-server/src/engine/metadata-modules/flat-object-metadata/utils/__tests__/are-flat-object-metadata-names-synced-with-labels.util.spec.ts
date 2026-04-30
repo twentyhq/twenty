@@ -85,7 +85,7 @@ describe('areFlatObjectMetadataNamesSyncedWithLabels', () => {
     expect(result).toBe(false);
   });
 
-  it('should not apply custom suffix for reserved words when caller is the Twenty Standard app', () => {
+  it('should not apply custom suffix for reserved words when caller is the Standard app', () => {
     const result = areFlatObjectMetadataNamesSyncedWithLabels({
       flatObjectMetadata: {
         nameSingular: 'event',

@@ -1,0 +1,47 @@
+name: Spawn Twenty App Dev Test
+description: >
+  Starts a Twenty all-in-one test instance (server, worker, database, redis)
+  using the twentycrm/twenty-app-dev Docker image on port 2021.
+  The server is available at http://localhost:2021 with seeded demo data.
+
+inputs:
+  twenty-version:
+    description: 'Twenty Docker Hub image tag for twenty-app-dev (e.g., "latest" or "v1.20.0").'
+    required: false
+    default: 'latest'
+
+outputs:
+  server-url:
+    description: 'URL where the Twenty test server can be reached'
+    value: http://localhost:2021
+  api-key:
+    description: 'API key (type: API_KEY) for the seeded Twenty dev workspace'
+    value: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyMDIwMjAyMC0xYzI1LTRkMDItYmYyNS02YWVjY2Y3ZWE0MTkiLCJ0eXBlIjoiQVBJX0tFWSIsIndvcmtzcGFjZUlkIjoiMjAyMDIwMjAtMWMyNS00ZDAyLWJmMjUtNmFlY2NmN2VhNDE5IiwiaWF0IjoxNzM1Njg5NjAwLCJleHAiOjQ4OTE0NDk2MDAsImp0aSI6IjIwMjAyMDIwLWY0MDEtNGQ4YS1hNzMxLTY0ZDAwN2MyN2JhZCJ9.bfQjfyN0NEtTCLE_xPyNcwonDzlSXFoP8kdCQTdnuDc
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Start twenty-app-dev-test container
+      shell: bash
+      run: |
+        docker run -d \
+          --name twenty-app-dev-test \
+          -p 2021:2021 \
+          -e NODE_PORT=2021 \
+          -e SERVER_URL=http://localhost:2021 \
+          twentycrm/twenty-app-dev:${{ inputs.twenty-version }}
+
+        echo "Waiting for Twenty test instance to become healthy…"
+        TIMEOUT=180
+        ELAPSED=0
+        until curl -sf http://localhost:2021/healthz > /dev/null 2>&1; do
+          if [ "$ELAPSED" -ge "$TIMEOUT" ]; then
+            echo "::error::Twenty did not become healthy within ${TIMEOUT}s"
+            docker logs twenty-app-dev-test 2>&1 | tail -80
+            exit 1
+          fi
+          sleep 3
+          ELAPSED=$((ELAPSED + 3))
+          echo "  … waited ${ELAPSED}s"
+        done
+        echo "Twenty test instance is ready at http://localhost:2021 (took ~${ELAPSED}s)"

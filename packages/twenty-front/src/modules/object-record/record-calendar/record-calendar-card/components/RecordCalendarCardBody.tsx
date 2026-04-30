@@ -48,6 +48,7 @@ export const RecordCalendarCardBody = ({
   const {
     labelIdentifierFieldMetadataItem,
     fieldDefinitionByFieldMetadataItemId,
+    objectPermissionsByObjectMetadataId,
   } = useRecordIndexContextOrThrow();
 
   const visibleRecordFields = useAtomComponentSelectorValue(
@@ -92,6 +93,8 @@ export const RecordCalendarCardBody = ({
                     isCustom:
                       correspondingFieldDefinition.metadata.isCustom ?? false,
                   },
+                  fieldDefinition: correspondingFieldDefinition,
+                  objectPermissionsByObjectMetadataId,
                 }),
                 fieldDefinition: correspondingFieldDefinition,
                 useUpdateRecord: useUpdateOneRecordHook,

@@ -1,0 +1,42 @@
+name: CD
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [labeled]
+
+permissions:
+  contents: read
+
+env:
+  TWENTY_DEPLOY_URL: http://localhost:3000
+
+concurrency:
+  group: cd-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  deploy-and-install:
+    if: >-
+      github.event_name == 'push' ||
+      (github.event_name == 'pull_request' && github.event.label.name == 'deploy')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+
+      - name: Deploy
+        uses: twentyhq/twenty/.github/actions/deploy-twenty-app@main
+        with:
+          api-url: ${{ env.TWENTY_DEPLOY_URL }}
+          api-key: ${{ secrets.TWENTY_DEPLOY_API_KEY }}
+
+      - name: Install
+        uses: twentyhq/twenty/.github/actions/install-twenty-app@main
+        with:
+          api-url: ${{ env.TWENTY_DEPLOY_URL }}
+          api-key: ${{ secrets.TWENTY_DEPLOY_API_KEY }}

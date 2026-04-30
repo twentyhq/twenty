@@ -13,7 +13,8 @@
     "src/engine/workspace-manager/dev-seeder/data/seeds/**",
     "src/utils/email-providers.ts",
     "src/engine/core-modules/i18n/locales/generated/**",
-    "src/engine/core-modules/logic-function/logic-function-resource/constants/seed-project/src/index.ts"
+    "src/engine/core-modules/logic-function/logic-function-resource/constants/seed-project/src/index.ts",
+    "src/engine/metadata-modules/front-component/constants/seed-project/**"
   ],
   "rules": {
     "func-style": ["error", "declaration", { "allowArrowFunctions": true }],
@@ -59,6 +60,7 @@
     "twenty/inject-workspace-repository": "warn",
     "twenty/rest-api-methods-should-be-guarded": "error",
     "twenty/graphql-resolvers-should-be-guarded": "error",
+    "twenty/upgrade-command-filename": "error",
     "twenty/enforce-module-boundaries": ["error", {
       "depConstraints": [
         {

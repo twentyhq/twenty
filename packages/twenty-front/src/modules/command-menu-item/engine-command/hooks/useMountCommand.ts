@@ -8,6 +8,7 @@ import { isDefined } from 'twenty-shared/utils';
 import {
   type CommandMenuItemAvailabilityType,
   type EngineComponentKey,
+  type CommandMenuItemPayload,
 } from '~/generated-metadata/graphql';
 
 type MountCommandParams = {
@@ -18,6 +19,7 @@ type MountCommandParams = {
   workflowVersionId?: string;
   availabilityType?: CommandMenuItemAvailabilityType;
   availabilityObjectMetadataId?: string | null;
+  payload?: CommandMenuItemPayload | null;
 };
 
 export const useMountCommand = () => {
@@ -36,11 +38,13 @@ export const useMountCommand = () => {
       workflowVersionId,
       availabilityType,
       availabilityObjectMetadataId,
+      payload,
     }: MountCommandParams) => {
       const headlessEngineCommandContextApi = buildHeadlessCommandContextApi({
         store,
         contextStoreInstanceId,
         engineComponentKey,
+        payload,
       });
 
       const commandState = isDefined(frontComponentId)

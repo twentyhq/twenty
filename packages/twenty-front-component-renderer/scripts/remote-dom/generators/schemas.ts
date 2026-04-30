@@ -12,6 +12,7 @@ export const HtmlElementConfigZ = z.object({
     .regex(/^Html[A-Z]/, 'Name must be PascalCase starting with Html'),
   properties: z.record(z.string(), PropertySchemaZ),
   events: z.array(z.string()).optional(),
+  htmlTag: z.string().optional(),
 });
 
 export const HtmlElementConfigArrayZ = z.array(HtmlElementConfigZ);

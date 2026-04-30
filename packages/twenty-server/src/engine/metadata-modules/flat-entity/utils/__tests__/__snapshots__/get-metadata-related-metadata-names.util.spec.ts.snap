@@ -6,6 +6,7 @@ exports[`getMetadataRelatedMetadataNames should return related metadata names fo
 [
   "objectMetadata",
   "frontComponent",
+  "pageLayout",
 ]
 `;
 
@@ -44,6 +45,7 @@ exports[`getMetadataRelatedMetadataNames should return related metadata names fo
   "objectMetadata",
   "navigationMenuItem",
   "view",
+  "pageLayout",
 ]
 `;
 
@@ -137,6 +139,7 @@ exports[`getMetadataRelatedMetadataNames should return related metadata names fo
   "viewFilterGroup",
   "viewGroup",
   "viewFieldGroup",
+  "viewSort",
 ]
 `;
 

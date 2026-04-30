@@ -1,3 +1,3 @@
 export type TrustedBySeparatorType = {
-    text: string;
-}
+  text: string;
+};

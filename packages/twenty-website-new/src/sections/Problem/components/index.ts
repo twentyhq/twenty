@@ -1,8 +1,8 @@
-import { Content } from "./Content/Content";
-import { Heading } from "./Heading/Heading";
-import { Points } from "./Points/Points";
-import { Root } from "./Root/Root";
-import { Visual } from "./Visual/Visual";
+import { Content } from './Content';
+import { Heading } from './Heading';
+import { Points } from './Points';
+import { Root } from './Root';
+import { Visual } from './Visual/Visual';
 
 export const Problem = {
   Root,

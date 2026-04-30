@@ -122,7 +122,7 @@ export const computeStandardWorkflowRunViewFields = (
         position: 0,
         isVisible: true,
         size: 150,
-        viewFieldGroupName: 'other',
+        viewFieldGroupName: 'system',
       },
     }),
     workflowRunRecordPageFieldsCreatedBy: createStandardViewFieldFlatMetadata({
@@ -135,7 +135,7 @@ export const computeStandardWorkflowRunViewFields = (
         position: 1,
         isVisible: true,
         size: 150,
-        viewFieldGroupName: 'other',
+        viewFieldGroupName: 'system',
       },
     }),
     workflowRunRecordPageFieldsEnqueuedAt: createStandardViewFieldFlatMetadata({
@@ -145,10 +145,10 @@ export const computeStandardWorkflowRunViewFields = (
         viewName: 'workflowRunRecordPageFields',
         viewFieldName: 'enqueuedAt',
         fieldName: 'enqueuedAt',
-        position: 0,
+        position: 9,
         isVisible: false,
         size: 150,
-        viewFieldGroupName: 'additional',
+        viewFieldGroupName: 'general',
       },
     }),
     workflowRunRecordPageFieldsState: createStandardViewFieldFlatMetadata({
@@ -174,7 +174,7 @@ export const computeStandardWorkflowRunViewFields = (
         position: 2,
         isVisible: false,
         size: 150,
-        viewFieldGroupName: 'other',
+        viewFieldGroupName: 'system',
       },
     }),
     workflowRunRecordPageFieldsUpdatedBy: createStandardViewFieldFlatMetadata({
@@ -187,20 +187,7 @@ export const computeStandardWorkflowRunViewFields = (
         position: 3,
         isVisible: false,
         size: 150,
-        viewFieldGroupName: 'other',
-      },
-    }),
-    workflowRunRecordPageFieldsFavorites: createStandardViewFieldFlatMetadata({
-      ...args,
-      objectName: 'workflowRun',
-      context: {
-        viewName: 'workflowRunRecordPageFields',
-        viewFieldName: 'favorites',
-        fieldName: 'favorites',
-        position: 7,
-        isVisible: false,
-        size: 150,
-        viewFieldGroupName: 'general',
+        viewFieldGroupName: 'system',
       },
     }),
     workflowRunRecordPageFieldsTimelineActivities:

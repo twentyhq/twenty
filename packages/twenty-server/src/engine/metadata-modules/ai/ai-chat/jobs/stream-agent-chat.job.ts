@@ -1,7 +1,7 @@
 import { Logger, Scope } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { createUIMessageStream, JsonToSseTransformStream } from 'ai';
+import { createUIMessageStream } from 'ai';
 import type {
   CodeExecutionData,
   ExtendedUIMessage,
@@ -9,38 +9,28 @@ import type {
 } from 'twenty-shared/ai';
 import { Repository } from 'typeorm';
 
-import { AgentChatCancelSubscriberService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-cancel-subscriber.service';
-import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display-credits.util';
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display-credits.util';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
-import type { BrowsingContextType } from 'src/engine/metadata-modules/ai/ai-agent/types/browsingContext.type';
 import { computeCostBreakdown } from 'src/engine/metadata-modules/ai/ai-billing/utils/compute-cost-breakdown.util';
 import { convertDollarsToBillingCredits } from 'src/engine/metadata-modules/ai/ai-billing/utils/convert-dollars-to-billing-credits.util';
 import { extractCacheCreationTokens } from 'src/engine/metadata-modules/ai/ai-billing/utils/extract-cache-creation-tokens.util';
-import type { AIModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-config.type';
 import { AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
-import { AgentChatResumableStreamService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-resumable-stream.service';
+import { AgentChatCancelSubscriberService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-cancel-subscriber.service';
+import { AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-event-publisher.service';
+import { AgentChatStreamingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-streaming.service';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { ChatExecutionService } from 'src/engine/metadata-modules/ai/ai-chat/services/chat-execution.service';
 import { getCancelChannel } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-cancel-channel.util';
+import type { AiModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-config.type';
 
-export const STREAM_AGENT_CHAT_JOB_NAME = 'StreamAgentChatJob';
+import { STREAM_AGENT_CHAT_JOB_NAME } from './stream-agent-chat-job-name.constant';
+import { type StreamAgentChatJobData } from './stream-agent-chat-job.types';
 
-export type StreamAgentChatJobData = {
-  threadId: string;
-  streamId: string;
-  userWorkspaceId: string;
-  workspaceId: string;
-  messages: ExtendedUIMessage[];
-  browsingContext: BrowsingContextType | null;
-  modelId?: string;
-  lastUserMessageText: string;
-  lastUserMessageParts: ExtendedUIMessagePart[];
-  hasTitle: boolean;
-};
+export { STREAM_AGENT_CHAT_JOB_NAME, type StreamAgentChatJobData };
 
 @Processor({ queueName: MessageQueue.aiStreamQueue, scope: Scope.REQUEST })
 export class StreamAgentChatJob {
@@ -53,8 +43,9 @@ export class StreamAgentChatJob {
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
     private readonly agentChatService: AgentChatService,
     private readonly chatExecutionService: ChatExecutionService,
-    private readonly resumableStreamService: AgentChatResumableStreamService,
+    private readonly eventPublisherService: AgentChatEventPublisherService,
     private readonly cancelSubscriberService: AgentChatCancelSubscriberService,
+    private readonly agentChatStreamingService: AgentChatStreamingService,
   ) {}
 
   @Process(STREAM_AGENT_CHAT_JOB_NAME)
@@ -65,9 +56,14 @@ export class StreamAgentChatJob {
 
     if (!workspace) {
       this.logger.error(`Workspace ${data.workspaceId} not found`);
-      await this.resumableStreamService.writeStreamError(data.streamId, {
-        code: 'WORKSPACE_NOT_FOUND',
-        message: `Workspace ${data.workspaceId} not found`,
+      await this.eventPublisherService.publish({
+        threadId: data.threadId,
+        workspaceId: data.workspaceId,
+        event: {
+          type: 'stream-error',
+          code: 'WORKSPACE_NOT_FOUND',
+          message: `Workspace ${data.workspaceId} not found`,
+        },
       });
 
       return;
@@ -86,13 +82,21 @@ export class StreamAgentChatJob {
       this.logger.error(
         `Stream ${data.streamId} failed: ${error instanceof Error ? error.message : String(error)}`,
       );
-      await this.resumableStreamService
-        .writeStreamError(data.streamId, {
-          code: 'STREAM_EXECUTION_FAILED',
-          message:
-            error instanceof Error ? error.message : 'Stream execution failed',
+      await this.eventPublisherService
+        .publish({
+          threadId: data.threadId,
+          workspaceId: data.workspaceId,
+          event: {
+            type: 'stream-error',
+            code: 'STREAM_EXECUTION_FAILED',
+            message:
+              error instanceof Error
+                ? error.message
+                : 'Stream execution failed',
+          },
         })
         .catch(() => {});
+      throw error;
     } finally {
       await this.cancelSubscriberService.unsubscribe(cancelChannel);
       await this.threadRepository
@@ -105,6 +109,21 @@ export class StreamAgentChatJob {
         })
         .execute()
         .catch(() => {});
+
+      if (!abortController.signal.aborted) {
+        await this.agentChatStreamingService
+          .flushNextQueuedMessage(
+            data.threadId,
+            data.userWorkspaceId,
+            data.workspaceId,
+            data.hasTitle,
+          )
+          .catch((error) => {
+            this.logger.error(
+              `Failed to flush queued message for thread ${data.threadId}: ${error instanceof Error ? error.message : String(error)}`,
+            );
+          });
+      }
     }
   }
 
@@ -113,26 +132,35 @@ export class StreamAgentChatJob {
     workspace: WorkspaceEntity,
     abortSignal: AbortSignal,
   ): Promise<void> {
-    const userMessagePromise = this.agentChatService.addMessage({
-      threadId: data.threadId,
-      uiMessage: {
-        role: AgentMessageRole.USER,
-        parts: data.lastUserMessageParts.filter(
-          (part): part is ExtendedUIMessagePart =>
-            part.type === 'text' || part.type === 'file',
-        ),
-      },
-    });
+    // When processing a promoted queued message, the user message already
+    // exists in the DB with a turn — skip persisting it again.
+    const userMessagePromise = data.existingTurnId
+      ? Promise.resolve({ turnId: data.existingTurnId })
+      : this.agentChatService.addMessage({
+          threadId: data.threadId,
+          uiMessage: {
+            role: AgentMessageRole.USER,
+            parts: data.lastUserMessageParts.filter(
+              (part): part is ExtendedUIMessagePart =>
+                part.type === 'text' || part.type === 'file',
+            ),
+          },
+          workspaceId: data.workspaceId,
+        });
 
     userMessagePromise.catch(() => {});
 
     const titlePromise = data.hasTitle
       ? Promise.resolve(null)
       : this.agentChatService
-          .generateTitleIfNeeded(data.threadId, data.lastUserMessageText)
+          .generateTitleIfNeeded({
+            threadId: data.threadId,
+            messageContent: data.lastUserMessageText,
+            workspaceId: data.workspaceId,
+          })
           .catch(() => null);
 
-    await this.buildAndPipeStream({
+    await this.buildAndPublishStream({
       workspace,
       data,
       userMessagePromise,
@@ -141,7 +169,7 @@ export class StreamAgentChatJob {
     });
   }
 
-  private async buildAndPipeStream({
+  private async buildAndPublishStream({
     workspace,
     data,
     userMessagePromise,
@@ -150,7 +178,7 @@ export class StreamAgentChatJob {
   }: {
     workspace: WorkspaceEntity;
     data: StreamAgentChatJobData;
-    userMessagePromise: Promise<{ turnId: string }>;
+    userMessagePromise: Promise<{ turnId: string | null }>;
     titlePromise: Promise<string | null>;
     abortSignal: AbortSignal;
   }): Promise<void> {
@@ -160,9 +188,19 @@ export class StreamAgentChatJob {
         outputTokens: 0,
         inputCredits: 0,
         outputCredits: 0,
+        cacheReadTokens: 0,
       };
       let lastStepConversationSize = 0;
       let totalCacheCreationTokens = 0;
+      let streamError: unknown;
+
+      // onFinish fires before the uiStream is fully drained. We use this
+      // promise to coordinate: the IIFE waits for DB persist to complete
+      // before publishing message-persisted (after all chunks).
+      let resolveStreamFinished: () => void;
+      const streamFinishedPromise = new Promise<void>((res) => {
+        resolveStreamFinished = res;
+      });
 
       abortSignal.addEventListener('abort', () => resolve(), { once: true });
 
@@ -178,6 +216,14 @@ export class StreamAgentChatJob {
             });
           };
 
+          const onCompaction = () => {
+            writer.write({
+              type: 'data-compaction' as const,
+              id: `compaction-${data.threadId}`,
+              data: {},
+            });
+          };
+
           const { stream, modelConfig } =
             await this.chatExecutionService.streamChat({
               workspace,
@@ -186,7 +232,9 @@ export class StreamAgentChatJob {
               browsingContext: data.browsingContext,
               modelId: data.modelId,
               onCodeExecutionUpdate,
+              onCompaction,
               abortSignal,
+              conversationSizeTokens: data.conversationSizeTokens,
             });
 
           const titleWritePromise = titlePromise.then((generatedTitle) => {
@@ -202,6 +250,8 @@ export class StreamAgentChatJob {
           writer.merge(
             stream.toUIMessageStream({
               onError: (error) => {
+                streamError = error;
+
                 return error instanceof Error ? error.message : String(error);
               },
               sendStart: false,
@@ -227,13 +277,15 @@ export class StreamAgentChatJob {
                   await this.handleStreamFinish({
                     responseMessage,
                     threadId: data.threadId,
+                    workspaceId: data.workspaceId,
                     streamUsage,
                     lastStepConversationSize,
+                    totalCacheCreationTokens,
                     modelConfig,
                     userMessagePromise,
                   });
                   await titleWritePromise;
-                  resolve();
+                  resolveStreamFinished();
                 } catch (error) {
                   reject(error);
                 }
@@ -244,11 +296,37 @@ export class StreamAgentChatJob {
         },
       });
 
-      const sseStream = uiStream.pipeThrough(new JsonToSseTransformStream());
+      // Publish all chunks first, then signal completion. This guarantees
+      // message-persisted arrives after every stream-chunk on the client.
+      (async () => {
+        try {
+          for await (const chunk of uiStream) {
+            await this.eventPublisherService.publish({
+              threadId: data.threadId,
+              workspaceId: data.workspaceId,
+              event: {
+                type: 'stream-chunk',
+                chunk: chunk as Record<string, unknown>,
+              },
+            });
+          }
 
-      this.resumableStreamService
-        .createResumableStream(data.streamId, () => sseStream)
-        .catch(reject);
+          await streamFinishedPromise;
+
+          if (streamError) {
+            reject(streamError);
+          } else {
+            await this.eventPublisherService.publish({
+              threadId: data.threadId,
+              workspaceId: data.workspaceId,
+              event: { type: 'message-persisted', messageId: data.threadId },
+            });
+            resolve();
+          }
+        } catch (error) {
+          reject(error);
+        }
+      })();
     });
   }
 
@@ -275,7 +353,7 @@ export class StreamAgentChatJob {
       };
       providerMetadata?: Record<string, Record<string, unknown> | undefined>;
     };
-    modelConfig: AIModelConfig;
+    modelConfig: AiModelConfig;
     lastStepConversationSize: number;
     totalCacheCreationTokens: number;
     onUpdateUsage: (usage: {
@@ -283,6 +361,7 @@ export class StreamAgentChatJob {
       outputTokens: number;
       inputCredits: number;
       outputCredits: number;
+      cacheReadTokens: number;
     }) => void;
     onUpdateConversationSize: (size: number) => void;
     onUpdateCacheCreationTokens: (tokens: number) => void;
@@ -319,6 +398,7 @@ export class StreamAgentChatJob {
         outputTokens: part.totalUsage?.outputTokens ?? 0,
         inputCredits,
         outputCredits,
+        cacheReadTokens: breakdown.tokenCounts.cachedInputTokens,
       });
 
       return {
@@ -343,22 +423,27 @@ export class StreamAgentChatJob {
   private async handleStreamFinish({
     responseMessage,
     threadId,
+    workspaceId,
     streamUsage,
     lastStepConversationSize,
+    totalCacheCreationTokens,
     modelConfig,
     userMessagePromise,
   }: {
     responseMessage: Omit<ExtendedUIMessage, 'id'>;
     threadId: string;
+    workspaceId: string;
     streamUsage: {
       inputTokens: number;
       outputTokens: number;
       inputCredits: number;
       outputCredits: number;
+      cacheReadTokens: number;
     };
     lastStepConversationSize: number;
-    modelConfig: AIModelConfig;
-    userMessagePromise: Promise<{ turnId: string }>;
+    totalCacheCreationTokens: number;
+    modelConfig: AiModelConfig;
+    userMessagePromise: Promise<{ turnId: string | null }>;
   }): Promise<void> {
     if (responseMessage.parts.length === 0) {
       return;
@@ -369,7 +454,8 @@ export class StreamAgentChatJob {
     await this.agentChatService.addMessage({
       threadId,
       uiMessage: responseMessage,
-      turnId: userMessage.turnId,
+      turnId: userMessage.turnId ?? undefined,
+      workspaceId,
     });
 
     await this.threadRepository.update(threadId, {
@@ -380,6 +466,10 @@ export class StreamAgentChatJob {
         `"totalInputCredits" + ${streamUsage.inputCredits}`,
       totalOutputCredits: () =>
         `"totalOutputCredits" + ${streamUsage.outputCredits}`,
+      totalCacheReadTokens: () =>
+        `"totalCacheReadTokens" + ${streamUsage.cacheReadTokens}`,
+      totalCacheCreationTokens: () =>
+        `"totalCacheCreationTokens" + ${totalCacheCreationTokens}`,
       contextWindowTokens: modelConfig.contextWindowTokens,
       conversationSize: lastStepConversationSize,
     });

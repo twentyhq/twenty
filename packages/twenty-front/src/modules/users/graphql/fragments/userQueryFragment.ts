@@ -66,6 +66,12 @@ export const USER_QUERY_FRAGMENT = gql`
       workspaceCustomApplication {
         id
       }
+      installedApplications {
+        id
+        name
+        universalIdentifier
+        logo
+      }
       isCustomDomainEnabled
       workspaceUrls {
         ...WorkspaceUrlsFragment

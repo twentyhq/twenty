@@ -1,17 +1,21 @@
-import { type CommandMenuItemConfig } from '@/command-menu-item/types/CommandMenuItemConfig';
+import { EMPTY_COMMAND_MENU_CONTEXT_API } from '@/command-menu-item/constants/EmptyCommandMenuContextApi';
 import { type CommandMenuItemContainerType } from '@/command-menu-item/types/CommandMenuItemContainerType';
 import { createContext } from 'react';
+import { type CommandMenuContextApi } from 'twenty-shared/types';
+import { type CommandMenuItemFieldsFragment } from '~/generated-metadata/graphql';
 
 export type CommandMenuContextType = {
-  isInSidePanel: boolean;
   displayType: 'button' | 'listItem' | 'dropdownItem';
   containerType: CommandMenuItemContainerType;
-  commandMenuItems: CommandMenuItemConfig[];
+  commandMenuItems: CommandMenuItemFieldsFragment[];
+  commandMenuContextApi: CommandMenuContextApi;
+  isInPreviewMode: boolean;
 };
 
 export const CommandMenuContext = createContext<CommandMenuContextType>({
-  isInSidePanel: false,
   containerType: 'command-menu-list',
   displayType: 'button',
   commandMenuItems: [],
+  commandMenuContextApi: EMPTY_COMMAND_MENU_CONTEXT_API,
+  isInPreviewMode: false,
 });

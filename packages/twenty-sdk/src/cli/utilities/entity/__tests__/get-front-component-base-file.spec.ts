@@ -8,7 +8,7 @@ describe('getFrontComponentBaseFile', () => {
     });
 
     expect(result).toContain(
-      "import { defineFrontComponent } from 'twenty-sdk'",
+      "import { defineFrontComponent } from 'twenty-sdk/define';",
     );
     expect(result).toContain('export default defineFrontComponent({');
 

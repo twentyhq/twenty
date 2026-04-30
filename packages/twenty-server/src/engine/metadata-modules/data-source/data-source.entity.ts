@@ -4,19 +4,16 @@ import {
   type DataSourceOptions,
   Entity,
   Index,
-  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/workspace-related-entity';
 
 export type DataSourceType = DataSourceOptions['type'];
 
-// @deprecated - This entity is being deprecated in favor of storing
-// databaseSchema directly on WorkspaceEntity.
-// During the transition, writes go to both tables (dual-write).
+// @deprecated - This entity is kept only to preserve the dataSource table.
+// All code should use workspace.databaseSchema instead.
 @Entity('dataSource')
 @Index('IDX_DATA_SOURCE_WORKSPACE_ID_CREATED_AT', ['workspaceId', 'createdAt'])
 export class DataSourceEntity extends WorkspaceRelatedEntity {
@@ -37,11 +34,6 @@ export class DataSourceEntity extends WorkspaceRelatedEntity {
 
   @Column({ default: false })
   isRemote: boolean;
-
-  @OneToMany(() => ObjectMetadataEntity, (object) => object.dataSource, {
-    cascade: true,
-  })
-  objects: ObjectMetadataEntity[];
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;

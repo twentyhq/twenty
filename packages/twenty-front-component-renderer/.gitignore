@@ -1,4 +1,5 @@
 node_modules
 storybook-static
-src/__stories__/example-sources-built
+src/__stories__/example-sources-built/*
+!src/__stories__/example-sources-built/bundle-sizes.json.d.ts
 src/__stories__/example-sources-built-preact

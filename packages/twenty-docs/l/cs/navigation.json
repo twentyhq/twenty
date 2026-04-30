@@ -1,24 +1,27 @@
 {
   "tabs": {
+    "gettingStarted": {
+      "label": "Začínáme",
+      "groups": {
+        "welcome": {
+          "label": "Vítejte"
+        },
+        "coreConcepts": {
+          "label": "Základní pojmy"
+        }
+      }
+    },
     "userGuide": {
       "label": "Uživatelská příručka",
       "groups": {
-        "discoverTwenty": {
-          "label": "Objevte Twenty",
-          "groups": {
-            "gettingStartedCapabilities": {
-              "label": "Možnosti"
-            },
-            "gettingStartedHowTos": {
-              "label": "Návody"
-            }
-          }
+        "userGuideOverview": {
+          "label": "Přehled"
         },
         "dataModel": {
           "label": "Datový model",
           "groups": {
-            "dataModelCapabilities": {
-              "label": "Možnosti"
+            "dataModelReference": {
+              "label": "Referenční dokumentace"
             },
             "dataModelHowTos": {
               "label": "Návody"
@@ -28,8 +31,8 @@
         "dataMigration": {
           "label": "Migrace dat",
           "groups": {
-            "dataMigrationCapabilities": {
-              "label": "Možnosti"
+            "dataMigrationReference": {
+              "label": "Referenční dokumentace"
             },
             "dataMigrationHowTos": {
               "label": "Návody"
@@ -39,8 +42,8 @@
         "calendarEmails": {
           "label": "Kalendář a e-maily",
           "groups": {
-            "calendarEmailsCapabilities": {
-              "label": "Možnosti"
+            "calendarEmailsReference": {
+              "label": "Referenční dokumentace"
             },
             "calendarEmailsHowTos": {
               "label": "Návody"
@@ -50,8 +53,8 @@
         "workflows": {
           "label": "Pracovní postupy",
           "groups": {
-            "workflowsCapabilities": {
-              "label": "Možnosti"
+            "workflowsReference": {
+              "label": "Referenční dokumentace"
             },
             "workflowsHowTos": {
               "label": "Návody",
@@ -75,21 +78,26 @@
         "ai": {
           "label": "AI",
           "groups": {
-            "aiCapabilities": {
-              "label": "Možnosti"
+            "aiReference": {
+              "label": "Referenční dokumentace"
             },
             "aiHowTos": {
               "label": "Návody"
             }
           }
         },
-        "viewsPipelines": {
-          "label": "Zobrazení a pipeline",
+        "layout": {
+          "label": "Rozvržení",
           "groups": {
-            "viewsPipelinesCapabilities": {
-              "label": "Možnosti"
+            "layoutReference": {
+              "label": "Referenční dokumentace",
+              "groups": {
+                "layoutViews": {
+                  "label": "Zobrazení"
+                }
+              }
             },
-            "viewsPipelinesHowTos": {
+            "layoutHowTos": {
               "label": "Návody"
             }
           }
@@ -97,8 +105,8 @@
         "dashboards": {
           "label": "Panely",
           "groups": {
-            "dashboardsCapabilities": {
-              "label": "Možnosti"
+            "dashboardsReference": {
+              "label": "Referenční dokumentace"
             },
             "dashboardsHowTos": {
               "label": "Návody"
@@ -108,8 +116,8 @@
         "permissionsAccess": {
           "label": "Oprávnění a přístup",
           "groups": {
-            "permissionsAccessCapabilities": {
-              "label": "Možnosti"
+            "permissionsAccessReference": {
+              "label": "Referenční dokumentace"
             },
             "permissionsAccessHowTos": {
               "label": "Návody"
@@ -119,8 +127,8 @@
         "billing": {
           "label": "Fakturace",
           "groups": {
-            "billingCapabilities": {
-              "label": "Možnosti"
+            "billingReference": {
+              "label": "Referenční dokumentace"
             },
             "billingHowTos": {
               "label": "Návody"
@@ -130,8 +138,8 @@
         "settings": {
           "label": "Nastavení",
           "groups": {
-            "settingsCapabilities": {
-              "label": "Možnosti"
+            "settingsReference": {
+              "label": "Referenční dokumentace"
             },
             "settingsHowTos": {
               "label": "Návody"
@@ -143,59 +151,20 @@
     "developers": {
       "label": "Vývojáři",
       "groups": {
-        "developersGroup": {
-          "label": "Vývojáři"
+        "developersOverview": {
+          "label": "Přehled"
         },
-        "extend": {
-          "label": "Rozšíření",
-          "groups": {
-            "apps": {
-              "label": "Aplikace"
-            }
-          }
+        "apps": {
+          "label": "Aplikace"
+        },
+        "api": {
+          "label": "API"
         },
         "selfHost": {
-          "label": "Vlastní hosting",
-          "groups": {
-            "selfHostCapabilities": {
-              "label": "Možnosti"
-            }
-          }
+          "label": "Vlastní hosting"
         },
         "contribute": {
-          "label": "Přispět",
-          "groups": {
-            "contributeCapabilities": {
-              "label": "Možnosti",
-              "groups": {
-                "frontendDevelopment": {
-                  "label": "Vývoj frontendu",
-                  "groups": {
-                    "twentyUi": {
-                      "label": "Twenty UI",
-                      "groups": {
-                        "display": {
-                          "label": "Zobrazit"
-                        },
-                        "feedback": {
-                          "label": "Zpětná vazba"
-                        },
-                        "input": {
-                          "label": "Vstup"
-                        },
-                        "navigation": {
-                          "label": "Navigace"
-                        }
-                      }
-                    }
-                  }
-                },
-                "backendDevelopment": {
-                  "label": "Vývoj backendu"
-                }
-              }
-            }
-          }
+          "label": "Přispět"
         }
       }
     }

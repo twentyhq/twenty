@@ -28,6 +28,7 @@ export const RecordBoardCardBody = () => {
   const {
     labelIdentifierFieldMetadataItem,
     fieldDefinitionByFieldMetadataItemId,
+    objectPermissionsByObjectMetadataId,
   } = useRecordIndexContextOrThrow();
 
   const useUpdateOneRecordHook: RecordUpdateHook = () => {
@@ -83,6 +84,8 @@ export const RecordBoardCardBody = () => {
                     isCustom:
                       correspondingFieldDefinition.metadata.isCustom ?? false,
                   },
+                  fieldDefinition: correspondingFieldDefinition,
+                  objectPermissionsByObjectMetadataId,
                 }),
                 fieldDefinition: correspondingFieldDefinition,
                 useUpdateRecord: useUpdateOneRecordHook,

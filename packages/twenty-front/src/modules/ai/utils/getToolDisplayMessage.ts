@@ -86,7 +86,10 @@ export const getToolDisplayMessage = (
   const byStatus = (finished: string, inProgress: string): string =>
     isFinished ? finished : inProgress;
 
-  if (resolvedToolName === 'web_search') {
+  if (
+    resolvedToolName === 'web_search' ||
+    resolvedToolName === 'app_exa_web_search'
+  ) {
     const query = extractSearchQuery(resolvedInput);
 
     if (isNonEmptyString(query)) {

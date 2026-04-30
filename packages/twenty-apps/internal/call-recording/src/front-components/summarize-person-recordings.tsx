@@ -5,7 +5,8 @@ import {
   SUMMARIZE_PERSON_RECORDINGS_COMMAND_UNIVERSAL_IDENTIFIER,
   SUMMARIZE_PERSON_RECORDINGS_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/summarize-person-recordings-universal-identifiers';
-import { defineFrontComponent, useRecordId } from 'twenty-sdk';
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { useRecordId } from 'twenty-sdk/front-component';
 import { CoreApiClient } from 'twenty-sdk/clients';
 import { isDefined } from 'twenty-shared/utils';
 

@@ -1,0 +1,178 @@
+---
+title: Макет
+description: Определите представления, пункты меню навигации и макеты страниц, чтобы сформировать внешний вид вашего приложения в Twenty.
+icon: table-columns
+---
+
+Сущности макета определяют, как ваше приложение представлено в интерфейсе Twenty — что находится в боковой панели, какие сохранённые представления поставляются с приложением и как устроена страница сведений о записи.
+
+## Концепции макета
+
+| Понятие                         | Что определяет                                                                                                     | Сущность                   |
+| ------------------------------- | ------------------------------------------------------------------------------------------------------------------ | -------------------------- |
+| **Представление**               | Сохранённая конфигурация списка для объекта — видимые поля, порядок, фильтры, группы                               | `defineView`               |
+| **Пункт меню навигации**        | Элемент в левой боковой панели, который ссылается на представление или внешний URL                                 | `defineNavigationMenuItem` |
+| **Макет страницы**              | Вкладки и виджеты, из которых состоит страница сведений о записи                                                   | `definePageLayout`         |
+| **Вкладка компоновки страницы** | Отдельная вкладка, прикреплённая к существующей компоновке страницы (стандартной или созданной в вашем приложении) | `definePageLayoutTab`      |
+
+Представления, пункты меню навигации и макеты страниц ссылаются друг на друга по `universalIdentifier`:
+
+* **Пункт меню навигации** типа `VIEW` указывает на идентификатор `defineView`, поэтому ссылка в боковой панели открывает это сохранённое представление.
+* **Макет страницы** типа `RECORD_PAGE` ориентирован на объект и может встраивать [фронт-компоненты](/l/ru/developers/extend/apps/front-components) во вкладки в качестве виджетов.
+
+<AccordionGroup>
+<Accordion title="defineView" description="Определяйте сохранённые представления для объектов">
+
+Представления — это сохранённые конфигурации отображения записей объекта: какие поля видны, их порядок, а также применённые фильтры и группы. Используйте `defineView()` для поставки преднастроенных представлений вместе с вашим приложением:
+
+```ts src/views/example-view.ts
+import { defineView, ViewKey } from 'twenty-sdk/define';
+import { EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER } from '../objects/example-object';
+import { NAME_FIELD_UNIVERSAL_IDENTIFIER } from '../objects/example-object';
+
+export default defineView({
+  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  name: 'All example items',
+  objectUniversalIdentifier: EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER,
+  icon: 'IconList',
+  key: ViewKey.INDEX,
+  position: 0,
+  fields: [
+    {
+      universalIdentifier: 'f926bdb7-6af7-4683-9a09-adbca56c29f0',
+      fieldMetadataUniversalIdentifier: NAME_FIELD_UNIVERSAL_IDENTIFIER,
+      position: 0,
+      isVisible: true,
+      size: 200,
+    },
+  ],
+});
+```
+
+Основные моменты:
+* `objectUniversalIdentifier` указывает, к какому объекту применяется это представление.
+* `key` определяет тип представления (например, `ViewKey.INDEX` для основного списка).
+* `fields` управляет тем, какие столбцы отображаются и в каком порядке. Каждое поле ссылается на `fieldMetadataUniversalIdentifier`.
+* Также вы можете определить `filters`, `filterGroups`, `groups` и `fieldGroups` для более продвинутых конфигураций.
+* `position` управляет порядком, когда для одного и того же объекта существует несколько представлений.
+
+</Accordion>
+<Accordion title="defineNavigationMenuItem" description="Определяйте ссылки боковой панели навигации">
+
+Пункты навигационного меню добавляют пользовательские элементы в боковую панель рабочего пространства. Используйте `defineNavigationMenuItem()` для ссылок на представления, внешние URL или объекты:
+
+```ts src/navigation-menu-items/example-navigation-menu-item.ts
+import { defineNavigationMenuItem, NavigationMenuItemType } from 'twenty-sdk/define';
+import { EXAMPLE_VIEW_UNIVERSAL_IDENTIFIER } from '../views/example-view';
+
+export default defineNavigationMenuItem({
+  universalIdentifier: '9327db91-afa1-41b6-bd9d-2b51a26efb4c',
+  name: 'example-navigation-menu-item',
+  icon: 'IconList',
+  color: 'blue',
+  position: 0,
+  type: NavigationMenuItemType.VIEW,
+  viewUniversalIdentifier: EXAMPLE_VIEW_UNIVERSAL_IDENTIFIER,
+});
+```
+
+Основные моменты:
+* `type` определяет, на что ссылается пункт меню: `NavigationMenuItemType.VIEW` для сохранённого представления или `NavigationMenuItemType.LINK` для внешнего URL.
+* Для ссылок на представления укажите `viewUniversalIdentifier`. Для внешних ссылок укажите `link`.
+* `position` управляет порядком в боковой панели.
+* `icon` и `color` (необязательно) настраивают внешний вид.
+
+</Accordion>
+<Accordion title="definePageLayout" description="Определяйте пользовательские макеты страниц для представлений записей">
+
+Макеты страниц позволяют настраивать вид страницы с деталями записи: какие вкладки отображаются, какие виджеты внутри каждой вкладки и как они расположены. Используйте `definePageLayout()` для поставки пользовательских макетов вместе с вашим приложением:
+
+```ts src/page-layouts/example-record-page-layout.ts
+import { definePageLayout, PageLayoutTabLayoutMode } from 'twenty-sdk/define';
+import { EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER } from '../objects/example-object';
+import { HELLO_WORLD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER } from '../front-components/hello-world';
+
+export default definePageLayout({
+  universalIdentifier: '203aeb94-6701-46d6-9af1-be2bbcc9e134',
+  name: 'Example Record Page',
+  type: 'RECORD_PAGE',
+  objectUniversalIdentifier: EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER,
+  tabs: [
+    {
+      universalIdentifier: '6ed26b60-a51d-4ad7-86dd-1c04c7f3cac5',
+      title: 'Hello World',
+      position: 50,
+      icon: 'IconWorld',
+      layoutMode: PageLayoutTabLayoutMode.CANVAS,
+      widgets: [
+        {
+          universalIdentifier: 'aa4234e0-2e5f-4c02-a96a-573449e2351d',
+          title: 'Hello World',
+          type: 'FRONT_COMPONENT',
+          configuration: {
+            configurationType: 'FRONT_COMPONENT',
+            frontComponentUniversalIdentifier:
+              HELLO_WORLD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
+          },
+        },
+      ],
+    },
+  ],
+});
+```
+
+Основные моменты:
+* `type` обычно равен `'RECORD_PAGE'` для настройки детального представления конкретного объекта.
+* `objectUniversalIdentifier` указывает, к какому объекту применяется этот макет.
+* Каждая `tab` определяет раздел страницы с `title`, `position` и `layoutMode` (`CANVAS` для свободного макета).
+* Каждый `widget` внутри вкладки может отображать компонент фронтенда, список связей или другие встроенные типы виджетов.
+* `position` у вкладок управляет их порядком. Используйте большие значения (например, 50), чтобы разместить пользовательские вкладки после встроенных.
+
+</Accordion>
+<Accordion title="definePageLayoutTab" description="Добавьте вкладку к существующему макету страницы.">
+
+`definePageLayoutTab` позволяет вашему приложению прикрепить одну вкладку — с необязательными виджетами — к **существующему** макету страницы. Самый распространённый сценарий — добавление пользовательской вкладки (например, вкладки с аналитикой или сводкой ИИ) к одной из встроенных страниц записей Twenty или к макету страницы, который уже поставляется вашим приложением.
+
+Целевой макет страницы должен быть либо **стандартным** макетом страницы Twenty, либо определённым **вашим собственным приложением**; ссылки между приложениями на макеты страниц, принадлежащие другому установленному приложению, пока не поддерживаются.
+
+```ts src/page-layouts/example-extra-tab.ts
+import {
+  definePageLayoutTab,
+  PageLayoutTabLayoutMode,
+} from 'twenty-sdk/define';
+import { HELLO_WORLD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER } from '../front-components/hello-world';
+
+const COMPANY_RECORD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER =
+  '20202020-ab01-4001-8001-c0aba11c0100';
+
+export default definePageLayoutTab({
+  universalIdentifier: 'b1b2b3b4-b5b6-4000-8000-000000000001',
+  pageLayoutUniversalIdentifier:
+    COMPANY_RECORD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER,
+  title: 'Hello World',
+  position: 1000,
+  icon: 'IconWorld',
+  layoutMode: PageLayoutTabLayoutMode.CANVAS,
+  widgets: [
+    {
+      universalIdentifier: 'b1b2b3b4-b5b6-4000-8000-000000000002',
+      title: 'Hello World',
+      type: 'FRONT_COMPONENT',
+      configuration: {
+        configurationType: 'FRONT_COMPONENT',
+        frontComponentUniversalIdentifier:
+          HELLO_WORLD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
+      },
+    },
+  ],
+});
+```
+
+Основные моменты:
+* `pageLayoutUniversalIdentifier` является **обязательным** при использовании `definePageLayoutTab` и должен указывать на макет страницы, который уже существует на момент установки (стандартный или вашего приложения). Если родительский макет страницы отсутствует, установка завершается с понятной ошибкой проверки.
+* `widgets` ограничены только этой вкладкой — они ссылаются на компоненты фронтенда, представления и т. п. точно так же, как виджеты, определённые непосредственно в `definePageLayout`.
+* `position` управляет порядком относительно существующих вкладок в целевом макете. Выберите значение, которое поместит вашу вкладку в нужное место относительно встроенных вкладок.
+* Используйте это вместо `definePageLayout`, когда вы хотите только **добавить** к существующему макету. Используйте `definePageLayout`, когда вы владеете всем макетом (обычно это `RECORD_PAGE` для объекта, который вы поставляете в своём приложении, или `STANDALONE_PAGE`).
+
+</Accordion>
+</AccordionGroup>

@@ -61,6 +61,7 @@ const PRO_METERED_MONTHLY_PRICE = PRO_METERED_PRODUCT?.prices?.find(
 export const mockCurrentWorkspace = {
   workspaceCustomApplication: CUSTOM_WORKSPACE_APPLICATION_MOCK,
   workspaceCustomApplicationId: CUSTOM_WORKSPACE_APPLICATION_MOCK.id,
+  installedApplications: [CUSTOM_WORKSPACE_APPLICATION_MOCK],
   subdomain: 'acme.twenty.com',
   id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6w',
   displayName: 'Twenty',

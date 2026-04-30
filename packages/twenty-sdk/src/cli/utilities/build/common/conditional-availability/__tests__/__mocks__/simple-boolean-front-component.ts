@@ -1,4 +1,5 @@
-import { defineFrontComponent, pageType } from '@/sdk';
+import { defineFrontComponent } from '@/sdk/define';
+import { pageType } from '@/sdk/front-component';
 
 const MyComponent = () => null;
 

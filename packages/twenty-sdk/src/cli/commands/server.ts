@@ -1,10 +1,14 @@
 import { serverStart } from '@/cli/operations/server-start';
+import { serverUpgrade } from '@/cli/operations/server-upgrade';
 import {
   CONTAINER_NAME,
   containerExists,
   DEFAULT_PORT,
+  DEFAULT_TEST_PORT,
+  getContainerEnvVar,
   getContainerPort,
   isContainerRunning,
+  TEST_CONTAINER_NAME,
 } from '@/cli/utilities/server/docker-container';
 import { checkServerHealth } from '@/cli/utilities/server/detect-local-server';
 import chalk from 'chalk';
@@ -19,9 +23,11 @@ export const registerServerCommands = (program: Command): void => {
   server
     .command('start')
     .description('Start a local Twenty server')
-    .option('-p, --port <port>', 'HTTP port', String(DEFAULT_PORT))
-    .action(async (options: { port: string }) => {
-      const port = parseInt(options.port, 10);
+    .option('-p, --port <port>', 'HTTP port')
+    .option('--test', 'Start a separate test instance (port 2021)')
+    .action(async (options: { port?: string; test?: boolean }) => {
+      const defaultPort = options.test ? DEFAULT_TEST_PORT : DEFAULT_PORT;
+      const port = options.port ? parseInt(options.port, 10) : defaultPort;
 
       if (isNaN(port) || port < 1 || port > 65535) {
         console.error(chalk.red('Invalid port number.'));
@@ -30,6 +36,7 @@ export const registerServerCommands = (program: Command): void => {
 
       const result = await serverStart({
         port,
+        test: options.test,
         onProgress: (message) => console.log(chalk.gray(message)),
       });
 
@@ -42,14 +49,17 @@ export const registerServerCommands = (program: Command): void => {
   server
     .command('stop')
     .description('Stop the local Twenty server')
-    .action(() => {
-      if (!containerExists()) {
+    .option('--test', 'Stop the test instance')
+    .action((options: { test?: boolean }) => {
+      const containerName = options.test ? TEST_CONTAINER_NAME : CONTAINER_NAME;
+
+      if (!containerExists(containerName)) {
         console.log(chalk.yellow('No Twenty server container found.'));
 
         return;
       }
 
-      execSync(`docker stop ${CONTAINER_NAME}`, { stdio: 'ignore' });
+      execSync(`docker stop ${containerName}`, { stdio: 'ignore' });
       console.log(chalk.green('Twenty server stopped.'));
     });
 
@@ -57,8 +67,11 @@ export const registerServerCommands = (program: Command): void => {
     .command('logs')
     .description('Stream Twenty server logs')
     .option('-n, --lines <lines>', 'Number of lines to show', '50')
-    .action((options: { lines: string }) => {
-      if (!containerExists()) {
+    .option('--test', 'Show logs for the test instance')
+    .action((options: { lines: string; test?: boolean }) => {
+      const containerName = options.test ? TEST_CONTAINER_NAME : CONTAINER_NAME;
+
+      if (!containerExists(containerName)) {
         console.log(chalk.yellow('No Twenty server container found.'));
 
         return;
@@ -67,7 +80,7 @@ export const registerServerCommands = (program: Command): void => {
       try {
         spawnSync(
           'docker',
-          ['logs', '-f', '--tail', options.lines, CONTAINER_NAME],
+          ['logs', '-f', '--tail', options.lines, containerName],
           { stdio: 'inherit' },
         );
       } catch {
@@ -78,18 +91,24 @@ export const registerServerCommands = (program: Command): void => {
   server
     .command('status')
     .description('Show Twenty server status')
-    .action(async () => {
-      if (!containerExists()) {
+    .option('--test', 'Show status of the test instance')
+    .action(async (options: { test?: boolean }) => {
+      const containerName = options.test ? TEST_CONTAINER_NAME : CONTAINER_NAME;
+      const defaultPort = options.test ? DEFAULT_TEST_PORT : DEFAULT_PORT;
+
+      if (!containerExists(containerName)) {
         console.log(`  Status:  ${chalk.gray('not created')}`);
         console.log(
-          chalk.gray("  Run 'yarn twenty server start' to create one."),
+          chalk.gray(
+            `  Run 'yarn twenty server start${options.test ? ' --test' : ''}' to create one.`,
+          ),
         );
 
         return;
       }
 
-      const running = isContainerRunning();
-      const port = running ? getContainerPort() : DEFAULT_PORT;
+      const running = isContainerRunning(containerName);
+      const port = running ? getContainerPort(containerName) : defaultPort;
       const healthy = running ? await checkServerHealth(port) : false;
 
       const statusText = healthy
@@ -98,8 +117,14 @@ export const registerServerCommands = (program: Command): void => {
           ? chalk.yellow('running (starting...)')
           : chalk.gray('stopped');
 
+      const appVersion = getContainerEnvVar('APP_VERSION', containerName);
+
       console.log(`  Status:  ${statusText}`);
       console.log(`  URL:     http://localhost:${port}`);
+
+      if (appVersion) {
+        console.log(`  Version: ${chalk.gray(appVersion)}`);
+      }
 
       if (healthy) {
         console.log(chalk.gray('  Login:   tim@apple.dev / tim@apple.dev'));
@@ -109,25 +134,70 @@ export const registerServerCommands = (program: Command): void => {
   server
     .command('reset')
     .description('Delete all data and start fresh')
-    .action(() => {
-      if (containerExists()) {
-        execSync(`docker rm -f ${CONTAINER_NAME}`, { stdio: 'ignore' });
+    .option('--test', 'Reset the test instance')
+    .action((options: { test?: boolean }) => {
+      const containerName = options.test ? TEST_CONTAINER_NAME : CONTAINER_NAME;
+      const volumeData = options.test
+        ? 'twenty-app-dev-test-data'
+        : 'twenty-app-dev-data';
+      const volumeStorage = options.test
+        ? 'twenty-app-dev-test-storage'
+        : 'twenty-app-dev-storage';
+
+      if (containerExists(containerName)) {
+        execSync(`docker rm -f ${containerName}`, { stdio: 'ignore' });
       }
 
       try {
-        execSync(
-          'docker volume rm twenty-app-dev-data twenty-app-dev-storage',
-          {
-            stdio: 'ignore',
-          },
-        );
+        execSync(`docker volume rm ${volumeData} ${volumeStorage}`, {
+          stdio: 'ignore',
+        });
       } catch {
         // Volumes may not exist
       }
 
       console.log(chalk.green('Twenty server data reset.'));
       console.log(
-        chalk.gray("Run 'yarn twenty server start' to start a fresh instance."),
+        chalk.gray(
+          `Run 'yarn twenty server start${options.test ? ' --test' : ''}' to start a fresh instance.`,
+        ),
       );
     });
+
+  server
+    .command('upgrade [version]')
+    .description('Upgrade the twenty-app-dev Docker image')
+    .option('--test', 'Upgrade the test instance')
+    .action(
+      async (version: string | undefined, options: { test?: boolean }) => {
+        const result = await serverUpgrade({
+          version: version ?? 'latest',
+          test: options.test,
+          onProgress: (message) => console.log(chalk.gray(message)),
+        });
+
+        if (!result.success) {
+          console.error(chalk.red(result.error.message));
+          process.exit(1);
+        }
+
+        const { data } = result;
+
+        if (!data.imageUpdated) {
+          console.log(chalk.green(`  Already up to date (${data.image}).`));
+
+          return;
+        }
+
+        console.log(chalk.green(`  Upgraded to: ${data.image}`));
+
+        if (data.containerRecreated) {
+          console.log(
+            chalk.gray(
+              `  Run 'yarn twenty server start${options.test ? ' --test' : ''}' to wait for the server to be ready.`,
+            ),
+          );
+        }
+      },
+    );
 };

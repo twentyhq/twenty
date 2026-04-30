@@ -23,9 +23,9 @@ const innerAuthLogin = async (
   await configService.setConfig({
     apiUrl,
     apiKey,
-    accessToken: undefined,
-    refreshToken: undefined,
-    oauthClientId: undefined,
+    twentyCLIAccessToken: undefined,
+    twentyCLIRefreshToken: undefined,
+    twentyCLIRegistrationClientId: undefined,
   });
 
   const apiService = new ApiService();

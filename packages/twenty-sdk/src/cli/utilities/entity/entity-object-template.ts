@@ -15,7 +15,7 @@ export const getObjectBaseFile = ({
   universalIdentifier?: string;
   nameFieldUniversalIdentifier?: string;
 }) => {
-  return `import { defineObject, FieldType } from 'twenty-sdk';
+  return `import { defineObject, FieldType } from 'twenty-sdk/define';
 
 export const NAME_FIELD_UNIVERSAL_IDENTIFIER =
   '${nameFieldUniversalIdentifier}';

@@ -68,6 +68,7 @@ const createValidManifest = (universalIdentifier: string) =>
     views: [],
     navigationMenuItems: [],
     pageLayouts: [],
+    pageLayoutTabs: [],
   });
 
 const insertRegistrationWithSource = async (
@@ -173,7 +174,7 @@ describe('App Distribution (integration)', () => {
       expect(rows[0].sourceType).toBe('tarball');
     });
 
-    it('should update existing tarball registration on re-upload', async () => {
+    it('should fail to update existing version', async () => {
       const uid = crypto.randomUUID();
       const manifest = createValidManifest(uid);
 
@@ -192,8 +193,52 @@ describe('App Distribution (integration)', () => {
 
       createdRegistrationIds.push(firstResult.data!.uploadAppTarball.id);
 
-      const secondResult = await uploadAppTarball({
+      const { errors } = await uploadAppTarball({
         tarballBuffer: tarball,
+        universalIdentifier: uid,
+        expectToFail: true,
+      });
+
+      expect(errors).toBeDefined();
+
+      expect(
+        errors?.some((error: { message: string }) =>
+          error.message.includes(
+            'version must be higher than the currently deployed version',
+          ),
+        ),
+      ).toBe(true);
+    });
+
+    it('should update existing tarball registration on re-upload', async () => {
+      const uid = crypto.randomUUID();
+      const manifest = createValidManifest(uid);
+
+      const firstTarball = await createTestTarball({
+        'manifest.json': manifest,
+        'package.json': JSON.stringify({
+          name: 'test-app',
+          version: '1.1.0',
+        }),
+      });
+
+      const firstResult = await uploadAppTarball({
+        tarballBuffer: firstTarball,
+        universalIdentifier: uid,
+      });
+
+      createdRegistrationIds.push(firstResult.data!.uploadAppTarball.id);
+
+      const secondTarball = await createTestTarball({
+        'manifest.json': manifest,
+        'package.json': JSON.stringify({
+          name: 'test-app',
+          version: '1.2.0',
+        }),
+      });
+
+      const secondResult = await uploadAppTarball({
+        tarballBuffer: secondTarball,
         universalIdentifier: uid,
       });
 

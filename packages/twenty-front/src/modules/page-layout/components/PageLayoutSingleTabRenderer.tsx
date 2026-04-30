@@ -40,8 +40,10 @@ const PageLayoutSingleTabRendererInner = () => {
   const targetRecordIdentifier = useTargetRecord();
   const { isInSidePanel } = useLayoutRenderingContext();
 
-  const sortedTabs = sortTabsByPosition(currentPageLayout.tabs);
-  const firstTab = sortedTabs[0];
+  const sortedActiveTabs = sortTabsByPosition(
+    currentPageLayout.tabs.filter((tab) => tab.isActive),
+  );
+  const firstTab = sortedActiveTabs[0];
 
   const firstTabWithVisibleWidgets = usePageLayoutTabWithVisibleWidgetsOrThrow(
     firstTab.id,

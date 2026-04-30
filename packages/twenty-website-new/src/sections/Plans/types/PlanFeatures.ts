@@ -1,6 +1,5 @@
-import { BodyType } from '@/design-system/components/Body/types/Body';
+import { BodyType } from '@/design-system/components/Body';
 
 export type PlanFeaturesType = {
-  title: BodyType;
   bullets: BodyType[];
 };

@@ -11,10 +11,12 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+import { type CommandMenuItemPayload } from 'src/engine/metadata-modules/command-menu-item/dtos/command-menu-item-payload.union';
 import { CommandMenuItemAvailabilityType } from 'src/engine/metadata-modules/command-menu-item/enums/command-menu-item-availability-type.enum';
 import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
 import { FrontComponentEntity } from 'src/engine/metadata-modules/front-component/entities/front-component.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { PageLayoutEntity } from 'src/engine/metadata-modules/page-layout/entities/page-layout.entity';
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 
 @Entity({ name: 'commandMenuItem', schema: 'core' })
@@ -29,9 +31,13 @@ import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-enti
 @Index('IDX_COMMAND_MENU_ITEM_AVAILABILITY_OBJECT_METADATA_ID', [
   'availabilityObjectMetadataId',
 ])
+@Index('IDX_COMMAND_MENU_ITEM_PAGE_LAYOUT_ID_WORKSPACE_ID', [
+  'pageLayoutId',
+  'workspaceId',
+])
 @Check(
   'CHK_CMD_MENU_ITEM_ENGINE_KEY_COHERENCE',
-  `("engineComponentKey" = 'TRIGGER_WORKFLOW_VERSION' AND "workflowVersionId" IS NOT NULL AND "frontComponentId" IS NULL) OR ("engineComponentKey" = 'FRONT_COMPONENT_RENDERER' AND "frontComponentId" IS NOT NULL AND "workflowVersionId" IS NULL) OR ("engineComponentKey" NOT IN ('TRIGGER_WORKFLOW_VERSION', 'FRONT_COMPONENT_RENDERER') AND "workflowVersionId" IS NULL AND "frontComponentId" IS NULL)`,
+  `("engineComponentKey" = 'TRIGGER_WORKFLOW_VERSION' AND "workflowVersionId" IS NOT NULL AND "frontComponentId" IS NULL AND "payload" IS NULL) OR ("engineComponentKey" = 'FRONT_COMPONENT_RENDERER' AND "frontComponentId" IS NOT NULL AND "workflowVersionId" IS NULL AND "payload" IS NULL) OR ("engineComponentKey" = 'NAVIGATION' AND "payload" IS NOT NULL AND "workflowVersionId" IS NULL AND "frontComponentId" IS NULL) OR ("engineComponentKey" NOT IN ('TRIGGER_WORKFLOW_VERSION', 'FRONT_COMPONENT_RENDERER', 'NAVIGATION') AND "workflowVersionId" IS NULL AND "frontComponentId" IS NULL AND "payload" IS NULL)`,
 )
 export class CommandMenuItemEntity
   extends SyncableEntity
@@ -79,6 +85,9 @@ export class CommandMenuItemEntity
   })
   availabilityType: CommandMenuItemAvailabilityType;
 
+  @Column({ type: 'jsonb', nullable: true })
+  payload: CommandMenuItemPayload | null;
+
   @Column({ type: 'text', array: true, nullable: true })
   hotKeys: string[] | null;
 
@@ -94,6 +103,16 @@ export class CommandMenuItemEntity
   })
   @JoinColumn({ name: 'availabilityObjectMetadataId' })
   availabilityObjectMetadata: Relation<ObjectMetadataEntity> | null;
+
+  @Column({ nullable: true, type: 'uuid' })
+  pageLayoutId: string | null;
+
+  @ManyToOne(() => PageLayoutEntity, {
+    onDelete: 'CASCADE',
+    nullable: true,
+  })
+  @JoinColumn({ name: 'pageLayoutId' })
+  pageLayout: Relation<PageLayoutEntity> | null;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;

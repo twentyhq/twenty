@@ -1,9 +1,5 @@
-import {
-  defineFrontComponent,
-  everyEquals,
-  pageType,
-  selectedRecords,
-} from '@/sdk';
+import { defineFrontComponent } from '@/sdk/define';
+import { everyEquals, pageType, selectedRecords } from '@/sdk/front-component';
 
 const MyComponent = () => null;
 

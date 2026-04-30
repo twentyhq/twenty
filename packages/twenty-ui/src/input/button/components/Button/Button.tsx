@@ -99,6 +99,7 @@ export const Button = ({
   className,
   Icon,
   title,
+  id,
   fullWidth = false,
   variant = 'primary',
   inverted = false,
@@ -158,6 +159,7 @@ export const Button = ({
       style={dynamicStyles}
     >
       <StyledButton
+        id={id}
         fullWidth={fullWidth}
         position={position}
         disabled={isDisabled}

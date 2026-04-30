@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
 
 export const getPageLayoutBaseFile = ({ name }: { name: string }) => {
-  return `import { definePageLayout } from 'twenty-sdk';
+  return `import { definePageLayout } from 'twenty-sdk/define';
 
 export default definePageLayout({
   universalIdentifier: '${uuidv4()}',

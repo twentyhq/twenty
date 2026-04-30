@@ -1,15 +1,11 @@
-const ARROW_RIGHT_UP_PATH =
-  "M6.069.5.5 6.068M6.069.5H1.738m4.33 0v4.331";
+const ARROW_RIGHT_UP_PATH = 'M6.069.5.5 6.068M6.069.5H1.738m4.33 0v4.331';
 
 interface ArrowRightUpIconProps {
   size: number;
   strokeColor: string;
 }
 
-export function ArrowRightUpIcon({
-  size,
-  strokeColor,
-}: ArrowRightUpIconProps) {
+export function ArrowRightUpIcon({ size, strokeColor }: ArrowRightUpIconProps) {
   return (
     <svg
       width={size}

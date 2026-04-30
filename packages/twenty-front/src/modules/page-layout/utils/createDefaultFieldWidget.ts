@@ -9,27 +9,33 @@ import {
 export const createDefaultFieldWidget = ({
   id,
   pageLayoutTabId,
+  title,
   fieldMetadataId,
+  fieldDisplayMode = FieldDisplayMode.CARD,
   objectMetadataId,
   positionIndex,
 }: {
   id: string;
   pageLayoutTabId: string;
+  title: string;
   fieldMetadataId: string;
+  fieldDisplayMode?: FieldDisplayMode;
   objectMetadataId: string;
   positionIndex: number;
 }): PageLayoutWidget => {
   return {
     __typename: 'PageLayoutWidget',
     id,
+    applicationId: '',
     pageLayoutTabId,
-    title: '',
+    title,
+    isActive: true,
     type: WidgetType.FIELD,
     configuration: {
       __typename: 'FieldConfiguration',
       configurationType: WidgetConfigurationType.FIELD,
       fieldMetadataId,
-      fieldDisplayMode: FieldDisplayMode.CARD,
+      fieldDisplayMode,
     },
     gridPosition: {
       __typename: 'GridPosition',
@@ -44,7 +50,6 @@ export const createDefaultFieldWidget = ({
       index: positionIndex,
     },
     objectMetadataId: objectMetadataId ?? null,
-    isOverridden: false,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
     deletedAt: null,

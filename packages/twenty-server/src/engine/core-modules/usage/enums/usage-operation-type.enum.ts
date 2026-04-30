@@ -7,6 +7,7 @@ export enum UsageOperationType {
   AI_WORKFLOW_TOKEN = 'AI_WORKFLOW_TOKEN',
   WORKFLOW_EXECUTION = 'WORKFLOW_EXECUTION',
   CODE_EXECUTION = 'CODE_EXECUTION',
+  WEB_SEARCH = 'WEB_SEARCH',
 }
 
 registerEnumType(UsageOperationType, {

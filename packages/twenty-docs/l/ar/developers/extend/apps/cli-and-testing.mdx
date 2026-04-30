@@ -1,0 +1,434 @@
+---
+title: CLI والاختبار
+description: أوامر CLI، إعداد الاختبار، الأصول العامة، حزم npm، المستودعات البعيدة، وتهيئة CI.
+icon: terminal
+---
+
+## الأصول العامة (مجلد `public/`)
+
+يحتوي مجلد `public/` في جذر تطبيقك على ملفات ثابتة — صور وأيقونات وخطوط وأي أصول أخرى يحتاجها تطبيقك وقت التشغيل. تُدرج هذه الملفات تلقائيًا في عمليات البناء، وتُزامَن أثناء وضع التطوير، وتُرفَع إلى الخادم.
+
+الملفات الموضوعة في `public/` هي:
+
+* **متاحة للعامة** — بمجرد مزامنتها إلى الخادم، تُقدَّم الأصول عبر عنوان URL عام. لا حاجة إلى مصادقة للوصول إليها.
+* **متاحة في المكوّنات الأمامية** — استخدم عناوين الأصول لعرض الصور أو الأيقونات أو أي وسائط داخل مكوّنات React لديك.
+* **متاحة في الدوال المنطقية** — أشِر إلى عناوين الأصول في رسائل البريد الإلكتروني أو استجابات واجهات البرمجة أو أي منطق على جهة الخادم.
+* **مستخدمة لبيانات تعريف السوق** — يشير حقلا `logoUrl` و`screenshots` في `defineApplication()` إلى ملفات من هذا المجلد (مثل `public/logo.png`). تُعرَض هذه عند نشر تطبيقك في السوق.
+* **تُزامَن تلقائيًا في وضع التطوير** — عند إضافة ملف في `public/` أو تحديثه أو حذفه، تتم مزامنته إلى الخادم تلقائيًا. لا حاجة لإعادة التشغيل.
+* **مضمَّنة في عمليات البناء** — يقوم `yarn twenty build` بتجميع جميع الأصول العامة ضمن مخرجات التوزيع.
+
+### الوصول إلى الأصول العامة باستخدام `getPublicAssetUrl`
+
+استخدم المساعد `getPublicAssetUrl` من `twenty-sdk` للحصول على العنوان الكامل لملف في دليل `public/` لديك. يعمل ذلك في كلٍ من الدوال المنطقية والمكوّنات الأمامية.
+
+**في دالة منطقية:**
+
+```ts src/logic-functions/send-invoice.ts
+import { defineLogicFunction, getPublicAssetUrl } from 'twenty-sdk/define';
+
+const handler = async (): Promise<any> => {
+  const logoUrl = getPublicAssetUrl('logo.png');
+  const invoiceUrl = getPublicAssetUrl('templates/invoice.png');
+
+  // Fetch the file content (no auth required — public endpoint)
+  const response = await fetch(invoiceUrl);
+  const buffer = await response.arrayBuffer();
+
+  return { logoUrl, size: buffer.byteLength };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: 'a1b2c3d4-...',
+  name: 'send-invoice',
+  description: 'Sends an invoice with the app logo',
+  timeoutSeconds: 10,
+  handler,
+});
+```
+
+**في مكوّن أمامي:**
+
+```tsx src/front-components/company-card.tsx
+import { defineFrontComponent, getPublicAssetUrl } from 'twenty-sdk/define';
+
+export default defineFrontComponent(() => {
+  const logoUrl = getPublicAssetUrl('logo.png');
+
+  return <img src={logoUrl} alt="App logo" />;
+});
+```
+
+وسيطة `path` نسبية إلى مجلد `public/` الخاص بتطبيقك. كلٌّ من `getPublicAssetUrl('logo.png')` و`getPublicAssetUrl('public/logo.png')` يُحلاّن إلى العنوان نفسه — تتم إزالة بادئة `public/` تلقائيًا إن وُجدت.
+
+## استخدام حِزَم npm
+
+يمكنك تثبيت واستخدام أي حزمة npm في تطبيقك. يتم تجميع كلٍ من الدوال المنطقية والمكوّنات الأمامية باستخدام [esbuild](https://esbuild.github.io/)، والذي يُضمّن جميع التبعيات ضمن المخرجات — لا حاجة إلى `node_modules` وقت التشغيل.
+
+### تثبيت حزمة
+
+```bash filename="Terminal"
+yarn add axios
+```
+
+ثم استوردها في شيفرتك:
+
+```ts src/logic-functions/fetch-data.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import axios from 'axios';
+
+const handler = async (): Promise<any> => {
+  const { data } = await axios.get('https://api.example.com/data');
+
+  return { data };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: '...',
+  name: 'fetch-data',
+  description: 'Fetches data from an external API',
+  timeoutSeconds: 10,
+  handler,
+});
+```
+
+وينطبق الأمر نفسه على المكوّنات الأمامية:
+
+```tsx src/front-components/chart.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { format } from 'date-fns';
+
+const DateWidget = () => {
+  return <p>Today is {format(new Date(), 'MMMM do, yyyy')}</p>;
+};
+
+export default defineFrontComponent({
+  universalIdentifier: '...',
+  name: 'date-widget',
+  component: DateWidget,
+});
+```
+
+### كيف يعمل التجميع
+
+تستخدم خطوة البناء أداة esbuild لإنتاج ملف واحد مستقل لكل دالة منطقية ولكل مكوّن أمامي. تُضمَّن جميع الحزم المستوردة داخل الحزمة.
+
+**الدوال المنطقية** تعمل في بيئة Node.js. الوحدات المدمجة في Node (`fs` و`path` و`crypto` و`http` وغيرها) متاحة ولا تحتاج إلى تثبيت.
+
+**المكوّنات الأمامية** تعمل ضمن Web Worker. وحدات Node المدمجة غير متاحة — المتاح فقط واجهات برمجة المتصفّح وحِزَم npm التي تعمل في بيئة المتصفّح.
+
+كلتا البيئتين تحتويان على `twenty-client-sdk/core` و`twenty-client-sdk/metadata` كوحدات متاحة مُسبقًا — لا تُضمَّن هذه ضمن الحزم بل تُحلّ وقت التشغيل بواسطة الخادم.
+
+## اختبار تطبيقك
+
+يوفّر SDK واجهات برمجة قابلة للتنفيذ برمجيًا تمكّنك من بناء تطبيقك ونشره وتثبيته وإلغاء تثبيته من شيفرة الاختبار. بالاقتران مع [Vitest](https://vitest.dev/) وعملاء واجهة البرمجة مضبوطي الأنواع، يمكنك كتابة اختبارات تكامل تتحقّق من أن تطبيقك يعمل من البداية إلى النهاية مقابل خادم Twenty حقيقي.
+
+### إعداد
+
+يتضمّن التطبيق المُولَّد بالقالب بالفعل Vitest. إذا أعددته يدويًا، فثبّت التبعيات:
+
+```bash filename="Terminal"
+yarn add -D vitest vite-tsconfig-paths
+```
+
+أنشئ `vitest.config.ts` في جذر تطبيقك:
+
+```ts vitest.config.ts
+import tsconfigPaths from 'vite-tsconfig-paths';
+import { defineConfig } from 'vitest/config';
+
+export default defineConfig({
+  plugins: [
+    tsconfigPaths({
+      projects: ['tsconfig.spec.json'],
+      ignoreConfigErrors: true,
+    }),
+  ],
+  test: {
+    testTimeout: 120_000,
+    hookTimeout: 120_000,
+    include: ['src/**/*.integration-test.ts'],
+    setupFiles: ['src/__tests__/setup-test.ts'],
+    env: {
+      TWENTY_API_URL: 'http://localhost:2020',
+      TWENTY_API_KEY: 'your-api-key',
+    },
+  },
+});
+```
+
+أنشئ ملف إعداد يتحقّق من إمكانية الوصول إلى الخادم قبل تشغيل الاختبارات:
+
+```ts src/__tests__/setup-test.ts
+import * as fs from 'fs';
+import * as os from 'os';
+import * as path from 'path';
+import { beforeAll } from 'vitest';
+
+const TWENTY_API_URL = process.env.TWENTY_API_URL ?? 'http://localhost:2020';
+const TEST_CONFIG_DIR = path.join(os.tmpdir(), '.twenty-sdk-test');
+
+beforeAll(async () => {
+  // Verify the server is running
+  const response = await fetch(`${TWENTY_API_URL}/healthz`);
+
+  if (!response.ok) {
+    throw new Error(
+      `Twenty server is not reachable at ${TWENTY_API_URL}. ` +
+        'Start the server before running integration tests.',
+    );
+  }
+
+  // Write a temporary config for the SDK
+  fs.mkdirSync(TEST_CONFIG_DIR, { recursive: true });
+
+  fs.writeFileSync(
+    path.join(TEST_CONFIG_DIR, 'config.json'),
+    JSON.stringify({
+      remotes: {
+        local: {
+          apiUrl: process.env.TWENTY_API_URL,
+          apiKey: process.env.TWENTY_API_KEY,
+        },
+      },
+      defaultRemote: 'local',
+    }, null, 2),
+  );
+});
+```
+
+### واجهات SDK البرمجية
+
+يُصدِّر المسار الفرعي `twenty-sdk/cli` دوالًا يمكنك استدعاؤها مباشرةً من شيفرة الاختبار:
+
+| دالة           | الوصف                                     |
+| -------------- | ----------------------------------------- |
+| `appBuild`     | بناء التطبيق واختياريًا حزم ملف tarball   |
+| `appDeploy`    | رفع ملف tarball إلى الخادم                |
+| `appInstall`   | تثبيت التطبيق على مساحة العمل النشطة      |
+| `appUninstall` | إلغاء تثبيت التطبيق من مساحة العمل النشطة |
+
+تُرجع كل دالة كائن نتيجة يحتوي على `success: boolean` وعلى إمّا `data` أو `error`.
+
+### كتابة اختبار تكامل
+
+إليك مثالًا كاملًا يبني التطبيق وينشره ويثبّته، ثم يتحقّق من ظهوره في مساحة العمل:
+
+```ts src/__tests__/app-install.integration-test.ts
+import { APPLICATION_UNIVERSAL_IDENTIFIER } from 'src/application-config';
+import { appBuild, appDeploy, appInstall, appUninstall } from 'twenty-sdk/cli';
+import { MetadataApiClient } from 'twenty-client-sdk/metadata';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+
+const APP_PATH = process.cwd();
+
+describe('App installation', () => {
+  beforeAll(async () => {
+    const buildResult = await appBuild({
+      appPath: APP_PATH,
+      tarball: true,
+      onProgress: (message: string) => console.log(`[build] ${message}`),
+    });
+
+    if (!buildResult.success) {
+      throw new Error(`Build failed: ${buildResult.error?.message}`);
+    }
+
+    const deployResult = await appDeploy({
+      tarballPath: buildResult.data.tarballPath!,
+      onProgress: (message: string) => console.log(`[deploy] ${message}`),
+    });
+
+    if (!deployResult.success) {
+      throw new Error(`Deploy failed: ${deployResult.error?.message}`);
+    }
+
+    const installResult = await appInstall({ appPath: APP_PATH });
+
+    if (!installResult.success) {
+      throw new Error(`Install failed: ${installResult.error?.message}`);
+    }
+  });
+
+  afterAll(async () => {
+    await appUninstall({ appPath: APP_PATH });
+  });
+
+  it('should find the installed app in the workspace', async () => {
+    const metadataClient = new MetadataApiClient();
+
+    const result = await metadataClient.query({
+      findManyApplications: {
+        id: true,
+        name: true,
+        universalIdentifier: true,
+      },
+    });
+
+    const installedApp = result.findManyApplications.find(
+      (app: { universalIdentifier: string }) =>
+        app.universalIdentifier === APPLICATION_UNIVERSAL_IDENTIFIER,
+    );
+
+    expect(installedApp).toBeDefined();
+  });
+});
+```
+
+### تشغيل الاختبارات
+
+تأكّد من تشغيل خادم Twenty المحلي لديك، ثم:
+
+```bash filename="Terminal"
+yarn test
+```
+
+أو في وضع المراقبة أثناء التطوير:
+
+```bash filename="Terminal"
+yarn test:watch
+```
+
+### التحقق من الأنواع
+
+يمكنك أيضًا تشغيل التحقق من الأنواع على تطبيقك دون تشغيل الاختبارات:
+
+```bash filename="Terminal"
+yarn twenty typecheck
+```
+
+يشغِّل هذا الأمر `tsc --noEmit` ويبلغ عن أي أخطاء في الأنواع.
+
+## مرجع CLI
+
+بالإضافة إلى `dev` و`build` و`add` و`typecheck`، يوفّر CLI أوامر لتنفيذ الدوال وعرض السجلات وإدارة تثبيتات التطبيقات.
+
+### تنفيذ الدوال (`yarn twenty exec`)
+
+تشغيل دالة منطقية يدويًا دون تشغيلها عبر HTTP أو cron أو حدث قاعدة بيانات:
+
+```bash filename="Terminal"
+# Execute by function name
+yarn twenty exec -n create-new-post-card
+
+# Execute by universalIdentifier
+yarn twenty exec -u e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf
+
+# Pass a JSON payload
+yarn twenty exec -n create-new-post-card -p '{"name": "Hello"}'
+
+# Execute the post-install function
+yarn twenty exec --postInstall
+```
+
+### عرض سجلات الدوال (`yarn twenty logs`)
+
+بثّ سجلات التنفيذ لدوال تطبيقك المنطقية:
+
+```bash filename="Terminal"
+# Stream all function logs
+yarn twenty logs
+
+# Filter by function name
+yarn twenty logs -n create-new-post-card
+
+# Filter by universalIdentifier
+yarn twenty logs -u e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf
+```
+
+<Note>
+يختلف هذا عن `yarn twenty server logs`، الذي يعرض سجلات حاوية Docker. يعرض `yarn twenty logs` سجلات تنفيذ دوال تطبيقك من خادم Twenty.
+</Note>
+
+### إلغاء تثبيت تطبيق (`yarn twenty uninstall`)
+
+أزل تطبيقك من مساحة العمل النشطة:
+
+```bash filename="Terminal"
+yarn twenty uninstall
+
+# Skip the confirmation prompt
+yarn twenty uninstall --yes
+```
+
+## إدارة الريموتات
+
+**الريموت** هو خادم Twenty يتصل به تطبيقك. أثناء الإعداد، تُنشئ أداة إنشاء الهيكل واحدًا لك تلقائيًا. يمكنك إضافة ريموتات أخرى أو التبديل بينها في أي وقت.
+
+```bash filename="Terminal"
+# Add a new remote (opens a browser for OAuth login)
+yarn twenty remote add
+
+# Connect to a local Twenty server (auto-detects port 2020 or 3000)
+yarn twenty remote add --local
+
+# Add a remote non-interactively (useful for CI)
+yarn twenty remote add --api-url https://your-twenty-server.com --api-key $TWENTY_API_KEY --as my-remote
+
+# List all configured remotes
+yarn twenty remote list
+
+# Switch the active remote
+yarn twenty remote switch <name>
+```
+
+تُخزَّن بيانات اعتمادك في `~/.twenty/config.json`.
+
+## التكامل المستمر (CI) باستخدام GitHub Actions
+
+تولّد أداة إنشاء الهيكل سير عمل GitHub Actions جاهزًا للاستخدام في `.github/workflows/ci.yml`. يشغّل اختبارات التكامل لديك تلقائيًا عند كل دفع إلى `main` وعلى طلبات السحب.
+
+سير العمل:
+
+1. يجلب الشيفرة الخاصة بك
+2. يشغّل خادم Twenty مؤقتًا باستخدام الإجراء `twentyhq/twenty/.github/actions/spawn-twenty-docker-image`
+3. يثبّت التبعيات باستخدام `yarn install --immutable`
+4. يشغّل `yarn test` مع حقن `TWENTY_API_URL` و`TWENTY_API_KEY` من مخرجات الإجراء
+
+```yaml .github/workflows/ci.yml
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request: {}
+
+env:
+  TWENTY_VERSION: latest
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Spawn Twenty instance
+        id: twenty
+        uses: twentyhq/twenty/.github/actions/spawn-twenty-docker-image@main
+        with:
+          twenty-version: ${{ env.TWENTY_VERSION }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'yarn'
+
+      - name: Install dependencies
+        run: yarn install --immutable
+
+      - name: Run integration tests
+        run: yarn test
+        env:
+          TWENTY_API_URL: ${{ steps.twenty.outputs.server-url }}
+          TWENTY_API_KEY: ${{ steps.twenty.outputs.access-token }}
+```
+
+لا تحتاج إلى تهيئة أي أسرار — إذ يبدأ إجراء `spawn-twenty-docker-image` خادم Twenty عابرًا مباشرة في المشغّل ويُخرِج تفاصيل الاتصال. يتم توفير السر `GITHUB_TOKEN` تلقائيًا من قِبل GitHub.
+
+لتثبيت إصدار محدّد من Twenty بدلًا من `latest`، غيّر متغير البيئة `TWENTY_VERSION` في أعلى سير العمل.

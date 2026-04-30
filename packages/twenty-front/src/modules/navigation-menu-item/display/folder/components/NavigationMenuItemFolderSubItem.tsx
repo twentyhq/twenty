@@ -1,28 +1,31 @@
 import { type ReactNode } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
+import { lastClickedNavigationMenuItemIdState } from '@/navigation-menu-item/common/states/lastClickedNavigationMenuItemIdState';
 import { getNavigationMenuItemColor } from '@/navigation-menu-item/common/utils/getNavigationMenuItemColor';
 import { NavigationMenuItemIcon } from '@/navigation-menu-item/display/components/NavigationMenuItemIcon';
-import type { EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
-import { getObjectMetadataForNavigationMenuItem } from '@/navigation-menu-item/display/object/utils/getObjectMetadataForNavigationMenuItem';
+import { useIdentifyActiveNavigationMenuItems } from '@/navigation-menu-item/display/hooks/useIdentifyActiveNavigationMenuItems';
+import { useIsNavigationMenuItemEditHighlighted } from '@/navigation-menu-item/display/hooks/useIsNavigationMenuItemEditHighlighted';
 import { getNavigationMenuItemObjectNameSingular } from '@/navigation-menu-item/display/object/utils/getNavigationMenuItemObjectNameSingular';
+import { getObjectMetadataForNavigationMenuItem } from '@/navigation-menu-item/display/object/utils/getObjectMetadataForNavigationMenuItem';
 import { getObjectNavigationMenuItemSecondaryLabel } from '@/navigation-menu-item/display/object/utils/getObjectNavigationMenuItemSecondaryLabel';
 import { getNavigationMenuItemComputedLink } from '@/navigation-menu-item/display/utils/getNavigationMenuItemComputedLink';
-import { useIsNavigationMenuItemEditHighlighted } from '@/navigation-menu-item/display/hooks/useIsNavigationMenuItemEditHighlighted';
 import { getNavigationMenuItemLabel } from '@/navigation-menu-item/display/utils/getNavigationMenuItemLabel';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
+import type { EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { NavigationDrawerSubItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSubItem';
 import { getNavigationSubItemLeftAdornment } from '@/ui/navigation/navigation-drawer/utils/getNavigationSubItemLeftAdornment';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { viewsSelector } from '@/views/states/selectors/viewsSelector';
 
 type NavigationMenuItemFolderSubItemProps = {
   navigationMenuItem: NavigationMenuItem;
   index: number;
   arrayLength: number;
-  selectedNavigationMenuItemIndex: number;
   isDragging: boolean;
   rightOptions?: ReactNode;
   onClick?: () => void;
@@ -36,7 +39,6 @@ export const NavigationMenuItemFolderSubItem = ({
   navigationMenuItem,
   index,
   arrayLength,
-  selectedNavigationMenuItemIndex,
   isDragging,
   rightOptions,
   onClick,
@@ -46,6 +48,15 @@ export const NavigationMenuItemFolderSubItem = ({
     useIsNavigationMenuItemEditHighlighted(navigationMenuItem);
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
   const views = useAtomStateValue(viewsSelector);
+  const navigate = useNavigate();
+  const setLastClickedNavigationMenuItemId = useSetAtomState(
+    lastClickedNavigationMenuItemIdState,
+  );
+
+  const { activeNavigationMenuItemIds } =
+    useIdentifyActiveNavigationMenuItems();
+
+  const isActive = activeNavigationMenuItemIds.includes(navigationMenuItem.id);
 
   const label = getNavigationMenuItemLabel(
     navigationMenuItem,
@@ -87,7 +98,10 @@ export const NavigationMenuItemFolderSubItem = ({
             item: navigationMenuItem,
             objectMetadataItem: objectMetadataItem ?? undefined,
           })
-      : undefined);
+      : () => {
+          setLastClickedNavigationMenuItemId(navigationMenuItem.id);
+          navigate(computedLink);
+        });
 
   return (
     <NavigationDrawerSubItem
@@ -107,14 +121,14 @@ export const NavigationMenuItemFolderSubItem = ({
         navigationMenuItem,
         objectMetadataItem ?? undefined,
       )}
-      to={isDragging || handleClick ? undefined : computedLink}
+      to={isDragging || isEditable ? undefined : computedLink}
       onClick={handleClick}
-      active={index === selectedNavigationMenuItemIndex}
+      active={isActive}
       isSelectedInEditMode={isEditHighlightedInNavigationMenu}
       subItemState={getNavigationSubItemLeftAdornment({
         index,
         arrayLength,
-        selectedIndex: selectedNavigationMenuItemIndex,
+        selectedIndex: isActive ? index : -1,
       })}
       rightOptions={rightOptions}
       isDragging={isDragging}

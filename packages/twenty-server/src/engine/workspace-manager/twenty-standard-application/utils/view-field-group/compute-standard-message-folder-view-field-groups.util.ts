@@ -20,14 +20,14 @@ export const computeStandardMessageFolderViewFieldGroups = (
           isVisible: true,
         },
       }),
-    messageFolderRecordPageFieldsOther:
+    messageFolderRecordPageFieldsSystem:
       createStandardViewFieldGroupFlatMetadata({
         ...args,
         objectName: 'messageFolder',
         context: {
           viewName: 'messageFolderRecordPageFields',
-          viewFieldGroupName: 'other',
-          name: 'Other',
+          viewFieldGroupName: 'system',
+          name: 'System',
           position: 1,
           isVisible: true,
         },

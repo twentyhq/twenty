@@ -1,3 +1,3 @@
 export type TrustedByClientCountLabelType = {
-    text: string;
-}
+  text: string;
+};

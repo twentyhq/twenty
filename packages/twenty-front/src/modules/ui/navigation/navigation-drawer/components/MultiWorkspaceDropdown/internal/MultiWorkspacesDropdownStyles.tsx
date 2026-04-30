@@ -4,23 +4,32 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 export const StyledContainer = styled.div<{
   isNavigationDrawerExpanded: boolean;
+  disabled?: boolean;
 }>`
   align-items: center;
   border: 1px solid transparent;
   border-radius: ${themeCssVariables.border.radius.sm};
   box-sizing: border-box;
   color: ${themeCssVariables.font.color.primary};
-  cursor: pointer;
+  cursor: ${({ disabled }) => (disabled ? 'default' : 'pointer')};
   display: flex;
   gap: ${({ isNavigationDrawerExpanded }) =>
     isNavigationDrawerExpanded ? themeCssVariables.spacing[2] : '0'};
   max-width: 100%;
   min-width: 0;
+  opacity: ${({ disabled }) => (disabled ? 0.5 : 1)};
   padding: calc(${themeCssVariables.spacing[1]} - 1px);
+  pointer-events: ${({ disabled }) => (disabled ? 'none' : 'auto')};
   width: fit-content;
+
   &:hover {
-    background-color: ${themeCssVariables.background.transparent.lighter};
-    border: 1px solid ${themeCssVariables.border.color.medium};
+    background-color: ${({ disabled }) =>
+      disabled
+        ? 'transparent'
+        : themeCssVariables.background.transparent.lighter};
+    border: 1px solid
+      ${({ disabled }) =>
+        disabled ? 'transparent' : themeCssVariables.border.color.medium};
   }
 `;
 

@@ -1,29 +1,26 @@
-import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useDeletePageLayoutTab } from '@/page-layout/hooks/useDeletePageLayoutTab';
 import { useDuplicatePageLayoutTab } from '@/page-layout/hooks/useDuplicatePageLayoutTab';
 import { useMovePageLayoutTab } from '@/page-layout/hooks/useMovePageLayoutTab';
+import { useResetPageLayoutTabToDefault } from '@/page-layout/hooks/useResetPageLayoutTabToDefault';
 import { useSetAsPinnedTab } from '@/page-layout/hooks/useSetAsPinnedTab';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutTabSettingsOpenTabIdComponentState } from '@/page-layout/states/pageLayoutTabSettingsOpenTabIdComponentState';
 import { getTabListInstanceIdFromPageLayoutAndRecord } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutAndRecord';
 import { sortTabsByPosition } from '@/page-layout/utils/sortTabsByPosition';
-import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
-import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
-import { TAB_SETTINGS_SELECTABLE_ITEM_IDS } from '@/side-panel/pages/page-layout/constants/settings/TabSettingsSelectableItemIds';
-import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
+import { CanvasTabSettingsContent } from '@/side-panel/pages/page-layout/components/CanvasTabSettingsContent';
+import { RegularTabSettingsContent } from '@/side-panel/pages/page-layout/components/RegularTabSettingsContent';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { t } from '@lingui/core/macro';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { isNonEmptyString } from '@sniptt/guards';
+import { useNavigate } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 import {
-  IconChevronLeft,
-  IconChevronRight,
-  IconCopyPlus,
-  IconPinned,
-  IconTrash,
-} from 'twenty-ui/display';
-import { PageLayoutType } from '~/generated-metadata/graphql';
+  PageLayoutTabLayoutMode,
+  PageLayoutType,
+} from '~/generated-metadata/graphql';
 
 type SidePanelPageLayoutTabSettingsContentProps = {
   pageLayoutId: string;
@@ -35,6 +32,10 @@ export const SidePanelPageLayoutTabSettingsContent = ({
   recordId,
 }: SidePanelPageLayoutTabSettingsContentProps) => {
   const { closeSidePanelMenu } = useSidePanelMenu();
+
+  const navigate = useNavigate();
+
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 
   const pageLayoutDraft = useAtomComponentStateValue(
     pageLayoutDraftComponentState,
@@ -63,6 +64,8 @@ export const SidePanelPageLayoutTabSettingsContent = ({
     tabListInstanceId,
   });
   const { setAsPinnedTab } = useSetAsPinnedTab(pageLayoutId);
+  const { resetPageLayoutTabToDefault } =
+    useResetPageLayoutTabToDefault(pageLayoutId);
 
   if (!isDefined(pageLayoutTabSettingsOpenTabId)) {
     return null;
@@ -70,7 +73,7 @@ export const SidePanelPageLayoutTabSettingsContent = ({
 
   const tabsSorted = sortTabsByPosition(pageLayoutDraft.tabs);
   const currentIndex = tabsSorted.findIndex(
-    (t) => t.id === pageLayoutTabSettingsOpenTabId,
+    (tabItem) => tabItem.id === pageLayoutTabSettingsOpenTabId,
   );
   if (currentIndex < 0) return null;
   const tab = tabsSorted[currentIndex];
@@ -83,89 +86,57 @@ export const SidePanelPageLayoutTabSettingsContent = ({
   const canSetAsPinned =
     isRecordPage && !isAlreadyPinned && tabsSorted.length > 1;
 
+  const isResetToDefaultDisabled =
+    !isNonEmptyString(tab.applicationId) ||
+    tab.applicationId === currentWorkspace?.workspaceCustomApplication?.id;
+
   const handleDelete = () => {
     deleteTab(tab.id);
     setPageLayoutTabSettingsOpenTabId(null);
     closeSidePanelMenu();
   };
 
-  const selectableItemIds = [
-    ...(canMoveLeft ? [TAB_SETTINGS_SELECTABLE_ITEM_IDS.MOVE_LEFT] : []),
-    ...(canMoveRight ? [TAB_SETTINGS_SELECTABLE_ITEM_IDS.MOVE_RIGHT] : []),
-    ...(canSetAsPinned ? [TAB_SETTINGS_SELECTABLE_ITEM_IDS.SET_AS_PINNED] : []),
-    TAB_SETTINGS_SELECTABLE_ITEM_IDS.DUPLICATE,
-    ...(canDelete ? [TAB_SETTINGS_SELECTABLE_ITEM_IDS.DELETE] : []),
-  ];
+  const handleResetToDefault = () => {
+    resetPageLayoutTabToDefault(tab.id);
+  };
+
+  const isCanvasTab = tab.layoutMode === PageLayoutTabLayoutMode.CANVAS;
+
+  if (isCanvasTab) {
+    return (
+      <CanvasTabSettingsContent
+        pageLayoutId={pageLayoutId}
+        canvasWidget={tab.widgets.at(0)}
+        canSetAsPinned={canSetAsPinned}
+        canMoveLeft={canMoveLeft}
+        canMoveRight={canMoveRight}
+        isResetToDefaultDisabled={isResetToDefaultDisabled}
+        canDelete={canDelete}
+        onMoveLeft={() => moveLeft(tab.id)}
+        onMoveRight={() => moveRight(tab.id)}
+        onSetAsPinned={() => setAsPinnedTab(tab.id)}
+        onResetToDefault={handleResetToDefault}
+        onDelete={handleDelete}
+      />
+    );
+  }
 
   return (
-    <>
-      <SidePanelList commandGroups={[]} selectableItemIds={selectableItemIds}>
-        <SidePanelGroup heading={t`Settings`}>
-          {canMoveLeft && (
-            <SelectableListItem
-              itemId={TAB_SETTINGS_SELECTABLE_ITEM_IDS.MOVE_LEFT}
-              onEnter={() => moveLeft(tab.id)}
-            >
-              <CommandMenuItem
-                id={TAB_SETTINGS_SELECTABLE_ITEM_IDS.MOVE_LEFT}
-                Icon={IconChevronLeft}
-                label={t`Move left`}
-                onClick={() => moveLeft(tab.id)}
-              />
-            </SelectableListItem>
-          )}
-          {canMoveRight && (
-            <SelectableListItem
-              itemId={TAB_SETTINGS_SELECTABLE_ITEM_IDS.MOVE_RIGHT}
-              onEnter={() => moveRight(tab.id)}
-            >
-              <CommandMenuItem
-                id={TAB_SETTINGS_SELECTABLE_ITEM_IDS.MOVE_RIGHT}
-                Icon={IconChevronRight}
-                label={t`Move right`}
-                onClick={() => moveRight(tab.id)}
-              />
-            </SelectableListItem>
-          )}
-          {canSetAsPinned && (
-            <SelectableListItem
-              itemId={TAB_SETTINGS_SELECTABLE_ITEM_IDS.SET_AS_PINNED}
-              onEnter={() => setAsPinnedTab(tab.id)}
-            >
-              <CommandMenuItem
-                id={TAB_SETTINGS_SELECTABLE_ITEM_IDS.SET_AS_PINNED}
-                Icon={IconPinned}
-                label={t`Set as pinned tab`}
-                onClick={() => setAsPinnedTab(tab.id)}
-              />
-            </SelectableListItem>
-          )}
-          <SelectableListItem
-            itemId={TAB_SETTINGS_SELECTABLE_ITEM_IDS.DUPLICATE}
-            onEnter={() => duplicateTab(tab.id)}
-          >
-            <CommandMenuItem
-              id={TAB_SETTINGS_SELECTABLE_ITEM_IDS.DUPLICATE}
-              Icon={IconCopyPlus}
-              label={t`Duplicate`}
-              onClick={() => duplicateTab(tab.id)}
-            />
-          </SelectableListItem>
-          {canDelete && (
-            <SelectableListItem
-              itemId={TAB_SETTINGS_SELECTABLE_ITEM_IDS.DELETE}
-              onEnter={handleDelete}
-            >
-              <CommandMenuItem
-                id={TAB_SETTINGS_SELECTABLE_ITEM_IDS.DELETE}
-                Icon={IconTrash}
-                label={t`Delete`}
-                onClick={handleDelete}
-              />
-            </SelectableListItem>
-          )}
-        </SidePanelGroup>
-      </SidePanelList>
-    </>
+    <RegularTabSettingsContent
+      canSetAsPinned={canSetAsPinned}
+      canMoveLeft={canMoveLeft}
+      canMoveRight={canMoveRight}
+      isResetToDefaultDisabled={isResetToDefaultDisabled}
+      canDelete={canDelete}
+      onMoveLeft={() => moveLeft(tab.id)}
+      onMoveRight={() => moveRight(tab.id)}
+      onSetAsPinned={() => setAsPinnedTab(tab.id)}
+      onDuplicate={() => {
+        const newTabId = duplicateTab(tab.id);
+        navigate(`#${newTabId}`);
+      }}
+      onResetToDefault={handleResetToDefault}
+      onDelete={handleDelete}
+    />
   );
 };

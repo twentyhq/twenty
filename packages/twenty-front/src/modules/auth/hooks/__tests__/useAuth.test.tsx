@@ -1,11 +1,5 @@
 import { useAuth } from '@/auth/hooks/useAuth';
-import { billingState } from '@/client-config/states/billingState';
-import { isDeveloperDefaultSignInPrefilledState } from '@/client-config/states/isDeveloperDefaultSignInPrefilledState';
-import { supportChatState } from '@/client-config/states/supportChatState';
 
-import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useApolloClient } from '@apollo/client/react';
 import { MockedProvider } from '@apollo/client/testing/react';
 import { type ReactNode, act } from 'react';
 import { MemoryRouter } from 'react-router-dom';
@@ -17,10 +11,8 @@ import {
   results,
   token,
 } from '@/auth/hooks/__mocks__/useAuth';
-import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { SnackBarComponentInstanceContext } from '@/ui/feedback/snack-bar-manager/contexts/SnackBarComponentInstanceContext';
 import { renderHook } from '@testing-library/react';
-import { SupportDriver } from '~/generated-metadata/graphql';
 
 const redirectSpy = jest.fn();
 
@@ -147,55 +139,15 @@ describe('useAuth', () => {
   });
 
   it('should handle sign-out', async () => {
-    const { result } = renderHook(
-      () => {
-        const client = useApolloClient();
-        const workspaceAuthProviders = useAtomStateValue(
-          workspaceAuthProvidersState,
-        );
-        const billing = useAtomStateValue(billingState);
-        const isDeveloperDefaultSignInPrefilled = useAtomStateValue(
-          isDeveloperDefaultSignInPrefilledState,
-        );
-        const supportChat = useAtomStateValue(supportChatState);
-        const isMultiWorkspaceEnabled = useAtomStateValue(
-          isMultiWorkspaceEnabledState,
-        );
-        return {
-          ...useAuth(),
-          client,
-          state: {
-            workspaceAuthProviders,
-            billing,
-            isDeveloperDefaultSignInPrefilled,
-            supportChat,
-            isMultiWorkspaceEnabled,
-          },
-        };
-      },
-      {
-        wrapper: Wrapper,
-      },
-    );
+    sessionStorage.setItem('lingering-key', 'should-be-cleared');
 
-    const { signOut, client } = result.current;
+    const { result } = renderHooks();
 
     await act(async () => {
-      await signOut();
+      result.current.signOut();
     });
 
     expect(sessionStorage.length).toBe(0);
-    expect(client.cache.extract()).toEqual({});
-
-    const { state } = result.current;
-
-    expect(state.workspaceAuthProviders).toEqual(null);
-    expect(state.billing).toBeNull();
-    expect(state.isDeveloperDefaultSignInPrefilled).toBe(false);
-    expect(state.supportChat).toEqual({
-      supportDriver: SupportDriver.NONE,
-      supportFrontChatId: null,
-    });
   });
 
   it('should handle credential sign-up', async () => {

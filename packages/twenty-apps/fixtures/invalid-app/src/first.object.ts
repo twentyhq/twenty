@@ -1,4 +1,4 @@
-import { defineObject, FieldType } from 'twenty-sdk';
+import { defineObject, FieldType } from 'twenty-sdk/define';
 
 const DUPLICATE_ID = 'duplicate-id-0000-0000-000000000001';
 

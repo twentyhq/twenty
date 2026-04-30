@@ -19,6 +19,10 @@ export class UpdateApplicationRegistrationVariablePayload {
   value?: string;
 
   @Field({ nullable: true })
+  @IsOptional()
+  resetValue?: boolean;
+
+  @Field({ nullable: true })
   @IsString()
   @MaxLength(2000)
   @IsOptional()

@@ -5,10 +5,12 @@ import { requiredQueryListenersState } from '@/sse-db-event/states/requiredQuery
 import { shouldDestroyEventStreamState } from '@/sse-db-event/states/shouldDestroyEventStreamState';
 import { sseEventStreamIdState } from '@/sse-db-event/states/sseEventStreamIdState';
 import { sseEventStreamReadyState } from '@/sse-db-event/states/sseEventStreamReadyState';
+import { isGracefullyHandledEventStreamError } from '@/sse-db-event/utils/isGracefullyHandledEventStreamError';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useMutation } from '@apollo/client/react';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
+import { useMutation } from '@apollo/client/react';
 import { isNonEmptyString } from '@sniptt/guards';
+import { useStore } from 'jotai';
 import { useCallback, useEffect } from 'react';
 import {
   compareArraysOfObjectsByProperty,
@@ -19,7 +21,7 @@ import {
   type AddQuerySubscriptionInput,
   type RemoveQueryFromEventStreamInput,
 } from '~/generated-metadata/graphql';
-import { useStore } from 'jotai';
+import { getGraphqlErrorExtensionsFromError } from '~/utils/get-graphql-error-extensions-from-error.util';
 
 export const SSEQuerySubscribeEffect = () => {
   const store = useStore();
@@ -87,17 +89,14 @@ export const SSEQuerySubscribeEffect = () => {
       }
     } catch (error) {
       if (CombinedGraphQLErrors.is(error)) {
-        const subCode = error.errors[0]?.extensions?.subCode;
-        const code = error.errors[0]?.extensions?.code;
+        const extensions = getGraphqlErrorExtensionsFromError(error);
 
-        const isRecoverable =
-          subCode === 'EVENT_STREAM_DOES_NOT_EXIST' ||
-          subCode === 'EVENT_STREAM_ALREADY_EXISTS' ||
-          subCode === 'NOT_AUTHORIZED' ||
-          code === 'UNAUTHENTICATED' ||
-          code === 'FORBIDDEN';
-
-        if (isRecoverable) {
+        if (
+          isGracefullyHandledEventStreamError({
+            subCode: extensions?.subCode,
+            code: extensions?.code,
+          })
+        ) {
           store.set(activeQueryListenersState.atom, []);
           store.set(shouldDestroyEventStreamState.atom, true);
           return;

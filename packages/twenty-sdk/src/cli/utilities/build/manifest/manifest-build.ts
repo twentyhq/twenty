@@ -7,14 +7,12 @@ import {
 } from '@/cli/utilities/build/manifest/manifest-extract-config';
 import { extractManifestFromFile } from '@/cli/utilities/build/manifest/manifest-extract-config-from-file';
 import { getDefaultFieldsInObjectFields } from '@/cli/utilities/build/manifest/utils/get-default-fields-in-object-fields';
-import {
-  type ApplicationConfig,
-  type FrontComponentConfig,
-  type LogicFunctionConfig,
-} from '@/sdk';
-import { type ObjectConfig } from '@/sdk/objects/object-config';
-import { type PageLayoutConfig } from '@/sdk/page-layouts/page-layout-config';
-import { type ViewConfig } from '@/sdk/views/view-config';
+import { type ApplicationConfig, type LogicFunctionConfig } from '@/sdk/define';
+import { type FrontComponentConfig } from '@/sdk/define/front-component/front-component-config';
+import { type ObjectConfig } from '@/sdk/define/objects/object-config';
+import { type PageLayoutConfig } from '@/sdk/define/page-layouts/page-layout-config';
+import { type PageLayoutTabConfig } from '@/sdk/define/page-layouts/page-layout-tab-config';
+import { type ViewConfig } from '@/sdk/define/views/view-config';
 import { readFile } from 'node:fs/promises';
 import { basename, extname, relative } from 'path';
 import { glob } from 'tinyglobby';
@@ -31,12 +29,20 @@ import {
   type NavigationMenuItemManifest,
   type ObjectManifest,
   type PageLayoutManifest,
+  type PageLayoutTabManifest,
   type RoleManifest,
   type SkillManifest,
   type ViewManifest,
+  type PostInstallLogicFunctionApplicationManifest,
+  type PreInstallLogicFunctionApplicationManifest,
 } from 'twenty-shared/application';
 import { getInputSchemaFromSourceCode } from 'twenty-shared/logic-function';
 import { assertUnreachable } from 'twenty-shared/utils';
+import { addMissingFieldOptionIds } from '@/cli/utilities/build/manifest/utils/add-missing-field-option-ids';
+import { type PostInstallLogicFunctionConfig } from '@/sdk/define/logic-functions/post-install-logic-function-config';
+import { type PreInstallLogicFunctionConfig } from '@/sdk/define/logic-functions/pre-install-logic-function-config';
+import { fromRoleConfigToRoleManifest } from '@/cli/utilities/build/manifest/utils/from-role-config-to-role-manifest';
+import { type RoleConfig } from '@/sdk/define/roles/role-config';
 
 const loadSources = async (appPath: string): Promise<string[]> => {
   return await glob(['**/*.ts', '**/*.tsx'], {
@@ -50,6 +56,7 @@ const loadSources = async (appPath: string): Promise<string[]> => {
 const loadAssets = async (appPath: string) => {
   return await glob([`${ASSETS_DIR}/**/*`], {
     cwd: appPath,
+    absolute: true,
     onlyFiles: true,
   });
 };
@@ -76,9 +83,11 @@ export const buildManifest = async (
   const views: ViewManifest[] = [];
   const navigationMenuItems: NavigationMenuItemManifest[] = [];
   const pageLayouts: PageLayoutManifest[] = [];
-  const preInstallLogicFunctionUniversalIdentifiers: string[] = [];
-  const postInstallLogicFunctionUniversalIdentifiers: string[] = [];
-
+  const pageLayoutTabs: PageLayoutTabManifest[] = [];
+  const postInstallLogicFunctions: PostInstallLogicFunctionApplicationManifest[] =
+    [];
+  const preInstallLogicFunctions: PreInstallLogicFunctionApplicationManifest[] =
+    [];
   const applicationFilePaths: string[] = [];
   const objectsFilePaths: string[] = [];
   const fieldsFilePaths: string[] = [];
@@ -91,6 +100,7 @@ export const buildManifest = async (
   const viewsFilePaths: string[] = [];
   const navigationMenuItemsFilePaths: string[] = [];
   const pageLayoutsFilePaths: string[] = [];
+  const pageLayoutTabsFilePaths: string[] = [];
 
   for (const filePath of filePaths) {
     const fileContent = await readFile(filePath, 'utf-8');
@@ -145,7 +155,7 @@ export const buildManifest = async (
 
         const objectManifest: ObjectManifest = {
           ...extract.config,
-          fields: objectFieldsWithDefaults,
+          fields: objectFieldsWithDefaults.map(addMissingFieldOptionIds),
           labelIdentifierFieldMetadataUniversalIdentifier,
         };
 
@@ -161,17 +171,19 @@ export const buildManifest = async (
           appPath,
           filePath,
         });
-        fields.push(extract.config);
+        const fieldConfig = addMissingFieldOptionIds(extract.config);
+        fields.push(fieldConfig);
         errors.push(...extract.errors);
         fieldsFilePaths.push(relativePath);
         break;
       }
       case ManifestEntityKey.Roles: {
-        const extract = await extractManifestFromFile<RoleManifest>({
+        const extract = await extractManifestFromFile<RoleConfig>({
           appPath,
           filePath,
         });
-        roles.push(extract.config);
+        const roleConfig = fromRoleConfigToRoleManifest(extract.config);
+        roles.push(roleConfig);
         errors.push(...extract.errors);
         rolesFilePaths.push(relativePath);
         break;
@@ -225,19 +237,31 @@ export const buildManifest = async (
         logicFunctionsFilePaths.push(relativePath);
 
         if (
-          targetFunctionName === TargetFunction.DefinePreInstallLogicFunction
+          targetFunctionName === TargetFunction.DefinePostInstallLogicFunction
         ) {
-          preInstallLogicFunctionUniversalIdentifiers.push(
-            extract.config.universalIdentifier,
-          );
+          const postInstallHookConfig =
+            extract.config as PostInstallLogicFunctionConfig;
+
+          postInstallLogicFunctions.push({
+            universalIdentifier: extract.config.universalIdentifier,
+            shouldRunOnVersionUpgrade:
+              postInstallHookConfig.shouldRunOnVersionUpgrade ?? false,
+            shouldRunSynchronously:
+              postInstallHookConfig.shouldRunSynchronously ?? false,
+          });
         }
 
         if (
-          targetFunctionName === TargetFunction.DefinePostInstallLogicFunction
+          targetFunctionName === TargetFunction.DefinePreInstallLogicFunction
         ) {
-          postInstallLogicFunctionUniversalIdentifiers.push(
-            extract.config.universalIdentifier,
-          );
+          const preInstallHookConfig =
+            extract.config as PreInstallLogicFunctionConfig;
+
+          preInstallLogicFunctions.push({
+            universalIdentifier: extract.config.universalIdentifier,
+            shouldRunOnVersionUpgrade:
+              preInstallHookConfig.shouldRunOnVersionUpgrade ?? false,
+          });
         }
 
         break;
@@ -311,6 +335,21 @@ export const buildManifest = async (
         pageLayoutsFilePaths.push(relativePath);
         break;
       }
+      case ManifestEntityKey.PageLayoutTabs: {
+        const extract = await extractManifestFromFile<PageLayoutTabConfig>({
+          appPath,
+          filePath,
+        });
+
+        const pageLayoutTabManifest: PageLayoutTabManifest = {
+          ...extract.config,
+        };
+
+        pageLayoutTabs.push(pageLayoutTabManifest);
+        errors.push(...extract.errors);
+        pageLayoutTabsFilePaths.push(relativePath);
+        break;
+      }
       case ManifestEntityKey.PublicAssets: {
         // Public assets are handled below
         break;
@@ -324,13 +363,14 @@ export const buildManifest = async (
   const assetFiles = await loadAssets(appPath);
 
   for (const assetFile of assetFiles) {
+    const relativePath = relative(appPath, assetFile);
     publicAssets.push({
-      filePath: assetFile,
+      filePath: relativePath,
       fileName: basename(assetFile),
       fileType: extname(assetFile).replace(/^\./, ''),
       checksum: null,
     });
-    publicAssetsFilePaths.push(relative(appPath, assetFile));
+    publicAssetsFilePaths.push(relativePath);
   }
 
   if (!application) {
@@ -339,31 +379,29 @@ export const buildManifest = async (
     );
   }
 
-  if (preInstallLogicFunctionUniversalIdentifiers.length > 1) {
-    errors.push(
-      'Only one pre install logic function is allowed per application',
-    );
-  }
-
-  if (postInstallLogicFunctionUniversalIdentifiers.length > 1) {
+  if (postInstallLogicFunctions.length > 1) {
     errors.push(
       'Only one post install logic function is allowed per application',
     );
   }
 
-  if (application && preInstallLogicFunctionUniversalIdentifiers.length >= 1) {
+  if (preInstallLogicFunctions.length > 1) {
+    errors.push(
+      'Only one pre install logic function is allowed per application',
+    );
+  }
+
+  if (application && postInstallLogicFunctions.length >= 1) {
     application = {
       ...application,
-      preInstallLogicFunctionUniversalIdentifier:
-        preInstallLogicFunctionUniversalIdentifiers[0],
+      postInstallLogicFunction: postInstallLogicFunctions[0],
     };
   }
 
-  if (application && postInstallLogicFunctionUniversalIdentifiers.length >= 1) {
+  if (application && preInstallLogicFunctions.length >= 1) {
     application = {
       ...application,
-      postInstallLogicFunctionUniversalIdentifier:
-        postInstallLogicFunctionUniversalIdentifiers[0],
+      preInstallLogicFunction: preInstallLogicFunctions[0],
     };
   }
 
@@ -388,6 +426,7 @@ export const buildManifest = async (
         views: views.sort(byId),
         navigationMenuItems: navigationMenuItems.sort(byId),
         pageLayouts: pageLayouts.sort(byId),
+        pageLayoutTabs: pageLayoutTabs.sort(byId),
       };
 
   const entityFilePaths: EntityFilePaths = {
@@ -403,6 +442,7 @@ export const buildManifest = async (
     views: viewsFilePaths,
     navigationMenuItems: navigationMenuItemsFilePaths,
     pageLayouts: pageLayoutsFilePaths,
+    pageLayoutTabs: pageLayoutTabsFilePaths,
   };
 
   return { manifest, filePaths: entityFilePaths, errors };

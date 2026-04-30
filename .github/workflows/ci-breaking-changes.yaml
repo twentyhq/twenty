@@ -35,15 +35,10 @@ jobs:
     runs-on: ubuntu-latest
     services:
       postgres:
-        image: twentycrm/twenty-postgres-spilo
-        credentials:
-          username: ${{ vars.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+        image: postgres:18
         env:
-          PGUSER_SUPERUSER: postgres
-          PGPASSWORD_SUPERUSER: postgres
-          ALLOW_NOSSL: 'true'
-          SPILO_PROVIDER: 'local'
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
         ports:
           - 5432:5432
         options: >-
@@ -53,16 +48,10 @@ jobs:
           --health-retries 5
       redis:
         image: redis
-        credentials:
-          username: ${{ vars.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_PASSWORD }}
         ports:
           - 6379:6379
       clickhouse:
         image: clickhouse/clickhouse-server:25.8.8
-        credentials:
-          username: ${{ vars.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_PASSWORD }}
         env:
           CLICKHOUSE_PASSWORD: clickhousePassword
           CLICKHOUSE_URL: "http://default:clickhousePassword@localhost:8123/twenty"
@@ -262,6 +251,14 @@ jobs:
             rm -f /tmp/current-server.pid
           fi
 
+      - name: Flush Redis between server runs
+        run: |
+          # Clear all Redis caches to prevent stale data from the current branch
+          # server contaminating the main branch server. Both servers share the
+          # same Redis instance, and CoreEntityCacheService/WorkspaceCacheService
+          # persist cached entities across process restarts.
+          redis-cli -h localhost -p 6379 FLUSHALL || echo "::warning::Failed to flush Redis"
+
       - name: Checkout main branch
         run: |
           git stash
@@ -420,12 +417,6 @@ jobs:
           done
 
           echo "valid=$valid" >> $GITHUB_OUTPUT
-
-      - name: Login to Docker Hub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ vars.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
       - name: Install OpenAPI Diff Tool
         run: |

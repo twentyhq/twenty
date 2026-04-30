@@ -131,6 +131,7 @@ export const createStandardIndexFlatMetadata = <
         indexMetadataId: indexId,
         order: index,
         updatedAt: now,
+        workspaceId,
       }),
     ),
     workspaceId,

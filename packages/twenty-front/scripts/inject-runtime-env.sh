@@ -1,5 +1,10 @@
 #!/bin/sh
 
+if [ -z "$REACT_APP_SERVER_BASE_URL" ]; then
+  echo "Error: REACT_APP_SERVER_BASE_URL is not set."
+  exit 1
+fi
+
 echo "Injecting runtime environment variables into index.html..."
 
 CONFIG_BLOCK=$(cat << EOF

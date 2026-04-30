@@ -227,7 +227,7 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       universalProperty: undefined,
     },
     isSearchable: {
-      toCompare: false,
+      toCompare: true,
       toStringify: false,
       universalProperty: undefined,
     },
@@ -373,6 +373,12 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toCompare: true,
       isOverridable: true,
     },
+    isActive: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+      isOverridable: false,
+    },
     deletedAt: {
       toStringify: false,
       universalProperty: undefined,
@@ -454,6 +460,12 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toCompare: false,
       toStringify: false,
       universalProperty: 'viewUniversalIdentifier',
+    },
+    isActive: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+      isOverridable: false,
     },
     overrides: {
       toCompare: true,
@@ -909,6 +921,7 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toCompare: false,
       toStringify: false,
       universalProperty: 'pageLayoutTabUniversalIdentifier',
+      isOverridable: true,
     },
     conditionalDisplay: {
       toCompare: true,
@@ -916,10 +929,22 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       universalProperty: undefined,
       isOverridable: true,
     },
+    conditionalAvailabilityExpression: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+      isOverridable: true,
+    },
+    isActive: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+      isOverridable: false,
+    },
     overrides: {
       toCompare: true,
       toStringify: true,
-      universalProperty: undefined,
+      universalProperty: 'universalOverrides',
     },
   },
   pageLayoutTab: {
@@ -965,6 +990,12 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toCompare: false,
       toStringify: false,
       universalProperty: undefined,
+    },
+    isActive: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+      isOverridable: false,
     },
     overrides: {
       toCompare: true,
@@ -1068,6 +1099,11 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toStringify: false,
       universalProperty: undefined,
     },
+    payload: {
+      toCompare: true,
+      toStringify: true,
+      universalProperty: undefined,
+    },
     hotKeys: {
       toCompare: true,
       toStringify: true,
@@ -1077,6 +1113,11 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toCompare: false,
       toStringify: false,
       universalProperty: undefined,
+    },
+    pageLayoutId: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: 'pageLayoutUniversalIdentifier',
     },
   },
   navigationMenuItem: {
@@ -1132,6 +1173,11 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toCompare: false,
       toStringify: false,
       universalProperty: 'targetObjectMetadataUniversalIdentifier',
+    },
+    pageLayoutId: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: 'pageLayoutUniversalIdentifier',
     },
   },
   permissionFlag: {

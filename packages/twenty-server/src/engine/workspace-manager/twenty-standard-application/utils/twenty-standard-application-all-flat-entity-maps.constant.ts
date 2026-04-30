@@ -28,14 +28,12 @@ export type ComputeTwentyStandardApplicationAllFlatEntityMapsArgs = {
   now: string;
   workspaceId: string;
   twentyStandardApplicationId: string;
-  shouldIncludeRecordPageLayouts?: boolean;
 };
 
 export const computeTwentyStandardApplicationAllFlatEntityMaps = ({
   now,
   workspaceId,
   twentyStandardApplicationId,
-  shouldIncludeRecordPageLayouts,
 }: ComputeTwentyStandardApplicationAllFlatEntityMapsArgs): {
   allFlatEntityMaps: TwentyStandardAllFlatEntityMaps;
   // TODO remove once all metadatas has fully been universal migrated
@@ -84,7 +82,6 @@ export const computeTwentyStandardApplicationAllFlatEntityMaps = ({
     standardObjectMetadataRelatedEntityIds,
     twentyStandardApplicationId,
     workspaceId,
-    shouldIncludeRecordPageLayouts,
   });
 
   const flatViewGroupMaps = buildStandardFlatViewGroupMetadataMaps({
@@ -108,7 +105,6 @@ export const computeTwentyStandardApplicationAllFlatEntityMaps = ({
     standardObjectMetadataRelatedEntityIds,
     twentyStandardApplicationId,
     workspaceId,
-    shouldIncludeRecordPageLayouts,
   });
 
   const flatViewFilterMaps = buildStandardFlatViewFilterMetadataMaps({
@@ -134,7 +130,6 @@ export const computeTwentyStandardApplicationAllFlatEntityMaps = ({
     standardObjectMetadataRelatedEntityIds,
     twentyStandardApplicationId,
     workspaceId,
-    shouldIncludeRecordPageLayouts,
   });
 
   const flatRoleMaps = buildStandardFlatRoleMetadataMaps({
@@ -172,7 +167,6 @@ export const computeTwentyStandardApplicationAllFlatEntityMaps = ({
     twentyStandardApplicationId,
     standardObjectMetadataRelatedEntityIds,
     standardPageLayoutMetadataRelatedEntityIds,
-    shouldIncludeRecordPageLayouts,
   });
 
   const flatPageLayoutTabMaps = buildStandardFlatPageLayoutTabMetadataMaps({
@@ -180,7 +174,6 @@ export const computeTwentyStandardApplicationAllFlatEntityMaps = ({
     workspaceId,
     twentyStandardApplicationId,
     standardPageLayoutMetadataRelatedEntityIds,
-    shouldIncludeRecordPageLayouts,
   });
 
   const flatPageLayoutWidgetMaps =
@@ -190,7 +183,6 @@ export const computeTwentyStandardApplicationAllFlatEntityMaps = ({
       twentyStandardApplicationId,
       standardObjectMetadataRelatedEntityIds,
       standardPageLayoutMetadataRelatedEntityIds,
-      shouldIncludeRecordPageLayouts,
     });
 
   const flatNavigationMenuItemMaps = buildStandardFlatNavigationMenuItemMaps({

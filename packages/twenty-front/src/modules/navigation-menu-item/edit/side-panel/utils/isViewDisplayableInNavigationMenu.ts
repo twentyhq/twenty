@@ -4,4 +4,5 @@ import { ViewVisibility } from '~/generated-metadata/graphql';
 
 export const isViewDisplayableInNavigationMenu = (view: View): boolean =>
   view.type !== ViewType.FIELDS_WIDGET &&
+  view.type !== ViewType.TABLE_WIDGET &&
   view.visibility === ViewVisibility.WORKSPACE;

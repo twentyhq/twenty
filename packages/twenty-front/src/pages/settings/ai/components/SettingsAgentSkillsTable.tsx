@@ -85,7 +85,7 @@ export const SettingsAgentSkillsTable = ({
               }
               link={
                 skill.isActive
-                  ? getSettingsPath(SettingsPath.AISkillDetail, {
+                  ? getSettingsPath(SettingsPath.AiSkillDetail, {
                       skillId: skill.id,
                     })
                   : undefined

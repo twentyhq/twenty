@@ -69,7 +69,7 @@ export const computeStandardBlocklistViewFields = (
         position: 0,
         isVisible: true,
         size: 150,
-        viewFieldGroupName: 'other',
+        viewFieldGroupName: 'system',
       },
     }),
     blocklistRecordPageFieldsCreatedBy: createStandardViewFieldFlatMetadata({
@@ -82,7 +82,7 @@ export const computeStandardBlocklistViewFields = (
         position: 1,
         isVisible: true,
         size: 150,
-        viewFieldGroupName: 'other',
+        viewFieldGroupName: 'system',
       },
     }),
   };

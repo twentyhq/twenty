@@ -16,7 +16,11 @@ const meta: Meta<typeof FrontComponentRenderer> = {
   args: {
     onError: errorHandler,
     applicationAccessToken: 'fake-token',
-    executionContext: { frontComponentId: 'storybook-test', userId: null },
+    executionContext: {
+      frontComponentId: 'storybook-test',
+      userId: null,
+      recordId: null,
+    },
   },
   beforeEach: () => {
     errorHandler.mockClear();
@@ -92,13 +96,9 @@ export const Lifecycle: Story = {
 
     expect(await canvas.findByText('Mounted')).toBeVisible();
 
-    await waitFor(
-      () => {
-        const tickElement = canvas.getByTestId('tick-count');
-        expect(tickElement.textContent).toMatch(/Ticks: [1-9]\d*/);
-      },
-      { timeout: 10000 },
-    );
+    expect(
+      await canvas.findByText(/Ticks: [1-9]\d*/, {}, { timeout: 10000 }),
+    ).toBeVisible();
   },
 };
 
@@ -121,6 +121,7 @@ export const SdkContext: Story = {
     executionContext: {
       frontComponentId: 'sdk-context-test',
       userId: 'test-user-abc-123',
+      recordId: null,
     },
   },
   play: async ({ canvasElement }) => {

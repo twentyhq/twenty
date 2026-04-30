@@ -1,5 +1,5 @@
-import { isDefined } from 'twenty-shared/utils';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
+import { useObjectMetadataSelectHelpers } from '@/object-metadata/hooks/useObjectMetadataSelectHelpers';
 import { IconPicker } from '@/ui/input/components/IconPicker';
 import { Select } from '@/ui/input/components/Select';
 import { SelectControl } from '@/ui/input/components/SelectControl';
@@ -13,6 +13,7 @@ import { getManualTriggerDefaultSettings } from '@/workflow/workflow-trigger/uti
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
+import { isDefined } from 'twenty-shared/utils';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 import { useIcons } from 'twenty-ui/display';
 import { type SelectOption } from 'twenty-ui/input';
@@ -56,6 +57,8 @@ export const WorkflowEditTriggerManual = ({
   const { t } = useLingui();
 
   const { getIcon } = useIcons();
+  const { getSelectIconPropsFromObjectMetadataItem } =
+    useObjectMetadataSelectHelpers();
   const maxRecordsFormatted = QUERY_MAX_RECORDS.toLocaleString();
 
   const { activeNonSystemObjectMetadataItems } =
@@ -65,7 +68,7 @@ export const WorkflowEditTriggerManual = ({
     activeNonSystemObjectMetadataItems.map((item) => ({
       label: item.labelPlural,
       value: item.nameSingular,
-      Icon: getIcon(item.icon),
+      ...getSelectIconPropsFromObjectMetadataItem(item),
     }));
 
   const availability = trigger.settings.availability;

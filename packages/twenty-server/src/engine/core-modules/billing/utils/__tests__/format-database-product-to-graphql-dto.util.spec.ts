@@ -99,7 +99,7 @@ describe('formatBillingDatabaseProductToGraphqlDTO', () => {
           prices: [
             {
               tiers: [
-                { upTo: 10000, flatAmount: 500, unitAmount: null },
+                { upTo: 10, flatAmount: 500, unitAmount: null },
                 { upTo: null, flatAmount: null, unitAmount: 0.001 },
               ],
               recurringInterval: SubscriptionInterval.Month,
@@ -150,7 +150,7 @@ describe('formatBillingDatabaseProductToGraphqlDTO', () => {
     const meteredPrices = result.meteredProducts[0].prices;
 
     expect(meteredPrices![0].tiers[0]).toEqual(
-      expect.objectContaining({ upTo: 50000 }),
+      expect.objectContaining({ upTo: 50 }),
     );
     expect(meteredPrices![0].tiers[1]).toEqual(
       expect.objectContaining({ upTo: null }),

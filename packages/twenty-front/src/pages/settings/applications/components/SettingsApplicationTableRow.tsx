@@ -1,16 +1,22 @@
 import { type ReactNode } from 'react';
 
-import { t } from '@lingui/core/macro';
+import { ApplicationDisplay } from '@/applications/components/ApplicationDisplay';
+import { useResolvedApplicationDescription } from '@/applications/hooks/useResolvedApplicationDescription';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { OverflowingTextWithTooltip } from 'twenty-ui/display';
+import { t } from '@lingui/core/macro';
 import { Tag } from 'twenty-ui/components';
+import { OverflowingTextWithTooltip } from 'twenty-ui/display';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { type ApplicationWithoutRelation } from '~/pages/settings/applications/types/applicationWithoutRelation';
+import { getApplicationDescriptionSummary } from '~/pages/settings/applications/utils/getApplicationDescriptionSummary';
+import { type ApplicationDisplayData } from '@/applications/types/applicationDisplayData.type';
+import { StyledNameTableCell } from '@/settings/data-model/object-details/components/SettingsObjectItemTableRowStyledComponents';
 
 export type SettingsApplicationTableRowProps = {
   action: ReactNode;
-  application: ApplicationWithoutRelation;
+  application: ApplicationDisplayData & {
+    description?: string | null;
+  };
   hasUpdate?: boolean;
   link?: string;
 };
@@ -24,22 +30,21 @@ export const SettingsApplicationTableRow = ({
   hasUpdate,
   link,
 }: SettingsApplicationTableRowProps) => {
+  const resolvedDescription = useResolvedApplicationDescription(application);
+  const descriptionSummary =
+    getApplicationDescriptionSummary(resolvedDescription);
+
   return (
     <TableRow
       gridTemplateColumns={APPLICATION_TABLE_ROW_GRID_TEMPLATE_COLUMNS}
       key={application.id}
       to={link}
     >
-      <TableCell
-        color={themeCssVariables.font.color.secondary}
-        gap={themeCssVariables.spacing[2]}
-        minWidth="0"
-        overflow="hidden"
-      >
-        <OverflowingTextWithTooltip text={application.name} />
-      </TableCell>
+      <StyledNameTableCell minWidth="0" overflow="hidden">
+        <ApplicationDisplay application={application} />
+      </StyledNameTableCell>
       <TableCell gap={themeCssVariables.spacing[2]} minWidth="0">
-        <OverflowingTextWithTooltip text={application.description} />
+        <OverflowingTextWithTooltip text={descriptionSummary} />
         {hasUpdate === true && (
           <Tag color="blue" text={t`Update`} weight="medium" />
         )}
@@ -47,6 +52,7 @@ export const SettingsApplicationTableRow = ({
       <TableCell
         align="right"
         padding={`0 ${themeCssVariables.spacing[2]} 0 0`}
+        color={themeCssVariables.font.color.tertiary}
       >
         {action}
       </TableCell>

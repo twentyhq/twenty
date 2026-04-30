@@ -1,5 +1,19 @@
 import axios from 'axios';
 
+const safeStringify = (value: unknown): string => {
+  try {
+    const stringified = JSON.stringify(value, null, 2);
+
+    if (stringified === '{}' || stringified === undefined) {
+      return String(value);
+    }
+
+    return stringified;
+  } catch {
+    return String(value);
+  }
+};
+
 export const serializeError = (error: unknown): string => {
   if (typeof error === 'string') {
     return error;
@@ -14,19 +28,29 @@ export const serializeError = (error: unknown): string => {
       parts.push(`HTTP ${status}${statusText ? ` ${statusText}` : ''}`);
     }
 
-    const graphqlErrors = error.response?.data?.errors;
+    const responseData = error.response?.data;
+    const graphqlErrors = responseData?.errors;
 
     if (Array.isArray(graphqlErrors) && graphqlErrors.length > 0) {
       const messages = graphqlErrors
-        .map(
-          (graphqlError: { message?: string }) =>
-            graphqlError.message ?? 'Unknown GraphQL error',
-        )
+        .map((graphqlError: { message?: unknown }) => {
+          if (typeof graphqlError.message === 'string') {
+            return graphqlError.message;
+          }
+
+          return safeStringify(graphqlError);
+        })
         .join('; ');
 
       parts.push(messages);
-    } else if (error.response?.data?.message) {
-      parts.push(error.response.data.message);
+    } else if (responseData?.message) {
+      parts.push(
+        typeof responseData.message === 'string'
+          ? responseData.message
+          : safeStringify(responseData.message),
+      );
+    } else if (responseData) {
+      parts.push(safeStringify(responseData));
     } else if (error.message) {
       parts.push(error.message);
     }
@@ -42,11 +66,5 @@ export const serializeError = (error: unknown): string => {
     return error.message || error.toString();
   }
 
-  const stringified = JSON.stringify(error, null, 2);
-
-  if (stringified === '{}' || stringified === undefined) {
-    return String(error);
-  }
-
-  return stringified;
+  return safeStringify(error);
 };

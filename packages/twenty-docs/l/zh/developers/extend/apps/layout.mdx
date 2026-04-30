@@ -1,0 +1,178 @@
+---
+title: 布局
+description: 定义视图、导航菜单项和页面布局，以塑造你的应用在 Twenty 中的呈现方式。
+icon: table-columns
+---
+
+布局实体控制你的应用如何在 Twenty 的 UI 中呈现——侧边栏中有哪些内容、应用随附哪些已保存的视图，以及记录详情页如何排布。
+
+## 布局概念
+
+| 概念          | 控制内容                                | 实体                         |
+| ----------- | ----------------------------------- | -------------------------- |
+| **视图**      | 对象的已保存列表配置——可见字段、顺序、筛选器、分组          | `defineView`               |
+| **导航菜单项**   | 左侧侧边栏中的一项，链接到某个视图或外部 URL            | `defineNavigationMenuItem` |
+| **页面布局**    | 构成记录详情页的选项卡和小部件                     | `definePageLayout`         |
+| **页面布局选项卡** | 附加到现有页面布局（标准页面布局或你自己的应用的页面布局）的独立选项卡 | `definePageLayoutTab`      |
+
+视图、导航菜单项和页面布局通过 `universalIdentifier` 相互引用：
+
+* 类型为 `VIEW` 的**导航菜单项**指向一个 `defineView` 标识符，因此侧边栏链接会打开该已保存视图。
+* 类型为 `RECORD_PAGE` 的**页面布局**面向某个对象，并可在其选项卡内嵌入[前端组件](/l/zh/developers/extend/apps/front-components)作为小部件。
+
+<AccordionGroup>
+<Accordion title="defineView" description="为对象定义已保存的视图">
+
+视图是关于对象记录如何显示的已保存配置——包括哪些字段可见、它们的顺序，以及应用的任何筛选器或分组。 使用 `defineView()` 随你的应用一起提供预配置的视图：
+
+```ts src/views/example-view.ts
+import { defineView, ViewKey } from 'twenty-sdk/define';
+import { EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER } from '../objects/example-object';
+import { NAME_FIELD_UNIVERSAL_IDENTIFIER } from '../objects/example-object';
+
+export default defineView({
+  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  name: 'All example items',
+  objectUniversalIdentifier: EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER,
+  icon: 'IconList',
+  key: ViewKey.INDEX,
+  position: 0,
+  fields: [
+    {
+      universalIdentifier: 'f926bdb7-6af7-4683-9a09-adbca56c29f0',
+      fieldMetadataUniversalIdentifier: NAME_FIELD_UNIVERSAL_IDENTIFIER,
+      position: 0,
+      isVisible: true,
+      size: 200,
+    },
+  ],
+});
+```
+
+关键点：
+* `objectUniversalIdentifier` 指定此视图适用于哪个对象。
+* `key` 决定视图类型（例如，主列表视图使用 `ViewKey.INDEX`）。
+* `fields` 控制显示哪些列及其顺序。 每个字段引用一个 `fieldMetadataUniversalIdentifier`。
+* 你还可以定义 `filters`、`filterGroups`、`groups` 和 `fieldGroups` 以进行更高级的配置。
+* `position` 在同一对象存在多个视图时控制其排序。
+
+</Accordion>
+<Accordion title="defineNavigationMenuItem" description="定义侧边栏导航链接">
+
+导航菜单项会在工作区侧边栏中添加自定义条目。 使用 `defineNavigationMenuItem()` 链接到视图、外部 URL 或对象：
+
+```ts src/navigation-menu-items/example-navigation-menu-item.ts
+import { defineNavigationMenuItem, NavigationMenuItemType } from 'twenty-sdk/define';
+import { EXAMPLE_VIEW_UNIVERSAL_IDENTIFIER } from '../views/example-view';
+
+export default defineNavigationMenuItem({
+  universalIdentifier: '9327db91-afa1-41b6-bd9d-2b51a26efb4c',
+  name: 'example-navigation-menu-item',
+  icon: 'IconList',
+  color: 'blue',
+  position: 0,
+  type: NavigationMenuItemType.VIEW,
+  viewUniversalIdentifier: EXAMPLE_VIEW_UNIVERSAL_IDENTIFIER,
+});
+```
+
+关键点：
+* `type` 决定菜单项链接到的目标：`NavigationMenuItemType.VIEW` 表示已保存视图，`NavigationMenuItemType.LINK` 表示外部 URL。
+* 对于视图链接，设置 `viewUniversalIdentifier`。 对于外部链接，设置 `link`。
+* `position` 控制在侧边栏中的排序。
+* `icon` 和 `color`（可选）用于自定义外观。
+
+</Accordion>
+<Accordion title="definePageLayout" description="为记录视图定义自定义页面布局">
+
+页面布局使你可以自定义记录详情页的外观——显示哪些选项卡、每个选项卡内有哪些小部件，以及它们如何排列。 使用 `definePageLayout()` 随你的应用一起提供自定义布局：
+
+```ts src/page-layouts/example-record-page-layout.ts
+import { definePageLayout, PageLayoutTabLayoutMode } from 'twenty-sdk/define';
+import { EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER } from '../objects/example-object';
+import { HELLO_WORLD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER } from '../front-components/hello-world';
+
+export default definePageLayout({
+  universalIdentifier: '203aeb94-6701-46d6-9af1-be2bbcc9e134',
+  name: 'Example Record Page',
+  type: 'RECORD_PAGE',
+  objectUniversalIdentifier: EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER,
+  tabs: [
+    {
+      universalIdentifier: '6ed26b60-a51d-4ad7-86dd-1c04c7f3cac5',
+      title: 'Hello World',
+      position: 50,
+      icon: 'IconWorld',
+      layoutMode: PageLayoutTabLayoutMode.CANVAS,
+      widgets: [
+        {
+          universalIdentifier: 'aa4234e0-2e5f-4c02-a96a-573449e2351d',
+          title: 'Hello World',
+          type: 'FRONT_COMPONENT',
+          configuration: {
+            configurationType: 'FRONT_COMPONENT',
+            frontComponentUniversalIdentifier:
+              HELLO_WORLD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
+          },
+        },
+      ],
+    },
+  ],
+});
+```
+
+关键点：
+* `type` 通常为 'RECORD_PAGE'，用于自定义特定对象的详情视图。
+* `objectUniversalIdentifier` 指定此布局适用于哪个对象。
+* 每个 `tab` 使用 `title`、`position` 和 `layoutMode` 定义页面的一个部分（`CANVAS` 表示自由布局）。
+* 选项卡内的每个 `widget` 可以渲染一个前端组件、关系列表或其他内置小部件类型。
+* 选项卡上的 `position` 控制其顺序。 使用更高的值（例如 50）可将自定义选项卡放在内置选项卡之后。
+
+</Accordion>
+<Accordion title="definePageLayoutTab" description="向现有页面布局添加一个选项卡">
+
+`definePageLayoutTab` 允许你的应用将单个选项卡 — 可选小部件 — 附加到一个**现有**页面布局。 最常见的用例是向 Twenty 内置的某个记录页面添加自定义选项卡（例如，分析或 AI 摘要选项卡），或向你的应用已随附的页面布局添加该选项卡。
+
+目标页面布局必须是 **标准** 的 Twenty 页面布局，或由 **你自己的应用** 定义的布局；目前不支持跨应用引用由其他已安装应用拥有的页面布局。
+
+```ts src/page-layouts/example-extra-tab.ts
+import {
+  definePageLayoutTab,
+  PageLayoutTabLayoutMode,
+} from 'twenty-sdk/define';
+import { HELLO_WORLD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER } from '../front-components/hello-world';
+
+const COMPANY_RECORD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER =
+  '20202020-ab01-4001-8001-c0aba11c0100';
+
+export default definePageLayoutTab({
+  universalIdentifier: 'b1b2b3b4-b5b6-4000-8000-000000000001',
+  pageLayoutUniversalIdentifier:
+    COMPANY_RECORD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER,
+  title: 'Hello World',
+  position: 1000,
+  icon: 'IconWorld',
+  layoutMode: PageLayoutTabLayoutMode.CANVAS,
+  widgets: [
+    {
+      universalIdentifier: 'b1b2b3b4-b5b6-4000-8000-000000000002',
+      title: 'Hello World',
+      type: 'FRONT_COMPONENT',
+      configuration: {
+        configurationType: 'FRONT_COMPONENT',
+        frontComponentUniversalIdentifier:
+          HELLO_WORLD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
+      },
+    },
+  ],
+});
+```
+
+关键点：
+* `pageLayoutUniversalIdentifier` 在使用 `definePageLayoutTab` 时是**必需**的，并且必须指向在安装时已存在的页面布局（标准布局或你的应用的布局）。 当父页面布局缺失时，安装会失败，并给出清晰的验证错误。
+* `widgets` 仅作用于此选项卡 — 它们引用前端组件、视图等，其方式与在 `definePageLayout` 中内联定义的小部件完全相同。
+* `position` 控制目标布局中相对于现有选项卡的排序。 选择一个取值，使你的选项卡相对于内置选项卡位于你想要的位置。
+* 当你只想向现有布局进行**添加**时，请使用此功能，而不是 `definePageLayout`。 当你拥有整个布局时，请使用 `definePageLayout`（通常是你在应用中提供的对象的 `RECORD_PAGE`，或 `STANDALONE_PAGE`）。
+
+</Accordion>
+</AccordionGroup>

@@ -2,14 +2,13 @@ import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
-import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { useCanEditProfileField } from '@/settings/profile/hooks/useCanEditProfileField';
+import { useUpdateWorkspaceMemberSettings } from '@/settings/profile/hooks/useUpdateWorkspaceMemberSettings';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ImageInput } from '@/ui/input/components/ImageInput';
-import { isDefined } from 'twenty-shared/utils';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useMutation } from '@apollo/client/react';
+import { isDefined } from 'twenty-shared/utils';
 import { UploadWorkspaceMemberProfilePictureDocument } from '~/generated-metadata/graphql';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
@@ -32,15 +31,13 @@ export const WorkspaceMemberPictureUploader = ({
   const [uploadController, setUploadController] =
     useState<AbortController | null>(null);
 
-  const [currentWorkspaceMember, setCurrentWorkspaceMember] = useAtomState(
-    currentWorkspaceMemberState,
-  );
+  const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
 
   const [uploadPicture] = useMutation(
     UploadWorkspaceMemberProfilePictureDocument,
   );
 
-  const { updateOneRecord } = useUpdateOneRecord();
+  const { updateWorkspaceMemberSettings } = useUpdateWorkspaceMemberSettings();
 
   const { canEdit: canEditProfilePicture } =
     useCanEditProfileField('profilePicture');
@@ -74,20 +71,11 @@ export const WorkspaceMemberPictureUploader = ({
         throw new Error('Avatar upload failed');
       }
 
-      await updateOneRecord({
-        objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
-        idToUpdate: workspaceMemberId,
-        updateOneRecordInput: { avatarUrl: signedFile.url },
-      });
-
       newAvatarUrl = signedFile.url;
-
-      if (isEditingSelf && isDefined(currentWorkspaceMember)) {
-        setCurrentWorkspaceMember({
-          ...currentWorkspaceMember,
-          avatarUrl: newAvatarUrl,
-        });
-      }
+      await updateWorkspaceMemberSettings({
+        workspaceMemberId,
+        update: { avatarUrl: newAvatarUrl },
+      });
 
       if (isDefined(onAvatarUpdated)) {
         onAvatarUpdated(newAvatarUrl);
@@ -114,18 +102,10 @@ export const WorkspaceMemberPictureUploader = ({
     setErrorMessage(null);
 
     try {
-      await updateOneRecord({
-        objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
-        idToUpdate: workspaceMemberId,
-        updateOneRecordInput: { avatarUrl: '' },
+      await updateWorkspaceMemberSettings({
+        workspaceMemberId,
+        update: { avatarUrl: '' },
       });
-
-      if (isEditingSelf && isDefined(currentWorkspaceMember)) {
-        setCurrentWorkspaceMember({
-          ...currentWorkspaceMember,
-          avatarUrl: null,
-        });
-      }
 
       if (isDefined(onAvatarUpdated)) {
         onAvatarUpdated(null);

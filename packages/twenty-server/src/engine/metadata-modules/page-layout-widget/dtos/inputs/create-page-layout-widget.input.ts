@@ -39,7 +39,11 @@ export class CreatePageLayoutWidgetInput {
   @IsOptional()
   objectMetadataId?: string | null;
 
-  @Field(() => GridPositionInput, { nullable: false })
+  @Field(() => GridPositionInput, {
+    nullable: false,
+    deprecationReason:
+      'Use `position` instead. Will be removed in a future release.',
+  })
   @ValidateNested()
   @Type(() => GridPositionInput)
   gridPosition: GridPositionInput;

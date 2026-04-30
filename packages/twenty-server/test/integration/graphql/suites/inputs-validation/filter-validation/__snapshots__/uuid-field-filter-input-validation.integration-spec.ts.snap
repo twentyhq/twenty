@@ -1,16 +1,16 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
-exports[`Filter input validation - UUID Gql filter input - failure UUID field type - should fail with filter : {"uuidField":{"eq":"2025-01-01"}} 1`] = `"Invalid UUID: '2025-01-01'"`;
+exports[`Filter input validation - UUID Gql filter input - failure UUID field type - should fail with filter : {"uuidField":{"eq":"2025-01-01"}} 1`] = `"Invalid UUID value '2025-01-01' for field "uuidField""`;
 
-exports[`Filter input validation - UUID Gql filter input - failure UUID field type - should fail with filter : {"uuidField":{"eq":"invalid-uuid"}} 1`] = `"Invalid UUID: 'invalid-uuid'"`;
+exports[`Filter input validation - UUID Gql filter input - failure UUID field type - should fail with filter : {"uuidField":{"eq":"invalid-uuid"}} 1`] = `"Invalid UUID value 'invalid-uuid' for field "uuidField""`;
 
-exports[`Filter input validation - UUID Gql filter input - failure UUID field type - should fail with filter : {"uuidField":{"eq":[]}} 1`] = `"UUID must be a string"`;
+exports[`Filter input validation - UUID Gql filter input - failure UUID field type - should fail with filter : {"uuidField":{"eq":[]}} 1`] = `"Invalid UUID value [] for field "uuidField""`;
 
-exports[`Filter input validation - UUID Gql filter input - failure UUID field type - should fail with filter : {"uuidField":{"eq":{}}} 1`] = `"UUID must be a string"`;
+exports[`Filter input validation - UUID Gql filter input - failure UUID field type - should fail with filter : {"uuidField":{"eq":{}}} 1`] = `"Invalid UUID value {} for field "uuidField""`;
 
-exports[`Filter input validation - UUID Gql filter input - failure UUID field type - should fail with filter : {"uuidField":{"eq":2}} 1`] = `"UUID must be a string"`;
+exports[`Filter input validation - UUID Gql filter input - failure UUID field type - should fail with filter : {"uuidField":{"eq":2}} 1`] = `"Invalid UUID value 2 for field "uuidField""`;
 
-exports[`Filter input validation - UUID Gql filter input - failure UUID field type - should fail with filter : {"uuidField":{"eq":true}} 1`] = `"UUID must be a string"`;
+exports[`Filter input validation - UUID Gql filter input - failure UUID field type - should fail with filter : {"uuidField":{"eq":true}} 1`] = `"Invalid UUID value true for field "uuidField""`;
 
 exports[`Filter input validation - UUID Rest filter input - failure UUID field type - should fail with filter : "uuidField[eq]:\\"[]\\"" 1`] = `
 [

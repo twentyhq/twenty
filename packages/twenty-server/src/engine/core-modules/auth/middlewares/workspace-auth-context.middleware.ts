@@ -13,6 +13,7 @@ import { buildApiKeyAuthContext } from 'src/engine/core-modules/auth/utils/build
 import { buildApplicationAuthContext } from 'src/engine/core-modules/auth/utils/build-application-auth-context.util';
 import { buildPendingActivationUserAuthContext } from 'src/engine/core-modules/auth/utils/build-pending-activation-user-auth-context.util';
 import { buildUserAuthContext } from 'src/engine/core-modules/auth/utils/build-user-auth-context.util';
+import { applyWorkspaceSentryContext } from 'src/engine/core-modules/sentry/utils/apply-workspace-sentry-context.util';
 
 @Injectable()
 export class WorkspaceAuthContextMiddleware implements NestMiddleware {
@@ -24,6 +25,8 @@ export class WorkspaceAuthContextMiddleware implements NestMiddleware {
     }
 
     const authContext = this.buildAuthContext(req);
+
+    applyWorkspaceSentryContext(authContext);
 
     withWorkspaceAuthContext(authContext, () => {
       next();

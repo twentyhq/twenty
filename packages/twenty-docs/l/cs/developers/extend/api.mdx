@@ -1,147 +1,55 @@
 ---
 title: API
-description: Programově dotazujte a upravujte svá CRM data pomocí REST nebo GraphQL.
+icon: plug
+description: REST and GraphQL APIs generated from your workspace schema.
 ---
 
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
-Twenty bylo vytvořeno s ohledem na vývojáře a nabízí výkonná API, která se přizpůsobí vašemu vlastnímu datovému modelu. Nabízíme čtyři typy API, které splňují různé potřeby integrace.
+## Schema-per-tenant APIs
 
-## Přístup orientovaný na vývojáře
+There is no static API reference for Twenty. Each workspace has its own schema — when you add a custom object (say `Invoice`), it immediately gets REST and GraphQL endpoints identical to built-in objects like `Company` or `Person`. The API is generated from the schema, so endpoints use your object and field names directly — no opaque IDs.
 
-Twenty generuje API specificky pro váš datový model:
+Your workspace-specific API documentation is available under **Settings → API & Webhooks** after creating an API key. It includes an interactive playground where you can execute real calls against your data.
 
-* **Nejsou vyžadována dlouhá ID**: Používejte v koncových bodech přímo názvy objektů a polí.
-* **Standardní a vlastní objekty jsou rovnocenně zpracovány**: Vaše vlastní objekty mají stejnou podporu API jako vestavěné.
-* **Vyhrazené koncové body**: Každý objekt a každé pole má svůj vlastní koncový bod API.
-* **Vlastní dokumentace**: Generována specificky pro datový model vašeho pracovního prostoru.
+## Two APIs
 
-<Note>
-Vaše personalizovaná dokumentace k API je dostupná v **Nastavení → API & Webhooks** po vytvoření API klíče. Protože Twenty generuje API odpovídající vašemu vlastnímu datovému modelu, dokumentace je jedinečná pro váš pracovní prostor.
-</Note>
+**Core API** — `/rest/` and `/graphql/`
 
-## Dva typy API
+CRUD on records: People, Companies, Opportunities, your custom objects. Query, filter, traverse relations.
 
-### Core API
+**Metadata API** — `/rest/metadata/` and `/metadata/`
 
-Přístupné na `/rest/` nebo `/graphql/`
+Schema management: create/modify/delete objects, fields, and relations. This is how you programmatically change your data model.
 
-Pracujte se svými skutečnými **záznamy** (daty):
+Both are available as REST and GraphQL. GraphQL adds batch upserts and the ability to traverse relations in a single query. Same underlying data either way.
 
-* Vytvářejte, čtěte, aktualizujte a mazejte osoby, společnosti, příležitosti atd.
-* Dotazujte a filtrujte data
-* Spravujte vztahy mezi záznamy.
+## Base URLs
 
-### Metadata API
-
-Přístupné na `/rest/metadata/` nebo `/metadata/`
-
-Spravujte svůj **pracovní prostor a datový model**:
-
-* Vytvářejte, upravujte nebo mazejte objekty a pole.
-* Konfigurujte nastavení pracovního prostoru.
-* Definujte vztahy mezi objekty
-
-## REST vs GraphQL
-
-Jak Core, tak Metadata API jsou k dispozici ve formátech REST a GraphQL:
-
-| Formát      | Dostupné operace                                                       |
-| ----------- | ---------------------------------------------------------------------- |
-| **REST**    | CRUD, hromadné operace, operace upsert                                 |
-| **GraphQL** | Stejné + **hromadné operace upsert**, dotazy na vztahy v jednom volání |
-
-Zvolte podle svých potřeb — oba formáty přistupují ke stejným datům.
-
-## Koncové body API
-
-| Prostředí           | Základní URL              |
-| ------------------- | ------------------------- |
-| **Cloud**           | `https://api.twenty.com/` |
-| **Vlastní hosting** | `https://{your-domain}/`  |
+| Prostředí   | Základní URL              |
+| ----------- | ------------------------- |
+| Cloud       | `https://api.twenty.com/` |
+| Self-Hosted | `https://{your-domain}/`  |
 
 ## Ověření
-
-Každý požadavek na API vyžaduje klíč API v hlavičce:
 
 ```
 Authorization: Bearer YOUR_API_KEY
 ```
 
-### Vytvořit API klíč
-
-1. Přejděte na **Nastavení → APIs & Webhooks**
-2. Klikněte na **+ Vytvořit klíč**
-3. Nakonfigurujte:
-   * **Název**: Popisný název pro klíč
-   * **Datum vypršení platnosti**: Kdy klíč vyprší
-4. Klikněte na **Uložit**
-5. **Zkopírujte ihned** — klíč se zobrazí pouze jednou
+Create an API key in **Settings → API & Webhooks → + Create key**. Copy it immediately — it's shown once. Keys can be scoped to a specific role under **Settings → Roles → Assignment tab** to limit what they can access.
 
 <VimeoEmbed videoId="928786722" title="Vytvoření klíče API" />
 
-<Warning>
-Váš klíč API poskytuje přístup k citlivým datům. Nesdílejte ho s nedůvěryhodnými službami. Pokud je kompromitován, okamžitě ho deaktivujte a vygenerujte nový.
-</Warning>
+For OAuth-based access (external apps acting on behalf of users), see [OAuth](/l/cs/developers/extend/oauth).
 
-### Přiřaďte roli klíči API
+## Batch operations
 
-Pro vyšší bezpečnost přiřaďte konkrétní roli, abyste omezili přístup:
+Both REST and GraphQL support batching up to 60 records per request — create, update, or delete. GraphQL also supports batch upsert (create-or-update in one call) using plural names like `CreateCompanies`.
 
-1. Přejděte na **Nastavení → Role**
-2. Klikněte na roli, kterou chcete přiřadit
-3. Otevřete záložku **Přiřazení**
-4. V části **API Keys** klikněte na **+ Přiřadit ke klíči API**
-5. Vyberte klíč API
+## Rate limits
 
-Klíč zdědí oprávnění této role. Podrobnosti viz [Oprávnění](/l/cs/user-guide/permissions-access/capabilities/permissions).
-
-### Spravovat API klíče
-
-**Znovu vygenerovat**: Nastavení → APIs & Webhooks → Klikněte na klíč → **Znovu vygenerovat**
-
-**Smazat**: Nastavení → APIs & Webhooks → Klikněte na klíč → **Smazat**
-
-## API Playground
-
-Testujte svá API přímo v prohlížeči pomocí našeho vestavěného playgroundu — k dispozici pro **REST** i **GraphQL**.
-
-### Přístup do Playgroundu
-
-1. Přejděte na **Nastavení → APIs & Webhooks**
-2. Vytvořte klíč API (povinné)
-3. Klikněte na **REST API** nebo **GraphQL API** pro otevření playgroundu
-
-### Co získáte
-
-* **Interaktivní dokumentace**: Generována pro váš specifický datový model
-* **Živé testování**: Spouštějte reálná volání API vůči vašemu pracovnímu prostoru
-* **Průzkumník schématu**: Procházejte dostupné objekty, pole a vztahy
-* **Tvůrce požadavků**: Sestavujte dotazy s automatickým doplňováním
-
-Playground odráží vaše vlastní objekty a pole, takže dokumentace je pro váš pracovní prostor vždy přesná.
-
-## Hromadné operace
-
-REST i GraphQL podporují hromadné operace:
-
-* **Velikost dávky**: Až 60 záznamů na požadavek.
-* **Operace**: Vytváření, aktualizace a mazání více záznamů
-
-**Funkce pouze pro GraphQL:**
-
-* **Hromadný upsert**: Vytvoření nebo aktualizace v jednom volání
-* Používejte množná čísla názvů objektů (např. `CreateCompanies` místo `CreateCompany`)
-
-## Limity rychlosti
-
-Požadavky na API jsou omezovány, aby byla zajištěna stabilita platformy:
-
-| Limit              | Hodnota              |
-| ------------------ | -------------------- |
-| **Požadavky**      | 100 volání za minutu |
-| **Velikost dávky** | 60 záznamů na volání |
-
-<Tip>
-Pro maximalizaci propustnosti používejte hromadné operace — zpracujte až 60 záznamů v jediném volání API místo odesílání jednotlivých požadavků.
-</Tip>
+| Limit      | Hodnota              |
+| ---------- | -------------------- |
+| Requests   | 100 per minute       |
+| Batch size | 60 záznamů na volání |

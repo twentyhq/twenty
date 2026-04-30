@@ -356,28 +356,6 @@ export const buildOpportunityStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
-  favorites: createStandardRelationFieldFlatMetadata({
-    objectName,
-    workspaceId,
-    context: {
-      type: FieldMetadataType.RELATION,
-      morphId: null,
-      fieldName: 'favorites',
-      label: i18nLabel(msg`Favorites`),
-      description: i18nLabel(msg`Favorites linked to the opportunity`),
-      icon: 'IconHeart',
-      isNullable: true,
-      targetObjectName: 'favorite',
-      targetFieldName: 'opportunity',
-      settings: {
-        relationType: RelationType.ONE_TO_MANY,
-      },
-    },
-    standardObjectMetadataRelatedEntityIds,
-    dependencyFlatEntityMaps,
-    twentyStandardApplicationId,
-    now,
-  }),
   taskTargets: createStandardRelationFieldFlatMetadata({
     objectName,
     workspaceId,

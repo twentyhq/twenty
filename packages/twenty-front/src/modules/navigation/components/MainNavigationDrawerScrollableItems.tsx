@@ -3,6 +3,7 @@ import { NavigationDrawerWorkspaceSectionSkeletonLoader } from '@/object-metadat
 
 import { EnterpriseNavigationSection } from '@/navigation/components/EnterpriseNavigationSection';
 import { NavigationDrawerOtherSection } from '@/navigation/components/NavigationDrawerOtherSection';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { lazy, Suspense } from 'react';
 
@@ -31,6 +32,10 @@ const StyledScrollableItemsContainer = styled.div`
 `;
 
 export const MainNavigationDrawerScrollableItems = () => {
+  const isLayoutCustomizationModeEnabled = useAtomStateValue(
+    isLayoutCustomizationModeEnabledState,
+  );
+
   return (
     <StyledScrollableItemsContainer>
       <NavigationDrawerOpenedSection />

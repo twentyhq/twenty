@@ -1,8 +1,6 @@
-import { type ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { type InformationBannerKeys } from '@/information-banner/types/InformationBannerKeys';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
-import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
+import { useMyConnectedAccounts } from '@/settings/accounts/hooks/useMyConnectedAccounts';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 export const useAccountToReconnect = (key: InformationBannerKeys) => {
@@ -12,13 +10,13 @@ export const useAccountToReconnect = (key: InformationBannerKeys) => {
 
   const firstAccountIdToReconnect = userVars?.[key]?.[0];
 
-  const accountToReconnect = useFindOneRecord<ConnectedAccount>({
-    objectNameSingular: CoreObjectNameSingular.ConnectedAccount,
-    objectRecordId: firstAccountIdToReconnect,
-    skip: !firstAccountIdToReconnect,
-  });
+  const { accounts } = useMyConnectedAccounts();
+
+  const accountToReconnect = accounts.find(
+    (account) => account.id === firstAccountIdToReconnect,
+  );
 
   return {
-    accountToReconnect: accountToReconnect?.record,
+    accountToReconnect,
   };
 };

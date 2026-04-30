@@ -29,6 +29,7 @@ describe('useColumnDefinitionsFromObjectMetadata', () => {
       workspaceCustomApplication: {
         id: CUSTOM_WORKSPACE_APPLICATION_MOCK.id,
       },
+      installedApplications: [],
       id: '1',
       featureFlags: [],
       allowImpersonation: false,
@@ -92,6 +93,6 @@ describe('useColumnDefinitionsFromObjectMetadata', () => {
 
     const { columnDefinitions } = result.current;
 
-    expect(columnDefinitions.length).toBe(25);
+    expect(columnDefinitions.length).toBe(24);
   });
 });

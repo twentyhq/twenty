@@ -8,8 +8,9 @@ import {
 const deleteWorkflowVersionStepSchema = z.object({
   workflowVersionId: z
     .string()
-    .describe('The ID of the workflow version containing the step'),
-  stepId: z.string().describe('The ID of the step to delete'),
+    .uuid()
+    .describe('The UUID of the workflow version containing the step'),
+  stepId: z.string().uuid().describe('The UUID of the step to delete'),
 });
 
 type DeleteWorkflowVersionStepInput = z.infer<

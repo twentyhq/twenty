@@ -7,8 +7,6 @@ import { type WorkspacePostQueryHookInstance } from 'src/engine/api/graphql/work
 
 import { WorkspaceQueryHook } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/decorators/workspace-query-hook.decorator';
 import { WorkspaceQueryHookType } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/types/workspace-query-hook.type';
-import { isApiKeyAuthContext } from 'src/engine/core-modules/auth/guards/is-api-key-auth-context.guard';
-import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
@@ -18,7 +16,6 @@ import {
   PermissionsExceptionCode,
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
-import { WorkspaceMemberPreQueryHookService } from 'src/modules/workspace-member/query-hooks/workspace-member-pre-query-hook.service';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 @WorkspaceQueryHook({
@@ -32,7 +29,6 @@ export class WorkspaceMemberDeleteOnePostQueryHook
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
-    private readonly workspaceMemberPreQueryHookService: WorkspaceMemberPreQueryHookService,
     private readonly userWorkspaceService: UserWorkspaceService,
   ) {}
 
@@ -52,22 +48,6 @@ export class WorkspaceMemberDeleteOnePostQueryHook
 
     assertIsDefinedOrThrow(workspace, WorkspaceNotFoundDefaultError);
 
-    await this.workspaceMemberPreQueryHookService.validateWorkspaceMemberUpdatePermissionOrThrow(
-      {
-        userWorkspaceId: isUserAuthContext(authContext)
-          ? authContext.userWorkspaceId
-          : undefined,
-        workspaceMemberId: isUserAuthContext(authContext)
-          ? authContext.workspaceMemberId
-          : undefined,
-        targettedWorkspaceMemberId,
-        workspaceId: workspace.id,
-        apiKey: isApiKeyAuthContext(authContext)
-          ? authContext.apiKey
-          : undefined,
-      },
-    );
-
     const workspaceMember =
       await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
         async () => {
@@ -75,6 +55,7 @@ export class WorkspaceMemberDeleteOnePostQueryHook
             await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
               workspace.id,
               'workspaceMember',
+              { shouldBypassPermissionChecks: true },
             );
 
           return workspaceMemberRepository.findOne({

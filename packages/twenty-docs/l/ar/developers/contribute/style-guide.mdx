@@ -1,0 +1,176 @@
+---
+title: دليل الأسلوب
+icon: فرشاة الرسم
+description: اتفاقيات الشيفرة وأفضل الممارسات للمساهمة في Twenty.
+---
+
+## React
+
+### المكوّنات الوظيفية فقط
+
+استخدم دائمًا مكوّنات TSX الوظيفية مع تصديرات مسمّاة.
+
+```tsx
+// ❌ Bad
+const MyComponent = () => {
+  return <div>Hello World</div>;
+};
+export default MyComponent;
+
+// ✅ Good
+export function MyComponent() {
+  return <div>Hello World</div>;
+};
+```
+
+### الخصائص
+
+أنشئ نوعًا باسم `{ComponentName}Props`. استخدم التفكيك. لا تستخدم `React.FC`.
+
+```tsx
+type MyComponentProps = {
+  name: string;
+};
+
+export const MyComponent = ({ name }: MyComponentProps) => <div>Hello {name}</div>;
+```
+
+### لا تستخدم نشر الخصائص من متغير واحد
+
+```tsx
+// ❌ Bad
+const MyComponent = (props: MyComponentProps) => <Other {...props} />;
+
+// ✅ Good
+const MyComponent = ({ prop1, prop2 }: MyComponentProps) => <Other {...{ prop1, prop2 }} />;
+```
+
+## إدارة الحالة
+
+### ذرات Jotai للحالة العامة
+
+```tsx
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+
+export const myAtomState = createAtomState<string>({
+  key: 'myAtomState',
+  defaultValue: 'default value',
+});
+```
+
+* فضّل الذرات على تمرير الخصائص عبر المستويات (prop drilling)
+* لا تستخدم `useRef` للحالة — استخدم `useState` أو الذرات
+* استخدم عائلات الذرات والمحددات للقوائم
+
+### تجنّب عمليات إعادة التصيير غير الضرورية
+
+* انقل `useEffect` وجلب البيانات إلى مكوّنات جانبية شقيقة (sidecar)
+* فضّل معالِجات الأحداث (`handleClick`, `handleChange`) على `useEffect`
+* لا تستخدم `React.memo()` — أصلِح السبب الجذري بدلًا من ذلك
+* حدّد استخدام `useCallback` / `useMemo`
+
+```tsx
+// ❌ Bad — useEffect in the same component causes re-renders
+export const Page = () => {
+  const [data, setData] = useAtomState(dataState);
+  const [dep] = useAtomState(depState);
+  useEffect(() => { setData(dep); }, [dep]);
+  return <div>{data}</div>;
+};
+
+// ✅ Good — extract into sibling
+export const PageData = () => {
+  const [data, setData] = useAtomState(dataState);
+  const [dep] = useAtomState(depState);
+  useEffect(() => { setData(dep); }, [dep]);
+  return <></>;
+};
+export const Page = () => {
+  const [data] = useAtomState(dataState);
+  return <div>{data}</div>;
+};
+```
+
+## TypeScript
+
+* **`type` بدلًا من `interface`** — أكثر مرونة وأسهل في التركيب
+* **النصوص الحرفية بدل التعدادات** — باستثناء تعدادات codegen الخاصة بـ GraphQL وواجهات برمجة تطبيقات المكتبة الداخلية
+* **بدون `any`** — يتم فرض TypeScript الصارم
+* **عدم استيراد الأنواع** — استخدم استيرادات عادية (مفروض بواسطة Oxlint `typescript/consistent-type-imports`)
+* **استخدم [Zod](https://github.com/colinhacks/zod)** للتحقق وقت التشغيل من الكائنات غير محددة النوع
+
+## JavaScript
+
+```tsx
+// Use nullish-coalescing (??) instead of ||
+const value = process.env.MY_VALUE ?? 'default';
+
+// Use optional chaining
+onClick?.();
+```
+
+## التسمية
+
+* **المتغيرات**: camelCase، وصفية (`email` وليس `value`، `fieldMetadata` وليس `fm`)
+* **الثوابت**: SCREAMING_SNAKE_CASE
+* **الأنواع/الفئات**: PascalCase
+* **الملفات/المجلدات**: kebab-case (`.component.tsx`, `.service.ts`, `.entity.ts`)
+* **معالجات الأحداث**: `handleClick` (وليس `onClick` لدالة المعالج)
+* **خصائص المكوّن**: ابدأ باسم المكوّن (`ButtonProps`)
+* **مكوّنات Styled**: ابدأ بـ `Styled` (`StyledTitle`)
+
+## التنسيق
+
+استخدم مكوّنات [Linaria](https://github.com/callstack/linaria) المنسقة. استخدم قيم السمة — وتجنّب القيم المضمّنة صراحة مثل `px` و`rem` أو الألوان.
+
+```tsx
+// ❌ Bad
+const StyledButton = styled.button`
+  color: #333333;
+  font-size: 1rem;
+  margin-left: 4px;
+`;
+
+// ✅ Good
+const StyledButton = styled.button`
+  color: ${({ theme }) => theme.font.color.primary};
+  font-size: ${({ theme }) => theme.font.size.md};
+  margin-left: ${({ theme }) => theme.spacing(1)};
+`;
+```
+
+## استيرادات
+
+استخدم الأسماء المستعارة بدل المسارات النسبية:
+
+```tsx
+// ❌ Bad
+import { Foo } from '../../../../../testing/decorators/Foo';
+
+// ✅ Good
+import { Foo } from '~/testing/decorators/Foo';
+import { Bar } from '@/modules/bar/components/Bar';
+```
+
+## هيكلية المجلدات
+
+```
+front
+└── modules/         # Feature modules
+│   └── module1/
+│       ├── components/
+│       ├── constants/
+│       ├── contexts/
+│       ├── graphql/  (fragments, queries, mutations)
+│       ├── hooks/
+│       ├── states/   (atoms, selectors)
+│       ├── types/
+│       └── utils/
+└── pages/           # Route-level components
+└── ui/              # Reusable UI components (display, input, feedback, ...)
+```
+
+* يمكن للوحدات الاستيراد من وحدات أخرى، لكن يجب أن يبقى `ui/` خاليًا من التبعيات
+* استخدم المجلدات الفرعية `internal/` للشيفرة الخاصة بالوحدة
+* المكوّنات أقل من 300 سطر، والخدمات أقل من 500 سطر

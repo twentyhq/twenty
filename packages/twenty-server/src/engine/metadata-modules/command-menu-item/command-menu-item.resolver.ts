@@ -1,17 +1,21 @@
 import { UseGuards, UseInterceptors } from '@nestjs/common';
-import { Args, Mutation, Parent, Query, ResolveField } from '@nestjs/graphql';
+import {
+  Args,
+  Context,
+  Mutation,
+  Parent,
+  Query,
+  ResolveField,
+} from '@nestjs/graphql';
 
 import { isDefined } from 'twenty-shared/utils';
-import { FeatureFlagKey } from 'twenty-shared/types';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { type I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
-import {
-  FeatureFlagGuard,
-  RequireFeatureFlag,
-} from 'src/engine/guards/feature-flag.guard';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { CommandMenuItemService } from 'src/engine/metadata-modules/command-menu-item/command-menu-item.service';
@@ -23,7 +27,7 @@ import { FrontComponentDTO } from 'src/engine/metadata-modules/front-component/d
 import { FrontComponentService } from 'src/engine/metadata-modules/front-component/front-component.service';
 import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
 
-@UseGuards(WorkspaceAuthGuard, FeatureFlagGuard)
+@UseGuards(WorkspaceAuthGuard)
 @UseInterceptors(
   WorkspaceMigrationGraphqlApiExceptionInterceptor,
   CommandMenuItemGraphqlApiExceptionInterceptor,
@@ -34,6 +38,53 @@ export class CommandMenuItemResolver {
     private readonly commandMenuItemService: CommandMenuItemService,
     private readonly frontComponentService: FrontComponentService,
   ) {}
+
+  @ResolveField(() => String)
+  async label(
+    @Parent() commandMenuItem: CommandMenuItemDTO,
+    @Context() context: { loaders: IDataloaders } & I18nContext,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+  ): Promise<string> {
+    return (
+      (await this.commandMenuItemService.resolveNavigationField({
+        commandMenuItem,
+        fieldName: 'label',
+        objectMetadataLoader: context.loaders.objectMetadataLoader,
+        workspaceId: workspace.id,
+        locale: context.req.locale,
+      })) ?? ''
+    );
+  }
+
+  @ResolveField(() => String, { nullable: true })
+  async shortLabel(
+    @Parent() commandMenuItem: CommandMenuItemDTO,
+    @Context() context: { loaders: IDataloaders } & I18nContext,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+  ): Promise<string | undefined> {
+    return this.commandMenuItemService.resolveNavigationField({
+      commandMenuItem,
+      fieldName: 'shortLabel',
+      objectMetadataLoader: context.loaders.objectMetadataLoader,
+      workspaceId: workspace.id,
+      locale: context.req.locale,
+    });
+  }
+
+  @ResolveField(() => String, { nullable: true })
+  async icon(
+    @Parent() commandMenuItem: CommandMenuItemDTO,
+    @Context() context: { loaders: IDataloaders } & I18nContext,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+  ): Promise<string | undefined> {
+    return this.commandMenuItemService.resolveNavigationField({
+      commandMenuItem,
+      fieldName: 'icon',
+      objectMetadataLoader: context.loaders.objectMetadataLoader,
+      workspaceId: workspace.id,
+      locale: context.req.locale,
+    });
+  }
 
   @ResolveField(() => FrontComponentDTO, { nullable: true })
   async frontComponent(
@@ -52,7 +103,6 @@ export class CommandMenuItemResolver {
 
   @Query(() => [CommandMenuItemDTO])
   @UseGuards(NoPermissionGuard)
-  @RequireFeatureFlag(FeatureFlagKey.IS_COMMAND_MENU_ITEM_ENABLED)
   async commandMenuItems(
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<CommandMenuItemDTO[]> {
@@ -61,7 +111,6 @@ export class CommandMenuItemResolver {
 
   @Query(() => CommandMenuItemDTO, { nullable: true })
   @UseGuards(NoPermissionGuard)
-  @RequireFeatureFlag(FeatureFlagKey.IS_COMMAND_MENU_ITEM_ENABLED)
   async commandMenuItem(
     @Args('id', { type: () => UUIDScalarType }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -71,7 +120,6 @@ export class CommandMenuItemResolver {
 
   @Mutation(() => CommandMenuItemDTO)
   @UseGuards(NoPermissionGuard)
-  @RequireFeatureFlag(FeatureFlagKey.IS_COMMAND_MENU_ITEM_ENABLED)
   async createCommandMenuItem(
     @Args('input') input: CreateCommandMenuItemInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -81,7 +129,6 @@ export class CommandMenuItemResolver {
 
   @Mutation(() => CommandMenuItemDTO)
   @UseGuards(NoPermissionGuard)
-  @RequireFeatureFlag(FeatureFlagKey.IS_COMMAND_MENU_ITEM_ENABLED)
   async updateCommandMenuItem(
     @Args('input') input: UpdateCommandMenuItemInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -91,7 +138,6 @@ export class CommandMenuItemResolver {
 
   @Mutation(() => CommandMenuItemDTO)
   @UseGuards(NoPermissionGuard)
-  @RequireFeatureFlag(FeatureFlagKey.IS_COMMAND_MENU_ITEM_ENABLED)
   async deleteCommandMenuItem(
     @Args('id', { type: () => UUIDScalarType }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,

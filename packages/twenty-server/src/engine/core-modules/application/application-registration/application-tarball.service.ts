@@ -5,6 +5,7 @@ import { promises as fs } from 'fs';
 import { tmpdir } from 'os';
 import { join } from 'path';
 
+import semver from 'semver';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
@@ -21,6 +22,8 @@ import { readJsonFile } from 'src/engine/core-modules/application/application-pa
 import { resolvePackageContentDir } from 'src/engine/core-modules/application/application-package/utils/tarball-utils';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
+import type { ApplicationManifest } from 'twenty-shared/application';
+import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.service';
 
 export const MAX_TARBALL_UPLOAD_SIZE_BYTES = 50 * 1024 * 1024;
 
@@ -33,6 +36,7 @@ export class ApplicationTarballService {
     private readonly appRegistrationRepository: Repository<ApplicationRegistrationEntity>,
     private readonly fileStorageService: FileStorageService,
     private readonly applicationService: ApplicationService,
+    private readonly applicationRegistrationVariableService: ApplicationRegistrationVariableService,
   ) {}
 
   async uploadTarball(params: {
@@ -57,10 +61,7 @@ export class ApplicationTarballService {
       const contentDir = await resolvePackageContentDir(extractDir);
 
       const manifest = await readJsonFile<{
-        application?: {
-          universalIdentifier?: string;
-          displayName?: string;
-        };
+        application?: ApplicationManifest;
       }>(contentDir, 'manifest.json');
 
       const packageJson = await readJsonFile<{
@@ -102,6 +103,33 @@ export class ApplicationTarballService {
             `This app is registered as ${appRegistration.sourceType}. Cannot upload tarball.`,
             ApplicationRegistrationExceptionCode.SOURCE_CHANNEL_MISMATCH,
           );
+        }
+
+        if (
+          appRegistration.sourceType ===
+            ApplicationRegistrationSourceType.TARBALL &&
+          isDefined(appRegistration.latestAvailableVersion) &&
+          isDefined(packageJson?.version)
+        ) {
+          const incomingVersion = packageJson.version;
+          const currentVersion = appRegistration.latestAvailableVersion;
+
+          if (!isDefined(semver.valid(incomingVersion))) {
+            throw new ApplicationRegistrationException(
+              `Invalid version "${incomingVersion}" in package.json. Must be a valid semver version.`,
+              ApplicationRegistrationExceptionCode.INVALID_INPUT,
+            );
+          }
+
+          if (
+            isDefined(semver.valid(currentVersion)) &&
+            semver.lte(incomingVersion, currentVersion)
+          ) {
+            throw new ApplicationRegistrationException(
+              `Cannot deploy ${universalIdentifier}@${incomingVersion}: version must be higher than the currently deployed version ${currentVersion}. Please bump the version in package.json.`,
+              ApplicationRegistrationExceptionCode.VERSION_ALREADY_EXISTS,
+            );
+          }
         }
       } else {
         appRegistration = this.appRegistrationRepository.create({
@@ -152,6 +180,13 @@ export class ApplicationTarballService {
         isFeatured: false,
         ownerWorkspaceId: params.ownerWorkspaceId,
       });
+
+      if (manifest.application?.serverVariables) {
+        await this.applicationRegistrationVariableService.syncVariableSchemas(
+          appRegistration.id,
+          manifest.application.serverVariables,
+        );
+      }
 
       this.logger.log(
         `Tarball uploaded for app ${universalIdentifier} (registration ${appRegistration.id})`,

@@ -74,6 +74,7 @@ const ENTITY_TYPE_TO_SYNCABLE: Record<string, SyncableEntity | undefined> = {
   views: SyncableEntity.View,
   navigationMenuItems: SyncableEntity.NavigationMenuItem,
   pageLayouts: SyncableEntity.PageLayout,
+  pageLayoutTabs: SyncableEntity.PageLayoutTab,
 };
 
 const MAX_EVENT_COUNT = 200;
@@ -269,6 +270,17 @@ export class OrchestratorState {
         ...entity,
         type: entityTypeMap.get(filePath),
       });
+    }
+
+    for (const [filePath, syncableEntity] of entityTypeMap) {
+      if (!entities.has(filePath)) {
+        entities.set(filePath, {
+          name: filePath,
+          path: filePath,
+          type: syncableEntity,
+          status: 'pending',
+        });
+      }
     }
 
     this.entities = entities;

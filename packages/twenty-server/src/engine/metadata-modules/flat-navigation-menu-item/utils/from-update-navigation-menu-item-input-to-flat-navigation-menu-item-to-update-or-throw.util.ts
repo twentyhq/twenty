@@ -1,5 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 
+import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { resolveEntityRelationUniversalIdentifiers } from 'src/engine/metadata-modules/flat-entity/utils/resolve-entity-relation-universal-identifiers.util';
 import { FLAT_NAVIGATION_MENU_ITEM_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-navigation-menu-item/constants/flat-navigation-menu-item-editable-properties.constant';
@@ -15,13 +16,17 @@ import { mergeUpdateInExistingRecord } from 'src/utils/merge-update-in-existing-
 export const fromUpdateNavigationMenuItemInputToFlatNavigationMenuItemToUpdateOrThrow =
   ({
     flatNavigationMenuItemMaps,
+    flatPageLayoutMaps,
     updateNavigationMenuItemInput,
   }: {
     flatNavigationMenuItemMaps: FlatNavigationMenuItemMaps;
     updateNavigationMenuItemInput: UpdateNavigationMenuItemInput & {
       id: string;
     };
-  }): FlatNavigationMenuItem => {
+  } & Pick<
+    AllFlatEntityMaps,
+    'flatPageLayoutMaps'
+  >): FlatNavigationMenuItem => {
     const existingFlatNavigationMenuItem = findFlatEntityByIdInFlatEntityMaps({
       flatEntityId: updateNavigationMenuItemInput.id,
       flatEntityMaps: flatNavigationMenuItemMaps,
@@ -57,6 +62,20 @@ export const fromUpdateNavigationMenuItemInputToFlatNavigationMenuItemToUpdateOr
 
       flatNavigationMenuItemToUpdate.folderUniversalIdentifier =
         folderUniversalIdentifier;
+    }
+
+    if (updates.pageLayoutId !== undefined) {
+      const { pageLayoutUniversalIdentifier } =
+        resolveEntityRelationUniversalIdentifiers({
+          metadataName: 'navigationMenuItem',
+          foreignKeyValues: {
+            pageLayoutId: flatNavigationMenuItemToUpdate.pageLayoutId,
+          },
+          flatEntityMaps: { flatPageLayoutMaps },
+        });
+
+      flatNavigationMenuItemToUpdate.pageLayoutUniversalIdentifier =
+        pageLayoutUniversalIdentifier;
     }
 
     return flatNavigationMenuItemToUpdate;

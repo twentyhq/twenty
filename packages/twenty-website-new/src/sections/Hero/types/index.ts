@@ -1,4 +1,34 @@
 export type { HeroBaseDataType } from './HeroBaseData';
-export type { HeroHomeDataType } from './HeroHomeData';
-export type { HeroIllustrationDataType } from './HeroIllustrationData';
+export type {
+  HeroDashboardChartImageType,
+  HeroDashboardDataType,
+  HeroDashboardMetricType,
+  HeroDashboardPageDefinition,
+  HeroKanbanCardType,
+  HeroKanbanLaneType,
+  HeroKanbanPageDefinition,
+  HeroWorkflowPageDefinition,
+  HeroCellBoolean,
+  HeroCellEntity,
+  HeroCellLink,
+  HeroCellNumber,
+  HeroCellPerson,
+  HeroPageDefinition,
+  HeroNavbarActionType,
+  HeroPageHeaderType,
+  HeroCellRelation,
+  HeroCellTag,
+  HeroCellText,
+  HeroCellValue,
+  HeroColumnDef,
+  HeroHomeDataType,
+  HeroRowDef,
+  HeroPageType,
+  HeroSidebarEntry,
+  HeroSidebarFolder,
+  HeroSidebarIcon,
+  HeroSidebarItem,
+  HeroTablePageDefinition,
+  HeroVisualType,
+} from './HeroHomeData';
 export type { HeroWhyTwentyDataType } from './HeroWhyTwentyData';

@@ -31,7 +31,7 @@ import {
 } from 'src/engine/metadata-modules/view-sort/exceptions/view-sort.exception';
 import { ViewSortRestApiExceptionFilter } from 'src/engine/metadata-modules/view-sort/filters/view-sort-rest-api-exception.filter';
 import { ViewSortService } from 'src/engine/metadata-modules/view-sort/services/view-sort.service';
-import { ViewSortDirection } from 'src/engine/metadata-modules/view-sort/enums/view-sort-direction';
+import { ViewSortDirection } from 'twenty-shared/types';
 
 @Controller('rest/metadata/viewSorts')
 @UseGuards(WorkspaceAuthGuard)

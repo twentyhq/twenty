@@ -1,6 +1,6 @@
 import { t } from '@lingui/core/macro';
 import { Status } from 'twenty-ui/display';
-import { AdminPanelHealthServiceStatus } from '~/generated-metadata/graphql';
+import { AdminPanelHealthServiceStatus } from '~/generated-admin/graphql';
 
 export const SettingsAdminHealthStatusRightContainer = ({
   status,

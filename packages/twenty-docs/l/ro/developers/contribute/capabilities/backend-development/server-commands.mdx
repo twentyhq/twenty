@@ -47,25 +47,8 @@ npx nx run twenty-server:database:reset
 #### Pentru obiectele din schematizările de Bază/Metadate (TypeORM)
 
 ```bash
-npx nx run twenty-server:typeorm migration:generate src/database/typeorm/core/migrations/nameOfYourMigration -d src/database/typeorm/core/core.datasource.ts
+npx nx run twenty-server:database:migrate:generate
 ```
-
-#### Pentru obiectele din Workspace
-
-Nu există fișiere de migrație, migrația este generată automat pentru fiecare spațiu de lucru,
-este stocată în baza de date și aplicată cu această comandă
-
-```bash
-npx nx run twenty-server:command workspace:sync-metadata -f
-```
-
-<Warning>
-
-Acest lucru va elimina baza de date și va relansa migrațiile și seed-urile.
-
-Asigură-te că faci un backup pentru orice date pe care dorești să le păstrezi înainte de a rula această comandă.
-
-</Warning>
 
 ## Tehnologii Utilizate
 

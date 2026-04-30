@@ -186,6 +186,7 @@ export class NavigationMenuItemService {
       flatNavigationMenuItemMaps: existingFlatNavigationMenuItemMaps,
       flatObjectMetadataMaps,
       flatViewMaps,
+      flatPageLayoutMaps,
     } = await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
       {
         workspaceId,
@@ -193,6 +194,7 @@ export class NavigationMenuItemService {
           'flatNavigationMenuItemMaps',
           'flatObjectMetadataMaps',
           'flatViewMaps',
+          'flatPageLayoutMaps',
         ],
       },
     );
@@ -230,6 +232,7 @@ export class NavigationMenuItemService {
           flatNavigationMenuItemMaps: optimisticFlatNavigationMenuItemMaps,
           flatObjectMetadataMaps,
           flatViewMaps,
+          flatPageLayoutMaps,
         });
 
       addFlatNavigationMenuItemToMapsAndUpdateIndex({
@@ -341,11 +344,14 @@ export class NavigationMenuItemService {
         { workspaceId },
       );
 
-    const { flatNavigationMenuItemMaps: existingFlatNavigationMenuItemMaps } =
+    const {
+      flatNavigationMenuItemMaps: existingFlatNavigationMenuItemMaps,
+      flatPageLayoutMaps,
+    } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatMapsKeys: ['flatNavigationMenuItemMaps'],
+          flatMapsKeys: ['flatNavigationMenuItemMaps', 'flatPageLayoutMaps'],
         },
       );
 
@@ -378,6 +384,7 @@ export class NavigationMenuItemService {
         fromUpdateNavigationMenuItemInputToFlatNavigationMenuItemToUpdateOrThrow(
           {
             flatNavigationMenuItemMaps: existingFlatNavigationMenuItemMaps,
+            flatPageLayoutMaps,
             updateNavigationMenuItemInput: updateInput,
           },
         ),

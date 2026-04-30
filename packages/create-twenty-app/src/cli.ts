@@ -2,7 +2,6 @@
 import chalk from 'chalk';
 import { Command, CommanderError } from 'commander';
 import { CreateAppCommand } from '@/create-app.command';
-import { type ScaffoldingMode } from '@/types/scaffolding-options';
 import packageJson from '../package.json';
 
 const program = new Command(packageJson.name)
@@ -13,11 +12,7 @@ const program = new Command(packageJson.name)
     'Output the current version of create-twenty-app.',
   )
   .argument('[directory]')
-  .option('-e, --exhaustive', 'Create all example entities (default)')
-  .option(
-    '-m, --minimal',
-    'Create only core entities (application-config and default-role)',
-  )
+  .option('--example <name>', 'Initialize from an example')
   .option('-n, --name <name>', 'Application name (skips prompt)')
   .option(
     '-d, --display-name <displayName>',
@@ -31,30 +26,20 @@ const program = new Command(packageJson.name)
     '--skip-local-instance',
     'Skip the local Twenty instance setup prompt',
   )
+  .option('-y, --yes', 'Auto-confirm prompts (e.g. start existing container)')
   .helpOption('-h, --help', 'Display this help message.')
   .action(
     async (
       directory?: string,
       options?: {
-        exhaustive?: boolean;
-        minimal?: boolean;
+        example?: string;
         name?: string;
         displayName?: string;
         description?: string;
         skipLocalInstance?: boolean;
+        yes?: boolean;
       },
     ) => {
-      const modeFlags = [options?.exhaustive, options?.minimal].filter(Boolean);
-
-      if (modeFlags.length > 1) {
-        console.error(
-          chalk.red(
-            'Error: --exhaustive and --minimal are mutually exclusive.',
-          ),
-        );
-        process.exit(1);
-      }
-
       if (directory && !/^[a-z0-9-]+$/.test(directory)) {
         console.error(
           chalk.red(
@@ -69,15 +54,14 @@ const program = new Command(packageJson.name)
         process.exit(1);
       }
 
-      const mode: ScaffoldingMode = options?.minimal ? 'minimal' : 'exhaustive';
-
       await new CreateAppCommand().execute({
         directory,
-        mode,
+        example: options?.example,
         name: options?.name,
         displayName: options?.displayName,
         description: options?.description,
         skipLocalInstance: options?.skipLocalInstance,
+        yes: options?.yes,
       });
     },
   );

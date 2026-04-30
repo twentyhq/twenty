@@ -19,6 +19,7 @@ export const query = gql`
       labelIdentifierFieldMetadataId
       imageIdentifierFieldMetadataId
       isLabelSyncedWithName
+      applicationId
     }
   }
 `;
@@ -41,4 +42,5 @@ export const responseData = {
   updatedAt: '',
   labelIdentifierFieldMetadataId: '20202020-72ba-4e11-a36d-e17b544541e1',
   imageIdentifierFieldMetadataId: '',
+  applicationId: null,
 };
