@@ -5,8 +5,14 @@ import {
   getImageFootprintScale,
   getImagePreviewZoom,
 } from '@/lib/halftone';
+import { observeElementSize } from '@/lib/dom/observe-element-size';
 import { getPrefersReducedMotionSnapshot } from '@/lib/motion';
-import { createSiteWebGlRenderer } from '@/lib/visual-runtime';
+import {
+  createVisualRenderLoop,
+  loadVisualImage,
+  tryCreateSiteWebGlRenderer,
+  type VisualRenderLoop,
+} from '@/lib/visual-runtime';
 import { styled } from '@linaria/react';
 import { useEffect, useRef } from 'react';
 import * as THREE from 'three';
@@ -281,15 +287,6 @@ function createPointerState(): PointerState {
   };
 }
 
-function loadImage(src: string) {
-  return new Promise<HTMLImageElement>((resolve, reject) => {
-    const image = new Image();
-    image.onload = () => resolve(image);
-    image.onerror = () => reject(new Error(`Failed to load image: ${src}`));
-    image.src = src;
-  });
-}
-
 async function mountHalftoneCanvas({
   container,
   imageUrl,
@@ -306,17 +303,28 @@ async function mountHalftoneCanvas({
       1,
     );
 
-  const image = await loadImage(imageUrl);
+  const image = await loadVisualImage(imageUrl, {
+    label: 'stepper background image',
+  });
 
   if (!container.isConnected) {
     return;
   }
 
-  const renderer = createSiteWebGlRenderer({
+  let renderLoop: VisualRenderLoop | null = null;
+  const renderer = tryCreateSiteWebGlRenderer({
     alpha: true,
     antialias: false,
+    onContextLost: () => {
+      renderLoop?.stop();
+    },
     powerPreference: 'high-performance',
   });
+
+  if (renderer === null) {
+    return undefined;
+  }
+
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.setClearColor(0x000000, 0);
   renderer.setPixelRatio(1);
@@ -447,8 +455,7 @@ async function mountHalftoneCanvas({
     updateViewportUniforms(virtualWidth, virtualHeight);
   };
 
-  const resizeObserver = new ResizeObserver(syncSize);
-  resizeObserver.observe(container);
+  const stopObservingSize = observeElementSize(container, syncSize);
 
   const updatePointerPosition = (
     event: PointerEvent,
@@ -511,10 +518,8 @@ async function mountHalftoneCanvas({
 
   const clock = new THREE.Timer();
   clock.connect(document);
-  let animationFrameId = 0;
 
   const renderFrame = (timestamp?: number) => {
-    animationFrameId = window.requestAnimationFrame(renderFrame);
     clock.update(timestamp);
     const deltaSeconds = clock.getDelta();
     const hoverEasing =
@@ -571,12 +576,17 @@ async function mountHalftoneCanvas({
     renderer.render(postScene, orthographicCamera);
   };
 
-  renderFrame(0);
+  renderLoop = createVisualRenderLoop({
+    renderFrame,
+    target: container,
+    targetVisibilityOptions: { rootMargin: '100px' },
+  });
+  renderLoop.start();
 
   return () => {
-    window.cancelAnimationFrame(animationFrameId);
+    renderLoop?.dispose();
     clock.dispose();
-    resizeObserver.disconnect();
+    stopObservingSize();
     interactionTarget.removeEventListener('pointerleave', handlePointerLeave);
     interactionTarget.removeEventListener('pointermove', handlePointerMove);
     fullScreenGeometry.dispose();

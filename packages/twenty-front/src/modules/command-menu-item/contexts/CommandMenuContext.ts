@@ -9,6 +9,7 @@ export type CommandMenuContextType = {
   containerType: CommandMenuItemContainerType;
   commandMenuItems: CommandMenuItemFieldsFragment[];
   commandMenuContextApi: CommandMenuContextApi;
+  isInPreviewMode: boolean;
 };
 
 export const CommandMenuContext = createContext<CommandMenuContextType>({
@@ -16,4 +17,5 @@ export const CommandMenuContext = createContext<CommandMenuContextType>({
   displayType: 'button',
   commandMenuItems: [],
   commandMenuContextApi: EMPTY_COMMAND_MENU_CONTEXT_API,
+  isInPreviewMode: false,
 });

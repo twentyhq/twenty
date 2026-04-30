@@ -1,5 +1,6 @@
 'use client';
 
+import { useTimeoutRegistry } from '@/lib/react';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
 import { useEffect, useState } from 'react';
@@ -117,17 +118,14 @@ export function WrongChoicePopup({
   titleBar,
   titleId,
 }: WrongChoicePopupProps) {
+  const timeoutRegistry = useTimeoutRegistry();
   const [isClosing, setIsClosing] = useState(false);
 
   useEffect(() => {
-    const fadeTimer = window.setTimeout(() => {
+    return timeoutRegistry.schedule(() => {
       setIsClosing(true);
     }, POPUP_VISIBLE_DURATION_MS);
-
-    return () => {
-      window.clearTimeout(fadeTimer);
-    };
-  }, []);
+  }, [timeoutRegistry]);
 
   useEffect(() => {
     if (isClosingRequested) {
@@ -140,14 +138,10 @@ export function WrongChoicePopup({
       return;
     }
 
-    const removeTimer = window.setTimeout(() => {
+    return timeoutRegistry.schedule(() => {
       onClose();
     }, POPUP_FADE_DURATION_MS);
-
-    return () => {
-      window.clearTimeout(removeTimer);
-    };
-  }, [isClosing, onClose]);
+  }, [isClosing, onClose, timeoutRegistry]);
 
   return (
     <Shell

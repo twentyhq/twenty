@@ -8,7 +8,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { ClickHouseService } from 'src/database/clickHouse/clickHouse.service';
-import { formatDateForClickHouse } from 'src/database/clickHouse/clickHouse.util';
+import { formatDateTimeForClickHouse } from 'src/database/clickHouse/clickHouse.util';
 import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
@@ -235,12 +235,12 @@ export class EventLogsService {
 
     if (isDefined(filters.dateRange?.start)) {
       whereClauses.push('"timestamp" >= {startDate:DateTime64(3)}');
-      params.startDate = formatDateForClickHouse(filters.dateRange.start);
+      params.startDate = formatDateTimeForClickHouse(filters.dateRange.start);
     }
 
     if (isDefined(filters.dateRange?.end)) {
       whereClauses.push('"timestamp" <= {endDate:DateTime64(3)}');
-      params.endDate = formatDateForClickHouse(filters.dateRange.end);
+      params.endDate = formatDateTimeForClickHouse(filters.dateRange.end);
     }
 
     if (table === EventLogTable.OBJECT_EVENT) {

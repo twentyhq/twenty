@@ -5,6 +5,7 @@ import {
   buttonBaseStyles,
 } from '@/design-system/components/Button/BaseButton';
 import { Body, Heading } from '@/design-system/components';
+import { useTimeoutRegistry } from '@/lib/react';
 import { theme } from '@/theme';
 import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
@@ -133,6 +134,7 @@ const nextStepItemClassName = css`
 export function EnterpriseActivateClient() {
   const searchParams = useSearchParams();
   const sessionId = searchParams.get('session_id');
+  const timeoutRegistry = useTimeoutRegistry();
   const [result, setResult] = useState<ActivationResult | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
@@ -146,13 +148,20 @@ export function EnterpriseActivateClient() {
       return;
     }
 
+    const abortController = new AbortController();
+
     const activate = async () => {
       try {
         const response = await fetch(
           `/api/enterprise/activate?session_id=${encodeURIComponent(sessionId)}`,
+          { signal: abortController.signal },
         );
         const data: { error?: string } & Partial<ActivationResult> =
           await response.json();
+
+        if (abortController.signal.aborted) {
+          return;
+        }
 
         if (!response.ok) {
           setError(data.error ?? 'Activation failed');
@@ -170,13 +179,23 @@ export function EnterpriseActivateClient() {
           setError('Activation response was incomplete.');
         }
       } catch {
+        if (abortController.signal.aborted) {
+          return;
+        }
+
         setError('Failed to activate enterprise key. Please try again.');
       } finally {
-        setLoading(false);
+        if (!abortController.signal.aborted) {
+          setLoading(false);
+        }
       }
     };
 
     void activate();
+
+    return () => {
+      abortController.abort();
+    };
   }, [sessionId]);
 
   const handleCopy = async () => {
@@ -186,7 +205,7 @@ export function EnterpriseActivateClient() {
 
     await navigator.clipboard.writeText(result.enterpriseKey);
     setCopied(true);
-    setTimeout(() => {
+    timeoutRegistry.schedule(() => {
       setCopied(false);
     }, 2000);
   };

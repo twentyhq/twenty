@@ -7,7 +7,10 @@ export interface HalftoneRect {
   y: number;
 }
 
+export type HalftoneImageFit = 'contain' | 'cover';
+
 export interface ImageFootprintScaleArgs {
+  imageFit?: HalftoneImageFit;
   imageHeight: number;
   imageWidth: number;
   previewDistance: number;
@@ -82,12 +85,14 @@ export function getImagePreviewZoom(previewDistance: number) {
 }
 
 export function getContainedImageRect({
+  imageFit = 'contain',
   imageHeight,
   imageWidth,
   viewportHeight,
   viewportWidth,
   zoom,
 }: {
+  imageFit?: HalftoneImageFit;
   imageHeight: number;
   imageWidth: number;
   viewportHeight: number;
@@ -110,9 +115,17 @@ export function getContainedImageRect({
   let fittedHeight = viewportHeight;
 
   if (imageAspect > viewAspect) {
-    fittedHeight = viewportWidth / imageAspect;
+    if (imageFit === 'cover') {
+      fittedWidth = viewportHeight * imageAspect;
+    } else {
+      fittedHeight = viewportWidth / imageAspect;
+    }
   } else {
-    fittedWidth = viewportHeight * imageAspect;
+    if (imageFit === 'cover') {
+      fittedHeight = viewportWidth / imageAspect;
+    } else {
+      fittedWidth = viewportHeight * imageAspect;
+    }
   }
 
   const scaledWidth = fittedWidth * zoom;
@@ -145,6 +158,7 @@ export function getFootprintScaleFromRects(
 }
 
 export function getImageFootprintScale({
+  imageFit = 'contain',
   imageHeight,
   imageWidth,
   previewDistance,
@@ -152,6 +166,7 @@ export function getImageFootprintScale({
   viewportWidth,
 }: ImageFootprintScaleArgs) {
   const currentRect = getContainedImageRect({
+    imageFit,
     imageHeight,
     imageWidth,
     viewportHeight,
@@ -159,6 +174,7 @@ export function getImageFootprintScale({
     zoom: getImagePreviewZoom(previewDistance),
   });
   const referenceRect = getContainedImageRect({
+    imageFit,
     imageHeight,
     imageWidth,
     viewportHeight,
@@ -312,6 +328,7 @@ function getImagePreviewZoom(previewDistance) {
 }
 
 function getContainedImageRect({
+  imageFit = 'contain',
   imageHeight,
   imageWidth,
   viewportHeight,
@@ -334,9 +351,17 @@ function getContainedImageRect({
   let fittedHeight = viewportHeight;
 
   if (imageAspect > viewAspect) {
-    fittedHeight = viewportWidth / imageAspect;
+    if (imageFit === 'cover') {
+      fittedWidth = viewportHeight * imageAspect;
+    } else {
+      fittedHeight = viewportWidth / imageAspect;
+    }
   } else {
-    fittedWidth = viewportHeight * imageAspect;
+    if (imageFit === 'cover') {
+      fittedHeight = viewportWidth / imageAspect;
+    } else {
+      fittedWidth = viewportHeight * imageAspect;
+    }
   }
 
   const scaledWidth = fittedWidth * zoom;
@@ -369,6 +394,7 @@ function getFootprintScaleFromRects(currentRect, referenceRect) {
 }
 
 function getImageFootprintScale({
+  imageFit = 'contain',
   imageHeight,
   imageWidth,
   previewDistance,
@@ -376,6 +402,7 @@ function getImageFootprintScale({
   viewportWidth,
 }) {
   const currentRect = getContainedImageRect({
+    imageFit,
     imageHeight,
     imageWidth,
     viewportHeight,
@@ -383,6 +410,7 @@ function getImageFootprintScale({
     zoom: getImagePreviewZoom(previewDistance),
   });
   const referenceRect = getContainedImageRect({
+    imageFit,
     imageHeight,
     imageWidth,
     viewportHeight,

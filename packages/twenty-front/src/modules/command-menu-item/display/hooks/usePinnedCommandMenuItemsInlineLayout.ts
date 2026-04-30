@@ -2,6 +2,7 @@ import { PINNED_COMMAND_MENU_ITEMS_GAP } from '@/command-menu-item/display/const
 import { commandMenuPinnedInlineLayoutState } from '@/command-menu-item/display/states/commandMenuPinnedInlineLayoutState';
 import { getVisibleCommandMenuItemCountForContainerWidth } from '@/command-menu-item/display/utils/getVisibleCommandMenuItemCountForContainerWidth';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { isNumber } from '@sniptt/guards';
 import { useCallback, useMemo } from 'react';
 import { type CommandMenuItemFieldsFragment } from '~/generated-metadata/graphql';
 
@@ -25,18 +26,37 @@ export const usePinnedCommandMenuItemsInlineLayout = ({
     [pinnedCommandMenuItems],
   );
 
+  const hasKnownPinnedInlineLayout = useMemo(
+    () =>
+      commandMenuPinnedInlineLayout.containerWidth > 0 &&
+      pinnedCommandMenuItemKeysInDisplayOrder.every((commandMenuItemKey) =>
+        isNumber(
+          commandMenuPinnedInlineLayout.commandMenuItemWidthsByKey[
+            commandMenuItemKey
+          ],
+        ),
+      ),
+    [commandMenuPinnedInlineLayout, pinnedCommandMenuItemKeysInDisplayOrder],
+  );
+
   const visiblePinnedCommandMenuItemCount = useMemo(
     () =>
-      getVisibleCommandMenuItemCountForContainerWidth({
-        commandMenuItemKeysInDisplayOrder:
-          pinnedCommandMenuItemKeysInDisplayOrder,
-        commandMenuItemWidthsByKey:
-          commandMenuPinnedInlineLayout.commandMenuItemWidthsByKey,
-        commandMenuItemsContainerWidth:
-          commandMenuPinnedInlineLayout.containerWidth,
-        commandMenuItemsGapWidth: PINNED_COMMAND_MENU_ITEMS_GAP,
-      }),
-    [commandMenuPinnedInlineLayout, pinnedCommandMenuItemKeysInDisplayOrder],
+      hasKnownPinnedInlineLayout
+        ? getVisibleCommandMenuItemCountForContainerWidth({
+            commandMenuItemKeysInDisplayOrder:
+              pinnedCommandMenuItemKeysInDisplayOrder,
+            commandMenuItemWidthsByKey:
+              commandMenuPinnedInlineLayout.commandMenuItemWidthsByKey,
+            commandMenuItemsContainerWidth:
+              commandMenuPinnedInlineLayout.containerWidth,
+            commandMenuItemsGapWidth: PINNED_COMMAND_MENU_ITEMS_GAP,
+          })
+        : 0,
+    [
+      commandMenuPinnedInlineLayout,
+      hasKnownPinnedInlineLayout,
+      pinnedCommandMenuItemKeysInDisplayOrder,
+    ],
   );
 
   const pinnedInlineCommandMenuItems = useMemo(

@@ -150,7 +150,7 @@ exports[`DataArgProcessorService failing inputs validation POSITION should throw
 
 exports[`DataArgProcessorService failing inputs validation POSITION should throw for invalid input #4: [] 1`] = `"Invalid position value [] for field "position""`;
 
-exports[`DataArgProcessorService failing inputs validation RATING should throw for invalid input #1: "not-a-rating" 1`] = `"Invalid value 'not-a-rating' for field "ratingField""`;
+exports[`DataArgProcessorService failing inputs validation RATING should throw for invalid input #1: "not-a-rating" 1`] = `"Invalid value "not-a-rating" for field "ratingField". Valid values are: RATING_1, RATING_2, RATING_3, RATING_4, RATING_5"`;
 
 exports[`DataArgProcessorService failing inputs validation RATING should throw for invalid input #2: {} 1`] = `"Invalid string value {} for text field "ratingField""`;
 
@@ -178,7 +178,7 @@ exports[`DataArgProcessorService failing inputs validation RICH_TEXT should thro
 
 exports[`DataArgProcessorService failing inputs validation RICH_TEXT should throw for invalid input #3: true 1`] = `"Invalid object value true for field "richTextField""`;
 
-exports[`DataArgProcessorService failing inputs validation SELECT should throw for invalid input #1: "not-a-select-option" 1`] = `"Invalid value 'not-a-select-option' for field "selectField""`;
+exports[`DataArgProcessorService failing inputs validation SELECT should throw for invalid input #1: "not-a-select-option" 1`] = `"Invalid value "not-a-select-option" for field "selectField". Valid values are: OPTION_1, OPTION_2"`;
 
 exports[`DataArgProcessorService failing inputs validation SELECT should throw for invalid input #2: {} 1`] = `"Invalid string value {} for text field "selectField""`;
 

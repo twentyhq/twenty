@@ -2,6 +2,8 @@
 
 import { useEffect } from 'react';
 
+import { createAnimationFrameLoop } from '@/lib/animation';
+
 type UseScheduledOnScrollOptions = {
   enabled?: boolean;
   fireImmediately?: boolean;
@@ -18,19 +20,14 @@ export function useScheduledOnScroll(
       return;
     }
 
-    let rafId: number | null = null;
+    const scrollTask = createAnimationFrameLoop({
+      onFrame: () => {
+        callback();
+        return false;
+      },
+    });
 
-    const flush = () => {
-      rafId = null;
-      callback();
-    };
-
-    const schedule = () => {
-      if (rafId !== null) {
-        return;
-      }
-      rafId = window.requestAnimationFrame(flush);
-    };
+    const schedule = scrollTask.start;
 
     if (fireImmediately) {
       callback();
@@ -41,9 +38,7 @@ export function useScheduledOnScroll(
     return () => {
       window.removeEventListener('scroll', schedule);
       window.removeEventListener('resize', schedule);
-      if (rafId !== null) {
-        window.cancelAnimationFrame(rafId);
-      }
+      scrollTask.stop();
     };
   }, [callback, enabled, fireImmediately]);
 }

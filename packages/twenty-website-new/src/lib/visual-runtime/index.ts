@@ -18,12 +18,36 @@ export {
 export { useWebGlPolicy } from './use-webgl-policy';
 export { WebGlErrorBoundary } from './webgl-error-boundary';
 export { WebGlMount } from './webgl-mount';
+export { loadVisualImage } from './load-visual-image';
+export {
+  createVisualMountScheduler,
+  scheduleVisualMount,
+  visualMountScheduler,
+  type ScheduleVisualMountOptions,
+  type VisualMountPriority,
+  type VisualMountScheduler,
+} from './visual-mount-scheduler';
 export {
   createSiteWebGlRenderer,
+  reportSiteWebGlRendererCreationFailure,
+  SITE_WEBGL_CONTEXT_LOST_EVENT,
+  tryCreateSiteWebGlRenderer,
+  type SiteWebGlRendererCreationFailureHandler,
   type SiteWebGlRendererParameters,
 } from './create-site-webgl-renderer';
 
-export { createFrameTimer, type FrameTimer } from './frame-timer';
+export {
+  createVisualRenderLoop,
+  reportVisualRenderLoopErrorInDevelopment,
+  type CreateVisualRenderLoopOptions,
+  type VisualRenderLoop,
+  type VisualRenderLoopCanceller,
+  type VisualRenderLoopDocument,
+  type VisualRenderLoopErrorHandler,
+  type VisualRenderLoopFrame,
+  type VisualRenderLoopFrameRenderer,
+  type VisualRenderLoopScheduler,
+} from './visual-render-loop';
 
 export {
   createBoundedFailureCache,

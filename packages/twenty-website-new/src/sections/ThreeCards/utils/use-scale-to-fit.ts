@@ -1,5 +1,6 @@
 'use client';
 
+import { observeElementSize } from '@/lib/dom/observe-element-size';
 import { type RefObject, useEffect, useState } from 'react';
 
 export function useScaleToFit(
@@ -26,12 +27,11 @@ export function useScaleToFit(
       setScale(baseScale * fit);
     };
 
-    const observer = new ResizeObserver(compute);
-    observer.observe(element);
+    const stopObservingSize = observeElementSize(element, compute);
     compute();
 
     return () => {
-      observer.disconnect();
+      stopObservingSize();
     };
   }, [baseScale, containerRef, designHeight, designWidth]);
 

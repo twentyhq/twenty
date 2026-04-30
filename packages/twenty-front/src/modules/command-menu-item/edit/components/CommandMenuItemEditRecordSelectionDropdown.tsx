@@ -83,7 +83,7 @@ export const CommandMenuItemEditRecordSelectionDropdown = ({
   const TriggerIcon = isNoneSelected ? IconSquareX : IconSquareCheck;
   const triggerLabel = isNoneSelected
     ? t`No record selected`
-    : t`Records selected`;
+    : t`Record(s) selected`;
 
   return (
     <Dropdown
@@ -108,6 +108,7 @@ export const CommandMenuItemEditRecordSelectionDropdown = ({
         </StyledClickableArea>
       }
       dropdownPlacement="bottom-start"
+      dropdownOffset={{ y: 4 }}
       dropdownComponents={
         <DropdownContent widthInPixels={GenericDropdownContentWidth.Medium}>
           <StyledDropdownMenuContainer
@@ -122,7 +123,7 @@ export const CommandMenuItemEditRecordSelectionDropdown = ({
               />
               <MenuItemSelect
                 LeftIcon={IconSquareCheck}
-                text={t`Records selected`}
+                text={t`Record(s) selected`}
                 selected={!isNoneSelected}
                 onClick={() => handleSelectMode('selection')}
               />

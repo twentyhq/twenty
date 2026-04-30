@@ -21,11 +21,6 @@ const CardRoot = styled.article`
   position: relative;
   row-gap: ${theme.spacing(2.5)};
   width: 100%;
-  transition:
-    transform 0.6s cubic-bezier(0.16, 1, 0.3, 1),
-    filter 0.6s ease;
-  transform-style: preserve-3d;
-  perspective: 1200px;
 `;
 
 const LogoRow = styled.div`
@@ -47,14 +42,6 @@ const VisualShell = styled.div`
   height: 240px;
   overflow: hidden;
   position: relative;
-  width: 100%;
-`;
-
-const VisualFallback = styled.div`
-  align-items: center;
-  display: flex;
-  height: 100%;
-  justify-content: center;
   width: 100%;
 `;
 
@@ -81,8 +68,6 @@ const CtaRow = styled.div`
 `;
 
 const LOGO_FILL = theme.colors.secondary.text[100];
-const FALLBACK_LOGO_FILL = theme.colors.secondary.text[80];
-const FALLBACK_LOGO_WIDTH = 160;
 
 type CardProps = {
   card: HeadingCardType;
@@ -92,15 +77,6 @@ export function Card({ card }: CardProps) {
   const IconComponent = CLIENT_ICONS[card.icon];
   const Visual = HELPED_VISUALS[card.illustration];
   const logoWidth = 104;
-
-  const visualFallback = IconComponent ? (
-    <VisualFallback aria-hidden="true">
-      <IconComponent
-        fillColor={FALLBACK_LOGO_FILL}
-        size={FALLBACK_LOGO_WIDTH}
-      />
-    </VisualFallback>
-  ) : null;
 
   return (
     <CardRoot>
@@ -115,7 +91,7 @@ export function Card({ card }: CardProps) {
       </LogoRow>
       <Rule aria-hidden="true" />
       <VisualShell>
-        <WebGlMount fallback={visualFallback}>
+        <WebGlMount loading="eager">
           <Visual />
         </WebGlMount>
       </VisualShell>
