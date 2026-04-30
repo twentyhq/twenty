@@ -49,6 +49,66 @@ export const containerExists = (containerName = CONTAINER_NAME): boolean => {
   }
 };
 
+export const getImageForVersion = (version = 'latest'): string =>
+  `twentycrm/twenty-app-dev:${version}`;
+
+export const getContainerImage = (
+  containerName = CONTAINER_NAME,
+): string | null => {
+  try {
+    return execSync(`docker inspect -f '{{.Config.Image}}' ${containerName}`, {
+      encoding: 'utf-8',
+      stdio: ['pipe', 'pipe', 'ignore'],
+    }).trim();
+  } catch {
+    return null;
+  }
+};
+
+// sha256 digest of the image the container was created from
+export const getContainerImageId = (
+  containerName = CONTAINER_NAME,
+): string | null => {
+  try {
+    return execSync(`docker inspect -f '{{.Image}}' ${containerName}`, {
+      encoding: 'utf-8',
+      stdio: ['pipe', 'pipe', 'ignore'],
+    }).trim();
+  } catch {
+    return null;
+  }
+};
+
+// sha256 digest of a local image by name/tag
+export const getLocalImageId = (image: string): string | null => {
+  try {
+    return execSync(`docker inspect -f '{{.Id}}' ${image}`, {
+      encoding: 'utf-8',
+      stdio: ['pipe', 'pipe', 'ignore'],
+    }).trim();
+  } catch {
+    return null;
+  }
+};
+
+export const getContainerEnvVar = (
+  envVar: string,
+  containerName = CONTAINER_NAME,
+): string | null => {
+  try {
+    const result = execSync(
+      `docker inspect -f '{{range .Config.Env}}{{println .}}{{end}}' ${containerName}`,
+      { encoding: 'utf-8', stdio: ['pipe', 'pipe', 'ignore'] },
+    );
+
+    const match = result.match(new RegExp(`^${envVar}=(.+)$`, 'm'));
+
+    return match ? match[1] : null;
+  } catch {
+    return null;
+  }
+};
+
 export const checkDockerRunning = (): boolean => {
   try {
     execSync('docker info', { stdio: 'ignore' });
