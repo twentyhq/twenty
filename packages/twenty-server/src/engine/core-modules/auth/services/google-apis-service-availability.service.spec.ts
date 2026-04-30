@@ -317,6 +317,59 @@ describe('GoogleApisServiceAvailabilityService', () => {
       });
     });
 
+    it('should return Calendar unavailable when Google returns 403 not signed up error', async () => {
+      mockTwentyConfigService.get.mockImplementation((key) => {
+        if (key === 'AUTH_GOOGLE_CLIENT_ID') return 'client-id';
+        if (key === 'AUTH_GOOGLE_CLIENT_SECRET') return 'client-secret';
+        if (key === 'MESSAGING_PROVIDER_GMAIL_ENABLED') return true;
+        if (key === 'CALENDAR_PROVIDER_GOOGLE_ENABLED') return true;
+
+        return undefined;
+      });
+
+      const notSignedUpError = {
+        response: {
+          status: 403,
+          data: {
+            error: {
+              code: 403,
+              message: 'The user must be signed up for Google Calendar.',
+              errors: [
+                {
+                  message: 'The user must be signed up for Google Calendar.',
+                  domain: 'calendar',
+                  reason: 'notACalendarUser',
+                },
+              ],
+              status: 'PERMISSION_DENIED',
+            },
+          },
+        },
+      };
+
+      const mockGmailClient = {
+        users: {
+          getProfile: jest.fn().mockResolvedValue({ data: {} }),
+        },
+      };
+
+      const mockCalendarClient = {
+        events: {
+          list: jest.fn().mockRejectedValue(notSignedUpError),
+        },
+      };
+
+      (google.gmail as jest.Mock).mockReturnValue(mockGmailClient);
+      (google.calendar as jest.Mock).mockReturnValue(mockCalendarClient);
+
+      const result = await service.checkServicesAvailability('access-token');
+
+      expect(result).toEqual({
+        isMessagingAvailable: true,
+        isCalendarAvailable: false,
+      });
+    });
+
     it('should throw error for non-service-availability related errors', async () => {
       mockTwentyConfigService.get.mockImplementation((key) => {
         if (key === 'AUTH_GOOGLE_CLIENT_ID') return 'client-id';

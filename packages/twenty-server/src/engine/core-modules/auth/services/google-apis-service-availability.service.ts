@@ -106,19 +106,21 @@ export class GoogleApisServiceAvailabilityService {
   }
 
   private isServiceNotEnabledError(error: unknown): boolean {
-    const errorResponse = (
-      error as { response?: { data?: { error?: unknown } } }
-    )?.response?.data?.error;
+    const typedError = error as {
+      response?: { status?: number; data?: { error?: unknown } };
+    };
+
+    const errorResponse = typedError?.response?.data?.error;
 
     if (!errorResponse || typeof errorResponse !== 'object') {
       return false;
     }
 
-    const gmailError = errorResponse as {
+    const googleError = errorResponse as {
       errors?: Array<{ reason?: string; message?: string }>;
     };
 
-    const firstError = gmailError.errors?.[0];
+    const firstError = googleError.errors?.[0];
 
     if (!firstError) {
       return false;
@@ -135,8 +137,20 @@ export class GoogleApisServiceAvailabilityService {
         ?.toLowerCase()
         ?.includes('precondition check failed') ?? false;
 
-    return (
-      isFailedPrecondition && (isServiceNotEnabled || isPreconditionCheckFailed)
-    );
+    if (
+      isFailedPrecondition &&
+      (isServiceNotEnabled || isPreconditionCheckFailed)
+    ) {
+      return true;
+    }
+
+    // Google returns HTTP 403 when the user hasn't signed up for a service
+    // (e.g., "The user must be signed up for Google Calendar.")
+    const isForbidden = typedError?.response?.status === 403;
+
+    const isNotSignedUp =
+      firstError.message?.toLowerCase()?.includes('must be signed up') ?? false;
+
+    return isForbidden && isNotSignedUp;
   }
 }
