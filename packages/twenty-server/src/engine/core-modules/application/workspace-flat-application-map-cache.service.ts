@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { Repository } from 'typeorm';
+import { type FindOptionsSelect, Repository } from 'typeorm';
 
 import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
 
@@ -50,7 +50,7 @@ export class WorkspaceFlatApplicationMapCacheService extends WorkspaceCacheProvi
         createdAt: true,
         updatedAt: true,
         deletedAt: true,
-      },
+      } as FindOptionsSelect<ApplicationEntity>,
       withDeleted: true,
     });
 
