@@ -34,6 +34,7 @@ export type {
 } from './server-upgrade';
 export { detectLocalServer } from '@/cli/utilities/server/detect-local-server';
 export {
+  checkDockerRunning,
   containerExists,
   getContainerDigest,
   getImageDigest,
