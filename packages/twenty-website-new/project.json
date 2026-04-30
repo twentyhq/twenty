@@ -80,21 +80,11 @@
       ]
     },
     "lint:diff-with-main": {
-      "executor": "nx:run-commands",
       "dependsOn": [
         "check-boundaries",
         "check-section-shape",
         "check-lottie-frames"
-      ],
-      "options": {
-        "cwd": "{projectRoot}",
-        "command": "FILES=$(git diff --name-only --relative --diff-filter=d main -- . | grep -E '\\.(ts|tsx|js|jsx)$'); [ -z \"$FILES\" ] && echo 'No changed files.' || (npx oxlint -c .oxlintrc.json $FILES && (prettier --check $FILES || (echo 'ERROR: Prettier formatting check failed! Fix with: npx nx lint:diff-with-main twenty-website-new --configuration=fix' && false)))"
-      },
-      "configurations": {
-        "fix": {
-          "command": "FILES=$(git diff --name-only --relative --diff-filter=d main -- . | grep -E '\\.(ts|tsx|js|jsx)$'); [ -z \"$FILES\" ] && echo 'No changed files.' || (npx oxlint --fix -c .oxlintrc.json $FILES && prettier --write $FILES)"
-        }
-      }
+      ]
     },
     "typecheck": {},
     "test": {
