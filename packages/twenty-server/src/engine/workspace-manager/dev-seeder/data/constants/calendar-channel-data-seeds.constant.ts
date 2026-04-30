@@ -42,7 +42,7 @@ export const CALENDAR_CHANNEL_DATA_SEEDS: CalendarChannelDataSeed[] = [
     handle: 'tim@apple.dev',
     visibility: CalendarChannelVisibility.METADATA,
     isContactAutoCreationEnabled: true,
-    isSyncEnabled: true,
+    isSyncEnabled: false,
   },
   {
     id: CALENDAR_CHANNEL_DATA_SEED_IDS.JONY,
@@ -50,7 +50,7 @@ export const CALENDAR_CHANNEL_DATA_SEEDS: CalendarChannelDataSeed[] = [
     handle: 'jony@apple.dev',
     visibility: CalendarChannelVisibility.SHARE_EVERYTHING,
     isContactAutoCreationEnabled: true,
-    isSyncEnabled: true,
+    isSyncEnabled: false,
   },
   {
     id: CALENDAR_CHANNEL_DATA_SEED_IDS.PHIL,
@@ -58,7 +58,7 @@ export const CALENDAR_CHANNEL_DATA_SEEDS: CalendarChannelDataSeed[] = [
     handle: 'phil@apple.dev',
     visibility: CalendarChannelVisibility.METADATA,
     isContactAutoCreationEnabled: true,
-    isSyncEnabled: true,
+    isSyncEnabled: false,
   },
   {
     id: CALENDAR_CHANNEL_DATA_SEED_IDS.JANE,
@@ -66,7 +66,7 @@ export const CALENDAR_CHANNEL_DATA_SEEDS: CalendarChannelDataSeed[] = [
     handle: 'jane.austen@apple.dev',
     visibility: CalendarChannelVisibility.SHARE_EVERYTHING,
     isContactAutoCreationEnabled: true,
-    isSyncEnabled: true,
+    isSyncEnabled: false,
   },
   {
     id: CALENDAR_CHANNEL_DATA_SEED_IDS.COMPANY_MAIN,
@@ -74,7 +74,7 @@ export const CALENDAR_CHANNEL_DATA_SEEDS: CalendarChannelDataSeed[] = [
     handle: 'company-main@apple.dev',
     visibility: CalendarChannelVisibility.SHARE_EVERYTHING,
     isContactAutoCreationEnabled: true,
-    isSyncEnabled: true,
+    isSyncEnabled: false,
   },
   {
     id: CALENDAR_CHANNEL_DATA_SEED_IDS.TEAM_CALENDAR,
@@ -82,6 +82,6 @@ export const CALENDAR_CHANNEL_DATA_SEEDS: CalendarChannelDataSeed[] = [
     handle: 'team-calendar@apple.dev',
     visibility: CalendarChannelVisibility.SHARE_EVERYTHING,
     isContactAutoCreationEnabled: true,
-    isSyncEnabled: true,
+    isSyncEnabled: false,
   },
 ];
