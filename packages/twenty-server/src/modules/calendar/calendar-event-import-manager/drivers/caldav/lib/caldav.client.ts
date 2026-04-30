@@ -2,19 +2,18 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import * as ical from 'node-ical';
-import { isDefined } from 'twenty-shared/utils';
 import {
   calendarMultiGet,
   createAccount,
   type DAVAccount,
   type DAVCalendar,
   DAVNamespaceShort,
-  type DAVObject,
   type DAVResponse,
   fetchCalendars,
   propfind,
   syncCollection,
 } from 'tsdav';
+import { isDefined } from 'twenty-shared/utils';
 
 import { createBasicDigestAuthFetch } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/lib/auth/create-basic-digest-auth-fetch';
 import {
@@ -28,8 +27,7 @@ import {
   type FetchedCalendarEvent,
   type FetchedCalendarEventParticipant,
 } from 'src/modules/calendar/common/types/fetched-calendar-event';
-
-const DEFAULT_CALENDAR_TYPE = 'caldav';
+import { DEFAULT_CALENDAR_TYPE } from './constants/default-calendar-type.constant';
 
 type CalendarCredentials = {
   username: string;
@@ -448,8 +446,21 @@ export class CalDAVClient {
       options,
     );
 
-    let newSyncToken = previousSyncToken;
+    const newSyncToken = await this.refreshSyncToken(
+      calendar.url,
+      previousSyncToken,
+    );
 
+    return {
+      events,
+      newSyncToken,
+    };
+  }
+
+  private async refreshSyncToken(
+    calendarUrl: string,
+    fallbackToken: string | undefined,
+  ): Promise<string | undefined> {
     try {
       const account = await this.getAccount();
       const refreshed = await fetchCalendars({
@@ -458,23 +469,20 @@ export class CalDAVClient {
       });
 
       const refreshedCalendar = refreshed.find(
-        (calendar) => calendar.url === calendar.url,
+        (candidate) => candidate.url === calendarUrl,
       );
 
-      if (refreshedCalendar?.syncToken) {
-        newSyncToken = refreshedCalendar.syncToken.toString();
-      }
-    } catch (syncTokenError) {
+      return refreshedCalendar?.syncToken
+        ? refreshedCalendar.syncToken.toString()
+        : fallbackToken;
+    } catch (refreshError) {
       this.logger.error(
-        `Error in ${CalDavGetEventsService.name} - fetchEventsViaSyncCollection`,
-        syncTokenError,
+        `Error in ${CalDavGetEventsService.name} - refreshSyncToken`,
+        refreshError,
       );
-    }
 
-    return {
-      events,
-      newSyncToken,
-    };
+      return fallbackToken;
+    }
   }
 
   /**
@@ -516,7 +524,7 @@ export class CalDAVClient {
     );
 
     const cancelledStubs = cancelledHrefs.map((href) =>
-      this.buildCancelledEvents(href),
+      this.buildCancelledEvent(href),
     );
 
     return {
@@ -526,7 +534,7 @@ export class CalDAVClient {
     };
   }
 
-  private buildCancelledEvents(href: string): FetchedCalendarEvent {
+  private buildCancelledEvent(href: string): FetchedCalendarEvent {
     return {
       id: href,
       title: '',
@@ -609,20 +617,11 @@ export class CalDAVClient {
           continue;
         }
 
-        const objectUrl = calendarObject.href || '';
-        const event = this.parseICalData(iCalData, objectUrl);
+        const event = this.parseICalData(iCalData, calendarObject.href || '');
 
         if (
           !event ||
-          !this.isEventInTimeRange(
-            {
-              url: objectUrl,
-              data: calendarObject.props.calendarData,
-              etag: calendarObject.props.getetag,
-            },
-            options.startDate,
-            options.endDate,
-          )
+          !this.isEventInTimeRange(event, options.startDate, options.endDate)
         ) {
           continue;
         }
@@ -671,25 +670,18 @@ export class CalDAVClient {
   }
 
   private isEventInTimeRange(
-    davObject: DAVObject,
-    startDate: Date,
-    endDate: Date,
+    event: FetchedCalendarEvent,
+    windowStart: Date,
+    windowEnd: Date,
   ): boolean {
-    try {
-      if (!davObject.data) return false;
+    if (!event.startsAt || !event.endsAt) return false;
 
-      const parsed = ical.parseICS(davObject.data);
-      const events = Object.values(parsed).filter(
-        (item) => item.type === 'VEVENT',
-      );
+    const eventStart = new Date(event.startsAt);
+    const eventEnd = new Date(event.endsAt);
 
-      if (events.length === 0) return false;
+    const startsBeforeWindowCloses = eventStart < windowEnd;
+    const endsAfterWindowOpens = eventEnd > windowStart;
 
-      const event = events[0] as ical.VEvent;
-
-      return event.start < endDate && event.end > startDate;
-    } catch {
-      return true;
-    }
+    return startsBeforeWindowCloses && endsAfterWindowOpens;
   }
 }
