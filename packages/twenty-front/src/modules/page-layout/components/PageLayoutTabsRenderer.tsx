@@ -102,11 +102,24 @@ export const PageLayoutTabsRenderer = () => {
     isEditMode: isPageLayoutInEditMode,
   });
 
-  const SYSTEM_OBJECT_TABS = ['Home', 'Timeline', 'Overview', 'Flow'];
+  const SYSTEM_OBJECT_TAB_ICONS = [
+    'IconHome',
+    'IconTimelineEvent',
+    'IconSettings',
+  ];
+  const SYSTEM_OBJECT_TAB_TITLES_FALLBACK = [
+    'Home',
+    'Timeline',
+    'Overview',
+    'Flow',
+  ];
 
   const tabsForCurrentObject = isSystemObject
-    ? tabsWithVisibleWidgets.filter((tab) =>
-        SYSTEM_OBJECT_TABS.includes(tab.title),
+    ? tabsWithVisibleWidgets.filter(
+        (tab) =>
+          (isDefined(tab.icon) && SYSTEM_OBJECT_TAB_ICONS.includes(tab.icon)) ||
+          (isDefined(tab.title) &&
+            SYSTEM_OBJECT_TAB_TITLES_FALLBACK.includes(tab.title)),
       )
     : tabsWithVisibleWidgets;
 

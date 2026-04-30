@@ -1,5 +1,7 @@
 import request from 'supertest';
 
+import { OPPORTUNITY_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/opportunity-data-seeds.constant';
+
 const client = request(`http://localhost:${APP_PORT}`);
 
 describe('opportunitiesResolver (e2e)', () => {
@@ -60,6 +62,38 @@ describe('opportunitiesResolver (e2e)', () => {
           expect(opportunities).toHaveProperty('pointOfContactId');
           expect(opportunities).toHaveProperty('companyId');
         }
+      });
+  });
+
+  it('should allow clearing opportunity stage to null', () => {
+    const queryData = {
+      query: `
+        mutation UpdateOpportunity($opportunityId: UUID!, $data: OpportunityUpdateInput!) {
+          updateOpportunity(id: $opportunityId, data: $data) {
+            id
+            stage
+          }
+        }
+      `,
+      variables: {
+        opportunityId: OPPORTUNITY_DATA_SEED_IDS.ID_1,
+        data: {
+          stage: null,
+        },
+      },
+    };
+
+    return client
+      .post('/graphql')
+      .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
+      .send(queryData)
+      .expect(200)
+      .expect((res) => {
+        expect(res.body.errors).toBeUndefined();
+        expect(res.body.data.updateOpportunity).toMatchObject({
+          id: OPPORTUNITY_DATA_SEED_IDS.ID_1,
+          stage: null,
+        });
       });
   });
 });

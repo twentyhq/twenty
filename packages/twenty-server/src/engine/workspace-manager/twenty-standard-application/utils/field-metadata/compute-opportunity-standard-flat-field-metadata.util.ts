@@ -172,7 +172,7 @@ export const buildOpportunityStandardFlatFieldMetadatas = ({
       label: i18nLabel(msg`Stage`),
       description: i18nLabel(msg`Opportunity stage`),
       icon: 'IconProgressCheck',
-      isNullable: false,
+      isNullable: true,
       defaultValue: "'NEW'",
       options: [
         {
