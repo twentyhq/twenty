@@ -11,14 +11,15 @@ export type { AnimatedButtonProps } from './button/components/AnimatedButton';
 export { AnimatedButton } from './button/components/AnimatedButton';
 export type { AnimatedLightIconButtonProps } from './button/components/AnimatedLightIconButton';
 export { AnimatedLightIconButton } from './button/components/AnimatedLightIconButton';
+export { Button } from './button/components/Button/Button';
 export type {
   ButtonSize,
   ButtonPosition,
   ButtonVariant,
   ButtonAccent,
   ButtonProps,
-} from './button/components/Button/Button';
-export { Button } from './button/components/Button/Button';
+  ButtonDynamicStyles,
+} from './button/components/Button/Button.types';
 export { baseTransitionTiming } from './button/components/Button/constant';
 export type { ButtonGroupProps } from './button/components/ButtonGroup';
 export { ButtonGroup } from './button/components/ButtonGroup';

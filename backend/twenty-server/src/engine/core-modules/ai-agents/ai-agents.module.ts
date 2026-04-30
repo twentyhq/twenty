@@ -1,6 +1,8 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { AIGovernanceModule } from '../ai-governance/ai-governance.module';
+
 import { CsmAgent } from './csm-agent/csm-agent.entity';
 import { CsmAgentService } from './csm-agent/csm-agent.service';
 import { DataHygieneAgent, DataQualityIssue } from './data-hygiene-agent/data-hygiene-agent.entity';
@@ -13,9 +15,15 @@ import { ProspectResearch, ProspectingResearchAgent } from './prospecting-resear
 import { ProspectingResearchAgentService } from './prospecting-research-agent/prospecting-research-agent.service';
 import { SdrAgent } from './sdr-agent/sdr-agent.entity';
 import { SdrAgentService } from './sdr-agent/sdr-agent.service';
+import { CompetitiveIntelligenceAgent } from './competitive-intelligence-agent/competitive-intelligence-agent.entity';
+import { CompetitiveIntelligenceAgentService } from './competitive-intelligence-agent/competitive-intelligence-agent.service';
+import { ContractIntelligenceAgent, ContractExtractionEntity } from './contract-intelligence-agent/contract-intelligence-agent.entity';
+import { ContractIntelligenceAgentService } from './contract-intelligence-agent/contract-intelligence-agent.service';
+import { AiAgentsResolver } from './ai-agents.resolver';
 
 @Module({
   imports: [
+    AIGovernanceModule,
     TypeOrmModule.forFeature(
       [
         SdrAgent,
@@ -28,6 +36,9 @@ import { SdrAgentService } from './sdr-agent/sdr-agent.service';
         MeetingTranscript,
         ProspectingResearchAgent,
         ProspectResearch,
+        CompetitiveIntelligenceAgent,
+        ContractIntelligenceAgent,
+        ContractExtractionEntity,
       ],
       'core',
     ),
@@ -39,6 +50,9 @@ import { SdrAgentService } from './sdr-agent/sdr-agent.service';
     DealQualificationAgentService,
     MeetingNotesAgentService,
     ProspectingResearchAgentService,
+    CompetitiveIntelligenceAgentService,
+    ContractIntelligenceAgentService,
+    AiAgentsResolver,
   ],
   exports: [
     SdrAgentService,
@@ -47,6 +61,8 @@ import { SdrAgentService } from './sdr-agent/sdr-agent.service';
     DealQualificationAgentService,
     MeetingNotesAgentService,
     ProspectingResearchAgentService,
+    CompetitiveIntelligenceAgentService,
+    ContractIntelligenceAgentService,
   ],
 })
 export class AiAgentsModule {}

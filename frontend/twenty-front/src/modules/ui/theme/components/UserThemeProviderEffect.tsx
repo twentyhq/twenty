@@ -1,15 +1,17 @@
-import { useContext, useEffect } from 'react';
-
-import { ThemeSchemeContext } from '@/ui/theme/components/BaseThemeProvider';
-import { useColorScheme } from '@/ui/theme/hooks/useColorScheme';
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { persistedColorSchemeState } from '@/ui/theme/states/persistedColorSchemeState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { useEffect } from 'react';
 
 export const UserThemeProviderEffect = () => {
-  const { colorScheme } = useColorScheme();
-  const setThemeScheme = useContext(ThemeSchemeContext);
+  const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
+  const setPersistedColorScheme = useSetAtomState(persistedColorSchemeState);
 
   useEffect(() => {
-    setThemeScheme(colorScheme);
-  }, [colorScheme, setThemeScheme]);
+    const colorScheme = currentWorkspaceMember?.colorScheme ?? 'System';
+    setPersistedColorScheme(colorScheme);
+  }, [currentWorkspaceMember?.colorScheme, setPersistedColorScheme]);
 
-  return <></>;
+  return null;
 };

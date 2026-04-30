@@ -158,6 +158,7 @@ export {
   IconDatabase,
   IconDatabaseExport,
   IconDecimal,
+  IconDeviceDesktop,
   IconDeviceFloppy,
   IconDoorEnter,
   IconDotsVertical,

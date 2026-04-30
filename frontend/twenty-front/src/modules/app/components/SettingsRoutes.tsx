@@ -328,6 +328,166 @@ const SettingsSecurity = lazy(() =>
   })),
 );
 
+const SettingsEnterpriseModules = lazy(() =>
+  import(
+    '~/pages/settings/modules/components/SettingsEnterpriseModules'
+  ).then((module) => ({
+    default: module.SettingsEnterpriseModules,
+  })),
+);
+
+const SettingsModuleDetail = lazy(() =>
+  import(
+    '~/pages/settings/modules/components/SettingsModuleDetail'
+  ).then((module) => ({
+    default: module.SettingsModuleDetail,
+  })),
+);
+
+const SettingsModuleVoIP = lazy(() =>
+  import(
+    '~/pages/settings/modules/components/SettingsModuleVoIP'
+  ).then((module) => ({
+    default: module.SettingsModuleVoIP,
+  })),
+);
+
+const SettingsModuleInventory = lazy(() =>
+  import(
+    '~/pages/settings/modules/components/SettingsModuleInventory'
+  ).then((module) => ({
+    default: module.SettingsModuleInventory,
+  })),
+);
+
+const SettingsModuleHelpdesk = lazy(() =>
+  import(
+    '~/pages/settings/modules/components/SettingsModuleHelpdesk'
+  ).then((module) => ({
+    default: module.SettingsModuleHelpdesk,
+  })),
+);
+
+const SettingsModuleBilling = lazy(() =>
+  import(
+    '~/pages/settings/modules/components/SettingsModuleBilling'
+  ).then((module) => ({
+    default: module.SettingsModuleBilling,
+  })),
+);
+
+const SettingsModuleAccounting = lazy(() =>
+  import(
+    '~/pages/settings/modules/components/SettingsModuleAccounting'
+  ).then((module) => ({
+    default: module.SettingsModuleAccounting,
+  })),
+);
+
+const SettingsModuleHRM = lazy(() =>
+  import(
+    '~/pages/settings/modules/components/SettingsModuleHRM'
+  ).then((module) => ({
+    default: module.SettingsModuleHRM,
+  })),
+);
+
+const SettingsModuleProjects = lazy(() =>
+  import(
+    '~/pages/settings/modules/components/SettingsModuleProjects'
+  ).then((module) => ({
+    default: module.SettingsModuleProjects,
+  })),
+);
+
+const SettingsModuleFleet = lazy(() =>
+  import(
+    '~/pages/settings/modules/components/SettingsModuleFleet'
+  ).then((module) => ({
+    default: module.SettingsModuleFleet,
+  })),
+);
+
+const SettingsModuleECommerce = lazy(() =>
+  import(
+    '~/pages/settings/modules/components/SettingsModuleECommerce'
+  ).then((module) => ({
+    default: module.SettingsModuleECommerce,
+  })),
+);
+
+const SettingsModulePRM = lazy(() =>
+  import(
+    '~/pages/settings/modules/components/SettingsModulePRM'
+  ).then((module) => ({
+    default: module.SettingsModulePRM,
+  })),
+);
+
+const SettingsModuleCLM = lazy(() =>
+  import(
+    '~/pages/settings/modules/components/SettingsModuleCLM'
+  ).then((module) => ({
+    default: module.SettingsModuleCLM,
+  })),
+);
+
+const SettingsModuleFSM = lazy(() =>
+  import(
+    '~/pages/settings/modules/components/SettingsModuleFSM'
+  ).then((module) => ({
+    default: module.SettingsModuleFSM,
+  })),
+);
+
+const SettingsModuleLMS = lazy(() =>
+  import(
+    '~/pages/settings/modules/components/SettingsModuleLMS'
+  ).then((module) => ({
+    default: module.SettingsModuleLMS,
+  })),
+);
+
+const SettingsModuleEvents = lazy(() =>
+  import(
+    '~/pages/settings/modules/components/SettingsModuleEvents'
+  ).then((module) => ({
+    default: module.SettingsModuleEvents,
+  })),
+);
+
+const SettingsModuleProcurement = lazy(() =>
+  import(
+    '~/pages/settings/modules/components/SettingsModuleProcurement'
+  ).then((module) => ({
+    default: module.SettingsModuleProcurement,
+  })),
+);
+
+const SettingsModuleMarketing = lazy(() =>
+  import(
+    '~/pages/settings/modules/components/SettingsModuleMarketing'
+  ).then((module) => ({
+    default: module.SettingsModuleMarketing,
+  })),
+);
+
+const SettingsModuleAI = lazy(() =>
+  import(
+    '~/pages/settings/modules/components/SettingsModuleAI'
+  ).then((module) => ({
+    default: module.SettingsModuleAI,
+  })),
+);
+
+const SettingsModuleFiscal = lazy(() =>
+  import(
+    '~/pages/settings/modules/components/SettingsModuleFiscal'
+  ).then((module) => ({
+    default: module.SettingsModuleFiscal,
+  })),
+);
+
 const SettingsSecuritySSOIdentifyProvider = lazy(() =>
   import('~/pages/settings/security/SettingsSecuritySSOIdentifyProvider').then(
     (module) => ({
@@ -783,6 +943,87 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
       >
         <Route path={SettingsPath.Updates} element={<SettingsUpdates />} />
       </Route>
+
+      <Route
+        path={SettingsPath.EnterpriseModules}
+        element={<SettingsEnterpriseModules />}
+      />
+      <Route
+        path={SettingsPath.EnterpriseVoIP}
+        element={<SettingsModuleVoIP />}
+      />
+      <Route
+        path={SettingsPath.EnterpriseInventory}
+        element={<SettingsModuleInventory />}
+      />
+      <Route
+        path={SettingsPath.EnterpriseBilling}
+        element={<SettingsModuleBilling />}
+      />
+      <Route
+        path="modules/support_ticket"
+        element={<SettingsModuleHelpdesk />}
+      />
+      <Route
+        path={SettingsPath.EnterpriseAccounting}
+        element={<SettingsModuleAccounting />}
+      />
+      <Route
+        path={SettingsPath.EnterpriseHRM}
+        element={<SettingsModuleHRM />}
+      />
+      <Route
+        path={SettingsPath.EnterpriseProjects}
+        element={<SettingsModuleProjects />}
+      />
+      <Route
+        path={SettingsPath.EnterpriseFleet}
+        element={<SettingsModuleFleet />}
+      />
+      <Route
+        path={SettingsPath.EnterpriseECommerce}
+        element={<SettingsModuleECommerce />}
+      />
+      <Route
+        path={SettingsPath.EnterprisePRM}
+        element={<SettingsModulePRM />}
+      />
+      <Route
+        path={SettingsPath.EnterpriseCLM}
+        element={<SettingsModuleCLM />}
+      />
+      <Route
+        path={SettingsPath.EnterpriseFSM}
+        element={<SettingsModuleFSM />}
+      />
+      <Route
+        path={SettingsPath.EnterpriseLMS}
+        element={<SettingsModuleLMS />}
+      />
+      <Route
+        path={SettingsPath.EnterpriseEvents}
+        element={<SettingsModuleEvents />}
+      />
+      <Route
+        path={SettingsPath.EnterpriseProcurement}
+        element={<SettingsModuleProcurement />}
+      />
+      <Route
+        path={SettingsPath.EnterpriseMarketing}
+        element={<SettingsModuleMarketing />}
+      />
+      <Route
+        path={SettingsPath.EnterpriseAI}
+        element={<SettingsModuleAI />}
+      />
+      <Route
+        path={SettingsPath.EnterpriseFiscal}
+        element={<SettingsModuleFiscal />}
+      />
+      <Route
+        path={SettingsPath.EnterpriseModuleDetail}
+        element={<SettingsModuleDetail />}
+      />
     </Routes>
   </Suspense>
 );

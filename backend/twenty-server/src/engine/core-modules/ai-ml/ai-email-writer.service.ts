@@ -1,6 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+
+import { AIGovernanceService } from '../ai-governance/ai-governance.service';
 
 import {
   AIEmailWriterEntity,
@@ -29,11 +31,14 @@ const TONE_MODIFIERS: Record<EmailTone, string> = {
 
 @Injectable()
 export class AIEmailWriterService {
+  private readonly logger = new Logger(AIEmailWriterService.name);
+
   constructor(
     @InjectRepository(AIEmailWriterEntity)
     private readonly writerRepo: Repository<AIEmailWriterEntity>,
     @InjectRepository(EmailGenerationLogEntity)
     private readonly logRepo: Repository<EmailGenerationLogEntity>,
+    private readonly aiGovernance: AIGovernanceService,
   ) {}
 
   async getWriterConfig(workspaceId: string, userId: string): Promise<AIEmailWriterEntity> {
@@ -90,7 +95,7 @@ export class AIEmailWriterService {
       includeCallToAction: config.includeCallToAction,
     });
 
-    const generatedEmail = await this.generateWithAI(prompt);
+    const generatedEmail = await this.generateWithAI(prompt, workspaceId, userId);
     const subject = this.generateSubject(templateType, options.contactName, options.contactCompany, options.context);
 
     const logEntry = this.logRepo.create({
@@ -172,7 +177,32 @@ export class AIEmailWriterService {
     await this.logRepo.update(logId, { used: true });
   }
 
-  private async generateWithAI(prompt: string): Promise<string> {
+  private async generateWithAI(prompt: string, workspaceId?: string, userId?: string): Promise<string> {
+    // Try LLM-powered generation first
+    if (workspaceId && userId) {
+      try {
+        const response = await this.aiGovernance.callLLM(workspaceId, userId, {
+          feature: 'ai-email-writer',
+          messages: [
+            {
+              role: 'system',
+              content: 'You are a professional sales email writer. Write concise, effective emails. Return only the email body text, no subject line.',
+            },
+            { role: 'user', content: prompt },
+          ],
+          temperature: 0.7,
+          maxTokens: 1024,
+        });
+
+        return response.content;
+      } catch (error) {
+        this.logger.warn(
+          `LLM email generation failed, falling back to template: ${error instanceof Error ? error.message : 'unknown'}`,
+        );
+      }
+    }
+
+    // Fallback to template-based generation
     const parsed = this.parsePrompt(prompt);
     const recipient = parsed.contactName ?? 'there';
     const company = parsed.contactCompany ?? parsed.variables.companyName ?? 'your team';

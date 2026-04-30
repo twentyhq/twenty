@@ -188,30 +188,196 @@ export class PredictiveLeadScoringService {
     );
   }
 
+  // Feature weight definitions keyed by model type, allowing different
+  // scoring strategies depending on the chosen algorithm.
+  private static readonly FEATURE_WEIGHTS: Record<
+    LeadScoreModelType,
+    Record<string, { weight: number; normalize: (value: unknown) => number }>
+  > = {
+    [LeadScoreModelType.XGBOOST]: {
+      companySize: {
+        weight: 0.15,
+        normalize: (v) => {
+          const map: Record<string, number> = { enterprise: 1, 'mid-market': 0.7, smb: 0.4, startup: 0.2 };
+          return map[String(v)] ?? 0.1;
+        },
+      },
+      industry: {
+        weight: 0.08,
+        normalize: (v) => {
+          const high = ['technology', 'finance', 'healthcare', 'saas'];
+          const mid = ['manufacturing', 'retail', 'education'];
+          const val = String(v).toLowerCase();
+          if (high.includes(val)) return 1;
+          if (mid.includes(val)) return 0.6;
+          return 0.3;
+        },
+      },
+      revenue: {
+        weight: 0.12,
+        normalize: (v) => {
+          const rev = Number(v) || 0;
+          if (rev >= 50_000_000) return 1;
+          if (rev >= 10_000_000) return 0.85;
+          if (rev >= 1_000_000) return 0.65;
+          if (rev >= 100_000) return 0.4;
+          return 0.15;
+        },
+      },
+      employeeCount: {
+        weight: 0.07,
+        normalize: (v) => Math.min(Number(v) || 0, 10000) / 10000,
+      },
+      websiteVisits: {
+        weight: 0.15,
+        normalize: (v) => Math.min(Number(v) || 0, 100) / 100,
+      },
+      emailOpens: {
+        weight: 0.12,
+        normalize: (v) => Math.min(Number(v) || 0, 50) / 50,
+      },
+      emailClicks: {
+        weight: 0.10,
+        normalize: (v) => Math.min(Number(v) || 0, 30) / 30,
+      },
+      pageViews: {
+        weight: 0.05,
+        normalize: (v) => Math.min(Number(v) || 0, 200) / 200,
+      },
+      eventAttendance: {
+        weight: 0.06,
+        normalize: (v) => Math.min(Number(v) || 0, 10) / 10,
+      },
+      contentDownloads: {
+        weight: 0.05,
+        normalize: (v) => Math.min(Number(v) || 0, 20) / 20,
+      },
+      socialEngagement: {
+        weight: 0.03,
+        normalize: (v) => Math.min(Number(v) || 0, 50) / 50,
+      },
+      demographicScore: {
+        weight: 0.02,
+        normalize: (v) => Math.min(Math.max(Number(v) || 0, 0), 100) / 100,
+      },
+    },
+    [LeadScoreModelType.RANDOM_FOREST]: {} as Record<string, { weight: number; normalize: (value: unknown) => number }>,
+    [LeadScoreModelType.LINEAR_REGRESSION]: {} as Record<string, { weight: number; normalize: (value: unknown) => number }>,
+    [LeadScoreModelType.NEURAL_NETWORK]: {} as Record<string, { weight: number; normalize: (value: unknown) => number }>,
+  };
+
   private calculateScore(
     features: Record<string, unknown>,
     model: PredictiveLeadScoringEntity,
   ): number {
-    let score = 50;
+    const weights =
+      PredictiveLeadScoringService.FEATURE_WEIGHTS[model.modelType] ??
+      PredictiveLeadScoringService.FEATURE_WEIGHTS[LeadScoreModelType.XGBOOST];
 
-    if (features.companySize === 'enterprise') score += 20;
-    else if (features.companySize === 'mid-market') score += 10;
+    const activeFeatures = model.features?.length
+      ? model.features
+      : DEFAULT_FEATURES;
 
-    if (features.revenue) {
-      const rev = Number(features.revenue);
-      if (rev > 10000000) score += 15;
-      else if (rev > 1000000) score += 10;
-      else if (rev > 100000) score += 5;
+    // Use feature importance from trained model when available, falling back
+    // to the static weight table.
+    const importance = model.featureImportance ?? {};
+
+    let weightedSum = 0;
+    let totalWeight = 0;
+
+    for (const featureName of activeFeatures) {
+      const featureConfig = weights[featureName];
+      if (!featureConfig) continue;
+
+      const featureWeight = importance[featureName] ?? featureConfig.weight;
+      const rawValue = features[featureName];
+      const normalizedValue = featureConfig.normalize(rawValue);
+
+      weightedSum += normalizedValue * featureWeight;
+      totalWeight += featureWeight;
     }
 
-    if (features.websiteVisits) score += Math.min(Number(features.websiteVisits) / 10, 15);
-    if (features.emailOpens) score += Math.min(Number(features.emailOpens) / 5, 10);
-    if (features.emailClicks) score += Math.min(Number(features.emailClicks) / 3, 10);
-    if (features.eventAttendance) score += Number(features.eventAttendance) * 5;
-    if (features.contentDownloads) score += Number(features.contentDownloads) * 3;
-    if (features.socialEngagement) score += Number(features.socialEngagement) * 2;
+    // Normalize to 0-100 range based on total weight coverage
+    const baseScore = totalWeight > 0 ? (weightedSum / totalWeight) * 100 : 50;
 
-    return Math.min(Math.max(Math.round(score), 0), 100);
+    // Apply recency boost: recent engagement signals are more valuable
+    const recencyBoost = this.calculateRecencyBoost(features);
+
+    // Apply interaction velocity bonus: rapid increase in engagement
+    const velocityBonus = this.calculateVelocityBonus(features);
+
+    const finalScore = baseScore * 0.8 + recencyBoost * 0.12 + velocityBonus * 0.08;
+
+    // Apply confidence threshold gate
+    if (model.confidenceThreshold > 0 && totalWeight / 1.0 < model.confidenceThreshold * 0.5) {
+      // Insufficient feature coverage -- dampen score toward midpoint
+      return Math.round(50 + (finalScore - 50) * 0.5);
+    }
+
+    return Math.min(Math.max(Math.round(finalScore), 0), 100);
+  }
+
+  private calculateRecencyBoost(features: Record<string, unknown>): number {
+    let boost = 0;
+    // Recent website visits in last 7 days
+    const recentVisits = Number(features.recentWebsiteVisits ?? features.websiteVisits ?? 0);
+    if (recentVisits > 5) boost += 30;
+    else if (recentVisits > 2) boost += 15;
+
+    // Recent email engagement
+    const recentClicks = Number(features.recentEmailClicks ?? features.emailClicks ?? 0);
+    if (recentClicks > 3) boost += 25;
+    else if (recentClicks > 0) boost += 10;
+
+    // Recently attended event
+    if (Number(features.daysSinceLastEvent ?? 999) < 14) boost += 20;
+
+    // Recently downloaded content
+    if (Number(features.daysSinceLastDownload ?? 999) < 7) boost += 15;
+
+    // Form submission
+    if (features.formSubmitted) boost += 10;
+
+    return Math.min(boost, 100);
+  }
+
+  private calculateVelocityBonus(features: Record<string, unknown>): number {
+    // Compare current period engagement vs previous period
+    const currentVisits = Number(features.websiteVisitsThisPeriod ?? features.websiteVisits ?? 0);
+    const previousVisits = Number(features.websiteVisitsLastPeriod ?? 0);
+    const currentEmails = Number(features.emailOpensThisPeriod ?? features.emailOpens ?? 0);
+    const previousEmails = Number(features.emailOpensLastPeriod ?? 0);
+
+    let velocity = 0;
+
+    if (previousVisits > 0) {
+      const visitGrowth = (currentVisits - previousVisits) / previousVisits;
+      velocity += Math.min(visitGrowth * 30, 40);
+    } else if (currentVisits > 5) {
+      velocity += 25;
+    }
+
+    if (previousEmails > 0) {
+      const emailGrowth = (currentEmails - previousEmails) / previousEmails;
+      velocity += Math.min(emailGrowth * 25, 35);
+    } else if (currentEmails > 3) {
+      velocity += 20;
+    }
+
+    // Multi-channel engagement bonus
+    const channels = [
+      Number(features.websiteVisits ?? 0) > 0,
+      Number(features.emailOpens ?? 0) > 0,
+      Number(features.eventAttendance ?? 0) > 0,
+      Number(features.socialEngagement ?? 0) > 0,
+      Number(features.contentDownloads ?? 0) > 0,
+    ].filter(Boolean).length;
+
+    if (channels >= 4) velocity += 25;
+    else if (channels >= 3) velocity += 15;
+    else if (channels >= 2) velocity += 5;
+
+    return Math.min(Math.max(velocity, 0), 100);
   }
 
   private getTier(score: number): string {
@@ -228,27 +394,95 @@ export class PredictiveLeadScoringService {
     const breakdown: Record<string, number> = {};
     const recommendations: string[] = [];
 
-    if (features.companySize === 'enterprise') {
-      breakdown['Enterprise Company'] = 20;
-      recommendations.push('Prioritize for demo request');
+    // Firmographic factors
+    const companySize = String(features.companySize ?? '');
+    if (companySize === 'enterprise') {
+      breakdown['Enterprise Company'] = 15;
+      recommendations.push('Assign to enterprise sales team');
+    } else if (companySize === 'mid-market') {
+      breakdown['Mid-Market Company'] = 10;
     }
 
-    if (Number(features.websiteVisits) > 10) {
-      breakdown['High Website Engagement'] = 15;
+    const revenue = Number(features.revenue ?? 0);
+    if (revenue >= 10_000_000) {
+      breakdown['High Revenue ($10M+)'] = 12;
+      recommendations.push('Prioritize for executive demo');
+    } else if (revenue >= 1_000_000) {
+      breakdown['Revenue ($1M+)'] = 8;
+    }
+
+    const industry = String(features.industry ?? '').toLowerCase();
+    const highValueIndustries = ['technology', 'finance', 'healthcare', 'saas'];
+    if (highValueIndustries.includes(industry)) {
+      breakdown['High-Value Industry'] = 8;
+    }
+
+    // Behavioral factors
+    const websiteVisits = Number(features.websiteVisits ?? 0);
+    if (websiteVisits > 20) {
+      breakdown['Very High Website Engagement'] = 15;
       recommendations.push('Send product comparison guide');
+      recommendations.push('Consider triggering sales outreach');
+    } else if (websiteVisits > 10) {
+      breakdown['High Website Engagement'] = 10;
+      recommendations.push('Send product comparison guide');
+    } else if (websiteVisits > 3) {
+      breakdown['Moderate Website Activity'] = 5;
     }
 
-    if (Number(features.eventAttendance) > 0) {
-      breakdown['Event Participation'] = 10;
-      recommendations.push('Follow up within 24 hours');
+    const emailClicks = Number(features.emailClicks ?? 0);
+    if (emailClicks > 5) {
+      breakdown['Strong Email Engagement'] = 10;
+      recommendations.push('Move to sales-qualified sequence');
+    } else if (emailClicks > 0) {
+      breakdown['Email Engagement'] = 5;
     }
 
-    if (score < 50) {
-      recommendations.push('Add to email nurture sequence');
-      recommendations.push('Share relevant case studies');
-    } else if (score >= 80) {
-      recommendations.push('Schedule discovery call');
+    const emailOpens = Number(features.emailOpens ?? 0);
+    if (emailOpens > 10 && emailClicks === 0) {
+      breakdown['Opens Without Clicks'] = 3;
+      recommendations.push('Test different CTAs in emails');
+    }
+
+    if (Number(features.eventAttendance ?? 0) > 0) {
+      breakdown['Event Participation'] = 6;
+      recommendations.push('Follow up within 24 hours of event');
+    }
+
+    if (Number(features.contentDownloads ?? 0) > 2) {
+      breakdown['Content Consumer'] = 5;
+      recommendations.push('Offer personalized content recommendations');
+    }
+
+    // Multi-channel engagement indicator
+    const channels = [
+      websiteVisits > 0,
+      emailOpens > 0,
+      Number(features.eventAttendance ?? 0) > 0,
+      Number(features.socialEngagement ?? 0) > 0,
+      Number(features.contentDownloads ?? 0) > 0,
+    ].filter(Boolean).length;
+
+    if (channels >= 3) {
+      breakdown['Multi-Channel Engagement'] = 8;
+      recommendations.push('Coordinate outreach across channels');
+    }
+
+    // Tier-based recommendations
+    if (score >= TIER_BREAKPOINTS.hot) {
+      recommendations.push('Schedule discovery call immediately');
       recommendations.push('Request referral introduction');
+      recommendations.push('Prepare custom proposal');
+    } else if (score >= TIER_BREAKPOINTS.warm) {
+      recommendations.push('Add to targeted nurture campaign');
+      recommendations.push('Share relevant case studies');
+      recommendations.push('Invite to upcoming webinar');
+    } else if (score >= TIER_BREAKPOINTS.cold) {
+      recommendations.push('Add to email nurture sequence');
+      recommendations.push('Retarget with awareness content');
+    } else {
+      recommendations.push('Add to long-term drip campaign');
+      recommendations.push('Monitor for engagement signals');
     }
 
     return { breakdown, recommendations };

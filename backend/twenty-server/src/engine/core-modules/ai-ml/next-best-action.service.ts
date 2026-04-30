@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { isDefined } from 'twenty-shared/utils';
@@ -8,6 +8,7 @@ import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system
 import { type CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
 import { type OpportunityWorkspaceEntity } from 'src/modules/opportunity/standard-objects/opportunity.workspace-entity';
 import { type PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
+import { AIGovernanceService } from '../ai-governance/ai-governance.service';
 import {
   NextBestActionConfigEntity,
   NextBestActionEntity,
@@ -27,6 +28,8 @@ const DEFAULT_WEIGHTS: Record<string, number> = {
 
 @Injectable()
 export class NextBestActionService {
+  private readonly logger = new Logger(NextBestActionService.name);
+
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     @InjectRepository(NextBestActionConfigEntity)
@@ -35,6 +38,7 @@ export class NextBestActionService {
     private readonly actionRepo: Repository<NextBestActionEntity>,
     @InjectRepository(ActionOutcomeLogEntity)
     private readonly outcomeRepo: Repository<ActionOutcomeLogEntity>,
+    private readonly aiGovernance: AIGovernanceService,
   ) {}
 
   async getConfig(workspaceId: string): Promise<NextBestActionConfigEntity> {
@@ -126,6 +130,80 @@ export class NextBestActionService {
 
   async dismissAction(workspaceId: string, actionId: string): Promise<void> {
     await this.actionRepo.update(actionId, { dismissedAt: new Date() });
+  }
+
+  async suggestAction(
+    workspaceId: string,
+    userId: string,
+    dealContext: {
+      dealName: string;
+      stage: string;
+      value: number;
+      lastActivityDaysAgo: number;
+      contactName?: string;
+      contactTitle?: string;
+      companyName?: string;
+    },
+  ): Promise<{ action: string; reason: string; priority: string; channel: string }> {
+    try {
+      const contextSummary = [
+        `Deal: ${dealContext.dealName}`,
+        `Stage: ${dealContext.stage}`,
+        `Value: $${dealContext.value.toLocaleString()}`,
+        `Last activity: ${dealContext.lastActivityDaysAgo} days ago`,
+        dealContext.contactName ? `Contact: ${dealContext.contactName}` : null,
+        dealContext.contactTitle ? `Title: ${dealContext.contactTitle}` : null,
+        dealContext.companyName ? `Company: ${dealContext.companyName}` : null,
+      ]
+        .filter(Boolean)
+        .join('\n');
+
+      const response = await this.aiGovernance.callLLM(workspaceId, userId, {
+        feature: 'next-best-action',
+        messages: [
+          {
+            role: 'system',
+            content:
+              'You are a sales strategy expert. Given deal context, suggest the single best next action. Return a JSON object with: action (string describing the action), reason (why this action), priority (high/medium/low), channel (email/call/meeting/task).',
+          },
+          {
+            role: 'user',
+            content: `Given this deal context, suggest the best next action:\n\n${contextSummary}`,
+          },
+        ],
+        temperature: 0.5,
+        maxTokens: 512,
+        jsonMode: true,
+      });
+
+      return JSON.parse(response.content) as {
+        action: string;
+        reason: string;
+        priority: string;
+        channel: string;
+      };
+    } catch (error) {
+      this.logger.warn(
+        `LLM next-best-action failed, returning heuristic: ${error instanceof Error ? error.message : 'unknown'}`,
+      );
+
+      // Fallback heuristic
+      if (dealContext.lastActivityDaysAgo > 14) {
+        return {
+          action: `Re-engage ${dealContext.contactName ?? 'contact'} with a follow-up`,
+          reason: 'Deal has been inactive for over 2 weeks',
+          priority: 'high',
+          channel: 'email',
+        };
+      }
+
+      return {
+        action: `Schedule a check-in call for ${dealContext.dealName}`,
+        reason: `Deal is in ${dealContext.stage} stage and needs momentum`,
+        priority: 'medium',
+        channel: 'call',
+      };
+    }
   }
 
   private async fetchRecordsForActions(workspaceId: string): Promise<Array<{ id: string; type: string; name: string }>> {

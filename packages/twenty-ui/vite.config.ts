@@ -89,6 +89,7 @@ export default defineConfig(({ command }) => {
       createWywProfilingPlugin(
         wyw({
           include: [path.resolve(__dirname, 'src') + '/**/*.{ts,tsx}'],
+          evaluate: false,
           babelOptions: {
             presets: ['@babel/preset-typescript', '@babel/preset-react'],
           },

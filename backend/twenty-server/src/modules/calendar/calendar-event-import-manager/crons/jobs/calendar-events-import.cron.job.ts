@@ -59,12 +59,14 @@ export class CalendarEventsImportCronJob {
 
         const [calendarChannels] = isMigrated
           ? await this.coreDataSource.query(
-              `UPDATE core."calendarChannel" SET "syncStage" = '${CalendarChannelSyncStage.CALENDAR_EVENTS_IMPORT_SCHEDULED}', "syncStageStartedAt" = COALESCE("syncStageStartedAt", '${now}')
-               WHERE "workspaceId" = '${activeWorkspace.id}' AND "isSyncEnabled" = true AND "syncStage" = '${CalendarChannelSyncStage.CALENDAR_EVENTS_IMPORT_PENDING}' RETURNING *`,
+              `UPDATE core."calendarChannel" SET "syncStage" = $1, "syncStageStartedAt" = COALESCE("syncStageStartedAt", $2)
+               WHERE "workspaceId" = $3 AND "isSyncEnabled" = true AND "syncStage" = $4 RETURNING *`,
+              [CalendarChannelSyncStage.CALENDAR_EVENTS_IMPORT_SCHEDULED, now, activeWorkspace.id, CalendarChannelSyncStage.CALENDAR_EVENTS_IMPORT_PENDING],
             )
           : await this.coreDataSource.query(
-              `UPDATE ${getWorkspaceSchemaName(activeWorkspace.id)}."calendarChannel" SET "syncStage" = '${CalendarChannelSyncStage.CALENDAR_EVENTS_IMPORT_SCHEDULED}', "syncStageStartedAt" = COALESCE("syncStageStartedAt", '${now}')
-               WHERE "isSyncEnabled" = true AND "syncStage" = '${CalendarChannelSyncStage.CALENDAR_EVENTS_IMPORT_PENDING}' RETURNING *`,
+              `UPDATE ${getWorkspaceSchemaName(activeWorkspace.id)}."calendarChannel" SET "syncStage" = $1, "syncStageStartedAt" = COALESCE("syncStageStartedAt", $2)
+               WHERE "isSyncEnabled" = true AND "syncStage" = $3 RETURNING *`,
+              [CalendarChannelSyncStage.CALENDAR_EVENTS_IMPORT_SCHEDULED, now, CalendarChannelSyncStage.CALENDAR_EVENTS_IMPORT_PENDING],
             );
 
         for (const calendarChannel of calendarChannels) {

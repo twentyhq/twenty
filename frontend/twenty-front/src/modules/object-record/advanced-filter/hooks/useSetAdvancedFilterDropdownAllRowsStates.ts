@@ -1,8 +1,10 @@
+import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { rootLevelRecordFilterGroupComponentSelector } from '@/object-record/advanced-filter/states/rootLevelRecordFilterGroupComponentSelector';
 import { getAdvancedFilterObjectFilterDropdownComponentInstanceId } from '@/object-record/advanced-filter/utils/getAdvancedFilterObjectFilterDropdownComponentInstanceId';
 import { fieldMetadataItemIdUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemIdUsedInDropdownComponentState';
 import { objectFilterDropdownCurrentRecordFilterComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownCurrentRecordFilterComponentState';
 import { subFieldNameUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/subFieldNameUsedInDropdownComponentState';
+import { getFieldMetadataItemById } from '@/object-metadata/utils/getFieldMetadataItemById';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
@@ -25,6 +27,10 @@ export const useSetAdvancedFilterDropdownStates = () => {
     currentRecordFilterGroupsComponentState,
   );
 
+  const objectMetadataItems = useAtomComponentSelectorValue(
+    objectMetadataItemsSelector,
+  );
+
   const setAdvancedFilterDropdownStates = useCallback(() => {
     const rootLevelRecordFilters = currentRecordFilters.filter(
       (recordFilter) =>
@@ -38,6 +44,15 @@ export const useSetAdvancedFilterDropdownStates = () => {
         getAdvancedFilterObjectFilterDropdownComponentInstanceId(
           recordFilter.id,
         );
+
+      const { fieldMetadataItem } = getFieldMetadataItemById({
+        fieldMetadataId: recordFilter.fieldMetadataId,
+        objectMetadataItems,
+      });
+
+      if (!fieldMetadataItem) {
+        return;
+      }
 
       store.set(
         objectFilterDropdownCurrentRecordFilterComponentState.atomFamily({
@@ -84,6 +99,7 @@ export const useSetAdvancedFilterDropdownStates = () => {
   }, [
     currentRecordFilterGroups,
     currentRecordFilters,
+    objectMetadataItems,
     rootLevelRecordFilterGroup,
     store,
   ]);

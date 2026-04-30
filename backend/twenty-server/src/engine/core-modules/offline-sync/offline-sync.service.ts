@@ -207,9 +207,11 @@ export class OfflineSyncService {
     await this.changeRepo.update(conflict.changeId, {
       data: finalData,
       status: SyncStatus.PENDING,
-    });
+    } as any);
 
-    return this.changeRepo.findOneBy({ id: conflict.changeId });
+    const result = await this.changeRepo.findOneBy({ id: conflict.changeId });
+    if (!result) throw new NotFoundException(`Change ${conflict.changeId} not found`);
+    return result;
   }
 
   async retryFailedChanges(workspaceId: string, maxRetries = 3): Promise<number> {
@@ -221,7 +223,7 @@ export class OfflineSyncService {
       },
       {
         status: SyncStatus.PENDING,
-        errorMessage: null,
+        errorMessage: undefined as unknown as string,
       },
     );
 

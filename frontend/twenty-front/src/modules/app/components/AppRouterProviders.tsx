@@ -43,6 +43,7 @@ export const AppRouterProviders = () => {
     <ApolloProvider>
       <BaseThemeProvider>
         <ClientConfigProviderEffect />
+        <UserThemeProviderEffect />
         <UserMetadataProviderInitialEffect />
         <MinimalMetadataLoadEffect />
         <IsMinimalMetadataReadyEffect />
@@ -54,7 +55,6 @@ export const AppRouterProviders = () => {
                 <ApolloCoreProvider>
                   <SSEProvider>
                     <PreComputedChipGeneratorsProvider>
-                      <UserThemeProviderEffect />
                       <SnackBarProvider>
                         <ErrorMessageEffect />
                         <AgentChatProvider>

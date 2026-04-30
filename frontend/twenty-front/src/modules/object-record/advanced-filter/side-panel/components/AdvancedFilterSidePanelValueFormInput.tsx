@@ -58,6 +58,10 @@ export const AdvancedFilterSidePanelValueFormInput = ({
     (recordFilter) => recordFilter.id === recordFilterId,
   );
 
+  if (!isDefined(recordFilter)) {
+    return null;
+  }
+
   const isDisabled = !recordFilter?.fieldMetadataId || !recordFilter.operand;
 
   const operandHasNoInput =
@@ -97,10 +101,6 @@ export const AdvancedFilterSidePanelValueFormInput = ({
         objectMetadataItem: objectMetadataItem,
       })
     : null;
-
-  if (!isDefined(recordFilter)) {
-    return null;
-  }
 
   const isFilterableByTextValue = shouldShowFilterTextInput({
     recordFilter,
@@ -153,6 +153,10 @@ export const AdvancedFilterSidePanelValueFormInput = ({
         onClear={handleClear}
       />
     );
+  }
+
+  if (!isDefined(fieldDefinition)) {
+    return null;
   }
 
   if (isFilterableByMultiSelectValue) {

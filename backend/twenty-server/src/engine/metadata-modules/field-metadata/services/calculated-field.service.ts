@@ -1,7 +1,11 @@
 import { Injectable } from '@nestjs/common';
 
-import { Parser, type EvaluationContext } from 'expr-eval-fork';
-import { isDefined, isNonEmptyString } from 'twenty-shared/utils';
+import { Parser } from 'expr-eval-fork';
+import { isDefined } from 'twenty-shared/utils';
+
+type EvaluationContext = Record<string, unknown>;
+const isNonEmptyString = (value: unknown): value is string =>
+  typeof value === 'string' && value.length > 0;
 
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import {
@@ -69,7 +73,7 @@ export class CalculatedFieldService {
 
       return {
         expression,
-        value: parsed.evaluate(evaluationContext),
+        value: parsed.evaluate(evaluationContext as any),
         context: evaluationContext,
         dependencies: calculation?.dependencies ?? [],
       };

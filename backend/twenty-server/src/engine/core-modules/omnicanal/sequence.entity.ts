@@ -12,6 +12,9 @@ export enum StepType {
   WAIT = 'wait',
   TASK = 'task',
   SMS = 'sms',
+  WHATSAPP = 'whatsapp',
+  LINKEDIN = 'linkedin',
+  CALL = 'call',
 }
 
 @Entity('email_sequence')

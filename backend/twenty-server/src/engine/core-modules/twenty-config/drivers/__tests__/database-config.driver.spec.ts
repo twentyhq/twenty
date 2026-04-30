@@ -26,8 +26,9 @@ class TestDatabaseConfigDriver extends DatabaseConfigDriver {
   constructor(
     configCache: ConfigCacheService,
     configStorage: ConfigStorageService,
+    configVariableVersionService?: any,
   ) {
-    super(configCache, configStorage);
+    super(configCache, configStorage, configVariableVersionService);
 
     Object.defineProperty(this, 'allPossibleConfigKeys', {
       value: [CONFIG_PASSWORD_KEY, CONFIG_EMAIL_KEY, CONFIG_PORT_KEY],

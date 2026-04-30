@@ -70,7 +70,7 @@ export class MCPServerService {
     workspaceId: string,
     data: Partial<MCPServerEntity>,
   ): Promise<MCPServerEntity> {
-    await this.mcpRepo.update({ id, workspaceId }, data);
+    await this.mcpRepo.update({ id, workspaceId }, data as any);
     return this.findOne(id, workspaceId);
   }
 

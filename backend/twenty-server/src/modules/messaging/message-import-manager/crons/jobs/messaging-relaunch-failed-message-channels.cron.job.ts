@@ -53,7 +53,8 @@ export class MessagingRelaunchFailedMessageChannelsCronJob {
         const schemaName = getWorkspaceSchemaName(activeWorkspace.id);
 
         const failedMessageChannels = await this.coreDataSource.query(
-          `SELECT * FROM ${schemaName}."messageChannel" WHERE "syncStage" = '${MessageChannelSyncStage.FAILED}' AND "syncStatus" = '${MessageChannelSyncStatus.FAILED_UNKNOWN}'`,
+          `SELECT * FROM ${schemaName}."messageChannel" WHERE "syncStage" = $1 AND "syncStatus" = $2`,
+          [MessageChannelSyncStage.FAILED, MessageChannelSyncStatus.FAILED_UNKNOWN],
         );
 
         for (const messageChannel of failedMessageChannels) {

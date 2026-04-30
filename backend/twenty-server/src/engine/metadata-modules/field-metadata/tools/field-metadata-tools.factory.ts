@@ -422,8 +422,8 @@ export class FieldMetadataToolsFactory {
           'Preview a calculated field expression against a sample record and return the computed value.',
         inputSchema: z.object({
           fieldId: z.string().uuid(),
-          record: z.record(z.unknown()),
-          context: z.record(z.unknown()).optional(),
+          record: z.record(z.string(), z.unknown()),
+          context: z.record(z.string(), z.unknown()).optional(),
         }),
         execute: async (parameters: {
           fieldId: string;

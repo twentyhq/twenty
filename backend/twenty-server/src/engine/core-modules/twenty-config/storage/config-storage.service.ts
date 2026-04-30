@@ -137,12 +137,12 @@ export class ConfigStorageService implements ConfigStorageInterface {
       if (existingRecord) {
         await this.keyValuePairRepository.update(
           { id: existingRecord.id },
-          { value: dbValue },
+          { value: dbValue as any },
         );
       } else {
         await this.keyValuePairRepository.insert({
           key: key as string,
-          value: dbValue,
+          value: dbValue as any,
           userId: null,
           workspaceId: null,
           type: KeyValuePairType.CONFIG_VARIABLE,

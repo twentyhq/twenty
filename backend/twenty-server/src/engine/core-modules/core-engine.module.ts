@@ -67,6 +67,37 @@ import { ABMModule } from 'src/engine/core-modules/abm/abm.module';
 import { SalesExecutionModule } from 'src/engine/core-modules/sales-execution/sales-execution.module';
 import { CustomerSuccessModule } from 'src/engine/core-modules/customer-success/customer-success.module';
 import { CPQModule } from 'src/engine/core-modules/cpq/cpq.module';
+import { AccountsReceivableModule } from 'src/engine/core-modules/accounts-receivable/accounts-receivable.module';
+import { ITAssetModule } from 'src/engine/core-modules/it-asset-management/it-asset.module';
+import { TradeImportModule } from 'src/engine/core-modules/trade-import/trade-import.module';
+import { AccountingIntegrationModule } from 'src/engine/core-modules/accounting-integration/accounting-integration.module';
+import { FintechModule } from 'src/engine/core-modules/fintech/fintech.module';
+import { SupportTicketModule } from 'src/modules/support-ticket/support-ticket.module';
+import { KnowledgeBaseModule } from 'src/modules/knowledge-base/knowledge-base.module';
+import { InventoryModule } from 'src/modules/inventory/inventory.module';
+import { MarketingCampaignModule } from 'src/modules/marketing-campaign/marketing-campaign.module';
+import { GamificationModule } from 'src/modules/gamification/gamification.module';
+import { ProjectModule } from 'src/modules/project/project.module';
+import { HRMModule } from 'src/engine/core-modules/hrm/hrm.module';
+import { AsteriskModule } from 'src/engine/core-modules/asterisk/asterisk.module';
+import { PRMModule } from 'src/engine/core-modules/prm/prm.module';
+import { ECommerceModule } from 'src/engine/core-modules/ecommerce/ecommerce.module';
+import { SaaSPlatformModule } from 'src/engine/core-modules/saas-platform/saas-platform.module';
+import { ContractLifecycleModule } from 'src/engine/core-modules/contract-lifecycle/contract-lifecycle.module';
+import { FieldServiceModule } from 'src/engine/core-modules/field-service/field-service.module';
+import { ProcurementModule } from 'src/engine/core-modules/procurement/procurement.module';
+import { EventManagementModule } from 'src/engine/core-modules/event-management/event-management.module';
+import { LMSModule } from 'src/engine/core-modules/lms/lms.module';
+import { FleetModule } from 'src/engine/core-modules/fleet/fleet.module';
+import { HyperPersonalizationModule } from 'src/engine/core-modules/hyper-personalization/hyper-personalization.module';
+import { PLGIntelligenceModule } from 'src/engine/core-modules/plg-intelligence/plg-intelligence.module';
+import { BankingLatamModule } from 'src/engine/core-modules/banking-latam/banking-latam.module';
+import { AIGovernanceModule } from 'src/engine/core-modules/ai-governance/ai-governance.module';
+import { IncidentManagementModule } from 'src/engine/core-modules/incident-management/incident-management.module';
+import { RevenueWaterfallModule } from 'src/engine/core-modules/revenue-waterfall/revenue-waterfall.module';
+import { SalesCoachingModule } from 'src/engine/core-modules/sales-coaching/sales-coaching.module';
+import { TenantWizardModule } from 'src/engine/core-modules/tenant-wizard/tenant-wizard.module';
+import { MobileNativeModule } from 'src/engine/core-modules/mobile-native/mobile-native.module';
 import { TwentyConfigModule } from 'src/engine/core-modules/twenty-config/twenty-config.module';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UsageModule } from 'src/engine/core-modules/usage/usage.module';
@@ -183,6 +214,37 @@ import { FileModule } from './file/file.module';
     SalesExecutionModule,
     CustomerSuccessModule,
     CPQModule,
+    AccountsReceivableModule,
+    ITAssetModule,
+    TradeImportModule,
+    AccountingIntegrationModule,
+    FintechModule,
+    SupportTicketModule,
+    KnowledgeBaseModule,
+    InventoryModule,
+    MarketingCampaignModule,
+    GamificationModule,
+    ProjectModule,
+    HRMModule,
+    ContractLifecycleModule,
+    FieldServiceModule,
+    ProcurementModule,
+    EventManagementModule,
+    LMSModule,
+    FleetModule,
+    AsteriskModule,
+    PRMModule,
+    ECommerceModule,
+    SaaSPlatformModule,
+    HyperPersonalizationModule,
+    PLGIntelligenceModule,
+    BankingLatamModule,
+    AIGovernanceModule,
+    IncidentManagementModule,
+    RevenueWaterfallModule,
+    SalesCoachingModule,
+    TenantWizardModule,
+    MobileNativeModule,
   ],
   exports: [
     AuditModule,

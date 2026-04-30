@@ -1,6 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+
+import { AIGovernanceService } from '../../ai-governance/ai-governance.service';
 
 import {
   DealQualification,
@@ -11,11 +13,14 @@ import {
 
 @Injectable()
 export class DealQualificationAgentService {
+  private readonly logger = new Logger(DealQualificationAgentService.name);
+
   constructor(
     @InjectRepository(DealQualificationAgent, 'core')
     private readonly agentRepo: Repository<DealQualificationAgent>,
     @InjectRepository(DealQualification, 'core')
     private readonly qualificationRepo: Repository<DealQualification>,
+    private readonly aiGovernance: AIGovernanceService,
   ) {}
 
   async findAll(workspaceId: string): Promise<DealQualificationAgent[]> {
@@ -90,8 +95,30 @@ export class DealQualificationAgentService {
       customSignals?: Record<string, unknown>;
     },
     framework: QualificationFramework = QualificationFramework.BANT,
+    userId?: string,
   ): Promise<DealQualification> {
-    const scoring = this.scoreDeal(deal, framework);
+    let scoring: {
+      overallScore: number;
+      qualificationLevel: string;
+      criteriaScores: Record<string, unknown>;
+      gapsIdentified: string[];
+      suggestedQuestions: string[];
+      recommendation: string;
+    };
+
+    // Try LLM-powered qualification first
+    if (userId) {
+      try {
+        scoring = await this.qualifyDealWithLLM(workspaceId, userId, deal, framework);
+      } catch (error) {
+        this.logger.warn(
+          `LLM deal qualification failed, falling back to heuristic: ${error instanceof Error ? error.message : 'unknown'}`,
+        );
+        scoring = this.scoreDeal(deal, framework);
+      }
+    } else {
+      scoring = this.scoreDeal(deal, framework);
+    }
 
     const qualification = this.qualificationRepo.create({
       workspaceId,
@@ -105,6 +132,78 @@ export class DealQualificationAgentService {
     });
 
     return this.qualificationRepo.save(qualification);
+  }
+
+  private async qualifyDealWithLLM(
+    workspaceId: string,
+    userId: string,
+    deal: {
+      id: string;
+      name: string;
+      amount?: number;
+      companyName?: string;
+      stage?: string;
+      closeDate?: Date | null;
+      stakeholderCount?: number;
+      lastActivityAt?: Date | null;
+      competitorMentions?: string[];
+      budgetConfirmed?: boolean;
+      authorityConfirmed?: boolean;
+      needConfirmed?: boolean;
+      timelineConfirmed?: boolean;
+      customSignals?: Record<string, unknown>;
+    },
+    framework: QualificationFramework,
+  ): Promise<{
+    overallScore: number;
+    qualificationLevel: string;
+    criteriaScores: Record<string, unknown>;
+    gapsIdentified: string[];
+    suggestedQuestions: string[];
+    recommendation: string;
+  }> {
+    const dealContext = [
+      `Deal: ${deal.name}`,
+      deal.amount !== undefined ? `Amount: $${deal.amount.toLocaleString()}` : null,
+      deal.companyName ? `Company: ${deal.companyName}` : null,
+      deal.stage ? `Stage: ${deal.stage}` : null,
+      deal.closeDate ? `Close date: ${deal.closeDate.toISOString().split('T')[0]}` : null,
+      deal.stakeholderCount !== undefined ? `Stakeholders: ${deal.stakeholderCount}` : null,
+      deal.lastActivityAt ? `Last activity: ${deal.lastActivityAt.toISOString().split('T')[0]}` : null,
+      deal.competitorMentions?.length ? `Competitors: ${deal.competitorMentions.join(', ')}` : null,
+      `Budget confirmed: ${deal.budgetConfirmed ? 'Yes' : 'No'}`,
+      `Authority confirmed: ${deal.authorityConfirmed ? 'Yes' : 'No'}`,
+      `Need confirmed: ${deal.needConfirmed ? 'Yes' : 'No'}`,
+      `Timeline confirmed: ${deal.timelineConfirmed ? 'Yes' : 'No'}`,
+    ]
+      .filter(Boolean)
+      .join('\n');
+
+    const response = await this.aiGovernance.callLLM(workspaceId, userId, {
+      feature: 'deal-qualification',
+      messages: [
+        {
+          role: 'system',
+          content: `You are a deal qualification expert using the ${framework} framework. Score the deal and provide actionable insights. Return a JSON object with: overallScore (0-100), qualificationLevel (qualified/working/weak/disqualified), criteriaScores (object with framework-specific scores), gapsIdentified (array of gap strings), suggestedQuestions (array of discovery questions to ask), recommendation (one-sentence recommendation).`,
+        },
+        {
+          role: 'user',
+          content: `Qualify this deal using ${framework}:\n\n${dealContext}`,
+        },
+      ],
+      temperature: 0.4,
+      maxTokens: 1024,
+      jsonMode: true,
+    });
+
+    return JSON.parse(response.content) as {
+      overallScore: number;
+      qualificationLevel: string;
+      criteriaScores: Record<string, unknown>;
+      gapsIdentified: string[];
+      suggestedQuestions: string[];
+      recommendation: string;
+    };
   }
 
   async getQualificationHistory(workspaceId: string, dealId: string): Promise<DealQualification[]> {

@@ -347,7 +347,7 @@ class TwilioDriver implements IntegrationDriver {
     const credentials = Buffer.from(`${this.config.apiKey}:${this.config.apiSecret}`).toString('base64');
     const formData = new URLSearchParams();
     formData.append('To', recipient);
-    formData.append('From', this.config.settings?.phoneNumber);
+    formData.append('From', this.config.settings?.phoneNumber as string ?? '');
     formData.append('Body', message);
 
     const response = await fetch(

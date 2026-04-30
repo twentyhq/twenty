@@ -7,6 +7,7 @@ import {
   QuoteLineItemEntity,
 } from './price-book.entity';
 import { CPQService } from './price-book.service';
+import { CPQResolver } from './cpq.resolver';
 
 @Module({
   imports: [
@@ -17,7 +18,7 @@ import { CPQService } from './price-book.service';
       QuoteLineItemEntity,
     ]),
   ],
-  providers: [CPQService],
+  providers: [CPQService, CPQResolver],
   exports: [CPQService],
 })
 export class CPQModule {}

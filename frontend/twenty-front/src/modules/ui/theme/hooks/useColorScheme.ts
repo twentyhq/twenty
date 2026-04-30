@@ -1,58 +1,22 @@
-import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
-import { useCallback } from 'react';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
-import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
+import { useSystemColorScheme } from '@/ui/theme/hooks/useSystemColorScheme';
 import { persistedColorSchemeState } from '@/ui/theme/states/persistedColorSchemeState';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { type ColorScheme } from '@/workspace-member/types/WorkspaceMember';
 import {
   type IconComponent,
+  IconDeviceDesktop,
   IconMoon,
   IconSun,
-  IconSunMoon,
 } from 'twenty-ui/display';
 
 export const useColorScheme = () => {
-  const [currentWorkspaceMember, setCurrentWorkspaceMember] = useAtomState(
-    currentWorkspaceMemberState,
+  const [colorScheme, setColorSchemeState] = useAtomState(
+    persistedColorSchemeState,
   );
+  const systemColorScheme = useSystemColorScheme();
 
-  const { updateOneRecord } = useUpdateOneRecord();
-  const setPersistedColorScheme = useSetAtomState(persistedColorSchemeState);
-
-  const colorScheme = currentWorkspaceMember?.colorScheme ?? 'System';
-
-  const setColorScheme = useCallback(
-    async (value: ColorScheme) => {
-      if (!currentWorkspaceMember) {
-        return;
-      }
-      setPersistedColorScheme(value);
-      setCurrentWorkspaceMember((current) => {
-        if (!current) {
-          return current;
-        }
-        return {
-          ...current,
-          colorScheme: value,
-        };
-      });
-      await updateOneRecord({
-        objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
-        idToUpdate: currentWorkspaceMember?.id,
-        updateOneRecordInput: {
-          colorScheme: value,
-        },
-      });
-    },
-    [
-      currentWorkspaceMember,
-      setCurrentWorkspaceMember,
-      setPersistedColorScheme,
-      updateOneRecord,
-    ],
-  );
+  const effectiveColorScheme =
+    colorScheme === 'System' ? systemColorScheme : colorScheme;
 
   const colorSchemeList: Array<{
     id: ColorScheme;
@@ -60,20 +24,25 @@ export const useColorScheme = () => {
   }> = [
     {
       id: 'System',
-      icon: IconSunMoon,
-    },
-    {
-      id: 'Dark',
-      icon: IconMoon,
+      icon: IconDeviceDesktop,
     },
     {
       id: 'Light',
       icon: IconSun,
     },
+    {
+      id: 'Dark',
+      icon: IconMoon,
+    },
   ];
+
+  const setColorScheme = async (value: ColorScheme) => {
+    setColorSchemeState(value);
+  };
 
   return {
     colorScheme,
+    effectiveColorScheme,
     setColorScheme,
     colorSchemeList,
   };

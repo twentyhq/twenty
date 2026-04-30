@@ -7,6 +7,13 @@ import { EmailSequenceEntity, SequenceStepEntity } from './sequence.entity';
 import { SequenceEnrollmentEntity } from './sequence-enrollment.entity';
 import { EmailSequenceService } from './sequence.service';
 import { SequenceExecutorService } from './sequence-executor.service';
+import {
+  UnifiedConversationEntity, UnifiedMessageEntity, WhatsAppTemplateEntity,
+  ChatWidgetEntity, LinkedInSyncEntity, MeetingSchedulerEntity,
+  SocialMonitorEntity, SocialSignalEntity,
+} from './unified-inbox.entity';
+import { UnifiedInboxService } from './unified-inbox.service';
+import { OmnicanalResolver } from './omnicanal.resolver';
 
 @Module({
   imports: [
@@ -18,9 +25,17 @@ import { SequenceExecutorService } from './sequence-executor.service';
       EmailSequenceEntity,
       SequenceStepEntity,
       SequenceEnrollmentEntity,
+      UnifiedConversationEntity,
+      UnifiedMessageEntity,
+      WhatsAppTemplateEntity,
+      ChatWidgetEntity,
+      LinkedInSyncEntity,
+      MeetingSchedulerEntity,
+      SocialMonitorEntity,
+      SocialSignalEntity,
     ]),
   ],
-  providers: [WhatsAppService, EmailSequenceService, SequenceExecutorService],
-  exports: [WhatsAppService, EmailSequenceService, SequenceExecutorService],
+  providers: [WhatsAppService, EmailSequenceService, SequenceExecutorService, UnifiedInboxService, OmnicanalResolver],
+  exports: [WhatsAppService, EmailSequenceService, SequenceExecutorService, UnifiedInboxService],
 })
 export class OmnicanalModule {}

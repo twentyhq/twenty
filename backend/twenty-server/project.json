@@ -13,7 +13,7 @@
         "commands": [
           "rimraf dist",
           "nest build --path ./tsconfig.build.json",
-          "mkdir -p dist/assets/twenty-client-sdk && cp ../twenty-client-sdk/package.json dist/assets/twenty-client-sdk/ && cp -r ../twenty-client-sdk/dist dist/assets/twenty-client-sdk/dist"
+          "node -e \"const fs=require('fs'); fs.mkdirSync('dist/assets/twenty-client-sdk',{recursive:true}); fs.copyFileSync('../twenty-client-sdk/package.json','dist/assets/twenty-client-sdk/package.json'); fs.cpSync('../twenty-client-sdk/dist','dist/assets/twenty-client-sdk/dist',{recursive:true});\""
         ]
       },
       "dependsOn": ["^build"]

@@ -26,7 +26,8 @@
     "types": ["jest", "node"],
     "paths": {
       "src/*": ["./src/*"],
-      "test/*": ["./test/*"]
+      "test/*": ["./test/*"],
+      "@file-type/pdf": ["../../node_modules/@file-type/pdf/lib/index.d.ts"]
     }
   },
   "ts-node": {

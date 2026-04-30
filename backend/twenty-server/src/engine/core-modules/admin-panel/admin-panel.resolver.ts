@@ -84,10 +84,10 @@ export class AdminPanelResolver {
     private readonly aiModelRegistryService: AiModelRegistryService,
     private readonly modelsDevCatalogService: ModelsDevCatalogService,
     private readonly usageAnalyticsService: UsageAnalyticsService,
-    @Optional()
-    private readonly configVariableVersionService?: ConfigVariableVersionService,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
+    @Optional()
+    private readonly configVariableVersionService?: ConfigVariableVersionService,
   ) {}
 
   @UseGuards(ServerLevelImpersonateGuard)

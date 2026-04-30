@@ -64,13 +64,15 @@ export class MessagingMessagesImportCronJob {
 
         const [messageChannels] = isMigrated
           ? await this.coreDataSource.query(
-              `UPDATE core."messageChannel" SET "syncStage" = '${MessageChannelSyncStage.MESSAGES_IMPORT_SCHEDULED}', "syncStageStartedAt" = COALESCE("syncStageStartedAt", '${now}')
-               WHERE "workspaceId" = '${activeWorkspace.id}' AND "isSyncEnabled" = true AND "syncStage" = '${MessageChannelSyncStage.MESSAGES_IMPORT_PENDING}' RETURNING *`,
-            )
+              `UPDATE core."messageChannel" SET "syncStage" = $1, "syncStageStartedAt" = COALESCE("syncStageStartedAt", $2)
+               WHERE "workspaceId" = $3 AND "isSyncEnabled" = true AND "syncStage" = $4 RETURNING *`,
+            [MessageChannelSyncStage.MESSAGES_IMPORT_SCHEDULED, now, activeWorkspace.id, MessageChannelSyncStage.MESSAGES_IMPORT_PENDING],
+          )
           : await this.coreDataSource.query(
-              `UPDATE ${getWorkspaceSchemaName(activeWorkspace.id)}."messageChannel" SET "syncStage" = '${MessageChannelSyncStage.MESSAGES_IMPORT_SCHEDULED}', "syncStageStartedAt" = COALESCE("syncStageStartedAt", '${now}')
-               WHERE "isSyncEnabled" = true AND "syncStage" = '${MessageChannelSyncStage.MESSAGES_IMPORT_PENDING}' RETURNING *`,
-            );
+              `UPDATE ${getWorkspaceSchemaName(activeWorkspace.id)}."messageChannel" SET "syncStage" = $1, "syncStageStartedAt" = COALESCE("syncStageStartedAt", $2)
+               WHERE "isSyncEnabled" = true AND "syncStage" = $3 RETURNING *`,
+            [MessageChannelSyncStage.MESSAGES_IMPORT_SCHEDULED, now, MessageChannelSyncStage.MESSAGES_IMPORT_PENDING],
+          );
 
         for (const messageChannel of messageChannels) {
           await this.messageQueueService.add<MessagingMessagesImportJobData>(

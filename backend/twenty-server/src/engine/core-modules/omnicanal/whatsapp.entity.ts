@@ -26,7 +26,7 @@ export class WhatsAppConfigEntity {
   phoneNumberId: string;
 
   @Column({ type: 'text', nullable: true })
-  accessToken: string;
+  accessToken: string | null;
 
   @Column({ type: 'boolean', default: false })
   businessAccountVerified: boolean;

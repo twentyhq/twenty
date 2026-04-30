@@ -1,6 +1,8 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { AIGovernanceModule } from '../ai-governance/ai-governance.module';
+
 import { PredictiveLeadScoringEntity, LeadScorePredictionEntity } from './predictive-lead-scoring.entity';
 import { PredictiveLeadScoringService } from './predictive-lead-scoring.service';
 
@@ -27,9 +29,11 @@ import { AutoEnrichmentService } from './auto-enrichment.service';
 
 import { ICPFitEntity, ICPCriteriaEntity } from './icp-fit.entity';
 import { ICPFitService } from './icp-fit.service';
+import { AiMLResolver } from './ai-ml.resolver';
 
 @Module({
   imports: [
+    AIGovernanceModule,
     TypeOrmModule.forFeature([
       PredictiveLeadScoringEntity,
       LeadScorePredictionEntity,
@@ -61,6 +65,7 @@ import { ICPFitService } from './icp-fit.service';
     MeetingBriefingService,
     AutoEnrichmentService,
     ICPFitService,
+    AiMLResolver,
   ],
   exports: [
     PredictiveLeadScoringService,

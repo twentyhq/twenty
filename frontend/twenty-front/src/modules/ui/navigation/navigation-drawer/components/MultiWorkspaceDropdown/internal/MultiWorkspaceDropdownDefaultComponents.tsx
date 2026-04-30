@@ -20,14 +20,11 @@ import { multiWorkspaceDropdownState } from '@/ui/navigation/navigation-drawer/s
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { navigationDrawerExpandedMemorizedState } from '@/ui/navigation/states/navigationDrawerExpandedMemorizedState';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
-import { useColorScheme } from '@/ui/theme/hooks/useColorScheme';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
-import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useLocation } from 'react-router-dom';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
@@ -55,11 +52,6 @@ import {
 } from '~/generated-metadata/graphql';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 
-const StyledDescription = styled.div`
-  color: ${themeCssVariables.font.color.light};
-  padding-left: ${themeCssVariables.spacing[1]};
-`;
-
 export const MultiWorkspaceDropdownDefaultComponents = () => {
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const { t } = useLingui();
@@ -71,7 +63,6 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
   const { closeDropdown } = useCloseDropdown();
   const { signOut } = useAuth();
   const { enqueueErrorSnackBar } = useSnackBar();
-  const { colorScheme, colorSchemeList } = useColorScheme();
   const supportChat = useAtomStateValue(supportChatState);
   const isSupportChatConfigured =
     supportChat?.supportDriver === 'FRONT' &&
@@ -217,17 +208,6 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
         </>
       )}
       <DropdownMenuItemsContainer>
-        <MenuItem
-          LeftIcon={colorSchemeList.find(({ id }) => id === colorScheme)?.icon}
-          text={
-            <>
-              {t`Theme `}
-              <StyledDescription>{` · ${colorScheme}`}</StyledDescription>
-            </>
-          }
-          hasSubMenu={true}
-          onClick={() => setMultiWorkspaceDropdown('themes')}
-        />
         <UndecoratedLink
           to={getSettingsPath(SettingsPath.WorkspaceMembersPage)}
           onClick={() => {
