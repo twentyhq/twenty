@@ -89,6 +89,15 @@ import { ProcurementModule } from 'src/engine/core-modules/procurement/procureme
 import { EventManagementModule } from 'src/engine/core-modules/event-management/event-management.module';
 import { LMSModule } from 'src/engine/core-modules/lms/lms.module';
 import { FleetModule } from 'src/engine/core-modules/fleet/fleet.module';
+import { HyperPersonalizationModule } from 'src/engine/core-modules/hyper-personalization/hyper-personalization.module';
+import { PLGIntelligenceModule } from 'src/engine/core-modules/plg-intelligence/plg-intelligence.module';
+import { BankingLatamModule } from 'src/engine/core-modules/banking-latam/banking-latam.module';
+import { AIGovernanceModule } from 'src/engine/core-modules/ai-governance/ai-governance.module';
+import { IncidentManagementModule } from 'src/engine/core-modules/incident-management/incident-management.module';
+import { RevenueWaterfallModule } from 'src/engine/core-modules/revenue-waterfall/revenue-waterfall.module';
+import { SalesCoachingModule } from 'src/engine/core-modules/sales-coaching/sales-coaching.module';
+import { TenantWizardModule } from 'src/engine/core-modules/tenant-wizard/tenant-wizard.module';
+import { MobileNativeModule } from 'src/engine/core-modules/mobile-native/mobile-native.module';
 import { TwentyConfigModule } from 'src/engine/core-modules/twenty-config/twenty-config.module';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UsageModule } from 'src/engine/core-modules/usage/usage.module';
@@ -227,6 +236,15 @@ import { FileModule } from './file/file.module';
     PRMModule,
     ECommerceModule,
     SaaSPlatformModule,
+    HyperPersonalizationModule,
+    PLGIntelligenceModule,
+    BankingLatamModule,
+    AIGovernanceModule,
+    IncidentManagementModule,
+    RevenueWaterfallModule,
+    SalesCoachingModule,
+    TenantWizardModule,
+    MobileNativeModule,
   ],
   exports: [
     AuditModule,

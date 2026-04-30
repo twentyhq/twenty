@@ -114,6 +114,162 @@ export class InventoryService {
     return { onTimeRate: Math.round(onTimeRate), qualityRating: supplier.qualityRating };
   }
 
+  // Cycle count: verify physical stock against system records and auto-adjust
+  async performCycleCount(
+    workspaceId: string,
+    warehouseId: string,
+    counts: Array<{ productId: string; physicalCount: number }>,
+  ): Promise<Array<{ productId: string; systemCount: number; physicalCount: number; variance: number; adjusted: boolean }>> {
+    const results: Array<{ productId: string; systemCount: number; physicalCount: number; variance: number; adjusted: boolean }> = [];
+
+    for (const count of counts) {
+      const stock = await this.stockRepo.findOne({
+        where: { workspaceId, productId: count.productId, warehouseId },
+      });
+
+      const systemCount = stock?.quantityOnHand ?? 0;
+      const variance = count.physicalCount - systemCount;
+
+      if (variance !== 0 && stock) {
+        stock.quantityOnHand = count.physicalCount;
+        stock.quantityAvailable = count.physicalCount - stock.quantityReserved;
+
+        await this.stockRepo.save(stock);
+        await this.recordMovement(
+          workspaceId,
+          count.productId,
+          StockMovementType.ADJUSTMENT,
+          Math.abs(variance),
+          {
+            toWarehouseId: warehouseId,
+            reason: `Cycle count adjustment: system=${systemCount}, physical=${count.physicalCount}, variance=${variance}`,
+          },
+        );
+      }
+
+      results.push({
+        productId: count.productId,
+        systemCount,
+        physicalCount: count.physicalCount,
+        variance,
+        adjusted: variance !== 0,
+      });
+    }
+
+    return results;
+  }
+
+  // Check all products against reorder points and return items needing purchase
+  async checkReorderTriggers(
+    workspaceId: string,
+  ): Promise<Array<{
+    productId: string;
+    warehouseId: string;
+    quantityAvailable: number;
+    reorderPoint: number;
+    suggestedOrderQuantity: number;
+    preferredSupplierId: string | null;
+  }>> {
+    const lowStockItems = await this.getLowStockAlerts(workspaceId);
+
+    const reorderList = await Promise.all(
+      lowStockItems.map(async (stock) => {
+        // Order enough to reach 2x the reorder point (economic order heuristic)
+        const suggestedOrderQuantity = Math.max(
+          stock.reorderPoint * 2 - stock.quantityAvailable,
+          stock.reorderPoint,
+        );
+
+        // Find the best supplier based on quality rating and delivery speed
+        const bestSupplier = await this.supplierRepo
+          .createQueryBuilder('s')
+          .where('s.workspaceId = :workspaceId', { workspaceId })
+          .orderBy('s.qualityRating', 'DESC')
+          .addOrderBy('s.avgLeadTimeDays', 'ASC')
+          .getOne();
+
+        return {
+          productId: stock.productId,
+          warehouseId: stock.warehouseId,
+          quantityAvailable: stock.quantityAvailable,
+          reorderPoint: stock.reorderPoint,
+          suggestedOrderQuantity,
+          preferredSupplierId: bestSupplier?.id ?? null,
+        };
+      }),
+    );
+
+    return reorderList;
+  }
+
+  // Returns analytics: breakdown of returns by reason, rate, and value impact
+  async getReturnsAnalytics(
+    workspaceId: string,
+    dateFrom?: Date,
+    dateTo?: Date,
+  ): Promise<{
+    totalReturns: number;
+    totalReturnedQuantity: number;
+    returnRate: number;
+    returnsByReason: Array<{ reason: string; count: number; quantity: number }>;
+    returnValueImpact: number;
+  }> {
+    const queryBuilder = this.movementRepo
+      .createQueryBuilder('m')
+      .where('m.workspaceId = :workspaceId', { workspaceId })
+      .andWhere('m.type = :type', { type: StockMovementType.RETURN });
+
+    if (dateFrom) {
+      queryBuilder.andWhere('m.createdAt >= :dateFrom', { dateFrom });
+    }
+    if (dateTo) {
+      queryBuilder.andWhere('m.createdAt <= :dateTo', { dateTo });
+    }
+
+    const returnMovements = await queryBuilder.getMany();
+
+    const totalOutbound = await this.movementRepo.count({
+      where: { workspaceId, type: StockMovementType.OUTBOUND },
+    });
+
+    const totalReturns = returnMovements.length;
+    const totalReturnedQuantity = returnMovements.reduce(
+      (sum, movement) => sum + movement.quantity,
+      0,
+    );
+
+    const returnRate = totalOutbound > 0
+      ? (totalReturns / totalOutbound) * 100
+      : 0;
+
+    // Group by reason
+    const reasonMap = new Map<string, { count: number; quantity: number }>();
+    for (const movement of returnMovements) {
+      const reason = movement.reason || 'Unspecified';
+      const existing = reasonMap.get(reason) || { count: 0, quantity: 0 };
+      existing.count += 1;
+      existing.quantity += movement.quantity;
+      reasonMap.set(reason, existing);
+    }
+
+    const returnsByReason = Array.from(reasonMap.entries())
+      .map(([reason, data]) => ({ reason, count: data.count, quantity: data.quantity }))
+      .sort((a, b) => b.quantity - a.quantity);
+
+    const returnValueImpact = returnMovements.reduce(
+      (sum, movement) => sum + movement.quantity * Number(movement.unitCost || 0),
+      0,
+    );
+
+    return {
+      totalReturns,
+      totalReturnedQuantity,
+      returnRate: Math.round(returnRate * 100) / 100,
+      returnsByReason,
+      returnValueImpact,
+    };
+  }
+
   private async recordMovement(
     workspaceId: string,
     productId: string,

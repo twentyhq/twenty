@@ -336,6 +336,46 @@ const SettingsEnterpriseModules = lazy(() =>
   })),
 );
 
+const SettingsModuleDetail = lazy(() =>
+  import(
+    '~/pages/settings/modules/components/SettingsModuleDetail'
+  ).then((module) => ({
+    default: module.SettingsModuleDetail,
+  })),
+);
+
+const SettingsModuleVoIP = lazy(() =>
+  import(
+    '~/pages/settings/modules/components/SettingsModuleVoIP'
+  ).then((module) => ({
+    default: module.SettingsModuleVoIP,
+  })),
+);
+
+const SettingsModuleInventory = lazy(() =>
+  import(
+    '~/pages/settings/modules/components/SettingsModuleInventory'
+  ).then((module) => ({
+    default: module.SettingsModuleInventory,
+  })),
+);
+
+const SettingsModuleHelpdesk = lazy(() =>
+  import(
+    '~/pages/settings/modules/components/SettingsModuleHelpdesk'
+  ).then((module) => ({
+    default: module.SettingsModuleHelpdesk,
+  })),
+);
+
+const SettingsModuleBilling = lazy(() =>
+  import(
+    '~/pages/settings/modules/components/SettingsModuleBilling'
+  ).then((module) => ({
+    default: module.SettingsModuleBilling,
+  })),
+);
+
 const SettingsSecuritySSOIdentifyProvider = lazy(() =>
   import('~/pages/settings/security/SettingsSecuritySSOIdentifyProvider').then(
     (module) => ({
@@ -797,8 +837,24 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
         element={<SettingsEnterpriseModules />}
       />
       <Route
+        path={SettingsPath.EnterpriseVoIP}
+        element={<SettingsModuleVoIP />}
+      />
+      <Route
+        path={SettingsPath.EnterpriseInventory}
+        element={<SettingsModuleInventory />}
+      />
+      <Route
+        path={SettingsPath.EnterpriseBilling}
+        element={<SettingsModuleBilling />}
+      />
+      <Route
+        path="modules/support_ticket"
+        element={<SettingsModuleHelpdesk />}
+      />
+      <Route
         path={SettingsPath.EnterpriseModuleDetail}
-        element={<SettingsEnterpriseModules />}
+        element={<SettingsModuleDetail />}
       />
     </Routes>
   </Suspense>

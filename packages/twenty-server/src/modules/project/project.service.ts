@@ -115,6 +115,225 @@ export class ProjectService {
     return this.templateRepo.save(this.templateRepo.create({ workspaceId, ...data }));
   }
 
+  // Create a template from an existing project, capturing its task structure
+  async createTemplateFromProject(
+    workspaceId: string,
+    projectId: string,
+    templateName: string,
+  ): Promise<ProjectTemplateEntity> {
+    const project = await this.findProjectOrFail(projectId);
+    const tasks = await this.taskRepo.find({
+      where: { projectId },
+      order: { sortOrder: 'ASC' },
+    });
+
+    // Group tasks by phase to build the template structure
+    const phaseMap = new Map<string, Array<{ name: string; estimatedHours: number; isMilestone: boolean }>>();
+
+    for (const task of tasks) {
+      const phaseName = task.phase || 'Default';
+      const existing = phaseMap.get(phaseName) || [];
+      existing.push({
+        name: task.name,
+        estimatedHours: task.estimatedHours,
+        isMilestone: task.isMilestone,
+      });
+      phaseMap.set(phaseName, existing);
+    }
+
+    const phases = Array.from(phaseMap.entries()).map(([name, phaseTasks]) => ({
+      name,
+      tasks: phaseTasks,
+    }));
+
+    return this.templateRepo.save(
+      this.templateRepo.create({
+        workspaceId,
+        name: templateName,
+        methodology: project.methodology ?? undefined,
+        phases,
+      }),
+    );
+  }
+
+  // Check all active projects for budget deviation and return alerts
+  async getBudgetDeviationAlerts(
+    workspaceId: string,
+    thresholdPercent = 80,
+  ): Promise<Array<{
+    projectId: string;
+    projectName: string;
+    budget: number;
+    actualCost: number;
+    usedPercent: number;
+    progressPercent: number;
+    severity: 'warning' | 'critical' | 'over-budget';
+    deviationMessage: string;
+  }>> {
+    const projects = await this.projectRepo.find({
+      where: { workspaceId, status: ProjectStatus.ACTIVE },
+    });
+
+    const alerts: Array<{
+      projectId: string;
+      projectName: string;
+      budget: number;
+      actualCost: number;
+      usedPercent: number;
+      progressPercent: number;
+      severity: 'warning' | 'critical' | 'over-budget';
+      deviationMessage: string;
+    }> = [];
+
+    for (const project of projects) {
+      const budget = Number(project.budget);
+      if (budget <= 0) continue;
+
+      const actualCost = Number(project.actualCost);
+      const usedPercent = (actualCost / budget) * 100;
+      const progressPercent = project.progressPercent ?? 0;
+
+      if (usedPercent < thresholdPercent) continue;
+
+      let severity: 'warning' | 'critical' | 'over-budget';
+      let deviationMessage: string;
+
+      if (usedPercent > 100) {
+        severity = 'over-budget';
+        deviationMessage = `Over budget by ${Math.round(usedPercent - 100)}%. Cost: $${actualCost.toFixed(2)} vs Budget: $${budget.toFixed(2)}`;
+      } else if (usedPercent > progressPercent + 20) {
+        // Spending ahead of progress -- cost is outpacing delivery
+        severity = 'critical';
+        deviationMessage = `Budget burn rate exceeds progress. ${Math.round(usedPercent)}% spent but only ${Math.round(progressPercent)}% complete`;
+      } else {
+        severity = 'warning';
+        deviationMessage = `Approaching budget threshold: ${Math.round(usedPercent)}% of budget consumed`;
+      }
+
+      alerts.push({
+        projectId: project.id,
+        projectName: project.name,
+        budget,
+        actualCost,
+        usedPercent: Math.round(usedPercent * 100) / 100,
+        progressPercent,
+        severity,
+        deviationMessage,
+      });
+    }
+
+    // Sort by severity (over-budget first, then critical, then warning)
+    const severityOrder = { 'over-budget': 0, critical: 1, warning: 2 };
+    alerts.sort((a, b) => severityOrder[a.severity] - severityOrder[b.severity]);
+
+    return alerts;
+  }
+
+  // Forecast resource demand across all active projects for upcoming weeks
+  async getResourceForecast(
+    workspaceId: string,
+    weeksAhead = 4,
+  ): Promise<Array<{
+    userId: string;
+    currentHoursPerWeek: number;
+    forecastedHoursPerWeek: number;
+    projectCount: number;
+    utilizationPercent: number;
+    isOverallocated: boolean;
+    projects: Array<{ projectId: string; projectName: string; estimatedHoursRemaining: number }>;
+  }>> {
+    const activeProjects = await this.projectRepo.find({
+      where: { workspaceId, status: ProjectStatus.ACTIVE },
+    });
+
+    // Gather time entries from the last 4 weeks for baseline
+    const fourWeeksAgo = new Date();
+    fourWeeksAgo.setDate(fourWeeksAgo.getDate() - 28);
+
+    const recentEntries = await this.timeRepo
+      .createQueryBuilder('t')
+      .innerJoin(ProjectEntity, 'p', 'p.id = t.projectId')
+      .where('p.workspaceId = :workspaceId', { workspaceId })
+      .andWhere('t.date >= :fourWeeksAgo', { fourWeeksAgo })
+      .getMany();
+
+    // Calculate current weekly rate per user
+    const userWeeklyHours = new Map<string, number>();
+    for (const entry of recentEntries) {
+      const current = userWeeklyHours.get(entry.userId) || 0;
+      userWeeklyHours.set(entry.userId, current + Number(entry.hours));
+    }
+
+    // Get remaining work per user from open tasks
+    const userProjectMap = new Map<
+      string,
+      Array<{ projectId: string; projectName: string; estimatedHoursRemaining: number }>
+    >();
+
+    for (const project of activeProjects) {
+      const openTasks = await this.taskRepo.find({
+        where: { projectId: project.id },
+      });
+
+      for (const task of openTasks) {
+        if (task.status === 'done' || !task.assigneeId) continue;
+
+        const remaining = Math.max(
+          task.estimatedHours - Number(task.loggedHours),
+          0,
+        );
+
+        if (remaining <= 0) continue;
+
+        const existing = userProjectMap.get(task.assigneeId) || [];
+        const projectEntry = existing.find((p) => p.projectId === project.id);
+        if (projectEntry) {
+          projectEntry.estimatedHoursRemaining += remaining;
+        } else {
+          existing.push({
+            projectId: project.id,
+            projectName: project.name,
+            estimatedHoursRemaining: remaining,
+          });
+        }
+        userProjectMap.set(task.assigneeId, existing);
+      }
+    }
+
+    const standardHoursPerWeek = 40;
+
+    const forecast = Array.from(userProjectMap.entries()).map(([userId, projects]) => {
+      const totalWeeklyHoursLogged = userWeeklyHours.get(userId) || 0;
+      const currentHoursPerWeek = totalWeeklyHoursLogged / 4; // Average over 4 weeks
+
+      const totalRemainingHours = projects.reduce(
+        (sum, p) => sum + p.estimatedHoursRemaining,
+        0,
+      );
+      const forecastedHoursPerWeek = weeksAhead > 0
+        ? totalRemainingHours / weeksAhead
+        : totalRemainingHours;
+
+      const utilizationPercent =
+        Math.round((forecastedHoursPerWeek / standardHoursPerWeek) * 100);
+
+      return {
+        userId,
+        currentHoursPerWeek: Math.round(currentHoursPerWeek * 100) / 100,
+        forecastedHoursPerWeek: Math.round(forecastedHoursPerWeek * 100) / 100,
+        projectCount: projects.length,
+        utilizationPercent,
+        isOverallocated: utilizationPercent > 100,
+        projects,
+      };
+    });
+
+    // Sort by utilization descending so overallocated resources appear first
+    forecast.sort((a, b) => b.utilizationPercent - a.utilizationPercent);
+
+    return forecast;
+  }
+
   async getGanttData(projectId: string): Promise<Array<{ id: string; name: string; start: string; end: string; progress: number; dependencies: string[] }>> {
     const tasks = await this.taskRepo.find({ where: { projectId }, order: { sortOrder: 'ASC' } });
     return tasks.map((t) => ({
