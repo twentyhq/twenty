@@ -1,17 +1,28 @@
+import { isDefined } from 'twenty-shared/utils';
+
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { resolveEntityRelationUniversalIdentifiers } from 'src/engine/metadata-modules/flat-entity/utils/resolve-entity-relation-universal-identifiers.util';
 import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
 import { type CreatePageLayoutWidgetInput } from 'src/engine/metadata-modules/page-layout-widget/dtos/inputs/create-page-layout-widget.input';
+import { getDefaultPageLayoutWidgetPosition } from 'src/engine/metadata-modules/page-layout-widget/utils/get-default-page-layout-widget-position.util';
 
 export const buildFlatPageLayoutWidgetCommonProperties = ({
   widgetInput,
+  widgetIndexInTab,
   flatPageLayoutTabMaps,
   flatObjectMetadataMaps,
 }: {
   widgetInput: Pick<
     CreatePageLayoutWidgetInput,
-    'pageLayoutTabId' | 'title' | 'type' | 'objectMetadataId' | 'position'
+    | 'pageLayoutTabId'
+    | 'title'
+    | 'type'
+    | 'objectMetadataId'
+    | 'gridPosition'
+    | 'position'
   >;
+  widgetIndexInTab?: number;
 } & Pick<
   AllFlatEntityMaps,
   'flatPageLayoutTabMaps' | 'flatObjectMetadataMaps'
@@ -23,6 +34,7 @@ export const buildFlatPageLayoutWidgetCommonProperties = ({
   | 'type'
   | 'objectMetadataId'
   | 'objectMetadataUniversalIdentifier'
+  | 'gridPosition'
   | 'position'
 > => {
   const {
@@ -37,6 +49,22 @@ export const buildFlatPageLayoutWidgetCommonProperties = ({
     flatEntityMaps: { flatPageLayoutTabMaps, flatObjectMetadataMaps },
   });
 
+  let position = widgetInput.position;
+
+  if (!isDefined(position)) {
+    const parentTab = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: widgetInput.pageLayoutTabId,
+      flatEntityMaps: flatPageLayoutTabMaps,
+    });
+
+    if (isDefined(parentTab)) {
+      position = getDefaultPageLayoutWidgetPosition(
+        parentTab.layoutMode,
+        widgetIndexInTab ?? 0,
+      );
+    }
+  }
+
   return {
     pageLayoutTabId: widgetInput.pageLayoutTabId,
     pageLayoutTabUniversalIdentifier,
@@ -44,7 +72,7 @@ export const buildFlatPageLayoutWidgetCommonProperties = ({
     type: widgetInput.type,
     objectMetadataId: widgetInput.objectMetadataId ?? null,
     objectMetadataUniversalIdentifier,
-    gridPosition: widgetInput.gridPosition,
-    position: widgetInput.position,
+    gridPosition: widgetInput.gridPosition ?? null,
+    position,
   };
 };

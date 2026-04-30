@@ -14,6 +14,7 @@ export type FromCreatePageLayoutWidgetInputToFlatPageLayoutWidgetToCreateArgs =
     createPageLayoutWidgetInput: CreatePageLayoutWidgetInput;
     workspaceId: string;
     flatApplication: FlatApplication;
+    widgetIndexInTab?: number;
   } & Pick<
     AllFlatEntityMaps,
     | 'flatPageLayoutTabMaps'
@@ -28,6 +29,7 @@ export const fromCreatePageLayoutWidgetInputToFlatPageLayoutWidgetToCreate = ({
   createPageLayoutWidgetInput: rawCreatePageLayoutWidgetInput,
   workspaceId,
   flatApplication,
+  widgetIndexInTab,
   flatPageLayoutTabMaps,
   flatObjectMetadataMaps,
   flatFieldMetadataMaps,
@@ -54,8 +56,10 @@ export const fromCreatePageLayoutWidgetInputToFlatPageLayoutWidgetToCreate = ({
       title: createPageLayoutWidgetInput.title,
       type: createPageLayoutWidgetInput.type,
       objectMetadataId: createPageLayoutWidgetInput.objectMetadataId,
+      gridPosition: createPageLayoutWidgetInput.gridPosition,
       position: createPageLayoutWidgetInput.position,
     },
+    widgetIndexInTab,
     flatPageLayoutTabMaps,
     flatObjectMetadataMaps,
   });

@@ -588,13 +588,14 @@ export class PageLayoutUpdateService {
     const now = new Date();
 
     const widgetsToCreate: FlatPageLayoutWidget[] = entitiesToCreate.map(
-      (widgetInput) => {
+      (widgetInput, widgetIndexInTab) => {
         const widgetId = widgetInput.id ?? v4();
 
         return {
           id: widgetId,
           ...buildFlatPageLayoutWidgetCommonProperties({
             widgetInput,
+            widgetIndexInTab,
             flatPageLayoutTabMaps,
             flatObjectMetadataMaps,
           }),
