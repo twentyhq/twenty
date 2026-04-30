@@ -281,6 +281,29 @@ const SessionList = lazy(() =>
   ),
 );
 
+// SaaS Platform
+const TenantDashboard = lazy(() =>
+  import('@/enterprise-saas-platform/components/TenantDashboard').then(
+    (module) => ({
+      default: module.TenantDashboard,
+    }),
+  ),
+);
+
+// Security
+const DeviceSessions = lazy(() =>
+  import('@/enterprise-security/components/DeviceSessions').then((module) => ({
+    default: module.DeviceSessions,
+  })),
+);
+
+// Feature Flags
+const FlagList = lazy(() =>
+  import('@/enterprise-feature-flags/components/FlagList').then((module) => ({
+    default: module.FlagList,
+  })),
+);
+
 const EnterpriseLoadingFallback = () => (
   <div style={{ padding: '24px', color: '#999' }}>Loading module...</div>
 );
@@ -324,6 +347,9 @@ export const EnterpriseRoutes = () => (
       <Route path="wizard" element={<WizardSteps />} />
       <Route path="residency" element={<RegionSelector />} />
       <Route path="mobile" element={<SessionList />} />
+      <Route path="saas-platform" element={<TenantDashboard />} />
+      <Route path="security" element={<DeviceSessions />} />
+      <Route path="feature-flags" element={<FlagList />} />
     </Routes>
   </Suspense>
 );

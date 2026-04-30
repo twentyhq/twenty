@@ -7,11 +7,13 @@ import {
   IconChartBar,
   IconCoins,
   IconFileText,
+  IconFlag,
   IconHeadphones,
   IconPhone,
   IconPresentation,
   IconRobot,
   IconSettings,
+  IconShield,
   IconUsers,
 } from 'twenty-ui/display';
 import { AnimatedExpandableContainer } from 'twenty-ui/layout';
@@ -101,6 +103,16 @@ export const EnterpriseNavigationSection = () => {
       label: t`AI Agents`,
       path: settingsPrefix + SettingsPath.EnterpriseAI,
       Icon: IconRobot,
+    },
+    {
+      label: t`Security`,
+      path: settingsPrefix + 'modules/security',
+      Icon: IconShield,
+    },
+    {
+      label: t`Feature Flags`,
+      path: settingsPrefix + 'modules/feature-flags',
+      Icon: IconFlag,
     },
     {
       label: t`All Modules`,
