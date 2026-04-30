@@ -270,7 +270,7 @@ export class PredictiveLeadScoringService {
     features: Record<string, unknown>,
     model: PredictiveLeadScoringEntity,
   ): number {
-    const weights =
+    const staticWeights =
       PredictiveLeadScoringService.FEATURE_WEIGHTS[model.modelType] ??
       PredictiveLeadScoringService.FEATURE_WEIGHTS[LeadScoreModelType.XGBOOST];
 
@@ -278,15 +278,49 @@ export class PredictiveLeadScoringService {
       ? model.features
       : DEFAULT_FEATURES;
 
-    // Use feature importance from trained model when available, falling back
-    // to the static weight table.
+    // When the model was trained with real data, use the logistic regression
+    // weights stored in modelConfig for a probability-based score.
+    const trainedConfig = model.modelConfig as {
+      weights?: Record<string, number>;
+      bias?: number;
+      trainedWithData?: boolean;
+    } | null;
+
+    if (trainedConfig?.trainedWithData && trainedConfig.weights) {
+      const trainedWeights = trainedConfig.weights;
+      const bias = trainedConfig.bias ?? 0;
+
+      let logit = bias;
+
+      for (const featureName of activeFeatures) {
+        const featureConfig = staticWeights[featureName];
+        if (!featureConfig) continue;
+
+        const normalizedValue = featureConfig.normalize(features[featureName]);
+
+        logit += (trainedWeights[featureName] ?? 0) * normalizedValue;
+      }
+
+      // Sigmoid to probability, then scale to 0-100
+      const probability = 1 / (1 + Math.exp(-Math.max(-500, Math.min(500, logit))));
+      const baseScore = probability * 100;
+
+      // Blend with recency and velocity signals
+      const recencyBoost = this.calculateRecencyBoost(features);
+      const velocityBonus = this.calculateVelocityBonus(features);
+      const finalScore = baseScore * 0.8 + recencyBoost * 0.12 + velocityBonus * 0.08;
+
+      return Math.min(Math.max(Math.round(finalScore), 0), 100);
+    }
+
+    // Fallback: use feature importance weights (either from training or static)
     const importance = model.featureImportance ?? {};
 
     let weightedSum = 0;
     let totalWeight = 0;
 
     for (const featureName of activeFeatures) {
-      const featureConfig = weights[featureName];
+      const featureConfig = staticWeights[featureName];
       if (!featureConfig) continue;
 
       const featureWeight = importance[featureName] ?? featureConfig.weight;
@@ -491,19 +525,72 @@ export class PredictiveLeadScoringService {
   private async performTraining(workspaceId: string, modelId: string): Promise<void> {
     try {
       const model = await this.getModel(workspaceId, modelId);
-      const hash = this.hashString(`${workspaceId}:${modelId}:${model.features?.join(',') ?? ''}`);
-      const featureCount = model.features?.length ?? DEFAULT_FEATURES.length;
-      const baseAccuracy = 0.82 + (hash % 13) / 100;
-      const basePrecision = 0.8 + (hash % 11) / 100;
-      const baseRecall = 0.78 + (hash % 9) / 100;
-      const baseF1 = (basePrecision + baseRecall) / 2;
+      const activeFeatures = model.features?.length
+        ? model.features
+        : DEFAULT_FEATURES;
 
-      const metrics = {
-        accuracy: Math.min(0.98, Number(baseAccuracy.toFixed(3))),
-        precision: Math.min(0.97, Number(basePrecision.toFixed(3))),
-        recall: Math.min(0.96, Number(baseRecall.toFixed(3))),
-        f1Score: Math.min(0.97, Number(baseF1.toFixed(3))),
-      };
+      // Fetch historical predictions with known outcomes for this workspace
+      const predictions = await this.predictionRepo.find({
+        where: { workspaceId },
+        order: { predictedAt: 'DESC' },
+        take: 5000,
+      });
+
+      // Only use predictions that have a definitive outcome
+      const labeledData = predictions.filter(
+        (prediction) => prediction.actualConverted || prediction.convertedAt !== null,
+      );
+
+      if (labeledData.length < 10) {
+        // Not enough labeled data -- use prior weights from the static table
+        // and store them so calculateScore can leverage featureImportance
+        const staticWeights =
+          PredictiveLeadScoringService.FEATURE_WEIGHTS[model.modelType] ??
+          PredictiveLeadScoringService.FEATURE_WEIGHTS[LeadScoreModelType.XGBOOST];
+
+        const featureImportance: Record<string, number> = {};
+
+        for (const featureName of activeFeatures) {
+          featureImportance[featureName] = staticWeights[featureName]?.weight ?? 0;
+        }
+
+        await this.modelRepo.update(modelId, {
+          status: LeadScoreStatus.ACTIVE,
+          accuracy: 0,
+          precision: 0,
+          recall: 0,
+          f1Score: 0,
+          trainingDataSize: labeledData.length,
+          lastTrainedAt: new Date(),
+          featureImportance,
+          modelConfig: { weights: featureImportance, bias: 0, trainedWithData: false },
+        });
+
+        return;
+      }
+
+      // Build training matrix from factor breakdowns stored on each prediction
+      const { weights, bias } = this.trainLogisticRegression(
+        labeledData,
+        activeFeatures,
+      );
+
+      // Normalize weights into importance values (sum to 1)
+      const featureImportance: Record<string, number> = {};
+      const absSum = activeFeatures.reduce(
+        (sum, featureName) => sum + Math.abs(weights[featureName] ?? 0),
+        0,
+      );
+
+      for (const featureName of activeFeatures) {
+        featureImportance[featureName] =
+          absSum > 0 ? Math.abs(weights[featureName] ?? 0) / absSum : 1 / activeFeatures.length;
+      }
+
+      // Evaluate model on a holdout set (last 20% of data)
+      const holdoutSize = Math.max(1, Math.floor(labeledData.length * 0.2));
+      const holdout = labeledData.slice(0, holdoutSize);
+      const metrics = this.evaluateModel(holdout, weights, bias, activeFeatures);
 
       await this.modelRepo.update(modelId, {
         status: LeadScoreStatus.ACTIVE,
@@ -511,16 +598,10 @@ export class PredictiveLeadScoringService {
         precision: metrics.precision,
         recall: metrics.recall,
         f1Score: metrics.f1Score,
-        trainingDataSize: 1000 + featureCount * 250 + (hash % 500),
+        trainingDataSize: labeledData.length,
         lastTrainedAt: new Date(),
-        featureImportance: {
-          websiteVisits: 0.25,
-          emailOpens: 0.2,
-          companySize: 0.18,
-          revenue: 0.15,
-          employeeCount: 0.12,
-          eventAttendance: 0.1,
-        },
+        featureImportance,
+        modelConfig: { weights, bias, trainedWithData: true },
       });
     } catch (error) {
       await this.modelRepo.update(modelId, {
@@ -530,11 +611,111 @@ export class PredictiveLeadScoringService {
     }
   }
 
-  private hashString(value: string): number {
-    let hash = 0;
-    for (let index = 0; index < value.length; index += 1) {
-      hash = (hash * 31 + value.charCodeAt(index)) >>> 0;
+  // Simple logistic regression via gradient descent on historical prediction data.
+  // Each prediction's factorBreakdown provides feature values; actualConverted
+  // provides the label.
+  private trainLogisticRegression(
+    data: LeadScorePredictionEntity[],
+    featureNames: string[],
+  ): { weights: Record<string, number>; bias: number } {
+    const learningRate = 0.01;
+    const epochs = 200;
+
+    // Initialize weights to small values
+    const weights: Record<string, number> = {};
+
+    for (const featureName of featureNames) {
+      weights[featureName] = 0;
     }
-    return hash;
+
+    let bias = 0;
+
+    // Build feature vectors from factor breakdowns
+    const samples = data.map((prediction) => {
+      const featureVector: number[] = featureNames.map((featureName) => {
+        const value = prediction.factorBreakdown?.[featureName] ?? 0;
+
+        // Normalize to 0-1 range (factor breakdowns are typically 0-100)
+        return Math.min(1, Math.max(0, value / 100));
+      });
+      const label = prediction.actualConverted ? 1 : 0;
+
+      return { featureVector, label };
+    });
+
+    // Gradient descent
+    for (let epoch = 0; epoch < epochs; epoch++) {
+      for (const sample of samples) {
+        // Compute logit
+        let logit = bias;
+
+        for (let featureIndex = 0; featureIndex < featureNames.length; featureIndex++) {
+          logit += (weights[featureNames[featureIndex]] ?? 0) * sample.featureVector[featureIndex];
+        }
+
+        // Sigmoid
+        const predicted = 1 / (1 + Math.exp(-Math.max(-500, Math.min(500, logit))));
+        const error = predicted - sample.label;
+
+        // Update weights
+        for (let featureIndex = 0; featureIndex < featureNames.length; featureIndex++) {
+          weights[featureNames[featureIndex]] -= learningRate * error * sample.featureVector[featureIndex];
+        }
+
+        bias -= learningRate * error;
+      }
+    }
+
+    return { weights, bias };
+  }
+
+  private evaluateModel(
+    holdout: LeadScorePredictionEntity[],
+    weights: Record<string, number>,
+    bias: number,
+    featureNames: string[],
+  ): { accuracy: number; precision: number; recall: number; f1Score: number } {
+    let truePositives = 0;
+    let falsePositives = 0;
+    let trueNegatives = 0;
+    let falseNegatives = 0;
+
+    for (const prediction of holdout) {
+      let logit = bias;
+
+      for (const featureName of featureNames) {
+        const value = (prediction.factorBreakdown?.[featureName] ?? 0) / 100;
+
+        logit += (weights[featureName] ?? 0) * value;
+      }
+
+      const predicted = 1 / (1 + Math.exp(-Math.max(-500, Math.min(500, logit))));
+      const predictedLabel = predicted >= 0.5 ? 1 : 0;
+      const actualLabel = prediction.actualConverted ? 1 : 0;
+
+      if (predictedLabel === 1 && actualLabel === 1) truePositives++;
+      else if (predictedLabel === 1 && actualLabel === 0) falsePositives++;
+      else if (predictedLabel === 0 && actualLabel === 0) trueNegatives++;
+      else falseNegatives++;
+    }
+
+    const total = holdout.length;
+    const accuracy = total > 0 ? (truePositives + trueNegatives) / total : 0;
+    const precision = truePositives + falsePositives > 0
+      ? truePositives / (truePositives + falsePositives)
+      : 0;
+    const recall = truePositives + falseNegatives > 0
+      ? truePositives / (truePositives + falseNegatives)
+      : 0;
+    const f1Score = precision + recall > 0
+      ? (2 * precision * recall) / (precision + recall)
+      : 0;
+
+    return {
+      accuracy: Number(accuracy.toFixed(3)),
+      precision: Number(precision.toFixed(3)),
+      recall: Number(recall.toFixed(3)),
+      f1Score: Number(f1Score.toFixed(3)),
+    };
   }
 }

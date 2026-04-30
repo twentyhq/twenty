@@ -31,6 +31,10 @@ export enum AppPath {
 
   Authorize = '/authorize',
 
+  // Enterprise modules
+  Enterprise = '/enterprise',
+  EnterpriseCatchAll = '/enterprise/*',
+
   // 404 page not found
   NotFoundWildcard = '*',
   NotFound = '/not-found',

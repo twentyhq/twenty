@@ -541,4 +541,237 @@ export class SaaSPlatformService {
     };
     return providers[country] ?? 'generic';
   }
+
+  // ==================== SUBSCRIPTION BILLING — QUICK WINS ====================
+
+  // Apply inflation adjustment for high-inflation countries (AR, etc.)
+  async applyInflationAdjustment(
+    workspaceId: string,
+    adjustmentPercent: number,
+  ): Promise<{ adjusted: number; modules: string[] }> {
+    const modules = await this.getActiveModules(workspaceId);
+    const adjustedModules: string[] = [];
+
+    for (const mod of modules) {
+      if (mod.priceUSD && Number(mod.priceUSD) > 0) {
+        const currentPrice = Number(mod.priceUSD);
+        mod.priceUSD = Math.round(currentPrice * (1 + adjustmentPercent / 100) * 100) / 100;
+        await this.moduleRepo.save(mod);
+        adjustedModules.push(mod.moduleCode);
+      }
+    }
+
+    await this.emitEvent(workspaceId, 'billing.inflation_adjusted', 'platform', {
+      adjustmentPercent,
+      modulesAffected: adjustedModules.length,
+    });
+
+    return { adjusted: adjustedModules.length, modules: adjustedModules };
+  }
+
+  // Identify churn risk based on usage decline
+  async getChurnRisk(workspaceId: string): Promise<{
+    riskLevel: 'low' | 'medium' | 'high' | 'critical';
+    riskScore: number;
+    signals: string[];
+  }> {
+    const tenant = await this.getTenantConfig(workspaceId);
+    const signals: string[] = [];
+    let riskScore = 0;
+
+    // Check trial expiration without conversion
+    if (tenant.status === TenantStatus.TRIAL) {
+      const daysLeft = tenant.trialEndsAt
+        ? Math.ceil((new Date(tenant.trialEndsAt).getTime() - Date.now()) / 86_400_000)
+        : 0;
+      if (daysLeft <= 3) { riskScore += 30; signals.push(`Trial expires in ${daysLeft} days`); }
+    }
+
+    // Past due status
+    if (tenant.status === TenantStatus.PAST_DUE) {
+      riskScore += 40;
+      signals.push('Account is past due on payments');
+    }
+
+    // Low usage relative to limits
+    const usage = tenant.usage;
+    const limits = tenant.limits;
+    if (usage && limits) {
+      const userUtilization = limits.maxUsers > 0 ? usage.currentUsers / limits.maxUsers : 0;
+      if (userUtilization < 0.2) { riskScore += 15; signals.push(`Low user utilization: ${Math.round(userUtilization * 100)}%`); }
+
+      const storageUtilization = limits.maxStorageGB > 0 ? usage.storageUsedGB / limits.maxStorageGB : 0;
+      if (storageUtilization < 0.05) { riskScore += 10; signals.push('Minimal storage usage'); }
+    }
+
+    // Few active modules
+    const activeModules = await this.getActiveModules(workspaceId);
+    if (activeModules.length <= 1) { riskScore += 15; signals.push(`Only ${activeModules.length} active module(s)`); }
+
+    // Recent events check
+    const recentEvents = await this.eventRepo.find({
+      where: { workspaceId },
+      order: { createdAt: 'DESC' },
+      take: 1,
+    });
+    if (recentEvents.length === 0) {
+      riskScore += 20;
+      signals.push('No recent activity events');
+    } else {
+      const daysSinceLastEvent = Math.ceil(
+        (Date.now() - new Date(recentEvents[0].createdAt).getTime()) / 86_400_000,
+      );
+      if (daysSinceLastEvent > 14) { riskScore += 20; signals.push(`No activity in ${daysSinceLastEvent} days`); }
+    }
+
+    const riskLevel: 'low' | 'medium' | 'high' | 'critical' =
+      riskScore >= 70 ? 'critical' :
+      riskScore >= 50 ? 'high' :
+      riskScore >= 25 ? 'medium' : 'low';
+
+    return { riskLevel, riskScore: Math.min(riskScore, 100), signals };
+  }
+
+  // Generate invoice PDF summary (returns structured data for PDF rendering)
+  async generateInvoicePDF(
+    workspaceId: string,
+    period: string,
+  ): Promise<{
+    tenant: { companyName: string; country: string; taxId: string | undefined; currency: string };
+    period: string;
+    generatedAt: string;
+    invoice: Awaited<ReturnType<SaaSPlatformService['calculateMonthlyInvoice']>>;
+    invoiceNumber: string | null;
+  }> {
+    const tenant = await this.getTenantConfig(workspaceId);
+    const invoice = await this.calculateMonthlyInvoice(workspaceId);
+
+    let invoiceNumber: string | null = null;
+    try {
+      invoiceNumber = await this.getNextInvoiceNumber(workspaceId, tenant.country as CountryCode);
+    } catch {
+      invoiceNumber = `INV-${Date.now()}`;
+    }
+
+    await this.emitEvent(workspaceId, 'invoice.generated', 'platform', { period, invoiceNumber });
+
+    return {
+      tenant: {
+        companyName: tenant.companyName,
+        country: tenant.country,
+        taxId: tenant.taxId,
+        currency: tenant.currency,
+      },
+      period,
+      generatedAt: new Date().toISOString(),
+      invoice,
+      invoiceNumber,
+    };
+  }
+
+  // ==================== OBSERVABILITY — QUICK WINS ====================
+
+  // Tenant health dashboard — API response times, error rates, storage usage
+  async getTenantHealthDashboard(workspaceId: string): Promise<{
+    status: string;
+    storage: { usedGB: number; limitGB: number; utilizationPercent: number };
+    users: { active: number; limit: number; utilizationPercent: number };
+    recentErrors: number;
+    recentEvents: number;
+    lastActivityAt: string | null;
+  }> {
+    const tenant = await this.getTenantConfig(workspaceId);
+    const usage = tenant.usage ?? { currentUsers: 0, storageUsedGB: 0, callMinutesUsed: 0, employees: 0 };
+    const limits = tenant.limits ?? { maxUsers: 0, maxStorageGB: 0, maxCallMinutes: 0, maxEmployees: 0 };
+
+    // Count recent errors from event log
+    const sevenDaysAgo = new Date(Date.now() - 7 * 86_400_000);
+    const events = await this.eventRepo.find({ where: { workspaceId } });
+    const recentEvents = events.filter(
+      (e) => new Date(e.createdAt) >= sevenDaysAgo,
+    );
+    const recentErrors = recentEvents.filter((e) => e.status === 'failed').length;
+
+    const lastEvent = events.sort(
+      (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+    )[0];
+
+    return {
+      status: tenant.status,
+      storage: {
+        usedGB: usage.storageUsedGB,
+        limitGB: limits.maxStorageGB,
+        utilizationPercent: limits.maxStorageGB > 0
+          ? Math.round((usage.storageUsedGB / limits.maxStorageGB) * 100)
+          : 0,
+      },
+      users: {
+        active: usage.currentUsers,
+        limit: limits.maxUsers,
+        utilizationPercent: limits.maxUsers > 0
+          ? Math.round((usage.currentUsers / limits.maxUsers) * 100)
+          : 0,
+      },
+      recentErrors,
+      recentEvents: recentEvents.length,
+      lastActivityAt: lastEvent ? lastEvent.createdAt.toISOString() : null,
+    };
+  }
+
+  // SLA compliance — uptime and response time vs targets
+  async getSLACompliance(workspaceId: string): Promise<{
+    plan: string;
+    slaTargets: { uptimePercent: number; responseTimeMs: number };
+    currentMetrics: { estimatedUptimePercent: number; avgResponseTimeMs: number };
+    isCompliant: boolean;
+    violations: string[];
+  }> {
+    const tenant = await this.getTenantConfig(workspaceId);
+
+    // SLA targets by plan
+    const slaByPlan: Record<string, { uptimePercent: number; responseTimeMs: number }> = {
+      [SubscriptionPlan.STARTER]: { uptimePercent: 99.0, responseTimeMs: 2000 },
+      [SubscriptionPlan.PROFESSIONAL]: { uptimePercent: 99.5, responseTimeMs: 1000 },
+      [SubscriptionPlan.ENTERPRISE]: { uptimePercent: 99.9, responseTimeMs: 500 },
+      [SubscriptionPlan.CUSTOM]: { uptimePercent: 99.95, responseTimeMs: 300 },
+    };
+
+    const targets = slaByPlan[tenant.plan] ?? slaByPlan[SubscriptionPlan.STARTER];
+
+    // Estimate uptime from error rate in event log
+    const thirtyDaysAgo = new Date(Date.now() - 30 * 86_400_000);
+    const events = await this.eventRepo.find({ where: { workspaceId } });
+    const recentEvents = events.filter((e) => new Date(e.createdAt) >= thirtyDaysAgo);
+    const failedEvents = recentEvents.filter((e) => e.status === 'failed').length;
+    const totalEvents = recentEvents.length || 1;
+    const errorRate = failedEvents / totalEvents;
+    const estimatedUptimePercent = Math.round((1 - errorRate) * 10000) / 100;
+
+    // Estimate avg response from processed events
+    const processedEvents = recentEvents.filter((e) => e.processedAt && e.createdAt);
+    const avgResponseTimeMs = processedEvents.length > 0
+      ? Math.round(
+          processedEvents.reduce(
+            (sum, e) => sum + (new Date(e.processedAt!).getTime() - new Date(e.createdAt).getTime()),
+            0,
+          ) / processedEvents.length,
+        )
+      : 0;
+
+    const violations: string[] = [];
+    if (estimatedUptimePercent < targets.uptimePercent) {
+      violations.push(`Uptime ${estimatedUptimePercent}% below target ${targets.uptimePercent}%`);
+    }
+    if (avgResponseTimeMs > targets.responseTimeMs) {
+      violations.push(`Avg response ${avgResponseTimeMs}ms exceeds target ${targets.responseTimeMs}ms`);
+    }
+
+    return {
+      plan: tenant.plan,
+      slaTargets: targets,
+      currentMetrics: { estimatedUptimePercent, avgResponseTimeMs },
+      isCompliant: violations.length === 0,
+      violations,
+    };
+  }
 }

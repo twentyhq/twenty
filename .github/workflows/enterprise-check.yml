@@ -1,0 +1,35 @@
+name: Enterprise Module Check
+on:
+  push:
+    paths:
+      - 'packages/twenty-server/src/engine/core-modules/**'
+      - 'packages/twenty-server/src/modules/**'
+      - 'packages/twenty-front/src/modules/enterprise-**'
+  pull_request:
+    paths:
+      - 'packages/twenty-server/src/engine/core-modules/**'
+
+jobs:
+  typecheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - run: yarn install --frozen-lockfile
+      - run: npx nx build twenty-shared
+      - run: npx tsc --noEmit --project packages/twenty-server/tsconfig.json
+
+  enterprise-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - run: yarn install --frozen-lockfile
+      - run: npx nx build twenty-shared
+      - run: |
+          cd packages/twenty-server
+          npx jest --passWithNoTests --testPathPattern="__tests__" --forceExit

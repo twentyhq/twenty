@@ -117,6 +117,115 @@ export class BIAnalyticsService {
     return map[m] ?? 'COUNT(*)::int';
   }
 
+  // Schedule report delivery via cron
+  async scheduleReport(
+    workspaceId: string,
+    reportId: string,
+    cronExpression: string,
+    recipientEmails: string[],
+  ): Promise<AnalyticsReportEntity> {
+    const report = await this.reportRepo.findOne({ where: { id: reportId, workspaceId } });
+    if (!report) throw new NotFoundException(`Report ${reportId} not found`);
+
+    report.isScheduled = true;
+    report.schedule = cronExpression;
+
+    // Store recipient emails in filters as metadata
+    if (!report.filters) report.filters = {};
+    (report.filters as Record<string, unknown>)['recipientEmails'] = recipientEmails;
+
+    return this.reportRepo.save(report);
+  }
+
+  // Export entity data as CSV or JSON
+  async exportData(
+    workspaceId: string,
+    format: 'csv' | 'json',
+    entityType: string,
+  ): Promise<string> {
+    const table = this.getTableForMetric(entityType);
+    const rows = await this.safeQuery(
+      `SELECT * FROM ${table} WHERE "workspaceId" = $1 ORDER BY "createdAt" DESC LIMIT 10000`,
+      [workspaceId],
+    );
+
+    if (format === 'json') {
+      return JSON.stringify(rows, null, 2);
+    }
+
+    // CSV
+    if (rows.length === 0) return '';
+    const headers = Object.keys(rows[0]);
+    const csvRows = rows.map((row) =>
+      headers.map((h) => {
+        const val = String(row[h] ?? '');
+        return `"${val.replace(/"/g, '""')}"`;
+      }).join(','),
+    );
+    return [headers.join(','), ...csvRows].join('\n');
+  }
+
+  // Detect anomalies — KPIs that deviate >2 standard deviations from mean
+  async getAnomalyAlerts(workspaceId: string): Promise<Array<{
+    metric: string;
+    currentValue: number;
+    mean: number;
+    stdDev: number;
+    deviations: number;
+    severity: 'warning' | 'critical';
+  }>> {
+    const metrics = ['total_revenue', 'deal_count', 'ticket_count', 'call_count'];
+    const alerts: Array<{
+      metric: string;
+      currentValue: number;
+      mean: number;
+      stdDev: number;
+      deviations: number;
+      severity: 'warning' | 'critical';
+    }> = [];
+
+    for (const metric of metrics) {
+      const table = this.getTableForMetric(metric);
+      const dateCol = this.getDateColumnForMetric(metric);
+      const aggFn = this.getAggForMetric(metric);
+
+      // Get monthly values for last 6 months
+      const monthlyData = await this.safeQuery(
+        `SELECT DATE_TRUNC('month', ${dateCol}) AS "month", ${aggFn} AS "value"
+         FROM ${table}
+         WHERE "workspaceId" = $1 AND ${dateCol} >= NOW() - INTERVAL '180 days'
+         GROUP BY DATE_TRUNC('month', ${dateCol})
+         ORDER BY "month" ASC`,
+        [workspaceId],
+      );
+
+      if (monthlyData.length < 3) continue;
+
+      const values = monthlyData.map((d) => Number(d.value ?? 0));
+      const mean = values.reduce((s, v) => s + v, 0) / values.length;
+      const variance = values.reduce((s, v) => s + Math.pow(v - mean, 2), 0) / values.length;
+      const stdDev = Math.sqrt(variance);
+
+      if (stdDev === 0) continue;
+
+      const currentValue = values[values.length - 1];
+      const deviations = Math.abs(currentValue - mean) / stdDev;
+
+      if (deviations > 2) {
+        alerts.push({
+          metric,
+          currentValue,
+          mean: Math.round(mean * 100) / 100,
+          stdDev: Math.round(stdDev * 100) / 100,
+          deviations: Math.round(deviations * 100) / 100,
+          severity: deviations > 3 ? 'critical' : 'warning',
+        });
+      }
+    }
+
+    return alerts;
+  }
+
   private async safeQuery(sql: string, params: unknown[]): Promise<Record<string, unknown>[]> {
     try { return await this.dataSource.query(sql, params); } catch { return []; }
   }

@@ -146,4 +146,51 @@ export class FeatureFlagService {
 
     return result;
   }
+
+  // Module adoption metrics — which flags are enabled, when activated
+  public async getModuleAdoptionMetrics(
+    workspaceId: string,
+  ): Promise<Array<{ key: string; value: boolean; updatedAt: Date | null }>> {
+    const flags = await this.featureFlagRepository.find({
+      where: { workspaceId },
+      order: { updatedAt: 'DESC' },
+    });
+
+    return flags.map((flag) => ({
+      key: flag.key,
+      value: flag.value,
+      updatedAt: flag.updatedAt ?? null,
+    }));
+  }
+
+  // Bulk toggle — enable/disable multiple flags at once
+  public async bulkToggle(
+    workspaceId: string,
+    flags: Record<string, boolean>,
+  ): Promise<{ toggled: number; results: Array<{ key: string; value: boolean }> }> {
+    const results: Array<{ key: string; value: boolean }> = [];
+
+    for (const [key, value] of Object.entries(flags)) {
+      featureFlagValidator.assertIsFeatureFlagKey(
+        key,
+        new FeatureFlagException(
+          `Invalid feature flag key: ${key}`,
+          FeatureFlagExceptionCode.INVALID_FEATURE_FLAG_KEY,
+        ),
+      );
+
+      await this.featureFlagRepository.upsert(
+        { workspaceId, key: key as FeatureFlagKey, value },
+        { conflictPaths: ['workspaceId', 'key'], skipUpdateIfNoValuesChanged: true },
+      );
+
+      results.push({ key, value });
+    }
+
+    await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
+      'featureFlagsMap',
+    ]);
+
+    return { toggled: results.length, results };
+  }
 }

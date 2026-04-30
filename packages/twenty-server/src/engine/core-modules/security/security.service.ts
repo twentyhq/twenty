@@ -142,4 +142,92 @@ export class SecurityService {
 
     return !!device;
   }
+
+  // Security Dashboard — active sessions, recent logins, 2FA adoption
+  async getSecurityDashboard(workspaceId: string): Promise<{
+    activeSessions: number;
+    revokedSessions: number;
+    recentLoginAttempts: DeviceSessionEntity[];
+    twoFactorAdoptionRate: number;
+    devicesByStatus: Record<string, number>;
+  }> {
+    const allDevices = await this.deviceRepo.find({ where: { workspaceId } });
+
+    const activeSessions = allDevices.filter(
+      (d) => d.status === DeviceStatus.ACTIVE,
+    ).length;
+    const revokedSessions = allDevices.filter(
+      (d) => d.status === DeviceStatus.REVOKED,
+    ).length;
+
+    // Recent login attempts (last 30 days)
+    const thirtyDaysAgo = new Date(Date.now() - 30 * 86_400_000);
+    const recentLoginAttempts = allDevices
+      .filter((d) => d.currentLoginAt && new Date(d.currentLoginAt) >= thirtyDaysAgo)
+      .sort((a, b) =>
+        new Date(b.currentLoginAt).getTime() - new Date(a.currentLoginAt).getTime(),
+      )
+      .slice(0, 50);
+
+    // 2FA adoption: ratio of unique users with >1 active device (proxy metric)
+    const userDeviceMap = new Map<string, number>();
+    for (const d of allDevices.filter((d) => d.status === DeviceStatus.ACTIVE)) {
+      userDeviceMap.set(d.userId, (userDeviceMap.get(d.userId) ?? 0) + 1);
+    }
+    const totalUsers = userDeviceMap.size;
+    const usersWithMultipleDevices = [...userDeviceMap.values()].filter((c) => c > 1).length;
+    const twoFactorAdoptionRate = totalUsers > 0
+      ? Math.round((usersWithMultipleDevices / totalUsers) * 100)
+      : 0;
+
+    const devicesByStatus: Record<string, number> = {};
+    for (const d of allDevices) {
+      devicesByStatus[d.status] = (devicesByStatus[d.status] ?? 0) + 1;
+    }
+
+    return {
+      activeSessions,
+      revokedSessions,
+      recentLoginAttempts,
+      twoFactorAdoptionRate,
+      devicesByStatus,
+    };
+  }
+
+  // Export audit log entries as CSV or JSON
+  async exportAuditLog(
+    workspaceId: string,
+    startDate: Date,
+    endDate: Date,
+    format: 'csv' | 'json',
+  ): Promise<string> {
+    const devices = await this.deviceRepo.find({ where: { workspaceId } });
+
+    const entries = devices
+      .filter((d) => {
+        const loginDate = d.currentLoginAt ? new Date(d.currentLoginAt) : null;
+        return loginDate && loginDate >= startDate && loginDate <= endDate;
+      })
+      .map((d) => ({
+        userId: d.userId,
+        deviceId: d.id,
+        status: d.status,
+        deviceName: d.deviceName ?? 'unknown',
+        ipAddress: d.ipAddress ?? 'unknown',
+        loginAt: d.currentLoginAt?.toISOString() ?? '',
+        lastActiveAt: d.lastActiveAt?.toISOString() ?? '',
+      }));
+
+    if (format === 'json') {
+      return JSON.stringify(entries, null, 2);
+    }
+
+    // CSV format
+    if (entries.length === 0) return '';
+    const headers = Object.keys(entries[0]);
+    const rows = entries.map((e) =>
+      headers.map((h) => `"${String((e as Record<string, string>)[h]).replace(/"/g, '""')}"`).join(','),
+    );
+    return [headers.join(','), ...rows].join('\n');
+  }
 }
