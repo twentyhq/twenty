@@ -14,7 +14,6 @@ export const buildBaseManifest = ({
     defaultRoleUniversalIdentifier: roleId,
     displayName: 'Test Application',
     description: 'Test application',
-    icon: 'IconTestPipe',
     applicationVariables: {},
     packageJsonChecksum: null,
     yarnLockChecksum: null,

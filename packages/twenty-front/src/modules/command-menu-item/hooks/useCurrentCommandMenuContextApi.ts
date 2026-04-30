@@ -30,7 +30,7 @@ import {
 } from 'twenty-shared/types';
 import { isDefined, resolveObjectMetadataLabel } from 'twenty-shared/utils';
 
-export const useCommandMenuContextApi = (): CommandMenuContextApi => {
+export const useCurrentCommandMenuContextApi = (): CommandMenuContextApi => {
   const store = useStore();
 
   const contextStoreInstanceId = useAvailableComponentInstanceIdOrThrow(

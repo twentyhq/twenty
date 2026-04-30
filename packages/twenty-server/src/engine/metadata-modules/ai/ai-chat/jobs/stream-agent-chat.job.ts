@@ -188,6 +188,7 @@ export class StreamAgentChatJob {
         outputTokens: 0,
         inputCredits: 0,
         outputCredits: 0,
+        cacheReadTokens: 0,
       };
       let lastStepConversationSize = 0;
       let totalCacheCreationTokens = 0;
@@ -279,6 +280,7 @@ export class StreamAgentChatJob {
                     workspaceId: data.workspaceId,
                     streamUsage,
                     lastStepConversationSize,
+                    totalCacheCreationTokens,
                     modelConfig,
                     userMessagePromise,
                   });
@@ -359,6 +361,7 @@ export class StreamAgentChatJob {
       outputTokens: number;
       inputCredits: number;
       outputCredits: number;
+      cacheReadTokens: number;
     }) => void;
     onUpdateConversationSize: (size: number) => void;
     onUpdateCacheCreationTokens: (tokens: number) => void;
@@ -395,6 +398,7 @@ export class StreamAgentChatJob {
         outputTokens: part.totalUsage?.outputTokens ?? 0,
         inputCredits,
         outputCredits,
+        cacheReadTokens: breakdown.tokenCounts.cachedInputTokens,
       });
 
       return {
@@ -422,6 +426,7 @@ export class StreamAgentChatJob {
     workspaceId,
     streamUsage,
     lastStepConversationSize,
+    totalCacheCreationTokens,
     modelConfig,
     userMessagePromise,
   }: {
@@ -433,8 +438,10 @@ export class StreamAgentChatJob {
       outputTokens: number;
       inputCredits: number;
       outputCredits: number;
+      cacheReadTokens: number;
     };
     lastStepConversationSize: number;
+    totalCacheCreationTokens: number;
     modelConfig: AiModelConfig;
     userMessagePromise: Promise<{ turnId: string | null }>;
   }): Promise<void> {
@@ -459,6 +466,10 @@ export class StreamAgentChatJob {
         `"totalInputCredits" + ${streamUsage.inputCredits}`,
       totalOutputCredits: () =>
         `"totalOutputCredits" + ${streamUsage.outputCredits}`,
+      totalCacheReadTokens: () =>
+        `"totalCacheReadTokens" + ${streamUsage.cacheReadTokens}`,
+      totalCacheCreationTokens: () =>
+        `"totalCacheCreationTokens" + ${totalCacheCreationTokens}`,
       contextWindowTokens: modelConfig.contextWindowTokens,
       conversationSize: lastStepConversationSize,
     });

@@ -45,6 +45,7 @@ const meta: Meta<typeof RecordIndexCommandMenuDropdown> = {
                 containerType: 'index-page-dropdown',
                 commandMenuItems: createMockCommandMenuItems(),
                 commandMenuContextApi: EMPTY_COMMAND_MENU_CONTEXT_API,
+                isInPreviewMode: false,
               }}
             >
               <Story />
