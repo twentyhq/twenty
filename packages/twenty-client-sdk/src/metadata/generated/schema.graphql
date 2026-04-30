@@ -580,6 +580,7 @@ type Application {
   id: UUID!
   name: String!
   description: String
+  logo: String
   version: String
   universalIdentifier: String!
   packageJsonChecksum: String
@@ -2202,7 +2203,6 @@ type MarketplaceApp {
   id: String!
   name: String!
   description: String!
-  icon: String!
   author: String!
   category: String!
   logo: String

@@ -1257,6 +1257,9 @@ export default {
             "description": [
                 1
             ],
+            "logo": [
+                1
+            ],
             "version": [
                 1
             ],
@@ -4413,9 +4416,6 @@ export default {
                 1
             ],
             "description": [
-                1
-            ],
-            "icon": [
                 1
             ],
             "author": [

@@ -1,9 +1,11 @@
 import { serverStart } from '@/cli/operations/server-start';
+import { serverUpgrade } from '@/cli/operations/server-upgrade';
 import {
   CONTAINER_NAME,
   containerExists,
   DEFAULT_PORT,
   DEFAULT_TEST_PORT,
+  getContainerEnvVar,
   getContainerPort,
   isContainerRunning,
   TEST_CONTAINER_NAME,
@@ -115,8 +117,14 @@ export const registerServerCommands = (program: Command): void => {
           ? chalk.yellow('running (starting...)')
           : chalk.gray('stopped');
 
+      const appVersion = getContainerEnvVar('APP_VERSION', containerName);
+
       console.log(`  Status:  ${statusText}`);
       console.log(`  URL:     http://localhost:${port}`);
+
+      if (appVersion) {
+        console.log(`  Version: ${chalk.gray(appVersion)}`);
+      }
 
       if (healthy) {
         console.log(chalk.gray('  Login:   tim@apple.dev / tim@apple.dev'));
@@ -155,4 +163,41 @@ export const registerServerCommands = (program: Command): void => {
         ),
       );
     });
+
+  server
+    .command('upgrade [version]')
+    .description('Upgrade the twenty-app-dev Docker image')
+    .option('--test', 'Upgrade the test instance')
+    .action(
+      async (version: string | undefined, options: { test?: boolean }) => {
+        const result = await serverUpgrade({
+          version: version ?? 'latest',
+          test: options.test,
+          onProgress: (message) => console.log(chalk.gray(message)),
+        });
+
+        if (!result.success) {
+          console.error(chalk.red(result.error.message));
+          process.exit(1);
+        }
+
+        const { data } = result;
+
+        if (!data.imageUpdated) {
+          console.log(chalk.green(`  Already up to date (${data.image}).`));
+
+          return;
+        }
+
+        console.log(chalk.green(`  Upgraded to: ${data.image}`));
+
+        if (data.containerRecreated) {
+          console.log(
+            chalk.gray(
+              `  Run 'yarn twenty server start${options.test ? ' --test' : ''}' to wait for the server to be ready.`,
+            ),
+          );
+        }
+      },
+    );
 };

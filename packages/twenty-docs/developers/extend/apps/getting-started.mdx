@@ -219,12 +219,30 @@ The scaffolder already started a local Twenty server for you. To manage it later
 | `yarn twenty server start --port 3030` | Start on a custom port |
 | `yarn twenty server start --test` | Start a separate test instance on port 2021 |
 | `yarn twenty server stop` | Stop the server (preserves data) |
-| `yarn twenty server status` | Show server status, URL, and credentials |
+| `yarn twenty server status` | Show server status, URL, version, and credentials |
 | `yarn twenty server logs` | Stream server logs |
 | `yarn twenty server logs --lines 100` | Show the last 100 log lines |
 | `yarn twenty server reset` | Delete all data and start fresh |
+| `yarn twenty server upgrade` | Pull the latest `twenty-app-dev` image and recreate the container |
+| `yarn twenty server upgrade 2.2.0` | Upgrade to a specific version |
 
 Data is persisted across restarts in two Docker volumes (`twenty-app-dev-data` for PostgreSQL, `twenty-app-dev-storage` for files). Use `reset` to wipe everything and start fresh.
+
+### Upgrading the server image
+
+Use `yarn twenty server upgrade` to check for a newer `twenty-app-dev` Docker image and update the container. The command pulls the image, compares it against the one the container was created from, and only recreates the container if the image actually changed. Your data volumes are preserved — only the container is replaced.
+
+```bash filename="Terminal"
+# Upgrade to the latest version (skips recreation if already up to date)
+yarn twenty server upgrade
+
+# Upgrade to a specific version
+yarn twenty server upgrade 2.2.0
+```
+
+If a newer image is available and the container was running, the upgrade command automatically starts a new container with the updated image. Run `yarn twenty server start` afterward to wait for it to become healthy. If the image hasn't changed, the container is left untouched.
+
+You can verify the running version with `yarn twenty server status`, which displays the `APP_VERSION` from the container.
 
 ### Running a test instance
 
@@ -234,9 +252,10 @@ Pass `--test` to any `server` command to manage a second, fully isolated instanc
 |---------|-------------|
 | `yarn twenty server start --test` | Start the test instance (defaults to port 2021) |
 | `yarn twenty server stop --test` | Stop the test instance |
-| `yarn twenty server status --test` | Show test instance status, URL, and credentials |
+| `yarn twenty server status --test` | Show test instance status, URL, version, and credentials |
 | `yarn twenty server logs --test` | Stream test instance logs |
 | `yarn twenty server reset --test` | Wipe test data and start fresh |
+| `yarn twenty server upgrade --test` | Upgrade the test instance image |
 
 The test instance runs in its own Docker container (`twenty-app-dev-test`) with dedicated volumes (`twenty-app-dev-test-data`, `twenty-app-dev-test-storage`) and config, so it can run in parallel with your main instance without conflicts. Combine `--test` with `--port` to override the default 2021.
 
