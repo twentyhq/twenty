@@ -1,5 +1,5 @@
 import { type PlaygroundSchemas } from '@/settings/playground/types/PlaygroundSchemas';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 
 type RestPlaygroundSchemaFetchEffectProps = {
@@ -16,8 +16,15 @@ export const RestPlaygroundSchemaFetchEffect = ({
   onSchemaLoaded,
   onError,
 }: RestPlaygroundSchemaFetchEffectProps) => {
+  // Read callbacks from refs so unstable parent functions don't retrigger
+  // the fetch (which would clear the schema and flicker the UI).
+  const onSchemaLoadedRef = useRef(onSchemaLoaded);
+  const onErrorRef = useRef(onError);
+  onSchemaLoadedRef.current = onSchemaLoaded;
+  onErrorRef.current = onError;
+
   useEffect(() => {
-    onSchemaLoaded(null);
+    onSchemaLoadedRef.current(null);
 
     const abortController = new AbortController();
 
@@ -26,15 +33,15 @@ export const RestPlaygroundSchemaFetchEffect = ({
       signal: abortController.signal,
     })
       .then((response) => (response.ok ? response.json() : Promise.reject()))
-      .then(onSchemaLoaded)
+      .then((document) => onSchemaLoadedRef.current(document))
       .catch((error) => {
         if (error?.name !== 'AbortError') {
-          onError();
+          onErrorRef.current();
         }
       });
 
     return () => abortController.abort();
-  }, [schema, apiKey, onSchemaLoaded, onError]);
+  }, [schema, apiKey]);
 
   return null;
 };
