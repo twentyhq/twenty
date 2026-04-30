@@ -19,6 +19,7 @@ import { AddIsPreInstalledToApplicationRegistrationFastInstanceCommand } from 's
 import { AddProviderExecutedToAgentMessagePartFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-1/2-1-instance-command-fast-1777012800000-add-provider-executed-to-agent-message-part';
 import { BackfillPageLayoutWidgetPositionSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-1/2-1-instance-command-slow-1795000002000-backfill-page-layout-widget-position';
 import { AddCacheTokensToAgentChatThreadFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-2/2-2-instance-command-fast-1777455269302-add-cache-tokens-to-agent-chat-thread';
+import { AddLogoToApplicationFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-2/2-2-instance-command-fast-1777539664664-add-logo-to-application';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -40,4 +41,5 @@ export const INSTANCE_COMMANDS = [
   AddProviderExecutedToAgentMessagePartFastInstanceCommand,
   BackfillPageLayoutWidgetPositionSlowInstanceCommand,
   AddCacheTokensToAgentChatThreadFastInstanceCommand,
+  AddLogoToApplicationFastInstanceCommand,
 ];

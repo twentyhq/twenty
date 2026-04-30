@@ -19,7 +19,7 @@ export const buildApplicationLogoUrl = ({
   }
 
   if (!isDefined(workspaceId) || !isDefined(applicationId)) {
-    return;
+    return undefined;
   }
 
   return `${REACT_APP_SERVER_BASE_URL}/public-assets/${workspaceId}/${applicationId}/${logo}`;

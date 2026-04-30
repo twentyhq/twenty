@@ -1,4 +1,3 @@
-import { CurrentApplicationContext } from '@/applications/contexts/CurrentApplicationContext';
 import {
   type ApplicationAvatarColors,
   useApplicationAvatarColors,
@@ -8,7 +7,6 @@ import { isWorkspaceCustomApplication } from '@/applications/utils/isWorkspaceCu
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { t } from '@lingui/core/macro';
-import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { buildApplicationLogoUrl } from '@/applications/utils/buildApplicationLogoUrl';
 import CustomLogo from '~/pages/settings/applications/assets/custom-illustrations/custom-logo.webp';
@@ -37,7 +35,6 @@ export const useApplicationChipData = ({
   applicationId,
   fallbackApplicationData,
 }: UseApplicationChipDataArgs): UseApplicationChipDataReturnType => {
-  const currentApplicationId = useContext(CurrentApplicationContext);
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 
   const application = currentWorkspace?.installedApplications.find(

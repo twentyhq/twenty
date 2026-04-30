@@ -1,4 +1,5 @@
 import {
+  SETTINGS_OBJECT_TABLE_COLUMN_WIDTH,
   StyledActionTableCell,
   StyledNameTableCell,
 } from '@/settings/data-model/object-details/components/SettingsObjectItemTableRowStyledComponents';
@@ -13,7 +14,7 @@ import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { type ApplicationDataTableRow } from '~/pages/settings/applications/types/applicationDataTableRow';
 import { AppChip } from '@/applications/components/AppChip';
 
-const MAIN_ROW_GRID_COLUMNS = '180px 1fr 98.7px 36px';
+const MAIN_ROW_GRID_COLUMNS = `180px 1fr ${SETTINGS_OBJECT_TABLE_COLUMN_WIDTH} 36px`;
 
 const StyledNameContainer = styled.div`
   align-items: center;
