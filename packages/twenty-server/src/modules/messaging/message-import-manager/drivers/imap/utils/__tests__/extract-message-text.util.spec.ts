@@ -98,6 +98,7 @@ Developer Support
 `,
       attachments: [],
       headers: [],
+      headerLines: [],
     };
 
     const result = service.extractTextWithoutReplyQuotations(parsed);
@@ -132,6 +133,7 @@ Developer Support`);
       `,
       attachments: [],
       headers: [],
+      headerLines: [],
     };
 
     const result = service.extractTextWithoutReplyQuotations(parsed);
@@ -153,6 +155,7 @@ Developer Support`);
       </div>`,
       attachments: [],
       headers: [],
+      headerLines: [],
     };
 
     const result = service.extractTextWithoutReplyQuotations(parsed);
@@ -164,6 +167,7 @@ Developer Support`);
     const parsed: ParsedMail = {
       attachments: [],
       headers: [],
+      headerLines: [],
     };
 
     const result = service.extractTextWithoutReplyQuotations(parsed);
@@ -175,6 +179,7 @@ Developer Support`);
     const parsed: ParsedMail = {
       attachments: [],
       headers: [],
+      headerLines: [],
       html: `<html><head><style>
   html, body {
     font-size: 14.5px;
@@ -306,6 +311,7 @@ Developer Support`);
       html: '<html><body><p>HTML content</p></body></html>',
       attachments: [],
       headers: [],
+      headerLines: [],
     };
 
     const result = service.extractTextWithoutReplyQuotations(parsed);
