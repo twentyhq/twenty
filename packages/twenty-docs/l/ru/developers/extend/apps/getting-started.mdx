@@ -92,7 +92,7 @@ yarn twenty dev --verbose
 </Warning>
 
 <div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/dev.jpg" alt="Вывод терминала в режиме разработки" />
+  <img src="/images/docs/developers/extends/apps/dev.png" alt="Вывод терминала в режиме разработки" />
 </div>
 
 #### Разовая синхронизация с `yarn twenty dev --once`
@@ -127,13 +127,7 @@ yarn twenty dev --once
 Нажмите **View installed app**, чтобы посмотреть установленное приложение. Вкладка **About** показывает текущую версию и параметры управления:
 
 <div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/app-in-ui-3.png" alt="Установленное приложение — вкладка About" />
-</div>
-
-Переключитесь на вкладку **Content**, чтобы увидеть всё, что предоставляет ваше приложение: объекты, поля, логические функции и агенты:
-
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/app-in-ui-4.png" alt="Установленное приложение — вкладка Content" />
+  <img src="/images/docs/developers/extends/apps/app-in-ui-3.png" alt="Установленное приложение" />
 </div>
 
 Готово! Отредактируйте любой файл в `src/`, и изменения будут подхвачены автоматически.
@@ -224,13 +218,13 @@ npx create-twenty-app@latest my-twenty-app --example postcard
 | `yarn twenty server logs --lines 100`  | Показать последние 100 строк журнала                               |
 | `yarn twenty server reset`             | Удалить все данные и начать с чистого листа                        |
 | `yarn twenty server upgrade`           | Загрузить последний образ `twenty-app-dev` и пересоздать контейнер |
-| `yarn twenty server upgrade 2.2.0`     | Upgrade to a specific version                                      |
+| `yarn twenty server upgrade 2.2.0`     | Обновить до конкретной версии                                      |
 
 Данные сохраняются между перезапусками в двух томах Docker (`twenty-app-dev-data` для PostgreSQL, `twenty-app-dev-storage` для файлов). Используйте `reset`, чтобы стереть всё и начать заново.
 
-### Upgrading the server image
+### Обновление образа сервера
 
-Use `yarn twenty server upgrade` to check for a newer `twenty-app-dev` Docker image and update the container. The command pulls the image, compares it against the one the container was created from, and only recreates the container if the image actually changed. Your data volumes are preserved — only the container is replaced.
+Используйте `yarn twenty server upgrade`, чтобы проверить наличие более нового Docker-образа `twenty-app-dev` и обновить контейнер. Команда скачивает образ, сравнивает его с тем, из которого был создан контейнер, и пересоздаёт контейнер только если образ действительно изменился. Ваши тома данных сохраняются — заменяется только контейнер.
 
 ```bash filename="Terminal"
 # Upgrade to the latest version (skips recreation if already up to date)
@@ -240,22 +234,22 @@ yarn twenty server upgrade
 yarn twenty server upgrade 2.2.0
 ```
 
-If a newer image is available and the container was running, the upgrade command automatically starts a new container with the updated image. Run `yarn twenty server start` afterward to wait for it to become healthy. If the image hasn't changed, the container is left untouched.
+Если доступен более новый образ и контейнер был запущен, команда обновления автоматически запускает новый контейнер с обновлённым образом. Затем выполните `yarn twenty server start`, чтобы дождаться перехода контейнера в состояние healthy. Если образ не изменился, контейнер остаётся без изменений.
 
-You can verify the running version with `yarn twenty server status`, which displays the `APP_VERSION` from the container.
+Вы можете проверить запущенную версию с помощью `yarn twenty server status` — эта команда показывает `APP_VERSION` из контейнера.
 
 ### Запуск тестового экземпляра
 
 Передайте `--test` любой команде `server`, чтобы управлять вторым, полностью изолированным экземпляром — это полезно для запуска интеграционных тестов или экспериментов, не затрагивая ваши основные данные разработки.
 
-| Команда                             | Описание                                                 |
-| ----------------------------------- | -------------------------------------------------------- |
-| `yarn twenty server start --test`   | Запустить тестовый экземпляр (по умолчанию — порт 2021)  |
-| `yarn twenty server stop --test`    | Остановить тестовый экземпляр                            |
-| `yarn twenty server status --test`  | Show test instance status, URL, version, and credentials |
-| `yarn twenty server logs --test`    | Выводить журналы тестового экземпляра в потоковом режиме |
-| `yarn twenty server reset --test`   | Удалить тестовые данные и начать с чистого листа         |
-| `yarn twenty server upgrade --test` | Upgrade the test instance image                          |
+| Команда                             | Описание                                                              |
+| ----------------------------------- | --------------------------------------------------------------------- |
+| `yarn twenty server start --test`   | Запустить тестовый экземпляр (по умолчанию — порт 2021)               |
+| `yarn twenty server stop --test`    | Остановить тестовый экземпляр                                         |
+| `yarn twenty server status --test`  | Показать состояние тестового экземпляра, URL, версию и учётные данные |
+| `yarn twenty server logs --test`    | Выводить журналы тестового экземпляра в потоковом режиме              |
+| `yarn twenty server reset --test`   | Удалить тестовые данные и начать с чистого листа                      |
+| `yarn twenty server upgrade --test` | Обновить образ тестового экземпляра                                   |
 
 Тестовый экземпляр запускается в собственном контейнере Docker (`twenty-app-dev-test`) с выделенными томами (`twenty-app-dev-test-data`, `twenty-app-dev-test-storage`) и собственной конфигурацией, поэтому он может работать параллельно с вашим основным экземпляром без конфликтов. Совместите `--test` с `--port`, чтобы переопределить значение по умолчанию (2021).
 
