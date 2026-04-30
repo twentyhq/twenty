@@ -27,7 +27,6 @@ import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAto
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
@@ -110,15 +109,10 @@ export const PageLayoutTabsRenderer = () => {
     isEditMode: isPageLayoutInEditMode,
   });
 
-  const systemObjectTabTitles = useMemo(
-    () => getSystemObjectTabTitles(i18n),
-    [i18n],
-  );
-
   const tabsForCurrentObject = getPageLayoutTabsForCurrentObject({
     isSystemObject,
     tabsWithVisibleWidgets,
-    systemObjectTabTitles,
+    systemObjectTabTitles: getSystemObjectTabTitles(i18n),
   });
 
   const { tabsToRenderInTabList, pinnedLeftTab } = getTabsByDisplayMode({
