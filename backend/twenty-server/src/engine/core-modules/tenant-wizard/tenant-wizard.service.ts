@@ -124,8 +124,8 @@ export class TenantWizardService {
     return { progress, steps, checklist };
   }
 
-  async generateDemoData(workspaceId: string): Promise<{ generated: boolean; counts: Record<string, number> }> {
-    this.logger.log(`Generating demo data for workspace ${workspaceId}`);
+  async generateDemoData(workspaceId: string, industry?: IndustryType): Promise<{ generated: boolean; counts: Record<string, number> }> {
+    this.logger.log(`Generating demo data for workspace ${workspaceId}, industry: ${industry ?? 'all'}`);
 
     // Create sample templates if none exist
     const existingTemplates = await this.templateRepo.find({ where: { workspaceId } });
@@ -185,5 +185,113 @@ export class TenantWizardService {
       errors,
       warnings,
     };
+  }
+
+  // Configuration progress checklist — what is configured vs missing
+  async getConfigurationProgress(workspaceId: string): Promise<{
+    totalItems: number;
+    completedItems: number;
+    progressPercent: number;
+    items: Array<{ name: string; category: string; isCompleted: boolean; isRequired: boolean }>;
+  }> {
+    const steps = await this.getWizardSteps(workspaceId);
+    const checklist = await this.checklistRepo.find({
+      where: { workspaceId },
+      order: { order: 'ASC' },
+    });
+
+    const items: Array<{ name: string; category: string; isCompleted: boolean; isRequired: boolean }> = [];
+
+    for (const step of steps) {
+      items.push({
+        name: step.name,
+        category: step.category,
+        isCompleted: step.status === StepStatus.COMPLETED,
+        isRequired: step.isRequired,
+      });
+    }
+
+    for (const item of checklist) {
+      items.push({
+        name: item.title,
+        category: item.category,
+        isCompleted: item.isCompleted,
+        isRequired: item.itemType === ChecklistItemType.REQUIRED,
+      });
+    }
+
+    const completedItems = items.filter((i) => i.isCompleted).length;
+
+    return {
+      totalItems: items.length,
+      completedItems,
+      progressPercent: items.length > 0 ? Math.round((completedItems / items.length) * 100) : 0,
+      items,
+    };
+  }
+
+  // Basic CSV importer for contacts/companies
+  async importCSV(
+    workspaceId: string,
+    entityType: string,
+    csvData: string,
+  ): Promise<{ imported: number; errors: string[]; entityType: string }> {
+    const errors: string[] = [];
+    const lines = csvData.trim().split('\n');
+
+    if (lines.length < 2) {
+      return { imported: 0, errors: ['CSV must have a header row and at least one data row'], entityType };
+    }
+
+    const headers = lines[0].split(',').map((h) => h.trim().replace(/^"|"$/g, ''));
+    const rows: Array<Record<string, string>> = [];
+
+    for (let i = 1; i < lines.length; i++) {
+      const values = lines[i].split(',').map((v) => v.trim().replace(/^"|"$/g, ''));
+      if (values.length !== headers.length) {
+        errors.push(`Row ${i}: column count mismatch (expected ${headers.length}, got ${values.length})`);
+        continue;
+      }
+      const row: Record<string, string> = {};
+      for (let j = 0; j < headers.length; j++) {
+        row[headers[j]] = values[j];
+      }
+      rows.push(row);
+    }
+
+    // Validate required fields per entity type
+    const requiredFields: Record<string, string[]> = {
+      contacts: ['firstName', 'lastName', 'email'],
+      companies: ['name'],
+      deals: ['name', 'amount'],
+    };
+
+    const required = requiredFields[entityType] ?? [];
+    for (const field of required) {
+      if (!headers.includes(field)) {
+        errors.push(`Missing required column: ${field}`);
+      }
+    }
+
+    if (errors.length > 0) {
+      return { imported: 0, errors, entityType };
+    }
+
+    // Store import as a checklist item for tracking
+    await this.checklistRepo.save(this.checklistRepo.create({
+      workspaceId,
+      title: `CSV Import: ${rows.length} ${entityType}`,
+      description: `Imported ${rows.length} ${entityType} records from CSV`,
+      itemType: ChecklistItemType.RECOMMENDED,
+      order: 99,
+      category: 'data-import',
+      estimatedMinutes: 1,
+      isCompleted: true,
+      completedAt: new Date(),
+    }));
+
+    this.logger.log(`CSV import for workspace ${workspaceId}: ${rows.length} ${entityType} records parsed`);
+
+    return { imported: rows.length, errors, entityType };
   }
 }

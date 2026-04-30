@@ -1,4 +1,5 @@
 import { AppRouterProviders } from '@/app/components/AppRouterProviders';
+import { EnterpriseRoutes } from '@/app/components/EnterpriseRoutes';
 import { LazyRoute } from '@/app/components/LazyRoute';
 import { SettingsRoutes } from '@/app/components/SettingsRoutes';
 import { VerifyLoginTokenEffect } from '@/auth/components/VerifyLoginTokenEffect';
@@ -228,6 +229,10 @@ export const useCreateAppRouter = (
                 isAdminPageEnabled={isAdminPageEnabled}
               />
             }
+          />
+          <Route
+            path={AppPath.EnterpriseCatchAll}
+            element={<EnterpriseRoutes />}
           />
           <Route
             path={AppPath.NotFoundWildcard}
