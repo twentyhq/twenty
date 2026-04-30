@@ -5,9 +5,6 @@ import {
 
 import { WIDGET_GRID_MAX_COLUMNS } from 'src/engine/metadata-modules/page-layout-widget/constants/widget-grid-max-columns.constant';
 
-// Used as a backfill when callers do not specify a widget position. Shape
-// follows the parent tab's layoutMode; the GRID variant advances column-first
-// using widgetIndexInTab so multiple defaults don't all collide at (0,0).
 export const getDefaultPageLayoutWidgetPosition = (
   layoutMode: PageLayoutTabLayoutMode,
   widgetIndexInTab: number,

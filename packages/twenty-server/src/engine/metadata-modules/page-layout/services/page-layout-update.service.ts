@@ -738,11 +738,17 @@ export class PageLayoutUpdateService {
       title: widgetInput.title,
       type: widgetInput.type,
       objectMetadataId: widgetInput.objectMetadataId ?? null,
-      gridPosition: widgetInput.gridPosition,
-      position: widgetInput.position ?? null,
       configuration,
       pageLayoutTabId: widgetInput.pageLayoutTabId,
     };
+
+    if (isDefined(widgetInput.position)) {
+      editableProperties.position = widgetInput.position;
+    }
+
+    if (isDefined(widgetInput.gridPosition)) {
+      editableProperties.gridPosition = widgetInput.gridPosition;
+    }
 
     if (widgetInput.conditionalDisplay !== undefined) {
       editableProperties.conditionalDisplay =
