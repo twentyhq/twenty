@@ -14,6 +14,7 @@ import {
 } from './unified-inbox.entity';
 import { UnifiedInboxService } from './unified-inbox.service';
 import { OmnicanalResolver } from './omnicanal.resolver';
+import { OmnicanalController } from './omnicanal.controller';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { OmnicanalResolver } from './omnicanal.resolver';
       SocialSignalEntity,
     ]),
   ],
+  controllers: [OmnicanalController],
   providers: [WhatsAppService, EmailSequenceService, SequenceExecutorService, UnifiedInboxService, OmnicanalResolver],
   exports: [WhatsAppService, EmailSequenceService, SequenceExecutorService, UnifiedInboxService],
 })
