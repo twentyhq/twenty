@@ -16,10 +16,6 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 
 import { createBasicDigestAuthFetch } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/lib/auth/create-basic-digest-auth-fetch';
-import {
-  diffHrefEtagMap,
-  type HrefEtagMap,
-} from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/lib/sync/diff-href-etag-map';
 import { icalDataExtractPropertyValue } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/lib/utils/icalDataExtractPropertyValue';
 import { CalDavGetEventsService } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/services/caldav-get-events.service';
 import { CalendarEventParticipantResponseStatus } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
@@ -50,17 +46,19 @@ type FetchEventsOptions = {
   syncCursor?: CalDAVSyncCursor;
 };
 
+type EtagsByHref = Record<string, string>;
+
 type CalDAVSyncResult = {
   events: FetchedCalendarEvent[];
   newSyncToken?: string;
   newCtag?: string;
-  newEtags?: HrefEtagMap;
+  newEtags?: EtagsByHref;
 };
 
 type CalDAVSyncCursor = {
   syncTokens: Record<string, string>;
   ctags?: Record<string, string>;
-  etags?: Record<string, HrefEtagMap>;
+  etags?: Record<string, EtagsByHref>;
 };
 
 export type CalDAVServerCapability = 'sync-collection' | 'ctag-etag';
@@ -391,7 +389,7 @@ export class CalDAVClient {
 
     const syncTokens: Record<string, string> = {};
     const ctags: Record<string, string> = {};
-    const etags: Record<string, HrefEtagMap> = {};
+    const etags: Record<string, EtagsByHref> = {};
 
     for (const [calendarUrl, result] of results) {
       if (result.newSyncToken) {
@@ -510,11 +508,13 @@ export class CalDAVClient {
       };
     }
 
-    const currentEtags = await this.fetchHrefEtagMap(calendar.url);
+    const currentEtags = await this.fetchEtagsByHref(calendar.url);
 
-    const { changedHrefs, cancelledHrefs } = diffHrefEtagMap(
-      storedEtags,
-      currentEtags,
+    const changedHrefs = Object.keys(currentEtags).filter(
+      (href) => storedEtags[href] !== currentEtags[href],
+    );
+    const cancelledHrefs = Object.keys(storedEtags).filter(
+      (href) => !(href in currentEtags),
     );
 
     const fetchedEvents = await this.fetchAndParseEvents(
@@ -555,7 +555,7 @@ export class CalDAVClient {
     };
   }
 
-  private async fetchHrefEtagMap(calendarUrl: string): Promise<HrefEtagMap> {
+  private async fetchEtagsByHref(calendarUrl: string): Promise<EtagsByHref> {
     const responses = await propfind({
       url: calendarUrl,
       props: { [`${DAVNamespaceShort.DAV}:getetag`]: {} },
@@ -563,7 +563,7 @@ export class CalDAVClient {
       fetch: this.fetchOverride,
     });
 
-    return responses.reduce<HrefEtagMap>((map, response: DAVResponse) => {
+    return responses.reduce<EtagsByHref>((map, response: DAVResponse) => {
       const href = response.href;
       const etag = response.props?.getetag;
 
