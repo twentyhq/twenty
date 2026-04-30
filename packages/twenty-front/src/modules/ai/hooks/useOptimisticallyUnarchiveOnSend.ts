@@ -24,11 +24,13 @@ export const useOptimisticallyUnarchiveOnSend = () => {
 
     const previousDeletedAt = thread.deletedAt;
     const previousUpdatedAt = thread.updatedAt;
+    const previousLastMessageAt = thread.lastMessageAt;
 
     applyAgentChatThreadUpdate({
       id: threadId,
       deletedAt: null,
       updatedAt: optimisticUpdatedAt,
+      lastMessageAt: optimisticUpdatedAt,
     });
 
     return () => {
@@ -36,6 +38,7 @@ export const useOptimisticallyUnarchiveOnSend = () => {
         id: threadId,
         deletedAt: previousDeletedAt,
         updatedAt: previousUpdatedAt,
+        lastMessageAt: previousLastMessageAt,
       });
     };
   };

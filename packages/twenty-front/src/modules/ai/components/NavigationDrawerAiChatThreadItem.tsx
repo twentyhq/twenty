@@ -75,7 +75,7 @@ export const NavigationDrawerAiChatThreadItem = ({
   const ThreadIcon = isArchived ? IconArchive : IconComment;
   const displayLabel = thread.title || t`New chat`;
   const timestamp = beautifyPastDateRelativeToNowShort(
-    thread.updatedAt ?? thread.createdAt,
+    thread.lastMessageAt ?? thread.updatedAt ?? thread.createdAt,
   );
   const itemMenuDropdownId = getAiChatThreadItemMenuDropdownId(
     thread.id,

@@ -28,6 +28,7 @@ describe('useAiChatThreadRename', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    renameChatThread.mockResolvedValue(true);
     (useRenameChatThread as jest.Mock).mockReturnValue({ renameChatThread });
   });
 
@@ -131,6 +132,25 @@ describe('useAiChatThreadRename', () => {
 
     expect(renameChatThread).toHaveBeenCalledWith('thread-7', 'New title');
     expect(result.current.isRenaming).toBe(false);
+  });
+
+  it('keeps renaming mode open when the rename mutation reports failure', async () => {
+    renameChatThread.mockResolvedValueOnce(false);
+
+    const { result } = renderHook(() =>
+      useAiChatThreadRename(buildThread({ id: 'thread-fail', title: 'Old' })),
+    );
+
+    act(() => {
+      result.current.startRename();
+    });
+
+    await act(async () => {
+      await result.current.commitRename('New title');
+    });
+
+    expect(renameChatThread).toHaveBeenCalledWith('thread-fail', 'New title');
+    expect(result.current.isRenaming).toBe(true);
   });
 
   it('treats a null current title as empty when comparing against committed input', async () => {

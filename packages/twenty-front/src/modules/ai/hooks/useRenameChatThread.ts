@@ -11,23 +11,32 @@ export const useRenameChatThread = () => {
 
   const [renameChatThreadMutation] = useMutation(RenameChatThreadDocument);
 
-  const renameChatThread = async (id: string, title: string) => {
+  const renameChatThread = async (
+    id: string,
+    title: string,
+  ): Promise<boolean> => {
     try {
       const { data } = await renameChatThreadMutation({
         variables: { id, title },
       });
 
-      if (data?.renameChatThread) {
-        applyAgentChatThreadUpdate({
-          id: data.renameChatThread.id,
-          title: data.renameChatThread.title ?? null,
-          updatedAt: data.renameChatThread.updatedAt,
-        });
+      if (!data?.renameChatThread) {
+        return false;
       }
+
+      applyAgentChatThreadUpdate({
+        id: data.renameChatThread.id,
+        title: data.renameChatThread.title ?? null,
+        updatedAt: data.renameChatThread.updatedAt,
+      });
+
+      return true;
     } catch (error) {
       enqueueErrorSnackBar({
         apolloError: CombinedGraphQLErrors.is(error) ? error : undefined,
       });
+
+      return false;
     }
   };
 

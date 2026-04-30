@@ -159,6 +159,7 @@ export class AgentChatResolver {
         id: messageId,
         fileIds: fileIds ?? undefined,
         workspaceId: workspace.id,
+        userWorkspaceId,
       });
 
       await this.eventPublisherService.publish({

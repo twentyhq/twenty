@@ -100,6 +100,11 @@ export class AgentChatStreamingService {
       workspaceId: workspace.id,
     });
 
+    await this.agentChatService.notifyThreadActivityUpdated(
+      threadId,
+      userWorkspaceId,
+    );
+
     const previousMessages = await this.loadMessagesFromDB(
       threadId,
       userWorkspaceId,

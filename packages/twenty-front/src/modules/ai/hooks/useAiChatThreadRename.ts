@@ -27,8 +27,11 @@ export const useAiChatThreadRename = (thread: AgentChatThread) => {
       return;
     }
 
-    await renameChatThread(thread.id, trimmed);
-    setIsRenaming(false);
+    const succeeded = await renameChatThread(thread.id, trimmed);
+
+    if (succeeded) {
+      setIsRenaming(false);
+    }
   };
 
   return {

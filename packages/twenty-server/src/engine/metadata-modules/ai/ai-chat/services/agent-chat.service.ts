@@ -25,7 +25,10 @@ import { WorkspaceEventBroadcaster } from 'src/engine/subscriptions/workspace-ev
 
 import { AgentTitleGenerationService } from './agent-title-generation.service';
 
-const serializeThreadForBroadcast = (thread: AgentChatThreadEntity) => ({
+const serializeThreadForBroadcast = (
+  thread: AgentChatThreadEntity,
+  lastMessageAt: Date | null,
+) => ({
   id: thread.id,
   title: thread.title,
   totalInputTokens: thread.totalInputTokens,
@@ -37,6 +40,7 @@ const serializeThreadForBroadcast = (thread: AgentChatThreadEntity) => ({
   totalInputCredits: thread.totalInputCredits,
   totalOutputCredits: thread.totalOutputCredits,
   deletedAt: thread.deletedAt,
+  lastMessageAt,
   createdAt: thread.createdAt,
   updatedAt: thread.updatedAt,
 });
@@ -83,7 +87,7 @@ export class AgentChatService {
           recordId: savedThread.id,
           recipientUserWorkspaceIds: [userWorkspaceId],
           properties: {
-            after: serializeThreadForBroadcast(savedThread),
+            after: serializeThreadForBroadcast(savedThread, null),
           },
         },
       ],
@@ -233,12 +237,14 @@ export class AgentChatService {
     id,
     fileIds,
     workspaceId,
+    userWorkspaceId,
   }: {
     threadId: string;
     text: string;
     id?: string;
     fileIds?: string[];
     workspaceId: string;
+    userWorkspaceId: string;
   }): Promise<AgentMessageEntity> {
     const messageValues = {
       ...(id ? { id } : {}),
@@ -280,6 +286,8 @@ export class AgentChatService {
     ];
 
     await this.messagePartRepository.insert(parts);
+
+    await this.notifyThreadActivityUpdated(threadId, userWorkspaceId);
 
     return {
       id: savedMessageId,
@@ -484,11 +492,24 @@ export class AgentChatService {
           recordId: threadId,
           recipientUserWorkspaceIds: [userWorkspaceId],
           properties: {
-            before: serializeThreadForBroadcast(thread),
+            before: serializeThreadForBroadcast(thread, null),
           },
         },
       ],
     });
+  }
+
+  async notifyThreadActivityUpdated(
+    threadId: string,
+    userWorkspaceId: string,
+  ): Promise<void> {
+    const thread = await this.getThreadById(threadId, userWorkspaceId);
+
+    await this.broadcastThreadUpdated(
+      thread,
+      ['lastMessageAt'],
+      userWorkspaceId,
+    );
   }
 
   private async broadcastThreadUpdated(
@@ -496,6 +517,8 @@ export class AgentChatService {
     updatedFields: string[],
     userWorkspaceId: string,
   ): Promise<void> {
+    const lastMessageAt = await this.getLastMessageAtForThread(thread.id);
+
     await this.workspaceEventBroadcaster.broadcast({
       workspaceId: thread.workspaceId,
       events: [
@@ -506,7 +529,7 @@ export class AgentChatService {
           recipientUserWorkspaceIds: [userWorkspaceId],
           properties: {
             updatedFields,
-            after: serializeThreadForBroadcast(thread),
+            after: serializeThreadForBroadcast(thread, lastMessageAt),
           },
         },
       ],
@@ -538,21 +561,11 @@ export class AgentChatService {
 
     await this.threadRepository.update(threadId, { title });
 
-    await this.workspaceEventBroadcaster.broadcast({
-      workspaceId,
-      events: [
-        {
-          type: 'updated',
-          entityName: 'agentChatThread',
-          recordId: threadId,
-          recipientUserWorkspaceIds: [thread.userWorkspaceId],
-          properties: {
-            updatedFields: ['title'],
-            after: serializeThreadForBroadcast({ ...thread, title }),
-          },
-        },
-      ],
-    });
+    await this.broadcastThreadUpdated(
+      { ...thread, title },
+      ['title'],
+      thread.userWorkspaceId,
+    );
 
     return title;
   }
