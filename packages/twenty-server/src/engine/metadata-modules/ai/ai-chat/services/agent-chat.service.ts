@@ -117,21 +117,38 @@ export class AgentChatService {
   async getThreadsForUser(
     userWorkspaceId: string,
   ): Promise<(AgentChatThreadEntity & { lastMessageAt: Date | null })[]> {
-    const result = await this.threadRepository
+    const rankedThreads = await this.threadRepository
       .createQueryBuilder('thread')
-      .leftJoin('thread.messages', 'message')
-      .select('thread')
+      .select('thread.id', 'id')
       .addSelect('MAX(message.createdAt)', 'last_message_at')
+      .leftJoin('thread.messages', 'message')
       .where('thread.userWorkspaceId = :userWorkspaceId', { userWorkspaceId })
       .groupBy('thread.id')
       .orderBy('last_message_at', 'DESC', 'NULLS LAST')
       .addOrderBy('thread.updatedAt', 'DESC')
-      .getRawAndEntities();
+      .getRawMany<{ id: string; last_message_at: Date | null }>();
 
-    return result.entities.map((thread, index) => ({
-      ...thread,
-      lastMessageAt: result.raw[index]?.last_message_at ?? null,
-    }));
+    if (rankedThreads.length === 0) {
+      return [];
+    }
+
+    const rankedThreadIds = rankedThreads.map(
+      (rankedThread) => rankedThread.id,
+    );
+
+    const threads = await this.threadRepository.find({
+      where: { id: In(rankedThreadIds), userWorkspaceId },
+    });
+
+    const threadById = new Map(threads.map((thread) => [thread.id, thread]));
+
+    return rankedThreads.flatMap((rankedThread) => {
+      const thread = threadById.get(rankedThread.id);
+
+      return thread
+        ? [{ ...thread, lastMessageAt: rankedThread.last_message_at ?? null }]
+        : [];
+    });
   }
 
   async getLastMessageAtForThread(threadId: string): Promise<Date | null> {
