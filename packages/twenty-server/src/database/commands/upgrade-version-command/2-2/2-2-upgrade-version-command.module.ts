@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 
+import { AddOpportunityNoStageSelectOptionCommand } from 'src/database/commands/upgrade-version-command/2-2/2-2-workspace-command-1786000001100-add-opportunity-no-stage-select-option.command';
 import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/workspace-iterator.module';
 import { SetCalendarEventDescriptionDisplayedMaxRowsCommand } from 'src/database/commands/upgrade-version-command/2-2/2-2-workspace-command-1786000000000-set-calendar-event-description-displayed-max-rows.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
@@ -13,6 +14,9 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     WorkspaceIteratorModule,
     WorkspaceMigrationModule,
   ],
-  providers: [SetCalendarEventDescriptionDisplayedMaxRowsCommand],
+  providers: [
+    SetCalendarEventDescriptionDisplayedMaxRowsCommand,
+    AddOpportunityNoStageSelectOptionCommand,
+  ],
 })
 export class V2_2_UpgradeVersionCommandModule {}

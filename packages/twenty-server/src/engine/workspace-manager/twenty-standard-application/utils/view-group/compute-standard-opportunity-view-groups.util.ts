@@ -63,5 +63,16 @@ export const computeStandardOpportunityViewGroups = (
         position: 4,
       },
     }),
+    byStageNoStage: createStandardViewGroupFlatMetadata({
+      ...args,
+      objectName: 'opportunity',
+      context: {
+        viewName: 'byStage',
+        viewGroupName: 'noStage',
+        isVisible: false,
+        fieldValue: 'NO_STAGE',
+        position: 5,
+      },
+    }),
   };
 };

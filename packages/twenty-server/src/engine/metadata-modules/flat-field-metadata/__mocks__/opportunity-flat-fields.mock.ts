@@ -125,6 +125,13 @@ export const OPPORTUNITY_FLAT_FIELDS_MOCK = {
         value: 'CUSTOMER',
         position: 4,
       },
+      {
+        id: '20202020-f3c2-4b8a-9d01-050005050050',
+        color: 'gray',
+        label: 'No stage',
+        value: 'NO_STAGE',
+        position: 5,
+      },
     ],
     settings: null,
     isCustom: false,

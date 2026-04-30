@@ -210,6 +210,13 @@ export const buildOpportunityStandardFlatFieldMetadatas = ({
           position: 4,
           color: 'yellow',
         },
+        {
+          id: '20202020-f3c2-4b8a-9d01-050005050050',
+          value: 'NO_STAGE',
+          label: i18nLabel(msg`No stage`),
+          position: 5,
+          color: 'gray',
+        },
       ],
     },
     standardObjectMetadataRelatedEntityIds,

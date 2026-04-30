@@ -2010,6 +2010,9 @@ export const STANDARD_OBJECTS = {
           customer: {
             universalIdentifier: '20202020-af14-4a04-8a04-0aa0b2ca2bf5',
           },
+          noStage: {
+            universalIdentifier: '20202020-af14-4a04-8a04-0aa0b2ca2bf6',
+          },
         },
       },
       opportunityRecordPageFields: {

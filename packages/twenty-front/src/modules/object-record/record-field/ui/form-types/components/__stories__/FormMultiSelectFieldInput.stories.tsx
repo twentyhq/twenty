@@ -19,6 +19,7 @@ type Story = StoryObj<typeof FormMultiSelectFieldInput>;
 export const Default: Story = {
   args: {
     label: 'Work Policy',
+    onChange: fn(),
     defaultValue: ['WORK_POLICY_1', 'WORK_POLICY_2'],
     options: [
       {

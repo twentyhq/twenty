@@ -26,6 +26,7 @@ type FormSelectFieldInputProps = {
   VariablePicker?: VariablePickerComponent;
   options: SelectOption[];
   readonly?: boolean;
+  allowsEmptySelection?: boolean;
 };
 
 export const FormSelectFieldInput = ({
@@ -36,6 +37,7 @@ export const FormSelectFieldInput = ({
   VariablePicker,
   options,
   readonly,
+  allowsEmptySelection = true,
 }: FormSelectFieldInputProps) => {
   const { theme } = useContext(ThemeContext);
   const instanceId = useId();
@@ -101,7 +103,20 @@ export const FormSelectFieldInput = ({
     icon: IconCircleOff,
   };
 
+  const firstOptionValue =
+    options[0]?.value !== undefined ? String(options[0].value) : '';
+
   const handleUnlinkVariable = () => {
+    if (!allowsEmptySelection) {
+      setDraftValue({
+        type: 'static',
+        value: firstOptionValue,
+        editingMode: 'view',
+      });
+      onChange(firstOptionValue);
+      return;
+    }
+
     setDraftValue({
       type: 'static',
       value: '',
@@ -138,7 +153,7 @@ export const FormSelectFieldInput = ({
             options={options}
             value={selectedOption?.value}
             onChange={onSelect}
-            emptyOption={defaultEmptyOption}
+            emptyOption={allowsEmptySelection ? defaultEmptyOption : undefined}
             fullWidth
             hasRightElement={isDefined(VariablePicker) && !readonly}
             withSearchInput

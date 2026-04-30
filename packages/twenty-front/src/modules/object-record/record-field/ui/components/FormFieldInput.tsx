@@ -116,6 +116,7 @@ export const FormFieldInput = ({
       VariablePicker={VariablePicker}
       options={field.metadata?.options}
       readonly={readonly}
+      allowsEmptySelection={field.metadata.isNullable}
     />
   ) : isFieldFullName(field) ? (
     <FormFullNameFieldInput
