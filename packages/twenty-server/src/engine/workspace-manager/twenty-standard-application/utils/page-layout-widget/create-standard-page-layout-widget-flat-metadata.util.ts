@@ -23,7 +23,8 @@ export type CreateStandardPageLayoutWidgetContext = {
   widgetName: string;
   title: string;
   type: WidgetType;
-  position: PageLayoutWidgetPosition;
+  gridPosition?: GridPosition | null;
+  position?: PageLayoutWidgetPosition | null;
   configuration: AllPageLayoutWidgetConfiguration;
   universalConfiguration: MetadataUniversalFlatEntity<'pageLayoutWidget'>['universalConfiguration'];
   objectMetadataId: string | null;
@@ -47,6 +48,7 @@ export const createStandardPageLayoutWidgetFlatMetadata = ({
     widgetName,
     title,
     type,
+    gridPosition,
     position,
     configuration,
     universalConfiguration,
@@ -97,6 +99,7 @@ export const createStandardPageLayoutWidgetFlatMetadata = ({
     pageLayoutTabUniversalIdentifier: tabDefinition.universalIdentifier,
     title,
     type,
+    gridPosition,
     position,
     configuration,
     universalConfiguration,

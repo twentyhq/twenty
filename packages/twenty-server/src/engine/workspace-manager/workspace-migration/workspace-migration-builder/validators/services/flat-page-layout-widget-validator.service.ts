@@ -229,13 +229,7 @@ export class FlatPageLayoutWidgetValidatorService {
     widgetTitle: string;
   }): FlatEntityValidationError[] {
     if (!isDefined(position)) {
-      return [
-        {
-          code: PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
-          message: t`Widget position is required`,
-          userFriendlyMessage: msg`Widget position is required`,
-        },
-      ];
+      return [];
     }
 
     const errors: FlatEntityValidationError[] = [];

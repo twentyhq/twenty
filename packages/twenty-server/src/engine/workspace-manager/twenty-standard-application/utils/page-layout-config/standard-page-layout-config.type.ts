@@ -11,7 +11,8 @@ export type StandardPageLayoutWidgetConfig = {
   universalIdentifier: string;
   title?: string;
   type?: WidgetType;
-  position?: PageLayoutWidgetPosition;
+  gridPosition?: GridPosition | null;
+  position?: PageLayoutWidgetPosition | null;
   conditionalDisplay?: PageLayoutWidgetConditionalDisplay | null;
   conditionalAvailabilityExpression?: string | null;
   fieldUniversalIdentifier?: string;
@@ -39,7 +40,8 @@ export type StandardRecordPageWidgetConfig = {
   universalIdentifier: string;
   title: string;
   type: WidgetType;
-  position: PageLayoutWidgetPosition;
+  gridPosition?: GridPosition | null;
+  position?: PageLayoutWidgetPosition | null;
   conditionalDisplay?: PageLayoutWidgetConditionalDisplay | null;
   conditionalAvailabilityExpression?: string | null;
   fieldUniversalIdentifier?: string;

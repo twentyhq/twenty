@@ -2,6 +2,7 @@ import { DEFAULT_WIDGET_SIZE } from '@/page-layout/constants/DefaultWidgetSize';
 import { type PageLayout } from '@/page-layout/types/PageLayout';
 import { type TabLayouts } from '@/page-layout/types/TabLayouts';
 import { getWidgetSize } from '@/page-layout/utils/getWidgetSize';
+import { isGridPosition } from '@/page-layout/utils/isGridPosition';
 import { isDefined } from 'twenty-shared/utils';
 
 export const convertPageLayoutToTabLayouts = (
@@ -32,7 +33,7 @@ export const convertPageLayoutToTabLayouts = (
         }
       }
 
-      if (widget.position?.__typename !== 'PageLayoutWidgetGridPosition') {
+      if (!widget.position || !isGridPosition(widget.position)) {
         return {
           i: widget.id,
           x: 0,

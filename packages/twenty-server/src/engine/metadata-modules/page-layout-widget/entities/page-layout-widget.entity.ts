@@ -28,7 +28,7 @@ import { type JsonbProperty } from 'src/engine/workspace-manager/workspace-migra
 
 export type PageLayoutWidgetOverrides = {
   title?: string;
-  position?: PageLayoutWidgetPosition;
+  position?: PageLayoutWidgetPosition | null;
   conditionalDisplay?: PageLayoutWidgetConditionalDisplay | null;
   conditionalAvailabilityExpression?: string | null;
   pageLayoutTabId?: SerializedRelation;
@@ -87,6 +87,9 @@ export class PageLayoutWidgetEntity<
 
   @Column({ type: 'varchar', nullable: true })
   conditionalAvailabilityExpression: string | null;
+
+  @Column({ type: 'jsonb', nullable: true })
+  gridPosition: JsonbProperty<GridPosition> | null;
 
   @Column({ type: 'jsonb', nullable: true })
   position: JsonbProperty<PageLayoutWidgetPosition | null>;

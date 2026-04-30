@@ -737,7 +737,8 @@ export class PageLayoutUpdateService {
       title: widgetInput.title,
       type: widgetInput.type,
       objectMetadataId: widgetInput.objectMetadataId ?? null,
-      position: widgetInput.position,
+      gridPosition: widgetInput.gridPosition,
+      position: widgetInput.position ?? null,
       configuration,
       pageLayoutTabId: widgetInput.pageLayoutTabId,
     };
