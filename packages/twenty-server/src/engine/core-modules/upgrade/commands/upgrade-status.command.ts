@@ -147,7 +147,10 @@ export class UpgradeStatusCommand extends CommandRunner {
     }
 
     if (failed.length > 0) {
-      const groupedByCommand = new Map<string | null, WorkspaceUpgradeStatus[]>();
+      const groupedByCommand = new Map<
+        string | null,
+        WorkspaceUpgradeStatus[]
+      >();
 
       for (const workspaceStatus of failed) {
         const commandName = workspaceStatus.latestCommand?.name ?? null;

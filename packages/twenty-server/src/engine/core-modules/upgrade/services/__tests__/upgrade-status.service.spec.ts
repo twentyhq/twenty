@@ -242,12 +242,8 @@ describe('UpgradeStatusService', () => {
 
       const result = await service.getInstanceAndAllWorkspacesStatus();
 
-      expect(result.workspacesBehind).toEqual([
-        { id: 'ws-2', name: 'Banana' },
-      ]);
-      expect(result.workspacesFailed).toEqual([
-        { id: 'ws-3', name: 'Cherry' },
-      ]);
+      expect(result.workspacesBehind).toEqual([{ id: 'ws-2', name: 'Banana' }]);
+      expect(result.workspacesFailed).toEqual([{ id: 'ws-3', name: 'Cherry' }]);
       expect(result.computedAt).toEqual(computedAt);
       expect(getWorkspaceLastAttemptedCommandName).not.toHaveBeenCalled();
       expect(cacheWrite).not.toHaveBeenCalled();
@@ -256,17 +252,13 @@ describe('UpgradeStatusService', () => {
     it('should fall back to a refresh when the cache marker is missing', async () => {
       cacheGetComputedAt.mockResolvedValue(null);
       getLastAttemptedInstanceCommand.mockResolvedValue(null);
-      workspaceFind.mockResolvedValue([
-        { id: 'ws-1', displayName: 'Apple' },
-      ]);
+      workspaceFind.mockResolvedValue([{ id: 'ws-1', displayName: 'Apple' }]);
       getWorkspaceLastAttemptedCommandName.mockResolvedValue(new Map());
 
       const result = await service.getInstanceAndAllWorkspacesStatus();
 
       expect(cacheWrite).toHaveBeenCalledTimes(1);
-      expect(result.workspacesBehind).toEqual([
-        { id: 'ws-1', name: 'Apple' },
-      ]);
+      expect(result.workspacesBehind).toEqual([{ id: 'ws-1', name: 'Apple' }]);
     });
 
     it('should use null name when a cached id is missing from the database', async () => {
@@ -340,12 +332,8 @@ describe('UpgradeStatusService', () => {
 
       const result = await service.refreshInstanceAndAllWorkspacesStatus();
 
-      expect(result.workspacesBehind).toEqual([
-        { id: 'ws-2', name: 'Banana' },
-      ]);
-      expect(result.workspacesFailed).toEqual([
-        { id: 'ws-3', name: 'Cherry' },
-      ]);
+      expect(result.workspacesBehind).toEqual([{ id: 'ws-2', name: 'Banana' }]);
+      expect(result.workspacesFailed).toEqual([{ id: 'ws-3', name: 'Cherry' }]);
 
       expect(cacheWrite).toHaveBeenCalledWith({
         behindWorkspaceIds: ['ws-2'],
