@@ -1,30 +1,10 @@
+import { useQuery } from '@apollo/client';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 
-import { TicketData } from '../types/ticket.types';
-
-const MOCK_TICKET: TicketData = {
-  id: 'T-1001',
-  subject: 'Cannot access dashboard',
-  description: 'User reports 403 error when navigating to /dashboard after login. Issue started after password reset.',
-  status: 'in_progress',
-  priority: 'high',
-  category: 'technical',
-  channel: 'email',
-  assignee: 'Ana Torres',
-  requester: 'Carlos Mendez',
-  createdAt: '2026-04-28T10:00:00Z',
-  updatedAt: '2026-04-28T14:00:00Z',
-  slaDeadline: '2026-04-29T10:00:00Z',
-  linkedDealId: 'D-500',
-  comments: [
-    { id: 'c1', author: 'Carlos Mendez', content: 'I tried clearing cache, still not working.', createdAt: '2026-04-28T11:00:00Z', isInternal: false },
-    { id: 'c2', author: 'Ana Torres', content: 'Checking permissions table — looks like role was reset.', createdAt: '2026-04-28T12:30:00Z', isInternal: true },
-    { id: 'c3', author: 'Ana Torres', content: 'Hi Carlos, we found the issue. Your role was reset during the password change. Fixed now.', createdAt: '2026-04-28T14:00:00Z', isInternal: false },
-  ],
-};
+import { GET_TICKETS } from '../hooks/useTickets';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -112,14 +92,33 @@ const StyledCommentBody = styled.p`
   color: ${themeCssVariables.font.color.primary};
 `;
 
+const StyledLoading = styled.div`
+  padding: ${themeCssVariables.spacing[4]};
+  color: ${themeCssVariables.font.color.tertiary};
+`;
+
+const StyledError = styled.div`
+  padding: ${themeCssVariables.spacing[4]};
+  color: ${themeCssVariables.color.red};
+`;
+
 export const TicketDetail = () => {
   useLingui();
-  const ticket = MOCK_TICKET;
+  const { data, loading, error } = useQuery(GET_TICKETS, {
+    variables: { limit: 1, offset: 0 },
+  });
+
+  if (loading) return <StyledLoading>{t`Loading...`}</StyledLoading>;
+  if (error) return <StyledError>{t`Error: ${error.message}`}</StyledError>;
+
+  const ticket = data?.tickets?.edges?.[0]?.node;
+
+  if (!ticket) return <StyledError>{t`Ticket not found`}</StyledError>;
 
   return (
     <StyledContainer>
       <StyledHeader>
-        <StyledSubject>{ticket.id}: {ticket.subject}</StyledSubject>
+        <StyledSubject>{ticket.ticketNumber}: {ticket.subject}</StyledSubject>
       </StyledHeader>
       <StyledMeta>
         <StyledMetaItem>
@@ -132,35 +131,43 @@ export const TicketDetail = () => {
         </StyledMetaItem>
         <StyledMetaItem>
           <StyledLabel>{t`Assignee`}</StyledLabel>
-          <StyledValue>{ticket.assignee}</StyledValue>
+          <StyledValue>{ticket.assigneeName ?? '---'}</StyledValue>
         </StyledMetaItem>
         <StyledMetaItem>
-          <StyledLabel>{t`Requester`}</StyledLabel>
-          <StyledValue>{ticket.requester}</StyledValue>
+          <StyledLabel>{t`Customer`}</StyledLabel>
+          <StyledValue>{ticket.customerName ?? '---'}</StyledValue>
         </StyledMetaItem>
         <StyledMetaItem>
-          <StyledLabel>{t`Channel`}</StyledLabel>
-          <StyledValue>{ticket.channel}</StyledValue>
+          <StyledLabel>{t`Category`}</StyledLabel>
+          <StyledValue>{ticket.category ?? '---'}</StyledValue>
         </StyledMetaItem>
         <StyledMetaItem>
-          <StyledLabel>{t`Linked Deal`}</StyledLabel>
-          <StyledValue>{ticket.linkedDealId ?? '—'}</StyledValue>
+          <StyledLabel>{t`Created`}</StyledLabel>
+          <StyledValue>{new Date(ticket.createdAt).toLocaleString()}</StyledValue>
         </StyledMetaItem>
       </StyledMeta>
       <StyledSection>
-        <StyledSectionTitle>{t`Description`}</StyledSectionTitle>
-        <StyledValue>{ticket.description}</StyledValue>
-      </StyledSection>
-      <StyledSection>
         <StyledSectionTitle>{t`Timeline`}</StyledSectionTitle>
-        {ticket.comments.map((comment) => (
-          <StyledComment key={comment.id} isInternal={comment.isInternal}>
-            <StyledCommentAuthor>{comment.author}</StyledCommentAuthor>
-            <StyledCommentDate>{new Date(comment.createdAt).toLocaleString()}</StyledCommentDate>
-            {comment.isInternal && <StyledLabel> {t`Internal`}</StyledLabel>}
-            <StyledCommentBody>{comment.content}</StyledCommentBody>
+        <StyledComment isInternal={false}>
+          <StyledCommentAuthor>{ticket.customerName ?? '---'}</StyledCommentAuthor>
+          <StyledCommentDate>{new Date(ticket.createdAt).toLocaleString()}</StyledCommentDate>
+          <StyledCommentBody>{t`Ticket created`}</StyledCommentBody>
+        </StyledComment>
+        {ticket.firstResponseAt && (
+          <StyledComment isInternal={true}>
+            <StyledCommentAuthor>{ticket.assigneeName ?? '---'}</StyledCommentAuthor>
+            <StyledCommentDate>{new Date(ticket.firstResponseAt).toLocaleString()}</StyledCommentDate>
+            <StyledLabel> {t`Internal`}</StyledLabel>
+            <StyledCommentBody>{t`First response`}</StyledCommentBody>
           </StyledComment>
-        ))}
+        )}
+        {ticket.resolvedAt && (
+          <StyledComment isInternal={false}>
+            <StyledCommentAuthor>{ticket.assigneeName ?? '---'}</StyledCommentAuthor>
+            <StyledCommentDate>{new Date(ticket.resolvedAt).toLocaleString()}</StyledCommentDate>
+            <StyledCommentBody>{t`Resolved`}</StyledCommentBody>
+          </StyledComment>
+        )}
       </StyledSection>
     </StyledContainer>
   );

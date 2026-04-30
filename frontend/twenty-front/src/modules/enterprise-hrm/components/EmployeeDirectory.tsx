@@ -1,3 +1,4 @@
+import { useQuery } from '@apollo/client';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
@@ -5,15 +6,7 @@ import { useState } from 'react';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { Department, EmployeeData } from '../types/hrm.types';
-
-const MOCK_EMPLOYEES: EmployeeData[] = [
-  { id: 'E1', name: 'Ana Torres', email: 'ana@company.co', department: 'engineering', title: 'Lead Engineer', status: 'active', hireDate: '2023-03-15' },
-  { id: 'E2', name: 'Carlos Mendez', email: 'carlos@company.co', department: 'sales', title: 'Sales Manager', status: 'active', hireDate: '2022-07-01' },
-  { id: 'E3', name: 'Maria Lopez', email: 'maria@company.co', department: 'hr', title: 'HR Director', status: 'active', hireDate: '2021-01-10' },
-  { id: 'E4', name: 'Pedro Ruiz', email: 'pedro@company.co', department: 'engineering', title: 'Backend Developer', status: 'on_leave', hireDate: '2024-06-20' },
-  { id: 'E5', name: 'Sofia Garcia', email: 'sofia@company.co', department: 'marketing', title: 'Content Lead', status: 'active', hireDate: '2023-11-05' },
-  { id: 'E6', name: 'Luis Reyes', email: 'luis@company.co', department: 'finance', title: 'Accountant', status: 'active', hireDate: '2024-02-14' },
-];
+import { GET_WORKFORCE_ANALYTICS } from '../hooks/useHRM';
 
 const ALL_DEPARTMENTS: Department[] = ['engineering', 'sales', 'marketing', 'hr', 'finance', 'operations'];
 
@@ -84,9 +77,16 @@ export const EmployeeDirectory = () => {
   useLingui();
   const [filter, setFilter] = useState<Department | 'all'>('all');
 
+  const { data, loading, error } = useQuery(GET_WORKFORCE_ANALYTICS);
+
+  if (loading) return <StyledContainer>{t`Loading...`}</StyledContainer>;
+  if (error) return <StyledContainer>{t`Error loading data`}</StyledContainer>;
+
+  const employees: EmployeeData[] = data?.workforceAnalytics?.byDepartment ?? [];
+
   const filtered = filter === 'all'
-    ? MOCK_EMPLOYEES
-    : MOCK_EMPLOYEES.filter((e) => e.department === filter);
+    ? employees
+    : employees.filter((e) => e.department === filter);
 
   return (
     <StyledContainer>

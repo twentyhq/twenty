@@ -1,16 +1,11 @@
+import { useQuery } from '@apollo/client';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { ContractData, ContractStatus } from '../types/clm.types';
-
-const MOCK_CONTRACTS: ContractData[] = [
-  { id: 'C1', title: 'SaaS License Agreement', counterparty: 'Bancolombia', status: 'active', value: 1200000, currency: 'COP', startDate: '2026-01-01', endDate: '2027-12-31', owner: 'Maria Lopez' },
-  { id: 'C2', title: 'Consulting MSA', counterparty: 'Ecopetrol', status: 'in_review', value: 850000, currency: 'COP', startDate: '2026-05-01', endDate: '2027-04-30', owner: 'Carlos Mendez' },
-  { id: 'C3', title: 'Data Processing Addendum', counterparty: 'Avianca', status: 'draft', value: 0, currency: 'COP', startDate: '', endDate: '', owner: 'Ana Torres' },
-  { id: 'C4', title: 'Support Contract', counterparty: 'ISA Group', status: 'expired', value: 450000, currency: 'COP', startDate: '2025-01-01', endDate: '2025-12-31', owner: 'Luis Reyes' },
-];
+import { GET_CONTRACT_ANALYTICS } from '../hooks/useCLM';
 
 const STATUS_COLORS: Record<ContractStatus, string> = {
   draft: themeCssVariables.color.gray50,
@@ -82,6 +77,13 @@ const StyledHideMobileHeader = styled.th`
 export const ContractList = () => {
   useLingui();
 
+  const { data, loading, error } = useQuery(GET_CONTRACT_ANALYTICS);
+
+  if (loading) return <StyledContainer>{t`Loading...`}</StyledContainer>;
+  if (error) return <StyledContainer>{t`Error loading data`}</StyledContainer>;
+
+  const contracts: ContractData[] = data?.contractAnalytics?.byStatus ?? [];
+
   return (
     <StyledContainer>
       <StyledTitle>{t`Contracts`}</StyledTitle>
@@ -96,12 +98,12 @@ export const ContractList = () => {
           </tr>
         </thead>
         <tbody>
-          {MOCK_CONTRACTS.map((contract) => (
+          {contracts.map((contract) => (
             <tr key={contract.id}>
               <StyledTd>{contract.title}</StyledTd>
               <StyledTd>{contract.counterparty}</StyledTd>
               <StyledTd>
-                <StyledBadge color={STATUS_COLORS[contract.status]}>{contract.status.replace('_', ' ')}</StyledBadge>
+                <StyledBadge color={STATUS_COLORS[contract.status] ?? themeCssVariables.color.gray50}>{contract.status.replace('_', ' ')}</StyledBadge>
               </StyledTd>
               <StyledHideMobile>{contract.value ? `$${contract.value.toLocaleString()}` : '—'}</StyledHideMobile>
               <StyledHideMobile>{contract.endDate || '—'}</StyledHideMobile>

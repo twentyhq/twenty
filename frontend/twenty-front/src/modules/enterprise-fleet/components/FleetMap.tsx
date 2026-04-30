@@ -1,17 +1,16 @@
+import { useMutation, useQuery } from '@apollo/client';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
+import { useState } from 'react';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 
-import { VehicleData, VehicleStatus } from '../types/fleet.types';
-
-const MOCK_VEHICLES: VehicleData[] = [
-  { id: 'V1', plate: 'ABC-123', model: 'Ford Transit', driver: 'Juan Perez', status: 'in_transit', lastLocation: 'Bogota Norte', mileage: 45200 },
-  { id: 'V2', plate: 'DEF-456', model: 'Mercedes Sprinter', driver: 'Carlos Ruiz', status: 'available', lastLocation: 'Depot Central', mileage: 32100 },
-  { id: 'V3', plate: 'GHI-789', model: 'Iveco Daily', driver: 'Pedro Gomez', status: 'maintenance', lastLocation: 'Taller Sur', mileage: 78500 },
-  { id: 'V4', plate: 'JKL-012', model: 'Renault Master', driver: 'Luis Reyes', status: 'in_transit', lastLocation: 'Cali Centro', mileage: 21300 },
-  { id: 'V5', plate: 'MNO-345', model: 'Ford Transit', driver: 'Ana Torres', status: 'offline', lastLocation: 'Unknown', mileage: 55000 },
-];
+import {
+  CREATE_DELIVERY,
+  GET_DRIVER_PERFORMANCE,
+  GET_FLEET_ANALYTICS,
+} from '../hooks/useFleet';
+import { VehicleStatus } from '../types/fleet.types';
 
 const STATUS_COLORS: Record<VehicleStatus, string> = {
   available: themeCssVariables.color.turquoise,
@@ -27,76 +26,237 @@ const StyledContainer = styled.div`
   gap: ${themeCssVariables.spacing[3]};
 `;
 
+const StyledToolbar = styled.div`
+  display: flex;
+  gap: ${themeCssVariables.spacing[2]};
+  flex-wrap: wrap;
+  align-items: center;
+`;
+
+const StyledButton = styled.button`
+  padding: 6px 14px;
+  border: none;
+  border-radius: 4px;
+  background: ${themeCssVariables.color.blue};
+  color: ${themeCssVariables.font.color.inverted};
+  cursor: pointer;
+  font-size: ${themeCssVariables.font.size.sm};
+`;
+
+const StyledInput = styled.input`
+  padding: 6px 10px;
+  border: 1px solid ${themeCssVariables.border.color.medium};
+  border-radius: 4px;
+  font-size: ${themeCssVariables.font.size.sm};
+  min-width: 120px;
+`;
+
+const StyledForm = styled.div`
+  display: flex;
+  gap: ${themeCssVariables.spacing[2]};
+  flex-wrap: wrap;
+  padding: ${themeCssVariables.spacing[3]};
+  border: 1px solid ${themeCssVariables.border.color.medium};
+  border-radius: 8px;
+`;
+
+const StyledMetrics = styled.div`
+  display: flex;
+  gap: ${themeCssVariables.spacing[3]};
+  font-size: ${themeCssVariables.font.size.sm};
+  color: ${themeCssVariables.font.color.secondary};
+  flex-wrap: wrap;
+`;
+
 const StyledTitle = styled.h2`
   font-size: ${themeCssVariables.font.size.lg};
   color: ${themeCssVariables.font.color.primary};
   margin: 0;
 `;
 
-const StyledList = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${themeCssVariables.spacing[2]};
+const StyledTable = styled.table`
+  width: 100%;
+  border-collapse: collapse;
 `;
 
-const StyledRow = styled.div`
-  display: flex;
-  align-items: center;
-  gap: ${themeCssVariables.spacing[3]};
+const StyledTh = styled.th`
+  text-align: left;
   padding: ${themeCssVariables.spacing[2]};
-  border-bottom: 1px solid ${themeCssVariables.border.color.light};
+  font-size: ${themeCssVariables.font.size.sm};
+  color: ${themeCssVariables.font.color.tertiary};
+  border-bottom: 1px solid ${themeCssVariables.border.color.medium};
+`;
 
-  @media (max-width: ${MOBILE_VIEWPORT}px) {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: ${themeCssVariables.spacing[1]};
-  }
+const StyledTd = styled.td`
+  padding: ${themeCssVariables.spacing[2]};
+  font-size: ${themeCssVariables.font.size.md};
+  color: ${themeCssVariables.font.color.primary};
+  border-bottom: 1px solid ${themeCssVariables.border.color.light};
 `;
 
 const StyledDot = styled.span<{ color: string }>`
+  display: inline-block;
   width: 10px;
   height: 10px;
   border-radius: 50%;
   background: ${({ color }) => color};
-  flex-shrink: 0;
+  margin-right: 6px;
 `;
 
-const StyledPlate = styled.span`
-  font-weight: ${themeCssVariables.font.weight.medium};
+const StyledBadge = styled.span<{ color: string }>`
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: ${themeCssVariables.font.size.xs};
+  background: ${({ color }) => color};
+  color: ${themeCssVariables.font.color.inverted};
+`;
+
+const StyledHideMobile = styled.td`
+  padding: ${themeCssVariables.spacing[2]};
   font-size: ${themeCssVariables.font.size.md};
   color: ${themeCssVariables.font.color.primary};
-  min-width: 90px;
+  border-bottom: 1px solid ${themeCssVariables.border.color.light};
+  @media (max-width: ${MOBILE_VIEWPORT}px) {
+    display: none;
+  }
 `;
 
-const StyledInfo = styled.span`
-  font-size: ${themeCssVariables.font.size.sm};
-  color: ${themeCssVariables.font.color.secondary};
-  min-width: 140px;
-`;
-
-const StyledLocation = styled.span`
+const StyledHideMobileHeader = styled.th`
+  text-align: left;
+  padding: ${themeCssVariables.spacing[2]};
   font-size: ${themeCssVariables.font.size.sm};
   color: ${themeCssVariables.font.color.tertiary};
+  border-bottom: 1px solid ${themeCssVariables.border.color.medium};
+  @media (max-width: ${MOBILE_VIEWPORT}px) {
+    display: none;
+  }
+`;
+
+const StyledLoading = styled.div`
+  padding: ${themeCssVariables.spacing[4]};
+  color: ${themeCssVariables.font.color.tertiary};
+`;
+
+const StyledError = styled.div`
+  padding: ${themeCssVariables.spacing[4]};
+  color: ${themeCssVariables.color.red};
 `;
 
 export const FleetMap = () => {
   useLingui();
 
+  const [showForm, setShowForm] = useState(false);
+  const [orderId, setOrderId] = useState('');
+  const [destination, setDestination] = useState('');
+
+  const { data, loading, error, refetch } = useQuery(GET_FLEET_ANALYTICS);
+  const { data: driverData } = useQuery(GET_DRIVER_PERFORMANCE, {
+    variables: {},
+  });
+
+  const [createDelivery, { loading: creating }] = useMutation(
+    CREATE_DELIVERY,
+    { onCompleted: () => { setShowForm(false); setOrderId(''); setDestination(''); refetch(); } },
+  );
+
+  const handleCreate = () => {
+    if (!orderId || !destination) return;
+    createDelivery({
+      variables: { input: { orderId, destination, origin: 'Warehouse' } },
+    });
+  };
+
+  if (loading) return <StyledLoading>{t`Loading...`}</StyledLoading>;
+  if (error) return <StyledError>{t`Error: ${error.message}`}</StyledError>;
+
+  const analytics = data?.fleetAnalytics;
+  const drivers = driverData?.driverPerformance?.drivers ?? [];
+
   return (
     <StyledContainer>
-      <StyledTitle>{t`Fleet Overview`}</StyledTitle>
-      <StyledList>
-        {MOCK_VEHICLES.map((vehicle) => (
-          <StyledRow key={vehicle.id}>
-            <StyledDot color={STATUS_COLORS[vehicle.status]} />
-            <StyledPlate>{vehicle.plate}</StyledPlate>
-            <StyledInfo>{vehicle.model}</StyledInfo>
-            <StyledInfo>{vehicle.driver}</StyledInfo>
-            <StyledLocation>{vehicle.lastLocation}</StyledLocation>
-            <StyledInfo>{vehicle.status.replace('_', ' ')}</StyledInfo>
-          </StyledRow>
-        ))}
-      </StyledList>
+      <StyledToolbar>
+        <StyledTitle>{t`Fleet Overview`}</StyledTitle>
+        <StyledButton onClick={() => setShowForm(!showForm)}>
+          {showForm ? t`Cancel` : t`New Delivery`}
+        </StyledButton>
+      </StyledToolbar>
+
+      {analytics && (
+        <StyledMetrics>
+          <span>
+            <StyledDot color={STATUS_COLORS.available} />
+            {t`Available`}: {analytics.availableCount}
+          </span>
+          <span>
+            <StyledDot color={STATUS_COLORS.in_transit} />
+            {t`In Transit`}: {analytics.inTransitCount}
+          </span>
+          <span>
+            <StyledDot color={STATUS_COLORS.maintenance} />
+            {t`Maintenance`}: {analytics.maintenanceCount}
+          </span>
+          <span>
+            {t`Deliveries`}: {analytics.totalDeliveries}
+          </span>
+          <span>
+            {t`On-time`}: {analytics.onTimeRate}%
+          </span>
+        </StyledMetrics>
+      )}
+
+      {showForm && (
+        <StyledForm>
+          <StyledInput
+            placeholder={t`Order ID`}
+            value={orderId}
+            onChange={(event) => setOrderId(event.target.value)}
+          />
+          <StyledInput
+            placeholder={t`Destination`}
+            value={destination}
+            onChange={(event) => setDestination(event.target.value)}
+          />
+          <StyledButton onClick={handleCreate} disabled={creating}>
+            {creating ? t`Creating...` : t`Dispatch`}
+          </StyledButton>
+        </StyledForm>
+      )}
+
+      <StyledTable>
+        <thead>
+          <tr>
+            <StyledTh>{t`Driver`}</StyledTh>
+            <StyledTh>{t`Deliveries`}</StyledTh>
+            <StyledTh>{t`On-time`}</StyledTh>
+            <StyledHideMobileHeader>{t`Safety`}</StyledHideMobileHeader>
+            <StyledHideMobileHeader>{t`Rating`}</StyledHideMobileHeader>
+          </tr>
+        </thead>
+        <tbody>
+          {drivers.map(
+            (driver: {
+              id: string;
+              name: string;
+              deliveriesCompleted: number;
+              onTimeRate: number;
+              safetyScore: number;
+              customerRating: number;
+            }) => (
+              <tr key={driver.id}>
+                <StyledTd>{driver.name}</StyledTd>
+                <StyledTd>
+                  <StyledBadge color={themeCssVariables.color.blue}>
+                    {driver.deliveriesCompleted}
+                  </StyledBadge>
+                </StyledTd>
+                <StyledTd>{driver.onTimeRate}%</StyledTd>
+                <StyledHideMobile>{driver.safetyScore}/100</StyledHideMobile>
+                <StyledHideMobile>{driver.customerRating}/5</StyledHideMobile>
+              </tr>
+            ),
+          )}
+        </tbody>
+      </StyledTable>
     </StyledContainer>
   );
 };

@@ -1,16 +1,11 @@
+import { useQuery } from '@apollo/client';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 
+import { GET_PARTNER_LEADERBOARD } from '../hooks/usePRM';
 import { PartnerRanking, PartnerTier } from '../types/prm.types';
-
-const MOCK_RANKINGS: PartnerRanking[] = [
-  { rank: 1, partnerId: 'PR1', partnerName: 'TechSolutions CO', tier: 'platinum', totalRevenue: 2500000, dealsWon: 15, currency: 'COP' },
-  { rank: 2, partnerId: 'PR2', partnerName: 'DataPros Inc', tier: 'gold', totalRevenue: 1200000, dealsWon: 8, currency: 'COP' },
-  { rank: 3, partnerId: 'PR3', partnerName: 'CloudFirst SAS', tier: 'silver', totalRevenue: 350000, dealsWon: 3, currency: 'COP' },
-  { rank: 4, partnerId: 'PR4', partnerName: 'Innovate LLC', tier: 'registered', totalRevenue: 0, dealsWon: 0, currency: 'COP' },
-];
 
 const TIER_COLORS: Record<PartnerTier, string> = {
   registered: themeCssVariables.color.gray50,
@@ -75,13 +70,47 @@ const StyledStat = styled.span`
   min-width: 100px;
 `;
 
+const StyledDetail = styled.span`
+  font-size: ${themeCssVariables.font.size.sm};
+  color: ${themeCssVariables.font.color.secondary};
+`;
+
+const StyledError = styled.div`
+  color: ${themeCssVariables.color.red};
+  padding: ${themeCssVariables.spacing[4]};
+`;
+
 export const PartnerLeaderboard = () => {
   useLingui();
+
+  const { data, loading, error } = useQuery(GET_PARTNER_LEADERBOARD, {
+    variables: { limit: 10 },
+  });
+
+  if (loading) {
+    return (
+      <StyledContainer>
+        <StyledTitle>{t`Partner Leaderboard`}</StyledTitle>
+        <StyledDetail>{t`Loading...`}</StyledDetail>
+      </StyledContainer>
+    );
+  }
+
+  if (error) {
+    return (
+      <StyledContainer>
+        <StyledTitle>{t`Partner Leaderboard`}</StyledTitle>
+        <StyledError>{t`Error loading leaderboard`}: {error.message}</StyledError>
+      </StyledContainer>
+    );
+  }
+
+  const rankings: PartnerRanking[] = data?.partnerLeaderboard?.rankings ?? [];
 
   return (
     <StyledContainer>
       <StyledTitle>{t`Partner Leaderboard`}</StyledTitle>
-      {MOCK_RANKINGS.map((ranking) => (
+      {rankings.map((ranking) => (
         <StyledRow key={ranking.partnerId}>
           <StyledRank>#{ranking.rank}</StyledRank>
           <StyledName>{ranking.partnerName}</StyledName>

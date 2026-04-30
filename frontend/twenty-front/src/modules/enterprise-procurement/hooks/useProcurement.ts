@@ -1,5 +1,26 @@
 import { gql } from '@apollo/client';
 
+export const GET_PURCHASE_REQUESTS = gql`
+  query GetPurchaseRequests($status: PRStatus, $limit: Int, $offset: Int) {
+    purchaseRequests(status: $status, limit: $limit, offset: $offset) {
+      edges {
+        node {
+          id
+          title
+          requester
+          department
+          status
+          totalAmount
+          currency
+          submittedAt
+          approver
+        }
+      }
+      totalCount
+    }
+  }
+`;
+
 export const CREATE_PR = gql`
   mutation CreatePurchaseRequest($input: CreatePurchaseRequestInput!) {
     createPurchaseRequest(input: $input) {

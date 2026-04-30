@@ -1,17 +1,11 @@
+import { useQuery } from '@apollo/client';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { Obligation } from '../types/clm.types';
-
-const MOCK_OBLIGATIONS: Obligation[] = [
-  { id: 'OB1', contractId: 'C1', description: 'Deliver Q1 compliance report', dueDate: '2026-03-31', responsible: 'Ana Torres', completed: true },
-  { id: 'OB2', contractId: 'C1', description: 'Annual security audit submission', dueDate: '2026-06-30', responsible: 'Maria Lopez', completed: false },
-  { id: 'OB3', contractId: 'C2', description: 'Data processing impact assessment', dueDate: '2026-05-15', responsible: 'Carlos Mendez', completed: false },
-  { id: 'OB4', contractId: 'C1', description: 'Renewal notice (90 days prior)', dueDate: '2027-10-02', responsible: 'Luis Reyes', completed: false },
-  { id: 'OB5', contractId: 'C4', description: 'Final invoice reconciliation', dueDate: '2026-01-31', responsible: 'Luis Reyes', completed: true },
-];
+import { GET_EXPIRING_CONTRACTS } from '../hooks/useCLM';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -70,10 +64,19 @@ export const ObligationTracker = () => {
   useLingui();
   const now = new Date();
 
+  const { data, loading, error } = useQuery(GET_EXPIRING_CONTRACTS, {
+    variables: { withinDays: 365 },
+  });
+
+  if (loading) return <StyledContainer>{t`Loading...`}</StyledContainer>;
+  if (error) return <StyledContainer>{t`Error loading data`}</StyledContainer>;
+
+  const obligations: Obligation[] = data?.expiringContracts?.edges?.map((edge: { node: Obligation }) => edge.node) ?? [];
+
   return (
     <StyledContainer>
       <StyledTitle>{t`Obligations`}</StyledTitle>
-      {MOCK_OBLIGATIONS.map((obligation) => {
+      {obligations.map((obligation) => {
         const dueDate = new Date(obligation.dueDate);
         const isOverdue = !obligation.completed && dueDate < now;
         return (

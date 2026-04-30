@@ -1,6 +1,6 @@
 import { gql, useQuery, useMutation } from '@apollo/client';
 
-const GET_SECURITY_DASHBOARD = gql`
+export const GET_SECURITY_DASHBOARD = gql`
   query GetSecurityDashboard {
     securityDashboard {
       sessions {
@@ -42,7 +42,7 @@ const GET_SECURITY_DASHBOARD = gql`
   }
 `;
 
-const EXPORT_AUDIT_LOG = gql`
+export const EXPORT_AUDIT_LOG = gql`
   mutation ExportAuditLog($dateFrom: String, $dateTo: String) {
     exportAuditLog(dateFrom: $dateFrom, dateTo: $dateTo) {
       downloadUrl
@@ -50,7 +50,7 @@ const EXPORT_AUDIT_LOG = gql`
   }
 `;
 
-const REVOKE_SESSION = gql`
+export const REVOKE_SESSION = gql`
   mutation RevokeSession($sessionId: String!) {
     revokeSession(sessionId: $sessionId) {
       success

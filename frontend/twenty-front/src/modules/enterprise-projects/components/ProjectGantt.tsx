@@ -1,30 +1,14 @@
+import { useQuery } from '@apollo/client';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 
+import { GET_GANTT_DATA } from '../hooks/useProjects';
 import { GanttTask } from '../types/project.types';
 
-const MOCK_TASKS: GanttTask[] = [
-  { id: 'G1', name: 'Requirements', startDate: '2026-04-01', endDate: '2026-04-15', progressPercent: 100, assignee: 'Ana Torres' },
-  { id: 'G2', name: 'Design', startDate: '2026-04-10', endDate: '2026-04-30', progressPercent: 80, assignee: 'Diego Vargas' },
-  { id: 'G3', name: 'Backend Dev', startDate: '2026-04-20', endDate: '2026-05-31', progressPercent: 30, assignee: 'Camila Ortiz' },
-  { id: 'G4', name: 'Frontend Dev', startDate: '2026-05-01', endDate: '2026-06-15', progressPercent: 10, assignee: 'Diego Vargas' },
-  { id: 'G5', name: 'Testing', startDate: '2026-06-01', endDate: '2026-06-30', progressPercent: 0, assignee: 'Pedro Ruiz' },
-];
-
-const TIMELINE_START = new Date('2026-04-01');
-const TIMELINE_END = new Date('2026-06-30');
-const TOTAL_DAYS = Math.ceil((TIMELINE_END.getTime() - TIMELINE_START.getTime()) / 86400000);
-
-const getOffset = (dateStr: string) => {
-  const days = Math.ceil((new Date(dateStr).getTime() - TIMELINE_START.getTime()) / 86400000);
-  return Math.max(0, (days / TOTAL_DAYS) * 100);
-};
-
-const getWidth = (startStr: string, endStr: string) => {
-  const days = Math.ceil((new Date(endStr).getTime() - new Date(startStr).getTime()) / 86400000);
-  return Math.max(2, (days / TOTAL_DAYS) * 100);
+type ProjectGanttProps = {
+  projectId: string;
 };
 
 const StyledContainer = styled.div`
@@ -101,13 +85,81 @@ const StyledAssignee = styled.span`
   }
 `;
 
-export const ProjectGantt = () => {
+const StyledDetail = styled.span`
+  font-size: ${themeCssVariables.font.size.sm};
+  color: ${themeCssVariables.font.color.secondary};
+`;
+
+const StyledError = styled.div`
+  color: ${themeCssVariables.color.red};
+  padding: ${themeCssVariables.spacing[4]};
+`;
+
+export const ProjectGantt = ({ projectId }: ProjectGanttProps) => {
   useLingui();
+
+  const { data, loading, error } = useQuery(GET_GANTT_DATA, {
+    variables: { projectId },
+  });
+
+  if (loading) {
+    return (
+      <StyledContainer>
+        <StyledTitle>{t`Project Timeline`}</StyledTitle>
+        <StyledDetail>{t`Loading...`}</StyledDetail>
+      </StyledContainer>
+    );
+  }
+
+  if (error) {
+    return (
+      <StyledContainer>
+        <StyledTitle>{t`Project Timeline`}</StyledTitle>
+        <StyledError>{t`Error loading timeline`}: {error.message}</StyledError>
+      </StyledContainer>
+    );
+  }
+
+  const tasks: GanttTask[] = data?.ganttData?.tasks ?? [];
+
+  if (tasks.length === 0) {
+    return (
+      <StyledContainer>
+        <StyledTitle>{t`Project Timeline`}</StyledTitle>
+        <StyledDetail>{t`No tasks found`}</StyledDetail>
+      </StyledContainer>
+    );
+  }
+
+  const dates = tasks.flatMap((task) => [
+    new Date(task.startDate).getTime(),
+    new Date(task.endDate).getTime(),
+  ]);
+  const timelineStart = new Date(Math.min(...dates));
+  const timelineEnd = new Date(Math.max(...dates));
+  const totalDays = Math.max(
+    1,
+    Math.ceil((timelineEnd.getTime() - timelineStart.getTime()) / 86400000),
+  );
+
+  const getOffset = (dateStr: string) => {
+    const days = Math.ceil(
+      (new Date(dateStr).getTime() - timelineStart.getTime()) / 86400000,
+    );
+    return Math.max(0, (days / totalDays) * 100);
+  };
+
+  const getWidth = (startStr: string, endStr: string) => {
+    const days = Math.ceil(
+      (new Date(endStr).getTime() - new Date(startStr).getTime()) / 86400000,
+    );
+    return Math.max(2, (days / totalDays) * 100);
+  };
 
   return (
     <StyledContainer>
       <StyledTitle>{t`Project Timeline`}</StyledTitle>
-      {MOCK_TASKS.map((task) => (
+      {tasks.map((task) => (
         <StyledRow key={task.id}>
           <StyledLabel>{task.name}</StyledLabel>
           <StyledTimeline>

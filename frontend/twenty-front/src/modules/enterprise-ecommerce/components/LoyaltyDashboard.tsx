@@ -1,24 +1,11 @@
+import { useQuery } from '@apollo/client';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 
-import { LoyaltyMember, LoyaltyStats, LoyaltyTier } from '../types/ecommerce.types';
-
-const MOCK_STATS: LoyaltyStats = {
-  totalMembers: 1250,
-  activeMembers: 890,
-  pointsIssued: 2500000,
-  pointsRedeemed: 1800000,
-  redemptionRate: 72,
-};
-
-const MOCK_MEMBERS: LoyaltyMember[] = [
-  { id: 'L1', name: 'Maria Lopez', tier: 'platinum', points: 45000, lifetimeSpend: 12500000, currency: 'COP', joinedAt: '2023-01-15' },
-  { id: 'L2', name: 'Carlos Ruiz', tier: 'gold', points: 22000, lifetimeSpend: 6800000, currency: 'COP', joinedAt: '2023-06-20' },
-  { id: 'L3', name: 'Ana Torres', tier: 'silver', points: 8500, lifetimeSpend: 2400000, currency: 'COP', joinedAt: '2024-03-10' },
-  { id: 'L4', name: 'Pedro Gomez', tier: 'bronze', points: 1200, lifetimeSpend: 450000, currency: 'COP', joinedAt: '2025-11-05' },
-];
+import { GET_LOYALTY_STATS } from '../hooks/useECommerce';
+import { LoyaltyMember, LoyaltyTier } from '../types/ecommerce.types';
 
 const TIER_COLORS: Record<LoyaltyTier, string> = {
   bronze: themeCssVariables.color.orange,
@@ -99,8 +86,41 @@ const StyledBadge = styled.span<{ color: string }>`
   color: ${themeCssVariables.font.color.inverted};
 `;
 
+const StyledDetail = styled.span`
+  font-size: ${themeCssVariables.font.size.sm};
+  color: ${themeCssVariables.font.color.secondary};
+`;
+
+const StyledError = styled.div`
+  color: ${themeCssVariables.color.red};
+  padding: ${themeCssVariables.spacing[4]};
+`;
+
 export const LoyaltyDashboard = () => {
   useLingui();
+
+  const { data, loading, error } = useQuery(GET_LOYALTY_STATS);
+
+  if (loading) {
+    return (
+      <StyledContainer>
+        <StyledTitle>{t`Loyalty Program`}</StyledTitle>
+        <StyledDetail>{t`Loading...`}</StyledDetail>
+      </StyledContainer>
+    );
+  }
+
+  if (error) {
+    return (
+      <StyledContainer>
+        <StyledTitle>{t`Loyalty Program`}</StyledTitle>
+        <StyledError>{t`Error loading loyalty data`}: {error.message}</StyledError>
+      </StyledContainer>
+    );
+  }
+
+  const stats = data?.loyaltyStats;
+  const members: LoyaltyMember[] = stats?.members ?? [];
 
   return (
     <StyledContainer>
@@ -108,19 +128,19 @@ export const LoyaltyDashboard = () => {
       <StyledStatsGrid>
         <StyledMetric>
           <StyledMetricLabel>{t`Members`}</StyledMetricLabel>
-          <StyledMetricValue>{MOCK_STATS.totalMembers.toLocaleString()}</StyledMetricValue>
+          <StyledMetricValue>{(stats?.totalMembers ?? 0).toLocaleString()}</StyledMetricValue>
         </StyledMetric>
         <StyledMetric>
           <StyledMetricLabel>{t`Active`}</StyledMetricLabel>
-          <StyledMetricValue>{MOCK_STATS.activeMembers.toLocaleString()}</StyledMetricValue>
+          <StyledMetricValue>{(stats?.activeMembers ?? 0).toLocaleString()}</StyledMetricValue>
         </StyledMetric>
         <StyledMetric>
           <StyledMetricLabel>{t`Points Issued`}</StyledMetricLabel>
-          <StyledMetricValue>{MOCK_STATS.pointsIssued.toLocaleString()}</StyledMetricValue>
+          <StyledMetricValue>{(stats?.pointsIssued ?? 0).toLocaleString()}</StyledMetricValue>
         </StyledMetric>
         <StyledMetric>
           <StyledMetricLabel>{t`Redemption Rate`}</StyledMetricLabel>
-          <StyledMetricValue>{MOCK_STATS.redemptionRate}%</StyledMetricValue>
+          <StyledMetricValue>{stats?.redemptionRate ?? 0}%</StyledMetricValue>
         </StyledMetric>
       </StyledStatsGrid>
       <StyledTable>
@@ -133,7 +153,7 @@ export const LoyaltyDashboard = () => {
           </tr>
         </thead>
         <tbody>
-          {MOCK_MEMBERS.map((member) => (
+          {members.map((member) => (
             <tr key={member.id}>
               <StyledTd>{member.name}</StyledTd>
               <StyledTd>

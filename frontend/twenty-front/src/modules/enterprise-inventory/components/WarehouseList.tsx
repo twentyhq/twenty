@@ -1,15 +1,10 @@
+import { useQuery } from '@apollo/client';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 
-import { WarehouseData } from '../types/inventory.types';
-
-const MOCK_WAREHOUSES: WarehouseData[] = [
-  { id: 'W1', name: 'Main Warehouse', location: 'Bogota, CO', skuCount: 342, totalUnits: 15200, utilizationPercent: 78 },
-  { id: 'W2', name: 'South Distribution', location: 'Medellin, CO', skuCount: 198, totalUnits: 8400, utilizationPercent: 45 },
-  { id: 'W3', name: 'North Hub', location: 'Barranquilla, CO', skuCount: 87, totalUnits: 3100, utilizationPercent: 92 },
-];
+import { GET_STOCK_VALUATION } from '../hooks/useInventory';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -76,29 +71,54 @@ const StyledBarFill = styled.div<{ percent: number; isHigh: boolean }>`
   border-radius: 3px;
 `;
 
+const StyledLoading = styled.div`
+  padding: ${themeCssVariables.spacing[4]};
+  color: ${themeCssVariables.font.color.tertiary};
+`;
+
+const StyledError = styled.div`
+  padding: ${themeCssVariables.spacing[4]};
+  color: ${themeCssVariables.color.red};
+`;
+
 export const WarehouseList = () => {
   useLingui();
+
+  const { data, loading, error } = useQuery(GET_STOCK_VALUATION);
+
+  if (loading) return <StyledLoading>{t`Loading...`}</StyledLoading>;
+  if (error) return <StyledError>{t`Error: ${error.message}`}</StyledError>;
+
+  const warehouses = data?.stockValuation?.byWarehouse ?? [];
 
   return (
     <StyledContainer>
       <StyledTitle>{t`Warehouses`}</StyledTitle>
       <StyledGrid>
-        {MOCK_WAREHOUSES.map((wh) => (
-          <StyledCard key={wh.id}>
-            <StyledName>{wh.name}</StyledName>
-            <StyledLocation>{wh.location}</StyledLocation>
-            <StyledStat>
-              <span>{t`SKUs`}: {wh.skuCount}</span>
-              <span>{t`Units`}: {wh.totalUnits.toLocaleString()}</span>
-            </StyledStat>
-            <StyledStat>
-              <span>{t`Utilization`}: {wh.utilizationPercent}%</span>
-            </StyledStat>
-            <StyledBar>
-              <StyledBarFill percent={wh.utilizationPercent} isHigh={wh.utilizationPercent > 85} />
-            </StyledBar>
-          </StyledCard>
-        ))}
+        {warehouses.map((wh: {
+          warehouseId: string;
+          warehouseName: string;
+          value: number;
+          quantity: number;
+        }) => {
+          const maxQuantity = Math.max(...warehouses.map((w: { quantity: number }) => w.quantity), 1);
+          const utilizationPercent = Math.round((wh.quantity / maxQuantity) * 100);
+          return (
+            <StyledCard key={wh.warehouseId}>
+              <StyledName>{wh.warehouseName}</StyledName>
+              <StyledLocation>{t`Value`}: ${wh.value?.toLocaleString()}</StyledLocation>
+              <StyledStat>
+                <span>{t`Units`}: {wh.quantity?.toLocaleString()}</span>
+              </StyledStat>
+              <StyledStat>
+                <span>{t`Relative Fill`}: {utilizationPercent}%</span>
+              </StyledStat>
+              <StyledBar>
+                <StyledBarFill percent={utilizationPercent} isHigh={utilizationPercent > 85} />
+              </StyledBar>
+            </StyledCard>
+          );
+        })}
       </StyledGrid>
     </StyledContainer>
   );

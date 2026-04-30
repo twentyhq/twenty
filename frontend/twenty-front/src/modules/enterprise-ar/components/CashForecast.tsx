@@ -1,11 +1,7 @@
+import { useQuery } from '@apollo/client';
 import { styled } from '@linaria/atomic';
 
-import { CashForecastEntry } from '../types/ar.types';
-
-type CashForecastProps = {
-  entries: CashForecastEntry[];
-  currency?: string;
-};
+import { GET_CASH_FORECAST } from '../hooks/useAccountsReceivable';
 
 const Container = styled.div`
   display: flex;
@@ -59,20 +55,54 @@ const Negative = styled.span`
   color: #ef4444;
 `;
 
-export const CashForecast = ({
-  entries,
-  currency = 'USD',
-}: CashForecastProps) => {
+const SummaryRow = styled.div`
+  display: flex;
+  gap: 16px;
+  font-size: 14px;
+  color: #374151;
+`;
+
+const LoadingMessage = styled.div`
+  padding: 16px;
+  color: #6b7280;
+`;
+
+const ErrorMessage = styled.div`
+  padding: 16px;
+  color: #ef4444;
+`;
+
+export const CashForecast = () => {
+  const now = new Date();
+  const startDate = now.toISOString();
+  const endDate = new Date(now.getTime() + 90 * 24 * 60 * 60 * 1000).toISOString();
+
+  const { data, loading, error } = useQuery(GET_CASH_FORECAST, {
+    variables: { startDate, endDate, currency: 'USD' },
+  });
+
   const formatAmount = (amount: number) =>
-    new Intl.NumberFormat('en-US', { style: 'currency', currency }).format(
-      amount,
-    );
+    new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amount);
+
+  if (loading) return <LoadingMessage>Loading...</LoadingMessage>;
+  if (error) return <ErrorMessage>Error: {error.message}</ErrorMessage>;
+
+  const entries = data?.cashForecast?.entries ?? [];
+  const summary = data?.cashForecast?.summary;
 
   return (
     <Container>
       <ChartPlaceholder>
         Cash flow projection chart - integrate with charting library
       </ChartPlaceholder>
+
+      {summary && (
+        <SummaryRow>
+          <span>Starting: {formatAmount(summary.startingBalance)}</span>
+          <span>Ending: {formatAmount(summary.endingBalance)}</span>
+          <span>Net: {formatAmount(summary.netChange)}</span>
+        </SummaryRow>
+      )}
 
       <Table>
         <thead>
@@ -85,7 +115,13 @@ export const CashForecast = ({
           </tr>
         </thead>
         <tbody>
-          {entries.map((entry) => (
+          {entries.map((entry: {
+            date: string;
+            expectedInflow: number;
+            expectedOutflow: number;
+            netCash: number;
+            cumulativeBalance: number;
+          }) => (
             <tr key={entry.date}>
               <Td>{new Date(entry.date).toLocaleDateString()}</Td>
               <Td>

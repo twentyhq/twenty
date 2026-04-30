@@ -1,23 +1,11 @@
+import { useQuery } from '@apollo/client';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { DeliveryData, DeliveryStatus } from '../types/fleet.types';
-
-const MOCK_DELIVERIES: DeliveryData[] = [
-  { id: 'D1', orderId: 'ORD-5001', vehicleId: 'V1', driver: 'Juan Perez', origin: 'Depot Central', destination: 'Cliente Bogota Norte', status: 'in_transit', estimatedArrival: '2026-04-29T14:00:00Z', events: [
-    { timestamp: '2026-04-29T08:00:00Z', status: 'pending', location: 'Depot Central' },
-    { timestamp: '2026-04-29T09:30:00Z', status: 'picked_up', location: 'Depot Central' },
-    { timestamp: '2026-04-29T11:00:00Z', status: 'in_transit', location: 'Autopista Norte Km 15' },
-  ]},
-  { id: 'D2', orderId: 'ORD-5002', vehicleId: 'V4', driver: 'Luis Reyes', origin: 'Depot Sur', destination: 'Cliente Cali', status: 'delivered', estimatedArrival: '2026-04-28T16:00:00Z', events: [
-    { timestamp: '2026-04-28T07:00:00Z', status: 'pending', location: 'Depot Sur' },
-    { timestamp: '2026-04-28T08:00:00Z', status: 'picked_up', location: 'Depot Sur' },
-    { timestamp: '2026-04-28T12:00:00Z', status: 'in_transit', location: 'Via Panamericana' },
-    { timestamp: '2026-04-28T15:30:00Z', status: 'delivered', location: 'Cliente Cali' },
-  ]},
-];
+import { GET_FLEET_ANALYTICS } from '../hooks/useFleet';
 
 const STATUS_COLORS: Record<DeliveryStatus, string> = {
   pending: themeCssVariables.color.gray50,
@@ -107,19 +95,26 @@ const StyledEventLocation = styled.span`
 export const DeliveryTracker = () => {
   useLingui();
 
+  const { data, loading, error } = useQuery(GET_FLEET_ANALYTICS);
+
+  if (loading) return <StyledContainer>{t`Loading...`}</StyledContainer>;
+  if (error) return <StyledContainer>{t`Error loading data`}</StyledContainer>;
+
+  const deliveries: DeliveryData[] = data?.fleetAnalytics?.deliveries ?? [];
+
   return (
     <StyledContainer>
       <StyledTitle>{t`Delivery Tracking`}</StyledTitle>
-      {MOCK_DELIVERIES.map((delivery) => (
+      {deliveries.map((delivery) => (
         <StyledDelivery key={delivery.id}>
           <StyledHeader>
             <StyledOrderId>{delivery.orderId}</StyledOrderId>
             <StyledRoute>{delivery.origin} → {delivery.destination}</StyledRoute>
           </StyledHeader>
           <StyledTimeline>
-            {delivery.events.map((event, index) => (
+            {delivery.events?.map((event, index) => (
               <StyledEvent key={index}>
-                <StyledDot color={STATUS_COLORS[event.status]} />
+                <StyledDot color={STATUS_COLORS[event.status] ?? themeCssVariables.color.gray50} />
                 <StyledEventTime>{new Date(event.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</StyledEventTime>
                 <StyledEventLocation>{event.location}</StyledEventLocation>
               </StyledEvent>

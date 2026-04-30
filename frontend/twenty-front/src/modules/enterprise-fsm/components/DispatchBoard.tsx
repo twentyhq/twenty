@@ -1,16 +1,11 @@
+import { useQuery } from '@apollo/client';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { TechnicianData } from '../types/fsm.types';
-
-const MOCK_TECHNICIANS: TechnicianData[] = [
-  { id: 'T1', name: 'Juan Perez', specialty: 'HVAC', status: 'on_job', currentLocation: 'Bogota Norte', activeWorkOrders: 1, completedToday: 2 },
-  { id: 'T2', name: 'Pedro Gomez', specialty: 'Electrical', status: 'available', currentLocation: 'Depot Central', activeWorkOrders: 0, completedToday: 3 },
-  { id: 'T3', name: 'Diego Vargas', specialty: 'Plumbing', status: 'on_job', currentLocation: 'Medellin Centro', activeWorkOrders: 2, completedToday: 1 },
-  { id: 'T4', name: 'Camila Ortiz', specialty: 'Fire Safety', status: 'off_duty', currentLocation: '—', activeWorkOrders: 0, completedToday: 0 },
-];
+import { GET_AVAILABLE_TECHNICIANS } from '../hooks/useFSM';
 
 const STATUS_COLORS: Record<string, string> = {
   available: themeCssVariables.color.turquoise,
@@ -35,10 +30,7 @@ const StyledGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
   gap: ${themeCssVariables.spacing[3]};
-
-  @media (max-width: ${MOBILE_VIEWPORT}px) {
-    grid-template-columns: 1fr;
-  }
+  @media (max-width: ${MOBILE_VIEWPORT}px) { grid-template-columns: 1fr; }
 `;
 
 const StyledCard = styled.div`
@@ -84,14 +76,21 @@ const StyledRow = styled.div`
 export const DispatchBoard = () => {
   useLingui();
 
+  const { data, loading, error } = useQuery(GET_AVAILABLE_TECHNICIANS);
+
+  if (loading) return <StyledContainer>{t`Loading...`}</StyledContainer>;
+  if (error) return <StyledContainer>{t`Error loading data`}</StyledContainer>;
+
+  const technicians: TechnicianData[] = data?.availableTechnicians?.technicians ?? [];
+
   return (
     <StyledContainer>
       <StyledTitle>{t`Dispatch Board`}</StyledTitle>
       <StyledGrid>
-        {MOCK_TECHNICIANS.map((tech) => (
+        {technicians.map((tech) => (
           <StyledCard key={tech.id}>
             <StyledHeader>
-              <StyledDot color={STATUS_COLORS[tech.status]} />
+              <StyledDot color={STATUS_COLORS[tech.status] ?? themeCssVariables.color.gray50} />
               <StyledName>{tech.name}</StyledName>
             </StyledHeader>
             <StyledDetail>{tech.specialty} - {tech.status.replace('_', ' ')}</StyledDetail>

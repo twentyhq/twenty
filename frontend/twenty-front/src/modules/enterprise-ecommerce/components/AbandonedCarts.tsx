@@ -1,16 +1,11 @@
+import { useQuery } from '@apollo/client';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 
+import { TRACK_ABANDONED_CART } from '../hooks/useECommerce';
 import { AbandonedCartData } from '../types/ecommerce.types';
-
-const MOCK_CARTS: AbandonedCartData[] = [
-  { id: 'AC1', customerEmail: 'juan@email.com', itemCount: 3, cartValue: 320000, currency: 'COP', abandonedAt: '2026-04-29T07:30:00Z', recoveryEmailSent: true, recovered: false },
-  { id: 'AC2', customerEmail: 'laura@email.com', itemCount: 1, cartValue: 89000, currency: 'COP', abandonedAt: '2026-04-28T20:00:00Z', recoveryEmailSent: true, recovered: true },
-  { id: 'AC3', customerEmail: 'diego@email.com', itemCount: 5, cartValue: 750000, currency: 'COP', abandonedAt: '2026-04-29T09:15:00Z', recoveryEmailSent: false, recovered: false },
-  { id: 'AC4', customerEmail: 'camila@email.com', itemCount: 2, cartValue: 145000, currency: 'COP', abandonedAt: '2026-04-28T14:00:00Z', recoveryEmailSent: true, recovered: false },
-];
 
 const StyledContainer = styled.div`
   display: flex;
@@ -89,11 +84,41 @@ const StyledRecoveryBadge = styled.span<{ recovered: boolean }>`
   color: ${themeCssVariables.font.color.inverted};
 `;
 
+const StyledError = styled.div`
+  color: ${themeCssVariables.color.red};
+  padding: ${themeCssVariables.spacing[4]};
+`;
+
 export const AbandonedCarts = () => {
   useLingui();
 
-  const totalValue = MOCK_CARTS.reduce((sum, cart) => sum + cart.cartValue, 0);
-  const recoveredCount = MOCK_CARTS.filter((cart) => cart.recovered).length;
+  const { data, loading, error } = useQuery(TRACK_ABANDONED_CART);
+
+  if (loading) {
+    return (
+      <StyledContainer>
+        <StyledTitle>{t`Abandoned Carts`}</StyledTitle>
+        <StyledDetail>{t`Loading...`}</StyledDetail>
+      </StyledContainer>
+    );
+  }
+
+  if (error) {
+    return (
+      <StyledContainer>
+        <StyledTitle>{t`Abandoned Carts`}</StyledTitle>
+        <StyledError>{t`Error loading abandoned carts`}: {error.message}</StyledError>
+      </StyledContainer>
+    );
+  }
+
+  const carts: AbandonedCartData[] =
+    data?.abandonedCarts?.edges?.map(
+      (edge: { node: AbandonedCartData }) => edge.node,
+    ) ?? [];
+
+  const totalValue = carts.reduce((sum, cart) => sum + cart.cartValue, 0);
+  const recoveredCount = carts.filter((cart) => cart.recovered).length;
 
   return (
     <StyledContainer>
@@ -101,7 +126,7 @@ export const AbandonedCarts = () => {
       <StyledStats>
         <StyledStat>
           <StyledStatLabel>{t`Total Carts`}</StyledStatLabel>
-          <StyledStatValue>{MOCK_CARTS.length}</StyledStatValue>
+          <StyledStatValue>{carts.length}</StyledStatValue>
         </StyledStat>
         <StyledStat>
           <StyledStatLabel>{t`Total Value`}</StyledStatLabel>
@@ -109,11 +134,11 @@ export const AbandonedCarts = () => {
         </StyledStat>
         <StyledStat>
           <StyledStatLabel>{t`Recovered`}</StyledStatLabel>
-          <StyledStatValue>{recoveredCount}/{MOCK_CARTS.length}</StyledStatValue>
+          <StyledStatValue>{recoveredCount}/{carts.length}</StyledStatValue>
         </StyledStat>
       </StyledStats>
       <StyledGrid>
-        {MOCK_CARTS.map((cart) => (
+        {carts.map((cart) => (
           <StyledCard key={cart.id}>
             <StyledEmail>{cart.customerEmail}</StyledEmail>
             <StyledDetail>{cart.itemCount} {t`items`} - ${cart.cartValue.toLocaleString()}</StyledDetail>

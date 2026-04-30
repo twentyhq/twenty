@@ -1,22 +1,25 @@
+import { useQuery } from '@apollo/client';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
+import { useState } from 'react';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 
-import { ProjectData, ProjectHealth } from '../types/project.types';
-
-const MOCK_PROJECTS: ProjectData[] = [
-  { id: 'P1', name: 'CRM Migration', description: 'Migrate legacy CRM', status: 'active', health: 'on_track', owner: 'Ana Torres', startDate: '2026-01-15', endDate: '2026-06-30', progressPercent: 65, budget: 120000, spent: 78000, currency: 'COP' },
-  { id: 'P2', name: 'Mobile App v2', description: 'Rebuild mobile app', status: 'active', health: 'at_risk', owner: 'Diego Vargas', startDate: '2026-02-01', endDate: '2026-08-15', progressPercent: 35, budget: 200000, spent: 95000, currency: 'COP' },
-  { id: 'P3', name: 'Data Warehouse', description: 'Build analytics DW', status: 'planning', health: 'on_track', owner: 'Carlos Mendez', startDate: '2026-05-01', endDate: '2026-12-31', progressPercent: 5, budget: 300000, spent: 10000, currency: 'COP' },
-  { id: 'P4', name: 'Security Audit', description: 'Annual security review', status: 'active', health: 'off_track', owner: 'Maria Lopez', startDate: '2026-03-01', endDate: '2026-04-30', progressPercent: 50, budget: 45000, spent: 42000, currency: 'COP' },
-];
+import { GET_ACTIVE_PROJECTS } from '../hooks/useProjects';
+import { ProjectData, ProjectHealth, ProjectStatus } from '../types/project.types';
 
 const HEALTH_COLORS: Record<ProjectHealth, string> = {
   on_track: themeCssVariables.color.turquoise,
   at_risk: themeCssVariables.color.yellow,
   off_track: themeCssVariables.color.red,
 };
+
+const STATUS_OPTIONS: ProjectStatus[] = [
+  'planning',
+  'active',
+  'on_hold',
+  'completed',
+];
 
 const StyledContainer = styled.div`
   display: flex;
@@ -25,17 +28,24 @@ const StyledContainer = styled.div`
   gap: ${themeCssVariables.spacing[3]};
 `;
 
-const StyledTitle = styled.h2`
-  font-size: ${themeCssVariables.font.size.lg};
-  color: ${themeCssVariables.font.color.primary};
-  margin: 0;
+const StyledToolbar = styled.div`
+  display: flex;
+  gap: ${themeCssVariables.spacing[2]};
+  flex-wrap: wrap;
+  align-items: center;
+`;
+
+const StyledSelect = styled.select`
+  padding: 6px 10px;
+  border: 1px solid ${themeCssVariables.border.color.medium};
+  border-radius: 4px;
+  font-size: ${themeCssVariables.font.size.sm};
 `;
 
 const StyledGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: ${themeCssVariables.spacing[3]};
-
   @media (max-width: ${MOBILE_VIEWPORT}px) {
     grid-template-columns: 1fr;
   }
@@ -76,37 +86,109 @@ const StyledBar = styled.div`
   overflow: hidden;
 `;
 
-const StyledBarFill = styled.div<{ percent: number }>`
+const StyledBarFill = styled.div<{ percent: number; color: string }>`
   height: 100%;
-  width: ${({ percent }) => percent}%;
-  background: ${themeCssVariables.color.blue};
+  width: ${({ percent }) => Math.min(percent, 100)}%;
+  background: ${({ color }) => color};
   border-radius: 3px;
+`;
+
+const StyledLoading = styled.div`
+  padding: ${themeCssVariables.spacing[4]};
+  color: ${themeCssVariables.font.color.tertiary};
+`;
+
+const StyledError = styled.div`
+  padding: ${themeCssVariables.spacing[4]};
+  color: ${themeCssVariables.color.red};
 `;
 
 export const ProjectList = () => {
   useLingui();
 
+  const [statusFilter, setStatusFilter] = useState<string>('active');
+
+  const { data, loading, error } = useQuery(GET_ACTIVE_PROJECTS, {
+    variables: { status: statusFilter || undefined, limit: 50 },
+  });
+
+  if (loading) return <StyledLoading>{t`Loading...`}</StyledLoading>;
+  if (error) return <StyledError>{t`Error: ${error.message}`}</StyledError>;
+
+  const projects: ProjectData[] =
+    data?.activeProjects?.edges?.map(
+      (edge: { node: ProjectData }) => edge.node,
+    ) ?? [];
+
   return (
     <StyledContainer>
-      <StyledTitle>{t`Projects`}</StyledTitle>
+      <StyledToolbar>
+        <StyledName>{t`Projects`}</StyledName>
+        <StyledSelect
+          value={statusFilter}
+          onChange={(event) => setStatusFilter(event.target.value)}
+        >
+          <option value="">{t`All statuses`}</option>
+          {STATUS_OPTIONS.map((status) => (
+            <option key={status} value={status}>
+              {status.replace('_', ' ')}
+            </option>
+          ))}
+        </StyledSelect>
+      </StyledToolbar>
+
       <StyledGrid>
-        {MOCK_PROJECTS.map((project) => (
-          <StyledCard key={project.id} healthColor={HEALTH_COLORS[project.health]}>
-            <StyledName>{project.name}</StyledName>
-            <StyledDetail>{project.owner} - {project.status}</StyledDetail>
-            <StyledRow>
-              <span>{t`Progress`}: {project.progressPercent}%</span>
-              <span>{project.health.replace('_', ' ')}</span>
-            </StyledRow>
-            <StyledBar>
-              <StyledBarFill percent={project.progressPercent} />
-            </StyledBar>
-            <StyledRow>
-              <span>{t`Budget`}: ${project.budget.toLocaleString()}</span>
-              <span>{t`Spent`}: ${project.spent.toLocaleString()}</span>
-            </StyledRow>
-          </StyledCard>
-        ))}
+        {projects.map((project) => {
+          const budgetPercent =
+            project.budget > 0
+              ? Math.round((project.spent / project.budget) * 100)
+              : 0;
+          const budgetColor =
+            budgetPercent > 90
+              ? themeCssVariables.color.red
+              : budgetPercent > 70
+                ? themeCssVariables.color.orange
+                : themeCssVariables.color.blue;
+
+          return (
+            <StyledCard
+              key={project.id}
+              healthColor={
+                HEALTH_COLORS[project.health] ?? themeCssVariables.color.gray50
+              }
+            >
+              <StyledName>{project.name}</StyledName>
+              <StyledDetail>
+                {project.owner} - {project.status.replace('_', ' ')}
+              </StyledDetail>
+              <StyledRow>
+                <span>
+                  {t`Progress`}: {project.progressPercent}%
+                </span>
+                <span>{project.health.replace('_', ' ')}</span>
+              </StyledRow>
+              <StyledBar>
+                <StyledBarFill
+                  percent={project.progressPercent}
+                  color={themeCssVariables.color.blue}
+                />
+              </StyledBar>
+              <StyledRow>
+                <span>
+                  {t`Budget`}: {project.currency}{' '}
+                  {project.budget.toLocaleString()}
+                </span>
+                <span>
+                  {t`Spent`}: {project.currency}{' '}
+                  {project.spent.toLocaleString()} ({budgetPercent}%)
+                </span>
+              </StyledRow>
+              <StyledBar>
+                <StyledBarFill percent={budgetPercent} color={budgetColor} />
+              </StyledBar>
+            </StyledCard>
+          );
+        })}
       </StyledGrid>
     </StyledContainer>
   );

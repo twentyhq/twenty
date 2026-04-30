@@ -1,16 +1,10 @@
+import { useQuery } from '@apollo/client';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 
-import { StockMovement } from '../types/inventory.types';
-
-const MOCK_MOVEMENTS: StockMovement[] = [
-  { id: 'M1', sku: 'SKU-001', itemName: 'Widget A', type: 'inbound', quantity: 100, toWarehouse: 'Main Warehouse', performedBy: 'Juan Perez', timestamp: '2026-04-28T09:00:00Z', reference: 'PO-2001' },
-  { id: 'M2', sku: 'SKU-002', itemName: 'Widget B', type: 'outbound', quantity: 50, fromWarehouse: 'Main Warehouse', performedBy: 'Maria Lopez', timestamp: '2026-04-28T10:30:00Z', reference: 'SO-3005' },
-  { id: 'M3', sku: 'SKU-003', itemName: 'Gadget C', type: 'transfer', quantity: 20, fromWarehouse: 'South Distribution', toWarehouse: 'Main Warehouse', performedBy: 'Carlos Ruiz', timestamp: '2026-04-27T14:00:00Z', reference: 'TR-401' },
-  { id: 'M4', sku: 'SKU-004', itemName: 'Part D', type: 'adjustment', quantity: -5, toWarehouse: 'North Hub', performedBy: 'Ana Torres', timestamp: '2026-04-27T16:00:00Z', reference: 'ADJ-101' },
-];
+import { GET_INVENTORY_ITEMS } from '../hooks/useInventory';
 
 const TYPE_COLORS: Record<string, string> = {
   inbound: themeCssVariables.color.turquoise,
@@ -81,8 +75,29 @@ const StyledHideMobileHeader = styled.th`
   }
 `;
 
+const StyledLoading = styled.div`
+  padding: ${themeCssVariables.spacing[4]};
+  color: ${themeCssVariables.font.color.tertiary};
+`;
+
+const StyledError = styled.div`
+  padding: ${themeCssVariables.spacing[4]};
+  color: ${themeCssVariables.color.red};
+`;
+
 export const StockMovementLog = () => {
   useLingui();
+
+  const { data, loading, error } = useQuery(GET_INVENTORY_ITEMS, {
+    variables: { limit: 50, offset: 0 },
+  });
+
+  if (loading) return <StyledLoading>{t`Loading...`}</StyledLoading>;
+  if (error) return <StyledError>{t`Error: ${error.message}`}</StyledError>;
+
+  const items = data?.inventoryItems?.edges?.map(
+    (edge: { node: Record<string, unknown> }) => edge.node,
+  ) ?? [];
 
   return (
     <StyledContainer>
@@ -92,23 +107,32 @@ export const StockMovementLog = () => {
           <tr>
             <StyledTh>{t`Date`}</StyledTh>
             <StyledTh>{t`Item`}</StyledTh>
-            <StyledTh>{t`Type`}</StyledTh>
-            <StyledTh>{t`Qty`}</StyledTh>
-            <StyledHideMobileHeader>{t`Reference`}</StyledHideMobileHeader>
-            <StyledHideMobileHeader>{t`By`}</StyledHideMobileHeader>
+            <StyledTh>{t`SKU`}</StyledTh>
+            <StyledTh>{t`Stock`}</StyledTh>
+            <StyledHideMobileHeader>{t`Warehouse`}</StyledHideMobileHeader>
+            <StyledHideMobileHeader>{t`Value`}</StyledHideMobileHeader>
           </tr>
         </thead>
         <tbody>
-          {MOCK_MOVEMENTS.map((movement) => (
-            <tr key={movement.id}>
-              <StyledTd>{new Date(movement.timestamp).toLocaleDateString()}</StyledTd>
-              <StyledTd>{movement.itemName}</StyledTd>
+          {items.map((item: {
+            id: string;
+            productName: string;
+            sku: string;
+            currentStock: number;
+            availableStock: number;
+            warehouseName: string;
+            totalValue: number;
+            lastMovementAt: string;
+          }) => (
+            <tr key={item.id}>
+              <StyledTd>{item.lastMovementAt ? new Date(item.lastMovementAt).toLocaleDateString() : '---'}</StyledTd>
+              <StyledTd>{item.productName}</StyledTd>
               <StyledTd>
-                <StyledBadge color={TYPE_COLORS[movement.type]}>{movement.type}</StyledBadge>
+                <StyledBadge color={TYPE_COLORS.inbound}>{item.sku}</StyledBadge>
               </StyledTd>
-              <StyledTd>{movement.quantity > 0 ? `+${movement.quantity}` : movement.quantity}</StyledTd>
-              <StyledHideMobile>{movement.reference}</StyledHideMobile>
-              <StyledHideMobile>{movement.performedBy}</StyledHideMobile>
+              <StyledTd>{item.currentStock} ({item.availableStock} {t`available`})</StyledTd>
+              <StyledHideMobile>{item.warehouseName}</StyledHideMobile>
+              <StyledHideMobile>${item.totalValue?.toLocaleString()}</StyledHideMobile>
             </tr>
           ))}
         </tbody>

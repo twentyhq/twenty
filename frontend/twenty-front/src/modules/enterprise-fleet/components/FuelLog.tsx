@@ -1,16 +1,11 @@
+import { useQuery } from '@apollo/client';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { FuelEntry } from '../types/fleet.types';
-
-const MOCK_FUEL: FuelEntry[] = [
-  { id: 'F1', vehicleId: 'V1', plate: 'ABC-123', liters: 60, costPerLiter: 2.45, totalCost: 147, odometer: 45200, date: '2026-04-28', station: 'Terpel Norte', hasAnomaly: false },
-  { id: 'F2', vehicleId: 'V2', plate: 'DEF-456', liters: 45, costPerLiter: 2.50, totalCost: 112.5, odometer: 32100, date: '2026-04-27', station: 'Primax Centro', hasAnomaly: false },
-  { id: 'F3', vehicleId: 'V3', plate: 'GHI-789', liters: 120, costPerLiter: 2.45, totalCost: 294, odometer: 78500, date: '2026-04-27', station: 'Terpel Sur', hasAnomaly: true, anomalyReason: 'Volume exceeds tank capacity (80L)' },
-  { id: 'F4', vehicleId: 'V4', plate: 'JKL-012', liters: 55, costPerLiter: 2.60, totalCost: 143, odometer: 21300, date: '2026-04-26', station: 'Biomax Cali', hasAnomaly: true, anomalyReason: 'Price per liter above market average' },
-];
+import { GET_FLEET_ANALYTICS } from '../hooks/useFleet';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -79,6 +74,13 @@ const StyledHideMobileHeader = styled.th`
 export const FuelLog = () => {
   useLingui();
 
+  const { data, loading, error } = useQuery(GET_FLEET_ANALYTICS);
+
+  if (loading) return <StyledContainer>{t`Loading...`}</StyledContainer>;
+  if (error) return <StyledContainer>{t`Error loading data`}</StyledContainer>;
+
+  const fuelEntries: FuelEntry[] = data?.fleetAnalytics?.fuelLog ?? [];
+
   return (
     <StyledContainer>
       <StyledTitle>{t`Fuel Log`}</StyledTitle>
@@ -94,7 +96,7 @@ export const FuelLog = () => {
           </tr>
         </thead>
         <tbody>
-          {MOCK_FUEL.map((entry) => {
+          {fuelEntries.map((entry) => {
             const Row = entry.hasAnomaly ? StyledAnomalyRow : 'tr';
             return (
               <Row key={entry.id}>

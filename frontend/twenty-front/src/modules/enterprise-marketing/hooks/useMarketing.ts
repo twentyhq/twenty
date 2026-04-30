@@ -1,5 +1,57 @@
 import { gql } from '@apollo/client';
 
+export const GET_CAMPAIGNS = gql`
+  query GetCampaigns($status: CampaignStatus, $limit: Int, $offset: Int) {
+    campaigns(status: $status, limit: $limit, offset: $offset) {
+      edges {
+        node {
+          id
+          name
+          status
+          channel
+          budget
+          spent
+          leads
+          roi
+          currency
+          startDate
+          endDate
+        }
+      }
+      totalCount
+    }
+  }
+`;
+
+export const GET_LEAD_SCORING_RULES = gql`
+  query GetLeadScoringRules {
+    leadScoringRules {
+      rules {
+        id
+        attribute
+        condition
+        value
+        points
+        isActive
+      }
+    }
+  }
+`;
+
+export const GET_ATTRIBUTION_DATA = gql`
+  query GetAttributionData($model: AttributionModel!) {
+    attributionData(model: $model) {
+      touchpoints {
+        channel
+        touchCount
+        weight
+        revenue
+        currency
+      }
+    }
+  }
+`;
+
 export const CREATE_CAMPAIGN = gql`
   mutation CreateCampaign($input: CreateCampaignInput!) {
     createCampaign(input: $input) {

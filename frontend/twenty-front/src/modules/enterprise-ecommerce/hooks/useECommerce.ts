@@ -81,6 +81,47 @@ export const GET_AI_RECOMMENDATIONS = gql`
   }
 `;
 
+export const GET_ORDERS = gql`
+  query GetOrders($status: OrderStatus, $limit: Int, $offset: Int) {
+    orders(status: $status, limit: $limit, offset: $offset) {
+      edges {
+        node {
+          id
+          customerName
+          status
+          source
+          amount
+          currency
+          itemCount
+          createdAt
+        }
+      }
+      totalCount
+    }
+  }
+`;
+
+export const GET_LOYALTY_STATS = gql`
+  query GetLoyaltyStats {
+    loyaltyStats {
+      totalMembers
+      activeMembers
+      pointsIssued
+      pointsRedeemed
+      redemptionRate
+      members {
+        id
+        name
+        tier
+        points
+        lifetimeSpend
+        currency
+        joinedAt
+      }
+    }
+  }
+`;
+
 export const GET_COHORT_RETENTION = gql`
   query GetCohortRetention($startMonth: String!, $monthsBack: Int!) {
     cohortRetention(startMonth: $startMonth, monthsBack: $monthsBack) {
