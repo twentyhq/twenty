@@ -3,7 +3,7 @@ import { QueryRunner } from 'typeorm';
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
 
-@RegisteredInstanceCommand('2.2.0', 1777682000000)
+@RegisteredInstanceCommand('2.3.0', 1777682000000)
 export class AddDeletedAtToAgentChatThreadFastInstanceCommand
   implements FastInstanceCommand
 {
