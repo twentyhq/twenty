@@ -213,30 +213,49 @@ npx create-twenty-app@latest my-twenty-app --example postcard
 
 İskelet oluşturucu sizin için zaten yerel bir Twenty sunucusu başlattı. Daha sonra yönetmek için `yarn twenty server` komutunu kullanın:
 
-| Komut                                  | Açıklama                                                        |
-| -------------------------------------- | --------------------------------------------------------------- |
-| `yarn twenty server start`             | Yerel sunucuyu başlatır (gerekirse imajı çeker)                 |
-| `yarn twenty server start --port 3030` | Özel bir portta başlatır                                        |
-| `yarn twenty server start --test`      | 2021 numaralı bağlantı noktasında ayrı bir test örneği başlatın |
-| `yarn twenty server stop`              | Sunucuyu durdurur (verileri korur)                              |
-| `yarn twenty server status`            | Sunucu durumunu, URL'yi ve kimlik bilgilerini gösterir          |
-| `yarn twenty server logs`              | Sunucu günlüklerini akış olarak iletir                          |
-| `yarn twenty server logs --lines 100`  | Son 100 günlük satırını gösterir                                |
-| `yarn twenty server reset`             | Tüm verileri siler ve sıfırdan başlatır                         |
+| Komut                                  | Açıklama                                                              |
+| -------------------------------------- | --------------------------------------------------------------------- |
+| `yarn twenty server start`             | Yerel sunucuyu başlatır (gerekirse imajı çeker)                       |
+| `yarn twenty server start --port 3030` | Özel bir portta başlatır                                              |
+| `yarn twenty server start --test`      | 2021 numaralı bağlantı noktasında ayrı bir test örneği başlatın       |
+| `yarn twenty server stop`              | Sunucuyu durdurur (verileri korur)                                    |
+| `yarn twenty server status`            | Sunucu durumunu, URL'yi, sürümü ve kimlik bilgilerini gösterir        |
+| `yarn twenty server logs`              | Sunucu günlüklerini akış olarak iletir                                |
+| `yarn twenty server logs --lines 100`  | Son 100 günlük satırını gösterir                                      |
+| `yarn twenty server reset`             | Tüm verileri siler ve sıfırdan başlatır                               |
+| `yarn twenty server upgrade`           | En son `twenty-app-dev` imajını çeker ve konteyneri yeniden oluşturur |
+| `yarn twenty server upgrade 2.2.0`     | Upgrade to a specific version                                         |
 
 Veriler, yeniden başlatmalar arasında iki Docker biriminde kalıcıdır (PostgreSQL için `twenty-app-dev-data`, dosyalar için `twenty-app-dev-storage`). Her şeyi silip baştan başlamak için `reset` kullanın.
+
+### Upgrading the server image
+
+Use `yarn twenty server upgrade` to check for a newer `twenty-app-dev` Docker image and update the container. The command pulls the image, compares it against the one the container was created from, and only recreates the container if the image actually changed. Your data volumes are preserved — only the container is replaced.
+
+```bash filename="Terminal"
+# Upgrade to the latest version (skips recreation if already up to date)
+yarn twenty server upgrade
+
+# Upgrade to a specific version
+yarn twenty server upgrade 2.2.0
+```
+
+If a newer image is available and the container was running, the upgrade command automatically starts a new container with the updated image. Run `yarn twenty server start` afterward to wait for it to become healthy. If the image hasn't changed, the container is left untouched.
+
+You can verify the running version with `yarn twenty server status`, which displays the `APP_VERSION` from the container.
 
 ### Test örneği çalıştırma
 
 `server` komutlarının herhangi birine `--test` parametresini vererek ikinci, tamamen yalıtılmış bir örneği yönetin — entegrasyon testlerini çalıştırmak veya ana geliştirme verilerinize dokunmadan denemeler yapmak için kullanışlıdır.
 
-| Komut                              | Açıklama                                                       |
-| ---------------------------------- | -------------------------------------------------------------- |
-| `yarn twenty server start --test`  | Test örneğini başlatır (varsayılan bağlantı noktası 2021'dir)  |
-| `yarn twenty server stop --test`   | Test örneğini durdurur                                         |
-| `yarn twenty server status --test` | Test örneğinin durumunu, URL'yi ve kimlik bilgilerini gösterir |
-| `yarn twenty server logs --test`   | Test örneği günlüklerini akış olarak iletir                    |
-| `yarn twenty server reset --test`  | Test verilerini siler ve sıfırdan başlatır                     |
+| Komut                               | Açıklama                                                      |
+| ----------------------------------- | ------------------------------------------------------------- |
+| `yarn twenty server start --test`   | Test örneğini başlatır (varsayılan bağlantı noktası 2021'dir) |
+| `yarn twenty server stop --test`    | Test örneğini durdurur                                        |
+| `yarn twenty server status --test`  | Show test instance status, URL, version, and credentials      |
+| `yarn twenty server logs --test`    | Test örneği günlüklerini akış olarak iletir                   |
+| `yarn twenty server reset --test`   | Test verilerini siler ve sıfırdan başlatır                    |
+| `yarn twenty server upgrade --test` | Upgrade the test instance image                               |
 
 Test örneği, kendine ait bir Docker konteynerinde (`twenty-app-dev-test`), ayrılmış birimlerle (`twenty-app-dev-test-data`, `twenty-app-dev-test-storage`) ve yapılandırmayla çalışır; böylece ana örneğinizle çakışma olmadan paralel olarak çalışabilir. Varsayılan 2021'i geçersiz kılmak için `--test` ile `--port`'u birlikte kullanın.
 

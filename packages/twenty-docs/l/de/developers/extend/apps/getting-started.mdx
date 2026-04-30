@@ -213,30 +213,49 @@ Die Beispiele stammen aus dem Verzeichnis [twenty-apps/examples](https://github.
 
 Der Scaffolder hat bereits einen lokalen Twenty-Server für Sie gestartet. Um ihn später zu verwalten, verwenden Sie `yarn twenty server`:
 
-| Befehl                                 | Beschreibung                                                |
-| -------------------------------------- | ----------------------------------------------------------- |
-| `yarn twenty server start`             | Lokalen Server starten (lädt das Image bei Bedarf herunter) |
-| `yarn twenty server start --port 3030` | Auf einem benutzerdefinierten Port starten                  |
-| `yarn twenty server start --test`      | Starten Sie eine separate Testinstanz auf Port 2021         |
-| `yarn twenty server stop`              | Server stoppen (Daten bleiben erhalten)                     |
-| `yarn twenty server status`            | Serverstatus, URL und Anmeldedaten anzeigen                 |
-| `yarn twenty server logs`              | Serverprotokolle streamen                                   |
-| `yarn twenty server logs --lines 100`  | Die letzten 100 Protokollzeilen anzeigen                    |
-| `yarn twenty server reset`             | Alle Daten löschen und neu starten                          |
+| Befehl                                 | Beschreibung                                                                     |
+| -------------------------------------- | -------------------------------------------------------------------------------- |
+| `yarn twenty server start`             | Lokalen Server starten (lädt das Image bei Bedarf herunter)                      |
+| `yarn twenty server start --port 3030` | Auf einem benutzerdefinierten Port starten                                       |
+| `yarn twenty server start --test`      | Starten Sie eine separate Testinstanz auf Port 2021                              |
+| `yarn twenty server stop`              | Server stoppen (Daten bleiben erhalten)                                          |
+| `yarn twenty server status`            | Serverstatus, URL, Version und Anmeldedaten anzeigen                             |
+| `yarn twenty server logs`              | Serverprotokolle streamen                                                        |
+| `yarn twenty server logs --lines 100`  | Die letzten 100 Protokollzeilen anzeigen                                         |
+| `yarn twenty server reset`             | Alle Daten löschen und neu starten                                               |
+| `yarn twenty server upgrade`           | Das neueste `twenty-app-dev`-Image herunterladen und den Container neu erstellen |
+| `yarn twenty server upgrade 2.2.0`     | Auf eine bestimmte Version aktualisieren                                         |
 
 Daten bleiben über Neustarts hinweg in zwei Docker-Volumes bestehen (`twenty-app-dev-data` für PostgreSQL, `twenty-app-dev-storage` für Dateien). Verwenden Sie `reset`, um alles zu löschen und neu zu beginnen.
+
+### Aktualisieren des Server-Images
+
+Verwenden Sie `yarn twenty server upgrade`, um nach einem neueren `twenty-app-dev`-Docker-Image zu suchen und den Container zu aktualisieren. Der Befehl lädt das Image herunter, vergleicht es mit dem, aus dem der Container erstellt wurde, und erstellt den Container nur neu, wenn sich das Image tatsächlich geändert hat. Ihre Daten-Volumes bleiben erhalten — nur der Container wird ersetzt.
+
+```bash filename="Terminal"
+# Upgrade to the latest version (skips recreation if already up to date)
+yarn twenty server upgrade
+
+# Upgrade to a specific version
+yarn twenty server upgrade 2.2.0
+```
+
+Wenn ein neueres Image verfügbar ist und der Container lief, startet der Upgrade-Befehl automatisch einen neuen Container mit dem aktualisierten Image. Führen Sie anschließend `yarn twenty server start` aus, um zu warten, bis er betriebsbereit ist. Wenn sich das Image nicht geändert hat, bleibt der Container unverändert.
+
+Sie können die laufende Version mit `yarn twenty server status` überprüfen; dieser Befehl zeigt die `APP_VERSION` des Containers an.
 
 ### Eine Testinstanz ausführen
 
 Übergeben Sie `--test` an jeden `server`-Befehl, um eine zweite, vollständig isolierte Instanz zu verwalten — nützlich, um Integrationstests auszuführen oder zu experimentieren, ohne Ihre Hauptentwicklungsdaten anzutasten.
 
-| Befehl                             | Beschreibung                                          |
-| ---------------------------------- | ----------------------------------------------------- |
-| `yarn twenty server start --test`  | Die Testinstanz starten (standardmäßig Port 2021)     |
-| `yarn twenty server stop --test`   | Die Testinstanz stoppen                               |
-| `yarn twenty server status --test` | Status, URL und Anmeldedaten der Testinstanz anzeigen |
-| `yarn twenty server logs --test`   | Protokolle der Testinstanz streamen                   |
-| `yarn twenty server reset --test`  | Alle Testdaten löschen und neu starten                |
+| Befehl                              | Beschreibung                                                   |
+| ----------------------------------- | -------------------------------------------------------------- |
+| `yarn twenty server start --test`   | Die Testinstanz starten (standardmäßig Port 2021)              |
+| `yarn twenty server stop --test`    | Die Testinstanz stoppen                                        |
+| `yarn twenty server status --test`  | Status, URL, Version und Anmeldedaten der Testinstanz anzeigen |
+| `yarn twenty server logs --test`    | Protokolle der Testinstanz streamen                            |
+| `yarn twenty server reset --test`   | Alle Testdaten löschen und neu starten                         |
+| `yarn twenty server upgrade --test` | Das Image der Testinstanz aktualisieren                        |
 
 Die Testinstanz läuft in einem eigenen Docker-Container (`twenty-app-dev-test`) mit dedizierten Volumes (`twenty-app-dev-test-data`, `twenty-app-dev-test-storage`) und eigener Konfiguration, sodass sie parallel zu Ihrer Hauptinstanz ohne Konflikte ausgeführt werden kann. Kombinieren Sie `--test` mit `--port`, um den Standardport 2021 zu überschreiben.
 

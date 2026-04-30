@@ -213,30 +213,49 @@ npx create-twenty-app@latest my-twenty-app --example postcard
 
 Генератор каркаса уже запустил для вас локальный сервер Twenty. Чтобы управлять им позже, используйте `yarn twenty server`:
 
-| Команда                                | Описание                                                       |
-| -------------------------------------- | -------------------------------------------------------------- |
-| `yarn twenty server start`             | Запустить локальный сервер (при необходимости скачивает образ) |
-| `yarn twenty server start --port 3030` | Запустить на пользовательском порту                            |
-| `yarn twenty server start --test`      | Запускает отдельный тестовый экземпляр на порту 2021           |
-| `yarn twenty server stop`              | Остановить сервер (данные сохраняются)                         |
-| `yarn twenty server status`            | Показать состояние сервера, URL и учётные данные               |
-| `yarn twenty server logs`              | Потоковый вывод журналов сервера                               |
-| `yarn twenty server logs --lines 100`  | Показать последние 100 строк журнала                           |
-| `yarn twenty server reset`             | Удалить все данные и начать с чистого листа                    |
+| Команда                                | Описание                                                           |
+| -------------------------------------- | ------------------------------------------------------------------ |
+| `yarn twenty server start`             | Запустить локальный сервер (при необходимости скачивает образ)     |
+| `yarn twenty server start --port 3030` | Запустить на пользовательском порту                                |
+| `yarn twenty server start --test`      | Запускает отдельный тестовый экземпляр на порту 2021               |
+| `yarn twenty server stop`              | Остановить сервер (данные сохраняются)                             |
+| `yarn twenty server status`            | Показать состояние сервера, URL, версию и учётные данные           |
+| `yarn twenty server logs`              | Потоковый вывод журналов сервера                                   |
+| `yarn twenty server logs --lines 100`  | Показать последние 100 строк журнала                               |
+| `yarn twenty server reset`             | Удалить все данные и начать с чистого листа                        |
+| `yarn twenty server upgrade`           | Загрузить последний образ `twenty-app-dev` и пересоздать контейнер |
+| `yarn twenty server upgrade 2.2.0`     | Upgrade to a specific version                                      |
 
 Данные сохраняются между перезапусками в двух томах Docker (`twenty-app-dev-data` для PostgreSQL, `twenty-app-dev-storage` для файлов). Используйте `reset`, чтобы стереть всё и начать заново.
+
+### Upgrading the server image
+
+Use `yarn twenty server upgrade` to check for a newer `twenty-app-dev` Docker image and update the container. The command pulls the image, compares it against the one the container was created from, and only recreates the container if the image actually changed. Your data volumes are preserved — only the container is replaced.
+
+```bash filename="Terminal"
+# Upgrade to the latest version (skips recreation if already up to date)
+yarn twenty server upgrade
+
+# Upgrade to a specific version
+yarn twenty server upgrade 2.2.0
+```
+
+If a newer image is available and the container was running, the upgrade command automatically starts a new container with the updated image. Run `yarn twenty server start` afterward to wait for it to become healthy. If the image hasn't changed, the container is left untouched.
+
+You can verify the running version with `yarn twenty server status`, which displays the `APP_VERSION` from the container.
 
 ### Запуск тестового экземпляра
 
 Передайте `--test` любой команде `server`, чтобы управлять вторым, полностью изолированным экземпляром — это полезно для запуска интеграционных тестов или экспериментов, не затрагивая ваши основные данные разработки.
 
-| Команда                            | Описание                                                      |
-| ---------------------------------- | ------------------------------------------------------------- |
-| `yarn twenty server start --test`  | Запустить тестовый экземпляр (по умолчанию — порт 2021)       |
-| `yarn twenty server stop --test`   | Остановить тестовый экземпляр                                 |
-| `yarn twenty server status --test` | Показать состояние тестового экземпляра, URL и учётные данные |
-| `yarn twenty server logs --test`   | Выводить журналы тестового экземпляра в потоковом режиме      |
-| `yarn twenty server reset --test`  | Удалить тестовые данные и начать с чистого листа              |
+| Команда                             | Описание                                                 |
+| ----------------------------------- | -------------------------------------------------------- |
+| `yarn twenty server start --test`   | Запустить тестовый экземпляр (по умолчанию — порт 2021)  |
+| `yarn twenty server stop --test`    | Остановить тестовый экземпляр                            |
+| `yarn twenty server status --test`  | Show test instance status, URL, version, and credentials |
+| `yarn twenty server logs --test`    | Выводить журналы тестового экземпляра в потоковом режиме |
+| `yarn twenty server reset --test`   | Удалить тестовые данные и начать с чистого листа         |
+| `yarn twenty server upgrade --test` | Upgrade the test instance image                          |
 
 Тестовый экземпляр запускается в собственном контейнере Docker (`twenty-app-dev-test`) с выделенными томами (`twenty-app-dev-test-data`, `twenty-app-dev-test-storage`) и собственной конфигурацией, поэтому он может работать параллельно с вашим основным экземпляром без конфликтов. Совместите `--test` с `--port`, чтобы переопределить значение по умолчанию (2021).
 
