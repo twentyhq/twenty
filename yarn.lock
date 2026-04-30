@@ -52,6 +52,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@ai-sdk/azure@npm:^3.0.55":
+  version: 3.0.55
+  resolution: "@ai-sdk/azure@npm:3.0.55"
+  dependencies:
+    "@ai-sdk/openai": "npm:3.0.54"
+    "@ai-sdk/provider": "npm:3.0.9"
+    "@ai-sdk/provider-utils": "npm:4.0.24"
+  peerDependencies:
+    zod: ^3.25.76 || ^4.1.8
+  checksum: 10c0/c0738ac36dbfffcfe903edaa57b497996a87fa45eabb2ebebfa72e7e1cda6705355cac7d595e2012f831a80e50db5e20222ee4af3c53c416ccb1051eff9612dd
+  languageName: node
+  linkType: hard
+
 "@ai-sdk/gateway@npm:3.0.53":
   version: 3.0.53
   resolution: "@ai-sdk/gateway@npm:3.0.53"
@@ -101,7 +114,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ai-sdk/openai@npm:^3.0.54":
+"@ai-sdk/openai@npm:3.0.54, @ai-sdk/openai@npm:^3.0.54":
   version: 3.0.54
   resolution: "@ai-sdk/openai@npm:3.0.54"
   dependencies:
@@ -60633,6 +60646,7 @@ __metadata:
   dependencies:
     "@ai-sdk/amazon-bedrock": "npm:^4.0.97"
     "@ai-sdk/anthropic": "npm:^3.0.72"
+    "@ai-sdk/azure": "npm:^3.0.55"
     "@ai-sdk/google": "npm:^3.0.65"
     "@ai-sdk/mistral": "npm:^3.0.31"
     "@ai-sdk/openai": "npm:^3.0.54"
