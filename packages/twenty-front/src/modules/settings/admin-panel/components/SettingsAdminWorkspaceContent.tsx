@@ -26,6 +26,7 @@ import {
   IconLink,
   IconStatusChange,
   IconUser,
+  OverflowingTextWithTooltip,
   Status,
 } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
@@ -44,10 +45,6 @@ const StyledContainer = styled.div`
   flex-direction: column;
   gap: ${themeCssVariables.spacing[3]};
   margin-top: ${themeCssVariables.spacing[6]};
-`;
-
-const StyledCommandValue = styled.span`
-  word-break: break-word;
 `;
 
 export const SettingsAdminWorkspaceContent = ({
@@ -182,13 +179,15 @@ export const SettingsAdminWorkspaceContent = ({
                 Icon: IconCalendar,
                 label: t`Last command`,
                 value: (
-                  <StyledCommandValue>
-                    {workspaceUpgradeStatus.latestCommand?.name
-                      ? formatUpgradeCommandName(
-                          workspaceUpgradeStatus.latestCommand.name,
-                        )
-                      : t`None`}
-                  </StyledCommandValue>
+                  <OverflowingTextWithTooltip
+                    text={
+                      workspaceUpgradeStatus.latestCommand?.name
+                        ? formatUpgradeCommandName(
+                            workspaceUpgradeStatus.latestCommand.name,
+                          )
+                        : t`None`
+                    }
+                  />
                 ),
               },
               {

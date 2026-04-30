@@ -1,6 +1,6 @@
 import { t } from '@lingui/core/macro';
-import { UpgradeHealthEnum } from 'twenty-shared/types';
 import { type ThemeColor } from 'twenty-ui/theme';
+import { UpgradeHealth } from '~/generated-admin/graphql';
 
 type UpgradeHealthStatusBadge = {
   color: ThemeColor;
@@ -8,14 +8,14 @@ type UpgradeHealthStatusBadge = {
 };
 
 export const getUpgradeHealthStatusBadge = (
-  health: UpgradeHealthEnum | undefined,
+  health: UpgradeHealth | undefined,
 ): UpgradeHealthStatusBadge => {
   switch (health) {
-    case UpgradeHealthEnum.UP_TO_DATE:
+    case UpgradeHealth.UP_TO_DATE:
       return { color: 'green', label: t`Up to date` };
-    case UpgradeHealthEnum.BEHIND:
+    case UpgradeHealth.BEHIND:
       return { color: 'orange', label: t`Behind` };
-    case UpgradeHealthEnum.FAILED:
+    case UpgradeHealth.FAILED:
       return { color: 'red', label: t`Failed` };
     default:
       return { color: 'gray', label: t`Unknown` };

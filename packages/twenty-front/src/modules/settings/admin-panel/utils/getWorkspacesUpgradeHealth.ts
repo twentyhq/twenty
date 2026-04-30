@@ -1,16 +1,16 @@
-import { UpgradeHealthEnum } from 'twenty-shared/types';
+import { UpgradeHealth } from '~/generated-admin/graphql';
 
 export const getWorkspacesUpgradeHealth = (
   behindCount: number,
   failedCount: number,
-): UpgradeHealthEnum => {
+): UpgradeHealth => {
   if (failedCount > 0) {
-    return UpgradeHealthEnum.FAILED;
+    return UpgradeHealth.FAILED;
   }
 
   if (behindCount > 0) {
-    return UpgradeHealthEnum.BEHIND;
+    return UpgradeHealth.BEHIND;
   }
 
-  return UpgradeHealthEnum.UP_TO_DATE;
+  return UpgradeHealth.UP_TO_DATE;
 };
