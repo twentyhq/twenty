@@ -87,6 +87,8 @@ export const SettingsAiModelsTab = () => {
       };
     });
 
+  const isLoading = aiModels.length === 0;
+
   const smartModelOptions = buildModelOptions();
   const fastModelOptions = buildModelOptions();
 
@@ -236,6 +238,7 @@ export const SettingsAiModelsTab = () => {
           >
             <Select
               dropdownId="smart-model-select"
+              disabled={isLoading}
               value={currentSmartModel}
               onChange={(value) => handleModelFieldChange('smartModel', value)}
               options={smartModelOptions}
@@ -251,6 +254,7 @@ export const SettingsAiModelsTab = () => {
           >
             <Select
               dropdownId="fast-model-select"
+              disabled={isLoading}
               value={currentFastModel}
               onChange={(value) => handleModelFieldChange('fastModel', value)}
               options={fastModelOptions}
