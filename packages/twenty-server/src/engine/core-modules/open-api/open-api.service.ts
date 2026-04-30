@@ -100,12 +100,7 @@ export class OpenApiService {
       serverUrlFallback: `${request.protocol}://${request.get('host')}`,
     });
 
-    const tokenFromQuery = request.query.token;
-    const schema = baseSchema(
-      'core',
-      baseUrl,
-      typeof tokenFromQuery === 'string' ? tokenFromQuery : undefined,
-    );
+    const schema = baseSchema('core', baseUrl);
 
     const workspace = await this.getWorkspaceFromRequest(request);
 
@@ -263,12 +258,7 @@ export class OpenApiService {
       serverUrlFallback: `${request.protocol}://${request.get('host')}`,
     });
 
-    const tokenFromQuery = request.query.token;
-    const schema = baseSchema(
-      'metadata',
-      baseUrl,
-      typeof tokenFromQuery === 'string' ? tokenFromQuery : undefined,
-    );
+    const schema = baseSchema('metadata', baseUrl);
 
     const workspace = await this.getWorkspaceFromRequest(request);
 

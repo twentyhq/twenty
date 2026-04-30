@@ -1,7 +1,7 @@
 import { playgroundApiKeyState } from '@/settings/playground/states/playgroundApiKeyState';
 import { type PlaygroundSchemas } from '@/settings/playground/types/PlaygroundSchemas';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useContext, lazy, Suspense } from 'react';
+import { useContext, useEffect, useState, lazy, Suspense } from 'react';
 import { styled } from '@linaria/react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { SettingsPath } from 'twenty-shared/types';
@@ -52,50 +52,76 @@ type RestPlaygroundProps = {
 export const RestPlayground = ({ onError, schema }: RestPlaygroundProps) => {
   const { theme, colorScheme } = useContext(ThemeContext);
   const playgroundApiKey = useAtomStateValue(playgroundApiKeyState);
+  const [specContent, setSpecContent] = useState<object | null>(null);
+
+  // Fetch via header so the token is never in a URL (logs, history, Referer).
+  useEffect(() => {
+    if (!playgroundApiKey) {
+      return;
+    }
+
+    const abortController = new AbortController();
+
+    fetch(`${REACT_APP_SERVER_BASE_URL}/rest/open-api/${schema}`, {
+      headers: { Authorization: `Bearer ${playgroundApiKey}` },
+      signal: abortController.signal,
+    })
+      .then((response) => (response.ok ? response.json() : Promise.reject()))
+      .then(setSpecContent)
+      .catch((error) => {
+        if (error?.name !== 'AbortError') {
+          onError();
+        }
+      });
+
+    return () => abortController.abort();
+  }, [schema, playgroundApiKey, onError]);
 
   if (!playgroundApiKey) {
     onError();
     return null;
   }
 
+  const fallback = (
+    <SkeletonTheme
+      baseColor={theme.background.tertiary}
+      highlightColor={theme.background.transparent.lighter}
+      borderRadius={4}
+    >
+      <Skeleton width="100%" height="100%" />
+    </SkeletonTheme>
+  );
+
   return (
     <StyledContainer>
-      <Suspense
-        fallback={
-          <SkeletonTheme
-            baseColor={theme.background.tertiary}
-            highlightColor={theme.background.transparent.lighter}
-            borderRadius={4}
-          >
-            <Skeleton width="100%" height="100%" />
-          </SkeletonTheme>
-        }
-      >
-        <ApiReferenceReact
-          configuration={{
-            spec: {
-              url: `${REACT_APP_SERVER_BASE_URL}/rest/open-api/${schema}?token=${playgroundApiKey}`,
-            },
-            authentication: {
-              http: {
-                bearer: playgroundApiKey
-                  ? { token: playgroundApiKey }
-                  : undefined,
+      {specContent === null ? (
+        fallback
+      ) : (
+        <Suspense fallback={fallback}>
+          <ApiReferenceReact
+            configuration={{
+              spec: {
+                content: specContent,
               },
-            },
-            baseServerURL: REACT_APP_SERVER_BASE_URL + '/' + schema,
-            forceDarkModeState: colorScheme === 'dark' ? 'dark' : 'light',
-            hideClientButton: true,
-            hideDarkModeToggle: true,
-            hideModels: schema === 'metadata',
-            pathRouting: {
-              basePath: getSettingsPath(SettingsPath.RestPlayground, {
-                schema,
-              }),
-            },
-          }}
-        />
-      </Suspense>
+              authentication: {
+                http: {
+                  bearer: { token: playgroundApiKey },
+                },
+              },
+              baseServerURL: REACT_APP_SERVER_BASE_URL + '/' + schema,
+              forceDarkModeState: colorScheme === 'dark' ? 'dark' : 'light',
+              hideClientButton: true,
+              hideDarkModeToggle: true,
+              hideModels: schema === 'metadata',
+              pathRouting: {
+                basePath: getSettingsPath(SettingsPath.RestPlayground, {
+                  schema,
+                }),
+              },
+            }}
+          />
+        </Suspense>
+      )}
     </StyledContainer>
   );
 };
