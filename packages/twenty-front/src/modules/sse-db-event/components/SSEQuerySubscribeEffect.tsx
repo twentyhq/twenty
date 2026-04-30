@@ -29,12 +29,12 @@ export const SSEQuerySubscribeEffect = () => {
   const sseEventStreamReady = useAtomStateValue(sseEventStreamReadyState);
 
   const [addQueryToEventStream] = useMutation<
-    boolean,
+    { addQueryToEventStream: boolean },
     { input: AddQuerySubscriptionInput }
   >(ADD_QUERY_TO_EVENT_STREAM_MUTATION);
 
   const [removeQueryFromEventStream] = useMutation<
-    void,
+    { removeQueryFromEventStream: boolean },
     { input: RemoveQueryFromEventStreamInput }
   >(REMOVE_QUERY_FROM_EVENT_STREAM_MUTATION);
 
@@ -66,7 +66,7 @@ export const SSEQuerySubscribeEffect = () => {
 
     try {
       for (const queryListenerToAdd of queryListenersToAdd) {
-        await addQueryToEventStream({
+        const result = await addQueryToEventStream({
           variables: {
             input: {
               eventStreamId: sseEventStreamId,
@@ -75,10 +75,17 @@ export const SSEQuerySubscribeEffect = () => {
             },
           },
         });
+
+        if (result.data?.addQueryToEventStream === false) {
+          store.set(activeQueryListenersState.atom, []);
+          store.set(shouldDestroyEventStreamState.atom, true);
+
+          return;
+        }
       }
 
       for (const queryListenerToRemove of queryListenersToRemove) {
-        await removeQueryFromEventStream({
+        const result = await removeQueryFromEventStream({
           variables: {
             input: {
               eventStreamId: sseEventStreamId,
@@ -86,6 +93,13 @@ export const SSEQuerySubscribeEffect = () => {
             },
           },
         });
+
+        if (result.data?.removeQueryFromEventStream === false) {
+          store.set(activeQueryListenersState.atom, []);
+          store.set(shouldDestroyEventStreamState.atom, true);
+
+          return;
+        }
       }
     } catch (error) {
       if (CombinedGraphQLErrors.is(error)) {
@@ -99,6 +113,7 @@ export const SSEQuerySubscribeEffect = () => {
         ) {
           store.set(activeQueryListenersState.atom, []);
           store.set(shouldDestroyEventStreamState.atom, true);
+
           return;
         }
 
