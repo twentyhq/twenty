@@ -4,11 +4,10 @@ import {
   checkDockerRunning,
   CONTAINER_NAME,
   containerExists,
-  getContainerImageId,
+  getContainerDigest,
   getContainerPort,
+  getImageDigest,
   getImageForVersion,
-  getLocalImageId,
-  isContainerRunning,
   TEST_CONTAINER_NAME,
 } from '@/cli/utilities/server/docker-container';
 import { execSync, spawnSync } from 'node:child_process';
@@ -43,8 +42,8 @@ const innerServerUpgrade = async (
   const containerName = isTest ? TEST_CONTAINER_NAME : CONTAINER_NAME;
   const image = getImageForVersion(version);
   const hasContainer = containerExists(containerName);
-  const previousImageId = hasContainer
-    ? getContainerImageId(containerName)
+  const previousDigest = hasContainer
+    ? getContainerDigest(containerName)
     : null;
 
   onProgress?.(`Pulling ${image}...`);
@@ -63,8 +62,8 @@ const innerServerUpgrade = async (
     };
   }
 
-  const pulledImageId = getLocalImageId(image);
-  const imageUpdated = !previousImageId || previousImageId !== pulledImageId;
+  const pulledDigest = getImageDigest(image);
+  const imageUpdated = !previousDigest || previousDigest !== pulledDigest;
 
   if (!hasContainer) {
     onProgress?.('Image pulled. No existing container to upgrade.');
@@ -85,7 +84,6 @@ const innerServerUpgrade = async (
   }
 
   const port = getContainerPort(containerName);
-  const wasRunning = isContainerRunning(containerName);
 
   onProgress?.('Removing existing container...');
   execSync(`docker rm -f ${containerName}`, { stdio: 'ignore' });
@@ -97,40 +95,38 @@ const innerServerUpgrade = async (
     ? 'twenty-app-dev-test-storage'
     : 'twenty-app-dev-storage';
 
-  if (wasRunning) {
-    onProgress?.('Starting container with new image...');
+  onProgress?.('Starting container with new image...');
 
-    const runResult = spawnSync(
-      'docker',
-      [
-        'run',
-        '-d',
-        '--name',
-        containerName,
-        '-p',
-        `${port}:${port}`,
-        '-e',
-        `NODE_PORT=${port}`,
-        '-e',
-        `SERVER_URL=http://localhost:${port}`,
-        '-v',
-        `${volumeData}:/data/postgres`,
-        '-v',
-        `${volumeStorage}:/app/packages/twenty-server/.local-storage`,
-        image,
-      ],
-      { stdio: 'inherit' },
-    );
+  const runResult = spawnSync(
+    'docker',
+    [
+      'run',
+      '-d',
+      '--name',
+      containerName,
+      '-p',
+      `${port}:${port}`,
+      '-e',
+      `NODE_PORT=${port}`,
+      '-e',
+      `SERVER_URL=http://localhost:${port}`,
+      '-v',
+      `${volumeData}:/data/postgres`,
+      '-v',
+      `${volumeStorage}:/app/packages/twenty-server/.local-storage`,
+      image,
+    ],
+    { stdio: 'inherit' },
+  );
 
-    if (runResult.status !== 0) {
-      return {
-        success: false,
-        error: {
-          code: SERVER_ERROR_CODES.IMAGE_UPGRADE_FAILED,
-          message: 'Failed to start container with new image.',
-        },
-      };
-    }
+  if (runResult.status !== 0) {
+    return {
+      success: false,
+      error: {
+        code: SERVER_ERROR_CODES.IMAGE_UPGRADE_FAILED,
+        message: 'Failed to start container with new image.',
+      },
+    };
   }
 
   return {

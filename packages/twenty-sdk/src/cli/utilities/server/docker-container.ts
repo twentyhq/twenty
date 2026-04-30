@@ -52,21 +52,7 @@ export const containerExists = (containerName = CONTAINER_NAME): boolean => {
 export const getImageForVersion = (version = 'latest'): string =>
   `twentycrm/twenty-app-dev:${version}`;
 
-export const getContainerImage = (
-  containerName = CONTAINER_NAME,
-): string | null => {
-  try {
-    return execSync(`docker inspect -f '{{.Config.Image}}' ${containerName}`, {
-      encoding: 'utf-8',
-      stdio: ['pipe', 'pipe', 'ignore'],
-    }).trim();
-  } catch {
-    return null;
-  }
-};
-
-// sha256 digest of the image the container was created from
-export const getContainerImageId = (
+export const getContainerDigest = (
   containerName = CONTAINER_NAME,
 ): string | null => {
   try {
@@ -79,8 +65,7 @@ export const getContainerImageId = (
   }
 };
 
-// sha256 digest of a local image by name/tag
-export const getLocalImageId = (image: string): string | null => {
+export const getImageDigest = (image: string): string | null => {
   try {
     return execSync(`docker inspect -f '{{.Id}}' ${image}`, {
       encoding: 'utf-8',
