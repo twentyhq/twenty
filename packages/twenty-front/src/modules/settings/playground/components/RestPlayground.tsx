@@ -1,7 +1,8 @@
+import { RestPlaygroundSchemaFetchEffect } from '@/settings/playground/components/RestPlaygroundSchemaFetchEffect';
 import { playgroundApiKeyState } from '@/settings/playground/states/playgroundApiKeyState';
 import { type PlaygroundSchemas } from '@/settings/playground/types/PlaygroundSchemas';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useContext, useEffect, useState, lazy, Suspense } from 'react';
+import { useContext, useState, lazy, Suspense } from 'react';
 import { styled } from '@linaria/react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { SettingsPath } from 'twenty-shared/types';
@@ -54,31 +55,6 @@ export const RestPlayground = ({ onError, schema }: RestPlaygroundProps) => {
   const playgroundApiKey = useAtomStateValue(playgroundApiKeyState);
   const [specContent, setSpecContent] = useState<object | null>(null);
 
-  // Fetch via header so the token is never in a URL (logs, history, Referer).
-  useEffect(() => {
-    if (!playgroundApiKey) {
-      return;
-    }
-
-    setSpecContent(null);
-
-    const abortController = new AbortController();
-
-    fetch(`${REACT_APP_SERVER_BASE_URL}/rest/open-api/${schema}`, {
-      headers: { Authorization: `Bearer ${playgroundApiKey}` },
-      signal: abortController.signal,
-    })
-      .then((response) => (response.ok ? response.json() : Promise.reject()))
-      .then(setSpecContent)
-      .catch((error) => {
-        if (error?.name !== 'AbortError') {
-          onError();
-        }
-      });
-
-    return () => abortController.abort();
-  }, [schema, playgroundApiKey, onError]);
-
   if (!playgroundApiKey) {
     onError();
     return null;
@@ -96,6 +72,12 @@ export const RestPlayground = ({ onError, schema }: RestPlaygroundProps) => {
 
   return (
     <StyledContainer>
+      <RestPlaygroundSchemaFetchEffect
+        schema={schema}
+        apiKey={playgroundApiKey}
+        onSchemaLoaded={setSpecContent}
+        onError={onError}
+      />
       {specContent === null ? (
         fallback
       ) : (
