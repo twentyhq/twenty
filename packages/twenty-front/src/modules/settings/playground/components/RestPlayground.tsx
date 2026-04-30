@@ -60,6 +60,8 @@ export const RestPlayground = ({ onError, schema }: RestPlaygroundProps) => {
       return;
     }
 
+    setSpecContent(null);
+
     const abortController = new AbortController();
 
     fetch(`${REACT_APP_SERVER_BASE_URL}/rest/open-api/${schema}`, {
