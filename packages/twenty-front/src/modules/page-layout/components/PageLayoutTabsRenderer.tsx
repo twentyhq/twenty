@@ -10,6 +10,10 @@ import { usePageLayoutAddTabStrategy } from '@/page-layout/hooks/usePageLayoutAd
 import { useReorderRecordPageLayoutTabs } from '@/page-layout/hooks/useReorderRecordPageLayoutTabs';
 import { PageLayoutMainContent } from '@/page-layout/PageLayoutMainContent';
 import { getScrollWrapperInstanceIdFromPageLayoutId } from '@/page-layout/utils/getScrollWrapperInstanceIdFromPageLayoutId';
+import {
+  getPageLayoutTabsForCurrentObject,
+  getSystemObjectTabTitles,
+} from '@/page-layout/utils/getPageLayoutTabsForCurrentObject';
 import { getTabListInstanceIdFromPageLayoutAndRecord } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutAndRecord';
 import { getTabsByDisplayMode } from '@/page-layout/utils/getTabsByDisplayMode';
 import { getTabsWithVisibleWidgets } from '@/page-layout/utils/getTabsWithVisibleWidgets';
@@ -22,6 +26,8 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { styled } from '@linaria/react';
+import { useLingui } from '@lingui/react/macro';
+import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
@@ -47,6 +53,8 @@ const StyledScrollWrapperContainer = styled.div`
 `;
 
 export const PageLayoutTabsRenderer = () => {
+  const { i18n } = useLingui();
+
   const { currentPageLayout } = useCurrentPageLayoutOrThrow();
 
   const { isInSidePanel, layoutType, targetRecordIdentifier } =
@@ -102,13 +110,16 @@ export const PageLayoutTabsRenderer = () => {
     isEditMode: isPageLayoutInEditMode,
   });
 
-  const SYSTEM_OBJECT_TABS = ['Home', 'Timeline', 'Overview', 'Flow'];
+  const systemObjectTabTitles = useMemo(
+    () => getSystemObjectTabTitles(i18n),
+    [i18n, i18n.locale],
+  );
 
-  const tabsForCurrentObject = isSystemObject
-    ? tabsWithVisibleWidgets.filter((tab) =>
-        SYSTEM_OBJECT_TABS.includes(tab.title),
-      )
-    : tabsWithVisibleWidgets;
+  const tabsForCurrentObject = getPageLayoutTabsForCurrentObject({
+    isSystemObject,
+    tabsWithVisibleWidgets,
+    systemObjectTabTitles,
+  });
 
   const { tabsToRenderInTabList, pinnedLeftTab } = getTabsByDisplayMode({
     tabs: tabsForCurrentObject,
