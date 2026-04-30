@@ -1,3 +1,4 @@
+import { msg } from '@lingui/core/macro';
 import { MENU_DATA } from '@/sections/Menu/data';
 import { EDITORIAL_FOUR } from '@/app/[locale]/why-twenty/editorial-four.data';
 import { EDITORIAL_ONE } from '@/app/[locale]/why-twenty/editorial-one.data';
@@ -191,7 +192,7 @@ export default async function WhyTwentyPage() {
           <LinkButton
             color="primary"
             href="https://app.twenty.com/welcome"
-            label="Get started"
+            label={msg`Get started`}
             type="anchor"
             variant="contained"
           />

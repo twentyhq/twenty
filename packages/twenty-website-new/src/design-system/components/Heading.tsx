@@ -2,10 +2,11 @@ import { theme } from '@/theme';
 import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
 import { Fragment } from 'react';
+import { LocalizedText, type LocalizableText } from './LocalizedText';
 
 export type HeadingType = {
   fontFamily: 'sans' | 'serif' | 'mono';
-  text: string;
+  text: LocalizableText;
   fontWeight?: 'light' | 'regular' | 'medium';
   newLine?: boolean;
   lineBreakBefore?: boolean;
@@ -146,7 +147,7 @@ export function Heading({
                 data-family={segment.fontFamily}
                 data-weight={segment.fontWeight}
               >
-                {segment.text}
+                <LocalizedText text={segment.text} />
               </StyledSpan>
             </Fragment>
           );
@@ -156,7 +157,7 @@ export function Heading({
           data-family={segments.fontFamily}
           data-weight={segments.fontWeight}
         >
-          {segments.text}
+          <LocalizedText text={segments.text} />
         </StyledSpan>
       )}
     </Tag>

@@ -1,6 +1,7 @@
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
 import type { ReactNode } from 'react';
+import { LocalizedText, type LocalizableText } from '../LocalizedText';
 import { ButtonShape } from './ButtonShape';
 
 export type ButtonSize = 'regular' | 'small';
@@ -92,7 +93,7 @@ const Label = styled.span`
 
 export type BaseButtonProps = {
   color: 'primary' | 'secondary';
-  label: string;
+  label: LocalizableText;
   leadingIcon?: ReactNode;
   size?: ButtonSize;
   variant: 'contained' | 'outlined';
@@ -180,7 +181,9 @@ export function BaseButton({
       </HoverFill>
       <Content>
         {leadingIcon ? <IconSlot>{leadingIcon}</IconSlot> : null}
-        <Label data-slot="button-label">{label}</Label>
+        <Label data-slot="button-label">
+          <LocalizedText text={label} />
+        </Label>
       </Content>
     </>
   );

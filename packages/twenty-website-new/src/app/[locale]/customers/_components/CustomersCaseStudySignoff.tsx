@@ -1,3 +1,4 @@
+import { msg } from '@lingui/core/macro';
 import { TalkToUsButton } from '@/lib/contact-cal';
 import { LinkButton } from '@/design-system/components';
 import { Pages } from '@/lib/pages';
@@ -26,13 +27,13 @@ export function CustomersCaseStudySignoff() {
         <LinkButton
           color="secondary"
           href="https://app.twenty.com/welcome"
-          label="Get started"
+          label={msg`Get started`}
           type="anchor"
           variant="contained"
         />
         <TalkToUsButton
           color="secondary"
-          label="Talk to us"
+          label={msg`Talk to us`}
           variant="outlined"
         />
       </Signoff.Cta>

@@ -1,6 +1,7 @@
 'use client';
 
 import { Body, Heading } from '@/design-system/components';
+import type { LocalizableText } from '@/lib/i18n/localizable-text';
 import type {
   SalesforceAddonRowType,
   SalesforceDataType,
@@ -34,13 +35,13 @@ const RightColumn = styled.div`
 `;
 
 type OpenWrongChoicePopup = {
-  body: string;
+  body: LocalizableText;
   key: string;
   layerIndex: number;
   left: number;
   sourceId: string;
   top: number;
-  titleBar: string;
+  titleBar: LocalizableText;
 };
 
 const POPUP_MARGIN = 12;

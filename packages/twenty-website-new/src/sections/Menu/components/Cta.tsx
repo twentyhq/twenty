@@ -1,6 +1,7 @@
 import { LinkButton } from '@/design-system/components';
 import type { MenuScheme } from '@/sections/Menu/types';
 import { theme } from '@/theme';
+import { msg } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
 
 const CtaContainer = styled.div`
@@ -26,7 +27,7 @@ export function Cta({ scheme }: CtaProps) {
       <LinkButton
         color={buttonColor}
         href="https://app.twenty.com/welcome"
-        label="Log in"
+        label={msg`Log in`}
         size="small"
         type="anchor"
         variant="outlined"
@@ -34,7 +35,7 @@ export function Cta({ scheme }: CtaProps) {
       <LinkButton
         color={buttonColor}
         href="https://app.twenty.com/welcome"
-        label="Get started"
+        label={msg`Get started`}
         size="small"
         type="anchor"
         variant="contained"

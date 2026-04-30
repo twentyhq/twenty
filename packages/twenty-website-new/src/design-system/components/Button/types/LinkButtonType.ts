@@ -1,1 +1,3 @@
-export type LinkButtonType = { href: string; label: string };
+import type { LocalizableText } from '../../LocalizedText';
+
+export type LinkButtonType = { href: string; label: LocalizableText };

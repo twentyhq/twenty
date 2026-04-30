@@ -4,6 +4,7 @@ import {
   BaseButton,
   buttonBaseStyles,
 } from '@/design-system/components/Button/BaseButton';
+import type { LocalizableText } from '@/lib/i18n/localizable-text';
 import { styled } from '@linaria/react';
 
 import { useContactCalModal } from './ContactCalModalRoot';
@@ -14,7 +15,7 @@ const StyledTrigger = styled.button`
 
 type TalkToUsButtonProps = {
   color: 'primary' | 'secondary';
-  label: string;
+  label: LocalizableText;
   variant: 'contained' | 'outlined';
 };
 

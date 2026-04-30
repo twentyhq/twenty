@@ -1,19 +1,20 @@
 import type { BodyType } from '@/design-system/components/Body';
 import type { HeadingType } from '@/design-system/components/Heading';
+import type { LocalizableText } from '@/lib/i18n/localizable-text';
 
 export type SalesforceWrongChoicePopupType = {
-  body: string;
-  titleBar: string;
+  body: LocalizableText;
+  titleBar: LocalizableText;
 };
 
 export type SalesforceRichTextPartType = {
   strike?: boolean;
-  text: string;
+  text: LocalizableText;
 };
 
 export type SalesforceAddonTooltipType = {
-  body: string;
-  title: string;
+  body: LocalizableText;
+  title: LocalizableText;
 };
 
 export type SalesforceAddonRowType = {
@@ -22,11 +23,11 @@ export type SalesforceAddonRowType = {
   disabled?: boolean;
   fixedCost?: number;
   id: string;
-  label: string;
+  label: LocalizableText;
   netSpendRate?: number;
   popup: SalesforceWrongChoicePopupType;
   rightLabelParts?: SalesforceRichTextPartType[][];
-  rightLabel: string;
+  rightLabel: LocalizableText;
   sharedCostKey?: string;
   tooltip?: SalesforceAddonTooltipType;
 };
@@ -35,16 +36,16 @@ export type SalesforcePricingPanelType = {
   basePriceAmount: number;
   productIconAlt: string;
   productIconSrc: string;
-  totalPriceLabel: string;
-  windowTitle: string;
-  productTitle: string;
-  priceSuffix: string;
-  promoTag?: string;
-  featureSectionHeading: string;
+  totalPriceLabel: LocalizableText;
+  windowTitle: LocalizableText;
+  productTitle: LocalizableText;
+  priceSuffix: LocalizableText;
+  promoTag?: LocalizableText;
+  featureSectionHeading: LocalizableText;
   addons: SalesforceAddonRowType[];
-  secondaryCtaNote?: string;
+  secondaryCtaNote?: LocalizableText;
   secondaryCtaHref: string;
-  secondaryCtaLabel: string;
+  secondaryCtaLabel: LocalizableText;
 };
 
 export type SalesforceDataType = {

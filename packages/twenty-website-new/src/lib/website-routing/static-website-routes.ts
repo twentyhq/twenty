@@ -1,12 +1,13 @@
+import { msg } from '@lingui/core/macro';
+
 import type { WebsiteRoute } from './types';
 
 export const STATIC_WEBSITE_ROUTES = [
   {
     id: 'home',
     path: '/',
-    title: 'Twenty | #1 open source CRM',
-    description:
-      'The #1 open source CRM for modern teams. Modular, scalable, and built to fit your business.',
+    title: msg`Twenty | #1 open source CRM`,
+    description: msg`The #1 open source CRM for modern teams. Modular, scalable, and built to fit your business.`,
     changeFrequency: 'weekly',
     priority: 1,
     indexed: true,
@@ -14,9 +15,8 @@ export const STATIC_WEBSITE_ROUTES = [
   {
     id: 'whyTwenty',
     path: '/why-twenty',
-    title: 'Why Twenty | Twenty',
-    description:
-      'Most packaged software makes companies more similar. Learn why the future of CRM is built, not bought.',
+    title: msg`Why Twenty | Twenty`,
+    description: msg`Most packaged software makes companies more similar. Learn why the future of CRM is built, not bought.`,
     changeFrequency: 'monthly',
     priority: 0.8,
     indexed: true,
@@ -24,9 +24,8 @@ export const STATIC_WEBSITE_ROUTES = [
   {
     id: 'product',
     path: '/product',
-    title: 'Product | Twenty',
-    description:
-      'Track relationships, manage pipelines, and take action quickly with a CRM that feels intuitive from day one.',
+    title: msg`Product | Twenty`,
+    description: msg`Track relationships, manage pipelines, and take action quickly with a CRM that feels intuitive from day one.`,
     changeFrequency: 'monthly',
     priority: 0.8,
     indexed: true,
@@ -34,9 +33,8 @@ export const STATIC_WEBSITE_ROUTES = [
   {
     id: 'pricing',
     path: '/pricing',
-    title: 'Pricing | Twenty',
-    description:
-      'Plans that scale with your team. Compare tiers of the #1 open source CRM.',
+    title: msg`Pricing | Twenty`,
+    description: msg`Plans that scale with your team. Compare tiers of the #1 open source CRM.`,
     changeFrequency: 'monthly',
     priority: 0.9,
     indexed: true,
@@ -44,9 +42,8 @@ export const STATIC_WEBSITE_ROUTES = [
   {
     id: 'partners',
     path: '/partners',
-    title: 'Partners | Twenty',
-    description:
-      'Join our partner ecosystem and grow with us as we build the #1 open source CRM.',
+    title: msg`Partners | Twenty`,
+    description: msg`Join our partner ecosystem and grow with us as we build the #1 open source CRM.`,
     changeFrequency: 'monthly',
     priority: 0.7,
     indexed: true,
@@ -54,9 +51,8 @@ export const STATIC_WEBSITE_ROUTES = [
   {
     id: 'releases',
     path: '/releases',
-    title: 'Releases | Twenty',
-    description:
-      'Discover the newest features and improvements in Twenty, the #1 open source CRM.',
+    title: msg`Releases | Twenty`,
+    description: msg`Discover the newest features and improvements in Twenty, the #1 open source CRM.`,
     changeFrequency: 'weekly',
     priority: 0.7,
     indexed: true,
@@ -64,9 +60,8 @@ export const STATIC_WEBSITE_ROUTES = [
   {
     id: 'customers',
     path: '/customers',
-    title: 'Customers | Twenty',
-    description:
-      'Meet the teams running their business on Twenty. Real customer stories on how they shaped the CRM to fit their workflow.',
+    title: msg`Customers | Twenty`,
+    description: msg`Meet the teams running their business on Twenty. Real customer stories on how they shaped the CRM to fit their workflow.`,
     changeFrequency: 'monthly',
     priority: 0.7,
     indexed: true,
@@ -74,9 +69,8 @@ export const STATIC_WEBSITE_ROUTES = [
   {
     id: 'privacyPolicy',
     path: '/privacy-policy',
-    title: 'Privacy Policy | Twenty',
-    description:
-      'How Twenty collects, uses, safeguards, and discloses information when you use Twenty.com and related services.',
+    title: msg`Privacy Policy | Twenty`,
+    description: msg`How Twenty collects, uses, safeguards, and discloses information when you use Twenty.com and related services.`,
     changeFrequency: 'yearly',
     priority: 0.3,
     indexed: true,
@@ -84,9 +78,8 @@ export const STATIC_WEBSITE_ROUTES = [
   {
     id: 'terms',
     path: '/terms',
-    title: 'Terms of Service | Twenty',
-    description:
-      'Terms of Service for Twenty.com PBC, including use of Twenty.com, sub-domains, and related services.',
+    title: msg`Terms of Service | Twenty`,
+    description: msg`Terms of Service for Twenty.com PBC, including use of Twenty.com, sub-domains, and related services.`,
     changeFrequency: 'yearly',
     priority: 0.3,
     indexed: true,
@@ -94,8 +87,8 @@ export const STATIC_WEBSITE_ROUTES = [
   {
     id: 'halftone',
     path: '/halftone',
-    title: 'Halftone Generator | Twenty',
-    description: 'Interactive halftone generator exported from Twenty.',
+    title: msg`Halftone Generator | Twenty`,
+    description: msg`Interactive halftone generator exported from Twenty.`,
     changeFrequency: 'monthly',
     priority: 0,
     indexed: false,
@@ -104,9 +97,8 @@ export const STATIC_WEBSITE_ROUTES = [
   {
     id: 'enterpriseActivate',
     path: '/enterprise/activate',
-    title: 'Enterprise activation | Twenty',
-    description:
-      'Complete activation for your Twenty self-hosted enterprise license.',
+    title: msg`Enterprise activation | Twenty`,
+    description: msg`Complete activation for your Twenty self-hosted enterprise license.`,
     changeFrequency: 'yearly',
     priority: 0,
     indexed: false,

@@ -1,1 +1,3 @@
-export type SubmitButtonType = { label: string };
+import type { LocalizableText } from '../../LocalizedText';
+
+export type SubmitButtonType = { label: LocalizableText };

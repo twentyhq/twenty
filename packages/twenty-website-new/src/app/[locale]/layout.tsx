@@ -14,9 +14,10 @@ import { ContactCalModalRoot } from '@/lib/contact-cal';
 import {
   I18nProvider,
   PUBLIC_APP_LOCALE_LIST,
-  getLocaleMessages,
   resolveLocaleParam,
 } from '@/lib/i18n';
+import { getLocaleMessages } from '@/lib/i18n/messages-by-locale';
+import { setServerI18n } from '@/lib/i18n/set-server-i18n';
 import { PartnerApplicationModalRoot } from '@/lib/partner-application';
 import { Footer } from '@/sections/Footer/components';
 import { FOOTER_DATA } from '@/sections/Footer/data';
@@ -124,6 +125,7 @@ const LocaleLayout = async ({
 }) => {
   const { locale: rawLocale } = await params;
   const locale = resolveLocaleParam(rawLocale);
+  setServerI18n(locale);
   const messages = getLocaleMessages(locale);
 
   return (

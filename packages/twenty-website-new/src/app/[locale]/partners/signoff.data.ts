@@ -1,11 +1,12 @@
+import { msg } from '@lingui/core/macro';
 import type { SignoffDataType } from '@/sections/Signoff/types';
 
 export const SIGNOFF_DATA: SignoffDataType = {
   heading: [
-    { text: 'Ready to grow\n', fontFamily: 'serif' },
-    { text: 'with Twenty?', fontFamily: 'sans' },
+    { text: msg`Ready to grow\n`, fontFamily: 'serif' },
+    { text: msg`with Twenty?`, fontFamily: 'sans' },
   ],
   body: {
-    text: 'Join our partner ecosystem and help businesses\ntake control of their CRM.',
+    text: msg`Join our partner ecosystem and help businesses\ntake control of their CRM.`,
   },
 };

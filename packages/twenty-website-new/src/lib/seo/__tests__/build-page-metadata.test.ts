@@ -48,6 +48,32 @@ describe('buildPageMetadata', () => {
     expect(metadata.openGraph).toMatchObject({ locale: 'en' });
   });
 
+  it('resolves Lingui message descriptors before emitting SEO fields', () => {
+    const metadata = buildPageMetadata({
+      locale: 'en',
+      path: '/',
+      title: {
+        id: 'seo.test.title',
+        message: 'Twenty | #1 open source CRM',
+      },
+      description: {
+        id: 'seo.test.description',
+        message: 'The #1 open source CRM for modern teams.',
+      },
+    });
+
+    expect(metadata.title).toEqual({
+      absolute: 'Twenty | #1 open source CRM',
+    });
+    expect(metadata.description).toBe(
+      'The #1 open source CRM for modern teams.',
+    );
+    expect(metadata.openGraph).toMatchObject({
+      title: 'Twenty | #1 open source CRM',
+      description: 'The #1 open source CRM for modern teams.',
+    });
+  });
+
   it('emits hreflang alternates only for published website locales', () => {
     const metadata = buildPageMetadata({
       locale: 'fr-FR',

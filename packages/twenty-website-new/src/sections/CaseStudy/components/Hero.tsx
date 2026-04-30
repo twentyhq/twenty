@@ -1,6 +1,7 @@
 import type { CaseStudyData } from '@/lib/customers';
 import { Container, Heading } from '@/design-system/components';
 import { CLIENT_ICONS } from '@/icons';
+import { LocalizedText } from '@/lib/i18n/LocalizedText';
 import { LocalizedLink } from '@/lib/i18n';
 import { CustomerCasesCover } from '@/sections/CaseStudyCatalog/visuals/CustomerCasesCover';
 import { theme } from '@/theme';
@@ -281,7 +282,9 @@ export function Hero({ hero, dashColor, hoverDashColor }: HeroProps) {
             <AuthorInfo>
               <AuthorName>{hero.author}</AuthorName>
               {hero.authorRole ? (
-                <AuthorRole>{hero.authorRole}</AuthorRole>
+                <AuthorRole>
+                  <LocalizedText text={hero.authorRole} />
+                </AuthorRole>
               ) : null}
             </AuthorInfo>
           </AuthorRow>

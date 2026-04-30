@@ -6,7 +6,10 @@ import type {
   SalesforceRichTextPartType,
 } from '@/sections/Salesforce/types';
 import { useAnimatedNumber } from '@/lib/animation';
+import { LocalizedText } from '@/lib/i18n/LocalizedText';
+import type { LocalizableText } from '@/lib/i18n/localizable-text';
 import { theme } from '@/theme';
+import { msg } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
 import { useRef } from 'react';
 
@@ -523,6 +526,7 @@ const AddonRightText = styled.span`
   font-size: ${theme.font.size(4.5)};
   line-height: ${theme.spacing(5.5)};
   text-align: right;
+  white-space: pre-line;
 `;
 
 const AddonRightLine = styled.span<{ 'data-muted'?: boolean }>`
@@ -553,21 +557,17 @@ const renderRightLabelParts = (lines: SalesforceRichTextPartType[][]) =>
               : undefined
           }
         >
-          {part.text}
+          <LocalizedText text={part.text} />
         </AddonRightPart>
       ))}
     </AddonRightLine>
   ));
 
-const renderRightLabel = (label: string) =>
-  label.split('\n').map((line, lineIndex) => (
-    <AddonRightLine
-      key={`${lineIndex}-${line}`}
-      data-muted={lineIndex > 0 || undefined}
-    >
-      {line}
-    </AddonRightLine>
-  ));
+const renderRightLabel = (label: LocalizableText) => (
+  <AddonRightLine>
+    <LocalizedText text={label} />
+  </AddonRightLine>
+);
 
 const SelectAllButton = styled.button`
   align-items: center;
@@ -624,14 +624,18 @@ export function PricingWindow({
     <PanelWrapper>
       {pricing.promoTag ? (
         <PromoTagBorder>
-          <PromoTagInner>{pricing.promoTag}</PromoTagInner>
+          <PromoTagInner>
+            <LocalizedText text={pricing.promoTag} />
+          </PromoTagInner>
         </PromoTagBorder>
       ) : null}
       <Panel>
         <WindowChrome aria-hidden="true" />
         <PricingHeader>
           <TitleBar>
-            <TitleBarText>{pricing.windowTitle}</TitleBarText>
+            <TitleBarText>
+              <LocalizedText text={pricing.windowTitle} />
+            </TitleBarText>
             <TitleBarActions>
               <TitleBarActionButton
                 aria-label="Help"
@@ -654,7 +658,9 @@ export function PricingWindow({
               <ProductBlock>
                 <ProductHeader>
                   <ProductCopy>
-                    <ProductTitle>{pricing.productTitle}</ProductTitle>
+                    <ProductTitle>
+                      <LocalizedText text={pricing.productTitle} />
+                    </ProductTitle>
                     <PriceRow>
                       {perSeatPriceAmount > pricing.basePriceAmount ? (
                         <BasePriceAmount>
@@ -664,7 +670,9 @@ export function PricingWindow({
                       <PriceAmount>
                         {formatPriceAmount(animatedPerSeat)}
                       </PriceAmount>
-                      <PriceSuffix>{pricing.priceSuffix}</PriceSuffix>
+                      <PriceSuffix>
+                        <LocalizedText text={pricing.priceSuffix} />
+                      </PriceSuffix>
                     </PriceRow>
                     {fixedPriceAmount > 0 ? (
                       <TotalPriceRow>
@@ -672,7 +680,7 @@ export function PricingWindow({
                           {formatPriceAmount(animatedTotal)}
                         </TotalPriceAmount>
                         <TotalPriceLabel>
-                          {pricing.totalPriceLabel}
+                          <LocalizedText text={pricing.totalPriceLabel} />
                         </TotalPriceLabel>
                       </TotalPriceRow>
                     ) : null}
@@ -690,9 +698,11 @@ export function PricingWindow({
         <ContentPad>
           <Inner>
             <SectionHeader>
-              <SectionLabel>{pricing.featureSectionHeading}</SectionLabel>
+              <SectionLabel>
+                <LocalizedText text={pricing.featureSectionHeading} />
+              </SectionLabel>
               <SelectAllButton onClick={onSelectAll} type="button">
-                Select all
+                <LocalizedText text={msg`Select all`} />
               </SelectAllButton>
             </SectionHeader>
             {pricing.addons.map((addon) => {
@@ -721,7 +731,9 @@ export function PricingWindow({
                     <CheckboxFace checked={checked} aria-hidden="true">
                       {checked ? <CheckGlyph>✓</CheckGlyph> : null}
                     </CheckboxFace>
-                    <AddonLabelText>{addon.label}</AddonLabelText>
+                    <AddonLabelText>
+                      <LocalizedText text={addon.label} />
+                    </AddonLabelText>
                   </CheckboxLabel>
                   <AddonRightText>
                     {addon.rightLabelParts
@@ -730,8 +742,12 @@ export function PricingWindow({
                   </AddonRightText>
                   {addon.tooltip ? (
                     <Tooltip>
-                      <TooltipTitleBar>{addon.tooltip.title}</TooltipTitleBar>
-                      <TooltipBody>{addon.tooltip.body}</TooltipBody>
+                      <TooltipTitleBar>
+                        <LocalizedText text={addon.tooltip.title} />
+                      </TooltipTitleBar>
+                      <TooltipBody>
+                        <LocalizedText text={addon.tooltip.body} />
+                      </TooltipBody>
                     </Tooltip>
                   ) : null}
                 </AddonRow>
@@ -740,14 +756,16 @@ export function PricingWindow({
             <FooterCtaSection>
               <Separator aria-hidden="true" />
               {pricing.secondaryCtaNote ? (
-                <FooterNote>{pricing.secondaryCtaNote}</FooterNote>
+                <FooterNote>
+                  <LocalizedText text={pricing.secondaryCtaNote} />
+                </FooterNote>
               ) : null}
               <FakeButton
                 href={pricing.secondaryCtaHref}
                 rel="noreferrer"
                 target="_blank"
               >
-                {pricing.secondaryCtaLabel}
+                <LocalizedText text={pricing.secondaryCtaLabel} />
               </FakeButton>
             </FooterCtaSection>
           </Inner>

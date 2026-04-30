@@ -6,6 +6,7 @@ import {
   RectangleFillIcon,
   RectangleOutlineIcon,
 } from '@/icons';
+import { LocalizedText } from '@/lib/i18n/LocalizedText';
 import type { FaqQuestionType } from '@/sections/Faq/types/FaqQuestion';
 import { theme } from '@/theme';
 import { Accordion as BaseAccordion } from '@base-ui/react/accordion';
@@ -226,7 +227,9 @@ export function Item({ question, value }: ItemProps) {
             </QuestionIconLayer>
           </QuestionIconContainer>
 
-          <QuestionText>{question.question.text}</QuestionText>
+          <QuestionText>
+            <LocalizedText text={question.question.text} />
+          </QuestionText>
 
           <ToggleContainer>
             <ToggleVisual aria-hidden>
@@ -249,7 +252,9 @@ export function Item({ question, value }: ItemProps) {
 
       <BaseAccordion.Panel render={<AnswerWrapper />} keepMounted>
         <AnswerInner>
-          <AnswerText>{question.answer.text}</AnswerText>
+          <AnswerText>
+            <LocalizedText text={question.answer.text} />
+          </AnswerText>
         </AnswerInner>
       </BaseAccordion.Panel>
     </BaseAccordion.Item>

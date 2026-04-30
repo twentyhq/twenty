@@ -1,4 +1,5 @@
 import { Body, Heading } from '@/design-system/components';
+import { LocalizedText } from '@/lib/i18n/LocalizedText';
 import type { PlanTableCalculatorDataType } from '@/sections/PlanTable/types';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
@@ -193,12 +194,16 @@ export function CalculatorEmbed({ calculator }: CalculatorEmbedProps) {
         {sections.map((section) => (
           <SectionBlock key={section.id}>
             <SectionTitleRow>
-              <span>{section.title}</span>
+              <span>
+                <LocalizedText text={section.title} />
+              </span>
               <span aria-hidden="true">☑</span>
             </SectionTitleRow>
             <FieldsRow>
               <Field>
-                <FieldLabel>{section.requestField.label}</FieldLabel>
+                <FieldLabel>
+                  <LocalizedText text={section.requestField.label} />
+                </FieldLabel>
                 <FakeInput>
                   <StepperInner>
                     <StepperBtn aria-hidden="true">‹</StepperBtn>
@@ -208,7 +213,9 @@ export function CalculatorEmbed({ calculator }: CalculatorEmbedProps) {
                 </FakeInput>
               </Field>
               <Field>
-                <FieldLabel>{section.tasksField.label}</FieldLabel>
+                <FieldLabel>
+                  <LocalizedText text={section.tasksField.label} />
+                </FieldLabel>
                 <FakeInput>
                   <span>{section.tasksField.value}</span>
                   <span aria-hidden="true">▾</span>
@@ -217,7 +224,9 @@ export function CalculatorEmbed({ calculator }: CalculatorEmbedProps) {
             </FieldsRow>
             {section.modelField ? (
               <Field>
-                <FieldLabel>{section.modelField.label}</FieldLabel>
+                <FieldLabel>
+                  <LocalizedText text={section.modelField.label} />
+                </FieldLabel>
                 <FakeInput>
                   <span>{section.modelField.value}</span>
                   <span aria-hidden="true">▾</span>
@@ -228,10 +237,15 @@ export function CalculatorEmbed({ calculator }: CalculatorEmbedProps) {
         ))}
         <PriceFooter>
           <PriceRow>
-            <span>{priceLine.label}</span>
+            <span>
+              <LocalizedText text={priceLine.label} />
+            </span>
             <span>
               <PriceAmount>{priceLine.amount}</PriceAmount>
-              <PricePeriod> {priceLine.periodSuffix}</PricePeriod>
+              <PricePeriod>
+                {' '}
+                <LocalizedText text={priceLine.periodSuffix} />
+              </PricePeriod>
             </span>
           </PriceRow>
         </PriceFooter>

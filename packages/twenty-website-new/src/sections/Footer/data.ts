@@ -1,39 +1,40 @@
+import { msg } from '@lingui/core/macro';
 import type { FooterDataType } from '@/sections/Footer/types';
 
 export const FOOTER_DATA: FooterDataType = {
   bottom: {
-    copyright: '© 2026 – Twenty',
+    copyright: msg`© 2026 – Twenty`,
   },
   navGroups: [
     {
       id: 'footer-sitemap',
-      title: 'Sitemap',
+      title: msg`Sitemap`,
       ctas: [],
       links: [
-        { label: 'Home', href: '/', external: false },
-        { label: 'Pricing', href: '/pricing', external: false },
-        { label: 'Partners', href: '/partners', external: false },
-        { label: 'Why Twenty', href: '/why-twenty', external: false },
+        { label: msg`Home`, href: '/', external: false },
+        { label: msg`Pricing`, href: '/pricing', external: false },
+        { label: msg`Partners`, href: '/partners', external: false },
+        { label: msg`Why Twenty`, href: '/why-twenty', external: false },
       ],
     },
     {
       id: 'footer-help',
-      title: 'Help',
+      title: msg`Help`,
       ctas: [],
       links: [
         {
-          label: 'Developers',
+          label: msg`Developers`,
           href: 'https://docs.twenty.com/developers/introduction',
           external: true,
         },
         {
-          label: 'User Guide',
+          label: msg`User Guide`,
           href: 'https://docs.twenty.com/getting-started/introduction',
           external: true,
         },
-        { label: 'Release Notes', href: '/releases', external: false },
+        { label: msg`Release Notes`, href: '/releases', external: false },
         {
-          label: 'Halftone generator',
+          label: msg`Halftone generator`,
           href: '/halftone',
           external: false,
         },
@@ -41,34 +42,38 @@ export const FOOTER_DATA: FooterDataType = {
     },
     {
       id: 'footer-legal',
-      title: 'Legal',
+      title: msg`Legal`,
       ctas: [],
       links: [
-        { label: 'Privacy Policy', href: '/privacy-policy', external: false },
-        { label: 'Terms and Conditions', href: '/terms', external: false },
+        {
+          label: msg`Privacy Policy`,
+          href: '/privacy-policy',
+          external: false,
+        },
+        { label: msg`Terms and Conditions`, href: '/terms', external: false },
       ],
     },
     {
       id: 'footer-connect',
-      title: 'Connect',
+      title: msg`Connect`,
       ctas: [
         {
           color: 'secondary',
           kind: 'contactModal',
-          label: 'Talk to us',
+          label: msg`Talk to us`,
           variant: 'contained',
         },
         {
           color: 'secondary',
           href: 'https://app.twenty.com/welcome',
           kind: 'link',
-          label: 'Get started',
+          label: msg`Get started`,
           variant: 'outlined',
         },
       ],
       links: [
         {
-          label: 'LinkedIn',
+          label: msg`LinkedIn`,
           href: 'https://www.linkedin.com/company/twenty',
           external: true,
         },

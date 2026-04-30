@@ -1,5 +1,6 @@
 import { FooterNavCta } from '@/sections/Footer/components/FooterNavCta';
 import { PlusIcon, RectangleFillIcon } from '@/icons';
+import { LocalizedText } from '@/lib/i18n/LocalizedText';
 import { LocalizedLink } from '@/lib/i18n';
 import type { FooterNavGroupType } from '@/sections/Footer/types';
 import { theme } from '@/theme';
@@ -148,10 +149,12 @@ export function Nav({ groups }: NavProps) {
             </NavDivider>
           )}
           <NavGroup aria-labelledby={group.id}>
-            <NavGroupTitle id={group.id}>{group.title}</NavGroupTitle>
+            <NavGroupTitle id={group.id}>
+              <LocalizedText text={group.title} />
+            </NavGroupTitle>
             <NavMenuList>
               {group.links.map((link) => (
-                <NavigationMenu.Item key={link.href + link.label}>
+                <NavigationMenu.Item key={link.href}>
                   <NavLink
                     render={
                       link.external ? (
@@ -171,7 +174,7 @@ export function Nav({ groups }: NavProps) {
                         fillColor={theme.colors.secondary.background[100]}
                       />
                     </NavLinkHoverIcon>
-                    {link.label}
+                    <LocalizedText text={link.label} />
                   </NavLink>
                 </NavigationMenu.Item>
               ))}
@@ -181,9 +184,7 @@ export function Nav({ groups }: NavProps) {
                 {group.ctas.map((cta) => (
                   <FooterNavCta
                     key={
-                      cta.kind === 'link'
-                        ? `${cta.label}-${cta.href}`
-                        : `${cta.label}-${cta.kind}`
+                      cta.kind === 'link' ? `${cta.href}-${cta.kind}` : cta.kind
                     }
                     cta={cta}
                   />

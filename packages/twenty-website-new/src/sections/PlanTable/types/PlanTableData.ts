@@ -1,26 +1,27 @@
 import type { BodyType } from '@/design-system/components/Body';
 import type { HeadingType } from '@/design-system/components/Heading';
+import type { LocalizableText } from '@/lib/i18n/localizable-text';
 import type { PlansHostingMode, PlansTierId } from '@/sections/Plans/types';
 
 export type PlanTableTierColumnType = {
   id: PlansTierId;
-  label: string;
+  label: LocalizableText;
 };
 
 export type PlanTableCellType =
   | { kind: 'dash' }
-  | { kind: 'text'; text: string }
-  | { kind: 'yes'; label?: string };
+  | { kind: 'text'; text: LocalizableText }
+  | { kind: 'yes'; label?: LocalizableText };
 
 export type PlanTableCategoryRowDataType = {
   appliesTo?: PlansHostingMode;
-  title: string;
+  title: LocalizableText;
   type: 'category';
 };
 
 export type PlanTableFeatureRowDataType = {
   appliesTo?: PlansHostingMode;
-  featureLabel: string;
+  featureLabel: LocalizableText;
   selfHostTiers?: Record<PlansTierId, PlanTableCellType>;
   tiers: Record<PlansTierId, PlanTableCellType>;
   type: 'row';
@@ -29,27 +30,27 @@ export type PlanTableFeatureRowDataType = {
 export type PlanTableCalculatorSectionDataType = {
   id: string;
   modelField?: {
-    label: string;
+    label: LocalizableText;
     options: string[];
     value: string;
   };
   requestField: {
-    label: string;
+    label: LocalizableText;
     value: number;
   };
   tasksField: {
-    label: string;
+    label: LocalizableText;
     options: string[];
     value: string;
   };
-  title: string;
+  title: LocalizableText;
 };
 
 export type PlanTableCalculatorDataType = {
   priceLine: {
     amount: string;
-    label: string;
-    periodSuffix: string;
+    label: LocalizableText;
+    periodSuffix: LocalizableText;
   };
   sections: PlanTableCalculatorSectionDataType[];
   visual: {
@@ -71,12 +72,12 @@ export type PlanTableBodyRowDataType =
   | PlanTableFeatureRowDataType;
 
 export type PlanTableDataType = {
-  featureColumnLabel: string;
+  featureColumnLabel: LocalizableText;
   initialVisibleRowCount: number;
   rows: PlanTableBodyRowDataType[];
   seeMoreFeaturesCta: {
-    collapseLabel: string;
-    expandLabel: string;
+    collapseLabel: LocalizableText;
+    expandLabel: LocalizableText;
   };
   tierColumns: PlanTableTierColumnType[];
 };

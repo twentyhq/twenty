@@ -1,4 +1,6 @@
 import { ArrowRightUpIcon, SOCIAL_ICONS } from '@/icons';
+import { LocalizedText } from '@/lib/i18n/LocalizedText';
+import type { LocalizableText } from '@/lib/i18n/localizable-text';
 import type { FooterSocialLinkType } from '@/sections/Footer/types';
 import { theme } from '@/theme';
 import { Separator } from '@base-ui/react/separator';
@@ -74,14 +76,16 @@ const SocialLink = styled.a`
 `;
 
 type BottomProps = {
-  copyright: string;
+  copyright: LocalizableText;
   links: FooterSocialLinkType[];
 };
 
 export function Bottom({ copyright, links }: BottomProps) {
   return (
     <BottomGrid>
-      <Copyright>{copyright}</Copyright>
+      <Copyright>
+        <LocalizedText text={copyright} />
+      </Copyright>
       <SocialNav aria-label="Social media">
         {links.map((link, index) => {
           const IconComponent = SOCIAL_ICONS[link.icon];
@@ -100,7 +104,7 @@ export function Bottom({ copyright, links }: BottomProps) {
                   fillColor={theme.colors.secondary.background[100]}
                   aria-hidden
                 />
-                {link.label}
+                {link.label ? <LocalizedText text={link.label} /> : null}
                 {link.label && (
                   <ArrowRightUpIcon
                     size={8}

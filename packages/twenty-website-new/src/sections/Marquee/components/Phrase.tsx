@@ -1,6 +1,7 @@
 import { styled } from '@linaria/react';
 
 import type { HeadingType } from '@/design-system/components/Heading';
+import { LocalizedText } from '@/lib/i18n/LocalizedText';
 import { theme } from '@/theme';
 
 const PhraseGroup = styled.div`
@@ -46,11 +47,8 @@ export function Phrase({ segments }: PhraseProps) {
   return (
     <PhraseGroup>
       {segments.map((segment, segmentIndex) => (
-        <Segment
-          key={`${segment.text}-${segmentIndex}`}
-          data-segment-index={segmentIndex}
-        >
-          {segment.text}
+        <Segment key={segmentIndex} data-segment-index={segmentIndex}>
+          <LocalizedText text={segment.text} />
         </Segment>
       ))}
     </PhraseGroup>

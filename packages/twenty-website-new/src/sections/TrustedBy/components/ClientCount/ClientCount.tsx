@@ -1,3 +1,5 @@
+import { LocalizedText } from '@/lib/i18n/LocalizedText';
+import type { LocalizableText } from '@/lib/i18n/localizable-text';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
 import NextImage from 'next/image';
@@ -26,7 +28,7 @@ const StyledText = styled.span`
 `;
 
 type ClientCountProps = {
-  label: string;
+  label: LocalizableText;
 };
 
 export function ClientCount({ label }: ClientCountProps) {
@@ -39,7 +41,9 @@ export function ClientCount({ label }: ClientCountProps) {
         unoptimized
         width={14}
       />
-      <StyledText>{label}</StyledText>
+      <StyledText>
+        <LocalizedText text={label} />
+      </StyledText>
     </StyledChip>
   );
 }

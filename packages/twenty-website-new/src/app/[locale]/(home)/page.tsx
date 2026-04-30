@@ -1,3 +1,4 @@
+import { msg } from '@lingui/core/macro';
 import { HELPED_DATA } from '@/app/[locale]/(home)/helped.data';
 import { HERO_DATA } from '@/app/[locale]/(home)/hero.data';
 import { HOME_STEPPER_DATA } from '@/app/[locale]/(home)/home-stepper.data';
@@ -123,13 +124,13 @@ export default async function HomePage() {
             <LinkButton
               color="secondary"
               href="https://app.twenty.com/welcome"
-              label="Get started"
+              label={msg`Get started`}
               type="anchor"
               variant="contained"
             />
             <TalkToUsButton
               color="secondary"
-              label="Talk to us"
+              label={msg`Talk to us`}
               variant="outlined"
             />
           </Hero.Cta>
@@ -225,13 +226,13 @@ export default async function HomePage() {
             <LinkButton
               color="primary"
               href="https://app.twenty.com/welcome"
-              label="Get started"
+              label={msg`Get started`}
               type="anchor"
               variant="contained"
             />
             <TalkToUsButton
               color="primary"
-              label="Talk to us"
+              label={msg`Talk to us`}
               variant="outlined"
             />
           </Faq.Cta>

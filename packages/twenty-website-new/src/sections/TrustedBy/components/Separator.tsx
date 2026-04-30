@@ -1,3 +1,4 @@
+import { LocalizedText } from '@/lib/i18n/LocalizedText';
 import type { TrustedBySeparatorType } from '@/sections/TrustedBy/types';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
@@ -24,7 +25,9 @@ type SeparatorProps = { separator: TrustedBySeparatorType };
 export function Separator({ separator }: SeparatorProps) {
   return (
     <StyledSeparatorRow>
-      <SeparatorText>{separator.text}</SeparatorText>
+      <SeparatorText>
+        <LocalizedText text={separator.text} />
+      </SeparatorText>
     </StyledSeparatorRow>
   );
 }

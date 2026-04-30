@@ -5,6 +5,8 @@ import {
   buttonBaseStyles,
 } from '@/design-system/components/Button/BaseButton';
 import { CheckIcon } from '@/icons';
+import { LocalizedText } from '@/lib/i18n/LocalizedText';
+import type { LocalizableText } from '@/lib/i18n/localizable-text';
 import { usePricingState } from '@/sections/Plans/context/PricingStateContext';
 import type {
   PlanTableBodyRowDataType,
@@ -14,6 +16,7 @@ import type {
   PlanTableTierColumnType,
 } from '@/sections/PlanTable/types';
 import { theme } from '@/theme';
+import { msg } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
 import { useMemo, useState } from 'react';
 import { CalculatorEmbed } from './CalculatorEmbed';
@@ -137,11 +140,19 @@ type CellValueProps = {
 
 function CellValue({ cell }: CellValueProps) {
   if (cell.kind === 'dash') {
-    return <TierText>No</TierText>;
+    return (
+      <TierText>
+        <LocalizedText text={msg`No`} />
+      </TierText>
+    );
   }
 
   if (cell.kind === 'text') {
-    return <TierText>{cell.text}</TierText>;
+    return (
+      <TierText>
+        <LocalizedText text={cell.text} />
+      </TierText>
+    );
   }
 
   const label = cell.label ?? 'Yes';
@@ -149,7 +160,9 @@ function CellValue({ cell }: CellValueProps) {
   return (
     <YesRow>
       <CheckIcon color={theme.colors.highlight[100]} size={16} />
-      <TierText>{label}</TierText>
+      <TierText>
+        <LocalizedText text={label} />
+      </TierText>
     </YesRow>
   );
 }
@@ -195,7 +208,9 @@ type FeatureRowProps = {
 function FeatureRow({ row, tierColumns }: FeatureRowProps) {
   return (
     <GridRow>
-      <FeatureLabel>{row.featureLabel}</FeatureLabel>
+      <FeatureLabel>
+        <LocalizedText text={row.featureLabel} />
+      </FeatureLabel>
       {tierColumns.map((column) => (
         <TierCell key={column.id}>
           <CellValue cell={row.tiers[column.id]} />
@@ -206,14 +221,16 @@ function FeatureRow({ row, tierColumns }: FeatureRowProps) {
 }
 
 type CategoryRowProps = {
-  title: string;
+  title: LocalizableText;
 };
 
 function CategoryRow({ title }: CategoryRowProps) {
   return (
     <GridRow>
       <CategoryBand>
-        <CategoryTitle>{title}</CategoryTitle>
+        <CategoryTitle>
+          <LocalizedText text={title} />
+        </CategoryTitle>
       </CategoryBand>
       <CategoryBand aria-hidden="true" />
       <CategoryBand aria-hidden="true" />
@@ -273,9 +290,13 @@ export function Content({ data }: ContentProps) {
   return (
     <TableScope>
       <GridRow>
-        <HeadFeature>{data.featureColumnLabel}</HeadFeature>
+        <HeadFeature>
+          <LocalizedText text={data.featureColumnLabel} />
+        </HeadFeature>
         {data.tierColumns.map((column) => (
-          <HeadTier key={column.id}>{column.label}</HeadTier>
+          <HeadTier key={column.id}>
+            <LocalizedText text={column.label} />
+          </HeadTier>
         ))}
       </GridRow>
 

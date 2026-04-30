@@ -1,6 +1,8 @@
 'use client';
 
 import { useTimeoutRegistry } from '@/lib/react';
+import { LocalizedText } from '@/lib/i18n/LocalizedText';
+import type { LocalizableText } from '@/lib/i18n/localizable-text';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
 import { useEffect, useState } from 'react';
@@ -98,13 +100,13 @@ const BodyText = styled.p`
 `;
 
 export type WrongChoicePopupProps = {
-  body: string;
+  body: LocalizableText;
   isClosingRequested?: boolean;
   layerIndex: number;
   left: number;
   onClose: () => void;
   top: number;
-  titleBar: string;
+  titleBar: LocalizableText;
   titleId: string;
 };
 
@@ -153,7 +155,9 @@ export function WrongChoicePopup({
       top={top}
     >
       <TitleBar>
-        <TitleText id={titleId}>{titleBar}</TitleText>
+        <TitleText id={titleId}>
+          <LocalizedText text={titleBar} />
+        </TitleText>
         <CloseButton
           aria-label="Close dialog"
           onClick={() => undefined}
@@ -164,7 +168,9 @@ export function WrongChoicePopup({
       </TitleBar>
       <BodyRow>
         <IconMark aria-hidden="true">⊘</IconMark>
-        <BodyText>{body}</BodyText>
+        <BodyText>
+          <LocalizedText text={body} />
+        </BodyText>
       </BodyRow>
     </Shell>
   );

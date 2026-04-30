@@ -1,5 +1,8 @@
 import { Container } from '@/design-system/components';
+import { LocalizedText } from '@/lib/i18n/LocalizedText';
+import type { LocalizableText } from '@/lib/i18n/localizable-text';
 import { theme } from '@/theme';
+import { msg } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
 
 const Section = styled.section`
@@ -111,14 +114,14 @@ const Label = styled.span`
 `;
 
 type HighlightsProps = {
-  industry?: string;
-  kpis?: { value: string; label: string }[];
+  industry?: LocalizableText;
+  kpis?: { value: LocalizableText; label: LocalizableText }[];
 };
 
 export function Highlights({ industry, kpis }: HighlightsProps) {
-  const cells: { value: string; label: string }[] = [];
+  const cells: { value: LocalizableText; label: LocalizableText }[] = [];
   if (industry) {
-    cells.push({ value: industry, label: 'Industry' });
+    cells.push({ value: industry, label: msg`Industry` });
   }
   if (kpis) {
     for (const kpi of kpis) {
@@ -136,9 +139,13 @@ export function Highlights({ industry, kpis }: HighlightsProps) {
         <ContentWrap>
           <Card count={cells.length}>
             {cells.map((cell, index) => (
-              <Cell count={cells.length} index={index} key={cell.label}>
-                <Value>{cell.value}</Value>
-                <Label>{cell.label}</Label>
+              <Cell count={cells.length} index={index} key={index}>
+                <Value>
+                  <LocalizedText text={cell.value} />
+                </Value>
+                <Label>
+                  <LocalizedText text={cell.label} />
+                </Label>
               </Cell>
             ))}
           </Card>

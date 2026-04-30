@@ -2,6 +2,7 @@
 
 import { LinkButton } from '@/design-system/components';
 import { ArrowRightUpIcon, INFORMATIVE_ICONS, SOCIAL_ICONS } from '@/icons';
+import { LocalizedText } from '@/lib/i18n/LocalizedText';
 import type {
   MenuNavItemType,
   MenuScheme,
@@ -10,6 +11,7 @@ import type {
 import { theme } from '@/theme';
 import { Drawer } from '@base-ui/react/drawer';
 import { Separator } from '@base-ui/react/separator';
+import { msg } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
 import { LocalizedLink, useUnlocalizedPathname } from '@/lib/i18n';
 import React, { useState } from 'react';
@@ -299,7 +301,7 @@ function NavGroup({ item, pathname, scheme }: NavGroupProps) {
         data-active={hasActiveChild || undefined}
         onClick={() => setIsOpen((prev) => !prev)}
       >
-        {item.label}
+        <LocalizedText text={item.label} />
         <NavGroupChevron aria-hidden>
           <svg
             width="12"
@@ -351,7 +353,9 @@ function NavGroup({ item, pathname, scheme }: NavGroupProps) {
                     <IconComponent size={20} color="currentColor" />
                   )}
                 </NavChildIcon>
-                <NavChildLabel>{child.label}</NavChildLabel>
+                <NavChildLabel>
+                  <LocalizedText text={child.label} />
+                </NavChildLabel>
               </Drawer.Close>
             );
           })}
@@ -389,7 +393,7 @@ export function MenuDrawer({ navItems, scheme, socialLinks }: MenuDrawerProps) {
         <StyledDrawerContent data-scheme={scheme}>
           <NavigationContainer aria-label="Mobile navigation">
             {topLevelItems.map((item, index) => (
-              <React.Fragment key={item.label}>
+              <React.Fragment key={`${index}-${item.href ?? 'group'}`}>
                 {item.children ? (
                   <NavGroup item={item} scheme={scheme} pathname={pathname} />
                 ) : item.href ? (
@@ -405,7 +409,7 @@ export function MenuDrawer({ navItems, scheme, socialLinks }: MenuDrawerProps) {
                       />
                     }
                   >
-                    {item.label}
+                    <LocalizedText text={item.label} />
                   </Drawer.Close>
                 ) : null}
                 {index < topLevelItems.length - 1 && (
@@ -426,7 +430,7 @@ export function MenuDrawer({ navItems, scheme, socialLinks }: MenuDrawerProps) {
             <LinkButton
               color={buttonColor}
               href="https://app.twenty.com/welcome"
-              label="Log in"
+              label={msg`Log in`}
               type="anchor"
               variant="outlined"
             />
@@ -456,7 +460,7 @@ export function MenuDrawer({ navItems, scheme, socialLinks }: MenuDrawerProps) {
                         fillColor={iconFillColor}
                         aria-hidden="true"
                       />
-                      {item.label}
+                      {item.label ? <LocalizedText text={item.label} /> : null}
                       {item.label && (
                         <ArrowRightUpIcon
                           size={8}

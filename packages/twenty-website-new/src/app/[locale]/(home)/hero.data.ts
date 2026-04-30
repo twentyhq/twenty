@@ -1,3 +1,5 @@
+import { msg } from '@lingui/core/macro';
+
 import type {
   HeroDashboardDataType,
   HeroDashboardPageDefinition,
@@ -325,12 +327,12 @@ function createTablePage({
 
 export const HERO_DATA: HeroHomeDataType = {
   heading: [
-    { text: 'Build', fontFamily: 'serif' },
-    { text: ' your Enterprise CRM ', fontFamily: 'serif' },
-    { text: 'at\u00A0AI\u00A0Speed', fontFamily: 'sans' },
+    { text: msg`Build`, fontFamily: 'serif' },
+    { text: msg` your Enterprise CRM `, fontFamily: 'serif' },
+    { text: msg`at\u00A0AI\u00A0Speed`, fontFamily: 'sans' },
   ],
   body: {
-    text: 'Twenty gives technical teams the building blocks for a custom CRM that meets complex business needs and quickly adapts as the business evolves.',
+    text: msg`Twenty gives technical teams the building blocks for a custom CRM that meets complex business needs and quickly adapts as the business evolves.`,
   },
   visual: {
     workspace: { icon: 'apple', name: 'Apple' },

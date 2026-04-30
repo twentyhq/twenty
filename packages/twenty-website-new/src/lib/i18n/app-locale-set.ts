@@ -12,6 +12,8 @@ const isKnownPublicLocale = (locale: AppLocale): boolean =>
 export const KNOWN_PUBLIC_APP_LOCALE_LIST: readonly AppLocale[] =
   APP_LOCALE_VALUES.filter(isKnownPublicLocale);
 
+// Catalogs can be prepared before copy is translated. Only locales in this
+// list get routes, hreflang alternates, redirects, and detection.
 export const WEBSITE_LOCALE_LIST: readonly AppLocale[] = [SOURCE_LOCALE];
 
 const WEBSITE_LOCALE_SET: ReadonlySet<AppLocale> = new Set(WEBSITE_LOCALE_LIST);

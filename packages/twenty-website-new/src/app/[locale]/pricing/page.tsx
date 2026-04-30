@@ -1,3 +1,4 @@
+import { msg } from '@lingui/core/macro';
 import { FAQ_DATA } from '@/sections/Faq/data';
 import { MENU_DATA } from '@/sections/Menu/data';
 import { TalkToUsButton } from '@/lib/contact-cal';
@@ -88,7 +89,7 @@ export default async function PricingPage() {
               <EngagementBand.Actions>
                 <BecomePartnerButton
                   color="secondary"
-                  label="Find a partner"
+                  label={msg`Find a partner`}
                   variant="outlined"
                 />
               </EngagementBand.Actions>
@@ -118,13 +119,13 @@ export default async function PricingPage() {
             <LinkButton
               color="primary"
               href="https://app.twenty.com/welcome"
-              label="Get started"
+              label={msg`Get started`}
               type="anchor"
               variant="contained"
             />
             <TalkToUsButton
               color="primary"
-              label="Talk to us"
+              label={msg`Talk to us`}
               variant="outlined"
             />
           </Faq.Cta>

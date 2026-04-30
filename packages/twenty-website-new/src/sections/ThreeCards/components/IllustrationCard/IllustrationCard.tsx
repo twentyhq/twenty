@@ -4,12 +4,18 @@ import { ButtonShape } from '@/design-system/components/Button/ButtonShape';
 import { Body, Heading } from '@/design-system/components';
 import { ArrowRightIcon } from '@/icons';
 import { INFORMATIVE_ICONS } from '@/icons/informative';
+import { LocalizedLink } from '@/lib/i18n';
+import { LocalizedText } from '@/lib/i18n/LocalizedText';
+import {
+  resolveLocalizableText,
+  type LocalizableText,
+} from '@/lib/i18n/localizable-text';
 import { usePartnerApplicationModal } from '@/lib/partner-application';
 import { WebGlMount } from '@/lib/visual-runtime';
 import type { ThreeCardsIllustrationCardType } from '@/sections/ThreeCards/types';
 import { THREE_CARDS_VISUALS } from '@/sections/ThreeCards/visuals';
 import { theme } from '@/theme';
-import { LocalizedLink } from '@/lib/i18n';
+import { useLingui } from '@lingui/react/macro';
 import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
 import { ThreeCardsCardShape } from './CardShape';
@@ -321,10 +327,12 @@ function PartnerProgramAction({
   label,
   programId,
 }: {
-  label: string;
+  label: LocalizableText;
   programId: 'technology' | 'content' | 'solutions';
 }) {
+  const { i18n } = useLingui();
   const { openPartnerApplicationModal } = usePartnerApplicationModal();
+  const ariaLabel = resolveLocalizableText(i18n, label);
 
   const openModal = () => {
     openPartnerApplicationModal(programId);
@@ -333,10 +341,10 @@ function PartnerProgramAction({
   return (
     <PartnerActionRow>
       <PartnerActionButton type="button" onClick={openModal}>
-        {label}
+        <LocalizedText text={label} />
       </PartnerActionButton>
       <PartnerActionIconButton
-        aria-label={label}
+        aria-label={ariaLabel}
         type="button"
         onClick={openModal}
       >
@@ -404,11 +412,11 @@ export function IllustrationCard({
 
         {variant === 'simple' && illustrationCard.benefits?.length ? (
           <BenefitList>
-            {illustrationCard.benefits.map((benefit) => {
+            {illustrationCard.benefits.map((benefit, benefitIndex) => {
               const BenefitIcon = INFORMATIVE_ICONS[benefit.icon ?? 'check'];
 
               return (
-                <BenefitItem key={benefit.text}>
+                <BenefitItem key={benefitIndex}>
                   <BenefitIconSlot aria-hidden>
                     <BenefitIcon
                       color="currentColor"

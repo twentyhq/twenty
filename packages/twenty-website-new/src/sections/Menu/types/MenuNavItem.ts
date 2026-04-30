@@ -1,3 +1,5 @@
+import type { LocalizableText } from '@/lib/i18n/localizable-text';
+
 export type MenuNavChildIcon = 'book' | 'code' | 'tag' | 'users';
 
 export type MenuNavChildPreview = {
@@ -5,21 +7,21 @@ export type MenuNavChildPreview = {
   imageAlt: string;
   imagePosition?: string;
   imageScale?: number;
-  title: string;
-  description: string;
+  title: LocalizableText;
+  description: LocalizableText;
 };
 
 export type MenuNavChildItemType = {
-  description?: string;
+  description?: LocalizableText;
   external?: boolean;
   href: string;
   icon?: MenuNavChildIcon;
-  label: string;
+  label: LocalizableText;
   preview?: MenuNavChildPreview;
 };
 
 export type MenuNavItemType = {
   children?: MenuNavChildItemType[];
   href?: string;
-  label: string;
+  label: LocalizableText;
 };

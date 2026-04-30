@@ -5,6 +5,11 @@ import {
   PUBLIC_APP_LOCALE_LIST,
   isPublicAppLocale,
 } from '@/lib/i18n/app-locale-set';
+import { createI18nInstance } from '@/lib/i18n/create-i18n-instance';
+import {
+  resolveLocalizableText,
+  type LocalizableText,
+} from '@/lib/i18n/localizable-text';
 
 import { getSiteUrl } from './site-url';
 
@@ -14,8 +19,8 @@ const TWITTER_HANDLE = '@twentycrm';
 export type BuildPageMetadataInput = {
   locale: AppLocale;
   path: string;
-  title: string;
-  description: string;
+  title: LocalizableText;
+  description: LocalizableText;
   ogImage?: string;
   type?: 'website' | 'article';
   extend?: Metadata;
@@ -55,6 +60,9 @@ export function buildPageMetadata({
   const normalizedPath = normalizePath(path);
   const metadataLocale = isPublicAppLocale(locale) ? locale : SOURCE_LOCALE;
   const canonical = localizePath(metadataLocale, normalizedPath);
+  const i18n = createI18nInstance(metadataLocale);
+  const resolvedTitle = resolveLocalizableText(i18n, title);
+  const resolvedDescription = resolveLocalizableText(i18n, description);
 
   const ogImages =
     ogImage === undefined
@@ -68,15 +76,15 @@ export function buildPageMetadata({
         ];
 
   const baseMetadata: Metadata = {
-    title: { absolute: title },
-    description,
+    title: { absolute: resolvedTitle },
+    description: resolvedDescription,
     alternates: {
       canonical,
       languages: buildLanguageAlternates(normalizedPath),
     },
     openGraph: {
-      title,
-      description,
+      title: resolvedTitle,
+      description: resolvedDescription,
       url: canonical,
       siteName: SITE_NAME,
       locale: metadataLocale,
@@ -85,8 +93,8 @@ export function buildPageMetadata({
     },
     twitter: {
       card: 'summary_large_image',
-      title,
-      description,
+      title: resolvedTitle,
+      description: resolvedDescription,
       site: TWITTER_HANDLE,
       creator: TWITTER_HANDLE,
       ...(ogImages && { images: ogImages.map((image) => image.url) }),

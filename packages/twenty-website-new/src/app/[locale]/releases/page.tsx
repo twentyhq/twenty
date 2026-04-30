@@ -1,3 +1,4 @@
+import { msg } from '@lingui/core/macro';
 import { MENU_DATA } from '@/sections/Menu/data';
 import {
   RELEASE_NOTES_HERO_BODY,
@@ -71,7 +72,7 @@ export default async function ReleasesPage() {
           <LinkButton
             color="secondary"
             href="https://github.com/twentyhq/twenty/releases"
-            label="Technical notes"
+            label={msg`Technical notes`}
             leadingIcon={<GitHubIcon fillColor="currentColor" size={14} />}
             type="anchor"
             variant="outlined"

@@ -1,8 +1,9 @@
 import { theme } from '@/theme';
 import { css } from '@linaria/core';
+import { LocalizedText, type LocalizableText } from './LocalizedText';
 
 export type BodyType = {
-  text: string;
+  text: LocalizableText;
 };
 
 const bodyClassName = css`
@@ -109,7 +110,7 @@ export function Body({
       data-size={size}
       data-variant={variant}
     >
-      {body.text}
+      <LocalizedText text={body.text} />
     </Tag>
   );
 }

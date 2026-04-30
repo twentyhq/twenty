@@ -3,9 +3,11 @@
 import { Body, Eyebrow, Heading, IconButton } from '@/design-system/components';
 import type { EyebrowType } from '@/design-system/components/Eyebrow';
 import { ArrowLeftIcon, ArrowRightIcon } from '@/icons';
+import { resolveLocalizableText } from '@/lib/i18n/localizable-text';
 import { PartnerEffect } from '@/sections/Testimonials/visuals/PartnerEffect';
 import type { TestimonialCardType } from '@/sections/Testimonials/types/TestimonialCard';
 import { theme } from '@/theme';
+import { useLingui } from '@lingui/react/macro';
 import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
 import { type ReactNode, useState } from 'react';
@@ -230,6 +232,7 @@ export function PartnerCarousel({
   eyebrow,
   testimonials,
 }: PartnerCarouselProps) {
+  const { i18n } = useLingui();
   const [index, setIndex] = useState(0);
 
   const total = testimonials.length;
@@ -248,7 +251,8 @@ export function PartnerCarousel({
   };
 
   const avatar = current.author.avatar;
-  const authorInitials = current.author.name.text
+  const authorName = resolveLocalizableText(i18n, current.author.name.text);
+  const authorInitials = authorName
     .split(/\s+/)
     .map((word) => word[0])
     .filter(Boolean)
@@ -267,7 +271,7 @@ export function PartnerCarousel({
           <PortraitFrame>
             {avatar ? (
               <PartnerEffect
-                alt={avatar.alt ?? current.author.name.text}
+                alt={avatar.alt ?? authorName}
                 fallback={authorInitials}
                 src={avatar.src}
               />

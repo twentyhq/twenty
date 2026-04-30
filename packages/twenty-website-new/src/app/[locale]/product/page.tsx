@@ -1,3 +1,4 @@
+import { msg } from '@lingui/core/macro';
 import { FAQ_DATA } from '@/sections/Faq/data';
 import { MENU_DATA } from '@/sections/Menu/data';
 import { TRUSTED_BY_DATA } from '@/sections/TrustedBy/data';
@@ -59,7 +60,7 @@ export default async function ProductPage() {
           <LinkButton
             color="secondary"
             href="https://app.twenty.com/welcome"
-            label="Get started"
+            label={msg`Get started`}
             type="anchor"
             variant="contained"
           />
@@ -120,13 +121,13 @@ export default async function ProductPage() {
           <LinkButton
             color="secondary"
             href="https://app.twenty.com/welcome"
-            label="Get started"
+            label={msg`Get started`}
             type="anchor"
             variant="contained"
           />
           <TalkToUsButton
             color="secondary"
-            label="Talk to us"
+            label={msg`Talk to us`}
             variant="outlined"
           />
         </Signoff.Cta>
@@ -140,13 +141,13 @@ export default async function ProductPage() {
             <LinkButton
               color="primary"
               href="https://app.twenty.com/welcome"
-              label="Get started"
+              label={msg`Get started`}
               type="anchor"
               variant="contained"
             />
             <TalkToUsButton
               color="primary"
-              label="Talk to us"
+              label={msg`Talk to us`}
               variant="outlined"
             />
           </Faq.Cta>

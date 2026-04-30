@@ -1,6 +1,7 @@
 'use client';
 
 import { ArrowRightUpIcon, INFORMATIVE_ICONS } from '@/icons';
+import { LocalizedText } from '@/lib/i18n/LocalizedText';
 import type {
   MenuNavChildItemType,
   MenuNavItemType,
@@ -481,11 +482,11 @@ function DropdownContent({ items, pathname, scheme }: DropdownContentProps) {
                 </DropdownIconWrap>
                 <DropdownTextStack>
                   <DropdownLabel data-scheme={scheme}>
-                    {child.label}
+                    <LocalizedText text={child.label} />
                   </DropdownLabel>
                   {child.description && (
                     <DropdownDescription data-scheme={scheme}>
-                      {child.description}
+                      <LocalizedText text={child.description} />
                     </DropdownDescription>
                   )}
                 </DropdownTextStack>
@@ -514,10 +515,10 @@ function DropdownContent({ items, pathname, scheme }: DropdownContentProps) {
           </PreviewFrame>
           <PreviewText>
             <PreviewTitle data-scheme={scheme}>
-              {activePreview.title}
+              <LocalizedText text={activePreview.title} />
             </PreviewTitle>
             <PreviewDescription data-scheme={scheme}>
-              {activePreview.description}
+              <LocalizedText text={activePreview.description} />
             </PreviewDescription>
           </PreviewText>
         </PreviewPanel>
@@ -543,7 +544,7 @@ export function Nav({ navItems, scheme }: NavProps) {
           const isLast = index === navItems.length - 1;
 
           return (
-            <React.Fragment key={item.label}>
+            <React.Fragment key={`${index}-${item.href ?? 'dropdown'}`}>
               <NavigationMenu.Item>
                 {item.children ? (
                   <>
@@ -556,7 +557,7 @@ export function Nav({ navItems, scheme }: NavProps) {
                         ) || undefined
                       }
                     >
-                      {item.label}
+                      <LocalizedText text={item.label} />
                       <TriggerChevron aria-hidden>
                         <svg
                           width="8"
@@ -590,7 +591,7 @@ export function Nav({ navItems, scheme }: NavProps) {
                       data-active={pathname.startsWith(item.href) || undefined}
                       render={<LocalizedLink href={item.href} />}
                     >
-                      {item.label}
+                      <LocalizedText text={item.label} />
                     </NavLink>
                   )
                 )}

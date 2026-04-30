@@ -1,10 +1,10 @@
 import { Heading, type HeadingType } from '@/design-system/components/Heading';
 import { RectangleFillIcon } from '@/icons';
-
-export type EyebrowType = { heading: HeadingType };
 import { theme } from '@/theme';
 import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
+
+export type EyebrowType = { heading: HeadingType };
 
 const EyebrowRow = styled.div`
   align-items: center;

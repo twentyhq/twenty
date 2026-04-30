@@ -1,10 +1,11 @@
 import type { HeadingType } from '@/design-system/components/Heading';
+import type { LocalizableText } from '@/lib/i18n/localizable-text';
 
 export type CaseStudyTextBlock = {
   type: 'text';
-  eyebrow?: string;
+  eyebrow?: LocalizableText;
   heading: HeadingType[];
-  paragraphs: string[];
+  paragraphs: LocalizableText[];
   callout?: string;
 };
 
@@ -17,18 +18,18 @@ export type CaseStudyVisualBlock = {
 export type CaseStudyContentBlock = CaseStudyTextBlock | CaseStudyVisualBlock;
 
 export type CaseStudyKpi = {
-  value: string;
-  label: string;
+  value: LocalizableText;
+  label: LocalizableText;
 };
 
 export type CaseStudyQuote = {
-  text: string;
+  text: LocalizableText;
   author: string;
-  role: string;
+  role: LocalizableText;
 };
 
 export type CaseStudyData = {
-  meta: { title: string; description: string };
+  meta: { title: LocalizableText; description: LocalizableText };
   hero: {
     readingTime: string;
     title: HeadingType[];
@@ -36,25 +37,25 @@ export type CaseStudyData = {
     authorAvatarSrc?: string;
     clientIcon: string;
     heroImageSrc: string;
-    industry?: string;
-    authorRole?: string;
+    industry?: LocalizableText;
+    authorRole?: LocalizableText;
     kpis?: CaseStudyKpi[];
     quote?: CaseStudyQuote;
   };
   sections: CaseStudyContentBlock[];
   tableOfContents: string[];
   catalogCard: {
-    summary: string;
-    date: string;
+    summary: LocalizableText;
+    date: LocalizableText;
     coverImageSrc?: string;
   };
 };
 
 export type CaseStudyCatalogEntry = {
   href: string;
-  industry: string;
+  industry: LocalizableText;
   kpis: CaseStudyKpi[];
-  authorRole: string;
+  authorRole: LocalizableText;
   quote?: CaseStudyQuote;
   hero: CaseStudyData['hero'];
   catalogCard: CaseStudyData['catalogCard'];

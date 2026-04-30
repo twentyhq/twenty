@@ -6,6 +6,7 @@ import NextImage from 'next/image';
 import { Body, Heading, LinkButton } from '@/design-system/components';
 import { CheckIcon } from '@/icons/informative/Check';
 import { useAnimatedNumber } from '@/lib/animation';
+import { getLocalizableTextSource } from '@/lib/i18n/localizable-text';
 import { useTimeoutRegistry } from '@/lib/react';
 import type { PlanCardType } from '@/sections/Plans/types';
 import { theme } from '@/theme';
@@ -260,7 +261,9 @@ function getPriceHeadingNumericValue(
   const segments = getHeadingSegments(heading);
 
   for (const segment of segments) {
-    const match = segment.text.match(PRICE_HEADING_NUMBER_REGEX);
+    const match = getLocalizableTextSource(segment.text).match(
+      PRICE_HEADING_NUMBER_REGEX,
+    );
 
     if (!match) {
       continue;
@@ -284,7 +287,9 @@ function getAnimatedPriceHeading(
       return segment;
     }
 
-    const match = segment.text.match(PRICE_HEADING_NUMBER_REGEX);
+    const match = getLocalizableTextSource(segment.text).match(
+      PRICE_HEADING_NUMBER_REGEX,
+    );
 
     if (!match) {
       return segment;
@@ -302,7 +307,9 @@ function getAnimatedPriceHeading(
 }
 
 function getBulletsKey(bullets: PlanCardType['features']['bullets']) {
-  return bullets.map((bullet) => bullet.text).join('||');
+  return bullets
+    .map((bullet) => getLocalizableTextSource(bullet.text))
+    .join('||');
 }
 
 function getFeaturesLayoutMinHeight(maxBullets: number) {
@@ -397,7 +404,7 @@ export function Card({ card, highlighted = false, maxBullets }: CardProps) {
 
   const comparisonBulletTexts = new Set(
     (featuresPhase === 'exiting' ? queuedBullets : comparisonBullets)?.map(
-      (bullet) => bullet.text,
+      (bullet) => getLocalizableTextSource(bullet.text),
     ) ?? [],
   );
 
@@ -454,11 +461,13 @@ export function Card({ card, highlighted = false, maxBullets }: CardProps) {
               data-state={
                 featuresPhase === 'stable'
                   ? 'stable'
-                  : comparisonBulletTexts.has(bullet.text)
+                  : comparisonBulletTexts.has(
+                        getLocalizableTextSource(bullet.text),
+                      )
                     ? 'stable'
                     : featuresPhase
               }
-              key={bullet.text}
+              key={`${getLocalizableTextSource(bullet.text)}-${index}`}
             >
               <FeatureCheck>
                 <CheckIcon

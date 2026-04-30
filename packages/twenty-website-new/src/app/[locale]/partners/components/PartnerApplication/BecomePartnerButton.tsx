@@ -4,7 +4,9 @@ import {
   BaseButton,
   buttonBaseStyles,
 } from '@/design-system/components/Button/BaseButton';
+import type { LocalizableText } from '@/lib/i18n/localizable-text';
 import { usePartnerApplicationModal } from '@/lib/partner-application';
+import { msg } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
 
 const StyledTrigger = styled.button`
@@ -13,13 +15,13 @@ const StyledTrigger = styled.button`
 
 type BecomePartnerButtonProps = {
   color?: 'primary' | 'secondary';
-  label?: string;
+  label?: LocalizableText;
   variant?: 'contained' | 'outlined';
 };
 
 export function BecomePartnerButton({
   color = 'secondary',
-  label = 'Become a partner',
+  label = msg`Become a partner`,
   variant = 'contained',
 }: BecomePartnerButtonProps) {
   const { openPartnerApplicationModal } = usePartnerApplicationModal();

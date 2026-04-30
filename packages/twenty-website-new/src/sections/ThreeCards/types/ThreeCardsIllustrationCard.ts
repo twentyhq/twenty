@@ -1,5 +1,6 @@
 import { type BodyType } from '@/design-system/components/Body';
 import { type HeadingType } from '@/design-system/components/Heading';
+import type { LocalizableText } from '@/lib/i18n/localizable-text';
 import { type ThreeCardsIllustrationCardAttributionType } from './ThreeCardsIllustrationCardAttribution';
 
 export type ThreeCardsIllustrationId =
@@ -15,7 +16,7 @@ export type ThreeCardsIllustrationId =
 
 export type ThreeCardsIllustrationCardActionType = {
   kind: 'partnerApplication';
-  label: string;
+  label: LocalizableText;
   programId: 'technology' | 'content' | 'solutions';
 };
 
