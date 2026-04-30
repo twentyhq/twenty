@@ -61,5 +61,22 @@ export const computeStandardOpportunityMilestoneViews = (
         roadmapFieldBlockedByName: 'blockedBy',
       },
     }),
+    // FIELDS_WIDGET view that backs the "Fields" tab of the default
+    // record page layout. Without this, the layout's Fields widget has
+    // no `configuration.viewId` and the layout editor errors with
+    // "Fields widget has no associated view" when the user tries to
+    // modify it.
+    opportunityMilestoneRecordPageFields: createStandardViewFlatMetadata({
+      ...args,
+      objectName: 'opportunityMilestone',
+      context: {
+        viewName: 'opportunityMilestoneRecordPageFields',
+        name: 'Opportunity Milestone Record Page Fields',
+        type: ViewType.FIELDS_WIDGET,
+        key: null,
+        position: 0,
+        icon: 'IconList',
+      },
+    }),
   };
 };

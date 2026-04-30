@@ -2209,6 +2209,10 @@ export const STANDARD_OBJECTS = {
           },
         },
       },
+      opportunityMilestoneRecordPageFields: {
+        universalIdentifier: '20202020-9550-49de-b2b3-883999db8a01',
+        viewFields: {},
+      },
     },
   },
   opportunityMilestoneDependency: {

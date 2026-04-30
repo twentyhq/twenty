@@ -81,6 +81,7 @@ const RECORD_PAGE_FIELDS_VIEW_NAME_BY_OBJECT: Partial<
   messageParticipant: 'messageParticipantRecordPageFields',
   note: 'noteRecordPageFields',
   opportunity: 'opportunityRecordPageFields',
+  opportunityMilestone: 'opportunityMilestoneRecordPageFields',
   person: 'personRecordPageFields',
   task: 'taskRecordPageFields',
   workflowAutomatedTrigger: 'workflowAutomatedTriggerRecordPageFields',
