@@ -10,9 +10,9 @@ import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
-@RegisteredWorkspaceCommand('2.4.0', 1798000000000)
+@RegisteredWorkspaceCommand('2.3.0', 1798000000000)
 @Command({
-  name: 'upgrade:2-4:delete-gauge-widgets',
+  name: 'upgrade:2-3:delete-gauge-widgets',
   description:
     'Delete all GAUGE_CHART page layout widgets — gauge support has been removed',
 })
