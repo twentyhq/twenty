@@ -3,7 +3,12 @@ import { msg } from '@lingui/core/macro';
 
 import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
 
-const SYSTEM_OBJECT_TAB_SOURCE_TITLES = ['Home', 'Timeline', 'Overview', 'Flow'];
+const SYSTEM_OBJECT_TAB_SOURCE_TITLES = [
+  'Home',
+  'Timeline',
+  'Overview',
+  'Flow',
+];
 
 export const getSystemObjectTabTitles = (i18n: I18n) => {
   const translated = [

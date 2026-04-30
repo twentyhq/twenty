@@ -112,7 +112,7 @@ export const PageLayoutTabsRenderer = () => {
 
   const systemObjectTabTitles = useMemo(
     () => getSystemObjectTabTitles(i18n),
-    [i18n, i18n.locale],
+    [i18n],
   );
 
   const tabsForCurrentObject = getPageLayoutTabsForCurrentObject({
