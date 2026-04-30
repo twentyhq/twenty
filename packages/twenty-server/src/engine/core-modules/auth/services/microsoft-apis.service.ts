@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import {
@@ -47,6 +47,8 @@ import { isDefined } from 'twenty-shared/utils';
 
 @Injectable()
 export class MicrosoftAPIsService {
+  private readonly logger = new Logger(MicrosoftAPIsService.name);
+
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     @InjectMessageQueue(MessageQueue.messagingQueue)
@@ -233,10 +235,16 @@ export class MicrosoftAPIsService {
           );
 
           if (isDefined(newMessageChannel)) {
-            await this.syncMessageFoldersService.syncMessageFolders({
-              messageChannel: newMessageChannel,
-              workspaceId,
-            });
+            try {
+              await this.syncMessageFoldersService.syncMessageFolders({
+                messageChannel: newMessageChannel,
+                workspaceId,
+              });
+            } catch (error) {
+              this.logger.error(
+                `Failed to sync message folders for connected account ${newOrExistingConnectedAccountId}: ${error instanceof Error ? error.message : String(error)}`,
+              );
+            }
           }
         }
 

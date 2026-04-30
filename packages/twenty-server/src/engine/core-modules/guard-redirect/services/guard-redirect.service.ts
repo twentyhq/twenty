@@ -8,6 +8,10 @@ import {
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { DomainServerConfigService } from 'src/engine/core-modules/domain/domain-server-config/services/domain-server-config.service';
+import {
+  MessageImportDriverException,
+  MessageImportDriverExceptionCode,
+} from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -71,6 +75,13 @@ export class GuardRedirectService {
     if (
       err instanceof AuthException &&
       err.code !== AuthExceptionCode.INTERNAL_SERVER_ERROR
+    )
+      return;
+
+    // Expected driver errors (e.g. unlicensed Microsoft accounts) are not actionable
+    if (
+      err instanceof MessageImportDriverException &&
+      err.code === MessageImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS
     )
       return;
 

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { ConnectedAccountProvider } from 'twenty-shared/types';
@@ -23,6 +23,8 @@ import { SyncMessageFoldersService } from 'src/modules/messaging/message-folder-
 
 @Injectable()
 export class ImapSmtpCalDavAPIService {
+  private readonly logger = new Logger(ImapSmtpCalDavAPIService.name);
+
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     @InjectRepository(CalendarChannelEntity)
@@ -188,10 +190,16 @@ export class ImapSmtpCalDavAPIService {
           );
 
           if (isDefined(newMessageChannel)) {
-            await this.syncMessageFoldersService.syncMessageFolders({
-              messageChannel: newMessageChannel,
-              workspaceId,
-            });
+            try {
+              await this.syncMessageFoldersService.syncMessageFolders({
+                messageChannel: newMessageChannel,
+                workspaceId,
+              });
+            } catch (error) {
+              this.logger.error(
+                `Failed to sync message folders for connected account ${newOrExistingAccountId}: ${error instanceof Error ? error.message : String(error)}`,
+              );
+            }
           }
         }
 

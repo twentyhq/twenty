@@ -58,8 +58,6 @@ export class MicrosoftGetAllFoldersService implements MessageFolderDriver {
             `Connected account ${connectedAccount.id}: Error fetching folders: ${error.message}`,
           );
           this.microsoftMessageListFetchErrorHandler.handleError(error);
-
-          return { value: [] };
         });
 
       const folders = (response.value as MicrosoftGraphFolder[]) || [];
