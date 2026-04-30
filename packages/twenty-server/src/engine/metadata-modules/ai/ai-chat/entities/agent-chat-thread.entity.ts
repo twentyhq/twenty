@@ -79,9 +79,6 @@ export class AgentChatThreadEntity {
   @Column({ type: 'timestamptz', nullable: true })
   deletedAt: Date | null;
 
-  @Column({ type: 'timestamptz', nullable: true })
-  lastMessageAt: Date | null;
-
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;
 

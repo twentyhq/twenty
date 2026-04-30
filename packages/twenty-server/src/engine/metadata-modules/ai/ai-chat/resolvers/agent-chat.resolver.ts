@@ -65,6 +65,11 @@ export class AgentChatResolver {
     private readonly threadRepository: Repository<AgentChatThreadEntity>,
   ) {}
 
+  @Query(() => [AgentChatThreadDTO])
+  async chatThreads(@AuthUserWorkspaceId() userWorkspaceId: string) {
+    return this.agentChatService.getThreadsForUser(userWorkspaceId);
+  }
+
   @Query(() => AgentChatThreadDTO)
   async chatThread(
     @Args('id', { type: () => UUIDScalarType }) id: string,
@@ -353,5 +358,17 @@ export class AgentChatResolver {
   @ResolveField(() => Float)
   totalOutputCredits(@Parent() thread: AgentChatThreadEntity): number {
     return toDisplayCredits(thread.totalOutputCredits);
+  }
+
+  @ResolveField('lastMessageAt', () => Date, { nullable: true })
+  async lastMessageAt(
+    @Parent()
+    thread: AgentChatThreadEntity & { lastMessageAt?: Date | null },
+  ): Promise<Date | null> {
+    if (thread.lastMessageAt !== undefined) {
+      return thread.lastMessageAt;
+    }
+
+    return this.agentChatService.getLastMessageAtForThread(thread.id);
   }
 }

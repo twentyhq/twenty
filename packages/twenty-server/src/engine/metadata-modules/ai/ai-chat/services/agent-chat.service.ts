@@ -37,7 +37,6 @@ const serializeThreadForBroadcast = (thread: AgentChatThreadEntity) => ({
   totalInputCredits: thread.totalInputCredits,
   totalOutputCredits: thread.totalOutputCredits,
   deletedAt: thread.deletedAt,
-  lastMessageAt: thread.lastMessageAt,
   createdAt: thread.createdAt,
   updatedAt: thread.updatedAt,
 });
@@ -111,6 +110,36 @@ export class AgentChatService {
     return thread;
   }
 
+  async getThreadsForUser(
+    userWorkspaceId: string,
+  ): Promise<(AgentChatThreadEntity & { lastMessageAt: Date | null })[]> {
+    const result = await this.threadRepository
+      .createQueryBuilder('thread')
+      .leftJoin('thread.messages', 'message')
+      .select('thread')
+      .addSelect('MAX(message.createdAt)', 'last_message_at')
+      .where('thread.userWorkspaceId = :userWorkspaceId', { userWorkspaceId })
+      .groupBy('thread.id')
+      .orderBy('last_message_at', 'DESC', 'NULLS LAST')
+      .addOrderBy('thread.updatedAt', 'DESC')
+      .getRawAndEntities();
+
+    return result.entities.map((thread, index) => ({
+      ...thread,
+      lastMessageAt: result.raw[index]?.last_message_at ?? null,
+    }));
+  }
+
+  async getLastMessageAtForThread(threadId: string): Promise<Date | null> {
+    const result = await this.messageRepository
+      .createQueryBuilder('message')
+      .select('MAX(message.createdAt)', 'last_message_at')
+      .where('message.threadId = :threadId', { threadId })
+      .getRawOne<{ last_message_at: Date | null }>();
+
+    return result?.last_message_at ?? null;
+  }
+
   async addMessage({
     threadId,
     uiMessage,
@@ -165,8 +194,6 @@ export class AgentChatService {
       );
     }
 
-    await this.touchThreadLastMessageAt(threadId);
-
     return {
       id: savedMessageId,
       threadId,
@@ -176,19 +203,6 @@ export class AgentChatService {
       processedAt: new Date(),
       workspaceId,
     } as AgentMessageEntity;
-  }
-
-  private async touchThreadLastMessageAt(threadId: string): Promise<void> {
-    try {
-      await this.threadRepository.update(threadId, {
-        lastMessageAt: new Date(),
-      });
-    } catch (error) {
-      this.logger.error(
-        `Failed to touch lastMessageAt for thread ${threadId}:`,
-        error,
-      );
-    }
   }
 
   async getMessagesForThread(threadId: string, userWorkspaceId: string) {
@@ -266,8 +280,6 @@ export class AgentChatService {
     ];
 
     await this.messagePartRepository.insert(parts);
-
-    await this.touchThreadLastMessageAt(threadId);
 
     return {
       id: savedMessageId,

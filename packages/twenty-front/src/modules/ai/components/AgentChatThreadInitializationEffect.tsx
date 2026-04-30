@@ -65,17 +65,14 @@ export const AgentChatThreadInitializationEffect = () => {
     client
       .query({
         query: GetChatThreadsDocument,
-        variables: { paging: { first: 500 } },
         fetchPolicy: 'network-only',
       })
       .then((result) => {
-        if (!isDefined(result.data?.chatThreads?.edges)) {
+        if (!isDefined(result.data?.chatThreads)) {
           return;
         }
 
-        const threads = result.data.chatThreads.edges.map((edge) => edge.node);
-
-        replaceDraft('agentChatThreads', threads);
+        replaceDraft('agentChatThreads', result.data.chatThreads);
         applyChanges();
       });
   }, [

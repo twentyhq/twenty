@@ -82,7 +82,7 @@ describe('groupThreadsByDate', () => {
     expect(groupThreadsByDate([], today)).toEqual([]);
   });
 
-  it('falls back to updatedAt when lastMessageAt is null (pre-backfill rows)', () => {
+  it('falls back to updatedAt when lastMessageAt is null', () => {
     const thread: AgentChatThread = {
       ...baseThread,
       id: '1',
