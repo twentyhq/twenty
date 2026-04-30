@@ -86,6 +86,81 @@ export class ContractLifecycleService {
     return { active: contracts.length, expiring30, totalValue: contracts.reduce((s, c) => s + Number(c.totalValue), 0), avgRisk: Math.round(avgRisk) };
   }
 
+  // --- OBLIGATIONS ---
+  async trackObligation(
+    contractId: string,
+    clause: string,
+    responsible: string,
+    dueDate: string,
+  ): Promise<CLMContractEntity> {
+    const c = await this.findOrFail(contractId);
+    const obligations = c.obligations ?? [];
+    obligations.push({ clause, responsible, dueDate, completed: false });
+    c.obligations = obligations;
+    return this.contractRepo.save(c);
+  }
+
+  async completeObligation(contractId: string, clauseIndex: number): Promise<CLMContractEntity> {
+    const c = await this.findOrFail(contractId);
+    if (!c.obligations || clauseIndex < 0 || clauseIndex >= c.obligations.length) {
+      throw new NotFoundException(`Obligation at index ${clauseIndex} not found on contract ${contractId}`);
+    }
+    c.obligations[clauseIndex].completed = true;
+    return this.contractRepo.save(c);
+  }
+
+  async getOverdueObligations(
+    workspaceId: string,
+  ): Promise<Array<{ contractId: string; title: string; clause: string; responsible: string; dueDate: string }>> {
+    const contracts = await this.contractRepo.find({
+      where: { workspaceId, status: ContractStatus.ACTIVE },
+    });
+
+    const now = new Date();
+    const overdue: Array<{ contractId: string; title: string; clause: string; responsible: string; dueDate: string }> = [];
+
+    for (const contract of contracts) {
+      if (!contract.obligations) continue;
+      for (const obligation of contract.obligations) {
+        if (!obligation.completed && new Date(obligation.dueDate) < now) {
+          overdue.push({
+            contractId: contract.id,
+            title: contract.title,
+            clause: obligation.clause,
+            responsible: obligation.responsible,
+            dueDate: obligation.dueDate,
+          });
+        }
+      }
+    }
+
+    return overdue.sort((a, b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime());
+  }
+
+  // --- RENEWAL ---
+  async renewContract(
+    contractId: string,
+    newEndDate: Date,
+    adjustments?: Partial<Pick<CLMContractEntity, 'totalValue' | 'slas' | 'content'>>,
+  ): Promise<CLMContractEntity> {
+    const c = await this.findOrFail(contractId);
+    c.endDate = newEndDate;
+    c.version++;
+    c.status = ContractStatus.ACTIVE;
+    if (adjustments?.totalValue !== undefined) c.totalValue = adjustments.totalValue;
+    if (adjustments?.slas !== undefined) c.slas = adjustments.slas;
+    if (adjustments?.content !== undefined) c.content = adjustments.content;
+    return this.contractRepo.save(c);
+  }
+
+  // --- QUERY BY ACCOUNT ---
+  async getContractsByAccount(workspaceId: string, accountId: string): Promise<CLMContractEntity[]> {
+    return this.contractRepo.find({
+      where: { workspaceId, accountId },
+      order: { createdAt: 'DESC' },
+    });
+  }
+
   private async findOrFail(id: string): Promise<CLMContractEntity> {
     const c = await this.contractRepo.findOne({ where: { id } });
     if (!c) throw new NotFoundException(`Contract ${id} not found`);

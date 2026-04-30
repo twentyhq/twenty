@@ -11,11 +11,11 @@ COPY ./.yarn/releases /app/.yarn/releases
 COPY ./.yarn/patches /app/.yarn/patches
 
 COPY ./packages/twenty-emails/package.json /app/packages/twenty-emails/
-COPY ./packages/twenty-server/package.json /app/packages/twenty-server/
-COPY ./packages/twenty-server/patches /app/packages/twenty-server/patches
+COPY ./backend/twenty-server/package.json /app/packages/twenty-server/
+COPY ./backend/twenty-server/patches /app/packages/twenty-server/patches
 COPY ./packages/twenty-ui/package.json /app/packages/twenty-ui/
 COPY ./packages/twenty-shared/package.json /app/packages/twenty-shared/
-COPY ./packages/twenty-front/package.json /app/packages/twenty-front/
+COPY ./frontend/twenty-front/package.json /app/packages/twenty-front/
 COPY ./packages/twenty-front-component-renderer/package.json /app/packages/twenty-front-component-renderer/
 COPY ./packages/twenty-sdk/package.json /app/packages/twenty-sdk/
 COPY ./packages/twenty-client-sdk/package.json /app/packages/twenty-client-sdk/
@@ -30,7 +30,7 @@ COPY ./packages/twenty-shared /app/packages/twenty-shared
 COPY ./packages/twenty-ui /app/packages/twenty-ui
 COPY ./packages/twenty-sdk /app/packages/twenty-sdk
 COPY ./packages/twenty-client-sdk /app/packages/twenty-client-sdk
-COPY ./packages/twenty-server /app/packages/twenty-server
+COPY ./backend/twenty-server /app/packages/twenty-server
 
 RUN npx nx run twenty-server:lingui:extract && \
     npx nx run twenty-server:lingui:compile && \
@@ -51,7 +51,7 @@ FROM common-deps AS twenty-front-build
 
 ARG REACT_APP_SERVER_BASE_URL
 
-COPY ./packages/twenty-front /app/packages/twenty-front
+COPY ./frontend/twenty-front /app/packages/twenty-front
 COPY ./packages/twenty-front-component-renderer /app/packages/twenty-front-component-renderer
 COPY ./packages/twenty-ui /app/packages/twenty-ui
 COPY ./packages/twenty-shared /app/packages/twenty-shared
@@ -59,14 +59,7 @@ COPY ./packages/twenty-sdk /app/packages/twenty-sdk
 COPY ./packages/twenty-client-sdk /app/packages/twenty-client-sdk
 RUN npx nx run twenty-front:lingui:extract && \
     npx nx run twenty-front:lingui:compile
-# To skip the memory-intensive frontend build, pre-build on the host:
-#   npx nx build twenty-front
-# The check below will use packages/twenty-front/build/ if it already exists.
-RUN if [ -d /app/packages/twenty-front/build ]; then \
-      echo "Using pre-built frontend from host"; \
-    else \
-      NODE_OPTIONS="--max-old-space-size=8192" npx nx build twenty-front; \
-    fi
+RUN NODE_OPTIONS="--max-old-space-size=8192" npx nx build twenty-front
 
 
 # ===========================================================================

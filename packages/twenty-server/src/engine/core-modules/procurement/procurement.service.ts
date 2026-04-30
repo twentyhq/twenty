@@ -68,4 +68,116 @@ export class ProcurementService {
     for (const pr of prs) { spend[pr.category ?? 'other'] = (spend[pr.category ?? 'other'] ?? 0) + Number(pr.estimatedAmount); }
     return spend;
   }
+
+  // --- THREE WAY MATCH ---
+  async threeWayMatch(
+    workspaceId: string,
+    prId: string,
+    invoiceAmount: number,
+    receivedQuantity: number,
+  ): Promise<{ matched: boolean; discrepancies: string[] }> {
+    const pr = await this.prRepo.findOne({ where: { id: prId, workspaceId } });
+    if (!pr) throw new NotFoundException(`PR ${prId} not found`);
+
+    const discrepancies: string[] = [];
+    const prAmount = Number(pr.estimatedAmount);
+    const prQuantity = pr.items?.reduce((sum, item) => sum + item.quantity, 0) ?? 0;
+
+    // Check PR amount vs invoice amount
+    if (Math.abs(prAmount - invoiceAmount) > 0.01) {
+      discrepancies.push(
+        `Invoice amount mismatch: PR=${prAmount.toFixed(2)}, Invoice=${invoiceAmount.toFixed(2)}`,
+      );
+    }
+
+    // Check PR quantity vs received quantity
+    if (prQuantity !== receivedQuantity) {
+      discrepancies.push(
+        `Quantity mismatch: PR ordered=${prQuantity}, Received=${receivedQuantity}`,
+      );
+    }
+
+    return {
+      matched: discrepancies.length === 0,
+      discrepancies,
+    };
+  }
+
+  // --- TOP SUPPLIERS ---
+  async getTopSuppliers(
+    workspaceId: string,
+    period?: string,
+  ): Promise<Array<{ supplierId: string; totalSpend: number; orderCount: number; scorecard: { overallScore: number } | null }>> {
+    const rfqs = await this.rfqRepo.find({ where: { workspaceId, status: 'awarded' } });
+
+    const supplierSpend = new Map<string, { totalSpend: number; orderCount: number }>();
+
+    for (const rfq of rfqs) {
+      if (!rfq.selectedSupplierId) continue;
+      const response = rfq.responses?.find((r) => r.supplierId === rfq.selectedSupplierId);
+      if (!response) continue;
+
+      const existing = supplierSpend.get(rfq.selectedSupplierId) ?? { totalSpend: 0, orderCount: 0 };
+      existing.totalSpend += response.totalPrice;
+      existing.orderCount++;
+      supplierSpend.set(rfq.selectedSupplierId, existing);
+    }
+
+    const results: Array<{ supplierId: string; totalSpend: number; orderCount: number; scorecard: { overallScore: number } | null }> = [];
+
+    for (const [supplierId, data] of supplierSpend.entries()) {
+      const whereClause: Record<string, unknown> = { workspaceId, supplierId };
+      if (period) whereClause['period'] = period;
+      const scorecard = await this.scorecardRepo.findOne({
+        where: whereClause as { workspaceId: string; supplierId: string; period?: string },
+        order: { createdAt: 'DESC' },
+      });
+
+      results.push({
+        supplierId,
+        totalSpend: Math.round(data.totalSpend * 100) / 100,
+        orderCount: data.orderCount,
+        scorecard: scorecard ? { overallScore: scorecard.overallScore } : null,
+      });
+    }
+
+    return results.sort((a, b) => b.totalSpend - a.totalSpend);
+  }
+
+  // --- DUPLICATE SPEND DETECTION ---
+  async detectDuplicateSpend(
+    workspaceId: string,
+  ): Promise<Array<{ itemDescription: string; matchingPRs: Array<{ prId: string; requesterId: string; amount: number; category: string }> }>> {
+    const prs = await this.prRepo.find({ where: { workspaceId } });
+
+    // Build a map of item descriptions to PRs
+    const itemMap = new Map<string, Array<{ prId: string; requesterId: string; amount: number; category: string }>>();
+
+    for (const pr of prs) {
+      if (!pr.items) continue;
+      for (const item of pr.items) {
+        const normalized = item.description.toLowerCase().trim();
+        const existing = itemMap.get(normalized) ?? [];
+        existing.push({
+          prId: pr.id,
+          requesterId: pr.requesterId,
+          amount: item.quantity * item.unitPrice,
+          category: pr.category ?? 'other',
+        });
+        itemMap.set(normalized, existing);
+      }
+    }
+
+    // Only return items that appear in multiple PRs from different requesters
+    const duplicates: Array<{ itemDescription: string; matchingPRs: Array<{ prId: string; requesterId: string; amount: number; category: string }> }> = [];
+
+    for (const [description, entries] of itemMap.entries()) {
+      const uniqueRequesters = new Set(entries.map((e) => e.requesterId));
+      if (entries.length > 1 && uniqueRequesters.size > 1) {
+        duplicates.push({ itemDescription: description, matchingPRs: entries });
+      }
+    }
+
+    return duplicates;
+  }
 }

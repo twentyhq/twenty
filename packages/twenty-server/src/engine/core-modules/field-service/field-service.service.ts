@@ -85,6 +85,154 @@ export class FieldServiceService {
     return this.contractRepo.save(this.contractRepo.create({ workspaceId, ...data }));
   }
 
+  // --- AVAILABLE TECHNICIANS ---
+  async getAvailableTechnicians(
+    workspaceId: string,
+    skillRequired?: string,
+    location?: { lat: number; lng: number },
+  ): Promise<Array<{ id: string; name: string; skills: string[]; distance: number | null; performanceScore: number }>> {
+    const techs = await this.techRepo.find({ where: { workspaceId, isAvailable: true } });
+
+    let filtered = techs;
+    if (skillRequired) {
+      filtered = filtered.filter((t) => t.skills?.includes(skillRequired));
+    }
+
+    const results = filtered.map((t) => {
+      let distance: number | null = null;
+      if (location && t.currentLat && t.currentLng) {
+        distance = Math.sqrt(
+          Math.pow(t.currentLat - location.lat, 2) + Math.pow(t.currentLng - location.lng, 2),
+        );
+      }
+      return {
+        id: t.id,
+        name: t.name,
+        skills: t.skills ?? [],
+        distance,
+        performanceScore: t.performanceScore,
+      };
+    });
+
+    // Sort by distance if location provided, otherwise by performance
+    if (location) {
+      results.sort((a, b) => (a.distance ?? Infinity) - (b.distance ?? Infinity));
+    } else {
+      results.sort((a, b) => b.performanceScore - a.performanceScore);
+    }
+
+    return results;
+  }
+
+  // --- SERVICE REPORT ---
+  async createServiceReport(
+    workOrderId: string,
+    data: { findings: string; actions: string; partsUsed: Array<{ partId: string; name: string; quantity: number }>; recommendations: string },
+  ): Promise<{
+    workOrderId: string;
+    technicianId: string | null;
+    generatedAt: string;
+    findings: string;
+    actions: string;
+    partsUsed: Array<{ partId: string; name: string; quantity: number }>;
+    recommendations: string;
+    workOrderStatus: WorkOrderStatus;
+  }> {
+    const wo = await this.woRepo.findOne({ where: { id: workOrderId } });
+    if (!wo) throw new NotFoundException(`Work order ${workOrderId} not found`);
+
+    // Update the work order with parts used
+    wo.partsUsed = data.partsUsed;
+    await this.woRepo.save(wo);
+
+    return {
+      workOrderId: wo.id,
+      technicianId: wo.technicianId ?? null,
+      generatedAt: new Date().toISOString(),
+      findings: data.findings,
+      actions: data.actions,
+      partsUsed: data.partsUsed,
+      recommendations: data.recommendations,
+      workOrderStatus: wo.status,
+    };
+  }
+
+  // --- PREDICTIVE MAINTENANCE ---
+  async getPredictiveMaintenanceAlerts(
+    workspaceId: string,
+  ): Promise<Array<{
+    accountId: string;
+    equipmentType: string;
+    completedOrderCount: number;
+    avgDaysBetweenOrders: number;
+    daysSinceLastOrder: number;
+    alert: string;
+  }>> {
+    const completedOrders = await this.woRepo.find({
+      where: { workspaceId, status: WorkOrderStatus.COMPLETED },
+      order: { actualEnd: 'ASC' },
+    });
+
+    // Group by accountId + type to detect patterns
+    const groupKey = (wo: WorkOrderEntity) => `${wo.accountId ?? 'unknown'}::${wo.type}`;
+    const groups = new Map<string, WorkOrderEntity[]>();
+    for (const wo of completedOrders) {
+      const key = groupKey(wo);
+      const existing = groups.get(key) ?? [];
+      existing.push(wo);
+      groups.set(key, existing);
+    }
+
+    const alerts: Array<{
+      accountId: string;
+      equipmentType: string;
+      completedOrderCount: number;
+      avgDaysBetweenOrders: number;
+      daysSinceLastOrder: number;
+      alert: string;
+    }> = [];
+
+    const now = Date.now();
+
+    for (const [key, orders] of groups.entries()) {
+      if (orders.length < 2) continue;
+
+      const [accountId, equipmentType] = key.split('::');
+
+      // Calculate average interval between service visits
+      const intervals: number[] = [];
+      for (let i = 1; i < orders.length; i++) {
+        const prev = orders[i - 1].actualEnd?.getTime() ?? 0;
+        const curr = orders[i].actualEnd?.getTime() ?? 0;
+        if (prev && curr) {
+          intervals.push((curr - prev) / 86_400_000);
+        }
+      }
+
+      if (!intervals.length) continue;
+
+      const avgDays = intervals.reduce((s, d) => s + d, 0) / intervals.length;
+      const lastOrderDate = orders[orders.length - 1].actualEnd?.getTime() ?? 0;
+      const daysSinceLast = lastOrderDate ? (now - lastOrderDate) / 86_400_000 : 0;
+
+      // Alert if approaching or past the average service interval
+      if (daysSinceLast >= avgDays * 0.8) {
+        alerts.push({
+          accountId,
+          equipmentType,
+          completedOrderCount: orders.length,
+          avgDaysBetweenOrders: Math.round(avgDays),
+          daysSinceLastOrder: Math.round(daysSinceLast),
+          alert: daysSinceLast >= avgDays
+            ? `Overdue: ${Math.round(daysSinceLast - avgDays)} days past expected service interval`
+            : `Upcoming: service likely needed within ${Math.round(avgDays - daysSinceLast)} days`,
+        });
+      }
+    }
+
+    return alerts.sort((a, b) => b.daysSinceLastOrder - a.daysSinceLastOrder);
+  }
+
   async getAnalytics(workspaceId: string): Promise<{ totalOrders: number; completed: number; ftfr: number; avgRating: number; avgResponseMinutes: number }> {
     const orders = await this.woRepo.find({ where: { workspaceId } });
     const completed = orders.filter((o) => o.status === WorkOrderStatus.COMPLETED);

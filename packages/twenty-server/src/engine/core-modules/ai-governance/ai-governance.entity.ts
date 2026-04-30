@@ -1,6 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, Index } from 'typeorm';
 
-export enum AIProvider { OPENAI = 'openai', ANTHROPIC = 'anthropic', AZURE = 'azure', LOCAL = 'local', CUSTOM = 'custom' }
+export enum AIProvider { OPENAI = 'openai', ANTHROPIC = 'anthropic', GOOGLE = 'google', AZURE = 'azure', LOCAL = 'local', CUSTOM = 'custom' }
 export enum MaskingStrategy { REDACT = 'redact', HASH = 'hash', REPLACE = 'replace', TOKENIZE = 'tokenize' }
 export enum PIICategory { EMAIL = 'email', PHONE = 'phone', SSN = 'ssn', CREDIT_CARD = 'credit_card', ADDRESS = 'address', NAME = 'name', ID_NUMBER = 'id_number', CUSTOM = 'custom' }
 export enum AuditAction { PROMPT = 'prompt', COMPLETION = 'completion', PII_DETECTED = 'pii_detected', PII_MASKED = 'pii_masked', POLICY_VIOLATION = 'policy_violation', MODEL_SWITCH = 'model_switch' }
@@ -60,6 +60,7 @@ export class ModelConfigEntity {
   @Column({ type: 'decimal', precision: 12, scale: 2, default: 0 }) monthlySpend: number;
   @Column({ type: 'int', nullable: true }) rateLimitPerMinute: number;
   @Column({ type: 'simple-json', nullable: true }) allowedFeatures: string[];
+  @Column({ type: 'varchar', length: 512, nullable: true }) apiKey: string;
   @CreateDateColumn() createdAt: Date;
   @UpdateDateColumn() updatedAt: Date;
 }

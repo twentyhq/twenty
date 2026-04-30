@@ -53,7 +53,8 @@ export class CalendarRelaunchFailedCalendarChannelsCronJob {
         const schemaName = getWorkspaceSchemaName(activeWorkspace.id);
 
         const failedCalendarChannels = await this.coreDataSource.query(
-          `SELECT * FROM ${schemaName}."calendarChannel" WHERE "syncStage" = '${CalendarChannelSyncStage.FAILED}' AND "syncStatus" = '${CalendarChannelSyncStatus.FAILED_UNKNOWN}'`,
+          `SELECT * FROM ${schemaName}."calendarChannel" WHERE "syncStage" = $1 AND "syncStatus" = $2`,
+          [CalendarChannelSyncStage.FAILED, CalendarChannelSyncStatus.FAILED_UNKNOWN],
         );
 
         for (const calendarChannel of failedCalendarChannels) {

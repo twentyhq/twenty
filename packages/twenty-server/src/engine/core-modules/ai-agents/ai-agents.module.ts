@@ -1,6 +1,8 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { AIGovernanceModule } from '../ai-governance/ai-governance.module';
+
 import { CsmAgent } from './csm-agent/csm-agent.entity';
 import { CsmAgentService } from './csm-agent/csm-agent.service';
 import { DataHygieneAgent, DataQualityIssue } from './data-hygiene-agent/data-hygiene-agent.entity';
@@ -17,9 +19,11 @@ import { CompetitiveIntelligenceAgent } from './competitive-intelligence-agent/c
 import { CompetitiveIntelligenceAgentService } from './competitive-intelligence-agent/competitive-intelligence-agent.service';
 import { ContractIntelligenceAgent, ContractExtractionEntity } from './contract-intelligence-agent/contract-intelligence-agent.entity';
 import { ContractIntelligenceAgentService } from './contract-intelligence-agent/contract-intelligence-agent.service';
+import { AiAgentsResolver } from './ai-agents.resolver';
 
 @Module({
   imports: [
+    AIGovernanceModule,
     TypeOrmModule.forFeature(
       [
         SdrAgent,
@@ -48,6 +52,7 @@ import { ContractIntelligenceAgentService } from './contract-intelligence-agent/
     ProspectingResearchAgentService,
     CompetitiveIntelligenceAgentService,
     ContractIntelligenceAgentService,
+    AiAgentsResolver,
   ],
   exports: [
     SdrAgentService,

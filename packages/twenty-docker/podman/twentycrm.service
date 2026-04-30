@@ -6,10 +6,9 @@ After=network.target
 Type=simple
 WorkingDirectory=/opt/apps/twenty
 EnvironmentFile=/opt/apps/twenty/.env
-ExecStart=/usr/bin/podman-compose -f podman-compose.yml up -d
+ExecStart=/usr/bin/podman-compose -f podman-compose.yml up -d --build
 ExecStop=/usr/bin/podman-compose -f podman-compose.yml down
 RemainAfterExit=yes
 
 [Install]
 WantedBy=default.target
-

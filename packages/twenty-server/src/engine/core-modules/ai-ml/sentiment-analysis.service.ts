@@ -1,16 +1,21 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, MoreThan } from 'typeorm';
+
+import { AIGovernanceService } from '../ai-governance/ai-governance.service';
 
 import { SentimentAnalysisEntity, SentimentAggregateEntity, SentimentLabel } from './sentiment-analysis.entity';
 
 @Injectable()
 export class SentimentAnalysisService {
+  private readonly logger = new Logger(SentimentAnalysisService.name);
+
   constructor(
     @InjectRepository(SentimentAnalysisEntity)
     private readonly sentimentRepo: Repository<SentimentAnalysisEntity>,
     @InjectRepository(SentimentAggregateEntity)
     private readonly aggregateRepo: Repository<SentimentAggregateEntity>,
+    private readonly aiGovernance: AIGovernanceService,
   ) {}
 
   async analyze(
@@ -18,8 +23,31 @@ export class SentimentAnalysisService {
     content: string,
     recordId?: string,
     recordType?: string,
+    userId?: string,
   ): Promise<SentimentAnalysisEntity> {
-    const analysis = this.performAnalysis(content);
+    let analysis: {
+      sentiment: SentimentLabel;
+      confidence: number;
+      positiveScore: number;
+      negativeScore: number;
+      neutralScore: number;
+      emotions: Record<string, number>;
+      keyPhrases: string[];
+    };
+
+    // Try LLM-powered analysis first
+    if (userId) {
+      try {
+        analysis = await this.analyzeSentimentWithLLM(workspaceId, userId, content);
+      } catch (error) {
+        this.logger.warn(
+          `LLM sentiment analysis failed, falling back to heuristic: ${error instanceof Error ? error.message : 'unknown'}`,
+        );
+        analysis = this.performAnalysis(content);
+      }
+    } else {
+      analysis = this.performAnalysis(content);
+    }
 
     const entity = this.sentimentRepo.create({
       workspaceId,
@@ -30,6 +58,67 @@ export class SentimentAnalysisService {
     });
 
     return this.sentimentRepo.save(entity);
+  }
+
+  private async analyzeSentimentWithLLM(
+    workspaceId: string,
+    userId: string,
+    content: string,
+  ): Promise<{
+    sentiment: SentimentLabel;
+    confidence: number;
+    positiveScore: number;
+    negativeScore: number;
+    neutralScore: number;
+    emotions: Record<string, number>;
+    keyPhrases: string[];
+  }> {
+    const response = await this.aiGovernance.callLLM(workspaceId, userId, {
+      feature: 'sentiment-analysis',
+      messages: [
+        {
+          role: 'system',
+          content: 'You are a sentiment analysis expert. Analyze the sentiment of the given text and return a JSON object with these exact fields: score (number from -1 to 1), label (one of: positive, negative, neutral), confidence (number from 0 to 1), emotions (object with keys: joy, anger, sadness, surprise, each a number 0-1), keyPhrases (array of up to 5 short key phrases).',
+        },
+        {
+          role: 'user',
+          content: `Analyze the sentiment of this text:\n\n${content.substring(0, 3000)}`,
+        },
+      ],
+      temperature: 0.3,
+      maxTokens: 512,
+      jsonMode: true,
+    });
+
+    const parsed = JSON.parse(response.content) as {
+      score: number;
+      label: string;
+      confidence: number;
+      emotions: Record<string, number>;
+      keyPhrases: string[];
+    };
+
+    const labelMap: Record<string, SentimentLabel> = {
+      positive: SentimentLabel.POSITIVE,
+      negative: SentimentLabel.NEGATIVE,
+      neutral: SentimentLabel.NEUTRAL,
+    };
+
+    const sentiment = labelMap[parsed.label] ?? SentimentLabel.NEUTRAL;
+    const score = parsed.score ?? 0;
+    const positiveScore = Math.max(0, score);
+    const negativeScore = Math.max(0, -score);
+    const neutralScore = 1 - Math.abs(score);
+
+    return {
+      sentiment,
+      confidence: parsed.confidence ?? 0.5,
+      positiveScore,
+      negativeScore,
+      neutralScore,
+      emotions: parsed.emotions ?? { joy: 0, anger: 0, sadness: 0, surprise: 0 },
+      keyPhrases: parsed.keyPhrases ?? [],
+    };
   }
 
   async analyzeBatch(

@@ -6,13 +6,13 @@ import { Trans, useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { H2Title } from 'twenty-ui/display';
-import { ColorSchemePicker } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
+import { ColorSchemePicker } from 'twenty-ui/input';
 import { LocalePicker } from '~/pages/settings/profile/appearance/components/LocalePicker';
 
 export const SettingsExperience = () => {
-  const { colorScheme, setColorScheme } = useColorScheme();
   const { t } = useLingui();
+  const { colorScheme, setColorScheme } = useColorScheme();
 
   return (
     <SubMenuTopBarContainer
@@ -27,13 +27,16 @@ export const SettingsExperience = () => {
     >
       <SettingsPageContainer>
         <Section>
-          <H2Title title={t`Appearance`} />
+          <H2Title
+            title={t`Appearance`}
+            description={t`Choose how the app looks`}
+          />
           <ColorSchemePicker
             value={colorScheme}
             onChange={setColorScheme}
             lightLabel={t`Light`}
             darkLabel={t`Dark`}
-            systemLabel={t`System settings`}
+            systemLabel={t`System`}
           />
         </Section>
 
@@ -52,7 +55,6 @@ export const SettingsExperience = () => {
           />
           <FormatPreferencesSettings />
         </Section>
-        {/* Unified into FormatPreferencesSettings */}
       </SettingsPageContainer>
     </SubMenuTopBarContainer>
   );

@@ -1,12 +1,13 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, LessThanOrEqual } from 'typeorm';
+import { Repository, LessThanOrEqual, MoreThan, LessThan, In } from 'typeorm';
 import {
   ProductStockEntity,
   StockMovementEntity,
   WarehouseEntity,
   SupplierEntity,
   StockMovementType,
+  CostingMethod,
 } from './inventory.entity';
 
 @Injectable()
@@ -268,6 +269,163 @@ export class InventoryService {
       returnsByReason,
       returnValueImpact,
     };
+  }
+
+  // --- COSTING METHODS ---
+
+  async calculateCostFIFO(
+    workspaceId: string,
+    productId: string,
+    warehouseId: string,
+  ): Promise<{ unitCost: number; totalValue: number; method: string }> {
+    const inboundMovements = await this.movementRepo.find({
+      where: { workspaceId, productId, toWarehouseId: warehouseId, type: StockMovementType.INBOUND },
+      order: { createdAt: 'ASC' },
+    });
+
+    const stock = await this.stockRepo.findOne({ where: { workspaceId, productId, warehouseId } });
+    const currentQty = stock?.quantityOnHand ?? 0;
+
+    if (inboundMovements.length === 0 || currentQty === 0) {
+      return { unitCost: 0, totalValue: 0, method: 'FIFO' };
+    }
+
+    // Walk from earliest inbound, consume quantities until we cover currentQty
+    let remaining = currentQty;
+    let totalValue = 0;
+    // FIFO: earliest cost layers are consumed first, so remaining stock uses latest layers
+    // Reverse: start from newest to find cost of remaining stock
+    const reversed = [...inboundMovements].reverse();
+
+    for (const movement of reversed) {
+      if (remaining <= 0) break;
+      const cost = Number(movement.unitCost ?? 0);
+      const qty = Math.min(remaining, movement.quantity);
+      totalValue += qty * cost;
+      remaining -= qty;
+    }
+
+    const unitCost = currentQty > 0 ? Math.round((totalValue / currentQty) * 10000) / 10000 : 0;
+
+    return { unitCost, totalValue, method: 'FIFO' };
+  }
+
+  async calculateCostWeightedAverage(
+    workspaceId: string,
+    productId: string,
+    warehouseId: string,
+  ): Promise<{ unitCost: number; totalValue: number; method: string }> {
+    const inboundMovements = await this.movementRepo.find({
+      where: { workspaceId, productId, toWarehouseId: warehouseId, type: StockMovementType.INBOUND },
+    });
+
+    if (inboundMovements.length === 0) {
+      return { unitCost: 0, totalValue: 0, method: 'WEIGHTED_AVERAGE' };
+    }
+
+    let totalQty = 0;
+    let totalCost = 0;
+
+    for (const movement of inboundMovements) {
+      const cost = Number(movement.unitCost ?? 0);
+      totalQty += movement.quantity;
+      totalCost += movement.quantity * cost;
+    }
+
+    const unitCost = totalQty > 0 ? Math.round((totalCost / totalQty) * 10000) / 10000 : 0;
+    const stock = await this.stockRepo.findOne({ where: { workspaceId, productId, warehouseId } });
+    const currentQty = stock?.quantityOnHand ?? 0;
+    const totalValue = currentQty * unitCost;
+
+    return { unitCost, totalValue, method: 'WEIGHTED_AVERAGE' };
+  }
+
+  async getProductCost(
+    workspaceId: string,
+    productId: string,
+    warehouseId: string,
+  ): Promise<{ unitCost: number; totalValue: number; method: string }> {
+    const stock = await this.stockRepo.findOne({ where: { workspaceId, productId, warehouseId } });
+    const costingMethod = stock?.costingMethod ?? CostingMethod.WEIGHTED_AVERAGE;
+
+    if (costingMethod === CostingMethod.FIFO) {
+      return this.calculateCostFIFO(workspaceId, productId, warehouseId);
+    }
+
+    return this.calculateCostWeightedAverage(workspaceId, productId, warehouseId);
+  }
+
+  // --- BATCH / LOT TRACKING ---
+
+  async trackBatchLot(
+    workspaceId: string,
+    productId: string,
+    warehouseId: string,
+    data: { batchNumber: string; serialNumber?: string; expiryDate?: Date; quantity: number },
+  ): Promise<ProductStockEntity> {
+    let stock = await this.stockRepo.findOne({ where: { workspaceId, productId, warehouseId } });
+
+    if (!stock) {
+      stock = this.stockRepo.create({
+        workspaceId,
+        productId,
+        warehouseId,
+        quantityOnHand: 0,
+        quantityAvailable: 0,
+        quantityReserved: 0,
+      });
+    }
+
+    stock.batchNumber = data.batchNumber;
+    if (data.serialNumber) stock.serialNumber = data.serialNumber;
+    if (data.expiryDate) stock.expiryDate = data.expiryDate;
+    stock.quantityOnHand += data.quantity;
+    stock.quantityAvailable = stock.quantityOnHand - stock.quantityReserved;
+
+    await this.recordMovement(workspaceId, productId, StockMovementType.INBOUND, data.quantity, {
+      toWarehouseId: warehouseId,
+      batchNumber: data.batchNumber,
+    });
+
+    return this.stockRepo.save(stock);
+  }
+
+  async getBatchHistory(
+    workspaceId: string,
+    productId: string,
+  ): Promise<Record<string, StockMovementEntity[]>> {
+    const movements = await this.movementRepo.find({
+      where: { workspaceId, productId },
+      order: { createdAt: 'ASC' },
+    });
+
+    const grouped: Record<string, StockMovementEntity[]> = {};
+
+    for (const movement of movements) {
+      const batch = movement.batchNumber ?? 'no_batch';
+      if (!grouped[batch]) grouped[batch] = [];
+      grouped[batch].push(movement);
+    }
+
+    return grouped;
+  }
+
+  async getExpiringBatches(
+    workspaceId: string,
+    daysAhead: number,
+  ): Promise<ProductStockEntity[]> {
+    const cutoffDate = new Date();
+    cutoffDate.setDate(cutoffDate.getDate() + daysAhead);
+
+    return this.stockRepo
+      .createQueryBuilder('s')
+      .where('s.workspaceId = :workspaceId', { workspaceId })
+      .andWhere('s.batchNumber IS NOT NULL')
+      .andWhere('s.expiryDate IS NOT NULL')
+      .andWhere('s.expiryDate <= :cutoffDate', { cutoffDate })
+      .andWhere('s.quantityOnHand > 0')
+      .orderBy('s.expiryDate', 'ASC')
+      .getMany();
   }
 
   private async recordMovement(

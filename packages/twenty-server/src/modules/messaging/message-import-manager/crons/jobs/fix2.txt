@@ -1,0 +1,4 @@
+        const failedMessageChannels = await this.coreDataSource.query(
+          `SELECT * FROM ${schemaName}."messageChannel" WHERE "syncStage" = $1 AND "syncStatus" = $2`,
+          [MessageChannelSyncStage.FAILED, MessageChannelSyncStatus.FAILED_UNKNOWN],
+        );

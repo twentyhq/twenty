@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, LessThan } from 'typeorm';
-import { LMSCourseEntity, LMSEnrollmentEntity, RetentionQuizEntity, EnrollmentStatus, CourseStatus } from './lms.entity';
+import { LMSCourseEntity, LMSEnrollmentEntity, RetentionQuizEntity, EnrollmentStatus, CourseStatus, CourseAudience } from './lms.entity';
 
 @Injectable()
 export class LMSService {
@@ -92,5 +92,144 @@ export class LMSService {
       totalEnrollments, completionRate: totalEnrollments ? Math.round((totalCompletions / totalEnrollments) * 100) : 0,
       avgScore: courses.length ? Math.round(courses.reduce((s, c) => s + c.avgScore, 0) / courses.length) : 0,
     };
+  }
+
+  // --- COURSE CATALOG ---
+  async getCourseCatalog(
+    workspaceId: string,
+    audience?: CourseAudience,
+  ): Promise<Array<{
+    id: string;
+    title: string;
+    description: string | null;
+    audience: CourseAudience;
+    category: string | null;
+    estimatedMinutes: number;
+    enrollmentCount: number;
+    completionCount: number;
+    avgScore: number;
+  }>> {
+    const whereClause: Record<string, unknown> = { workspaceId, status: CourseStatus.PUBLISHED };
+    if (audience) whereClause['audience'] = audience;
+
+    const courses = await this.courseRepo.find({
+      where: whereClause as { workspaceId: string; status: CourseStatus; audience?: CourseAudience },
+      order: { title: 'ASC' },
+    });
+
+    return courses.map((c) => ({
+      id: c.id,
+      title: c.title,
+      description: c.description,
+      audience: c.audience,
+      category: c.category,
+      estimatedMinutes: c.estimatedMinutes,
+      enrollmentCount: c.enrollmentCount,
+      completionCount: c.completionCount,
+      avgScore: c.avgScore,
+    }));
+  }
+
+  // --- COMPLIANCE STATUS ---
+  async getComplianceStatus(
+    workspaceId: string,
+  ): Promise<Array<{
+    userId: string;
+    courseId: string;
+    courseTitle: string;
+    status: EnrollmentStatus | 'not_enrolled';
+    certificationExpiry: Date | null;
+    isOverdue: boolean;
+  }>> {
+    // Get courses with required roles (compliance courses)
+    const courses = await this.courseRepo.find({
+      where: { workspaceId, status: CourseStatus.PUBLISHED },
+    });
+    const requiredCourses = courses.filter((c) => c.requiredForRoles?.length);
+
+    if (!requiredCourses.length) return [];
+
+    const results: Array<{
+      userId: string;
+      courseId: string;
+      courseTitle: string;
+      status: EnrollmentStatus | 'not_enrolled';
+      certificationExpiry: Date | null;
+      isOverdue: boolean;
+    }> = [];
+
+    // Get all enrollments for required courses
+    for (const course of requiredCourses) {
+      const enrollments = await this.enrollRepo.find({ where: { courseId: course.id } });
+
+      for (const enrollment of enrollments) {
+        const isExpired = enrollment.certificationExpiry
+          ? new Date(enrollment.certificationExpiry) < new Date()
+          : false;
+
+        const isOverdue = enrollment.status !== EnrollmentStatus.COMPLETED || isExpired;
+
+        results.push({
+          userId: enrollment.userId,
+          courseId: course.id,
+          courseTitle: course.title,
+          status: enrollment.status,
+          certificationExpiry: enrollment.certificationExpiry,
+          isOverdue,
+        });
+      }
+    }
+
+    return results.filter((r) => r.isOverdue);
+  }
+
+  // --- TRAINING VS PERFORMANCE CORRELATION ---
+  async correlateTrainingWithPerformance(
+    workspaceId: string,
+  ): Promise<Array<{
+    userId: string;
+    coursesCompleted: number;
+    avgQuizScore: number;
+    totalTrainingMinutes: number;
+    completionRate: number;
+  }>> {
+    const courses = await this.courseRepo.find({ where: { workspaceId } });
+    const courseIds = courses.map((c) => c.id);
+
+    if (!courseIds.length) return [];
+
+    // Gather all enrollments for workspace courses
+    const allEnrollments: LMSEnrollmentEntity[] = [];
+    for (const courseId of courseIds) {
+      const enrollments = await this.enrollRepo.find({ where: { courseId } });
+      allEnrollments.push(...enrollments);
+    }
+
+    // Group by user
+    const userMap = new Map<string, LMSEnrollmentEntity[]>();
+    for (const enrollment of allEnrollments) {
+      const existing = userMap.get(enrollment.userId) ?? [];
+      existing.push(enrollment);
+      userMap.set(enrollment.userId, existing);
+    }
+
+    return Array.from(userMap.entries()).map(([userId, enrollments]) => {
+      const completed = enrollments.filter((e) => e.status === EnrollmentStatus.COMPLETED);
+      const withScores = completed.filter((e) => e.quizScore !== null && e.quizScore !== undefined);
+      const avgQuizScore = withScores.length
+        ? Math.round(withScores.reduce((s, e) => s + (e.quizScore ?? 0), 0) / withScores.length * 100) / 100
+        : 0;
+      const totalTrainingMinutes = enrollments.reduce((s, e) => s + e.timeSpentMinutes, 0);
+
+      return {
+        userId,
+        coursesCompleted: completed.length,
+        avgQuizScore,
+        totalTrainingMinutes,
+        completionRate: enrollments.length
+          ? Math.round((completed.length / enrollments.length) * 100)
+          : 0,
+      };
+    }).sort((a, b) => b.avgQuizScore - a.avgQuizScore);
   }
 }

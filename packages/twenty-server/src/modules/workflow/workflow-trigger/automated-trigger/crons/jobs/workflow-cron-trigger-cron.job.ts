@@ -61,7 +61,8 @@ export class WorkflowCronTriggerCronJob {
         const schemaName = getWorkspaceSchemaName(activeWorkspace.id);
 
         const workflowAutomatedCronTriggers = await this.coreDataSource.query(
-          `SELECT * FROM ${schemaName}."workflowAutomatedTrigger" WHERE type = '${AutomatedTriggerType.CRON}'`,
+          `SELECT * FROM ${schemaName}."workflowAutomatedTrigger" WHERE type = $1`,
+          [AutomatedTriggerType.CRON],
         );
 
         this.logger.log(

@@ -7,7 +7,7 @@ import {
   ManyToOne,
   JoinColumn,
 } from 'typeorm';
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 export enum SSOType {
   SAML = 'saml',
@@ -33,7 +33,7 @@ export class WorkspaceSSOEntity {
   @Column({ nullable: false })
   workspaceId: string;
 
-  @ManyToOne(() => WorkspaceEntity)
+  @ManyToOne('WorkspaceEntity')
   @JoinColumn({ name: 'workspaceId' })
   workspace: WorkspaceEntity;
 

@@ -154,6 +154,106 @@ export class RevenueRecognitionEntity {
   createdAt: Date;
 }
 
+export enum AccountType {
+  ASSET = 'asset',
+  LIABILITY = 'liability',
+  EQUITY = 'equity',
+  REVENUE = 'revenue',
+  EXPENSE = 'expense',
+}
+
+export enum JournalEntryStatus {
+  DRAFT = 'draft',
+  POSTED = 'posted',
+  VOIDED = 'voided',
+}
+
+export enum PeriodStatus {
+  OPEN = 'open',
+  CLOSED = 'closed',
+}
+
+@Entity('chart_of_account')
+@Index(['workspaceId', 'code'], { unique: true })
+export class ChartOfAccountEntity {
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
+
+  @Column({ nullable: false })
+  workspaceId: string;
+
+  @Column({ type: 'varchar', length: 20, nullable: false })
+  code: string;
+
+  @Column({ nullable: false })
+  name: string;
+
+  @Column({ type: 'enum', enum: AccountType })
+  type: AccountType;
+
+  @Column({ type: 'varchar', length: 20, nullable: true })
+  parentCode: string;
+
+  @Column({ type: 'decimal', precision: 14, scale: 2, default: 0 })
+  balance: number;
+
+  @Column({ type: 'boolean', default: true })
+  isActive: boolean;
+
+  @CreateDateColumn()
+  createdAt: Date;
+}
+
+@Entity('journal_entry')
+@Index(['workspaceId', 'date'])
+export class JournalEntryEntity {
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
+
+  @Column({ nullable: false })
+  workspaceId: string;
+
+  @Column({ type: 'date', nullable: false })
+  date: Date;
+
+  @Column({ type: 'text', nullable: true })
+  description: string;
+
+  @Column({ type: 'enum', enum: JournalEntryStatus, default: JournalEntryStatus.DRAFT })
+  status: JournalEntryStatus;
+
+  @Column({ type: 'simple-json', nullable: true })
+  lines: Array<{ accountCode: string; debit: number; credit: number }>;
+
+  @Column({ type: 'varchar', length: 20, nullable: true })
+  period: string;
+
+  @CreateDateColumn()
+  createdAt: Date;
+}
+
+@Entity('accounting_period')
+@Index(['workspaceId', 'period'], { unique: true })
+export class AccountingPeriodEntity {
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
+
+  @Column({ nullable: false })
+  workspaceId: string;
+
+  @Column({ type: 'varchar', length: 20, nullable: false })
+  period: string;
+
+  @Column({ type: 'enum', enum: PeriodStatus, default: PeriodStatus.OPEN })
+  status: PeriodStatus;
+
+  @Column({ type: 'timestamp', nullable: true })
+  closedAt: Date;
+
+  @CreateDateColumn()
+  createdAt: Date;
+}
+
 @Entity('sales_commission')
 @Index(['workspaceId', 'repId'])
 export class SalesCommissionEntity {

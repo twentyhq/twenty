@@ -123,6 +123,19 @@ export class LoyaltyMemberEntity {
   @UpdateDateColumn() updatedAt: Date;
 }
 
+@Entity('product_review')
+@Index(['workspaceId', 'productId'])
+export class ProductReviewEntity {
+  @PrimaryGeneratedColumn('uuid') id: string;
+  @Column({ nullable: false }) workspaceId: string;
+  @Column({ nullable: false }) productId: string;
+  @Column({ nullable: true }) contactId: string;
+  @Column({ type: 'int', nullable: false }) rating: number;
+  @Column({ type: 'text', nullable: true }) comment: string;
+  @Column({ type: 'boolean', default: false }) verified: boolean;
+  @CreateDateColumn() createdAt: Date;
+}
+
 @Entity('browse_event')
 @Index(['workspaceId', 'contactId', 'createdAt'])
 export class BrowseEventEntity {

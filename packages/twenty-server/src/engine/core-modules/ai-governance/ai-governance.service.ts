@@ -5,6 +5,7 @@ import {
   AIUsageLogEntity, PIIMaskingRuleEntity, ModelConfigEntity, PromptTemplateEntity, AIAuditEntryEntity,
   AIProvider, MaskingStrategy, AuditAction,
 } from './ai-governance.entity';
+import { LLMClientService, LLMResponse, LLMProvider } from './llm-client.service';
 
 @Injectable()
 export class AIGovernanceService {
@@ -16,6 +17,7 @@ export class AIGovernanceService {
     @InjectRepository(ModelConfigEntity) private readonly modelConfigRepo: Repository<ModelConfigEntity>,
     @InjectRepository(PromptTemplateEntity) private readonly promptRepo: Repository<PromptTemplateEntity>,
     @InjectRepository(AIAuditEntryEntity) private readonly auditRepo: Repository<AIAuditEntryEntity>,
+    private readonly llmClient: LLMClientService,
   ) {}
 
   async logUsage(workspaceId: string, data: Partial<AIUsageLogEntity>): Promise<AIUsageLogEntity> {
@@ -144,6 +146,120 @@ export class AIGovernanceService {
     }));
 
     return { maskedInput: maskedText, modelConfig: config, auditId: audit.id, approved: true };
+  }
+
+  async callLLM(
+    workspaceId: string,
+    userId: string,
+    options: {
+      feature: string;
+      provider?: LLMProvider;
+      model?: string;
+      messages: Array<{ role: string; content: string }>;
+      temperature?: number;
+      maxTokens?: number;
+      jsonMode?: boolean;
+    },
+  ): Promise<LLMResponse> {
+    const provider = options.provider ?? 'openai';
+    const model = options.model ?? this.getDefaultModel(provider);
+
+    // Run governance checks
+    const inputText = options.messages.map((m) => m.content).join('\n');
+    const governance = await this.executeWithGovernance(workspaceId, userId, {
+      provider: provider as unknown as AIProvider,
+      model,
+      inputText,
+      feature: options.feature,
+    });
+
+    if (!governance.approved) {
+      throw new Error(
+        `LLM call not approved by governance: ${governance.modelConfig ? 'policy violation' : 'model not configured'}`,
+      );
+    }
+
+    // Get API key from model config or environment
+    const apiKey = await this.llmClient.getApiKey(workspaceId, provider, model);
+
+    if (!apiKey) {
+      throw new Error(
+        `No API key configured for ${provider}/${model}. Set it in workspace AI model config or via environment variable.`,
+      );
+    }
+
+    // Replace input text with PII-masked version in messages
+    const maskedMessages = options.messages.map((message) => {
+      if (message.role === 'system') return message;
+
+      // Apply the masking ratio: find and replace content that was masked
+      let maskedContent = message.content;
+
+      if (governance.maskedInput !== inputText) {
+        // PII was detected; re-mask this specific message
+        const originalSegments = inputText.split('\n');
+        const maskedSegments = governance.maskedInput.split('\n');
+        const segmentMap = new Map<string, string>();
+
+        for (let i = 0; i < originalSegments.length; i++) {
+          if (originalSegments[i] !== maskedSegments[i]) {
+            segmentMap.set(originalSegments[i], maskedSegments[i]);
+          }
+        }
+
+        for (const [original, masked] of segmentMap) {
+          if (maskedContent.includes(original)) {
+            maskedContent = maskedContent.replace(original, masked);
+          }
+        }
+      }
+
+      return { role: message.role, content: maskedContent };
+    });
+
+    // Make the LLM call
+    const response = await this.llmClient.callAndLog(
+      workspaceId,
+      userId,
+      options.feature,
+      {
+        provider,
+        model,
+        messages: maskedMessages,
+        temperature: options.temperature,
+        maxTokens: options.maxTokens,
+        jsonMode: options.jsonMode,
+      },
+      apiKey,
+    );
+
+    // Log completion audit
+    await this.auditRepo.save(
+      this.auditRepo.create({
+        workspaceId,
+        userId,
+        action: AuditAction.COMPLETION,
+        resource: `${provider}/${model}`,
+        details: `Completed ${options.feature}: ${response.tokensUsed.input}in/${response.tokensUsed.output}out tokens, $${response.cost.toFixed(4)}`,
+        isFlagged: false,
+        relatedLogId: governance.auditId,
+      }),
+    );
+
+    return response;
+  }
+
+  private getDefaultModel(provider: LLMProvider): string {
+    switch (provider) {
+      case 'openai':
+        return 'gpt-4o';
+      case 'anthropic':
+        return 'claude-sonnet-4-20250514';
+      case 'google':
+        return 'gemini-2.5-pro';
+      default:
+        return 'gpt-4o';
+    }
   }
 
   async getUsageCost(workspaceId: string): Promise<{

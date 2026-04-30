@@ -85,6 +85,9 @@ export class ProductStockEntity {
   @Column({ type: 'varchar', length: 50, nullable: true })
   serialNumber: string;
 
+  @Column({ type: 'date', nullable: true })
+  expiryDate: Date;
+
   @UpdateDateColumn()
   updatedAt: Date;
 }
@@ -125,6 +128,12 @@ export class StockMovementEntity {
 
   @Column({ type: 'decimal', precision: 12, scale: 4, nullable: true })
   unitCost: number;
+
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  batchNumber: string;
+
+  @Column({ type: 'date', nullable: true })
+  expiryDate: Date;
 
   @CreateDateColumn()
   createdAt: Date;

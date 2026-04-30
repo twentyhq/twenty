@@ -346,6 +346,148 @@ export class ProjectService {
     }));
   }
 
+  // --- TIMELINE ---
+  async getProjectTimeline(
+    projectId: string,
+  ): Promise<Array<{
+    id: string;
+    name: string;
+    phase: string;
+    startDate: string;
+    dueDate: string;
+    status: string;
+    assigneeId: string | null;
+    isMilestone: boolean;
+    dependencies: Array<{ taskId: string; type: string }>;
+  }>> {
+    const tasks = await this.taskRepo.find({
+      where: { projectId },
+      order: { startDate: 'ASC', sortOrder: 'ASC' },
+    });
+
+    return tasks.map((t) => ({
+      id: t.id,
+      name: t.name,
+      phase: t.phase ?? '',
+      startDate: t.startDate?.toISOString?.() ?? '',
+      dueDate: t.dueDate?.toISOString?.() ?? '',
+      status: t.status,
+      assigneeId: t.assigneeId ?? null,
+      isMilestone: t.isMilestone,
+      dependencies: t.dependencies ?? [],
+    }));
+  }
+
+  // --- CLONE ---
+  async cloneProject(
+    workspaceId: string,
+    projectId: string,
+    newName: string,
+  ): Promise<ProjectEntity> {
+    const source = await this.findProjectOrFail(projectId);
+    const tasks = await this.taskRepo.find({
+      where: { projectId },
+      order: { sortOrder: 'ASC' },
+    });
+
+    const cloned = await this.projectRepo.save(
+      this.projectRepo.create({
+        workspaceId,
+        name: newName,
+        description: source.description,
+        status: ProjectStatus.PLANNING,
+        methodology: source.methodology,
+        budget: source.budget,
+        revenue: 0,
+        actualCost: 0,
+        progressPercent: 0,
+        isRetainer: source.isRetainer,
+        retainerHoursTotal: source.retainerHoursTotal,
+        retainerHoursUsed: 0,
+      }),
+    );
+
+    for (const task of tasks) {
+      await this.taskRepo.save(
+        this.taskRepo.create({
+          projectId: cloned.id,
+          name: task.name,
+          description: task.description,
+          status: 'todo',
+          phase: task.phase,
+          priority: task.priority,
+          estimatedHours: task.estimatedHours,
+          isBillable: task.isBillable,
+          isMilestone: task.isMilestone,
+          sortOrder: task.sortOrder,
+        }),
+      );
+    }
+
+    return cloned;
+  }
+
+  // --- ACTIVE PROJECTS ---
+  async getActiveProjects(
+    workspaceId: string,
+  ): Promise<Array<{
+    id: string;
+    name: string;
+    progressPercent: number;
+    healthColor: string;
+    budget: number;
+    actualCost: number;
+    budgetUsedPercent: number;
+  }>> {
+    const projects = await this.projectRepo.find({
+      where: { workspaceId, status: ProjectStatus.ACTIVE },
+    });
+
+    return projects.map((p) => {
+      const budget = Number(p.budget);
+      const actualCost = Number(p.actualCost);
+      return {
+        id: p.id,
+        name: p.name,
+        progressPercent: p.progressPercent ?? 0,
+        healthColor: p.healthColor ?? 'green',
+        budget,
+        actualCost,
+        budgetUsedPercent: budget > 0 ? Math.round((actualCost / budget) * 100 * 100) / 100 : 0,
+      };
+    });
+  }
+
+  // --- TEAM WORKLOAD ---
+  async getTeamWorkload(
+    workspaceId: string,
+  ): Promise<Array<{ userId: string; assignedHours: number; taskCount: number; projectIds: string[] }>> {
+    const activeProjects = await this.projectRepo.find({
+      where: { workspaceId, status: ProjectStatus.ACTIVE },
+    });
+
+    const userMap = new Map<string, { assignedHours: number; taskCount: number; projectIds: Set<string> }>();
+
+    for (const project of activeProjects) {
+      const tasks = await this.taskRepo.find({ where: { projectId: project.id } });
+      for (const task of tasks) {
+        if (!task.assigneeId || task.status === 'done') continue;
+        const existing = userMap.get(task.assigneeId) ?? { assignedHours: 0, taskCount: 0, projectIds: new Set<string>() };
+        existing.assignedHours += task.estimatedHours - Number(task.loggedHours);
+        existing.taskCount++;
+        existing.projectIds.add(project.id);
+        userMap.set(task.assigneeId, existing);
+      }
+    }
+
+    return Array.from(userMap.entries()).map(([userId, data]) => ({
+      userId,
+      assignedHours: Math.max(0, Math.round(data.assignedHours * 100) / 100),
+      taskCount: data.taskCount,
+      projectIds: Array.from(data.projectIds),
+    })).sort((a, b) => b.assignedHours - a.assignedHours);
+  }
+
   private async recalculateProgress(projectId: string): Promise<void> {
     const tasks = await this.taskRepo.find({ where: { projectId } });
     if (!tasks.length) return;

@@ -1,4 +1,5 @@
-import { useGetFieldMetadataItemByIdOrThrow } from '@/object-metadata/hooks/useGetFieldMetadataItemById';
+import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
+import { getFieldMetadataItemById } from '@/object-metadata/utils/getFieldMetadataItemById';
 import { useGetInitialFilterValue } from '@/object-record/object-filter-dropdown/hooks/useGetInitialFilterValue';
 import { fieldMetadataItemIdUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemIdUsedInDropdownComponentState';
 import { objectFilterDropdownCurrentRecordFilterComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownCurrentRecordFilterComponentState';
@@ -15,6 +16,7 @@ import { isCompositeTypeNonFilterableByAnySubField } from '@/object-record/recor
 import { type CompositeFieldSubFieldName } from '@/settings/data-model/types/CompositeFieldSubFieldName';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { getFilterTypeFromFieldType, isDefined } from 'twenty-shared/utils';
@@ -42,10 +44,11 @@ export const useSelectFieldUsedInAdvancedFilterDropdown = () => {
     currentRecordFiltersComponentState,
   );
 
-  const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
+  const objectMetadataItems = useAtomComponentSelectorValue(
+    objectMetadataItemsSelector,
+  );
 
-  const { getFieldMetadataItemByIdOrThrow } =
-    useGetFieldMetadataItemByIdOrThrow();
+  const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
 
   const setSubFieldNameUsedInDropdown = useSetAtomComponentState(
     subFieldNameUsedInDropdownComponentState,
@@ -63,14 +66,16 @@ export const useSelectFieldUsedInAdvancedFilterDropdown = () => {
     recordFilterId,
     subFieldName,
   }: SelectFilterParams) => {
-    setFieldMetadataItemIdUsedInDropdown(fieldMetadataItemId);
-
-    const { fieldMetadataItem } =
-      getFieldMetadataItemByIdOrThrow(fieldMetadataItemId);
+    const { fieldMetadataItem } = getFieldMetadataItemById({
+      fieldMetadataId: fieldMetadataItemId,
+      objectMetadataItems,
+    });
 
     if (!isDefined(fieldMetadataItem)) {
       return;
     }
+
+    setFieldMetadataItemIdUsedInDropdown(fieldMetadataItemId);
 
     if (
       fieldMetadataItem.type === 'RELATION' ||

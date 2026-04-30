@@ -4,6 +4,7 @@ import { Repository, In, LessThan } from 'typeorm';
 import {
   ECommerceProductEntity, ECommerceOrderEntity, AbandonedCartEntity,
   ECommerceSubscriptionEntity, LoyaltyMemberEntity, BrowseEventEntity,
+  ProductReviewEntity,
   OrderStatus, CartStatus, SubscriptionStatus, LoyaltyTier, MarketplaceSource,
 } from './ecommerce.entity';
 
@@ -16,6 +17,7 @@ export class ECommerceService {
     @InjectRepository(ECommerceSubscriptionEntity) private readonly subRepo: Repository<ECommerceSubscriptionEntity>,
     @InjectRepository(LoyaltyMemberEntity) private readonly loyaltyRepo: Repository<LoyaltyMemberEntity>,
     @InjectRepository(BrowseEventEntity) private readonly browseRepo: Repository<BrowseEventEntity>,
+    @InjectRepository(ProductReviewEntity) private readonly reviewRepo: Repository<ProductReviewEntity>,
   ) {}
 
   // ==================== CATALOG ====================
@@ -280,5 +282,226 @@ export class ECommerceService {
       topProducts: products.map((p) => ({ name: p.name, sold: p.totalSold, revenue: p.totalSold * Number(p.basePrice) })),
       bySource,
     };
+  }
+
+  // ==================== MARKETPLACE SYNC ====================
+
+  async syncProductToShopify(
+    workspaceId: string,
+    productId: string,
+    shopifyConfig: { apiKey: string; shopDomain: string },
+  ): Promise<{ success: boolean; shopifyProductId?: string; error?: string }> {
+    const product = await this.productRepo.findOne({ where: { id: productId, workspaceId } });
+    if (!product) throw new NotFoundException(`Product ${productId} not found`);
+
+    const shopifyPayload = {
+      product: {
+        title: product.name,
+        body_html: product.description ?? '',
+        variants: [
+          {
+            price: String(product.basePrice),
+            sku: product.sku ?? '',
+          },
+        ],
+        images: (product.images ?? []).map((url) => ({ src: url })),
+      },
+    };
+
+    try {
+      const response = await fetch(
+        `https://${shopifyConfig.shopDomain}/admin/api/2024-01/products.json`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Shopify-Access-Token': shopifyConfig.apiKey,
+          },
+          body: JSON.stringify(shopifyPayload),
+        },
+      );
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        return { success: false, error: `Shopify API error: ${response.status} - ${errorText}` };
+      }
+
+      const result = await response.json();
+      product.syncedToShopify = true;
+      await this.productRepo.save(product);
+
+      return { success: true, shopifyProductId: String(result.product?.id) };
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Unknown error';
+      return { success: false, error: `Shopify sync failed: ${message}` };
+    }
+  }
+
+  async syncProductToMercadoLibre(
+    workspaceId: string,
+    productId: string,
+    mlConfig: { accessToken: string },
+  ): Promise<{ success: boolean; mlItemId?: string; error?: string }> {
+    const product = await this.productRepo.findOne({ where: { id: productId, workspaceId } });
+    if (!product) throw new NotFoundException(`Product ${productId} not found`);
+
+    const mlPayload = {
+      title: product.name,
+      category_id: 'MLCxxxx',
+      price: Number(product.basePrice),
+      currency_id: 'COP',
+      available_quantity: 1,
+      buying_mode: 'buy_it_now',
+      condition: 'new',
+      description: { plain_text: product.description ?? '' },
+      pictures: (product.images ?? []).map((url) => ({ source: url })),
+    };
+
+    try {
+      const response = await fetch(
+        'https://api.mercadolibre.com/items',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${mlConfig.accessToken}`,
+          },
+          body: JSON.stringify(mlPayload),
+        },
+      );
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        return { success: false, error: `MercadoLibre API error: ${response.status} - ${errorText}` };
+      }
+
+      const result = await response.json();
+      product.syncedToMercadoLibre = true;
+      await this.productRepo.save(product);
+
+      return { success: true, mlItemId: String(result.id) };
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Unknown error';
+      return { success: false, error: `MercadoLibre sync failed: ${message}` };
+    }
+  }
+
+  // ==================== WEBHOOKS ====================
+
+  async processWebhookShopify(
+    workspaceId: string,
+    event: string,
+    payload: Record<string, unknown>,
+  ): Promise<ECommerceOrderEntity | null> {
+    if (event === 'orders/create' || event === 'orders/paid') {
+      const lineItems = (payload['line_items'] as Array<Record<string, unknown>>) ?? [];
+      const items = lineItems.map((item) => ({
+        productId: String(item['product_id'] ?? ''),
+        name: String(item['title'] ?? ''),
+        sku: String(item['sku'] ?? ''),
+        quantity: Number(item['quantity'] ?? 1),
+        unitPrice: Number(item['price'] ?? 0),
+        discount: 0,
+        total: Number(item['price'] ?? 0) * Number(item['quantity'] ?? 1),
+      }));
+
+      const shippingPriceSet = payload['total_shipping_price_set'] as Record<string, Record<string, unknown>> | undefined;
+      const shippingAddress = payload['shipping_address'] as Record<string, unknown> | undefined;
+
+      const order = await this.createOrder(workspaceId, {
+        source: MarketplaceSource.SHOPIFY,
+        externalOrderId: String(payload['id'] ?? ''),
+        items,
+        totalAmount: Number(payload['total_price'] ?? 0),
+        taxAmount: Number(payload['total_tax'] ?? 0),
+        shippingCost: Number(shippingPriceSet?.['shop_money']?.['amount'] ?? 0),
+        paymentStatus: event === 'orders/paid' ? 'paid' : 'pending',
+        shippingAddress: String(shippingAddress?.['address1'] ?? ''),
+        customerNotes: String(payload['note'] ?? ''),
+      });
+
+      return order;
+    }
+
+    return null;
+  }
+
+  async processWebhookMercadoLibre(
+    workspaceId: string,
+    topic: string,
+    payload: Record<string, unknown>,
+  ): Promise<ECommerceOrderEntity | null> {
+    if (topic === 'orders' || topic === 'payments') {
+      const orderItems = (payload['order_items'] as Array<Record<string, unknown>>) ?? [];
+      const items = orderItems.map((item) => {
+        const innerItem = (item['item'] as Record<string, unknown>) ?? {};
+        return {
+          productId: String(innerItem['id'] ?? ''),
+          name: String(innerItem['title'] ?? ''),
+          sku: '',
+          quantity: Number(item['quantity'] ?? 1),
+          unitPrice: Number(item['unit_price'] ?? 0),
+          discount: 0,
+          total: Number(item['unit_price'] ?? 0) * Number(item['quantity'] ?? 1),
+        };
+      });
+
+      const order = await this.createOrder(workspaceId, {
+        source: MarketplaceSource.MERCADOLIBRE,
+        externalOrderId: String(payload['id'] ?? ''),
+        items,
+        totalAmount: Number(payload['total_amount'] ?? 0),
+        paymentStatus: topic === 'payments' ? 'paid' : 'pending',
+      });
+
+      return order;
+    }
+
+    return null;
+  }
+
+  // ==================== REVIEWS ====================
+
+  async getProductReviews(
+    workspaceId: string,
+    productId: string,
+  ): Promise<ProductReviewEntity[]> {
+    return this.reviewRepo.find({
+      where: { workspaceId, productId },
+      order: { createdAt: 'DESC' },
+    });
+  }
+
+  async submitReview(
+    workspaceId: string,
+    productId: string,
+    data: { contactId?: string; rating: number; comment?: string; verified?: boolean },
+  ): Promise<ProductReviewEntity> {
+    const product = await this.productRepo.findOne({ where: { id: productId, workspaceId } });
+    if (!product) throw new NotFoundException(`Product ${productId} not found`);
+
+    if (data.rating < 1 || data.rating > 5) {
+      throw new NotFoundException('Rating must be between 1 and 5');
+    }
+
+    const review = await this.reviewRepo.save(
+      this.reviewRepo.create({
+        workspaceId,
+        productId,
+        contactId: data.contactId,
+        rating: data.rating,
+        comment: data.comment,
+        verified: data.verified ?? false,
+      }),
+    );
+
+    // Update product average rating
+    const allReviews = await this.reviewRepo.find({ where: { workspaceId, productId } });
+    const totalRating = allReviews.reduce((sum, r) => sum + r.rating, 0);
+    product.avgRating = allReviews.length > 0 ? Math.round((totalRating / allReviews.length) * 100) / 100 : 0;
+    product.reviewCount = allReviews.length;
+    await this.productRepo.save(product);
+
+    return review;
   }
 }

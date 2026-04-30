@@ -1,5 +1,3 @@
-version: "3.8"
-
 services:
   db:
     container_name: twenty-db
@@ -10,6 +8,12 @@ services:
       POSTGRES_PASSWORD: ${PG_DATABASE_PASSWORD}
     volumes:
       - twenty-db-data:/var/lib/postgresql/data:Z
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U twenty -h localhost -d twenty"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: always
 
   redis:
     container_name: twenty-redis
@@ -17,10 +21,20 @@ services:
     command: ["--maxmemory-policy", "noeviction"]
     volumes:
       - twenty-redis-data:/data:Z
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: always
 
   server:
     container_name: twenty-server
-    image: twentycrm/twenty:latest
+    build:
+      context: ../../..
+      dockerfile: packages/twenty-docker/twenty/Dockerfile
+      target: twenty
+    image: twentycrm/twenty:podman-local
     environment:
       NODE_PORT: "3000"
       SERVER_URL: ${SERVER_URL}
@@ -32,11 +46,27 @@ services:
     volumes:
       - twenty-server-data:/app/docker-data:Z
     ports:
-      - 127.0.0.1:8080:3000
+      - 127.0.0.1:3000:3000
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:3000/healthz"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+      start_period: 45s
+    restart: always
 
   worker:
     container_name: twenty-worker
-    image: twentycrm/twenty:latest
+    build:
+      context: ../../..
+      dockerfile: packages/twenty-docker/twenty/Dockerfile
+      target: twenty
+    image: twentycrm/twenty:podman-local
     command: yarn worker:prod
     environment:
       SERVER_URL: ${SERVER_URL}
@@ -49,6 +79,35 @@ services:
     volumes:
       - twenty-server-data:/app/docker-data:Z
     init: true
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: always
+
+  frontend:
+    container_name: twenty-front
+    build:
+      context: ../../..
+      dockerfile: packages/twenty-docker/podman/frontend.Dockerfile
+      args:
+        REACT_APP_SERVER_BASE_URL: http://localhost:8080
+    image: twentycrm/twenty-front:podman-local
+    ports:
+      - 127.0.0.1:8080:80
+    environment:
+      REACT_APP_SERVER_BASE_URL: http://localhost:8080
+    depends_on:
+      server:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://127.0.0.1/"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    restart: always
 
 volumes:
   twenty-db-data:

@@ -7,9 +7,6 @@ export const getTokenPair = (): AuthTokenPair | undefined => {
   const stringTokenPair = cookieStorage.getItem('tokenPair');
 
   if (!isDefined(stringTokenPair)) {
-    // oxlint-disable-next-line no-console
-    console.log('tokenPair is undefined');
-
     return undefined;
   }
 

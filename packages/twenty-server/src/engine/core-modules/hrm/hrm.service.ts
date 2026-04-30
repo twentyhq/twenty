@@ -117,6 +117,184 @@ export class HRMService {
     return { enps: Math.round(((promoters - detractors) / surveys.length) * 100), promoters, detractors };
   }
 
+  // --- ONBOARDING ---
+  async generateOnboardingChecklist(
+    workspaceId: string,
+    employeeId: string,
+  ): Promise<Array<{ task: string; category: string; completed: boolean; dueOffset: number }>> {
+    const emp = await this.empRepo.findOne({ where: { id: employeeId, workspaceId } });
+    if (!emp) throw new NotFoundException(`Employee ${employeeId} not found`);
+
+    const checklist = [
+      { task: 'IT setup - laptop, email, and accounts provisioning', category: 'IT', completed: false, dueOffset: 0 },
+      { task: 'Access permissions - grant role-based system access', category: 'IT', completed: false, dueOffset: 1 },
+      { task: 'Welcome meeting with manager and team', category: 'Culture', completed: false, dueOffset: 1 },
+      { task: 'Policy acknowledgment - company handbook and compliance', category: 'Compliance', completed: false, dueOffset: 3 },
+      { task: 'Training enrollment - role-specific onboarding courses', category: 'Training', completed: false, dueOffset: 5 },
+    ];
+
+    return checklist;
+  }
+
+  // --- OVERTIME ---
+  async calculateOvertime(
+    workspaceId: string,
+    employeeId: string,
+    period: string,
+  ): Promise<{ regularHours: number; overtimeHours: number; overtimeAmount: number }> {
+    const emp = await this.empRepo.findOne({ where: { id: employeeId, workspaceId } });
+    if (!emp) throw new NotFoundException(`Employee ${employeeId} not found`);
+
+    const payrollRecords = await this.payrollRepo.find({ where: { workspaceId, employeeId, period } });
+    const totalOvertimeLogged = payrollRecords.reduce((sum, r) => sum + Number(r.overtime), 0);
+
+    // Standard: 8h/day, 48h/week = ~192h/month regular
+    const standardMonthlyHours = 192;
+    const hourlyRate = Number(emp.baseSalary) / standardMonthlyHours;
+    const overtimeMultiplier = 1.25;
+
+    const overtimeHours = totalOvertimeLogged > 0
+      ? totalOvertimeLogged / (hourlyRate * overtimeMultiplier) || 0
+      : 0;
+
+    const regularHours = standardMonthlyHours;
+    const overtimeAmount = Number(totalOvertimeLogged);
+
+    return {
+      regularHours,
+      overtimeHours: Math.round(overtimeHours * 100) / 100,
+      overtimeAmount: Math.round(overtimeAmount * 100) / 100,
+    };
+  }
+
+  // --- PAYSLIP ---
+  async generatePayslip(
+    workspaceId: string,
+    employeeId: string,
+    period: string,
+  ): Promise<{
+    employeeId: string;
+    employeeName: string;
+    period: string;
+    baseSalary: number;
+    overtime: number;
+    commissions: number;
+    bonuses: number;
+    grossPay: number;
+    deductions: {
+      health: number;
+      pension: number;
+      tax: number;
+      other: number;
+      totalDeductions: number;
+    };
+    netPay: number;
+  }> {
+    const emp = await this.empRepo.findOne({ where: { id: employeeId, workspaceId } });
+    if (!emp) throw new NotFoundException(`Employee ${employeeId} not found`);
+
+    const record = await this.payrollRepo.findOne({ where: { workspaceId, employeeId, period } });
+    if (!record) throw new NotFoundException(`No payroll record found for employee ${employeeId} in period ${period}`);
+
+    const grossPay = Number(record.baseSalary) + Number(record.overtime) + Number(record.commissions) + Number(record.bonuses);
+    const totalDeductions = Number(record.healthDeduction) + Number(record.pensionDeduction) + Number(record.taxWithholding) + Number(record.otherDeductions);
+
+    return {
+      employeeId,
+      employeeName: emp.fullName,
+      period,
+      baseSalary: Number(record.baseSalary),
+      overtime: Number(record.overtime),
+      commissions: Number(record.commissions),
+      bonuses: Number(record.bonuses),
+      grossPay,
+      deductions: {
+        health: Number(record.healthDeduction),
+        pension: Number(record.pensionDeduction),
+        tax: Number(record.taxWithholding),
+        other: Number(record.otherDeductions),
+        totalDeductions,
+      },
+      netPay: Number(record.netPay),
+    };
+  }
+
+  // --- COMPENSATION HISTORY ---
+  async getCompensationHistory(
+    workspaceId: string,
+    employeeId: string,
+  ): Promise<Array<{ period: string; baseSalary: number; grossPay: number; netPay: number; createdAt: Date }>> {
+    const emp = await this.empRepo.findOne({ where: { id: employeeId, workspaceId } });
+    if (!emp) throw new NotFoundException(`Employee ${employeeId} not found`);
+
+    const records = await this.payrollRepo.find({
+      where: { workspaceId, employeeId },
+      order: { createdAt: 'ASC' },
+    });
+
+    return records.map((r) => ({
+      period: r.period,
+      baseSalary: Number(r.baseSalary),
+      grossPay: Number(r.baseSalary) + Number(r.overtime) + Number(r.commissions) + Number(r.bonuses),
+      netPay: Number(r.netPay),
+      createdAt: r.createdAt,
+    }));
+  }
+
+  // --- TURNOVER ---
+  async calculateTurnover(
+    workspaceId: string,
+    startDate: Date,
+    endDate: Date,
+  ): Promise<{ turnoverRate: number; terminatedCount: number; avgHeadcount: number }> {
+    const allEmployees = await this.empRepo.find({ where: { workspaceId } });
+
+    const activeAtStart = allEmployees.filter(
+      (e) => e.hireDate && new Date(e.hireDate) <= startDate &&
+        (e.status !== EmployeeStatus.TERMINATED || (e.terminationDate && new Date(e.terminationDate) > startDate)),
+    ).length;
+
+    const activeAtEnd = allEmployees.filter(
+      (e) => e.hireDate && new Date(e.hireDate) <= endDate &&
+        (e.status !== EmployeeStatus.TERMINATED || (e.terminationDate && new Date(e.terminationDate) > endDate)),
+    ).length;
+
+    const avgHeadcount = (activeAtStart + activeAtEnd) / 2;
+
+    const terminatedInPeriod = allEmployees.filter(
+      (e) => e.status === EmployeeStatus.TERMINATED &&
+        e.terminationDate && new Date(e.terminationDate) >= startDate && new Date(e.terminationDate) <= endDate,
+    ).length;
+
+    const turnoverRate = avgHeadcount > 0
+      ? Math.round((terminatedInPeriod / avgHeadcount) * 100 * 100) / 100
+      : 0;
+
+    return { turnoverRate, terminatedCount: terminatedInPeriod, avgHeadcount: Math.round(avgHeadcount) };
+  }
+
+  // --- HEADCOUNT BY DEPARTMENT ---
+  async getHeadcountByDepartment(
+    workspaceId: string,
+  ): Promise<Array<{ department: string; count: number; avgSalary: number }>> {
+    const activeEmployees = await this.empRepo.find({ where: { workspaceId, status: EmployeeStatus.ACTIVE } });
+
+    const deptMap = new Map<string, { count: number; totalSalary: number }>();
+    for (const emp of activeEmployees) {
+      const dept = emp.department ?? 'Unassigned';
+      const existing = deptMap.get(dept) ?? { count: 0, totalSalary: 0 };
+      existing.count++;
+      existing.totalSalary += Number(emp.baseSalary);
+      deptMap.set(dept, existing);
+    }
+
+    return Array.from(deptMap.entries()).map(([department, data]) => ({
+      department,
+      count: data.count,
+      avgSalary: Math.round(data.totalSalary / data.count),
+    })).sort((a, b) => b.count - a.count);
+  }
+
   // --- ANALYTICS ---
   async getWorkforceAnalytics(workspaceId: string): Promise<{ headcount: number; avgSalary: number; turnoverRate: number; payrollCost: number }> {
     const active = await this.empRepo.find({ where: { workspaceId, status: EmployeeStatus.ACTIVE } });
