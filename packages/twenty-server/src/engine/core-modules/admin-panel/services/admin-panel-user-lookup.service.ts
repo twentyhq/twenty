@@ -14,9 +14,9 @@ import {
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
-import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
+import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { userValidator } from 'src/engine/core-modules/user/user.validate';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
@@ -208,16 +208,16 @@ export class AdminPanelUserLookupService {
     const firstUser = workspaceUsers.find((wu) => isDefined(wu.user))?.user;
 
     return {
-      user: {
-        id: firstUser?.id ?? '',
-        email: firstUser?.email ?? '',
-        firstName: firstUser?.firstName,
-        lastName: firstUser?.lastName,
-        avatarUrl: firstUser
-          ? (avatarUrlsByUserId.get(firstUser.id) ?? null)
-          : null,
-        createdAt: firstUser?.createdAt ?? new Date(),
-      },
+      user: isDefined(firstUser)
+        ? {
+            id: firstUser.id,
+            email: firstUser.email,
+            firstName: firstUser.firstName,
+            lastName: firstUser.lastName,
+            avatarUrl: avatarUrlsByUserId.get(firstUser.id) ?? null,
+            createdAt: firstUser.createdAt,
+          }
+        : null,
       workspaces: [workspaceInfo],
     };
   }

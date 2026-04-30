@@ -14,12 +14,14 @@ export const REFRESH_UPGRADE_STATUS = gql`
           createdAt
         }
       }
-      totalCount
-      upToDateCount
-      behindCount
-      failedCount
-      workspacesBehindIds
-      workspacesFailedIds
+      workspacesBehind {
+        id
+        name
+      }
+      workspacesFailed {
+        id
+        name
+      }
       computedAt
     }
   }

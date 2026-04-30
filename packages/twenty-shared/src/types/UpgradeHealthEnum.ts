@@ -1,5 +1,5 @@
 export enum UpgradeHealthEnum {
-  upToDate = 'upToDate',
-  behind = 'behind',
-  failed = 'failed',
+  UP_TO_DATE = 'UP_TO_DATE',
+  BEHIND = 'BEHIND',
+  FAILED = 'FAILED',
 }

@@ -1,8 +1,8 @@
 import { gql } from '@apollo/client';
 
-export const GET_ALL_WORKSPACES_UPGRADE_STATUS = gql`
-  query GetAllWorkspacesUpgradeStatus {
-    getAllWorkspacesUpgradeStatus {
+export const GET_INSTANCE_AND_ALL_WORKSPACES_UPGRADE_STATUS = gql`
+  query GetInstanceAndAllWorkspacesUpgradeStatus {
+    getInstanceAndAllWorkspacesUpgradeStatus {
       instanceUpgradeStatus {
         inferredVersion
         health
@@ -14,12 +14,14 @@ export const GET_ALL_WORKSPACES_UPGRADE_STATUS = gql`
           createdAt
         }
       }
-      totalCount
-      upToDateCount
-      behindCount
-      failedCount
-      workspacesBehindIds
-      workspacesFailedIds
+      workspacesBehind {
+        id
+        name
+      }
+      workspacesFailed {
+        id
+        name
+      }
       computedAt
     }
   }

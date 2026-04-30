@@ -401,10 +401,26 @@ const SettingsAdminIndicatorHealthStatus = lazy(() =>
   })),
 );
 
-const SettingsAdminUpgradeStatus = lazy(() =>
-  import('~/pages/settings/admin-panel/SettingsAdminUpgradeStatus').then(
+const SettingsAdminInferredVersion = lazy(() =>
+  import('~/pages/settings/admin-panel/SettingsAdminInferredVersion').then(
     (module) => ({
-      default: module.SettingsAdminUpgradeStatus,
+      default: module.SettingsAdminInferredVersion,
+    }),
+  ),
+);
+
+const SettingsAdminInstanceStatus = lazy(() =>
+  import('~/pages/settings/admin-panel/SettingsAdminInstanceStatus').then(
+    (module) => ({
+      default: module.SettingsAdminInstanceStatus,
+    }),
+  ),
+);
+
+const SettingsAdminWorkspacesStatus = lazy(() =>
+  import('~/pages/settings/admin-panel/SettingsAdminWorkspacesStatus').then(
+    (module) => ({
+      default: module.SettingsAdminWorkspacesStatus,
     }),
   ),
 );
@@ -798,8 +814,16 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
             }
           />
           <Route
-            path={SettingsPath.AdminPanelUpgradeStatus}
-            element={<SettingsAdminUpgradeStatus />}
+            path={SettingsPath.AdminPanelInferredVersion}
+            element={<SettingsAdminInferredVersion />}
+          />
+          <Route
+            path={SettingsPath.AdminPanelInstanceStatus}
+            element={<SettingsAdminInstanceStatus />}
+          />
+          <Route
+            path={SettingsPath.AdminPanelWorkspacesStatus}
+            element={<SettingsAdminWorkspacesStatus />}
           />
           <Route
             path={SettingsPath.AdminPanelIndicatorHealthStatus}

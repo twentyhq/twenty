@@ -1,5 +1,5 @@
 import { type WorkspaceInfo } from '@/settings/admin-panel/types/WorkspaceInfo';
-import { formatUpgradeCommandName } from '@/settings/admin-panel/utils/formatUpgradeCommandName';
+import { getUpgradeHealthStatusBadge } from '@/settings/admin-panel/utils/getUpgradeHealthStatusBadge';
 import { getWorkspaceSchemaName } from '@/settings/admin-panel/utils/getWorkspaceSchemaName';
 import { SettingsTableCard } from '@/settings/components/SettingsTableCard';
 import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceLogo';
@@ -9,12 +9,14 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useContext } from 'react';
-import { SettingsPath, UpgradeHealthEnum } from 'twenty-shared/types';
+import { SettingsPath } from 'twenty-shared/types';
 import {
+  formatUpgradeCommandName,
   getImageAbsoluteURI,
   getSettingsPath,
   isDefined,
 } from 'twenty-shared/utils';
+import { type GetUpgradeStatusQuery } from '~/generated-admin/graphql';
 import { AvatarOrIcon, LinkChip } from 'twenty-ui/components';
 import {
   H2Title,
@@ -34,16 +36,7 @@ import { formatDateTimeString } from '~/utils/string/formatDateTimeString';
 
 type SettingsAdminWorkspaceContentProps = {
   activeWorkspace: WorkspaceInfo | undefined;
-  workspaceUpgradeStatus?: {
-    health: UpgradeHealthEnum;
-    inferredVersion: string | null;
-    latestCommand: {
-      name: string;
-      status: string;
-      createdAt: string;
-      errorMessage: string | null;
-    } | null;
-  };
+  workspaceUpgradeStatus?: GetUpgradeStatusQuery['getUpgradeStatus'][number];
 };
 
 const StyledContainer = styled.div`
@@ -76,6 +69,10 @@ export const SettingsAdminWorkspaceContent = ({
   const getWorkspaceUrl = (workspaceUrls: WorkspaceInfo['workspaceUrls']) => {
     return workspaceUrls.customUrl ?? workspaceUrls.subdomainUrl;
   };
+
+  const upgradeHealthStatusBadge = getUpgradeHealthStatusBadge(
+    workspaceUpgradeStatus?.health,
+  );
 
   const workspaceInfoItems = [
     {
@@ -170,30 +167,8 @@ export const SettingsAdminWorkspaceContent = ({
                 label: t`Status`,
                 value: (
                   <Status
-                    color={
-                      workspaceUpgradeStatus.health ===
-                      UpgradeHealthEnum.upToDate
-                        ? 'green'
-                        : workspaceUpgradeStatus.health ===
-                            UpgradeHealthEnum.behind
-                          ? 'orange'
-                          : workspaceUpgradeStatus.health ===
-                              UpgradeHealthEnum.failed
-                            ? 'red'
-                            : 'gray'
-                    }
-                    text={
-                      workspaceUpgradeStatus.health ===
-                      UpgradeHealthEnum.upToDate
-                        ? t`Up to date`
-                        : workspaceUpgradeStatus.health ===
-                            UpgradeHealthEnum.behind
-                          ? t`Behind`
-                          : workspaceUpgradeStatus.health ===
-                              UpgradeHealthEnum.failed
-                            ? t`Failed`
-                            : t`Unknown`
-                    }
+                    color={upgradeHealthStatusBadge.color}
+                    text={upgradeHealthStatusBadge.label}
                     weight="medium"
                   />
                 ),
@@ -208,9 +183,11 @@ export const SettingsAdminWorkspaceContent = ({
                 label: t`Last command`,
                 value: (
                   <StyledCommandValue>
-                    {formatUpgradeCommandName(
-                      workspaceUpgradeStatus.latestCommand?.name,
-                    ) ?? t`None`}
+                    {workspaceUpgradeStatus.latestCommand?.name
+                      ? formatUpgradeCommandName(
+                          workspaceUpgradeStatus.latestCommand.name,
+                        )
+                      : t`None`}
                   </StyledCommandValue>
                 ),
               },

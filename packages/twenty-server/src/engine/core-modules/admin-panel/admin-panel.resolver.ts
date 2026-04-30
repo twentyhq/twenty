@@ -8,9 +8,9 @@ import { isDefined } from 'twenty-shared/utils';
 import { In, type Repository } from 'typeorm';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { AllWorkspacesUpgradeStatusDTO } from 'src/engine/core-modules/upgrade/dtos/all-workspaces-upgrade-status.dto';
+import { InstanceAndAllWorkspacesUpgradeStatusDTO } from 'src/engine/core-modules/upgrade/dtos/instance-and-all-workspaces-upgrade-status.dto';
 import { WorkspaceUpgradeStatusDTO } from 'src/engine/core-modules/upgrade/dtos/workspace-upgrade-status.dto';
-import { UpgradeStatusCacheService } from 'src/engine/core-modules/upgrade/services/upgrade-status-cache.service';
+import { UpgradeStatusService } from 'src/engine/core-modules/upgrade/services/upgrade-status.service';
 
 import { AdminResolver } from 'src/engine/api/graphql/graphql-config/decorators/admin-resolver.decorator';
 import { AdminPanelHealthService } from 'src/engine/core-modules/admin-panel/admin-panel-health.service';
@@ -107,7 +107,7 @@ export class AdminPanelResolver {
     private readonly modelsDevCatalogService: ModelsDevCatalogService,
     private readonly usageAnalyticsService: UsageAnalyticsService,
     private readonly maintenanceModeService: MaintenanceModeService,
-    private readonly upgradeStatusCacheService: UpgradeStatusCacheService,
+    private readonly upgradeStatusService: UpgradeStatusService,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
   ) {}
@@ -706,21 +706,15 @@ export class AdminPanelResolver {
   }
 
   @UseGuards(AdminPanelGuard)
-  @Query(() => AllWorkspacesUpgradeStatusDTO)
-  async getAllWorkspacesUpgradeStatus(): Promise<AllWorkspacesUpgradeStatusDTO> {
-    const status =
-      await this.upgradeStatusCacheService.getAllWorkspacesStatus();
-
-    return status;
+  @Query(() => InstanceAndAllWorkspacesUpgradeStatusDTO)
+  async getInstanceAndAllWorkspacesUpgradeStatus(): Promise<InstanceAndAllWorkspacesUpgradeStatusDTO> {
+    return this.upgradeStatusService.getInstanceAndAllWorkspacesStatus();
   }
 
   @UseGuards(AdminPanelGuard)
-  @Mutation(() => AllWorkspacesUpgradeStatusDTO)
-  async refreshUpgradeStatus(): Promise<AllWorkspacesUpgradeStatusDTO> {
-    const status =
-      await this.upgradeStatusCacheService.recomputeAllWorkspaces();
-
-    return status;
+  @Mutation(() => InstanceAndAllWorkspacesUpgradeStatusDTO)
+  async refreshUpgradeStatus(): Promise<InstanceAndAllWorkspacesUpgradeStatusDTO> {
+    return this.upgradeStatusService.refreshInstanceAndAllWorkspacesStatus();
   }
 
   @UseGuards(AdminPanelGuard)
@@ -729,9 +723,10 @@ export class AdminPanelResolver {
     @Args('workspaceIds', { type: () => [UUIDScalarType] })
     workspaceIds: string[],
   ): Promise<WorkspaceUpgradeStatusDTO[]> {
-    const statuses =
-      await this.upgradeStatusCacheService.getWorkspacesStatus(workspaceIds);
+    if (workspaceIds.length === 0) {
+      return [];
+    }
 
-    return statuses as WorkspaceUpgradeStatusDTO[];
+    return this.upgradeStatusService.getWorkspaceStatuses(workspaceIds);
   }
 }

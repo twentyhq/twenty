@@ -5,7 +5,7 @@ import { type ParsedUpgradeCommandOptions } from 'src/database/commands/upgrade-
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/services/upgrade-command-registry.service';
 import { UpgradeMigrationService } from 'src/engine/core-modules/upgrade/services/upgrade-migration.service';
-import { UpgradeStatusCacheService } from 'src/engine/core-modules/upgrade/services/upgrade-status-cache.service';
+import { UpgradeStatusService } from 'src/engine/core-modules/upgrade/services/upgrade-status.service';
 
 type WorkspaceCommandEntry = Pick<
   RegisteredWorkspaceCommand,
@@ -25,7 +25,7 @@ export class WorkspaceCommandRunnerService {
   constructor(
     private readonly twentyConfigService: TwentyConfigService,
     private readonly upgradeMigrationService: UpgradeMigrationService,
-    private readonly upgradeStatusCacheService: UpgradeStatusCacheService,
+    private readonly upgradeStatusService: UpgradeStatusService,
   ) {}
 
   async runWorkspaceCommands({
@@ -63,7 +63,7 @@ export class WorkspaceCommandRunnerService {
 
   private async safeInvalidateWorkspace(workspaceId: string): Promise<void> {
     try {
-      await this.upgradeStatusCacheService.invalidateWorkspace(workspaceId);
+      await this.upgradeStatusService.invalidateInstanceAndAllWorkspacesStatus();
     } catch (error) {
       this.logger.warn(
         `Failed to invalidate upgrade-status cache for workspace ${workspaceId}: ${

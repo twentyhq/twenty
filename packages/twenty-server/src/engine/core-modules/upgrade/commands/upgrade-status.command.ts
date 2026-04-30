@@ -5,6 +5,7 @@ import { Command, CommandRunner, Option } from 'nest-commander';
 
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UpgradeHealthEnum } from 'twenty-shared/types';
+import { formatUpgradeCommandName } from 'twenty-shared/utils';
 import {
   type InstanceUpgradeStatus,
   UpgradeStatusService,
@@ -23,9 +24,9 @@ type GroupedWorkspaceUpgradeStatuses = {
 };
 
 const HEALTH_LABELS: Record<UpgradeHealthEnum, string> = {
-  [UpgradeHealthEnum.upToDate]: chalk.green('Up to date'),
-  [UpgradeHealthEnum.behind]: chalk.yellow('Behind'),
-  [UpgradeHealthEnum.failed]: chalk.red('Failed'),
+  [UpgradeHealthEnum.UP_TO_DATE]: chalk.green('Up to date'),
+  [UpgradeHealthEnum.BEHIND]: chalk.yellow('Behind'),
+  [UpgradeHealthEnum.FAILED]: chalk.red('Failed'),
 };
 
 @Command({
@@ -146,10 +147,10 @@ export class UpgradeStatusCommand extends CommandRunner {
     }
 
     if (failed.length > 0) {
-      const groupedByCommand = new Map<string, WorkspaceUpgradeStatus[]>();
+      const groupedByCommand = new Map<string | null, WorkspaceUpgradeStatus[]>();
 
       for (const workspaceStatus of failed) {
-        const commandName = workspaceStatus.latestCommand?.name ?? 'unknown';
+        const commandName = workspaceStatus.latestCommand?.name ?? null;
 
         if (!groupedByCommand.has(commandName)) {
           groupedByCommand.set(commandName, []);
@@ -159,7 +160,11 @@ export class UpgradeStatusCommand extends CommandRunner {
       }
 
       for (const [commandName, statuses] of groupedByCommand) {
-        lines.push(chalk.red.bold(`  Failed at: ${commandName}`));
+        const formattedCommandName = commandName
+          ? formatUpgradeCommandName(commandName)
+          : 'unknown';
+
+        lines.push(chalk.red.bold(`  Failed at: ${formattedCommandName}`));
 
         for (const workspaceStatus of statuses) {
           lines.push(
@@ -201,7 +206,7 @@ export class UpgradeStatusCommand extends CommandRunner {
 
     const lines: string[] = [
       `${indent}Inferred version: ${status.inferredVersion ?? chalk.dim('unknown')}`,
-      `${indent}Latest command:   ${latestCommand.name}`,
+      `${indent}Latest command:   ${formatUpgradeCommandName(latestCommand.name)}`,
       `${indent}Status:           ${HEALTH_LABELS[status.health]}`,
       `${indent}Executed by:      ${latestCommand.executedByVersion}`,
       `${indent}At:               ${latestCommand.createdAt.toISOString()}`,
@@ -240,24 +245,30 @@ export class UpgradeStatusCommand extends CommandRunner {
     lines.push(`  Workspaces: ${parts.join(', ')} (${totalCount} total)`);
 
     if (behind.length > 0) {
-      const behindCounts = new Map<string, number>();
+      const behindCounts = new Map<string | null, number>();
 
       for (const status of behind) {
-        const commandName = status.latestCommand?.name ?? 'no commands';
+        const commandName = status.latestCommand?.name ?? null;
 
         behindCounts.set(commandName, (behindCounts.get(commandName) ?? 0) + 1);
       }
 
       for (const [commandName, count] of behindCounts) {
-        lines.push(chalk.yellow(`    ${count} behind at: ${commandName}`));
+        const formattedCommandName = commandName
+          ? formatUpgradeCommandName(commandName)
+          : 'no commands';
+
+        lines.push(
+          chalk.yellow(`    ${count} behind at: ${formattedCommandName}`),
+        );
       }
     }
 
     if (failed.length > 0) {
-      const failureCounts = new Map<string, number>();
+      const failureCounts = new Map<string | null, number>();
 
       for (const status of failed) {
-        const commandName = status.latestCommand?.name ?? 'unknown';
+        const commandName = status.latestCommand?.name ?? null;
 
         failureCounts.set(
           commandName,
@@ -266,7 +277,13 @@ export class UpgradeStatusCommand extends CommandRunner {
       }
 
       for (const [commandName, count] of failureCounts) {
-        lines.push(chalk.red(`    ${count} failed at: ${commandName}`));
+        const formattedCommandName = commandName
+          ? formatUpgradeCommandName(commandName)
+          : 'unknown';
+
+        lines.push(
+          chalk.red(`    ${count} failed at: ${formattedCommandName}`),
+        );
       }
     }
 
@@ -284,13 +301,13 @@ export class UpgradeStatusCommand extends CommandRunner {
 
     for (const status of workspaceStatuses) {
       switch (status.health) {
-        case UpgradeHealthEnum.upToDate:
+        case UpgradeHealthEnum.UP_TO_DATE:
           upToDate.push(status);
           break;
-        case UpgradeHealthEnum.behind:
+        case UpgradeHealthEnum.BEHIND:
           behind.push(status);
           break;
-        case UpgradeHealthEnum.failed:
+        case UpgradeHealthEnum.FAILED:
           failed.push(status);
           break;
       }

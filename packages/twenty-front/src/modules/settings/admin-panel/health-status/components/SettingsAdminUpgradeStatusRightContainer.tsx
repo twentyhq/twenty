@@ -1,55 +1,48 @@
+import { type UpgradeStatusRow } from '@/settings/admin-panel/health-status/components/SettingsAdminUpgradeStatusListCard';
+import { getUpgradeHealthStatusBadge } from '@/settings/admin-panel/utils/getUpgradeHealthStatusBadge';
+import { getWorkspacesUpgradeHealth } from '@/settings/admin-panel/utils/getWorkspacesUpgradeHealth';
+import { getWorkspacesUpgradeHealthText } from '@/settings/admin-panel/utils/getWorkspacesUpgradeHealthText';
 import { t } from '@lingui/core/macro';
 import { Status } from 'twenty-ui/display';
-import { UpgradeHealthEnum } from 'twenty-shared/types';
-
-type SettingsAdminUpgradeStatusRightContainerProps = {
-  instanceHealth: UpgradeHealthEnum | string;
-  behindCount: number;
-  failedCount: number;
-};
 
 export const SettingsAdminUpgradeStatusRightContainer = ({
-  instanceHealth,
-  behindCount,
-  failedCount,
-}: SettingsAdminUpgradeStatusRightContainerProps) => {
-  const instanceOk = instanceHealth === UpgradeHealthEnum.upToDate;
-  const workspacesOk = behindCount === 0 && failedCount === 0;
-
-  if (instanceOk && workspacesOk) {
+  item,
+}: {
+  item: UpgradeStatusRow;
+}) => {
+  if (item.kind === 'inferred-version') {
     return (
       <Status
-        color="green"
-        text={t`Instance and all workspaces are up to date`}
+        color="gray"
+        text={item.inferredVersion ?? t`Unknown`}
         weight="medium"
       />
     );
   }
 
-  if (!instanceOk && !workspacesOk) {
-    return (
-      <Status
-        color="red"
-        text={t`Instance and Workspaces not up to date`}
-        weight="medium"
-      />
-    );
+  if (item.kind === 'instance-status') {
+    const badge = getUpgradeHealthStatusBadge(item.instanceHealth);
+
+    return <Status color={badge.color} text={badge.label} weight="medium" />;
   }
 
-  if (!instanceOk) {
-    return (
-      <Status
-        color={instanceHealth === UpgradeHealthEnum.failed ? 'red' : 'orange'}
-        text={t`Instance not up to date`}
-        weight="medium"
-      />
-    );
-  }
+  const workspacesUpgradeHealth = getWorkspacesUpgradeHealth(
+    item.behindCount,
+    item.failedCount,
+  );
+  const workspacesUpgradeHealthBadge = getUpgradeHealthStatusBadge(
+    workspacesUpgradeHealth,
+  );
+  const workspacesUpgradeHealthText = getWorkspacesUpgradeHealthText(
+    item.behindCount,
+    item.failedCount,
+    workspacesUpgradeHealthBadge.label,
+  );
 
   return (
     <Status
-      color="orange"
-      text={t`Workspaces behind or failed`}
+      color={workspacesUpgradeHealthBadge.color}
+      text={workspacesUpgradeHealthText}
       weight="medium"
     />
   );

@@ -62,8 +62,8 @@ class WorkspaceInfoDTO {
 
 @ObjectType('UserLookup')
 export class UserLookup {
-  @Field(() => UserInfoDTO)
-  user: UserInfoDTO;
+  @Field(() => UserInfoDTO, { nullable: true })
+  user?: UserInfoDTO | null;
 
   @Field(() => [WorkspaceInfoDTO])
   workspaces: WorkspaceInfoDTO[];

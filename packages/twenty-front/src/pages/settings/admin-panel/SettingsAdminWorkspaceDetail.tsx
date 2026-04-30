@@ -2,7 +2,7 @@ import { useParams } from 'react-router-dom';
 
 import { useMutation, useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
-import { SettingsPath, type UpgradeHealthEnum } from 'twenty-shared/types';
+import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 
 import { currentUserState } from '@/auth/states/currentUserState';
@@ -15,7 +15,6 @@ import { SettingsAdminWorkspaceBillingContent } from '@/settings/admin-panel/com
 import { SettingsAdminWorkspaceContent } from '@/settings/admin-panel/components/SettingsAdminWorkspaceContent';
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
 import { GET_ADMIN_WORKSPACE_CHAT_THREADS } from '@/settings/admin-panel/graphql/queries/getAdminWorkspaceChatThreads';
-import { GET_UPGRADE_STATUS } from '@/settings/admin-panel/graphql/queries/getUpgradeStatus';
 import { WORKSPACE_LOOKUP_ADMIN_PANEL } from '@/settings/admin-panel/graphql/queries/workspaceLookupAdminPanel';
 import { useFeatureFlagState } from '@/settings/admin-panel/hooks/useFeatureFlagState';
 import { useHandleImpersonate } from '@/settings/admin-panel/hooks/useHandleImpersonate';
@@ -50,6 +49,7 @@ import {
   type FeatureFlagKey,
   type GetAdminWorkspaceChatThreadsQuery,
   type WorkspaceLookupAdminPanelQuery,
+  GetUpgradeStatusDocument,
   UpdateWorkspaceFeatureFlagDocument,
 } from '~/generated-admin/graphql';
 
@@ -107,26 +107,15 @@ export const SettingsAdminWorkspaceDetail = () => {
           effectiveTabId !== WORKSPACE_DETAIL_TAB_IDS.CHATS,
       },
     );
-  const { data: workspaceUpgradeStatusData } = useQuery<{
-    getUpgradeStatus: Array<{
-      workspaceId: string;
-      displayName: string | null;
-      inferredVersion: string | null;
-      health: UpgradeHealthEnum;
-      latestCommand: {
-        name: string;
-        status: string;
-        executedByVersion: string;
-        errorMessage: string | null;
-        createdAt: string;
-      } | null;
-    }>;
-  }>(GET_UPGRADE_STATUS, {
-    client: apolloAdminClient,
-    variables: { workspaceIds: workspaceId ? [workspaceId] : [] },
-    skip: !workspaceId,
-    fetchPolicy: 'network-only',
-  });
+  const { data: workspaceUpgradeStatusData } = useQuery(
+    GetUpgradeStatusDocument,
+    {
+      client: apolloAdminClient,
+      variables: { workspaceIds: workspaceId ? [workspaceId] : [] },
+      skip: !workspaceId,
+      fetchPolicy: 'network-only',
+    },
+  );
 
   const threads = threadsData?.getAdminWorkspaceChatThreads ?? [];
 
