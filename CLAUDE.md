@@ -224,53 +224,68 @@ This handles everything: starts Postgres + Redis (auto-detects local services vs
 
 ## CCG Central — Enterprise Modules (Fork)
 
-This fork extends Twenty CRM with 33 enterprise modules for a multi-tenant SaaS platform targeting LATAM markets. All modules are pure expansion — zero core modifications.
+This fork extends Twenty CRM with 42+ enterprise modules for a multi-tenant SaaS platform targeting LATAM markets. All modules are pure expansion — zero core modifications.
 
 ### Architecture
 
-- **33 NestJS modules** registered in `core-engine.module.ts`
+- **42+ NestJS modules** registered in `core-engine.module.ts`
+- **95+ resolver files**, **49 controller files**, **100+ services**, **92 entity files**
+- **59 feature flag keys** (19 base + 31 module flags + 7 fiscal country flags + 2 extra)
 - **0 cross-module dependencies** — each module extractable to microservice
 - **workspaceId on every entity** — multi-tenant via RLS
 - **Feature flags** for module activation per workspace (`FeatureFlagKey.ts`)
 - **Event bus bridge** via `SaaSPlatformService.emitEvent()`
-- **175 TypeScript files, 0 compilation errors**
+- **20 frontend settings pages** for enterprise module configuration
+- **Multi-provider LLM client** (OpenAI, Anthropic, Google) with cost tracking
+- **7 LATAM fiscal countries** (CO, MX, DO, CL, PE, AR, BR)
 
 ### Enterprise Module Map
 
 ```
 engine/core-modules/
 ├── sales-execution/        # Quotas, territories, deal blueprints
-├── customer-success/       # Health score, NPS, playbooks, QBR
-├── cpq/                    # Price books, quotes, line items
-├── abm/                    # Target accounts, ABM campaigns
-├── omnicanal/              # Sequences, WhatsApp, SMS, unified inbox, chat widget
-├── ai-ml/                  # Lead scoring, sentiment, NLP, NBA, enrichment
-├── bi-analytics/           # Dashboard widgets, real SQL queries
-├── ai-agents/              # SDR, CSM, Deal Qual, Meeting Notes, CI, Contract
-├── accounts-receivable/    # Invoicing, payments, dunning, disputes, portal
-├── it-asset-management/    # Assets, licenses, depreciation, ITSM
-├── trade-import/           # POs, shipments, customs, landed cost, OCR, carbon
-├── accounting-integration/ # ERP sync, tax rules, revenue recognition, commissions
-├── fintech/                # Embedded payments, e-invoicing DIAN/SAT, partners
-├── hrm/                    # Employees, recruitment, payroll CO, performance, leaves
-├── contract-lifecycle/     # CLM, redlining, signatures, risk scoring
+├── customer-success/       # Health score, NPS, playbooks, QBR, expansion revenue
+├── cpq/                    # Price books, quotes, line items, approval workflow
+├── abm/                    # Target accounts, ABM campaigns, engagement tracking
+├── omnicanal/              # Sequences, WhatsApp, SMS, unified inbox, chat widget, social signals
+├── ai-ml/                  # Lead scoring, sentiment, NLP, NBA, ICP, enrichment, deal health
+├── bi-analytics/           # Dashboard widgets, reports, KPIs, time series, top performers
+├── ai-agents/              # SDR, CSM, Deal Qual, Meeting Notes, Data Hygiene, CI, Contract, Prospecting
+├── ai-governance/          # LLM client, PII masking, cost tracking, audit trail, model config
+├── accounts-receivable/    # Invoicing, payments, dunning, disputes, portal, cash forecast
+├── it-asset-management/    # Assets, licenses, depreciation, SaaS spend, change requests
+├── trade-import/           # POs, shipments, customs, landed cost, OCR, carbon footprint
+├── accounting-integration/ # ERP sync, tax rules, revenue recognition, commissions, P&L
+├── fintech/                # Embedded payments, e-invoicing DIAN/SAT, partner channels
+├── hrm/                    # Employees, org chart, payroll CO, performance, leaves, eNPS
+├── contract-lifecycle/     # CLM, redlining, signatures, risk scoring, analytics
 ├── field-service/          # Work orders, technicians, dispatch, service contracts
-├── procurement/            # Purchase requests, RFQ, vendor scorecards
-├── event-management/       # Events, registrations, QR check-in, ROI
-├── lms/                    # Courses, enrollments, quizzes, certifications
-├── fleet/                  # Vehicles, drivers, routes, fuel, maintenance, ePOD
-├── asterisk/               # VoIP, SIP, call logs, IVR, auto-dialer, queues
-├── prm/                    # Partner lifecycle, deal registration, MDF, SPIFFs
-├── ecommerce/              # Products, orders, carts, subscriptions, loyalty, CLV
-├── saas-platform/          # Tenant provisioning, module activation, billing, events
-├── data-residency/         # Regional hosting, migration
-├── mobile/                 # Apps, push notifications (APNS/FCM)
+├── procurement/            # Purchase requests, RFQ, vendor scorecards, spend analysis
+├── event-management/       # Events, registrations, QR check-in, ROI, cloning
+├── lms/                    # Courses, enrollments, quizzes, certifications, training ROI
+├── fleet/                  # Vehicles, drivers, routes, fuel, delivery tracking, ePOD
+├── asterisk/               # VoIP, SIP, call logs, IVR, auto-dialer, queues, analytics
+├── prm/                    # Partner lifecycle, deal registration, MDF, SPIFFs, leaderboard
+├── ecommerce/              # Products, orders, carts, subscriptions, loyalty, CLV, cohorts
+├── saas-platform/          # Tenant provisioning, module activation, billing, event bus
+├── data-residency/         # Regional hosting, replication, migration, data deletion
+├── mobile/                 # Apps, push notifications (APNS/FCM), device management
+├── mobile-native/          # Biometrics, offline queue, location check-in, nearby clients
 ├── offline-sync/           # Change tracking, conflict resolution
-└── sandbox/                # Test environments
+├── sandbox/                # Test environments
+├── integration/            # Integration hub
+├── hyper-personalization/  # Profiles, rules, events, personalized content, segments
+├── plg-intelligence/       # Product usage, PQL scoring, trial metrics, conversion prediction
+├── banking-latam/          # Bank connections, reconciliation, payment files
+├── incident-management/    # Incidents, severity, timeline, postmortem, MTTR
+├── revenue-waterfall/      # ARR breakdown, NRR, bookings, churn, expansion
+├── sales-coaching/         # Coaching sessions, call review, scorecards, skill gaps
+├── tenant-wizard/          # Onboarding wizard, industry templates, demo data, validation
+└── security/               # IP allowlist, device sessions
 
 modules/
-├── support-ticket/         # Helpdesk, SLA, comments, CSAT
-├── knowledge-base/         # Articles, categories, search, deflection
+├── support-ticket/         # Helpdesk, SLA, comments, CSAT, escalation, merge
+├── knowledge-base/         # Articles, categories, search, deflection rate
 ├── inventory/              # Stock, warehouses, movements, suppliers
 ├── marketing-campaign/     # Campaigns, lead scoring, attribution
 ├── gamification/           # Leaderboards, badges, challenges
