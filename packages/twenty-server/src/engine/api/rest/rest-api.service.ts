@@ -41,7 +41,13 @@ export class RestApiService {
         },
       });
     } catch (err) {
-      throw new RestApiException(err.response.data.errors);
+      // For GraphQL-level errors, err.response.data.errors is populated
+      if (err.response?.data?.errors) {
+        throw new RestApiException(err.response.data.errors);
+      }
+      // For network-level errors (ECONNREFUSED, timeout, etc.) err.response is
+      // undefined — re-throw so NestJS can log and return a proper 500 response
+      throw err;
     }
 
     if (response.data.errors?.length) {
