@@ -6,7 +6,8 @@ export const turnPlainDateIntoUserTimeZoneInstantString = (
 ) => {
   try {
     return plainDate.toZonedDateTime(userTimeZone).toInstant().toString();
-  } catch (error) {
+  } catch {
+    // oxlint-disable-next-line no-console
     console.warn(
       `Invalid timezone "${userTimeZone}" provided to turnPlainDateIntoUserTimeZoneInstantString. Falling back to UTC.`,
     );

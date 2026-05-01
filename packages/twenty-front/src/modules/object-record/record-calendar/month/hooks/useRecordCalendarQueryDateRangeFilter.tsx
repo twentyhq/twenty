@@ -11,6 +11,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { t } from '@lingui/core/macro';
 import { type Temporal } from 'temporal-polyfill';
+import { FieldMetadataType } from 'twenty-shared/types';
 import {
   combineFilters,
   computeRecordGqlOperationFilter,
@@ -60,6 +61,15 @@ export const useRecordCalendarQueryDateRangeFilter = (
     };
   }
 
+  const dateRangeFilterFieldMetadataId = currentView.calendarFieldMetadataId;
+
+  const calendarFieldMetadataItem = objectMetadataItem.fields.find(
+    (field) => field.id === dateRangeFilterFieldMetadataId,
+  );
+
+  const isDateField =
+    calendarFieldMetadataItem?.type === FieldMetadataType.DATE;
+
   const firstDayOfFirstWeekISOString =
     turnPlainDateIntoUserTimeZoneInstantString(
       firstDayOfFirstWeek,
@@ -72,14 +82,6 @@ export const useRecordCalendarQueryDateRangeFilter = (
       userTimezone,
     );
 
-  const dateRangeFilterFieldMetadataId = currentView.calendarFieldMetadataId;
-
-  const calendarFieldMetadataItem = objectMetadataItem.fields.find(
-    (field) => field.id === dateRangeFilterFieldMetadataId,
-  );
-
-  const isDateField = calendarFieldMetadataItem?.type === 'DATE';
-
   const dateRangeFilterAfter: RecordFilter = {
     id: DATE_RANGE_FILTER_AFTER_ID,
     fieldMetadataId: dateRangeFilterFieldMetadataId,
@@ -87,7 +89,7 @@ export const useRecordCalendarQueryDateRangeFilter = (
       ? firstDayOfFirstWeek.toString()
       : firstDayOfFirstWeekISOString,
     operand: RecordFilterOperand.IS_AFTER,
-    type: isDateField ? 'DATE' : 'DATE_TIME',
+    type: isDateField ? FieldMetadataType.DATE : FieldMetadataType.DATE_TIME,
     label: t`After or equal`,
     displayValue: `${firstDayOfFirstWeek.toString()}`,
   };
@@ -99,7 +101,7 @@ export const useRecordCalendarQueryDateRangeFilter = (
       ? lastDayOfLastWeek.add({ days: 1 }).toString()
       : nextDayAfterLastDayOfLastWeekISOString,
     operand: RecordFilterOperand.IS_BEFORE,
-    type: isDateField ? 'DATE' : 'DATE_TIME',
+    type: isDateField ? FieldMetadataType.DATE : FieldMetadataType.DATE_TIME,
     label: t`Before`,
     displayValue: `${lastDayOfLastWeek.toString()}`,
   };

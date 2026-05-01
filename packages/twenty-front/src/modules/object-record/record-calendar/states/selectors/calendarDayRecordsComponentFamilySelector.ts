@@ -74,7 +74,8 @@ export const calendarDayRecordIdsComponentFamilySelector =
                 recordDateAsPlainDateInTimeZone = instant
                   .toZonedDateTimeISO(timeZone)
                   .toPlainDate();
-              } catch (error) {
+              } catch {
+                // oxlint-disable-next-line no-console
                 console.warn(
                   `Invalid timezone "${timeZone}" provided to calendarDayRecordIdsComponentFamilySelector. Falling back to UTC.`,
                 );
@@ -83,7 +84,7 @@ export const calendarDayRecordIdsComponentFamilySelector =
                   .toPlainDate();
               }
             }
-          } catch (error) {
+          } catch {
             return false;
           }
 

@@ -2,7 +2,6 @@ import { Temporal } from 'temporal-polyfill';
 
 import { parseToPlainDateOrThrow } from '@/utils/date/parseToPlainDateOrThrow';
 import { turnJSDateToPlainDate } from '@/utils/date/turnJSDateToPlainDate';
-import { turnPlainDateIntoUserTimeZoneInstantString } from '@/utils/date/turnPlainDateIntoUserTimeZoneInstantString';
 import { turnPlainDateToShiftedDateInSystemTimeZone } from '@/utils/date/turnPlainDateToShiftedDateInSystemTimeZone';
 
 describe('parseToPlainDateOrThrow', () => {
@@ -41,14 +40,6 @@ describe('turnJSDateToPlainDate', () => {
   });
 });
 
-describe('turnPlainDateIntoUserTimeZoneInstantString', () => {
-  it('should convert a PlainDate to an instant string in the given timezone', () => {
-    const plainDate = Temporal.PlainDate.from('2024-03-15');
-    const result = turnPlainDateIntoUserTimeZoneInstantString(plainDate, 'UTC');
-
-    expect(result).toBe('2024-03-15T00:00:00Z');
-  });
-});
 
 describe('turnPlainDateToShiftedDateInSystemTimeZone', () => {
   it('should return a JS Date for the given PlainDate', () => {

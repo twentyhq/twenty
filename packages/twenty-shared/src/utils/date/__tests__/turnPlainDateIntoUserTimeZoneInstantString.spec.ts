@@ -1,20 +1,29 @@
 import { Temporal } from 'temporal-polyfill';
+
 import { turnPlainDateIntoUserTimeZoneInstantString } from '../turnPlainDateIntoUserTimeZoneInstantString';
 
 describe('turnPlainDateIntoUserTimeZoneInstantString', () => {
-  const plainDate = Temporal.PlainDate.from('2024-01-01');
+  it('should convert a PlainDate to an instant string in UTC', () => {
+    const plainDate = Temporal.PlainDate.from('2024-01-01');
+    const result = turnPlainDateIntoUserTimeZoneInstantString(plainDate, 'UTC');
 
-  it('should convert plain date to instant string in specified timezone', () => {
-    const result = turnPlainDateIntoUserTimeZoneInstantString(plainDate, 'Asia/Kolkata');
-    expect(result).toBe('2024-01-01T00:00:00+05:30[Asia/Kolkata]');
+    expect(result).toBe('2024-01-01T00:00:00Z');
   });
 
-  it('should fallback to UTC and warn when invalid timezone is provided', () => {
+  it('should convert a PlainDate to an instant string in Asia/Kolkata', () => {
+    const plainDate = Temporal.PlainDate.from('2024-01-01');
+    const result = turnPlainDateIntoUserTimeZoneInstantString(plainDate, 'Asia/Kolkata');
+
+    expect(result).toBe('2023-12-31T18:30:00Z');
+  });
+
+  it('should fallback to UTC when an invalid timezone is provided', () => {
+    const plainDate = Temporal.PlainDate.from('2024-01-01');
     const warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
     
     const result = turnPlainDateIntoUserTimeZoneInstantString(plainDate, 'INVALID_TZ');
-    
-    expect(result).toBe('2024-01-01T00:00:00Z[UTC]');
+
+    expect(result).toBe('2024-01-01T00:00:00Z');
     expect(warnSpy).toBeCalledWith(
       expect.stringContaining('Invalid timezone "INVALID_TZ"'),
     );
