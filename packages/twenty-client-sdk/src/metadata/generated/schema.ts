@@ -2836,6 +2836,8 @@ export interface Mutation {
 
 export type AnalyticsType = 'PAGEVIEW' | 'TRACK'
 
+export type EmailVerificationTrigger = 'SIGN_UP' | 'EMAIL_UPDATE'
+
 export type WorkspaceMigrationActionType = 'delete' | 'create' | 'update'
 
 export type FileFolder = 'ProfilePicture' | 'WorkspaceLogo' | 'Attachment' | 'PersonPicture' | 'CorePicture' | 'File' | 'AgentChat' | 'BuiltLogicFunction' | 'BuiltFrontComponent' | 'PublicAsset' | 'Source' | 'FilesField' | 'Dependencies' | 'Workflow' | 'EmailAttachment' | 'AppTarball' | 'GeneratedSdkClient'
@@ -5820,7 +5822,7 @@ export interface MutationGenqlSelection{
     deleteUserFromWorkspace?: (UserWorkspaceGenqlSelection & { __args: {workspaceMemberIdToDelete: Scalars['String']} })
     updateWorkspaceMemberSettings?: { __args: {input: UpdateWorkspaceMemberSettingsInput} }
     updateUserEmail?: { __args: {newEmail: Scalars['String'], verifyEmailRedirectPath?: (Scalars['String'] | null)} }
-    resendEmailVerificationToken?: (ResendEmailVerificationTokenGenqlSelection & { __args: {email: Scalars['String'], origin: Scalars['String']} })
+    resendEmailVerificationToken?: (ResendEmailVerificationTokenGenqlSelection & { __args: {email: Scalars['String'], verificationTrigger?: (EmailVerificationTrigger | null), origin: Scalars['String']} })
     activateWorkspace?: (WorkspaceGenqlSelection & { __args: {data: ActivateWorkspaceInput} })
     updateWorkspace?: (WorkspaceGenqlSelection & { __args: {data: UpdateWorkspaceInput} })
     deleteCurrentWorkspace?: WorkspaceGenqlSelection
@@ -8805,6 +8807,11 @@ export const enumUsageOperationType = {
 export const enumAnalyticsType = {
    PAGEVIEW: 'PAGEVIEW' as const,
    TRACK: 'TRACK' as const
+}
+
+export const enumEmailVerificationTrigger = {
+   SIGN_UP: 'SIGN_UP' as const,
+   EMAIL_UPDATE: 'EMAIL_UPDATE' as const
 }
 
 export const enumWorkspaceMigrationActionType = {
