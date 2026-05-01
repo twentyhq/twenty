@@ -15,7 +15,7 @@ export const useHandleResendEmailVerificationToken = () => {
   const { origin } = useOrigin();
 
   const handleResendEmailVerificationToken = useCallback(
-    (email: string | null) => {
+    (email: string | null, verificationTrigger?: string) => {
       return async () => {
         if (!email) {
           enqueueErrorSnackBar({
@@ -29,6 +29,7 @@ export const useHandleResendEmailVerificationToken = () => {
             variables: {
               email,
               origin,
+              ...(verificationTrigger ? { verificationTrigger } : {}),
             },
           });
 

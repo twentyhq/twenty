@@ -123,6 +123,7 @@ export class EmailVerificationService {
     email: string,
     workspace: WorkspaceDomainConfig | undefined,
     locale: keyof typeof APP_LOCALES,
+    verificationTrigger: EmailVerificationTrigger = EmailVerificationTrigger.SIGN_UP,
   ) {
     if (!this.twentyConfigService.get('IS_EMAIL_VERIFICATION_REQUIRED')) {
       throw new EmailVerificationException(
@@ -176,7 +177,7 @@ export class EmailVerificationService {
       email,
       workspace,
       locale,
-      verificationTrigger: EmailVerificationTrigger.SIGN_UP,
+      verificationTrigger,
     });
 
     return { success: true };
