@@ -40,7 +40,6 @@ describe('turnJSDateToPlainDate', () => {
   });
 });
 
-
 describe('turnPlainDateToShiftedDateInSystemTimeZone', () => {
   it('should return a JS Date for the given PlainDate', () => {
     const plainDate = Temporal.PlainDate.from('2024-03-15');
