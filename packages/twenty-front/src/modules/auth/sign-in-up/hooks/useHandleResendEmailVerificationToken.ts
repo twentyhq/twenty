@@ -5,7 +5,7 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { t } from '@lingui/core/macro';
 import { useMutation } from '@apollo/client/react';
-import { ResendEmailVerificationTokenDocument } from '~/generated-metadata/graphql';
+import { EmailVerificationTrigger, ResendEmailVerificationTokenDocument } from '~/generated-metadata/graphql';
 
 export const useHandleResendEmailVerificationToken = () => {
   const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
@@ -15,7 +15,10 @@ export const useHandleResendEmailVerificationToken = () => {
   const { origin } = useOrigin();
 
   const handleResendEmailVerificationToken = useCallback(
-    (email: string | null) => {
+    (
+      email: string | null,
+      verificationTrigger?: EmailVerificationTrigger,
+    ) => {
       return async () => {
         if (!email) {
           enqueueErrorSnackBar({
@@ -29,6 +32,7 @@ export const useHandleResendEmailVerificationToken = () => {
             variables: {
               email,
               origin,
+              ...(verificationTrigger && { verificationTrigger }),
             },
           });
 
