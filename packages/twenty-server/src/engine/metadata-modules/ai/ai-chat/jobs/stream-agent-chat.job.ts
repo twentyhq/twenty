@@ -449,6 +449,15 @@ export class StreamAgentChatJob {
       return;
     }
 
+    const threadStatus = await this.threadRepository.findOne({
+      where: { id: threadId },
+      select: ['id', 'deletedAt'],
+    });
+
+    if (!threadStatus || threadStatus.deletedAt) {
+      return;
+    }
+
     const userMessage = await userMessagePromise;
 
     await this.agentChatService.addMessage({

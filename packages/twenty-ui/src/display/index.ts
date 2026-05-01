@@ -81,6 +81,7 @@ export { IllustrationIconWrapper } from './icon/components/IllustrationIconWrapp
 export type { TablerIconsProps } from './icon/components/TablerIcons';
 export {
   Icon123,
+  IconAdjustments,
   IconAlertCircle,
   IconAlertTriangle,
   IconAlignBoxLeftTop,
@@ -90,7 +91,6 @@ export {
   IconApi,
   IconApps,
   IconAppWindow,
-  IconWindow,
   IconArchive,
   IconArchiveOff,
   IconArrowBackUp,
@@ -507,6 +507,7 @@ export {
   IconVideo,
   IconWand,
   IconWebhook,
+  IconWindow,
   IconWorld,
   IconX,
 } from './icon/components/TablerIcons';
