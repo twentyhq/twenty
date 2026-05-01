@@ -5,6 +5,8 @@ import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
+import { ApplicationOAuthProviderException } from 'src/engine/core-modules/application/application-oauth-provider/application-oauth-provider.exception';
+import { AppOAuthRefreshAccessTokenService } from 'src/engine/core-modules/application/application-oauth-provider/refresh/services/app-oauth-refresh-tokens.service';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -31,6 +33,7 @@ export class ConnectedAccountRefreshTokensService {
   constructor(
     private readonly googleAPIRefreshAccessTokenService: GoogleAPIRefreshAccessTokenService,
     private readonly microsoftAPIRefreshAccessTokenService: MicrosoftAPIRefreshAccessTokenService,
+    private readonly appOAuthRefreshAccessTokenService: AppOAuthRefreshAccessTokenService,
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     @InjectRepository(ConnectedAccountEntity)
     private readonly connectedAccountRepository: Repository<ConnectedAccountEntity>,
@@ -99,7 +102,8 @@ export class ConnectedAccountRefreshTokensService {
   ): Promise<boolean> {
     switch (connectedAccount.provider) {
       case ConnectedAccountProvider.GOOGLE:
-      case ConnectedAccountProvider.MICROSOFT: {
+      case ConnectedAccountProvider.MICROSOFT:
+      case ConnectedAccountProvider.APP: {
         if (!connectedAccount.lastCredentialsRefreshedAt) {
           return false;
         }
@@ -141,6 +145,24 @@ export class ConnectedAccountRefreshTokensService {
           return await this.microsoftAPIRefreshAccessTokenService.refreshTokens(
             refreshToken,
           );
+        case ConnectedAccountProvider.APP:
+          try {
+            return await this.appOAuthRefreshAccessTokenService.refreshTokens(
+              connectedAccount,
+              refreshToken,
+            );
+          } catch (error) {
+            // Translate the engine-side exception so callers see a single
+            // exception class regardless of provider, matching what
+            // Google/Microsoft drivers throw.
+            if (error instanceof ApplicationOAuthProviderException) {
+              throw new ConnectedAccountRefreshAccessTokenException(
+                error.message,
+                ConnectedAccountRefreshAccessTokenExceptionCode.INVALID_REFRESH_TOKEN,
+              );
+            }
+            throw error;
+          }
         case ConnectedAccountProvider.IMAP_SMTP_CALDAV:
         case ConnectedAccountProvider.OIDC:
         case ConnectedAccountProvider.SAML:

@@ -17,6 +17,8 @@ export { DEFAULT_API_URL_NAME } from './constants/DefaultApiUrlName';
 export { DEFAULT_APP_ACCESS_TOKEN_NAME } from './constants/DefaultAppAccessTokenName';
 export { GENERATED_DIR } from './constants/GeneratedDirectory';
 export { NODE_ESM_CJS_BANNER } from './constants/NodeEsmCjsBanner';
+export { OAUTH_ENV_VAR_FIELD } from './constants/OAuthEnvVarField';
+export { OAUTH_ENV_VAR_PREFIX } from './constants/OAuthEnvVarPrefix';
 export { OUTPUT_DIR } from './constants/OutputDirectory';
 export { TWENTY_STANDARD_APPLICATION_NAME } from './constants/TwentyStandardApplicationName';
 export { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from './constants/TwentyStandardApplicationUniversalIdentifier';
@@ -39,6 +41,9 @@ export type {
 } from './logicFunctionManifestType';
 export type { Manifest } from './manifestType';
 export type { NavigationMenuItemManifest } from './navigationMenuItemManifestType';
+export type { OAuthProviderConnectionMode } from './oauthProviderConnectionMode.type';
+export type { OAuthProviderManifest } from './oauthProviderManifestType';
+export type { OAuthProviderTokenRequestContentType } from './oauthProviderTokenRequestContentType.type';
 export type { ObjectFieldManifest } from './objectFieldManifest.type';
 export type { ObjectManifest } from './objectManifestType';
 export type {
@@ -57,6 +62,7 @@ export type {
 export type { ServerVariables } from './server-variables.type';
 export type { SkillManifest } from './skillManifestType';
 export type { SyncableEntityOptions } from './syncableEntityOptionsType';
+export { buildOAuthEnvVarPrefix } from './utils/buildOAuthEnvVarPrefix';
 export type {
   ViewManifestFilterValue,
   ViewFieldManifest,

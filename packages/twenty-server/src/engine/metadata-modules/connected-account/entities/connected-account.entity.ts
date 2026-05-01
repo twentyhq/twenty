@@ -2,6 +2,9 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
+  JoinColumn,
+  ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
   type Relation,
@@ -10,12 +13,16 @@ import {
 
 import { type ConnectedAccountProvider } from 'twenty-shared/types';
 
+import { ApplicationOAuthProviderEntity } from 'src/engine/core-modules/application/application-oauth-provider/application-oauth-provider.entity';
 import { type ImapSmtpCaldavParams } from 'src/engine/core-modules/imap-smtp-caldav-connection/types/imap-smtp-caldav-connection.type';
 import { type CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { type MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/workspace-related-entity';
 
 @Entity({ name: 'connectedAccount', schema: 'core' })
+@Index('IDX_CONNECTED_ACCOUNT_APP_OAUTH_PROVIDER_ID', [
+  'applicationOAuthProviderId',
+])
 export class ConnectedAccountEntity extends WorkspaceRelatedEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -55,6 +62,16 @@ export class ConnectedAccountEntity extends WorkspaceRelatedEntity {
 
   @Column({ type: 'uuid', nullable: false })
   userWorkspaceId: string;
+
+  @Column({ type: 'uuid', nullable: true })
+  applicationOAuthProviderId: string | null;
+
+  @ManyToOne(() => ApplicationOAuthProviderEntity, {
+    onDelete: 'CASCADE',
+    nullable: true,
+  })
+  @JoinColumn({ name: 'applicationOAuthProviderId' })
+  applicationOAuthProvider: Relation<ApplicationOAuthProviderEntity> | null;
 
   @OneToMany(
     'MessageChannelEntity',

@@ -12,6 +12,7 @@ import {
   type AgentManifest,
   type FieldManifest,
   type NavigationMenuItemManifest,
+  type OAuthProviderManifest,
   type SkillManifest,
 } from 'twenty-shared/application';
 
@@ -30,6 +31,7 @@ export type DefinableEntity =
   | PostInstallLogicFunctionConfig
   | PreInstallLogicFunctionConfig
   | AgentManifest
+  | OAuthProviderManifest
   | RoleConfig
   | SkillManifest
   | ViewConfig

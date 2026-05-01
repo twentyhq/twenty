@@ -5,6 +5,7 @@ import { type FieldManifest } from './fieldManifestType';
 import { type FrontComponentManifest } from './frontComponentManifestType';
 import { type LogicFunctionManifest } from './logicFunctionManifestType';
 import { type NavigationMenuItemManifest } from './navigationMenuItemManifestType';
+import { type OAuthProviderManifest } from './oauthProviderManifestType';
 import { type ObjectManifest } from './objectManifestType';
 import {
   type PageLayoutManifest,
@@ -23,6 +24,7 @@ export type Manifest = {
   roles: RoleManifest[];
   skills: SkillManifest[];
   agents: AgentManifest[];
+  oauthProviders?: OAuthProviderManifest[];
   publicAssets: AssetManifest[];
   views: ViewManifest[];
   navigationMenuItems: NavigationMenuItemManifest[];

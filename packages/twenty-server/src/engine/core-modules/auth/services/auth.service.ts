@@ -1140,6 +1140,11 @@ export class AuthService {
         return [];
       case ConnectedAccountProvider.IMAP_SMTP_CALDAV:
         return [];
+      case ConnectedAccountProvider.APP:
+        // App-managed OAuth connections never participate in SSO sign-in;
+        // their scopes are declared per provider in the app manifest and
+        // handled by the application-oauth-provider flow instead.
+        return [];
       default:
         throw new Error(
           `Unsupported connected account provider: ${provider satisfies never}`,

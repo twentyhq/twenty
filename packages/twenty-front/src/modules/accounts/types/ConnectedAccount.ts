@@ -12,6 +12,8 @@ export type ConnectedAccount = {
   handleAliases: string[] | null;
   lastSignedInAt: string | null;
   userWorkspaceId: string;
+  applicationOAuthProviderId: string | null;
+  lastCredentialsRefreshedAt: string | null;
   connectionParameters: ImapSmtpCaldavAccount | null;
   createdAt: string;
   updatedAt: string;

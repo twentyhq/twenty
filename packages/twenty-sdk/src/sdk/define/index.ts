@@ -62,6 +62,8 @@ export type { InputJsonSchema } from 'twenty-shared/logic-function';
 
 export { defineNavigationMenuItem } from '@/sdk/define/navigation-menu-items/define-navigation-menu-item';
 
+export { defineOAuthProvider } from '@/sdk/define/oauth-providers/define-oauth-provider';
+
 export { defineObject } from '@/sdk/define/objects/define-object';
 export { generateDefaultFieldUniversalIdentifier } from '@/sdk/define/objects/generate-default-field-universal-identifier';
 export {

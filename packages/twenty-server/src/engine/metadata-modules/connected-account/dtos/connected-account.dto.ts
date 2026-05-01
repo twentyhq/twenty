@@ -72,6 +72,11 @@ export class ConnectedAccountDTO {
   @Field(() => UUIDScalarType)
   userWorkspaceId: string;
 
+  @IsUUID()
+  @IsOptional()
+  @Field(() => UUIDScalarType, { nullable: true })
+  applicationOAuthProviderId: string | null;
+
   @HideField()
   workspaceId: string;
 

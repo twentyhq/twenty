@@ -19,6 +19,7 @@ import { getPageLayoutTabBaseFile } from '@/cli/utilities/entity/entity-page-lay
 import { getRecordPageLayoutBaseFile } from '@/cli/utilities/entity/entity-record-page-layout-template';
 import { getRoleBaseFile } from '@/cli/utilities/entity/entity-role-template';
 import { getAgentBaseFile } from '@/cli/utilities/entity/entity-agent-template';
+import { getOAuthProviderBaseFile } from '@/cli/utilities/entity/entity-oauth-provider-template';
 import { getSkillBaseFile } from '@/cli/utilities/entity/entity-skill-template';
 import { getViewBaseFile } from '@/cli/utilities/entity/entity-view-template';
 import { ensureDir, pathExists } from '@/cli/utilities/file/fs-utils';
@@ -153,6 +154,16 @@ export class EntityAddCommand {
         const name = await this.getEntityName(entity);
 
         const file = getAgentBaseFile({
+          name,
+        });
+
+        return { name, file };
+      }
+
+      case SyncableEntity.OAuthProvider: {
+        const name = await this.getEntityName(entity);
+
+        const file = getOAuthProviderBaseFile({
           name,
         });
 
