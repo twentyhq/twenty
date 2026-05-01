@@ -1,4 +1,3 @@
-import { useApplicationAvatarColors } from '@/applications/hooks/useApplicationAvatarColors';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
 import {
@@ -16,24 +15,21 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useContext, useMemo, useState } from 'react';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
-import { SettingsPath } from 'twenty-shared/types';
+import { FeatureFlagKey, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import {
-  Avatar,
   CommandBlock,
   H2Title,
+  IconArrowUpRight,
   IconChevronRight,
   IconCopy,
-  IconArrowUpRight,
-  OverflowingTextWithTooltip,
   InlineBanner,
+  OverflowingTextWithTooltip,
 } from 'twenty-ui/display';
 import { Button, SearchInput } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import {
   type ApplicationRegistrationFragmentFragment,
-  FeatureFlagKey,
   FindManyApplicationRegistrationsDocument,
 } from '~/generated-metadata/graphql';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
@@ -43,6 +39,8 @@ import {
   SettingsApplicationTableRow,
 } from '~/pages/settings/applications/components/SettingsApplicationTableRow';
 import { getApplicationDescriptionSummary } from '~/pages/settings/applications/utils/getApplicationDescriptionSummary';
+import { ApplicationDisplay } from '@/applications/components/ApplicationDisplay';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 
 const StyledButtonContainer = styled.div`
   display: flex;
@@ -60,31 +58,6 @@ const StyledTableRowsContainer = styled.div`
 `;
 
 const NPM_PACKAGES_GRID_COLUMNS = '200px 1fr 36px';
-
-type MarketplaceAppAvatarProps = {
-  application: { id: string; name: string; logo?: string | null };
-};
-
-const MarketplaceAppAvatar = ({ application }: MarketplaceAppAvatarProps) => {
-  const colors = useApplicationAvatarColors({
-    id: application.id,
-    name: application.name,
-    universalIdentifier: application.id,
-  });
-
-  return (
-    <Avatar
-      avatarUrl={application.logo || null}
-      placeholder={application.name}
-      placeholderColorSeed={application.id ?? application.name}
-      size="md"
-      type="app"
-      color={colors?.color}
-      backgroundColor={colors?.backgroundColor}
-      borderColor={colors?.borderColor}
-    />
-  );
-};
 
 export const SettingsApplicationsDeveloperTab = () => {
   const { t } = useLingui();
@@ -268,8 +241,7 @@ export const SettingsApplicationsDeveloperTab = () => {
                         )}
                       >
                         <StyledNameTableCell>
-                          <MarketplaceAppAvatar application={application} />
-                          <OverflowingTextWithTooltip text={application.name} />
+                          <ApplicationDisplay application={application} />
                         </StyledNameTableCell>
                         <TableCell
                           overflow="hidden"

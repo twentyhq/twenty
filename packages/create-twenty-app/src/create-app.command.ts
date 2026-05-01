@@ -11,7 +11,9 @@ import * as path from 'path';
 import { basename } from 'path';
 import {
   authLoginOAuth,
+  checkDockerRunning,
   ConfigService,
+  containerExists,
   detectLocalServer,
   serverStart,
   type ServerStartResult,
@@ -27,6 +29,7 @@ type CreateAppOptions = {
   displayName?: string;
   description?: string;
   skipLocalInstance?: boolean;
+  yes?: boolean;
 };
 
 export class CreateAppCommand {
@@ -71,7 +74,7 @@ export class CreateAppCommand {
       let serverResult: ServerStartResult | undefined;
 
       if (!options.skipLocalInstance) {
-        const shouldStartServer = await this.shouldStartServer();
+        const shouldStartServer = await this.shouldStartServer(options.yes);
 
         if (shouldStartServer) {
           const startResult = await serverStart({
@@ -223,10 +226,32 @@ export class CreateAppCommand {
     );
   }
 
-  private async shouldStartServer(): Promise<boolean> {
+  private async shouldStartServer(autoConfirm?: boolean): Promise<boolean> {
     const existingServerUrl = await detectLocalServer();
 
     if (existingServerUrl) {
+      return true;
+    }
+
+    if (checkDockerRunning() && containerExists()) {
+      if (autoConfirm) {
+        return true;
+      }
+
+      const { startExisting } = await inquirer.prompt([
+        {
+          type: 'confirm',
+          name: 'startExisting',
+          message:
+            'An existing Twenty server container was found. Would you like to start it?',
+          default: true,
+        },
+      ]);
+
+      return startExisting;
+    }
+
+    if (autoConfirm) {
       return true;
     }
 

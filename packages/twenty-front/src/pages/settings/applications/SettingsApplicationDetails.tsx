@@ -89,7 +89,10 @@ export const SettingsApplicationDetails = () => {
     app?.displayName ?? application?.name ?? t`Application details`;
   const description = app?.description ?? resolvedDescription;
   const logoUrl =
-    app?.logoUrl ?? application?.applicationRegistration?.logoUrl ?? undefined;
+    app?.logoUrl ??
+    application?.logo ??
+    application?.applicationRegistration?.logoUrl ??
+    undefined;
 
   const getScreenshots = () => {
     if (app?.screenshots?.length) return app.screenshots;
@@ -283,6 +286,12 @@ export const SettingsApplicationDetails = () => {
             applicationId={application.id}
             installedApplication={application}
             manifestContent={manifest}
+            applicationInfo={{
+              id: application.id,
+              name: displayName,
+              logo: application.logo,
+              universalIdentifier: application.universalIdentifier,
+            }}
           />
         );
       case 'permissions':
@@ -317,10 +326,7 @@ export const SettingsApplicationDetails = () => {
           <SettingsApplicationDetailTitle
             displayName={displayName}
             description={description}
-            logoUrl={logoUrl}
             applicationId={application?.id}
-            applicationName={application?.name}
-            universalIdentifier={application?.universalIdentifier}
           />
         }
         links={[

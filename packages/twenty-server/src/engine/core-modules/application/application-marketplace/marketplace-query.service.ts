@@ -87,7 +87,6 @@ export class MarketplaceQueryService {
       id: registration.universalIdentifier,
       name: app?.displayName ?? registration.name,
       description: app?.description ?? '',
-      icon: app?.icon ?? 'IconApps',
       author: `${app?.author ?? 'Unknown'}`,
       category: app?.category ?? '',
       logo: app?.logoUrl ?? undefined,

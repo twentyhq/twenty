@@ -50,6 +50,9 @@ export class ApplicationEntity extends WorkspaceRelatedEntity {
   @Column({ nullable: true, type: 'text' })
   description: string | null;
 
+  @Column({ nullable: true, type: 'text' })
+  logo: string | null;
+
   // TODO should not be nullable
   @Column({ nullable: true, type: 'text' })
   version: string | null;

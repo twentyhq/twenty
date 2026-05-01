@@ -10,6 +10,7 @@ import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { H2Title } from 'twenty-ui/display';
 import { SearchInput } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
+import { type ApplicationDisplayData } from '@/applications/types/applicationDisplayData.type';
 import { type Application } from '~/generated-metadata/graphql';
 import {
   type ApplicationContentRow,
@@ -19,7 +20,7 @@ import { normalizeSearchText } from '~/utils/normalizeSearchText';
 
 type InstalledApplicationForContentTab = Omit<
   Application,
-  'objects' | 'universalIdentifier' | 'frontComponents'
+  'objects' | 'frontComponents'
 > & {
   objects: { id: string }[];
   frontComponents?: {
@@ -33,6 +34,7 @@ type SettingsApplicationDetailContentTabProps = {
   applicationId: string;
   installedApplication?: InstalledApplicationForContentTab;
   manifestContent?: Manifest;
+  applicationInfo: ApplicationDisplayData;
 };
 
 const filterRows = (rows: ApplicationContentRow[], normalizedSearch: string) =>
@@ -49,6 +51,7 @@ export const SettingsApplicationDetailContentTab = ({
   applicationId,
   installedApplication,
   manifestContent,
+  applicationInfo,
 }: SettingsApplicationDetailContentTabProps) => {
   const { t } = useLingui();
 
@@ -69,6 +72,11 @@ export const SettingsApplicationDetailContentTab = ({
     installedApplication,
     manifestContent,
   });
+
+  const fallbackApplicationData = {
+    logo: applicationInfo?.logo,
+    name: applicationInfo?.name,
+  };
 
   const lifecycleOptions = {
     postInstallUniversalIdentifier:
@@ -167,10 +175,14 @@ export const SettingsApplicationDetailContentTab = ({
             <SettingsApplicationContentSubtable
               title={t`Objects`}
               rows={filtered.objects}
+              applicationId={applicationId}
+              fallbackApplicationData={fallbackApplicationData}
             />
             <SettingsApplicationContentSubtable
               title={t`Fields added to other objects`}
               rows={filtered.fields}
+              applicationId={applicationId}
+              fallbackApplicationData={fallbackApplicationData}
             />
           </Table>
         </Section>
@@ -186,18 +198,26 @@ export const SettingsApplicationDetailContentTab = ({
             <SettingsApplicationContentSubtable
               title={t`Page layouts`}
               rows={filtered.pageLayouts}
+              applicationId={applicationId}
+              fallbackApplicationData={fallbackApplicationData}
             />
             <SettingsApplicationContentSubtable
               title={t`Views`}
               rows={filtered.views}
+              applicationId={applicationId}
+              fallbackApplicationData={fallbackApplicationData}
             />
             <SettingsApplicationContentSubtable
               title={t`Navigation menu items`}
               rows={filtered.navigation}
+              applicationId={applicationId}
+              fallbackApplicationData={fallbackApplicationData}
             />
             <SettingsApplicationContentSubtable
               title={t`Front components`}
               rows={filtered.frontComponents}
+              applicationId={applicationId}
+              fallbackApplicationData={fallbackApplicationData}
             />
           </Table>
         </Section>
@@ -213,18 +233,26 @@ export const SettingsApplicationDetailContentTab = ({
             <SettingsApplicationContentSubtable
               title={t`Logic functions`}
               rows={filtered.logicFunctions}
+              applicationId={applicationId}
+              fallbackApplicationData={fallbackApplicationData}
             />
             <SettingsApplicationContentSubtable
               title={t`Agents`}
               rows={filtered.agents}
+              applicationId={applicationId}
+              fallbackApplicationData={fallbackApplicationData}
             />
             <SettingsApplicationContentSubtable
               title={t`Skills`}
               rows={filtered.skills}
+              applicationId={applicationId}
+              fallbackApplicationData={fallbackApplicationData}
             />
             <SettingsApplicationContentSubtable
               title={t`Roles`}
               rows={filtered.roles}
+              applicationId={applicationId}
+              fallbackApplicationData={fallbackApplicationData}
             />
           </Table>
         </Section>
