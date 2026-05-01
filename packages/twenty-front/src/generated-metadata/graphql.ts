@@ -1397,6 +1397,11 @@ export type EmailThreadConfiguration = {
   configurationType: WidgetConfigurationType;
 };
 
+export enum EmailVerificationTrigger {
+  EMAIL_UPDATE = 'EMAIL_UPDATE',
+  SIGN_UP = 'SIGN_UP'
+}
+
 export type EmailingDomain = {
   __typename?: 'EmailingDomain';
   createdAt: Scalars['DateTime'];
@@ -3074,6 +3079,7 @@ export type MutationRenewTokenArgs = {
 export type MutationResendEmailVerificationTokenArgs = {
   email: Scalars['String'];
   origin: Scalars['String'];
+  verificationTrigger?: InputMaybe<EmailVerificationTrigger>;
 };
 
 
