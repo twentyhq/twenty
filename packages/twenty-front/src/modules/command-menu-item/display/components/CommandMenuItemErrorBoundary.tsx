@@ -1,4 +1,5 @@
 import { CommandComponentInstanceContext } from '@/command-menu-item/engine-command/states/contexts/CommandComponentInstanceContext';
+import { ObjectMetadataItemNotFoundError } from '@/object-metadata/errors/ObjectMetadataNotFoundError';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { type ReactNode } from 'react';
@@ -22,9 +23,16 @@ export const CommandMenuItemErrorBoundary = ({
   );
 
   const handleError = async (error: Error) => {
-    enqueueErrorSnackBar({ message: error.message });
+    // ObjectMetadataItemNotFoundError is a transient condition during metadata
+    // store refreshes — skip the user-facing snackbar and Sentry noise.
+    const isTransientMetadataError =
+      error instanceof ObjectMetadataItemNotFoundError;
 
-    if (shouldReportToSentry) {
+    if (!isTransientMetadataError) {
+      enqueueErrorSnackBar({ message: error.message });
+    }
+
+    if (shouldReportToSentry && !isTransientMetadataError) {
       try {
         const { captureException } = await import('@sentry/react');
         captureException(error, (scope) => {
