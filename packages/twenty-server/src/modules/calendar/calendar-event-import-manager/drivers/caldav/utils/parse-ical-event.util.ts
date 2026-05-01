@@ -14,7 +14,10 @@ export const parseICalEvents = (
         (calendarComponent): calendarComponent is ical.VEvent =>
           calendarComponent.type === 'VEVENT',
       )
-      .flatMap((event) => [event, ...Object.values(event.recurrences ?? {})]);
+      .flatMap((event) => [event, ...Object.values(event.recurrences ?? {})])
+      .filter(
+        (event) => event.start instanceof Date && event.end instanceof Date,
+      );
 
     return events.map((event) => {
       const organizer = extractOrganizerFromEvent(event);

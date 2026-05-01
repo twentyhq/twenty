@@ -238,4 +238,20 @@ describe('parseICalEvents', () => {
   it('returns an empty array and does not throw when iCal data is malformed', () => {
     expect(parseICalEvents('not a calendar', HREF)).toEqual([]);
   });
+
+  it('skips a VEVENT missing DTSTART without dropping its siblings', () => {
+    const ics = buildVCalendar([
+      ['UID:no-start', 'SUMMARY:Broken'],
+      [
+        'UID:healthy',
+        'SUMMARY:Healthy',
+        'DTSTART:20260601T100000Z',
+        'DTEND:20260601T110000Z',
+      ],
+    ]);
+
+    const events = parseICalEvents(ics, HREF);
+
+    expect(events.map((event) => event.iCalUid)).toEqual(['healthy']);
+  });
 });
