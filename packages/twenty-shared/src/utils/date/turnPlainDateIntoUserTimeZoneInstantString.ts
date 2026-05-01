@@ -4,5 +4,9 @@ export const turnPlainDateIntoUserTimeZoneInstantString = (
   plainDate: Temporal.PlainDate,
   userTimeZone: string,
 ) => {
-  return plainDate.toZonedDateTime(userTimeZone).toInstant().toString();
+  try {
+    return plainDate.toZonedDateTime(userTimeZone).toInstant().toString();
+  } catch (error) {
+    return plainDate.toZonedDateTime('UTC').toInstant().toString();
+  }
 };

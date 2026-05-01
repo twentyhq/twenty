@@ -61,12 +61,23 @@ export const calendarDayRecordIdsComponentFamilySelector =
             return false;
           }
 
-          const recordDateAsPlainDateInTimeZone =
-            fieldMetadataItem.type === FieldMetadataType.DATE
-              ? Temporal.PlainDate.from(recordDate)
-              : Temporal.Instant.from(recordDate)
-                  .toZonedDateTimeISO(timeZone)
-                  .toPlainDate();
+          let recordDateAsPlainDateInTimeZone: Temporal.PlainDate;
+
+          try {
+            recordDateAsPlainDateInTimeZone =
+              fieldMetadataItem.type === FieldMetadataType.DATE
+                ? Temporal.PlainDate.from(recordDate)
+                : Temporal.Instant.from(recordDate)
+                    .toZonedDateTimeISO(timeZone)
+                    .toPlainDate();
+          } catch (error) {
+            recordDateAsPlainDateInTimeZone =
+              fieldMetadataItem.type === FieldMetadataType.DATE
+                ? Temporal.PlainDate.from(recordDate)
+                : Temporal.Instant.from(recordDate)
+                    .toZonedDateTimeISO('UTC')
+                    .toPlainDate();
+          }
 
           return isSamePlainDate(day, recordDateAsPlainDateInTimeZone);
         });
