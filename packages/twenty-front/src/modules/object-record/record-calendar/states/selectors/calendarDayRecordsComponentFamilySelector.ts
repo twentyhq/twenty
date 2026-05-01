@@ -64,19 +64,27 @@ export const calendarDayRecordIdsComponentFamilySelector =
           let recordDateAsPlainDateInTimeZone: Temporal.PlainDate;
 
           try {
-            recordDateAsPlainDateInTimeZone =
-              fieldMetadataItem.type === FieldMetadataType.DATE
-                ? Temporal.PlainDate.from(recordDate)
-                : Temporal.Instant.from(recordDate)
-                    .toZonedDateTimeISO(timeZone)
-                    .toPlainDate();
+            if (fieldMetadataItem.type === FieldMetadataType.DATE) {
+              recordDateAsPlainDateInTimeZone =
+                Temporal.PlainDate.from(recordDate);
+            } else {
+              const instant = Temporal.Instant.from(recordDate);
+
+              try {
+                recordDateAsPlainDateInTimeZone = instant
+                  .toZonedDateTimeISO(timeZone)
+                  .toPlainDate();
+              } catch (error) {
+                console.warn(
+                  `Invalid timezone "${timeZone}" provided to calendarDayRecordIdsComponentFamilySelector. Falling back to UTC.`,
+                );
+                recordDateAsPlainDateInTimeZone = instant
+                  .toZonedDateTimeISO('UTC')
+                  .toPlainDate();
+              }
+            }
           } catch (error) {
-            recordDateAsPlainDateInTimeZone =
-              fieldMetadataItem.type === FieldMetadataType.DATE
-                ? Temporal.PlainDate.from(recordDate)
-                : Temporal.Instant.from(recordDate)
-                    .toZonedDateTimeISO('UTC')
-                    .toPlainDate();
+            return false;
           }
 
           return isSamePlainDate(day, recordDateAsPlainDateInTimeZone);
