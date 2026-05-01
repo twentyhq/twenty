@@ -18,6 +18,7 @@ import {
   turnAnyFieldFilterIntoRecordGqlFilter,
   turnPlainDateIntoUserTimeZoneInstantString,
 } from 'twenty-shared/utils';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 const DATE_RANGE_FILTER_AFTER_ID = 'DATE_RANGE_FILTER_AFTER_ID';
 const DATE_RANGE_FILTER_BEFORE_ID = 'DATE_RANGE_FILTER_BEFORE_ID';
@@ -60,26 +61,37 @@ export const useRecordCalendarQueryDateRangeFilter = (
     };
   }
 
-  const firstDayOfFirstWeekISOString =
-    turnPlainDateIntoUserTimeZoneInstantString(
-      firstDayOfFirstWeek,
-      userTimezone,
-    );
-
-  const nextDayAfterLastDayOfLastWeekISOString =
-    turnPlainDateIntoUserTimeZoneInstantString(
-      lastDayOfLastWeek.add({ days: 1 }),
-      userTimezone,
-    );
-
   const dateRangeFilterFieldMetadataId = currentView.calendarFieldMetadataId;
+
+  const calendarFieldMetadataItem = objectMetadataItem.fields.find(
+    (field) => field.id === dateRangeFilterFieldMetadataId,
+  );
+
+  const isDateField =
+    calendarFieldMetadataItem?.type === FieldMetadataType.DATE;
+
+  const filterType = isDateField ? 'DATE' : 'DATE_TIME';
+
+  const afterValue = isDateField
+    ? firstDayOfFirstWeek.toString()
+    : turnPlainDateIntoUserTimeZoneInstantString(
+        firstDayOfFirstWeek,
+        userTimezone,
+      );
+
+  const beforeValue = isDateField
+    ? lastDayOfLastWeek.add({ days: 1 }).toString()
+    : turnPlainDateIntoUserTimeZoneInstantString(
+        lastDayOfLastWeek.add({ days: 1 }),
+        userTimezone,
+      );
 
   const dateRangeFilterAfter: RecordFilter = {
     id: DATE_RANGE_FILTER_AFTER_ID,
     fieldMetadataId: dateRangeFilterFieldMetadataId,
-    value: `${firstDayOfFirstWeekISOString}`,
+    value: afterValue,
     operand: RecordFilterOperand.IS_AFTER,
-    type: 'DATE_TIME',
+    type: filterType,
     label: t`After or equal`,
     displayValue: `${firstDayOfFirstWeek.toString()}`,
   };
@@ -87,9 +99,9 @@ export const useRecordCalendarQueryDateRangeFilter = (
   const dateRangeFilterBefore: RecordFilter = {
     id: DATE_RANGE_FILTER_BEFORE_ID,
     fieldMetadataId: dateRangeFilterFieldMetadataId,
-    value: `${nextDayAfterLastDayOfLastWeekISOString}`,
+    value: beforeValue,
     operand: RecordFilterOperand.IS_BEFORE,
-    type: 'DATE_TIME',
+    type: filterType,
     label: t`Before`,
     displayValue: `${lastDayOfLastWeek.toString()}`,
   };
