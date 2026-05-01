@@ -212,11 +212,6 @@ export class CodeInterpreterTool implements Tool {
         ),
       );
 
-      // ToolOutput's streamable fields (stdout/stderr/exitCode/files) live at
-      // the top level so ToolStepRenderer can read them flat off `output`,
-      // matching the post-#19321 convention used by every other tool. Nesting
-      // under `result` made the step render as "Failed" on thread reload,
-      // when no streaming part is available to back-fill the display.
       const output = {
         success: result.exitCode === 0,
         message:
