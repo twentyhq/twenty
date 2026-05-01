@@ -37,19 +37,39 @@ export const computeFoldersToUpdate = ({
     const discoveredFolderData = {
       name: discoveredFolder.name,
       isSentFolder: discoveredFolder.isSentFolder,
+      isSynced: discoveredFolder.isSynced,
       parentFolderId,
     };
 
     const existingFolderData = {
       name: existingFolder.name,
       isSentFolder: existingFolder.isSentFolder,
+      isSynced: existingFolder.isSynced,
       parentFolderId: isNonEmptyString(existingFolder.parentFolderId)
         ? existingFolder.parentFolderId
         : null,
     };
 
     if (!fastDeepEqual(discoveredFolderData, existingFolderData)) {
-      foldersToUpdate.set(existingFolder.id, discoveredFolderData);
+      const updatePayload: Partial<MessageFolderEntity> = {
+        name: discoveredFolder.name,
+        isSentFolder: discoveredFolder.isSentFolder,
+        isSynced: discoveredFolder.isSynced,
+        parentFolderId,
+      };
+
+      /**
+       * Fix for issue #17095: When a folder is toggled back to synced
+       * (isSynced: false → true), we must reset the syncCursor to null.
+       * This forces the next import cycle to perform a full backfill of
+       * historical messages instead of continuing from the stale cursor,
+       * which would incorrectly skip all previously unsynced messages.
+       */
+      if (!existingFolder.isSynced && discoveredFolder.isSynced) {
+        updatePayload.syncCursor = null;
+      }
+
+      foldersToUpdate.set(existingFolder.id, updatePayload);
     }
   }
 
