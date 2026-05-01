@@ -6,7 +6,6 @@ import { MarketplaceService } from 'src/engine/core-modules/application/applicat
 import { buildRegistryCdnUrl } from 'src/engine/core-modules/application/application-marketplace/utils/build-registry-cdn-url.util';
 import { resolveManifestAssetUrls } from 'src/engine/core-modules/application/application-marketplace/utils/resolve-manifest-asset-urls.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { MARKETPLACE_CURATED_APPLICATIONS } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-curated-applications.constant';
 
 @Injectable()
 export class MarketplaceCatalogSyncService {
@@ -27,12 +26,6 @@ export class MarketplaceCatalogSyncService {
   private async syncRegistryApps(): Promise<void> {
     const packages = await this.marketplaceService.fetchAppsFromRegistry();
 
-    const curatedIdentifiers = new Set(
-      MARKETPLACE_CURATED_APPLICATIONS.map(
-        (entry) => entry.universalIdentifier,
-      ),
-    );
-
     for (const pkg of packages) {
       try {
         const fetchedManifest =
@@ -48,8 +41,6 @@ export class MarketplaceCatalogSyncService {
 
         const universalIdentifier =
           fetchedManifest.application.universalIdentifier;
-
-        const isFeatured = curatedIdentifiers.has(universalIdentifier);
 
         const aboutDescription =
           fetchedManifest.application.aboutDescription ??
@@ -87,10 +78,7 @@ export class MarketplaceCatalogSyncService {
           sourceType: ApplicationRegistrationSourceType.NPM,
           sourcePackage: pkg.name,
           latestAvailableVersion: pkg.version ?? null,
-          isListed: true,
-          isFeatured,
           manifest: manifestWithResolvedUrls,
-          ownerWorkspaceId: null,
         });
       } catch (error) {
         this.logger.error(

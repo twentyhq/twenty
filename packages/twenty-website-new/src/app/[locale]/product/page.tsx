@@ -20,14 +20,9 @@ import { Signoff } from '@/sections/Signoff/components';
 import { ThreeCards } from '@/sections/ThreeCards/components';
 import { TrustedBy } from '@/sections/TrustedBy/components';
 import { theme } from '@/theme';
-import { buildLocalizedMetadata } from '@/lib/seo';
+import { buildRouteMetadata } from '@/lib/seo';
 
-export const generateMetadata = buildLocalizedMetadata({
-  path: '/product',
-  title: 'Product | Twenty',
-  description:
-    'Track relationships, manage pipelines, and take action quickly with a CRM that feels intuitive from day one.',
-});
+export const generateMetadata = buildRouteMetadata('product');
 
 export default async function ProductPage() {
   const stats = await fetchCommunityStats();

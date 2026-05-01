@@ -1,18 +1,33 @@
 import { useMapViewFieldToRecordTableWidgetViewFieldItem } from '@/page-layout/widgets/record-table/hooks/useMapViewFieldToRecordTableWidgetViewFieldItem';
+import { useRecordTableWidgetViewForDisplay } from '@/page-layout/widgets/record-table/hooks/useRecordTableWidgetViewForDisplay';
 import { type RecordTableWidgetViewFieldItem } from '@/page-layout/widgets/record-table/types/RecordTableWidgetViewFieldItem';
-import { useViewById } from '@/views/hooks/useViewById';
 import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { sortByProperty } from '~/utils/array/sortByProperty';
 
-export const useRecordTableWidgetViewFieldItems = (viewId: string) => {
-  const { view } = useViewById(viewId);
+type UseRecordTableWidgetViewFieldItemsParams = {
+  viewId: string;
+  widgetId: string;
+  pageLayoutId: string;
+};
+
+export const useRecordTableWidgetViewFieldItems = ({
+  viewId,
+  widgetId,
+  pageLayoutId,
+}: UseRecordTableWidgetViewFieldItemsParams) => {
+  const { view } = useRecordTableWidgetViewForDisplay({
+    viewId,
+    widgetId,
+    pageLayoutId,
+  });
+
   const { mapViewFieldToRecordTableWidgetViewFieldItem } =
     useMapViewFieldToRecordTableWidgetViewFieldItem();
 
   const recordTableWidgetViewFieldItems: RecordTableWidgetViewFieldItem[] =
     useMemo(() => {
-      if (!view) {
+      if (!isDefined(view)) {
         return [];
       }
 

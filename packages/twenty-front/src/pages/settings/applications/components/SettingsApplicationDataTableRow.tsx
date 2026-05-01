@@ -1,5 +1,5 @@
-import { SettingsItemTypeTag } from '@/settings/components/SettingsItemTypeTag';
 import {
+  SETTINGS_OBJECT_TABLE_COLUMN_WIDTH,
   StyledActionTableCell,
   StyledNameTableCell,
 } from '@/settings/data-model/object-details/components/SettingsObjectItemTableRowStyledComponents';
@@ -11,9 +11,10 @@ import { isDefined } from 'twenty-shared/utils';
 import { IconChevronRight, useIcons } from 'twenty-ui/display';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
-import { type ApplicationDataTableRow } from '~/pages/settings/applications/components/SettingsApplicationDataTable';
+import { type ApplicationDataTableRow } from '~/pages/settings/applications/types/applicationDataTableRow';
+import { AppChip } from '@/applications/components/AppChip';
 
-const MAIN_ROW_GRID_COLUMNS = '180px 1fr 98.7px 36px';
+const MAIN_ROW_GRID_COLUMNS = `180px 1fr ${SETTINGS_OBJECT_TABLE_COLUMN_WIDTH} 36px`;
 
 const StyledNameContainer = styled.div`
   align-items: center;
@@ -51,9 +52,12 @@ export const SettingsApplicationDataTableRow = ({
           </StyledNameLabel>
         </StyledNameContainer>
       </StyledNameTableCell>
-      <TableCell minWidth="0" overflow="hidden">
-        <SettingsItemTypeTag item={row.tagItem} />
-      </TableCell>
+      <StyledNameTableCell minWidth="0" overflow="hidden">
+        <AppChip
+          applicationId={row.application?.id}
+          fallbackApplicationData={row.application}
+        />
+      </StyledNameTableCell>
       <TableCell align="right">{row.fieldsCount}</TableCell>
       <StyledActionTableCell>
         {row.link && (

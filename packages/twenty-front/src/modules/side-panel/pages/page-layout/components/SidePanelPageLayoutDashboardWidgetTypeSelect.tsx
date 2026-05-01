@@ -11,7 +11,7 @@ import { useRemovePageLayoutWidgetAndPreservePosition } from '@/page-layout/hook
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
 import { getTabListInstanceIdFromPageLayoutAndRecord } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutAndRecord';
-import { useCreateViewForRecordTableWidget } from '@/page-layout/widgets/record-table/hooks/useCreateViewForRecordTableWidget';
+import { useAddDraftViewForRecordTableWidget } from '@/page-layout/widgets/record-table/hooks/useAddDraftViewForRecordTableWidget';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
@@ -83,8 +83,8 @@ export const SidePanelPageLayoutDashboardWidgetTypeSelect = () => {
   const { removePageLayoutWidgetAndPreservePosition } =
     useRemovePageLayoutWidgetAndPreservePosition(pageLayoutId);
 
-  const { createViewForRecordTableWidget } =
-    useCreateViewForRecordTableWidget(pageLayoutId);
+  const { addDraftViewForRecordTableWidget } =
+    useAddDraftViewForRecordTableWidget(pageLayoutId);
   const { readableObjectMetadataItems } = useReadableObjectMetadataItems();
 
   const firstAvailableObjectMetadataItem =
@@ -185,7 +185,7 @@ export const SidePanelPageLayoutDashboardWidgetTypeSelect = () => {
     closeSidePanelMenu();
   };
 
-  const handleNavigateToRecordTableSettings = async () => {
+  const handleNavigateToRecordTableSettings = () => {
     if (
       isExistingWidgetMissingOrDifferentType(
         existingWidget?.type,
@@ -202,7 +202,7 @@ export const SidePanelPageLayoutDashboardWidgetTypeSelect = () => {
 
       setPageLayoutEditingWidgetId(newRecordTableWidget.id);
 
-      await createViewForRecordTableWidget(
+      addDraftViewForRecordTableWidget(
         newRecordTableWidget.id,
         firstAvailableObjectMetadataItem,
       );

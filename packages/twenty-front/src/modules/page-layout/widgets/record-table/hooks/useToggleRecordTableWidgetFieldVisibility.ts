@@ -1,21 +1,49 @@
-import { usePerformViewFieldAPIPersist } from '@/views/hooks/internal/usePerformViewFieldAPIPersist';
+import { recordTableWidgetViewDraftComponentState } from '@/page-layout/states/recordTableWidgetViewDraftComponentState';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
+import { useStore } from 'jotai';
 import { useCallback } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 
-export const useToggleRecordTableWidgetFieldVisibility = () => {
-  const { performViewFieldAPIUpdate } = usePerformViewFieldAPIPersist();
+type UseToggleRecordTableWidgetFieldVisibilityParams = {
+  pageLayoutId: string;
+  widgetId: string;
+};
+
+export const useToggleRecordTableWidgetFieldVisibility = ({
+  pageLayoutId,
+  widgetId,
+}: UseToggleRecordTableWidgetFieldVisibilityParams) => {
+  const recordTableWidgetViewDraftState = useAtomComponentStateCallbackState(
+    recordTableWidgetViewDraftComponentState,
+    pageLayoutId,
+  );
+
+  const store = useStore();
 
   const toggleRecordTableWidgetFieldVisibility = useCallback(
-    async (viewFieldId: string, isVisible: boolean) => {
-      await performViewFieldAPIUpdate([
-        {
-          input: {
-            id: viewFieldId,
-            update: { isVisible },
+    (viewFieldId: string, isVisible: boolean) => {
+      store.set(recordTableWidgetViewDraftState, (prev) => {
+        const widgetViewDraft = prev[widgetId];
+
+        if (!isDefined(widgetViewDraft)) {
+          return prev;
+        }
+
+        return {
+          ...prev,
+          [widgetId]: {
+            ...widgetViewDraft,
+            viewFields: widgetViewDraft.viewFields.map((field) =>
+              field.id === viewFieldId ||
+              field.clientRecordFieldId === viewFieldId
+                ? { ...field, isVisible }
+                : field,
+            ),
           },
-        },
-      ]);
+        };
+      });
     },
-    [performViewFieldAPIUpdate],
+    [store, recordTableWidgetViewDraftState, widgetId],
   );
 
   return { toggleRecordTableWidgetFieldVisibility };

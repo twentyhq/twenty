@@ -96,10 +96,6 @@ const NavItem = styled(LocalizedLink)`
   ${navItemStyles}
 `;
 
-const ExternalNavItem = styled.a`
-  ${navItemStyles}
-`;
-
 const NavGroupButton = styled.button`
   ${navItemStyles}
   align-items: center;
@@ -215,11 +211,11 @@ const NavChildLabel = styled.span`
   }
 `;
 
-const HorizontalSeparator = styled(Separator)<{ $separatorColor: string }>`
+const HorizontalSeparator = styled(Separator)`
   background: repeating-linear-gradient(
     90deg,
-    ${({ $separatorColor }) => $separatorColor} 0,
-    ${({ $separatorColor }) => $separatorColor} 1px,
+    var(--menu-separator-color) 0,
+    var(--menu-separator-color) 1px,
     transparent 2px,
     transparent 4px
   );
@@ -414,8 +410,12 @@ export function MenuDrawer({ navItems, scheme, socialLinks }: MenuDrawerProps) {
                 ) : null}
                 {index < topLevelItems.length - 1 && (
                   <HorizontalSeparator
-                    $separatorColor={separatorColor}
                     orientation="horizontal"
+                    style={
+                      {
+                        '--menu-separator-color': separatorColor,
+                      } as React.CSSProperties
+                    }
                   />
                 )}
               </React.Fragment>

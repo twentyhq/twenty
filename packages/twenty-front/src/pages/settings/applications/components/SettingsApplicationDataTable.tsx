@@ -14,19 +14,7 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { SettingsApplicationDataTableRow } from '~/pages/settings/applications/components/SettingsApplicationDataTableRow';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
-
-export type ApplicationDataTableRow = {
-  key: string;
-  labelPlural: string;
-  icon?: string;
-  fieldsCount: number;
-  link?: string;
-  tagItem: {
-    isCustom?: boolean;
-    isRemote?: boolean;
-    applicationId?: string | null;
-  };
-};
+import { type ApplicationDataTableRow } from '~/pages/settings/applications/types/applicationDataTableRow';
 
 const MAIN_ROW_GRID_COLUMNS = `180px 1fr ${SETTINGS_OBJECT_TABLE_COLUMN_WIDTH} 36px`;
 

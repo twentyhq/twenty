@@ -9,10 +9,10 @@ import {
 } from './PageLayoutTestWrapper';
 
 jest.mock(
-  '@/page-layout/widgets/record-table/hooks/useDeleteViewForRecordTableWidget',
+  '@/page-layout/widgets/record-table/hooks/useRemoveDraftViewForRecordTableWidget',
   () => ({
-    useDeleteViewForRecordTableWidget: () => ({
-      deleteViewForRecordTableWidget: jest.fn(),
+    useRemoveDraftViewForRecordTableWidget: () => ({
+      removeDraftViewForRecordTableWidget: jest.fn(),
     }),
   }),
 );

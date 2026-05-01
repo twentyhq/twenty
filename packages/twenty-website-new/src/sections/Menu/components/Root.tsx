@@ -2,6 +2,7 @@
 
 import { Container, IconButton, LinkButton } from '@/design-system/components';
 import { CloseIcon, MenuIcon } from '@/icons';
+import { useTimeoutRegistry } from '@/lib/react';
 import type {
   MenuNavItemType,
   MenuScheme,
@@ -10,7 +11,7 @@ import type {
 import { theme } from '@/theme';
 import { Drawer } from '@base-ui/react/drawer';
 import { styled } from '@linaria/react';
-import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import { CloseDrawerWhenNavigationExpandsEffect } from './../effect-components/CloseDrawerWhenNavigationExpandsEffect';
 import { MenuDrawer } from './Drawer';
 
@@ -103,20 +104,20 @@ export function Root({
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [hasScrolled, setHasScrolled] = useState(false);
   const [isScrolling, setIsScrolling] = useState(false);
-  const scrollTimeoutRef = useRef<number | null>(null);
+  const timeoutRegistry = useTimeoutRegistry();
 
   useEffect(() => {
+    let cancelScrollIdle: (() => void) | null = null;
+
     const handleScroll = () => {
       setHasScrolled(window.scrollY > 8);
       setIsScrolling(true);
 
-      if (scrollTimeoutRef.current !== null) {
-        window.clearTimeout(scrollTimeoutRef.current);
-      }
+      cancelScrollIdle?.();
 
-      scrollTimeoutRef.current = window.setTimeout(() => {
+      cancelScrollIdle = timeoutRegistry.schedule(() => {
         setIsScrolling(false);
-        scrollTimeoutRef.current = null;
+        cancelScrollIdle = null;
       }, SCROLL_IDLE_TIMEOUT_MS);
     };
 
@@ -125,12 +126,9 @@ export function Root({
 
     return () => {
       window.removeEventListener('scroll', handleScroll);
-
-      if (scrollTimeoutRef.current !== null) {
-        window.clearTimeout(scrollTimeoutRef.current);
-      }
+      cancelScrollIdle?.();
     };
-  }, []);
+  }, [timeoutRegistry]);
 
   const buttonColor: {
     border: string;

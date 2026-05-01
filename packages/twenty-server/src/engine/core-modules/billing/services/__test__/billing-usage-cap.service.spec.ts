@@ -2,14 +2,16 @@
 
 import { Test, type TestingModule } from '@nestjs/testing';
 
+import { getRepositoryToken } from '@nestjs/typeorm';
+
 import { ClickHouseService } from 'src/database/clickHouse/clickHouse.service';
-import { type BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
-import {
-  type BillingCapEvaluation,
-  BillingUsageCapService,
-} from 'src/engine/core-modules/billing/services/billing-usage-cap.service';
+import { BillingSubscriptionItemEntity } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
+import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
+import { BillingUsageCapService } from 'src/engine/core-modules/billing/services/billing-usage-cap.service';
 import { MeteredCreditService } from 'src/engine/core-modules/billing/services/metered-credit.service';
+import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 describe('BillingUsageCapService', () => {
   let service: BillingUsageCapService;
@@ -52,6 +54,34 @@ describe('BillingUsageCapService', () => {
             get: jest.fn(),
           },
         },
+        {
+          provide: CacheStorageNamespace.EngineBillingUsage,
+          useValue: {
+            get: jest.fn(),
+            set: jest.fn(),
+            del: jest.fn(),
+            incrBy: jest.fn(),
+          },
+        },
+        {
+          provide: getRepositoryToken(BillingSubscriptionEntity),
+          useValue: {
+            findOne: jest.fn(),
+          },
+        },
+        {
+          provide: getRepositoryToken(BillingSubscriptionItemEntity),
+          useValue: {
+            find: jest.fn(),
+            update: jest.fn(),
+          },
+        },
+        {
+          provide: WorkspaceCacheService,
+          useValue: {
+            getOrRecompute: jest.fn(),
+          },
+        },
       ],
     }).compile();
 
@@ -79,83 +109,6 @@ describe('BillingUsageCapService', () => {
     });
   });
 
-  describe('getCurrentPeriodCreditsUsed', () => {
-    beforeEach(() => {
-      twentyConfigService.get.mockReturnValue('http://clickhouse:8123');
-    });
-
-    it('returns 0 when ClickHouse is disabled', async () => {
-      twentyConfigService.get.mockReturnValue('');
-
-      const result = await service.getCurrentPeriodCreditsUsed(
-        'workspace_123',
-        new Date('2026-04-01T00:00:00Z'),
-        new Date('2026-05-01T00:00:00Z'),
-      );
-
-      expect(result).toBe(0);
-      expect(clickHouseService.select).not.toHaveBeenCalled();
-    });
-
-    it('sums creditsUsedMicro for the workspace in the given period', async () => {
-      clickHouseService.select.mockResolvedValue([{ total: 12345 }]);
-
-      const result = await service.getCurrentPeriodCreditsUsed(
-        'workspace_123',
-        new Date('2026-04-01T00:00:00Z'),
-        new Date('2026-05-01T00:00:00Z'),
-      );
-
-      expect(result).toBe(12345);
-      expect(clickHouseService.select).toHaveBeenCalledTimes(1);
-
-      const [query, params] = clickHouseService.select.mock.calls[0];
-
-      expect(query).toContain('sum(creditsUsedMicro)');
-      expect(query).toContain('FROM usageEvent');
-      expect(params).toMatchObject({
-        workspaceId: 'workspace_123',
-      });
-      expect(query).not.toContain('operationType');
-    });
-
-    it('coerces string totals returned by ClickHouse to a number', async () => {
-      clickHouseService.select.mockResolvedValue([{ total: '9876543210' }]);
-
-      const result = await service.getCurrentPeriodCreditsUsed(
-        'workspace_123',
-        new Date('2026-04-01T00:00:00Z'),
-        new Date('2026-05-01T00:00:00Z'),
-      );
-
-      expect(result).toBe(9876543210);
-    });
-
-    it('returns 0 when no rows are returned', async () => {
-      clickHouseService.select.mockResolvedValue([]);
-
-      const result = await service.getCurrentPeriodCreditsUsed(
-        'workspace_123',
-        new Date('2026-04-01T00:00:00Z'),
-        new Date('2026-05-01T00:00:00Z'),
-      );
-
-      expect(result).toBe(0);
-    });
-
-    it('returns 0 when total is null', async () => {
-      clickHouseService.select.mockResolvedValue([{ total: null }]);
-
-      const result = await service.getCurrentPeriodCreditsUsed(
-        'workspace_123',
-        new Date('2026-04-01T00:00:00Z'),
-        new Date('2026-05-01T00:00:00Z'),
-      );
-
-      expect(result).toBe(0);
-    });
-  });
-
   describe('getBatchPeriodCreditsUsed', () => {
     beforeEach(() => {
       twentyConfigService.get.mockReturnValue('http://clickhouse:8123');
@@ -167,7 +120,6 @@ describe('BillingUsageCapService', () => {
       const result = await service.getBatchPeriodCreditsUsed(
         ['ws_1', 'ws_2'],
         new Date('2026-04-01T00:00:00Z'),
-        new Date('2026-05-01T00:00:00Z'),
       );
 
       expect(result.size).toBe(0);
@@ -178,7 +130,6 @@ describe('BillingUsageCapService', () => {
       const result = await service.getBatchPeriodCreditsUsed(
         [],
         new Date('2026-04-01T00:00:00Z'),
-        new Date('2026-05-01T00:00:00Z'),
       );
 
       expect(result.size).toBe(0);
@@ -194,7 +145,6 @@ describe('BillingUsageCapService', () => {
       const result = await service.getBatchPeriodCreditsUsed(
         ['ws_1', 'ws_2', 'ws_3'],
         new Date('2026-04-01T00:00:00Z'),
-        new Date('2026-05-01T00:00:00Z'),
       );
 
       expect(result.get('ws_1')).toBe(500_000);
@@ -218,119 +168,9 @@ describe('BillingUsageCapService', () => {
       const result = await service.getBatchPeriodCreditsUsed(
         ['ws_1'],
         new Date('2026-04-01T00:00:00Z'),
-        new Date('2026-05-01T00:00:00Z'),
       );
 
       expect(result.get('ws_1')).toBe(9876543210);
-    });
-  });
-
-  describe('evaluateCap', () => {
-    beforeEach(() => {
-      twentyConfigService.get.mockReturnValue('http://clickhouse:8123');
-    });
-
-    it('returns skipped when ClickHouse is disabled', async () => {
-      twentyConfigService.get.mockReturnValue('');
-
-      const result = await service.evaluateCap(buildSubscription());
-
-      expect(result).toEqual<BillingCapEvaluation>({
-        skipped: true,
-        reason: 'clickhouse-disabled',
-      });
-      expect(
-        meteredCreditService.extractMeteredPricingInfoFromSubscription,
-      ).not.toHaveBeenCalled();
-    });
-
-    it('returns skipped when subscription has no metered item', async () => {
-      meteredCreditService.extractMeteredPricingInfoFromSubscription.mockReturnValue(
-        null,
-      );
-
-      const result = await service.evaluateCap(buildSubscription());
-
-      expect(result).toEqual<BillingCapEvaluation>({
-        skipped: true,
-        reason: 'no-metered-item',
-      });
-      expect(clickHouseService.select).not.toHaveBeenCalled();
-    });
-
-    it('reports hasReachedCap=false when usage is below tierCap + creditBalance', async () => {
-      meteredCreditService.extractMeteredPricingInfoFromSubscription.mockReturnValue(
-        { tierCap: 1_000_000, unitPriceCents: 10 },
-      );
-      meteredCreditService.getCreditBalance.mockResolvedValue(250_000);
-      clickHouseService.select.mockResolvedValue([{ total: 800_000 }]);
-
-      const result = await service.evaluateCap(buildSubscription());
-
-      expect(result).toEqual<BillingCapEvaluation>({
-        skipped: false,
-        hasReachedCap: false,
-        usage: 800_000,
-        allowance: 1_250_000,
-        tierCap: 1_000_000,
-        creditBalance: 250_000,
-      });
-    });
-
-    it('reports hasReachedCap=true when usage meets tierCap + creditBalance', async () => {
-      meteredCreditService.extractMeteredPricingInfoFromSubscription.mockReturnValue(
-        { tierCap: 1_000_000, unitPriceCents: 10 },
-      );
-      meteredCreditService.getCreditBalance.mockResolvedValue(0);
-      clickHouseService.select.mockResolvedValue([{ total: 1_000_000 }]);
-
-      const result = await service.evaluateCap(buildSubscription());
-
-      expect(result).toMatchObject({
-        skipped: false,
-        hasReachedCap: true,
-        usage: 1_000_000,
-        allowance: 1_000_000,
-      });
-    });
-
-    it('reports hasReachedCap=true when usage exceeds tierCap + creditBalance', async () => {
-      meteredCreditService.extractMeteredPricingInfoFromSubscription.mockReturnValue(
-        { tierCap: 1_000_000, unitPriceCents: 10 },
-      );
-      meteredCreditService.getCreditBalance.mockResolvedValue(100_000);
-      clickHouseService.select.mockResolvedValue([{ total: 5_000_000 }]);
-
-      const result = await service.evaluateCap(buildSubscription());
-
-      expect(result).toMatchObject({
-        skipped: false,
-        hasReachedCap: true,
-        usage: 5_000_000,
-        allowance: 1_100_000,
-      });
-    });
-
-    it('re-reads pricing on each call so that tier changes apply immediately', async () => {
-      meteredCreditService.extractMeteredPricingInfoFromSubscription
-        .mockReturnValueOnce({ tierCap: 2_000_000, unitPriceCents: 10 })
-        .mockReturnValueOnce({ tierCap: 500_000, unitPriceCents: 10 });
-      meteredCreditService.getCreditBalance.mockResolvedValue(0);
-      clickHouseService.select.mockResolvedValue([{ total: 1_000_000 }]);
-
-      const first = await service.evaluateCap(buildSubscription());
-      const second = await service.evaluateCap(buildSubscription());
-
-      expect(first).toMatchObject({
-        skipped: false,
-        hasReachedCap: false,
-        allowance: 2_000_000,
-      });
-      expect(second).toMatchObject({
-        skipped: false,
-        hasReachedCap: true,
-        allowance: 500_000,
-      });
     });
   });
 

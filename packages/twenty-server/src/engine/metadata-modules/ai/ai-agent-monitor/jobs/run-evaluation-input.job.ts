@@ -58,6 +58,8 @@ export class RunEvaluationInputJob {
     const executionResult = await this.aiAgentExecutorService.executeAgent({
       agent,
       userPrompt: data.input,
+      workspaceId: data.workspaceId,
+      userWorkspaceId: null,
     });
 
     await this.agentChatService.addMessage({

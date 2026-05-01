@@ -1,9 +1,9 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
-exports[`Create input validation - SELECT Gql create input - failure SELECT - should fail with : {"selectField":"not-a-select-option"} 1`] = `"Invalid value 'not-a-select-option' for field "selectField""`;
+exports[`Create input validation - SELECT Gql create input - failure SELECT - should fail with : {"selectField":"not-a-select-option"} 1`] = `"Invalid value \"not-a-select-option\" for field \"selectField\". Valid values are: OPTION_1"`;
 
 exports[`Create input validation - SELECT Gql create input - failure SELECT - should fail with : {"selectField":1} 1`] = `"Invalid string value 1 for text field "selectField""`;
 
-exports[`Create input validation - SELECT Rest create input - failure SELECT - should fail with : {"selectField":"not-a-select-option"} 1`] = `"["Invalid value 'not-a-select-option' for field \\"selectField\\""]"`;
+exports[`Create input validation - SELECT Rest create input - failure SELECT - should fail with : {"selectField":"not-a-select-option"} 1`] = `"[\"Invalid value \\\"not-a-select-option\\\" for field \\\"selectField\\\". Valid values are: OPTION_1\"]"`;
 
 exports[`Create input validation - SELECT Rest create input - failure SELECT - should fail with : {"selectField":1} 1`] = `"["Invalid string value 1 for text field \\"selectField\\""]"`;

@@ -24,6 +24,8 @@ import { FlatApplication } from 'src/engine/core-modules/application/types/flat-
 import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
 import { LOGIC_FUNCTION_EXECUTED_EVENT } from 'src/engine/core-modules/audit/utils/events/workspace-event/logic-function/logic-function-executed';
 import { ApplicationTokenService } from 'src/engine/core-modules/auth/token/services/application-token.service';
+import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
+import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { LogicFunctionDriverFactory } from 'src/engine/core-modules/logic-function/logic-function-drivers/logic-function-driver.factory';
 import { buildEnvVar } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/build-env-var';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
@@ -72,6 +74,8 @@ export class LogicFunctionExecutorService {
     private readonly auditService: AuditService,
     private readonly applicationLogsService: ApplicationLogsService,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
+    private readonly billingService: BillingService,
+    private readonly billingUsageService: BillingUsageService,
     @InjectRepository(ApplicationRegistrationVariableEntity)
     private readonly applicationRegistrationVariableRepository: Repository<ApplicationRegistrationVariableEntity>,
   ) {}
@@ -352,5 +356,12 @@ export class LogicFunctionExecutorService {
       ],
       workspaceId,
     );
+
+    if (this.billingService.isBillingEnabled()) {
+      await this.billingUsageService.decrementAvailableCredits({
+        workspaceId,
+        usedCredits: 100,
+      });
+    }
   }
 }

@@ -12,6 +12,7 @@ type CommandMenuContextProviderWithWorkflowEnrichmentProps = {
   children: React.ReactNode;
   commandMenuContextApi: CommandMenuContextApi;
   selectedWorkflowRecordIds: string[];
+  isInPreviewMode: boolean;
 };
 
 export const CommandMenuContextProviderWithWorkflowEnrichment = ({
@@ -20,6 +21,7 @@ export const CommandMenuContextProviderWithWorkflowEnrichment = ({
   children,
   commandMenuContextApi,
   selectedWorkflowRecordIds,
+  isInPreviewMode,
 }: CommandMenuContextProviderWithWorkflowEnrichmentProps) => {
   const workflowsWithCurrentVersions = useWorkflowsWithCurrentVersions(
     selectedWorkflowRecordIds,
@@ -54,6 +56,7 @@ export const CommandMenuContextProviderWithWorkflowEnrichment = ({
       displayType={displayType}
       containerType={containerType}
       commandMenuContextApi={enrichedCommandMenuContextApi}
+      isInPreviewMode={isInPreviewMode}
     >
       {children}
     </CommandMenuContextProviderContent>
