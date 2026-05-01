@@ -5,7 +5,10 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { t } from '@lingui/core/macro';
 import { useMutation } from '@apollo/client/react';
-import { EmailVerificationTrigger, ResendEmailVerificationTokenDocument } from '~/generated-metadata/graphql';
+import {
+  ResendEmailVerificationTokenDocument,
+  type EmailVerificationTrigger,
+} from '~/generated-metadata/graphql';
 
 export const useHandleResendEmailVerificationToken = () => {
   const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();

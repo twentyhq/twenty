@@ -3264,7 +3264,7 @@ type Mutation {
   deleteUserFromWorkspace(workspaceMemberIdToDelete: String!): UserWorkspace!
   updateWorkspaceMemberSettings(input: UpdateWorkspaceMemberSettingsInput!): Boolean!
   updateUserEmail(newEmail: String!, verifyEmailRedirectPath: String): Boolean!
-  resendEmailVerificationToken(email: String!, verificationTrigger: EmailVerificationTrigger = SIGN_UP, origin: String!): ResendEmailVerificationToken!
+  resendEmailVerificationToken(email: String!, verificationTrigger: EmailVerificationTrigger, origin: String!): ResendEmailVerificationToken!
   activateWorkspace(data: ActivateWorkspaceInput!): Workspace!
   updateWorkspace(data: UpdateWorkspaceInput!): Workspace!
   deleteCurrentWorkspace: Workspace!
