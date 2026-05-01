@@ -3,7 +3,7 @@ import {
   type DragStart,
   type DropResult,
 } from '@hello-pangea/dnd';
-import { type ReactNode, useCallback } from 'react';
+import { type ReactNode, useCallback, useEffect } from 'react';
 
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
@@ -14,6 +14,7 @@ import { useEndRecordDrag } from '@/object-record/record-drag/hooks/useEndRecord
 import { useProcessTableWithoutGroupRecordDrop } from '@/object-record/record-drag/hooks/useProcessTableWithoutGroupRecordDrop';
 import { useStartRecordDrag } from '@/object-record/record-drag/hooks/useStartRecordDrag';
 import { selectedRowIdsComponentSelector } from '@/object-record/record-table/states/selectors/selectedRowIdsComponentSelector';
+import { useSuppressDndInvariantErrors } from '@/object-record/record-drag/hooks/useSuppressDndInvariantErrors';
 
 export const RecordTableBodyNoRecordGroupDragDropContextProvider = ({
   children,
@@ -34,6 +35,8 @@ export const RecordTableBodyNoRecordGroupDragDropContextProvider = ({
   const { endRecordDrag } = useEndRecordDrag(recordIndexId);
   const { processTableWithoutGroupRecordDrop } =
     useProcessTableWithoutGroupRecordDrop();
+
+  useSuppressDndInvariantErrors();
 
   const handleDragStart = useCallback(
     (start: DragStart) => {
