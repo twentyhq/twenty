@@ -4,7 +4,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
-import { type Repository } from 'typeorm';
+import { Not, type Repository } from 'typeorm';
 
 import { ClickHouseService } from 'src/database/clickHouse/clickHouse.service';
 import { formatDateTimeForClickHouse } from 'src/database/clickHouse/clickHouse.util';
@@ -62,8 +62,9 @@ export class BillingUsageService {
     }
 
     const billingSubscription =
-      await this.billingSubscriptionService.getCurrentBillingSubscription({
-        workspaceId,
+      await this.billingSubscriptionRepository.findOne({
+        where: { workspaceId, status: Not(SubscriptionStatus.Canceled) },
+        select: ['id'],
       });
 
     return !!billingSubscription;
