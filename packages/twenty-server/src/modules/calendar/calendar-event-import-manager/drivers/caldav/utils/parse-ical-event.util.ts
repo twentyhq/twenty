@@ -2,7 +2,6 @@ import * as ical from 'node-ical';
 import { icalDataExtractPropertyValue } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/lib/utils/icalDataExtractPropertyValue';
 import { extractAttendeesFromEvent } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/utils/extract-attendees-from-event.util';
 import { extractOrganizerFromEvent } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/utils/extract-organizer-from-event.util';
-import { isFullDayEvent } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/utils/is-full-day-event.util';
 import { type FetchedCalendarEvent } from 'src/modules/calendar/common/types/fetched-calendar-event';
 
 export const parseICalEvents = (
@@ -37,7 +36,7 @@ export const parseICalEvents = (
         location: icalDataExtractPropertyValue(event.location),
         startsAt: event.start.toISOString(),
         endsAt: event.end.toISOString(),
-        isFullDay: isFullDayEvent(rawData),
+        isFullDay: event.datetype === 'date',
         isCanceled: event.status === 'CANCELLED',
         status: event.status || 'CONFIRMED',
         recurringEventExternalId: recurrenceIso,

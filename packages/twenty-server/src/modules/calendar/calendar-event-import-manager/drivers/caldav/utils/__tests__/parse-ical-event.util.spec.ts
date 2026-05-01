@@ -68,6 +68,30 @@ describe('parseICalEvents', () => {
     expect(parseICalEvents(ics, HREF)[0].isFullDay).toBe(true);
   });
 
+  it('classifies isFullDay per-event when a full-day master has a timed recurrence override', () => {
+    const ics = buildVCalendar([
+      [
+        'UID:series-fullday',
+        'SUMMARY:Daily standup',
+        'DTSTART;VALUE=DATE:20260601',
+        'DTEND;VALUE=DATE:20260602',
+        'RRULE:FREQ=DAILY',
+      ],
+      [
+        'UID:series-fullday',
+        'SUMMARY:Daily standup (rescheduled to a meeting)',
+        'DTSTART:20260605T140000Z',
+        'DTEND:20260605T143000Z',
+        'RECURRENCE-ID;VALUE=DATE:20260605',
+      ],
+    ]);
+
+    const [master, override] = parseICalEvents(ics, HREF);
+
+    expect(master.isFullDay).toBe(true);
+    expect(override.isFullDay).toBe(false);
+  });
+
   it('flags isCanceled when STATUS:CANCELLED is present', () => {
     const ics = buildVEvent([
       'UID:abc',

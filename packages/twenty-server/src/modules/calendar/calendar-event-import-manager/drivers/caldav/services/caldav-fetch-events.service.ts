@@ -90,10 +90,7 @@ export class CalDavFetchEventsService {
     calendar: DAVCalendar,
     options: FetchEventsOptions,
   ): Promise<CalendarSyncResult> {
-    const storedSyncToken = options.syncCursor?.syncTokens[calendar.url];
-    const previousSyncToken = isNonEmptyString(storedSyncToken)
-      ? storedSyncToken
-      : calendar.syncToken?.toString();
+    const previousSyncToken = options.syncCursor?.syncTokens[calendar.url];
 
     const syncResult = await this.runSyncCollection(
       client,

@@ -246,10 +246,16 @@ describe('CalDavFetchEventsService', () => {
           url: PRIMARY_URL,
           components: ['VEVENT'],
           reports: ['syncCollection'],
-          syncToken: 'token-fresh',
         },
       ]);
-      c.syncCollection.mockResolvedValue([]);
+      c.syncCollection.mockResolvedValue([
+        {
+          status: 207,
+          statusText: 'OK',
+          ok: true,
+          raw: { multistatus: { syncToken: 'token-fresh' } },
+        },
+      ]);
       c.calendarMultiGet.mockResolvedValue([]);
 
       const result = await service.fetchEvents(c.client, inWindow);
@@ -257,6 +263,39 @@ describe('CalDavFetchEventsService', () => {
       expect(result.syncCursor).toEqual({
         syncTokens: { [PRIMARY_URL]: 'token-fresh' },
       });
+    });
+  });
+
+  describe('initial sync (no stored cursor)', () => {
+    it('omits the sync-token on the first run so the server returns a full listing (RFC 6578 §3.4)', async () => {
+      const c = buildClient();
+
+      c.fetchCalendars.mockResolvedValue([
+        {
+          url: PRIMARY_URL,
+          components: ['VEVENT'],
+          reports: ['syncCollection'],
+          syncToken: 'server-current-token',
+        },
+      ]);
+      c.syncCollection.mockResolvedValue([
+        { href: HREF_A, status: 207, statusText: 'OK', ok: true, props: {} },
+      ]);
+      c.calendarMultiGet.mockResolvedValue([
+        {
+          href: HREF_A,
+          status: 207,
+          statusText: 'OK',
+          ok: true,
+          props: { calendarData: buildICal('uid-a') },
+        },
+      ]);
+
+      await service.fetchEvents(c.client, inWindow);
+
+      expect(c.syncCollection).toHaveBeenCalledWith(
+        expect.not.objectContaining({ syncToken: expect.anything() }),
+      );
     });
   });
 
