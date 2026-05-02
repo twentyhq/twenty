@@ -12,6 +12,8 @@ import { Temporal } from 'temporal-polyfill';
 import { isDefined, isSamePlainDate } from 'twenty-shared/utils';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
+const warnedTimeZones = new Set<string>();
+
 export const calendarDayRecordIdsComponentFamilySelector =
   createAtomComponentFamilySelector<
     string[],
@@ -52,6 +54,23 @@ export const calendarDayRecordIdsComponentFamilySelector =
           instanceId,
         });
 
+        let effectiveTimeZone = timeZone;
+
+        try {
+          Temporal.Now.instant().toZonedDateTimeISO(timeZone);
+        } catch {
+          if (!warnedTimeZones.has(timeZone)) {
+            // oxlint-disable-next-line no-console
+            console.warn(
+              `Invalid timezone "${timeZone}" provided to calendarDayRecordIdsComponentFamilySelector. Falling back to UTC.`,
+            );
+
+            warnedTimeZones.add(timeZone);
+          }
+
+          effectiveTimeZone = 'UTC';
+        }
+
         const recordIds = allRecordIds.filter((recordId) => {
           const record = get(recordStoreFamilyState, recordId);
 
@@ -70,19 +89,9 @@ export const calendarDayRecordIdsComponentFamilySelector =
             } else {
               const instant = Temporal.Instant.from(recordDate);
 
-              try {
-                recordDateAsPlainDateInTimeZone = instant
-                  .toZonedDateTimeISO(timeZone)
-                  .toPlainDate();
-              } catch {
-                // oxlint-disable-next-line no-console
-                console.warn(
-                  `Invalid timezone "${timeZone}" provided to calendarDayRecordIdsComponentFamilySelector. Falling back to UTC.`,
-                );
-                recordDateAsPlainDateInTimeZone = instant
-                  .toZonedDateTimeISO('UTC')
-                  .toPlainDate();
-              }
+              recordDateAsPlainDateInTimeZone = instant
+                .toZonedDateTimeISO(effectiveTimeZone)
+                .toPlainDate();
             }
           } catch {
             return false;
