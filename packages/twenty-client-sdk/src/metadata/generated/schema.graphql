@@ -2609,19 +2609,6 @@ type Skill {
   updatedAt: DateTime!
 }
 
-type AgentChatThread {
-  id: UUID!
-  title: String
-  totalInputTokens: Int!
-  totalOutputTokens: Int!
-  contextWindowTokens: Int
-  conversationSize: Int!
-  totalInputCredits: Float!
-  totalOutputCredits: Float!
-  createdAt: DateTime!
-  updatedAt: DateTime!
-}
-
 type AgentMessage {
   id: UUID!
   threadId: UUID!
@@ -2632,6 +2619,21 @@ type AgentMessage {
   parts: [AgentMessagePart!]!
   processedAt: DateTime
   createdAt: DateTime!
+}
+
+type AgentChatThread {
+  id: ID!
+  title: String
+  totalInputTokens: Int!
+  totalOutputTokens: Int!
+  contextWindowTokens: Int
+  conversationSize: Int!
+  totalInputCredits: Float!
+  totalOutputCredits: Float!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  deletedAt: DateTime
+  lastMessageAt: DateTime
 }
 
 type AiSystemPromptSection {
@@ -2659,22 +2661,6 @@ type SendChatMessageResult {
 type AgentChatEvent {
   threadId: String!
   event: JSON!
-}
-
-type AgentChatThreadEdge {
-  """The node containing the AgentChatThread"""
-  node: AgentChatThread!
-
-  """Cursor for this node."""
-  cursor: ConnectionCursor!
-}
-
-type AgentChatThreadConnection {
-  """Paging information"""
-  pageInfo: PageInfo!
-
-  """Array of edges."""
-  edges: [AgentChatThreadEdge!]!
 }
 
 type AgentTurnEvaluation {
@@ -2993,22 +2979,13 @@ type Query {
   webhooks: [Webhook!]!
   webhook(id: UUID!): Webhook
   minimalMetadata: MinimalMetadata!
+  chatThreads: [AgentChatThread!]!
   chatThread(id: UUID!): AgentChatThread!
   chatMessages(threadId: UUID!): [AgentMessage!]!
   chatStreamCatchupChunks(threadId: UUID!): ChatStreamCatchupChunks!
   getAiSystemPromptPreview: AiSystemPromptPreview!
   skills: [Skill!]!
   skill(id: UUID!): Skill
-  chatThreads(
-    """Limit or page results."""
-    paging: CursorPaging! = {first: 10}
-
-    """Specify to filter the records returned."""
-    filter: AgentChatThreadFilter! = {}
-
-    """Specify to sort results."""
-    sorting: [AgentChatThreadSort!]! = [{field: updatedAt, direction: DESC}]
-  ): AgentChatThreadConnection!
   agentTurns(agentId: UUID!): [AgentTurn!]!
   checkUserExists(email: String!, captchaToken: String): CheckUserExist!
   checkWorkspaceInviteHashIsValid(inviteHash: String!): WorkspaceInviteHashValid!
@@ -3055,56 +3032,6 @@ input LogicFunctionIdInput {
 input AgentIdInput {
   """The id of the agent."""
   id: UUID!
-}
-
-input AgentChatThreadFilter {
-  and: [AgentChatThreadFilter!]
-  or: [AgentChatThreadFilter!]
-  id: UUIDFilterComparison
-  updatedAt: DateFieldComparison
-}
-
-input DateFieldComparison {
-  is: Boolean
-  isNot: Boolean
-  eq: DateTime
-  neq: DateTime
-  gt: DateTime
-  gte: DateTime
-  lt: DateTime
-  lte: DateTime
-  in: [DateTime!]
-  notIn: [DateTime!]
-  between: DateFieldComparisonBetween
-  notBetween: DateFieldComparisonBetween
-}
-
-input DateFieldComparisonBetween {
-  lower: DateTime!
-  upper: DateTime!
-}
-
-input AgentChatThreadSort {
-  field: AgentChatThreadSortFields!
-  direction: SortDirection!
-  nulls: SortNulls
-}
-
-enum AgentChatThreadSortFields {
-  id
-  updatedAt
-}
-
-"""Sort Directions"""
-enum SortDirection {
-  ASC
-  DESC
-}
-
-"""Sort Nulls Options"""
-enum SortNulls {
-  NULLS_FIRST
-  NULLS_LAST
 }
 
 input EventLogQueryInput {
@@ -3292,6 +3219,10 @@ type Mutation {
   createChatThread: AgentChatThread!
   sendChatMessage(threadId: UUID!, text: String!, messageId: UUID!, browsingContext: JSON, modelId: String, fileIds: [UUID!]): SendChatMessageResult!
   stopAgentChatStream(threadId: UUID!): Boolean!
+  renameChatThread(id: UUID!, title: String!): AgentChatThread!
+  archiveChatThread(id: UUID!): AgentChatThread!
+  unarchiveChatThread(id: UUID!): AgentChatThread!
+  deleteChatThread(id: UUID!): Boolean!
   deleteQueuedChatMessage(messageId: UUID!): Boolean!
   createSkill(input: CreateSkillInput!): Skill!
   updateSkill(input: UpdateSkillInput!): Skill!
