@@ -188,29 +188,40 @@ jobs:
           # Read admin token from shared test tokens file (single source of truth)
           ADMIN_TOKEN=$(jq -r '.APPLE_JANE_ADMIN_ACCESS_TOKEN' packages/twenty-server/test/integration/constants/test-tokens.json)
 
-          # Load introspection query from file
-          INTROSPECTION_QUERY=$(cat packages/twenty-utils/graphql-introspection-query.graphql)
-
-          # Prepare the query payload
-          QUERY_PAYLOAD=$(echo "$INTROSPECTION_QUERY" | tr '\n' ' ' | sed 's/"/\\"/g')
+          # Load introspection query and build JSON payload using jq
+          jq -n --arg query "$(cat packages/twenty-utils/graphql-introspection-query.graphql)" '{"query": $query}' > introspection-payload.json
 
           echo "Downloading GraphQL schema from current server..."
-          curl -X POST "http://localhost:${{ env.CURRENT_SERVER_PORT }}/graphql" \
+          HTTP_CODE=$(curl -X POST "http://localhost:${{ env.CURRENT_SERVER_PORT }}/graphql" \
             -H "Content-Type: application/json" \
             -H "Authorization: Bearer ${ADMIN_TOKEN}" \
-            -d "{\"query\":\"${QUERY_PAYLOAD}\"}" \
+            --data-binary @introspection-payload.json \
             -o current-schema-introspection.json \
-            -w "HTTP Status: %{http_code}\n" \
-            -s
+            -w "%{http_code}" -s)
+          
+          if [ "$HTTP_CODE" != "200" ]; then
+            echo "❌ Failed to download current GraphQL schema. HTTP Status: $HTTP_CODE"
+            cat current-schema-introspection.json
+            echo "=== Server Logs ==="
+            cat /tmp/current-server.log
+            exit 1
+          fi
 
           echo "Downloading GraphQL metadata schema from current server..."
-          curl -X POST "http://localhost:${{ env.CURRENT_SERVER_PORT }}/metadata" \
+          HTTP_CODE=$(curl -X POST "http://localhost:${{ env.CURRENT_SERVER_PORT }}/metadata" \
             -H "Content-Type: application/json" \
             -H "Authorization: Bearer ${ADMIN_TOKEN}" \
-            -d "{\"query\":\"${QUERY_PAYLOAD}\"}" \
+            --data-binary @introspection-payload.json \
             -o current-metadata-schema-introspection.json \
-            -w "HTTP Status: %{http_code}\n" \
-            -s
+            -w "%{http_code}" -s)
+
+          if [ "$HTTP_CODE" != "200" ]; then
+            echo "❌ Failed to download current Metadata schema. HTTP Status: $HTTP_CODE"
+            cat current-metadata-schema-introspection.json
+            echo "=== Server Logs ==="
+            cat /tmp/current-server.log
+            exit 1
+          fi
 
           # Download current branch OpenAPI specs
           echo "Downloading OpenAPI specifications from current server..."
@@ -348,29 +359,40 @@ jobs:
           # Read admin token from shared test tokens file (single source of truth)
           ADMIN_TOKEN=$(jq -r '.APPLE_JANE_ADMIN_ACCESS_TOKEN' packages/twenty-server/test/integration/constants/test-tokens.json)
 
-          # Load introspection query from file
-          INTROSPECTION_QUERY=$(cat packages/twenty-utils/graphql-introspection-query.graphql)
-
-          # Prepare the query payload
-          QUERY_PAYLOAD=$(echo "$INTROSPECTION_QUERY" | tr '\n' ' ' | sed 's/"/\\"/g')
+          # Load introspection query and build JSON payload using jq
+          jq -n --arg query "$(cat packages/twenty-utils/graphql-introspection-query.graphql)" '{"query": $query}' > introspection-payload.json
 
           echo "Downloading GraphQL schema from main server..."
-          curl -X POST "http://localhost:${{ env.MAIN_SERVER_PORT }}/graphql" \
+          HTTP_CODE=$(curl -X POST "http://localhost:${{ env.MAIN_SERVER_PORT }}/graphql" \
             -H "Content-Type: application/json" \
             -H "Authorization: Bearer ${ADMIN_TOKEN}" \
-            -d "{\"query\":\"${QUERY_PAYLOAD}\"}" \
+            --data-binary @introspection-payload.json \
             -o main-schema-introspection.json \
-            -w "HTTP Status: %{http_code}\n" \
-            -s
+            -w "%{http_code}" -s)
+          
+          if [ "$HTTP_CODE" != "200" ]; then
+            echo "❌ Failed to download main GraphQL schema. HTTP Status: $HTTP_CODE"
+            cat main-schema-introspection.json
+            echo "=== Server Logs ==="
+            cat /tmp/main-server.log
+            exit 1
+          fi
 
           echo "Downloading GraphQL metadata schema from main server..."
-          curl -X POST "http://localhost:${{ env.MAIN_SERVER_PORT }}/metadata" \
+          HTTP_CODE=$(curl -X POST "http://localhost:${{ env.MAIN_SERVER_PORT }}/metadata" \
             -H "Content-Type: application/json" \
             -H "Authorization: Bearer ${ADMIN_TOKEN}" \
-            -d "{\"query\":\"${QUERY_PAYLOAD}\"}" \
+            --data-binary @introspection-payload.json \
             -o main-metadata-schema-introspection.json \
-            -w "HTTP Status: %{http_code}\n" \
-            -s
+            -w "%{http_code}" -s)
+
+          if [ "$HTTP_CODE" != "200" ]; then
+            echo "❌ Failed to download main Metadata schema. HTTP Status: $HTTP_CODE"
+            cat main-metadata-schema-introspection.json
+            echo "=== Server Logs ==="
+            cat /tmp/main-server.log
+            exit 1
+          fi
 
           # Download main branch OpenAPI specs
           echo "Downloading OpenAPI specifications from main server..."
