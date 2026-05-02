@@ -216,6 +216,7 @@ describe('ApplicationOAuthProviderFlowService', () => {
 
       expect(result.connectedAccountId).toBe('new-account-id');
       expect(result.workspaceId).toBe('workspace-1');
+      expect(result.applicationId).toBe('app-1');
 
       expect(connectedAccountRepository.create).toHaveBeenCalledWith(
         expect.objectContaining({

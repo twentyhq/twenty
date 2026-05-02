@@ -44,6 +44,7 @@ type CallbackArgs = {
 type CallbackResult = {
   connectedAccountId: string;
   workspaceId: string;
+  applicationId: string;
   redirectLocation: string | null;
 };
 
@@ -170,6 +171,7 @@ export class ApplicationOAuthProviderFlowService {
     return {
       connectedAccountId: connectedAccount.id,
       workspaceId: statePayload.workspaceId,
+      applicationId: provider.applicationId,
       redirectLocation: statePayload.redirectLocation,
     };
   }

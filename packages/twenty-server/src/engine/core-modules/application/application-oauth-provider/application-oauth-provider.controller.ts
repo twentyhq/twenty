@@ -189,7 +189,7 @@ export class ApplicationOAuthProviderController {
     }
 
     try {
-      const { connectedAccountId, workspaceId, redirectLocation } =
+      const { workspaceId, applicationId, redirectLocation } =
         await this.oauthProviderFlowService.completeAuthorizationFlow({
           code,
           state,
@@ -208,14 +208,18 @@ export class ApplicationOAuthProviderController {
 
       const pathname =
         redirectLocation ||
-        getSettingsPath(SettingsPath.AccountsConfiguration, {
-          connectedAccountId,
-        });
+        getSettingsPath(SettingsPath.ApplicationDetail, { applicationId });
 
       const url = this.workspaceDomainsService.buildWorkspaceURL({
         workspace,
         pathname,
       });
+
+      // The frontend tab list picks the active tab from the URL hash, so
+      // `#settings` lands the user on the Connections section.
+      if (!redirectLocation) {
+        url.hash = 'settings';
+      }
 
       return res.redirect(url.toString());
     } catch (error) {
