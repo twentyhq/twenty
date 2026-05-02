@@ -12,7 +12,6 @@ import { Temporal } from 'temporal-polyfill';
 import { FieldMetadataType } from 'twenty-shared/types';
 import {
   isDefined,
-  isFieldMetadataDateKind,
   isSamePlainDate,
 } from 'twenty-shared/utils';
 
