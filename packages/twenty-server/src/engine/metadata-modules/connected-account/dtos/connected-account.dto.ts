@@ -84,11 +84,11 @@ export class ConnectedAccountDTO {
 
   @IsString()
   @IsOptional()
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   name: string | null;
 
   @IsString()
-  @Field()
+  @Field(() => String)
   scope: string;
 
   @HideField()

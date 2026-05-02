@@ -18,7 +18,7 @@ export class ApplicationOAuthProviderDTO {
   @Field()
   displayName: string;
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   icon: string | null;
 
   @Field(() => [String])

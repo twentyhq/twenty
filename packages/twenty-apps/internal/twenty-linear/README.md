@@ -24,9 +24,10 @@ logic functions:
 2. Install it on your workspace from `Settings → Applications`.
 3. Open the Linear app's settings tab and paste the **Client ID** and
    **Client Secret** into the matching application variables.
-4. Click **Connect Linear** in the OAuth Connections section. You'll be
-   redirected to Linear, asked to authorize, and bounced back to Twenty
-   with the connection saved.
+4. In the **Connections** section, click **Add connection** on the Linear
+   row, pick a scope (Just for me / Workspace shared), then complete the
+   Linear consent screen. You'll be redirected back with the credential
+   saved.
 
 ## Verify
 
@@ -51,11 +52,11 @@ in your Linear workspace.
 - `defineOAuthProvider` registration → `applicationOAuthProvider` row in
   the core schema.
 - Authorize endpoint → Linear consent screen → callback endpoint → token
-  exchange via `SecureHttpClientService.createSsrfSafeFetch()` → upserted
+  exchange via `SecureHttpClientService.createSsrfSafeFetch()` → new
   `connectedAccount` row with `provider = 'app'`.
-- `useOAuth('linear')` in the handler reads the access token injected
-  into `process.env` (`OAUTH_LINEAR_ACCESS_TOKEN`).
-- The token-refresh driver kicks in once the original access token
-  expires (Linear access tokens last 10 years by default, so the refresh
-  path is harder to verify casually — set `accessTokenExpiresInMs` to
-  something like `60_000` on the OAuth provider config to force it).
+- `listConnections({ providerName: 'linear' })` in the handler →
+  `POST /apps/connections/list` → server refreshes the access token if
+  expired and returns the connection.
+- The handler's `connections.find(c => c.userWorkspaceId === event.userWorkspaceId)`
+  fallback-to-`scope === 'workspace'` pattern shows how a single handler
+  serves both per-user and shared credentials.
