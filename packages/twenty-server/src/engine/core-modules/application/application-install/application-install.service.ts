@@ -482,6 +482,7 @@ export class ApplicationInstallService {
 
     files.push(
       { relativePath: 'package.json', fileFolder: FileFolder.Dependencies },
+      { relativePath: 'yarn.lock', fileFolder: FileFolder.Dependencies },
       { relativePath: 'manifest.json', fileFolder: FileFolder.Source },
     );
 
