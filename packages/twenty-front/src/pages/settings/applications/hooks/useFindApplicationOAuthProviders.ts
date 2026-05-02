@@ -13,7 +13,8 @@ export const useFindApplicationOAuthProviders = (applicationId?: string) => {
     {
       skip: !applicationId,
       variables: { applicationId: applicationId ?? '' },
-      fetchPolicy: 'cache-and-network',
+      // Provider list only changes on app install/update; cache is fine.
+      fetchPolicy: 'cache-first',
     },
   );
 

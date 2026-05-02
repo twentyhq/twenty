@@ -86,13 +86,9 @@ describe('ApplicationConnectionsListService', () => {
   afterEach(() => jest.clearAllMocks());
 
   describe('list', () => {
-    it('hides user-scoped credentials owned by another user when called with a request user', async () => {
+    it('asks SQL to OR (scope = workspace) with (userWorkspaceId = me) when there is a request user', async () => {
       connectedAccountRepository.find.mockResolvedValue([
         buildAccount({ id: 'mine' }),
-        buildAccount({
-          id: 'theirs',
-          userWorkspaceId: OTHER_USER_WORKSPACE_ID,
-        }),
         buildAccount({
           id: 'shared',
           scope: 'workspace',
@@ -108,18 +104,21 @@ describe('ApplicationConnectionsListService', () => {
       });
 
       expect(result.map((c) => c.id).sort()).toEqual(['mine', 'shared']);
+      expect(connectedAccountRepository.find).toHaveBeenCalledWith({
+        where: [
+          expect.objectContaining({ scope: 'workspace' }),
+          expect.objectContaining({
+            userWorkspaceId: REQUEST_USER_WORKSPACE_ID,
+          }),
+        ],
+      });
     });
 
-    it('returns all credentials when no request user is provided (cron)', async () => {
+    it('skips the privacy OR clause when no request user is provided (cron)', async () => {
       connectedAccountRepository.find.mockResolvedValue([
         buildAccount({ id: 'mine' }),
         buildAccount({
           id: 'theirs',
-          userWorkspaceId: OTHER_USER_WORKSPACE_ID,
-        }),
-        buildAccount({
-          id: 'shared',
-          scope: 'workspace',
           userWorkspaceId: OTHER_USER_WORKSPACE_ID,
         }),
       ]);
@@ -131,11 +130,12 @@ describe('ApplicationConnectionsListService', () => {
         filter: {},
       });
 
-      expect(result.map((c) => c.id).sort()).toEqual([
-        'mine',
-        'shared',
-        'theirs',
-      ]);
+      expect(result.map((c) => c.id).sort()).toEqual(['mine', 'theirs']);
+      expect(connectedAccountRepository.find).toHaveBeenCalledWith({
+        where: [
+          expect.not.objectContaining({ scope: expect.anything() }),
+        ],
+      });
     });
 
     it('returns empty list when filter.providerName matches no provider for this app', async () => {

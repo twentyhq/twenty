@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { Repository } from 'typeorm';
+import { type FindOptionsWhere, Repository } from 'typeorm';
 
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -50,29 +50,32 @@ export class ApplicationConnectionsListService {
       providerId = provider.id;
     }
 
-    const accounts = await this.connectedAccountRepository.find({
-      where: {
-        applicationId,
-        workspaceId,
-        provider: ConnectedAccountProvider.APP,
-        ...(isDefined(providerId)
-          ? { applicationOAuthProviderId: providerId }
-          : {}),
-      },
-    });
+    const baseWhere: FindOptionsWhere<ConnectedAccountEntity> = {
+      applicationId,
+      workspaceId,
+      provider: ConnectedAccountProvider.APP,
+      ...(isDefined(providerId)
+        ? { applicationOAuthProviderId: providerId }
+        : {}),
+    };
 
     // Privacy: when there's a request user, hide other users' user-scoped
-    // credentials. Workspace-scoped credentials are always visible.
-    const visibleAccounts = isDefined(requestUserWorkspaceId)
-      ? accounts.filter(
-          (a) =>
-            a.scope === 'workspace' ||
-            a.userWorkspaceId === requestUserWorkspaceId,
-        )
-      : accounts;
+    // credentials. Workspace-scoped credentials are always visible. Pushing
+    // this into SQL keeps the result set small for workspaces with many
+    // user-scoped credentials.
+    const where: FindOptionsWhere<ConnectedAccountEntity>[] = isDefined(
+      requestUserWorkspaceId,
+    )
+      ? [
+          { ...baseWhere, scope: 'workspace' },
+          { ...baseWhere, userWorkspaceId: requestUserWorkspaceId },
+        ]
+      : [baseWhere];
+
+    const accounts = await this.connectedAccountRepository.find({ where });
 
     const refreshed = await Promise.all(
-      visibleAccounts.map(async (account) => {
+      accounts.map(async (account) => {
         try {
           const tokens = await this.refreshTokensService.refreshAndSaveTokens(
             account,
