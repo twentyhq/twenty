@@ -1,21 +1,16 @@
-import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 
 import { SettingsRadioCardContainer } from '@/settings/components/SettingsRadioCardContainer';
-import { ModalStatefulWrapper } from '@/ui/layout/modal/components/ModalStatefulWrapper';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { H1Title, H1TitleFontColor } from 'twenty-ui/display';
-import { Button } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-
-const StyledFooter = styled.div`
-  display: flex;
-  gap: ${themeCssVariables.spacing[2]};
-  justify-content: flex-end;
-  margin-top: ${themeCssVariables.spacing[3]};
-`;
+import { SectionAlignment, SectionFontColor } from 'twenty-ui/layout';
+import {
+  StyledAppModal,
+  StyledAppModalButton,
+  StyledAppModalSection,
+  StyledAppModalTitle,
+} from '~/pages/settings/applications/components/SettingsAppModalLayout';
 
 type SettingsApplicationConnectScopePickerModalProps = {
   modalInstanceId: string;
@@ -36,53 +31,51 @@ export const SettingsApplicationConnectScopePickerModal = ({
     {
       value: 'user',
       title: t`Just for me`,
-      description: t`Only you can use this credential. Use this for personal accounts.`,
+      description: t`Only you can use this credential.`,
     },
     {
       value: 'workspace',
       title: t`Workspace shared`,
-      description: t`Anyone in this workspace can use this credential. Pick this for shared bots or service accounts.`,
+      description: t`Anyone in this workspace can use this credential.`,
     },
   ];
 
   return (
-    <ModalStatefulWrapper
-      modalInstanceId={modalInstanceId}
-      isClosable
-      padding="large"
-      overlay="dark"
-      renderInDocumentBody
-      smallBorderRadius
-      narrowWidth
-      autoHeight
-    >
-      <H1Title
-        title={t`Connect ${providerDisplayName}`}
-        fontColor={H1TitleFontColor.Primary}
-      />
-      <Section>
+    <StyledAppModal modalId={modalInstanceId} isClosable padding="large">
+      <StyledAppModalTitle>
+        <H1Title
+          title={t`Connect ${providerDisplayName}`}
+          fontColor={H1TitleFontColor.Primary}
+        />
+      </StyledAppModalTitle>
+      <StyledAppModalSection
+        alignment={SectionAlignment.Center}
+        fontColor={SectionFontColor.Primary}
+      >
         <SettingsRadioCardContainer
           value={scope}
           options={options}
           onChange={(value) => setScope(value as 'user' | 'workspace')}
         />
-      </Section>
-      <StyledFooter>
-        <Button
-          variant="secondary"
-          title={t`Cancel`}
-          onClick={() => closeModal(modalInstanceId)}
-        />
-        <Button
-          variant="primary"
-          accent="blue"
-          title={t`Continue`}
-          onClick={() => {
-            closeModal(modalInstanceId);
-            onConfirm(scope);
-          }}
-        />
-      </StyledFooter>
-    </ModalStatefulWrapper>
+      </StyledAppModalSection>
+      <StyledAppModalButton
+        onClick={() => closeModal(modalInstanceId)}
+        variant="secondary"
+        title={t`Cancel`}
+        fullWidth
+        justify="center"
+      />
+      <StyledAppModalButton
+        onClick={() => {
+          closeModal(modalInstanceId);
+          onConfirm(scope);
+        }}
+        variant="secondary"
+        accent="blue"
+        title={t`Continue`}
+        fullWidth
+        justify="center"
+      />
+    </StyledAppModal>
   );
 };

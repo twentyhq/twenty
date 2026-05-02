@@ -55,6 +55,12 @@ export class ApplicationOAuthProviderController {
     @Query('redirectLocation') redirectLocation: string | undefined,
     @Res() res: Response,
   ) {
+    // Captured early so the error-redirect can route to the user's own
+    // subdomain instead of falling back to DEFAULT_SUBDOMAIN — which would
+    // hand the browser back to a different cookie domain and effectively
+    // log the user out of the workspace they were trying to connect from.
+    let workspace: WorkspaceEntity | null = null;
+
     try {
       if (!applicationId || !providerName || !transientToken) {
         throw new ApplicationOAuthProviderException(
@@ -76,6 +82,17 @@ export class ApplicationOAuthProviderController {
       if (!workspaceId || !userId) {
         throw new AuthException(
           'Workspace or user not found in transient token',
+          AuthExceptionCode.WORKSPACE_NOT_FOUND,
+        );
+      }
+
+      workspace = await this.workspaceRepository.findOneBy({
+        id: workspaceId,
+      });
+
+      if (!workspace) {
+        throw new AuthException(
+          `Workspace ${workspaceId} not found`,
           AuthExceptionCode.WORKSPACE_NOT_FOUND,
         );
       }
@@ -133,7 +150,7 @@ export class ApplicationOAuthProviderController {
         error instanceof Error ? error.stack : undefined,
       );
 
-      return this.redirectToError(res, error);
+      return this.redirectToError(res, error, workspace);
     }
   }
 
@@ -149,12 +166,15 @@ export class ApplicationOAuthProviderController {
     @Query('error_description') errorDescription: string | undefined,
     @Res() res: Response,
   ) {
+    let workspace: WorkspaceEntity | null = null;
+
     if (errorParam) {
       return this.redirectToError(
         res,
         new Error(
           `OAuth provider returned error: ${errorParam}${errorDescription ? `: ${errorDescription}` : ''}`,
         ),
+        workspace,
       );
     }
 
@@ -164,6 +184,7 @@ export class ApplicationOAuthProviderController {
         new Error(
           'OAuth callback is missing the `code` or `state` query parameter',
         ),
+        workspace,
       );
     }
 
@@ -174,7 +195,7 @@ export class ApplicationOAuthProviderController {
           state,
         });
 
-      const workspace = await this.workspaceRepository.findOneBy({
+      workspace = await this.workspaceRepository.findOneBy({
         id: workspaceId,
       });
 
@@ -198,17 +219,28 @@ export class ApplicationOAuthProviderController {
 
       return res.redirect(url.toString());
     } catch (error) {
-      return this.redirectToError(res, error);
+      return this.redirectToError(res, error, workspace);
     }
   }
 
-  private redirectToError(res: Response, error: unknown) {
+  // Redirects to the workspace's own subdomain when known (so the user stays
+  // logged in). Falls back to DEFAULT_SUBDOMAIN only for errors that occur
+  // before we can identify the workspace (invalid transient token, missing
+  // query params).
+  private redirectToError(
+    res: Response,
+    error: unknown,
+    workspace: WorkspaceEntity | null,
+  ) {
     return res.redirect(
       this.guardRedirectService.getRedirectErrorUrlAndCaptureExceptions({
         error: error instanceof Error ? error : new Error(String(error)),
         workspace: {
-          subdomain: this.twentyConfigService.get('DEFAULT_SUBDOMAIN'),
-          customDomain: null,
+          id: workspace?.id,
+          subdomain:
+            workspace?.subdomain ??
+            this.twentyConfigService.get('DEFAULT_SUBDOMAIN'),
+          customDomain: workspace?.customDomain ?? null,
         },
         pathname: getSettingsPath(SettingsPath.Accounts),
       }),
