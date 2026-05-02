@@ -8,6 +8,7 @@ import { PermissionFlagType } from 'twenty-shared/constants';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { DomainValidRecords } from 'src/engine/core-modules/dns-manager/dtos/domain-valid-records';
+import { DnsManagerExceptionFilter } from 'src/engine/core-modules/dns-manager/exceptions/dns-manager-exception-filter';
 import { DnsManagerService } from 'src/engine/core-modules/dns-manager/services/dns-manager.service';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
@@ -31,6 +32,7 @@ import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 )
 @UsePipes(ResolverValidationPipe)
 @UseFilters(
+  DnsManagerExceptionFilter,
   PublicDomainExceptionFilter,
   PreventNestToAutoLogGraphqlErrorsFilter,
 )

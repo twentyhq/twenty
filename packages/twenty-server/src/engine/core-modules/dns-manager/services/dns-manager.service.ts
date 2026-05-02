@@ -138,7 +138,16 @@ export class DnsManagerService {
       options,
     );
 
-    assertIsDefinedOrThrow(publicDomainWithRecords);
+    assertIsDefinedOrThrow(
+      publicDomainWithRecords,
+      new DnsManagerException(
+        'Hostname not found in Cloudflare',
+        DnsManagerExceptionCode.HOSTNAME_NOT_REGISTERED,
+        {
+          userFriendlyMessage: msg`Domain is not registered in Cloudflare`,
+        },
+      ),
+    );
 
     await this.cloudflareClient.customHostnames.edit(
       publicDomainWithRecords.id,

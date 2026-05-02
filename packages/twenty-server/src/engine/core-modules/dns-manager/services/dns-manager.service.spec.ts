@@ -288,6 +288,63 @@ describe('DnsManagerService', () => {
     });
   });
 
+  describe('refreshHostname', () => {
+    it('should throw DnsManagerException when hostname is not found in Cloudflare', async () => {
+      const hostname = 'example.com';
+      const cloudflareMock = {
+        customHostnames: {
+          list: jest.fn().mockResolvedValueOnce({ result: [] }),
+        },
+      };
+
+      jest.spyOn(twentyConfigService, 'get').mockReturnValue('test-zone-id');
+      (dnsManagerService as any).cloudflareClient = cloudflareMock;
+
+      await expect(
+        dnsManagerService.refreshHostname(hostname),
+      ).rejects.toThrow(DnsManagerException);
+    });
+
+    it('should refresh and return hostname records when hostname exists', async () => {
+      const hostname = 'example.com';
+      const mockResult = {
+        id: 'custom-id',
+        hostname,
+        verification_errors: [],
+        ssl: {
+          dcv_delegation_records: [],
+        },
+      };
+      const cloudflareMock = {
+        customHostnames: {
+          list: jest.fn().mockResolvedValueOnce({ result: [mockResult] }),
+          edit: jest.fn().mockResolvedValueOnce({}),
+        },
+      };
+
+      jest.spyOn(twentyConfigService, 'get').mockReturnValue('test-zone-id');
+      jest
+        .spyOn(domainServerConfigService, 'getBaseUrl')
+        .mockReturnValue(new URL('https://front.domain'));
+      (dnsManagerService as any).cloudflareClient = cloudflareMock;
+
+      const result = await dnsManagerService.refreshHostname(hostname);
+
+      expect(result).toEqual({
+        id: 'custom-id',
+        domain: hostname,
+        records: expect.any(Array),
+      });
+      expect(cloudflareMock.customHostnames.edit).toHaveBeenCalledWith(
+        'custom-id',
+        {
+          zone_id: 'test-zone-id',
+          ssl: expect.any(Object),
+        },
+      );
+    });
+  });
+
   describe('updateHostname', () => {
     it('should update a custom domain and register a new one', async () => {
       const fromHostname = 'old.com';
