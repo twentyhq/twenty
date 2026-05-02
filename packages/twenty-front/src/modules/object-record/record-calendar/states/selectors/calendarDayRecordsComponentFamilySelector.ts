@@ -10,10 +10,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 
 import { Temporal } from 'temporal-polyfill';
 import { FieldMetadataType } from 'twenty-shared/types';
-import {
-  isDefined,
-  isSamePlainDate,
-} from 'twenty-shared/utils';
+import { isDefined, isSamePlainDate } from 'twenty-shared/utils';
 
 const warnedTimeZones = new Set<string>();
 
