@@ -1,4 +1,4 @@
-import { Controller, Get, Query, Res, UseGuards } from '@nestjs/common';
+import { Controller, Get, Logger, Query, Res, UseGuards } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { type Response } from 'express';
@@ -26,6 +26,8 @@ import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 @Controller('apps/oauth')
 @UseGuards(PublicEndpointGuard, NoPermissionGuard)
 export class ApplicationOAuthProviderController {
+  private readonly logger = new Logger(ApplicationOAuthProviderController.name);
+
   constructor(
     private readonly oauthProviderService: ApplicationOAuthProviderService,
     private readonly oauthProviderFlowService: ApplicationOAuthProviderFlowService,
@@ -53,73 +55,86 @@ export class ApplicationOAuthProviderController {
     @Query('redirectLocation') redirectLocation: string | undefined,
     @Res() res: Response,
   ) {
-    if (!applicationId || !providerName || !transientToken) {
-      throw new ApplicationOAuthProviderException(
-        'Missing required query parameters: applicationId, providerName, transientToken',
-        ApplicationOAuthProviderExceptionCode.INVALID_REQUEST,
-      );
-    }
+    try {
+      if (!applicationId || !providerName || !transientToken) {
+        throw new ApplicationOAuthProviderException(
+          'Missing required query parameters: applicationId, providerName, transientToken',
+          ApplicationOAuthProviderExceptionCode.INVALID_REQUEST,
+        );
+      }
 
-    if (scope !== undefined && scope !== 'user' && scope !== 'workspace') {
-      throw new ApplicationOAuthProviderException(
-        `Invalid scope "${scope}" — must be 'user' or 'workspace'`,
-        ApplicationOAuthProviderExceptionCode.INVALID_REQUEST,
-      );
-    }
+      if (scope !== undefined && scope !== 'user' && scope !== 'workspace') {
+        throw new ApplicationOAuthProviderException(
+          `Invalid scope "${scope}" — must be 'user' or 'workspace'`,
+          ApplicationOAuthProviderExceptionCode.INVALID_REQUEST,
+        );
+      }
 
-    const { userId, workspaceId } =
-      await this.transientTokenService.verifyTransientToken(transientToken);
+      const { userId, workspaceId } =
+        await this.transientTokenService.verifyTransientToken(transientToken);
 
-    if (!workspaceId || !userId) {
-      throw new AuthException(
-        'Workspace or user not found in transient token',
-        AuthExceptionCode.WORKSPACE_NOT_FOUND,
-      );
-    }
+      if (!workspaceId || !userId) {
+        throw new AuthException(
+          'Workspace or user not found in transient token',
+          AuthExceptionCode.WORKSPACE_NOT_FOUND,
+        );
+      }
 
-    const provider =
-      await this.oauthProviderService.findOneByApplicationAndName({
-        applicationId,
-        name: providerName,
+      const provider =
+        await this.oauthProviderService.findOneByApplicationAndName({
+          applicationId,
+          name: providerName,
+        });
+
+      if (!provider) {
+        throw new ApplicationOAuthProviderException(
+          `OAuth provider "${providerName}" not found for application ${applicationId}`,
+          ApplicationOAuthProviderExceptionCode.PROVIDER_NOT_FOUND,
+        );
+      }
+
+      if (provider.workspaceId !== workspaceId) {
+        throw new ApplicationOAuthProviderException(
+          'OAuth provider does not belong to the requesting workspace',
+          ApplicationOAuthProviderExceptionCode.FORBIDDEN,
+        );
+      }
+
+      const userWorkspace = await this.userWorkspaceRepository.findOne({
+        where: { userId, workspaceId },
       });
 
-    if (!provider) {
-      throw new ApplicationOAuthProviderException(
-        `OAuth provider "${providerName}" not found for application ${applicationId}`,
-        ApplicationOAuthProviderExceptionCode.PROVIDER_NOT_FOUND,
+      if (!isDefined(userWorkspace)) {
+        throw new AuthException(
+          `UserWorkspace not found for user ${userId} in workspace ${workspaceId}`,
+          AuthExceptionCode.WORKSPACE_NOT_FOUND,
+        );
+      }
+
+      const { authorizationUrl } =
+        await this.oauthProviderFlowService.startAuthorizationFlow({
+          applicationOAuthProvider: provider,
+          workspaceId,
+          userId,
+          userWorkspaceId: userWorkspace.id,
+          scope: (scope as 'user' | 'workspace' | undefined) ?? 'user',
+          reconnectingConnectedAccountId:
+            reconnectingConnectedAccountId ?? null,
+          redirectLocation: redirectLocation ?? null,
+        });
+
+      return res.redirect(authorizationUrl);
+    } catch (error) {
+      // Custom exceptions extend CustomException, not HttpException, so the
+      // default Nest filter would silently 500 with no log. Mirror the
+      // callback-side pattern: log + redirect to a user-facing error page.
+      this.logger.error(
+        `OAuth authorize failed (applicationId=${applicationId}, providerName=${providerName}): ${error instanceof Error ? error.message : String(error)}`,
+        error instanceof Error ? error.stack : undefined,
       );
+
+      return this.redirectToError(res, error);
     }
-
-    if (provider.workspaceId !== workspaceId) {
-      throw new ApplicationOAuthProviderException(
-        'OAuth provider does not belong to the requesting workspace',
-        ApplicationOAuthProviderExceptionCode.FORBIDDEN,
-      );
-    }
-
-    const userWorkspace = await this.userWorkspaceRepository.findOne({
-      where: { userId, workspaceId },
-    });
-
-    if (!isDefined(userWorkspace)) {
-      throw new AuthException(
-        `UserWorkspace not found for user ${userId} in workspace ${workspaceId}`,
-        AuthExceptionCode.WORKSPACE_NOT_FOUND,
-      );
-    }
-
-    const { authorizationUrl } =
-      await this.oauthProviderFlowService.startAuthorizationFlow({
-        applicationOAuthProvider: provider,
-        workspaceId,
-        userId,
-        userWorkspaceId: userWorkspace.id,
-        scope: (scope as 'user' | 'workspace' | undefined) ?? 'user',
-        reconnectingConnectedAccountId: reconnectingConnectedAccountId ?? null,
-        redirectLocation: redirectLocation ?? null,
-      });
-
-    return res.redirect(authorizationUrl);
   }
 
   // The OAuth provider redirects back here with `code` + `state`. The state
