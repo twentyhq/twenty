@@ -14,7 +14,8 @@ import { useAtomComponentFamilySelectorCallbackState } from '@/ui/utilities/stat
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { Temporal } from 'temporal-polyfill';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { isDefined, isNonEmptyString } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
+import { isNonEmptyString } from '@sniptt/guards';
 
 export const useProcessCalendarCardDrop = () => {
   const store = useStore();
@@ -59,7 +60,7 @@ export const useProcessCalendarCardDrop = () => {
         effectiveTimeZone = 'UTC';
       } else {
         try {
-          Temporal.TimeZone.from(userTimezone);
+          (Temporal as any).TimeZone.from(userTimezone);
         } catch {
           // oxlint-disable-next-line no-console
           console.warn(

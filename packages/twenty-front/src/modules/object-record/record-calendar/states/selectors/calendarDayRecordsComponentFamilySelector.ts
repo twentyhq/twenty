@@ -64,7 +64,7 @@ export const calendarDayRecordIdsComponentFamilySelector =
           effectiveTimeZone = 'UTC';
         } else {
           try {
-            Temporal.TimeZone.from(timeZone);
+            (Temporal as any).TimeZone.from(timeZone);
           } catch {
             if (!warnedTimeZones.has(timeZone)) {
               // oxlint-disable-next-line no-console
