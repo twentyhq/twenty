@@ -28,16 +28,12 @@ export class ApplicationOAuthProviderService {
     });
   }
 
-  async findOneById(
-    id: string,
-  ): Promise<ApplicationOAuthProviderEntity | null> {
-    return this.oauthProviderRepository.findOne({ where: { id } });
-  }
-
   async findOneByIdOrThrow(
     id: string,
   ): Promise<ApplicationOAuthProviderEntity> {
-    const provider = await this.findOneById(id);
+    const provider = await this.oauthProviderRepository.findOne({
+      where: { id },
+    });
 
     if (!isDefined(provider)) {
       throw new ApplicationOAuthProviderException(
@@ -99,7 +95,6 @@ export class ApplicationOAuthProviderService {
           scopes: manifest.scopes,
           clientIdVariable: manifest.clientIdVariable,
           clientSecretVariable: manifest.clientSecretVariable,
-          accessTokenExpiresInMs: manifest.accessTokenExpiresInMs ?? null,
           authorizationParams: manifest.authorizationParams ?? null,
           tokenRequestContentType: manifest.tokenRequestContentType ?? 'json',
           usePkce: manifest.usePkce ?? true,
@@ -129,9 +124,5 @@ export class ApplicationOAuthProviderService {
           }
         : { applicationId },
     );
-  }
-
-  async deleteByApplication(applicationId: string): Promise<void> {
-    await this.oauthProviderRepository.delete({ applicationId });
   }
 }

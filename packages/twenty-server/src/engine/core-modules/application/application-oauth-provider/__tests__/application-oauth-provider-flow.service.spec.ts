@@ -56,7 +56,6 @@ describe('ApplicationOAuthProviderFlowService', () => {
     scopes: ['read', 'write'],
     clientIdVariable: 'LINEAR_CLIENT_ID',
     clientSecretVariable: 'LINEAR_CLIENT_SECRET',
-    accessTokenExpiresInMs: null,
     authorizationParams: null,
     tokenRequestContentType: 'form-urlencoded',
     usePkce: false,
@@ -259,20 +258,6 @@ describe('ApplicationOAuthProviderFlowService', () => {
         }),
       );
       expect(connectedAccountRepository.create).not.toHaveBeenCalled();
-    });
-
-    it('falls back to a generated name when handle derivation has no signal', async () => {
-      const result = await service.completeAuthorizationFlow({
-        code: 'auth_code',
-        state: 'signed-state',
-      });
-
-      expect(result.connectedAccountId).toBe('new-account-id');
-
-      const createCall = connectedAccountRepository.create.mock.calls[0][0];
-
-      expect(createCall.name).toMatch(/^Linear/);
-      expect(createCall.handle).toBe(createCall.name);
     });
 
     it('persists the workspace scope when state asks for it', async () => {

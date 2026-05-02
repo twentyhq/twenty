@@ -1,8 +1,4 @@
-import {
-  findConnectionForRequest,
-  listConnections,
-  type RoutePayload,
-} from 'twenty-sdk/logic-function';
+import { listConnections, type RoutePayload } from 'twenty-sdk/logic-function';
 
 import { ISSUE_CREATE_MUTATION } from 'src/logic-functions/constants/issue-create-mutation.constant';
 import { type CreateIssueBody } from 'src/logic-functions/types/create-issue-body.type';
@@ -34,7 +30,11 @@ export const createLinearIssueHandler = async (
   }
 
   const connections = await listConnections({ providerName: 'linear' });
-  const connection = findConnectionForRequest(connections, event);
+  // Prefer the request user's own connection; fall back to a workspace-shared
+  // one (e.g. an admin-set service account).
+  const connection =
+    connections.find((c) => c.userWorkspaceId === event.userWorkspaceId) ??
+    connections.find((c) => c.scope === 'workspace');
 
   if (!connection) {
     return {

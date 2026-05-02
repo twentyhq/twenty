@@ -48,27 +48,13 @@ const buildAccount = (
 
 describe('ApplicationConnectionsListService', () => {
   let service: ApplicationConnectionsListService;
-  let connectedAccountRepository: {
-    find: jest.Mock;
-    findOne: jest.Mock;
-  };
-  let oauthProviderRepository: {
-    find: jest.Mock;
-    findOne: jest.Mock;
-  };
+  let connectedAccountRepository: { find: jest.Mock };
+  let oauthProviderRepository: { findOne: jest.Mock };
   let refreshTokensService: { refreshAndSaveTokens: jest.Mock };
 
   beforeEach(async () => {
-    connectedAccountRepository = {
-      find: jest.fn(),
-      findOne: jest.fn(),
-    };
-    oauthProviderRepository = {
-      find: jest.fn(async () => [
-        { id: 'provider-1', name: 'linear' },
-      ]),
-      findOne: jest.fn(),
-    };
+    connectedAccountRepository = { find: jest.fn() };
+    oauthProviderRepository = { findOne: jest.fn() };
     refreshTokensService = {
       refreshAndSaveTokens: jest.fn(async () => ({
         accessToken: 'fresh-access',
@@ -199,47 +185,6 @@ describe('ApplicationConnectionsListService', () => {
       });
 
       expect(result.map((c) => c.id)).toEqual(['good']);
-    });
-  });
-
-  describe('get', () => {
-    it('returns null when the connection belongs to another user (user-scoped)', async () => {
-      connectedAccountRepository.findOne.mockResolvedValue(
-        buildAccount({ userWorkspaceId: OTHER_USER_WORKSPACE_ID }),
-      );
-
-      const result = await service.get({
-        id: 'conn-1',
-        applicationId: APP_ID,
-        workspaceId: WORKSPACE_ID,
-        requestUserWorkspaceId: REQUEST_USER_WORKSPACE_ID,
-      });
-
-      expect(result).toBeNull();
-    });
-
-    it('returns the workspace-scoped credential to a different user', async () => {
-      connectedAccountRepository.findOne.mockResolvedValue(
-        buildAccount({
-          scope: 'workspace',
-          userWorkspaceId: OTHER_USER_WORKSPACE_ID,
-        }),
-      );
-      oauthProviderRepository.findOne.mockResolvedValue({
-        id: 'provider-1',
-        name: 'linear',
-      });
-
-      const result = await service.get({
-        id: 'conn-1',
-        applicationId: APP_ID,
-        workspaceId: WORKSPACE_ID,
-        requestUserWorkspaceId: REQUEST_USER_WORKSPACE_ID,
-      });
-
-      expect(result?.id).toBe('conn-1');
-      expect(result?.scope).toBe('workspace');
-      expect(result?.providerName).toBe('linear');
     });
   });
 });

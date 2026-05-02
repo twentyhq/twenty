@@ -21,7 +21,6 @@ export class AddApplicationOAuthProviderAndConnectedAccountColumn1777558657640
         "scopes" varchar array NOT NULL DEFAULT '{}',
         "clientIdVariable" varchar NOT NULL,
         "clientSecretVariable" varchar NOT NULL,
-        "accessTokenExpiresInMs" integer,
         "authorizationParams" jsonb,
         "tokenRequestContentType" varchar NOT NULL DEFAULT 'json',
         "usePkce" boolean NOT NULL DEFAULT true,

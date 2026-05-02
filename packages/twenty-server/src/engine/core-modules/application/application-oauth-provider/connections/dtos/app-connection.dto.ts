@@ -1,14 +1,12 @@
-// Wire shape returned to apps from POST /apps/connections/list and /get.
-// Matches the SDK's `AppConnection` type.
+// Wire shape returned to apps from POST /apps/connections/list. Matches the
+// SDK's `AppConnection` type. Kept minimal — extend when a real consumer
+// needs more fields.
 export type AppConnectionDto = {
   id: string;
-  name: string | null;
   scope: 'user' | 'workspace';
-  providerName: string;
   userWorkspaceId: string;
   accessToken: string;
-  scopes: string[];
-  handle: string | null;
-  lastRefreshedAt: string | null;
+  // Set when the most recent refresh attempt failed; the user must reconnect
+  // from the app's settings tab. Apps should surface this to end users.
   authFailedAt: string | null;
 };

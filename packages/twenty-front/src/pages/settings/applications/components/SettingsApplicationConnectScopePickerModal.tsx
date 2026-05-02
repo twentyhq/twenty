@@ -9,45 +9,19 @@ import { Button, Radio } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-const StyledOptions = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${themeCssVariables.spacing[3]};
-  margin-top: ${themeCssVariables.spacing[2]};
-`;
-
 const StyledOption = styled.label`
-  align-items: flex-start;
-  background: ${themeCssVariables.background.secondary};
-  border: 1px solid ${themeCssVariables.border.color.medium};
-  border-radius: ${themeCssVariables.border.radius.md};
+  align-items: center;
   cursor: pointer;
   display: flex;
   gap: ${themeCssVariables.spacing[3]};
-  padding: ${themeCssVariables.spacing[3]};
-`;
-
-const StyledOptionText = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${themeCssVariables.spacing[1]};
-`;
-
-const StyledOptionTitle = styled.div`
-  color: ${themeCssVariables.font.color.primary};
-  font-weight: ${themeCssVariables.font.weight.medium};
-`;
-
-const StyledOptionDescription = styled.div`
-  color: ${themeCssVariables.font.color.tertiary};
-  font-size: ${themeCssVariables.font.size.sm};
+  padding: ${themeCssVariables.spacing[2]} 0;
 `;
 
 const StyledFooter = styled.div`
   display: flex;
   gap: ${themeCssVariables.spacing[2]};
   justify-content: flex-end;
-  margin-top: ${themeCssVariables.spacing[4]};
+  margin-top: ${themeCssVariables.spacing[3]};
 `;
 
 type SettingsApplicationConnectScopePickerModalProps = {
@@ -86,34 +60,22 @@ export const SettingsApplicationConnectScopePickerModal = ({
         fontColor={H1TitleFontColor.Primary}
       />
       <Section>
-        <StyledOptions>
-          <StyledOption>
-            <Radio
-              value="user"
-              checked={scope === 'user'}
-              onCheckedChange={(checked) => checked && setScope('user')}
-            />
-            <StyledOptionText>
-              <StyledOptionTitle>{t`Just for me`}</StyledOptionTitle>
-              <StyledOptionDescription>
-                {t`Only you can use this credential. Use this for personal accounts.`}
-              </StyledOptionDescription>
-            </StyledOptionText>
-          </StyledOption>
-          <StyledOption>
-            <Radio
-              value="workspace"
-              checked={scope === 'workspace'}
-              onCheckedChange={(checked) => checked && setScope('workspace')}
-            />
-            <StyledOptionText>
-              <StyledOptionTitle>{t`Workspace shared`}</StyledOptionTitle>
-              <StyledOptionDescription>
-                {t`Anyone in this workspace can use this credential. Pick this for shared bots or service accounts.`}
-              </StyledOptionDescription>
-            </StyledOptionText>
-          </StyledOption>
-        </StyledOptions>
+        <StyledOption>
+          <Radio
+            value="user"
+            checked={scope === 'user'}
+            onCheckedChange={(checked) => checked && setScope('user')}
+            label={t`Just for me`}
+          />
+        </StyledOption>
+        <StyledOption>
+          <Radio
+            value="workspace"
+            checked={scope === 'workspace'}
+            onCheckedChange={(checked) => checked && setScope('workspace')}
+            label={t`Workspace shared`}
+          />
+        </StyledOption>
       </Section>
       <StyledFooter>
         <Button

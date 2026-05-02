@@ -5,7 +5,6 @@ import {
   DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
   LINEAR_CLIENT_ID_VARIABLE_UNIVERSAL_IDENTIFIER,
   LINEAR_CLIENT_SECRET_VARIABLE_UNIVERSAL_IDENTIFIER,
-  LINEAR_DEFAULT_USER_WORKSPACE_ID_VARIABLE_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/universal-identifiers';
 
 export default defineApplication({
@@ -27,13 +26,6 @@ export default defineApplication({
       description:
         'OAuth client secret from your Linear OAuth application. Stored encrypted; never exposed in API responses.',
       isSecret: true,
-    },
-    LINEAR_DEFAULT_USER_WORKSPACE_ID: {
-      universalIdentifier:
-        LINEAR_DEFAULT_USER_WORKSPACE_ID_VARIABLE_UNIVERSAL_IDENTIFIER,
-      description:
-        'userWorkspaceId of the member whose Linear connection cron jobs should use when no workspace-shared credential exists. Optional.',
-      isSecret: false,
     },
   },
 });

@@ -1,8 +1,4 @@
-import {
-  findConnectionForRequest,
-  listConnections,
-  type RoutePayload,
-} from 'twenty-sdk/logic-function';
+import { listConnections, type RoutePayload } from 'twenty-sdk/logic-function';
 
 import { callLinearGraphQL } from 'src/logic-functions/utils/call-linear-graphql';
 
@@ -24,7 +20,9 @@ export const listLinearTeamsHandler = async (
   event: RoutePayload,
 ): Promise<HandlerResult> => {
   const connections = await listConnections({ providerName: 'linear' });
-  const connection = findConnectionForRequest(connections, event);
+  const connection =
+    connections.find((c) => c.userWorkspaceId === event.userWorkspaceId) ??
+    connections.find((c) => c.scope === 'workspace');
 
   if (!connection) {
     return {

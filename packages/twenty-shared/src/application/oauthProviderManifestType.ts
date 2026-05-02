@@ -11,7 +11,6 @@ export type OAuthProviderManifest = SyncableEntityOptions & {
   scopes: string[];
   clientIdVariable: string;
   clientSecretVariable: string;
-  accessTokenExpiresInMs?: number;
   authorizationParams?: Record<string, string>;
   tokenRequestContentType?: OAuthProviderTokenRequestContentType;
   usePkce?: boolean;

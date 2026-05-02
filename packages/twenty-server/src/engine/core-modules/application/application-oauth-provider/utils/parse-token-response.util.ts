@@ -12,23 +12,13 @@ export const parseTokenResponse = (
     );
   }
 
-  const refreshToken =
-    typeof json.refresh_token === 'string' ? json.refresh_token : null;
-
-  const scopesRaw = json.scope;
-  const scopes =
-    typeof scopesRaw === 'string'
-      ? scopesRaw.split(/[\s,]+/).filter(Boolean)
-      : null;
-
-  const expiresInSeconds =
-    typeof json.expires_in === 'number' ? json.expires_in : null;
-
   return {
     accessToken,
-    refreshToken,
-    scopes,
-    expiresInMs: expiresInSeconds !== null ? expiresInSeconds * 1000 : null,
-    raw: json,
+    refreshToken:
+      typeof json.refresh_token === 'string' ? json.refresh_token : null,
+    scopes:
+      typeof json.scope === 'string'
+        ? json.scope.split(/[\s,]+/).filter(Boolean)
+        : null,
   };
 };

@@ -6,18 +6,14 @@ import { GET_MY_CONNECTED_ACCOUNTS } from '@/settings/accounts/graphql/queries/g
 // App OAuth connections only — i.e. ConnectedAccount rows with
 // `provider = 'app'`. The email/calendar `useMyConnectedAccounts` filters
 // these out; this hook is the inverse, used by the per-app settings tab.
-export type AppConnectedAccount = {
+type AppConnectedAccount = {
   id: string;
   handle: string;
   provider: ConnectedAccountProvider;
   authFailedAt: string | null;
-  scopes: string[] | null;
   applicationOAuthProviderId: string | null;
-  applicationId: string | null;
   name: string | null;
   scope: 'user' | 'workspace';
-  userWorkspaceId: string;
-  lastCredentialsRefreshedAt: string | null;
 };
 
 export const useMyAppConnectedAccounts = () => {

@@ -76,9 +76,6 @@ export class ApplicationOAuthProviderEntity extends WorkspaceRelatedEntity {
   @Column({ nullable: false, type: 'varchar' })
   clientSecretVariable: string;
 
-  @Column({ nullable: true, type: 'integer' })
-  accessTokenExpiresInMs: number | null;
-
   @Column({ nullable: true, type: 'jsonb' })
   authorizationParams: Record<string, string> | null;
 

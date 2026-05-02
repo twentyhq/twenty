@@ -13,7 +13,6 @@ import { ApplicationOAuthProviderService } from 'src/engine/core-modules/applica
 import { type TokenExchangeResponse } from 'src/engine/core-modules/application/application-oauth-provider/types/token-exchange-response.type';
 import { buildAppOAuthCallbackUrl } from 'src/engine/core-modules/application/application-oauth-provider/utils/build-callback-url.util';
 import { computePkceChallenge } from 'src/engine/core-modules/application/application-oauth-provider/utils/compute-pkce-challenge.util';
-import { deriveConnectionNameFromHandle } from 'src/engine/core-modules/application/application-oauth-provider/utils/derive-connection-name-from-handle.util';
 import { exchangeCodeForToken } from 'src/engine/core-modules/application/application-oauth-provider/utils/exchange-code-for-token.util';
 import { generatePkceVerifier } from 'src/engine/core-modules/application/application-oauth-provider/utils/generate-pkce-verifier.util';
 import { ApplicationVariableEntityService } from 'src/engine/core-modules/application/application-variable/application-variable.service';
@@ -274,11 +273,8 @@ export class ApplicationOAuthProviderFlowService {
       where: { applicationOAuthProviderId: provider.id, workspaceId },
     });
 
-    const name = deriveConnectionNameFromHandle({
-      providerDisplayName: provider.displayName,
-      accessToken: tokenResponse.accessToken,
-      fallbackIndex: existingCount + 1,
-    });
+    // Auto-generated default — the user can rename from the app settings tab.
+    const name = `${provider.displayName} #${existingCount + 1}`;
 
     const created = this.connectedAccountRepository.create({
       ...sharedFields,

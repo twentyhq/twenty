@@ -7,8 +7,6 @@ import { type AppConnection } from '@/sdk/logic-function/connections/types/app-c
 
 export type ListConnectionsFilter = {
   providerName?: string;
-  userWorkspaceId?: string;
-  scope?: 'user' | 'workspace';
 };
 
 // Returns every connection owned by the running app, optionally filtered.

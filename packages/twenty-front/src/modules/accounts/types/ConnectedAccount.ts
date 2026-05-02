@@ -13,7 +13,6 @@ export type ConnectedAccount = {
   lastSignedInAt: string | null;
   userWorkspaceId: string;
   applicationOAuthProviderId: string | null;
-  applicationId: string | null;
   name: string | null;
   scope: 'user' | 'workspace';
   lastCredentialsRefreshedAt: string | null;
