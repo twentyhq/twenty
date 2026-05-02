@@ -1,7 +1,7 @@
-import { listConnections, type RoutePayload } from 'twenty-sdk/logic-function';
+import { listConnections } from 'twenty-sdk/logic-function';
 
 import { ISSUE_CREATE_MUTATION } from 'src/logic-functions/constants/issue-create-mutation.constant';
-import { type CreateIssueBody } from 'src/logic-functions/types/create-issue-body.type';
+import { type CreateIssueInput } from 'src/logic-functions/types/create-issue-input.type';
 import { type CreateIssueMutationResult } from 'src/logic-functions/types/create-issue-mutation-result.type';
 import { callLinearGraphQL } from 'src/logic-functions/utils/call-linear-graphql';
 
@@ -18,23 +18,20 @@ type HandlerResult =
   | { success: false; error: string };
 
 export const createLinearIssueHandler = async (
-  event: RoutePayload<CreateIssueBody>,
+  input: CreateIssueInput,
 ): Promise<HandlerResult> => {
-  const body = event.body ?? {};
-
-  if (!body.teamId || !body.title) {
+  if (!input.teamId || !input.title) {
     return {
       success: false,
-      error: 'Both `teamId` and `title` are required in the request body.',
+      error: 'Both `teamId` and `title` are required.',
     };
   }
 
   const connections = await listConnections({ providerName: 'linear' });
-  // Prefer the request user's own connection; fall back to a workspace-shared
-  // one (e.g. an admin-set service account).
+  // Workspace-shared credentials win when present (a team-managed service
+  // account); otherwise fall back to the first user-scoped connection.
   const connection =
-    connections.find((c) => c.userWorkspaceId === event.userWorkspaceId) ??
-    connections.find((c) => c.scope === 'workspace');
+    connections.find((c) => c.scope === 'workspace') ?? connections[0];
 
   if (!connection) {
     return {
@@ -49,9 +46,9 @@ export const createLinearIssueHandler = async (
     query: ISSUE_CREATE_MUTATION,
     variables: {
       input: {
-        teamId: body.teamId,
-        title: body.title,
-        description: body.description,
+        teamId: input.teamId,
+        title: input.title,
+        description: input.description,
       },
     },
   });

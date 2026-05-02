@@ -2,16 +2,9 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { createLinearIssueHandler } from '../handlers/create-linear-issue-handler';
 
-import {
-  buildConnection,
-  buildEvent,
-  stubConnectionsThenLinear,
-} from './test-utils';
+import { buildConnection, stubConnectionsThenLinear } from './test-utils';
 
 const SAVED_ENV = { ...process.env };
-
-const buildIssueEvent = (body: object) =>
-  buildEvent(body, '/linear/create-issue', 'POST');
 
 describe('createLinearIssueHandler', () => {
   beforeEach(() => {
@@ -25,10 +18,8 @@ describe('createLinearIssueHandler', () => {
     vi.restoreAllMocks();
   });
 
-  it('returns an error when the body is missing required fields', async () => {
-    const result = await createLinearIssueHandler(
-      buildIssueEvent({ title: 'no team' }),
-    );
+  it('returns an error when required input fields are missing', async () => {
+    const result = await createLinearIssueHandler({ title: 'no team' });
 
     expect(result).toMatchObject({
       success: false,
@@ -36,12 +27,13 @@ describe('createLinearIssueHandler', () => {
     });
   });
 
-  it('returns an error when no connection matches the request user', async () => {
+  it('returns an error when no Linear connection exists', async () => {
     stubConnectionsThenLinear([], {});
 
-    const result = await createLinearIssueHandler(
-      buildIssueEvent({ teamId: 'team_1', title: 'hi' }),
-    );
+    const result = await createLinearIssueHandler({
+      teamId: 'team_1',
+      title: 'hi',
+    });
 
     expect(result).toMatchObject({
       success: false,
@@ -49,7 +41,7 @@ describe('createLinearIssueHandler', () => {
     });
   });
 
-  it('calls Linear with the matching user connection and returns the issue', async () => {
+  it('calls Linear with the only available connection and returns the issue', async () => {
     const issue = {
       id: 'issue_1',
       identifier: 'TEAM-1',
@@ -61,13 +53,11 @@ describe('createLinearIssueHandler', () => {
       data: { issueCreate: { success: true, issue } },
     });
 
-    const result = await createLinearIssueHandler(
-      buildIssueEvent({
-        teamId: 'team_1',
-        title: 'Hello from Twenty',
-        description: 'Body',
-      }),
-    );
+    const result = await createLinearIssueHandler({
+      teamId: 'team_1',
+      title: 'Hello from Twenty',
+      description: 'Body',
+    });
 
     expect(result).toEqual({ success: true, issue });
 
@@ -82,31 +72,38 @@ describe('createLinearIssueHandler', () => {
     });
   });
 
-  it('falls back to a workspace-shared connection when the user has none', async () => {
+  it('prefers a workspace-scoped connection over a user-scoped one', async () => {
+    const userConnection = buildConnection({
+      id: 'conn_user',
+      accessToken: 'lin_user',
+    });
     const sharedConnection = buildConnection({
       id: 'conn_shared',
       scope: 'workspace',
-      userWorkspaceId: '99999999-9999-9999-9999-999999999999',
       accessToken: 'lin_shared',
     });
 
-    const fetchMock = stubConnectionsThenLinear([sharedConnection], {
-      data: {
-        issueCreate: {
-          success: true,
-          issue: {
-            id: 'issue_2',
-            identifier: 'T-2',
-            title: 'Hi',
-            url: 'https://linear.app/x/T-2',
+    const fetchMock = stubConnectionsThenLinear(
+      [userConnection, sharedConnection],
+      {
+        data: {
+          issueCreate: {
+            success: true,
+            issue: {
+              id: 'issue_2',
+              identifier: 'T-2',
+              title: 'Hi',
+              url: 'https://linear.app/x/T-2',
+            },
           },
         },
       },
-    });
-
-    const result = await createLinearIssueHandler(
-      buildIssueEvent({ teamId: 'team_1', title: 'Hi' }),
     );
+
+    const result = await createLinearIssueHandler({
+      teamId: 'team_1',
+      title: 'Hi',
+    });
 
     expect(result.success).toBe(true);
     expect(fetchMock.mock.calls[1][1].headers.Authorization).toBe(
@@ -119,9 +116,10 @@ describe('createLinearIssueHandler', () => {
       errors: [{ message: 'Invalid teamId' }],
     });
 
-    const result = await createLinearIssueHandler(
-      buildIssueEvent({ teamId: 'bogus', title: 'hi' }),
-    );
+    const result = await createLinearIssueHandler({
+      teamId: 'bogus',
+      title: 'hi',
+    });
 
     expect(result).toEqual({ success: false, error: 'Invalid teamId' });
   });

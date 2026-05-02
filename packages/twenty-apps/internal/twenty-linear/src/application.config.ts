@@ -10,7 +10,7 @@ export default defineApplication({
   displayName: 'Linear',
   description:
     'Connect Linear to Twenty. Each workspace member connects their own Linear account; logic functions can then create issues and read team data on their behalf.',
-  icon: 'IconBrandLinear',
+  logoUrl: 'public/linear-logomark.svg',
   defaultRoleUniversalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
   // OAuth client_id/secret live at the registration level (one OAuth app per
   // Twenty server, configured by the server admin) — not per-workspace —

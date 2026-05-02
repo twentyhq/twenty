@@ -46,18 +46,3 @@ export const stubConnectionsThenLinear = (
 
   return fetchMock;
 };
-
-export const buildEvent = <TBody = object>(
-  body: TBody | null,
-  path: string,
-  method: string,
-  userWorkspaceId: string | null = USER_WORKSPACE_ID,
-) => ({
-  headers: {},
-  queryStringParameters: {},
-  pathParameters: {},
-  body,
-  isBase64Encoded: false,
-  requestContext: { http: { method, path } },
-  userWorkspaceId,
-});

@@ -1,4 +1,4 @@
-export type CreateIssueBody = {
+export type CreateIssueInput = {
   teamId?: string;
   title?: string;
   description?: string;

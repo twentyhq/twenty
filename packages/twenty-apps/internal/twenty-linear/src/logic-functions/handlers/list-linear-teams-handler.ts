@@ -1,4 +1,4 @@
-import { listConnections, type RoutePayload } from 'twenty-sdk/logic-function';
+import { listConnections } from 'twenty-sdk/logic-function';
 
 import { callLinearGraphQL } from 'src/logic-functions/utils/call-linear-graphql';
 
@@ -16,13 +16,10 @@ type HandlerResult =
   | { success: true; teams: LinearTeam[] }
   | { success: false; error: string };
 
-export const listLinearTeamsHandler = async (
-  event: RoutePayload,
-): Promise<HandlerResult> => {
+export const listLinearTeamsHandler = async (): Promise<HandlerResult> => {
   const connections = await listConnections({ providerName: 'linear' });
   const connection =
-    connections.find((c) => c.userWorkspaceId === event.userWorkspaceId) ??
-    connections.find((c) => c.scope === 'workspace');
+    connections.find((c) => c.scope === 'workspace') ?? connections[0];
 
   if (!connection) {
     return {

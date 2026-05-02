@@ -2,15 +2,9 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { listLinearTeamsHandler } from '../handlers/list-linear-teams-handler';
 
-import {
-  buildConnection,
-  buildEvent,
-  stubConnectionsThenLinear,
-} from './test-utils';
+import { buildConnection, stubConnectionsThenLinear } from './test-utils';
 
 const SAVED_ENV = { ...process.env };
-
-const teamsEvent = () => buildEvent(null, '/linear/teams', 'GET');
 
 describe('listLinearTeamsHandler', () => {
   beforeEach(() => {
@@ -34,7 +28,7 @@ describe('listLinearTeamsHandler', () => {
       data: { teams: { nodes: teams } },
     });
 
-    const result = await listLinearTeamsHandler(teamsEvent());
+    const result = await listLinearTeamsHandler();
 
     expect(result).toEqual({ success: true, teams });
     expect(fetchMock.mock.calls[1][1].headers.Authorization).toBe(
@@ -42,10 +36,10 @@ describe('listLinearTeamsHandler', () => {
     );
   });
 
-  it('returns success=false when there is no matching connection', async () => {
+  it('returns success=false when no Linear connection exists', async () => {
     stubConnectionsThenLinear([], { data: { teams: { nodes: [] } } });
 
-    const result = await listLinearTeamsHandler(teamsEvent());
+    const result = await listLinearTeamsHandler();
 
     expect(result.success).toBe(false);
   });
@@ -55,7 +49,7 @@ describe('listLinearTeamsHandler', () => {
       errors: [{ message: 'rate limited' }],
     });
 
-    const result = await listLinearTeamsHandler(teamsEvent());
+    const result = await listLinearTeamsHandler();
 
     expect(result).toEqual({ success: false, error: 'rate limited' });
   });

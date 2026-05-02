@@ -7,12 +7,27 @@ export default defineLogicFunction({
   universalIdentifier: CREATE_LINEAR_ISSUE_UNIVERSAL_IDENTIFIER,
   name: 'create-linear-issue',
   description:
-    'Creates a Linear issue on behalf of the connected user. POST a JSON body with `teamId` and `title` (and optional `description`).',
+    'Create a Linear issue on behalf of the connected user. Requires a teamId (call list-linear-teams to discover one) and a title.',
   timeoutSeconds: 30,
   handler: createLinearIssueHandler,
-  httpRouteTriggerSettings: {
-    path: '/linear/create-issue',
-    httpMethod: 'POST',
-    isAuthRequired: true,
+  isTool: true,
+  toolInputSchema: {
+    type: 'object',
+    properties: {
+      teamId: {
+        type: 'string',
+        description:
+          'The Linear team ID to create the issue in. Use list-linear-teams to discover available teams.',
+      },
+      title: {
+        type: 'string',
+        description: 'The issue title.',
+      },
+      description: {
+        type: 'string',
+        description: 'Optional issue description (Markdown supported).',
+      },
+    },
+    required: ['teamId', 'title'],
   },
 });
