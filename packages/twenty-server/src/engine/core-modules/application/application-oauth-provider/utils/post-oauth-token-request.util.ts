@@ -36,7 +36,5 @@ export const postOAuthTokenRequest = async (args: {
     );
   }
 
-  return parseTokenResponse(
-    (await response.json()) as Record<string, unknown>,
-  );
+  return parseTokenResponse((await response.json()) as Record<string, unknown>);
 };

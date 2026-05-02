@@ -20,9 +20,7 @@ export const SettingsApplicationDetailSettingsTab = ({
   return (
     <>
       {application?.id && (
-        <SettingsApplicationConnectionsSection
-          applicationId={application.id}
-        />
+        <SettingsApplicationConnectionsSection applicationId={application.id} />
       )}
       <SettingsApplicationDetailEnvironmentVariablesTable
         envVariables={envVariables}

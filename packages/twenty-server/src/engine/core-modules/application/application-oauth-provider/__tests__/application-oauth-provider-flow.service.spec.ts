@@ -86,7 +86,10 @@ describe('ApplicationOAuthProviderFlowService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         ApplicationOAuthProviderFlowService,
-        { provide: ApplicationOAuthProviderService, useValue: oauthProviderService },
+        {
+          provide: ApplicationOAuthProviderService,
+          useValue: oauthProviderService,
+        },
         {
           provide: ApplicationVariableEntityService,
           useValue: applicationVariableService,

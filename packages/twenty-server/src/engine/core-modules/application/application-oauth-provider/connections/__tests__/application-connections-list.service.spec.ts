@@ -132,9 +132,7 @@ describe('ApplicationConnectionsListService', () => {
 
       expect(result.map((c) => c.id).sort()).toEqual(['mine', 'theirs']);
       expect(connectedAccountRepository.find).toHaveBeenCalledWith({
-        where: [
-          expect.not.objectContaining({ scope: expect.anything() }),
-        ],
+        where: [expect.not.objectContaining({ scope: expect.anything() })],
       });
     });
 

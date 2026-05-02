@@ -3,8 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { type Response } from 'express';
 import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath } from 'twenty-shared/utils';
-import { isDefined } from 'twenty-shared/utils';
+import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { ApplicationOAuthProviderFlowService } from 'src/engine/core-modules/application/application-oauth-provider/application-oauth-provider-flow.service';

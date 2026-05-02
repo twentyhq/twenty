@@ -31,8 +31,7 @@ export const useTriggerAppOAuth = () => {
       redirectLocation?: string;
     }) => {
       const transient = await generateTransientToken();
-      const token =
-        transient.data?.generateTransientToken.transientToken.token;
+      const token = transient.data?.generateTransientToken.transientToken.token;
 
       if (!token) {
         return;

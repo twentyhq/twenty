@@ -63,10 +63,9 @@ export const SettingsApplicationConnectionsSection = ({
   const { oauthProviders, loading } =
     useFindApplicationOAuthProviders(applicationId);
   const { accounts: connectedAccounts } = useMyAppConnectedAccounts();
-  const [deleteConnectedAccount] = useMutation(
-    DeleteConnectedAccountDocument,
-    { refetchQueries: [{ query: GET_MY_CONNECTED_ACCOUNTS }] },
-  );
+  const [deleteConnectedAccount] = useMutation(DeleteConnectedAccountDocument, {
+    refetchQueries: [{ query: GET_MY_CONNECTED_ACCOUNTS }],
+  });
 
   // Tracks which provider's "Add connection" was clicked so the scope picker
   // modal knows the displayName + which provider to launch OAuth for.

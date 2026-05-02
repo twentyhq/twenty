@@ -45,7 +45,12 @@ describe('exchangeCodeForToken', () => {
       scopes: ['read', 'write'],
     });
 
-    const init = (fetchFn.mock.calls[0] as unknown as [string, { headers: Record<string, string>; body: string }])[1];
+    const init = (
+      fetchFn.mock.calls[0] as unknown as [
+        string,
+        { headers: Record<string, string>; body: string },
+      ]
+    )[1];
 
     expect(init.headers['Content-Type']).toBe(
       'application/x-www-form-urlencoded',
@@ -71,7 +76,12 @@ describe('exchangeCodeForToken', () => {
       fetchFn: fetchFn as unknown as typeof globalThis.fetch,
     });
 
-    const init = (fetchFn.mock.calls[0] as unknown as [string, { headers: Record<string, string>; body: string }])[1];
+    const init = (
+      fetchFn.mock.calls[0] as unknown as [
+        string,
+        { headers: Record<string, string>; body: string },
+      ]
+    )[1];
 
     expect(init.headers['Content-Type']).toBe('application/json');
     expect(JSON.parse(init.body)).toMatchObject({
@@ -94,9 +104,7 @@ describe('exchangeCodeForToken', () => {
   });
 
   it('throws when 200 response is missing access_token', async () => {
-    const fetchFn = jest.fn(async () =>
-      buildResponse({ refresh_token: 'r' }),
-    );
+    const fetchFn = jest.fn(async () => buildResponse({ refresh_token: 'r' }));
 
     await expect(
       exchangeCodeForToken({
@@ -118,7 +126,10 @@ describe('exchangeRefreshTokenForToken', () => {
 
   it('uses grant_type=refresh_token and returns the rotated tokens', async () => {
     const fetchFn = jest.fn(async () =>
-      buildResponse({ access_token: 'new_access', refresh_token: 'new_refresh' }),
+      buildResponse({
+        access_token: 'new_access',
+        refresh_token: 'new_refresh',
+      }),
     );
 
     const result = await exchangeRefreshTokenForToken({
@@ -132,7 +143,9 @@ describe('exchangeRefreshTokenForToken', () => {
       scopes: null,
     });
 
-    const init = (fetchFn.mock.calls[0] as unknown as [string, { body: string }])[1];
+    const init = (
+      fetchFn.mock.calls[0] as unknown as [string, { body: string }]
+    )[1];
     const params = new URLSearchParams(init.body);
 
     expect(params.get('grant_type')).toBe('refresh_token');

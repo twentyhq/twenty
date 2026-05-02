@@ -36,16 +36,19 @@ export class AddApplicationOAuthProviderAndConnectedAccountColumn1777558657640
       `CREATE INDEX "IDX_APP_OAUTH_PROVIDER_WORKSPACE_ID" ON "core"."applicationOAuthProvider" ("workspaceId")`,
     );
 
+    // FK constraint names match the hashes that TypeORM auto-generates from
+    // the @ManyToOne decorators in the entities. Keeping them in sync here
+    // avoids a "pending migration" diff on every CI run.
     await queryRunner.query(
       `ALTER TABLE "core"."applicationOAuthProvider"
-       ADD CONSTRAINT "FK_applicationOAuthProvider_workspace"
+       ADD CONSTRAINT "FK_c63de8b90514de1798876c30f2e"
        FOREIGN KEY ("workspaceId") REFERENCES "core"."workspace"("id")
        ON DELETE CASCADE ON UPDATE NO ACTION`,
     );
 
     await queryRunner.query(
       `ALTER TABLE "core"."applicationOAuthProvider"
-       ADD CONSTRAINT "FK_applicationOAuthProvider_application"
+       ADD CONSTRAINT "FK_2d01320998547c2f5059d8b09d6"
        FOREIGN KEY ("applicationId") REFERENCES "core"."application"("id")
        ON DELETE CASCADE ON UPDATE NO ACTION`,
     );
@@ -68,14 +71,14 @@ export class AddApplicationOAuthProviderAndConnectedAccountColumn1777558657640
 
     await queryRunner.query(
       `ALTER TABLE "core"."connectedAccount"
-       ADD CONSTRAINT "FK_connectedAccount_applicationOAuthProvider"
+       ADD CONSTRAINT "FK_344a905bc2041c998d5b57f9bde"
        FOREIGN KEY ("applicationOAuthProviderId") REFERENCES "core"."applicationOAuthProvider"("id")
        ON DELETE CASCADE ON UPDATE NO ACTION`,
     );
 
     await queryRunner.query(
       `ALTER TABLE "core"."connectedAccount"
-       ADD CONSTRAINT "FK_connectedAccount_application"
+       ADD CONSTRAINT "FK_21b8e7d3a21ff5712c4dd4875ac"
        FOREIGN KEY ("applicationId") REFERENCES "core"."application"("id")
        ON DELETE CASCADE ON UPDATE NO ACTION`,
     );
@@ -83,11 +86,11 @@ export class AddApplicationOAuthProviderAndConnectedAccountColumn1777558657640
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `ALTER TABLE "core"."connectedAccount" DROP CONSTRAINT "FK_connectedAccount_application"`,
+      `ALTER TABLE "core"."connectedAccount" DROP CONSTRAINT "FK_21b8e7d3a21ff5712c4dd4875ac"`,
     );
 
     await queryRunner.query(
-      `ALTER TABLE "core"."connectedAccount" DROP CONSTRAINT "FK_connectedAccount_applicationOAuthProvider"`,
+      `ALTER TABLE "core"."connectedAccount" DROP CONSTRAINT "FK_344a905bc2041c998d5b57f9bde"`,
     );
 
     await queryRunner.query(
@@ -107,11 +110,11 @@ export class AddApplicationOAuthProviderAndConnectedAccountColumn1777558657640
     );
 
     await queryRunner.query(
-      `ALTER TABLE "core"."applicationOAuthProvider" DROP CONSTRAINT "FK_applicationOAuthProvider_application"`,
+      `ALTER TABLE "core"."applicationOAuthProvider" DROP CONSTRAINT "FK_2d01320998547c2f5059d8b09d6"`,
     );
 
     await queryRunner.query(
-      `ALTER TABLE "core"."applicationOAuthProvider" DROP CONSTRAINT "FK_applicationOAuthProvider_workspace"`,
+      `ALTER TABLE "core"."applicationOAuthProvider" DROP CONSTRAINT "FK_c63de8b90514de1798876c30f2e"`,
     );
 
     await queryRunner.query(
