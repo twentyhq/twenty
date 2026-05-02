@@ -28,17 +28,15 @@ export const findConflictingRecord = async (
       return field.name === columnName;
     }
 
-    const property = compositeType.properties.find(
+    const uniqueProperties = compositeType.properties.filter(
       (prop) => prop.isIncludedInUniqueConstraint,
     );
 
-    if (!property) {
-      return false;
-    }
+    return uniqueProperties.some((property) => {
+      const expectedColumnName = `${field.name}${capitalize(property.name)}`;
 
-    const expectedColumnName = `${field.name}${capitalize(property.name)}`;
-
-    return expectedColumnName === columnName;
+      return expectedColumnName === columnName;
+    });
   });
 
   if (!matchingField) {

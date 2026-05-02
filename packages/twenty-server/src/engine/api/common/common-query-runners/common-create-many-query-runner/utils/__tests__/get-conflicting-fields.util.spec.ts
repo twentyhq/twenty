@@ -61,6 +61,13 @@ describe('getConflictingFields', () => {
     isUnique: false,
   });
 
+  const phonesUniqueField = createMockField({
+    id: 'phones-unique-id',
+    name: 'phonesField',
+    type: FieldMetadataType.PHONES,
+    isUnique: true,
+  });
+
   const addressUniqueFieldNoIncludedProp = createMockField({
     id: 'address-unique-id',
     name: 'addressField',
@@ -168,6 +175,33 @@ describe('getConflictingFields', () => {
     );
 
     expect(result).toEqual([{ baseField: 'id', fullPath: 'id', column: 'id' }]);
+  });
+
+  it('returns all unique constraint subfields for composite fields with multiple included properties', () => {
+    const fields = [idField, phonesUniqueField];
+    const flatObjectMetadata = buildFlatObjectMetadata(fields);
+    const flatFieldMetadataMaps = buildFlatFieldMetadataMaps(fields);
+
+    const result = getConflictingFields(
+      flatObjectMetadata,
+      flatFieldMetadataMaps,
+    );
+
+    expect(result).toEqual(
+      expect.arrayContaining([
+        { baseField: 'id', fullPath: 'id', column: 'id' },
+        {
+          baseField: 'phonesField',
+          fullPath: 'phonesField.primaryPhoneNumber',
+          column: 'phonesFieldPrimaryPhoneNumber',
+        },
+        {
+          baseField: 'phonesField',
+          fullPath: 'phonesField.primaryPhoneCallingCode',
+          column: 'phonesFieldPrimaryPhoneCallingCode',
+        },
+      ]),
+    );
   });
 
   it('ignores non-unique fields', () => {

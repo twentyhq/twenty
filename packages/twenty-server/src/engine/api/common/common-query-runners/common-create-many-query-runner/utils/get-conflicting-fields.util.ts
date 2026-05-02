@@ -32,18 +32,14 @@ export const getConflictingFields = (
         ];
       }
 
-      const property = compositeType.properties.find(
+      const uniqueProperties = compositeType.properties.filter(
         (prop) => prop.isIncludedInUniqueConstraint,
       );
 
-      return property
-        ? [
-            {
-              baseField: field.name,
-              fullPath: `${field.name}.${property.name}`,
-              column: `${field.name}${capitalize(property.name)}`,
-            },
-          ]
-        : [];
+      return uniqueProperties.map((property) => ({
+        baseField: field.name,
+        fullPath: `${field.name}.${property.name}`,
+        column: `${field.name}${capitalize(property.name)}`,
+      }));
     });
 };
