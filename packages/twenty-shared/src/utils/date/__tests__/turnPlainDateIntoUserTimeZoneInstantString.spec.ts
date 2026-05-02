@@ -30,7 +30,7 @@ describe('turnPlainDateIntoUserTimeZoneInstantString', () => {
     );
 
     expect(result).toBe('2024-01-01T00:00:00Z');
-    expect(warnSpy).toBeCalledWith(
+    expect(warnSpy).toHaveBeenCalledWith(
       expect.stringContaining('Invalid timezone "INVALID_TZ"'),
     );
 
