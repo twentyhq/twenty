@@ -1,8 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
-
 import { ApplicationOAuthProviderEntity } from 'src/engine/core-modules/application/application-oauth-provider/application-oauth-provider.entity';
 import { ApplicationOAuthProviderFlowService } from 'src/engine/core-modules/application/application-oauth-provider/application-oauth-provider-flow.service';
 import { ApplicationOAuthProviderResolver } from 'src/engine/core-modules/application/application-oauth-provider/application-oauth-provider.resolver';
@@ -15,7 +13,6 @@ import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-ac
 
 @Module({
   imports: [
-    NestjsQueryTypeOrmModule.forFeature([ApplicationOAuthProviderEntity]),
     TypeOrmModule.forFeature([
       ApplicationOAuthProviderEntity,
       ConnectedAccountEntity,

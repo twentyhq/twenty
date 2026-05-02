@@ -77,7 +77,7 @@ export class ConnectedAccountEntity extends WorkspaceRelatedEntity {
   @JoinColumn({ name: 'applicationOAuthProviderId' })
   applicationOAuthProvider: Relation<ApplicationOAuthProviderEntity> | null;
 
-  // Cascade-delete with the owning app so a uninstalled app doesn't leave
+  // Cascade-deletes with the owning app so an uninstall doesn't leave
   // dangling app-scoped credentials.
   @Column({ type: 'uuid', nullable: true })
   applicationId: string | null;
@@ -89,15 +89,13 @@ export class ConnectedAccountEntity extends WorkspaceRelatedEntity {
   @JoinColumn({ name: 'applicationId' })
   application: Relation<ApplicationEntity> | null;
 
-  // User-given name for app-managed credentials. Auto-populated from the
-  // OAuth handle (email/login) at callback time; user can rename later.
-  // null for legacy / system-managed rows.
+  // null for legacy / system-managed rows. App-managed credentials get a
+  // generated default at callback time; user can rename later.
   @Column({ type: 'varchar', nullable: true })
   name: string | null;
 
   // 'user' = only the owning userWorkspaceId can use it.
   // 'workspace' = any workspace member can use it (cron triggers too).
-  // Defaults to 'user' so existing legacy rows keep their semantics.
   @Column({ type: 'varchar', nullable: false, default: 'user' })
   scope: ConnectedAccountScope;
 

@@ -28,12 +28,17 @@ export class AppOAuthRevokeService {
       return;
     }
 
-    const provider =
-      await this.applicationOAuthProviderService.findOneById(
+    let provider;
+
+    try {
+      provider = await this.applicationOAuthProviderService.findOneByIdOrThrow(
         connectedAccount.applicationOAuthProviderId,
       );
+    } catch {
+      return;
+    }
 
-    if (!provider || !provider.revokeEndpoint) {
+    if (!provider.revokeEndpoint) {
       return;
     }
 

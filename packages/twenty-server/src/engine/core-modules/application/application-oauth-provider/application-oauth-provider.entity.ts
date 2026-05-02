@@ -1,6 +1,3 @@
-import { Field, ObjectType } from '@nestjs/graphql';
-
-import { IDField } from '@ptc-org/nestjs-query-graphql';
 import { type OAuthProviderTokenRequestContentType } from 'twenty-shared/application';
 import {
   Column,
@@ -15,12 +12,10 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/workspace-related-entity';
 
 @Entity({ name: 'applicationOAuthProvider', schema: 'core' })
-@ObjectType('ApplicationOAuthProvider')
 @Unique('IDX_APP_OAUTH_PROVIDER_NAME_APPLICATION_UNIQUE', [
   'name',
   'applicationId',
@@ -31,7 +26,6 @@ import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/works
 ])
 @Index('IDX_APP_OAUTH_PROVIDER_WORKSPACE_ID', ['workspaceId'])
 export class ApplicationOAuthProviderEntity extends WorkspaceRelatedEntity {
-  @IDField(() => UUIDScalarType)
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -45,15 +39,12 @@ export class ApplicationOAuthProviderEntity extends WorkspaceRelatedEntity {
   @JoinColumn({ name: 'applicationId' })
   application: Relation<ApplicationEntity>;
 
-  @Field()
   @Column({ nullable: false, type: 'varchar' })
   name: string;
 
-  @Field()
   @Column({ nullable: false, type: 'varchar' })
   displayName: string;
 
-  @Field({ nullable: true })
   @Column({ nullable: true, type: 'varchar' })
   icon: string | null;
 
@@ -66,7 +57,6 @@ export class ApplicationOAuthProviderEntity extends WorkspaceRelatedEntity {
   @Column({ nullable: true, type: 'varchar' })
   revokeEndpoint: string | null;
 
-  @Field(() => [String])
   @Column({ type: 'varchar', array: true, nullable: false, default: '{}' })
   scopes: string[];
 
