@@ -9,8 +9,12 @@ import { createAtomComponentFamilySelector } from '@/ui/utilities/state/jotai/ut
 import { isNonEmptyString } from '@sniptt/guards';
 
 import { Temporal } from 'temporal-polyfill';
-import { isDefined, isSamePlainDate } from 'twenty-shared/utils';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { FieldMetadataType } from 'twenty-shared/types';
+import {
+  isDefined,
+  isFieldMetadataDateKind,
+  isSamePlainDate,
+} from 'twenty-shared/utils';
 
 const warnedTimeZones = new Set<string>();
 
@@ -56,19 +60,23 @@ export const calendarDayRecordIdsComponentFamilySelector =
 
         let effectiveTimeZone = timeZone;
 
-        try {
-          Temporal.Now.instant().toZonedDateTimeISO(timeZone);
-        } catch {
-          if (!warnedTimeZones.has(timeZone)) {
-            // oxlint-disable-next-line no-console
-            console.warn(
-              `Invalid timezone "${timeZone}" provided to calendarDayRecordIdsComponentFamilySelector. Falling back to UTC.`,
-            );
-
-            warnedTimeZones.add(timeZone);
-          }
-
+        if (!isNonEmptyString(timeZone)) {
           effectiveTimeZone = 'UTC';
+        } else {
+          try {
+            Temporal.TimeZone.from(timeZone);
+          } catch {
+            if (!warnedTimeZones.has(timeZone)) {
+              // oxlint-disable-next-line no-console
+              console.warn(
+                `Invalid timezone "${timeZone}" provided to calendarDayRecordIdsComponentFamilySelector. Falling back to UTC.`,
+              );
+
+              warnedTimeZones.add(timeZone);
+            }
+
+            effectiveTimeZone = 'UTC';
+          }
         }
 
         const recordIds = allRecordIds.filter((recordId) => {
@@ -86,12 +94,14 @@ export const calendarDayRecordIdsComponentFamilySelector =
             if (fieldMetadataItem.type === FieldMetadataType.DATE) {
               recordDateAsPlainDateInTimeZone =
                 Temporal.PlainDate.from(recordDate);
-            } else {
+            } else if (fieldMetadataItem.type === FieldMetadataType.DATE_TIME) {
               const instant = Temporal.Instant.from(recordDate);
 
               recordDateAsPlainDateInTimeZone = instant
                 .toZonedDateTimeISO(effectiveTimeZone)
                 .toPlainDate();
+            } else {
+              return false;
             }
           } catch {
             return false;

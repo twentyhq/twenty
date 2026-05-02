@@ -14,7 +14,7 @@ import { useAtomComponentFamilySelectorCallbackState } from '@/ui/utilities/stat
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { Temporal } from 'temporal-polyfill';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyString } from 'twenty-shared/utils';
 
 export const useProcessCalendarCardDrop = () => {
   const store = useStore();
@@ -53,10 +53,26 @@ export const useProcessCalendarCardDrop = () => {
 
       if (!calendarFieldMetadata) return;
 
+      let effectiveTimeZone = userTimezone;
+
+      if (!isNonEmptyString(userTimezone)) {
+        effectiveTimeZone = 'UTC';
+      } else {
+        try {
+          Temporal.TimeZone.from(userTimezone);
+        } catch {
+          // oxlint-disable-next-line no-console
+          console.warn(
+            `Invalid timezone "${userTimezone}" provided to useProcessCalendarCardDrop. Falling back to UTC.`,
+          );
+          effectiveTimeZone = 'UTC';
+        }
+      }
+
       const destinationRecordIds = store.get(
         calendarDayRecordIdsSelector({
           day: destinationPlainDate,
-          timeZone: userTimezone,
+          timeZone: effectiveTimeZone,
         }),
       );
 
@@ -115,31 +131,18 @@ export const useProcessCalendarCardDrop = () => {
       } else if (calendarFieldMetadata.type === FieldMetadataType.DATE_TIME) {
         let newDate: Temporal.ZonedDateTime;
 
-        try {
-          newDate = isDefined(currentFieldValue)
-            ? Temporal.Instant.from(currentFieldValue)
-                .toZonedDateTimeISO(userTimezone)
-                .with({
-                  day: destinationPlainDate.day,
-                  month: destinationPlainDate.month,
-                  year: destinationPlainDate.year,
-                })
-            : destinationPlainDate.toZonedDateTime(userTimezone);
-        } catch {
-          // oxlint-disable-next-line no-console
-          console.warn(
-            `Invalid timezone "${userTimezone}" provided to useProcessCalendarCardDrop. Falling back to UTC.`,
-          );
-          newDate = isDefined(currentFieldValue)
-            ? Temporal.Instant.from(currentFieldValue)
-                .toZonedDateTimeISO('UTC')
-                .with({
-                  day: destinationPlainDate.day,
-                  month: destinationPlainDate.month,
-                  year: destinationPlainDate.year,
-                })
-            : destinationPlainDate.toZonedDateTime('UTC');
-        }
+        const timeZoneToUse =
+          effectiveTimeZone === 'UTC' ? 'UTC' : effectiveTimeZone;
+
+        newDate = isDefined(currentFieldValue)
+          ? Temporal.Instant.from(currentFieldValue)
+              .toZonedDateTimeISO(timeZoneToUse)
+              .with({
+                day: destinationPlainDate.day,
+                month: destinationPlainDate.month,
+                year: destinationPlainDate.year,
+              })
+          : destinationPlainDate.toZonedDateTime(timeZoneToUse);
 
         await updateOneRecord({
           objectNameSingular: objectMetadataItem.nameSingular,
