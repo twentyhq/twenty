@@ -1300,6 +1300,7 @@ type ApplicationOAuthProvider {
   displayName: String!
   icon: String
   scopes: [String!]!
+  isClientCredentialsConfigured: Boolean!
 }
 
 type Analytics {

@@ -3,8 +3,6 @@ import { defineApplication } from 'twenty-sdk/define';
 import {
   APPLICATION_UNIVERSAL_IDENTIFIER,
   DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
-  LINEAR_CLIENT_ID_VARIABLE_UNIVERSAL_IDENTIFIER,
-  LINEAR_CLIENT_SECRET_VARIABLE_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/universal-identifiers';
 
 export default defineApplication({
@@ -14,18 +12,21 @@ export default defineApplication({
     'Connect Linear to Twenty. Each workspace member connects their own Linear account; logic functions can then create issues and read team data on their behalf.',
   icon: 'IconBrandLinear',
   defaultRoleUniversalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
-  applicationVariables: {
+  // OAuth client_id/secret live at the registration level (one OAuth app per
+  // Twenty server, configured by the server admin) — not per-workspace —
+  // so they're declared as serverVariables, not applicationVariables.
+  serverVariables: {
     LINEAR_CLIENT_ID: {
-      universalIdentifier: LINEAR_CLIENT_ID_VARIABLE_UNIVERSAL_IDENTIFIER,
       description:
         'OAuth client ID from your Linear OAuth application (linear.app/settings/api/applications).',
       isSecret: false,
+      isRequired: true,
     },
     LINEAR_CLIENT_SECRET: {
-      universalIdentifier: LINEAR_CLIENT_SECRET_VARIABLE_UNIVERSAL_IDENTIFIER,
       description:
         'OAuth client secret from your Linear OAuth application. Stored encrypted; never exposed in API responses.',
       isSecret: true,
+      isRequired: true,
     },
   },
 });

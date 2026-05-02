@@ -6,7 +6,7 @@ import { useState } from 'react';
 import { GET_MY_CONNECTED_ACCOUNTS } from '@/settings/accounts/graphql/queries/getMyConnectedAccounts';
 import { SettingsListCard } from '@/settings/components/SettingsListCard';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
-import { H2Title, Status } from 'twenty-ui/display';
+import { H2Title, Info, Status } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -62,6 +62,12 @@ export const SettingsApplicationConnectionsSection = ({
               title={provider.displayName}
               description={t`Manage connections used by this app to call ${provider.displayName}.`}
             />
+            {!provider.isClientCredentialsConfigured && (
+              <Info
+                accent="danger"
+                text={t`${provider.displayName} OAuth is not yet set up by your server administrator. They need to fill in the OAuth client ID and secret on the application registration before you can add a connection.`}
+              />
+            )}
             <SettingsListCard
               items={providerConnections.map((connection) => ({
                 id: connection.id,
@@ -71,7 +77,7 @@ export const SettingsApplicationConnectionsSection = ({
                 providerName: provider.name,
               }))}
               getItemLabel={(item) => item.label}
-              hasFooter
+              hasFooter={provider.isClientCredentialsConfigured}
               footerButtonLabel={t`Add connection`}
               onFooterButtonClick={() => {
                 setPendingProvider(provider);

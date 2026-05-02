@@ -1026,6 +1026,7 @@ export interface ApplicationOAuthProvider {
     displayName: Scalars['String']
     icon?: Scalars['String']
     scopes: Scalars['String'][]
+    isClientCredentialsConfigured: Scalars['Boolean']
     __typename: 'ApplicationOAuthProvider'
 }
 
@@ -3942,6 +3943,7 @@ export interface ApplicationOAuthProviderGenqlSelection{
     displayName?: boolean | number
     icon?: boolean | number
     scopes?: boolean | number
+    isClientCredentialsConfigured?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }

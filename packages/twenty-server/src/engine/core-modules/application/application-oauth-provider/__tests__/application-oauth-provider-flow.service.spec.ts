@@ -17,7 +17,6 @@ import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { type ApplicationOAuthProviderEntity } from 'src/engine/core-modules/application/application-oauth-provider/application-oauth-provider.entity';
 import { ApplicationOAuthProviderFlowService } from 'src/engine/core-modules/application/application-oauth-provider/application-oauth-provider-flow.service';
 import { ApplicationOAuthProviderService } from 'src/engine/core-modules/application/application-oauth-provider/application-oauth-provider.service';
-import { ApplicationVariableEntityService } from 'src/engine/core-modules/application/application-variable/application-variable.service';
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
@@ -26,8 +25,10 @@ import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-ac
 
 describe('ApplicationOAuthProviderFlowService', () => {
   let service: ApplicationOAuthProviderFlowService;
-  let oauthProviderService: { findOneByIdOrThrow: jest.Mock };
-  let applicationVariableService: { getRawValueByKeyOrThrow: jest.Mock };
+  let oauthProviderService: {
+    findOneByIdOrThrow: jest.Mock;
+    getClientCredentials: jest.Mock;
+  };
   let jwtWrapperService: {
     sign: jest.Mock;
     verifyJwtToken: jest.Mock;
@@ -64,8 +65,13 @@ describe('ApplicationOAuthProviderFlowService', () => {
   } as unknown as ApplicationOAuthProviderEntity;
 
   beforeEach(async () => {
-    oauthProviderService = { findOneByIdOrThrow: jest.fn() };
-    applicationVariableService = { getRawValueByKeyOrThrow: jest.fn() };
+    oauthProviderService = {
+      findOneByIdOrThrow: jest.fn(),
+      getClientCredentials: jest.fn(async () => ({
+        clientId: 'lin_client_id',
+        clientSecret: 'lin_client_secret',
+      })),
+    };
     jwtWrapperService = {
       sign: jest.fn(),
       verifyJwtToken: jest.fn(),
@@ -90,10 +96,6 @@ describe('ApplicationOAuthProviderFlowService', () => {
           provide: ApplicationOAuthProviderService,
           useValue: oauthProviderService,
         },
-        {
-          provide: ApplicationVariableEntityService,
-          useValue: applicationVariableService,
-        },
         { provide: JwtWrapperService, useValue: jwtWrapperService },
         { provide: SecureHttpClientService, useValue: secureHttpClientService },
         {
@@ -114,9 +116,6 @@ describe('ApplicationOAuthProviderFlowService', () => {
 
   describe('startAuthorizationFlow', () => {
     it('builds the provider authorization URL with the workspace + scope context signed into state', async () => {
-      applicationVariableService.getRawValueByKeyOrThrow.mockResolvedValue(
-        'lin_client_id',
-      );
       jwtWrapperService.sign.mockReturnValue('signed-state-token');
 
       const { authorizationUrl } = await service.startAuthorizationFlow({
@@ -157,9 +156,6 @@ describe('ApplicationOAuthProviderFlowService', () => {
     });
 
     it('emits PKCE challenge params when usePkce is enabled', async () => {
-      applicationVariableService.getRawValueByKeyOrThrow.mockResolvedValue(
-        'lin_client_id',
-      );
       jwtWrapperService.sign.mockReturnValue('signed-state');
 
       const { authorizationUrl } = await service.startAuthorizationFlow({
@@ -207,9 +203,6 @@ describe('ApplicationOAuthProviderFlowService', () => {
     beforeEach(() => {
       jwtWrapperService.verifyJwtToken.mockReturnValue(stateClaims);
       oauthProviderService.findOneByIdOrThrow.mockResolvedValue(baseProvider);
-      applicationVariableService.getRawValueByKeyOrThrow
-        .mockResolvedValueOnce('cid')
-        .mockResolvedValueOnce('csec');
       secureHttpClientService.createSsrfSafeFetch.mockReturnValue(
         jest.fn(async () => successfulTokenResponse),
       );

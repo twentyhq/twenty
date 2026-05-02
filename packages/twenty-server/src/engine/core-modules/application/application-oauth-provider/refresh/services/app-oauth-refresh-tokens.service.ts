@@ -7,7 +7,6 @@ import { ApplicationOAuthProviderExceptionCode } from 'src/engine/core-modules/a
 import { ApplicationOAuthProviderException } from 'src/engine/core-modules/application/application-oauth-provider/application-oauth-provider.exception';
 import { type AppOAuthTokens } from 'src/engine/core-modules/application/application-oauth-provider/refresh/types/app-oauth-tokens.type';
 import { exchangeRefreshTokenForToken } from 'src/engine/core-modules/application/application-oauth-provider/utils/exchange-refresh-token-for-token.util';
-import { ApplicationVariableEntityService } from 'src/engine/core-modules/application/application-variable/application-variable.service';
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 
@@ -17,7 +16,6 @@ export class AppOAuthRefreshAccessTokenService {
 
   constructor(
     private readonly applicationOAuthProviderService: ApplicationOAuthProviderService,
-    private readonly applicationVariableService: ApplicationVariableEntityService,
     private readonly secureHttpClientService: SecureHttpClientService,
   ) {}
 
@@ -37,16 +35,8 @@ export class AppOAuthRefreshAccessTokenService {
         connectedAccount.applicationOAuthProviderId,
       );
 
-    const [clientId, clientSecret] = await Promise.all([
-      this.applicationVariableService.getRawValueByKeyOrThrow({
-        applicationId: provider.applicationId,
-        key: provider.clientIdVariable,
-      }),
-      this.applicationVariableService.getRawValueByKeyOrThrow({
-        applicationId: provider.applicationId,
-        key: provider.clientSecretVariable,
-      }),
-    ]);
+    const { clientId, clientSecret } =
+      await this.applicationOAuthProviderService.getClientCredentials(provider);
 
     try {
       const tokenResponse = await exchangeRefreshTokenForToken({

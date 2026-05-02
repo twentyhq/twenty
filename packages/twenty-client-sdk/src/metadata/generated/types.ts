@@ -2704,6 +2704,9 @@ export default {
             "scopes": [
                 1
             ],
+            "isClientCredentialsConfigured": [
+                6
+            ],
             "__typename": [
                 1
             ]

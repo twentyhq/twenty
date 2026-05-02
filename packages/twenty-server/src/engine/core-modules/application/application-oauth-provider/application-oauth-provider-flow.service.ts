@@ -15,7 +15,6 @@ import { buildAppOAuthCallbackUrl } from 'src/engine/core-modules/application/ap
 import { computePkceChallenge } from 'src/engine/core-modules/application/application-oauth-provider/utils/compute-pkce-challenge.util';
 import { exchangeCodeForToken } from 'src/engine/core-modules/application/application-oauth-provider/utils/exchange-code-for-token.util';
 import { generatePkceVerifier } from 'src/engine/core-modules/application/application-oauth-provider/utils/generate-pkce-verifier.util';
-import { ApplicationVariableEntityService } from 'src/engine/core-modules/application/application-variable/application-variable.service';
 import {
   type AppOAuthStateJwtPayload,
   JwtTokenTypeEnum,
@@ -56,7 +55,6 @@ export class ApplicationOAuthProviderFlowService {
 
   constructor(
     private readonly oauthProviderService: ApplicationOAuthProviderService,
-    private readonly applicationVariableService: ApplicationVariableEntityService,
     private readonly jwtWrapperService: JwtWrapperService,
     private readonly secureHttpClientService: SecureHttpClientService,
     private readonly twentyConfigService: TwentyConfigService,
@@ -70,18 +68,9 @@ export class ApplicationOAuthProviderFlowService {
     const { applicationOAuthProvider, workspaceId, userId, userWorkspaceId } =
       args;
 
-    const clientId =
-      await this.applicationVariableService.getRawValueByKeyOrThrow({
-        applicationId: applicationOAuthProvider.applicationId,
-        key: applicationOAuthProvider.clientIdVariable,
-      });
-
-    if (!clientId) {
-      throw new ApplicationOAuthProviderException(
-        `Client ID variable "${applicationOAuthProvider.clientIdVariable}" is empty`,
-        ApplicationOAuthProviderExceptionCode.CLIENT_CREDENTIALS_NOT_CONFIGURED,
-      );
-    }
+    const { clientId } = await this.oauthProviderService.getClientCredentials(
+      applicationOAuthProvider,
+    );
 
     const codeVerifier = applicationOAuthProvider.usePkce
       ? generatePkceVerifier()
@@ -139,16 +128,8 @@ export class ApplicationOAuthProviderFlowService {
       statePayload.applicationOAuthProviderId,
     );
 
-    const [clientId, clientSecret] = await Promise.all([
-      this.applicationVariableService.getRawValueByKeyOrThrow({
-        applicationId: provider.applicationId,
-        key: provider.clientIdVariable,
-      }),
-      this.applicationVariableService.getRawValueByKeyOrThrow({
-        applicationId: provider.applicationId,
-        key: provider.clientSecretVariable,
-      }),
-    ]);
+    const { clientId, clientSecret } =
+      await this.oauthProviderService.getClientCredentials(provider);
 
     const callbackUrl = buildAppOAuthCallbackUrl(this.getServerUrl());
 

@@ -23,4 +23,10 @@ export class ApplicationOAuthProviderDTO {
 
   @Field(() => [String])
   scopes: string[];
+
+  // false when the server admin hasn't filled in the OAuth client_id /
+  // client_secret on the application registration. The frontend uses it to
+  // disable "Add connection" and surface a "needs server admin" hint.
+  @Field()
+  isClientCredentialsConfigured: boolean;
 }

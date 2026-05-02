@@ -26,9 +26,22 @@ export class ApplicationOAuthProviderResolver {
     applicationId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<ApplicationOAuthProviderDTO[]> {
-    return this.oauthProviderService.findManyByApplication({
+    const providers = await this.oauthProviderService.findManyByApplication({
       applicationId,
       workspaceId: workspace.id,
     });
+
+    // One extra round-trip per provider — typical app has 1-3 providers, so
+    // not worth a join. Surface a non-actionable hint to the user when the
+    // server admin hasn't configured the credentials yet.
+    return Promise.all(
+      providers.map(async (provider) => ({
+        ...provider,
+        isClientCredentialsConfigured:
+          await this.oauthProviderService.areClientCredentialsConfigured(
+            provider,
+          ),
+      })),
+    );
   }
 }

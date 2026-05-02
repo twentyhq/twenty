@@ -9,6 +9,7 @@ export const FIND_APPLICATION_OAUTH_PROVIDERS = gql`
       displayName
       icon
       scopes
+      isClientCredentialsConfigured
     }
   }
 `;
