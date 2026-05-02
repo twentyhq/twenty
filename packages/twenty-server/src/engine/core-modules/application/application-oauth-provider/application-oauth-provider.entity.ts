@@ -1,10 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
 import { IDField } from '@ptc-org/nestjs-query-graphql';
-import {
-  type OAuthProviderConnectionMode,
-  type OAuthProviderTokenRequestContentType,
-} from 'twenty-shared/application';
+import { type OAuthProviderTokenRequestContentType } from 'twenty-shared/application';
 import {
   Column,
   CreateDateColumn,
@@ -72,10 +69,6 @@ export class ApplicationOAuthProviderEntity extends WorkspaceRelatedEntity {
   @Field(() => [String])
   @Column({ type: 'varchar', array: true, nullable: false, default: '{}' })
   scopes: string[];
-
-  @Field()
-  @Column({ nullable: false, type: 'varchar' })
-  connectionMode: OAuthProviderConnectionMode;
 
   @Column({ nullable: false, type: 'varchar' })
   clientIdVariable: string;

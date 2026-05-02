@@ -1,7 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
 import { IDField } from '@ptc-org/nestjs-query-graphql';
-import { type OAuthProviderConnectionMode } from 'twenty-shared/application';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
@@ -24,7 +23,4 @@ export class ApplicationOAuthProviderDTO {
 
   @Field(() => [String])
   scopes: string[];
-
-  @Field()
-  connectionMode: OAuthProviderConnectionMode;
 }

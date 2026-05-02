@@ -1,4 +1,8 @@
-import { OAuthNotConnectedError, useOAuth } from 'twenty-sdk/logic-function';
+import {
+  findConnectionForRequest,
+  listConnections,
+  type RoutePayload,
+} from 'twenty-sdk/logic-function';
 
 import { callLinearGraphQL } from 'src/logic-functions/utils/call-linear-graphql';
 
@@ -16,24 +20,22 @@ type HandlerResult =
   | { success: true; teams: LinearTeam[] }
   | { success: false; error: string };
 
-export const listLinearTeamsHandler = async (): Promise<HandlerResult> => {
-  let accessToken: string;
+export const listLinearTeamsHandler = async (
+  event: RoutePayload,
+): Promise<HandlerResult> => {
+  const connections = await listConnections({ providerName: 'linear' });
+  const connection = findConnectionForRequest(connections, event);
 
-  try {
-    accessToken = useOAuth('linear').accessToken;
-  } catch (error) {
-    if (error instanceof OAuthNotConnectedError) {
-      return {
-        success: false,
-        error:
-          'Linear is not connected. Open the app settings and click "Connect Linear" first.',
-      };
-    }
-    throw error;
+  if (!connection) {
+    return {
+      success: false,
+      error:
+        'Linear is not connected. Open the app settings and click "Add connection" first.',
+    };
   }
 
   const result = await callLinearGraphQL<TeamsQueryResult>({
-    accessToken,
+    accessToken: connection.accessToken,
     query: `
       query Teams {
         teams { nodes { id name key } }

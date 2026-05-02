@@ -13,6 +13,7 @@ import { ApplicationOAuthProviderService } from 'src/engine/core-modules/applica
 import { type TokenExchangeResponse } from 'src/engine/core-modules/application/application-oauth-provider/types/token-exchange-response.type';
 import { buildAppOAuthCallbackUrl } from 'src/engine/core-modules/application/application-oauth-provider/utils/build-callback-url.util';
 import { computePkceChallenge } from 'src/engine/core-modules/application/application-oauth-provider/utils/compute-pkce-challenge.util';
+import { deriveConnectionNameFromHandle } from 'src/engine/core-modules/application/application-oauth-provider/utils/derive-connection-name-from-handle.util';
 import { exchangeCodeForToken } from 'src/engine/core-modules/application/application-oauth-provider/utils/exchange-code-for-token.util';
 import { generatePkceVerifier } from 'src/engine/core-modules/application/application-oauth-provider/utils/generate-pkce-verifier.util';
 import { ApplicationVariableEntityService } from 'src/engine/core-modules/application/application-variable/application-variable.service';
@@ -32,6 +33,8 @@ type AuthorizeArgs = {
   workspaceId: string;
   userId: string;
   userWorkspaceId: string;
+  scope: 'user' | 'workspace';
+  reconnectingConnectedAccountId: string | null;
   redirectLocation: string | null;
 };
 
@@ -92,6 +95,8 @@ export class ApplicationOAuthProviderFlowService {
       workspaceId,
       userId,
       userWorkspaceId,
+      scope: args.scope,
+      reconnectingConnectedAccountId: args.reconnectingConnectedAccountId,
       redirectLocation: args.redirectLocation,
       codeVerifier,
     });
@@ -172,11 +177,14 @@ export class ApplicationOAuthProviderFlowService {
       );
     }
 
-    const connectedAccount = await this.upsertConnectedAccount({
+    const connectedAccount = await this.persistConnectedAccount({
       provider,
       tokenResponse,
       workspaceId: statePayload.workspaceId,
       userWorkspaceId: statePayload.userWorkspaceId,
+      scope: statePayload.scope,
+      reconnectingConnectedAccountId:
+        statePayload.reconnectingConnectedAccountId,
     });
 
     return {
@@ -225,51 +233,63 @@ export class ApplicationOAuthProviderFlowService {
     return this.twentyConfigService.get('SERVER_URL');
   }
 
-  private async upsertConnectedAccount({
+  // Reconnect updates an existing row (preserves the id so logic-function
+  // bindings via id keep working). New connections always create — multiple
+  // credentials per (user, provider) are now allowed and intentional.
+  private async persistConnectedAccount({
     provider,
     tokenResponse,
     workspaceId,
     userWorkspaceId,
+    scope,
+    reconnectingConnectedAccountId,
   }: {
     provider: ApplicationOAuthProviderEntity;
     tokenResponse: TokenExchangeResponse;
     workspaceId: string;
     userWorkspaceId: string;
+    scope: 'user' | 'workspace';
+    reconnectingConnectedAccountId: string | null;
   }): Promise<ConnectedAccountEntity> {
-    const matchByUser = provider.connectionMode === 'per-user';
-
-    const existing = await this.connectedAccountRepository.findOne({
-      where: matchByUser
-        ? { applicationOAuthProviderId: provider.id, userWorkspaceId }
-        : { applicationOAuthProviderId: provider.id, workspaceId },
-    });
-
     const sharedFields = {
       accessToken: tokenResponse.accessToken,
       refreshToken: tokenResponse.refreshToken,
       scopes: tokenResponse.scopes ?? provider.scopes,
       lastCredentialsRefreshedAt: new Date(),
       authFailedAt: null,
-      userWorkspaceId,
     };
 
-    if (isDefined(existing)) {
-      await this.connectedAccountRepository.update(existing.id, sharedFields);
+    if (isDefined(reconnectingConnectedAccountId)) {
+      await this.connectedAccountRepository.update(
+        { id: reconnectingConnectedAccountId, workspaceId },
+        sharedFields,
+      );
 
       return this.connectedAccountRepository.findOneByOrFail({
-        id: existing.id,
+        id: reconnectingConnectedAccountId,
       });
     }
 
+    const existingCount = await this.connectedAccountRepository.count({
+      where: { applicationOAuthProviderId: provider.id, workspaceId },
+    });
+
+    const name = deriveConnectionNameFromHandle({
+      providerDisplayName: provider.displayName,
+      accessToken: tokenResponse.accessToken,
+      fallbackIndex: existingCount + 1,
+    });
+
     const created = this.connectedAccountRepository.create({
       ...sharedFields,
-      // handle is left empty until a future userinfo step can populate it
-      // with the provider's identifier (e.g. GitHub login). Surfacing a
-      // fabricated value would mislead users in the settings UI.
-      handle: '',
+      handle: name,
+      name,
+      scope,
       provider: ConnectedAccountProvider.APP,
       workspaceId,
+      applicationId: provider.applicationId,
       applicationOAuthProviderId: provider.id,
+      userWorkspaceId,
     });
 
     return this.connectedAccountRepository.save(created);

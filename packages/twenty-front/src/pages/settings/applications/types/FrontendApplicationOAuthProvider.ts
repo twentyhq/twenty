@@ -1,5 +1,3 @@
-import { type OAuthProviderConnectionMode } from 'twenty-shared/application';
-
 export type FrontendApplicationOAuthProvider = {
   id: string;
   applicationId: string;
@@ -7,5 +5,4 @@ export type FrontendApplicationOAuthProvider = {
   displayName: string;
   icon: string | null;
   scopes: string[];
-  connectionMode: OAuthProviderConnectionMode;
 };

@@ -27,7 +27,6 @@ import { ApplicationTokenService } from 'src/engine/core-modules/auth/token/serv
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { LogicFunctionDriverFactory } from 'src/engine/core-modules/logic-function/logic-function-drivers/logic-function-driver.factory';
-import { LogicFunctionOAuthResolverService } from 'src/engine/core-modules/logic-function/logic-function-executor/services/logic-function-oauth-resolver.service';
 import { buildEnvVar } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/build-env-var';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
@@ -77,7 +76,6 @@ export class LogicFunctionExecutorService {
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
     private readonly billingService: BillingService,
     private readonly billingUsageService: BillingUsageService,
-    private readonly oauthResolverService: LogicFunctionOAuthResolverService,
     @InjectRepository(ApplicationRegistrationVariableEntity)
     private readonly applicationRegistrationVariableRepository: Repository<ApplicationRegistrationVariableEntity>,
   ) {}
@@ -86,17 +84,10 @@ export class LogicFunctionExecutorService {
     logicFunctionId,
     workspaceId,
     payload,
-    userWorkspaceId,
   }: {
     logicFunctionId: string;
     workspaceId: string;
     payload: object;
-    // Optional — when present, per-user OAuth providers will resolve to this
-    // user's connected account. Cron and database event triggers don't have a
-    // user context and per-user OAuth providers will surface CONNECTED=false
-    // env vars instead. HTTP-route triggers and tool-callable executions
-    // should pass this through from their auth context.
-    userWorkspaceId?: string;
   }): Promise<LogicFunctionExecuteResult> {
     await this.throttleExecution(workspaceId);
 
@@ -110,7 +101,6 @@ export class LogicFunctionExecutorService {
       workspaceId,
       flatApplication,
       flatApplicationVariables,
-      userWorkspaceId,
     });
 
     const driver = this.logicFunctionDriverFactory.getCurrentDriver();
@@ -225,12 +215,10 @@ export class LogicFunctionExecutorService {
     workspaceId,
     flatApplication,
     flatApplicationVariables,
-    userWorkspaceId,
   }: {
     workspaceId: string;
     flatApplication: FlatApplication;
     flatApplicationVariables: FlatApplicationVariable[];
-    userWorkspaceId?: string;
   }) {
     const applicationAccessToken =
       await this.applicationTokenService.generateApplicationAccessToken({
@@ -248,13 +236,6 @@ export class LogicFunctionExecutorService {
       this.secretEncryptionService,
     );
 
-    const oauthVariables =
-      await this.oauthResolverService.buildEnvVarsForApplication({
-        applicationId: flatApplication.id,
-        workspaceId,
-        userWorkspaceId,
-      });
-
     return {
       [DEFAULT_API_URL_NAME]: baseUrl ?? '',
       [DEFAULT_APP_ACCESS_TOKEN_NAME]: applicationAccessToken.token,
@@ -264,10 +245,6 @@ export class LogicFunctionExecutorService {
       // values let a specific tenant customize a server default.
       ...serverVariables,
       ...workspaceVariables,
-      // OAuth bindings are kept separate from user-defined variables so app
-      // authors can't accidentally shadow them by declaring an applicationVariable
-      // with the same key.
-      ...oauthVariables,
     };
   }
 

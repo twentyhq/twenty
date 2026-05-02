@@ -19,7 +19,6 @@ export class AddApplicationOAuthProviderAndConnectedAccountColumn1777558657640
         "tokenEndpoint" varchar NOT NULL,
         "revokeEndpoint" varchar,
         "scopes" varchar array NOT NULL DEFAULT '{}',
-        "connectionMode" varchar NOT NULL,
         "clientIdVariable" varchar NOT NULL,
         "clientSecretVariable" varchar NOT NULL,
         "accessTokenExpiresInMs" integer,
@@ -54,11 +53,18 @@ export class AddApplicationOAuthProviderAndConnectedAccountColumn1777558657640
 
     await queryRunner.query(
       `ALTER TABLE "core"."connectedAccount"
-       ADD COLUMN "applicationOAuthProviderId" uuid`,
+       ADD COLUMN "applicationOAuthProviderId" uuid,
+       ADD COLUMN "applicationId" uuid,
+       ADD COLUMN "name" varchar,
+       ADD COLUMN "scope" varchar NOT NULL DEFAULT 'user'`,
     );
 
     await queryRunner.query(
       `CREATE INDEX "IDX_CONNECTED_ACCOUNT_APP_OAUTH_PROVIDER_ID" ON "core"."connectedAccount" ("applicationOAuthProviderId")`,
+    );
+
+    await queryRunner.query(
+      `CREATE INDEX "IDX_CONNECTED_ACCOUNT_APPLICATION_ID" ON "core"."connectedAccount" ("applicationId")`,
     );
 
     await queryRunner.query(
@@ -67,11 +73,26 @@ export class AddApplicationOAuthProviderAndConnectedAccountColumn1777558657640
        FOREIGN KEY ("applicationOAuthProviderId") REFERENCES "core"."applicationOAuthProvider"("id")
        ON DELETE CASCADE ON UPDATE NO ACTION`,
     );
+
+    await queryRunner.query(
+      `ALTER TABLE "core"."connectedAccount"
+       ADD CONSTRAINT "FK_connectedAccount_application"
+       FOREIGN KEY ("applicationId") REFERENCES "core"."application"("id")
+       ON DELETE CASCADE ON UPDATE NO ACTION`,
+    );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
+      `ALTER TABLE "core"."connectedAccount" DROP CONSTRAINT "FK_connectedAccount_application"`,
+    );
+
+    await queryRunner.query(
       `ALTER TABLE "core"."connectedAccount" DROP CONSTRAINT "FK_connectedAccount_applicationOAuthProvider"`,
+    );
+
+    await queryRunner.query(
+      `DROP INDEX "core"."IDX_CONNECTED_ACCOUNT_APPLICATION_ID"`,
     );
 
     await queryRunner.query(
@@ -79,7 +100,11 @@ export class AddApplicationOAuthProviderAndConnectedAccountColumn1777558657640
     );
 
     await queryRunner.query(
-      `ALTER TABLE "core"."connectedAccount" DROP COLUMN "applicationOAuthProviderId"`,
+      `ALTER TABLE "core"."connectedAccount"
+       DROP COLUMN "scope",
+       DROP COLUMN "name",
+       DROP COLUMN "applicationId",
+       DROP COLUMN "applicationOAuthProviderId"`,
     );
 
     await queryRunner.query(

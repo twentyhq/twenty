@@ -10,7 +10,6 @@ export default defineOAuthProvider({
   authorizationEndpoint: 'https://linear.app/oauth/authorize',
   tokenEndpoint: 'https://api.linear.app/oauth/token',
   scopes: ['read', 'write'],
-  connectionMode: 'per-user',
   clientIdVariable: 'LINEAR_CLIENT_ID',
   clientSecretVariable: 'LINEAR_CLIENT_SECRET',
   tokenRequestContentType: 'form-urlencoded',

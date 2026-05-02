@@ -35,7 +35,7 @@ describe('ApplicationOAuthProviderFlowService', () => {
   };
   let secureHttpClientService: { createSsrfSafeFetch: jest.Mock };
   let connectedAccountRepository: {
-    findOne: jest.Mock;
+    count: jest.Mock;
     update: jest.Mock;
     create: jest.Mock;
     save: jest.Mock;
@@ -54,7 +54,6 @@ describe('ApplicationOAuthProviderFlowService', () => {
     tokenEndpoint: 'https://api.linear.app/oauth/token',
     revokeEndpoint: null,
     scopes: ['read', 'write'],
-    connectionMode: 'per-user',
     clientIdVariable: 'LINEAR_CLIENT_ID',
     clientSecretVariable: 'LINEAR_CLIENT_SECRET',
     accessTokenExpiresInMs: null,
@@ -75,7 +74,7 @@ describe('ApplicationOAuthProviderFlowService', () => {
     };
     secureHttpClientService = { createSsrfSafeFetch: jest.fn() };
     connectedAccountRepository = {
-      findOne: jest.fn(),
+      count: jest.fn(async () => 0),
       update: jest.fn(),
       create: jest.fn((entity) => entity),
       save: jest.fn(async (entity) => ({ ...entity, id: 'new-account-id' })),
@@ -112,7 +111,7 @@ describe('ApplicationOAuthProviderFlowService', () => {
   afterEach(() => jest.clearAllMocks());
 
   describe('startAuthorizationFlow', () => {
-    it('builds the provider authorization URL with the workspace context signed into state', async () => {
+    it('builds the provider authorization URL with the workspace + scope context signed into state', async () => {
       applicationVariableService.getRawValueByKeyOrThrow.mockResolvedValue(
         'lin_client_id',
       );
@@ -123,6 +122,8 @@ describe('ApplicationOAuthProviderFlowService', () => {
         workspaceId: 'workspace-1',
         userId: 'user-1',
         userWorkspaceId: 'uws-1',
+        scope: 'user',
+        reconnectingConnectedAccountId: null,
         redirectLocation: null,
       });
 
@@ -146,6 +147,8 @@ describe('ApplicationOAuthProviderFlowService', () => {
           type: JwtTokenTypeEnum.APP_OAUTH_STATE,
           workspaceId: 'workspace-1',
           applicationOAuthProviderId: 'provider-1',
+          scope: 'user',
+          reconnectingConnectedAccountId: null,
         }),
         expect.objectContaining({ secret: 'derived-secret' }),
       );
@@ -162,6 +165,8 @@ describe('ApplicationOAuthProviderFlowService', () => {
         workspaceId: 'workspace-1',
         userId: 'user-1',
         userWorkspaceId: 'uws-1',
+        scope: 'user',
+        reconnectingConnectedAccountId: null,
         redirectLocation: null,
       });
 
@@ -180,6 +185,8 @@ describe('ApplicationOAuthProviderFlowService', () => {
       workspaceId: 'workspace-1',
       userId: 'user-1',
       userWorkspaceId: 'uws-1',
+      scope: 'user' as const,
+      reconnectingConnectedAccountId: null,
       redirectLocation: null,
       codeVerifier: null,
     };
@@ -206,9 +213,7 @@ describe('ApplicationOAuthProviderFlowService', () => {
       );
     });
 
-    it('creates a new ConnectedAccount on first connect', async () => {
-      connectedAccountRepository.findOne.mockResolvedValue(null);
-
+    it('always creates a new ConnectedAccount when no reconnect id is supplied', async () => {
       const result = await service.completeAuthorizationFlow({
         code: 'auth_code',
         state: 'signed-state',
@@ -223,17 +228,20 @@ describe('ApplicationOAuthProviderFlowService', () => {
           accessToken: 'new_access',
           refreshToken: 'new_refresh',
           applicationOAuthProviderId: 'provider-1',
+          applicationId: 'app-1',
           workspaceId: 'workspace-1',
           userWorkspaceId: 'uws-1',
+          scope: 'user',
         }),
       );
       expect(connectedAccountRepository.save).toHaveBeenCalled();
       expect(connectedAccountRepository.update).not.toHaveBeenCalled();
     });
 
-    it('updates the existing ConnectedAccount on reconnect', async () => {
-      connectedAccountRepository.findOne.mockResolvedValue({
-        id: 'existing-account-id',
+    it('updates the existing ConnectedAccount when reconnectingConnectedAccountId is supplied', async () => {
+      jwtWrapperService.verifyJwtToken.mockReturnValue({
+        ...stateClaims,
+        reconnectingConnectedAccountId: 'existing-account-id',
       });
 
       const result = await service.completeAuthorizationFlow({
@@ -243,7 +251,7 @@ describe('ApplicationOAuthProviderFlowService', () => {
 
       expect(result.connectedAccountId).toBe('existing-account-id');
       expect(connectedAccountRepository.update).toHaveBeenCalledWith(
-        'existing-account-id',
+        { id: 'existing-account-id', workspaceId: 'workspace-1' },
         expect.objectContaining({
           accessToken: 'new_access',
           refreshToken: 'new_refresh',
@@ -253,24 +261,34 @@ describe('ApplicationOAuthProviderFlowService', () => {
       expect(connectedAccountRepository.create).not.toHaveBeenCalled();
     });
 
-    it('matches existing connection by workspaceId for per-workspace mode', async () => {
-      oauthProviderService.findOneByIdOrThrow.mockResolvedValue({
-        ...baseProvider,
-        connectionMode: 'per-workspace',
+    it('falls back to a generated name when handle derivation has no signal', async () => {
+      const result = await service.completeAuthorizationFlow({
+        code: 'auth_code',
+        state: 'signed-state',
       });
-      connectedAccountRepository.findOne.mockResolvedValue(null);
+
+      expect(result.connectedAccountId).toBe('new-account-id');
+
+      const createCall = connectedAccountRepository.create.mock.calls[0][0];
+
+      expect(createCall.name).toMatch(/^Linear/);
+      expect(createCall.handle).toBe(createCall.name);
+    });
+
+    it('persists the workspace scope when state asks for it', async () => {
+      jwtWrapperService.verifyJwtToken.mockReturnValue({
+        ...stateClaims,
+        scope: 'workspace',
+      });
 
       await service.completeAuthorizationFlow({
         code: 'auth_code',
         state: 'signed-state',
       });
 
-      expect(connectedAccountRepository.findOne).toHaveBeenCalledWith({
-        where: {
-          applicationOAuthProviderId: 'provider-1',
-          workspaceId: 'workspace-1',
-        },
-      });
+      expect(connectedAccountRepository.create).toHaveBeenCalledWith(
+        expect.objectContaining({ scope: 'workspace' }),
+      );
     });
 
     it('rejects an invalid state', async () => {

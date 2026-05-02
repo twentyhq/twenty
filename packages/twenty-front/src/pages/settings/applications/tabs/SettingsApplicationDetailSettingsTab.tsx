@@ -1,7 +1,7 @@
 import { type Application } from '~/generated-metadata/graphql';
 import { useUpdateOneApplicationVariable } from '~/pages/settings/applications/hooks/useUpdateOneApplicationVariable';
+import { SettingsApplicationConnectionsSection } from '~/pages/settings/applications/tabs/SettingsApplicationConnectionsSection';
 import { SettingsApplicationDetailEnvironmentVariablesTable } from '~/pages/settings/applications/tabs/SettingsApplicationDetailEnvironmentVariablesTable';
-import { SettingsApplicationOAuthProvidersSection } from '~/pages/settings/applications/tabs/SettingsApplicationOAuthProvidersSection';
 
 export const SettingsApplicationDetailSettingsTab = ({
   application,
@@ -20,7 +20,7 @@ export const SettingsApplicationDetailSettingsTab = ({
   return (
     <>
       {application?.id && (
-        <SettingsApplicationOAuthProvidersSection
+        <SettingsApplicationConnectionsSection
           applicationId={application.id}
         />
       )}

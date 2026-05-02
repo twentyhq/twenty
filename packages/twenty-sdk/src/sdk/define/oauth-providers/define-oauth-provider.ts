@@ -45,12 +45,6 @@ export const defineOAuthProvider: DefineEntity<OAuthProviderManifest> = (
     );
   }
 
-  if (!config.connectionMode) {
-    errors.push(
-      'OAuth provider must declare a connectionMode ("per-user" or "per-workspace")',
-    );
-  }
-
   if (!Array.isArray(config.scopes)) {
     errors.push('OAuth provider must declare a scopes array');
   }

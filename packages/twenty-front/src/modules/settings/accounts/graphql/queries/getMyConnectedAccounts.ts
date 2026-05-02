@@ -12,6 +12,9 @@ export const GET_MY_CONNECTED_ACCOUNTS = gql`
       lastSignedInAt
       userWorkspaceId
       applicationOAuthProviderId
+      applicationId
+      name
+      scope
       lastCredentialsRefreshedAt
       connectionParameters {
         IMAP {

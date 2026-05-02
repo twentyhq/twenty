@@ -24,9 +24,6 @@ export default defineOAuthProvider({
   authorizationEndpoint: 'https://example.com/oauth/authorize',
   tokenEndpoint: 'https://example.com/oauth/access_token',
   scopes: [],
-  // 'per-user' = each workspace member connects their own account.
-  // 'per-workspace' = a single shared connection per workspace (admin sets up).
-  connectionMode: 'per-user',
   // Reference applicationVariables declared on this app's defineApplication.
   clientIdVariable: '${upperKey}_CLIENT_ID',
   clientSecretVariable: '${upperKey}_CLIENT_SECRET',

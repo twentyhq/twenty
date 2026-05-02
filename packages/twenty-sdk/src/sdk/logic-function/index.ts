@@ -38,8 +38,9 @@ export type { RoutePayload } from '@/sdk/define/logic-functions/triggers/route-p
 
 export type { InputJsonSchema } from 'twenty-shared/logic-function';
 
-export { useOAuth } from '@/sdk/logic-function/oauth/use-oauth';
-export { useOptionalOAuth } from '@/sdk/logic-function/oauth/use-optional-oauth';
-export { OAuthNotConnectedError } from '@/sdk/logic-function/oauth/oauth-not-connected.error';
-export type { OAuthBinding } from '@/sdk/logic-function/oauth/oauth-binding.type';
-export type { ConnectedOAuthBinding } from '@/sdk/logic-function/oauth/connected-oauth-binding.type';
+export { listConnections } from '@/sdk/logic-function/connections/list-connections';
+export type { ListConnectionsFilter } from '@/sdk/logic-function/connections/list-connections';
+export { getConnection } from '@/sdk/logic-function/connections/get-connection';
+export { findConnectionForRequest } from '@/sdk/logic-function/connections/find-connection-for-request';
+export { AppConnectionAuthFailedError } from '@/sdk/logic-function/connections/app-connection-auth-failed.error';
+export type { AppConnection } from '@/sdk/logic-function/connections/types/app-connection.type';

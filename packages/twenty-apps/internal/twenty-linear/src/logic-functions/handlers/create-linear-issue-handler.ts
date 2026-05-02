@@ -1,7 +1,7 @@
 import {
-  OAuthNotConnectedError,
+  findConnectionForRequest,
+  listConnections,
   type RoutePayload,
-  useOAuth,
 } from 'twenty-sdk/logic-function';
 
 import { ISSUE_CREATE_MUTATION } from 'src/logic-functions/constants/issue-create-mutation.constant';
@@ -33,23 +33,19 @@ export const createLinearIssueHandler = async (
     };
   }
 
-  let accessToken: string;
+  const connections = await listConnections({ providerName: 'linear' });
+  const connection = findConnectionForRequest(connections, event);
 
-  try {
-    accessToken = useOAuth('linear').accessToken;
-  } catch (error) {
-    if (error instanceof OAuthNotConnectedError) {
-      return {
-        success: false,
-        error:
-          'Linear is not connected. Open the app settings and click "Connect Linear" first.',
-      };
-    }
-    throw error;
+  if (!connection) {
+    return {
+      success: false,
+      error:
+        'Linear is not connected. Open the app settings and click "Add connection" first.',
+    };
   }
 
   const result = await callLinearGraphQL<CreateIssueMutationResult>({
-    accessToken,
+    accessToken: connection.accessToken,
     query: ISSUE_CREATE_MUTATION,
     variables: {
       input: {

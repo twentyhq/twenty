@@ -77,6 +77,20 @@ export class ConnectedAccountDTO {
   @Field(() => UUIDScalarType, { nullable: true })
   applicationOAuthProviderId: string | null;
 
+  @IsUUID()
+  @IsOptional()
+  @Field(() => UUIDScalarType, { nullable: true })
+  applicationId: string | null;
+
+  @IsString()
+  @IsOptional()
+  @Field({ nullable: true })
+  name: string | null;
+
+  @IsString()
+  @Field()
+  scope: string;
+
   @HideField()
   workspaceId: string;
 

@@ -16,10 +16,18 @@ export const useTriggerAppOAuth = () => {
     async ({
       applicationId,
       providerName,
+      scope,
+      reconnectingConnectedAccountId,
       redirectLocation,
     }: {
       applicationId: string;
       providerName: string;
+      // 'user' = personal credential, only the creator can use it.
+      // 'workspace' = shared with all members of the workspace.
+      scope: 'user' | 'workspace';
+      // Set to update an existing connectedAccount row rather than creating
+      // a new one (the "Reconnect" action on a failed credential).
+      reconnectingConnectedAccountId?: string;
       redirectLocation?: string;
     }) => {
       const transient = await generateTransientToken();
@@ -34,7 +42,15 @@ export const useTriggerAppOAuth = () => {
         applicationId,
         providerName,
         transientToken: token,
+        scope,
       });
+
+      if (reconnectingConnectedAccountId) {
+        params.set(
+          'reconnectingConnectedAccountId',
+          reconnectingConnectedAccountId,
+        );
+      }
 
       if (redirectLocation) {
         params.set('redirectLocation', redirectLocation);

@@ -13,16 +13,20 @@ import {
 
 import { type ConnectedAccountProvider } from 'twenty-shared/types';
 
+import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ApplicationOAuthProviderEntity } from 'src/engine/core-modules/application/application-oauth-provider/application-oauth-provider.entity';
 import { type ImapSmtpCaldavParams } from 'src/engine/core-modules/imap-smtp-caldav-connection/types/imap-smtp-caldav-connection.type';
 import { type CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { type MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/workspace-related-entity';
 
+export type ConnectedAccountScope = 'user' | 'workspace';
+
 @Entity({ name: 'connectedAccount', schema: 'core' })
 @Index('IDX_CONNECTED_ACCOUNT_APP_OAUTH_PROVIDER_ID', [
   'applicationOAuthProviderId',
 ])
+@Index('IDX_CONNECTED_ACCOUNT_APPLICATION_ID', ['applicationId'])
 export class ConnectedAccountEntity extends WorkspaceRelatedEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -72,6 +76,30 @@ export class ConnectedAccountEntity extends WorkspaceRelatedEntity {
   })
   @JoinColumn({ name: 'applicationOAuthProviderId' })
   applicationOAuthProvider: Relation<ApplicationOAuthProviderEntity> | null;
+
+  // Cascade-delete with the owning app so a uninstalled app doesn't leave
+  // dangling app-scoped credentials.
+  @Column({ type: 'uuid', nullable: true })
+  applicationId: string | null;
+
+  @ManyToOne(() => ApplicationEntity, {
+    onDelete: 'CASCADE',
+    nullable: true,
+  })
+  @JoinColumn({ name: 'applicationId' })
+  application: Relation<ApplicationEntity> | null;
+
+  // User-given name for app-managed credentials. Auto-populated from the
+  // OAuth handle (email/login) at callback time; user can rename later.
+  // null for legacy / system-managed rows.
+  @Column({ type: 'varchar', nullable: true })
+  name: string | null;
+
+  // 'user' = only the owning userWorkspaceId can use it.
+  // 'workspace' = any workspace member can use it (cron triggers too).
+  // Defaults to 'user' so existing legacy rows keep their semantics.
+  @Column({ type: 'varchar', nullable: false, default: 'user' })
+  scope: ConnectedAccountScope;
 
   @OneToMany(
     'MessageChannelEntity',

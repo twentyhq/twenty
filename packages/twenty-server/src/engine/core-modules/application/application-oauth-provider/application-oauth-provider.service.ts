@@ -97,7 +97,6 @@ export class ApplicationOAuthProviderService {
           tokenEndpoint: manifest.tokenEndpoint,
           revokeEndpoint: manifest.revokeEndpoint ?? null,
           scopes: manifest.scopes,
-          connectionMode: manifest.connectionMode,
           clientIdVariable: manifest.clientIdVariable,
           clientSecretVariable: manifest.clientSecretVariable,
           accessTokenExpiresInMs: manifest.accessTokenExpiresInMs ?? null,

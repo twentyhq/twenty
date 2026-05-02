@@ -48,12 +48,22 @@ export class ApplicationOAuthProviderController {
     @Query('applicationId') applicationId: string,
     @Query('providerName') providerName: string,
     @Query('transientToken') transientToken: string,
+    @Query('scope') scope: string | undefined,
+    @Query('reconnectingConnectedAccountId')
+    reconnectingConnectedAccountId: string | undefined,
     @Query('redirectLocation') redirectLocation: string | undefined,
     @Res() res: Response,
   ) {
     if (!applicationId || !providerName || !transientToken) {
       throw new ApplicationOAuthProviderException(
         'Missing required query parameters: applicationId, providerName, transientToken',
+        ApplicationOAuthProviderExceptionCode.INVALID_REQUEST,
+      );
+    }
+
+    if (scope !== undefined && scope !== 'user' && scope !== 'workspace') {
+      throw new ApplicationOAuthProviderException(
+        `Invalid scope "${scope}" — must be 'user' or 'workspace'`,
         ApplicationOAuthProviderExceptionCode.INVALID_REQUEST,
       );
     }
@@ -105,6 +115,8 @@ export class ApplicationOAuthProviderController {
         workspaceId,
         userId,
         userWorkspaceId: userWorkspace.id,
+        scope: (scope as 'user' | 'workspace' | undefined) ?? 'user',
+        reconnectingConnectedAccountId: reconnectingConnectedAccountId ?? null,
         redirectLocation: redirectLocation ?? null,
       });
 
