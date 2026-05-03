@@ -181,20 +181,20 @@ export const ValidationStep = ({
     () =>
       generateColumns(fields)
         .map((column) => {
-          const hasBeenImported =
-            importedColumns.filter(
-              (importColumn) =>
-                (importColumn.type === SpreadsheetColumnType.matched &&
-                  importColumn.value === column.key) ||
-                (importColumn.type === SpreadsheetColumnType.matchedSelect &&
-                  importColumn.value === column.key) ||
-                (importColumn.type ===
-                  SpreadsheetColumnType.matchedSelectOptions &&
-                  importColumn.value === column.key) ||
-                (importColumn.type === SpreadsheetColumnType.matchedCheckbox &&
-                  importColumn.value === column.key) ||
-                column.key === 'select-row',
-            ).length > 0;
+          if (column.key === 'select-row') {
+            return column;
+          }
+
+          const hasBeenImported = importedColumns.some(
+            (importColumn) =>
+              'value' in importColumn &&
+              importColumn.value === column.key &&
+              (importColumn.type === SpreadsheetColumnType.matched ||
+                importColumn.type === SpreadsheetColumnType.matchedSelect ||
+                importColumn.type ===
+                  SpreadsheetColumnType.matchedSelectOptions ||
+                importColumn.type === SpreadsheetColumnType.matchedCheckbox),
+          );
 
           if (!hasBeenImported) return null;
           return column;
