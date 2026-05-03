@@ -38,6 +38,7 @@ import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
 import {
   getOutputSchemaFromValue,
+  jsonSchemaToInputSchema,
   type InputJsonSchema,
 } from 'twenty-shared/logic-function';
 import { IconCode, IconPlayerPlay } from 'twenty-ui/display';
@@ -146,11 +147,9 @@ export const WorkflowEditActionCode = ({
         return;
       }
 
-      const schemaArray = Array.isArray(inferredJsonSchema)
-        ? inferredJsonSchema
-        : [inferredJsonSchema];
+      const inputSchema = jsonSchemaToInputSchema(inferredJsonSchema);
 
-      const newFunctionInput = getFunctionInputFromInputSchema(schemaArray)[0];
+      const newFunctionInput = getFunctionInputFromInputSchema(inputSchema)[0];
 
       const newMergedInput = mergeDefaultFunctionInputAndFunctionInput({
         newInput: newFunctionInput,
