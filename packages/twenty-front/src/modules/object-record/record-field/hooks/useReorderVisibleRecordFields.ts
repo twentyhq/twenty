@@ -7,6 +7,7 @@ import { useAtomComponentSelectorCallbackState } from '@/ui/utilities/state/jota
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useCallback } from 'react';
 import { useStore } from 'jotai';
+import { isDefined } from 'twenty-shared/utils';
 
 export const useReorderVisibleRecordFields = (recordTableId: string) => {
   const store = useStore();
@@ -23,21 +24,29 @@ export const useReorderVisibleRecordFields = (recordTableId: string) => {
   const { updateRecordField } = useUpdateRecordField(recordTableId);
 
   const reorderVisibleRecordFields = useCallback(
-    ({ fromIndex, toIndex }: { fromIndex: number; toIndex: number }) => {
+    ({
+      fromIndex,
+      toIndex,
+    }: {
+      fromIndex: number;
+      toIndex: number;
+    }): RecordField | undefined => {
       const visibleRecordFieldsValue = store.get(visibleRecordFields);
       const currentRecordFieldsValue = store.get(currentRecordFields);
 
-      const idOfRecordToMove = visibleRecordFieldsValue[fromIndex].id;
-      const idOfTargetRecord = visibleRecordFieldsValue[toIndex].id;
-
       const recordToMove = visibleRecordFieldsValue[fromIndex];
+      const targetRecord = visibleRecordFieldsValue[toIndex];
+
+      if (!isDefined(recordToMove) || !isDefined(targetRecord)) {
+        return undefined;
+      }
 
       const isDroppedAfterList = toIndex >= visibleRecordFieldsValue.length;
 
       const newPositionOfTargetRecord = computeNewPositionOfDraggedRecord({
         arrayOfRecordsWithPosition: currentRecordFieldsValue,
-        idOfItemToMove: idOfRecordToMove,
-        idOfTargetItem: idOfTargetRecord,
+        idOfItemToMove: recordToMove.id,
+        idOfTargetItem: targetRecord.id,
         isDroppedAfterList,
       });
 
