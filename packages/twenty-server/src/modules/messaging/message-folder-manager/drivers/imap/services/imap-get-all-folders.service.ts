@@ -43,8 +43,6 @@ export class ImapGetAllFoldersService implements MessageFolderDriver {
         messageChannel,
       );
 
-      await this.imapClientProvider.closeClient(client);
-
       return folders;
     } catch (error) {
       this.logger.error(
@@ -53,6 +51,8 @@ export class ImapGetAllFoldersService implements MessageFolderDriver {
       );
 
       throw error;
+    } finally {
+      await this.imapClientProvider.closeClient(connectedAccount.id);
     }
   }
 

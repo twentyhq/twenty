@@ -71,7 +71,7 @@ export class ImapGetMessageListService {
       this.errorHandler.handleError(error);
       throw error;
     } finally {
-      await this.imapClientProvider.closeClient(client);
+      await this.imapClientProvider.closeClient(connectedAccount.id);
     }
   }
 
@@ -118,7 +118,7 @@ export class ImapGetMessageListService {
 
       const mailboxState = extractMailboxState(mailbox);
 
-      const { messageUids } = await this.imapSyncService.syncFolder(
+      const { messageUids, isPartial } = await this.imapSyncService.syncFolder(
         client,
         folderPath,
         previousCursor,
@@ -129,6 +129,7 @@ export class ImapGetMessageListService {
         messageUids,
         previousCursor,
         mailboxState,
+        isPartial,
       );
 
       const messageExternalIds = messageUids

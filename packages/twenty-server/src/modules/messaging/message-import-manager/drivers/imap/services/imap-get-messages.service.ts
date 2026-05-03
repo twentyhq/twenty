@@ -50,7 +50,7 @@ export class ImapGetMessagesService {
         connectedAccount,
       );
     } finally {
-      await this.imapClientProvider.closeClient(client);
+      await this.imapClientProvider.closeClient(connectedAccount.id);
     }
   }
 
