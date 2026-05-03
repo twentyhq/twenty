@@ -5,7 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 const DEFAULT_WORKFLOW_ACTION_TRIGGER_SETTINGS: WorkflowActionTriggerSettings =
   {
-    inputSchema: [{ type: 'object', properties: {} }],
+    inputSchema: [],
   };
 
 type SettingsLogicFunctionWorkflowActionTriggerSectionProps = {

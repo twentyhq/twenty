@@ -49,11 +49,9 @@ const convertProperty = (jsonSchema: InputJsonSchema): InputSchemaProperty => {
   return property;
 };
 
-// Best-effort fallback used by the migration that backfills
-// workflowActionTriggerSettings.inputSchema from a legacy toolInputSchema.
-// The result is wrapped in a single-element array because Twenty's
-// InputSchema represents the parameter list of a function -- logic functions
-// take a single params object, hence a one-element array containing it.
+// Wraps in a single-element array because Twenty's InputSchema represents
+// the parameter list of a function -- logic functions take a single params
+// object, hence a one-element array containing it.
 export const jsonSchemaToInputSchema = (
   jsonSchema: InputJsonSchema,
 ): InputSchema => {

@@ -3,14 +3,8 @@ import { DataSource, QueryRunner } from 'typeorm';
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import { SlowInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/slow-instance-command.interface';
 
-// Backfills the new toolTriggerSettings and workflowActionTriggerSettings
-// columns from the legacy isTool + toolInputSchema columns, then drops the
-// legacy columns.
-//
-// Behaviour preservation: today, isTool=true makes a logic function appear
-// as both an AI tool AND a workflow node, so we populate both new triggers
-// for any existing tool. Apps can later refine workflowActionTriggerSettings
-// to use FieldMetadataType-aware schemas.
+// isTool=true previously exposed a function on both surfaces (AI tool and
+// workflow node), so we populate both new triggers when migrating.
 @RegisteredInstanceCommand('2.4.0', 1797000002000, { type: 'slow' })
 export class MigrateToolTriggerSettingsSlowInstanceCommand
   implements SlowInstanceCommand
@@ -18,10 +12,6 @@ export class MigrateToolTriggerSettingsSlowInstanceCommand
   async runDataMigration(dataSource: DataSource): Promise<void> {
     const defaultJsonSchema = `'{"type":"object","properties":{}}'::jsonb`;
 
-    // Tool trigger: store the existing JSON Schema verbatim under inputSchema.
-    // Workflow action trigger: wrap the JSON Schema in a single-element array
-    // -- Twenty's InputSchema is the parameter list of a function, and logic
-    // functions take a single params object.
     await dataSource.query(
       `UPDATE "core"."logicFunction"
           SET "toolTriggerSettings" = jsonb_build_object(

@@ -36,11 +36,12 @@ export const LogicFunctionTestInputInitEffect = ({
       return;
     }
 
-    const inputSchema = isDefined(workflowInputSchema)
-      ? workflowInputSchema
-      : isDefined(toolJsonSchema)
-        ? jsonSchemaToInputSchema(toolJsonSchema)
-        : null;
+    let inputSchema = null;
+    if (isDefined(workflowInputSchema)) {
+      inputSchema = workflowInputSchema;
+    } else if (isDefined(toolJsonSchema)) {
+      inputSchema = jsonSchemaToInputSchema(toolJsonSchema);
+    }
 
     if (!isDefined(inputSchema)) {
       return;
