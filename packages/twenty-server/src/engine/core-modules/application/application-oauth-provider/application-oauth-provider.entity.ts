@@ -24,6 +24,7 @@ import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/works
   'universalIdentifier',
   'applicationId',
 ])
+@Index('IDX_APP_OAUTH_PROVIDER_APPLICATION_ID', ['applicationId'])
 @Index('IDX_APP_OAUTH_PROVIDER_WORKSPACE_ID', ['workspaceId'])
 export class ApplicationOAuthProviderEntity extends WorkspaceRelatedEntity {
   @PrimaryGeneratedColumn('uuid')

@@ -33,6 +33,10 @@ export class AddApplicationOAuthProviderAndConnectedAccountColumn1777558657640
     );
 
     await queryRunner.query(
+      `CREATE INDEX "IDX_APP_OAUTH_PROVIDER_APPLICATION_ID" ON "core"."applicationOAuthProvider" ("applicationId")`,
+    );
+
+    await queryRunner.query(
       `CREATE INDEX "IDX_APP_OAUTH_PROVIDER_WORKSPACE_ID" ON "core"."applicationOAuthProvider" ("workspaceId")`,
     );
 
@@ -119,6 +123,10 @@ export class AddApplicationOAuthProviderAndConnectedAccountColumn1777558657640
 
     await queryRunner.query(
       `DROP INDEX "core"."IDX_APP_OAUTH_PROVIDER_WORKSPACE_ID"`,
+    );
+
+    await queryRunner.query(
+      `DROP INDEX "core"."IDX_APP_OAUTH_PROVIDER_APPLICATION_ID"`,
     );
 
     await queryRunner.query(`DROP TABLE "core"."applicationOAuthProvider"`);

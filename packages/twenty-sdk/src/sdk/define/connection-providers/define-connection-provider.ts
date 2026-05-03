@@ -3,6 +3,7 @@ import { createValidationResult } from '@/sdk/define/common/utils/create-validat
 import { type ConnectionProviderManifest } from 'twenty-shared/application';
 
 const PROVIDER_NAME_PATTERN = /^[a-z][a-z0-9-]*$/;
+const SUPPORTED_TYPES = ['oauth'] as const;
 
 export const defineConnectionProvider: DefineEntity<
   ConnectionProviderManifest
@@ -27,6 +28,10 @@ export const defineConnectionProvider: DefineEntity<
 
   if (!config.type) {
     errors.push("Connection provider must declare a `type` (e.g. 'oauth')");
+  } else if (!(SUPPORTED_TYPES as readonly string[]).includes(config.type)) {
+    errors.push(
+      `Connection provider type "${config.type}" is not supported. Supported types: ${SUPPORTED_TYPES.join(', ')}.`,
+    );
   }
 
   if (config.type === 'oauth') {

@@ -11,6 +11,7 @@ export default defineConnectionProvider({
   oauth: {
     authorizationEndpoint: 'https://linear.app/oauth/authorize',
     tokenEndpoint: 'https://api.linear.app/oauth/token',
+    revokeEndpoint: 'https://api.linear.app/oauth/revoke',
     scopes: ['read', 'write'],
     clientIdVariable: 'LINEAR_CLIENT_ID',
     clientSecretVariable: 'LINEAR_CLIENT_SECRET',

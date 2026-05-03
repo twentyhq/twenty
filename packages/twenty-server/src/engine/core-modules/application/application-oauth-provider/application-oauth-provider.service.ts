@@ -268,11 +268,12 @@ export class ApplicationOAuthProviderService {
       oauthProviders.length > 0
         ? {
             applicationId,
+            workspaceId,
             universalIdentifier: Not(
               In(oauthProviders.map((p) => p.universalIdentifier)),
             ),
           }
-        : { applicationId },
+        : { applicationId, workspaceId },
     );
   }
 }

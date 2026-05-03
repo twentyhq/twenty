@@ -10,6 +10,9 @@ export const getConnectionProviderBaseFile = ({
 }) => {
   const kebabCaseName = kebabCase(name);
   const upperKey = kebabCaseName.toUpperCase().replace(/-/g, '_');
+  // Escape backslashes and single quotes so a name like "Bob's app" produces
+  // a valid TS literal in the generated file.
+  const escapedDisplayName = name.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
 
   return `import { defineConnectionProvider } from 'twenty-sdk/define';
 
@@ -19,7 +22,7 @@ export const ${upperKey}_CONNECTION_PROVIDER_UNIVERSAL_IDENTIFIER =
 export default defineConnectionProvider({
   universalIdentifier: ${upperKey}_CONNECTION_PROVIDER_UNIVERSAL_IDENTIFIER,
   name: '${kebabCaseName}',
-  displayName: '${name}',
+  displayName: '${escapedDisplayName}',
   type: 'oauth',
   oauth: {
     // Replace with the OAuth provider's endpoints.
