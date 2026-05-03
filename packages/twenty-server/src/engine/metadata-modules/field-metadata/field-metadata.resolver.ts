@@ -75,7 +75,7 @@ export class FieldMetadataResolver {
 
       return fromFlatFieldMetadataToFieldMetadataDto(flatFieldMetadata);
     } catch (error) {
-      fieldMetadataGraphqlApiExceptionHandler(
+      return fieldMetadataGraphqlApiExceptionHandler(
         error,
         this.i18nService.getI18nInstance(context.req.locale),
       );
@@ -101,7 +101,7 @@ export class FieldMetadataResolver {
 
       return fromFlatFieldMetadataToFieldMetadataDto(flatFieldMetadata);
     } catch (error) {
-      fieldMetadataGraphqlApiExceptionHandler(
+      return fieldMetadataGraphqlApiExceptionHandler(
         error,
         this.i18nService.getI18nInstance(context.req.locale),
       );

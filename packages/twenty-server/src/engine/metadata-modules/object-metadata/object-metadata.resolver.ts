@@ -148,7 +148,7 @@ export class ObjectMetadataResolver {
 
       return fromFlatObjectMetadataToObjectMetadataDto(flatobjectMetadata);
     } catch (error) {
-      objectMetadataGraphqlApiExceptionHandler(
+      return objectMetadataGraphqlApiExceptionHandler(
         error,
         this.i18nService.getI18nInstance(context.req.locale),
       );
@@ -171,7 +171,7 @@ export class ObjectMetadataResolver {
 
       return fromFlatObjectMetadataToObjectMetadataDto(flatobjectMetadata);
     } catch (error) {
-      objectMetadataGraphqlApiExceptionHandler(
+      return objectMetadataGraphqlApiExceptionHandler(
         error,
         this.i18nService.getI18nInstance(context.req.locale),
       );
@@ -194,7 +194,7 @@ export class ObjectMetadataResolver {
 
       return fromFlatObjectMetadataToObjectMetadataDto(flatobjectMetadata);
     } catch (error) {
-      objectMetadataGraphqlApiExceptionHandler(
+      return objectMetadataGraphqlApiExceptionHandler(
         error,
         this.i18nService.getI18nInstance(context.req.locale),
       );
