@@ -23,16 +23,16 @@ export class AppOAuthRefreshAccessTokenService {
     connectedAccount: ConnectedAccountEntity,
     refreshToken: string,
   ): Promise<AppOAuthTokens> {
-    if (!isDefined(connectedAccount.applicationOAuthProviderId)) {
+    if (!isDefined(connectedAccount.applicationConnectionProviderId)) {
       throw new ApplicationOAuthProviderException(
-        `Connected account ${connectedAccount.id} has no applicationOAuthProviderId`,
+        `Connected account ${connectedAccount.id} has no applicationConnectionProviderId`,
         ApplicationOAuthProviderExceptionCode.PROVIDER_NOT_FOUND,
       );
     }
 
     const provider =
       await this.applicationOAuthProviderService.findOneByIdOrThrow(
-        connectedAccount.applicationOAuthProviderId,
+        connectedAccount.applicationConnectionProviderId,
       );
 
     const { clientId, clientSecret } =

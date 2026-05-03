@@ -22,7 +22,7 @@ export class AppOAuthRevokeService {
   // de-facto standard.
   async revokeIfApp(connectedAccount: ConnectedAccountEntity): Promise<void> {
     if (
-      !isDefined(connectedAccount.applicationOAuthProviderId) ||
+      !isDefined(connectedAccount.applicationConnectionProviderId) ||
       !isDefined(connectedAccount.accessToken)
     ) {
       return;
@@ -32,7 +32,7 @@ export class AppOAuthRevokeService {
 
     try {
       provider = await this.applicationOAuthProviderService.findOneByIdOrThrow(
-        connectedAccount.applicationOAuthProviderId,
+        connectedAccount.applicationConnectionProviderId,
       );
     } catch {
       return;

@@ -10,7 +10,7 @@ export enum TargetFunction {
   DefineRole = 'defineRole',
   DefineSkill = 'defineSkill',
   DefineAgent = 'defineAgent',
-  DefineOAuthProvider = 'defineOAuthProvider',
+  DefineConnectionProvider = 'defineConnectionProvider',
   DefineFrontComponent = 'defineFrontComponent',
   DefineView = 'defineView',
   DefineNavigationMenuItem = 'defineNavigationMenuItem',
@@ -26,7 +26,7 @@ export enum ManifestEntityKey {
   Roles = 'roles',
   Skills = 'skills',
   Agents = 'agents',
-  OAuthProviders = 'oauthProviders',
+  ConnectionProviders = 'connectionProviders',
   FrontComponents = 'frontComponents',
   PublicAssets = 'publicAssets',
   Views = 'views',
@@ -52,7 +52,8 @@ export const TARGET_FUNCTION_TO_ENTITY_KEY_MAPPING: Record<
   [TargetFunction.DefineRole]: ManifestEntityKey.Roles,
   [TargetFunction.DefineSkill]: ManifestEntityKey.Skills,
   [TargetFunction.DefineAgent]: ManifestEntityKey.Agents,
-  [TargetFunction.DefineOAuthProvider]: ManifestEntityKey.OAuthProviders,
+  [TargetFunction.DefineConnectionProvider]:
+    ManifestEntityKey.ConnectionProviders,
   [TargetFunction.DefineFrontComponent]: ManifestEntityKey.FrontComponents,
   [TargetFunction.DefineView]: ManifestEntityKey.Views,
   [TargetFunction.DefineNavigationMenuItem]:

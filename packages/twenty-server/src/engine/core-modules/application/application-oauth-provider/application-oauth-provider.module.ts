@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { ApplicationConnectionProviderResolver } from 'src/engine/core-modules/application/application-oauth-provider/application-connection-provider.resolver';
 import { ApplicationOAuthProviderEntity } from 'src/engine/core-modules/application/application-oauth-provider/application-oauth-provider.entity';
 import { ApplicationOAuthProviderFlowService } from 'src/engine/core-modules/application/application-oauth-provider/application-oauth-provider-flow.service';
-import { ApplicationOAuthProviderResolver } from 'src/engine/core-modules/application/application-oauth-provider/application-oauth-provider.resolver';
 import { ApplicationOAuthProviderService } from 'src/engine/core-modules/application/application-oauth-provider/application-oauth-provider.service';
 import { ApplicationRegistrationVariableEntity } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.entity';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
@@ -29,7 +29,7 @@ import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-ac
   providers: [
     ApplicationOAuthProviderService,
     ApplicationOAuthProviderFlowService,
-    ApplicationOAuthProviderResolver,
+    ApplicationConnectionProviderResolver,
   ],
   exports: [
     ApplicationOAuthProviderService,

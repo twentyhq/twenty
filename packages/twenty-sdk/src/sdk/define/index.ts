@@ -60,9 +60,9 @@ export type {
 export type { RoutePayload } from '@/sdk/define/logic-functions/triggers/route-payload-type';
 export type { InputJsonSchema } from 'twenty-shared/logic-function';
 
-export { defineNavigationMenuItem } from '@/sdk/define/navigation-menu-items/define-navigation-menu-item';
+export { defineConnectionProvider } from '@/sdk/define/connection-providers/define-connection-provider';
 
-export { defineOAuthProvider } from '@/sdk/define/oauth-providers/define-oauth-provider';
+export { defineNavigationMenuItem } from '@/sdk/define/navigation-menu-items/define-navigation-menu-item';
 
 export { defineObject } from '@/sdk/define/objects/define-object';
 export { generateDefaultFieldUniversalIdentifier } from '@/sdk/define/objects/generate-default-field-universal-identifier';

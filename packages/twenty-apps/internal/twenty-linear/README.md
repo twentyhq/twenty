@@ -1,8 +1,9 @@
 # twenty-linear
 
-End-to-end test app for Twenty's generic OAuth provider infrastructure.
-Connects a workspace member's Linear account and exposes two **tools** —
-discoverable from workflow nodes and the AI chat:
+End-to-end test app for Twenty's generic connection-provider infrastructure
+(currently OAuth 2.0 only). Connects a workspace member's Linear account
+and exposes two **tools** — discoverable from workflow nodes and the AI
+chat:
 
 - `list-linear-teams` — returns the connected user's Linear teams (handy
   for finding a `teamId`). Takes no input.
@@ -39,8 +40,9 @@ discoverable from workflow nodes and the AI chat:
 
 ## What this exercises
 
-- `defineOAuthProvider` registration → `applicationOAuthProvider` row in
-  the core schema.
+- `defineConnectionProvider({ type: 'oauth' })` registration →
+  `applicationOAuthProvider` row in the core schema (the OAuth-specific
+  storage table backing the public ConnectionProvider concept).
 - Authorize endpoint → Linear consent screen → callback endpoint → token
   exchange via `SecureHttpClientService.createSsrfSafeFetch()` → new
   `connectedAccount` row with `provider = 'app'`.

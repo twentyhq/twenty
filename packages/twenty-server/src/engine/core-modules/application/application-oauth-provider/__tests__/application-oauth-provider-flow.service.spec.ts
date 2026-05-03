@@ -223,7 +223,7 @@ describe('ApplicationOAuthProviderFlowService', () => {
           provider: ConnectedAccountProvider.APP,
           accessToken: 'new_access',
           refreshToken: 'new_refresh',
-          applicationOAuthProviderId: 'provider-1',
+          applicationConnectionProviderId: 'provider-1',
           applicationId: 'app-1',
           workspaceId: 'workspace-1',
           userWorkspaceId: 'uws-1',

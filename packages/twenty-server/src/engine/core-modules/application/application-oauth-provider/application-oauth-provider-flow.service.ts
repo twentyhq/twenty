@@ -253,7 +253,7 @@ export class ApplicationOAuthProviderFlowService {
     }
 
     const existingCount = await this.connectedAccountRepository.count({
-      where: { applicationOAuthProviderId: provider.id, workspaceId },
+      where: { applicationConnectionProviderId: provider.id, workspaceId },
     });
 
     // Auto-generated default — the user can rename from the app settings tab.
@@ -267,7 +267,7 @@ export class ApplicationOAuthProviderFlowService {
       provider: ConnectedAccountProvider.APP,
       workspaceId,
       applicationId: provider.applicationId,
-      applicationOAuthProviderId: provider.id,
+      applicationConnectionProviderId: provider.id,
       userWorkspaceId,
     });
 

@@ -156,7 +156,7 @@ export class ApplicationSyncService {
     );
 
     await this.applicationOAuthProviderService.upsertManyFromManifest({
-      oauthProviders: manifest.oauthProviders,
+      connectionProviders: manifest.connectionProviders,
       applicationId: application.id,
       workspaceId,
     });

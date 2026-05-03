@@ -6,7 +6,7 @@ export enum SyncableEntity {
   Role = 'role',
   Skill = 'skill',
   Agent = 'agent',
-  OAuthProvider = 'oauthProvider',
+  ConnectionProvider = 'connectionProvider',
   View = 'view',
   NavigationMenuItem = 'navigationMenuItem',
   PageLayout = 'pageLayout',

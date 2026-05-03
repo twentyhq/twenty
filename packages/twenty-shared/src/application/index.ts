@@ -11,6 +11,11 @@ export type { AgentManifest } from './agentManifestType';
 export type { ApplicationManifest } from './applicationType';
 export type { ApplicationVariables } from './applicationVariablesType';
 export type { AssetManifest } from './assetManifestType';
+export type {
+  ConnectionProviderType,
+  OAuthConnectionProviderConfig,
+  ConnectionProviderManifest,
+} from './connectionProviderManifestType';
 export { ASSETS_DIR } from './constants/AssetDirectory';
 export { DEFAULT_API_KEY_NAME } from './constants/DefaultApiKeyName';
 export { DEFAULT_API_URL_NAME } from './constants/DefaultApiUrlName';
@@ -39,7 +44,6 @@ export type {
 } from './logicFunctionManifestType';
 export type { Manifest } from './manifestType';
 export type { NavigationMenuItemManifest } from './navigationMenuItemManifestType';
-export type { OAuthProviderManifest } from './oauthProviderManifestType';
 export type { OAuthProviderTokenRequestContentType } from './oauthProviderTokenRequestContentType.type';
 export type { ObjectFieldManifest } from './objectFieldManifest.type';
 export type { ObjectManifest } from './objectManifestType';

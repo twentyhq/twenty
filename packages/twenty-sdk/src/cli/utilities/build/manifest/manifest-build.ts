@@ -21,13 +21,13 @@ import {
   type ApplicationManifest,
   type AssetManifest,
   ASSETS_DIR,
+  type ConnectionProviderManifest,
   type FieldManifest,
   type FrontComponentCommandManifest,
   type FrontComponentManifest,
   type LogicFunctionManifest,
   type Manifest,
   type NavigationMenuItemManifest,
-  type OAuthProviderManifest,
   type ObjectManifest,
   type PageLayoutManifest,
   type PageLayoutTabManifest,
@@ -78,7 +78,7 @@ export const buildManifest = async (
   const roles: RoleManifest[] = [];
   const skills: SkillManifest[] = [];
   const agents: AgentManifest[] = [];
-  const oauthProviders: OAuthProviderManifest[] = [];
+  const connectionProviders: ConnectionProviderManifest[] = [];
   const logicFunctions: LogicFunctionManifest[] = [];
   const frontComponents: FrontComponentManifest[] = [];
   const publicAssets: AssetManifest[] = [];
@@ -96,7 +96,7 @@ export const buildManifest = async (
   const rolesFilePaths: string[] = [];
   const skillsFilePaths: string[] = [];
   const agentsFilePaths: string[] = [];
-  const oauthProvidersFilePaths: string[] = [];
+  const connectionProvidersFilePaths: string[] = [];
   const logicFunctionsFilePaths: string[] = [];
   const frontComponentsFilePaths: string[] = [];
   const publicAssetsFilePaths: string[] = [];
@@ -211,14 +211,15 @@ export const buildManifest = async (
         agentsFilePaths.push(relativePath);
         break;
       }
-      case ManifestEntityKey.OAuthProviders: {
-        const extract = await extractManifestFromFile<OAuthProviderManifest>({
-          appPath,
-          filePath,
-        });
-        oauthProviders.push(extract.config);
+      case ManifestEntityKey.ConnectionProviders: {
+        const extract =
+          await extractManifestFromFile<ConnectionProviderManifest>({
+            appPath,
+            filePath,
+          });
+        connectionProviders.push(extract.config);
         errors.push(...extract.errors);
-        oauthProvidersFilePaths.push(relativePath);
+        connectionProvidersFilePaths.push(relativePath);
         break;
       }
       case ManifestEntityKey.LogicFunctions: {
@@ -433,7 +434,7 @@ export const buildManifest = async (
         roles: roles.sort(byId),
         skills: skills.sort(byId),
         agents: agents.sort(byId),
-        oauthProviders: oauthProviders.sort(byId),
+        connectionProviders: connectionProviders.sort(byId),
         logicFunctions: logicFunctions.sort(byId),
         frontComponents: frontComponents.sort(byId),
         publicAssets: publicAssets.sort(byPath),
@@ -450,7 +451,7 @@ export const buildManifest = async (
     roles: rolesFilePaths,
     skills: skillsFilePaths,
     agents: agentsFilePaths,
-    oauthProviders: oauthProvidersFilePaths,
+    connectionProviders: connectionProvidersFilePaths,
     logicFunctions: logicFunctionsFilePaths,
     frontComponents: frontComponentsFilePaths,
     publicAssets: publicAssetsFilePaths,

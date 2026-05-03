@@ -104,7 +104,7 @@ export const ENTITY_LABELS: Record<SyncableEntity, string> = {
   [SyncableEntity.PageLayout]: 'Page layouts',
   [SyncableEntity.PageLayoutTab]: 'Page layout tabs',
   [SyncableEntity.Agent]: 'Agents',
-  [SyncableEntity.OAuthProvider]: 'OAuth providers',
+  [SyncableEntity.ConnectionProvider]: 'Connection providers',
 };
 
 export const ENTITY_ORDER = Object.keys(ENTITY_LABELS) as SyncableEntity[];

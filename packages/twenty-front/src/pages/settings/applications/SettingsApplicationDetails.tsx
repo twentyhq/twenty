@@ -44,7 +44,7 @@ import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSec
 import { SettingsApplicationDetailTitle } from '~/pages/settings/applications/components/SettingsApplicationDetailTitle';
 import { CUSTOM_APPLICATION_ILLUSTRATIONS } from '~/pages/settings/applications/constants/CustomApplicationIllustrations';
 import { STANDARD_APPLICATION_ILLUSTRATIONS } from '~/pages/settings/applications/constants/StandardApplicationIllustrations';
-import { useFindApplicationOAuthProviders } from '~/pages/settings/applications/hooks/useFindApplicationOAuthProviders';
+import { useFindApplicationConnectionProviders } from '~/pages/settings/applications/hooks/useFindApplicationConnectionProviders';
 import { SettingsApplicationCustomTab } from '~/pages/settings/applications/tabs/SettingsApplicationCustomTab';
 import { SettingsApplicationDetailAboutTab } from '~/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab';
 import { SettingsApplicationDetailContentTab } from '~/pages/settings/applications/tabs/SettingsApplicationDetailContentTab';
@@ -69,7 +69,8 @@ export const SettingsApplicationDetails = () => {
 
   const application = data?.findOneApplication;
 
-  const { oauthProviders } = useFindApplicationOAuthProviders(applicationId);
+  const { connectionProviders } =
+    useFindApplicationConnectionProviders(applicationId);
 
   const { data: detailData } = useQuery(FindMarketplaceAppDetailDocument, {
     variables: { universalIdentifier: application?.universalIdentifier ?? '' },
@@ -232,8 +233,8 @@ export const SettingsApplicationDetails = () => {
     },
     (() => {
       const hasVariables = (application?.applicationVariables ?? []).length > 0;
-      const hasOAuthProviders = oauthProviders.length > 0;
-      const hasNothingToConfigure = !hasVariables && !hasOAuthProviders;
+      const hasConnectionProviders = connectionProviders.length > 0;
+      const hasNothingToConfigure = !hasVariables && !hasConnectionProviders;
 
       return {
         id: 'settings',

@@ -55,7 +55,7 @@ export class ApplicationConnectionsListService {
       workspaceId,
       provider: ConnectedAccountProvider.APP,
       ...(isDefined(providerId)
-        ? { applicationOAuthProviderId: providerId }
+        ? { applicationConnectionProviderId: providerId }
         : {}),
     };
 

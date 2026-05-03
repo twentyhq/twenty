@@ -28,7 +28,7 @@ export const normalizeManifestForComparison = <T extends Manifest>(
   roles: sortById(manifest.roles),
   skills: sortById(manifest.skills),
   agents: sortById(manifest.agents),
-  oauthProviders: sortById(manifest.oauthProviders ?? []),
+  connectionProviders: sortById(manifest.connectionProviders ?? []),
   views: sortById(manifest.views),
   navigationMenuItems: sortById(manifest.navigationMenuItems),
   pageLayouts: sortById(manifest.pageLayouts),

@@ -24,7 +24,7 @@ export type ConnectedAccountScope = 'user' | 'workspace';
 
 @Entity({ name: 'connectedAccount', schema: 'core' })
 @Index('IDX_CONNECTED_ACCOUNT_APP_OAUTH_PROVIDER_ID', [
-  'applicationOAuthProviderId',
+  'applicationConnectionProviderId',
 ])
 @Index('IDX_CONNECTED_ACCOUNT_APPLICATION_ID', ['applicationId'])
 export class ConnectedAccountEntity extends WorkspaceRelatedEntity {
@@ -67,15 +67,20 @@ export class ConnectedAccountEntity extends WorkspaceRelatedEntity {
   @Column({ type: 'uuid', nullable: false })
   userWorkspaceId: string;
 
-  @Column({ type: 'uuid', nullable: true })
-  applicationOAuthProviderId: string | null;
+  // The DB column stays named `applicationOAuthProviderId` (storage detail
+  // matching the OAuth-specific backing table). The TS property and GraphQL
+  // field are named `applicationConnectionProviderId` to align with the
+  // public ConnectionProvider concept — future credential types will reuse
+  // the same field with a different backing FK.
+  @Column({ type: 'uuid', nullable: true, name: 'applicationOAuthProviderId' })
+  applicationConnectionProviderId: string | null;
 
   @ManyToOne(() => ApplicationOAuthProviderEntity, {
     onDelete: 'CASCADE',
     nullable: true,
   })
   @JoinColumn({ name: 'applicationOAuthProviderId' })
-  applicationOAuthProvider: Relation<ApplicationOAuthProviderEntity> | null;
+  applicationConnectionProvider: Relation<ApplicationOAuthProviderEntity> | null;
 
   // Cascade-deletes with the owning app so an uninstall doesn't leave
   // dangling app-scoped credentials.

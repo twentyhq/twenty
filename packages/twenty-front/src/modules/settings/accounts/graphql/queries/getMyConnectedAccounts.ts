@@ -11,7 +11,7 @@ export const GET_MY_CONNECTED_ACCOUNTS = gql`
       handleAliases
       lastSignedInAt
       userWorkspaceId
-      applicationOAuthProviderId
+      applicationConnectionProviderId
       name
       scope
       lastCredentialsRefreshedAt

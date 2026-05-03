@@ -34,7 +34,7 @@ const buildAccount = (
     handle: 'octocat@example.com',
     scope: 'user',
     applicationId: APP_ID,
-    applicationOAuthProviderId: 'provider-1',
+    applicationConnectionProviderId: 'provider-1',
     workspaceId: WORKSPACE_ID,
     userWorkspaceId: REQUEST_USER_WORKSPACE_ID,
     provider: ConnectedAccountProvider.APP,

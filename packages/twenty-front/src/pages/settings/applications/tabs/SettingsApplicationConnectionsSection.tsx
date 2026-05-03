@@ -12,10 +12,10 @@ import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { DeleteConnectedAccountDocument } from '~/generated-metadata/graphql';
 import { SettingsApplicationConnectScopePickerModal } from '~/pages/settings/applications/components/SettingsApplicationConnectScopePickerModal';
-import { useFindApplicationOAuthProviders } from '~/pages/settings/applications/hooks/useFindApplicationOAuthProviders';
+import { useFindApplicationConnectionProviders } from '~/pages/settings/applications/hooks/useFindApplicationConnectionProviders';
 import { useMyAppConnectedAccounts } from '~/pages/settings/applications/hooks/useMyAppConnectedAccounts';
 import { useTriggerAppOAuth } from '~/pages/settings/applications/hooks/useTriggerAppOAuth';
-import { type FrontendApplicationOAuthProvider } from '~/pages/settings/applications/types/FrontendApplicationOAuthProvider';
+import { type FrontendApplicationConnectionProvider } from '~/pages/settings/applications/types/FrontendApplicationConnectionProvider';
 
 const SCOPE_PICKER_MODAL_ID = 'app-connection-scope-picker';
 
@@ -33,8 +33,8 @@ export const SettingsApplicationConnectionsSection = ({
   const { t } = useLingui();
   const { triggerAppOAuth } = useTriggerAppOAuth();
   const { openModal } = useModal();
-  const { oauthProviders, loading } =
-    useFindApplicationOAuthProviders(applicationId);
+  const { connectionProviders, loading } =
+    useFindApplicationConnectionProviders(applicationId);
   const { accounts: connectedAccounts } = useMyAppConnectedAccounts();
   const [deleteConnectedAccount] = useMutation(DeleteConnectedAccountDocument, {
     refetchQueries: [{ query: GET_MY_CONNECTED_ACCOUNTS }],
@@ -43,17 +43,21 @@ export const SettingsApplicationConnectionsSection = ({
   // Tracks which provider's "Add connection" was clicked so the scope picker
   // modal knows the displayName + which provider to launch OAuth for.
   const [pendingProvider, setPendingProvider] =
-    useState<FrontendApplicationOAuthProvider | null>(null);
+    useState<FrontendApplicationConnectionProvider | null>(null);
 
-  if (loading || oauthProviders.length === 0) {
+  if (loading || connectionProviders.length === 0) {
     return null;
   }
 
   return (
     <>
-      {oauthProviders.map((provider) => {
+      {connectionProviders.map((provider) => {
+        const isOAuth = provider.type === 'oauth';
+        const isClientCredentialsConfigured =
+          provider.oauth?.isClientCredentialsConfigured ?? false;
+
         const providerConnections = connectedAccounts.filter(
-          (account) => account.applicationOAuthProviderId === provider.id,
+          (account) => account.applicationConnectionProviderId === provider.id,
         );
 
         return (
@@ -62,7 +66,7 @@ export const SettingsApplicationConnectionsSection = ({
               title={provider.displayName}
               description={t`Manage connections used by this app to call ${provider.displayName}.`}
             />
-            {!provider.isClientCredentialsConfigured && (
+            {isOAuth && !isClientCredentialsConfigured && (
               <Info
                 accent="danger"
                 text={t`${provider.displayName} OAuth is not yet set up by your server administrator. They need to fill in the OAuth client ID and secret on the application registration before you can add a connection.`}
@@ -77,7 +81,7 @@ export const SettingsApplicationConnectionsSection = ({
                 providerName: provider.name,
               }))}
               getItemLabel={(item) => item.label}
-              hasFooter={provider.isClientCredentialsConfigured}
+              hasFooter={isClientCredentialsConfigured}
               footerButtonLabel={t`Add connection`}
               onFooterButtonClick={() => {
                 setPendingProvider(provider);

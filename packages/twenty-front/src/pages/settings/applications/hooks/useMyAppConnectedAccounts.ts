@@ -11,7 +11,7 @@ type AppConnectedAccount = {
   handle: string;
   provider: ConnectedAccountProvider;
   authFailedAt: string | null;
-  applicationOAuthProviderId: string | null;
+  applicationConnectionProviderId: string | null;
   name: string | null;
   scope: 'user' | 'workspace';
 };

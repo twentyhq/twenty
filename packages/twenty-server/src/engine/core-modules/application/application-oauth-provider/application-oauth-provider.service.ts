@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { type OAuthProviderManifest } from 'twenty-shared/application';
+import { type ConnectionProviderManifest } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 import { In, Not, Repository } from 'typeorm';
 
@@ -138,22 +138,28 @@ export class ApplicationOAuthProviderService {
     });
   }
 
+  // Persists OAuth-typed connection providers from a manifest. Non-OAuth
+  // types (future: API keys, PATs) are skipped here — they will get their
+  // own sibling tables and persistence helpers, with no nullable columns
+  // bleeding into this OAuth-specific table.
   async upsertManyFromManifest({
-    oauthProviders,
+    connectionProviders,
     applicationId,
     workspaceId,
   }: {
-    oauthProviders?: OAuthProviderManifest[];
+    connectionProviders?: ConnectionProviderManifest[];
     applicationId: string;
     workspaceId: string;
   }): Promise<void> {
-    const providers = oauthProviders ?? [];
+    const oauthProviders = (connectionProviders ?? []).filter(
+      (provider) => provider.type === 'oauth',
+    );
 
     const existing = await this.oauthProviderRepository.find({
       where: { applicationId, workspaceId },
     });
 
-    if (providers.length === 0 && existing.length === 0) {
+    if (oauthProviders.length === 0 && existing.length === 0) {
       return;
     }
 
@@ -161,8 +167,8 @@ export class ApplicationOAuthProviderService {
       existing.map((p) => [p.universalIdentifier, p]),
     );
 
-    const toSave: Partial<ApplicationOAuthProviderEntity>[] = providers.map(
-      (manifest) => {
+    const toSave: Partial<ApplicationOAuthProviderEntity>[] =
+      oauthProviders.map((manifest) => {
         const fields = {
           applicationId,
           workspaceId,
@@ -170,15 +176,16 @@ export class ApplicationOAuthProviderService {
           name: manifest.name,
           displayName: manifest.displayName,
           icon: manifest.icon ?? null,
-          authorizationEndpoint: manifest.authorizationEndpoint,
-          tokenEndpoint: manifest.tokenEndpoint,
-          revokeEndpoint: manifest.revokeEndpoint ?? null,
-          scopes: manifest.scopes,
-          clientIdVariable: manifest.clientIdVariable,
-          clientSecretVariable: manifest.clientSecretVariable,
-          authorizationParams: manifest.authorizationParams ?? null,
-          tokenRequestContentType: manifest.tokenRequestContentType ?? 'json',
-          usePkce: manifest.usePkce ?? true,
+          authorizationEndpoint: manifest.oauth.authorizationEndpoint,
+          tokenEndpoint: manifest.oauth.tokenEndpoint,
+          revokeEndpoint: manifest.oauth.revokeEndpoint ?? null,
+          scopes: manifest.oauth.scopes,
+          clientIdVariable: manifest.oauth.clientIdVariable,
+          clientSecretVariable: manifest.oauth.clientSecretVariable,
+          authorizationParams: manifest.oauth.authorizationParams ?? null,
+          tokenRequestContentType:
+            manifest.oauth.tokenRequestContentType ?? 'json',
+          usePkce: manifest.oauth.usePkce ?? true,
         };
 
         const existingEntity = existingByUniversalIdentifier.get(
@@ -188,19 +195,18 @@ export class ApplicationOAuthProviderService {
         return isDefined(existingEntity)
           ? { id: existingEntity.id, ...fields }
           : fields;
-      },
-    );
+      });
 
     if (toSave.length > 0) {
       await this.oauthProviderRepository.save(toSave);
     }
 
     await this.oauthProviderRepository.delete(
-      providers.length > 0
+      oauthProviders.length > 0
         ? {
             applicationId,
             universalIdentifier: Not(
-              In(providers.map((p) => p.universalIdentifier)),
+              In(oauthProviders.map((p) => p.universalIdentifier)),
             ),
           }
         : { applicationId },
