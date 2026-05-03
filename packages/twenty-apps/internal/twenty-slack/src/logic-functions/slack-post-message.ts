@@ -1,11 +1,11 @@
 import { defineLogicFunction } from 'twenty-sdk/define';
 
-import { slackPostMessageInputSchema } from './schemas/slack-post-message-input.schema';
-import { type SlackPostMessageInput } from './types/slack-post-message-input.type';
-import { type SlackToolResult } from './types/slack-tool-result.type';
 import { createSlackWebClient } from '../utils/create-slack-web-client';
 import { getSlackErrorMessage } from '../utils/get-slack-error-message';
 import { validateSlackMessageText } from '../utils/slack-text';
+import { slackPostMessageInputSchema } from './schemas/slack-post-message-input.schema';
+import { type SlackPostMessageInput } from './types/slack-post-message-input.type';
+import { type SlackToolResult } from './types/slack-tool-result.type';
 
 const handler = async (
   parameters: SlackPostMessageInput,
