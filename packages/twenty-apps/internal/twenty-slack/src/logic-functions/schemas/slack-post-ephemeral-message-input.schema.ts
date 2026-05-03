@@ -3,24 +3,27 @@ import { type InputJsonSchema } from 'twenty-sdk/logic-function';
 export const slackPostEphemeralMessageInputSchema: InputJsonSchema = {
   type: 'object',
   properties: {
-    channel: {
+    slack_channel_id: {
       type: 'string',
       description:
-        'Channel ID where the ephemeral message appears (user must be a member).',
+        'Channel where the note appears (Slack channel ID like C…). The person you choose must already be in this channel, or they will not see the message.',
     },
-    user: {
+    recipient_slack_user_id: {
       type: 'string',
-      description: 'Slack user ID (U…) who will see the ephemeral message.',
+      description:
+        'Who can see this message: their Slack **member ID** (starts with U…). Only that person sees it; everyone else in the channel does not. In Slack: click their profile → three dots → Copy member ID (wording may vary by client).',
     },
-    text: {
+    message_text: {
       type: 'string',
-      description: 'Ephemeral message body.',
+      description:
+        'Short note shown only to the recipient above — for example a private hint, validation result, or next step.',
     },
-    mrkdwn: {
+    use_slack_markdown: {
       type: 'boolean',
-      description: 'When true, Slack parses mrkdwn in `text`.',
+      description:
+        'Optional. Use Slack’s simple formatting (*bold*, links, etc.) in the message text.',
     },
   },
-  required: ['channel', 'user', 'text'],
+  required: ['slack_channel_id', 'recipient_slack_user_id', 'message_text'],
   additionalProperties: false,
 };

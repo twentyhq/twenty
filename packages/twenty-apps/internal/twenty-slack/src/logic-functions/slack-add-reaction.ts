@@ -21,7 +21,7 @@ const handler = async (
     };
   }
 
-  const reactionError = validateReactionName(parameters.name);
+  const reactionError = validateReactionName(parameters.emoji_name);
 
   if (reactionError) {
     return {
@@ -35,16 +35,16 @@ const handler = async (
 
   try {
     await client.reactions.add({
-      channel: parameters.channel,
-      timestamp: parameters.timestamp,
-      name: parameters.name.trim(),
+      channel: parameters.slack_channel_id,
+      timestamp: parameters.message_timestamp,
+      name: parameters.emoji_name.trim(),
     });
 
     return {
       success: true,
-      message: `Reaction "${parameters.name.trim()}" added to the message.`,
-      slackTs: parameters.timestamp,
-      channel: parameters.channel,
+      message: `Reaction "${parameters.emoji_name.trim()}" added to the message.`,
+      slackTs: parameters.message_timestamp,
+      channel: parameters.slack_channel_id,
     };
   } catch (error) {
     return {
@@ -59,7 +59,7 @@ export default defineLogicFunction({
   universalIdentifier: '2a8c7f91-4d3e-5b6f-a7c8-9d0e1f2a3b4c',
   name: 'slack_add_reaction',
   description:
-    'Add an emoji reaction to a Slack message (reactions.add). Use the message timestamp and a reaction name without colons.',
+    'Add an emoji reaction to a message (for example a checkmark as `white_check_mark`) so the channel can see status at a glance.',
   timeoutSeconds: 30,
   isTool: true,
   toolInputSchema: slackAddReactionInputSchema,

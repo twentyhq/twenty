@@ -1,5 +1,5 @@
 export type SlackAddReactionInput = {
-  channel: string;
-  timestamp: string;
-  name: string;
+  slack_channel_id: string;
+  message_timestamp: string;
+  emoji_name: string;
 };

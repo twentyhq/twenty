@@ -1,6 +1,6 @@
 export type SlackPostMessageInput = {
-  channel: string;
-  text: string;
-  thread_ts?: string;
-  mrkdwn?: boolean;
+  slack_channel_id: string;
+  message_text: string;
+  parent_message_timestamp?: string;
+  use_slack_markdown?: boolean;
 };

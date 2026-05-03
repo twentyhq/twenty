@@ -3,20 +3,22 @@ import { type InputJsonSchema } from 'twenty-sdk/logic-function';
 export const slackAddReactionInputSchema: InputJsonSchema = {
   type: 'object',
   properties: {
-    channel: {
-      type: 'string',
-      description: 'Channel ID where the message lives.',
-    },
-    timestamp: {
-      type: 'string',
-      description: 'Message ts to react to (same format as slack_post_message slackTs).',
-    },
-    name: {
+    slack_channel_id: {
       type: 'string',
       description:
-        'Reaction name without colons (e.g. thumbsup, eyes, white_check_mark).',
+        'Channel where the message lives (Slack channel ID like C…).',
+    },
+    message_timestamp: {
+      type: 'string',
+      description:
+        'The message to react to: use the **timestamp** from Slack (same value as `slackTs` after posting, or visible in “Copy link” URLs as the last number).',
+    },
+    emoji_name: {
+      type: 'string',
+      description:
+        'Emoji to add, **without** colons — for example `thumbsup`, `eyes`, or `white_check_mark`. Do not paste `:thumbsup:` style names.',
     },
   },
-  required: ['channel', 'timestamp', 'name'],
+  required: ['slack_channel_id', 'message_timestamp', 'emoji_name'],
   additionalProperties: false,
 };

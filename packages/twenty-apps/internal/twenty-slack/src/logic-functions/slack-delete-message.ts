@@ -24,15 +24,15 @@ const handler = async (
 
   try {
     await client.chat.delete({
-      channel: parameters.channel,
-      ts: parameters.ts,
+      channel: parameters.slack_channel_id,
+      ts: parameters.message_timestamp,
     });
 
     return {
       success: true,
       message: 'Slack message deleted.',
-      slackTs: parameters.ts,
-      channel: parameters.channel,
+      slackTs: parameters.message_timestamp,
+      channel: parameters.slack_channel_id,
     };
   } catch (error) {
     return {
@@ -47,7 +47,7 @@ export default defineLogicFunction({
   universalIdentifier: 'f3c92a76-8b4a-4a09-ba19-47b9280651c9',
   name: 'slack_delete_message',
   description:
-    'Delete a Slack message sent by this bot (chat.delete). Requires channel ID and message ts.',
+    'Remove a message this bot sent (for example after a mistake or when a workflow is cancelled).',
   timeoutSeconds: 30,
   isTool: true,
   toolInputSchema: slackDeleteMessageInputSchema,

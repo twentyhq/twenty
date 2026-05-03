@@ -15,6 +15,10 @@ messages, update/delete bot messages, and add reactions. Uses the official
 | `slack_delete_message` | `chat.delete` |
 | `slack_add_reaction` | `reactions.add` |
 
+### Workflow field names (for authors)
+
+Fields use plain names in the step UI, for example **`slack_channel_id`** (Slack’s channel / DM ID), **`message_text`**, and **`message_timestamp`** (Slack’s per-message id — same value as tool output **`slackTs`** when chaining steps). Optional **`parent_message_timestamp`** is only for **thread replies**. **`use_slack_markdown`** turns on Slack’s `*bold*`-style formatting.
+
 ## Slack app setup
 
 1. Create a Slack app at [api.slack.com/apps](https://api.slack.com/apps)

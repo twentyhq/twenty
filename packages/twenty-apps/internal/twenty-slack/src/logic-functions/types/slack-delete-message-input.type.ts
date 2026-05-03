@@ -1,4 +1,4 @@
 export type SlackDeleteMessageInput = {
-  channel: string;
-  ts: string;
+  slack_channel_id: string;
+  message_timestamp: string;
 };

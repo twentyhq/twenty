@@ -1,6 +1,6 @@
 export type SlackUpdateMessageInput = {
-  channel: string;
-  ts: string;
-  text: string;
-  mrkdwn?: boolean;
+  slack_channel_id: string;
+  message_timestamp: string;
+  new_message_text: string;
+  use_slack_markdown?: boolean;
 };

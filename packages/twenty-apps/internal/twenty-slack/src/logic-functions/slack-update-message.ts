@@ -22,7 +22,7 @@ const handler = async (
     };
   }
 
-  const textError = validateSlackMessageText(parameters.text);
+  const textError = validateSlackMessageText(parameters.new_message_text);
 
   if (textError) {
     return {
@@ -37,22 +37,24 @@ const handler = async (
   try {
     // `mrkdwn` is supported by the Slack API but missing from ChatUpdateArguments in @slack/web-api.
     const updatePayload = {
-      channel: parameters.channel,
-      ts: parameters.ts,
-      text: parameters.text,
-      ...(parameters.mrkdwn === true ? { mrkdwn: true as const } : {}),
+      channel: parameters.slack_channel_id,
+      ts: parameters.message_timestamp,
+      text: parameters.new_message_text,
+      ...(parameters.use_slack_markdown === true
+        ? { mrkdwn: true as const }
+        : {}),
     } as ChatUpdateArguments & { mrkdwn?: boolean };
 
     const data = await client.chat.update(updatePayload);
 
     const slackTs =
-      typeof data.ts === 'string' ? data.ts : parameters.ts;
+      typeof data.ts === 'string' ? data.ts : parameters.message_timestamp;
 
     return {
       success: true,
       message: 'Slack message updated.',
       slackTs,
-      channel: parameters.channel,
+      channel: parameters.slack_channel_id,
     };
   } catch (error) {
     return {
@@ -67,7 +69,7 @@ export default defineLogicFunction({
   universalIdentifier: 'e4d03b87-9a5b-4f1d-8b20-58ca3917620d',
   name: 'slack_update_message',
   description:
-    'Edit a Slack message previously sent by this bot (chat.update). Requires channel ID and message ts.',
+    'Change the text of a message this bot already sent. You need the channel ID and the message’s timestamp from when it was posted.',
   timeoutSeconds: 30,
   isTool: true,
   toolInputSchema: slackUpdateMessageInputSchema,

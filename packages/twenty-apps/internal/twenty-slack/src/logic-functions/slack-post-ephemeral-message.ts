@@ -22,7 +22,7 @@ const handler = async (
     };
   }
 
-  const textError = validateSlackMessageText(parameters.text);
+  const textError = validateSlackMessageText(parameters.message_text);
 
   if (textError) {
     return {
@@ -37,10 +37,12 @@ const handler = async (
   try {
     // `mrkdwn` is supported by the Slack API but missing from ChatPostEphemeralArguments in @slack/web-api.
     const postEphemeralPayload = {
-      channel: parameters.channel,
-      user: parameters.user,
-      text: parameters.text,
-      ...(parameters.mrkdwn === true ? { mrkdwn: true as const } : {}),
+      channel: parameters.slack_channel_id,
+      user: parameters.recipient_slack_user_id,
+      text: parameters.message_text,
+      ...(parameters.use_slack_markdown === true
+        ? { mrkdwn: true as const }
+        : {}),
     } as ChatPostEphemeralArguments & { mrkdwn?: boolean };
 
     await client.chat.postEphemeral(postEphemeralPayload);
@@ -48,7 +50,7 @@ const handler = async (
     return {
       success: true,
       message: 'Ephemeral message sent to the user in the channel.',
-      channel: parameters.channel,
+      channel: parameters.slack_channel_id,
     };
   } catch (error) {
     return {
@@ -63,7 +65,7 @@ export default defineLogicFunction({
   universalIdentifier: 'd5e14c98-0a6b-4e2e-ac31-69db4a18720e',
   name: 'slack_post_ephemeral_message',
   description:
-    'Post a temporary Slack message visible only to one user in a channel (chat.postEphemeral).',
+    'Send a private-on-channel note: only the chosen teammate sees it in that channel (not a DM broadcast to everyone).',
   timeoutSeconds: 30,
   isTool: true,
   toolInputSchema: slackPostEphemeralMessageInputSchema,
