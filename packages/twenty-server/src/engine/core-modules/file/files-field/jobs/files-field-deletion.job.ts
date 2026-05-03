@@ -32,8 +32,11 @@ export class FilesFieldDeletionJob {
           fileId,
           workspaceId,
         });
-      } catch {
-        this.logger.log(`Failed to delete file ${fileId}`);
+      } catch (error) {
+        this.logger.error(
+          `Failed to delete file ${fileId} in workspace ${workspaceId}`,
+          error instanceof Error ? error.stack : String(error),
+        );
       }
     }
   }
