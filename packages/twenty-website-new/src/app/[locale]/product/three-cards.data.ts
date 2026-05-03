@@ -5,10 +5,6 @@ export const THREE_CARDS_ILLUSTRATION_DATA: ThreeCardsIllustrationDataType = {
   eyebrow: {
     heading: { text: msg`Stop settling for trade-offs.`, fontFamily: 'sans' },
   },
-  heading: [
-    { text: msg`A modern CRM with `, fontFamily: 'serif' },
-    { text: msg`an intuitive interface`, fontFamily: 'sans' },
-  ],
   body: { text: msg`` },
   illustrationCards: [
     {

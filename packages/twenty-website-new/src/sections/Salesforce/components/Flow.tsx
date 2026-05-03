@@ -10,7 +10,7 @@ import type {
 } from '@/sections/Salesforce/types';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
-import { useCallback, useRef, useState } from 'react';
+import { type ReactNode, useCallback, useRef, useState } from 'react';
 import { PricingWindow } from './PricingWindow';
 import { Root } from './Root';
 import { WrongChoicePopup, WRONG_CHOICE_POPUP_WIDTH } from './WrongChoicePopup';
@@ -134,11 +134,12 @@ const getScatteredPopupPosition = (
   };
 };
 
-type FlowProps = SalesforceDataType & {
+type FlowProps = Omit<SalesforceDataType, 'heading'> & {
   backgroundColor: string;
+  children: ReactNode;
 };
 
-export function Flow({ backgroundColor, body, heading, pricing }: FlowProps) {
+export function Flow({ backgroundColor, body, children, pricing }: FlowProps) {
   const rightColumnRef = useRef<HTMLDivElement>(null);
   const popupSequenceRef = useRef(0);
   const [isPricingWindowVisible, setIsPricingWindowVisible] = useState(true);
@@ -272,13 +273,9 @@ export function Flow({ backgroundColor, body, heading, pricing }: FlowProps) {
   return (
     <Root backgroundColor={backgroundColor}>
       <CopyColumn>
-        <Heading
-          as="h2"
-          renderText={renderMessageDescriptor}
-          segments={heading}
-          size="lg"
-          weight="light"
-        />
+        <Heading as="h2" size="lg" weight="light">
+          {children}
+        </Heading>
         <Body
           body={body}
           family="sans"

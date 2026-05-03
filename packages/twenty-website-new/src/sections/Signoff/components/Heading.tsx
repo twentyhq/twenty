@@ -5,6 +5,7 @@ import type { MessageHeadingSegment } from '@/lib/i18n/message-heading-segment';
 import { renderMessageDescriptor } from '@/lib/i18n/render-message-descriptor';
 import type { Page } from '@/lib/pages';
 import { theme } from '@/theme';
+import type { ReactNode } from 'react';
 
 const HeadingWrap = styled.div`
   margin-bottom: ${theme.spacing(2)};
@@ -22,11 +23,12 @@ const HeadingWrap = styled.div`
 `;
 
 type HeadingProps = {
+  children?: ReactNode;
   page?: Page;
-  segments: MessageHeadingSegment[];
+  segments?: MessageHeadingSegment[];
 };
 
-export function Heading({ page, segments }: HeadingProps) {
+export function Heading({ children, page, segments }: HeadingProps) {
   return (
     <HeadingWrap data-page={page}>
       <BaseHeading
@@ -35,7 +37,9 @@ export function Heading({ page, segments }: HeadingProps) {
         segments={segments}
         size="xl"
         weight="light"
-      />
+      >
+        {segments === undefined ? children : undefined}
+      </BaseHeading>
     </HeadingWrap>
   );
 }

@@ -1,3 +1,5 @@
+'use client';
+
 import type { MessageDescriptor } from '@lingui/core';
 import { Trans } from '@lingui/react';
 

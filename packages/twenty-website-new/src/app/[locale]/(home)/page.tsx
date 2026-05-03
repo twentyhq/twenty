@@ -10,7 +10,13 @@ import { TalkToUsButton } from '@/lib/contact-cal';
 import { FAQ_DATA } from '@/sections/Faq/data';
 import { MENU_DATA } from '@/sections/Menu/data';
 import { TRUSTED_BY_DATA } from '@/sections/TrustedBy/data';
-import { Body, Eyebrow, Heading, LinkButton } from '@/design-system/components';
+import {
+  Body,
+  Eyebrow,
+  Heading,
+  HeadingPart,
+  LinkButton,
+} from '@/design-system/components';
 import { Pages } from '@/lib/pages';
 import { renderMessageDescriptor } from '@/lib/i18n/render-message-descriptor';
 import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';
@@ -118,14 +124,14 @@ export default async function HomePage() {
       <Hero.Root backgroundColor={HOME_TOP_BACKGROUND_COLOR} showHomeBackground>
         <HeroIntroGroup data-halftone-exclude>
           <HeroHeadingGroup>
-            <Hero.Heading
-              page={Pages.Home}
-              segments={[
-                { fontFamily: 'serif', text: HERO_COPY.heading.descriptor },
-                { fontFamily: 'serif', text: HERO_COPY.heading.qualifier },
-                { fontFamily: 'sans', text: HERO_COPY.heading.subject },
-              ]}
-            />
+            <Hero.Heading page={Pages.Home}>
+              <HeadingPart fontFamily="serif">
+                {renderMessageDescriptor(msg`Build your Enterprise CRM`)}
+              </HeadingPart>{' '}
+              <HeadingPart fontFamily="sans">
+                {renderMessageDescriptor(msg`at\u00A0AI\u00A0Speed`)}
+              </HeadingPart>
+            </Hero.Heading>
             <Hero.Body
               page={Pages.Home}
               body={{ text: HERO_COPY.body }}
@@ -164,7 +170,22 @@ export default async function HomePage() {
             heading={PROBLEM_DATA.eyebrow.heading}
             renderText={renderMessageDescriptor}
           />
-          <Problem.Heading segments={PROBLEM_DATA.heading} />
+          <Problem.Heading>
+            <HeadingPart fontFamily="serif">
+              {renderMessageDescriptor(
+                msg`A custom CRM gives your org an edge,`,
+              )}
+            </HeadingPart>{' '}
+            <HeadingPart fontFamily="sans">
+              {renderMessageDescriptor(msg`but building one`)}
+            </HeadingPart>{' '}
+            <HeadingPart fontFamily="serif">
+              {renderMessageDescriptor(msg`comes with`)}
+            </HeadingPart>{' '}
+            <HeadingPart fontFamily="sans">
+              {renderMessageDescriptor(msg`tradeoffs`)}
+            </HeadingPart>
+          </Problem.Heading>
           <Problem.Points points={PROBLEM_DATA.points} />
         </Problem.Content>
       </Problem.Root>
@@ -180,11 +201,18 @@ export default async function HomePage() {
               />
               <Heading
                 className={threeCardsIllustrationHeadingClassName}
-                renderText={renderMessageDescriptor}
-                segments={THREE_CARDS_ILLUSTRATION_DATA.heading}
                 size="lg"
                 weight="light"
-              />
+              >
+                <HeadingPart fontFamily="serif">
+                  {renderMessageDescriptor(
+                    msg`Assemble, iterate and adapt a robust CRM,`,
+                  )}
+                </HeadingPart>{' '}
+                <HeadingPart fontFamily="sans">
+                  {renderMessageDescriptor(msg`that's quick to flex`)}
+                </HeadingPart>
+              </Heading>
             </ThreeCardsIllustrationIntroHeader>
             <Body
               body={THREE_CARDS_ILLUSTRATION_DATA.body}
@@ -208,12 +236,18 @@ export default async function HomePage() {
             heading={THREE_CARDS_FEATURE_DATA.eyebrow.heading}
             renderText={renderMessageDescriptor}
           />
-          <Heading
-            renderText={renderMessageDescriptor}
-            segments={THREE_CARDS_FEATURE_DATA.heading}
-            size="lg"
-            weight="light"
-          />
+          <Heading size="lg" weight="light">
+            <HeadingPart fontFamily="serif">
+              {renderMessageDescriptor(msg`Make your GTM team happy`)}
+            </HeadingPart>
+            <br />
+            <HeadingPart fontFamily="serif">
+              {renderMessageDescriptor(msg`with`)}
+            </HeadingPart>{' '}
+            <HeadingPart fontFamily="sans">
+              {renderMessageDescriptor(msg`a CRM they'll love`)}
+            </HeadingPart>
+          </Heading>
         </ThreeCards.Intro>
         <ThreeCards.FeatureCards
           featureCards={THREE_CARDS_FEATURE_DATA.featureCards}
@@ -243,7 +277,15 @@ export default async function HomePage() {
             heading={FAQ_DATA.eyebrow.heading}
             renderText={renderMessageDescriptor}
           />
-          <Faq.Heading segments={FAQ_DATA.heading} />
+          <Faq.Heading>
+            <HeadingPart fontFamily="serif">
+              {renderMessageDescriptor(msg`Stop fighting custom.`)}
+            </HeadingPart>
+            <br />
+            <HeadingPart fontFamily="sans">
+              {renderMessageDescriptor(msg`Start building, with Twenty`)}
+            </HeadingPart>
+          </Faq.Heading>
           <Faq.Cta>
             <LinkButton
               color="primary"

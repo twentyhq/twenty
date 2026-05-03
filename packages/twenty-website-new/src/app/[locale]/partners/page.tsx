@@ -12,7 +12,13 @@ import {
   PartnerHeroCtas,
   PartnerSignoffCtas,
 } from '@/app/[locale]/partners/components/PartnerApplication';
-import { Body, Eyebrow, Heading, LinkButton } from '@/design-system/components';
+import {
+  Body,
+  Eyebrow,
+  Heading,
+  HeadingPart,
+  LinkButton,
+} from '@/design-system/components';
 import { Pages } from '@/lib/pages';
 import { renderMessageDescriptor } from '@/lib/i18n/render-message-descriptor';
 import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';
@@ -68,17 +74,15 @@ export default async function PartnerPage() {
       </Menu.Root>
 
       <Hero.Root backgroundColor={theme.colors.primary.background[100]}>
-        <Hero.Heading
-          page={Pages.Partners}
-          segments={[
-            { fontFamily: 'serif', text: HERO_COPY.heading.descriptor },
-            {
-              fontFamily: 'sans',
-              newLine: true,
-              text: HERO_COPY.heading.subject,
-            },
-          ]}
-        />
+        <Hero.Heading page={Pages.Partners}>
+          <HeadingPart fontFamily="serif">
+            {renderMessageDescriptor(msg`Become`)}
+          </HeadingPart>
+          <br />
+          <HeadingPart fontFamily="sans">
+            {renderMessageDescriptor(msg`our partner`)}
+          </HeadingPart>
+        </Hero.Heading>
         <Hero.Body page={Pages.Partners} body={{ text: HERO_COPY.body }} />
         <Hero.Cta>
           <PartnerHeroCtas />
@@ -109,12 +113,18 @@ export default async function PartnerPage() {
             heading={THREE_CARDS_ILLUSTRATION_DATA.eyebrow.heading}
             renderText={renderMessageDescriptor}
           />
-          <Heading
-            renderText={renderMessageDescriptor}
-            segments={THREE_CARDS_ILLUSTRATION_DATA.heading}
-            size="lg"
-            weight="light"
-          />
+          <Heading size="lg" weight="light">
+            <HeadingPart fontFamily="serif">
+              {renderMessageDescriptor(
+                msg`Find the program that fits your business`,
+              )}
+            </HeadingPart>{' '}
+            <HeadingPart fontFamily="sans">
+              {renderMessageDescriptor(
+                msg`and unlock new opportunities with Twenty`,
+              )}
+            </HeadingPart>
+          </Heading>
           <Body
             body={THREE_CARDS_ILLUSTRATION_DATA.body}
             renderText={renderMessageDescriptor}
@@ -146,13 +156,15 @@ export default async function PartnerPage() {
         color={theme.colors.primary.text[100]}
         page={Pages.Partners}
       >
-        <Signoff.Heading
-          page={Pages.Partners}
-          segments={[
-            { fontFamily: 'serif', text: SIGNOFF_COPY.heading.descriptor },
-            { fontFamily: 'sans', text: SIGNOFF_COPY.heading.subject },
-          ]}
-        />
+        <Signoff.Heading page={Pages.Partners}>
+          <HeadingPart fontFamily="serif">
+            {renderMessageDescriptor(msg`Ready to grow`)}
+          </HeadingPart>
+          <br />
+          <HeadingPart fontFamily="sans">
+            {renderMessageDescriptor(msg`with Twenty?`)}
+          </HeadingPart>
+        </Signoff.Heading>
         <Signoff.Body
           body={{ text: SIGNOFF_COPY.body }}
           page={Pages.Partners}
@@ -169,7 +181,15 @@ export default async function PartnerPage() {
             heading={FAQ_DATA.eyebrow.heading}
             renderText={renderMessageDescriptor}
           />
-          <Faq.Heading segments={FAQ_DATA.heading} />
+          <Faq.Heading>
+            <HeadingPart fontFamily="serif">
+              {renderMessageDescriptor(msg`Stop fighting custom.`)}
+            </HeadingPart>
+            <br />
+            <HeadingPart fontFamily="sans">
+              {renderMessageDescriptor(msg`Start building, with Twenty`)}
+            </HeadingPart>
+          </Faq.Heading>
           <Faq.Cta>
             <LinkButton
               color="primary"

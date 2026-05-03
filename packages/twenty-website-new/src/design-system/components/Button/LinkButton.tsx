@@ -1,5 +1,4 @@
 import type { LinkButtonType } from '@/design-system/components/Button/types/LinkButtonType';
-import { LocalizedLink } from '@/lib/i18n';
 import { styled } from '@linaria/react';
 import {
   BaseButton,
@@ -8,10 +7,6 @@ import {
 } from './BaseButton';
 
 const StyledButtonAnchor = styled.a`
-  ${buttonBaseStyles}
-`;
-
-const StyledButtonLink = styled(LocalizedLink)`
   ${buttonBaseStyles}
 `;
 
@@ -55,13 +50,13 @@ export function LinkButton({
   }
 
   return (
-    <StyledButtonLink
+    <StyledButtonAnchor
       data-color={color}
       data-size={size}
       data-variant={variant}
       href={href}
     >
       {inner}
-    </StyledButtonLink>
+    </StyledButtonAnchor>
   );
 }

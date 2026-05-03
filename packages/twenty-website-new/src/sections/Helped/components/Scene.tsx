@@ -1,6 +1,12 @@
 'use client';
 
-import { Eyebrow, GuideCrosshair, Heading } from '@/design-system/components';
+import { msg } from '@lingui/core/macro';
+import {
+  Eyebrow,
+  GuideCrosshair,
+  Heading,
+  HeadingPart,
+} from '@/design-system/components';
 import { renderMessageDescriptor } from '@/lib/i18n/render-message-descriptor';
 import { HelpedSceneScrollLayoutEffect } from '@/sections/Helped/effect-components/HelpedSceneScrollLayoutEffect';
 import type { HelpedDataType } from '@/sections/Helped/types/HelpedData';
@@ -130,11 +136,19 @@ export function Scene({ data }: SceneProps) {
           <Heading
             as="h2"
             className={helpedHeadingClassName}
-            renderText={renderMessageDescriptor}
-            segments={data.heading}
             size="xl"
             weight="light"
-          />
+          >
+            <HeadingPart fontFamily="serif">
+              {renderMessageDescriptor(msg`Dev teams power`)}
+              <br />
+              {renderMessageDescriptor(msg`company-wide`)}
+            </HeadingPart>
+            <br />
+            <HeadingPart fontFamily="sans">
+              {renderMessageDescriptor(msg`change with Twenty`)}
+            </HeadingPart>
+          </Heading>
         </HeadlineBlock>
         <CardsLayer>
           {data.cards.map((card, index) => (

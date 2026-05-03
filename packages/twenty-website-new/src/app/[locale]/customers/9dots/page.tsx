@@ -20,10 +20,13 @@ const CASE_STUDY: CaseStudyData = {
   hero: {
     readingTime: '9 min',
     title: [
-      { text: msg`A real estate agency on WhatsApp `, fontFamily: 'serif' },
-      { text: msg`built a `, fontFamily: 'serif' },
+      {
+        text: msg`A real estate agency on WhatsApp`,
+        fontFamily: 'serif',
+      },
+      { text: msg`built a`, fontFamily: 'serif' },
       { text: msg`CRM`, fontFamily: 'sans', newLine: true },
-      { text: msg` around it`, fontFamily: 'serif' },
+      { text: msg`around it`, fontFamily: 'serif' },
     ],
     author: 'Mike Babiy & Azmat Parveen',
     authorAvatarSrc: '/images/partner/testimonials/mike-babiy.png',
@@ -47,7 +50,10 @@ const CASE_STUDY: CaseStudyData = {
       type: 'text',
       eyebrow: msg`Homeseller`,
       heading: [
-        { text: msg`When the channel is `, fontFamily: 'serif' },
+        {
+          text: msg`When the channel is`,
+          fontFamily: 'serif',
+        },
         { text: msg`the business`, fontFamily: 'sans' },
       ],
       paragraphs: [
@@ -62,7 +68,7 @@ const CASE_STUDY: CaseStudyData = {
       type: 'text',
       eyebrow: msg`Architecture`,
       heading: [
-        { text: msg`The CRM as a `, fontFamily: 'serif' },
+        { text: msg`The CRM as a`, fontFamily: 'serif' },
         { text: msg`control hub`, fontFamily: 'sans' },
       ],
       paragraphs: [
@@ -77,7 +83,10 @@ const CASE_STUDY: CaseStudyData = {
       eyebrow: msg`The result`,
       heading: [
         { text: msg`150 hours`, fontFamily: 'sans' },
-        { text: msg` saved every month`, fontFamily: 'serif' },
+        {
+          text: msg`saved every month`,
+          fontFamily: 'serif',
+        },
       ],
       paragraphs: [
         msg`About 150 hours per month saved in manual operations. Real-time metrics for the business owner. Growth readiness without adding operational headcount. A team that can answer questions that used to take days to piece together.`,

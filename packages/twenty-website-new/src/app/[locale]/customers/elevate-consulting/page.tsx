@@ -20,9 +20,12 @@ const CASE_STUDY: CaseStudyData = {
   hero: {
     readingTime: '8 min',
     title: [
-      { text: msg`Twenty as the `, fontFamily: 'serif' },
+      { text: msg`Twenty as the`, fontFamily: 'serif' },
       { text: msg`API backbone`, fontFamily: 'sans', newLine: true },
-      { text: msg` of a go-to-market stack`, fontFamily: 'serif' },
+      {
+        text: msg`of a go-to-market stack`,
+        fontFamily: 'serif',
+      },
     ],
     author: 'Justin Beadle',
     authorRole: msg`Director of Digital and Information, Elevate Consulting`,
@@ -45,7 +48,7 @@ const CASE_STUDY: CaseStudyData = {
       type: 'text',
       eyebrow: msg`The situation`,
       heading: [
-        { text: msg`From documents to `, fontFamily: 'serif' },
+        { text: msg`From documents to`, fontFamily: 'serif' },
         { text: msg`open APIs`, fontFamily: 'sans' },
       ],
       paragraphs: [
@@ -60,9 +63,9 @@ const CASE_STUDY: CaseStudyData = {
       type: 'text',
       eyebrow: msg`Integration`,
       heading: [
-        { text: msg`One `, fontFamily: 'serif' },
+        { text: msg`One`, fontFamily: 'serif' },
         { text: msg`API`, fontFamily: 'sans' },
-        { text: msg` to rule them all`, fontFamily: 'serif' },
+        { text: msg`to rule them all`, fontFamily: 'serif' },
       ],
       paragraphs: [
         msg`Justin's broader mission at Elevate has been to move the company off static documents and onto tools with API access. By the end of 2025, that was in place: time billing, resource planning, Microsoft Teams, and project management were all accessible via API, with Twenty at the center holding client and opportunity data. Team members could use that information strategically instead of re-keying it.`,
@@ -76,7 +79,7 @@ const CASE_STUDY: CaseStudyData = {
       type: 'text',
       eyebrow: msg`Adoption`,
       heading: [
-        { text: msg`Workflows that `, fontFamily: 'serif' },
+        { text: msg`Workflows that`, fontFamily: 'serif' },
         { text: msg`actually get used`, fontFamily: 'sans' },
       ],
       paragraphs: [
@@ -89,7 +92,7 @@ const CASE_STUDY: CaseStudyData = {
       type: 'text',
       eyebrow: msg`What is next`,
       heading: [
-        { text: msg`Beyond `, fontFamily: 'serif' },
+        { text: msg`Beyond`, fontFamily: 'serif' },
         { text: msg`internal rollout`, fontFamily: 'sans' },
       ],
       paragraphs: [

@@ -6,6 +6,7 @@ import type { MessageHeadingSegment } from '@/lib/i18n/message-heading-segment';
 import { renderMessageDescriptor } from '@/lib/i18n/render-message-descriptor';
 import { theme } from '@/theme';
 import { css } from '@linaria/core';
+import type { ReactNode } from 'react';
 
 const problemHeadingClassName = css`
   margin-top: calc(${theme.spacing(2)} - ${theme.spacing(10)});
@@ -17,11 +18,14 @@ const problemHeadingClassName = css`
 
 export function Heading({
   as = 'h2',
+  children,
   className,
   segments,
   size = 'md',
   weight = 'light',
-}: Omit<HeadingProps<MessageHeadingSegment['text']>, 'renderText'>) {
+}: Omit<HeadingProps<MessageHeadingSegment['text']>, 'renderText'> & {
+  children?: ReactNode;
+}) {
   return (
     <BaseHeading
       as={as}
@@ -30,6 +34,8 @@ export function Heading({
       segments={segments}
       size={size}
       weight={weight}
-    />
+    >
+      {segments === undefined ? children : undefined}
+    </BaseHeading>
   );
 }

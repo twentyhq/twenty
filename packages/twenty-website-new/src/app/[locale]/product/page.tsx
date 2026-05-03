@@ -8,7 +8,13 @@ import { HERO_COPY } from '@/app/[locale]/product/hero.data';
 import { SIGNOFF_COPY } from '@/app/[locale]/product/signoff.data';
 import { STEPPER_DATA } from '@/app/[locale]/product/stepper.data';
 import { THREE_CARDS_ILLUSTRATION_DATA } from '@/app/[locale]/product/three-cards.data';
-import { Body, Eyebrow, Heading, LinkButton } from '@/design-system/components';
+import {
+  Body,
+  Eyebrow,
+  Heading,
+  HeadingPart,
+  LinkButton,
+} from '@/design-system/components';
 import { Pages } from '@/lib/pages';
 import { renderMessageDescriptor } from '@/lib/i18n/render-message-descriptor';
 import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';
@@ -55,18 +61,18 @@ export default async function ProductPage() {
       </Menu.Root>
 
       <Hero.Root backgroundColor={theme.colors.primary.background[100]}>
-        <Hero.Heading
-          page={Pages.Product}
-          segments={[
-            { fontFamily: 'serif', text: HERO_COPY.heading.descriptor },
-            {
-              fontFamily: 'serif',
-              newLine: true,
-              text: HERO_COPY.heading.qualifier,
-            },
-            { fontFamily: 'sans', text: HERO_COPY.heading.subject },
-          ]}
-        />
+        <Hero.Heading page={Pages.Product}>
+          <HeadingPart fontFamily="serif">
+            {renderMessageDescriptor(msg`A CRM for teams`)}
+          </HeadingPart>
+          <br />
+          <HeadingPart fontFamily="serif">
+            {renderMessageDescriptor(msg`that`)}
+          </HeadingPart>{' '}
+          <HeadingPart fontFamily="sans">
+            {renderMessageDescriptor(msg`moves fast`)}
+          </HeadingPart>
+        </Hero.Heading>
         <Hero.Body body={{ text: HERO_COPY.body }} page={Pages.Product} />
         <Hero.Cta>
           <LinkButton
@@ -93,12 +99,14 @@ export default async function ProductPage() {
             heading={FEATURE_DATA.eyebrow.heading}
             renderText={renderMessageDescriptor}
           />
-          <Heading
-            renderText={renderMessageDescriptor}
-            segments={FEATURE_DATA.heading}
-            size="lg"
-            weight="light"
-          />
+          <Heading size="lg" weight="light">
+            <HeadingPart fontFamily="serif">
+              {renderMessageDescriptor(msg`Everything you need,`)}
+            </HeadingPart>{' '}
+            <HeadingPart fontFamily="sans">
+              {renderMessageDescriptor(msg`out of the box`)}
+            </HeadingPart>
+          </Heading>
         </Feature.Intro>
         <Feature.Tiles mask={FEATURE_DATA.mask} tiles={FEATURE_DATA.tiles} />
       </Feature.Root>
@@ -110,12 +118,14 @@ export default async function ProductPage() {
             heading={THREE_CARDS_ILLUSTRATION_DATA.eyebrow.heading}
             renderText={renderMessageDescriptor}
           />
-          <Heading
-            renderText={renderMessageDescriptor}
-            segments={THREE_CARDS_ILLUSTRATION_DATA.heading}
-            size="lg"
-            weight="light"
-          />
+          <Heading size="lg" weight="light">
+            <HeadingPart fontFamily="serif">
+              {renderMessageDescriptor(msg`A modern CRM with`)}
+            </HeadingPart>{' '}
+            <HeadingPart fontFamily="sans">
+              {renderMessageDescriptor(msg`an intuitive interface`)}
+            </HeadingPart>
+          </Heading>
           <Body
             body={THREE_CARDS_ILLUSTRATION_DATA.body}
             renderText={renderMessageDescriptor}
@@ -130,27 +140,33 @@ export default async function ProductPage() {
       <ProductStepper.Flow
         body={STEPPER_DATA.body}
         eyebrow={STEPPER_DATA.eyebrow}
-        heading={STEPPER_DATA.heading}
         steps={STEPPER_DATA.steps}
-      />
+      >
+        <HeadingPart fontFamily="serif">
+          {renderMessageDescriptor(msg`Go the extra mile`)}
+        </HeadingPart>{' '}
+        <HeadingPart fontFamily="sans">
+          {renderMessageDescriptor(msg`with no-code`)}
+        </HeadingPart>
+      </ProductStepper.Flow>
 
       <Signoff.Root
         backgroundColor={theme.colors.secondary.background[5]}
         color={theme.colors.primary.text[100]}
         page={Pages.Product}
       >
-        <Signoff.Heading
-          page={Pages.Product}
-          segments={[
-            { fontFamily: 'serif', text: SIGNOFF_COPY.heading.descriptor },
-            {
-              fontFamily: 'serif',
-              newLine: true,
-              text: SIGNOFF_COPY.heading.qualifier,
-            },
-            { fontFamily: 'sans', text: SIGNOFF_COPY.heading.subject },
-          ]}
-        />
+        <Signoff.Heading page={Pages.Product}>
+          <HeadingPart fontFamily="serif">
+            {renderMessageDescriptor(msg`Ready to grow`)}
+          </HeadingPart>
+          <br />
+          <HeadingPart fontFamily="serif">
+            {renderMessageDescriptor(msg`with`)}
+          </HeadingPart>{' '}
+          <HeadingPart fontFamily="sans">
+            {renderMessageDescriptor(msg`Twenty?`)}
+          </HeadingPart>
+        </Signoff.Heading>
         <Signoff.Body body={{ text: SIGNOFF_COPY.body }} page={Pages.Product} />
         <Signoff.Cta>
           <LinkButton
@@ -175,7 +191,15 @@ export default async function ProductPage() {
             heading={FAQ_DATA.eyebrow.heading}
             renderText={renderMessageDescriptor}
           />
-          <Faq.Heading segments={FAQ_DATA.heading} />
+          <Faq.Heading>
+            <HeadingPart fontFamily="serif">
+              {renderMessageDescriptor(msg`Stop fighting custom.`)}
+            </HeadingPart>
+            <br />
+            <HeadingPart fontFamily="sans">
+              {renderMessageDescriptor(msg`Start building, with Twenty`)}
+            </HeadingPart>
+          </Faq.Heading>
           <Faq.Cta>
             <LinkButton
               color="primary"

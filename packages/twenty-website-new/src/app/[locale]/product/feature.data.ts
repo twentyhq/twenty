@@ -8,10 +8,6 @@ export const FEATURE_DATA: FeatureDataType = {
       fontFamily: 'sans',
     },
   },
-  heading: [
-    { text: msg`Everything you need,`, fontFamily: 'serif' },
-    { text: msg` out of the box`, fontFamily: 'sans' },
-  ],
   mask: { src: '/images/product/feature/mask.webp', alt: '' },
   tiles: [
     {

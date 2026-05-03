@@ -1,8 +1,12 @@
 import { msg } from '@lingui/core/macro';
 import { MENU_DATA } from '@/sections/Menu/data';
 import { EnterpriseActivateClient } from '@/app/[locale]/enterprise/activate/EnterpriseActivateClient';
-import { Body, Container, Eyebrow } from '@/design-system/components';
-import type { MessageHeadingSegment } from '@/lib/i18n/message-heading-segment';
+import {
+  Body,
+  Container,
+  Eyebrow,
+  HeadingPart,
+} from '@/design-system/components';
 import { renderMessageDescriptor } from '@/lib/i18n/render-message-descriptor';
 import { Pages } from '@/lib/pages';
 import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';
@@ -15,11 +19,6 @@ import { Suspense } from 'react';
 import { styled } from '@linaria/react';
 
 export const generateMetadata = buildRouteMetadata('enterpriseActivate');
-
-const ENTERPRISE_ACTIVATE_HEADING: MessageHeadingSegment[] = [
-  { text: msg`Enterprise `, fontFamily: 'serif' },
-  { text: msg`activation`, fontFamily: 'sans' },
-];
 
 const ENTERPRISE_ACTIVATE_BODY = {
   text: msg`Your checkout is complete. Follow the steps below to copy your license key into your Twenty instance.`,
@@ -78,10 +77,14 @@ export default async function EnterpriseActivatePage() {
           heading={{ text: msg`Self-hosting`, fontFamily: 'sans' }}
           renderText={renderMessageDescriptor}
         />
-        <Hero.Heading
-          page={Pages.Pricing}
-          segments={ENTERPRISE_ACTIVATE_HEADING}
-        />
+        <Hero.Heading page={Pages.Pricing}>
+          <HeadingPart fontFamily="serif">
+            {renderMessageDescriptor(msg`Enterprise`)}
+          </HeadingPart>{' '}
+          <HeadingPart fontFamily="sans">
+            {renderMessageDescriptor(msg`activation`)}
+          </HeadingPart>
+        </Hero.Heading>
         <Hero.Body body={ENTERPRISE_ACTIVATE_BODY} page={Pages.Pricing} />
       </Hero.Root>
 

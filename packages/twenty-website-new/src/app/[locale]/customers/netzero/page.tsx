@@ -20,9 +20,9 @@ const CASE_STUDY: CaseStudyData = {
   hero: {
     readingTime: '8 min',
     title: [
-      { text: msg`A CRM that `, fontFamily: 'serif' },
+      { text: msg`A CRM that`, fontFamily: 'serif' },
       { text: msg`grows`, fontFamily: 'sans', newLine: true },
-      { text: msg` with you`, fontFamily: 'serif' },
+      { text: msg`with you`, fontFamily: 'serif' },
     ],
     author: 'Olivier Reinaud',
     authorAvatarSrc: '/images/partner/testimonials/olivier-reinaud.jpg',
@@ -40,7 +40,7 @@ const CASE_STUDY: CaseStudyData = {
       type: 'text',
       eyebrow: msg`NetZero`,
       heading: [
-        { text: msg`The right `, fontFamily: 'serif' },
+        { text: msg`The right`, fontFamily: 'serif' },
         { text: msg`foundation`, fontFamily: 'sans' },
       ],
       paragraphs: [
@@ -53,7 +53,10 @@ const CASE_STUDY: CaseStudyData = {
       type: 'text',
       eyebrow: msg`Flexibility`,
       heading: [
-        { text: msg`A business that does not fit a `, fontFamily: 'serif' },
+        {
+          text: msg`A business that does not fit a`,
+          fontFamily: 'serif',
+        },
         { text: msg`template`, fontFamily: 'sans' },
       ],
       paragraphs: [
@@ -67,7 +70,7 @@ const CASE_STUDY: CaseStudyData = {
       type: 'text',
       eyebrow: msg`Roadmap`,
       heading: [
-        { text: msg`From simple to `, fontFamily: 'serif' },
+        { text: msg`From simple to`, fontFamily: 'serif' },
         { text: msg`advanced`, fontFamily: 'sans' },
       ],
       paragraphs: [
@@ -80,7 +83,7 @@ const CASE_STUDY: CaseStudyData = {
       type: 'text',
       eyebrow: msg`Results`,
       heading: [
-        { text: msg`The bet is `, fontFamily: 'serif' },
+        { text: msg`The bet is`, fontFamily: 'serif' },
         { text: msg`paying off`, fontFamily: 'sans' },
       ],
       paragraphs: [

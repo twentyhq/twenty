@@ -6,7 +6,7 @@ import { EDITORIAL_THREE } from '@/app/[locale]/why-twenty/editorial-three.data'
 import { HERO_COPY } from '@/app/[locale]/why-twenty/hero.data';
 import { MARQUEE_DATA } from '@/app/[locale]/why-twenty/marquee.data';
 import { SIGNOFF_COPY } from '@/app/[locale]/why-twenty/signoff.data';
-import { LinkButton } from '@/design-system/components';
+import { HeadingPart, LinkButton } from '@/design-system/components';
 import { Pages } from '@/lib/pages';
 import { renderMessageDescriptor } from '@/lib/i18n/render-message-descriptor';
 import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';
@@ -93,14 +93,14 @@ export default async function WhyTwentyPage() {
         backgroundColor={theme.colors.secondary.background[100]}
         colorScheme="secondary"
       >
-        <Hero.Heading
-          page={Pages.WhyTwenty}
-          segments={[
-            { fontFamily: 'serif', text: HERO_COPY.heading.descriptor },
-            { fontFamily: 'sans', text: HERO_COPY.heading.subject },
-          ]}
-          size="xl"
-        />
+        <Hero.Heading page={Pages.WhyTwenty} size="xl">
+          <HeadingPart fontFamily="serif">
+            {renderMessageDescriptor(msg`The future of CRM is built,`)}
+          </HeadingPart>{' '}
+          <HeadingPart fontFamily="sans">
+            {renderMessageDescriptor(msg`not bought.`)}
+          </HeadingPart>
+        </Hero.Heading>
         <Hero.Body body={{ text: HERO_COPY.body }} page={Pages.WhyTwenty} />
         <Hero.WhyTwentyVisual />
       </Hero.Root>
@@ -115,7 +115,16 @@ export default async function WhyTwentyPage() {
             colorScheme="secondary"
             eyebrow={EDITORIAL_ONE.eyebrow!}
           />
-          <Editorial.Heading segments={EDITORIAL_ONE.heading!} />
+          <Editorial.Heading>
+            <HeadingPart fontFamily="serif">
+              {renderMessageDescriptor(msg`CRM was a ledger.`)}
+            </HeadingPart>{' '}
+            <HeadingPart fontFamily="sans">
+              {renderMessageDescriptor(
+                msg`AI turned it into an operating system.`,
+              )}
+            </HeadingPart>
+          </Editorial.Heading>
         </Editorial.Intro>
         <Editorial.Body
           body={EDITORIAL_ONE.body}
@@ -147,7 +156,14 @@ export default async function WhyTwentyPage() {
             colorScheme="secondary"
             eyebrow={EDITORIAL_FOUR.eyebrow!}
           />
-          <Editorial.Heading segments={EDITORIAL_FOUR.heading!} />
+          <Editorial.Heading>
+            <HeadingPart fontFamily="serif">
+              {renderMessageDescriptor(msg`Differentiation now`)}
+            </HeadingPart>{' '}
+            <HeadingPart fontFamily="sans">
+              {renderMessageDescriptor(msg`lives in the code you own.`)}
+            </HeadingPart>
+          </Editorial.Heading>
         </Editorial.Intro>
         <Editorial.Body
           body={EDITORIAL_FOUR.body}
@@ -166,7 +182,14 @@ export default async function WhyTwentyPage() {
             colorScheme="secondary"
             eyebrow={EDITORIAL_THREE.eyebrow!}
           />
-          <Editorial.Heading segments={EDITORIAL_THREE.heading!} />
+          <Editorial.Heading>
+            <HeadingPart fontFamily="serif">
+              {renderMessageDescriptor(msg`Build it in an afternoon.`)}
+            </HeadingPart>{' '}
+            <HeadingPart fontFamily="sans">
+              {renderMessageDescriptor(msg`AI made the gap that small.`)}
+            </HeadingPart>
+          </Editorial.Heading>
         </Editorial.Intro>
         <Editorial.Body
           body={EDITORIAL_THREE.body}
@@ -187,13 +210,14 @@ export default async function WhyTwentyPage() {
         color={theme.colors.secondary.text[100]}
         page={Pages.WhyTwenty}
       >
-        <Signoff.Heading
-          page={Pages.WhyTwenty}
-          segments={[
-            { fontFamily: 'serif', text: SIGNOFF_COPY.heading.descriptor },
-            { fontFamily: 'sans', text: SIGNOFF_COPY.heading.subject },
-          ]}
-        />
+        <Signoff.Heading page={Pages.WhyTwenty}>
+          <HeadingPart fontFamily="serif">
+            {renderMessageDescriptor(msg`Build a CRM your competitors`)}
+          </HeadingPart>{' '}
+          <HeadingPart fontFamily="sans">
+            {renderMessageDescriptor(msg`can't buy.`)}
+          </HeadingPart>
+        </Signoff.Heading>
         <Signoff.Body
           body={{ text: SIGNOFF_COPY.body }}
           page={Pages.WhyTwenty}

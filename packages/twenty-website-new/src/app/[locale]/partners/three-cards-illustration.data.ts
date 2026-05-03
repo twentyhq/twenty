@@ -8,13 +8,6 @@ export const THREE_CARDS_ILLUSTRATION_DATA: ThreeCardsIllustrationDataType = {
       fontFamily: 'sans',
     },
   },
-  heading: [
-    {
-      text: msg`Find the program that fits your business `,
-      fontFamily: 'serif',
-    },
-    { text: msg`and unlock new opportunities with Twenty`, fontFamily: 'sans' },
-  ],
   body: { text: msg`` },
   illustrationCards: [
     {

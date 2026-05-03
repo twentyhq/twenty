@@ -3,12 +3,6 @@ import type { ProblemDataType } from '@/sections/Problem/types';
 
 export const PROBLEM_DATA: ProblemDataType = {
   eyebrow: { heading: { text: msg`The Problem.`, fontFamily: 'sans' } },
-  heading: [
-    { text: msg`A custom CRM gives your org an edge, `, fontFamily: 'serif' },
-    { text: msg`but building one `, fontFamily: 'sans' },
-    { text: msg`comes with `, fontFamily: 'serif' },
-    { text: msg`tradeoffs`, fontFamily: 'sans' },
-  ],
   points: [
     {
       heading: { text: msg`The Giant Monolith`, fontFamily: 'sans' },

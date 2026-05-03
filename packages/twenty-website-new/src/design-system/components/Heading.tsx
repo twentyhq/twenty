@@ -108,6 +108,24 @@ const StyledSpan = styled.span`
   }
 `;
 
+type HeadingPartProps = {
+  children: ReactNode;
+  fontFamily: HeadingFamily;
+  fontWeight?: HeadingWeight;
+};
+
+export function HeadingPart({
+  children,
+  fontFamily,
+  fontWeight,
+}: HeadingPartProps) {
+  return (
+    <StyledSpan data-family={fontFamily} data-weight={fontWeight}>
+      {children}
+    </StyledSpan>
+  );
+}
+
 export type HeadingAs = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
 export type HeadingFamily = 'sans' | 'serif' | 'mono';
 export type HeadingWeight = 'light' | 'regular' | 'medium';
@@ -119,7 +137,8 @@ type HeadingTextRenderer<TText> = [TText] extends [ReactNode]
 
 export type HeadingProps<TText = ReactNode> = {
   as?: HeadingAs;
-  segments: HeadingType<TText> | HeadingType<TText>[];
+  children?: ReactNode;
+  segments?: HeadingType<TText> | HeadingType<TText>[];
   weight?: HeadingWeight;
   size?: HeadingSize;
   className?: string;
@@ -127,6 +146,7 @@ export type HeadingProps<TText = ReactNode> = {
 
 export function Heading<TText = ReactNode>({
   as: Tag = 'h1',
+  children,
   renderText,
   segments,
   weight = 'regular',
@@ -141,14 +161,19 @@ export function Heading<TText = ReactNode>({
 
   return (
     <Tag className={rootClassName} data-weight={weight} data-size={size}>
-      {Array.isArray(segments) ? (
+      {children !== undefined ? (
+        children
+      ) : Array.isArray(segments) ? (
         segments.map((segment, index) => {
           const lineBreakBefore =
             segment.newLine === true || segment.lineBreakBefore === true;
+          const joinWithPreviousInlineSegment =
+            index > 0 && lineBreakBefore === false;
 
           return (
             <Fragment key={index}>
               {lineBreakBefore ? <br /> : null}
+              {joinWithPreviousInlineSegment ? ' ' : null}
               <StyledSpan
                 data-family={segment.fontFamily}
                 data-weight={segment.fontWeight}
@@ -158,14 +183,14 @@ export function Heading<TText = ReactNode>({
             </Fragment>
           );
         })
-      ) : (
+      ) : segments !== undefined ? (
         <StyledSpan
           data-family={segments.fontFamily}
           data-weight={segments.fontWeight}
         >
           {renderSegmentText(segments.text)}
         </StyledSpan>
-      )}
+      ) : null}
     </Tag>
   );
 }

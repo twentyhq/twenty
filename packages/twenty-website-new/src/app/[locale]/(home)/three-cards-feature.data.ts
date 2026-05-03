@@ -8,11 +8,6 @@ export const THREE_CARDS_FEATURE_DATA: ThreeCardsFeatureCardsDataType = {
       fontFamily: 'sans',
     },
   },
-  heading: [
-    { text: msg`Make your GTM team happy`, fontFamily: 'serif' },
-    { text: msg`with `, fontFamily: 'serif', lineBreakBefore: true },
-    { text: msg`a CRM they'll love`, fontFamily: 'sans' },
-  ],
   featureCards: [
     {
       heading: { text: msg`Familiar, modern interface`, fontFamily: 'sans' },

@@ -7,6 +7,7 @@ import { renderMessageDescriptor } from '@/lib/i18n/render-message-descriptor';
 import { type Page, Pages } from '@/lib/pages';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
+import type { ReactNode } from 'react';
 
 const HeadingContainer = styled.div`
   max-width: 360px;
@@ -25,10 +26,14 @@ const HeadingContainer = styled.div`
 export type HeroHeadingProps = Omit<
   HeadingProps<MessageHeadingSegment['text']>,
   'renderText'
-> & { page: Page };
+> & {
+  children?: ReactNode;
+  page: Page;
+};
 
 export function Heading({
   as,
+  children,
   className,
   page,
   segments,
@@ -44,7 +49,9 @@ export function Heading({
         segments={segments}
         size={size}
         weight={weight}
-      />
+      >
+        {segments === undefined ? children : undefined}
+      </BaseHeading>
     </HeadingContainer>
   );
 }

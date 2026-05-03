@@ -7,7 +7,7 @@ import { ENGAGEMENT_BAND_COPY } from '@/app/[locale]/pricing/engagement-band.dat
 import { HERO_COPY } from '@/app/[locale]/pricing/hero.data';
 import { PLAN_TABLE_DATA } from '@/app/[locale]/pricing/plan-table.data';
 import { SALESFORCE_DATA } from '@/app/[locale]/pricing/salesforce.data';
-import { Eyebrow, LinkButton } from '@/design-system/components';
+import { Eyebrow, HeadingPart, LinkButton } from '@/design-system/components';
 import { Pages } from '@/lib/pages';
 import { renderMessageDescriptor } from '@/lib/i18n/render-message-descriptor';
 import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';
@@ -57,17 +57,15 @@ export default async function PricingPage() {
       </Menu.Root>
 
       <Hero.Root backgroundColor={theme.colors.secondary.background[5]}>
-        <Hero.Heading
-          page={Pages.Pricing}
-          segments={[
-            { fontFamily: 'serif', text: HERO_COPY.heading.descriptor },
-            {
-              fontFamily: 'sans',
-              newLine: true,
-              text: HERO_COPY.heading.subject,
-            },
-          ]}
-        />
+        <Hero.Heading page={Pages.Pricing}>
+          <HeadingPart fontFamily="serif">
+            {renderMessageDescriptor(msg`Simple`)}
+          </HeadingPart>
+          <br />
+          <HeadingPart fontFamily="sans">
+            {renderMessageDescriptor(msg`Pricing`)}
+          </HeadingPart>
+        </Hero.Heading>
         <Hero.Body
           body={{ text: HERO_COPY.body }}
           page={Pages.Pricing}
@@ -123,9 +121,15 @@ export default async function PricingPage() {
       <Salesforce.Flow
         backgroundColor={theme.colors.secondary.background[5]}
         body={SALESFORCE_DATA.body}
-        heading={SALESFORCE_DATA.heading}
         pricing={SALESFORCE_DATA.pricing}
-      />
+      >
+        <HeadingPart fontFamily="serif">
+          {renderMessageDescriptor(msg`Trust the n°1 CRM,`)}
+        </HeadingPart>{' '}
+        <HeadingPart fontFamily="sans">
+          {renderMessageDescriptor(msg`or not !`)}
+        </HeadingPart>
+      </Salesforce.Flow>
 
       <Faq.Root>
         <Faq.Intro>
@@ -134,7 +138,15 @@ export default async function PricingPage() {
             heading={FAQ_DATA.eyebrow.heading}
             renderText={renderMessageDescriptor}
           />
-          <Faq.Heading segments={FAQ_DATA.heading} />
+          <Faq.Heading>
+            <HeadingPart fontFamily="serif">
+              {renderMessageDescriptor(msg`Stop fighting custom.`)}
+            </HeadingPart>
+            <br />
+            <HeadingPart fontFamily="sans">
+              {renderMessageDescriptor(msg`Start building, with Twenty`)}
+            </HeadingPart>
+          </Faq.Heading>
           <Faq.Cta>
             <LinkButton
               color="primary"

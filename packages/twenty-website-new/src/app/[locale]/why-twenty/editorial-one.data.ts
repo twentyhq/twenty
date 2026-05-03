@@ -8,10 +8,6 @@ export const EDITORIAL_ONE: EditorialDataType = {
       text: msg`The shift`,
     },
   },
-  heading: [
-    { fontFamily: 'serif', text: msg`CRM was a ledger.` },
-    { fontFamily: 'sans', text: msg` AI turned it into an operating system.` },
-  ],
   body: [
     {
       text: msg`For twenty years, CRM meant the same thing: a place to log calls, track deals, and pull reports on Friday. The real work happened in people's heads, in Slack threads, in hallway conversations. The CRM kept score. Nobody expected more from it.`,

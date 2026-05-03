@@ -327,11 +327,6 @@ function createTablePage({
 
 export const HERO_COPY = {
   body: msg`Twenty gives technical teams the building blocks for a custom CRM that meets complex business needs and quickly adapts as the business evolves.`,
-  heading: {
-    descriptor: msg`Build`,
-    qualifier: msg` your Enterprise CRM `,
-    subject: msg`at\u00A0AI\u00A0Speed`,
-  },
 };
 
 export const HERO_DATA: { visual: HeroVisualType } = {

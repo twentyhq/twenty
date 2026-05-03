@@ -20,7 +20,7 @@ const CASE_STUDY: CaseStudyData = {
   hero: {
     readingTime: '8 min',
     title: [
-      { text: msg`When your CRM is `, fontFamily: 'serif' },
+      { text: msg`When your CRM is`, fontFamily: 'serif' },
       { text: msg`the product`, fontFamily: 'sans', newLine: true },
     ],
     author: 'Amrendra Pratap Singh',
@@ -36,7 +36,7 @@ const CASE_STUDY: CaseStudyData = {
       type: 'text',
       eyebrow: msg`W3Grads`,
       heading: [
-        { text: msg`Scale without `, fontFamily: 'serif' },
+        { text: msg`Scale without`, fontFamily: 'serif' },
         { text: msg`breaking operations`, fontFamily: 'sans' },
       ],
       paragraphs: [
@@ -50,7 +50,10 @@ const CASE_STUDY: CaseStudyData = {
       type: 'text',
       eyebrow: msg`Architecture`,
       heading: [
-        { text: msg`Focus on the use case, not the `, fontFamily: 'serif' },
+        {
+          text: msg`Focus on the use case, not the`,
+          fontFamily: 'serif',
+        },
         { text: msg`plumbing`, fontFamily: 'sans' },
       ],
       paragraphs: [
@@ -63,7 +66,10 @@ const CASE_STUDY: CaseStudyData = {
       type: 'text',
       eyebrow: msg`Scale`,
       heading: [
-        { text: msg`A platform ready to `, fontFamily: 'serif' },
+        {
+          text: msg`A platform ready to`,
+          fontFamily: 'serif',
+        },
         { text: msg`grow`, fontFamily: 'sans' },
       ],
       paragraphs: [
@@ -77,7 +83,7 @@ const CASE_STUDY: CaseStudyData = {
       eyebrow: msg`The result`,
       heading: [
         { text: msg`Zero manual work`, fontFamily: 'sans' },
-        { text: msg` at the core`, fontFamily: 'serif' },
+        { text: msg`at the core`, fontFamily: 'serif' },
       ],
       paragraphs: [
         msg`Programs that previously needed heavy manual coordination now run end-to-end with automation. Institutions get a scalable, intelligent system; students get faster preparation for interviews that matter; W3villa shipped a product institutions can build revenue around.`,

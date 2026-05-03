@@ -8,16 +8,6 @@ export const HELPED_DATA: HelpedDataType = {
       fontFamily: 'sans',
     },
   },
-  heading: [
-    {
-      text: msg`Dev teams power\ncompany-wide\n`,
-      fontFamily: 'serif',
-    },
-    {
-      text: msg`change with Twenty`,
-      fontFamily: 'sans',
-    },
-  ],
   cards: [
     {
       icon: 'w3villa',

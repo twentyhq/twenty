@@ -8,16 +8,6 @@ export const STEPPER_DATA: ProductStepperDataType = {
       fontFamily: 'sans',
     },
   },
-  heading: [
-    {
-      text: msg`Go the extra mile`,
-      fontFamily: 'serif',
-    },
-    {
-      text: msg` with no-code`,
-      fontFamily: 'sans',
-    },
-  ],
   body: {
     text: msg`Need a quick change? Skip the engineering ticket. Customize your workspace in minutes.`,
   },

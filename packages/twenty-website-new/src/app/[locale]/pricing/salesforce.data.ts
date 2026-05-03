@@ -7,10 +7,6 @@ export const SALESFORCE_DATA: SalesforceDataType = {
   body: {
     text: msg`Some call this enterprise pricing. We prefer a CRM where API access, webhooks, and workflows don't show up as surprise add-ons.`,
   },
-  heading: [
-    { text: msg`Trust the n°1 CRM,`, fontFamily: 'serif' },
-    { text: msg` or not !`, fontFamily: 'sans' },
-  ],
   pricing: {
     addons: [
       {
@@ -117,7 +113,7 @@ export const SALESFORCE_DATA: SalesforceDataType = {
         },
         rightLabel: msg`3 2 years contract\n-33% off`,
         rightLabelParts: [
-          [{ strike: true, text: msg`3` }, { text: msg` 2 years contract` }],
+          [{ strike: true, text: msg`3` }, { text: msg`2 years contract` }],
           [{ text: msg`-33% off` }],
         ],
       },
@@ -223,7 +219,7 @@ export const SALESFORCE_DATA: SalesforceDataType = {
     featureSectionHeading: msg`Add-ons`,
     productIconAlt: 'Retro help document icon',
     productIconSrc: '/images/pricing/salesforce/help-icon.webp',
-    priceSuffix: msg` / seat / month - billed yearly`,
+    priceSuffix: msg`/ seat / month - billed yearly`,
     productTitle: msg`Salesfarce Pro`,
     secondaryCtaNote: msg`More options available!`,
     secondaryCtaHref:

@@ -5,16 +5,6 @@ export const EDITORIAL_THREE: EditorialDataType = {
   eyebrow: {
     heading: { fontFamily: 'sans', text: msg`The opportunity` },
   },
-  heading: [
-    {
-      fontFamily: 'serif',
-      text: msg`Build it in an afternoon.`,
-    },
-    {
-      fontFamily: 'sans',
-      text: msg` AI made the gap that small.`,
-    },
-  ],
   body: [
     {
       text: msg`A year ago, customizing your CRM meant hiring a Salesforce consultant, learning Apex, waiting months. The gap between "I want this" and "it\'s live" was measured in quarters and invoices. So people settled. They bent their process to fit the tool and called it adoption.`,

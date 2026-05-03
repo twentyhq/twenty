@@ -10,7 +10,7 @@ export const HOME_STEPPER_DATA: HomeStepperDataType = {
           fontFamily: 'serif',
         },
         {
-          text: msg` building blocks`,
+          text: msg`building blocks`,
           fontFamily: 'sans',
         },
       ],
@@ -25,7 +25,7 @@ export const HOME_STEPPER_DATA: HomeStepperDataType = {
           fontFamily: 'serif',
         },
         {
-          text: msg` without friction`,
+          text: msg`without friction`,
           fontFamily: 'sans',
         },
       ],
@@ -40,7 +40,7 @@ export const HOME_STEPPER_DATA: HomeStepperDataType = {
           fontFamily: 'serif',
         },
         {
-          text: msg` open-source software`,
+          text: msg`open-source software`,
           fontFamily: 'sans',
         },
       ],

@@ -8,16 +8,6 @@ export const FAQ_DATA: FaqDataType = {
       fontFamily: 'sans',
     },
   },
-  heading: [
-    {
-      text: msg`Stop fighting custom.\n`,
-      fontFamily: 'serif',
-    },
-    {
-      text: msg` Start building, with Twenty`,
-      fontFamily: 'sans',
-    },
-  ],
   questions: [
     {
       question: {

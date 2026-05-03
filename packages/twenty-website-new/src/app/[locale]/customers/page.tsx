@@ -4,7 +4,7 @@ import { MENU_DATA } from '@/sections/Menu/data';
 import { TRUSTED_BY_DATA } from '@/sections/TrustedBy/data';
 import { TalkToUsButton } from '@/lib/contact-cal';
 import { CASE_STUDY_CATALOG_ENTRIES } from '@/lib/customers';
-import { Eyebrow, LinkButton } from '@/design-system/components';
+import { Eyebrow, HeadingPart, LinkButton } from '@/design-system/components';
 import { Pages } from '@/lib/pages';
 import { renderMessageDescriptor } from '@/lib/i18n/render-message-descriptor';
 import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';
@@ -21,20 +21,9 @@ import { css } from '@linaria/core';
 
 export const generateMetadata = buildRouteMetadata('customers');
 
-const HERO_HEADING = [
-  { text: msg`See how teams `, fontFamily: 'serif' as const },
-  { text: msg`build `, fontFamily: 'serif' as const, newLine: true },
-  { text: msg`on Twenty`, fontFamily: 'sans' as const },
-];
-
 const HERO_BODY = {
   text: msg`Real stories from real teams about how they shaped Twenty to fit their workflow and accelerated their growth.`,
 };
-
-const SIGNOFF_HEADING = [
-  { text: msg`Ready to build\n`, fontFamily: 'serif' as const },
-  { text: msg`your own story?`, fontFamily: 'sans' as const },
-];
 
 const SIGNOFF_BODY = {
   text: msg`Join the teams that chose to own their CRM.\nStart building with Twenty today.`,
@@ -88,7 +77,18 @@ export default async function CaseStudiesCatalogPage() {
 
       <div className={pageRevealClassName}>
         <Hero.Root backgroundColor={CUSTOMERS_TOP_BACKGROUND_COLOR}>
-          <Hero.Heading page={Pages.CaseStudies} segments={HERO_HEADING} />
+          <Hero.Heading page={Pages.CaseStudies}>
+            <HeadingPart fontFamily="serif">
+              {renderMessageDescriptor(msg`See how teams`)}
+            </HeadingPart>
+            <br />
+            <HeadingPart fontFamily="serif">
+              {renderMessageDescriptor(msg`build`)}
+            </HeadingPart>{' '}
+            <HeadingPart fontFamily="sans">
+              {renderMessageDescriptor(msg`on Twenty`)}
+            </HeadingPart>
+          </Hero.Heading>
           <Hero.Body body={HERO_BODY} page={Pages.CaseStudies} />
         </Hero.Root>
         <TrustedBy.Root
@@ -110,7 +110,15 @@ export default async function CaseStudiesCatalogPage() {
         color={theme.colors.primary.text[100]}
         page={Pages.Partners}
       >
-        <Signoff.Heading page={Pages.Partners} segments={SIGNOFF_HEADING} />
+        <Signoff.Heading page={Pages.Partners}>
+          <HeadingPart fontFamily="serif">
+            {renderMessageDescriptor(msg`Ready to build`)}
+          </HeadingPart>
+          <br />
+          <HeadingPart fontFamily="sans">
+            {renderMessageDescriptor(msg`your own story?`)}
+          </HeadingPart>
+        </Signoff.Heading>
         <Signoff.Body body={SIGNOFF_BODY} page={Pages.Partners} />
         <Signoff.Cta>
           <LinkButton
@@ -135,7 +143,15 @@ export default async function CaseStudiesCatalogPage() {
             heading={FAQ_DATA.eyebrow.heading}
             renderText={renderMessageDescriptor}
           />
-          <Faq.Heading segments={FAQ_DATA.heading} />
+          <Faq.Heading>
+            <HeadingPart fontFamily="serif">
+              {renderMessageDescriptor(msg`Stop fighting custom.`)}
+            </HeadingPart>
+            <br />
+            <HeadingPart fontFamily="sans">
+              {renderMessageDescriptor(msg`Start building, with Twenty`)}
+            </HeadingPart>
+          </Faq.Heading>
           <Faq.Cta>
             <LinkButton
               color="primary"

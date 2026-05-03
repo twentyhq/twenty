@@ -195,12 +195,9 @@ export function Content({
             heading={eyebrow.heading}
             renderText={renderMessageDescriptor}
           />
-          <Heading
-            renderText={renderMessageDescriptor}
-            segments={heading}
-            size="lg"
-            weight="light"
-          />
+          <Heading size="lg" weight="light">
+            {heading}
+          </Heading>
           <Body body={body} renderText={renderMessageDescriptor} size="sm" />
         </IntroBlock>
         {layoutMode === 'swipe' ? (

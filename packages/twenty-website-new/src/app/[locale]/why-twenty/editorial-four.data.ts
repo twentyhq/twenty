@@ -8,16 +8,6 @@ export const EDITORIAL_FOUR: EditorialDataType = {
       text: msg`What this means`,
     },
   },
-  heading: [
-    {
-      fontFamily: 'serif',
-      text: msg`Differentiation now `,
-    },
-    {
-      fontFamily: 'sans',
-      text: msg`lives in the code you own.`,
-    },
-  ],
   body: [
     {
       text: msg`You don't buy your deployment pipeline off the shelf. You don't rent your data warehouse from a vendor who decides the schema. You build it, you own it, you iterate on it every week. CRM is going the same way. The teams that treat it as infrastructure they own will compound an advantage every quarter.`,

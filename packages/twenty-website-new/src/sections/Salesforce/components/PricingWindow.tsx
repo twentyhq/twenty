@@ -557,6 +557,7 @@ const renderRightLabelParts = (lines: SalesforceRichTextPartType[][]) =>
               : undefined
           }
         >
+          {partIndex > 0 ? ' ' : null}
           <MessageDescriptorTrans descriptor={part.text} />
         </AddonRightPart>
       ))}
@@ -673,6 +674,7 @@ export function PricingWindow({
                         {formatPriceAmount(animatedPerSeat)}
                       </PriceAmount>
                       <PriceSuffix>
+                        {' '}
                         <MessageDescriptorTrans
                           descriptor={pricing.priceSuffix}
                         />

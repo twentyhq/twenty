@@ -20,7 +20,7 @@ const CASE_STUDY: CaseStudyData = {
   hero: {
     readingTime: '7 min',
     title: [
-      { text: msg`A CRM they `, fontFamily: 'serif' },
+      { text: msg`A CRM they`, fontFamily: 'serif' },
       { text: msg`actually own`, fontFamily: 'sans', newLine: true },
     ],
     author: 'Joseph Chiang',
@@ -36,7 +36,7 @@ const CASE_STUDY: CaseStudyData = {
       type: 'text',
       eyebrow: msg`AC&T Education Migration`,
       heading: [
-        { text: msg`When the vendor `, fontFamily: 'serif' },
+        { text: msg`When the vendor`, fontFamily: 'serif' },
         { text: msg`pulled the plug`, fontFamily: 'sans' },
       ],
       paragraphs: [
@@ -50,7 +50,10 @@ const CASE_STUDY: CaseStudyData = {
       type: 'text',
       eyebrow: msg`Implementation`,
       heading: [
-        { text: msg`No more renting someone else's `, fontFamily: 'serif' },
+        {
+          text: msg`No more renting someone else's`,
+          fontFamily: 'serif',
+        },
         { text: msg`structure`, fontFamily: 'sans' },
       ],
       paragraphs: [
@@ -63,7 +66,7 @@ const CASE_STUDY: CaseStudyData = {
       type: 'text',
       eyebrow: msg`Control`,
       heading: [
-        { text: msg`Control without `, fontFamily: 'serif' },
+        { text: msg`Control without`, fontFamily: 'serif' },
         { text: msg`the overhead`, fontFamily: 'sans' },
       ],
       paragraphs: [
@@ -75,7 +78,10 @@ const CASE_STUDY: CaseStudyData = {
       type: 'text',
       eyebrow: msg`The result`,
       heading: [
-        { text: msg`Costs down more than `, fontFamily: 'serif' },
+        {
+          text: msg`Costs down more than`,
+          fontFamily: 'serif',
+        },
         { text: msg`90%`, fontFamily: 'sans' },
       ],
       paragraphs: [

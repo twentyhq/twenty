@@ -1,7 +1,7 @@
 import { msg } from '@lingui/core/macro';
 import { MENU_DATA } from '@/sections/Menu/data';
 import { RELEASE_NOTES_HERO_COPY } from '@/app/[locale]/releases/hero.data';
-import { LinkButton } from '@/design-system/components';
+import { HeadingPart, LinkButton } from '@/design-system/components';
 import { Pages } from '@/lib/pages';
 import { GitHubIcon } from '@/icons';
 import { renderMessageDescriptor } from '@/lib/i18n/render-message-descriptor';
@@ -55,22 +55,15 @@ export default async function ReleasesPage() {
       </Menu.Root>
 
       <Hero.Root backgroundColor={theme.colors.primary.background[100]}>
-        <Hero.Heading
-          page={Pages.ReleaseNotes}
-          segments={[
-            {
-              fontFamily: 'serif',
-              text: RELEASE_NOTES_HERO_COPY.heading.descriptor,
-            },
-            {
-              fontFamily: 'sans',
-              newLine: true,
-              text: RELEASE_NOTES_HERO_COPY.heading.subject,
-            },
-          ]}
-          size="lg"
-          weight="light"
-        />
+        <Hero.Heading page={Pages.ReleaseNotes} size="lg" weight="light">
+          <HeadingPart fontFamily="serif">
+            {renderMessageDescriptor(msg`Latest`)}
+          </HeadingPart>
+          <br />
+          <HeadingPart fontFamily="sans">
+            {renderMessageDescriptor(msg`Releases`)}
+          </HeadingPart>
+        </Hero.Heading>
         <Hero.Body
           page={Pages.ReleaseNotes}
           body={{ text: RELEASE_NOTES_HERO_COPY.body }}

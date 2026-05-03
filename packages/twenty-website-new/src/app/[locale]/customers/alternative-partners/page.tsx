@@ -20,7 +20,7 @@ const CASE_STUDY: CaseStudyData = {
   hero: {
     readingTime: '7 min',
     title: [
-      { text: msg`From Salesforce to `, fontFamily: 'serif' },
+      { text: msg`From Salesforce to`, fontFamily: 'serif' },
       { text: msg`self-hosted Twenty`, fontFamily: 'sans', newLine: true },
     ],
     author: 'Benjamin Reynolds',
@@ -39,7 +39,7 @@ const CASE_STUDY: CaseStudyData = {
       type: 'text',
       eyebrow: msg`Alternative Partners`,
       heading: [
-        { text: msg`AI in the `, fontFamily: 'serif' },
+        { text: msg`AI in the`, fontFamily: 'serif' },
         { text: msg`migration workflow`, fontFamily: 'sans' },
       ],
       paragraphs: [
@@ -52,7 +52,7 @@ const CASE_STUDY: CaseStudyData = {
       type: 'text',
       eyebrow: msg`Ownership`,
       heading: [
-        { text: msg`Self-hosted `, fontFamily: 'serif' },
+        { text: msg`Self-hosted`, fontFamily: 'serif' },
         { text: msg`means control`, fontFamily: 'sans' },
       ],
       paragraphs: [

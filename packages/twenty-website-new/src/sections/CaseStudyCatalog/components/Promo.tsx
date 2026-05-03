@@ -27,7 +27,7 @@ const EYEBROW = {
 };
 
 const HEADING = [
-  { text: msg`How teams `, fontFamily: 'serif' as const },
+  { text: msg`How teams`, fontFamily: 'serif' as const },
   { text: msg`built with Twenty`, fontFamily: 'sans' as const, newLine: true },
 ];
 

@@ -246,11 +246,11 @@ export function EnterpriseActivateClient() {
           <LicenseeRow>
             <Body
               as="span"
-              body={{ text: msg`Licensee: ` }}
+              body={{ text: msg`Licensee:` }}
               renderText={renderMessageDescriptor}
               size="sm"
               weight="medium"
-            />
+            />{' '}
             <LicenseeValue>{result.licensee}</LicenseeValue>
           </LicenseeRow>
 

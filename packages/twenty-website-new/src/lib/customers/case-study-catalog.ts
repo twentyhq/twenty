@@ -54,7 +54,7 @@ export const CASE_STUDY_CATALOG_ENTRIES: CaseStudyCatalogEntry[] = [
     hero: {
       readingTime: '9 min',
       title: [
-        { text: msg`A real estate agency on WhatsApp `, fontFamily: 'serif' },
+        { text: msg`A real estate agency on WhatsApp`, fontFamily: 'serif' },
         { text: msg`built a CRM around it`, fontFamily: 'sans' },
       ],
       author: 'Mike Babiy & Azmat Parveen',
@@ -80,7 +80,7 @@ export const CASE_STUDY_CATALOG_ENTRIES: CaseStudyCatalogEntry[] = [
     hero: {
       readingTime: '7 min',
       title: [
-        { text: msg`From Salesforce to `, fontFamily: 'serif' },
+        { text: msg`From Salesforce to`, fontFamily: 'serif' },
         { text: msg`self-hosted Twenty`, fontFamily: 'sans' },
       ],
       author: 'Benjamin Reynolds',
@@ -106,7 +106,7 @@ export const CASE_STUDY_CATALOG_ENTRIES: CaseStudyCatalogEntry[] = [
     hero: {
       readingTime: '8 min',
       title: [
-        { text: msg`A CRM that `, fontFamily: 'serif' },
+        { text: msg`A CRM that`, fontFamily: 'serif' },
         { text: msg`grows with you`, fontFamily: 'sans' },
       ],
       author: 'Olivier Reinaud',
@@ -129,7 +129,7 @@ export const CASE_STUDY_CATALOG_ENTRIES: CaseStudyCatalogEntry[] = [
     hero: {
       readingTime: '7 min',
       title: [
-        { text: msg`A CRM they `, fontFamily: 'serif' },
+        { text: msg`A CRM they`, fontFamily: 'serif' },
         { text: msg`actually own`, fontFamily: 'sans' },
       ],
       author: 'Joseph Chiang',
@@ -152,7 +152,7 @@ export const CASE_STUDY_CATALOG_ENTRIES: CaseStudyCatalogEntry[] = [
     hero: {
       readingTime: '8 min',
       title: [
-        { text: msg`When your CRM `, fontFamily: 'serif' },
+        { text: msg`When your CRM`, fontFamily: 'serif' },
         { text: msg`is the product`, fontFamily: 'sans' },
       ],
       author: 'Amrendra Pratap Singh',
@@ -184,7 +184,7 @@ export const CASE_STUDY_CATALOG_ENTRIES: CaseStudyCatalogEntry[] = [
     hero: {
       readingTime: '8 min',
       title: [
-        { text: msg`Twenty as the API backbone `, fontFamily: 'serif' },
+        { text: msg`Twenty as the API backbone`, fontFamily: 'serif' },
         { text: msg`of a go-to-market stack`, fontFamily: 'sans' },
       ],
       author: 'Justin Beadle',
