@@ -5,6 +5,7 @@ import { BLOCK_SCHEMA } from '@/blocknote-editor/blocks/Schema';
 import { BlockEditor } from '@/blocknote-editor/components/BlockEditor';
 import { BLOCK_EDITOR_GLOBAL_HOTKEYS_CONFIG } from '@/blocknote-editor/constants/BlockEditorGlobalHotkeysConfig';
 import { useAttachmentSync } from '@/blocknote-editor/hooks/useAttachmentSync';
+import { getBackspaceTopLevelGuardExtension } from '@/blocknote-editor/utils/getBackspaceTopLevelGuardExtension';
 import { useReplaceBlockEditorContent } from '@/blocknote-editor/hooks/useReplaceBlockEditorContent';
 import { parseInitialBlocknote } from '@/blocknote-editor/utils/parseInitialBlocknote';
 import { prepareBodyWithSignedUrls } from '@/blocknote-editor/utils/prepareBodyWithSignedUrls';
@@ -212,6 +213,9 @@ export const RichTextFieldEditor = ({
     uploadFile: handleEditorBuiltInUploadFile,
     placeholders: {
       default: t`Type '/' for commands, '@' for mentions`,
+    },
+    _tiptapOptions: {
+      extensions: [getBackspaceTopLevelGuardExtension()],
     },
   });
 

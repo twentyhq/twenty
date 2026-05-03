@@ -12,6 +12,7 @@ import { filterSupportedBlocks } from '@/page-layout/widgets/standalone-rich-tex
 
 import { BLOCK_EDITOR_GLOBAL_HOTKEYS_CONFIG } from '@/blocknote-editor/constants/BlockEditorGlobalHotkeysConfig';
 import { useAttachmentSync } from '@/blocknote-editor/hooks/useAttachmentSync';
+import { getBackspaceTopLevelGuardExtension } from '@/blocknote-editor/utils/getBackspaceTopLevelGuardExtension';
 import { parseInitialBlocknote } from '@/blocknote-editor/utils/parseInitialBlocknote';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
@@ -78,6 +79,9 @@ export const StandaloneRichTextEditorContent = ({
     schema: DASHBOARD_BLOCK_SCHEMA,
     placeholders: {
       default: t`Enter text or type '/' for commands`,
+    },
+    _tiptapOptions: {
+      extensions: [getBackspaceTopLevelGuardExtension()],
     },
   });
 
