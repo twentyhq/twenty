@@ -176,20 +176,21 @@ export const useComputeApplicationContentForLayoutAndLogic = ({
   const connectionProviderRows: ApplicationContentRow[] = (
     manifestContent?.connectionProviders ?? []
   ).map((provider) => {
-    const typeLabel = provider.type === 'oauth' ? t`OAuth 2.0` : provider.type;
-    const scopeCount =
-      provider.type === 'oauth' ? (provider.oauth?.scopes?.length ?? 0) : 0;
+    const parts: string[] = [];
 
-    const parts: string[] = [typeLabel];
-    if (scopeCount > 0) {
-      parts.push(scopeCount === 1 ? t`1 scope` : t`${scopeCount} scopes`);
+    if (provider.type === 'oauth') {
+      parts.push(t`OAuth 2.0`);
+      const scopeCount = provider.oauth.scopes.length;
+      if (scopeCount > 0) {
+        parts.push(scopeCount === 1 ? t`1 scope` : t`${scopeCount} scopes`);
+      }
     }
 
     return {
       key: provider.universalIdentifier,
       name: provider.displayName,
       icon: provider.icon ?? undefined,
-      secondary: parts.join(' · '),
+      secondary: parts.length > 0 ? parts.join(' · ') : undefined,
     };
   });
 

@@ -1019,15 +1019,21 @@ export interface PageLayout {
 
 export type PageLayoutType = 'RECORD_INDEX' | 'RECORD_PAGE' | 'DASHBOARD' | 'STANDALONE_PAGE'
 
-export interface ApplicationOAuthProvider {
+export interface ApplicationConnectionProviderOAuthConfig {
+    scopes: Scalars['String'][]
+    isClientCredentialsConfigured: Scalars['Boolean']
+    __typename: 'ApplicationConnectionProviderOAuthConfig'
+}
+
+export interface ApplicationConnectionProvider {
     id: Scalars['UUID']
     applicationId: Scalars['String']
+    type: Scalars['String']
     name: Scalars['String']
     displayName: Scalars['String']
     icon?: Scalars['String']
-    scopes: Scalars['String'][]
-    isClientCredentialsConfigured: Scalars['Boolean']
-    __typename: 'ApplicationOAuthProvider'
+    oauth?: ApplicationConnectionProviderOAuthConfig
+    __typename: 'ApplicationConnectionProvider'
 }
 
 export interface Analytics {
@@ -2234,7 +2240,7 @@ export interface ConnectedAccountDTO {
     connectionParameters?: ImapSmtpCaldavConnectionParameters
     lastSignedInAt?: Scalars['DateTime']
     userWorkspaceId: Scalars['UUID']
-    applicationOAuthProviderId?: Scalars['UUID']
+    applicationConnectionProviderId?: Scalars['UUID']
     applicationId?: Scalars['UUID']
     name?: Scalars['String']
     scope: Scalars['String']
@@ -2268,7 +2274,7 @@ export interface ConnectedAccountPublicDTO {
     scopes?: Scalars['String'][]
     lastSignedInAt?: Scalars['DateTime']
     userWorkspaceId: Scalars['UUID']
-    applicationOAuthProviderId?: Scalars['UUID']
+    applicationConnectionProviderId?: Scalars['UUID']
     applicationId?: Scalars['UUID']
     name?: Scalars['String']
     scope: Scalars['String']
@@ -2563,7 +2569,7 @@ export interface Query {
     getPageLayoutTab: PageLayoutTab
     getPageLayouts: PageLayout[]
     getPageLayout?: PageLayout
-    applicationOAuthProviders: ApplicationOAuthProvider[]
+    applicationConnectionProviders: ApplicationConnectionProvider[]
     getPageLayoutWidgets: PageLayoutWidget[]
     getPageLayoutWidget: PageLayoutWidget
     findOneLogicFunction: LogicFunction
@@ -3936,14 +3942,21 @@ export interface PageLayoutGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface ApplicationOAuthProviderGenqlSelection{
+export interface ApplicationConnectionProviderOAuthConfigGenqlSelection{
+    scopes?: boolean | number
+    isClientCredentialsConfigured?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface ApplicationConnectionProviderGenqlSelection{
     id?: boolean | number
     applicationId?: boolean | number
+    type?: boolean | number
     name?: boolean | number
     displayName?: boolean | number
     icon?: boolean | number
-    scopes?: boolean | number
-    isClientCredentialsConfigured?: boolean | number
+    oauth?: ApplicationConnectionProviderOAuthConfigGenqlSelection
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -5241,7 +5254,7 @@ export interface ConnectedAccountDTOGenqlSelection{
     connectionParameters?: ImapSmtpCaldavConnectionParametersGenqlSelection
     lastSignedInAt?: boolean | number
     userWorkspaceId?: boolean | number
-    applicationOAuthProviderId?: boolean | number
+    applicationConnectionProviderId?: boolean | number
     applicationId?: boolean | number
     name?: boolean | number
     scope?: boolean | number
@@ -5278,7 +5291,7 @@ export interface ConnectedAccountPublicDTOGenqlSelection{
     scopes?: boolean | number
     lastSignedInAt?: boolean | number
     userWorkspaceId?: boolean | number
-    applicationOAuthProviderId?: boolean | number
+    applicationConnectionProviderId?: boolean | number
     applicationId?: boolean | number
     name?: boolean | number
     scope?: boolean | number
@@ -5570,7 +5583,7 @@ export interface QueryGenqlSelection{
     getPageLayoutTab?: (PageLayoutTabGenqlSelection & { __args: {id: Scalars['String']} })
     getPageLayouts?: (PageLayoutGenqlSelection & { __args?: {objectMetadataId?: (Scalars['String'] | null), pageLayoutType?: (PageLayoutType | null)} })
     getPageLayout?: (PageLayoutGenqlSelection & { __args: {id: Scalars['String']} })
-    applicationOAuthProviders?: (ApplicationOAuthProviderGenqlSelection & { __args: {applicationId: Scalars['UUID']} })
+    applicationConnectionProviders?: (ApplicationConnectionProviderGenqlSelection & { __args: {applicationId: Scalars['UUID']} })
     getPageLayoutWidgets?: (PageLayoutWidgetGenqlSelection & { __args: {pageLayoutTabId: Scalars['String']} })
     getPageLayoutWidget?: (PageLayoutWidgetGenqlSelection & { __args: {id: Scalars['String']} })
     findOneLogicFunction?: (LogicFunctionGenqlSelection & { __args: {input: LogicFunctionIdInput} })
@@ -6848,10 +6861,18 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     
 
 
-    const ApplicationOAuthProvider_possibleTypes: string[] = ['ApplicationOAuthProvider']
-    export const isApplicationOAuthProvider = (obj?: { __typename?: any } | null): obj is ApplicationOAuthProvider => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationOAuthProvider"')
-      return ApplicationOAuthProvider_possibleTypes.includes(obj.__typename)
+    const ApplicationConnectionProviderOAuthConfig_possibleTypes: string[] = ['ApplicationConnectionProviderOAuthConfig']
+    export const isApplicationConnectionProviderOAuthConfig = (obj?: { __typename?: any } | null): obj is ApplicationConnectionProviderOAuthConfig => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationConnectionProviderOAuthConfig"')
+      return ApplicationConnectionProviderOAuthConfig_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const ApplicationConnectionProvider_possibleTypes: string[] = ['ApplicationConnectionProvider']
+    export const isApplicationConnectionProvider = (obj?: { __typename?: any } | null): obj is ApplicationConnectionProvider => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationConnectionProvider"')
+      return ApplicationConnectionProvider_possibleTypes.includes(obj.__typename)
     }
     
 

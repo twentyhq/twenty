@@ -4,13 +4,6 @@ import { type ConnectionProviderManifest } from 'twenty-shared/application';
 
 const PROVIDER_NAME_PATTERN = /^[a-z][a-z0-9-]*$/;
 
-// Defines a connection provider — describes how a user's third-party
-// credentials for an external service are obtained, stored, and refreshed.
-//
-// Today only `type: 'oauth'` is supported. Future credential types (PATs,
-// API keys, basic auth) add new `type` values + their own sub-config block
-// — purely additive, app developers using `type: 'oauth'` never need to
-// migrate.
 export const defineConnectionProvider: DefineEntity<
   ConnectionProviderManifest
 > = (config) => {
@@ -54,12 +47,12 @@ export const defineConnectionProvider: DefineEntity<
       }
       if (!oauth.clientIdVariable) {
         errors.push(
-          'OAuth connection provider must reference a clientIdVariable (key of an applicationRegistrationVariable)',
+          'OAuth connection provider must reference a clientIdVariable (key of a serverVariable on defineApplication)',
         );
       }
       if (!oauth.clientSecretVariable) {
         errors.push(
-          'OAuth connection provider must reference a clientSecretVariable (key of an applicationRegistrationVariable)',
+          'OAuth connection provider must reference a clientSecretVariable (key of a serverVariable on defineApplication)',
         );
       }
       if (!Array.isArray(oauth.scopes)) {

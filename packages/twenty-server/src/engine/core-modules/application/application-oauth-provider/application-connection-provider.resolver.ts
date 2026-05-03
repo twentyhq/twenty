@@ -10,11 +10,6 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 
-// Public-facing resolver for the discriminated ApplicationConnectionProvider
-// concept. Today the only `type` is `oauth`, backed by the OAuth-specific
-// applicationOAuthProvider table internally. Future credential types will
-// add their own backing tables, and this resolver will union over them
-// without changing the GraphQL surface.
 @UseGuards(WorkspaceAuthGuard)
 @MetadataResolver(() => ApplicationConnectionProviderDTO)
 export class ApplicationConnectionProviderResolver {
@@ -22,8 +17,6 @@ export class ApplicationConnectionProviderResolver {
     private readonly oauthProviderService: ApplicationOAuthProviderService,
   ) {}
 
-  // Lists connection providers an application declares. Frontend uses this
-  // to render the "Add connection" buttons in the app settings tab.
   @Query(() => [ApplicationConnectionProviderDTO])
   @UseGuards(NoPermissionGuard)
   async applicationConnectionProviders(
@@ -36,25 +29,23 @@ export class ApplicationConnectionProviderResolver {
       workspaceId: workspace.id,
     });
 
-    // One extra round-trip per provider — typical app has 1-3 providers, so
-    // not worth a join. Surface a non-actionable hint to the user when the
-    // server admin hasn't configured the credentials yet.
-    return Promise.all(
-      providers.map(async (provider) => ({
-        id: provider.id,
-        applicationId: provider.applicationId,
-        type: 'oauth' as const,
-        name: provider.name,
-        displayName: provider.displayName,
-        icon: provider.icon,
-        oauth: {
-          scopes: provider.scopes,
-          isClientCredentialsConfigured:
-            await this.oauthProviderService.areClientCredentialsConfigured(
-              provider,
-            ),
-        },
-      })),
-    );
+    const credentialsConfiguredByProviderId =
+      await this.oauthProviderService.areClientCredentialsConfiguredBatch(
+        providers,
+      );
+
+    return providers.map((provider) => ({
+      id: provider.id,
+      applicationId: provider.applicationId,
+      type: 'oauth',
+      name: provider.name,
+      displayName: provider.displayName,
+      icon: provider.icon,
+      oauth: {
+        scopes: provider.scopes,
+        isClientCredentialsConfigured:
+          credentialsConfiguredByProviderId.get(provider.id) ?? false,
+      },
+    }));
   }
 }

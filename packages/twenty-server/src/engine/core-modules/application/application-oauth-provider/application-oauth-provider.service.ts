@@ -73,28 +73,93 @@ export class ApplicationOAuthProviderService {
 
   // Cheap check used by the GraphQL resolver to surface a "needs setup" hint
   // to non-admin users. Doesn't decrypt — just looks at whether the
-  // registration variables are populated.
+  // registration variables are populated. Single-provider variant; for the
+  // resolver listing path use `areClientCredentialsConfiguredBatch` instead
+  // to avoid N+1.
   async areClientCredentialsConfigured(
     provider: ApplicationOAuthProviderEntity,
   ): Promise<boolean> {
-    const application = await this.applicationRepository.findOneBy({
-      id: provider.applicationId,
-    });
+    const result = await this.areClientCredentialsConfiguredBatch([provider]);
 
-    if (!isDefined(application?.applicationRegistrationId)) {
-      return false;
+    return result.get(provider.id) ?? false;
+  }
+
+  // Batched variant: for N providers (typically all from one application),
+  // does at most 2 DB round-trips total instead of 2N.
+  async areClientCredentialsConfiguredBatch(
+    providers: ApplicationOAuthProviderEntity[],
+  ): Promise<Map<string, boolean>> {
+    const result = new Map<string, boolean>();
+
+    if (providers.length === 0) {
+      return result;
     }
 
+    const applicationIds = [...new Set(providers.map((p) => p.applicationId))];
+    const applications = await this.applicationRepository.find({
+      where: { id: In(applicationIds) },
+    });
+    const registrationIdByApplicationId = new Map(
+      applications.map((app) => [app.id, app.applicationRegistrationId]),
+    );
+
+    const registrationIds = [
+      ...new Set(
+        applications
+          .map((app) => app.applicationRegistrationId)
+          .filter(isDefined),
+      ),
+    ];
+
+    if (registrationIds.length === 0) {
+      providers.forEach((p) => result.set(p.id, false));
+
+      return result;
+    }
+
+    const allKeys = providers.flatMap((p) => [
+      p.clientIdVariable,
+      p.clientSecretVariable,
+    ]);
     const variables = await this.registrationVariableRepository.find({
       where: {
-        applicationRegistrationId: application.applicationRegistrationId,
-        key: In([provider.clientIdVariable, provider.clientSecretVariable]),
+        applicationRegistrationId: In(registrationIds),
+        key: In(allKeys),
       },
     });
 
-    return (
-      variables.length === 2 && variables.every((v) => v.encryptedValue !== '')
-    );
+    const filledKeysByRegistrationId = new Map<string, Set<string>>();
+
+    for (const variable of variables) {
+      if (variable.encryptedValue === '') continue;
+      const set =
+        filledKeysByRegistrationId.get(variable.applicationRegistrationId) ??
+        new Set<string>();
+
+      set.add(variable.key);
+      filledKeysByRegistrationId.set(variable.applicationRegistrationId, set);
+    }
+
+    for (const provider of providers) {
+      const registrationId = registrationIdByApplicationId.get(
+        provider.applicationId,
+      );
+
+      if (!isDefined(registrationId)) {
+        result.set(provider.id, false);
+        continue;
+      }
+
+      const filled = filledKeysByRegistrationId.get(registrationId);
+
+      result.set(
+        provider.id,
+        filled?.has(provider.clientIdVariable) === true &&
+          filled?.has(provider.clientSecretVariable) === true,
+      );
+    }
+
+    return result;
   }
 
   async findOneByApplicationAndName({
@@ -138,10 +203,8 @@ export class ApplicationOAuthProviderService {
     });
   }
 
-  // Persists OAuth-typed connection providers from a manifest. Non-OAuth
-  // types (future: API keys, PATs) are skipped here — they will get their
-  // own sibling tables and persistence helpers, with no nullable columns
-  // bleeding into this OAuth-specific table.
+  // Persists OAuth-typed entries only. Other connection-provider types get
+  // their own sibling persistence helpers when added.
   async upsertManyFromManifest({
     connectionProviders,
     applicationId,

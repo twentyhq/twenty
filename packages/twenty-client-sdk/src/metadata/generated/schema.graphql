@@ -1293,14 +1293,19 @@ enum PageLayoutType {
   STANDALONE_PAGE
 }
 
-type ApplicationOAuthProvider {
+type ApplicationConnectionProviderOAuthConfig {
+  scopes: [String!]!
+  isClientCredentialsConfigured: Boolean!
+}
+
+type ApplicationConnectionProvider {
   id: UUID!
   applicationId: String!
+  type: String!
   name: String!
   displayName: String!
   icon: String
-  scopes: [String!]!
-  isClientCredentialsConfigured: Boolean!
+  oauth: ApplicationConnectionProviderOAuthConfig
 }
 
 type Analytics {
@@ -2547,7 +2552,7 @@ type ConnectedAccountDTO {
   connectionParameters: ImapSmtpCaldavConnectionParameters
   lastSignedInAt: DateTime
   userWorkspaceId: UUID!
-  applicationOAuthProviderId: UUID
+  applicationConnectionProviderId: UUID
   applicationId: UUID
   name: String
   scope: String!
@@ -2578,7 +2583,7 @@ type ConnectedAccountPublicDTO {
   scopes: [String!]
   lastSignedInAt: DateTime
   userWorkspaceId: UUID!
-  applicationOAuthProviderId: UUID
+  applicationConnectionProviderId: UUID
   applicationId: UUID
   name: String
   scope: String!
@@ -2937,7 +2942,7 @@ type Query {
   getPageLayoutTab(id: String!): PageLayoutTab!
   getPageLayouts(objectMetadataId: String, pageLayoutType: PageLayoutType): [PageLayout!]!
   getPageLayout(id: String!): PageLayout
-  applicationOAuthProviders(applicationId: UUID!): [ApplicationOAuthProvider!]!
+  applicationConnectionProviders(applicationId: UUID!): [ApplicationConnectionProvider!]!
   getPageLayoutWidgets(pageLayoutTabId: String!): [PageLayoutWidget!]!
   getPageLayoutWidget(id: String!): PageLayoutWidget!
   findOneLogicFunction(input: LogicFunctionIdInput!): LogicFunction!
