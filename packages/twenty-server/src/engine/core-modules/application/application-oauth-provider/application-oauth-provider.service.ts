@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { isUUID } from 'class-validator';
 import { type ConnectionProviderManifest } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 import { In, Not, Repository } from 'typeorm';
@@ -210,6 +211,19 @@ export class ApplicationOAuthProviderService {
     const oauthProviders = (connectionProviders ?? []).filter(
       (provider) => provider.type === 'oauth',
     );
+
+    // The DB column is `uuid NOT NULL`. The manifest type is just `string`
+    // because manifests are dev-supplied and TS can't enforce UUID at the
+    // type level. Validate up-front so we throw a typed exception instead
+    // of letting Postgres reject the insert with an opaque type error.
+    for (const provider of oauthProviders) {
+      if (!isUUID(provider.universalIdentifier)) {
+        throw new ApplicationOAuthProviderException(
+          `Connection provider "${provider.name}" has an invalid universalIdentifier "${provider.universalIdentifier}" — must be a UUID.`,
+          ApplicationOAuthProviderExceptionCode.INVALID_REQUEST,
+        );
+      }
+    }
 
     const existing = await this.oauthProviderRepository.find({
       where: { applicationId, workspaceId },
