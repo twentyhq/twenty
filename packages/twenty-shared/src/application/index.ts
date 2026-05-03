@@ -8,6 +8,7 @@
  */
 
 export type { AgentManifest } from './agentManifestType';
+export type { AppConnection } from './appConnectionType';
 export type { ApplicationManifest } from './applicationType';
 export type { ApplicationVariables } from './applicationVariablesType';
 export type { AssetManifest } from './assetManifestType';

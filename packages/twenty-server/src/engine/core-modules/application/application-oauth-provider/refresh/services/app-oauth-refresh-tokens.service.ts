@@ -4,7 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationOAuthProviderException } from 'src/engine/core-modules/application/application-oauth-provider/application-oauth-provider.exception';
 import { ApplicationOAuthProviderService } from 'src/engine/core-modules/application/application-oauth-provider/application-oauth-provider.service';
-import { type AppOAuthTokens } from 'src/engine/core-modules/application/application-oauth-provider/refresh/types/app-oauth-tokens.type';
+import { type ConnectedAccountTokens } from 'src/modules/connected-account/refresh-tokens-manager/services/connected-account-refresh-tokens.service';
 import { exchangeRefreshTokenForToken } from 'src/engine/core-modules/application/application-oauth-provider/utils/exchange-refresh-token-for-token.util';
 import { OAuthTokenEndpointError } from 'src/engine/core-modules/application/application-oauth-provider/utils/post-oauth-token-request.util';
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
@@ -26,7 +26,7 @@ export class AppOAuthRefreshAccessTokenService {
   async refreshTokens(
     connectedAccount: ConnectedAccountEntity,
     refreshToken: string,
-  ): Promise<AppOAuthTokens> {
+  ): Promise<ConnectedAccountTokens> {
     if (!isDefined(connectedAccount.applicationConnectionProviderId)) {
       throw new ConnectedAccountRefreshAccessTokenException(
         `Connected account ${connectedAccount.id} has no applicationConnectionProviderId`,
