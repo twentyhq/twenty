@@ -10,6 +10,7 @@ jest.mock(
   }),
 );
 
+import { NotFoundException } from '@nestjs/common';
 import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
@@ -24,23 +25,37 @@ const APP_ID = 'app-1';
 const WORKSPACE_ID = 'workspace-1';
 const REQUEST_USER_WORKSPACE_ID = 'uws-request';
 const OTHER_USER_WORKSPACE_ID = 'uws-other';
+const PROVIDER_ID = 'provider-1';
+
+const buildProvider = (
+  overrides: Partial<ApplicationOAuthProviderEntity> = {},
+): ApplicationOAuthProviderEntity =>
+  ({
+    id: PROVIDER_ID,
+    applicationId: APP_ID,
+    workspaceId: WORKSPACE_ID,
+    name: 'linear',
+    displayName: 'Linear',
+    scopes: ['read', 'write'],
+    ...overrides,
+  }) as unknown as ApplicationOAuthProviderEntity;
 
 const buildAccount = (
   overrides: Partial<ConnectedAccountEntity> = {},
 ): ConnectedAccountEntity =>
   ({
     id: 'conn-1',
-    name: 'octocat@example.com',
+    name: 'Linear #1',
     handle: 'octocat@example.com',
     scope: 'user',
     applicationId: APP_ID,
-    applicationConnectionProviderId: 'provider-1',
+    applicationConnectionProviderId: PROVIDER_ID,
     workspaceId: WORKSPACE_ID,
     userWorkspaceId: REQUEST_USER_WORKSPACE_ID,
     provider: ConnectedAccountProvider.APP,
     accessToken: 'enc',
     refreshToken: 'enc',
-    scopes: ['read'],
+    scopes: ['read', 'write'],
     lastCredentialsRefreshedAt: new Date('2024-01-01T00:00:00Z'),
     authFailedAt: null,
     ...overrides,
@@ -48,13 +63,19 @@ const buildAccount = (
 
 describe('ApplicationConnectionsListService', () => {
   let service: ApplicationConnectionsListService;
-  let connectedAccountRepository: { find: jest.Mock };
-  let oauthProviderRepository: { findOne: jest.Mock };
+  let connectedAccountRepository: { find: jest.Mock; findOne: jest.Mock };
+  let oauthProviderRepository: {
+    find: jest.Mock;
+    findOneByOrFail: jest.Mock;
+  };
   let refreshTokensService: { refreshAndSaveTokens: jest.Mock };
 
   beforeEach(async () => {
-    connectedAccountRepository = { find: jest.fn() };
-    oauthProviderRepository = { findOne: jest.fn() };
+    connectedAccountRepository = { find: jest.fn(), findOne: jest.fn() };
+    oauthProviderRepository = {
+      find: jest.fn().mockResolvedValue([buildProvider()]),
+      findOneByOrFail: jest.fn().mockResolvedValue(buildProvider()),
+    };
     refreshTokensService = {
       refreshAndSaveTokens: jest.fn(async () => ({
         accessToken: 'fresh-access',
@@ -137,7 +158,7 @@ describe('ApplicationConnectionsListService', () => {
     });
 
     it('returns empty list when filter.providerName matches no provider for this app', async () => {
-      oauthProviderRepository.findOne.mockResolvedValue(null);
+      oauthProviderRepository.find.mockResolvedValue([]);
 
       const result = await service.list({
         applicationId: APP_ID,
@@ -166,6 +187,44 @@ describe('ApplicationConnectionsListService', () => {
       expect(result[0].accessToken).toBe('fresh-access');
     });
 
+    it('exposes provider name and other public fields in the DTO', async () => {
+      connectedAccountRepository.find.mockResolvedValue([buildAccount()]);
+
+      const [connection] = await service.list({
+        applicationId: APP_ID,
+        workspaceId: WORKSPACE_ID,
+        requestUserWorkspaceId: REQUEST_USER_WORKSPACE_ID,
+        filter: {},
+      });
+
+      expect(connection).toEqual({
+        id: 'conn-1',
+        providerName: 'linear',
+        name: 'Linear #1',
+        handle: 'octocat@example.com',
+        scope: 'user',
+        userWorkspaceId: REQUEST_USER_WORKSPACE_ID,
+        accessToken: 'fresh-access',
+        scopes: ['read', 'write'],
+        authFailedAt: null,
+      });
+    });
+
+    it('falls back to handle when name is null', async () => {
+      connectedAccountRepository.find.mockResolvedValue([
+        buildAccount({ name: null }),
+      ]);
+
+      const [connection] = await service.list({
+        applicationId: APP_ID,
+        workspaceId: WORKSPACE_ID,
+        requestUserWorkspaceId: REQUEST_USER_WORKSPACE_ID,
+        filter: {},
+      });
+
+      expect(connection.name).toBe('octocat@example.com');
+    });
+
     it('skips a connection when the refresh fails', async () => {
       connectedAccountRepository.find.mockResolvedValue([
         buildAccount({ id: 'good' }),
@@ -183,6 +242,102 @@ describe('ApplicationConnectionsListService', () => {
       });
 
       expect(result.map((c) => c.id)).toEqual(['good']);
+    });
+
+    it('skips a connection whose provider was deleted (orphan)', async () => {
+      connectedAccountRepository.find.mockResolvedValue([
+        buildAccount({
+          id: 'orphan',
+          applicationConnectionProviderId: 'gone-provider',
+        }),
+      ]);
+
+      const result = await service.list({
+        applicationId: APP_ID,
+        workspaceId: WORKSPACE_ID,
+        requestUserWorkspaceId: REQUEST_USER_WORKSPACE_ID,
+        filter: {},
+      });
+
+      expect(result).toEqual([]);
+    });
+  });
+
+  describe('getOne', () => {
+    it('returns the connection when the request user owns it', async () => {
+      connectedAccountRepository.findOne.mockResolvedValue(buildAccount());
+
+      const result = await service.getOne({
+        applicationId: APP_ID,
+        workspaceId: WORKSPACE_ID,
+        requestUserWorkspaceId: REQUEST_USER_WORKSPACE_ID,
+        id: 'conn-1',
+      });
+
+      expect(result.id).toBe('conn-1');
+      expect(result.providerName).toBe('linear');
+      expect(result.accessToken).toBe('fresh-access');
+    });
+
+    it('returns the connection when scope is workspace, regardless of owner', async () => {
+      connectedAccountRepository.findOne.mockResolvedValue(
+        buildAccount({
+          scope: 'workspace',
+          userWorkspaceId: OTHER_USER_WORKSPACE_ID,
+        }),
+      );
+
+      const result = await service.getOne({
+        applicationId: APP_ID,
+        workspaceId: WORKSPACE_ID,
+        requestUserWorkspaceId: REQUEST_USER_WORKSPACE_ID,
+        id: 'conn-1',
+      });
+
+      expect(result.id).toBe('conn-1');
+    });
+
+    it('throws NotFound when the connection does not exist', async () => {
+      connectedAccountRepository.findOne.mockResolvedValue(null);
+
+      await expect(
+        service.getOne({
+          applicationId: APP_ID,
+          workspaceId: WORKSPACE_ID,
+          requestUserWorkspaceId: REQUEST_USER_WORKSPACE_ID,
+          id: 'missing',
+        }),
+      ).rejects.toBeInstanceOf(NotFoundException);
+    });
+
+    it('throws NotFound when a request user asks for another user-scoped connection', async () => {
+      connectedAccountRepository.findOne.mockResolvedValue(
+        buildAccount({ userWorkspaceId: OTHER_USER_WORKSPACE_ID }),
+      );
+
+      await expect(
+        service.getOne({
+          applicationId: APP_ID,
+          workspaceId: WORKSPACE_ID,
+          requestUserWorkspaceId: REQUEST_USER_WORKSPACE_ID,
+          id: 'conn-1',
+        }),
+      ).rejects.toBeInstanceOf(NotFoundException);
+    });
+
+    it('returns another user-scoped connection in cron context (no request user)', async () => {
+      connectedAccountRepository.findOne.mockResolvedValue(
+        buildAccount({ userWorkspaceId: OTHER_USER_WORKSPACE_ID }),
+      );
+
+      const result = await service.getOne({
+        applicationId: APP_ID,
+        workspaceId: WORKSPACE_ID,
+        requestUserWorkspaceId: null,
+        id: 'conn-1',
+      });
+
+      expect(result.userWorkspaceId).toBe(OTHER_USER_WORKSPACE_ID);
     });
   });
 });

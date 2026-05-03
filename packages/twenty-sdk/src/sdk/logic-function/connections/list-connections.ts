@@ -1,12 +1,14 @@
-import {
-  DEFAULT_API_URL_NAME,
-  DEFAULT_APP_ACCESS_TOKEN_NAME,
-} from 'twenty-shared/application';
-
 import { type AppConnection } from '@/sdk/logic-function/connections/types/app-connection.type';
+import { postConnectionsEndpoint } from '@/sdk/logic-function/connections/utils/post-connections-endpoint.util';
 
 export type ListConnectionsFilter = {
+  // Provider name as declared on `defineConnectionProvider({ name })`.
   providerName?: string;
+  // Restrict to credentials owned by a specific user. Useful in cron
+  // triggers when picking a service-account user via app config.
+  userWorkspaceId?: string;
+  // Restrict to one scope.
+  scope?: 'user' | 'workspace';
 };
 
 // Returns every connection owned by the running app, optionally filtered.
@@ -17,31 +19,8 @@ export type ListConnectionsFilter = {
 // server-side. Cron and database-event triggers see all connections.
 export const listConnections = async (
   filter: ListConnectionsFilter = {},
-): Promise<AppConnection[]> => {
-  const apiUrl = process.env[DEFAULT_API_URL_NAME];
-  const accessToken = process.env[DEFAULT_APP_ACCESS_TOKEN_NAME];
-
-  if (!apiUrl || !accessToken) {
-    throw new Error(
-      'listConnections() requires the app runtime env vars ' +
-        `${DEFAULT_API_URL_NAME} and ${DEFAULT_APP_ACCESS_TOKEN_NAME}.`,
-    );
-  }
-
-  const response = await fetch(`${apiUrl}/apps/connections/list`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${accessToken}`,
-    },
-    body: JSON.stringify(filter),
-  });
-
-  if (!response.ok) {
-    throw new Error(
-      `listConnections() failed: HTTP ${response.status} ${response.statusText}`,
-    );
-  }
-
-  return (await response.json()) as AppConnection[];
-};
+): Promise<AppConnection[]> =>
+  postConnectionsEndpoint<ListConnectionsFilter, AppConnection[]>(
+    'list',
+    filter,
+  );
