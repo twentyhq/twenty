@@ -24,10 +24,8 @@ export class ApplicationOAuthProviderService {
     private readonly secretEncryptionService: SecretEncryptionService,
   ) {}
 
-  // OAuth client_id/client_secret are properties of the OAuth app registered
-  // at the provider (one Linear app per Twenty server, etc.) — not per-tenant
-  // settings — so they live in applicationRegistrationVariable, set once by
-  // the server admin. All workspaces installing this app share them.
+  // Stored on the registration (one OAuth app per Twenty server, set by
+  // the server admin) — not per-workspace.
   async getClientCredentials(
     provider: ApplicationOAuthProviderEntity,
   ): Promise<{ clientId: string; clientSecret: string }> {
@@ -71,11 +69,8 @@ export class ApplicationOAuthProviderService {
     return { clientId, clientSecret };
   }
 
-  // Cheap check used by the GraphQL resolver to surface a "needs setup" hint
-  // to non-admin users. Doesn't decrypt — just looks at whether the
-  // registration variables are populated. Single-provider variant; for the
-  // resolver listing path use `areClientCredentialsConfiguredBatch` instead
-  // to avoid N+1.
+  // For batched calls (e.g. the resolver listing path) prefer
+  // `areClientCredentialsConfiguredBatch` to avoid N+1.
   async areClientCredentialsConfigured(
     provider: ApplicationOAuthProviderEntity,
   ): Promise<boolean> {
@@ -84,8 +79,6 @@ export class ApplicationOAuthProviderService {
     return result.get(provider.id) ?? false;
   }
 
-  // Batched variant: for N providers (typically all from one application),
-  // does at most 2 DB round-trips total instead of 2N.
   async areClientCredentialsConfiguredBatch(
     providers: ApplicationOAuthProviderEntity[],
   ): Promise<Map<string, boolean>> {

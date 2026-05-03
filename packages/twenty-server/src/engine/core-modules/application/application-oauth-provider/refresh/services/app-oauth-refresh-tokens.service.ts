@@ -3,12 +3,14 @@ import { Injectable, Logger } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationOAuthProviderService } from 'src/engine/core-modules/application/application-oauth-provider/application-oauth-provider.service';
-import { ApplicationOAuthProviderExceptionCode } from 'src/engine/core-modules/application/application-oauth-provider/application-oauth-provider-exception-code.enum';
-import { ApplicationOAuthProviderException } from 'src/engine/core-modules/application/application-oauth-provider/application-oauth-provider.exception';
 import { type AppOAuthTokens } from 'src/engine/core-modules/application/application-oauth-provider/refresh/types/app-oauth-tokens.type';
 import { exchangeRefreshTokenForToken } from 'src/engine/core-modules/application/application-oauth-provider/utils/exchange-refresh-token-for-token.util';
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
+import {
+  ConnectedAccountRefreshAccessTokenException,
+  ConnectedAccountRefreshAccessTokenExceptionCode,
+} from 'src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception';
 
 @Injectable()
 export class AppOAuthRefreshAccessTokenService {
@@ -24,9 +26,9 @@ export class AppOAuthRefreshAccessTokenService {
     refreshToken: string,
   ): Promise<AppOAuthTokens> {
     if (!isDefined(connectedAccount.applicationConnectionProviderId)) {
-      throw new ApplicationOAuthProviderException(
+      throw new ConnectedAccountRefreshAccessTokenException(
         `Connected account ${connectedAccount.id} has no applicationConnectionProviderId`,
-        ApplicationOAuthProviderExceptionCode.PROVIDER_NOT_FOUND,
+        ConnectedAccountRefreshAccessTokenExceptionCode.PROVIDER_NOT_SUPPORTED,
       );
     }
 
@@ -60,9 +62,9 @@ export class AppOAuthRefreshAccessTokenService {
         `App OAuth refresh failed for connected account ${connectedAccount.id}: ${(error as Error).message}`,
       );
 
-      throw new ApplicationOAuthProviderException(
+      throw new ConnectedAccountRefreshAccessTokenException(
         `App OAuth refresh failed: ${(error as Error).message}`,
-        ApplicationOAuthProviderExceptionCode.REFRESH_FAILED,
+        ConnectedAccountRefreshAccessTokenExceptionCode.INVALID_REFRESH_TOKEN,
       );
     }
   }

@@ -197,7 +197,7 @@ msgid "A temporary error occurred. Please try again."
 msgstr "S'ha produït un error temporal. Torna-ho a intentar."
 
 #. js-lingui-id: reBsjo
-#: src/modules/connected-account/refresh-tokens-manager/exceptions/connected-account-refresh-tokens.exception.ts
+#: src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception.ts
 msgid "A temporary network error occurred."
 msgstr "S'ha produït un error temporal de xarxa."
 
@@ -287,7 +287,7 @@ msgid "Access Token"
 msgstr "Token d'Accés"
 
 #. js-lingui-id: Bk+qoW
-#: src/modules/connected-account/refresh-tokens-manager/exceptions/connected-account-refresh-tokens.exception.ts
+#: src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception.ts
 msgid "Access token not found."
 msgstr "Token d'accés no trobat."
 
@@ -3509,7 +3509,7 @@ msgid "Invalid pricing tiers."
 msgstr "Nivells de preus no vàlids."
 
 #. js-lingui-id: XBYAgs
-#: src/modules/connected-account/refresh-tokens-manager/exceptions/connected-account-refresh-tokens.exception.ts
+#: src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception.ts
 msgid "Invalid refresh token."
 msgstr "Token d'actualització no vàlid."
 
@@ -5815,7 +5815,7 @@ msgid "Refresh Token"
 msgstr ""
 
 #. js-lingui-id: 1GvzpH
-#: src/modules/connected-account/refresh-tokens-manager/exceptions/connected-account-refresh-tokens.exception.ts
+#: src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception.ts
 msgid "Refresh token not found."
 msgstr "Token d'actualització no trobat."
 
@@ -7115,7 +7115,7 @@ msgid "This permission is already set for the role"
 msgstr "Aquest permís ja està assignat al rol"
 
 #. js-lingui-id: Y5C3uK
-#: src/modules/connected-account/refresh-tokens-manager/exceptions/connected-account-refresh-tokens.exception.ts
+#: src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception.ts
 msgid "This provider is not supported."
 msgstr "Aquest proveïdor no és compatible."
 

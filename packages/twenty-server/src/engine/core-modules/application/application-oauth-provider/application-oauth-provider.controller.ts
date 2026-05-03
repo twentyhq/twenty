@@ -41,9 +41,8 @@ export class ApplicationOAuthProviderController {
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
   ) {}
 
-  // Initiated from the frontend after the user clicks "Connect <provider>".
-  // The frontend mints a transient token (encoding workspace + user context)
-  // so this endpoint can be public yet still scoped to the right workspace.
+  // Public endpoint — the transient token carries workspace + user context
+  // so we don't need a session cookie here.
   @Get('authorize')
   async authorize(
     @Query('applicationId') applicationId: string,
@@ -55,10 +54,8 @@ export class ApplicationOAuthProviderController {
     @Query('redirectLocation') redirectLocation: string | undefined,
     @Res() res: Response,
   ) {
-    // Captured early so the error-redirect can route to the user's own
-    // subdomain instead of falling back to DEFAULT_SUBDOMAIN — which would
-    // hand the browser back to a different cookie domain and effectively
-    // log the user out of the workspace they were trying to connect from.
+    // Captured early so the error-redirect lands on the user's own
+    // subdomain (different cookie domain otherwise = de-facto logout).
     let workspace: WorkspaceEntity | null = null;
 
     try {
@@ -142,9 +139,8 @@ export class ApplicationOAuthProviderController {
 
       return res.redirect(authorizationUrl);
     } catch (error) {
-      // Custom exceptions extend CustomException, not HttpException, so the
-      // default Nest filter would silently 500 with no log. Mirror the
-      // callback-side pattern: log + redirect to a user-facing error page.
+      // Without an explicit log, CustomException would 500 silently
+      // (it doesn't extend HttpException, so Nest's default filter swallows it).
       this.logger.error(
         `OAuth authorize failed (applicationId=${applicationId}, providerName=${providerName}): ${error instanceof Error ? error.message : String(error)}`,
         error instanceof Error ? error.stack : undefined,
@@ -154,10 +150,6 @@ export class ApplicationOAuthProviderController {
     }
   }
 
-  // The OAuth provider redirects back here with `code` + `state`. The state
-  // is a signed JWT we minted in the authorize step — it carries workspace
-  // identity so this single, workspace-agnostic URL can route the user back
-  // to their workspace subdomain after the token exchange.
   @Get('callback')
   async callback(
     @Query('code') code: string,
@@ -215,8 +207,7 @@ export class ApplicationOAuthProviderController {
         pathname,
       });
 
-      // The frontend tab list picks the active tab from the URL hash, so
-      // `#settings` lands the user on the Connections section.
+      // Frontend tab list reads the URL hash to pick the active tab.
       if (!redirectLocation) {
         url.hash = 'settings';
       }
@@ -227,10 +218,6 @@ export class ApplicationOAuthProviderController {
     }
   }
 
-  // Redirects to the workspace's own subdomain when known (so the user stays
-  // logged in). Falls back to DEFAULT_SUBDOMAIN only for errors that occur
-  // before we can identify the workspace (invalid transient token, missing
-  // query params).
   private redirectToError(
     res: Response,
     error: unknown,

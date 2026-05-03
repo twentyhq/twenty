@@ -67,8 +67,6 @@ export class ConnectedAccountEntity extends WorkspaceRelatedEntity {
   @Column({ type: 'uuid', nullable: false })
   userWorkspaceId: string;
 
-  // DB column stays OAuth-named (storage detail); TS / GraphQL surface
-  // exposes it as the public ConnectionProvider concept.
   @Column({ type: 'uuid', nullable: true, name: 'applicationOAuthProviderId' })
   applicationConnectionProviderId: string | null;
 
@@ -79,8 +77,6 @@ export class ConnectedAccountEntity extends WorkspaceRelatedEntity {
   @JoinColumn({ name: 'applicationOAuthProviderId' })
   applicationConnectionProvider: Relation<ApplicationOAuthProviderEntity> | null;
 
-  // Cascade-deletes with the owning app so an uninstall doesn't leave
-  // dangling app-scoped credentials.
   @Column({ type: 'uuid', nullable: true })
   applicationId: string | null;
 
@@ -91,13 +87,9 @@ export class ConnectedAccountEntity extends WorkspaceRelatedEntity {
   @JoinColumn({ name: 'applicationId' })
   application: Relation<ApplicationEntity> | null;
 
-  // null for legacy / system-managed rows. App-managed credentials get a
-  // generated default at callback time; user can rename later.
   @Column({ type: 'varchar', nullable: true })
   name: string | null;
 
-  // 'user' = only the owning userWorkspaceId can use it.
-  // 'workspace' = any workspace member can use it (cron triggers too).
   @Column({ type: 'varchar', nullable: false, default: 'user' })
   scope: ConnectedAccountScope;
 

@@ -11,10 +11,17 @@ type CoreConnectedAccount = Omit<
   'messageChannels' | 'calendarChannels'
 >;
 
-// Returns the user's email/calendar connected accounts. App-managed OAuth
-// connections (`provider = 'app'`) are excluded — they're surfaced under
-// each app's settings tab via `useMyAppConnectedAccounts` instead, so they
-// don't pollute the personal accounts page.
+const EMAIL_AND_CALENDAR_PROVIDERS: ReadonlySet<ConnectedAccountProvider> =
+  new Set([
+    ConnectedAccountProvider.GOOGLE,
+    ConnectedAccountProvider.MICROSOFT,
+    ConnectedAccountProvider.IMAP_SMTP_CALDAV,
+  ]);
+
+// The personal accounts page is for email/calendar credentials only. SSO
+// providers (OIDC, SAML) and app-managed OAuth (APP) also live in
+// connectedAccount, but they're surfaced elsewhere — keep them off this
+// page by filtering to the email/calendar provider set.
 export const useMyConnectedAccounts = () => {
   const apolloClient = useApolloClient();
 
@@ -35,7 +42,7 @@ export const useMyConnectedAccounts = () => {
     }
 
     return data.myConnectedAccounts
-      .filter((account) => account.provider !== ConnectedAccountProvider.APP)
+      .filter((account) => EMAIL_AND_CALENDAR_PROVIDERS.has(account.provider))
       .map((account) => ({
         ...account,
         messageChannels: messageChannels.filter(

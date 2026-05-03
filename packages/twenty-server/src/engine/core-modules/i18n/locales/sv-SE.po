@@ -197,7 +197,7 @@ msgid "A temporary error occurred. Please try again."
 msgstr "Ett tillfälligt fel inträffade. Försök igen."
 
 #. js-lingui-id: reBsjo
-#: src/modules/connected-account/refresh-tokens-manager/exceptions/connected-account-refresh-tokens.exception.ts
+#: src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception.ts
 msgid "A temporary network error occurred."
 msgstr "Ett tillfälligt nätverksfel inträffade."
 
@@ -287,7 +287,7 @@ msgid "Access Token"
 msgstr "Åtkomsttoken"
 
 #. js-lingui-id: Bk+qoW
-#: src/modules/connected-account/refresh-tokens-manager/exceptions/connected-account-refresh-tokens.exception.ts
+#: src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception.ts
 msgid "Access token not found."
 msgstr "Åtkomsttoken hittades inte."
 
@@ -3509,7 +3509,7 @@ msgid "Invalid pricing tiers."
 msgstr "Ogiltiga prissättningsnivåer."
 
 #. js-lingui-id: XBYAgs
-#: src/modules/connected-account/refresh-tokens-manager/exceptions/connected-account-refresh-tokens.exception.ts
+#: src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception.ts
 msgid "Invalid refresh token."
 msgstr "Ogiltig uppdateringstoken."
 
@@ -5817,7 +5817,7 @@ msgid "Refresh Token"
 msgstr ""
 
 #. js-lingui-id: 1GvzpH
-#: src/modules/connected-account/refresh-tokens-manager/exceptions/connected-account-refresh-tokens.exception.ts
+#: src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception.ts
 msgid "Refresh token not found."
 msgstr "Uppdateringstoken hittades inte."
 
@@ -7121,7 +7121,7 @@ msgid "This permission is already set for the role"
 msgstr "Den här behörigheten är redan angiven för rollen"
 
 #. js-lingui-id: Y5C3uK
-#: src/modules/connected-account/refresh-tokens-manager/exceptions/connected-account-refresh-tokens.exception.ts
+#: src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception.ts
 msgid "This provider is not supported."
 msgstr "Denna leverantör stöds inte."
 
