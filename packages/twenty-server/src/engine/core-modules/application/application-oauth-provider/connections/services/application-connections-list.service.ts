@@ -77,23 +77,15 @@ export class ApplicationConnectionsListService {
       ...(isDefined(filter.userWorkspaceId)
         ? { userWorkspaceId: filter.userWorkspaceId }
         : {}),
-      ...(isDefined(filter.scope) ? { scope: filter.scope } : {}),
     };
 
-    // Privacy: when there's a request user, hide other users' user-scoped
-    // credentials. Workspace-scoped credentials are always visible. Pushing
-    // this into SQL keeps the result set small for workspaces with many
-    // user-scoped credentials.
-    const where: FindOptionsWhere<ConnectedAccountEntity>[] = isDefined(
-      requestUserWorkspaceId,
-    )
-      ? [
-          { ...baseWhere, scope: 'workspace' },
-          { ...baseWhere, userWorkspaceId: requestUserWorkspaceId },
-        ]
-      : [baseWhere];
-
-    const accounts = await this.connectedAccountRepository.find({ where });
+    const accounts = await this.connectedAccountRepository.find({
+      where: this.buildPrivacyWhere(
+        baseWhere,
+        requestUserWorkspaceId,
+        filter.scope,
+      ),
+    });
 
     const refreshed = await Promise.all(
       accounts.map((account) =>
@@ -156,6 +148,56 @@ export class ApplicationConnectionsListService {
     }
 
     return dto;
+  }
+
+  // Composes the caller's `scope` filter with the per-request privacy rule.
+  // Always returns a TypeORM where (single object = AND, array = OR) so the
+  // caller doesn't have to branch.
+  //
+  // The earlier inline version OR'd `{ ...baseWhere, scope: 'workspace' }`
+  // with `{ ...baseWhere, userWorkspaceId: me }` regardless of caller intent,
+  // which silently overrode an explicit `filter.scope: 'user'` (the first
+  // OR branch always returned workspace-scoped rows).
+  private buildPrivacyWhere(
+    baseWhere: FindOptionsWhere<ConnectedAccountEntity>,
+    requestUserWorkspaceId: string | null,
+    scopeFilter: 'user' | 'workspace' | undefined,
+  ):
+    | FindOptionsWhere<ConnectedAccountEntity>
+    | FindOptionsWhere<ConnectedAccountEntity>[] {
+    // Cron / DB-event triggers carry no user — the app is trusted to use
+    // its own criteria, so honour the scope filter as-is.
+    if (!isDefined(requestUserWorkspaceId)) {
+      return isDefined(scopeFilter)
+        ? { ...baseWhere, scope: scopeFilter }
+        : baseWhere;
+    }
+
+    // Caller asked for user-scoped only → must be theirs.
+    if (scopeFilter === 'user') {
+      return {
+        ...baseWhere,
+        scope: 'user',
+        userWorkspaceId: requestUserWorkspaceId,
+      };
+    }
+
+    // Caller asked for workspace-scoped only → no per-user restriction
+    // (workspace-scoped credentials are visible to everyone in the workspace).
+    if (scopeFilter === 'workspace') {
+      return { ...baseWhere, scope: 'workspace' };
+    }
+
+    // No scope filter → return both: every workspace-scoped row, plus the
+    // request user's own user-scoped rows.
+    return [
+      { ...baseWhere, scope: 'workspace' },
+      {
+        ...baseWhere,
+        scope: 'user',
+        userWorkspaceId: requestUserWorkspaceId,
+      },
+    ];
   }
 
   private async refreshAndMap(

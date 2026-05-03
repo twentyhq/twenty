@@ -107,7 +107,7 @@ describe('ApplicationConnectionsListService', () => {
   afterEach(() => jest.clearAllMocks());
 
   describe('list', () => {
-    it('asks SQL to OR (scope = workspace) with (userWorkspaceId = me) when there is a request user', async () => {
+    it('asks SQL to OR (scope = workspace) with (scope = user AND userWorkspaceId = me) when there is a request user', async () => {
       connectedAccountRepository.find.mockResolvedValue([
         buildAccount({ id: 'mine' }),
         buildAccount({
@@ -129,6 +129,7 @@ describe('ApplicationConnectionsListService', () => {
         where: [
           expect.objectContaining({ scope: 'workspace' }),
           expect.objectContaining({
+            scope: 'user',
             userWorkspaceId: REQUEST_USER_WORKSPACE_ID,
           }),
         ],
@@ -153,7 +154,66 @@ describe('ApplicationConnectionsListService', () => {
 
       expect(result.map((c) => c.id).sort()).toEqual(['mine', 'theirs']);
       expect(connectedAccountRepository.find).toHaveBeenCalledWith({
-        where: [expect.not.objectContaining({ scope: expect.anything() })],
+        where: expect.not.objectContaining({ scope: expect.anything() }),
+      });
+    });
+
+    it('respects filter.scope=user under request-user privacy (regression)', async () => {
+      // Bug guard: an earlier version OR'd { scope: 'workspace' } into the
+      // privacy where regardless of the caller's filter, so requesting
+      // user-scoped only would silently leak workspace-scoped rows back.
+      connectedAccountRepository.find.mockResolvedValue([buildAccount()]);
+
+      await service.list({
+        applicationId: APP_ID,
+        workspaceId: WORKSPACE_ID,
+        requestUserWorkspaceId: REQUEST_USER_WORKSPACE_ID,
+        filter: { scope: 'user' },
+      });
+
+      expect(connectedAccountRepository.find).toHaveBeenCalledWith({
+        where: expect.objectContaining({
+          scope: 'user',
+          userWorkspaceId: REQUEST_USER_WORKSPACE_ID,
+        }),
+      });
+      // Specifically not the OR shape — single AND object.
+      const passed = connectedAccountRepository.find.mock.calls[0][0];
+
+      expect(Array.isArray(passed.where)).toBe(false);
+    });
+
+    it('respects filter.scope=workspace under request-user privacy', async () => {
+      connectedAccountRepository.find.mockResolvedValue([buildAccount()]);
+
+      await service.list({
+        applicationId: APP_ID,
+        workspaceId: WORKSPACE_ID,
+        requestUserWorkspaceId: REQUEST_USER_WORKSPACE_ID,
+        filter: { scope: 'workspace' },
+      });
+
+      const passed = connectedAccountRepository.find.mock.calls[0][0];
+
+      expect(passed.where).toEqual(
+        expect.objectContaining({ scope: 'workspace' }),
+      );
+      expect(passed.where).not.toHaveProperty('userWorkspaceId');
+      expect(Array.isArray(passed.where)).toBe(false);
+    });
+
+    it('passes filter.scope through unchanged in cron context', async () => {
+      connectedAccountRepository.find.mockResolvedValue([buildAccount()]);
+
+      await service.list({
+        applicationId: APP_ID,
+        workspaceId: WORKSPACE_ID,
+        requestUserWorkspaceId: null,
+        filter: { scope: 'user' },
+      });
+
+      expect(connectedAccountRepository.find).toHaveBeenCalledWith({
+        where: expect.objectContaining({ scope: 'user' }),
       });
     });
 
