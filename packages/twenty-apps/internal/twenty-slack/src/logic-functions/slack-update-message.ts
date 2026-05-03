@@ -64,7 +64,7 @@ const handler = async (
 };
 
 export default defineLogicFunction({
-  universalIdentifier: 'e4d03b87-9a5b-2c1d-ab20-58ca3917620d',
+  universalIdentifier: 'e4d03b87-9a5b-4f1d-8b20-58ca3917620d',
   name: 'slack_update_message',
   description:
     'Edit a Slack message previously sent by this bot (chat.update). Requires channel ID and message ts.',

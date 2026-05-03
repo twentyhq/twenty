@@ -44,7 +44,7 @@ const handler = async (
 };
 
 export default defineLogicFunction({
-  universalIdentifier: 'f3c92a76-8b4a-1c09-ba19-47b9280651c9',
+  universalIdentifier: 'f3c92a76-8b4a-4a09-ba19-47b9280651c9',
   name: 'slack_delete_message',
   description:
     'Delete a Slack message sent by this bot (chat.delete). Requires channel ID and message ts.',

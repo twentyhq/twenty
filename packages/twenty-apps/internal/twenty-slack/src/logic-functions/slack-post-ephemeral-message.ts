@@ -60,7 +60,7 @@ const handler = async (
 };
 
 export default defineLogicFunction({
-  universalIdentifier: 'd5e14c98-0a6b-3d2e-bc31-69db4a18720e',
+  universalIdentifier: 'd5e14c98-0a6b-4e2e-ac31-69db4a18720e',
   name: 'slack_post_ephemeral_message',
   description:
     'Post a temporary Slack message visible only to one user in a channel (chat.postEphemeral).',
