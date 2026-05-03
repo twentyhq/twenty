@@ -37,7 +37,6 @@ import {
   type PostInstallLogicFunctionApplicationManifest,
   type PreInstallLogicFunctionApplicationManifest,
 } from 'twenty-shared/application';
-import { getInputSchemaFromSourceCode } from 'twenty-shared/logic-function';
 import { assertUnreachable } from 'twenty-shared/utils';
 import { addMissingFieldOptionIds } from '@/cli/utilities/build/manifest/utils/add-missing-field-option-ids';
 import { type PostInstallLogicFunctionConfig } from '@/sdk/define/logic-functions/post-install-logic-function-config';
@@ -234,13 +233,8 @@ export const buildManifest = async (
 
         const relativeFilePath = relative(appPath, filePath);
 
-        const toolInputSchema =
-          rest.toolInputSchema ??
-          (await getInputSchemaFromSourceCode(fileContent));
-
         const config: LogicFunctionManifest = {
           ...rest,
-          toolInputSchema,
           handlerName: 'default.config.handler',
           sourceHandlerPath: relativeFilePath,
           builtHandlerPath: relativeFilePath.replace(/\.tsx?$/, '.mjs'),

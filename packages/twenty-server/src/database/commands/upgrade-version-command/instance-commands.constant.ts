@@ -21,6 +21,8 @@ import { BackfillPageLayoutWidgetPositionSlowInstanceCommand } from 'src/databas
 import { AddCacheTokensToAgentChatThreadFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-2/2-2-instance-command-fast-1777455269302-add-cache-tokens-to-agent-chat-thread';
 import { AddLogoToApplicationFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-2/2-2-instance-command-fast-1777539664664-add-logo-to-application';
 import { AddDeletedAtToAgentChatThreadFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-3/2-3-instance-command-fast-1777682000000-add-deleted-at-to-agent-chat-thread';
+import { AddToolAndWorkflowActionTriggerSettingsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-4/2-4-instance-command-fast-1797000001000-add-tool-and-workflow-action-trigger-settings';
+import { MigrateToolTriggerSettingsSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-4/2-4-instance-command-slow-1797000002000-migrate-tool-trigger-settings';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -44,4 +46,6 @@ export const INSTANCE_COMMANDS = [
   AddCacheTokensToAgentChatThreadFastInstanceCommand,
   AddLogoToApplicationFastInstanceCommand,
   AddDeletedAtToAgentChatThreadFastInstanceCommand,
+  AddToolAndWorkflowActionTriggerSettingsFastInstanceCommand,
+  MigrateToolTriggerSettingsSlowInstanceCommand,
 ];

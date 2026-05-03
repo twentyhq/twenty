@@ -15,8 +15,6 @@ export const fromFlatLogicFunctionToLogicFunctionDto = ({
     timeoutSeconds: flatLogicFunction.timeoutSeconds,
     sourceHandlerPath: flatLogicFunction.sourceHandlerPath,
     handlerName: flatLogicFunction.handlerName,
-    toolInputSchema: flatLogicFunction.toolInputSchema ?? undefined,
-    isTool: flatLogicFunction.isTool,
     applicationId: flatLogicFunction.applicationId ?? undefined,
     workspaceId: flatLogicFunction.workspaceId,
     createdAt: new Date(flatLogicFunction.createdAt),
@@ -26,5 +24,8 @@ export const fromFlatLogicFunctionToLogicFunctionDto = ({
       flatLogicFunction.databaseEventTriggerSettings ?? undefined,
     httpRouteTriggerSettings:
       flatLogicFunction.httpRouteTriggerSettings ?? undefined,
+    toolTriggerSettings: flatLogicFunction.toolTriggerSettings ?? undefined,
+    workflowActionTriggerSettings:
+      flatLogicFunction.workflowActionTriggerSettings ?? undefined,
   };
 };

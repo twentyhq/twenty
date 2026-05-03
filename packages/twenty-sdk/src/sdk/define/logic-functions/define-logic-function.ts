@@ -40,6 +40,31 @@ export const defineLogicFunction: DefineEntity<LogicFunctionConfig> = (
     }
   }
 
+  if (config.toolTriggerSettings) {
+    if (!config.toolTriggerSettings.inputSchema) {
+      errors.push('Tool trigger must have an inputSchema');
+    }
+  }
+
+  if (config.workflowActionTriggerSettings) {
+    if (!config.workflowActionTriggerSettings.inputSchema) {
+      errors.push('Workflow action trigger must have an inputSchema');
+    }
+  }
+
+  const hasAnyTrigger =
+    !!config.cronTriggerSettings ||
+    !!config.databaseEventTriggerSettings ||
+    !!config.httpRouteTriggerSettings ||
+    !!config.toolTriggerSettings ||
+    !!config.workflowActionTriggerSettings;
+
+  if (!hasAnyTrigger) {
+    errors.push(
+      'Logic function must define at least one trigger (cron, database event, http route, tool, or workflow action)',
+    );
+  }
+
   return createValidationResult({
     config,
     errors,

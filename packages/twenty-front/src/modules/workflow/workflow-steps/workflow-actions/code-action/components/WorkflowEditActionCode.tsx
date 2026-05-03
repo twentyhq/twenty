@@ -137,7 +137,7 @@ export const WorkflowEditActionCode = ({
     );
 
   const handleUpdateFunctionInputSchema = useDebouncedCallback(
-    async (sourceCode: string, toolInputSchema: InputJsonSchema) => {
+    async (sourceCode: string, inferredJsonSchema: InputJsonSchema) => {
       if (actionOptions.readonly === true) {
         return;
       }
@@ -146,9 +146,9 @@ export const WorkflowEditActionCode = ({
         return;
       }
 
-      const schemaArray = Array.isArray(toolInputSchema)
-        ? toolInputSchema
-        : [toolInputSchema];
+      const schemaArray = Array.isArray(inferredJsonSchema)
+        ? inferredJsonSchema
+        : [inferredJsonSchema];
 
       const newFunctionInput = getFunctionInputFromInputSchema(schemaArray)[0];
 
@@ -260,12 +260,12 @@ export const WorkflowEditActionCode = ({
       return;
     }
 
-    const toolInputSchema = await onChange('sourceHandlerCode')(newCode);
+    const inferredJsonSchema = await onChange('sourceHandlerCode')(newCode);
 
     await getUpdatableWorkflowVersion();
 
-    if (isDefined(toolInputSchema)) {
-      await handleUpdateFunctionInputSchema(newCode, toolInputSchema);
+    if (isDefined(inferredJsonSchema)) {
+      await handleUpdateFunctionInputSchema(newCode, inferredJsonSchema);
     }
   };
 

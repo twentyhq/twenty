@@ -30,7 +30,9 @@ export const createListLogicFunctionToolsTool = (
       flatLogicFunctionMaps.byUniversalIdentifier,
     ).filter(
       (fn): fn is FlatLogicFunction =>
-        isDefined(fn) && fn.isTool === true && fn.deletedAt === null,
+        isDefined(fn) &&
+        isDefined(fn.workflowActionTriggerSettings) &&
+        fn.deletedAt === null,
     );
 
     return {

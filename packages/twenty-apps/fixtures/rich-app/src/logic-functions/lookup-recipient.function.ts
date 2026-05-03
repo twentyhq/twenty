@@ -10,5 +10,12 @@ export default defineLogicFunction({
   description: 'Look up a recipient by name to find their details',
   timeoutSeconds: 5,
   handler,
-  isTool: true,
+  toolTriggerSettings: {
+    inputSchema: {
+      type: 'object',
+      properties: {
+        recipientName: { type: 'string' },
+      },
+    },
+  },
 });

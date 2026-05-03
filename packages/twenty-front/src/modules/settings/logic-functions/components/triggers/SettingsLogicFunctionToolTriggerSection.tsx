@@ -1,7 +1,12 @@
 import { SettingsLogicFunctionTriggerSection } from '@/settings/logic-functions/components/triggers/SettingsLogicFunctionTriggerSection';
 import { useLingui } from '@lingui/react/macro';
+import { type ToolTriggerSettings } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 import { SettingsToolParameterTable } from '~/pages/settings/ai/components/SettingsToolParameterTable';
+
+const DEFAULT_TOOL_TRIGGER_SETTINGS: ToolTriggerSettings = {
+  inputSchema: { type: 'object', properties: {} },
+};
 
 type ToolInputSchema = {
   properties?: Record<string, unknown>;
@@ -9,21 +14,19 @@ type ToolInputSchema = {
 };
 
 type SettingsLogicFunctionToolTriggerSectionProps = {
-  isTool: boolean;
-  toolInputSchema?: object;
-  onChange: (value: boolean) => void;
+  value: ToolTriggerSettings | null;
+  onChange: (value: ToolTriggerSettings | null) => void;
   readonly: boolean;
 };
 
 export const SettingsLogicFunctionToolTriggerSection = ({
-  isTool,
-  toolInputSchema,
+  value,
   onChange,
   readonly,
 }: SettingsLogicFunctionToolTriggerSectionProps) => {
   const { t } = useLingui();
 
-  const schema = (toolInputSchema as ToolInputSchema | undefined) ?? {};
+  const schema = (value?.inputSchema as ToolInputSchema | undefined) ?? {};
   const schemaProperties = isDefined(schema.properties)
     ? (schema.properties as Record<
         string,
@@ -34,9 +37,11 @@ export const SettingsLogicFunctionToolTriggerSection = ({
   return (
     <SettingsLogicFunctionTriggerSection
       title={t`AI tool`}
-      description={t`Triggers the function when called by an AI agent or workflow`}
-      enabled={isTool}
-      onEnabledChange={onChange}
+      description={t`Exposes the function as a tool that AI agents can call`}
+      enabled={isDefined(value)}
+      onEnabledChange={(checked) =>
+        onChange(checked ? DEFAULT_TOOL_TRIGGER_SETTINGS : null)
+      }
       readonly={readonly}
     >
       <SettingsToolParameterTable
