@@ -29,8 +29,10 @@ const getTextBeforeCursor = (editor: Editor): string => {
   return textBefore;
 };
 
-const convertTextToTag = (editor: Editor, text: string): boolean => {
-  const trimmedText = text.trim();
+const convertTextToTag = (editor: Editor): boolean => {
+  const textBefore = getTextBeforeCursor(editor);
+  const trimmedText = textBefore.trim();
+
   if (trimmedText.length === 0) {
     return false;
   }
@@ -39,8 +41,12 @@ const convertTextToTag = (editor: Editor, text: string): boolean => {
   const { selection } = state;
   const { $from } = selection;
 
-  const deleteFrom = $from.pos - text.length;
+  const deleteFrom = $from.pos - textBefore.length;
   const deleteTo = $from.pos;
+
+  if (deleteFrom < 0) {
+    return false;
+  }
 
   editor
     .chain()
@@ -68,7 +74,7 @@ const CommaToTagExtension = Extension.create({
 
               if (textBefore.trim().length > 0) {
                 setTimeout(() => {
-                  convertTextToTag(editor, textBefore);
+                  convertTextToTag(editor);
                 }, 0);
                 return true;
               }
@@ -81,7 +87,7 @@ const CommaToTagExtension = Extension.create({
 
               if (textBefore.trim().length > 0) {
                 setTimeout(() => {
-                  convertTextToTag(editor, textBefore);
+                  convertTextToTag(editor);
                 }, 0);
                 return true;
               }
@@ -150,11 +156,7 @@ export const useMultiItemFieldEditor = ({
       onUpdate(editor);
     },
     onBlur: ({ editor }) => {
-      const textBefore = getTextBeforeCursor(editor);
-
-      if (textBefore.trim().length > 0) {
-        convertTextToTag(editor, textBefore);
-      }
+      convertTextToTag(editor);
     },
     enableInputRules: false,
     enablePasteRules: false,
