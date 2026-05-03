@@ -1499,6 +1499,23 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
               in: recordIds,
             } as UUIDFilter,
           };
+        case RecordFilterOperand.IS_NOT:
+          return {
+            or: [
+              {
+                not: {
+                  [correspondingFieldMetadataItem.name]: {
+                    in: recordIds,
+                  } as UUIDFilter,
+                },
+              },
+              {
+                [correspondingFieldMetadataItem.name]: {
+                  is: 'NULL',
+                } as UUIDFilter,
+              },
+            ],
+          };
         default:
           throw new Error(
             `Unknown operand ${recordFilter.operand} for ${filterType} filter`,

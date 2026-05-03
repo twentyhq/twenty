@@ -918,5 +918,25 @@ describe('turnRecordFilterIntoRecordGqlOperationFilter', () => {
 
       expect(result).toHaveProperty('recordId.in');
     });
+
+    it('should handle IS_NOT operand', () => {
+      const result = turnRecordFilterIntoRecordGqlOperationFilter({
+        filterValueDependencies,
+        recordFilter: makeFilter(
+          'f-uuid',
+          RecordFilterOperand.IS_NOT,
+          '["550e8400-e29b-41d4-a716-446655440000"]',
+        ),
+        fieldMetadataItems: fields,
+      });
+
+      expect(result).toHaveProperty('or');
+
+      const orFilter = (result as any).or;
+
+      expect(orFilter).toHaveLength(2);
+      expect(orFilter[0]).toHaveProperty('not.recordId.in');
+      expect(orFilter[1]).toHaveProperty('recordId.is', 'NULL');
+    });
   });
 });
