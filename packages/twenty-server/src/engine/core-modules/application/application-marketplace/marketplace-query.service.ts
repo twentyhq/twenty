@@ -1,9 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { type Manifest } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
-import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import {
   ApplicationRegistrationException,
@@ -13,11 +11,9 @@ import { ApplicationRegistrationService } from 'src/engine/core-modules/applicat
 import { MarketplaceCatalogSyncCronJob } from 'src/engine/core-modules/application/application-marketplace/crons/marketplace-catalog-sync.cron.job';
 import { MarketplaceAppDTO } from 'src/engine/core-modules/application/application-marketplace/dtos/marketplace-app.dto';
 import { MarketplaceAppDetailDTO } from 'src/engine/core-modules/application/application-marketplace/dtos/marketplace-app-detail.dto';
-import { resolveManifestAssetUrls } from 'src/engine/core-modules/application/application-marketplace/utils/resolve-manifest-asset-urls.util';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 @Injectable()
 export class MarketplaceQueryService {
@@ -26,8 +22,6 @@ export class MarketplaceQueryService {
 
   constructor(
     private readonly applicationRegistrationService: ApplicationRegistrationService,
-    private readonly applicationService: ApplicationService,
-    private readonly twentyConfigService: TwentyConfigService,
     @InjectMessageQueue(MessageQueue.cronQueue)
     private readonly messageQueueService: MessageQueueService,
   ) {}
@@ -59,51 +53,11 @@ export class MarketplaceQueryService {
 
   async findMarketplaceAppDetail(
     universalIdentifier: string,
-    workspaceId: string,
   ): Promise<MarketplaceAppDetailDTO> {
     const registration =
       await this.findRegistrationByUniversalIdentifier(universalIdentifier);
 
-    const installedApplication =
-      await this.applicationService.findByUniversalIdentifier({
-        universalIdentifier,
-        workspaceId,
-      });
-
-    const manifest = registration.manifest
-      ? this.resolveManifestUrlsForInstall(registration.manifest, {
-          workspaceId,
-          installedApplicationId: installedApplication?.id ?? null,
-        })
-      : undefined;
-
-    return this.toMarketplaceAppDetailDTO(registration, manifest);
-  }
-
-  // Asset URLs in `applicationRegistration.manifest` are stored as the raw
-  // manifest paths (e.g. `public/linear-logomark.svg`). At read time we
-  // rewrite them to the workspace-scoped public-assets endpoint so the
-  // browser can actually load them. NPM-published apps already arrive with
-  // CDN URLs (resolved during catalog sync) — those are absolute and pass
-  // through unchanged.
-  private resolveManifestUrlsForInstall(
-    manifest: Manifest,
-    {
-      workspaceId,
-      installedApplicationId,
-    }: { workspaceId: string; installedApplicationId: string | null },
-  ): Manifest {
-    if (!isDefined(installedApplicationId)) {
-      return manifest;
-    }
-
-    const serverUrl = this.twentyConfigService.get('SERVER_URL');
-
-    return resolveManifestAssetUrls(
-      manifest,
-      (filePath) =>
-        `${serverUrl}/public-assets/${workspaceId}/${installedApplicationId}/${filePath}`,
-    );
+    return this.toMarketplaceAppDetailDTO(registration);
   }
 
   async findRegistrationByUniversalIdentifier(
@@ -143,7 +97,6 @@ export class MarketplaceQueryService {
 
   private toMarketplaceAppDetailDTO(
     registration: ApplicationRegistrationEntity,
-    manifest: Manifest | undefined,
   ): MarketplaceAppDetailDTO {
     return {
       id: registration.id,
@@ -154,7 +107,7 @@ export class MarketplaceQueryService {
       latestAvailableVersion: registration.latestAvailableVersion ?? undefined,
       isListed: registration.isListed,
       isFeatured: registration.isFeatured,
-      manifest: manifest ?? registration.manifest ?? undefined,
+      manifest: registration.manifest ?? undefined,
     };
   }
 }

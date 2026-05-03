@@ -39,11 +39,9 @@ export class MarketplaceResolver {
   @Query(() => MarketplaceAppDetailDTO)
   async findMarketplaceAppDetail(
     @Args('universalIdentifier') universalIdentifier: string,
-    @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<MarketplaceAppDetailDTO> {
     return this.marketplaceQueryService.findMarketplaceAppDetail(
       universalIdentifier,
-      workspace.id,
     );
   }
 
