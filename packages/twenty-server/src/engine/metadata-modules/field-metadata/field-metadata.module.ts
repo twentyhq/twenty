@@ -29,11 +29,12 @@ import { ViewGroupModule } from 'src/engine/metadata-modules/view-group/view-gro
 import { ViewModule } from 'src/engine/metadata-modules/view/view.module';
 import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/workspace-metadata-version/workspace-metadata-version.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
-import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
+import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
 
 import { FieldMetadataEntity } from './field-metadata.entity';
 
+import { FieldMetadataController } from 'src/engine/metadata-modules/field-metadata/field-metadata.controller';
 import { CreateFieldInput } from './dtos/create-field.input';
 import { UpdateFieldInput } from './dtos/update-field.input';
 
@@ -88,6 +89,7 @@ import { UpdateFieldInput } from './dtos/update-field.input';
       ],
     }),
   ],
+  controllers: [FieldMetadataController],
   providers: [
     FieldMetadataService,
     FieldMetadataResolver,

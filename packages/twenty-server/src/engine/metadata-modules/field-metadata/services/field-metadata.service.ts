@@ -27,6 +27,7 @@ import { fromDeleteFieldInputToFlatFieldMetadatasToDelete } from 'src/engine/met
 import { fromUpdateFieldInputToFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-update-field-input-to-flat-field-metadata.util';
 import { throwOnFieldInputTranspilationsError } from 'src/engine/metadata-modules/flat-field-metadata/utils/throw-on-field-input-transpilations-error.util';
 import { computeFlatViewFieldsFromFieldsWidgets } from 'src/engine/metadata-modules/flat-view-field/utils/compute-flat-view-fields-from-fields-widgets.util';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { EMPTY_ORCHESTRATOR_FAILURE_REPORT } from 'src/engine/workspace-manager/workspace-migration/constant/empty-orchestrator-failure-report.constant';
@@ -43,6 +44,9 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly applicationService: ApplicationService,
     private readonly workspaceCacheService: WorkspaceCacheService,
+    @InjectRepository(ObjectMetadataEntity, 'metadata')
+    private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
+
   ) {
     super(fieldMetadataRepository);
   }
@@ -70,6 +74,32 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     }
 
     return createdFieldMetadata;
+  }
+
+  async getFieldCountForObject(
+    workspaceId: string,
+    objectNameSingular: string,
+  ): Promise<number> {
+    const objectMetadata = await this.objectMetadataRepository.findOne({
+      where: {
+        workspaceId,
+        nameSingular: objectNameSingular,
+      },
+    });
+
+    if (!objectMetadata) {
+      throw new FieldMetadataException(
+        `Object "${objectNameSingular}" not found in workspace`,
+        FieldMetadataExceptionCode.NOT_AVAILABLE,
+      );
+    }
+
+    return this.fieldMetadataRepository.count({
+      where: {
+        objectMetadataId: objectMetadata.id,
+        workspaceId,
+      },
+    });
   }
 
   async deleteOneField({
