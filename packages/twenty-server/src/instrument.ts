@@ -41,6 +41,31 @@ if (process.env.EXCEPTION_HANDLER_DRIVER === ExceptionHandlerDriver.SENTRY) {
       }),
       nodeProfilingIntegration(),
     ],
+    beforeSend: (event) => {
+      const message = event.exception?.values?.[0]?.value ?? '';
+
+      // Duplicate key errors on metadata create actions are caused by
+      // client-side race conditions (e.g. double-click on "Update view").
+      // These are not server bugs — downgrade to warning level so they
+      // don't create noisy Sentry alerts.
+      if (
+        message.includes("Migration action 'create'") &&
+        message.includes('failed') &&
+        event.breadcrumbs?.some((breadcrumb) =>
+          String(breadcrumb.message ?? '').includes(
+            'duplicate key value violates unique constraint',
+          ),
+        )
+      ) {
+        event.level = 'warning';
+        event.fingerprint = [
+          'duplicate-key-metadata-create',
+          ...(event.fingerprint ?? ['{{ default }}']),
+        ];
+      }
+
+      return event;
+    },
     tracesSampleRate: 0.1,
     profilesSampleRate: 0.3,
     sendDefaultPii: true,
