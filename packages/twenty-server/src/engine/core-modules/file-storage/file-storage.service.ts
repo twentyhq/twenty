@@ -224,11 +224,28 @@ export class FileStorageService {
         path: Like(`${fileFolder}/%`),
       },
     });
+
+    const application = await this.applicationRepository.findOneOrFail({
+      where: {
+        id: file.applicationId,
+        workspaceId,
+      },
+    });
+
+    const resourcePath = file.path.replace(`${fileFolder}/`, '');
+
+    const onStoragePath = this.buildOnStoragePath({
+      workspaceId,
+      applicationUniversalIdentifier: application.universalIdentifier,
+      fileFolder,
+      resourcePath,
+    });
+
     const driver = this.fileStorageDriverFactory.getCurrentDriver();
 
     await driver.delete({
-      folderPath: `${file.workspaceId}/${file.applicationId}`,
-      filename: file.path,
+      folderPath: dirname(onStoragePath),
+      filename: basename(onStoragePath),
     });
 
     await this.fileRepository.delete(fileId);

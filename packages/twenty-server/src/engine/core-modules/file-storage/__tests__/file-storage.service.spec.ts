@@ -16,6 +16,8 @@ describe('FileStorageService', () => {
 
   const mockFileRepository = {
     save: jest.fn(),
+    findOneOrFail: jest.fn(),
+    delete: jest.fn(),
   };
 
   const mockApplicationRepository = {
@@ -190,6 +192,51 @@ describe('FileStorageService', () => {
         });
 
         expect(result).toBeNull();
+      });
+    });
+
+    describe('deleteByFileId', () => {
+      it('should build the correct storage path using applicationUniversalIdentifier', async () => {
+        const fileId = 'file-uuid';
+        const workspaceId = 'ws-uuid';
+        const applicationId = 'app-uuid';
+        const applicationUniversalIdentifier = 'twenty-standard';
+
+        mockFileRepository.findOneOrFail.mockResolvedValue({
+          id: fileId,
+          workspaceId,
+          applicationId,
+          path: 'files-field/field-uid/file-uuid.pdf',
+        });
+
+        mockApplicationRepository.findOneOrFail.mockResolvedValue({
+          id: applicationId,
+          universalIdentifier: applicationUniversalIdentifier,
+          workspaceId,
+        });
+
+        mockDriver.delete.mockResolvedValue(undefined);
+        mockFileRepository.delete.mockResolvedValue(undefined);
+
+        await service.deleteByFileId({
+          fileId,
+          workspaceId,
+          fileFolder: 'files-field' as any,
+        });
+
+        expect(mockApplicationRepository.findOneOrFail).toHaveBeenCalledWith({
+          where: {
+            id: applicationId,
+            workspaceId,
+          },
+        });
+
+        expect(mockDriver.delete).toHaveBeenCalledWith({
+          folderPath: `${workspaceId}/${applicationUniversalIdentifier}/files-field/field-uid`,
+          filename: 'file-uuid.pdf',
+        });
+
+        expect(mockFileRepository.delete).toHaveBeenCalledWith(fileId);
       });
     });
 
