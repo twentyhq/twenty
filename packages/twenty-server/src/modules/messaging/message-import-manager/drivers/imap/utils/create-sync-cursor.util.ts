@@ -5,6 +5,7 @@ export const createSyncCursor = (
   messageUids: number[],
   previousCursor: ImapSyncCursor | null,
   mailboxState: MailboxState,
+  isPartial: boolean,
 ): ImapSyncCursor => {
   const { uidValidity, highestModSeq } = mailboxState;
   const lastSeenUid = previousCursor?.highestUid ?? 0;
@@ -17,9 +18,11 @@ export const createSyncCursor = (
     }
   }
 
+  const modSeq = isPartial ? previousCursor?.modSeq : highestModSeq?.toString();
+
   return {
     highestUid,
     uidValidity,
-    ...(highestModSeq ? { modSeq: highestModSeq.toString() } : {}),
+    ...(modSeq ? { modSeq } : {}),
   };
 };

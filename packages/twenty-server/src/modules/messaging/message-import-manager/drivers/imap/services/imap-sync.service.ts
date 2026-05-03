@@ -12,11 +12,14 @@ import { type ImapSyncCursor } from 'src/modules/messaging/message-import-manage
 
 type SyncResult = {
   messageUids: number[];
+  isPartial: boolean;
 };
 
 @Injectable()
 export class ImapSyncService {
   private readonly logger = new Logger(ImapSyncService.name);
+
+  private static readonly MAX_UID_FETCH_SIZE = 1000;
 
   async syncFolder(
     client: ImapFlow,
@@ -26,14 +29,12 @@ export class ImapSyncService {
   ): Promise<SyncResult> {
     this.validateUidValidity(previousCursor, mailboxState, folderPath);
 
-    const messageUids = await this.fetchNewMessageUids(
+    return await this.fetchNewMessageUids(
       client,
       previousCursor,
       mailboxState,
       folderPath,
     );
-
-    return { messageUids };
   }
 
   private validateUidValidity(
@@ -61,7 +62,7 @@ export class ImapSyncService {
     previousCursor: ImapSyncCursor | null,
     mailboxState: MailboxState,
     folderPath: string,
-  ): Promise<number[]> {
+  ): Promise<SyncResult> {
     const lastSyncedUid = previousCursor?.highestUid ?? 0;
     const { maxUid } = mailboxState;
 
@@ -69,11 +70,13 @@ export class ImapSyncService {
       this.logger.debug(`Using QRESYNC for folder ${folderPath}`);
 
       try {
-        return await this.fetchWithQresync(
+        const result = await this.fetchWithQresync(
           client,
           lastSyncedUid,
           BigInt(previousCursor!.modSeq!),
         );
+
+        return result;
       } catch (error) {
         this.logger.warn(
           `QRESYNC failed for ${folderPath}, falling back to UID range: ${error.message}`,
@@ -90,40 +93,60 @@ export class ImapSyncService {
     client: ImapFlow,
     lastSyncedUid: number,
     highestAvailableUid: number,
-  ): Promise<number[]> {
+  ): Promise<SyncResult> {
     if (lastSyncedUid >= highestAvailableUid) {
-      return [];
+      return { messageUids: [], isPartial: false };
     }
 
-    const uidRange = `${lastSyncedUid + 1}:${highestAvailableUid}`;
+    const nextUid = lastSyncedUid + 1;
+    const endUid = Math.min(
+      nextUid + ImapSyncService.MAX_UID_FETCH_SIZE - 1,
+      highestAvailableUid,
+    );
+
+    const isPartial = endUid < highestAvailableUid;
+    const uidRange = `${nextUid}:${endUid}`;
+
+    this.logger.debug(
+      `Fetching UID range ${uidRange} (max available: ${highestAvailableUid})`,
+    );
+
     const uids = await client.search({ uid: uidRange }, { uid: true });
 
     if (!uids || !Array.isArray(uids)) {
-      return [];
+      return { messageUids: [], isPartial: false };
     }
 
-    return uids;
+    // Cast as number[] because imapflow search with {uid: true} returns numbers
+    return { messageUids: uids as number[], isPartial };
   }
 
   private async fetchWithQresync(
     client: ImapFlow,
     lastSyncedUid: number,
     lastModSeq: bigint,
-  ): Promise<number[]> {
-    const uids = await client.search(
+  ): Promise<SyncResult> {
+    const uids = (await client.search(
       {
         modseq: lastModSeq + BigInt(1),
         uid: `${lastSyncedUid + 1}:*`,
       },
       { uid: true },
-    );
+    )) as number[];
 
     if (!uids || !Array.isArray(uids) || !uids.length) {
-      return [];
+      return { messageUids: [], isPartial: false };
     }
 
-    this.logger.debug(`QRESYNC found ${uids.length} new/modified messages`);
+    const isPartial = uids.length > ImapSyncService.MAX_UID_FETCH_SIZE;
+    const messageUids = isPartial
+      ? uids.slice(0, ImapSyncService.MAX_UID_FETCH_SIZE)
+      : uids;
 
-    return uids;
+    this.logger.debug(
+      `QRESYNC found ${uids.length} new/modified messages${isPartial ? ` (returning first ${ImapSyncService.MAX_UID_FETCH_SIZE})` : ''}`,
+    );
+
+    return { messageUids, isPartial };
   }
 }

@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { type FetchMessageObject, type ImapFlow } from 'imapflow';
-import { chunk } from 'lodash';
+import chunk from 'lodash.chunk';
 import PostalMime, { type Email as ParsedEmail } from 'postal-mime';
 
 export type MessageParseResult = {
