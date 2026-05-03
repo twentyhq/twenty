@@ -1,0 +1,21 @@
+#
+# Crowdin CLI configuration for Website translations (twenty-website-new)
+# Project ID is supplied by the Crowdin GitHub Action through CROWDIN_PROJECT_ID.
+# See https://crowdin.github.io/crowdin-cli/configuration for more information
+#
+
+preserve_hierarchy: true
+base_path: ..
+languages_mapping:
+  locale:
+    fr: fr-FR
+
+files:
+  #
+  # Source file - PO file for Lingui
+  #
+  - source: packages/twenty-website-new/src/locales/en.po
+    #
+    # Translation files path
+    #
+    translation: '%original_path%/%locale%.po'

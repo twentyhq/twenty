@@ -1,8 +1,9 @@
 import type { CaseStudyData } from '@/lib/customers';
 import { Container, Heading } from '@/design-system/components';
 import { CLIENT_ICONS } from '@/icons';
-import { LocalizedText } from '@/lib/i18n/LocalizedText';
+import { MessageDescriptorTrans } from '@/lib/i18n/MessageDescriptorTrans';
 import { LocalizedLink } from '@/lib/i18n';
+import { renderMessageDescriptor } from '@/lib/i18n/render-message-descriptor';
 import { CustomerCasesCover } from '@/sections/CaseStudyCatalog/visuals/CustomerCasesCover';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
@@ -256,7 +257,13 @@ export function Hero({ hero, dashColor, hoverDashColor }: HeroProps) {
           </MetaRow>
 
           <TitleWrap>
-            <Heading as="h1" segments={hero.title} size="lg" weight="light" />
+            <Heading
+              as="h1"
+              renderText={renderMessageDescriptor}
+              segments={hero.title}
+              size="lg"
+              weight="light"
+            />
           </TitleWrap>
 
           <AuthorAvatar>
@@ -283,7 +290,7 @@ export function Hero({ hero, dashColor, hoverDashColor }: HeroProps) {
               <AuthorName>{hero.author}</AuthorName>
               {hero.authorRole ? (
                 <AuthorRole>
-                  <LocalizedText text={hero.authorRole} />
+                  <MessageDescriptorTrans descriptor={hero.authorRole} />
                 </AuthorRole>
               ) : null}
             </AuthorInfo>

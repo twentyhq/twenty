@@ -4,7 +4,8 @@ import {
   BaseButton,
   buttonBaseStyles,
 } from '@/design-system/components/Button/BaseButton';
-import type { LocalizableText } from '@/lib/i18n/localizable-text';
+import { renderMessageDescriptor } from '@/lib/i18n/render-message-descriptor';
+import type { MessageDescriptor } from '@lingui/core';
 import { styled } from '@linaria/react';
 
 import { useContactCalModal } from './ContactCalModalRoot';
@@ -15,7 +16,7 @@ const StyledTrigger = styled.button`
 
 type TalkToUsButtonProps = {
   color: 'primary' | 'secondary';
-  label: LocalizableText;
+  label: MessageDescriptor;
   variant: 'contained' | 'outlined';
 };
 
@@ -29,7 +30,11 @@ export function TalkToUsButton({ color, label, variant }: TalkToUsButtonProps) {
       type="button"
       onClick={openContactCalModal}
     >
-      <BaseButton color={color} label={label} variant={variant} />
+      <BaseButton
+        color={color}
+        label={renderMessageDescriptor(label)}
+        variant={variant}
+      />
     </StyledTrigger>
   );
 }

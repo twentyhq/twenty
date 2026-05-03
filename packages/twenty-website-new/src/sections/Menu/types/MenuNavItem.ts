@@ -1,4 +1,4 @@
-import type { LocalizableText } from '@/lib/i18n/localizable-text';
+import type { MessageDescriptor } from '@lingui/core';
 
 export type MenuNavChildIcon = 'book' | 'code' | 'tag' | 'users';
 
@@ -7,21 +7,21 @@ export type MenuNavChildPreview = {
   imageAlt: string;
   imagePosition?: string;
   imageScale?: number;
-  title: LocalizableText;
-  description: LocalizableText;
+  title: MessageDescriptor;
+  description: MessageDescriptor;
 };
 
 export type MenuNavChildItemType = {
-  description?: LocalizableText;
+  description?: MessageDescriptor;
   external?: boolean;
   href: string;
   icon?: MenuNavChildIcon;
-  label: LocalizableText;
+  label: MessageDescriptor;
   preview?: MenuNavChildPreview;
 };
 
 export type MenuNavItemType = {
   children?: MenuNavChildItemType[];
   href?: string;
-  label: LocalizableText;
+  label: MessageDescriptor;
 };

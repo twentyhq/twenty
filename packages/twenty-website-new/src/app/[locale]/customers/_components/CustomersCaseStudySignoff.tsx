@@ -1,17 +1,18 @@
 import { msg } from '@lingui/core/macro';
 import { TalkToUsButton } from '@/lib/contact-cal';
 import { LinkButton } from '@/design-system/components';
+import { renderMessageDescriptor } from '@/lib/i18n/render-message-descriptor';
 import { Pages } from '@/lib/pages';
 import { Signoff } from '@/sections/Signoff/components';
 import { theme } from '@/theme';
 
 const SIGNOFF_HEADING = [
-  { text: 'Ready to grow\nwith ', fontFamily: 'serif' as const },
-  { text: 'Twenty?', fontFamily: 'sans' as const },
+  { text: msg`Ready to grow\nwith `, fontFamily: 'serif' as const },
+  { text: msg`Twenty?`, fontFamily: 'sans' as const },
 ];
 
 const SIGNOFF_BODY = {
-  text: 'Join the teams that chose to own their CRM.\nStart building with Twenty today.',
+  text: msg`Join the teams that chose to own their CRM.\nStart building with Twenty today.`,
 };
 
 export function CustomersCaseStudySignoff() {
@@ -27,7 +28,7 @@ export function CustomersCaseStudySignoff() {
         <LinkButton
           color="secondary"
           href="https://app.twenty.com/welcome"
-          label={msg`Get started`}
+          label={renderMessageDescriptor(msg`Get started`)}
           type="anchor"
           variant="contained"
         />

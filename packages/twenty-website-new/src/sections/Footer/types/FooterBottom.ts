@@ -1,5 +1,5 @@
-import type { LocalizableText } from '@/lib/i18n/localizable-text';
+import type { MessageDescriptor } from '@lingui/core';
 
 export type FooterBottomType = {
-  copyright: LocalizableText;
+  copyright: MessageDescriptor;
 };

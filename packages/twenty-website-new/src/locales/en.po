@@ -39,6 +39,16 @@ msgstr " AI made the gap that small."
 msgid " AI turned it into an operating system."
 msgstr " AI turned it into an operating system."
 
+#. js-lingui-id: U6pxEH
+#: src/app/[locale]/customers/9dots/page.tsx
+msgid " around it"
+msgstr " around it"
+
+#. js-lingui-id: Byjy6f
+#: src/app/[locale]/customers/w3villa/page.tsx
+msgid " at the core"
+msgstr " at the core"
+
 #. js-lingui-id: p88+10
 #: src/app/[locale]/(home)/home-stepper.data.ts
 msgid " building blocks"
@@ -48,6 +58,11 @@ msgstr " building blocks"
 #: src/app/[locale]/why-twenty/hero.data.ts
 msgid " not bought."
 msgstr " not bought."
+
+#. js-lingui-id: 4ce3Kg
+#: src/app/[locale]/customers/elevate-consulting/page.tsx
+msgid " of a go-to-market stack"
+msgstr " of a go-to-market stack"
 
 #. js-lingui-id: Ou+ugf
 #: src/app/[locale]/(home)/home-stepper.data.ts
@@ -64,6 +79,11 @@ msgstr " or not !"
 msgid " out of the box"
 msgstr " out of the box"
 
+#. js-lingui-id: yiPWZP
+#: src/app/[locale]/customers/9dots/page.tsx
+msgid " saved every month"
+msgstr " saved every month"
+
 #. js-lingui-id: DXzPiy
 #: src/sections/Faq/data.ts
 msgid " Start building, with Twenty"
@@ -74,10 +94,20 @@ msgstr " Start building, with Twenty"
 msgid " that's quick to flex"
 msgstr " that's quick to flex"
 
+#. js-lingui-id: 8c0vmp
+#: src/app/[locale]/customers/elevate-consulting/page.tsx
+msgid " to rule them all"
+msgstr " to rule them all"
+
 #. js-lingui-id: NobNl3
 #: src/app/[locale]/product/stepper.data.ts
 msgid " with no-code"
 msgstr " with no-code"
+
+#. js-lingui-id: bnhd6M
+#: src/app/[locale]/customers/netzero/page.tsx
+msgid " with you"
+msgstr " with you"
 
 #. js-lingui-id: PtQ/mr
 #: src/app/[locale]/(home)/home-stepper.data.ts
@@ -93,6 +123,12 @@ msgstr " your Enterprise CRM "
 #: src/app/[locale]/pricing/salesforce.data.ts
 msgid "-33% off"
 msgstr "-33% off"
+
+#. js-lingui-id: q0ur5+
+#. placeholder {0}: entry.hero.author
+#: src/lib/website-routing/customer-story-routes.ts
+msgid "{0} | Twenty Customer Story"
+msgstr "{0} | Twenty Customer Story"
 
 #. js-lingui-id: XUqxHW
 #: src/sections/Plans/data.ts
@@ -201,6 +237,12 @@ msgstr "$25"
 msgid "$9"
 msgstr "$9"
 
+#. js-lingui-id: EHNAf2
+#: src/lib/customers/case-study-catalog.ts
+#: src/app/[locale]/customers/elevate-consulting/page.tsx
+msgid "1 click"
+msgstr "1 click"
+
 #. js-lingui-id: qvNspm
 #: src/app/[locale]/pricing/salesforce.data.ts
 msgid "1‑800‑YES‑SOFTWARE"
@@ -220,10 +262,39 @@ msgstr ""
 "11 permissions\n"
 "groups"
 
+#. js-lingui-id: SaSafJ
+#: src/app/[locale]/customers/9dots/page.tsx
+msgid "150 hours"
+msgstr "150 hours"
+
+#. js-lingui-id: 9ntyY8
+#: src/lib/customers/case-study-catalog.ts
+#: src/app/[locale]/customers/9dots/page.tsx
+msgid "150 hrs"
+msgstr "150 hrs"
+
+#. js-lingui-id: l6Vx4q
+#: src/lib/customers/case-study-catalog.ts
+#: src/app/[locale]/customers/9dots/page.tsx
+msgid "2,000+"
+msgstr "2,000+"
+
 #. js-lingui-id: oadHWW
 #: src/app/[locale]/pricing/plan-table.data.ts
 msgid "200 per minute"
 msgstr "200 per minute"
+
+#. js-lingui-id: FKcV/y
+#: src/lib/customers/case-study-catalog.ts
+#: src/lib/customers/case-study-catalog.ts
+#: src/lib/customers/case-study-catalog.ts
+#: src/lib/customers/case-study-catalog.ts
+#: src/app/[locale]/customers/w3villa/page.tsx
+#: src/app/[locale]/customers/netzero/page.tsx
+#: src/app/[locale]/customers/alternative-partners/page.tsx
+#: src/app/[locale]/customers/act-education/page.tsx
+msgid "2025"
+msgstr "2025"
 
 #. js-lingui-id: PJgfBS
 #: src/app/[locale]/pricing/salesforce.data.ts
@@ -239,21 +310,66 @@ msgstr ""
 "3 2 years contract\n"
 "-33% off"
 
+#. js-lingui-id: /jgC+9
+#: src/lib/customers/case-study-catalog.ts
+#: src/app/[locale]/customers/netzero/page.tsx
+msgid "3 product lines"
+msgstr "3 product lines"
+
 #. js-lingui-id: 7SJhyh
 #: src/app/[locale]/pricing/plan-table.data.ts
 #: src/app/[locale]/pricing/plan-table.data.ts
 msgid "30+"
 msgstr "30+"
 
+#. js-lingui-id: Pdl2UE
+#: src/lib/customers/case-study-catalog.ts
+#: src/app/[locale]/customers/elevate-consulting/page.tsx
+msgid "4 tools"
+msgstr "4 tools"
+
 #. js-lingui-id: tZvajW
 #: src/app/[locale]/pricing/salesforce.data.ts
 msgid "6 workflows"
 msgstr "6 workflows"
 
+#. js-lingui-id: AQPMc4
+#: src/app/[locale]/customers/act-education/page.tsx
+msgid "90%"
+msgstr "90%"
+
+#. js-lingui-id: fHxYPM
+#: src/lib/customers/case-study-catalog.ts
+#: src/app/[locale]/customers/act-education/page.tsx
+msgid "90%+"
+msgstr "90%+"
+
+#. js-lingui-id: x3dJNX
+#: src/app/[locale]/customers/netzero/page.tsx
+msgid "A business that does not fit a "
+msgstr "A business that does not fit a "
+
 #. js-lingui-id: 9Z2FZQ
 #: src/app/[locale]/product/hero.data.ts
 msgid "A CRM for teams"
 msgstr "A CRM for teams"
+
+#. js-lingui-id: uvQk7t
+#: src/lib/customers/case-study-catalog.ts
+#: src/app/[locale]/customers/netzero/page.tsx
+msgid "A CRM that "
+msgstr "A CRM that "
+
+#. js-lingui-id: och6cp
+#: src/app/[locale]/customers/netzero/page.tsx
+msgid "A CRM that grows with you | NetZero & Twenty"
+msgstr "A CRM that grows with you | NetZero & Twenty"
+
+#. js-lingui-id: a7gSEm
+#: src/lib/customers/case-study-catalog.ts
+#: src/app/[locale]/customers/act-education/page.tsx
+msgid "A CRM they "
+msgstr "A CRM they "
 
 #. js-lingui-id: sgzhYK
 #: src/app/[locale]/(home)/three-cards-feature.data.ts
@@ -270,6 +386,17 @@ msgstr "A custom CRM gives your org an edge, "
 msgid "A modern CRM with "
 msgstr "A modern CRM with "
 
+#. js-lingui-id: SSR7rJ
+#: src/app/[locale]/customers/w3villa/page.tsx
+msgid "A platform ready to "
+msgstr "A platform ready to "
+
+#. js-lingui-id: VNlgKK
+#: src/lib/customers/case-study-catalog.ts
+#: src/app/[locale]/customers/9dots/page.tsx
+msgid "A real estate agency on WhatsApp "
+msgstr "A real estate agency on WhatsApp "
+
 #. js-lingui-id: WjUlJr
 #: src/app/[locale]/pricing/salesforce.data.ts
 msgid "A retro theme as a paid add-on is somehow the most believable part."
@@ -280,10 +407,27 @@ msgstr "A retro theme as a paid add-on is somehow the most believable part."
 msgid "A year ago, customizing your CRM meant hiring a Salesforce consultant, learning Apex, waiting months. The gap between \"I want this\" and \"it's live\" was measured in quarters and invoices. So people settled. They bent their process to fit the tool and called it adoption."
 msgstr "A year ago, customizing your CRM meant hiring a Salesforce consultant, learning Apex, waiting months. The gap between \"I want this\" and \"it's live\" was measured in quarters and invoices. So people settled. They bent their process to fit the tool and called it adoption."
 
+#. js-lingui-id: c0RR2h
+#: src/app/[locale]/customers/9dots/page.tsx
+msgid "About 150 hours per month saved in manual operations. Real-time metrics for the business owner. Growth readiness without adding operational headcount. A team that can answer questions that used to take days to piece together."
+msgstr "About 150 hours per month saved in manual operations. Real-time metrics for the business owner. Growth readiness without adding operational headcount. A team that can answer questions that used to take days to piece together."
+
+#. js-lingui-id: 41o3VS
+#: src/lib/customers/case-study-catalog.ts
+#: src/app/[locale]/customers/act-education/page.tsx
+msgid "AC&T and Flycoder moved from a dead vendor export to self-hosted Twenty, with over 90% lower CRM cost and full control."
+msgstr "AC&T and Flycoder moved from a dead vendor export to self-hosted Twenty, with over 90% lower CRM cost and full control."
+
 #. js-lingui-id: TuJiQF
+#: src/app/[locale]/customers/act-education/page.tsx
 #: src/app/[locale]/(home)/three-cards-illustration.data.ts
 msgid "AC&T Education Migration"
 msgstr "AC&T Education Migration"
+
+#. js-lingui-id: yHUdh6
+#: src/app/[locale]/customers/act-education/page.tsx
+msgid "AC&T Education Migration (actimmi.com) is an education agency in Australia. They help international students with applications to education providers and visas. They had been on a previous CRM until the vendor shut the system down, leaving nothing but a CSV export."
+msgstr "AC&T Education Migration (actimmi.com) is an education agency in Australia. They help international students with applications to education providers and visas. They had been on a previous CRM until the vendor shut the system down, leaving nothing but a CSV export."
 
 #. js-lingui-id: MPzy5R
 #: src/app/[locale]/(home)/three-cards-illustration.data.ts
@@ -295,6 +439,27 @@ msgstr "AC&T moved to a self-hosted Twenty instance with no vendor risk, no forc
 msgid "AC&T replaced a shuttered vendor CRM with self-hosted Twenty and cut CRM costs by more than 90%."
 msgstr "AC&T replaced a shuttered vendor CRM with self-hosted Twenty and cut CRM costs by more than 90%."
 
+#. js-lingui-id: muhZ+X
+#: src/app/[locale]/enterprise/activate/EnterpriseActivateClient.tsx
+msgid "Activating your enterprise license…"
+msgstr "Activating your enterprise license…"
+
+#. js-lingui-id: y+9jZD
+#: src/app/[locale]/enterprise/activate/page.tsx
+msgid "activation"
+msgstr "activation"
+
+#. js-lingui-id: TDMykO
+#: src/app/[locale]/customers/elevate-consulting/page.tsx
+msgid "actually get used"
+msgstr "actually get used"
+
+#. js-lingui-id: +/fX0G
+#: src/lib/customers/case-study-catalog.ts
+#: src/app/[locale]/customers/act-education/page.tsx
+msgid "actually own"
+msgstr "actually own"
+
 #. js-lingui-id: woOp+c
 #: src/app/[locale]/product/stepper.data.ts
 msgid "Add objects and fields"
@@ -305,6 +470,16 @@ msgstr "Add objects and fields"
 msgid "Add-ons"
 msgstr "Add-ons"
 
+#. js-lingui-id: Op7nVF
+#: src/app/[locale]/customers/elevate-consulting/page.tsx
+msgid "Adoption"
+msgstr "Adoption"
+
+#. js-lingui-id: TeMRC2
+#: src/app/[locale]/customers/netzero/page.tsx
+msgid "advanced"
+msgstr "advanced"
+
 #. js-lingui-id: cBdysG
 #: src/app/[locale]/pricing/plan-table.data.ts
 msgid "Advanced Encryption"
@@ -314,6 +489,12 @@ msgstr "Advanced Encryption"
 #: src/app/[locale]/product/feature.data.ts
 msgid "Aggregate, bar, line, pie, and gauge widgets"
 msgstr "Aggregate, bar, line, pie, and gauge widgets"
+
+#. js-lingui-id: rp2omj
+#: src/lib/customers/case-study-catalog.ts
+#: src/app/[locale]/customers/netzero/page.tsx
+msgid "Agribusiness"
+msgstr "Agribusiness"
 
 #. js-lingui-id: jiGK6+
 #: src/app/[locale]/pricing/salesforce.data.ts
@@ -351,10 +532,33 @@ msgstr "AI chat, settings, and records in a side panels for fast, single-screen 
 msgid "AI for rapid iterations"
 msgstr "AI for rapid iterations"
 
+#. js-lingui-id: yemSzr
+#: src/app/[locale]/customers/alternative-partners/page.tsx
+msgid "AI in the "
+msgstr "AI in the "
+
+#. js-lingui-id: t97j+F
+#: src/lib/customers/case-study-catalog.ts
+#: src/app/[locale]/customers/alternative-partners/page.tsx
+msgid "AI-assisted"
+msgstr "AI-assisted"
+
 #. js-lingui-id: LIGwFL
+#: src/app/[locale]/customers/alternative-partners/page.tsx
 #: src/app/[locale]/(home)/three-cards-illustration.data.ts
 msgid "Alternative Partners"
 msgstr "Alternative Partners"
+
+#. js-lingui-id: GDVvyT
+#: src/app/[locale]/customers/alternative-partners/page.tsx
+msgid "Alternative Partners is a consulting firm that moved from Salesforce to a self-hosted Twenty instance. Benjamin Reynolds led the migration. He had already become a Twenty expert implementing Twenty for one of Twenty's first cloud customers."
+msgstr "Alternative Partners is a consulting firm that moved from Salesforce to a self-hosted Twenty instance. Benjamin Reynolds led the migration. He had already become a Twenty expert implementing Twenty for one of Twenty's first cloud customers."
+
+#. js-lingui-id: CCrRuT
+#: src/lib/customers/case-study-catalog.ts
+#: src/app/[locale]/customers/alternative-partners/page.tsx
+msgid "Alternative Partners replaced Salesforce with self-hosted Twenty, using agentic AI to compress migration work."
+msgstr "Alternative Partners replaced Salesforce with self-hosted Twenty, using agentic AI to compress migration work."
 
 #. js-lingui-id: UIu18Y
 #: src/app/[locale]/(home)/three-cards-illustration.data.ts
@@ -386,15 +590,31 @@ msgstr "Any Questions?"
 msgid "APEX tutorials"
 msgstr "APEX tutorials"
 
+#. js-lingui-id: OZtEcz
+#: src/app/[locale]/customers/elevate-consulting/page.tsx
+msgid "API"
+msgstr "API"
+
 #. js-lingui-id: yKBF3l
 #: src/app/[locale]/pricing/salesforce.data.ts
 msgid "API access"
 msgstr "API access"
 
+#. js-lingui-id: GpYSXo
+#: src/app/[locale]/customers/elevate-consulting/page.tsx
+msgid "API backbone"
+msgstr "API backbone"
+
 #. js-lingui-id: 30KnZB
 #: src/app/[locale]/pricing/plan-table.data.ts
 msgid "API calls"
 msgstr "API calls"
+
+#. js-lingui-id: 42FQ3y
+#: src/lib/customers/case-study-catalog.ts
+#: src/app/[locale]/customers/elevate-consulting/page.tsx
+msgid "API-first"
+msgstr "API-first"
 
 #. js-lingui-id: azQMHP
 #: src/app/[locale]/pricing/salesforce.data.ts
@@ -405,6 +625,17 @@ msgstr "APIs are extra. Simplicity has a price."
 #: src/sections/Menu/data.ts
 msgid "APIs, SDKs and webhooks to extend Twenty and ship apps on top of your CRM data."
 msgstr "APIs, SDKs and webhooks to extend Twenty and ship apps on top of your CRM data."
+
+#. js-lingui-id: I1Z4AM
+#: src/lib/partner-application/partner-application-modal-data.ts
+msgid "Apply to build"
+msgstr "Apply to build"
+
+#. js-lingui-id: uicv6Z
+#: src/app/[locale]/customers/w3villa/page.tsx
+#: src/app/[locale]/customers/9dots/page.tsx
+msgid "Architecture"
+msgstr "Architecture"
 
 #. js-lingui-id: yYKNWp
 #: src/app/[locale]/(home)/three-cards-illustration.data.ts
@@ -440,6 +671,16 @@ msgstr "Available on YouTube!"
 #: src/app/[locale]/pricing/salesforce.data.ts
 msgid "Because apparently privacy feels more premium with a surcharge."
 msgstr "Because apparently privacy feels more premium with a surcharge."
+
+#. js-lingui-id: qEQv1F
+#: src/app/[locale]/customers/act-education/page.tsx
+msgid "Because everything is built on Twenty's open foundation, Flycoder could wire the exact logic AC&T needed without fighting the platform."
+msgstr "Because everything is built on Twenty's open foundation, Flycoder could wire the exact logic AC&T needed without fighting the platform."
+
+#. js-lingui-id: uIG0OH
+#: src/app/[locale]/customers/w3villa/page.tsx
+msgid "Because the foundation is solid, W3Grads is architected for what comes next, including a payment layer for future paid interview plans and nationwide scale without structural rewrites."
+msgstr "Because the foundation is solid, W3Grads is architected for what comes next, including a payment layer for future paid interview plans and nationwide scale without structural rewrites."
 
 #. js-lingui-id: JGM+JO
 #: src/app/[locale]/pricing/salesforce.data.ts
@@ -496,6 +737,16 @@ msgstr "Bertrams"
 msgid "Better than Liquid Glass!"
 msgstr "Better than Liquid Glass!"
 
+#. js-lingui-id: +Aqqtf
+#: src/app/[locale]/customers/elevate-consulting/page.tsx
+msgid "Beyond "
+msgstr "Beyond "
+
+#. js-lingui-id: bxWnM1
+#: src/app/[locale]/customers/w3villa/page.tsx
+msgid "breaking operations"
+msgstr "breaking operations"
+
 #. js-lingui-id: iSiFYa
 #: src/app/[locale]/(home)/hero.data.ts
 msgid "Build"
@@ -531,10 +782,30 @@ msgstr "Build it in an afternoon."
 msgid "Build on an open platform"
 msgstr "Build on an open platform"
 
+#. js-lingui-id: FrnsYu
+#: src/app/[locale]/customers/9dots/page.tsx
+msgid "built a "
+msgstr "built a "
+
+#. js-lingui-id: 8hMULp
+#: src/lib/customers/case-study-catalog.ts
+msgid "built a CRM around it"
+msgstr "built a CRM around it"
+
 #. js-lingui-id: SoAKmY
 #: src/app/[locale]/product/three-cards.data.ts
 msgid "Built for speed"
 msgstr "Built for speed"
+
+#. js-lingui-id: hnSOXa
+#: src/sections/CaseStudyCatalog/components/Promo.tsx
+msgid "built with Twenty"
+msgstr "built with Twenty"
+
+#. js-lingui-id: j8RGrG
+#: src/app/[locale]/customers/act-education/page.tsx
+msgid "Burned by vendor lock-in, AC&T built a CRM they actually own | Twenty"
+msgstr "Burned by vendor lock-in, AC&T built a CRM they actually own | Twenty"
 
 #. js-lingui-id: QJJQ9S
 #: src/app/[locale]/(home)/problem.data.ts
@@ -580,6 +851,12 @@ msgstr "Cloud Pro is $9/user/month (yearly). Organization is $19/user/month and 
 #: src/app/[locale]/(home)/testimonials.data.ts
 msgid "Co-founder at NetZero"
 msgstr "Co-founder at NetZero"
+
+#. js-lingui-id: vWaYWP
+#: src/lib/customers/case-study-catalog.ts
+#: src/app/[locale]/customers/netzero/page.tsx
+msgid "Co-founder, NetZero"
+msgstr "Co-founder, NetZero"
 
 #. js-lingui-id: R8BDsa
 #: src/app/[locale]/partners/three-cards-illustration.data.ts
@@ -642,6 +919,18 @@ msgstr "Connect"
 msgid "Connect Google or Microsoft accounts"
 msgstr "Connect Google or Microsoft accounts"
 
+#. js-lingui-id: MVrQxI
+#: src/lib/customers/case-study-catalog.ts
+#: src/app/[locale]/customers/elevate-consulting/page.tsx
+msgid "Connected via API"
+msgstr "Connected via API"
+
+#. js-lingui-id: cfAG43
+#: src/lib/customers/case-study-catalog.ts
+#: src/app/[locale]/customers/alternative-partners/page.tsx
+msgid "Consulting"
+msgstr "Consulting"
+
 #. js-lingui-id: Oii3vg
 #: src/app/[locale]/product/feature.data.ts
 msgid "Contacts & Companies"
@@ -657,15 +946,55 @@ msgstr "Content & Community Partners"
 msgid "Continue iteration"
 msgstr "Continue iteration"
 
+#. js-lingui-id: +Uepfb
+#: src/app/[locale]/customers/act-education/page.tsx
+msgid "Control"
+msgstr "Control"
+
+#. js-lingui-id: VOpE1H
+#: src/app/[locale]/customers/9dots/page.tsx
+msgid "control hub"
+msgstr "control hub"
+
+#. js-lingui-id: SVY97K
+#: src/app/[locale]/customers/act-education/page.tsx
+msgid "Control without "
+msgstr "Control without "
+
 #. js-lingui-id: wH1xmY
 #: src/app/[locale]/(home)/three-cards-illustration.data.ts
 msgid "Control without drag"
 msgstr "Control without drag"
 
+#. js-lingui-id: PiH3UR
+#: src/app/[locale]/enterprise/activate/EnterpriseActivateClient.tsx
+msgid "Copied!"
+msgstr "Copied!"
+
+#. js-lingui-id: he3ygx
+#: src/app/[locale]/enterprise/activate/EnterpriseActivateClient.tsx
+msgid "Copy"
+msgstr "Copy"
+
+#. js-lingui-id: 7qTWwB
+#: src/app/[locale]/enterprise/activate/EnterpriseActivateClient.tsx
+msgid "Copy the enterprise key above."
+msgstr "Copy the enterprise key above."
+
+#. js-lingui-id: PXnj76
+#: src/app/[locale]/enterprise/activate/EnterpriseActivateClient.tsx
+msgid "Copy this key and paste it into your Twenty self-hosted instance settings."
+msgstr "Copy this key and paste it into your Twenty self-hosted instance settings."
+
 #. js-lingui-id: FapWIq
 #: src/app/[locale]/product/feature.data.ts
 msgid "Core Features"
 msgstr "Core Features"
+
+#. js-lingui-id: +ZyziU
+#: src/app/[locale]/customers/act-education/page.tsx
+msgid "Costs down more than "
+msgstr "Costs down more than "
 
 #. js-lingui-id: Xn2Nlq
 #: src/app/[locale]/product/stepper.data.ts
@@ -689,15 +1018,31 @@ msgstr "Create custom apps"
 msgid "Create tasks from records"
 msgstr "Create tasks from records"
 
+#. js-lingui-id: MSlbwg
+#: src/app/[locale]/customers/9dots/page.tsx
+msgid "CRM"
+msgstr "CRM"
+
+#. js-lingui-id: Y44Xsf
+#: src/app/[locale]/customers/act-education/page.tsx
+msgid "CRM costs dropped by more than 90%. Manual overhead tied to the old system is gone. For the first time, AC&T has a CRM they will not lose again."
+msgstr "CRM costs dropped by more than 90%. Manual overhead tied to the old system is gone. For the first time, AC&T has a CRM they will not lose again."
+
 #. js-lingui-id: wDasLa
 #: src/app/[locale]/(home)/three-cards-illustration.data.ts
 msgid "CRM Engineer"
 msgstr "CRM Engineer"
 
-#. js-lingui-id: HxpC/H
+#. js-lingui-id: DqkzNV
+#: src/lib/customers/case-study-catalog.ts
+#: src/app/[locale]/customers/act-education/page.tsx
+msgid "CRM Engineer, AC&T Education Migration"
+msgstr "CRM Engineer, AC&T Education Migration"
+
+#. js-lingui-id: b7vNti
 #: src/app/[locale]/why-twenty/hero.data.ts
-msgid "CRM was a database you filled on Fridays. "
-msgstr "CRM was a database you filled on Fridays. "
+msgid "CRM was a database you filled on Fridays. AI turned it into the system that runs your go-to-market. To differentiate, you have to build what your competitors can't buy."
+msgstr "CRM was a database you filled on Fridays. AI turned it into the system that runs your go-to-market. To differentiate, you have to build what your competitors can't buy."
 
 #. js-lingui-id: v5sHk3
 #: src/app/[locale]/why-twenty/editorial-one.data.ts
@@ -764,6 +1109,11 @@ msgstr "Custom objects"
 msgid "Custom views"
 msgstr "Custom views"
 
+#. js-lingui-id: YjXLAQ
+#: src/sections/CaseStudyCatalog/components/Promo.tsx
+msgid "Customer Stories"
+msgstr "Customer Stories"
+
 #. js-lingui-id: NihQNk
 #: src/sections/Menu/data.ts
 msgid "Customers"
@@ -779,6 +1129,18 @@ msgstr "Customers | Twenty"
 #: src/app/[locale]/pricing/plan-table.data.ts
 msgid "Customization"
 msgstr "Customization"
+
+#. js-lingui-id: GRfLAg
+#: src/lib/customers/case-study-catalog.ts
+#: src/app/[locale]/customers/netzero/page.tsx
+msgid "Customizations"
+msgstr "Customizations"
+
+#. js-lingui-id: 4RLD4p
+#: src/lib/customers/case-study-catalog.ts
+#: src/app/[locale]/customers/9dots/page.tsx
+msgid "Daily messages"
+msgstr "Daily messages"
 
 #. js-lingui-id: V0kvgB
 #: src/app/[locale]/product/feature.data.ts
@@ -819,6 +1181,10 @@ msgid "Differentiation now "
 msgstr "Differentiation now "
 
 #. js-lingui-id: Wuqvfz
+#: src/lib/customers/case-study-catalog.ts
+#: src/lib/customers/case-study-catalog.ts
+#: src/app/[locale]/customers/elevate-consulting/page.tsx
+#: src/app/[locale]/customers/elevate-consulting/page.tsx
 #: src/app/[locale]/(home)/testimonials.data.ts
 msgid "Director of Digital and Information, Elevate Consulting"
 msgstr "Director of Digital and Information, Elevate Consulting"
@@ -867,6 +1233,34 @@ msgstr "Don't get locked into someone else's ecosystem. Twenty's developer exper
 msgid "Drag-and-drop deals between stages"
 msgstr "Drag-and-drop deals between stages"
 
+#. js-lingui-id: 4CJ4xV
+#: src/lib/customers/case-study-catalog.ts
+#: src/app/[locale]/customers/w3villa/page.tsx
+msgid "EdTech"
+msgstr "EdTech"
+
+#. js-lingui-id: aqxYLv
+#: src/lib/customers/case-study-catalog.ts
+#: src/app/[locale]/customers/act-education/page.tsx
+msgid "Education"
+msgstr "Education"
+
+#. js-lingui-id: 1wTjWx
+#: src/app/[locale]/customers/elevate-consulting/page.tsx
+msgid "Elevate Consulting is a management consultancy based in Canada. When Justin Beadle, Director of Digital and Information, joined, the company ran entirely on Word documents, Excel spreadsheets, sticky notes, emails, and reliance on people. There was no CRM, no API-accessible tools, only a patchwork trying to stand in for a single source of truth."
+msgstr "Elevate Consulting is a management consultancy based in Canada. When Justin Beadle, Director of Digital and Information, joined, the company ran entirely on Word documents, Excel spreadsheets, sticky notes, emails, and reliance on people. There was no CRM, no API-accessible tools, only a patchwork trying to stand in for a single source of truth."
+
+#. js-lingui-id: 2THY70
+#: src/lib/customers/case-study-catalog.ts
+#: src/app/[locale]/customers/elevate-consulting/page.tsx
+msgid "Elevate Consulting uses Twenty as the API backbone connecting billing, Teams, resourcing, and a custom front end around client and opportunity data."
+msgstr "Elevate Consulting uses Twenty as the API backbone connecting billing, Teams, resourcing, and a custom front end around client and opportunity data."
+
+#. js-lingui-id: wiTeYI
+#: src/app/[locale]/customers/elevate-consulting/page.tsx
+msgid "Elevate's CEO was so impressed with Twenty he started recommending it to clients before the internal setup was even complete. The team is exploring bringing Twenty to client projects as part of their consulting practice, including as the backend for custom-built products tailored to specific operational needs."
+msgstr "Elevate's CEO was so impressed with Twenty he started recommending it to clients before the internal setup was even complete. The team is exploring bringing Twenty to client projects as part of their consulting practice, including as the backend for custom-built products tailored to specific operational needs."
+
 #. js-lingui-id: FNyrb0
 #: src/app/[locale]/product/feature.data.ts
 msgid "Email & Calendar"
@@ -906,6 +1300,11 @@ msgstr "Encrypt your data"
 #: src/app/[locale]/(home)/home-stepper.data.ts
 msgid "Enjoy unlimited customization using the AI coding tools you already love. Adapt your CRM to fit the way your business grows and wins."
 msgstr "Enjoy unlimited customization using the AI coding tools you already love. Adapt your CRM to fit the way your business grows and wins."
+
+#. js-lingui-id: k/cvQT
+#: src/app/[locale]/enterprise/activate/page.tsx
+msgid "Enterprise "
+msgstr "Enterprise "
 
 #. js-lingui-id: 5l0LGU
 #: src/lib/website-routing/static-website-routes.ts
@@ -948,6 +1347,11 @@ msgstr "Exclusive content collaboration opportunities"
 #: src/app/[locale]/pricing/salesforce.data.ts
 msgid "Experience enterprise-grade granularity, starting with an 11th permission."
 msgstr "Experience enterprise-grade granularity, starting with an 11th permission."
+
+#. js-lingui-id: JTM5zS
+#: src/sections/CaseStudyCatalog/components/Promo.tsx
+msgid "Explore customer stories"
+msgstr "Explore customer stories"
 
 #. js-lingui-id: weFouS
 #: src/app/[locale]/pricing/salesforce.data.ts
@@ -1000,6 +1404,11 @@ msgstr "Find the program that fits your business "
 msgid "Find the right partner to implement, customize, and tailor Twenty to your team."
 msgstr "Find the right partner to implement, customize, and tailor Twenty to your team."
 
+#. js-lingui-id: PHM5wp
+#: src/app/[locale]/customers/netzero/page.tsx
+msgid "Flexibility"
+msgstr "Flexibility"
+
 #. js-lingui-id: HBJ0P5
 #: src/app/[locale]/pricing/salesforce.data.ts
 msgid ""
@@ -1014,18 +1423,42 @@ msgstr ""
 msgid "Fly through your workspace with shortcuts and short load times."
 msgstr "Fly through your workspace with shortcuts and short load times."
 
+#. js-lingui-id: HjFq2b
+#: src/app/[locale]/customers/act-education/page.tsx
+msgid "Flycoder, a full-stack development partner, helped them set up Twenty as a self-hosted instance shaped around how AC&T actually operates. The data model centers on students, not a generic contact-and-deal pipeline. Statuses update automatically: a workflow runs nightly to keep enrollment records current. Automated email reminders cover important dates. Adding a new record takes under a minute."
+msgstr "Flycoder, a full-stack development partner, helped them set up Twenty as a self-hosted instance shaped around how AC&T actually operates. The data model centers on students, not a generic contact-and-deal pipeline. Statuses update automatically: a workflow runs nightly to keep enrollment records current. Automated email reminders cover important dates. Adding a new record takes under a minute."
+
+#. js-lingui-id: BXLYGl
+#: src/app/[locale]/customers/w3villa/page.tsx
+msgid "Focus on the use case, not the "
+msgstr "Focus on the use case, not the "
+
 #. js-lingui-id: wdVyxi
 #: src/app/[locale]/pricing/plan-table.data.ts
 msgid "Folder/Label import"
 msgstr "Folder/Label import"
+
+#. js-lingui-id: CKQ0za
+#: src/app/[locale]/customers/elevate-consulting/page.tsx
+msgid "For a firm that once ran on sticky notes, this is more than an upgrade. It is a complete transformation."
+msgstr "For a firm that once ran on sticky notes, this is more than an upgrade. It is a complete transformation."
 
 #. js-lingui-id: yAJC9c
 #: src/app/[locale]/why-twenty/editorial-one.data.ts
 msgid "For twenty years, CRM meant the same thing: a place to log calls, track deals, and pull reports on Friday. The real work happened in people's heads, in Slack threads, in hallway conversations. The CRM kept score. Nobody expected more from it."
 msgstr "For twenty years, CRM meant the same thing: a place to log calls, track deals, and pull reports on Friday. The real work happened in people's heads, in Slack threads, in hallway conversations. The CRM kept score. Nobody expected more from it."
 
+#. js-lingui-id: wSoqhC
+#: src/app/[locale]/customers/netzero/page.tsx
+msgid "foundation"
+msgstr "foundation"
+
 #. js-lingui-id: UCoxP5
+#: src/lib/customers/case-study-catalog.ts
+#: src/lib/customers/case-study-catalog.ts
 #: src/app/[locale]/partners/testimonials.data.ts
+#: src/app/[locale]/customers/9dots/page.tsx
+#: src/app/[locale]/customers/9dots/page.tsx
 msgid "Founder, Nine Dots Ventures"
 msgstr "Founder, Nine Dots Ventures"
 
@@ -1039,6 +1472,27 @@ msgstr "Founder, Wintactix"
 msgid "Free for you!"
 msgstr "Free for you!"
 
+#. js-lingui-id: z09cui
+#: src/app/[locale]/customers/elevate-consulting/page.tsx
+msgid "From documents to "
+msgstr "From documents to "
+
+#. js-lingui-id: T7cyYp
+#: src/lib/customers/case-study-catalog.ts
+#: src/app/[locale]/customers/alternative-partners/page.tsx
+msgid "From Salesforce to "
+msgstr "From Salesforce to "
+
+#. js-lingui-id: syU/BD
+#: src/app/[locale]/customers/alternative-partners/page.tsx
+msgid "From Salesforce to self-hosted Twenty, powered by AI | Alternative Partners"
+msgstr "From Salesforce to self-hosted Twenty, powered by AI | Alternative Partners"
+
+#. js-lingui-id: 8kKe8V
+#: src/app/[locale]/customers/netzero/page.tsx
+msgid "From simple to "
+msgstr "From simple to "
+
 #. js-lingui-id: m1I5TY
 #: src/app/[locale]/product/feature.data.ts
 msgid "Full communication history in one place"
@@ -1051,6 +1505,12 @@ msgstr "Full communication history in one place"
 msgid "Full customization"
 msgstr "Full customization"
 
+#. js-lingui-id: YZ7Q3Z
+#: src/lib/customers/case-study-catalog.ts
+#: src/app/[locale]/customers/alternative-partners/page.tsx
+msgid "Full ownership"
+msgstr "Full ownership"
+
 #. js-lingui-id: hdxwWi
 #: src/app/[locale]/pricing/plan-table.data.ts
 #: src/app/[locale]/pricing/plan-table.data.ts
@@ -1058,6 +1518,7 @@ msgid "Fully customizable"
 msgstr "Fully customizable"
 
 #. js-lingui-id: ZDIydz
+#: src/sections/Menu/components/Root.tsx
 #: src/sections/Menu/components/Cta.tsx
 #: src/sections/Footer/data.ts
 #: src/app/[locale]/why-twenty/page.tsx
@@ -1084,10 +1545,25 @@ msgstr "Go the extra mile"
 msgid "Good choice!"
 msgstr "Good choice!"
 
+#. js-lingui-id: IsZ6P7
+#: src/app/[locale]/customers/w3villa/page.tsx
+msgid "grow"
+msgstr "grow"
+
 #. js-lingui-id: MCLWq4
 #: src/app/[locale]/(home)/helped.data.ts
 msgid "Grow with a flexible foundation"
 msgstr "Grow with a flexible foundation"
+
+#. js-lingui-id: XpCing
+#: src/app/[locale]/customers/netzero/page.tsx
+msgid "grows"
+msgstr "grows"
+
+#. js-lingui-id: ORQRms
+#: src/lib/customers/case-study-catalog.ts
+msgid "grows with you"
+msgstr "grows with you"
 
 #. js-lingui-id: Xf5EJg
 #: src/sections/Footer/data.ts
@@ -1114,30 +1590,100 @@ msgstr "Help center"
 msgid "Help customers implement, customize, and succeed with Twenty. Combine sales and services to grow your business."
 msgstr "Help customers implement, customize, and succeed with Twenty. Combine sales and services to grow your business."
 
+#. js-lingui-id: qfSbUb
+#: src/app/[locale]/customers/alternative-partners/page.tsx
+msgid "His approach was unconventional. Instead of mapping fields manually, scripting transforms, and validating data step by step, he handed the job to agentic AI tools with a brief: where the data lives, the GitHub repo for the target platform, and the Railway deployment. Start, and only return if something breaks beyond a 70% confidence fix."
+msgstr "His approach was unconventional. Instead of mapping fields manually, scripting transforms, and validating data step by step, he handed the job to agentic AI tools with a brief: where the data lives, the GitHub repo for the target platform, and the Railway deployment. Start, and only return if something breaks beyond a 70% confidence fix."
+
 #. js-lingui-id: i0qMbr
 #: src/sections/Footer/data.ts
 msgid "Home"
 msgstr "Home"
+
+#. js-lingui-id: CtU7yU
+#: src/app/[locale]/customers/9dots/page.tsx
+msgid "Homeseller"
+msgstr "Homeseller"
+
+#. js-lingui-id: KYnPnU
+#: src/app/[locale]/customers/9dots/page.tsx
+msgid "Homeseller is a high-volume real estate agency in Singapore, founded by one of the country's top-performing property agents. The whole operation runs on WhatsApp: no email, no calendars, just group chats, thousands of them, with clients, agents, and leads together."
+msgstr "Homeseller is a high-volume real estate agency in Singapore, founded by one of the country's top-performing property agents. The whole operation runs on WhatsApp: no email, no calendars, just group chats, thousands of them, with clients, agents, and leads together."
+
+#. js-lingui-id: v6cmMq
+#: src/app/[locale]/customers/9dots/page.tsx
+msgid "Homeseller kept their habits. WhatsApp stayed WhatsApp. What changed is that everything flowing through those conversations now lands in a structured system, tracked, classified, and visible in real time."
+msgstr "Homeseller kept their habits. WhatsApp stayed WhatsApp. What changed is that everything flowing through those conversations now lands in a structured system, tracked, classified, and visible in real time."
+
+#. js-lingui-id: xaIV9m
+#: src/app/[locale]/customers/9dots/page.tsx
+msgid "Homeseller, WhatsApp, and a CRM built around the business | Nine Dots & Twenty"
+msgstr "Homeseller, WhatsApp, and a CRM built around the business | Nine Dots & Twenty"
+
+#. js-lingui-id: XnFo3G
+#: src/app/[locale]/customers/act-education/page.tsx
+msgid "How AC&T Education Migration and Flycoder replaced a shuttered vendor CRM with self-hosted Twenty, with 90%+ lower cost and full ownership."
+msgstr "How AC&T Education Migration and Flycoder replaced a shuttered vendor CRM with self-hosted Twenty, with 90%+ lower cost and full ownership."
+
+#. js-lingui-id: PYi0f6
+#: src/app/[locale]/customers/alternative-partners/page.tsx
+msgid "How Alternative Partners migrated from Salesforce to self-hosted Twenty using agentic AI in the implementation loop: fast migration, durable ownership."
+msgstr "How Alternative Partners migrated from Salesforce to self-hosted Twenty using agentic AI in the implementation loop: fast migration, durable ownership."
+
+#. js-lingui-id: +MLOVo
+#: src/app/[locale]/customers/elevate-consulting/page.tsx
+msgid "How Elevate Consulting moved off documents and spreadsheets to Twenty as the API-connected CRM at the center of their stack."
+msgstr "How Elevate Consulting moved off documents and spreadsheets to Twenty as the API-connected CRM at the center of their stack."
 
 #. js-lingui-id: OIwpKt
 #: src/sections/Faq/data.ts
 msgid "How long does it take to get started?"
 msgstr "How long does it take to get started?"
 
+#. js-lingui-id: iRzy9e
+#: src/app/[locale]/customers/netzero/page.tsx
+msgid "How NetZero uses Twenty across carbon credits, agricultural products, and franchised industrial systems with a modular CRM and a roadmap toward AI-assisted workflows."
+msgstr "How NetZero uses Twenty across carbon credits, agricultural products, and franchised industrial systems with a modular CRM and a roadmap toward AI-assisted workflows."
+
+#. js-lingui-id: NZYA4S
+#: src/app/[locale]/customers/9dots/page.tsx
+msgid "How Nine Dots Ventures rebuilt a Singapore real estate agency on Twenty with APIs, n8n, Grafana, and AI on top of 2,000+ WhatsApp messages a day."
+msgstr "How Nine Dots Ventures rebuilt a Singapore real estate agency on Twenty with APIs, n8n, Grafana, and AI on top of 2,000+ WhatsApp messages a day."
+
+#. js-lingui-id: TQIL0w
+#: src/sections/CaseStudyCatalog/components/Promo.tsx
+msgid "How teams "
+msgstr "How teams "
+
 #. js-lingui-id: bcln75
 #: src/lib/website-routing/static-website-routes.ts
 msgid "How Twenty collects, uses, safeguards, and discloses information when you use Twenty.com and related services."
 msgstr "How Twenty collects, uses, safeguards, and discloses information when you use Twenty.com and related services."
+
+#. js-lingui-id: URQPvK
+#: src/app/[locale]/customers/w3villa/page.tsx
+msgid "How W3villa Technologies shipped W3Grads, an AI mock interview platform for institutions, on Twenty as the operational backbone."
+msgstr "How W3villa Technologies shipped W3Grads, an AI mock interview platform for institutions, on Twenty as the operational backbone."
 
 #. js-lingui-id: l0JGUk
 #: src/app/[locale]/pricing/plan-table.data.ts
 msgid "Impersonate users"
 msgstr "Impersonate users"
 
+#. js-lingui-id: N4OVNn
+#: src/app/[locale]/customers/act-education/page.tsx
+msgid "Implementation"
+msgstr "Implementation"
+
 #. js-lingui-id: yHueLx
 #: src/app/[locale]/pricing/plan-table.data.ts
 msgid "Implementation partners"
 msgstr "Implementation partners"
+
+#. js-lingui-id: InyU0Z
+#: src/app/[locale]/customers/elevate-consulting/page.tsx
+msgid "In June 2025, Justin learned Twenty v1 had shipped. Within two or three days, the CEO asked him to look into setting up a CRM. The shift came from the potential of what could be built on top of fully open APIs. The timing was perfect."
+msgstr "In June 2025, Justin learned Twenty v1 had shipped. Within two or three days, the CEO asked him to look into setting up a CRM. The shift came from the potential of what could be built on top of fully open APIs. The timing was perfect."
 
 #. js-lingui-id: d1Aru8
 #: src/app/[locale]/(home)/helped.data.ts
@@ -1176,30 +1722,61 @@ msgstr "Infinite scroll is still coming soon, unlike the invoice."
 msgid "Install shared tarball app"
 msgstr "Install shared tarball app"
 
+#. js-lingui-id: AHWM9N
+#: src/app/[locale]/customers/elevate-consulting/page.tsx
+msgid "Integration"
+msgstr "Integration"
+
 #. js-lingui-id: OChKCc
 #: src/lib/website-routing/static-website-routes.ts
 msgid "Interactive halftone generator exported from Twenty."
 msgstr "Interactive halftone generator exported from Twenty."
+
+#. js-lingui-id: mdsMtj
+#: src/app/[locale]/customers/elevate-consulting/page.tsx
+msgid "internal rollout"
+msgstr "internal rollout"
 
 #. js-lingui-id: a+PGuG
 #: src/app/[locale]/pricing/plan-table.data.ts
 msgid "Internet accounts per user"
 msgstr "Internet accounts per user"
 
+#. js-lingui-id: DQenUJ
+#: src/lib/customers/case-study-catalog.ts
+msgid "is the product"
+msgstr "is the product"
+
 #. js-lingui-id: /yQIKP
 #: src/sections/Faq/data.ts
 msgid "Is Twenty really open-source?"
 msgstr "Is Twenty really open-source?"
+
+#. js-lingui-id: QjEULz
+#: src/lib/customers/case-study-catalog.ts
+#: src/app/[locale]/customers/elevate-consulting/page.tsx
+msgid "It is just such a nicer experience than dealing with a Salesforce or a HubSpot. My mission has been to get every tool API-accessible, so everything talks to each other."
+msgstr "It is just such a nicer experience than dealing with a Salesforce or a HubSpot. My mission has been to get every tool API-accessible, so everything talks to each other."
 
 #. js-lingui-id: FJ51pP
 #: src/app/[locale]/(home)/testimonials.data.ts
 msgid "It is just such a nicer experience than dealing with a Salesforce or a HubSpot. My mission has been to get every tool API-accessible, so everything talks to each other. Twenty made that possible in a way older CRM platforms simply do not."
 msgstr "It is just such a nicer experience than dealing with a Salesforce or a HubSpot. My mission has been to get every tool API-accessible, so everything talks to each other. Twenty made that possible in a way older CRM platforms simply do not."
 
+#. js-lingui-id: kqIAbN
+#: src/app/[locale]/customers/alternative-partners/page.tsx
+msgid "It worked. This is AI-assisted iteration in practice: not AI as a product feature, but as part of implementation work, compressing what would typically be weeks into something one person can oversee without being the bottleneck."
+msgstr "It worked. This is AI-assisted iteration in practice: not AI as a product feature, but as part of implementation work, compressing what would typically be weeks into something one person can oversee without being the bottleneck."
+
 #. js-lingui-id: ltNDOB
 #: src/app/[locale]/(home)/problem.data.ts
 msgid "It's fragile. V1 ships quickly, but maintaining and making changes is a long term burden."
 msgstr "It's fragile. V1 ships quickly, but maintaining and making changes is a long term burden."
+
+#. js-lingui-id: kX2mij
+#: src/lib/partner-application/partner-application-modal-data.ts
+msgid "Join our ecosystem and help businesses take control of their customer data with"
+msgstr "Join our ecosystem and help businesses take control of their customer data with"
 
 #. js-lingui-id: 1qiriB
 #: src/app/[locale]/partners/testimonials.data.ts
@@ -1222,6 +1799,7 @@ msgstr ""
 
 #. js-lingui-id: 4QqdtB
 #: src/app/[locale]/customers/page.tsx
+#: src/app/[locale]/customers/_components/CustomersCaseStudySignoff.tsx
 msgid ""
 "Join the teams that chose to own their CRM.\n"
 "Start building with Twenty today."
@@ -1234,10 +1812,32 @@ msgstr ""
 msgid "Join the teams that chose to own their CRM. Start building with Twenty today."
 msgstr "Join the teams that chose to own their CRM. Start building with Twenty today."
 
+#. js-lingui-id: pB76mP
+#: src/lib/customers/case-study-catalog.ts
+#: src/app/[locale]/customers/9dots/page.tsx
+msgid "Jul 2025"
+msgstr "Jul 2025"
+
+#. js-lingui-id: hvwlu3
+#: src/lib/customers/case-study-catalog.ts
+#: src/app/[locale]/customers/elevate-consulting/page.tsx
+msgid "Jun 2025"
+msgstr "Jun 2025"
+
 #. js-lingui-id: qrYDGE
 #: src/app/[locale]/(home)/testimonials.data.ts
 msgid "Justin Beadle"
 msgstr "Justin Beadle"
+
+#. js-lingui-id: vYXuJI
+#: src/app/[locale]/customers/elevate-consulting/page.tsx
+msgid "Justin built workflows for notifications across the team, alerting the right people in Teams when a prospect becomes a lead or when project milestones are reached. Forms in Twenty let the business development team log activity without leaving the tool. The impact is real for the organization. The tool has been adaptable from opportunity-level work at a client to executive-level decisions."
+msgstr "Justin built workflows for notifications across the team, alerting the right people in Teams when a prospect becomes a lead or when project milestones are reached. Forms in Twenty let the business development team log activity without leaving the tool. The impact is real for the organization. The tool has been adaptable from opportunity-level work at a client to executive-level decisions."
+
+#. js-lingui-id: E6Oohx
+#: src/app/[locale]/customers/elevate-consulting/page.tsx
+msgid "Justin's broader mission at Elevate has been to move the company off static documents and onto tools with API access. By the end of 2025, that was in place: time billing, resource planning, Microsoft Teams, and project management were all accessible via API, with Twenty at the center holding client and opportunity data. Team members could use that information strategically instead of re-keying it."
+msgstr "Justin's broader mission at Elevate has been to move the company off static documents and onto tools with API access. By the end of 2025, that was in place: time billing, resource planning, Microsoft Teams, and project management were all accessible via API, with Twenty at the center holding client and opportunity data. Team members could use that information strategically instead of re-keying it."
 
 #. js-lingui-id: GAmD3h
 #: src/app/[locale]/pricing/plan-table.data.ts
@@ -1263,6 +1863,11 @@ msgstr "Learn how to use Twenty"
 #: src/sections/Footer/data.ts
 msgid "Legal"
 msgstr "Legal"
+
+#. js-lingui-id: f4ve27
+#: src/app/[locale]/enterprise/activate/EnterpriseActivateClient.tsx
+msgid "Licensee: "
+msgstr "Licensee: "
 
 #. js-lingui-id: gggTBm
 #: src/sections/Footer/data.ts
@@ -1294,6 +1899,11 @@ msgstr "Live updates are unavailable, which is almost more honest."
 msgid "lives in the code you own."
 msgstr "lives in the code you own."
 
+#. js-lingui-id: ObPscj
+#: src/app/[locale]/enterprise/activate/page.tsx
+msgid "Loading activation…"
+msgstr "Loading activation…"
+
 #. js-lingui-id: 7VBQ2j
 #: src/app/[locale]/pricing/plan-table.data.ts
 #: src/app/[locale]/pricing/plan-table.data.ts
@@ -1311,10 +1921,28 @@ msgstr "Lock-in"
 msgid "Log in"
 msgstr "Log in"
 
+#. js-lingui-id: KPLAuI
+#: src/lib/customers/case-study-catalog.ts
+#: src/app/[locale]/customers/act-education/page.tsx
+msgid "Lower CRM cost"
+msgstr "Lower CRM cost"
+
 #. js-lingui-id: i3PI5l
 #: src/app/[locale]/(home)/three-cards-feature.data.ts
 msgid "Make your GTM team happy"
 msgstr "Make your GTM team happy"
+
+#. js-lingui-id: Si4WyF
+#: src/lib/customers/case-study-catalog.ts
+#: src/app/[locale]/customers/elevate-consulting/page.tsx
+msgid "Management Consulting"
+msgstr "Management Consulting"
+
+#. js-lingui-id: poX06f
+#: src/lib/customers/case-study-catalog.ts
+#: src/app/[locale]/customers/w3villa/page.tsx
+msgid "Manual work at core"
+msgstr "Manual work at core"
 
 #. js-lingui-id: VJOKPB
 #: src/app/[locale]/pricing/salesforce.data.ts
@@ -1341,6 +1969,11 @@ msgstr "Master every corner of Twenty"
 msgid "MCP server"
 msgstr "MCP server"
 
+#. js-lingui-id: zxcfgg
+#: src/app/[locale]/customers/alternative-partners/page.tsx
+msgid "means control"
+msgstr "means control"
+
 #. js-lingui-id: bwCiCi
 #: src/sections/Menu/data.ts
 msgid "Meet the certified agencies and consultants implementing Twenty for teams worldwide."
@@ -1350,6 +1983,21 @@ msgstr "Meet the certified agencies and consultants implementing Twenty for team
 #: src/lib/website-routing/static-website-routes.ts
 msgid "Meet the teams running their business on Twenty. Real customer stories on how they shaped the CRM to fit their workflow."
 msgstr "Meet the teams running their business on Twenty. Real customer stories on how they shaped the CRM to fit their workflow."
+
+#. js-lingui-id: ujYZ+f
+#: src/sections/CaseStudyCatalog/components/Promo.tsx
+msgid "Meet the teams who shaped Twenty into their own CRM with self-hosted deployments, AI-assisted workflows, and API-first product stacks."
+msgstr "Meet the teams who shaped Twenty into their own CRM with self-hosted deployments, AI-assisted workflows, and API-first product stacks."
+
+#. js-lingui-id: ZdvtU2
+#: src/app/[locale]/customers/alternative-partners/page.tsx
+msgid "migration workflow"
+msgstr "migration workflow"
+
+#. js-lingui-id: so04x6
+#: src/app/[locale]/customers/9dots/page.tsx
+msgid "Mike and Azmat from Nine Dots stepped in to fix that, not by changing how Homeseller works, but by building a system that finally fit around it."
+msgstr "Mike and Azmat from Nine Dots stepped in to fix that, not by changing how Homeseller works, but by building a system that finally fit around it."
 
 #. js-lingui-id: izddzp
 #: src/app/[locale]/partners/testimonials.data.ts
@@ -1381,6 +2029,11 @@ msgstr "moves fast"
 msgid "Multi-file upload on records"
 msgstr "Multi-file upload on records"
 
+#. js-lingui-id: 6YtxFj
+#: src/app/[locale]/pricing/plan-table.data.ts
+msgid "Name"
+msgstr "Name"
+
 #. js-lingui-id: LfNsfa
 #: src/app/[locale]/product/stepper.data.ts
 msgid "Need a quick change? Skip the engineering ticket. Customize your workspace in minutes."
@@ -1391,20 +2044,63 @@ msgstr "Need a quick change? Skip the engineering ticket. Customize your workspa
 msgid "Need help with customization?"
 msgstr "Need help with customization?"
 
+#. js-lingui-id: 8Cp4Of
+#: src/app/[locale]/customers/netzero/page.tsx
+msgid "NetZero"
+msgstr "NetZero"
+
 #. js-lingui-id: J8ZssL
 #: src/app/[locale]/(home)/helped.data.ts
 msgid "NetZero runs a modular Twenty setup across carbon credits, ag products, and industrial systems."
 msgstr "NetZero runs a modular Twenty setup across carbon credits, ag products, and industrial systems."
+
+#. js-lingui-id: 7HVBV+
+#: src/lib/customers/case-study-catalog.ts
+#: src/app/[locale]/customers/netzero/page.tsx
+msgid "NetZero uses Twenty as a modular CRM across product lines and countries, with a roadmap into AI-assisted workflows."
+msgstr "NetZero uses Twenty as a modular CRM across product lines and countries, with a roadmap into AI-assisted workflows."
+
+#. js-lingui-id: 3PtYTO
+#: src/app/[locale]/customers/netzero/page.tsx
+msgid "NetZero works with the agro-industry, serving clients from multinationals to smallholder farmers. They sell carbon credits, agricultural products, and franchised industrial systems across three different product lines, multiple countries, and multiple company sizes. When Olivier Reinaud, co-founder of NetZero, started looking at CRMs in late 2024, he was not chasing the most feature-rich platform. He wanted the right foundation."
+msgstr "NetZero works with the agro-industry, serving clients from multinationals to smallholder farmers. They sell carbon credits, agricultural products, and franchised industrial systems across three different product lines, multiple countries, and multiple company sizes. When Olivier Reinaud, co-founder of NetZero, started looking at CRMs in late 2024, he was not chasing the most feature-rich platform. He wanted the right foundation."
+
+#. js-lingui-id: KqojOL
+#: src/app/[locale]/enterprise/activate/EnterpriseActivateClient.tsx
+msgid "Next steps"
+msgstr "Next steps"
+
+#. js-lingui-id: qZ+egR
+#: src/lib/customers/case-study-catalog.ts
+#: src/app/[locale]/customers/9dots/page.tsx
+msgid "Nine Dots put Twenty at the center of Homeseller's stack with APIs, automation, and AI on top of WhatsApp-heavy operations."
+msgstr "Nine Dots put Twenty at the center of Homeseller's stack with APIs, automation, and AI on top of WhatsApp-heavy operations."
+
+#. js-lingui-id: sGuHDu
+#: src/app/[locale]/customers/9dots/page.tsx
+msgid "Nine Dots rebuilt Homeseller's operations on Twenty, with a custom data model shaped around their sales flow. Because Twenty is open and everything is accessible via API, they connected it to what the business actually needed: n8n for automated workflows (in-app workflows were not available at that time), Grafana for live dashboards fed from Twenty, and a custom AI layer to parse and extract structured insights from more than 2,000 WhatsApp messages a day."
+msgstr "Nine Dots rebuilt Homeseller's operations on Twenty, with a custom data model shaped around their sales flow. Because Twenty is open and everything is accessible via API, they connected it to what the business actually needed: n8n for automated workflows (in-app workflows were not available at that time), Grafana for live dashboards fed from Twenty, and a custom AI layer to parse and extract structured insights from more than 2,000 WhatsApp messages a day."
 
 #. js-lingui-id: 1UzENP
 #: src/sections/PlanTable/components/Content.tsx
 msgid "No"
 msgstr "No"
 
+#. js-lingui-id: Q7+Ccb
+#: src/app/[locale]/customers/act-education/page.tsx
+msgid "No more renting someone else's "
+msgstr "No more renting someone else's "
+
 #. js-lingui-id: K1QTmg
 #: src/sections/Plans/data.ts
 msgid "No open-source distribution requirement"
 msgstr "No open-source distribution requirement"
+
+#. js-lingui-id: q9f4Tp
+#: src/lib/customers/case-study-catalog.ts
+#: src/app/[locale]/customers/netzero/page.tsx
+msgid "No-code"
+msgstr "No-code"
 
 #. js-lingui-id: SiZ/7E
 #: src/sections/Faq/data.ts
@@ -1421,10 +2117,26 @@ msgstr "Now a developer can describe what they want to Claude Code and have a wo
 msgid "Number of dashboards"
 msgstr "Number of dashboards"
 
+#. js-lingui-id: 0dVyEt
+#: src/lib/customers/case-study-catalog.ts
+msgid "of a go-to-market stack"
+msgstr "of a go-to-market stack"
+
+#. js-lingui-id: pkrZnO
+#: src/app/[locale]/customers/netzero/page.tsx
+msgid "Olivier recognizes that NetZero's current use of Twenty is still relatively simple: workflows and integrations are not yet as deep as he eventually wants, because he prioritized getting foundations right first."
+msgstr "Olivier recognizes that NetZero's current use of Twenty is still relatively simple: workflows and integrations are not yet as deep as he eventually wants, because he prioritized getting foundations right first."
+
 #. js-lingui-id: l/1LQc
 #: src/app/[locale]/(home)/testimonials.data.ts
 msgid "Olivier Reinaud"
 msgstr "Olivier Reinaud"
+
+#. js-lingui-id: D2b+1q
+#: src/lib/customers/case-study-catalog.ts
+#: src/app/[locale]/customers/netzero/page.tsx
+msgid "On a single CRM"
+msgstr "On a single CRM"
 
 #. js-lingui-id: jeGPx0
 #: src/app/[locale]/customers/page.tsx
@@ -1436,10 +2148,30 @@ msgstr "on Twenty"
 msgid "Onboarding Packs"
 msgstr "Onboarding Packs"
 
+#. js-lingui-id: p4GgjE
+#: src/app/[locale]/customers/elevate-consulting/page.tsx
+msgid "One "
+msgstr "One "
+
 #. js-lingui-id: pShqss
 #: src/app/[locale]/pricing/salesforce.data.ts
 msgid "Only $5 for SSO. Practically a charity program."
 msgstr "Only $5 for SSO. Practically a charity program."
+
+#. js-lingui-id: 3WErRa
+#: src/app/[locale]/customers/elevate-consulting/page.tsx
+msgid "open APIs"
+msgstr "open APIs"
+
+#. js-lingui-id: pkXQA+
+#: src/app/[locale]/enterprise/activate/EnterpriseActivateClient.tsx
+msgid "Open your Twenty self-hosted instance Settings → Enterprise."
+msgstr "Open your Twenty self-hosted instance Settings → Enterprise."
+
+#. js-lingui-id: wtKPUT
+#: src/lib/partner-application/partner-application-modal-data.ts
+msgid "open-source primitives."
+msgstr "open-source primitives."
 
 #. js-lingui-id: 5RkmVr
 #: src/app/[locale]/why-twenty/signoff.data.ts
@@ -1473,6 +2205,11 @@ msgstr "Outlived every redesign since 2004."
 msgid "Own your CRM end to end"
 msgstr "Own your CRM end to end"
 
+#. js-lingui-id: oDAEQq
+#: src/app/[locale]/customers/alternative-partners/page.tsx
+msgid "Ownership"
+msgstr "Ownership"
+
 #. js-lingui-id: NmF/Vo
 #: src/app/[locale]/pricing/salesforce.data.ts
 msgid "Owning your stack remains mysteriously out of stock."
@@ -1494,6 +2231,16 @@ msgstr "Partners"
 msgid "Partners | Twenty"
 msgstr "Partners | Twenty"
 
+#. js-lingui-id: 9yo8NN
+#: src/app/[locale]/enterprise/activate/EnterpriseActivateClient.tsx
+msgid "Paste the key and click Activate."
+msgstr "Paste the key and click Activate."
+
+#. js-lingui-id: nxV7o2
+#: src/app/[locale]/customers/netzero/page.tsx
+msgid "paying off"
+msgstr "paying off"
+
 #. js-lingui-id: FFkjaT
 #: src/app/[locale]/product/feature.data.ts
 msgid "Pipeline Management"
@@ -1503,6 +2250,11 @@ msgstr "Pipeline Management"
 #: src/lib/website-routing/static-website-routes.ts
 msgid "Plans that scale with your team. Compare tiers of the #1 open source CRM."
 msgstr "Plans that scale with your team. Compare tiers of the #1 open source CRM."
+
+#. js-lingui-id: iCh6/3
+#: src/app/[locale]/customers/w3villa/page.tsx
+msgid "plumbing"
+msgstr "plumbing"
 
 #. js-lingui-id: a7u1N9
 #: src/app/[locale]/pricing/plan-table.data.ts
@@ -1527,7 +2279,9 @@ msgid "Principal and Founder"
 msgstr "Principal and Founder"
 
 #. js-lingui-id: kXBQYM
+#: src/lib/customers/case-study-catalog.ts
 #: src/app/[locale]/partners/testimonials.data.ts
+#: src/app/[locale]/customers/alternative-partners/page.tsx
 msgid "Principal and Founder, Alternative Partners"
 msgstr "Principal and Founder, Alternative Partners"
 
@@ -1564,10 +2318,37 @@ msgstr "Product | Twenty"
 msgid "Production grade quality"
 msgstr "Production grade quality"
 
+#. js-lingui-id: CcK9cq
+#: src/app/[locale]/customers/w3villa/page.tsx
+msgid "Programs that previously needed heavy manual coordination now run end-to-end with automation. Institutions get a scalable, intelligent system; students get faster preparation for interviews that matter; W3villa shipped a product institutions can build revenue around."
+msgstr "Programs that previously needed heavy manual coordination now run end-to-end with automation. Institutions get a scalable, intelligent system; students get faster preparation for interviews that matter; W3villa shipped a product institutions can build revenue around."
+
+#. js-lingui-id: 9NAqO4
+#: src/lib/customers/case-study-catalog.ts
+#: src/app/[locale]/customers/elevate-consulting/page.tsx
+msgid "Proposal automation"
+msgstr "Proposal automation"
+
 #. js-lingui-id: a24q7E
 #: src/app/[locale]/(home)/problem.data.ts
 msgid "Proprietary languages, slow deployment cycles, and \"black box\" logic."
 msgstr "Proprietary languages, slow deployment cycles, and \"black box\" logic."
+
+#. js-lingui-id: kS6G/9
+#: src/app/[locale]/customers/act-education/page.tsx
+msgid "pulled the plug"
+msgstr "pulled the plug"
+
+#. js-lingui-id: frfCYp
+#: src/lib/customers/case-study-catalog.ts
+#: src/app/[locale]/customers/9dots/page.tsx
+msgid "Q1 2026"
+msgstr "Q1 2026"
+
+#. js-lingui-id: gSQVmr
+#: src/sections/Helped/components/Card.tsx
+msgid "Read the case"
+msgstr "Read the case"
 
 #. js-lingui-id: EqCbT9
 #: src/app/[locale]/pricing/plan-table.data.ts
@@ -1597,6 +2378,21 @@ msgstr ""
 "Ready to grow\n"
 ""
 
+#. js-lingui-id: Cu2tH6
+#: src/app/[locale]/customers/_components/CustomersCaseStudySignoff.tsx
+msgid ""
+"Ready to grow\n"
+"with "
+msgstr ""
+"Ready to grow\n"
+"with "
+
+#. js-lingui-id: NIwjHh
+#: src/lib/customers/case-study-catalog.ts
+#: src/app/[locale]/customers/9dots/page.tsx
+msgid "Real Estate"
+msgstr "Real Estate"
+
 #. js-lingui-id: CH+Ona
 #: src/app/[locale]/customers/page.tsx
 msgid "Real stories from real teams about how they shaped Twenty to fit their workflow and accelerated their growth."
@@ -1616,6 +2412,12 @@ msgstr "Real-time data"
 #: src/app/[locale]/pricing/salesforce.data.ts
 msgid "Real-time is a state of mind, not a feature."
 msgstr "Real-time is a state of mind, not a feature."
+
+#. js-lingui-id: Zhiuz9
+#: src/lib/customers/case-study-catalog.ts
+#: src/app/[locale]/customers/9dots/page.tsx
+msgid "Record quarter"
+msgstr "Record quarter"
 
 #. js-lingui-id: PWlTvh
 #: src/app/[locale]/pricing/plan-table.data.ts
@@ -1668,6 +2470,11 @@ msgstr "Resources"
 msgid "REST & GraphQL API"
 msgstr "REST & GraphQL API"
 
+#. js-lingui-id: kx0s+n
+#: src/app/[locale]/customers/netzero/page.tsx
+msgid "Results"
+msgstr "Results"
+
 #. js-lingui-id: 2itg0p
 #: src/app/[locale]/pricing/salesforce.data.ts
 msgid "Retro 2015"
@@ -1683,6 +2490,11 @@ msgstr "Revenue share for referred customers"
 msgid "Rich notes attached to records"
 msgstr "Rich notes attached to records"
 
+#. js-lingui-id: /gaSVU
+#: src/app/[locale]/customers/netzero/page.tsx
+msgid "Roadmap"
+msgstr "Roadmap"
+
 #. js-lingui-id: C77N5M
 #: src/sections/Plans/data.ts
 #: src/sections/Plans/data.ts
@@ -1694,6 +2506,11 @@ msgstr "Roles & Permissions"
 #: src/app/[locale]/pricing/plan-table.data.ts
 msgid "Row-level permissions"
 msgstr "Row-level permissions"
+
+#. js-lingui-id: mRpuWW
+#: src/app/[locale]/customers/w3villa/page.tsx
+msgid "Running mock interview programs for hundreds of students sounds straightforward. In practice, universities and training institutes hit the same wall: registrations entered by hand, interview links sent one by one, faculty reviewing every session without scoring or classification. At real scale, it breaks."
+msgstr "Running mock interview programs for hundreds of students sounds straightforward. In practice, universities and training institutes hit the same wall: registrations entered by hand, interview links sent one by one, faculty reviewing every session without scoring or classification. At real scale, it breaks."
 
 #. js-lingui-id: Burn4/
 #: src/app/[locale]/pricing/salesforce.data.ts
@@ -1709,6 +2526,12 @@ msgstr "Salesfarce Pro"
 #: src/app/[locale]/pricing/salesforce.data.ts
 msgid "Salesforce Classic"
 msgstr "Salesforce Classic"
+
+#. js-lingui-id: l69E+u
+#: src/lib/customers/case-study-catalog.ts
+#: src/app/[locale]/customers/alternative-partners/page.tsx
+msgid "Salesforce migration"
+msgstr "Salesforce migration"
 
 #. js-lingui-id: CADlRK
 #: src/app/[locale]/why-twenty/marquee.data.ts
@@ -1731,6 +2554,22 @@ msgstr "Same results"
 #: src/sections/Plans/data.ts
 msgid "SAML/OIDC SSO"
 msgstr "SAML/OIDC SSO"
+
+#. js-lingui-id: elz5ka
+#: src/lib/customers/case-study-catalog.ts
+#: src/app/[locale]/customers/9dots/page.tsx
+msgid "Saved / month"
+msgstr "Saved / month"
+
+#. js-lingui-id: bifv6N
+#: src/app/[locale]/customers/w3villa/page.tsx
+msgid "Scale"
+msgstr "Scale"
+
+#. js-lingui-id: nmlC2c
+#: src/app/[locale]/customers/w3villa/page.tsx
+msgid "Scale without "
+msgstr "Scale without "
 
 #. js-lingui-id: HVOGoW
 #: src/app/[locale]/pricing/plan-table.data.ts
@@ -1762,6 +2601,12 @@ msgstr "See the latest release"
 msgid "See updates as they happen. Work with your team and agents seamlessly."
 msgstr "See updates as they happen. Work with your team and agents seamlessly."
 
+#. js-lingui-id: 0kgOPB
+#. placeholder {0}: latest.release
+#: src/lib/releases/get-latest-release-preview.ts
+msgid "See what shipped in {0}"
+msgstr "See what shipped in {0}"
+
 #. js-lingui-id: k/MRj4
 #: src/app/[locale]/partners/engagement-band.data.ts
 msgid "See what they built"
@@ -1772,9 +2617,32 @@ msgstr "See what they built"
 msgid "Select all"
 msgstr "Select all"
 
+#. js-lingui-id: 6JhL+3
+#: src/lib/customers/case-study-catalog.ts
+#: src/app/[locale]/customers/alternative-partners/page.tsx
+msgid "Self-hosted"
+msgstr "Self-hosted"
+
+#. js-lingui-id: hcnRne
+#: src/app/[locale]/customers/alternative-partners/page.tsx
+msgid "Self-hosted "
+msgstr "Self-hosted "
+
+#. js-lingui-id: 5CWy3T
+#: src/app/[locale]/customers/act-education/page.tsx
+msgid "Self-hosted means AC&T carries no vendor risk: no pricing model that can change, no platform that can disappear, no forced migration. The system is theirs."
+msgstr "Self-hosted means AC&T carries no vendor risk: no pricing model that can change, no platform that can disappear, no forced migration. The system is theirs."
+
+#. js-lingui-id: 6QPYP7
+#: src/lib/customers/case-study-catalog.ts
+#: src/app/[locale]/customers/alternative-partners/page.tsx
+msgid "self-hosted Twenty"
+msgstr "self-hosted Twenty"
+
 #. js-lingui-id: GrBvv/
 #: src/app/[locale]/pricing/salesforce.data.ts
 #: src/app/[locale]/pricing/plan-table.data.ts
+#: src/app/[locale]/enterprise/activate/page.tsx
 msgid "Self-hosting"
 msgstr "Self-hosting"
 
@@ -1865,6 +2733,11 @@ msgstr "Standard support"
 msgid "Start automating at huge scale!"
 msgstr "Start automating at huge scale!"
 
+#. js-lingui-id: XO628f
+#: src/sections/Plans/components/Card.tsx
+msgid "Start for free"
+msgstr "Start for free"
+
 #. js-lingui-id: sBOFB0
 #: src/app/[locale]/pricing/hero.data.ts
 msgid ""
@@ -1903,6 +2776,11 @@ msgstr ""
 #: src/app/[locale]/(home)/three-cards-illustration.data.ts
 msgid "Stop settling for trade-offs."
 msgstr "Stop settling for trade-offs."
+
+#. js-lingui-id: lm4alq
+#: src/app/[locale]/customers/act-education/page.tsx
+msgid "structure"
+msgstr "structure"
 
 #. js-lingui-id: Sv4BSp
 #: src/app/[locale]/pricing/plan-table.data.ts
@@ -1960,6 +2838,11 @@ msgstr "Technical notes"
 msgid "Technology Partners"
 msgstr "Technology Partners"
 
+#. js-lingui-id: 1ZwmkP
+#: src/app/[locale]/customers/netzero/page.tsx
+msgid "template"
+msgstr "template"
+
 #. js-lingui-id: mvP/25
 #: src/sections/Footer/data.ts
 msgid "Terms and Conditions"
@@ -1980,10 +2863,50 @@ msgstr "Terms of Service for Twenty.com PBC, including use of Twenty.com, sub-do
 msgid "that "
 msgstr "that "
 
+#. js-lingui-id: FjkPYg
+#: src/app/[locale]/customers/elevate-consulting/page.tsx
+msgid "That opened the door to something more powerful. Justin built a custom front end that pulls live data from those systems into a single view, tailored to each role. When a proposal is won, what used to require four separate people manually setting up instances across four different tools now happens in a single click, drawing on data collected in Twenty across the full opportunity lifecycle. It is another shift toward higher-value work for clients."
+msgstr "That opened the door to something more powerful. Justin built a custom front end that pulls live data from those systems into a single view, tailored to each role. When a proposal is won, what used to require four separate people manually setting up instances across four different tools now happens in a single click, drawing on data collected in Twenty across the full opportunity lifecycle. It is another shift toward higher-value work for clients."
+
+#. js-lingui-id: 8S4psU
+#: src/app/[locale]/customers/9dots/page.tsx
+msgid "That works until you need to understand the business underneath. Which deals are stuck? Where are leads coming from? What is the close rate? With spreadsheets and a legacy custom CRM that could not keep up, those questions were nearly impossible to answer."
+msgstr "That works until you need to understand the business underneath. Which deals are stuck? Where are leads coming from? What is the close rate? With spreadsheets and a legacy custom CRM that could not keep up, those questions were nearly impossible to answer."
+
 #. js-lingui-id: rTqABu
 #: src/lib/website-routing/static-website-routes.ts
 msgid "The #1 open source CRM for modern teams. Modular, scalable, and built to fit your business."
 msgstr "The #1 open source CRM for modern teams. Modular, scalable, and built to fit your business."
+
+#. js-lingui-id: 2pbPQJ
+#: src/app/[locale]/customers/netzero/page.tsx
+msgid "The bet is "
+msgstr "The bet is "
+
+#. js-lingui-id: Xmr/wH
+#: src/app/[locale]/customers/9dots/page.tsx
+msgid "the business"
+msgstr "the business"
+
+#. js-lingui-id: Wie492
+#: src/app/[locale]/customers/elevate-consulting/page.tsx
+msgid "The business development team finally had the CRM they had been asking for. Adoption came naturally: their data was already there when they logged in."
+msgstr "The business development team finally had the CRM they had been asking for. Adoption came naturally: their data was already there when they logged in."
+
+#. js-lingui-id: 2kHqXc
+#: src/app/[locale]/customers/elevate-consulting/page.tsx
+msgid "The CEO had resisted bringing in a CRM for years. The business development team had no experience using one, and the licensing costs of well-known CRMs like Salesforce or HubSpot were hard to justify without any guarantee of adoption: CRMs are only as good as the maintenance of the data inside them."
+msgstr "The CEO had resisted bringing in a CRM for years. The business development team had no experience using one, and the licensing costs of well-known CRMs like Salesforce or HubSpot were hard to justify without any guarantee of adoption: CRMs are only as good as the maintenance of the data inside them."
+
+#. js-lingui-id: xT/lAF
+#: src/app/[locale]/customers/9dots/page.tsx
+msgid "The CRM as a "
+msgstr "The CRM as a "
+
+#. js-lingui-id: XlFsoH
+#: src/app/[locale]/customers/netzero/page.tsx
+msgid "The early bet on the architecture is holding, and upcoming AI features are expected to make it even more relevant."
+msgstr "The early bet on the architecture is holding, and upcoming AI features are expected to make it even more relevant."
 
 #. js-lingui-id: kCUcnD
 #: src/app/[locale]/partners/testimonials.data.ts
@@ -1994,6 +2917,21 @@ msgstr "The flexibility is just amazing. Literally, there's nothing you cannot d
 #: src/app/[locale]/(home)/testimonials.data.ts
 msgid "The flexibility is really what made the difference. Our needs evolve very fast. I discover a new need and in two clicks I can address it. That is a real advantage when you are moving quickly."
 msgstr "The flexibility is really what made the difference. Our needs evolve very fast. I discover a new need and in two clicks I can address it. That is a real advantage when you are moving quickly."
+
+#. js-lingui-id: Q5iZ9Q
+#: src/app/[locale]/customers/elevate-consulting/page.tsx
+msgid "The flexibility to wire this together, without outside help and without fighting the platform, is what made it possible for a single person to stand up and maintain a connected stack across an entire consultancy."
+msgstr "The flexibility to wire this together, without outside help and without fighting the platform, is what made it possible for a single person to stand up and maintain a connected stack across an entire consultancy."
+
+#. js-lingui-id: l0eUFC
+#: src/app/[locale]/customers/9dots/page.tsx
+msgid "The full rollout landed in July 2025. Since then, Nine Dots built a Smart Assistant on top of the system, nudging agents with tasks, reminders, and on-demand market analysis. Some agents never open Twenty directly, yet they are powered by it, outperforming peers on manual processes alone. By Q1 2026, Homeseller had recorded its best sales quarter ever."
+msgstr "The full rollout landed in July 2025. Since then, Nine Dots built a Smart Assistant on top of the system, nudging agents with tasks, reminders, and on-demand market analysis. Some agents never open Twenty directly, yet they are powered by it, outperforming peers on manual processes alone. By Q1 2026, Homeseller had recorded its best sales quarter ever."
+
+#. js-lingui-id: SiW1pC
+#: src/lib/partner-application/partner-application-modal-data.ts
+msgid "the future of CRM"
+msgstr "the future of CRM"
 
 #. js-lingui-id: Uslh7V
 #: src/app/[locale]/why-twenty/hero.data.ts
@@ -2010,20 +2948,62 @@ msgstr "The Giant Monolith"
 msgid "The In-house Burden"
 msgstr "The In-house Burden"
 
+#. js-lingui-id: ZNzKXV
+#: src/app/[locale]/customers/w3villa/page.tsx
+msgid "The key decision was not to build everything from scratch. Twenty covers the data model, permissions, authentication, and workflow engine, the parts that would have taken months to rebuild, so the team could focus on product-specific logic."
+msgstr "The key decision was not to build everything from scratch. Twenty covers the data model, permissions, authentication, and workflow engine, the parts that would have taken months to rebuild, so the team could focus on product-specific logic."
+
 #. js-lingui-id: q1kKLq
 #: src/app/[locale]/why-twenty/editorial-three.data.ts
 msgid "The opportunity"
 msgstr "The opportunity"
+
+#. js-lingui-id: ZgWQl4
+#: src/app/[locale]/customers/act-education/page.tsx
+msgid "the overhead"
+msgstr "the overhead"
 
 #. js-lingui-id: 2NJdyz
 #: src/app/[locale]/(home)/problem.data.ts
 msgid "The Problem."
 msgstr "The Problem."
 
+#. js-lingui-id: Q8D9Lf
+#: src/app/[locale]/customers/w3villa/page.tsx
+msgid "the product"
+msgstr "the product"
+
+#. js-lingui-id: 3/wAFg
+#: src/app/[locale]/customers/w3villa/page.tsx
+#: src/app/[locale]/customers/act-education/page.tsx
+#: src/app/[locale]/customers/9dots/page.tsx
+msgid "The result"
+msgstr "The result"
+
+#. js-lingui-id: nAWeyi
+#: src/app/[locale]/customers/act-education/page.tsx
+msgid "The result is a system that fits how AC&T already worked, instead of the other way around."
+msgstr "The result is a system that fits how AC&T already worked, instead of the other way around."
+
+#. js-lingui-id: DQpDNN
+#: src/app/[locale]/customers/netzero/page.tsx
+msgid "The right "
+msgstr "The right "
+
+#. js-lingui-id: omVXTg
+#: src/app/[locale]/customers/alternative-partners/page.tsx
+msgid "The self-hosted setup means Alternative Partners owns the full stack: no vendor access to their data, no dependency on a SaaS pricing model, full control over how the system evolves. The migration was fast because of AI; the result is durable because the stack is open source."
+msgstr "The self-hosted setup means Alternative Partners owns the full stack: no vendor access to their data, no dependency on a SaaS pricing model, full control over how the system evolves. The migration was fast because of AI; the result is durable because the stack is open source."
+
 #. js-lingui-id: 1tN3qf
 #: src/app/[locale]/why-twenty/editorial-one.data.ts
 msgid "The shift"
 msgstr "The shift"
+
+#. js-lingui-id: AnGOwN
+#: src/app/[locale]/customers/elevate-consulting/page.tsx
+msgid "The situation"
+msgstr "The situation"
 
 #. js-lingui-id: u0uFxg
 #: src/app/[locale]/(home)/testimonials.data.ts
@@ -2034,6 +3014,22 @@ msgstr "They are the real sales"
 #: src/app/[locale]/pricing/salesforce.data.ts
 msgid "They call it customer loyalty. We call it a very affectionate cage."
 msgstr "They call it customer loyalty. We call it a very affectionate cage."
+
+#. js-lingui-id: RhmZMe
+#: src/app/[locale]/customers/act-education/page.tsx
+msgid "They did not just replace a tool. They took back ownership of how their business runs."
+msgstr "They did not just replace a tool. They took back ownership of how their business runs."
+
+#. js-lingui-id: 5YzqyT
+#: src/app/[locale]/customers/act-education/page.tsx
+msgid "They evaluated Salesforce, Zoho, Pipedrive, and SuiteCRM. Each came with the same tradeoffs: too expensive, too rigid, or too generic, and none fixed the underlying problem. They were still renting a structure they did not control."
+msgstr "They evaluated Salesforce, Zoho, Pipedrive, and SuiteCRM. Each came with the same tradeoffs: too expensive, too rigid, or too generic, and none fixed the underlying problem. They were still renting a structure they did not control."
+
+#. js-lingui-id: 5eFktS
+#: src/lib/customers/case-study-catalog.ts
+#: src/app/[locale]/customers/elevate-consulting/page.tsx
+msgid "Tool integration"
+msgstr "Tool integration"
 
 #. js-lingui-id: xv7HSr
 #: src/app/[locale]/pricing/salesforce.data.ts
@@ -2047,6 +3043,7 @@ msgstr "Track amount and close date"
 
 #. js-lingui-id: POzmFl
 #: src/sections/Menu/data.ts
+#: src/lib/releases/get-latest-release-preview.ts
 msgid "Track every release with changelogs, highlights and demos of the newest features."
 msgstr "Track every release with changelogs, highlights and demos of the newest features."
 
@@ -2086,6 +3083,21 @@ msgstr "Twenty | #1 open source CRM"
 msgid "Twenty Apps opens the door to building products, not just implementations. For example, we're developing a WhatsApp Business integration that any Twenty’s client could get. That's a recurring revenue stream we wouldn't have if we were just configuring someone else's platform."
 msgstr "Twenty Apps opens the door to building products, not just implementations. For example, we're developing a WhatsApp Business integration that any Twenty’s client could get. That's a recurring revenue stream we wouldn't have if we were just configuring someone else's platform."
 
+#. js-lingui-id: weyjt8
+#: src/app/[locale]/customers/elevate-consulting/page.tsx
+msgid "Twenty as the "
+msgstr "Twenty as the "
+
+#. js-lingui-id: mB1+zI
+#: src/lib/customers/case-study-catalog.ts
+msgid "Twenty as the API backbone "
+msgstr "Twenty as the API backbone "
+
+#. js-lingui-id: zj0CA+
+#: src/app/[locale]/customers/elevate-consulting/page.tsx
+msgid "Twenty as the API backbone of a go-to-market stack | Elevate Consulting"
+msgstr "Twenty as the API backbone of a go-to-market stack | Elevate Consulting"
+
 #. js-lingui-id: 0qyMhk
 #: src/app/[locale]/(home)/hero.data.ts
 msgid "Twenty gives technical teams the building blocks for a custom CRM that meets complex business needs and quickly adapts as the business evolves."
@@ -2095,6 +3107,17 @@ msgstr "Twenty gives technical teams the building blocks for a custom CRM that m
 #: src/app/[locale]/partners/testimonials.data.ts
 msgid "Twenty gives you the kind of flexibility that actually changes what you can offer your clients. The dev experience is clean, the APIs are open, and when something needs to be customized, you can just do it. There's no fighting the platform."
 msgstr "Twenty gives you the kind of flexibility that actually changes what you can offer your clients. The dev experience is clean, the APIs are open, and when something needs to be customized, you can just do it. There's no fighting the platform."
+
+#. js-lingui-id: x/I85y
+#: src/app/[locale]/customers/elevate-consulting/page.tsx
+msgid "Twenty is not only where CRM data lives. It is the API backbone that makes the rest of the stack possible."
+msgstr "Twenty is not only where CRM data lives. It is the API backbone that makes the rest of the stack possible."
+
+#. js-lingui-id: K+zzSQ
+#: src/lib/customers/case-study-catalog.ts
+#: src/app/[locale]/customers/9dots/page.tsx
+msgid "Twenty lets us build a CRM around the business and not the business around the CRM."
+msgstr "Twenty lets us build a CRM around the business and not the business around the CRM."
 
 #. js-lingui-id: AxT+g4
 #: src/app/[locale]/(home)/three-cards-feature.data.ts
@@ -2108,6 +3131,7 @@ msgstr "Twenty team support"
 
 #. js-lingui-id: WN9ufk
 #: src/app/[locale]/product/signoff.data.ts
+#: src/app/[locale]/customers/_components/CustomersCaseStudySignoff.tsx
 msgid "Twenty?"
 msgstr "Twenty?"
 
@@ -2202,15 +3226,42 @@ msgstr "VP of Engineering"
 msgid "VP of Engineering at W3villa Technologies"
 msgstr "VP of Engineering at W3villa Technologies"
 
+#. js-lingui-id: w2INie
+#: src/lib/customers/case-study-catalog.ts
+#: src/app/[locale]/customers/w3villa/page.tsx
+msgid "VP of Engineering, W3villa Technologies"
+msgstr "VP of Engineering, W3villa Technologies"
+
+#. js-lingui-id: s0tU5h
+#: src/app/[locale]/customers/w3villa/page.tsx
+msgid "W3Grads"
+msgstr "W3Grads"
+
+#. js-lingui-id: R8BueT
+#: src/app/[locale]/customers/w3villa/page.tsx
+msgid "W3villa built W3Grads (w3grads.com), an AI-powered mock interview platform for universities and training institutes, using Twenty as its operational backbone."
+msgstr "W3villa built W3Grads (w3grads.com), an AI-powered mock interview platform for universities and training institutes, using Twenty as its operational backbone."
+
 #. js-lingui-id: 7hHsoV
 #: src/app/[locale]/(home)/helped.data.ts
 msgid "W3villa built W3Grads for AI mock interviews at scale, with Twenty as the operational backbone."
 msgstr "W3villa built W3Grads for AI mock interviews at scale, with Twenty as the operational backbone."
 
+#. js-lingui-id: QBOUnd
+#: src/lib/customers/case-study-catalog.ts
+#: src/app/[locale]/customers/w3villa/page.tsx
+msgid "W3villa shipped W3Grads on Twenty for AI interviews, scoring, and institution-scale workflows without rebuilding CRM plumbing."
+msgstr "W3villa shipped W3Grads on Twenty for AI interviews, scoring, and institution-scale workflows without rebuilding CRM plumbing."
+
 #. js-lingui-id: 7q5Vjn
 #: src/app/[locale]/(home)/three-cards-illustration.data.ts
 msgid "W3villa Technologies"
 msgstr "W3villa Technologies"
+
+#. js-lingui-id: ZabLEt
+#: src/app/[locale]/customers/w3villa/page.tsx
+msgid "W3villa Technologies set out to solve it properly, not with a workaround, but with a product."
+msgstr "W3villa Technologies set out to solve it properly, not with a workaround, but with a product."
 
 #. js-lingui-id: 3v2ipf
 #: src/app/[locale]/(home)/three-cards-illustration.data.ts
@@ -2237,20 +3288,80 @@ msgstr "Webhooks"
 msgid "Webhooks (Change Data Capture)"
 msgstr "Webhooks (Change Data Capture)"
 
+#. js-lingui-id: Z34FQq
+#: src/app/[locale]/customers/netzero/page.tsx
+msgid "What convinced Olivier was the flexibility of the platform and where it was headed. Even when initial needs were basic record-keeping, he still needed a custom data model with granular permissions to manage the wide range of NetZero activities. He also needed a system that could adapt quickly to a fast-iteration company."
+msgstr "What convinced Olivier was the flexibility of the platform and where it was headed. Even when initial needs were basic record-keeping, he still needed a custom data model with granular permissions to manage the wide range of NetZero activities. He also needed a system that could adapt quickly to a fast-iteration company."
+
 #. js-lingui-id: phiBjc
 #: src/sections/Faq/data.ts
 msgid "What does Twenty cost?"
 msgstr "What does Twenty cost?"
+
+#. js-lingui-id: WVQaGB
+#: src/app/[locale]/customers/netzero/page.tsx
+msgid "What is coming in April 2026 is what he has been waiting for: AI-assisted workflow creation, describing what he needs and iterating from there instead of building complex logic from scratch. For a founder who runs the CRM himself, that changes what is realistically possible."
+msgstr "What is coming in April 2026 is what he has been waiting for: AI-assisted workflow creation, describing what he needs and iterating from there instead of building complex logic from scratch. For a founder who runs the CRM himself, that changes what is realistically possible."
+
+#. js-lingui-id: iOAq7n
+#: src/app/[locale]/customers/elevate-consulting/page.tsx
+msgid "What is next"
+msgstr "What is next"
+
+#. js-lingui-id: tWd6MT
+#: src/app/[locale]/customers/netzero/page.tsx
+msgid "What is planned is significant. NetZero has a data lake, online forms, and multiple internal systems that he wants to connect to Twenty. The pipes are there; the next step is automations that tie them together."
+msgstr "What is planned is significant. NetZero has a data lake, online forms, and multiple internal systems that he wants to connect to Twenty. The pipes are there; the next step is automations that tie them together."
 
 #. js-lingui-id: aYRqmz
 #: src/app/[locale]/why-twenty/editorial-four.data.ts
 msgid "What this means"
 msgstr "What this means"
 
+#. js-lingui-id: 1kfjxX
+#: src/app/[locale]/customers/act-education/page.tsx
+msgid "Whatever came next had to be something they could own."
+msgstr "Whatever came next had to be something they could own."
+
+#. js-lingui-id: cs6VpJ
+#: src/app/[locale]/customers/w3villa/page.tsx
+msgid "When a student registers via QR at a campus event, the system assigns a plan, generates an interview session, and sends a link. The AI conducts the interview, scores the candidate, and classifies the result. Faculty see where each student stands without manually reviewing every session. Building and iterating on these workflows was faster with AI in the loop."
+msgstr "When a student registers via QR at a campus event, the system assigns a plan, generates an interview session, and sends a link. The AI conducts the interview, scores the candidate, and classifies the result. Faculty see where each student stands without manually reviewing every session. Building and iterating on these workflows was faster with AI in the loop."
+
+#. js-lingui-id: 58j0o9
+#: src/app/[locale]/customers/9dots/page.tsx
+msgid "When the channel is "
+msgstr "When the channel is "
+
+#. js-lingui-id: poWZoQ
+#: src/app/[locale]/customers/act-education/page.tsx
+msgid "When the vendor "
+msgstr "When the vendor "
+
+#. js-lingui-id: /W3Rn1
+#: src/lib/customers/case-study-catalog.ts
+msgid "When your CRM "
+msgstr "When your CRM "
+
+#. js-lingui-id: bxuGRF
+#: src/app/[locale]/customers/w3villa/page.tsx
+msgid "When your CRM is "
+msgstr "When your CRM is "
+
+#. js-lingui-id: Svuneu
+#: src/app/[locale]/customers/w3villa/page.tsx
+msgid "When your CRM is the product: W3Grads on Twenty | W3villa Technologies"
+msgstr "When your CRM is the product: W3Grads on Twenty | W3villa Technologies"
+
 #. js-lingui-id: KRKrw8
 #: src/app/[locale]/partners/three-cards-illustration.data.ts
 msgid "Which partner program is right for you?"
 msgstr "Which partner program is right for you?"
+
+#. js-lingui-id: bGN8u+
+#: src/app/[locale]/customers/netzero/page.tsx
+msgid "While NetZero still runs a second CRM in parallel for WhatsApp-heavy operations with farmers in Brazil, they expect to migrate all of it to Twenty as features and the ecosystem grow. Already, their structured, multinational pipeline is powered by Twenty."
+msgstr "While NetZero still runs a second CRM in parallel for WhatsApp-heavy operations with farmers in Brazil, they expect to migrate all of it to Twenty as features and the ecosystem grow. Already, their structured, multinational pipeline is powered by Twenty."
 
 #. js-lingui-id: DJlSwA
 #: src/sections/Menu/data.ts
@@ -2273,6 +3384,11 @@ msgstr "Why Twenty | Twenty"
 msgid "with "
 msgstr "with "
 
+#. js-lingui-id: OKVlnc
+#: src/app/[locale]/customers/netzero/page.tsx
+msgid "With Twenty, when a new need appears, he can address it himself: no developer required, no support ticket."
+msgstr "With Twenty, when a new need appears, he can address it himself: no developer required, no support ticket."
+
 #. js-lingui-id: JRUWoH
 #: src/app/[locale]/partners/signoff.data.ts
 msgid "with Twenty?"
@@ -2282,6 +3398,11 @@ msgstr "with Twenty?"
 #: src/app/[locale]/pricing/plan-table.data.ts
 msgid "Workflows"
 msgstr "Workflows"
+
+#. js-lingui-id: CyxLvq
+#: src/app/[locale]/customers/elevate-consulting/page.tsx
+msgid "Workflows that "
+msgstr "Workflows that "
 
 #. js-lingui-id: pmUArF
 #: src/app/[locale]/pricing/plan-table.data.ts
@@ -2294,6 +3415,7 @@ msgid "Yearly"
 msgstr "Yearly"
 
 #. js-lingui-id: l75CjT
+#: src/sections/PlanTable/components/Content.tsx
 #: src/app/[locale]/pricing/plan-table.data.ts
 #: src/app/[locale]/pricing/plan-table.data.ts
 #: src/app/[locale]/pricing/plan-table.data.ts
@@ -2364,7 +3486,38 @@ msgstr "Yes. Twenty is the #1 open source CRM on GitHub. You can self-host to fu
 msgid "You don't buy your deployment pipeline off the shelf. You don't rent your data warehouse from a vendor who decides the schema. You build it, you own it, you iterate on it every week. CRM is going the same way. The teams that treat it as infrastructure they own will compound an advantage every quarter."
 msgstr "You don't buy your deployment pipeline off the shelf. You don't rent your data warehouse from a vendor who decides the schema. You build it, you own it, you iterate on it every week. CRM is going the same way. The teams that treat it as infrastructure they own will compound an advantage every quarter."
 
+#. js-lingui-id: SfJVcK
+#: src/app/[locale]/enterprise/activate/page.tsx
+msgid "Your checkout is complete. Follow the steps below to copy your license key into your Twenty instance."
+msgstr "Your checkout is complete. Follow the steps below to copy your license key into your Twenty instance."
+
+#. js-lingui-id: krHgj1
+#: src/app/[locale]/enterprise/activate/EnterpriseActivateClient.tsx
+msgid "Your enterprise key"
+msgstr "Your enterprise key"
+
+#. js-lingui-id: +dxjCu
+#: src/app/[locale]/enterprise/activate/EnterpriseActivateClient.tsx
+msgid "Your enterprise license has been activated successfully."
+msgstr "Your enterprise license has been activated successfully."
+
 #. js-lingui-id: 9Apzz7
 #: src/app/[locale]/customers/page.tsx
 msgid "your own story?"
 msgstr "your own story?"
+
+#. js-lingui-id: wHjFOw
+#: src/lib/customers/case-study-catalog.ts
+#: src/app/[locale]/customers/w3villa/page.tsx
+msgid "Zero"
+msgstr "Zero"
+
+#. js-lingui-id: xlFvlS
+#: src/app/[locale]/customers/w3villa/page.tsx
+msgid "Zero manual work"
+msgstr "Zero manual work"
+
+#. js-lingui-id: ZvEoMq
+#: src/app/[locale]/customers/w3villa/page.tsx
+msgid "Zero manual work at the core. Full automation. Built on Twenty."
+msgstr "Zero manual work at the core. Full automation. Built on Twenty."

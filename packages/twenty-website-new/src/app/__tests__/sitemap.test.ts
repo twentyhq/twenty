@@ -9,8 +9,9 @@ describe('sitemap', () => {
 
     expect(pathnames).toContain('/');
     expect(pathnames).toContain('/product');
+    expect(pathnames).toContain('/fr-FR/product');
     expect(pathnames).toContain('/customers/9dots');
-    expect(pathnames).not.toContain('/fr-FR/product');
+    expect(pathnames).not.toContain('/de-DE/product');
     expect(pathnames).not.toContain('/halftone');
     expect(pathnames).not.toContain('/enterprise/activate');
   });
@@ -22,8 +23,9 @@ describe('sitemap', () => {
 
     expect(productEntry?.alternates?.languages).toMatchObject({
       en: expect.stringMatching(/\/product$/),
+      'fr-FR': expect.stringMatching(/\/fr-FR\/product$/),
       'x-default': expect.stringMatching(/\/product$/),
     });
-    expect(productEntry?.alternates?.languages).not.toHaveProperty('fr-FR');
+    expect(productEntry?.alternates?.languages).not.toHaveProperty('de-DE');
   });
 });

@@ -2,7 +2,8 @@
 
 import { LinkButton } from '@/design-system/components';
 import { ArrowRightUpIcon, INFORMATIVE_ICONS, SOCIAL_ICONS } from '@/icons';
-import { LocalizedText } from '@/lib/i18n/LocalizedText';
+import { MessageDescriptorTrans } from '@/lib/i18n/MessageDescriptorTrans';
+import { renderMessageDescriptor } from '@/lib/i18n/render-message-descriptor';
 import type {
   MenuNavItemType,
   MenuScheme,
@@ -301,7 +302,7 @@ function NavGroup({ item, pathname, scheme }: NavGroupProps) {
         data-active={hasActiveChild || undefined}
         onClick={() => setIsOpen((prev) => !prev)}
       >
-        <LocalizedText text={item.label} />
+        <MessageDescriptorTrans descriptor={item.label} />
         <NavGroupChevron aria-hidden>
           <svg
             width="12"
@@ -354,7 +355,7 @@ function NavGroup({ item, pathname, scheme }: NavGroupProps) {
                   )}
                 </NavChildIcon>
                 <NavChildLabel>
-                  <LocalizedText text={child.label} />
+                  <MessageDescriptorTrans descriptor={child.label} />
                 </NavChildLabel>
               </Drawer.Close>
             );
@@ -409,7 +410,7 @@ export function MenuDrawer({ navItems, scheme, socialLinks }: MenuDrawerProps) {
                       />
                     }
                   >
-                    <LocalizedText text={item.label} />
+                    <MessageDescriptorTrans descriptor={item.label} />
                   </Drawer.Close>
                 ) : null}
                 {index < topLevelItems.length - 1 && (
@@ -430,7 +431,7 @@ export function MenuDrawer({ navItems, scheme, socialLinks }: MenuDrawerProps) {
             <LinkButton
               color={buttonColor}
               href="https://app.twenty.com/welcome"
-              label={msg`Log in`}
+              label={renderMessageDescriptor(msg`Log in`)}
               type="anchor"
               variant="outlined"
             />
@@ -460,7 +461,7 @@ export function MenuDrawer({ navItems, scheme, socialLinks }: MenuDrawerProps) {
                         fillColor={iconFillColor}
                         aria-hidden="true"
                       />
-                      {item.label ? <LocalizedText text={item.label} /> : null}
+                      {item.label ?? null}
                       {item.label && (
                         <ArrowRightUpIcon
                           size={8}

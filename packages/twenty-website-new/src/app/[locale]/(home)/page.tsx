@@ -1,6 +1,6 @@
 import { msg } from '@lingui/core/macro';
 import { HELPED_DATA } from '@/app/[locale]/(home)/helped.data';
-import { HERO_DATA } from '@/app/[locale]/(home)/hero.data';
+import { HERO_COPY, HERO_DATA } from '@/app/[locale]/(home)/hero.data';
 import { HOME_STEPPER_DATA } from '@/app/[locale]/(home)/home-stepper.data';
 import { PROBLEM_DATA } from '@/app/[locale]/(home)/problem.data';
 import { TESTIMONIALS_DATA } from '@/app/[locale]/(home)/testimonials.data';
@@ -12,6 +12,7 @@ import { MENU_DATA } from '@/sections/Menu/data';
 import { TRUSTED_BY_DATA } from '@/sections/TrustedBy/data';
 import { Body, Eyebrow, Heading, LinkButton } from '@/design-system/components';
 import { Pages } from '@/lib/pages';
+import { renderMessageDescriptor } from '@/lib/i18n/render-message-descriptor';
 import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';
 import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels';
 import { Faq } from '@/sections/Faq/components';
@@ -117,14 +118,25 @@ export default async function HomePage() {
       <Hero.Root backgroundColor={HOME_TOP_BACKGROUND_COLOR} showHomeBackground>
         <HeroIntroGroup data-halftone-exclude>
           <HeroHeadingGroup>
-            <Hero.Heading page={Pages.Home} segments={HERO_DATA.heading} />
-            <Hero.Body page={Pages.Home} body={HERO_DATA.body} size="sm" />
+            <Hero.Heading
+              page={Pages.Home}
+              segments={[
+                { fontFamily: 'serif', text: HERO_COPY.heading.descriptor },
+                { fontFamily: 'serif', text: HERO_COPY.heading.qualifier },
+                { fontFamily: 'sans', text: HERO_COPY.heading.subject },
+              ]}
+            />
+            <Hero.Body
+              page={Pages.Home}
+              body={{ text: HERO_COPY.body }}
+              size="sm"
+            />
           </HeroHeadingGroup>
           <Hero.Cta>
             <LinkButton
               color="secondary"
               href="https://app.twenty.com/welcome"
-              label={msg`Get started`}
+              label={renderMessageDescriptor(msg`Get started`)}
               type="anchor"
               variant="contained"
             />
@@ -150,6 +162,7 @@ export default async function HomePage() {
           <Eyebrow
             colorScheme="primary"
             heading={PROBLEM_DATA.eyebrow.heading}
+            renderText={renderMessageDescriptor}
           />
           <Problem.Heading segments={PROBLEM_DATA.heading} />
           <Problem.Points points={PROBLEM_DATA.points} />
@@ -163,9 +176,11 @@ export default async function HomePage() {
               <Eyebrow
                 colorScheme="primary"
                 heading={THREE_CARDS_ILLUSTRATION_DATA.eyebrow.heading}
+                renderText={renderMessageDescriptor}
               />
               <Heading
                 className={threeCardsIllustrationHeadingClassName}
+                renderText={renderMessageDescriptor}
                 segments={THREE_CARDS_ILLUSTRATION_DATA.heading}
                 size="lg"
                 weight="light"
@@ -174,6 +189,7 @@ export default async function HomePage() {
             <Body
               body={THREE_CARDS_ILLUSTRATION_DATA.body}
               className={threeCardsIllustrationBodyClassName}
+              renderText={renderMessageDescriptor}
               size="sm"
             />
           </ThreeCardsIllustrationIntroContent>
@@ -190,8 +206,10 @@ export default async function HomePage() {
           <Eyebrow
             colorScheme="primary"
             heading={THREE_CARDS_FEATURE_DATA.eyebrow.heading}
+            renderText={renderMessageDescriptor}
           />
           <Heading
+            renderText={renderMessageDescriptor}
             segments={THREE_CARDS_FEATURE_DATA.heading}
             size="lg"
             weight="light"
@@ -220,13 +238,17 @@ export default async function HomePage() {
 
       <Faq.Root>
         <Faq.Intro>
-          <Eyebrow colorScheme="secondary" heading={FAQ_DATA.eyebrow.heading} />
+          <Eyebrow
+            colorScheme="secondary"
+            heading={FAQ_DATA.eyebrow.heading}
+            renderText={renderMessageDescriptor}
+          />
           <Faq.Heading segments={FAQ_DATA.heading} />
           <Faq.Cta>
             <LinkButton
               color="primary"
               href="https://app.twenty.com/welcome"
-              label={msg`Get started`}
+              label={renderMessageDescriptor(msg`Get started`)}
               type="anchor"
               variant="contained"
             />

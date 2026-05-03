@@ -1,6 +1,6 @@
 import type { MetadataRoute } from 'next';
 
-import type { LocalizableText } from '@/lib/i18n/localizable-text';
+import type { MessageDescriptor } from '@lingui/core';
 
 export type WebsiteRouteId =
   | 'home'
@@ -18,11 +18,11 @@ export type WebsiteRouteId =
 
 export type WebsiteRoute = {
   changeFrequency: MetadataRoute.Sitemap[number]['changeFrequency'];
-  description: LocalizableText;
+  description: MessageDescriptor;
   id: WebsiteRouteId;
   indexed: boolean;
   path: string;
   priority: number;
   robotsDisallow?: boolean;
-  title: LocalizableText;
+  title: MessageDescriptor;
 };

@@ -1,8 +1,8 @@
 'use client';
 
-import type { BodyType } from '@/design-system/components/Body';
-import type { EyebrowType } from '@/design-system/components/Eyebrow';
-import type { HeadingType } from '@/design-system/components/Heading';
+import type { MessageBody } from '@/lib/i18n/message-body';
+import type { MessageEyebrow } from '@/lib/i18n/message-eyebrow';
+import type { MessageHeadingSegment } from '@/lib/i18n/message-heading-segment';
 import { ScrollProgressEffect } from '@/lib/scroll';
 import { useStepperMdUp } from '@/lib/stepper';
 import type { ProductStepperStepType } from '@/sections/ProductStepper/types/ProductStepperStep';
@@ -12,9 +12,9 @@ import { Root } from './Root';
 import { Visual } from './Visual';
 
 type FlowProps = {
-  body: BodyType;
-  eyebrow: EyebrowType;
-  heading: HeadingType[];
+  body: MessageBody;
+  eyebrow: MessageEyebrow;
+  heading: MessageHeadingSegment[];
   steps: ProductStepperStepType[];
 };
 

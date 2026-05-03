@@ -2,6 +2,8 @@ import {
   Heading as BaseHeading,
   type HeadingProps,
 } from '@/design-system/components/Heading';
+import type { MessageHeadingSegment } from '@/lib/i18n/message-heading-segment';
+import { renderMessageDescriptor } from '@/lib/i18n/render-message-descriptor';
 import { theme } from '@/theme';
 import { css } from '@linaria/core';
 
@@ -15,17 +17,19 @@ const problemHeadingClassName = css`
 
 export function Heading({
   as = 'h2',
+  className,
+  segments,
   size = 'md',
   weight = 'light',
-  ...props
-}: HeadingProps) {
+}: Omit<HeadingProps<MessageHeadingSegment['text']>, 'renderText'>) {
   return (
     <BaseHeading
-      className={problemHeadingClassName}
       as={as}
+      className={[problemHeadingClassName, className].filter(Boolean).join(' ')}
+      renderText={renderMessageDescriptor}
+      segments={segments}
       size={size}
       weight={weight}
-      {...props}
     />
   );
 }

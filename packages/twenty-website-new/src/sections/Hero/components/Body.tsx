@@ -2,6 +2,8 @@ import {
   Body as BaseBody,
   type BodyProps,
 } from '@/design-system/components/Body';
+import type { MessageBody } from '@/lib/i18n/message-body';
+import { renderMessageDescriptor } from '@/lib/i18n/render-message-descriptor';
 import type { Page } from '@/lib/pages';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
@@ -62,17 +64,26 @@ const StyledBody = styled.div`
 
 export type HeroBodyColorScheme = 'primary' | 'secondary';
 
-export type HeroBodyProps = BodyProps & {
+export type HeroBodyProps = Omit<
+  BodyProps<MessageBody['text']>,
+  'renderText'
+> & {
   page: Page;
   colorScheme?: HeroBodyColorScheme;
   preserveLineBreaks?: boolean;
 };
 
 export function Body({
+  as,
+  body,
+  className,
   page,
   colorScheme,
+  family,
   preserveLineBreaks = false,
-  ...bodyProps
+  size,
+  variant,
+  weight,
 }: HeroBodyProps) {
   return (
     <StyledBody
@@ -80,7 +91,16 @@ export function Body({
       data-page={page}
       data-preserve-line-breaks={preserveLineBreaks}
     >
-      <BaseBody {...bodyProps} />
+      <BaseBody
+        as={as}
+        body={body}
+        className={className}
+        family={family}
+        renderText={renderMessageDescriptor}
+        size={size}
+        variant={variant}
+        weight={weight}
+      />
     </StyledBody>
   );
 }

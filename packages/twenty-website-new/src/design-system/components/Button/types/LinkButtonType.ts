@@ -1,3 +1,3 @@
-import type { LocalizableText } from '../../LocalizedText';
+import type { ReactNode } from 'react';
 
-export type LinkButtonType = { href: string; label: LocalizableText };
+export type LinkButtonType = { href: string; label: ReactNode };

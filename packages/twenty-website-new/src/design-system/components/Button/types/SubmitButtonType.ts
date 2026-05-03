@@ -1,3 +1,3 @@
-import type { LocalizableText } from '../../LocalizedText';
+import type { ReactNode } from 'react';
 
-export type SubmitButtonType = { label: LocalizableText };
+export type SubmitButtonType = { label: ReactNode };

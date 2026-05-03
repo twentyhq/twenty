@@ -1,6 +1,7 @@
 'use client';
 
 import { Eyebrow, GuideCrosshair, Heading } from '@/design-system/components';
+import { renderMessageDescriptor } from '@/lib/i18n/render-message-descriptor';
 import { HelpedSceneScrollLayoutEffect } from '@/sections/Helped/effect-components/HelpedSceneScrollLayoutEffect';
 import type { HelpedDataType } from '@/sections/Helped/types/HelpedData';
 import { preloadHelpedVisualGeometries } from '@/sections/Helped/visuals/helped-visual-models';
@@ -120,11 +121,16 @@ export function Scene({ data }: SceneProps) {
         />
         <HeadlineBlock>
           <EyebrowExitTarget data-helped-exit-target>
-            <Eyebrow colorScheme="primary" heading={data.eyebrow.heading} />
+            <Eyebrow
+              colorScheme="primary"
+              heading={data.eyebrow.heading}
+              renderText={renderMessageDescriptor}
+            />
           </EyebrowExitTarget>
           <Heading
             as="h2"
             className={helpedHeadingClassName}
+            renderText={renderMessageDescriptor}
             segments={data.heading}
             size="xl"
             weight="light"

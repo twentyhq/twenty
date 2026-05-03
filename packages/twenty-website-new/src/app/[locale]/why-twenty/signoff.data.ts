@@ -1,12 +1,9 @@
 import { msg } from '@lingui/core/macro';
-import type { SignoffDataType } from '@/sections/Signoff/types';
 
-export const SIGNOFF_DATA: SignoffDataType = {
-  heading: [
-    { text: msg`Build a CRM your competitors `, fontFamily: 'serif' },
-    { text: msg`can't buy.`, fontFamily: 'sans' },
-  ],
-  body: {
-    text: msg`Open-source, AI-ready, and yours to shape.`,
+export const SIGNOFF_COPY = {
+  body: msg`Open-source, AI-ready, and yours to shape.`,
+  heading: {
+    descriptor: msg`Build a CRM your competitors `,
+    subject: msg`can't buy.`,
   },
 };

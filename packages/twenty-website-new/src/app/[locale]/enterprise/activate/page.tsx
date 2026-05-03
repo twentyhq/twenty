@@ -1,7 +1,9 @@
+import { msg } from '@lingui/core/macro';
 import { MENU_DATA } from '@/sections/Menu/data';
 import { EnterpriseActivateClient } from '@/app/[locale]/enterprise/activate/EnterpriseActivateClient';
 import { Body, Container, Eyebrow } from '@/design-system/components';
-import type { HeadingType } from '@/design-system/components/Heading';
+import type { MessageHeadingSegment } from '@/lib/i18n/message-heading-segment';
+import { renderMessageDescriptor } from '@/lib/i18n/render-message-descriptor';
 import { Pages } from '@/lib/pages';
 import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';
 import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels';
@@ -14,13 +16,13 @@ import { styled } from '@linaria/react';
 
 export const generateMetadata = buildRouteMetadata('enterpriseActivate');
 
-const ENTERPRISE_ACTIVATE_HEADING: HeadingType[] = [
-  { text: 'Enterprise ', fontFamily: 'serif' },
-  { text: 'activation', fontFamily: 'sans' },
+const ENTERPRISE_ACTIVATE_HEADING: MessageHeadingSegment[] = [
+  { text: msg`Enterprise `, fontFamily: 'serif' },
+  { text: msg`activation`, fontFamily: 'sans' },
 ];
 
 const ENTERPRISE_ACTIVATE_BODY = {
-  text: 'Your checkout is complete. Follow the steps below to copy your license key into your Twenty instance.',
+  text: msg`Your checkout is complete. Follow the steps below to copy your license key into your Twenty instance.`,
 };
 
 const ActivatePageContent = styled.section`
@@ -41,7 +43,8 @@ const ActivateContentInner = styled.div`
 function EnterpriseActivateFallback() {
   return (
     <Body
-      body={{ text: 'Loading activation…' }}
+      body={{ text: msg`Loading activation…` }}
+      renderText={renderMessageDescriptor}
       size="sm"
       variant="body-paragraph"
     />
@@ -72,7 +75,8 @@ export default async function EnterpriseActivatePage() {
       >
         <Eyebrow
           colorScheme="primary"
-          heading={{ text: 'Self-hosting', fontFamily: 'sans' }}
+          heading={{ text: msg`Self-hosting`, fontFamily: 'sans' }}
+          renderText={renderMessageDescriptor}
         />
         <Hero.Heading
           page={Pages.Pricing}

@@ -1,6 +1,6 @@
 import { Container } from '@/design-system/components';
-import { LocalizedText } from '@/lib/i18n/LocalizedText';
-import type { LocalizableText } from '@/lib/i18n/localizable-text';
+import { MessageDescriptorTrans } from '@/lib/i18n/MessageDescriptorTrans';
+import type { MessageDescriptor } from '@lingui/core';
 import { theme } from '@/theme';
 import { msg } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
@@ -114,12 +114,12 @@ const Label = styled.span`
 `;
 
 type HighlightsProps = {
-  industry?: LocalizableText;
-  kpis?: { value: LocalizableText; label: LocalizableText }[];
+  industry?: MessageDescriptor;
+  kpis?: { value: MessageDescriptor; label: MessageDescriptor }[];
 };
 
 export function Highlights({ industry, kpis }: HighlightsProps) {
-  const cells: { value: LocalizableText; label: LocalizableText }[] = [];
+  const cells: { value: MessageDescriptor; label: MessageDescriptor }[] = [];
   if (industry) {
     cells.push({ value: industry, label: msg`Industry` });
   }
@@ -141,10 +141,10 @@ export function Highlights({ industry, kpis }: HighlightsProps) {
             {cells.map((cell, index) => (
               <Cell count={cells.length} index={index} key={index}>
                 <Value>
-                  <LocalizedText text={cell.value} />
+                  <MessageDescriptorTrans descriptor={cell.value} />
                 </Value>
                 <Label>
-                  <LocalizedText text={cell.label} />
+                  <MessageDescriptorTrans descriptor={cell.label} />
                 </Label>
               </Cell>
             ))}

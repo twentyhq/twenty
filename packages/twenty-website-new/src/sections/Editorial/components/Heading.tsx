@@ -1,5 +1,6 @@
 import { Heading as BaseHeading } from '@/design-system/components';
-import type { HeadingType } from '@/design-system/components/Heading';
+import type { MessageHeadingSegment } from '@/lib/i18n/message-heading-segment';
+import { renderMessageDescriptor } from '@/lib/i18n/render-message-descriptor';
 import { styled } from '@linaria/react';
 
 const HeadingWrap = styled.div`
@@ -9,13 +10,19 @@ const HeadingWrap = styled.div`
 `;
 
 type EditorialHeadingProps = {
-  segments: HeadingType | HeadingType[];
+  segments: MessageHeadingSegment | MessageHeadingSegment[];
 };
 
 export function Heading({ segments }: EditorialHeadingProps) {
   return (
     <HeadingWrap>
-      <BaseHeading as="h2" segments={segments} size="lg" weight="light" />
+      <BaseHeading
+        as="h2"
+        renderText={renderMessageDescriptor}
+        segments={segments}
+        size="lg"
+        weight="light"
+      />
     </HeadingWrap>
   );
 }

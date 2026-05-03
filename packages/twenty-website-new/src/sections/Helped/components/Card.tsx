@@ -1,10 +1,12 @@
 import { Body, Heading, LinkButton } from '@/design-system/components';
 import { CLIENT_ICONS } from '@/icons';
+import { renderMessageDescriptor } from '@/lib/i18n/render-message-descriptor';
 import { WebGlMount } from '@/lib/visual-runtime';
 import { HelpedCardShape } from '@/sections/Helped/components/HelpedCardShape';
 import type { HeadingCardType } from '@/sections/Helped/types/HeadingCard';
 import { HELPED_VISUALS } from '@/sections/Helped/visuals';
 import { theme } from '@/theme';
+import { msg } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
 
 const CardRoot = styled.article`
@@ -98,17 +100,28 @@ export function Card({ card }: CardProps) {
       <Rule aria-hidden="true" />
       <CopyBlock>
         <CardTitleWrap>
-          <Heading as="h3" segments={card.heading} size="xs" weight="medium" />
+          <Heading
+            as="h3"
+            renderText={renderMessageDescriptor}
+            segments={card.heading}
+            size="xs"
+            weight="medium"
+          />
         </CardTitleWrap>
         <CardBodyWrap>
-          <Body as="p" body={card.body} size="sm" />
+          <Body
+            as="p"
+            body={card.body}
+            renderText={renderMessageDescriptor}
+            size="sm"
+          />
         </CardBodyWrap>
       </CopyBlock>
       <CtaRow>
         <LinkButton
           color="primary"
           href={card.href}
-          label="Read the case"
+          label={renderMessageDescriptor(msg`Read the case`)}
           type="link"
           variant="outlined"
         />

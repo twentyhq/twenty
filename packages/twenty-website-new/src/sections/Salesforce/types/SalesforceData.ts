@@ -1,20 +1,20 @@
-import type { BodyType } from '@/design-system/components/Body';
-import type { HeadingType } from '@/design-system/components/Heading';
-import type { LocalizableText } from '@/lib/i18n/localizable-text';
+import type { MessageBody } from '@/lib/i18n/message-body';
+import type { MessageHeadingSegment } from '@/lib/i18n/message-heading-segment';
+import type { MessageDescriptor } from '@lingui/core';
 
 export type SalesforceWrongChoicePopupType = {
-  body: LocalizableText;
-  titleBar: LocalizableText;
+  body: MessageDescriptor;
+  titleBar: MessageDescriptor;
 };
 
 export type SalesforceRichTextPartType = {
   strike?: boolean;
-  text: LocalizableText;
+  text: MessageDescriptor;
 };
 
 export type SalesforceAddonTooltipType = {
-  body: LocalizableText;
-  title: LocalizableText;
+  body: MessageDescriptor;
+  title: MessageDescriptor;
 };
 
 export type SalesforceAddonRowType = {
@@ -23,11 +23,11 @@ export type SalesforceAddonRowType = {
   disabled?: boolean;
   fixedCost?: number;
   id: string;
-  label: LocalizableText;
+  label: MessageDescriptor;
   netSpendRate?: number;
   popup: SalesforceWrongChoicePopupType;
   rightLabelParts?: SalesforceRichTextPartType[][];
-  rightLabel: LocalizableText;
+  rightLabel: MessageDescriptor;
   sharedCostKey?: string;
   tooltip?: SalesforceAddonTooltipType;
 };
@@ -36,20 +36,20 @@ export type SalesforcePricingPanelType = {
   basePriceAmount: number;
   productIconAlt: string;
   productIconSrc: string;
-  totalPriceLabel: LocalizableText;
-  windowTitle: LocalizableText;
-  productTitle: LocalizableText;
-  priceSuffix: LocalizableText;
-  promoTag?: LocalizableText;
-  featureSectionHeading: LocalizableText;
+  totalPriceLabel: MessageDescriptor;
+  windowTitle: MessageDescriptor;
+  productTitle: MessageDescriptor;
+  priceSuffix: MessageDescriptor;
+  promoTag?: MessageDescriptor;
+  featureSectionHeading: MessageDescriptor;
   addons: SalesforceAddonRowType[];
-  secondaryCtaNote?: LocalizableText;
+  secondaryCtaNote?: MessageDescriptor;
   secondaryCtaHref: string;
-  secondaryCtaLabel: LocalizableText;
+  secondaryCtaLabel: MessageDescriptor;
 };
 
 export type SalesforceDataType = {
-  heading: HeadingType[];
-  body: BodyType;
+  heading: MessageHeadingSegment[];
+  body: MessageBody;
   pricing: SalesforcePricingPanelType;
 };

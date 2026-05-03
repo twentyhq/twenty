@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 
-import type { HeadingType } from '@/design-system/components/Heading';
+import type { MessageHeadingSegment } from '@/lib/i18n/message-heading-segment';
 import { theme } from '@/theme';
 
 import { Phrase } from './Phrase';
@@ -35,7 +35,7 @@ const TrackHalf = styled.div`
 `;
 
 type TrackProps = {
-  heading: HeadingType[];
+  heading: MessageHeadingSegment[];
   reversed: boolean;
 };
 

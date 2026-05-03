@@ -1,11 +1,11 @@
-import type { HeadingType } from '@/design-system/components/Heading';
-import type { LocalizableText } from '@/lib/i18n/localizable-text';
+import type { MessageHeadingSegment } from '@/lib/i18n/message-heading-segment';
+import type { MessageDescriptor } from '@lingui/core';
 
 export type CaseStudyTextBlock = {
   type: 'text';
-  eyebrow?: LocalizableText;
-  heading: HeadingType[];
-  paragraphs: LocalizableText[];
+  eyebrow?: MessageDescriptor;
+  heading: MessageHeadingSegment[];
+  paragraphs: MessageDescriptor[];
   callout?: string;
 };
 
@@ -18,44 +18,44 @@ export type CaseStudyVisualBlock = {
 export type CaseStudyContentBlock = CaseStudyTextBlock | CaseStudyVisualBlock;
 
 export type CaseStudyKpi = {
-  value: LocalizableText;
-  label: LocalizableText;
+  value: MessageDescriptor;
+  label: MessageDescriptor;
 };
 
 export type CaseStudyQuote = {
-  text: LocalizableText;
+  text: MessageDescriptor;
   author: string;
-  role: LocalizableText;
+  role: MessageDescriptor;
 };
 
 export type CaseStudyData = {
-  meta: { title: LocalizableText; description: LocalizableText };
+  meta: { title: MessageDescriptor; description: MessageDescriptor };
   hero: {
     readingTime: string;
-    title: HeadingType[];
+    title: MessageHeadingSegment[];
     author: string;
     authorAvatarSrc?: string;
     clientIcon: string;
     heroImageSrc: string;
-    industry?: LocalizableText;
-    authorRole?: LocalizableText;
+    industry?: MessageDescriptor;
+    authorRole?: MessageDescriptor;
     kpis?: CaseStudyKpi[];
     quote?: CaseStudyQuote;
   };
   sections: CaseStudyContentBlock[];
   tableOfContents: string[];
   catalogCard: {
-    summary: LocalizableText;
-    date: LocalizableText;
+    summary: MessageDescriptor;
+    date: MessageDescriptor;
     coverImageSrc?: string;
   };
 };
 
 export type CaseStudyCatalogEntry = {
   href: string;
-  industry: LocalizableText;
+  industry: MessageDescriptor;
   kpis: CaseStudyKpi[];
-  authorRole: LocalizableText;
+  authorRole: MessageDescriptor;
   quote?: CaseStudyQuote;
   hero: CaseStudyData['hero'];
   catalogCard: CaseStudyData['catalogCard'];

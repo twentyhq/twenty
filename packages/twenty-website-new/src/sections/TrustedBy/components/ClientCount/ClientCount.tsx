@@ -1,5 +1,5 @@
-import { LocalizedText } from '@/lib/i18n/LocalizedText';
-import type { LocalizableText } from '@/lib/i18n/localizable-text';
+import { MessageDescriptorTrans } from '@/lib/i18n/MessageDescriptorTrans';
+import type { MessageDescriptor } from '@lingui/core';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
 import NextImage from 'next/image';
@@ -28,7 +28,7 @@ const StyledText = styled.span`
 `;
 
 type ClientCountProps = {
-  label: LocalizableText;
+  label: MessageDescriptor;
 };
 
 export function ClientCount({ label }: ClientCountProps) {
@@ -42,7 +42,7 @@ export function ClientCount({ label }: ClientCountProps) {
         width={14}
       />
       <StyledText>
-        <LocalizedText text={label} />
+        <MessageDescriptorTrans descriptor={label} />
       </StyledText>
     </StyledChip>
   );

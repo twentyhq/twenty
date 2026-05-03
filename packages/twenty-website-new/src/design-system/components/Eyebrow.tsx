@@ -1,10 +1,15 @@
-import { Heading, type HeadingType } from '@/design-system/components/Heading';
+import {
+  Heading,
+  type HeadingProps,
+  type HeadingType,
+} from '@/design-system/components/Heading';
 import { RectangleFillIcon } from '@/icons';
 import { theme } from '@/theme';
 import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
+import type { ReactNode } from 'react';
 
-export type EyebrowType = { heading: HeadingType };
+export type EyebrowType<TText = ReactNode> = { heading: HeadingType<TText> };
 
 const EyebrowRow = styled.div`
   align-items: center;
@@ -37,19 +42,24 @@ const eyebrowLabelClassName = css`
   }
 `;
 
-type EyebrowProps = {
-  heading: HeadingType;
+type EyebrowTextRenderer<TText> = [TText] extends [ReactNode]
+  ? { renderText?: (text: TText) => ReactNode }
+  : { renderText: (text: TText) => ReactNode };
+
+type EyebrowProps<TText = ReactNode> = {
+  heading: HeadingType<TText>;
   colorScheme: 'primary' | 'secondary';
   markerHeight?: number;
   markerWidth?: number;
-};
+} & EyebrowTextRenderer<TText>;
 
-export function Eyebrow({
+export function Eyebrow<TText = ReactNode>({
   heading,
   colorScheme,
   markerHeight,
   markerWidth,
-}: EyebrowProps) {
+  renderText,
+}: EyebrowProps<TText>) {
   const colorClassName =
     colorScheme === 'primary' ? eyebrowColorPrimary : eyebrowColorSecondary;
   const headingClassName = [eyebrowLabelClassName, colorClassName].join(' ');
@@ -64,13 +74,14 @@ export function Eyebrow({
           width={markerWidth}
         />
       </IconWrapper>
-      <Heading
-        as="h3"
-        className={headingClassName}
-        segments={{ fontFamily: heading.fontFamily, text: heading.text }}
-        size="xs"
-        weight="medium"
-      />
+      {Heading<TText>({
+        as: 'h3',
+        className: headingClassName,
+        segments: { fontFamily: heading.fontFamily, text: heading.text },
+        size: 'xs',
+        weight: 'medium',
+        ...(renderText === undefined ? {} : { renderText }),
+      } as HeadingProps<TText>)}
     </EyebrowRow>
   );
 }

@@ -1,12 +1,11 @@
 import { theme } from '@/theme';
 import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
-import { Fragment } from 'react';
-import { LocalizedText, type LocalizableText } from './LocalizedText';
+import { Fragment, type ReactNode } from 'react';
 
-export type HeadingType = {
+export type HeadingType<TText = ReactNode> = {
   fontFamily: 'sans' | 'serif' | 'mono';
-  text: LocalizableText;
+  text: TText;
   fontWeight?: 'light' | 'regular' | 'medium';
   newLine?: boolean;
   lineBreakBefore?: boolean;
@@ -114,24 +113,31 @@ export type HeadingFamily = 'sans' | 'serif' | 'mono';
 export type HeadingWeight = 'light' | 'regular' | 'medium';
 export type HeadingSize = 'xl' | 'lg' | 'md' | 'sm' | 'xs';
 
-export type HeadingProps = {
+type HeadingTextRenderer<TText> = [TText] extends [ReactNode]
+  ? { renderText?: (text: TText) => ReactNode }
+  : { renderText: (text: TText) => ReactNode };
+
+export type HeadingProps<TText = ReactNode> = {
   as?: HeadingAs;
-  segments: HeadingType | HeadingType[];
+  segments: HeadingType<TText> | HeadingType<TText>[];
   weight?: HeadingWeight;
   size?: HeadingSize;
   className?: string;
-};
+} & HeadingTextRenderer<TText>;
 
-export function Heading({
+export function Heading<TText = ReactNode>({
   as: Tag = 'h1',
+  renderText,
   segments,
   weight = 'regular',
   size = 'md',
   className,
-}: HeadingProps) {
+}: HeadingProps<TText>) {
   const rootClassName = [headingRootClassName, className]
     .filter(Boolean)
     .join(' ');
+  const renderSegmentText = (text: TText) =>
+    renderText === undefined ? (text as ReactNode) : renderText(text);
 
   return (
     <Tag className={rootClassName} data-weight={weight} data-size={size}>
@@ -147,7 +153,7 @@ export function Heading({
                 data-family={segment.fontFamily}
                 data-weight={segment.fontWeight}
               >
-                <LocalizedText text={segment.text} />
+                {renderSegmentText(segment.text)}
               </StyledSpan>
             </Fragment>
           );
@@ -157,7 +163,7 @@ export function Heading({
           data-family={segments.fontFamily}
           data-weight={segments.fontWeight}
         >
-          <LocalizedText text={segments.text} />
+          {renderSegmentText(segments.text)}
         </StyledSpan>
       )}
     </Tag>

@@ -6,10 +6,12 @@ import NextImage from 'next/image';
 import { Body, Heading, LinkButton } from '@/design-system/components';
 import { CheckIcon } from '@/icons/informative/Check';
 import { useAnimatedNumber } from '@/lib/animation';
-import { getLocalizableTextSource } from '@/lib/i18n/localizable-text';
+import { getMessageDescriptorSource } from '@/lib/i18n/get-message-descriptor-source';
+import { renderMessageDescriptor } from '@/lib/i18n/render-message-descriptor';
 import { useTimeoutRegistry } from '@/lib/react';
 import type { PlanCardType } from '@/sections/Plans/types';
 import { theme } from '@/theme';
+import { msg } from '@lingui/core/macro';
 import { css } from '@linaria/core';
 import { useEffect, useState } from 'react';
 
@@ -261,7 +263,7 @@ function getPriceHeadingNumericValue(
   const segments = getHeadingSegments(heading);
 
   for (const segment of segments) {
-    const match = getLocalizableTextSource(segment.text).match(
+    const match = getMessageDescriptorSource(segment.text).match(
       PRICE_HEADING_NUMBER_REGEX,
     );
 
@@ -287,7 +289,7 @@ function getAnimatedPriceHeading(
       return segment;
     }
 
-    const match = getLocalizableTextSource(segment.text).match(
+    const match = getMessageDescriptorSource(segment.text).match(
       PRICE_HEADING_NUMBER_REGEX,
     );
 
@@ -308,7 +310,7 @@ function getAnimatedPriceHeading(
 
 function getBulletsKey(bullets: PlanCardType['features']['bullets']) {
   return bullets
-    .map((bullet) => getLocalizableTextSource(bullet.text))
+    .map((bullet) => getMessageDescriptorSource(bullet.text))
     .join('||');
 }
 
@@ -404,7 +406,7 @@ export function Card({ card, highlighted = false, maxBullets }: CardProps) {
 
   const comparisonBulletTexts = new Set(
     (featuresPhase === 'exiting' ? queuedBullets : comparisonBullets)?.map(
-      (bullet) => getLocalizableTextSource(bullet.text),
+      (bullet) => getMessageDescriptorSource(bullet.text),
     ) ?? [],
   );
 
@@ -415,6 +417,7 @@ export function Card({ card, highlighted = false, maxBullets }: CardProps) {
           <Heading
             as="h3"
             className={cardPlanTitleClassName}
+            renderText={renderMessageDescriptor}
             segments={card.heading}
             size="xs"
             weight="light"
@@ -422,6 +425,7 @@ export function Card({ card, highlighted = false, maxBullets }: CardProps) {
           <PriceLine>
             <Heading
               as="h4"
+              renderText={renderMessageDescriptor}
               segments={animatedPriceHeading}
               size="sm"
               weight="regular"
@@ -430,6 +434,7 @@ export function Card({ card, highlighted = false, maxBullets }: CardProps) {
               as="span"
               body={card.price.body}
               className={priceBodyClassName}
+              renderText={renderMessageDescriptor}
               size="sm"
             />
           </PriceLine>
@@ -462,12 +467,12 @@ export function Card({ card, highlighted = false, maxBullets }: CardProps) {
                 featuresPhase === 'stable'
                   ? 'stable'
                   : comparisonBulletTexts.has(
-                        getLocalizableTextSource(bullet.text),
+                        getMessageDescriptorSource(bullet.text),
                       )
                     ? 'stable'
                     : featuresPhase
               }
-              key={`${getLocalizableTextSource(bullet.text)}-${index}`}
+              key={`${getMessageDescriptorSource(bullet.text)}-${index}`}
             >
               <FeatureCheck>
                 <CheckIcon
@@ -476,7 +481,12 @@ export function Card({ card, highlighted = false, maxBullets }: CardProps) {
                   strokeWidth={1.5}
                 />
               </FeatureCheck>
-              <Body as="span" body={bullet} size="sm" />
+              <Body
+                as="span"
+                body={bullet}
+                renderText={renderMessageDescriptor}
+                size="sm"
+              />
             </FeatureItem>
           ))}
         </FeaturesList>
@@ -486,7 +496,7 @@ export function Card({ card, highlighted = false, maxBullets }: CardProps) {
         <LinkButton
           color="secondary"
           href="https://app.twenty.com/welcome"
-          label="Start for free"
+          label={renderMessageDescriptor(msg`Start for free`)}
           type="anchor"
           variant={highlighted ? 'contained' : 'outlined'}
         />

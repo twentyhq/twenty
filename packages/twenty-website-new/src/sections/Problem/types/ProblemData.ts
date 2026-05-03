@@ -1,9 +1,9 @@
-import { EyebrowType } from '@/design-system/components/Eyebrow';
-import { HeadingType } from '@/design-system/components/Heading';
-import { ProblemPointType } from './ProblemPoint';
+import type { MessageEyebrow } from '@/lib/i18n/message-eyebrow';
+import type { MessageHeadingSegment } from '@/lib/i18n/message-heading-segment';
+import type { ProblemPointType } from './ProblemPoint';
 
 export type ProblemDataType = {
-  eyebrow: EyebrowType;
-  heading: HeadingType[];
+  eyebrow: MessageEyebrow;
+  heading: MessageHeadingSegment[];
   points: ProblemPointType[];
 };

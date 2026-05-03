@@ -1,5 +1,6 @@
 import { Body as BaseBody } from '@/design-system/components';
-import type { BodyType } from '@/design-system/components/Body';
+import type { MessageBody } from '@/lib/i18n/message-body';
+import { renderMessageDescriptor } from '@/lib/i18n/render-message-descriptor';
 import { styled } from '@linaria/react';
 
 const StyledBody = styled(BaseBody)`
@@ -8,9 +9,16 @@ const StyledBody = styled(BaseBody)`
 `;
 
 type BodyProps = {
-  body: BodyType;
+  body: MessageBody;
 };
 
 export function Body({ body }: BodyProps) {
-  return <StyledBody body={body} size="sm" weight="regular" />;
+  return (
+    <StyledBody
+      body={body}
+      renderText={renderMessageDescriptor}
+      size="sm"
+      weight="regular"
+    />
+  );
 }

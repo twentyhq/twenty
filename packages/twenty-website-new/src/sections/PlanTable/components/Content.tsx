@@ -5,8 +5,9 @@ import {
   buttonBaseStyles,
 } from '@/design-system/components/Button/BaseButton';
 import { CheckIcon } from '@/icons';
-import { LocalizedText } from '@/lib/i18n/LocalizedText';
-import type { LocalizableText } from '@/lib/i18n/localizable-text';
+import { MessageDescriptorTrans } from '@/lib/i18n/MessageDescriptorTrans';
+import { renderMessageDescriptor } from '@/lib/i18n/render-message-descriptor';
+import type { MessageDescriptor } from '@lingui/core';
 import { usePricingState } from '@/sections/Plans/context/PricingStateContext';
 import type {
   PlanTableBodyRowDataType,
@@ -142,7 +143,7 @@ function CellValue({ cell }: CellValueProps) {
   if (cell.kind === 'dash') {
     return (
       <TierText>
-        <LocalizedText text={msg`No`} />
+        <MessageDescriptorTrans descriptor={msg`No`} />
       </TierText>
     );
   }
@@ -150,18 +151,18 @@ function CellValue({ cell }: CellValueProps) {
   if (cell.kind === 'text') {
     return (
       <TierText>
-        <LocalizedText text={cell.text} />
+        <MessageDescriptorTrans descriptor={cell.text} />
       </TierText>
     );
   }
 
-  const label = cell.label ?? 'Yes';
+  const label = cell.label ?? msg`Yes`;
 
   return (
     <YesRow>
       <CheckIcon color={theme.colors.highlight[100]} size={16} />
       <TierText>
-        <LocalizedText text={label} />
+        <MessageDescriptorTrans descriptor={label} />
       </TierText>
     </YesRow>
   );
@@ -209,7 +210,7 @@ function FeatureRow({ row, tierColumns }: FeatureRowProps) {
   return (
     <GridRow>
       <FeatureLabel>
-        <LocalizedText text={row.featureLabel} />
+        <MessageDescriptorTrans descriptor={row.featureLabel} />
       </FeatureLabel>
       {tierColumns.map((column) => (
         <TierCell key={column.id}>
@@ -221,7 +222,7 @@ function FeatureRow({ row, tierColumns }: FeatureRowProps) {
 }
 
 type CategoryRowProps = {
-  title: LocalizableText;
+  title: MessageDescriptor;
 };
 
 function CategoryRow({ title }: CategoryRowProps) {
@@ -229,7 +230,7 @@ function CategoryRow({ title }: CategoryRowProps) {
     <GridRow>
       <CategoryBand>
         <CategoryTitle>
-          <LocalizedText text={title} />
+          <MessageDescriptorTrans descriptor={title} />
         </CategoryTitle>
       </CategoryBand>
       <CategoryBand aria-hidden="true" />
@@ -291,11 +292,11 @@ export function Content({ data }: ContentProps) {
     <TableScope>
       <GridRow>
         <HeadFeature>
-          <LocalizedText text={data.featureColumnLabel} />
+          <MessageDescriptorTrans descriptor={data.featureColumnLabel} />
         </HeadFeature>
         {data.tierColumns.map((column) => (
           <HeadTier key={column.id}>
-            <LocalizedText text={column.label} />
+            <MessageDescriptorTrans descriptor={column.label} />
           </HeadTier>
         ))}
       </GridRow>
@@ -320,7 +321,7 @@ export function Content({ data }: ContentProps) {
           >
             <BaseButton
               color="primary"
-              label={toggleLabel}
+              label={renderMessageDescriptor(toggleLabel)}
               variant="outlined"
             />
           </ToggleButton>

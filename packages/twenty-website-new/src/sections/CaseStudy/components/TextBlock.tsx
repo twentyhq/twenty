@@ -5,6 +5,7 @@ import {
   Eyebrow,
   Heading,
 } from '@/design-system/components';
+import { renderMessageDescriptor } from '@/lib/i18n/render-message-descriptor';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
 
@@ -140,10 +141,17 @@ export function TextBlock({
             <Eyebrow
               colorScheme="primary"
               heading={{ fontFamily: 'sans', text: block.eyebrow }}
+              renderText={renderMessageDescriptor}
             />
           )}
 
-          <Heading as="h2" segments={block.heading} size="md" weight="light" />
+          <Heading
+            as="h2"
+            renderText={renderMessageDescriptor}
+            segments={block.heading}
+            size="md"
+            weight="light"
+          />
 
           <BodyStack>
             {block.paragraphs.map((paragraph, index) => (
@@ -151,6 +159,7 @@ export function TextBlock({
                 key={index}
                 body={{ text: paragraph }}
                 family="sans"
+                renderText={renderMessageDescriptor}
                 size="md"
                 variant="body-paragraph"
                 weight="regular"

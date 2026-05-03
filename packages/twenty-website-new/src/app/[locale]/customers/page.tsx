@@ -6,6 +6,7 @@ import { TalkToUsButton } from '@/lib/contact-cal';
 import { CASE_STUDY_CATALOG_ENTRIES } from '@/lib/customers';
 import { Eyebrow, LinkButton } from '@/design-system/components';
 import { Pages } from '@/lib/pages';
+import { renderMessageDescriptor } from '@/lib/i18n/render-message-descriptor';
 import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';
 import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels';
 import { CaseStudyCatalog } from '@/sections/CaseStudyCatalog/components';
@@ -115,7 +116,7 @@ export default async function CaseStudiesCatalogPage() {
           <LinkButton
             color="secondary"
             href="https://app.twenty.com/welcome"
-            label={msg`Get started`}
+            label={renderMessageDescriptor(msg`Get started`)}
             type="anchor"
             variant="contained"
           />
@@ -129,13 +130,17 @@ export default async function CaseStudiesCatalogPage() {
 
       <Faq.Root>
         <Faq.Intro>
-          <Eyebrow colorScheme="secondary" heading={FAQ_DATA.eyebrow.heading} />
+          <Eyebrow
+            colorScheme="secondary"
+            heading={FAQ_DATA.eyebrow.heading}
+            renderText={renderMessageDescriptor}
+          />
           <Faq.Heading segments={FAQ_DATA.heading} />
           <Faq.Cta>
             <LinkButton
               color="primary"
               href="https://app.twenty.com/welcome"
-              label={msg`Get started`}
+              label={renderMessageDescriptor(msg`Get started`)}
               type="anchor"
               variant="contained"
             />

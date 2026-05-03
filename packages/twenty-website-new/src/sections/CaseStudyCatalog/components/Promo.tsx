@@ -1,3 +1,4 @@
+import { msg } from '@lingui/core/macro';
 import type { CaseStudyCatalogEntry } from '@/lib/customers';
 import {
   Body,
@@ -7,8 +8,10 @@ import {
   LinkButton,
 } from '@/design-system/components';
 import { PlusIcon, UsersIcon } from '@/icons';
+import { renderMessageDescriptor } from '@/lib/i18n/render-message-descriptor';
 import { PromoMic } from '@/sections/CaseStudyCatalog/visuals/PromoMic';
 import { theme } from '@/theme';
+import type { MessageDescriptor } from '@lingui/core';
 import { styled } from '@linaria/react';
 
 const CORNER_SIZE = 14;
@@ -19,17 +22,17 @@ const TRUSTED_BY_BOTTOM_PADDING = 12;
 const TRUSTED_BY_BOTTOM_PADDING_DESKTOP = 16;
 
 const EYEBROW = {
-  text: 'Customer Stories',
+  text: msg`Customer Stories`,
   fontFamily: 'mono' as const,
 };
 
 const HEADING = [
-  { text: 'How teams ', fontFamily: 'serif' as const },
-  { text: 'built with Twenty', fontFamily: 'sans' as const, newLine: true },
+  { text: msg`How teams `, fontFamily: 'serif' as const },
+  { text: msg`built with Twenty`, fontFamily: 'sans' as const, newLine: true },
 ];
 
 const BODY = {
-  text: 'Meet the teams who shaped Twenty into their own CRM with self-hosted deployments, AI-assisted workflows, and API-first product stacks.',
+  text: msg`Meet the teams who shaped Twenty into their own CRM with self-hosted deployments, AI-assisted workflows, and API-first product stacks.`,
 };
 
 const Section = styled.section`
@@ -259,14 +262,14 @@ const CtaRow = styled.div`
 type PromoProps = {
   entries: readonly CaseStudyCatalogEntry[];
   ctaHref?: string;
-  ctaLabel?: string;
+  ctaLabel?: MessageDescriptor;
   compactTop?: boolean;
 };
 
 export function Promo({
   entries,
   ctaHref = '/customers',
-  ctaLabel = 'Explore customer stories',
+  ctaLabel = msg`Explore customer stories`,
   compactTop = false,
 }: PromoProps) {
   return (
@@ -337,14 +340,24 @@ export function Promo({
             heading={EYEBROW}
             markerHeight={6}
             markerWidth={14}
+            renderText={renderMessageDescriptor}
           />
-          <Heading segments={HEADING} size="lg" weight="light" />
-          <PromoBody body={BODY} size="sm" />
+          <Heading
+            renderText={renderMessageDescriptor}
+            segments={HEADING}
+            size="lg"
+            weight="light"
+          />
+          <PromoBody
+            body={BODY}
+            renderText={renderMessageDescriptor}
+            size="sm"
+          />
           <CtaRow>
             <LinkButton
               color="secondary"
               href={ctaHref}
-              label={ctaLabel}
+              label={renderMessageDescriptor(ctaLabel)}
               type="link"
               variant="outlined"
             />

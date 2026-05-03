@@ -6,10 +6,8 @@ import {
   isPublicAppLocale,
 } from '@/lib/i18n/app-locale-set';
 import { createI18nInstance } from '@/lib/i18n/create-i18n-instance';
-import {
-  resolveLocalizableText,
-  type LocalizableText,
-} from '@/lib/i18n/localizable-text';
+import { resolveMessageDescriptor } from '@/lib/i18n/resolve-message-descriptor';
+import type { MessageDescriptor } from '@lingui/core';
 
 import { getSiteUrl } from './site-url';
 
@@ -19,8 +17,8 @@ const TWITTER_HANDLE = '@twentycrm';
 export type BuildPageMetadataInput = {
   locale: AppLocale;
   path: string;
-  title: LocalizableText;
-  description: LocalizableText;
+  title: MessageDescriptor;
+  description: MessageDescriptor;
   ogImage?: string;
   type?: 'website' | 'article';
   extend?: Metadata;
@@ -61,8 +59,8 @@ export function buildPageMetadata({
   const metadataLocale = isPublicAppLocale(locale) ? locale : SOURCE_LOCALE;
   const canonical = localizePath(metadataLocale, normalizedPath);
   const i18n = createI18nInstance(metadataLocale);
-  const resolvedTitle = resolveLocalizableText(i18n, title);
-  const resolvedDescription = resolveLocalizableText(i18n, description);
+  const resolvedTitle = resolveMessageDescriptor(i18n, title);
+  const resolvedDescription = resolveMessageDescriptor(i18n, description);
 
   const ogImages =
     ogImage === undefined

@@ -2,6 +2,7 @@
 
 import { TalkToUsButton } from '@/lib/contact-cal';
 import { LinkButton } from '@/design-system/components';
+import { renderMessageDescriptor } from '@/lib/i18n/render-message-descriptor';
 import type { FooterCtaType } from '@/sections/Footer/types';
 
 type FooterNavCtaProps = {
@@ -23,7 +24,7 @@ export function FooterNavCta({ cta }: FooterNavCtaProps) {
     <LinkButton
       color={cta.color}
       href={cta.href}
-      label={cta.label}
+      label={renderMessageDescriptor(cta.label)}
       type="anchor"
       variant={cta.variant}
     />

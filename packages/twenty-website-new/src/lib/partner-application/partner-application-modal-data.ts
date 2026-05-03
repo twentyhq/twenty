@@ -1,3 +1,5 @@
+import { msg } from '@lingui/core/macro';
+
 export type PartnerProgramId = 'technology' | 'content' | 'solutions';
 
 export const PARTNER_PROGRAM_OPTIONS: ReadonlyArray<{
@@ -10,11 +12,10 @@ export const PARTNER_PROGRAM_OPTIONS: ReadonlyArray<{
 ];
 
 export const PARTNER_APPLICATION_MODAL_COPY = {
-  titleSerif: 'Apply to build',
-  titleSans: 'the future of CRM',
-  subtitleLine1:
-    'Join our ecosystem and help businesses take control of their customer data with',
-  subtitleLine2: 'open-source primitives.',
+  titleSerif: msg`Apply to build`,
+  titleSans: msg`the future of CRM`,
+  subtitleLine1: msg`Join our ecosystem and help businesses take control of their customer data with`,
+  subtitleLine2: msg`open-source primitives.`,
   selectLabel: 'Select your team',
   fields: {
     name: 'Your name *',

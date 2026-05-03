@@ -5,8 +5,8 @@ import { TRUSTED_BY_DATA } from '@/sections/TrustedBy/data';
 import { TalkToUsButton } from '@/lib/contact-cal';
 import { CASE_STUDY_CATALOG_ENTRIES } from '@/lib/customers';
 import { THREE_CARDS_ILLUSTRATION_DATA } from '@/app/[locale]/partners/three-cards-illustration.data';
-import { HERO_DATA } from '@/app/[locale]/partners/hero.data';
-import { SIGNOFF_DATA } from '@/app/[locale]/partners/signoff.data';
+import { HERO_COPY } from '@/app/[locale]/partners/hero.data';
+import { SIGNOFF_COPY } from '@/app/[locale]/partners/signoff.data';
 import { TESTIMONIALS_DATA } from '@/app/[locale]/partners/testimonials.data';
 import {
   PartnerHeroCtas,
@@ -14,6 +14,7 @@ import {
 } from '@/app/[locale]/partners/components/PartnerApplication';
 import { Body, Eyebrow, Heading, LinkButton } from '@/design-system/components';
 import { Pages } from '@/lib/pages';
+import { renderMessageDescriptor } from '@/lib/i18n/render-message-descriptor';
 import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';
 import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels';
 import { CaseStudyCatalog } from '@/sections/CaseStudyCatalog/components';
@@ -67,8 +68,18 @@ export default async function PartnerPage() {
       </Menu.Root>
 
       <Hero.Root backgroundColor={theme.colors.primary.background[100]}>
-        <Hero.Heading page={Pages.Partners} segments={HERO_DATA.heading} />
-        <Hero.Body page={Pages.Partners} body={HERO_DATA.body} />
+        <Hero.Heading
+          page={Pages.Partners}
+          segments={[
+            { fontFamily: 'serif', text: HERO_COPY.heading.descriptor },
+            {
+              fontFamily: 'sans',
+              newLine: true,
+              text: HERO_COPY.heading.subject,
+            },
+          ]}
+        />
+        <Hero.Body page={Pages.Partners} body={{ text: HERO_COPY.body }} />
         <Hero.Cta>
           <PartnerHeroCtas />
         </Hero.Cta>
@@ -96,13 +107,19 @@ export default async function PartnerPage() {
           <Eyebrow
             colorScheme="primary"
             heading={THREE_CARDS_ILLUSTRATION_DATA.eyebrow.heading}
+            renderText={renderMessageDescriptor}
           />
           <Heading
+            renderText={renderMessageDescriptor}
             segments={THREE_CARDS_ILLUSTRATION_DATA.heading}
             size="lg"
             weight="light"
           />
-          <Body body={THREE_CARDS_ILLUSTRATION_DATA.body} size="sm" />
+          <Body
+            body={THREE_CARDS_ILLUSTRATION_DATA.body}
+            renderText={renderMessageDescriptor}
+            size="sm"
+          />
         </ThreeCards.Intro>
         <ThreeCards.IllustrationCards
           illustrationCards={THREE_CARDS_ILLUSTRATION_DATA.illustrationCards}
@@ -131,9 +148,15 @@ export default async function PartnerPage() {
       >
         <Signoff.Heading
           page={Pages.Partners}
-          segments={SIGNOFF_DATA.heading}
+          segments={[
+            { fontFamily: 'serif', text: SIGNOFF_COPY.heading.descriptor },
+            { fontFamily: 'sans', text: SIGNOFF_COPY.heading.subject },
+          ]}
         />
-        <Signoff.Body body={SIGNOFF_DATA.body} page={Pages.Partners} />
+        <Signoff.Body
+          body={{ text: SIGNOFF_COPY.body }}
+          page={Pages.Partners}
+        />
         <Signoff.Cta>
           <PartnerSignoffCtas />
         </Signoff.Cta>
@@ -141,13 +164,17 @@ export default async function PartnerPage() {
 
       <Faq.Root>
         <Faq.Intro>
-          <Eyebrow colorScheme="secondary" heading={FAQ_DATA.eyebrow.heading} />
+          <Eyebrow
+            colorScheme="secondary"
+            heading={FAQ_DATA.eyebrow.heading}
+            renderText={renderMessageDescriptor}
+          />
           <Faq.Heading segments={FAQ_DATA.heading} />
           <Faq.Cta>
             <LinkButton
               color="primary"
               href="https://app.twenty.com/welcome"
-              label={msg`Get started`}
+              label={renderMessageDescriptor(msg`Get started`)}
               type="anchor"
               variant="contained"
             />

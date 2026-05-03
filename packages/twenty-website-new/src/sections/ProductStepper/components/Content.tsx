@@ -7,6 +7,7 @@ import {
   StepperProgressRail,
 } from '@/design-system/components';
 import { INFORMATIVE_ICONS } from '@/icons';
+import { renderMessageDescriptor } from '@/lib/i18n/render-message-descriptor';
 import { StepperSwipeDeck } from '@/lib/stepper';
 import type { ProductStepperContentProps } from '@/sections/ProductStepper/types';
 import type { ProductStepperContentStepType } from '@/sections/ProductStepper/types/ProductStepperContentStep';
@@ -138,9 +139,14 @@ function renderProductStepBlock(
             />
           ) : null}
         </StepIconBox>
-        <Heading segments={step.heading} size="sm" weight="regular" />
+        <Heading
+          renderText={renderMessageDescriptor}
+          segments={step.heading}
+          size="sm"
+          weight="regular"
+        />
       </StepRowHeader>
-      <Body body={step.body} size="sm" />
+      <Body body={step.body} renderText={renderMessageDescriptor} size="sm" />
     </>
   );
 
@@ -184,9 +190,18 @@ export function Content({
       />
       <StepsColumn>
         <IntroBlock>
-          <Eyebrow colorScheme="primary" heading={eyebrow.heading} />
-          <Heading segments={heading} size="lg" weight="light" />
-          <Body body={body} size="sm" />
+          <Eyebrow
+            colorScheme="primary"
+            heading={eyebrow.heading}
+            renderText={renderMessageDescriptor}
+          />
+          <Heading
+            renderText={renderMessageDescriptor}
+            segments={heading}
+            size="lg"
+            weight="light"
+          />
+          <Body body={body} renderText={renderMessageDescriptor} size="sm" />
         </IntroBlock>
         {layoutMode === 'swipe' ? (
           <StepperSwipeDeck

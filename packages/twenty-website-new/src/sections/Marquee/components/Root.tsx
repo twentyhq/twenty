@@ -1,4 +1,4 @@
-import type { HeadingType } from '@/design-system/components/Heading';
+import type { MessageHeadingSegment } from '@/lib/i18n/message-heading-segment';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
 import {
@@ -42,7 +42,7 @@ type RootProps = {
   children: ReactNode;
 };
 
-type HeadingElement = ReactElement<{ segments: HeadingType[] }>;
+type HeadingElement = ReactElement<{ segments: MessageHeadingSegment[] }>;
 
 function findHeadingSlot(children: ReactNode): HeadingElement | null {
   let found: HeadingElement | null = null;

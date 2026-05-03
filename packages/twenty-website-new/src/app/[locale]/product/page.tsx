@@ -4,12 +4,13 @@ import { MENU_DATA } from '@/sections/Menu/data';
 import { TRUSTED_BY_DATA } from '@/sections/TrustedBy/data';
 import { TalkToUsButton } from '@/lib/contact-cal';
 import { FEATURE_DATA } from '@/app/[locale]/product/feature.data';
-import { HERO_DATA } from '@/app/[locale]/product/hero.data';
-import { SIGNOFF_DATA } from '@/app/[locale]/product/signoff.data';
+import { HERO_COPY } from '@/app/[locale]/product/hero.data';
+import { SIGNOFF_COPY } from '@/app/[locale]/product/signoff.data';
 import { STEPPER_DATA } from '@/app/[locale]/product/stepper.data';
 import { THREE_CARDS_ILLUSTRATION_DATA } from '@/app/[locale]/product/three-cards.data';
 import { Body, Eyebrow, Heading, LinkButton } from '@/design-system/components';
 import { Pages } from '@/lib/pages';
+import { renderMessageDescriptor } from '@/lib/i18n/render-message-descriptor';
 import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';
 import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels';
 import { Faq } from '@/sections/Faq/components';
@@ -54,13 +55,24 @@ export default async function ProductPage() {
       </Menu.Root>
 
       <Hero.Root backgroundColor={theme.colors.primary.background[100]}>
-        <Hero.Heading page={Pages.Product} segments={HERO_DATA.heading} />
-        <Hero.Body body={HERO_DATA.body} page={Pages.Product} />
+        <Hero.Heading
+          page={Pages.Product}
+          segments={[
+            { fontFamily: 'serif', text: HERO_COPY.heading.descriptor },
+            {
+              fontFamily: 'serif',
+              newLine: true,
+              text: HERO_COPY.heading.qualifier,
+            },
+            { fontFamily: 'sans', text: HERO_COPY.heading.subject },
+          ]}
+        />
+        <Hero.Body body={{ text: HERO_COPY.body }} page={Pages.Product} />
         <Hero.Cta>
           <LinkButton
             color="secondary"
             href="https://app.twenty.com/welcome"
-            label={msg`Get started`}
+            label={renderMessageDescriptor(msg`Get started`)}
             type="anchor"
             variant="contained"
           />
@@ -79,8 +91,14 @@ export default async function ProductPage() {
           <Eyebrow
             colorScheme="primary"
             heading={FEATURE_DATA.eyebrow.heading}
+            renderText={renderMessageDescriptor}
           />
-          <Heading segments={FEATURE_DATA.heading} size="lg" weight="light" />
+          <Heading
+            renderText={renderMessageDescriptor}
+            segments={FEATURE_DATA.heading}
+            size="lg"
+            weight="light"
+          />
         </Feature.Intro>
         <Feature.Tiles mask={FEATURE_DATA.mask} tiles={FEATURE_DATA.tiles} />
       </Feature.Root>
@@ -90,13 +108,19 @@ export default async function ProductPage() {
           <Eyebrow
             colorScheme="primary"
             heading={THREE_CARDS_ILLUSTRATION_DATA.eyebrow.heading}
+            renderText={renderMessageDescriptor}
           />
           <Heading
+            renderText={renderMessageDescriptor}
             segments={THREE_CARDS_ILLUSTRATION_DATA.heading}
             size="lg"
             weight="light"
           />
-          <Body body={THREE_CARDS_ILLUSTRATION_DATA.body} size="sm" />
+          <Body
+            body={THREE_CARDS_ILLUSTRATION_DATA.body}
+            renderText={renderMessageDescriptor}
+            size="sm"
+          />
         </ThreeCards.Intro>
         <ThreeCards.IllustrationCards
           illustrationCards={THREE_CARDS_ILLUSTRATION_DATA.illustrationCards}
@@ -115,13 +139,24 @@ export default async function ProductPage() {
         color={theme.colors.primary.text[100]}
         page={Pages.Product}
       >
-        <Signoff.Heading page={Pages.Product} segments={SIGNOFF_DATA.heading} />
-        <Signoff.Body body={SIGNOFF_DATA.body} page={Pages.Product} />
+        <Signoff.Heading
+          page={Pages.Product}
+          segments={[
+            { fontFamily: 'serif', text: SIGNOFF_COPY.heading.descriptor },
+            {
+              fontFamily: 'serif',
+              newLine: true,
+              text: SIGNOFF_COPY.heading.qualifier,
+            },
+            { fontFamily: 'sans', text: SIGNOFF_COPY.heading.subject },
+          ]}
+        />
+        <Signoff.Body body={{ text: SIGNOFF_COPY.body }} page={Pages.Product} />
         <Signoff.Cta>
           <LinkButton
             color="secondary"
             href="https://app.twenty.com/welcome"
-            label={msg`Get started`}
+            label={renderMessageDescriptor(msg`Get started`)}
             type="anchor"
             variant="contained"
           />
@@ -135,13 +170,17 @@ export default async function ProductPage() {
 
       <Faq.Root>
         <Faq.Intro>
-          <Eyebrow colorScheme="secondary" heading={FAQ_DATA.eyebrow.heading} />
+          <Eyebrow
+            colorScheme="secondary"
+            heading={FAQ_DATA.eyebrow.heading}
+            renderText={renderMessageDescriptor}
+          />
           <Faq.Heading segments={FAQ_DATA.heading} />
           <Faq.Cta>
             <LinkButton
               color="primary"
               href="https://app.twenty.com/welcome"
-              label={msg`Get started`}
+              label={renderMessageDescriptor(msg`Get started`)}
               type="anchor"
               variant="contained"
             />

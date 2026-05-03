@@ -3,11 +3,12 @@ import { MENU_DATA } from '@/sections/Menu/data';
 import { EDITORIAL_FOUR } from '@/app/[locale]/why-twenty/editorial-four.data';
 import { EDITORIAL_ONE } from '@/app/[locale]/why-twenty/editorial-one.data';
 import { EDITORIAL_THREE } from '@/app/[locale]/why-twenty/editorial-three.data';
-import { HERO_DATA } from '@/app/[locale]/why-twenty/hero.data';
+import { HERO_COPY } from '@/app/[locale]/why-twenty/hero.data';
 import { MARQUEE_DATA } from '@/app/[locale]/why-twenty/marquee.data';
-import { SIGNOFF_DATA } from '@/app/[locale]/why-twenty/signoff.data';
+import { SIGNOFF_COPY } from '@/app/[locale]/why-twenty/signoff.data';
 import { LinkButton } from '@/design-system/components';
 import { Pages } from '@/lib/pages';
+import { renderMessageDescriptor } from '@/lib/i18n/render-message-descriptor';
 import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';
 import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels';
 import { Editorial } from '@/sections/Editorial/components';
@@ -94,10 +95,13 @@ export default async function WhyTwentyPage() {
       >
         <Hero.Heading
           page={Pages.WhyTwenty}
-          segments={HERO_DATA.heading}
+          segments={[
+            { fontFamily: 'serif', text: HERO_COPY.heading.descriptor },
+            { fontFamily: 'sans', text: HERO_COPY.heading.subject },
+          ]}
           size="xl"
         />
-        <Hero.Body body={HERO_DATA.body} page={Pages.WhyTwenty} />
+        <Hero.Body body={{ text: HERO_COPY.body }} page={Pages.WhyTwenty} />
         <Hero.WhyTwentyVisual />
       </Hero.Root>
 
@@ -185,14 +189,20 @@ export default async function WhyTwentyPage() {
       >
         <Signoff.Heading
           page={Pages.WhyTwenty}
-          segments={SIGNOFF_DATA.heading}
+          segments={[
+            { fontFamily: 'serif', text: SIGNOFF_COPY.heading.descriptor },
+            { fontFamily: 'sans', text: SIGNOFF_COPY.heading.subject },
+          ]}
         />
-        <Signoff.Body body={SIGNOFF_DATA.body} page={Pages.WhyTwenty} />
+        <Signoff.Body
+          body={{ text: SIGNOFF_COPY.body }}
+          page={Pages.WhyTwenty}
+        />
         <Signoff.Cta>
           <LinkButton
             color="primary"
             href="https://app.twenty.com/welcome"
-            label={msg`Get started`}
+            label={renderMessageDescriptor(msg`Get started`)}
             type="anchor"
             variant="contained"
           />

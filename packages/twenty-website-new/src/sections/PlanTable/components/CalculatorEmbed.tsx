@@ -1,5 +1,6 @@
 import { Body, Heading } from '@/design-system/components';
-import { LocalizedText } from '@/lib/i18n/LocalizedText';
+import { MessageDescriptorTrans } from '@/lib/i18n/MessageDescriptorTrans';
+import { renderMessageDescriptor } from '@/lib/i18n/render-message-descriptor';
 import type { PlanTableCalculatorDataType } from '@/sections/PlanTable/types';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
@@ -185,9 +186,21 @@ export function CalculatorEmbed({ calculator }: CalculatorEmbedProps) {
             />
           </VisualFrame>
         ) : null}
-        <Heading as="h3" segments={visual.heading} size="lg" weight="light" />
+        <Heading
+          as="h3"
+          renderText={renderMessageDescriptor}
+          segments={visual.heading}
+          size="lg"
+          weight="light"
+        />
         <BodyOnDark>
-          <Body body={visual.body} family="sans" size="md" weight="regular" />
+          <Body
+            body={visual.body}
+            family="sans"
+            renderText={renderMessageDescriptor}
+            size="md"
+            weight="regular"
+          />
         </BodyOnDark>
       </VisualColumn>
       <ControlsColumn>
@@ -195,14 +208,16 @@ export function CalculatorEmbed({ calculator }: CalculatorEmbedProps) {
           <SectionBlock key={section.id}>
             <SectionTitleRow>
               <span>
-                <LocalizedText text={section.title} />
+                <MessageDescriptorTrans descriptor={section.title} />
               </span>
               <span aria-hidden="true">☑</span>
             </SectionTitleRow>
             <FieldsRow>
               <Field>
                 <FieldLabel>
-                  <LocalizedText text={section.requestField.label} />
+                  <MessageDescriptorTrans
+                    descriptor={section.requestField.label}
+                  />
                 </FieldLabel>
                 <FakeInput>
                   <StepperInner>
@@ -214,7 +229,9 @@ export function CalculatorEmbed({ calculator }: CalculatorEmbedProps) {
               </Field>
               <Field>
                 <FieldLabel>
-                  <LocalizedText text={section.tasksField.label} />
+                  <MessageDescriptorTrans
+                    descriptor={section.tasksField.label}
+                  />
                 </FieldLabel>
                 <FakeInput>
                   <span>{section.tasksField.value}</span>
@@ -225,7 +242,9 @@ export function CalculatorEmbed({ calculator }: CalculatorEmbedProps) {
             {section.modelField ? (
               <Field>
                 <FieldLabel>
-                  <LocalizedText text={section.modelField.label} />
+                  <MessageDescriptorTrans
+                    descriptor={section.modelField.label}
+                  />
                 </FieldLabel>
                 <FakeInput>
                   <span>{section.modelField.value}</span>
@@ -238,13 +257,13 @@ export function CalculatorEmbed({ calculator }: CalculatorEmbedProps) {
         <PriceFooter>
           <PriceRow>
             <span>
-              <LocalizedText text={priceLine.label} />
+              <MessageDescriptorTrans descriptor={priceLine.label} />
             </span>
             <span>
               <PriceAmount>{priceLine.amount}</PriceAmount>
               <PricePeriod>
                 {' '}
-                <LocalizedText text={priceLine.periodSuffix} />
+                <MessageDescriptorTrans descriptor={priceLine.periodSuffix} />
               </PricePeriod>
             </span>
           </PriceRow>

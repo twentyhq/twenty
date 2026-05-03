@@ -6,8 +6,8 @@ import type {
   SalesforceRichTextPartType,
 } from '@/sections/Salesforce/types';
 import { useAnimatedNumber } from '@/lib/animation';
-import { LocalizedText } from '@/lib/i18n/LocalizedText';
-import type { LocalizableText } from '@/lib/i18n/localizable-text';
+import { MessageDescriptorTrans } from '@/lib/i18n/MessageDescriptorTrans';
+import type { MessageDescriptor } from '@lingui/core';
 import { theme } from '@/theme';
 import { msg } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
@@ -557,15 +557,15 @@ const renderRightLabelParts = (lines: SalesforceRichTextPartType[][]) =>
               : undefined
           }
         >
-          <LocalizedText text={part.text} />
+          <MessageDescriptorTrans descriptor={part.text} />
         </AddonRightPart>
       ))}
     </AddonRightLine>
   ));
 
-const renderRightLabel = (label: LocalizableText) => (
+const renderRightLabel = (label: MessageDescriptor) => (
   <AddonRightLine>
-    <LocalizedText text={label} />
+    <MessageDescriptorTrans descriptor={label} />
   </AddonRightLine>
 );
 
@@ -625,7 +625,7 @@ export function PricingWindow({
       {pricing.promoTag ? (
         <PromoTagBorder>
           <PromoTagInner>
-            <LocalizedText text={pricing.promoTag} />
+            <MessageDescriptorTrans descriptor={pricing.promoTag} />
           </PromoTagInner>
         </PromoTagBorder>
       ) : null}
@@ -634,7 +634,7 @@ export function PricingWindow({
         <PricingHeader>
           <TitleBar>
             <TitleBarText>
-              <LocalizedText text={pricing.windowTitle} />
+              <MessageDescriptorTrans descriptor={pricing.windowTitle} />
             </TitleBarText>
             <TitleBarActions>
               <TitleBarActionButton
@@ -659,7 +659,9 @@ export function PricingWindow({
                 <ProductHeader>
                   <ProductCopy>
                     <ProductTitle>
-                      <LocalizedText text={pricing.productTitle} />
+                      <MessageDescriptorTrans
+                        descriptor={pricing.productTitle}
+                      />
                     </ProductTitle>
                     <PriceRow>
                       {perSeatPriceAmount > pricing.basePriceAmount ? (
@@ -671,7 +673,9 @@ export function PricingWindow({
                         {formatPriceAmount(animatedPerSeat)}
                       </PriceAmount>
                       <PriceSuffix>
-                        <LocalizedText text={pricing.priceSuffix} />
+                        <MessageDescriptorTrans
+                          descriptor={pricing.priceSuffix}
+                        />
                       </PriceSuffix>
                     </PriceRow>
                     {fixedPriceAmount > 0 ? (
@@ -680,7 +684,9 @@ export function PricingWindow({
                           {formatPriceAmount(animatedTotal)}
                         </TotalPriceAmount>
                         <TotalPriceLabel>
-                          <LocalizedText text={pricing.totalPriceLabel} />
+                          <MessageDescriptorTrans
+                            descriptor={pricing.totalPriceLabel}
+                          />
                         </TotalPriceLabel>
                       </TotalPriceRow>
                     ) : null}
@@ -699,10 +705,12 @@ export function PricingWindow({
           <Inner>
             <SectionHeader>
               <SectionLabel>
-                <LocalizedText text={pricing.featureSectionHeading} />
+                <MessageDescriptorTrans
+                  descriptor={pricing.featureSectionHeading}
+                />
               </SectionLabel>
               <SelectAllButton onClick={onSelectAll} type="button">
-                <LocalizedText text={msg`Select all`} />
+                <MessageDescriptorTrans descriptor={msg`Select all`} />
               </SelectAllButton>
             </SectionHeader>
             {pricing.addons.map((addon) => {
@@ -732,7 +740,7 @@ export function PricingWindow({
                       {checked ? <CheckGlyph>✓</CheckGlyph> : null}
                     </CheckboxFace>
                     <AddonLabelText>
-                      <LocalizedText text={addon.label} />
+                      <MessageDescriptorTrans descriptor={addon.label} />
                     </AddonLabelText>
                   </CheckboxLabel>
                   <AddonRightText>
@@ -743,10 +751,14 @@ export function PricingWindow({
                   {addon.tooltip ? (
                     <Tooltip>
                       <TooltipTitleBar>
-                        <LocalizedText text={addon.tooltip.title} />
+                        <MessageDescriptorTrans
+                          descriptor={addon.tooltip.title}
+                        />
                       </TooltipTitleBar>
                       <TooltipBody>
-                        <LocalizedText text={addon.tooltip.body} />
+                        <MessageDescriptorTrans
+                          descriptor={addon.tooltip.body}
+                        />
                       </TooltipBody>
                     </Tooltip>
                   ) : null}
@@ -757,7 +769,9 @@ export function PricingWindow({
               <Separator aria-hidden="true" />
               {pricing.secondaryCtaNote ? (
                 <FooterNote>
-                  <LocalizedText text={pricing.secondaryCtaNote} />
+                  <MessageDescriptorTrans
+                    descriptor={pricing.secondaryCtaNote}
+                  />
                 </FooterNote>
               ) : null}
               <FakeButton
@@ -765,7 +779,9 @@ export function PricingWindow({
                 rel="noreferrer"
                 target="_blank"
               >
-                <LocalizedText text={pricing.secondaryCtaLabel} />
+                <MessageDescriptorTrans
+                  descriptor={pricing.secondaryCtaLabel}
+                />
               </FakeButton>
             </FooterCtaSection>
           </Inner>

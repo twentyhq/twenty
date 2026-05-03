@@ -1,4 +1,5 @@
 import { LinkButton } from '@/design-system/components';
+import { renderMessageDescriptor } from '@/lib/i18n/render-message-descriptor';
 import type { MenuScheme } from '@/sections/Menu/types';
 import { theme } from '@/theme';
 import { msg } from '@lingui/core/macro';
@@ -27,7 +28,7 @@ export function Cta({ scheme }: CtaProps) {
       <LinkButton
         color={buttonColor}
         href="https://app.twenty.com/welcome"
-        label={msg`Log in`}
+        label={renderMessageDescriptor(msg`Log in`)}
         size="small"
         type="anchor"
         variant="outlined"
@@ -35,7 +36,7 @@ export function Cta({ scheme }: CtaProps) {
       <LinkButton
         color={buttonColor}
         href="https://app.twenty.com/welcome"
-        label={msg`Get started`}
+        label={renderMessageDescriptor(msg`Get started`)}
         size="small"
         type="anchor"
         variant="contained"

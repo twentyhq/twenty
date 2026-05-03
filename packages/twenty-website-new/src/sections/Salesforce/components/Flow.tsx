@@ -1,7 +1,8 @@
 'use client';
 
 import { Body, Heading } from '@/design-system/components';
-import type { LocalizableText } from '@/lib/i18n/localizable-text';
+import { renderMessageDescriptor } from '@/lib/i18n/render-message-descriptor';
+import type { MessageDescriptor } from '@lingui/core';
 import type {
   SalesforceAddonRowType,
   SalesforceDataType,
@@ -35,13 +36,13 @@ const RightColumn = styled.div`
 `;
 
 type OpenWrongChoicePopup = {
-  body: LocalizableText;
+  body: MessageDescriptor;
   key: string;
   layerIndex: number;
   left: number;
   sourceId: string;
   top: number;
-  titleBar: LocalizableText;
+  titleBar: MessageDescriptor;
 };
 
 const POPUP_MARGIN = 12;
@@ -271,8 +272,20 @@ export function Flow({ backgroundColor, body, heading, pricing }: FlowProps) {
   return (
     <Root backgroundColor={backgroundColor}>
       <CopyColumn>
-        <Heading as="h2" segments={heading} size="lg" weight="light" />
-        <Body body={body} family="sans" size="md" weight="regular" />
+        <Heading
+          as="h2"
+          renderText={renderMessageDescriptor}
+          segments={heading}
+          size="lg"
+          weight="light"
+        />
+        <Body
+          body={body}
+          family="sans"
+          renderText={renderMessageDescriptor}
+          size="md"
+          weight="regular"
+        />
       </CopyColumn>
       <RightColumn ref={rightColumnRef}>
         {isPricingWindowVisible ? (

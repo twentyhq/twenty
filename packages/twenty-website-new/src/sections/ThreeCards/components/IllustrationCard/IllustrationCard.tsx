@@ -5,16 +5,15 @@ import { Body, Heading } from '@/design-system/components';
 import { ArrowRightIcon } from '@/icons';
 import { INFORMATIVE_ICONS } from '@/icons/informative';
 import { LocalizedLink } from '@/lib/i18n';
-import { LocalizedText } from '@/lib/i18n/LocalizedText';
-import {
-  resolveLocalizableText,
-  type LocalizableText,
-} from '@/lib/i18n/localizable-text';
+import { resolveMessageDescriptor } from '@/lib/i18n/resolve-message-descriptor';
+import { renderMessageDescriptor } from '@/lib/i18n/render-message-descriptor';
 import { usePartnerApplicationModal } from '@/lib/partner-application';
 import { WebGlMount } from '@/lib/visual-runtime';
 import type { ThreeCardsIllustrationCardType } from '@/sections/ThreeCards/types';
 import { THREE_CARDS_VISUALS } from '@/sections/ThreeCards/visuals';
 import { theme } from '@/theme';
+import type { MessageDescriptor } from '@lingui/core';
+import { MessageDescriptorTrans } from '@/lib/i18n/MessageDescriptorTrans';
 import { useLingui } from '@lingui/react/macro';
 import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
@@ -327,12 +326,12 @@ function PartnerProgramAction({
   label,
   programId,
 }: {
-  label: LocalizableText;
+  label: MessageDescriptor;
   programId: 'technology' | 'content' | 'solutions';
 }) {
   const { i18n } = useLingui();
   const { openPartnerApplicationModal } = usePartnerApplicationModal();
-  const ariaLabel = resolveLocalizableText(i18n, label);
+  const ariaLabel = resolveMessageDescriptor(i18n, label);
 
   const openModal = () => {
     openPartnerApplicationModal(programId);
@@ -341,7 +340,7 @@ function PartnerProgramAction({
   return (
     <PartnerActionRow>
       <PartnerActionButton type="button" onClick={openModal}>
-        <LocalizedText text={label} />
+        <MessageDescriptorTrans descriptor={label} />
       </PartnerActionButton>
       <PartnerActionIconButton
         aria-label={ariaLabel}
@@ -387,6 +386,7 @@ export function IllustrationCard({
       )}
       <Heading
         as="h3"
+        renderText={renderMessageDescriptor}
         segments={illustrationCard.heading}
         size="xs"
         weight="medium"
@@ -405,6 +405,7 @@ export function IllustrationCard({
             className={
               variant === 'simple' ? simpleCardBodyClassName : undefined
             }
+            renderText={renderMessageDescriptor}
             size="sm"
             weight="regular"
           />
@@ -428,6 +429,7 @@ export function IllustrationCard({
                     as="span"
                     body={benefit}
                     className={benefitLabelClassName}
+                    renderText={renderMessageDescriptor}
                     size="sm"
                     weight="regular"
                   />
@@ -449,12 +451,14 @@ export function IllustrationCard({
           <CardFooter>
             <Body
               body={illustrationCard.attribution.role}
+              renderText={renderMessageDescriptor}
               size="xs"
               weight="medium"
             />
             <AttributionPipe aria-hidden />
             <Body
               body={illustrationCard.attribution.company}
+              renderText={renderMessageDescriptor}
               size="xs"
               weight="regular"
             />

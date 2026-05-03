@@ -1,7 +1,7 @@
 'use client';
 
 import { ArrowRightUpIcon, INFORMATIVE_ICONS } from '@/icons';
-import { LocalizedText } from '@/lib/i18n/LocalizedText';
+import { MessageDescriptorTrans } from '@/lib/i18n/MessageDescriptorTrans';
 import type {
   MenuNavChildItemType,
   MenuNavItemType,
@@ -482,11 +482,11 @@ function DropdownContent({ items, pathname, scheme }: DropdownContentProps) {
                 </DropdownIconWrap>
                 <DropdownTextStack>
                   <DropdownLabel data-scheme={scheme}>
-                    <LocalizedText text={child.label} />
+                    <MessageDescriptorTrans descriptor={child.label} />
                   </DropdownLabel>
                   {child.description && (
                     <DropdownDescription data-scheme={scheme}>
-                      <LocalizedText text={child.description} />
+                      <MessageDescriptorTrans descriptor={child.description} />
                     </DropdownDescription>
                   )}
                 </DropdownTextStack>
@@ -515,10 +515,10 @@ function DropdownContent({ items, pathname, scheme }: DropdownContentProps) {
           </PreviewFrame>
           <PreviewText>
             <PreviewTitle data-scheme={scheme}>
-              <LocalizedText text={activePreview.title} />
+              <MessageDescriptorTrans descriptor={activePreview.title} />
             </PreviewTitle>
             <PreviewDescription data-scheme={scheme}>
-              <LocalizedText text={activePreview.description} />
+              <MessageDescriptorTrans descriptor={activePreview.description} />
             </PreviewDescription>
           </PreviewText>
         </PreviewPanel>
@@ -557,7 +557,7 @@ export function Nav({ navItems, scheme }: NavProps) {
                         ) || undefined
                       }
                     >
-                      <LocalizedText text={item.label} />
+                      <MessageDescriptorTrans descriptor={item.label} />
                       <TriggerChevron aria-hidden>
                         <svg
                           width="8"
@@ -591,7 +591,7 @@ export function Nav({ navItems, scheme }: NavProps) {
                       data-active={pathname.startsWith(item.href) || undefined}
                       render={<LocalizedLink href={item.href} />}
                     >
-                      <LocalizedText text={item.label} />
+                      <MessageDescriptorTrans descriptor={item.label} />
                     </NavLink>
                   )
                 )}

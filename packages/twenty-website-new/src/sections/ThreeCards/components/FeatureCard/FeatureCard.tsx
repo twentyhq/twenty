@@ -2,6 +2,7 @@
 
 import { Body, Heading } from '@/design-system/components';
 import { FastPathIcon, LiveDataIcon } from '@/icons';
+import { renderMessageDescriptor } from '@/lib/i18n/render-message-descriptor';
 import type { ThreeCardsFeatureCardType } from '@/sections/ThreeCards/types';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
@@ -198,13 +199,19 @@ export function FeatureCard({ featureCard }: FeatureCardProps) {
           <CardTitleWrap>
             <Heading
               as="h3"
+              renderText={renderMessageDescriptor}
               segments={featureCard.heading}
               size="xs"
               weight="medium"
             />
           </CardTitleWrap>
         </CardTitleRow>
-        <Body body={featureCard.body} size="sm" weight="regular" />
+        <Body
+          body={featureCard.body}
+          renderText={renderMessageDescriptor}
+          size="sm"
+          weight="regular"
+        />
       </CardContent>
     </FeatureCardContainer>
   );

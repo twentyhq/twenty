@@ -1,3 +1,4 @@
+import { msg } from '@lingui/core/macro';
 import { MENU_DATA } from '@/sections/Menu/data';
 import { CustomersCaseStudySignoff } from '@/app/[locale]/customers/_components/CustomersCaseStudySignoff';
 import { getCaseStudyPalette, type CaseStudyData } from '@/lib/customers';
@@ -13,51 +14,49 @@ const PLACEHOLDER_HERO =
 
 const CASE_STUDY: CaseStudyData = {
   meta: {
-    title:
-      'From Salesforce to self-hosted Twenty, powered by AI | Alternative Partners',
-    description:
-      'How Alternative Partners migrated from Salesforce to self-hosted Twenty using agentic AI in the implementation loop: fast migration, durable ownership.',
+    title: msg`From Salesforce to self-hosted Twenty, powered by AI | Alternative Partners`,
+    description: msg`How Alternative Partners migrated from Salesforce to self-hosted Twenty using agentic AI in the implementation loop: fast migration, durable ownership.`,
   },
   hero: {
     readingTime: '7 min',
     title: [
-      { text: 'From Salesforce to ', fontFamily: 'serif' },
-      { text: 'self-hosted Twenty', fontFamily: 'sans', newLine: true },
+      { text: msg`From Salesforce to `, fontFamily: 'serif' },
+      { text: msg`self-hosted Twenty`, fontFamily: 'sans', newLine: true },
     ],
     author: 'Benjamin Reynolds',
     authorAvatarSrc: '/images/partner/testimonials/benjamin-reynolds.webp',
-    authorRole: 'Principal and Founder, Alternative Partners',
+    authorRole: msg`Principal and Founder, Alternative Partners`,
     clientIcon: 'alternative-partners',
     heroImageSrc: PLACEHOLDER_HERO,
-    industry: 'Consulting',
+    industry: msg`Consulting`,
     kpis: [
-      { value: 'AI-assisted', label: 'Salesforce migration' },
-      { value: 'Self-hosted', label: 'Full ownership' },
+      { value: msg`AI-assisted`, label: msg`Salesforce migration` },
+      { value: msg`Self-hosted`, label: msg`Full ownership` },
     ],
   },
   sections: [
     {
       type: 'text',
-      eyebrow: 'Alternative Partners',
+      eyebrow: msg`Alternative Partners`,
       heading: [
-        { text: 'AI in the ', fontFamily: 'serif' },
-        { text: 'migration workflow', fontFamily: 'sans' },
+        { text: msg`AI in the `, fontFamily: 'serif' },
+        { text: msg`migration workflow`, fontFamily: 'sans' },
       ],
       paragraphs: [
-        "Alternative Partners is a consulting firm that moved from Salesforce to a self-hosted Twenty instance. Benjamin Reynolds led the migration. He had already become a Twenty expert implementing Twenty for one of Twenty's first cloud customers.",
-        'His approach was unconventional. Instead of mapping fields manually, scripting transforms, and validating data step by step, he handed the job to agentic AI tools with a brief: where the data lives, the GitHub repo for the target platform, and the Railway deployment. Start, and only return if something breaks beyond a 70% confidence fix.',
-        'It worked. This is AI-assisted iteration in practice: not AI as a product feature, but as part of implementation work, compressing what would typically be weeks into something one person can oversee without being the bottleneck.',
+        msg`Alternative Partners is a consulting firm that moved from Salesforce to a self-hosted Twenty instance. Benjamin Reynolds led the migration. He had already become a Twenty expert implementing Twenty for one of Twenty's first cloud customers.`,
+        msg`His approach was unconventional. Instead of mapping fields manually, scripting transforms, and validating data step by step, he handed the job to agentic AI tools with a brief: where the data lives, the GitHub repo for the target platform, and the Railway deployment. Start, and only return if something breaks beyond a 70% confidence fix.`,
+        msg`It worked. This is AI-assisted iteration in practice: not AI as a product feature, but as part of implementation work, compressing what would typically be weeks into something one person can oversee without being the bottleneck.`,
       ],
     },
     {
       type: 'text',
-      eyebrow: 'Ownership',
+      eyebrow: msg`Ownership`,
       heading: [
-        { text: 'Self-hosted ', fontFamily: 'serif' },
-        { text: 'means control', fontFamily: 'sans' },
+        { text: msg`Self-hosted `, fontFamily: 'serif' },
+        { text: msg`means control`, fontFamily: 'sans' },
       ],
       paragraphs: [
-        'The self-hosted setup means Alternative Partners owns the full stack: no vendor access to their data, no dependency on a SaaS pricing model, full control over how the system evolves. The migration was fast because of AI; the result is durable because the stack is open source.',
+        msg`The self-hosted setup means Alternative Partners owns the full stack: no vendor access to their data, no dependency on a SaaS pricing model, full control over how the system evolves. The migration was fast because of AI; the result is durable because the stack is open source.`,
       ],
     },
   ],
@@ -66,9 +65,8 @@ const CASE_STUDY: CaseStudyData = {
     'Self-hosted means control',
   ],
   catalogCard: {
-    summary:
-      'Alternative Partners replaced Salesforce with self-hosted Twenty, using agentic AI to compress migration work.',
-    date: '2025',
+    summary: msg`Alternative Partners replaced Salesforce with self-hosted Twenty, using agentic AI to compress migration work.`,
+    date: msg`2025`,
   },
 };
 

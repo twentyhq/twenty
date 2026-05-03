@@ -1,6 +1,6 @@
 import type { CaseStudyCatalogEntry } from '@/lib/customers';
 import { ArrowRightIcon, CLIENT_ICONS } from '@/icons';
-import { LocalizedText } from '@/lib/i18n/LocalizedText';
+import { MessageDescriptorTrans } from '@/lib/i18n/MessageDescriptorTrans';
 import { LocalizedLink } from '@/lib/i18n';
 import { CustomerCasesCover } from '@/sections/CaseStudyCatalog/visuals/CustomerCasesCover';
 import { theme } from '@/theme';
@@ -501,17 +501,17 @@ export function Card({
       <ContentWrapper variant={variant}>
         <CardBody variant={variant}>
           <IndustryLabel>
-            <LocalizedText text={entry.industry} />
+            <MessageDescriptorTrans descriptor={entry.industry} />
           </IndustryLabel>
           <Title variant={variant}>
             {entry.hero.title.map((segment, segmentIndex) =>
               segment.fontFamily === 'sans' ? (
                 <TitleSans key={segmentIndex}>
-                  <LocalizedText text={segment.text} />
+                  <MessageDescriptorTrans descriptor={segment.text} />
                 </TitleSans>
               ) : (
                 <span key={segmentIndex}>
-                  <LocalizedText text={segment.text} />
+                  <MessageDescriptorTrans descriptor={segment.text} />
                 </span>
               ),
             )}
@@ -519,12 +519,12 @@ export function Card({
           {hasQuote && entry.quote ? (
             <Quote>
               &ldquo;
-              <LocalizedText text={entry.quote.text} />
+              <MessageDescriptorTrans descriptor={entry.quote.text} />
               &rdquo;
             </Quote>
           ) : !isLarge ? (
             <Summary>
-              <LocalizedText text={entry.catalogCard.summary} />
+              <MessageDescriptorTrans descriptor={entry.catalogCard.summary} />
             </Summary>
           ) : null}
           {isLarge && kpiCount > 0 ? (
@@ -532,10 +532,10 @@ export function Card({
               {entry.kpis.map((kpi, kpiIndex) => (
                 <KpiCell count={kpiCount} index={kpiIndex} key={kpiIndex}>
                   <KpiValue>
-                    <LocalizedText text={kpi.value} />
+                    <MessageDescriptorTrans descriptor={kpi.value} />
                   </KpiValue>
                   <KpiLabel>
-                    <LocalizedText text={kpi.label} />
+                    <MessageDescriptorTrans descriptor={kpi.label} />
                   </KpiLabel>
                 </KpiCell>
               ))}
@@ -548,11 +548,11 @@ export function Card({
             {entry.kpis.map((kpi, kpiIndex) => (
               <KpiChip key={kpiIndex}>
                 <KpiChipValue>
-                  <LocalizedText text={kpi.value} />
+                  <MessageDescriptorTrans descriptor={kpi.value} />
                 </KpiChipValue>
                 <KpiChipDivider aria-hidden />
                 <KpiChipLabel>
-                  <LocalizedText text={kpi.label} />
+                  <MessageDescriptorTrans descriptor={kpi.label} />
                 </KpiChipLabel>
               </KpiChip>
             ))}
@@ -578,14 +578,14 @@ export function Card({
               <AuthorText>
                 {entry.quote.author}{' '}
                 <AuthorRoleText>
-                  · <LocalizedText text={entry.quote.role} />
+                  · <MessageDescriptorTrans descriptor={entry.quote.role} />
                 </AuthorRoleText>
               </AuthorText>
             ) : (
               <AuthorText>
                 {entry.hero.author}{' '}
                 <AuthorRoleText>
-                  · <LocalizedText text={entry.authorRole} />
+                  · <MessageDescriptorTrans descriptor={entry.authorRole} />
                 </AuthorRoleText>
               </AuthorText>
             )}

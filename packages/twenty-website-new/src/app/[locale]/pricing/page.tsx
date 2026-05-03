@@ -3,12 +3,13 @@ import { FAQ_DATA } from '@/sections/Faq/data';
 import { MENU_DATA } from '@/sections/Menu/data';
 import { TalkToUsButton } from '@/lib/contact-cal';
 import { BecomePartnerButton } from '@/app/[locale]/partners/components/PartnerApplication';
-import { ENGAGEMENT_BAND_DATA } from '@/app/[locale]/pricing/engagement-band.data';
-import { HERO_DATA } from '@/app/[locale]/pricing/hero.data';
+import { ENGAGEMENT_BAND_COPY } from '@/app/[locale]/pricing/engagement-band.data';
+import { HERO_COPY } from '@/app/[locale]/pricing/hero.data';
 import { PLAN_TABLE_DATA } from '@/app/[locale]/pricing/plan-table.data';
 import { SALESFORCE_DATA } from '@/app/[locale]/pricing/salesforce.data';
 import { Eyebrow, LinkButton } from '@/design-system/components';
 import { Pages } from '@/lib/pages';
+import { renderMessageDescriptor } from '@/lib/i18n/render-message-descriptor';
 import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';
 import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels';
 import { EngagementBand } from '@/sections/EngagementBand/components';
@@ -56,9 +57,19 @@ export default async function PricingPage() {
       </Menu.Root>
 
       <Hero.Root backgroundColor={theme.colors.secondary.background[5]}>
-        <Hero.Heading page={Pages.Pricing} segments={HERO_DATA.heading} />
+        <Hero.Heading
+          page={Pages.Pricing}
+          segments={[
+            { fontFamily: 'serif', text: HERO_COPY.heading.descriptor },
+            {
+              fontFamily: 'sans',
+              newLine: true,
+              text: HERO_COPY.heading.subject,
+            },
+          ]}
+        />
         <Hero.Body
-          body={HERO_DATA.body}
+          body={{ text: HERO_COPY.body }}
           page={Pages.Pricing}
           preserveLineBreaks
         />
@@ -82,9 +93,14 @@ export default async function PricingPage() {
             >
               <EngagementBand.Copy>
                 <EngagementBand.Heading
-                  segments={ENGAGEMENT_BAND_DATA.heading}
+                  segments={{
+                    fontFamily: 'serif',
+                    text: ENGAGEMENT_BAND_COPY.heading,
+                  }}
                 />
-                <EngagementBand.Body body={ENGAGEMENT_BAND_DATA.body} />
+                <EngagementBand.Body
+                  body={{ text: ENGAGEMENT_BAND_COPY.body }}
+                />
               </EngagementBand.Copy>
               <EngagementBand.Actions>
                 <BecomePartnerButton
@@ -113,13 +129,17 @@ export default async function PricingPage() {
 
       <Faq.Root>
         <Faq.Intro>
-          <Eyebrow colorScheme="secondary" heading={FAQ_DATA.eyebrow.heading} />
+          <Eyebrow
+            colorScheme="secondary"
+            heading={FAQ_DATA.eyebrow.heading}
+            renderText={renderMessageDescriptor}
+          />
           <Faq.Heading segments={FAQ_DATA.heading} />
           <Faq.Cta>
             <LinkButton
               color="primary"
               href="https://app.twenty.com/welcome"
-              label={msg`Get started`}
+              label={renderMessageDescriptor(msg`Get started`)}
               type="anchor"
               variant="contained"
             />

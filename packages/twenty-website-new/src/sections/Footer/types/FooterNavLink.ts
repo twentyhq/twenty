@@ -1,7 +1,7 @@
-import type { LocalizableText } from '@/lib/i18n/localizable-text';
+import type { MessageDescriptor } from '@lingui/core';
 
 export type FooterNavLinkType = {
   external: boolean;
   href: string;
-  label: LocalizableText;
+  label: MessageDescriptor;
 };

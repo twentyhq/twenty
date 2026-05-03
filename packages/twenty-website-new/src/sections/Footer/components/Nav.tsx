@@ -1,6 +1,6 @@
 import { FooterNavCta } from '@/sections/Footer/components/FooterNavCta';
 import { PlusIcon, RectangleFillIcon } from '@/icons';
-import { LocalizedText } from '@/lib/i18n/LocalizedText';
+import { MessageDescriptorTrans } from '@/lib/i18n/MessageDescriptorTrans';
 import { LocalizedLink } from '@/lib/i18n';
 import type { FooterNavGroupType } from '@/sections/Footer/types';
 import { theme } from '@/theme';
@@ -150,7 +150,7 @@ export function Nav({ groups }: NavProps) {
           )}
           <NavGroup aria-labelledby={group.id}>
             <NavGroupTitle id={group.id}>
-              <LocalizedText text={group.title} />
+              <MessageDescriptorTrans descriptor={group.title} />
             </NavGroupTitle>
             <NavMenuList>
               {group.links.map((link) => (
@@ -174,7 +174,7 @@ export function Nav({ groups }: NavProps) {
                         fillColor={theme.colors.secondary.background[100]}
                       />
                     </NavLinkHoverIcon>
-                    <LocalizedText text={link.label} />
+                    <MessageDescriptorTrans descriptor={link.label} />
                   </NavLink>
                 </NavigationMenu.Item>
               ))}

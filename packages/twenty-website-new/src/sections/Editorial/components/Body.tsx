@@ -1,5 +1,6 @@
 import { Body as BaseBody } from '@/design-system/components';
-import type { BodyType } from '@/design-system/components/Body';
+import type { MessageBody } from '@/lib/i18n/message-body';
+import { renderMessageDescriptor } from '@/lib/i18n/render-message-descriptor';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
 
@@ -44,7 +45,7 @@ const SingleColumnBody = styled.div`
 `;
 
 type EditorialBodyProps = {
-  body: BodyType | BodyType[];
+  body: MessageBody | MessageBody[];
   color: string;
   layout:
     | 'centered'
@@ -62,6 +63,7 @@ export function Body({ body, color, layout }: EditorialBodyProps) {
           as="p"
           body={item}
           family="sans"
+          renderText={renderMessageDescriptor}
           size="md"
           variant="body-paragraph"
           weight="regular"
@@ -74,6 +76,7 @@ export function Body({ body, color, layout }: EditorialBodyProps) {
         as="p"
         body={body}
         family="sans"
+        renderText={renderMessageDescriptor}
         size="md"
         variant="body-paragraph"
         weight="regular"

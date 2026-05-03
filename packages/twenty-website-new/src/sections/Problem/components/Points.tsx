@@ -1,5 +1,6 @@
 import { Body } from '@/design-system/components/Body';
 import { Heading } from '@/design-system/components/Heading';
+import { renderMessageDescriptor } from '@/lib/i18n/render-message-descriptor';
 import type { ProblemPointType } from '@/sections/Problem/types';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
@@ -42,8 +43,17 @@ export function Points({ points }: PointsProps) {
         <React.Fragment key={index}>
           <StyledDivider />
           <StyledPoint>
-            <Heading segments={point.heading} weight="medium" size="xs" />
-            <Body body={point.body} size="sm" />
+            <Heading
+              renderText={renderMessageDescriptor}
+              segments={point.heading}
+              weight="medium"
+              size="xs"
+            />
+            <Body
+              body={point.body}
+              renderText={renderMessageDescriptor}
+              size="sm"
+            />
           </StyledPoint>
         </React.Fragment>
       ))}

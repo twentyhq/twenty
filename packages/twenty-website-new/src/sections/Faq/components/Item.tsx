@@ -6,7 +6,7 @@ import {
   RectangleFillIcon,
   RectangleOutlineIcon,
 } from '@/icons';
-import { LocalizedText } from '@/lib/i18n/LocalizedText';
+import { MessageDescriptorTrans } from '@/lib/i18n/MessageDescriptorTrans';
 import type { FaqQuestionType } from '@/sections/Faq/types/FaqQuestion';
 import { theme } from '@/theme';
 import { Accordion as BaseAccordion } from '@base-ui/react/accordion';
@@ -228,7 +228,7 @@ export function Item({ question, value }: ItemProps) {
           </QuestionIconContainer>
 
           <QuestionText>
-            <LocalizedText text={question.question.text} />
+            <MessageDescriptorTrans descriptor={question.question.text} />
           </QuestionText>
 
           <ToggleContainer>
@@ -253,7 +253,7 @@ export function Item({ question, value }: ItemProps) {
       <BaseAccordion.Panel render={<AnswerWrapper />} keepMounted>
         <AnswerInner>
           <AnswerText>
-            <LocalizedText text={question.answer.text} />
+            <MessageDescriptorTrans descriptor={question.answer.text} />
           </AnswerText>
         </AnswerInner>
       </BaseAccordion.Panel>

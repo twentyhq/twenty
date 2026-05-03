@@ -1,27 +1,27 @@
-import type { BodyType } from '@/design-system/components/Body';
-import type { HeadingType } from '@/design-system/components/Heading';
-import type { LocalizableText } from '@/lib/i18n/localizable-text';
+import type { MessageBody } from '@/lib/i18n/message-body';
+import type { MessageHeadingSegment } from '@/lib/i18n/message-heading-segment';
+import type { MessageDescriptor } from '@lingui/core';
 import type { PlansHostingMode, PlansTierId } from '@/sections/Plans/types';
 
 export type PlanTableTierColumnType = {
   id: PlansTierId;
-  label: LocalizableText;
+  label: MessageDescriptor;
 };
 
 export type PlanTableCellType =
   | { kind: 'dash' }
-  | { kind: 'text'; text: LocalizableText }
-  | { kind: 'yes'; label?: LocalizableText };
+  | { kind: 'text'; text: MessageDescriptor }
+  | { kind: 'yes'; label?: MessageDescriptor };
 
 export type PlanTableCategoryRowDataType = {
   appliesTo?: PlansHostingMode;
-  title: LocalizableText;
+  title: MessageDescriptor;
   type: 'category';
 };
 
 export type PlanTableFeatureRowDataType = {
   appliesTo?: PlansHostingMode;
-  featureLabel: LocalizableText;
+  featureLabel: MessageDescriptor;
   selfHostTiers?: Record<PlansTierId, PlanTableCellType>;
   tiers: Record<PlansTierId, PlanTableCellType>;
   type: 'row';
@@ -30,32 +30,32 @@ export type PlanTableFeatureRowDataType = {
 export type PlanTableCalculatorSectionDataType = {
   id: string;
   modelField?: {
-    label: LocalizableText;
+    label: MessageDescriptor;
     options: string[];
     value: string;
   };
   requestField: {
-    label: LocalizableText;
+    label: MessageDescriptor;
     value: number;
   };
   tasksField: {
-    label: LocalizableText;
+    label: MessageDescriptor;
     options: string[];
     value: string;
   };
-  title: LocalizableText;
+  title: MessageDescriptor;
 };
 
 export type PlanTableCalculatorDataType = {
   priceLine: {
     amount: string;
-    label: LocalizableText;
-    periodSuffix: LocalizableText;
+    label: MessageDescriptor;
+    periodSuffix: MessageDescriptor;
   };
   sections: PlanTableCalculatorSectionDataType[];
   visual: {
-    body: BodyType;
-    heading: HeadingType[];
+    body: MessageBody;
+    heading: MessageHeadingSegment[];
     imageAlt?: string;
     imageSrc?: string;
   };
@@ -72,12 +72,12 @@ export type PlanTableBodyRowDataType =
   | PlanTableFeatureRowDataType;
 
 export type PlanTableDataType = {
-  featureColumnLabel: LocalizableText;
+  featureColumnLabel: MessageDescriptor;
   initialVisibleRowCount: number;
   rows: PlanTableBodyRowDataType[];
   seeMoreFeaturesCta: {
-    collapseLabel: LocalizableText;
-    expandLabel: LocalizableText;
+    collapseLabel: MessageDescriptor;
+    expandLabel: MessageDescriptor;
   };
   tierColumns: PlanTableTierColumnType[];
 };

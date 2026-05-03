@@ -11,6 +11,7 @@ import {
   PARTNER_PROGRAM_OPTIONS,
   type PartnerProgramId,
 } from '@/lib/partner-application/partner-application-modal-data';
+import { renderMessageDescriptor } from '@/lib/i18n/render-message-descriptor';
 import { theme } from '@/theme';
 import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
@@ -406,6 +407,7 @@ export function PartnerApplicationModal({
                     newLine: true,
                   },
                 ]}
+                renderText={renderMessageDescriptor}
                 size="lg"
                 weight="light"
               />
@@ -415,8 +417,16 @@ export function PartnerApplicationModal({
         <Modal.Description
           render={
             <SubtitleStack>
-              <Body body={{ text: copy.subtitleLine1 }} size="md" />
-              <Body body={{ text: copy.subtitleLine2 }} size="md" />
+              <Body
+                body={{ text: copy.subtitleLine1 }}
+                renderText={renderMessageDescriptor}
+                size="md"
+              />
+              <Body
+                body={{ text: copy.subtitleLine2 }}
+                renderText={renderMessageDescriptor}
+                size="md"
+              />
             </SubtitleStack>
           }
         />

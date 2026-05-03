@@ -2,6 +2,7 @@ import { styled } from '@linaria/react';
 
 import { Body, Heading } from '@/design-system/components';
 import { INFORMATIVE_ICONS } from '@/icons';
+import { renderMessageDescriptor } from '@/lib/i18n/render-message-descriptor';
 import type { FeatureTileType } from '@/sections/Feature/types/FeatureTile';
 import { theme } from '@/theme';
 
@@ -67,13 +68,25 @@ export function TileContent({ tile }: TileContentProps) {
           ) : null}
         </IconSlot>
         <HeadingWrap>
-          <Heading as="h3" segments={tile.heading} size="xs" weight="medium" />
+          <Heading
+            as="h3"
+            renderText={renderMessageDescriptor}
+            segments={tile.heading}
+            size="xs"
+            weight="medium"
+          />
         </HeadingWrap>
       </TitleRow>
       <Bullets>
         {tile.bullets.map((bullet, bulletIndex) => (
           <BulletItem key={bulletIndex}>
-            <Body as="span" body={bullet} size="sm" weight="regular" />
+            <Body
+              as="span"
+              body={bullet}
+              renderText={renderMessageDescriptor}
+              size="sm"
+              weight="regular"
+            />
           </BulletItem>
         ))}
       </Bullets>

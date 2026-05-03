@@ -1,12 +1,10 @@
 import { msg } from '@lingui/core/macro';
 import { MENU_DATA } from '@/sections/Menu/data';
-import {
-  RELEASE_NOTES_HERO_BODY,
-  RELEASE_NOTES_HERO_HEADING,
-} from '@/app/[locale]/releases/hero.data';
+import { RELEASE_NOTES_HERO_COPY } from '@/app/[locale]/releases/hero.data';
 import { LinkButton } from '@/design-system/components';
 import { Pages } from '@/lib/pages';
 import { GitHubIcon } from '@/icons';
+import { renderMessageDescriptor } from '@/lib/i18n/render-message-descriptor';
 import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';
 import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels';
 import { fetchLatestGithubReleaseTag } from '@/lib/releases/fetch-latest-release-tag';
@@ -59,20 +57,30 @@ export default async function ReleasesPage() {
       <Hero.Root backgroundColor={theme.colors.primary.background[100]}>
         <Hero.Heading
           page={Pages.ReleaseNotes}
-          segments={RELEASE_NOTES_HERO_HEADING}
+          segments={[
+            {
+              fontFamily: 'serif',
+              text: RELEASE_NOTES_HERO_COPY.heading.descriptor,
+            },
+            {
+              fontFamily: 'sans',
+              newLine: true,
+              text: RELEASE_NOTES_HERO_COPY.heading.subject,
+            },
+          ]}
           size="lg"
           weight="light"
         />
         <Hero.Body
           page={Pages.ReleaseNotes}
-          body={RELEASE_NOTES_HERO_BODY}
+          body={{ text: RELEASE_NOTES_HERO_COPY.body }}
           size="sm"
         />
         <Hero.Cta>
           <LinkButton
             color="secondary"
             href="https://github.com/twentyhq/twenty/releases"
-            label={msg`Technical notes`}
+            label={renderMessageDescriptor(msg`Technical notes`)}
             leadingIcon={<GitHubIcon fillColor="currentColor" size={14} />}
             type="anchor"
             variant="outlined"

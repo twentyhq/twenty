@@ -1,7 +1,8 @@
 'use client';
 
 import { Body, Eyebrow, Heading, IconButton } from '@/design-system/components';
-import type { EyebrowType } from '@/design-system/components/Eyebrow';
+import type { MessageEyebrow } from '@/lib/i18n/message-eyebrow';
+import { renderMessageDescriptor } from '@/lib/i18n/render-message-descriptor';
 import { ArrowLeftIcon, ArrowRightIcon } from '@/icons';
 import type { TestimonialCardType } from '@/sections/Testimonials/types/TestimonialCard';
 import { theme } from '@/theme';
@@ -149,7 +150,7 @@ const AuthorBlock = styled.div`
 
 type CarouselProps = {
   children: ReactNode;
-  eyebrow: EyebrowType;
+  eyebrow: MessageEyebrow;
   testimonials: TestimonialCardType[];
 };
 
@@ -190,12 +191,22 @@ export function Carousel({ children, eyebrow, testimonials }: CarouselProps) {
       <Separator />
 
       <RightColumn>
-        <Eyebrow colorScheme="primary" heading={eyebrow.heading} />
+        <Eyebrow
+          colorScheme="primary"
+          heading={eyebrow.heading}
+          renderText={renderMessageDescriptor}
+        />
 
         <HeadingContainer>
           {testimonials.map((t, i) => (
             <HeadingWrapper key={i} data-active={i === index}>
-              <Heading as="h2" segments={t.heading} size="md" weight="light" />
+              <Heading
+                as="h2"
+                renderText={renderMessageDescriptor}
+                segments={t.heading}
+                size="md"
+                weight="light"
+              />
             </HeadingWrapper>
           ))}
         </HeadingContainer>
@@ -244,6 +255,7 @@ export function Carousel({ children, eyebrow, testimonials }: CarouselProps) {
             <Body
               as="span"
               body={current.author.name}
+              renderText={renderMessageDescriptor}
               size="sm"
               weight="medium"
             />
@@ -251,6 +263,7 @@ export function Carousel({ children, eyebrow, testimonials }: CarouselProps) {
               <Body
                 as="span"
                 body={authorSecondaryLine}
+                renderText={renderMessageDescriptor}
                 size="xs"
                 weight="light"
               />

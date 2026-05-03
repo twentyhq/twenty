@@ -1,7 +1,8 @@
 import { styled } from '@linaria/react';
 
 import { Heading as BaseHeading } from '@/design-system/components';
-import type { HeadingType } from '@/design-system/components/Heading';
+import type { MessageHeadingSegment } from '@/lib/i18n/message-heading-segment';
+import { renderMessageDescriptor } from '@/lib/i18n/render-message-descriptor';
 import type { Page } from '@/lib/pages';
 import { theme } from '@/theme';
 
@@ -22,13 +23,19 @@ const HeadingWrap = styled.div`
 
 type HeadingProps = {
   page?: Page;
-  segments: HeadingType[];
+  segments: MessageHeadingSegment[];
 };
 
 export function Heading({ page, segments }: HeadingProps) {
   return (
     <HeadingWrap data-page={page}>
-      <BaseHeading as="h2" segments={segments} size="xl" weight="light" />
+      <BaseHeading
+        as="h2"
+        renderText={renderMessageDescriptor}
+        segments={segments}
+        size="xl"
+        weight="light"
+      />
     </HeadingWrap>
   );
 }

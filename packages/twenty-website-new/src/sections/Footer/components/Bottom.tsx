@@ -1,6 +1,6 @@
 import { ArrowRightUpIcon, SOCIAL_ICONS } from '@/icons';
-import { LocalizedText } from '@/lib/i18n/LocalizedText';
-import type { LocalizableText } from '@/lib/i18n/localizable-text';
+import { MessageDescriptorTrans } from '@/lib/i18n/MessageDescriptorTrans';
+import type { MessageDescriptor } from '@lingui/core';
 import type { FooterSocialLinkType } from '@/sections/Footer/types';
 import { theme } from '@/theme';
 import { Separator } from '@base-ui/react/separator';
@@ -76,7 +76,7 @@ const SocialLink = styled.a`
 `;
 
 type BottomProps = {
-  copyright: LocalizableText;
+  copyright: MessageDescriptor;
   links: FooterSocialLinkType[];
 };
 
@@ -84,7 +84,7 @@ export function Bottom({ copyright, links }: BottomProps) {
   return (
     <BottomGrid>
       <Copyright>
-        <LocalizedText text={copyright} />
+        <MessageDescriptorTrans descriptor={copyright} />
       </Copyright>
       <SocialNav aria-label="Social media">
         {links.map((link, index) => {
@@ -104,7 +104,7 @@ export function Bottom({ copyright, links }: BottomProps) {
                   fillColor={theme.colors.secondary.background[100]}
                   aria-hidden
                 />
-                {link.label ? <LocalizedText text={link.label} /> : null}
+                {link.label ?? null}
                 {link.label && (
                   <ArrowRightUpIcon
                     size={8}
