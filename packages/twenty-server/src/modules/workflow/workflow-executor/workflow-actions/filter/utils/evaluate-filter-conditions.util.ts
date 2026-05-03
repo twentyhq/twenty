@@ -268,6 +268,11 @@ function evaluateUuidFilter(filter: ResolvedFilter): boolean {
       return filter.leftOperand === filter.rightOperand;
     case ViewFilterOperand.IS_NOT:
       return filter.leftOperand !== filter.rightOperand;
+    case ViewFilterOperand.IS_EMPTY:
+      return !isNonEmptyString(filter.leftOperand);
+    case ViewFilterOperand.IS_NOT_NULL:
+    case ViewFilterOperand.IS_NOT_EMPTY:
+      return isNonEmptyString(filter.leftOperand);
     default:
       throw new Error(
         `Operand ${filter.operand} not supported for uuid filter`,

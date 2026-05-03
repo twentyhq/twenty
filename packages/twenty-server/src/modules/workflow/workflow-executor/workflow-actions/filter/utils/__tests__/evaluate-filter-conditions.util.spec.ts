@@ -298,6 +298,78 @@ describe('evaluateFilterConditions', () => {
         expect(evaluateFilterConditions({ filters: [filter2] })).toBe(false);
       });
 
+      it('should return true when left operand is non-empty (IS_NOT_NULL UUID)', () => {
+        const filter = createFilter(
+          ViewFilterOperand.IS_NOT_NULL,
+          uuid1,
+          '',
+          'UUID',
+        );
+        const result = evaluateFilterConditions({ filters: [filter] });
+
+        expect(result).toBe(true);
+      });
+
+      it('should return false when left operand is empty (IS_NOT_NULL UUID)', () => {
+        const filter = createFilter(
+          ViewFilterOperand.IS_NOT_NULL,
+          '',
+          '',
+          'UUID',
+        );
+        const result = evaluateFilterConditions({ filters: [filter] });
+
+        expect(result).toBe(false);
+      });
+
+      it('should return true when left operand is non-empty (IS_NOT_EMPTY UUID)', () => {
+        const filter = createFilter(
+          ViewFilterOperand.IS_NOT_EMPTY,
+          uuid1,
+          '',
+          'UUID',
+        );
+        const result = evaluateFilterConditions({ filters: [filter] });
+
+        expect(result).toBe(true);
+      });
+
+      it('should return false when left operand is empty (IS_NOT_EMPTY UUID)', () => {
+        const filter = createFilter(
+          ViewFilterOperand.IS_NOT_EMPTY,
+          '',
+          '',
+          'UUID',
+        );
+        const result = evaluateFilterConditions({ filters: [filter] });
+
+        expect(result).toBe(false);
+      });
+
+      it('should return true when left operand is empty (IS_EMPTY UUID)', () => {
+        const filter = createFilter(
+          ViewFilterOperand.IS_EMPTY,
+          '',
+          '',
+          'UUID',
+        );
+        const result = evaluateFilterConditions({ filters: [filter] });
+
+        expect(result).toBe(true);
+      });
+
+      it('should return false when left operand is non-empty (IS_EMPTY UUID)', () => {
+        const filter = createFilter(
+          ViewFilterOperand.IS_EMPTY,
+          uuid1,
+          '',
+          'UUID',
+        );
+        const result = evaluateFilterConditions({ filters: [filter] });
+
+        expect(result).toBe(false);
+      });
+
       it('should throw error for unsupported UUID filter operand', () => {
         const filter = createFilter(
           ViewFilterOperand.CONTAINS,
