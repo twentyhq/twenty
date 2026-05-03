@@ -89,8 +89,8 @@ export const SettingsApplicationDetails = () => {
     app?.displayName ?? application?.name ?? t`Application details`;
   const description = app?.description ?? resolvedDescription;
   const logoUrl =
-    app?.logoUrl ??
     application?.logo ??
+    app?.logoUrl ??
     application?.applicationRegistration?.logoUrl ??
     undefined;
 
