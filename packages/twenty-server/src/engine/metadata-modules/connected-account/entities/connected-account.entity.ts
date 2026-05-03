@@ -67,11 +67,8 @@ export class ConnectedAccountEntity extends WorkspaceRelatedEntity {
   @Column({ type: 'uuid', nullable: false })
   userWorkspaceId: string;
 
-  // The DB column stays named `applicationOAuthProviderId` (storage detail
-  // matching the OAuth-specific backing table). The TS property and GraphQL
-  // field are named `applicationConnectionProviderId` to align with the
-  // public ConnectionProvider concept — future credential types will reuse
-  // the same field with a different backing FK.
+  // DB column stays OAuth-named (storage detail); TS / GraphQL surface
+  // exposes it as the public ConnectionProvider concept.
   @Column({ type: 'uuid', nullable: true, name: 'applicationOAuthProviderId' })
   applicationConnectionProviderId: string | null;
 

@@ -26,8 +26,7 @@ export default defineConnectionProvider({
     authorizationEndpoint: 'https://example.com/oauth/authorize',
     tokenEndpoint: 'https://example.com/oauth/access_token',
     scopes: [],
-    // Reference applicationRegistrationVariables declared on this app's
-    // defineApplication serverVariables.
+    // Names of serverVariables declared on this app's defineApplication.
     clientIdVariable: '${upperKey}_CLIENT_ID',
     clientSecretVariable: '${upperKey}_CLIENT_SECRET',
   },
