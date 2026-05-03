@@ -1,5 +1,6 @@
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import { type FlatViewFilter } from '@/metadata-store/types/FlatViewFilter';
+import { type FlatViewFilterGroup } from '@/metadata-store/types/FlatViewFilterGroup';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
@@ -90,6 +91,37 @@ export const useSaveRecordFiltersAndGroupFiltersToViewFiltersAndGroupFilters =
         );
         await performViewFilterGroupAPIUpdate(viewFilterGroupsToUpdate);
         await performViewFilterGroupAPIDestroy(viewFilterGroupIdsToDestroy);
+
+        // Optimistically update viewFilterGroups in the metadata store
+        // to prevent duplicate creates if the save is triggered again
+        // before the SSE event refreshes the store
+        if (
+          viewFilterGroupsToCreate.length > 0 ||
+          viewFilterGroupIdsToDestroy.length > 0 ||
+          viewFilterGroupsToUpdate.length > 0
+        ) {
+          const destroyedIdsSet = new Set(viewFilterGroupIdsToDestroy);
+          const updatedById = new Map(
+            viewFilterGroupsToUpdate.map((group) => [group.id, group]),
+          );
+
+          store.set(
+            metadataStoreState.atomFamily('viewFilterGroups'),
+            (prev) => ({
+              ...prev,
+              current: [
+                ...(prev.current as FlatViewFilterGroup[])
+                  .filter((group) => !destroyedIdsSet.has(group.id))
+                  .map((group) => {
+                    const updated = updatedById.get(group.id);
+
+                    return isDefined(updated) ? { ...group, ...updated } : group;
+                  }),
+                ...viewFilterGroupsToCreate,
+              ],
+            }),
+          );
+        }
 
         // Mirror the DB cascade: remove cascade-deleted viewFilters from the store
         if (viewFilterGroupIdsToDestroy.length > 0) {
