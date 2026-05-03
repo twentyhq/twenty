@@ -26,7 +26,9 @@ export class ApplicationConnectionProviderDTO {
   @Field()
   applicationId: string;
 
-  @Field()
+  // Explicit String type because @nestjs/graphql can't infer GraphQL types
+  // from TS string unions. The TS type is the source of truth for the union.
+  @Field(() => String)
   type: ConnectionProviderType;
 
   @Field()
