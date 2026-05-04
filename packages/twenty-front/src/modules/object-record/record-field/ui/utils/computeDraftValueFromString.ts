@@ -83,7 +83,7 @@ export const computeDraftValueFromString = <FieldValue>({
   }
 
   throw new CustomError(
-    `Record field type not supported : ${fieldDefinition.type}}`,
+    `Record field type not supported : ${fieldDefinition.type}`,
     'RECORD_FIELD_TYPE_NOT_SUPPORTED',
   );
 };

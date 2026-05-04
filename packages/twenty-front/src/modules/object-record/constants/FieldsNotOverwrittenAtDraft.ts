@@ -6,6 +6,7 @@ export const FIELD_NOT_OVERWRITTEN_AT_DRAFT = [
   FieldMetadataType.LINKS,
   FieldMetadataType.MULTI_SELECT,
   FieldMetadataType.RATING,
+  FieldMetadataType.RICH_TEXT,
   FieldMetadataType.SELECT,
   FieldMetadataType.FILES,
 ];
