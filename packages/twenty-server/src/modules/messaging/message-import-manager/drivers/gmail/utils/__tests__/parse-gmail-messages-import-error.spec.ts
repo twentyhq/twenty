@@ -9,7 +9,6 @@ describe('GmailMessagesImportErrorHandler', () => {
 
   beforeEach(() => {
     handler = new GmailMessagesImportErrorHandler();
-    jest.spyOn((handler as any).logger, 'error').mockImplementation(() => {});
   });
 
   it('should handle 400 Bad Request', () => {

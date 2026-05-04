@@ -327,6 +327,11 @@ jobs:
           set_env_var "CLICKHOUSE_URL" "http://default:clickhousePassword@localhost:8123/twenty"
           set_env_var "CLICKHOUSE_PASSWORD" "clickhousePassword"
 
+          # Recreate main_branch database to ensure clean state
+          PGPASSWORD=postgres psql -h localhost -U postgres -d postgres -c "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = 'main_branch' AND pid <> pg_backend_pid();" || true
+          PGPASSWORD=postgres psql -h localhost -U postgres -d postgres -c "DROP DATABASE IF EXISTS main_branch;"
+          PGPASSWORD=postgres psql -h localhost -U postgres -d postgres -c "CREATE DATABASE main_branch;"
+
           npx nx run twenty-server:database:init:prod
 
       - name: Seed main branch database with test data

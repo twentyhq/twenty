@@ -81,8 +81,6 @@ describe('GmailGetMessageListService', () => {
     oAuth2ClientManagerService = module.get<OAuth2ClientManagerService>(
       OAuth2ClientManagerService,
     );
-
-    jest.spyOn((service as any).logger, 'error').mockImplementation(() => {});
   });
 
   afterEach(() => {
