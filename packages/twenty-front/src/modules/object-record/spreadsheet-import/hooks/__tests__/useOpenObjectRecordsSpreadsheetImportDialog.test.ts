@@ -18,11 +18,11 @@ jest.mock('@/object-record/hooks/useBatchCreateManyRecords', () => ({
   }),
 }));
 
-const companyId = 'cb2e9f4b-20c3-4759-9315-4ffeecfaf71a';
-
 jest.mock('uuid', () => ({
-  v4: jest.fn(() => companyId),
+  v4: jest.fn(() => 'cb2e9f4b-20c3-4759-9315-4ffeecfaf71a'),
 }));
+
+const companyId = 'cb2e9f4b-20c3-4759-9315-4ffeecfaf71a';
 
 const mockResult = jest.fn(() => ({
   data: {

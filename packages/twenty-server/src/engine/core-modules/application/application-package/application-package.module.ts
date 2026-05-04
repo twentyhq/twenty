@@ -14,7 +14,13 @@ import { TwentyConfigModule } from 'src/engine/core-modules/twenty-config/twenty
     TwentyConfigModule,
     TypeOrmModule.forFeature([FileEntity, ApplicationEntity]),
   ],
-  providers: [ApplicationPackageFetcherService, ApplicationVersionValidationService],
-  exports: [ApplicationPackageFetcherService, ApplicationVersionValidationService],
+  providers: [
+    ApplicationPackageFetcherService,
+    ApplicationVersionValidationService,
+  ],
+  exports: [
+    ApplicationPackageFetcherService,
+    ApplicationVersionValidationService,
+  ],
 })
 export class ApplicationPackageModule {}
