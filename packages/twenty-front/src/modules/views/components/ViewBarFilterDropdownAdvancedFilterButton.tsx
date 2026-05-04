@@ -7,9 +7,11 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { isSelectedItemIdComponentFamilyState } from '@/ui/layout/selectable-list/states/isSelectedItemIdComponentFamilyState';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
+import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { VIEW_BAR_FILTER_BOTTOM_MENU_ITEM_IDS } from '@/views/constants/ViewBarFilterBottomMenuItemIds';
 
-import { useSetRecordFilterUsedInAdvancedFilterDropdownRow } from '@/object-record/advanced-filter/hooks/useSetRecordFilterUsedInAdvancedFilterDropdownRow';
+import { useChildRecordFiltersAndRecordFilterGroups } from '@/object-record/advanced-filter/hooks/useChildRecordFiltersAndRecordFilterGroups';
+import { rootLevelRecordFilterGroupComponentSelector } from '@/object-record/advanced-filter/states/rootLevelRecordFilterGroupComponentSelector';
 import { useCreateEmptyRecordFilterFromFieldMetadataItem } from '@/object-record/record-filter/hooks/useCreateEmptyRecordFilterFromFieldMetadataItem';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
@@ -34,7 +36,17 @@ const StyledPillContainer = styled.span`
 `;
 
 export const ViewBarFilterDropdownAdvancedFilterButton = () => {
-  const advancedFilterQuerySubFilterCount = 0; // TODO
+  const rootRecordFilterGroup = useAtomComponentSelectorValue(
+    rootLevelRecordFilterGroupComponentSelector,
+  );
+
+  const { childRecordFiltersAndRecordFilterGroups } =
+    useChildRecordFiltersAndRecordFilterGroups({
+      recordFilterGroupId: rootRecordFilterGroup?.id,
+    });
+
+  const advancedFilterQuerySubFilterCount =
+    childRecordFiltersAndRecordFilterGroups.length;
 
   const { t } = useLingui();
 
