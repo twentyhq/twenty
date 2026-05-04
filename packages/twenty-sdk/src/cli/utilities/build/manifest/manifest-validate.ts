@@ -103,7 +103,7 @@ const validateRelationFields = (
   return errors;
 };
 
-const validateUniversalIdentifierVersions = (
+const invalidUniversalIdentifierVersions = (
   identifiers: string[],
 ): string[] => {
   const errors: string[] = [];
@@ -145,7 +145,14 @@ export const manifestValidate = (manifest: Manifest) => {
     errors.push(`Duplicate universal identifiers: ${duplicates.join(', ')}`);
   }
 
-  errors.push(...validateUniversalIdentifierVersions(universalIdentifiers));
+  const invalidUniversalIdentifiers =
+    invalidUniversalIdentifierVersions(universalIdentifiers);
+
+  if (invalidUniversalIdentifiers.length > 0) {
+    errors.push(
+      `Duplicate universal identifiers: ${invalidUniversalIdentifiers.join(', ')}`,
+    );
+  }
 
   if (!isNonEmptyArray(manifest.objects)) {
     warnings.push('No object defined');
