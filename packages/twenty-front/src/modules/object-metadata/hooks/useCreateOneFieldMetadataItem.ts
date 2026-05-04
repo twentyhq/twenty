@@ -5,6 +5,7 @@ import {
 } from '~/generated-metadata/graphql';
 
 import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetadataErrorHandler';
+import { useInvalidateMetadataStore } from '@/metadata-store/hooks/useInvalidateMetadataStore';
 import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
 import { type FlatFieldMetadataItem } from '@/metadata-store/types/FlatFieldMetadataItem';
 import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequestResult.type';
@@ -22,6 +23,7 @@ export const useCreateOneFieldMetadataItem = () => {
   const { handleMetadataError } = useMetadataErrorHandler();
   const { enqueueErrorSnackBar } = useSnackBar();
   const { addToDraft, applyChanges } = useUpdateMetadataStoreDraft();
+  const { invalidateMetadataStore } = useInvalidateMetadataStore();
 
   const createOneFieldMetadataItem = async (
     input: CreateFieldInput,
@@ -54,6 +56,7 @@ export const useCreateOneFieldMetadataItem = () => {
           ],
         });
         applyChanges();
+        invalidateMetadataStore();
       }
 
       return {

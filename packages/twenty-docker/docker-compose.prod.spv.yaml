@@ -20,7 +20,7 @@ services:
     volumes:
       - server-local-data:/app/packages/twenty-server/.local-storage
     ports:
-      - "3000:3000"
+      - "127.0.0.1:3000:3000"
     # Load *every* key from /opt/spotvision/twenty/.env into the container,
     # so optional providers (AUTH_GOOGLE_*, AUTH_MICROSOFT_*, EMAIL_*, etc.)
     # don't need to be enumerated below. The explicit `environment:` block
@@ -121,7 +121,7 @@ services:
   redis:
     image: redis:7-alpine
     restart: always
-    command: ["--maxmemory-policy", "noeviction"]
+    command: ["--maxmemory", "256mb", "--maxmemory-policy", "allkeys-lru"]
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 5s

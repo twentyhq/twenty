@@ -5,6 +5,7 @@ import {
 } from '~/generated-metadata/graphql';
 
 import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetadataErrorHandler';
+import { useInvalidateMetadataStore } from '@/metadata-store/hooks/useInvalidateMetadataStore';
 import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
 import { type FlatFieldMetadataItem } from '@/metadata-store/types/FlatFieldMetadataItem';
 import { lastFieldMetadataItemUpdateState } from '@/object-metadata/states/lastFieldMetadataItemUpdateState';
@@ -26,6 +27,7 @@ export const useUpdateOneFieldMetadataItem = () => {
 
   const { enqueueErrorSnackBar } = useSnackBar();
   const { updateInDraft, applyChanges } = useUpdateMetadataStoreDraft();
+  const { invalidateMetadataStore } = useInvalidateMetadataStore();
 
   const setLastFieldMetadataItemUpdate = useSetAtomState(
     lastFieldMetadataItemUpdateState,
@@ -76,6 +78,7 @@ export const useUpdateOneFieldMetadataItem = () => {
           } as FlatFieldMetadataItem,
         ]);
         applyChanges();
+        invalidateMetadataStore();
       }
 
       setLastFieldMetadataItemUpdate({

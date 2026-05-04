@@ -6,6 +6,7 @@ import {
 } from '~/generated-metadata/graphql';
 
 import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetadataErrorHandler';
+import { useInvalidateMetadataStore } from '@/metadata-store/hooks/useInvalidateMetadataStore';
 import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
 import { type FlatObjectMetadataItem } from '@/metadata-store/types/FlatObjectMetadataItem';
 import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequestResult.type';
@@ -26,6 +27,7 @@ export const useUpdateOneObjectMetadataItem = () => {
   const { enqueueErrorSnackBar } = useSnackBar();
   const { updateInDraft, replaceDraft, applyChanges } =
     useUpdateMetadataStoreDraft();
+  const { invalidateMetadataStore } = useInvalidateMetadataStore();
 
   const updateOneObjectMetadataItem = async ({
     idToUpdate,
@@ -66,6 +68,7 @@ export const useUpdateOneObjectMetadataItem = () => {
           commandMenuItemsResult.data?.commandMenuItems ?? [],
         );
         applyChanges();
+        invalidateMetadataStore();
       }
 
       return {

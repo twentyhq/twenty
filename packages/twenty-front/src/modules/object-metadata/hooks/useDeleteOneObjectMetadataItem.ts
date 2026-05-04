@@ -5,6 +5,7 @@ import {
 } from '~/generated-metadata/graphql';
 
 import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetadataErrorHandler';
+import { useInvalidateMetadataStore } from '@/metadata-store/hooks/useInvalidateMetadataStore';
 import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
 import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequestResult.type';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -22,6 +23,7 @@ export const useDeleteOneObjectMetadataItem = () => {
   const { enqueueErrorSnackBar } = useSnackBar();
   const { removeFromDraft, replaceDraft, applyChanges } =
     useUpdateMetadataStoreDraft();
+  const { invalidateMetadataStore } = useInvalidateMetadataStore();
 
   const deleteOneObjectMetadataItem = async (
     idToDelete: string,
@@ -50,6 +52,7 @@ export const useDeleteOneObjectMetadataItem = () => {
         commandMenuItemsResult.data?.commandMenuItems ?? [],
       );
       applyChanges();
+      invalidateMetadataStore();
 
       return {
         status: 'successful',

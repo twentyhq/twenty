@@ -1,5 +1,6 @@
 import { useStore } from 'jotai';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { useInvalidateMetadataStore } from '@/metadata-store/hooks/useInvalidateMetadataStore';
 
 import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
@@ -31,6 +32,7 @@ export const useUpdateCurrentView = () => {
   const store = useStore();
 
   const [updateOneView] = useMutation(UpdateViewDocument);
+  const { invalidateMetadataStore } = useInvalidateMetadataStore();
 
   const getViewGroupsToCreateAtViewUpdate = useMemo(() => {
     return ({
@@ -114,6 +116,7 @@ export const useUpdateCurrentView = () => {
             input,
           },
         });
+        invalidateMetadataStore();
 
         if (
           input.mainGroupByFieldMetadataId !== undefined &&
@@ -144,6 +147,7 @@ export const useUpdateCurrentView = () => {
       canPersistChanges,
       currentViewIdCallbackState,
       getViewGroupsToCreateAtViewUpdate,
+      invalidateMetadataStore,
       loadRecordIndexStates,
       objectMetadataItem,
       setRecordIndexViewType,
