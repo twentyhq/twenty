@@ -93,11 +93,11 @@ describe('useFrontComponentExecutionContext', () => {
   });
 
   describe('executionContext', () => {
-    it('should return frontComponentId, userId, and recordId', () => {
+    it('should return frontComponentId, userId, recordId, and recordIds with single record', () => {
       const { result } = renderHook(() =>
         useFrontComponentExecutionContext({
           frontComponentId: FRONT_COMPONENT_ID,
-          recordId: 'record-456',
+          recordIds: ['record-456'],
         }),
       );
 
@@ -105,6 +105,23 @@ describe('useFrontComponentExecutionContext', () => {
         frontComponentId: FRONT_COMPONENT_ID,
         userId: 'user-123',
         recordId: 'record-456',
+        recordIds: ['record-456'],
+      });
+    });
+
+    it('should return recordId as first element when multiple recordIds provided', () => {
+      const { result } = renderHook(() =>
+        useFrontComponentExecutionContext({
+          frontComponentId: FRONT_COMPONENT_ID,
+          recordIds: ['record-1', 'record-2', 'record-3'],
+        }),
+      );
+
+      expect(result.current.executionContext).toEqual({
+        frontComponentId: FRONT_COMPONENT_ID,
+        userId: 'user-123',
+        recordId: 'record-1',
+        recordIds: ['record-1', 'record-2', 'record-3'],
       });
     });
 
@@ -120,7 +137,7 @@ describe('useFrontComponentExecutionContext', () => {
       expect(result.current.executionContext.userId).toBeNull();
     });
 
-    it('should return null recordId when no recordId provided', () => {
+    it('should return null recordId and empty recordIds when no recordIds provided', () => {
       const { result } = renderHook(() =>
         useFrontComponentExecutionContext({
           frontComponentId: FRONT_COMPONENT_ID,
@@ -128,6 +145,19 @@ describe('useFrontComponentExecutionContext', () => {
       );
 
       expect(result.current.executionContext.recordId).toBeNull();
+      expect(result.current.executionContext.recordIds).toEqual([]);
+    });
+
+    it('should return null recordId and empty recordIds when empty array provided', () => {
+      const { result } = renderHook(() =>
+        useFrontComponentExecutionContext({
+          frontComponentId: FRONT_COMPONENT_ID,
+          recordIds: [],
+        }),
+      );
+
+      expect(result.current.executionContext.recordId).toBeNull();
+      expect(result.current.executionContext.recordIds).toEqual([]);
     });
   });
 

@@ -23,11 +23,11 @@ import { useNavigateApp } from '~/hooks/useNavigateApp';
 export const useFrontComponentExecutionContext = ({
   frontComponentId,
   commandMenuItemId,
-  recordId,
+  recordIds,
 }: {
   frontComponentId: string;
   commandMenuItemId?: string;
-  recordId?: string;
+  recordIds?: string[];
 }): {
   executionContext: FrontComponentExecutionContext;
   frontComponentHostCommunicationApi: FrontComponentHostCommunicationApi;
@@ -127,7 +127,8 @@ export const useFrontComponentExecutionContext = ({
   const executionContext: FrontComponentExecutionContext = {
     frontComponentId,
     userId: currentUser?.id ?? null,
-    recordId: recordId ?? null,
+    recordId: recordIds?.[0] ?? null,
+    recordIds: recordIds ?? [],
   };
 
   const unmountFrontComponent: FrontComponentHostCommunicationApi['unmountFrontComponent'] =

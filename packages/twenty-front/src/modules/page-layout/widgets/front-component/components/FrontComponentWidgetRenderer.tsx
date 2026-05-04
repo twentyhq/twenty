@@ -42,13 +42,16 @@ export const FrontComponentWidgetRenderer = ({
   }
 
   const frontComponentId = configuration.frontComponentId;
+  const recordIds = isDefined(targetRecordIdentifier?.id)
+    ? [targetRecordIdentifier.id]
+    : undefined;
 
   return (
     <StyledContainer isInEditMode={isPageLayoutInEditMode}>
       <Suspense fallback={null}>
         <FrontComponentRenderer
           frontComponentId={frontComponentId}
-          recordId={targetRecordIdentifier?.id}
+          recordIds={recordIds}
         />
       </Suspense>
     </StyledContainer>

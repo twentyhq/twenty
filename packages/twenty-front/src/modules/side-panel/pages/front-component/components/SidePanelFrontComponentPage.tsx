@@ -24,11 +24,15 @@ export const SidePanelFrontComponentPage = () => {
     return null;
   }
 
+  const recordIds = isDefined(viewableFrontComponentRecordContext?.recordId)
+    ? [viewableFrontComponentRecordContext.recordId]
+    : undefined;
+
   return (
     <Suspense fallback={null}>
       <FrontComponentRenderer
         frontComponentId={viewableFrontComponentId}
-        recordId={viewableFrontComponentRecordContext?.recordId}
+        recordIds={recordIds}
       />
     </Suspense>
   );
