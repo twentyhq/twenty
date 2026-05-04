@@ -1,5 +1,6 @@
 import process from 'process';
 
+import { ExportResultCode } from '@opentelemetry/core';
 import opentelemetry from '@opentelemetry/api';
 import { OTLPMetricExporter } from '@opentelemetry/exporter-metrics-otlp-http';
 import { PrometheusExporter } from '@opentelemetry/exporter-prometheus';
@@ -8,6 +9,8 @@ import {
   ConsoleMetricExporter,
   MeterProvider,
   PeriodicExportingMetricReader,
+  type PushMetricExporter,
+  type ResourceMetrics,
 } from '@opentelemetry/sdk-metrics';
 import * as Sentry from '@sentry/node';
 import { nodeProfilingIntegration } from '@sentry/profiling-node';
@@ -23,6 +26,84 @@ const meterDrivers = parseArrayEnvVar(
   Object.values(MeterDriver),
   [],
 );
+
+const OTLP_METRICS_LOG_PREFIX = '[Twenty OTEL metrics]';
+
+const formatOtlEndpointForLog = (rawUrl: string | undefined): string => {
+  if (!rawUrl?.trim()) {
+    return 'unset';
+  }
+  try {
+    const parsed = new URL(rawUrl);
+
+    return `${parsed.protocol}//${parsed.host}${parsed.pathname}`;
+  } catch {
+    return 'invalid_url';
+  }
+};
+
+const serializeOtlExportFailure = (error: unknown): string => {
+  if (error === undefined || error === null) {
+    return 'none';
+  }
+  if (error instanceof Error) {
+    const base = `${error.name}: ${error.message}`;
+    const maybeAggregate = error as Error & { errors?: unknown[] };
+    if (
+      Array.isArray(maybeAggregate.errors) &&
+      maybeAggregate.errors.length > 0
+    ) {
+      const causes = maybeAggregate.errors.map((cause: unknown) =>
+        serializeOtlExportFailure(cause),
+      );
+
+      return `${base} | causes=[${causes.join(' | ')}]`;
+    }
+
+    return base;
+  }
+  try {
+    return JSON.stringify(error);
+  } catch {
+    return String(error);
+  }
+};
+
+let otlpMetricsFirstExportSuccessLogged = false;
+
+const wrapOtlMetricExporterWithProcessLogs = (
+  inner: OTLPMetricExporter,
+  otlpEndpointForLog: string,
+): PushMetricExporter => ({
+  export(metrics: ResourceMetrics, resultCallback) {
+    const totalMetricData = metrics.scopeMetrics.reduce(
+      (accumulator, scopeMetric) => accumulator + scopeMetric.metrics.length,
+      0,
+    );
+    inner.export(metrics, (result) => {
+      if (result.code === ExportResultCode.SUCCESS) {
+        if (!otlpMetricsFirstExportSuccessLogged) {
+          otlpMetricsFirstExportSuccessLogged = true;
+          // One-time line so prod logs stay usable; further success is silent.
+          console.log(
+            `${OTLP_METRICS_LOG_PREFIX} first export ok | endpoint=${otlpEndpointForLog} | metricDataPoints=${totalMetricData}`,
+          );
+        }
+      } else {
+        console.warn(
+          `${OTLP_METRICS_LOG_PREFIX} export failed | endpoint=${otlpEndpointForLog} | metricDataPoints=${totalMetricData} | code=${result.code} | error=${serializeOtlExportFailure(result.error)}`,
+        );
+      }
+      resultCallback(result);
+    });
+  },
+  forceFlush: () => inner.forceFlush(),
+  shutdown: () => inner.shutdown(),
+  selectAggregationTemporality: (instrumentType) =>
+    inner.selectAggregationTemporality(instrumentType),
+  selectAggregation: (instrumentType) =>
+    inner.selectAggregation(instrumentType),
+});
 
 if (process.env.EXCEPTION_HANDLER_DRIVER === ExceptionHandlerDriver.SENTRY) {
   Sentry.init({
@@ -50,6 +131,19 @@ if (process.env.EXCEPTION_HANDLER_DRIVER === ExceptionHandlerDriver.SENTRY) {
 
 // Meter setup
 
+const otlpCollectorMetricsUrl = process.env.OTLP_COLLECTOR_METRICS_ENDPOINT_URL;
+const otlpEndpointForLog = formatOtlEndpointForLog(otlpCollectorMetricsUrl);
+
+if (meterDrivers.includes(MeterDriver.OpenTelemetry)) {
+  console.log(
+    `${OTLP_METRICS_LOG_PREFIX} OTLP reader enabled | exportIntervalMs=10000 | endpoint=${otlpEndpointForLog} | meterDrivers=${meterDrivers.join(',')}`,
+  );
+} else {
+  console.log(
+    `${OTLP_METRICS_LOG_PREFIX} OTLP reader disabled | parsedMeterDrivers=${JSON.stringify(meterDrivers)} | rawMETER_DRIVER=${JSON.stringify(process.env.METER_DRIVER ?? '')}`,
+  );
+}
+
 const prometheusExporter = meterDrivers.includes(MeterDriver.Prometheus)
   ? new PrometheusExporter({ port: 9464 })
   : null;
@@ -67,10 +161,13 @@ const meterProvider = new MeterProvider({
     ...(meterDrivers.includes(MeterDriver.OpenTelemetry)
       ? [
           new PeriodicExportingMetricReader({
-            exporter: new OTLPMetricExporter({
-              url: process.env.OTLP_COLLECTOR_METRICS_ENDPOINT_URL,
-              temporalityPreference: AggregationTemporality.DELTA,
-            }),
+            exporter: wrapOtlMetricExporterWithProcessLogs(
+              new OTLPMetricExporter({
+                url: otlpCollectorMetricsUrl,
+                temporalityPreference: AggregationTemporality.DELTA,
+              }),
+              otlpEndpointForLog,
+            ),
             exportIntervalMillis: 10000,
           }),
         ]
