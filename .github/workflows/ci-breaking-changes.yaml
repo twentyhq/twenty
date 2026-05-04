@@ -143,7 +143,6 @@ jobs:
           set_env_var "CLICKHOUSE_PASSWORD" "clickhousePassword"
 
           npx nx run twenty-server:database:init:prod
-          npx nx command-no-deps twenty-server -- metadata:sync
 
       - name: Seed current branch database with test data
         run: |
@@ -166,7 +165,8 @@ jobs:
           elapsed=0
 
           while [ $elapsed -lt $timeout ]; do
-            if curl -sf "http://localhost:${{ env.CURRENT_SERVER_PORT }}/healthz" > /dev/null 2>&1; then
+            if curl -sf "http://localhost:${{ env.CURRENT_SERVER_PORT }}/healthz" > /dev/null 2>&1 && \
+               curl -sf "http://localhost:${{ env.CURRENT_SERVER_PORT }}/graphql" > /dev/null 2>&1; then
               echo "Current branch server is ready!"
               break
             fi
@@ -334,7 +334,6 @@ jobs:
           PGPASSWORD=postgres psql -h localhost -U postgres -d postgres -c "CREATE DATABASE main_branch;"
 
           npx nx run twenty-server:database:init:prod
-          npx nx command-no-deps twenty-server -- metadata:sync
 
       - name: Seed main branch database with test data
         run: |
@@ -357,7 +356,8 @@ jobs:
           elapsed=0
 
           while [ $elapsed -lt $timeout ]; do
-            if curl -sf "http://localhost:${{ env.MAIN_SERVER_PORT }}/healthz" > /dev/null 2>&1; then
+            if curl -sf "http://localhost:${{ env.MAIN_SERVER_PORT }}/healthz" > /dev/null 2>&1 && \
+               curl -sf "http://localhost:${{ env.MAIN_SERVER_PORT }}/graphql" > /dev/null 2>&1; then
               echo "Main branch server is ready!"
               break
             fi
