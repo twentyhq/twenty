@@ -13,7 +13,6 @@ import { type ObjectManifest } from './objectManifestType';
 import {
   type PageLayoutManifest,
   type PageLayoutTabManifest,
-  type PageLayoutWidgetManifest,
 } from './pageLayoutManifestType';
 import { type RoleManifest } from './roleManifestType';
 import { type SkillManifest } from './skillManifestType';
@@ -34,9 +33,7 @@ export type Manifest = {
   navigationMenuItems: NavigationMenuItemManifest[];
   pageLayouts: PageLayoutManifest[];
   pageLayoutTabs: PageLayoutTabManifest[];
-  // Standalone children of FrontComponent / PageLayoutTab declared via
-  // defineCommandMenuItem / definePageLayoutWidget. Optional so that older
-  // manifests and minimal apps continue to type-check without these arrays.
+  // Standalone command menu items declared via defineCommandMenuItem.
+  // Optional so older manifests continue to type-check without this array.
   commandMenuItems?: CommandMenuItemManifest[];
-  pageLayoutWidgets?: PageLayoutWidgetManifest[];
 };

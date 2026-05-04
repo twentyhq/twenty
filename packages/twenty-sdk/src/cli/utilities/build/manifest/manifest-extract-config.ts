@@ -16,7 +16,6 @@ export enum TargetFunction {
   DefineNavigationMenuItem = 'defineNavigationMenuItem',
   DefinePageLayout = 'definePageLayout',
   DefinePageLayoutTab = 'definePageLayoutTab',
-  DefinePageLayoutWidget = 'definePageLayoutWidget',
   DefineCommandMenuItem = 'defineCommandMenuItem',
 }
 
@@ -35,7 +34,6 @@ export enum ManifestEntityKey {
   NavigationMenuItems = 'navigationMenuItems',
   PageLayouts = 'pageLayouts',
   PageLayoutTabs = 'pageLayoutTabs',
-  PageLayoutWidgets = 'pageLayoutWidgets',
   CommandMenuItems = 'commandMenuItems',
 }
 
@@ -64,7 +62,6 @@ export const TARGET_FUNCTION_TO_ENTITY_KEY_MAPPING: Record<
     ManifestEntityKey.NavigationMenuItems,
   [TargetFunction.DefinePageLayout]: ManifestEntityKey.PageLayouts,
   [TargetFunction.DefinePageLayoutTab]: ManifestEntityKey.PageLayoutTabs,
-  [TargetFunction.DefinePageLayoutWidget]: ManifestEntityKey.PageLayoutWidgets,
   [TargetFunction.DefineCommandMenuItem]: ManifestEntityKey.CommandMenuItems,
 };
 

@@ -34,13 +34,12 @@ Full documentation is available at **[docs.twenty.com/developers/extend/apps](ht
 
 ## Defining entities
 
-Each `define*` function declares one entity that the dev sync pipeline tracks. Three entities can also be declared as children of a parent define (`PageLayoutTab` inside `definePageLayout`, `PageLayoutWidget` inside a tab, `CommandMenuItem` inside `defineFrontComponent`'s `command:` field) — but each one is also exposed as a top-level define for cases where the child is owned by a different file or app:
+Each `define*` function declares one entity that the dev sync pipeline tracks. Two entities can also be declared as children of a parent define (`PageLayoutTab` inside `definePageLayout`, `CommandMenuItem` inside `defineFrontComponent`'s `command:` field) — but each is also exposed as a top-level define for cases where the child is owned by a different file or app:
 
 | Entity                                                                                                                                             | Top-level define                                                    | Also nestable inside                     |
 | -------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------- | ---------------------------------------- |
 | Object / Field / Role / Skill / Agent / View / FrontComponent / LogicFunction / NavigationMenuItem / PageLayout / ConnectionProvider / Application | `defineX(...)`                                                      | —                                        |
 | PageLayoutTab                                                                                                                                      | `definePageLayoutTab({ pageLayoutUniversalIdentifier, ... })`       | `definePageLayout({ tabs: [...] })`      |
-| PageLayoutWidget                                                                                                                                   | `definePageLayoutWidget({ pageLayoutTabUniversalIdentifier, ... })` | a tab's `widgets:` array                 |
 | CommandMenuItem                                                                                                                                    | `defineCommandMenuItem({ frontComponentUniversalIdentifier, ... })` | `defineFrontComponent({ command: ... })` |
 
 **Don't declare the same entity twice.** The top-level form and the nested form produce the same flat record on the server — declaring both with the same `universalIdentifier` makes the manifest aggregator throw on duplicate identifier. Pick one form per entity.

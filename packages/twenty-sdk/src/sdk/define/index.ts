@@ -77,10 +77,8 @@ export {
 
 export { definePageLayout } from '@/sdk/define/page-layouts/define-page-layout';
 export { definePageLayoutTab } from '@/sdk/define/page-layouts/define-page-layout-tab';
-export { definePageLayoutWidget } from '@/sdk/define/page-layouts/define-page-layout-widget';
 export type { PageLayoutConfig } from '@/sdk/define/page-layouts/page-layout-config';
 export type { PageLayoutTabConfig } from '@/sdk/define/page-layouts/page-layout-tab-config';
-export type { PageLayoutWidgetConfig } from '@/sdk/define/page-layouts/page-layout-widget-config';
 export type {
   PageLayoutManifest,
   PageLayoutTabManifest,

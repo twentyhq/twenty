@@ -33,7 +33,6 @@ export const normalizeManifestForComparison = <T extends Manifest>(
   navigationMenuItems: sortById(manifest.navigationMenuItems),
   pageLayouts: sortById(manifest.pageLayouts),
   pageLayoutTabs: sortById(manifest.pageLayoutTabs ?? []),
-  pageLayoutWidgets: sortById(manifest.pageLayoutWidgets ?? []),
   commandMenuItems: sortById(manifest.commandMenuItems ?? []),
   logicFunctions: sortById(
     manifest.logicFunctions?.map((fn) => ({

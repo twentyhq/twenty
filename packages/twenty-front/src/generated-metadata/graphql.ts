@@ -882,6 +882,7 @@ export type CommandMenuItem = {
   payload?: Maybe<CommandMenuItemPayload>;
   position: Scalars['Float'];
   shortLabel?: Maybe<Scalars['String']>;
+  universalIdentifier?: Maybe<Scalars['UUID']>;
   updatedAt: Scalars['DateTime'];
   workflowVersionId?: Maybe<Scalars['UUID']>;
 };
