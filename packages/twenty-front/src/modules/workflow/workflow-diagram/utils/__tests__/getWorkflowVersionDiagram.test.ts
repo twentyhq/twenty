@@ -1,9 +1,16 @@
-import { getUuidV4Mock } from '~/testing/utils/getUuidV4Mock';
 import { getWorkflowVersionDiagram } from '@/workflow/workflow-diagram/utils/getWorkflowVersionDiagram';
 
+let uuidCounter = 0;
+
 jest.mock('uuid', () => ({
-  v4: getUuidV4Mock(),
+  get v4() {
+    return () => `8f3b2121-f194-4ba4-9fbf-${uuidCounter++}`;
+  },
 }));
+
+beforeEach(() => {
+  uuidCounter = 0;
+});
 
 describe('getWorkflowVersionDiagram', () => {
   it('returns an empty diagram if the provided workflow version', () => {

@@ -4,12 +4,19 @@ import {
 } from '@/workflow/types/Workflow';
 import { StepStatus, type WorkflowRunStepInfos } from 'twenty-shared/workflow';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { getUuidV4Mock } from '~/testing/utils/getUuidV4Mock';
 import { generateWorkflowRunDiagram } from '@/workflow/workflow-diagram/utils/generateWorkflowRunDiagram';
 
+let uuidCounter = 0;
+
 jest.mock('uuid', () => ({
-  v4: getUuidV4Mock(),
+  get v4() {
+    return () => `8f3b2121-f194-4ba4-9fbf-${uuidCounter++}`;
+  },
 }));
+
+beforeEach(() => {
+  uuidCounter = 0;
+});
 
 describe('generateWorkflowRunDiagram', () => {
   it('marks node as failed when the last attempt failed', () => {
