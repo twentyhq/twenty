@@ -184,7 +184,7 @@ describe('useInitializeFilterOnFieldMetadataItemFromViewBarFilterDropdown', () =
     });
   });
 
-  it('should initialize filter with a duplicate field on city', () => {
+  it('should initialize a fresh filter even when a filter already exists on the same field', () => {
     const { result } = renderHook(
       () => {
         const { initializeFilterOnFieldMetataItemFromViewBarFilterDropdown } =
@@ -262,9 +262,12 @@ describe('useInitializeFilterOnFieldMetadataItemFromViewBarFilterDropdown', () =
       );
     });
 
-    expect(result.current.objectFilterDropdownCurrentRecordFilter).toBe(
+    // A fresh filter should be initialized, not the existing one
+    expect(result.current.objectFilterDropdownCurrentRecordFilter).not.toBe(
       mockExistingFilterOnCity,
     );
+    expect(result.current.objectFilterDropdownCurrentRecordFilter).toBeNull();
+    expect(result.current.selectedOperandInDropdown).toBe(defaultOperand);
   });
 
   it('should initialize filter on a date field correctly', () => {
