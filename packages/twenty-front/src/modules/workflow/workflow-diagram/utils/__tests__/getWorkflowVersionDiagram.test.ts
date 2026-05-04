@@ -155,7 +155,7 @@ describe('getWorkflowVersionDiagram', () => {
         "edgeType": "default",
       },
       "deletable": true,
-      "id": "8f3b2121-f194-4ba4-9fbf-0",
+      "id": "8f3b2121-f194-4ba4-9fbf-10",
       "markerEnd": "edge-branch-arrow-default",
       "markerStart": undefined,
       "reconnectable": "target",
