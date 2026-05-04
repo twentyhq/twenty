@@ -8,8 +8,8 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        required: true
-        description: New current version (e.g. 2.4.0)
+        required: false
+        description: New current version (defaults to TWENTY_NEXT_VERSIONS[0], e.g. 2.4.0)
       ref:
         default: main
         description: Ref to start from (e.g. main, sha)
@@ -33,23 +33,27 @@ jobs:
         with:
           node-version: 24
 
-      - name: Sanitize version
-        id: sanitize
+      - name: Bump version constants
         env:
           RAW_VERSION: ${{ github.event.inputs.version }}
         run: |
-          VERSION="${RAW_VERSION#v}"
-          printf 'version=%s\n' "$VERSION" >> "$GITHUB_OUTPUT"
+          if [ -n "$RAW_VERSION" ]; then
+            VERSION="${RAW_VERSION#v}"
+            npx nx version:bump twenty-server -- "$VERSION"
+          else
+            npx nx version:bump twenty-server
+          fi
 
-      - name: Bump version constants
-        env:
-          VERSION: ${{ steps.sanitize.outputs.version }}
-        run: npx nx version:bump twenty-server -- "$VERSION"
+      - name: Get new version
+        id: get_version
+        run: |
+          VERSION=$(sed -n "s/.*TWENTY_CURRENT_VERSION = '\([0-9.]*\)'.*/\1/p" packages/twenty-server/src/engine/core-modules/upgrade/constants/twenty-current-version.constant.ts)
+          printf 'version=%s\n' "$VERSION" >> "$GITHUB_OUTPUT"
 
       - name: Create PR with gh
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          VERSION: ${{ steps.sanitize.outputs.version }}
+          VERSION: ${{ steps.get_version.outputs.version }}
         run: |
           git config user.name "Github Action Deploy"
           git config user.email "github-action-deploy@twenty.com"
@@ -68,12 +72,10 @@ jobs:
           - Moves current version to previous versions array
           - Sets TWENTY_CURRENT_VERSION to the new version
           - Updates TWENTY_NEXT_VERSIONS with the next minor version
-          - Creates upgrade command module scaffold for the next version
 
           ## Checklist
 
           - [ ] Verify version constants are correct
-          - [ ] Verify upgrade command module was created
           EOF
           )" \
             --label "ci:allow-previous-version-upgrade-mutation"

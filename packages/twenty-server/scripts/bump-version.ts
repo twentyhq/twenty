@@ -4,62 +4,6 @@ import semver from 'semver';
 
 const CONSTANTS_DIR = 'src/engine/core-modules/upgrade/constants';
 
-function parseVersion(version: string): semver.SemVer {
-  const parsed = semver.parse(version);
-
-  if (!parsed) {
-    throw new Error(`Invalid version format: ${version}`);
-  }
-
-  return parsed;
-}
-
-function incrementMinorVersion(version: string): string {
-  const incremented = semver.inc(version, 'minor');
-
-  if (!incremented) {
-    throw new Error(`Failed to increment version: ${version}`);
-  }
-
-  return incremented;
-}
-
-function getCurrentVersion(): string {
-  const filePath = `${CONSTANTS_DIR}/twenty-current-version.constant.ts`;
-  const content = readFileSync(filePath, 'utf-8');
-  const match = content.match(/'([0-9.]+)'/);
-
-  if (!match) {
-    throw new Error('Could not extract current version');
-  }
-
-  return match[1];
-}
-
-function getPreviousVersions(): string[] {
-  const filePath = `${CONSTANTS_DIR}/twenty-previous-versions.constant.ts`;
-  const content = readFileSync(filePath, 'utf-8');
-  const matches = content.match(/'[0-9.]+'/g);
-
-  if (!matches) {
-    return [];
-  }
-
-  return matches.map((m) => m.replace(/'/g, ''));
-}
-
-function getNextVersions(): string[] {
-  const filePath = `${CONSTANTS_DIR}/twenty-next-versions.constant.ts`;
-  const content = readFileSync(filePath, 'utf-8');
-  const matches = content.match(/'[0-9.]+'/g);
-
-  if (!matches) {
-    return [];
-  }
-
-  return matches.map((m) => m.replace(/'/g, ''));
-}
-
 const AUTO_GENERATED_HEADER = `/*
  * _____                    _
  *|_   _|_      _____ _ __ | |_ _   _
@@ -71,7 +15,63 @@ const AUTO_GENERATED_HEADER = `/*
 
 `;
 
-function updateCurrentVersion(newVersion: string): void {
+const parseVersion = (version: string): semver.SemVer => {
+  const parsed = semver.parse(version);
+
+  if (!parsed) {
+    throw new Error(`Invalid version format: ${version}`);
+  }
+
+  return parsed;
+};
+
+const incrementMinorVersion = (version: string): string => {
+  const incremented = semver.inc(version, 'minor');
+
+  if (!incremented) {
+    throw new Error(`Failed to increment version: ${version}`);
+  }
+
+  return incremented;
+};
+
+const getCurrentVersion = (): string => {
+  const filePath = `${CONSTANTS_DIR}/twenty-current-version.constant.ts`;
+  const content = readFileSync(filePath, 'utf-8');
+  const match = content.match(/'([0-9.]+)'/);
+
+  if (!match) {
+    throw new Error('Could not extract current version');
+  }
+
+  return match[1];
+};
+
+const getPreviousVersions = (): string[] => {
+  const filePath = `${CONSTANTS_DIR}/twenty-previous-versions.constant.ts`;
+  const content = readFileSync(filePath, 'utf-8');
+  const matches = content.match(/'[0-9.]+'/g);
+
+  if (!matches) {
+    return [];
+  }
+
+  return matches.map((m) => m.replace(/'/g, ''));
+};
+
+const getNextVersions = (): string[] => {
+  const filePath = `${CONSTANTS_DIR}/twenty-next-versions.constant.ts`;
+  const content = readFileSync(filePath, 'utf-8');
+  const matches = content.match(/'[0-9.]+'/g);
+
+  if (!matches) {
+    return [];
+  }
+
+  return matches.map((m) => m.replace(/'/g, ''));
+};
+
+const updateCurrentVersion = (newVersion: string): void => {
   const filePath = `${CONSTANTS_DIR}/twenty-current-version.constant.ts`;
 
   writeFileSync(
@@ -80,9 +80,9 @@ function updateCurrentVersion(newVersion: string): void {
   );
 
   console.log(`Updated TWENTY_CURRENT_VERSION to '${newVersion}'`);
-}
+};
 
-function updatePreviousVersions(versions: string[]): void {
+const updatePreviousVersions = (versions: string[]): void => {
   const filePath = `${CONSTANTS_DIR}/twenty-previous-versions.constant.ts`;
   const formattedVersions = versions.map((v) => `  '${v}',`).join('\n');
 
@@ -92,9 +92,9 @@ function updatePreviousVersions(versions: string[]): void {
   );
 
   console.log(`Updated TWENTY_PREVIOUS_VERSIONS with ${versions.length} versions`);
-}
+};
 
-function updateNextVersions(versions: string[]): void {
+const updateNextVersions = (versions: string[]): void => {
   const filePath = `${CONSTANTS_DIR}/twenty-next-versions.constant.ts`;
   const formattedVersions = versions.map((v) => `'${v}'`).join(', ');
 
@@ -104,11 +104,45 @@ function updateNextVersions(versions: string[]): void {
   );
 
   console.log(`Updated TWENTY_NEXT_VERSIONS to [${formattedVersions}]`);
-}
+};
 
-function bumpVersion(newVersion: string): void {
-  parseVersion(newVersion);
+const resolveNewVersion = (
+  newVersionArg: string | undefined,
+  currentVersion: string,
+  nextVersions: string[],
+): string => {
+  if (newVersionArg) {
+    parseVersion(newVersionArg);
 
+    if (!semver.gt(newVersionArg, currentVersion)) {
+      throw new Error(
+        `New version '${newVersionArg}' must be greater than current version '${currentVersion}'`,
+      );
+    }
+
+    if (nextVersions.length > 0 && semver.gt(newVersionArg, nextVersions[0])) {
+      throw new Error(
+        `New version '${newVersionArg}' cannot be greater than planned next version '${nextVersions[0]}'`,
+      );
+    }
+
+    return newVersionArg;
+  }
+
+  if (nextVersions.length === 0) {
+    throw new Error(
+      'No version in TWENTY_NEXT_VERSIONS. Please provide a version explicitly.',
+    );
+  }
+
+  console.log(
+    `\nNo version provided, using TWENTY_NEXT_VERSIONS[0]: '${nextVersions[0]}'`,
+  );
+
+  return nextVersions[0];
+};
+
+const bumpVersion = (newVersionArg?: string): void => {
   const currentVersion = getCurrentVersion();
   const previousVersions = getPreviousVersions();
   const nextVersions = getNextVersions();
@@ -122,6 +156,7 @@ function bumpVersion(newVersion: string): void {
     `  TWENTY_NEXT_VERSIONS: [${nextVersions.map((v) => `'${v}'`).join(', ')}]`,
   );
 
+  const newVersion = resolveNewVersion(newVersionArg, currentVersion, nextVersions);
   const updatedPreviousVersions = [...previousVersions, currentVersion];
   const nextNextVersion = incrementMinorVersion(newVersion);
 
@@ -138,14 +173,8 @@ function bumpVersion(newVersion: string): void {
   );
   console.log(`  TWENTY_NEXT_VERSIONS: ['${nextNextVersion}']`);
   console.log('\nVersion bump complete!');
-}
+};
 
 const newVersion = process.argv[2];
-
-if (!newVersion) {
-  console.error('Usage: npx nx version:bump twenty-server -- <new-version>');
-  console.error('Example: npx nx version:bump twenty-server -- 2.4.0');
-  process.exit(1);
-}
 
 bumpVersion(newVersion);
