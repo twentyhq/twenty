@@ -77,9 +77,9 @@ Bir güncelleme yayımlamak için:
 
 {/* TODO: add screenshot of the Upgrade button */}
 
-### Server version compatibility
+### Sunucu sürümü uyumluluğu
 
-If your app uses a feature introduced in a specific Twenty server version (for example, OAuth providers added in v2.3.0), you should declare the minimum server version your app requires using the `engines.twenty` field in `package.json`:
+Uygulamanız belirli bir Twenty sunucu sürümünde sunulan bir özelliği kullanıyorsa (örneğin, v2.3.0'da eklenen OAuth sağlayıcıları), uygulamanızın gerektirdiği en düşük sunucu sürümünü `package.json` içindeki `engines.twenty` alanını kullanarak belirtmelisiniz:
 
 ```json filename="package.json"
 {
@@ -92,22 +92,22 @@ If your app uses a feature introduced in a specific Twenty server version (for e
 }
 ```
 
-The value is a standard [semver range](https://github.com/npm/node-semver#ranges). Common patterns:
+Değer, standart bir [semver aralığı](https://github.com/npm/node-semver#ranges)dır. Yaygın Kalıplar:
 
-| Range                              | Meaning                                    |
-| ---------------------------------- | ------------------------------------------ |
-| `>=2.3.0`                          | Any server from 2.3.0 onward               |
-| `>=2.3.0 \<3.0.0` | 2.3.0 or later, but below the next major   |
-| `^2.3.0`                           | Same as `>=2.3.0 \<3.0.0` |
+| Aralık                             | Anlam                                                     |
+| ---------------------------------- | --------------------------------------------------------- |
+| `>=2.3.0`                          | 2.3.0'dan itibaren herhangi bir sunucu                    |
+| `>=2.3.0 \<3.0.0` | 2.3.0 veya sonrası, ancak bir sonraki ana sürümün altında |
+| `^2.3.0`                           | `>=2.3.0 \<3.0.0` ile aynı               |
 
-**What happens at deploy and install time:**
+**Dağıtım ve yükleme sırasında ne olur:**
 
-* If `engines.twenty` is set and the target server's version does not satisfy the range, the deploy (tarball upload) or install is rejected with a `SERVER_VERSION_INCOMPATIBLE` error and a message indicating both the required range and the actual server version.
-* If `engines.twenty` is **not set**, the app is accepted on any server version (backward-compatible with existing apps).
-* If the server has no `APP_VERSION` configured, the check is skipped.
+* `engines.twenty` ayarlanmışsa ve hedef sunucunun sürümü aralığı karşılamıyorsa, dağıtım (tarball yüklemesi) veya yükleme, gerekli aralığı ve gerçek sunucu sürümünü belirten bir mesajla birlikte `SERVER_VERSION_INCOMPATIBLE` hatasıyla reddedilir.
+* `engines.twenty` **ayarlı değilse**, uygulama herhangi bir sunucu sürümünde kabul edilir (mevcut uygulamalarla geriye dönük uyumludur).
+* Sunucuda `APP_VERSION` yapılandırılmamışsa, denetim atlanır.
 
 <Note>
-The server is the authoritative check — it validates `engines.twenty` on both tarball upload and workspace install. If you deploy a tarball out-of-band or install from the marketplace, the server still enforces compatibility.
+Nihai denetim sunucudadır — hem tarball yüklemesinde hem de çalışma alanı (workspace) kurulumunda `engines.twenty`'yi doğrular. Bir tarball'ı bant dışı dağıtırsanız veya marketplace'ten kurarsanız, sunucu yine de uyumluluğu zorunlu kılar.
 </Note>
 
 ## Otomatik CI/CD (hazır şablonlu iş akışları)
