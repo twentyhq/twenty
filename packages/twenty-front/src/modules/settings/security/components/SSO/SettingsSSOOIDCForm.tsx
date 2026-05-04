@@ -109,13 +109,17 @@ export const SettingsSSOOIDCForm = () => {
           <Controller
             name="clientID"
             control={control}
-            render={({ field: { onChange, value } }) => (
+            render={({
+              field: { onChange, value },
+              fieldState: { error },
+            }) => (
               <SettingsTextInput
                 instanceId="sso-oidc-client-id"
                 autoComplete="off"
                 label={t`Client ID`}
                 value={value}
                 onChange={onChange}
+                error={error?.message}
                 fullWidth
                 placeholder="900960562328-36306ohbk8e3.apps.googleusercontent.com"
               />
@@ -124,7 +128,10 @@ export const SettingsSSOOIDCForm = () => {
           <Controller
             name="clientSecret"
             control={control}
-            render={({ field: { onChange, value } }) => (
+            render={({
+              field: { onChange, value },
+              fieldState: { error },
+            }) => (
               <SettingsTextInput
                 instanceId="sso-oidc-client-secret"
                 autoComplete="off"
@@ -132,6 +139,7 @@ export const SettingsSSOOIDCForm = () => {
                 label={t`Client Secret`}
                 value={value}
                 onChange={onChange}
+                error={error?.message}
                 fullWidth
                 placeholder="****************************"
               />
@@ -140,13 +148,17 @@ export const SettingsSSOOIDCForm = () => {
           <Controller
             name="issuer"
             control={control}
-            render={({ field: { onChange, value } }) => (
+            render={({
+              field: { onChange, value },
+              fieldState: { error },
+            }) => (
               <SettingsTextInput
                 instanceId="sso-oidc-issuer"
                 autoComplete="off"
                 label={t`Issuer URI`}
                 value={value}
                 onChange={onChange}
+                error={error?.message}
                 fullWidth
                 placeholder="https://accounts.google.com"
               />

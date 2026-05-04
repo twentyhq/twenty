@@ -87,13 +87,17 @@ export const SettingsSSOIdentitiesProvidersForm = () => {
           <Controller
             name="name"
             control={control}
-            render={({ field: { onChange, value } }) => (
+            render={({
+              field: { onChange, value },
+              fieldState: { error },
+            }) => (
               <SettingsTextInput
                 instanceId="sso-identity-provider-name"
                 autoComplete="off"
                 label={t`Name`}
                 value={value}
                 onChange={onChange}
+                error={error?.message}
                 fullWidth
                 placeholder={t`Google OIDC`}
               />
