@@ -11,7 +11,7 @@ import { MicrosoftAPIRefreshAccessTokenService } from 'src/modules/connected-acc
 import {
   ConnectedAccountRefreshAccessTokenException,
   ConnectedAccountRefreshAccessTokenExceptionCode,
-} from 'src/modules/connected-account/refresh-tokens-manager/exceptions/connected-account-refresh-tokens.exception';
+} from 'src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception';
 
 import { ConnectedAccountRefreshTokensService } from './connected-account-refresh-tokens.service';
 

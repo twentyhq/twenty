@@ -19,7 +19,7 @@ type HandlerResult =
 export const listLinearTeamsHandler = async (): Promise<HandlerResult> => {
   const connections = await listConnections({ providerName: 'linear' });
   const connection =
-    connections.find((c) => c.scope === 'workspace') ?? connections[0];
+    connections.find((c) => c.visibility === 'workspace') ?? connections[0];
 
   if (!connection) {
     return {

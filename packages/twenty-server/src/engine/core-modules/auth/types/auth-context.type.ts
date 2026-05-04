@@ -150,7 +150,8 @@ export type AppOAuthStateJwtPayload = CommonPropertiesJwtPayload & {
   userWorkspaceId: string;
   // 'user' = the resulting credential is private to userWorkspaceId.
   // 'workspace' = visible to anyone in the workspace.
-  scope: 'user' | 'workspace';
+  // Named `visibility` to disambiguate from OAuth `scopes` on the row.
+  visibility: 'user' | 'workspace';
   // If set, the callback updates this existing connectedAccount row instead
   // of creating a new one (used by the UI's "Reconnect" action).
   reconnectingConnectedAccountId: string | null;

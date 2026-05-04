@@ -72,14 +72,14 @@ describe('createLinearIssueHandler', () => {
     });
   });
 
-  it('prefers a workspace-scoped connection over a user-scoped one', async () => {
+  it('prefers a workspace-shared connection over a user-visibility one', async () => {
     const userConnection = buildConnection({
       id: 'conn_user',
       accessToken: 'lin_user',
     });
     const sharedConnection = buildConnection({
       id: 'conn_shared',
-      scope: 'workspace',
+      visibility: 'workspace',
       accessToken: 'lin_shared',
     });
 

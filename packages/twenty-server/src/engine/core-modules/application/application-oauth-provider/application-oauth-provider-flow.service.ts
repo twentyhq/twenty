@@ -31,7 +31,10 @@ type AuthorizeArgs = {
   workspaceId: string;
   userId: string;
   userWorkspaceId: string;
-  scope: 'user' | 'workspace';
+  // Connection-row visibility: 'user' = private to userWorkspaceId,
+  // 'workspace' = shared with all members. Distinct from OAuth `scopes`
+  // on the row, which are the upstream-granted permissions.
+  visibility: 'user' | 'workspace';
   reconnectingConnectedAccountId: string | null;
   redirectLocation: string | null;
 };
@@ -69,6 +72,30 @@ export class ApplicationOAuthProviderFlowService {
     const { applicationOAuthProvider, workspaceId, userId, userWorkspaceId } =
       args;
 
+    // Reconnect can only target a row that lives in the requesting workspace
+    // *and* belongs to the same provider. Without this check, a caller could
+    // pass any connectedAccount id from any workspace; persist() filters its
+    // UPDATE by workspaceId so nothing would be written, but the subsequent
+    // findOneByOrFail (and the redirect URL we build from it) would happily
+    // surface stale fields from the foreign row. Fail fast at authorize time
+    // so the user sees the error before the upstream OAuth round-trip.
+    if (isDefined(args.reconnectingConnectedAccountId)) {
+      const target = await this.connectedAccountRepository.findOne({
+        where: {
+          id: args.reconnectingConnectedAccountId,
+          workspaceId,
+          applicationConnectionProviderId: applicationOAuthProvider.id,
+        },
+      });
+
+      if (!isDefined(target)) {
+        throw new ApplicationOAuthProviderException(
+          `Cannot reconnect connectedAccount ${args.reconnectingConnectedAccountId}: not found in this workspace for the requested provider.`,
+          ApplicationOAuthProviderExceptionCode.FORBIDDEN,
+        );
+      }
+    }
+
     const { clientId } = await this.oauthProviderService.getClientCredentials(
       applicationOAuthProvider,
     );
@@ -84,7 +111,7 @@ export class ApplicationOAuthProviderFlowService {
       workspaceId,
       userId,
       userWorkspaceId,
-      scope: args.scope,
+      visibility: args.visibility,
       reconnectingConnectedAccountId: args.reconnectingConnectedAccountId,
       redirectLocation: args.redirectLocation,
       codeVerifier,
@@ -163,7 +190,7 @@ export class ApplicationOAuthProviderFlowService {
       tokenResponse,
       workspaceId: statePayload.workspaceId,
       userWorkspaceId: statePayload.userWorkspaceId,
-      scope: statePayload.scope,
+      visibility: statePayload.visibility,
       reconnectingConnectedAccountId:
         statePayload.reconnectingConnectedAccountId,
     });
@@ -223,14 +250,14 @@ export class ApplicationOAuthProviderFlowService {
     tokenResponse,
     workspaceId,
     userWorkspaceId,
-    scope,
+    visibility,
     reconnectingConnectedAccountId,
   }: {
     provider: ApplicationOAuthProviderEntity;
     tokenResponse: TokenExchangeResponse;
     workspaceId: string;
     userWorkspaceId: string;
-    scope: 'user' | 'workspace';
+    visibility: 'user' | 'workspace';
     reconnectingConnectedAccountId: string | null;
   }): Promise<ConnectedAccountEntity> {
     const sharedFields = {
@@ -242,6 +269,11 @@ export class ApplicationOAuthProviderFlowService {
     };
 
     if (isDefined(reconnectingConnectedAccountId)) {
+      // Workspace-scope BOTH the update and the read — a foreign-id passed
+      // through here (the authorize-time guard should have caught it) would
+      // otherwise update zero rows but still return the foreign row from
+      // findOneByOrFail({ id }), making a silently-failed reconnect look
+      // successful.
       await this.connectedAccountRepository.update(
         { id: reconnectingConnectedAccountId, workspaceId },
         sharedFields,
@@ -249,6 +281,7 @@ export class ApplicationOAuthProviderFlowService {
 
       return this.connectedAccountRepository.findOneByOrFail({
         id: reconnectingConnectedAccountId,
+        workspaceId,
       });
     }
 
@@ -263,7 +296,7 @@ export class ApplicationOAuthProviderFlowService {
       ...sharedFields,
       handle: name,
       name,
-      scope,
+      visibility,
       provider: ConnectedAccountProvider.APP,
       workspaceId,
       applicationId: provider.applicationId,

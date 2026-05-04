@@ -6,6 +6,18 @@ import { parseTokenResponse } from 'src/engine/core-modules/application/applicat
 
 type FetchFn = typeof globalThis.fetch;
 
+// Carries the HTTP status alongside the message so callers can distinguish
+// transient (5xx, network) from permanent (4xx) failures.
+export class OAuthTokenEndpointError extends Error {
+  constructor(
+    message: string,
+    public readonly status: number,
+  ) {
+    super(message);
+    this.name = 'OAuthTokenEndpointError';
+  }
+}
+
 export const postOAuthTokenRequest = async (args: {
   fetchFn: FetchFn;
   tokenEndpoint: string;
@@ -31,8 +43,9 @@ export const postOAuthTokenRequest = async (args: {
   if (!response.ok) {
     const text = await response.text();
 
-    throw new Error(
+    throw new OAuthTokenEndpointError(
       `Token endpoint responded with ${response.status}: ${text.slice(0, 500)}`,
+      response.status,
     );
   }
 

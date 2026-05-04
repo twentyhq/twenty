@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { isUUID } from 'class-validator';
 import { type ConnectionProviderManifest } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 import { In, Not, Repository } from 'typeorm';
@@ -24,10 +25,8 @@ export class ApplicationOAuthProviderService {
     private readonly secretEncryptionService: SecretEncryptionService,
   ) {}
 
-  // OAuth client_id/client_secret are properties of the OAuth app registered
-  // at the provider (one Linear app per Twenty server, etc.) — not per-tenant
-  // settings — so they live in applicationRegistrationVariable, set once by
-  // the server admin. All workspaces installing this app share them.
+  // Stored on the registration (one OAuth app per Twenty server, set by
+  // the server admin) — not per-workspace.
   async getClientCredentials(
     provider: ApplicationOAuthProviderEntity,
   ): Promise<{ clientId: string; clientSecret: string }> {
@@ -71,11 +70,8 @@ export class ApplicationOAuthProviderService {
     return { clientId, clientSecret };
   }
 
-  // Cheap check used by the GraphQL resolver to surface a "needs setup" hint
-  // to non-admin users. Doesn't decrypt — just looks at whether the
-  // registration variables are populated. Single-provider variant; for the
-  // resolver listing path use `areClientCredentialsConfiguredBatch` instead
-  // to avoid N+1.
+  // For batched calls (e.g. the resolver listing path) prefer
+  // `areClientCredentialsConfiguredBatch` to avoid N+1.
   async areClientCredentialsConfigured(
     provider: ApplicationOAuthProviderEntity,
   ): Promise<boolean> {
@@ -84,8 +80,6 @@ export class ApplicationOAuthProviderService {
     return result.get(provider.id) ?? false;
   }
 
-  // Batched variant: for N providers (typically all from one application),
-  // does at most 2 DB round-trips total instead of 2N.
   async areClientCredentialsConfiguredBatch(
     providers: ApplicationOAuthProviderEntity[],
   ): Promise<Map<string, boolean>> {
@@ -218,6 +212,19 @@ export class ApplicationOAuthProviderService {
       (provider) => provider.type === 'oauth',
     );
 
+    // The DB column is `uuid NOT NULL`. The manifest type is just `string`
+    // because manifests are dev-supplied and TS can't enforce UUID at the
+    // type level. Validate up-front so we throw a typed exception instead
+    // of letting Postgres reject the insert with an opaque type error.
+    for (const provider of oauthProviders) {
+      if (!isUUID(provider.universalIdentifier)) {
+        throw new ApplicationOAuthProviderException(
+          `Connection provider "${provider.name}" has an invalid universalIdentifier "${provider.universalIdentifier}" — must be a UUID.`,
+          ApplicationOAuthProviderExceptionCode.INVALID_REQUEST,
+        );
+      }
+    }
+
     const existing = await this.oauthProviderRepository.find({
       where: { applicationId, workspaceId },
     });
@@ -238,7 +245,6 @@ export class ApplicationOAuthProviderService {
           universalIdentifier: manifest.universalIdentifier,
           name: manifest.name,
           displayName: manifest.displayName,
-          icon: manifest.icon ?? null,
           authorizationEndpoint: manifest.oauth.authorizationEndpoint,
           tokenEndpoint: manifest.oauth.tokenEndpoint,
           revokeEndpoint: manifest.oauth.revokeEndpoint ?? null,
@@ -268,11 +274,12 @@ export class ApplicationOAuthProviderService {
       oauthProviders.length > 0
         ? {
             applicationId,
+            workspaceId,
             universalIdentifier: Not(
               In(oauthProviders.map((p) => p.universalIdentifier)),
             ),
           }
-        : { applicationId },
+        : { applicationId, workspaceId },
     );
   }
 }

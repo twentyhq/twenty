@@ -3,6 +3,13 @@ import { createValidationResult } from '@/sdk/define/common/utils/create-validat
 import { type ConnectionProviderManifest } from 'twenty-shared/application';
 
 const PROVIDER_NAME_PATTERN = /^[a-z][a-z0-9-]*$/;
+// Matches UUID v1–v5 (and the `00000000-…` Nil UUID). Mirrors the server-side
+// check that runs against the `uuid` Postgres column; catching this at SDK
+// build time means a typo in `defineConnectionProvider({ universalIdentifier })`
+// fails the dev's `twenty deploy` rather than blowing up at install time.
+const UUID_PATTERN =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+const SUPPORTED_TYPES = ['oauth'] as const;
 
 export const defineConnectionProvider: DefineEntity<
   ConnectionProviderManifest
@@ -11,6 +18,10 @@ export const defineConnectionProvider: DefineEntity<
 
   if (!config.universalIdentifier) {
     errors.push('Connection provider must have a universalIdentifier');
+  } else if (!UUID_PATTERN.test(config.universalIdentifier)) {
+    errors.push(
+      `Connection provider universalIdentifier "${config.universalIdentifier}" must be a UUID. Generate one with \`uuidgen\` or any UUID v4 tool.`,
+    );
   }
 
   if (!config.name) {
@@ -27,6 +38,10 @@ export const defineConnectionProvider: DefineEntity<
 
   if (!config.type) {
     errors.push("Connection provider must declare a `type` (e.g. 'oauth')");
+  } else if (!(SUPPORTED_TYPES as readonly string[]).includes(config.type)) {
+    errors.push(
+      `Connection provider type "${config.type}" is not supported. Supported types: ${SUPPORTED_TYPES.join(', ')}.`,
+    );
   }
 
   if (config.type === 'oauth') {

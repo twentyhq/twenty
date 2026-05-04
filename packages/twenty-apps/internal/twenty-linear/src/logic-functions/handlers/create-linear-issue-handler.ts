@@ -31,7 +31,7 @@ export const createLinearIssueHandler = async (
   // Workspace-shared credentials win when present (a team-managed service
   // account); otherwise fall back to the first user-scoped connection.
   const connection =
-    connections.find((c) => c.scope === 'workspace') ?? connections[0];
+    connections.find((c) => c.visibility === 'workspace') ?? connections[0];
 
   if (!connection) {
     return {

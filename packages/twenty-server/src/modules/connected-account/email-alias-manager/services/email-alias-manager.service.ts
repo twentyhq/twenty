@@ -44,8 +44,6 @@ export class EmailAliasManagerService {
       case ConnectedAccountProvider.OIDC:
       case ConnectedAccountProvider.SAML:
       case ConnectedAccountProvider.APP:
-        // App-managed OAuth connections aren't email accounts; alias
-        // management is meaningless and should leave the field untouched.
         handleAliases = [];
         break;
       default:

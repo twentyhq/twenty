@@ -1304,7 +1304,6 @@ type ApplicationConnectionProvider {
   type: String!
   name: String!
   displayName: String!
-  icon: String
   oauth: ApplicationConnectionProviderOAuthConfig
 }
 
@@ -2555,7 +2554,7 @@ type ConnectedAccountDTO {
   applicationConnectionProviderId: UUID
   applicationId: UUID
   name: String
-  scope: String!
+  visibility: String!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -2586,7 +2585,7 @@ type ConnectedAccountPublicDTO {
   applicationConnectionProviderId: UUID
   applicationId: UUID
   name: String
-  scope: String!
+  visibility: String!
   createdAt: DateTime!
   updatedAt: DateTime!
   connectionParameters: PublicImapSmtpCaldavConnectionParameters

@@ -40,7 +40,6 @@ export class ApplicationConnectionProviderResolver {
       type: 'oauth',
       name: provider.name,
       displayName: provider.displayName,
-      icon: provider.icon,
       oauth: {
         scopes: provider.scopes,
         isClientCredentialsConfigured:

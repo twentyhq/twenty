@@ -16,15 +16,17 @@ export const useTriggerAppOAuth = () => {
     async ({
       applicationId,
       providerName,
-      scope,
+      visibility,
       reconnectingConnectedAccountId,
       redirectLocation,
     }: {
       applicationId: string;
       providerName: string;
-      // 'user' = personal credential, only the creator can use it.
-      // 'workspace' = shared with all members of the workspace.
-      scope: 'user' | 'workspace';
+      // Connection-row visibility:
+      //   'user'      = personal credential, only the creator can use it.
+      //   'workspace' = shared with all members of the workspace.
+      // Distinct from the OAuth `scopes` granted by the upstream provider.
+      visibility: 'user' | 'workspace';
       // Set to update an existing connectedAccount row rather than creating
       // a new one (the "Reconnect" action on a failed credential).
       reconnectingConnectedAccountId?: string;
@@ -41,7 +43,7 @@ export const useTriggerAppOAuth = () => {
         applicationId,
         providerName,
         transientToken: token,
-        scope,
+        visibility,
       });
 
       if (reconnectingConnectedAccountId) {

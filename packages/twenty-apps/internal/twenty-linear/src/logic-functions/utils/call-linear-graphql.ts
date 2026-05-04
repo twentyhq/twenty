@@ -11,17 +11,29 @@ export const callLinearGraphQL = async <TData>({
   query: string;
   variables?: Record<string, unknown>;
 }): Promise<LinearGraphQLResult<TData>> => {
-  const response = await fetch(LINEAR_GRAPHQL_ENDPOINT, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${accessToken}`,
-    },
-    body: JSON.stringify({ query, variables }),
-  });
+  let response: Response;
+
+  try {
+    response = await fetch(LINEAR_GRAPHQL_ENDPOINT, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${accessToken}`,
+      },
+      body: JSON.stringify({ query, variables }),
+    });
+  } catch (error) {
+    return {
+      errors: [
+        {
+          message: `Linear API request failed: ${(error as Error).message}`,
+        },
+      ],
+    };
+  }
 
   if (!response.ok) {
-    const text = await response.text();
+    const text = await response.text().catch(() => '');
 
     return {
       errors: [
@@ -32,5 +44,15 @@ export const callLinearGraphQL = async <TData>({
     };
   }
 
-  return response.json() as Promise<LinearGraphQLResult<TData>>;
+  try {
+    return (await response.json()) as LinearGraphQLResult<TData>;
+  } catch (error) {
+    return {
+      errors: [
+        {
+          message: `Linear API returned a non-JSON response: ${(error as Error).message}`,
+        },
+      ],
+    };
+  }
 };

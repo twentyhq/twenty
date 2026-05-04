@@ -14,6 +14,5 @@ export type FrontendApplicationConnectionProvider = {
   type: ConnectionProviderType;
   name: string;
   displayName: string;
-  icon: string | null;
   oauth: FrontendApplicationConnectionProviderOAuthConfig | null;
 };

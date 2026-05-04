@@ -14,7 +14,6 @@ export class AddApplicationOAuthProviderAndConnectedAccountColumn1777558657640
         "universalIdentifier" uuid NOT NULL,
         "name" varchar NOT NULL,
         "displayName" varchar NOT NULL,
-        "icon" varchar,
         "authorizationEndpoint" varchar NOT NULL,
         "tokenEndpoint" varchar NOT NULL,
         "revokeEndpoint" varchar,
@@ -30,6 +29,10 @@ export class AddApplicationOAuthProviderAndConnectedAccountColumn1777558657640
         CONSTRAINT "IDX_APP_OAUTH_PROVIDER_UNIVERSAL_ID_APPLICATION_UNIQUE" UNIQUE ("universalIdentifier", "applicationId"),
         CONSTRAINT "PK_applicationOAuthProvider_id" PRIMARY KEY ("id")
       )`,
+    );
+
+    await queryRunner.query(
+      `CREATE INDEX "IDX_APP_OAUTH_PROVIDER_APPLICATION_ID" ON "core"."applicationOAuthProvider" ("applicationId")`,
     );
 
     await queryRunner.query(
@@ -58,7 +61,7 @@ export class AddApplicationOAuthProviderAndConnectedAccountColumn1777558657640
        ADD COLUMN "applicationOAuthProviderId" uuid,
        ADD COLUMN "applicationId" uuid,
        ADD COLUMN "name" varchar,
-       ADD COLUMN "scope" varchar NOT NULL DEFAULT 'user'`,
+       ADD COLUMN "visibility" varchar NOT NULL DEFAULT 'user'`,
     );
 
     await queryRunner.query(
@@ -103,7 +106,7 @@ export class AddApplicationOAuthProviderAndConnectedAccountColumn1777558657640
 
     await queryRunner.query(
       `ALTER TABLE "core"."connectedAccount"
-       DROP COLUMN "scope",
+       DROP COLUMN "visibility",
        DROP COLUMN "name",
        DROP COLUMN "applicationId",
        DROP COLUMN "applicationOAuthProviderId"`,
@@ -119,6 +122,10 @@ export class AddApplicationOAuthProviderAndConnectedAccountColumn1777558657640
 
     await queryRunner.query(
       `DROP INDEX "core"."IDX_APP_OAUTH_PROVIDER_WORKSPACE_ID"`,
+    );
+
+    await queryRunner.query(
+      `DROP INDEX "core"."IDX_APP_OAUTH_PROVIDER_APPLICATION_ID"`,
     );
 
     await queryRunner.query(`DROP TABLE "core"."applicationOAuthProvider"`);

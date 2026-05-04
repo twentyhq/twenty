@@ -5,7 +5,6 @@ import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
-import { ApplicationOAuthProviderException } from 'src/engine/core-modules/application/application-oauth-provider/application-oauth-provider.exception';
 import { AppOAuthRefreshAccessTokenService } from 'src/engine/core-modules/application/application-oauth-provider/refresh/services/app-oauth-refresh-tokens.service';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
@@ -15,7 +14,7 @@ import { MicrosoftAPIRefreshAccessTokenService } from 'src/modules/connected-acc
 import {
   ConnectedAccountRefreshAccessTokenException,
   ConnectedAccountRefreshAccessTokenExceptionCode,
-} from 'src/modules/connected-account/refresh-tokens-manager/exceptions/connected-account-refresh-tokens.exception';
+} from 'src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception';
 
 export type ConnectedAccountTokens = {
   accessToken: string;
@@ -146,23 +145,10 @@ export class ConnectedAccountRefreshTokensService {
             refreshToken,
           );
         case ConnectedAccountProvider.APP:
-          try {
-            return await this.appOAuthRefreshAccessTokenService.refreshTokens(
-              connectedAccount,
-              refreshToken,
-            );
-          } catch (error) {
-            // Translate the engine-side exception so callers see a single
-            // exception class regardless of provider, matching what
-            // Google/Microsoft drivers throw.
-            if (error instanceof ApplicationOAuthProviderException) {
-              throw new ConnectedAccountRefreshAccessTokenException(
-                error.message,
-                ConnectedAccountRefreshAccessTokenExceptionCode.INVALID_REFRESH_TOKEN,
-              );
-            }
-            throw error;
-          }
+          return await this.appOAuthRefreshAccessTokenService.refreshTokens(
+            connectedAccount,
+            refreshToken,
+          );
         case ConnectedAccountProvider.IMAP_SMTP_CALDAV:
         case ConnectedAccountProvider.OIDC:
         case ConnectedAccountProvider.SAML:

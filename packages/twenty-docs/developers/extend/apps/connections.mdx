@@ -14,6 +14,8 @@ Today only OAuth 2.0 is supported. Future credential types (personal access toke
 
 A connection provider describes the OAuth handshake your app needs. The user clicks "Add connection" in your app's settings, completes the provider's consent screen, and a `ConnectedAccount` row is created in their workspace.
 
+A working setup needs **two files** — the connection provider, and a matching `serverVariables` declaration on `defineApplication` that holds the OAuth client credentials.
+
 ```ts src/connection-providers/linear-connection.ts
 import { defineConnectionProvider } from 'twenty-sdk/define';
 
@@ -27,9 +29,7 @@ export default defineConnectionProvider({
     authorizationEndpoint: 'https://linear.app/oauth/authorize',
     tokenEndpoint: 'https://api.linear.app/oauth/token',
     scopes: ['read', 'write'],
-    // Names of serverVariables on this app's defineApplication. The server
-    // admin fills these in once on the app registration; all workspaces
-    // installing the app share the same OAuth client.
+    // These must match keys in `defineApplication.serverVariables` below.
     clientIdVariable: 'LINEAR_CLIENT_ID',
     clientSecretVariable: 'LINEAR_CLIENT_SECRET',
     // Optional: defaults to 'json'. Some providers (Linear, Slack) want
@@ -45,25 +45,6 @@ export default defineConnectionProvider({
 });
 ```
 
-Key points:
-
-- `name` is the unique identifier string used in `listConnections({ providerName })` (kebab-case, must match `^[a-z][a-z0-9-]*$`).
-- `displayName` shows in the per-app settings tab and in the AI tool list.
-- `clientIdVariable` / `clientSecretVariable` reference **server variables** declared on `defineApplication.serverVariables` (not application variables). The server admin fills them on the app registration, and all installed workspaces share them.
-- `type: 'oauth'` is the only supported value today. The discriminator is forward-compatible: future types (`'pat'`, `'api-key'`, ...) will add new sub-config blocks alongside `oauth`.
-
-The OAuth callback URL your provider needs to whitelist is:
-
-```
-https://<your-twenty-server>/apps/oauth/callback
-```
-
-</Accordion>
-
-<Accordion title="serverVariables for OAuth credentials" description="Declare the client_id / client_secret slots on the app">
-
-OAuth client credentials live on the **app registration** (one OAuth app per Twenty server), not on each workspace install. Declare them as `serverVariables` on `defineApplication` so the server admin can configure them once:
-
 ```ts src/application.config.ts
 import { defineApplication } from 'twenty-sdk/define';
 
@@ -72,6 +53,9 @@ export default defineApplication({
   displayName: 'Linear',
   description: 'Connect Linear to Twenty.',
   defaultRoleUniversalIdentifier: '...',
+  // OAuth client credentials live on the app registration (one OAuth app per
+  // Twenty server, configured by the admin) — not per-workspace. Declare them
+  // as serverVariables so the admin can fill them in once for all installs.
   serverVariables: {
     LINEAR_CLIENT_ID: {
       description: 'OAuth client ID from your Linear OAuth application.',
@@ -87,7 +71,20 @@ export default defineApplication({
 });
 ```
 
-Until those values are filled in, the per-app settings tab shows a "needs server admin" hint and the "Add connection" button is disabled.
+Key points:
+
+- `name` is the unique identifier string used in `listConnections({ providerName })` (kebab-case, must match `^[a-z][a-z0-9-]*$`).
+- `displayName` shows in the per-app settings tab and in the AI tool list.
+- `clientIdVariable` / `clientSecretVariable` are **names**, not values — they must match keys declared in `defineApplication.serverVariables`. The actual `client_id` and `client_secret` are entered by the server admin through the app registration UI, never committed to your repo.
+- Use `serverVariables` (not `applicationVariables`) — OAuth credentials are server-wide and one OAuth app per Twenty server.
+- Until both `serverVariables` are filled in, the per-app settings tab shows a "needs server admin" hint and the "Add connection" button is disabled.
+- `type: 'oauth'` is the only supported value today. The discriminator is forward-compatible: future types (`'pat'`, `'api-key'`, ...) will add new sub-config blocks alongside `oauth`.
+
+The OAuth callback URL your provider needs to whitelist is:
+
+```
+https://<your-twenty-server>/apps/oauth/callback
+```
 
 </Accordion>
 
@@ -109,10 +106,10 @@ export const createLinearIssueHandler = async (input: {
   const connections = await listConnections({ providerName: 'linear' });
 
   // Workspace-shared credentials win when present; fall back to the first
-  // user-scoped one. For HTTP-route triggers you typically pick the request
-  // user's connection via event.userWorkspaceId instead.
+  // user-visibility one. For HTTP-route triggers you typically pick the
+  // request user's connection via event.userWorkspaceId instead.
   const connection =
-    connections.find((c) => c.scope === 'workspace') ?? connections[0];
+    connections.find((c) => c.visibility === 'workspace') ?? connections[0];
 
   if (!connection) {
     return {
@@ -143,7 +140,8 @@ Each connection has:
 | Field             | Description                                                                                              |
 | ----------------- | -------------------------------------------------------------------------------------------------------- |
 | `id`              | Unique row id; pass to `getConnection(id)` to refetch a single one                                       |
-| `scope`           | `'user'` (private to one workspace member) or `'workspace'` (shared with all members)                    |
+| `visibility`      | `'user'` (private to one workspace member) or `'workspace'` (shared with all members)                    |
+| `scopes`          | OAuth permissions granted by the upstream provider (distinct from `visibility` — those are unrelated)    |
 | `userWorkspaceId` | The owner's userWorkspace id — useful for picking "the request user's connection" in HTTP-route triggers |
 | `accessToken`     | Fresh OAuth access token (refreshed automatically if expired)                                            |
 | `name` / `handle` | The connection's display name (auto-derived at OAuth callback, user-renameable)                          |
@@ -151,15 +149,15 @@ Each connection has:
 
 Key points:
 
-- Pass `{ providerName }` to scope by provider; omit it to get all connections this app owns across all providers.
+- Pass `{ providerName }` to filter by provider; omit it to get all connections this app owns across all providers.
 - The server transparently refreshes the access token before returning. Your handler always sees a usable token (or `authFailedAt` set).
 - `getConnection(id)` is the single-row equivalent.
 
 </Accordion>
 
-<Accordion title="Per-user vs workspace-shared scope" description="How users choose between private and shared credentials">
+<Accordion title="Per-user vs workspace-shared visibility" description="How users choose between private and shared credentials">
 
-When a user clicks "Add connection," they're prompted to pick a scope:
+When a user clicks "Add connection," they're prompted to pick a visibility:
 
 - **Just for me** — the credential is private to the connecting user. Any logic function called on their behalf (HTTP-route trigger with `isAuthRequired: true`) sees it; cron triggers and database events do not.
 - **Workspace shared** — any workspace member can use the credential. Cron / database triggers also see it, since they have no request user.
@@ -170,10 +168,10 @@ Use the right one for each handler:
 // HTTP-route trigger — prefer the request user's own connection.
 const conn =
   connections.find((c) => c.userWorkspaceId === event.userWorkspaceId) ??
-  connections.find((c) => c.scope === 'workspace');
+  connections.find((c) => c.visibility === 'workspace');
 
 // Cron trigger — no request user; only shared credentials are sensible.
-const conn = connections.find((c) => c.scope === 'workspace');
+const conn = connections.find((c) => c.visibility === 'workspace');
 ```
 
 Multiple connections per (user, provider) are allowed, so the same user can hold "Personal Linear" and "Work Linear" side by side.

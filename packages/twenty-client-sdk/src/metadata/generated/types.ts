@@ -2712,9 +2712,6 @@ export default {
             "displayName": [
                 1
             ],
-            "icon": [
-                1
-            ],
             "oauth": [
                 119
             ],
@@ -5103,7 +5100,7 @@ export default {
             "name": [
                 1
             ],
-            "scope": [
+            "visibility": [
                 1
             ],
             "createdAt": [
@@ -5184,7 +5181,7 @@ export default {
             "name": [
                 1
             ],
-            "scope": [
+            "visibility": [
                 1
             ],
             "createdAt": [

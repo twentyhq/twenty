@@ -20,7 +20,10 @@ import { type CalendarChannelEntity } from 'src/engine/metadata-modules/calendar
 import { type MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/workspace-related-entity';
 
-export type ConnectedAccountScope = 'user' | 'workspace';
+// Distinguishes who can use this credential. Named `visibility` (not
+// `scope`) so it doesn't clash with the OAuth `scopes` array on the same
+// row — those are unrelated concepts that used to differ by one letter.
+export type ConnectedAccountVisibility = 'user' | 'workspace';
 
 @Entity({ name: 'connectedAccount', schema: 'core' })
 @Index('IDX_CONNECTED_ACCOUNT_APP_OAUTH_PROVIDER_ID', [
@@ -67,8 +70,6 @@ export class ConnectedAccountEntity extends WorkspaceRelatedEntity {
   @Column({ type: 'uuid', nullable: false })
   userWorkspaceId: string;
 
-  // DB column stays OAuth-named (storage detail); TS / GraphQL surface
-  // exposes it as the public ConnectionProvider concept.
   @Column({ type: 'uuid', nullable: true, name: 'applicationOAuthProviderId' })
   applicationConnectionProviderId: string | null;
 
@@ -79,8 +80,6 @@ export class ConnectedAccountEntity extends WorkspaceRelatedEntity {
   @JoinColumn({ name: 'applicationOAuthProviderId' })
   applicationConnectionProvider: Relation<ApplicationOAuthProviderEntity> | null;
 
-  // Cascade-deletes with the owning app so an uninstall doesn't leave
-  // dangling app-scoped credentials.
   @Column({ type: 'uuid', nullable: true })
   applicationId: string | null;
 
@@ -91,15 +90,11 @@ export class ConnectedAccountEntity extends WorkspaceRelatedEntity {
   @JoinColumn({ name: 'applicationId' })
   application: Relation<ApplicationEntity> | null;
 
-  // null for legacy / system-managed rows. App-managed credentials get a
-  // generated default at callback time; user can rename later.
   @Column({ type: 'varchar', nullable: true })
   name: string | null;
 
-  // 'user' = only the owning userWorkspaceId can use it.
-  // 'workspace' = any workspace member can use it (cron triggers too).
   @Column({ type: 'varchar', nullable: false, default: 'user' })
-  scope: ConnectedAccountScope;
+  visibility: ConnectedAccountVisibility;
 
   @OneToMany(
     'MessageChannelEntity',

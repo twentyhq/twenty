@@ -13,7 +13,7 @@ export const GET_MY_CONNECTED_ACCOUNTS = gql`
       userWorkspaceId
       applicationConnectionProviderId
       name
-      scope
+      visibility
       lastCredentialsRefreshedAt
       connectionParameters {
         IMAP {

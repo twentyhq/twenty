@@ -7,7 +7,7 @@ export const buildConnection = (
 ) => ({
   id: 'conn_1',
   name: 'octocat@example.com',
-  scope: 'user' as const,
+  visibility: 'user' as const,
   providerName: 'linear',
   userWorkspaceId: USER_WORKSPACE_ID,
   accessToken: 'lin_test_access_token',

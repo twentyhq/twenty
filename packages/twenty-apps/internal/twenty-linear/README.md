@@ -1,54 +1,68 @@
-# twenty-linear
+# Linear for Twenty
 
-End-to-end test app for Twenty's generic connection-provider infrastructure
-(currently OAuth 2.0 only). Connects a workspace member's Linear account
-and exposes two **tools** — discoverable from workflow nodes and the AI
-chat:
+Connect your Linear account to Twenty to create issues and look up teams
+straight from your workflows or the AI chat.
 
-- `list-linear-teams` — returns the connected user's Linear teams (handy
-  for finding a `teamId`). Takes no input.
-- `create-linear-issue` — creates a new Linear issue. Inputs: `teamId`,
-  `title`, optional `description`.
+## What you can do
 
-## One-time setup at Linear
+Once installed and connected, two tools become available:
 
-1. Visit https://linear.app/settings/api/applications/new and create a new
-   OAuth application.
-2. Set the **Redirect URI** to `<SERVER_URL>/apps/oauth/callback`, e.g.
-   `http://localhost:3000/apps/oauth/callback` for local dev.
+- **Create Linear issue** — from the AI chat, ask something like
+  *"create a Linear issue in the Engineering team titled 'Fix login bug'"*
+  and the AI will file it for you. From a workflow, add it as a step
+  with `teamId` + `title` (and optional `description`).
+- **List Linear teams** — discovers the teams in your Linear workspace,
+  useful when you need to pick a `teamId` for the create-issue step.
+
+## Installing
+
+1. Open **Settings → Applications** in your Twenty workspace.
+2. Find **Linear** in the available apps and click **Install**.
+3. Open the app, go to the **Connections** tab, and click **Add connection**.
+4. Choose **Just for me** (your personal Linear account) or
+   **Workspace shared** (a team-managed Linear account anyone in this
+   workspace can act through), then complete the Linear sign-in.
+
+That's it — you can now use the tools above.
+
+> If you see a "Linear OAuth is not yet set up by your server administrator"
+> notice on the Connections tab, ask your Twenty admin to follow the
+> **Self-hosting setup** below — they need to provide the OAuth credentials
+> before connections can be added.
+
+---
+
+## Self-hosting setup
+
+This section is for Twenty server admins. If you're on Twenty Cloud, skip
+this — the OAuth credentials are already configured.
+
+### 1. Register an OAuth app in Linear
+
+1. Visit https://linear.app/settings/api/applications/new.
+2. Set the **Redirect URI** to `<SERVER_URL>/apps/oauth/callback` (for
+   local dev: `http://localhost:3000/apps/oauth/callback`).
 3. Copy the generated **Client ID** and **Client Secret**.
 
-## Install in Twenty
+### 2. Wire the credentials into Twenty
 
-1. Build & deploy the app: `cd packages/twenty-apps/internal/twenty-linear
-   && yarn twenty deploy`.
-2. Install it on your workspace from `Settings → Applications`.
-3. As the server admin, paste **Client ID** and **Client Secret** into the
-   `LINEAR_CLIENT_ID` / `LINEAR_CLIENT_SECRET` server variables on the
-   application registration (one OAuth app per Twenty server).
-4. In the Linear app's settings tab → **Connections**, click **Add
-   connection**, pick a scope (Just for me / Workspace shared), then
-   complete the Linear consent screen. You'll be redirected back with the
-   credential saved.
+1. In **Settings → Applications**, find **Linear**, click into it, and go
+   to the **Application registration** tab (admin-only).
+2. Paste your Linear **Client ID** into `LINEAR_CLIENT_ID` and the
+   **Client Secret** into `LINEAR_CLIENT_SECRET`.
 
-## Use the tools
+Workspace users will now be able to add Linear connections from the
+**Connections** tab as described above.
 
-- **From a workflow:** add a `LOGIC_FUNCTION` step, pick `create-linear-issue`,
-  and fill in `teamId` + `title` (and optional `description`).
-- **From the AI chat:** ask "create a Linear issue in team <X> titled <Y>"
-  — the AI discovers the tool and calls it with the right input.
+### 3. (Developers only) Building the app from source
 
-## What this exercises
+If you're working on this app rather than installing the published version:
 
-- `defineConnectionProvider({ type: 'oauth' })` registration →
-  `applicationOAuthProvider` row in the core schema (the OAuth-specific
-  storage table backing the public ConnectionProvider concept).
-- Authorize endpoint → Linear consent screen → callback endpoint → token
-  exchange via `SecureHttpClientService.createSsrfSafeFetch()` → new
-  `connectedAccount` row with `provider = 'app'`.
-- `listConnections({ providerName: 'linear' })` in the handler →
-  `POST /apps/connections/list` → server refreshes the access token if
-  expired and returns the connection.
-- The `find(c => c.scope === 'workspace') ?? connections[0]` selection
-  pattern shows how a tool handler picks a credential without a request
-  user context.
+```bash
+cd packages/twenty-apps/internal/twenty-linear
+yarn twenty deploy
+```
+
+This serves as the reference implementation for Twenty's
+`defineConnectionProvider({ type: 'oauth' })` flow — useful as a template
+when adding OAuth integrations for other providers.
