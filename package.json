@@ -12,6 +12,7 @@
     "concurrently": "^8.2.2",
     "http-server": "^14.1.1",
     "nx": "22.5.4",
+    "tsx": "^4.17.0",
     "verdaccio": "^6.3.1"
   },
   "engines": {
