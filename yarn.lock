@@ -20408,7 +20408,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sentry/nestjs@npm:^10.27.0":
+"@sentry/nestjs@npm:^10.51.0":
   version: 10.51.0
   resolution: "@sentry/nestjs@npm:10.51.0"
   dependencies:
@@ -20457,7 +20457,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sentry/node@npm:10.51.0, @sentry/node@npm:^10.27.0":
+"@sentry/node@npm:10.51.0, @sentry/node@npm:^10.51.0":
   version: 10.51.0
   resolution: "@sentry/node@npm:10.51.0"
   dependencies:
@@ -20510,7 +20510,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sentry/profiling-node@npm:^10.27.0":
+"@sentry/profiling-node@npm:^10.51.0":
   version: 10.51.0
   resolution: "@sentry/profiling-node@npm:10.51.0"
   dependencies:
@@ -20523,7 +20523,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sentry/react@npm:^10.27.0":
+"@sentry/react@npm:^10.51.0":
   version: 10.51.0
   resolution: "@sentry/react@npm:10.51.0"
   dependencies:
@@ -57848,7 +57848,7 @@ __metadata:
     "@react-email/components": "npm:^0.5.3"
     "@react-pdf/renderer": "npm:^4.1.6"
     "@scalar/api-reference-react": "npm:^0.4.36"
-    "@sentry/react": "npm:^10.27.0"
+    "@sentry/react": "npm:^10.51.0"
     "@sniptt/guards": "npm:^0.2.0"
     "@storybook-community/storybook-addon-cookie": "npm:^5.0.0"
     "@storybook/addon-coverage": "npm:^3.0.0"
@@ -58096,9 +58096,9 @@ __metadata:
     "@ptc-org/nestjs-query-graphql": "patch:@ptc-org/nestjs-query-graphql@4.2.0#./patches/@ptc-org+nestjs-query-graphql+4.2.0.patch"
     "@ptc-org/nestjs-query-typeorm": "npm:4.2.1-alpha.2"
     "@react-email/render": "npm:^1.2.3"
-    "@sentry/nestjs": "npm:^10.27.0"
-    "@sentry/node": "npm:^10.27.0"
-    "@sentry/profiling-node": "npm:^10.27.0"
+    "@sentry/nestjs": "npm:^10.51.0"
+    "@sentry/node": "npm:^10.51.0"
+    "@sentry/profiling-node": "npm:^10.51.0"
     "@sniptt/guards": "npm:0.2.0"
     "@swc/cli": "npm:^0.7.10"
     "@swc/core": "npm:^1.15.11"
