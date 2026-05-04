@@ -2767,6 +2767,7 @@ export interface Mutation {
     updateMessageFolder: MessageFolder
     updateMessageFolders: MessageFolder[]
     updateMessageChannel: MessageChannel
+    updateConnectedAccountName: ConnectedAccountDTO
     deleteConnectedAccount: ConnectedAccountDTO
     updateCalendarChannel: CalendarChannel
     createWebhook: Webhook
@@ -5818,6 +5819,7 @@ export interface MutationGenqlSelection{
     updateMessageFolder?: (MessageFolderGenqlSelection & { __args: {input: UpdateMessageFolderInput} })
     updateMessageFolders?: (MessageFolderGenqlSelection & { __args: {input: UpdateMessageFoldersInput} })
     updateMessageChannel?: (MessageChannelGenqlSelection & { __args: {input: UpdateMessageChannelInput} })
+    updateConnectedAccountName?: (ConnectedAccountDTOGenqlSelection & { __args: {input: UpdateConnectedAccountNameInput} })
     deleteConnectedAccount?: (ConnectedAccountDTOGenqlSelection & { __args: {id: Scalars['UUID']} })
     updateCalendarChannel?: (CalendarChannelGenqlSelection & { __args: {input: UpdateCalendarChannelInput} })
     createWebhook?: (WebhookGenqlSelection & { __args: {input: CreateWebhookInput} })
@@ -6195,6 +6197,8 @@ export interface UpdateMessageFoldersInput {ids: Scalars['UUID'][],update: Updat
 export interface UpdateMessageChannelInput {id: Scalars['UUID'],update: UpdateMessageChannelInputUpdates}
 
 export interface UpdateMessageChannelInputUpdates {visibility?: (MessageChannelVisibility | null),isContactAutoCreationEnabled?: (Scalars['Boolean'] | null),contactAutoCreationPolicy?: (MessageChannelContactAutoCreationPolicy | null),messageFolderImportPolicy?: (MessageFolderImportPolicy | null),isSyncEnabled?: (Scalars['Boolean'] | null),excludeNonProfessionalEmails?: (Scalars['Boolean'] | null),excludeGroupEmails?: (Scalars['Boolean'] | null)}
+
+export interface UpdateConnectedAccountNameInput {id: Scalars['UUID'],name?: (Scalars['String'] | null)}
 
 export interface UpdateCalendarChannelInput {id: Scalars['UUID'],update: UpdateCalendarChannelInputUpdates}
 

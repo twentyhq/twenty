@@ -78,8 +78,8 @@ export default {
         334,
         341,
         377,
-        452,
-        464
+        453,
+        465
     ],
     "types": {
         "BillingProductDTO": {
@@ -7730,6 +7730,15 @@ export default {
                     ]
                 }
             ],
+            "updateConnectedAccountName": [
+                282,
+                {
+                    "input": [
+                        433,
+                        "UpdateConnectedAccountNameInput!"
+                    ]
+                }
+            ],
             "deleteConnectedAccount": [
                 282,
                 {
@@ -7743,7 +7752,7 @@ export default {
                 301,
                 {
                     "input": [
-                        433,
+                        434,
                         "UpdateCalendarChannelInput!"
                     ]
                 }
@@ -7752,7 +7761,7 @@ export default {
                 321,
                 {
                     "input": [
-                        435,
+                        436,
                         "CreateWebhookInput!"
                     ]
                 }
@@ -7761,7 +7770,7 @@ export default {
                 321,
                 {
                     "input": [
-                        436,
+                        437,
                         "UpdateWebhookInput!"
                     ]
                 }
@@ -7867,7 +7876,7 @@ export default {
                 290,
                 {
                     "input": [
-                        438,
+                        439,
                         "CreateSkillInput!"
                     ]
                 }
@@ -7876,7 +7885,7 @@ export default {
                 290,
                 {
                     "input": [
-                        439,
+                        440,
                         "UpdateSkillInput!"
                     ]
                 }
@@ -7934,7 +7943,7 @@ export default {
                 231,
                 {
                     "input": [
-                        440,
+                        441,
                         "GetAuthorizationUrlForSSOInput!"
                     ]
                 }
@@ -8188,7 +8197,7 @@ export default {
                 190,
                 {
                     "input": [
-                        441,
+                        442,
                         "CreateApplicationRegistrationInput!"
                     ]
                 }
@@ -8197,7 +8206,7 @@ export default {
                 7,
                 {
                     "input": [
-                        442,
+                        443,
                         "UpdateApplicationRegistrationInput!"
                     ]
                 }
@@ -8224,7 +8233,7 @@ export default {
                 5,
                 {
                     "input": [
-                        444,
+                        445,
                         "CreateApplicationRegistrationVariableInput!"
                     ]
                 }
@@ -8233,7 +8242,7 @@ export default {
                 5,
                 {
                     "input": [
-                        445,
+                        446,
                         "UpdateApplicationRegistrationVariableInput!"
                     ]
                 }
@@ -8322,7 +8331,7 @@ export default {
                 6,
                 {
                     "input": [
-                        447,
+                        448,
                         "UpdateWorkspaceMemberSettingsInput!"
                     ]
                 }
@@ -8356,7 +8365,7 @@ export default {
                 69,
                 {
                     "data": [
-                        448,
+                        449,
                         "ActivateWorkspaceInput!"
                     ]
                 }
@@ -8365,7 +8374,7 @@ export default {
                 69,
                 {
                     "data": [
-                        449,
+                        450,
                         "UpdateWorkspaceInput!"
                     ]
                 }
@@ -8392,7 +8401,7 @@ export default {
                 6,
                 {
                     "workspaceMigration": [
-                        450,
+                        451,
                         "WorkspaceMigrationInput!"
                     ]
                 }
@@ -8410,7 +8419,7 @@ export default {
                 198,
                 {
                     "input": [
-                        453,
+                        454,
                         "SetupOIDCSsoInput!"
                     ]
                 }
@@ -8419,7 +8428,7 @@ export default {
                 198,
                 {
                     "input": [
-                        454,
+                        455,
                         "SetupSAMLSsoInput!"
                     ]
                 }
@@ -8428,7 +8437,7 @@ export default {
                 194,
                 {
                     "input": [
-                        455,
+                        456,
                         "DeleteSsoInput!"
                     ]
                 }
@@ -8437,7 +8446,7 @@ export default {
                 195,
                 {
                     "input": [
-                        456,
+                        457,
                         "EditSsoInput!"
                     ]
                 }
@@ -8468,7 +8477,7 @@ export default {
                 286,
                 {
                     "input": [
-                        457,
+                        458,
                         "SendEmailInput!"
                     ]
                 }
@@ -8494,7 +8503,7 @@ export default {
                         "String!"
                     ],
                     "connectionParameters": [
-                        459,
+                        460,
                         "EmailAccountConnectionParameters!"
                     ],
                     "id": [
@@ -8506,7 +8515,7 @@ export default {
                 162,
                 {
                     "input": [
-                        461,
+                        462,
                         "UpdateLabPublicFeatureFlagInput!"
                     ]
                 }
@@ -8579,7 +8588,7 @@ export default {
                 71,
                 {
                     "input": [
-                        462,
+                        463,
                         "CreateOneAppTokenInput!"
                     ]
                 }
@@ -8642,7 +8651,7 @@ export default {
                         "String!"
                     ],
                     "fileFolder": [
-                        464,
+                        465,
                         "FileFolder!"
                     ],
                     "filePath": [
@@ -10561,12 +10570,23 @@ export default {
                 1
             ]
         },
+        "UpdateConnectedAccountNameInput": {
+            "id": [
+                3
+            ],
+            "name": [
+                1
+            ],
+            "__typename": [
+                1
+            ]
+        },
         "UpdateCalendarChannelInput": {
             "id": [
                 3
             ],
             "update": [
-                434
+                435
             ],
             "__typename": [
                 1
@@ -10614,7 +10634,7 @@ export default {
                 3
             ],
             "update": [
-                437
+                438
             ],
             "__typename": [
                 1
@@ -10719,7 +10739,7 @@ export default {
                 1
             ],
             "update": [
-                443
+                444
             ],
             "__typename": [
                 1
@@ -10767,7 +10787,7 @@ export default {
                 1
             ],
             "update": [
-                446
+                447
             ],
             "__typename": [
                 1
@@ -10882,7 +10902,7 @@ export default {
         },
         "WorkspaceMigrationInput": {
             "actions": [
-                451
+                452
             ],
             "__typename": [
                 1
@@ -10890,7 +10910,7 @@ export default {
         },
         "WorkspaceMigrationDeleteActionInput": {
             "type": [
-                452
+                453
             ],
             "metadataName": [
                 317
@@ -10985,7 +11005,7 @@ export default {
                 1
             ],
             "files": [
-                458
+                459
             ],
             "__typename": [
                 1
@@ -11004,13 +11024,13 @@ export default {
         },
         "EmailAccountConnectionParameters": {
             "IMAP": [
-                460
+                461
             ],
             "SMTP": [
-                460
+                461
             ],
             "CALDAV": [
-                460
+                461
             ],
             "__typename": [
                 1
@@ -11049,7 +11069,7 @@ export default {
         },
         "CreateOneAppTokenInput": {
             "appToken": [
-                463
+                464
             ],
             "__typename": [
                 1
@@ -11078,7 +11098,7 @@ export default {
                 223,
                 {
                     "input": [
-                        466,
+                        467,
                         "LogicFunctionLogsInput!"
                     ]
                 }
