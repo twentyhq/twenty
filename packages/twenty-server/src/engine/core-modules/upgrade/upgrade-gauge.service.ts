@@ -47,8 +47,7 @@ export class UpgradeGaugeService implements OnModuleInit {
     this.metricsService.createObservableGauge({
       metricName: 'twenty_upgrade_workspaces_failed_total',
       options: {
-        description:
-          'Number of workspaces with a failed upgrade command',
+        description: 'Number of workspaces with a failed upgrade command',
       },
       callback: async () => {
         return this.getWorkspacesFailedCount();
