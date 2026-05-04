@@ -58277,6 +58277,7 @@ __metadata:
     "@types/babel__preset-env": "npm:^7"
     "@types/handlebars": "npm:^4.1.0"
     "@types/jest": "npm:^30.0.0"
+    "@types/lodash.camelcase": "npm:^4.3.7"
     "@types/lodash.escaperegexp": "npm:^4.1.9"
     "@typescript/native-preview": "npm:^7.0.0-dev.20260116.1"
     ai: "npm:6.0.97"
