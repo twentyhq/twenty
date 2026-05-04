@@ -11,6 +11,7 @@ import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/
 import { VIEW_BAR_FILTER_BOTTOM_MENU_ITEM_IDS } from '@/views/constants/ViewBarFilterBottomMenuItemIds';
 
 import { useChildRecordFiltersAndRecordFilterGroups } from '@/object-record/advanced-filter/hooks/useChildRecordFiltersAndRecordFilterGroups';
+import { useSetRecordFilterUsedInAdvancedFilterDropdownRow } from '@/object-record/advanced-filter/hooks/useSetRecordFilterUsedInAdvancedFilterDropdownRow';
 import { rootLevelRecordFilterGroupComponentSelector } from '@/object-record/advanced-filter/states/rootLevelRecordFilterGroupComponentSelector';
 import { useCreateEmptyRecordFilterFromFieldMetadataItem } from '@/object-record/record-filter/hooks/useCreateEmptyRecordFilterFromFieldMetadataItem';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
@@ -146,12 +147,14 @@ export const ViewBarFilterDropdownAdvancedFilterButton = () => {
         onClick={handleClick}
         LeftIcon={IconFilter}
         focused={isSelectedItemId}
+        RightComponent={
+          advancedFilterQuerySubFilterCount > 0 ? (
+            <StyledPillContainer>
+              <Pill label={advancedFilterQuerySubFilterCount.toString()} />
+            </StyledPillContainer>
+          ) : undefined
+        }
       />
-      {advancedFilterQuerySubFilterCount > 0 && (
-        <StyledPillContainer>
-          <Pill label={advancedFilterQuerySubFilterCount.toString()} />
-        </StyledPillContainer>
-      )}
     </SelectableListItem>
   );
 };
