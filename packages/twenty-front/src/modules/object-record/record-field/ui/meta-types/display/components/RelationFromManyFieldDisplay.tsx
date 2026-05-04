@@ -4,16 +4,15 @@ import { useActivityTargetObjectRecords } from '@/activities/hooks/useActivityTa
 import { type NoteTarget } from '@/activities/types/NoteTarget';
 import { type TaskTarget } from '@/activities/types/TaskTarget';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { RecordChip } from '@/object-record/components/RecordChip';
 import { isActivityTargetField } from '@/object-record/record-field-list/utils/categorizeRelationFields';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { useFieldFocus } from '@/object-record/record-field/ui/hooks/useFieldFocus';
 import { useRelationFromManyFieldDisplay } from '@/object-record/record-field/ui/meta-types/hooks/useRelationFromManyFieldDisplay';
-import { ForbiddenFieldDisplay } from '@/object-record/record-field/ui/meta-types/display/components/ForbiddenFieldDisplay';
 import { extractTargetRecordsFromJunction } from '@/object-record/record-field/ui/utils/junction/extractTargetRecordsFromJunction';
 import { getJunctionConfig } from '@/object-record/record-field/ui/utils/junction/getJunctionConfig';
 import { hasJunctionConfig } from '@/object-record/record-field/ui/utils/junction/hasJunctionConfig';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 
 import { ExpandableList } from '@/ui/layout/expandable-list/components/ExpandableList';
 import { styled } from '@linaria/react';
@@ -146,8 +145,11 @@ export const RelationFromManyFieldDisplay = () => {
       })
       .filter(isDefined);
 
+    // Return null instead of ForbiddenFieldDisplay when we have junction records but can't extract target records
+    // This handles the case where related records are soft deleted (junction records exist but target records are not available)
+    // Previously showed "Not shared" which was misleading for soft-deleted records
     if (fieldValue.some(isDefined) && targetRecordsWithMetadata.length === 0) {
-      return <ForbiddenFieldDisplay />;
+      return null;
     }
 
     return (
