@@ -6752,6 +6752,12 @@ msgstr "El agente que está buscando no se pudo encontrar. Puede que haya sido e
 msgid "The API key does not have a valid role assigned. Please check your API key configuration."
 msgstr "La clave API no tiene un rol válido asignado. Por favor, revisa la configuración de tu clave API."
 
+#. js-lingui-id: Z4AMcp
+#: src/engine/core-modules/application/application.exception.ts
+#: src/engine/core-modules/application/application-registration/application-registration.exception.ts
+msgid "The app manifest declares an invalid server version requirement."
+msgstr ""
+
 #. js-lingui-id: MQn14a
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 msgid "The app source channel does not match the expected type."
@@ -6926,6 +6932,12 @@ msgstr "El rol que está intentando modificar no se pudo encontrar."
 msgid "The server address you entered is not allowed. Please use a public server address."
 msgstr "La dirección del servidor que has introducido no está permitida. Por favor, usa una dirección de servidor pública."
 
+#. js-lingui-id: 6N5Pv5
+#: src/engine/core-modules/application/application.exception.ts
+#: src/engine/core-modules/application/application-registration/application-registration.exception.ts
+msgid "The server's APP_VERSION is not a valid semver version. Self-hosted instances must configure a valid APP_VERSION."
+msgstr ""
+
 #. js-lingui-id: FOEWHl
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name.util.ts
 msgid "The singular and plural names cannot be the same for an object"
@@ -7037,6 +7049,12 @@ msgstr "Esta clave API ha expirado. Por favor, cree una nueva."
 #: src/engine/core-modules/api-key/exceptions/api-key.exception.ts
 msgid "This API key has no role assigned."
 msgstr "Esta clave de API no tiene ningún rol asignado."
+
+#. js-lingui-id: zISk4k
+#: src/engine/core-modules/application/application.exception.ts
+#: src/engine/core-modules/application/application-registration/application-registration.exception.ts
+msgid "This app requires a newer version of the Twenty server. Please upgrade your server or use a compatible app version."
+msgstr ""
 
 #. js-lingui-id: ADtO2E
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
