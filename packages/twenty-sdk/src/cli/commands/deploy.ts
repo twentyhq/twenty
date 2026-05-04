@@ -48,9 +48,10 @@ export class DeployCommand {
 
     const packageJson = await readJson<{ name?: string; version?: string }>(
       path.join(appPath, 'package.json'),
-    );
-    const appName = packageJson.name ?? result.data.name;
-    const appVersion = packageJson.version ?? 'unknown';
+    ).catch(() => undefined);
+
+    const appName = packageJson?.name ?? result.data.name;
+    const appVersion = packageJson?.version ?? 'unknown';
     const remoteName = ConfigService.getActiveRemote();
 
     console.log(
