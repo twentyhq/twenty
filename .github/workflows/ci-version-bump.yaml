@@ -44,7 +44,7 @@ jobs:
       - name: Bump version constants
         env:
           VERSION: ${{ steps.sanitize.outputs.version }}
-        run: npx tsx scripts/bump-version.ts "$VERSION"
+        run: npx nx version:bump twenty-server -- "$VERSION"
 
       - name: Create PR with gh
         env:
