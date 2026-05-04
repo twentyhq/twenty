@@ -1,9 +1,18 @@
-import { getUuidV4Mock } from '~/testing/utils/getUuidV4Mock';
+import { v4 as uuidv4 } from 'uuid';
 import { getWorkflowVersionDiagram } from '@/workflow/workflow-diagram/utils/getWorkflowVersionDiagram';
 
-jest.mock('uuid', () => ({
-  v4: getUuidV4Mock(),
-}));
+jest.mock('uuid');
+
+beforeEach(() => {
+  let counter = 0;
+  (uuidv4 as jest.Mock).mockImplementation(
+    () => `8f3b2121-f194-4ba4-9fbf-${counter++}`,
+  );
+});
+
+afterAll(() => {
+  jest.resetAllMocks();
+});
 
 describe('getWorkflowVersionDiagram', () => {
   it('returns an empty diagram if the provided workflow version', () => {
@@ -155,7 +164,7 @@ describe('getWorkflowVersionDiagram', () => {
         "edgeType": "default",
       },
       "deletable": true,
-      "id": "8f3b2121-f194-4ba4-9fbf-10",
+      "id": "8f3b2121-f194-4ba4-9fbf-0",
       "markerEnd": "edge-branch-arrow-default",
       "markerStart": undefined,
       "reconnectable": "target",
