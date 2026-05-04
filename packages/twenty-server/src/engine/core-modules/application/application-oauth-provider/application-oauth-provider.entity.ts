@@ -12,10 +12,8 @@ import {
 
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 
-// Table name stays `applicationOAuthProvider` for now — the SyncableEntity
-// metadataName (`connectionProvider`) is what consumers see in code, and a
-// table rename would balloon this PR with mechanical churn unrelated to the
-// sync-pipeline wiring. Tracked as separate cleanup.
+// Table name predates the `connectionProvider` metadataName; consumers in
+// code reference the metadataName, the DB still uses the older table name.
 @Entity({ name: 'applicationOAuthProvider', schema: 'core' })
 @Unique('IDX_APP_OAUTH_PROVIDER_NAME_APPLICATION_UNIQUE', [
   'name',
