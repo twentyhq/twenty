@@ -17,9 +17,13 @@ import {
   HeadingPart,
   LinkButton,
 } from '@/design-system/components';
-import { Pages } from '@/lib/pages';
-import { renderMessageDescriptor } from '@/lib/i18n/render-message-descriptor';
 import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';
+import { createMessageDescriptorRenderer } from '@/lib/i18n/create-message-descriptor-renderer';
+import {
+  getRouteI18n,
+  type LocaleRouteParams,
+} from '@/lib/i18n/get-route-i18n';
+import { Pages } from '@/lib/pages';
 import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels';
 import { Faq } from '@/sections/Faq/components';
 import { Helped } from '@/sections/Helped/components';
@@ -93,8 +97,16 @@ const threeCardsIllustrationBodyClassName = css`
   }
 `;
 
-export default async function HomePage() {
-  const stats = await fetchCommunityStats();
+type HomePageProps = {
+  params: Promise<LocaleRouteParams>;
+};
+
+export default async function HomePage({ params }: HomePageProps) {
+  const [i18n, stats] = await Promise.all([
+    getRouteI18n(params),
+    fetchCommunityStats(),
+  ]);
+  const renderText = createMessageDescriptorRenderer(i18n);
   const menuSocialLinks = mergeSocialLinkLabels(MENU_DATA.socialLinks, stats);
 
   return (
@@ -126,15 +138,16 @@ export default async function HomePage() {
           <HeroHeadingGroup>
             <Hero.Heading page={Pages.Home}>
               <HeadingPart fontFamily="serif">
-                {renderMessageDescriptor(msg`Build your Enterprise CRM`)}
+                {renderText(msg`Build your Enterprise CRM`)}
               </HeadingPart>{' '}
               <HeadingPart fontFamily="sans">
-                {renderMessageDescriptor(msg`at\u00A0AI\u00A0Speed`)}
+                {renderText(msg`at\u00A0AI\u00A0Speed`)}
               </HeadingPart>
             </Hero.Heading>
             <Hero.Body
               page={Pages.Home}
               body={{ text: HERO_COPY.body }}
+              renderText={renderText}
               size="sm"
             />
           </HeroHeadingGroup>
@@ -142,7 +155,7 @@ export default async function HomePage() {
             <LinkButton
               color="secondary"
               href="https://app.twenty.com/welcome"
-              label={renderMessageDescriptor(msg`Get started`)}
+              label={renderText(msg`Get started`)}
               type="anchor"
               variant="contained"
             />
@@ -157,9 +170,15 @@ export default async function HomePage() {
       </Hero.Root>
 
       <TrustedBy.Root>
-        <TrustedBy.Separator separator={TRUSTED_BY_DATA.separator} />
+        <TrustedBy.Separator
+          renderText={renderText}
+          separator={TRUSTED_BY_DATA.separator}
+        />
         <TrustedBy.Logos logos={TRUSTED_BY_DATA.logos} />
-        <TrustedBy.ClientCount label={TRUSTED_BY_DATA.clientCountLabel.text} />
+        <TrustedBy.ClientCount
+          label={TRUSTED_BY_DATA.clientCountLabel.text}
+          renderText={renderText}
+        />
       </TrustedBy.Root>
 
       <Problem.Root>
@@ -168,25 +187,26 @@ export default async function HomePage() {
           <Eyebrow
             colorScheme="primary"
             heading={PROBLEM_DATA.eyebrow.heading}
-            renderText={renderMessageDescriptor}
+            renderText={renderText}
           />
           <Problem.Heading>
             <HeadingPart fontFamily="serif">
-              {renderMessageDescriptor(
-                msg`A custom CRM gives your org an edge,`,
-              )}
+              {renderText(msg`A custom CRM gives your org an edge,`)}
             </HeadingPart>{' '}
             <HeadingPart fontFamily="sans">
-              {renderMessageDescriptor(msg`but building one`)}
+              {renderText(msg`but building one`)}
             </HeadingPart>{' '}
             <HeadingPart fontFamily="serif">
-              {renderMessageDescriptor(msg`comes with`)}
+              {renderText(msg`comes with`)}
             </HeadingPart>{' '}
             <HeadingPart fontFamily="sans">
-              {renderMessageDescriptor(msg`tradeoffs`)}
+              {renderText(msg`tradeoffs`)}
             </HeadingPart>
           </Problem.Heading>
-          <Problem.Points points={PROBLEM_DATA.points} />
+          <Problem.Points
+            points={PROBLEM_DATA.points}
+            renderText={renderText}
+          />
         </Problem.Content>
       </Problem.Root>
 
@@ -197,7 +217,7 @@ export default async function HomePage() {
               <Eyebrow
                 colorScheme="primary"
                 heading={THREE_CARDS_ILLUSTRATION_DATA.eyebrow.heading}
-                renderText={renderMessageDescriptor}
+                renderText={renderText}
               />
               <Heading
                 className={threeCardsIllustrationHeadingClassName}
@@ -205,21 +225,21 @@ export default async function HomePage() {
                 weight="light"
               >
                 <HeadingPart fontFamily="serif">
-                  {renderMessageDescriptor(
-                    msg`Assemble, iterate and adapt a robust CRM,`,
-                  )}
+                  {renderText(msg`Assemble, iterate and adapt a robust CRM,`)}
                 </HeadingPart>{' '}
                 <HeadingPart fontFamily="sans">
-                  {renderMessageDescriptor(msg`that's quick to flex`)}
+                  {renderText(msg`that's quick to flex`)}
                 </HeadingPart>
               </Heading>
             </ThreeCardsIllustrationIntroHeader>
-            <Body
-              body={THREE_CARDS_ILLUSTRATION_DATA.body}
-              className={threeCardsIllustrationBodyClassName}
-              renderText={renderMessageDescriptor}
-              size="sm"
-            />
+            {THREE_CARDS_ILLUSTRATION_DATA.body && (
+              <Body
+                body={THREE_CARDS_ILLUSTRATION_DATA.body}
+                className={threeCardsIllustrationBodyClassName}
+                renderText={renderText}
+                size="sm"
+              />
+            )}
           </ThreeCardsIllustrationIntroContent>
         </ThreeCards.Intro>
         <ThreeCards.IllustrationCards
@@ -234,18 +254,18 @@ export default async function HomePage() {
           <Eyebrow
             colorScheme="primary"
             heading={THREE_CARDS_FEATURE_DATA.eyebrow.heading}
-            renderText={renderMessageDescriptor}
+            renderText={renderText}
           />
           <Heading size="lg" weight="light">
             <HeadingPart fontFamily="serif">
-              {renderMessageDescriptor(msg`Make your GTM team happy`)}
+              {renderText(msg`Make your GTM team happy`)}
             </HeadingPart>
             <br />
             <HeadingPart fontFamily="serif">
-              {renderMessageDescriptor(msg`with`)}
+              {renderText(msg`with`)}
             </HeadingPart>{' '}
             <HeadingPart fontFamily="sans">
-              {renderMessageDescriptor(msg`a CRM they'll love`)}
+              {renderText(msg`a CRM they'll love`)}
             </HeadingPart>
           </Heading>
         </ThreeCards.Intro>
@@ -275,22 +295,22 @@ export default async function HomePage() {
           <Eyebrow
             colorScheme="secondary"
             heading={FAQ_DATA.eyebrow.heading}
-            renderText={renderMessageDescriptor}
+            renderText={renderText}
           />
           <Faq.Heading>
             <HeadingPart fontFamily="serif">
-              {renderMessageDescriptor(msg`Stop fighting custom.`)}
+              {renderText(msg`Stop fighting custom.`)}
             </HeadingPart>
             <br />
             <HeadingPart fontFamily="sans">
-              {renderMessageDescriptor(msg`Start building, with Twenty`)}
+              {renderText(msg`Start building, with Twenty`)}
             </HeadingPart>
           </Faq.Heading>
           <Faq.Cta>
             <LinkButton
               color="primary"
               href="https://app.twenty.com/welcome"
-              label={renderMessageDescriptor(msg`Get started`)}
+              label={renderText(msg`Get started`)}
               type="anchor"
               variant="contained"
             />

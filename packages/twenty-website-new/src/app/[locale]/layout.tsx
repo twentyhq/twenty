@@ -11,6 +11,7 @@ import { type ReactNode } from 'react';
 import { FooterVisibilityGate } from '@/app/_components/FooterVisibilityGate';
 import { ScrollToTopOnRouteChange } from '@/app/_components/ScrollToTopOnRouteChange';
 import { ContactCalModalRoot } from '@/lib/contact-cal';
+import { createMessageDescriptorRenderer } from '@/lib/i18n/create-message-descriptor-renderer';
 import {
   I18nProvider,
   PUBLIC_APP_LOCALE_LIST,
@@ -125,7 +126,8 @@ const LocaleLayout = async ({
 }) => {
   const { locale: rawLocale } = await params;
   const locale = resolveLocaleParam(rawLocale);
-  setServerI18n(locale);
+  const i18n = setServerI18n(locale);
+  const renderText = createMessageDescriptorRenderer(i18n);
   const messages = getLocaleMessages(locale);
 
   return (
@@ -149,10 +151,14 @@ const LocaleLayout = async ({
               <FooterVisibilityGate>
                 <Footer.Root>
                   <Footer.Logo />
-                  <Footer.Nav groups={FOOTER_DATA.navGroups} />
+                  <Footer.Nav
+                    groups={FOOTER_DATA.navGroups}
+                    renderText={renderText}
+                  />
                   <Footer.Bottom
                     copyright={FOOTER_DATA.bottom.copyright}
                     links={FOOTER_DATA.socialLinks}
+                    renderText={renderText}
                   />
                 </Footer.Root>
               </FooterVisibilityGate>

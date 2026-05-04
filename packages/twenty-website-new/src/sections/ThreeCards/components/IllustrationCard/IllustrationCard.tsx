@@ -5,16 +5,13 @@ import { Body, Heading } from '@/design-system/components';
 import { ArrowRightIcon } from '@/icons';
 import { INFORMATIVE_ICONS } from '@/icons/informative';
 import { LocalizedLink } from '@/lib/i18n';
-import { resolveMessageDescriptor } from '@/lib/i18n/resolve-message-descriptor';
-import { renderMessageDescriptor } from '@/lib/i18n/render-message-descriptor';
 import { usePartnerApplicationModal } from '@/lib/partner-application';
 import { WebGlMount } from '@/lib/visual-runtime';
 import type { ThreeCardsIllustrationCardType } from '@/sections/ThreeCards/types';
 import { THREE_CARDS_VISUALS } from '@/sections/ThreeCards/visuals';
 import { theme } from '@/theme';
 import type { MessageDescriptor } from '@lingui/core';
-import { MessageDescriptorTrans } from '@/lib/i18n/MessageDescriptorTrans';
-import { useLingui } from '@lingui/react/macro';
+import { useLingui } from '@lingui/react';
 import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
 import { ThreeCardsCardShape } from './CardShape';
@@ -331,7 +328,7 @@ function PartnerProgramAction({
 }) {
   const { i18n } = useLingui();
   const { openPartnerApplicationModal } = usePartnerApplicationModal();
-  const ariaLabel = resolveMessageDescriptor(i18n, label);
+  const translatedLabel = i18n._(label);
 
   const openModal = () => {
     openPartnerApplicationModal(programId);
@@ -340,10 +337,10 @@ function PartnerProgramAction({
   return (
     <PartnerActionRow>
       <PartnerActionButton type="button" onClick={openModal}>
-        <MessageDescriptorTrans descriptor={label} />
+        {translatedLabel}
       </PartnerActionButton>
       <PartnerActionIconButton
-        aria-label={ariaLabel}
+        aria-label={translatedLabel}
         type="button"
         onClick={openModal}
       >
@@ -374,7 +371,9 @@ export function IllustrationCard({
   illustrationCard,
   variant = 'shaped',
 }: IllustrationCardProps) {
+  const { i18n } = useLingui();
   const Visual = THREE_CARDS_VISUALS[illustrationCard.illustration];
+  const renderText = (descriptor: MessageDescriptor) => i18n._(descriptor);
 
   return (
     <IllustrationCardContainer>
@@ -386,7 +385,7 @@ export function IllustrationCard({
       )}
       <Heading
         as="h3"
-        renderText={renderMessageDescriptor}
+        renderText={renderText}
         segments={illustrationCard.heading}
         size="xs"
         weight="medium"
@@ -405,7 +404,7 @@ export function IllustrationCard({
             className={
               variant === 'simple' ? simpleCardBodyClassName : undefined
             }
-            renderText={renderMessageDescriptor}
+            renderText={renderText}
             size="sm"
             weight="regular"
           />
@@ -429,7 +428,7 @@ export function IllustrationCard({
                     as="span"
                     body={benefit}
                     className={benefitLabelClassName}
-                    renderText={renderMessageDescriptor}
+                    renderText={renderText}
                     size="sm"
                     weight="regular"
                   />
@@ -451,14 +450,14 @@ export function IllustrationCard({
           <CardFooter>
             <Body
               body={illustrationCard.attribution.role}
-              renderText={renderMessageDescriptor}
+              renderText={renderText}
               size="xs"
               weight="medium"
             />
             <AttributionPipe aria-hidden />
             <Body
               body={illustrationCard.attribution.company}
-              renderText={renderMessageDescriptor}
+              renderText={renderText}
               size="xs"
               weight="regular"
             />

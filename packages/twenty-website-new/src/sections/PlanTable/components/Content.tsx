@@ -5,8 +5,6 @@ import {
   buttonBaseStyles,
 } from '@/design-system/components/Button/BaseButton';
 import { CheckIcon } from '@/icons';
-import { MessageDescriptorTrans } from '@/lib/i18n/MessageDescriptorTrans';
-import { renderMessageDescriptor } from '@/lib/i18n/render-message-descriptor';
 import type { MessageDescriptor } from '@lingui/core';
 import { usePricingState } from '@/sections/Plans/context/PricingStateContext';
 import type {
@@ -18,6 +16,7 @@ import type {
 } from '@/sections/PlanTable/types';
 import { theme } from '@/theme';
 import { msg } from '@lingui/core/macro';
+import { useLingui } from '@lingui/react';
 import { styled } from '@linaria/react';
 import { useMemo, useState } from 'react';
 import { CalculatorEmbed } from './CalculatorEmbed';
@@ -137,23 +136,16 @@ const ToggleButton = styled.button`
 
 type CellValueProps = {
   cell: PlanTableCellType;
+  renderText: (descriptor: MessageDescriptor) => string;
 };
 
-function CellValue({ cell }: CellValueProps) {
+function CellValue({ cell, renderText }: CellValueProps) {
   if (cell.kind === 'dash') {
-    return (
-      <TierText>
-        <MessageDescriptorTrans descriptor={msg`No`} />
-      </TierText>
-    );
+    return <TierText>{renderText(msg`No`)}</TierText>;
   }
 
   if (cell.kind === 'text') {
-    return (
-      <TierText>
-        <MessageDescriptorTrans descriptor={cell.text} />
-      </TierText>
-    );
+    return <TierText>{renderText(cell.text)}</TierText>;
   }
 
   const label = cell.label ?? msg`Yes`;
@@ -161,9 +153,7 @@ function CellValue({ cell }: CellValueProps) {
   return (
     <YesRow>
       <CheckIcon color={theme.colors.highlight[100]} size={16} />
-      <TierText>
-        <MessageDescriptorTrans descriptor={label} />
-      </TierText>
+      <TierText>{renderText(label)}</TierText>
     </YesRow>
   );
 }
@@ -202,19 +192,18 @@ function resolveVisibleRows(
 }
 
 type FeatureRowProps = {
+  renderText: (descriptor: MessageDescriptor) => string;
   row: PlanTableFeatureRowDataType;
   tierColumns: PlanTableTierColumnType[];
 };
 
-function FeatureRow({ row, tierColumns }: FeatureRowProps) {
+function FeatureRow({ renderText, row, tierColumns }: FeatureRowProps) {
   return (
     <GridRow>
-      <FeatureLabel>
-        <MessageDescriptorTrans descriptor={row.featureLabel} />
-      </FeatureLabel>
+      <FeatureLabel>{renderText(row.featureLabel)}</FeatureLabel>
       {tierColumns.map((column) => (
         <TierCell key={column.id}>
-          <CellValue cell={row.tiers[column.id]} />
+          <CellValue cell={row.tiers[column.id]} renderText={renderText} />
         </TierCell>
       ))}
     </GridRow>
@@ -222,16 +211,15 @@ function FeatureRow({ row, tierColumns }: FeatureRowProps) {
 }
 
 type CategoryRowProps = {
+  renderText: (descriptor: MessageDescriptor) => string;
   title: MessageDescriptor;
 };
 
-function CategoryRow({ title }: CategoryRowProps) {
+function CategoryRow({ renderText, title }: CategoryRowProps) {
   return (
     <GridRow>
       <CategoryBand>
-        <CategoryTitle>
-          <MessageDescriptorTrans descriptor={title} />
-        </CategoryTitle>
+        <CategoryTitle>{renderText(title)}</CategoryTitle>
       </CategoryBand>
       <CategoryBand aria-hidden="true" />
       <CategoryBand aria-hidden="true" />
@@ -244,8 +232,10 @@ type ContentProps = {
 };
 
 export function Content({ data }: ContentProps) {
+  const { i18n } = useLingui();
   const [expanded, setExpanded] = useState(false);
   const { hosting } = usePricingState();
+  const renderText = (descriptor: MessageDescriptor) => i18n._(descriptor);
 
   const visibleRows = useMemo(
     () => resolveVisibleRows(data.rows, hosting),
@@ -266,7 +256,11 @@ export function Content({ data }: ContentProps) {
 
       if (row.type === 'category') {
         return (
-          <CategoryRow key={`${row.title}-${rowIndex}`} title={row.title} />
+          <CategoryRow
+            key={`${row.title}-${rowIndex}`}
+            renderText={renderText}
+            title={row.title}
+          />
         );
       }
 
@@ -275,6 +269,7 @@ export function Content({ data }: ContentProps) {
           <CalculatorEmbed
             calculator={row.calculator}
             key={`calculator-${rowIndex}`}
+            renderText={renderText}
           />
         );
       }
@@ -282,6 +277,7 @@ export function Content({ data }: ContentProps) {
       return (
         <FeatureRow
           key={`${row.featureLabel}-${rowIndex}`}
+          renderText={renderText}
           row={row}
           tierColumns={data.tierColumns}
         />
@@ -291,13 +287,9 @@ export function Content({ data }: ContentProps) {
   return (
     <TableScope>
       <GridRow>
-        <HeadFeature>
-          <MessageDescriptorTrans descriptor={data.featureColumnLabel} />
-        </HeadFeature>
+        <HeadFeature>{renderText(data.featureColumnLabel)}</HeadFeature>
         {data.tierColumns.map((column) => (
-          <HeadTier key={column.id}>
-            <MessageDescriptorTrans descriptor={column.label} />
-          </HeadTier>
+          <HeadTier key={column.id}>{renderText(column.label)}</HeadTier>
         ))}
       </GridRow>
 
@@ -321,7 +313,7 @@ export function Content({ data }: ContentProps) {
           >
             <BaseButton
               color="primary"
-              label={renderMessageDescriptor(toggleLabel)}
+              label={renderText(toggleLabel)}
               variant="outlined"
             />
           </ToggleButton>

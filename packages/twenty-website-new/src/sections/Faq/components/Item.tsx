@@ -6,10 +6,10 @@ import {
   RectangleFillIcon,
   RectangleOutlineIcon,
 } from '@/icons';
-import { MessageDescriptorTrans } from '@/lib/i18n/MessageDescriptorTrans';
 import type { FaqQuestionType } from '@/sections/Faq/types/FaqQuestion';
 import { theme } from '@/theme';
 import { Accordion as BaseAccordion } from '@base-ui/react/accordion';
+import { useLingui } from '@lingui/react';
 import { styled } from '@linaria/react';
 
 const QuestionText = styled.span`
@@ -208,6 +208,8 @@ type ItemProps = {
 };
 
 export function Item({ question, value }: ItemProps) {
+  const { i18n } = useLingui();
+
   return (
     <BaseAccordion.Item key={value} value={value} render={<ItemRow />}>
       <BaseAccordion.Header render={<Header />}>
@@ -227,9 +229,7 @@ export function Item({ question, value }: ItemProps) {
             </QuestionIconLayer>
           </QuestionIconContainer>
 
-          <QuestionText>
-            <MessageDescriptorTrans descriptor={question.question.text} />
-          </QuestionText>
+          <QuestionText>{i18n._(question.question.text)}</QuestionText>
 
           <ToggleContainer>
             <ToggleVisual aria-hidden>
@@ -252,9 +252,7 @@ export function Item({ question, value }: ItemProps) {
 
       <BaseAccordion.Panel render={<AnswerWrapper />} keepMounted>
         <AnswerInner>
-          <AnswerText>
-            <MessageDescriptorTrans descriptor={question.answer.text} />
-          </AnswerText>
+          <AnswerText>{i18n._(question.answer.text)}</AnswerText>
         </AnswerInner>
       </BaseAccordion.Panel>
     </BaseAccordion.Item>

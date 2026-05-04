@@ -2,10 +2,11 @@
 
 import { Body, Eyebrow, Heading, IconButton } from '@/design-system/components';
 import type { MessageEyebrow } from '@/lib/i18n/message-eyebrow';
-import { renderMessageDescriptor } from '@/lib/i18n/render-message-descriptor';
 import { ArrowLeftIcon, ArrowRightIcon } from '@/icons';
 import type { TestimonialCardType } from '@/sections/Testimonials/types/TestimonialCard';
 import { theme } from '@/theme';
+import type { MessageDescriptor } from '@lingui/core';
+import { useLingui } from '@lingui/react';
 import { styled } from '@linaria/react';
 import { type ReactNode, useState } from 'react';
 import { Separator } from './Separator';
@@ -155,7 +156,9 @@ type CarouselProps = {
 };
 
 export function Carousel({ children, eyebrow, testimonials }: CarouselProps) {
+  const { i18n } = useLingui();
   const [index, setIndex] = useState(0);
+  const renderText = (descriptor: MessageDescriptor) => i18n._(descriptor);
 
   const total = testimonials.length;
   if (total === 0) return null;
@@ -194,7 +197,7 @@ export function Carousel({ children, eyebrow, testimonials }: CarouselProps) {
         <Eyebrow
           colorScheme="primary"
           heading={eyebrow.heading}
-          renderText={renderMessageDescriptor}
+          renderText={renderText}
         />
 
         <HeadingContainer>
@@ -202,7 +205,7 @@ export function Carousel({ children, eyebrow, testimonials }: CarouselProps) {
             <HeadingWrapper key={i} data-active={i === index}>
               <Heading
                 as="h2"
-                renderText={renderMessageDescriptor}
+                renderText={renderText}
                 segments={t.heading}
                 size="md"
                 weight="light"
@@ -255,7 +258,7 @@ export function Carousel({ children, eyebrow, testimonials }: CarouselProps) {
             <Body
               as="span"
               body={current.author.name}
-              renderText={renderMessageDescriptor}
+              renderText={renderText}
               size="sm"
               weight="medium"
             />
@@ -263,7 +266,7 @@ export function Carousel({ children, eyebrow, testimonials }: CarouselProps) {
               <Body
                 as="span"
                 body={authorSecondaryLine}
-                renderText={renderMessageDescriptor}
+                renderText={renderText}
                 size="xs"
                 weight="light"
               />

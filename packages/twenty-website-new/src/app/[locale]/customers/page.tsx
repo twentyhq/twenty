@@ -5,9 +5,13 @@ import { TRUSTED_BY_DATA } from '@/sections/TrustedBy/data';
 import { TalkToUsButton } from '@/lib/contact-cal';
 import { CASE_STUDY_CATALOG_ENTRIES } from '@/lib/customers';
 import { Eyebrow, HeadingPart, LinkButton } from '@/design-system/components';
-import { Pages } from '@/lib/pages';
-import { renderMessageDescriptor } from '@/lib/i18n/render-message-descriptor';
 import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';
+import { createMessageDescriptorRenderer } from '@/lib/i18n/create-message-descriptor-renderer';
+import {
+  getRouteI18n,
+  type LocaleRouteParams,
+} from '@/lib/i18n/get-route-i18n';
+import { Pages } from '@/lib/pages';
 import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels';
 import { CaseStudyCatalog } from '@/sections/CaseStudyCatalog/components';
 import { Faq } from '@/sections/Faq/components';
@@ -57,8 +61,18 @@ const pageRevealClassName = css`
   }
 `;
 
-export default async function CaseStudiesCatalogPage() {
-  const stats = await fetchCommunityStats();
+type CaseStudiesCatalogPageProps = {
+  params: Promise<LocaleRouteParams>;
+};
+
+export default async function CaseStudiesCatalogPage({
+  params,
+}: CaseStudiesCatalogPageProps) {
+  const [i18n, stats] = await Promise.all([
+    getRouteI18n(params),
+    fetchCommunityStats(),
+  ]);
+  const renderText = createMessageDescriptorRenderer(i18n);
   const menuSocialLinks = mergeSocialLinkLabels(MENU_DATA.socialLinks, stats);
 
   return (
@@ -79,31 +93,43 @@ export default async function CaseStudiesCatalogPage() {
         <Hero.Root backgroundColor={CUSTOMERS_TOP_BACKGROUND_COLOR}>
           <Hero.Heading page={Pages.CaseStudies}>
             <HeadingPart fontFamily="serif">
-              {renderMessageDescriptor(msg`See how teams`)}
+              {renderText(msg`See how teams`)}
             </HeadingPart>
             <br />
             <HeadingPart fontFamily="serif">
-              {renderMessageDescriptor(msg`build`)}
+              {renderText(msg`build`)}
             </HeadingPart>{' '}
             <HeadingPart fontFamily="sans">
-              {renderMessageDescriptor(msg`on Twenty`)}
+              {renderText(msg`on Twenty`)}
             </HeadingPart>
           </Hero.Heading>
-          <Hero.Body body={HERO_BODY} page={Pages.CaseStudies} />
+          <Hero.Body
+            body={HERO_BODY}
+            page={Pages.CaseStudies}
+            renderText={renderText}
+          />
         </Hero.Root>
         <TrustedBy.Root
           cardBackgroundColor={CUSTOMERS_TOP_BACKGROUND_COLOR}
           compactBottom
         >
-          <TrustedBy.Separator separator={TRUSTED_BY_DATA.separator} />
+          <TrustedBy.Separator
+            renderText={renderText}
+            separator={TRUSTED_BY_DATA.separator}
+          />
           <TrustedBy.Logos logos={TRUSTED_BY_DATA.logos} />
           <TrustedBy.ClientCount
             label={TRUSTED_BY_DATA.clientCountLabel.text}
+            renderText={renderText}
           />
         </TrustedBy.Root>
       </div>
 
-      <CaseStudyCatalog.Grid compactTop entries={CASE_STUDY_CATALOG_ENTRIES} />
+      <CaseStudyCatalog.Grid
+        compactTop
+        entries={CASE_STUDY_CATALOG_ENTRIES}
+        renderText={renderText}
+      />
 
       <Signoff.Root
         backgroundColor={theme.colors.primary.background[100]}
@@ -112,19 +138,23 @@ export default async function CaseStudiesCatalogPage() {
       >
         <Signoff.Heading page={Pages.Partners}>
           <HeadingPart fontFamily="serif">
-            {renderMessageDescriptor(msg`Ready to build`)}
+            {renderText(msg`Ready to build`)}
           </HeadingPart>
           <br />
           <HeadingPart fontFamily="sans">
-            {renderMessageDescriptor(msg`your own story?`)}
+            {renderText(msg`your own story?`)}
           </HeadingPart>
         </Signoff.Heading>
-        <Signoff.Body body={SIGNOFF_BODY} page={Pages.Partners} />
+        <Signoff.Body
+          body={SIGNOFF_BODY}
+          page={Pages.Partners}
+          renderText={renderText}
+        />
         <Signoff.Cta>
           <LinkButton
             color="secondary"
             href="https://app.twenty.com/welcome"
-            label={renderMessageDescriptor(msg`Get started`)}
+            label={renderText(msg`Get started`)}
             type="anchor"
             variant="contained"
           />
@@ -141,22 +171,22 @@ export default async function CaseStudiesCatalogPage() {
           <Eyebrow
             colorScheme="secondary"
             heading={FAQ_DATA.eyebrow.heading}
-            renderText={renderMessageDescriptor}
+            renderText={renderText}
           />
           <Faq.Heading>
             <HeadingPart fontFamily="serif">
-              {renderMessageDescriptor(msg`Stop fighting custom.`)}
+              {renderText(msg`Stop fighting custom.`)}
             </HeadingPart>
             <br />
             <HeadingPart fontFamily="sans">
-              {renderMessageDescriptor(msg`Start building, with Twenty`)}
+              {renderText(msg`Start building, with Twenty`)}
             </HeadingPart>
           </Faq.Heading>
           <Faq.Cta>
             <LinkButton
               color="primary"
               href="https://app.twenty.com/welcome"
-              label={renderMessageDescriptor(msg`Get started`)}
+              label={renderText(msg`Get started`)}
               type="anchor"
               variant="contained"
             />

@@ -7,11 +7,12 @@ import {
   StepperProgressRail,
 } from '@/design-system/components';
 import { INFORMATIVE_ICONS } from '@/icons';
-import { renderMessageDescriptor } from '@/lib/i18n/render-message-descriptor';
 import { StepperSwipeDeck } from '@/lib/stepper';
 import type { ProductStepperContentProps } from '@/sections/ProductStepper/types';
 import type { ProductStepperContentStepType } from '@/sections/ProductStepper/types/ProductStepperContentStep';
 import { theme } from '@/theme';
+import type { MessageDescriptor } from '@lingui/core';
+import { useLingui } from '@lingui/react';
 import { styled } from '@linaria/react';
 
 const ContentRoot = styled.div`
@@ -104,6 +105,7 @@ function renderProductStepBlock(
   index: number,
   activeStepIndex: number,
   localProgress: number,
+  renderText: (descriptor: MessageDescriptor) => string,
   variant: 'scroll' | 'swipe',
 ) {
   const Icon = INFORMATIVE_ICONS[step.icon];
@@ -140,13 +142,13 @@ function renderProductStepBlock(
           ) : null}
         </StepIconBox>
         <Heading
-          renderText={renderMessageDescriptor}
+          renderText={renderText}
           segments={step.heading}
           size="sm"
           weight="regular"
         />
       </StepRowHeader>
-      <Body body={step.body} renderText={renderMessageDescriptor} size="sm" />
+      <Body body={step.body} renderText={renderText} size="sm" />
     </>
   );
 
@@ -180,6 +182,9 @@ export function Content({
   onMobileStepIndexChange,
   steps,
 }: ProductStepperContentProps) {
+  const { i18n } = useLingui();
+  const renderText = (descriptor: MessageDescriptor) => i18n._(descriptor);
+
   return (
     <ContentRoot>
       <StepperProgressRail
@@ -193,12 +198,12 @@ export function Content({
           <Eyebrow
             colorScheme="primary"
             heading={eyebrow.heading}
-            renderText={renderMessageDescriptor}
+            renderText={renderText}
           />
           <Heading size="lg" weight="light">
             {heading}
           </Heading>
-          <Body body={body} renderText={renderMessageDescriptor} size="sm" />
+          <Body body={body} renderText={renderText} size="sm" />
         </IntroBlock>
         {layoutMode === 'swipe' ? (
           <StepperSwipeDeck
@@ -212,6 +217,7 @@ export function Content({
                 stepIndex,
                 activeStepIndex,
                 localProgress,
+                renderText,
                 'swipe',
               )
             }
@@ -223,6 +229,7 @@ export function Content({
               index,
               activeStepIndex,
               localProgress,
+              renderText,
               'scroll',
             ),
           )

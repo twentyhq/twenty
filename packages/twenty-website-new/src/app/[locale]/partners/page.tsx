@@ -19,9 +19,13 @@ import {
   HeadingPart,
   LinkButton,
 } from '@/design-system/components';
-import { Pages } from '@/lib/pages';
-import { renderMessageDescriptor } from '@/lib/i18n/render-message-descriptor';
 import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';
+import { createMessageDescriptorRenderer } from '@/lib/i18n/create-message-descriptor-renderer';
+import {
+  getRouteI18n,
+  type LocaleRouteParams,
+} from '@/lib/i18n/get-route-i18n';
+import { Pages } from '@/lib/pages';
 import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels';
 import { CaseStudyCatalog } from '@/sections/CaseStudyCatalog/components';
 import { Faq } from '@/sections/Faq/components';
@@ -55,8 +59,16 @@ const PromoSpacing = styled.div`
 
 export const generateMetadata = buildRouteMetadata('partners');
 
-export default async function PartnerPage() {
-  const stats = await fetchCommunityStats();
+type PartnerPageProps = {
+  params: Promise<LocaleRouteParams>;
+};
+
+export default async function PartnerPage({ params }: PartnerPageProps) {
+  const [i18n, stats] = await Promise.all([
+    getRouteI18n(params),
+    fetchCommunityStats(),
+  ]);
+  const renderText = createMessageDescriptorRenderer(i18n);
   const menuSocialLinks = mergeSocialLinkLabels(MENU_DATA.socialLinks, stats);
 
   return (
@@ -76,14 +88,18 @@ export default async function PartnerPage() {
       <Hero.Root backgroundColor={theme.colors.primary.background[100]}>
         <Hero.Heading page={Pages.Partners}>
           <HeadingPart fontFamily="serif">
-            {renderMessageDescriptor(msg`Become`)}
+            {renderText(msg`Become`)}
           </HeadingPart>
           <br />
           <HeadingPart fontFamily="sans">
-            {renderMessageDescriptor(msg`our partner`)}
+            {renderText(msg`our partner`)}
           </HeadingPart>
         </Hero.Heading>
-        <Hero.Body page={Pages.Partners} body={{ text: HERO_COPY.body }} />
+        <Hero.Body
+          page={Pages.Partners}
+          body={{ text: HERO_COPY.body }}
+          renderText={renderText}
+        />
         <Hero.Cta>
           <PartnerHeroCtas />
         </Hero.Cta>
@@ -94,15 +110,22 @@ export default async function PartnerPage() {
         backgroundColor={theme.colors.primary.background[100]}
         compactBottom
       >
-        <TrustedBy.Separator separator={TRUSTED_BY_DATA.separator} />
+        <TrustedBy.Separator
+          renderText={renderText}
+          separator={TRUSTED_BY_DATA.separator}
+        />
         <TrustedBy.Logos logos={TRUSTED_BY_DATA.logos} />
-        <TrustedBy.ClientCount label={TRUSTED_BY_DATA.clientCountLabel.text} />
+        <TrustedBy.ClientCount
+          label={TRUSTED_BY_DATA.clientCountLabel.text}
+          renderText={renderText}
+        />
       </TrustedBy.Root>
 
       <PromoSpacing>
         <CaseStudyCatalog.Promo
           compactTop
           entries={CASE_STUDY_CATALOG_ENTRIES}
+          renderText={renderText}
         />
       </PromoSpacing>
 
@@ -111,25 +134,23 @@ export default async function PartnerPage() {
           <Eyebrow
             colorScheme="primary"
             heading={THREE_CARDS_ILLUSTRATION_DATA.eyebrow.heading}
-            renderText={renderMessageDescriptor}
+            renderText={renderText}
           />
           <Heading size="lg" weight="light">
             <HeadingPart fontFamily="serif">
-              {renderMessageDescriptor(
-                msg`Find the program that fits your business`,
-              )}
+              {renderText(msg`Find the program that fits your business`)}
             </HeadingPart>{' '}
             <HeadingPart fontFamily="sans">
-              {renderMessageDescriptor(
-                msg`and unlock new opportunities with Twenty`,
-              )}
+              {renderText(msg`and unlock new opportunities with Twenty`)}
             </HeadingPart>
           </Heading>
-          <Body
-            body={THREE_CARDS_ILLUSTRATION_DATA.body}
-            renderText={renderMessageDescriptor}
-            size="sm"
-          />
+          {THREE_CARDS_ILLUSTRATION_DATA.body && (
+            <Body
+              body={THREE_CARDS_ILLUSTRATION_DATA.body}
+              renderText={renderText}
+              size="sm"
+            />
+          )}
         </ThreeCards.Intro>
         <ThreeCards.IllustrationCards
           illustrationCards={THREE_CARDS_ILLUSTRATION_DATA.illustrationCards}
@@ -158,16 +179,17 @@ export default async function PartnerPage() {
       >
         <Signoff.Heading page={Pages.Partners}>
           <HeadingPart fontFamily="serif">
-            {renderMessageDescriptor(msg`Ready to grow`)}
+            {renderText(msg`Ready to grow`)}
           </HeadingPart>
           <br />
           <HeadingPart fontFamily="sans">
-            {renderMessageDescriptor(msg`with Twenty?`)}
+            {renderText(msg`with Twenty?`)}
           </HeadingPart>
         </Signoff.Heading>
         <Signoff.Body
           body={{ text: SIGNOFF_COPY.body }}
           page={Pages.Partners}
+          renderText={renderText}
         />
         <Signoff.Cta>
           <PartnerSignoffCtas />
@@ -179,22 +201,22 @@ export default async function PartnerPage() {
           <Eyebrow
             colorScheme="secondary"
             heading={FAQ_DATA.eyebrow.heading}
-            renderText={renderMessageDescriptor}
+            renderText={renderText}
           />
           <Faq.Heading>
             <HeadingPart fontFamily="serif">
-              {renderMessageDescriptor(msg`Stop fighting custom.`)}
+              {renderText(msg`Stop fighting custom.`)}
             </HeadingPart>
             <br />
             <HeadingPart fontFamily="sans">
-              {renderMessageDescriptor(msg`Start building, with Twenty`)}
+              {renderText(msg`Start building, with Twenty`)}
             </HeadingPart>
           </Faq.Heading>
           <Faq.Cta>
             <LinkButton
               color="primary"
               href="https://app.twenty.com/welcome"
-              label={renderMessageDescriptor(msg`Get started`)}
+              label={renderText(msg`Get started`)}
               type="anchor"
               variant="contained"
             />

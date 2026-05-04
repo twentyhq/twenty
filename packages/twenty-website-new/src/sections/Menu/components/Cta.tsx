@@ -1,8 +1,10 @@
+'use client';
+
 import { LinkButton } from '@/design-system/components';
-import { renderMessageDescriptor } from '@/lib/i18n/render-message-descriptor';
 import type { MenuScheme } from '@/sections/Menu/types';
 import { theme } from '@/theme';
 import { msg } from '@lingui/core/macro';
+import { useLingui } from '@lingui/react';
 import { styled } from '@linaria/react';
 
 const CtaContainer = styled.div`
@@ -21,6 +23,7 @@ type CtaProps = {
 };
 
 export function Cta({ scheme }: CtaProps) {
+  const { i18n } = useLingui();
   const buttonColor = scheme === 'primary' ? 'secondary' : 'primary';
 
   return (
@@ -28,7 +31,7 @@ export function Cta({ scheme }: CtaProps) {
       <LinkButton
         color={buttonColor}
         href="https://app.twenty.com/welcome"
-        label={renderMessageDescriptor(msg`Log in`)}
+        label={i18n._(msg`Log in`)}
         size="small"
         type="anchor"
         variant="outlined"
@@ -36,7 +39,7 @@ export function Cta({ scheme }: CtaProps) {
       <LinkButton
         color={buttonColor}
         href="https://app.twenty.com/welcome"
-        label={renderMessageDescriptor(msg`Get started`)}
+        label={i18n._(msg`Get started`)}
         size="small"
         type="anchor"
         variant="contained"

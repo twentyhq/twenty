@@ -2,7 +2,6 @@
 
 import { Container, IconButton, LinkButton } from '@/design-system/components';
 import { CloseIcon, MenuIcon } from '@/icons';
-import { renderMessageDescriptor } from '@/lib/i18n/render-message-descriptor';
 import { useTimeoutRegistry } from '@/lib/react';
 import type {
   MenuNavItemType,
@@ -12,6 +11,7 @@ import type {
 import { theme } from '@/theme';
 import { Drawer } from '@base-ui/react/drawer';
 import { msg } from '@lingui/core/macro';
+import { useLingui } from '@lingui/react';
 import { styled } from '@linaria/react';
 import { useEffect, useState, type ReactNode } from 'react';
 import { CloseDrawerWhenNavigationExpandsEffect } from './../effect-components/CloseDrawerWhenNavigationExpandsEffect';
@@ -103,6 +103,7 @@ export function Root({
   surfaceColor,
   socialLinks,
 }: RootProps) {
+  const { i18n } = useLingui();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [hasScrolled, setHasScrolled] = useState(false);
   const [isScrolling, setIsScrolling] = useState(false);
@@ -181,7 +182,7 @@ export function Root({
               <LinkButton
                 color={buttonColor.linkButton}
                 href="https://app.twenty.com/welcome"
-                label={renderMessageDescriptor(msg`Get started`)}
+                label={i18n._(msg`Get started`)}
                 type="anchor"
                 variant="contained"
               />

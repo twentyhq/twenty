@@ -2,9 +2,10 @@
 
 import { Body, Heading } from '@/design-system/components';
 import { FastPathIcon, LiveDataIcon } from '@/icons';
-import { renderMessageDescriptor } from '@/lib/i18n/render-message-descriptor';
 import type { ThreeCardsFeatureCardType } from '@/sections/ThreeCards/types';
 import { theme } from '@/theme';
+import type { MessageDescriptor } from '@lingui/core';
+import { useLingui } from '@lingui/react';
 import { styled } from '@linaria/react';
 import { IconUsersGroup } from '@tabler/icons-react';
 import Image from 'next/image';
@@ -133,8 +134,10 @@ function renderFeatureCardIcon(icon: ThreeCardsFeatureCardType['icon']) {
 }
 
 export function FeatureCard({ featureCard }: FeatureCardProps) {
+  const { i18n } = useLingui();
   const [isHovered, setIsHovered] = useState(false);
   const imageFrameRef = useRef<HTMLDivElement>(null);
+  const renderText = (descriptor: MessageDescriptor) => i18n._(descriptor);
   let visual: ReactNode;
 
   if ('illustration' in featureCard) {
@@ -199,7 +202,7 @@ export function FeatureCard({ featureCard }: FeatureCardProps) {
           <CardTitleWrap>
             <Heading
               as="h3"
-              renderText={renderMessageDescriptor}
+              renderText={renderText}
               segments={featureCard.heading}
               size="xs"
               weight="medium"
@@ -208,7 +211,7 @@ export function FeatureCard({ featureCard }: FeatureCardProps) {
         </CardTitleRow>
         <Body
           body={featureCard.body}
-          renderText={renderMessageDescriptor}
+          renderText={renderText}
           size="sm"
           weight="regular"
         />

@@ -2,8 +2,6 @@ import {
   Heading as BaseHeading,
   type HeadingProps,
 } from '@/design-system/components/Heading';
-import type { MessageHeadingSegment } from '@/lib/i18n/message-heading-segment';
-import { renderMessageDescriptor } from '@/lib/i18n/render-message-descriptor';
 import { type Page, Pages } from '@/lib/pages';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
@@ -23,10 +21,7 @@ const HeadingContainer = styled.div`
   }
 `;
 
-export type HeroHeadingProps = Omit<
-  HeadingProps<MessageHeadingSegment['text']>,
-  'renderText'
-> & {
+export type HeroHeadingProps = HeadingProps & {
   children?: ReactNode;
   page: Page;
 };
@@ -36,21 +31,13 @@ export function Heading({
   children,
   className,
   page,
-  segments,
   size = 'lg',
   weight = 'light',
 }: HeroHeadingProps) {
   return (
     <HeadingContainer data-page={page}>
-      <BaseHeading
-        as={as}
-        className={className}
-        renderText={renderMessageDescriptor}
-        segments={segments}
-        size={size}
-        weight={weight}
-      >
-        {segments === undefined ? children : undefined}
+      <BaseHeading as={as} className={className} size={size} weight={weight}>
+        {children}
       </BaseHeading>
     </HeadingContainer>
   );

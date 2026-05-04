@@ -13,12 +13,6 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
-#. js-lingui-explicit-id
-#: src/app/[locale]/product/three-cards.data.ts
-#: src/app/[locale]/partners/three-cards-illustration.data.ts
-msgid "/+Z5u4"
-msgstr "/+Z5u4"
-
 #. js-lingui-id: BUIzFF
 #: src/app/[locale]/pricing/salesforce.data.ts
 msgid "-33% off"
@@ -596,6 +590,11 @@ msgstr "Automation"
 #: src/app/[locale]/pricing/salesforce.data.ts
 msgid "Available on YouTube!"
 msgstr "Available on YouTube!"
+
+#. js-lingui-id: iH8pgl
+#: src/sections/CaseStudy/components/Hero.tsx
+msgid "Back"
+msgstr "Back"
 
 #. js-lingui-id: jQLfIW
 #: src/app/[locale]/pricing/salesforce.data.ts

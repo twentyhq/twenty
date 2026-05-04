@@ -1,10 +1,12 @@
 #
 # Crowdin CLI configuration for Website translations (twenty-website-new)
-# Project ID is supplied by the Crowdin GitHub Action through CROWDIN_PROJECT_ID.
+# Project ID: 4
 # See https://crowdin.github.io/crowdin-cli/configuration for more information
 #
 
+project_id: 4
 preserve_hierarchy: true
+base_url: 'https://twenty.api.crowdin.com'
 base_path: ..
 languages_mapping:
   locale:

@@ -1,7 +1,6 @@
 'use client';
 
 import { ArrowRightUpIcon, INFORMATIVE_ICONS } from '@/icons';
-import { MessageDescriptorTrans } from '@/lib/i18n/MessageDescriptorTrans';
 import type {
   MenuNavChildItemType,
   MenuNavItemType,
@@ -10,6 +9,8 @@ import type {
 import { theme } from '@/theme';
 import { NavigationMenu } from '@base-ui/react/navigation-menu';
 import { Separator } from '@base-ui/react/separator';
+import type { MessageDescriptor } from '@lingui/core';
+import { useLingui } from '@lingui/react';
 import { styled } from '@linaria/react';
 import { LocalizedLink, useUnlocalizedPathname } from '@/lib/i18n';
 import Image from 'next/image';
@@ -413,10 +414,16 @@ const DropdownDescription = styled.span`
 type DropdownContentProps = {
   items: MenuNavChildItemType[];
   pathname: string;
+  renderText: (descriptor: MessageDescriptor) => string;
   scheme: MenuScheme;
 };
 
-function DropdownContent({ items, pathname, scheme }: DropdownContentProps) {
+function DropdownContent({
+  items,
+  pathname,
+  renderText,
+  scheme,
+}: DropdownContentProps) {
   const previewItems = items.filter((item) => item.preview);
   const hasPreview = previewItems.length > 0;
   const defaultPreviewItem = previewItems[0] ?? null;
@@ -482,11 +489,11 @@ function DropdownContent({ items, pathname, scheme }: DropdownContentProps) {
                 </DropdownIconWrap>
                 <DropdownTextStack>
                   <DropdownLabel data-scheme={scheme}>
-                    <MessageDescriptorTrans descriptor={child.label} />
+                    {renderText(child.label)}
                   </DropdownLabel>
                   {child.description && (
                     <DropdownDescription data-scheme={scheme}>
-                      <MessageDescriptorTrans descriptor={child.description} />
+                      {renderText(child.description)}
                     </DropdownDescription>
                   )}
                 </DropdownTextStack>
@@ -515,10 +522,10 @@ function DropdownContent({ items, pathname, scheme }: DropdownContentProps) {
           </PreviewFrame>
           <PreviewText>
             <PreviewTitle data-scheme={scheme}>
-              <MessageDescriptorTrans descriptor={activePreview.title} />
+              {renderText(activePreview.title)}
             </PreviewTitle>
             <PreviewDescription data-scheme={scheme}>
-              <MessageDescriptorTrans descriptor={activePreview.description} />
+              {renderText(activePreview.description)}
             </PreviewDescription>
           </PreviewText>
         </PreviewPanel>
@@ -533,7 +540,9 @@ type NavProps = {
 };
 
 export function Nav({ navItems, scheme }: NavProps) {
+  const { i18n } = useLingui();
   const pathname = useUnlocalizedPathname();
+  const renderText = (descriptor: MessageDescriptor) => i18n._(descriptor);
 
   const hasDropdown = navItems.some((item) => item.children);
 
@@ -557,7 +566,7 @@ export function Nav({ navItems, scheme }: NavProps) {
                         ) || undefined
                       }
                     >
-                      <MessageDescriptorTrans descriptor={item.label} />
+                      {renderText(item.label)}
                       <TriggerChevron aria-hidden>
                         <svg
                           width="8"
@@ -580,6 +589,7 @@ export function Nav({ navItems, scheme }: NavProps) {
                       <DropdownContent
                         items={item.children}
                         pathname={pathname}
+                        renderText={renderText}
                         scheme={scheme}
                       />
                     </NavigationMenu.Content>
@@ -591,7 +601,7 @@ export function Nav({ navItems, scheme }: NavProps) {
                       data-active={pathname.startsWith(item.href) || undefined}
                       render={<LocalizedLink href={item.href} />}
                     >
-                      <MessageDescriptorTrans descriptor={item.label} />
+                      {renderText(item.label)}
                     </NavLink>
                   )
                 )}

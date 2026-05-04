@@ -1,7 +1,6 @@
 'use client';
 
 import { Body, Heading } from '@/design-system/components';
-import { renderMessageDescriptor } from '@/lib/i18n/render-message-descriptor';
 import type { MessageDescriptor } from '@lingui/core';
 import type {
   SalesforceAddonRowType,
@@ -9,6 +8,7 @@ import type {
   SalesforceWrongChoicePopupType,
 } from '@/sections/Salesforce/types';
 import { theme } from '@/theme';
+import { useLingui } from '@lingui/react';
 import { styled } from '@linaria/react';
 import { type ReactNode, useCallback, useRef, useState } from 'react';
 import { PricingWindow } from './PricingWindow';
@@ -140,8 +140,10 @@ type FlowProps = Omit<SalesforceDataType, 'heading'> & {
 };
 
 export function Flow({ backgroundColor, body, children, pricing }: FlowProps) {
+  const { i18n } = useLingui();
   const rightColumnRef = useRef<HTMLDivElement>(null);
   const popupSequenceRef = useRef(0);
+  const renderText = (descriptor: MessageDescriptor) => i18n._(descriptor);
   const [isPricingWindowVisible, setIsPricingWindowVisible] = useState(true);
   const [checkedIds, setCheckedIds] = useState(() => {
     const initial = new Set<string>();
@@ -279,7 +281,7 @@ export function Flow({ backgroundColor, body, children, pricing }: FlowProps) {
         <Body
           body={body}
           family="sans"
-          renderText={renderMessageDescriptor}
+          renderText={renderText}
           size="md"
           weight="regular"
         />

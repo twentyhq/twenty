@@ -1,10 +1,11 @@
 'use client';
 
 import { Body, Heading } from '@/design-system/components';
-import { renderMessageDescriptor } from '@/lib/i18n/render-message-descriptor';
 import { StepperSwipeDeck } from '@/lib/stepper';
 import { HOME_STEPPER_HOLD_FRACTIONS } from '@/sections/HomeStepper/utils/home-stepper-lottie-frame-map';
 import { theme } from '@/theme';
+import type { MessageDescriptor } from '@lingui/core';
+import { useLingui } from '@lingui/react';
 import { styled } from '@linaria/react';
 import type { HomeStepperStepType } from './../types/HomeStepperStep';
 import { ProgressBar } from './ProgressBar';
@@ -143,6 +144,9 @@ export function LeftColumn({
   onMobileStepIndexChange,
   steps,
 }: HomeStepperLeftColumnProps) {
+  const { i18n } = useLingui();
+  const renderText = (descriptor: MessageDescriptor) => i18n._(descriptor);
+
   return (
     <LeftColumnRoot>
       <StickyPanel>
@@ -163,16 +167,12 @@ export function LeftColumn({
                 return (
                   <SwipeStepBlock>
                     <Heading
-                      renderText={renderMessageDescriptor}
+                      renderText={renderText}
                       segments={step.heading}
                       size="lg"
                       weight="light"
                     />
-                    <Body
-                      body={step.body}
-                      renderText={renderMessageDescriptor}
-                      size="sm"
-                    />
+                    <Body body={step.body} renderText={renderText} size="sm" />
                   </SwipeStepBlock>
                 );
               }}
@@ -194,16 +194,12 @@ export function LeftColumn({
                   key={index}
                 >
                   <Heading
-                    renderText={renderMessageDescriptor}
+                    renderText={renderText}
                     segments={step.heading}
                     size="lg"
                     weight="light"
                   />
-                  <Body
-                    body={step.body}
-                    renderText={renderMessageDescriptor}
-                    size="sm"
-                  />
+                  <Body body={step.body} renderText={renderText} size="sm" />
                 </StepBlock>
               );
             })

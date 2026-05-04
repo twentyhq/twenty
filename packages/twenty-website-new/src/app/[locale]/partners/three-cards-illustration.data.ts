@@ -8,7 +8,6 @@ export const THREE_CARDS_ILLUSTRATION_DATA: ThreeCardsIllustrationDataType = {
       fontFamily: 'sans',
     },
   },
-  body: { text: msg`` },
   illustrationCards: [
     {
       heading: { text: msg`Technology Partners`, fontFamily: 'sans' },

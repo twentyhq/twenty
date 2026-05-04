@@ -1,6 +1,6 @@
-import { MessageDescriptorTrans } from '@/lib/i18n/MessageDescriptorTrans';
 import type { TrustedBySeparatorType } from '@/sections/TrustedBy/types';
 import { theme } from '@/theme';
+import type { MessageDescriptor } from '@lingui/core';
 import { styled } from '@linaria/react';
 
 const StyledSeparatorRow = styled.div`
@@ -20,14 +20,15 @@ const SeparatorText = styled.p`
   line-height: ${theme.font.size(4)};
 `;
 
-type SeparatorProps = { separator: TrustedBySeparatorType };
+type SeparatorProps = {
+  renderText: (descriptor: MessageDescriptor) => string;
+  separator: TrustedBySeparatorType;
+};
 
-export function Separator({ separator }: SeparatorProps) {
+export function Separator({ renderText, separator }: SeparatorProps) {
   return (
     <StyledSeparatorRow>
-      <SeparatorText>
-        <MessageDescriptorTrans descriptor={separator.text} />
-      </SeparatorText>
+      <SeparatorText>{renderText(separator.text)}</SeparatorText>
     </StyledSeparatorRow>
   );
 }

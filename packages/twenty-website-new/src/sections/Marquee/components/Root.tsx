@@ -1,5 +1,6 @@
 import type { MessageHeadingSegment } from '@/lib/i18n/message-heading-segment';
 import { theme } from '@/theme';
+import type { MessageDescriptor } from '@lingui/core';
 import { styled } from '@linaria/react';
 import {
   Children,
@@ -40,6 +41,7 @@ type RootProps = {
   backgroundColor: string;
   color: string;
   children: ReactNode;
+  renderText: (descriptor: MessageDescriptor) => string;
 };
 
 type HeadingElement = ReactElement<{ segments: MessageHeadingSegment[] }>;
@@ -59,7 +61,12 @@ function findHeadingSlot(children: ReactNode): HeadingElement | null {
   return found;
 }
 
-export function Root({ backgroundColor, children, color }: RootProps) {
+export function Root({
+  backgroundColor,
+  children,
+  color,
+  renderText,
+}: RootProps) {
   const headingSlot = findHeadingSlot(children);
 
   if (headingSlot === null) {
@@ -77,10 +84,10 @@ export function Root({ backgroundColor, children, color }: RootProps) {
     <StyledSection style={{ backgroundColor, color }}>
       <Viewport>
         <Row>
-          <Track heading={segments} reversed={false} />
+          <Track heading={segments} renderText={renderText} reversed={false} />
         </Row>
         <Row>
-          <Track heading={segments} reversed />
+          <Track heading={segments} renderText={renderText} reversed />
         </Row>
       </Viewport>
     </StyledSection>

@@ -1,16 +1,22 @@
 import { msg } from '@lingui/core/macro';
 import { TalkToUsButton } from '@/lib/contact-cal';
 import { HeadingPart, LinkButton } from '@/design-system/components';
-import { renderMessageDescriptor } from '@/lib/i18n/render-message-descriptor';
 import { Pages } from '@/lib/pages';
 import { Signoff } from '@/sections/Signoff/components';
 import { theme } from '@/theme';
+import type { MessageDescriptor } from '@lingui/core';
 
 const SIGNOFF_BODY = {
   text: msg`Join the teams that chose to own their CRM.\nStart building with Twenty today.`,
 };
 
-export function CustomersCaseStudySignoff() {
+type CustomersCaseStudySignoffProps = {
+  renderText: (descriptor: MessageDescriptor) => string;
+};
+
+export function CustomersCaseStudySignoff({
+  renderText,
+}: CustomersCaseStudySignoffProps) {
   return (
     <Signoff.Root
       backgroundColor={theme.colors.secondary.background[5]}
@@ -19,22 +25,24 @@ export function CustomersCaseStudySignoff() {
     >
       <Signoff.Heading page={Pages.Partners}>
         <HeadingPart fontFamily="serif">
-          {renderMessageDescriptor(msg`Ready to grow`)}
+          {renderText(msg`Ready to grow`)}
         </HeadingPart>
         <br />
         <HeadingPart fontFamily="serif">
-          {renderMessageDescriptor(msg`with`)}
+          {renderText(msg`with`)}
         </HeadingPart>{' '}
-        <HeadingPart fontFamily="sans">
-          {renderMessageDescriptor(msg`Twenty?`)}
-        </HeadingPart>
+        <HeadingPart fontFamily="sans">{renderText(msg`Twenty?`)}</HeadingPart>
       </Signoff.Heading>
-      <Signoff.Body body={SIGNOFF_BODY} page={Pages.Partners} />
+      <Signoff.Body
+        body={SIGNOFF_BODY}
+        page={Pages.Partners}
+        renderText={renderText}
+      />
       <Signoff.Cta>
         <LinkButton
           color="secondary"
           href="https://app.twenty.com/welcome"
-          label={renderMessageDescriptor(msg`Get started`)}
+          label={renderText(msg`Get started`)}
           type="anchor"
           variant="contained"
         />

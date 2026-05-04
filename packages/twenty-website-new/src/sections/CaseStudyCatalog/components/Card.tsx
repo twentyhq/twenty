@@ -1,9 +1,9 @@
 import type { CaseStudyCatalogEntry } from '@/lib/customers';
 import { ArrowRightIcon, CLIENT_ICONS } from '@/icons';
-import { MessageDescriptorTrans } from '@/lib/i18n/MessageDescriptorTrans';
 import { LocalizedLink } from '@/lib/i18n';
 import { CustomerCasesCover } from '@/sections/CaseStudyCatalog/visuals/CustomerCasesCover';
 import { theme } from '@/theme';
+import type { MessageDescriptor } from '@lingui/core';
 import { styled } from '@linaria/react';
 import Image from 'next/image';
 import type { CSSProperties } from 'react';
@@ -447,6 +447,7 @@ const LARGE_LOGO_SCALE = 1.4;
 type CardProps = {
   entry: CaseStudyCatalogEntry;
   index?: number;
+  renderText: (descriptor: MessageDescriptor) => string;
   variant?: CardVariant;
   dashColor?: string;
   hoverDashColor?: string;
@@ -455,6 +456,7 @@ type CardProps = {
 export function Card({
   entry,
   index = 0,
+  renderText,
   variant = 'default',
   dashColor,
   hoverDashColor,
@@ -500,43 +502,29 @@ export function Card({
 
       <ContentWrapper variant={variant}>
         <CardBody variant={variant}>
-          <IndustryLabel>
-            <MessageDescriptorTrans descriptor={entry.industry} />
-          </IndustryLabel>
+          <IndustryLabel>{renderText(entry.industry)}</IndustryLabel>
           <Title variant={variant}>
             {entry.hero.title.map((segment, segmentIndex) =>
               segment.fontFamily === 'sans' ? (
                 <TitleSans key={segmentIndex}>
-                  <MessageDescriptorTrans descriptor={segment.text} />
+                  {renderText(segment.text)}
                 </TitleSans>
               ) : (
-                <span key={segmentIndex}>
-                  <MessageDescriptorTrans descriptor={segment.text} />
-                </span>
+                <span key={segmentIndex}>{renderText(segment.text)}</span>
               ),
             )}
           </Title>
           {hasQuote && entry.quote ? (
-            <Quote>
-              &ldquo;
-              <MessageDescriptorTrans descriptor={entry.quote.text} />
-              &rdquo;
-            </Quote>
+            <Quote>&ldquo;{renderText(entry.quote.text)}&rdquo;</Quote>
           ) : !isLarge ? (
-            <Summary>
-              <MessageDescriptorTrans descriptor={entry.catalogCard.summary} />
-            </Summary>
+            <Summary>{renderText(entry.catalogCard.summary)}</Summary>
           ) : null}
           {isLarge && kpiCount > 0 ? (
             <KpiRow count={kpiCount}>
               {entry.kpis.map((kpi, kpiIndex) => (
                 <KpiCell count={kpiCount} index={kpiIndex} key={kpiIndex}>
-                  <KpiValue>
-                    <MessageDescriptorTrans descriptor={kpi.value} />
-                  </KpiValue>
-                  <KpiLabel>
-                    <MessageDescriptorTrans descriptor={kpi.label} />
-                  </KpiLabel>
+                  <KpiValue>{renderText(kpi.value)}</KpiValue>
+                  <KpiLabel>{renderText(kpi.label)}</KpiLabel>
                 </KpiCell>
               ))}
             </KpiRow>
@@ -547,13 +535,9 @@ export function Card({
           <KpiChipRow>
             {entry.kpis.map((kpi, kpiIndex) => (
               <KpiChip key={kpiIndex}>
-                <KpiChipValue>
-                  <MessageDescriptorTrans descriptor={kpi.value} />
-                </KpiChipValue>
+                <KpiChipValue>{renderText(kpi.value)}</KpiChipValue>
                 <KpiChipDivider aria-hidden />
-                <KpiChipLabel>
-                  <MessageDescriptorTrans descriptor={kpi.label} />
-                </KpiChipLabel>
+                <KpiChipLabel>{renderText(kpi.label)}</KpiChipLabel>
               </KpiChip>
             ))}
           </KpiChipRow>
@@ -578,14 +562,14 @@ export function Card({
               <AuthorText>
                 {entry.quote.author}{' '}
                 <AuthorRoleText>
-                  · <MessageDescriptorTrans descriptor={entry.quote.role} />
+                  · {renderText(entry.quote.role)}
                 </AuthorRoleText>
               </AuthorText>
             ) : (
               <AuthorText>
                 {entry.hero.author}{' '}
                 <AuthorRoleText>
-                  · <MessageDescriptorTrans descriptor={entry.authorRole} />
+                  · {renderText(entry.authorRole)}
                 </AuthorRoleText>
               </AuthorText>
             )}

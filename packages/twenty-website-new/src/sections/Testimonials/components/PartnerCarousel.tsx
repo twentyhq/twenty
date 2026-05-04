@@ -4,11 +4,11 @@ import { Body, Eyebrow, Heading, IconButton } from '@/design-system/components';
 import type { MessageEyebrow } from '@/lib/i18n/message-eyebrow';
 import { ArrowLeftIcon, ArrowRightIcon } from '@/icons';
 import { resolveMessageDescriptor } from '@/lib/i18n/resolve-message-descriptor';
-import { renderMessageDescriptor } from '@/lib/i18n/render-message-descriptor';
 import { PartnerEffect } from '@/sections/Testimonials/visuals/PartnerEffect';
 import type { TestimonialCardType } from '@/sections/Testimonials/types/TestimonialCard';
 import { theme } from '@/theme';
-import { useLingui } from '@lingui/react/macro';
+import type { MessageDescriptor } from '@lingui/core';
+import { useLingui } from '@lingui/react';
 import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
 import { type ReactNode, useState } from 'react';
@@ -235,6 +235,7 @@ export function PartnerCarousel({
 }: PartnerCarouselProps) {
   const { i18n } = useLingui();
   const [index, setIndex] = useState(0);
+  const renderText = (descriptor: MessageDescriptor) => i18n._(descriptor);
 
   const total = testimonials.length;
   if (total === 0) return null;
@@ -289,7 +290,7 @@ export function PartnerCarousel({
                 as="span"
                 body={current.author.name}
                 className={nameTextClassName}
-                renderText={renderMessageDescriptor}
+                renderText={renderText}
                 size="sm"
                 weight="medium"
               />
@@ -298,7 +299,7 @@ export function PartnerCarousel({
                   as="span"
                   body={current.author.designation}
                   className={handleTextClassName}
-                  renderText={renderMessageDescriptor}
+                  renderText={renderText}
                   size="sm"
                 />
               </HandleText>
@@ -323,7 +324,7 @@ export function PartnerCarousel({
         <Eyebrow
           colorScheme="secondary"
           heading={eyebrow.heading}
-          renderText={renderMessageDescriptor}
+          renderText={renderText}
         />
 
         <QuoteArea>
@@ -336,7 +337,7 @@ export function PartnerCarousel({
                 <Heading
                   as="h2"
                   className={quoteHeadingClassName}
-                  renderText={renderMessageDescriptor}
+                  renderText={renderText}
                   segments={testimonial.heading}
                   size="md"
                   weight="light"

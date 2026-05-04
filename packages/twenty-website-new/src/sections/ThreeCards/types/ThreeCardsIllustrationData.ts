@@ -3,6 +3,6 @@ import type { ThreeCardsBaseDataType } from './ThreeCardsBase';
 import type { ThreeCardsIllustrationCardType } from './ThreeCardsIllustrationCard';
 
 export type ThreeCardsIllustrationDataType = ThreeCardsBaseDataType & {
-  body: MessageBody;
+  body?: MessageBody;
   illustrationCards: ThreeCardsIllustrationCardType[];
 };

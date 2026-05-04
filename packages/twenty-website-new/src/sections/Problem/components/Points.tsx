@@ -1,10 +1,10 @@
 import { Body } from '@/design-system/components/Body';
 import { Heading } from '@/design-system/components/Heading';
-import { renderMessageDescriptor } from '@/lib/i18n/render-message-descriptor';
 import type { ProblemPointType } from '@/sections/Problem/types';
 import { theme } from '@/theme';
+import type { MessageDescriptor } from '@lingui/core';
 import { styled } from '@linaria/react';
-import React from 'react';
+import React, { type ReactNode } from 'react';
 
 const StyledPoints = styled.div`
   display: grid;
@@ -34,9 +34,12 @@ const StyledPoint = styled.div`
   }
 `;
 
-export type PointsProps = { points: ProblemPointType[] };
+export type PointsProps = {
+  points: ProblemPointType[];
+  renderText: (descriptor: MessageDescriptor) => ReactNode;
+};
 
-export function Points({ points }: PointsProps) {
+export function Points({ points, renderText }: PointsProps) {
   return (
     <StyledPoints>
       {points.map((point, index) => (
@@ -44,16 +47,12 @@ export function Points({ points }: PointsProps) {
           <StyledDivider />
           <StyledPoint>
             <Heading
-              renderText={renderMessageDescriptor}
+              renderText={renderText}
               segments={point.heading}
               weight="medium"
               size="xs"
             />
-            <Body
-              body={point.body}
-              renderText={renderMessageDescriptor}
-              size="sm"
-            />
+            <Body body={point.body} renderText={renderText} size="sm" />
           </StyledPoint>
         </React.Fragment>
       ))}

@@ -7,11 +7,12 @@ import { Body, Heading, LinkButton } from '@/design-system/components';
 import { CheckIcon } from '@/icons/informative/Check';
 import { useAnimatedNumber } from '@/lib/animation';
 import { getMessageDescriptorSource } from '@/lib/i18n/get-message-descriptor-source';
-import { renderMessageDescriptor } from '@/lib/i18n/render-message-descriptor';
 import { useTimeoutRegistry } from '@/lib/react';
 import type { PlanCardType } from '@/sections/Plans/types';
 import { theme } from '@/theme';
+import type { MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
+import { useLingui } from '@lingui/react';
 import { css } from '@linaria/core';
 import { useEffect, useState } from 'react';
 
@@ -335,7 +336,9 @@ function getFeaturesAnimationMinHeight(maxBullets: number) {
 }
 
 export function Card({ card, highlighted = false, maxBullets }: CardProps) {
+  const { i18n } = useLingui();
   const timeoutRegistry = useTimeoutRegistry();
+  const renderText = (descriptor: MessageDescriptor) => i18n._(descriptor);
   const iconWidth = card.icon.width ?? 80;
   const targetPriceValue = getPriceHeadingNumericValue(card.price.heading);
   const animatedPriceValue = useAnimatedNumber(targetPriceValue ?? 0);
@@ -417,7 +420,7 @@ export function Card({ card, highlighted = false, maxBullets }: CardProps) {
           <Heading
             as="h3"
             className={cardPlanTitleClassName}
-            renderText={renderMessageDescriptor}
+            renderText={renderText}
             segments={card.heading}
             size="xs"
             weight="light"
@@ -425,7 +428,7 @@ export function Card({ card, highlighted = false, maxBullets }: CardProps) {
           <PriceLine>
             <Heading
               as="h4"
-              renderText={renderMessageDescriptor}
+              renderText={renderText}
               segments={animatedPriceHeading}
               size="sm"
               weight="regular"
@@ -434,7 +437,7 @@ export function Card({ card, highlighted = false, maxBullets }: CardProps) {
               as="span"
               body={card.price.body}
               className={priceBodyClassName}
-              renderText={renderMessageDescriptor}
+              renderText={renderText}
               size="sm"
             />
           </PriceLine>
@@ -481,12 +484,7 @@ export function Card({ card, highlighted = false, maxBullets }: CardProps) {
                   strokeWidth={1.5}
                 />
               </FeatureCheck>
-              <Body
-                as="span"
-                body={bullet}
-                renderText={renderMessageDescriptor}
-                size="sm"
-              />
+              <Body as="span" body={bullet} renderText={renderText} size="sm" />
             </FeatureItem>
           ))}
         </FeaturesList>
@@ -496,7 +494,7 @@ export function Card({ card, highlighted = false, maxBullets }: CardProps) {
         <LinkButton
           color="secondary"
           href="https://app.twenty.com/welcome"
-          label={renderMessageDescriptor(msg`Start for free`)}
+          label={renderText(msg`Start for free`)}
           type="anchor"
           variant={highlighted ? 'contained' : 'outlined'}
         />

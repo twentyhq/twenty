@@ -2,8 +2,6 @@ import {
   Heading as BaseHeading,
   type HeadingProps,
 } from '@/design-system/components/Heading';
-import type { MessageHeadingSegment } from '@/lib/i18n/message-heading-segment';
-import { renderMessageDescriptor } from '@/lib/i18n/render-message-descriptor';
 import { theme } from '@/theme';
 import { css } from '@linaria/core';
 import type { ReactNode } from 'react';
@@ -20,22 +18,19 @@ export function Heading({
   as = 'h2',
   children,
   className,
-  segments,
   size = 'md',
   weight = 'light',
-}: Omit<HeadingProps<MessageHeadingSegment['text']>, 'renderText'> & {
+}: HeadingProps & {
   children?: ReactNode;
 }) {
   return (
     <BaseHeading
       as={as}
       className={[problemHeadingClassName, className].filter(Boolean).join(' ')}
-      renderText={renderMessageDescriptor}
-      segments={segments}
       size={size}
       weight={weight}
     >
-      {segments === undefined ? children : undefined}
+      {children}
     </BaseHeading>
   );
 }

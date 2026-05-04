@@ -1,8 +1,7 @@
 import { Body, Heading } from '@/design-system/components';
-import { MessageDescriptorTrans } from '@/lib/i18n/MessageDescriptorTrans';
-import { renderMessageDescriptor } from '@/lib/i18n/render-message-descriptor';
 import type { PlanTableCalculatorDataType } from '@/sections/PlanTable/types';
 import { theme } from '@/theme';
+import type { MessageDescriptor } from '@lingui/core';
 import { styled } from '@linaria/react';
 import NextImage from 'next/image';
 
@@ -167,9 +166,13 @@ const PricePeriod = styled.span`
 
 type CalculatorEmbedProps = {
   calculator: PlanTableCalculatorDataType;
+  renderText: (descriptor: MessageDescriptor) => string;
 };
 
-export function CalculatorEmbed({ calculator }: CalculatorEmbedProps) {
+export function CalculatorEmbed({
+  calculator,
+  renderText,
+}: CalculatorEmbedProps) {
   const { priceLine, sections, visual } = calculator;
 
   return (
@@ -188,7 +191,7 @@ export function CalculatorEmbed({ calculator }: CalculatorEmbedProps) {
         ) : null}
         <Heading
           as="h3"
-          renderText={renderMessageDescriptor}
+          renderText={renderText}
           segments={visual.heading}
           size="lg"
           weight="light"
@@ -197,7 +200,7 @@ export function CalculatorEmbed({ calculator }: CalculatorEmbedProps) {
           <Body
             body={visual.body}
             family="sans"
-            renderText={renderMessageDescriptor}
+            renderText={renderText}
             size="md"
             weight="regular"
           />
@@ -207,17 +210,13 @@ export function CalculatorEmbed({ calculator }: CalculatorEmbedProps) {
         {sections.map((section) => (
           <SectionBlock key={section.id}>
             <SectionTitleRow>
-              <span>
-                <MessageDescriptorTrans descriptor={section.title} />
-              </span>
+              <span>{renderText(section.title)}</span>
               <span aria-hidden="true">☑</span>
             </SectionTitleRow>
             <FieldsRow>
               <Field>
                 <FieldLabel>
-                  <MessageDescriptorTrans
-                    descriptor={section.requestField.label}
-                  />
+                  {renderText(section.requestField.label)}
                 </FieldLabel>
                 <FakeInput>
                   <StepperInner>
@@ -228,11 +227,7 @@ export function CalculatorEmbed({ calculator }: CalculatorEmbedProps) {
                 </FakeInput>
               </Field>
               <Field>
-                <FieldLabel>
-                  <MessageDescriptorTrans
-                    descriptor={section.tasksField.label}
-                  />
-                </FieldLabel>
+                <FieldLabel>{renderText(section.tasksField.label)}</FieldLabel>
                 <FakeInput>
                   <span>{section.tasksField.value}</span>
                   <span aria-hidden="true">▾</span>
@@ -241,11 +236,7 @@ export function CalculatorEmbed({ calculator }: CalculatorEmbedProps) {
             </FieldsRow>
             {section.modelField ? (
               <Field>
-                <FieldLabel>
-                  <MessageDescriptorTrans
-                    descriptor={section.modelField.label}
-                  />
-                </FieldLabel>
+                <FieldLabel>{renderText(section.modelField.label)}</FieldLabel>
                 <FakeInput>
                   <span>{section.modelField.value}</span>
                   <span aria-hidden="true">▾</span>
@@ -256,15 +247,10 @@ export function CalculatorEmbed({ calculator }: CalculatorEmbedProps) {
         ))}
         <PriceFooter>
           <PriceRow>
-            <span>
-              <MessageDescriptorTrans descriptor={priceLine.label} />
-            </span>
+            <span>{renderText(priceLine.label)}</span>
             <span>
               <PriceAmount>{priceLine.amount}</PriceAmount>
-              <PricePeriod>
-                {' '}
-                <MessageDescriptorTrans descriptor={priceLine.periodSuffix} />
-              </PricePeriod>
+              <PricePeriod> {renderText(priceLine.periodSuffix)}</PricePeriod>
             </span>
           </PriceRow>
         </PriceFooter>

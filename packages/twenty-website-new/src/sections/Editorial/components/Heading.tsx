@@ -1,6 +1,4 @@
 import { Heading as BaseHeading } from '@/design-system/components';
-import type { MessageHeadingSegment } from '@/lib/i18n/message-heading-segment';
-import { renderMessageDescriptor } from '@/lib/i18n/render-message-descriptor';
 import { styled } from '@linaria/react';
 import type { ReactNode } from 'react';
 
@@ -11,21 +9,14 @@ const HeadingWrap = styled.div`
 `;
 
 type EditorialHeadingProps = {
-  children?: ReactNode;
-  segments?: MessageHeadingSegment | MessageHeadingSegment[];
+  children: ReactNode;
 };
 
-export function Heading({ children, segments }: EditorialHeadingProps) {
+export function Heading({ children }: EditorialHeadingProps) {
   return (
     <HeadingWrap>
-      <BaseHeading
-        as="h2"
-        renderText={renderMessageDescriptor}
-        segments={segments}
-        size="lg"
-        weight="light"
-      >
-        {segments === undefined ? children : undefined}
+      <BaseHeading as="h2" size="lg" weight="light">
+        {children}
       </BaseHeading>
     </HeadingWrap>
   );

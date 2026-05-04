@@ -2,8 +2,6 @@
 
 import { LinkButton } from '@/design-system/components';
 import { ArrowRightUpIcon, INFORMATIVE_ICONS, SOCIAL_ICONS } from '@/icons';
-import { MessageDescriptorTrans } from '@/lib/i18n/MessageDescriptorTrans';
-import { renderMessageDescriptor } from '@/lib/i18n/render-message-descriptor';
 import type {
   MenuNavItemType,
   MenuScheme,
@@ -12,7 +10,9 @@ import type {
 import { theme } from '@/theme';
 import { Drawer } from '@base-ui/react/drawer';
 import { Separator } from '@base-ui/react/separator';
+import type { MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
+import { useLingui } from '@lingui/react';
 import { styled } from '@linaria/react';
 import { LocalizedLink, useUnlocalizedPathname } from '@/lib/i18n';
 import React, { useState } from 'react';
@@ -283,10 +283,11 @@ const Divider = styled(Separator)`
 type NavGroupProps = {
   item: MenuNavItemType;
   pathname: string;
+  renderText: (descriptor: MessageDescriptor) => string;
   scheme: MenuScheme;
 };
 
-function NavGroup({ item, pathname, scheme }: NavGroupProps) {
+function NavGroup({ item, pathname, renderText, scheme }: NavGroupProps) {
   const hasActiveChild =
     item.children?.some(
       (child) => !child.external && pathname.startsWith(child.href),
@@ -302,7 +303,7 @@ function NavGroup({ item, pathname, scheme }: NavGroupProps) {
         data-active={hasActiveChild || undefined}
         onClick={() => setIsOpen((prev) => !prev)}
       >
-        <MessageDescriptorTrans descriptor={item.label} />
+        {renderText(item.label)}
         <NavGroupChevron aria-hidden>
           <svg
             width="12"
@@ -354,9 +355,7 @@ function NavGroup({ item, pathname, scheme }: NavGroupProps) {
                     <IconComponent size={20} color="currentColor" />
                   )}
                 </NavChildIcon>
-                <NavChildLabel>
-                  <MessageDescriptorTrans descriptor={child.label} />
-                </NavChildLabel>
+                <NavChildLabel>{renderText(child.label)}</NavChildLabel>
               </Drawer.Close>
             );
           })}
@@ -373,8 +372,10 @@ type MenuDrawerProps = {
 };
 
 export function MenuDrawer({ navItems, scheme, socialLinks }: MenuDrawerProps) {
+  const { i18n } = useLingui();
   const pathname = useUnlocalizedPathname();
   const buttonColor = scheme === 'primary' ? 'secondary' : 'primary';
+  const renderText = (descriptor: MessageDescriptor) => i18n._(descriptor);
 
   const iconFillColor =
     scheme === 'primary'
@@ -396,7 +397,12 @@ export function MenuDrawer({ navItems, scheme, socialLinks }: MenuDrawerProps) {
             {topLevelItems.map((item, index) => (
               <React.Fragment key={`${index}-${item.href ?? 'group'}`}>
                 {item.children ? (
-                  <NavGroup item={item} scheme={scheme} pathname={pathname} />
+                  <NavGroup
+                    item={item}
+                    pathname={pathname}
+                    renderText={renderText}
+                    scheme={scheme}
+                  />
                 ) : item.href ? (
                   <Drawer.Close
                     nativeButton={false}
@@ -410,7 +416,7 @@ export function MenuDrawer({ navItems, scheme, socialLinks }: MenuDrawerProps) {
                       />
                     }
                   >
-                    <MessageDescriptorTrans descriptor={item.label} />
+                    {renderText(item.label)}
                   </Drawer.Close>
                 ) : null}
                 {index < topLevelItems.length - 1 && (
@@ -431,7 +437,7 @@ export function MenuDrawer({ navItems, scheme, socialLinks }: MenuDrawerProps) {
             <LinkButton
               color={buttonColor}
               href="https://app.twenty.com/welcome"
-              label={renderMessageDescriptor(msg`Log in`)}
+              label={renderText(msg`Log in`)}
               type="anchor"
               variant="outlined"
             />

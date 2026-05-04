@@ -1,5 +1,4 @@
 import { Container } from '@/design-system/components';
-import { MessageDescriptorTrans } from '@/lib/i18n/MessageDescriptorTrans';
 import type { MessageDescriptor } from '@lingui/core';
 import { theme } from '@/theme';
 import { msg } from '@lingui/core/macro';
@@ -116,9 +115,10 @@ const Label = styled.span`
 type HighlightsProps = {
   industry?: MessageDescriptor;
   kpis?: { value: MessageDescriptor; label: MessageDescriptor }[];
+  renderText: (descriptor: MessageDescriptor) => string;
 };
 
-export function Highlights({ industry, kpis }: HighlightsProps) {
+export function Highlights({ industry, kpis, renderText }: HighlightsProps) {
   const cells: { value: MessageDescriptor; label: MessageDescriptor }[] = [];
   if (industry) {
     cells.push({ value: industry, label: msg`Industry` });
@@ -140,12 +140,8 @@ export function Highlights({ industry, kpis }: HighlightsProps) {
           <Card count={cells.length}>
             {cells.map((cell, index) => (
               <Cell count={cells.length} index={index} key={index}>
-                <Value>
-                  <MessageDescriptorTrans descriptor={cell.value} />
-                </Value>
-                <Label>
-                  <MessageDescriptorTrans descriptor={cell.label} />
-                </Label>
+                <Value>{renderText(cell.value)}</Value>
+                <Label>{renderText(cell.label)}</Label>
               </Cell>
             ))}
           </Card>

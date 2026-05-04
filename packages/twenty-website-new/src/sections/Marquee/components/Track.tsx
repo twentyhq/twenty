@@ -2,6 +2,7 @@ import { styled } from '@linaria/react';
 
 import type { MessageHeadingSegment } from '@/lib/i18n/message-heading-segment';
 import { theme } from '@/theme';
+import type { MessageDescriptor } from '@lingui/core';
 
 import { Phrase } from './Phrase';
 
@@ -36,12 +37,13 @@ const TrackHalf = styled.div`
 
 type TrackProps = {
   heading: MessageHeadingSegment[];
+  renderText: (descriptor: MessageDescriptor) => string;
   reversed: boolean;
 };
 
-export function Track({ heading, reversed }: TrackProps) {
+export function Track({ heading, renderText, reversed }: TrackProps) {
   const phrases = Array.from({ length: MARQUEE_REPEAT }, (_, index) => (
-    <Phrase key={index} segments={heading} />
+    <Phrase key={index} renderText={renderText} segments={heading} />
   ));
 
   return (

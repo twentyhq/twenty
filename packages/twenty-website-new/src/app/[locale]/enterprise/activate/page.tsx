@@ -7,9 +7,13 @@ import {
   Eyebrow,
   HeadingPart,
 } from '@/design-system/components';
-import { renderMessageDescriptor } from '@/lib/i18n/render-message-descriptor';
-import { Pages } from '@/lib/pages';
 import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';
+import { createMessageDescriptorRenderer } from '@/lib/i18n/create-message-descriptor-renderer';
+import {
+  getRouteI18n,
+  type LocaleRouteParams,
+} from '@/lib/i18n/get-route-i18n';
+import { Pages } from '@/lib/pages';
 import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels';
 import { Hero } from '@/sections/Hero/components';
 import { Menu } from '@/sections/Menu/components';
@@ -39,19 +43,30 @@ const ActivateContentInner = styled.div`
   width: 100%;
 `;
 
-function EnterpriseActivateFallback() {
+type EnterpriseActivateFallbackProps = {
+  loadingLabel: string;
+};
+
+function EnterpriseActivateFallback({
+  loadingLabel,
+}: EnterpriseActivateFallbackProps) {
   return (
-    <Body
-      body={{ text: msg`Loading activation…` }}
-      renderText={renderMessageDescriptor}
-      size="sm"
-      variant="body-paragraph"
-    />
+    <Body body={{ text: loadingLabel }} size="sm" variant="body-paragraph" />
   );
 }
 
-export default async function EnterpriseActivatePage() {
-  const stats = await fetchCommunityStats();
+type EnterpriseActivatePageProps = {
+  params: Promise<LocaleRouteParams>;
+};
+
+export default async function EnterpriseActivatePage({
+  params,
+}: EnterpriseActivatePageProps) {
+  const [i18n, stats] = await Promise.all([
+    getRouteI18n(params),
+    fetchCommunityStats(),
+  ]);
+  const renderText = createMessageDescriptorRenderer(i18n);
   const menuSocialLinks = mergeSocialLinkLabels(MENU_DATA.socialLinks, stats);
 
   return (
@@ -75,23 +90,33 @@ export default async function EnterpriseActivatePage() {
         <Eyebrow
           colorScheme="primary"
           heading={{ text: msg`Self-hosting`, fontFamily: 'sans' }}
-          renderText={renderMessageDescriptor}
+          renderText={renderText}
         />
         <Hero.Heading page={Pages.Pricing}>
           <HeadingPart fontFamily="serif">
-            {renderMessageDescriptor(msg`Enterprise`)}
+            {renderText(msg`Enterprise`)}
           </HeadingPart>{' '}
           <HeadingPart fontFamily="sans">
-            {renderMessageDescriptor(msg`activation`)}
+            {renderText(msg`activation`)}
           </HeadingPart>
         </Hero.Heading>
-        <Hero.Body body={ENTERPRISE_ACTIVATE_BODY} page={Pages.Pricing} />
+        <Hero.Body
+          body={ENTERPRISE_ACTIVATE_BODY}
+          page={Pages.Pricing}
+          renderText={renderText}
+        />
       </Hero.Root>
 
       <ActivatePageContent>
         <Container>
           <ActivateContentInner>
-            <Suspense fallback={<EnterpriseActivateFallback />}>
+            <Suspense
+              fallback={
+                <EnterpriseActivateFallback
+                  loadingLabel={renderText(msg`Loading activation…`)}
+                />
+              }
+            >
               <EnterpriseActivateClient />
             </Suspense>
           </ActivateContentInner>

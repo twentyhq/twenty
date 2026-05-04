@@ -89,7 +89,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
           # Website translations project
-          CROWDIN_PROJECT_ID: ${{ vars.CROWDIN_WEBSITE_PROJECT_ID }}
+          CROWDIN_PROJECT_ID: '4'
           CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
 
       # As the files are extracted from a Docker container, they belong to root:root.

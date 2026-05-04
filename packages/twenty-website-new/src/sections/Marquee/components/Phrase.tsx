@@ -1,8 +1,8 @@
 import { styled } from '@linaria/react';
 
 import type { MessageHeadingSegment } from '@/lib/i18n/message-heading-segment';
-import { MessageDescriptorTrans } from '@/lib/i18n/MessageDescriptorTrans';
 import { theme } from '@/theme';
+import type { MessageDescriptor } from '@lingui/core';
 
 const PhraseGroup = styled.div`
   align-items: center;
@@ -40,15 +40,16 @@ const Segment = styled.span`
 `;
 
 type PhraseProps = {
+  renderText: (descriptor: MessageDescriptor) => string;
   segments: MessageHeadingSegment[];
 };
 
-export function Phrase({ segments }: PhraseProps) {
+export function Phrase({ renderText, segments }: PhraseProps) {
   return (
     <PhraseGroup>
       {segments.map((segment, segmentIndex) => (
         <Segment key={segmentIndex} data-segment-index={segmentIndex}>
-          <MessageDescriptorTrans descriptor={segment.text} />
+          {renderText(segment.text)}
         </Segment>
       ))}
     </PhraseGroup>

@@ -11,8 +11,9 @@ import {
   PARTNER_PROGRAM_OPTIONS,
   type PartnerProgramId,
 } from '@/lib/partner-application/partner-application-modal-data';
-import { renderMessageDescriptor } from '@/lib/i18n/render-message-descriptor';
 import { theme } from '@/theme';
+import type { MessageDescriptor } from '@lingui/core';
+import { useLingui } from '@lingui/react';
 import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
 import { IconChevronDown } from '@tabler/icons-react';
@@ -267,6 +268,7 @@ export function PartnerApplicationModal({
   onClose,
   initialProgramId = 'technology',
 }: PartnerApplicationModalProps) {
+  const { i18n } = useLingui();
   const formRef = useRef<HTMLFormElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [programId, setProgramId] =
@@ -379,6 +381,7 @@ export function PartnerApplicationModal({
   );
 
   const copy = PARTNER_APPLICATION_MODAL_COPY;
+  const renderText = (descriptor: MessageDescriptor) => i18n._(descriptor);
 
   return (
     <Modal.Root
@@ -407,7 +410,7 @@ export function PartnerApplicationModal({
                     newLine: true,
                   },
                 ]}
-                renderText={renderMessageDescriptor}
+                renderText={renderText}
                 size="lg"
                 weight="light"
               />
@@ -419,12 +422,12 @@ export function PartnerApplicationModal({
             <SubtitleStack>
               <Body
                 body={{ text: copy.subtitleLine1 }}
-                renderText={renderMessageDescriptor}
+                renderText={renderText}
                 size="md"
               />
               <Body
                 body={{ text: copy.subtitleLine2 }}
-                renderText={renderMessageDescriptor}
+                renderText={renderText}
                 size="md"
               />
             </SubtitleStack>

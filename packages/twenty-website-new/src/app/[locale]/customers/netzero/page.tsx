@@ -3,6 +3,11 @@ import { MENU_DATA } from '@/sections/Menu/data';
 import { CustomersCaseStudySignoff } from '@/app/[locale]/customers/_components/CustomersCaseStudySignoff';
 import { getCaseStudyPalette, type CaseStudyData } from '@/lib/customers';
 import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';
+import { createMessageDescriptorRenderer } from '@/lib/i18n/create-message-descriptor-renderer';
+import {
+  getRouteI18n,
+  type LocaleRouteParams,
+} from '@/lib/i18n/get-route-i18n';
 import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels';
 import { CaseStudy } from '@/sections/CaseStudy/components';
 import { Menu } from '@/sections/Menu/components';
@@ -110,8 +115,18 @@ export const generateMetadata = buildLocalizedMetadata({
   description: CASE_STUDY.meta.description,
 });
 
-export default async function NetZeroCaseStudyPage() {
-  const stats = await fetchCommunityStats();
+type CaseStudyPageProps = {
+  params: Promise<LocaleRouteParams>;
+};
+
+export default async function NetZeroCaseStudyPage({
+  params,
+}: CaseStudyPageProps) {
+  const [i18n, stats] = await Promise.all([
+    getRouteI18n(params),
+    fetchCommunityStats(),
+  ]);
+  const renderText = createMessageDescriptorRenderer(i18n);
   const menuSocialLinks = mergeSocialLinkLabels(MENU_DATA.socialLinks, stats);
   const palette = getCaseStudyPalette('/customers/netzero');
 
@@ -125,6 +140,7 @@ export default async function NetZeroCaseStudyPage() {
           key={index}
           block={block}
           isLast={index === CASE_STUDY.sections.length - 1}
+          renderText={renderText}
           sectionId={sectionId}
         />
       );
@@ -156,17 +172,19 @@ export default async function NetZeroCaseStudyPage() {
         dashColor={palette.dashColor}
         hero={CASE_STUDY.hero}
         hoverDashColor={palette.hoverDashColor}
+        renderText={renderText}
       />
 
       <CaseStudy.Highlights
         industry={CASE_STUDY.hero.industry}
         kpis={CASE_STUDY.hero.kpis}
+        renderText={renderText}
       />
 
       <CaseStudy.Body>{sectionBlocks}</CaseStudy.Body>
 
       <CaseStudy.SectionNav items={CASE_STUDY.tableOfContents} />
-      <CustomersCaseStudySignoff />
+      <CustomersCaseStudySignoff renderText={renderText} />
     </>
   );
 }

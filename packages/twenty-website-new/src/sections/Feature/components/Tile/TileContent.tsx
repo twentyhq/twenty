@@ -2,9 +2,9 @@ import { styled } from '@linaria/react';
 
 import { Body, Heading } from '@/design-system/components';
 import { INFORMATIVE_ICONS } from '@/icons';
-import { renderMessageDescriptor } from '@/lib/i18n/render-message-descriptor';
 import type { FeatureTileType } from '@/sections/Feature/types/FeatureTile';
 import { theme } from '@/theme';
+import type { MessageDescriptor } from '@lingui/core';
 
 const Content = styled.div`
   display: grid;
@@ -53,10 +53,11 @@ const BulletItem = styled.li`
 `;
 
 type TileContentProps = {
+  renderText: (descriptor: MessageDescriptor) => string;
   tile: FeatureTileType;
 };
 
-export function TileContent({ tile }: TileContentProps) {
+export function TileContent({ renderText, tile }: TileContentProps) {
   const Icon = INFORMATIVE_ICONS[tile.icon];
 
   return (
@@ -70,7 +71,7 @@ export function TileContent({ tile }: TileContentProps) {
         <HeadingWrap>
           <Heading
             as="h3"
-            renderText={renderMessageDescriptor}
+            renderText={renderText}
             segments={tile.heading}
             size="xs"
             weight="medium"
@@ -83,7 +84,7 @@ export function TileContent({ tile }: TileContentProps) {
             <Body
               as="span"
               body={bullet}
-              renderText={renderMessageDescriptor}
+              renderText={renderText}
               size="sm"
               weight="regular"
             />

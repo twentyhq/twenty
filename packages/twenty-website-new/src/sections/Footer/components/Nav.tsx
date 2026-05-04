@@ -1,10 +1,10 @@
 import { FooterNavCta } from '@/sections/Footer/components/FooterNavCta';
 import { PlusIcon, RectangleFillIcon } from '@/icons';
-import { MessageDescriptorTrans } from '@/lib/i18n/MessageDescriptorTrans';
 import { LocalizedLink } from '@/lib/i18n';
 import type { FooterNavGroupType } from '@/sections/Footer/types';
 import { theme } from '@/theme';
 import { NavigationMenu } from '@base-ui/react/navigation-menu';
+import type { MessageDescriptor } from '@lingui/core';
 import { styled } from '@linaria/react';
 import React from 'react';
 
@@ -126,9 +126,10 @@ const Actions = styled.div`
 
 type NavProps = {
   groups: FooterNavGroupType[];
+  renderText: (descriptor: MessageDescriptor) => string;
 };
 
-export function Nav({ groups }: NavProps) {
+export function Nav({ groups, renderText }: NavProps) {
   return (
     <NavigationMenu.Root render={<FooterNav />}>
       {groups.map((group, index) => (
@@ -150,7 +151,7 @@ export function Nav({ groups }: NavProps) {
           )}
           <NavGroup aria-labelledby={group.id}>
             <NavGroupTitle id={group.id}>
-              <MessageDescriptorTrans descriptor={group.title} />
+              {renderText(group.title)}
             </NavGroupTitle>
             <NavMenuList>
               {group.links.map((link) => (
@@ -174,7 +175,7 @@ export function Nav({ groups }: NavProps) {
                         fillColor={theme.colors.secondary.background[100]}
                       />
                     </NavLinkHoverIcon>
-                    <MessageDescriptorTrans descriptor={link.label} />
+                    {renderText(link.label)}
                   </NavLink>
                 </NavigationMenu.Item>
               ))}
@@ -187,6 +188,7 @@ export function Nav({ groups }: NavProps) {
                       cta.kind === 'link' ? `${cta.href}-${cta.kind}` : cta.kind
                     }
                     cta={cta}
+                    renderText={renderText}
                   />
                 ))}
               </Actions>

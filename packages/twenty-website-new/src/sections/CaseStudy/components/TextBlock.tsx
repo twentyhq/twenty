@@ -5,8 +5,8 @@ import {
   Eyebrow,
   Heading,
 } from '@/design-system/components';
-import { renderMessageDescriptor } from '@/lib/i18n/render-message-descriptor';
 import { theme } from '@/theme';
+import type { MessageDescriptor } from '@lingui/core';
 import { styled } from '@linaria/react';
 
 const Section = styled.section`
@@ -125,12 +125,14 @@ function parseCallout(raw: string): {
 type TextBlockProps = {
   block: CaseStudyTextBlock;
   isLast?: boolean;
+  renderText: (descriptor: MessageDescriptor) => string;
   sectionId?: string;
 };
 
 export function TextBlock({
   block,
   isLast = false,
+  renderText,
   sectionId,
 }: TextBlockProps) {
   return (
@@ -141,13 +143,13 @@ export function TextBlock({
             <Eyebrow
               colorScheme="primary"
               heading={{ fontFamily: 'sans', text: block.eyebrow }}
-              renderText={renderMessageDescriptor}
+              renderText={renderText}
             />
           )}
 
           <Heading
             as="h2"
-            renderText={renderMessageDescriptor}
+            renderText={renderText}
             segments={block.heading}
             size="md"
             weight="light"
@@ -159,7 +161,7 @@ export function TextBlock({
                 key={index}
                 body={{ text: paragraph }}
                 family="sans"
-                renderText={renderMessageDescriptor}
+                renderText={renderText}
                 size="md"
                 variant="body-paragraph"
                 weight="regular"

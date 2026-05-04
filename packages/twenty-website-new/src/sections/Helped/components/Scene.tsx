@@ -7,11 +7,12 @@ import {
   Heading,
   HeadingPart,
 } from '@/design-system/components';
-import { renderMessageDescriptor } from '@/lib/i18n/render-message-descriptor';
 import { HelpedSceneScrollLayoutEffect } from '@/sections/Helped/effect-components/HelpedSceneScrollLayoutEffect';
 import type { HelpedDataType } from '@/sections/Helped/types/HelpedData';
 import { preloadHelpedVisualGeometries } from '@/sections/Helped/visuals/helped-visual-models';
 import { theme } from '@/theme';
+import type { MessageDescriptor } from '@lingui/core';
+import { useLingui } from '@lingui/react';
 import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
 import { useEffect, useRef } from 'react';
@@ -99,9 +100,11 @@ type SceneProps = {
 };
 
 export function Scene({ data }: SceneProps) {
+  const { i18n } = useLingui();
   const sectionRef = useRef<HTMLElement>(null);
   const innerRef = useRef<HTMLDivElement>(null);
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const renderText = (descriptor: MessageDescriptor) => i18n._(descriptor);
 
   useEffect(() => {
     void preloadHelpedVisualGeometries();
@@ -130,7 +133,7 @@ export function Scene({ data }: SceneProps) {
             <Eyebrow
               colorScheme="primary"
               heading={data.eyebrow.heading}
-              renderText={renderMessageDescriptor}
+              renderText={renderText}
             />
           </EyebrowExitTarget>
           <Heading
@@ -140,13 +143,13 @@ export function Scene({ data }: SceneProps) {
             weight="light"
           >
             <HeadingPart fontFamily="serif">
-              {renderMessageDescriptor(msg`Dev teams power`)}
+              {renderText(msg`Dev teams power`)}
               <br />
-              {renderMessageDescriptor(msg`company-wide`)}
+              {renderText(msg`company-wide`)}
             </HeadingPart>
             <br />
             <HeadingPart fontFamily="sans">
-              {renderMessageDescriptor(msg`change with Twenty`)}
+              {renderText(msg`change with Twenty`)}
             </HeadingPart>
           </Heading>
         </HeadlineBlock>
@@ -158,7 +161,7 @@ export function Scene({ data }: SceneProps) {
                 cardRefs.current[index] = element;
               }}
             >
-              <Card card={card} />
+              <Card card={card} renderText={renderText} />
             </CardPositioner>
           ))}
         </CardsLayer>

@@ -8,7 +8,6 @@ import {
   LinkButton,
 } from '@/design-system/components';
 import { PlusIcon, UsersIcon } from '@/icons';
-import { renderMessageDescriptor } from '@/lib/i18n/render-message-descriptor';
 import { PromoMic } from '@/sections/CaseStudyCatalog/visuals/PromoMic';
 import { theme } from '@/theme';
 import type { MessageDescriptor } from '@lingui/core';
@@ -264,6 +263,7 @@ type PromoProps = {
   ctaHref?: string;
   ctaLabel?: MessageDescriptor;
   compactTop?: boolean;
+  renderText: (descriptor: MessageDescriptor) => string;
 };
 
 export function Promo({
@@ -271,6 +271,7 @@ export function Promo({
   ctaHref = '/customers',
   ctaLabel = msg`Explore customer stories`,
   compactTop = false,
+  renderText,
 }: PromoProps) {
   return (
     <Section aria-label="Customer stories preview">
@@ -340,24 +341,20 @@ export function Promo({
             heading={EYEBROW}
             markerHeight={6}
             markerWidth={14}
-            renderText={renderMessageDescriptor}
+            renderText={renderText}
           />
           <Heading
-            renderText={renderMessageDescriptor}
+            renderText={renderText}
             segments={HEADING}
             size="lg"
             weight="light"
           />
-          <PromoBody
-            body={BODY}
-            renderText={renderMessageDescriptor}
-            size="sm"
-          />
+          <PromoBody body={BODY} renderText={renderText} size="sm" />
           <CtaRow>
             <LinkButton
               color="secondary"
               href={ctaHref}
-              label={renderMessageDescriptor(ctaLabel)}
+              label={renderText(ctaLabel)}
               type="link"
               variant="outlined"
             />

@@ -1,5 +1,4 @@
 import { ArrowRightUpIcon, SOCIAL_ICONS } from '@/icons';
-import { MessageDescriptorTrans } from '@/lib/i18n/MessageDescriptorTrans';
 import type { MessageDescriptor } from '@lingui/core';
 import type { FooterSocialLinkType } from '@/sections/Footer/types';
 import { theme } from '@/theme';
@@ -78,14 +77,13 @@ const SocialLink = styled.a`
 type BottomProps = {
   copyright: MessageDescriptor;
   links: FooterSocialLinkType[];
+  renderText: (descriptor: MessageDescriptor) => string;
 };
 
-export function Bottom({ copyright, links }: BottomProps) {
+export function Bottom({ copyright, links, renderText }: BottomProps) {
   return (
     <BottomGrid>
-      <Copyright>
-        <MessageDescriptorTrans descriptor={copyright} />
-      </Copyright>
+      <Copyright>{renderText(copyright)}</Copyright>
       <SocialNav aria-label="Social media">
         {links.map((link, index) => {
           const IconComponent = SOCIAL_ICONS[link.icon];
