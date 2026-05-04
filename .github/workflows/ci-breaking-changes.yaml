@@ -111,7 +111,7 @@ jobs:
       - name: Setup databases
         run: |
           PGPASSWORD=postgres psql -h localhost -p 5432 -U postgres -d postgres -c 'CREATE DATABASE "current_branch";'
-          PGPASSWORD=postgres psql -h localhost -p 5432 -U postgres -d postgres -c 'CREATE DATABASE "main_branch";'
+          PGPASSWORD=postgres psql -h localhost -p 5432 -U postgres -d postgres -c 'CREATE DATABASE "twenty";'
 
       - name: Run ClickHouse migrations
         run: npx nx clickhouse:migrate twenty-server
@@ -327,10 +327,10 @@ jobs:
           set_env_var "CLICKHOUSE_URL" "http://default:clickhousePassword@localhost:8123/twenty"
           set_env_var "CLICKHOUSE_PASSWORD" "clickhousePassword"
 
-          # Create twenty database (it should already exist, but ensure it's clean)
-          PGPASSWORD=postgres psql -h localhost -U postgres -d postgres -c "DROP DATABASE IF EXISTS twenty; CREATE DATABASE twenty;" || \
-          docker run --rm --network host -e PGPASSWORD=postgres postgres:16 psql -h localhost -U postgres -c "DROP DATABASE IF EXISTS twenty; CREATE DATABASE twenty;" || \
-          echo "Warning: Could not recreate database twenty"
+          # Recreate twenty database to ensure clean state for main branch
+          PGPASSWORD=postgres psql -h localhost -U postgres -d postgres -c "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = 'twenty' AND pid <> pg_backend_pid();" || true
+          PGPASSWORD=postgres psql -h localhost -U postgres -d postgres -c "DROP DATABASE IF EXISTS twenty;"
+          PGPASSWORD=postgres psql -h localhost -U postgres -d postgres -c "CREATE DATABASE twenty;"
 
           npx nx run twenty-server:database:init:prod
 
