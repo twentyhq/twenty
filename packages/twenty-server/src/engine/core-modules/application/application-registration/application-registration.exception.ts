@@ -13,6 +13,9 @@ export enum ApplicationRegistrationExceptionCode {
   SOURCE_CHANNEL_MISMATCH = 'SOURCE_CHANNEL_MISMATCH',
   VARIABLE_NOT_FOUND = 'VARIABLE_NOT_FOUND',
   VERSION_ALREADY_EXISTS = 'VERSION_ALREADY_EXISTS',
+  SERVER_VERSION_INCOMPATIBLE = 'SERVER_VERSION_INCOMPATIBLE',
+  INVALID_APP_ENGINE_REQUIREMENT = 'INVALID_APP_ENGINE_REQUIREMENT',
+  INVALID_SERVER_VERSION = 'INVALID_SERVER_VERSION',
 }
 
 const getExceptionUserFriendlyMessage = (
@@ -35,6 +38,12 @@ const getExceptionUserFriendlyMessage = (
       return msg`Application registration variable not found.`;
     case ApplicationRegistrationExceptionCode.VERSION_ALREADY_EXISTS:
       return msg`This version is not higher than the currently deployed version. Please bump the version in package.json before deploying again.`;
+    case ApplicationRegistrationExceptionCode.SERVER_VERSION_INCOMPATIBLE:
+      return msg`This app requires a newer version of the Twenty server. Please upgrade your server or use a compatible app version.`;
+    case ApplicationRegistrationExceptionCode.INVALID_APP_ENGINE_REQUIREMENT:
+      return msg`The app manifest declares an invalid server version requirement.`;
+    case ApplicationRegistrationExceptionCode.INVALID_SERVER_VERSION:
+      return msg`The server's APP_VERSION is not a valid semver version. Self-hosted instances must configure a valid APP_VERSION.`;
     default:
       assertUnreachable(code);
   }

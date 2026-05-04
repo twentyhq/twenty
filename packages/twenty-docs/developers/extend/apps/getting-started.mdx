@@ -88,7 +88,7 @@ yarn twenty dev --verbose
 ```
 
 <Warning>
-Dev mode is only available on Twenty instances running in development (`NODE_ENV=development`). Production instances reject dev sync requests. Use `yarn twenty deploy` to deploy to production servers — see [Publishing Apps](/developers/extend/apps/publishing) for details.
+Dev mode is only available on Twenty instances running in development (`NODE_ENV=development`). Production instances reject dev sync requests. Use `yarn twenty deploy` followed by `yarn twenty install` to publish and install on production servers — `deploy` publishes to the application registry, while `install` installs it on a given workspace. See [Publishing Apps](/developers/extend/apps/publishing) for details.
 </Warning>
 
 <div style={{textAlign: 'center'}}>

@@ -242,9 +242,10 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       universalProperty: undefined,
     },
     imageIdentifierFieldMetadataId: {
-      toCompare: false,
+      toCompare: true,
       toStringify: false,
-      universalProperty: undefined,
+      // @ts-expect-error remove once https://github.com/twentyhq/core-team-issues/issues/2172 has been resolved
+      universalProperty: 'imageIdentifierFieldMetadataUniversalIdentifier',
     },
     targetTableName: {
       toCompare: false,

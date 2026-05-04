@@ -1830,9 +1830,6 @@ export default {
             "email": [
                 1
             ],
-            "defaultAvatarUrl": [
-                1
-            ],
             "isEmailVerified": [
                 6
             ],

@@ -158,7 +158,7 @@ describe('manifestValidate', () => {
         ...validManifest,
         objects: [
           {
-            universalIdentifier: 'obj-uuid',
+            universalIdentifier: 'f47ac10b-58cc-4372-a567-0e02b2c3d479',
             nameSingular: 'myObject',
             namePlural: 'myObjects',
             labelSingular: 'My Object',
@@ -224,15 +224,16 @@ describe('manifestValidate', () => {
         ...validManifest,
         objects: [
           {
-            universalIdentifier: 'obj-uuid',
+            universalIdentifier: 'f47ac10b-58cc-4372-a567-0e02b2c3d479',
             nameSingular: 'recipient',
             namePlural: 'recipients',
             labelSingular: 'Recipient',
             labelPlural: 'Recipients',
-            labelIdentifierFieldMetadataUniversalIdentifier: 'label-field-uuid',
+            labelIdentifierFieldMetadataUniversalIdentifier:
+              '7c9e6679-7425-40de-944b-e07fc1f90ae7',
             fields: [
               {
-                universalIdentifier: 'label-field-uuid',
+                universalIdentifier: '7c9e6679-7425-40de-944b-e07fc1f90ae7',
                 type: FieldMetadataType.TEXT,
                 name: 'name',
                 label: 'Name',
@@ -359,6 +360,141 @@ describe('manifestValidate', () => {
       expect(result.isValid).toBe(false);
       expect(result.errors[0]).toContain('company');
       expect(result.errors[0]).toContain('invalid relationType');
+    });
+  });
+
+  describe('UUID version validation', () => {
+    it('should pass with UUID v4 identifiers', () => {
+      const result = manifestValidate({
+        ...validManifest,
+        fields: [validField],
+      });
+
+      expect(result.isValid).toBe(true);
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it('should pass with UUID v5 identifiers', () => {
+      const v5Field: FieldManifest = {
+        objectUniversalIdentifier: '20202020-b374-4779-a561-80086cb2e17f',
+        universalIdentifier: '21f7f8de-8051-5b89-8680-0195ef798b6a',
+        type: FieldMetadataType.TEXT,
+        name: 'v5Field',
+        label: 'V5 Field',
+      };
+
+      const result = manifestValidate({
+        ...validManifest,
+        fields: [v5Field],
+      });
+
+      expect(result.isValid).toBe(true);
+      expect(result.errors).toHaveLength(0);
+    });
+
+    it('should fail with UUID v1 identifiers', () => {
+      const v1Uuid = '6ba7b810-9dad-11d1-80b4-00c04fd430c8';
+      const v1Field: FieldManifest = {
+        objectUniversalIdentifier: '20202020-b374-4779-a561-80086cb2e17f',
+        universalIdentifier: v1Uuid,
+        type: FieldMetadataType.TEXT,
+        name: 'v1Field',
+        label: 'V1 Field',
+      };
+
+      const result = manifestValidate({
+        ...validManifest,
+        fields: [v1Field],
+      });
+
+      expect(result.isValid).toBe(false);
+      expect(result.errors).toContainEqual(
+        expect.stringContaining(`"${v1Uuid}" is UUID version 1`),
+      );
+      expect(result.errors).toContainEqual(
+        expect.stringContaining('Only UUID version 4 or higher is allowed'),
+      );
+    });
+
+    it('should fail with UUID v3 identifiers', () => {
+      const v3Uuid = 'a3bb189e-8bf9-3888-9912-ace4e6543002';
+      const v3Field: FieldManifest = {
+        objectUniversalIdentifier: '20202020-b374-4779-a561-80086cb2e17f',
+        universalIdentifier: v3Uuid,
+        type: FieldMetadataType.TEXT,
+        name: 'v3Field',
+        label: 'V3 Field',
+      };
+
+      const result = manifestValidate({
+        ...validManifest,
+        fields: [v3Field],
+      });
+
+      expect(result.isValid).toBe(false);
+      expect(result.errors).toContainEqual(
+        expect.stringContaining(`"${v3Uuid}" is UUID version 3`),
+      );
+    });
+
+    it('should fail with non-UUID universal identifiers', () => {
+      const result = manifestValidate({
+        ...validManifest,
+        objects: [
+          {
+            universalIdentifier: 'not-a-uuid',
+            nameSingular: 'myObject',
+            namePlural: 'myObjects',
+            labelSingular: 'My Object',
+            labelPlural: 'My Objects',
+            labelIdentifierFieldMetadataUniversalIdentifier:
+              '550e8400-e29b-41d4-a716-446655440030',
+            fields: [
+              {
+                universalIdentifier: '550e8400-e29b-41d4-a716-446655440030',
+                type: FieldMetadataType.TEXT,
+                name: 'name',
+                label: 'Name',
+              },
+            ],
+          },
+        ],
+      });
+
+      expect(result.isValid).toBe(false);
+      expect(result.errors).toContainEqual(
+        expect.stringContaining('"not-a-uuid" is not a valid UUID'),
+      );
+    });
+
+    it('should not report duplicate version errors for the same identifier', () => {
+      const v1Uuid = '6ba7b810-9dad-11d1-80b4-00c04fd430c8';
+
+      const result = manifestValidate({
+        ...validManifest,
+        fields: [
+          {
+            objectUniversalIdentifier: '20202020-b374-4779-a561-80086cb2e17f',
+            universalIdentifier: v1Uuid,
+            type: FieldMetadataType.TEXT,
+            name: 'field1',
+            label: 'Field 1',
+          },
+          {
+            objectUniversalIdentifier: '20202020-b374-4779-a561-80086cb2e17f',
+            universalIdentifier: v1Uuid,
+            type: FieldMetadataType.TEXT,
+            name: 'field2',
+            label: 'Field 2',
+          },
+        ],
+      });
+
+      const versionErrors = result.errors.filter((e) =>
+        e.includes('is UUID version 1'),
+      );
+
+      expect(versionErrors).toHaveLength(1);
     });
   });
 });

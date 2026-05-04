@@ -77,6 +77,39 @@ Bir güncelleme yayımlamak için:
 
 {/* TODO: add screenshot of the Upgrade button */}
 
+### Sunucu sürümü uyumluluğu
+
+Uygulamanız belirli bir Twenty sunucu sürümünde sunulan bir özelliği kullanıyorsa (örneğin, v2.3.0'da eklenen OAuth sağlayıcıları), uygulamanızın gerektirdiği en düşük sunucu sürümünü `package.json` içindeki `engines.twenty` alanını kullanarak belirtmelisiniz:
+
+```json filename="package.json"
+{
+  "name": "twenty-my-app",
+  "version": "1.0.0",
+  "engines": {
+    "node": "^24.5.0",
+    "twenty": ">=2.3.0"
+  }
+}
+```
+
+Değer, standart bir [semver aralığı](https://github.com/npm/node-semver#ranges)dır. Yaygın Kalıplar:
+
+| Aralık                             | Anlam                                                     |
+| ---------------------------------- | --------------------------------------------------------- |
+| `>=2.3.0`                          | 2.3.0'dan itibaren herhangi bir sunucu                    |
+| `>=2.3.0 \<3.0.0` | 2.3.0 veya sonrası, ancak bir sonraki ana sürümün altında |
+| `^2.3.0`                           | `>=2.3.0 \<3.0.0` ile aynı               |
+
+**Dağıtım ve yükleme sırasında ne olur:**
+
+* `engines.twenty` ayarlanmışsa ve hedef sunucunun sürümü aralığı karşılamıyorsa, dağıtım (tarball yüklemesi) veya yükleme, gerekli aralığı ve gerçek sunucu sürümünü belirten bir mesajla birlikte `SERVER_VERSION_INCOMPATIBLE` hatasıyla reddedilir.
+* `engines.twenty` **ayarlı değilse**, uygulama herhangi bir sunucu sürümünde kabul edilir (mevcut uygulamalarla geriye dönük uyumludur).
+* Sunucuda `APP_VERSION` yapılandırılmamışsa, denetim atlanır.
+
+<Note>
+Nihai denetim sunucudadır — hem tarball yüklemesinde hem de çalışma alanı (workspace) kurulumunda `engines.twenty`'yi doğrular. Bir tarball'ı bant dışı dağıtırsanız veya marketplace'ten kurarsanız, sunucu yine de uyumluluğu zorunlu kılar.
+</Note>
+
 ## Otomatik CI/CD (hazır şablonlu iş akışları)
 
 `create-twenty-app` ile oluşturulan uygulamalar, kutudan çıktığı gibi `.github/workflows/` altında iki GitHub Actions iş akışıyla gelir. Depoyu GitHub’a iter itmez çalışmaya hazırdır — CI için ek bir kurulum gerekmez ve CD yalnızca tek bir gizli anahtar gerektirir.
