@@ -2,10 +2,9 @@
 
 import { Body, Heading } from '@/design-system/components';
 import { FastPathIcon, LiveDataIcon } from '@/icons';
+import { useRenderMessage } from '@/lib/i18n/use-render-message';
 import type { ThreeCardsFeatureCardType } from '@/sections/ThreeCards/types';
 import { theme } from '@/theme';
-import type { MessageDescriptor } from '@lingui/core';
-import { useLingui } from '@lingui/react';
 import { styled } from '@linaria/react';
 import { IconUsersGroup } from '@tabler/icons-react';
 import Image from 'next/image';
@@ -134,10 +133,9 @@ function renderFeatureCardIcon(icon: ThreeCardsFeatureCardType['icon']) {
 }
 
 export function FeatureCard({ featureCard }: FeatureCardProps) {
-  const { i18n } = useLingui();
+  const renderText = useRenderMessage();
   const [isHovered, setIsHovered] = useState(false);
   const imageFrameRef = useRef<HTMLDivElement>(null);
-  const renderText = (descriptor: MessageDescriptor) => i18n._(descriptor);
   let visual: ReactNode;
 
   if ('illustration' in featureCard) {

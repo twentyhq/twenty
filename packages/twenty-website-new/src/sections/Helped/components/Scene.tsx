@@ -7,12 +7,11 @@ import {
   Heading,
   HeadingPart,
 } from '@/design-system/components';
+import { useRenderMessage } from '@/lib/i18n/use-render-message';
 import { HelpedSceneScrollLayoutEffect } from '@/sections/Helped/effect-components/HelpedSceneScrollLayoutEffect';
 import type { HelpedDataType } from '@/sections/Helped/types/HelpedData';
 import { preloadHelpedVisualGeometries } from '@/sections/Helped/visuals/helped-visual-models';
 import { theme } from '@/theme';
-import type { MessageDescriptor } from '@lingui/core';
-import { useLingui } from '@lingui/react';
 import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
 import { useEffect, useRef } from 'react';
@@ -100,11 +99,10 @@ type SceneProps = {
 };
 
 export function Scene({ data }: SceneProps) {
-  const { i18n } = useLingui();
+  const renderText = useRenderMessage();
   const sectionRef = useRef<HTMLElement>(null);
   const innerRef = useRef<HTMLDivElement>(null);
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const renderText = (descriptor: MessageDescriptor) => i18n._(descriptor);
 
   useEffect(() => {
     void preloadHelpedVisualGeometries();

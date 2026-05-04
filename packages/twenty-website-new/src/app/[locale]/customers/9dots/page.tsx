@@ -100,9 +100,9 @@ const CASE_STUDY: CaseStudyData = {
     },
   ],
   tableOfContents: [
-    'When the channel is the business',
-    'The CRM as a control hub',
-    'The result',
+    msg`When the channel is the business`,
+    msg`The CRM as a control hub`,
+    msg`The result`,
   ],
   catalogCard: {
     summary: msg`Nine Dots put Twenty at the center of Homeseller's stack with APIs, automation, and AI on top of WhatsApp-heavy operations.`,

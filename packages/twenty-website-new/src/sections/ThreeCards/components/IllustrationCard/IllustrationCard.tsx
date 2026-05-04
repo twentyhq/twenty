@@ -5,13 +5,13 @@ import { Body, Heading } from '@/design-system/components';
 import { ArrowRightIcon } from '@/icons';
 import { INFORMATIVE_ICONS } from '@/icons/informative';
 import { LocalizedLink } from '@/lib/i18n';
+import { useRenderMessage } from '@/lib/i18n/use-render-message';
 import { usePartnerApplicationModal } from '@/lib/partner-application';
 import { WebGlMount } from '@/lib/visual-runtime';
 import type { ThreeCardsIllustrationCardType } from '@/sections/ThreeCards/types';
 import { THREE_CARDS_VISUALS } from '@/sections/ThreeCards/visuals';
 import { theme } from '@/theme';
 import type { MessageDescriptor } from '@lingui/core';
-import { useLingui } from '@lingui/react';
 import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
 import { ThreeCardsCardShape } from './CardShape';
@@ -326,9 +326,9 @@ function PartnerProgramAction({
   label: MessageDescriptor;
   programId: 'technology' | 'content' | 'solutions';
 }) {
-  const { i18n } = useLingui();
+  const renderText = useRenderMessage();
   const { openPartnerApplicationModal } = usePartnerApplicationModal();
-  const translatedLabel = i18n._(label);
+  const translatedLabel = renderText(label);
 
   const openModal = () => {
     openPartnerApplicationModal(programId);
@@ -371,9 +371,8 @@ export function IllustrationCard({
   illustrationCard,
   variant = 'shaped',
 }: IllustrationCardProps) {
-  const { i18n } = useLingui();
+  const renderText = useRenderMessage();
   const Visual = THREE_CARDS_VISUALS[illustrationCard.illustration];
-  const renderText = (descriptor: MessageDescriptor) => i18n._(descriptor);
 
   return (
     <IllustrationCardContainer>

@@ -66,8 +66,8 @@ const CASE_STUDY: CaseStudyData = {
     },
   ],
   tableOfContents: [
-    'AI in the migration workflow',
-    'Self-hosted means control',
+    msg`AI in the migration workflow`,
+    msg`Self-hosted means control`,
   ],
   catalogCard: {
     summary: msg`Alternative Partners replaced Salesforce with self-hosted Twenty, using agentic AI to compress migration work.`,

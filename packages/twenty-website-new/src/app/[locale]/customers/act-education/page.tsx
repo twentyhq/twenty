@@ -96,10 +96,10 @@ const CASE_STUDY: CaseStudyData = {
     },
   ],
   tableOfContents: [
-    'When the vendor pulled the plug',
-    "No more renting someone else's structure",
-    'Control without the overhead',
-    'The result',
+    msg`When the vendor pulled the plug`,
+    msg`No more renting someone else's structure`,
+    msg`Control without the overhead`,
+    msg`The result`,
   ],
   catalogCard: {
     summary: msg`AC&T and Flycoder moved from a dead vendor export to self-hosted Twenty, with over 90% lower CRM cost and full control.`,

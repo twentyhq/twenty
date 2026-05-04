@@ -98,10 +98,10 @@ const CASE_STUDY: CaseStudyData = {
     },
   ],
   tableOfContents: [
-    'The right foundation',
-    'A business that does not fit a template',
-    'From simple to advanced',
-    'The bet is paying off',
+    msg`The right foundation`,
+    msg`A business that does not fit a template`,
+    msg`From simple to advanced`,
+    msg`The bet is paying off`,
   ],
   catalogCard: {
     summary: msg`NetZero uses Twenty as a modular CRM across product lines and countries, with a roadmap into AI-assisted workflows.`,

@@ -10,7 +10,7 @@ const StyledButtonAnchor = styled.a`
   ${buttonBaseStyles}
 `;
 
-export type LinkButtonPresentation = 'anchor' | 'link';
+export type LinkButtonPresentation = 'anchor';
 
 export type LinkButtonProps = Omit<BaseButtonProps, 'label'> &
   LinkButtonType & { type: LinkButtonPresentation };
@@ -21,7 +21,6 @@ export function LinkButton({
   label,
   leadingIcon,
   size = 'regular',
-  type,
   variant,
 }: LinkButtonProps) {
   const inner = (
@@ -34,27 +33,14 @@ export function LinkButton({
     />
   );
 
-  if (type === 'anchor') {
-    return (
-      <StyledButtonAnchor
-        data-color={color}
-        data-size={size}
-        data-variant={variant}
-        href={href}
-        rel="noopener noreferrer"
-        target="_blank"
-      >
-        {inner}
-      </StyledButtonAnchor>
-    );
-  }
-
   return (
     <StyledButtonAnchor
       data-color={color}
       data-size={size}
       data-variant={variant}
       href={href}
+      rel="noopener noreferrer"
+      target="_blank"
     >
       {inner}
     </StyledButtonAnchor>

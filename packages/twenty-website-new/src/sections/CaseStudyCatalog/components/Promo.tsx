@@ -1,13 +1,8 @@
 import { msg } from '@lingui/core/macro';
 import type { CaseStudyCatalogEntry } from '@/lib/customers';
-import {
-  Body,
-  Container,
-  Eyebrow,
-  Heading,
-  LinkButton,
-} from '@/design-system/components';
+import { Body, Container, Eyebrow, Heading } from '@/design-system/components';
 import { PlusIcon, UsersIcon } from '@/icons';
+import { LocalizedLinkButton } from '@/lib/i18n/LocalizedLinkButton';
 import { PromoMic } from '@/sections/CaseStudyCatalog/visuals/PromoMic';
 import { theme } from '@/theme';
 import type { MessageDescriptor } from '@lingui/core';
@@ -351,11 +346,10 @@ export function Promo({
           />
           <PromoBody body={BODY} renderText={renderText} size="sm" />
           <CtaRow>
-            <LinkButton
+            <LocalizedLinkButton
               color="secondary"
               href={ctaHref}
               label={renderText(ctaLabel)}
-              type="link"
               variant="outlined"
             />
           </CtaRow>

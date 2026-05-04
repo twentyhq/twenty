@@ -1,11 +1,10 @@
 'use client';
 
 import { Body, Heading } from '@/design-system/components';
+import { useRenderMessage } from '@/lib/i18n/use-render-message';
 import { StepperSwipeDeck } from '@/lib/stepper';
 import { HOME_STEPPER_HOLD_FRACTIONS } from '@/sections/HomeStepper/utils/home-stepper-lottie-frame-map';
 import { theme } from '@/theme';
-import type { MessageDescriptor } from '@lingui/core';
-import { useLingui } from '@lingui/react';
 import { styled } from '@linaria/react';
 import type { HomeStepperStepType } from './../types/HomeStepperStep';
 import { ProgressBar } from './ProgressBar';
@@ -144,8 +143,7 @@ export function LeftColumn({
   onMobileStepIndexChange,
   steps,
 }: HomeStepperLeftColumnProps) {
-  const { i18n } = useLingui();
-  const renderText = (descriptor: MessageDescriptor) => i18n._(descriptor);
+  const renderText = useRenderMessage();
 
   return (
     <LeftColumnRoot>

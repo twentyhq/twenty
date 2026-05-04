@@ -1,9 +1,9 @@
 'use client';
 
+import { useRenderMessage } from '@/lib/i18n/use-render-message';
 import { useTimeoutRegistry } from '@/lib/react';
 import type { MessageDescriptor } from '@lingui/core';
 import { theme } from '@/theme';
-import { useLingui } from '@lingui/react';
 import { styled } from '@linaria/react';
 import { useEffect, useState } from 'react';
 
@@ -120,7 +120,7 @@ export function WrongChoicePopup({
   titleBar,
   titleId,
 }: WrongChoicePopupProps) {
-  const { i18n } = useLingui();
+  const renderText = useRenderMessage();
   const timeoutRegistry = useTimeoutRegistry();
   const [isClosing, setIsClosing] = useState(false);
 
@@ -156,7 +156,7 @@ export function WrongChoicePopup({
       top={top}
     >
       <TitleBar>
-        <TitleText id={titleId}>{i18n._(titleBar)}</TitleText>
+        <TitleText id={titleId}>{renderText(titleBar)}</TitleText>
         <CloseButton
           aria-label="Close dialog"
           onClick={() => undefined}
@@ -167,7 +167,7 @@ export function WrongChoicePopup({
       </TitleBar>
       <BodyRow>
         <IconMark aria-hidden="true">⊘</IconMark>
-        <BodyText>{i18n._(body)}</BodyText>
+        <BodyText>{renderText(body)}</BodyText>
       </BodyRow>
     </Shell>
   );

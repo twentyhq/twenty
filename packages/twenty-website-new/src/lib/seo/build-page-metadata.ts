@@ -6,7 +6,7 @@ import {
   isPublicAppLocale,
 } from '@/lib/i18n/app-locale-set';
 import { createI18nInstance } from '@/lib/i18n/create-i18n-instance';
-import { resolveMessageDescriptor } from '@/lib/i18n/resolve-message-descriptor';
+import { createMessageDescriptorRenderer } from '@/lib/i18n/create-message-descriptor-renderer';
 import type { MessageDescriptor } from '@lingui/core';
 
 import { getSiteUrl } from './site-url';
@@ -59,8 +59,9 @@ export function buildPageMetadata({
   const metadataLocale = isPublicAppLocale(locale) ? locale : SOURCE_LOCALE;
   const canonical = localizePath(metadataLocale, normalizedPath);
   const i18n = createI18nInstance(metadataLocale);
-  const resolvedTitle = resolveMessageDescriptor(i18n, title);
-  const resolvedDescription = resolveMessageDescriptor(i18n, description);
+  const renderText = createMessageDescriptorRenderer(i18n);
+  const resolvedTitle = renderText(title);
+  const resolvedDescription = renderText(description);
 
   const ogImages =
     ogImage === undefined

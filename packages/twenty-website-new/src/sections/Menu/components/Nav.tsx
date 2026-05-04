@@ -10,9 +10,9 @@ import { theme } from '@/theme';
 import { NavigationMenu } from '@base-ui/react/navigation-menu';
 import { Separator } from '@base-ui/react/separator';
 import type { MessageDescriptor } from '@lingui/core';
-import { useLingui } from '@lingui/react';
 import { styled } from '@linaria/react';
 import { LocalizedLink, useUnlocalizedPathname } from '@/lib/i18n';
+import { useRenderMessage } from '@/lib/i18n/use-render-message';
 import Image from 'next/image';
 import React, { useState } from 'react';
 
@@ -540,9 +540,8 @@ type NavProps = {
 };
 
 export function Nav({ navItems, scheme }: NavProps) {
-  const { i18n } = useLingui();
+  const renderText = useRenderMessage();
   const pathname = useUnlocalizedPathname();
-  const renderText = (descriptor: MessageDescriptor) => i18n._(descriptor);
 
   const hasDropdown = navItems.some((item) => item.children);
 

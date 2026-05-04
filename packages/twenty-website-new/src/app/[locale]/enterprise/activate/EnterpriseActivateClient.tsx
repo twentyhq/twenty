@@ -6,10 +6,9 @@ import {
   buttonBaseStyles,
 } from '@/design-system/components/Button/BaseButton';
 import { Body, Heading } from '@/design-system/components';
+import { useRenderMessage } from '@/lib/i18n/use-render-message';
 import { useTimeoutRegistry } from '@/lib/react';
 import { theme } from '@/theme';
-import type { MessageDescriptor } from '@lingui/core';
-import { useLingui } from '@lingui/react';
 import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
 import { useSearchParams } from 'next/navigation';
@@ -141,11 +140,10 @@ const nextStepItemClassName = css`
 `;
 
 export function EnterpriseActivateClient() {
-  const { i18n } = useLingui();
+  const renderText = useRenderMessage();
   const searchParams = useSearchParams();
   const sessionId = searchParams.get('session_id');
   const timeoutRegistry = useTimeoutRegistry();
-  const renderText = (descriptor: MessageDescriptor) => i18n._(descriptor);
   const [result, setResult] = useState<ActivationResult | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);

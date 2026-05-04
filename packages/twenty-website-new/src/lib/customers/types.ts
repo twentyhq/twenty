@@ -43,7 +43,7 @@ export type CaseStudyData = {
     quote?: CaseStudyQuote;
   };
   sections: CaseStudyContentBlock[];
-  tableOfContents: string[];
+  tableOfContents: MessageDescriptor[];
   catalogCard: {
     summary: MessageDescriptor;
     date: MessageDescriptor;

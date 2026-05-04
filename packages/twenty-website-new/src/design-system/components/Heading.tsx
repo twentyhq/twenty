@@ -138,6 +138,7 @@ type HeadingTextRenderer<TText> = [TText] extends [ReactNode]
 export type HeadingProps<TText = ReactNode> = {
   as?: HeadingAs;
   children?: ReactNode;
+  inlineSegmentSeparator?: ReactNode;
   segments?: HeadingType<TText> | HeadingType<TText>[];
   weight?: HeadingWeight;
   size?: HeadingSize;
@@ -147,6 +148,7 @@ export type HeadingProps<TText = ReactNode> = {
 export function Heading<TText = ReactNode>({
   as: Tag = 'h1',
   children,
+  inlineSegmentSeparator = ' ',
   renderText,
   segments,
   weight = 'regular',
@@ -173,7 +175,7 @@ export function Heading<TText = ReactNode>({
           return (
             <Fragment key={index}>
               {lineBreakBefore ? <br /> : null}
-              {joinWithPreviousInlineSegment ? ' ' : null}
+              {joinWithPreviousInlineSegment ? inlineSegmentSeparator : null}
               <StyledSpan
                 data-family={segment.fontFamily}
                 data-weight={segment.fontWeight}

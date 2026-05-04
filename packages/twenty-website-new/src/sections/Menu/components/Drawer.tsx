@@ -12,9 +12,9 @@ import { Drawer } from '@base-ui/react/drawer';
 import { Separator } from '@base-ui/react/separator';
 import type { MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
-import { useLingui } from '@lingui/react';
 import { styled } from '@linaria/react';
 import { LocalizedLink, useUnlocalizedPathname } from '@/lib/i18n';
+import { useRenderMessage } from '@/lib/i18n/use-render-message';
 import React, { useState } from 'react';
 
 const StyledDrawerContent = styled.div`
@@ -372,10 +372,9 @@ type MenuDrawerProps = {
 };
 
 export function MenuDrawer({ navItems, scheme, socialLinks }: MenuDrawerProps) {
-  const { i18n } = useLingui();
+  const renderText = useRenderMessage();
   const pathname = useUnlocalizedPathname();
   const buttonColor = scheme === 'primary' ? 'secondary' : 'primary';
-  const renderText = (descriptor: MessageDescriptor) => i18n._(descriptor);
 
   const iconFillColor =
     scheme === 'primary'

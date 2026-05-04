@@ -6,10 +6,10 @@ import type {
   SalesforceRichTextPartType,
 } from '@/sections/Salesforce/types';
 import { useAnimatedNumber } from '@/lib/animation';
+import { useRenderMessage } from '@/lib/i18n/use-render-message';
 import type { MessageDescriptor } from '@lingui/core';
 import { theme } from '@/theme';
 import { msg } from '@lingui/core/macro';
-import { useLingui } from '@lingui/react';
 import { styled } from '@linaria/react';
 import { useRef } from 'react';
 
@@ -616,9 +616,8 @@ export function PricingWindow({
   onSelectAll,
   pricing,
 }: PricingWindowProps) {
-  const { i18n } = useLingui();
+  const renderText = useRenderMessage();
   const addonAnchorRefs = useRef<Record<string, HTMLLabelElement | null>>({});
-  const renderText = (descriptor: MessageDescriptor) => i18n._(descriptor);
   const { fixedPriceAmount, perSeatPriceAmount, totalPriceAmount } =
     calculatePriceAmounts(pricing, checkedIds);
 

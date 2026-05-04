@@ -1,5 +1,6 @@
-import { Body, Heading, LinkButton } from '@/design-system/components';
+import { Body, Heading } from '@/design-system/components';
 import { CLIENT_ICONS } from '@/icons';
+import { LocalizedLinkButton } from '@/lib/i18n/LocalizedLinkButton';
 import { WebGlMount } from '@/lib/visual-runtime';
 import { HelpedCardShape } from '@/sections/Helped/components/HelpedCardShape';
 import type { HeadingCardType } from '@/sections/Helped/types/HeadingCard';
@@ -114,11 +115,10 @@ export function Card({ card, renderText }: CardProps) {
         </CardBodyWrap>
       </CopyBlock>
       <CtaRow>
-        <LinkButton
+        <LocalizedLinkButton
           color="primary"
           href={card.href}
           label={renderText(msg`Read the case`)}
-          type="link"
           variant="outlined"
         />
       </CtaRow>

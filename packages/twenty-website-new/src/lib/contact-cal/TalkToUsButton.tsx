@@ -4,8 +4,8 @@ import {
   BaseButton,
   buttonBaseStyles,
 } from '@/design-system/components/Button/BaseButton';
+import { useRenderMessage } from '@/lib/i18n/use-render-message';
 import type { MessageDescriptor } from '@lingui/core';
-import { useLingui } from '@lingui/react';
 import { styled } from '@linaria/react';
 
 import { useContactCalModal } from './ContactCalModalRoot';
@@ -21,7 +21,7 @@ type TalkToUsButtonProps = {
 };
 
 export function TalkToUsButton({ color, label, variant }: TalkToUsButtonProps) {
-  const { i18n } = useLingui();
+  const renderText = useRenderMessage();
   const { openContactCalModal } = useContactCalModal();
 
   return (
@@ -31,7 +31,7 @@ export function TalkToUsButton({ color, label, variant }: TalkToUsButtonProps) {
       type="button"
       onClick={openContactCalModal}
     >
-      <BaseButton color={color} label={i18n._(label)} variant={variant} />
+      <BaseButton color={color} label={renderText(label)} variant={variant} />
     </StyledTrigger>
   );
 }

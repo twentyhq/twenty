@@ -97,10 +97,10 @@ const CASE_STUDY: CaseStudyData = {
     },
   ],
   tableOfContents: [
-    'Scale without breaking operations',
-    'Focus on the use case, not the plumbing',
-    'A platform ready to grow',
-    'The result',
+    msg`Scale without breaking operations`,
+    msg`Focus on the use case, not the plumbing`,
+    msg`A platform ready to grow`,
+    msg`The result`,
   ],
   catalogCard: {
     summary: msg`W3villa shipped W3Grads on Twenty for AI interviews, scoring, and institution-scale workflows without rebuilding CRM plumbing.`,

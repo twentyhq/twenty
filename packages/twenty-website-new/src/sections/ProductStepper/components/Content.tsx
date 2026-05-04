@@ -7,12 +7,12 @@ import {
   StepperProgressRail,
 } from '@/design-system/components';
 import { INFORMATIVE_ICONS } from '@/icons';
+import { useRenderMessage } from '@/lib/i18n/use-render-message';
 import { StepperSwipeDeck } from '@/lib/stepper';
 import type { ProductStepperContentProps } from '@/sections/ProductStepper/types';
 import type { ProductStepperContentStepType } from '@/sections/ProductStepper/types/ProductStepperContentStep';
 import { theme } from '@/theme';
 import type { MessageDescriptor } from '@lingui/core';
-import { useLingui } from '@lingui/react';
 import { styled } from '@linaria/react';
 
 const ContentRoot = styled.div`
@@ -182,8 +182,7 @@ export function Content({
   onMobileStepIndexChange,
   steps,
 }: ProductStepperContentProps) {
-  const { i18n } = useLingui();
-  const renderText = (descriptor: MessageDescriptor) => i18n._(descriptor);
+  const renderText = useRenderMessage();
 
   return (
     <ContentRoot>

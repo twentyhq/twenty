@@ -107,10 +107,10 @@ const CASE_STUDY: CaseStudyData = {
     },
   ],
   tableOfContents: [
-    'From documents to open APIs',
-    'One API to rule them all',
-    'Workflows that actually get used',
-    'What is next',
+    msg`From documents to open APIs`,
+    msg`One API to rule them all`,
+    msg`Workflows that actually get used`,
+    msg`What is next`,
   ],
   catalogCard: {
     summary: msg`Elevate Consulting uses Twenty as the API backbone connecting billing, Teams, resourcing, and a custom front end around client and opportunity data.`,

@@ -2,13 +2,11 @@
 
 import { Body, Eyebrow, Heading, IconButton } from '@/design-system/components';
 import type { MessageEyebrow } from '@/lib/i18n/message-eyebrow';
+import { useRenderMessage } from '@/lib/i18n/use-render-message';
 import { ArrowLeftIcon, ArrowRightIcon } from '@/icons';
-import { resolveMessageDescriptor } from '@/lib/i18n/resolve-message-descriptor';
 import { PartnerEffect } from '@/sections/Testimonials/visuals/PartnerEffect';
 import type { TestimonialCardType } from '@/sections/Testimonials/types/TestimonialCard';
 import { theme } from '@/theme';
-import type { MessageDescriptor } from '@lingui/core';
-import { useLingui } from '@lingui/react';
 import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
 import { type ReactNode, useState } from 'react';
@@ -233,9 +231,8 @@ export function PartnerCarousel({
   eyebrow,
   testimonials,
 }: PartnerCarouselProps) {
-  const { i18n } = useLingui();
+  const renderText = useRenderMessage();
   const [index, setIndex] = useState(0);
-  const renderText = (descriptor: MessageDescriptor) => i18n._(descriptor);
 
   const total = testimonials.length;
   if (total === 0) return null;
@@ -253,7 +250,7 @@ export function PartnerCarousel({
   };
 
   const avatar = current.author.avatar;
-  const authorName = resolveMessageDescriptor(i18n, current.author.name.text);
+  const authorName = renderText(current.author.name.text);
   const authorInitials = authorName
     .split(/\s+/)
     .map((word) => word[0])

@@ -65,6 +65,7 @@ jobs:
           git stash
 
       - name: Pull website translations from Crowdin
+        if: inputs.force_pull || steps.compile_translations_strict.outcome == 'failure'
         uses: crowdin/github-action@v2
         with:
           upload_sources: false

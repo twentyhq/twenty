@@ -7,12 +7,11 @@ import { Body, Heading, LinkButton } from '@/design-system/components';
 import { CheckIcon } from '@/icons/informative/Check';
 import { useAnimatedNumber } from '@/lib/animation';
 import { getMessageDescriptorSource } from '@/lib/i18n/get-message-descriptor-source';
+import { useRenderMessage } from '@/lib/i18n/use-render-message';
 import { useTimeoutRegistry } from '@/lib/react';
 import type { PlanCardType } from '@/sections/Plans/types';
 import { theme } from '@/theme';
-import type { MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
-import { useLingui } from '@lingui/react';
 import { css } from '@linaria/core';
 import { useEffect, useState } from 'react';
 
@@ -336,9 +335,8 @@ function getFeaturesAnimationMinHeight(maxBullets: number) {
 }
 
 export function Card({ card, highlighted = false, maxBullets }: CardProps) {
-  const { i18n } = useLingui();
+  const renderText = useRenderMessage();
   const timeoutRegistry = useTimeoutRegistry();
-  const renderText = (descriptor: MessageDescriptor) => i18n._(descriptor);
   const iconWidth = card.icon.width ?? 80;
   const targetPriceValue = getPriceHeadingNumericValue(card.price.heading);
   const animatedPriceValue = useAnimatedNumber(targetPriceValue ?? 0);

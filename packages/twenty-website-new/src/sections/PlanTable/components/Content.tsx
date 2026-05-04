@@ -5,6 +5,7 @@ import {
   buttonBaseStyles,
 } from '@/design-system/components/Button/BaseButton';
 import { CheckIcon } from '@/icons';
+import { useRenderMessage } from '@/lib/i18n/use-render-message';
 import type { MessageDescriptor } from '@lingui/core';
 import { usePricingState } from '@/sections/Plans/context/PricingStateContext';
 import type {
@@ -16,7 +17,6 @@ import type {
 } from '@/sections/PlanTable/types';
 import { theme } from '@/theme';
 import { msg } from '@lingui/core/macro';
-import { useLingui } from '@lingui/react';
 import { styled } from '@linaria/react';
 import { useMemo, useState } from 'react';
 import { CalculatorEmbed } from './CalculatorEmbed';
@@ -232,10 +232,9 @@ type ContentProps = {
 };
 
 export function Content({ data }: ContentProps) {
-  const { i18n } = useLingui();
+  const renderText = useRenderMessage();
   const [expanded, setExpanded] = useState(false);
   const { hosting } = usePricingState();
-  const renderText = (descriptor: MessageDescriptor) => i18n._(descriptor);
 
   const visibleRows = useMemo(
     () => resolveVisibleRows(data.rows, hosting),
