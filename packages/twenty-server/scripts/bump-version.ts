@@ -130,9 +130,13 @@ const resolveNewVersion = (
   }
 
   if (nextVersions.length === 0) {
-    throw new Error(
-      'No version in TWENTY_NEXT_VERSIONS. Please provide a version explicitly.',
+    const computed = incrementMinorVersion(currentVersion);
+
+    console.log(
+      `\nNo version provided and TWENTY_NEXT_VERSIONS is empty, computed from current: '${computed}'`,
     );
+
+    return computed;
   }
 
   console.log(
