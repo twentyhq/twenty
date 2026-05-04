@@ -22,7 +22,7 @@ export const fromViewFilterManifestToUniversalFlatViewFilter = ({
     viewFilterGroupUniversalIdentifier:
       viewFilterManifest.viewFilterGroupUniversalIdentifier ?? null,
     operand: viewFilterManifest.operand,
-    value: viewFilterManifest.value,
+    value: viewFilterManifest.value ?? '',
     subFieldName: viewFilterManifest.subFieldName ?? null,
     positionInViewFilterGroup:
       viewFilterManifest.positionInViewFilterGroup ?? null,

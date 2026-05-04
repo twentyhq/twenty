@@ -30,7 +30,7 @@ export type ViewFieldManifest = SyncableEntityOptions & {
 export type ViewFilterManifest = SyncableEntityOptions & {
   fieldMetadataUniversalIdentifier: string;
   operand: ViewFilterOperand;
-  value: ViewManifestFilterValue;
+  value?: ViewManifestFilterValue;
   subFieldName?: string;
   viewFilterGroupUniversalIdentifier?: string;
   positionInViewFilterGroup?: number;

@@ -30,6 +30,22 @@ describe('fromViewFilterManifestToUniversalFlatViewFilter', () => {
     expect(result.positionInViewFilterGroup).toBeNull();
   });
 
+  it('should default value to empty string when omitted (e.g. IS_NOT_EMPTY operand)', () => {
+    const result = fromViewFilterManifestToUniversalFlatViewFilter({
+      viewFilterManifest: {
+        universalIdentifier: 'vfilter-uuid-3',
+        fieldMetadataUniversalIdentifier: 'field-uuid-3',
+        operand: ViewFilterOperand.IS_NOT_EMPTY,
+      },
+      viewUniversalIdentifier,
+      applicationUniversalIdentifier,
+      now,
+    });
+
+    expect(result.operand).toBe(ViewFilterOperand.IS_NOT_EMPTY);
+    expect(result.value).toBe('');
+  });
+
   it('should respect explicit optional values', () => {
     const result = fromViewFilterManifestToUniversalFlatViewFilter({
       viewFilterManifest: {
