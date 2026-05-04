@@ -18,6 +18,8 @@ import { ViewSortException } from 'src/engine/metadata-modules/view-sort/excepti
 import { ViewException } from 'src/engine/metadata-modules/view/exceptions/view.exception';
 import { viewGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/view/utils/view-graphql-api-exception-handler.util';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
+import { workspaceMigrationRunnerExceptionFormatter } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-runner-exception-formatter';
+import { WorkspaceMigrationRunnerException } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-runner.exception';
 
 @Catch(
   ViewException,
@@ -27,6 +29,7 @@ import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager
   ViewGroupException,
   ViewSortException,
   WorkspaceMigrationBuilderException,
+  WorkspaceMigrationRunnerException,
 )
 @Injectable()
 export class ViewGraphqlApiExceptionFilter implements ExceptionFilter {
@@ -41,13 +44,18 @@ export class ViewGraphqlApiExceptionFilter implements ExceptionFilter {
       | ViewFilterGroupException
       | ViewGroupException
       | ViewSortException
-      | WorkspaceMigrationBuilderException,
+      | WorkspaceMigrationBuilderException
+      | WorkspaceMigrationRunnerException,
     host: ExecutionContext,
   ) {
     const gqlContext = GqlExecutionContext.create(host);
     const ctx = gqlContext.getContext();
     const userLocale = ctx.req?.locale ?? SOURCE_LOCALE;
     const i18n = this.i18nService.getI18nInstance(userLocale);
+
+    if (exception instanceof WorkspaceMigrationRunnerException) {
+      return workspaceMigrationRunnerExceptionFormatter(exception);
+    }
 
     return viewGraphqlApiExceptionHandler(exception, i18n);
   }
