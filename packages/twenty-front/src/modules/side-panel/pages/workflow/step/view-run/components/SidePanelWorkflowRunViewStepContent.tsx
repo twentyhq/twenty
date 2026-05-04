@@ -8,8 +8,8 @@ import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTab
 import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 import { useComponentInstanceStateContext } from '@/ui/utilities/state/component-state/hooks/useComponentInstanceStateContext';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useFlowOrThrow } from '@/workflow/hooks/useFlowOrThrow';
 import { useWorkflowRun } from '@/workflow/hooks/useWorkflowRun';
+import { flowComponentState } from '@/workflow/states/flowComponentState';
 import { useWorkflowRunIdOrThrow } from '@/workflow/hooks/useWorkflowRunIdOrThrow';
 import { getStepDefinitionOrThrow } from '@/workflow/utils/getStepDefinitionOrThrow';
 import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
@@ -43,7 +43,7 @@ const StyledTabListContainer = styled.div`
 type TabId = WorkflowRunTabIdType;
 
 export const SidePanelWorkflowRunViewStepContent = () => {
-  const flow = useFlowOrThrow();
+  const flow = useAtomComponentStateValue(flowComponentState);
   const workflowSelectedNode = useAtomComponentStateValue(
     workflowSelectedNodeComponentState,
   );
@@ -65,7 +65,11 @@ export const SidePanelWorkflowRunViewStepContent = () => {
     sidePanelPageComponentInstance.instanceId,
   );
 
-  if (!isDefined(workflowRun) || !isDefined(workflowSelectedNode)) {
+  if (
+    !isDefined(flow) ||
+    !isDefined(workflowRun) ||
+    !isDefined(workflowSelectedNode)
+  ) {
     return null;
   }
 
