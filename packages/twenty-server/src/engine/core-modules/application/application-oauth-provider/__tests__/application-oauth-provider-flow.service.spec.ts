@@ -40,6 +40,7 @@ describe('ApplicationOAuthProviderFlowService', () => {
     update: jest.Mock;
     create: jest.Mock;
     save: jest.Mock;
+    findOne: jest.Mock;
     findOneByOrFail: jest.Mock;
   };
 
@@ -83,6 +84,7 @@ describe('ApplicationOAuthProviderFlowService', () => {
       update: jest.fn(),
       create: jest.fn((entity) => entity),
       save: jest.fn(async (entity) => ({ ...entity, id: 'new-account-id' })),
+      findOne: jest.fn(async () => null),
       findOneByOrFail: jest.fn(async ({ id }) => ({
         id,
         provider: ConnectedAccountProvider.APP,
@@ -175,6 +177,90 @@ describe('ApplicationOAuthProviderFlowService', () => {
       expect(url.searchParams.get('code_challenge_method')).toBe('S256');
       expect(url.searchParams.get('code_challenge')).toMatch(/^[\w-]+$/);
     });
+
+    describe('reconnect target validation', () => {
+      // Cross-workspace reconnect was a real bug: the persist UPDATE filtered
+      // by (id, workspaceId) so it wrote nothing, but the subsequent
+      // findOneByOrFail({ id }) returned the foreign-workspace row with stale
+      // tokens, making the reconnect look successful. Catch it at authorize
+      // time before the upstream OAuth round-trip.
+      const validateArgs = {
+        applicationOAuthProvider: baseProvider,
+        workspaceId: 'workspace-1',
+        userId: 'user-1',
+        userWorkspaceId: 'uws-1',
+        visibility: 'user' as const,
+        redirectLocation: null,
+      };
+
+      it('throws FORBIDDEN when reconnecting an id that lives in another workspace', async () => {
+        connectedAccountRepository.findOne.mockResolvedValue(null);
+
+        const error = await service
+          .startAuthorizationFlow({
+            ...validateArgs,
+            reconnectingConnectedAccountId: 'foreign-account-id',
+          })
+          .catch((caught) => caught);
+
+        expect(error).toMatchObject({
+          code: 'FORBIDDEN',
+        });
+        expect(error.message).toContain('foreign-account-id');
+        expect(connectedAccountRepository.findOne).toHaveBeenCalledWith({
+          where: {
+            id: 'foreign-account-id',
+            workspaceId: 'workspace-1',
+            applicationConnectionProviderId: 'provider-1',
+          },
+        });
+        // No state JWT signed, no upstream URL built.
+        expect(jwtWrapperService.sign).not.toHaveBeenCalled();
+      });
+
+      it('throws FORBIDDEN when reconnecting an id that belongs to a different provider in the same workspace', async () => {
+        // findOne with the provider filter returns null even though the row
+        // exists in this workspace under a different provider.
+        connectedAccountRepository.findOne.mockResolvedValue(null);
+
+        await expect(
+          service.startAuthorizationFlow({
+            ...validateArgs,
+            reconnectingConnectedAccountId: 'wrong-provider-account-id',
+          }),
+        ).rejects.toMatchObject({ code: 'FORBIDDEN' });
+      });
+
+      it('proceeds when the reconnect target matches workspace and provider', async () => {
+        connectedAccountRepository.findOne.mockResolvedValue({
+          id: 'existing-account-id',
+          workspaceId: 'workspace-1',
+          applicationConnectionProviderId: 'provider-1',
+        });
+        jwtWrapperService.sign.mockReturnValue('state');
+
+        const { authorizationUrl } = await service.startAuthorizationFlow({
+          ...validateArgs,
+          reconnectingConnectedAccountId: 'existing-account-id',
+        });
+
+        expect(new URL(authorizationUrl).searchParams.get('state')).toBe(
+          'state',
+        );
+        expect(jwtWrapperService.sign).toHaveBeenCalled();
+      });
+
+      it('skips the lookup entirely when reconnectingConnectedAccountId is null', async () => {
+        jwtWrapperService.sign.mockReturnValue('state');
+
+        await service.startAuthorizationFlow({
+          ...validateArgs,
+          reconnectingConnectedAccountId: null,
+        });
+
+        expect(connectedAccountRepository.findOne).not.toHaveBeenCalled();
+      });
+    });
   });
 
   describe('completeAuthorizationFlow', () => {
@@ -256,6 +342,13 @@ describe('ApplicationOAuthProviderFlowService', () => {
           authFailedAt: null,
         }),
       );
+      // Defense-in-depth: the post-update read MUST also be workspace-scoped,
+      // otherwise a foreign-id that slipped past the authorize-time guard
+      // would still surface stale fields from another workspace.
+      expect(connectedAccountRepository.findOneByOrFail).toHaveBeenCalledWith({
+        id: 'existing-account-id',
+        workspaceId: 'workspace-1',
+      });
       expect(connectedAccountRepository.create).not.toHaveBeenCalled();
     });
 
