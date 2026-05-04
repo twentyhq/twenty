@@ -194,10 +194,4 @@ export class ApplicationOAuthProviderService {
       where: { applicationId, workspaceId },
     });
   }
-
-  // Note: connection providers are now sync'd from the application manifest
-  // through the standard SyncableEntity pipeline (validator + builder +
-  // action handlers in workspace-migration). The previous `upsertManyFromManifest`
-  // bypass was removed when ConnectionProvider was registered in
-  // ALL_METADATA_NAME and wired through the manifest-sync orchestrator.
 }

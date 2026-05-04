@@ -153,13 +153,6 @@ export class ApplicationSyncService {
       },
     );
 
-    // Connection providers used to be synced here via a bespoke
-    // `upsertManyFromManifest` call. They now flow through the standard
-    // SyncableEntity pipeline (registered in ALL_METADATA_NAME, wired into
-    // the workspace-migration orchestrator) — see
-    // `compute-application-manifest-all-universal-flat-entity-maps.util.ts`
-    // and `workspace-migration-build-orchestrator.service.ts`.
-
     const resolvedRegistrationId =
       applicationRegistrationId ?? application.applicationRegistrationId;
 
