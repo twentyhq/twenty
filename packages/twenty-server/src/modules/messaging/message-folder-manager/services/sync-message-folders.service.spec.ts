@@ -63,7 +63,7 @@ const createMockDiscoveredFolder = (
 ): DiscoveredMessageFolder => ({
   externalId: `external-${Math.random().toString(36).substring(7)}`,
   name: 'Test Folder',
-  isSynced: false,
+  isSynced: true,
   isSentFolder: false,
   parentFolderId: null,
   ...overrides,
@@ -138,6 +138,7 @@ describe('SyncMessageFoldersService', () => {
           pendingSyncAction: MessageFolderPendingSyncAction.NONE,
           externalId: folder.externalId as string,
         });
+        return folder;
       }),
       find: jest.fn().mockImplementation(async ({ where }) => {
         if (!where?.externalId) {

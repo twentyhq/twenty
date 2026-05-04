@@ -321,17 +321,16 @@ jobs:
             fi
           }
 
-          set_env_var "PG_DATABASE_URL" "postgres://postgres:postgres@localhost:5432/main_branch_db"
-          set_env_var "PG_DATABASE_NAME" "main_branch_db"
+          set_env_var "PG_DATABASE_URL" "postgres://postgres:postgres@localhost:5432/twenty"
           set_env_var "NODE_PORT" "${{ env.MAIN_SERVER_PORT }}"
           set_env_var "REDIS_URL" "redis://localhost:6379"
           set_env_var "CLICKHOUSE_URL" "http://default:clickhousePassword@localhost:8123/twenty"
           set_env_var "CLICKHOUSE_PASSWORD" "clickhousePassword"
 
-          # Create main_branch_db
-          PGPASSWORD=postgres psql -h localhost -U postgres -d postgres -c "DROP DATABASE IF EXISTS main_branch_db; CREATE DATABASE main_branch_db;" || \
-          docker run --rm --network host -e PGPASSWORD=postgres postgres:16 psql -h localhost -U postgres -c "DROP DATABASE IF EXISTS main_branch_db; CREATE DATABASE main_branch_db;" || \
-          echo "Warning: Could not create database main_branch_db"
+          # Create twenty database (it should already exist, but ensure it's clean)
+          PGPASSWORD=postgres psql -h localhost -U postgres -d postgres -c "DROP DATABASE IF EXISTS twenty; CREATE DATABASE twenty;" || \
+          docker run --rm --network host -e PGPASSWORD=postgres postgres:16 psql -h localhost -U postgres -c "DROP DATABASE IF EXISTS twenty; CREATE DATABASE twenty;" || \
+          echo "Warning: Could not recreate database twenty"
 
           npx nx run twenty-server:database:init:prod
 

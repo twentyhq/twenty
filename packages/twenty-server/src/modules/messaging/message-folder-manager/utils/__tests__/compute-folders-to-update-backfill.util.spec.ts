@@ -57,7 +57,13 @@ describe('computeFoldersToUpdate - backfill fix #17095', () => {
     it('should NOT reset syncCursor when folder is toggled to unsynced', () => {
       const result = computeFoldersToUpdate({
         discoveredFolders: [{ ...baseDiscoveredFolder, isSynced: false }],
-        existingFolders: [{ ...baseExistingFolder, isSynced: true, syncCursor: 'cursor-abc-123' }],
+        existingFolders: [
+          {
+            ...baseExistingFolder,
+            isSynced: true,
+            syncCursor: 'cursor-abc-123',
+          },
+        ],
       });
 
       const update = result.get('folder-1');
@@ -71,7 +77,13 @@ describe('computeFoldersToUpdate - backfill fix #17095', () => {
   describe('isSynced unchanged', () => {
     it('should NOT reset syncCursor when isSynced stays true', () => {
       const result = computeFoldersToUpdate({
-        discoveredFolders: [{ ...baseDiscoveredFolder, isSynced: true, name: 'Promotions Updated' }],
+        discoveredFolders: [
+          {
+            ...baseDiscoveredFolder,
+            isSynced: true,
+            name: 'Promotions Updated',
+          },
+        ],
         existingFolders: [{ ...baseExistingFolder, isSynced: true }],
       });
 
@@ -97,14 +109,59 @@ describe('computeFoldersToUpdate - backfill fix #17095', () => {
     it('should only reset syncCursor for folders being toggled to synced', () => {
       const result = computeFoldersToUpdate({
         discoveredFolders: [
-          { name: 'Inbox', externalId: 'ext-inbox', isSynced: true, isSentFolder: false, parentFolderId: null },
-          { name: 'Promotions', externalId: 'ext-promotions', isSynced: true, isSentFolder: false, parentFolderId: null },
-          { name: 'Sent', externalId: 'ext-sent', isSynced: true, isSentFolder: true, parentFolderId: null },
+          {
+            name: 'Inbox',
+            externalId: 'ext-inbox',
+            isSynced: true,
+            isSentFolder: false,
+            parentFolderId: null,
+          },
+          {
+            name: 'Promotions',
+            externalId: 'ext-promotions',
+            isSynced: true,
+            isSentFolder: false,
+            parentFolderId: null,
+          },
+          {
+            name: 'Sent',
+            externalId: 'ext-sent',
+            isSynced: true,
+            isSentFolder: true,
+            parentFolderId: null,
+          },
         ],
         existingFolders: [
-          { id: 'inbox-id', name: 'Inbox', externalId: 'ext-inbox', isSynced: true, isSentFolder: false, parentFolderId: null, syncCursor: 'inbox-cursor', pendingSyncAction: MessageFolderPendingSyncAction.NONE },
-          { id: 'folder-1', name: 'Promotions', externalId: 'ext-promotions', isSynced: false, isSentFolder: false, parentFolderId: null, syncCursor: 'cursor-abc-123', pendingSyncAction: MessageFolderPendingSyncAction.NONE },
-          { id: 'sent-id', name: 'Sent', externalId: 'ext-sent', isSynced: true, isSentFolder: true, parentFolderId: null, syncCursor: 'sent-cursor', pendingSyncAction: MessageFolderPendingSyncAction.NONE },
+          {
+            id: 'inbox-id',
+            name: 'Inbox',
+            externalId: 'ext-inbox',
+            isSynced: true,
+            isSentFolder: false,
+            parentFolderId: null,
+            syncCursor: 'inbox-cursor',
+            pendingSyncAction: MessageFolderPendingSyncAction.NONE,
+          },
+          {
+            id: 'folder-1',
+            name: 'Promotions',
+            externalId: 'ext-promotions',
+            isSynced: false,
+            isSentFolder: false,
+            parentFolderId: null,
+            syncCursor: 'cursor-abc-123',
+            pendingSyncAction: MessageFolderPendingSyncAction.NONE,
+          },
+          {
+            id: 'sent-id',
+            name: 'Sent',
+            externalId: 'ext-sent',
+            isSynced: true,
+            isSentFolder: true,
+            parentFolderId: null,
+            syncCursor: 'sent-cursor',
+            pendingSyncAction: MessageFolderPendingSyncAction.NONE,
+          },
         ],
       });
 

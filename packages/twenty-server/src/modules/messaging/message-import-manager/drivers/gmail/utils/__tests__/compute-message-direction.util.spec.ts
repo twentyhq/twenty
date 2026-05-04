@@ -51,9 +51,9 @@ describe('computeMessageDirection', () => {
     });
 
     it('should return OUTGOING when fromHandle matches second alias', () => {
-      expect(
-        computeMessageDirection('me@work.com', connectedAccount),
-      ).toBe(MessageDirection.OUTGOING);
+      expect(computeMessageDirection('me@work.com', connectedAccount)).toBe(
+        MessageDirection.OUTGOING,
+      );
     });
   });
 
@@ -79,7 +79,10 @@ describe('computeMessageDirection', () => {
 
   describe('null/undefined handleAliases', () => {
     it('should return OUTGOING when handle matches and handleAliases is null', () => {
-      const accountNoAliases = { handle: 'user@example.com', handleAliases: null };
+      const accountNoAliases = {
+        handle: 'user@example.com',
+        handleAliases: null,
+      };
 
       expect(
         computeMessageDirection('user@example.com', accountNoAliases as any),
@@ -87,7 +90,10 @@ describe('computeMessageDirection', () => {
     });
 
     it('should return INCOMING when handle does not match and handleAliases is null', () => {
-      const accountNoAliases = { handle: 'user@example.com', handleAliases: null };
+      const accountNoAliases = {
+        handle: 'user@example.com',
+        handleAliases: null,
+      };
 
       expect(
         computeMessageDirection('other@example.com', accountNoAliases as any),
@@ -95,7 +101,10 @@ describe('computeMessageDirection', () => {
     });
 
     it('should return OUTGOING when handle matches and handleAliases is undefined', () => {
-      const accountNoAliases = { handle: 'user@example.com', handleAliases: undefined };
+      const accountNoAliases = {
+        handle: 'user@example.com',
+        handleAliases: undefined,
+      };
 
       expect(
         computeMessageDirection('user@example.com', accountNoAliases as any),
