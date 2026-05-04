@@ -21,6 +21,10 @@ import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/appli
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { ApplicationPackageFetcherService } from 'src/engine/core-modules/application/application-package/application-package-fetcher.service';
+import {
+  ApplicationVersionValidationService,
+  type VersionValidationFailureReason,
+} from 'src/engine/core-modules/application/application-package/application-version-validation.service';
 import { ApplicationSyncService } from 'src/engine/core-modules/application/application-manifest/application-sync.service';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
@@ -32,7 +36,6 @@ import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decora
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { SdkClientGenerationService } from 'src/engine/core-modules/sdk-client/sdk-client-generation.service';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
 
@@ -40,11 +43,22 @@ import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-func
 export class ApplicationInstallService {
   private readonly logger = new Logger(ApplicationInstallService.name);
 
+  private static readonly VERSION_REASON_TO_EXCEPTION_CODE: Record<
+    VersionValidationFailureReason,
+    ApplicationExceptionCode
+  > = {
+    INVALID_REQUIRED_VERSION:
+      ApplicationExceptionCode.INVALID_APP_ENGINE_REQUIREMENT,
+    INVALID_SERVER_VERSION: ApplicationExceptionCode.INVALID_SERVER_VERSION,
+    INCOMPATIBLE: ApplicationExceptionCode.SERVER_VERSION_INCOMPATIBLE,
+  };
+
   constructor(
     @InjectRepository(ApplicationRegistrationEntity)
     private readonly appRegistrationRepository: Repository<ApplicationRegistrationEntity>,
     private readonly applicationService: ApplicationService,
     private readonly applicationPackageFetcherService: ApplicationPackageFetcherService,
+    private readonly applicationVersionValidationService: ApplicationVersionValidationService,
     private readonly applicationSyncService: ApplicationSyncService,
     private readonly fileStorageService: FileStorageService,
     private readonly logicFunctionExecutorService: LogicFunctionExecutorService,
@@ -53,7 +67,6 @@ export class ApplicationInstallService {
     @InjectMessageQueue(MessageQueue.logicFunctionQueue)
     private readonly messageQueueService: MessageQueueService,
     private readonly workspaceCacheService: WorkspaceCacheService,
-    private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
   async installApplication(params: {
@@ -122,17 +135,22 @@ export class ApplicationInstallService {
 
     const requiredServerVersion =
       resolvedPackage.packageJson.engines?.['twenty'];
-    const serverVersion = this.twentyConfigService.get('APP_VERSION');
 
-    if (
-      isDefined(requiredServerVersion) &&
-      isDefined(serverVersion) &&
-      isDefined(semver.valid(serverVersion)) &&
-      !semver.satisfies(serverVersion, requiredServerVersion)
-    ) {
+    const versionValidation =
+      this.applicationVersionValidationService.validateServerCompatibility(
+        requiredServerVersion,
+      );
+
+    if (!versionValidation.compatible) {
+      await this.applicationPackageFetcherService.cleanupExtractedDir(
+        resolvedPackage.cleanupDir,
+      );
+
       throw new ApplicationException(
-        `App requires Twenty server ${requiredServerVersion} but this server is ${serverVersion}.`,
-        ApplicationExceptionCode.SERVER_VERSION_INCOMPATIBLE,
+        versionValidation.message,
+        ApplicationInstallService.VERSION_REASON_TO_EXCEPTION_CODE[
+          versionValidation.reason
+        ],
       );
     }
 

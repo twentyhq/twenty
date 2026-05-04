@@ -20,9 +20,12 @@ import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/appli
 import { extractTarballSecurely } from 'src/engine/core-modules/application/application-package/utils/extract-tarball-securely.util';
 import { readJsonFile } from 'src/engine/core-modules/application/application-package/utils/read-json-file.util';
 import { resolvePackageContentDir } from 'src/engine/core-modules/application/application-package/utils/tarball-utils';
+import {
+  ApplicationVersionValidationService,
+  type VersionValidationFailureReason,
+} from 'src/engine/core-modules/application/application-package/application-version-validation.service';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import type { ApplicationManifest } from 'twenty-shared/application';
 import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.service';
 
@@ -32,13 +35,25 @@ export const MAX_TARBALL_UPLOAD_SIZE_BYTES = 50 * 1024 * 1024;
 export class ApplicationTarballService {
   private readonly logger = new Logger(ApplicationTarballService.name);
 
+  private static readonly VERSION_REASON_TO_EXCEPTION_CODE: Record<
+    VersionValidationFailureReason,
+    ApplicationRegistrationExceptionCode
+  > = {
+    INVALID_REQUIRED_VERSION:
+      ApplicationRegistrationExceptionCode.INVALID_APP_ENGINE_REQUIREMENT,
+    INVALID_SERVER_VERSION:
+      ApplicationRegistrationExceptionCode.INVALID_SERVER_VERSION,
+    INCOMPATIBLE:
+      ApplicationRegistrationExceptionCode.SERVER_VERSION_INCOMPATIBLE,
+  };
+
   constructor(
     @InjectRepository(ApplicationRegistrationEntity)
     private readonly appRegistrationRepository: Repository<ApplicationRegistrationEntity>,
     private readonly fileStorageService: FileStorageService,
     private readonly applicationService: ApplicationService,
     private readonly applicationRegistrationVariableService: ApplicationRegistrationVariableService,
-    private readonly twentyConfigService: TwentyConfigService,
+    private readonly applicationVersionValidationService: ApplicationVersionValidationService,
   ) {}
 
   async uploadTarball(params: {
@@ -79,17 +94,18 @@ export class ApplicationTarballService {
       }
 
       const requiredServerVersion = packageJson?.engines?.twenty;
-      const serverVersion = this.twentyConfigService.get('APP_VERSION');
 
-      if (
-        isDefined(requiredServerVersion) &&
-        isDefined(serverVersion) &&
-        isDefined(semver.valid(serverVersion)) &&
-        !semver.satisfies(serverVersion, requiredServerVersion)
-      ) {
+      const versionValidation =
+        this.applicationVersionValidationService.validateServerCompatibility(
+          requiredServerVersion,
+        );
+
+      if (!versionValidation.compatible) {
         throw new ApplicationRegistrationException(
-          `App requires Twenty server ${requiredServerVersion} but this server is ${serverVersion}.`,
-          ApplicationRegistrationExceptionCode.SERVER_VERSION_INCOMPATIBLE,
+          versionValidation.message,
+          ApplicationTarballService.VERSION_REASON_TO_EXCEPTION_CODE[
+            versionValidation.reason
+          ],
         );
       }
 
