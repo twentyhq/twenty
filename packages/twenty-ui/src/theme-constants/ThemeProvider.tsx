@@ -1,5 +1,7 @@
 import { createContext, useLayoutEffect, useState } from 'react';
 
+import { ANIMATION } from '@ui/theme/constants/Animation';
+
 import { themeCssVariables } from './themeCssVariables';
 
 type StringLeaves<T> = {
@@ -47,6 +49,16 @@ export type ThemeContextType = {
   colorScheme: 'light' | 'dark';
 };
 
+// Fallback values for CSS variables that must resolve to numbers at runtime
+// (e.g. framer-motion passes these to the Web Animations API which rejects
+// non-numeric / NaN durations with "duration must be non-negative or auto").
+const numericFallbacks: Record<string, number> = {
+  '--t-animation-duration-instant': ANIMATION.duration.instant,
+  '--t-animation-duration-fast': ANIMATION.duration.fast,
+  '--t-animation-duration-normal': ANIMATION.duration.normal,
+  '--t-animation-duration-slow': ANIMATION.duration.slow,
+};
+
 const computeThemeFromCss = (): ThemeType => {
   const root = document?.documentElement;
 
@@ -66,7 +78,10 @@ const computeThemeFromCss = (): ThemeType => {
         const varName = value.slice(4, -1);
         const raw = computedStyle.getPropertyValue(varName).trim();
         const num = Number(raw);
-        result[key] = raw !== '' && !isNaN(num) ? num : raw;
+        result[key] =
+          raw !== '' && !isNaN(num)
+            ? num
+            : (numericFallbacks[varName] ?? raw);
       } else if (typeof value === 'object' && value !== null) {
         result[key] = resolve(value as Record<string, unknown>);
       } else {
@@ -90,7 +105,7 @@ const applyColorSchemeClass = (colorScheme: 'light' | 'dark') => {
 };
 
 export const ThemeContext = createContext<ThemeContextType>({
-  theme: themeCssVariables as unknown as ThemeType,
+  theme: computeThemeFromCss(),
   colorScheme: 'light',
 });
 
