@@ -1,6 +1,7 @@
 import { styled } from '@linaria/react';
 import { useState } from 'react';
 
+import { useIsSsoEnabled } from '@/auth/hooks/useIsSsoEnabled';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { useCanEditProfileField } from '@/settings/profile/hooks/useCanEditProfileField';
 import { useUpdateEmail } from '@/settings/profile/hooks/useUpdateEmail';
@@ -40,7 +41,9 @@ const StyledActionButtonContainer = styled.div`
 
 export const EmailField = () => {
   const currentUser = useAtomStateValue(currentUserState);
-  const { canEdit } = useCanEditProfileField('email');
+  const { canEdit: canEditFromHook } = useCanEditProfileField('email');
+  const isSsoEnabled = useIsSsoEnabled();
+  const canEdit = canEditFromHook && !isSsoEnabled;
   const { updateEmail } = useUpdateEmail();
 
   const [draftEmail, setDraftEmail] = useState('');

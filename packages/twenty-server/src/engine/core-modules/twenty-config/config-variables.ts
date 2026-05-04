@@ -1693,6 +1693,33 @@ export class ConfigVariables {
   })
   @IsOptional()
   APP_REGISTRY_TOKEN: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
+    description:
+      'Set to "SSO" to enable the ForwardAuth proxy-login endpoint and hide local auth UI in the SPA. Matches the AUTH_TYPE convention used by the other apps in foss-server-bundle-devstack (Plane / Outline / Penpot / SurfSense).',
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  AUTH_TYPE = '';
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
+    description:
+      'Domain appended to bare-username SSO identities (e.g. "user" -> "user@<domain>") when X-Auth-Request-Email lacks an @-sign. Required when AUTH_TYPE=SSO; no default to avoid binding to a single deployment.',
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  DEFAULT_EMAIL_DOMAIN = '';
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
+    description:
+      'Per-deployment tenant identifier wired into every foss-server-bundle-devstack app. Twenty uses it both as the seed workspace subdomain (see seeder-workspaces.constant.ts) and as the workspace SSO users join on first login. Required when AUTH_TYPE=SSO.',
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  SMB_NAME = '';
 }
 
 export const validate = (config: Record<string, unknown>): ConfigVariables => {

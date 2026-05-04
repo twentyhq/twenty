@@ -17,7 +17,9 @@ import {
   VerifyEmailAndGetWorkspaceAgnosticTokenDocument,
 } from '~/generated-metadata/graphql';
 
+import { useIsSsoEnabled } from '@/auth/hooks/useIsSsoEnabled';
 import { tokenPairState } from '@/auth/states/tokenPairState';
+import { buildPortalUrl } from '@/auth/utils/buildPortalUrl';
 import { clearSessionLocalStorageKeys } from '@/auth/utils/clearSessionLocalStorageKeys';
 import { broadcastSignOutToOtherTabs } from '@/auth/utils/crossTabSignOut';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -53,6 +55,7 @@ import { useStore } from 'jotai';
 
 export const useAuth = () => {
   const store = useStore();
+  const isSsoEnabled = useIsSsoEnabled();
   const setTokenPair = useSetAtomState(tokenPairState);
   const setLoginToken = useSetAtomState(loginTokenState);
   const setIsAppEffectRedirectEnabled = useSetAtomState(
@@ -408,8 +411,32 @@ export const useAuth = () => {
 
   const handleSignOut = useCallback(() => {
     broadcastSignOutToOtherTabs();
+
+    if (isSsoEnabled) {
+      // 1-layer logout: clear local session and navigate to the portal host.
+      // Matches the shape every other app in the foss-server-bundle-devstack
+      // (Plane / Outline / Penpot / SurfSense) settled on — rewrite
+      // "<prefix>-<app>.<domain>" → "<prefix>.<domain>" by capturing the
+      // prefix and dropping the -<app> segment. The oauth2-proxy /sign_out
+      // hop was dropped on 2026-04-17 because Cognito hosted /logout isn't
+      // available on this app client.
+      // We replicate clearSession's cleanup inline (skipping its terminal
+      // window.location.assign(AppPath.SignInUp)) so we can navigate to the
+      // portal host instead.
+      sessionStorage.clear();
+      clearSessionLocalStorageKeys();
+      store.set(tokenPairState.atom, null);
+      setLastAuthenticateWorkspaceDomain(null);
+
+      window.location.href = buildPortalUrl(
+        window.location.hostname,
+        window.location.protocol,
+      );
+      return;
+    }
+
     clearSession();
-  }, [clearSession]);
+  }, [clearSession, isSsoEnabled, store, setLastAuthenticateWorkspaceDomain]);
 
   const handleCredentialsSignUpInWorkspace = useCallback(
     async ({

@@ -3,6 +3,7 @@ import { Logo } from '@/auth/components/Logo';
 import { Title } from '@/auth/components/Title';
 import { useAuth } from '@/auth/hooks/useAuth';
 import { useHasAccessTokenPair } from '@/auth/hooks/useHasAccessTokenPair';
+import { useIsSsoEnabled } from '@/auth/hooks/useIsSsoEnabled';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { workspacePublicDataState } from '@/auth/states/workspacePublicDataState';
 import { PASSWORD_REGEX } from '@/auth/utils/passwordRegex';
@@ -90,6 +91,7 @@ export const PasswordReset = () => {
   const { theme } = useContext(ThemeContext);
   const { t } = useLingui();
   const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
+  const isSsoEnabled = useIsSsoEnabled();
 
   const workspacePublicData = useAtomStateValue(workspacePublicDataState);
   const setCurrentUser = useSetAtomState(currentUserState);
@@ -217,6 +219,25 @@ export const PasswordReset = () => {
 
   const passwordActionLabel =
     isTargetUserPasswordSet === true ? t`Change Password` : t`Set Password`;
+
+  if (isSsoEnabled) {
+    return (
+      <ModalContent isVerticallyCentered isHorizontallyCentered>
+        <StyledMainContainer>
+          <AnimatedEaseIn>
+            <Logo
+              secondaryLogo={workspacePublicData?.logo}
+              placeholder={workspacePublicData?.displayName}
+            />
+          </AnimatedEaseIn>
+          <Title animate>{t`Password is managed by SSO`}</Title>
+          <StyledContentContainer>
+            {t`Contact your administrator to manage credentials.`}
+          </StyledContentContainer>
+        </StyledMainContainer>
+      </ModalContent>
+    );
+  }
 
   return (
     isTokenValid && (

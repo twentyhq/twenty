@@ -1,3 +1,4 @@
+import { useIsSsoEnabled } from '@/auth/hooks/useIsSsoEnabled';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
@@ -6,6 +7,11 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 export const useCanChangePassword = () => {
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const currentUserWorkspace = useAtomStateValue(currentUserWorkspaceState);
+  const isSsoEnabled = useIsSsoEnabled();
+
+  if (isSsoEnabled) {
+    return { canChangePassword: false };
+  }
 
   const isPasswordAuthEnabled =
     currentWorkspace?.isPasswordAuthEnabled === true;

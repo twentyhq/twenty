@@ -1,3 +1,4 @@
+import { useIsSsoEnabled } from '@/auth/hooks/useIsSsoEnabled';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
@@ -8,12 +9,25 @@ import { IconLifebuoy } from 'twenty-ui/display';
 import { useMutation } from '@apollo/client/react';
 import { UpdateWorkspaceDocument } from '~/generated-metadata/graphql';
 
+// Under SSO the IdP owns MFA — Twenty's local 2FA enforcement toggle is a
+// dead control. Outer component bails out before any of the inner hooks
+// (useSnackBar, useAtomState, useMutation) run, so neither the workspace
+// state nor the GraphQL client need to be available when SSO is on.
 export const Toggle2FA = () => {
+  const isSsoEnabled = useIsSsoEnabled();
+
+  if (isSsoEnabled) {
+    return null;
+  }
+
+  return <Toggle2FAEnabled />;
+};
+
+const Toggle2FAEnabled = () => {
   const { enqueueErrorSnackBar } = useSnackBar();
   const [currentWorkspace, setCurrentWorkspace] = useAtomState(
     currentWorkspaceState,
   );
-
   const [updateWorkspace] = useMutation(UpdateWorkspaceDocument);
 
   const handleChange = async () => {

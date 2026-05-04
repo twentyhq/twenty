@@ -143,12 +143,27 @@ export class DevSeederService {
       light,
     });
 
-    await this.devSeederPermissionsService.initPermissions({
-      workspaceId,
-      twentyStandardFlatApplication,
-      workspaceCustomFlatApplication,
-      light,
-    });
+    // initPermissions assigns admin/limited/guest/member roles to the demo
+    // userWorkspace rows (Tim, Jane, Jony, Phil + ~200 random). When SMB_NAME
+    // is set those userWorkspace rows weren't seeded above, so fall back to
+    // the minimal init path (member role + workspace activation, no
+    // user-specific assignments). The first SSO user provisioned via
+    // ForwardAuth picks up the member role from defaultRoleId on sign-in.
+    if (this.twentyConfigService.get('SMB_NAME')) {
+      await this.devSeederPermissionsService.initMinimalPermissionsAndActivateWorkspace(
+        {
+          workspaceId,
+          workspaceCustomFlatApplication,
+        },
+      );
+    } else {
+      await this.devSeederPermissionsService.initPermissions({
+        workspaceId,
+        twentyStandardFlatApplication,
+        workspaceCustomFlatApplication,
+        light,
+      });
+    }
 
     const objectMetadataRepository =
       this.coreDataSource.getRepository(ObjectMetadataEntity);
@@ -178,12 +193,20 @@ export class DevSeederService {
         this.workspaceMigrationValidateBuildAndRunService,
     });
 
-    await this.devSeederDataService.seed({
-      schemaName,
-      workspaceId,
-      featureFlags: featureFlagsMap,
-      light,
-    });
+    // devSeederDataService.seed populates the workspace schema with demo CRM
+    // data (companies, people, opportunities, workspace members). Workspace
+    // member rows reference core."user" via userId FK, which we didn't seed
+    // when SMB_NAME is set, so skip the entire data fixture in that mode and
+    // leave the workspace clean. SSO users provisioned via ForwardAuth get
+    // their workspaceMember rows created at sign-in time.
+    if (!this.twentyConfigService.get('SMB_NAME')) {
+      await this.devSeederDataService.seed({
+        schemaName,
+        workspaceId,
+        featureFlags: featureFlagsMap,
+        light,
+      });
+    }
 
     await this.workspaceCacheStorageService.flush(workspaceId, undefined);
   }
@@ -305,9 +328,23 @@ export class DevSeederService {
         queryRunner,
       );
 
+      // Skip every fixture that would create a demo user or reference one
+      // (Tim/Jony/Phil/Jane + ~200 random workspace members, their AI agents,
+      // and their connected accounts / message channels) when running inside
+      // the foss-server-bundle-devstack: SMB_NAME signals a deployed bundle
+      // where real users come in through SSO ForwardAuth on first sign-in, so
+      // the demo data would clutter the workspace member list and any
+      // downstream FK reference (seedAgents / seedMetadataEntities) would
+      // break against missing userWorkspace rows. Same single switch as the
+      // workspace subdomain/displayName override in seeder-workspaces.constant.ts.
+      const seedDemoUsersAndDependents =
+        !this.twentyConfigService.get('SMB_NAME');
+
       await seedServerId({ queryRunner, schemaName });
-      await seedUsers({ queryRunner, schemaName });
-      await seedUserWorkspaces({ queryRunner, schemaName, workspaceId });
+      if (seedDemoUsersAndDependents) {
+        await seedUsers({ queryRunner, schemaName });
+        await seedUserWorkspaces({ queryRunner, schemaName, workspaceId });
+      }
 
       await this.applicationService.createTwentyStandardApplication(
         {
@@ -317,7 +354,9 @@ export class DevSeederService {
         queryRunner,
       );
 
-      await seedAgents({ queryRunner, schemaName, workspaceId });
+      if (seedDemoUsersAndDependents) {
+        await seedAgents({ queryRunner, schemaName, workspaceId });
+      }
       await seedApiKeys({ queryRunner, schemaName, workspaceId });
       await seedFeatureFlags({ queryRunner, schemaName, workspaceId });
 
@@ -330,7 +369,9 @@ export class DevSeederService {
         });
       }
 
-      await seedMetadataEntities({ queryRunner, schemaName, workspaceId });
+      if (seedDemoUsersAndDependents) {
+        await seedMetadataEntities({ queryRunner, schemaName, workspaceId });
+      }
 
       await this.upgradeMigrationService.markAsWorkspaceInitial({
         name: initialCursor.name,

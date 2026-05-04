@@ -2,7 +2,9 @@ import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { FormProvider } from 'react-hook-form';
 import QRCode from 'react-qr-code';
+import { Navigate } from 'react-router-dom';
 
+import { useIsSsoEnabled } from '@/auth/hooks/useIsSsoEnabled';
 import { qrCodeState } from '@/auth/states/qrCode';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -82,7 +84,23 @@ const StyledDivider = styled.div`
   width: 100%;
 `;
 
+// Under SSO the IdP owns MFA — Twenty's local TOTP setup page would mint
+// authenticator entries that never participate in the actual login flow.
+// Outer component bails out with a Navigate before any of the inner hooks
+// (useCopyToClipboard, useAtomStateValue, useCurrentUserWorkspaceTwoFactorAuthentication,
+// useTwoFactorVerificationForSettings) run, so the page can stay
+// uninstantiable for SSO sessions without their contexts being provided.
 export const SettingsTwoFactorAuthenticationMethod = () => {
+  const isSsoEnabled = useIsSsoEnabled();
+
+  if (isSsoEnabled) {
+    return <Navigate to={getSettingsPath(SettingsPath.ProfilePage)} replace />;
+  }
+
+  return <SettingsTwoFactorAuthenticationMethodInner />;
+};
+
+const SettingsTwoFactorAuthenticationMethodInner = () => {
   const { t } = useLingui();
   const { copyToClipboard } = useCopyToClipboard();
   const qrCode = useAtomStateValue(qrCodeState);
