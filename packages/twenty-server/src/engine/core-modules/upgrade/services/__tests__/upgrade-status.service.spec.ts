@@ -2,7 +2,9 @@ import { Test } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { UpgradeHealthEnum } from 'twenty-shared/types';
+import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
+import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { UpgradeMigrationService } from 'src/engine/core-modules/upgrade/services/upgrade-migration.service';
 import { UpgradeSequenceReaderService } from 'src/engine/core-modules/upgrade/services/upgrade-sequence-reader.service';
 import { UpgradeStatusCacheService } from 'src/engine/core-modules/upgrade/services/upgrade-status-cache.service';
@@ -19,21 +21,56 @@ const MOCK_SEQUENCE = [
   { kind: 'workspace', name: LAST_WORKSPACE_COMMAND },
 ];
 
+type WorkspaceRecord = {
+  id: string;
+  displayName: string | null;
+};
+
+const buildWorkspaceCacheGetMock = (
+  workspaces: WorkspaceRecord[],
+): jest.Mock => {
+  const byId = new Map(
+    workspaces.map((workspace) => [workspace.id, workspace]),
+  );
+
+  return jest.fn(async (_cacheKey: string, workspaceId: string) => {
+    const workspace = byId.get(workspaceId);
+
+    if (!workspace) {
+      return null;
+    }
+
+    return {
+      activationStatus: WorkspaceActivationStatus.ACTIVE,
+      ...workspace,
+    };
+  });
+};
+
 describe('UpgradeStatusService', () => {
   let service: UpgradeStatusService;
   let getLastAttemptedInstanceCommand: jest.Mock;
   let getWorkspaceLastAttemptedCommandName: jest.Mock;
   let workspaceFind: jest.Mock;
+  let coreEntityCacheGet: jest.Mock;
   let cacheGetComputedAt: jest.Mock;
   let cacheGetBehindWorkspaceIds: jest.Mock;
   let cacheGetFailedWorkspaceIds: jest.Mock;
   let cacheWrite: jest.Mock;
   let cacheInvalidate: jest.Mock;
 
+  const mockActiveWorkspaces = (workspaces: WorkspaceRecord[]) => {
+    workspaceFind.mockResolvedValue(workspaces);
+    coreEntityCacheGet.mockImplementation(
+      buildWorkspaceCacheGetMock(workspaces),
+    );
+  };
+
   beforeEach(async () => {
     getLastAttemptedInstanceCommand = jest.fn();
     getWorkspaceLastAttemptedCommandName = jest.fn();
-    workspaceFind = jest.fn();
+    workspaceFind = jest.fn().mockResolvedValue([]);
+    coreEntityCacheGet = jest.fn().mockResolvedValue(null);
     cacheGetComputedAt = jest.fn();
     cacheGetBehindWorkspaceIds = jest.fn().mockResolvedValue([]);
     cacheGetFailedWorkspaceIds = jest.fn().mockResolvedValue([]);
@@ -59,6 +96,10 @@ describe('UpgradeStatusService', () => {
         {
           provide: getRepositoryToken(WorkspaceEntity),
           useValue: { find: workspaceFind },
+        },
+        {
+          provide: CoreEntityCacheService,
+          useValue: { get: coreEntityCacheGet },
         },
         {
           provide: UpgradeStatusCacheService,
@@ -135,7 +176,7 @@ describe('UpgradeStatusService', () => {
 
   describe('getWorkspaceStatuses', () => {
     it('should return up-to-date for workspace at last command', async () => {
-      workspaceFind.mockResolvedValue([{ id: 'ws-1', displayName: 'Apple' }]);
+      mockActiveWorkspaces([{ id: 'ws-1', displayName: 'Apple' }]);
 
       getWorkspaceLastAttemptedCommandName.mockResolvedValue(
         new Map([
@@ -160,7 +201,7 @@ describe('UpgradeStatusService', () => {
     });
 
     it('should return behind for workspace not at last command', async () => {
-      workspaceFind.mockResolvedValue([
+      mockActiveWorkspaces([
         { id: 'ws-1', displayName: 'Apple' },
         { id: 'ws-2', displayName: 'Google' },
       ]);
@@ -200,7 +241,7 @@ describe('UpgradeStatusService', () => {
     });
 
     it('should return behind for workspace with no migration history', async () => {
-      workspaceFind.mockResolvedValue([{ id: 'ws-1', displayName: 'Apple' }]);
+      mockActiveWorkspaces([{ id: 'ws-1', displayName: 'Apple' }]);
 
       getWorkspaceLastAttemptedCommandName.mockResolvedValue(new Map());
 
@@ -212,7 +253,7 @@ describe('UpgradeStatusService', () => {
     });
 
     it('should return empty array when no workspaces exist', async () => {
-      workspaceFind.mockResolvedValue([]);
+      mockActiveWorkspaces([]);
       getWorkspaceLastAttemptedCommandName.mockResolvedValue(new Map());
 
       const results = await service.getWorkspaceStatuses();
@@ -235,10 +276,12 @@ describe('UpgradeStatusService', () => {
         errorMessage: null,
         createdAt: new Date('2025-06-01T00:00:00Z'),
       });
-      workspaceFind.mockResolvedValue([
-        { id: 'ws-2', displayName: 'Banana' },
-        { id: 'ws-3', displayName: 'Cherry' },
-      ]);
+      coreEntityCacheGet.mockImplementation(
+        buildWorkspaceCacheGetMock([
+          { id: 'ws-2', displayName: 'Banana' },
+          { id: 'ws-3', displayName: 'Cherry' },
+        ]),
+      );
 
       const result = await service.getInstanceAndAllWorkspacesStatus();
 
@@ -252,7 +295,7 @@ describe('UpgradeStatusService', () => {
     it('should fall back to a refresh when the cache marker is missing', async () => {
       cacheGetComputedAt.mockResolvedValue(null);
       getLastAttemptedInstanceCommand.mockResolvedValue(null);
-      workspaceFind.mockResolvedValue([{ id: 'ws-1', displayName: 'Apple' }]);
+      mockActiveWorkspaces([{ id: 'ws-1', displayName: 'Apple' }]);
       getWorkspaceLastAttemptedCommandName.mockResolvedValue(new Map());
 
       const result = await service.getInstanceAndAllWorkspacesStatus();
@@ -261,11 +304,11 @@ describe('UpgradeStatusService', () => {
       expect(result.workspacesBehind).toEqual([{ id: 'ws-1', name: 'Apple' }]);
     });
 
-    it('should use null name when a cached id is missing from the database', async () => {
+    it('should use null name when a cached id is missing from the cache', async () => {
       cacheGetComputedAt.mockResolvedValue(new Date());
       cacheGetBehindWorkspaceIds.mockResolvedValue(['ws-orphan']);
       getLastAttemptedInstanceCommand.mockResolvedValue(null);
-      workspaceFind.mockResolvedValue([]);
+      coreEntityCacheGet.mockResolvedValue(null);
 
       const result = await service.getInstanceAndAllWorkspacesStatus();
 
@@ -280,14 +323,14 @@ describe('UpgradeStatusService', () => {
 
       await service.getInstanceAndAllWorkspacesStatus();
 
-      expect(workspaceFind).not.toHaveBeenCalled();
+      expect(coreEntityCacheGet).not.toHaveBeenCalled();
     });
   });
 
   describe('refreshInstanceAndAllWorkspacesStatus', () => {
     it('should partition workspaces by health, write to cache, and return the fresh payload', async () => {
       getLastAttemptedInstanceCommand.mockResolvedValue(null);
-      workspaceFind.mockResolvedValue([
+      mockActiveWorkspaces([
         { id: 'ws-1', displayName: 'Apple' },
         { id: 'ws-2', displayName: 'Banana' },
         { id: 'ws-3', displayName: 'Cherry' },

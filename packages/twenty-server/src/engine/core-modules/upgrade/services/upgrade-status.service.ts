@@ -1,17 +1,18 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import { UpgradeHealthEnum } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
-import { In, Repository } from 'typeorm';
 
+import { InjectRepository } from '@nestjs/typeorm';
+import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { UpgradeMigrationService } from 'src/engine/core-modules/upgrade/services/upgrade-migration.service';
 import { UpgradeSequenceReaderService } from 'src/engine/core-modules/upgrade/services/upgrade-sequence-reader.service';
 import { UpgradeStatusCacheService } from 'src/engine/core-modules/upgrade/services/upgrade-status-cache.service';
 import { type UpgradeMigrationStatus } from 'src/engine/core-modules/upgrade/upgrade-migration.entity';
 import { extractVersionFromCommandName } from 'src/engine/core-modules/upgrade/utils/extract-version-from-command-name.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { In, Repository } from 'typeorm';
 
 export type LatestUpgradeCommand = {
   name: string;
@@ -75,6 +76,7 @@ export class UpgradeStatusService {
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
     private readonly upgradeStatusCacheService: UpgradeStatusCacheService,
+    private readonly coreEntityCacheService: CoreEntityCacheService,
   ) {}
 
   async getInstanceStatus(): Promise<InstanceUpgradeStatus> {
@@ -261,13 +263,16 @@ export class UpgradeStatusService {
       return namesById;
     }
 
-    const workspaces = await this.workspaceRepository.find({
-      select: ['id', 'displayName'],
-      where: { id: In(workspaceIds) },
-    });
+    const workspaces = await Promise.all(
+      workspaceIds.map((workspaceId) =>
+        this.coreEntityCacheService.get('workspaceEntity', workspaceId),
+      ),
+    );
 
     for (const workspace of workspaces) {
-      namesById.set(workspace.id, workspace.displayName ?? null);
+      if (isDefined(workspace)) {
+        namesById.set(workspace.id, workspace.displayName ?? null);
+      }
     }
 
     return namesById;

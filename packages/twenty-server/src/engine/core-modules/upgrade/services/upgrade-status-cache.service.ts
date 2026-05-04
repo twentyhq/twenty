@@ -19,9 +19,9 @@ export class UpgradeStatusCacheService {
   ) {}
 
   async getComputedAt(): Promise<Date | null> {
-    const iso = await this.cacheStorage.get<string>(COMPUTED_AT_KEY);
+    const computedAt = await this.cacheStorage.get<string>(COMPUTED_AT_KEY);
 
-    return isDefined(iso) ? new Date(iso) : null;
+    return isDefined(computedAt) ? new Date(computedAt) : null;
   }
 
   async getBehindWorkspaceIds(): Promise<string[]> {
