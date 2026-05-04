@@ -1,14 +1,20 @@
+import { getUuidV4Mock } from '~/testing/utils/getUuidV4Mock';
+
 import { renderHook } from '@testing-library/react';
 import { act } from 'react';
+import gql from 'graphql-tag';
 
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { spreadsheetImportDialogState } from '@/spreadsheet-import/states/spreadsheetImportDialogState';
-
 import { useOpenObjectRecordsSpreadsheetImportDialog } from '@/object-record/spreadsheet-import/hooks/useOpenObjectRecordsSpreadsheetImportDialog';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
-
-import gql from 'graphql-tag';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
+
+jest.mock('uuid', () => ({
+  v4: getUuidV4Mock(),
+}));
+
+const COMPANY_ID = 'test-company-id';
 
 const mockBatchCreateManyRecords = jest.fn().mockResolvedValue([]);
 
@@ -18,17 +24,11 @@ jest.mock('@/object-record/hooks/useBatchCreateManyRecords', () => ({
   }),
 }));
 
-const companyId = 'cb2e9f4b-20c3-4759-9315-4ffeecfaf71a';
-
-jest.mock('uuid', () => ({
-  v4: jest.fn(() => companyId),
-}));
-
 const mockResult = jest.fn(() => ({
   data: {
     createCompanies: [
       {
-        id: companyId,
+        id: COMPANY_ID,
         name: 'Example Company',
         employees: 0,
         idealCustomerProfile: true,
@@ -137,7 +137,7 @@ describe('useOpenObjectRecordsSpreadsheetImportDialog', () => {
     const submitData = {
       validStructuredRows: [
         {
-          id: companyId,
+          id: COMPANY_ID,
           name: 'Example Company',
           idealCustomerProfile: true,
           employees: '0',
@@ -146,7 +146,7 @@ describe('useOpenObjectRecordsSpreadsheetImportDialog', () => {
       invalidStructuredRows: [],
       allStructuredRows: [
         {
-          id: companyId,
+          id: COMPANY_ID,
           name: 'Example Company',
           __index: 'cbc3985f-dde9-46d1-bae2-c124141700ac',
           idealCustomerProfile: true,
