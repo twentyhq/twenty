@@ -63,7 +63,7 @@ const createMockDiscoveredFolder = (
 ): DiscoveredMessageFolder => ({
   externalId: `external-${Math.random().toString(36).substring(7)}`,
   name: 'Test Folder',
-  isSynced: true,
+  isSynced: false,
   isSentFolder: false,
   parentFolderId: null,
   ...overrides,
