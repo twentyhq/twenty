@@ -342,6 +342,20 @@ describe('turnRecordFilterIntoRecordGqlOperationFilter', () => {
 
       expect(result).toHaveProperty('and');
     });
+
+    it('should return undefined for unsupported operand like IS_NOT', () => {
+      const result = turnRecordFilterIntoRecordGqlOperationFilter({
+        filterValueDependencies,
+        recordFilter: makeFilter(
+          'f-date',
+          RecordFilterOperand.IS_NOT,
+          '2024-03-15',
+        ),
+        fieldMetadataItems: fields,
+      });
+
+      expect(result).toBeUndefined();
+    });
   });
 
   describe('DATE_TIME filter', () => {
@@ -441,6 +455,20 @@ describe('turnRecordFilterIntoRecordGqlOperationFilter', () => {
       });
 
       expect(result).toHaveProperty('and');
+    });
+
+    it('should return undefined for unsupported operand like IS_NOT', () => {
+      const result = turnRecordFilterIntoRecordGqlOperationFilter({
+        filterValueDependencies,
+        recordFilter: makeFilter(
+          'f-datetime',
+          RecordFilterOperand.IS_NOT,
+          '2024-03-15T10:00:00Z',
+        ),
+        fieldMetadataItems: fields,
+      });
+
+      expect(result).toBeUndefined();
     });
   });
 

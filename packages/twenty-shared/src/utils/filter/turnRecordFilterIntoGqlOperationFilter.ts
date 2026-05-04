@@ -288,9 +288,7 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
         }
       }
 
-      throw new Error(
-        `Unknown operand ${recordFilter.operand} for ${filterType} filter`,
-      );
+      return;
     }
     case 'DATE_TIME': {
       const itsARelativeDateTimeFilter =
@@ -446,9 +444,7 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
         }
       }
 
-      throw new Error(
-        `Unknown operand ${recordFilter.operand} for ${filterType} filter`,
-      );
+      return;
     }
     case 'RATING':
       switch (recordFilter.operand) {
