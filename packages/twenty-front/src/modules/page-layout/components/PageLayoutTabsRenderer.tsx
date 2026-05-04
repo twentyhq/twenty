@@ -104,11 +104,11 @@ export const PageLayoutTabsRenderer = () => {
 
   const SYSTEM_OBJECT_TABS = ['Home', 'Timeline', 'Overview', 'Flow'];
 
-  const isUsingSyntheticDefault =
+  const isUsingDefaultRecordPageLayout =
     currentPageLayout.id === DEFAULT_RECORD_PAGE_LAYOUT_ID;
 
   const tabsForCurrentObject =
-    isSystemObject && isUsingSyntheticDefault
+    isSystemObject && isUsingDefaultRecordPageLayout
       ? tabsWithVisibleWidgets.filter((tab) =>
           SYSTEM_OBJECT_TABS.includes(tab.title),
         )
