@@ -204,6 +204,12 @@ msgstr ""
 msgid "{0} widgets"
 msgstr ""
 
+#. js-lingui-id: xTgz1F
+#. placeholder {1}: provider.displayName
+#: src/pages/settings/applications/tabs/SettingsApplicationConnectionsSection.tsx
+msgid "{1} OAuth is not yet set up by your server administrator. They need to fill in the OAuth client ID and secret on the application registration before you can add a connection."
+msgstr ""
+
 #. js-lingui-id: qdQhzv
 #: src/modules/views/advanced-filter-chip/components/AdvancedFilterChip.tsx
 msgid "{advancedFilterCount, plural, one {{advancedFilterCount} advanced rule} other {{advancedFilterCount} advanced rules}}"
@@ -443,6 +449,11 @@ msgstr "{roleLabel} não pode {humanReadableAction} registros de {objectLabel}"
 msgid "{roleTargetName} will be assigned to the \"{newRoleName}\" role."
 msgstr "{roleTargetName} será atribuído ao cargo \"{newRoleName}\"."
 
+#. js-lingui-id: UsskHt
+#: src/modules/settings/applications/hooks/useComputeApplicationContentForLayoutAndLogic.ts
+msgid "{scopeCount} scopes"
+msgstr ""
+
 #. js-lingui-id: kvVMdH
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
 msgid "{selectedCount, plural, one {Delete {selectedCount} Job} other {Delete {selectedCount} Jobs}}"
@@ -547,6 +558,11 @@ msgstr "0 */1 * * *"
 #: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 msgid "1 day"
 msgstr "1 dia"
+
+#. js-lingui-id: Mkh9C8
+#: src/modules/settings/applications/hooks/useComputeApplicationContentForLayoutAndLogic.ts
+msgid "1 scope"
+msgstr ""
 
 #. js-lingui-id: W/OU4i
 #: src/modules/settings/applications/hooks/useComputeApplicationContentForLayoutAndLogic.ts
@@ -991,6 +1007,11 @@ msgstr "Adicionar Bloco"
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
 msgid "Add CC"
 msgstr "Adicionar Cc"
+
+#. js-lingui-id: Rop0cs
+#: src/pages/settings/applications/tabs/SettingsApplicationConnectionsSection.tsx
+msgid "Add connection"
+msgstr ""
 
 #. js-lingui-id: RVp8im
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
@@ -3713,6 +3734,11 @@ msgstr "Ligar à Microsoft"
 msgid "Connected accounts"
 msgstr "Contas ligadas"
 
+#. js-lingui-id: sbBqyy
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
+msgid "Connection providers"
+msgstr ""
+
 #. js-lingui-id: W4Kgwq
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
 msgid "Connection settings"
@@ -4894,6 +4920,7 @@ msgstr "eliminar"
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationConnectionsSection.tsx
 #: src/pages/settings/ai/SettingsToolDetail.tsx
 #: src/pages/settings/ai/SettingsToolDetail.tsx
 #: src/pages/settings/ai/SettingsSkillForm.tsx
@@ -8575,6 +8602,16 @@ msgstr "Juntar-se à equipe {workspaceName}"
 msgid "JSON"
 msgstr ""
 
+#. js-lingui-id: UpNpMK
+#: src/pages/settings/applications/tabs/SettingsApplicationConnectionsSection.tsx
+msgid "Just for me"
+msgstr ""
+
+#. js-lingui-id: JJOCq/
+#: src/pages/settings/applications/tabs/SettingsApplicationConnectionsSection.tsx
+msgid "Just me"
+msgstr ""
+
 #. js-lingui-id: OGXtL8
 #: src/modules/views/view-picker/constants/ViewPickerTypeSelectOptions.ts
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
@@ -9191,6 +9228,12 @@ msgstr "Gerenciar cobrança e assinaturas"
 #: src/modules/settings/billing/components/SettingsBillingContent.tsx
 msgid "Manage billing information"
 msgstr "Gerenciar informações de faturamento"
+
+#. js-lingui-id: GDz4fg
+#. placeholder {0}: provider.displayName
+#: src/pages/settings/applications/tabs/SettingsApplicationConnectionsSection.tsx
+msgid "Manage connections used by this app to call {0}."
+msgstr ""
 
 #. js-lingui-id: U8dG4j
 #: src/modules/views/view-picker/components/ViewPickerOptionDropdown.tsx
@@ -10597,7 +10640,6 @@ msgid "No variables found"
 msgstr "Nenhuma variável encontrada"
 
 #. js-lingui-id: OCektF
-#: src/pages/settings/applications/SettingsApplicationDetails.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailEnvironmentVariablesTable.tsx
 msgid "No variables to set for this application"
 msgstr ""
@@ -10700,6 +10742,11 @@ msgstr "Não compartilhado por {notSharedByFullName}"
 msgid "Not synced"
 msgstr "Não sincronizado"
 
+#. js-lingui-id: VngD1z
+#: src/pages/settings/applications/SettingsApplicationDetails.tsx
+msgid "Nothing to configure for this application"
+msgstr ""
+
 #. js-lingui-id: DYCPYF
 #: src/modules/page-layout/widgets/components/StandaloneWidgetPlaceholder.tsx
 msgid "Nothing to see"
@@ -10776,6 +10823,11 @@ msgstr ""
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetail.tsx
 msgid "OAuth"
 msgstr "OAuth"
+
+#. js-lingui-id: IxKj9Y
+#: src/modules/settings/applications/hooks/useComputeApplicationContentForLayoutAndLogic.ts
+msgid "OAuth 2.0"
+msgstr ""
 
 #. js-lingui-id: pNEViR
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
@@ -12077,11 +12129,17 @@ msgid "Recommended Models"
 msgstr "Modelos recomendados"
 
 #. js-lingui-id: gcoiFh
+#: src/pages/settings/applications/tabs/SettingsApplicationConnectionsSection.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
 #: src/modules/information-banner/components/reconnect-account/InformationBannerReconnectAccountInsufficientPermissions.tsx
 #: src/modules/information-banner/components/reconnect-account/InformationBannerReconnectAccountEmailAliases.tsx
 msgid "Reconnect"
 msgstr "Reconectar"
+
+#. js-lingui-id: XsIxsL
+#: src/pages/settings/applications/tabs/SettingsApplicationConnectionsSection.tsx
+msgid "Reconnect needed"
+msgstr ""
 
 #. js-lingui-id: hVS0gK
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsRecordPicker.tsx
@@ -16655,6 +16713,7 @@ msgstr "Workflows"
 #: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
 #: src/pages/settings/applications/SettingsApplicationFrontComponentDetail.tsx
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationConnectionsSection.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationConfigVariableDetail.tsx
 #: src/pages/settings/ai/SettingsToolDetail.tsx
 #: src/pages/settings/ai/SettingsSkillForm.tsx
@@ -16738,6 +16797,11 @@ msgstr ""
 #: src/pages/onboarding/CreateWorkspace.tsx
 msgid "Workspace name"
 msgstr "Nome do espaço de trabalho"
+
+#. js-lingui-id: PHF7zj
+#: src/pages/settings/applications/tabs/SettingsApplicationConnectionsSection.tsx
+msgid "Workspace shared"
+msgstr ""
 
 #. js-lingui-id: QZi0YX
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownVisibilityContent.tsx
