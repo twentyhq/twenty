@@ -65,7 +65,6 @@ describe('ConnectionProviderOAuthFlowService', () => {
     },
     createdAt: new Date(),
     updatedAt: new Date(),
-    deletedAt: null,
   } as unknown as ConnectionProviderEntity;
 
   beforeEach(async () => {

@@ -35,7 +35,6 @@ export const fromConnectionProviderEntityToFlatConnectionProvider = ({
     oauthConfig: connectionProviderEntity.oauthConfig,
     createdAt: connectionProviderEntity.createdAt.toISOString(),
     updatedAt: connectionProviderEntity.updatedAt.toISOString(),
-    deletedAt: connectionProviderEntity.deletedAt?.toISOString() ?? null,
     applicationUniversalIdentifier,
   };
 };

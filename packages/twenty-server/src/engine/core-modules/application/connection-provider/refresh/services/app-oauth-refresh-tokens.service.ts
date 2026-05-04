@@ -51,9 +51,8 @@ export class AppOAuthRefreshAccessTokenService {
 
       return {
         accessToken: tokenResponse.accessToken,
-        // Some providers (e.g. Google) keep the refresh token stable across
-        // refreshes; others rotate. Fall back to the original when the
-        // response omits one.
+        // Fall back to the original when the response omits one — some
+        // providers don't rotate refresh tokens.
         refreshToken: tokenResponse.refreshToken ?? refreshToken,
       };
     } catch (error) {
@@ -61,9 +60,8 @@ export class AppOAuthRefreshAccessTokenService {
         `App OAuth refresh failed for connected account ${connectedAccount.id}: ${(error as Error).message}`,
       );
 
-      // 5xx and network/transport errors are transient — don't mark the
-      // credential as permanently invalid. Only 4xx responses from the
-      // token endpoint (esp. invalid_grant) imply the user must reconnect.
+      // Only 4xx token-endpoint responses (esp. invalid_grant) imply the
+      // user must reconnect — 5xx and transport errors stay transient.
       const isTransient =
         !(error instanceof OAuthTokenEndpointError) || error.status >= 500;
 
@@ -76,9 +74,6 @@ export class AppOAuthRefreshAccessTokenService {
     }
   }
 
-  // Provider lookup or credential resolution failed (provider deleted,
-  // server admin hasn't filled in client_id/secret). Translate so callers
-  // see one exception class regardless of provider.
   private async resolveProvider(connectionProviderId: string) {
     try {
       const provider =

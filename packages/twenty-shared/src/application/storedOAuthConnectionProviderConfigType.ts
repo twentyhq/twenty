@@ -1,9 +1,8 @@
 import { type OAuthProviderTokenRequestContentType } from '@/application/oauthProviderTokenRequestContentType.type';
 
-// The resolved/normalized form of `OAuthConnectionProviderConfig` as written
-// to the `connectionProvider.oauthConfig` JSONB column. Manifest defaults
-// (`tokenRequestContentType`, `usePkce`) are filled at write time so reads
-// on the entity never need to re-apply them.
+// Resolved form of `OAuthConnectionProviderConfig` as stored in the
+// `connectionProvider.oauthConfig` JSONB column — manifest defaults are
+// filled at write time.
 export type StoredOAuthConnectionProviderConfig = {
   authorizationEndpoint: string;
   tokenEndpoint: string;

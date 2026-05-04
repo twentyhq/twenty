@@ -5,7 +5,6 @@ import {
 import {
   Column,
   CreateDateColumn,
-  DeleteDateColumn,
   Entity,
   Index,
   PrimaryGeneratedColumn,
@@ -34,15 +33,9 @@ export class ConnectionProviderEntity
   @Column({ nullable: false, type: 'varchar' })
   displayName: string;
 
-  // Discriminator over how a connection's credentials are obtained. Today
-  // only `oauth` exists; future types (PATs, API keys, basic auth) add their
-  // own typed sub-config column alongside `oauthConfig`.
   @Column({ nullable: false, type: 'varchar' })
   type: ConnectionProviderType;
 
-  // Populated when `type === 'oauth'`; null otherwise. Stored shape is
-  // resolved/normalized — manifest defaults (usePkce, contentType, etc.)
-  // are filled at write time so reads never branch on defaults.
   @Column({ nullable: true, type: 'jsonb' })
   oauthConfig: StoredOAuthConnectionProviderConfig | null;
 
@@ -51,7 +44,4 @@ export class ConnectionProviderEntity
 
   @UpdateDateColumn({ type: 'timestamptz' })
   updatedAt: Date;
-
-  @DeleteDateColumn({ type: 'timestamptz' })
-  deletedAt: Date | null;
 }

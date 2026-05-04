@@ -52,7 +52,6 @@ describe('fromConnectionProviderManifestToUniversalFlatConnectionProvider', () =
       },
       createdAt: NOW,
       updatedAt: NOW,
-      deletedAt: null,
     });
   });
 

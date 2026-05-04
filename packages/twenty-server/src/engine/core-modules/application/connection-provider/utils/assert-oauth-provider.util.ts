@@ -5,10 +5,6 @@ import { ConnectionProviderEntity } from 'src/engine/core-modules/application/co
 import { ConnectionProviderExceptionCode } from 'src/engine/core-modules/application/connection-provider/connection-provider-exception-code.enum';
 import { ConnectionProviderException } from 'src/engine/core-modules/application/connection-provider/connection-provider.exception';
 
-// Narrows a generic ConnectionProviderEntity to its OAuth-typed shape so
-// callers in the OAuth flow can read `provider.oauthConfig.x` without
-// optional chaining or non-null assertions. Throws on type mismatch — the
-// invariant is `type === 'oauth'` ⇔ `oauthConfig` is non-null.
 export type OAuthConnectionProvider = ConnectionProviderEntity & {
   type: 'oauth';
   oauthConfig: StoredOAuthConnectionProviderConfig;

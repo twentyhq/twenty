@@ -35,9 +35,6 @@ type AuthorizeArgs = {
   workspaceId: string;
   userId: string;
   userWorkspaceId: string;
-  // Connection-row visibility: 'user' = private to userWorkspaceId,
-  // 'workspace' = shared with all members. Distinct from OAuth `scopes`
-  // on the row, which are the upstream-granted permissions.
   visibility: 'user' | 'workspace';
   reconnectingConnectedAccountId: string | null;
   redirectLocation: string | null;
@@ -57,9 +54,7 @@ type CallbackResult = {
 
 @Injectable()
 export class ConnectionProviderOAuthFlowService {
-  private readonly logger = new Logger(
-    ConnectionProviderOAuthFlowService.name,
-  );
+  private readonly logger = new Logger(ConnectionProviderOAuthFlowService.name);
 
   constructor(
     private readonly oauthProviderService: ConnectionProviderService,
@@ -77,13 +72,9 @@ export class ConnectionProviderOAuthFlowService {
 
     assertOAuthProvider(connectionProvider);
 
-    // Reconnect can only target a row that lives in the requesting workspace
-    // *and* belongs to the same provider. Without this check, a caller could
-    // pass any connectedAccount id from any workspace; persist() filters its
-    // UPDATE by workspaceId so nothing would be written, but the subsequent
-    // findOneByOrFail (and the redirect URL we build from it) would happily
-    // surface stale fields from the foreign row. Fail fast at authorize time
-    // so the user sees the error before the upstream OAuth round-trip.
+    // Reconnect target must live in the requesting workspace and belong to
+    // the same provider — without this guard a foreign id would silently
+    // leak through findOneByOrFail later in the flow.
     if (isDefined(args.reconnectingConnectedAccountId)) {
       const target = await this.connectedAccountRepository.findOne({
         where: {
@@ -104,12 +95,8 @@ export class ConnectionProviderOAuthFlowService {
     const { clientId } =
       await this.oauthProviderService.getClientCredentials(connectionProvider);
 
-    const {
-      authorizationEndpoint,
-      scopes,
-      authorizationParams,
-      usePkce,
-    } = connectionProvider.oauthConfig;
+    const { authorizationEndpoint, scopes, authorizationParams, usePkce } =
+      connectionProvider.oauthConfig;
 
     const codeVerifier = usePkce ? generatePkceVerifier() : null;
 
@@ -246,9 +233,6 @@ export class ConnectionProviderOAuthFlowService {
     return this.twentyConfigService.get('SERVER_URL');
   }
 
-  // Reconnect updates an existing row (preserves the id so logic-function
-  // bindings via id keep working). New connections always create — multiple
-  // credentials per (user, provider) are now allowed and intentional.
   private async persistConnectedAccount({
     provider,
     tokenResponse,
@@ -273,11 +257,8 @@ export class ConnectionProviderOAuthFlowService {
     };
 
     if (isDefined(reconnectingConnectedAccountId)) {
-      // Workspace-scope BOTH the update and the read — a foreign-id passed
-      // through here (the authorize-time guard should have caught it) would
-      // otherwise update zero rows but still return the foreign row from
-      // findOneByOrFail({ id }), making a silently-failed reconnect look
-      // successful.
+      // Workspace-scope both the update and the read so a foreign id can't
+      // leak through findOneByOrFail.
       await this.connectedAccountRepository.update(
         { id: reconnectingConnectedAccountId, workspaceId },
         sharedFields,
@@ -293,7 +274,6 @@ export class ConnectionProviderOAuthFlowService {
       where: { connectionProviderId: provider.id, workspaceId },
     });
 
-    // Auto-generated default — the user can rename from the app settings tab.
     const name = `${provider.displayName} #${existingCount + 1}`;
 
     const created = this.connectedAccountRepository.create({

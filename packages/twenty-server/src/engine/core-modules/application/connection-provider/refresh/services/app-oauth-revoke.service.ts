@@ -15,11 +15,7 @@ export class AppOAuthRevokeService {
     private readonly secureHttpClientService: SecureHttpClientService,
   ) {}
 
-  // Best-effort revoke against the provider's `revokeEndpoint` if declared
-  // in the manifest. Failures are swallowed (logged as warnings) so a
-  // disconnect always succeeds locally even when the provider is down or
-  // doesn't support revocation. RFC 7009 form-urlencoded body is the
-  // de-facto standard.
+  // Best-effort: failures are logged but never block disconnect.
   async revokeIfApp(connectedAccount: ConnectedAccountEntity): Promise<void> {
     if (
       !isDefined(connectedAccount.connectionProviderId) ||

@@ -45,6 +45,5 @@ export const fromConnectionProviderManifestToUniversalFlatConnectionProvider =
       oauthConfig,
       createdAt: now,
       updatedAt: now,
-      deletedAt: null,
     };
   };

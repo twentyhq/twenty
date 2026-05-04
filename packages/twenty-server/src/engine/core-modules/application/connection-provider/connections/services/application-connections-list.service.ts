@@ -150,14 +150,6 @@ export class ApplicationConnectionsListService {
     return dto;
   }
 
-  // Composes the caller's `visibility` filter with the per-request privacy
-  // rule. Always returns a TypeORM where (single object = AND, array = OR)
-  // so the caller doesn't have to branch.
-  //
-  // The earlier inline version OR'd `{ ...baseWhere, visibility: 'workspace' }`
-  // with `{ ...baseWhere, userWorkspaceId: me }` regardless of caller intent,
-  // which silently overrode an explicit `filter.visibility: 'user'` (the
-  // first OR branch always returned workspace-shared rows).
   private buildPrivacyWhere(
     baseWhere: FindOptionsWhere<ConnectedAccountEntity>,
     requestUserWorkspaceId: string | null,
@@ -165,15 +157,12 @@ export class ApplicationConnectionsListService {
   ):
     | FindOptionsWhere<ConnectedAccountEntity>
     | FindOptionsWhere<ConnectedAccountEntity>[] {
-    // Cron / DB-event triggers carry no user — the app is trusted to use
-    // its own criteria, so honour the visibility filter as-is.
     if (!isDefined(requestUserWorkspaceId)) {
       return isDefined(visibilityFilter)
         ? { ...baseWhere, visibility: visibilityFilter }
         : baseWhere;
     }
 
-    // Caller asked for user-visibility only → must be theirs.
     if (visibilityFilter === 'user') {
       return {
         ...baseWhere,
@@ -182,14 +171,10 @@ export class ApplicationConnectionsListService {
       };
     }
 
-    // Caller asked for workspace-shared only → no per-user restriction
-    // (workspace-shared credentials are visible to everyone in the workspace).
     if (visibilityFilter === 'workspace') {
       return { ...baseWhere, visibility: 'workspace' };
     }
 
-    // No visibility filter → return both: every workspace-shared row, plus
-    // the request user's own user-visibility rows.
     return [
       { ...baseWhere, visibility: 'workspace' },
       {

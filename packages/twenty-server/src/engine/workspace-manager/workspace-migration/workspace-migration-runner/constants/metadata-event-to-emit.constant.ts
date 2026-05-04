@@ -28,7 +28,5 @@ export const METADATA_EVENTS_TO_EMIT = {
   logicFunction: true,
   viewSort: true,
   webhook: false,
-  // Connection providers are sync'd from manifest at install/upgrade and the
-  // frontend reads them on demand — no consumer needs to react to changes.
-  connectionProvider: false,
+  connectionProvider: true,
 } as const satisfies { [P in AllMetadataName]: boolean };

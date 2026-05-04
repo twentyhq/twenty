@@ -79,11 +79,6 @@ export class FlatConnectionProviderValidatorService {
       }
     }
 
-    // (name, applicationId) is unique on the table — guard at validation
-    // time so the dev sees a friendly error instead of a Postgres unique-
-    // violation. The optimistic map is already filtered to this workspace,
-    // and within a workspace each application gets its own row, so checking
-    // by (name, applicationUniversalIdentifier) is equivalent.
     const existingByName = Object.values(
       optimisticFlatConnectionProviderMaps.byUniversalIdentifier,
     ).find(

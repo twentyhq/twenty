@@ -24,8 +24,6 @@ export class ConnectionProviderService {
     private readonly secretEncryptionService: SecretEncryptionService,
   ) {}
 
-  // Stored on the registration (one OAuth app per Twenty server, set by
-  // the server admin) — not per-workspace.
   async getClientCredentials(
     provider: ConnectionProviderEntity,
   ): Promise<{ clientId: string; clientSecret: string }> {
@@ -73,8 +71,6 @@ export class ConnectionProviderService {
     return { clientId, clientSecret };
   }
 
-  // For batched calls (e.g. the resolver listing path) prefer
-  // `areClientCredentialsConfiguredBatch` to avoid N+1.
   async areClientCredentialsConfigured(
     provider: ConnectionProviderEntity,
   ): Promise<boolean> {
@@ -92,8 +88,6 @@ export class ConnectionProviderService {
       return result;
     }
 
-    // Non-OAuth providers (future PAT/API-key types) have no client
-    // credentials concept; report them as configured: false.
     const oauthProviders = providers.filter(
       (p) => p.type === 'oauth' && isDefined(p.oauthConfig),
     );
