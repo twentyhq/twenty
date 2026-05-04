@@ -44273,7 +44273,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lodash.isempty@npm:4.4.0":
+"lodash.isempty@npm:4.4.0, lodash.isempty@npm:^4.4.0":
   version: 4.4.0
   resolution: "lodash.isempty@npm:4.4.0"
   checksum: 10c0/6c7eaa0802398736809b9e8aed8b8ac1abca9be71788fd719ba9d7f5b4c23e8dc63b7f049df4131713dda30a2fdedc2f655268e9deb8cd5a985dfc934afca194
@@ -57917,6 +57917,10 @@ __metadata:
     jwt-decode: "npm:^4.0.0"
     linkify-react: "npm:^4.1.3"
     linkifyjs: "npm:^4.1.3"
+    lodash.camelcase: "npm:^4.3.0"
+    lodash.groupby: "npm:^4.6.0"
+    lodash.isempty: "npm:^4.4.0"
+    lodash.omit: "npm:^4.5.0"
     marked: "npm:^17.0.1"
     microdiff: "npm:^1.3.2"
     monaco-editor: "npm:^0.51.0"
