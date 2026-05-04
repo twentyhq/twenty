@@ -57918,7 +57918,7 @@ __metadata:
     json-2-csv: "npm:^5.4.0"
     json-logic-js: "npm:^2.0.5"
     jwt-decode: "npm:^4.0.0"
-    libphonenumber-js: "npm:^1.10.14"
+    libphonenumber-js: "npm:^1.10.26"
     linkify-react: "npm:^4.1.3"
     linkifyjs: "npm:^4.1.3"
     lodash.camelcase: "npm:^4.3.0"
@@ -57961,7 +57961,7 @@ __metadata:
     react-textarea-autosize: "npm:^8.4.1"
     remark-gfm: "npm:^4.0.1"
     rollup-plugin-visualizer: "npm:^5.14.0"
-    rxjs: "npm:^7.8.1"
+    rxjs: "npm:^7.2.0"
     storybook-addon-mock-date: "npm:2.0.0"
     storybook-addon-pseudo-states: "npm:^10.3.3"
     temporal-polyfill: "npm:^0.3.0"
@@ -57971,13 +57971,13 @@ __metadata:
     twenty-front-component-renderer: "workspace:*"
     twenty-shared: "workspace:*"
     twenty-ui: "workspace:*"
-    type-fest: "npm:^4.10.1"
+    type-fest: "npm:4.10.1"
     use-debounce: "npm:^10.0.0"
     uuid: "npm:^9.0.0"
     vite-plugin-svgr: "npm:^4.3.0"
     vite-tsconfig-paths: "npm:^4.2.1"
     xlsx-ugnis: "npm:^0.19.3"
-    zod: "npm:^3.20.6"
+    zod: "npm:^4.1.11"
   languageName: unknown
   linkType: soft
 
