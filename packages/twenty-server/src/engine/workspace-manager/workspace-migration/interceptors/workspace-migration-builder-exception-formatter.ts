@@ -9,6 +9,7 @@ import {
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { type WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { fromWorkspaceMigrationBuilderExceptionToMetadataValidationResponseError } from 'src/engine/workspace-manager/workspace-migration/interceptors/utils/from-workspace-migration-builder-exception-to-metadata-validation-response-error.util';
+import { getPrimaryMetadataValidationUserFriendlyMessage } from 'src/engine/workspace-manager/workspace-migration/interceptors/utils/get-primary-metadata-validation-user-friendly-message.util';
 
 export const workspaceMigrationBuilderExceptionFormatter = (
   error: WorkspaceMigrationBuilderException,
@@ -20,7 +21,9 @@ export const workspaceMigrationBuilderExceptionFormatter = (
       i18n,
     );
 
-  const message = `Validation failed for ${Object.values(ALL_METADATA_NAME)
+  const validationSummaryMessage = `Validation failed for ${Object.values(
+    ALL_METADATA_NAME,
+  )
     .flatMap((metadataName) => {
       const count = summary[metadataName];
 
@@ -32,15 +35,22 @@ export const workspaceMigrationBuilderExceptionFormatter = (
     })
     .join(', ')}`;
 
+  const primaryUserFriendlyMessage =
+    getPrimaryMetadataValidationUserFriendlyMessage({
+      errors,
+      summary,
+    });
+
   throw new BaseGraphQLError(
-    error.message,
+    primaryUserFriendlyMessage ?? error.message,
     ErrorCode.METADATA_VALIDATION_FAILED,
     {
       code: 'METADATA_VALIDATION_ERROR',
       errors,
       summary,
-      message,
-      userFriendlyMessage: msg`Metadata validation failed`,
+      message: validationSummaryMessage,
+      userFriendlyMessage:
+        primaryUserFriendlyMessage ?? msg`Metadata validation failed`,
     },
   );
 };

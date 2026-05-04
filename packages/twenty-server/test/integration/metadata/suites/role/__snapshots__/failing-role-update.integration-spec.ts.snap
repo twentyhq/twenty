@@ -40,9 +40,9 @@ exports[`Role update should fail updating role with existing write permissions s
       "role": 1,
       "totalErrors": 1,
     },
-    "userFriendlyMessage": "Metadata validation failed",
+    "userFriendlyMessage": "You cannot grant edit permissions without also granting read permissions. Please enable read access first.",
   },
-  "message": "Multiple validation errors occurred while updating role",
+  "message": "You cannot grant edit permissions without also granting read permissions. Please enable read access first.",
   "name": "GraphQLError",
 }
 `;
@@ -75,9 +75,9 @@ exports[`Role update should fail when updating a non-editable system role 1`] = 
       "role": 1,
       "totalErrors": 1,
     },
-    "userFriendlyMessage": "Metadata validation failed",
+    "userFriendlyMessage": "This role cannot be modified because it is a system role. Only custom roles can be edited.",
   },
-  "message": "Multiple validation errors occurred while updating role",
+  "message": "This role cannot be modified because it is a system role. Only custom roles can be edited.",
   "name": "GraphQLError",
 }
 `;
@@ -110,9 +110,9 @@ exports[`Role update should fail when updating canReadAllObjectRecords to false 
       "role": 1,
       "totalErrors": 1,
     },
-    "userFriendlyMessage": "Metadata validation failed",
+    "userFriendlyMessage": "You cannot grant edit permissions without also granting read permissions. Please enable read access first.",
   },
-  "message": "Multiple validation errors occurred while updating role",
+  "message": "You cannot grant edit permissions without also granting read permissions. Please enable read access first.",
   "name": "GraphQLError",
 }
 `;
@@ -145,9 +145,9 @@ exports[`Role update should fail when updating canReadAllObjectRecords to false 
       "role": 1,
       "totalErrors": 1,
     },
-    "userFriendlyMessage": "Metadata validation failed",
+    "userFriendlyMessage": "You cannot grant edit permissions without also granting read permissions. Please enable read access first.",
   },
-  "message": "Multiple validation errors occurred while updating role",
+  "message": "You cannot grant edit permissions without also granting read permissions. Please enable read access first.",
   "name": "GraphQLError",
 }
 `;
@@ -180,9 +180,9 @@ exports[`Role update should fail when updating canReadAllObjectRecords to false 
       "role": 1,
       "totalErrors": 1,
     },
-    "userFriendlyMessage": "Metadata validation failed",
+    "userFriendlyMessage": "You cannot grant edit permissions without also granting read permissions. Please enable read access first.",
   },
-  "message": "Multiple validation errors occurred while updating role",
+  "message": "You cannot grant edit permissions without also granting read permissions. Please enable read access first.",
   "name": "GraphQLError",
 }
 `;
@@ -215,9 +215,9 @@ exports[`Role update should fail when updating label to one that already exists 
       "role": 1,
       "totalErrors": 1,
     },
-    "userFriendlyMessage": "Metadata validation failed",
+    "userFriendlyMessage": "A role with this label already exists.",
   },
-  "message": "Multiple validation errors occurred while updating role",
+  "message": "A role with this label already exists.",
   "name": "GraphQLError",
 }
 `;
@@ -250,9 +250,9 @@ exports[`Role update should fail when updating to enable write permissions witho
       "role": 1,
       "totalErrors": 1,
     },
-    "userFriendlyMessage": "Metadata validation failed",
+    "userFriendlyMessage": "You cannot grant edit permissions without also granting read permissions. Please enable read access first.",
   },
-  "message": "Multiple validation errors occurred while updating role",
+  "message": "You cannot grant edit permissions without also granting read permissions. Please enable read access first.",
   "name": "GraphQLError",
 }
 `;

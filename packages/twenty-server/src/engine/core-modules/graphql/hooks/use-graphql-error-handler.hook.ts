@@ -225,10 +225,14 @@ export const useGraphQLErrorHandlerHook = <
                       ...error,
                       extensions: {
                         ...error.extensions,
-                        userFriendlyMessage: i18n._(
-                          error.extensions.userFriendlyMessage ??
-                            defaultErrorMessage,
-                        ),
+                        userFriendlyMessage:
+                          typeof error.extensions.userFriendlyMessage ===
+                          'string'
+                            ? error.extensions.userFriendlyMessage
+                            : i18n._(
+                                error.extensions.userFriendlyMessage ??
+                                  defaultErrorMessage,
+                              ),
                       },
                     }
                   : generateGraphQLErrorFromError(error, i18n);
