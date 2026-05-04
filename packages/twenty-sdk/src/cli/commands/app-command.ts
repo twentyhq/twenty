@@ -93,7 +93,7 @@ export const registerCommands = (program: Command): void => {
 
   program
     .command('deploy [appPath]')
-    .description('Build and upload application to a Twenty server')
+    .description("Publish a new version to a Twenty server's registry")
     .option('-r, --remote <name>', 'Deploy to a specific remote')
     .action(async (appPath, options) => {
       await deployCommand.execute({
