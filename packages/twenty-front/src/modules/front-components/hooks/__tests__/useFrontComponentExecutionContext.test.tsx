@@ -109,7 +109,7 @@ describe('useFrontComponentExecutionContext', () => {
       });
     });
 
-    it('should return recordId as first element when multiple recordIds provided', () => {
+    it('should return null recordId when multiple recordIds provided', () => {
       const { result } = renderHook(() =>
         useFrontComponentExecutionContext({
           frontComponentId: FRONT_COMPONENT_ID,
@@ -120,7 +120,7 @@ describe('useFrontComponentExecutionContext', () => {
       expect(result.current.executionContext).toEqual({
         frontComponentId: FRONT_COMPONENT_ID,
         userId: 'user-123',
-        recordId: 'record-1',
+        recordId: null,
         recordIds: ['record-1', 'record-2', 'record-3'],
       });
     });

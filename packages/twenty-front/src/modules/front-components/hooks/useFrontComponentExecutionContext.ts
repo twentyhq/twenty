@@ -127,7 +127,7 @@ export const useFrontComponentExecutionContext = ({
   const executionContext: FrontComponentExecutionContext = {
     frontComponentId,
     userId: currentUser?.id ?? null,
-    recordId: recordIds?.[0] ?? null,
+    recordId: recordIds?.length === 1 ? recordIds[0] : null,
     recordIds: recordIds ?? [],
   };
 

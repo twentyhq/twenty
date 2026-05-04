@@ -3,11 +3,12 @@ import { useFrontComponentExecutionContext } from './useFrontComponentExecutionC
 
 const selectRecordId = (
   context: FrontComponentExecutionContext,
-): string | null => context.recordId;
+): string | null =>
+  context.recordIds.length === 1 ? context.recordIds[0] : null;
 
 /**
- * @deprecated Use `useRecordIds` instead. This hook returns only the first
- * selected record ID or null when multiple records are selected.
+ * Returns the selected record ID when exactly one record is selected,
+ * otherwise returns null. Use `useRecordIds()` for multi-record operations.
  */
 export const useRecordId = (): string | null => {
   return useFrontComponentExecutionContext(selectRecordId);
