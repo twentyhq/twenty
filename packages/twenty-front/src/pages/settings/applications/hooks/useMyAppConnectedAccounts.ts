@@ -13,7 +13,7 @@ type AppConnectedAccount = {
   authFailedAt: string | null;
   applicationConnectionProviderId: string | null;
   name: string | null;
-  scope: 'user' | 'workspace';
+  visibility: 'user' | 'workspace';
 };
 
 export const useMyAppConnectedAccounts = () => {

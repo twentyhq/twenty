@@ -21,7 +21,7 @@ type ListArgs = {
   filter: {
     providerName?: string;
     userWorkspaceId?: string;
-    scope?: 'user' | 'workspace';
+    visibility?: 'user' | 'workspace';
   };
 };
 
@@ -83,7 +83,7 @@ export class ApplicationConnectionsListService {
       where: this.buildPrivacyWhere(
         baseWhere,
         requestUserWorkspaceId,
-        filter.scope,
+        filter.visibility,
       ),
     });
 
@@ -116,11 +116,11 @@ export class ApplicationConnectionsListService {
     }
 
     // Same privacy rule as list(): a request-user can only see their own
-    // user-scoped credentials. Workspace-scoped credentials are visible to
+    // user-visibility credentials. Workspace-shared ones are visible to
     // anyone in the workspace. Cron has no request user — sees all.
     if (
       isDefined(requestUserWorkspaceId) &&
-      account.scope === 'user' &&
+      account.visibility === 'user' &&
       account.userWorkspaceId !== requestUserWorkspaceId
     ) {
       throw new NotFoundException(`Connection ${id} not found`);
@@ -150,51 +150,51 @@ export class ApplicationConnectionsListService {
     return dto;
   }
 
-  // Composes the caller's `scope` filter with the per-request privacy rule.
-  // Always returns a TypeORM where (single object = AND, array = OR) so the
-  // caller doesn't have to branch.
+  // Composes the caller's `visibility` filter with the per-request privacy
+  // rule. Always returns a TypeORM where (single object = AND, array = OR)
+  // so the caller doesn't have to branch.
   //
-  // The earlier inline version OR'd `{ ...baseWhere, scope: 'workspace' }`
+  // The earlier inline version OR'd `{ ...baseWhere, visibility: 'workspace' }`
   // with `{ ...baseWhere, userWorkspaceId: me }` regardless of caller intent,
-  // which silently overrode an explicit `filter.scope: 'user'` (the first
-  // OR branch always returned workspace-scoped rows).
+  // which silently overrode an explicit `filter.visibility: 'user'` (the
+  // first OR branch always returned workspace-shared rows).
   private buildPrivacyWhere(
     baseWhere: FindOptionsWhere<ConnectedAccountEntity>,
     requestUserWorkspaceId: string | null,
-    scopeFilter: 'user' | 'workspace' | undefined,
+    visibilityFilter: 'user' | 'workspace' | undefined,
   ):
     | FindOptionsWhere<ConnectedAccountEntity>
     | FindOptionsWhere<ConnectedAccountEntity>[] {
     // Cron / DB-event triggers carry no user — the app is trusted to use
-    // its own criteria, so honour the scope filter as-is.
+    // its own criteria, so honour the visibility filter as-is.
     if (!isDefined(requestUserWorkspaceId)) {
-      return isDefined(scopeFilter)
-        ? { ...baseWhere, scope: scopeFilter }
+      return isDefined(visibilityFilter)
+        ? { ...baseWhere, visibility: visibilityFilter }
         : baseWhere;
     }
 
-    // Caller asked for user-scoped only → must be theirs.
-    if (scopeFilter === 'user') {
+    // Caller asked for user-visibility only → must be theirs.
+    if (visibilityFilter === 'user') {
       return {
         ...baseWhere,
-        scope: 'user',
+        visibility: 'user',
         userWorkspaceId: requestUserWorkspaceId,
       };
     }
 
-    // Caller asked for workspace-scoped only → no per-user restriction
-    // (workspace-scoped credentials are visible to everyone in the workspace).
-    if (scopeFilter === 'workspace') {
-      return { ...baseWhere, scope: 'workspace' };
+    // Caller asked for workspace-shared only → no per-user restriction
+    // (workspace-shared credentials are visible to everyone in the workspace).
+    if (visibilityFilter === 'workspace') {
+      return { ...baseWhere, visibility: 'workspace' };
     }
 
-    // No scope filter → return both: every workspace-scoped row, plus the
-    // request user's own user-scoped rows.
+    // No visibility filter → return both: every workspace-shared row, plus
+    // the request user's own user-visibility rows.
     return [
-      { ...baseWhere, scope: 'workspace' },
+      { ...baseWhere, visibility: 'workspace' },
       {
         ...baseWhere,
-        scope: 'user',
+        visibility: 'user',
         userWorkspaceId: requestUserWorkspaceId,
       },
     ];
@@ -232,7 +232,7 @@ export class ApplicationConnectionsListService {
         providerName: provider.name,
         name: account.name ?? account.handle,
         handle: account.handle,
-        scope: account.scope as 'user' | 'workspace',
+        visibility: account.visibility as 'user' | 'workspace',
         userWorkspaceId: account.userWorkspaceId,
         accessToken: tokens.accessToken,
         scopes: account.scopes ?? provider.scopes,

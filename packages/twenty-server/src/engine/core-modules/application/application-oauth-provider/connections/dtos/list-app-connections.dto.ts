@@ -11,8 +11,8 @@ export class ListAppConnectionsDto {
   @IsOptional()
   userWorkspaceId?: string;
 
-  // Optional scope filter — narrow to 'user' or 'workspace'-scoped only.
+  // Optional visibility filter — narrow to 'user' or 'workspace' only.
   @IsString()
   @IsOptional()
-  scope?: 'user' | 'workspace';
+  visibility?: 'user' | 'workspace';
 }

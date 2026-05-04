@@ -31,7 +31,10 @@ type AuthorizeArgs = {
   workspaceId: string;
   userId: string;
   userWorkspaceId: string;
-  scope: 'user' | 'workspace';
+  // Connection-row visibility: 'user' = private to userWorkspaceId,
+  // 'workspace' = shared with all members. Distinct from OAuth `scopes`
+  // on the row, which are the upstream-granted permissions.
+  visibility: 'user' | 'workspace';
   reconnectingConnectedAccountId: string | null;
   redirectLocation: string | null;
 };
@@ -84,7 +87,7 @@ export class ApplicationOAuthProviderFlowService {
       workspaceId,
       userId,
       userWorkspaceId,
-      scope: args.scope,
+      visibility: args.visibility,
       reconnectingConnectedAccountId: args.reconnectingConnectedAccountId,
       redirectLocation: args.redirectLocation,
       codeVerifier,
@@ -163,7 +166,7 @@ export class ApplicationOAuthProviderFlowService {
       tokenResponse,
       workspaceId: statePayload.workspaceId,
       userWorkspaceId: statePayload.userWorkspaceId,
-      scope: statePayload.scope,
+      visibility: statePayload.visibility,
       reconnectingConnectedAccountId:
         statePayload.reconnectingConnectedAccountId,
     });
@@ -223,14 +226,14 @@ export class ApplicationOAuthProviderFlowService {
     tokenResponse,
     workspaceId,
     userWorkspaceId,
-    scope,
+    visibility,
     reconnectingConnectedAccountId,
   }: {
     provider: ApplicationOAuthProviderEntity;
     tokenResponse: TokenExchangeResponse;
     workspaceId: string;
     userWorkspaceId: string;
-    scope: 'user' | 'workspace';
+    visibility: 'user' | 'workspace';
     reconnectingConnectedAccountId: string | null;
   }): Promise<ConnectedAccountEntity> {
     const sharedFields = {
@@ -263,7 +266,7 @@ export class ApplicationOAuthProviderFlowService {
       ...sharedFields,
       handle: name,
       name,
-      scope,
+      visibility,
       provider: ConnectedAccountProvider.APP,
       workspaceId,
       applicationId: provider.applicationId,

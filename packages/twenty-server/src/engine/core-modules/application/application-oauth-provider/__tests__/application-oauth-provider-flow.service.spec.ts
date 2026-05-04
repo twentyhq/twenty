@@ -115,7 +115,7 @@ describe('ApplicationOAuthProviderFlowService', () => {
   afterEach(() => jest.clearAllMocks());
 
   describe('startAuthorizationFlow', () => {
-    it('builds the provider authorization URL with the workspace + scope context signed into state', async () => {
+    it('builds the provider authorization URL with the workspace + visibility context signed into state', async () => {
       jwtWrapperService.sign.mockReturnValue('signed-state-token');
 
       const { authorizationUrl } = await service.startAuthorizationFlow({
@@ -123,7 +123,7 @@ describe('ApplicationOAuthProviderFlowService', () => {
         workspaceId: 'workspace-1',
         userId: 'user-1',
         userWorkspaceId: 'uws-1',
-        scope: 'user',
+        visibility: 'user',
         reconnectingConnectedAccountId: null,
         redirectLocation: null,
       });
@@ -135,6 +135,8 @@ describe('ApplicationOAuthProviderFlowService', () => {
       );
       expect(url.searchParams.get('client_id')).toBe('lin_client_id');
       expect(url.searchParams.get('response_type')).toBe('code');
+      // OAuth-standard `scope` (plural meaning) — these are the upstream
+      // permissions we're requesting, unrelated to the row-visibility field.
       expect(url.searchParams.get('scope')).toBe('read write');
       expect(url.searchParams.get('state')).toBe('signed-state-token');
       expect(url.searchParams.get('redirect_uri')).toBe(
@@ -148,7 +150,7 @@ describe('ApplicationOAuthProviderFlowService', () => {
           type: JwtTokenTypeEnum.APP_OAUTH_STATE,
           workspaceId: 'workspace-1',
           applicationOAuthProviderId: 'provider-1',
-          scope: 'user',
+          visibility: 'user',
           reconnectingConnectedAccountId: null,
         }),
         expect.objectContaining({ secret: 'derived-secret' }),
@@ -163,7 +165,7 @@ describe('ApplicationOAuthProviderFlowService', () => {
         workspaceId: 'workspace-1',
         userId: 'user-1',
         userWorkspaceId: 'uws-1',
-        scope: 'user',
+        visibility: 'user',
         reconnectingConnectedAccountId: null,
         redirectLocation: null,
       });
@@ -183,7 +185,7 @@ describe('ApplicationOAuthProviderFlowService', () => {
       workspaceId: 'workspace-1',
       userId: 'user-1',
       userWorkspaceId: 'uws-1',
-      scope: 'user' as const,
+      visibility: 'user' as const,
       reconnectingConnectedAccountId: null,
       redirectLocation: null,
       codeVerifier: null,
@@ -227,7 +229,7 @@ describe('ApplicationOAuthProviderFlowService', () => {
           applicationId: 'app-1',
           workspaceId: 'workspace-1',
           userWorkspaceId: 'uws-1',
-          scope: 'user',
+          visibility: 'user',
         }),
       );
       expect(connectedAccountRepository.save).toHaveBeenCalled();
@@ -257,10 +259,10 @@ describe('ApplicationOAuthProviderFlowService', () => {
       expect(connectedAccountRepository.create).not.toHaveBeenCalled();
     });
 
-    it('persists the workspace scope when state asks for it', async () => {
+    it('persists the workspace visibility when state asks for it', async () => {
       jwtWrapperService.verifyJwtToken.mockReturnValue({
         ...stateClaims,
-        scope: 'workspace',
+        visibility: 'workspace',
       });
 
       await service.completeAuthorizationFlow({
@@ -269,7 +271,7 @@ describe('ApplicationOAuthProviderFlowService', () => {
       });
 
       expect(connectedAccountRepository.create).toHaveBeenCalledWith(
-        expect.objectContaining({ scope: 'workspace' }),
+        expect.objectContaining({ visibility: 'workspace' }),
       );
     });
 

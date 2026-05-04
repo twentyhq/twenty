@@ -62,7 +62,7 @@ export class AddApplicationOAuthProviderAndConnectedAccountColumn1777558657640
        ADD COLUMN "applicationOAuthProviderId" uuid,
        ADD COLUMN "applicationId" uuid,
        ADD COLUMN "name" varchar,
-       ADD COLUMN "scope" varchar NOT NULL DEFAULT 'user'`,
+       ADD COLUMN "visibility" varchar NOT NULL DEFAULT 'user'`,
     );
 
     await queryRunner.query(
@@ -107,7 +107,7 @@ export class AddApplicationOAuthProviderAndConnectedAccountColumn1777558657640
 
     await queryRunner.query(
       `ALTER TABLE "core"."connectedAccount"
-       DROP COLUMN "scope",
+       DROP COLUMN "visibility",
        DROP COLUMN "name",
        DROP COLUMN "applicationId",
        DROP COLUMN "applicationOAuthProviderId"`,

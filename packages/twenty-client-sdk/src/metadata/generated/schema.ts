@@ -2243,7 +2243,7 @@ export interface ConnectedAccountDTO {
     applicationConnectionProviderId?: Scalars['UUID']
     applicationId?: Scalars['UUID']
     name?: Scalars['String']
-    scope: Scalars['String']
+    visibility: Scalars['String']
     createdAt: Scalars['DateTime']
     updatedAt: Scalars['DateTime']
     __typename: 'ConnectedAccountDTO'
@@ -2277,7 +2277,7 @@ export interface ConnectedAccountPublicDTO {
     applicationConnectionProviderId?: Scalars['UUID']
     applicationId?: Scalars['UUID']
     name?: Scalars['String']
-    scope: Scalars['String']
+    visibility: Scalars['String']
     createdAt: Scalars['DateTime']
     updatedAt: Scalars['DateTime']
     connectionParameters?: PublicImapSmtpCaldavConnectionParameters
@@ -5257,7 +5257,7 @@ export interface ConnectedAccountDTOGenqlSelection{
     applicationConnectionProviderId?: boolean | number
     applicationId?: boolean | number
     name?: boolean | number
-    scope?: boolean | number
+    visibility?: boolean | number
     createdAt?: boolean | number
     updatedAt?: boolean | number
     __typename?: boolean | number
@@ -5294,7 +5294,7 @@ export interface ConnectedAccountPublicDTOGenqlSelection{
     applicationConnectionProviderId?: boolean | number
     applicationId?: boolean | number
     name?: boolean | number
-    scope?: boolean | number
+    visibility?: boolean | number
     createdAt?: boolean | number
     updatedAt?: boolean | number
     connectionParameters?: PublicImapSmtpCaldavConnectionParametersGenqlSelection

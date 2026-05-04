@@ -47,7 +47,7 @@ const buildAccount = (
     id: 'conn-1',
     name: 'Linear #1',
     handle: 'octocat@example.com',
-    scope: 'user',
+    visibility: 'user',
     applicationId: APP_ID,
     applicationConnectionProviderId: PROVIDER_ID,
     workspaceId: WORKSPACE_ID,
@@ -55,6 +55,8 @@ const buildAccount = (
     provider: ConnectedAccountProvider.APP,
     accessToken: 'enc',
     refreshToken: 'enc',
+    // OAuth scopes granted by the upstream provider — distinct from the
+    // row-level `visibility` field above.
     scopes: ['read', 'write'],
     lastCredentialsRefreshedAt: new Date('2024-01-01T00:00:00Z'),
     authFailedAt: null,
@@ -107,12 +109,12 @@ describe('ApplicationConnectionsListService', () => {
   afterEach(() => jest.clearAllMocks());
 
   describe('list', () => {
-    it('asks SQL to OR (scope = workspace) with (scope = user AND userWorkspaceId = me) when there is a request user', async () => {
+    it('asks SQL to OR (visibility = workspace) with (visibility = user AND userWorkspaceId = me) when there is a request user', async () => {
       connectedAccountRepository.find.mockResolvedValue([
         buildAccount({ id: 'mine' }),
         buildAccount({
           id: 'shared',
-          scope: 'workspace',
+          visibility: 'workspace',
           userWorkspaceId: OTHER_USER_WORKSPACE_ID,
         }),
       ]);
@@ -127,9 +129,9 @@ describe('ApplicationConnectionsListService', () => {
       expect(result.map((c) => c.id).sort()).toEqual(['mine', 'shared']);
       expect(connectedAccountRepository.find).toHaveBeenCalledWith({
         where: [
-          expect.objectContaining({ scope: 'workspace' }),
+          expect.objectContaining({ visibility: 'workspace' }),
           expect.objectContaining({
-            scope: 'user',
+            visibility: 'user',
             userWorkspaceId: REQUEST_USER_WORKSPACE_ID,
           }),
         ],
@@ -154,26 +156,26 @@ describe('ApplicationConnectionsListService', () => {
 
       expect(result.map((c) => c.id).sort()).toEqual(['mine', 'theirs']);
       expect(connectedAccountRepository.find).toHaveBeenCalledWith({
-        where: expect.not.objectContaining({ scope: expect.anything() }),
+        where: expect.not.objectContaining({ visibility: expect.anything() }),
       });
     });
 
-    it('respects filter.scope=user under request-user privacy (regression)', async () => {
-      // Bug guard: an earlier version OR'd { scope: 'workspace' } into the
-      // privacy where regardless of the caller's filter, so requesting
-      // user-scoped only would silently leak workspace-scoped rows back.
+    it('respects filter.visibility=user under request-user privacy (regression)', async () => {
+      // Bug guard: an earlier version OR'd { visibility: 'workspace' } into
+      // the privacy where regardless of the caller's filter, so requesting
+      // user-visibility only would silently leak workspace-shared rows back.
       connectedAccountRepository.find.mockResolvedValue([buildAccount()]);
 
       await service.list({
         applicationId: APP_ID,
         workspaceId: WORKSPACE_ID,
         requestUserWorkspaceId: REQUEST_USER_WORKSPACE_ID,
-        filter: { scope: 'user' },
+        filter: { visibility: 'user' },
       });
 
       expect(connectedAccountRepository.find).toHaveBeenCalledWith({
         where: expect.objectContaining({
-          scope: 'user',
+          visibility: 'user',
           userWorkspaceId: REQUEST_USER_WORKSPACE_ID,
         }),
       });
@@ -183,37 +185,37 @@ describe('ApplicationConnectionsListService', () => {
       expect(Array.isArray(passed.where)).toBe(false);
     });
 
-    it('respects filter.scope=workspace under request-user privacy', async () => {
+    it('respects filter.visibility=workspace under request-user privacy', async () => {
       connectedAccountRepository.find.mockResolvedValue([buildAccount()]);
 
       await service.list({
         applicationId: APP_ID,
         workspaceId: WORKSPACE_ID,
         requestUserWorkspaceId: REQUEST_USER_WORKSPACE_ID,
-        filter: { scope: 'workspace' },
+        filter: { visibility: 'workspace' },
       });
 
       const passed = connectedAccountRepository.find.mock.calls[0][0];
 
       expect(passed.where).toEqual(
-        expect.objectContaining({ scope: 'workspace' }),
+        expect.objectContaining({ visibility: 'workspace' }),
       );
       expect(passed.where).not.toHaveProperty('userWorkspaceId');
       expect(Array.isArray(passed.where)).toBe(false);
     });
 
-    it('passes filter.scope through unchanged in cron context', async () => {
+    it('passes filter.visibility through unchanged in cron context', async () => {
       connectedAccountRepository.find.mockResolvedValue([buildAccount()]);
 
       await service.list({
         applicationId: APP_ID,
         workspaceId: WORKSPACE_ID,
         requestUserWorkspaceId: null,
-        filter: { scope: 'user' },
+        filter: { visibility: 'user' },
       });
 
       expect(connectedAccountRepository.find).toHaveBeenCalledWith({
-        where: expect.objectContaining({ scope: 'user' }),
+        where: expect.objectContaining({ visibility: 'user' }),
       });
     });
 
@@ -262,7 +264,7 @@ describe('ApplicationConnectionsListService', () => {
         providerName: 'linear',
         name: 'Linear #1',
         handle: 'octocat@example.com',
-        scope: 'user',
+        visibility: 'user',
         userWorkspaceId: REQUEST_USER_WORKSPACE_ID,
         accessToken: 'fresh-access',
         scopes: ['read', 'write'],
@@ -339,10 +341,10 @@ describe('ApplicationConnectionsListService', () => {
       expect(result.accessToken).toBe('fresh-access');
     });
 
-    it('returns the connection when scope is workspace, regardless of owner', async () => {
+    it('returns the connection when visibility is workspace, regardless of owner', async () => {
       connectedAccountRepository.findOne.mockResolvedValue(
         buildAccount({
-          scope: 'workspace',
+          visibility: 'workspace',
           userWorkspaceId: OTHER_USER_WORKSPACE_ID,
         }),
       );
@@ -370,7 +372,7 @@ describe('ApplicationConnectionsListService', () => {
       ).rejects.toBeInstanceOf(NotFoundException);
     });
 
-    it('throws NotFound when a request user asks for another user-scoped connection', async () => {
+    it('throws NotFound when a request user asks for another user-visibility connection', async () => {
       connectedAccountRepository.findOne.mockResolvedValue(
         buildAccount({ userWorkspaceId: OTHER_USER_WORKSPACE_ID }),
       );
@@ -385,7 +387,7 @@ describe('ApplicationConnectionsListService', () => {
       ).rejects.toBeInstanceOf(NotFoundException);
     });
 
-    it('returns another user-scoped connection in cron context (no request user)', async () => {
+    it('returns another user-visibility connection in cron context (no request user)', async () => {
       connectedAccountRepository.findOne.mockResolvedValue(
         buildAccount({ userWorkspaceId: OTHER_USER_WORKSPACE_ID }),
       );

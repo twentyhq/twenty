@@ -39,7 +39,7 @@ const StyledFooter = styled.div`
 `;
 
 // Inline split button: a "Add connection" CTA whose click opens a small
-// Dropdown menu with the two scope choices ("Just for me" / "Workspace
+// Dropdown menu with the two visibility choices ("Just for me" / "Workspace
 // shared"). Replaces an earlier full-screen modal that didn't match the
 // rest of the settings UI.
 const AddConnectionDropdown = ({
@@ -47,15 +47,15 @@ const AddConnectionDropdown = ({
   onPick,
 }: {
   provider: FrontendApplicationConnectionProvider;
-  onPick: (scope: 'user' | 'workspace') => void;
+  onPick: (visibility: 'user' | 'workspace') => void;
 }) => {
   const { t } = useLingui();
   const dropdownId = `app-connection-add-${provider.id}`;
   const { closeDropdown } = useCloseDropdown();
 
-  const handleSelect = (scope: 'user' | 'workspace') => {
+  const handleSelect = (visibility: 'user' | 'workspace') => {
     closeDropdown(dropdownId);
-    onPick(scope);
+    onPick(visibility);
   };
 
   return (
@@ -137,7 +137,7 @@ export const SettingsApplicationConnectionsSection = ({
                 items={providerConnections.map((connection) => ({
                   id: connection.id,
                   label: connection.name ?? connection.handle,
-                  scope: connection.scope,
+                  visibility: connection.visibility,
                   authFailedAt: connection.authFailedAt,
                   providerName: provider.name,
                 }))}
@@ -145,9 +145,11 @@ export const SettingsApplicationConnectionsSection = ({
                 RowRightComponent={({ item }) => (
                   <StyledRowRightContainer>
                     <Status
-                      color={item.scope === 'workspace' ? 'blue' : 'gray'}
+                      color={item.visibility === 'workspace' ? 'blue' : 'gray'}
                       text={
-                        item.scope === 'workspace' ? t`Workspace` : t`Just me`
+                        item.visibility === 'workspace'
+                          ? t`Workspace`
+                          : t`Just me`
                       }
                     />
                     {item.authFailedAt && (
@@ -163,7 +165,7 @@ export const SettingsApplicationConnectionsSection = ({
                           triggerAppOAuth({
                             applicationId,
                             providerName: item.providerName,
-                            scope: item.scope,
+                            visibility: item.visibility,
                             reconnectingConnectedAccountId: item.id,
                           })
                         }
@@ -186,11 +188,11 @@ export const SettingsApplicationConnectionsSection = ({
               <StyledFooter>
                 <AddConnectionDropdown
                   provider={provider}
-                  onPick={(scope) =>
+                  onPick={(visibility) =>
                     triggerAppOAuth({
                       applicationId,
                       providerName: provider.name,
-                      scope,
+                      visibility,
                     })
                   }
                 />

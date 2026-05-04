@@ -5103,7 +5103,7 @@ export default {
             "name": [
                 1
             ],
-            "scope": [
+            "visibility": [
                 1
             ],
             "createdAt": [
@@ -5184,7 +5184,7 @@ export default {
             "name": [
                 1
             ],
-            "scope": [
+            "visibility": [
                 1
             ],
             "createdAt": [

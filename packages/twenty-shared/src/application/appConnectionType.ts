@@ -18,9 +18,13 @@ export type AppConnection = {
   // OAuth-derived identifier (typically email or login). Stays stable across
   // reconnects of the same upstream account.
   handle: string;
-  // 'user' = visible only to the user who created it.
-  // 'workspace' = visible to every user in the workspace.
-  scope: 'user' | 'workspace';
+  // Connection-row visibility:
+  //   'user'      = visible only to the user who created it.
+  //   'workspace' = visible to every user in the workspace.
+  // Named `visibility` (not `scope`) to disambiguate from the `scopes`
+  // array below, which is the unrelated set of OAuth permissions granted
+  // by the upstream provider.
+  visibility: 'user' | 'workspace';
   // The userWorkspace that originally created the credential (also the owner
   // for `scope: 'user'` credentials). Match against `event.userWorkspaceId`
   // to resolve the request user's connection.

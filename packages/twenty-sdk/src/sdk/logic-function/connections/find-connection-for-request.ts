@@ -18,7 +18,7 @@ export const findConnectionForRequest = (
   if (event.userWorkspaceId !== null) {
     const personal = connections.find(
       (connection) =>
-        connection.scope === 'user' &&
+        connection.visibility === 'user' &&
         connection.userWorkspaceId === event.userWorkspaceId,
     );
 
@@ -27,9 +27,9 @@ export const findConnectionForRequest = (
     }
   }
 
-  // 2. Any workspace-scoped credential (team-managed service account).
+  // 2. Any workspace-shared credential (team-managed service account).
   const workspaceShared = connections.find(
-    (connection) => connection.scope === 'workspace',
+    (connection) => connection.visibility === 'workspace',
   );
 
   return workspaceShared ?? null;

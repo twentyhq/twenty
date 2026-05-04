@@ -7,8 +7,8 @@ export type ListConnectionsFilter = {
   // Restrict to credentials owned by a specific user. Useful in cron
   // triggers when picking a service-account user via app config.
   userWorkspaceId?: string;
-  // Restrict to one scope.
-  scope?: 'user' | 'workspace';
+  // Restrict by row visibility — 'user' (private) or 'workspace' (shared).
+  visibility?: 'user' | 'workspace';
 };
 
 // Returns every connection owned by the running app, optionally filtered.

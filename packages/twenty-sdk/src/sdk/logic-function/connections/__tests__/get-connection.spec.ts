@@ -19,7 +19,7 @@ const buildConnection = (
   providerName: 'linear',
   name: 'Linear #1',
   handle: 'octocat@example.com',
-  scope: 'user',
+  visibility: 'user',
   userWorkspaceId: 'uws-me',
   accessToken: 'fresh',
   scopes: ['read'],

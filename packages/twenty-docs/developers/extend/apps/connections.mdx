@@ -106,10 +106,10 @@ export const createLinearIssueHandler = async (input: {
   const connections = await listConnections({ providerName: 'linear' });
 
   // Workspace-shared credentials win when present; fall back to the first
-  // user-scoped one. For HTTP-route triggers you typically pick the request
-  // user's connection via event.userWorkspaceId instead.
+  // user-visibility one. For HTTP-route triggers you typically pick the
+  // request user's connection via event.userWorkspaceId instead.
   const connection =
-    connections.find((c) => c.scope === 'workspace') ?? connections[0];
+    connections.find((c) => c.visibility === 'workspace') ?? connections[0];
 
   if (!connection) {
     return {
@@ -140,7 +140,8 @@ Each connection has:
 | Field             | Description                                                                                              |
 | ----------------- | -------------------------------------------------------------------------------------------------------- |
 | `id`              | Unique row id; pass to `getConnection(id)` to refetch a single one                                       |
-| `scope`           | `'user'` (private to one workspace member) or `'workspace'` (shared with all members)                    |
+| `visibility`      | `'user'` (private to one workspace member) or `'workspace'` (shared with all members)                    |
+| `scopes`          | OAuth permissions granted by the upstream provider (distinct from `visibility` — those are unrelated)    |
 | `userWorkspaceId` | The owner's userWorkspace id — useful for picking "the request user's connection" in HTTP-route triggers |
 | `accessToken`     | Fresh OAuth access token (refreshed automatically if expired)                                            |
 | `name` / `handle` | The connection's display name (auto-derived at OAuth callback, user-renameable)                          |
@@ -148,15 +149,15 @@ Each connection has:
 
 Key points:
 
-- Pass `{ providerName }` to scope by provider; omit it to get all connections this app owns across all providers.
+- Pass `{ providerName }` to filter by provider; omit it to get all connections this app owns across all providers.
 - The server transparently refreshes the access token before returning. Your handler always sees a usable token (or `authFailedAt` set).
 - `getConnection(id)` is the single-row equivalent.
 
 </Accordion>
 
-<Accordion title="Per-user vs workspace-shared scope" description="How users choose between private and shared credentials">
+<Accordion title="Per-user vs workspace-shared visibility" description="How users choose between private and shared credentials">
 
-When a user clicks "Add connection," they're prompted to pick a scope:
+When a user clicks "Add connection," they're prompted to pick a visibility:
 
 - **Just for me** — the credential is private to the connecting user. Any logic function called on their behalf (HTTP-route trigger with `isAuthRequired: true`) sees it; cron triggers and database events do not.
 - **Workspace shared** — any workspace member can use the credential. Cron / database triggers also see it, since they have no request user.
@@ -167,10 +168,10 @@ Use the right one for each handler:
 // HTTP-route trigger — prefer the request user's own connection.
 const conn =
   connections.find((c) => c.userWorkspaceId === event.userWorkspaceId) ??
-  connections.find((c) => c.scope === 'workspace');
+  connections.find((c) => c.visibility === 'workspace');
 
 // Cron trigger — no request user; only shared credentials are sensible.
-const conn = connections.find((c) => c.scope === 'workspace');
+const conn = connections.find((c) => c.visibility === 'workspace');
 ```
 
 Multiple connections per (user, provider) are allowed, so the same user can hold "Personal Linear" and "Work Linear" side by side.

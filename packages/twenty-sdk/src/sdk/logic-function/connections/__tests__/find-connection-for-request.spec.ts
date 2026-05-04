@@ -10,7 +10,7 @@ const buildConnection = (
   providerName: 'linear',
   name: 'Linear #1',
   handle: 'octocat@example.com',
-  scope: 'user',
+  visibility: 'user',
   userWorkspaceId: 'uws-me',
   accessToken: 'token-fresh',
   scopes: ['read'],
@@ -25,7 +25,7 @@ describe('findConnectionForRequest', () => {
       id: 'theirs',
       userWorkspaceId: 'uws-other',
     });
-    const shared = buildConnection({ id: 'shared', scope: 'workspace' });
+    const shared = buildConnection({ id: 'shared', visibility: 'workspace' });
 
     expect(
       findConnectionForRequest([someoneElses, shared, personal], {
@@ -39,7 +39,7 @@ describe('findConnectionForRequest', () => {
       id: 'theirs',
       userWorkspaceId: 'uws-other',
     });
-    const shared = buildConnection({ id: 'shared', scope: 'workspace' });
+    const shared = buildConnection({ id: 'shared', visibility: 'workspace' });
 
     expect(
       findConnectionForRequest([someoneElses, shared], {
@@ -51,7 +51,7 @@ describe('findConnectionForRequest', () => {
   it('returns workspace-shared even when event.userWorkspaceId is null', () => {
     // Cron / DB-event triggers carry no user context. The handler should still
     // be able to lean on a workspace-shared credential.
-    const shared = buildConnection({ id: 'shared', scope: 'workspace' });
+    const shared = buildConnection({ id: 'shared', visibility: 'workspace' });
 
     expect(findConnectionForRequest([shared], { userWorkspaceId: null })).toBe(
       shared,
@@ -79,7 +79,7 @@ describe('findConnectionForRequest', () => {
     // Even when the workspace-shared row appears first in the array, the
     // personal one wins — we never want a request user to silently fall
     // through to a service-account credential.
-    const shared = buildConnection({ id: 'shared', scope: 'workspace' });
+    const shared = buildConnection({ id: 'shared', visibility: 'workspace' });
     const personal = buildConnection({ id: 'mine', userWorkspaceId: 'uws-me' });
 
     expect(

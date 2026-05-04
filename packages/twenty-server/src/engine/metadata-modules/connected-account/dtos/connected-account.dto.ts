@@ -87,9 +87,12 @@ export class ConnectedAccountDTO {
   @Field(() => String, { nullable: true })
   name: string | null;
 
+  // 'user' = private to the connecting user.
+  // 'workspace' = shared with all members.
+  // Named `visibility` to disambiguate from the OAuth `scopes` array.
   @IsString()
   @Field(() => String)
-  scope: string;
+  visibility: string;
 
   @HideField()
   workspaceId: string;

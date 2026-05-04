@@ -20,7 +20,10 @@ import { type CalendarChannelEntity } from 'src/engine/metadata-modules/calendar
 import { type MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/workspace-related-entity';
 
-export type ConnectedAccountScope = 'user' | 'workspace';
+// Distinguishes who can use this credential. Named `visibility` (not
+// `scope`) so it doesn't clash with the OAuth `scopes` array on the same
+// row — those are unrelated concepts that used to differ by one letter.
+export type ConnectedAccountVisibility = 'user' | 'workspace';
 
 @Entity({ name: 'connectedAccount', schema: 'core' })
 @Index('IDX_CONNECTED_ACCOUNT_APP_OAUTH_PROVIDER_ID', [
@@ -91,7 +94,7 @@ export class ConnectedAccountEntity extends WorkspaceRelatedEntity {
   name: string | null;
 
   @Column({ type: 'varchar', nullable: false, default: 'user' })
-  scope: ConnectedAccountScope;
+  visibility: ConnectedAccountVisibility;
 
   @OneToMany(
     'MessageChannelEntity',
