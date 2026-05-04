@@ -42,7 +42,7 @@ export const workspaceMigrationBuilderExceptionFormatter = (
     });
 
   throw new BaseGraphQLError(
-    primaryUserFriendlyMessage ?? error.message,
+    error.message,
     ErrorCode.METADATA_VALIDATION_FAILED,
     {
       code: 'METADATA_VALIDATION_ERROR',
