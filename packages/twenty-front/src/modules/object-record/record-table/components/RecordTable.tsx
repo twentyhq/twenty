@@ -1,7 +1,6 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { useRef } from 'react';
 import { styled } from '@linaria/react';
-import { keyframes } from '@linaria/core';
 
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { hasRecordGroupsComponentSelector } from '@/object-record/record-group/states/selectors/hasRecordGroupsComponentSelector';
@@ -21,18 +20,6 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import isEmpty from 'lodash.isempty';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-const loadingSlide = keyframes`
-  0% {
-    transform: translateX(-100%);
-  }
-  60% {
-    transform: translateX(0%);
-  }
-  100% {
-    transform: translateX(100%);
-  }
-`;
-
 const StyledLoadingBarWrapper = styled.div`
   height: 2px;
   left: 0;
@@ -44,7 +31,7 @@ const StyledLoadingBarWrapper = styled.div`
 `;
 
 const StyledLoadingBar = styled.div`
-  animation: ${loadingSlide} 1.4s ease-in-out infinite;
+  animation: loading-slide 1.4s ease-in-out infinite;
   background: linear-gradient(
     90deg,
     transparent 0%,
@@ -54,6 +41,18 @@ const StyledLoadingBar = styled.div`
   );
   height: 100%;
   width: 60%;
+
+  @keyframes loading-slide {
+    0% {
+      transform: translateX(-100%);
+    }
+    60% {
+      transform: translateX(0%);
+    }
+    100% {
+      transform: translateX(100%);
+    }
+  }
 `;
 
 const StyledTableWrapper = styled.div`
