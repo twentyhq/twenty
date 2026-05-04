@@ -1,3 +1,4 @@
+import { v4 as uuidv4 } from 'uuid';
 import {
   type WorkflowStep,
   type WorkflowTrigger,
@@ -5,11 +6,19 @@ import {
 import { StepStatus, type WorkflowRunStepInfos } from 'twenty-shared/workflow';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { generateWorkflowRunDiagram } from '@/workflow/workflow-diagram/utils/generateWorkflowRunDiagram';
-import { setupUuidV4Mock } from '~/testing/utils/setupUuidV4Mock';
 
 jest.mock('uuid');
 
-setupUuidV4Mock();
+beforeEach(() => {
+  let counter = 0;
+  (uuidv4 as jest.Mock).mockImplementation(
+    () => `8f3b2121-f194-4ba4-9fbf-${counter++}`,
+  );
+});
+
+afterAll(() => {
+  jest.resetAllMocks();
+});
 
 describe('generateWorkflowRunDiagram', () => {
   it('marks node as failed when the last attempt failed', () => {
