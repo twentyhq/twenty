@@ -8,11 +8,19 @@ describe('getMatchingRecordId', () => {
       id: 'recordId1',
       uniqueText: 'alpha',
       emailsField: { primaryEmail: 'alpha@example.com' },
+      phonesField: {
+        primaryPhoneNumber: '123456789',
+        primaryPhoneCallingCode: '+1',
+      },
     },
     {
       id: 'recordId2',
       uniqueText: 'beta',
       emailsField: { primaryEmail: 'beta@example.com' },
+      phonesField: {
+        primaryPhoneNumber: '123456789',
+        primaryPhoneCallingCode: '+32',
+      },
     },
   ];
 
@@ -32,6 +40,58 @@ describe('getMatchingRecordId', () => {
     const id = getMatchingRecordId(record, conflictingFields, existingRecords);
 
     expect(id).toBe('recordId1');
+  });
+
+  it('returns the matching record id when every composite unique field matches the same existing record', () => {
+    const record = {
+      phonesField: {
+        primaryPhoneNumber: '123456789',
+        primaryPhoneCallingCode: '+32',
+      },
+    };
+
+    const conflictingFields = [
+      {
+        baseField: 'phonesField',
+        fullPath: 'phonesField.primaryPhoneNumber',
+        column: 'phonesFieldPrimaryPhoneNumber',
+      },
+      {
+        baseField: 'phonesField',
+        fullPath: 'phonesField.primaryPhoneCallingCode',
+        column: 'phonesFieldPrimaryPhoneCallingCode',
+      },
+    ];
+
+    const id = getMatchingRecordId(record, conflictingFields, existingRecords);
+
+    expect(id).toBe('recordId2');
+  });
+
+  it('returns undefined when only part of a composite unique field matches', () => {
+    const record = {
+      phonesField: {
+        primaryPhoneNumber: '123456789',
+        primaryPhoneCallingCode: '+33',
+      },
+    };
+
+    const conflictingFields = [
+      {
+        baseField: 'phonesField',
+        fullPath: 'phonesField.primaryPhoneNumber',
+        column: 'phonesFieldPrimaryPhoneNumber',
+      },
+      {
+        baseField: 'phonesField',
+        fullPath: 'phonesField.primaryPhoneCallingCode',
+        column: 'phonesFieldPrimaryPhoneCallingCode',
+      },
+    ];
+
+    const id = getMatchingRecordId(record, conflictingFields, existingRecords);
+
+    expect(id).toBeUndefined();
   });
 
   it('returns undefined when no existing record matches any conflicting field', () => {

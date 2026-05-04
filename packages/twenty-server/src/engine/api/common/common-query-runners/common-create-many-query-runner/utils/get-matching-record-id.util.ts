@@ -18,20 +18,37 @@ export const getMatchingRecordId = (
   }[],
   existingRecords: PartialObjectRecordWithId[],
 ): string | undefined => {
-  const matchingRecordIds = conflictingFields.reduce<string[]>((acc, field) => {
-    const requestFieldValue = getValueFromPath(record, field.fullPath);
+  const conflictingFieldsByBaseField = conflictingFields.reduce(
+    (acc, field) => {
+      acc[field.baseField] = [...(acc[field.baseField] ?? []), field];
 
-    const matchingRecord = existingRecords.find((existingRecord) => {
-      const existingFieldValue = getValueFromPath(
-        existingRecord,
-        field.fullPath,
-      );
+      return acc;
+    },
+    {} as Record<string, typeof conflictingFields>,
+  );
 
-      return (
-        isDefined(existingFieldValue) &&
-        existingFieldValue === requestFieldValue
-      );
-    });
+  const matchingRecordIds = Object.values(conflictingFieldsByBaseField).reduce<
+    string[]
+  >((acc, fields) => {
+    const requestFieldValues = fields.map((field) => ({
+      field,
+      value: getValueFromPath(record, field.fullPath),
+    }));
+
+    if (requestFieldValues.some(({ value }) => !isDefined(value))) {
+      return acc;
+    }
+
+    const matchingRecord = existingRecords.find((existingRecord) =>
+      requestFieldValues.every(({ field, value }) => {
+        const existingFieldValue = getValueFromPath(
+          existingRecord,
+          field.fullPath,
+        );
+
+        return isDefined(existingFieldValue) && existingFieldValue === value;
+      }),
+    );
 
     if (isDefined(matchingRecord)) {
       acc.push(matchingRecord.id);

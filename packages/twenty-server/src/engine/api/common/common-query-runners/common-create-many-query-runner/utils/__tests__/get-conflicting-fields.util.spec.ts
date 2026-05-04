@@ -54,6 +54,13 @@ describe('getConflictingFields', () => {
     isUnique: true,
   });
 
+  const phonesUniqueField = createMockField({
+    id: 'phones-unique-id',
+    name: 'phonesField',
+    type: FieldMetadataType.PHONES,
+    isUnique: true,
+  });
+
   const phonesNotUniqueField = createMockField({
     id: 'phones-not-unique-id',
     name: 'phonesField',
@@ -155,6 +162,31 @@ describe('getConflictingFields', () => {
         },
       ]),
     );
+  });
+
+  it('returns every included unique property for phone composite fields', () => {
+    const fields = [idField, phonesUniqueField];
+    const flatObjectMetadata = buildFlatObjectMetadata(fields);
+    const flatFieldMetadataMaps = buildFlatFieldMetadataMaps(fields);
+
+    const result = getConflictingFields(
+      flatObjectMetadata,
+      flatFieldMetadataMaps,
+    );
+
+    expect(result).toEqual([
+      { baseField: 'id', fullPath: 'id', column: 'id' },
+      {
+        baseField: 'phonesField',
+        fullPath: 'phonesField.primaryPhoneNumber',
+        column: 'phonesFieldPrimaryPhoneNumber',
+      },
+      {
+        baseField: 'phonesField',
+        fullPath: 'phonesField.primaryPhoneCallingCode',
+        column: 'phonesFieldPrimaryPhoneCallingCode',
+      },
+    ]);
   });
 
   it('does not include composite fields without included unique property', () => {
