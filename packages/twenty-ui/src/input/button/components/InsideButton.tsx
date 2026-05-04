@@ -27,7 +27,10 @@ const StyledButton = styled.button`
   transition: background-color 0.1s ease;
 
   &:hover {
-    background-color: ${themeCssVariables.background.transparent.light};
+    background-color: ${({ disabled }) =>
+      !disabled
+        ? themeCssVariables.background.transparent.light
+        : 'transparent'};
   }
 `;
 

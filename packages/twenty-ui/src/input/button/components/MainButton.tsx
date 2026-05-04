@@ -77,13 +77,22 @@ const StyledButton = styled.button<
     fullWidth ? '100%' : width ? `${width}px` : 'auto'};
   &:hover {
     background: ${({ variant, disabled }) => {
+      if (disabled) {
+        switch (variant) {
+          case 'primary':
+            return themeCssVariables.background.secondary;
+          case 'secondary':
+            return themeCssVariables.background.primary;
+          default:
+            return themeCssVariables.background.primary;
+        }
+      }
+
       switch (variant) {
         case 'secondary':
           return themeCssVariables.background.tertiary;
         default:
-          return !disabled
-            ? themeCssVariables.background.primaryInvertedHover
-            : themeCssVariables.background.secondary;
+          return themeCssVariables.background.primaryInvertedHover;
       }
     }};
   }

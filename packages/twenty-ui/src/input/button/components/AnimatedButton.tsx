@@ -90,7 +90,9 @@ const computeAnimatedButtonDynamicStyles = (
           break;
         case 'blue':
           result.background = !inverted
-            ? themeCssVariables.color.blue
+            ? disabled
+              ? themeCssVariables.accent.accent4060
+              : themeCssVariables.color.blue
             : themeCssVariables.background.primary;
           result.borderColor = !inverted
             ? focus
@@ -270,7 +272,9 @@ const computeAnimatedButtonDynamicStyles = (
                 }`
               : 'none';
           result.color = !inverted
-            ? themeCssVariables.font.color.danger
+            ? !disabled
+              ? themeCssVariables.font.color.danger
+              : themeCssVariables.color.red5
             : themeCssVariables.font.color.inverted;
           result.hoverBackground = !inverted
             ? !disabled
