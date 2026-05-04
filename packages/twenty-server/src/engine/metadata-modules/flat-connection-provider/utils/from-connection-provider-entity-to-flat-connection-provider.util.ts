@@ -1,6 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { type ApplicationOAuthProviderEntity } from 'src/engine/core-modules/application/application-oauth-provider/application-oauth-provider.entity';
+import { type ConnectionProviderEntity } from 'src/engine/core-modules/application/connection-provider/connection-provider.entity';
 import {
   FlatEntityMapsException,
   FlatEntityMapsExceptionCode,
@@ -31,15 +31,8 @@ export const fromConnectionProviderEntityToFlatConnectionProvider = ({
     workspaceId: connectionProviderEntity.workspaceId,
     name: connectionProviderEntity.name,
     displayName: connectionProviderEntity.displayName,
-    authorizationEndpoint: connectionProviderEntity.authorizationEndpoint,
-    tokenEndpoint: connectionProviderEntity.tokenEndpoint,
-    revokeEndpoint: connectionProviderEntity.revokeEndpoint,
-    scopes: connectionProviderEntity.scopes,
-    clientIdVariable: connectionProviderEntity.clientIdVariable,
-    clientSecretVariable: connectionProviderEntity.clientSecretVariable,
-    authorizationParams: connectionProviderEntity.authorizationParams,
-    tokenRequestContentType: connectionProviderEntity.tokenRequestContentType,
-    usePkce: connectionProviderEntity.usePkce,
+    type: connectionProviderEntity.type,
+    oauthConfig: connectionProviderEntity.oauthConfig,
     createdAt: connectionProviderEntity.createdAt.toISOString(),
     updatedAt: connectionProviderEntity.updatedAt.toISOString(),
     deletedAt: connectionProviderEntity.deletedAt?.toISOString() ?? null,

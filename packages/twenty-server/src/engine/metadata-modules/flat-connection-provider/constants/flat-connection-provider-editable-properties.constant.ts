@@ -9,13 +9,6 @@ import { type MetadataEntityPropertyName } from 'src/engine/metadata-modules/fla
 //     would break references; treat as immutable until we have a rename flow
 export const FLAT_CONNECTION_PROVIDER_EDITABLE_PROPERTIES = [
   'displayName',
-  'authorizationEndpoint',
-  'tokenEndpoint',
-  'revokeEndpoint',
-  'scopes',
-  'clientIdVariable',
-  'clientSecretVariable',
-  'authorizationParams',
-  'tokenRequestContentType',
-  'usePkce',
+  'type',
+  'oauthConfig',
 ] as const satisfies MetadataEntityPropertyName<'connectionProvider'>[];

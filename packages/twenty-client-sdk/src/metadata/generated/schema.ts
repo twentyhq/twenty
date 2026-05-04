@@ -2239,7 +2239,7 @@ export interface ConnectedAccountDTO {
     connectionParameters?: ImapSmtpCaldavConnectionParameters
     lastSignedInAt?: Scalars['DateTime']
     userWorkspaceId: Scalars['UUID']
-    applicationConnectionProviderId?: Scalars['UUID']
+    connectionProviderId?: Scalars['UUID']
     applicationId?: Scalars['UUID']
     name?: Scalars['String']
     visibility: Scalars['String']
@@ -2273,7 +2273,7 @@ export interface ConnectedAccountPublicDTO {
     scopes?: Scalars['String'][]
     lastSignedInAt?: Scalars['DateTime']
     userWorkspaceId: Scalars['UUID']
-    applicationConnectionProviderId?: Scalars['UUID']
+    connectionProviderId?: Scalars['UUID']
     applicationId?: Scalars['UUID']
     name?: Scalars['String']
     visibility: Scalars['String']
@@ -5252,7 +5252,7 @@ export interface ConnectedAccountDTOGenqlSelection{
     connectionParameters?: ImapSmtpCaldavConnectionParametersGenqlSelection
     lastSignedInAt?: boolean | number
     userWorkspaceId?: boolean | number
-    applicationConnectionProviderId?: boolean | number
+    connectionProviderId?: boolean | number
     applicationId?: boolean | number
     name?: boolean | number
     visibility?: boolean | number
@@ -5289,7 +5289,7 @@ export interface ConnectedAccountPublicDTOGenqlSelection{
     scopes?: boolean | number
     lastSignedInAt?: boolean | number
     userWorkspaceId?: boolean | number
-    applicationConnectionProviderId?: boolean | number
+    connectionProviderId?: boolean | number
     applicationId?: boolean | number
     name?: boolean | number
     visibility?: boolean | number

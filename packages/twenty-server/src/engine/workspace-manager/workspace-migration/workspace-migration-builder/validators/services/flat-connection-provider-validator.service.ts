@@ -5,7 +5,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
-import { ApplicationOAuthProviderExceptionCode } from 'src/engine/core-modules/application/application-oauth-provider/application-oauth-provider-exception-code.enum';
+import { ConnectionProviderExceptionCode } from 'src/engine/core-modules/application/connection-provider/connection-provider-exception-code.enum';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
@@ -33,7 +33,7 @@ export class FlatConnectionProviderValidatorService {
 
     if (!isNonEmptyString(flatConnectionProvider.name)) {
       validationResult.errors.push({
-        code: ApplicationOAuthProviderExceptionCode.INVALID_CONNECTION_PROVIDER_INPUT,
+        code: ConnectionProviderExceptionCode.INVALID_CONNECTION_PROVIDER_INPUT,
         message: t`Connection provider name is required`,
         userFriendlyMessage: msg`Connection provider name is required`,
       });
@@ -41,42 +41,42 @@ export class FlatConnectionProviderValidatorService {
 
     if (!isNonEmptyString(flatConnectionProvider.displayName)) {
       validationResult.errors.push({
-        code: ApplicationOAuthProviderExceptionCode.INVALID_CONNECTION_PROVIDER_INPUT,
+        code: ConnectionProviderExceptionCode.INVALID_CONNECTION_PROVIDER_INPUT,
         message: t`Connection provider displayName is required`,
         userFriendlyMessage: msg`Connection provider display name is required`,
       });
     }
 
-    if (!isNonEmptyString(flatConnectionProvider.authorizationEndpoint)) {
-      validationResult.errors.push({
-        code: ApplicationOAuthProviderExceptionCode.INVALID_CONNECTION_PROVIDER_INPUT,
-        message: t`Connection provider authorizationEndpoint is required`,
-        userFriendlyMessage: msg`OAuth authorizationEndpoint is required`,
-      });
-    }
+    if (flatConnectionProvider.type === 'oauth') {
+      const oauthConfig = flatConnectionProvider.oauthConfig;
 
-    if (!isNonEmptyString(flatConnectionProvider.tokenEndpoint)) {
-      validationResult.errors.push({
-        code: ApplicationOAuthProviderExceptionCode.INVALID_CONNECTION_PROVIDER_INPUT,
-        message: t`Connection provider tokenEndpoint is required`,
-        userFriendlyMessage: msg`OAuth tokenEndpoint is required`,
-      });
-    }
+      if (!isDefined(oauthConfig)) {
+        validationResult.errors.push({
+          code: ConnectionProviderExceptionCode.INVALID_CONNECTION_PROVIDER_INPUT,
+          message: t`Connection provider with type 'oauth' is missing oauthConfig`,
+          userFriendlyMessage: msg`OAuth connection provider is missing its oauth config block`,
+        });
+      } else {
+        const requiredOAuthFields: Array<{
+          key: keyof typeof oauthConfig;
+          label: string;
+        }> = [
+          { key: 'authorizationEndpoint', label: 'authorizationEndpoint' },
+          { key: 'tokenEndpoint', label: 'tokenEndpoint' },
+          { key: 'clientIdVariable', label: 'clientIdVariable' },
+          { key: 'clientSecretVariable', label: 'clientSecretVariable' },
+        ];
 
-    if (!isNonEmptyString(flatConnectionProvider.clientIdVariable)) {
-      validationResult.errors.push({
-        code: ApplicationOAuthProviderExceptionCode.INVALID_CONNECTION_PROVIDER_INPUT,
-        message: t`Connection provider clientIdVariable is required`,
-        userFriendlyMessage: msg`OAuth clientIdVariable is required`,
-      });
-    }
-
-    if (!isNonEmptyString(flatConnectionProvider.clientSecretVariable)) {
-      validationResult.errors.push({
-        code: ApplicationOAuthProviderExceptionCode.INVALID_CONNECTION_PROVIDER_INPUT,
-        message: t`Connection provider clientSecretVariable is required`,
-        userFriendlyMessage: msg`OAuth clientSecretVariable is required`,
-      });
+        for (const { key, label } of requiredOAuthFields) {
+          if (!isNonEmptyString(oauthConfig[key])) {
+            validationResult.errors.push({
+              code: ConnectionProviderExceptionCode.INVALID_CONNECTION_PROVIDER_INPUT,
+              message: t`Connection provider oauthConfig.${label} is required`,
+              userFriendlyMessage: msg`OAuth ${label} is required`,
+            });
+          }
+        }
+      }
     }
 
     // (name, applicationId) is unique on the table — guard at validation
@@ -98,7 +98,7 @@ export class FlatConnectionProviderValidatorService {
 
     if (isDefined(existingByName)) {
       validationResult.errors.push({
-        code: ApplicationOAuthProviderExceptionCode.CONNECTION_PROVIDER_NAME_ALREADY_EXISTS,
+        code: ConnectionProviderExceptionCode.CONNECTION_PROVIDER_NAME_ALREADY_EXISTS,
         message: t`Connection provider with name ${flatConnectionProvider.name} already exists for this application`,
         userFriendlyMessage: msg`A connection provider with this name already exists for this application`,
       });
@@ -131,7 +131,7 @@ export class FlatConnectionProviderValidatorService {
 
     if (!isDefined(existingConnectionProvider)) {
       validationResult.errors.push({
-        code: ApplicationOAuthProviderExceptionCode.CONNECTION_PROVIDER_NOT_FOUND,
+        code: ConnectionProviderExceptionCode.CONNECTION_PROVIDER_NOT_FOUND,
         message: t`Connection provider not found`,
         userFriendlyMessage: msg`Connection provider not found`,
       });
@@ -165,7 +165,7 @@ export class FlatConnectionProviderValidatorService {
 
     if (!isDefined(fromFlatConnectionProvider)) {
       validationResult.errors.push({
-        code: ApplicationOAuthProviderExceptionCode.CONNECTION_PROVIDER_NOT_FOUND,
+        code: ConnectionProviderExceptionCode.CONNECTION_PROVIDER_NOT_FOUND,
         message: t`Connection provider not found`,
         userFriendlyMessage: msg`Connection provider not found`,
       });

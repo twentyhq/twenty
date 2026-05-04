@@ -5,7 +5,7 @@ import { IsNull, Repository } from 'typeorm';
 
 import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
 
-import { ApplicationOAuthProviderEntity } from 'src/engine/core-modules/application/application-oauth-provider/application-oauth-provider.entity';
+import { ConnectionProviderEntity } from 'src/engine/core-modules/application/connection-provider/connection-provider.entity';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type FlatConnectionProviderMaps } from 'src/engine/metadata-modules/flat-connection-provider/types/flat-connection-provider-maps.type';
@@ -18,8 +18,8 @@ import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/
 @WorkspaceCache('flatConnectionProviderMaps')
 export class WorkspaceFlatConnectionProviderMapCacheService extends WorkspaceCacheProvider<FlatConnectionProviderMaps> {
   constructor(
-    @InjectRepository(ApplicationOAuthProviderEntity)
-    private readonly connectionProviderRepository: Repository<ApplicationOAuthProviderEntity>,
+    @InjectRepository(ConnectionProviderEntity)
+    private readonly connectionProviderRepository: Repository<ConnectionProviderEntity>,
     @InjectRepository(ApplicationEntity)
     private readonly applicationRepository: Repository<ApplicationEntity>,
   ) {

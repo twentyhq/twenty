@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
-import { ApplicationOAuthProviderEntity } from 'src/engine/core-modules/application/application-oauth-provider/application-oauth-provider.entity';
+import { ConnectionProviderEntity } from 'src/engine/core-modules/application/connection-provider/connection-provider.entity';
 import {
   FlatDeleteConnectionProviderAction,
   UniversalDeleteConnectionProviderAction,
@@ -33,8 +33,8 @@ export class DeleteConnectionProviderActionHandlerService extends WorkspaceMigra
     const { flatAction, queryRunner, workspaceId } = context;
 
     const connectionProviderRepository =
-      queryRunner.manager.getRepository<ApplicationOAuthProviderEntity>(
-        ApplicationOAuthProviderEntity,
+      queryRunner.manager.getRepository<ConnectionProviderEntity>(
+        ConnectionProviderEntity,
       );
 
     await connectionProviderRepository.delete({

@@ -25,29 +25,31 @@ const buildManifest = (
   }) as ConnectionProviderManifest;
 
 describe('fromConnectionProviderManifestToUniversalFlatConnectionProvider', () => {
-  it('produces a universal flat entity that matches the manifest 1:1 for required fields', () => {
-    const result = fromConnectionProviderManifestToUniversalFlatConnectionProvider(
-      {
+  it('moves OAuth manifest fields into the resolved oauthConfig blob with defaults filled', () => {
+    const result =
+      fromConnectionProviderManifestToUniversalFlatConnectionProvider({
         connectionProviderManifest: buildManifest(),
         applicationUniversalIdentifier: APP_UID,
         now: NOW,
-      },
-    );
+      });
 
     expect(result).toEqual({
       universalIdentifier: PROVIDER_UID,
       applicationUniversalIdentifier: APP_UID,
       name: 'linear',
       displayName: 'Linear',
-      authorizationEndpoint: 'https://linear.app/oauth/authorize',
-      tokenEndpoint: 'https://api.linear.app/oauth/token',
-      revokeEndpoint: null,
-      scopes: ['read', 'write'],
-      clientIdVariable: 'LINEAR_CLIENT_ID',
-      clientSecretVariable: 'LINEAR_CLIENT_SECRET',
-      authorizationParams: null,
-      tokenRequestContentType: 'json',
-      usePkce: true,
+      type: 'oauth',
+      oauthConfig: {
+        authorizationEndpoint: 'https://linear.app/oauth/authorize',
+        tokenEndpoint: 'https://api.linear.app/oauth/token',
+        revokeEndpoint: null,
+        scopes: ['read', 'write'],
+        clientIdVariable: 'LINEAR_CLIENT_ID',
+        clientSecretVariable: 'LINEAR_CLIENT_SECRET',
+        authorizationParams: null,
+        tokenRequestContentType: 'json',
+        usePkce: true,
+      },
       createdAt: NOW,
       updatedAt: NOW,
       deletedAt: null,
@@ -55,8 +57,8 @@ describe('fromConnectionProviderManifestToUniversalFlatConnectionProvider', () =
   });
 
   it('passes through optional oauth config when provided', () => {
-    const result = fromConnectionProviderManifestToUniversalFlatConnectionProvider(
-      {
+    const result =
+      fromConnectionProviderManifestToUniversalFlatConnectionProvider({
         connectionProviderManifest: buildManifest({
           oauth: {
             authorizationEndpoint: 'https://linear.app/oauth/authorize',
@@ -72,10 +74,9 @@ describe('fromConnectionProviderManifestToUniversalFlatConnectionProvider', () =
         }),
         applicationUniversalIdentifier: APP_UID,
         now: NOW,
-      },
-    );
+      });
 
-    expect(result).toMatchObject({
+    expect(result.oauthConfig).toMatchObject({
       revokeEndpoint: 'https://api.linear.app/oauth/revoke',
       authorizationParams: { prompt: 'consent' },
       tokenRequestContentType: 'form-urlencoded',
@@ -84,15 +85,14 @@ describe('fromConnectionProviderManifestToUniversalFlatConnectionProvider', () =
   });
 
   it('defaults to json content-type and PKCE-on when oauth config omits them', () => {
-    const result = fromConnectionProviderManifestToUniversalFlatConnectionProvider(
-      {
+    const result =
+      fromConnectionProviderManifestToUniversalFlatConnectionProvider({
         connectionProviderManifest: buildManifest(),
         applicationUniversalIdentifier: APP_UID,
         now: NOW,
-      },
-    );
+      });
 
-    expect(result.tokenRequestContentType).toBe('json');
-    expect(result.usePkce).toBe(true);
+    expect(result.oauthConfig?.tokenRequestContentType).toBe('json');
+    expect(result.oauthConfig?.usePkce).toBe(true);
   });
 });
