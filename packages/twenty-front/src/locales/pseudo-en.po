@@ -199,6 +199,12 @@ msgstr ""
 msgid "{0} widgets"
 msgstr ""
 
+#. js-lingui-id: xTgz1F
+#. placeholder {1}: provider.displayName
+#: src/pages/settings/applications/tabs/SettingsApplicationConnectionsSection.tsx
+msgid "{1} OAuth is not yet set up by your server administrator. They need to fill in the OAuth client ID and secret on the application registration before you can add a connection."
+msgstr ""
+
 #. js-lingui-id: qdQhzv
 #: src/modules/views/advanced-filter-chip/components/AdvancedFilterChip.tsx
 msgid "{advancedFilterCount, plural, one {{advancedFilterCount} advanced rule} other {{advancedFilterCount} advanced rules}}"
@@ -438,6 +444,11 @@ msgstr ""
 msgid "{roleTargetName} will be assigned to the \"{newRoleName}\" role."
 msgstr ""
 
+#. js-lingui-id: UsskHt
+#: src/modules/settings/applications/hooks/useComputeApplicationContentForLayoutAndLogic.ts
+msgid "{scopeCount} scopes"
+msgstr ""
+
 #. js-lingui-id: kvVMdH
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
 msgid "{selectedCount, plural, one {Delete {selectedCount} Job} other {Delete {selectedCount} Jobs}}"
@@ -541,6 +552,11 @@ msgstr ""
 #. js-lingui-id: gphxoA
 #: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 msgid "1 day"
+msgstr ""
+
+#. js-lingui-id: Mkh9C8
+#: src/modules/settings/applications/hooks/useComputeApplicationContentForLayoutAndLogic.ts
+msgid "1 scope"
 msgstr ""
 
 #. js-lingui-id: W/OU4i
@@ -985,6 +1001,11 @@ msgstr ""
 #. js-lingui-id: 02qdT/
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
 msgid "Add CC"
+msgstr ""
+
+#. js-lingui-id: Rop0cs
+#: src/pages/settings/applications/tabs/SettingsApplicationConnectionsSection.tsx
+msgid "Add connection"
 msgstr ""
 
 #. js-lingui-id: RVp8im
@@ -3708,6 +3729,11 @@ msgstr ""
 msgid "Connected accounts"
 msgstr ""
 
+#. js-lingui-id: sbBqyy
+#: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
+msgid "Connection providers"
+msgstr ""
+
 #. js-lingui-id: W4Kgwq
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
 msgid "Connection settings"
@@ -4889,6 +4915,7 @@ msgstr ""
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationConnectionsSection.tsx
 #: src/pages/settings/ai/SettingsToolDetail.tsx
 #: src/pages/settings/ai/SettingsToolDetail.tsx
 #: src/pages/settings/ai/SettingsSkillForm.tsx
@@ -8570,6 +8597,16 @@ msgstr ""
 msgid "JSON"
 msgstr ""
 
+#. js-lingui-id: UpNpMK
+#: src/pages/settings/applications/tabs/SettingsApplicationConnectionsSection.tsx
+msgid "Just for me"
+msgstr ""
+
+#. js-lingui-id: JJOCq/
+#: src/pages/settings/applications/tabs/SettingsApplicationConnectionsSection.tsx
+msgid "Just me"
+msgstr ""
+
 #. js-lingui-id: OGXtL8
 #: src/modules/views/view-picker/constants/ViewPickerTypeSelectOptions.ts
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
@@ -9185,6 +9222,12 @@ msgstr ""
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 #: src/modules/settings/billing/components/SettingsBillingContent.tsx
 msgid "Manage billing information"
+msgstr ""
+
+#. js-lingui-id: GDz4fg
+#. placeholder {0}: provider.displayName
+#: src/pages/settings/applications/tabs/SettingsApplicationConnectionsSection.tsx
+msgid "Manage connections used by this app to call {0}."
 msgstr ""
 
 #. js-lingui-id: U8dG4j
@@ -10592,7 +10635,6 @@ msgid "No variables found"
 msgstr ""
 
 #. js-lingui-id: OCektF
-#: src/pages/settings/applications/SettingsApplicationDetails.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailEnvironmentVariablesTable.tsx
 msgid "No variables to set for this application"
 msgstr ""
@@ -10695,6 +10737,11 @@ msgstr ""
 msgid "Not synced"
 msgstr ""
 
+#. js-lingui-id: VngD1z
+#: src/pages/settings/applications/SettingsApplicationDetails.tsx
+msgid "Nothing to configure for this application"
+msgstr ""
+
 #. js-lingui-id: DYCPYF
 #: src/modules/page-layout/widgets/components/StandaloneWidgetPlaceholder.tsx
 msgid "Nothing to see"
@@ -10770,6 +10817,11 @@ msgstr ""
 #: src/pages/settings/ai/components/SettingsAiMCP.tsx
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetail.tsx
 msgid "OAuth"
+msgstr ""
+
+#. js-lingui-id: IxKj9Y
+#: src/modules/settings/applications/hooks/useComputeApplicationContentForLayoutAndLogic.ts
+msgid "OAuth 2.0"
 msgstr ""
 
 #. js-lingui-id: pNEViR
@@ -12072,10 +12124,16 @@ msgid "Recommended Models"
 msgstr ""
 
 #. js-lingui-id: gcoiFh
+#: src/pages/settings/applications/tabs/SettingsApplicationConnectionsSection.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsRowDropdownMenu.tsx
 #: src/modules/information-banner/components/reconnect-account/InformationBannerReconnectAccountInsufficientPermissions.tsx
 #: src/modules/information-banner/components/reconnect-account/InformationBannerReconnectAccountEmailAliases.tsx
 msgid "Reconnect"
+msgstr ""
+
+#. js-lingui-id: XsIxsL
+#: src/pages/settings/applications/tabs/SettingsApplicationConnectionsSection.tsx
+msgid "Reconnect needed"
 msgstr ""
 
 #. js-lingui-id: hVS0gK
@@ -16648,6 +16706,7 @@ msgstr ""
 #: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
 #: src/pages/settings/applications/SettingsApplicationFrontComponentDetail.tsx
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationConnectionsSection.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationConfigVariableDetail.tsx
 #: src/pages/settings/ai/SettingsToolDetail.tsx
 #: src/pages/settings/ai/SettingsSkillForm.tsx
@@ -16730,6 +16789,11 @@ msgstr ""
 #. js-lingui-id: CozWO1
 #: src/pages/onboarding/CreateWorkspace.tsx
 msgid "Workspace name"
+msgstr ""
+
+#. js-lingui-id: PHF7zj
+#: src/pages/settings/applications/tabs/SettingsApplicationConnectionsSection.tsx
+msgid "Workspace shared"
 msgstr ""
 
 #. js-lingui-id: QZi0YX
