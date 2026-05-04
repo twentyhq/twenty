@@ -122,9 +122,9 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 Morh re
       "fieldMetadata": 1,
       "totalErrors": 1,
     },
-    "userFriendlyMessage": "Name ",
+    "userFriendlyMessage": "Name "fieldNamePersonForMorphRelationSecondId" is not available as it is already used by join column name",
   },
-  "message": "Name ",
+  "message": "Name "fieldNamePersonForMorphRelationSecondId" is not available as it is already used by join column name",
   "name": "GraphQLError",
 }
 `;
