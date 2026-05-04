@@ -1,5 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { useRef } from 'react';
+import { styled } from '@linaria/react';
+import { keyframes } from '@linaria/core';
 
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { hasRecordGroupsComponentSelector } from '@/object-record/record-group/states/selectors/hasRecordGroupsComponentSelector';
@@ -17,6 +19,47 @@ import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useC
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import isEmpty from 'lodash.isempty';
+
+const loadingSlide = keyframes`
+  0% {
+    transform: translateX(-100%);
+  }
+  60% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+`;
+
+const StyledLoadingBarWrapper = styled.div`
+  height: 2px;
+  left: 0;
+  overflow: hidden;
+  position: absolute;
+  right: 0;
+  top: 0;
+  z-index: 10;
+`;
+
+const StyledLoadingBar = styled.div`
+  animation: ${loadingSlide} 1.4s ease-in-out infinite;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    #4f46e5 40%,
+    #818cf8 60%,
+    transparent 100%
+  );
+  height: 100%;
+  width: 60%;
+`;
+
+const StyledTableWrapper = styled.div`
+  position: relative;
+  height: 100%;
+  width: 100%;
+`;
 
 export const RecordTable = () => {
   const {
@@ -69,6 +112,8 @@ export const RecordTable = () => {
     toggleClickOutside(true);
   };
 
+  const isRefetching = isRecordTableInitialLoading && recordTableHasRecords;
+
   return (
     <>
       {objectPermissions.canReadObjectRecords && (
@@ -86,13 +131,20 @@ export const RecordTable = () => {
         !hasRecordGroups ? (
         <RecordTableEmpty tableBodyRef={tableBodyRef} />
       ) : (
-        <RecordTableContent
-          tableBodyRef={tableBodyRef}
-          handleDragSelectionStart={handleDragSelectionStart}
-          handleDragSelectionEnd={handleDragSelectionEnd}
-          hasRecordGroups={hasRecordGroups}
-          recordTableId={recordTableId}
-        />
+        <StyledTableWrapper>
+          {isRefetching && (
+            <StyledLoadingBarWrapper>
+              <StyledLoadingBar />
+            </StyledLoadingBarWrapper>
+          )}
+          <RecordTableContent
+            tableBodyRef={tableBodyRef}
+            handleDragSelectionStart={handleDragSelectionStart}
+            handleDragSelectionEnd={handleDragSelectionEnd}
+            hasRecordGroups={hasRecordGroups}
+            recordTableId={recordTableId}
+          />
+        </StyledTableWrapper>
       )}
     </>
   );
