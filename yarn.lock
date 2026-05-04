@@ -57593,7 +57593,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tsx@npm:^4.19.3, tsx@npm:^4.7.0":
+"tsx@npm:^4.17.0, tsx@npm:^4.19.3, tsx@npm:^4.7.0":
   version: 4.21.0
   resolution: "tsx@npm:4.21.0"
   dependencies:
@@ -58490,6 +58490,7 @@ __metadata:
     concurrently: "npm:^8.2.2"
     http-server: "npm:^14.1.1"
     nx: "npm:22.5.4"
+    tsx: "npm:^4.17.0"
     verdaccio: "npm:^6.3.1"
   languageName: unknown
   linkType: soft
