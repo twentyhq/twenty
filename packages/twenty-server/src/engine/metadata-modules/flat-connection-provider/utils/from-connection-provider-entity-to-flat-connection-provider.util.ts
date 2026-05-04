@@ -1,6 +1,5 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { type ConnectionProviderEntity } from 'src/engine/core-modules/application/connection-provider/connection-provider.entity';
 import {
   FlatEntityMapsException,
   FlatEntityMapsExceptionCode,

@@ -33,9 +33,6 @@ import { FlatConnectionProviderModule } from 'src/engine/metadata-modules/flat-c
     ConnectionProviderOAuthFlowService,
     ApplicationConnectionProviderResolver,
   ],
-  exports: [
-    ConnectionProviderService,
-    ConnectionProviderOAuthFlowService,
-  ],
+  exports: [ConnectionProviderService, ConnectionProviderOAuthFlowService],
 })
 export class ConnectionProviderModule {}
