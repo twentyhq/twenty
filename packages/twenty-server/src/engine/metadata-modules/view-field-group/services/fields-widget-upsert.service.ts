@@ -117,8 +117,11 @@ export class FieldsWidgetUpsertService {
 
     if (!isDefined(viewId)) {
       throw new ViewFieldGroupException(
-        t`Fields widget has no associated view`,
+        t`Fields widget has no associated view. Try resetting the page layout to default.`,
         ViewFieldGroupExceptionCode.VIEW_NOT_FOUND,
+        {
+          userFriendlyMessage: msg`Fields widget has no associated view. Try resetting the page layout to default.`,
+        },
       );
     }
 
