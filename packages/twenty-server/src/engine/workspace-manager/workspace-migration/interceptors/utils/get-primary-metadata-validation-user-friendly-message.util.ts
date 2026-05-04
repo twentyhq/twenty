@@ -1,24 +1,9 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import {
   ALL_METADATA_NAME,
-  type FailedMetadataValidationError,
   type MetadataValidationErrorResponse,
 } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
-
-const getUserFacingMessageForValidationError = (
-  validationError: FailedMetadataValidationError,
-): string | undefined => {
-  if (isNonEmptyString(validationError.userFriendlyMessage)) {
-    return validationError.userFriendlyMessage;
-  }
-
-  if (isNonEmptyString(validationError.message)) {
-    return validationError.message;
-  }
-
-  return undefined;
-};
 
 export const getPrimaryMetadataValidationUserFriendlyMessage = (
   metadataValidation: MetadataValidationErrorResponse,
@@ -36,11 +21,8 @@ export const getPrimaryMetadataValidationUserFriendlyMessage = (
 
     for (const failedValidation of failedValidations) {
       for (const validationError of failedValidation.errors) {
-        const message =
-          getUserFacingMessageForValidationError(validationError);
-
-        if (isDefined(message)) {
-          return message;
+        if (isNonEmptyString(validationError.userFriendlyMessage)) {
+          return validationError.userFriendlyMessage;
         }
       }
     }
