@@ -1,5 +1,6 @@
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { RecordChip } from '@/object-record/components/RecordChip';
+import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { ForbiddenFieldDisplay } from '@/object-record/record-field/ui/meta-types/display/components/ForbiddenFieldDisplay';
 import { useRelationToOneFieldDisplay } from '@/object-record/record-field/ui/meta-types/hooks/useRelationToOneFieldDisplay';
@@ -16,8 +17,19 @@ export const RelationToOneFieldDisplay = () => {
 
   const { disableChipClick, triggerEvent } = useContext(FieldContext);
 
+  const targetObjectPermissions = useObjectPermissionsForObject(
+    fieldDefinition.metadata.relationObjectMetadataId,
+  );
+
   if (!isDefined(fieldValue) && isDefined(foreignKeyFieldValue)) {
-    return <ForbiddenFieldDisplay />;
+    const hasRowLevelRestrictions =
+      targetObjectPermissions.rowLevelPermissionPredicates.length > 0;
+
+    if (hasRowLevelRestrictions) {
+      return <ForbiddenFieldDisplay />;
+    }
+
+    return null;
   }
 
   if (

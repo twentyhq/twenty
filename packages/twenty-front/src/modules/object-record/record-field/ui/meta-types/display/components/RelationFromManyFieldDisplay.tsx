@@ -3,9 +3,11 @@ import { useContext } from 'react';
 import { useActivityTargetObjectRecords } from '@/activities/hooks/useActivityTargetObjectRecords';
 import { type NoteTarget } from '@/activities/types/NoteTarget';
 import { type TaskTarget } from '@/activities/types/TaskTarget';
+import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { RecordChip } from '@/object-record/components/RecordChip';
+import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { isActivityTargetField } from '@/object-record/record-field-list/utils/categorizeRelationFields';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { useFieldFocus } from '@/object-record/record-field/ui/hooks/useFieldFocus';
@@ -13,6 +15,7 @@ import { useRelationFromManyFieldDisplay } from '@/object-record/record-field/ui
 import { ForbiddenFieldDisplay } from '@/object-record/record-field/ui/meta-types/display/components/ForbiddenFieldDisplay';
 import { extractTargetRecordsFromJunction } from '@/object-record/record-field/ui/utils/junction/extractTargetRecordsFromJunction';
 import { getJunctionConfig } from '@/object-record/record-field/ui/utils/junction/getJunctionConfig';
+import { getTargetObjectMetadataIdsFromField } from '@/object-record/record-field/ui/utils/junction/getTargetObjectMetadataIdsFromField';
 import { hasJunctionConfig } from '@/object-record/record-field/ui/utils/junction/hasJunctionConfig';
 
 import { ExpandableList } from '@/ui/layout/expandable-list/components/ExpandableList';
@@ -37,6 +40,7 @@ export const RelationFromManyFieldDisplay = () => {
   const { isFocused } = useFieldFocus();
   const { disableChipClick, triggerEvent } = useContext(FieldContext);
   const { objectMetadataItems } = useObjectMetadataItems();
+  const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
 
   const { fieldName, objectMetadataNameSingular } = fieldDefinition.metadata;
 
@@ -147,7 +151,23 @@ export const RelationFromManyFieldDisplay = () => {
       .filter(isDefined);
 
     if (fieldValue.some(isDefined) && targetRecordsWithMetadata.length === 0) {
-      return <ForbiddenFieldDisplay />;
+      const targetObjectMetadataIds = junctionConfig.targetFields.flatMap(
+        getTargetObjectMetadataIdsFromField,
+      );
+
+      const hasRowLevelRestrictions = targetObjectMetadataIds.some(
+        (targetId) =>
+          getObjectPermissionsForObject(
+            objectPermissionsByObjectMetadataId,
+            targetId,
+          ).rowLevelPermissionPredicates.length > 0,
+      );
+
+      if (hasRowLevelRestrictions) {
+        return <ForbiddenFieldDisplay />;
+      }
+
+      return null;
     }
 
     return (
