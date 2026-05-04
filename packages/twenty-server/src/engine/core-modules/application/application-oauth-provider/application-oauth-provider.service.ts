@@ -1,10 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { isUUID } from 'class-validator';
-import { type ConnectionProviderManifest } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
-import { In, Not, Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 
 import { ApplicationOAuthProviderEntity } from 'src/engine/core-modules/application/application-oauth-provider/application-oauth-provider.entity';
 import { ApplicationOAuthProviderExceptionCode } from 'src/engine/core-modules/application/application-oauth-provider/application-oauth-provider-exception-code.enum';
@@ -197,89 +195,9 @@ export class ApplicationOAuthProviderService {
     });
   }
 
-  // Persists OAuth-typed entries only. Other connection-provider types get
-  // their own sibling persistence helpers when added.
-  async upsertManyFromManifest({
-    connectionProviders,
-    applicationId,
-    workspaceId,
-  }: {
-    connectionProviders?: ConnectionProviderManifest[];
-    applicationId: string;
-    workspaceId: string;
-  }): Promise<void> {
-    const oauthProviders = (connectionProviders ?? []).filter(
-      (provider) => provider.type === 'oauth',
-    );
-
-    // The DB column is `uuid NOT NULL`. The manifest type is just `string`
-    // because manifests are dev-supplied and TS can't enforce UUID at the
-    // type level. Validate up-front so we throw a typed exception instead
-    // of letting Postgres reject the insert with an opaque type error.
-    for (const provider of oauthProviders) {
-      if (!isUUID(provider.universalIdentifier)) {
-        throw new ApplicationOAuthProviderException(
-          `Connection provider "${provider.name}" has an invalid universalIdentifier "${provider.universalIdentifier}" — must be a UUID.`,
-          ApplicationOAuthProviderExceptionCode.INVALID_REQUEST,
-        );
-      }
-    }
-
-    const existing = await this.oauthProviderRepository.find({
-      where: { applicationId, workspaceId },
-    });
-
-    if (oauthProviders.length === 0 && existing.length === 0) {
-      return;
-    }
-
-    const existingByUniversalIdentifier = new Map(
-      existing.map((p) => [p.universalIdentifier, p]),
-    );
-
-    const toSave: Partial<ApplicationOAuthProviderEntity>[] =
-      oauthProviders.map((manifest) => {
-        const fields = {
-          applicationId,
-          workspaceId,
-          universalIdentifier: manifest.universalIdentifier,
-          name: manifest.name,
-          displayName: manifest.displayName,
-          authorizationEndpoint: manifest.oauth.authorizationEndpoint,
-          tokenEndpoint: manifest.oauth.tokenEndpoint,
-          revokeEndpoint: manifest.oauth.revokeEndpoint ?? null,
-          scopes: manifest.oauth.scopes,
-          clientIdVariable: manifest.oauth.clientIdVariable,
-          clientSecretVariable: manifest.oauth.clientSecretVariable,
-          authorizationParams: manifest.oauth.authorizationParams ?? null,
-          tokenRequestContentType:
-            manifest.oauth.tokenRequestContentType ?? 'json',
-          usePkce: manifest.oauth.usePkce ?? true,
-        };
-
-        const existingEntity = existingByUniversalIdentifier.get(
-          manifest.universalIdentifier,
-        );
-
-        return isDefined(existingEntity)
-          ? { id: existingEntity.id, ...fields }
-          : fields;
-      });
-
-    if (toSave.length > 0) {
-      await this.oauthProviderRepository.save(toSave);
-    }
-
-    await this.oauthProviderRepository.delete(
-      oauthProviders.length > 0
-        ? {
-            applicationId,
-            workspaceId,
-            universalIdentifier: Not(
-              In(oauthProviders.map((p) => p.universalIdentifier)),
-            ),
-          }
-        : { applicationId, workspaceId },
-    );
-  }
+  // Note: connection providers are now sync'd from the application manifest
+  // through the standard SyncableEntity pipeline (validator + builder +
+  // action handlers in workspace-migration). The previous `upsertManyFromManifest`
+  // bypass was removed when ConnectionProvider was registered in
+  // ALL_METADATA_NAME and wired through the manifest-sync orchestrator.
 }

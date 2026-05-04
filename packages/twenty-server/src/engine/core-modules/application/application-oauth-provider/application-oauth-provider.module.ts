@@ -12,6 +12,11 @@ import { SecretEncryptionModule } from 'src/engine/core-modules/secret-encryptio
 import { SecureHttpClientModule } from 'src/engine/core-modules/secure-http-client/secure-http-client.module';
 import { TwentyConfigModule } from 'src/engine/core-modules/twenty-config/twenty-config.module';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
+// FlatConnectionProviderModule registers the workspace-cache provider that
+// the SyncableEntity sync pipeline reads from when the manifest sync runs;
+// importing it here keeps the cache discoverable wherever this module ends
+// up in the app graph.
+import { FlatConnectionProviderModule } from 'src/engine/metadata-modules/flat-connection-provider/flat-connection-provider.module';
 
 @Module({
   imports: [
@@ -25,6 +30,7 @@ import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-ac
     SecretEncryptionModule,
     SecureHttpClientModule,
     TwentyConfigModule,
+    FlatConnectionProviderModule,
   ],
   providers: [
     ApplicationOAuthProviderService,

@@ -12,7 +12,6 @@ import {
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
 import { ApplicationManifestMigrationService } from 'src/engine/core-modules/application/application-manifest/application-manifest-migration.service';
-import { ApplicationOAuthProviderService } from 'src/engine/core-modules/application/application-oauth-provider/application-oauth-provider.service';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { buildFromToAllUniversalFlatEntityMaps } from 'src/engine/core-modules/application/application-manifest/utils/build-from-to-all-universal-flat-entity-maps.util';
@@ -34,7 +33,6 @@ export class ApplicationSyncService {
   constructor(
     private readonly applicationService: ApplicationService,
     private readonly applicationVariableService: ApplicationVariableEntityService,
-    private readonly applicationOAuthProviderService: ApplicationOAuthProviderService,
     private readonly applicationManifestMigrationService: ApplicationManifestMigrationService,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly workspaceCacheService: WorkspaceCacheService,
@@ -155,11 +153,12 @@ export class ApplicationSyncService {
       },
     );
 
-    await this.applicationOAuthProviderService.upsertManyFromManifest({
-      connectionProviders: manifest.connectionProviders,
-      applicationId: application.id,
-      workspaceId,
-    });
+    // Connection providers used to be synced here via a bespoke
+    // `upsertManyFromManifest` call. They now flow through the standard
+    // SyncableEntity pipeline (registered in ALL_METADATA_NAME, wired into
+    // the workspace-migration orchestrator) — see
+    // `compute-application-manifest-all-universal-flat-entity-maps.util.ts`
+    // and `workspace-migration-build-orchestrator.service.ts`.
 
     const resolvedRegistrationId =
       applicationRegistrationId ?? application.applicationRegistrationId;

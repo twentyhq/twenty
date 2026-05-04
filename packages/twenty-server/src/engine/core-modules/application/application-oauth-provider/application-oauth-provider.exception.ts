@@ -23,6 +23,12 @@ const getApplicationOAuthProviderExceptionUserFriendlyMessage = (
       return msg`The OAuth request is missing required parameters.`;
     case ApplicationOAuthProviderExceptionCode.FORBIDDEN:
       return msg`Not authorized to access this OAuth provider.`;
+    case ApplicationOAuthProviderExceptionCode.INVALID_CONNECTION_PROVIDER_INPUT:
+      return msg`The connection-provider manifest is missing required fields.`;
+    case ApplicationOAuthProviderExceptionCode.CONNECTION_PROVIDER_NOT_FOUND:
+      return msg`Connection provider not found.`;
+    case ApplicationOAuthProviderExceptionCode.CONNECTION_PROVIDER_NAME_ALREADY_EXISTS:
+      return msg`A connection provider with this name already exists for this application.`;
     default:
       assertUnreachable(code);
   }

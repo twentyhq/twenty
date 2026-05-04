@@ -6,4 +6,10 @@ export enum ApplicationOAuthProviderExceptionCode {
   INVALID_STATE = 'INVALID_STATE',
   INVALID_REQUEST = 'INVALID_REQUEST',
   FORBIDDEN = 'FORBIDDEN',
+  // Surfaced from the workspace-migration validator/builder for connection
+  // providers (the SyncableEntity sync path that replaced the old
+  // upsertManyFromManifest bypass).
+  INVALID_CONNECTION_PROVIDER_INPUT = 'INVALID_CONNECTION_PROVIDER_INPUT',
+  CONNECTION_PROVIDER_NOT_FOUND = 'CONNECTION_PROVIDER_NOT_FOUND',
+  CONNECTION_PROVIDER_NAME_ALREADY_EXISTS = 'CONNECTION_PROVIDER_NAME_ALREADY_EXISTS',
 }

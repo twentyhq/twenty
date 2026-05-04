@@ -1541,6 +1541,74 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       universalProperty: undefined,
     },
   },
+  connectionProvider: {
+    name: { toCompare: true, toStringify: false, universalProperty: undefined },
+    displayName: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    authorizationEndpoint: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    tokenEndpoint: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    revokeEndpoint: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    scopes: {
+      toCompare: true,
+      toStringify: true,
+      universalProperty: undefined,
+    },
+    clientIdVariable: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    clientSecretVariable: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    authorizationParams: {
+      toCompare: true,
+      toStringify: true,
+      universalProperty: undefined,
+    },
+    tokenRequestContentType: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    usePkce: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    createdAt: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    updatedAt: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    deletedAt: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+  },
 } as const satisfies {
   [P in AllMetadataName]: MetadataEntityPropertyConfiguration<P>;
 };

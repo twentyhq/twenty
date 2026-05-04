@@ -2,43 +2,33 @@ import { type OAuthProviderTokenRequestContentType } from 'twenty-shared/applica
 import {
   Column,
   CreateDateColumn,
+  DeleteDateColumn,
   Entity,
   Index,
-  JoinColumn,
-  ManyToOne,
   PrimaryGeneratedColumn,
-  type Relation,
   Unique,
   UpdateDateColumn,
 } from 'typeorm';
 
-import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
-import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/workspace-related-entity';
+import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 
+// Table name stays `applicationOAuthProvider` for now — the SyncableEntity
+// metadataName (`connectionProvider`) is what consumers see in code, and a
+// table rename would balloon this PR with mechanical churn unrelated to the
+// sync-pipeline wiring. Tracked as separate cleanup.
 @Entity({ name: 'applicationOAuthProvider', schema: 'core' })
 @Unique('IDX_APP_OAUTH_PROVIDER_NAME_APPLICATION_UNIQUE', [
   'name',
   'applicationId',
 ])
-@Unique('IDX_APP_OAUTH_PROVIDER_UNIVERSAL_ID_APPLICATION_UNIQUE', [
-  'universalIdentifier',
-  'applicationId',
-])
 @Index('IDX_APP_OAUTH_PROVIDER_APPLICATION_ID', ['applicationId'])
 @Index('IDX_APP_OAUTH_PROVIDER_WORKSPACE_ID', ['workspaceId'])
-export class ApplicationOAuthProviderEntity extends WorkspaceRelatedEntity {
+export class ApplicationOAuthProviderEntity
+  extends SyncableEntity
+  implements Required<ApplicationOAuthProviderEntity>
+{
   @PrimaryGeneratedColumn('uuid')
   id: string;
-
-  @Column({ nullable: false, type: 'uuid' })
-  universalIdentifier: string;
-
-  @Column({ nullable: false, type: 'uuid' })
-  applicationId: string;
-
-  @ManyToOne(() => ApplicationEntity, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'applicationId' })
-  application: Relation<ApplicationEntity>;
 
   @Column({ nullable: false, type: 'varchar' })
   name: string;
@@ -78,4 +68,7 @@ export class ApplicationOAuthProviderEntity extends WorkspaceRelatedEntity {
 
   @UpdateDateColumn({ type: 'timestamptz' })
   updatedAt: Date;
+
+  @DeleteDateColumn({ type: 'timestamptz' })
+  deletedAt: Date | null;
 }
