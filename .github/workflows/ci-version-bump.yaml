@@ -1,0 +1,79 @@
+name: "Version: bump"
+
+permissions:
+  contents: write
+  pull-requests: write
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        required: true
+        description: New current version (e.g. 2.4.0)
+      ref:
+        default: main
+        description: Ref to start from (e.g. main, sha)
+
+defaults:
+  run:
+    shell: bash --noprofile --norc -euo pipefail {0}
+
+jobs:
+  bump:
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.ref }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Sanitize version
+        id: sanitize
+        env:
+          RAW_VERSION: ${{ github.event.inputs.version }}
+        run: |
+          VERSION="${RAW_VERSION#v}"
+          printf 'version=%s\n' "$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Bump version constants
+        env:
+          VERSION: ${{ steps.sanitize.outputs.version }}
+        run: npx tsx scripts/bump-version.ts "$VERSION"
+
+      - name: Create PR with gh
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VERSION: ${{ steps.sanitize.outputs.version }}
+        run: |
+          git config user.name "Github Action Deploy"
+          git config user.email "github-action-deploy@twenty.com"
+
+          BRANCH="version-bump/${VERSION}"
+          git checkout -b "$BRANCH"
+          git add -A
+          git commit -m "chore: bump version to ${VERSION}"
+          git push -u origin "$BRANCH"
+
+          gh pr create \
+            --title "chore: bump version to ${VERSION}" \
+            --body "$(cat <<'EOF'
+          ## Summary
+
+          - Moves current version to previous versions array
+          - Sets TWENTY_CURRENT_VERSION to the new version
+          - Updates TWENTY_NEXT_VERSIONS with the next minor version
+          - Creates upgrade command module scaffold for the next version
+
+          ## Checklist
+
+          - [ ] Verify version constants are correct
+          - [ ] Verify upgrade command module was created
+          EOF
+          )" \
+            --label "ci:allow-previous-version-upgrade-mutation"
