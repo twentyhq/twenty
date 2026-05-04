@@ -1,6 +1,8 @@
 import { Body as BaseBody } from '@/design-system/components';
-import type { BodyType } from '@/design-system/components/Body';
+import type { MessageBody } from '@/lib/i18n/message-body';
+import type { MessageDescriptor } from '@lingui/core';
 import { styled } from '@linaria/react';
+import type { ReactNode } from 'react';
 
 const StyledBody = styled(BaseBody)`
   --body-sm-color: color-mix(in srgb, currentColor 90%, transparent);
@@ -8,9 +10,17 @@ const StyledBody = styled(BaseBody)`
 `;
 
 type BodyProps = {
-  body: BodyType;
+  body: MessageBody;
+  renderText: (descriptor: MessageDescriptor) => ReactNode;
 };
 
-export function Body({ body }: BodyProps) {
-  return <StyledBody body={body} size="sm" weight="regular" />;
+export function Body({ body, renderText }: BodyProps) {
+  return (
+    <StyledBody
+      body={body}
+      renderText={renderText}
+      size="sm"
+      weight="regular"
+    />
+  );
 }

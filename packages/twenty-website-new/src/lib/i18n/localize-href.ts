@@ -32,9 +32,11 @@ export const localizeHref = (locale: AppLocale, href: string): string => {
       ? buildTailFromSegmentEnd(href, segmentEnd)
       : href;
 
-  return locale === SOURCE_LOCALE || !isPublicAppLocale(locale)
-    ? unprefixed
-    : `/${locale}${unprefixed}`;
+  if (locale === SOURCE_LOCALE || !isPublicAppLocale(locale)) {
+    return unprefixed;
+  }
+
+  return unprefixed === '/' ? `/${locale}` : `/${locale}${unprefixed}`;
 };
 
 export const stripLocale = (pathname: string): string => {

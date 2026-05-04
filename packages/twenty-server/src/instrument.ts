@@ -70,12 +70,19 @@ const serializeOtlExportFailure = (error: unknown): string => {
 };
 
 let otlpMetricsFirstExportSuccessLogged = false;
+let otlpMetricsFirstExportAttemptLogged = false;
 
 const wrapOtlMetricExporterWithProcessLogs = (
   inner: OTLPMetricExporter,
   otlpEndpointForLog: string,
 ): PushMetricExporter => ({
   export(metrics: ResourceMetrics, resultCallback) {
+    if (!otlpMetricsFirstExportAttemptLogged) {
+      otlpMetricsFirstExportAttemptLogged = true;
+      console.log(
+        `${OTLP_METRICS_LOG_PREFIX} first periodic export attempt | endpoint=${otlpEndpointForLog}`,
+      );
+    }
     const totalMetricData = metrics.scopeMetrics.reduce(
       (accumulator, scopeMetric) => accumulator + scopeMetric.metrics.length,
       0,
@@ -177,3 +184,19 @@ const meterProvider = new MeterProvider({
 });
 
 opentelemetry.metrics.setGlobalMeterProvider(meterProvider);
+
+// Always-on gauge so the OTLP exporter fires on every collection tick,
+// even when the process is otherwise idle. This guarantees the process-log
+// wrapper above can prove connectivity (first export ok / export failed).
+if (meterDrivers.includes(MeterDriver.OpenTelemetry)) {
+  const heartbeatMeter = opentelemetry.metrics.getMeter(
+    'twenty-server-heartbeat',
+  );
+  const heartbeat = heartbeatMeter.createObservableGauge('twenty.heartbeat', {
+    description: 'Always-on gauge (1) to prove OTLP export pipeline',
+  });
+
+  heartbeat.addCallback((observableResult) => {
+    observableResult.observe(1);
+  });
+}
