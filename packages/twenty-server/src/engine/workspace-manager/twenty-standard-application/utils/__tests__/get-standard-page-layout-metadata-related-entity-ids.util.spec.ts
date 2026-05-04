@@ -17,7 +17,6 @@ afterAll(() => {
 });
 
 describe('getStandardPageLayoutMetadataRelatedEntityIds', () => {
-
   it('should return standard page layout metadata related entity ids', () => {
     const result = getStandardPageLayoutMetadataRelatedEntityIds();
 
