@@ -29,9 +29,9 @@ exports[`Front component creation should fail when name is empty 1`] = `
       "frontComponent": 1,
       "totalErrors": 1,
     },
-    "userFriendlyMessage": "Metadata validation failed",
+    "userFriendlyMessage": "Front component name is required",
   },
-  "message": "Multiple validation errors occurred while creating front component",
+  "message": "Front component name is required",
   "name": "GraphQLError",
 }
 `;
@@ -65,9 +65,9 @@ exports[`Front component creation should fail when name is whitespace-only 1`] =
       "frontComponent": 1,
       "totalErrors": 1,
     },
-    "userFriendlyMessage": "Metadata validation failed",
+    "userFriendlyMessage": "Front component name is required",
   },
-  "message": "Multiple validation errors occurred while creating front component",
+  "message": "Front component name is required",
   "name": "GraphQLError",
 }
 `;

@@ -31,9 +31,9 @@ exports[`updateOne failing update should not update a field name if it is not sy
         "fieldMetadata": 1,
         "totalErrors": 1,
       },
-      "userFriendlyMessage": "Metadata validation failed",
+      "userFriendlyMessage": "Updated field name is not synced with label",
     },
-    "message": "Multiple validation errors occurred while updating field",
+    "message": "Updated field name is not synced with label",
     "name": "GraphQLError",
   },
 ]
@@ -76,9 +76,9 @@ exports[`updateOne failing update should throw if the field name is not availabl
         "fieldMetadata": 1,
         "totalErrors": 1,
       },
-      "userFriendlyMessage": "Metadata validation failed",
+      "userFriendlyMessage": "Name ",
     },
-    "message": "Multiple validation errors occurred while updating field",
+    "message": "Name ",
     "name": "GraphQLError",
   },
 ]

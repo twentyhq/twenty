@@ -52,9 +52,9 @@ exports[`Skill update should fail when updating with empty content 1`] = `
       "skill": 1,
       "totalErrors": 1,
     },
-    "userFriendlyMessage": "Metadata validation failed",
+    "userFriendlyMessage": "Content cannot be empty",
   },
-  "message": "Multiple validation errors occurred while updating skill",
+  "message": "Content cannot be empty",
   "name": "GraphQLError",
 }
 `;
@@ -87,9 +87,9 @@ exports[`Skill update should fail when updating with empty label 1`] = `
       "skill": 1,
       "totalErrors": 1,
     },
-    "userFriendlyMessage": "Metadata validation failed",
+    "userFriendlyMessage": "Label cannot be empty",
   },
-  "message": "Multiple validation errors occurred while updating skill",
+  "message": "Label cannot be empty",
   "name": "GraphQLError",
 }
 `;

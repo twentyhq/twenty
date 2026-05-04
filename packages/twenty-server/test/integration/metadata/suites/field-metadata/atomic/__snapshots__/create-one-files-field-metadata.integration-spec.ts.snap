@@ -86,9 +86,9 @@ exports[`createOne FILES field metadata - failing should fail to create files fi
       "fieldMetadata": 1,
       "totalErrors": 1,
     },
-    "userFriendlyMessage": "Metadata validation failed",
+    "userFriendlyMessage": "maxNumberOfValues must be defined in settings and be a number greater than 0 and less than or equal to 10",
   },
-  "message": "Multiple validation errors occurred while creating fields",
+  "message": "maxNumberOfValues must be defined in settings and be a number greater than 0 and less than or equal to 10",
   "name": "GraphQLError",
 }
 `;
@@ -123,9 +123,9 @@ exports[`createOne FILES field metadata - failing should fail to create files fi
       "fieldMetadata": 1,
       "totalErrors": 1,
     },
-    "userFriendlyMessage": "Metadata validation failed",
+    "userFriendlyMessage": "maxNumberOfValues must be defined in settings and be a number greater than 0 and less than or equal to 10",
   },
-  "message": "Multiple validation errors occurred while creating fields",
+  "message": "maxNumberOfValues must be defined in settings and be a number greater than 0 and less than or equal to 10",
   "name": "GraphQLError",
 }
 `;
@@ -160,9 +160,9 @@ exports[`createOne FILES field metadata - failing should fail to create files fi
       "fieldMetadata": 1,
       "totalErrors": 1,
     },
-    "userFriendlyMessage": "Metadata validation failed",
+    "userFriendlyMessage": "maxNumberOfValues must be defined in settings and be a number greater than 0 and less than or equal to 10",
   },
-  "message": "Multiple validation errors occurred while creating fields",
+  "message": "maxNumberOfValues must be defined in settings and be a number greater than 0 and less than or equal to 10",
   "name": "GraphQLError",
 }
 `;

@@ -29,9 +29,9 @@ exports[`failing createOne unique field metadata should fail for composite type 
       "index": 1,
       "totalErrors": 1,
     },
-    "userFriendlyMessage": "Metadata validation failed",
+    "userFriendlyMessage": "FULL_NAME fields cannot be unique.",
   },
-  "message": "Multiple validation errors occurred while creating fields",
+  "message": "FULL_NAME fields cannot be unique.",
   "name": "GraphQLError",
 }
 `;
@@ -65,9 +65,9 @@ exports[`failing createOne unique field metadata should fail when field has cust
       "index": 1,
       "totalErrors": 1,
     },
-    "userFriendlyMessage": "Metadata validation failed",
+    "userFriendlyMessage": "TEXT fields cannot have a default value.",
   },
-  "message": "Multiple validation errors occurred while creating fields",
+  "message": "TEXT fields cannot have a default value.",
   "name": "GraphQLError",
 }
 `;

@@ -71,9 +71,9 @@ exports[`Object permission upsert should fail when role is not editable (system 
       "objectPermission": 1,
       "totalErrors": 1,
     },
-    "userFriendlyMessage": "Metadata validation failed",
+    "userFriendlyMessage": "Cannot target a role owned by another application.",
   },
-  "message": "Validation errors occurred while upserting object permissions",
+  "message": "Cannot target a role owned by another application.",
   "name": "GraphQLError",
 }
 `;

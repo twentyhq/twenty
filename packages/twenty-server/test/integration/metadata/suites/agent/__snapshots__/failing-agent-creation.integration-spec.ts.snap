@@ -29,9 +29,9 @@ exports[`Agent creation should fail when computed name already exists 1`] = `
       "agent": 1,
       "totalErrors": 1,
     },
-    "userFriendlyMessage": "Metadata validation failed",
+    "userFriendlyMessage": "An agent with this name already exists",
   },
-  "message": "Multiple validation errors occurred while creating agent",
+  "message": "An agent with this name already exists",
   "name": "GraphQLError",
 }
 `;
@@ -65,9 +65,9 @@ exports[`Agent creation should fail when label is empty string 1`] = `
       "agent": 1,
       "totalErrors": 1,
     },
-    "userFriendlyMessage": "Metadata validation failed",
+    "userFriendlyMessage": "Label cannot be empty",
   },
-  "message": "Multiple validation errors occurred while creating agent",
+  "message": "Label cannot be empty",
   "name": "GraphQLError",
 }
 `;
@@ -115,9 +115,9 @@ exports[`Agent creation should fail when modelId is empty string 1`] = `
       "agent": 1,
       "totalErrors": 1,
     },
-    "userFriendlyMessage": "Metadata validation failed",
+    "userFriendlyMessage": "Model ID cannot be empty",
   },
-  "message": "Multiple validation errors occurred while creating agent",
+  "message": "Model ID cannot be empty",
   "name": "GraphQLError",
 }
 `;
@@ -165,9 +165,9 @@ exports[`Agent creation should fail when prompt is empty string 1`] = `
       "agent": 1,
       "totalErrors": 1,
     },
-    "userFriendlyMessage": "Metadata validation failed",
+    "userFriendlyMessage": "Prompt cannot be empty",
   },
-  "message": "Multiple validation errors occurred while creating agent",
+  "message": "Prompt cannot be empty",
   "name": "GraphQLError",
 }
 `;
@@ -215,9 +215,9 @@ exports[`Agent creation should fail when responseFormat has invalid type 1`] = `
       "agent": 1,
       "totalErrors": 1,
     },
-    "userFriendlyMessage": "Metadata validation failed",
+    "userFriendlyMessage": "Invalid response format type",
   },
-  "message": "Multiple validation errors occurred while creating agent",
+  "message": "Invalid response format type",
   "name": "GraphQLError",
 }
 `;
@@ -251,9 +251,9 @@ exports[`Agent creation should fail when responseFormat type is json but schema 
       "agent": 1,
       "totalErrors": 1,
     },
-    "userFriendlyMessage": "Metadata validation failed",
+    "userFriendlyMessage": "JSON response format requires a schema",
   },
-  "message": "Multiple validation errors occurred while creating agent",
+  "message": "JSON response format requires a schema",
   "name": "GraphQLError",
 }
 `;
@@ -287,9 +287,9 @@ exports[`Agent creation should fail when responseFormat type is text but schema 
       "agent": 1,
       "totalErrors": 1,
     },
-    "userFriendlyMessage": "Metadata validation failed",
+    "userFriendlyMessage": "Text response format should not have a schema",
   },
-  "message": "Multiple validation errors occurred while creating agent",
+  "message": "Text response format should not have a schema",
   "name": "GraphQLError",
 }
 `;

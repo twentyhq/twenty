@@ -31,9 +31,9 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE (rela
       "fieldMetadata": 1,
       "totalErrors": 1,
     },
-    "userFriendlyMessage": "Metadata validation failed",
+    "userFriendlyMessage": "Name ",
   },
-  "message": "Multiple validation errors occurred while creating fields",
+  "message": "Name ",
   "name": "GraphQLError",
 }
 `;
@@ -69,9 +69,9 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE (rela
       "fieldMetadata": 1,
       "totalErrors": 1,
     },
-    "userFriendlyMessage": "Metadata validation failed",
+    "userFriendlyMessage": "Name ",
   },
-  "message": "Multiple validation errors occurred while creating fields",
+  "message": "Name ",
   "name": "GraphQLError",
 }
 `;
@@ -113,9 +113,9 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE (rela
       "fieldMetadata": 1,
       "totalErrors": 1,
     },
-    "userFriendlyMessage": "Metadata validation failed",
+    "userFriendlyMessage": "Name is too short",
   },
-  "message": "Multiple validation errors occurred while creating fields",
+  "message": "Name is too short",
   "name": "GraphQLError",
 }
 `;
@@ -151,9 +151,9 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE (rela
       "fieldMetadata": 1,
       "totalErrors": 1,
     },
-    "userFriendlyMessage": "Metadata validation failed",
+    "userFriendlyMessage": "Name is too long",
   },
-  "message": "Multiple validation errors occurred while creating fields",
+  "message": "Name is too long",
   "name": "GraphQLError",
 }
 `;
@@ -195,9 +195,9 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE (rela
       "fieldMetadata": 1,
       "totalErrors": 1,
     },
-    "userFriendlyMessage": "Metadata validation failed",
+    "userFriendlyMessage": "Name is too short",
   },
-  "message": "Multiple validation errors occurred while creating fields",
+  "message": "Name is too short",
   "name": "GraphQLError",
 }
 `;
@@ -235,9 +235,9 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE (rela
       "fieldMetadata": 1,
       "totalErrors": 1,
     },
-    "userFriendlyMessage": "Metadata validation failed",
+    "userFriendlyMessage": "Invalid relation creation payload",
   },
-  "message": "Multiple validation errors occurred while creating field",
+  "message": "Invalid relation creation payload",
   "name": "GraphQLError",
 }
 `;
@@ -275,9 +275,9 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE (rela
       "fieldMetadata": 1,
       "totalErrors": 1,
     },
-    "userFriendlyMessage": "Metadata validation failed",
+    "userFriendlyMessage": "Object targeted by field to create not found",
   },
-  "message": "Multiple validation errors occurred while creating field",
+  "message": "Object targeted by field to create not found",
   "name": "GraphQLError",
 }
 `;
@@ -315,9 +315,9 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE (rela
       "fieldMetadata": 1,
       "totalErrors": 1,
     },
-    "userFriendlyMessage": "Metadata validation failed",
+    "userFriendlyMessage": "Invalid relation creation payload",
   },
-  "message": "Multiple validation errors occurred while creating field",
+  "message": "Invalid relation creation payload",
   "name": "GraphQLError",
 }
 `;
@@ -354,9 +354,9 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE (rela
       "fieldMetadata": 1,
       "totalErrors": 1,
     },
-    "userFriendlyMessage": "Metadata validation failed",
+    "userFriendlyMessage": "Invalid relation creation payload",
   },
-  "message": "Multiple validation errors occurred while creating field",
+  "message": "Invalid relation creation payload",
   "name": "GraphQLError",
 }
 `;
@@ -468,9 +468,9 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE when 
       "fieldMetadata": 1,
       "totalErrors": 1,
     },
-    "userFriendlyMessage": "Metadata validation failed",
+    "userFriendlyMessage": "Invalid relation creation payload",
   },
-  "message": "Multiple validation errors occurred while creating field",
+  "message": "Invalid relation creation payload",
   "name": "GraphQLError",
 }
 `;
@@ -508,9 +508,9 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE when 
       "fieldMetadata": 1,
       "totalErrors": 1,
     },
-    "userFriendlyMessage": "Metadata validation failed",
+    "userFriendlyMessage": "Invalid relation creation payload",
   },
-  "message": "Multiple validation errors occurred while creating field",
+  "message": "Invalid relation creation payload",
   "name": "GraphQLError",
 }
 `;
@@ -622,9 +622,9 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE when 
       "fieldMetadata": 1,
       "totalErrors": 1,
     },
-    "userFriendlyMessage": "Metadata validation failed",
+    "userFriendlyMessage": "Invalid relation creation payload",
   },
-  "message": "Multiple validation errors occurred while creating field",
+  "message": "Invalid relation creation payload",
   "name": "GraphQLError",
 }
 `;
@@ -970,9 +970,9 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY (rela
         "fieldMetadata": 1,
         "totalErrors": 1,
       },
-      "userFriendlyMessage": "Metadata validation failed",
+      "userFriendlyMessage": "Invalid relation creation payload",
     },
-    "message": "Multiple validation errors occurred while creating field",
+    "message": "Invalid relation creation payload",
     "name": "GraphQLError",
   },
 ]
@@ -1012,9 +1012,9 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY (rela
         "fieldMetadata": 1,
         "totalErrors": 1,
       },
-      "userFriendlyMessage": "Metadata validation failed",
+      "userFriendlyMessage": "Object targeted by field to create not found",
     },
-    "message": "Multiple validation errors occurred while creating field",
+    "message": "Object targeted by field to create not found",
     "name": "GraphQLError",
   },
 ]
@@ -1054,9 +1054,9 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY (rela
         "fieldMetadata": 1,
         "totalErrors": 1,
       },
-      "userFriendlyMessage": "Metadata validation failed",
+      "userFriendlyMessage": "Invalid relation creation payload",
     },
-    "message": "Multiple validation errors occurred while creating field",
+    "message": "Invalid relation creation payload",
     "name": "GraphQLError",
   },
 ]
@@ -1095,9 +1095,9 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY (rela
         "fieldMetadata": 1,
         "totalErrors": 1,
       },
-      "userFriendlyMessage": "Metadata validation failed",
+      "userFriendlyMessage": "Invalid relation creation payload",
     },
-    "message": "Multiple validation errors occurred while creating field",
+    "message": "Invalid relation creation payload",
     "name": "GraphQLError",
   },
 ]
@@ -1213,9 +1213,9 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY when 
         "fieldMetadata": 1,
         "totalErrors": 1,
       },
-      "userFriendlyMessage": "Metadata validation failed",
+      "userFriendlyMessage": "Invalid relation creation payload",
     },
-    "message": "Multiple validation errors occurred while creating field",
+    "message": "Invalid relation creation payload",
     "name": "GraphQLError",
   },
 ]
@@ -1255,9 +1255,9 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY when 
         "fieldMetadata": 1,
         "totalErrors": 1,
       },
-      "userFriendlyMessage": "Metadata validation failed",
+      "userFriendlyMessage": "Invalid relation creation payload",
     },
-    "message": "Multiple validation errors occurred while creating field",
+    "message": "Invalid relation creation payload",
     "name": "GraphQLError",
   },
 ]
@@ -1373,9 +1373,9 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY when 
         "fieldMetadata": 1,
         "totalErrors": 1,
       },
-      "userFriendlyMessage": "Metadata validation failed",
+      "userFriendlyMessage": "Invalid relation creation payload",
     },
-    "message": "Multiple validation errors occurred while creating field",
+    "message": "Invalid relation creation payload",
     "name": "GraphQLError",
   },
 ]
@@ -1412,9 +1412,9 @@ exports[`Field metadata relation creation should fail should fail when creating 
       "fieldMetadata": 1,
       "totalErrors": 1,
     },
-    "userFriendlyMessage": "Metadata validation failed",
+    "userFriendlyMessage": "Name ",
   },
-  "message": "Multiple validation errors occurred while creating fields",
+  "message": "Name ",
   "name": "GraphQLError",
 }
 `;

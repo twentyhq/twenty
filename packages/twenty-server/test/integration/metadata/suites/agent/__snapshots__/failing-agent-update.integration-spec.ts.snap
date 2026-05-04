@@ -28,9 +28,9 @@ exports[`Agent update should fail should fail when attempting to update a standa
       "agent": 1,
       "totalErrors": 1,
     },
-    "userFriendlyMessage": "Metadata validation failed",
+    "userFriendlyMessage": "Cannot update standard agent",
   },
-  "message": "Multiple validation errors occurred while updating agent",
+  "message": "Cannot update standard agent",
   "name": "GraphQLError",
 }
 `;
@@ -85,9 +85,9 @@ exports[`Agent update should fail when settings null required properties 1`] = `
       "agent": 1,
       "totalErrors": 1,
     },
-    "userFriendlyMessage": "Metadata validation failed",
+    "userFriendlyMessage": "Label cannot be empty",
   },
-  "message": "Multiple validation errors occurred while updating agent",
+  "message": "Label cannot be empty",
   "name": "GraphQLError",
 }
 `;
@@ -120,9 +120,9 @@ exports[`Agent update should fail when updating label to one that already exists
       "agent": 1,
       "totalErrors": 1,
     },
-    "userFriendlyMessage": "Metadata validation failed",
+    "userFriendlyMessage": "An agent with this name already exists",
   },
-  "message": "Multiple validation errors occurred while updating agent",
+  "message": "An agent with this name already exists",
   "name": "GraphQLError",
 }
 `;
@@ -155,9 +155,9 @@ exports[`Agent update should fail when updating responseFormat type to json with
       "agent": 1,
       "totalErrors": 1,
     },
-    "userFriendlyMessage": "Metadata validation failed",
+    "userFriendlyMessage": "JSON response format requires a schema",
   },
-  "message": "Multiple validation errors occurred while updating agent",
+  "message": "JSON response format requires a schema",
   "name": "GraphQLError",
 }
 `;
@@ -190,9 +190,9 @@ exports[`Agent update should fail when updating responseFormat type to text with
       "agent": 1,
       "totalErrors": 1,
     },
-    "userFriendlyMessage": "Metadata validation failed",
+    "userFriendlyMessage": "Text response format should not have a schema",
   },
-  "message": "Multiple validation errors occurred while updating agent",
+  "message": "Text response format should not have a schema",
   "name": "GraphQLError",
 }
 `;
@@ -225,9 +225,9 @@ exports[`Agent update should fail when updating responseFormat with invalid type
       "agent": 1,
       "totalErrors": 1,
     },
-    "userFriendlyMessage": "Metadata validation failed",
+    "userFriendlyMessage": "Invalid response format type",
   },
-  "message": "Multiple validation errors occurred while updating agent",
+  "message": "Invalid response format type",
   "name": "GraphQLError",
 }
 `;
@@ -260,9 +260,9 @@ exports[`Agent update should fail when updating with empty label 1`] = `
       "agent": 1,
       "totalErrors": 1,
     },
-    "userFriendlyMessage": "Metadata validation failed",
+    "userFriendlyMessage": "Label cannot be empty",
   },
-  "message": "Multiple validation errors occurred while updating agent",
+  "message": "Label cannot be empty",
   "name": "GraphQLError",
 }
 `;
@@ -295,9 +295,9 @@ exports[`Agent update should fail when updating with empty modelId 1`] = `
       "agent": 1,
       "totalErrors": 1,
     },
-    "userFriendlyMessage": "Metadata validation failed",
+    "userFriendlyMessage": "Model ID cannot be empty",
   },
-  "message": "Multiple validation errors occurred while updating agent",
+  "message": "Model ID cannot be empty",
   "name": "GraphQLError",
 }
 `;
@@ -330,9 +330,9 @@ exports[`Agent update should fail when updating with empty prompt 1`] = `
       "agent": 1,
       "totalErrors": 1,
     },
-    "userFriendlyMessage": "Metadata validation failed",
+    "userFriendlyMessage": "Prompt cannot be empty",
   },
-  "message": "Multiple validation errors occurred while updating agent",
+  "message": "Prompt cannot be empty",
   "name": "GraphQLError",
 }
 `;

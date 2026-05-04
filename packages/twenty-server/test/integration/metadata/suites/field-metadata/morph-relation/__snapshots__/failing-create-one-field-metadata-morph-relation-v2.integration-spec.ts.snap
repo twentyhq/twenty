@@ -122,9 +122,9 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 Morh re
       "fieldMetadata": 1,
       "totalErrors": 1,
     },
-    "userFriendlyMessage": "Metadata validation failed",
+    "userFriendlyMessage": "Name ",
   },
-  "message": "Multiple validation errors occurred while creating fields",
+  "message": "Name ",
   "name": "GraphQLError",
 }
 `;
@@ -229,9 +229,9 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 it shou
       "fieldMetadata": 1,
       "totalErrors": 1,
     },
-    "userFriendlyMessage": "Metadata validation failed",
+    "userFriendlyMessage": "An error occurred.",
   },
-  "message": "Multiple validation errors occurred while creating field",
+  "message": "An error occurred.",
   "name": "GraphQLError",
 }
 `;
@@ -511,9 +511,9 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 it shou
       "fieldMetadata": 1,
       "totalErrors": 1,
     },
-    "userFriendlyMessage": "Metadata validation failed",
+    "userFriendlyMessage": "Invalid morph relation input",
   },
-  "message": "Multiple validation errors occurred while creating field",
+  "message": "Invalid morph relation input",
   "name": "GraphQLError",
 }
 `;
@@ -553,9 +553,9 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 it shou
       "fieldMetadata": 1,
       "totalErrors": 1,
     },
-    "userFriendlyMessage": "Metadata validation failed",
+    "userFriendlyMessage": "Invalid morph relation input",
   },
-  "message": "Multiple validation errors occurred while creating field",
+  "message": "Invalid morph relation input",
   "name": "GraphQLError",
 }
 `;
@@ -594,9 +594,9 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 it shou
       "fieldMetadata": 1,
       "totalErrors": 1,
     },
-    "userFriendlyMessage": "Metadata validation failed",
+    "userFriendlyMessage": "Invalid morph relation input",
   },
-  "message": "Multiple validation errors occurred while creating field",
+  "message": "Invalid morph relation input",
   "name": "GraphQLError",
 }
 `;
@@ -628,9 +628,9 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 it shou
       "fieldMetadata": 1,
       "totalErrors": 1,
     },
-    "userFriendlyMessage": "Metadata validation failed",
+    "userFriendlyMessage": "At least one relation is require",
   },
-  "message": "Multiple validation errors occurred while creating field",
+  "message": "At least one relation is require",
   "name": "GraphQLError",
 }
 `;
@@ -662,9 +662,9 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 it shou
       "fieldMetadata": 1,
       "totalErrors": 1,
     },
-    "userFriendlyMessage": "Metadata validation failed",
+    "userFriendlyMessage": "An error occurred.",
   },
-  "message": "Multiple validation errors occurred while creating field",
+  "message": "An error occurred.",
   "name": "GraphQLError",
 }
 `;
@@ -696,9 +696,9 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 it shou
       "fieldMetadata": 1,
       "totalErrors": 1,
     },
-    "userFriendlyMessage": "Metadata validation failed",
+    "userFriendlyMessage": "An error occurred.",
   },
-  "message": "Multiple validation errors occurred while creating field",
+  "message": "An error occurred.",
   "name": "GraphQLError",
 }
 `;
@@ -733,9 +733,9 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 it shou
       "fieldMetadata": 1,
       "totalErrors": 1,
     },
-    "userFriendlyMessage": "Metadata validation failed",
+    "userFriendlyMessage": "Invalid morph relation input",
   },
-  "message": "Multiple validation errors occurred while creating field",
+  "message": "Invalid morph relation input",
   "name": "GraphQLError",
 }
 `;
@@ -768,9 +768,9 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 it shou
       "fieldMetadata": 1,
       "totalErrors": 1,
     },
-    "userFriendlyMessage": "Metadata validation failed",
+    "userFriendlyMessage": "Relation creation payload is required",
   },
-  "message": "Multiple validation errors occurred while creating field",
+  "message": "Relation creation payload is required",
   "name": "GraphQLError",
 }
 `;
@@ -802,9 +802,9 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 it shou
       "fieldMetadata": 1,
       "totalErrors": 1,
     },
-    "userFriendlyMessage": "Metadata validation failed",
+    "userFriendlyMessage": "Relation creation payload is required",
   },
-  "message": "Multiple validation errors occurred while creating field",
+  "message": "Relation creation payload is required",
   "name": "GraphQLError",
 }
 `;

@@ -55,9 +55,9 @@ exports[`CommandMenuItem update should fail when updating with empty label 1`] =
       "commandMenuItem": 1,
       "totalErrors": 1,
     },
-    "userFriendlyMessage": "Metadata validation failed",
+    "userFriendlyMessage": "Label is required",
   },
-  "message": "Multiple validation errors occurred while updating command menu item",
+  "message": "Label is required",
   "name": "GraphQLError",
 }
 `;
@@ -119,9 +119,9 @@ exports[`CommandMenuItem update should fail when changing engineComponentKey to 
       "commandMenuItem": 1,
       "totalErrors": 1,
     },
-    "userFriendlyMessage": "Metadata validation failed",
+    "userFriendlyMessage": "Workflow version must not be set for this item type",
   },
-  "message": "Multiple validation errors occurred while updating command menu item",
+  "message": "Workflow version must not be set for this item type",
   "name": "GraphQLError",
 }
 `;
