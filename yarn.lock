@@ -57960,6 +57960,7 @@ __metadata:
     react-router-dom: "npm:^6.4.4"
     react-textarea-autosize: "npm:^8.4.1"
     remark-gfm: "npm:^4.0.1"
+    rollup-plugin-node-polyfills: "npm:^0.2.1"
     rollup-plugin-visualizer: "npm:^5.14.0"
     rxjs: "npm:^7.2.0"
     storybook-addon-mock-date: "npm:2.0.0"

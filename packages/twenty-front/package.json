@@ -194,6 +194,7 @@
     "oxlint-tsgolint": "^0.16.0",
     "playwright": "^1.56.1",
     "prettier": "^3.1.1",
+    "rollup-plugin-node-polyfills": "^0.2.1",
     "rollup-plugin-visualizer": "^5.14.0",
     "storybook-addon-mock-date": "2.0.0",
     "storybook-addon-pseudo-states": "^10.3.3",
