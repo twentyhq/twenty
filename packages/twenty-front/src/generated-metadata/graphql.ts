@@ -909,10 +909,10 @@ export type ConnectedAccountDto = {
   lastSignedInAt?: Maybe<Scalars['DateTime']>;
   name?: Maybe<Scalars['String']>;
   provider: Scalars['String'];
-  scope: Scalars['String'];
   scopes?: Maybe<Array<Scalars['String']>>;
   updatedAt: Scalars['DateTime'];
   userWorkspaceId: Scalars['UUID'];
+  visibility: Scalars['String'];
 };
 
 export type ConnectedAccountPublicDto = {
@@ -929,10 +929,10 @@ export type ConnectedAccountPublicDto = {
   lastSignedInAt?: Maybe<Scalars['DateTime']>;
   name?: Maybe<Scalars['String']>;
   provider: Scalars['String'];
-  scope: Scalars['String'];
   scopes?: Maybe<Array<Scalars['String']>>;
   updatedAt: Scalars['DateTime'];
   userWorkspaceId: Scalars['UUID'];
+  visibility: Scalars['String'];
 };
 
 export type ConnectedImapSmtpCaldavAccount = {
