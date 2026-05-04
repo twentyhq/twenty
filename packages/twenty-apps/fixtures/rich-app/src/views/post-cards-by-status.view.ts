@@ -30,7 +30,7 @@ export default defineView({
   ],
   groups: [
     {
-      universalIdentifier: 'bg1a2b3c-0001-4a7b-8c9d-0e1f2a3b4c5d',
+      universalIdentifier: 'e9ed34f1-3c3d-41b1-869b-00aae0033d9c',
       fieldValue: 'DRAFT',
       position: 0,
       isVisible: true,
@@ -48,13 +48,13 @@ export default defineView({
       isVisible: true,
     },
     {
-      universalIdentifier: 'bg1a2b3c-0004-4a7b-8c9d-0e1f2a3b4c5d',
+      universalIdentifier: 'e9ed34f1-3c3d-41b1-869b-00aae0033d9c',
       fieldValue: 'RETURNED',
       position: 3,
       isVisible: true,
     },
     {
-      universalIdentifier: 'bg1a2b3c-0005-4a7b-8c9d-0e1f2a3b4c5d',
+      universalIdentifier: 'e9ed34f1-3c3d-41b1-869b-00aae0033d9c',
       fieldValue: 'LOST',
       position: 4,
       isVisible: true,
