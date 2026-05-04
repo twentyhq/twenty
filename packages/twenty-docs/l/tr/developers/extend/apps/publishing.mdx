@@ -77,6 +77,39 @@ Bir güncelleme yayımlamak için:
 
 {/* TODO: add screenshot of the Upgrade button */}
 
+### Server version compatibility
+
+If your app uses a feature introduced in a specific Twenty server version (for example, OAuth providers added in v2.3.0), you should declare the minimum server version your app requires using the `engines.twenty` field in `package.json`:
+
+```json filename="package.json"
+{
+  "name": "twenty-my-app",
+  "version": "1.0.0",
+  "engines": {
+    "node": "^24.5.0",
+    "twenty": ">=2.3.0"
+  }
+}
+```
+
+The value is a standard [semver range](https://github.com/npm/node-semver#ranges). Common patterns:
+
+| Range                              | Meaning                                    |
+| ---------------------------------- | ------------------------------------------ |
+| `>=2.3.0`                          | Any server from 2.3.0 onward               |
+| `>=2.3.0 \<3.0.0` | 2.3.0 or later, but below the next major   |
+| `^2.3.0`                           | Same as `>=2.3.0 \<3.0.0` |
+
+**What happens at deploy and install time:**
+
+* If `engines.twenty` is set and the target server's version does not satisfy the range, the deploy (tarball upload) or install is rejected with a `SERVER_VERSION_INCOMPATIBLE` error and a message indicating both the required range and the actual server version.
+* If `engines.twenty` is **not set**, the app is accepted on any server version (backward-compatible with existing apps).
+* If the server has no `APP_VERSION` configured, the check is skipped.
+
+<Note>
+The server is the authoritative check — it validates `engines.twenty` on both tarball upload and workspace install. If you deploy a tarball out-of-band or install from the marketplace, the server still enforces compatibility.
+</Note>
+
 ## Otomatik CI/CD (hazır şablonlu iş akışları)
 
 `create-twenty-app` ile oluşturulan uygulamalar, kutudan çıktığı gibi `.github/workflows/` altında iki GitHub Actions iş akışıyla gelir. Depoyu GitHub’a iter itmez çalışmaya hazırdır — CI için ek bir kurulum gerekmez ve CD yalnızca tek bir gizli anahtar gerektirir.
