@@ -28,8 +28,11 @@ describe('buildEnvVar', () => {
         isSecret: false,
         applicationId: 'app-1',
         workspaceId: '00000000-0000-0000-0000-000000000000',
+        universalIdentifier: '00000000-0000-0000-0000-000000000000',
+        applicationUniversalIdentifier: '00000000-0000-0000-0000-000000000000',
         createdAt: '2024-01-01T00:00:00.000Z',
         updatedAt: '2024-01-01T00:00:00.000Z',
+        deletedAt: null,
       },
       {
         id: '2',
@@ -39,8 +42,11 @@ describe('buildEnvVar', () => {
         isSecret: true,
         applicationId: 'app-1',
         workspaceId: '00000000-0000-0000-0000-000000000000',
+        universalIdentifier: '00000000-0000-0000-0000-000000000000',
+        applicationUniversalIdentifier: '00000000-0000-0000-0000-000000000000',
         createdAt: '2024-01-01T00:00:00.000Z',
         updatedAt: '2024-01-01T00:00:00.000Z',
+        deletedAt: null,
       },
       {
         id: '3',
@@ -50,8 +56,11 @@ describe('buildEnvVar', () => {
         isSecret: false,
         applicationId: 'app-1',
         workspaceId: '00000000-0000-0000-0000-000000000000',
+        universalIdentifier: '00000000-0000-0000-0000-000000000000',
+        applicationUniversalIdentifier: '00000000-0000-0000-0000-000000000000',
         createdAt: '2024-01-01T00:00:00.000Z',
         updatedAt: '2024-01-01T00:00:00.000Z',
+        deletedAt: null,
       },
     ];
 
@@ -78,8 +87,11 @@ describe('buildEnvVar', () => {
         isSecret: false,
         applicationId: 'app-1',
         workspaceId: '00000000-0000-0000-0000-000000000000',
+        universalIdentifier: '00000000-0000-0000-0000-000000000000',
+        applicationUniversalIdentifier: '00000000-0000-0000-0000-000000000000',
         createdAt: '2024-01-01T00:00:00.000Z',
         updatedAt: '2024-01-01T00:00:00.000Z',
+        deletedAt: null,
       },
       {
         id: '2',
@@ -89,8 +101,11 @@ describe('buildEnvVar', () => {
         isSecret: false,
         applicationId: 'app-1',
         workspaceId: '00000000-0000-0000-0000-000000000000',
+        universalIdentifier: '00000000-0000-0000-0000-000000000000',
+        applicationUniversalIdentifier: '00000000-0000-0000-0000-000000000000',
         createdAt: '2024-01-01T00:00:00.000Z',
         updatedAt: '2024-01-01T00:00:00.000Z',
+        deletedAt: null,
       },
     ];
 
@@ -112,8 +127,11 @@ describe('buildEnvVar', () => {
         isSecret: false,
         applicationId: 'app-1',
         workspaceId: '00000000-0000-0000-0000-000000000000',
+        universalIdentifier: '00000000-0000-0000-0000-000000000000',
+        applicationUniversalIdentifier: '00000000-0000-0000-0000-000000000000',
         createdAt: '2024-01-01T00:00:00.000Z',
         updatedAt: '2024-01-01T00:00:00.000Z',
+        deletedAt: null,
       },
     ];
 

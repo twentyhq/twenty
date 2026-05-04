@@ -2,6 +2,7 @@ import { type AllMetadataName } from 'twenty-shared/metadata';
 import { type EntityTarget, type ObjectLiteral } from 'typeorm';
 
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
+import { ApplicationVariableEntity } from 'src/engine/core-modules/application/application-variable/application-variable.entity';
 import { CommandMenuItemEntity } from 'src/engine/metadata-modules/command-menu-item/entities/command-menu-item.entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { FrontComponentEntity } from 'src/engine/metadata-modules/front-component/entities/front-component.entity';
@@ -56,5 +57,6 @@ export const ALL_METADATA_ENTITY_BY_METADATA_NAME = {
   navigationMenuItem: NavigationMenuItemEntity,
   permissionFlag: PermissionFlagEntity,
   webhook: WebhookEntity,
+  applicationVariable: ApplicationVariableEntity,
   viewSort: ViewSortEntity,
 } as const satisfies Record<AllMetadataName, EntityTarget<ObjectLiteral>>;

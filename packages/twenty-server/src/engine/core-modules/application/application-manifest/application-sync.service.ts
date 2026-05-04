@@ -17,7 +17,6 @@ import { ApplicationService } from 'src/engine/core-modules/application/applicat
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { buildFromToAllUniversalFlatEntityMaps } from 'src/engine/core-modules/application/application-manifest/utils/build-from-to-all-universal-flat-entity-maps.util';
 import { getApplicationSubAllFlatEntityMaps } from 'src/engine/core-modules/application/application-manifest/utils/get-application-sub-all-flat-entity-maps.util';
-import { ApplicationVariableEntityService } from 'src/engine/core-modules/application/application-variable/application-variable.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { createEmptyAllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-all-flat-entity-maps.constant';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
@@ -33,7 +32,6 @@ export class ApplicationSyncService {
 
   constructor(
     private readonly applicationService: ApplicationService,
-    private readonly applicationVariableService: ApplicationVariableEntityService,
     private readonly applicationOAuthProviderService: ApplicationOAuthProviderService,
     private readonly applicationManifestMigrationService: ApplicationManifestMigrationService,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
@@ -146,14 +144,6 @@ export class ApplicationSyncService {
         ApplicationExceptionCode.APP_NOT_INSTALLED,
       );
     }
-
-    await this.applicationVariableService.upsertManyApplicationVariableEntities(
-      {
-        applicationVariables: manifest.application.applicationVariables,
-        applicationId: application.id,
-        workspaceId,
-      },
-    );
 
     await this.applicationOAuthProviderService.upsertManyFromManifest({
       connectionProviders: manifest.connectionProviders,
