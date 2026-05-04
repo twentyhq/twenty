@@ -327,6 +327,9 @@ jobs:
           set_env_var "CLICKHOUSE_URL" "http://default:clickhousePassword@localhost:8123/twenty"
           set_env_var "CLICKHOUSE_PASSWORD" "clickhousePassword"
 
+          # Ensure main_branch database exists
+          docker exec postgres psql -U postgres -c "CREATE DATABASE main_branch;" || true
+
           npx nx run twenty-server:database:init:prod
 
       - name: Seed main branch database with test data
