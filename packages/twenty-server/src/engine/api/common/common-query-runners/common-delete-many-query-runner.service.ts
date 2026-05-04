@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 
 import { QUERY_MAX_RECORDS_FROM_RELATION } from 'twenty-shared/constants';
 import { ObjectRecord } from 'twenty-shared/types';
@@ -12,6 +12,7 @@ import {
   CommonQueryRunnerExceptionCode,
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
+import { RelationOnDeleteService } from 'src/engine/api/common/common-query-runners/services/relation-on-delete.service';
 import { CommonBaseQueryRunnerContext } from 'src/engine/api/common/types/common-base-query-runner-context.type';
 import { CommonExtendedQueryRunnerContext } from 'src/engine/api/common/types/common-extended-query-runner-context.type';
 import {
@@ -32,6 +33,9 @@ export class CommonDeleteManyQueryRunnerService extends CommonBaseQueryRunnerSer
   DeleteManyQueryArgs,
   ObjectRecord[]
 > {
+  @Inject()
+  private readonly relationOnDeleteService: RelationOnDeleteService;
+
   protected readonly operationName = CommonQueryNames.DELETE_MANY;
 
   async run(
@@ -60,7 +64,7 @@ export class CommonDeleteManyQueryRunnerService extends CommonBaseQueryRunnerSer
     );
 
     const columnsToReturn = buildColumnsToReturn({
-      select: args.selectedFieldsResult.select,
+      select: { ...args.selectedFieldsResult.select, id: true },
       relations: args.selectedFieldsResult.relations,
       flatObjectMetadata,
       flatObjectMetadataMaps,
@@ -73,6 +77,20 @@ export class CommonDeleteManyQueryRunnerService extends CommonBaseQueryRunnerSer
       .execute();
 
     const deletedRecords = deletedObjectRecords.generatedMaps as ObjectRecord[];
+
+    const deletedRecordIds = deletedRecords
+      .map((record) => record.id)
+      .filter(isDefined);
+
+    if (deletedRecordIds.length > 0) {
+      await this.relationOnDeleteService.nullifyForeignKeysOnSoftDelete({
+        deletedRecordIds,
+        deletedObjectMetadata: flatObjectMetadata,
+        flatFieldMetadataMaps,
+        flatObjectMetadataMaps,
+        workspaceDataSource,
+      });
+    }
 
     if (isDefined(args.selectedFieldsResult.relations)) {
       await this.processNestedRelationsHelper.processNestedRelations({

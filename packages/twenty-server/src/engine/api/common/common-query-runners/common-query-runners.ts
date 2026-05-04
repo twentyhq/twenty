@@ -11,6 +11,7 @@ import { CommonGroupByQueryRunnerService } from 'src/engine/api/common/common-qu
 import { CommonMergeManyQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-merge-many-query-runner.service';
 import { CommonRestoreManyQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-restore-many-query-runner.service';
 import { CommonRestoreOneQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-restore-one-query-runner.service';
+import { RelationOnDeleteService } from 'src/engine/api/common/common-query-runners/services/relation-on-delete.service';
 import { CommonUpdateManyQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-update-many-query-runner.service';
 import { CommonUpdateOneQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-update-one-query-runner.service';
 
@@ -30,4 +31,5 @@ export const CommonQueryRunners = [
   CommonRestoreManyQueryRunnerService,
   CommonRestoreOneQueryRunnerService,
   CommonMergeManyQueryRunnerService,
+  RelationOnDeleteService,
 ];
