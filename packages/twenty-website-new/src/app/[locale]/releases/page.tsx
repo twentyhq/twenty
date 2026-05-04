@@ -86,7 +86,6 @@ export default async function ReleasesPage({ params }: ReleasesPageProps) {
             href="https://github.com/twentyhq/twenty/releases"
             label={renderText(msg`Technical notes`)}
             leadingIcon={<GitHubIcon fillColor="currentColor" size={14} />}
-            type="anchor"
             variant="outlined"
           />
         </Hero.Cta>

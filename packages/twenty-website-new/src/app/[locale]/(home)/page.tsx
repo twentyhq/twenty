@@ -156,7 +156,6 @@ export default async function HomePage({ params }: HomePageProps) {
               color="secondary"
               href="https://app.twenty.com/welcome"
               label={renderText(msg`Get started`)}
-              type="anchor"
               variant="contained"
             />
             <TalkToUsButton
@@ -311,7 +310,6 @@ export default async function HomePage({ params }: HomePageProps) {
               color="primary"
               href="https://app.twenty.com/welcome"
               label={renderText(msg`Get started`)}
-              type="anchor"
               variant="contained"
             />
             <TalkToUsButton

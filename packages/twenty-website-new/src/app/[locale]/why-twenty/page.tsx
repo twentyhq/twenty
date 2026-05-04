@@ -250,7 +250,6 @@ export default async function WhyTwentyPage({ params }: WhyTwentyPageProps) {
             color="primary"
             href="https://app.twenty.com/welcome"
             label={renderText(msg`Get started`)}
-            type="anchor"
             variant="contained"
           />
         </Signoff.Cta>

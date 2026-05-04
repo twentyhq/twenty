@@ -33,7 +33,6 @@ export function Cta({ scheme }: CtaProps) {
         href="https://app.twenty.com/welcome"
         label={renderText(msg`Log in`)}
         size="small"
-        type="anchor"
         variant="outlined"
       />
       <LinkButton
@@ -41,7 +40,6 @@ export function Cta({ scheme }: CtaProps) {
         href="https://app.twenty.com/welcome"
         label={renderText(msg`Get started`)}
         size="small"
-        type="anchor"
         variant="contained"
       />
     </CtaContainer>

@@ -493,7 +493,6 @@ export function Card({ card, highlighted = false, maxBullets }: CardProps) {
           color="secondary"
           href="https://app.twenty.com/welcome"
           label={renderText(msg`Start for free`)}
-          type="anchor"
           variant={highlighted ? 'contained' : 'outlined'}
         />
       </CtaWrapper>

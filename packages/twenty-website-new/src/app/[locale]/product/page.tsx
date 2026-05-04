@@ -95,7 +95,6 @@ export default async function ProductPage({ params }: ProductPageProps) {
             color="secondary"
             href="https://app.twenty.com/welcome"
             label={renderText(msg`Get started`)}
-            type="anchor"
             variant="contained"
           />
         </Hero.Cta>
@@ -205,7 +204,6 @@ export default async function ProductPage({ params }: ProductPageProps) {
             color="secondary"
             href="https://app.twenty.com/welcome"
             label={renderText(msg`Get started`)}
-            type="anchor"
             variant="contained"
           />
           <TalkToUsButton
@@ -237,7 +235,6 @@ export default async function ProductPage({ params }: ProductPageProps) {
               color="primary"
               href="https://app.twenty.com/welcome"
               label={renderText(msg`Get started`)}
-              type="anchor"
               variant="contained"
             />
             <TalkToUsButton

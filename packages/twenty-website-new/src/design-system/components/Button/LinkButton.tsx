@@ -10,10 +10,7 @@ const StyledButtonAnchor = styled.a`
   ${buttonBaseStyles}
 `;
 
-export type LinkButtonPresentation = 'anchor';
-
-export type LinkButtonProps = Omit<BaseButtonProps, 'label'> &
-  LinkButtonType & { type: LinkButtonPresentation };
+export type LinkButtonProps = Omit<BaseButtonProps, 'label'> & LinkButtonType;
 
 export function LinkButton({
   color,

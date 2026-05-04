@@ -437,7 +437,6 @@ export function MenuDrawer({ navItems, scheme, socialLinks }: MenuDrawerProps) {
               color={buttonColor}
               href="https://app.twenty.com/welcome"
               label={renderText(msg`Log in`)}
-              type="anchor"
               variant="outlined"
             />
           </CtaContainer>

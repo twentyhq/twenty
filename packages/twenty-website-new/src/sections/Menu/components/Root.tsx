@@ -183,7 +183,6 @@ export function Root({
                 color={buttonColor.linkButton}
                 href="https://app.twenty.com/welcome"
                 label={renderText(msg`Get started`)}
-                type="anchor"
                 variant="contained"
               />
               <IconButton

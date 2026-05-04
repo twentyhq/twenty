@@ -24,7 +24,6 @@ export function FooterNavCta({ cta, renderText }: FooterNavCtaProps) {
       color={cta.color}
       href={cta.href}
       label={renderText(cta.label)}
-      type="anchor"
       variant={cta.variant}
     />
   );
