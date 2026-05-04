@@ -1,5 +1,3 @@
-import { getUuidV4Mock } from '~/testing/utils/getUuidV4Mock';
-
 import { renderHook } from '@testing-library/react';
 import { act } from 'react';
 import gql from 'graphql-tag';
@@ -10,11 +8,11 @@ import { useOpenObjectRecordsSpreadsheetImportDialog } from '@/object-record/spr
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 
-jest.mock('uuid', () => ({
-  v4: getUuidV4Mock(),
-}));
+const COMPANY_ID = 'cb2e9f4b-20c3-4759-9315-4ffeecfaf71a';
 
-const COMPANY_ID = 'test-company-id';
+jest.mock('uuid', () => ({
+  v4: jest.fn(() => 'cb2e9f4b-20c3-4759-9315-4ffeecfaf71a'),
+}));
 
 const mockBatchCreateManyRecords = jest.fn().mockResolvedValue([]);
 
