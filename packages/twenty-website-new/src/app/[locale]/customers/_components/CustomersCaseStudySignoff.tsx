@@ -25,13 +25,8 @@ export function CustomersCaseStudySignoff({
     >
       <Signoff.Heading page={Pages.Partners}>
         <HeadingPart fontFamily="serif">
-          {renderText(msg`Ready to grow`)}
+          {renderText(msg`Ready to grow\nwith Twenty?`)}
         </HeadingPart>
-        <br />
-        <HeadingPart fontFamily="serif">
-          {renderText(msg`with`)}
-        </HeadingPart>{' '}
-        <HeadingPart fontFamily="sans">{renderText(msg`Twenty?`)}</HeadingPart>
       </Signoff.Heading>
       <Signoff.Body
         body={SIGNOFF_BODY}

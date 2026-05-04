@@ -2138,12 +2138,7 @@ msgid "On a single CRM"
 msgstr "On a single CRM"
 
 #. js-lingui-id: XhXmzW
-#: src/app/[locale]/customers/w3villa/page.tsx
-#: src/app/[locale]/customers/netzero/page.tsx
-#: src/app/[locale]/customers/elevate-consulting/page.tsx
-#: src/app/[locale]/customers/alternative-partners/page.tsx
-#: src/app/[locale]/customers/act-education/page.tsx
-#: src/app/[locale]/customers/9dots/page.tsx
+#: src/sections/CaseStudy/components/CaseStudySectionNav.tsx
 msgid "On this page"
 msgstr "On this page"
 
@@ -2397,9 +2392,17 @@ msgstr "Ready to build"
 #. js-lingui-id: 9BL+5g
 #: src/app/[locale]/product/page.tsx
 #: src/app/[locale]/partners/page.tsx
-#: src/app/[locale]/customers/_components/CustomersCaseStudySignoff.tsx
 msgid "Ready to grow"
 msgstr "Ready to grow"
+
+#. js-lingui-id: 1d+b/h
+#: src/app/[locale]/customers/_components/CustomersCaseStudySignoff.tsx
+msgid ""
+"Ready to grow\n"
+"with Twenty?"
+msgstr ""
+"Ready to grow\n"
+"with Twenty?"
 
 #. js-lingui-id: NIwjHh
 #: src/lib/customers/case-study-catalog.ts
@@ -3218,7 +3221,6 @@ msgstr "Twenty team support"
 
 #. js-lingui-id: WN9ufk
 #: src/app/[locale]/product/page.tsx
-#: src/app/[locale]/customers/_components/CustomersCaseStudySignoff.tsx
 msgid "Twenty?"
 msgstr "Twenty?"
 
@@ -3488,7 +3490,6 @@ msgstr "Why Twenty | Twenty"
 
 #. js-lingui-id: aycITw
 #: src/app/[locale]/product/page.tsx
-#: src/app/[locale]/customers/_components/CustomersCaseStudySignoff.tsx
 #: src/app/[locale]/(home)/page.tsx
 msgid "with"
 msgstr "with"
