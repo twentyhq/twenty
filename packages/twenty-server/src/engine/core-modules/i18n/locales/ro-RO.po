@@ -6752,6 +6752,12 @@ msgstr "Agentul pe care îl căutați nu a putut fi găsit. Este posibil să fi 
 msgid "The API key does not have a valid role assigned. Please check your API key configuration."
 msgstr "Cheia API nu are un rol valid alocat. Vă rugăm să verificați configurarea cheii API."
 
+#. js-lingui-id: Z4AMcp
+#: src/engine/core-modules/application/application.exception.ts
+#: src/engine/core-modules/application/application-registration/application-registration.exception.ts
+msgid "The app manifest declares an invalid server version requirement."
+msgstr ""
+
 #. js-lingui-id: MQn14a
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 msgid "The app source channel does not match the expected type."
@@ -6926,6 +6932,12 @@ msgstr "Rolul pe care încercați să îl modificați nu a putut fi găsit."
 msgid "The server address you entered is not allowed. Please use a public server address."
 msgstr ""
 
+#. js-lingui-id: 6N5Pv5
+#: src/engine/core-modules/application/application.exception.ts
+#: src/engine/core-modules/application/application-registration/application-registration.exception.ts
+msgid "The server's APP_VERSION is not a valid semver version. Self-hosted instances must configure a valid APP_VERSION."
+msgstr ""
+
 #. js-lingui-id: FOEWHl
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name.util.ts
 msgid "The singular and plural names cannot be the same for an object"
@@ -7037,6 +7049,12 @@ msgstr "Această cheie API a expirat. Vă rugăm să creați una nouă."
 #: src/engine/core-modules/api-key/exceptions/api-key.exception.ts
 msgid "This API key has no role assigned."
 msgstr "Această cheie API nu are niciun rol atribuit."
+
+#. js-lingui-id: zISk4k
+#: src/engine/core-modules/application/application.exception.ts
+#: src/engine/core-modules/application/application-registration/application-registration.exception.ts
+msgid "This app requires a newer version of the Twenty server. Please upgrade your server or use a compatible app version."
+msgstr ""
 
 #. js-lingui-id: ADtO2E
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts

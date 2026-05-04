@@ -1,6 +1,13 @@
 'use client';
 
-import { Eyebrow, GuideCrosshair, Heading } from '@/design-system/components';
+import { msg } from '@lingui/core/macro';
+import {
+  Eyebrow,
+  GuideCrosshair,
+  Heading,
+  HeadingPart,
+} from '@/design-system/components';
+import { useRenderMessage } from '@/lib/i18n/use-render-message';
 import { HelpedSceneScrollLayoutEffect } from '@/sections/Helped/effect-components/HelpedSceneScrollLayoutEffect';
 import type { HelpedDataType } from '@/sections/Helped/types/HelpedData';
 import { preloadHelpedVisualGeometries } from '@/sections/Helped/visuals/helped-visual-models';
@@ -92,6 +99,7 @@ type SceneProps = {
 };
 
 export function Scene({ data }: SceneProps) {
+  const renderText = useRenderMessage();
   const sectionRef = useRef<HTMLElement>(null);
   const innerRef = useRef<HTMLDivElement>(null);
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
@@ -120,15 +128,28 @@ export function Scene({ data }: SceneProps) {
         />
         <HeadlineBlock>
           <EyebrowExitTarget data-helped-exit-target>
-            <Eyebrow colorScheme="primary" heading={data.eyebrow.heading} />
+            <Eyebrow
+              colorScheme="primary"
+              heading={data.eyebrow.heading}
+              renderText={renderText}
+            />
           </EyebrowExitTarget>
           <Heading
             as="h2"
             className={helpedHeadingClassName}
-            segments={data.heading}
             size="xl"
             weight="light"
-          />
+          >
+            <HeadingPart fontFamily="serif">
+              {renderText(msg`Dev teams power`)}
+              <br />
+              {renderText(msg`company-wide`)}
+            </HeadingPart>
+            <br />
+            <HeadingPart fontFamily="sans">
+              {renderText(msg`change with Twenty`)}
+            </HeadingPart>
+          </Heading>
         </HeadlineBlock>
         <CardsLayer>
           {data.cards.map((card, index) => (
@@ -138,7 +159,7 @@ export function Scene({ data }: SceneProps) {
                 cardRefs.current[index] = element;
               }}
             >
-              <Card card={card} />
+              <Card card={card} renderText={renderText} />
             </CardPositioner>
           ))}
         </CardsLayer>

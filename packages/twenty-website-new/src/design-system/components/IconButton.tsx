@@ -1,4 +1,3 @@
-import { LocalizedLink } from '@/lib/i18n';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
 import type { ComponentType } from 'react';
@@ -15,7 +14,6 @@ interface IconButtonProps {
   iconSize: number;
   iconStrokeColor: string;
   size: number;
-  href?: string;
   onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void;
   ariaExpanded?: boolean;
 }
@@ -59,14 +57,6 @@ const StyledButton = styled.button<SurfaceProps>`
   width: ${({ $size }) => `${$size}px`};
 `;
 
-const StyledIconLink = styled(LocalizedLink)<SurfaceProps>`
-  ${iconButtonSurfaceStyles}
-  border: 1px solid ${({ $borderColor }) => $borderColor};
-  color: inherit;
-  height: ${({ $size }) => `${$size}px`};
-  width: ${({ $size }) => `${$size}px`};
-`;
-
 export function IconButton({
   icon: Icon,
   ariaLabel,
@@ -75,7 +65,6 @@ export function IconButton({
   iconSize,
   iconStrokeColor,
   size,
-  href,
   onClick,
   ariaExpanded,
 }: IconButtonProps) {
@@ -87,19 +76,6 @@ export function IconButton({
       strokeColor={iconStrokeColor}
     />
   );
-
-  if (href !== undefined && href !== '') {
-    return (
-      <StyledIconLink
-        $borderColor={borderColor}
-        $size={size}
-        aria-label={ariaLabel}
-        href={href}
-      >
-        {icon}
-      </StyledIconLink>
-    );
-  }
 
   return (
     <StyledButton

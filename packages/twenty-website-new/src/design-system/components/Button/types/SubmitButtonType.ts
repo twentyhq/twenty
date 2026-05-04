@@ -1,1 +1,3 @@
-export type SubmitButtonType = { label: string };
+import type { ReactNode } from 'react';
+
+export type SubmitButtonType = { label: ReactNode };

@@ -1,15 +1,24 @@
+import { v4 as uuidv4 } from 'uuid';
 import {
   type WorkflowStep,
   type WorkflowTrigger,
 } from '@/workflow/types/Workflow';
 import { StepStatus, type WorkflowRunStepInfos } from 'twenty-shared/workflow';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { getUuidV4Mock } from '~/testing/utils/getUuidV4Mock';
 import { generateWorkflowRunDiagram } from '@/workflow/workflow-diagram/utils/generateWorkflowRunDiagram';
 
-jest.mock('uuid', () => ({
-  v4: getUuidV4Mock(),
-}));
+jest.mock('uuid');
+
+beforeEach(() => {
+  let counter = 0;
+  (uuidv4 as jest.Mock).mockImplementation(
+    () => `8f3b2121-f194-4ba4-9fbf-${counter++}`,
+  );
+});
+
+afterAll(() => {
+  jest.resetAllMocks();
+});
 
 describe('generateWorkflowRunDiagram', () => {
   it('marks node as failed when the last attempt failed', () => {
@@ -349,7 +358,7 @@ describe('generateWorkflowRunDiagram', () => {
           "edgeType": "default",
         },
         "deletable": false,
-        "id": "8f3b2121-f194-4ba4-9fbf-3",
+        "id": "8f3b2121-f194-4ba4-9fbf-0",
         "markerEnd": "edge-branch-arrow-default",
         "markerStart": undefined,
         "selectable": false,
@@ -367,7 +376,7 @@ describe('generateWorkflowRunDiagram', () => {
           "edgeType": "default",
         },
         "deletable": false,
-        "id": "8f3b2121-f194-4ba4-9fbf-4",
+        "id": "8f3b2121-f194-4ba4-9fbf-1",
         "markerEnd": "edge-branch-arrow-default",
         "markerStart": undefined,
         "selectable": false,
@@ -385,7 +394,7 @@ describe('generateWorkflowRunDiagram', () => {
           "edgeType": "default",
         },
         "deletable": false,
-        "id": "8f3b2121-f194-4ba4-9fbf-5",
+        "id": "8f3b2121-f194-4ba4-9fbf-2",
         "markerEnd": "edge-branch-arrow-default",
         "markerStart": undefined,
         "selectable": false,
@@ -585,7 +594,7 @@ describe('generateWorkflowRunDiagram', () => {
           "edgeType": "default",
         },
         "deletable": false,
-        "id": "8f3b2121-f194-4ba4-9fbf-6",
+        "id": "8f3b2121-f194-4ba4-9fbf-0",
         "markerEnd": "edge-branch-arrow-default",
         "markerStart": undefined,
         "selectable": false,
@@ -603,7 +612,7 @@ describe('generateWorkflowRunDiagram', () => {
           "edgeType": "default",
         },
         "deletable": false,
-        "id": "8f3b2121-f194-4ba4-9fbf-7",
+        "id": "8f3b2121-f194-4ba4-9fbf-1",
         "markerEnd": "edge-branch-arrow-default",
         "markerStart": undefined,
         "selectable": false,
@@ -621,7 +630,7 @@ describe('generateWorkflowRunDiagram', () => {
           "edgeType": "default",
         },
         "deletable": false,
-        "id": "8f3b2121-f194-4ba4-9fbf-8",
+        "id": "8f3b2121-f194-4ba4-9fbf-2",
         "markerEnd": "edge-branch-arrow-default",
         "markerStart": undefined,
         "selectable": false,
@@ -839,7 +848,7 @@ describe('generateWorkflowRunDiagram', () => {
           "edgeType": "default",
         },
         "deletable": false,
-        "id": "8f3b2121-f194-4ba4-9fbf-9",
+        "id": "8f3b2121-f194-4ba4-9fbf-0",
         "markerEnd": "edge-branch-arrow-default",
         "markerStart": undefined,
         "selectable": false,
@@ -857,7 +866,7 @@ describe('generateWorkflowRunDiagram', () => {
           "edgeType": "default",
         },
         "deletable": false,
-        "id": "8f3b2121-f194-4ba4-9fbf-10",
+        "id": "8f3b2121-f194-4ba4-9fbf-1",
         "markerEnd": "edge-branch-arrow-default",
         "markerStart": undefined,
         "selectable": false,
@@ -875,7 +884,7 @@ describe('generateWorkflowRunDiagram', () => {
           "edgeType": "default",
         },
         "deletable": false,
-        "id": "8f3b2121-f194-4ba4-9fbf-11",
+        "id": "8f3b2121-f194-4ba4-9fbf-2",
         "markerEnd": "edge-branch-arrow-default",
         "markerStart": undefined,
         "selectable": false,
@@ -893,7 +902,7 @@ describe('generateWorkflowRunDiagram', () => {
           "edgeType": "default",
         },
         "deletable": false,
-        "id": "8f3b2121-f194-4ba4-9fbf-12",
+        "id": "8f3b2121-f194-4ba4-9fbf-3",
         "markerEnd": "edge-branch-arrow-default",
         "markerStart": undefined,
         "selectable": false,
@@ -1081,7 +1090,7 @@ describe('generateWorkflowRunDiagram', () => {
           "edgeType": "default",
         },
         "deletable": false,
-        "id": "8f3b2121-f194-4ba4-9fbf-13",
+        "id": "8f3b2121-f194-4ba4-9fbf-0",
         "markerEnd": "edge-branch-arrow-default",
         "markerStart": undefined,
         "selectable": false,
