@@ -1,9 +1,5 @@
 name: "Version: bump"
 
-permissions:
-  contents: write
-  pull-requests: write
-
 on:
   workflow_dispatch:
     inputs:
@@ -22,6 +18,9 @@ jobs:
   bump:
     timeout-minutes: 10
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
