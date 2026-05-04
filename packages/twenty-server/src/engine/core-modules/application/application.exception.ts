@@ -22,6 +22,7 @@ export enum ApplicationExceptionCode {
   POST_INSTALL_ERROR = 'POST_INSTALL_ERROR',
   APP_ALREADY_INSTALLED = 'APP_ALREADY_INSTALLED',
   CANNOT_DOWNGRADE_APPLICATION = 'CANNOT_DOWNGRADE_APPLICATION',
+  SERVER_VERSION_INCOMPATIBLE = 'SERVER_VERSION_INCOMPATIBLE',
 }
 
 const getApplicationExceptionUserFriendlyMessage = (
@@ -62,6 +63,8 @@ const getApplicationExceptionUserFriendlyMessage = (
       return msg`This version of the application is already installed in this workspace.`;
     case ApplicationExceptionCode.CANNOT_DOWNGRADE_APPLICATION:
       return msg`A higher version of this application is already installed. Downgrading is not allowed.`;
+    case ApplicationExceptionCode.SERVER_VERSION_INCOMPATIBLE:
+      return msg`This app requires a newer version of the Twenty server. Please upgrade your server or use a compatible app version.`;
     default:
       assertUnreachable(code);
   }

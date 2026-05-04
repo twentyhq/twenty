@@ -31,6 +31,7 @@ export class ApplicationExceptionFilter implements ExceptionFilter {
       case ApplicationExceptionCode.SOURCE_CHANNEL_MISMATCH:
       case ApplicationExceptionCode.APP_ALREADY_INSTALLED:
       case ApplicationExceptionCode.CANNOT_DOWNGRADE_APPLICATION:
+      case ApplicationExceptionCode.SERVER_VERSION_INCOMPATIBLE:
         throw new UserInputError(exception);
       case ApplicationExceptionCode.PACKAGE_RESOLUTION_FAILED:
       case ApplicationExceptionCode.POST_INSTALL_ERROR:

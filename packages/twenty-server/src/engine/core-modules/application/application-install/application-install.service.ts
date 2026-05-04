@@ -32,6 +32,7 @@ import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decora
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { SdkClientGenerationService } from 'src/engine/core-modules/sdk-client/sdk-client-generation.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
 
@@ -52,6 +53,7 @@ export class ApplicationInstallService {
     @InjectMessageQueue(MessageQueue.logicFunctionQueue)
     private readonly messageQueueService: MessageQueueService,
     private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
   async installApplication(params: {
@@ -116,6 +118,22 @@ export class ApplicationInstallService {
 
     if (!resolvedPackage) {
       return true;
+    }
+
+    const requiredServerVersion =
+      resolvedPackage.packageJson.engines?.['twenty'];
+    const serverVersion = this.twentyConfigService.get('APP_VERSION');
+
+    if (
+      isDefined(requiredServerVersion) &&
+      isDefined(serverVersion) &&
+      isDefined(semver.valid(serverVersion)) &&
+      !semver.satisfies(serverVersion, requiredServerVersion)
+    ) {
+      throw new ApplicationException(
+        `App requires Twenty server ${requiredServerVersion} but this server is ${serverVersion}.`,
+        ApplicationExceptionCode.SERVER_VERSION_INCOMPATIBLE,
+      );
     }
 
     const universalIdentifier = appRegistration.universalIdentifier;

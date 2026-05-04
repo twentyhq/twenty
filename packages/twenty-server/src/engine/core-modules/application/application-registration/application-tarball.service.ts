@@ -22,6 +22,7 @@ import { readJsonFile } from 'src/engine/core-modules/application/application-pa
 import { resolvePackageContentDir } from 'src/engine/core-modules/application/application-package/utils/tarball-utils';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import type { ApplicationManifest } from 'twenty-shared/application';
 import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.service';
 
@@ -37,6 +38,7 @@ export class ApplicationTarballService {
     private readonly fileStorageService: FileStorageService,
     private readonly applicationService: ApplicationService,
     private readonly applicationRegistrationVariableService: ApplicationRegistrationVariableService,
+    private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
   async uploadTarball(params: {
@@ -66,12 +68,28 @@ export class ApplicationTarballService {
 
       const packageJson = await readJsonFile<{
         version: string;
+        engines?: { twenty?: string };
       }>(contentDir, 'package.json');
 
       if (manifest === null) {
         throw new ApplicationRegistrationException(
           'manifest.json not found or invalid in tarball',
           ApplicationRegistrationExceptionCode.INVALID_INPUT,
+        );
+      }
+
+      const requiredServerVersion = packageJson?.engines?.twenty;
+      const serverVersion = this.twentyConfigService.get('APP_VERSION');
+
+      if (
+        isDefined(requiredServerVersion) &&
+        isDefined(serverVersion) &&
+        isDefined(semver.valid(serverVersion)) &&
+        !semver.satisfies(serverVersion, requiredServerVersion)
+      ) {
+        throw new ApplicationRegistrationException(
+          `App requires Twenty server ${requiredServerVersion} but this server is ${serverVersion}.`,
+          ApplicationRegistrationExceptionCode.SERVER_VERSION_INCOMPATIBLE,
         );
       }
 
