@@ -24,10 +24,7 @@
     "@types/babel__preset-env": "^7",
     "@types/handlebars": "^4.1.0",
     "@types/jest": "^30.0.0",
-    "@types/lodash.camelcase": "^4.3.7",
     "@types/lodash.escaperegexp": "^4.1.9",
-    "@types/qs": "6.9.16",
-    "@types/uuid": "^9.0.2",
     "@typescript/native-preview": "^7.0.0-dev.20260116.1",
     "babel-plugin-module-resolver": "^5.0.2",
     "glob": "^11.1.0",
@@ -56,7 +53,6 @@
     "react-router-dom": "^6.4.4",
     "temporal-polyfill": "^0.3.0",
     "transliteration": "^2.3.5",
-    "uuid": "^9.0.0",
     "zod": "^4.1.11"
   },
   "exports": {
