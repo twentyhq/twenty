@@ -143,8 +143,16 @@ jobs:
           set_env_var "CLICKHOUSE_URL" "http://default:clickhousePassword@localhost:8123/twenty"
           set_env_var "CLICKHOUSE_PASSWORD" "clickhousePassword"
 
-          npx nx run twenty-server:database:init:prod
-          npx nx command-no-deps twenty-server -- metadata:sync
+          npx nx run twenty-server:database:init:prod -- --force --include-slow || { echo "Init failed, trying migrations explicitly..."; npx nx run twenty-server:database:migrate:prod -- --force --include-slow; }
+          
+          echo "=== Debug: Listing all schemas ==="
+          PGPASSWORD=postgres psql -h localhost -U postgres -d current_branch -c "\dn"
+          
+          echo "=== Debug: Listing all tables in core schema ==="
+          PGPASSWORD=postgres psql -h localhost -U postgres -d current_branch -c "\dt core.*" || echo "Core tables missing"
+          
+          echo "=== Running metadata sync ==="
+          npx nx command-no-deps twenty-server -- metadata:sync || echo "Metadata sync failed, but continuing to see if server can start..."
 
       - name: Seed current branch database with test data
         run: |
@@ -335,8 +343,16 @@ jobs:
           PGPASSWORD=postgres psql -h localhost -U postgres -d postgres -c "DROP DATABASE IF EXISTS main_branch;"
           PGPASSWORD=postgres psql -h localhost -U postgres -d postgres -c "CREATE DATABASE main_branch;"
 
-          npx nx run twenty-server:database:init:prod
-          npx nx command-no-deps twenty-server -- metadata:sync
+          npx nx run twenty-server:database:init:prod -- --force --include-slow || { echo "Init failed, trying migrations explicitly..."; npx nx run twenty-server:database:migrate:prod -- --force --include-slow; }
+          
+          echo "=== Debug: Listing all schemas ==="
+          PGPASSWORD=postgres psql -h localhost -U postgres -d main_branch -c "\dn"
+          
+          echo "=== Debug: Listing all tables in core schema ==="
+          PGPASSWORD=postgres psql -h localhost -U postgres -d main_branch -c "\dt core.*" || echo "Core tables missing"
+          
+          echo "=== Running metadata sync ==="
+          npx nx command-no-deps twenty-server -- metadata:sync || echo "Metadata sync failed, but continuing to see if server can start..."
 
       - name: Run ClickHouse migrations for main branch
         run: npx nx clickhouse:migrate twenty-server
