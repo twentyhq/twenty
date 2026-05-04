@@ -10,7 +10,9 @@ import {
   type WorkflowVersion,
   type WorkflowStep,
 } from '@/workflow/types/Workflow';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useMutation } from '@apollo/client/react';
+import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import {
   type UpdateWorkflowVersionStepInput,
@@ -22,6 +24,7 @@ export const useUpdateWorkflowVersionStep = () => {
   const apolloCoreClient = useApolloCoreClient();
   const { objectMetadataItems } = useObjectMetadataItems();
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
+  const { enqueueErrorSnackBar } = useSnackBar();
 
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular: CoreObjectNameSingular.WorkflowVersion,
@@ -39,7 +42,15 @@ export const useUpdateWorkflowVersionStep = () => {
   const updateWorkflowVersionStep = async (
     input: UpdateWorkflowVersionStepInput,
   ) => {
-    const result = await mutate({ variables: { input } });
+    const result = await mutate({
+      variables: { input },
+      onError: (error) => {
+        enqueueErrorSnackBar({
+          apolloError: error,
+          message: t`Failed to update workflow step`,
+        });
+      },
+    });
     const updatedStep = result?.data?.updateWorkflowVersionStep;
     if (!isDefined(updatedStep)) {
       return;

@@ -1,10 +1,12 @@
 import { useMutation } from '@apollo/client/react';
+import { t } from '@lingui/core/macro';
 import {
   type ResendWorkspaceInvitationMutationVariables,
   ResendWorkspaceInvitationDocument,
 } from '~/generated-metadata/graphql';
 import { workspaceInvitationsState } from '@/workspace-invitation/states/workspaceInvitationsStates';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 
 export const useResendWorkspaceInvitation = () => {
   const [resendWorkspaceInvitationMutation] = useMutation(
@@ -12,6 +14,7 @@ export const useResendWorkspaceInvitation = () => {
   );
 
   const setWorkspaceInvitations = useSetAtomState(workspaceInvitationsState);
+  const { enqueueErrorSnackBar } = useSnackBar();
 
   const resendInvitation = async ({
     appTokenId,
@@ -27,6 +30,12 @@ export const useResendWorkspaceInvitation = () => {
             (workspaceInvitation) => workspaceInvitation.id !== appTokenId,
           ),
         ]);
+      },
+      onError: (error) => {
+        enqueueErrorSnackBar({
+          apolloError: error,
+          message: t`Failed to resend invitation`,
+        });
       },
     });
   };
