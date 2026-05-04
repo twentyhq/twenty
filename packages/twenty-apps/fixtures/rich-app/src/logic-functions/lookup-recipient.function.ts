@@ -16,6 +16,7 @@ export default defineLogicFunction({
       properties: {
         recipientName: { type: 'string' },
       },
+      required: ['recipientName'],
     },
   },
 });

@@ -37,6 +37,10 @@ import {
   type PostInstallLogicFunctionApplicationManifest,
   type PreInstallLogicFunctionApplicationManifest,
 } from 'twenty-shared/application';
+import {
+  getInputSchemaFromSourceCode,
+  jsonSchemaToInputSchema,
+} from 'twenty-shared/logic-function';
 import { assertUnreachable } from 'twenty-shared/utils';
 import { addMissingFieldOptionIds } from '@/cli/utilities/build/manifest/utils/add-missing-field-option-ids';
 import { type PostInstallLogicFunctionConfig } from '@/sdk/define/logic-functions/post-install-logic-function-config';
@@ -233,8 +237,43 @@ export const buildManifest = async (
 
         const relativeFilePath = relative(appPath, filePath);
 
+        // Auto-infer inputSchema for any trigger that opts in but omits one.
+        // For the AI tool surface we use the JSON schema directly; for the
+        // workflow action surface we convert to Twenty's InputSchema.
+        const inferredJsonSchema =
+          (rest.toolTriggerSettings && !rest.toolTriggerSettings.inputSchema) ||
+          (rest.workflowActionTriggerSettings &&
+            !rest.workflowActionTriggerSettings.inputSchema)
+            ? await getInputSchemaFromSourceCode(fileContent)
+            : null;
+
+        const toolTriggerSettings = rest.toolTriggerSettings
+          ? {
+              ...rest.toolTriggerSettings,
+              inputSchema:
+                rest.toolTriggerSettings.inputSchema ??
+                inferredJsonSchema ??
+                undefined,
+            }
+          : undefined;
+
+        const workflowActionTriggerSettings = rest.workflowActionTriggerSettings
+          ? {
+              ...rest.workflowActionTriggerSettings,
+              inputSchema:
+                rest.workflowActionTriggerSettings.inputSchema ??
+                (inferredJsonSchema
+                  ? jsonSchemaToInputSchema(inferredJsonSchema)
+                  : undefined),
+            }
+          : undefined;
+
         const config: LogicFunctionManifest = {
           ...rest,
+          ...(toolTriggerSettings ? { toolTriggerSettings } : {}),
+          ...(workflowActionTriggerSettings
+            ? { workflowActionTriggerSettings }
+            : {}),
           handlerName: 'default.config.handler',
           sourceHandlerPath: relativeFilePath,
           builtHandlerPath: relativeFilePath.replace(/\.tsx?$/, '.mjs'),
