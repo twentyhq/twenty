@@ -1,6 +1,7 @@
 import { type AgentManifest } from './agentManifestType';
 import { type ApplicationManifest } from './applicationType';
 import { type AssetManifest } from './assetManifestType';
+import { type ConnectionProviderManifest } from './connectionProviderManifestType';
 import { type FieldManifest } from './fieldManifestType';
 import { type FrontComponentManifest } from './frontComponentManifestType';
 import { type LogicFunctionManifest } from './logicFunctionManifestType';
@@ -23,6 +24,7 @@ export type Manifest = {
   roles: RoleManifest[];
   skills: SkillManifest[];
   agents: AgentManifest[];
+  connectionProviders?: ConnectionProviderManifest[];
   publicAssets: AssetManifest[];
   views: ViewManifest[];
   navigationMenuItems: NavigationMenuItemManifest[];

@@ -5,6 +5,7 @@ import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { In, Repository } from 'typeorm';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
+import { AppOAuthRevokeService } from 'src/engine/core-modules/application/application-oauth-provider/refresh/services/app-oauth-revoke.service';
 import {
   ConnectedAccountException,
   ConnectedAccountExceptionCode,
@@ -33,6 +34,7 @@ export class ConnectedAccountMetadataService {
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
+    private readonly appOAuthRevokeService: AppOAuthRevokeService,
   ) {}
 
   async findAll(workspaceId: string): Promise<ConnectedAccountDTO[]> {
@@ -181,6 +183,12 @@ export class ConnectedAccountMetadataService {
     this.logger.log(
       `WorkspaceId: ${workspaceId} Deleting connected account ${id} with ${messageChannels.length} message channel(s) and ${calendarChannels.length} calendar channel(s)`,
     );
+
+    // Best-effort revocation against the provider's revokeEndpoint (no-op
+    // for non-app providers and for app providers without a revokeEndpoint
+    // declared). We don't want a slow or failing provider to block the
+    // local disconnect, so any error is swallowed inside the service.
+    await this.appOAuthRevokeService.revokeIfApp(connectedAccount);
 
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
       await this.repository.delete({

@@ -11,4 +11,8 @@ export type LogicFunctionEvent<TBody = object> = {
       path: string;
     };
   };
+  // Populated for HTTP-route triggers with `isAuthRequired: true`. null
+  // when the trigger fires without a user (cron, database events) or when
+  // auth is disabled.
+  userWorkspaceId: string | null;
 };

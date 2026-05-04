@@ -48,6 +48,7 @@ export enum JwtTokenTypeEnum {
   KEY_ENCRYPTION_KEY = 'KEY_ENCRYPTION_KEY',
   APPLICATION_ACCESS = 'APPLICATION_ACCESS',
   APPLICATION_REFRESH = 'APPLICATION_REFRESH',
+  APP_OAUTH_STATE = 'APP_OAUTH_STATE',
 }
 
 type CommonPropertiesJwtPayload = {
@@ -141,6 +142,23 @@ export type PostgresProxyTokenJwtPayload = CommonPropertiesJwtPayload & {
   type: JwtTokenTypeEnum.POSTGRES_PROXY;
 };
 
+export type AppOAuthStateJwtPayload = CommonPropertiesJwtPayload & {
+  type: JwtTokenTypeEnum.APP_OAUTH_STATE;
+  workspaceId: string;
+  applicationOAuthProviderId: string;
+  userId: string;
+  userWorkspaceId: string;
+  // 'user' = the resulting credential is private to userWorkspaceId.
+  // 'workspace' = visible to anyone in the workspace.
+  // Named `visibility` to disambiguate from OAuth `scopes` on the row.
+  visibility: 'user' | 'workspace';
+  // If set, the callback updates this existing connectedAccount row instead
+  // of creating a new one (used by the UI's "Reconnect" action).
+  reconnectingConnectedAccountId: string | null;
+  redirectLocation: string | null;
+  codeVerifier: string | null;
+};
+
 export type JwtPayload =
   | AccessTokenJwtPayload
   | ApiKeyTokenJwtPayload
@@ -152,4 +170,5 @@ export type JwtPayload =
   | RefreshTokenJwtPayload
   | FileTokenJwtPayload
   | FileTokenJwtPayloadLegacy
-  | PostgresProxyTokenJwtPayload;
+  | PostgresProxyTokenJwtPayload
+  | AppOAuthStateJwtPayload;

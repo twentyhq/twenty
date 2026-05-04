@@ -1140,6 +1140,8 @@ export class AuthService {
         return [];
       case ConnectedAccountProvider.IMAP_SMTP_CALDAV:
         return [];
+      case ConnectedAccountProvider.APP:
+        return [];
       default:
         throw new Error(
           `Unsupported connected account provider: ${provider satisfies never}`,

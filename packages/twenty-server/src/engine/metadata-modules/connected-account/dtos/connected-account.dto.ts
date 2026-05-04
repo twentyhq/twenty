@@ -72,6 +72,28 @@ export class ConnectedAccountDTO {
   @Field(() => UUIDScalarType)
   userWorkspaceId: string;
 
+  @IsUUID()
+  @IsOptional()
+  @Field(() => UUIDScalarType, { nullable: true })
+  applicationConnectionProviderId: string | null;
+
+  @IsUUID()
+  @IsOptional()
+  @Field(() => UUIDScalarType, { nullable: true })
+  applicationId: string | null;
+
+  @IsString()
+  @IsOptional()
+  @Field(() => String, { nullable: true })
+  name: string | null;
+
+  // 'user' = private to the connecting user.
+  // 'workspace' = shared with all members.
+  // Named `visibility` to disambiguate from the OAuth `scopes` array.
+  @IsString()
+  @Field(() => String)
+  visibility: string;
+
   @HideField()
   workspaceId: string;
 
