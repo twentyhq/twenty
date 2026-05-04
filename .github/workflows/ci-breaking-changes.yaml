@@ -165,8 +165,7 @@ jobs:
           elapsed=0
 
           while [ $elapsed -lt $timeout ]; do
-            if curl -sf "http://localhost:${{ env.CURRENT_SERVER_PORT }}/graphql" > /dev/null 2>&1 && \
-               curl -sf "http://localhost:${{ env.CURRENT_SERVER_PORT }}/rest/open-api/core" > /dev/null 2>&1; then
+            if curl -sf "http://localhost:${{ env.CURRENT_SERVER_PORT }}/healthz" > /dev/null 2>&1; then
               echo "Current branch server is ready!"
               break
             fi
@@ -351,8 +350,7 @@ jobs:
           elapsed=0
 
           while [ $elapsed -lt $timeout ]; do
-            if curl -sf "http://localhost:${{ env.MAIN_SERVER_PORT }}/graphql" > /dev/null 2>&1 && \
-               curl -sf "http://localhost:${{ env.MAIN_SERVER_PORT }}/rest/open-api/core" > /dev/null 2>&1; then
+            if curl -sf "http://localhost:${{ env.MAIN_SERVER_PORT }}/healthz" > /dev/null 2>&1; then
               echo "Main branch server is ready!"
               break
             fi
