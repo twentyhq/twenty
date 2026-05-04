@@ -1,7 +1,13 @@
+import { msg } from '@lingui/core/macro';
 import { MENU_DATA } from '@/sections/Menu/data';
 import { CustomersCaseStudySignoff } from '@/app/[locale]/customers/_components/CustomersCaseStudySignoff';
 import { getCaseStudyPalette, type CaseStudyData } from '@/lib/customers';
 import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';
+import { createMessageDescriptorRenderer } from '@/lib/i18n/create-message-descriptor-renderer';
+import {
+  getRouteI18n,
+  type LocaleRouteParams,
+} from '@/lib/i18n/get-route-i18n';
 import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels';
 import { CaseStudy } from '@/sections/CaseStudy/components';
 import { Menu } from '@/sections/Menu/components';
@@ -13,89 +19,92 @@ const PLACEHOLDER_HERO =
 
 const CASE_STUDY: CaseStudyData = {
   meta: {
-    title:
-      'When your CRM is the product: W3Grads on Twenty | W3villa Technologies',
-    description:
-      'How W3villa Technologies shipped W3Grads, an AI mock interview platform for institutions, on Twenty as the operational backbone.',
+    title: msg`When your CRM is the product: W3Grads on Twenty | W3villa Technologies`,
+    description: msg`How W3villa Technologies shipped W3Grads, an AI mock interview platform for institutions, on Twenty as the operational backbone.`,
   },
   hero: {
     readingTime: '8 min',
     title: [
-      { text: 'When your CRM is ', fontFamily: 'serif' },
-      { text: 'the product', fontFamily: 'sans', newLine: true },
+      { text: msg`When your CRM is`, fontFamily: 'serif' },
+      { text: msg`the product`, fontFamily: 'sans', newLine: true },
     ],
     author: 'Amrendra Pratap Singh',
     authorAvatarSrc: '/images/partner/testimonials/amrendra-singh.webp',
-    authorRole: 'VP of Engineering, W3villa Technologies',
+    authorRole: msg`VP of Engineering, W3villa Technologies`,
     clientIcon: 'w3villa',
     heroImageSrc: PLACEHOLDER_HERO,
-    industry: 'EdTech',
-    kpis: [{ value: 'Zero', label: 'Manual work at core' }],
+    industry: msg`EdTech`,
+    kpis: [{ value: msg`Zero`, label: msg`Manual work at core` }],
   },
   sections: [
     {
       type: 'text',
-      eyebrow: 'W3Grads',
+      eyebrow: msg`W3Grads`,
       heading: [
-        { text: 'Scale without ', fontFamily: 'serif' },
-        { text: 'breaking operations', fontFamily: 'sans' },
+        { text: msg`Scale without`, fontFamily: 'serif' },
+        { text: msg`breaking operations`, fontFamily: 'sans' },
       ],
       paragraphs: [
-        'Running mock interview programs for hundreds of students sounds straightforward. In practice, universities and training institutes hit the same wall: registrations entered by hand, interview links sent one by one, faculty reviewing every session without scoring or classification. At real scale, it breaks.',
-        'W3villa Technologies set out to solve it properly, not with a workaround, but with a product.',
+        msg`Running mock interview programs for hundreds of students sounds straightforward. In practice, universities and training institutes hit the same wall: registrations entered by hand, interview links sent one by one, faculty reviewing every session without scoring or classification. At real scale, it breaks.`,
+        msg`W3villa Technologies set out to solve it properly, not with a workaround, but with a product.`,
       ],
       callout:
         '"We did not want to patch over the problem. We wanted to build something institutions could rely on at scale, and that meant starting from a foundation solid enough to support the full complexity of what we had in mind." - Amrendra Pratap Singh, VP of Engineering, W3villa Technologies',
     },
     {
       type: 'text',
-      eyebrow: 'Architecture',
+      eyebrow: msg`Architecture`,
       heading: [
-        { text: 'Focus on the use case, not the ', fontFamily: 'serif' },
-        { text: 'plumbing', fontFamily: 'sans' },
+        {
+          text: msg`Focus on the use case, not the`,
+          fontFamily: 'serif',
+        },
+        { text: msg`plumbing`, fontFamily: 'sans' },
       ],
       paragraphs: [
-        'W3villa built W3Grads (w3grads.com), an AI-powered mock interview platform for universities and training institutes, using Twenty as its operational backbone.',
-        'The key decision was not to build everything from scratch. Twenty covers the data model, permissions, authentication, and workflow engine, the parts that would have taken months to rebuild, so the team could focus on product-specific logic.',
-        'When a student registers via QR at a campus event, the system assigns a plan, generates an interview session, and sends a link. The AI conducts the interview, scores the candidate, and classifies the result. Faculty see where each student stands without manually reviewing every session. Building and iterating on these workflows was faster with AI in the loop.',
+        msg`W3villa built W3Grads (w3grads.com), an AI-powered mock interview platform for universities and training institutes, using Twenty as its operational backbone.`,
+        msg`The key decision was not to build everything from scratch. Twenty covers the data model, permissions, authentication, and workflow engine, the parts that would have taken months to rebuild, so the team could focus on product-specific logic.`,
+        msg`When a student registers via QR at a campus event, the system assigns a plan, generates an interview session, and sends a link. The AI conducts the interview, scores the candidate, and classifies the result. Faculty see where each student stands without manually reviewing every session. Building and iterating on these workflows was faster with AI in the loop.`,
       ],
     },
     {
       type: 'text',
-      eyebrow: 'Scale',
+      eyebrow: msg`Scale`,
       heading: [
-        { text: 'A platform ready to ', fontFamily: 'serif' },
-        { text: 'grow', fontFamily: 'sans' },
+        {
+          text: msg`A platform ready to`,
+          fontFamily: 'serif',
+        },
+        { text: msg`grow`, fontFamily: 'sans' },
       ],
       paragraphs: [
-        'Because the foundation is solid, W3Grads is architected for what comes next, including a payment layer for future paid interview plans and nationwide scale without structural rewrites.',
+        msg`Because the foundation is solid, W3Grads is architected for what comes next, including a payment layer for future paid interview plans and nationwide scale without structural rewrites.`,
       ],
       callout:
         '"Twenty gave us the flexibility to model the entire interview lifecycle as custom objects and workflows. We could build something genuinely complex without fighting the platform to do it." - Piyush Khandelwal, Director, W3villa Technologies, Partner',
     },
     {
       type: 'text',
-      eyebrow: 'The result',
+      eyebrow: msg`The result`,
       heading: [
-        { text: 'Zero manual work', fontFamily: 'sans' },
-        { text: ' at the core', fontFamily: 'serif' },
+        { text: msg`Zero manual work`, fontFamily: 'sans' },
+        { text: msg`at the core`, fontFamily: 'serif' },
       ],
       paragraphs: [
-        'Programs that previously needed heavy manual coordination now run end-to-end with automation. Institutions get a scalable, intelligent system; students get faster preparation for interviews that matter; W3villa shipped a product institutions can build revenue around.',
-        'Zero manual work at the core. Full automation. Built on Twenty.',
+        msg`Programs that previously needed heavy manual coordination now run end-to-end with automation. Institutions get a scalable, intelligent system; students get faster preparation for interviews that matter; W3villa shipped a product institutions can build revenue around.`,
+        msg`Zero manual work at the core. Full automation. Built on Twenty.`,
       ],
     },
   ],
   tableOfContents: [
-    'Scale without breaking operations',
-    'Focus on the use case, not the plumbing',
-    'A platform ready to grow',
-    'The result',
+    msg`Scale without breaking operations`,
+    msg`Focus on the use case, not the plumbing`,
+    msg`A platform ready to grow`,
+    msg`The result`,
   ],
   catalogCard: {
-    summary:
-      'W3villa shipped W3Grads on Twenty for AI interviews, scoring, and institution-scale workflows without rebuilding CRM plumbing.',
-    date: '2025',
+    summary: msg`W3villa shipped W3Grads on Twenty for AI interviews, scoring, and institution-scale workflows without rebuilding CRM plumbing.`,
+    date: msg`2025`,
   },
 };
 
@@ -105,8 +114,18 @@ export const generateMetadata = buildLocalizedMetadata({
   description: CASE_STUDY.meta.description,
 });
 
-export default async function W3villaCaseStudyPage() {
-  const stats = await fetchCommunityStats();
+type CaseStudyPageProps = {
+  params: Promise<LocaleRouteParams>;
+};
+
+export default async function W3villaCaseStudyPage({
+  params,
+}: CaseStudyPageProps) {
+  const [i18n, stats] = await Promise.all([
+    getRouteI18n(params),
+    fetchCommunityStats(),
+  ]);
+  const renderText = createMessageDescriptorRenderer(i18n);
   const menuSocialLinks = mergeSocialLinkLabels(MENU_DATA.socialLinks, stats);
   const palette = getCaseStudyPalette('/customers/w3villa');
 
@@ -120,6 +139,7 @@ export default async function W3villaCaseStudyPage() {
           key={index}
           block={block}
           isLast={index === CASE_STUDY.sections.length - 1}
+          renderText={renderText}
           sectionId={sectionId}
         />
       );
@@ -151,17 +171,19 @@ export default async function W3villaCaseStudyPage() {
         dashColor={palette.dashColor}
         hero={CASE_STUDY.hero}
         hoverDashColor={palette.hoverDashColor}
+        renderText={renderText}
       />
 
       <CaseStudy.Highlights
         industry={CASE_STUDY.hero.industry}
         kpis={CASE_STUDY.hero.kpis}
+        renderText={renderText}
       />
 
       <CaseStudy.Body>{sectionBlocks}</CaseStudy.Body>
 
       <CaseStudy.SectionNav items={CASE_STUDY.tableOfContents} />
-      <CustomersCaseStudySignoff />
+      <CustomersCaseStudySignoff renderText={renderText} />
     </>
   );
 }

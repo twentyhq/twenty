@@ -1293,6 +1293,20 @@ enum PageLayoutType {
   STANDALONE_PAGE
 }
 
+type ApplicationConnectionProviderOAuthConfig {
+  scopes: [String!]!
+  isClientCredentialsConfigured: Boolean!
+}
+
+type ApplicationConnectionProvider {
+  id: UUID!
+  applicationId: String!
+  type: String!
+  name: String!
+  displayName: String!
+  oauth: ApplicationConnectionProviderOAuthConfig
+}
+
 type Analytics {
   """Boolean that confirms query was dispatched"""
   success: Boolean!
@@ -2537,6 +2551,10 @@ type ConnectedAccountDTO {
   connectionParameters: ImapSmtpCaldavConnectionParameters
   lastSignedInAt: DateTime
   userWorkspaceId: UUID!
+  applicationConnectionProviderId: UUID
+  applicationId: UUID
+  name: String
+  visibility: String!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -2564,6 +2582,10 @@ type ConnectedAccountPublicDTO {
   scopes: [String!]
   lastSignedInAt: DateTime
   userWorkspaceId: UUID!
+  applicationConnectionProviderId: UUID
+  applicationId: UUID
+  name: String
+  visibility: String!
   createdAt: DateTime!
   updatedAt: DateTime!
   connectionParameters: PublicImapSmtpCaldavConnectionParameters
@@ -2919,6 +2941,7 @@ type Query {
   getPageLayoutTab(id: String!): PageLayoutTab!
   getPageLayouts(objectMetadataId: String, pageLayoutType: PageLayoutType): [PageLayout!]!
   getPageLayout(id: String!): PageLayout
+  applicationConnectionProviders(applicationId: UUID!): [ApplicationConnectionProvider!]!
   getPageLayoutWidgets(pageLayoutTabId: String!): [PageLayoutWidget!]!
   getPageLayoutWidget(id: String!): PageLayoutWidget!
   findOneLogicFunction(input: LogicFunctionIdInput!): LogicFunction!
@@ -3170,6 +3193,7 @@ type Mutation {
   resetPageLayoutToDefault(id: String!): PageLayout!
   resetPageLayoutWidgetToDefault(id: String!): PageLayoutWidget!
   resetPageLayoutTabToDefault(id: String!): PageLayoutTab!
+  updateOneApplicationVariable(key: String!, value: String!, applicationId: UUID!): Boolean!
   createPageLayoutWidget(input: CreatePageLayoutWidgetInput!): PageLayoutWidget!
   updatePageLayoutWidget(id: String!, input: UpdatePageLayoutWidgetInput!): PageLayoutWidget!
   destroyPageLayoutWidget(id: String!): Boolean!
@@ -3272,7 +3296,6 @@ type Mutation {
   installApplication(appRegistrationId: String!, version: String): Boolean!
   runWorkspaceMigration(workspaceMigration: WorkspaceMigrationInput!): Boolean!
   uninstallApplication(universalIdentifier: String!): Boolean!
-  updateOneApplicationVariable(key: String!, value: String!, applicationId: UUID!): Boolean!
   createOIDCIdentityProvider(input: SetupOIDCSsoInput!): SetupSso!
   createSAMLIdentityProvider(input: SetupSAMLSsoInput!): SetupSso!
   deleteSSOIdentityProvider(input: DeleteSsoInput!): DeleteSso!

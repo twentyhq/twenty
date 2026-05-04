@@ -11,6 +11,10 @@ export const GET_MY_CONNECTED_ACCOUNTS = gql`
       handleAliases
       lastSignedInAt
       userWorkspaceId
+      applicationConnectionProviderId
+      name
+      visibility
+      lastCredentialsRefreshedAt
       connectionParameters {
         IMAP {
           host

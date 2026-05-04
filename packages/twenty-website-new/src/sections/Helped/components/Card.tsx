@@ -1,10 +1,13 @@
-import { Body, Heading, LinkButton } from '@/design-system/components';
+import { Body, Heading } from '@/design-system/components';
 import { CLIENT_ICONS } from '@/icons';
+import { LocalizedLinkButton } from '@/lib/i18n/LocalizedLinkButton';
 import { WebGlMount } from '@/lib/visual-runtime';
 import { HelpedCardShape } from '@/sections/Helped/components/HelpedCardShape';
 import type { HeadingCardType } from '@/sections/Helped/types/HeadingCard';
 import { HELPED_VISUALS } from '@/sections/Helped/visuals';
 import { theme } from '@/theme';
+import type { MessageDescriptor } from '@lingui/core';
+import { msg } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
 
 const CardRoot = styled.article`
@@ -71,9 +74,10 @@ const LOGO_FILL = theme.colors.secondary.text[100];
 
 type CardProps = {
   card: HeadingCardType;
+  renderText: (descriptor: MessageDescriptor) => string;
 };
 
-export function Card({ card }: CardProps) {
+export function Card({ card, renderText }: CardProps) {
   const IconComponent = CLIENT_ICONS[card.icon];
   const Visual = HELPED_VISUALS[card.illustration];
   const logoWidth = 104;
@@ -98,18 +102,23 @@ export function Card({ card }: CardProps) {
       <Rule aria-hidden="true" />
       <CopyBlock>
         <CardTitleWrap>
-          <Heading as="h3" segments={card.heading} size="xs" weight="medium" />
+          <Heading
+            as="h3"
+            renderText={renderText}
+            segments={card.heading}
+            size="xs"
+            weight="medium"
+          />
         </CardTitleWrap>
         <CardBodyWrap>
-          <Body as="p" body={card.body} size="sm" />
+          <Body as="p" body={card.body} renderText={renderText} size="sm" />
         </CardBodyWrap>
       </CopyBlock>
       <CtaRow>
-        <LinkButton
+        <LocalizedLinkButton
           color="primary"
           href={card.href}
-          label="Read the case"
-          type="link"
+          label={renderText(msg`Read the case`)}
           variant="outlined"
         />
       </CtaRow>

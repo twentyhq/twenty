@@ -197,7 +197,7 @@ msgid "A temporary error occurred. Please try again."
 msgstr "Une erreur temporaire s'est produite. Veuillez réessayer."
 
 #. js-lingui-id: reBsjo
-#: src/modules/connected-account/refresh-tokens-manager/exceptions/connected-account-refresh-tokens.exception.ts
+#: src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception.ts
 msgid "A temporary network error occurred."
 msgstr "Une erreur réseau temporaire s'est produite."
 
@@ -287,7 +287,7 @@ msgid "Access Token"
 msgstr "Jeton d'accès"
 
 #. js-lingui-id: Bk+qoW
-#: src/modules/connected-account/refresh-tokens-manager/exceptions/connected-account-refresh-tokens.exception.ts
+#: src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception.ts
 msgid "Access token not found."
 msgstr "Jeton d'accès introuvable."
 
@@ -1324,6 +1324,11 @@ msgstr "Dépendance circulaire détectée dans la hiérarchie des groupes de fil
 msgid "City"
 msgstr "Ville"
 
+#. js-lingui-id: J7dFKa
+#: src/engine/core-modules/application/application-oauth-provider/application-oauth-provider.exception.ts
+msgid "Client credentials are not configured for this OAuth provider."
+msgstr ""
+
 #. js-lingui-id: NRF7pg
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
 msgid "Close date"
@@ -2306,6 +2311,11 @@ msgstr "Échec de la suppression de l'enregistrement."
 msgid "Failed to duplicate dashboard."
 msgstr "Échec de la duplication du tableau de bord."
 
+#. js-lingui-id: srkEOV
+#: src/engine/core-modules/application/application-oauth-provider/application-oauth-provider.exception.ts
+msgid "Failed to exchange the authorization code for an access token."
+msgstr ""
+
 #. js-lingui-id: MIto3A
 #: src/engine/core-modules/sdk-client/exceptions/sdk-client.exception.ts
 msgid "Failed to extract SDK client archive."
@@ -2335,6 +2345,11 @@ msgstr "Échec de la réception des mises à jour en temps réel."
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "Failed to record billing event."
 msgstr "Échec de l'enregistrement de l'événement de facturation."
+
+#. js-lingui-id: eQmx6a
+#: src/engine/core-modules/application/application-oauth-provider/application-oauth-provider.exception.ts
+msgid "Failed to refresh the access token."
+msgstr ""
 
 #. js-lingui-id: SJEIIJ
 #: src/engine/core-modules/admin-panel/admin-panel-queue.service.ts
@@ -3509,7 +3524,7 @@ msgid "Invalid pricing tiers."
 msgstr "Paliers de tarification invalides."
 
 #. js-lingui-id: XBYAgs
-#: src/modules/connected-account/refresh-tokens-manager/exceptions/connected-account-refresh-tokens.exception.ts
+#: src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception.ts
 msgid "Invalid refresh token."
 msgstr "Jeton d'actualisation invalide."
 
@@ -4846,6 +4861,11 @@ msgstr "Aucun espace de travail trouvé avec l'authentification par mot de passe
 msgid "None"
 msgstr ""
 
+#. js-lingui-id: eRIGld
+#: src/engine/core-modules/application/application-oauth-provider/application-oauth-provider.exception.ts
+msgid "Not authorized to access this OAuth provider."
+msgstr ""
+
 #. js-lingui-id: NpVtef
 #: src/modules/dashboard/chart-data/utils/format-dimension-value.util.ts
 #: src/modules/dashboard/chart-data/utils/format-dimension-value.util.ts
@@ -4967,6 +4987,11 @@ msgstr "Nombre d'employés dans l'entreprise"
 #: src/engine/core-modules/auth/auth.exception.ts
 msgid "OAuth access was denied."
 msgstr "L'accès OAuth a été refusé."
+
+#. js-lingui-id: xodh4N
+#: src/engine/core-modules/application/application-oauth-provider/application-oauth-provider.exception.ts
+msgid "OAuth provider not found."
+msgstr ""
 
 #. js-lingui-id: ECRKYR
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name-and-labels.util.ts
@@ -5815,7 +5840,7 @@ msgid "Refresh Token"
 msgstr "Jeton de rafraîchissement"
 
 #. js-lingui-id: 1GvzpH
-#: src/modules/connected-account/refresh-tokens-manager/exceptions/connected-account-refresh-tokens.exception.ts
+#: src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception.ts
 msgid "Refresh token not found."
 msgstr "Jeton d'actualisation introuvable."
 
@@ -6843,6 +6868,16 @@ msgstr "L'extension du fichier ne correspond pas au contenu du fichier. Veuillez
 msgid "The initial version of a workflow can not be deleted"
 msgstr "La version initiale d'un flux de travail ne peut pas être supprimée"
 
+#. js-lingui-id: kdTB4e
+#: src/engine/core-modules/application/application-oauth-provider/application-oauth-provider.exception.ts
+msgid "The OAuth request is missing required parameters."
+msgstr ""
+
+#. js-lingui-id: mCM5lH
+#: src/engine/core-modules/application/application-oauth-provider/application-oauth-provider.exception.ts
+msgid "The OAuth state parameter is invalid or expired."
+msgstr ""
+
 #. js-lingui-id: hx2IZ4
 #: src/engine/metadata-modules/object-permission/object-permission.service.ts
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
@@ -7115,7 +7150,7 @@ msgid "This permission is already set for the role"
 msgstr "Cette autorisation est déjà définie pour le rôle"
 
 #. js-lingui-id: Y5C3uK
-#: src/modules/connected-account/refresh-tokens-manager/exceptions/connected-account-refresh-tokens.exception.ts
+#: src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception.ts
 msgid "This provider is not supported."
 msgstr "Ce fournisseur n'est pas pris en charge."
 
