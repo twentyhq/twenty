@@ -328,7 +328,9 @@ jobs:
           set_env_var "CLICKHOUSE_PASSWORD" "clickhousePassword"
 
           # Ensure main_branch database exists
-          docker exec postgres psql -U postgres -c "CREATE DATABASE main_branch;" || true
+          PGPASSWORD=postgres psql -h localhost -U postgres -c "CREATE DATABASE main_branch;" || \
+          docker run --rm --network host -e PGPASSWORD=postgres postgres:16 psql -h localhost -U postgres -c "CREATE DATABASE main_branch;" || \
+          echo "Warning: Could not create database main_branch"
 
           npx nx run twenty-server:database:init:prod
 
