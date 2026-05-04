@@ -88,7 +88,7 @@ yarn twenty dev --verbose
 ```
 
 <Warning>
-Режим разработки доступен только на экземплярах Twenty, запущенных в режиме разработки (`NODE_ENV=development`). Экземпляры в продакшене отклоняют запросы синхронизации из режима разработки. Используйте `yarn twenty deploy` для развёртывания на продакшен-серверах — подробности см. в разделе [Публикация приложений](/l/ru/developers/extend/apps/publishing).
+Режим разработки доступен только на экземплярах Twenty, запущенных в режиме разработки (`NODE_ENV=development`). Экземпляры в продакшене отклоняют запросы синхронизации из режима разработки. Use `yarn twenty deploy` followed by `yarn twenty install` to publish and install on production servers — `deploy` publishes to the application registry, while `install` installs it on a given workspace. See [Publishing Apps](/l/ru/developers/extend/apps/publishing) for details.
 </Warning>
 
 <div style={{textAlign: 'center'}}>

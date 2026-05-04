@@ -88,7 +88,7 @@ yarn twenty dev --verbose
 ```
 
 <Warning>
-O modo de desenvolvimento só está disponível em instâncias do Twenty em modo de desenvolvimento (`NODE_ENV=development`). Instâncias de produção rejeitam solicitações de sincronização de desenvolvimento. Use `yarn twenty deploy` para fazer o deploy em servidores de produção — veja [Publicando aplicativos](/l/pt/developers/extend/apps/publishing) para detalhes.
+O modo de desenvolvimento só está disponível em instâncias do Twenty em modo de desenvolvimento (`NODE_ENV=development`). Instâncias de produção rejeitam solicitações de sincronização de desenvolvimento. Use `yarn twenty deploy` followed by `yarn twenty install` to publish and install on production servers — `deploy` publishes to the application registry, while `install` installs it on a given workspace. See [Publishing Apps](/l/pt/developers/extend/apps/publishing) for details.
 </Warning>
 
 <div style={{textAlign: 'center'}}>

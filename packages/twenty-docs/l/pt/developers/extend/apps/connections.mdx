@@ -1,20 +1,20 @@
 ---
-title: Connections
-description: Let your app act on a user's behalf in third-party services via OAuth.
+title: Conexões
+description: Permita que seu aplicativo aja em nome de um usuário em serviços de terceiros via OAuth.
 icon: plug
 ---
 
-Connections are credentials a user holds for an external service (Linear, GitHub, Slack, ...). Your app declares **how** those credentials are obtained — a **connection provider** — and consumes them at runtime to make authenticated calls to the third-party API.
+Conexões são credenciais que um usuário mantém para um serviço externo (Linear, GitHub, Slack, ...). Seu app declara **como** essas credenciais são obtidas — um **provedor de conexão** — e as consome em tempo de execução para fazer chamadas autenticadas à API de terceiros.
 
-Today only OAuth 2.0 is supported. Future credential types (personal access tokens, API keys, basic auth) will plug into the same surface — apps already using `defineConnectionProvider({ type: 'oauth', ... })` won't need to migrate.
+Atualmente, apenas o OAuth 2.0 tem suporte. Tipos de credenciais futuros (tokens de acesso pessoal, chaves de API, autenticação básica) serão conectados à mesma interface — apps que já usam `defineConnectionProvider({ type: 'oauth', ... })` não precisarão migrar.
 
 <AccordionGroup>
 
-<Accordion title="defineConnectionProvider" description="Declare how your app's connections are obtained">
+<Accordion title="defineConnectionProvider" description="Declare como as conexões do seu app são obtidas">
 
-A connection provider describes the OAuth handshake your app needs. The user clicks "Add connection" in your app's settings, completes the provider's consent screen, and a `ConnectedAccount` row is created in their workspace.
+Um provedor de conexão descreve o handshake OAuth de que seu app precisa. O usuário clica em "Adicionar conexão" nas configurações do seu app, conclui a tela de consentimento do provedor e uma linha `ConnectedAccount` é criada no seu workspace.
 
-A working setup needs **two files** — the connection provider, and a matching `serverVariables` declaration on `defineApplication` that holds the OAuth client credentials.
+Uma configuração funcional precisa de **dois arquivos** — o provedor de conexão e uma declaração correspondente de `serverVariables` em `defineApplication` que contém as credenciais do cliente OAuth.
 
 ```ts src/connection-providers/linear-connection.ts
 import { defineConnectionProvider } from 'twenty-sdk/define';
@@ -73,14 +73,14 @@ export default defineApplication({
 
 Pontos-chave:
 
-* `name` is the unique identifier string used in `listConnections({ providerName })` (kebab-case, must match `^[a-z][a-z0-9-]*$`).
-* `displayName` shows in the per-app settings tab and in the AI tool list.
-* `clientIdVariable` / `clientSecretVariable` are **names**, not values — they must match keys declared in `defineApplication.serverVariables`. The actual `client_id` and `client_secret` are entered by the server admin through the app registration UI, never committed to your repo.
-* Use `serverVariables` (not `applicationVariables`) — OAuth credentials are server-wide and one OAuth app per Twenty server.
-* Until both `serverVariables` are filled in, the per-app settings tab shows a "needs server admin" hint and the "Add connection" button is disabled.
-* `type: 'oauth'` is the only supported value today. The discriminator is forward-compatible: future types (`'pat'`, `'api-key'`, ...) will add new sub-config blocks alongside `oauth`.
+* `name` é a string de identificador exclusivo usada em `listConnections({ providerName })` (kebab-case, deve corresponder a `^[a-z][a-z0-9-]*$`).
+* `displayName` aparece na aba de configurações do app e na lista de ferramentas de IA.
+* `clientIdVariable` / `clientSecretVariable` são **nomes**, não valores — devem corresponder às chaves declaradas em `defineApplication.serverVariables`. Os `client_id` e `client_secret` reais são inseridos pelo administrador do servidor por meio da interface de registro do app e nunca são versionados no seu repositório.
+* Use `serverVariables` (não `applicationVariables`) — as credenciais OAuth são do servidor como um todo e há um app OAuth por servidor do Twenty.
+* Até que ambos os `serverVariables` sejam preenchidos, a aba de configurações do app mostra uma dica "precisa de administrador do servidor" e o botão "Adicionar conexão" fica desativado.
+* `type: 'oauth'` é o único valor compatível atualmente. O discriminador é compatível com versões futuras: tipos futuros (`'pat'`, `'api-key'`, ...) adicionarão novos blocos de subconfiguração ao lado de `oauth`.
 
-The OAuth callback URL your provider needs to whitelist is:
+O URL de callback do OAuth que seu provedor precisa adicionar à lista de permissões é:
 
 ```
 https://<your-twenty-server>/apps/oauth/callback
@@ -88,9 +88,9 @@ https://<your-twenty-server>/apps/oauth/callback
 
 </Accordion>
 
-<Accordion title="listConnections / getConnection" description="Use connections from a logic function">
+<Accordion title="listConnections / getConnection" description="Use conexões a partir de uma função de lógica">
 
-Inside a logic function handler, `listConnections({ providerName })` returns this app's `ConnectedAccount` rows for the given provider, with refreshed access tokens.
+Dentro de um handler de função de lógica, `listConnections({ providerName })` retorna as linhas `ConnectedAccount` deste app para o provedor fornecido, com tokens de acesso atualizados.
 
 ```ts src/logic-functions/handlers/create-linear-issue-handler.ts
 import { listConnections } from 'twenty-sdk/logic-function';
@@ -135,34 +135,34 @@ export const createLinearIssueHandler = async (input: {
 };
 ```
 
-Each connection has:
+Cada conexão tem:
 
-| Campo             | Descrição                                                                                                |
-| ----------------- | -------------------------------------------------------------------------------------------------------- |
-| `id`              | Unique row id; pass to `getConnection(id)` to refetch a single one                                       |
-| `visibilidade`    | `'user'` (private to one workspace member) or `'workspace'` (shared with all members)                    |
-| `escopos`         | OAuth permissions granted by the upstream provider (distinct from `visibility` — those are unrelated)    |
-| `userWorkspaceId` | The owner's userWorkspace id — useful for picking "the request user's connection" in HTTP-route triggers |
-| `accessToken`     | Fresh OAuth access token (refreshed automatically if expired)                                            |
-| `name` / `handle` | The connection's display name (auto-derived at OAuth callback, user-renameable)                          |
-| `authFailedAt`    | Set when the most recent refresh failed; the user must reconnect                                         |
+| Campo             | Descrição                                                                                                                  |
+| ----------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| `id`              | ID de linha exclusivo; passe para `getConnection(id)` para buscar novamente um único registro                              |
+| `visibilidade`    | `'user'` (privada para um membro do workspace) ou `'workspace'` (compartilhada com todos os membros)                       |
+| `escopos`         | Permissões OAuth concedidas pelo provedor de origem (distintas de `visibility` — não têm relação)                          |
+| `userWorkspaceId` | O id de userWorkspace do proprietário — útil para selecionar "a conexão do usuário da requisição" em gatilhos de rota HTTP |
+| `accessToken`     | Token de acesso OAuth recente (atualizado automaticamente se estiver expirado)                                             |
+| `name` / `handle` | O nome de exibição da conexão (derivado automaticamente no callback do OAuth, renomeável pelo usuário)                     |
+| `authFailedAt`    | Definido quando a atualização mais recente falhou; o usuário deve reconectar                                               |
 
 Pontos-chave:
 
-* Pass `{ providerName }` to filter by provider; omit it to get all connections this app owns across all providers.
-* The server transparently refreshes the access token before returning. Your handler always sees a usable token (or `authFailedAt` set).
-* `getConnection(id)` is the single-row equivalent.
+* Passe `{ providerName }` para filtrar por provedor; omita para obter todas as conexões que este app possui em todos os provedores.
+* O servidor atualiza transparentemente o token de acesso antes de retornar. Seu handler sempre vê um token utilizável (ou `authFailedAt` definido).
+* `getConnection(id)` é o equivalente de uma única linha.
 
 </Accordion>
 
-<Accordion title="Per-user vs workspace-shared visibility" description="How users choose between private and shared credentials">
+<Accordion title="Visibilidade por usuário vs. compartilhada no workspace" description="Como os usuários escolhem entre credenciais privadas e compartilhadas">
 
-When a user clicks "Add connection," they're prompted to pick a visibility:
+Quando um usuário clica em "Adicionar conexão", é solicitado que escolha uma visibilidade:
 
-* **Just for me** — the credential is private to the connecting user. Any logic function called on their behalf (HTTP-route trigger with `isAuthRequired: true`) sees it; cron triggers and database events do not.
-* **Workspace shared** — any workspace member can use the credential. Cron / database triggers also see it, since they have no request user.
+* **Apenas para mim** — a credencial é privada para o usuário que a conectou. Qualquer função de lógica chamada em seu nome (gatilho de rota HTTP com `isAuthRequired: true`) a vê; gatilhos cron e eventos de banco de dados não.
+* **Compartilhada no workspace** — qualquer membro do workspace pode usar a credencial. Gatilhos de cron / banco de dados também a veem, pois não há um usuário da requisição.
 
-Use the right one for each handler:
+Use a adequada para cada handler:
 
 ```ts
 // HTTP-route trigger — prefer the request user's own connection.
@@ -174,19 +174,19 @@ const conn =
 const conn = connections.find((c) => c.visibility === 'workspace');
 ```
 
-Multiple connections per (user, provider) are allowed, so the same user can hold "Personal Linear" and "Work Linear" side by side.
+Várias conexões por (usuário, provedor) são permitidas, então o mesmo usuário pode manter "Linear pessoal" e "Linear de trabalho" lado a lado.
 
 </Accordion>
 
-<Accordion title="One-time provider setup" description="Register your OAuth app with the third-party service">
+<Accordion title="Configuração única do provedor" description="Registre seu app OAuth no serviço de terceiros">
 
-For each connection provider, the server admin needs to register an OAuth app at the third party first.
+Para cada provedor de conexão, o administrador do servidor precisa primeiro registrar um app OAuth no serviço de terceiros.
 
-1. Go to the provider's developer settings (e.g. https://linear.app/settings/api/applications/new).
-2. Set the **Redirect URI** to `\<SERVER_URL>/apps/oauth/callback`.
-3. Copy the generated **Client ID** and **Client Secret**.
-4. Open the installed app in Twenty as a server admin → set the values on the corresponding `serverVariables`.
-5. Workspace members can then add connections from the per-app **Connections** section.
+1. Acesse as configurações de desenvolvedor do provedor (por exemplo, https://linear.app/settings/api/applications/new).
+2. Defina a **URI de redirecionamento** como `\<SERVER_URL>/apps/oauth/callback`.
+3. Copie o **ID do cliente** e o **Segredo do cliente** gerados.
+4. Abra o app instalado no Twenty como administrador do servidor → defina os valores nos `serverVariables` correspondentes.
+5. Os membros do workspace podem então adicionar conexões na seção **Conexões** de cada app.
 
 </Accordion>
 

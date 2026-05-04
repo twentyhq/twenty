@@ -77,9 +77,9 @@ yarn twenty deploy
 
 {/* TODO: add screenshot of the Upgrade button */}
 
-### Server version compatibility
+### 服务器版本兼容性
 
-If your app uses a feature introduced in a specific Twenty server version (for example, OAuth providers added in v2.3.0), you should declare the minimum server version your app requires using the `engines.twenty` field in `package.json`:
+如果你的应用使用了特定 Twenty 服务器版本中引入的功能（例如在 v2.3.0 中新增的 OAuth 提供方），应当在 `package.json` 的 `engines.twenty` 字段中声明应用所需的最低服务器版本：
 
 ```json filename="package.json"
 {
@@ -92,22 +92,22 @@ If your app uses a feature introduced in a specific Twenty server version (for e
 }
 ```
 
-The value is a standard [semver range](https://github.com/npm/node-semver#ranges). Common patterns:
+该值是标准的 [semver 范围](https://github.com/npm/node-semver#ranges)。 常见模式:
 
-| Range                              | Meaning                                    |
-| ---------------------------------- | ------------------------------------------ |
-| `>=2.3.0`                          | Any server from 2.3.0 onward               |
-| `>=2.3.0 \<3.0.0` | 2.3.0 or later, but below the next major   |
-| `^2.3.0`                           | Same as `>=2.3.0 \<3.0.0` |
+| 范围                                 | 含义                                      |
+| ---------------------------------- | --------------------------------------- |
+| `>=2.3.0`                          | 任何 2.3.0 及以上的服务器                        |
+| `>=2.3.0 \<3.0.0` | 2.3.0 或更高，但低于下一个主版本                     |
+| `^2.3.0`                           | 与 `>=2.3.0 \<3.0.0` 相同 |
 
-**What happens at deploy and install time:**
+**在部署和安装时会发生什么：**
 
-* If `engines.twenty` is set and the target server's version does not satisfy the range, the deploy (tarball upload) or install is rejected with a `SERVER_VERSION_INCOMPATIBLE` error and a message indicating both the required range and the actual server version.
-* If `engines.twenty` is **not set**, the app is accepted on any server version (backward-compatible with existing apps).
-* If the server has no `APP_VERSION` configured, the check is skipped.
+* 如果已设置 `engines.twenty`，且目标服务器的版本不满足该范围，则部署（tarball 上传）或安装将被拒绝，并返回 `SERVER_VERSION_INCOMPATIBLE` 错误以及一条同时指明所需范围和实际服务器版本的消息。
+* 如果 `engines.twenty` **未设置**，则该应用可在任何服务器版本上被接受（与现有应用向后兼容）。
+* 如果服务器未配置 `APP_VERSION`，则跳过该检查。
 
 <Note>
-The server is the authoritative check — it validates `engines.twenty` on both tarball upload and workspace install. If you deploy a tarball out-of-band or install from the marketplace, the server still enforces compatibility.
+服务器是权威校验方——它会在 tarball 上传和工作区安装时验证 `engines.twenty`。 即使你通过带外方式部署 tarball 或从应用市场安装，服务器仍会强制执行兼容性要求。
 </Note>
 
 ## 自动化 CI/CD（脚手架生成的工作流）

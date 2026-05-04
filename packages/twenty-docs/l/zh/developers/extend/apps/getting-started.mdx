@@ -88,7 +88,7 @@ yarn twenty dev --verbose
 ```
 
 <Warning>
-开发模式仅适用于以开发模式运行的 Twenty 实例（`NODE_ENV=development`）。 生产实例会拒绝开发同步请求。 使用 `yarn twenty deploy` 部署到生产服务器——详见[发布应用](/l/zh/developers/extend/apps/publishing)。
+开发模式仅适用于以开发模式运行的 Twenty 实例（`NODE_ENV=development`）。 生产实例会拒绝开发同步请求。 Use `yarn twenty deploy` followed by `yarn twenty install` to publish and install on production servers — `deploy` publishes to the application registry, while `install` installs it on a given workspace. See [Publishing Apps](/l/zh/developers/extend/apps/publishing) for details.
 </Warning>
 
 <div style={{textAlign: 'center'}}>

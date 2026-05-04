@@ -77,9 +77,9 @@ Tags de pré-lançamento funcionam como esperado: incrementar `1.0.0-rc.1` → `
 
 {/* TODO: add screenshot of the Upgrade button */}
 
-### Server version compatibility
+### Compatibilidade da versão do servidor
 
-If your app uses a feature introduced in a specific Twenty server version (for example, OAuth providers added in v2.3.0), you should declare the minimum server version your app requires using the `engines.twenty` field in `package.json`:
+Se o seu aplicativo usar um recurso introduzido em uma versão específica do servidor Twenty (por exemplo, provedores OAuth adicionados na v2.3.0), você deve declarar a versão mínima do servidor que seu aplicativo requer usando o campo `engines.twenty` em `package.json`:
 
 ```json filename="package.json"
 {
@@ -92,22 +92,22 @@ If your app uses a feature introduced in a specific Twenty server version (for e
 }
 ```
 
-The value is a standard [semver range](https://github.com/npm/node-semver#ranges). Common patterns:
+O valor é um [intervalo semver](https://github.com/npm/node-semver#ranges) padrão. Padrões comuns:
 
-| Range                              | Meaning                                    |
-| ---------------------------------- | ------------------------------------------ |
-| `>=2.3.0`                          | Any server from 2.3.0 onward               |
-| `>=2.3.0 \<3.0.0` | 2.3.0 or later, but below the next major   |
-| `^2.3.0`                           | Same as `>=2.3.0 \<3.0.0` |
+| Intervalo                          | Significado                                                |
+| ---------------------------------- | ---------------------------------------------------------- |
+| `>=2.3.0`                          | Qualquer servidor a partir de 2.3.0                        |
+| `>=2.3.0 \<3.0.0` | 2.3.0 ou posterior, mas abaixo da próxima versão principal |
+| `^2.3.0`                           | O mesmo que `>=2.3.0 \<3.0.0`             |
 
-**What happens at deploy and install time:**
+**O que acontece no momento da implantação e da instalação:**
 
-* If `engines.twenty` is set and the target server's version does not satisfy the range, the deploy (tarball upload) or install is rejected with a `SERVER_VERSION_INCOMPATIBLE` error and a message indicating both the required range and the actual server version.
-* If `engines.twenty` is **not set**, the app is accepted on any server version (backward-compatible with existing apps).
-* If the server has no `APP_VERSION` configured, the check is skipped.
+* Se `engines.twenty` estiver definido e a versão do servidor de destino não satisfizer o intervalo, a implantação (upload do tarball) ou a instalação será rejeitada com o erro `SERVER_VERSION_INCOMPATIBLE` e uma mensagem indicando tanto o intervalo exigido quanto a versão real do servidor.
+* Se `engines.twenty` **não estiver definido**, o aplicativo é aceito em qualquer versão do servidor (retrocompatível com os aplicativos existentes).
+* Se o servidor não tiver `APP_VERSION` configurado, a verificação será ignorada.
 
 <Note>
-The server is the authoritative check — it validates `engines.twenty` on both tarball upload and workspace install. If you deploy a tarball out-of-band or install from the marketplace, the server still enforces compatibility.
+O servidor realiza a verificação definitiva — ele valida `engines.twenty` tanto no upload do tarball quanto na instalação no workspace. Se você implantar um tarball fora de banda ou instalar a partir do marketplace, o servidor ainda impõe a compatibilidade.
 </Note>
 
 ## CI/CD automatizado (fluxos de trabalho pré-configurados)
