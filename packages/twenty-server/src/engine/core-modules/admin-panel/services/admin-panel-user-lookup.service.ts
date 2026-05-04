@@ -44,9 +44,7 @@ export class AdminPanelUserLookupService {
         .filter((workspaceUser) => isDefined(workspaceUser.user))
         .map((workspaceUser) => [
           workspaceUser.user.id,
-          workspaceUser.defaultAvatarUrl ??
-            workspaceUser.user.defaultAvatarUrl ??
-            null,
+          workspaceUser.defaultAvatarUrl ?? null,
         ]),
     );
   }
