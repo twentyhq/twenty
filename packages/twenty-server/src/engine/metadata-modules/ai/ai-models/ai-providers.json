@@ -1305,6 +1305,17 @@
         "maxOutputTokens": 64000
       },
       {
+        "name": "mistral-medium-2604",
+        "label": "Mistral Medium 3.5",
+        "modelFamily": "MISTRAL",
+        "inputCostPerMillionTokens": 1.5,
+        "outputCostPerMillionTokens": 7.5,
+        "contextWindowTokens": 262144,
+        "maxOutputTokens": 262144,
+        "modalities": ["image"],
+        "supportsReasoning": true
+      },
+      {
         "name": "devstral-small-2505",
         "label": "Devstral Small 2505",
         "modelFamily": "MISTRAL",
@@ -1321,16 +1332,6 @@
         "outputCostPerMillionTokens": 2,
         "contextWindowTokens": 128000,
         "maxOutputTokens": 128000
-      },
-      {
-        "name": "mistral-medium-latest",
-        "label": "Mistral Medium (latest)",
-        "modelFamily": "MISTRAL",
-        "inputCostPerMillionTokens": 0.4,
-        "outputCostPerMillionTokens": 2,
-        "contextWindowTokens": 128000,
-        "maxOutputTokens": 16384,
-        "modalities": ["image"]
       },
       {
         "name": "open-mistral-7b",
@@ -1378,6 +1379,17 @@
         "contextWindowTokens": 262144,
         "maxOutputTokens": 262144,
         "modalities": ["image"]
+      },
+      {
+        "name": "mistral-medium-latest",
+        "label": "Mistral Medium (latest)",
+        "modelFamily": "MISTRAL",
+        "inputCostPerMillionTokens": 1.5,
+        "outputCostPerMillionTokens": 7.5,
+        "contextWindowTokens": 262144,
+        "maxOutputTokens": 262144,
+        "modalities": ["image"],
+        "supportsReasoning": true
       }
     ]
   },
@@ -1406,6 +1418,24 @@
         "contextWindowTokens": 8192,
         "maxOutputTokens": 4096,
         "modalities": ["image"]
+      },
+      {
+        "name": "grok-4.3",
+        "label": "Grok 4.3",
+        "modelFamily": "GROK",
+        "inputCostPerMillionTokens": 1.25,
+        "outputCostPerMillionTokens": 2.5,
+        "cachedInputCostPerMillionTokens": 0.2,
+        "longContextCost": {
+          "inputCostPerMillionTokens": 2.5,
+          "outputCostPerMillionTokens": 5,
+          "thresholdTokens": 200000,
+          "cachedInputCostPerMillionTokens": 0.4
+        },
+        "contextWindowTokens": 1000000,
+        "maxOutputTokens": 30000,
+        "modalities": ["image"],
+        "supportsReasoning": true
       },
       {
         "name": "grok-3-mini-fast",
