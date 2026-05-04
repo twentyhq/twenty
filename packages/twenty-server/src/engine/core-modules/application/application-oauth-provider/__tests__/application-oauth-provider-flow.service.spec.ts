@@ -340,6 +340,7 @@ describe('ApplicationOAuthProviderFlowService', () => {
           accessToken: 'new_access',
           refreshToken: 'new_refresh',
           authFailedAt: null,
+          visibility: 'user',
         }),
       );
       // Defense-in-depth: the post-update read MUST also be workspace-scoped,
@@ -350,6 +351,26 @@ describe('ApplicationOAuthProviderFlowService', () => {
         workspaceId: 'workspace-1',
       });
       expect(connectedAccountRepository.create).not.toHaveBeenCalled();
+    });
+
+    it('updates visibility on an existing ConnectedAccount when reconnecting', async () => {
+      jwtWrapperService.verifyJwtToken.mockReturnValue({
+        ...stateClaims,
+        visibility: 'workspace',
+        reconnectingConnectedAccountId: 'existing-account-id',
+      });
+
+      await service.completeAuthorizationFlow({
+        code: 'auth_code',
+        state: 'signed-state',
+      });
+
+      expect(connectedAccountRepository.update).toHaveBeenCalledWith(
+        { id: 'existing-account-id', workspaceId: 'workspace-1' },
+        expect.objectContaining({
+          visibility: 'workspace',
+        }),
+      );
     });
 
     it('persists the workspace visibility when state asks for it', async () => {

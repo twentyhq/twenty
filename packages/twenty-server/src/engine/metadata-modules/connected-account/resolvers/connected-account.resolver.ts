@@ -14,6 +14,7 @@ import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.service';
 import { ConnectedAccountDTO } from 'src/engine/metadata-modules/connected-account/dtos/connected-account.dto';
 import { ConnectedAccountPublicDTO } from 'src/engine/metadata-modules/connected-account/dtos/connected-account-public.dto';
+import { UpdateConnectedAccountNameInput } from 'src/engine/metadata-modules/connected-account/dtos/inputs/update-connected-account-name.input';
 import { ConnectedAccountGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/connected-account/interceptors/connected-account-graphql-api-exception.interceptor';
 
 @UseGuards(WorkspaceAuthGuard)
@@ -54,6 +55,33 @@ export class ConnectedAccountResolver {
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<ConnectedAccountDTO[]> {
     return this.connectedAccountMetadataService.findAll(workspace.id);
+  }
+
+  @Mutation(() => ConnectedAccountDTO)
+  @UseGuards(NoPermissionGuard)
+  async updateConnectedAccountName(
+    @Args('input') input: UpdateConnectedAccountNameInput,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
+  ): Promise<ConnectedAccountDTO> {
+    await this.connectedAccountMetadataService.verifyOwnership({
+      id: input.id,
+      userWorkspaceId,
+      workspaceId: workspace.id,
+    });
+
+    const trimmedName = input.name?.trim();
+
+    return this.connectedAccountMetadataService.update({
+      id: input.id,
+      workspaceId: workspace.id,
+      data: {
+        name:
+          trimmedName === undefined || trimmedName.length === 0
+            ? null
+            : trimmedName,
+      },
+    });
   }
 
   @Mutation(() => ConnectedAccountDTO)
