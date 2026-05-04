@@ -19,6 +19,7 @@ import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useC
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import isEmpty from 'lodash.isempty';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const loadingSlide = keyframes`
   0% {
@@ -47,8 +48,8 @@ const StyledLoadingBar = styled.div`
   background: linear-gradient(
     90deg,
     transparent 0%,
-    #4f46e5 40%,
-    #818cf8 60%,
+    ${themeCssVariables.color.blue} 40%,
+    ${themeCssVariables.color.blue3} 60%,
     transparent 100%
   );
   height: 100%;
@@ -56,8 +57,8 @@ const StyledLoadingBar = styled.div`
 `;
 
 const StyledTableWrapper = styled.div`
-  position: relative;
   height: 100%;
+  position: relative;
   width: 100%;
 `;
 
