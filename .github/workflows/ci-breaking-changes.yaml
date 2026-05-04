@@ -143,6 +143,7 @@ jobs:
           set_env_var "CLICKHOUSE_PASSWORD" "clickhousePassword"
 
           npx nx run twenty-server:database:init:prod
+          npx nx command-no-deps twenty-server -- metadata:sync
 
       - name: Seed current branch database with test data
         run: |
@@ -333,6 +334,7 @@ jobs:
           PGPASSWORD=postgres psql -h localhost -U postgres -d postgres -c "CREATE DATABASE main_branch;"
 
           npx nx run twenty-server:database:init:prod
+          npx nx command-no-deps twenty-server -- metadata:sync
 
       - name: Seed main branch database with test data
         run: |

@@ -130,15 +130,16 @@ describe('SyncMessageFoldersService', () => {
       delete: jest.fn(),
       update: jest.fn().mockResolvedValue(undefined),
       save: jest.fn().mockImplementation(async (folder) => {
-        createdFolderRecords.push({
+        const newRecord = {
           ...folder,
           id: `new-folder-${createdFolderRecords.length}-${Math.random().toString(36).substring(7)}`,
           isSynced: false,
           syncCursor: null,
           pendingSyncAction: MessageFolderPendingSyncAction.NONE,
           externalId: folder.externalId as string,
-        });
-        return folder;
+        };
+        createdFolderRecords.push(newRecord);
+        return newRecord;
       }),
       find: jest.fn().mockImplementation(async ({ where }) => {
         if (!where?.externalId) {
