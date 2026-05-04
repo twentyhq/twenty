@@ -137,7 +137,9 @@ export const SettingsApplicationConnectionsSection = ({
                 items={providerConnections.map((connection) => ({
                   id: connection.id,
                   label: connection.name ?? connection.handle,
-                  visibility: connection.visibility,
+                  // GraphQL types `visibility` as `string`; the column is
+                  // constrained to one of these two values at write time.
+                  visibility: connection.visibility as 'user' | 'workspace',
                   authFailedAt: connection.authFailedAt,
                   providerName: provider.name,
                 }))}

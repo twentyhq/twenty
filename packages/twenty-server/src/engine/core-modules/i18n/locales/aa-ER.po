@@ -201,7 +201,7 @@ msgid "A temporary error occurred. Please try again."
 msgstr "crwdns65116:0crwdne65116:0"
 
 #. js-lingui-id: reBsjo
-#: src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception.ts
+#: src/modules/connected-account/refresh-tokens-manager/exceptions/connected-account-refresh-tokens.exception.ts
 msgid "A temporary network error occurred."
 msgstr "crwdns65118:0crwdne65118:0"
 
@@ -291,7 +291,7 @@ msgid "Access Token"
 msgstr "crwdns112218:0crwdne112218:0"
 
 #. js-lingui-id: Bk+qoW
-#: src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception.ts
+#: src/modules/connected-account/refresh-tokens-manager/exceptions/connected-account-refresh-tokens.exception.ts
 msgid "Access token not found."
 msgstr "crwdns65134:0crwdne65134:0"
 
@@ -3528,7 +3528,7 @@ msgid "Invalid pricing tiers."
 msgstr "crwdns65458:0crwdne65458:0"
 
 #. js-lingui-id: XBYAgs
-#: src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception.ts
+#: src/modules/connected-account/refresh-tokens-manager/exceptions/connected-account-refresh-tokens.exception.ts
 msgid "Invalid refresh token."
 msgstr "crwdns65462:0crwdne65462:0"
 
@@ -5817,7 +5817,7 @@ msgid "Refresh Token"
 msgstr "crwdns112858:0crwdne112858:0"
 
 #. js-lingui-id: 1GvzpH
-#: src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception.ts
+#: src/modules/connected-account/refresh-tokens-manager/exceptions/connected-account-refresh-tokens.exception.ts
 msgid "Refresh token not found."
 msgstr "crwdns65602:0crwdne65602:0"
 
@@ -7097,7 +7097,7 @@ msgid "This permission is already set for the role"
 msgstr "crwdns111542:0crwdne111542:0"
 
 #. js-lingui-id: Y5C3uK
-#: src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception.ts
+#: src/modules/connected-account/refresh-tokens-manager/exceptions/connected-account-refresh-tokens.exception.ts
 msgid "This provider is not supported."
 msgstr "crwdns65726:0crwdne65726:0"
 

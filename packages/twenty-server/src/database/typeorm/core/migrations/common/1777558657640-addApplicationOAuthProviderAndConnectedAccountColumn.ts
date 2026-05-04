@@ -14,7 +14,6 @@ export class AddApplicationOAuthProviderAndConnectedAccountColumn1777558657640
         "universalIdentifier" uuid NOT NULL,
         "name" varchar NOT NULL,
         "displayName" varchar NOT NULL,
-        "icon" varchar,
         "authorizationEndpoint" varchar NOT NULL,
         "tokenEndpoint" varchar NOT NULL,
         "revokeEndpoint" varchar,

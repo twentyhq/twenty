@@ -46,9 +46,6 @@ export class ApplicationOAuthProviderEntity extends WorkspaceRelatedEntity {
   @Column({ nullable: false, type: 'varchar' })
   displayName: string;
 
-  @Column({ nullable: true, type: 'varchar' })
-  icon: string | null;
-
   @Column({ nullable: false, type: 'varchar' })
   authorizationEndpoint: string;
 

@@ -189,7 +189,7 @@ export const useComputeApplicationContentForLayoutAndLogic = ({
     return {
       key: provider.universalIdentifier,
       name: provider.displayName,
-      icon: provider.icon ?? undefined,
+      icon: undefined,
       secondary: parts.length > 0 ? parts.join(' · ') : undefined,
     };
   });

@@ -245,7 +245,6 @@ export class ApplicationOAuthProviderService {
           universalIdentifier: manifest.universalIdentifier,
           name: manifest.name,
           displayName: manifest.displayName,
-          icon: manifest.icon ?? null,
           authorizationEndpoint: manifest.oauth.authorizationEndpoint,
           tokenEndpoint: manifest.oauth.tokenEndpoint,
           revokeEndpoint: manifest.oauth.revokeEndpoint ?? null,

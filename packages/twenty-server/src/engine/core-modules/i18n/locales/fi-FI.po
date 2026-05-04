@@ -197,7 +197,7 @@ msgid "A temporary error occurred. Please try again."
 msgstr "Tapahtui tilapäinen virhe. Yritä uudelleen."
 
 #. js-lingui-id: reBsjo
-#: src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception.ts
+#: src/modules/connected-account/refresh-tokens-manager/exceptions/connected-account-refresh-tokens.exception.ts
 msgid "A temporary network error occurred."
 msgstr "Tapahtui tilapäinen verkkovirhe."
 
@@ -287,7 +287,7 @@ msgid "Access Token"
 msgstr ""
 
 #. js-lingui-id: Bk+qoW
-#: src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception.ts
+#: src/modules/connected-account/refresh-tokens-manager/exceptions/connected-account-refresh-tokens.exception.ts
 msgid "Access token not found."
 msgstr "Käyttöoikeustunnusta ei löytynyt."
 
@@ -3509,7 +3509,7 @@ msgid "Invalid pricing tiers."
 msgstr "Virheelliset hinnoittelutasot."
 
 #. js-lingui-id: XBYAgs
-#: src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception.ts
+#: src/modules/connected-account/refresh-tokens-manager/exceptions/connected-account-refresh-tokens.exception.ts
 msgid "Invalid refresh token."
 msgstr "Virheellinen päivitystunnus."
 
@@ -5815,7 +5815,7 @@ msgid "Refresh Token"
 msgstr ""
 
 #. js-lingui-id: 1GvzpH
-#: src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception.ts
+#: src/modules/connected-account/refresh-tokens-manager/exceptions/connected-account-refresh-tokens.exception.ts
 msgid "Refresh token not found."
 msgstr "Päivitystunnusta ei löytynyt."
 
@@ -7115,7 +7115,7 @@ msgid "This permission is already set for the role"
 msgstr "Tämä käyttöoikeus on jo asetettu roolille"
 
 #. js-lingui-id: Y5C3uK
-#: src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception.ts
+#: src/modules/connected-account/refresh-tokens-manager/exceptions/connected-account-refresh-tokens.exception.ts
 msgid "This provider is not supported."
 msgstr "Tätä palveluntarjoajaa ei tueta."
 

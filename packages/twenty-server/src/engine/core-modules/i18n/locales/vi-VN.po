@@ -197,7 +197,7 @@ msgid "A temporary error occurred. Please try again."
 msgstr "Đã xảy ra lỗi tạm thời. Vui lòng thử lại."
 
 #. js-lingui-id: reBsjo
-#: src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception.ts
+#: src/modules/connected-account/refresh-tokens-manager/exceptions/connected-account-refresh-tokens.exception.ts
 msgid "A temporary network error occurred."
 msgstr "Đã xảy ra lỗi mạng tạm thời."
 
@@ -287,7 +287,7 @@ msgid "Access Token"
 msgstr ""
 
 #. js-lingui-id: Bk+qoW
-#: src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception.ts
+#: src/modules/connected-account/refresh-tokens-manager/exceptions/connected-account-refresh-tokens.exception.ts
 msgid "Access token not found."
 msgstr "Không tìm thấy mã thông báo truy cập."
 
@@ -3509,7 +3509,7 @@ msgid "Invalid pricing tiers."
 msgstr "Các bậc giá không hợp lệ."
 
 #. js-lingui-id: XBYAgs
-#: src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception.ts
+#: src/modules/connected-account/refresh-tokens-manager/exceptions/connected-account-refresh-tokens.exception.ts
 msgid "Invalid refresh token."
 msgstr "Mã thông báo làm mới không hợp lệ."
 
@@ -5815,7 +5815,7 @@ msgid "Refresh Token"
 msgstr ""
 
 #. js-lingui-id: 1GvzpH
-#: src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception.ts
+#: src/modules/connected-account/refresh-tokens-manager/exceptions/connected-account-refresh-tokens.exception.ts
 msgid "Refresh token not found."
 msgstr "Không tìm thấy mã thông báo làm mới."
 
@@ -7115,7 +7115,7 @@ msgid "This permission is already set for the role"
 msgstr "Quyền này đã được thiết lập cho vai trò"
 
 #. js-lingui-id: Y5C3uK
-#: src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception.ts
+#: src/modules/connected-account/refresh-tokens-manager/exceptions/connected-account-refresh-tokens.exception.ts
 msgid "This provider is not supported."
 msgstr "Nhà cung cấp này không được hỗ trợ."
 

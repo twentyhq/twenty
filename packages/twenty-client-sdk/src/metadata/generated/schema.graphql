@@ -1304,7 +1304,6 @@ type ApplicationConnectionProvider {
   type: String!
   name: String!
   displayName: String!
-  icon: String
   oauth: ApplicationConnectionProviderOAuthConfig
 }
 

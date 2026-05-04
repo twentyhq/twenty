@@ -197,7 +197,7 @@ msgid "A temporary error occurred. Please try again."
 msgstr "일시적인 오류가 발생했습니다. 다시 시도해 주세요."
 
 #. js-lingui-id: reBsjo
-#: src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception.ts
+#: src/modules/connected-account/refresh-tokens-manager/exceptions/connected-account-refresh-tokens.exception.ts
 msgid "A temporary network error occurred."
 msgstr "일시적인 네트워크 오류가 발생했습니다."
 
@@ -287,7 +287,7 @@ msgid "Access Token"
 msgstr "액세스 토큰"
 
 #. js-lingui-id: Bk+qoW
-#: src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception.ts
+#: src/modules/connected-account/refresh-tokens-manager/exceptions/connected-account-refresh-tokens.exception.ts
 msgid "Access token not found."
 msgstr "액세스 토큰을 찾을 수 없음."
 
@@ -3509,7 +3509,7 @@ msgid "Invalid pricing tiers."
 msgstr "잘못된 가격 티어입니다."
 
 #. js-lingui-id: XBYAgs
-#: src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception.ts
+#: src/modules/connected-account/refresh-tokens-manager/exceptions/connected-account-refresh-tokens.exception.ts
 msgid "Invalid refresh token."
 msgstr "잘못된 리프레시 토큰입니다."
 
@@ -5815,7 +5815,7 @@ msgid "Refresh Token"
 msgstr ""
 
 #. js-lingui-id: 1GvzpH
-#: src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception.ts
+#: src/modules/connected-account/refresh-tokens-manager/exceptions/connected-account-refresh-tokens.exception.ts
 msgid "Refresh token not found."
 msgstr "리프레시 토큰을 찾을 수 없음."
 
@@ -7115,7 +7115,7 @@ msgid "This permission is already set for the role"
 msgstr "이 권한은 이미 해당 역할에 설정되어 있습니다"
 
 #. js-lingui-id: Y5C3uK
-#: src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception.ts
+#: src/modules/connected-account/refresh-tokens-manager/exceptions/connected-account-refresh-tokens.exception.ts
 msgid "This provider is not supported."
 msgstr "이 공급자는 지원되지 않습니다."
 

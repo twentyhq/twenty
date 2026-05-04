@@ -6,10 +6,6 @@ export default defineConnectionProvider({
   universalIdentifier: LINEAR_CONNECTION_PROVIDER_UNIVERSAL_IDENTIFIER,
   name: 'linear',
   displayName: 'Linear',
-  // No `icon` set here on purpose: Tabler doesn't have brand icons for most
-  // OAuth providers, so the connection-provider manifest needs a `logoUrl`
-  // field (mirroring `defineApplication({ logoUrl })`) before this is a
-  // worth-having field. Tracked separately.
   type: 'oauth',
   oauth: {
     authorizationEndpoint: 'https://linear.app/oauth/authorize',

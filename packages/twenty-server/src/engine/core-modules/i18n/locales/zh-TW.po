@@ -197,7 +197,7 @@ msgid "A temporary error occurred. Please try again."
 msgstr "發生暫時性錯誤。請再試一次。"
 
 #. js-lingui-id: reBsjo
-#: src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception.ts
+#: src/modules/connected-account/refresh-tokens-manager/exceptions/connected-account-refresh-tokens.exception.ts
 msgid "A temporary network error occurred."
 msgstr "發生暫時性網路錯誤。"
 
@@ -287,7 +287,7 @@ msgid "Access Token"
 msgstr ""
 
 #. js-lingui-id: Bk+qoW
-#: src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception.ts
+#: src/modules/connected-account/refresh-tokens-manager/exceptions/connected-account-refresh-tokens.exception.ts
 msgid "Access token not found."
 msgstr "找不到存取權杖。"
 
@@ -3509,7 +3509,7 @@ msgid "Invalid pricing tiers."
 msgstr "無效的訂價層級。"
 
 #. js-lingui-id: XBYAgs
-#: src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception.ts
+#: src/modules/connected-account/refresh-tokens-manager/exceptions/connected-account-refresh-tokens.exception.ts
 msgid "Invalid refresh token."
 msgstr "無效的更新權杖。"
 
@@ -5815,7 +5815,7 @@ msgid "Refresh Token"
 msgstr ""
 
 #. js-lingui-id: 1GvzpH
-#: src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception.ts
+#: src/modules/connected-account/refresh-tokens-manager/exceptions/connected-account-refresh-tokens.exception.ts
 msgid "Refresh token not found."
 msgstr "找不到更新權杖。"
 
@@ -7115,7 +7115,7 @@ msgid "This permission is already set for the role"
 msgstr "此權限已為該角色設定"
 
 #. js-lingui-id: Y5C3uK
-#: src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception.ts
+#: src/modules/connected-account/refresh-tokens-manager/exceptions/connected-account-refresh-tokens.exception.ts
 msgid "This provider is not supported."
 msgstr "不支援此提供者。"
 

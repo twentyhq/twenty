@@ -4,7 +4,6 @@ import { type SyncableEntityOptions } from '@/application/syncableEntityOptionsT
 export type ConnectionProviderManifest = SyncableEntityOptions & {
   name: string;
   displayName: string;
-  icon?: string;
   type: 'oauth';
   oauth: OAuthConnectionProviderConfig;
 };

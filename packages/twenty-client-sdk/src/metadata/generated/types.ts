@@ -2712,9 +2712,6 @@ export default {
             "displayName": [
                 1
             ],
-            "icon": [
-                1
-            ],
             "oauth": [
                 119
             ],
