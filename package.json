@@ -31,7 +31,8 @@
     "@lingui/core": "5.1.2",
     "@types/qs": "6.9.16",
     "@wyw-in-js/transform@npm:0.6.0": "patch:@wyw-in-js/transform@npm%3A0.7.0#~/.yarn/patches/@wyw-in-js-transform-npm-0.7.0-ba641dc99f.patch",
-    "@wyw-in-js/transform@npm:0.7.0": "patch:@wyw-in-js/transform@npm%3A0.7.0#~/.yarn/patches/@wyw-in-js-transform-npm-0.7.0-ba641dc99f.patch"
+    "@wyw-in-js/transform@npm:0.7.0": "patch:@wyw-in-js/transform@npm%3A0.7.0#~/.yarn/patches/@wyw-in-js-transform-npm-0.7.0-ba641dc99f.patch",
+    "@opentelemetry/api": "1.9.1"
   },
   "version": "0.2.1",
   "nx": {},
