@@ -165,8 +165,8 @@ jobs:
           elapsed=0
 
           while [ $elapsed -lt $timeout ]; do
-            if curl -s "http://localhost:${{ env.CURRENT_SERVER_PORT }}/graphql" > /dev/null 2>&1 && \
-               curl -s "http://localhost:${{ env.CURRENT_SERVER_PORT }}/rest/open-api/core" > /dev/null 2>&1; then
+            if curl -sf "http://localhost:${{ env.CURRENT_SERVER_PORT }}/graphql" > /dev/null 2>&1 && \
+               curl -sf "http://localhost:${{ env.CURRENT_SERVER_PORT }}/rest/open-api/core" > /dev/null 2>&1; then
               echo "Current branch server is ready!"
               break
             fi
@@ -223,17 +223,32 @@ jobs:
             exit 1
           fi
 
-          # Download current branch OpenAPI specs
           echo "Downloading OpenAPI specifications from current server..."
-          curl -s "http://localhost:${{ env.CURRENT_SERVER_PORT }}/rest/open-api/core" \
+          HTTP_CODE=$(curl -s "http://localhost:${{ env.CURRENT_SERVER_PORT }}/rest/open-api/core" \
             -H "Authorization: Bearer ${ADMIN_TOKEN}" \
             -o current-rest-api.json \
-            -w "HTTP Status: %{http_code}\n"
+            -w "%{http_code}")
+          
+          if [ "$HTTP_CODE" != "200" ]; then
+            echo "❌ Failed to download current REST API schema. HTTP Status: $HTTP_CODE"
+            cat current-rest-api.json
+            echo "=== Server Logs ==="
+            cat /tmp/current-server.log
+            exit 1
+          fi
 
-          curl -s "http://localhost:${{ env.CURRENT_SERVER_PORT }}/rest/open-api/metadata" \
+          HTTP_CODE=$(curl -s "http://localhost:${{ env.CURRENT_SERVER_PORT }}/rest/open-api/metadata" \
             -H "Authorization: Bearer ${ADMIN_TOKEN}" \
             -o current-rest-metadata-api.json \
-            -w "HTTP Status: %{http_code}\n"
+            -w "%{http_code}")
+
+          if [ "$HTTP_CODE" != "200" ]; then
+            echo "❌ Failed to download current REST Metadata schema. HTTP Status: $HTTP_CODE"
+            cat current-rest-metadata-api.json
+            echo "=== Server Logs ==="
+            cat /tmp/current-server.log
+            exit 1
+          fi
 
           # Verify the downloads
           echo "Current branch files downloaded:"
@@ -336,8 +351,8 @@ jobs:
           elapsed=0
 
           while [ $elapsed -lt $timeout ]; do
-            if curl -s "http://localhost:${{ env.MAIN_SERVER_PORT }}/graphql" > /dev/null 2>&1 && \
-               curl -s "http://localhost:${{ env.MAIN_SERVER_PORT }}/rest/open-api/core" > /dev/null 2>&1; then
+            if curl -sf "http://localhost:${{ env.MAIN_SERVER_PORT }}/graphql" > /dev/null 2>&1 && \
+               curl -sf "http://localhost:${{ env.MAIN_SERVER_PORT }}/rest/open-api/core" > /dev/null 2>&1; then
               echo "Main branch server is ready!"
               break
             fi
@@ -394,17 +409,32 @@ jobs:
             exit 1
           fi
 
-          # Download main branch OpenAPI specs
           echo "Downloading OpenAPI specifications from main server..."
-          curl -s "http://localhost:${{ env.MAIN_SERVER_PORT }}/rest/open-api/core" \
+          HTTP_CODE=$(curl -s "http://localhost:${{ env.MAIN_SERVER_PORT }}/rest/open-api/core" \
             -H "Authorization: Bearer ${ADMIN_TOKEN}" \
             -o main-rest-api.json \
-            -w "HTTP Status: %{http_code}\n"
+            -w "%{http_code}")
 
-          curl -s "http://localhost:${{ env.MAIN_SERVER_PORT }}/rest/open-api/metadata" \
+          if [ "$HTTP_CODE" != "200" ]; then
+            echo "❌ Failed to download main REST API schema. HTTP Status: $HTTP_CODE"
+            cat main-rest-api.json
+            echo "=== Server Logs ==="
+            cat /tmp/main-server.log
+            exit 1
+          fi
+
+          HTTP_CODE=$(curl -s "http://localhost:${{ env.MAIN_SERVER_PORT }}/rest/open-api/metadata" \
             -H "Authorization: Bearer ${ADMIN_TOKEN}" \
             -o main-rest-metadata-api.json \
-            -w "HTTP Status: %{http_code}\n"
+            -w "%{http_code}")
+
+          if [ "$HTTP_CODE" != "200" ]; then
+            echo "❌ Failed to download main REST Metadata schema. HTTP Status: $HTTP_CODE"
+            cat main-rest-metadata-api.json
+            echo "=== Server Logs ==="
+            cat /tmp/main-server.log
+            exit 1
+          fi
 
           # Verify the downloads
           echo "Main branch files downloaded:"

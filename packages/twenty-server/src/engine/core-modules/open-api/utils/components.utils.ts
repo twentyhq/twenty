@@ -1305,7 +1305,18 @@ export const computeMetadataSchemaComponents = (
               title: { type: 'string' },
               type: {
                 type: 'string',
-                enum: ['VIEW', 'IFRAME', 'FIELDS', 'GRAPH'],
+                enum: [
+                  'VIEW',
+                  'IFRAME',
+                  'FIELDS',
+                  'GRAPH',
+                  'TIMELINE',
+                  'TASKS',
+                  'NOTES',
+                  'FILES',
+                  'EMAILS',
+                  'CALENDAR',
+                ],
               },
               objectMetadataId: { type: 'string', format: 'uuid' },
               gridPosition: {
