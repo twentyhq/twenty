@@ -13,6 +13,9 @@ export type PageLayoutWidgetManifest = SyncableEntityOptions & {
   conditionalDisplay?: PageLayoutWidgetConditionalDisplay;
   gridPosition?: GridPosition;
   configuration: PageLayoutWidgetUniversalConfiguration;
+  // Required when the widget is defined standalone via definePageLayoutWidget;
+  // populated automatically when nested inside definePageLayout/definePageLayoutTab.
+  pageLayoutTabUniversalIdentifier?: string;
 };
 
 export type PageLayoutTabManifest = SyncableEntityOptions & {

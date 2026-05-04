@@ -48,6 +48,20 @@ export const APPLICATION_FRAGMENT = gql`
       createdAt
       updatedAt
     }
+    commandMenuItems {
+      id
+      label
+      shortLabel
+      icon
+      isPinned
+      availabilityType
+      conditionalAvailabilityExpression
+      frontComponentId
+      universalIdentifier
+      applicationId
+      createdAt
+      updatedAt
+    }
     objects {
       ...ObjectMetadataFields
     }

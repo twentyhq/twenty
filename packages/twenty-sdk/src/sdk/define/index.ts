@@ -27,6 +27,10 @@ export { OnDeleteAction } from '@/sdk/define/fields/on-delete-action';
 export { RelationType } from '@/sdk/define/fields/relation-type';
 export { validateFields } from '@/sdk/define/fields/validate-fields';
 
+export { defineCommandMenuItem } from '@/sdk/define/command-menu-items/define-command-menu-item';
+export type { CommandMenuItemConfig } from '@/sdk/define/command-menu-items/command-menu-item-config';
+export type { CommandMenuItemManifest } from 'twenty-shared/application';
+
 export { defineFrontComponent } from '@/sdk/define/front-component/define-front-component';
 export type {
   FrontComponentCommandConfig,
@@ -73,8 +77,10 @@ export {
 
 export { definePageLayout } from '@/sdk/define/page-layouts/define-page-layout';
 export { definePageLayoutTab } from '@/sdk/define/page-layouts/define-page-layout-tab';
+export { definePageLayoutWidget } from '@/sdk/define/page-layouts/define-page-layout-widget';
 export type { PageLayoutConfig } from '@/sdk/define/page-layouts/page-layout-config';
 export type { PageLayoutTabConfig } from '@/sdk/define/page-layouts/page-layout-tab-config';
+export type { PageLayoutWidgetConfig } from '@/sdk/define/page-layouts/page-layout-widget-config';
 export type {
   PageLayoutManifest,
   PageLayoutTabManifest,

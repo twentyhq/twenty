@@ -9,6 +9,7 @@ import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-
 import { TwentyConfigModule } from 'src/engine/core-modules/twenty-config/twenty-config.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
+import { CommandMenuItemEntity } from 'src/engine/metadata-modules/command-menu-item/entities/command-menu-item.entity';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { FrontComponentEntity } from 'src/engine/metadata-modules/front-component/entities/front-component.entity';
 import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
@@ -23,6 +24,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
       LogicFunctionEntity,
       AgentEntity,
       FrontComponentEntity,
+      CommandMenuItemEntity,
       ObjectMetadataEntity,
       ApplicationVariableEntity,
     ]),
