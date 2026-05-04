@@ -10,6 +10,7 @@ import { type PreInstallLogicFunctionConfig } from '@/sdk/define/logic-functions
 import { type RoleConfig } from '@/sdk/define/roles/role-config';
 import {
   type AgentManifest,
+  type ConnectionProviderManifest,
   type FieldManifest,
   type NavigationMenuItemManifest,
   type SkillManifest,
@@ -30,6 +31,7 @@ export type DefinableEntity =
   | PostInstallLogicFunctionConfig
   | PreInstallLogicFunctionConfig
   | AgentManifest
+  | ConnectionProviderManifest
   | RoleConfig
   | SkillManifest
   | ViewConfig

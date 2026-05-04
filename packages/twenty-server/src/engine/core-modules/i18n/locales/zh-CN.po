@@ -197,7 +197,7 @@ msgid "A temporary error occurred. Please try again."
 msgstr "发生临时错误。请重试。"
 
 #. js-lingui-id: reBsjo
-#: src/modules/connected-account/refresh-tokens-manager/exceptions/connected-account-refresh-tokens.exception.ts
+#: src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception.ts
 msgid "A temporary network error occurred."
 msgstr "发生临时网络错误。"
 
@@ -287,7 +287,7 @@ msgid "Access Token"
 msgstr ""
 
 #. js-lingui-id: Bk+qoW
-#: src/modules/connected-account/refresh-tokens-manager/exceptions/connected-account-refresh-tokens.exception.ts
+#: src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception.ts
 msgid "Access token not found."
 msgstr "未找到访问令牌。"
 
@@ -1324,6 +1324,11 @@ msgstr "检测到视图筛选组层级中的循环依赖"
 msgid "City"
 msgstr ""
 
+#. js-lingui-id: J7dFKa
+#: src/engine/core-modules/application/application-oauth-provider/application-oauth-provider.exception.ts
+msgid "Client credentials are not configured for this OAuth provider."
+msgstr ""
+
 #. js-lingui-id: NRF7pg
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
 msgid "Close date"
@@ -2306,6 +2311,11 @@ msgstr "删除记录失败。"
 msgid "Failed to duplicate dashboard."
 msgstr "复制仪表板失败."
 
+#. js-lingui-id: srkEOV
+#: src/engine/core-modules/application/application-oauth-provider/application-oauth-provider.exception.ts
+msgid "Failed to exchange the authorization code for an access token."
+msgstr ""
+
 #. js-lingui-id: MIto3A
 #: src/engine/core-modules/sdk-client/exceptions/sdk-client.exception.ts
 msgid "Failed to extract SDK client archive."
@@ -2335,6 +2345,11 @@ msgstr "无法接收实时更新。"
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "Failed to record billing event."
 msgstr "记录计费事件失败。"
+
+#. js-lingui-id: eQmx6a
+#: src/engine/core-modules/application/application-oauth-provider/application-oauth-provider.exception.ts
+msgid "Failed to refresh the access token."
+msgstr ""
 
 #. js-lingui-id: SJEIIJ
 #: src/engine/core-modules/admin-panel/admin-panel-queue.service.ts
@@ -3509,7 +3524,7 @@ msgid "Invalid pricing tiers."
 msgstr "价格分级无效。"
 
 #. js-lingui-id: XBYAgs
-#: src/modules/connected-account/refresh-tokens-manager/exceptions/connected-account-refresh-tokens.exception.ts
+#: src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception.ts
 msgid "Invalid refresh token."
 msgstr "刷新令牌无效。"
 
@@ -4846,6 +4861,11 @@ msgstr "未找到启用了密码身份验证的工作区。"
 msgid "None"
 msgstr ""
 
+#. js-lingui-id: eRIGld
+#: src/engine/core-modules/application/application-oauth-provider/application-oauth-provider.exception.ts
+msgid "Not authorized to access this OAuth provider."
+msgstr ""
+
 #. js-lingui-id: NpVtef
 #: src/modules/dashboard/chart-data/utils/format-dimension-value.util.ts
 #: src/modules/dashboard/chart-data/utils/format-dimension-value.util.ts
@@ -4967,6 +4987,11 @@ msgstr ""
 #: src/engine/core-modules/auth/auth.exception.ts
 msgid "OAuth access was denied."
 msgstr "OAuth 访问被拒绝。"
+
+#. js-lingui-id: xodh4N
+#: src/engine/core-modules/application/application-oauth-provider/application-oauth-provider.exception.ts
+msgid "OAuth provider not found."
+msgstr ""
 
 #. js-lingui-id: ECRKYR
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name-and-labels.util.ts
@@ -5815,7 +5840,7 @@ msgid "Refresh Token"
 msgstr ""
 
 #. js-lingui-id: 1GvzpH
-#: src/modules/connected-account/refresh-tokens-manager/exceptions/connected-account-refresh-tokens.exception.ts
+#: src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception.ts
 msgid "Refresh token not found."
 msgstr "未找到刷新令牌。"
 
@@ -6843,6 +6868,16 @@ msgstr "文件扩展名与文件内容不匹配。请检查您的文件未损坏
 msgid "The initial version of a workflow can not be deleted"
 msgstr "工作流程的初始版本不能被删除"
 
+#. js-lingui-id: kdTB4e
+#: src/engine/core-modules/application/application-oauth-provider/application-oauth-provider.exception.ts
+msgid "The OAuth request is missing required parameters."
+msgstr ""
+
+#. js-lingui-id: mCM5lH
+#: src/engine/core-modules/application/application-oauth-provider/application-oauth-provider.exception.ts
+msgid "The OAuth state parameter is invalid or expired."
+msgstr ""
+
 #. js-lingui-id: hx2IZ4
 #: src/engine/metadata-modules/object-permission/object-permission.service.ts
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
@@ -7115,7 +7150,7 @@ msgid "This permission is already set for the role"
 msgstr "该角色已设置此权限"
 
 #. js-lingui-id: Y5C3uK
-#: src/modules/connected-account/refresh-tokens-manager/exceptions/connected-account-refresh-tokens.exception.ts
+#: src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception.ts
 msgid "This provider is not supported."
 msgstr "不支持此提供商。"
 

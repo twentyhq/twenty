@@ -1,0 +1,384 @@
+// SecureHttpClientService transitively depends on `@lifeomic/axios-fetch`,
+// which is an optional native-binding dep that's flaky in some test envs.
+// We never use the real implementation here (the test always injects a
+// mock via `useValue`), so stub the module to avoid loading the dep at all.
+jest.mock(
+  'src/engine/core-modules/secure-http-client/secure-http-client.service',
+  () => ({
+    SecureHttpClientService: class {},
+  }),
+);
+
+import { Test, type TestingModule } from '@nestjs/testing';
+import { getRepositoryToken } from '@nestjs/typeorm';
+
+import { ConnectedAccountProvider } from 'twenty-shared/types';
+
+import { type ApplicationOAuthProviderEntity } from 'src/engine/core-modules/application/application-oauth-provider/application-oauth-provider.entity';
+import { ApplicationOAuthProviderFlowService } from 'src/engine/core-modules/application/application-oauth-provider/application-oauth-provider-flow.service';
+import { ApplicationOAuthProviderService } from 'src/engine/core-modules/application/application-oauth-provider/application-oauth-provider.service';
+import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
+import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
+
+describe('ApplicationOAuthProviderFlowService', () => {
+  let service: ApplicationOAuthProviderFlowService;
+  let oauthProviderService: {
+    findOneByIdOrThrow: jest.Mock;
+    getClientCredentials: jest.Mock;
+  };
+  let jwtWrapperService: {
+    sign: jest.Mock;
+    verifyJwtToken: jest.Mock;
+    generateAppSecret: jest.Mock;
+  };
+  let secureHttpClientService: { createSsrfSafeFetch: jest.Mock };
+  let connectedAccountRepository: {
+    count: jest.Mock;
+    update: jest.Mock;
+    create: jest.Mock;
+    save: jest.Mock;
+    findOne: jest.Mock;
+    findOneByOrFail: jest.Mock;
+  };
+
+  const baseProvider: ApplicationOAuthProviderEntity = {
+    id: 'provider-1',
+    universalIdentifier: 'provider-uid',
+    applicationId: 'app-1',
+    workspaceId: 'workspace-1',
+    name: 'linear',
+    displayName: 'Linear',
+    icon: null,
+    authorizationEndpoint: 'https://linear.app/oauth/authorize',
+    tokenEndpoint: 'https://api.linear.app/oauth/token',
+    revokeEndpoint: null,
+    scopes: ['read', 'write'],
+    clientIdVariable: 'LINEAR_CLIENT_ID',
+    clientSecretVariable: 'LINEAR_CLIENT_SECRET',
+    authorizationParams: null,
+    tokenRequestContentType: 'form-urlencoded',
+    usePkce: false,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  } as unknown as ApplicationOAuthProviderEntity;
+
+  beforeEach(async () => {
+    oauthProviderService = {
+      findOneByIdOrThrow: jest.fn(),
+      getClientCredentials: jest.fn(async () => ({
+        clientId: 'lin_client_id',
+        clientSecret: 'lin_client_secret',
+      })),
+    };
+    jwtWrapperService = {
+      sign: jest.fn(),
+      verifyJwtToken: jest.fn(),
+      generateAppSecret: jest.fn(() => 'derived-secret'),
+    };
+    secureHttpClientService = { createSsrfSafeFetch: jest.fn() };
+    connectedAccountRepository = {
+      count: jest.fn(async () => 0),
+      update: jest.fn(),
+      create: jest.fn((entity) => entity),
+      save: jest.fn(async (entity) => ({ ...entity, id: 'new-account-id' })),
+      findOne: jest.fn(async () => null),
+      findOneByOrFail: jest.fn(async ({ id }) => ({
+        id,
+        provider: ConnectedAccountProvider.APP,
+      })),
+    };
+
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [
+        ApplicationOAuthProviderFlowService,
+        {
+          provide: ApplicationOAuthProviderService,
+          useValue: oauthProviderService,
+        },
+        { provide: JwtWrapperService, useValue: jwtWrapperService },
+        { provide: SecureHttpClientService, useValue: secureHttpClientService },
+        {
+          provide: TwentyConfigService,
+          useValue: { get: jest.fn(() => 'https://api.example.com') },
+        },
+        {
+          provide: getRepositoryToken(ConnectedAccountEntity),
+          useValue: connectedAccountRepository,
+        },
+      ],
+    }).compile();
+
+    service = module.get(ApplicationOAuthProviderFlowService);
+  });
+
+  afterEach(() => jest.clearAllMocks());
+
+  describe('startAuthorizationFlow', () => {
+    it('builds the provider authorization URL with the workspace + visibility context signed into state', async () => {
+      jwtWrapperService.sign.mockReturnValue('signed-state-token');
+
+      const { authorizationUrl } = await service.startAuthorizationFlow({
+        applicationOAuthProvider: baseProvider,
+        workspaceId: 'workspace-1',
+        userId: 'user-1',
+        userWorkspaceId: 'uws-1',
+        visibility: 'user',
+        reconnectingConnectedAccountId: null,
+        redirectLocation: null,
+      });
+
+      const url = new URL(authorizationUrl);
+
+      expect(url.origin + url.pathname).toBe(
+        'https://linear.app/oauth/authorize',
+      );
+      expect(url.searchParams.get('client_id')).toBe('lin_client_id');
+      expect(url.searchParams.get('response_type')).toBe('code');
+      // OAuth-standard `scope` (plural meaning) — these are the upstream
+      // permissions we're requesting, unrelated to the row-visibility field.
+      expect(url.searchParams.get('scope')).toBe('read write');
+      expect(url.searchParams.get('state')).toBe('signed-state-token');
+      expect(url.searchParams.get('redirect_uri')).toBe(
+        'https://api.example.com/apps/oauth/callback',
+      );
+      expect(url.searchParams.has('code_challenge')).toBe(false);
+
+      // signed payload carries workspace identity for the callback to use
+      expect(jwtWrapperService.sign).toHaveBeenCalledWith(
+        expect.objectContaining({
+          type: JwtTokenTypeEnum.APP_OAUTH_STATE,
+          workspaceId: 'workspace-1',
+          applicationOAuthProviderId: 'provider-1',
+          visibility: 'user',
+          reconnectingConnectedAccountId: null,
+        }),
+        expect.objectContaining({ secret: 'derived-secret' }),
+      );
+    });
+
+    it('emits PKCE challenge params when usePkce is enabled', async () => {
+      jwtWrapperService.sign.mockReturnValue('signed-state');
+
+      const { authorizationUrl } = await service.startAuthorizationFlow({
+        applicationOAuthProvider: { ...baseProvider, usePkce: true },
+        workspaceId: 'workspace-1',
+        userId: 'user-1',
+        userWorkspaceId: 'uws-1',
+        visibility: 'user',
+        reconnectingConnectedAccountId: null,
+        redirectLocation: null,
+      });
+
+      const url = new URL(authorizationUrl);
+
+      expect(url.searchParams.get('code_challenge_method')).toBe('S256');
+      expect(url.searchParams.get('code_challenge')).toMatch(/^[\w-]+$/);
+    });
+
+    describe('reconnect target validation', () => {
+      // Cross-workspace reconnect was a real bug: the persist UPDATE filtered
+      // by (id, workspaceId) so it wrote nothing, but the subsequent
+      // findOneByOrFail({ id }) returned the foreign-workspace row with stale
+      // tokens, making the reconnect look successful. Catch it at authorize
+      // time before the upstream OAuth round-trip.
+      const validateArgs = {
+        applicationOAuthProvider: baseProvider,
+        workspaceId: 'workspace-1',
+        userId: 'user-1',
+        userWorkspaceId: 'uws-1',
+        visibility: 'user' as const,
+        redirectLocation: null,
+      };
+
+      it('throws FORBIDDEN when reconnecting an id that lives in another workspace', async () => {
+        connectedAccountRepository.findOne.mockResolvedValue(null);
+
+        const error = await service
+          .startAuthorizationFlow({
+            ...validateArgs,
+            reconnectingConnectedAccountId: 'foreign-account-id',
+          })
+          .catch((caught) => caught);
+
+        expect(error).toMatchObject({
+          code: 'FORBIDDEN',
+        });
+        expect(error.message).toContain('foreign-account-id');
+        expect(connectedAccountRepository.findOne).toHaveBeenCalledWith({
+          where: {
+            id: 'foreign-account-id',
+            workspaceId: 'workspace-1',
+            applicationConnectionProviderId: 'provider-1',
+          },
+        });
+        // No state JWT signed, no upstream URL built.
+        expect(jwtWrapperService.sign).not.toHaveBeenCalled();
+      });
+
+      it('throws FORBIDDEN when reconnecting an id that belongs to a different provider in the same workspace', async () => {
+        // findOne with the provider filter returns null even though the row
+        // exists in this workspace under a different provider.
+        connectedAccountRepository.findOne.mockResolvedValue(null);
+
+        await expect(
+          service.startAuthorizationFlow({
+            ...validateArgs,
+            reconnectingConnectedAccountId: 'wrong-provider-account-id',
+          }),
+        ).rejects.toMatchObject({ code: 'FORBIDDEN' });
+      });
+
+      it('proceeds when the reconnect target matches workspace and provider', async () => {
+        connectedAccountRepository.findOne.mockResolvedValue({
+          id: 'existing-account-id',
+          workspaceId: 'workspace-1',
+          applicationConnectionProviderId: 'provider-1',
+        });
+        jwtWrapperService.sign.mockReturnValue('state');
+
+        const { authorizationUrl } = await service.startAuthorizationFlow({
+          ...validateArgs,
+          reconnectingConnectedAccountId: 'existing-account-id',
+        });
+
+        expect(new URL(authorizationUrl).searchParams.get('state')).toBe(
+          'state',
+        );
+        expect(jwtWrapperService.sign).toHaveBeenCalled();
+      });
+
+      it('skips the lookup entirely when reconnectingConnectedAccountId is null', async () => {
+        jwtWrapperService.sign.mockReturnValue('state');
+
+        await service.startAuthorizationFlow({
+          ...validateArgs,
+          reconnectingConnectedAccountId: null,
+        });
+
+        expect(connectedAccountRepository.findOne).not.toHaveBeenCalled();
+      });
+    });
+  });
+
+  describe('completeAuthorizationFlow', () => {
+    const stateClaims = {
+      sub: 'provider-1',
+      type: JwtTokenTypeEnum.APP_OAUTH_STATE,
+      applicationOAuthProviderId: 'provider-1',
+      workspaceId: 'workspace-1',
+      userId: 'user-1',
+      userWorkspaceId: 'uws-1',
+      visibility: 'user' as const,
+      reconnectingConnectedAccountId: null,
+      redirectLocation: null,
+      codeVerifier: null,
+    };
+
+    const successfulTokenResponse = {
+      ok: true,
+      status: 200,
+      json: async () => ({
+        access_token: 'new_access',
+        refresh_token: 'new_refresh',
+        scope: 'read write',
+      }),
+      text: async () => '',
+    };
+
+    beforeEach(() => {
+      jwtWrapperService.verifyJwtToken.mockReturnValue(stateClaims);
+      oauthProviderService.findOneByIdOrThrow.mockResolvedValue(baseProvider);
+      secureHttpClientService.createSsrfSafeFetch.mockReturnValue(
+        jest.fn(async () => successfulTokenResponse),
+      );
+    });
+
+    it('always creates a new ConnectedAccount when no reconnect id is supplied', async () => {
+      const result = await service.completeAuthorizationFlow({
+        code: 'auth_code',
+        state: 'signed-state',
+      });
+
+      expect(result.connectedAccountId).toBe('new-account-id');
+      expect(result.workspaceId).toBe('workspace-1');
+      expect(result.applicationId).toBe('app-1');
+
+      expect(connectedAccountRepository.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          provider: ConnectedAccountProvider.APP,
+          accessToken: 'new_access',
+          refreshToken: 'new_refresh',
+          applicationConnectionProviderId: 'provider-1',
+          applicationId: 'app-1',
+          workspaceId: 'workspace-1',
+          userWorkspaceId: 'uws-1',
+          visibility: 'user',
+        }),
+      );
+      expect(connectedAccountRepository.save).toHaveBeenCalled();
+      expect(connectedAccountRepository.update).not.toHaveBeenCalled();
+    });
+
+    it('updates the existing ConnectedAccount when reconnectingConnectedAccountId is supplied', async () => {
+      jwtWrapperService.verifyJwtToken.mockReturnValue({
+        ...stateClaims,
+        reconnectingConnectedAccountId: 'existing-account-id',
+      });
+
+      const result = await service.completeAuthorizationFlow({
+        code: 'auth_code',
+        state: 'signed-state',
+      });
+
+      expect(result.connectedAccountId).toBe('existing-account-id');
+      expect(connectedAccountRepository.update).toHaveBeenCalledWith(
+        { id: 'existing-account-id', workspaceId: 'workspace-1' },
+        expect.objectContaining({
+          accessToken: 'new_access',
+          refreshToken: 'new_refresh',
+          authFailedAt: null,
+        }),
+      );
+      // Defense-in-depth: the post-update read MUST also be workspace-scoped,
+      // otherwise a foreign-id that slipped past the authorize-time guard
+      // would still surface stale fields from another workspace.
+      expect(connectedAccountRepository.findOneByOrFail).toHaveBeenCalledWith({
+        id: 'existing-account-id',
+        workspaceId: 'workspace-1',
+      });
+      expect(connectedAccountRepository.create).not.toHaveBeenCalled();
+    });
+
+    it('persists the workspace visibility when state asks for it', async () => {
+      jwtWrapperService.verifyJwtToken.mockReturnValue({
+        ...stateClaims,
+        visibility: 'workspace',
+      });
+
+      await service.completeAuthorizationFlow({
+        code: 'auth_code',
+        state: 'signed-state',
+      });
+
+      expect(connectedAccountRepository.create).toHaveBeenCalledWith(
+        expect.objectContaining({ visibility: 'workspace' }),
+      );
+    });
+
+    it('rejects an invalid state', async () => {
+      jwtWrapperService.verifyJwtToken.mockImplementation(() => {
+        throw new Error('JWT expired');
+      });
+
+      await expect(
+        service.completeAuthorizationFlow({
+          code: 'auth_code',
+          state: 'bad-state',
+        }),
+      ).rejects.toThrow(/state/);
+    });
+  });
+});

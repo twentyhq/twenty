@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { AppOAuthRefreshModule } from 'src/engine/core-modules/application/application-oauth-provider/refresh/app-oauth-refresh.module';
 import { JwtModule } from 'src/engine/core-modules/jwt/jwt.module';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { GoogleAPIRefreshAccessTokenModule } from 'src/modules/connected-account/refresh-tokens-manager/drivers/google/google-api-refresh-access-token.module';
@@ -13,6 +14,7 @@ import { ConnectedAccountRefreshTokensService } from 'src/modules/connected-acco
     TypeOrmModule.forFeature([ConnectedAccountEntity]),
     GoogleAPIRefreshAccessTokenModule,
     MicrosoftAPIRefreshAccessTokenModule,
+    AppOAuthRefreshModule,
   ],
   providers: [ConnectedAccountRefreshTokensService],
   exports: [ConnectedAccountRefreshTokensService],

@@ -4,6 +4,7 @@ import { ApplicationModule } from 'src/engine/core-modules/application/applicati
 import { ApplicationManifestMigrationService } from 'src/engine/core-modules/application/application-manifest/application-manifest-migration.service';
 import { ApplicationManifestResolver } from 'src/engine/core-modules/application/application-manifest/application-manifest.resolver';
 import { ApplicationSyncService } from 'src/engine/core-modules/application/application-manifest/application-sync.service';
+import { ApplicationOAuthProviderModule } from 'src/engine/core-modules/application/application-oauth-provider/application-oauth-provider.module';
 import { ApplicationVariableEntityModule } from 'src/engine/core-modules/application/application-variable/application-variable.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { FileStorageModule } from 'src/engine/core-modules/file-storage/file-storage.module';
@@ -16,6 +17,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
 @Module({
   imports: [
     ApplicationModule,
+    ApplicationOAuthProviderModule,
     ApplicationVariableEntityModule,
     FeatureFlagModule,
     FileStorageModule,
