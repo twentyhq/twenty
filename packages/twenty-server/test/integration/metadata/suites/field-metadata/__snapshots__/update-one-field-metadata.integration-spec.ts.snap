@@ -76,9 +76,9 @@ exports[`updateOne failing update should throw if the field name is not availabl
         "fieldMetadata": 1,
         "totalErrors": 1,
       },
-      "userFriendlyMessage": "Name ",
+      "userFriendlyMessage": "Name "otherTestName" is not available as it is already used by another field",
     },
-    "message": "Name ",
+    "message": "Name "otherTestName" is not available as it is already used by another field",
     "name": "GraphQLError",
   },
 ]

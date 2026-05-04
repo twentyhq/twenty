@@ -78,9 +78,9 @@ exports[`Failing create field metadata tests suite should fail to create POSITIO
         "fieldMetadata": 1,
         "totalErrors": 1,
       },
-      "userFriendlyMessage": "Field type POSITION must be named ",
+      "userFriendlyMessage": "Field type POSITION must be named "position"",
     },
-    "message": "Field type POSITION must be named ",
+    "message": "Field type POSITION must be named "position"",
     "name": "GraphQLError",
   },
 ]
