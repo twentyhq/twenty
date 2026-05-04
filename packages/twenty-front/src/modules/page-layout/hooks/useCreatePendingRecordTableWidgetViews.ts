@@ -4,7 +4,7 @@ import { recordTableWidgetViewDraftComponentState } from '@/page-layout/states/r
 import { getWidgetConfigurationViewId } from '@/page-layout/utils/getWidgetConfigurationViewId';
 import { usePerformViewAPIPersist } from '@/views/hooks/internal/usePerformViewAPIPersist';
 import { useStore } from 'jotai';
-import { useCallback } from 'react';
+import { useCallback, useRef } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { WidgetType } from '~/generated-metadata/graphql';
 
@@ -12,6 +12,7 @@ export const useCreatePendingRecordTableWidgetViews = () => {
   const { performViewAPICreate, performViewAPIDestroy } =
     usePerformViewAPIPersist();
   const store = useStore();
+  const createdViewIdsRef = useRef<Set<string>>(new Set());
 
   const createPendingRecordTableWidgetViews = useCallback(
     async (pageLayoutId: string) => {
@@ -59,7 +60,10 @@ export const useCreatePendingRecordTableWidgetViews = () => {
 
         const persistedViewId = persistedRecordTableWidgets.get(widget.id);
 
-        if (persistedViewId === viewId) {
+        if (
+          persistedViewId === viewId ||
+          createdViewIdsRef.current.has(viewId)
+        ) {
           continue;
         }
 
@@ -98,6 +102,8 @@ export const useCreatePendingRecordTableWidgetViews = () => {
             `Failed to create view for RECORD_TABLE widget ${widget.id}`,
           );
         }
+
+        createdViewIdsRef.current.add(view.id);
       }
 
       for (const [widgetId, viewId] of persistedRecordTableWidgets) {
