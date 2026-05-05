@@ -28,4 +28,10 @@ describe('buildPortalUrl', () => {
       'https://foss.staging.moneta.dev/',
     );
   });
+
+  it('preserves port when present', () => {
+    expect(
+      buildPortalUrl('foss-twenty.local.moneta.dev:8080', 'http:'),
+    ).toBe('http://foss.local.moneta.dev:8080/');
+  });
 });

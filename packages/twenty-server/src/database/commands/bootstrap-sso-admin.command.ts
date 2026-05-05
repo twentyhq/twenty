@@ -20,8 +20,9 @@ type BootstrapSsoAdminOptions = {
 
 // Pre-seed one Admin user for the SMB_NAME workspace so SSO sign-in lands a
 // useful role on first hit. Mirrors `provision-plane.sh` (ADMIN_EMAIL →
-// InstanceAdmin). Idempotent: subsequent runs find the existing user/
-// userWorkspace and no-op.
+// InstanceAdmin). Idempotent: subsequent runs ensure the Admin role on the
+// existing userWorkspace, even if the user signed in via SSO first and was
+// auto-provisioned as Member through the workspace's defaultRoleId.
 //
 // Wired into the foss-server-bundle-devstack provisioning pipeline at
 // `provision/provision-twenty.sh`, which runs `workspace:seed:dev --light`
@@ -100,14 +101,17 @@ export class BootstrapSsoAdminCommand extends CommandRunner {
 
     const user = await this.findOrCreateUser(normalizedEmail);
 
-    await this.userWorkspaceService.addUserToWorkspaceIfUserNotInWorkspace(
-      user,
-      workspace,
-      adminRole.id,
-    );
+    const { wasExistingMember } =
+      await this.userWorkspaceService.addUserToWorkspaceOrEnsureRole(
+        user,
+        workspace,
+        adminRole.id,
+      );
 
     this.logger.log(
-      `Admin user "${normalizedEmail}" provisioned for workspace "${subdomain}".`,
+      wasExistingMember
+        ? `Existing user "${normalizedEmail}" promoted to Admin in workspace "${subdomain}".`
+        : `Admin user "${normalizedEmail}" newly provisioned for workspace "${subdomain}".`,
     );
   }
 

@@ -3,8 +3,8 @@
 // target in useAuth: `foss-twenty.local.moneta.dev` -> `foss.local.moneta.dev`.
 // The regex requires a hyphen segment so non-`<prefix>-<app>` hosts
 // (`localhost`, `foo.example.com`) no-op safely.
-export const buildPortalUrl = (hostname: string, protocol: string) => {
-  const portalHost = hostname.replace(/^([^-]+)-[^.]+\.(.+)/, '$1.$2');
+export const buildPortalUrl = (host: string, protocol: string) => {
+  const portalHost = host.replace(/^([^-]+)-[^.]+\.(.+)/, '$1.$2');
 
   return `${protocol}//${portalHost}/`;
 };

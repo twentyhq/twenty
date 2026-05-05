@@ -429,7 +429,7 @@ export const useAuth = () => {
       setLastAuthenticateWorkspaceDomain(null);
 
       window.location.href = buildPortalUrl(
-        window.location.hostname,
+        window.location.host,
         window.location.protocol,
       );
       return;
