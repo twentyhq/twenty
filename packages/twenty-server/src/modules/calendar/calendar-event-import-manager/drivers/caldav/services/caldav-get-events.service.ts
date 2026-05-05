@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
@@ -34,8 +35,8 @@ export class CalDavGetEventsService {
       const params = connectedAccount.connectionParameters?.CALDAV;
 
       if (
-        !params?.host ||
-        !params.password ||
+        !isNonEmptyString(params?.host) ||
+        !isNonEmptyString(params?.password) ||
         !isDefined(connectedAccount.handle)
       ) {
         throw new Error('Missing required CalDAV connection parameters');

@@ -13,11 +13,11 @@ export const extractOrganizerFromEvent = (
   if (!isDefined(organizer)) return null;
 
   const rawValue = isString(organizer) ? organizer : organizer.val;
-  const cn = isString(organizer) ? undefined : organizer.params?.CN;
+  const commonName = isString(organizer) ? undefined : organizer.params?.CN;
   const handle = rawValue.replace(/^mailto:/i, '');
 
   return {
-    displayName: cn || handle || 'Unknown',
+    displayName: commonName || handle || 'Unknown',
     responseStatus: CalendarEventParticipantResponseStatus.ACCEPTED,
     handle,
     isOrganizer: true,
