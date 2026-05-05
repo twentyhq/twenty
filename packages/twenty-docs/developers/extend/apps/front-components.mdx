@@ -223,7 +223,8 @@ Available hooks:
 | Hook | Returns | Description |
 |------|---------|-------------|
 | `useUserId()` | `string` or `null` | The current user's ID |
-| `useRecordId()` | `string` or `null` | The current record's ID (when placed on a record page) |
+| `useSelectedRecordIds()` | `string[]` | All selected record IDs (empty array if none selected) |
+| `useRecordId()` | `string` or `null` | **Deprecated.** Use `useSelectedRecordIds()` instead |
 | `useFrontComponentId()` | `string` | This component instance's ID |
 | `useFrontComponentExecutionContext(selector)` | varies | Access the full execution context with a selector function |
 
@@ -283,6 +284,61 @@ export default defineFrontComponent({
   name: 'archive-record',
   description: 'Archives the current record',
   component: ArchiveRecord,
+});
+```
+
+### Working with multiple records
+
+Use `useSelectedRecordIds()` to handle multiple selected records. This is useful for bulk operations:
+
+```tsx src/front-components/bulk-export.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { useSelectedRecordIds, numberOfSelectedRecords } from 'twenty-sdk/front-component';
+import { enqueueSnackbar, closeSidePanel } from 'twenty-sdk/front-component';
+import { CoreApiClient } from 'twenty-sdk/clients';
+
+const BulkExport = () => {
+  const selectedRecordIds = useSelectedRecordIds();
+
+  const handleExport = async () => {
+    const client = new CoreApiClient();
+
+    for (const recordId of selectedRecordIds) {
+      await client.mutation({
+        updateTask: {
+          __args: { id: recordId, data: { exported: true } },
+          id: true,
+        },
+      });
+    }
+
+    await enqueueSnackbar({
+      message: `Exported ${selectedRecordIds.length} records`,
+      variant: 'success',
+    });
+
+    await closeSidePanel();
+  };
+
+  return (
+    <div style={{ padding: '20px' }}>
+      <p>Export {selectedRecordIds.length} selected record(s)?</p>
+      <button onClick={handleExport}>Export</button>
+    </div>
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'd0e1f2a3-b4c5-6789-defa-012345678901',
+  name: 'bulk-export',
+  description: 'Export selected records',
+  component: BulkExport,
+  command: {
+    universalIdentifier: 'd0e1f2a3-b4c5-6789-defa-012345678902',
+    label: 'Bulk Export',
+    availabilityType: 'RECORD_SELECTION',
+    conditionalAvailabilityExpression: numberOfSelectedRecords > 0,
+  },
 });
 ```
 

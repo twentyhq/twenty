@@ -730,12 +730,6 @@ export default {
             "handlerName": [
                 1
             ],
-            "toolInputSchema": [
-                15
-            ],
-            "isTool": [
-                6
-            ],
             "cronTriggerSettings": [
                 15
             ],
@@ -743,6 +737,12 @@ export default {
                 15
             ],
             "httpRouteTriggerSettings": [
+                15
+            ],
+            "toolTriggerSettings": [
+                15
+            ],
+            "workflowActionTriggerSettings": [
                 15
             ],
             "applicationId": [
@@ -9650,12 +9650,6 @@ export default {
             "timeoutSeconds": [
                 11
             ],
-            "toolInputSchema": [
-                15
-            ],
-            "isTool": [
-                6
-            ],
             "source": [
                 15
             ],
@@ -9666,6 +9660,12 @@ export default {
                 15
             ],
             "httpRouteTriggerSettings": [
+                15
+            ],
+            "toolTriggerSettings": [
+                15
+            ],
+            "workflowActionTriggerSettings": [
                 15
             ],
             "__typename": [
@@ -9707,17 +9707,11 @@ export default {
             "sourceHandlerCode": [
                 1
             ],
-            "toolInputSchema": [
-                15
-            ],
             "handlerName": [
                 1
             ],
             "sourceHandlerPath": [
                 1
-            ],
-            "isTool": [
-                6
             ],
             "cronTriggerSettings": [
                 15
@@ -9726,6 +9720,12 @@ export default {
                 15
             ],
             "httpRouteTriggerSettings": [
+                15
+            ],
+            "toolTriggerSettings": [
+                15
+            ],
+            "workflowActionTriggerSettings": [
                 15
             ],
             "__typename": [

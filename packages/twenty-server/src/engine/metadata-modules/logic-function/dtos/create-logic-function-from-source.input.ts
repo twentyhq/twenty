@@ -1,7 +1,6 @@
 import { Field, InputType } from '@nestjs/graphql';
 
 import {
-  IsBoolean,
   IsNotEmpty,
   IsNumber,
   IsObject,
@@ -16,6 +15,8 @@ import {
   CronTriggerSettings,
   DatabaseEventTriggerSettings,
   HttpRouteTriggerSettings,
+  ToolTriggerSettings,
+  WorkflowActionTriggerSettings,
 } from 'twenty-shared/application';
 
 import type { JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';
@@ -51,16 +52,6 @@ export class CreateLogicFunctionFromSourceInput {
   @IsOptional()
   timeoutSeconds?: number;
 
-  @Field(() => graphqlTypeJson, { nullable: true })
-  @IsObject()
-  @IsOptional()
-  toolInputSchema?: object;
-
-  @IsBoolean()
-  @Field({ nullable: true })
-  @IsOptional()
-  isTool?: boolean;
-
   @IsObject()
   @Field(() => graphqlTypeJson, { nullable: true })
   @IsOptional()
@@ -80,4 +71,14 @@ export class CreateLogicFunctionFromSourceInput {
   @Field(() => graphqlTypeJson, { nullable: true })
   @IsOptional()
   httpRouteTriggerSettings?: JsonbProperty<HttpRouteTriggerSettings>;
+
+  @IsObject()
+  @Field(() => graphqlTypeJson, { nullable: true })
+  @IsOptional()
+  toolTriggerSettings?: JsonbProperty<ToolTriggerSettings>;
+
+  @IsObject()
+  @Field(() => graphqlTypeJson, { nullable: true })
+  @IsOptional()
+  workflowActionTriggerSettings?: JsonbProperty<WorkflowActionTriggerSettings>;
 }

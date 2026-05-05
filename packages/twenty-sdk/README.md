@@ -19,8 +19,8 @@ A CLI and SDK to develop, build, and publish applications that extend [Twenty CR
 The recommended way to start is with [create-twenty-app](https://www.npmjs.com/package/create-twenty-app):
 
 ```bash
-npx create-twenty-app@latest my-app
-cd my-app
+npx create-twenty-app@latest my-twenty-app
+cd my-twenty-app
 yarn twenty dev
 ```
 

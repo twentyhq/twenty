@@ -1,62 +1,44 @@
 import { useEffect } from 'react';
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { useRecordId, updateProgress, enqueueSnackbar, unmountFrontComponent } from 'twenty-sdk/front-component';
+import { useSelectedRecordIds, updateProgress, enqueueSnackbar, unmountFrontComponent } from 'twenty-sdk/front-component';
 import { CoreApiClient } from 'twenty-client-sdk/core';
-import { isDefined } from 'twenty-shared/utils';
 import { POST_CARD_UNIVERSAL_IDENTIFIER } from '../objects/post-card.object';
 
 const SendPostCardsEffect = () => {
-  const recordId = useRecordId();
+  const selectedRecordIds = useSelectedRecordIds();
 
   useEffect(() => {
     const send = async () => {
       try {
-        await updateProgress(0.1);
-        const client = new CoreApiClient();
-
-        let idsToSend: string[] = [];
-
-        if (isDefined(recordId)) {
-          idsToSend = [recordId];
-        } else {
-          const { postCards } = await client.query({
-            postCards: {
-              __args: {
-                filter: { status: { eq: 'DRAFT' } },
-              },
-              edges: { node: { id: true } },
-            },
+        if (selectedRecordIds.length === 0) {
+          await enqueueSnackbar({
+            message: 'No postcards selected',
+            variant: 'error',
           });
-
-          idsToSend =
-            postCards?.edges?.map(
-              (edge: { node: { id: string; status: true } }) => edge.node.id,
-            ) ?? [];
-        }
-
-        if (idsToSend.length === 0) {
-          await updateProgress(1);
           await unmountFrontComponent();
           return;
         }
 
+        await updateProgress(0.1);
+        const client = new CoreApiClient();
+
         await updateProgress(0.3);
 
-        for (let i = 0; i < idsToSend.length; i++) {
+        for (let i = 0; i < selectedRecordIds.length; i++) {
           await client.mutation({
             updatePostCard: {
               __args: {
-                id: idsToSend[i],
+                id: selectedRecordIds[i],
                 data: { status: 'SENT' },
               },
               id: true,
             },
           });
 
-          await updateProgress(0.3 + (0.7 * (i + 1)) / idsToSend.length);
+          await updateProgress(0.3 + (0.7 * (i + 1)) / selectedRecordIds.length);
         }
 
-        const count = idsToSend.length;
+        const count = selectedRecordIds.length;
 
         await enqueueSnackbar({
           message: `${count} postcard${count > 1 ? 's' : ''} sent`,
@@ -74,7 +56,7 @@ const SendPostCardsEffect = () => {
     };
 
     send();
-  }, [recordId]);
+  }, [selectedRecordIds]);
 
   return null;
 };
