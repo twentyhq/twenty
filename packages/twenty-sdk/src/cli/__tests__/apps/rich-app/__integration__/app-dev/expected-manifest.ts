@@ -12,6 +12,7 @@ import {
 } from 'twenty-shared/types';
 
 export const EXPECTED_MANIFEST: Manifest = {
+  commandMenuItems: [],
   pageLayouts: [],
   pageLayoutTabs: [
     {

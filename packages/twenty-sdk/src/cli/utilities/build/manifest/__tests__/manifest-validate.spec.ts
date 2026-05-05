@@ -1,7 +1,7 @@
 import {
   type ApplicationManifest,
-  type Manifest,
   type FieldManifest,
+  type Manifest,
 } from 'twenty-shared/application';
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 import { manifestValidate } from '@/cli/utilities/build/manifest/manifest-validate';
@@ -25,6 +25,7 @@ const validField: FieldManifest = {
 };
 
 const validManifest: Manifest = {
+  commandMenuItems: [],
   application: validApplication,
   objects: [],
   frontComponents: [],
