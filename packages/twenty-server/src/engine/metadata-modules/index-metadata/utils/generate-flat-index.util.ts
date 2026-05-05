@@ -1,3 +1,4 @@
+import { RelationType } from 'twenty-shared/types';
 import {
   computeRelationFieldJoinColumnName,
   isDefined,
@@ -39,9 +40,12 @@ export const generateFlatIndexMetadataWithNameOrThrow = ({
         );
       }
 
-      const name = isMorphOrRelationUniversalFlatFieldMetadata(
-        relatedFlatFieldMetadata,
-      )
+      const isManyToOneRelation =
+        isMorphOrRelationUniversalFlatFieldMetadata(relatedFlatFieldMetadata) &&
+        relatedFlatFieldMetadata.universalSettings?.relationType ===
+          RelationType.MANY_TO_ONE;
+
+      const name = isManyToOneRelation
         ? computeRelationFieldJoinColumnName({
             name: relatedFlatFieldMetadata.name,
           })

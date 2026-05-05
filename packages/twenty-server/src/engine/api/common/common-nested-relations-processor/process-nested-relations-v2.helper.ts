@@ -204,6 +204,17 @@ export class ProcessNestedRelationsV2Helper {
         relationType === RelationType.ONE_TO_MANY ? 'id' : joinColumnName,
     });
 
+    if (
+      relationType === RelationType.ONE_TO_MANY &&
+      !isDefined(targetRelationName)
+    ) {
+      throw new GraphqlQueryRunnerException(
+        `Could not resolve target relation for one-to-many field ${sourceFieldName}`,
+        GraphqlQueryRunnerExceptionCode.RELATION_TARGET_OBJECT_METADATA_NOT_FOUND,
+        { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
+      );
+    }
+
     const fieldMetadataTargetRelationColumnName =
       computeRelationFieldJoinColumnName({
         name:
@@ -213,7 +224,7 @@ export class ProcessNestedRelationsV2Helper {
             FieldMetadataType.MORPH_RELATION,
           )
             ? targetRelation.name
-            : (targetRelationName ?? ''),
+            : (targetRelationName as string),
       });
 
     const { relationResults, relationAggregatedFieldsResult } =

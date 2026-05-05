@@ -1,4 +1,4 @@
-import { compositeTypeDefinitions } from 'twenty-shared/types';
+import { compositeTypeDefinitions, RelationType } from 'twenty-shared/types';
 import {
   computeRelationFieldJoinColumnName,
   isDefined,
@@ -44,6 +44,15 @@ export const computeFlatIndexFieldColumnNames = ({
     }
 
     if (isMorphOrRelationFlatFieldMetadata(flatFieldMetadata)) {
+      if (
+        flatFieldMetadata.settings?.relationType !== RelationType.MANY_TO_ONE
+      ) {
+        throw new FlatEntityMapsException(
+          'Cannot index a relation field that has no join column',
+          FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
+        );
+      }
+
       return computeRelationFieldJoinColumnName({
         name: flatFieldMetadata.name,
       });

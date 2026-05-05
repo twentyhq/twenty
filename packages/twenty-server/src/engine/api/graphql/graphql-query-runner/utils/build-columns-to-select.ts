@@ -88,7 +88,7 @@ const getRequiredRelationColumns = (
         : undefined;
 
       if (
-        !fieldMetadata.settings?.relationType ||
+        fieldMetadata.settings?.relationType !== RelationType.MANY_TO_ONE ||
         !isDefined(targetObjectMetadata)
       ) {
         continue;

@@ -5,6 +5,7 @@ import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 import { isFieldMorphRelation } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelation';
 import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
 import {
+  computeMorphRelationFieldJoinColumnName,
   computeRelationFieldJoinColumnName,
   isDefined,
 } from 'twenty-shared/utils';
@@ -16,14 +17,35 @@ export const shouldFieldBeQueried = ({
   recordGqlFields,
 }: {
   gqlField: string;
-  fieldMetadata: Pick<FieldMetadataItem, 'name' | 'type' | 'settings'>;
+  fieldMetadata: Pick<
+    FieldMetadataItem,
+    'name' | 'type' | 'settings' | 'morphRelations'
+  >;
   objectRecord?: ObjectRecord;
   recordGqlFields?: RecordGqlOperationGqlRecordFields;
 }): any => {
-  const isJoinColumn: boolean =
-    (isFieldRelation(fieldMetadata) || isFieldMorphRelation(fieldMetadata)) &&
+  const isRelationJoinColumn =
+    isFieldRelation(fieldMetadata) &&
     computeRelationFieldJoinColumnName({ name: fieldMetadata.name }) ===
       gqlField;
+
+  const isMorphRelationJoinColumn =
+    isFieldMorphRelation(fieldMetadata) &&
+    isDefined(fieldMetadata.morphRelations) &&
+    fieldMetadata.morphRelations.some(
+      (morphRelation) =>
+        computeMorphRelationFieldJoinColumnName({
+          fieldName: fieldMetadata.name,
+          relationType: morphRelation.type,
+          targetObjectMetadataNameSingular:
+            morphRelation.targetObjectMetadata.nameSingular,
+          targetObjectMetadataNamePlural:
+            morphRelation.targetObjectMetadata.namePlural,
+        }) === gqlField,
+    );
+
+  const isJoinColumn: boolean =
+    isRelationJoinColumn || isMorphRelationJoinColumn;
 
   if (
     isUndefinedOrNull(recordGqlFields) &&
