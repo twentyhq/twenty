@@ -15,7 +15,7 @@ icon: window-maximize
 
 ## Basit örnek
 
-Bir ön uç bileşenini çalışırken görmenin en hızlı yolu, onu bir komut olarak kaydetmektir. `isPinned: true` ile bir `command` alanı eklemek, sayfanın sağ üst köşesinde hızlı işlem düğmesi olarak görünmesini sağlar — herhangi bir sayfa düzenine gerek yoktur:
+The quickest way to see a front component in action is to register it with a **command menu item**. Use `defineCommandMenuItem` in a separate file to make the component appear as a quick-action button in the top-right corner of the page:
 
 ```tsx src/front-components/hello-world.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
@@ -34,14 +34,20 @@ export default defineFrontComponent({
   name: 'hello-world',
   description: 'A simple front component',
   component: HelloWorld,
-  command: {
-    universalIdentifier: 'd4e5f6a7-b8c9-0123-defa-456789012345',
-    shortLabel: 'Hello',
-    label: 'Hello World',
-    icon: 'IconBolt',
-    isPinned: true,
-    availabilityType: 'GLOBAL',
-  },
+});
+```
+
+```ts src/command-menu-items/hello-world.command-menu-item.ts
+import { defineCommandMenuItem } from 'twenty-sdk/define';
+
+export default defineCommandMenuItem({
+  universalIdentifier: 'd4e5f6a7-b8c9-0123-defa-456789012345',
+  shortLabel: 'Hello',
+  label: 'Hello World',
+  icon: 'IconBolt',
+  isPinned: true,
+  availabilityType: 'GLOBAL',
+  frontComponentUniversalIdentifier: '74c526eb-cb68-4cf7-b05c-0dd8c288d948',
 });
 ```
 
@@ -55,14 +61,13 @@ Bileşeni satır içi işlemek için üzerine tıklayın.
 
 ## Yapılandırma alanları
 
-| Alan                  | Zorunlu | Açıklama                                                                                   |
-| --------------------- | ------- | ------------------------------------------------------------------------------------------ |
-| `universalIdentifier` | Evet    | Bu bileşen için kalıcı benzersiz kimlik                                                    |
-| `component`           | Evet    | Bir React bileşen fonksiyonu                                                               |
-| `name`                | Hayır   | Görünen Ad                                                                                 |
-| `description`         | Hayır   | Bileşenin ne yaptığına dair açıklama                                                       |
-| `isHeadless`          | Hayır   | Bileşenin görünür bir kullanıcı arayüzü yoksa `true` olarak ayarlayın (aşağıya bakın)      |
-| `command`             | Hayır   | Bileşeni bir komut olarak kaydedin (aşağıda [komut seçeneklerine](#command-options) bakın) |
+| Alan                  | Zorunlu | Açıklama                                                                              |
+| --------------------- | ------- | ------------------------------------------------------------------------------------- |
+| `universalIdentifier` | Evet    | Bu bileşen için kalıcı benzersiz kimlik                                               |
+| `component`           | Evet    | Bir React bileşen fonksiyonu                                                          |
+| `name`                | Hayır   | Görünen Ad                                                                            |
+| `description`         | Hayır   | Bileşenin ne yaptığına dair açıklama                                                  |
+| `isHeadless`          | Hayır   | Bileşenin görünür bir kullanıcı arayüzü yoksa `true` olarak ayarlayın (aşağıya bakın) |
 
 ## Bir ön uç bileşenini bir sayfaya yerleştirme
 
@@ -141,11 +146,17 @@ export default defineFrontComponent({
   description: 'Creates a task from the command menu',
   component: RunAction,
   isHeadless: true,
-  command: {
-    universalIdentifier: 'f6a7b8c9-d0e1-2345-fabc-456789012345',
-    label: 'Run my action',
-    icon: 'IconPlayerPlay',
-  },
+});
+```
+
+```ts src/command-menu-items/run-action.command-menu-item.ts
+import { defineCommandMenuItem } from 'twenty-sdk/define';
+
+export default defineCommandMenuItem({
+  universalIdentifier: 'f6a7b8c9-d0e1-2345-fabc-456789012345',
+  label: 'Run my action',
+  icon: 'IconPlayerPlay',
+  frontComponentUniversalIdentifier: 'e5f6a7b8-c9d0-1234-efab-345678901234',
 });
 ```
 
@@ -177,11 +188,6 @@ export default defineFrontComponent({
   description: 'Deletes a draft with confirmation',
   component: DeleteDraft,
   isHeadless: true,
-  command: {
-    universalIdentifier: 'b8c9d0e1-f2a3-4567-bcde-678901234567',
-    label: 'Delete draft',
-    icon: 'IconTrash',
-  },
 });
 ```
 
@@ -220,12 +226,13 @@ export default defineFrontComponent({
 
 Kullanılabilir hook'lar:
 
-| Hook                                          | Döndürür             | Açıklama                                                      |
-| --------------------------------------------- | -------------------- | ------------------------------------------------------------- |
-| `useUserId()`                                 | `string` veya `null` | Geçerli kullanıcının ID'si                                    |
-| `useRecordId()`                               | `string` veya `null` | Geçerli kaydın ID'si (bir kayıt sayfasına yerleştirildiğinde) |
-| `useFrontComponentId()`                       | `string`             | Bu bileşen örneğinin ID'si                                    |
-| `useFrontComponentExecutionContext(selector)` | değişir              | Bir seçici işlevle tam yürütme bağlamına erişin               |
+| Hook                                          | Döndürür             | Açıklama                                                                   |
+| --------------------------------------------- | -------------------- | -------------------------------------------------------------------------- |
+| `useUserId()`                                 | `string` veya `null` | Geçerli kullanıcının ID'si                                                 |
+| `useSelectedRecordIds()`                      | `metin[]`            | Tüm seçili kayıt kimlikleri (hiçbiri seçilmediyse boş dizi)                |
+| `useRecordId()`                               | `string` veya `null` | **Kullanımdan kaldırıldı.** Bunun yerine `useSelectedRecordIds()` kullanın |
+| `useFrontComponentId()`                       | `string`             | Bu bileşen örneğinin ID'si                                                 |
+| `useFrontComponentExecutionContext(selector)` | değişir              | Bir seçici işlevle tam yürütme bağlamına erişin                            |
 
 ## Host iletişim API'si
 
@@ -286,14 +293,84 @@ export default defineFrontComponent({
 });
 ```
 
-## Komut seçenekleri
+### Birden çok kayıtla çalışma
 
-`defineFrontComponent` içine bir `command` alanı eklemek, bileşeni komut menüsüne (Cmd+K) kaydeder. `isPinned` `true` ise, sayfanın sağ üst köşesinde bir hızlı işlem düğmesi olarak da görünür.
+Birden çok seçili kaydı yönetmek için `useSelectedRecordIds()` kullanın. Bu, toplu işlemler için kullanışlıdır:
+
+```tsx src/front-components/bulk-export.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { useSelectedRecordIds, numberOfSelectedRecords } from 'twenty-sdk/front-component';
+import { enqueueSnackbar, closeSidePanel } from 'twenty-sdk/front-component';
+import { CoreApiClient } from 'twenty-sdk/clients';
+
+const BulkExport = () => {
+  const selectedRecordIds = useSelectedRecordIds();
+
+  const handleExport = async () => {
+    const client = new CoreApiClient();
+
+    for (const recordId of selectedRecordIds) {
+      await client.mutation({
+        updateTask: {
+          __args: { id: recordId, data: { exported: true } },
+          id: true,
+        },
+      });
+    }
+
+    await enqueueSnackbar({
+      message: `Exported ${selectedRecordIds.length} records`,
+      variant: 'success',
+    });
+
+    await closeSidePanel();
+  };
+
+  return (
+    <div style={{ padding: '20px' }}>
+      <p>Export {selectedRecordIds.length} selected record(s)?</p>
+      <button onClick={handleExport}>Export</button>
+    </div>
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'd0e1f2a3-b4c5-6789-defa-012345678901',
+  name: 'bulk-export',
+  description: 'Export selected records',
+  component: BulkExport,
+  command: {
+    universalIdentifier: 'd0e1f2a3-b4c5-6789-defa-012345678902',
+    label: 'Bulk Export',
+    availabilityType: 'RECORD_SELECTION',
+    conditionalAvailabilityExpression: numberOfSelectedRecords > 0,
+  },
+});
+```
+
+## defineCommandMenuItem
+
+Use `defineCommandMenuItem` to register a front component in the command menu (Cmd+K). `isPinned` `true` ise, sayfanın sağ üst köşesinde bir hızlı işlem düğmesi olarak da görünür.
+
+```ts src/command-menu-items/open-dashboard.command-menu-item.ts
+import { defineCommandMenuItem } from 'twenty-sdk/define';
+
+export default defineCommandMenuItem({
+  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  label: 'Open Dashboard',
+  shortLabel: 'Dashboard',
+  icon: 'IconLayoutDashboard',
+  isPinned: true,
+  availabilityType: 'GLOBAL',
+  frontComponentUniversalIdentifier: '74c526eb-cb68-4cf7-b05c-0dd8c288d948',
+});
+```
 
 | Alan                                    | Zorunlu | Açıklama                                                                                                                                                                                              |
 | --------------------------------------- | ------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `universalIdentifier`                   | Evet    | Komut için kalıcı benzersiz kimlik                                                                                                                                                                    |
 | `label`                                 | Evet    | Komut menüsünde (Cmd+K) gösterilen tam etiket                                                                                                                                                         |
+| `frontComponentUniversalIdentifier`     | Evet    | The `universalIdentifier` of the front component this command opens                                                                                                                                   |
 | `shortLabel`                            | Hayır   | Sabitlenmiş hızlı işlem düğmesinde görüntülenen daha kısa etiket                                                                                                                                      |
 | `icon`                                  | Hayır   | Etiketin yanında görüntülenen simge adı (örn. `'IconBolt'`, `'IconSend'`)                                                                                                                             |
 | `isPinned`                              | Hayır   | `true` olduğunda, komutu sayfanın sağ üst köşesinde bir hızlı işlem düğmesi olarak gösterir                                                                                                           |
@@ -305,30 +382,23 @@ export default defineFrontComponent({
 
 `conditionalAvailabilityExpression` alanı, geçerli sayfa bağlamına göre bir komutun ne zaman görünür olacağını kontrol etmenizi sağlar. İfadeler oluşturmak için `twenty-sdk`'den türlendirilmiş değişkenleri ve operatörleri içe aktarın:
 
-```tsx
-import { defineFrontComponent } from 'twenty-sdk/define';
+```ts src/command-menu-items/bulk-update.command-menu-item.ts
+import { defineCommandMenuItem } from 'twenty-sdk/define';
 import {
-  pageType,
-  numberOfSelectedRecords,
   objectPermissions,
   everyEquals,
-  isDefined,
 } from 'twenty-sdk/front-component';
 
-export default defineFrontComponent({
+export default defineCommandMenuItem({
   universalIdentifier: '...',
-  name: 'bulk-action',
-  component: BulkAction,
-  command: {
-    universalIdentifier: '...',
-    label: 'Bulk Update',
-    availabilityType: 'RECORD_SELECTION',
-    conditionalAvailabilityExpression: everyEquals(
-      objectPermissions,
-      'canUpdateObjectRecords',
-      true,
-    ),
-  },
+  label: 'Bulk Update',
+  availabilityType: 'RECORD_SELECTION',
+  frontComponentUniversalIdentifier: '...',
+  conditionalAvailabilityExpression: everyEquals(
+    objectPermissions,
+    'canUpdateObjectRecords',
+    true,
+  ),
 });
 ```
 

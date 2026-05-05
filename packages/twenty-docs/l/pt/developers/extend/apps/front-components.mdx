@@ -15,7 +15,7 @@ Os componentes de front-end podem ser renderizados em dois locais dentro do Twen
 
 ## Exemplo básico
 
-A maneira mais rápida de ver um componente de front-end em ação é registrá-lo como um **comando**. Adicionar um campo `command` com `isPinned: true` faz com que ele apareça como um botão de ação rápida no canto superior direito da página — não é necessário layout de página:
+The quickest way to see a front component in action is to register it with a **command menu item**. Use `defineCommandMenuItem` in a separate file to make the component appear as a quick-action button in the top-right corner of the page:
 
 ```tsx src/front-components/hello-world.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
@@ -34,14 +34,20 @@ export default defineFrontComponent({
   name: 'hello-world',
   description: 'A simple front component',
   component: HelloWorld,
-  command: {
-    universalIdentifier: 'd4e5f6a7-b8c9-0123-defa-456789012345',
-    shortLabel: 'Hello',
-    label: 'Hello World',
-    icon: 'IconBolt',
-    isPinned: true,
-    availabilityType: 'GLOBAL',
-  },
+});
+```
+
+```ts src/command-menu-items/hello-world.command-menu-item.ts
+import { defineCommandMenuItem } from 'twenty-sdk/define';
+
+export default defineCommandMenuItem({
+  universalIdentifier: 'd4e5f6a7-b8c9-0123-defa-456789012345',
+  shortLabel: 'Hello',
+  label: 'Hello World',
+  icon: 'IconBolt',
+  isPinned: true,
+  availabilityType: 'GLOBAL',
+  frontComponentUniversalIdentifier: '74c526eb-cb68-4cf7-b05c-0dd8c288d948',
 });
 ```
 
@@ -55,14 +61,13 @@ Clique nele para renderizar o componente inline.
 
 ## Campos de configuração
 
-| Campo                 | Obrigatório | Descrição                                                                                 |
-| --------------------- | ----------- | ----------------------------------------------------------------------------------------- |
-| `universalIdentifier` | Sim         | ID único e estável para este componente                                                   |
-| `component`           | Sim         | Uma função de componente React                                                            |
-| `name`                | Não         | Nome de Exibição                                                                          |
-| `description`         | Não         | Descrição do que o componente faz                                                         |
-| `isHeadless`          | Não         | Defina como `true` se o componente não tiver interface visível (veja abaixo)              |
-| `command`             | Não         | Registre o componente como um comando (veja [opções de comando](#command-options) abaixo) |
+| Campo                 | Obrigatório | Descrição                                                                    |
+| --------------------- | ----------- | ---------------------------------------------------------------------------- |
+| `universalIdentifier` | Sim         | ID único e estável para este componente                                      |
+| `component`           | Sim         | Uma função de componente React                                               |
+| `name`                | Não         | Nome de Exibição                                                             |
+| `description`         | Não         | Descrição do que o componente faz                                            |
+| `isHeadless`          | Não         | Defina como `true` se o componente não tiver interface visível (veja abaixo) |
 
 ## Colocando um componente de front-end em uma página
 
@@ -141,11 +146,17 @@ export default defineFrontComponent({
   description: 'Creates a task from the command menu',
   component: RunAction,
   isHeadless: true,
-  command: {
-    universalIdentifier: 'f6a7b8c9-d0e1-2345-fabc-456789012345',
-    label: 'Run my action',
-    icon: 'IconPlayerPlay',
-  },
+});
+```
+
+```ts src/command-menu-items/run-action.command-menu-item.ts
+import { defineCommandMenuItem } from 'twenty-sdk/define';
+
+export default defineCommandMenuItem({
+  universalIdentifier: 'f6a7b8c9-d0e1-2345-fabc-456789012345',
+  label: 'Run my action',
+  icon: 'IconPlayerPlay',
+  frontComponentUniversalIdentifier: 'e5f6a7b8-c9d0-1234-efab-345678901234',
 });
 ```
 
@@ -177,11 +188,6 @@ export default defineFrontComponent({
   description: 'Deletes a draft with confirmation',
   component: DeleteDraft,
   isHeadless: true,
-  command: {
-    universalIdentifier: 'b8c9d0e1-f2a3-4567-bcde-678901234567',
-    label: 'Delete draft',
-    icon: 'IconTrash',
-  },
 });
 ```
 
@@ -220,12 +226,13 @@ export default defineFrontComponent({
 
 Hooks disponíveis:
 
-| Hook                                          | Retorna            | Descrição                                                          |
-| --------------------------------------------- | ------------------ | ------------------------------------------------------------------ |
-| `useUserId()`                                 | `string` ou `null` | O ID do usuário atual                                              |
-| `useRecordId()`                               | `string` ou `null` | O ID do registro atual (quando colocado em uma página de registro) |
-| `useFrontComponentId()`                       | `string`           | O ID desta instância do componente                                 |
-| `useFrontComponentExecutionContext(selector)` | varia              | Acesse o contexto de execução completo com uma função seletora     |
+| Hook                                          | Retorna            | Descrição                                                                           |
+| --------------------------------------------- | ------------------ | ----------------------------------------------------------------------------------- |
+| `useUserId()`                                 | `string` ou `null` | O ID do usuário atual                                                               |
+| `useSelectedRecordIds()`                      | `string[]`         | Todos os IDs dos registros selecionados (array vazio se nenhum estiver selecionado) |
+| `useRecordId()`                               | `string` ou `null` | **Obsoleto.** Use `useSelectedRecordIds()` em vez disso                             |
+| `useFrontComponentId()`                       | `string`           | O ID desta instância do componente                                                  |
+| `useFrontComponentExecutionContext(selector)` | varia              | Acesse o contexto de execução completo com uma função seletora                      |
 
 ## API de comunicação do host
 
@@ -286,14 +293,84 @@ export default defineFrontComponent({
 });
 ```
 
-## Opções de comando
+### Trabalhando com vários registros
 
-Adicionar um campo `command` a `defineFrontComponent` registra o componente no menu de comandos (Cmd+K). Se `isPinned` for `true`, ele também aparece como um botão de ação rápida no canto superior direito da página.
+Use `useSelectedRecordIds()` para lidar com vários registros selecionados. Isso é útil para operações em lote:
+
+```tsx src/front-components/bulk-export.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { useSelectedRecordIds, numberOfSelectedRecords } from 'twenty-sdk/front-component';
+import { enqueueSnackbar, closeSidePanel } from 'twenty-sdk/front-component';
+import { CoreApiClient } from 'twenty-sdk/clients';
+
+const BulkExport = () => {
+  const selectedRecordIds = useSelectedRecordIds();
+
+  const handleExport = async () => {
+    const client = new CoreApiClient();
+
+    for (const recordId of selectedRecordIds) {
+      await client.mutation({
+        updateTask: {
+          __args: { id: recordId, data: { exported: true } },
+          id: true,
+        },
+      });
+    }
+
+    await enqueueSnackbar({
+      message: `Exported ${selectedRecordIds.length} records`,
+      variant: 'success',
+    });
+
+    await closeSidePanel();
+  };
+
+  return (
+    <div style={{ padding: '20px' }}>
+      <p>Export {selectedRecordIds.length} selected record(s)?</p>
+      <button onClick={handleExport}>Export</button>
+    </div>
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'd0e1f2a3-b4c5-6789-defa-012345678901',
+  name: 'bulk-export',
+  description: 'Export selected records',
+  component: BulkExport,
+  command: {
+    universalIdentifier: 'd0e1f2a3-b4c5-6789-defa-012345678902',
+    label: 'Bulk Export',
+    availabilityType: 'RECORD_SELECTION',
+    conditionalAvailabilityExpression: numberOfSelectedRecords > 0,
+  },
+});
+```
+
+## defineCommandMenuItem
+
+Use `defineCommandMenuItem` to register a front component in the command menu (Cmd+K). Se `isPinned` for `true`, ele também aparece como um botão de ação rápida no canto superior direito da página.
+
+```ts src/command-menu-items/open-dashboard.command-menu-item.ts
+import { defineCommandMenuItem } from 'twenty-sdk/define';
+
+export default defineCommandMenuItem({
+  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  label: 'Open Dashboard',
+  shortLabel: 'Dashboard',
+  icon: 'IconLayoutDashboard',
+  isPinned: true,
+  availabilityType: 'GLOBAL',
+  frontComponentUniversalIdentifier: '74c526eb-cb68-4cf7-b05c-0dd8c288d948',
+});
+```
 
 | Campo                                   | Obrigatório | Descrição                                                                                                                                                                                            |
 | --------------------------------------- | ----------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `universalIdentifier`                   | Sim         | ID exclusivo e estável para o comando                                                                                                                                                                |
 | `label`                                 | Sim         | Rótulo completo exibido no menu de comandos (Cmd+K)                                                                                                                                                  |
+| `frontComponentUniversalIdentifier`     | Sim         | The `universalIdentifier` of the front component this command opens                                                                                                                                  |
 | `shortLabel`                            | Não         | Rótulo mais curto exibido no botão fixado de ação rápida                                                                                                                                             |
 | `icon`                                  | Não         | Nome do ícone exibido ao lado do rótulo (por exemplo, `'IconBolt'`, `'IconSend'`)                                                                                                                    |
 | `isPinned`                              | Não         | Quando `true`, mostra o comando como um botão de ação rápida no canto superior direito da página                                                                                                     |
@@ -305,30 +382,23 @@ Adicionar um campo `command` a `defineFrontComponent` registra o componente no m
 
 O campo `conditionalAvailabilityExpression` permite controlar quando um comando é visível com base no contexto da página atual. Importe variáveis tipadas e operadores de `twenty-sdk` para construir expressões:
 
-```tsx
-import { defineFrontComponent } from 'twenty-sdk/define';
+```ts src/command-menu-items/bulk-update.command-menu-item.ts
+import { defineCommandMenuItem } from 'twenty-sdk/define';
 import {
-  pageType,
-  numberOfSelectedRecords,
   objectPermissions,
   everyEquals,
-  isDefined,
 } from 'twenty-sdk/front-component';
 
-export default defineFrontComponent({
+export default defineCommandMenuItem({
   universalIdentifier: '...',
-  name: 'bulk-action',
-  component: BulkAction,
-  command: {
-    universalIdentifier: '...',
-    label: 'Bulk Update',
-    availabilityType: 'RECORD_SELECTION',
-    conditionalAvailabilityExpression: everyEquals(
-      objectPermissions,
-      'canUpdateObjectRecords',
-      true,
-    ),
-  },
+  label: 'Bulk Update',
+  availabilityType: 'RECORD_SELECTION',
+  frontComponentUniversalIdentifier: '...',
+  conditionalAvailabilityExpression: everyEquals(
+    objectPermissions,
+    'canUpdateObjectRecords',
+    true,
+  ),
 });
 ```
 

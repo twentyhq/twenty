@@ -141,11 +141,14 @@ const handler = async (event: RoutePayload) => {
 Имена заголовков приводятся к нижнему регистру. Обращайтесь к ним, используя ключи в нижнем регистре (например, `event.headers['content-type']`).
 </Note>
 
-#### Предоставление функции как инструмента
+#### Предоставление функции в качестве инструмента ИИ или действия рабочего процесса
 
-Логические функции можно предоставлять как **инструменты** для ИИ-агентов и рабочих процессов. Когда функция помечена как инструмент, она становится доступной для функций ИИ Twenty и может использоваться в автоматизациях рабочих процессов.
+Функции логики могут быть представлены в двух интерфейсах, у каждого — свой триггер:
 
-Чтобы пометить логическую функцию как инструмент, установите `isTool: true`:
+* **`toolTriggerSettings`** — делает функцию обнаруживаемой для возможностей ИИ Twenty (чат, MCP, вызов функций). Использует стандартную JSON Schema — формат, который модели LLM изначально понимают.
+* **`workflowActionTriggerSettings`** — делает функцию доступной как шаг в визуальном конструкторе рабочих процессов. Использует расширенную `InputSchema` от Twenty, чтобы конструктор мог отрисовывать корректные редакторы полей, селекторы переменных и подписи.
+
+Функция может выбрать один, другой или оба варианта. Они идут рядом с `cronTriggerSettings`, `databaseEventTriggerSettings` и `httpRouteTriggerSettings` — тот же шаблон, та же структура.
 
 ```ts src/logic-functions/enrich-company.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk/define';
@@ -175,31 +178,33 @@ export default defineLogicFunction({
   description: 'Enrich a company record with external data',
   timeoutSeconds: 10,
   handler,
-  isTool: true,
+  toolTriggerSettings: {},
 });
 ```
 
 Основные моменты:
 
-* Вы можете комбинировать `isTool` с триггерами — функция может одновременно быть инструментом (вызываемым агентами ИИ) и запускаться событиями.
-* **`toolInputSchema`** (необязательно): объект JSON Schema, описывающий параметры, которые принимает ваша функция. Схема вычисляется автоматически на основе статического анализа исходного кода, но вы можете задать её явно:
+* Функция может сочетать интерфейсы — объявите и `toolTriggerSettings`, и `workflowActionTriggerSettings`, чтобы сделать её доступной и в чате, и в конструкторе рабочих процессов.
+* `toolTriggerSettings.inputSchema` и `workflowActionTriggerSettings.inputSchema` — обе необязательны. Если они опущены, конструктор манифеста выводит их из исходного кода обработчика (JSON Schema — для инструмента ИИ, `InputSchema` от Twenty — для действия рабочего процесса). Укажите её явно, когда вам нужна более богатая типизация — например, с полями, учитывающими `FieldMetadataType`, такими как `CURRENCY` или `RELATION`, для конструктора рабочих процессов, или с полями `description`, которые может прочитать ИИ-агент:
 
 ```ts
 export default defineLogicFunction({
   ...,
-  toolInputSchema: {
-    type: 'object',
-    properties: {
-      companyName: {
-        type: 'string',
-        description: 'The name of the company to enrich',
+  toolTriggerSettings: {
+    inputSchema: {
+      type: 'object',
+      properties: {
+        companyName: {
+          type: 'string',
+          description: 'The name of the company to enrich',
+        },
+        domain: {
+          type: 'string',
+          description: 'The company website domain (optional)',
+        },
       },
-      domain: {
-        type: 'string',
-        description: 'The company website domain (optional)',
-      },
+      required: ['companyName'],
     },
-    required: ['companyName'],
   },
 });
 ```
@@ -238,7 +243,7 @@ yarn twenty exec --postInstall
 ```
 
 Основные моменты:
-* Послеустановочные функции используют `definePostInstallLogicFunction()` — специализированный вариант, который опускает настройки триггеров (`cronTriggerSettings`, `databaseEventTriggerSettings`, `httpRouteTriggerSettings`, `isTool`).
+* Послеустановочные функции используют `definePostInstallLogicFunction()` — специализированный вариант, который опускает настройки триггеров (`cronTriggerSettings`, `databaseEventTriggerSettings`, `httpRouteTriggerSettings`, `toolTriggerSettings`, `workflowActionTriggerSettings`).
 * Обработчик получает `InstallPayload` с `{ previousVersion?: string; newVersion: string }` — `newVersion` — это устанавливаемая версия, а `previousVersion` — версия, установленная ранее (или `undefined` при чистой установке). Используйте эти значения, чтобы отличать чистые установки от обновлений и запускать логику миграции, зависящую от версии.
 * **Когда запускается хук**: по умолчанию только при чистой установке. Передайте `shouldRunOnVersionUpgrade: true`, если хотите, чтобы он также выполнялся при обновлении приложения с предыдущей версии. Если флаг опущен, по умолчанию он равен `false`, и при обновлении хук пропускается.
 * **Модель выполнения — по умолчанию асинхронно, синхронный режим по выбору**: флаг `shouldRunSynchronously` определяет, *как* выполняется post-install.
