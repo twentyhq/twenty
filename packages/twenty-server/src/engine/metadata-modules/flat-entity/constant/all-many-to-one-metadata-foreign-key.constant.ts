@@ -289,6 +289,10 @@ export const ALL_MANY_TO_ONE_METADATA_FOREIGN_KEY = {
       foreignKey: 'viewId',
     },
   },
+  connectionProvider: {
+    workspace: null,
+    application: null,
+  },
 } as const satisfies ManyToOneMetadataRelationsProperties;
 
 // satisfies with complex mapped types involving nested generics doesn't always catch missing required keys

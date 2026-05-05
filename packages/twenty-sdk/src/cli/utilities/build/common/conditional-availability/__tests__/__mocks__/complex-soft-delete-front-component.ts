@@ -1,4 +1,4 @@
-import { defineFrontComponent } from '@/sdk/define';
+import { defineCommandMenuItem } from '@/sdk/define';
 import {
   none,
   numberOfSelectedRecords,
@@ -6,17 +6,12 @@ import {
   selectedRecords,
 } from '@/sdk/front-component';
 
-const MyComponent = () => null;
-
-export default defineFrontComponent({
-  universalIdentifier: 'complex-soft-delete',
-  component: MyComponent,
-  command: {
-    universalIdentifier: 'complex-soft-delete-cmd',
-    label: 'Complex Soft Delete',
-    conditionalAvailabilityExpression:
-      objectPermissions.canSoftDeleteObjectRecords &&
-      none(selectedRecords, 'isRemote') &&
-      numberOfSelectedRecords > 0,
-  },
+export default defineCommandMenuItem({
+  universalIdentifier: 'complex-soft-delete-cmd',
+  label: 'Complex Soft Delete',
+  frontComponentUniversalIdentifier: 'complex-soft-delete',
+  conditionalAvailabilityExpression:
+    objectPermissions.canSoftDeleteObjectRecords &&
+    none(selectedRecords, 'isRemote') &&
+    numberOfSelectedRecords > 0,
 });

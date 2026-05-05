@@ -1,14 +1,9 @@
-import { defineFrontComponent } from '@/sdk/define';
+import { defineCommandMenuItem } from '@/sdk/define';
 import { numberOfSelectedRecords } from '@/sdk/front-component';
 
-const MyComponent = () => null;
-
-export default defineFrontComponent({
-  universalIdentifier: 'comparison-operator',
-  component: MyComponent,
-  command: {
-    universalIdentifier: 'comparison-operator-cmd',
-    label: 'Comparison Operator',
-    conditionalAvailabilityExpression: numberOfSelectedRecords > 0,
-  },
+export default defineCommandMenuItem({
+  universalIdentifier: 'comparison-operator-cmd',
+  label: 'Comparison Operator',
+  frontComponentUniversalIdentifier: 'comparison-operator',
+  conditionalAvailabilityExpression: numberOfSelectedRecords > 0,
 });

@@ -65,7 +65,8 @@ export const optimisticallyApplyUpdateActionOnAllFlatEntityMaps = ({
     case 'objectPermission':
     case 'fieldPermission':
     case 'webhook':
-    case 'applicationVariable': {
+    case 'applicationVariable':
+    case 'connectionProvider': {
       const flatEntityMapsKey = getMetadataFlatEntityMapsKey(
         flatAction.metadataName,
       );

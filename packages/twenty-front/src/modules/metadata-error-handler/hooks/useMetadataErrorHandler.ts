@@ -49,6 +49,7 @@ export const useMetadataErrorHandler = () => {
     webhook: t`webhook`,
     viewSort: t`view sort`,
     applicationVariable: t`application variable`,
+    connectionProvider: t`connection provider`,
   } as const satisfies Record<AllMetadataName, string>;
 
   const handleMetadataError = (

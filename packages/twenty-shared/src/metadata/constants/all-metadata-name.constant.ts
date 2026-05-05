@@ -27,4 +27,5 @@ export const ALL_METADATA_NAME = {
   frontComponent: 'frontComponent',
   webhook: 'webhook',
   applicationVariable: 'applicationVariable',
+  connectionProvider: 'connectionProvider',
 } as const;

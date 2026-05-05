@@ -29,4 +29,5 @@ export const METADATA_EVENTS_TO_EMIT = {
   viewSort: true,
   webhook: false,
   applicationVariable: false,
+  connectionProvider: true,
 } as const satisfies { [P in AllMetadataName]: boolean };

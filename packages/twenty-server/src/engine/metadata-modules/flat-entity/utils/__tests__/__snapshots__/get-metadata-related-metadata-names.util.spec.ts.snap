@@ -12,6 +12,8 @@ exports[`getMetadataRelatedMetadataNames should return related metadata names fo
 ]
 `;
 
+exports[`getMetadataRelatedMetadataNames should return related metadata names for connectionProvider 1`] = `[]`;
+
 exports[`getMetadataRelatedMetadataNames should return related metadata names for fieldMetadata 1`] = `
 [
   "objectMetadata",

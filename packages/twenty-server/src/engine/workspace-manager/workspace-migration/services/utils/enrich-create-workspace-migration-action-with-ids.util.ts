@@ -171,7 +171,8 @@ export const enrichCreateWorkspaceMigrationActionsWithIds = ({
       case 'objectPermission':
       case 'fieldPermission':
       case 'webhook':
-      case 'applicationVariable': {
+      case 'applicationVariable':
+      case 'connectionProvider': {
         if (!isDefined(idByUniversalIdentifier)) {
           return action;
         }
