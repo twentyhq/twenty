@@ -2870,6 +2870,7 @@ enum AllMetadataName {
   fieldPermission
   frontComponent
   webhook
+  applicationVariable
 }
 
 type MinimalObjectMetadata {
