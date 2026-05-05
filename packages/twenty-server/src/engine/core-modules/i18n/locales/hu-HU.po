@@ -8167,6 +8167,11 @@ msgstr "Nem tudtunk csatlakozni az e-mail szerveréhez. Kérjük, ellenőrizze a
 msgid "We couldn't connect to your outgoing email server. Please check your SMTP settings and try again."
 msgstr "Nem tudtunk csatlakozni a kimenő e-mail szerveréhez. Kérjük, ellenőrizze az SMTP beállításokat és próbálja újra."
 
+#. js-lingui-id: jNr0+j
+#: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
+msgid "We couldn't find any calendars on your CalDAV server. Please make sure your account has at least one calendar."
+msgstr ""
+
 #. js-lingui-id: v8UNEA
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
 msgid "We couldn't log in to your email account. Please check your email address and password, then try again."
@@ -8821,11 +8826,6 @@ msgstr "Az alkalmazás ön verziója elavult. Kérjük, frissítse az oldalt a f
 #: src/engine/core-modules/billing/billing.validate.ts
 msgid "Your billing subscription is corrupted. Please contact support."
 msgstr "A számlázási előfizetése hibás. Kérjük, lépjen kapcsolatba a támogatással."
-
-#. js-lingui-id: hDEOuv
-#: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
-msgid "Your CalDAV server does not support incremental sync (RFC 6578). Please use a compatible provider such as Nextcloud, iCloud, or Fastmail."
-msgstr "A CalDAV-kiszolgálója nem támogatja az inkrementális szinkronizálást (RFC 6578). Kérjük, használjon kompatibilis szolgáltatót, például a Nextcloudot, az iCloudot vagy a Fastmailt."
 
 #. js-lingui-id: bTyBrW
 #: src/engine/core-modules/auth/services/auth.service.ts

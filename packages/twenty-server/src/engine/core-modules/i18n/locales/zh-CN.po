@@ -8167,6 +8167,11 @@ msgstr "我们无法连接到您的电子邮件服务器。请检查您的服务
 msgid "We couldn't connect to your outgoing email server. Please check your SMTP settings and try again."
 msgstr "我们无法连接到您的外发电子邮件服务器。请检查您的 SMTP 设置并重试。"
 
+#. js-lingui-id: jNr0+j
+#: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
+msgid "We couldn't find any calendars on your CalDAV server. Please make sure your account has at least one calendar."
+msgstr ""
+
 #. js-lingui-id: v8UNEA
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
 msgid "We couldn't log in to your email account. Please check your email address and password, then try again."
@@ -8821,11 +8826,6 @@ msgstr "您的应用程序版本已过期。请刷新页面以继续。"
 #: src/engine/core-modules/billing/billing.validate.ts
 msgid "Your billing subscription is corrupted. Please contact support."
 msgstr "您的账单订阅已损坏。请联系支持。"
-
-#. js-lingui-id: hDEOuv
-#: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
-msgid "Your CalDAV server does not support incremental sync (RFC 6578). Please use a compatible provider such as Nextcloud, iCloud, or Fastmail."
-msgstr "您的 CalDAV 服务器不支持增量同步 (RFC 6578)。请使用兼容的服务提供商，例如 Nextcloud、iCloud 或 Fastmail。"
 
 #. js-lingui-id: bTyBrW
 #: src/engine/core-modules/auth/services/auth.service.ts
