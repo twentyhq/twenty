@@ -158,7 +158,6 @@ export const computeApplicationManifestAllUniversalFlatEntityMaps = ({
       universalFlatEntityMapsToMutate:
         allUniversalFlatEntityMaps.flatFrontComponentMaps,
     });
-
   }
 
   for (const connectionProviderManifest of manifest.connectionProviders ?? []) {
