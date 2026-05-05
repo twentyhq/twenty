@@ -15,15 +15,16 @@ const HEALTH_TO_GAUGE_VALUE: Record<UpgradeHealthEnum, number> = {
 };
 
 const HEALTH_UNKNOWN = -2;
-const SNAPSHOT_TTL_MS = 60_000;
+const UPGRADE_STATUS_TTL_MS = 60_000;
 
 @Injectable()
 export class UpgradeGaugeService implements OnModuleInit {
   private readonly logger = new Logger(UpgradeGaugeService.name);
 
-  private cachedSnapshot: InstanceAndAllWorkspacesUpgradeStatus | null = null;
-  private cachedSnapshotExpiresAt = 0;
-  private inflightPromise: Promise<InstanceAndAllWorkspacesUpgradeStatus> | null =
+  private cachedUpgradeStatus: InstanceAndAllWorkspacesUpgradeStatus | null =
+    null;
+  private cachedUpgradeStatusExpiresAt = 0;
+  private inflightUpgradeStatusPromise: Promise<InstanceAndAllWorkspacesUpgradeStatus> | null =
     null;
 
   constructor(
@@ -39,14 +40,14 @@ export class UpgradeGaugeService implements OnModuleInit {
           'Instance upgrade health (1 = up-to-date, 0 = behind, -1 = failed, -2 = unknown)',
       },
       callback: async () => {
-        const snapshot = await this.getSnapshot();
+        const upgradeStatus = await this.getCachedUpgradeStatus();
 
-        if (!snapshot) {
+        if (!upgradeStatus) {
           return HEALTH_UNKNOWN;
         }
 
         return (
-          HEALTH_TO_GAUGE_VALUE[snapshot.instanceUpgradeStatus.health] ??
+          HEALTH_TO_GAUGE_VALUE[upgradeStatus.instanceUpgradeStatus.health] ??
           HEALTH_UNKNOWN
         );
       },
@@ -59,9 +60,9 @@ export class UpgradeGaugeService implements OnModuleInit {
         description: 'Number of workspaces behind on upgrade commands',
       },
       callback: async () => {
-        const snapshot = await this.getSnapshot();
+        const upgradeStatus = await this.getCachedUpgradeStatus();
 
-        return snapshot?.workspacesBehind.length ?? 0;
+        return upgradeStatus?.workspacesBehind.length ?? 0;
       },
       cacheValue: true,
     });
@@ -72,39 +73,40 @@ export class UpgradeGaugeService implements OnModuleInit {
         description: 'Number of workspaces with a failed upgrade command',
       },
       callback: async () => {
-        const snapshot = await this.getSnapshot();
+        const upgradeStatus = await this.getCachedUpgradeStatus();
 
-        return snapshot?.workspacesFailed.length ?? 0;
+        return upgradeStatus?.workspacesFailed.length ?? 0;
       },
       cacheValue: true,
     });
   }
 
-  // Deduplicates concurrent calls and memoizes for SNAPSHOT_TTL_MS
-  // so all 3 gauges share a single fetch per scrape cycle.
-  private async getSnapshot(): Promise<InstanceAndAllWorkspacesUpgradeStatus | null> {
-    if (this.cachedSnapshot && Date.now() < this.cachedSnapshotExpiresAt) {
-      return this.cachedSnapshot;
+  private async getCachedUpgradeStatus(): Promise<InstanceAndAllWorkspacesUpgradeStatus | null> {
+    if (
+      this.cachedUpgradeStatus &&
+      Date.now() < this.cachedUpgradeStatusExpiresAt
+    ) {
+      return this.cachedUpgradeStatus;
     }
 
-    if (this.inflightPromise) {
-      return this.inflightPromise;
+    if (this.inflightUpgradeStatusPromise) {
+      return this.inflightUpgradeStatusPromise;
     }
 
-    this.inflightPromise =
+    this.inflightUpgradeStatusPromise =
       this.upgradeStatusService.getInstanceAndAllWorkspacesStatus();
 
     try {
-      this.cachedSnapshot = await this.inflightPromise;
-      this.cachedSnapshotExpiresAt = Date.now() + SNAPSHOT_TTL_MS;
+      this.cachedUpgradeStatus = await this.inflightUpgradeStatusPromise;
+      this.cachedUpgradeStatusExpiresAt = Date.now() + UPGRADE_STATUS_TTL_MS;
 
-      return this.cachedSnapshot;
+      return this.cachedUpgradeStatus;
     } catch (error) {
-      this.logger.error('Failed to fetch upgrade status snapshot', error);
+      this.logger.error('Failed to fetch upgrade status for gauges', error);
 
       return null;
     } finally {
-      this.inflightPromise = null;
+      this.inflightUpgradeStatusPromise = null;
     }
   }
 }
