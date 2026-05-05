@@ -3768,6 +3768,11 @@ msgstr "Microsoft와 연결"
 msgid "Connected accounts"
 msgstr "연결된 계정"
 
+#. js-lingui-id: 54WNJ6
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "connection provider"
+msgstr ""
+
 #. js-lingui-id: sbBqyy
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
 msgid "Connection providers"
