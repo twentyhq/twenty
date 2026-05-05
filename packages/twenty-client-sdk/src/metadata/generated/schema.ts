@@ -2238,7 +2238,7 @@ export interface ConnectedAccountDTO {
     connectionParameters?: ImapSmtpCaldavConnectionParameters
     lastSignedInAt?: Scalars['DateTime']
     userWorkspaceId: Scalars['UUID']
-    applicationConnectionProviderId?: Scalars['UUID']
+    connectionProviderId?: Scalars['UUID']
     applicationId?: Scalars['UUID']
     name?: Scalars['String']
     visibility: Scalars['String']
@@ -2272,7 +2272,7 @@ export interface ConnectedAccountPublicDTO {
     scopes?: Scalars['String'][]
     lastSignedInAt?: Scalars['DateTime']
     userWorkspaceId: Scalars['UUID']
-    applicationConnectionProviderId?: Scalars['UUID']
+    connectionProviderId?: Scalars['UUID']
     applicationId?: Scalars['UUID']
     name?: Scalars['String']
     visibility: Scalars['String']
@@ -2493,7 +2493,7 @@ export interface CollectionHash {
     __typename: 'CollectionHash'
 }
 
-export type AllMetadataName = 'fieldMetadata' | 'objectMetadata' | 'view' | 'viewField' | 'viewFieldGroup' | 'viewGroup' | 'viewSort' | 'rowLevelPermissionPredicate' | 'rowLevelPermissionPredicateGroup' | 'viewFilterGroup' | 'index' | 'logicFunction' | 'viewFilter' | 'role' | 'roleTarget' | 'agent' | 'skill' | 'pageLayout' | 'pageLayoutWidget' | 'pageLayoutTab' | 'commandMenuItem' | 'navigationMenuItem' | 'permissionFlag' | 'objectPermission' | 'fieldPermission' | 'frontComponent' | 'webhook'
+export type AllMetadataName = 'fieldMetadata' | 'objectMetadata' | 'view' | 'viewField' | 'viewFieldGroup' | 'viewGroup' | 'viewSort' | 'rowLevelPermissionPredicate' | 'rowLevelPermissionPredicateGroup' | 'viewFilterGroup' | 'index' | 'logicFunction' | 'viewFilter' | 'role' | 'roleTarget' | 'agent' | 'skill' | 'pageLayout' | 'pageLayoutWidget' | 'pageLayoutTab' | 'commandMenuItem' | 'navigationMenuItem' | 'permissionFlag' | 'objectPermission' | 'fieldPermission' | 'frontComponent' | 'webhook' | 'connectionProvider'
 
 export interface MinimalObjectMetadata {
     id: Scalars['UUID']
@@ -5250,7 +5250,7 @@ export interface ConnectedAccountDTOGenqlSelection{
     connectionParameters?: ImapSmtpCaldavConnectionParametersGenqlSelection
     lastSignedInAt?: boolean | number
     userWorkspaceId?: boolean | number
-    applicationConnectionProviderId?: boolean | number
+    connectionProviderId?: boolean | number
     applicationId?: boolean | number
     name?: boolean | number
     visibility?: boolean | number
@@ -5287,7 +5287,7 @@ export interface ConnectedAccountPublicDTOGenqlSelection{
     scopes?: boolean | number
     lastSignedInAt?: boolean | number
     userWorkspaceId?: boolean | number
-    applicationConnectionProviderId?: boolean | number
+    connectionProviderId?: boolean | number
     applicationId?: boolean | number
     name?: boolean | number
     visibility?: boolean | number
@@ -8849,7 +8849,8 @@ export const enumAllMetadataName = {
    objectPermission: 'objectPermission' as const,
    fieldPermission: 'fieldPermission' as const,
    frontComponent: 'frontComponent' as const,
-   webhook: 'webhook' as const
+   webhook: 'webhook' as const,
+   connectionProvider: 'connectionProvider' as const
 }
 
 export const enumEventLogTable = {

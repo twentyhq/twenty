@@ -24,6 +24,7 @@ import { AddLogoToApplicationFastInstanceCommand } from 'src/database/commands/u
 import { AddDeletedAtToAgentChatThreadFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-3/2-3-instance-command-fast-1777682000000-add-deleted-at-to-agent-chat-thread';
 import { AddToolAndWorkflowActionTriggerSettingsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-3/2-3-instance-command-fast-1797000001000-add-tool-and-workflow-action-trigger-settings';
 import { MigrateToolTriggerSettingsSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-3/2-3-instance-command-slow-1797000002000-migrate-tool-trigger-settings';
+import { ConnectionProviderSyncableEntityFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-3/2-3-instance-command-fast-1777896012579-connection-provider-syncable-entity';
 import { RemoveUserDefaultAvatarUrlFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-3/2-3-instance-command-fast-1777915958318-remove-user-default-avatar-url';
 
 export const INSTANCE_COMMANDS = [
@@ -51,5 +52,6 @@ export const INSTANCE_COMMANDS = [
   AddDeletedAtToAgentChatThreadFastInstanceCommand,
   AddToolAndWorkflowActionTriggerSettingsFastInstanceCommand,
   MigrateToolTriggerSettingsSlowInstanceCommand,
+  ConnectionProviderSyncableEntityFastInstanceCommand,
   RemoveUserDefaultAvatarUrlFastInstanceCommand,
 ];

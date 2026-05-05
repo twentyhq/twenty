@@ -39,6 +39,17 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY should ma
       "hotKeys",
     ],
   },
+  "connectionProvider": {
+    "propertiesToCompare": [
+      "name",
+      "displayName",
+      "type",
+      "oauthConfig",
+    ],
+    "propertiesToStringify": [
+      "oauthConfig",
+    ],
+  },
   "fieldMetadata": {
     "propertiesToCompare": [
       "defaultValue",

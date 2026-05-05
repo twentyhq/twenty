@@ -5088,7 +5088,7 @@ export default {
             "userWorkspaceId": [
                 3
             ],
-            "applicationConnectionProviderId": [
+            "connectionProviderId": [
                 3
             ],
             "applicationId": [
@@ -5169,7 +5169,7 @@ export default {
             "userWorkspaceId": [
                 3
             ],
-            "applicationConnectionProviderId": [
+            "connectionProviderId": [
                 3
             ],
             "applicationId": [
