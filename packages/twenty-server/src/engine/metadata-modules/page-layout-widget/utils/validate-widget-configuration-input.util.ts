@@ -3,6 +3,7 @@ import { isNotEmptyObject, type ValidationError } from 'class-validator';
 import { AggregateChartConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/aggregate-chart-configuration.dto';
 import { BarChartConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/bar-chart-configuration.dto';
 import { FieldConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/field-configuration.dto';
+import { FieldsConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/fields-configuration.dto';
 import { FrontComponentConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/front-component-configuration.dto';
 import { GaugeChartConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/gauge-chart-configuration.dto';
 import { IframeConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/iframe-configuration.dto';
@@ -140,10 +141,11 @@ export const validateWidgetConfigurationInput = ({
       );
       break;
     case WidgetConfigurationType.FIELDS:
-      throw new PageLayoutWidgetException(
-        'Fields configuration is not supported yet',
-        PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
+      errors = validateWidgetConfigurationByDto(
+        FieldsConfigurationDTO,
+        configuration,
       );
+      break;
     case WidgetConfigurationType.TIMELINE:
       throw new PageLayoutWidgetException(
         'Timeline configuration is not supported yet',
