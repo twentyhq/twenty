@@ -209,7 +209,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
             .primaryPhoneCallingCode,
         isImportable: true,
         isFilterable: true,
-        isIncludedInUniqueConstraint: false,
+        isIncludedInUniqueConstraint: true,
       },
       {
         subFieldName:

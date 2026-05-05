@@ -23,6 +23,7 @@ export const phonesCompositeType: CompositeType = {
       type: FieldMetadataType.TEXT,
       hidden: false,
       isRequired: false,
+      isIncludedInUniqueConstraint: true,
     },
     {
       name: 'additionalPhones',
