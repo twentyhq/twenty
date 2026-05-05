@@ -12,6 +12,7 @@ export class BillingProductMetadata {
   planKey: BillingPlanKey;
 
   @Field(() => BillingUsageType)
+  // @deprecated — productKey alone is sufficient once all prices are licensed
   priceUsageBased: BillingUsageType;
 
   @Field(() => BillingProductKey)

@@ -5,7 +5,7 @@ export const mockBillingPlans = {
     {
       __typename: 'BillingPlan',
       planKey: 'PRO',
-      licensedProducts: [
+      baseProducts: [
         {
           __typename: 'BillingLicensedProduct',
           name: 'Pro Plan',
@@ -35,6 +35,7 @@ export const mockBillingPlans = {
           ],
         },
       ],
+      resourceCreditProducts: [],
       meteredProducts: [
         {
           __typename: 'BillingMeteredProduct',
@@ -295,7 +296,7 @@ export const mockBillingPlans = {
     {
       __typename: 'BillingPlan',
       planKey: 'ENTERPRISE',
-      licensedProducts: [
+      baseProducts: [
         {
           __typename: 'BillingLicensedProduct',
           name: 'Organization Plan',
@@ -325,6 +326,7 @@ export const mockBillingPlans = {
           ],
         },
       ],
+      resourceCreditProducts: [],
       meteredProducts: [
         {
           __typename: 'BillingMeteredProduct',
