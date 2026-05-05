@@ -14,11 +14,14 @@ import { checkServerHealth } from '@/cli/utilities/server/detect-local-server';
 import chalk from 'chalk';
 import type { Command } from 'commander';
 import { execSync, spawnSync } from 'node:child_process';
+import { CatalogSyncCommand } from './catalog-sync';
 
 export const registerServerCommands = (program: Command): void => {
   const server = program
     .command('server')
-    .description('Manage a local Twenty server instance');
+    .description(
+      'Manage a Twenty server (local instance and server-side actions)',
+    );
 
   server
     .command('start')
@@ -200,4 +203,13 @@ export const registerServerCommands = (program: Command): void => {
         }
       },
     );
+
+  server
+    .command('catalog-sync')
+    .description('Trigger a marketplace catalog sync on the server')
+    .option('-r, --remote <name>', 'Sync on a specific remote')
+    .action(async (options: { remote?: string }) => {
+      const command = new CatalogSyncCommand();
+      await command.execute({ remote: options.remote });
+    });
 };

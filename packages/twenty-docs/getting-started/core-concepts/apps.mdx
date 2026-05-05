@@ -35,14 +35,8 @@ Everything is detected via AST analysis at build time — no config files, no re
 
 ## The developer experience
 
-```bash
-npx create-twenty-app@latest my-twenty-app
-cd my-twenty-app
-yarn twenty dev
-```
-
-`yarn twenty dev` watches your source files, rebuilds on change, and live-syncs to a local Twenty instance. The typed API client regenerates automatically when the schema changes. When you're ready, `yarn twenty deploy` pushes to production. Apps can also be published to npm and listed in the Twenty marketplace.
+You write your app as a TypeScript project on your machine. The CLI watches your source files and live-syncs them to a running Twenty server — edit a file, see the change in the UI within a second. The typed API client regenerates automatically when the schema changes. When you're ready, `yarn twenty deploy` pushes to a production server, or `yarn twenty publish` lists your app on npm and the Twenty marketplace.
 
 <Card title="Build your first app" icon="arrow-right" href="/developers/extend/apps/getting-started">
-  Full walkthrough — scaffold, develop, deploy.
+  Three-phase walkthrough — scaffold, run a local server, sync your changes.
 </Card>
