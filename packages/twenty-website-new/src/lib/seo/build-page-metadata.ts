@@ -7,6 +7,7 @@ import {
 } from '@/lib/i18n/app-locale-set';
 import { createI18nInstance } from '@/lib/i18n/create-i18n-instance';
 import { createMessageDescriptorRenderer } from '@/lib/i18n/create-message-descriptor-renderer';
+import { localeToUrlSegment } from '@/lib/i18n/website-locale-segments';
 import type { MessageDescriptor } from '@lingui/core';
 
 import { getSiteUrl } from './site-url';
@@ -31,7 +32,10 @@ const localizePath = (locale: AppLocale, normalizedPath: string): string => {
   if (locale === SOURCE_LOCALE || !isPublicAppLocale(locale)) {
     return normalizedPath;
   }
-  return normalizedPath === '/' ? `/${locale}` : `/${locale}${normalizedPath}`;
+  const segment = localeToUrlSegment(locale);
+  return normalizedPath === '/'
+    ? `/${segment}`
+    : `/${segment}${normalizedPath}`;
 };
 
 const buildLanguageAlternates = (

@@ -44,6 +44,7 @@ export enum SettingsPath {
   ApplicationDetail = 'applications/:applicationId',
   ApplicationLogicFunctionDetail = 'applications/:applicationId/logicFunctions/:logicFunctionId',
   ApplicationFrontComponentDetail = 'applications/:applicationId/frontComponents/:frontComponentId',
+  ApplicationCommandMenuItemDetail = 'applications/:applicationId/commandMenuItems/:commandMenuItemId',
   ApplicationViewDetail = 'applications/:applicationId/views/:viewUniversalIdentifier',
   ApplicationPageLayoutDetail = 'applications/:applicationId/pageLayouts/:pageLayoutUniversalIdentifier',
   AvailableApplicationDetail = 'applications/available/:availableApplicationId',

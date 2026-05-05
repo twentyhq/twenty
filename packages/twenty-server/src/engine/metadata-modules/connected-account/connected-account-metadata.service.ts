@@ -5,7 +5,7 @@ import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { In, Repository } from 'typeorm';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
-import { AppOAuthRevokeService } from 'src/engine/core-modules/application/application-oauth-provider/refresh/services/app-oauth-revoke.service';
+import { AppOAuthRevokeService } from 'src/engine/core-modules/application/connection-provider/refresh/services/app-oauth-revoke.service';
 import {
   ConnectedAccountException,
   ConnectedAccountExceptionCode,

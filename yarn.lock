@@ -54951,6 +54951,7 @@ __metadata:
     "@nx/web": "npm:22.5.4"
     "@types/react": "npm:^18.2.39"
     "@types/react-dom": "npm:^18.2.15"
+    "@yarnpkg/types": "npm:^4.0.0"
     concurrently: "npm:^8.2.2"
     http-server: "npm:^14.1.1"
     nx: "npm:22.5.4"

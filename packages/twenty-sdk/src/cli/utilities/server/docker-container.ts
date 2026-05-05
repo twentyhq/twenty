@@ -103,3 +103,29 @@ export const checkDockerRunning = (): boolean => {
     return false;
   }
 };
+
+const getDockerStartInstruction = (): string => {
+  switch (process.platform) {
+    case 'darwin':
+      return '  Run: open -a Docker\n  (or launch Docker Desktop from Applications)';
+    case 'linux':
+      return '  Run: sudo systemctl start docker\n  (or launch Docker Desktop if installed)';
+    case 'win32':
+      return '  Launch Docker Desktop from the Start menu';
+    default:
+      return '  See https://docs.docker.com/engine/install/ for installation';
+  }
+};
+
+export const getDockerNotRunningMessage = (retryCommand: string): string =>
+  [
+    'Docker is not running.',
+    '',
+    'Start Docker:',
+    getDockerStartInstruction(),
+    '',
+    'Then retry:',
+    `  ${retryCommand}`,
+    '',
+    "Don't have Docker? Install from https://docs.docker.com/get-docker/",
+  ].join('\n');

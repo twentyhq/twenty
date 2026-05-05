@@ -188,6 +188,14 @@ const SettingsApplicationFrontComponentDetail = lazy(() =>
   })),
 );
 
+const SettingsApplicationCommandMenuItemDetail = lazy(() =>
+  import(
+    '~/pages/settings/applications/SettingsApplicationCommandMenuItemDetail'
+  ).then((module) => ({
+    default: module.SettingsApplicationCommandMenuItemDetail,
+  })),
+);
+
 const SettingsLayoutViewDetail = lazy(() =>
   import('~/pages/settings/layout/SettingsLayoutViewDetail').then((module) => ({
     default: module.SettingsLayoutViewDetail,
@@ -801,6 +809,10 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
         <Route
           path={SettingsPath.ApplicationFrontComponentDetail}
           element={<SettingsApplicationFrontComponentDetail />}
+        />
+        <Route
+          path={SettingsPath.ApplicationCommandMenuItemDetail}
+          element={<SettingsApplicationCommandMenuItemDetail />}
         />
         <Route
           path={SettingsPath.ApplicationViewDetail}
