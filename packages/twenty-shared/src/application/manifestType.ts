@@ -33,7 +33,5 @@ export type Manifest = {
   navigationMenuItems: NavigationMenuItemManifest[];
   pageLayouts: PageLayoutManifest[];
   pageLayoutTabs: PageLayoutTabManifest[];
-  // Standalone command menu items declared via defineCommandMenuItem.
-  // Optional so older manifests continue to type-check without this array.
-  commandMenuItems?: CommandMenuItemManifest[];
+  commandMenuItems: CommandMenuItemManifest[];
 };
