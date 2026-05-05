@@ -223,8 +223,8 @@ Available hooks:
 | Hook | Returns | Description |
 |------|---------|-------------|
 | `useUserId()` | `string` or `null` | The current user's ID |
-| `useRecordId()` | `string` or `null` | The selected record ID when exactly one record is selected, otherwise null |
 | `useRecordIds()` | `string[]` | All selected record IDs (empty array if none selected) |
+| `useRecordId()` | `string` or `null` | **Deprecated.** Use `useRecordIds()` instead |
 | `useFrontComponentId()` | `string` | This component instance's ID |
 | `useFrontComponentExecutionContext(selector)` | varies | Access the full execution context with a selector function |
 

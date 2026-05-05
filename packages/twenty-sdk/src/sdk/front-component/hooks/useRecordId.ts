@@ -7,8 +7,8 @@ const selectRecordId = (
   context.recordIds.length === 1 ? context.recordIds[0] : null;
 
 /**
- * Returns the selected record ID when exactly one record is selected,
- * otherwise returns null. Use `useRecordIds()` for multi-record operations.
+ * @deprecated Use `useRecordIds()` instead. For single-record operations,
+ * use `recordIds.length === 1 ? recordIds[0] : null`.
  */
 export const useRecordId = (): string | null => {
   return useFrontComponentExecutionContext(selectRecordId);
