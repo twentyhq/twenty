@@ -173,20 +173,16 @@ export class BillingWebhookInvoiceService {
       paidInvoicePeriodEnd,
     );
 
-    await this.delaySuspendedWorkspaceCleanup(stripeCustomerId);
-
     const billingCustomer = await this.billingCustomerRepository.findOne({
       where: { stripeCustomerId },
     });
 
+    await this.delaySuspendedWorkspaceCleanup(billingCustomer);
+
     if (isDefined(billingCustomer)) {
       this.auditService
         .createContext({ workspaceId: billingCustomer.workspaceId })
-        .insertWorkspaceEvent(PAYMENT_RECEIVED_EVENT, {
-          stripeInvoiceId: data.object.id,
-          amountPaid: data.object.amount_paid,
-          billingReason: data.object.billing_reason ?? undefined,
-        });
+        .insertWorkspaceEvent(PAYMENT_RECEIVED_EVENT, {});
     }
 
     return { stripeSubscriptionId };
@@ -221,12 +217,8 @@ export class BillingWebhookInvoiceService {
   }
 
   private async delaySuspendedWorkspaceCleanup(
-    stripeCustomerId: string,
+    billingCustomer: BillingCustomerEntity | null,
   ): Promise<void> {
-    const billingCustomer = await this.billingCustomerRepository.findOne({
-      where: { stripeCustomerId },
-    });
-
     if (!isDefined(billingCustomer)) {
       return;
     }

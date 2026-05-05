@@ -5,11 +5,7 @@ import { registerEvent } from 'src/engine/core-modules/audit/utils/events/worksp
 export const PAYMENT_RECEIVED_EVENT = 'Payment Received' as const;
 export const paymentReceivedSchema = z.strictObject({
   event: z.literal(PAYMENT_RECEIVED_EVENT),
-  properties: z.strictObject({
-    stripeInvoiceId: z.string(),
-    amountPaid: z.number(),
-    billingReason: z.string().optional(),
-  }),
+  properties: z.strictObject({}),
 });
 
 export type PaymentReceivedTrackEvent = z.infer<
