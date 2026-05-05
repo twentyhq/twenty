@@ -115,7 +115,7 @@ exports[`Failing create field metadata tests suite should fail to create TS_VECT
       },
       "userFriendlyMessage": "Metadata validation failed",
     },
-    "message": "Multiple validation errors occurred while creating fields",
+    "message": "Multiple validation errors occurred while creating field",
     "name": "GraphQLError",
   },
 ]
