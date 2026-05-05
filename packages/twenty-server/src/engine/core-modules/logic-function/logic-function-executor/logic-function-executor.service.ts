@@ -205,8 +205,17 @@ export class LogicFunctionExecutorService {
       );
     }
 
-    const flatApplicationVariables =
-      applicationVariableMaps.byApplicationId[flatApplication.id] ?? [];
+    const flatApplicationVariableUniversalIdentifiers =
+      applicationVariableMaps.universalIdentifiersByApplicationId[
+        flatApplication.id
+      ] ?? [];
+
+    const flatApplicationVariables = flatApplicationVariableUniversalIdentifiers
+      .map(
+        (universalIdentifier) =>
+          applicationVariableMaps.byUniversalIdentifier[universalIdentifier],
+      )
+      .filter(isDefined);
 
     return { flatApplication, flatLogicFunction, flatApplicationVariables };
   }
