@@ -205,6 +205,14 @@ export const SettingsObjectFieldEdit = () => {
           ([key]) => Object.keys(otherDirtyFields).includes(key),
         ),
       );
+      const shouldClearPhoneDefaultValue =
+        formValues.type === FieldMetadataType.PHONES &&
+        formValues.isUnique === true &&
+        ('isUnique' in otherDirtyFields || 'defaultValue' in otherDirtyFields);
+
+      if (shouldClearPhoneDefaultValue) {
+        formattedInput.defaultValue = null;
+      }
 
       const updateResult = await updateOneFieldMetadataItem({
         objectMetadataId: objectMetadataItem.id,
