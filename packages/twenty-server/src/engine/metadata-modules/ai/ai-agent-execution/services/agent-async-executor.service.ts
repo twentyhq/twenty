@@ -17,6 +17,7 @@ import { type Repository } from 'typeorm';
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
+import { EXA_WEB_SEARCH_TOOL_NAME } from 'src/engine/core-modules/tool-provider/constants/exa-web-search-tool-name.const';
 import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
 import { NativeToolBinderService } from 'src/engine/core-modules/tool-provider/native/native-tool-binder.service';
 import { ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
@@ -39,6 +40,8 @@ import { repairToolCall } from 'src/engine/metadata-modules/ai/ai-agent/utils/re
 import { AI_TELEMETRY_CONFIG } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-telemetry.const';
 import { AiModelConfigService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-config.service';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
+import { type NativeModelToolOptions } from 'src/engine/metadata-modules/ai/ai-models/types/native-model-tool-options.type';
+import { getWebSearchImplementation } from 'src/engine/metadata-modules/ai/ai-models/utils/get-web-search-implementation.util';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 
@@ -194,6 +197,22 @@ export class AgentAsyncExecutorService {
               : undefined,
         };
 
+        const toolCatalog =
+          await this.toolRegistry.getCatalog(toolProviderContext);
+
+        const webSearchEnabled =
+          agent.modelConfiguration?.webSearch?.enabled === true;
+        const webSearchImplementation = getWebSearchImplementation({
+          sdkPackage: registeredModel.sdkPackage,
+          toolCatalog,
+        });
+        const nativeModelToolOptions: NativeModelToolOptions = {
+          webSearchEnabled:
+            webSearchEnabled && webSearchImplementation === 'native',
+          twitterSearchEnabled:
+            agent.modelConfiguration?.twitterSearch?.enabled === true,
+        };
+
         const registryTools = await this.toolRegistry.getToolsByCategories(
           toolProviderContext,
           {
@@ -202,21 +221,28 @@ export class AgentAsyncExecutorService {
           },
         );
 
-        const nativeTools = this.nativeToolBinder.bind(registeredModel, {
-          webSearchEnabled:
-            agent.modelConfiguration?.webSearch?.enabled === true,
-        });
+        const exaWebSearchTools =
+          webSearchEnabled && webSearchImplementation === 'exa'
+            ? await this.toolRegistry.getToolsByName(
+                [EXA_WEB_SEARCH_TOOL_NAME],
+                toolProviderContext,
+              )
+            : {};
+
+        const nativeTools = this.nativeToolBinder.bind(
+          registeredModel,
+          nativeModelToolOptions,
+        );
 
         tools = {
           ...registryTools,
+          ...exaWebSearchTools,
           ...nativeTools,
         };
 
         providerOptions = this.aiModelConfigService.getProviderOptions(
           registeredModel,
-          agent as unknown as Parameters<
-            typeof this.aiModelConfigService.getProviderOptions
-          >[1],
+          nativeModelToolOptions,
         );
       }
 

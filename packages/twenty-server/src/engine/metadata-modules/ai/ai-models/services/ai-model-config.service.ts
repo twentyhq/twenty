@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
-import { ProviderOptions } from '@ai-sdk/provider-utils';
-import { ToolSet } from 'ai';
+import { type ProviderOptions } from '@ai-sdk/provider-utils';
+import { type ToolSet } from 'ai';
 
 import { AGENT_CONFIG } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-config.const';
 import {
@@ -10,13 +10,13 @@ import {
   AI_SDK_OPENAI,
   AI_SDK_XAI,
 } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-sdk-package.const';
+import { getNativeModelToolsForSdkPackage } from 'src/engine/metadata-modules/ai/ai-models/utils/get-native-model-tools-for-sdk-package.util';
 import {
   AiModelRegistryService,
   RegisteredAiModel,
 } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { type NativeModelToolOptions } from 'src/engine/metadata-modules/ai/ai-models/types/native-model-tool-options.type';
 import { SdkProviderFactoryService } from 'src/engine/metadata-modules/ai/ai-models/services/sdk-provider-factory.service';
-import { FlatAgentWithRoleId } from 'src/engine/metadata-modules/flat-agent/types/flat-agent.type';
 
 @Injectable()
 export class AiModelConfigService {
@@ -27,11 +27,11 @@ export class AiModelConfigService {
 
   getProviderOptions(
     model: RegisteredAiModel,
-    agent: FlatAgentWithRoleId,
+    options: NativeModelToolOptions = {},
   ): ProviderOptions {
     switch (model.sdkPackage) {
       case AI_SDK_XAI:
-        return this.getXaiProviderOptions(agent);
+        return this.getXaiProviderOptions(options);
       case AI_SDK_ANTHROPIC:
         return this.getAnthropicProviderOptions(model);
       case AI_SDK_BEDROCK:
@@ -46,8 +46,11 @@ export class AiModelConfigService {
     options: NativeModelToolOptions,
   ): ToolSet {
     const tools: Record<string, unknown> = {};
+    const webSearchTool = getNativeModelToolsForSdkPackage(
+      model.sdkPackage,
+    )?.webSearch;
 
-    if (!options.webSearchEnabled) {
+    if (!options.webSearchEnabled || webSearchTool?.kind !== 'sdk-tool') {
       return tools as ToolSet;
     }
 
@@ -58,7 +61,8 @@ export class AiModelConfigService {
           : undefined;
 
         if (anthropicProvider) {
-          tools.web_search = anthropicProvider.tools.webSearch_20250305();
+          tools[webSearchTool.directToolName] =
+            anthropicProvider.tools.webSearch_20250305();
         }
 
         break;
@@ -69,7 +73,8 @@ export class AiModelConfigService {
           : undefined;
 
         if (openaiProvider) {
-          tools.web_search = openaiProvider.tools.webSearch();
+          tools[webSearchTool.directToolName] =
+            openaiProvider.tools.webSearch();
         }
 
         break;
@@ -79,23 +84,27 @@ export class AiModelConfigService {
     return tools as ToolSet;
   }
 
-  private getXaiProviderOptions(agent: FlatAgentWithRoleId): ProviderOptions {
-    if (
-      !agent.modelConfiguration ||
-      (!agent.modelConfiguration.webSearch?.enabled &&
-        !agent.modelConfiguration.twitterSearch?.enabled)
-    ) {
+  private getXaiProviderOptions(
+    options: NativeModelToolOptions,
+  ): ProviderOptions {
+    const webSearchEnabled = options.webSearchEnabled === true;
+    const twitterSearchEnabled = options.twitterSearchEnabled === true;
+
+    if (!webSearchEnabled && !twitterSearchEnabled) {
       return {};
     }
 
     const sources: Array<{ type: string }> = [];
+    const xaiTools = getNativeModelToolsForSdkPackage(AI_SDK_XAI);
+    const webSearchTool = xaiTools?.webSearch;
+    const twitterSearchTool = xaiTools?.twitterSearch;
 
-    if (agent.modelConfiguration.webSearch?.enabled) {
-      sources.push({ type: 'web' });
+    if (webSearchEnabled && webSearchTool?.kind === 'provider-option') {
+      sources.push({ type: webSearchTool.providerOptionKey });
     }
 
-    if (agent.modelConfiguration.twitterSearch?.enabled) {
-      sources.push({ type: 'x' });
+    if (twitterSearchEnabled && twitterSearchTool?.kind === 'provider-option') {
+      sources.push({ type: twitterSearchTool.providerOptionKey });
     }
 
     return {
