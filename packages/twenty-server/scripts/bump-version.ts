@@ -19,16 +19,6 @@ const AUTO_GENERATED_HEADER = `/*
 
 `;
 
-const parseVersion = (version: string): semver.SemVer => {
-  const parsed = semver.parse(version);
-
-  if (!parsed) {
-    throw new Error(`Invalid version format: ${version}`);
-  }
-
-  return parsed;
-};
-
 const incrementMinorVersion = (version: string): string => {
   const incremented = semver.inc(version, 'minor');
 
