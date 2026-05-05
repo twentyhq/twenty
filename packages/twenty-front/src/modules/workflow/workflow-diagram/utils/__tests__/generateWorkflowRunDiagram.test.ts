@@ -1,11 +1,11 @@
-import { v4 as uuidv4 } from 'uuid';
 import {
   type WorkflowStep,
   type WorkflowTrigger,
 } from '@/workflow/types/Workflow';
-import { StepStatus, type WorkflowRunStepInfos } from 'twenty-shared/workflow';
-import { FieldMetadataType } from 'twenty-shared/types';
 import { generateWorkflowRunDiagram } from '@/workflow/workflow-diagram/utils/generateWorkflowRunDiagram';
+import { FieldMetadataType } from 'twenty-shared/types';
+import { StepStatus, type WorkflowRunStepInfos } from 'twenty-shared/workflow';
+import { v4 as uuidv4 } from 'uuid';
 
 jest.mock('uuid');
 

@@ -1,50 +1,69 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
+import { UpgradeHealthEnum } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
-import { In, Repository } from 'typeorm';
 
+import { InjectRepository } from '@nestjs/typeorm';
+import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { UpgradeMigrationService } from 'src/engine/core-modules/upgrade/services/upgrade-migration.service';
 import { UpgradeSequenceReaderService } from 'src/engine/core-modules/upgrade/services/upgrade-sequence-reader.service';
+import { UpgradeStatusCacheService } from 'src/engine/core-modules/upgrade/services/upgrade-status-cache.service';
 import { type UpgradeMigrationStatus } from 'src/engine/core-modules/upgrade/upgrade-migration.entity';
 import { extractVersionFromCommandName } from 'src/engine/core-modules/upgrade/utils/extract-version-from-command-name.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { In, Repository } from 'typeorm';
 
-export type UpgradeHealth = 'up-to-date' | 'behind' | 'failed';
-
-export type MigrationCursorStatus = {
-  inferredVersion: string | null;
-  health: UpgradeHealth;
-  latestCommand: {
-    name: string;
-    status: UpgradeMigrationStatus;
-    executedByVersion: string;
-    errorMessage: string | null;
-    createdAt: Date;
-  } | null;
+export type LatestUpgradeCommand = {
+  name: string;
+  status: UpgradeMigrationStatus;
+  executedByVersion: string;
+  errorMessage: string | null;
+  createdAt: Date;
 };
 
-export type WorkspaceStatus = MigrationCursorStatus & {
+export type InstanceUpgradeStatus = {
+  inferredVersion: string | null;
+  health: UpgradeHealthEnum;
+  latestCommand: LatestUpgradeCommand | null;
+};
+
+export type WorkspaceUpgradeStatus = {
   workspaceId: string;
   displayName: string | null;
+  inferredVersion: string | null;
+  health: UpgradeHealthEnum;
+  latestCommand: LatestUpgradeCommand | null;
+};
+
+export type WorkspaceUpgradeRef = {
+  id: string;
+  name: string | null;
+};
+
+export type InstanceAndAllWorkspacesUpgradeStatus = {
+  instanceUpgradeStatus: InstanceUpgradeStatus;
+  workspacesBehind: WorkspaceUpgradeRef[];
+  workspacesFailed: WorkspaceUpgradeRef[];
+  computedAt: Date;
 };
 
 const deriveHealth = (
   migration: { name: string; status: UpgradeMigrationStatus },
   lastExpectedCommandName: string | null,
-): UpgradeHealth => {
+): UpgradeHealthEnum => {
   if (migration.status === 'failed') {
-    return 'failed';
+    return UpgradeHealthEnum.FAILED;
   }
 
   if (
     lastExpectedCommandName !== null &&
     migration.name !== lastExpectedCommandName
   ) {
-    return 'behind';
+    return UpgradeHealthEnum.BEHIND;
   }
 
-  return 'up-to-date';
+  return UpgradeHealthEnum.UP_TO_DATE;
 };
 
 @Injectable()
@@ -56,9 +75,11 @@ export class UpgradeStatusService {
     private readonly upgradeSequenceReaderService: UpgradeSequenceReaderService,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
+    private readonly upgradeStatusCacheService: UpgradeStatusCacheService,
+    private readonly coreEntityCacheService: CoreEntityCacheService,
   ) {}
 
-  async getInstanceStatus(): Promise<MigrationCursorStatus> {
+  async getInstanceStatus(): Promise<InstanceUpgradeStatus> {
     const migration =
       await this.upgradeMigrationService.getLastAttemptedInstanceCommand();
 
@@ -75,8 +96,9 @@ export class UpgradeStatusService {
 
   async getWorkspaceStatuses(
     filterWorkspaceIds?: string[],
-  ): Promise<WorkspaceStatus[]> {
-    const workspaces = await this.loadWorkspaces(filterWorkspaceIds);
+  ): Promise<WorkspaceUpgradeStatus[]> {
+    const workspaces =
+      await this.loadActiveOrSuspendedWorkspaces(filterWorkspaceIds);
 
     if (filterWorkspaceIds) {
       const foundIds = new Set(workspaces.map((workspace) => workspace.id));
@@ -110,18 +132,93 @@ export class UpgradeStatusService {
     }));
   }
 
+  async getInstanceAndAllWorkspacesStatus(): Promise<InstanceAndAllWorkspacesUpgradeStatus> {
+    const computedAt = await this.upgradeStatusCacheService.getComputedAt();
+
+    if (!isDefined(computedAt)) {
+      return this.refreshInstanceAndAllWorkspacesStatus();
+    }
+
+    const [instanceUpgradeStatus, behindWorkspaceIds, failedWorkspaceIds] =
+      await Promise.all([
+        this.getInstanceStatus(),
+        this.upgradeStatusCacheService.getBehindWorkspaceIds(),
+        this.upgradeStatusCacheService.getFailedWorkspaceIds(),
+      ]);
+
+    const workspaceNamesById = await this.loadWorkspaceNamesById([
+      ...behindWorkspaceIds,
+      ...failedWorkspaceIds,
+    ]);
+
+    return {
+      instanceUpgradeStatus,
+      workspacesBehind: this.toWorkspaceRefs(
+        behindWorkspaceIds,
+        workspaceNamesById,
+      ),
+      workspacesFailed: this.toWorkspaceRefs(
+        failedWorkspaceIds,
+        workspaceNamesById,
+      ),
+      computedAt,
+    };
+  }
+
+  async refreshInstanceAndAllWorkspacesStatus(): Promise<InstanceAndAllWorkspacesUpgradeStatus> {
+    this.logger.log('Recomputing upgrade status for all workspaces');
+
+    const [instanceUpgradeStatus, workspaceStatuses] = await Promise.all([
+      this.getInstanceStatus(),
+      this.getWorkspaceStatuses(),
+    ]);
+
+    const workspacesBehind: WorkspaceUpgradeRef[] = [];
+    const workspacesFailed: WorkspaceUpgradeRef[] = [];
+
+    for (const workspaceStatus of workspaceStatuses) {
+      const workspaceRef: WorkspaceUpgradeRef = {
+        id: workspaceStatus.workspaceId,
+        name: workspaceStatus.displayName,
+      };
+
+      if (workspaceStatus.health === UpgradeHealthEnum.BEHIND) {
+        workspacesBehind.push(workspaceRef);
+      } else if (workspaceStatus.health === UpgradeHealthEnum.FAILED) {
+        workspacesFailed.push(workspaceRef);
+      }
+    }
+
+    const computedAt = new Date();
+
+    await this.upgradeStatusCacheService.write({
+      behindWorkspaceIds: workspacesBehind.map((workspace) => workspace.id),
+      failedWorkspaceIds: workspacesFailed.map((workspace) => workspace.id),
+      computedAt,
+    });
+
+    return {
+      instanceUpgradeStatus,
+      workspacesBehind,
+      workspacesFailed,
+      computedAt,
+    };
+  }
+
+  async invalidateInstanceAndAllWorkspacesStatus(): Promise<void> {
+    await this.upgradeStatusCacheService.invalidate();
+  }
+
   private buildCursorStatus(
-    migration: {
-      name: string;
-      status: UpgradeMigrationStatus;
-      executedByVersion: string;
-      errorMessage: string | null;
-      createdAt: Date;
-    } | null,
+    migration: LatestUpgradeCommand | null,
     lastExpectedCommandName: string | null,
-  ): MigrationCursorStatus {
+  ): InstanceUpgradeStatus {
     if (!migration) {
-      return { inferredVersion: null, health: 'behind', latestCommand: null };
+      return {
+        inferredVersion: null,
+        health: UpgradeHealthEnum.BEHIND,
+        latestCommand: null,
+      };
     }
 
     const health = deriveHealth(migration, lastExpectedCommandName);
@@ -139,7 +236,7 @@ export class UpgradeStatusService {
     };
   }
 
-  private async loadWorkspaces(
+  private async loadActiveOrSuspendedWorkspaces(
     workspaceIds?: string[],
   ): Promise<Pick<WorkspaceEntity, 'id' | 'displayName'>[]> {
     return this.workspaceRepository.find({
@@ -155,5 +252,39 @@ export class UpgradeStatusService {
       },
       order: { id: 'ASC' },
     });
+  }
+
+  private async loadWorkspaceNamesById(
+    workspaceIds: string[],
+  ): Promise<Map<string, string | null>> {
+    const namesById = new Map<string, string | null>();
+
+    if (workspaceIds.length === 0) {
+      return namesById;
+    }
+
+    const workspaces = await Promise.all(
+      workspaceIds.map((workspaceId) =>
+        this.coreEntityCacheService.get('workspaceEntity', workspaceId),
+      ),
+    );
+
+    for (const workspace of workspaces) {
+      if (isDefined(workspace)) {
+        namesById.set(workspace.id, workspace.displayName ?? null);
+      }
+    }
+
+    return namesById;
+  }
+
+  private toWorkspaceRefs(
+    workspaceIds: string[],
+    workspaceNamesById: Map<string, string | null>,
+  ): WorkspaceUpgradeRef[] {
+    return workspaceIds.map((workspaceId) => ({
+      id: workspaceId,
+      name: workspaceNamesById.get(workspaceId) ?? null,
+    }));
   }
 }

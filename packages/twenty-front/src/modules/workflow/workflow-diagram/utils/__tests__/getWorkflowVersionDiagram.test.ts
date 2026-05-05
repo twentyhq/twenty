@@ -1,5 +1,5 @@
-import { v4 as uuidv4 } from 'uuid';
 import { getWorkflowVersionDiagram } from '@/workflow/workflow-diagram/utils/getWorkflowVersionDiagram';
+import { v4 as uuidv4 } from 'uuid';
 
 jest.mock('uuid');
 

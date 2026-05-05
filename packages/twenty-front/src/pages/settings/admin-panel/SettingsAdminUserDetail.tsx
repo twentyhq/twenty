@@ -5,7 +5,11 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { SettingsPath } from 'twenty-shared/types';
-import { getImageAbsoluteURI, getSettingsPath } from 'twenty-shared/utils';
+import {
+  getImageAbsoluteURI,
+  getSettingsPath,
+  isDefined,
+} from 'twenty-shared/utils';
 
 import { currentUserState } from '@/auth/states/currentUserState';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
@@ -15,9 +19,9 @@ import { useHandleImpersonate } from '@/settings/admin-panel/hooks/useHandleImpe
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { SettingsTableCard } from '@/settings/components/SettingsTableCard';
+import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceLogo';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -64,9 +68,10 @@ export const SettingsAdminUserDetail = () => {
   const { handleImpersonate, impersonatingUserId } = useHandleImpersonate();
 
   const effectiveTabId = activeTabId || userLookupResult?.workspaces?.[0]?.id;
+  const user = userLookupResult?.user;
 
-  const userFullName = `${userLookupResult?.user.firstName || ''} ${
-    userLookupResult?.user.lastName || ''
+  const userFullName = `${user?.firstName || ''} ${
+    user?.lastName || ''
   }`.trim();
 
   const activeWorkspace = userLookupResult?.workspaces.find(
@@ -95,18 +100,18 @@ export const SettingsAdminUserDetail = () => {
     {
       Icon: IconMail,
       label: t`Email`,
-      value: userLookupResult?.user.email,
+      value: user?.email,
     },
     {
       Icon: IconId,
       label: t`ID`,
-      value: userLookupResult?.user.id,
+      value: user?.id,
     },
     {
       Icon: IconCalendar,
       label: t`Created`,
-      value: userLookupResult?.user.createdAt
-        ? new Date(userLookupResult.user.createdAt).toLocaleDateString()
+      value: user?.createdAt
+        ? new Date(user.createdAt).toLocaleDateString()
         : '',
     },
   ];
@@ -159,30 +164,29 @@ export const SettingsAdminUserDetail = () => {
               <SettingsAdminWorkspaceContent
                 activeWorkspace={activeWorkspace}
               />
-              {currentUser?.canImpersonate && activeWorkspace && (
-                <StyledButtonContainer>
-                  <Button
-                    Icon={IconEyeShare}
-                    variant="primary"
-                    accent="default"
-                    title={
-                      activeWorkspace.allowImpersonation === false
-                        ? t`Impersonation is disabled for this workspace`
-                        : t`Impersonate`
-                    }
-                    onClick={() =>
-                      handleImpersonate(
-                        userLookupResult.user.id,
-                        activeWorkspace.id,
-                      )
-                    }
-                    disabled={
-                      impersonatingUserId !== null ||
-                      activeWorkspace.allowImpersonation === false
-                    }
-                  />
-                </StyledButtonContainer>
-              )}
+              {currentUser?.canImpersonate &&
+                activeWorkspace &&
+                isDefined(user) && (
+                  <StyledButtonContainer>
+                    <Button
+                      Icon={IconEyeShare}
+                      variant="primary"
+                      accent="default"
+                      title={
+                        activeWorkspace.allowImpersonation === false
+                          ? t`Impersonation is disabled for this workspace`
+                          : t`Impersonate`
+                      }
+                      onClick={() =>
+                        handleImpersonate(user.id, activeWorkspace.id)
+                      }
+                      disabled={
+                        impersonatingUserId !== null ||
+                        activeWorkspace.allowImpersonation === false
+                      }
+                    />
+                  </StyledButtonContainer>
+                )}
             </Section>
           </>
         )}

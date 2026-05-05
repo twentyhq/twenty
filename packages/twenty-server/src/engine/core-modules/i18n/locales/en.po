@@ -6747,6 +6747,12 @@ msgstr "The agent you are looking for could not be found. It may have been delet
 msgid "The API key does not have a valid role assigned. Please check your API key configuration."
 msgstr "The API key does not have a valid role assigned. Please check your API key configuration."
 
+#. js-lingui-id: Z4AMcp
+#: src/engine/core-modules/application/application.exception.ts
+#: src/engine/core-modules/application/application-registration/application-registration.exception.ts
+msgid "The app manifest declares an invalid server version requirement."
+msgstr "The app manifest declares an invalid server version requirement."
+
 #. js-lingui-id: MQn14a
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 msgid "The app source channel does not match the expected type."
@@ -6921,6 +6927,12 @@ msgstr "The role you are trying to modify could not be found."
 msgid "The server address you entered is not allowed. Please use a public server address."
 msgstr "The server address you entered is not allowed. Please use a public server address."
 
+#. js-lingui-id: 6N5Pv5
+#: src/engine/core-modules/application/application.exception.ts
+#: src/engine/core-modules/application/application-registration/application-registration.exception.ts
+msgid "The server's APP_VERSION is not a valid semver version. Self-hosted instances must configure a valid APP_VERSION."
+msgstr "The server's APP_VERSION is not a valid semver version. Self-hosted instances must configure a valid APP_VERSION."
+
 #. js-lingui-id: FOEWHl
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name.util.ts
 msgid "The singular and plural names cannot be the same for an object"
@@ -7032,6 +7044,12 @@ msgstr "This API Key has expired. Please create a new one."
 #: src/engine/core-modules/api-key/exceptions/api-key.exception.ts
 msgid "This API key has no role assigned."
 msgstr "This API key has no role assigned."
+
+#. js-lingui-id: zISk4k
+#: src/engine/core-modules/application/application.exception.ts
+#: src/engine/core-modules/application/application-registration/application-registration.exception.ts
+msgid "This app requires a newer version of the Twenty server. Please upgrade your server or use a compatible app version."
+msgstr "This app requires a newer version of the Twenty server. Please upgrade your server or use a compatible app version."
 
 #. js-lingui-id: ADtO2E
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts

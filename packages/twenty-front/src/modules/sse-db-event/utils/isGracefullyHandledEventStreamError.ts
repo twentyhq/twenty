@@ -12,7 +12,6 @@ export const isGracefullyHandledEventStreamError = ({
   }
 
   return (
-    subCode === 'EVENT_STREAM_DOES_NOT_EXIST' ||
     subCode === 'EVENT_STREAM_ALREADY_EXISTS' ||
     subCode === 'NOT_AUTHORIZED' ||
     code === 'UNAUTHENTICATED' ||
