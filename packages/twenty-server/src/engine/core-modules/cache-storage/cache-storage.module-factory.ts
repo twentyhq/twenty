@@ -49,9 +49,10 @@ export const cacheStorageModuleFactory = (
 
           await redisClient.connect();
 
-          return redisInsStore(redisClient, {
-            ttl: cacheStorageTtl * 1000,
-          });
+          return redisInsStore(
+            redisClient as Parameters<typeof redisInsStore>[0],
+            { ttl: cacheStorageTtl * 1000 },
+          );
         },
       };
     }
