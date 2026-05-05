@@ -4,6 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type State } from '@/ui/utilities/state/jotai/types/State';
 import { createJotaiCookieStorage } from '@/ui/utilities/state/jotai/utils/createJotaiCookieStorage';
+import { createSafeLocalStorage } from '@/ui/utilities/state/jotai/utils/createSafeLocalStorage';
 
 type CookieStorageConfig<ValueType> = {
   cookieKey: string;
@@ -62,7 +63,7 @@ export const createAtomState = <ValueType>({
     baseAtom = atomWithStorage<ValueType>(
       key,
       defaultValue,
-      undefined,
+      createSafeLocalStorage<ValueType>(),
       localStorageOptions ?? undefined,
     ) as StateAtom<ValueType>;
   } else {
