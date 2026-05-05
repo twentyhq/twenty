@@ -2,19 +2,16 @@ import qs from 'qs';
 import { useCallback, useMemo } from 'react';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
+import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { type RecordSort } from '@/object-record/record-sort/types/RecordSort';
 import { sortUrlQueryParamsSchema } from '@/views/schemas/sortUrlQueryParamsSchema';
-import { useParams, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 import { type ViewSortDirection } from '~/generated-metadata/graphql';
 
 export const useSortsFromQueryParams = () => {
   const [searchParams] = useSearchParams();
-  const { objectNamePlural = '' } = useParams();
-  const { objectNameSingular } = useObjectNameSingularFromPlural({
-    objectNamePlural,
-  });
+  const { objectNameSingular } = useRecordIndexContextOrThrow();
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
   });
