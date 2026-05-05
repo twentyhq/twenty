@@ -31,11 +31,10 @@ export class UpdateApplicationVariableActionHandlerService extends WorkspaceMigr
   ): Promise<FlatUpdateApplicationVariableAction> {
     const { action, allFlatEntityMaps } = context;
 
-    const flatApplicationVariable =
-      findFlatEntityByUniversalIdentifierOrThrow({
-        flatEntityMaps: allFlatEntityMaps.flatApplicationVariableMaps,
-        universalIdentifier: action.universalIdentifier,
-      });
+    const flatApplicationVariable = findFlatEntityByUniversalIdentifierOrThrow({
+      flatEntityMaps: allFlatEntityMaps.flatApplicationVariableMaps,
+      universalIdentifier: action.universalIdentifier,
+    });
 
     const update = resolveUniversalUpdateRelationIdentifiersToIds({
       metadataName: 'applicationVariable',

@@ -23,7 +23,7 @@ import { AddCacheTokensToAgentChatThreadFastInstanceCommand } from 'src/database
 import { AddLogoToApplicationFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-2/2-2-instance-command-fast-1777539664664-add-logo-to-application';
 import { AddDeletedAtToAgentChatThreadFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-3/2-3-instance-command-fast-1777682000000-add-deleted-at-to-agent-chat-thread';
 import { RemoveUserDefaultAvatarUrlFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-3/2-3-instance-command-fast-1777915958318-remove-user-default-avatar-url';
-import { TransformApplicationVariableToSyncableEntityFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-3/2-3-instance-command-fast-1777966965587-transformApplicationVariableToSyncableEntity';
+import { TransformApplicationVariableToSyncableEntityFastInstanceCommand } from 'packages/twenty-server/src/database/commands/upgrade-version-command/2-3/2-3-instance-command-fast-1777966965587-transform-application-variable-to-syncable-entity';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,

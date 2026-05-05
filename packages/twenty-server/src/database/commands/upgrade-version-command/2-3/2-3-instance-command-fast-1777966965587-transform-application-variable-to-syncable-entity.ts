@@ -15,7 +15,13 @@ export class TransformApplicationVariableToSyncableEntityFastInstanceCommand
       'ALTER TABLE "core"."applicationVariable" DROP CONSTRAINT "IDX_APPLICATION_VARIABLE_KEY_APPLICATION_ID_UNIQUE"',
     );
     await queryRunner.query(
-      'ALTER TABLE "core"."applicationVariable" ADD "universalIdentifier" uuid NOT NULL',
+      'ALTER TABLE "core"."applicationVariable" ADD "universalIdentifier" uuid',
+    );
+    await queryRunner.query(
+      'UPDATE "core"."applicationVariable" SET "universalIdentifier" = gen_random_uuid() WHERE "universalIdentifier" IS NULL',
+    );
+    await queryRunner.query(
+      'ALTER TABLE "core"."applicationVariable" ALTER COLUMN "universalIdentifier" SET NOT NULL',
     );
     await queryRunner.query(
       'ALTER TABLE "core"."applicationVariable" ADD "deletedAt" TIMESTAMP WITH TIME ZONE',
