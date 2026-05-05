@@ -124,7 +124,7 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 Morh re
     },
     "userFriendlyMessage": "Name "fieldNamePersonForMorphRelationSecondId" is not available as it is already used by join column name",
   },
-  "message": "Multiple validation errors occurred while creating field",
+  "message": "Multiple validation errors occurred while creating fields",
   "name": "GraphQLError",
 }
 `;
