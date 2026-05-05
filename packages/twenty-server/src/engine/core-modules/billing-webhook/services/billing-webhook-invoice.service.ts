@@ -8,6 +8,8 @@ import { type Repository } from 'typeorm';
 
 import type Stripe from 'stripe';
 
+import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
+import { PAYMENT_RECEIVED_EVENT } from 'src/engine/core-modules/audit/utils/events/workspace-event/billing/payment-received';
 import { getSubscriptionIdFromInvoice } from 'src/engine/core-modules/billing-webhook/utils/get-subscription-id-from-invoice.util';
 import {
   BillingException,
@@ -41,6 +43,7 @@ export class BillingWebhookInvoiceService {
     private readonly billingCreditRolloverService: BillingCreditRolloverService,
     private readonly meteredCreditService: MeteredCreditService,
     private readonly stripeInvoiceService: StripeInvoiceService,
+    private readonly auditService: AuditService,
   ) {}
 
   async processStripeEvent(
@@ -171,6 +174,20 @@ export class BillingWebhookInvoiceService {
     );
 
     await this.delaySuspendedWorkspaceCleanup(stripeCustomerId);
+
+    const billingCustomer = await this.billingCustomerRepository.findOne({
+      where: { stripeCustomerId },
+    });
+
+    if (isDefined(billingCustomer)) {
+      this.auditService
+        .createContext({ workspaceId: billingCustomer.workspaceId })
+        .insertWorkspaceEvent(PAYMENT_RECEIVED_EVENT, {
+          stripeInvoiceId: data.object.id,
+          amountPaid: data.object.amount_paid,
+          billingReason: data.object.billing_reason ?? undefined,
+        });
+    }
 
     return { stripeSubscriptionId };
   }
