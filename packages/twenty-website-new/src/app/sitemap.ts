@@ -1,14 +1,15 @@
 import type { MetadataRoute } from 'next';
 import { SOURCE_LOCALE, type AppLocale } from 'twenty-shared/translations';
 
-import { PUBLIC_APP_LOCALE_LIST } from '@/lib/i18n';
+import { PUBLIC_APP_LOCALE_LIST, localeToUrlSegment } from '@/lib/i18n';
 import { getSiteUrl } from '@/lib/seo';
 import { getIndexedWebsiteRoutes } from '@/lib/website-routing';
 
 const SITE_URL = getSiteUrl();
 
 const buildLocalizedUrl = (locale: AppLocale, path: string): string => {
-  const prefix = locale === SOURCE_LOCALE ? '' : `/${locale}`;
+  const prefix =
+    locale === SOURCE_LOCALE ? '' : `/${localeToUrlSegment(locale)}`;
   const tail = path === '/' ? '' : path;
   return `${SITE_URL}${prefix}${tail}`;
 };

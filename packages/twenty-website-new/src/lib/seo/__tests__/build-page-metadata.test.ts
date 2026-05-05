@@ -88,7 +88,7 @@ describe('buildPageMetadata', () => {
       | Record<string, string>
       | undefined;
     expect(languages?.en).toBe('/pricing');
-    expect(languages?.['fr-FR']).toBe('/fr-FR/pricing');
+    expect(languages?.['fr-FR']).toBe('/fr/pricing');
     expect(languages?.['zh-CN']).toBeUndefined();
     expect(languages?.['x-default']).toBe('/pricing');
   });
@@ -120,7 +120,7 @@ describe('buildPageMetadata', () => {
       | Record<string, string>
       | undefined;
     expect(languages?.['de-DE']).toBeUndefined();
-    expect(languages?.['fr-FR']).toBe('/fr-FR');
+    expect(languages?.['fr-FR']).toBe('/fr');
     expect(languages?.en).toBe('/');
     expect(languages?.['x-default']).toBe('/');
   });

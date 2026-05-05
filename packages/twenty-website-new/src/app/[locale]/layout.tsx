@@ -20,6 +20,7 @@ import { createMessageDescriptorRenderer } from '@/lib/i18n/create-message-descr
 import {
   I18nProvider,
   PUBLIC_APP_LOCALE_LIST,
+  localeToUrlSegment,
   resolveLocaleParam,
 } from '@/lib/i18n';
 import { getLocaleMessages } from '@/lib/i18n/messages-by-locale';
@@ -120,7 +121,9 @@ type LocaleLayoutParams = { locale: string };
 export const dynamicParams = false;
 
 export const generateStaticParams = (): LocaleLayoutParams[] =>
-  PUBLIC_APP_LOCALE_LIST.map((locale) => ({ locale }));
+  PUBLIC_APP_LOCALE_LIST.map((locale) => ({
+    locale: localeToUrlSegment(locale),
+  }));
 
 const LocaleLayout = async ({
   children,

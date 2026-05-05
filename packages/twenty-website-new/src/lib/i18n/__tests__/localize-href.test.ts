@@ -5,9 +5,19 @@ describe('localizeHref', () => {
     expect(localizeHref('de-DE', '/pricing')).toBe('/pricing');
   });
 
-  it('emits locale prefixes for published non-default locales', () => {
-    expect(localizeHref('fr-FR', '/pricing')).toBe('/fr-FR/pricing');
-    expect(localizeHref('fr-FR', '/')).toBe('/fr-FR');
+  it('emits the URL-segment prefix (not the AppLocale) for published non-default locales', () => {
+    expect(localizeHref('fr-FR', '/pricing')).toBe('/fr/pricing');
+    expect(localizeHref('fr-FR', '/')).toBe('/fr');
+  });
+
+  it('strips the canonical /fr URL segment when re-localising to the default locale', () => {
+    expect(localizeHref('en', '/fr/pricing')).toBe('/pricing');
+    expect(localizeHref('en', '/fr')).toBe('/');
+  });
+
+  it('strips a stale /fr-FR AppLocale prefix when re-localising', () => {
+    expect(localizeHref('en', '/fr-FR/pricing')).toBe('/pricing');
+    expect(localizeHref('fr-FR', '/fr-FR/pricing')).toBe('/fr/pricing');
   });
 
   it('returns paths unprefixed for the default locale (English at root)', () => {
