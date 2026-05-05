@@ -24,7 +24,9 @@ export const SidePanelFrontComponentPage = () => {
     return null;
   }
 
-  const selectedRecordIds = isDefined(viewableFrontComponentRecordContext?.recordId)
+  const selectedRecordIds = isDefined(
+    viewableFrontComponentRecordContext?.recordId,
+  )
     ? [viewableFrontComponentRecordContext.recordId]
     : undefined;
 
