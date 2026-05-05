@@ -1,12 +1,11 @@
 import { useEffect } from 'react';
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { useRecordId, updateProgress, enqueueSnackbar, unmountFrontComponent } from 'twenty-sdk/front-component';
+import { useRecordIds, updateProgress, enqueueSnackbar, unmountFrontComponent } from 'twenty-sdk/front-component';
 import { CoreApiClient } from 'twenty-client-sdk/core';
-import { isDefined } from 'twenty-shared/utils';
 import { POST_CARD_UNIVERSAL_IDENTIFIER } from '../objects/post-card.object';
 
 const SendPostCardsEffect = () => {
-  const recordId = useRecordId();
+  const recordIds = useRecordIds();
 
   useEffect(() => {
     const send = async () => {
@@ -16,8 +15,8 @@ const SendPostCardsEffect = () => {
 
         let idsToSend: string[] = [];
 
-        if (isDefined(recordId)) {
-          idsToSend = [recordId];
+        if (recordIds.length > 0) {
+          idsToSend = recordIds;
         } else {
           const { postCards } = await client.query({
             postCards: {
@@ -74,7 +73,7 @@ const SendPostCardsEffect = () => {
     };
 
     send();
-  }, [recordId]);
+  }, [recordIds]);
 
   return null;
 };
