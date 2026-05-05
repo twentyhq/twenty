@@ -30,6 +30,7 @@ export async function findIssueByNumberAndRepo(
           closedAt: true,
           repo: true,
           authorId: true,
+          isTransferred: true,
         },
       },
     },

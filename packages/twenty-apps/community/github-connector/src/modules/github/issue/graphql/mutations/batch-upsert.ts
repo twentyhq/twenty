@@ -14,6 +14,7 @@ export async function batchUpsertIssues(
     closedAt: string | null;
     repo: string;
     authorId: string | null;
+    isTransferred: boolean;
   }>,
 ): Promise<IssueRow[]> {
   return chunkedBatchCreate('createIssues', items, {
@@ -23,5 +24,6 @@ export async function batchUpsertIssues(
     title: true,
     state: true,
     repo: true,
+    isTransferred: true,
   }) as Promise<IssueRow[]>;
 }

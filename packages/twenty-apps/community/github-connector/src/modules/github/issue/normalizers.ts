@@ -15,6 +15,7 @@ export type IssueCanonical = {
   githubCreatedAt: string | null;
   closedAt: string | null;
   repo: string;
+  isTransferred: boolean;
 };
 
 export function deriveIssueState(state: string): IssueState {
@@ -31,6 +32,7 @@ export function buildIssueUniqueIdentifier(
 export function issueFromWebhook(
   issue: GitHubIssue,
   repoFullName: string,
+  options?: { isTransferred?: boolean },
 ): IssueCanonical {
   return {
     title: issue.title,
@@ -42,6 +44,7 @@ export function issueFromWebhook(
     githubCreatedAt: issue.created_at,
     closedAt: issue.closed_at,
     repo: repoFullName,
+    isTransferred: options?.isTransferred ?? false,
   };
 }
 
@@ -49,6 +52,9 @@ export function issueFromGraphql(
   issue: GqlIssue,
   repoFullName: string,
 ): IssueCanonical {
+  const hasTransferEvent =
+    issue.timelineItems?.nodes?.some((n) => n?.__typename === 'TransferredEvent') ?? false;
+
   return {
     title: issue.title,
     githubNumber: issue.number,
@@ -59,5 +65,6 @@ export function issueFromGraphql(
     githubCreatedAt: issue.createdAt,
     closedAt: issue.closedAt,
     repo: repoFullName,
+    isTransferred: hasTransferEvent,
   };
 }

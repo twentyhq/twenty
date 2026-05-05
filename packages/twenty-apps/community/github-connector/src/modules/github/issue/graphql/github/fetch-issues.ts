@@ -19,6 +19,7 @@ query($owner: String!, $name: String!, $cursor: String) {
         closedAt
         author { login avatarUrl ... on User { databaseId } }
         labels(first: 50) { nodes { name } }
+        timelineItems(itemTypes: [TRANSFERRED_EVENT], first: 1) { nodes { __typename } }
       }
     }
   }
@@ -33,6 +34,7 @@ export type GqlIssue = {
   closedAt: string | null;
   author: { login: string; avatarUrl?: string | null; databaseId?: number } | null;
   labels: { nodes: Array<{ name: string }> };
+  timelineItems?: { nodes: Array<{ __typename: string } | null> } | null;
 };
 
 type Response = {

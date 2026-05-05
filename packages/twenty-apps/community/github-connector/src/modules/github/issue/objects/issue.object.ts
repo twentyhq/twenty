@@ -27,6 +27,9 @@ export const ISSUE_REPO_FIELD_UNIVERSAL_IDENTIFIER =
 export const ISSUE_UNIQUE_IDENTIFIER_FIELD_UNIVERSAL_IDENTIFIER =
   '0ca04207-4d74-4298-8238-59cdf685862b';
 
+export const ISSUE_IS_TRANSFERRED_FIELD_UNIVERSAL_IDENTIFIER =
+  'a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d';
+
 enum IssueState {
   OPEN = 'OPEN',
   CLOSED = 'CLOSED',
@@ -129,6 +132,16 @@ export default defineObject({
       label: 'Unique Identifier',
       icon: 'IconFingerprint',
       isUnique: true,
+    },
+    {
+      universalIdentifier: ISSUE_IS_TRANSFERRED_FIELD_UNIVERSAL_IDENTIFIER,
+      name: 'isTransferred',
+      type: FieldType.BOOLEAN,
+      label: 'Transferred',
+      description:
+        'True when the issue has been transferred to a different repository via GitHub.',
+      icon: 'IconArrowsExchange',
+      defaultValue: false,
     },
   ],
 });

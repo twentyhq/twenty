@@ -150,8 +150,12 @@ async function handleIssueEvent(payload: GitHubWebhookPayload) {
     return { skipped: true, reason: 'missing issue or repository' };
   }
 
+  const isTransferred = payload.action === 'transferred';
+
   const idByLogin = await upsertContributorsByLogin([issue.user]);
-  const canonical = issueFromWebhook(issue, repository.full_name);
+  const canonical = issueFromWebhook(issue, repository.full_name, {
+    isTransferred,
+  });
 
   const [record] = await batchUpsertIssues([
     { ...canonical, authorId: idByLogin.get(issue.user.login) ?? null },

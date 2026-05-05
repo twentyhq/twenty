@@ -12,4 +12,5 @@ export type IssueRow = {
   closedAt?: string | null;
   repo?: string | null;
   authorId?: string | null;
+  isTransferred?: boolean | null;
 };
