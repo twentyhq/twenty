@@ -17,6 +17,10 @@ export { LocaleContext } from './LocaleContext';
 export { LocalizedLink } from './LocalizedLink';
 export { LocalizedLinkButton } from './LocalizedLinkButton';
 export { localizeHref, stripLocale } from './localize-href';
+export {
+  getEnglishLocaleName,
+  getNativeLocaleName,
+} from './locale-display-names';
 export { resolveLocaleParam } from './resolve-locale-param';
 export {
   LOCALE_BY_URL_SEGMENT,
