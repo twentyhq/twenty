@@ -7,6 +7,7 @@ import { type FieldAddressDraftValue } from '@/object-record/record-field/ui/typ
 import { type FieldAddressValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import { t } from '@lingui/core/macro';
+import { normalizeAddressFieldValueForPersist } from '~/utils/normalize-address-field-value-for-persist';
 
 type FormAddressFieldInputProps = {
   label?: string;
@@ -25,7 +26,7 @@ export const FormAddressFieldInput = ({
 }: FormAddressFieldInputProps) => {
   const handleChange =
     (field: keyof FieldAddressDraftValue) => (updatedAddressPart: string) => {
-      const updatedAddress = {
+      const updatedAddress: FieldAddressValue = {
         addressStreet1: defaultValue?.addressStreet1 ?? '',
         addressStreet2: defaultValue?.addressStreet2 ?? '',
         addressCity: defaultValue?.addressCity ?? '',
@@ -36,7 +37,7 @@ export const FormAddressFieldInput = ({
         addressLng: defaultValue?.addressLng ?? null,
         [field]: updatedAddressPart,
       };
-      onChange(updatedAddress);
+      onChange(normalizeAddressFieldValueForPersist(updatedAddress));
     };
 
   return (
