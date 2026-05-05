@@ -645,6 +645,11 @@ export class AuthService {
       );
     }
 
+    // RFC 9207: include `iss` in authorization response to prevent mix-up attacks
+    const issuer = this.twentyConfigService.get('SERVER_URL');
+
+    redirectUriValidation.parsed.searchParams.set('iss', issuer);
+
     return { redirectUrl: redirectUriValidation.parsed.toString() };
   }
 

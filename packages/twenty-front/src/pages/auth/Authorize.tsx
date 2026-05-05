@@ -106,6 +106,7 @@ export const Authorize = () => {
   const redirectUrl =
     searchParam.get('redirect_uri') ?? searchParam.get('redirectUrl');
   const state = searchParam.get('state');
+  const scope = searchParam.get('scope');
 
   const {
     data,
@@ -142,6 +143,7 @@ export const Authorize = () => {
           codeChallenge: codeChallenge ?? undefined,
           redirectUrl,
           state: state ?? undefined,
+          scope: scope ?? undefined,
         },
         onCompleted: (responseData) => {
           redirect(responseData.authorizeApp.redirectUrl);
