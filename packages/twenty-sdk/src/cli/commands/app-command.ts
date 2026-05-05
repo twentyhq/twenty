@@ -115,9 +115,18 @@ export const registerCommands = (program: Command): void => {
 
   program
     .command('catalog-sync')
-    .description('Trigger marketplace catalog sync on the server')
+    .description(
+      '[Deprecated] Moved under server. Use `yarn twenty server catalog-sync`.',
+    )
     .option('-r, --remote <name>', 'Sync on a specific remote')
     .action(async (options) => {
+      console.warn(
+        chalk.yellow(
+          '`yarn twenty catalog-sync` is deprecated and will be removed in a future release.\n' +
+            'Use `yarn twenty server catalog-sync` instead.\n',
+        ),
+      );
+
       await catalogSyncCommand.execute({
         remote: options.remote,
       });

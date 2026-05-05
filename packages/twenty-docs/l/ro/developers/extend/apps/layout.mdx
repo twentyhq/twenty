@@ -1,0 +1,178 @@
+---
+title: Aspect
+description: Definiți vizualizări, elemente de meniu de navigare și layouturi de pagină pentru a stabili modul în care aplicația dvs. se afișează în Twenty.
+icon: table-columns
+---
+
+Entitățile de layout controlează modul în care aplicația dvs. apare în UI-ul Twenty — ce se află în bara laterală, care vizualizări salvate vin împreună cu aplicația și cum este aranjată pagina de detalii a unei înregistrări.
+
+## Concepte de layout
+
+| Concept                          | Ce controlează                                                                                    | Entitate                   |
+| -------------------------------- | ------------------------------------------------------------------------------------------------- | -------------------------- |
+| **Vizualizare**                  | O configurație salvată a unei liste pentru un obiect — câmpuri vizibile, ordine, filtre, grupuri  | `defineView`               |
+| **Element de meniu de navigare** | Un element în bara laterală stângă care face legătura către o vizualizare sau un URL extern       | `defineNavigationMenuItem` |
+| **Layout pagină**                | Filele și widgeturile care alcătuiesc pagina de detalii a unei înregistrări                       | `definePageLayout`         |
+| **Filă layout pagină**           | O filă independentă atașată unui layout pagină existent (standard sau al propriei tale aplicații) | `definePageLayoutTab`      |
+
+Vizualizările, elementele de navigare și layouturile de pagină fac referire unele la altele prin `universalIdentifier`:
+
+* Un **element de meniu de navigare** de tip `VIEW` indică către un identificator `defineView`, astfel încât linkul din bara laterală deschide acea vizualizare salvată.
+* Un **layout de pagină** de tip `RECORD_PAGE` vizează un obiect și poate încorpora [componente frontale](/l/ro/developers/extend/apps/front-components) în filele sale ca widgeturi.
+
+<AccordionGroup>
+<Accordion title="defineView" description="Definește vizualizări salvate pentru obiecte">
+
+Vizualizările sunt configurații salvate despre cum sunt afișate înregistrările unui obiect — inclusiv ce câmpuri sunt vizibile, ordinea lor și orice filtre sau grupuri aplicate. Utilizați `defineView()` pentru a livra vizualizări preconfigurate împreună cu aplicația:
+
+```ts src/views/example-view.ts
+import { defineView, ViewKey } from 'twenty-sdk/define';
+import { EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER } from '../objects/example-object';
+import { NAME_FIELD_UNIVERSAL_IDENTIFIER } from '../objects/example-object';
+
+export default defineView({
+  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  name: 'All example items',
+  objectUniversalIdentifier: EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER,
+  icon: 'IconList',
+  key: ViewKey.INDEX,
+  position: 0,
+  fields: [
+    {
+      universalIdentifier: 'f926bdb7-6af7-4683-9a09-adbca56c29f0',
+      fieldMetadataUniversalIdentifier: NAME_FIELD_UNIVERSAL_IDENTIFIER,
+      position: 0,
+      isVisible: true,
+      size: 200,
+    },
+  ],
+});
+```
+
+Puncte cheie:
+* `objectUniversalIdentifier` specifică la ce obiect se aplică această vizualizare.
+* `key` determină tipul vizualizării (de ex., `ViewKey.INDEX` pentru vizualizarea principală de listă).
+* `fields` controlează ce coloane apar și ordinea acestora. Fiecare câmp face referire la un `fieldMetadataUniversalIdentifier`.
+* Puteți defini, de asemenea, `filters`, `filterGroups`, `groups` și `fieldGroups` pentru configurații mai avansate.
+* `position` controlează ordonarea atunci când există mai multe vizualizări pentru același obiect.
+
+</Accordion>
+<Accordion title="defineNavigationMenuItem" description="Definește linkuri de navigare în bara laterală">
+
+Elementele de meniu de navigare adaugă intrări personalizate în bara laterală a spațiului de lucru. Utilizați `defineNavigationMenuItem()` pentru a crea linkuri către vizualizări, URL-uri externe sau obiecte:
+
+```ts src/navigation-menu-items/example-navigation-menu-item.ts
+import { defineNavigationMenuItem, NavigationMenuItemType } from 'twenty-sdk/define';
+import { EXAMPLE_VIEW_UNIVERSAL_IDENTIFIER } from '../views/example-view';
+
+export default defineNavigationMenuItem({
+  universalIdentifier: '9327db91-afa1-41b6-bd9d-2b51a26efb4c',
+  name: 'example-navigation-menu-item',
+  icon: 'IconList',
+  color: 'blue',
+  position: 0,
+  type: NavigationMenuItemType.VIEW,
+  viewUniversalIdentifier: EXAMPLE_VIEW_UNIVERSAL_IDENTIFIER,
+});
+```
+
+Puncte cheie:
+* `type` determină la ce face trimitere elementul de meniu: `NavigationMenuItemType.VIEW` pentru o vizualizare salvată sau `NavigationMenuItemType.LINK` pentru un URL extern.
+* Pentru link-uri către vizualizări, setați `viewUniversalIdentifier`. Pentru link-uri externe, setați `link`.
+* `position` controlează ordonarea în bara laterală.
+* `icon` și `color` (opțional) personalizează aspectul.
+
+</Accordion>
+<Accordion title="definePageLayout" description="Definiți machete de pagină personalizate pentru vizualizările de înregistrare">
+
+Machetele de pagină vă permit să personalizați aspectul unei pagini de detalii a unei înregistrări — ce file apar, ce widgeturi sunt în fiecare filă și cum sunt aranjate. Utilizați `definePageLayout()` pentru a livra machete personalizate împreună cu aplicația:
+
+```ts src/page-layouts/example-record-page-layout.ts
+import { definePageLayout, PageLayoutTabLayoutMode } from 'twenty-sdk/define';
+import { EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER } from '../objects/example-object';
+import { HELLO_WORLD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER } from '../front-components/hello-world';
+
+export default definePageLayout({
+  universalIdentifier: '203aeb94-6701-46d6-9af1-be2bbcc9e134',
+  name: 'Example Record Page',
+  type: 'RECORD_PAGE',
+  objectUniversalIdentifier: EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER,
+  tabs: [
+    {
+      universalIdentifier: '6ed26b60-a51d-4ad7-86dd-1c04c7f3cac5',
+      title: 'Hello World',
+      position: 50,
+      icon: 'IconWorld',
+      layoutMode: PageLayoutTabLayoutMode.CANVAS,
+      widgets: [
+        {
+          universalIdentifier: 'aa4234e0-2e5f-4c02-a96a-573449e2351d',
+          title: 'Hello World',
+          type: 'FRONT_COMPONENT',
+          configuration: {
+            configurationType: 'FRONT_COMPONENT',
+            frontComponentUniversalIdentifier:
+              HELLO_WORLD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
+          },
+        },
+      ],
+    },
+  ],
+});
+```
+
+Puncte cheie:
+* `type` este de obicei `'RECORD_PAGE'` pentru a personaliza vizualizarea de detaliu a unui obiect specific.
+* `objectUniversalIdentifier` specifică la ce obiect se aplică această machetă.
+* Fiecare `tab` definește o secțiune a paginii cu un `title`, `position` și `layoutMode` (`CANVAS` pentru layout liber).
+* Fiecare `widget` dintr-o filă poate reda o componentă frontend, o listă de relații sau alte tipuri de widgeturi integrate.
+* `position` pe file le controlează ordinea. Folosiți valori mai mari (de ex., 50) pentru a plasa filele personalizate după cele integrate.
+
+</Accordion>
+<Accordion title="definePageLayoutTab" description="Adaugă o filă la un layout de pagină existent">
+
+`definePageLayoutTab` permite aplicației tale să atașeze o singură filă — cu widgeturi opționale — la un layout de pagină **existent**. Cel mai comun caz de utilizare este adăugarea unei file personalizate (de exemplu, o filă de analize sau o filă cu rezumat AI) la una dintre paginile de înregistrare predefinite ale Twenty sau la un layout de pagină pe care propria ta aplicație îl livrează deja.
+
+Layoutul de pagină țintă trebuie să fie fie un layout de pagină Twenty **standard**, fie unul definit de **propria ta aplicație**; referințele între aplicații la layouturi de pagină deținute de o altă aplicație instalată nu sunt acceptate în prezent.
+
+```ts src/page-layouts/example-extra-tab.ts
+import {
+  definePageLayoutTab,
+  PageLayoutTabLayoutMode,
+} from 'twenty-sdk/define';
+import { HELLO_WORLD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER } from '../front-components/hello-world';
+
+const COMPANY_RECORD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER =
+  '20202020-ab01-4001-8001-c0aba11c0100';
+
+export default definePageLayoutTab({
+  universalIdentifier: 'b1b2b3b4-b5b6-4000-8000-000000000001',
+  pageLayoutUniversalIdentifier:
+    COMPANY_RECORD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER,
+  title: 'Hello World',
+  position: 1000,
+  icon: 'IconWorld',
+  layoutMode: PageLayoutTabLayoutMode.CANVAS,
+  widgets: [
+    {
+      universalIdentifier: 'b1b2b3b4-b5b6-4000-8000-000000000002',
+      title: 'Hello World',
+      type: 'FRONT_COMPONENT',
+      configuration: {
+        configurationType: 'FRONT_COMPONENT',
+        frontComponentUniversalIdentifier:
+          HELLO_WORLD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
+      },
+    },
+  ],
+});
+```
+
+Puncte cheie:
+* `pageLayoutUniversalIdentifier` este **necesar** când folosești `definePageLayoutTab` și trebuie să indice către un layout de pagină care există deja la momentul instalării (standard sau al aplicației tale). Când lipsește layoutul de pagină părinte, instalarea eșuează cu o eroare clară de validare.
+* `widgets` sunt limitate doar la această filă — fac referire la componente front-end, vizualizări etc., exact ca widgeturile definite inline în `definePageLayout`.
+* `position` controlează ordonarea în raport cu filele existente din layoutul țintă. Alege o valoare care să plaseze fila ta acolo unde dorești, relativ la filele predefinite.
+* Folosește aceasta în loc de `definePageLayout` atunci când vrei doar să **adaugi** la un layout existent. Folosește `definePageLayout` când deții întregul layout (de obicei un `RECORD_PAGE` pentru un obiect pe care îl livrezi în aplicația ta sau un `STANDALONE_PAGE`).
+
+</Accordion>
+</AccordionGroup>

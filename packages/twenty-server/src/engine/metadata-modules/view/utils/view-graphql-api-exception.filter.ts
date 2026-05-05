@@ -4,11 +4,7 @@ import {
   type ExecutionContext,
   Injectable,
 } from '@nestjs/common';
-import { GqlExecutionContext } from '@nestjs/graphql';
 
-import { SOURCE_LOCALE } from 'twenty-shared/translations';
-
-import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { ViewFieldGroupException } from 'src/engine/metadata-modules/view-field-group/exceptions/view-field-group.exception';
 import { ViewFieldException } from 'src/engine/metadata-modules/view-field/exceptions/view-field.exception';
 import { ViewFilterGroupException } from 'src/engine/metadata-modules/view-filter-group/exceptions/view-filter-group.exception';
@@ -30,8 +26,6 @@ import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager
 )
 @Injectable()
 export class ViewGraphqlApiExceptionFilter implements ExceptionFilter {
-  constructor(private readonly i18nService: I18nService) {}
-
   catch(
     exception:
       | ViewException
@@ -42,13 +36,8 @@ export class ViewGraphqlApiExceptionFilter implements ExceptionFilter {
       | ViewGroupException
       | ViewSortException
       | WorkspaceMigrationBuilderException,
-    host: ExecutionContext,
+    _host: ExecutionContext,
   ) {
-    const gqlContext = GqlExecutionContext.create(host);
-    const ctx = gqlContext.getContext();
-    const userLocale = ctx.req?.locale ?? SOURCE_LOCALE;
-    const i18n = this.i18nService.getI18nInstance(userLocale);
-
-    return viewGraphqlApiExceptionHandler(exception, i18n);
+    return viewGraphqlApiExceptionHandler(exception);
   }
 }

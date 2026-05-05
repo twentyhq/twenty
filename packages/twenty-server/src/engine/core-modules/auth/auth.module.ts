@@ -8,9 +8,9 @@ import { AppTokenEntity } from 'src/engine/core-modules/app-token/app-token.enti
 import { AppTokenService } from 'src/engine/core-modules/app-token/services/app-token.service';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
-import { ApplicationOAuthProviderModule } from 'src/engine/core-modules/application/application-oauth-provider/application-oauth-provider.module';
-import { ApplicationOAuthProviderController } from 'src/engine/core-modules/application/application-oauth-provider/application-oauth-provider.controller';
-import { ApplicationConnectionsModule } from 'src/engine/core-modules/application/application-oauth-provider/connections/application-connections.module';
+import { ConnectionProviderModule } from 'src/engine/core-modules/application/connection-provider/connection-provider.module';
+import { ConnectionProviderOAuthController } from 'src/engine/core-modules/application/connection-provider/connection-provider-oauth.controller';
+import { ApplicationConnectionsModule } from 'src/engine/core-modules/application/connection-provider/connections/application-connections.module';
 import { AuditModule } from 'src/engine/core-modules/audit/audit.module';
 import { GoogleAPIsAuthController } from 'src/engine/core-modules/auth/controllers/google-apis-auth.controller';
 import { GoogleAuthController } from 'src/engine/core-modules/auth/controllers/google-auth.controller';
@@ -118,7 +118,7 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
     DomainServerConfigModule,
     ApplicationRegistrationModule,
     ApplicationModule,
-    ApplicationOAuthProviderModule,
+    ConnectionProviderModule,
     ApplicationConnectionsModule,
     WorkspaceCacheModule,
     CoreEntityCacheModule,
@@ -133,7 +133,7 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
     MicrosoftAPIsAuthController,
     OAuthPropagatorController,
     SSOAuthController,
-    ApplicationOAuthProviderController,
+    ConnectionProviderOAuthController,
   ],
   providers: [
     SignInUpService,

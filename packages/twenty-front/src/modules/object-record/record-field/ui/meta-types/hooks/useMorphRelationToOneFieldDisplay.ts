@@ -13,7 +13,7 @@ import { isFieldMorphRelation } from '@/object-record/record-field/ui/types/guar
 
 import { useRecordFieldValue } from '@/object-record/record-store/hooks/useRecordFieldValue';
 
-import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { type FieldMorphRelationManyToOneValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { isDefined } from 'twenty-shared/utils';
 
 export const useMorphRelationToOneFieldDisplay = () => {
@@ -34,10 +34,12 @@ export const useMorphRelationToOneFieldDisplay = () => {
 
   const button = fieldDefinition.editButtonIcon;
 
-  const morphFieldValueWithObjectName = useRecordFieldValue<{
-    objectNameSingular: string;
-    value: ObjectRecord;
-  }>(recordId, fieldDefinition.metadata.fieldName, fieldDefinition);
+  const morphFieldValueWithObjectName =
+    useRecordFieldValue<FieldMorphRelationManyToOneValue>(
+      recordId,
+      fieldDefinition.metadata.fieldName,
+      fieldDefinition,
+    );
 
   if (!isDefined(morphFieldValueWithObjectName)) {
     return {
@@ -66,6 +68,7 @@ export const useMorphRelationToOneFieldDisplay = () => {
 
   return {
     fieldDefinition,
+    foreignKeyFieldValue: morphFieldValueWithObjectName.foreignKeyFieldValue,
     morphFieldValuesWithObjectName: morphFieldValueWithObjectName,
     maxWidth: maxWidthForField,
     recordId,

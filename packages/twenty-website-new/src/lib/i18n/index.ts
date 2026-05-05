@@ -17,7 +17,15 @@ export { LocaleContext } from './LocaleContext';
 export { LocalizedLink } from './LocalizedLink';
 export { LocalizedLinkButton } from './LocalizedLinkButton';
 export { localizeHref, stripLocale } from './localize-href';
+export {
+  getEnglishLocaleName,
+  getNativeLocaleName,
+} from './locale-display-names';
 export { resolveLocaleParam } from './resolve-locale-param';
+export {
+  LOCALE_BY_URL_SEGMENT,
+  localeToUrlSegment,
+} from './website-locale-segments';
 export { useLocale } from './use-locale';
 export { useRenderMessage } from './use-render-message';
 export { useUnlocalizedPathname } from './use-unlocalized-pathname';

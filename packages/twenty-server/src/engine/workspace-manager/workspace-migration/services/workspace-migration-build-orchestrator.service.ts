@@ -16,6 +16,7 @@ import { crossEntityTransversalValidation } from 'src/engine/workspace-manager/w
 import { mergeOrchestratorFailureReports } from 'src/engine/workspace-manager/workspace-migration/utils/merge-orchestrator-failure-reports.util';
 import { WorkspaceMigrationAgentActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/agent/workspace-migration-agent-actions-builder.service';
 import { WorkspaceMigrationCommandMenuItemActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/command-menu-item/workspace-migration-command-menu-item-actions-builder.service';
+import { WorkspaceMigrationConnectionProviderActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/connection-provider/workspace-migration-connection-provider-actions-builder.service';
 import { WorkspaceMigrationFieldPermissionActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/field-permission/workspace-migration-field-permission-actions-builder.service';
 import { WorkspaceMigrationFieldActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/field/workspace-migration-field-actions-builder.service';
 import { WorkspaceMigrationFrontComponentActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/front-component/workspace-migration-front-component-actions-builder.service';
@@ -72,6 +73,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
     private readonly workspaceMigrationRowLevelPermissionPredicateGroupActionsBuilderService: WorkspaceMigrationRowLevelPermissionPredicateGroupActionsBuilderService,
     private readonly workspaceMigrationFrontComponentActionsBuilderService: WorkspaceMigrationFrontComponentActionsBuilderService,
     private readonly workspaceMigrationWebhookActionsBuilderService: WorkspaceMigrationWebhookActionsBuilderService,
+    private readonly workspaceMigrationConnectionProviderActionsBuilderService: WorkspaceMigrationConnectionProviderActionsBuilderService,
   ) {}
 
   private setupOptimisticCache({
@@ -164,6 +166,7 @@ export class WorkspaceMigrationBuildOrchestratorService {
       flatPageLayoutTabMaps,
       flatFrontComponentMaps,
       flatWebhookMaps,
+      flatConnectionProviderMaps,
     } = fromToAllFlatEntityMaps;
 
     if (isDefined(flatObjectMetadataMaps)) {
@@ -823,6 +826,34 @@ export class WorkspaceMigrationBuildOrchestratorService {
       }
     }
 
+    if (isDefined(flatConnectionProviderMaps)) {
+      const {
+        from: fromFlatConnectionProviderMaps,
+        to: toFlatConnectionProviderMaps,
+      } = flatConnectionProviderMaps;
+
+      const connectionProviderResult =
+        await this.workspaceMigrationConnectionProviderActionsBuilderService.validateAndBuild(
+          {
+            additionalCacheDataMaps,
+            from: fromFlatConnectionProviderMaps,
+            to: toFlatConnectionProviderMaps,
+            buildOptions,
+            dependencyOptimisticFlatEntityMaps: optimisticAllFlatEntityMaps,
+            workspaceId,
+          },
+        );
+
+      if (connectionProviderResult.status === 'fail') {
+        orchestratorFailureReport.connectionProvider.push(
+          ...connectionProviderResult.errors,
+        );
+      } else {
+        orchestratorActionsReport.connectionProvider =
+          connectionProviderResult.actions;
+      }
+    }
+
     const crossEntityFailureReport = crossEntityTransversalValidation({
       optimisticUniversalFlatMaps: optimisticAllFlatEntityMaps,
       orchestratorActionsReport,
@@ -998,6 +1029,12 @@ export class WorkspaceMigrationBuildOrchestratorService {
           ...aggregatedOrchestratorActionsReport.webhook.delete,
           ...aggregatedOrchestratorActionsReport.webhook.create,
           ...aggregatedOrchestratorActionsReport.webhook.update,
+          ///
+
+          // Connection providers
+          ...aggregatedOrchestratorActionsReport.connectionProvider.delete,
+          ...aggregatedOrchestratorActionsReport.connectionProvider.create,
+          ...aggregatedOrchestratorActionsReport.connectionProvider.update,
           ///
         ],
       },

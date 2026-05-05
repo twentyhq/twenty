@@ -15,6 +15,7 @@ import { getFrontComponentBaseFile } from '@/cli/utilities/entity/entity-front-c
 import { getLogicFunctionBaseFile } from '@/cli/utilities/entity/entity-logic-function-template';
 import { getNavigationMenuItemBaseFile } from '@/cli/utilities/entity/entity-navigation-menu-item-template';
 import { getObjectBaseFile } from '@/cli/utilities/entity/entity-object-template';
+import { getCommandMenuItemBaseFile } from '@/cli/utilities/entity/entity-command-menu-item-template';
 import { getPageLayoutBaseFile } from '@/cli/utilities/entity/entity-page-layout-template';
 import { getPageLayoutTabBaseFile } from '@/cli/utilities/entity/entity-page-layout-tab-template';
 import { getRecordPageLayoutBaseFile } from '@/cli/utilities/entity/entity-record-page-layout-template';
@@ -212,6 +213,15 @@ export class EntityAddCommand {
         const name = await this.getEntityName(entity);
 
         const file = getPageLayoutTabBaseFile({
+          name,
+        });
+        return { name, file };
+      }
+
+      case SyncableEntity.CommandMenuItem: {
+        const name = await this.getEntityName(entity);
+
+        const file = getCommandMenuItemBaseFile({
           name,
         });
         return { name, file };

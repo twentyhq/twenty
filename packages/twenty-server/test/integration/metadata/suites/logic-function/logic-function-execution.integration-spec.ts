@@ -65,10 +65,6 @@ describe('Logic Function Execution', () => {
         id: createData.createOneLogicFunction.id,
         update: {
           sourceHandlerCode: DEFAULT_TEMPLATE_FUNCTION_CODE,
-          toolInputSchema: {
-            type: 'object',
-            properties: { message: { type: 'string' } },
-          },
         },
       },
       expectToFail: false,
@@ -115,10 +111,6 @@ describe('Logic Function Execution', () => {
         id: createData.createOneLogicFunction.id,
         update: {
           sourceHandlerCode: EXTERNAL_PACKAGES_FUNCTION_CODE,
-          toolInputSchema: {
-            type: 'object',
-            properties: { message: { type: 'string' } },
-          },
         },
       },
       expectToFail: false,
@@ -207,10 +199,6 @@ describe('Logic Function Execution', () => {
         name: 'Test Default Function',
         source: {
           sourceHandlerCode: DEFAULT_TEMPLATE_FUNCTION_CODE,
-          toolInputSchema: {
-            type: 'object',
-            properties: { message: { type: 'string' } },
-          },
           handlerName: 'main',
         },
       },
@@ -263,10 +251,6 @@ describe('Logic Function Execution', () => {
         id: createData.createOneLogicFunction.id,
         update: {
           sourceHandlerCode: ERROR_FUNCTION_CODE,
-          toolInputSchema: {
-            type: 'object',
-            properties: { message: { type: 'string' } },
-          },
         },
       },
       expectToFail: false,
