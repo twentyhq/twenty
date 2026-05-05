@@ -154,7 +154,7 @@ export const Modal = ({
             initial="hidden"
             animate="visible"
             exit="exit"
-            layout
+            layout="position"
             overlay={overlay}
             variants={modalAnimation}
             transition={{
