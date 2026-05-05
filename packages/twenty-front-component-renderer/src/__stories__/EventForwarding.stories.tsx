@@ -31,6 +31,7 @@ const meta: Meta<typeof FrontComponentRenderer> = {
       frontComponentId: 'storybook-test',
       userId: null,
       recordId: null,
+      recordIds: [],
     },
     colorScheme: 'light',
     frontComponentHostCommunicationApi: createHostApiMocks(),
