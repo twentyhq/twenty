@@ -35,7 +35,7 @@ export const getMatchingRecordId = (
       value: getValueFromPath(record, field.fullPath),
     }));
 
-    if (requestFieldValues.some(({ value }) => !isDefined(value))) {
+    if (requestFieldValues.every(({ value }) => !isDefined(value))) {
       return acc;
     }
 
@@ -45,6 +45,13 @@ export const getMatchingRecordId = (
           existingRecord,
           field.fullPath,
         );
+
+        // Treat both-undefined as equal so optional composite subfields
+        // (e.g. phone calling code) still trigger a duplicate match when
+        // the same null shape is repeated across records.
+        if (!isDefined(value) && !isDefined(existingFieldValue)) {
+          return true;
+        }
 
         return isDefined(existingFieldValue) && existingFieldValue === value;
       }),

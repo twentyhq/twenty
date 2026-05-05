@@ -68,6 +68,90 @@ describe('getMatchingRecordId', () => {
     expect(id).toBe('recordId2');
   });
 
+  it('matches an existing record when all composite unique subfields are undefined on both sides', () => {
+    const recordsWithoutCallingCode: PartialObjectRecordWithId[] = [
+      {
+        id: 'recordIdWithoutCallingCode',
+        phonesField: {
+          primaryPhoneNumber: '555000111',
+        },
+      },
+    ];
+
+    const record = {
+      phonesField: {
+        primaryPhoneNumber: '555000111',
+      },
+    };
+
+    const conflictingFields = [
+      {
+        baseField: 'phonesField',
+        fullPath: 'phonesField.primaryPhoneNumber',
+        column: 'phonesFieldPrimaryPhoneNumber',
+      },
+      {
+        baseField: 'phonesField',
+        fullPath: 'phonesField.primaryPhoneCallingCode',
+        column: 'phonesFieldPrimaryPhoneCallingCode',
+      },
+    ];
+
+    const id = getMatchingRecordId(
+      record,
+      conflictingFields,
+      recordsWithoutCallingCode,
+    );
+
+    expect(id).toBe('recordIdWithoutCallingCode');
+  });
+
+  it('does not match when one side has a calling code and the other does not', () => {
+    const record = {
+      phonesField: {
+        primaryPhoneNumber: '123456789',
+      },
+    };
+
+    const conflictingFields = [
+      {
+        baseField: 'phonesField',
+        fullPath: 'phonesField.primaryPhoneNumber',
+        column: 'phonesFieldPrimaryPhoneNumber',
+      },
+      {
+        baseField: 'phonesField',
+        fullPath: 'phonesField.primaryPhoneCallingCode',
+        column: 'phonesFieldPrimaryPhoneCallingCode',
+      },
+    ];
+
+    const id = getMatchingRecordId(record, conflictingFields, existingRecords);
+
+    expect(id).toBeUndefined();
+  });
+
+  it('skips composite dedup when the request supplies no values for the base field', () => {
+    const record = {};
+
+    const conflictingFields = [
+      {
+        baseField: 'phonesField',
+        fullPath: 'phonesField.primaryPhoneNumber',
+        column: 'phonesFieldPrimaryPhoneNumber',
+      },
+      {
+        baseField: 'phonesField',
+        fullPath: 'phonesField.primaryPhoneCallingCode',
+        column: 'phonesFieldPrimaryPhoneCallingCode',
+      },
+    ];
+
+    const id = getMatchingRecordId(record, conflictingFields, existingRecords);
+
+    expect(id).toBeUndefined();
+  });
+
   it('returns undefined when only part of a composite unique field matches', () => {
     const record = {
       phonesField: {
