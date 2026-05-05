@@ -14,7 +14,7 @@ export type MetadataValidationErrorPayloadDescriptor =
 const MANY_VALIDATION_ERRORS_MESSAGE = msg`Many validation errors`;
 const METADATA_VALIDATION_FAILED_MESSAGE = msg`Metadata validation failed`;
 
-export const getMetadataValidationUserFriendlyMessage = (
+const getMetadataValidationUserFriendlyMessage = (
   metadataValidation: MetadataValidationErrorResponseDescriptor,
 ): MessageDescriptor => {
   if (metadataValidation.summary.totalErrors > 1) {
