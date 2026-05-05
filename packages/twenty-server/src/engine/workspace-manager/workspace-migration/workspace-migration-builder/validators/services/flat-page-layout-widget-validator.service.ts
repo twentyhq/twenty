@@ -228,6 +228,7 @@ export class FlatPageLayoutWidgetValidatorService {
     pageLayoutTab: UniversalFlatPageLayoutTab | undefined;
     widgetTitle: string;
   }): FlatEntityValidationError[] {
+    // TODO(post-2.3): re-tighten to reject undefined `position` once the 2.2
     if (!isDefined(position)) {
       return [];
     }
