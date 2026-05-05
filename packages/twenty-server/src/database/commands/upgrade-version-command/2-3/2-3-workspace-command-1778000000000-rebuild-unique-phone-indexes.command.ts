@@ -87,11 +87,16 @@ export class RebuildUniquePhoneIndexesCommand extends ActiveOrSuspendedWorkspace
 
     const schemaName = getWorkspaceSchemaName(workspaceId);
     const queryRunner = dataSource.createQueryRunner();
-
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
+    let isQueryRunnerConnected = false;
+    let isTransactionStarted = false;
 
     try {
+      await queryRunner.connect();
+      isQueryRunnerConnected = true;
+
+      await queryRunner.startTransaction();
+      isTransactionStarted = true;
+
       for (const uniquePhoneIndex of uniquePhoneIndexes) {
         const flatObjectMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
           flatEntityId: uniquePhoneIndex.objectMetadataId,
@@ -120,10 +125,15 @@ export class RebuildUniquePhoneIndexesCommand extends ActiveOrSuspendedWorkspace
       }
       await queryRunner.commitTransaction();
     } catch (error) {
-      await queryRunner.rollbackTransaction();
+      if (isTransactionStarted) {
+        await queryRunner.rollbackTransaction();
+      }
+
       throw error;
     } finally {
-      await queryRunner.release();
+      if (isQueryRunnerConnected) {
+        await queryRunner.release();
+      }
     }
   }
 }
