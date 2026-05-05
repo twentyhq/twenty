@@ -9,6 +9,9 @@ import { FieldMetadataType } from 'twenty-shared/types';
 
 const OBJECT_SINGULAR = 'uniquePhonesTestObject';
 const OBJECT_PLURAL = 'uniquePhonesTestObjects';
+// Custom object metadata maps to a physical table prefixed with `_`
+// (see computeTableName in src/engine/utils/compute-table-name.util.ts).
+const OBJECT_TABLE_NAME = `_${OBJECT_SINGULAR}`;
 const FIELD_NAME = 'phone';
 
 describe('unique PHONES field with empty values', () => {
@@ -48,7 +51,7 @@ describe('unique PHONES field with empty values', () => {
 
   afterEach(async () => {
     if (createdRecordIdsForCleaning.length > 0) {
-      await deleteRecordsByIds(OBJECT_SINGULAR, createdRecordIdsForCleaning);
+      await deleteRecordsByIds(OBJECT_TABLE_NAME, createdRecordIdsForCleaning);
       createdRecordIdsForCleaning = [];
     }
   });
