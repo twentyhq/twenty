@@ -1,4 +1,4 @@
-import { memo, useCallback, useState } from 'react';
+import { memo, useCallback, useEffect, useState } from 'react';
 import { defineFrontComponent } from 'twenty-sdk/define';
 import { useRecordId } from 'twenty-sdk/front-component';
 
@@ -7,6 +7,7 @@ import { EXTRACT_TASKS_PANEL_UID } from 'src/constants/universal-identifiers';
 // ─── Types ───────────────────────────────────────────────────────────────────
 
 type ProposedTask = {
+  taskId: string;
   title: string;
   body: string;
   dueAt: string | null;
@@ -20,6 +21,14 @@ type SalesNoteSnapshot = {
   companyId: string | null;
   opportunityId: string | null;
   ownerId: string | null;
+};
+
+type TaskRelations = {
+  taskTargetIds: string[]; // for diagnostics; not used downstream
+  personIds: Set<string>;
+  companyIds: Set<string>;
+  opportunityIds: Set<string>;
+  salesNoteIds: Set<string>;
 };
 
 // ─── HTTP helpers (kept top-level so JSX is small + sandbox-safe) ────────────
@@ -84,6 +93,136 @@ const fetchSalesNoteSnapshot = async (id: string): Promise<SalesNoteSnapshot> =>
     opportunityId: sn.opportunityId ?? null,
     ownerId: sn.ownerId ?? null,
   };
+};
+
+// Existing DRAFT tasks linked to a salesNote.
+//
+// The TaskFilterInput schema does NOT expose `taskTargets` as a filterable
+// field (verified against the UAT introspection on 2026-05-05), so we cannot
+// filter `tasks` by their nested taskTargets. Two-step query instead:
+//   1. taskTargets where targetSalesNoteId = $id, distinct taskIds
+//   2. tasks where id IN those + status=DRAFT (in code, since `status` filter
+//      doesn't accept `in`-style multi-values on this build)
+//
+// Returns ProposedTask[] ready for the panel state.
+const fetchExistingDraftsForSalesNote = async (
+  salesNoteId: string,
+): Promise<ProposedTask[]> => {
+  const targetData = (await graphqlFetch(
+    `query DraftTaskTargetsForSalesNote($id: UUID!) {
+       taskTargets(filter: { targetSalesNoteId: { eq: $id } }, first: 100) {
+         edges { node { taskId } }
+       }
+     }`,
+    { id: salesNoteId },
+  )) as {
+    taskTargets?: {
+      edges?: { node?: { taskId?: string | null } | null }[] | null;
+    } | null;
+  };
+
+  const taskIdSet = new Set<string>();
+  for (const edge of targetData?.taskTargets?.edges ?? []) {
+    const tid = edge?.node?.taskId;
+    if (typeof tid === 'string' && tid.length > 0) taskIdSet.add(tid);
+  }
+  if (taskIdSet.size === 0) return [];
+
+  // Fetch each task; filter for DRAFT in code. This is N round-trips but
+  // typically N is tiny (≤ a handful per sales note) and we don't need to
+  // page; the alternative would be a hand-built `or` filter list.
+  const drafts: ProposedTask[] = [];
+  for (const taskId of taskIdSet) {
+    const taskData = (await graphqlFetch(
+      `query GetTaskForDraftCheck($id: UUID!) {
+         task(filter: { id: { eq: $id } }) {
+           id
+           title
+           status
+           dueAt
+           bodyV2 { markdown }
+         }
+       }`,
+      { id: taskId },
+    )) as {
+      task?: {
+        id?: string;
+        title?: string | null;
+        status?: string | null;
+        dueAt?: string | null;
+        bodyV2?: { markdown?: string | null } | null;
+      } | null;
+    };
+    const t = taskData?.task;
+    if (!t || t.status !== 'DRAFT' || typeof t.id !== 'string') continue;
+    drafts.push({
+      taskId: t.id,
+      title: t.title ?? '',
+      body: t.bodyV2?.markdown ?? '',
+      dueAt: t.dueAt ?? null,
+      rationale: '',
+    });
+  }
+  return drafts;
+};
+
+// Read a task's existing taskTargets so Finalise can compute which relations
+// still need to be added vs the live salesNote snapshot.
+const fetchTaskTargets = async (taskId: string): Promise<TaskRelations> => {
+  const data = (await graphqlFetch(
+    `query TaskTargetsForFinalise($id: UUID!) {
+       taskTargets(filter: { taskId: { eq: $id } }, first: 200) {
+         edges {
+           node {
+             id
+             targetPersonId
+             targetCompanyId
+             targetOpportunityId
+             targetSalesNoteId
+           }
+         }
+       }
+     }`,
+    { id: taskId },
+  )) as {
+    taskTargets?: {
+      edges?: {
+        node?: {
+          id?: string | null;
+          targetPersonId?: string | null;
+          targetCompanyId?: string | null;
+          targetOpportunityId?: string | null;
+          targetSalesNoteId?: string | null;
+        } | null;
+      }[] | null;
+    } | null;
+  };
+
+  const out: TaskRelations = {
+    taskTargetIds: [],
+    personIds: new Set<string>(),
+    companyIds: new Set<string>(),
+    opportunityIds: new Set<string>(),
+    salesNoteIds: new Set<string>(),
+  };
+  for (const edge of data?.taskTargets?.edges ?? []) {
+    const n = edge?.node;
+    if (!n) continue;
+    if (typeof n.id === 'string') out.taskTargetIds.push(n.id);
+    if (typeof n.targetPersonId === 'string' && n.targetPersonId.length > 0) {
+      out.personIds.add(n.targetPersonId);
+    }
+    if (typeof n.targetCompanyId === 'string' && n.targetCompanyId.length > 0) {
+      out.companyIds.add(n.targetCompanyId);
+    }
+    if (typeof n.targetOpportunityId === 'string' && n.targetOpportunityId.length > 0) {
+      out.opportunityIds.add(n.targetOpportunityId);
+    }
+    if (typeof n.targetSalesNoteId === 'string' && n.targetSalesNoteId.length > 0) {
+      out.salesNoteIds.add(n.targetSalesNoteId);
+    }
+  }
+  return out;
 };
 
 const EXTRACTION_SYSTEM_PROMPT = [
@@ -164,8 +303,9 @@ const createTask = async (
   body: string,
   dueAt: string | null,
   assigneeId: string | null,
+  status: 'DRAFT' | 'TODO',
 ): Promise<string> => {
-  const data: Record<string, unknown> = { title };
+  const data: Record<string, unknown> = { title, status };
   if (dueAt !== null) data.dueAt = dueAt;
   if (assigneeId !== null) data.assigneeId = assigneeId;
   // Twenty's task.bodyV2 is RICH_TEXT_V2: { blocknote, markdown }. We supply
@@ -182,6 +322,36 @@ const createTask = async (
   )) as { createTask?: { id?: string } };
   if (!resp.createTask?.id) throw new Error('createTask returned no id');
   return resp.createTask.id;
+};
+
+// On-blur incremental updates from the proposal panel inputs.
+const updateTask = async (
+  taskId: string,
+  patch: {
+    title?: string;
+    bodyV2?: { blocknote: null; markdown: string };
+    dueAt?: string | null;
+    status?: 'DRAFT' | 'TODO';
+  },
+): Promise<void> => {
+  await graphqlFetch(
+    `mutation UpdateExtractedTask($id: UUID!, $data: TaskUpdateInput!) {
+       updateTask(id: $id, data: $data) { id }
+     }`,
+    { id: taskId, data: patch },
+  );
+};
+
+// Soft-delete (sets deletedAt). Verified against UAT 2026-05-05:
+//   deleteTask(id) { id deletedAt } returns the row with deletedAt populated.
+// destroyTask is the hard-delete variant we don't want here.
+const deleteTask = async (taskId: string): Promise<void> => {
+  await graphqlFetch(
+    `mutation DeleteExtractedTask($id: UUID!) {
+       deleteTask(id: $id) { id deletedAt }
+     }`,
+    { id: taskId },
+  );
 };
 
 const createTaskTarget = async (
@@ -285,26 +455,35 @@ const readEventValue = (e: unknown): string | null => {
 // Pattern lifted from `apps/stratum-quote-app/src/components/quote-sections-panel.tsx`
 // `LineItemRow`, which solved the same problem in the same sandbox.
 //
-// Parent state is updated on blur (commits local edits up). Re-extraction
-// remounts cards via a `key` change at the call site so local state resets
-// to the new defaultValues.
+// Parent state is updated on blur AND each on-blur fires an updateTask
+// mutation against the DRAFT row in DB. Re-extraction remounts cards via a
+// `key` change at the call site so local state resets to the new
+// defaultValues.
 
 type ProposalCardProps = {
+  taskId: string;
   initialTitle: string;
   initialBody: string;
   initialDueAt: string | null;
   rationale: string;
-  onCommit: (patch: { title?: string; body?: string; dueAt?: string | null }) => void;
-  onRemove: () => void;
+  onCommitTitle: (taskId: string, value: string) => void;
+  onCommitBody: (taskId: string, value: string) => void;
+  onCommitDueAt: (taskId: string, value: string | null) => void;
+  onRemove: (taskId: string) => void;
+  syncError: string | null;
 };
 
 const ProposalCardImpl = ({
+  taskId,
   initialTitle,
   initialBody,
   initialDueAt,
   rationale,
-  onCommit,
+  onCommitTitle,
+  onCommitBody,
+  onCommitDueAt,
   onRemove,
+  syncError,
 }: ProposalCardProps) => {
   const [title, setTitle] = useState(initialTitle);
   const [body, setBody] = useState(initialBody);
@@ -317,17 +496,6 @@ const ProposalCardImpl = ({
   //   re-applies the value prop without preserving cursor position. There's
   //   no React-side workaround since refs don't expose .setSelectionRange.
   //   Workaround for users: Cmd+A to select-all, then retype.
-  const commit = (
-    next: { title?: string; body?: string; dueAt?: string | null } = {},
-  ) => {
-    const t = next.title ?? title;
-    const b = next.body ?? body;
-    const dRaw = next.dueAt !== undefined ? next.dueAt : dueAtStr;
-    const d = typeof dRaw === 'string' && dRaw.trim().length > 0
-      ? dRaw.trim()
-      : null;
-    onCommit({ title: t, body: b, dueAt: d });
-  };
 
   return (
     <div style={card}>
@@ -341,7 +509,7 @@ const ProposalCardImpl = ({
               const v = readEventValue(e);
               if (v !== null) setTitle(v);
             }}
-            onBlur={() => commit({ title })}
+            onBlur={() => onCommitTitle(taskId, title)}
             style={inputStyle}
           />
           <span style={labelStyle}>Notes</span>
@@ -353,7 +521,7 @@ const ProposalCardImpl = ({
               const v = readEventValue(e);
               if (v !== null) setBody(v);
             }}
-            onBlur={() => commit({ body })}
+            onBlur={() => onCommitBody(taskId, body)}
             style={{ ...inputStyle, resize: 'vertical' as const, fontFamily: 'inherit' }}
           />
           <span style={labelStyle}>Due date (ISO; clear for "no date")</span>
@@ -365,7 +533,12 @@ const ProposalCardImpl = ({
               const v = readEventValue(e);
               if (v !== null) setDueAtStr(v);
             }}
-            onBlur={() => commit({ dueAt: dueAtStr })}
+            onBlur={() =>
+              onCommitDueAt(
+                taskId,
+                dueAtStr.trim().length > 0 ? dueAtStr.trim() : null,
+              )
+            }
             style={inputStyle}
           />
           {rationale && (
@@ -380,8 +553,19 @@ const ProposalCardImpl = ({
               Rationale: {rationale}
             </div>
           )}
+          {syncError && (
+            <div
+              style={{
+                marginTop: '8px',
+                fontSize: '11.5px',
+                color: '#c0392b',
+              }}
+            >
+              Sync error: {syncError}
+            </div>
+          )}
         </div>
-        <button onClick={onRemove} style={dangerButton}>
+        <button onClick={() => onRemove(taskId)} style={dangerButton}>
           Remove
         </button>
       </div>
@@ -393,20 +577,162 @@ const ProposalCard = memo(ProposalCardImpl);
 
 const ExtractTasksPanel = () => {
   const recordId = useRecordId();
+  const [loading, setLoading] = useState(true);
   const [extracting, setExtracting] = useState(false);
-  const [creating, setCreating] = useState(false);
+  const [finalising, setFinalising] = useState(false);
   const [proposals, setProposals] = useState<ProposedTask[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [snapshot, setSnapshot] = useState<SalesNoteSnapshot | null>(null);
-  // Bumps on each successful extraction so cards remount with fresh local
-  // state seeded from the new proposals. Within an editing session the key
-  // stays stable so each card keeps its identity (and React.memo prevents
-  // re-renders when siblings change).
+  const [cardErrors, setCardErrors] = useState<Record<string, string>>({});
+  // Bumps on each successful extraction OR on-mount fetch so cards remount
+  // with fresh local state seeded from the new proposals. Within an editing
+  // session the key stays stable so each card keeps its identity (and
+  // React.memo prevents re-renders when siblings change).
   const [extractionId, setExtractionId] = useState(0);
 
+  // ── On mount: query existing DRAFT tasks for this salesNote ───────────────
+  useEffect(() => {
+    if (typeof recordId !== 'string' || recordId.length === 0) {
+      setLoading(false);
+      return;
+    }
+    setLoading(true);
+    setError(null);
+    fetchExistingDraftsForSalesNote(recordId)
+      .then((drafts) => {
+        setProposals(drafts);
+        setExtractionId((n) => n + 1);
+      })
+      .catch((e) => {
+        console.error('[extract-tasks] failed to load existing drafts', e);
+        setError(
+          `Failed to load existing drafts: ${e instanceof Error ? e.message : String(e)}`,
+        );
+      })
+      .finally(() => setLoading(false));
+  }, [recordId]);
+
+  const setCardError = useCallback((taskId: string, msg: string | null) => {
+    setCardErrors((prev) => {
+      const next = { ...prev };
+      if (msg === null) delete next[taskId];
+      else next[taskId] = msg;
+      return next;
+    });
+  }, []);
+
+  // ── On-blur sync handlers (per ProposalCard input) ────────────────────────
+  const handleCommitTitle = useCallback(
+    (taskId: string, value: string) => {
+      setProposals((prev) =>
+        prev.map((p) => (p.taskId === taskId ? { ...p, title: value } : p)),
+      );
+      updateTask(taskId, { title: value })
+        .then(() => setCardError(taskId, null))
+        .catch((e) => {
+          console.error('[extract-tasks] updateTask(title) failed', e);
+          setCardError(
+            taskId,
+            `title save failed: ${e instanceof Error ? e.message : String(e)}`,
+          );
+        });
+    },
+    [setCardError],
+  );
+
+  const handleCommitBody = useCallback(
+    (taskId: string, value: string) => {
+      setProposals((prev) =>
+        prev.map((p) => (p.taskId === taskId ? { ...p, body: value } : p)),
+      );
+      // Twenty's bodyV2 is RICH_TEXT_V2 { blocknote, markdown }; sending
+      // markdown only is fine — the editor lazy-builds the blocknote shape
+      // on first open. Same pattern as createTask above.
+      updateTask(taskId, { bodyV2: { blocknote: null, markdown: value } })
+        .then(() => setCardError(taskId, null))
+        .catch((e) => {
+          console.error('[extract-tasks] updateTask(body) failed', e);
+          setCardError(
+            taskId,
+            `body save failed: ${e instanceof Error ? e.message : String(e)}`,
+          );
+        });
+    },
+    [setCardError],
+  );
+
+  const handleCommitDueAt = useCallback(
+    (taskId: string, value: string | null) => {
+      setProposals((prev) =>
+        prev.map((p) => (p.taskId === taskId ? { ...p, dueAt: value } : p)),
+      );
+      updateTask(taskId, { dueAt: value })
+        .then(() => setCardError(taskId, null))
+        .catch((e) => {
+          console.error('[extract-tasks] updateTask(dueAt) failed', e);
+          setCardError(
+            taskId,
+            `due-date save failed: ${e instanceof Error ? e.message : String(e)}`,
+          );
+        });
+    },
+    [setCardError],
+  );
+
+  const handleRemove = useCallback(
+    async (taskId: string) => {
+      try {
+        await deleteTask(taskId);
+        setProposals((prev) => prev.filter((p) => p.taskId !== taskId));
+        setCardError(taskId, null);
+      } catch (e) {
+        console.error('[extract-tasks] deleteTask failed', e);
+        setCardError(
+          taskId,
+          `remove failed: ${e instanceof Error ? e.message : String(e)}`,
+        );
+      }
+    },
+    [setCardError],
+  );
+
+  const handleDiscardAll = useCallback(async () => {
+    if (proposals.length === 0) return;
+    setError(null);
+    setSuccess(null);
+    const ids = proposals.map((p) => p.taskId);
+    try {
+      const results = await Promise.allSettled(
+        ids.map((id) => deleteTask(id)),
+      );
+      const failed = results.filter((r) => r.status === 'rejected');
+      // Drop the successfully-deleted ones from local state regardless;
+      // re-mount would pick up only DRAFTs anyway.
+      const survivors: ProposedTask[] = [];
+      results.forEach((r, idx) => {
+        if (r.status === 'rejected') survivors.push(proposals[idx]);
+      });
+      setProposals(survivors);
+      if (failed.length > 0) {
+        const firstReason = (failed[0] as PromiseRejectedResult).reason;
+        const msg = firstReason instanceof Error ? firstReason.message : String(firstReason);
+        setError(
+          `Discarded ${ids.length - failed.length} of ${ids.length}; ${failed.length} failed (${msg}).`,
+        );
+      } else {
+        setSuccess(`Discarded ${ids.length} draft${ids.length === 1 ? '' : 's'}.`);
+      }
+    } catch (e) {
+      console.error('[extract-tasks] discardAll failed', e);
+      setError(`Discard failed: ${e instanceof Error ? e.message : String(e)}`);
+    }
+  }, [proposals]);
+
+  // ── Extract: AI run → create DRAFT tasks immediately ──────────────────────
   const handleExtract = useCallback(async () => {
     if (recordId == null) return;
+    if (proposals.length > 0) return; // belt + braces; button is disabled too
     const id = recordId;
     setError(null);
     setSuccess(null);
@@ -416,81 +742,116 @@ const ExtractTasksPanel = () => {
       setSnapshot(snap);
       if (snap.bodyMarkdown.trim().length === 0) {
         setError('Note body is empty — type some notes in the body field first.');
-        setProposals([]);
         return;
       }
       const noteDateIso = snap.createdAt ?? new Date().toISOString();
       const extracted = await callExtractAI(snap.bodyMarkdown, noteDateIso);
-      const seeded: ProposedTask[] = extracted.map((e) => ({
-        title: e.title,
-        body: e.body,
-        dueAt: e.dueAt,
-        rationale: e.rationale,
-      }));
+      if (extracted.length === 0) {
+        setSuccess('No future actions found in this note.');
+        return;
+      }
+      // Create each proposal as a DRAFT task immediately, with current-snapshot
+      // relations attached. Failure on any one aborts the loop but keeps
+      // any drafts we already persisted (they'll be visible on next mount).
+      const seeded: ProposedTask[] = [];
+      for (const e of extracted) {
+        const taskId = await createTask(e.title, e.body, e.dueAt, snap.ownerId, 'DRAFT');
+        // Always link back to this sales note so it shows in the Linked
+        // Tasks tab and the next-mount query finds it.
+        await createTaskTarget(taskId, { targetSalesNoteId: id });
+        for (const personId of snap.attendeePersonIds) {
+          await createTaskTarget(taskId, { targetPersonId: personId });
+        }
+        if (snap.companyId) {
+          await createTaskTarget(taskId, { targetCompanyId: snap.companyId });
+        }
+        if (snap.opportunityId) {
+          await createTaskTarget(taskId, { targetOpportunityId: snap.opportunityId });
+        }
+        seeded.push({
+          taskId,
+          title: e.title,
+          body: e.body,
+          dueAt: e.dueAt,
+          rationale: e.rationale,
+        });
+      }
       setProposals(seeded);
       setExtractionId((n) => n + 1);
-      if (seeded.length === 0) setSuccess('No future actions found in this note.');
+      const word = seeded.length === 1 ? 'draft' : 'drafts';
+      setSuccess(
+        `Created ${seeded.length} ${word}. Edit, remove, or click Finalise to promote to TODO.`,
+      );
     } catch (e) {
+      console.error('[extract-tasks] extract failed', e);
       setError(e instanceof Error ? e.message : String(e));
     } finally {
       setExtracting(false);
     }
-  }, [recordId]);
+  }, [recordId, proposals.length]);
 
-  const updateProposal = (idx: number, patch: Partial<ProposedTask>) =>
-    setProposals((prev) => prev.map((p, i) => (i === idx ? { ...p, ...patch } : p)));
-  const removeProposal = (idx: number) =>
-    setProposals((prev) => prev.filter((_, i) => i !== idx));
-
-  const handleCreate = useCallback(async () => {
+  // ── Finalise: refresh relations + flip DRAFT → TODO ───────────────────────
+  const handleFinalise = useCallback(async () => {
     if (proposals.length === 0) return;
     if (recordId == null) return;
     const salesNoteId = recordId;
     setError(null);
     setSuccess(null);
-    setCreating(true);
-    let createdCount = 0;
+    setFinalising(true);
+    let finalisedCount = 0;
     try {
-      // Re-fetch the salesNote at commit time so we pick up any relation
-      // changes that happened since Extract ran (e.g., auto-filled account
-      // from the first attendee, or attendees added after extraction).
-      // Using extract-time `snapshot` would let those drop on the floor.
       const liveSnap = await fetchSalesNoteSnapshot(salesNoteId);
-      const assigneeId = liveSnap.ownerId;
       for (const p of proposals) {
-        const taskId = await createTask(p.title, p.body, p.dueAt, assigneeId);
-        // Always link the task back to this sales note so it appears in
-        // the Linked Tasks tab.
-        await createTaskTarget(taskId, { targetSalesNoteId: salesNoteId });
+        const existing = await fetchTaskTargets(p.taskId);
+        // Add any relations from liveSnap not already attached. We only
+        // ADD here — we never remove — so removals on the salesNote since
+        // extract-time stay safe (the user can still remove manually from
+        // the task UI).
+        if (!existing.salesNoteIds.has(salesNoteId)) {
+          await createTaskTarget(p.taskId, { targetSalesNoteId: salesNoteId });
+        }
+        if (
+          liveSnap.companyId &&
+          !existing.companyIds.has(liveSnap.companyId)
+        ) {
+          await createTaskTarget(p.taskId, { targetCompanyId: liveSnap.companyId });
+        }
+        if (
+          liveSnap.opportunityId &&
+          !existing.opportunityIds.has(liveSnap.opportunityId)
+        ) {
+          await createTaskTarget(p.taskId, { targetOpportunityId: liveSnap.opportunityId });
+        }
         for (const personId of liveSnap.attendeePersonIds) {
-          await createTaskTarget(taskId, { targetPersonId: personId });
+          if (!existing.personIds.has(personId)) {
+            await createTaskTarget(p.taskId, { targetPersonId: personId });
+          }
         }
-        if (liveSnap.companyId) {
-          await createTaskTarget(taskId, { targetCompanyId: liveSnap.companyId });
-        }
-        if (liveSnap.opportunityId) {
-          await createTaskTarget(taskId, { targetOpportunityId: liveSnap.opportunityId });
-        }
-        createdCount += 1;
+        await updateTask(p.taskId, { status: 'TODO' });
+        finalisedCount += 1;
       }
       setProposals([]);
-      const word = createdCount === 1 ? 'task' : 'tasks';
-      const assignedNote = assigneeId
-        ? ' Assigned to the call report owner.'
-        : ' (Call report has no owner — tasks created unassigned. Set the Owner field to auto-assign next time.)';
+      setSnapshot(liveSnap);
+      const word = finalisedCount === 1 ? 'task' : 'tasks';
       setSuccess(
-        `Created ${createdCount} ${word} linked to this call report.${assignedNote}`,
+        `Finalised ${finalisedCount} ${word} — status TODO. New relations linked from current call report state.`,
       );
     } catch (e) {
+      console.error('[extract-tasks] finalise failed', e);
       const msg = e instanceof Error ? e.message : String(e);
-      setError(`${msg} (created ${createdCount} of ${proposals.length} before failing)`);
+      setError(`${msg} (finalised ${finalisedCount} of ${proposals.length} before failing)`);
     } finally {
-      setCreating(false);
+      setFinalising(false);
     }
   }, [proposals, recordId]);
 
   const buttonLabel = extracting ? 'Extracting…' : 'Extract tasks from notes';
-  const isReadyToExtract = !extracting && !creating && recordId != null;
+  const isReadyToExtract =
+    !loading &&
+    !extracting &&
+    !finalising &&
+    recordId != null &&
+    proposals.length === 0;
   const proposalCountWord = proposals.length === 1 ? 'task' : 'tasks';
 
   return (
@@ -511,6 +872,11 @@ const ExtractTasksPanel = () => {
             {snapshot.opportunityId ? ' + opportunity' : ''}
           </span>
         )}
+        {!loading && !extracting && proposals.length > 0 && (
+          <span style={{ marginLeft: '12px', fontSize: '12px', color: '#57606a' }}>
+            (Finalise or discard existing drafts before extracting more.)
+          </span>
+        )}
       </div>
 
       {error && (
@@ -524,7 +890,13 @@ const ExtractTasksPanel = () => {
         </div>
       )}
 
-      {proposals.length > 0 && (
+      {loading ? (
+        <div style={{ fontSize: '12px', color: '#57606a' }}>Loading existing drafts…</div>
+      ) : proposals.length === 0 ? (
+        <div style={{ fontSize: '12px', color: '#57606a', fontStyle: 'italic' }}>
+          No drafts yet — click Extract to generate.
+        </div>
+      ) : (
         <div>
           <div
             style={{
@@ -536,31 +908,37 @@ const ExtractTasksPanel = () => {
               letterSpacing: '0.04em',
             }}
           >
-            Proposed tasks ({proposals.length}) — review, edit or remove before creating
+            Draft tasks ({proposals.length}) — edits sync as you blur each field
           </div>
-          {proposals.map((p, idx) => (
+          {proposals.map((p) => (
             <ProposalCard
-              key={`${extractionId}-${idx}`}
+              key={`${extractionId}-${p.taskId}`}
+              taskId={p.taskId}
               initialTitle={p.title}
               initialBody={p.body}
               initialDueAt={p.dueAt}
               rationale={p.rationale}
-              onCommit={(patch) => updateProposal(idx, patch)}
-              onRemove={() => removeProposal(idx)}
+              onCommitTitle={handleCommitTitle}
+              onCommitBody={handleCommitBody}
+              onCommitDueAt={handleCommitDueAt}
+              onRemove={handleRemove}
+              syncError={cardErrors[p.taskId] ?? null}
             />
           ))}
 
           <div style={{ marginTop: '14px', display: 'flex', gap: '10px' }}>
             <button
-              onClick={handleCreate}
-              disabled={creating}
-              style={{ ...buttonStyle, opacity: creating ? 0.6 : 1 }}
+              onClick={handleFinalise}
+              disabled={finalising}
+              style={{ ...buttonStyle, opacity: finalising ? 0.6 : 1 }}
             >
-              {creating ? 'Creating…' : `Create ${proposals.length} ${proposalCountWord}`}
+              {finalising
+                ? 'Finalising…'
+                : `Finalise ${proposals.length} ${proposalCountWord}`}
             </button>
             <button
-              onClick={() => setProposals([])}
-              disabled={creating}
+              onClick={handleDiscardAll}
+              disabled={finalising}
               style={ghostButton}
             >
               Discard all
@@ -576,6 +954,6 @@ export default defineFrontComponent({
   universalIdentifier: EXTRACT_TASKS_PANEL_UID,
   name: 'extract-tasks-panel',
   description:
-    'Calls the AI to extract follow-up tasks (with due dates) from the call report body, lets the user review/edit them, and creates them as Twenty Tasks linked to the same attendees / company / opportunity.',
+    'Calls the AI to extract follow-up tasks (with due dates) from the call report body, creates them as DRAFT Twenty Tasks immediately, and lets the user edit/remove/finalise them. Finalise promotes DRAFT → TODO and refreshes relations to current sales-note state.',
   component: ExtractTasksPanel,
 });
