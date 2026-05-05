@@ -177,9 +177,9 @@ export class BillingWebhookInvoiceService {
       where: { stripeCustomerId },
     });
 
-    await this.delaySuspendedWorkspaceCleanup(billingCustomer);
-
     if (isDefined(billingCustomer)) {
+      await this.delaySuspendedWorkspaceCleanup(billingCustomer);
+
       this.auditService
         .createContext({ workspaceId: billingCustomer.workspaceId })
         .insertWorkspaceEvent(PAYMENT_RECEIVED_EVENT, {});
@@ -217,12 +217,8 @@ export class BillingWebhookInvoiceService {
   }
 
   private async delaySuspendedWorkspaceCleanup(
-    billingCustomer: BillingCustomerEntity | null,
+    billingCustomer: BillingCustomerEntity,
   ): Promise<void> {
-    if (!isDefined(billingCustomer)) {
-      return;
-    }
-
     const workspace = await this.workspaceRepository.findOne({
       where: {
         id: billingCustomer.workspaceId,
