@@ -27,6 +27,5 @@ export const fromApplicationVariableManifestToUniversalFlatApplicationVariable =
       isSecret: isSecret ?? false,
       createdAt: now,
       updatedAt: now,
-      deletedAt: null,
     };
   };

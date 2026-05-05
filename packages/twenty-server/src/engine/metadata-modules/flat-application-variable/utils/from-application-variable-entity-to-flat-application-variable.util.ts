@@ -34,7 +34,6 @@ export const fromApplicationVariableEntityToFlatApplicationVariable = ({
     applicationId: applicationVariableEntity.applicationId,
     createdAt: applicationVariableEntity.createdAt.toISOString(),
     updatedAt: applicationVariableEntity.updatedAt.toISOString(),
-    deletedAt: applicationVariableEntity.deletedAt?.toISOString() ?? null,
     applicationUniversalIdentifier,
   };
 };

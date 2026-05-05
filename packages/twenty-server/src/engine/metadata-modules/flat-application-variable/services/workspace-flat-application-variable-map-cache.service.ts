@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { IsNull, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 
 import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
 
@@ -31,7 +31,7 @@ export class WorkspaceFlatApplicationVariableMapCacheService extends WorkspaceCa
   ): Promise<FlatApplicationVariableMaps> {
     const [applicationVariables, applications] = await Promise.all([
       this.applicationVariableRepository.find({
-        where: { workspaceId, deletedAt: IsNull() },
+        where: { workspaceId },
       }),
       this.applicationRepository.find({
         where: { workspaceId },

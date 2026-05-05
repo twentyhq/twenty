@@ -16,6 +16,9 @@ import { type UniversalFlatEntityValidationArgs } from 'src/engine/workspace-man
 export class FlatApplicationVariableValidatorService {
   public validateFlatApplicationVariableCreation({
     flatEntityToValidate: flatApplicationVariable,
+    optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
+      flatApplicationVariableMaps: optimisticFlatApplicationVariableMaps,
+    },
   }: UniversalFlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.applicationVariable
   >): FailedFlatEntityValidation<'applicationVariable', 'create'> {
@@ -33,6 +36,24 @@ export class FlatApplicationVariableValidatorService {
         code: ApplicationVariableEntityExceptionCode.INVALID_APPLICATION_VARIABLE_INPUT,
         message: t`Application variable key is required`,
         userFriendlyMessage: msg`Application variable key is required`,
+      });
+    }
+
+    const existingVariableWithSameKey = Object.values(
+      optimisticFlatApplicationVariableMaps.byUniversalIdentifier,
+    ).find(
+      (variable) =>
+        isDefined(variable) &&
+        variable.key === flatApplicationVariable.key &&
+        variable.universalIdentifier !==
+          flatApplicationVariable.universalIdentifier,
+    );
+
+    if (isDefined(existingVariableWithSameKey)) {
+      validationResult.errors.push({
+        code: ApplicationVariableEntityExceptionCode.INVALID_APPLICATION_VARIABLE_INPUT,
+        message: t`Application variable key must be unique`,
+        userFriendlyMessage: msg`Application variable key must be unique`,
       });
     }
 
