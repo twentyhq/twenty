@@ -22,6 +22,10 @@ import { AddCacheTokensToAgentChatThreadFastInstanceCommand } from 'src/database
 import { MakePageLayoutWidgetGridPositionNullableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-2/2-2-instance-command-fast-1777473592000-make-page-layout-widget-grid-position-nullable';
 import { AddLogoToApplicationFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-2/2-2-instance-command-fast-1777539664664-add-logo-to-application';
 import { BackfillPageLayoutWidgetPositionAgainSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-2/2-2-instance-command-slow-1795000003000-backfill-page-layout-widget-position-again';
+import { AddUpgradeMigrationWorkspaceIdIndexFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-3/2-3-instance-command-fast-1777308014234-add-upgrade-migration-workspace-id-index';
+import { AddDeletedAtToAgentChatThreadFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-3/2-3-instance-command-fast-1777682000000-add-deleted-at-to-agent-chat-thread';
+import { ConnectionProviderSyncableEntityFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-3/2-3-instance-command-fast-1777896012579-connection-provider-syncable-entity';
+import { RemoveUserDefaultAvatarUrlFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-3/2-3-instance-command-fast-1777915958318-remove-user-default-avatar-url';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -39,6 +43,7 @@ export const INSTANCE_COMMANDS = [
   AddGlobalObjectContextToCommandMenuItemAvailabilityTypeFastInstanceCommand,
   AddPageLayoutIdToCommandMenuItemFastInstanceCommand,
   AddConditionalAvailabilityExpressionToPageLayoutWidgetFastInstanceCommand,
+  AddUpgradeMigrationWorkspaceIdIndexFastInstanceCommand,
   AddIsPreInstalledToApplicationRegistrationFastInstanceCommand,
   AddProviderExecutedToAgentMessagePartFastInstanceCommand,
   BackfillPageLayoutWidgetPositionSlowInstanceCommand,
@@ -46,4 +51,7 @@ export const INSTANCE_COMMANDS = [
   BackfillPageLayoutWidgetPositionAgainSlowInstanceCommand,
   AddCacheTokensToAgentChatThreadFastInstanceCommand,
   AddLogoToApplicationFastInstanceCommand,
+  AddDeletedAtToAgentChatThreadFastInstanceCommand,
+  ConnectionProviderSyncableEntityFastInstanceCommand,
+  RemoveUserDefaultAvatarUrlFastInstanceCommand,
 ];

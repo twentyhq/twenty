@@ -5,6 +5,7 @@ import {
 import { type Page, Pages } from '@/lib/pages';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
+import type { ReactNode } from 'react';
 
 const HeadingContainer = styled.div`
   max-width: 360px;
@@ -20,17 +21,24 @@ const HeadingContainer = styled.div`
   }
 `;
 
-export type HeroHeadingProps = HeadingProps & { page: Page };
+export type HeroHeadingProps = HeadingProps & {
+  children?: ReactNode;
+  page: Page;
+};
 
 export function Heading({
+  as,
+  children,
+  className,
   page,
   size = 'lg',
   weight = 'light',
-  ...props
 }: HeroHeadingProps) {
   return (
     <HeadingContainer data-page={page}>
-      <BaseHeading size={size} weight={weight} {...props} />
+      <BaseHeading as={as} className={className} size={size} weight={weight}>
+        {children}
+      </BaseHeading>
     </HeadingContainer>
   );
 }

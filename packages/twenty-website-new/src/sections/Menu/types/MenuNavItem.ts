@@ -1,3 +1,5 @@
+import type { MessageDescriptor } from '@lingui/core';
+
 export type MenuNavChildIcon = 'book' | 'code' | 'tag' | 'users';
 
 export type MenuNavChildPreview = {
@@ -5,21 +7,21 @@ export type MenuNavChildPreview = {
   imageAlt: string;
   imagePosition?: string;
   imageScale?: number;
-  title: string;
-  description: string;
+  title: MessageDescriptor;
+  description: MessageDescriptor;
 };
 
 export type MenuNavChildItemType = {
-  description?: string;
+  description?: MessageDescriptor;
   external?: boolean;
   href: string;
   icon?: MenuNavChildIcon;
-  label: string;
+  label: MessageDescriptor;
   preview?: MenuNavChildPreview;
 };
 
 export type MenuNavItemType = {
   children?: MenuNavChildItemType[];
   href?: string;
-  label: string;
+  label: MessageDescriptor;
 };

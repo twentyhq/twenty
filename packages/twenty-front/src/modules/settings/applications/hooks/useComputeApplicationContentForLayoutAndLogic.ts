@@ -173,6 +173,27 @@ export const useComputeApplicationContentForLayoutAndLogic = ({
     }),
   );
 
+  const connectionProviderRows: ApplicationContentRow[] = (
+    manifestContent?.connectionProviders ?? []
+  ).map((provider) => {
+    const parts: string[] = [];
+
+    if (provider.type === 'oauth') {
+      parts.push(t`OAuth 2.0`);
+      const scopeCount = provider.oauth.scopes.length;
+      if (scopeCount > 0) {
+        parts.push(scopeCount === 1 ? t`1 scope` : t`${scopeCount} scopes`);
+      }
+    }
+
+    return {
+      key: provider.universalIdentifier,
+      name: provider.displayName,
+      icon: undefined,
+      secondary: parts.length > 0 ? parts.join(' · ') : undefined,
+    };
+  });
+
   return {
     pageLayoutRows,
     viewRows,
@@ -180,5 +201,6 @@ export const useComputeApplicationContentForLayoutAndLogic = ({
     agentRows,
     skillRows,
     roleRows,
+    connectionProviderRows,
   };
 };

@@ -60,6 +60,8 @@ export type {
 export type { RoutePayload } from '@/sdk/define/logic-functions/triggers/route-payload-type';
 export type { InputJsonSchema } from 'twenty-shared/logic-function';
 
+export { defineConnectionProvider } from '@/sdk/define/connection-providers/define-connection-provider';
+
 export { defineNavigationMenuItem } from '@/sdk/define/navigation-menu-items/define-navigation-menu-item';
 
 export { defineObject } from '@/sdk/define/objects/define-object';

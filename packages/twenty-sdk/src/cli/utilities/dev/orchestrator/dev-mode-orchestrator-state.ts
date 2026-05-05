@@ -71,6 +71,7 @@ const ENTITY_TYPE_TO_SYNCABLE: Record<string, SyncableEntity | undefined> = {
   frontComponents: SyncableEntity.FrontComponent,
   roles: SyncableEntity.Role,
   skills: SyncableEntity.Skill,
+  connectionProviders: SyncableEntity.ConnectionProvider,
   views: SyncableEntity.View,
   navigationMenuItems: SyncableEntity.NavigationMenuItem,
   pageLayouts: SyncableEntity.PageLayout,

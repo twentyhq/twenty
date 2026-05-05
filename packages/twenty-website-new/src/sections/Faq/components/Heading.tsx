@@ -1,7 +1,7 @@
 import { Heading as BaseHeading } from '@/design-system/components';
-import type { HeadingType } from '@/design-system/components/Heading';
 import { theme } from '@/theme';
 import { css } from '@linaria/core';
+import type { ReactNode } from 'react';
 
 const faqHeadingClassName = css`
   white-space: pre-line;
@@ -12,17 +12,18 @@ const faqHeadingClassName = css`
 `;
 
 type HeadingProps = {
-  segments: HeadingType[];
+  children: ReactNode;
 };
 
-export function Heading({ segments }: HeadingProps) {
+export function Heading({ children }: HeadingProps) {
   return (
     <BaseHeading
       as="h2"
       className={faqHeadingClassName}
-      segments={segments}
       size="lg"
       weight="light"
-    />
+    >
+      {children}
+    </BaseHeading>
   );
 }

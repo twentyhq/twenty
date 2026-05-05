@@ -61,7 +61,6 @@ describe('TwoFactorAuthenticationResolver', () => {
     firstName: '',
     lastName: '',
     email: 'test@example.com',
-    defaultAvatarUrl: '',
     isEmailVerified: true,
     disabled: false,
     canImpersonate: false,
