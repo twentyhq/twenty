@@ -15,7 +15,7 @@ Front-Komponenten können an zwei Stellen innerhalb von Twenty gerendert werden:
 
 ## Einfaches Beispiel
 
-The quickest way to see a front component in action is to register it with a **command menu item**. Use `defineCommandMenuItem` in a separate file to make the component appear as a quick-action button in the top-right corner of the page:
+Der schnellste Weg, eine Front-Komponente in Aktion zu sehen, ist, sie als **Befehlsmenüeintrag** zu registrieren. Verwende `defineCommandMenuItem` in einer separaten Datei, damit die Komponente als Schnellaktionsschaltfläche oben rechts auf der Seite erscheint:
 
 ```tsx src/front-components/hello-world.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
@@ -350,7 +350,7 @@ export default defineFrontComponent({
 
 ## defineCommandMenuItem
 
-Use `defineCommandMenuItem` to register a front component in the command menu (Cmd+K). Wenn `isPinned` `true` ist, erscheint sie außerdem als Schnellaktionsschaltfläche oben rechts auf der Seite.
+Verwende `defineCommandMenuItem`, um eine Front-Komponente im Befehlsmenü (Cmd+K) zu registrieren. Wenn `isPinned` `true` ist, erscheint sie außerdem als Schnellaktionsschaltfläche oben rechts auf der Seite.
 
 ```ts src/command-menu-items/open-dashboard.command-menu-item.ts
 import { defineCommandMenuItem } from 'twenty-sdk/define';
@@ -370,7 +370,7 @@ export default defineCommandMenuItem({
 | --------------------------------------- | ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `universalIdentifier`                   | Ja           | Stabile eindeutige ID für den Befehl                                                                                                                                                       |
 | `label`                                 | Ja           | Vollständiges Label, das im Befehlsmenü (Cmd+K) angezeigt wird                                                                                                                             |
-| `frontComponentUniversalIdentifier`     | Ja           | The `universalIdentifier` of the front component this command opens                                                                                                                        |
+| `frontComponentUniversalIdentifier`     | Ja           | Der `universalIdentifier` der Front-Komponente, die dieser Befehl öffnet                                                                                                                   |
 | `shortLabel`                            | Nein         | Kürzeres Label, das auf der angehefteten Schnellaktionsschaltfläche angezeigt wird                                                                                                         |
 | `icon`                                  | Nein         | Neben dem Label angezeigter Icon-Name (z. B. 'IconBolt', 'IconSend')                                                                                                                       |
 | `isPinned`                              | Nein         | Bei `true` wird der Befehl als Schnellaktionsschaltfläche oben rechts auf der Seite angezeigt                                                                                              |

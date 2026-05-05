@@ -15,7 +15,7 @@ icon: window-maximize
 
 ## Basit örnek
 
-The quickest way to see a front component in action is to register it with a **command menu item**. Use `defineCommandMenuItem` in a separate file to make the component appear as a quick-action button in the top-right corner of the page:
+Bir ön uç bileşenini çalışırken görmenin en hızlı yolu, onu bir **komut menüsü öğesi** olarak kaydetmektir. Bileşenin sayfanın sağ üst köşesinde bir hızlı işlem düğmesi olarak görünmesini sağlamak için ayrı bir dosyada `defineCommandMenuItem` kullanın:
 
 ```tsx src/front-components/hello-world.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
@@ -350,7 +350,7 @@ export default defineFrontComponent({
 
 ## defineCommandMenuItem
 
-Use `defineCommandMenuItem` to register a front component in the command menu (Cmd+K). `isPinned` `true` ise, sayfanın sağ üst köşesinde bir hızlı işlem düğmesi olarak da görünür.
+Bir ön uç bileşenini komut menüsüne (Cmd+K) kaydetmek için `defineCommandMenuItem` kullanın. `isPinned` `true` ise, sayfanın sağ üst köşesinde bir hızlı işlem düğmesi olarak da görünür.
 
 ```ts src/command-menu-items/open-dashboard.command-menu-item.ts
 import { defineCommandMenuItem } from 'twenty-sdk/define';
@@ -370,7 +370,7 @@ export default defineCommandMenuItem({
 | --------------------------------------- | ------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `universalIdentifier`                   | Evet    | Komut için kalıcı benzersiz kimlik                                                                                                                                                                    |
 | `label`                                 | Evet    | Komut menüsünde (Cmd+K) gösterilen tam etiket                                                                                                                                                         |
-| `frontComponentUniversalIdentifier`     | Evet    | The `universalIdentifier` of the front component this command opens                                                                                                                                   |
+| `frontComponentUniversalIdentifier`     | Evet    | Bu komutun açtığı ön uç bileşeninin `universalIdentifier` değeri                                                                                                                                      |
 | `shortLabel`                            | Hayır   | Sabitlenmiş hızlı işlem düğmesinde görüntülenen daha kısa etiket                                                                                                                                      |
 | `icon`                                  | Hayır   | Etiketin yanında görüntülenen simge adı (örn. `'IconBolt'`, `'IconSend'`)                                                                                                                             |
 | `isPinned`                              | Hayır   | `true` olduğunda, komutu sayfanın sağ üst köşesinde bir hızlı işlem düğmesi olarak gösterir                                                                                                           |

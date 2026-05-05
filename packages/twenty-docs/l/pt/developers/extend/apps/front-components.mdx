@@ -15,7 +15,7 @@ Os componentes de front-end podem ser renderizados em dois locais dentro do Twen
 
 ## Exemplo básico
 
-The quickest way to see a front component in action is to register it with a **command menu item**. Use `defineCommandMenuItem` in a separate file to make the component appear as a quick-action button in the top-right corner of the page:
+A maneira mais rápida de ver um componente de front-end em ação é registrá-lo como um **item do menu de comando**. Use `defineCommandMenuItem` em um arquivo separado para fazer o componente aparecer como um botão de ação rápida no canto superior direito da página:
 
 ```tsx src/front-components/hello-world.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
@@ -350,7 +350,7 @@ export default defineFrontComponent({
 
 ## defineCommandMenuItem
 
-Use `defineCommandMenuItem` to register a front component in the command menu (Cmd+K). Se `isPinned` for `true`, ele também aparece como um botão de ação rápida no canto superior direito da página.
+Use `defineCommandMenuItem` para registrar um componente de front-end no menu de comando (Cmd+K). Se `isPinned` for `true`, ele também aparece como um botão de ação rápida no canto superior direito da página.
 
 ```ts src/command-menu-items/open-dashboard.command-menu-item.ts
 import { defineCommandMenuItem } from 'twenty-sdk/define';
@@ -370,7 +370,7 @@ export default defineCommandMenuItem({
 | --------------------------------------- | ----------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `universalIdentifier`                   | Sim         | ID exclusivo e estável para o comando                                                                                                                                                                |
 | `label`                                 | Sim         | Rótulo completo exibido no menu de comandos (Cmd+K)                                                                                                                                                  |
-| `frontComponentUniversalIdentifier`     | Sim         | The `universalIdentifier` of the front component this command opens                                                                                                                                  |
+| `frontComponentUniversalIdentifier`     | Sim         | O `universalIdentifier` do componente de front-end que este comando abre                                                                                                                             |
 | `shortLabel`                            | Não         | Rótulo mais curto exibido no botão fixado de ação rápida                                                                                                                                             |
 | `icon`                                  | Não         | Nome do ícone exibido ao lado do rótulo (por exemplo, `'IconBolt'`, `'IconSend'`)                                                                                                                    |
 | `isPinned`                              | Não         | Quando `true`, mostra o comando como um botão de ação rápida no canto superior direito da página                                                                                                     |
