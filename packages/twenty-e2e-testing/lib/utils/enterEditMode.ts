@@ -1,7 +1,6 @@
 import { type Page } from '@playwright/test';
 
 export const enterEditMode = async (page: Page) => {
-  // Open command menu with Ctrl+K
   await page.getByTestId('page-header-side-panel-button').click();
 
   // Type to search for Edit Layout command

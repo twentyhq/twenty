@@ -16,9 +16,10 @@ const DEFAULT_TAB_NAMES = [
 ];
 
 test.describe('Record page layout', () => {
-  let companyId: string;
+  let companyId: string | undefined;
 
   test.beforeEach(async ({ page }) => {
+    companyId = undefined;
     await resetRecordPageLayout({ page, objectNameSingular: 'company' });
 
     companyId = await createCompany({
@@ -30,6 +31,7 @@ test.describe('Record page layout', () => {
   });
 
   test.afterEach(async ({ page }) => {
+    if (!companyId) return;
     await deleteCompany({ page, companyId });
     await destroyCompany({ page, companyId });
   });
@@ -258,7 +260,7 @@ test.describe('Record page layout', () => {
       .getByText('Persisted Tab', { exact: true });
 
     await persistedTabInListBox.hover();
-    await page.getByRole('listbox').locator('.hoverable-buttons > *').click();
+    await page.getByTestId('tab-list-item-edit-button').click();
 
     const deletePersistedButton = sidePanel.getByText('Delete', {
       exact: true,

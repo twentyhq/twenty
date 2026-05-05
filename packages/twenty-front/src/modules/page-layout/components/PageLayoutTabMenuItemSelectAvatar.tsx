@@ -80,6 +80,7 @@ export const PageLayoutTabMenuItemSelectAvatar = ({
               Icon={IconPencil}
               size="small"
               accent="tertiary"
+              testId="tab-list-item-edit-button"
               onClick={() => onEditClick?.(tab.id)}
             />
           </div>

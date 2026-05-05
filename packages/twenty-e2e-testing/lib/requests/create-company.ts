@@ -27,7 +27,25 @@ export const createCompany = async ({
     },
   });
 
+  if (!response.ok()) {
+    throw new Error(
+      `createCompany request failed with status ${response.status()}`,
+    );
+  }
+
   const body = await response.json();
 
-  return body.data.createCompany.id as string;
+  if (body.errors?.length) {
+    throw new Error(
+      `createCompany GraphQL errors: ${body.errors.map((e: { message: string }) => e.message).join(', ')}`,
+    );
+  }
+
+  const id: string | undefined = body.data?.createCompany?.id;
+
+  if (!id) {
+    throw new Error('createCompany returned no id');
+  }
+
+  return id;
 };
