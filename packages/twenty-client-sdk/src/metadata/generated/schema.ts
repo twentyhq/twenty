@@ -648,7 +648,6 @@ export interface User {
     firstName: Scalars['String']
     lastName: Scalars['String']
     email: Scalars['String']
-    defaultAvatarUrl?: Scalars['String']
     isEmailVerified: Scalars['Boolean']
     disabled?: Scalars['Boolean']
     canImpersonate: Scalars['Boolean']
@@ -3543,7 +3542,6 @@ export interface UserGenqlSelection{
     firstName?: boolean | number
     lastName?: boolean | number
     email?: boolean | number
-    defaultAvatarUrl?: boolean | number
     isEmailVerified?: boolean | number
     disabled?: boolean | number
     canImpersonate?: boolean | number

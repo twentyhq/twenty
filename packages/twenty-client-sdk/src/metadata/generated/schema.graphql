@@ -863,7 +863,6 @@ type User {
   firstName: String!
   lastName: String!
   email: String!
-  defaultAvatarUrl: String
   isEmailVerified: Boolean!
   disabled: Boolean
   canImpersonate: Boolean!

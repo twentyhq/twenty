@@ -77,6 +77,39 @@ Tags de pré-lançamento funcionam como esperado: incrementar `1.0.0-rc.1` → `
 
 {/* TODO: add screenshot of the Upgrade button */}
 
+### Compatibilidade da versão do servidor
+
+Se o seu aplicativo usar um recurso introduzido em uma versão específica do servidor Twenty (por exemplo, provedores OAuth adicionados na v2.3.0), você deve declarar a versão mínima do servidor que seu aplicativo requer usando o campo `engines.twenty` em `package.json`:
+
+```json filename="package.json"
+{
+  "name": "twenty-my-app",
+  "version": "1.0.0",
+  "engines": {
+    "node": "^24.5.0",
+    "twenty": ">=2.3.0"
+  }
+}
+```
+
+O valor é um [intervalo semver](https://github.com/npm/node-semver#ranges) padrão. Padrões comuns:
+
+| Intervalo                          | Significado                                                |
+| ---------------------------------- | ---------------------------------------------------------- |
+| `>=2.3.0`                          | Qualquer servidor a partir de 2.3.0                        |
+| `>=2.3.0 \<3.0.0` | 2.3.0 ou posterior, mas abaixo da próxima versão principal |
+| `^2.3.0`                           | O mesmo que `>=2.3.0 \<3.0.0`             |
+
+**O que acontece no momento da implantação e da instalação:**
+
+* Se `engines.twenty` estiver definido e a versão do servidor de destino não satisfizer o intervalo, a implantação (upload do tarball) ou a instalação será rejeitada com o erro `SERVER_VERSION_INCOMPATIBLE` e uma mensagem indicando tanto o intervalo exigido quanto a versão real do servidor.
+* Se `engines.twenty` **não estiver definido**, o aplicativo é aceito em qualquer versão do servidor (retrocompatível com os aplicativos existentes).
+* Se o servidor não tiver `APP_VERSION` configurado, a verificação será ignorada.
+
+<Note>
+O servidor realiza a verificação definitiva — ele valida `engines.twenty` tanto no upload do tarball quanto na instalação no workspace. Se você implantar um tarball fora de banda ou instalar a partir do marketplace, o servidor ainda impõe a compatibilidade.
+</Note>
+
 ## CI/CD automatizado (fluxos de trabalho pré-configurados)
 
 Os apps gerados com `create-twenty-app` já vêm com dois fluxos de trabalho do GitHub Actions prontos, em `.github/workflows/`. Eles estão prontos para executar assim que você fizer push do repositório para o GitHub — nenhuma configuração extra é necessária para CI, e CD requer apenas um único segredo.
