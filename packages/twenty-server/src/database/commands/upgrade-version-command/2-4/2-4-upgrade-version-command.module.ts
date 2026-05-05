@@ -1,4 +1,7 @@
 import { Module } from '@nestjs/common';
 
-@Module({})
+@Module({
+  imports: [],
+  providers: [],
+})
 export class V2_4_UpgradeVersionCommandModule {}
