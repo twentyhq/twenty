@@ -22,7 +22,7 @@ export const fromApplicationVariableManifestToUniversalFlatApplicationVariable =
       universalIdentifier,
       applicationUniversalIdentifier,
       key,
-      value: value ?? '',
+      value: isSecret ? '' : (value ?? ''), // We protect secret variable by not syncing its value at all
       description: description ?? '',
       isSecret: isSecret ?? false,
       createdAt: now,

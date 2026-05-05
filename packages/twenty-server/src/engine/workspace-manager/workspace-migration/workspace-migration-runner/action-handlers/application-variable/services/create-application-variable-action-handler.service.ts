@@ -4,7 +4,6 @@ import { v4 } from 'uuid';
 
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
-import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 import { getUniversalFlatEntityEmptyForeignKeyAggregators } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/reset-universal-flat-entity-foreign-key-aggregators.util';
 import {
   FlatCreateApplicationVariableAction,
@@ -20,9 +19,7 @@ export class CreateApplicationVariableActionHandlerService extends WorkspaceMigr
   'create',
   'applicationVariable',
 ) {
-  constructor(
-    private readonly secretEncryptionService: SecretEncryptionService,
-  ) {
+  constructor() {
     super();
   }
 
@@ -36,15 +33,10 @@ export class CreateApplicationVariableActionHandlerService extends WorkspaceMigr
         metadataName: 'applicationVariable',
       });
 
-    const value = action.flatEntity.isSecret
-      ? this.secretEncryptionService.encrypt(action.flatEntity.value)
-      : action.flatEntity.value;
-
     return {
       ...action,
       flatEntity: {
         ...action.flatEntity,
-        value,
         applicationId: flatApplication.id,
         id: action.id ?? v4(),
         workspaceId,
