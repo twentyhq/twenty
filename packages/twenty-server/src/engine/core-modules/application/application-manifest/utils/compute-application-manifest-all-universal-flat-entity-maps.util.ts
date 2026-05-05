@@ -442,8 +442,8 @@ export const computeApplicationManifestAllUniversalFlatEntityMaps = ({
       universalFlatEntity:
         fromApplicationVariableManifestToUniversalFlatApplicationVariable({
           key,
-          universalIdentifier:
-            applicationVariableManifest.universalIdentifier,
+          universalIdentifier: applicationVariableManifest.universalIdentifier,
+          value: applicationVariableManifest.value,
           description: applicationVariableManifest.description,
           isSecret: applicationVariableManifest.isSecret,
           applicationUniversalIdentifier,

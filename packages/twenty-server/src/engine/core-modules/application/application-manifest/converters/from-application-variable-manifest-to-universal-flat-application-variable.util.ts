@@ -5,6 +5,7 @@ export const fromApplicationVariableManifestToUniversalFlatApplicationVariable =
     key,
     universalIdentifier,
     description,
+    value,
     isSecret,
     applicationUniversalIdentifier,
     now,
@@ -12,6 +13,7 @@ export const fromApplicationVariableManifestToUniversalFlatApplicationVariable =
     key: string;
     universalIdentifier: string;
     description?: string;
+    value?: string;
     isSecret?: boolean;
     applicationUniversalIdentifier: string;
     now: string;
@@ -20,7 +22,7 @@ export const fromApplicationVariableManifestToUniversalFlatApplicationVariable =
       universalIdentifier,
       applicationUniversalIdentifier,
       key,
-      value: '',
+      value: value ?? '',
       description: description ?? '',
       isSecret: isSecret ?? false,
       createdAt: now,

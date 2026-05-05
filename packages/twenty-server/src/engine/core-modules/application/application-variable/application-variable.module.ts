@@ -9,6 +9,7 @@ import { ApplicationVariableEntityResolver } from 'src/engine/core-modules/appli
 import { ApplicationVariableEntityService } from 'src/engine/core-modules/application/application-variable/application-variable.service';
 import { WorkspaceApplicationVariableMapCacheService } from 'src/engine/core-modules/application/application-variable/workspace-application-variable-map-cache.service';
 import { SecretEncryptionModule } from 'src/engine/core-modules/secret-encryption/secret-encryption.module';
+import { FlatApplicationVariableModule } from 'src/engine/metadata-modules/flat-application-variable/flat-application-variable.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
@@ -19,6 +20,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     PermissionsModule,
     WorkspaceCacheModule,
     SecretEncryptionModule,
+    FlatApplicationVariableModule,
   ],
   providers: [
     ApplicationVariableEntityService,
