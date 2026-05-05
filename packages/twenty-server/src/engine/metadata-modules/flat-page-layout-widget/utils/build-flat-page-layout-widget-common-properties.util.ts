@@ -73,6 +73,6 @@ export const buildFlatPageLayoutWidgetCommonProperties = ({
     objectMetadataId: widgetInput.objectMetadataId ?? null,
     objectMetadataUniversalIdentifier,
     gridPosition: widgetInput.gridPosition ?? null,
-    position,
+    position: position ?? null,
   };
 };

@@ -324,8 +324,8 @@ export class PageLayoutDuplicationService {
         fromCreatePageLayoutWidgetInputToFlatPageLayoutWidgetToCreate({
           createPageLayoutWidgetInput: {
             title: originalWidget.title,
-            gridPosition: originalWidget.gridPosition,
-            position: originalWidget.position,
+            gridPosition: originalWidget.gridPosition ?? undefined,
+            position: originalWidget.position ?? undefined,
             type: originalWidget.type,
             objectMetadataId: originalWidget.objectMetadataId,
             configuration: originalWidget.configuration,

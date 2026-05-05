@@ -10,6 +10,7 @@ export const fromFlatPageLayoutWidgetToPageLayoutWidgetDto = (
     deletedAt,
     objectMetadataId,
     overrides,
+    gridPosition: _gridPosition,
     ...rest
   } = flatPageLayoutWidget;
 

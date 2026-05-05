@@ -1,3 +1,4 @@
+import { PAGE_LAYOUT_CONFIG } from '@/page-layout/constants/PageLayoutBreakpoints';
 import { type DraftPageLayout } from '@/page-layout/types/DraftPageLayout';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { isDynamicRelationWidget } from '@/page-layout/utils/isDynamicRelationWidget';
@@ -40,10 +41,12 @@ const buildWidgetPosition = (
         };
       }
 
+      const columns = PAGE_LAYOUT_CONFIG.columns.desktop;
+
       return {
         layoutMode: PageLayoutTabLayoutMode.GRID,
-        row: 0,
-        column: 0,
+        row: Math.floor(widgetIndex / columns),
+        column: widgetIndex % columns,
         rowSpan: 1,
         columnSpan: 1,
       };
