@@ -198,6 +198,14 @@ export default defineApplication({
 
 See the [defineApplication accordion](/developers/extend/apps/building#defineentity-functions) in the Building Apps page for the full list of marketplace fields (`author`, `category`, `aboutDescription`, `websiteUrl`, `termsUrl`, etc.).
 
+#### Recommended screenshot dimensions
+
+The marketplace renders `screenshots` in a fixed `8:5` container (for example, `1600×1000 px`).
+
+<Note>
+Screenshots of any aspect ratio are displayed in full and are never cropped, but anything significantly taller or narrower than `8:5` will show empty bands on the sides.
+</Note>
+
 ### Publish
 
 ```bash filename="Terminal"
