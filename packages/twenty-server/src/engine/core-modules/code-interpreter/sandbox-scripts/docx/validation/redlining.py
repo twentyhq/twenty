@@ -2,7 +2,6 @@
 Validator for tracked changes in Word documents.
 """
 
-import subprocess
 import tempfile
 import zipfile
 from pathlib import Path
@@ -29,7 +28,7 @@ class RedliningValidator:
 
         # First, check if there are any tracked changes by Claude to validate
         try:
-            import xml.etree.ElementTree as ET
+            import defusedxml.ElementTree as ET
 
             tree = ET.parse(modified_file)
             root = tree.getroot()
@@ -81,7 +80,7 @@ class RedliningValidator:
 
             # Parse both XML files using xml.etree.ElementTree for redlining validation
             try:
-                import xml.etree.ElementTree as ET
+                import defusedxml.ElementTree as ET
 
                 modified_tree = ET.parse(modified_file)
                 modified_root = modified_tree.getroot()
@@ -137,79 +136,25 @@ class RedliningValidator:
         return "\n".join(error_parts)
 
     def _get_git_word_diff(self, original_text, modified_text):
-        """Generate word diff using git with character-level precision."""
+        """Generate word diff using Python difflib (no subprocess)."""
+        import difflib
+
         try:
-            with tempfile.TemporaryDirectory() as temp_dir:
-                temp_path = Path(temp_dir)
-
-                # Create two files
-                original_file = temp_path / "original.txt"
-                modified_file = temp_path / "modified.txt"
-
-                original_file.write_text(original_text, encoding="utf-8")
-                modified_file.write_text(modified_text, encoding="utf-8")
-
-                # Try character-level diff first for precise differences
-                result = subprocess.run(
-                    [
-                        "git",
-                        "diff",
-                        "--word-diff=plain",
-                        "--word-diff-regex=.",  # Character-by-character diff
-                        "-U0",  # Zero lines of context - show only changed lines
-                        "--no-index",
-                        str(original_file),
-                        str(modified_file),
-                    ],
-                    capture_output=True,
-                    text=True,
+            diff = list(
+                difflib.unified_diff(
+                    original_text.splitlines(),
+                    modified_text.splitlines(),
+                    lineterm="",
+                    n=0,
                 )
-
-                if result.stdout.strip():
-                    # Clean up the output - remove git diff header lines
-                    lines = result.stdout.split("\n")
-                    # Skip the header lines (diff --git, index, +++, ---, @@)
-                    content_lines = []
-                    in_content = False
-                    for line in lines:
-                        if line.startswith("@@"):
-                            in_content = True
-                            continue
-                        if in_content and line.strip():
-                            content_lines.append(line)
-
-                    if content_lines:
-                        return "\n".join(content_lines)
-
-                # Fallback to word-level diff if character-level is too verbose
-                result = subprocess.run(
-                    [
-                        "git",
-                        "diff",
-                        "--word-diff=plain",
-                        "-U0",  # Zero lines of context
-                        "--no-index",
-                        str(original_file),
-                        str(modified_file),
-                    ],
-                    capture_output=True,
-                    text=True,
-                )
-
-                if result.stdout.strip():
-                    lines = result.stdout.split("\n")
-                    content_lines = []
-                    in_content = False
-                    for line in lines:
-                        if line.startswith("@@"):
-                            in_content = True
-                            continue
-                        if in_content and line.strip():
-                            content_lines.append(line)
-                    return "\n".join(content_lines)
-
-        except (subprocess.CalledProcessError, FileNotFoundError, Exception):
-            # Git not available or other error, return None to use fallback
+            )
+            # Skip the --- / +++ header lines; keep only change lines
+            content_lines = [
+                line for line in diff if not line.startswith(("---", "+++", "@@"))
+            ]
+            if content_lines:
+                return "\n".join(content_lines)
+        except Exception:
             pass
 
         return None
