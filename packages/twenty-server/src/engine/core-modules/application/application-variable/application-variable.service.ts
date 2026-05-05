@@ -109,7 +109,6 @@ export class ApplicationVariableEntityService {
 
     await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
       'applicationVariableMaps',
-      'flatApplicationVariableMaps',
     ]);
   }
 }

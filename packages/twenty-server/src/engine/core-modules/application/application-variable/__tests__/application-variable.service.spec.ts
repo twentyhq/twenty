@@ -104,7 +104,7 @@ describe('ApplicationVariableEntityService', () => {
       );
       expect(workspaceCacheService.invalidateAndRecompute).toHaveBeenCalledWith(
         mockWorkspaceId,
-        ['applicationVariableMaps', 'flatApplicationVariableMaps'],
+        ['applicationVariableMaps'],
       );
     });
 

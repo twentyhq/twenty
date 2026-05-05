@@ -56,7 +56,7 @@ export class UpdateApplicationVariableActionHandlerService extends WorkspaceMigr
     const { flatAction, queryRunner, workspaceId } = context;
     const { entityId, update } = flatAction;
 
-    if ('isSecret' in update && update.isSecret === true) {
+    if (update.isSecret !== undefined && update.isSecret) {
       const applicationVariableRepository =
         queryRunner.manager.getRepository<ApplicationVariableEntity>(
           ApplicationVariableEntity,
@@ -72,7 +72,7 @@ export class UpdateApplicationVariableActionHandlerService extends WorkspaceMigr
       }
     }
 
-    if ('isSecret' in update && update.isSecret === false) {
+    if (update.isSecret !== undefined && !update.isSecret) {
       const applicationVariableRepository =
         queryRunner.manager.getRepository<ApplicationVariableEntity>(
           ApplicationVariableEntity,
