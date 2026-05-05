@@ -1,19 +1,45 @@
+import { BACKGROUND_MOCK_COLUMN_WIDTHS } from '@/sign-in-background-mock/constants/BackgroundMockColumnWidths';
+
 export type BackgroundMockColumn = {
-  label: string;
+  label: keyof typeof BACKGROUND_MOCK_COLUMN_WIDTHS;
   iconName: string;
   width: number;
 };
 
 export const BACKGROUND_MOCK_COLUMNS = [
-  { label: 'Name', iconName: 'IconBuildingSkyscraper', width: 180 },
-  { label: 'Domain', iconName: 'IconLink', width: 150 },
-  { label: 'Employees', iconName: 'IconUsers', width: 100 },
-  { label: 'People', iconName: 'IconUsers', width: 200 },
-  { label: 'Address', iconName: 'IconMap', width: 170 },
-  { label: 'Account Owner', iconName: 'IconUserCircle', width: 150 },
-  { label: 'Creation date', iconName: 'IconCalendar', width: 150 },
-  { label: 'ICP', iconName: 'IconTarget', width: 80 },
-  { label: 'Linkedin', iconName: 'IconBrandLinkedin', width: 150 },
-  { label: 'Opportunities', iconName: 'IconTargetArrow', width: 150 },
-  { label: 'X', iconName: 'IconBrandX', width: 100 },
+  {
+    label: 'Name',
+    iconName: 'IconBuildingSkyscraper',
+    width: BACKGROUND_MOCK_COLUMN_WIDTHS.Name,
+  },
+  {
+    label: 'Domain',
+    iconName: 'IconLink',
+    width: BACKGROUND_MOCK_COLUMN_WIDTHS.Domain,
+  },
+  {
+    label: 'Created by',
+    iconName: 'IconUserCircle',
+    width: BACKGROUND_MOCK_COLUMN_WIDTHS['Created by'],
+  },
+  {
+    label: 'Account Owner',
+    iconName: 'IconUserCircle',
+    width: BACKGROUND_MOCK_COLUMN_WIDTHS['Account Owner'],
+  },
+  {
+    label: 'Creation date',
+    iconName: 'IconCalendar',
+    width: BACKGROUND_MOCK_COLUMN_WIDTHS['Creation date'],
+  },
+  {
+    label: 'Employees',
+    iconName: 'IconUsers',
+    width: BACKGROUND_MOCK_COLUMN_WIDTHS.Employees,
+  },
+  {
+    label: 'Address',
+    iconName: 'IconMap',
+    width: BACKGROUND_MOCK_COLUMN_WIDTHS.Address,
+  },
 ] satisfies BackgroundMockColumn[];

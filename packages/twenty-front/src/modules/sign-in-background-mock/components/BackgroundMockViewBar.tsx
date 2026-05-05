@@ -1,25 +1,68 @@
 import { styled } from '@linaria/react';
+import { useContext } from 'react';
 
-import { Tag } from 'twenty-ui/components';
-import { IconBuildingSkyscraper } from 'twenty-ui/display';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { TopBar } from '@/ui/layout/top-bar/components/TopBar';
+import { IconBuildingSkyscraper, IconChevronDown } from 'twenty-ui/display';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
-const StyledViewBar = styled.div`
+const StyledViewPicker = styled.div`
   align-items: center;
-  background: ${themeCssVariables.background.primary};
-  border-bottom: 1px solid ${themeCssVariables.border.color.light};
-  box-sizing: border-box;
+  color: ${themeCssVariables.font.color.secondary};
+  cursor: pointer;
   display: flex;
-  flex-shrink: 0;
-  gap: 8px;
-  height: 40px;
-  padding: 0 12px;
+  font-weight: ${themeCssVariables.font.weight.medium};
+  gap: ${themeCssVariables.spacing[1]};
+  height: 100%;
+  padding: 0 ${themeCssVariables.spacing[2]};
+`;
+
+const StyledViewPickerIcon = styled.div`
+  align-items: center;
+  color: ${themeCssVariables.font.color.tertiary};
+  display: flex;
+`;
+
+const StyledViewPickerCount = styled.span`
+  color: ${themeCssVariables.font.color.tertiary};
+`;
+
+const StyledRightAction = styled.div`
+  align-items: center;
+  color: ${themeCssVariables.font.color.tertiary};
+  display: flex;
+  font-weight: ${themeCssVariables.font.weight.regular};
+  height: 100%;
+  padding: 0 ${themeCssVariables.spacing[2]};
 `;
 
 export const BackgroundMockViewBar = () => {
+  const { theme } = useContext(ThemeContext);
+
   return (
-    <StyledViewBar>
-      <Tag text="All Companies" color="gray" Icon={IconBuildingSkyscraper} />
-    </StyledViewBar>
+    <TopBar
+      leftComponent={
+        <StyledViewPicker>
+          <StyledViewPickerIcon>
+            <IconBuildingSkyscraper
+              size={theme.icon.size.md}
+              stroke={theme.icon.stroke.sm}
+            />
+          </StyledViewPickerIcon>
+          <span>All Companies</span>
+          <StyledViewPickerCount>· 599</StyledViewPickerCount>
+          <IconChevronDown
+            size={theme.icon.size.sm}
+            stroke={theme.icon.stroke.sm}
+          />
+        </StyledViewPicker>
+      }
+      rightComponent={
+        <>
+          <StyledRightAction>Filter</StyledRightAction>
+          <StyledRightAction>Sort</StyledRightAction>
+          <StyledRightAction>Options</StyledRightAction>
+        </>
+      }
+    />
   );
 };

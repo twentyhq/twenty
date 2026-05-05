@@ -5,6 +5,7 @@ import { getSettingsPath } from 'twenty-shared/utils';
 import { IconSearch, IconSettings } from 'twenty-ui/display';
 import { getOsControlSymbol, useIsMobile } from 'twenty-ui/utilities';
 
+import { BACKGROUND_MOCK_OTHER_ITEMS } from '@/sign-in-background-mock/constants/BackgroundMockOtherItems';
 import { BACKGROUND_MOCK_WORKSPACE_ITEMS } from '@/sign-in-background-mock/constants/BackgroundMockNavigationItems';
 import { NavigationDrawer } from '@/ui/navigation/navigation-drawer/components/NavigationDrawer';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
@@ -48,12 +49,24 @@ export const BackgroundMockNavigationDrawer = ({
       )}
       <NavigationDrawerSection>
         <NavigationDrawerSectionTitle label={t`Workspace`} />
-        {BACKGROUND_MOCK_WORKSPACE_ITEMS.map((item) => (
+        {BACKGROUND_MOCK_WORKSPACE_ITEMS.map((item, index) => (
           <NavigationDrawerItem
             key={item.label}
             label={item.label}
             Icon={item.Icon}
             iconColor={item.color}
+            active={index === 0}
+            onClick={() => {}}
+          />
+        ))}
+      </NavigationDrawerSection>
+      <NavigationDrawerSection>
+        <NavigationDrawerSectionTitle label={t`Other`} />
+        {BACKGROUND_MOCK_OTHER_ITEMS.map((item) => (
+          <NavigationDrawerItem
+            key={item.label}
+            label={item.label}
+            Icon={item.Icon}
             onClick={() => {}}
           />
         ))}

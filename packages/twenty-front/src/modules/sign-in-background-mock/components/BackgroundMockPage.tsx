@@ -1,6 +1,7 @@
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { IconBuildingSkyscraper } from 'twenty-ui/display';
+import { IconBuildingSkyscraper, IconPlus } from 'twenty-ui/display';
+import { Button } from 'twenty-ui/input';
 
 import { BackgroundMockTable } from '@/sign-in-background-mock/components/BackgroundMockTable';
 import { BackgroundMockViewBar } from '@/sign-in-background-mock/components/BackgroundMockViewBar';
@@ -20,7 +21,15 @@ const StyledTableContainer = styled.div`
 export const BackgroundMockPage = () => {
   return (
     <PageContainer>
-      <PageHeader title={t`Companies`} Icon={IconBuildingSkyscraper} />
+      <PageHeader title={t`Companies`} Icon={IconBuildingSkyscraper}>
+        <Button
+          Icon={IconPlus}
+          title={t`New Company`}
+          variant="primary"
+          accent="default"
+          size="small"
+        />
+      </PageHeader>
       <PageBody>
         <StyledTableContainer>
           <BackgroundMockViewBar />
