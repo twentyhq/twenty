@@ -11,9 +11,6 @@ type ProposedTask = {
   body: string;
   dueAt: string | null;
   rationale: string;
-  targetPersonIds: string[];
-  targetCompanyId: string | null;
-  targetOpportunityId: string | null;
 };
 
 type SalesNoteSnapshot = {
@@ -429,9 +426,6 @@ const ExtractTasksPanel = () => {
         body: e.body,
         dueAt: e.dueAt,
         rationale: e.rationale,
-        targetPersonIds: snap.attendeePersonIds,
-        targetCompanyId: snap.companyId,
-        targetOpportunityId: snap.opportunityId,
       }));
       setProposals(seeded);
       setExtractionId((n) => n + 1);
@@ -452,25 +446,30 @@ const ExtractTasksPanel = () => {
     if (proposals.length === 0) return;
     if (recordId == null) return;
     const salesNoteId = recordId;
-    const assigneeId = snapshot?.ownerId ?? null;
     setError(null);
     setSuccess(null);
     setCreating(true);
     let createdCount = 0;
     try {
+      // Re-fetch the salesNote at commit time so we pick up any relation
+      // changes that happened since Extract ran (e.g., auto-filled account
+      // from the first attendee, or attendees added after extraction).
+      // Using extract-time `snapshot` would let those drop on the floor.
+      const liveSnap = await fetchSalesNoteSnapshot(salesNoteId);
+      const assigneeId = liveSnap.ownerId;
       for (const p of proposals) {
         const taskId = await createTask(p.title, p.body, p.dueAt, assigneeId);
         // Always link the task back to this sales note so it appears in
         // the Linked Tasks tab.
         await createTaskTarget(taskId, { targetSalesNoteId: salesNoteId });
-        for (const personId of p.targetPersonIds) {
+        for (const personId of liveSnap.attendeePersonIds) {
           await createTaskTarget(taskId, { targetPersonId: personId });
         }
-        if (p.targetCompanyId) {
-          await createTaskTarget(taskId, { targetCompanyId: p.targetCompanyId });
+        if (liveSnap.companyId) {
+          await createTaskTarget(taskId, { targetCompanyId: liveSnap.companyId });
         }
-        if (p.targetOpportunityId) {
-          await createTaskTarget(taskId, { targetOpportunityId: p.targetOpportunityId });
+        if (liveSnap.opportunityId) {
+          await createTaskTarget(taskId, { targetOpportunityId: liveSnap.opportunityId });
         }
         createdCount += 1;
       }
@@ -488,7 +487,7 @@ const ExtractTasksPanel = () => {
     } finally {
       setCreating(false);
     }
-  }, [proposals, recordId, snapshot]);
+  }, [proposals, recordId]);
 
   const buttonLabel = extracting ? 'Extracting…' : 'Extract tasks from notes';
   const isReadyToExtract = !extracting && !creating && recordId != null;
