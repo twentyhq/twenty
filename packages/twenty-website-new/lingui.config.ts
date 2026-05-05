@@ -1,13 +1,13 @@
 import { defineConfig } from '@lingui/conf';
 import { formatter } from '@lingui/format-po';
-import { APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
+import { SOURCE_LOCALE } from 'twenty-shared/translations';
+
+import { WEBSITE_LOCALE_LIST } from './src/lib/i18n/website-locale-list';
 
 export default defineConfig({
   sourceLocale: SOURCE_LOCALE,
-  locales: Object.values(APP_LOCALES),
-  pseudoLocale: 'pseudo-en',
+  locales: [...WEBSITE_LOCALE_LIST],
   fallbackLocales: {
-    'pseudo-en': 'en',
     default: SOURCE_LOCALE,
   },
   catalogs: [

@@ -1,11 +1,6 @@
-import type { EngagementBandDataType } from '@/sections/EngagementBand/types';
+import { msg } from '@lingui/core/macro';
 
-export const ENGAGEMENT_BAND_DATA: EngagementBandDataType = {
-  heading: {
-    text: 'Need help with customization?',
-    fontFamily: 'serif',
-  },
-  body: {
-    text: 'Find the right partner to implement, customize, and tailor Twenty to your team.',
-  },
+export const ENGAGEMENT_BAND_COPY = {
+  body: msg`Find the right partner to implement, customize, and tailor Twenty to your team.`,
+  heading: msg`Need help with customization?`,
 };

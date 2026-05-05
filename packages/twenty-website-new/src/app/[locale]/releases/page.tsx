@@ -1,12 +1,15 @@
+import { msg } from '@lingui/core/macro';
 import { MENU_DATA } from '@/sections/Menu/data';
-import {
-  RELEASE_NOTES_HERO_BODY,
-  RELEASE_NOTES_HERO_HEADING,
-} from '@/app/[locale]/releases/hero.data';
-import { LinkButton } from '@/design-system/components';
-import { Pages } from '@/lib/pages';
+import { RELEASE_NOTES_HERO_COPY } from '@/app/[locale]/releases/hero.data';
+import { HeadingPart, LinkButton } from '@/design-system/components';
 import { GitHubIcon } from '@/icons';
 import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';
+import { createMessageDescriptorRenderer } from '@/lib/i18n/create-message-descriptor-renderer';
+import {
+  getRouteI18n,
+  type LocaleRouteParams,
+} from '@/lib/i18n/get-route-i18n';
+import { Pages } from '@/lib/pages';
 import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels';
 import { fetchLatestGithubReleaseTag } from '@/lib/releases/fetch-latest-release-tag';
 import { getVisibleReleaseNotes } from '@/lib/releases/get-visible-releases';
@@ -20,12 +23,18 @@ import { Fragment } from 'react';
 
 export const generateMetadata = buildRouteMetadata('releases');
 
-export default async function ReleasesPage() {
+type ReleasesPageProps = {
+  params: Promise<LocaleRouteParams>;
+};
+
+export default async function ReleasesPage({ params }: ReleasesPageProps) {
   const allNotes = loadLocalReleaseNotes();
-  const [latestTag, stats] = await Promise.all([
+  const [i18n, latestTag, stats] = await Promise.all([
+    getRouteI18n(params),
     fetchLatestGithubReleaseTag(),
     fetchCommunityStats(),
   ]);
+  const renderText = createMessageDescriptorRenderer(i18n);
   const menuSocialLinks = mergeSocialLinkLabels(MENU_DATA.socialLinks, stats);
   const visibleNotes =
     process.env.NODE_ENV === 'development'
@@ -56,24 +65,27 @@ export default async function ReleasesPage() {
       </Menu.Root>
 
       <Hero.Root backgroundColor={theme.colors.primary.background[100]}>
-        <Hero.Heading
-          page={Pages.ReleaseNotes}
-          segments={RELEASE_NOTES_HERO_HEADING}
-          size="lg"
-          weight="light"
-        />
+        <Hero.Heading page={Pages.ReleaseNotes} size="lg" weight="light">
+          <HeadingPart fontFamily="serif">
+            {renderText(msg`Latest`)}
+          </HeadingPart>
+          <br />
+          <HeadingPart fontFamily="sans">
+            {renderText(msg`Releases`)}
+          </HeadingPart>
+        </Hero.Heading>
         <Hero.Body
           page={Pages.ReleaseNotes}
-          body={RELEASE_NOTES_HERO_BODY}
+          body={{ text: RELEASE_NOTES_HERO_COPY.body }}
+          renderText={renderText}
           size="sm"
         />
         <Hero.Cta>
           <LinkButton
             color="secondary"
             href="https://github.com/twentyhq/twenty/releases"
-            label="Technical notes"
+            label={renderText(msg`Technical notes`)}
             leadingIcon={<GitHubIcon fillColor="currentColor" size={14} />}
-            type="anchor"
             variant="outlined"
           />
         </Hero.Cta>

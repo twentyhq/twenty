@@ -12,6 +12,7 @@ import {
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
 import { ApplicationManifestMigrationService } from 'src/engine/core-modules/application/application-manifest/application-manifest-migration.service';
+import { ApplicationOAuthProviderService } from 'src/engine/core-modules/application/application-oauth-provider/application-oauth-provider.service';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { buildFromToAllUniversalFlatEntityMaps } from 'src/engine/core-modules/application/application-manifest/utils/build-from-to-all-universal-flat-entity-maps.util';
@@ -33,6 +34,7 @@ export class ApplicationSyncService {
   constructor(
     private readonly applicationService: ApplicationService,
     private readonly applicationVariableService: ApplicationVariableEntityService,
+    private readonly applicationOAuthProviderService: ApplicationOAuthProviderService,
     private readonly applicationManifestMigrationService: ApplicationManifestMigrationService,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly workspaceCacheService: WorkspaceCacheService,
@@ -152,6 +154,12 @@ export class ApplicationSyncService {
         workspaceId,
       },
     );
+
+    await this.applicationOAuthProviderService.upsertManyFromManifest({
+      connectionProviders: manifest.connectionProviders,
+      applicationId: application.id,
+      workspaceId,
+    });
 
     const resolvedRegistrationId =
       applicationRegistrationId ?? application.applicationRegistrationId;

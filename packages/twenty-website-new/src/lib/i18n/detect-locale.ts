@@ -48,7 +48,8 @@ export const detectLocale = ({
   }
 
   if (acceptLanguageHeader !== undefined && acceptLanguageHeader.length > 0) {
-    for (const { tag } of parseAcceptLanguage(acceptLanguageHeader)) {
+    for (const { tag, quality } of parseAcceptLanguage(acceptLanguageHeader)) {
+      if (quality <= 0) continue;
       const match = matchTag(tag);
       if (match !== undefined) return match;
     }

@@ -24,15 +24,15 @@ describe('detectLocale', () => {
       detectLocale({
         acceptLanguageHeader: 'en;q=0.5,fr-FR;q=0.9,de;q=0.7',
       }),
-    ).toBe('en');
+    ).toBe('fr-FR');
   });
 
-  it('falls back to the source locale when a regional language is not published', () => {
+  it('matches a regional language to a published locale with the same language subtag', () => {
     expect(
       detectLocale({
         acceptLanguageHeader: 'fr-CA',
       }),
-    ).toBe('en');
+    ).toBe('fr-FR');
   });
 
   it('falls back to the source locale when a bare language is not published', () => {
@@ -68,6 +68,6 @@ describe('detectLocale', () => {
       detectLocale({
         acceptLanguageHeader: 'en;q=0.1, fr-FR ; q=0.9, de-DE ; q=0.5',
       }),
-    ).toBe('en');
+    ).toBe('fr-FR');
   });
 });

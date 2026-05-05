@@ -1,6 +1,6 @@
 import process from 'process';
 
-import opentelemetry from '@opentelemetry/api';
+import { metrics as otelMetrics } from '@opentelemetry/api';
 import { OTLPMetricExporter } from '@opentelemetry/exporter-metrics-otlp-http';
 import { PrometheusExporter } from '@opentelemetry/exporter-prometheus';
 import {
@@ -102,4 +102,4 @@ const meterProvider = new MeterProvider({
   ],
 });
 
-opentelemetry.metrics.setGlobalMeterProvider(meterProvider);
+otelMetrics.setGlobalMeterProvider(meterProvider);

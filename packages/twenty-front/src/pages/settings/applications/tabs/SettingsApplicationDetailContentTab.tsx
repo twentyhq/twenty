@@ -68,6 +68,7 @@ export const SettingsApplicationDetailContentTab = ({
     agentRows,
     skillRows,
     roleRows,
+    connectionProviderRows,
   } = useComputeApplicationContentForLayoutAndLogic({
     installedApplication,
     manifestContent,
@@ -137,6 +138,7 @@ export const SettingsApplicationDetailContentTab = ({
     agents: filterRows(agentRows, normalizedSearch),
     skills: filterRows(skillRows, normalizedSearch),
     roles: filterRows(roleRows, normalizedSearch),
+    connectionProviders: filterRows(connectionProviderRows, normalizedSearch),
   };
 
   const hasData = filtered.objects.length > 0 || filtered.fields.length > 0;
@@ -149,7 +151,8 @@ export const SettingsApplicationDetailContentTab = ({
     filtered.logicFunctions.length > 0 ||
     filtered.agents.length > 0 ||
     filtered.skills.length > 0 ||
-    filtered.roles.length > 0;
+    filtered.roles.length > 0 ||
+    filtered.connectionProviders.length > 0;
 
   if (!hasData && !hasLayout && !hasLogic && normalizedSearch === '') {
     return null;
@@ -251,6 +254,12 @@ export const SettingsApplicationDetailContentTab = ({
             <SettingsApplicationContentSubtable
               title={t`Roles`}
               rows={filtered.roles}
+              applicationId={applicationId}
+              fallbackApplicationData={fallbackApplicationData}
+            />
+            <SettingsApplicationContentSubtable
+              title={t`Connection providers`}
+              rows={filtered.connectionProviders}
               applicationId={applicationId}
               fallbackApplicationData={fallbackApplicationData}
             />
