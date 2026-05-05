@@ -7,7 +7,7 @@ const USER_FRIENDLY_MESSAGE_KEY: keyof FlatEntityValidationError =
   'userFriendlyMessage';
 
 const isMessageDescriptor = (value: unknown): value is MessageDescriptor =>
-  isObject(value) && 'id' in value && isString((value as { id: unknown }).id);
+  isObject(value) && 'id' in value && isString(value.id);
 
 const translateValueRecursively = (
   value: unknown,

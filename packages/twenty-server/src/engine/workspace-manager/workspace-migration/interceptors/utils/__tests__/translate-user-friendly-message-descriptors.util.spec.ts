@@ -38,7 +38,9 @@ describe('translateUserFriendlyMessageDescriptors', () => {
       i18nMock,
     );
 
-    expect(result).toEqual({ someOtherKey: { id: 'not-user-friendly', message: 'not-user-friendly' } });
+    expect(result).toEqual({
+      someOtherKey: { id: 'not-user-friendly', message: 'not-user-friendly' },
+    });
   });
 
   it('translates userFriendlyMessage descriptors nested inside arrays of objects', () => {
@@ -96,7 +98,9 @@ describe('translateUserFriendlyMessageDescriptors', () => {
                 {
                   code: 'INVALID_VIEW_DATA',
                   message: 'Field value is required',
-                  userFriendlyMessage: buildDescriptor('Field value is required'),
+                  userFriendlyMessage: buildDescriptor(
+                    'Field value is required',
+                  ),
                 },
               ],
             },

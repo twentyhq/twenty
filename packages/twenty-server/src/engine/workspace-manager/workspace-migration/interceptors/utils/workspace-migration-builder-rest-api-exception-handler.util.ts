@@ -5,7 +5,7 @@ import { type WorkspaceMigrationBuilderException } from 'src/engine/workspace-ma
 import { buildMetadataValidationErrorPayload } from 'src/engine/workspace-manager/workspace-migration/interceptors/utils/build-metadata-validation-error-payload.util';
 import { translateUserFriendlyMessageDescriptors } from 'src/engine/workspace-manager/workspace-migration/interceptors/utils/translate-user-friendly-message-descriptors.util';
 
-export const respondWithWorkspaceMigrationBuilderExceptionRestApi = ({
+export const workspaceMigrationBuilderRestApiExceptionHandler = ({
   exception,
   response,
   i18n,

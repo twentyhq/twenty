@@ -8,10 +8,10 @@ import {
 import { type WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { buildMetadataValidationErrorPayload } from 'src/engine/workspace-manager/workspace-migration/interceptors/utils/build-metadata-validation-error-payload.util';
 
-export const workspaceMigrationBuilderExceptionFormatter = (
-  error: WorkspaceMigrationBuilderException,
+export const workspaceMigrationBuilderGraphqlApiExceptionHandler = (
+  exception: WorkspaceMigrationBuilderException,
 ) => {
-  const payload = buildMetadataValidationErrorPayload(error);
+  const payload = buildMetadataValidationErrorPayload(exception);
 
   const validationSummaryMessage = `Validation failed for ${Object.values(
     ALL_METADATA_NAME,
@@ -28,7 +28,7 @@ export const workspaceMigrationBuilderExceptionFormatter = (
     .join(', ')}`;
 
   throw new BaseGraphQLError(
-    error.message,
+    exception.message,
     ErrorCode.METADATA_VALIDATION_FAILED,
     {
       code: 'METADATA_VALIDATION_ERROR',

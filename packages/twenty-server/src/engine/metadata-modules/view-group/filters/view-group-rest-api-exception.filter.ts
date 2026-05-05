@@ -16,7 +16,7 @@ import {
   ViewGroupExceptionCode,
 } from 'src/engine/metadata-modules/view-group/exceptions/view-group.exception';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
-import { respondWithWorkspaceMigrationBuilderExceptionRestApi } from 'src/engine/workspace-manager/workspace-migration/interceptors/utils/respond-with-workspace-migration-builder-exception-rest-api.util';
+import { workspaceMigrationBuilderRestApiExceptionHandler } from 'src/engine/workspace-manager/workspace-migration/interceptors/utils/workspace-migration-builder-rest-api-exception-handler.util';
 import {
   type CustomException,
   UnknownException,
@@ -38,7 +38,7 @@ export class ViewGroupRestApiExceptionFilter implements ExceptionFilter {
     const response = ctx.getResponse<Response>();
 
     if (exception instanceof WorkspaceMigrationBuilderException) {
-      return respondWithWorkspaceMigrationBuilderExceptionRestApi({
+      return workspaceMigrationBuilderRestApiExceptionHandler({
         exception,
         response,
         i18n: this.i18nService.getI18nInstance(SOURCE_LOCALE),
