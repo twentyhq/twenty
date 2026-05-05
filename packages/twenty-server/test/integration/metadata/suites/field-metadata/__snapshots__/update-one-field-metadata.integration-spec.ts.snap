@@ -33,7 +33,7 @@ exports[`updateOne failing update should not update a field name if it is not sy
       },
       "userFriendlyMessage": "Updated field name is not synced with label",
     },
-    "message": "Updated field name is not synced with label",
+    "message": "Multiple validation errors occurred while updating field",
     "name": "GraphQLError",
   },
 ]
@@ -78,7 +78,7 @@ exports[`updateOne failing update should throw if the field name is not availabl
       },
       "userFriendlyMessage": "Name "otherTestName" is not available as it is already used by another field",
     },
-    "message": "Name "otherTestName" is not available as it is already used by another field",
+    "message": "Multiple validation errors occurred while updating field",
     "name": "GraphQLError",
   },
 ]

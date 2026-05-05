@@ -49,7 +49,7 @@ exports[`Object metadata update should fail when labelIdentifier is not a TEXT o
       },
       "userFriendlyMessage": "Field cannot be used as label identifier due to its type: should be of type UUID, text or full name",
     },
-    "message": "Field cannot be used as label identifier due to its type: should be of type UUID, text or full name",
+    "message": "Multiple validation errors occurred while updating object",
     "name": "GraphQLError",
   },
 ]

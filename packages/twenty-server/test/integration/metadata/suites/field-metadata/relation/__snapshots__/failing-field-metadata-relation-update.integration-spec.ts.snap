@@ -34,7 +34,7 @@ exports[`Field metadata relation update should fail relation when name is not in
       },
       "userFriendlyMessage": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
     },
-    "message": "Name is not valid: it must start with lowercase letter and contain only alphanumeric letters",
+    "message": "Multiple validation errors occurred while updating field",
     "name": "GraphQLError",
   },
 ]
@@ -73,7 +73,7 @@ exports[`Field metadata relation update should fail relation when updating ONE_T
       },
       "userFriendlyMessage": "On delete action is only supported for many to one relations",
     },
-    "message": "On delete action is only supported for many to one relations",
+    "message": "Multiple validation errors occurred while updating field",
     "name": "GraphQLError",
   },
 ]

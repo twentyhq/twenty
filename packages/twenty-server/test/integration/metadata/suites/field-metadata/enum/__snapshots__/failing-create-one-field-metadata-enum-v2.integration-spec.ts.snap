@@ -34,7 +34,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       },
       "userFriendlyMessage": "Multi-select field default value must be an array",
     },
-    "message": "Multi-select field default value must be an array",
+    "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
   },
 ]
@@ -74,7 +74,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       },
       "userFriendlyMessage": "Multi-select field default value must be an array",
     },
-    "message": "Multi-select field default value must be an array",
+    "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
   },
 ]
@@ -114,7 +114,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       },
       "userFriendlyMessage": "Label must not contain a comma",
     },
-    "message": "Label must not contain a comma",
+    "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
   },
 ]
@@ -169,7 +169,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       },
       "userFriendlyMessage": "Duplicated option id",
     },
-    "message": "Duplicated option id",
+    "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
   },
 ]
@@ -224,7 +224,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       },
       "userFriendlyMessage": "Duplicated option position",
     },
-    "message": "Duplicated option position",
+    "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
   },
 ]
@@ -279,7 +279,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       },
       "userFriendlyMessage": "Duplicated option value",
     },
-    "message": "Duplicated option value",
+    "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
   },
 ]
@@ -334,7 +334,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       },
       "userFriendlyMessage": "Duplicated option value",
     },
-    "message": "Duplicated option value",
+    "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
   },
 ]
@@ -374,7 +374,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       },
       "userFriendlyMessage": "If defined default value must contain at least one value",
     },
-    "message": "If defined default value must contain at least one value",
+    "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
   },
 ]
@@ -414,7 +414,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       },
       "userFriendlyMessage": "Options are required for enum fields",
     },
-    "message": "Options are required for enum fields",
+    "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
   },
 ]
@@ -460,7 +460,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       },
       "userFriendlyMessage": "Default value should be as quoted string",
     },
-    "message": "Default value should be as quoted string",
+    "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
   },
 ]
@@ -500,7 +500,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       },
       "userFriendlyMessage": "Option id is invalid",
     },
-    "message": "Option id is invalid",
+    "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
   },
 ]
@@ -540,7 +540,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       },
       "userFriendlyMessage": "Option label format not supported",
     },
-    "message": "Option label format not supported",
+    "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
   },
 ]
@@ -580,7 +580,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       },
       "userFriendlyMessage": "Option value format not supported",
     },
-    "message": "Option value format not supported",
+    "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
   },
 ]
@@ -638,7 +638,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       },
       "userFriendlyMessage": "Default value should be as quoted string",
     },
-    "message": "Default value should be as quoted string",
+    "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
   },
 ]
@@ -678,7 +678,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       },
       "userFriendlyMessage": "Option id is invalid",
     },
-    "message": "Option id is invalid",
+    "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
   },
 ]
@@ -718,7 +718,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       },
       "userFriendlyMessage": "Value must be in UPPER_CASE and follow snake_case \"Option 1 and some other things, /\"",
     },
-    "message": "Value must be in UPPER_CASE and follow snake_case \"Option 1 and some other things, /\"",
+    "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
   },
 ]
@@ -758,7 +758,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       },
       "userFriendlyMessage": "Multi-select field default value must be an array",
     },
-    "message": "Multi-select field default value must be an array",
+    "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
   },
 ]
@@ -798,7 +798,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       },
       "userFriendlyMessage": "Default value must be a string",
     },
-    "message": "Default value must be a string",
+    "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
   },
 ]
@@ -838,7 +838,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       },
       "userFriendlyMessage": "Option id is invalid",
     },
-    "message": "Option id is invalid",
+    "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
   },
 ]
@@ -878,7 +878,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       },
       "userFriendlyMessage": "Option label format not supported",
     },
-    "message": "Option label format not supported",
+    "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
   },
 ]
@@ -918,7 +918,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       },
       "userFriendlyMessage": "Option value format not supported",
     },
-    "message": "Option value format not supported",
+    "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
   },
 ]
@@ -963,7 +963,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       },
       "userFriendlyMessage": "Option id is required",
     },
-    "message": "Option id is required",
+    "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
   },
 ]
@@ -1002,7 +1002,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       },
       "userFriendlyMessage": "Option label is required",
     },
-    "message": "Option label is required",
+    "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
   },
 ]
@@ -1042,7 +1042,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       },
       "userFriendlyMessage": "Options are required for enum fields",
     },
-    "message": "Options are required for enum fields",
+    "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
   },
 ]
@@ -1081,7 +1081,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       },
       "userFriendlyMessage": "Option value is required",
     },
-    "message": "Option value is required",
+    "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
   },
 ]
@@ -1127,7 +1127,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       },
       "userFriendlyMessage": "Default value should be as quoted string",
     },
-    "message": "Default value should be as quoted string",
+    "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
   },
 ]
@@ -1167,7 +1167,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       },
       "userFriendlyMessage": "Option id is invalid",
     },
-    "message": "Option id is invalid",
+    "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
   },
 ]
@@ -1207,7 +1207,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       },
       "userFriendlyMessage": "Option label format not supported",
     },
-    "message": "Option label format not supported",
+    "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
   },
 ]
@@ -1247,7 +1247,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       },
       "userFriendlyMessage": "Option value format not supported",
     },
-    "message": "Option value format not supported",
+    "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
   },
 ]
@@ -1293,7 +1293,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       },
       "userFriendlyMessage": "Default value should be as quoted string",
     },
-    "message": "Default value should be as quoted string",
+    "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
   },
 ]
@@ -1333,7 +1333,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       },
       "userFriendlyMessage": "Option id is invalid",
     },
-    "message": "Option id is invalid",
+    "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
   },
 ]
@@ -1373,7 +1373,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       },
       "userFriendlyMessage": "Option label exceeds 63 characters",
     },
-    "message": "Option label exceeds 63 characters",
+    "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
   },
 ]
@@ -1419,7 +1419,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       },
       "userFriendlyMessage": "Option value exceeds 63 characters",
     },
-    "message": "Option value exceeds 63 characters",
+    "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
   },
 ]
@@ -1458,7 +1458,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       },
       "userFriendlyMessage": "Option label is required",
     },
-    "message": "Option label is required",
+    "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
   },
 ]
@@ -1497,7 +1497,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       },
       "userFriendlyMessage": "Option value is required",
     },
-    "message": "Option value is required",
+    "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
   },
 ]
@@ -1537,7 +1537,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       },
       "userFriendlyMessage": "Options are required for enum fields",
     },
-    "message": "Options are required for enum fields",
+    "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
   },
 ]
@@ -1577,7 +1577,7 @@ exports[`Failing create field metadata MULTI_SELECT tests suite v2 Create should
       },
       "userFriendlyMessage": "Default value \"'UNKNOWN_OPTION'\" must be one of the option values",
     },
-    "message": "Default value \"'UNKNOWN_OPTION'\" must be one of the option values",
+    "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
   },
 ]
@@ -1623,7 +1623,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       },
       "userFriendlyMessage": "Default value should be as quoted string",
     },
-    "message": "Default value should be as quoted string",
+    "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
   },
 ]
@@ -1663,7 +1663,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       },
       "userFriendlyMessage": "Default value \"'OPTION_424242'\" must be one of the option values",
     },
-    "message": "Default value \"'OPTION_424242'\" must be one of the option values",
+    "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
   },
 ]
@@ -1703,7 +1703,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       },
       "userFriendlyMessage": "Label must not contain a comma",
     },
-    "message": "Label must not contain a comma",
+    "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
   },
 ]
@@ -1758,7 +1758,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       },
       "userFriendlyMessage": "Duplicated option id",
     },
-    "message": "Duplicated option id",
+    "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
   },
 ]
@@ -1813,7 +1813,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       },
       "userFriendlyMessage": "Duplicated option position",
     },
-    "message": "Duplicated option position",
+    "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
   },
 ]
@@ -1868,7 +1868,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       },
       "userFriendlyMessage": "Duplicated option value",
     },
-    "message": "Duplicated option value",
+    "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
   },
 ]
@@ -1923,7 +1923,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       },
       "userFriendlyMessage": "Duplicated option value",
     },
-    "message": "Duplicated option value",
+    "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
   },
 ]
@@ -1963,7 +1963,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       },
       "userFriendlyMessage": "Options are required for enum fields",
     },
-    "message": "Options are required for enum fields",
+    "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
   },
 ]
@@ -2009,7 +2009,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       },
       "userFriendlyMessage": "Default value should be as quoted string",
     },
-    "message": "Default value should be as quoted string",
+    "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
   },
 ]
@@ -2049,7 +2049,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       },
       "userFriendlyMessage": "Option id is invalid",
     },
-    "message": "Option id is invalid",
+    "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
   },
 ]
@@ -2089,7 +2089,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       },
       "userFriendlyMessage": "Option label format not supported",
     },
-    "message": "Option label format not supported",
+    "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
   },
 ]
@@ -2129,7 +2129,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       },
       "userFriendlyMessage": "Option value format not supported",
     },
-    "message": "Option value format not supported",
+    "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
   },
 ]
@@ -2169,7 +2169,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       },
       "userFriendlyMessage": "Option id is invalid",
     },
-    "message": "Option id is invalid",
+    "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
   },
 ]
@@ -2209,7 +2209,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       },
       "userFriendlyMessage": "Value must be in UPPER_CASE and follow snake_case \"Option 1 and some other things, /\"",
     },
-    "message": "Value must be in UPPER_CASE and follow snake_case \"Option 1 and some other things, /\"",
+    "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
   },
 ]
@@ -2249,7 +2249,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       },
       "userFriendlyMessage": "Default value must be a string",
     },
-    "message": "Default value must be a string",
+    "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
   },
 ]
@@ -2289,7 +2289,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       },
       "userFriendlyMessage": "Option id is invalid",
     },
-    "message": "Option id is invalid",
+    "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
   },
 ]
@@ -2329,7 +2329,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       },
       "userFriendlyMessage": "Option label format not supported",
     },
-    "message": "Option label format not supported",
+    "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
   },
 ]
@@ -2369,7 +2369,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       },
       "userFriendlyMessage": "Option value format not supported",
     },
-    "message": "Option value format not supported",
+    "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
   },
 ]
@@ -2414,7 +2414,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       },
       "userFriendlyMessage": "Option id is required",
     },
-    "message": "Option id is required",
+    "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
   },
 ]
@@ -2453,7 +2453,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       },
       "userFriendlyMessage": "Option label is required",
     },
-    "message": "Option label is required",
+    "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
   },
 ]
@@ -2493,7 +2493,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       },
       "userFriendlyMessage": "Options are required for enum fields",
     },
-    "message": "Options are required for enum fields",
+    "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
   },
 ]
@@ -2532,7 +2532,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       },
       "userFriendlyMessage": "Option value is required",
     },
-    "message": "Option value is required",
+    "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
   },
 ]
@@ -2578,7 +2578,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       },
       "userFriendlyMessage": "Default value should be as quoted string",
     },
-    "message": "Default value should be as quoted string",
+    "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
   },
 ]
@@ -2618,7 +2618,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       },
       "userFriendlyMessage": "Option id is invalid",
     },
-    "message": "Option id is invalid",
+    "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
   },
 ]
@@ -2658,7 +2658,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       },
       "userFriendlyMessage": "Option label format not supported",
     },
-    "message": "Option label format not supported",
+    "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
   },
 ]
@@ -2698,7 +2698,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       },
       "userFriendlyMessage": "Option value format not supported",
     },
-    "message": "Option value format not supported",
+    "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
   },
 ]
@@ -2744,7 +2744,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       },
       "userFriendlyMessage": "Default value should be as quoted string",
     },
-    "message": "Default value should be as quoted string",
+    "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
   },
 ]
@@ -2784,7 +2784,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       },
       "userFriendlyMessage": "Option id is invalid",
     },
-    "message": "Option id is invalid",
+    "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
   },
 ]
@@ -2824,7 +2824,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       },
       "userFriendlyMessage": "Option label exceeds 63 characters",
     },
-    "message": "Option label exceeds 63 characters",
+    "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
   },
 ]
@@ -2870,7 +2870,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       },
       "userFriendlyMessage": "Option value exceeds 63 characters",
     },
-    "message": "Option value exceeds 63 characters",
+    "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
   },
 ]
@@ -2909,7 +2909,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       },
       "userFriendlyMessage": "Option label is required",
     },
-    "message": "Option label is required",
+    "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
   },
 ]
@@ -2948,7 +2948,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       },
       "userFriendlyMessage": "Option value is required",
     },
-    "message": "Option value is required",
+    "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
   },
 ]
@@ -2988,7 +2988,7 @@ exports[`Failing create field metadata SELECT tests suite v2 Create should fail 
       },
       "userFriendlyMessage": "Options are required for enum fields",
     },
-    "message": "Options are required for enum fields",
+    "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
   },
 ]

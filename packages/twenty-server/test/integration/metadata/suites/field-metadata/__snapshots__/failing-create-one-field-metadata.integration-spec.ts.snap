@@ -34,7 +34,7 @@ exports[`Failing create field metadata tests suite should fail to create NUMERIC
       },
       "userFriendlyMessage": "Field type NUMERIC is not supported. Use Number instead.",
     },
-    "message": "Field type NUMERIC is not supported. Use Number instead.",
+    "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
   },
 ]
@@ -80,7 +80,7 @@ exports[`Failing create field metadata tests suite should fail to create POSITIO
       },
       "userFriendlyMessage": "Field type POSITION must be named "position"",
     },
-    "message": "Field type POSITION must be named "position"",
+    "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
   },
 ]
@@ -115,7 +115,7 @@ exports[`Failing create field metadata tests suite should fail to create TS_VECT
       },
       "userFriendlyMessage": "Metadata validation failed",
     },
-    "message": "Multiple validation errors occurred while creating field",
+    "message": "Multiple validation errors occurred while creating fields",
     "name": "GraphQLError",
   },
 ]
