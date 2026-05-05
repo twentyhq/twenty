@@ -576,16 +576,6 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toStringify: false,
       universalProperty: undefined,
     },
-    toolInputSchema: {
-      toCompare: true,
-      toStringify: true,
-      universalProperty: undefined,
-    },
-    isTool: {
-      toCompare: true,
-      toStringify: false,
-      universalProperty: undefined,
-    },
     isBuildUpToDate: {
       toCompare: true,
       toStringify: false,
@@ -607,6 +597,16 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       universalProperty: undefined,
     },
     httpRouteTriggerSettings: {
+      toCompare: true,
+      toStringify: true,
+      universalProperty: undefined,
+    },
+    toolTriggerSettings: {
+      toCompare: true,
+      toStringify: true,
+      universalProperty: undefined,
+    },
+    workflowActionTriggerSettings: {
       toCompare: true,
       toStringify: true,
       universalProperty: undefined,

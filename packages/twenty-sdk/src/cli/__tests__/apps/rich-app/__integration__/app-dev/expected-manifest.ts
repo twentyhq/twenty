@@ -1597,7 +1597,6 @@ export const EXPECTED_MANIFEST: Manifest = {
       handlerName: 'default.config.handler',
       name: 'root-function',
       sourceHandlerPath: 'src/root.function.ts',
-      toolInputSchema: { type: 'object', properties: {} },
       timeoutSeconds: 5,
       httpRouteTriggerSettings: {
         httpMethod: 'GET',
@@ -1612,7 +1611,6 @@ export const EXPECTED_MANIFEST: Manifest = {
       handlerName: 'default.config.handler',
       name: 'greeting-function',
       sourceHandlerPath: 'src/logic-functions/greeting.function.ts',
-      toolInputSchema: { type: 'object', properties: {} },
       timeoutSeconds: 5,
       httpRouteTriggerSettings: {
         httpMethod: 'GET',
@@ -1626,16 +1624,18 @@ export const EXPECTED_MANIFEST: Manifest = {
       builtHandlerPath: 'src/logic-functions/lookup-recipient.function.mjs',
       description: 'Look up a recipient by name to find their details',
       handlerName: 'default.config.handler',
-      isTool: true,
       name: 'lookup-recipient',
       sourceHandlerPath: 'src/logic-functions/lookup-recipient.function.ts',
       timeoutSeconds: 5,
-      toolInputSchema: {
-        type: 'object',
-        properties: {
-          recipientName: {
-            type: 'string',
+      toolTriggerSettings: {
+        inputSchema: {
+          type: 'object',
+          properties: {
+            recipientName: {
+              type: 'string',
+            },
           },
+          required: ['recipientName'],
         },
       },
       universalIdentifier: 'a1b2c3d4-1001-4a7b-8c9d-0e1f2a3b4c5d',
@@ -1651,7 +1651,6 @@ export const EXPECTED_MANIFEST: Manifest = {
       name: 'on-post-card-created',
       sourceHandlerPath: 'src/logic-functions/on-post-card-created.function.ts',
       timeoutSeconds: 5,
-      toolInputSchema: { type: 'object', properties: {} },
       universalIdentifier: 'a1b2c3d4-db01-4a7b-8c9d-0e1f2a3b4c5d',
     },
     {
@@ -1660,7 +1659,6 @@ export const EXPECTED_MANIFEST: Manifest = {
       handlerName: 'default.config.handler',
       name: 'test-function-2',
       sourceHandlerPath: 'src/logic-functions/test-function-2.function.ts',
-      toolInputSchema: { type: 'object', properties: {} },
       timeoutSeconds: 2,
       cronTriggerSettings: {
         pattern: '0 0 1 1 *',
@@ -1673,7 +1671,6 @@ export const EXPECTED_MANIFEST: Manifest = {
       handlerName: 'default.config.handler',
       name: 'test-function',
       sourceHandlerPath: 'src/logic-functions/test-function.function.ts',
-      toolInputSchema: { type: 'object', properties: {} },
       timeoutSeconds: 2,
       httpRouteTriggerSettings: {
         forwardedRequestHeaders: ['signature'],

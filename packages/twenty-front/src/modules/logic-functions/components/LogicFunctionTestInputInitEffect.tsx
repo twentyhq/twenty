@@ -2,7 +2,7 @@ import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAto
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { logicFunctionTestDataFamilyState } from '@/workflow/workflow-steps/workflow-actions/code-action/states/logicFunctionTestDataFamilyState';
 import { useEffect } from 'react';
-import { type InputJsonSchema } from 'twenty-shared/logic-function';
+import { jsonSchemaToInputSchema } from 'twenty-shared/logic-function';
 import { isDefined } from 'twenty-shared/utils';
 import { getFunctionInputFromInputSchema } from 'twenty-shared/workflow';
 import { useLogicFunctionForm } from '@/logic-functions/hooks/useLogicFunctionForm';
@@ -14,7 +14,12 @@ export const LogicFunctionTestInputInitEffect = ({
 }) => {
   const { logicFunction } = useLogicFunctionForm({ logicFunctionId });
 
-  const toolInputSchema = logicFunction?.toolInputSchema;
+  // Prefer the workflow action schema (already in Twenty's InputSchema form)
+  // and fall back to converting the AI tool's JSON Schema when only that
+  // surface is configured.
+  const workflowInputSchema =
+    logicFunction?.workflowActionTriggerSettings?.inputSchema;
+  const toolJsonSchema = logicFunction?.toolTriggerSettings?.inputSchema;
 
   const logicFunctionTestData = useAtomFamilyStateValue(
     logicFunctionTestDataFamilyState,
@@ -31,15 +36,18 @@ export const LogicFunctionTestInputInitEffect = ({
       return;
     }
 
-    if (!isDefined(toolInputSchema)) {
+    let inputSchema = null;
+    if (isDefined(workflowInputSchema)) {
+      inputSchema = workflowInputSchema;
+    } else if (isDefined(toolJsonSchema)) {
+      inputSchema = jsonSchemaToInputSchema(toolJsonSchema);
+    }
+
+    if (!isDefined(inputSchema)) {
       return;
     }
 
-    const schemaArray: InputJsonSchema[] = Array.isArray(toolInputSchema)
-      ? toolInputSchema
-      : [toolInputSchema];
-
-    const defaultInput = getFunctionInputFromInputSchema(schemaArray)[0];
+    const defaultInput = getFunctionInputFromInputSchema(inputSchema)[0];
 
     if (!isDefined(defaultInput)) {
       return;
@@ -51,7 +59,8 @@ export const LogicFunctionTestInputInitEffect = ({
       shouldInitInput: false,
     }));
   }, [
-    toolInputSchema,
+    workflowInputSchema,
+    toolJsonSchema,
     logicFunctionTestData.shouldInitInput,
     setLogicFunctionTestData,
   ]);

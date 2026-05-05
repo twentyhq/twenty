@@ -62,6 +62,7 @@ export type { ServerVariables } from './server-variables.type';
 export type { SkillManifest } from './skillManifestType';
 export type { StoredOAuthConnectionProviderConfig } from './storedOAuthConnectionProviderConfigType';
 export type { SyncableEntityOptions } from './syncableEntityOptionsType';
+export type { ToolTriggerSettings } from './toolTriggerSettingsType';
 export type {
   ViewManifestFilterValue,
   ViewFieldManifest,
@@ -72,3 +73,4 @@ export type {
   ViewSortManifest,
   ViewManifest,
 } from './viewManifestType';
+export type { WorkflowActionTriggerSettings } from './workflowActionTriggerSettingsType';

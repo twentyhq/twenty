@@ -10,9 +10,10 @@ export default defineLogicFunction({
     "Returns the connected user's Linear teams. Useful for picking a teamId to pass to create-linear-issue.",
   timeoutSeconds: 15,
   handler: listLinearTeamsHandler,
-  isTool: true,
-  toolInputSchema: {
-    type: 'object',
-    properties: {},
+  toolTriggerSettings: {
+    inputSchema: {
+      type: 'object',
+      properties: {},
+    },
   },
 });
