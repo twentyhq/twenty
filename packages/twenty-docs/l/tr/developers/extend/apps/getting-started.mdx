@@ -88,11 +88,11 @@ yarn twenty dev --verbose
 ```
 
 <Warning>
-Geliştirme modu yalnızca geliştirme ortamında (`NODE_ENV=development`) çalışan Twenty örneklerinde kullanılabilir. Üretim örnekleri geliştirme eşitleme isteklerini reddeder. Üretim sunucularına dağıtmak için `yarn twenty deploy` komutunu kullanın — ayrıntılar için [Uygulamaları Yayınlama](/l/tr/developers/extend/apps/publishing) bölümüne bakın.
+Geliştirme modu yalnızca geliştirme ortamında (`NODE_ENV=development`) çalışan Twenty örneklerinde kullanılabilir. Üretim örnekleri geliştirme eşitleme isteklerini reddeder. Canlı sunucularda yayımlamak ve yüklemek için önce `yarn twenty deploy`, ardından `yarn twenty install` komutlarını kullanın — `deploy` uygulama kayıt defterine yayımlar, `install` ise bunu belirli bir çalışma alanına yükler. Ayrıntılar için [Uygulamaları Yayımlama](/l/tr/developers/extend/apps/publishing) bölümüne bakın.
 </Warning>
 
 <div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/dev.jpg" alt="Geliştirme modu terminal çıktısı" />
+  <img src="/images/docs/developers/extends/apps/dev.png" alt="Geliştirme modu terminal çıktısı" />
 </div>
 
 #### Tek seferlik eşitleme `yarn twenty dev --once` ile
@@ -127,13 +127,7 @@ Tarayıcınızda [http://localhost:2020/settings/applications#developer](http://
 Yüklü uygulamayı görmek için **View installed app**'e tıklayın. **About** sekmesi, geçerli sürümü ve yönetim seçeneklerini gösterir:
 
 <div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/app-in-ui-3.png" alt="Yüklü uygulama — About sekmesi" />
-</div>
-
-Uygulamanızın sağladığı her şeyi — nesneler, alanlar, mantık işlevleri ve ajanlar — görmek için **Content** sekmesine geçin:
-
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/app-in-ui-4.png" alt="Yüklü uygulama — Content sekmesi" />
+  <img src="/images/docs/developers/extends/apps/app-in-ui-3.png" alt="Yüklü uygulama" />
 </div>
 
 Her şey hazır! `src/` içindeki herhangi bir dosyayı düzenleyin; değişiklikler otomatik olarak alınacaktır.
@@ -213,30 +207,49 @@ npx create-twenty-app@latest my-twenty-app --example postcard
 
 İskelet oluşturucu sizin için zaten yerel bir Twenty sunucusu başlattı. Daha sonra yönetmek için `yarn twenty server` komutunu kullanın:
 
-| Komut                                  | Açıklama                                                        |
-| -------------------------------------- | --------------------------------------------------------------- |
-| `yarn twenty server start`             | Yerel sunucuyu başlatır (gerekirse imajı çeker)                 |
-| `yarn twenty server start --port 3030` | Özel bir portta başlatır                                        |
-| `yarn twenty server start --test`      | 2021 numaralı bağlantı noktasında ayrı bir test örneği başlatın |
-| `yarn twenty server stop`              | Sunucuyu durdurur (verileri korur)                              |
-| `yarn twenty server status`            | Sunucu durumunu, URL'yi ve kimlik bilgilerini gösterir          |
-| `yarn twenty server logs`              | Sunucu günlüklerini akış olarak iletir                          |
-| `yarn twenty server logs --lines 100`  | Son 100 günlük satırını gösterir                                |
-| `yarn twenty server reset`             | Tüm verileri siler ve sıfırdan başlatır                         |
+| Komut                                  | Açıklama                                                              |
+| -------------------------------------- | --------------------------------------------------------------------- |
+| `yarn twenty server start`             | Yerel sunucuyu başlatır (gerekirse imajı çeker)                       |
+| `yarn twenty server start --port 3030` | Özel bir portta başlatır                                              |
+| `yarn twenty server start --test`      | 2021 numaralı bağlantı noktasında ayrı bir test örneği başlatın       |
+| `yarn twenty server stop`              | Sunucuyu durdurur (verileri korur)                                    |
+| `yarn twenty server status`            | Sunucu durumunu, URL'yi, sürümü ve kimlik bilgilerini gösterir        |
+| `yarn twenty server logs`              | Sunucu günlüklerini akış olarak iletir                                |
+| `yarn twenty server logs --lines 100`  | Son 100 günlük satırını gösterir                                      |
+| `yarn twenty server reset`             | Tüm verileri siler ve sıfırdan başlatır                               |
+| `yarn twenty server upgrade`           | En son `twenty-app-dev` imajını çeker ve konteyneri yeniden oluşturur |
+| `yarn twenty server upgrade 2.2.0`     | Belirli bir sürüme yükseltin                                          |
 
 Veriler, yeniden başlatmalar arasında iki Docker biriminde kalıcıdır (PostgreSQL için `twenty-app-dev-data`, dosyalar için `twenty-app-dev-storage`). Her şeyi silip baştan başlamak için `reset` kullanın.
+
+### Sunucu imajını yükseltme
+
+Daha yeni bir `twenty-app-dev` Docker imajı olup olmadığını kontrol etmek ve konteyneri güncellemek için `yarn twenty server upgrade` komutunu kullanın. Komut imajı çeker, konteynerin oluşturulduğu imajla karşılaştırır ve imaj gerçekten değiştiyse yalnızca konteyneri yeniden oluşturur. Veri birimleriniz korunur — yalnızca konteyner değiştirilir.
+
+```bash filename="Terminal"
+# Upgrade to the latest version (skips recreation if already up to date)
+yarn twenty server upgrade
+
+# Upgrade to a specific version
+yarn twenty server upgrade 2.2.0
+```
+
+Daha yeni bir imaj mevcutsa ve konteyner çalışıyorsa, yükseltme komutu güncellenmiş imajla yeni bir konteyneri otomatik olarak başlatır. Ardından sağlıklı hale gelmesini beklemek için `yarn twenty server start` komutunu çalıştırın. İmaj değişmediyse, konteyner olduğu gibi bırakılır.
+
+`yarn twenty server status` ile çalışan sürümü doğrulayabilirsiniz; bu komut, konteynerden `APP_VERSION` değerini görüntüler.
 
 ### Test örneği çalıştırma
 
 `server` komutlarının herhangi birine `--test` parametresini vererek ikinci, tamamen yalıtılmış bir örneği yönetin — entegrasyon testlerini çalıştırmak veya ana geliştirme verilerinize dokunmadan denemeler yapmak için kullanışlıdır.
 
-| Komut                              | Açıklama                                                       |
-| ---------------------------------- | -------------------------------------------------------------- |
-| `yarn twenty server start --test`  | Test örneğini başlatır (varsayılan bağlantı noktası 2021'dir)  |
-| `yarn twenty server stop --test`   | Test örneğini durdurur                                         |
-| `yarn twenty server status --test` | Test örneğinin durumunu, URL'yi ve kimlik bilgilerini gösterir |
-| `yarn twenty server logs --test`   | Test örneği günlüklerini akış olarak iletir                    |
-| `yarn twenty server reset --test`  | Test verilerini siler ve sıfırdan başlatır                     |
+| Komut                               | Açıklama                                                               |
+| ----------------------------------- | ---------------------------------------------------------------------- |
+| `yarn twenty server start --test`   | Test örneğini başlatır (varsayılan bağlantı noktası 2021'dir)          |
+| `yarn twenty server stop --test`    | Test örneğini durdurur                                                 |
+| `yarn twenty server status --test`  | Test örneğinin durumunu, URL'yi, sürümü ve kimlik bilgilerini gösterir |
+| `yarn twenty server logs --test`    | Test örneği günlüklerini akış olarak iletir                            |
+| `yarn twenty server reset --test`   | Test verilerini siler ve sıfırdan başlatır                             |
+| `yarn twenty server upgrade --test` | Test örneğinin imajını yükseltin                                       |
 
 Test örneği, kendine ait bir Docker konteynerinde (`twenty-app-dev-test`), ayrılmış birimlerle (`twenty-app-dev-test-data`, `twenty-app-dev-test-storage`) ve yapılandırmayla çalışır; böylece ana örneğinizle çakışma olmadan paralel olarak çalışabilir. Varsayılan 2021'i geçersiz kılmak için `--test` ile `--port`'u birlikte kullanın.
 

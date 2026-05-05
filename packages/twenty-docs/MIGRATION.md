@@ -77,14 +77,10 @@ To deploy to Mintlify:
 3. Set subdirectory to `packages/twenty-docs`
 4. Mintlify will auto-deploy and generate search embeddings
 
-## Next Steps
+## Status
 
-1. **Manual Review** - Check for any component conversion issues
-2. **Fix Image Paths** - Verify all images render correctly
-3. **Test Navigation** - Ensure all internal links work
-4. **Deploy** - Push to production Mintlify
-5. **Update Helper Agent** - Verify searchArticles tool works with full content
-6. **Deprecate twenty-website docs** - Once migration is confirmed working
+This migration has been completed. The legacy `packages/twenty-website` package
+has been removed, and documentation now lives in `packages/twenty-docs`.
 
 ## Known Issues to Review
 
@@ -92,4 +88,3 @@ To deploy to Mintlify:
 - Some images may have incorrect paths
 - Custom styled components may need adjustment
 - Video embeds might need review
-

@@ -6,6 +6,7 @@ import { Container } from '@/design-system/components';
 import { PlusIcon } from '@/icons';
 import { Card } from '@/sections/CaseStudyCatalog/components/Card';
 import { theme } from '@/theme';
+import type { MessageDescriptor } from '@lingui/core';
 import { styled } from '@linaria/react';
 import type { ReactNode } from 'react';
 
@@ -140,6 +141,7 @@ type GridProps = {
   compactTop?: boolean;
   entries: readonly CaseStudyCatalogEntry[];
   intro?: ReactNode;
+  renderText: (descriptor: MessageDescriptor) => string;
 };
 
 export function Grid({
@@ -147,6 +149,7 @@ export function Grid({
   compactTop = false,
   entries,
   intro,
+  renderText,
 }: GridProps) {
   const lastIndex = entries.length - 1;
 
@@ -200,6 +203,7 @@ export function Grid({
                   hoverDashColor={palette.hoverDashColor}
                   index={index}
                   key={entry.href}
+                  renderText={renderText}
                   variant={isLarge ? 'large' : 'default'}
                 />
               );

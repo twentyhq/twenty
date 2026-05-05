@@ -9,16 +9,22 @@ import { RecordTableComponentInstanceContext } from '@/object-record/record-tabl
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { ViewBarFilterDropdown } from '@/views/components/ViewBarFilterDropdown';
 import { ViewComponentInstanceContext } from '@/views/states/contexts/ViewComponentInstanceContext';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import {
+  CoreObjectNameSingular,
+  RecordFilterGroupLogicalOperator,
+  ViewFilterOperand,
+} from 'twenty-shared/types';
 
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
 import { currentRecordFieldsComponentState } from '@/object-record/record-field/states/currentRecordFieldsComponentState';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
+import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
+import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { useRecordIndexFieldMetadataDerivedStates } from '@/object-record/record-index/hooks/useRecordIndexFieldMetadataDerivedStates';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { ViewBarFilterDropdownIds } from '@/views/constants/ViewBarFilterDropdownIds';
-import { userEvent, within } from 'storybook/test';
+import { expect, userEvent, within } from 'storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { ContextStoreDecorator } from '~/testing/decorators/ContextStoreDecorator';
 import { IconsProviderDecorator } from '~/testing/decorators/IconsProviderDecorator';
@@ -189,5 +195,98 @@ export const Number: Story = {
     const dateFilter = await canvas.findByText('Employees');
 
     await userEvent.click(dateFilter);
+  },
+};
+
+const MOCK_ROOT_FILTER_GROUP_ID = 'test-root-filter-group-id';
+
+export const AdvancedFilterCountBadge: Story = {
+  decorators: [
+    (Story) => {
+      const companyObjectMetadataItem =
+        getTestEnrichedObjectMetadataItemsMock().find(
+          (item) => item.nameSingular === CoreObjectNameSingular.Company,
+        )!;
+      const instanceId = companyObjectMetadataItem.id;
+
+      const setCurrentRecordFilterGroups = useSetAtomComponentState(
+        currentRecordFilterGroupsComponentState,
+        instanceId,
+      );
+
+      const setCurrentRecordFilters = useSetAtomComponentState(
+        currentRecordFiltersComponentState,
+        instanceId,
+      );
+
+      const firstFieldMetadataItem = companyObjectMetadataItem.fields[0];
+
+      useEffect(() => {
+        setCurrentRecordFilterGroups([
+          {
+            id: MOCK_ROOT_FILTER_GROUP_ID,
+            logicalOperator: RecordFilterGroupLogicalOperator.AND,
+            positionInRecordFilterGroup: 0,
+          },
+        ]);
+
+        setCurrentRecordFilters([
+          {
+            id: 'filter-1',
+            fieldMetadataId: firstFieldMetadataItem.id,
+            value: 'test-value-1',
+            displayValue: 'Test 1',
+            type: 'TEXT',
+            operand: ViewFilterOperand.CONTAINS,
+            label: firstFieldMetadataItem.label,
+            recordFilterGroupId: MOCK_ROOT_FILTER_GROUP_ID,
+            positionInRecordFilterGroup: 0,
+          },
+          {
+            id: 'filter-2',
+            fieldMetadataId: firstFieldMetadataItem.id,
+            value: 'test-value-2',
+            displayValue: 'Test 2',
+            type: 'TEXT',
+            operand: ViewFilterOperand.CONTAINS,
+            label: firstFieldMetadataItem.label,
+            recordFilterGroupId: MOCK_ROOT_FILTER_GROUP_ID,
+            positionInRecordFilterGroup: 1,
+          },
+          {
+            id: 'filter-3',
+            fieldMetadataId: firstFieldMetadataItem.id,
+            value: 'test-value-3',
+            displayValue: 'Test 3',
+            type: 'TEXT',
+            operand: ViewFilterOperand.CONTAINS,
+            label: firstFieldMetadataItem.label,
+            recordFilterGroupId: MOCK_ROOT_FILTER_GROUP_ID,
+            positionInRecordFilterGroup: 2,
+          },
+        ]);
+      }, [
+        setCurrentRecordFilterGroups,
+        setCurrentRecordFilters,
+        firstFieldMetadataItem,
+      ]);
+
+      return <Story />;
+    },
+  ],
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement.ownerDocument.body);
+
+    const filterButton = await canvas.findByText('Filter');
+
+    await userEvent.click(filterButton);
+
+    const advancedFilterButton = await canvas.findByText('Advanced filter');
+
+    expect(advancedFilterButton).toBeVisible();
+
+    const pillBadge = await canvas.findByText('3');
+
+    expect(pillBadge).toBeVisible();
   },
 };

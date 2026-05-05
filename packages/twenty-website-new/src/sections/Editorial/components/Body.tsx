@@ -1,7 +1,9 @@
 import { Body as BaseBody } from '@/design-system/components';
-import type { BodyType } from '@/design-system/components/Body';
+import type { MessageBody } from '@/lib/i18n/message-body';
 import { theme } from '@/theme';
+import type { MessageDescriptor } from '@lingui/core';
 import { styled } from '@linaria/react';
+import type { ReactNode } from 'react';
 
 const BodyParagraph = styled.div<{ $color: string }>`
   --body-paragraph-color: ${({ $color }) => $color};
@@ -44,7 +46,7 @@ const SingleColumnBody = styled.div`
 `;
 
 type EditorialBodyProps = {
-  body: BodyType | BodyType[];
+  body: MessageBody | MessageBody[];
   color: string;
   layout:
     | 'centered'
@@ -52,9 +54,10 @@ type EditorialBodyProps = {
     | 'two-column'
     | 'two-column-left'
     | 'two-column-right';
+  renderText: (descriptor: MessageDescriptor) => ReactNode;
 };
 
-export function Body({ body, color, layout }: EditorialBodyProps) {
+export function Body({ body, color, layout, renderText }: EditorialBodyProps) {
   const paragraphs = Array.isArray(body) ? (
     body.map((item, index) => (
       <BodyParagraph $color={color} key={index}>
@@ -62,6 +65,7 @@ export function Body({ body, color, layout }: EditorialBodyProps) {
           as="p"
           body={item}
           family="sans"
+          renderText={renderText}
           size="md"
           variant="body-paragraph"
           weight="regular"
@@ -74,6 +78,7 @@ export function Body({ body, color, layout }: EditorialBodyProps) {
         as="p"
         body={body}
         family="sans"
+        renderText={renderText}
         size="md"
         variant="body-paragraph"
         weight="regular"

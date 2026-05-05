@@ -1,11 +1,5 @@
-import type { HeroBaseDataType } from '@/sections/Hero/types';
+import { msg } from '@lingui/core/macro';
 
-export const HERO_DATA = {
-  heading: [
-    { text: 'Become ', fontFamily: 'serif' },
-    { text: 'our partner', fontFamily: 'sans', newLine: true },
-  ],
-  body: {
-    text: "We're building the #1 open source CRM, but we can't do it alone. Join our partner ecosystem and grow with us.",
-  },
-} satisfies HeroBaseDataType;
+export const HERO_COPY = {
+  body: msg`We're building the #1 open source CRM, but we can't do it alone. Join our partner ecosystem and grow with us.`,
+};

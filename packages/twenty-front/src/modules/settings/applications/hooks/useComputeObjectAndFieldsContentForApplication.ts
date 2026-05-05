@@ -67,6 +67,7 @@ export const useComputeObjectAndFieldsContentForApplication = ({
             .map((field) => ({
               key: `${item.id}-${field.id}`,
               name: field.label,
+              applicationId: item?.applicationId ?? undefined,
               icon: field.icon ?? undefined,
               secondary: t`on ${item.labelSingular}`,
               link: getSettingsPath(SettingsPath.ObjectFieldEdit, {

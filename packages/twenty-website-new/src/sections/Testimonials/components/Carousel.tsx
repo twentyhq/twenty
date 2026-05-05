@@ -1,7 +1,8 @@
 'use client';
 
 import { Body, Eyebrow, Heading, IconButton } from '@/design-system/components';
-import type { EyebrowType } from '@/design-system/components/Eyebrow';
+import type { MessageEyebrow } from '@/lib/i18n/message-eyebrow';
+import { useRenderMessage } from '@/lib/i18n/use-render-message';
 import { ArrowLeftIcon, ArrowRightIcon } from '@/icons';
 import type { TestimonialCardType } from '@/sections/Testimonials/types/TestimonialCard';
 import { theme } from '@/theme';
@@ -149,11 +150,12 @@ const AuthorBlock = styled.div`
 
 type CarouselProps = {
   children: ReactNode;
-  eyebrow: EyebrowType;
+  eyebrow: MessageEyebrow;
   testimonials: TestimonialCardType[];
 };
 
 export function Carousel({ children, eyebrow, testimonials }: CarouselProps) {
+  const renderText = useRenderMessage();
   const [index, setIndex] = useState(0);
 
   const total = testimonials.length;
@@ -190,12 +192,22 @@ export function Carousel({ children, eyebrow, testimonials }: CarouselProps) {
       <Separator />
 
       <RightColumn>
-        <Eyebrow colorScheme="primary" heading={eyebrow.heading} />
+        <Eyebrow
+          colorScheme="primary"
+          heading={eyebrow.heading}
+          renderText={renderText}
+        />
 
         <HeadingContainer>
           {testimonials.map((t, i) => (
             <HeadingWrapper key={i} data-active={i === index}>
-              <Heading as="h2" segments={t.heading} size="md" weight="light" />
+              <Heading
+                as="h2"
+                renderText={renderText}
+                segments={t.heading}
+                size="md"
+                weight="light"
+              />
             </HeadingWrapper>
           ))}
         </HeadingContainer>
@@ -244,6 +256,7 @@ export function Carousel({ children, eyebrow, testimonials }: CarouselProps) {
             <Body
               as="span"
               body={current.author.name}
+              renderText={renderText}
               size="sm"
               weight="medium"
             />
@@ -251,6 +264,7 @@ export function Carousel({ children, eyebrow, testimonials }: CarouselProps) {
               <Body
                 as="span"
                 body={authorSecondaryLine}
+                renderText={renderText}
                 size="xs"
                 weight="light"
               />
