@@ -1,9 +1,6 @@
 import { SOURCE_LOCALE, type AppLocale } from 'twenty-shared/translations';
 
-import {
-  KNOWN_PUBLIC_APP_LOCALE_BY_RAW,
-  isPublicAppLocale,
-} from './app-locale-set';
+import { isPublicAppLocale } from './app-locale-set';
 import {
   LOCALE_BY_URL_SEGMENT,
   localeToUrlSegment,
@@ -25,8 +22,7 @@ const buildTailFromSegmentEnd = (path: string, segmentEnd: number): string => {
 };
 
 const isLocalePrefixSegment = (segment: string): boolean =>
-  LOCALE_BY_URL_SEGMENT.has(segment) ||
-  KNOWN_PUBLIC_APP_LOCALE_BY_RAW.has(segment);
+  LOCALE_BY_URL_SEGMENT.has(segment);
 
 export const localizeHref = (locale: AppLocale, href: string): string => {
   if (!href.startsWith('/') || href.startsWith('//')) return href;

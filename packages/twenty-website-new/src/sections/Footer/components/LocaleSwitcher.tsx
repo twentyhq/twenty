@@ -182,9 +182,7 @@ export function LocaleSwitcher() {
     if (!open) return;
 
     const handlePointerDown = (event: MouseEvent) => {
-      const target = event.target as Node | null;
-      if (target === null) return;
-      if (wrapperRef.current?.contains(target) === true) return;
+      if (wrapperRef.current?.contains(event.target as Node)) return;
       setOpen(false);
     };
 
