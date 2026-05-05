@@ -1,4 +1,3 @@
-import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
@@ -10,7 +9,7 @@ const METADATA_VALIDATION_FAILED_MESSAGE = msg`Metadata validation failed`;
 
 export const getMetadataValidationUserFriendlyMessage = (
   metadataValidation: MetadataValidationErrorResponseDescriptor,
-): MessageDescriptor => {
+) => {
   if (metadataValidation.summary.totalErrors > 1) {
     return MANY_VALIDATION_ERRORS_MESSAGE;
   }
