@@ -29,7 +29,7 @@ from meta_client import MetaClient
 
 API_URL = os.environ.get(
     'TWENTY_API_URL',
-    'https://twenty-production-4ce5.up.railway.app/graphql',
+    'https://twenty-production-eea0.up.railway.app/graphql',
 )
 API_KEY = os.environ.get('TWENTY_API_KEY', '')
 
