@@ -11,13 +11,11 @@ import {
   ObjectRecord,
   RelationType,
 } from 'twenty-shared/types';
-import {
-  computeRelationFieldJoinColumnName,
-  isDefined,
-} from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import { FindOptionsRelations, In, ObjectLiteral } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
 
+import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { CommonBaseQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-base-query-runner.service';
 import {
   CommonQueryRunnerException,
@@ -405,7 +403,7 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
         objectMetadata: objMetadata,
         fieldName: field.name,
         fieldId: field.id,
-        joinColumnName: computeRelationFieldJoinColumnName({
+        joinColumnName: computeMorphOrRelationFieldJoinColumnName({
           name: field.name,
         }),
       });

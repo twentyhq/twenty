@@ -6,7 +6,7 @@ import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { generateEmptyFieldValue } from '@/object-record/utils/generateEmptyFieldValue';
 import {
   computeMorphRelationFieldName,
-  computeRelationFieldJoinColumnName,
+  computeRelationGqlFieldJoinColumnName,
   isDefined,
 } from 'twenty-shared/utils';
 import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
@@ -30,7 +30,7 @@ export const prefillRecord = <T extends ObjectRecord>({
           fieldMetadataItem.type === FieldMetadataType.RELATION &&
           fieldMetadataItem.relation?.type === RelationType.MANY_TO_ONE
         ) {
-          const joinColumnName = computeRelationFieldJoinColumnName({
+          const joinColumnName = computeRelationGqlFieldJoinColumnName({
             name: fieldMetadataItem.name,
           });
           const joinColumnValue = input[joinColumnName] ?? null;
@@ -59,7 +59,7 @@ export const prefillRecord = <T extends ObjectRecord>({
           );
 
           return gqlFields?.flatMap((gqlField) => {
-            const joinColumnName = computeRelationFieldJoinColumnName({
+            const joinColumnName = computeRelationGqlFieldJoinColumnName({
               name: gqlField,
             });
             return [
@@ -81,7 +81,7 @@ const throwIfInputRelationDataIsInconsistent = (
   fieldMetadataItem: FieldMetadataItem,
 ) => {
   const inputValue = input[fieldMetadataItem.name];
-  const relationIdFieldName = computeRelationFieldJoinColumnName({
+  const relationIdFieldName = computeRelationGqlFieldJoinColumnName({
     name: fieldMetadataItem.name,
   });
   if (isDefined(inputValue) && !isDefined(input[relationIdFieldName])) {

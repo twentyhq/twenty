@@ -5,29 +5,29 @@ enum RelationType {
   ONE_TO_MANY = 'ONE_TO_MANY',
 }
 
-type ComputeRelationFieldJoinColumnNameArgs = {
+type ComputeRelationGqlFieldJoinColumnNameArgs = {
   name: string;
 };
 
-export const computeRelationFieldJoinColumnName = ({
+export const computeRelationGqlFieldJoinColumnName = ({
   name,
-}: ComputeRelationFieldJoinColumnNameArgs): string => {
+}: ComputeRelationGqlFieldJoinColumnNameArgs): string => {
   return `${name}Id`;
 };
 
-type ComputeMorphRelationFieldJoinColumnNameArgs = {
+type ComputeMorphRelationGqlFieldJoinColumnNameArgs = {
   fieldName: string;
   relationType: RelationType;
   targetObjectMetadataNameSingular: string;
   targetObjectMetadataNamePlural: string;
 };
 
-export const computeMorphRelationFieldJoinColumnName = ({
+export const computeMorphRelationGqlFieldJoinColumnName = ({
   fieldName,
   relationType,
   targetObjectMetadataNameSingular,
   targetObjectMetadataNamePlural,
-}: ComputeMorphRelationFieldJoinColumnNameArgs): string => {
+}: ComputeMorphRelationGqlFieldJoinColumnNameArgs): string => {
   const morphFieldName = computeMorphRelationFieldName({
     fieldName,
     relationType,
@@ -35,5 +35,5 @@ export const computeMorphRelationFieldJoinColumnName = ({
     targetObjectMetadataNamePlural,
   });
 
-  return computeRelationFieldJoinColumnName({ name: morphFieldName });
+  return computeRelationGqlFieldJoinColumnName({ name: morphFieldName });
 };

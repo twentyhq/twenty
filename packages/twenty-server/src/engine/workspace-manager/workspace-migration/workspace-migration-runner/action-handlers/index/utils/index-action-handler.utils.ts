@@ -1,10 +1,8 @@
 import { compositeTypeDefinitions, RelationType } from 'twenty-shared/types';
-import {
-  computeRelationFieldJoinColumnName,
-  isDefined,
-} from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import { type QueryRunner } from 'typeorm';
 
+import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import {
@@ -53,7 +51,7 @@ export const computeFlatIndexFieldColumnNames = ({
         );
       }
 
-      return computeRelationFieldJoinColumnName({
+      return computeMorphOrRelationFieldJoinColumnName({
         name: flatFieldMetadata.name,
       });
     }

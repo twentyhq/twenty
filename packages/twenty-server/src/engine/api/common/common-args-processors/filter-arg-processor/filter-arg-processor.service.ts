@@ -6,11 +6,9 @@ import {
   FieldMetadataType,
   RelationType,
 } from 'twenty-shared/types';
-import {
-  computeRelationFieldJoinColumnName,
-  isDefined,
-} from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
+import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { type ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import { validateAndTransformOperatorAndValue } from 'src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-and-transform-operator-and-value.util';
@@ -155,7 +153,7 @@ export class FilterArgProcessorService {
         ))
     ) {
       if (fieldMetadata.settings?.relationType === RelationType.MANY_TO_ONE) {
-        const joinColumnName = computeRelationFieldJoinColumnName({
+        const joinColumnName = computeMorphOrRelationFieldJoinColumnName({
           name: key,
         });
 

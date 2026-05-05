@@ -1,13 +1,11 @@
 import { RelationType } from 'twenty-shared/types';
-import {
-  computeRelationFieldJoinColumnName,
-  isDefined,
-} from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 import {
   FlatEntityMapsException,
   FlatEntityMapsExceptionCode,
 } from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
+import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { isMorphOrRelationUniversalFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { generateDeterministicIndexNameV2 } from 'src/engine/metadata-modules/index-metadata/utils/generate-deterministic-index-name-v2';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
@@ -46,7 +44,7 @@ export const generateFlatIndexMetadataWithNameOrThrow = ({
           RelationType.MANY_TO_ONE;
 
       const name = isManyToOneRelation
-        ? computeRelationFieldJoinColumnName({
+        ? computeMorphOrRelationFieldJoinColumnName({
             name: relatedFlatFieldMetadata.name,
           })
         : relatedFlatFieldMetadata.name;

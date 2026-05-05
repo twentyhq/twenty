@@ -1,38 +1,38 @@
 import {
-  computeMorphRelationFieldJoinColumnName,
-  computeRelationFieldJoinColumnName,
-} from '@/utils/fieldMetadata/compute-relation-field-join-column-name';
+  computeMorphRelationGqlFieldJoinColumnName,
+  computeRelationGqlFieldJoinColumnName,
+} from '@/utils/fieldMetadata/compute-relation-gql-field-join-column-name';
 
-describe('computeRelationFieldJoinColumnName', () => {
+describe('computeRelationGqlFieldJoinColumnName', () => {
   it('should append `Id` to a simple field name', () => {
-    expect(computeRelationFieldJoinColumnName({ name: 'company' })).toBe(
+    expect(computeRelationGqlFieldJoinColumnName({ name: 'company' })).toBe(
       'companyId',
     );
   });
 
   it('should preserve camelCase field names', () => {
-    expect(computeRelationFieldJoinColumnName({ name: 'pointOfContact' })).toBe(
-      'pointOfContactId',
-    );
+    expect(
+      computeRelationGqlFieldJoinColumnName({ name: 'pointOfContact' }),
+    ).toBe('pointOfContactId');
   });
 
   it('should append `Id` to a morph-aware field name', () => {
     expect(
-      computeRelationFieldJoinColumnName({ name: 'targetOpportunity' }),
+      computeRelationGqlFieldJoinColumnName({ name: 'targetOpportunity' }),
     ).toBe('targetOpportunityId');
   });
 
   it('should not strip an existing trailing `Id` (it just appends)', () => {
-    expect(computeRelationFieldJoinColumnName({ name: 'companyId' })).toBe(
+    expect(computeRelationGqlFieldJoinColumnName({ name: 'companyId' })).toBe(
       'companyIdId',
     );
   });
 });
 
-describe('computeMorphRelationFieldJoinColumnName', () => {
+describe('computeMorphRelationGqlFieldJoinColumnName', () => {
   it('should combine field name and capitalized singular target for MANY_TO_ONE', () => {
     expect(
-      computeMorphRelationFieldJoinColumnName({
+      computeMorphRelationGqlFieldJoinColumnName({
         fieldName: 'target',
         relationType: 'MANY_TO_ONE' as any,
         targetObjectMetadataNameSingular: 'opportunity',
@@ -43,7 +43,7 @@ describe('computeMorphRelationFieldJoinColumnName', () => {
 
   it('should combine field name and capitalized plural target for ONE_TO_MANY', () => {
     expect(
-      computeMorphRelationFieldJoinColumnName({
+      computeMorphRelationGqlFieldJoinColumnName({
         fieldName: 'caretaker',
         relationType: 'ONE_TO_MANY' as any,
         targetObjectMetadataNameSingular: 'person',
@@ -54,7 +54,7 @@ describe('computeMorphRelationFieldJoinColumnName', () => {
 
   it('should handle simple plurals (e.g. `companies`)', () => {
     expect(
-      computeMorphRelationFieldJoinColumnName({
+      computeMorphRelationGqlFieldJoinColumnName({
         fieldName: 'parent',
         relationType: 'ONE_TO_MANY' as any,
         targetObjectMetadataNameSingular: 'company',
@@ -65,7 +65,7 @@ describe('computeMorphRelationFieldJoinColumnName', () => {
 
   it('should throw on an invalid relation type', () => {
     expect(() =>
-      computeMorphRelationFieldJoinColumnName({
+      computeMorphRelationGqlFieldJoinColumnName({
         fieldName: 'target',
         relationType: 'INVALID' as any,
         targetObjectMetadataNameSingular: 'opportunity',

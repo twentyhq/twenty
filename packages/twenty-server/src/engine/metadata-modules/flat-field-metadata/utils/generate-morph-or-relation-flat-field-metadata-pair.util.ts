@@ -4,9 +4,10 @@ import {
   RelationOnDeleteAction,
   RelationType,
 } from 'twenty-shared/types';
-import { computeRelationFieldJoinColumnName } from 'twenty-shared/utils';
+
 import { v4 } from 'uuid';
 
+import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { type MorphOrRelationFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/morph-or-relation-field-metadata-type.type';
@@ -151,7 +152,7 @@ export const generateMorphOrRelationFlatFieldMetadataPair = ({
   };
   const targetFlatFieldMetadataUniversalSettings =
     computeFieldMetadataRelationSettingsForRelationType({
-      joinColumnName: computeRelationFieldJoinColumnName({
+      joinColumnName: computeMorphOrRelationFieldJoinColumnName({
         name: targetCreateFieldInput.name,
       }),
       relationType:

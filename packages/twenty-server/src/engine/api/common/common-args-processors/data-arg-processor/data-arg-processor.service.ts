@@ -11,10 +11,10 @@ import {
 import {
   assertIsDefinedOrThrow,
   assertUnreachable,
-  computeRelationFieldJoinColumnName,
   isDefined,
 } from 'twenty-shared/utils';
 
+import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { transformActorField } from 'src/engine/api/common/common-args-processors/data-arg-processor/transformer-utils/transform-actor-field.util';
 import { transformAddressField } from 'src/engine/api/common/common-args-processors/data-arg-processor/transformer-utils/transform-address-field.util';
 import { transformArrayField } from 'src/engine/api/common/common-args-processors/data-arg-processor/transformer-utils/transform-array-field.util';
@@ -244,7 +244,7 @@ export class DataArgProcessorService {
           );
         }
 
-        const joinColumnName = computeRelationFieldJoinColumnName({
+        const joinColumnName = computeMorphOrRelationFieldJoinColumnName({
           name: fieldMetadata.name,
         });
 

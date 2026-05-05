@@ -10,7 +10,7 @@ import { getRefName } from '@/object-record/cache/utils/getRefName';
 import { type RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import {
-  computeRelationFieldJoinColumnName,
+  computeRelationGqlFieldJoinColumnName,
   getNodeTypename,
   isDefined,
   pascalCase,
@@ -138,7 +138,7 @@ export const getRecordNodeFromRecord = <T extends ObjectRecord>({
         switch (field.type) {
           case FieldMetadataType.RELATION: {
             const isJoinColumn =
-              computeRelationFieldJoinColumnName({ name: field.name }) ===
+              computeRelationGqlFieldJoinColumnName({ name: field.name }) ===
               gqlField;
             if (isJoinColumn) {
               return [gqlField, value];

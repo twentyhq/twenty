@@ -2,7 +2,7 @@ import {
   type FieldMetadataType,
   RelationType as TwentyRelationType,
 } from 'twenty-shared/types';
-import { computeRelationFieldJoinColumnName } from 'twenty-shared/utils';
+
 import { type RelationType } from 'typeorm/metadata/types/RelationTypes';
 
 import {
@@ -14,6 +14,7 @@ import {
   type EntitySchemaFieldMetadataMaps,
   type EntitySchemaObjectMetadataMaps,
 } from 'src/engine/twenty-orm/global-workspace-datasource/types/entity-schema-metadata.type';
+import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { converRelationTypeToTypeORMRelationType } from 'src/engine/twenty-orm/utils/convert-relation-type-to-typeorm-relation-type.util';
 
 interface RelationDetails {
@@ -78,7 +79,7 @@ export function determineSchemaRelationDetails(
     inverseSide: targetFieldMetadata.name,
     joinColumn: isManyToOne
       ? {
-          name: computeRelationFieldJoinColumnName({
+          name: computeMorphOrRelationFieldJoinColumnName({
             name: fieldMetadata.name,
           }),
         }

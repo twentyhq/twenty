@@ -13,7 +13,7 @@ import { assertFieldMetadata } from '@/object-record/record-field/ui/types/guard
 import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
 import { useRecordFieldValue } from '@/object-record/record-store/hooks/useRecordFieldValue';
 import {
-  computeRelationFieldJoinColumnName,
+  computeRelationGqlFieldJoinColumnName,
   isDefined,
 } from 'twenty-shared/utils';
 
@@ -44,7 +44,7 @@ export const useRelationToOneFieldDisplay = () => {
     fieldDefinition,
   );
 
-  const joinColumnName = computeRelationFieldJoinColumnName({
+  const joinColumnName = computeRelationGqlFieldJoinColumnName({
     name: fieldName,
   });
 

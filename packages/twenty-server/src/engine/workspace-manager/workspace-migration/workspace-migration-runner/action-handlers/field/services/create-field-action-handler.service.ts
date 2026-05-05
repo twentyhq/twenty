@@ -1,13 +1,11 @@
 import { Injectable } from '@nestjs/common';
 
 import { RelationType } from 'twenty-shared/types';
-import {
-  computeRelationFieldJoinColumnName,
-  isDefined,
-} from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import { type QueryRunner } from 'typeorm';
 import { v4 } from 'uuid';
 
+import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
 import { type MetadataFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity-maps.type';
@@ -217,7 +215,7 @@ export class CreateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
         targetFlatObjectMetadata,
       );
 
-      const joinColumnName = computeRelationFieldJoinColumnName({
+      const joinColumnName = computeMorphOrRelationFieldJoinColumnName({
         name: flatFieldMetadata.name,
       });
 

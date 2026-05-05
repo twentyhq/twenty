@@ -1,9 +1,7 @@
 import { FieldMetadataType } from 'twenty-shared/types';
-import {
-  computeRelationFieldJoinColumnName,
-  isDefined,
-} from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
+import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -73,7 +71,7 @@ const getRequiredRelationColumns = (
       }
 
       requiredColumns.push(
-        computeRelationFieldJoinColumnName({ name: fieldMetadata.name }),
+        computeMorphOrRelationFieldJoinColumnName({ name: fieldMetadata.name }),
       );
     }
 
@@ -101,7 +99,7 @@ const getRequiredRelationColumns = (
       }
 
       requiredColumns.push(
-        computeRelationFieldJoinColumnName({ name: fieldMetadata.name }),
+        computeMorphOrRelationFieldJoinColumnName({ name: fieldMetadata.name }),
       );
     }
   }

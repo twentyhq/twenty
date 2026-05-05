@@ -1,10 +1,8 @@
 import { msg } from '@lingui/core/macro';
 import { FieldMetadataType } from 'twenty-shared/types';
-import {
-  computeRelationFieldJoinColumnName,
-  isDefined,
-} from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
+import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { FieldMetadataExceptionCode } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
@@ -82,9 +80,10 @@ export const fromRelationCreateFieldInputToFlatFieldMetadatas = async ({
       ...createFieldInput,
       relationCreationPayload,
     },
-    sourceFlatObjectMetadataJoinColumnName: computeRelationFieldJoinColumnName({
-      name: createFieldInput.name,
-    }),
+    sourceFlatObjectMetadataJoinColumnName:
+      computeMorphOrRelationFieldJoinColumnName({
+        name: createFieldInput.name,
+      }),
     sourceFlatObjectMetadata,
     targetFlatObjectMetadata,
     targetFlatFieldMetadataType: FieldMetadataType.RELATION,

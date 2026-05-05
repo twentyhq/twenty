@@ -2,7 +2,7 @@ import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataIte
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import {
   computeMorphRelationFieldName,
-  computeRelationFieldJoinColumnName,
+  computeRelationGqlFieldJoinColumnName,
   isDefined,
 } from 'twenty-shared/utils';
 
@@ -48,7 +48,7 @@ const findMorphTargetFieldInfo = (
   // e.g., caretakerPerson → caretakerPersonId
   return {
     fieldName,
-    joinColumnName: computeRelationFieldJoinColumnName({ name: fieldName }),
+    joinColumnName: computeRelationGqlFieldJoinColumnName({ name: fieldName }),
   };
 };
 
@@ -71,7 +71,7 @@ export const findTargetFieldInfo = (
     if (field.relation?.targetObjectMetadata.id === targetObjectMetadataId) {
       return {
         fieldName: field.name,
-        joinColumnName: computeRelationFieldJoinColumnName({
+        joinColumnName: computeRelationGqlFieldJoinColumnName({
           name: field.name,
         }),
       };

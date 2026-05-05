@@ -4,12 +4,10 @@ import {
   FieldMetadataType,
   compositeTypeDefinitions,
 } from 'twenty-shared/types';
-import {
-  computeRelationFieldJoinColumnName,
-  isDefined,
-} from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import { type ColumnType, type EntitySchemaColumnOptions } from 'typeorm';
 
+import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
 import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
@@ -61,7 +59,7 @@ export class EntitySchemaColumnFactory {
           continue;
         }
 
-        const joinColumnName = computeRelationFieldJoinColumnName({
+        const joinColumnName = computeMorphOrRelationFieldJoinColumnName({
           name: fieldMetadata.name,
         });
 

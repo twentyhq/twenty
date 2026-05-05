@@ -35,7 +35,7 @@ import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/com
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import {
-  computeRelationFieldJoinColumnName,
+  computeRelationGqlFieldJoinColumnName,
   CustomError,
   isDefined,
 } from 'twenty-shared/utils';
@@ -221,7 +221,7 @@ export const RelationOneToManyFieldInput = () => {
           sourceObjectMetadata: objectMetadataItem,
         });
 
-        const targetJoinColumnName = computeRelationFieldJoinColumnName({
+        const targetJoinColumnName = computeRelationGqlFieldJoinColumnName({
           name: targetField.name,
         });
 

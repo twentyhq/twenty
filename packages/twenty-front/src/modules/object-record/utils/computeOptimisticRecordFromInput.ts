@@ -19,7 +19,7 @@ import { buildOptimisticActorFieldValueFromCurrentWorkspaceMember } from '@/obje
 import { getForeignKeyNameFromRelationFieldName } from '@/object-record/utils/getForeignKeyNameFromRelationFieldName';
 import {
   computeMorphRelationFieldName,
-  computeRelationFieldJoinColumnName,
+  computeRelationGqlFieldJoinColumnName,
   isDefined,
 } from 'twenty-shared/utils';
 import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
@@ -50,7 +50,7 @@ export const computeOptimisticRecordFromInput = ({
         objectMetadataItem.fields.find(
           (field) =>
             field.type === FieldMetadataType.RELATION &&
-            computeRelationFieldJoinColumnName({ name: field.name }) ===
+            computeRelationGqlFieldJoinColumnName({ name: field.name }) ===
               recordKey,
         );
 
@@ -219,11 +219,11 @@ export const computeOptimisticRecordFromInput = ({
       const relationGqlField = relationGqlFields?.find(
         (relationGqlField) =>
           recordInput[
-            computeRelationFieldJoinColumnName({ name: relationGqlField })
+            computeRelationGqlFieldJoinColumnName({ name: relationGqlField })
           ],
       );
 
-      const relationGqlFieldWithId = computeRelationFieldJoinColumnName({
+      const relationGqlFieldWithId = computeRelationGqlFieldJoinColumnName({
         name: relationGqlField ?? '',
       });
 

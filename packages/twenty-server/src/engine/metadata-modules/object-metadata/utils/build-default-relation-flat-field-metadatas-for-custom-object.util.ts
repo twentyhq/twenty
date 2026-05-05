@@ -3,12 +3,9 @@ import {
   DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS,
 } from 'twenty-shared/metadata';
 import { FieldMetadataType } from 'twenty-shared/types';
-import {
-  capitalize,
-  computeRelationFieldJoinColumnName,
-  isDefined,
-} from 'twenty-shared/utils';
+import { capitalize, isDefined } from 'twenty-shared/utils';
 
+import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
@@ -103,7 +100,7 @@ export const buildDefaultRelationFlatFieldMetadatasForCustomObject = ({
         const fieldName = isObjectMigratedToMorphRelations
           ? morphFieldName
           : sourceFlatObjectMetadata.nameSingular;
-        const joinColumnName = computeRelationFieldJoinColumnName({
+        const joinColumnName = computeMorphOrRelationFieldJoinColumnName({
           name: fieldName,
         });
 

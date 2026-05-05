@@ -36,7 +36,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import {
-  computeRelationFieldJoinColumnName,
+  computeRelationGqlFieldJoinColumnName,
   CustomError,
   isDefined,
 } from 'twenty-shared/utils';
@@ -291,7 +291,7 @@ export const RecordDetailRelationSectionDropdownToMany = ({
           sourceObjectMetadata: objectMetadataItem,
         });
 
-        const targetJoinColumnName = computeRelationFieldJoinColumnName({
+        const targetJoinColumnName = computeRelationGqlFieldJoinColumnName({
           name: targetField.name,
         });
 

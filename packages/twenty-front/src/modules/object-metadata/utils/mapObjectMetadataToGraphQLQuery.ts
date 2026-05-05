@@ -10,9 +10,9 @@ import {
   type ObjectPermissions,
 } from 'twenty-shared/types';
 import {
-  computeMorphRelationFieldJoinColumnName,
+  computeMorphRelationGqlFieldJoinColumnName,
   computeMorphRelationFieldName,
-  computeRelationFieldJoinColumnName,
+  computeRelationGqlFieldJoinColumnName,
   isDefined,
 } from 'twenty-shared/utils';
 
@@ -71,7 +71,7 @@ export const mapObjectMetadataToGraphQLQuery = ({
         fieldMetadata.type === FieldMetadataType.MORPH_RELATION;
       if (!isMorphRelation) {
         return {
-          gqlField: computeRelationFieldJoinColumnName({
+          gqlField: computeRelationGqlFieldJoinColumnName({
             name: fieldMetadata.name,
           }),
           fieldMetadata: fieldMetadata,
@@ -83,7 +83,7 @@ export const mapObjectMetadataToGraphQLQuery = ({
       }
 
       return fieldMetadata.morphRelations.map((morphRelation) => ({
-        gqlField: computeMorphRelationFieldJoinColumnName({
+        gqlField: computeMorphRelationGqlFieldJoinColumnName({
           fieldName: fieldMetadata.name,
           relationType: morphRelation.type,
           targetObjectMetadataNameSingular:

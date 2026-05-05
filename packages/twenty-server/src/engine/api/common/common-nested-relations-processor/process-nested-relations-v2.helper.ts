@@ -1,12 +1,10 @@
 import { Injectable } from '@nestjs/common';
 
 import { FieldMetadataType, type ObjectRecord } from 'twenty-shared/types';
-import {
-  computeRelationFieldJoinColumnName,
-  isDefined,
-} from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import { type FindOptionsRelations, type ObjectLiteral } from 'typeorm';
 
+import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
@@ -194,7 +192,7 @@ export class ProcessNestedRelationsV2Helper {
       select: columnsToSelect,
     });
 
-    const joinColumnName = computeRelationFieldJoinColumnName({
+    const joinColumnName = computeMorphOrRelationFieldJoinColumnName({
       name: sourceFieldName,
     });
 
@@ -216,7 +214,7 @@ export class ProcessNestedRelationsV2Helper {
     }
 
     const fieldMetadataTargetRelationColumnName =
-      computeRelationFieldJoinColumnName({
+      computeMorphOrRelationFieldJoinColumnName({
         name:
           targetRelation &&
           isFieldMetadataEntityOfType(

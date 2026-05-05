@@ -2,8 +2,8 @@ import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataIte
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { FieldMetadataType } from 'twenty-shared/types';
 import {
-  computeMorphRelationFieldJoinColumnName,
-  computeRelationFieldJoinColumnName,
+  computeMorphRelationGqlFieldJoinColumnName,
+  computeRelationGqlFieldJoinColumnName,
   isDefined,
 } from 'twenty-shared/utils';
 
@@ -28,7 +28,7 @@ export const getSourceJoinColumnName = ({
       return undefined;
     }
 
-    return computeMorphRelationFieldJoinColumnName({
+    return computeMorphRelationGqlFieldJoinColumnName({
       fieldName: morphRelation.sourceFieldMetadata.name,
       relationType: morphRelation.type,
       targetObjectMetadataNameSingular: sourceObjectMetadata.nameSingular,
@@ -36,5 +36,5 @@ export const getSourceJoinColumnName = ({
     });
   }
 
-  return computeRelationFieldJoinColumnName({ name: sourceField.name });
+  return computeRelationGqlFieldJoinColumnName({ name: sourceField.name });
 };

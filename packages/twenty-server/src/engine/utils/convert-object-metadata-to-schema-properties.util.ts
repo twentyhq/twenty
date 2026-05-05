@@ -3,11 +3,9 @@ import {
   NumberDataType,
   type FieldMetadataSettings,
 } from 'twenty-shared/types';
-import {
-  computeRelationFieldJoinColumnName,
-  isDefined,
-} from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
+import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
 import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
@@ -110,7 +108,7 @@ export const convertObjectMetadataToSchemaProperties = ({
       field.settings?.relationType === RelationType.MANY_TO_ONE;
 
     if (isRelationManyToOne) {
-      const key = computeRelationFieldJoinColumnName({
+      const key = computeMorphOrRelationFieldJoinColumnName({
         name: field.name,
       });
 

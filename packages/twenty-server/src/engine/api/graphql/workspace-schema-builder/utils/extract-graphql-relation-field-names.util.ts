@@ -1,6 +1,6 @@
 import { type FieldMetadataType } from 'twenty-shared/types';
-import { computeRelationFieldJoinColumnName } from 'twenty-shared/utils';
 
+import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 
 export const extractGraphQLRelationFieldNames = (
@@ -9,7 +9,7 @@ export const extractGraphQLRelationFieldNames = (
   >,
 ) => {
   const fieldMetadataName = fieldMetadata.name;
-  const joinColumnName = computeRelationFieldJoinColumnName({
+  const joinColumnName = computeMorphOrRelationFieldJoinColumnName({
     name: fieldMetadataName,
   });
 

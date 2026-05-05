@@ -12,7 +12,7 @@ import {
 } from 'twenty-shared/types';
 import {
   computeMorphRelationFieldName,
-  computeRelationFieldJoinColumnName,
+  computeRelationGqlFieldJoinColumnName,
   isDefined,
 } from 'twenty-shared/utils';
 
@@ -174,7 +174,7 @@ ${mapObjectMetadataToGraphQLQuery({
 
     if (
       gqlField ===
-      computeRelationFieldJoinColumnName({ name: fieldMetadata.name })
+      computeRelationGqlFieldJoinColumnName({ name: fieldMetadata.name })
     ) {
       return `${gqlField}`;
     }

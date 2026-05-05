@@ -2,12 +2,9 @@ import {
   FieldMetadataType,
   compositeTypeDefinitions,
 } from 'twenty-shared/types';
-import {
-  capitalize,
-  computeRelationFieldJoinColumnName,
-  isDefined,
-} from 'twenty-shared/utils';
+import { capitalize, isDefined } from 'twenty-shared/utils';
 
+import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { GraphqlQuerySelectedFieldsAggregateParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-selected-fields/graphql-selected-fields-aggregate.parser';
 import { GraphqlQuerySelectedFieldsRelationParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-selected-fields/graphql-selected-fields-relation.parser';
 import { type CompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/composite-field-metadata-type.type';
@@ -108,7 +105,7 @@ export class GraphqlQuerySelectedFieldsParser {
       if (
         isFlatFieldMetadataOfType(fieldMetadata, FieldMetadataType.RELATION)
       ) {
-        const joinColumnName = computeRelationFieldJoinColumnName({
+        const joinColumnName = computeMorphOrRelationFieldJoinColumnName({
           name: fieldMetadata.name,
         });
 
@@ -152,7 +149,7 @@ export class GraphqlQuerySelectedFieldsParser {
           continue;
         }
 
-        const joinColumnName = computeRelationFieldJoinColumnName({
+        const joinColumnName = computeMorphOrRelationFieldJoinColumnName({
           name: fieldMetadata.name,
         });
 

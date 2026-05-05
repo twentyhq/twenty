@@ -3,9 +3,10 @@ import {
   FieldMetadataType,
   RelationType,
 } from 'twenty-shared/types';
-import { computeRelationFieldJoinColumnName } from 'twenty-shared/utils';
+
 import { type ColumnType } from 'typeorm';
 
+import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { type CompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/composite-field-metadata-type.type';
 import {
   computeColumnName,
@@ -118,7 +119,7 @@ const generateRelationColumnDefinition = (
     return null;
   }
 
-  const joinColumnName = computeRelationFieldJoinColumnName({
+  const joinColumnName = computeMorphOrRelationFieldJoinColumnName({
     name: flatFieldMetadata.name,
   });
 

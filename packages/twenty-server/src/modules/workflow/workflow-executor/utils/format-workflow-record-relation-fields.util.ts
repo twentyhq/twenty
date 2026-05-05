@@ -1,10 +1,8 @@
 import { isObject, isString } from '@sniptt/guards';
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
-import {
-  computeRelationFieldJoinColumnName,
-  isDefined,
-} from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
+import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-flat-fields-for-flat-object-metadata.util';
 import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { type ObjectMetadataInfo } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
@@ -61,7 +59,7 @@ export const formatWorkflowRecordRelationFields = (
       continue;
     }
 
-    const joinColumnName = computeRelationFieldJoinColumnName({
+    const joinColumnName = computeMorphOrRelationFieldJoinColumnName({
       name: key,
     });
 

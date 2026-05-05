@@ -5,12 +5,10 @@ import {
   FieldMetadataType,
   RelationType,
 } from 'twenty-shared/types';
-import {
-  computeRelationFieldJoinColumnName,
-  isDefined,
-} from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import { ColumnType, type QueryRunner } from 'typeorm';
 
+import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
@@ -287,7 +285,7 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
           isDefined(toSettings?.onDelete) &&
           toSettings.onDelete !== fromSettings.onDelete
         ) {
-          const joinColumnName = computeRelationFieldJoinColumnName({
+          const joinColumnName = computeMorphOrRelationFieldJoinColumnName({
             name: optimisticFlatFieldMetadata.name,
           });
           const foreignKeyName =
@@ -393,8 +391,12 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
           queryRunner,
           schemaName,
           tableName,
-          oldColumnName: computeRelationFieldJoinColumnName({ name: fromName }),
-          newColumnName: computeRelationFieldJoinColumnName({ name: toName }),
+          oldColumnName: computeMorphOrRelationFieldJoinColumnName({
+            name: fromName,
+          }),
+          newColumnName: computeMorphOrRelationFieldJoinColumnName({
+            name: toName,
+          }),
         });
       }
     } else {

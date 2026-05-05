@@ -4,7 +4,7 @@ import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { isSystemSearchVectorField } from '@/object-record/utils/isSystemSearchVectorField';
 import {
   computeMorphRelationFieldName,
-  computeRelationFieldJoinColumnName,
+  computeRelationGqlFieldJoinColumnName,
   isDefined,
 } from 'twenty-shared/utils';
 import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
@@ -30,7 +30,7 @@ export const sanitizeRecordInput = ({
           objectMetadataItem.fields.find(
             (field) =>
               field.type === FieldMetadataType.RELATION &&
-              computeRelationFieldJoinColumnName({ name: field.name }) ===
+              computeRelationGqlFieldJoinColumnName({ name: field.name }) ===
                 fieldName,
           );
         const potentialMorphRelationJoinColumnNameFieldMetadataItem =
