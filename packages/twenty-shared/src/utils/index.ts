@@ -45,6 +45,10 @@ export { CustomError } from './errors/CustomError';
 export { evalFromContext } from './evalFromContext';
 export { extractAndSanitizeObjectStringFields } from './extractAndSanitizeObjectStringFields';
 export { computeMorphRelationFieldName } from './fieldMetadata/compute-morph-relation-field-name';
+export {
+  computeRelationFieldJoinColumnName,
+  computeMorphRelationFieldJoinColumnName,
+} from './fieldMetadata/compute-relation-field-join-column-name';
 export { isFieldMetadataArrayKind } from './fieldMetadata/isFieldMetadataArrayKind';
 export { isFieldMetadataDateKind } from './fieldMetadata/isFieldMetadataDateKind';
 export { isFieldMetadataEligibleForFieldsWidget } from './fieldMetadata/isFieldMetadataEligibleForFieldsWidget';

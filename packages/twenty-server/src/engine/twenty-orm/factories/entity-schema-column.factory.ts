@@ -4,7 +4,10 @@ import {
   FieldMetadataType,
   compositeTypeDefinitions,
 } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import {
+  computeRelationFieldJoinColumnName,
+  isDefined,
+} from 'twenty-shared/utils';
 import { type ColumnType, type EntitySchemaColumnOptions } from 'typeorm';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
@@ -13,10 +16,6 @@ import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-me
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { isEnumFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-enum-field-metadata-type.util';
 import { serializeDefaultValue } from 'src/engine/metadata-modules/field-metadata/utils/serialize-default-value';
-import {
-  TwentyORMException,
-  TwentyORMExceptionCode,
-} from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import {
   type EntitySchemaFieldMetadata,
   type EntitySchemaFieldMetadataMaps,
@@ -57,18 +56,14 @@ export class EntitySchemaColumnFactory {
       if (isRelation) {
         const isManyToOneRelation =
           fieldMetadata.settings?.relationType === RelationType.MANY_TO_ONE;
-        const joinColumnName = fieldMetadata.settings?.joinColumnName;
 
         if (!isManyToOneRelation) {
           continue;
         }
 
-        if (!isDefined(joinColumnName)) {
-          throw new TwentyORMException(
-            `Field ${fieldMetadata.id} of type ${fieldMetadata.type}  is a many to one relation but does not have a join column name`,
-            TwentyORMExceptionCode.MALFORMED_METADATA,
-          );
-        }
+        const joinColumnName = computeRelationFieldJoinColumnName({
+          name: fieldMetadata.name,
+        });
 
         entitySchemaColumnMap[joinColumnName] = {
           name: joinColumnName,

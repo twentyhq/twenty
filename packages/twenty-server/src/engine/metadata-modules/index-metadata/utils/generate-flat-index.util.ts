@@ -1,4 +1,7 @@
-import { isDefined } from 'twenty-shared/utils';
+import {
+  computeRelationFieldJoinColumnName,
+  isDefined,
+} from 'twenty-shared/utils';
 
 import {
   FlatEntityMapsException,
@@ -39,8 +42,9 @@ export const generateFlatIndexMetadataWithNameOrThrow = ({
       const name = isMorphOrRelationUniversalFlatFieldMetadata(
         relatedFlatFieldMetadata,
       )
-        ? (relatedFlatFieldMetadata.universalSettings.joinColumnName ??
-          relatedFlatFieldMetadata.name)
+        ? computeRelationFieldJoinColumnName({
+            name: relatedFlatFieldMetadata.name,
+          })
         : relatedFlatFieldMetadata.name;
 
       return {

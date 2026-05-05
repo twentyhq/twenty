@@ -288,7 +288,7 @@ export const RecordDetailRelationSectionDropdownToMany = ({
           sourceObjectMetadata: objectMetadataItem,
         });
 
-        const targetJoinColumnName = getJoinColumnName(targetField.settings);
+        const targetJoinColumnName = getJoinColumnName(targetField);
 
         if (!sourceJoinColumnName || !targetJoinColumnName) {
           return;

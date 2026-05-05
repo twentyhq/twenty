@@ -1,4 +1,9 @@
-import { type CompositeProperty, FieldMetadataType } from 'twenty-shared/types';
+import {
+  type CompositeProperty,
+  FieldMetadataType,
+  RelationType,
+} from 'twenty-shared/types';
+import { computeRelationFieldJoinColumnName } from 'twenty-shared/utils';
 import { type ColumnType } from 'typeorm';
 
 import { type CompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/composite-field-metadata-type.type';
@@ -109,14 +114,13 @@ const generateRelationColumnDefinition = (
     FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION
   >,
 ): WorkspaceSchemaColumnDefinition | null => {
-  if (
-    !flatFieldMetadata.settings ||
-    !flatFieldMetadata.settings.joinColumnName
-  ) {
+  if (flatFieldMetadata.settings?.relationType !== RelationType.MANY_TO_ONE) {
     return null;
   }
 
-  const joinColumnName = flatFieldMetadata.settings.joinColumnName;
+  const joinColumnName = computeRelationFieldJoinColumnName({
+    name: flatFieldMetadata.name,
+  });
 
   return {
     name: joinColumnName,

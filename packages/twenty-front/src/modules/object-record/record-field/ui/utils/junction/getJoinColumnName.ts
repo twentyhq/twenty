@@ -1,16 +1,17 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { isDefined } from 'twenty-shared/utils';
+import {
+  computeRelationFieldJoinColumnName,
+  isDefined,
+} from 'twenty-shared/utils';
 
+// Returns the join column name for a (non-morph) relation field, computed
+// from the field's name. Use `getSourceJoinColumnName` when you need the
+// join column name for a specific morph target.
 export const getJoinColumnName = (
-  settings: FieldMetadataItem['settings'],
+  field: Pick<FieldMetadataItem, 'name'> | undefined | null,
 ): string | undefined => {
-  if (
-    isDefined(settings) &&
-    typeof settings === 'object' &&
-    'joinColumnName' in settings &&
-    typeof settings.joinColumnName === 'string'
-  ) {
-    return settings.joinColumnName;
+  if (!isDefined(field)) {
+    return undefined;
   }
-  return undefined;
+  return computeRelationFieldJoinColumnName({ name: field.name });
 };

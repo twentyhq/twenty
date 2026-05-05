@@ -1,7 +1,10 @@
 import { Injectable } from '@nestjs/common';
 
 import { RelationType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import {
+  computeRelationFieldJoinColumnName,
+  isDefined,
+} from 'twenty-shared/utils';
 import { type QueryRunner } from 'typeorm';
 import { v4 } from 'uuid';
 
@@ -214,13 +217,9 @@ export class CreateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
         targetFlatObjectMetadata,
       );
 
-      const joinColumnName = flatFieldMetadata.settings?.joinColumnName;
-
-      if (!isDefined(joinColumnName)) {
-        throw new Error(
-          'Join column name is not defined in a MANY_TO_ONE relation',
-        );
-      }
+      const joinColumnName = computeRelationFieldJoinColumnName({
+        name: flatFieldMetadata.name,
+      });
 
       await this.workspaceSchemaManagerService.foreignKeyManager.createForeignKey(
         {

@@ -10,7 +10,11 @@ import {
   type ObjectPermissions,
   RelationType,
 } from 'twenty-shared/types';
-import { computeMorphRelationFieldName, isDefined } from 'twenty-shared/utils';
+import {
+  computeMorphRelationFieldName,
+  computeRelationFieldJoinColumnName,
+  isDefined,
+} from 'twenty-shared/utils';
 
 type MapFieldMetadataToGraphQLQueryArgs = {
   objectMetadataItems: EnrichedObjectMetadataItem[];
@@ -168,7 +172,10 @@ ${mapObjectMetadataToGraphQLQuery({
       }
     }
 
-    if (gqlField === fieldMetadata.settings?.joinColumnName) {
+    if (
+      gqlField ===
+      computeRelationFieldJoinColumnName({ name: fieldMetadata.name })
+    ) {
       return `${gqlField}`;
     }
 

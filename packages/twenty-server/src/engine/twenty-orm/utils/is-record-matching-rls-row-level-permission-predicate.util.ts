@@ -30,6 +30,7 @@ import {
   type UUIDFilter,
 } from 'twenty-shared/types';
 import {
+  computeRelationFieldJoinColumnName,
   isDefined,
   isEmptyObject,
   isMatchingArrayFilter,
@@ -208,8 +209,8 @@ export const isRecordMatchingRLSRowLevelPermissionPredicate = ({
       objectFields.find(
         (field) =>
           field.type === FieldMetadataType.RELATION &&
-          (field.settings as { joinColumnName?: string } | undefined)
-            ?.joinColumnName === filterKey,
+          computeRelationFieldJoinColumnName({ name: field.name }) ===
+            filterKey,
       );
 
     if (!isDefined(objectMetadataField)) {
@@ -412,11 +413,9 @@ export const isRecordMatchingRLSRowLevelPermissionPredicate = ({
       }
       case FieldMetadataType.RELATION: {
         const isJoinColumn =
-          (
-            objectMetadataField.settings as
-              | { joinColumnName?: string }
-              | undefined
-          )?.joinColumnName === filterKey;
+          computeRelationFieldJoinColumnName({
+            name: objectMetadataField.name,
+          }) === filterKey;
 
         if (isJoinColumn) {
           return isMatchingUUIDFilter({

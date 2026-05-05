@@ -1,7 +1,10 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
-import { getJoinColumnName } from '@/object-record/record-field/ui/utils/junction/getJoinColumnName';
-import { computeMorphRelationFieldName, isDefined } from 'twenty-shared/utils';
+import {
+  computeMorphRelationFieldName,
+  computeRelationFieldJoinColumnName,
+  isDefined,
+} from 'twenty-shared/utils';
 
 export type TargetFieldInfo = {
   fieldName: string;
@@ -45,7 +48,7 @@ const findMorphTargetFieldInfo = (
   // e.g., caretakerPerson → caretakerPersonId
   return {
     fieldName,
-    joinColumnName: `${fieldName}Id`,
+    joinColumnName: computeRelationFieldJoinColumnName({ name: fieldName }),
   };
 };
 
@@ -68,7 +71,9 @@ export const findTargetFieldInfo = (
     if (field.relation?.targetObjectMetadata.id === targetObjectMetadataId) {
       return {
         fieldName: field.name,
-        joinColumnName: getJoinColumnName(field.settings),
+        joinColumnName: computeRelationFieldJoinColumnName({
+          name: field.name,
+        }),
       };
     }
   }

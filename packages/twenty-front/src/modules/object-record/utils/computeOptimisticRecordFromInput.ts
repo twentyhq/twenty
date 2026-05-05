@@ -17,7 +17,11 @@ import { isFieldUuid } from '@/object-record/record-field/ui/types/guards/isFiel
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { buildOptimisticActorFieldValueFromCurrentWorkspaceMember } from '@/object-record/utils/buildOptimisticActorFieldValueFromCurrentWorkspaceMember';
 import { getForeignKeyNameFromRelationFieldName } from '@/object-record/utils/getForeignKeyNameFromRelationFieldName';
-import { computeMorphRelationFieldName, isDefined } from 'twenty-shared/utils';
+import {
+  computeMorphRelationFieldName,
+  computeRelationFieldJoinColumnName,
+  isDefined,
+} from 'twenty-shared/utils';
 import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
 
 type ComputeOptimisticCacheRecordInputArgs = {
@@ -46,7 +50,8 @@ export const computeOptimisticRecordFromInput = ({
         objectMetadataItem.fields.find(
           (field) =>
             field.type === FieldMetadataType.RELATION &&
-            field.settings?.joinColumnName === recordKey,
+            computeRelationFieldJoinColumnName({ name: field.name }) ===
+              recordKey,
         );
 
       const potentialMorphRelationJoinColumnNameFieldMetadataItem =
@@ -212,10 +217,15 @@ export const computeOptimisticRecordFromInput = ({
       );
 
       const relationGqlField = relationGqlFields?.find(
-        (relationGqlField) => recordInput[`${relationGqlField}Id`],
+        (relationGqlField) =>
+          recordInput[
+            computeRelationFieldJoinColumnName({ name: relationGqlField })
+          ],
       );
 
-      const relationGqlFieldWithId = `${relationGqlField}Id`;
+      const relationGqlFieldWithId = computeRelationFieldJoinColumnName({
+        name: relationGqlField ?? '',
+      });
 
       if (isUndefined(relationGqlField)) {
         continue;

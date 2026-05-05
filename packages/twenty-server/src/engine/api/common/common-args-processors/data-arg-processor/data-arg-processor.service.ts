@@ -61,7 +61,6 @@ import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/fl
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
-import { isFlatFieldMetadataOfType } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-flat-field-metadata-of-type.util';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 @Injectable()
@@ -245,14 +244,9 @@ export class DataArgProcessorService {
           );
         }
 
-        const joinColumnName = isFlatFieldMetadataOfType(
-          fieldMetadata,
-          FieldMetadataType.MORPH_RELATION,
-        )
-          ? computeMorphOrRelationFieldJoinColumnName({
-              name: fieldMetadata.name,
-            })
-          : relationSettings.joinColumnName;
+        const joinColumnName = computeMorphOrRelationFieldJoinColumnName({
+          name: fieldMetadata.name,
+        });
 
         if (key === joinColumnName) {
           return validateUUIDFieldOrThrow(value, key);

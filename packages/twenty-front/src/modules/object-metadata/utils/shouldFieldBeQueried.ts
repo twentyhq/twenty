@@ -4,7 +4,10 @@ import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 import { isFieldMorphRelation } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelation';
 import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
-import { isDefined } from 'twenty-shared/utils';
+import {
+  computeRelationFieldJoinColumnName,
+  isDefined,
+} from 'twenty-shared/utils';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 
 export const shouldFieldBeQueried = ({
@@ -19,7 +22,8 @@ export const shouldFieldBeQueried = ({
 }): any => {
   const isJoinColumn: boolean =
     (isFieldRelation(fieldMetadata) || isFieldMorphRelation(fieldMetadata)) &&
-    fieldMetadata.settings.joinColumnName === gqlField;
+    computeRelationFieldJoinColumnName({ name: fieldMetadata.name }) ===
+      gqlField;
 
   if (
     isUndefinedOrNull(recordGqlFields) &&

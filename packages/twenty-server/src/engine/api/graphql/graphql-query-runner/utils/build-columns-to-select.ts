@@ -1,5 +1,8 @@
 import { FieldMetadataType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import {
+  computeRelationFieldJoinColumnName,
+  isDefined,
+} from 'twenty-shared/utils';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
@@ -64,13 +67,14 @@ const getRequiredRelationColumns = (
 
       if (
         !isDefined(relationValue) ||
-        !isDefined(fieldMetadata?.settings?.joinColumnName) ||
         fieldMetadata.settings?.relationType !== RelationType.MANY_TO_ONE
       ) {
         continue;
       }
 
-      requiredColumns.push(fieldMetadata.settings.joinColumnName);
+      requiredColumns.push(
+        computeRelationFieldJoinColumnName({ name: fieldMetadata.name }),
+      );
     }
 
     if (
@@ -92,14 +96,13 @@ const getRequiredRelationColumns = (
 
       const relationValue = relations[fieldMetadata.name];
 
-      if (
-        !isDefined(relationValue) ||
-        !isDefined(fieldMetadata?.settings?.joinColumnName)
-      ) {
+      if (!isDefined(relationValue)) {
         continue;
       }
 
-      requiredColumns.push(fieldMetadata.settings.joinColumnName);
+      requiredColumns.push(
+        computeRelationFieldJoinColumnName({ name: fieldMetadata.name }),
+      );
     }
   }
 

@@ -1,5 +1,8 @@
 import { compositeTypeDefinitions } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import {
+  computeRelationFieldJoinColumnName,
+  isDefined,
+} from 'twenty-shared/utils';
 import { type QueryRunner } from 'typeorm';
 
 import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
@@ -41,14 +44,9 @@ export const computeFlatIndexFieldColumnNames = ({
     }
 
     if (isMorphOrRelationFlatFieldMetadata(flatFieldMetadata)) {
-      if (!isDefined(flatFieldMetadata.settings?.joinColumnName)) {
-        throw new FlatEntityMapsException(
-          'Join column name is not defined for relation field',
-          FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
-        );
-      }
-
-      return flatFieldMetadata.settings.joinColumnName;
+      return computeRelationFieldJoinColumnName({
+        name: flatFieldMetadata.name,
+      });
     }
 
     if (isCompositeFieldMetadataType(flatFieldMetadata.type)) {

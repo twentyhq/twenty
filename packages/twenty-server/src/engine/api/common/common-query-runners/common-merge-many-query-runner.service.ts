@@ -11,7 +11,10 @@ import {
   ObjectRecord,
   RelationType,
 } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import {
+  computeRelationFieldJoinColumnName,
+  isDefined,
+} from 'twenty-shared/utils';
 import { FindOptionsRelations, In, ObjectLiteral } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -385,10 +388,7 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
         | FieldMetadataSettingsMapping['RELATION']
         | undefined;
 
-      if (
-        relationSettings?.relationType !== RelationType.MANY_TO_ONE ||
-        !relationSettings?.joinColumnName
-      ) {
+      if (relationSettings?.relationType !== RelationType.MANY_TO_ONE) {
         continue;
       }
 
@@ -405,7 +405,9 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
         objectMetadata: objMetadata,
         fieldName: field.name,
         fieldId: field.id,
-        joinColumnName: relationSettings.joinColumnName,
+        joinColumnName: computeRelationFieldJoinColumnName({
+          name: field.name,
+        }),
       });
     }
 

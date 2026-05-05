@@ -1,7 +1,10 @@
 import { Injectable } from '@nestjs/common';
 
 import { FieldMetadataType, type ObjectRecord } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import {
+  computeRelationFieldJoinColumnName,
+  isDefined,
+} from 'twenty-shared/utils';
 import { type FindOptionsRelations, type ObjectLiteral } from 'typeorm';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
@@ -191,8 +194,9 @@ export class ProcessNestedRelationsV2Helper {
       select: columnsToSelect,
     });
 
-    const joinColumnName =
-      sourceFieldMetadata.settings.joinColumnName ?? `${sourceFieldName}Id`;
+    const joinColumnName = computeRelationFieldJoinColumnName({
+      name: sourceFieldName,
+    });
 
     const relationIds = this.getUniqueIds({
       records: parentObjectRecords,
@@ -201,13 +205,16 @@ export class ProcessNestedRelationsV2Helper {
     });
 
     const fieldMetadataTargetRelationColumnName =
-      targetRelation &&
-      isFieldMetadataEntityOfType(
-        targetRelation,
-        FieldMetadataType.MORPH_RELATION,
-      )
-        ? `${targetRelation.settings?.joinColumnName}`
-        : `${targetRelationName}Id`;
+      computeRelationFieldJoinColumnName({
+        name:
+          targetRelation &&
+          isFieldMetadataEntityOfType(
+            targetRelation,
+            FieldMetadataType.MORPH_RELATION,
+          )
+            ? targetRelation.name
+            : (targetRelationName ?? ''),
+      });
 
     const { relationResults, relationAggregatedFieldsResult } =
       await this.findRelations({

@@ -3,9 +3,9 @@ import { getJoinColumnName } from '@/object-record/record-field/ui/utils/junctio
 import { isDefined } from 'twenty-shared/utils';
 
 export const getJoinColumnNameOrThrow = (
-  settings: FieldMetadataItem['settings'],
+  field: Pick<FieldMetadataItem, 'name'> | undefined | null,
 ): string => {
-  const joinColumnName = getJoinColumnName(settings);
+  const joinColumnName = getJoinColumnName(field);
   if (!isDefined(joinColumnName)) {
     throw new Error('Join column name is not defined');
   }
