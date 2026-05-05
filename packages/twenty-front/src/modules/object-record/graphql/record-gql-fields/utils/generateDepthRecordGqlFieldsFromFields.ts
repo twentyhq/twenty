@@ -138,17 +138,47 @@ export const generateDepthRecordGqlFieldsFromFields = ({
         }
 
         const morphGqlFields = fieldMetadata.morphRelations.map(
-          (morphRelation) => ({
-            gqlField: computeMorphRelationFieldName({
-              fieldName: fieldMetadata.name,
-              relationType: morphRelation.type,
-              targetObjectMetadataNameSingular:
-                morphRelation.targetObjectMetadata.nameSingular,
-              targetObjectMetadataNamePlural:
-                morphRelation.targetObjectMetadata.namePlural,
-            }),
-            fieldMetadata,
-          }),
+          (morphRelation) => {
+            const morphTargetObjectMetadataItem = objectMetadataItems.find(
+              (objectMetadataItem) =>
+                objectMetadataItem.id === morphRelation.targetObjectMetadata.id,
+            );
+
+            const morphLabelIdentifierFieldMetadataItem =
+              morphTargetObjectMetadataItem
+                ? getLabelIdentifierFieldMetadataItem(
+                    morphTargetObjectMetadataItem,
+                  )
+                : undefined;
+
+            const morphImageIdentifierFieldMetadataItem =
+              morphTargetObjectMetadataItem
+                ? getImageIdentifierFieldMetadataItem(
+                    morphTargetObjectMetadataItem,
+                  )
+                : undefined;
+
+            return {
+              gqlField: computeMorphRelationFieldName({
+                fieldName: fieldMetadata.name,
+                relationType: morphRelation.type,
+                targetObjectMetadataNameSingular:
+                  morphRelation.targetObjectMetadata.nameSingular,
+                targetObjectMetadataNamePlural:
+                  morphRelation.targetObjectMetadata.namePlural,
+              }),
+              fieldMetadata,
+              relationIdentifierSubGqlFields: {
+                id: true,
+                ...(isDefined(morphLabelIdentifierFieldMetadataItem)
+                  ? { [morphLabelIdentifierFieldMetadataItem.name]: true }
+                  : {}),
+                ...(isDefined(morphImageIdentifierFieldMetadataItem)
+                  ? { [morphImageIdentifierFieldMetadataItem.name]: true }
+                  : {}),
+              },
+            };
+          },
         );
 
         return {
@@ -156,8 +186,14 @@ export const generateDepthRecordGqlFieldsFromFields = ({
           ...morphGqlFields.reduce(
             (morphGqlFields, morphGqlField) => ({
               ...morphGqlFields,
-              ...(depth === 1
-                ? { [`${morphGqlField.gqlField}`]: { id: true, name: true } }
+              ...(depth === 1 && shouldOnlyLoadRelationIdentifiers
+                ? {
+                    [`${morphGqlField.gqlField}`]:
+                      morphGqlField.relationIdentifierSubGqlFields,
+                  }
+                : {}),
+              ...(depth === 1 && !shouldOnlyLoadRelationIdentifiers
+                ? { [`${morphGqlField.gqlField}`]: true }
                 : {}),
               ...(relationType === RelationType.MANY_TO_ONE
                 ? { [`${morphGqlField.gqlField}Id`]: true }
