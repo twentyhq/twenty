@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 
 import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/workspace-iterator.module';
-import { SetCalendarEventDescriptionDisplayedMaxRowsCommand } from 'src/database/commands/upgrade-version-command/2-2/2-2-workspace-command-1786000000000-set-calendar-event-description-displayed-max-rows.command';
+import { DropMessageDirectionFieldCommand } from 'src/database/commands/upgrade-version-command/2-3/2-3-workspace-command-1777400000000-drop-message-direction-field.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
@@ -13,6 +13,6 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     WorkspaceIteratorModule,
     WorkspaceMigrationModule,
   ],
-  providers: [SetCalendarEventDescriptionDisplayedMaxRowsCommand],
+  providers: [DropMessageDirectionFieldCommand],
 })
-export class V2_2_UpgradeVersionCommandModule {}
+export class V2_3_UpgradeVersionCommandModule {}

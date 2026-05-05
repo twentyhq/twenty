@@ -13,9 +13,9 @@ import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspa
 const MESSAGE_DIRECTION_FIELD_UNIVERSAL_IDENTIFIER =
   '20202020-0203-4118-8e2a-05b9bdae6dab';
 
-@RegisteredWorkspaceCommand('2.2.0', 1777400000000)
+@RegisteredWorkspaceCommand('2.3.0', 1777400000000)
 @Command({
-  name: 'upgrade:2-2:drop-message-direction-field',
+  name: 'upgrade:2-3:drop-message-direction-field',
   description:
     'Drop the leftover message.direction field metadata and its workspace column',
 })
