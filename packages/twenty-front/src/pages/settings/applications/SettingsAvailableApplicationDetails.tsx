@@ -136,12 +136,10 @@ export const SettingsAvailableApplicationDetails = () => {
     },
     {
       icon: IconGraph,
-      count: (manifest?.frontComponents ?? []).filter(
-        (fc) =>
-          !isDefined(fc.command) &&
-          fc.universalIdentifier !==
-            manifest?.application
-              .settingsCustomTabFrontComponentUniversalIdentifier,
+      count: (manifest?.frontComponents ?? []).filter((fc) =>
+        (manifest?.commandMenuItems ?? [])
+          .map((cm) => cm.frontComponentUniversalIdentifier)
+          .includes(fc.universalIdentifier),
       ).length,
       one: t`widget`,
       many: t`widgets`,
@@ -149,7 +147,11 @@ export const SettingsAvailableApplicationDetails = () => {
     {
       icon: IconCommand,
       count: (manifest?.frontComponents ?? []).filter(
-        (fc) => isDefined(fc.command) && !fc.isHeadless,
+        (fc) =>
+          !fc.isHeadless &&
+          (manifest?.commandMenuItems ?? [])
+            .map((cm) => cm.frontComponentUniversalIdentifier)
+            .includes(fc.universalIdentifier),
       ).length,
       one: t`command`,
       many: t`commands`,
