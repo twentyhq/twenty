@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
-import { isDefined } from 'twenty-shared/utils';
 
 import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
 
@@ -12,6 +11,8 @@ import { type ApplicationVariableCacheMaps } from 'src/engine/core-modules/appli
 import { fromApplicationVariableEntityToFlatApplicationVariable } from 'src/engine/metadata-modules/flat-application-variable/utils/from-application-variable-entity-to-flat-application-variable.util';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 import { createIdToUniversalIdentifierMap } from 'src/engine/workspace-cache/utils/create-id-to-universal-identifier-map.util';
+import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
+import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
 
 @Injectable()
 @WorkspaceCache('applicationVariableMaps')
@@ -41,10 +42,7 @@ export class WorkspaceApplicationVariableMapCacheService extends WorkspaceCacheP
     const applicationIdToUniversalIdentifierMap =
       createIdToUniversalIdentifierMap(applications);
 
-    const applicationVariableMaps: ApplicationVariableCacheMaps = {
-      byId: {},
-      byApplicationId: {},
-    };
+    const applicationVariableMaps = createEmptyFlatEntityMaps();
 
     for (const entity of applicationVariableEntities) {
       const flatApplicationVariable =
@@ -53,28 +51,10 @@ export class WorkspaceApplicationVariableMapCacheService extends WorkspaceCacheP
           applicationIdToUniversalIdentifierMap,
         });
 
-      applicationVariableMaps.byId[flatApplicationVariable.id] =
-        flatApplicationVariable;
-
-      if (!isDefined(flatApplicationVariable.applicationId)) {
-        continue;
-      }
-      if (
-        !isDefined(
-          applicationVariableMaps.byApplicationId[
-            flatApplicationVariable.applicationId
-          ],
-        )
-      ) {
-        applicationVariableMaps.byApplicationId[
-          flatApplicationVariable.applicationId
-        ] = [flatApplicationVariable];
-        continue;
-      }
-
-      applicationVariableMaps.byApplicationId[
-        flatApplicationVariable.applicationId
-      ]?.push(flatApplicationVariable);
+      addFlatEntityToFlatEntityMapsThroughMutationOrThrow({
+        flatEntity: flatApplicationVariable,
+        flatEntityMapsToMutate: applicationVariableMaps,
+      });
     }
 
     return applicationVariableMaps;
