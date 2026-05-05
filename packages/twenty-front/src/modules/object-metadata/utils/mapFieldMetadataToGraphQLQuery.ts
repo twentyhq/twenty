@@ -11,7 +11,7 @@ import {
   RelationType,
 } from 'twenty-shared/types';
 import {
-  computeMorphRelationFieldName,
+  computeMorphRelationGqlFieldName,
   computeRelationGqlFieldJoinColumnName,
   isDefined,
 } from 'twenty-shared/utils';
@@ -56,7 +56,7 @@ export const mapFieldMetadataToGraphQLQuery = ({
   ) {
     let gqlMorphField = '';
     for (const morphRelation of fieldMetadata.morphRelations ?? []) {
-      const relationFieldName = computeMorphRelationFieldName({
+      const relationFieldName = computeMorphRelationGqlFieldName({
         fieldName: fieldMetadata.name,
         relationType: fieldMetadata.settings?.relationType,
         targetObjectMetadataNameSingular:

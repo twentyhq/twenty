@@ -5,7 +5,7 @@ import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/Enriche
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { generateEmptyFieldValue } from '@/object-record/utils/generateEmptyFieldValue';
 import {
-  computeMorphRelationFieldName,
+  computeMorphRelationGqlFieldName,
   computeRelationGqlFieldJoinColumnName,
   isDefined,
 } from 'twenty-shared/utils';
@@ -47,7 +47,7 @@ export const prefillRecord = <T extends ObjectRecord>({
         ) {
           const gqlFields = fieldMetadataItem.morphRelations?.map(
             (morphRelation) => {
-              return computeMorphRelationFieldName({
+              return computeMorphRelationGqlFieldName({
                 fieldName: fieldMetadataItem.name,
                 relationType: morphRelation.type,
                 targetObjectMetadataNameSingular:

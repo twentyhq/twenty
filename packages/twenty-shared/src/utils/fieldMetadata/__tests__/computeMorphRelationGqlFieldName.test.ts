@@ -1,8 +1,8 @@
-import { computeMorphRelationFieldName } from '@/utils/fieldMetadata/compute-morph-relation-field-name';
+import { computeMorphRelationGqlFieldName } from '@/utils/fieldMetadata/compute-morph-relation-gql-field-name';
 
-describe('computeMorphRelationFieldName', () => {
+describe('computeMorphRelationGqlFieldName', () => {
   it('should return singular-based name for MANY_TO_ONE', () => {
-    const result = computeMorphRelationFieldName({
+    const result = computeMorphRelationGqlFieldName({
       fieldName: 'assigned',
       relationType: 'MANY_TO_ONE' as any,
       targetObjectMetadataNameSingular: 'person',
@@ -13,7 +13,7 @@ describe('computeMorphRelationFieldName', () => {
   });
 
   it('should return plural-based name for ONE_TO_MANY', () => {
-    const result = computeMorphRelationFieldName({
+    const result = computeMorphRelationGqlFieldName({
       fieldName: 'assigned',
       relationType: 'ONE_TO_MANY' as any,
       targetObjectMetadataNameSingular: 'person',
@@ -25,7 +25,7 @@ describe('computeMorphRelationFieldName', () => {
 
   it('should throw for invalid relation type', () => {
     expect(() =>
-      computeMorphRelationFieldName({
+      computeMorphRelationGqlFieldName({
         fieldName: 'assigned',
         relationType: 'INVALID' as any,
         targetObjectMetadataNameSingular: 'person',

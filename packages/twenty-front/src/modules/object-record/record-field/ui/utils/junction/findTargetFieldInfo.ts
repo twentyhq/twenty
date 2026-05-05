@@ -1,7 +1,7 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import {
-  computeMorphRelationFieldName,
+  computeMorphRelationGqlFieldName,
   computeRelationGqlFieldJoinColumnName,
   isDefined,
 } from 'twenty-shared/utils';
@@ -37,7 +37,7 @@ const findMorphTargetFieldInfo = (
     return undefined;
   }
 
-  const fieldName = computeMorphRelationFieldName({
+  const fieldName = computeMorphRelationGqlFieldName({
     fieldName: matchingMorphRelation.sourceFieldMetadata.name,
     relationType: matchingMorphRelation.type,
     targetObjectMetadataNameSingular: targetObjectMetadata.nameSingular,

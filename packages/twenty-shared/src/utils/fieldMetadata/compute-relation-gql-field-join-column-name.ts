@@ -1,4 +1,4 @@
-import { computeMorphRelationFieldName } from '@/utils/fieldMetadata/compute-morph-relation-field-name';
+import { computeMorphRelationGqlFieldName } from '@/utils/fieldMetadata/compute-morph-relation-gql-field-name';
 
 enum RelationType {
   MANY_TO_ONE = 'MANY_TO_ONE',
@@ -28,12 +28,12 @@ export const computeMorphRelationGqlFieldJoinColumnName = ({
   targetObjectMetadataNameSingular,
   targetObjectMetadataNamePlural,
 }: ComputeMorphRelationGqlFieldJoinColumnNameArgs): string => {
-  const morphFieldName = computeMorphRelationFieldName({
+  const morphGqlFieldName = computeMorphRelationGqlFieldName({
     fieldName,
     relationType,
     targetObjectMetadataNameSingular,
     targetObjectMetadataNamePlural,
   });
 
-  return computeRelationGqlFieldJoinColumnName({ name: morphFieldName });
+  return computeRelationGqlFieldJoinColumnName({ name: morphGqlFieldName });
 };

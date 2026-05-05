@@ -18,7 +18,7 @@ import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { buildOptimisticActorFieldValueFromCurrentWorkspaceMember } from '@/object-record/utils/buildOptimisticActorFieldValueFromCurrentWorkspaceMember';
 import { getForeignKeyNameFromRelationFieldName } from '@/object-record/utils/getForeignKeyNameFromRelationFieldName';
 import {
-  computeMorphRelationFieldName,
+  computeMorphRelationGqlFieldName,
   computeRelationGqlFieldJoinColumnName,
   isDefined,
 } from 'twenty-shared/utils';
@@ -205,7 +205,7 @@ export const computeOptimisticRecordFromInput = ({
 
       const relationGqlFields = fieldMetadataItem.morphRelations?.map(
         (morphRelation) => {
-          return computeMorphRelationFieldName({
+          return computeMorphRelationGqlFieldName({
             fieldName: fieldMetadataItem.name,
             relationType,
             targetObjectMetadataNameSingular:

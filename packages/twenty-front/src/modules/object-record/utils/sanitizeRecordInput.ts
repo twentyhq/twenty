@@ -3,7 +3,7 @@ import { isFieldMorphRelation } from '@/object-record/record-field/ui/types/guar
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { isSystemSearchVectorField } from '@/object-record/utils/isSystemSearchVectorField';
 import {
-  computeMorphRelationFieldName,
+  computeMorphRelationGqlFieldName,
   computeRelationGqlFieldJoinColumnName,
   isDefined,
 } from 'twenty-shared/utils';
@@ -37,7 +37,7 @@ export const sanitizeRecordInput = ({
           objectMetadataItem.fields.find((field) => {
             if (!isFieldMorphRelation(field)) return false;
             return field.morphRelations?.some((morphRelation) => {
-              const computedFieldName = computeMorphRelationFieldName({
+              const computedFieldName = computeMorphRelationGqlFieldName({
                 fieldName: field.name,
                 relationType: morphRelation.type,
                 targetObjectMetadataNameSingular:
