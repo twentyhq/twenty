@@ -120,7 +120,46 @@ describe('unique PHONES field with empty values', () => {
     createdRecordIdsForCleaning.push(secondId);
   });
 
-  it('should still enforce uniqueness when two records share the same non-empty primaryPhoneNumber', async () => {
+  it('should allow creating when same phoneNumber but different phoneCallingCode', async () => {
+    const firstId = faker.string.uuid();
+    const secondId = faker.string.uuid();
+
+    const firstResponse = await createOneOperation({
+      objectMetadataSingularName: OBJECT_SINGULAR,
+      input: {
+        id: firstId,
+        [FIELD_NAME]: {
+          primaryPhoneNumber: '4155552671',
+          primaryPhoneCallingCode: '+1',
+          primaryPhoneCountryCode: 'US',
+        },
+      },
+      gqlFields: `id`,
+    });
+
+    expect(firstResponse.errors).toBeUndefined();
+    expect(firstResponse.data.createOneResponse.id).toBe(firstId);
+    createdRecordIdsForCleaning.push(firstId);
+
+    const secondResponse = await createOneOperation({
+      objectMetadataSingularName: OBJECT_SINGULAR,
+      input: {
+        id: secondId,
+        [FIELD_NAME]: {
+          primaryPhoneNumber: '4155552671',
+          primaryPhoneCallingCode: '+32',
+          primaryPhoneCountryCode: 'BE',
+        },
+      },
+      gqlFields: `id`,
+    });
+
+    expect(secondResponse.errors).toBeUndefined();
+    expect(secondResponse.data.createOneResponse.id).toBe(secondId);
+    createdRecordIdsForCleaning.push(secondId);
+  });
+
+  it('should still enforce uniqueness when two records share the same non-empty primaryPhoneNumber and primaryPhoneCallingCode', async () => {
     const firstId = faker.string.uuid();
     const secondId = faker.string.uuid();
 
