@@ -1,16 +1,16 @@
 import { useEffect } from 'react';
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { useRecordIds, updateProgress, enqueueSnackbar, unmountFrontComponent } from 'twenty-sdk/front-component';
+import { useSelectedRecordIds, updateProgress, enqueueSnackbar, unmountFrontComponent } from 'twenty-sdk/front-component';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 import { POST_CARD_UNIVERSAL_IDENTIFIER } from '../objects/post-card.object';
 
 const SendPostCardsEffect = () => {
-  const recordIds = useRecordIds();
+  const selectedRecordIds = useSelectedRecordIds();
 
   useEffect(() => {
     const send = async () => {
       try {
-        if (recordIds.length === 0) {
+        if (selectedRecordIds.length === 0) {
           await enqueueSnackbar({
             message: 'No postcards selected',
             variant: 'error',
@@ -24,21 +24,21 @@ const SendPostCardsEffect = () => {
 
         await updateProgress(0.3);
 
-        for (let i = 0; i < recordIds.length; i++) {
+        for (let i = 0; i < selectedRecordIds.length; i++) {
           await client.mutation({
             updatePostCard: {
               __args: {
-                id: recordIds[i],
+                id: selectedRecordIds[i],
                 data: { status: 'SENT' },
               },
               id: true,
             },
           });
 
-          await updateProgress(0.3 + (0.7 * (i + 1)) / recordIds.length);
+          await updateProgress(0.3 + (0.7 * (i + 1)) / selectedRecordIds.length);
         }
 
-        const count = recordIds.length;
+        const count = selectedRecordIds.length;
 
         await enqueueSnackbar({
           message: `${count} postcard${count > 1 ? 's' : ''} sent`,
@@ -56,7 +56,7 @@ const SendPostCardsEffect = () => {
     };
 
     send();
-  }, [recordIds]);
+  }, [selectedRecordIds]);
 
   return null;
 };

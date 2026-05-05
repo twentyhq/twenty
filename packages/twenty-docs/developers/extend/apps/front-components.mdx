@@ -223,8 +223,8 @@ Available hooks:
 | Hook | Returns | Description |
 |------|---------|-------------|
 | `useUserId()` | `string` or `null` | The current user's ID |
-| `useRecordIds()` | `string[]` | All selected record IDs (empty array if none selected) |
-| `useRecordId()` | `string` or `null` | **Deprecated.** Use `useRecordIds()` instead |
+| `useSelectedRecordIds()` | `string[]` | All selected record IDs (empty array if none selected) |
+| `useRecordId()` | `string` or `null` | **Deprecated.** Use `useSelectedRecordIds()` instead |
 | `useFrontComponentId()` | `string` | This component instance's ID |
 | `useFrontComponentExecutionContext(selector)` | varies | Access the full execution context with a selector function |
 
@@ -289,21 +289,21 @@ export default defineFrontComponent({
 
 ### Working with multiple records
 
-Use `useRecordIds()` to handle multiple selected records. This is useful for bulk operations:
+Use `useSelectedRecordIds()` to handle multiple selected records. This is useful for bulk operations:
 
 ```tsx src/front-components/bulk-export.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { useRecordIds, numberOfSelectedRecords } from 'twenty-sdk/front-component';
+import { useSelectedRecordIds, numberOfSelectedRecords } from 'twenty-sdk/front-component';
 import { enqueueSnackbar, closeSidePanel } from 'twenty-sdk/front-component';
 import { CoreApiClient } from 'twenty-sdk/clients';
 
 const BulkExport = () => {
-  const recordIds = useRecordIds();
+  const selectedRecordIds = useSelectedRecordIds();
 
   const handleExport = async () => {
     const client = new CoreApiClient();
 
-    for (const recordId of recordIds) {
+    for (const recordId of selectedRecordIds) {
       await client.mutation({
         updateTask: {
           __args: { id: recordId, data: { exported: true } },
@@ -313,7 +313,7 @@ const BulkExport = () => {
     }
 
     await enqueueSnackbar({
-      message: `Exported ${recordIds.length} records`,
+      message: `Exported ${selectedRecordIds.length} records`,
       variant: 'success',
     });
 
@@ -322,7 +322,7 @@ const BulkExport = () => {
 
   return (
     <div style={{ padding: '20px' }}>
-      <p>Export {recordIds.length} selected record(s)?</p>
+      <p>Export {selectedRecordIds.length} selected record(s)?</p>
       <button onClick={handleExport}>Export</button>
     </div>
   );

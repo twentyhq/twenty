@@ -24,7 +24,7 @@ export const SidePanelFrontComponentPage = () => {
     return null;
   }
 
-  const recordIds = isDefined(viewableFrontComponentRecordContext?.recordId)
+  const selectedRecordIds = isDefined(viewableFrontComponentRecordContext?.recordId)
     ? [viewableFrontComponentRecordContext.recordId]
     : undefined;
 
@@ -32,7 +32,7 @@ export const SidePanelFrontComponentPage = () => {
     <Suspense fallback={null}>
       <FrontComponentRenderer
         frontComponentId={viewableFrontComponentId}
-        recordIds={recordIds}
+        selectedRecordIds={selectedRecordIds}
       />
     </Suspense>
   );

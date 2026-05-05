@@ -42,7 +42,7 @@ export const FrontComponentWidgetRenderer = ({
   }
 
   const frontComponentId = configuration.frontComponentId;
-  const recordIds = isDefined(targetRecordIdentifier?.id)
+  const selectedRecordIds = isDefined(targetRecordIdentifier?.id)
     ? [targetRecordIdentifier.id]
     : undefined;
 
@@ -51,7 +51,7 @@ export const FrontComponentWidgetRenderer = ({
       <Suspense fallback={null}>
         <FrontComponentRenderer
           frontComponentId={frontComponentId}
-          recordIds={recordIds}
+          selectedRecordIds={selectedRecordIds}
         />
       </Suspense>
     </StyledContainer>

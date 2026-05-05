@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { useRecordIds } from 'twenty-sdk/front-component';
+import { useSelectedRecordIds } from 'twenty-sdk/front-component';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -72,8 +72,8 @@ const CardDisplay = ({
 };
 
 const PostCardPreview = () => {
-  const recordIds = useRecordIds();
-  const recordId = recordIds.length === 1 ? recordIds[0] : null;
+  const selectedRecordIds = useSelectedRecordIds();
+  const recordId = selectedRecordIds.length === 1 ? selectedRecordIds[0] : null;
   const [postCard, setPostCard] = useState<PostCardRecord | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
