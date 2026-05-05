@@ -1,7 +1,13 @@
+import { msg } from '@lingui/core/macro';
 import { MENU_DATA } from '@/sections/Menu/data';
 import { CustomersCaseStudySignoff } from '@/app/[locale]/customers/_components/CustomersCaseStudySignoff';
 import { getCaseStudyPalette, type CaseStudyData } from '@/lib/customers';
 import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';
+import { createMessageDescriptorRenderer } from '@/lib/i18n/create-message-descriptor-renderer';
+import {
+  getRouteI18n,
+  type LocaleRouteParams,
+} from '@/lib/i18n/get-route-i18n';
 import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels';
 import { CaseStudy } from '@/sections/CaseStudy/components';
 import { Menu } from '@/sections/Menu/components';
@@ -13,88 +19,94 @@ const PLACEHOLDER_HERO =
 
 const CASE_STUDY: CaseStudyData = {
   meta: {
-    title:
-      'Homeseller, WhatsApp, and a CRM built around the business | Nine Dots & Twenty',
-    description:
-      'How Nine Dots Ventures rebuilt a Singapore real estate agency on Twenty with APIs, n8n, Grafana, and AI on top of 2,000+ WhatsApp messages a day.',
+    title: msg`Homeseller, WhatsApp, and a CRM built around the business | Nine Dots & Twenty`,
+    description: msg`How Nine Dots Ventures rebuilt a Singapore real estate agency on Twenty with APIs, n8n, Grafana, and AI on top of 2,000+ WhatsApp messages a day.`,
   },
   hero: {
     readingTime: '9 min',
     title: [
-      { text: 'A real estate agency on WhatsApp ', fontFamily: 'serif' },
-      { text: 'built a ', fontFamily: 'serif' },
-      { text: 'CRM', fontFamily: 'sans', newLine: true },
-      { text: ' around it', fontFamily: 'serif' },
+      {
+        text: msg`A real estate agency on WhatsApp`,
+        fontFamily: 'serif',
+      },
+      { text: msg`built a`, fontFamily: 'serif' },
+      { text: msg`CRM`, fontFamily: 'sans', newLine: true },
+      { text: msg`around it`, fontFamily: 'serif' },
     ],
     author: 'Mike Babiy & Azmat Parveen',
     authorAvatarSrc: '/images/partner/testimonials/mike-babiy.png',
-    authorRole: 'Founder, Nine Dots Ventures',
+    authorRole: msg`Founder, Nine Dots Ventures`,
     clientIcon: 'nine-dots',
     heroImageSrc: PLACEHOLDER_HERO,
-    industry: 'Real Estate',
+    industry: msg`Real Estate`,
     kpis: [
-      { value: '150 hrs', label: 'Saved / month' },
-      { value: '2,000+', label: 'Daily messages' },
-      { value: 'Q1 2026', label: 'Record quarter' },
+      { value: msg`150 hrs`, label: msg`Saved / month` },
+      { value: msg`2,000+`, label: msg`Daily messages` },
+      { value: msg`Q1 2026`, label: msg`Record quarter` },
     ],
     quote: {
-      text: 'Twenty lets us build a CRM around the business and not the business around the CRM.',
+      text: msg`Twenty lets us build a CRM around the business and not the business around the CRM.`,
       author: 'Mike Babiy',
-      role: 'Founder, Nine Dots Ventures',
+      role: msg`Founder, Nine Dots Ventures`,
     },
   },
   sections: [
     {
       type: 'text',
-      eyebrow: 'Homeseller',
+      eyebrow: msg`Homeseller`,
       heading: [
-        { text: 'When the channel is ', fontFamily: 'serif' },
-        { text: 'the business', fontFamily: 'sans' },
+        {
+          text: msg`When the channel is`,
+          fontFamily: 'serif',
+        },
+        { text: msg`the business`, fontFamily: 'sans' },
       ],
       paragraphs: [
-        "Homeseller is a high-volume real estate agency in Singapore, founded by one of the country's top-performing property agents. The whole operation runs on WhatsApp: no email, no calendars, just group chats, thousands of them, with clients, agents, and leads together.",
-        'That works until you need to understand the business underneath. Which deals are stuck? Where are leads coming from? What is the close rate? With spreadsheets and a legacy custom CRM that could not keep up, those questions were nearly impossible to answer.',
-        'Mike and Azmat from Nine Dots stepped in to fix that, not by changing how Homeseller works, but by building a system that finally fit around it.',
+        msg`Homeseller is a high-volume real estate agency in Singapore, founded by one of the country's top-performing property agents. The whole operation runs on WhatsApp: no email, no calendars, just group chats, thousands of them, with clients, agents, and leads together.`,
+        msg`That works until you need to understand the business underneath. Which deals are stuck? Where are leads coming from? What is the close rate? With spreadsheets and a legacy custom CRM that could not keep up, those questions were nearly impossible to answer.`,
+        msg`Mike and Azmat from Nine Dots stepped in to fix that, not by changing how Homeseller works, but by building a system that finally fit around it.`,
       ],
       callout:
         '"Twenty lets us build a CRM around the business and not the business around the CRM." - Mike Babiy, Founder, Nine Dots Ventures',
     },
     {
       type: 'text',
-      eyebrow: 'Architecture',
+      eyebrow: msg`Architecture`,
       heading: [
-        { text: 'The CRM as a ', fontFamily: 'serif' },
-        { text: 'control hub', fontFamily: 'sans' },
+        { text: msg`The CRM as a`, fontFamily: 'serif' },
+        { text: msg`control hub`, fontFamily: 'sans' },
       ],
       paragraphs: [
-        "Nine Dots rebuilt Homeseller's operations on Twenty, with a custom data model shaped around their sales flow. Because Twenty is open and everything is accessible via API, they connected it to what the business actually needed: n8n for automated workflows (in-app workflows were not available at that time), Grafana for live dashboards fed from Twenty, and a custom AI layer to parse and extract structured insights from more than 2,000 WhatsApp messages a day.",
-        'Homeseller kept their habits. WhatsApp stayed WhatsApp. What changed is that everything flowing through those conversations now lands in a structured system, tracked, classified, and visible in real time.',
+        msg`Nine Dots rebuilt Homeseller's operations on Twenty, with a custom data model shaped around their sales flow. Because Twenty is open and everything is accessible via API, they connected it to what the business actually needed: n8n for automated workflows (in-app workflows were not available at that time), Grafana for live dashboards fed from Twenty, and a custom AI layer to parse and extract structured insights from more than 2,000 WhatsApp messages a day.`,
+        msg`Homeseller kept their habits. WhatsApp stayed WhatsApp. What changed is that everything flowing through those conversations now lands in a structured system, tracked, classified, and visible in real time.`,
       ],
       callout:
         '"Twenty is the heart of the system. Everything branches from it." - Azmat Parveen, Nine Dots Ventures',
     },
     {
       type: 'text',
-      eyebrow: 'The result',
+      eyebrow: msg`The result`,
       heading: [
-        { text: '150 hours', fontFamily: 'sans' },
-        { text: ' saved every month', fontFamily: 'serif' },
+        { text: msg`150 hours`, fontFamily: 'sans' },
+        {
+          text: msg`saved every month`,
+          fontFamily: 'serif',
+        },
       ],
       paragraphs: [
-        'About 150 hours per month saved in manual operations. Real-time metrics for the business owner. Growth readiness without adding operational headcount. A team that can answer questions that used to take days to piece together.',
-        'The full rollout landed in July 2025. Since then, Nine Dots built a Smart Assistant on top of the system, nudging agents with tasks, reminders, and on-demand market analysis. Some agents never open Twenty directly, yet they are powered by it, outperforming peers on manual processes alone. By Q1 2026, Homeseller had recorded its best sales quarter ever.',
+        msg`About 150 hours per month saved in manual operations. Real-time metrics for the business owner. Growth readiness without adding operational headcount. A team that can answer questions that used to take days to piece together.`,
+        msg`The full rollout landed in July 2025. Since then, Nine Dots built a Smart Assistant on top of the system, nudging agents with tasks, reminders, and on-demand market analysis. Some agents never open Twenty directly, yet they are powered by it, outperforming peers on manual processes alone. By Q1 2026, Homeseller had recorded its best sales quarter ever.`,
       ],
     },
   ],
   tableOfContents: [
-    'When the channel is the business',
-    'The CRM as a control hub',
-    'The result',
+    msg`When the channel is the business`,
+    msg`The CRM as a control hub`,
+    msg`The result`,
   ],
   catalogCard: {
-    summary:
-      "Nine Dots put Twenty at the center of Homeseller's stack with APIs, automation, and AI on top of WhatsApp-heavy operations.",
-    date: 'Jul 2025',
+    summary: msg`Nine Dots put Twenty at the center of Homeseller's stack with APIs, automation, and AI on top of WhatsApp-heavy operations.`,
+    date: msg`Jul 2025`,
   },
 };
 
@@ -104,8 +116,18 @@ export const generateMetadata = buildLocalizedMetadata({
   description: CASE_STUDY.meta.description,
 });
 
-export default async function NineDotsCaseStudyPage() {
-  const stats = await fetchCommunityStats();
+type CaseStudyPageProps = {
+  params: Promise<LocaleRouteParams>;
+};
+
+export default async function NineDotsCaseStudyPage({
+  params,
+}: CaseStudyPageProps) {
+  const [i18n, stats] = await Promise.all([
+    getRouteI18n(params),
+    fetchCommunityStats(),
+  ]);
+  const renderText = createMessageDescriptorRenderer(i18n);
   const menuSocialLinks = mergeSocialLinkLabels(MENU_DATA.socialLinks, stats);
   const palette = getCaseStudyPalette('/customers/9dots');
 
@@ -119,6 +141,7 @@ export default async function NineDotsCaseStudyPage() {
           key={index}
           block={block}
           isLast={index === CASE_STUDY.sections.length - 1}
+          renderText={renderText}
           sectionId={sectionId}
         />
       );
@@ -150,17 +173,19 @@ export default async function NineDotsCaseStudyPage() {
         dashColor={palette.dashColor}
         hero={CASE_STUDY.hero}
         hoverDashColor={palette.hoverDashColor}
+        renderText={renderText}
       />
 
       <CaseStudy.Highlights
         industry={CASE_STUDY.hero.industry}
         kpis={CASE_STUDY.hero.kpis}
+        renderText={renderText}
       />
 
       <CaseStudy.Body>{sectionBlocks}</CaseStudy.Body>
 
       <CaseStudy.SectionNav items={CASE_STUDY.tableOfContents} />
-      <CustomersCaseStudySignoff />
+      <CustomersCaseStudySignoff renderText={renderText} />
     </>
   );
 }

@@ -1,6 +1,7 @@
 'use client';
 
 import { TalkToUsButton } from '@/lib/contact-cal';
+import { msg } from '@lingui/core/macro';
 
 import { BecomePartnerButton } from './BecomePartnerButton';
 
@@ -10,7 +11,7 @@ export function PartnerSignoffCtas() {
       <BecomePartnerButton variant="outlined" />
       <TalkToUsButton
         color="secondary"
-        label="Talk to us"
+        label={msg`Talk to us`}
         variant="contained"
       />
     </>

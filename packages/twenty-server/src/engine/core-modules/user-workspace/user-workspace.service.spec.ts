@@ -248,7 +248,6 @@ describe('UserWorkspaceService', () => {
         email: 'test@example.com',
         firstName: 'John',
         lastName: 'Doe',
-        defaultAvatarUrl: 'avatar-url',
         locale: 'en',
         isEmailVerified: false,
         disabled: false,

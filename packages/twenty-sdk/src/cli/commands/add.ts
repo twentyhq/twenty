@@ -9,20 +9,25 @@ import { v4 } from 'uuid';
 
 import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/current-execution-directory';
 import { convertToLabel } from '@/cli/utilities/entity/entity-label';
+import { appendServerVariablesToAppConfig } from '@/cli/utilities/file/append-server-variables.util';
 import { getFieldBaseFile } from '@/cli/utilities/entity/entity-field-template';
 import { getFrontComponentBaseFile } from '@/cli/utilities/entity/entity-front-component-template';
 import { getLogicFunctionBaseFile } from '@/cli/utilities/entity/entity-logic-function-template';
 import { getNavigationMenuItemBaseFile } from '@/cli/utilities/entity/entity-navigation-menu-item-template';
 import { getObjectBaseFile } from '@/cli/utilities/entity/entity-object-template';
+import { getCommandMenuItemBaseFile } from '@/cli/utilities/entity/entity-command-menu-item-template';
 import { getPageLayoutBaseFile } from '@/cli/utilities/entity/entity-page-layout-template';
 import { getPageLayoutTabBaseFile } from '@/cli/utilities/entity/entity-page-layout-tab-template';
 import { getRecordPageLayoutBaseFile } from '@/cli/utilities/entity/entity-record-page-layout-template';
 import { getRoleBaseFile } from '@/cli/utilities/entity/entity-role-template';
 import { getAgentBaseFile } from '@/cli/utilities/entity/entity-agent-template';
+import { getConnectionProviderBaseFile } from '@/cli/utilities/entity/entity-connection-provider-template';
 import { getSkillBaseFile } from '@/cli/utilities/entity/entity-skill-template';
 import { getViewBaseFile } from '@/cli/utilities/entity/entity-view-template';
 import { ensureDir, pathExists } from '@/cli/utilities/file/fs-utils';
 import { kebabCase } from '@/cli/utilities/string/kebab-case';
+
+const APP_CONFIG_HINT_PATH = 'src/application.config.ts';
 
 const APP_FOLDER = 'src';
 
@@ -63,6 +68,10 @@ export class EntityAddCommand {
 
       if (entity === SyncableEntity.Object) {
         await this.promptAndCreateObjectCompanions(name, path);
+      }
+
+      if (entity === SyncableEntity.ConnectionProvider) {
+        await this.registerConnectionProviderServerVariables(name);
       }
     } catch (error) {
       console.error(
@@ -159,6 +168,16 @@ export class EntityAddCommand {
         return { name, file };
       }
 
+      case SyncableEntity.ConnectionProvider: {
+        const name = await this.getEntityName(entity);
+
+        const file = getConnectionProviderBaseFile({
+          name,
+        });
+
+        return { name, file };
+      }
+
       case SyncableEntity.View: {
         const entityData = await this.getViewData();
 
@@ -194,6 +213,15 @@ export class EntityAddCommand {
         const name = await this.getEntityName(entity);
 
         const file = getPageLayoutTabBaseFile({
+          name,
+        });
+        return { name, file };
+      }
+
+      case SyncableEntity.CommandMenuItem: {
+        const name = await this.getEntityName(entity);
+
+        const file = getCommandMenuItemBaseFile({
           name,
         });
         return { name, file };
@@ -379,6 +407,71 @@ export class EntityAddCommand {
         relative(CURRENT_EXECUTION_DIRECTORY, recordPageLayoutFilePath),
       ),
     );
+  }
+
+  // Connection providers reference two serverVariables (`<NAME>_CLIENT_ID`
+  // and `<NAME>_CLIENT_SECRET`) that the dev needs to declare on
+  // `defineApplication.serverVariables`. Auto-append them so the dev
+  // doesn't have to remember the wiring after `twenty add connection-provider`.
+  // The util is best-effort: it handles the common file shapes and falls
+  // back to a printed snippet for anything it can't safely modify.
+  private async registerConnectionProviderServerVariables(
+    name: string,
+  ): Promise<void> {
+    const upperKey = kebabCase(name).toUpperCase().replace(/-/g, '_');
+    const variables = [
+      {
+        name: `${upperKey}_CLIENT_ID`,
+        description:
+          'OAuth client ID issued by the third-party provider. Filled in once by the server admin on the application registration.',
+        isSecret: false,
+      },
+      {
+        name: `${upperKey}_CLIENT_SECRET`,
+        description:
+          'OAuth client secret issued by the third-party provider. Stored encrypted; never echoed in API responses.',
+        isSecret: true,
+      },
+    ];
+
+    const result = await appendServerVariablesToAppConfig({
+      projectRoot: CURRENT_EXECUTION_DIRECTORY,
+      variables,
+    });
+
+    switch (result.status) {
+      case 'appended':
+      case 'created': {
+        console.log(
+          chalk.green(
+            `✓ Added ${variables.map((v) => v.name).join(' + ')} to defineApplication.serverVariables:`,
+          ),
+          chalk.cyan(relative(CURRENT_EXECUTION_DIRECTORY, result.file)),
+        );
+        break;
+      }
+      case 'skipped-existing':
+        console.log(
+          chalk.dim(
+            `  (${variables.map((v) => v.name).join(' / ')} already declared on defineApplication.serverVariables)`,
+          ),
+        );
+        break;
+      case 'skipped-no-config':
+      case 'skipped-no-app-call':
+        console.log(
+          chalk.yellow(
+            `! Couldn't auto-update ${APP_CONFIG_HINT_PATH}. Add these manually to defineApplication.serverVariables:\n` +
+              variables
+                .map(
+                  (v) =>
+                    `    ${v.name}: { description: '...', isSecret: ${v.isSecret}, isRequired: true },`,
+                )
+                .join('\n'),
+          ),
+        );
+        break;
+    }
   }
 
   private buildRecordPageFieldsViewFields(

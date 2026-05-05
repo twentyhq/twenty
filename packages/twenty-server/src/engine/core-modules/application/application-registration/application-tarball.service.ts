@@ -20,6 +20,10 @@ import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/appli
 import { extractTarballSecurely } from 'src/engine/core-modules/application/application-package/utils/extract-tarball-securely.util';
 import { readJsonFile } from 'src/engine/core-modules/application/application-package/utils/read-json-file.util';
 import { resolvePackageContentDir } from 'src/engine/core-modules/application/application-package/utils/tarball-utils';
+import {
+  ApplicationVersionValidationService,
+  type VersionValidationFailureReason,
+} from 'src/engine/core-modules/application/application-package/application-version-validation.service';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import type { ApplicationManifest } from 'twenty-shared/application';
@@ -31,12 +35,25 @@ export const MAX_TARBALL_UPLOAD_SIZE_BYTES = 50 * 1024 * 1024;
 export class ApplicationTarballService {
   private readonly logger = new Logger(ApplicationTarballService.name);
 
+  private static readonly VERSION_REASON_TO_EXCEPTION_CODE: Record<
+    VersionValidationFailureReason,
+    ApplicationRegistrationExceptionCode
+  > = {
+    INVALID_REQUIRED_VERSION:
+      ApplicationRegistrationExceptionCode.INVALID_APP_ENGINE_REQUIREMENT,
+    INVALID_SERVER_VERSION:
+      ApplicationRegistrationExceptionCode.INVALID_SERVER_VERSION,
+    INCOMPATIBLE:
+      ApplicationRegistrationExceptionCode.SERVER_VERSION_INCOMPATIBLE,
+  };
+
   constructor(
     @InjectRepository(ApplicationRegistrationEntity)
     private readonly appRegistrationRepository: Repository<ApplicationRegistrationEntity>,
     private readonly fileStorageService: FileStorageService,
     private readonly applicationService: ApplicationService,
     private readonly applicationRegistrationVariableService: ApplicationRegistrationVariableService,
+    private readonly applicationVersionValidationService: ApplicationVersionValidationService,
   ) {}
 
   async uploadTarball(params: {
@@ -66,12 +83,29 @@ export class ApplicationTarballService {
 
       const packageJson = await readJsonFile<{
         version: string;
+        engines?: { twenty?: string };
       }>(contentDir, 'package.json');
 
       if (manifest === null) {
         throw new ApplicationRegistrationException(
           'manifest.json not found or invalid in tarball',
           ApplicationRegistrationExceptionCode.INVALID_INPUT,
+        );
+      }
+
+      const requiredServerVersion = packageJson?.engines?.twenty;
+
+      const versionValidation =
+        this.applicationVersionValidationService.validateServerCompatibility(
+          requiredServerVersion,
+        );
+
+      if (!versionValidation.compatible) {
+        throw new ApplicationRegistrationException(
+          versionValidation.message,
+          ApplicationTarballService.VERSION_REASON_TO_EXCEPTION_CODE[
+            versionValidation.reason
+          ],
         );
       }
 

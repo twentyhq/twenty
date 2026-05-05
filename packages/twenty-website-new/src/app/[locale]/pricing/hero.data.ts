@@ -1,13 +1,5 @@
-import type { HeroBaseDataType } from '@/sections/Hero/types';
+import { msg } from '@lingui/core/macro';
 
-const PRICING_HERO_SUBTAGLINE = {
-  text: 'Start your free trial today\nwithout credit card.',
+export const HERO_COPY = {
+  body: msg`Start your free trial today\nwithout credit card.`,
 };
-
-export const HERO_DATA = {
-  heading: [
-    { text: 'Simple', fontFamily: 'serif' },
-    { text: 'Pricing', fontFamily: 'sans', newLine: true },
-  ],
-  body: PRICING_HERO_SUBTAGLINE,
-} satisfies HeroBaseDataType;

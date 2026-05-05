@@ -42,6 +42,48 @@ export class ApplicationVariableEntityService {
     });
   }
 
+  // Decrypted plaintext value. Server-side only — never expose via GraphQL.
+  // Used by trusted server flows that need the raw secret (e.g. exchanging an
+  // OAuth client secret with a third-party provider).
+  getRawValue(applicationVariable: ApplicationVariableEntity): string {
+    if (!applicationVariable.isSecret) {
+      return applicationVariable.value;
+    }
+
+    return this.secretEncryptionService.decrypt(applicationVariable.value);
+  }
+
+  async findOneByKey({
+    applicationId,
+    key,
+  }: {
+    applicationId: string;
+    key: string;
+  }): Promise<ApplicationVariableEntity | null> {
+    return this.applicationVariableRepository.findOne({
+      where: { applicationId, key },
+    });
+  }
+
+  async getRawValueByKeyOrThrow({
+    applicationId,
+    key,
+  }: {
+    applicationId: string;
+    key: string;
+  }): Promise<string> {
+    const variable = await this.findOneByKey({ applicationId, key });
+
+    if (!isDefined(variable)) {
+      throw new ApplicationVariableEntityException(
+        `Application variable "${key}" not found for application ${applicationId}`,
+        ApplicationVariableEntityExceptionCode.APPLICATION_VARIABLE_NOT_FOUND,
+      );
+    }
+
+    return this.getRawValue(variable);
+  }
+
   async update({
     key,
     plainTextValue,

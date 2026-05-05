@@ -50,6 +50,7 @@ export const ALL_METADATA_SERIALIZED_RELATION = {
   viewSort: {},
   frontComponent: {},
   webhook: {},
+  connectionProvider: {},
 } as const satisfies MetadataSerializedRelationProperties;
 
 // satisfies with complex mapped types involving nested generics doesn't always catch missing required keys

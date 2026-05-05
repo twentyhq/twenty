@@ -61,6 +61,14 @@ export const createStandardObjectFlatMetadata = <
       labelIdentifierFieldMetadataName
     ].universalIdentifier;
 
+  const imageIdentifierFieldMetadataUniversalIdentifier =
+    imageIdentifierFieldMetadataName
+      ? // @ts-expect-error ignore
+        STANDARD_OBJECTS[nameSingular as keyof typeof STANDARD_OBJECTS].fields[
+          imageIdentifierFieldMetadataName
+        ].universalIdentifier
+      : null;
+
   return {
     universalIdentifier,
     applicationId: twentyStandardApplicationId,
@@ -108,6 +116,6 @@ export const createStandardObjectFlatMetadata = <
     viewUniversalIdentifiers: [],
     indexMetadataUniversalIdentifiers: [],
     labelIdentifierFieldMetadataUniversalIdentifier,
-    imageIdentifierFieldMetadataUniversalIdentifier: null,
+    imageIdentifierFieldMetadataUniversalIdentifier,
   };
 };

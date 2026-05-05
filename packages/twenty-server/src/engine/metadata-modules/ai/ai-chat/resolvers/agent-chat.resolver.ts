@@ -59,6 +59,11 @@ export class AgentChatResolver {
     private readonly threadRepository: Repository<AgentChatThreadEntity>,
   ) {}
 
+  @Query(() => [AgentChatThreadDTO])
+  async chatThreads(@AuthUserWorkspaceId() userWorkspaceId: string) {
+    return this.agentChatService.getThreadsForUser(userWorkspaceId);
+  }
+
   @Query(() => AgentChatThreadDTO)
   async chatThread(
     @Args('id', { type: () => UUIDScalarType }) id: string,
@@ -140,6 +145,13 @@ export class AgentChatResolver {
       );
     }
 
+    if (isDefined(thread.deletedAt)) {
+      await this.agentChatService.unarchiveThread({
+        threadId,
+        userWorkspaceId,
+      });
+    }
+
     if (isDefined(thread.activeStreamId)) {
       const queuedMessage = await this.agentChatService.queueMessage({
         threadId,
@@ -147,6 +159,7 @@ export class AgentChatResolver {
         id: messageId,
         fileIds: fileIds ?? undefined,
         workspaceId: workspace.id,
+        userWorkspaceId,
       });
 
       await this.eventPublisherService.publish({
@@ -199,6 +212,75 @@ export class AgentChatResolver {
     );
 
     return true;
+  }
+
+  @Mutation(() => AgentChatThreadDTO)
+  async renameChatThread(
+    @Args('id', { type: () => UUIDScalarType }) id: string,
+    @Args('title') title: string,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
+  ): Promise<AgentChatThreadEntity> {
+    return this.agentChatService.updateThreadTitle({
+      threadId: id,
+      userWorkspaceId,
+      title,
+    });
+  }
+
+  @Mutation(() => AgentChatThreadDTO)
+  async archiveChatThread(
+    @Args('id', { type: () => UUIDScalarType }) id: string,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
+  ): Promise<AgentChatThreadEntity> {
+    await this.cancelActiveStreamIfAny(id, userWorkspaceId);
+
+    return this.agentChatService.archiveThread({
+      threadId: id,
+      userWorkspaceId,
+    });
+  }
+
+  @Mutation(() => AgentChatThreadDTO)
+  async unarchiveChatThread(
+    @Args('id', { type: () => UUIDScalarType }) id: string,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
+  ): Promise<AgentChatThreadEntity> {
+    return this.agentChatService.unarchiveThread({
+      threadId: id,
+      userWorkspaceId,
+    });
+  }
+
+  @Mutation(() => Boolean)
+  async deleteChatThread(
+    @Args('id', { type: () => UUIDScalarType }) id: string,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
+  ): Promise<boolean> {
+    await this.cancelActiveStreamIfAny(id, userWorkspaceId);
+
+    await this.agentChatService.hardDeleteThread({
+      threadId: id,
+      userWorkspaceId,
+    });
+
+    return true;
+  }
+
+  private async cancelActiveStreamIfAny(
+    threadId: string,
+    userWorkspaceId: string,
+  ): Promise<void> {
+    const thread = await this.threadRepository.findOne({
+      where: { id: threadId, userWorkspaceId },
+    });
+
+    if (!isDefined(thread) || !isDefined(thread.activeStreamId)) {
+      return;
+    }
+
+    const redis = this.redisClientService.getClient();
+
+    await redis.publish(getCancelChannel(threadId), 'cancel');
   }
 
   @Mutation(() => Boolean)
@@ -260,5 +342,17 @@ export class AgentChatResolver {
   @ResolveField(() => Float)
   totalOutputCredits(@Parent() thread: AgentChatThreadEntity): number {
     return toDisplayCredits(thread.totalOutputCredits);
+  }
+
+  @ResolveField('lastMessageAt', () => Date, { nullable: true })
+  async lastMessageAt(
+    @Parent()
+    thread: AgentChatThreadEntity & { lastMessageAt?: Date | null },
+  ): Promise<Date | null> {
+    if (thread.lastMessageAt !== undefined) {
+      return thread.lastMessageAt;
+    }
+
+    return this.agentChatService.getLastMessageAtForThread(thread.id);
   }
 }
