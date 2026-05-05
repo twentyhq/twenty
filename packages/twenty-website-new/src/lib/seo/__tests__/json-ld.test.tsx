@@ -84,7 +84,6 @@ describe('buildFaqPageJsonLd', () => {
       [
         {
           question: {
-            fontFamily: 'sans' as const,
             text: { id: 'faq.q', message: 'Resolved question' },
           },
           answer: { text: { id: 'faq.a', message: 'Resolved answer' } },
