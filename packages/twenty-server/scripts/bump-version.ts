@@ -1,8 +1,12 @@
 import { readFileSync, writeFileSync } from 'fs';
+import { resolve } from 'path';
 
 import semver from 'semver';
 
-const CONSTANTS_DIR = 'src/engine/core-modules/upgrade/constants';
+const CONSTANTS_DIR = resolve(
+  __dirname,
+  '../src/engine/core-modules/upgrade/constants',
+);
 
 const AUTO_GENERATED_HEADER = `/*
  * _____                    _
@@ -91,26 +95,32 @@ const updatePreviousVersions = (versions: string[]): void => {
     `${AUTO_GENERATED_HEADER}export const TWENTY_PREVIOUS_VERSIONS = [\n${formattedVersions}\n] as const;\n`,
   );
 
-  console.log(`Updated TWENTY_PREVIOUS_VERSIONS with ${versions.length} versions`);
+  console.log(
+    `Updated TWENTY_PREVIOUS_VERSIONS with ${versions.length} versions`,
+  );
 };
 
 const updateNextVersions = (versions: string[]): void => {
   const filePath = `${CONSTANTS_DIR}/twenty-next-versions.constant.ts`;
-  const formattedVersions = versions.map((v) => `'${v}'`).join(', ');
+  const formattedVersions = versions.map((v) => `  '${v}',`).join('\n');
 
   writeFileSync(
     filePath,
-    `${AUTO_GENERATED_HEADER}export const TWENTY_NEXT_VERSIONS = [${formattedVersions}] as const;\n`,
+    `${AUTO_GENERATED_HEADER}export const TWENTY_NEXT_VERSIONS = [\n${formattedVersions}\n] as const;\n`,
   );
 
-  console.log(`Updated TWENTY_NEXT_VERSIONS to [${formattedVersions}]`);
+  console.log(`Updated TWENTY_NEXT_VERSIONS with ${versions.length} versions`);
 };
 
-const resolveNewVersion = (
-  newVersionArg: string | undefined,
-  currentVersion: string,
-  nextVersions: string[],
-): string => {
+const resolveNewVersion = ({
+  newVersionArg,
+  currentVersion,
+  nextVersions,
+}: {
+  newVersionArg: string | undefined;
+  currentVersion: string;
+  nextVersions: string[];
+}): string => {
   if (newVersionArg) {
     parseVersion(newVersionArg);
 
@@ -120,10 +130,14 @@ const resolveNewVersion = (
       );
     }
 
-    if (nextVersions.length > 0 && semver.gt(newVersionArg, nextVersions[0])) {
-      throw new Error(
-        `New version '${newVersionArg}' cannot be greater than planned next version '${nextVersions[0]}'`,
-      );
+    if (nextVersions.length > 0) {
+      const highestNextVersion = nextVersions[nextVersions.length - 1];
+
+      if (semver.gt(newVersionArg, highestNextVersion)) {
+        throw new Error(
+          `New version '${newVersionArg}' cannot be greater than highest planned next version '${highestNextVersion}'`,
+        );
+      }
     }
 
     return newVersionArg;
@@ -146,6 +160,40 @@ const resolveNewVersion = (
   return nextVersions[0];
 };
 
+const partitionNextVersions = ({
+  nextVersions,
+  newVersion,
+}: {
+  nextVersions: string[];
+  newVersion: string;
+}): {
+  skippedNextVersions: string[];
+  remainingNextVersions: string[];
+} =>
+  nextVersions.reduce<{
+    skippedNextVersions: string[];
+    remainingNextVersions: string[];
+  }>(
+    (acc, version) => {
+      if (semver.lt(version, newVersion)) {
+        return {
+          ...acc,
+          skippedNextVersions: [...acc.skippedNextVersions, version],
+        };
+      }
+
+      if (semver.gt(version, newVersion)) {
+        return {
+          ...acc,
+          remainingNextVersions: [...acc.remainingNextVersions, version],
+        };
+      }
+
+      return acc;
+    },
+    { skippedNextVersions: [], remainingNextVersions: [] },
+  );
+
 const bumpVersion = (newVersionArg?: string): void => {
   const currentVersion = getCurrentVersion();
   const previousVersions = getPreviousVersions();
@@ -160,22 +208,41 @@ const bumpVersion = (newVersionArg?: string): void => {
     `  TWENTY_NEXT_VERSIONS: [${nextVersions.map((v) => `'${v}'`).join(', ')}]`,
   );
 
-  const newVersion = resolveNewVersion(newVersionArg, currentVersion, nextVersions);
-  const updatedPreviousVersions = [...previousVersions, currentVersion];
-  const nextNextVersion = incrementMinorVersion(newVersion);
+  const newVersion = resolveNewVersion({
+    newVersionArg,
+    currentVersion,
+    nextVersions,
+  });
+
+  const { skippedNextVersions, remainingNextVersions } = partitionNextVersions({
+    nextVersions,
+    newVersion,
+  });
+
+  const updatedPreviousVersions = [
+    ...previousVersions,
+    currentVersion,
+    ...skippedNextVersions,
+  ];
+  const updatedNextVersions =
+    remainingNextVersions.length > 0
+      ? remainingNextVersions
+      : [incrementMinorVersion(newVersion)];
 
   console.log('\nApplying changes:');
 
   updatePreviousVersions(updatedPreviousVersions);
   updateCurrentVersion(newVersion);
-  updateNextVersions([nextNextVersion]);
+  updateNextVersions(updatedNextVersions);
 
   console.log('\nNew state:');
   console.log(`  TWENTY_CURRENT_VERSION: '${newVersion}'`);
   console.log(
     `  TWENTY_PREVIOUS_VERSIONS: [${updatedPreviousVersions.map((v) => `'${v}'`).join(', ')}]`,
   );
-  console.log(`  TWENTY_NEXT_VERSIONS: ['${nextNextVersion}']`);
+  console.log(
+    `  TWENTY_NEXT_VERSIONS: [${updatedNextVersions.map((v) => `'${v}'`).join(', ')}]`,
+  );
   console.log('\nVersion bump complete!');
 };
 
