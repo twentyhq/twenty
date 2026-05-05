@@ -142,11 +142,14 @@ const handler = async (event: RoutePayload) => {
 请求头名称会被规范化为小写。 请使用小写键访问它们（例如，`event.headers['content-type']`）。
 </Note>
 
-#### 将函数作为工具公开
+#### 将函数公开为 AI 工具或工作流操作
 
-逻辑函数可以作为供 AI 智能体和工作流使用的**工具**对外提供。 当函数被标记为工具时，Twenty 的 AI 功能即可发现它，并可在工作流自动化中使用。
+逻辑函数可以在两个入口对外公开，每个入口都有各自的触发器：
 
-要将逻辑函数标记为工具，请设置 `isTool: true`：
+* **`toolTriggerSettings`** — 使该函数可被 Twenty 的 AI 功能（chat、MCP、function calling）发现。 使用标准 JSON Schema，LLM 能够原生理解的格式。
+* **`workflowActionTriggerSettings`** — 使该函数在可视化工作流构建器中显示为一个步骤。 使用 Twenty 丰富的 `InputSchema`，以便构建器可以呈现合适的字段编辑器、变量选择器和标签。
+
+函数可以选择加入其中一个、另一个，或两者都加入。 它们与 `cronTriggerSettings`、`databaseEventTriggerSettings` 和 `httpRouteTriggerSettings` 并列 — 相同的模式、相同的结构。
 
 ```ts src/logic-functions/enrich-company.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk/define';
@@ -176,31 +179,33 @@ export default defineLogicFunction({
   description: 'Enrich a company record with external data',
   timeoutSeconds: 10,
   handler,
-  isTool: true,
+  toolTriggerSettings: {},
 });
 ```
 
 关键点：
 
-* 你可以将 `isTool` 与触发器结合使用——一个函数既可以作为工具（由 AI 智能体调用），也可以同时由事件触发。
-* **`toolInputSchema`**（可选）：描述函数可接受参数的 JSON Schema 对象。 该模式会通过对源代码的静态分析自动推导，但你也可以显式设置：
+* 函数可以混用这些入口 — 同时声明 `toolTriggerSettings` 和 `workflowActionTriggerSettings`，即可在 chat 和工作流构建器中同时公开它。
+* `toolTriggerSettings.inputSchema` 和 `workflowActionTriggerSettings.inputSchema` 均为可选。 如果省略，清单构建器会根据处理器源代码进行推断（AI 工具使用 JSON Schema，工作流操作使用 Twenty 的 `InputSchema`）。 当你需要更丰富的类型时，可显式提供一个 — 例如，在工作流构建器中使用对 `FieldMetadataType` 友好的字段（如 `CURRENCY` 或 `RELATION`），或提供 AI 代理可读取的 `description` 字段：
 
 ```ts
 export default defineLogicFunction({
   ...,
-  toolInputSchema: {
-    type: 'object',
-    properties: {
-      companyName: {
-        type: 'string',
-        description: 'The name of the company to enrich',
+  toolTriggerSettings: {
+    inputSchema: {
+      type: 'object',
+      properties: {
+        companyName: {
+          type: 'string',
+          description: 'The name of the company to enrich',
+        },
+        domain: {
+          type: 'string',
+          description: 'The company website domain (optional)',
+        },
       },
-      domain: {
-        type: 'string',
-        description: 'The company website domain (optional)',
-      },
+      required: ['companyName'],
     },
-    required: ['companyName'],
   },
 });
 ```
@@ -239,7 +244,7 @@ yarn twenty exec --postInstall
 ```
 
 关键点：
-* 安装后函数使用 `definePostInstallLogicFunction()` —— 这是一个省略触发器设置（`cronTriggerSettings`、`databaseEventTriggerSettings`、`httpRouteTriggerSettings`、`isTool`）的专用变体。
+* 安装后函数使用 `definePostInstallLogicFunction()` — 这是一个省略触发器设置（`cronTriggerSettings`、`databaseEventTriggerSettings`、`httpRouteTriggerSettings`、`toolTriggerSettings`、`workflowActionTriggerSettings`）的专用变体。
 * 处理程序会接收一个 `InstallPayload`，其为 `{ previousVersion?: string; newVersion: string }` —— `newVersion` 是正在安装的版本，而 `previousVersion` 是先前已安装的版本（在全新安装时为 `undefined`）。 使用这些值来区分全新安装与升级，并运行特定版本的迁移逻辑。
 * **钩子何时运行**：默认情况下，仅在全新安装时运行。 如果还希望在应用从旧版本升级时运行，请传入 `shouldRunOnVersionUpgrade: true`。 若省略，该标志默认为 `false`，升级将跳过该钩子。
 * **执行模型 — 默认异步，可选择同步**：`shouldRunSynchronously` 标志控制安装后*如何*执行。

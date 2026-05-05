@@ -217,9 +217,9 @@ yarn twenty publish --tag beta
 Вы можете запустить синхронизацию немедленно, вместо ожидания:
 
 ```bash filename="Terminal"
-yarn twenty catalog-sync
+yarn twenty server catalog-sync
 # To target a specific remote:
-# yarn twenty catalog-sync --remote production
+# yarn twenty server catalog-sync --remote production
 ```
 
 Метаданные, отображаемые в маркетплейсе, берутся из конфигурации `defineApplication()` — из таких полей, как `displayName`, `description`, `author`, `category`, `logoUrl`, `screenshots`, `aboutDescription`, `websiteUrl` и `termsUrl`.

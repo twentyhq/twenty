@@ -27,7 +27,7 @@ export type HeroHeadingProps = HeadingProps & {
 };
 
 export function Heading({
-  as,
+  as = 'h1',
   children,
   className,
   page,

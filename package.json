@@ -9,6 +9,7 @@
     "@nx/web": "22.5.4",
     "@types/react": "^18.2.39",
     "@types/react-dom": "^18.2.15",
+    "@yarnpkg/types": "^4.0.0",
     "concurrently": "^8.2.2",
     "http-server": "^14.1.1",
     "nx": "22.5.4",
