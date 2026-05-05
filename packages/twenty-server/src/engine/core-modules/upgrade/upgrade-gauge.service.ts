@@ -3,7 +3,10 @@ import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { UpgradeHealthEnum } from 'twenty-shared/types';
 
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
-import { UpgradeStatusService } from 'src/engine/core-modules/upgrade/services/upgrade-status.service';
+import {
+  type InstanceAndAllWorkspacesUpgradeStatus,
+  UpgradeStatusService,
+} from 'src/engine/core-modules/upgrade/services/upgrade-status.service';
 
 const HEALTH_TO_GAUGE_VALUE: Record<UpgradeHealthEnum, number> = {
   [UpgradeHealthEnum.UP_TO_DATE]: 1,
@@ -11,9 +14,17 @@ const HEALTH_TO_GAUGE_VALUE: Record<UpgradeHealthEnum, number> = {
   [UpgradeHealthEnum.FAILED]: -1,
 };
 
+const HEALTH_UNKNOWN = -2;
+const SNAPSHOT_TTL_MS = 60_000;
+
 @Injectable()
 export class UpgradeGaugeService implements OnModuleInit {
   private readonly logger = new Logger(UpgradeGaugeService.name);
+
+  private cachedSnapshot: InstanceAndAllWorkspacesUpgradeStatus | null = null;
+  private cachedSnapshotExpiresAt = 0;
+  private inflightPromise: Promise<InstanceAndAllWorkspacesUpgradeStatus> | null =
+    null;
 
   constructor(
     private readonly metricsService: MetricsService,
@@ -25,10 +36,19 @@ export class UpgradeGaugeService implements OnModuleInit {
       metricName: 'twenty_upgrade_instance_health',
       options: {
         description:
-          'Instance upgrade health (1 = up-to-date, 0 = behind, -1 = failed)',
+          'Instance upgrade health (1 = up-to-date, 0 = behind, -1 = failed, -2 = unknown)',
       },
       callback: async () => {
-        return this.getInstanceHealthGauge();
+        const snapshot = await this.getSnapshot();
+
+        if (!snapshot) {
+          return HEALTH_UNKNOWN;
+        }
+
+        return (
+          HEALTH_TO_GAUGE_VALUE[snapshot.instanceUpgradeStatus.health] ??
+          HEALTH_UNKNOWN
+        );
       },
       cacheValue: true,
     });
@@ -39,7 +59,9 @@ export class UpgradeGaugeService implements OnModuleInit {
         description: 'Number of workspaces behind on upgrade commands',
       },
       callback: async () => {
-        return this.getWorkspacesBehindCount();
+        const snapshot = await this.getSnapshot();
+
+        return snapshot?.workspacesBehind.length ?? 0;
       },
       cacheValue: true,
     });
@@ -50,48 +72,39 @@ export class UpgradeGaugeService implements OnModuleInit {
         description: 'Number of workspaces with a failed upgrade command',
       },
       callback: async () => {
-        return this.getWorkspacesFailedCount();
+        const snapshot = await this.getSnapshot();
+
+        return snapshot?.workspacesFailed.length ?? 0;
       },
       cacheValue: true,
     });
   }
 
-  private async getInstanceHealthGauge(): Promise<number> {
-    try {
-      const status =
-        await this.upgradeStatusService.getInstanceAndAllWorkspacesStatus();
-
-      return HEALTH_TO_GAUGE_VALUE[status.instanceUpgradeStatus.health] ?? 0;
-    } catch (error) {
-      this.logger.error('Failed to get instance upgrade health', error);
-
-      return 0;
+  // Deduplicates concurrent calls and memoizes for SNAPSHOT_TTL_MS
+  // so all 3 gauges share a single fetch per scrape cycle.
+  private async getSnapshot(): Promise<InstanceAndAllWorkspacesUpgradeStatus | null> {
+    if (this.cachedSnapshot && Date.now() < this.cachedSnapshotExpiresAt) {
+      return this.cachedSnapshot;
     }
-  }
 
-  private async getWorkspacesBehindCount(): Promise<number> {
-    try {
-      const status =
-        await this.upgradeStatusService.getInstanceAndAllWorkspacesStatus();
-
-      return status.workspacesBehind.length;
-    } catch (error) {
-      this.logger.error('Failed to count workspaces behind', error);
-
-      return 0;
+    if (this.inflightPromise) {
+      return this.inflightPromise;
     }
-  }
 
-  private async getWorkspacesFailedCount(): Promise<number> {
+    this.inflightPromise =
+      this.upgradeStatusService.getInstanceAndAllWorkspacesStatus();
+
     try {
-      const status =
-        await this.upgradeStatusService.getInstanceAndAllWorkspacesStatus();
+      this.cachedSnapshot = await this.inflightPromise;
+      this.cachedSnapshotExpiresAt = Date.now() + SNAPSHOT_TTL_MS;
 
-      return status.workspacesFailed.length;
+      return this.cachedSnapshot;
     } catch (error) {
-      this.logger.error('Failed to count workspaces failed', error);
+      this.logger.error('Failed to fetch upgrade status snapshot', error);
 
-      return 0;
+      return null;
+    } finally {
+      this.inflightPromise = null;
     }
   }
 }
