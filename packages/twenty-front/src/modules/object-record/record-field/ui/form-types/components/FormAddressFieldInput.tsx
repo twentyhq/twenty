@@ -26,7 +26,7 @@ export const FormAddressFieldInput = ({
 }: FormAddressFieldInputProps) => {
   const handleChange =
     (field: keyof FieldAddressDraftValue) => (updatedAddressPart: string) => {
-      const updatedAddress: FieldAddressValue = {
+      const updatedAddress = {
         addressStreet1: defaultValue?.addressStreet1 ?? '',
         addressStreet2: defaultValue?.addressStreet2 ?? '',
         addressCity: defaultValue?.addressCity ?? '',
