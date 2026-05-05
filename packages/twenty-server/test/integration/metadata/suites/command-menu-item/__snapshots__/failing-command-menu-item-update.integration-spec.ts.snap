@@ -57,7 +57,7 @@ exports[`CommandMenuItem update should fail when updating with empty label 1`] =
     },
     "userFriendlyMessage": "Label is required",
   },
-  "message": "Label is required",
+  "message": "Multiple validation errors occurred while updating command menu item",
   "name": "GraphQLError",
 }
 `;
@@ -121,7 +121,7 @@ exports[`CommandMenuItem update should fail when changing engineComponentKey to 
     },
     "userFriendlyMessage": "Workflow version must not be set for this item type",
   },
-  "message": "Workflow version must not be set for this item type",
+  "message": "Multiple validation errors occurred while updating command menu item",
   "name": "GraphQLError",
 }
 `;

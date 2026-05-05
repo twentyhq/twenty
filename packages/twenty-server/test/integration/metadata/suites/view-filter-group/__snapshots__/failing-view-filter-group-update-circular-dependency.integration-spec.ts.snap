@@ -30,7 +30,7 @@ exports[`View Filter Group update should fail with circular dependency when pare
     },
     "userFriendlyMessage": "View filter group cannot be its own parent",
   },
-  "message": "View filter group cannot be its own parent",
+  "message": "Multiple validation errors occurred while updating view filter group",
   "name": "GraphQLError",
 }
 `;
@@ -65,7 +65,7 @@ exports[`View Filter Group update should fail with circular dependency when upda
     },
     "userFriendlyMessage": "Circular dependency detected in view filter group hierarchy",
   },
-  "message": "Circular dependency detected in view filter group hierarchy",
+  "message": "Multiple validation errors occurred while updating view filter group",
   "name": "GraphQLError",
 }
 `;

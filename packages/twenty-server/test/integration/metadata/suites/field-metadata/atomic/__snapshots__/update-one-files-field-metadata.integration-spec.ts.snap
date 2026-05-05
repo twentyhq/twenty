@@ -32,7 +32,7 @@ exports[`updateOne FILES field metadata - failing should fail to update files fi
     },
     "userFriendlyMessage": "maxNumberOfValues must be defined in settings and be a number greater than 0 and less than or equal to 10",
   },
-  "message": "maxNumberOfValues must be defined in settings and be a number greater than 0 and less than or equal to 10",
+  "message": "Multiple validation errors occurred while updating field",
   "name": "GraphQLError",
 }
 `;
@@ -69,7 +69,7 @@ exports[`updateOne FILES field metadata - failing should fail to update files fi
     },
     "userFriendlyMessage": "maxNumberOfValues must be defined in settings and be a number greater than 0 and less than or equal to 10",
   },
-  "message": "maxNumberOfValues must be defined in settings and be a number greater than 0 and less than or equal to 10",
+  "message": "Multiple validation errors occurred while updating field",
   "name": "GraphQLError",
 }
 `;
@@ -106,7 +106,7 @@ exports[`updateOne FILES field metadata - failing should fail to update files fi
     },
     "userFriendlyMessage": "Files field is not supported for unique fields",
   },
-  "message": "Files field is not supported for unique fields",
+  "message": "Multiple validation errors occurred while updating field",
   "name": "GraphQLError",
 }
 `;

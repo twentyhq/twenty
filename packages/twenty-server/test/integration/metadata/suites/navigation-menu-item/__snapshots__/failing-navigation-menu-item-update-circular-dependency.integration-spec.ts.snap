@@ -30,7 +30,7 @@ exports[`Navigation Menu Item update should fail with circular dependency when f
     },
     "userFriendlyMessage": "Navigation menu item cannot be its own parent",
   },
-  "message": "Navigation menu item cannot be its own parent",
+  "message": "Multiple validation errors occurred while updating navigation menu items",
   "name": "GraphQLError",
 }
 `;
@@ -65,7 +65,7 @@ exports[`Navigation Menu Item update should fail with circular dependency when u
     },
     "userFriendlyMessage": "Circular dependency detected in navigation menu item hierarchy",
   },
-  "message": "Circular dependency detected in navigation menu item hierarchy",
+  "message": "Multiple validation errors occurred while updating navigation menu items",
   "name": "GraphQLError",
 }
 `;

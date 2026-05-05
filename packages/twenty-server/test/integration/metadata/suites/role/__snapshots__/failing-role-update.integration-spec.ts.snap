@@ -42,7 +42,7 @@ exports[`Role update should fail updating role with existing write permissions s
     },
     "userFriendlyMessage": "You cannot grant edit permissions without also granting read permissions. Please enable read access first.",
   },
-  "message": "You cannot grant edit permissions without also granting read permissions. Please enable read access first.",
+  "message": "Multiple validation errors occurred while updating role",
   "name": "GraphQLError",
 }
 `;
@@ -77,7 +77,7 @@ exports[`Role update should fail when updating a non-editable system role 1`] = 
     },
     "userFriendlyMessage": "This role cannot be modified because it is a system role. Only custom roles can be edited.",
   },
-  "message": "This role cannot be modified because it is a system role. Only custom roles can be edited.",
+  "message": "Multiple validation errors occurred while updating role",
   "name": "GraphQLError",
 }
 `;
@@ -112,7 +112,7 @@ exports[`Role update should fail when updating canReadAllObjectRecords to false 
     },
     "userFriendlyMessage": "You cannot grant edit permissions without also granting read permissions. Please enable read access first.",
   },
-  "message": "You cannot grant edit permissions without also granting read permissions. Please enable read access first.",
+  "message": "Multiple validation errors occurred while updating role",
   "name": "GraphQLError",
 }
 `;
@@ -147,7 +147,7 @@ exports[`Role update should fail when updating canReadAllObjectRecords to false 
     },
     "userFriendlyMessage": "You cannot grant edit permissions without also granting read permissions. Please enable read access first.",
   },
-  "message": "You cannot grant edit permissions without also granting read permissions. Please enable read access first.",
+  "message": "Multiple validation errors occurred while updating role",
   "name": "GraphQLError",
 }
 `;
@@ -182,7 +182,7 @@ exports[`Role update should fail when updating canReadAllObjectRecords to false 
     },
     "userFriendlyMessage": "You cannot grant edit permissions without also granting read permissions. Please enable read access first.",
   },
-  "message": "You cannot grant edit permissions without also granting read permissions. Please enable read access first.",
+  "message": "Multiple validation errors occurred while updating role",
   "name": "GraphQLError",
 }
 `;
@@ -217,7 +217,7 @@ exports[`Role update should fail when updating label to one that already exists 
     },
     "userFriendlyMessage": "A role with this label already exists.",
   },
-  "message": "A role with this label already exists.",
+  "message": "Multiple validation errors occurred while updating role",
   "name": "GraphQLError",
 }
 `;
@@ -252,7 +252,7 @@ exports[`Role update should fail when updating to enable write permissions witho
     },
     "userFriendlyMessage": "You cannot grant edit permissions without also granting read permissions. Please enable read access first.",
   },
-  "message": "You cannot grant edit permissions without also granting read permissions. Please enable read access first.",
+  "message": "Multiple validation errors occurred while updating role",
   "name": "GraphQLError",
 }
 `;

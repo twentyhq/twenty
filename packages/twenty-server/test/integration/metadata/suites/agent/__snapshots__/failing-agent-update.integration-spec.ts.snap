@@ -30,7 +30,7 @@ exports[`Agent update should fail should fail when attempting to update a standa
     },
     "userFriendlyMessage": "Cannot update standard agent",
   },
-  "message": "Cannot update standard agent",
+  "message": "Multiple validation errors occurred while updating agent",
   "name": "GraphQLError",
 }
 `;
@@ -87,7 +87,7 @@ exports[`Agent update should fail when settings null required properties 1`] = `
     },
     "userFriendlyMessage": "Label cannot be empty",
   },
-  "message": "Label cannot be empty",
+  "message": "Multiple validation errors occurred while updating agent",
   "name": "GraphQLError",
 }
 `;
@@ -122,7 +122,7 @@ exports[`Agent update should fail when updating label to one that already exists
     },
     "userFriendlyMessage": "An agent with this name already exists",
   },
-  "message": "An agent with this name already exists",
+  "message": "Multiple validation errors occurred while updating agent",
   "name": "GraphQLError",
 }
 `;
@@ -157,7 +157,7 @@ exports[`Agent update should fail when updating responseFormat type to json with
     },
     "userFriendlyMessage": "JSON response format requires a schema",
   },
-  "message": "JSON response format requires a schema",
+  "message": "Multiple validation errors occurred while updating agent",
   "name": "GraphQLError",
 }
 `;
@@ -192,7 +192,7 @@ exports[`Agent update should fail when updating responseFormat type to text with
     },
     "userFriendlyMessage": "Text response format should not have a schema",
   },
-  "message": "Text response format should not have a schema",
+  "message": "Multiple validation errors occurred while updating agent",
   "name": "GraphQLError",
 }
 `;
@@ -227,7 +227,7 @@ exports[`Agent update should fail when updating responseFormat with invalid type
     },
     "userFriendlyMessage": "Invalid response format type",
   },
-  "message": "Invalid response format type",
+  "message": "Multiple validation errors occurred while updating agent",
   "name": "GraphQLError",
 }
 `;
@@ -262,7 +262,7 @@ exports[`Agent update should fail when updating with empty label 1`] = `
     },
     "userFriendlyMessage": "Label cannot be empty",
   },
-  "message": "Label cannot be empty",
+  "message": "Multiple validation errors occurred while updating agent",
   "name": "GraphQLError",
 }
 `;
@@ -297,7 +297,7 @@ exports[`Agent update should fail when updating with empty modelId 1`] = `
     },
     "userFriendlyMessage": "Model ID cannot be empty",
   },
-  "message": "Model ID cannot be empty",
+  "message": "Multiple validation errors occurred while updating agent",
   "name": "GraphQLError",
 }
 `;
@@ -332,7 +332,7 @@ exports[`Agent update should fail when updating with empty prompt 1`] = `
     },
     "userFriendlyMessage": "Prompt cannot be empty",
   },
-  "message": "Prompt cannot be empty",
+  "message": "Multiple validation errors occurred while updating agent",
   "name": "GraphQLError",
 }
 `;

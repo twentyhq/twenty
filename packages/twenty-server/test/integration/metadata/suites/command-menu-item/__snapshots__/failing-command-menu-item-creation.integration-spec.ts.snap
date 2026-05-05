@@ -30,7 +30,7 @@ exports[`CommandMenuItem creation should fail when creating with empty label 1`]
     },
     "userFriendlyMessage": "Label is required",
   },
-  "message": "Label is required",
+  "message": "Multiple validation errors occurred while creating command menu item",
   "name": "GraphQLError",
 }
 `;
@@ -123,7 +123,7 @@ exports[`CommandMenuItem creation should fail when creating TRIGGER_WORKFLOW_VER
     },
     "userFriendlyMessage": "Workflow version is required for workflow trigger items",
   },
-  "message": "Workflow version is required for workflow trigger items",
+  "message": "Multiple validation errors occurred while creating command menu item",
   "name": "GraphQLError",
 }
 `;
@@ -170,7 +170,7 @@ exports[`CommandMenuItem creation should fail when creating FRONT_COMPONENT_REND
     },
     "userFriendlyMessage": "Front component is required for front component renderer items",
   },
-  "message": "Front component is required for front component renderer items",
+  "message": "Multiple validation errors occurred while creating command menu item",
   "name": "GraphQLError",
 }
 `;
@@ -217,7 +217,7 @@ exports[`CommandMenuItem creation should fail when creating standard key with wo
     },
     "userFriendlyMessage": "Workflow version must not be set for this item type",
   },
-  "message": "Workflow version must not be set for this item type",
+  "message": "Multiple validation errors occurred while creating command menu item",
   "name": "GraphQLError",
 }
 `;

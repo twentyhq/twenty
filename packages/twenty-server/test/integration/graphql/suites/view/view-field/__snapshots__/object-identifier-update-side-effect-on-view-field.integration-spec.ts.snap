@@ -32,7 +32,7 @@ exports[`View Field Resolver - Successful object metadata identifier update side
     },
     "userFriendlyMessage": "View field position cannot be lower than label identifier view field position",
   },
-  "message": "View field position cannot be lower than label identifier view field position",
+  "message": "Multiple validation errors occurred while creating view fields",
   "name": "GraphQLError",
 }
 `;
@@ -69,7 +69,7 @@ exports[`View Field Resolver - Successful object metadata identifier update side
     },
     "userFriendlyMessage": "Label identifier view field cannot be deleted",
   },
-  "message": "Label identifier view field cannot be deleted",
+  "message": "Multiple validation errors occurred while deleting view field",
   "name": "GraphQLError",
 }
 `;
@@ -105,7 +105,7 @@ exports[`View Field Resolver - Successful object metadata identifier update side
     },
     "userFriendlyMessage": "Label identifier view field cannot be deleted",
   },
-  "message": "Label identifier view field cannot be deleted",
+  "message": "Multiple validation errors occurred while deleting view field",
   "name": "GraphQLError",
 }
 `;
@@ -142,7 +142,7 @@ exports[`View Field Resolver - Successful object metadata identifier update side
     },
     "userFriendlyMessage": "Label identifier view field has to be visible",
   },
-  "message": "Label identifier view field has to be visible",
+  "message": "Multiple validation errors occurred while updating view field",
   "name": "GraphQLError",
 }
 `;
@@ -179,7 +179,7 @@ exports[`View Field Resolver - Successful object metadata identifier update side
     },
     "userFriendlyMessage": "Label identifier view field has to be in the lowest position",
   },
-  "message": "Label identifier view field has to be in the lowest position",
+  "message": "Multiple validation errors occurred while updating view field",
   "name": "GraphQLError",
 }
 `;

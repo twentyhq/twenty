@@ -31,7 +31,7 @@ exports[`Role creation should fail when canReadAllObjectRecords is false but can
     },
     "userFriendlyMessage": "You cannot grant edit permissions without also granting read permissions. Please enable read access first.",
   },
-  "message": "You cannot grant edit permissions without also granting read permissions. Please enable read access first.",
+  "message": "Multiple validation errors occurred while creating role",
   "name": "GraphQLError",
 }
 `;
@@ -67,7 +67,7 @@ exports[`Role creation should fail when canReadAllObjectRecords is false but can
     },
     "userFriendlyMessage": "You cannot grant edit permissions without also granting read permissions. Please enable read access first.",
   },
-  "message": "You cannot grant edit permissions without also granting read permissions. Please enable read access first.",
+  "message": "Multiple validation errors occurred while creating role",
   "name": "GraphQLError",
 }
 `;
@@ -103,7 +103,7 @@ exports[`Role creation should fail when canReadAllObjectRecords is false but can
     },
     "userFriendlyMessage": "You cannot grant edit permissions without also granting read permissions. Please enable read access first.",
   },
-  "message": "You cannot grant edit permissions without also granting read permissions. Please enable read access first.",
+  "message": "Multiple validation errors occurred while creating role",
   "name": "GraphQLError",
 }
 `;
@@ -139,7 +139,7 @@ exports[`Role creation should fail when canReadAllObjectRecords is false but mul
     },
     "userFriendlyMessage": "You cannot grant edit permissions without also granting read permissions. Please enable read access first.",
   },
-  "message": "You cannot grant edit permissions without also granting read permissions. Please enable read access first.",
+  "message": "Multiple validation errors occurred while creating role",
   "name": "GraphQLError",
 }
 `;
@@ -175,7 +175,7 @@ exports[`Role creation should fail when label already exists 1`] = `
     },
     "userFriendlyMessage": "A role with this label already exists.",
   },
-  "message": "A role with this label already exists.",
+  "message": "Multiple validation errors occurred while creating role",
   "name": "GraphQLError",
 }
 `;

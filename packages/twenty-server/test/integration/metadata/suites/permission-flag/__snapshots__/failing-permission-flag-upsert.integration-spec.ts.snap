@@ -50,7 +50,7 @@ exports[`Permission flag upsert should fail when role is not editable (system ro
     },
     "userFriendlyMessage": "Cannot target a role owned by another application.",
   },
-  "message": "Cannot target a role owned by another application.",
+  "message": "Validation errors occurred while upserting permission flags",
   "name": "GraphQLError",
 }
 `;

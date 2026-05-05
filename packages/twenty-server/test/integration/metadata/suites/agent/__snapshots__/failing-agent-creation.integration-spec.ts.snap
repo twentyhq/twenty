@@ -31,7 +31,7 @@ exports[`Agent creation should fail when computed name already exists 1`] = `
     },
     "userFriendlyMessage": "An agent with this name already exists",
   },
-  "message": "An agent with this name already exists",
+  "message": "Multiple validation errors occurred while creating agent",
   "name": "GraphQLError",
 }
 `;
@@ -67,7 +67,7 @@ exports[`Agent creation should fail when label is empty string 1`] = `
     },
     "userFriendlyMessage": "Label cannot be empty",
   },
-  "message": "Label cannot be empty",
+  "message": "Multiple validation errors occurred while creating agent",
   "name": "GraphQLError",
 }
 `;
@@ -117,7 +117,7 @@ exports[`Agent creation should fail when modelId is empty string 1`] = `
     },
     "userFriendlyMessage": "Model ID cannot be empty",
   },
-  "message": "Model ID cannot be empty",
+  "message": "Multiple validation errors occurred while creating agent",
   "name": "GraphQLError",
 }
 `;
@@ -167,7 +167,7 @@ exports[`Agent creation should fail when prompt is empty string 1`] = `
     },
     "userFriendlyMessage": "Prompt cannot be empty",
   },
-  "message": "Prompt cannot be empty",
+  "message": "Multiple validation errors occurred while creating agent",
   "name": "GraphQLError",
 }
 `;
@@ -217,7 +217,7 @@ exports[`Agent creation should fail when responseFormat has invalid type 1`] = `
     },
     "userFriendlyMessage": "Invalid response format type",
   },
-  "message": "Invalid response format type",
+  "message": "Multiple validation errors occurred while creating agent",
   "name": "GraphQLError",
 }
 `;
@@ -253,7 +253,7 @@ exports[`Agent creation should fail when responseFormat type is json but schema 
     },
     "userFriendlyMessage": "JSON response format requires a schema",
   },
-  "message": "JSON response format requires a schema",
+  "message": "Multiple validation errors occurred while creating agent",
   "name": "GraphQLError",
 }
 `;
@@ -289,7 +289,7 @@ exports[`Agent creation should fail when responseFormat type is text but schema 
     },
     "userFriendlyMessage": "Text response format should not have a schema",
   },
-  "message": "Text response format should not have a schema",
+  "message": "Multiple validation errors occurred while creating agent",
   "name": "GraphQLError",
 }
 `;

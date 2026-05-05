@@ -31,7 +31,7 @@ exports[`Skill creation should fail when content is empty string 1`] = `
     },
     "userFriendlyMessage": "Content cannot be empty",
   },
-  "message": "Content cannot be empty",
+  "message": "Multiple validation errors occurred while creating skill",
   "name": "GraphQLError",
 }
 `;
@@ -81,7 +81,7 @@ exports[`Skill creation should fail when label is empty string 1`] = `
     },
     "userFriendlyMessage": "Label cannot be empty",
   },
-  "message": "Label cannot be empty",
+  "message": "Multiple validation errors occurred while creating skill",
   "name": "GraphQLError",
 }
 `;
@@ -131,7 +131,7 @@ exports[`Skill creation should fail when name already exists 1`] = `
     },
     "userFriendlyMessage": "A skill with this name already exists",
   },
-  "message": "A skill with this name already exists",
+  "message": "Multiple validation errors occurred while creating skill",
   "name": "GraphQLError",
 }
 `;

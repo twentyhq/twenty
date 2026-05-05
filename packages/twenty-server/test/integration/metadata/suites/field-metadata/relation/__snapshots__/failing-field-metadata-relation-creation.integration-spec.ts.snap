@@ -115,7 +115,7 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE (rela
     },
     "userFriendlyMessage": "Name is too short",
   },
-  "message": "Name is too short",
+  "message": "Multiple validation errors occurred while creating fields",
   "name": "GraphQLError",
 }
 `;
@@ -153,7 +153,7 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE (rela
     },
     "userFriendlyMessage": "Name is too long",
   },
-  "message": "Name is too long",
+  "message": "Multiple validation errors occurred while creating fields",
   "name": "GraphQLError",
 }
 `;
@@ -197,7 +197,7 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE (rela
     },
     "userFriendlyMessage": "Name is too short",
   },
-  "message": "Name is too short",
+  "message": "Multiple validation errors occurred while creating fields",
   "name": "GraphQLError",
 }
 `;
@@ -237,7 +237,7 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE (rela
     },
     "userFriendlyMessage": "Invalid relation creation payload",
   },
-  "message": "Invalid relation creation payload",
+  "message": "Multiple validation errors occurred while creating fields",
   "name": "GraphQLError",
 }
 `;
@@ -277,7 +277,7 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE (rela
     },
     "userFriendlyMessage": "Object targeted by field to create not found",
   },
-  "message": "Object targeted by field to create not found",
+  "message": "Multiple validation errors occurred while creating fields",
   "name": "GraphQLError",
 }
 `;
@@ -317,7 +317,7 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE (rela
     },
     "userFriendlyMessage": "Invalid relation creation payload",
   },
-  "message": "Invalid relation creation payload",
+  "message": "Multiple validation errors occurred while creating fields",
   "name": "GraphQLError",
 }
 `;
@@ -356,7 +356,7 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE (rela
     },
     "userFriendlyMessage": "Invalid relation creation payload",
   },
-  "message": "Invalid relation creation payload",
+  "message": "Multiple validation errors occurred while creating fields",
   "name": "GraphQLError",
 }
 `;
@@ -470,7 +470,7 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE when 
     },
     "userFriendlyMessage": "Invalid relation creation payload",
   },
-  "message": "Invalid relation creation payload",
+  "message": "Multiple validation errors occurred while creating fields",
   "name": "GraphQLError",
 }
 `;
@@ -510,7 +510,7 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE when 
     },
     "userFriendlyMessage": "Invalid relation creation payload",
   },
-  "message": "Invalid relation creation payload",
+  "message": "Multiple validation errors occurred while creating fields",
   "name": "GraphQLError",
 }
 `;
@@ -624,7 +624,7 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE when 
     },
     "userFriendlyMessage": "Invalid relation creation payload",
   },
-  "message": "Invalid relation creation payload",
+  "message": "Multiple validation errors occurred while creating fields",
   "name": "GraphQLError",
 }
 `;

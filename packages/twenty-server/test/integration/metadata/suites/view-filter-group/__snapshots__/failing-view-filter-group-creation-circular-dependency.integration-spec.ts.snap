@@ -42,7 +42,7 @@ exports[`View Filter Group creation should fail with circular dependency when ma
     },
     "userFriendlyMessage": "View filter group hierarchy exceeds maximum depth of 2",
   },
-  "message": "View filter group hierarchy exceeds maximum depth of 2",
+  "message": "Multiple validation errors occurred while creating view filter group",
   "name": "GraphQLError",
 }
 `;
