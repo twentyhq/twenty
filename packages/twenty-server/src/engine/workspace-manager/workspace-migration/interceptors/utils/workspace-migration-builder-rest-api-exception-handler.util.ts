@@ -3,7 +3,7 @@ import { type Response } from 'express';
 
 import { type WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { buildMetadataValidationErrorPayload } from 'src/engine/workspace-manager/workspace-migration/interceptors/utils/build-metadata-validation-error-payload.util';
-import { translateUserFriendlyMessageDescriptors } from 'src/engine/workspace-manager/workspace-migration/interceptors/utils/translate-user-friendly-message-descriptors.util';
+import { translateUserFriendlyMessageDescriptors } from 'src/engine/core-modules/i18n/utils/translate-user-friendly-message-descriptors.util';
 
 export const workspaceMigrationBuilderRestApiExceptionHandler = ({
   exception,

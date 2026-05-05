@@ -1,10 +1,7 @@
 import { type I18n, type MessageDescriptor } from '@lingui/core';
 import { isArray, isObject, isString } from '@sniptt/guards';
 
-import { type FlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
-
-const USER_FRIENDLY_MESSAGE_KEY: keyof FlatEntityValidationError =
-  'userFriendlyMessage';
+const USER_FRIENDLY_MESSAGE_KEY = 'userFriendlyMessage';
 
 const isMessageDescriptor = (value: unknown): value is MessageDescriptor =>
   isObject(value) && 'id' in value && isString(value.id);

@@ -32,7 +32,7 @@ import {
   graphQLErrorCodesToFilter,
   shouldCaptureException,
 } from 'src/engine/utils/global-exception-handler.util';
-import { translateUserFriendlyMessageDescriptors } from 'src/engine/workspace-manager/workspace-migration/interceptors/utils/translate-user-friendly-message-descriptors.util';
+import { translateUserFriendlyMessageDescriptors } from 'src/engine/core-modules/i18n/utils/translate-user-friendly-message-descriptors.util';
 
 const DEFAULT_EVENT_ID_KEY = 'exceptionEventId';
 const SCHEMA_VERSION_HEADER = 'x-schema-version';

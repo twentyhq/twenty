@@ -1,6 +1,6 @@
 import { type I18n, type MessageDescriptor } from '@lingui/core';
 
-import { translateUserFriendlyMessageDescriptors } from 'src/engine/workspace-manager/workspace-migration/interceptors/utils/translate-user-friendly-message-descriptors.util';
+import { translateUserFriendlyMessageDescriptors } from 'src/engine/core-modules/i18n/utils/translate-user-friendly-message-descriptors.util';
 
 const buildDescriptor = (id: string): MessageDescriptor => ({
   id,
