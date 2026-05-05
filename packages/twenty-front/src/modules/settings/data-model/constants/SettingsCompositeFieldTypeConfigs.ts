@@ -1,30 +1,30 @@
 import {
-  type FieldActorValue,
-  type FieldAddressValue,
-  type FieldCurrencyValue,
-  type FieldEmailsValue,
-  type FieldFullNameValue,
-  type FieldLinksValue,
-  type FieldPhonesValue,
-  type FieldRichTextValue,
+    type FieldActorValue,
+    type FieldAddressValue,
+    type FieldCurrencyValue,
+    type FieldEmailsValue,
+    type FieldFullNameValue,
+    type FieldLinksValue,
+    type FieldPhonesValue,
+    type FieldRichTextValue,
 } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { COMPOSITE_FIELD_SUB_FIELD_LABELS } from '@/settings/data-model/constants/CompositeFieldSubFieldLabel';
 import { type SettingsFieldTypeConfig } from '@/settings/data-model/constants/SettingsNonCompositeFieldTypeConfigs';
 import { type CompositeFieldType } from '@/settings/data-model/types/CompositeFieldType';
 import {
-  COMPOSITE_FIELD_TYPE_SUB_FIELDS_NAMES,
-  CurrencyCode,
+    COMPOSITE_FIELD_TYPE_SUB_FIELDS_NAMES,
+    CurrencyCode,
 } from 'twenty-shared/constants';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 import {
-  IllustrationIconCurrency,
-  IllustrationIconLink,
-  IllustrationIconMail,
-  IllustrationIconMap,
-  IllustrationIconPhone,
-  IllustrationIconSetting,
-  IllustrationIconText,
-  IllustrationIconUser,
+    IllustrationIconCurrency,
+    IllustrationIconLink,
+    IllustrationIconMail,
+    IllustrationIconMap,
+    IllustrationIconPhone,
+    IllustrationIconSetting,
+    IllustrationIconText,
+    IllustrationIconUser,
 } from 'twenty-ui/display';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
@@ -209,7 +209,7 @@ export const SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS = {
             .primaryPhoneCallingCode,
         isImportable: true,
         isFilterable: true,
-        isIncludedInUniqueConstraint: false,
+        isIncludedInUniqueConstraint: true,
       },
       {
         subFieldName:
