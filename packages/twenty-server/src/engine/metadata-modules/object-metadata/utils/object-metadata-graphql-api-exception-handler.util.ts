@@ -1,4 +1,3 @@
-import { type I18n } from '@lingui/core';
 import { assertUnreachable } from 'twenty-shared/utils';
 
 import {
@@ -16,12 +15,9 @@ import { InvalidMetadataException } from 'src/engine/metadata-modules/utils/exce
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { workspaceMigrationBuilderExceptionFormatter } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-builder-exception-formatter';
 
-export const objectMetadataGraphqlApiExceptionHandler = (
-  error: Error,
-  i18n: I18n,
-) => {
+export const objectMetadataGraphqlApiExceptionHandler = (error: Error) => {
   if (error instanceof WorkspaceMigrationBuilderException) {
-    workspaceMigrationBuilderExceptionFormatter(error, i18n);
+    workspaceMigrationBuilderExceptionFormatter(error);
   }
 
   if (error instanceof InvalidMetadataException) {

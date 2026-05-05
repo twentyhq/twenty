@@ -1,4 +1,3 @@
-import { type I18n } from '@lingui/core';
 import { assertUnreachable } from 'twenty-shared/utils';
 
 import {
@@ -20,12 +19,9 @@ import {
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { workspaceMigrationBuilderExceptionFormatter } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-builder-exception-formatter';
 
-export const pageLayoutGraphqlApiExceptionHandler = (
-  error: Error,
-  i18n: I18n,
-) => {
+export const pageLayoutGraphqlApiExceptionHandler = (error: Error) => {
   if (error instanceof WorkspaceMigrationBuilderException) {
-    return workspaceMigrationBuilderExceptionFormatter(error, i18n);
+    return workspaceMigrationBuilderExceptionFormatter(error);
   }
 
   if (error instanceof PageLayoutException) {
