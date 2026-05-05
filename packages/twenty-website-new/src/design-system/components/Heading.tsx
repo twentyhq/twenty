@@ -146,7 +146,7 @@ export type HeadingProps<TText = ReactNode> = {
 } & HeadingTextRenderer<TText>;
 
 export function Heading<TText = ReactNode>({
-  as: Tag = 'h1',
+  as: Tag = 'h2',
   children,
   inlineSegmentSeparator = ' ',
   renderText,

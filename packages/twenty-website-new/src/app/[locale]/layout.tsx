@@ -1,4 +1,9 @@
-import { getSiteUrl } from '@/lib/seo';
+import {
+  buildOrganizationJsonLd,
+  buildSoftwareApplicationJsonLd,
+  getSiteUrl,
+  JsonLd,
+} from '@/lib/seo';
 import { DRACO_DECODER_ORIGIN } from '@/lib/visual-runtime/draco-decoder-path';
 import { theme } from '@/theme';
 import { cssVariables } from '@/theme/css-variables';
@@ -82,9 +87,9 @@ const StyledMain = styled.main`
   flex-grow: 1;
 `;
 
-const SITE_TITLE = 'Twenty | #1 open source CRM';
+const SITE_TITLE = 'Twenty | #1 Open Source CRM';
 const SITE_DESCRIPTION =
-  'The #1 open source CRM for modern teams. Modular, scalable, and built to fit your business.';
+  'The #1 Open Source CRM for modern teams. Modular, scalable, and built to fit your business.';
 
 export const metadata: Metadata = {
   metadataBase: new URL(getSiteUrl()),
@@ -137,6 +142,9 @@ const LocaleLayout = async ({
           crossOrigin="anonymous"
           href={DRACO_DECODER_ORIGIN}
           rel="preconnect"
+        />
+        <JsonLd
+          data={[buildOrganizationJsonLd(), buildSoftwareApplicationJsonLd()]}
         />
       </head>
       <body

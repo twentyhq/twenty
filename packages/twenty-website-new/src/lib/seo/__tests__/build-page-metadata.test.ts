@@ -56,23 +56,23 @@ describe('buildPageMetadata', () => {
       path: '/',
       title: {
         id: 'seo.test.title',
-        message: 'Twenty | #1 open source CRM',
+        message: 'Twenty | #1 Open Source CRM',
       },
       description: {
         id: 'seo.test.description',
-        message: 'The #1 open source CRM for modern teams.',
+        message: 'The #1 Open Source CRM for modern teams.',
       },
     });
 
     expect(metadata.title).toEqual({
-      absolute: 'Twenty | #1 open source CRM',
+      absolute: 'Twenty | #1 Open Source CRM',
     });
     expect(metadata.description).toBe(
-      'The #1 open source CRM for modern teams.',
+      'The #1 Open Source CRM for modern teams.',
     );
     expect(metadata.openGraph).toMatchObject({
-      title: 'Twenty | #1 open source CRM',
-      description: 'The #1 open source CRM for modern teams.',
+      title: 'Twenty | #1 Open Source CRM',
+      description: 'The #1 Open Source CRM for modern teams.',
     });
   });
 

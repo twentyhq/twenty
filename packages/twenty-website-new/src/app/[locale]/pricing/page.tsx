@@ -25,7 +25,7 @@ import { PricingStateProvider } from '@/sections/Plans/context/PricingStateConte
 import { PlanTable } from '@/sections/PlanTable/components';
 import { Salesforce } from '@/sections/Salesforce/components';
 import { theme } from '@/theme';
-import { buildRouteMetadata } from '@/lib/seo';
+import { buildFaqPageJsonLd, buildRouteMetadata, JsonLd } from '@/lib/seo';
 import { styled } from '@linaria/react';
 
 const PricingPlansContainer = styled.div`
@@ -56,6 +56,7 @@ export default async function PricingPage({ params }: PricingPageProps) {
 
   return (
     <>
+      <JsonLd data={buildFaqPageJsonLd(FAQ_DATA.questions, renderText)} />
       <Menu.Root
         backgroundColor="#F3F3F3"
         scheme="primary"
