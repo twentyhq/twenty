@@ -6,9 +6,8 @@ import {
 } from 'twenty-shared/types';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
-import { getImageIdentifierFieldMetadataItem } from '@/object-metadata/utils/getImageIdentifierFieldMetadataItem';
-import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
 import { type RecordGqlFields } from '@/object-record/graphql/record-gql-fields/types/RecordGqlFields';
+import { buildIdentifierGqlFields } from '@/object-record/graphql/record-gql-fields/utils/buildIdentifierGqlFields';
 import { generateActivityTargetGqlFields } from '@/object-record/graphql/record-gql-fields/utils/generateActivityTargetGqlFields';
 import { generateJunctionRelationGqlFields } from '@/object-record/graphql/record-gql-fields/utils/generateJunctionRelationGqlFields';
 import { isJunctionRelationField } from '@/object-record/record-field/ui/utils/junction/isJunctionRelationField';
@@ -96,21 +95,9 @@ export const generateDepthRecordGqlFieldsFromFields = ({
           }
         }
 
-        const labelIdentifierFieldMetadataItem =
-          getLabelIdentifierFieldMetadataItem(targetObjectMetadataItem);
-
-        const imageIdentifierFieldMetadataItem =
-          getImageIdentifierFieldMetadataItem(targetObjectMetadataItem);
-
-        const relationIdentifierSubGqlFields = {
-          id: true,
-          ...(isDefined(labelIdentifierFieldMetadataItem)
-            ? { [labelIdentifierFieldMetadataItem.name]: true }
-            : {}),
-          ...(isDefined(imageIdentifierFieldMetadataItem)
-            ? { [imageIdentifierFieldMetadataItem.name]: true }
-            : {}),
-        };
+        const relationIdentifierSubGqlFields = buildIdentifierGqlFields(
+          targetObjectMetadataItem,
+        );
 
         const manyToOneGqlFields = {
           [`${fieldMetadata.name}Id`]: true,
@@ -144,19 +131,11 @@ export const generateDepthRecordGqlFieldsFromFields = ({
                 objectMetadataItem.id === morphRelation.targetObjectMetadata.id,
             );
 
-            const morphLabelIdentifierFieldMetadataItem =
-              morphTargetObjectMetadataItem
-                ? getLabelIdentifierFieldMetadataItem(
-                    morphTargetObjectMetadataItem,
-                  )
-                : undefined;
-
-            const morphImageIdentifierFieldMetadataItem =
-              morphTargetObjectMetadataItem
-                ? getImageIdentifierFieldMetadataItem(
-                    morphTargetObjectMetadataItem,
-                  )
-                : undefined;
+            if (!morphTargetObjectMetadataItem) {
+              throw new Error(
+                `Target object metadata item not found for ${fieldMetadata.name} (morph target ${morphRelation.targetObjectMetadata.nameSingular})`,
+              );
+            }
 
             return {
               gqlField: computeMorphRelationFieldName({
@@ -168,15 +147,9 @@ export const generateDepthRecordGqlFieldsFromFields = ({
                   morphRelation.targetObjectMetadata.namePlural,
               }),
               fieldMetadata,
-              relationIdentifierSubGqlFields: {
-                id: true,
-                ...(isDefined(morphLabelIdentifierFieldMetadataItem)
-                  ? { [morphLabelIdentifierFieldMetadataItem.name]: true }
-                  : {}),
-                ...(isDefined(morphImageIdentifierFieldMetadataItem)
-                  ? { [morphImageIdentifierFieldMetadataItem.name]: true }
-                  : {}),
-              },
+              relationIdentifierSubGqlFields: buildIdentifierGqlFields(
+                morphTargetObjectMetadataItem,
+              ),
             };
           },
         );
