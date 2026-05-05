@@ -1,6 +1,6 @@
 {
   "name": "stratum-sales-notes-app",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "license": "MIT",
   "engines": {
     "node": "^24.5.0",

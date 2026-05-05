@@ -179,6 +179,14 @@ export const ON_SALES_NOTE_CREATED_LOGIC_FUNCTION_UID =
 export const VOICENOTES_WEBHOOK_LOGIC_FUNCTION_UID =
   'a9521bf0-8ccf-4f33-bd86-a3e67c2e053d';
 
+// v0.3.2 — when a salesNoteAttendee is created and the parent salesNote has
+// no Account set, copy the attached Person's Company onto the salesNote.
+// Cuts the manual click on the common "create note → add attendee → also
+// set their account" workflow. Skips if person has no company or salesNote
+// already has one (never overwrites).
+export const ON_SALES_NOTE_ATTENDEE_CREATED_LOGIC_FUNCTION_UID =
+  'd7e3c8a1-4f29-4b7e-91d8-6c5a3b8e2f47';
+
 // ─── Front-components: "+ Sales note" buttons on standard records ───────────
 // v0.1.9 — pinned actions on Person / Company / Opportunity record detail
 // pages. Each creates a blank salesNote with the source record pre-linked
