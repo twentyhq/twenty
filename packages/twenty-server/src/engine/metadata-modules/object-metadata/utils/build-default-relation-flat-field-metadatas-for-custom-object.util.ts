@@ -3,12 +3,15 @@ import {
   DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS,
 } from 'twenty-shared/metadata';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { capitalize, isDefined } from 'twenty-shared/utils';
+import {
+  capitalize,
+  computeRelationFieldJoinColumnName,
+  isDefined,
+} from 'twenty-shared/utils';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
-import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { generateMorphOrRelationFlatFieldMetadataPair } from 'src/engine/metadata-modules/flat-field-metadata/utils/generate-morph-or-relation-flat-field-metadata-pair.util';
@@ -100,7 +103,7 @@ export const buildDefaultRelationFlatFieldMetadatasForCustomObject = ({
         const fieldName = isObjectMigratedToMorphRelations
           ? morphFieldName
           : sourceFlatObjectMetadata.nameSingular;
-        const joinColumnName = computeMorphOrRelationFieldJoinColumnName({
+        const joinColumnName = computeRelationFieldJoinColumnName({
           name: fieldName,
         });
 

@@ -11,6 +11,7 @@ import {
 import {
   assertIsDefinedOrThrow,
   assertUnreachable,
+  computeRelationFieldJoinColumnName,
   isDefined,
 } from 'twenty-shared/utils';
 
@@ -56,7 +57,6 @@ import { transformLinksValue } from 'src/engine/core-modules/record-transformer/
 import { transformPhonesValue } from 'src/engine/core-modules/record-transformer/utils/transform-phones-value.util';
 import { transformRichTextValue } from 'src/engine/core-modules/record-transformer/utils/transform-rich-text.util';
 import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
-import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -244,7 +244,7 @@ export class DataArgProcessorService {
           );
         }
 
-        const joinColumnName = computeMorphOrRelationFieldJoinColumnName({
+        const joinColumnName = computeRelationFieldJoinColumnName({
           name: fieldMetadata.name,
         });
 
