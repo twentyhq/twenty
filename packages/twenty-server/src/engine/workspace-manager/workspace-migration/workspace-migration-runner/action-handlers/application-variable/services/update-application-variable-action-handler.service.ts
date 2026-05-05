@@ -55,43 +55,34 @@ export class UpdateApplicationVariableActionHandlerService extends WorkspaceMigr
   ): Promise<void> {
     const { flatAction, queryRunner, workspaceId } = context;
     const { entityId, update } = flatAction;
-
-    if (update.isSecret !== undefined && update.isSecret) {
-      const applicationVariableRepository =
-        queryRunner.manager.getRepository<ApplicationVariableEntity>(
-          ApplicationVariableEntity,
-        );
-
-      const existing = await applicationVariableRepository.findOne({
-        where: { id: entityId, workspaceId },
-      });
-
-      if (existing && !existing.isSecret) {
-        (update as Record<string, unknown>).value =
-          this.secretEncryptionService.encrypt(existing.value);
-      }
-    }
-
-    if (update.isSecret !== undefined && !update.isSecret) {
-      const applicationVariableRepository =
-        queryRunner.manager.getRepository<ApplicationVariableEntity>(
-          ApplicationVariableEntity,
-        );
-
-      const existing = await applicationVariableRepository.findOne({
-        where: { id: entityId, workspaceId },
-      });
-
-      if (existing && existing.isSecret) {
-        (update as Record<string, unknown>).value =
-          this.secretEncryptionService.decrypt(existing.value);
-      }
-    }
-
     const applicationVariableRepository =
       queryRunner.manager.getRepository<ApplicationVariableEntity>(
         ApplicationVariableEntity,
       );
+
+    const existing = await applicationVariableRepository.findOne({
+      where: { id: entityId, workspaceId },
+    });
+
+    if (
+      update.isSecret !== undefined &&
+      update.isSecret &&
+      existing &&
+      !existing.isSecret
+    ) {
+      (update as Record<string, unknown>).value =
+        this.secretEncryptionService.encrypt(existing.value);
+    }
+
+    if (
+      update.isSecret !== undefined &&
+      !update.isSecret &&
+      existing &&
+      existing.isSecret
+    ) {
+      (update as Record<string, unknown>).value =
+        this.secretEncryptionService.decrypt(existing.value);
+    }
 
     await applicationVariableRepository.update(
       { id: entityId, workspaceId },
