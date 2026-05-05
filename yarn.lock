@@ -54932,6 +54932,7 @@ __metadata:
     concurrently: "npm:^8.2.2"
     http-server: "npm:^14.1.1"
     nx: "npm:22.5.4"
+    tsx: "npm:^4.19.3"
     verdaccio: "npm:^6.3.1"
   languageName: unknown
   linkType: soft
