@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import MailComposer from 'nodemailer/lib/mail-composer';
@@ -20,6 +20,8 @@ import { toMailComposerOptions } from 'src/modules/messaging/message-outbound-ma
 
 @Injectable()
 export class ImapSmtpMessageOutboundService implements MessageOutboundDriver {
+  private readonly logger = new Logger(ImapSmtpMessageOutboundService.name);
+
   constructor(
     private readonly smtpClientProvider: SmtpClientProvider,
     private readonly imapClientProvider: ImapClientProvider,
@@ -76,8 +78,16 @@ export class ImapSmtpMessageOutboundService implements MessageOutboundDriver {
         });
       }
 
-      if (isDefined(sentFolder) && isDefined(sentFolder.name)) {
-        await imapClient.append(sentFolder.name, messageBuffer);
+      const sentFolderPath = this.getSentFolderPath(sentFolder);
+
+      if (isDefined(sentFolderPath)) {
+        try {
+          await imapClient.append(sentFolderPath, messageBuffer);
+        } catch (error) {
+          this.logger.warn(
+            `Failed to append message to sent folder "${sentFolderPath}": ${error}`,
+          );
+        }
       }
 
       await this.imapClientProvider.closeClient(imapClient);
@@ -123,6 +133,20 @@ export class ImapSmtpMessageOutboundService implements MessageOutboundDriver {
     } finally {
       await this.imapClientProvider.closeClient(imapClient);
     }
+  }
+
+  private getSentFolderPath(
+    sentFolder: MessageFolderEntity | null,
+  ): string | null {
+    if (!isDefined(sentFolder)) {
+      return null;
+    }
+
+    if (isDefined(sentFolder.externalId)) {
+      return sentFolder.externalId.split(':')[0];
+    }
+
+    return sentFolder.name;
   }
 
   private async compileRawMessage(
