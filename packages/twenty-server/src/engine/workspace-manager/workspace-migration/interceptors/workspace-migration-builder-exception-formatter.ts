@@ -1,5 +1,3 @@
-import { type I18n } from '@lingui/core';
-import { msg } from '@lingui/core/macro';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -9,16 +7,14 @@ import {
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { type WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { fromWorkspaceMigrationBuilderExceptionToMetadataValidationResponseError } from 'src/engine/workspace-manager/workspace-migration/interceptors/utils/from-workspace-migration-builder-exception-to-metadata-validation-response-error.util';
-import { getPrimaryMetadataValidationUserFriendlyMessage } from 'src/engine/workspace-manager/workspace-migration/interceptors/utils/get-primary-metadata-validation-user-friendly-message.util';
+import { getMetadataValidationUserFriendlyMessage } from 'src/engine/workspace-manager/workspace-migration/interceptors/utils/get-metadata-validation-user-friendly-message.util';
 
 export const workspaceMigrationBuilderExceptionFormatter = (
   error: WorkspaceMigrationBuilderException,
-  i18n: I18n,
 ) => {
   const { errors, summary } =
     fromWorkspaceMigrationBuilderExceptionToMetadataValidationResponseError(
       error,
-      i18n,
     );
 
   const validationSummaryMessage = `Validation failed for ${Object.values(
@@ -35,11 +31,10 @@ export const workspaceMigrationBuilderExceptionFormatter = (
     })
     .join(', ')}`;
 
-  const primaryUserFriendlyMessage =
-    getPrimaryMetadataValidationUserFriendlyMessage({
-      errors,
-      summary,
-    });
+  const userFriendlyMessage = getMetadataValidationUserFriendlyMessage({
+    errors,
+    summary,
+  });
 
   throw new BaseGraphQLError(
     error.message,
@@ -49,8 +44,7 @@ export const workspaceMigrationBuilderExceptionFormatter = (
       errors,
       summary,
       message: validationSummaryMessage,
-      userFriendlyMessage:
-        primaryUserFriendlyMessage ?? msg`Metadata validation failed`,
+      userFriendlyMessage,
     },
   );
 };

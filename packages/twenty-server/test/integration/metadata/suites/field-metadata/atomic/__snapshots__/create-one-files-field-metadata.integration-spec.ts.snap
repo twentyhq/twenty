@@ -49,7 +49,7 @@ exports[`createOne FILES field metadata - failing should fail to create files fi
       "index": 1,
       "totalErrors": 2,
     },
-    "userFriendlyMessage": "Metadata validation failed",
+    "userFriendlyMessage": "Many validation errors",
   },
   "message": "Multiple validation errors occurred while creating fields",
   "name": "GraphQLError",
