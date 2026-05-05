@@ -122,7 +122,9 @@ const resolveNewVersion = ({
   nextVersions: string[];
 }): string => {
   if (newVersionArg) {
-    parseVersion(newVersionArg);
+    if (!semver.valid(newVersionArg)) {
+      throw new Error(`Invalid version format: ${newVersionArg}`);
+    }
 
     if (!semver.gt(newVersionArg, currentVersion)) {
       throw new Error(
