@@ -8,8 +8,6 @@ export const workspaceCreatedSchema = z.strictObject({
   properties: z.strictObject({}),
 });
 
-export type WorkspaceCreatedTrackEvent = z.infer<
-  typeof workspaceCreatedSchema
->;
+export type WorkspaceCreatedTrackEvent = z.infer<typeof workspaceCreatedSchema>;
 
 registerEvent(WORKSPACE_CREATED_EVENT, workspaceCreatedSchema);

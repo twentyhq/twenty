@@ -182,7 +182,9 @@ export class BillingWebhookInvoiceService {
 
       this.auditService
         .createContext({ workspaceId: billingCustomer.workspaceId })
-        .insertWorkspaceEvent(PAYMENT_RECEIVED_EVENT, {});
+        .insertWorkspaceEvent(PAYMENT_RECEIVED_EVENT, {
+          amountPaid: data.object.amount_paid,
+        });
     }
 
     return { stripeSubscriptionId };
