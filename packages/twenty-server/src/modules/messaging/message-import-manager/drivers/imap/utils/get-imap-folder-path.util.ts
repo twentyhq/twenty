@@ -13,5 +13,11 @@ export const getImapFolderPath = (
     return externalId;
   }
 
+  const trailingSegment = externalId.slice(lastColonIndex + 1);
+
+  if (!/^\d+$/.test(trailingSegment)) {
+    return externalId;
+  }
+
   return externalId.slice(0, lastColonIndex);
 };

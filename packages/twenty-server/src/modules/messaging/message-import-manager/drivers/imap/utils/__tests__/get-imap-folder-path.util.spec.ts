@@ -13,6 +13,10 @@ describe('getImapFolderPath', () => {
     expect(getImapFolderPath('Foo:Bar:42')).toBe('Foo:Bar');
   });
 
+  it('returns the externalId unchanged when the trailing segment is non-numeric', () => {
+    expect(getImapFolderPath('Project: Updates')).toBe('Project: Updates');
+  });
+
   it('returns null for empty, null, or undefined input', () => {
     expect(getImapFolderPath('')).toBeNull();
     expect(getImapFolderPath(null)).toBeNull();
