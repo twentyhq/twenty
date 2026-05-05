@@ -28,6 +28,12 @@ const RecordShowPage = lazy(() =>
   })),
 );
 
+const StrowgerJobsPage = lazy(() =>
+  import('~/pages/strowger/StrowgerJobsPage').then((module) => ({
+    default: module.StrowgerJobsPage,
+  })),
+);
+
 const SignInUp = lazy(() =>
   import('~/pages/auth/SignInUp').then((module) => ({
     default: module.SignInUp,
@@ -223,6 +229,14 @@ export const useCreateAppRouter = (
             element={
               <LazyRoute>
                 <RecordShowPage />
+              </LazyRoute>
+            }
+          />
+          <Route
+            path="/strowger/jobs"
+            element={
+              <LazyRoute>
+                <StrowgerJobsPage />
               </LazyRoute>
             }
           />

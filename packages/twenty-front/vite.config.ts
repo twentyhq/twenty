@@ -69,6 +69,13 @@ export default defineConfig(({ mode }) => {
           '**/@blocknote/core/src/fonts/**',
         ],
       },
+      proxy: {
+        '/strowger-api': {
+          target: 'http://localhost:4000',
+          changeOrigin: true,
+          rewrite: (path) => path.replace(/^\/strowger-api/, '/api'),
+        },
+      },
     },
 
     plugins: [
