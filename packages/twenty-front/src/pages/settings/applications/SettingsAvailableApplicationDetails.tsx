@@ -136,10 +136,11 @@ export const SettingsAvailableApplicationDetails = () => {
     },
     {
       icon: IconGraph,
-      count: (manifest?.frontComponents ?? []).filter((fc) =>
-        (manifest?.commandMenuItems ?? [])
-          .map((cm) => cm.frontComponentUniversalIdentifier)
-          .includes(fc.universalIdentifier),
+      count: (manifest?.frontComponents ?? []).filter(
+        (fc) =>
+          !(manifest?.commandMenuItems ?? [])
+            .map((cm) => cm.frontComponentUniversalIdentifier)
+            .includes(fc.universalIdentifier),
       ).length,
       one: t`widget`,
       many: t`widgets`,
