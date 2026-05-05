@@ -18,6 +18,7 @@ exports[`sortMetadataNamesChildrenFirst should return metadata names sorted with
   "rowLevelPermissionPredicateGroup",
   "viewGroup",
   "agent",
+  "connectionProvider",
   "frontComponent",
   "logicFunction",
   "pageLayoutTab",

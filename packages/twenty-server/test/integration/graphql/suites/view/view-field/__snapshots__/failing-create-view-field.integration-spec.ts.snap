@@ -30,7 +30,7 @@ exports[`View Field Resolver - Failing Create Operation Should fail to create a 
       "totalErrors": 1,
       "viewField": 1,
     },
-    "userFriendlyMessage": "Metadata validation failed",
+    "userFriendlyMessage": "View field already exists",
   },
   "message": "Multiple validation errors occurred while creating view fields",
   "name": "GraphQLError",

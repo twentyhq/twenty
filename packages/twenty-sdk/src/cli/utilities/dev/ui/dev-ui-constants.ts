@@ -97,6 +97,7 @@ export const ENTITY_LABELS: Record<SyncableEntity, string> = {
   [SyncableEntity.Field]: 'Fields',
   [SyncableEntity.LogicFunction]: 'Logic functions',
   [SyncableEntity.FrontComponent]: 'Front components',
+  [SyncableEntity.CommandMenuItem]: 'Command menu items',
   [SyncableEntity.Role]: 'Roles',
   [SyncableEntity.Skill]: 'Skills',
   [SyncableEntity.View]: 'Views',

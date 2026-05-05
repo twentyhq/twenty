@@ -117,7 +117,7 @@ export const SettingsApplicationConnectionsSection = ({
           provider.oauth?.isClientCredentialsConfigured ?? false;
 
         const providerConnections = connectedAccounts.filter(
-          (account) => account.applicationConnectionProviderId === provider.id,
+          (account) => account.connectionProviderId === provider.id,
         );
 
         return (

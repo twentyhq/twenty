@@ -38,6 +38,7 @@ export { updateProgress } from './functions/updateProgress';
 export { useFrontComponentExecutionContext } from './hooks/useFrontComponentExecutionContext';
 export { useFrontComponentId } from './hooks/useFrontComponentId';
 export { useRecordId } from './hooks/useRecordId';
+export { useSelectedRecordIds } from './hooks/useSelectedRecordIds';
 export { useUserId } from './hooks/useUserId';
 export type { FrontComponentExecutionContext } from './types/FrontComponentExecutionContext';
 export { getFrontComponentCommandErrorDedupeKey } from './utils/getFrontComponentCommandErrorDedupeKey';

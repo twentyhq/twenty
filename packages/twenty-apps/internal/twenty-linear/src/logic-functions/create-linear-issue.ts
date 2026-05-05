@@ -10,24 +10,25 @@ export default defineLogicFunction({
     'Create a Linear issue on behalf of the connected user. Requires a teamId (call list-linear-teams to discover one) and a title.',
   timeoutSeconds: 30,
   handler: createLinearIssueHandler,
-  isTool: true,
-  toolInputSchema: {
-    type: 'object',
-    properties: {
-      teamId: {
-        type: 'string',
-        description:
-          'The Linear team ID to create the issue in. Use list-linear-teams to discover available teams.',
+  toolTriggerSettings: {
+    inputSchema: {
+      type: 'object',
+      properties: {
+        teamId: {
+          type: 'string',
+          description:
+            'The Linear team ID to create the issue in. Use list-linear-teams to discover available teams.',
+        },
+        title: {
+          type: 'string',
+          description: 'The issue title.',
+        },
+        description: {
+          type: 'string',
+          description: 'Optional issue description (Markdown supported).',
+        },
       },
-      title: {
-        type: 'string',
-        description: 'The issue title.',
-      },
-      description: {
-        type: 'string',
-        description: 'Optional issue description (Markdown supported).',
-      },
+      required: ['teamId', 'title'],
     },
-    required: ['teamId', 'title'],
   },
 });

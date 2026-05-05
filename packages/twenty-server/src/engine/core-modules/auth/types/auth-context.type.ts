@@ -145,7 +145,7 @@ export type PostgresProxyTokenJwtPayload = CommonPropertiesJwtPayload & {
 export type AppOAuthStateJwtPayload = CommonPropertiesJwtPayload & {
   type: JwtTokenTypeEnum.APP_OAUTH_STATE;
   workspaceId: string;
-  applicationOAuthProviderId: string;
+  connectionProviderId: string;
   userId: string;
   userWorkspaceId: string;
   // 'user' = the resulting credential is private to userWorkspaceId.

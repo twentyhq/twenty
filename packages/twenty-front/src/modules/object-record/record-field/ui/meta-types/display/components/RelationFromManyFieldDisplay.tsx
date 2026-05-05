@@ -10,7 +10,6 @@ import { isActivityTargetField } from '@/object-record/record-field-list/utils/c
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { useFieldFocus } from '@/object-record/record-field/ui/hooks/useFieldFocus';
 import { useRelationFromManyFieldDisplay } from '@/object-record/record-field/ui/meta-types/hooks/useRelationFromManyFieldDisplay';
-import { ForbiddenFieldDisplay } from '@/object-record/record-field/ui/meta-types/display/components/ForbiddenFieldDisplay';
 import { extractTargetRecordsFromJunction } from '@/object-record/record-field/ui/utils/junction/extractTargetRecordsFromJunction';
 import { getJunctionConfig } from '@/object-record/record-field/ui/utils/junction/getJunctionConfig';
 import { hasJunctionConfig } from '@/object-record/record-field/ui/utils/junction/hasJunctionConfig';
@@ -147,7 +146,7 @@ export const RelationFromManyFieldDisplay = () => {
       .filter(isDefined);
 
     if (fieldValue.some(isDefined) && targetRecordsWithMetadata.length === 0) {
-      return <ForbiddenFieldDisplay />;
+      return null;
     }
 
     return (

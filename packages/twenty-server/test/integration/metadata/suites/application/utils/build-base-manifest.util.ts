@@ -36,5 +36,6 @@ export const buildBaseManifest = ({
   navigationMenuItems: [],
   pageLayouts: [],
   pageLayoutTabs: [],
+  commandMenuItems: [],
   ...overrides,
 });

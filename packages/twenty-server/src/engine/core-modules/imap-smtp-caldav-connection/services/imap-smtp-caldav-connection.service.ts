@@ -16,7 +16,8 @@ import {
 } from 'src/engine/core-modules/imap-smtp-caldav-connection/types/imap-smtp-caldav-connection.type';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
-import { CalDAVClient } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/lib/caldav.client';
+import { CalDavClientService } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/services/caldav-client.service';
+import { CalDavFetchEventsService } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/services/caldav-fetch-events.service';
 
 @Injectable()
 export class ImapSmtpCaldavService {
@@ -27,6 +28,8 @@ export class ImapSmtpCaldavService {
     @InjectRepository(ConnectedAccountEntity)
     private readonly connectedAccountRepository: Repository<ConnectedAccountEntity>,
     private readonly secureHttpClientService: SecureHttpClientService,
+    private readonly caldavClientService: CalDavClientService,
+    private readonly caldavFetchEventsService: CalDavFetchEventsService,
   ) {}
 
   async testImapConnection(
@@ -132,28 +135,30 @@ export class ImapSmtpCaldavService {
     handle: string,
     params: ConnectionParameters,
   ): Promise<boolean> {
-    const ssrfSafeFetch = this.secureHttpClientService.createSsrfSafeFetch();
-    const client = new CalDAVClient({
-      serverUrl: params.host,
-      username: params.username ?? handle,
-      password: params.password,
-      fetch: ssrfSafeFetch,
-    });
-
     try {
-      await client.listCalendars();
-      await client.validateSyncCollectionSupport();
+      const client = await this.caldavClientService.getClient({
+        serverUrl: params.host,
+        username: params.username ?? handle,
+        password: params.password,
+      });
+
+      const calendars =
+        await this.caldavFetchEventsService.listEventCalendars(client);
+
+      if (calendars.length === 0) {
+        throw new UserInputError('No calendar with event support found', {
+          userFriendlyMessage: msg`We couldn't find any calendars on your CalDAV server. Please make sure your account has at least one calendar.`,
+        });
+      }
     } catch (error) {
+      if (error instanceof UserInputError) {
+        throw error;
+      }
+
       this.logger.error(
         `CALDAV connection failed: ${error.message}`,
         error.stack,
       );
-
-      if (error.message?.includes('CALDAV_SYNC_COLLECTION_NOT_SUPPORTED')) {
-        throw new UserInputError(`CALDAV connection failed: ${error.message}`, {
-          userFriendlyMessage: msg`Your CalDAV server does not support incremental sync (RFC 6578). Please use a compatible provider such as Nextcloud, iCloud, or Fastmail.`,
-        });
-      }
 
       if (error.code === 'FailedToOpenSocket') {
         throw new UserInputError(`CALDAV connection failed: ${error.message}`, {

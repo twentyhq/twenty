@@ -98,7 +98,6 @@ export const NavigationDrawerAiChatContent = () => {
                 currentThreadId={currentAiChatThread}
                 onThreadClick={handleThreadClick}
                 rightIcon={index === 0 ? filterDropdown : undefined}
-                alwaysShowRightIcon={index === 0}
               />
             ))}
           </StyledSectionsContainer>
@@ -110,7 +109,6 @@ export const NavigationDrawerAiChatContent = () => {
             currentThreadId={currentAiChatThread}
             onThreadClick={handleThreadClick}
             rightIcon={filterDropdown}
-            alwaysShowRightIcon
           />
         )}
         {threads.length === 0 ? (
