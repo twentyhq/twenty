@@ -6,6 +6,7 @@ import {
   containerExists,
   getContainerDigest,
   getContainerPort,
+  getDockerNotRunningMessage,
   getImageDigest,
   getImageForVersion,
   TEST_CONTAINER_NAME,
@@ -30,11 +31,19 @@ const innerServerUpgrade = async (
   const { version = 'latest', test: isTest, onProgress } = options;
 
   if (!checkDockerRunning()) {
+    const retryCommand = [
+      'yarn twenty server upgrade',
+      version !== 'latest' ? version : null,
+      isTest ? '--test' : null,
+    ]
+      .filter(Boolean)
+      .join(' ');
+
     return {
       success: false,
       error: {
         code: SERVER_ERROR_CODES.DOCKER_NOT_RUNNING,
-        message: 'Docker is not running. Please start Docker and try again.',
+        message: getDockerNotRunningMessage(retryCommand),
       },
     };
   }

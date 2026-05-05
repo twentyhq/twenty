@@ -332,11 +332,11 @@ type LogicFunction {
   timeoutSeconds: Float!
   sourceHandlerPath: String!
   handlerName: String!
-  toolInputSchema: JSON
-  isTool: Boolean!
   cronTriggerSettings: JSON
   databaseEventTriggerSettings: JSON
   httpRouteTriggerSettings: JSON
+  toolTriggerSettings: JSON
+  workflowActionTriggerSettings: JSON
   applicationId: UUID
   universalIdentifier: UUID
   createdAt: DateTime!
@@ -2550,7 +2550,7 @@ type ConnectedAccountDTO {
   connectionParameters: ImapSmtpCaldavConnectionParameters
   lastSignedInAt: DateTime
   userWorkspaceId: UUID!
-  applicationConnectionProviderId: UUID
+  connectionProviderId: UUID
   applicationId: UUID
   name: String
   visibility: String!
@@ -2581,7 +2581,7 @@ type ConnectedAccountPublicDTO {
   scopes: [String!]
   lastSignedInAt: DateTime
   userWorkspaceId: UUID!
-  applicationConnectionProviderId: UUID
+  connectionProviderId: UUID
   applicationId: UUID
   name: String
   visibility: String!
@@ -2870,6 +2870,7 @@ enum AllMetadataName {
   fieldPermission
   frontComponent
   webhook
+  connectionProvider
 }
 
 type MinimalObjectMetadata {
@@ -3778,12 +3779,12 @@ input CreateLogicFunctionFromSourceInput {
   name: String!
   description: String
   timeoutSeconds: Float
-  toolInputSchema: JSON
-  isTool: Boolean
   source: JSON
   cronTriggerSettings: JSON
   databaseEventTriggerSettings: JSON
   httpRouteTriggerSettings: JSON
+  toolTriggerSettings: JSON
+  workflowActionTriggerSettings: JSON
 }
 
 input ExecuteOneLogicFunctionInput {
@@ -3807,13 +3808,13 @@ input UpdateLogicFunctionFromSourceInputUpdates {
   description: String
   timeoutSeconds: Float
   sourceHandlerCode: String
-  toolInputSchema: JSON
   handlerName: String
   sourceHandlerPath: String
-  isTool: Boolean
   cronTriggerSettings: JSON
   databaseEventTriggerSettings: JSON
   httpRouteTriggerSettings: JSON
+  toolTriggerSettings: JSON
+  workflowActionTriggerSettings: JSON
 }
 
 input CreateCommandMenuItemInput {

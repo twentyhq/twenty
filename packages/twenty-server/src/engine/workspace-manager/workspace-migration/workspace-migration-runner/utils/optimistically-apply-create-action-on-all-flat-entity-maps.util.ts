@@ -71,7 +71,8 @@ export const optimisticallyApplyCreateActionOnAllFlatEntityMaps = ({
     case 'permissionFlag':
     case 'objectPermission':
     case 'fieldPermission':
-    case 'webhook': {
+    case 'webhook':
+    case 'connectionProvider': {
       addFlatEntityToFlatEntityAndRelatedEntityMapsThroughMutationOrThrow({
         flatEntity: flatAction.flatEntity,
         flatEntityAndRelatedMapsToMutate: allFlatEntityMaps,

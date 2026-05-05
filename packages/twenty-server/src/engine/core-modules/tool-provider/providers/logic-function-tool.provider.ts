@@ -58,7 +58,9 @@ export class LogicFunctionToolProvider implements ToolProvider {
       flatLogicFunctionMaps.byUniversalIdentifier,
     ).filter(
       (fn): fn is FlatLogicFunction =>
-        isDefined(fn) && fn.isTool === true && fn.deletedAt === null,
+        isDefined(fn) &&
+        isDefined(fn.toolTriggerSettings) &&
+        fn.deletedAt === null,
     );
 
     const descriptors: (ToolIndexEntry | ToolDescriptor)[] = [];
@@ -79,12 +81,12 @@ export class LogicFunctionToolProvider implements ToolProvider {
       };
 
       if (includeSchemas) {
-        // Logic functions already store JSON Schema -- use it directly
-        const inputSchema =
-          (logicFunction.toolInputSchema as object) ??
-          DEFAULT_TOOL_INPUT_SCHEMA;
-
-        descriptors.push({ ...base, inputSchema });
+        descriptors.push({
+          ...base,
+          inputSchema:
+            (logicFunction.toolTriggerSettings?.inputSchema as object) ??
+            DEFAULT_TOOL_INPUT_SCHEMA,
+        });
       } else {
         descriptors.push(base);
       }

@@ -217,9 +217,9 @@ The Twenty server syncs its marketplace catalog from the npm registry **every ho
 You can trigger the sync immediately instead of waiting:
 
 ```bash filename="Terminal"
-yarn twenty catalog-sync
+yarn twenty server catalog-sync
 # To target a specific remote:
-# yarn twenty catalog-sync --remote production
+# yarn twenty server catalog-sync --remote production
 ```
 
 The metadata shown in the marketplace comes from your `defineApplication()` config — fields like `displayName`, `description`, `author`, `category`, `logoUrl`, `screenshots`, `aboutDescription`, `websiteUrl`, and `termsUrl`.
