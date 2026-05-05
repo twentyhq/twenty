@@ -31,11 +31,11 @@ import {
   type ObjectManifest,
   type PageLayoutManifest,
   type PageLayoutTabManifest,
+  type PostInstallLogicFunctionApplicationManifest,
+  type PreInstallLogicFunctionApplicationManifest,
   type RoleManifest,
   type SkillManifest,
   type ViewManifest,
-  type PostInstallLogicFunctionApplicationManifest,
-  type PreInstallLogicFunctionApplicationManifest,
 } from 'twenty-shared/application';
 import {
   getInputSchemaFromSourceCode,
