@@ -25,7 +25,6 @@ import {
   type CommandMenuItemManifest,
   type ConnectionProviderManifest,
   type FieldManifest,
-  type FrontComponentCommandManifest,
   type FrontComponentManifest,
   type LogicFunctionManifest,
   type Manifest,
@@ -292,7 +291,7 @@ export const buildManifest = async (
 
         errors.push(...extract.errors);
 
-        const { component, command, ...rest } = extract.config;
+        const { component, ...rest } = extract.config;
 
         const relativeFilePath = relative(appPath, filePath);
 
@@ -303,8 +302,6 @@ export const buildManifest = async (
           builtComponentPath: relativeFilePath.replace(/\.tsx?$/, '.mjs'),
           builtComponentChecksum: '',
           isHeadless: rest.isHeadless ?? false,
-          // transformed by conditionalAvailabilityTransformPlugin
-          command: command as FrontComponentCommandManifest,
         };
 
         frontComponents.push(config);
@@ -374,7 +371,9 @@ export const buildManifest = async (
           filePath,
         });
 
-        commandMenuItems.push({ ...extract.config });
+        commandMenuItems.push(
+          extract.config as unknown as CommandMenuItemManifest,
+        );
         errors.push(...extract.errors);
         commandMenuItemsFilePaths.push(relativePath);
         break;

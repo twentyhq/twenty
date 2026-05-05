@@ -158,22 +158,6 @@ export const computeApplicationManifestAllUniversalFlatEntityMaps = ({
         allUniversalFlatEntityMaps.flatFrontComponentMaps,
     });
 
-    if (frontComponentManifest.command) {
-      addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
-        universalFlatEntity:
-          fromCommandMenuItemManifestToUniversalFlatCommandMenuItem({
-            commandMenuItemManifest: {
-              ...frontComponentManifest.command,
-              frontComponentUniversalIdentifier:
-                frontComponentManifest.universalIdentifier,
-            },
-            applicationUniversalIdentifier,
-            now,
-          }),
-        universalFlatEntityMapsToMutate:
-          allUniversalFlatEntityMaps.flatCommandMenuItemMaps,
-      });
-    }
   }
 
   for (const roleManifest of manifest.roles) {

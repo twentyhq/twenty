@@ -33,7 +33,6 @@ export type { CommandMenuItemManifest } from 'twenty-shared/application';
 
 export { defineFrontComponent } from '@/sdk/define/front-component/define-front-component';
 export type {
-  FrontComponentCommandConfig,
   FrontComponentConfig,
   FrontComponentType,
 } from '@/sdk/define/front-component/front-component-config';
