@@ -69,6 +69,16 @@ msgstr "Một công ty"
 msgid "A connected account"
 msgstr "Một tài khoản đã kết nối"
 
+#. js-lingui-id: JYntnV
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
+msgid "A connection provider with this name already exists for this application"
+msgstr ""
+
+#. js-lingui-id: jzhZvB
+#: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
+msgid "A connection provider with this name already exists for this application."
+msgstr ""
+
 #. js-lingui-id: cOSBjW
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgid "A dashboard"
@@ -1325,7 +1335,7 @@ msgid "City"
 msgstr ""
 
 #. js-lingui-id: J7dFKa
-#: src/engine/core-modules/application/application-oauth-provider/application-oauth-provider.exception.ts
+#: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "Client credentials are not configured for this OAuth provider."
 msgstr ""
 
@@ -1535,6 +1545,51 @@ msgstr ""
 #. js-lingui-id: AMDUqA
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgid "Connected Accounts"
+msgstr ""
+
+#. js-lingui-id: xQ2DfP
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
+msgid "Connection provider display name is required"
+msgstr ""
+
+#. js-lingui-id: zYcf9G
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
+msgid "Connection provider displayName is required"
+msgstr ""
+
+#. js-lingui-id: WsuFPo
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
+msgid "Connection provider name is required"
+msgstr ""
+
+#. js-lingui-id: mTAp1w
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
+msgid "Connection provider not found"
+msgstr ""
+
+#. js-lingui-id: b+xWjq
+#: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
+msgid "Connection provider not found."
+msgstr ""
+
+#. js-lingui-id: z2V1Q6
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
+msgid "Connection provider oauthConfig.{label} is required"
+msgstr ""
+
+#. js-lingui-id: vOKvb8
+#. placeholder {0}: flatConnectionProvider.name
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
+msgid "Connection provider with name {0} already exists for this application"
+msgstr ""
+
+#. js-lingui-id: YQTVfF
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
+msgid "Connection provider with type 'oauth' is missing oauthConfig"
 msgstr ""
 
 #. js-lingui-id: jfC/xh
@@ -2312,7 +2367,7 @@ msgid "Failed to duplicate dashboard."
 msgstr "Không thể nhân bản bảng điều khiển."
 
 #. js-lingui-id: srkEOV
-#: src/engine/core-modules/application/application-oauth-provider/application-oauth-provider.exception.ts
+#: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "Failed to exchange the authorization code for an access token."
 msgstr ""
 
@@ -2347,7 +2402,7 @@ msgid "Failed to record billing event."
 msgstr "Ghi lại sự kiện thanh toán thất bại."
 
 #. js-lingui-id: eQmx6a
-#: src/engine/core-modules/application/application-oauth-provider/application-oauth-provider.exception.ts
+#: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "Failed to refresh the access token."
 msgstr ""
 
@@ -4862,7 +4917,7 @@ msgid "None"
 msgstr ""
 
 #. js-lingui-id: eRIGld
-#: src/engine/core-modules/application/application-oauth-provider/application-oauth-provider.exception.ts
+#: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "Not authorized to access this OAuth provider."
 msgstr ""
 
@@ -4983,13 +5038,23 @@ msgstr ""
 msgid "Number of employees in the company"
 msgstr ""
 
+#. js-lingui-id: MKdH/S
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
+msgid "OAuth {label} is required"
+msgstr ""
+
 #. js-lingui-id: 08qKzD
 #: src/engine/core-modules/auth/auth.exception.ts
 msgid "OAuth access was denied."
 msgstr "Truy cập OAuth đã bị từ chối."
 
+#. js-lingui-id: zey8hv
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
+msgid "OAuth connection provider is missing its oauth config block"
+msgstr ""
+
 #. js-lingui-id: xodh4N
-#: src/engine/core-modules/application/application-oauth-provider/application-oauth-provider.exception.ts
+#: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "OAuth provider not found."
 msgstr ""
 
@@ -6788,6 +6853,11 @@ msgstr ""
 msgid "The company website URL. We use this url to fetch the company icon"
 msgstr ""
 
+#. js-lingui-id: j6q6l+
+#: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
+msgid "The connection-provider manifest is missing required fields."
+msgstr ""
+
 #. js-lingui-id: zGBDEH
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-version-standard-flat-field-metadata.util.ts
@@ -6875,12 +6945,12 @@ msgid "The initial version of a workflow can not be deleted"
 msgstr "Phiên bản ban đầu của quy trình làm việc không thể bị xóa"
 
 #. js-lingui-id: kdTB4e
-#: src/engine/core-modules/application/application-oauth-provider/application-oauth-provider.exception.ts
+#: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "The OAuth request is missing required parameters."
 msgstr ""
 
 #. js-lingui-id: mCM5lH
-#: src/engine/core-modules/application/application-oauth-provider/application-oauth-provider.exception.ts
+#: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
 msgid "The OAuth state parameter is invalid or expired."
 msgstr ""
 

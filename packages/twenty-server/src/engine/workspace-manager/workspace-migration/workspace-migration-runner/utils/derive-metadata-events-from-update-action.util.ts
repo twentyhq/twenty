@@ -135,7 +135,8 @@ const deriveAllMetadataEventsFromUpdateAction = ({
     case 'objectPermission':
     case 'fieldPermission':
     case 'viewSort':
-    case 'webhook': {
+    case 'webhook':
+    case 'connectionProvider': {
       const flatEntityMapsKey = getMetadataFlatEntityMapsKey(
         flatAction.metadataName,
       );

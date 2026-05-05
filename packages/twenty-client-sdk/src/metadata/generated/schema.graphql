@@ -973,7 +973,6 @@ type User {
   firstName: String!
   lastName: String!
   email: String!
-  defaultAvatarUrl: String
   isEmailVerified: Boolean!
   disabled: Boolean
   canImpersonate: Boolean!
@@ -2553,7 +2552,7 @@ type ConnectedAccountDTO {
   connectionParameters: ImapSmtpCaldavConnectionParameters
   lastSignedInAt: DateTime
   userWorkspaceId: UUID!
-  applicationConnectionProviderId: UUID
+  connectionProviderId: UUID
   applicationId: UUID
   name: String
   visibility: String!
@@ -2584,7 +2583,7 @@ type ConnectedAccountPublicDTO {
   scopes: [String!]
   lastSignedInAt: DateTime
   userWorkspaceId: UUID!
-  applicationConnectionProviderId: UUID
+  connectionProviderId: UUID
   applicationId: UUID
   name: String
   visibility: String!
@@ -2873,6 +2872,7 @@ enum AllMetadataName {
   fieldPermission
   frontComponent
   webhook
+  connectionProvider
 }
 
 type MinimalObjectMetadata {

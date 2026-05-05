@@ -3768,6 +3768,11 @@ msgstr "Se connecter avec Microsoft"
 msgid "Connected accounts"
 msgstr "Comptes connectés"
 
+#. js-lingui-id: 54WNJ6
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "connection provider"
+msgstr ""
+
 #. js-lingui-id: sbBqyy
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
 msgid "Connection providers"

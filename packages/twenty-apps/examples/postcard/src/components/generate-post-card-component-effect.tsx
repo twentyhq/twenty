@@ -1,8 +1,7 @@
 import { useEffect } from 'react';
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { useRecordId, updateProgress, enqueueSnackbar, unmountFrontComponent } from 'twenty-sdk/front-component';
+import { useSelectedRecordIds, updateProgress, enqueueSnackbar, unmountFrontComponent } from 'twenty-sdk/front-component';
 import { CoreApiClient } from 'twenty-client-sdk/core';
-import { isDefined } from 'twenty-shared/utils';
 import { POST_CARD_UNIVERSAL_IDENTIFIER } from '../objects/post-card.object';
 
 const SYSTEM_PROMPT =
@@ -11,12 +10,13 @@ const SYSTEM_PROMPT =
   'text, nothing else — no greeting label, no sign-off label, just the message.';
 
 const GeneratePostCardEffect = () => {
-  const recordId = useRecordId();
+  const selectedRecordIds = useSelectedRecordIds();
+  const recordId = selectedRecordIds.length === 1 ? selectedRecordIds[0] : null;
 
   useEffect(() => {
-    if (!isDefined(recordId)) {
+    if (recordId === null) {
       enqueueSnackbar({
-        message: 'No record selected',
+        message: 'Please select exactly one record',
         variant: 'error',
       });
       unmountFrontComponent();
