@@ -17,9 +17,27 @@ export class TransformApplicationVariableToSyncableEntityFastInstanceCommand
     await queryRunner.query(
       'ALTER TABLE "core"."applicationVariable" ADD "universalIdentifier" uuid',
     );
+    await queryRunner.query(
+      'ALTER TABLE "core"."applicationVariable" DROP CONSTRAINT "FK_51adb49e7f8df35dd23e01c4830"',
+    );
+    await queryRunner.query(
+      'ALTER TABLE "core"."applicationVariable" ALTER COLUMN "applicationId" SET NOT NULL',
+    );
+    await queryRunner.query(
+      'ALTER TABLE "core"."applicationVariable" ADD CONSTRAINT "FK_51adb49e7f8df35dd23e01c4830" FOREIGN KEY ("applicationId") REFERENCES "core"."application"("id") ON DELETE CASCADE ON UPDATE NO ACTION',
+    );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query(
+      'ALTER TABLE "core"."applicationVariable" DROP CONSTRAINT "FK_51adb49e7f8df35dd23e01c4830"',
+    );
+    await queryRunner.query(
+      'ALTER TABLE "core"."applicationVariable" ALTER COLUMN "applicationId" DROP NOT NULL',
+    );
+    await queryRunner.query(
+      'ALTER TABLE "core"."applicationVariable" ADD CONSTRAINT "FK_51adb49e7f8df35dd23e01c4830" FOREIGN KEY ("applicationId") REFERENCES "core"."application"("id") ON DELETE CASCADE ON UPDATE NO ACTION',
+    );
     await queryRunner.query(
       'ALTER TABLE "core"."applicationVariable" DROP COLUMN "universalIdentifier"',
     );
