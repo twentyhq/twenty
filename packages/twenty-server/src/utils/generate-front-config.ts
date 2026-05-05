@@ -12,6 +12,7 @@ export function generateFrontConfig(): void {
     window: {
       _env_: {
         REACT_APP_SERVER_BASE_URL: process.env.SERVER_URL,
+        AUTH_TYPE: process.env.AUTH_TYPE ?? '',
       },
     },
   };

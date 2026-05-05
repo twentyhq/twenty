@@ -427,6 +427,69 @@ describe('UserWorkspaceService', () => {
     });
   });
 
+  describe('addUserToWorkspaceOrEnsureRole', () => {
+    it('should delegate to addUserToWorkspaceIfUserNotInWorkspace when no membership exists', async () => {
+      const user = { id: 'user-id', email: 'test@example.com' } as UserEntity;
+      const workspace = { id: 'workspace-id' } as WorkspaceEntity;
+      const roleId = 'admin-role-id';
+
+      jest.spyOn(service, 'checkUserWorkspaceExists').mockResolvedValue(null);
+      const delegateSpy = jest
+        .spyOn(service, 'addUserToWorkspaceIfUserNotInWorkspace')
+        .mockResolvedValue(undefined);
+
+      const result = await service.addUserToWorkspaceOrEnsureRole(
+        user,
+        workspace,
+        roleId,
+      );
+
+      expect(delegateSpy).toHaveBeenCalledWith(user, workspace, roleId);
+      expect(
+        userRoleService.assignRoleToManyUserWorkspace,
+      ).not.toHaveBeenCalled();
+      expect(result).toEqual({ wasExistingMember: false });
+    });
+
+    it('should ensure role on existing membership without re-creating it (regression for bootstrap-sso-admin no-op)', async () => {
+      const user = { id: 'user-id', email: 'test@example.com' } as UserEntity;
+      const workspace = { id: 'workspace-id' } as WorkspaceEntity;
+      const existing = {
+        id: 'user-workspace-id',
+        userId: user.id,
+        workspaceId: workspace.id,
+      } as UserWorkspaceEntity;
+      const roleId = 'admin-role-id';
+
+      jest
+        .spyOn(service, 'checkUserWorkspaceExists')
+        .mockResolvedValue(existing);
+      const delegateSpy = jest.spyOn(
+        service,
+        'addUserToWorkspaceIfUserNotInWorkspace',
+      );
+      jest
+        .spyOn(userRoleService, 'assignRoleToManyUserWorkspace')
+        .mockResolvedValue(undefined);
+
+      const result = await service.addUserToWorkspaceOrEnsureRole(
+        user,
+        workspace,
+        roleId,
+      );
+
+      expect(delegateSpy).not.toHaveBeenCalled();
+      expect(
+        userRoleService.assignRoleToManyUserWorkspace,
+      ).toHaveBeenCalledWith({
+        workspaceId: workspace.id,
+        userWorkspaceIds: [existing.id],
+        roleId,
+      });
+      expect(result).toEqual({ wasExistingMember: true });
+    });
+  });
+
   describe('getUserCount', () => {
     it('should return the count of users in a workspace', async () => {
       const workspaceId = 'workspace-id';

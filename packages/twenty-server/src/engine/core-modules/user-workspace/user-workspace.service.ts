@@ -224,6 +224,34 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
     });
   }
 
+  // Idempotent variant of `addUserToWorkspaceIfUserNotInWorkspace` that also
+  // ensures the role on a pre-existing membership matches `roleId`. Used by
+  // the `workspace:bootstrap-sso-admin` CLI: an SSO sign-in that beats
+  // bootstrap to the workspace would otherwise leave the admin stuck as the
+  // workspace's defaultRoleId (Member), with bootstrap's existence-check
+  // helper silently no-op'ing the role assignment.
+  async addUserToWorkspaceOrEnsureRole(
+    user: UserEntity,
+    workspace: WorkspaceEntity,
+    roleId: string,
+  ): Promise<{ wasExistingMember: boolean }> {
+    const existing = await this.checkUserWorkspaceExists(user.id, workspace.id);
+
+    if (existing) {
+      await this.userRoleService.assignRoleToManyUserWorkspace({
+        workspaceId: workspace.id,
+        userWorkspaceIds: [existing.id],
+        roleId,
+      });
+
+      return { wasExistingMember: true };
+    }
+
+    await this.addUserToWorkspaceIfUserNotInWorkspace(user, workspace, roleId);
+
+    return { wasExistingMember: false };
+  }
+
   private async resolveRoleIdForNewMember(
     roleId: string | null | undefined,
     workspace: WorkspaceEntity,

@@ -30,7 +30,19 @@ su-exec postgres psql -h localhost -tc \
 # Run Twenty database setup and migrations
 cd /app/packages/twenty-server
 
-has_schema=$(PGPASSWORD=twenty psql -h localhost -U twenty -d default -tAc \
+# When PG_DATABASE_URL is set (external postgres mode) target it directly;
+# otherwise fall back to the embedded postgres + default db.
+# Wrapped in a function (not a string) so the URL stays one argument and
+# can't be word-split if it ever contains spaces or shell metacharacters.
+psql_target() {
+  if [ -n "$PG_DATABASE_URL" ]; then
+    psql "$PG_DATABASE_URL" "$@"
+  else
+    PGPASSWORD=twenty psql -h localhost -U twenty -d default "$@"
+  fi
+}
+
+has_schema=$(psql_target -tAc \
   "SELECT EXISTS (SELECT 1 FROM information_schema.schemata WHERE schema_name = 'core')")
 
 if [ "$has_schema" = "f" ]; then
@@ -55,8 +67,12 @@ step_start "Flushing cache"
 yarn command:prod cache:flush
 step_done
 
-# Only seed on first boot — check if the dev workspace already exists
-has_workspace=$(PGPASSWORD=twenty psql -h localhost -U twenty -d default -tAc \
+# Only seed on first boot — check if the dev workspace already exists.
+# UUID is SEED_APPLE_WORKSPACE_ID from
+# packages/twenty-server/src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant.ts
+# (the constant file repurposes this slot for SMB deployments via SMB_NAME
+# but keeps the same UUID, so the existence check is correct in both modes).
+has_workspace=$(psql_target -tAc \
   "SELECT EXISTS (SELECT 1 FROM core.workspace WHERE id = '20202020-1c25-4d02-bf25-6aeccf7ea419')")
 
 if [ "$has_workspace" = "f" ]; then

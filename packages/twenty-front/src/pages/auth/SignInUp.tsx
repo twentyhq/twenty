@@ -1,3 +1,4 @@
+import { useIsSsoEnabled } from '@/auth/hooks/useIsSsoEnabled';
 import { useSignInUp } from '@/auth/sign-in-up/hooks/useSignInUp';
 import { useSignInUpForm } from '@/auth/sign-in-up/hooks/useSignInUpForm';
 import {
@@ -22,13 +23,14 @@ import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWork
 import { useGetPublicWorkspaceDataByDomain } from '@/domain-manager/hooks/useGetPublicWorkspaceDataByDomain';
 import { useIsCurrentLocationOnAWorkspace } from '@/domain-manager/hooks/useIsCurrentLocationOnAWorkspace';
 import { useIsCurrentLocationOnDefaultDomain } from '@/domain-manager/hooks/useIsCurrentLocationOnDefaultDomain';
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 
 import { SignInUpGlobalScopeFormEffect } from '@/auth/sign-in-up/components/internal/SignInUpGlobalScopeFormEffect';
 import { SignInUpTwoFactorAuthenticationProvision } from '@/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationProvision';
 import { SignInUpTOTPVerification } from '@/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationVerification';
 import { useWorkspaceFromInviteHash } from '@/auth/sign-in-up/hooks/useWorkspaceFromInviteHash';
 import { clientConfigApiStatusState } from '@/client-config/states/clientConfigApiStatusState';
+import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { ModalContent } from 'twenty-ui/layout';
 import { useLingui } from '@lingui/react/macro';
 import { useSearchParams } from 'react-router-dom';
@@ -85,6 +87,19 @@ export const SignInUp = () => {
   const { t } = useLingui();
   const setSignInUpStep = useSetAtomState(signInUpStepState);
   const clientConfigApiStatus = useAtomStateValue(clientConfigApiStatusState);
+  const isSsoEnabled = useIsSsoEnabled();
+
+  useEffect(() => {
+    if (isSsoEnabled) {
+      // Use the API origin so the redirect still works when the SPA is
+      // served separately from the backend. In the unified-image setup
+      // both share an origin and the absolute URL collapses to the same
+      // path; in split-deploy mode it correctly hits the API.
+      window.location.replace(
+        `${REACT_APP_SERVER_BASE_URL}/auth/sso/proxy-login`,
+      );
+    }
+  }, [isSsoEnabled]);
 
   const { form } = useSignInUpForm();
   const { signInUpStep } = useSignInUp(form);
@@ -202,6 +217,16 @@ export const SignInUp = () => {
     signInUpStep,
     workspacePublicData,
   ]);
+
+  if (isSsoEnabled) {
+    return (
+      <ModalContent isVerticallyCentered isHorizontallyCentered>
+        <StyledLoaderContainer>
+          <Loader color="gray" />
+        </StyledLoaderContainer>
+      </ModalContent>
+    );
+  }
 
   if (signInUpStep === SignInUpStep.EmailVerification) {
     return (
