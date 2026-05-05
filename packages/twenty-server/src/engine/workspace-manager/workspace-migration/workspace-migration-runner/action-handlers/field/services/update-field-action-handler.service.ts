@@ -227,10 +227,6 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
     }
 
     if (isDefined(update.settings)) {
-      // Join column name is now computed from the field name and is renamed
-      // alongside it via `handleFieldNameUpdate`. No dedicated settings rename
-      // is needed here.
-
       // Handle asExpression/generatedType change (for TS_VECTOR fields)
       if (
         isFlatFieldMetadataOfType(
@@ -390,9 +386,6 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
         });
       }
     } else if (isMorphOrRelationFlatFieldMetadata(flatFieldMetadata)) {
-      // Only MANY_TO_ONE morph/relation fields have a database column to
-      // rename; the column name is computed from the field name as
-      // `${fieldName}Id`.
       if (
         flatFieldMetadata.settings?.relationType === RelationType.MANY_TO_ONE
       ) {
