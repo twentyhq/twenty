@@ -133,13 +133,13 @@ export class BlocklistItemDeleteCalendarEventsJob {
         for (const calendarChannel of calendarChannels) {
           const calendarChannelHandles = [calendarChannel.handle];
 
-          if (calendarChannel.connectedAccount.handleAliases) {
-            const rawAliases = calendarChannel.connectedAccount
-              .handleAliases as string | string[];
+          const handleAliases =
+            calendarChannel.connectedAccount?.handleAliases;
 
-            const aliasList = Array.isArray(rawAliases)
-              ? rawAliases
-              : rawAliases.split(',').map((alias: string) => alias.trim());
+          if (isDefined(handleAliases)) {
+            const aliasList: string[] = Array.isArray(handleAliases)
+              ? handleAliases
+              : (handleAliases as string).split(',').map((alias) => alias.trim());
 
             calendarChannelHandles.push(...aliasList);
           }
