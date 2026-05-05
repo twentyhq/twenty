@@ -1,44 +1,43 @@
 import { type I18n, type MessageDescriptor } from '@lingui/core';
-import { isDefined } from 'twenty-shared/utils';
+import { isArray, isObject, isString } from '@sniptt/guards';
 
 import { type FlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 
-const isMessageDescriptor = (obj: unknown): obj is MessageDescriptor =>
-  isDefined(obj) &&
-  typeof obj === 'object' &&
-  Object.prototype.hasOwnProperty.call(obj, 'id') &&
-  Object.prototype.hasOwnProperty.call(obj, 'message') &&
-  typeof (obj as MessageDescriptor).id === 'string';
+const USER_FRIENDLY_MESSAGE_KEY: keyof FlatEntityValidationError =
+  'userFriendlyMessage';
 
-export const translateUserFriendlyMessageDescriptors = <T>(
-  obj: T,
+const isMessageDescriptor = (value: unknown): value is MessageDescriptor =>
+  isObject(value) && 'id' in value && isString((value as { id: unknown }).id);
+
+const translateValueRecursively = (
+  value: unknown,
   i18n: I18n,
   parentKey?: string,
-): T => {
-  if (!isDefined(obj) || typeof obj !== 'object') {
-    return obj;
+): unknown => {
+  if (parentKey === USER_FRIENDLY_MESSAGE_KEY && isMessageDescriptor(value)) {
+    return i18n._(value);
   }
 
-  if (
-    isMessageDescriptor(obj) &&
-    parentKey ===
-      ('userFriendlyMessage' as const satisfies keyof FlatEntityValidationError)
-  ) {
-    return i18n._(obj) as T;
+  if (isArray(value)) {
+    return value.map((item) =>
+      translateValueRecursively(item, i18n, parentKey),
+    );
   }
 
-  if (Array.isArray(obj)) {
-    return obj.map((item) =>
-      translateUserFriendlyMessageDescriptors(item, i18n, parentKey),
-    ) as T;
+  if (isObject(value)) {
+    return Object.fromEntries(
+      Object.entries(value).map(([key, nestedValue]) => [
+        key,
+        translateValueRecursively(nestedValue, i18n, key),
+      ]),
+    );
   }
 
-  const result = {} as T;
-
-  for (const [key, value] of Object.entries(obj)) {
-    (result as Record<string, unknown>)[key] =
-      translateUserFriendlyMessageDescriptors(value, i18n, key);
-  }
-
-  return result;
+  return value;
 };
+
+export const translateUserFriendlyMessageDescriptors = (
+  payload: object,
+  i18n: I18n,
+): Record<string, unknown> =>
+  translateValueRecursively(payload, i18n) as Record<string, unknown>;
