@@ -1,6 +1,7 @@
 import { type ApolloCache, type StoreObject } from '@apollo/client';
 import { isNonEmptyString } from '@sniptt/guards';
 
+import { sortCachedObjectEdges } from '@/apollo/optimistic-effect/utils/sortCachedObjectEdges';
 import { triggerUpdateRelationsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerUpdateRelationsOptimisticEffect';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type RecordGqlRefEdge } from '@/object-record/cache/types/RecordGqlRefEdge';
@@ -226,9 +227,21 @@ export const triggerCreateRecordsOptimisticEffect = ({
           return rootQueryCachedObjectRecordConnection;
         }
 
+        const rootQueryOrderBy = rootQueryVariables?.orderBy;
+
+        let sortedEdges = nextRootQueryCachedRecordEdges;
+
+        if (Array.isArray(rootQueryOrderBy) && rootQueryOrderBy.length > 0) {
+          sortedEdges = sortCachedObjectEdges({
+            edges: nextRootQueryCachedRecordEdges,
+            orderBy: rootQueryOrderBy,
+            readCacheField: readField,
+          });
+        }
+
         return {
           ...rootQueryCachedObjectRecordConnection,
-          edges: nextRootQueryCachedRecordEdges,
+          edges: sortedEdges,
           totalCount: isDefined(rootQueryCachedRecordTotalCount)
             ? rootQueryCachedRecordTotalCount + 1
             : undefined,

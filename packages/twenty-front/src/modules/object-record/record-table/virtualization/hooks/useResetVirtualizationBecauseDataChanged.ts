@@ -1,7 +1,6 @@
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 
-import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useLazyFindManyRecords } from '@/object-record/hooks/useLazyFindManyRecords';
 import { useRelevantRecordsGqlFields } from '@/object-record/record-field/hooks/useRelevantRecordsGqlFields';
@@ -65,8 +64,6 @@ export const useResetVirtualizationBecauseDataChanged = (
     useAtomComponentStateCallbackState(
       dataLoadingStatusByRealIndexComponentState,
     );
-
-  const apolloCoreClient = useApolloCoreClient();
 
   const store = useStore();
 
@@ -145,15 +142,10 @@ export const useResetVirtualizationBecauseDataChanged = (
   const resetVirtualizationBecauseDataChanged = useCallback(async () => {
     await resetVirtualization();
 
-    apolloCoreClient.cache.evict({
-      fieldName: objectMetadataItem.namePlural,
-    });
-    apolloCoreClient.cache.gc();
-
     await sleep(50);
 
     await triggerFetchPagesWithoutDebounce();
-  }, [resetVirtualization, triggerFetchPagesWithoutDebounce, apolloCoreClient.cache, objectMetadataItem.namePlural]);
+  }, [resetVirtualization, triggerFetchPagesWithoutDebounce]);
 
   return {
     resetVirtualizationBecauseDataChanged,
