@@ -117,7 +117,7 @@ const SalesNotesListOnCompany = () => {
   if (error != null) {
     return (
       <div style={emptyStyle}>
-        <span>Failed to load sales notes: {error}</span>
+        <span>Failed to load call reports: {error}</span>
       </div>
     );
   }
@@ -125,7 +125,7 @@ const SalesNotesListOnCompany = () => {
   if (records == null) {
     return (
       <div style={emptyStyle}>
-        <span>Loading sales notes…</span>
+        <span>Loading call reports…</span>
       </div>
     );
   }
@@ -134,7 +134,7 @@ const SalesNotesListOnCompany = () => {
     return (
       <div style={emptyStyle}>
         <span>
-          No sales notes for this company yet. Click <b>+ Sales note</b> in the
+          No call reports for this company yet. Click <b>+ Call report</b> in the
           header to create one.
         </span>
       </div>
@@ -144,7 +144,7 @@ const SalesNotesListOnCompany = () => {
   return (
     <div style={cardStyle}>
       <div style={headerStyle}>
-        <span>{records.length} sales note{records.length === 1 ? '' : 's'}</span>
+        <span>{records.length} call report{records.length === 1 ? '' : 's'}</span>
       </div>
       <table style={tableStyle}>
         <thead>
@@ -192,6 +192,6 @@ export default defineFrontComponent({
   universalIdentifier: SALES_NOTES_LIST_ON_COMPANY_FRONT_COMPONENT_UID,
   name: 'sales-notes-list-on-company',
   description:
-    'Lists sales notes attached to the focal Company record (via salesNote.companyId). Each row navigates to the sales note.',
+    'Lists call reports attached to the focal Company record (via salesNote.companyId). Each row navigates to the call report.',
   component: SalesNotesListOnCompany,
 });

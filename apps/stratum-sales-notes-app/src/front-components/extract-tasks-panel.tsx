@@ -72,7 +72,7 @@ const fetchSalesNoteSnapshot = async (id: string): Promise<SalesNoteSnapshot> =>
     } | null;
   };
   const sn = data?.salesNote;
-  if (!sn) throw new Error('Sales note not found');
+  if (!sn) throw new Error('Call report not found');
   const attendeePersonIds: string[] = [];
   for (const edge of sn.attendees?.edges ?? []) {
     const pid = edge?.node?.personId;
@@ -329,10 +329,10 @@ const ExtractTasksPanel = () => {
       setProposals([]);
       const word = createdCount === 1 ? 'task' : 'tasks';
       const assignedNote = assigneeId
-        ? ' Assigned to the sales note owner.'
-        : ' (Sales note has no owner — tasks created unassigned. Set the Owner field to auto-assign next time.)';
+        ? ' Assigned to the call report owner.'
+        : ' (Call report has no owner — tasks created unassigned. Set the Owner field to auto-assign next time.)';
       setSuccess(
-        `Created ${createdCount} ${word} linked to this sales note.${assignedNote}`,
+        `Created ${createdCount} ${word} linked to this call report.${assignedNote}`,
       );
     } catch (e) {
       const msg = e instanceof Error ? e.message : String(e);
@@ -464,6 +464,6 @@ export default defineFrontComponent({
   universalIdentifier: EXTRACT_TASKS_PANEL_UID,
   name: 'extract-tasks-panel',
   description:
-    'Calls the AI to extract follow-up tasks (with due dates) from the sales note body, lets the user review/edit them, and creates them as Twenty Tasks linked to the same attendees / company / opportunity.',
+    'Calls the AI to extract follow-up tasks (with due dates) from the call report body, lets the user review/edit them, and creates them as Twenty Tasks linked to the same attendees / company / opportunity.',
   component: ExtractTasksPanel,
 });

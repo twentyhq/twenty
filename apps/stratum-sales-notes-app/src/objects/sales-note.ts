@@ -15,10 +15,10 @@ export default defineObject({
   universalIdentifier: SALES_NOTE_OBJECT_UNIVERSAL_IDENTIFIER,
   nameSingular: 'salesNote',
   namePlural: 'salesNotes',
-  labelSingular: 'Sales note',
-  labelPlural: 'Sales notes',
+  labelSingular: 'Call report',
+  labelPlural: 'Call reports',
   description:
-    'Sales-rep call/meeting notes. AI summarises the body and can extract follow-up tasks.',
+    'Sales-rep call/meeting reports. AI summarises the body and can extract follow-up tasks.',
   icon: 'IconNotebook',
   labelIdentifierFieldMetadataUniversalIdentifier: SALES_NOTE_NAME_FIELD_UID,
   fields: [
@@ -27,7 +27,7 @@ export default defineObject({
       type: FieldType.TEXT,
       name: 'name',
       label: 'Title',
-      description: 'Short title of the sales note',
+      description: 'Short title of the call report',
       icon: 'IconAbc',
     },
     {

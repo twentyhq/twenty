@@ -12,9 +12,9 @@ export default defineField({
   objectUniversalIdentifier: PERSON_OBJECT_UID,
   type: FieldType.RELATION,
   name: 'salesNoteAttendees',
-  label: 'Sales note attendances',
+  label: 'Call report attendances',
   description:
-    'Junction rows linking this Person to sales notes they attended. Use the salesNote relation on each row to reach the actual notes.',
+    'Junction rows linking this Person to call reports they attended. Use the salesNote relation on each row to reach the actual reports.',
   icon: 'IconUsers',
   relationTargetObjectMetadataUniversalIdentifier:
     SALES_NOTE_ATTENDEE_OBJECT_UID,

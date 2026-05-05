@@ -15,14 +15,14 @@ import {
 export default definePageLayoutTab({
   universalIdentifier: SALES_NOTES_ON_COMPANY_TAB_UID,
   pageLayoutUniversalIdentifier: DEFAULT_COMPANY_LAYOUT_UID,
-  title: 'Sales notes',
+  title: 'Call reports',
   position: 200,
   icon: 'IconNotebook',
   layoutMode: PageLayoutTabLayoutMode.CANVAS,
   widgets: [
     {
       universalIdentifier: SALES_NOTES_ON_COMPANY_WIDGET_UID,
-      title: 'Sales notes',
+      title: 'Call reports',
       type: 'FRONT_COMPONENT',
       configuration: {
         configurationType: 'FRONT_COMPONENT',

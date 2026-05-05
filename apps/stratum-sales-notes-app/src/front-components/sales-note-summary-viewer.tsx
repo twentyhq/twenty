@@ -111,6 +111,6 @@ export default defineFrontComponent({
   universalIdentifier: SALES_NOTE_SUMMARY_VIEWER_UID,
   name: 'sales-note-summary-viewer',
   description:
-    'Renders the AI-generated summary of a sales note in markdown format.',
+    'Renders the AI-generated summary of a call report in markdown format.',
   component: SalesNoteSummaryViewer,
 });

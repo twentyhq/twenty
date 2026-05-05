@@ -12,10 +12,10 @@ export default defineObject({
   universalIdentifier: SALES_NOTE_ATTENDEE_OBJECT_UID,
   nameSingular: 'salesNoteAttendee',
   namePlural: 'salesNoteAttendees',
-  labelSingular: 'Sales note attendee',
-  labelPlural: 'Sales note attendees',
+  labelSingular: 'Call report attendee',
+  labelPlural: 'Call report attendees',
   description:
-    'Junction linking a sales note to one of its attending People. Multiple rows per sales note for multi-attendee meetings.',
+    'Junction linking a call report to one of its attending People. Multiple rows per call report for multi-attendee meetings.',
   icon: 'IconUsers',
   labelIdentifierFieldMetadataUniversalIdentifier:
     SALES_NOTE_ATTENDEE_NAME_FIELD_UID,
@@ -26,7 +26,7 @@ export default defineObject({
       name: 'name',
       label: 'Name',
       description:
-        'Cached display label (typically "<person name> @ <sales note title>"). Populated by the app on insert.',
+        'Cached display label (typically "<person name> @ <call report title>"). Populated by the app on insert.',
       icon: 'IconAbc',
     },
   ],

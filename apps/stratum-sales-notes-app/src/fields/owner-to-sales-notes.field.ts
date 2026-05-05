@@ -12,8 +12,8 @@ export default defineField({
   objectUniversalIdentifier: WORKSPACE_MEMBER_OBJECT_UID,
   type: FieldType.RELATION,
   name: 'ownedSalesNotes',
-  label: 'Sales notes (as owner)',
-  description: 'Sales notes this workspace member is the author of',
+  label: 'Call reports (as owner)',
+  description: 'Call reports this workspace member is the author of',
   icon: 'IconNotebook',
   relationTargetObjectMetadataUniversalIdentifier:
     SALES_NOTE_OBJECT_UNIVERSAL_IDENTIFIER,

@@ -43,7 +43,7 @@ const NewSalesNoteFromPerson = () => {
         });
 
         await enqueueSnackbar({
-          message: 'Sales note created and linked to this contact',
+          message: 'Call report created and linked to this contact',
           variant: 'success',
         });
 
@@ -58,7 +58,7 @@ const NewSalesNoteFromPerson = () => {
           message:
             err instanceof Error
               ? err.message
-              : 'Failed to create sales note',
+              : 'Failed to create call report',
           variant: 'error',
         });
         await unmountFrontComponent();
@@ -73,13 +73,13 @@ export default defineFrontComponent({
   universalIdentifier: NEW_SALES_NOTE_FROM_PERSON_FRONT_COMPONENT_UID,
   name: 'New Sales Note From Person',
   description:
-    'Creates a fresh sales note attached to the current Person record (as an attendee) and navigates to it.',
+    'Creates a fresh call report attached to the current Person record (as an attendee) and navigates to it.',
   isHeadless: true,
   component: NewSalesNoteFromPerson,
   command: {
     universalIdentifier: NEW_SALES_NOTE_FROM_PERSON_COMMAND_UID,
-    label: '+ Sales note',
-    shortLabel: 'Sales note',
+    label: '+ Call report',
+    shortLabel: 'Call report',
     icon: 'IconNotebook',
     isPinned: true,
     availabilityType: 'RECORD_SELECTION',

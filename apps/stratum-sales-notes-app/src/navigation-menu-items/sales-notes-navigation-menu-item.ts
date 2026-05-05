@@ -8,7 +8,7 @@ import { defineNavigationMenuItem, NavigationMenuItemType } from 'twenty-sdk/def
 // default salesNote view defined in src/views/sales-note-view.ts.
 export default defineNavigationMenuItem({
   universalIdentifier: SALES_NOTE_NAV_MENU_ITEM_UID,
-  name: 'Sales notes',
+  name: 'Call reports',
   icon: 'IconNotebook',
   position: 0,
   type: NavigationMenuItemType.VIEW,

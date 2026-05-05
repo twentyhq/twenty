@@ -40,7 +40,7 @@ import { definePageLayout, PageLayoutTabLayoutMode } from 'twenty-sdk/define';
 //   - Files: reserved for #103 voice notes.
 export default definePageLayout({
   universalIdentifier: SALES_NOTE_PAGE_LAYOUT_UID,
-  name: 'Sales Note Record Page',
+  name: 'Call Report Record Page',
   type: 'RECORD_PAGE',
   objectUniversalIdentifier: SALES_NOTE_OBJECT_UNIVERSAL_IDENTIFIER,
   tabs: [

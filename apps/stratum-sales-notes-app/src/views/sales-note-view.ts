@@ -25,7 +25,7 @@ import { defineView } from 'twenty-sdk/define';
 // on a record renders empty and the index list is unconfigured.
 export default defineView({
   universalIdentifier: SALES_NOTE_VIEW_UID,
-  name: 'Sales notes',
+  name: 'Call reports',
   objectUniversalIdentifier: SALES_NOTE_OBJECT_UNIVERSAL_IDENTIFIER,
   icon: 'IconNotebook',
   position: 0,

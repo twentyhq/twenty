@@ -12,8 +12,8 @@ export default defineField({
   objectUniversalIdentifier: SALES_NOTE_ATTENDEE_OBJECT_UID,
   type: FieldType.RELATION,
   name: 'salesNote',
-  label: 'Sales note',
-  description: 'The sales note this attendee row links to',
+  label: 'Call report',
+  description: 'The call report this attendee row links to',
   icon: 'IconNotebook',
   relationTargetObjectMetadataUniversalIdentifier:
     SALES_NOTE_OBJECT_UNIVERSAL_IDENTIFIER,

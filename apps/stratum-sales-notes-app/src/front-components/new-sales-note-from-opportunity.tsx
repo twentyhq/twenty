@@ -44,7 +44,7 @@ const NewSalesNoteFromOpportunity = () => {
         });
 
         await enqueueSnackbar({
-          message: 'Sales note created and linked to this opportunity',
+          message: 'Call report created and linked to this opportunity',
           variant: 'success',
         });
 
@@ -59,7 +59,7 @@ const NewSalesNoteFromOpportunity = () => {
           message:
             err instanceof Error
               ? err.message
-              : 'Failed to create sales note',
+              : 'Failed to create call report',
           variant: 'error',
         });
         await unmountFrontComponent();
@@ -74,13 +74,13 @@ export default defineFrontComponent({
   universalIdentifier: NEW_SALES_NOTE_FROM_OPPORTUNITY_FRONT_COMPONENT_UID,
   name: 'New Sales Note From Opportunity',
   description:
-    'Creates a fresh sales note attached to the current Opportunity and navigates to it.',
+    'Creates a fresh call report attached to the current Opportunity and navigates to it.',
   isHeadless: true,
   component: NewSalesNoteFromOpportunity,
   command: {
     universalIdentifier: NEW_SALES_NOTE_FROM_OPPORTUNITY_COMMAND_UID,
-    label: '+ Sales note',
-    shortLabel: 'Sales note',
+    label: '+ Call report',
+    shortLabel: 'Call report',
     icon: 'IconNotebook',
     isPinned: true,
     availabilityType: 'RECORD_SELECTION',

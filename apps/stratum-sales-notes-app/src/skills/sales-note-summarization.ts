@@ -4,16 +4,16 @@ import { defineSkill } from 'twenty-sdk/define';
 export default defineSkill({
   universalIdentifier: SALES_NOTE_SUMMARIZATION_SKILL_UID,
   name: 'sales-note-summarization',
-  label: 'Sales Note Summarization',
+  label: 'Call Report Summarization',
   description:
-    'Instructions for summarising a sales-rep call/meeting note into a structured digest',
-  content: `# Sales Note Summarization
+    'Instructions for summarising a sales-rep call/meeting report into a structured digest',
+  content: `# Call Report Summarization
 
 ## When to Use
-Use this skill when a user asks you to summarise, structure, or extract insights from a sales-rep call or meeting note in Twenty.
+Use this skill when a user asks you to summarise, structure, or extract insights from a sales-rep call or meeting report in Twenty.
 
 ## How to Access the Data
-1. Use \`find_one_salesNote\` to fetch the sales note by its ID.
+1. Use \`find_one_salesNote\` to fetch the call report by its ID.
 2. Read the \`body\` field (RICH_TEXT, markdown). This is freeform text written by the rep — typed during or just after the call. There are NO speaker labels and NO timestamps; treat it as a single first-person account from the rep.
 3. The associated \`attendees\` (junction → Person), \`company\`, and \`opportunity\` relations give context about who/what the call was about.
 
