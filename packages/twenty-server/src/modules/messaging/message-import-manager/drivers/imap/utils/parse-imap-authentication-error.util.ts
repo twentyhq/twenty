@@ -11,7 +11,7 @@ const TRANSIENT_IMAP_RESPONSE_CODES = new Set([
   'UNAVAILABLE',
   'INUSE',
   'SERVERBUG',
-  'SERVERBUG'
+  'SERVERBUG',
 ]);
 
 export const parseImapAuthenticationError = (
