@@ -1,15 +1,4 @@
-export const INBOUND_WEBHOOK_SOURCES = [
-  'google-messaging',
-  'google-calendar',
-  'microsoft-messaging',
-  'microsoft-calendar',
-  'inbound-email-ses',
-] as const;
-
-export type InboundWebhookSource = (typeof INBOUND_WEBHOOK_SOURCES)[number];
-
-export const isInboundWebhookSource = (
-  value: unknown,
-): value is InboundWebhookSource =>
-  typeof value === 'string' &&
-  (INBOUND_WEBHOOK_SOURCES as readonly string[]).includes(value);
+// Sources are identified by an opaque string supplied as a URL path segment.
+// Concrete values are added by each consumer PR (driver migration, inbound
+// email, etc.) when they register an InboundWebhookHandler.
+export type InboundWebhookSource = string;

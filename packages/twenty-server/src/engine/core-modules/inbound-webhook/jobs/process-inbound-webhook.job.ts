@@ -11,9 +11,7 @@ import { type InboundWebhookJobData } from 'src/engine/core-modules/inbound-webh
 export class ProcessInboundWebhookJob {
   private readonly logger = new Logger(ProcessInboundWebhookJob.name);
 
-  constructor(
-    private readonly dispatcher: InboundWebhookDispatcherService,
-  ) {}
+  constructor(private readonly dispatcher: InboundWebhookDispatcherService) {}
 
   @Process(ProcessInboundWebhookJob.name)
   async handle(data: InboundWebhookJobData): Promise<void> {

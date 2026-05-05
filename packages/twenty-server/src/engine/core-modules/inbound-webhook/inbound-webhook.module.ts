@@ -5,11 +5,6 @@ import { InboundWebhookRenewalCronCommand } from 'src/engine/core-modules/inboun
 import { InboundWebhookRenewalCronJob } from 'src/engine/core-modules/inbound-webhook/crons/jobs/inbound-webhook-renewal.cron.job';
 import { InboundWebhookController } from 'src/engine/core-modules/inbound-webhook/controllers/inbound-webhook.controller';
 import { InboundWebhookSubscriptionEntity } from 'src/engine/core-modules/inbound-webhook/entities/inbound-webhook-subscription.entity';
-import { GoogleCalendarInboundWebhookHandler } from 'src/engine/core-modules/inbound-webhook/handlers/google-calendar-inbound-webhook.handler';
-import { GoogleMessagingInboundWebhookHandler } from 'src/engine/core-modules/inbound-webhook/handlers/google-messaging-inbound-webhook.handler';
-import { InboundEmailSesInboundWebhookHandler } from 'src/engine/core-modules/inbound-webhook/handlers/inbound-email-ses-inbound-webhook.handler';
-import { MicrosoftCalendarInboundWebhookHandler } from 'src/engine/core-modules/inbound-webhook/handlers/microsoft-calendar-inbound-webhook.handler';
-import { MicrosoftMessagingInboundWebhookHandler } from 'src/engine/core-modules/inbound-webhook/handlers/microsoft-messaging-inbound-webhook.handler';
 import { ProcessInboundWebhookJob } from 'src/engine/core-modules/inbound-webhook/jobs/process-inbound-webhook.job';
 import { InboundWebhookDispatcherService } from 'src/engine/core-modules/inbound-webhook/services/inbound-webhook-dispatcher.service';
 import { InboundWebhookIdempotencyService } from 'src/engine/core-modules/inbound-webhook/services/inbound-webhook-idempotency.service';
@@ -26,15 +21,14 @@ import { InboundWebhookVerifyService } from 'src/engine/core-modules/inbound-web
     InboundWebhookIdempotencyService,
     InboundWebhookSubscriptionService,
     InboundWebhookVerifyService,
-    GoogleMessagingInboundWebhookHandler,
-    GoogleCalendarInboundWebhookHandler,
-    MicrosoftMessagingInboundWebhookHandler,
-    MicrosoftCalendarInboundWebhookHandler,
-    InboundEmailSesInboundWebhookHandler,
     ProcessInboundWebhookJob,
     InboundWebhookRenewalCronJob,
     InboundWebhookRenewalCronCommand,
   ],
-  exports: [InboundWebhookSubscriptionService],
+  exports: [
+    InboundWebhookDispatcherService,
+    InboundWebhookSubscriptionService,
+    InboundWebhookVerifyService,
+  ],
 })
 export class InboundWebhookModule {}

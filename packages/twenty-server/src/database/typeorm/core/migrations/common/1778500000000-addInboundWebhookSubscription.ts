@@ -69,8 +69,6 @@ export class AddInboundWebhookSubscription1778500000000
       `DROP INDEX "core"."IDX_INBOUND_WEBHOOK_SUBSCRIPTION_WORKSPACE_ID"`,
     );
 
-    await queryRunner.query(
-      `DROP TABLE "core"."inboundWebhookSubscription"`,
-    );
+    await queryRunner.query(`DROP TABLE "core"."inboundWebhookSubscription"`);
   }
 }

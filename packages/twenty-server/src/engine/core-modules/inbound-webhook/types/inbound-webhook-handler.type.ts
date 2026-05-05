@@ -10,7 +10,9 @@ import { type InboundWebhookSubscriptionEntity } from 'src/engine/core-modules/i
 // belongs.
 export type InboundWebhookHandler = {
   verify(request: InboundWebhookRequest): Promise<boolean>;
-  buildEnvelope(request: InboundWebhookRequest): Promise<InboundWebhookEnvelope>;
+  buildEnvelope(
+    request: InboundWebhookRequest,
+  ): Promise<InboundWebhookEnvelope>;
   handle(envelope: InboundWebhookEnvelope): Promise<void>;
 };
 
