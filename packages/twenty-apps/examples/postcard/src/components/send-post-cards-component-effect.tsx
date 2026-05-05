@@ -10,52 +10,35 @@ const SendPostCardsEffect = () => {
   useEffect(() => {
     const send = async () => {
       try {
-        await updateProgress(0.1);
-        const client = new CoreApiClient();
-
-        let idsToSend: string[] = [];
-
-        if (recordIds.length > 0) {
-          idsToSend = recordIds;
-        } else {
-          const { postCards } = await client.query({
-            postCards: {
-              __args: {
-                filter: { status: { eq: 'DRAFT' } },
-              },
-              edges: { node: { id: true } },
-            },
+        if (recordIds.length === 0) {
+          await enqueueSnackbar({
+            message: 'No postcards selected',
+            variant: 'error',
           });
-
-          idsToSend =
-            postCards?.edges?.map(
-              (edge: { node: { id: string; status: true } }) => edge.node.id,
-            ) ?? [];
-        }
-
-        if (idsToSend.length === 0) {
-          await updateProgress(1);
           await unmountFrontComponent();
           return;
         }
 
+        await updateProgress(0.1);
+        const client = new CoreApiClient();
+
         await updateProgress(0.3);
 
-        for (let i = 0; i < idsToSend.length; i++) {
+        for (let i = 0; i < recordIds.length; i++) {
           await client.mutation({
             updatePostCard: {
               __args: {
-                id: idsToSend[i],
+                id: recordIds[i],
                 data: { status: 'SENT' },
               },
               id: true,
             },
           });
 
-          await updateProgress(0.3 + (0.7 * (i + 1)) / idsToSend.length);
+          await updateProgress(0.3 + (0.7 * (i + 1)) / recordIds.length);
         }
 
-        const count = idsToSend.length;
+        const count = recordIds.length;
 
         await enqueueSnackbar({
           message: `${count} postcard${count > 1 ? 's' : ''} sent`,
