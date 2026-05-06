@@ -30,7 +30,7 @@ import { type FrontendApplicationConnectionProvider } from '~/pages/settings/app
 import { getApplicationConnectionDetailSettingsPath } from '~/pages/settings/applications/utils/getApplicationConnectionDetailSettingsPath';
 
 const CONNECTION_TABLE_ROW_GRID_TEMPLATE_COLUMNS =
-  'minmax(0, 1fr) 160px 140px 36px';
+  'minmax(0, 1fr) 160px 180px 36px';
 
 const StyledFooter = styled.div`
   display: flex;
