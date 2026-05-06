@@ -1,5 +1,4 @@
 import { useMutation } from '@apollo/client/react';
-import { t } from '@lingui/core/macro';
 import {
   type SendInvitationsMutationVariables,
   SendInvitationsDocument,
@@ -26,10 +25,7 @@ export const useCreateWorkspaceInvitation = () => {
         ]);
       },
       onError: (error) => {
-        enqueueErrorSnackBar({
-          apolloError: error,
-          message: t`Failed to send invitation`,
-        });
+        enqueueErrorSnackBar({ apolloError: error });
       },
     });
   };

@@ -12,7 +12,6 @@ import {
 } from '@/workflow/types/Workflow';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useMutation } from '@apollo/client/react';
-import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import {
   type UpdateWorkflowVersionStepInput,
@@ -45,10 +44,7 @@ export const useUpdateWorkflowVersionStep = () => {
     const result = await mutate({
       variables: { input },
       onError: (error) => {
-        enqueueErrorSnackBar({
-          apolloError: error,
-          message: t`Failed to update workflow step`,
-        });
+        enqueueErrorSnackBar({ apolloError: error });
       },
     });
     const updatedStep = result?.data?.updateWorkflowVersionStep;

@@ -5,7 +5,6 @@ import { DELETE_WORKFLOW_VERSION_STEP } from '@/workflow/graphql/mutations/delet
 import { useUpdateWorkflowVersionCache } from '@/workflow/workflow-steps/hooks/useUpdateWorkflowVersionCache';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useMutation } from '@apollo/client/react';
-import { t } from '@lingui/core/macro';
 import {
   type DeleteWorkflowVersionStepInput,
   type DeleteWorkflowVersionStepMutation,
@@ -43,10 +42,7 @@ export const useDeleteWorkflowVersionStep = () => {
         },
       ],
       onError: (error) => {
-        enqueueErrorSnackBar({
-          apolloError: error,
-          message: t`Failed to delete workflow step`,
-        });
+        enqueueErrorSnackBar({ apolloError: error });
       },
     });
 

@@ -1,5 +1,4 @@
 import { useMutation } from '@apollo/client/react';
-import { t } from '@lingui/core/macro';
 import {
   type DeleteWorkspaceInvitationMutationVariables,
   DeleteWorkspaceInvitationDocument,
@@ -31,10 +30,7 @@ export const useDeleteWorkspaceInvitation = () => {
         );
       },
       onError: (error) => {
-        enqueueErrorSnackBar({
-          apolloError: error,
-          message: t`Failed to delete invitation`,
-        });
+        enqueueErrorSnackBar({ apolloError: error });
       },
     });
   };

@@ -1,5 +1,4 @@
 import { useMutation } from '@apollo/client/react';
-import { t } from '@lingui/core/macro';
 import {
   type ResendWorkspaceInvitationMutationVariables,
   ResendWorkspaceInvitationDocument,
@@ -32,10 +31,7 @@ export const useResendWorkspaceInvitation = () => {
         ]);
       },
       onError: (error) => {
-        enqueueErrorSnackBar({
-          apolloError: error,
-          message: t`Failed to resend invitation`,
-        });
+        enqueueErrorSnackBar({ apolloError: error });
       },
     });
   };

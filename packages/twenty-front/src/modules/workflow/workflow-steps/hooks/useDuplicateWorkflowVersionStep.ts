@@ -5,7 +5,6 @@ import { flowComponentState } from '@/workflow/states/flowComponentState';
 import { useUpdateWorkflowVersionCache } from '@/workflow/workflow-steps/hooks/useUpdateWorkflowVersionCache';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useMutation } from '@apollo/client/react';
-import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import {
   type DuplicateWorkflowVersionStepInput,
@@ -34,10 +33,7 @@ export const useDuplicateWorkflowVersionStep = () => {
     const result = await mutate({
       variables: { input },
       onError: (error) => {
-        enqueueErrorSnackBar({
-          apolloError: error,
-          message: t`Failed to duplicate workflow step`,
-        });
+        enqueueErrorSnackBar({ apolloError: error });
       },
     });
 

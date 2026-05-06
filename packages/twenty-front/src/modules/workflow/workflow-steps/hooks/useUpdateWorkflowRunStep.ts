@@ -9,7 +9,6 @@ import { UPDATE_WORKFLOW_RUN_STEP } from '@/workflow/graphql/mutations/updateWor
 import { type WorkflowStep, type WorkflowRun } from '@/workflow/types/Workflow';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useMutation } from '@apollo/client/react';
-import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import {
   type UpdateWorkflowRunStepInput,
@@ -42,10 +41,7 @@ export const useUpdateWorkflowRunStep = () => {
         input: { workflowRunId: input.workflowRunId, step: input.step },
       },
       onError: (error) => {
-        enqueueErrorSnackBar({
-          apolloError: error,
-          message: t`Failed to update workflow run step`,
-        });
+        enqueueErrorSnackBar({ apolloError: error });
       },
     });
     const updatedStep = result?.data?.updateWorkflowRunStep;
