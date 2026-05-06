@@ -16,8 +16,7 @@ import { ApolloCoreClientMockedProvider } from '@/object-metadata/hooks/__mocks_
 import { DefaultLayout } from '@/ui/layout/page/components/DefaultLayout';
 import { MinimalMetadataGater } from '@/metadata-store/components/MinimalMetadataGater';
 import { UserMetadataProviderInitialEffect } from '@/metadata-store/effect-components/UserMetadataProviderInitialEffect';
-import { IsMinimalMetadataReadyEffect } from '@/metadata-store/effect-components/IsMinimalMetadataReadyEffect';
-import { MinimalMetadataLoadEffect } from '@/metadata-store/effect-components/MinimalMetadataLoadEffect';
+import { MockedMetadataLoadEffect } from '~/testing/decorators/MockedMetadataLoadEffect';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { useState } from 'react';
 import { ClientConfigProvider } from '~/modules/client-config/components/ClientConfigProvider';
@@ -87,8 +86,7 @@ const Providers = () => {
             <ClientConfigProviderEffect />
             <ClientConfigProvider>
               <UserMetadataProviderInitialEffect />
-              <MinimalMetadataLoadEffect />
-              <IsMinimalMetadataReadyEffect />
+              <MockedMetadataLoadEffect />
               <WorkspaceProviderEffect />
               <MinimalMetadataGater>
                 <ApolloCoreClientMockedProvider>
