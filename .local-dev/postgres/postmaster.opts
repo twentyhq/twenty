@@ -1,0 +1,1 @@
+/usr/lib/postgresql/16/bin/postgres "-D" ".local-dev/postgres" "-p" "55432" "-k" "/home/apollo/Documents/hera8939/twenty/.local-dev"
