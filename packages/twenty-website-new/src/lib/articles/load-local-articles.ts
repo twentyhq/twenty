@@ -72,14 +72,21 @@ function normalizeTags(value: unknown, fileName: string): readonly string[] {
     return [];
   }
 
-  if (
-    Array.isArray(value) &&
-    value.every((tag) => typeof tag === 'string' && tag.trim())
-  ) {
-    return value;
+  if (!Array.isArray(value)) {
+    throw new Error(`Article "${fileName}" has invalid "tags".`);
   }
 
-  throw new Error(`Article "${fileName}" has invalid "tags".`);
+  if (!value.every((tag) => typeof tag === 'string' && tag.trim())) {
+    throw new Error(`Article "${fileName}" has invalid "tags".`);
+  }
+
+  return value.map((tag) => {
+    if (typeof tag !== 'string') {
+      throw new Error(`Article "${fileName}" has invalid "tags".`);
+    }
+
+    return tag.trim();
+  });
 }
 
 function normalizeSlug(value: unknown, fileName: string): string {

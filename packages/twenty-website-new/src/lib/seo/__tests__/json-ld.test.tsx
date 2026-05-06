@@ -198,6 +198,10 @@ describe('articles JSON-LD', () => {
       headline: 'Practical CRM Article',
       url: 'https://example.test/articles/practical-crm-article',
       datePublished: '2026-05-06',
+      author: {
+        '@type': 'Organization',
+        name: 'Twenty',
+      },
     });
   });
 
@@ -211,6 +215,10 @@ describe('articles JSON-LD', () => {
       url: 'https://example.test/articles/practical-crm-article',
       mainEntityOfPage: 'https://example.test/articles/practical-crm-article',
       datePublished: '2026-05-06',
+      author: {
+        '@type': 'Organization',
+        name: 'Twenty',
+      },
       publisher: {
         '@type': 'Organization',
         name: 'Twenty',

@@ -58,6 +58,29 @@ Newer body.`,
     expect(posts[1].tags).toEqual(['CRM']);
   });
 
+  it('trims tag strings after validating', () => {
+    const directoryPath = createTempDirectory();
+
+    writePost(
+      directoryPath,
+      'tagged-post.mdx',
+      `---
+title: Tagged post
+description: Tagged description
+date: 2026-03-01
+tags:
+  - "  CRM  "
+  - product
+---
+
+Body.`,
+    );
+
+    const posts = loadLocalArticlesFromDirectory(directoryPath);
+
+    expect(posts[0].tags).toEqual(['CRM', 'product']);
+  });
+
   it('fails loudly when required frontmatter is missing', () => {
     const directoryPath = createTempDirectory();
 

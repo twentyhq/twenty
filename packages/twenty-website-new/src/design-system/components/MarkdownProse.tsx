@@ -156,7 +156,6 @@ export function MarkdownProse({ markdown }: MarkdownProseProps) {
           ),
         }}
         remarkPlugins={[remarkGfm]}
-        urlTransform={(value) => value}
       >
         {markdown}
       </ReactMarkdown>
