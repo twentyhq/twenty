@@ -1,12 +1,18 @@
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 
-import { type AllFlatWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-action-common';
-import { METADATA_EVENTS_TO_EMIT } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/constants/metadata-event-to-emit.constant';
+import {
+  type AllFlatWorkspaceMigrationAction
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-action-common';
+import {
+  METADATA_EVENTS_TO_EMIT
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/constants/metadata-event-to-emit.constant';
 import {
   type CreateMetadataEvent,
   type MetadataEvent,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/metadata-event';
-import { flatEntityToScalarFlatEntity } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/flat-entity-to-scalar-flat-entity.util';
+import {
+  flatEntityToScalarFlatEntity
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/flat-entity-to-scalar-flat-entity.util';
 
 export const deriveMetadataEventsFromCreateAction = (
   flatAction: AllFlatWorkspaceMigrationAction<'create'>,
@@ -69,6 +75,9 @@ const deriveAllMetadataEventsFromCreateAction = (
 
       return [objectEvent, ...fieldEvents];
     }
+    case 'applicationVariable': {
+      return [];
+    }
     case 'view':
     case 'viewField':
     case 'viewGroup':
@@ -94,7 +103,6 @@ const deriveAllMetadataEventsFromCreateAction = (
     case 'fieldPermission':
     case 'viewSort':
     case 'webhook':
-    case 'applicationVariable':
     case 'connectionProvider': {
       return [
         {

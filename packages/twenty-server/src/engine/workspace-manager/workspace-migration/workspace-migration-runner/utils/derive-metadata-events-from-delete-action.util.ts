@@ -31,6 +31,9 @@ const deriveAllMetadataEventsFromDeleteAction = ({
   allFlatEntityMaps,
 }: DeriveMetadataEventsFromDeleteActionArgs): MetadataEvent[] => {
   switch (flatAction.metadataName) {
+    case 'applicationVariable': {
+      return [];
+    }
     case 'fieldMetadata':
     case 'objectMetadata':
     case 'view':
@@ -58,7 +61,6 @@ const deriveAllMetadataEventsFromDeleteAction = ({
     case 'fieldPermission':
     case 'viewSort':
     case 'webhook':
-    case 'applicationVariable':
     case 'connectionProvider': {
       const flatEntityToDelete = findFlatEntityByIdInFlatEntityMapsOrThrow<
         MetadataFlatEntity<typeof flatAction.metadataName>
