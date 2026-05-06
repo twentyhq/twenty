@@ -7,12 +7,11 @@ export const getNativeModelCapabilities = (
   sdkPackage?: AiSdkPackage | null,
 ): Partial<Record<NativeModelToolKey, boolean>> | undefined => {
   const tools = getNativeModelToolsForSdkPackage(sdkPackage);
+  const toolKeys = tools ? Object.keys(tools) : [];
 
-  if (!tools) {
+  if (toolKeys.length === 0) {
     return undefined;
   }
 
-  return Object.fromEntries(
-    Object.keys(tools).map((toolKey) => [toolKey, true]),
-  );
+  return Object.fromEntries(toolKeys.map((toolKey) => [toolKey, true]));
 };

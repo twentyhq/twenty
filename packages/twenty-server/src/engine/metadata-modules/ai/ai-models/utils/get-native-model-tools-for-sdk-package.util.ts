@@ -8,8 +8,9 @@ export const getNativeModelToolsForSdkPackage = (
 ): NativeModelTools | undefined =>
   sdkPackage
     ? (
-        NATIVE_MODEL_TOOLS_BY_SDK_PACKAGE as Partial<
-          Record<AiSdkPackage, NativeModelTools>
+        NATIVE_MODEL_TOOLS_BY_SDK_PACKAGE as Record<
+          AiSdkPackage,
+          NativeModelTools
         >
       )[sdkPackage]
     : undefined;
