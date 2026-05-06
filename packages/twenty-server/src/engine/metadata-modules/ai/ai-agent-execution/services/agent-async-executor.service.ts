@@ -79,29 +79,10 @@ export class AgentAsyncExecutorService {
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
   ) {}
 
-  private extractRoleIds(
-    rolePermissionConfig?: RolePermissionConfig,
-  ): string[] {
-    if (!rolePermissionConfig) {
-      return [];
-    }
-
-    if ('intersectionOf' in rolePermissionConfig) {
-      return rolePermissionConfig.intersectionOf;
-    }
-
-    if ('unionOf' in rolePermissionConfig) {
-      return rolePermissionConfig.unionOf;
-    }
-
-    return [];
-  }
-
-  private async getEffectiveRolePermissionConfig(
+  private async getAgentRoleId(
     agentId: string,
     workspaceId: string,
-    rolePermissionConfig?: RolePermissionConfig,
-  ): Promise<RolePermissionConfig | undefined> {
+  ): Promise<string | undefined> {
     const roleTarget = await this.roleTargetRepository.findOne({
       where: {
         agentId,
@@ -110,25 +91,13 @@ export class AgentAsyncExecutorService {
       select: ['roleId'],
     });
 
-    const agentRoleId = roleTarget?.roleId;
-    const configRoleIds = this.extractRoleIds(rolePermissionConfig);
-
-    const allRoleIds = agentRoleId
-      ? [...new Set([...configRoleIds, agentRoleId])]
-      : configRoleIds;
-
-    if (allRoleIds.length === 0) {
-      return undefined;
-    }
-
-    return { intersectionOf: allRoleIds };
+    return roleTarget?.roleId;
   }
 
   async executeAgent({
     agent,
     userPrompt,
     actorContext,
-    rolePermissionConfig,
     authContext,
     workspaceId,
     userWorkspaceId,
@@ -170,52 +139,62 @@ export class AgentAsyncExecutorService {
       let providerOptions = {};
 
       if (agent) {
-        const effectiveRoleConfig = await this.getEffectiveRolePermissionConfig(
+        const agentRoleId = await this.getAgentRoleId(
           agent.id,
           agent.workspaceId,
-          rolePermissionConfig,
         );
 
-        // Workflow context: registry tools come from DATABASE_CRUD and ACTION.
-        // Native model tools are bound separately below.
-        const roleId = this.extractRoleIds(effectiveRoleConfig)[0] ?? '';
+        // Workflow agent tools are scoped exclusively by the agent permission-tab role.
+        // No role means no tools. If on-behalf-of execution should also constrain
+        // tools, intersect this agent role with the runtime role permission config.
+        const hasAgentPermissionRole = isDefined(agentRoleId);
 
-        const toolProviderContext: ToolProviderContext = {
-          workspaceId: agent.workspaceId,
-          roleId,
-          rolePermissionConfig: effectiveRoleConfig ?? { unionOf: [] },
-          authContext,
-          actorContext,
-          userId:
-            isDefined(authContext) && isUserAuthContext(authContext)
-              ? authContext.user.id
-              : undefined,
-          userWorkspaceId:
-            isDefined(authContext) && isUserAuthContext(authContext)
-              ? authContext.userWorkspaceId
-              : undefined,
-        };
-
-        // Native (modelConfiguration) and action (role permission) are independent rails — model picks if both active.
         const nativeModelToolOptions: NativeModelToolOptions = {
           webSearchEnabled:
+            hasAgentPermissionRole &&
             agent.modelConfiguration?.webSearch?.enabled === true,
           twitterSearchEnabled:
+            hasAgentPermissionRole &&
             agent.modelConfiguration?.twitterSearch?.enabled === true,
         };
 
-        const registryTools = await this.toolRegistry.getToolsByCategories(
-          toolProviderContext,
-          {
-            categories: WORKFLOW_AGENT_REGISTRY_TOOL_CATEGORIES,
-            wrapWithErrorContext: false,
-          },
-        );
+        let registryTools: ToolSet = {};
+        let actionWebSearchTools: ToolSet = {};
 
-        const actionWebSearchTools = await this.toolRegistry.getToolsByName(
-          [EXA_WEB_SEARCH_TOOL_NAME],
-          toolProviderContext,
-        );
+        if (isDefined(agentRoleId)) {
+          const agentRolePermissionConfig: RolePermissionConfig = {
+            unionOf: [agentRoleId],
+          };
+
+          const toolProviderContext: ToolProviderContext = {
+            workspaceId: agent.workspaceId,
+            roleId: agentRoleId,
+            rolePermissionConfig: agentRolePermissionConfig,
+            authContext,
+            actorContext,
+            userId:
+              isDefined(authContext) && isUserAuthContext(authContext)
+                ? authContext.user.id
+                : undefined,
+            userWorkspaceId:
+              isDefined(authContext) && isUserAuthContext(authContext)
+                ? authContext.userWorkspaceId
+                : undefined,
+          };
+
+          registryTools = await this.toolRegistry.getToolsByCategories(
+            toolProviderContext,
+            {
+              categories: WORKFLOW_AGENT_REGISTRY_TOOL_CATEGORIES,
+              wrapWithErrorContext: false,
+            },
+          );
+
+          actionWebSearchTools = await this.toolRegistry.getToolsByName(
+            [EXA_WEB_SEARCH_TOOL_NAME],
+            toolProviderContext,
+          );
+        }
 
         const nativeTools = this.nativeToolBinder.bind(
           registeredModel,

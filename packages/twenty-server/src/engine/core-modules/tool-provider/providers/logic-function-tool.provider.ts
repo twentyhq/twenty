@@ -72,6 +72,8 @@ export class LogicFunctionToolProvider implements ToolProvider {
     for (const logicFunction of logicFunctionsWithSchema) {
       const toolName = this.buildLogicFunctionToolName(logicFunction.name);
 
+      // Exa web search is registered as a logic-function tool, so gate it here
+      // with WEB_SEARCH_TOOL instead of the ActionToolProvider permissions.
       if (toolName === EXA_WEB_SEARCH_TOOL_NAME) {
         const isPermitted = await this.permissionsService.hasToolPermission(
           context.rolePermissionConfig,
