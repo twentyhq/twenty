@@ -9,7 +9,7 @@ export class BackfillApplicationVariableUniversalIdentifierSlowInstanceCommand
 {
   async runDataMigration(dataSource: DataSource): Promise<void> {
     await dataSource.query(
-      'DELETE "core"."applicationVariable" WHERE "applicationId" IS NULL',
+      'DELETE FROM "core"."applicationVariable" WHERE "applicationId" IS NULL',
     );
     await dataSource.query(
       'UPDATE "core"."applicationVariable" SET "universalIdentifier" = gen_random_uuid() WHERE "universalIdentifier" IS NULL',
