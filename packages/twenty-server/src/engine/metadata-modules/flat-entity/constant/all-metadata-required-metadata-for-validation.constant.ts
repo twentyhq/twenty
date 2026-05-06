@@ -112,5 +112,6 @@ export const ALL_METADATA_REQUIRED_METADATA_FOR_VALIDATION = {
   },
   frontComponent: {},
   webhook: {},
+  applicationVariable: {},
   connectionProvider: {},
 } as const satisfies MetadataRequiredForValidation;

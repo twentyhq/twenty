@@ -185,6 +185,7 @@ export type AiSystemPromptSection = {
 
 export enum AllMetadataName {
   agent = 'agent',
+  applicationVariable = 'applicationVariable',
   commandMenuItem = 'commandMenuItem',
   connectionProvider = 'connectionProvider',
   fieldMetadata = 'fieldMetadata',

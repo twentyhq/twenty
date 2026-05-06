@@ -19,7 +19,7 @@ import {
 import { ApplicationLogsService } from 'src/engine/core-modules/application-logs/application-logs.service';
 import { parseApplicationLogLines } from 'src/engine/core-modules/application-logs/utils/parse-application-log-lines';
 import { ApplicationRegistrationVariableEntity } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.entity';
-import type { FlatApplicationVariable } from 'src/engine/core-modules/application/application-variable/types/flat-application-variable.type';
+import type { FlatApplicationVariable } from 'src/engine/metadata-modules/flat-application-variable/types/flat-application-variable.type';
 import { FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
 import { LOGIC_FUNCTION_EXECUTED_EVENT } from 'src/engine/core-modules/audit/utils/events/workspace-event/logic-function/logic-function-executed';
@@ -205,8 +205,17 @@ export class LogicFunctionExecutorService {
       );
     }
 
-    const flatApplicationVariables =
-      applicationVariableMaps.byApplicationId[flatApplication.id] ?? [];
+    const flatApplicationVariableUniversalIdentifiers =
+      applicationVariableMaps.universalIdentifiersByApplicationId[
+        flatApplication.id
+      ] ?? [];
+
+    const flatApplicationVariables = flatApplicationVariableUniversalIdentifiers
+      .map(
+        (universalIdentifier) =>
+          applicationVariableMaps.byUniversalIdentifier[universalIdentifier],
+      )
+      .filter(isDefined);
 
     return { flatApplication, flatLogicFunction, flatApplicationVariables };
   }
