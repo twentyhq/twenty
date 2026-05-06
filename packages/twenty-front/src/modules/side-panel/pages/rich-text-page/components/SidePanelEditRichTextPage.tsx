@@ -22,8 +22,16 @@ const RichTextFieldEditor = lazy(() =>
 );
 
 const StyledContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+`;
+
+const StyledContent = styled.div`
   box-sizing: border-box;
+  flex: 1;
   margin: ${themeCssVariables.spacing[4]} -8px;
+  overflow-y: auto;
   padding-inline: 44px 0px;
   width: 100%;
 `;
@@ -56,20 +64,22 @@ export const SidePanelEditRichTextPage = () => {
 
   return (
     <StyledContainer>
-      <Suspense fallback={<LoadingSkeleton />}>
-        {isActivityObject(objectNameSingular) ? (
-          <ActivityRichTextEditor
-            activityId={recordId}
-            activityObjectNameSingular={objectNameSingular}
-          />
-        ) : (
-          <RichTextFieldEditor
-            recordId={recordId}
-            objectNameSingular={objectNameSingular}
-            fieldName={fieldName}
-          />
-        )}
-      </Suspense>
+      <StyledContent>
+        <Suspense fallback={<LoadingSkeleton />}>
+          {isActivityObject(objectNameSingular) ? (
+            <ActivityRichTextEditor
+              activityId={recordId}
+              activityObjectNameSingular={objectNameSingular}
+            />
+          ) : (
+            <RichTextFieldEditor
+              recordId={recordId}
+              objectNameSingular={objectNameSingular}
+              fieldName={fieldName}
+            />
+          )}
+        </Suspense>
+      </StyledContent>
     </StyledContainer>
   );
 };
