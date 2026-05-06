@@ -32,6 +32,7 @@ import {
   LEARN_TOOLS_TOOL_NAME,
   LOAD_SKILL_TOOL_NAME,
 } from 'src/engine/core-modules/tool-provider/tools';
+import { inlineToolSetInputSchemaRefs } from 'src/engine/core-modules/tool-provider/utils/inline-json-schema-refs.util';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AgentActorContextService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-actor-context.service';
 import { AGENT_CONFIG } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-config.const';
@@ -53,6 +54,7 @@ import {
   getCallLevelCacheProviderOptions,
 } from 'src/engine/metadata-modules/ai/ai-chat/utils/inject-cache-breakpoint.util';
 import { AI_TELEMETRY_CONFIG } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-telemetry.const';
+import { AI_SDK_GOOGLE } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-sdk-package.const';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { type AiModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-config.type';
 import { SkillService } from 'src/engine/metadata-modules/skill/skill.service';
@@ -158,6 +160,8 @@ export class ChatExecutionService {
       registeredModel.modelId,
     );
 
+    const isGoogleModel = registeredModel.sdkPackage === AI_SDK_GOOGLE;
+
     const nativeModelTools = this.nativeToolBinder.bind(registeredModel, {
       webSearchEnabled: true,
     });
@@ -182,6 +186,7 @@ export class ChatExecutionService {
       [LEARN_TOOLS_TOOL_NAME]: createLearnToolsTool(
         this.toolRegistry,
         toolContext,
+        { inlineInputSchemaRefs: isGoogleModel },
       ),
       [EXECUTE_TOOL_TOOL_NAME]: createExecuteToolTool(
         this.toolRegistry,
@@ -200,6 +205,10 @@ export class ChatExecutionService {
         },
       ),
     };
+
+    const modelTools = isGoogleModel
+      ? inlineToolSetInputSchemaRefs(activeTools)
+      : activeTools;
 
     let processedMessages: UIMessage[] = messages;
 
@@ -232,7 +241,7 @@ export class ChatExecutionService {
     );
 
     this.logger.log(
-      `Starting chat execution with model ${registeredModel.modelId}, ${Object.keys(activeTools).length} active tools`,
+      `Starting chat execution with model ${registeredModel.modelId}, ${Object.keys(modelTools).length} active tools`,
     );
 
     const systemMessage: SystemModelMessage = {
@@ -325,7 +334,7 @@ export class ChatExecutionService {
     const stream = streamText({
       model: registeredModel.model,
       messages: [systemMessage, ...modelMessages],
-      tools: activeTools,
+      tools: modelTools,
       abortSignal,
       stopWhen: stepCountIs(AGENT_CONFIG.MAX_STEPS),
       experimental_telemetry: AI_TELEMETRY_CONFIG,

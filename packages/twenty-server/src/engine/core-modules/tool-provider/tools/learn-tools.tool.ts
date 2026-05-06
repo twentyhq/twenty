@@ -2,6 +2,7 @@ import { z } from 'zod';
 
 import { type ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
 import { type ToolContext } from 'src/engine/core-modules/tool-provider/types/tool-context.type';
+import { inlineJsonSchemaRefs } from 'src/engine/core-modules/tool-provider/utils/inline-json-schema-refs.util';
 
 export const LEARN_TOOLS_TOOL_NAME = 'learn_tools';
 
@@ -39,7 +40,10 @@ export type LearnToolsResult = {
 export const createLearnToolsTool = (
   toolRegistry: ToolRegistryService,
   context: ToolContext,
-  excludeTools?: Set<string>,
+  options?: {
+    excludeTools?: Set<string>;
+    inlineInputSchemaRefs?: boolean;
+  },
 ) => ({
   description:
     'STEP 2: Get input schemas for tools discovered via get_tool_catalog. Call this with exact tool names to learn the required arguments before calling execute_tool.',
@@ -47,15 +51,19 @@ export const createLearnToolsTool = (
   execute: async (parameters: LearnToolsInput): Promise<LearnToolsResult> => {
     const { toolNames, aspects } = parameters;
 
-    const allowedNames = excludeTools
-      ? toolNames.filter((name) => !excludeTools.has(name))
+    const allowedNames = options?.excludeTools
+      ? toolNames.filter((name) => !options.excludeTools?.has(name))
       : toolNames;
 
-    const toolInfos = await toolRegistry.getToolInfo(
-      allowedNames,
-      context,
-      aspects,
-    );
+    const toolInfos = (
+      await toolRegistry.getToolInfo(allowedNames, context, aspects)
+    ).map((toolInfo) => ({
+      ...toolInfo,
+      inputSchema:
+        options?.inlineInputSchemaRefs && toolInfo.inputSchema
+          ? inlineJsonSchemaRefs(toolInfo.inputSchema)
+          : toolInfo.inputSchema,
+    }));
 
     const foundNames = new Set(toolInfos.map((t) => t.name));
     const notFound = toolNames.filter((name) => !foundNames.has(name));

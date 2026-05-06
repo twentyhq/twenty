@@ -20,6 +20,10 @@ import { BillingUsageService } from 'src/engine/core-modules/billing/services/bi
 import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
 import { NativeToolBinderService } from 'src/engine/core-modules/tool-provider/native/native-tool-binder.service';
 import { ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
+import {
+  inlineJsonSchemaRefs,
+  inlineToolSetInputSchemaRefs,
+} from 'src/engine/core-modules/tool-provider/utils/inline-json-schema-refs.util';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WORKFLOW_AGENT_REGISTRY_TOOL_CATEGORIES } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/workflow-agent-registry-tool-categories.const';
@@ -37,6 +41,7 @@ import { WORKFLOW_SYSTEM_PROMPTS } from 'src/engine/metadata-modules/ai/ai-agent
 import { type AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { repairToolCall } from 'src/engine/metadata-modules/ai/ai-agent/utils/repair-tool-call.util';
 import { AI_TELEMETRY_CONFIG } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-telemetry.const';
+import { AI_SDK_GOOGLE } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-sdk-package.const';
 import { AiModelConfigService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-config.service';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
@@ -163,6 +168,7 @@ export class AgentAsyncExecutorService {
 
       const registeredModel =
         await this.aiModelRegistryService.resolveModelForAgent(agent);
+      const isGoogleModel = registeredModel.sdkPackage === AI_SDK_GOOGLE;
 
       let tools: ToolSet = {};
       let providerOptions = {};
@@ -220,6 +226,10 @@ export class AgentAsyncExecutorService {
         );
       }
 
+      if (isGoogleModel) {
+        tools = inlineToolSetInputSchemaRefs(tools);
+      }
+
       this.logger.log(`Generated ${Object.keys(tools).length} tools for agent`);
 
       const textResponse = await generateText({
@@ -258,8 +268,12 @@ export class AgentAsyncExecutorService {
         agent?.responseFormat?.type === 'json'
           ? agent.responseFormat.schema
           : undefined;
+      const outputSchema =
+        agentSchema && isGoogleModel
+          ? inlineJsonSchemaRefs(agentSchema)
+          : agentSchema;
 
-      if (!agentSchema) {
+      if (!outputSchema) {
         return {
           result: { response: textResponse.text },
           usage: textResponse.usage,
@@ -276,7 +290,7 @@ export class AgentAsyncExecutorService {
                  Execution Results: ${textResponse.text}
 
                  Please generate the structured output based on the execution results and context above.`,
-        output: Output.object({ schema: jsonSchema(agentSchema) }),
+        output: Output.object({ schema: jsonSchema(outputSchema) }),
         experimental_telemetry: AI_TELEMETRY_CONFIG,
       });
 
