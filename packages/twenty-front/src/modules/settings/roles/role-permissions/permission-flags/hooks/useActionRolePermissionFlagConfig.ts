@@ -13,6 +13,7 @@ import {
   IconSparkles,
   IconTable,
   IconUser,
+  IconWorld,
 } from 'twenty-ui/display';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 
@@ -92,6 +93,16 @@ export const useActionRolePermissionFlagConfig = ({
         name: t`Code Interpreter`,
         description: t`Run code to analyze files and data`,
         Icon: IconCode,
+        isToolPermission: true,
+        isRelevantForAgents: true,
+        isRelevantForApiKeys: false,
+        isRelevantForUsers: true,
+      },
+      {
+        key: PermissionFlagType.WEB_SEARCH_TOOL,
+        name: t`Web Search`,
+        description: t`Search the web via configured action tools`,
+        Icon: IconWorld,
         isToolPermission: true,
         isRelevantForAgents: true,
         isRelevantForApiKeys: false,

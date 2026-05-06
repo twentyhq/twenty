@@ -1,8 +1,10 @@
 import { Injectable } from '@nestjs/common';
 
+import { PermissionFlagType } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 import { DEFAULT_TOOL_INPUT_SCHEMA } from 'twenty-shared/logic-function';
 
+import { EXA_WEB_SEARCH_TOOL_NAME } from 'src/engine/core-modules/tool-provider/constants/exa-web-search-tool-name.const';
 import { type GenerateDescriptorOptions } from 'src/engine/core-modules/tool-provider/interfaces/generate-descriptor-options.type';
 import { type ToolProvider } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
 import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
@@ -13,6 +15,7 @@ import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
+import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 
 @Injectable()
 export class LogicFunctionToolProvider implements ToolProvider {
@@ -20,6 +23,7 @@ export class LogicFunctionToolProvider implements ToolProvider {
 
   constructor(
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
+    private readonly permissionsService: PermissionsService,
   ) {}
 
   async isAvailable(_context: ToolProviderContext): Promise<boolean> {
@@ -67,6 +71,18 @@ export class LogicFunctionToolProvider implements ToolProvider {
 
     for (const logicFunction of logicFunctionsWithSchema) {
       const toolName = this.buildLogicFunctionToolName(logicFunction.name);
+
+      if (toolName === EXA_WEB_SEARCH_TOOL_NAME) {
+        const isPermitted = await this.permissionsService.hasToolPermission(
+          context.rolePermissionConfig,
+          context.workspaceId,
+          PermissionFlagType.WEB_SEARCH_TOOL,
+        );
+
+        if (!isPermitted) {
+          continue;
+        }
+      }
 
       const base: ToolIndexEntry = {
         name: toolName,

@@ -19,7 +19,7 @@ import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/wo
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
 import { EXA_WEB_SEARCH_TOOL_NAME } from 'src/engine/core-modules/tool-provider/constants/exa-web-search-tool-name.const';
 import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
-import { NativeToolBinderService } from 'src/engine/core-modules/tool-provider/native/native-tool-binder.service';
+import { NativeToolBinderService } from 'src/engine/metadata-modules/ai/ai-models/services/native-tool-binder.service';
 import { ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -41,7 +41,6 @@ import { AI_TELEMETRY_CONFIG } from 'src/engine/metadata-modules/ai/ai-models/co
 import { AiModelConfigService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-config.service';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { type NativeModelToolOptions } from 'src/engine/metadata-modules/ai/ai-models/types/native-model-tool-options.type';
-import { getWebSearchImplementation } from 'src/engine/metadata-modules/ai/ai-models/utils/get-web-search-implementation.util';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 
@@ -197,18 +196,10 @@ export class AgentAsyncExecutorService {
               : undefined,
         };
 
-        const toolCatalog =
-          await this.toolRegistry.getCatalog(toolProviderContext);
-
-        const webSearchEnabled =
-          agent.modelConfiguration?.webSearch?.enabled === true;
-        const webSearchImplementation = getWebSearchImplementation({
-          sdkPackage: registeredModel.sdkPackage,
-          toolCatalog,
-        });
+        // Native (modelConfiguration) and action (role permission) are independent rails — model picks if both active.
         const nativeModelToolOptions: NativeModelToolOptions = {
           webSearchEnabled:
-            webSearchEnabled && webSearchImplementation === 'native',
+            agent.modelConfiguration?.webSearch?.enabled === true,
           twitterSearchEnabled:
             agent.modelConfiguration?.twitterSearch?.enabled === true,
         };
@@ -221,13 +212,10 @@ export class AgentAsyncExecutorService {
           },
         );
 
-        const exaWebSearchTools =
-          webSearchEnabled && webSearchImplementation === 'exa'
-            ? await this.toolRegistry.getToolsByName(
-                [EXA_WEB_SEARCH_TOOL_NAME],
-                toolProviderContext,
-              )
-            : {};
+        const actionWebSearchTools = await this.toolRegistry.getToolsByName(
+          [EXA_WEB_SEARCH_TOOL_NAME],
+          toolProviderContext,
+        );
 
         const nativeTools = this.nativeToolBinder.bind(
           registeredModel,
@@ -236,7 +224,7 @@ export class AgentAsyncExecutorService {
 
         tools = {
           ...registryTools,
-          ...exaWebSearchTools,
+          ...actionWebSearchTools,
           ...nativeTools,
         };
 

@@ -22,7 +22,7 @@ import { type CodeExecutionStreamEmitter } from 'src/engine/core-modules/tool-pr
 import { CodeInterpreterService } from 'src/engine/core-modules/code-interpreter/code-interpreter.service';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
-import { NativeToolBinderService } from 'src/engine/core-modules/tool-provider/native/native-tool-binder.service';
+import { NativeToolBinderService } from 'src/engine/metadata-modules/ai/ai-models/services/native-tool-binder.service';
 import { ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
 import {
   createExecuteToolTool,
@@ -55,7 +55,6 @@ import {
 import { AI_TELEMETRY_CONFIG } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-telemetry.const';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { type AiModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-config.type';
-import { getWebSearchImplementation } from 'src/engine/metadata-modules/ai/ai-models/utils/get-web-search-implementation.util';
 import { SkillService } from 'src/engine/metadata-modules/skill/skill.service';
 
 export type ChatExecutionOptions = {
@@ -159,13 +158,9 @@ export class ChatExecutionService {
       registeredModel.modelId,
     );
 
-    const webSearchImplementation = getWebSearchImplementation({
-      sdkPackage: registeredModel.sdkPackage,
-      toolCatalog,
-    });
-
+    // Chat default-on — action variant (when installed) loads via the preload const.
     const nativeModelTools = this.nativeToolBinder.bind(registeredModel, {
-      webSearchEnabled: webSearchImplementation === 'native',
+      webSearchEnabled: true,
     });
 
     // Tools the model can call directly: preloaded registry tools (already
