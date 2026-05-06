@@ -54,9 +54,7 @@ export class MarketplaceQueryService {
       );
 
     return registrations
-      .filter(
-        (registration) => configuredStatuses.get(registration.id) ?? true,
-      )
+      .filter((registration) => configuredStatuses.get(registration.id) ?? true)
       .map((registration) => this.toMarketplaceAppDTO(registration));
   }
 
