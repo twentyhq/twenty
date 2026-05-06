@@ -1,7 +1,6 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
-import { type CompositeFieldGroupByDefinition } from 'src/engine/api/common/common-args-processors/group-by-arg-processor/types/composite-field-group-by-definition.type';
 import { isGroupByDateFieldDefinition } from 'src/engine/api/common/common-args-processors/group-by-arg-processor/utils/is-group-by-date-field-definition.util';
 import { isRelationNestedFieldSupportedInGroupBy } from 'src/engine/api/common/common-args-processors/group-by-arg-processor/utils/is-relation-nested-field-supported-in-group-by.util';
 import { validateSingleKeyForGroupByOrThrow } from 'src/engine/api/common/common-args-processors/group-by-arg-processor/utils/validate-single-key-for-group-by-or-throw.util';

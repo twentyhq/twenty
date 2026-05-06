@@ -383,13 +383,20 @@ export class ViewWidgetUpsertService {
     const fieldsToUpdate: FlatViewField[] = [];
 
     for (const inputField of inputFields) {
-      const existingField = isDefined(inputField.viewFieldId)
+      const existingFieldByViewFieldId = isDefined(inputField.viewFieldId)
         ? existingViewFields.find((f) => f.id === inputField.viewFieldId)
-        : isDefined(inputField.fieldMetadataId)
-          ? existingViewFields.find(
-              (f) => f.fieldMetadataId === inputField.fieldMetadataId,
-            )
-          : undefined;
+        : undefined;
+
+      const existingFieldByFieldMetadataId = isDefined(
+        inputField.fieldMetadataId,
+      )
+        ? existingViewFields.find(
+            (f) => f.fieldMetadataId === inputField.fieldMetadataId,
+          )
+        : undefined;
+
+      const existingField =
+        existingFieldByViewFieldId ?? existingFieldByFieldMetadataId;
 
       if (isDefined(existingField)) {
         const resolvedIsVisible = isDefined(existingField.overrides?.isVisible)

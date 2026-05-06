@@ -6,7 +6,6 @@ import {
   QueryOptions,
 } from '@ptc-org/nestjs-query-graphql';
 import {
-  IsBoolean,
   IsDateString,
   IsNotEmpty,
   IsNumber,
@@ -20,9 +19,9 @@ import {
   CronTriggerSettings,
   DatabaseEventTriggerSettings,
   HttpRouteTriggerSettings,
+  ToolTriggerSettings,
+  WorkflowActionTriggerSettings,
 } from 'twenty-shared/application';
-
-import type { InputJsonSchema } from 'twenty-shared/logic-function';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
@@ -71,15 +70,6 @@ export class LogicFunctionDTO {
   @IsObject()
   @IsOptional()
   @Field(() => graphqlTypeJson, { nullable: true })
-  toolInputSchema?: InputJsonSchema;
-
-  @IsBoolean()
-  @Field()
-  isTool: boolean;
-
-  @IsObject()
-  @IsOptional()
-  @Field(() => graphqlTypeJson, { nullable: true })
   cronTriggerSettings?: CronTriggerSettings;
 
   @IsObject()
@@ -91,6 +81,16 @@ export class LogicFunctionDTO {
   @IsOptional()
   @Field(() => graphqlTypeJson, { nullable: true })
   httpRouteTriggerSettings?: HttpRouteTriggerSettings;
+
+  @IsObject()
+  @IsOptional()
+  @Field(() => graphqlTypeJson, { nullable: true })
+  toolTriggerSettings?: ToolTriggerSettings;
+
+  @IsObject()
+  @IsOptional()
+  @Field(() => graphqlTypeJson, { nullable: true })
+  workflowActionTriggerSettings?: WorkflowActionTriggerSettings;
 
   @IsUUID()
   @IsOptional()

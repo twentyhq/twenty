@@ -20,13 +20,18 @@ import { normalizeSearchText } from '~/utils/normalizeSearchText';
 
 type InstalledApplicationForContentTab = Omit<
   Application,
-  'objects' | 'frontComponents'
+  'objects' | 'frontComponents' | 'commandMenuItems'
 > & {
   objects: { id: string }[];
   frontComponents?: {
     id: string;
     name: string;
     description?: string | null;
+  }[];
+  commandMenuItems?: {
+    id: string;
+    label: string;
+    shortLabel?: string | null;
   }[];
 };
 
@@ -68,6 +73,7 @@ export const SettingsApplicationDetailContentTab = ({
     agentRows,
     skillRows,
     roleRows,
+    connectionProviderRows,
   } = useComputeApplicationContentForLayoutAndLogic({
     installedApplication,
     manifestContent,
@@ -123,6 +129,24 @@ export const SettingsApplicationDetailContentTab = ({
         secondary: fc.description ?? undefined,
       }));
 
+  const commandMenuItemRows: ApplicationContentRow[] = isDefined(
+    installedApplication,
+  )
+    ? (installedApplication.commandMenuItems ?? []).map((item) => ({
+        key: item.id,
+        name: item.label,
+        secondary: item.shortLabel ?? undefined,
+        link: getSettingsPath(SettingsPath.ApplicationCommandMenuItemDetail, {
+          applicationId,
+          commandMenuItemId: item.id,
+        }),
+      }))
+    : (manifestContent?.commandMenuItems ?? []).map((item) => ({
+        key: item.universalIdentifier,
+        name: item.label,
+        secondary: item.shortLabel ?? undefined,
+      }));
+
   const [searchTerm, setSearchTerm] = useState('');
   const normalizedSearch = normalizeSearchText(searchTerm);
 
@@ -133,10 +157,12 @@ export const SettingsApplicationDetailContentTab = ({
     views: filterRows(viewRows, normalizedSearch),
     navigation: filterRows(navigationMenuItemRows, normalizedSearch),
     frontComponents: filterRows(frontComponentRows, normalizedSearch),
+    commandMenuItems: filterRows(commandMenuItemRows, normalizedSearch),
     logicFunctions: filterRows(logicFunctionRows, normalizedSearch),
     agents: filterRows(agentRows, normalizedSearch),
     skills: filterRows(skillRows, normalizedSearch),
     roles: filterRows(roleRows, normalizedSearch),
+    connectionProviders: filterRows(connectionProviderRows, normalizedSearch),
   };
 
   const hasData = filtered.objects.length > 0 || filtered.fields.length > 0;
@@ -144,12 +170,14 @@ export const SettingsApplicationDetailContentTab = ({
     filtered.pageLayouts.length > 0 ||
     filtered.views.length > 0 ||
     filtered.navigation.length > 0 ||
-    filtered.frontComponents.length > 0;
+    filtered.frontComponents.length > 0 ||
+    filtered.commandMenuItems.length > 0;
   const hasLogic =
     filtered.logicFunctions.length > 0 ||
     filtered.agents.length > 0 ||
     filtered.skills.length > 0 ||
-    filtered.roles.length > 0;
+    filtered.roles.length > 0 ||
+    filtered.connectionProviders.length > 0;
 
   if (!hasData && !hasLayout && !hasLogic && normalizedSearch === '') {
     return null;
@@ -219,6 +247,12 @@ export const SettingsApplicationDetailContentTab = ({
               applicationId={applicationId}
               fallbackApplicationData={fallbackApplicationData}
             />
+            <SettingsApplicationContentSubtable
+              title={t`Command menu items`}
+              rows={filtered.commandMenuItems}
+              applicationId={applicationId}
+              fallbackApplicationData={fallbackApplicationData}
+            />
           </Table>
         </Section>
       )}
@@ -251,6 +285,12 @@ export const SettingsApplicationDetailContentTab = ({
             <SettingsApplicationContentSubtable
               title={t`Roles`}
               rows={filtered.roles}
+              applicationId={applicationId}
+              fallbackApplicationData={fallbackApplicationData}
+            />
+            <SettingsApplicationContentSubtable
+              title={t`Connection providers`}
+              rows={filtered.connectionProviders}
               applicationId={applicationId}
               fallbackApplicationData={fallbackApplicationData}
             />

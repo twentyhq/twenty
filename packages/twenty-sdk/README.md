@@ -1,7 +1,7 @@
 <div align="center">
   <a href="https://twenty.com">
     <picture>
-      <img alt="Twenty logo" src="https://raw.githubusercontent.com/twentyhq/twenty/2f25922f4cd5bd61e1427c57c4f8ea224e1d552c/packages/twenty-website/public/images/core/logo.svg" height="128">
+      <img alt="Twenty logo" src="https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-website-new/public/images/core/logo.svg" height="128">
     </picture>
   </a>
   <h1>Twenty SDK</h1>
@@ -19,8 +19,8 @@ A CLI and SDK to develop, build, and publish applications that extend [Twenty CR
 The recommended way to start is with [create-twenty-app](https://www.npmjs.com/package/create-twenty-app):
 
 ```bash
-npx create-twenty-app@latest my-app
-cd my-app
+npx create-twenty-app@latest my-twenty-app
+cd my-twenty-app
 yarn twenty dev
 ```
 
