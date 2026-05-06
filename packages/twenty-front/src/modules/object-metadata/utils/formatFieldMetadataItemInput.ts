@@ -1,5 +1,4 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export const formatFieldMetadataItemInput = (
   input: Partial<
@@ -18,13 +17,8 @@ export const formatFieldMetadataItemInput = (
     >
   >,
 ) => {
-  const defaultValue =
-    input.type === FieldMetadataType.PHONES && input.isUnique
-      ? null
-      : input.defaultValue;
-
   return {
-    defaultValue,
+    defaultValue: input.defaultValue,
     description: input.description?.trim() ?? null,
     icon: input.icon,
     label: input.label?.trim(),

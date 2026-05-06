@@ -39,6 +39,12 @@ describe('unique PHONES field with empty values', () => {
         type: FieldMetadataType.PHONES,
         objectMetadataId: createdObjectMetadataId,
         isUnique: true,
+        defaultValue: {
+          primaryPhoneNumber: "''",
+          primaryPhoneCountryCode: "'US'",
+          primaryPhoneCallingCode: "'+1'",
+          additionalPhones: null,
+        },
         isLabelSyncedWithName: false,
       },
       gqlFields: `
@@ -107,19 +113,43 @@ describe('unique PHONES field with empty values', () => {
     const firstResponse = await createOneOperation({
       objectMetadataSingularName: OBJECT_SINGULAR,
       input: { id: firstId },
-      gqlFields: `id`,
+      gqlFields: `
+        id
+        ${FIELD_NAME} {
+          primaryPhoneNumber
+          primaryPhoneCountryCode
+          primaryPhoneCallingCode
+        }
+      `,
     });
 
     expect(firstResponse.errors).toBeUndefined();
+    expect(firstResponse.data.createOneResponse[FIELD_NAME]).toMatchObject({
+      primaryPhoneNumber: null,
+      primaryPhoneCountryCode: 'US',
+      primaryPhoneCallingCode: '+1',
+    });
     createdRecordIdsForCleaning.push(firstId);
 
     const secondResponse = await createOneOperation({
       objectMetadataSingularName: OBJECT_SINGULAR,
       input: { id: secondId },
-      gqlFields: `id`,
+      gqlFields: `
+        id
+        ${FIELD_NAME} {
+          primaryPhoneNumber
+          primaryPhoneCountryCode
+          primaryPhoneCallingCode
+        }
+      `,
     });
 
     expect(secondResponse.errors).toBeUndefined();
+    expect(secondResponse.data.createOneResponse[FIELD_NAME]).toMatchObject({
+      primaryPhoneNumber: null,
+      primaryPhoneCountryCode: 'US',
+      primaryPhoneCallingCode: '+1',
+    });
     createdRecordIdsForCleaning.push(secondId);
   });
 

@@ -246,6 +246,50 @@ describe('Generate Column Definitions', () => {
         default: "'USD'::text",
       });
     });
+
+    it('should serialize null-equivalent unique composite defaults as NULL', () => {
+      const phonesField = getFlatFieldMetadataMock({
+        universalIdentifier: 'phone',
+        objectMetadataId: mockObjectId,
+        type: FieldMetadataType.PHONES,
+        name: 'phone',
+        isUnique: true,
+        defaultValue: {
+          primaryPhoneNumber: "''",
+          primaryPhoneCountryCode: "'US'",
+          primaryPhoneCallingCode: "'+1'",
+          additionalPhones: null,
+        },
+      });
+
+      const columns = generateColumnDefinitions({
+        flatFieldMetadata: phonesField,
+        flatObjectMetadata: mockObjectMetadata,
+        workspaceId,
+      });
+
+      expect(columns).toHaveLength(4);
+      expect(columns).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            name: 'phonePrimaryPhoneNumber',
+            default: 'NULL',
+          }),
+          expect.objectContaining({
+            name: 'phonePrimaryPhoneCountryCode',
+            default: "'US'::text",
+          }),
+          expect.objectContaining({
+            name: 'phonePrimaryPhoneCallingCode',
+            default: "'+1'::text",
+          }),
+          expect.objectContaining({
+            name: 'phoneAdditionalPhones',
+            default: 'NULL',
+          }),
+        ]),
+      );
+    });
   });
 
   describe('Default Value Schema Generation', () => {

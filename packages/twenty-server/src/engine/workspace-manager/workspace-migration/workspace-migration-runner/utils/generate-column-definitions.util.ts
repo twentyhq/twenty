@@ -14,6 +14,7 @@ import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type WorkspaceSchemaColumnDefinition } from 'src/engine/twenty-orm/workspace-schema-manager/types/workspace-schema-column-definition.type';
 import { computePostgresEnumName } from 'src/engine/workspace-manager/workspace-migration/utils/compute-postgres-enum-name.util';
+import { getCompositePropertyDefaultValueForWorkspaceSchema } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/utils/composite-unique-default-value.util';
 import { serializeDefaultValue } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/utils/serialize-default-value.util';
 import {
   WorkspaceMigrationActionExecutionException,
@@ -52,9 +53,10 @@ export const generateCompositeColumnDefinition = ({
     parentFlatFieldMetadata.name,
     compositeProperty,
   );
-  const defaultValue =
-    // @ts-expect-error - TODO: fix this
-    parentFlatFieldMetadata.defaultValue?.[compositeProperty.name];
+  const defaultValue = getCompositePropertyDefaultValueForWorkspaceSchema({
+    compositeProperty,
+    parentFieldMetadata: parentFlatFieldMetadata,
+  });
   const columnType = fieldMetadataTypeToColumnType(compositeProperty.type);
   const serializedDefaultValue = serializeDefaultValue({
     columnName,
