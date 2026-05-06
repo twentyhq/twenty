@@ -7,7 +7,7 @@ import {
   type BillingPriceLicensed,
 } from '~/generated-metadata/graphql';
 
-export const useGetNextCreditPackPrice = (): BillingPriceLicensed | null => {
+export const useGetNextResourceCreditPrice = (): BillingPriceLicensed | null => {
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const { listPlans, isPlansLoaded } = usePlans();
 
@@ -29,24 +29,24 @@ export const useGetNextCreditPackPrice = (): BillingPriceLicensed | null => {
     return null;
   }
 
-  const currentCreditPackItem = items.find(
+  const currentResourceCreditItem = items.find(
     (item) =>
       item.billingProduct.metadata?.['productKey'] ===
       BillingProductKey.RESOURCE_CREDIT,
   );
 
-  if (!currentCreditPackItem) {
+  if (!currentResourceCreditItem) {
     return null;
   }
 
-  const creditPackPrices = currentPlan.resourceCreditProducts
+  const resourceCreditPrices = currentPlan.resourceCreditProducts
     .flatMap((product) => product.prices ?? [])
     .filter(
       (price): price is BillingPriceLicensed =>
         price !== null && price !== undefined,
     );
 
-  const pricesForInterval = creditPackPrices
+  const pricesForInterval = resourceCreditPrices
     .filter((price) => price.recurringInterval === interval)
     .sort(
       (priceA, priceB) =>
@@ -55,7 +55,7 @@ export const useGetNextCreditPackPrice = (): BillingPriceLicensed | null => {
 
   const currentIndex = pricesForInterval.findIndex(
     ({ stripePriceId }) =>
-      stripePriceId === currentCreditPackItem.stripePriceId,
+      stripePriceId === currentResourceCreditItem.stripePriceId,
   );
 
   if (currentIndex === -1 || currentIndex === pricesForInterval.length - 1) {

@@ -181,18 +181,17 @@ export class BillingSubscriptionPhaseService {
     }
   }
 
-  // V2 counterpart of buildPhaseUpdateParams — emits { price, quantity: 1 } for the credit pack;
-  // no billing_thresholds
-  async buildPhaseUpdateParamsV2({
+  // Billing V2: emits { price, quantity: 1 } for the resource credit price; no billing_thresholds
+  async buildResourceCreditPhaseUpdateParams({
     basePlanStripePriceId,
     seats,
-    creditPackStripePriceId,
+    resourceCreditStripePriceId,
     startDate,
     endDate,
   }: {
     basePlanStripePriceId: string;
     seats: number;
-    creditPackStripePriceId: string;
+    resourceCreditStripePriceId: string;
     startDate: Stripe.SubscriptionScheduleUpdateParams.Phase['start_date'];
     endDate: number | undefined;
   }): Promise<Stripe.SubscriptionScheduleUpdateParams.Phase> {
@@ -202,13 +201,13 @@ export class BillingSubscriptionPhaseService {
       proration_behavior: 'none',
       items: [
         { price: basePlanStripePriceId, quantity: seats },
-        { price: creditPackStripePriceId, quantity: 1 },
+        { price: resourceCreditStripePriceId, quantity: 1 },
       ],
     };
   }
 
-  // V2 counterpart of isSamePhaseSignature — compares credit pack price via productKey lookup
-  async isSamePhaseSignatureV2(
+  // Billing V2: compares resource credit Stripe price id between phases
+  async isSameResourceCreditPhaseSignature(
     a: Stripe.SubscriptionScheduleUpdateParams.Phase,
     b: Stripe.SubscriptionScheduleUpdateParams.Phase,
   ): Promise<boolean> {
@@ -217,41 +216,40 @@ export class BillingSubscriptionPhaseService {
         this.getLicensedPriceIdAndQuantityFromPhaseUpdateParams(a);
       const phaseBLicensedPriceIdAndQuantity =
         this.getLicensedPriceIdAndQuantityFromPhaseUpdateParams(b);
-      const phaseACreditPackPriceId =
-        this.getCreditPackPriceIdFromPhaseUpdateParams(a);
-      const phaseBCreditPackPriceId =
-        this.getCreditPackPriceIdFromPhaseUpdateParams(b);
+      const phaseAResourceCreditPriceId =
+        this.getResourceCreditPriceIdFromPhaseUpdateParams(a);
+      const phaseBResourceCreditPriceId =
+        this.getResourceCreditPriceIdFromPhaseUpdateParams(b);
 
       return (
         phaseALicensedPriceIdAndQuantity.price ===
           phaseBLicensedPriceIdAndQuantity.price &&
         phaseALicensedPriceIdAndQuantity.quantity ===
           phaseBLicensedPriceIdAndQuantity.quantity &&
-        phaseACreditPackPriceId === phaseBCreditPackPriceId
+        phaseAResourceCreditPriceId === phaseBResourceCreditPriceId
       );
     } catch {
       return false;
     }
   }
 
-  // V2 counterpart of getMeteredPriceIdFromPhaseUpdateParams
-  // In V2 the credit pack item has quantity: 1
-  getCreditPackPriceIdFromPhaseUpdateParams(
+  // Billing V2 counterpart of getMeteredPriceIdFromPhaseUpdateParams (resource credit has quantity: 1)
+  getResourceCreditPriceIdFromPhaseUpdateParams(
     phase: Stripe.SubscriptionScheduleUpdateParams.Phase,
   ): string {
     const items = phase.items ?? [];
     const licensedPriceIdAndQuantity =
       this.getLicensedPriceIdAndQuantityFromPhaseUpdateParams(phase);
 
-    const creditPackItem = items.find(
+    const resourceCreditItem = items.find(
       (item) =>
         item.price !== licensedPriceIdAndQuantity.price && item.quantity === 1,
     );
 
-    if (!creditPackItem?.price) {
-      throw new Error('Credit pack item not found in V2 phase params');
+    if (!resourceCreditItem?.price) {
+      throw new Error('Resource credit item not found in V2 phase params');
     }
 
-    return creditPackItem.price;
+    return resourceCreditItem.price;
   }
 }

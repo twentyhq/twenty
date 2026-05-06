@@ -37,11 +37,11 @@ const StyledButtonContainer = styled.div`
   flex: 0 0 auto;
 `;
 
-export const CreditPackPriceSelector = ({
-  creditPackPrices,
+export const ResourceCreditPriceSelector = ({
+  resourceCreditPrices,
   isTrialing = false,
 }: {
-  creditPackPrices: BillingPriceLicensed[];
+  resourceCreditPrices: BillingPriceLicensed[];
   isTrialing?: boolean;
 }) => {
   const { currentResourceCreditBillingPrice } = useCurrentResourceCredit();
@@ -55,7 +55,7 @@ export const CreditPackPriceSelector = ({
 
   const { getIntervalLabel } = useBillingWording();
 
-  const [currentCreditPackPrice, setCurrentCreditPackPrice] = useState(
+  const [currentResourceCreditPrice, setCurrentResourceCreditPrice] = useState(
     currentResourceCreditBillingPrice,
   );
 
@@ -74,11 +74,11 @@ export const CreditPackPriceSelector = ({
 
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
 
-  const [setCreditPackPrice, { loading: isUpdating }] = useMutation(
+  const [setResourceCreditPrice, { loading: isUpdating }] = useMutation(
     SetMeteredSubscriptionPriceDocument,
   );
 
-  const options = [...creditPackPrices]
+  const options = [...resourceCreditPrices]
     .sort((a, b) => (a.creditAmount ?? 0) - (b.creditAmount ?? 0))
     .map(toOption);
 
@@ -87,25 +87,25 @@ export const CreditPackPriceSelector = ({
     undefined,
   );
 
-  const selectedPrice = creditPackPrices.find(
+  const selectedPrice = resourceCreditPrices.find(
     ({ stripePriceId }) => stripePriceId === selectedPriceId,
   );
 
   const isChanged =
     isDefined(selectedPriceId) &&
-    selectedPriceId !== currentCreditPackPrice?.stripePriceId;
+    selectedPriceId !== currentResourceCreditPrice?.stripePriceId;
 
   const isUpgrade = () => {
     if (
       !isChanged ||
       !isDefined(selectedPrice) ||
-      !isDefined(currentCreditPackPrice)
+      !isDefined(currentResourceCreditPrice)
     )
       return false;
 
     return (
       (selectedPrice.creditAmount ?? 0) >
-      (currentCreditPackPrice.creditAmount ?? 0)
+      (currentResourceCreditPrice.creditAmount ?? 0)
     );
   };
 
@@ -113,7 +113,7 @@ export const CreditPackPriceSelector = ({
     setSelectedPriceId(priceId);
   };
 
-  const confirmModalId = 'CREDIT_PACK_PRICE_CHANGE_CONFIRMATION_MODAL';
+  const confirmModalId = 'RESOURCE_CREDIT_PRICE_CHANGE_CONFIRMATION_MODAL';
 
   const handleOpenConfirm = () => {
     if (!isChanged || !selectedPrice) return;
@@ -121,13 +121,13 @@ export const CreditPackPriceSelector = ({
   };
 
   const recurringInterval = getIntervalLabel(
-    currentCreditPackPrice?.recurringInterval === SubscriptionInterval.Month,
+    currentResourceCreditPrice?.recurringInterval === SubscriptionInterval.Month,
   );
 
   const handleConfirmClick = async () => {
     if (!selectedPrice) return;
     try {
-      const { data } = await setCreditPackPrice({
+      const { data } = await setResourceCreditPrice({
         variables: { priceId: selectedPrice.stripePriceId },
       });
       if (
@@ -146,32 +146,32 @@ export const CreditPackPriceSelector = ({
         setCurrentWorkspace(newCurrentWorkspace);
         refetchResourceCreditUsage();
       }
-      enqueueSuccessSnackBar({ message: t`Credit pack updated.` });
-      const newPrice = creditPackPrices.find(
+      enqueueSuccessSnackBar({ message: t`Resource credits updated.` });
+      const newPrice = resourceCreditPrices.find(
         ({ stripePriceId }) => stripePriceId === selectedPrice.stripePriceId,
       );
       if (isDefined(newPrice)) {
-        setCurrentCreditPackPrice(newPrice);
+        setCurrentResourceCreditPrice(newPrice);
       }
       setSelectedPriceId(undefined);
     } catch {
-      enqueueErrorSnackBar({ message: t`Failed to update credit pack.` });
+      enqueueErrorSnackBar({ message: t`Failed to update resource credits.` });
     }
   };
 
   return (
     <>
       <H2Title
-        title={t`Credit Pack`}
+        title={t`Resource credits`}
         description={t`Number of new credits allocated every ${recurringInterval}`}
       />
       <StyledRow>
         <StyledSelectContainer>
           <Select
-            dropdownId="settings_billing-credit-pack-price"
+            dropdownId="settings_billing-resource-credit-price"
             options={options}
             value={
-              selectedPriceId ?? currentCreditPackPrice?.stripePriceId ?? ''
+              selectedPriceId ?? currentResourceCreditPrice?.stripePriceId ?? ''
             }
             onChange={handleChange}
             disabled={isUpdating || isTrialing}
@@ -197,7 +197,7 @@ export const CreditPackPriceSelector = ({
       <ConfirmationModal
         modalInstanceId={confirmModalId}
         title={isUpgrade() ? t`Confirm upgrade` : t`Confirm downgrade`}
-        subtitle={t`Confirm changing your current credit pack.`}
+        subtitle={t`Confirm changing your current resource credit allocation.`}
         confirmButtonText={isUpgrade() ? t`Upgrade` : t`Downgrade`}
         confirmButtonAccent={isUpgrade() ? 'blue' : 'danger'}
         loading={isUpdating}

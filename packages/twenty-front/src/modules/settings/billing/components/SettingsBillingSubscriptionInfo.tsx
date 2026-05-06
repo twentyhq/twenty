@@ -438,7 +438,7 @@ export const SettingsBillingSubscriptionInfo = ({
           label={t`Credits by period`}
           Icon={IconCoins}
           currentValue={
-            currentCreditsByPeriod !== null
+            isDefined(currentCreditsByPeriod)
               ? formatNumber(currentCreditsByPeriod, {
                   abbreviate: true,
                   decimals: 2,
@@ -446,7 +446,7 @@ export const SettingsBillingSubscriptionInfo = ({
               : undefined
           }
           nextValue={
-            nextCreditsByPeriod !== null
+            isDefined(nextCreditsByPeriod)
               ? formatNumber(nextCreditsByPeriod, {
                   abbreviate: true,
                   decimals: 2,

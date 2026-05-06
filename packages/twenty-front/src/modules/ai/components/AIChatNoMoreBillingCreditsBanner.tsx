@@ -2,7 +2,7 @@ import { AiChatBanner } from '@/ai/components/AiChatBanner';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { useEndSubscriptionTrialPeriod } from '@/settings/billing/hooks/useEndSubscriptionTrialPeriod';
-import { useGetNextCreditPackPrice } from '@/settings/billing/hooks/useGetNextCreditPackPrice';
+import { useGetNextResourceCreditPrice } from '@/settings/billing/hooks/useGetNextResourceCreditPrice';
 import { useGetNextMeteredBillingPrice } from '@/settings/billing/hooks/useGetNextMeteredBillingPrice';
 import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -36,9 +36,9 @@ export const AIChatNoMoreBillingCreditsBanner = () => {
   const isV2 = useIsFeatureEnabled(FeatureFlagKey.IS_BILLING_V2_ENABLED);
 
   const nextMeteredBillingPrice = useGetNextMeteredBillingPrice();
-  const nextCreditPackPrice = useGetNextCreditPackPrice();
+  const nextResourceCreditPrice = useGetNextResourceCreditPrice();
 
-  const nextPrice = isV2 ? nextCreditPackPrice : nextMeteredBillingPrice;
+  const nextPrice = isV2 ? nextResourceCreditPrice : nextMeteredBillingPrice;
 
   const { formatNumber } = useNumberFormat();
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
@@ -63,7 +63,7 @@ export const AIChatNoMoreBillingCreditsBanner = () => {
   const nextTierCredits = isDefined(nextPrice)
     ? isV2
       ? formatNumber(
-          (nextPrice as typeof nextCreditPackPrice)?.creditAmount ?? 0,
+          (nextPrice as typeof nextResourceCreditPrice)?.creditAmount ?? 0,
           {
             abbreviate: true,
             decimals: 2,
@@ -81,7 +81,7 @@ export const AIChatNoMoreBillingCreditsBanner = () => {
   const nextTierPrice = isDefined(nextPrice)
     ? isV2
       ? formatNumber(
-          ((nextPrice as typeof nextCreditPackPrice)?.unitAmount ?? 0) / 100,
+          ((nextPrice as typeof nextResourceCreditPrice)?.unitAmount ?? 0) / 100,
         )
       : formatNumber(
           ((nextPrice as typeof nextMeteredBillingPrice)?.tiers?.[0]

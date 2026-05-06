@@ -134,7 +134,7 @@ export class BillingPriceService {
   // V2 counterpart of findEquivalentMeteredPrice.
   // Finds a RESOURCE_CREDIT price matching the target interval and plan,
   // with the largest credit_amount that does not exceed the reference credit_amount.
-  async findEquivalentCreditPackPrice({
+  async findEquivalentResourceCreditPrice({
     targetInterval,
     targetPlanKey,
     hasSameInterval,
@@ -167,7 +167,7 @@ export class BillingPriceService {
           ? referenceCreditAmount / 12
           : referenceCreditAmount;
 
-    const creditPackCandidates = catalog
+    const resourceCreditCandidates = catalog
       .filter(
         (p) =>
           p.billingProduct?.metadata?.productKey ===
@@ -179,7 +179,7 @@ export class BillingPriceService {
           Number(b.metadata?.credit_amount ?? 0),
       );
 
-    if (!creditPackCandidates.length) {
+    if (!resourceCreditCandidates.length) {
       throw new BillingException(
         'No RESOURCE_CREDIT price candidates found',
         BillingExceptionCode.BILLING_PRICE_NOT_FOUND,
@@ -187,9 +187,9 @@ export class BillingPriceService {
     }
 
     return (
-      creditPackCandidates
+      resourceCreditCandidates
         .filter((p) => Number(p.metadata?.credit_amount ?? 0) <= scaledAmount)
-        .pop() ?? creditPackCandidates[0]
+        .pop() ?? resourceCreditCandidates[0]
     );
   }
 }

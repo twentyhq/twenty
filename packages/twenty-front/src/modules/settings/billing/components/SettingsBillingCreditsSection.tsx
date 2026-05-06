@@ -1,6 +1,6 @@
 import { type CurrentWorkspace } from '@/auth/states/currentWorkspaceState';
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
-import { CreditPackPriceSelector } from '@/settings/billing/components/internal/CreditPackPriceSelector';
+import { ResourceCreditPriceSelector } from '@/settings/billing/components/internal/ResourceCreditPriceSelector';
 import { MeteredPriceSelector } from '@/settings/billing/components/internal/MeteredPriceSelector';
 import { SettingsBillingLabelValueItem } from '@/settings/billing/components/internal/SettingsBillingLabelValueItem';
 import { SubscriptionInfoContainer } from '@/settings/billing/components/SubscriptionInfoContainer';
@@ -88,7 +88,7 @@ export const SettingsBillingCreditsSection = ({
     currentBillingSubscription.interval,
   );
 
-  const creditPackPrices = getResourceCreditPricesByInterval(
+  const resourceCreditPrices = getResourceCreditPricesByInterval(
     currentBillingSubscription.interval,
   );
 
@@ -193,8 +193,8 @@ export const SettingsBillingCreditsSection = ({
       </Section>
       <Section>
         {isV2 ? (
-          <CreditPackPriceSelector
-            creditPackPrices={creditPackPrices}
+          <ResourceCreditPriceSelector
+            resourceCreditPrices={resourceCreditPrices}
             isTrialing={isTrialing}
           />
         ) : (

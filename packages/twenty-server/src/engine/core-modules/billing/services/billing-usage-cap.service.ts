@@ -136,7 +136,9 @@ export class BillingUsageCapService {
 
     for (const subscription of subscriptions) {
       const resourceCreditPricingInfo =
-        this.meteredCreditService.extractResourceCreditPricingInfo(subscription);
+        this.meteredCreditService.extractResourceCreditPricingInfo(
+          subscription,
+        );
 
       if (!resourceCreditPricingInfo) {
         results.set(subscription.id, {

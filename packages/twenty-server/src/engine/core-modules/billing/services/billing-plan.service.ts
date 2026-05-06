@@ -148,9 +148,7 @@ export class BillingPlanService {
     const meteredProductPrices = meteredProducts.flatMap(
       filterPricesByInterval,
     );
-    const baseProductPrices = baseProducts.flatMap(
-      filterPricesByInterval,
-    );
+    const baseProductPrices = baseProducts.flatMap(filterPricesByInterval);
 
     const resourceCreditProductPrices = resourceCreditProducts.flatMap(
       filterPricesByInterval,

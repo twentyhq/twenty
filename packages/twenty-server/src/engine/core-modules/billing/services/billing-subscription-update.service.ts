@@ -431,7 +431,7 @@ export class BillingSubscriptionUpdateService {
         stripeCustomerId: subscription.stripeCustomerId,
         stripeSubscriptionId: subscription.stripeSubscriptionId,
         diffAmountInCents: diffInCents,
-        description: `Resource usage -  Upgrade credit pack from $${Number(currentPrice.unitAmount) / 100} to $${Number(newPrice.unitAmount) / 100}`,
+        description: `Resource usage - Upgrade resource credit price from $${Number(currentPrice.unitAmount) / 100} to $${Number(newPrice.unitAmount) / 100}`,
         currency: newPrice.currency,
       });
     }
@@ -858,7 +858,7 @@ export class BillingSubscriptionUpdateService {
     }
 
     const newEquivalentResourceCreditPrice =
-      await this.billingPriceService.findEquivalentCreditPackPrice({
+      await this.billingPriceService.findEquivalentResourceCreditPrice({
         referencePrice: newResourceCreditPrice,
         targetInterval: currentInterval,
         targetPlanKey: currentPlanKey,
@@ -917,7 +917,7 @@ export class BillingSubscriptionUpdateService {
       );
 
       const targetResourceCreditPrice =
-        await this.billingPriceService.findEquivalentCreditPackPrice({
+        await this.billingPriceService.findEquivalentResourceCreditPrice({
           referencePrice: currentResourceCreditPrice,
           targetInterval: currentInterval,
           targetPlanKey: newPlan,
@@ -1001,7 +1001,7 @@ export class BillingSubscriptionUpdateService {
       );
 
       const targetResourceCreditPrice =
-        await this.billingPriceService.findEquivalentCreditPackPrice({
+        await this.billingPriceService.findEquivalentResourceCreditPrice({
           referencePrice: currentResourceCreditPrice,
           targetInterval: newInterval,
           targetPlanKey: currentPlanKey,

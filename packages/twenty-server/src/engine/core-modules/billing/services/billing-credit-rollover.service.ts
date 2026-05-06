@@ -89,10 +89,11 @@ export class BillingCreditRolloverService {
     tierQuantity: number;
     previousPeriodStart: Date;
   }): Promise<void> {
-    const usedCredits = await this.billingUsageService.getCurrentPeriodCreditsUsed(
-      workspaceId,
-      previousPeriodStart,
-    );
+    const usedCredits =
+      await this.billingUsageService.getCurrentPeriodCreditsUsed(
+        workspaceId,
+        previousPeriodStart,
+      );
 
     const unusedCredits = Math.max(0, tierQuantity - usedCredits);
     const rolloverAmount = Math.min(unusedCredits, tierQuantity);
