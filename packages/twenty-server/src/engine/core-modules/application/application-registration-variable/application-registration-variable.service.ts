@@ -188,9 +188,9 @@ export class ApplicationRegistrationVariableService {
       applicationRegistrationId,
     );
 
-    const requiredSecrets = variables.filter((v) => v.isSecret && v.isRequired);
+    const requiredVariables = variables.filter((v) => v.isRequired);
 
-    return requiredSecrets.every((v) => v.isFilled);
+    return requiredVariables.every((v) => v.isFilled);
   }
 
   private async assertRegistrationOwnedByWorkspace(
