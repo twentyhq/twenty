@@ -14,7 +14,7 @@ type CompositeDefaultValue = Record<
 >;
 
 const isCompositeDefaultValue = (
-  defaultValue?: FieldMetadataDefaultValueForAnyType,
+  defaultValue: unknown,
 ): defaultValue is CompositeDefaultValue =>
   isDefined(defaultValue) &&
   typeof defaultValue === 'object' &&
@@ -30,10 +30,15 @@ const getCompositePropertyDefaultValueFromFieldDefaultValue = ({
 }: {
   defaultValue?: FieldMetadataDefaultValueForAnyType;
   compositeProperty: CompositeProperty;
-}) =>
-  isCompositeDefaultValue(defaultValue)
-    ? defaultValue[compositeProperty.name]
-    : undefined;
+}) => {
+  if (!isCompositeDefaultValue(defaultValue)) {
+    return undefined;
+  }
+
+  const compositeDefaultValue = defaultValue as CompositeDefaultValue;
+
+  return compositeDefaultValue[compositeProperty.name];
+};
 
 export const isFieldMetadataDefaultValueNullEquivalent = ({
   defaultValue,
