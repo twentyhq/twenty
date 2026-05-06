@@ -85,21 +85,21 @@ const StyledAddColumnHeaderCell = styled.div`
   align-items: center;
   background: ${themeCssVariables.background.primary};
   border-bottom: 1px solid ${themeCssVariables.border.color.light};
-  border-right: 1px solid ${themeCssVariables.border.color.light};
   box-sizing: border-box;
   color: ${themeCssVariables.font.color.tertiary};
+  display: flex;
+  flex: 1;
+  height: ${BACKGROUND_MOCK_TABLE_DIMENSIONS.rowHeight}px;
+  min-width: ${BACKGROUND_MOCK_TABLE_DIMENSIONS.addColumnButtonWidth}px;
+`;
+
+const StyledAddColumnIconWrapper = styled.div`
+  align-items: center;
   display: flex;
   flex-shrink: 0;
   height: ${BACKGROUND_MOCK_TABLE_DIMENSIONS.rowHeight}px;
   justify-content: center;
   width: ${BACKGROUND_MOCK_TABLE_DIMENSIONS.addColumnButtonWidth}px;
-`;
-
-const StyledLastEmptyHeaderColumn = styled.div`
-  background: ${themeCssVariables.background.primary};
-  border-bottom: 1px solid ${themeCssVariables.border.color.light};
-  flex: 1;
-  height: ${BACKGROUND_MOCK_TABLE_DIMENSIONS.rowHeight}px;
 `;
 
 const StyledTableBody = styled.div`
@@ -145,15 +145,10 @@ const StyledFooterValue = styled.span`
   flex-shrink: 0;
 `;
 
-const StyledTrailingPlaceholder = styled.div`
-  flex-shrink: 0;
-  height: ${BACKGROUND_MOCK_TABLE_DIMENSIONS.rowHeight}px;
-  width: ${BACKGROUND_MOCK_TABLE_DIMENSIONS.addColumnButtonWidth}px;
-`;
-
 const StyledLastEmptyCell = styled.div`
   flex: 1;
   height: ${BACKGROUND_MOCK_TABLE_DIMENSIONS.rowHeight}px;
+  min-width: ${BACKGROUND_MOCK_TABLE_DIMENSIONS.addColumnButtonWidth}px;
 `;
 
 export const BackgroundMockTable = () => {
@@ -183,9 +178,13 @@ export const BackgroundMockTable = () => {
             );
           })}
           <StyledAddColumnHeaderCell>
-            <IconPlus size={theme.icon.size.sm} stroke={theme.icon.stroke.sm} />
+            <StyledAddColumnIconWrapper>
+              <IconPlus
+                size={theme.icon.size.sm}
+                stroke={theme.icon.stroke.sm}
+              />
+            </StyledAddColumnIconWrapper>
           </StyledAddColumnHeaderCell>
-          <StyledLastEmptyHeaderColumn />
         </StyledHeaderRow>
         <StyledTableBody>
           {BACKGROUND_MOCK_COMPANIES.map((company) => (
@@ -225,7 +224,6 @@ export const BackgroundMockTable = () => {
             </StyledFooterLabel>
             <StyledFooterValue>599</StyledFooterValue>
           </StyledFooterCell>
-          <StyledTrailingPlaceholder />
           <StyledLastEmptyCell />
         </StyledFooterRow>
       </StyledTable>
