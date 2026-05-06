@@ -4,7 +4,9 @@ import { useContext } from 'react';
 import { BackgroundMockTableRow } from '@/sign-in-background-mock/components/BackgroundMockTableRow';
 import { BACKGROUND_MOCK_COLUMNS } from '@/sign-in-background-mock/constants/BackgroundMockColumns';
 import { BACKGROUND_MOCK_COMPANIES } from '@/sign-in-background-mock/constants/BackgroundMockCompanies';
+import { BACKGROUND_MOCK_TABLE_DIMENSIONS } from '@/sign-in-background-mock/constants/BackgroundMockTableDimensions';
 import { IconChevronDown, IconPlus, useIcons } from 'twenty-ui/display';
+import { Checkbox } from 'twenty-ui/input';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledTableWrapper = styled.div`
@@ -27,32 +29,26 @@ const StyledTable = styled.div`
 
 const StyledHeaderRow = styled.div`
   background: ${themeCssVariables.background.primary};
+  display: flex;
+  height: ${BACKGROUND_MOCK_TABLE_DIMENSIONS.rowHeight}px;
+`;
+
+const StyledCheckboxHeaderColumn = styled.div`
+  align-items: center;
+  background: ${themeCssVariables.background.primary};
   border-bottom: 1px solid ${themeCssVariables.border.color.light};
   display: flex;
-  height: 32px;
-`;
-
-const StyledCheckboxColumn = styled.div`
-  align-items: center;
-  border-right: 1px solid ${themeCssVariables.border.color.light};
-  box-sizing: border-box;
-  display: flex;
   flex-shrink: 0;
+  height: ${BACKGROUND_MOCK_TABLE_DIMENSIONS.rowHeight}px;
   justify-content: center;
-  padding-left: 8px;
-  width: 36px;
-`;
-
-const StyledCheckbox = styled.div`
-  background: ${themeCssVariables.background.primary};
-  border: 1px solid ${themeCssVariables.border.color.medium};
-  border-radius: ${themeCssVariables.border.radius.xs};
-  height: 12px;
-  width: 12px;
+  padding-right: ${themeCssVariables.spacing[1]};
+  width: ${BACKGROUND_MOCK_TABLE_DIMENSIONS.checkboxColumnWidth}px;
 `;
 
 const StyledHeaderCell = styled.div<{ width: number }>`
   align-items: center;
+  background: ${themeCssVariables.background.primary};
+  border-bottom: 1px solid ${themeCssVariables.border.color.light};
   border-right: 1px solid ${themeCssVariables.border.color.light};
   box-sizing: border-box;
   color: ${themeCssVariables.font.color.tertiary};
@@ -60,6 +56,7 @@ const StyledHeaderCell = styled.div<{ width: number }>`
   flex-shrink: 0;
   font-weight: ${themeCssVariables.font.weight.medium};
   gap: ${themeCssVariables.spacing[1]};
+  height: ${BACKGROUND_MOCK_TABLE_DIMENSIONS.rowHeight}px;
   overflow: hidden;
   padding: 0 ${themeCssVariables.spacing[2]};
   width: ${({ width }) => width}px;
@@ -73,13 +70,16 @@ const StyledHeaderLabel = styled.span`
 
 const StyledAddColumnHeaderCell = styled.div`
   align-items: center;
+  background: ${themeCssVariables.background.primary};
+  border-bottom: 1px solid ${themeCssVariables.border.color.light};
   border-right: 1px solid ${themeCssVariables.border.color.light};
   box-sizing: border-box;
   color: ${themeCssVariables.font.color.tertiary};
   display: flex;
   flex-shrink: 0;
+  height: ${BACKGROUND_MOCK_TABLE_DIMENSIONS.rowHeight}px;
   justify-content: center;
-  width: 32px;
+  width: ${BACKGROUND_MOCK_TABLE_DIMENSIONS.addColumnButtonWidth}px;
 `;
 
 const StyledTableBody = styled.div`
@@ -88,48 +88,34 @@ const StyledTableBody = styled.div`
   flex-shrink: 0;
 `;
 
-const StyledFooter = styled.div`
-  display: flex;
-  flex-direction: column;
-`;
-
 const StyledFooterRow = styled.div`
-  align-items: center;
-  border-bottom: 1px solid ${themeCssVariables.border.color.light};
-  color: ${themeCssVariables.font.color.tertiary};
   display: flex;
-  height: 32px;
+  height: ${BACKGROUND_MOCK_TABLE_DIMENSIONS.rowHeight}px;
 `;
 
 const StyledFooterCheckboxColumn = styled.div`
-  border-right: 1px solid ${themeCssVariables.border.color.light};
   flex-shrink: 0;
-  height: 100%;
-  width: 36px;
+  height: ${BACKGROUND_MOCK_TABLE_DIMENSIONS.rowHeight}px;
+  width: ${BACKGROUND_MOCK_TABLE_DIMENSIONS.checkboxColumnWidth}px;
 `;
 
 const StyledFooterCell = styled.div<{ width: number }>`
   align-items: center;
-  border-right: 1px solid ${themeCssVariables.border.color.light};
   box-sizing: border-box;
+  color: ${themeCssVariables.font.color.tertiary};
   display: flex;
   flex-shrink: 0;
-  font-size: ${themeCssVariables.font.size.sm};
+  font-weight: ${themeCssVariables.font.weight.medium};
   gap: ${themeCssVariables.spacing[1]};
-  height: 100%;
+  height: ${BACKGROUND_MOCK_TABLE_DIMENSIONS.rowHeight}px;
+  justify-content: space-between;
   overflow: hidden;
   padding: 0 ${themeCssVariables.spacing[2]};
   width: ${({ width }) => width}px;
 `;
 
-const StyledFooterLabel = styled.span`
-  color: ${themeCssVariables.font.color.tertiary};
-`;
-
 const StyledFooterValue = styled.span`
   color: ${themeCssVariables.font.color.primary};
-  font-weight: ${themeCssVariables.font.weight.medium};
-  margin-left: auto;
 `;
 
 export const BackgroundMockTable = () => {
@@ -140,16 +126,16 @@ export const BackgroundMockTable = () => {
     <StyledTableWrapper>
       <StyledTable>
         <StyledHeaderRow>
-          <StyledCheckboxColumn>
-            <StyledCheckbox />
-          </StyledCheckboxColumn>
+          <StyledCheckboxHeaderColumn>
+            <Checkbox hoverable checked={false} />
+          </StyledCheckboxHeaderColumn>
           {BACKGROUND_MOCK_COLUMNS.map((column) => {
             const Icon = getIcon(column.iconName);
             return (
               <StyledHeaderCell key={column.label} width={column.width}>
                 {Icon !== undefined && (
                   <Icon
-                    size={theme.icon.size.sm}
+                    size={theme.icon.size.md}
                     stroke={theme.icon.stroke.sm}
                   />
                 )}
@@ -166,33 +152,31 @@ export const BackgroundMockTable = () => {
             <BackgroundMockTableRow key={company.id} company={company} />
           ))}
         </StyledTableBody>
-        <StyledFooter>
-          <StyledFooterRow>
-            <StyledFooterCheckboxColumn />
-            <StyledFooterCell width={180}>
-              <StyledFooterLabel>Calculate</StyledFooterLabel>
-              <IconChevronDown
-                size={theme.icon.size.sm}
-                stroke={theme.icon.stroke.sm}
-              />
-            </StyledFooterCell>
-            <StyledFooterCell width={130}>
-              <StyledFooterLabel>Count all</StyledFooterLabel>
-              <StyledFooterValue>599</StyledFooterValue>
-            </StyledFooterCell>
-            <StyledFooterCell width={130} />
-            <StyledFooterCell width={130} />
-            <StyledFooterCell width={130} />
-            <StyledFooterCell width={110}>
-              <StyledFooterLabel>Max of Em…</StyledFooterLabel>
-              <StyledFooterValue>284,571</StyledFooterValue>
-            </StyledFooterCell>
-            <StyledFooterCell width={200}>
-              <StyledFooterLabel>Not empty of Add…</StyledFooterLabel>
-              <StyledFooterValue>599</StyledFooterValue>
-            </StyledFooterCell>
-          </StyledFooterRow>
-        </StyledFooter>
+        <StyledFooterRow>
+          <StyledFooterCheckboxColumn />
+          <StyledFooterCell width={BACKGROUND_MOCK_COLUMNS[0].width}>
+            <span>Calculate</span>
+            <IconChevronDown
+              size={theme.icon.size.sm}
+              stroke={theme.icon.stroke.sm}
+            />
+          </StyledFooterCell>
+          <StyledFooterCell width={BACKGROUND_MOCK_COLUMNS[1].width}>
+            <span>Count all</span>
+            <StyledFooterValue>599</StyledFooterValue>
+          </StyledFooterCell>
+          <StyledFooterCell width={BACKGROUND_MOCK_COLUMNS[2].width} />
+          <StyledFooterCell width={BACKGROUND_MOCK_COLUMNS[3].width} />
+          <StyledFooterCell width={BACKGROUND_MOCK_COLUMNS[4].width} />
+          <StyledFooterCell width={BACKGROUND_MOCK_COLUMNS[5].width}>
+            <span>Max of Em…</span>
+            <StyledFooterValue>284,571</StyledFooterValue>
+          </StyledFooterCell>
+          <StyledFooterCell width={BACKGROUND_MOCK_COLUMNS[6].width}>
+            <span>Not empty of Add…</span>
+            <StyledFooterValue>599</StyledFooterValue>
+          </StyledFooterCell>
+        </StyledFooterRow>
       </StyledTable>
     </StyledTableWrapper>
   );

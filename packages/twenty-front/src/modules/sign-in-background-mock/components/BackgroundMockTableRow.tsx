@@ -3,61 +3,53 @@ import { useContext } from 'react';
 
 import { type BackgroundMockCompany } from '@/sign-in-background-mock/constants/BackgroundMockCompanies';
 import { BACKGROUND_MOCK_COLUMN_WIDTHS } from '@/sign-in-background-mock/constants/BackgroundMockColumnWidths';
+import { BACKGROUND_MOCK_TABLE_DIMENSIONS } from '@/sign-in-background-mock/constants/BackgroundMockTableDimensions';
 import { Avatar, IconLink } from 'twenty-ui/display';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { Chip, ChipAccent, ChipSize, ChipVariant } from 'twenty-ui/components';
+import { Checkbox } from 'twenty-ui/input';
 import { getLogoUrlFromDomainName } from 'twenty-shared/utils';
 
-const ROW_HEIGHT = 32;
-
 const StyledRow = styled.div`
-  border-bottom: 1px solid ${themeCssVariables.border.color.light};
   display: flex;
-  height: ${ROW_HEIGHT}px;
+  height: ${BACKGROUND_MOCK_TABLE_DIMENSIONS.rowHeight}px;
 `;
 
 const StyledCheckboxColumn = styled.div`
   align-items: center;
-  border-right: 1px solid ${themeCssVariables.border.color.light};
+  border-bottom: 1px solid ${themeCssVariables.border.color.light};
   box-sizing: border-box;
   display: flex;
   flex-shrink: 0;
+  height: ${BACKGROUND_MOCK_TABLE_DIMENSIONS.rowHeight}px;
   justify-content: center;
-  padding-left: 8px;
-  width: 36px;
-`;
-
-const StyledCheckbox = styled.div`
-  background: ${themeCssVariables.background.primary};
-  border: 1px solid ${themeCssVariables.border.color.medium};
-  border-radius: ${themeCssVariables.border.radius.xs};
-  height: 12px;
-  width: 12px;
+  padding-right: ${themeCssVariables.spacing[1]};
+  width: ${BACKGROUND_MOCK_TABLE_DIMENSIONS.checkboxColumnWidth}px;
 `;
 
 const StyledCell = styled.div<{ width: number }>`
   align-items: center;
+  border-bottom: 1px solid ${themeCssVariables.border.color.light};
   border-right: 1px solid ${themeCssVariables.border.color.light};
   box-sizing: border-box;
   color: ${themeCssVariables.font.color.primary};
   display: flex;
   flex-shrink: 0;
+  height: ${BACKGROUND_MOCK_TABLE_DIMENSIONS.rowHeight}px;
   overflow: hidden;
-  padding: 0 ${themeCssVariables.spacing[1]};
+  padding-left: ${themeCssVariables.spacing[2]};
   white-space: nowrap;
   width: ${({ width }) => width}px;
 `;
 
 const StyledTruncated = styled.span`
   overflow: hidden;
-  padding: 0 ${themeCssVariables.spacing[1]};
   text-overflow: ellipsis;
 `;
 
 const StyledMutedText = styled.span`
   color: ${themeCssVariables.font.color.tertiary};
   overflow: hidden;
-  padding: 0 ${themeCssVariables.spacing[1]};
   text-overflow: ellipsis;
 `;
 
@@ -101,7 +93,7 @@ export const BackgroundMockTableRow = ({
   return (
     <StyledRow>
       <StyledCheckboxColumn>
-        <StyledCheckbox />
+        <Checkbox hoverable checked={false} />
       </StyledCheckboxColumn>
       <StyledCell width={BACKGROUND_MOCK_COLUMN_WIDTHS.Name}>
         <Chip
