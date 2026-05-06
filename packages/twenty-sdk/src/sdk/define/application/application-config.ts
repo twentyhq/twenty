@@ -8,5 +8,6 @@ export type ApplicationConfig = Omit<
   | 'preInstallLogicFunction'
   | 'defaultRoleUniversalIdentifier'
 > & {
+  //deprecated
   defaultRoleUniversalIdentifier?: string;
 };
