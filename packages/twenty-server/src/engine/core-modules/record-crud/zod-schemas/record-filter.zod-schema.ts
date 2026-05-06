@@ -10,8 +10,13 @@ import { generateFieldFilterZodSchema } from 'src/engine/core-modules/record-cru
 import { shouldExcludeFieldFromAgentToolSchema } from 'src/engine/metadata-modules/field-metadata/utils/should-exclude-field-from-agent-tool-schema.util';
 import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 
-// Builds the per-field filter shape and full recursive filter schema
-// for a given object metadata, reusable across find and updateMany tools
+// Builds the per-field filter shape and full filter schema for a given object
+// metadata, reusable across find and updateMany tools.
+//
+// The filter schema is bounded to 2 levels of logical nesting (or/and/not
+// containing or/and/not) rather than using z.lazy(). z.lazy() produces
+// $defs/$ref in the JSON Schema output which Google Gemini rejects — fully
+// inlined schemas are required by that provider.
 export const generateRecordFilterSchema = (
   objectMetadata: ObjectMetadataForToolSchema,
   restrictedFields?: RestrictedFieldsPermissions,
@@ -44,24 +49,44 @@ export const generateRecordFilterSchema = (
       fieldFilter;
   });
 
-  const filterSchema: z.ZodTypeAny = z.lazy(() =>
-    z
-      .object({
-        ...filterShape,
-        or: z
-          .array(filterSchema)
-          .optional()
-          .describe('OR condition - matches if ANY of the filters match'),
-        and: z
-          .array(filterSchema)
-          .optional()
-          .describe('AND condition - matches if ALL filters match'),
-        not: filterSchema
-          .optional()
-          .describe('NOT condition - matches if the filter does NOT match'),
-      })
-      .partial(),
-  );
+  // Leaf schema: only field-level predicates, no nested logical operators
+  const leafFilterSchema = z.object({ ...filterShape }).partial();
+
+  // One level of logical nesting wrapping leaf filters
+  const innerFilterSchema: z.ZodTypeAny = z
+    .object({
+      ...filterShape,
+      or: z
+        .array(leafFilterSchema)
+        .optional()
+        .describe('OR condition - matches if ANY of the filters match'),
+      and: z
+        .array(leafFilterSchema)
+        .optional()
+        .describe('AND condition - matches if ALL filters match'),
+      not: leafFilterSchema
+        .optional()
+        .describe('NOT condition - matches if the filter does NOT match'),
+    })
+    .partial();
+
+  // Outer schema: two levels of logical nesting
+  const filterSchema: z.ZodTypeAny = z
+    .object({
+      ...filterShape,
+      or: z
+        .array(innerFilterSchema)
+        .optional()
+        .describe('OR condition - matches if ANY of the filters match'),
+      and: z
+        .array(innerFilterSchema)
+        .optional()
+        .describe('AND condition - matches if ALL filters match'),
+      not: innerFilterSchema
+        .optional()
+        .describe('NOT condition - matches if the filter does NOT match'),
+    })
+    .partial();
 
   return { filterShape, filterSchema };
 };
