@@ -228,10 +228,15 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         },
       );
 
-    const updatedFlatObjectMetadata = findFlatEntityByUniversalIdentifier({
-      universalIdentifier: flatObjectMetadataToUpdate.universalIdentifier,
-      flatEntityMaps: recomputedFlatObjectMetadataMaps,
-    });
+    const updatedFlatObjectMetadata =
+      findFlatEntityByUniversalIdentifier({
+        universalIdentifier: flatObjectMetadataToUpdate.universalIdentifier,
+        flatEntityMaps: recomputedFlatObjectMetadataMaps,
+      }) ||
+      findFlatEntityByIdInFlatEntityMaps({
+        flatEntityId: flatObjectMetadataToUpdate.id,
+        flatEntityMaps: recomputedFlatObjectMetadataMaps,
+      });
 
     if (!isDefined(updatedFlatObjectMetadata)) {
       throw new ObjectMetadataException(
