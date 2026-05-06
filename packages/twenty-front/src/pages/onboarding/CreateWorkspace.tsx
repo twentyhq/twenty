@@ -28,6 +28,14 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useMutation } from '@apollo/client/react';
 import { ActivateWorkspaceDocument } from '~/generated-metadata/graphql';
 
+// Workspace activation propagation can lag across server instances because the
+// per-instance core entity cache memoizes the workspace entity for up to 10s.
+// We poll the currentUser query until the server returns a defined
+// workspaceMember (which guarantees the workspace is active and the next page
+// will not crash on a null currentWorkspaceMember).
+const WORKSPACE_ACTIVATION_POLL_MAX_ATTEMPTS = 20;
+const WORKSPACE_ACTIVATION_POLL_INTERVAL_MS = 500;
+
 const StyledContentContainer = styled.div`
   width: 100%;
 `;
@@ -121,14 +129,42 @@ export const CreateWorkspace = () => {
           throw result.error ?? new Error(t`Unknown error`);
         }
 
-        await loadCurrentUser();
+        let isWorkspaceActivationPropagated = false;
+        for (
+          let attempt = 0;
+          attempt < WORKSPACE_ACTIVATION_POLL_MAX_ATTEMPTS;
+          attempt++
+        ) {
+          const { workspaceMember } = await loadCurrentUser();
+
+          if (isDefined(workspaceMember)) {
+            isWorkspaceActivationPropagated = true;
+            break;
+          }
+
+          await new Promise((resolve) =>
+            setTimeout(resolve, WORKSPACE_ACTIVATION_POLL_INTERVAL_MS),
+          );
+        }
+
+        if (!isWorkspaceActivationPropagated) {
+          throw new Error(
+            t`Workspace activation is taking longer than expected. Please refresh the page.`,
+          );
+        }
+
         setNextOnboardingStatus();
       } catch (error: any) {
         setPendingCreationLoaderStep(PendingCreationLoaderStep.None);
 
-        enqueueErrorSnackBar({
-          apolloError: CombinedGraphQLErrors.is(error) ? error : undefined,
-        });
+        enqueueErrorSnackBar(
+          CombinedGraphQLErrors.is(error)
+            ? { apolloError: error }
+            : {
+                message:
+                  error instanceof Error ? error.message : t`Unknown error`,
+              },
+        );
       }
     },
     [
