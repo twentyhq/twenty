@@ -8,36 +8,65 @@ import {
   IconBox,
   IconBriefcase,
   IconCalendarEvent,
+  IconCalendarTime,
+  IconCalendarX,
   IconChevronDown,
+  IconCube,
   IconCurrencyDollar,
   IconFilter,
+  IconLink,
   IconList,
+  IconMail,
+  IconNumber,
+  IconPhone,
   IconPin,
+  IconPlus,
   IconProgressCheck,
+  IconRefresh,
+  IconTag,
   IconUser,
+  IconUserCircle,
+  IconWorld,
 } from 'twenty-ui/display';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { PageContainer } from '@/ui/layout/page/components/PageContainer';
 
 const STROWGER_GRAPHQL_URL = '/strowger-api/graphql';
-const SEEDED_ORGANIZATION_ID = '11111111-1111-1111-1111-111111111111';
 
 type StrowgerJob = {
   id: string;
+  providerJobId: string | null;
+  provider: string | null;
+  openDate: string | null;
+  bookDate: string | null;
+  cancelDate: string | null;
+  moveType: string | null;
+  status: string | null;
+  rep: string | null;
+  userName: string | null;
   firstName: string | null;
   lastName: string | null;
-  email: string | null;
   phoneNumber: string | null;
-  status: string | null;
-  moveType: string | null;
-  moveDate: string | null;
-  estimateAmountInCents: number | null;
+  email: string | null;
   originCity: string | null;
   originState: string | null;
+  originZip: string | null;
   destinationCity: string | null;
   destinationState: string | null;
-  createdAt: string | null;
+  destinationZip: string | null;
+  miles: number | null;
+  estimateCubicFeet: number | null;
+  actualCubicFeet: number | null;
+  estimateAmountInCents: number | null;
+  actualCostAmountInCents: number | null;
+  balanceAmountInCents: number | null;
+  paidAmountInCents: number | null;
+  moveDate: string | null;
+  source: string | null;
+  priority: string | null;
+  refNo: string | null;
+  jobLink: string | null;
 };
 
 type FetchState =
@@ -63,6 +92,34 @@ const STATUS_COLORS: Record<string, TagColor> = {
   BAD_LEAD: 'red',
 };
 
+const formatLocation = (city: string | null, state: string | null) => {
+  if (!city && !state) return '—';
+  if (city && state) return `${city}, ${state}`;
+  return city ?? state ?? '—';
+};
+
+const formatDate = (value: string | null) => {
+  if (!value) return '—';
+  const parsed = new Date(value.length === 10 ? `${value}T00:00:00` : value);
+  if (Number.isNaN(parsed.getTime())) return value;
+  return parsed.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+  });
+};
+
+const formatEnumLabel = (value: string) =>
+  value
+    .split('_')
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(' ');
+
+const formatVolume = (cubicFeet: number | null) => {
+  if (cubicFeet === null || cubicFeet === undefined) return '—';
+  return `${cubicFeet.toLocaleString('en-US')} ft³`;
+};
+
 const formatCurrency = (cents: number | null) => {
   if (cents === null || cents === undefined) return '—';
   return `$${(cents / 100).toLocaleString('en-US', {
@@ -71,40 +128,34 @@ const formatCurrency = (cents: number | null) => {
   })}`;
 };
 
-const formatLocation = (city: string | null, state: string | null) => {
-  if (!city && !state) return '—';
-  if (city && state) return `${city}, ${state}`;
-  return city ?? state ?? '—';
+const formatNumber = (value: number | null, suffix?: string) => {
+  if (value === null || value === undefined) return '—';
+  return suffix
+    ? `${value.toLocaleString('en-US')} ${suffix}`
+    : value.toLocaleString('en-US');
 };
 
-const formatMoveDate = (date: string | null) => {
-  if (!date) return '—';
-  const parsed = new Date(`${date}T00:00:00`);
-  if (Number.isNaN(parsed.getTime())) return date;
-  return parsed.toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  });
-};
-
-const formatStatus = (status: string) =>
-  status
-    .split('_')
-    .map(
-      (word) =>
-        word.charAt(0).toUpperCase() + word.slice(1).toLowerCase(),
-    )
-    .join(' ');
-
-const COLUMNS: ColumnDef[] = [
+const ALL_COLUMNS: ColumnDef[] = [
   {
-    key: 'customer',
-    label: 'Customer',
-    Icon: IconUser,
-    width: '180px',
-    render: (job) =>
-      [job.firstName, job.lastName].filter(Boolean).join(' ') || '—',
+    key: 'jobNo',
+    label: 'Job no.',
+    Icon: IconNumber,
+    width: '120px',
+    render: (job) => job.providerJobId ?? '—',
+  },
+  {
+    key: 'openDate',
+    label: 'Open date',
+    Icon: IconCalendarTime,
+    width: '140px',
+    render: (job) => formatDate(job.openDate),
+  },
+  {
+    key: 'type',
+    label: 'Type',
+    Icon: IconBox,
+    width: '140px',
+    render: (job) => (job.moveType ? formatEnumLabel(job.moveType) : '—'),
   },
   {
     key: 'status',
@@ -115,41 +166,195 @@ const COLUMNS: ColumnDef[] = [
       job.status ? (
         <Tag
           color={STATUS_COLORS[job.status] ?? 'gray'}
-          text={formatStatus(job.status)}
+          text={formatEnumLabel(job.status)}
         />
       ) : (
         '—'
       ),
   },
   {
-    key: 'moveType',
-    label: 'Move type',
-    Icon: IconBox,
+    key: 'userRep',
+    label: 'User rep',
+    Icon: IconUserCircle,
+    width: '160px',
+    render: (job) => job.rep ?? job.userName ?? '—',
+  },
+  {
+    key: 'customer',
+    label: 'Customer',
+    Icon: IconUser,
+    width: '180px',
+    render: (job) =>
+      [job.firstName, job.lastName].filter(Boolean).join(' ') || '—',
+  },
+  {
+    key: 'phone',
+    label: 'Phone',
+    Icon: IconPhone,
+    width: '140px',
+    render: (job) => job.phoneNumber ?? '—',
+  },
+  {
+    key: 'email',
+    label: 'Email',
+    Icon: IconMail,
+    width: '220px',
+    render: (job) => job.email ?? '—',
+  },
+  {
+    key: 'fromTo',
+    label: 'From → To',
+    Icon: IconPin,
+    width: '260px',
+    render: (job) =>
+      `${formatLocation(job.originCity, job.originState)} → ${formatLocation(job.destinationCity, job.destinationState)}`,
+  },
+  {
+    key: 'volume',
+    label: 'Volume',
+    Icon: IconCube,
     width: '120px',
-    render: (job) => job.moveType ?? '—',
+    render: (job) => formatVolume(job.estimateCubicFeet),
   },
   {
     key: 'moveDate',
     label: 'Move date',
     Icon: IconCalendarEvent,
-    width: '160px',
-    render: (job) => formatMoveDate(job.moveDate),
+    width: '140px',
+    render: (job) => formatDate(job.moveDate),
   },
   {
-    key: 'estimate',
+    key: 'source',
+    label: 'Source',
+    Icon: IconTag,
+    width: '140px',
+    render: (job) => job.source ?? '—',
+  },
+  {
+    key: 'provider',
+    label: 'Provider',
+    Icon: IconWorld,
+    width: '120px',
+    render: (job) => (job.provider ? formatEnumLabel(job.provider) : '—'),
+  },
+  {
+    key: 'bookDate',
+    label: 'Book date',
+    Icon: IconCalendarEvent,
+    width: '140px',
+    render: (job) => formatDate(job.bookDate),
+  },
+  {
+    key: 'cancelDate',
+    label: 'Cancel date',
+    Icon: IconCalendarX,
+    width: '140px',
+    render: (job) => formatDate(job.cancelDate),
+  },
+  {
+    key: 'miles',
+    label: 'Miles',
+    Icon: IconPin,
+    width: '100px',
+    render: (job) => formatNumber(job.miles, 'mi'),
+  },
+  {
+    key: 'actualCubicFeet',
+    label: 'Actual volume',
+    Icon: IconCube,
+    width: '140px',
+    render: (job) => formatVolume(job.actualCubicFeet),
+  },
+  {
+    key: 'estimateAmount',
     label: 'Estimate',
     Icon: IconCurrencyDollar,
-    width: '110px',
+    width: '120px',
     render: (job) => formatCurrency(job.estimateAmountInCents),
   },
   {
-    key: 'route',
-    label: 'Route',
-    Icon: IconPin,
-    width: '240px',
-    render: (job) =>
-      `${formatLocation(job.originCity, job.originState)} → ${formatLocation(job.destinationCity, job.destinationState)}`,
+    key: 'actualCost',
+    label: 'Actual cost',
+    Icon: IconCurrencyDollar,
+    width: '120px',
+    render: (job) => formatCurrency(job.actualCostAmountInCents),
   },
+  {
+    key: 'balance',
+    label: 'Balance',
+    Icon: IconCurrencyDollar,
+    width: '120px',
+    render: (job) => formatCurrency(job.balanceAmountInCents),
+  },
+  {
+    key: 'paid',
+    label: 'Paid',
+    Icon: IconCurrencyDollar,
+    width: '120px',
+    render: (job) => formatCurrency(job.paidAmountInCents),
+  },
+  {
+    key: 'priority',
+    label: 'Priority',
+    Icon: IconRefresh,
+    width: '120px',
+    render: (job) => job.priority ?? '—',
+  },
+  {
+    key: 'refNo',
+    label: 'Ref no.',
+    Icon: IconNumber,
+    width: '120px',
+    render: (job) => job.refNo ?? '—',
+  },
+  {
+    key: 'originZip',
+    label: 'Origin zip',
+    Icon: IconPin,
+    width: '110px',
+    render: (job) => job.originZip ?? '—',
+  },
+  {
+    key: 'destinationZip',
+    label: 'Destination zip',
+    Icon: IconPin,
+    width: '130px',
+    render: (job) => job.destinationZip ?? '—',
+  },
+  {
+    key: 'jobLink',
+    label: 'Job link',
+    Icon: IconLink,
+    width: '160px',
+    render: (job) =>
+      job.jobLink ? (
+        <a
+          href={job.jobLink}
+          target="_blank"
+          rel="noreferrer noopener"
+          onClick={(event) => event.stopPropagation()}
+        >
+          Open
+        </a>
+      ) : (
+        '—'
+      ),
+  },
+];
+
+const DEFAULT_VISIBLE_COLUMN_KEYS = [
+  'jobNo',
+  'openDate',
+  'type',
+  'status',
+  'userRep',
+  'customer',
+  'phone',
+  'email',
+  'fromTo',
+  'volume',
+  'moveDate',
+  'source',
 ];
 
 const StyledPageRoot = styled.div`
@@ -391,6 +596,54 @@ const StyledMessage = styled.div`
   text-align: center;
 `;
 
+const PLUS_CELL_WIDTH = '40px';
+
+const StyledPlusHeaderCell = styled.div`
+  align-items: center;
+  border-right: 1px solid ${themeCssVariables.border.color.light};
+  color: ${themeCssVariables.font.color.tertiary};
+  cursor: pointer;
+  display: flex;
+  flex: 1;
+  height: ${themeCssVariables.spacing[8]};
+  justify-content: center;
+  min-width: ${PLUS_CELL_WIDTH};
+  position: relative;
+
+  &:hover {
+    background: ${themeCssVariables.background.transparent.lighter};
+    color: ${themeCssVariables.font.color.primary};
+  }
+
+  & > svg {
+    height: ${themeCssVariables.icon.size.md}px;
+    width: ${themeCssVariables.icon.size.md}px;
+  }
+`;
+
+const StyledPlusBodyCell = styled.div`
+  border-right: 1px solid ${themeCssVariables.border.color.light};
+  flex: 1;
+  height: ${themeCssVariables.spacing[8]};
+  min-width: ${PLUS_CELL_WIDTH};
+`;
+
+const StyledPlusPopover = styled.div`
+  background: ${themeCssVariables.background.primary};
+  border: 1px solid ${themeCssVariables.border.color.medium};
+  border-radius: ${themeCssVariables.border.radius.md};
+  box-shadow: ${themeCssVariables.boxShadow.strong};
+  display: flex;
+  flex-direction: column;
+  margin-top: ${themeCssVariables.spacing[1]};
+  overflow: hidden;
+  position: absolute;
+  right: 0;
+  top: 100%;
+  width: 240px;
+  z-index: 10;
+`;
+
 export const StrowgerJobsPage = () => {
   const [state, setState] = useState<FetchState>({ status: 'loading' });
   const [isFilterOpen, setIsFilterOpen] = useState(false);
@@ -401,8 +654,15 @@ export const StrowgerJobsPage = () => {
   const [sortSearch, setSortSearch] = useState('');
   const sortAnchorRef = useRef<HTMLDivElement | null>(null);
 
+  const [visibleColumnKeys, setVisibleColumnKeys] = useState<string[]>(
+    DEFAULT_VISIBLE_COLUMN_KEYS,
+  );
+  const [isAddColumnOpen, setIsAddColumnOpen] = useState(false);
+  const [addColumnSearch, setAddColumnSearch] = useState('');
+  const addColumnAnchorRef = useRef<HTMLDivElement | null>(null);
+
   useEffect(() => {
-    if (!isFilterOpen && !isSortOpen) return;
+    if (!isFilterOpen && !isSortOpen && !isAddColumnOpen) return;
 
     const handleClick = (event: MouseEvent) => {
       const target = event.target as Node;
@@ -420,12 +680,20 @@ export const StrowgerJobsPage = () => {
       ) {
         setIsSortOpen(false);
       }
+      if (
+        isAddColumnOpen &&
+        addColumnAnchorRef.current &&
+        !addColumnAnchorRef.current.contains(target)
+      ) {
+        setIsAddColumnOpen(false);
+      }
     };
 
     const handleKey = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
         setIsFilterOpen(false);
         setIsSortOpen(false);
+        setIsAddColumnOpen(false);
       }
     };
 
@@ -435,34 +703,72 @@ export const StrowgerJobsPage = () => {
       document.removeEventListener('mousedown', handleClick);
       document.removeEventListener('keydown', handleKey);
     };
-  }, [isFilterOpen, isSortOpen]);
+  }, [isFilterOpen, isSortOpen, isAddColumnOpen]);
 
-  const filterableColumns = COLUMNS.filter((column) =>
+  const visibleColumns = visibleColumnKeys
+    .map((key) => ALL_COLUMNS.find((column) => column.key === key))
+    .filter((column): column is ColumnDef => column !== undefined);
+
+  const hiddenColumns = ALL_COLUMNS.filter(
+    (column) => !visibleColumnKeys.includes(column.key),
+  );
+
+  const addableColumns = hiddenColumns.filter((column) =>
+    column.label.toLowerCase().includes(addColumnSearch.toLowerCase()),
+  );
+
+  const filterableColumns = visibleColumns.filter((column) =>
     column.label.toLowerCase().includes(filterSearch.toLowerCase()),
   );
 
-  const sortableColumns = COLUMNS.filter((column) =>
+  const sortableColumns = visibleColumns.filter((column) =>
     column.label.toLowerCase().includes(sortSearch.toLowerCase()),
   );
 
+  const handleAddColumn = (key: string) => {
+    setVisibleColumnKeys((current) =>
+      current.includes(key) ? current : [...current, key],
+    );
+    setIsAddColumnOpen(false);
+    setAddColumnSearch('');
+  };
+
   useEffect(() => {
     const query = `
-      query StrowgerJobs($orgId: ID!) {
-        jobs(organizationId: $orgId) {
+      query StrowgerJobs {
+        jobs {
           id
+          providerJobId
+          provider
+          openDate
+          bookDate
+          cancelDate
+          moveType
+          status
+          rep
+          userName
           firstName
           lastName
-          email
           phoneNumber
-          status
-          moveType
-          moveDate
-          estimateAmountInCents
+          email
           originCity
           originState
+          originZip
           destinationCity
           destinationState
-          createdAt
+          destinationZip
+          miles
+          estimateCubicFeet
+          actualCubicFeet
+          estimateAmountInCents
+          actualCostAmountInCents
+          balanceAmountInCents
+          paidAmountInCents
+          moveDate
+          source
+          priority
+          refNo
+          jobLink
         }
       }
     `;
@@ -472,10 +778,7 @@ export const StrowgerJobsPage = () => {
         const response = await fetch(STROWGER_GRAPHQL_URL, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            query,
-            variables: { orgId: SEEDED_ORGANIZATION_ID },
-          }),
+          body: JSON.stringify({ query }),
         });
 
         if (!response.ok) {
@@ -581,9 +884,7 @@ export const StrowgerJobsPage = () => {
                         autoFocus
                         placeholder="Search fields"
                         value={sortSearch}
-                        onChange={(event) =>
-                          setSortSearch(event.target.value)
-                        }
+                        onChange={(event) => setSortSearch(event.target.value)}
                       />
                     </StyledPopoverSearchWrap>
                     <StyledPopoverList>
@@ -615,15 +916,12 @@ export const StrowgerJobsPage = () => {
               </StyledMessage>
             )}
             {state.status === 'ready' && state.jobs.length === 0 && (
-              <StyledMessage>
-                No jobs found for organization{' '}
-                <code>{SEEDED_ORGANIZATION_ID}</code>.
-              </StyledMessage>
+              <StyledMessage>No jobs found.</StyledMessage>
             )}
             {state.status === 'ready' && state.jobs.length > 0 && (
               <StyledTable>
                 <StyledHeaderRow>
-                  {COLUMNS.map(({ key, label, Icon, width }) => (
+                  {visibleColumns.map(({ key, label, Icon, width }) => (
                     <StyledHeaderCell
                       key={key}
                       style={{ width, minWidth: width }}
@@ -632,17 +930,56 @@ export const StrowgerJobsPage = () => {
                       {label}
                     </StyledHeaderCell>
                   ))}
+                  <StyledPlusHeaderCell
+                    ref={addColumnAnchorRef}
+                    onClick={() => setIsAddColumnOpen((open) => !open)}
+                    title="Add field"
+                  >
+                    <IconPlus />
+                    {isAddColumnOpen && (
+                      <StyledPlusPopover
+                        onClick={(event) => event.stopPropagation()}
+                      >
+                        <StyledPopoverSearchWrap>
+                          <StyledPopoverSearchInput
+                            autoFocus
+                            placeholder="Search fields"
+                            value={addColumnSearch}
+                            onChange={(event) =>
+                              setAddColumnSearch(event.target.value)
+                            }
+                          />
+                        </StyledPopoverSearchWrap>
+                        <StyledPopoverList>
+                          {addableColumns.length === 0 ? (
+                            <StyledPopoverEmpty>
+                              {hiddenColumns.length === 0
+                                ? 'All fields shown'
+                                : 'No fields found'}
+                            </StyledPopoverEmpty>
+                          ) : (
+                            addableColumns.map(({ key, label, Icon }) => (
+                              <MenuItem
+                                key={key}
+                                text={label}
+                                LeftIcon={Icon}
+                                onClick={() => handleAddColumn(key)}
+                              />
+                            ))
+                          )}
+                        </StyledPopoverList>
+                      </StyledPlusPopover>
+                    )}
+                  </StyledPlusHeaderCell>
                 </StyledHeaderRow>
                 {state.jobs.map((job) => (
                   <StyledRow key={job.id}>
-                    {COLUMNS.map(({ key, width, render }) => (
-                      <StyledCell
-                        key={key}
-                        style={{ width, minWidth: width }}
-                      >
+                    {visibleColumns.map(({ key, width, render }) => (
+                      <StyledCell key={key} style={{ width, minWidth: width }}>
                         {render(job)}
                       </StyledCell>
                     ))}
+                    <StyledPlusBodyCell />
                   </StyledRow>
                 ))}
               </StyledTable>
