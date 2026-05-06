@@ -64,11 +64,13 @@ describe('defineApplication', () => {
       defaultRoleUniversalIdentifier: '68bb56f3-8300-4cb5-8cc3-8da9ee66f1b2',
     });
 
+    const warnings = result.warnings ?? [];
+
     expect(result.success).toBe(true);
     expect(result.errors).toEqual([]);
-    expect(result.warnings).toHaveLength(1);
-    expect(result.warnings[0]).toMatch(/deprecated/i);
-    expect(result.warnings[0]).toMatch(/defineApplicationRole/);
+    expect(warnings).toHaveLength(1);
+    expect(warnings[0]).toMatch(/deprecated/i);
+    expect(warnings[0]).toMatch(/defineApplicationRole/);
   });
 
   it('should return error when universalIdentifier is missing', () => {
