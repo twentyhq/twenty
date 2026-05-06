@@ -41,6 +41,20 @@ describe('defineApplication', () => {
     );
   });
 
+  it('should accept config without defaultRoleUniversalIdentifier (auto-wired by defineApplicationRole)', () => {
+    const config = {
+      universalIdentifier: 'a9faf5f8-cf7e-4f24-9d37-fd523c30febe',
+      displayName: 'My App',
+      description: 'My app description',
+    };
+
+    const result = defineApplication(config);
+
+    expect(result.success).toBe(true);
+    expect(result.errors).toEqual([]);
+    expect(result.config?.defaultRoleUniversalIdentifier).toBeUndefined();
+  });
+
   it('should return error when universalIdentifier is missing', () => {
     const config = {
       displayName: 'My App',
