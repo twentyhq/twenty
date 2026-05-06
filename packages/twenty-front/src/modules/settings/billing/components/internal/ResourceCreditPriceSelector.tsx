@@ -121,7 +121,8 @@ export const ResourceCreditPriceSelector = ({
   };
 
   const recurringInterval = getIntervalLabel(
-    currentResourceCreditPrice?.recurringInterval === SubscriptionInterval.Month,
+    currentResourceCreditPrice?.recurringInterval ===
+      SubscriptionInterval.Month,
   );
 
   const handleConfirmClick = async () => {

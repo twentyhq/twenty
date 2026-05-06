@@ -81,7 +81,8 @@ export const AIChatNoMoreBillingCreditsBanner = () => {
   const nextTierPrice = isDefined(nextPrice)
     ? isV2
       ? formatNumber(
-          ((nextPrice as typeof nextResourceCreditPrice)?.unitAmount ?? 0) / 100,
+          ((nextPrice as typeof nextResourceCreditPrice)?.unitAmount ?? 0) /
+            100,
         )
       : formatNumber(
           ((nextPrice as typeof nextMeteredBillingPrice)?.tiers?.[0]

@@ -43,8 +43,6 @@ export const SettingsBillingContent = () => {
     ? isGetResourceCreditUsageQueryLoaded
     : isGetMeteredProductsUsageQueryLoaded;
 
-  console.log('isUsageQueryLoaded', isUsageQueryLoaded);
-
   const hasNotCanceledCurrentSubscription =
     isDefined(subscriptionStatus) &&
     subscriptionStatus !== SubscriptionStatus.Canceled;

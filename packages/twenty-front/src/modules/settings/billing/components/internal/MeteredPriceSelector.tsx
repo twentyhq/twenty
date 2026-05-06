@@ -62,6 +62,17 @@ export const MeteredPriceSelector = ({
     currentMeteredBillingPrice,
   );
 
+  const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
+
+  const [setMeteredSubscriptionPrice, { loading: isUpdating }] = useMutation(
+    SetMeteredSubscriptionPriceDocument,
+  );
+
+  const { openModal } = useModal();
+  const [selectedPriceId, setSelectedPriceId] = useState<string | undefined>(
+    undefined,
+  );
+
   if (!currentMeteredPrice) return null;
 
   const toOption = (meteredBillingPrice: MeteredBillingPrice) => {
@@ -77,20 +88,9 @@ export const MeteredPriceSelector = ({
     };
   };
 
-  const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
-
-  const [setMeteredSubscriptionPrice, { loading: isUpdating }] = useMutation(
-    SetMeteredSubscriptionPriceDocument,
-  );
-
   const options = [...meteredBillingPrices]
     .sort((a, b) => a.tiers[0].flatAmount - b.tiers[0].flatAmount)
     .map(toOption);
-
-  const { openModal } = useModal();
-  const [selectedPriceId, setSelectedPriceId] = useState<string | undefined>(
-    undefined,
-  );
 
   const selectedPrice = meteredBillingPrices.find(
     ({ stripePriceId }) => stripePriceId === selectedPriceId,

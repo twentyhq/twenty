@@ -24,6 +24,7 @@ export const mockBillingPlans = {
               unitAmount: 1200,
               recurringInterval: 'Month',
               priceUsageType: 'LICENSED',
+              creditAmount: null,
             },
             {
               __typename: 'BillingPriceLicensed',
@@ -31,6 +32,7 @@ export const mockBillingPlans = {
               unitAmount: 10800,
               recurringInterval: 'Year',
               priceUsageType: 'LICENSED',
+              creditAmount: null,
             },
           ],
         },
@@ -315,6 +317,7 @@ export const mockBillingPlans = {
               unitAmount: 2500,
               recurringInterval: 'Month',
               priceUsageType: 'LICENSED',
+              creditAmount: null,
             },
             {
               __typename: 'BillingPriceLicensed',
@@ -322,6 +325,7 @@ export const mockBillingPlans = {
               unitAmount: 22800,
               recurringInterval: 'Year',
               priceUsageType: 'LICENSED',
+              creditAmount: null,
             },
           ],
         },
