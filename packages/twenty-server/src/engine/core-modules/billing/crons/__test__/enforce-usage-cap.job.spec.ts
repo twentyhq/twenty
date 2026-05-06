@@ -11,6 +11,7 @@ import { BillingSubscriptionItemEntity } from 'src/engine/core-modules/billing/e
 import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing-product-key.enum';
 import { BillingUsageCapService } from 'src/engine/core-modules/billing/services/billing-usage-cap.service';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 const METERED_STRIPE_PRODUCT_ID = 'prod_metered';
@@ -22,7 +23,15 @@ describe('EnforceUsageCapJob', () => {
   let billingSubscriptionItemRepository: jest.Mocked<{
     update: jest.Mock;
   }>;
-  let billingUsageCapService: jest.Mocked<BillingUsageCapService>;
+  let billingUsageCapService: jest.Mocked<
+    Pick<
+      BillingUsageCapService,
+      | 'isClickHouseEnabled'
+      | 'getBatchPeriodCreditsUsed'
+      | 'evaluateCapBatch'
+      | 'evaluateCapBatchV2'
+    >
+  >;
   let twentyConfigService: jest.Mocked<TwentyConfigService>;
 
   const buildSubscription = ({
@@ -87,11 +96,18 @@ describe('EnforceUsageCapJob', () => {
             isClickHouseEnabled: jest.fn().mockReturnValue(true),
             getBatchPeriodCreditsUsed: jest.fn().mockResolvedValue(new Map()),
             evaluateCapBatch: jest.fn().mockReturnValue(new Map()),
+            evaluateCapBatchV2: jest.fn().mockReturnValue(new Map()),
           },
         },
         {
           provide: TwentyConfigService,
           useValue: { get: jest.fn() },
+        },
+        {
+          provide: FeatureFlagService,
+          useValue: {
+            isFeatureEnabled: jest.fn().mockResolvedValue(false),
+          },
         },
       ],
     }).compile();
