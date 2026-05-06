@@ -14,6 +14,7 @@ import {
   type WorkspaceUpgradeStep,
 } from 'src/engine/core-modules/upgrade/services/upgrade-sequence-reader.service';
 import { UpgradeSequenceRunnerService } from 'src/engine/core-modules/upgrade/services/upgrade-sequence-runner.service';
+import { UpgradeStatusService } from 'src/engine/core-modules/upgrade/services/upgrade-status.service';
 import { WorkspaceCommandRunnerService } from 'src/engine/core-modules/upgrade/services/workspace-command-runner.service';
 import { UpgradeMigrationEntity } from 'src/engine/core-modules/upgrade/upgrade-migration.entity';
 import {
@@ -140,6 +141,14 @@ export const createUpgradeSequenceRunnerIntegrationTestModule = async () => {
       {
         provide: UpgradeSequenceReaderService,
         useFactory: () => new UpgradeSequenceReaderService({} as any),
+      },
+      {
+        provide: UpgradeStatusService,
+        useValue: {
+          invalidateInstanceAndAllWorkspacesStatus: jest
+            .fn()
+            .mockResolvedValue(undefined),
+        },
       },
       InstanceCommandRunnerService,
       WorkspaceCommandRunnerService,
@@ -294,45 +303,6 @@ export const seedWorkspaceMigration = async (
       [name, status, attempt, EXECUTED_BY_VERSION, workspaceId, createdAt, isInitial],
     );
   }
-};
-
-export const testCountMigrationsForCommand = async (
-  dataSource: DataSource,
-  {
-    name,
-    workspaceId = null,
-  }: {
-    name: string;
-    workspaceId?: string | null;
-  },
-): Promise<number> => {
-  const rows = await dataSource.query(
-    `SELECT COUNT(*)::int AS count FROM core."upgradeMigration"
-     WHERE name = $1 AND ($2::uuid IS NULL AND "workspaceId" IS NULL OR "workspaceId" = $2)`,
-    [name, workspaceId],
-  );
-
-  return rows[0].count;
-};
-
-export const testGetLatestMigrationForCommand = async (
-  dataSource: DataSource,
-  {
-    name,
-    workspaceId = null,
-  }: {
-    name: string;
-    workspaceId?: string | null;
-  },
-): Promise<{ name: string; status: string; attempt: number } | null> => {
-  const rows = await dataSource.query(
-    `SELECT name, status, attempt FROM core."upgradeMigration"
-     WHERE name = $1 AND ($2::uuid IS NULL AND "workspaceId" IS NULL OR "workspaceId" = $2)
-     ORDER BY attempt DESC LIMIT 1`,
-    [name, workspaceId],
-  );
-
-  return rows.length > 0 ? rows[0] : null;
 };
 
 export type ExecutedMigrationRecord = {

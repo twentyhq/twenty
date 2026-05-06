@@ -53,38 +53,45 @@ Erstellen Sie zunächst das Zwischenobjekt, das die Verknüpfungen speichert.
 1. Gehen Sie zu **Einstellungen → Datenmodell**
 2. Klicken Sie auf **+ Neues Objekt**
 3. Benennen Sie es aussagekräftig (z. B. "Projektzuweisung", "Teammitglied", "Produktbestellung")
-4. Klicken Sie auf **Speichern**
+4. Schalten Sie "Erstellen eines Namensfelds überspringen" ein
+
+<img src="/images/user-guide/fields/new-pivot-object.png" alt="Neues Verknüpfungsobjekt" />
+
+5. Klicken Sie auf **Speichern**
 
 <Tip>
 **Namenskonvention**: Verwenden Sie einen Namen, der die Beziehung beschreibt, z. B. "Projektzuweisung" oder "Teammitgliedschaft". Das macht das Datenmodell leichter verständlich.
 </Tip>
 
-## Schritt 2: Beziehungen vom Verknüpfungsobjekt erstellen
+## Schritt 2: Beziehungen zwischen Objekten und dem Verknüpfungsobjekt erstellen
 
-Fügen Sie vom Verknüpfungsobjekt aus Beziehungsfelder zu beiden Objekten hinzu, die Sie verbinden möchten.
+Fügen Sie für jedes Ihrer beiden Objekte Beziehungsfelder zum Verknüpfungsobjekt hinzu.
 
-### Erste Beziehung (Verknüpfung → Objekt A)
+### Erste Beziehung (Objekt A → Verknüpfung)
 
-1. Wählen Sie Ihr Verknüpfungsobjekt unter **Einstellungen → Datenmodell** aus
-2. Klicken Sie auf **+ Feld hinzufügen**
-3. Wählen Sie **Relation** als Feldtyp
-4. Wählen Sie das erste Objekt aus (z. B. "Personen")
-5. Legen Sie den Beziehungstyp auf **Viele-zu-Eins** fest (viele Zuweisungen können mit einer Person verknüpft werden)
-6. Benennen Sie die Felder:
-   * Feld auf der Verknüpfung: z. B. "Person"
-   * Feld bei Personen: z. B. "Projektzuweisungen"
-7. Klicken Sie auf **Speichern**
-
-### Zweite Beziehung (Verknüpfung → Objekt B)
-
-1. Bleiben Sie im Verknüpfungsobjekt und klicken Sie auf **+ Feld hinzufügen**
-2. Wählen Sie **Relation** als Feldtyp
-3. Wählen Sie das zweite Objekt aus (z. B. "Projekte")
-4. Legen Sie den Beziehungstyp auf **Viele-zu-Eins** fest
+1. Wählen Sie Ihr erstes Objekt unter **Einstellungen → Datenmodell** aus
+2. Klicken Sie auf **+ Beziehung hinzufügen**
+3. Wählen Sie das Verknüpfungsobjekt aus (z. B. "Projektzuweisungen")
+4. Legen Sie den Beziehungstyp auf **Eins-zu-Viele** fest (eine Person kann mit vielen Zuweisungen verknüpft werden)
 5. Benennen Sie die Felder:
+   * Feld bei Personen: z. B. "Projektzuweisungen"
+   * Feld auf der Verknüpfung: z. B. "Person"
+6. Klicken Sie auf **Speichern**
+
+### Zweite Beziehung (Objekt B → Verknüpfung)
+
+1. Wählen Sie Ihr zweites Objekt unter **Einstellungen → Datenmodell** aus
+2. Klicken Sie auf **+ Beziehung hinzufügen**
+3. Wählen Sie das Verknüpfungsobjekt aus (z. B. "Projektzuweisungen")
+4. Legen Sie den Beziehungstyp auf **Eins-zu-Viele** fest (ein Projekt kann mit vielen Zuweisungen verknüpft werden)
+5. Aktivieren Sie **"Dies ist eine Beziehung zu einem Verknüpfungsobjekt"**
+
+<img src="/images/user-guide/fields/junction-relation-toggle.png" style={{width:'100%'}} />
+
+6. Benennen Sie die Felder:
    * Feld auf der Verknüpfung: z. B. "Projekt"
    * Feld bei Projekten: z. B. "Teammitglieder"
-6. Klicken Sie auf **Speichern**
+7. Klicken Sie auf **Speichern**
 
 ## Schritt 3: Anzeige der Verknüpfungsbeziehung konfigurieren
 
@@ -97,18 +104,6 @@ Konfigurieren Sie nun die Quellobjekte so, dass verknüpfte Datensätze direkt a
 5. Aktivieren Sie **"Dies ist eine Beziehung zu einem Verknüpfungsobjekt"**
 6. Wählen Sie die **Zielbeziehung** aus (z. B. "Projekt" — das Feld an der Verknüpfung, das auf die andere Seite zeigt)
 7. Klicken Sie auf **Speichern**
-
-{/* TODO: Add image
-<img src="/images/user-guide/fields/junction-relation-toggle.png" style={{width:'100%'}}/>
-*/}
-
-Wiederholen Sie dies für das andere Objekt:
-
-1. Wählen Sie "Projekte" im Datenmodell aus
-2. Bearbeiten Sie das Beziehungsfeld "Teammitglieder"
-3. Aktivieren Sie den Verknüpfungsschalter
-4. Wählen Sie "Person" als Zielbeziehung aus
-5. Speichern
 
 ## Ergebnis
 
@@ -130,15 +125,15 @@ Hier ist eine vollständige Schritt-für-Schritt-Anleitung:
 
 ### Beziehungen hinzufügen
 
-1. **Projektzuweisung → Personen**
-   * Typ: Viele-zu-Eins
-   * Feld bei Zuweisung: "Person"
+1. **Personen → Projektzuweisung**
+   * Typ: Eins-zu-Viele
    * Feld bei Personen: "Projektzuweisungen"
+   * Feld bei Zuweisung: "Person"
 
-2. **Projektzuweisung → Projekte**
-   * Typ: Viele-zu-Eins
-   * Feld bei Zuweisung: "Projekt"
+2. **Projekte → Projektzuweisung**
+   * Typ: Eins-zu-Viele
    * Feld bei Projekten: "Teammitglieder"
+   * Feld bei Zuweisung: "Projekt"
 
 ### Verknüpfungsanzeige konfigurieren
 

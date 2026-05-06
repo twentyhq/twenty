@@ -10,4 +10,7 @@ export class AdminPanelRecentUserDTO extends UserInfoDTO {
 
   @Field(() => UUIDScalarType, { nullable: true })
   workspaceId?: string | null;
+
+  @Field(() => String, { nullable: true })
+  workspaceLogo?: string | null;
 }

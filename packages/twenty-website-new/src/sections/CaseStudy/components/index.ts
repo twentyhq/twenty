@@ -1,9 +1,9 @@
-import { Body } from './Body/Body';
+import { Body } from './Body';
 import { CaseStudySectionNav } from './CaseStudySectionNav';
-import { Hero } from './Hero/Hero';
-import { Highlights } from './Highlights/Highlights';
-import { TextBlock } from './TextBlock/TextBlock';
-import { VisualBlock } from './VisualBlock/VisualBlock';
+import { Hero } from './Hero';
+import { Highlights } from './Highlights';
+import { TextBlock } from './TextBlock';
+import { VisualBlock } from './VisualBlock';
 
 export const CaseStudy = {
   Body,

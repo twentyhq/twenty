@@ -8,6 +8,7 @@ import {
 import { extractManifestFromFile } from '@/cli/utilities/build/manifest/manifest-extract-config-from-file';
 import { getDefaultFieldsInObjectFields } from '@/cli/utilities/build/manifest/utils/get-default-fields-in-object-fields';
 import { type ApplicationConfig, type LogicFunctionConfig } from '@/sdk/define';
+import { type CommandMenuItemConfig } from '@/sdk/define/command-menu-items/command-menu-item-config';
 import { type FrontComponentConfig } from '@/sdk/define/front-component/front-component-config';
 import { type ObjectConfig } from '@/sdk/define/objects/object-config';
 import { type PageLayoutConfig } from '@/sdk/define/page-layouts/page-layout-config';
@@ -21,8 +22,9 @@ import {
   type ApplicationManifest,
   type AssetManifest,
   ASSETS_DIR,
+  type CommandMenuItemManifest,
+  type ConnectionProviderManifest,
   type FieldManifest,
-  type FrontComponentCommandManifest,
   type FrontComponentManifest,
   type LogicFunctionManifest,
   type Manifest,
@@ -30,13 +32,16 @@ import {
   type ObjectManifest,
   type PageLayoutManifest,
   type PageLayoutTabManifest,
+  type PostInstallLogicFunctionApplicationManifest,
+  type PreInstallLogicFunctionApplicationManifest,
   type RoleManifest,
   type SkillManifest,
   type ViewManifest,
-  type PostInstallLogicFunctionApplicationManifest,
-  type PreInstallLogicFunctionApplicationManifest,
 } from 'twenty-shared/application';
-import { getInputSchemaFromSourceCode } from 'twenty-shared/logic-function';
+import {
+  getInputSchemaFromSourceCode,
+  jsonSchemaToInputSchema,
+} from 'twenty-shared/logic-function';
 import { assertUnreachable } from 'twenty-shared/utils';
 import { addMissingFieldOptionIds } from '@/cli/utilities/build/manifest/utils/add-missing-field-option-ids';
 import { type PostInstallLogicFunctionConfig } from '@/sdk/define/logic-functions/post-install-logic-function-config';
@@ -77,6 +82,7 @@ export const buildManifest = async (
   const roles: RoleManifest[] = [];
   const skills: SkillManifest[] = [];
   const agents: AgentManifest[] = [];
+  const connectionProviders: ConnectionProviderManifest[] = [];
   const logicFunctions: LogicFunctionManifest[] = [];
   const frontComponents: FrontComponentManifest[] = [];
   const publicAssets: AssetManifest[] = [];
@@ -84,6 +90,7 @@ export const buildManifest = async (
   const navigationMenuItems: NavigationMenuItemManifest[] = [];
   const pageLayouts: PageLayoutManifest[] = [];
   const pageLayoutTabs: PageLayoutTabManifest[] = [];
+  const commandMenuItems: CommandMenuItemManifest[] = [];
   const postInstallLogicFunctions: PostInstallLogicFunctionApplicationManifest[] =
     [];
   const preInstallLogicFunctions: PreInstallLogicFunctionApplicationManifest[] =
@@ -94,6 +101,7 @@ export const buildManifest = async (
   const rolesFilePaths: string[] = [];
   const skillsFilePaths: string[] = [];
   const agentsFilePaths: string[] = [];
+  const connectionProvidersFilePaths: string[] = [];
   const logicFunctionsFilePaths: string[] = [];
   const frontComponentsFilePaths: string[] = [];
   const publicAssetsFilePaths: string[] = [];
@@ -101,6 +109,7 @@ export const buildManifest = async (
   const navigationMenuItemsFilePaths: string[] = [];
   const pageLayoutsFilePaths: string[] = [];
   const pageLayoutTabsFilePaths: string[] = [];
+  const commandMenuItemsFilePaths: string[] = [];
 
   for (const filePath of filePaths) {
     const fileContent = await readFile(filePath, 'utf-8');
@@ -208,6 +217,17 @@ export const buildManifest = async (
         agentsFilePaths.push(relativePath);
         break;
       }
+      case ManifestEntityKey.ConnectionProviders: {
+        const extract =
+          await extractManifestFromFile<ConnectionProviderManifest>({
+            appPath,
+            filePath,
+          });
+        connectionProviders.push(extract.config);
+        errors.push(...extract.errors);
+        connectionProvidersFilePaths.push(relativePath);
+        break;
+      }
       case ManifestEntityKey.LogicFunctions: {
         const extract = await extractManifestFromFile<LogicFunctionConfig>({
           appPath,
@@ -220,13 +240,43 @@ export const buildManifest = async (
 
         const relativeFilePath = relative(appPath, filePath);
 
-        const toolInputSchema =
-          rest.toolInputSchema ??
-          (await getInputSchemaFromSourceCode(fileContent));
+        // Auto-infer inputSchema for any trigger that opts in but omits one.
+        // For the AI tool surface we use the JSON schema directly; for the
+        // workflow action surface we convert to Twenty's InputSchema.
+        const inferredJsonSchema =
+          (rest.toolTriggerSettings && !rest.toolTriggerSettings.inputSchema) ||
+          (rest.workflowActionTriggerSettings &&
+            !rest.workflowActionTriggerSettings.inputSchema)
+            ? await getInputSchemaFromSourceCode(fileContent)
+            : null;
+
+        const toolTriggerSettings = rest.toolTriggerSettings
+          ? {
+              ...rest.toolTriggerSettings,
+              inputSchema:
+                rest.toolTriggerSettings.inputSchema ??
+                inferredJsonSchema ??
+                undefined,
+            }
+          : undefined;
+
+        const workflowActionTriggerSettings = rest.workflowActionTriggerSettings
+          ? {
+              ...rest.workflowActionTriggerSettings,
+              inputSchema:
+                rest.workflowActionTriggerSettings.inputSchema ??
+                (inferredJsonSchema
+                  ? jsonSchemaToInputSchema(inferredJsonSchema)
+                  : undefined),
+            }
+          : undefined;
 
         const config: LogicFunctionManifest = {
           ...rest,
-          toolInputSchema,
+          ...(toolTriggerSettings ? { toolTriggerSettings } : {}),
+          ...(workflowActionTriggerSettings
+            ? { workflowActionTriggerSettings }
+            : {}),
           handlerName: 'default.config.handler',
           sourceHandlerPath: relativeFilePath,
           builtHandlerPath: relativeFilePath.replace(/\.tsx?$/, '.mjs'),
@@ -274,7 +324,7 @@ export const buildManifest = async (
 
         errors.push(...extract.errors);
 
-        const { component, command, ...rest } = extract.config;
+        const { component, ...rest } = extract.config;
 
         const relativeFilePath = relative(appPath, filePath);
 
@@ -285,8 +335,6 @@ export const buildManifest = async (
           builtComponentPath: relativeFilePath.replace(/\.tsx?$/, '.mjs'),
           builtComponentChecksum: '',
           isHeadless: rest.isHeadless ?? false,
-          // transformed by conditionalAvailabilityTransformPlugin
-          command: command as FrontComponentCommandManifest,
         };
 
         frontComponents.push(config);
@@ -348,6 +396,19 @@ export const buildManifest = async (
         pageLayoutTabs.push(pageLayoutTabManifest);
         errors.push(...extract.errors);
         pageLayoutTabsFilePaths.push(relativePath);
+        break;
+      }
+      case ManifestEntityKey.CommandMenuItems: {
+        const extract = await extractManifestFromFile<CommandMenuItemConfig>({
+          appPath,
+          filePath,
+        });
+
+        commandMenuItems.push(
+          extract.config as unknown as CommandMenuItemManifest,
+        );
+        errors.push(...extract.errors);
+        commandMenuItemsFilePaths.push(relativePath);
         break;
       }
       case ManifestEntityKey.PublicAssets: {
@@ -420,6 +481,7 @@ export const buildManifest = async (
         roles: roles.sort(byId),
         skills: skills.sort(byId),
         agents: agents.sort(byId),
+        connectionProviders: connectionProviders.sort(byId),
         logicFunctions: logicFunctions.sort(byId),
         frontComponents: frontComponents.sort(byId),
         publicAssets: publicAssets.sort(byPath),
@@ -427,6 +489,7 @@ export const buildManifest = async (
         navigationMenuItems: navigationMenuItems.sort(byId),
         pageLayouts: pageLayouts.sort(byId),
         pageLayoutTabs: pageLayoutTabs.sort(byId),
+        commandMenuItems: commandMenuItems.sort(byId),
       };
 
   const entityFilePaths: EntityFilePaths = {
@@ -436,6 +499,7 @@ export const buildManifest = async (
     roles: rolesFilePaths,
     skills: skillsFilePaths,
     agents: agentsFilePaths,
+    connectionProviders: connectionProvidersFilePaths,
     logicFunctions: logicFunctionsFilePaths,
     frontComponents: frontComponentsFilePaths,
     publicAssets: publicAssetsFilePaths,
@@ -443,6 +507,7 @@ export const buildManifest = async (
     navigationMenuItems: navigationMenuItemsFilePaths,
     pageLayouts: pageLayoutsFilePaths,
     pageLayoutTabs: pageLayoutTabsFilePaths,
+    commandMenuItems: commandMenuItemsFilePaths,
   };
 
   return { manifest, filePaths: entityFilePaths, errors };

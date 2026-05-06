@@ -1,10 +1,6 @@
 type UsersIconProps = { size: number; color: string; strokeWidth?: number };
 
-export function UsersIcon({
-  size,
-  color,
-  strokeWidth = 1.5,
-}: UsersIconProps) {
+export function UsersIcon({ size, color, strokeWidth = 1.5 }: UsersIconProps) {
   return (
     <svg
       width={size}

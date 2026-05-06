@@ -1,4 +1,5 @@
-import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
+import { defineLogicFunction } from 'twenty-sdk/define';
+import { type RoutePayload } from 'twenty-sdk/logic-function';
 import {
   fetchPullRequests,
   type GqlPullRequest,
@@ -51,7 +52,13 @@ const handler = async (event: RoutePayload<FetchPrsPayload>) => {
 
   if (prs.length === 0) {
     console.log(`[fetch-prs] empty page for ${tag}`);
-    return { prCount: 0, reviewCount: 0, totalCount, hasMore: false, endCursor: null };
+    return {
+      prCount: 0,
+      reviewCount: 0,
+      totalCount,
+      hasMore: false,
+      endCursor: null,
+    };
   }
 
   const allUsers = prs.flatMap((pr) => [
@@ -103,8 +110,15 @@ const handler = async (event: RoutePayload<FetchPrsPayload>) => {
     reviewerId: string | null;
     prNumber: number;
     reviewerLogin: string | null;
+    prAuthorId: string | null;
     events: { state: ReviewEventState; submittedAt: string | null }[];
   };
+
+  const authorIdByPullRequestId = new Map<string, string | null>();
+  for (const pr of prData) {
+    const id = prIdByNumber.get(pr.githubNumber);
+    if (id) authorIdByPullRequestId.set(id, pr.authorId);
+  }
 
   let skippedReviews = 0;
   const reviewEventData: ReviewEventInput[] = [];
@@ -134,6 +148,7 @@ const handler = async (event: RoutePayload<FetchPrsPayload>) => {
           reviewerId,
           prNumber: pr.number,
           reviewerLogin: review.author?.login ?? null,
+          prAuthorId: authorIdByPullRequestId.get(pullRequestId) ?? null,
           events: [],
         };
         groups.set(key, group);
@@ -170,6 +185,7 @@ const handler = async (event: RoutePayload<FetchPrsPayload>) => {
         prNumber: group.prNumber,
         reviewerLogin: group.reviewerLogin,
         events: group.events,
+        prAuthorId: group.prAuthorId,
       }),
     );
     const consolidatedRecords = await timed(

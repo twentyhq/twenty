@@ -10,6 +10,10 @@ export type SerializedEventData = {
   pageY?: number;
   screenX?: number;
   screenY?: number;
+  offsetX?: number;
+  offsetY?: number;
+  movementX?: number;
+  movementY?: number;
   button?: number;
   buttons?: number;
   key?: string;

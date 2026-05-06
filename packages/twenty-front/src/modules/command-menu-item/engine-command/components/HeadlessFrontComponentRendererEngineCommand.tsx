@@ -24,17 +24,14 @@ export const HeadlessFrontComponentRendererEngineCommand = () => {
     );
   }
 
-  const recordId =
-    context.selectedRecords.length === 1
-      ? context.selectedRecords[0].id
-      : undefined;
+  const selectedRecordIds = context.selectedRecords.map((record) => record.id);
 
   return (
     <Suspense fallback={null}>
       <FrontComponentRenderer
         frontComponentId={context.frontComponentId}
         commandMenuItemId={commandMenuItemId}
-        recordId={recordId}
+        selectedRecordIds={selectedRecordIds}
       />
     </Suspense>
   );

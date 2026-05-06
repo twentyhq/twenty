@@ -86,7 +86,7 @@ const StyledFields = styled.div`
 `;
 
 const StyledPropertyBoxContainer = styled.div`
-  height: ${themeCssVariables.spacing[6]};
+  min-height: ${themeCssVariables.spacing[6]};
   width: 100%;
 `;
 

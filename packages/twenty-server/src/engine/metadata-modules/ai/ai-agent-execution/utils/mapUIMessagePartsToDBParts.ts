@@ -92,6 +92,7 @@ export const mapUIMessagePartsToDBParts = (
                 toolOutput: output,
                 errorMessage: errorText,
                 state,
+                providerExecuted: part.providerExecuted ?? null,
               };
             }
           }

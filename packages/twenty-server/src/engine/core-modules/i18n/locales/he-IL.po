@@ -69,6 +69,16 @@ msgstr "חברה"
 msgid "A connected account"
 msgstr "חשבון מחובר"
 
+#. js-lingui-id: JYntnV
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
+msgid "A connection provider with this name already exists for this application"
+msgstr ""
+
+#. js-lingui-id: jzhZvB
+#: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
+msgid "A connection provider with this name already exists for this application."
+msgstr ""
+
 #. js-lingui-id: cOSBjW
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgid "A dashboard"
@@ -197,7 +207,7 @@ msgid "A temporary error occurred. Please try again."
 msgstr "אירעה שגיאה זמנית. נא לנסות שוב."
 
 #. js-lingui-id: reBsjo
-#: src/modules/connected-account/refresh-tokens-manager/exceptions/connected-account-refresh-tokens.exception.ts
+#: src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception.ts
 msgid "A temporary network error occurred."
 msgstr "אירעה שגיאת רשת זמנית."
 
@@ -287,7 +297,7 @@ msgid "Access Token"
 msgstr "אסימון גישה"
 
 #. js-lingui-id: Bk+qoW
-#: src/modules/connected-account/refresh-tokens-manager/exceptions/connected-account-refresh-tokens.exception.ts
+#: src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception.ts
 msgid "Access token not found."
 msgstr "אסימון גישה לא נמצא."
 
@@ -577,6 +587,26 @@ msgstr "משתנה רישום היישום לא נמצא."
 #: src/engine/core-modules/application/application.exception.ts
 msgid "Application upgrade failed."
 msgstr "שדרוג היישום נכשל."
+
+#. js-lingui-id: 5MJQ4s
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-application-variable-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-application-variable-validator.service.ts
+msgid "Application variable key is required"
+msgstr ""
+
+#. js-lingui-id: K+YEBR
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-application-variable-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-application-variable-validator.service.ts
+msgid "Application variable key must be unique"
+msgstr ""
+
+#. js-lingui-id: e6tjp1
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-application-variable-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-application-variable-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-application-variable-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-application-variable-validator.service.ts
+msgid "Application variable not found"
+msgstr ""
 
 #. js-lingui-id: 9qtW5o
 #: src/engine/core-modules/application/application-variable/application-variable.exception.ts
@@ -1297,6 +1327,11 @@ msgstr ""
 msgid "Chat thread not found."
 msgstr ""
 
+#. js-lingui-id: eLQjKW
+#: src/engine/metadata-modules/ai/ai.exception.ts
+msgid "Chat thread title cannot be empty."
+msgstr ""
+
 #. js-lingui-id: NGL+Sl
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
@@ -1318,6 +1353,11 @@ msgstr "התגלתה תלות מעגלית בהיררכיית קבוצות סי�
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
 msgid "City"
 msgstr "עיר"
+
+#. js-lingui-id: J7dFKa
+#: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
+msgid "Client credentials are not configured for this OAuth provider."
+msgstr ""
 
 #. js-lingui-id: NRF7pg
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
@@ -1526,6 +1566,51 @@ msgstr "חשבונות מחוברים"
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgid "Connected Accounts"
 msgstr "חשבונות מחוברים"
+
+#. js-lingui-id: xQ2DfP
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
+msgid "Connection provider display name is required"
+msgstr ""
+
+#. js-lingui-id: zYcf9G
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
+msgid "Connection provider displayName is required"
+msgstr ""
+
+#. js-lingui-id: WsuFPo
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
+msgid "Connection provider name is required"
+msgstr ""
+
+#. js-lingui-id: mTAp1w
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
+msgid "Connection provider not found"
+msgstr ""
+
+#. js-lingui-id: b+xWjq
+#: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
+msgid "Connection provider not found."
+msgstr ""
+
+#. js-lingui-id: z2V1Q6
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
+msgid "Connection provider oauthConfig.{label} is required"
+msgstr ""
+
+#. js-lingui-id: vOKvb8
+#. placeholder {0}: flatConnectionProvider.name
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
+msgid "Connection provider with name {0} already exists for this application"
+msgstr ""
+
+#. js-lingui-id: YQTVfF
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
+msgid "Connection provider with type 'oauth' is missing oauthConfig"
+msgstr ""
 
 #. js-lingui-id: jfC/xh
 #: src/engine/metadata-modules/view-field-group/constants/standard-view-field-group-names.ts
@@ -1930,7 +2015,6 @@ msgid "Description"
 msgstr "תיאור"
 
 #. js-lingui-id: MRB7nI
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-message-association-standard-flat-field-metadata.util.ts
 msgid "Direction"
 msgstr "כיוון"
@@ -2301,6 +2385,11 @@ msgstr "מחיקת הרשומה נכשלה."
 msgid "Failed to duplicate dashboard."
 msgstr "שכפול לוח הבקרה נכשל."
 
+#. js-lingui-id: srkEOV
+#: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
+msgid "Failed to exchange the authorization code for an access token."
+msgstr ""
+
 #. js-lingui-id: MIto3A
 #: src/engine/core-modules/sdk-client/exceptions/sdk-client.exception.ts
 msgid "Failed to extract SDK client archive."
@@ -2330,6 +2419,11 @@ msgstr "כשל בקבלת עדכונים בזמן אמת."
 #: src/engine/core-modules/billing/billing.exception.ts
 msgid "Failed to record billing event."
 msgstr "רישום אירוע חיוב נכשל."
+
+#. js-lingui-id: eQmx6a
+#: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
+msgid "Failed to refresh the access token."
+msgstr ""
 
 #. js-lingui-id: SJEIIJ
 #: src/engine/core-modules/admin-panel/admin-panel-queue.service.ts
@@ -2693,6 +2787,11 @@ msgstr "קבצים"
 msgid "Files field is not supported for unique fields"
 msgstr "שדה Files אינו נתמך עבור שדות ייחודיים"
 
+#. js-lingui-id: 4GaFCQ
+#: src/engine/workspace-manager/workspace-migration/interceptors/utils/__tests__/build-metadata-validation-error-payload.util.spec.ts
+msgid "First friendly message"
+msgstr ""
+
 #. js-lingui-id: ylQd2j
 #: src/engine/metadata-modules/page-layout-widget/constants/standard-page-layout-widget-titles.ts
 #: src/engine/metadata-modules/page-layout-tab/constants/standard-page-layout-tab-titles.ts
@@ -3021,7 +3120,6 @@ msgid "In progress"
 msgstr "בתהליך"
 
 #. js-lingui-id: RAMaAx
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-message-association-standard-flat-field-metadata.util.ts
 msgid "Incoming"
 msgstr ""
@@ -3108,6 +3206,11 @@ msgstr "קלט סוכן לא תקין."
 #: src/engine/api/rest/input-request-parsers/rest-input-request-parser.exception.ts
 msgid "Invalid aggregate fields parameter."
 msgstr "פרמטר שדות אגרגציה לא תקין."
+
+#. js-lingui-id: 56bSD0
+#: src/engine/core-modules/application/application-variable/application-variable.exception.ts
+msgid "Invalid application variable input."
+msgstr ""
 
 #. js-lingui-id: KNrRpL
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
@@ -3504,7 +3607,7 @@ msgid "Invalid pricing tiers."
 msgstr "מדרגות תמחור לא תקינות."
 
 #. js-lingui-id: XBYAgs
-#: src/modules/connected-account/refresh-tokens-manager/exceptions/connected-account-refresh-tokens.exception.ts
+#: src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception.ts
 msgid "Invalid refresh token."
 msgstr "אסימון רענון לא תקין."
 
@@ -3667,6 +3770,11 @@ msgstr "ערך לא חוקי עבור תאריך: \"{inspectedValue}\". תבני
 msgid "Invalid value for emails."
 msgstr "ערך לא תקין עבור כתובות דוא\"ל."
 
+#. js-lingui-id: qvqNco
+#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-rating-and-select-field-or-throw.util.ts
+msgid "Invalid value for field \"{fieldName}\""
+msgstr ""
+
 #. js-lingui-id: tfoEIq
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-files-field-or-throw.util.ts
 msgid "Invalid value for FILES field \"{fieldName}\" - {errorMessage}"
@@ -3719,11 +3827,6 @@ msgstr "ערך לא תקין עבור מיקום: \"{inspectedValue}\""
 #: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-rich-text-field-or-throw.util.ts
 msgid "Invalid value for rich text."
 msgstr "ערך לא תקין עבור טקסט עשיר."
-
-#. js-lingui-id: 9lVA5C
-#: src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-rating-and-select-field-or-throw.util.ts
-msgid "Invalid value for select: \"{inspectedValue}\""
-msgstr "ערך לא תקין עבור בחירה: \"{inspectedValue}\""
 
 #. js-lingui-id: ZjemzY
 #: src/engine/api/common/common-args-processors/filter-arg-processor/validator-utils/validate-uuid-field-or-throw.util.ts
@@ -4242,6 +4345,12 @@ msgstr "פונקציה לוגית לא נמצאה."
 msgid "Logic function with same universal identifier already exists"
 msgstr "פונקציה לוגית עם אותו מזהה אוניברסלי כבר קיימת"
 
+#. js-lingui-id: Mwvtvf
+#: src/engine/workspace-manager/workspace-migration/interceptors/utils/build-metadata-validation-error-payload.util.ts
+#: src/engine/workspace-manager/workspace-migration/interceptors/utils/__tests__/build-metadata-validation-error-payload.util.spec.ts
+msgid "Many validation errors"
+msgstr ""
+
 #. js-lingui-id: hg6l4j
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "March"
@@ -4361,7 +4470,6 @@ msgid "Message Channels"
 msgstr ""
 
 #. js-lingui-id: /4uGJc
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-message-association-standard-flat-field-metadata.util.ts
 msgid "Message Direction"
 msgstr ""
@@ -4542,7 +4650,9 @@ msgid "Metadata"
 msgstr ""
 
 #. js-lingui-id: PslTPV
-#: src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-builder-exception-formatter.ts
+#: src/engine/workspace-manager/workspace-migration/interceptors/utils/build-metadata-validation-error-payload.util.ts
+#: src/engine/workspace-manager/workspace-migration/interceptors/utils/__tests__/build-metadata-validation-error-payload.util.spec.ts
+#: src/engine/workspace-manager/workspace-migration/interceptors/utils/__tests__/build-metadata-validation-error-payload.util.spec.ts
 msgid "Metadata validation failed"
 msgstr "אימות מטא נתונים נכשל"
 
@@ -4841,6 +4951,11 @@ msgstr "לא נמצאה סביבת עבודה שבה מופעל אימות בא�
 msgid "None"
 msgstr ""
 
+#. js-lingui-id: eRIGld
+#: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
+msgid "Not authorized to access this OAuth provider."
+msgstr ""
+
 #. js-lingui-id: NpVtef
 #: src/modules/dashboard/chart-data/utils/format-dimension-value.util.ts
 #: src/modules/dashboard/chart-data/utils/format-dimension-value.util.ts
@@ -4958,10 +5073,25 @@ msgstr ""
 msgid "Number of employees in the company"
 msgstr ""
 
+#. js-lingui-id: MKdH/S
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
+msgid "OAuth {label} is required"
+msgstr ""
+
 #. js-lingui-id: 08qKzD
 #: src/engine/core-modules/auth/auth.exception.ts
 msgid "OAuth access was denied."
 msgstr "הגישה באמצעות OAuth נדחתה."
+
+#. js-lingui-id: zey8hv
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-connection-provider-validator.service.ts
+msgid "OAuth connection provider is missing its oauth config block"
+msgstr ""
+
+#. js-lingui-id: xodh4N
+#: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
+msgid "OAuth provider not found."
+msgstr ""
 
 #. js-lingui-id: ECRKYR
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name-and-labels.util.ts
@@ -5131,6 +5261,11 @@ msgstr "אחד או יותר מתחומי הגישה המבוקשים אינם �
 msgid "Ongoing"
 msgstr ""
 
+#. js-lingui-id: XLn1DI
+#: src/engine/workspace-manager/workspace-migration/interceptors/utils/__tests__/build-metadata-validation-error-payload.util.spec.ts
+msgid "Only error"
+msgstr ""
+
 #. js-lingui-id: eYgzEd
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Only field restrictions are allowed."
@@ -5277,8 +5412,12 @@ msgstr "נדרשות אפשרויות עבור שדות enum"
 msgid "Other"
 msgstr ""
 
+#. js-lingui-id: 4romcD
+#: src/engine/workspace-manager/workspace-migration/interceptors/utils/__tests__/build-metadata-validation-error-payload.util.spec.ts
+msgid "Other error"
+msgstr ""
+
 #. js-lingui-id: O0Z2Xr
-#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-message-association-standard-flat-field-metadata.util.ts
 msgid "Outgoing"
 msgstr ""
@@ -5788,6 +5927,16 @@ msgstr "הרשומה אינה עומדת באילוצי האבטחה."
 msgid "Record not found."
 msgstr "רשומה לא נמצאה."
 
+#. js-lingui-id: LVUF8D
+#: src/engine/metadata-modules/view/services/view-widget-upsert.service.ts
+msgid "Record table widget has no associated view"
+msgstr ""
+
+#. js-lingui-id: KnnILY
+#: src/engine/metadata-modules/view/services/view-widget-upsert.service.ts
+msgid "Record table widget not found"
+msgstr ""
+
 #. js-lingui-id: 9gXJw8
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
@@ -5800,7 +5949,7 @@ msgid "Refresh Token"
 msgstr ""
 
 #. js-lingui-id: 1GvzpH
-#: src/modules/connected-account/refresh-tokens-manager/exceptions/connected-account-refresh-tokens.exception.ts
+#: src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception.ts
 msgid "Refresh token not found."
 msgstr "אסימון רענון לא נמצא."
 
@@ -5932,6 +6081,11 @@ msgstr "התפקיד אינו ניתן לעריכה"
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
 msgid "Role must have at least one target."
 msgstr "לתפקיד חייב להיות לפחות יעד אחד."
+
+#. js-lingui-id: BEtj6u
+#: src/engine/workspace-manager/workspace-migration/interceptors/utils/__tests__/build-metadata-validation-error-payload.util.spec.ts
+msgid "Role name is invalid"
+msgstr ""
 
 #. js-lingui-id: MvTCyk
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
@@ -6712,6 +6866,12 @@ msgstr "לא ניתן למצוא את הסוכן שאתה מחפש. ייתכן �
 msgid "The API key does not have a valid role assigned. Please check your API key configuration."
 msgstr "למפתח ה-API אין תפקיד תקף שייך. אנא בדוק את הגדרת ה-API שלך."
 
+#. js-lingui-id: Z4AMcp
+#: src/engine/core-modules/application/application.exception.ts
+#: src/engine/core-modules/application/application-registration/application-registration.exception.ts
+msgid "The app manifest declares an invalid server version requirement."
+msgstr ""
+
 #. js-lingui-id: MQn14a
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
 msgid "The app source channel does not match the expected type."
@@ -6740,6 +6900,11 @@ msgstr ""
 #. js-lingui-id: OBmU0K
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
 msgid "The company website URL. We use this url to fetch the company icon"
+msgstr ""
+
+#. js-lingui-id: j6q6l+
+#: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
+msgid "The connection-provider manifest is missing required fields."
 msgstr ""
 
 #. js-lingui-id: zGBDEH
@@ -6828,6 +6993,16 @@ msgstr "סיומת הקובץ אינה תואמת את תוכן הקובץ. יש
 msgid "The initial version of a workflow can not be deleted"
 msgstr "לא ניתן למחוק את גרסת המוצא של תהליך עבודה."
 
+#. js-lingui-id: kdTB4e
+#: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
+msgid "The OAuth request is missing required parameters."
+msgstr ""
+
+#. js-lingui-id: mCM5lH
+#: src/engine/core-modules/application/connection-provider/connection-provider.exception.ts
+msgid "The OAuth state parameter is invalid or expired."
+msgstr ""
+
 #. js-lingui-id: hx2IZ4
 #: src/engine/metadata-modules/object-permission/object-permission.service.ts
 #: src/engine/metadata-modules/object-permission/field-permission/field-permission.service.ts
@@ -6875,6 +7050,12 @@ msgstr "לא ניתן למצוא את התפקיד שאתה מנסה לשנות.
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection-validator.service.ts
 msgid "The server address you entered is not allowed. Please use a public server address."
 msgstr "כתובת השרת שהזנת אינה מותרת. אנא השתמש/י בכתובת שרת ציבורית."
+
+#. js-lingui-id: 6N5Pv5
+#: src/engine/core-modules/application/application.exception.ts
+#: src/engine/core-modules/application/application-registration/application-registration.exception.ts
+msgid "The server's APP_VERSION is not a valid semver version. Self-hosted instances must configure a valid APP_VERSION."
+msgstr ""
 
 #. js-lingui-id: FOEWHl
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name.util.ts
@@ -6988,6 +7169,12 @@ msgstr "מפתח ה-API הזה פג תוקף. אנא צור אחד חדש."
 msgid "This API key has no role assigned."
 msgstr "למפתח API זה לא הוקצה תפקיד."
 
+#. js-lingui-id: zISk4k
+#: src/engine/core-modules/application/application.exception.ts
+#: src/engine/core-modules/application/application-registration/application-registration.exception.ts
+msgid "This app requires a newer version of the Twenty server. Please upgrade your server or use a compatible app version."
+msgstr ""
+
 #. js-lingui-id: ADtO2E
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
 msgid "This connection is not allowed."
@@ -7100,7 +7287,7 @@ msgid "This permission is already set for the role"
 msgstr "הרשאה זו כבר מוגדרת עבור התפקיד"
 
 #. js-lingui-id: Y5C3uK
-#: src/modules/connected-account/refresh-tokens-manager/exceptions/connected-account-refresh-tokens.exception.ts
+#: src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception.ts
 msgid "This provider is not supported."
 msgstr "ספק זה אינו נתמך."
 
@@ -7158,6 +7345,11 @@ msgstr "לא ניתן לערוך תפקיד זה."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-permission-validator.service.ts
 msgid "This role cannot be modified because it is a system role. Only custom roles can be edited."
 msgstr "לא ניתן לשנות תפקיד זה כי הוא תפקיד מערכת. רק תפקידים מותאמים אישית יכולים להשתנות."
+
+#. js-lingui-id: nzveUr
+#: src/engine/metadata-modules/object-permission/field-permission/__tests__/field-permissions.service.spec.ts
+msgid "This role cannot be modified."
+msgstr ""
 
 #. js-lingui-id: nFIPim
 #: src/engine/core-modules/workspace/workspace.exception.ts
@@ -7883,13 +8075,20 @@ msgstr "לא נמצא מידע מטה של שדה מצטבר לקנבן תצוג
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-group-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-group-validator.service.ts
+#: src/engine/metadata-modules/view/services/view-widget-upsert.service.ts
 msgid "View not found"
 msgstr "תצוגה לא נמצאה"
 
 #. js-lingui-id: BHDATQ
 #: src/engine/metadata-modules/view-field-group/services/fields-widget-upsert.service.ts
+#: src/engine/metadata-modules/view/services/view-widget-upsert.service.ts
 msgid "View not found after upsert"
 msgstr "התצוגה לא נמצאה לאחר הוספה/עדכון"
+
+#. js-lingui-id: RAcTQ1
+#: src/engine/metadata-modules/view/services/view-widget-upsert.service.ts
+msgid "View not found for widget"
+msgstr ""
 
 #. js-lingui-id: yheEin
 #: src/engine/metadata-modules/view/exceptions/flat-view.exception.ts
@@ -8025,6 +8224,11 @@ msgstr "לא הצלחנו להתחבר לשרת הדואר האלקטרוני ש
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
 msgid "We couldn't connect to your outgoing email server. Please check your SMTP settings and try again."
 msgstr "לא הצלחנו להתחבר לשרת הדואר היוצא שלך. אנא בדוק את הגדרות ה-SMTP ונסה שוב."
+
+#. js-lingui-id: jNr0+j
+#: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
+msgid "We couldn't find any calendars on your CalDAV server. Please make sure your account has at least one calendar."
+msgstr ""
 
 #. js-lingui-id: v8UNEA
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
@@ -8480,6 +8684,11 @@ msgstr "WorkspaceId נדרש ליצירת תצוגה."
 msgid "WorkspaceMember"
 msgstr ""
 
+#. js-lingui-id: 9RXJsb
+#: src/engine/workspace-manager/workspace-migration/interceptors/utils/__tests__/build-metadata-validation-error-payload.util.spec.ts
+msgid "Would not reach this"
+msgstr ""
+
 #. js-lingui-id: VddeYt
 #: src/engine/core-modules/file-storage/interfaces/file-storage-exception.ts
 msgid "Wrong extension for file."
@@ -8680,11 +8889,6 @@ msgstr "גרסת האפליקציה שלך ישנה. נא לרענן את הדף
 #: src/engine/core-modules/billing/billing.validate.ts
 msgid "Your billing subscription is corrupted. Please contact support."
 msgstr "המנוי שלך לכרטיסייה תקול. אנא פנה לתמיכה."
-
-#. js-lingui-id: hDEOuv
-#: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection.service.ts
-msgid "Your CalDAV server does not support incremental sync (RFC 6578). Please use a compatible provider such as Nextcloud, iCloud, or Fastmail."
-msgstr "שרת CalDAV שלכם אינו תומך בסנכרון אינקרמנטלי (RFC 6578). אנא השתמשו בספק תואם כגון Nextcloud, iCloud או Fastmail."
 
 #. js-lingui-id: bTyBrW
 #: src/engine/core-modules/auth/services/auth.service.ts

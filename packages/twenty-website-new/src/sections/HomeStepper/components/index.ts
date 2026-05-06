@@ -1,8 +1,8 @@
-import { Flow } from './Flow/Flow';
-import { LeftColumn } from './LeftColumn/LeftColumn';
-import { RightColumn } from './RightColumn/RightColumn';
-import { Root } from './Root/Root';
-import { ScrollSection } from './ScrollSection/ScrollSection';
+import { Flow } from './Flow';
+import { LeftColumn } from './LeftColumn';
+import { RightColumn } from './RightColumn';
+import { Root } from './Root';
+import { ScrollSection } from './ScrollSection';
 import { Visual } from './Visual/Visual';
 
 export const HomeStepper = {

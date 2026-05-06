@@ -79,6 +79,7 @@ export class ApplicationManifestMigrationService {
       navigationMenuItems: [],
       pageLayouts: [],
       pageLayoutTabs: [],
+      commandMenuItems: [],
     };
 
     const now = new Date().toISOString();

@@ -1,4 +1,5 @@
-import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
+import { defineLogicFunction } from 'twenty-sdk/define';
+import { type RoutePayload } from 'twenty-sdk/logic-function';
 import {
   fetchIssues,
   type GqlIssue,
@@ -65,9 +66,8 @@ const handler = async (event: RoutePayload<FetchIssuesPayload>) => {
     authorId: issue.author ? (idByLogin.get(issue.author.login) ?? null) : null,
   }));
 
-  await timed(
-    `fetch-issues:upsertIssues ${tag} (${issueData.length})`,
-    () => batchUpsertIssues(issueData),
+  await timed(`fetch-issues:upsertIssues ${tag} (${issueData.length})`, () =>
+    batchUpsertIssues(issueData),
   );
 
   const totalMs = Date.now() - handlerStart;

@@ -1,7 +1,7 @@
 import {
   getEnterprisePriceId,
   getStripeClient,
-} from '@/shared/enterprise/stripe-client';
+} from '@/lib/enterprise/stripe-client';
 import { NextResponse } from 'next/server';
 
 export const dynamic = 'force-dynamic';

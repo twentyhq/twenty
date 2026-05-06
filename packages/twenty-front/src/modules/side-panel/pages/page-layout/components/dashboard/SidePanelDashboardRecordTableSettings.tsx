@@ -1,5 +1,6 @@
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { CommandMenuItemDropdown } from '@/command-menu/components/CommandMenuItemDropdown';
+import { useRecordTableWidgetFieldCallbacks } from '@/page-layout/widgets/record-table/hooks/useRecordTableWidgetFieldCallbacks';
 import { WidgetComponentInstanceContext } from '@/page-layout/widgets/states/contexts/WidgetComponentInstanceContext';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
@@ -64,6 +65,13 @@ export const SidePanelDashboardRecordTableSettings = () => {
     objectMetadataId: widgetInEditMode?.objectMetadataId,
     viewId,
   });
+
+  const { handleFieldUpdated, handleFieldCreated } =
+    useRecordTableWidgetFieldCallbacks({
+      pageLayoutId,
+      widgetId: widgetInEditMode?.id ?? '',
+      viewId: viewId ?? '',
+    });
 
   if (!isDefined(widgetInEditMode)) {
     return null;
@@ -136,6 +144,8 @@ export const SidePanelDashboardRecordTableSettings = () => {
                         <RecordTableFieldsDropdownContent
                           viewId={viewId}
                           objectMetadataId={widgetInEditMode.objectMetadataId!}
+                          onFieldUpdated={handleFieldUpdated}
+                          onFieldCreated={handleFieldCreated}
                         />
                       }
                       dropdownPlacement="bottom-end"

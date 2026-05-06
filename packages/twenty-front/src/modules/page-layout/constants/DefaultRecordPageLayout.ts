@@ -47,6 +47,11 @@ export const DEFAULT_RECORD_PAGE_LAYOUT: PageLayout = {
             rowSpan: 12,
             columnSpan: 12,
           },
+          position: {
+            __typename: 'PageLayoutWidgetVerticalListPosition',
+            layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+            index: 0,
+          },
           configuration: {
             __typename: 'FieldsConfiguration',
             configurationType: WidgetConfigurationType.FIELDS,
@@ -87,6 +92,10 @@ export const DEFAULT_RECORD_PAGE_LAYOUT: PageLayout = {
             column: 0,
             rowSpan: 6,
             columnSpan: 12,
+          },
+          position: {
+            __typename: 'PageLayoutWidgetCanvasPosition',
+            layoutMode: PageLayoutTabLayoutMode.CANVAS,
           },
           configuration: {
             __typename: 'FieldsConfiguration',
@@ -129,6 +138,10 @@ export const DEFAULT_RECORD_PAGE_LAYOUT: PageLayout = {
             rowSpan: 6,
             columnSpan: 12,
           },
+          position: {
+            __typename: 'PageLayoutWidgetCanvasPosition',
+            layoutMode: PageLayoutTabLayoutMode.CANVAS,
+          },
           configuration: {
             __typename: 'FieldsConfiguration',
             configurationType: WidgetConfigurationType.FIELDS,
@@ -170,6 +183,10 @@ export const DEFAULT_RECORD_PAGE_LAYOUT: PageLayout = {
             rowSpan: 6,
             columnSpan: 12,
           },
+          position: {
+            __typename: 'PageLayoutWidgetCanvasPosition',
+            layoutMode: PageLayoutTabLayoutMode.CANVAS,
+          },
           configuration: {
             __typename: 'FieldsConfiguration',
             configurationType: WidgetConfigurationType.FIELDS,
@@ -210,6 +227,10 @@ export const DEFAULT_RECORD_PAGE_LAYOUT: PageLayout = {
             column: 0,
             rowSpan: 6,
             columnSpan: 12,
+          },
+          position: {
+            __typename: 'PageLayoutWidgetCanvasPosition',
+            layoutMode: PageLayoutTabLayoutMode.CANVAS,
           },
           configuration: {
             __typename: 'FieldsConfiguration',

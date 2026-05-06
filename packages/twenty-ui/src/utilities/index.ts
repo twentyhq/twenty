@@ -38,3 +38,5 @@ export { createState } from './state/utils/createState';
 export type { ClickOutsideAttributes } from './types/ClickOutsideAttributes';
 export type { Nullable } from './types/Nullable';
 export { getDisplayValueByUrlType } from './utils/getDisplayValueByUrlType';
+export type { LinkifyMatch } from './utils/linkifyText';
+export { linkifyText } from './utils/linkifyText';

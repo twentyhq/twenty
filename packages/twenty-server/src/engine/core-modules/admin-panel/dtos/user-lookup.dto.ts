@@ -20,6 +20,9 @@ export class UserInfoDTO {
   @Field(() => String, { nullable: true })
   lastName?: string;
 
+  @Field(() => String, { nullable: true })
+  avatarUrl?: string | null;
+
   @Field(() => Date)
   createdAt: Date;
 }
@@ -59,8 +62,8 @@ class WorkspaceInfoDTO {
 
 @ObjectType('UserLookup')
 export class UserLookup {
-  @Field(() => UserInfoDTO)
-  user: UserInfoDTO;
+  @Field(() => UserInfoDTO, { nullable: true })
+  user?: UserInfoDTO | null;
 
   @Field(() => [WorkspaceInfoDTO])
   workspaces: WorkspaceInfoDTO[];

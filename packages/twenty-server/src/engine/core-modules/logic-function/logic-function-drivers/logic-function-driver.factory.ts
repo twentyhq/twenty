@@ -17,6 +17,7 @@ import { DriverFactoryBase } from 'src/engine/core-modules/twenty-config/dynamic
 import { ConfigVariablesGroup } from 'src/engine/core-modules/twenty-config/enums/config-variables-group.enum';
 import { ConfigGroupHashService } from 'src/engine/core-modules/twenty-config/services/config-group-hash.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 @Injectable()
 export class LogicFunctionDriverFactory extends DriverFactoryBase<LogicFunctionDriver> {
@@ -26,6 +27,7 @@ export class LogicFunctionDriverFactory extends DriverFactoryBase<LogicFunctionD
     private readonly logicFunctionResourceService: LogicFunctionResourceService,
     private readonly sdkClientArchiveService: SdkClientArchiveService,
     private readonly cacheLockService: CacheLockService,
+    private readonly workspaceCacheService: WorkspaceCacheService,
   ) {
     super(twentyConfigService, configGroupHashService);
   }
@@ -51,6 +53,8 @@ export class LogicFunctionDriverFactory extends DriverFactoryBase<LogicFunctionD
         return new LocalDriver({
           logicFunctionResourceService: this.logicFunctionResourceService,
           sdkClientArchiveService: this.sdkClientArchiveService,
+          cacheLockService: this.cacheLockService,
+          workspaceCacheService: this.workspaceCacheService,
         });
 
       case LogicFunctionDriverType.LAMBDA: {

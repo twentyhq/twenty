@@ -88,7 +88,7 @@ export const getToolDisplayMessage = (
 
   if (
     resolvedToolName === 'web_search' ||
-    resolvedToolName === 'exa_web_search'
+    resolvedToolName === 'app_exa_web_search'
   ) {
     const query = extractSearchQuery(resolvedInput);
 

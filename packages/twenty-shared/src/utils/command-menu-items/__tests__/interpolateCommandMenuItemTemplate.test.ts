@@ -6,7 +6,8 @@ const buildContext = (
 ): CommandMenuContextApi => ({
   pageType: ContextStorePageType.Index,
   isInSidePanel: false,
-  isPageInEditMode: false,
+  isDashboardPageLayoutInEditMode: false,
+  isLayoutCustomizationModeEnabled: false,
   favoriteRecordIds: [],
   isSelectAll: false,
   hasAnySoftDeleteFilterOnView: false,
@@ -23,6 +24,7 @@ const buildContext = (
   },
   selectedRecords: [],
   featureFlags: {},
+  permissionFlags: {},
   targetObjectReadPermissions: {},
   targetObjectWritePermissions: {},
   objectMetadataItem: {},

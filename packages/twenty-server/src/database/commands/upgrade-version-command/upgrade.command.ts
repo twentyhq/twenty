@@ -113,6 +113,15 @@ export class UpgradeCommand extends CommandRunner {
       });
     }
 
+    if (
+      isDefined(options.workspaceId) &&
+      isDefined(options.startFromWorkspaceId)
+    ) {
+      throw new Error(
+        'Cannot use --start-from-workspace-id together with -w/--workspace-id',
+      );
+    }
+
     try {
       const sequence = this.upgradeSequenceReaderService.getUpgradeSequence();
 

@@ -71,7 +71,8 @@ import { ToolRegistryService } from './services/tool-registry.service';
     {
       // TOOL_PROVIDERS contains only providers implementing ToolProvider
       // (registry tools with descriptors). The native tool binder is a
-      // parallel concept and is injected directly into ToolRegistryService.
+      // parallel concept and is exported for surfaces that bind SDK-native
+      // tools directly into their model ToolSet.
       provide: TOOL_PROVIDERS,
       useFactory: (
         actionProvider: ActionToolProvider,
@@ -105,6 +106,6 @@ import { ToolRegistryService } from './services/tool-registry.service';
     },
     ToolRegistryService,
   ],
-  exports: [ToolRegistryService],
+  exports: [NativeToolBinderService, ToolRegistryService],
 })
 export class ToolProviderModule {}

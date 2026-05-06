@@ -2,6 +2,8 @@ import { Test, type TestingModule } from '@nestjs/testing';
 
 import { getWorkflowRunContext, StepStatus } from 'twenty-shared/workflow';
 
+import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
+import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
@@ -69,6 +71,15 @@ describe('WorkflowExecutorWorkspaceService', () => {
     getWorkflowRunOrFail: jest.fn(),
   };
 
+  const mockBillingService = {
+    isBillingEnabled: jest.fn().mockReturnValue(true),
+  };
+
+  const mockBillingUsageService = {
+    hasAvailableCredits: jest.fn().mockResolvedValue(true),
+    decrementAvailableCredits: jest.fn().mockResolvedValue(undefined),
+  };
+
   const mockExceptionHandlerService = {
     captureExceptions: jest.fn(),
   };
@@ -100,6 +111,14 @@ describe('WorkflowExecutorWorkspaceService', () => {
         {
           provide: WorkflowRunWorkspaceService,
           useValue: mockWorkflowRunWorkspaceService,
+        },
+        {
+          provide: BillingService,
+          useValue: mockBillingService,
+        },
+        {
+          provide: BillingUsageService,
+          useValue: mockBillingUsageService,
         },
         {
           provide: ExceptionHandlerService,
@@ -675,8 +694,8 @@ describe('WorkflowExecutorWorkspaceService', () => {
   });
 
   describe('sendWorkflowNodeRunEvent', () => {
-    it('should emit a billing event', () => {
-      service['sendWorkflowNodeRunEvent']('workspace-id', 'workflow-id');
+    it('should emit a billing event', async () => {
+      await service['sendWorkflowNodeRunEvent']('workspace-id', 'workflow-id');
 
       expect(workspaceEventEmitter.emitCustomBatchEvent).toHaveBeenCalledWith(
         USAGE_RECORDED,

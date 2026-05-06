@@ -1,4 +1,5 @@
-import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
+import { defineLogicFunction } from 'twenty-sdk/define';
+import { type RoutePayload } from 'twenty-sdk/logic-function';
 import { countAcrossRepos } from 'src/modules/github/connector/count-across-repos';
 import { countPullRequests } from 'src/modules/github/pull-request/graphql/github/count-pull-requests';
 

@@ -10,11 +10,6 @@ type DiffPillProps = {
   onClick?: () => void;
 };
 
-// Single button styled like a segmented-control segment. Reads as plain
-// monospace text by default; on hover (or when diff panel is open) it shows
-// a subtle background so it feels like the TerminalToggle's active segment.
-// Height (30px) matches the TerminalToggle outer shell so both controls
-// align along the top bar baseline.
 const PillButton = styled.button<{ $active?: boolean }>`
   align-items: center;
   background: ${({ $active }) =>

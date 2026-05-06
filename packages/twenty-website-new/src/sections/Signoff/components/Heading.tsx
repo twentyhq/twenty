@@ -1,15 +1,15 @@
 import { styled } from '@linaria/react';
 
 import { Heading as BaseHeading } from '@/design-system/components';
-import type { HeadingType } from '@/design-system/components/Heading/types/Heading';
-import type { Pages } from '@/enums/pages';
+import type { Page } from '@/lib/pages';
 import { theme } from '@/theme';
+import type { ReactNode } from 'react';
 
 const HeadingWrap = styled.div`
   margin-bottom: ${theme.spacing(2)};
   margin-left: auto;
   margin-right: auto;
-  max-width: 921px;
+  max-width: ${theme.layout.editorial};
   min-width: 0;
   width: 100%;
 
@@ -21,14 +21,16 @@ const HeadingWrap = styled.div`
 `;
 
 type HeadingProps = {
-  page?: Pages;
-  segments: HeadingType[];
+  children: ReactNode;
+  page?: Page;
 };
 
-export function Heading({ page, segments }: HeadingProps) {
+export function Heading({ children, page }: HeadingProps) {
   return (
     <HeadingWrap data-page={page}>
-      <BaseHeading as="h2" segments={segments} size="xl" weight="light" />
+      <BaseHeading as="h2" size="xl" weight="light">
+        {children}
+      </BaseHeading>
     </HeadingWrap>
   );
 }

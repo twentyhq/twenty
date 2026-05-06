@@ -6,10 +6,7 @@ interface RatingStarIconProps {
   size?: number;
 }
 
-export function RatingStarIcon({
-  fillColor,
-  size = 12,
-}: RatingStarIconProps) {
+export function RatingStarIcon({ fillColor, size = 12 }: RatingStarIconProps) {
   return (
     <svg
       aria-hidden="true"

@@ -1,6 +1,21 @@
 import path from 'path';
 import withLinaria, { type LinariaConfig } from 'next-with-linaria';
 
+const SECURITY_HEADERS = [
+  {
+    key: 'Strict-Transport-Security',
+    value: 'max-age=63072000; includeSubDomains; preload',
+  },
+  { key: 'X-Content-Type-Options', value: 'nosniff' },
+  { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
+  {
+    key: 'Permissions-Policy',
+    value: 'camera=(), microphone=(), geolocation=(), payment=()',
+  },
+  { key: 'X-Frame-Options', value: 'DENY' },
+  { key: 'Content-Security-Policy', value: "frame-ancestors 'none'" },
+] as const;
+
 const nextConfig: LinariaConfig = {
   images: {
     formats: ['image/avif', 'image/webp'],
@@ -21,10 +36,29 @@ const nextConfig: LinariaConfig = {
     configFile: path.resolve(__dirname, 'wyw-in-js.config.cjs'),
   },
   reactCompiler: true,
+  experimental: {
+    swcPlugins: [
+      [
+        '@lingui/swc-plugin',
+        {
+          runtimeModules: {
+            i18n: ['@lingui/core', 'i18n'],
+            trans: ['@lingui/react', 'Trans'],
+          },
+        },
+      ],
+    ],
+  },
+  async headers() {
+    return [
+      {
+        source: '/:path*',
+        headers: SECURITY_HEADERS.map((h) => ({ ...h })),
+      },
+    ];
+  },
   async redirects() {
     return [
-      // Documentation moved to docs.twenty.com (carried over from the
-      // legacy twenty-website Next.js app).
       {
         source: '/user-guide',
         destination: 'https://docs.twenty.com/user-guide/introduction',
@@ -80,10 +114,6 @@ const nextConfig: LinariaConfig = {
         destination: 'https://docs.twenty.com/twenty-ui/:slug',
         permanent: true,
       },
-
-      // Renamed/restructured pages on the new website. Mappings derived
-      // from the old twenty.com sitemap so existing inbound links and
-      // search results keep working.
       {
         source: '/story',
         destination: '/why-twenty',

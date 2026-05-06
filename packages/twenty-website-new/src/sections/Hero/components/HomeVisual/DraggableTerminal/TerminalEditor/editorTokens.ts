@@ -1,5 +1,3 @@
-// Dark-theme tokens for the Terminal's Editor view. Mirrors the Figma mock
-// (node 4126:54062).
 export const EDITOR_TOKENS = {
   surface: {
     topBar: '#111216',

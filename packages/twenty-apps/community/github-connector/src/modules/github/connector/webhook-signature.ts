@@ -7,7 +7,11 @@ export type SignatureVerificationResult =
 export function getRawBodyForSignature(event: {
   body: unknown;
   isBase64Encoded?: boolean;
+  rawBody?: string;
 }): string | null {
+  if (typeof event.rawBody === 'string') {
+    return event.rawBody;
+  }
   const raw = event.body;
   if (raw == null) return '';
   if (typeof raw === 'string') {

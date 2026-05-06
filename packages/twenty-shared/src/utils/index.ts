@@ -159,7 +159,7 @@ export { parseJson } from './parseJson';
 export { removePropertiesFromRecord } from './removePropertiesFromRecord';
 export { removeUndefinedFields } from './removeUndefinedFields';
 export { resolveRichTextVariables } from './rich-text-variable-resolver';
-export { safeParseRelativeDateFilterJSONStringified } from './safeParseRelativeDateFilterJSONStringified';
+export { safeParseRelativeDateFilterJsonStringified } from './safeParseRelativeDateFilterJsonStringified';
 export { getGenericOperationName } from './sentry/getGenericOperationName';
 export { getHumanReadableNameFromCode } from './sentry/getHumanReadableNameFromCode';
 export { appendCopySuffix } from './strings/appendCopySuffix';
@@ -189,6 +189,7 @@ export { isMetadataGqlOperationSignature } from './typeguard/isMetadataGqlOperat
 export { isPlainObject } from './typeguard/isPlainObject';
 export { isRecordGqlOperationSignature } from './typeguard/isRecordGqlOperationSignature';
 export { throwIfNotDefined } from './typeguard/throwIfNotDefined';
+export { formatUpgradeCommandName } from './upgrade/formatUpgradeCommandName';
 export { absoluteUrlSchema } from './url/absoluteUrlSchema';
 export { buildSignedPath } from './url/buildSignedPath';
 export { ensureAbsoluteUrl } from './url/ensureAbsoluteUrl';

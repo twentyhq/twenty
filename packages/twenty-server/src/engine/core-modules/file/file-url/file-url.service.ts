@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { FileFolder } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import {
   FileTokenJwtPayload,
@@ -8,6 +9,7 @@ import {
 } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Injectable()
 export class FileUrlService {
@@ -15,6 +17,20 @@ export class FileUrlService {
     private readonly jwtWrapperService: JwtWrapperService,
     private readonly twentyConfigService: TwentyConfigService,
   ) {}
+
+  signWorkspaceLogoUrl(
+    workspace: Pick<WorkspaceEntity, 'id' | 'logoFileId'>,
+  ): string | null {
+    if (!isDefined(workspace.logoFileId)) {
+      return null;
+    }
+
+    return this.signFileByIdUrl({
+      fileId: workspace.logoFileId,
+      workspaceId: workspace.id,
+      fileFolder: FileFolder.CorePicture,
+    });
+  }
 
   signFileByIdUrl({
     fileId,
@@ -49,5 +65,17 @@ export class FileUrlService {
     const serverUrl = this.twentyConfigService.get('SERVER_URL');
 
     return `${serverUrl}/file/${fileFolder}/${fileId}?token=${token}`;
+  }
+
+  getLegacyWorkspaceMemberAvatarUrl({
+    fileId,
+    fileFolder,
+  }: {
+    fileId: string;
+    fileFolder: FileFolder;
+  }): string {
+    const serverUrl = this.twentyConfigService.get('SERVER_URL');
+
+    return `${serverUrl}/file/${fileFolder}/${fileId}`;
   }
 }

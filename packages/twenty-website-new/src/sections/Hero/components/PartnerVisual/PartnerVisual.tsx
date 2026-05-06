@@ -1,4 +1,5 @@
-import { IllustrationMount } from '@/illustrations';
+import { WebGlMount } from '@/lib/visual-runtime';
+import { PartnerHeroHalftoneIllustration } from '@/sections/Hero/visuals/PartnerHeroHalftoneIllustration';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
 
@@ -19,7 +20,9 @@ const StyledContainer = styled.div`
 export function PartnerVisual() {
   return (
     <StyledContainer>
-      <IllustrationMount illustration="heroPartnerHalftone" />
+      <WebGlMount priority>
+        <PartnerHeroHalftoneIllustration />
+      </WebGlMount>
     </StyledContainer>
   );
 }

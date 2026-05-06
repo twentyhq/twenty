@@ -18,7 +18,8 @@ const buildMockCommandMenuContextApi = (
 ): CommandMenuContextApi => ({
   pageType: ContextStorePageType.Index,
   isInSidePanel: false,
-  isPageInEditMode: false,
+  isDashboardPageLayoutInEditMode: false,
+  isLayoutCustomizationModeEnabled: false,
   favoriteRecordIds: [],
   isSelectAll: false,
   hasAnySoftDeleteFilterOnView: false,
@@ -35,6 +36,7 @@ const buildMockCommandMenuContextApi = (
   },
   selectedRecords: [],
   featureFlags: {},
+  permissionFlags: {},
   targetObjectReadPermissions: {},
   targetObjectWritePermissions: {},
   objectMetadataItem: {},

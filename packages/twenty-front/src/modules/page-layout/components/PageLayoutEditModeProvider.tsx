@@ -25,7 +25,7 @@ export const PageLayoutEditModeProvider = ({
 
   if (layoutType === PageLayoutType.RECORD_PAGE) {
     return (
-      <RecordPageLayoutEditModeProvider>
+      <RecordPageLayoutEditModeProvider pageLayoutId={pageLayoutId}>
         {children}
       </RecordPageLayoutEditModeProvider>
     );

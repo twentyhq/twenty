@@ -1,12 +1,29 @@
+import { recordTableWidgetViewDraftComponentState } from '@/page-layout/states/recordTableWidgetViewDraftComponentState';
 import { type RecordTableWidgetViewFieldItem } from '@/page-layout/widgets/record-table/types/RecordTableWidgetViewFieldItem';
-import { usePerformViewFieldAPIPersist } from '@/views/hooks/internal/usePerformViewFieldAPIPersist';
+import { getRecordTableWidgetDraftViewFieldClientId } from '@/page-layout/widgets/record-table/utils/getRecordTableWidgetDraftViewFieldClientId';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
+import { useStore } from 'jotai';
 import { useCallback } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 
-export const useReorderRecordTableWidgetFields = () => {
-  const { performViewFieldAPIUpdate } = usePerformViewFieldAPIPersist();
+type UseReorderRecordTableWidgetFieldsParams = {
+  pageLayoutId: string;
+  widgetId: string;
+};
+
+export const useReorderRecordTableWidgetFields = ({
+  pageLayoutId,
+  widgetId,
+}: UseReorderRecordTableWidgetFieldsParams) => {
+  const recordTableWidgetViewDraftState = useAtomComponentStateCallbackState(
+    recordTableWidgetViewDraftComponentState,
+    pageLayoutId,
+  );
+
+  const store = useStore();
 
   const reorderRecordTableWidgetFields = useCallback(
-    async (
+    (
       sourceIndex: number,
       destinationIndex: number,
       visibleFieldItems: RecordTableWidgetViewFieldItem[],
@@ -19,16 +36,38 @@ export const useReorderRecordTableWidgetFields = () => {
       const [movedField] = reorderedFields.splice(sourceIndex, 1);
       reorderedFields.splice(destinationIndex, 0, movedField);
 
-      const updates = reorderedFields.map((fieldItem, index) => ({
-        input: {
-          id: fieldItem.viewField.id,
-          update: { position: index },
-        },
-      }));
+      const updatedPositions = new Map(
+        reorderedFields.map((fieldItem, index) => [
+          fieldItem.viewField.id,
+          index,
+        ]),
+      );
 
-      await performViewFieldAPIUpdate(updates);
+      store.set(recordTableWidgetViewDraftState, (prev) => {
+        const widgetViewDraft = prev[widgetId];
+
+        if (!isDefined(widgetViewDraft)) {
+          return prev;
+        }
+
+        return {
+          ...prev,
+          [widgetId]: {
+            ...widgetViewDraft,
+            viewFields: widgetViewDraft.viewFields.map((field) => {
+              const newPosition = updatedPositions.get(
+                getRecordTableWidgetDraftViewFieldClientId(field),
+              );
+
+              return newPosition !== undefined
+                ? { ...field, position: newPosition }
+                : field;
+            }),
+          },
+        };
+      });
     },
-    [performViewFieldAPIUpdate],
+    [store, recordTableWidgetViewDraftState, widgetId],
   );
 
   return { reorderRecordTableWidgetFields };

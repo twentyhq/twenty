@@ -16,12 +16,26 @@
   },
   "devDependencies": {
     "@babel/preset-env": "^7.26.9",
+    "@babel/preset-typescript": "^7.24.6",
     "@lingui/core": "^5.1.2",
     "@prettier/sync": "^0.5.2",
+    "@swc/core": "^1.15.11",
+    "@swc/jest": "^0.2.39",
     "@types/babel__preset-env": "^7",
     "@types/handlebars": "^4.1.0",
+    "@types/jest": "^30.0.0",
+    "@types/lodash.camelcase": "^4.3.7",
+    "@types/lodash.escaperegexp": "^4.1.9",
+    "@types/qs": "6.9.16",
+    "@types/uuid": "^9.0.2",
+    "@typescript/native-preview": "^7.0.0-dev.20260116.1",
     "babel-plugin-module-resolver": "^5.0.2",
     "glob": "^11.1.0",
+    "jest": "29.7.0",
+    "jest-environment-jsdom": "30.0.0-beta.3",
+    "prettier": "^3.1.1",
+    "slash": "^5.1.0",
+    "tsc-alias": "^1.8.16",
     "tsx": "^4.19.3",
     "typescript": "^5.9.2",
     "vite": "^7.0.0",
@@ -30,14 +44,19 @@
   },
   "dependencies": {
     "@sniptt/guards": "^0.2.0",
+    "ai": "6.0.97",
     "class-validator": "^0.14.0",
     "expr-eval-fork": "3.0.3",
     "handlebars": "^4.7.9",
     "libphonenumber-js": "^1.10.26",
     "lodash.camelcase": "^4.3.0",
+    "lodash.escaperegexp": "^4.1.2",
+    "microdiff": "^1.3.2",
     "qs": "^6.11.2",
     "react-router-dom": "^6.4.4",
+    "temporal-polyfill": "^0.3.0",
     "transliteration": "^2.3.5",
+    "uuid": "^9.0.0",
     "zod": "^4.1.11"
   },
   "exports": {
@@ -65,6 +84,11 @@
       "types": "./dist/database-events/index.d.ts",
       "import": "./dist/database-events.mjs",
       "require": "./dist/database-events.cjs"
+    },
+    "./i18n": {
+      "types": "./dist/i18n/index.d.ts",
+      "import": "./dist/i18n.mjs",
+      "require": "./dist/i18n.cjs"
     },
     "./logic-function": {
       "types": "./dist/logic-function/index.d.ts",
@@ -118,6 +142,7 @@
     "application",
     "constants",
     "database-events",
+    "i18n",
     "logic-function",
     "metadata",
     "testing",
@@ -141,6 +166,9 @@
       ],
       "database-events": [
         "dist/database-events/index.d.ts"
+      ],
+      "i18n": [
+        "dist/i18n/index.d.ts"
       ],
       "logic-function": [
         "dist/logic-function/index.d.ts"

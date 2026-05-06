@@ -1,19 +1,22 @@
 import { type ReactNode } from 'react';
 
-import { useApplicationAvatarColors } from '@/applications/hooks/useApplicationAvatarColors';
+import { ApplicationDisplay } from '@/applications/components/ApplicationDisplay';
 import { useResolvedApplicationDescription } from '@/applications/hooks/useResolvedApplicationDescription';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { t } from '@lingui/core/macro';
 import { Tag } from 'twenty-ui/components';
-import { Avatar, OverflowingTextWithTooltip } from 'twenty-ui/display';
+import { OverflowingTextWithTooltip } from 'twenty-ui/display';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { type ApplicationWithoutRelation } from '~/pages/settings/applications/types/applicationWithoutRelation';
 import { getApplicationDescriptionSummary } from '~/pages/settings/applications/utils/getApplicationDescriptionSummary';
+import { type ApplicationDisplayData } from '@/applications/types/applicationDisplayData.type';
+import { StyledNameTableCell } from '@/settings/data-model/object-details/components/SettingsObjectItemTableRowStyledComponents';
 
 export type SettingsApplicationTableRowProps = {
   action: ReactNode;
-  application: ApplicationWithoutRelation;
+  application: ApplicationDisplayData & {
+    description?: string | null;
+  };
   hasUpdate?: boolean;
   link?: string;
 };
@@ -27,7 +30,6 @@ export const SettingsApplicationTableRow = ({
   hasUpdate,
   link,
 }: SettingsApplicationTableRowProps) => {
-  const colors = useApplicationAvatarColors(application);
   const resolvedDescription = useResolvedApplicationDescription(application);
   const descriptionSummary =
     getApplicationDescriptionSummary(resolvedDescription);
@@ -38,25 +40,9 @@ export const SettingsApplicationTableRow = ({
       key={application.id}
       to={link}
     >
-      <TableCell
-        color={themeCssVariables.font.color.primary}
-        gap={themeCssVariables.spacing[2]}
-        minWidth="0"
-        overflow="hidden"
-      >
-        <Avatar
-          type="app"
-          size="md"
-          placeholder={application.name}
-          placeholderColorSeed={
-            application.universalIdentifier ?? application.name
-          }
-          color={colors?.color}
-          backgroundColor={colors?.backgroundColor}
-          borderColor={colors?.borderColor}
-        />
-        <OverflowingTextWithTooltip text={application.name} />
-      </TableCell>
+      <StyledNameTableCell minWidth="0" overflow="hidden">
+        <ApplicationDisplay application={application} />
+      </StyledNameTableCell>
       <TableCell gap={themeCssVariables.spacing[2]} minWidth="0">
         <OverflowingTextWithTooltip text={descriptionSummary} />
         {hasUpdate === true && (

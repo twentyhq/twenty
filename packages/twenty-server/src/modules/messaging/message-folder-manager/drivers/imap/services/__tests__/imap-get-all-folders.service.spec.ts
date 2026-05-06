@@ -190,5 +190,46 @@ describe('ImapGetAllFoldersService', () => {
       );
       expect(result.find((f) => f.isSentFolder)).toBeUndefined();
     });
+
+    it.each([['\\Noselect'], ['\\NoSelect'], ['\\NOSELECT'], ['\\noselect']])(
+      'should treat %s as non-selectable (RFC 3501 attribute names are case-insensitive)',
+      async (flagSpelling) => {
+        const mailboxList = [
+          createMockMailbox({ path: 'INBOX' }),
+          createMockMailbox({
+            path: 'Shared Folders',
+            flags: new Set([flagSpelling]),
+          }),
+          createMockMailbox({
+            path: 'Shared Folders/team/INBOX',
+            name: 'INBOX',
+            parentPath: 'Shared Folders/team',
+          }),
+        ];
+
+        mockImapClient.list.mockResolvedValue(mailboxList);
+        mockImapClient.status.mockImplementation(async (path: string) => {
+          if (path === 'Shared Folders') {
+            throw new Error(`Mailbox doesn't exist: ${path}`);
+          }
+
+          return { uidValidity: BigInt(1) } as any;
+        });
+
+        const result = await service.getAllMessageFolders(
+          CONNECTED_ACCOUNT,
+          MESSAGE_CHANNEL,
+        );
+
+        expect(mockImapClient.status).not.toHaveBeenCalledWith(
+          'Shared Folders',
+          expect.anything(),
+        );
+
+        const paths = result.map((f) => f.externalId?.split(':')[0]);
+
+        expect(paths).not.toContain('Shared Folders');
+      },
+    );
   });
 });

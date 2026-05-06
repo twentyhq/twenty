@@ -262,7 +262,7 @@ describe('resolveFieldMetadataStandardOverride', () => {
       ).toBe('overridden-icon');
     });
 
-    it('should not use direct override for non-SOURCE_LOCALE', () => {
+    it('should use direct override for non-SOURCE_LOCALE when translation override is missing', () => {
       const fieldMetadata = {
         label: 'Standard Label',
         description: 'Standard Description',
@@ -283,7 +283,9 @@ describe('resolveFieldMetadataStandardOverride', () => {
         mockI18n,
       );
 
-      expect(result).toBe('Standard Label');
+      expect(result).toBe('Overridden Label');
+      expect(mockGenerateMessageId).not.toHaveBeenCalled();
+      expect(mockI18n._).not.toHaveBeenCalled();
     });
 
     it('should not use empty string override for SOURCE_LOCALE', () => {

@@ -31,6 +31,8 @@ export const SidePanelRecordTableFilterSubPage = () => {
   return (
     <RecordTableSettingsFilters
       viewId={viewId}
+      widgetId={widgetInEditMode.id}
+      pageLayoutId={pageLayoutId}
       objectMetadataId={widgetInEditMode.objectMetadataId}
     />
   );

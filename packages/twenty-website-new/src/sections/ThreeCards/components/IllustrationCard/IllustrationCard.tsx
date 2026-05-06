@@ -1,16 +1,19 @@
 'use client';
 
-import { usePartnerApplicationModal } from '@/app/partners/components/PartnerApplication/PartnerApplicationModalRoot';
 import { ButtonShape } from '@/design-system/components/Button/ButtonShape';
 import { Body, Heading } from '@/design-system/components';
 import { ArrowRightIcon } from '@/icons';
 import { INFORMATIVE_ICONS } from '@/icons/informative';
-import { IllustrationMount } from '@/illustrations';
+import { LocalizedLink } from '@/lib/i18n';
+import { useRenderMessage } from '@/lib/i18n/use-render-message';
+import { usePartnerApplicationModal } from '@/lib/partner-application';
+import { WebGlMount } from '@/lib/visual-runtime';
 import type { ThreeCardsIllustrationCardType } from '@/sections/ThreeCards/types';
+import { THREE_CARDS_VISUALS } from '@/sections/ThreeCards/visuals';
 import { theme } from '@/theme';
+import type { MessageDescriptor } from '@lingui/core';
 import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
-import Link from 'next/link';
 import { ThreeCardsCardShape } from './CardShape';
 
 const CARD_OUTLINE_COLOR = theme.colors.primary.border[20];
@@ -211,7 +214,7 @@ const PartnerActionIconButton = styled.button`
   }
 `;
 
-const PartnerActionIconLink = styled(Link)`
+const PartnerActionIconLink = styled(LocalizedLink)`
   align-items: center;
   appearance: none;
   background: transparent;
@@ -320,10 +323,12 @@ function PartnerProgramAction({
   label,
   programId,
 }: {
-  label: string;
+  label: MessageDescriptor;
   programId: 'technology' | 'content' | 'solutions';
 }) {
+  const renderText = useRenderMessage();
   const { openPartnerApplicationModal } = usePartnerApplicationModal();
+  const translatedLabel = renderText(label);
 
   const openModal = () => {
     openPartnerApplicationModal(programId);
@@ -332,10 +337,10 @@ function PartnerProgramAction({
   return (
     <PartnerActionRow>
       <PartnerActionButton type="button" onClick={openModal}>
-        {label}
+        {translatedLabel}
       </PartnerActionButton>
       <PartnerActionIconButton
-        aria-label={label}
+        aria-label={translatedLabel}
         type="button"
         onClick={openModal}
       >
@@ -366,6 +371,9 @@ export function IllustrationCard({
   illustrationCard,
   variant = 'shaped',
 }: IllustrationCardProps) {
+  const renderText = useRenderMessage();
+  const Visual = THREE_CARDS_VISUALS[illustrationCard.illustration];
+
   return (
     <IllustrationCardContainer>
       {variant === 'shaped' && (
@@ -376,13 +384,16 @@ export function IllustrationCard({
       )}
       <Heading
         as="h3"
+        renderText={renderText}
         segments={illustrationCard.heading}
         size="xs"
         weight="medium"
       />
       <CardRule />
       <CardEmbed>
-        <IllustrationMount illustration={illustrationCard.illustration} />
+        <WebGlMount>
+          <Visual />
+        </WebGlMount>
       </CardEmbed>
       <CardRule />
       <CardLowerSection>
@@ -392,6 +403,7 @@ export function IllustrationCard({
             className={
               variant === 'simple' ? simpleCardBodyClassName : undefined
             }
+            renderText={renderText}
             size="sm"
             weight="regular"
           />
@@ -399,11 +411,11 @@ export function IllustrationCard({
 
         {variant === 'simple' && illustrationCard.benefits?.length ? (
           <BenefitList>
-            {illustrationCard.benefits.map((benefit) => {
+            {illustrationCard.benefits.map((benefit, benefitIndex) => {
               const BenefitIcon = INFORMATIVE_ICONS[benefit.icon ?? 'check'];
 
               return (
-                <BenefitItem key={benefit.text}>
+                <BenefitItem key={benefitIndex}>
                   <BenefitIconSlot aria-hidden>
                     <BenefitIcon
                       color="currentColor"
@@ -415,6 +427,7 @@ export function IllustrationCard({
                     as="span"
                     body={benefit}
                     className={benefitLabelClassName}
+                    renderText={renderText}
                     size="sm"
                     weight="regular"
                   />
@@ -436,12 +449,14 @@ export function IllustrationCard({
           <CardFooter>
             <Body
               body={illustrationCard.attribution.role}
+              renderText={renderText}
               size="xs"
               weight="medium"
             />
             <AttributionPipe aria-hidden />
             <Body
               body={illustrationCard.attribution.company}
+              renderText={renderText}
               size="xs"
               weight="regular"
             />

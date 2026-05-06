@@ -1,0 +1,30 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "sourceMap": true,
+    "declaration": true,
+    "outDir": "./dist",
+    "rootDir": ".",
+    "moduleResolution": "bundler",
+    "allowSyntheticDefaultImports": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "importHelpers": true,
+    "allowUnreachableCode": false,
+    "strict": true,
+    "alwaysStrict": true,
+    "noImplicitAny": true,
+    "strictBindCallApply": false,
+    "target": "es2020",
+    "module": "esnext",
+    "lib": ["es2020"],
+    "skipLibCheck": true,
+    "skipDefaultLibCheck": true,
+    "resolveJsonModule": true,
+    "paths": {
+      "src/*": ["./src/*"],
+      "~/*": ["./*"]
+    }
+  },
+  "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.spec.ts"]
+}

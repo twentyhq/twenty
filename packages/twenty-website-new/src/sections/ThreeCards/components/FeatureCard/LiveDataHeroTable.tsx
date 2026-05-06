@@ -1,6 +1,12 @@
 'use client';
 
-import { SHARED_COMPANY_LOGO_URLS } from '@/lib/shared-asset-paths';
+import { SHARED_COMPANY_LOGO_URLS } from '@/content/site/asset-paths';
+import { useHorizontalDragScroll } from '@/lib/dom/use-horizontal-drag-scroll';
+import {
+  Chip,
+  ChipVariant,
+} from '@/sections/Hero/components/HomeVisual/Shared/homeVisualChip';
+import { VISUAL_TOKENS } from '@/sections/Hero/components/HomeVisual/Shared/homeVisualTokens';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
 import {
@@ -10,17 +16,7 @@ import {
   IconLink,
   IconPlus,
 } from '@tabler/icons-react';
-import {
-  useEffect,
-  useRef,
-  useState,
-  type PointerEvent as ReactPointerEvent,
-} from 'react';
-import {
-  Chip,
-  ChipVariant,
-} from '@/sections/Hero/components/HomeVisual/homeVisualChip';
-import { VISUAL_TOKENS } from '@/sections/Hero/components/HomeVisual/homeVisualTokens';
+import { useState } from 'react';
 
 const APP_FONT = VISUAL_TOKENS.font.family;
 const TABLE_CELL_HORIZONTAL_PADDING = 8;
@@ -184,6 +180,14 @@ const RowMotion = styled.div<{ $delayMs?: number; $entering?: boolean }>`
       opacity: 1;
       transform: translate3d(0, 0, 0);
     }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    /* Rows still appear (functional — the demo is showing live data
+       arriving) but with no slide / fade easing. */
+    animation-duration: 1ms;
+    animation-delay: 0ms;
+    animation-timing-function: linear;
   }
 `;
 
@@ -478,14 +482,17 @@ export function LiveDataHeroTable({
   isFirstTagHoveredByAlice,
   showExtendedRows,
 }: LiveDataHeroTableProps) {
-  const viewportRef = useRef<HTMLDivElement>(null);
-  const dragRef = useRef({
-    active: false,
-    pointerId: -1,
-    startScrollLeft: 0,
-    startX: 0,
+  const {
+    dragging,
+    onPointerCancel,
+    onPointerDown,
+    onPointerLeave,
+    onPointerMove,
+    onPointerUp,
+    viewportRef,
+  } = useHorizontalDragScroll<HTMLDivElement>({
+    wheelScrollsHorizontally: true,
   });
-  const [dragging, setDragging] = useState(false);
   const [hoveredRowIndex, setHoveredRowIndex] = useState<number | null>(null);
   const visibleRows = showExtendedRows ? EXPANDED_TABLE_ROWS : BASE_TABLE_ROWS;
 
@@ -496,100 +503,17 @@ export function LiveDataHeroTable({
   const totalTableWidth = Math.max(DEFAULT_TABLE_WIDTH, columnWidth);
   const fillerWidth = Math.max(totalTableWidth - columnWidth, 0);
 
-  const handlePointerDown = (event: ReactPointerEvent<HTMLDivElement>) => {
-    if (
-      event.pointerType !== 'mouse' ||
-      event.button !== 0 ||
-      !viewportRef.current
-    ) {
-      return;
-    }
-
-    dragRef.current = {
-      active: true,
-      pointerId: event.pointerId,
-      startScrollLeft: viewportRef.current.scrollLeft,
-      startX: event.clientX,
-    };
-
-    viewportRef.current.setPointerCapture(event.pointerId);
-    setDragging(true);
-    event.preventDefault();
-  };
-
-  const handlePointerMove = (event: ReactPointerEvent<HTMLDivElement>) => {
-    if (!dragRef.current.active || !viewportRef.current) {
-      return;
-    }
-
-    viewportRef.current.scrollLeft =
-      dragRef.current.startScrollLeft -
-      (event.clientX - dragRef.current.startX);
-  };
-
-  const endDragging = () => {
-    dragRef.current.active = false;
-    dragRef.current.pointerId = -1;
-    setDragging(false);
-  };
-
-  const handlePointerUp = (event: ReactPointerEvent<HTMLDivElement>) => {
-    if (!viewportRef.current || dragRef.current.pointerId !== event.pointerId) {
-      return;
-    }
-
-    viewportRef.current.releasePointerCapture(event.pointerId);
-    endDragging();
-  };
-
-  useEffect(() => {
-    const node = viewportRef.current;
-
-    if (!node) {
-      return;
-    }
-
-    const onWheel: EventListener = (event) => {
-      if (!(event instanceof WheelEvent)) {
-        return;
-      }
-
-      if (Math.abs(event.deltaY) <= Math.abs(event.deltaX)) {
-        return;
-      }
-
-      const maxScrollLeft = Math.max(node.scrollWidth - node.clientWidth, 0);
-      const nextScrollLeft = Math.min(
-        Math.max(node.scrollLeft + event.deltaY, 0),
-        maxScrollLeft,
-      );
-
-      if (Math.abs(nextScrollLeft - node.scrollLeft) < 0.5) {
-        return;
-      }
-
-      node.scrollLeft = nextScrollLeft;
-      event.preventDefault();
-    };
-
-    node.addEventListener('wheel', onWheel, { passive: false });
-
-    return () => {
-      node.removeEventListener('wheel', onWheel);
-    };
-  }, []);
-
   return (
     <TableShell>
       <TableViewport
         ref={viewportRef}
         $dragging={dragging}
         aria-label="Interactive preview of the companies table"
-        onPointerCancel={endDragging}
-        onPointerDown={handlePointerDown}
-        onPointerLeave={endDragging}
-        onPointerMove={handlePointerMove}
-        onPointerUp={handlePointerUp}
+        onPointerCancel={onPointerCancel}
+        onPointerDown={onPointerDown}
+        onPointerLeave={onPointerLeave}
+        onPointerMove={onPointerMove}
+        onPointerUp={onPointerUp}
       >
         <TableCanvas $width={totalTableWidth}>
           <HeaderRow>

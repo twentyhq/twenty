@@ -95,10 +95,7 @@ describe('UpgradeSequenceRunnerService — workspace segment alignment (integrat
 
     const report = await context.runner.run({
       sequence,
-      options: {
-        ...DEFAULT_OPTIONS,
-        workspaceIds: [WS_1, WS_2, WS_3],
-      },
+      options: DEFAULT_OPTIONS,
     });
 
     expect(report.totalFailures).toBe(0);
@@ -504,10 +501,7 @@ describe('UpgradeSequenceRunnerService — workspace segment alignment (integrat
     await expect(
       context.runner.run({
         sequence,
-        options: {
-          ...DEFAULT_OPTIONS,
-          workspaceIds: [WS_1, WS_2],
-        },
+        options: DEFAULT_OPTIONS,
       }),
     ).rejects.toThrow('Ic1 temporary failure');
 
@@ -542,10 +536,7 @@ describe('UpgradeSequenceRunnerService — workspace segment alignment (integrat
     // Second run — Ic1 retries and succeeds, then WC segment runs for all 3
     const report = await context.runner.run({
       sequence,
-      options: {
-        ...DEFAULT_OPTIONS,
-        workspaceIds: [WS_1, WS_2, WS_3],
-      },
+      options: DEFAULT_OPTIONS,
     });
 
     expect(report.totalFailures).toBe(0);

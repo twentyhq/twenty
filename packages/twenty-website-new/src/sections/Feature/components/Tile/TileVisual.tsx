@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import NextImage from 'next/image';
 
-import type { ImageType } from '@/design-system/components/Image/types/Image';
+import type { ImageType } from '@/design-system/components/Image';
 import { theme } from '@/theme';
 
 const VisualArea = styled.div`

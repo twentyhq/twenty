@@ -15,5 +15,6 @@ export async function batchUpsertConsolidatedReviews(
     eventCount: true,
     reviewerId: true,
     pullRequestId: true,
+    isSelfReview: true,
   }) as Promise<PullRequestReviewRow[]>;
 }

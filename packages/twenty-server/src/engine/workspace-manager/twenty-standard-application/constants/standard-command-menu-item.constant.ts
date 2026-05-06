@@ -148,7 +148,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     position: 10,
     shortLabel: 'Export',
     availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
-    conditionalAvailabilityExpression: null,
+    conditionalAvailabilityExpression: 'permissionFlags.EXPORT_CSV',
     availabilityObjectMetadataUniversalIdentifier: null,
     frontComponentUniversalIdentifier: null,
     engineComponentKey: EngineComponentKey.EXPORT_RECORDS,
@@ -192,7 +192,8 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     position: 13,
     shortLabel: 'Import',
     availabilityType: CommandMenuItemAvailabilityType.GLOBAL_OBJECT_CONTEXT,
-    conditionalAvailabilityExpression: 'not hasAnySoftDeleteFilterOnView',
+    conditionalAvailabilityExpression:
+      'not hasAnySoftDeleteFilterOnView and permissionFlags.IMPORT_CSV',
     availabilityObjectMetadataUniversalIdentifier: null,
     frontComponentUniversalIdentifier: null,
     engineComponentKey: EngineComponentKey.IMPORT_RECORDS,
@@ -206,7 +207,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     position: 14,
     shortLabel: 'Export',
     availabilityType: CommandMenuItemAvailabilityType.GLOBAL_OBJECT_CONTEXT,
-    conditionalAvailabilityExpression: null,
+    conditionalAvailabilityExpression: 'permissionFlags.EXPORT_CSV',
     availabilityObjectMetadataUniversalIdentifier: null,
     frontComponentUniversalIdentifier: null,
     engineComponentKey: EngineComponentKey.EXPORT_VIEW,
@@ -263,7 +264,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     shortLabel: 'Edit Layout',
     availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
     conditionalAvailabilityExpression:
-      'pageType == "RECORD_PAGE" and featureFlags.IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED and noneDefined(selectedRecords, "deletedAt") and objectPermissions.canUpdateObjectRecords and objectMetadataItem.nameSingular != "dashboard"',
+      'pageType == "RECORD_PAGE" and featureFlags.IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED and not isLayoutCustomizationModeEnabled and noneDefined(selectedRecords, "deletedAt") and objectPermissions.canUpdateObjectRecords and objectMetadataItem.nameSingular != "dashboard"',
     availabilityObjectMetadataUniversalIdentifier: null,
     frontComponentUniversalIdentifier: null,
     engineComponentKey: EngineComponentKey.EDIT_RECORD_PAGE_LAYOUT,
@@ -278,7 +279,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     shortLabel: 'Edit',
     availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
     conditionalAvailabilityExpression:
-      'pageType == "RECORD_PAGE" and not isPageInEditMode and noneDefined(selectedRecords, "deletedAt") and everyDefined(selectedRecords, "pageLayoutId") and objectPermissions.canUpdateObjectRecords',
+      'pageType == "RECORD_PAGE" and not isDashboardPageLayoutInEditMode and not isLayoutCustomizationModeEnabled and noneDefined(selectedRecords, "deletedAt") and everyDefined(selectedRecords, "pageLayoutId") and objectPermissions.canUpdateObjectRecords',
     availabilityObjectMetadataUniversalIdentifier:
       STANDARD_OBJECTS.dashboard.universalIdentifier,
     frontComponentUniversalIdentifier: null,
@@ -294,7 +295,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     shortLabel: 'Save',
     availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
     conditionalAvailabilityExpression:
-      'pageType == "RECORD_PAGE" and isPageInEditMode and noneDefined(selectedRecords, "deletedAt") and everyDefined(selectedRecords, "pageLayoutId") and objectPermissions.canUpdateObjectRecords',
+      'pageType == "RECORD_PAGE" and isDashboardPageLayoutInEditMode and noneDefined(selectedRecords, "deletedAt") and everyDefined(selectedRecords, "pageLayoutId") and objectPermissions.canUpdateObjectRecords',
     availabilityObjectMetadataUniversalIdentifier:
       STANDARD_OBJECTS.dashboard.universalIdentifier,
     frontComponentUniversalIdentifier: null,
@@ -310,7 +311,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     shortLabel: 'Cancel',
     availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
     conditionalAvailabilityExpression:
-      'pageType == "RECORD_PAGE" and isPageInEditMode and noneDefined(selectedRecords, "deletedAt") and everyDefined(selectedRecords, "pageLayoutId") and objectPermissions.canUpdateObjectRecords',
+      'pageType == "RECORD_PAGE" and isDashboardPageLayoutInEditMode and noneDefined(selectedRecords, "deletedAt") and everyDefined(selectedRecords, "pageLayoutId") and objectPermissions.canUpdateObjectRecords',
     availabilityObjectMetadataUniversalIdentifier:
       STANDARD_OBJECTS.dashboard.universalIdentifier,
     frontComponentUniversalIdentifier: null,

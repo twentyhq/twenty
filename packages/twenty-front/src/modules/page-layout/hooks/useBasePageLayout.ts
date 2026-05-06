@@ -20,6 +20,7 @@ import { DEFAULT_WORKFLOW_VERSION_PAGE_LAYOUT } from '@/page-layout/constants/De
 import { DEFAULT_WORKFLOW_VERSION_PAGE_LAYOUT_ID } from '@/page-layout/constants/DefaultWorkflowVersionPageLayoutId';
 import { recordPageLayoutFromIdFamilySelector } from '@/page-layout/states/selectors/recordPageLayoutFromIdFamilySelector';
 import { type PageLayout } from '@/page-layout/types/PageLayout';
+import { isDefaultPageLayoutId } from '@/page-layout/utils/isDefaultPageLayoutId';
 import { transformPageLayout } from '@/page-layout/utils/transformPageLayout';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useQuery } from '@apollo/client/react';
@@ -52,22 +53,10 @@ const getDefaultLayoutById = (layoutId: string): PageLayout => {
   }
 };
 
-const isDefaultLayoutId = (layoutId: string): boolean =>
-  layoutId === DEFAULT_RECORD_PAGE_LAYOUT_ID ||
-  layoutId === DEFAULT_COMPANY_RECORD_PAGE_LAYOUT_ID ||
-  layoutId === DEFAULT_PERSON_RECORD_PAGE_LAYOUT_ID ||
-  layoutId === DEFAULT_OPPORTUNITY_RECORD_PAGE_LAYOUT_ID ||
-  layoutId === DEFAULT_NOTE_RECORD_PAGE_LAYOUT_ID ||
-  layoutId === DEFAULT_TASK_RECORD_PAGE_LAYOUT_ID ||
-  layoutId === DEFAULT_WORKFLOW_PAGE_LAYOUT_ID ||
-  layoutId === DEFAULT_WORKFLOW_VERSION_PAGE_LAYOUT_ID ||
-  layoutId === DEFAULT_WORKFLOW_RUN_PAGE_LAYOUT_ID ||
-  layoutId === DEFAULT_MESSAGE_THREAD_RECORD_PAGE_LAYOUT_ID;
-
 export const useBasePageLayout = (
   pageLayoutId: string,
 ): PageLayout | undefined => {
-  const isDefaultLayout = isDefaultLayoutId(pageLayoutId);
+  const isDefaultLayout = isDefaultPageLayoutId(pageLayoutId);
 
   const cachedRecordPageLayout = useAtomFamilySelectorValue(
     recordPageLayoutFromIdFamilySelector,

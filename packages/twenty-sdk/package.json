@@ -1,6 +1,6 @@
 {
   "name": "twenty-sdk",
-  "version": "2.0.0",
+  "version": "2.3.0",
   "sideEffects": false,
   "bin": {
     "twenty": "dist/cli.cjs"
@@ -22,6 +22,11 @@
     "development"
   ],
   "exports": {
+    "./billing": {
+      "types": "./dist/billing/index.d.ts",
+      "import": "./dist/billing/index.mjs",
+      "require": "./dist/billing/index.cjs"
+    },
     "./define": {
       "types": "./dist/define/index.d.ts",
       "import": "./dist/define/index.mjs",
@@ -31,6 +36,11 @@
       "types": "./dist/front-component/index.d.ts",
       "import": "./dist/front-component/index.mjs",
       "require": "./dist/front-component/index.cjs"
+    },
+    "./logic-function": {
+      "types": "./dist/logic-function/index.d.ts",
+      "import": "./dist/logic-function/index.mjs",
+      "require": "./dist/logic-function/index.cjs"
     },
     "./ui": {
       "types": "./dist/ui/index.d.ts",
@@ -86,8 +96,12 @@
     "@types/node": "^24.0.0",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
+    "@typescript/native-preview": "^7.0.0-dev.20260116.1",
+    "@vitest/coverage-v8": "^4.0.18",
+    "prettier": "^3.1.1",
     "rollup-plugin-dts": "^6.4.1",
     "ts-morph": "^25.0.0",
+    "tsc-alias": "^1.8.16",
     "tsx": "^4.7.0",
     "twenty-shared": "workspace:*",
     "twenty-ui": "workspace:*",
@@ -105,6 +119,9 @@
       ],
       "front-component": [
         "dist/front-component/index.d.ts"
+      ],
+      "logic-function": [
+        "dist/logic-function/index.d.ts"
       ],
       "cli": [
         "dist/cli/operations/index.d.ts"

@@ -1,5 +1,5 @@
-import { Content } from './Content/Content';
-import { Root } from './Root/Root';
+import { Content } from './Content';
+import { Root } from './Root';
 
 export const PlanTable = {
   Content,

@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { In, IsNull, Repository } from 'typeorm';
 
+import { formatDateForClickHouse } from 'src/database/clickHouse/clickHouse.util';
 import { enforceUsageCapCronPattern } from 'src/engine/core-modules/billing/crons/enforce-usage-cap.cron.pattern';
 import { BillingProductEntity } from 'src/engine/core-modules/billing/entities/billing-product.entity';
 import { BillingSubscriptionItemEntity } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
@@ -118,7 +119,6 @@ export class EnforceUsageCapJob {
             await this.billingUsageCapService.getBatchPeriodCreditsUsed(
               workspaceIds,
               group[0].currentPeriodStart,
-              group[0].currentPeriodEnd,
             );
 
           for (const [id, usage] of batchUsage) {
@@ -249,7 +249,7 @@ export class EnforceUsageCapJob {
     const groups = new Map<string, BillingSubscriptionEntity[]>();
 
     for (const subscription of subscriptions) {
-      const key = `${subscription.currentPeriodStart.toISOString()}|${subscription.currentPeriodEnd.toISOString()}`;
+      const key = `${formatDateForClickHouse(subscription.currentPeriodStart)}`;
       const group = groups.get(key);
 
       if (group) {

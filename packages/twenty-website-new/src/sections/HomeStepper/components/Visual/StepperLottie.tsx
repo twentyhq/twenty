@@ -10,7 +10,10 @@ import {
   useState,
 } from 'react';
 
-import { scrollProgressToHomeStepperLottieFrame } from '@/sections/HomeStepper/utils/home-stepper-lottie-frame-map';
+import {
+  HOME_STEPPER_LOTTIE_EXPECTED_TOTAL_FRAMES,
+  scrollProgressToHomeStepperLottieFrame,
+} from '@/sections/HomeStepper/utils/home-stepper-lottie-frame-map';
 import { theme } from '@/theme';
 
 export const HOME_STEPPER_LOTTIE_SRC =
@@ -61,7 +64,14 @@ export function StepperLottie({ scrollProgress }: StepperLottieProps) {
     }
 
     const onReady = () => {
-      const frames = player.totalFrames;
+      const frames = Math.floor(player.totalFrames);
+      if (frames > 0 && frames !== HOME_STEPPER_LOTTIE_EXPECTED_TOTAL_FRAMES) {
+        console.error(
+          `[StepperLottie] Lottie totalFrames mismatch — expected ${HOME_STEPPER_LOTTIE_EXPECTED_TOTAL_FRAMES}, got ${frames} (raw player.totalFrames=${player.totalFrames}). ` +
+            'The scroll → frame mapping in home-stepper-lottie-frame-map.ts is tied to the authored timeline; ' +
+            'update HOME_STEPPER_LOTTIE_EXPECTED_TOTAL_FRAMES and the STEP_*_END constants together.',
+        );
+      }
       setTotalFrames(frames);
       applyScrollToDotLottie(player, scrollProgressRef.current, frames);
     };

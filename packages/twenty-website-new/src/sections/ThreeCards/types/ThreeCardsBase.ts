@@ -1,7 +1,5 @@
-import { EyebrowType } from '@/design-system/components/Eyebrow/types/Eyebrow';
-import { HeadingType } from '@/design-system/components/Heading/types/Heading';
+import type { MessageEyebrow } from '@/lib/i18n/message-eyebrow';
 
 export type ThreeCardsBaseDataType = {
-  eyebrow: EyebrowType;
-  heading: HeadingType[];
+  eyebrow: MessageEyebrow;
 };

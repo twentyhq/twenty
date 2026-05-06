@@ -1,5 +1,5 @@
-import { Flow } from './Flow/Flow';
-import { Root } from './Root/Root';
+import { Flow } from './Flow';
+import { Root } from './Root';
 
 export const Salesforce = {
   Flow,

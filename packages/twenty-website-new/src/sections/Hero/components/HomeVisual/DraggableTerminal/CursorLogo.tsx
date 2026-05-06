@@ -1,7 +1,5 @@
 'use client';
 
-// Cursor app icon — black rounded tile wrapping an isometric hexagonal prism
-// with a folded white arrow bursting out of its front face.
 export const CursorLogo = ({ size = 14 }: { size?: number }) => {
   return (
     <svg
@@ -17,20 +15,11 @@ export const CursorLogo = ({ size = 14 }: { size?: number }) => {
 
       {/* Isometric cube — 3 shaded faces meeting at the center */}
       {/* Top face (lightest) */}
-      <path
-        d="M12 4.5 L19.5 8.5 L12 12.5 L4.5 8.5 Z"
-        fill="#5e5e5e"
-      />
+      <path d="M12 4.5 L19.5 8.5 L12 12.5 L4.5 8.5 Z" fill="#5e5e5e" />
       {/* Left face (mid) */}
-      <path
-        d="M4.5 8.5 L12 12.5 L12 20.5 L4.5 16.5 Z"
-        fill="#3d3d3d"
-      />
+      <path d="M4.5 8.5 L12 12.5 L12 20.5 L4.5 16.5 Z" fill="#3d3d3d" />
       {/* Right face (darkest) */}
-      <path
-        d="M19.5 8.5 L19.5 16.5 L12 20.5 L12 12.5 Z"
-        fill="#2a2a2a"
-      />
+      <path d="M19.5 8.5 L19.5 16.5 L12 20.5 L12 12.5 Z" fill="#2a2a2a" />
 
       {/* White folded arrow — triangular silhouette with an inner fold line
           that splits it into two slightly different shades */}

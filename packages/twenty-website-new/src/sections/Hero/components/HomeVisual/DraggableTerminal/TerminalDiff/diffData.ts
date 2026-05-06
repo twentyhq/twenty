@@ -1,8 +1,4 @@
-// Diff data shown in the slide-in review panel. Reflects the launch-ops CRM
-// expansion (Rocket, Launch, Payload, Customer, Launch site) that the chat
-// scaffolds — matches the file list in ChangesSummaryCard.
-
-import { CHANGESET_TOTALS } from '../conversation/rocketChangeset';
+import { CHANGESET_TOTALS } from '../Conversation/rocketChangeset';
 
 export type DiffTokenKind =
   | 'text'
@@ -584,7 +580,4 @@ export const DIFF_FILES: DiffFile[] = [
   },
 ];
 
-// The diff panel only ships a sampler of files; the top-bar pill summarizes
-// the full changeset, so derive totals from the canonical changeset to keep
-// the pill consistent with the ChangesSummaryCard header.
 export const DIFF_TOTALS = CHANGESET_TOTALS;

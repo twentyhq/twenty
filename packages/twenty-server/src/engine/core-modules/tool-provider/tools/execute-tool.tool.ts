@@ -49,7 +49,7 @@ export const createExecuteToolTool = (
   context: ToolContext,
   options?: {
     excludeTools?: Set<string>;
-    serializeOutput?: boolean;
+    compactOutput?: boolean;
   },
 ) => ({
   description:
@@ -67,7 +67,7 @@ export const createExecuteToolTool = (
     }
 
     return toolRegistry.resolveAndExecute(toolName, args, context, {
-      serializeOutput: options?.serializeOutput,
+      compactOutput: options?.compactOutput,
     });
   },
 });

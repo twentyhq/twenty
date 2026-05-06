@@ -1,9 +1,7 @@
 import { canManageFeatureFlagsState } from '@/client-config/states/canManageFeatureFlagsState';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
+import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
 import { SettingsAdminVersionContainer } from '@/settings/admin-panel/components/SettingsAdminVersionContainer';
-import { ADMIN_PANEL_RECENT_USERS } from '@/settings/admin-panel/graphql/queries/adminPanelRecentUsers';
-import { ADMIN_PANEL_TOP_WORKSPACES } from '@/settings/admin-panel/graphql/queries/adminPanelTopWorkspaces';
-import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableBody } from '@/ui/layout/table/components/TableBody';
@@ -14,22 +12,35 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { useDebounce } from 'use-debounce';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 
 import { currentUserState } from '@/auth/states/currentUserState';
-import { H2Title } from 'twenty-ui/display';
+import {
+  Avatar,
+  H2Title,
+  IconChevronRight,
+  OverflowingTextWithTooltip,
+} from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  AdminPanelRecentUsersDocument,
+  AdminPanelTopWorkspacesDocument,
+} from '~/generated-admin/graphql';
 
 const StyledEmptyState = styled.div`
   color: ${themeCssVariables.font.color.tertiary};
   padding: ${themeCssVariables.spacing[4]} 0;
 `;
 
+const RECENT_USERS_GRID_TEMPLATE_COLUMNS = '1fr 2fr 1fr 36px';
+const TOP_WORKSPACES_GRID_TEMPLATE_COLUMNS = '2fr 1fr 36px';
+
 export const SettingsAdminGeneral = () => {
+  const { theme } = useContext(ThemeContext);
   const apolloAdminClient = useApolloAdminClient();
   const [userSearchTerm, setUserSearchTerm] = useState('');
   const [debouncedUserSearchTerm] = useDebounce(userSearchTerm, 300);
@@ -42,34 +53,23 @@ export const SettingsAdminGeneral = () => {
   const canImpersonate = currentUser?.canImpersonate;
   const canManageFeatureFlags = useAtomStateValue(canManageFeatureFlagsState);
 
-  const { data: recentUsersData, loading: isLoadingUsers } = useQuery<{
-    adminPanelRecentUsers: {
-      id: string;
-      email: string;
-      firstName?: string | null;
-      lastName?: string | null;
-      createdAt: string;
-      workspaceName?: string | null;
-      workspaceId?: string | null;
-    }[];
-  }>(ADMIN_PANEL_RECENT_USERS, {
-    client: apolloAdminClient,
-    variables: { searchTerm: debouncedUserSearchTerm },
-    skip: !canImpersonate,
-  });
+  const { data: recentUsersData, loading: isLoadingUsers } = useQuery(
+    AdminPanelRecentUsersDocument,
+    {
+      client: apolloAdminClient,
+      variables: { searchTerm: debouncedUserSearchTerm },
+      skip: !canImpersonate,
+    },
+  );
 
-  const { data: topWorkspacesData, loading: isLoadingWorkspaces } = useQuery<{
-    adminPanelTopWorkspaces: {
-      id: string;
-      name: string;
-      totalUsers: number;
-      subdomain: string;
-    }[];
-  }>(ADMIN_PANEL_TOP_WORKSPACES, {
-    client: apolloAdminClient,
-    variables: { searchTerm: debouncedWorkspaceSearchTerm },
-    skip: !canImpersonate,
-  });
+  const { data: topWorkspacesData, loading: isLoadingWorkspaces } = useQuery(
+    AdminPanelTopWorkspacesDocument,
+    {
+      client: apolloAdminClient,
+      variables: { searchTerm: debouncedWorkspaceSearchTerm },
+      skip: !canImpersonate,
+    },
+  );
 
   const recentUsers = recentUsersData?.adminPanelRecentUsers ?? [];
   const topWorkspaces = topWorkspacesData?.adminPanelTopWorkspaces ?? [];
@@ -105,7 +105,7 @@ export const SettingsAdminGeneral = () => {
               fullWidth
             />
             {isLoadingUsers ? (
-              <SettingsSkeletonLoader />
+              <SettingsSectionSkeletonLoader />
             ) : recentUsers.length === 0 ? (
               <StyledEmptyState>
                 {t`No users found matching your search criteria.`}
@@ -113,26 +113,71 @@ export const SettingsAdminGeneral = () => {
             ) : (
               <Table>
                 <TableBody>
-                  <TableRow gridTemplateColumns="1fr 2fr 1fr">
+                  <TableRow
+                    gridTemplateColumns={RECENT_USERS_GRID_TEMPLATE_COLUMNS}
+                  >
                     <TableHeader>{t`Name`}</TableHeader>
                     <TableHeader>{t`Email`}</TableHeader>
-                    <TableHeader align="right">{t`Workspace`}</TableHeader>
+                    <TableHeader>{t`Workspace`}</TableHeader>
+                    <TableHeader />
                   </TableRow>
                   {recentUsers.map((user) => (
                     <TableRow
                       key={user.id}
-                      gridTemplateColumns="1fr 2fr 1fr"
+                      gridTemplateColumns={RECENT_USERS_GRID_TEMPLATE_COLUMNS}
                       to={getSettingsPath(SettingsPath.AdminPanelUserDetail, {
                         userId: user.id,
                       })}
                     >
-                      <TableCell color={themeCssVariables.font.color.primary}>
-                        {`${user.firstName || ''} ${user.lastName || ''}`.trim() ||
-                          '\u2014'}
+                      <TableCell
+                        color={themeCssVariables.font.color.primary}
+                        gap={themeCssVariables.spacing[2]}
+                        overflow="hidden"
+                      >
+                        <Avatar
+                          avatarUrl={user.avatarUrl}
+                          placeholder={
+                            `${user.firstName || ''} ${user.lastName || ''}`.trim() ||
+                            user.email
+                          }
+                          placeholderColorSeed={user.id}
+                          size="md"
+                          type="rounded"
+                        />
+                        <OverflowingTextWithTooltip
+                          text={
+                            `${user.firstName || ''} ${user.lastName || ''}`.trim() ||
+                            '\u2014'
+                          }
+                        />
                       </TableCell>
                       <TableCell>{user.email}</TableCell>
-                      <TableCell align="right">
-                        {user.workspaceName || '\u2014'}
+                      <TableCell
+                        gap={themeCssVariables.spacing[2]}
+                        overflow="hidden"
+                      >
+                        {user.workspaceId ? (
+                          <>
+                            <Avatar
+                              avatarUrl={user.workspaceLogo}
+                              placeholder={user.workspaceName || ''}
+                              placeholderColorSeed={user.workspaceId}
+                              size="sm"
+                            />
+                            <OverflowingTextWithTooltip
+                              text={user.workspaceName || '\u2014'}
+                            />
+                          </>
+                        ) : (
+                          '\u2014'
+                        )}
+                      </TableCell>
+                      <TableCell align="center">
+                        <IconChevronRight
+                          size={theme.icon.size.md}
+                          stroke={theme.icon.stroke.sm}
+                          color={theme.font.color.tertiary}
+                        />
                       </TableCell>
                     </TableRow>
                   ))}
@@ -154,7 +199,7 @@ export const SettingsAdminGeneral = () => {
               fullWidth
             />
             {isLoadingWorkspaces ? (
-              <SettingsSkeletonLoader />
+              <SettingsSectionSkeletonLoader />
             ) : topWorkspaces.length === 0 ? (
               <StyledEmptyState>
                 {t`No workspaces found matching your search criteria.`}
@@ -162,24 +207,46 @@ export const SettingsAdminGeneral = () => {
             ) : (
               <Table>
                 <TableBody>
-                  <TableRow gridTemplateColumns="2fr 1fr">
+                  <TableRow
+                    gridTemplateColumns={TOP_WORKSPACES_GRID_TEMPLATE_COLUMNS}
+                  >
                     <TableHeader>{t`Workspace`}</TableHeader>
                     <TableHeader align="right">{t`Users`}</TableHeader>
+                    <TableHeader />
                   </TableRow>
                   {topWorkspaces.map((workspace) => (
                     <TableRow
                       key={workspace.id}
-                      gridTemplateColumns="2fr 1fr"
+                      gridTemplateColumns={TOP_WORKSPACES_GRID_TEMPLATE_COLUMNS}
                       to={getSettingsPath(
                         SettingsPath.AdminPanelWorkspaceDetail,
                         { workspaceId: workspace.id },
                       )}
                     >
-                      <TableCell color={themeCssVariables.font.color.primary}>
-                        {workspace.name || '\u2014'}
+                      <TableCell
+                        color={themeCssVariables.font.color.primary}
+                        gap={themeCssVariables.spacing[2]}
+                        overflow="hidden"
+                      >
+                        <Avatar
+                          avatarUrl={workspace.logoUrl}
+                          placeholder={workspace.name || ''}
+                          placeholderColorSeed={workspace.id}
+                          size="md"
+                        />
+                        <OverflowingTextWithTooltip
+                          text={workspace.name || '\u2014'}
+                        />
                       </TableCell>
                       <TableCell align="right">
                         {workspace.totalUsers}
+                      </TableCell>
+                      <TableCell align="center">
+                        <IconChevronRight
+                          size={theme.icon.size.md}
+                          stroke={theme.icon.stroke.sm}
+                          color={theme.font.color.tertiary}
+                        />
                       </TableCell>
                     </TableRow>
                   ))}

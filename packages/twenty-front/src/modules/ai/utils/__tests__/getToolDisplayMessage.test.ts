@@ -86,11 +86,11 @@ describe('getToolDisplayMessage', () => {
     });
   });
 
-  describe('exa_web_search', () => {
+  describe('app_exa_web_search', () => {
     it('should show the same searching-the-web message as native web_search', () => {
       const message = getToolDisplayMessage(
         { query: 'CRM tools' },
-        'exa_web_search',
+        'app_exa_web_search',
         false,
       );
 
@@ -99,7 +99,7 @@ describe('getToolDisplayMessage', () => {
     });
 
     it('should handle missing query', () => {
-      const message = getToolDisplayMessage({}, 'exa_web_search', true);
+      const message = getToolDisplayMessage({}, 'app_exa_web_search', true);
 
       expect(message).toContain('Searched the web');
     });

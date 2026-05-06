@@ -1,5 +1,3 @@
-// Design tokens extracted from the Figma terminal overlay.
-// Values are pinned to the Figma source of truth so the overlay stays pixel perfect.
 export const TERMINAL_TOKENS = {
   surface: {
     window: '#fefefd',
