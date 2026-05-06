@@ -137,22 +137,22 @@ export const buildReleaseListJsonLd = (
   };
 };
 
-export const buildBlogListJsonLd = (
+export const buildArticleListJsonLd = (
   posts: readonly Article[],
 ): JsonLdValue => {
   const siteUrl = getSiteUrl();
-  const blogUrl = `${siteUrl}/articles`;
+  const articlesUrl = `${siteUrl}/articles`;
 
   return {
     '@context': 'https://schema.org',
     '@type': 'Blog',
-    name: 'Twenty Blog',
-    url: blogUrl,
+    name: 'Twenty Articles',
+    url: articlesUrl,
     blogPost: posts.map((post) => ({
-      '@type': 'Articleing',
+      '@type': 'BlogPosting',
       headline: post.title,
       description: post.description,
-      url: `${blogUrl}/${post.slug}`,
+      url: `${articlesUrl}/${post.slug}`,
       datePublished: post.date,
       author: {
         '@type': 'Organization',

@@ -9,7 +9,7 @@ import { getRouteI18n, type LocaleRouteParams } from '@/lib/i18n/get-route-i18n'
 import { resolveLocaleParam } from '@/lib/i18n';
 import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels';
 import { Pages } from '@/lib/pages';
-import { buildBlogListJsonLd, buildRouteMetadata, JsonLd } from '@/lib/seo';
+import { buildArticleListJsonLd, buildRouteMetadata, JsonLd } from '@/lib/seo';
 import { Articles } from '@/sections/Articles/components';
 import { Hero } from '@/sections/Hero/components';
 import { Menu } from '@/sections/Menu/components';
@@ -21,14 +21,14 @@ import { css } from '@linaria/core';
 
 export const generateMetadata = buildRouteMetadata('articles');
 
-const BLOG_HERO_BODY = {
+const ARTICLES_HERO_BODY = {
   text: 'Ideas from the team building Twenty on open source CRM, GTM systems, and building software that lasts.',
 };
 
-const BLOG_TOP_BACKGROUND_COLOR = '#F4F4F4';
+const ARTICLES_TOP_BACKGROUND_COLOR = '#F4F4F4';
 
 const pageRevealClassName = css`
-  @keyframes blogPageReveal {
+  @keyframes articlesPageReveal {
     from {
       opacity: 0;
       transform: translate3d(0, 20px, 0);
@@ -39,10 +39,10 @@ const pageRevealClassName = css`
     }
   }
 
-  background-color: ${BLOG_TOP_BACKGROUND_COLOR};
+  background-color: ${ARTICLES_TOP_BACKGROUND_COLOR};
 
   & > * {
-    animation: blogPageReveal 720ms cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation: articlesPageReveal 720ms cubic-bezier(0.22, 1, 0.36, 1) both;
     animation-delay: 80ms;
   }
 
@@ -53,11 +53,11 @@ const pageRevealClassName = css`
   }
 `;
 
-type BlogPageProps = {
+type ArticlesPageProps = {
   params: Promise<LocaleRouteParams>;
 };
 
-export default async function BlogPage({ params }: BlogPageProps) {
+export default async function ArticlesPage({ params }: ArticlesPageProps) {
   const { locale: rawLocale } = await params;
   const locale = resolveLocaleParam(rawLocale);
 
@@ -75,9 +75,9 @@ export default async function BlogPage({ params }: BlogPageProps) {
 
   return (
     <>
-      {posts.length > 0 ? <JsonLd data={buildBlogListJsonLd(posts)} /> : null}
+      {posts.length > 0 ? <JsonLd data={buildArticleListJsonLd(posts)} /> : null}
       <Menu.Root
-        backgroundColor={BLOG_TOP_BACKGROUND_COLOR}
+        backgroundColor={ARTICLES_TOP_BACKGROUND_COLOR}
         scheme="primary"
         navItems={MENU_DATA.navItems}
         socialLinks={menuSocialLinks}
@@ -89,17 +89,17 @@ export default async function BlogPage({ params }: BlogPageProps) {
       </Menu.Root>
 
       <div className={pageRevealClassName}>
-        <Hero.Root backgroundColor={BLOG_TOP_BACKGROUND_COLOR}>
+        <Hero.Root backgroundColor={ARTICLES_TOP_BACKGROUND_COLOR}>
           <Hero.Heading page={Pages.Articles}>
             <HeadingPart fontFamily="serif">Ideas on</HeadingPart>
             <br />
             <HeadingPart fontFamily="serif">open-source</HeadingPart>{' '}
             <HeadingPart fontFamily="sans">CRM</HeadingPart>
           </Hero.Heading>
-          <Hero.Body body={BLOG_HERO_BODY} page={Pages.Articles} />
+          <Hero.Body body={ARTICLES_HERO_BODY} page={Pages.Articles} />
         </Hero.Root>
         <TrustedBy.Root
-          cardBackgroundColor={BLOG_TOP_BACKGROUND_COLOR}
+          cardBackgroundColor={ARTICLES_TOP_BACKGROUND_COLOR}
           compactBottom
         >
           <TrustedBy.Separator

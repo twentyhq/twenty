@@ -6,7 +6,7 @@ const descriptorFromText = (message: string) => ({ id: message, message });
 
 const publishedArticles = getPublishedArticles();
 
-export const BLOG_POST_ROUTES: readonly WebsiteRoute[] =
+export const ARTICLE_ROUTES: readonly WebsiteRoute[] =
   publishedArticles.length === 0
     ? []
     : [
@@ -23,11 +23,11 @@ export const BLOG_POST_ROUTES: readonly WebsiteRoute[] =
           localeMode: 'source',
         },
         ...publishedArticles.map(
-          (blogPost): WebsiteRoute => ({
-            id: `articles:${blogPost.slug}`,
-            path: `/articles/${blogPost.slug}`,
-            title: descriptorFromText(`${blogPost.title} | Twenty Articles`),
-            description: descriptorFromText(blogPost.description),
+          (article): WebsiteRoute => ({
+            id: `articles:${article.slug}`,
+            path: `/articles/${article.slug}`,
+            title: descriptorFromText(`${article.title} | Twenty Articles`),
+            description: descriptorFromText(article.description),
             changeFrequency: 'monthly' as const,
             priority: 0.6,
             indexed: true,

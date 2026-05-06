@@ -1,5 +1,5 @@
 import {
-  buildBlogListJsonLd,
+  buildArticleListJsonLd,
   buildArticleJsonLd,
   buildFaqPageJsonLd,
   buildOrganizationJsonLd,
@@ -169,7 +169,7 @@ describe('buildReleaseListJsonLd', () => {
   });
 });
 
-describe('blog JSON-LD', () => {
+describe('articles JSON-LD', () => {
   const post = {
     author: 'Twenty',
     content: 'Body',
@@ -182,21 +182,21 @@ describe('blog JSON-LD', () => {
     title: 'Practical CRM Article',
   };
 
-  it('builds a Blog schema for the blog index', () => {
-    const data = buildBlogListJsonLd([post]) as {
+  it('builds a Blog schema for the articles index', () => {
+    const data = buildArticleListJsonLd([post]) as {
       '@type': string;
       blogPost: Array<Record<string, unknown>>;
     };
 
     expect(data).toMatchObject({
       '@type': 'Blog',
-      name: 'Twenty Blog',
-      url: 'https://example.test/blog',
+      name: 'Twenty Articles',
+      url: 'https://example.test/articles',
     });
     expect(data.blogPost[0]).toMatchObject({
       '@type': 'BlogPosting',
       headline: 'Practical CRM Article',
-      url: 'https://example.test/blog/practical-crm-article',
+      url: 'https://example.test/articles/practical-crm-article',
       datePublished: '2026-05-06',
     });
   });
@@ -208,8 +208,8 @@ describe('blog JSON-LD', () => {
       '@type': 'BlogPosting',
       headline: 'Practical CRM Article',
       description: 'A practical CRM article.',
-      url: 'https://example.test/blog/practical-crm-article',
-      mainEntityOfPage: 'https://example.test/blog/practical-crm-article',
+      url: 'https://example.test/articles/practical-crm-article',
+      mainEntityOfPage: 'https://example.test/articles/practical-crm-article',
       datePublished: '2026-05-06',
       publisher: {
         '@type': 'Organization',

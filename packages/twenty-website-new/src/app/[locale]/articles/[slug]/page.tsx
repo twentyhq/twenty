@@ -17,15 +17,15 @@ import { Menu } from '@/sections/Menu/components';
 import { MENU_DATA } from '@/sections/Menu/data';
 import { theme } from '@/theme';
 
-type BlogSlugParams = LocaleRouteParams & { slug: string };
+type ArticleSlugParams = LocaleRouteParams & { slug: string };
 
 type ArticlePageProps = {
-  params: Promise<BlogSlugParams>;
+  params: Promise<ArticleSlugParams>;
 };
 
 export const dynamicParams = false;
 
-export function generateStaticParams(): BlogSlugParams[] {
+export function generateStaticParams(): ArticleSlugParams[] {
   return getPublishedArticles().map((post) => ({
     locale: localeToUrlSegment(SOURCE_LOCALE),
     slug: post.slug,

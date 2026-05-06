@@ -8,7 +8,7 @@ import { formatArticleDate, type Article as ArticleData } from '@/lib/articles';
 import { theme } from '@/theme';
 import { Container } from '@/design-system/components';
 
-type BlogCardStyle = CSSProperties & { '--blog-card-index': number };
+type ArticleCardStyle = CSSProperties & { '--article-card-index': number };
 
 const CORNER_SIZE = 14;
 const CORNER_OFFSET = '-7px';
@@ -135,7 +135,7 @@ const CardGrid = styled.div`
 `;
 
 const CardLink = styled(Link)<{ $isLarge: boolean }>`
-  @keyframes blogCardEnter {
+  @keyframes articleCardEnter {
     from {
       opacity: 0;
       transform: translate3d(0, 18px, 0);
@@ -146,8 +146,8 @@ const CardLink = styled(Link)<{ $isLarge: boolean }>`
     }
   }
 
-  animation: blogCardEnter 700ms cubic-bezier(0.22, 1, 0.36, 1) both;
-  animation-delay: calc(var(--blog-card-index) * 90ms + 180ms);
+  animation: articleCardEnter 700ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: calc(var(--article-card-index) * 90ms + 180ms);
   background-color: ${theme.colors.primary.background[100]};
   border: 1px solid ${theme.colors.primary.border[10]};
   border-radius: ${theme.radius(2)};
@@ -405,7 +405,7 @@ function ArticleCard({ index, isLarge, post }: ArticleCardProps) {
     .map((word) => word[0])
     .join('')
     .slice(0, 2);
-  const cardStyle: BlogCardStyle = { '--blog-card-index': index };
+  const cardStyle: ArticleCardStyle = { '--article-card-index': index };
 
   return (
     <CardLink
