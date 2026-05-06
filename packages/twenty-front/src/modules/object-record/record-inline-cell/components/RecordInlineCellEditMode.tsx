@@ -12,6 +12,7 @@ import {
   autoUpdate,
   flip,
   offset,
+  shift,
   useFloating,
   type MiddlewareState,
 } from '@floating-ui/react';
@@ -71,6 +72,7 @@ export const RecordInlineCellEditMode = ({
     placement: isCentered ? 'bottom' : 'bottom-start',
     middleware: [
       flip(),
+      shift({ padding: 8 }),
       offset(
         isCentered
           ? {
