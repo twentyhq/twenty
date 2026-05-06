@@ -1,0 +1,4 @@
+interface:
+  display_name: "App README And Visuals"
+  short_description: "Prepare Twenty app listing assets."
+  default_prompt: "Use $app-readme-and-visuals to prepare a Twenty app README and listing assets."

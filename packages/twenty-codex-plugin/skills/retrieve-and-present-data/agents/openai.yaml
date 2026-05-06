@@ -1,0 +1,4 @@
+interface:
+  display_name: "Retrieve And Present Data"
+  short_description: "Retrieve Twenty records and present them clearly."
+  default_prompt: "Use $retrieve-and-present-data to retrieve Twenty records and present them with readable dates, labels, grouped fields, original record links, and safe visual identifiers when available."

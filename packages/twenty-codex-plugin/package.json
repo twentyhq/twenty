@@ -1,0 +1,24 @@
+{
+  "name": "twenty-codex-plugin",
+  "version": "0.1.1",
+  "description": "Codex plugin for creating Twenty apps, searching Twenty documentation, and connecting to Twenty workspaces with MCP.",
+  "private": true,
+  "license": "AGPL-3.0",
+  "scripts": {
+    "setup:mcp": "bash ./scripts/setup-mcp.sh",
+    "validate": "node ./scripts/validate.js"
+  },
+  "files": [
+    ".codex-plugin",
+    ".mcp.json",
+    "assets",
+    "scripts",
+    "skills",
+    "README.md"
+  ],
+  "engines": {
+    "node": "^24.5.0",
+    "npm": "please-use-yarn",
+    "yarn": ">=4.0.2"
+  }
+}
