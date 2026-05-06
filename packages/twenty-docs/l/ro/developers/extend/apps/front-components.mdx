@@ -15,7 +15,7 @@ Componentele frontale pot fi afișate în două locații în cadrul Twenty:
 
 ## Exemplu de bază
 
-The quickest way to see a front component in action is to register it with a **command menu item**. Use `defineCommandMenuItem` in a separate file to make the component appear as a quick-action button in the top-right corner of the page:
+Cel mai rapid mod de a vedea o componentă front-end în acțiune este să o înregistrați ca **element din meniul de comenzi**. Folosiți `defineCommandMenuItem` într-un fișier separat pentru ca componenta să apară ca buton de acțiune rapidă în colțul din dreapta sus al paginii:
 
 ```tsx src/front-components/hello-world.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
@@ -350,7 +350,7 @@ export default defineFrontComponent({
 
 ## defineCommandMenuItem
 
-Use `defineCommandMenuItem` to register a front component in the command menu (Cmd+K). Dacă `isPinned` este `true`, apare și ca buton de acțiune rapidă în colțul din dreapta sus al paginii.
+Folosiți `defineCommandMenuItem` pentru a înregistra o componentă front-end în meniul de comenzi (Cmd+K). Dacă `isPinned` este `true`, apare și ca buton de acțiune rapidă în colțul din dreapta sus al paginii.
 
 ```ts src/command-menu-items/open-dashboard.command-menu-item.ts
 import { defineCommandMenuItem } from 'twenty-sdk/define';
@@ -370,7 +370,7 @@ export default defineCommandMenuItem({
 | --------------------------------------- | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `universalIdentifier`                   | Da          | ID unic stabil pentru comandă                                                                                                                                                                    |
 | `label`                                 | Da          | Etichetă completă afișată în meniul de comenzi (Cmd+K)                                                                                                                                           |
-| `frontComponentUniversalIdentifier`     | Da          | The `universalIdentifier` of the front component this command opens                                                                                                                              |
+| `frontComponentUniversalIdentifier`     | Da          | `universalIdentifier` al componentei front-end pe care această comandă o deschide                                                                                                                |
 | `shortLabel`                            | Nu          | Etichetă mai scurtă afișată pe butonul de acțiune rapidă fixat                                                                                                                                   |
 | `icon`                                  | Nu          | Numele pictogramei afișat lângă etichetă (de ex. `'IconBolt'`, `'IconSend'`)                                                                                                                     |
 | `isPinned`                              | Nu          | Când este `true`, afișează comanda ca buton de acțiune rapidă în colțul din dreapta sus al paginii                                                                                               |

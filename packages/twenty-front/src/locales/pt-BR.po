@@ -2167,6 +2167,11 @@ msgstr "Aplicação desinstalada com sucesso."
 msgid "Application upgraded successfully."
 msgstr "Aplicação atualizada com sucesso."
 
+#. js-lingui-id: Okob8q
+#: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
+msgid "application variable"
+msgstr ""
+
 #. js-lingui-id: fL7WXr
 #: src/pages/settings/logic-functions/SettingsLogicFunctionDetail.tsx
 #: src/pages/settings/layout/components/SettingsLayoutDetailScaffold.tsx

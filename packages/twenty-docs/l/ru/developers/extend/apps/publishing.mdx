@@ -198,6 +198,14 @@ export default defineApplication({
 
 См. [аккордеон defineApplication](/l/ru/developers/extend/apps/building#defineentity-functions) на странице «Создание приложений» для полного списка полей маркетплейса (`author`, `category`, `aboutDescription`, `websiteUrl`, `termsUrl` и т. д.).
 
+#### Рекомендуемые размеры скриншотов
+
+Маркетплейс отображает `screenshots` в контейнере с фиксированным соотношением сторон `8:5` (например, `1600×1000 px`).
+
+<Note>
+Скриншоты с любым соотношением сторон отображаются полностью и никогда не обрезаются, но всё, что значительно выше или уже, чем `8:5`, будет иметь пустые поля по бокам.
+</Note>
+
 ### Публикация
 
 ```bash filename="Terminal"

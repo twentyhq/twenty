@@ -2872,6 +2872,7 @@ enum AllMetadataName {
   fieldPermission
   frontComponent
   webhook
+  applicationVariable
   connectionProvider
 }
 

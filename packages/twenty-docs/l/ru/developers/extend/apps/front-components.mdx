@@ -15,7 +15,7 @@ icon: window-maximize
 
 ## Простой пример
 
-The quickest way to see a front component in action is to register it with a **command menu item**. Use `defineCommandMenuItem` in a separate file to make the component appear as a quick-action button in the top-right corner of the page:
+Самый быстрый способ увидеть фронтенд-компонент в действии — зарегистрировать его в качестве **пункта меню команд**. Используйте `defineCommandMenuItem` в отдельном файле, чтобы компонент отображался как кнопка быстрого действия в правом верхнем углу страницы:
 
 ```tsx src/front-components/hello-world.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
@@ -350,7 +350,7 @@ export default defineFrontComponent({
 
 ## defineCommandMenuItem
 
-Use `defineCommandMenuItem` to register a front component in the command menu (Cmd+K). Если `isPinned` имеет значение `true`, команда также отображается как кнопка быстрого действия в правом верхнем углу страницы.
+Используйте `defineCommandMenuItem`, чтобы зарегистрировать фронтенд-компонент в меню команд (Cmd+K). Если `isPinned` имеет значение `true`, команда также отображается как кнопка быстрого действия в правом верхнем углу страницы.
 
 ```ts src/command-menu-items/open-dashboard.command-menu-item.ts
 import { defineCommandMenuItem } from 'twenty-sdk/define';
@@ -370,7 +370,7 @@ export default defineCommandMenuItem({
 | --------------------------------------- | ----------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `universalIdentifier`                   | Да          | Стабильный уникальный идентификатор для команды                                                                                                                                        |
 | `label`                                 | Да          | Полная метка, отображаемая в меню команд (Cmd+K)                                                                                                                                       |
-| `frontComponentUniversalIdentifier`     | Да          | The `universalIdentifier` of the front component this command opens                                                                                                                    |
+| `frontComponentUniversalIdentifier`     | Да          | `universalIdentifier` фронтенд-компонента, который открывается этой командой                                                                                                           |
 | `shortLabel`                            | Нет         | Короткая метка, отображаемая на закреплённой кнопке быстрого действия                                                                                                                  |
 | `icon`                                  | Нет         | Имя значка, отображаемое рядом с меткой (например, `'IconBolt'`, `'IconSend'`)                                                                                                         |
 | `isPinned`                              | Нет         | При значении `true` показывает команду как кнопку быстрого действия в правом верхнем углу страницы                                                                                     |

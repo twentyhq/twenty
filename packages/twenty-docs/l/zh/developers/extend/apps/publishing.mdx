@@ -198,6 +198,14 @@ export default defineApplication({
 
 See the [defineApplication accordion](/l/zh/developers/extend/apps/building#defineentity-functions) in the Building Apps page for the full list of marketplace fields (`author`, `category`, `aboutDescription`, `websiteUrl`, `termsUrl`, etc.).
 
+#### 建议的屏幕截图尺寸
+
+该市场会在固定的 `8:5` 容器中渲染 `screenshots`（例如，`1600×1000 px`）。
+
+<Note>
+任意纵横比的屏幕截图都会完整显示，且绝不会被裁剪，但相对于 `8:5` 明显更高或更窄的图片，两侧会出现空白边。
+</Note>
+
 ### Publish
 
 ```bash filename="Terminal"
