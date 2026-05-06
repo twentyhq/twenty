@@ -13,6 +13,13 @@ export const defineApplication: DefineEntity<ApplicationConfig> = (config) => {
     errors.push('Application must have a non empty display name');
   }
 
+  if (config.defaultRoleUniversalIdentifier) {
+    console.warn(
+      '[twenty-sdk] `defaultRoleUniversalIdentifier` on defineApplication() is deprecated. ' +
+        'Use defineApplicationRole() in your role file instead.',
+    );
+  }
+
   return createValidationResult({
     config,
     errors,

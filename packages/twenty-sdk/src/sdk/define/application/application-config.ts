@@ -8,6 +8,8 @@ export type ApplicationConfig = Omit<
   | 'preInstallLogicFunction'
   | 'defaultRoleUniversalIdentifier'
 > & {
-  //deprecated
+  /**
+   * @deprecated Use `defineApplicationRole()` in your role file instead.
+   */
   defaultRoleUniversalIdentifier?: string;
 };
