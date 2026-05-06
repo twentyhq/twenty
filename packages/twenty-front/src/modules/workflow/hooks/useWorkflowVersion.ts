@@ -1,9 +1,11 @@
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
-import { type WorkflowVersion } from '@/workflow/types/Workflow';
+import { type Workflow, type WorkflowVersion } from '@/workflow/types/Workflow';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 
 export const useWorkflowVersion = (workflowVersionId?: string) => {
-  const { record: workflowVersion } = useFindOneRecord<WorkflowVersion>({
+  const { record: workflowVersion } = useFindOneRecord<
+    WorkflowVersion & { workflow: Pick<Workflow, 'id' | 'name'> }
+  >({
     objectNameSingular: CoreObjectNameSingular.WorkflowVersion,
     objectRecordId: workflowVersionId,
     recordGqlFields: {
