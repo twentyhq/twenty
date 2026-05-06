@@ -106,7 +106,6 @@ export class AgentAsyncExecutorService {
     agent: AgentEntity | null;
     userPrompt: string;
     actorContext?: ActorMetadata;
-    rolePermissionConfig?: RolePermissionConfig;
     authContext?: WorkspaceAuthContext;
     workspaceId: string;
     userWorkspaceId?: string | null;
@@ -144,23 +143,18 @@ export class AgentAsyncExecutorService {
           agent.workspaceId,
         );
 
-        // Workflow agent tools are scoped exclusively by the agent permission-tab role.
-        // No role means no tools. If on-behalf-of execution should also constrain
-        // tools, intersect this agent role with the runtime role permission config.
-        const hasAgentPermissionRole = isDefined(agentRoleId);
-
+        // Native model tools are provider capabilities controlled by model configuration.
         const nativeModelToolOptions: NativeModelToolOptions = {
-          webSearchEnabled:
-            hasAgentPermissionRole &&
-            agent.modelConfiguration?.webSearch?.enabled === true,
-          twitterSearchEnabled:
-            hasAgentPermissionRole &&
+          webSearch: agent.modelConfiguration?.webSearch?.enabled === true,
+          twitterSearch:
             agent.modelConfiguration?.twitterSearch?.enabled === true,
         };
 
         let registryTools: ToolSet = {};
         let actionWebSearchTools: ToolSet = {};
 
+        // Workflow agent registry tools are scoped exclusively by the agent
+        // permission-tab role. No role means no registry tools.
         if (isDefined(agentRoleId)) {
           const agentRolePermissionConfig: RolePermissionConfig = {
             unionOf: [agentRoleId],

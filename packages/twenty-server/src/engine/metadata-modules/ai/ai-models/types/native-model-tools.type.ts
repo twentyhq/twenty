@@ -6,7 +6,6 @@ export type NativeModelTools = Partial<
     | {
         kind: 'sdk-tool';
         directToolName: string;
-        providerToolKey: string;
       }
     | {
         kind: 'provider-option';

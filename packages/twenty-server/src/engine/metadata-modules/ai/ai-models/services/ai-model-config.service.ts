@@ -1,7 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { type ProviderOptions } from '@ai-sdk/provider-utils';
 import { type ToolSet } from 'ai';
+import { isDefined } from 'twenty-shared/utils';
 
 import { AGENT_CONFIG } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-config.const';
 import {
@@ -20,6 +21,8 @@ import { SdkProviderFactoryService } from 'src/engine/metadata-modules/ai/ai-mod
 
 @Injectable()
 export class AiModelConfigService {
+  private readonly logger = new Logger(AiModelConfigService.name);
+
   constructor(
     private readonly aiModelRegistryService: AiModelRegistryService,
     private readonly sdkProviderFactory: SdkProviderFactoryService,
@@ -46,11 +49,25 @@ export class AiModelConfigService {
     options: NativeModelToolOptions,
   ): ToolSet {
     const tools: Record<string, unknown> = {};
+
+    if (options.webSearch !== true) {
+      return tools as ToolSet;
+    }
+
     const webSearchTool = getNativeModelToolsForSdkPackage(
       model.sdkPackage,
     )?.webSearch;
 
-    if (!options.webSearchEnabled || webSearchTool?.kind !== 'sdk-tool') {
+    if (!isDefined(webSearchTool)) {
+      this.logger.warn(
+        `webSearch requested for sdkPackage="${model.sdkPackage}" but no native binding is registered. Skipping.`,
+      );
+
+      return tools as ToolSet;
+    }
+
+    // provider-option bindings (e.g. xAI) are handled in getProviderOptions
+    if (webSearchTool.kind !== 'sdk-tool') {
       return tools as ToolSet;
     }
 
@@ -87,8 +104,8 @@ export class AiModelConfigService {
   private getXaiProviderOptions(
     options: NativeModelToolOptions,
   ): ProviderOptions {
-    const webSearchEnabled = options.webSearchEnabled === true;
-    const twitterSearchEnabled = options.twitterSearchEnabled === true;
+    const webSearchEnabled = options.webSearch === true;
+    const twitterSearchEnabled = options.twitterSearch === true;
 
     if (!webSearchEnabled && !twitterSearchEnabled) {
       return {};
@@ -99,12 +116,24 @@ export class AiModelConfigService {
     const webSearchTool = xaiTools?.webSearch;
     const twitterSearchTool = xaiTools?.twitterSearch;
 
-    if (webSearchEnabled && webSearchTool?.kind === 'provider-option') {
-      sources.push({ type: webSearchTool.providerOptionKey });
+    if (webSearchEnabled) {
+      if (webSearchTool?.kind === 'provider-option') {
+        sources.push({ type: webSearchTool.providerOptionKey });
+      } else {
+        this.logger.warn(
+          `webSearch requested for xAI but no provider-option binding is registered. Skipping.`,
+        );
+      }
     }
 
-    if (twitterSearchEnabled && twitterSearchTool?.kind === 'provider-option') {
-      sources.push({ type: twitterSearchTool.providerOptionKey });
+    if (twitterSearchEnabled) {
+      if (twitterSearchTool?.kind === 'provider-option') {
+        sources.push({ type: twitterSearchTool.providerOptionKey });
+      } else {
+        this.logger.warn(
+          `twitterSearch requested for xAI but no provider-option binding is registered. Skipping.`,
+        );
+      }
     }
 
     return {

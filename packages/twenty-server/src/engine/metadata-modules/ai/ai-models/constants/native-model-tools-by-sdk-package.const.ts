@@ -12,14 +12,12 @@ export const NATIVE_MODEL_TOOLS_BY_SDK_PACKAGE = {
     webSearch: {
       kind: 'sdk-tool',
       directToolName: 'web_search',
-      providerToolKey: 'webSearch_20250305',
     },
   },
   [AI_SDK_OPENAI]: {
     webSearch: {
       kind: 'sdk-tool',
       directToolName: 'web_search',
-      providerToolKey: 'webSearch',
     },
   },
   [AI_SDK_XAI]: {

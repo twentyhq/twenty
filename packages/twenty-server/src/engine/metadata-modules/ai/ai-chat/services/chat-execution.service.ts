@@ -158,9 +158,10 @@ export class ChatExecutionService {
       registeredModel.modelId,
     );
 
-    // Chat default-on — action variant (when installed) loads via the preload const.
+    // Native chat search is a model capability, while action web search is
+    // permission-scoped through preloaded registry tools.
     const nativeModelTools = this.nativeToolBinder.bind(registeredModel, {
-      webSearchEnabled: true,
+      webSearch: true,
     });
 
     // Tools the model can call directly: preloaded registry tools (already
