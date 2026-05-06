@@ -7,6 +7,7 @@ import { WorkspaceQueryHookExplorer } from 'src/engine/api/graphql/workspace-que
 import { WorkspaceQueryHookService } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/workspace-query-hook.service';
 import { BlocklistQueryHookModule } from 'src/modules/blocklist/query-hooks/blocklist-query-hook.module';
 import { CalendarQueryHookModule } from 'src/modules/calendar/common/query-hooks/calendar-query-hook.module';
+import { CompanyQueryHookModule } from 'src/modules/company/query-hooks/company-query-hook.module';
 import { DeskQueryHookModule } from 'src/modules/desk/query-hooks/desk-query-hook.module';
 import { QuoteQueryHookModule } from 'src/modules/quote/query-hooks/quote-query-hook.module';
 import { OpportunityQueryHookModule } from 'src/modules/opportunity/query-hooks/opportunity-query-hook.module';
@@ -22,6 +23,7 @@ import { WorkspaceMemberQueryHookModule } from 'src/modules/workspace-member/que
     CalendarQueryHookModule,
     DashboardQueryHookModule,
     BlocklistQueryHookModule,
+    CompanyQueryHookModule,
     DeskQueryHookModule,
     OpportunityQueryHookModule,
     QuoteQueryHookModule,
