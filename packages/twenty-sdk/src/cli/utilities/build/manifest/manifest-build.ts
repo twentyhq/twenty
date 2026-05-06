@@ -172,6 +172,7 @@ export const buildManifest = async (
         fields.push(...reverseRelationFields);
 
         errors.push(...extract.errors);
+        warnings.push(...extract.warnings);
         objectsFilePaths.push(relativePath);
         break;
       }
@@ -183,6 +184,7 @@ export const buildManifest = async (
         const fieldConfig = addMissingFieldOptionIds(extract.config);
         fields.push(fieldConfig);
         errors.push(...extract.errors);
+        warnings.push(...extract.warnings);
         fieldsFilePaths.push(relativePath);
         break;
       }
@@ -194,6 +196,7 @@ export const buildManifest = async (
         const roleConfig = fromRoleConfigToRoleManifest(extract.config);
         roles.push(roleConfig);
         errors.push(...extract.errors);
+        warnings.push(...extract.warnings);
         rolesFilePaths.push(relativePath);
 
         if (targetFunctionName === TargetFunction.DefineApplicationRole) {
@@ -211,6 +214,7 @@ export const buildManifest = async (
         });
         skills.push(extract.config);
         errors.push(...extract.errors);
+        warnings.push(...extract.warnings);
         skillsFilePaths.push(relativePath);
         break;
       }
@@ -221,6 +225,7 @@ export const buildManifest = async (
         });
         agents.push(extract.config);
         errors.push(...extract.errors);
+        warnings.push(...extract.warnings);
         agentsFilePaths.push(relativePath);
         break;
       }
@@ -232,6 +237,7 @@ export const buildManifest = async (
           });
         connectionProviders.push(extract.config);
         errors.push(...extract.errors);
+        warnings.push(...extract.warnings);
         connectionProvidersFilePaths.push(relativePath);
         break;
       }
@@ -242,6 +248,7 @@ export const buildManifest = async (
         });
 
         errors.push(...extract.errors);
+        warnings.push(...extract.warnings);
 
         const { handler: _, ...rest } = extract.config;
 
@@ -330,6 +337,7 @@ export const buildManifest = async (
         });
 
         errors.push(...extract.errors);
+        warnings.push(...extract.warnings);
 
         const { component, ...rest } = extract.config;
 
@@ -361,6 +369,7 @@ export const buildManifest = async (
 
         views.push(viewManifest);
         errors.push(...extract.errors);
+        warnings.push(...extract.warnings);
         viewsFilePaths.push(relativePath);
         break;
       }
@@ -372,6 +381,7 @@ export const buildManifest = async (
           });
         navigationMenuItems.push(extract.config);
         errors.push(...extract.errors);
+        warnings.push(...extract.warnings);
         navigationMenuItemsFilePaths.push(relativePath);
         break;
       }
@@ -387,6 +397,7 @@ export const buildManifest = async (
 
         pageLayouts.push(pageLayoutManifest);
         errors.push(...extract.errors);
+        warnings.push(...extract.warnings);
         pageLayoutsFilePaths.push(relativePath);
         break;
       }
@@ -402,6 +413,7 @@ export const buildManifest = async (
 
         pageLayoutTabs.push(pageLayoutTabManifest);
         errors.push(...extract.errors);
+        warnings.push(...extract.warnings);
         pageLayoutTabsFilePaths.push(relativePath);
         break;
       }
@@ -415,6 +427,7 @@ export const buildManifest = async (
           extract.config as unknown as CommandMenuItemManifest,
         );
         errors.push(...extract.errors);
+        warnings.push(...extract.warnings);
         commandMenuItemsFilePaths.push(relativePath);
         break;
       }
