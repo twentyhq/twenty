@@ -8,13 +8,14 @@ import {
   type FieldActorSource,
 } from 'twenty-shared/types';
 import { isDefined, normalizeUrlOrigin } from 'twenty-shared/utils';
-import { type DeepPartial, ILike } from 'typeorm';
+import { type DeepPartial } from 'typeorm';
 
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
+import { getAllCompanyDomains } from 'src/modules/company/utils/get-all-company-domains.util';
 import { extractDomainFromLink } from 'src/modules/contact-creation-manager/utils/extract-domain-from-link.util';
 import { getCompanyNameFromDomainName } from 'src/modules/contact-creation-manager/utils/get-company-name-from-domain-name.util';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
@@ -76,26 +77,19 @@ export class CreateCompanyService {
           companiesWithoutTrailingSlash,
           'domainName',
         );
-        const conditions = uniqueCompanies.map((companyToCreate) => ({
-          domainName: {
-            primaryLinkUrl: ILike(`%${companyToCreate.domainName}%`),
-          },
-        }));
 
-        const existingCompanies = await companyRepository.find({
-          where: conditions,
-          withDeleted: true,
-        });
+        const existingCompanies = await this.findExistingCompaniesByDomains(
+          companyRepository,
+          uniqueCompanies
+            .map((c) => c.domainName)
+            .filter((d): d is string => isDefined(d)),
+        );
         const existingCompanyIdsMap = this.createCompanyMap(existingCompanies);
 
         const newCompaniesToCreate = uniqueCompanies.filter(
           (company) =>
-            !existingCompanies.some(
-              (existingCompany) =>
-                existingCompany.domainName &&
-                extractDomainFromLink(
-                  existingCompany.domainName.primaryLinkUrl,
-                ) === company.domainName,
+            !existingCompanies.some((existingCompany) =>
+              this.companyOwnsDomain(existingCompany, company.domainName),
             ),
         );
 
@@ -131,15 +125,21 @@ export class CreateCompanyService {
             };
           }),
           undefined,
-          ['domainNamePrimaryLinkUrl', 'id'],
+          ['domainNamePrimaryLinkUrl', 'domainNameSecondaryLinks', 'id'],
         );
 
         const formattedRestoredCompanies = restoredCompanies.raw.map(
-          (row: { id: string; domainNamePrimaryLinkUrl: string }) => {
+          (row: {
+            id: string;
+            domainNamePrimaryLinkUrl: string;
+            domainNameSecondaryLinks: { label: string; url: string }[] | null;
+          }) => {
             return {
               id: row.id,
               domainName: {
                 primaryLinkUrl: row.domainNamePrimaryLinkUrl,
+                primaryLinkLabel: '',
+                secondaryLinks: row.domainNameSecondaryLinks ?? null,
               },
             };
           },
@@ -165,14 +165,11 @@ export class CreateCompanyService {
   ) {
     return uniqueCompanies
       .map((company) => {
-        const existingCompany = existingCompanies.find(
-          (existingCompany) =>
-            existingCompany.domainName &&
-            extractDomainFromLink(existingCompany.domainName.primaryLinkUrl) ===
-              company.domainName,
+        const existingCompany = existingCompanies.find((c) =>
+          this.companyOwnsDomain(c, company.domainName),
         );
 
-        return isDefined(existingCompany)
+        return isDefined(existingCompany) && existingCompany.deletedAt !== null
           ? {
               domainName: company.domainName,
               id: existingCompany.id,
@@ -181,6 +178,50 @@ export class CreateCompanyService {
           : undefined;
       })
       .filter(isDefined);
+  }
+
+  private companyOwnsDomain(
+    company: Pick<CompanyWorkspaceEntity, 'domainName'>,
+    candidateDomain: string | undefined,
+  ): boolean {
+    if (!isDefined(candidateDomain)) {
+      return false;
+    }
+
+    const candidateKey = extractDomainFromLink(candidateDomain);
+
+    if (candidateKey === '') {
+      return false;
+    }
+
+    return getAllCompanyDomains(company.domainName).includes(candidateKey);
+  }
+
+  private async findExistingCompaniesByDomains(
+    companyRepository: WorkspaceRepository<CompanyWorkspaceEntity>,
+    domains: string[],
+  ): Promise<CompanyWorkspaceEntity[]> {
+    if (domains.length === 0) {
+      return [];
+    }
+
+    const queryBuilder = companyRepository
+      .createQueryBuilder('company')
+      .withDeleted();
+
+    domains.forEach((domain, index) => {
+      const paramName = `domain${index}`;
+      const condition = `(LOWER(company."domainNamePrimaryLinkUrl") LIKE :${paramName} OR LOWER(company."domainNameSecondaryLinks"::text) LIKE :${paramName})`;
+      const value = `%${domain.toLowerCase()}%`;
+
+      if (index === 0) {
+        queryBuilder.where(condition, { [paramName]: value });
+      } else {
+        queryBuilder.orWhere(condition, { [paramName]: value });
+      }
+    });
+
+    return queryBuilder.getMany();
   }
 
   private async prepareCompanyData(
@@ -219,12 +260,13 @@ export class CreateCompanyService {
   ) {
     return companies.reduce(
       (acc, company) => {
-        if (!company.domainName?.primaryLinkUrl || !company.id) {
+        if (!company.id) {
           return acc;
         }
-        const key = extractDomainFromLink(company.domainName.primaryLinkUrl);
 
-        acc[key] = company.id;
+        for (const key of getAllCompanyDomains(company.domainName)) {
+          acc[key] = company.id;
+        }
 
         return acc;
       },

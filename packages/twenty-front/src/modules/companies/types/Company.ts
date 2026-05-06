@@ -11,7 +11,7 @@ export type Company = {
         __typename?: 'Links';
         primaryLinkUrl: string;
         primaryLinkLabel: string;
-        secondaryLinks: never[] | [];
+        secondaryLinks: { label: string; url: string }[] | null;
       };
   address: {
     __typename?: 'Address';

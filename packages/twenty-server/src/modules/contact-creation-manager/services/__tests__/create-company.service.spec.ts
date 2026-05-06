@@ -1,13 +1,10 @@
 import { Test, type TestingModule } from '@nestjs/testing';
-import { getRepositoryToken } from '@nestjs/typeorm';
 
 import {
   ConnectedAccountProvider,
   FieldActorSource,
 } from 'twenty-shared/types';
-import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import {
@@ -19,6 +16,8 @@ describe('CreateCompanyService', () => {
   let service: CreateCompanyService;
   let mockCompanyRepository: any;
   let mockHttpService: any;
+  let mockQueryBuilder: any;
+  let queryBuilderResult: any[] = [];
 
   const workspaceId = 'workspace-1';
 
@@ -45,6 +44,13 @@ describe('CreateCompanyService', () => {
   };
   const companyToCreateExisting: CompanyToCreate = {
     domainName: 'existing-company.com',
+    createdBySource: FieldActorSource.MANUAL,
+    createdByContext: {
+      provider: ConnectedAccountProvider.GOOGLE,
+    },
+  };
+  const companyToCreateBySecondary: CompanyToCreate = {
+    domainName: 'alt-domain.com',
     createdBySource: FieldActorSource.MANUAL,
     createdByContext: {
       provider: ConnectedAccountProvider.GOOGLE,
@@ -96,8 +102,16 @@ describe('CreateCompanyService', () => {
   };
 
   beforeEach(async () => {
+    queryBuilderResult = [];
+    mockQueryBuilder = {
+      withDeleted: jest.fn().mockReturnThis(),
+      where: jest.fn().mockReturnThis(),
+      orWhere: jest.fn().mockReturnThis(),
+      getMany: jest.fn().mockImplementation(() => Promise.resolve(queryBuilderResult)),
+    };
+
     mockCompanyRepository = {
-      find: jest.fn(),
+      createQueryBuilder: jest.fn().mockReturnValue(mockQueryBuilder),
       save: jest.fn(),
       maximum: jest.fn().mockResolvedValue(0),
       updateMany: jest.fn(),
@@ -125,28 +139,6 @@ describe('CreateCompanyService', () => {
               .mockImplementation((fn: () => any, _authContext?: any) => fn()),
           },
         },
-        {
-          provide: getRepositoryToken(ObjectMetadataEntity),
-          useValue: {
-            findOne: jest.fn().mockResolvedValue({
-              id: 'mock-object-metadata-id',
-              universalIdentifier: STANDARD_OBJECTS.company.universalIdentifier,
-              workspaceId,
-              nameSingular: 'company',
-              namePlural: 'companies',
-              labelSingular: 'Company',
-              labelPlural: 'Companies',
-              targetTableName: 'company',
-              isCustom: false,
-              isRemote: false,
-              isActive: true,
-              isSystem: false,
-              isAuditLogged: true,
-              isSearchable: true,
-              isLabelSyncedWithName: false,
-            }),
-          },
-        },
       ],
     }).compile();
 
@@ -155,8 +147,7 @@ describe('CreateCompanyService', () => {
 
   describe('With no existing companies', () => {
     beforeEach(() => {
-      mockCompanyRepository.find.mockResolvedValue([]);
-      // it is useless to check results here, we can only check the input it was called with
+      queryBuilderResult = [];
       mockCompanyRepository.save.mockResolvedValue([]);
 
       mockCompanyRepository.updateMany.mockResolvedValue({
@@ -174,7 +165,7 @@ describe('CreateCompanyService', () => {
 
       await service.createOrRestoreCompanies([companyToCreate1], workspaceId);
 
-      expect(mockCompanyRepository.find).toHaveBeenCalled();
+      expect(mockCompanyRepository.createQueryBuilder).toHaveBeenCalled();
       expect(mockCompanyRepository.save).toHaveBeenCalledWith([
         inputForCompanyToCreate1,
       ]);
@@ -200,7 +191,7 @@ describe('CreateCompanyService', () => {
         workspaceId,
       );
 
-      expect(mockCompanyRepository.find).toHaveBeenCalled();
+      expect(mockCompanyRepository.createQueryBuilder).toHaveBeenCalled();
       expect(mockCompanyRepository.save).toHaveBeenCalledWith([
         inputForCompanyToCreate1,
         inputForCompanyToCreate2,
@@ -213,7 +204,7 @@ describe('CreateCompanyService', () => {
         workspaceId,
       );
 
-      expect(mockCompanyRepository.find).toHaveBeenCalled();
+      expect(mockCompanyRepository.createQueryBuilder).toHaveBeenCalled();
       expect(mockCompanyRepository.save).toHaveBeenCalledWith(
         expect.arrayContaining([
           expect.objectContaining({
@@ -228,12 +219,15 @@ describe('CreateCompanyService', () => {
 
   describe('With existing companies', () => {
     beforeEach(() => {
-      mockCompanyRepository.find.mockResolvedValue([
+      queryBuilderResult = [
         {
           id: 'existing-company-1',
-          domainName: { primaryLinkUrl: 'https://existing-company.com' },
+          domainName: {
+            primaryLinkUrl: 'https://existing-company.com',
+            secondaryLinks: null,
+          },
         },
-      ]);
+      ];
       mockCompanyRepository.save.mockResolvedValue([]);
       mockCompanyRepository.updateMany.mockResolvedValue({
         raw: [],
@@ -246,26 +240,30 @@ describe('CreateCompanyService', () => {
         workspaceId,
       );
 
-      expect(mockCompanyRepository.find).toHaveBeenCalled();
+      expect(mockCompanyRepository.createQueryBuilder).toHaveBeenCalled();
       expect(mockCompanyRepository.save).toHaveBeenCalledWith([]);
     });
   });
 
   describe('With existing companies and some deleted', () => {
     beforeEach(() => {
-      mockCompanyRepository.find.mockResolvedValue([
+      queryBuilderResult = [
         {
           id: 'soft-deleted-company-1',
-          domainName: { primaryLinkUrl: 'https://soft-deleted-company.com' },
+          domainName: {
+            primaryLinkUrl: 'https://soft-deleted-company.com',
+            secondaryLinks: null,
+          },
           deletedAt: new Date(),
         },
-      ]);
+      ];
       mockCompanyRepository.save.mockResolvedValue([]);
       mockCompanyRepository.updateMany.mockResolvedValue({
         raw: [
           {
             id: 'soft-deleted-company-1',
             domainNamePrimaryLinkUrl: 'https://soft-deleted-company.com',
+            domainNameSecondaryLinks: null,
           },
         ],
       });
@@ -274,7 +272,7 @@ describe('CreateCompanyService', () => {
     it('should restore the soft deleted company', async () => {
       await service.createOrRestoreCompanies([companyToRestore], workspaceId);
 
-      expect(mockCompanyRepository.find).toHaveBeenCalled();
+      expect(mockCompanyRepository.createQueryBuilder).toHaveBeenCalled();
       expect(mockCompanyRepository.save).toHaveBeenCalledWith([]);
       expect(mockCompanyRepository.updateMany).toHaveBeenCalledWith(
         [
@@ -286,7 +284,75 @@ describe('CreateCompanyService', () => {
           },
         ],
         undefined,
-        ['domainNamePrimaryLinkUrl', 'id'],
+        ['domainNamePrimaryLinkUrl', 'domainNameSecondaryLinks', 'id'],
+      );
+    });
+  });
+
+  describe('When the email domain matches a secondary link', () => {
+    beforeEach(() => {
+      queryBuilderResult = [
+        {
+          id: 'existing-company-with-secondary',
+          domainName: {
+            primaryLinkUrl: 'https://primary.com',
+            secondaryLinks: [{ label: 'Alt', url: 'https://alt-domain.com' }],
+          },
+        },
+      ];
+      mockCompanyRepository.save.mockResolvedValue([]);
+      mockCompanyRepository.updateMany.mockResolvedValue({ raw: [] });
+    });
+
+    it('should not create a duplicate company when domain matches an existing secondary link', async () => {
+      const result = await service.createOrRestoreCompanies(
+        [companyToCreateBySecondary],
+        workspaceId,
+      );
+
+      expect(mockCompanyRepository.save).toHaveBeenCalledWith([]);
+      expect(result['alt-domain.com']).toBe('existing-company-with-secondary');
+      expect(result['primary.com']).toBe('existing-company-with-secondary');
+    });
+
+    it('should restore a soft-deleted company matched by a secondary domain', async () => {
+      queryBuilderResult = [
+        {
+          id: 'soft-deleted-secondary-match',
+          domainName: {
+            primaryLinkUrl: 'https://other.com',
+            secondaryLinks: [{ label: 'Alt', url: 'https://alt-domain.com' }],
+          },
+          deletedAt: new Date(),
+        },
+      ];
+      mockCompanyRepository.updateMany.mockResolvedValue({
+        raw: [
+          {
+            id: 'soft-deleted-secondary-match',
+            domainNamePrimaryLinkUrl: 'https://other.com',
+            domainNameSecondaryLinks: [
+              { label: 'Alt', url: 'https://alt-domain.com' },
+            ],
+          },
+        ],
+      });
+
+      await service.createOrRestoreCompanies(
+        [companyToCreateBySecondary],
+        workspaceId,
+      );
+
+      expect(mockCompanyRepository.save).toHaveBeenCalledWith([]);
+      expect(mockCompanyRepository.updateMany).toHaveBeenCalledWith(
+        [
+          {
+            criteria: 'soft-deleted-secondary-match',
+            partialEntity: { deletedAt: null },
+          },
+        ],
+        undefined,
+        ['domainNamePrimaryLinkUrl', 'domainNameSecondaryLinks', 'id'],
       );
     });
   });

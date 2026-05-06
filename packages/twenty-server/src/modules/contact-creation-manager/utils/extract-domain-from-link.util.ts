@@ -1,5 +1,14 @@
-export const extractDomainFromLink = (link: string) => {
-  const domain = link.replace(/^(https?:\/\/)?(www\.)?/i, '').split('/')[0];
+import { ensureAbsoluteUrl, normalizeUrlOrigin } from 'twenty-shared/utils';
 
-  return domain;
+export const extractDomainFromLink = (link: string) => {
+  if (!link) {
+    return '';
+  }
+
+  const normalised = normalizeUrlOrigin(ensureAbsoluteUrl(link.trim()));
+
+  return normalised
+    .replace(/^(https?:\/\/)?(www\.)?/i, '')
+    .split('/')[0]
+    .toLowerCase();
 };

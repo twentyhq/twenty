@@ -28,4 +28,20 @@ describe('extractDomainFromLink', () => {
 
     expect(result).toBe('twenty.com');
   });
+
+  it('should lowercase the host', () => {
+    expect(extractDomainFromLink('HTTPS://Twenty.COM')).toBe('twenty.com');
+  });
+
+  it('should strip a trailing slash', () => {
+    expect(extractDomainFromLink('https://twenty.com/')).toBe('twenty.com');
+  });
+
+  it('should handle whitespace around the input', () => {
+    expect(extractDomainFromLink('   twenty.com  ')).toBe('twenty.com');
+  });
+
+  it('should return empty string for empty input', () => {
+    expect(extractDomainFromLink('')).toBe('');
+  });
 });
