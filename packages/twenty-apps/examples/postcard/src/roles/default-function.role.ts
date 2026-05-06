@@ -1,4 +1,4 @@
-import { PermissionFlag, defineApplicationRole } from 'twenty-sdk/define';
+import { PermissionFlag, defineRole } from 'twenty-sdk/define';
 import {
   CONTENT_FIELD_UNIVERSAL_IDENTIFIER,
   POST_CARD_UNIVERSAL_IDENTIFIER,
@@ -7,7 +7,7 @@ import {
 export const DEFAULT_ROLE_UNIVERSAL_IDENTIFIER =
   'b648f87b-1d26-4961-b974-0908fd991061';
 
-export default defineApplicationRole({
+export default defineRole({
   universalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
   label: 'Default function role',
   description: 'Default role for function Twenty client',
