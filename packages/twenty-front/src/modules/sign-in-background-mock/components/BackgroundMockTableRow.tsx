@@ -59,6 +59,19 @@ const StyledMutedText = styled.span`
   text-overflow: ellipsis;
 `;
 
+const StyledTrailingPlaceholder = styled.div`
+  border-bottom: 1px solid ${themeCssVariables.border.color.light};
+  flex-shrink: 0;
+  height: ${BACKGROUND_MOCK_TABLE_DIMENSIONS.rowHeight}px;
+  width: ${BACKGROUND_MOCK_TABLE_DIMENSIONS.addColumnButtonWidth}px;
+`;
+
+const StyledLastEmptyCell = styled.div`
+  border-bottom: 1px solid ${themeCssVariables.border.color.light};
+  flex: 1;
+  height: ${BACKGROUND_MOCK_TABLE_DIMENSIONS.rowHeight}px;
+`;
+
 type BackgroundMockTableRowProps = {
   company: BackgroundMockCompany;
 };
@@ -151,6 +164,8 @@ export const BackgroundMockTableRow = ({
       <StyledCell width={BACKGROUND_MOCK_COLUMN_WIDTHS.Address}>
         <StyledTruncated>{company.address}</StyledTruncated>
       </StyledCell>
+      <StyledTrailingPlaceholder />
+      <StyledLastEmptyCell />
     </StyledRow>
   );
 };

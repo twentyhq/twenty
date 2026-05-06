@@ -94,6 +94,13 @@ const StyledAddColumnHeaderCell = styled.div`
   width: ${BACKGROUND_MOCK_TABLE_DIMENSIONS.addColumnButtonWidth}px;
 `;
 
+const StyledLastEmptyHeaderColumn = styled.div`
+  background: ${themeCssVariables.background.primary};
+  border-bottom: 1px solid ${themeCssVariables.border.color.light};
+  flex: 1;
+  height: ${BACKGROUND_MOCK_TABLE_DIMENSIONS.rowHeight}px;
+`;
+
 const StyledTableBody = styled.div`
   display: flex;
   flex-direction: column;
@@ -137,6 +144,17 @@ const StyledFooterValue = styled.span`
   flex-shrink: 0;
 `;
 
+const StyledTrailingPlaceholder = styled.div`
+  flex-shrink: 0;
+  height: ${BACKGROUND_MOCK_TABLE_DIMENSIONS.rowHeight}px;
+  width: ${BACKGROUND_MOCK_TABLE_DIMENSIONS.addColumnButtonWidth}px;
+`;
+
+const StyledLastEmptyCell = styled.div`
+  flex: 1;
+  height: ${BACKGROUND_MOCK_TABLE_DIMENSIONS.rowHeight}px;
+`;
+
 export const BackgroundMockTable = () => {
   const { theme } = useContext(ThemeContext);
   const { getIcon } = useIcons();
@@ -166,6 +184,7 @@ export const BackgroundMockTable = () => {
           <StyledAddColumnHeaderCell>
             <IconPlus size={theme.icon.size.sm} stroke={theme.icon.stroke.sm} />
           </StyledAddColumnHeaderCell>
+          <StyledLastEmptyHeaderColumn />
         </StyledHeaderRow>
         <StyledTableBody>
           {BACKGROUND_MOCK_COMPANIES.map((company) => (
@@ -205,6 +224,8 @@ export const BackgroundMockTable = () => {
             </StyledFooterLabel>
             <StyledFooterValue>599</StyledFooterValue>
           </StyledFooterCell>
+          <StyledTrailingPlaceholder />
+          <StyledLastEmptyCell />
         </StyledFooterRow>
       </StyledTable>
     </StyledTableWrapper>
