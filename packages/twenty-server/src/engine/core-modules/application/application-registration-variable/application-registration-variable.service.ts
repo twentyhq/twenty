@@ -175,6 +175,26 @@ export class ApplicationRegistrationVariableService {
     }
   }
 
+  async findVariablesByRegistrationId(
+    applicationRegistrationId: string,
+  ): Promise<ApplicationRegistrationVariableEntity[]> {
+    return this.variableRepository.find({
+      where: { applicationRegistrationId },
+    });
+  }
+
+  async isConfigured(applicationRegistrationId: string): Promise<boolean> {
+    const variables = await this.findVariablesByRegistrationId(
+      applicationRegistrationId,
+    );
+
+    const requiredSecrets = variables.filter(
+      (v) => v.isSecret && v.isRequired,
+    );
+
+    return requiredSecrets.every((v) => v.isFilled);
+  }
+
   private async assertRegistrationOwnedByWorkspace(
     registrationId: string,
     workspaceId: string,

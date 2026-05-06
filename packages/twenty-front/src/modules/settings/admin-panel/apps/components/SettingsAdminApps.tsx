@@ -42,8 +42,7 @@ export const SettingsAdminApps = () => {
     client: apolloAdminClient,
   });
 
-  const registrations: ApplicationRegistrationFragmentFragment[] =
-    data?.findAllApplicationRegistrations ?? [];
+  const registrations = data?.findAllApplicationRegistrations ?? [];
 
   const query = searchQuery.trim().toLowerCase();
 
