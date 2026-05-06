@@ -42,7 +42,6 @@ export enum SettingsPath {
   AiToolDetail = 'ai/tools/:toolIdentifier',
   Applications = 'applications',
   ApplicationDetail = 'applications/:applicationId',
-  ApplicationConnectionDetail = 'applications/:applicationId/connections/:connectedAccountId',
   ApplicationLogicFunctionDetail = 'applications/:applicationId/logicFunctions/:logicFunctionId',
   ApplicationFrontComponentDetail = 'applications/:applicationId/frontComponents/:frontComponentId',
   ApplicationCommandMenuItemDetail = 'applications/:applicationId/commandMenuItems/:commandMenuItemId',
