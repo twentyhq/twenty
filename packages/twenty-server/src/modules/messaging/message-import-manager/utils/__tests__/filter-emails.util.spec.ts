@@ -37,6 +37,43 @@ describe('filterEmails', () => {
     expect(filteredMessages).toEqual([]);
   });
 
+  it('Should keep same-domain emails when primary handle is on a university domain', () => {
+    // Universities host thousands of unrelated members across departments
+    // and labs, so domain equality is not a reliable proxy for "internal
+    // teammate". Treat them like consumer providers and skip the same-domain
+    // filter — collaborators sharing the institution domain should be
+    // imported, not silently dropped.
+    const primaryHandle = 'researcher@mit.edu';
+    const messages: MessageWithParticipants[] = [
+      {
+        externalId: 'institution-internal',
+        subject: 'Research collaboration',
+        receivedAt: new Date('2025-01-09T09:54:37.000Z'),
+        text: 'Following up on the paper.',
+        headerMessageId: '<msg@mit.edu>',
+        messageThreadExternalId: 'thread-1',
+        direction: MessageDirection.OUTGOING,
+        participants: [
+          {
+            role: MessageParticipantRole.FROM,
+            handle: 'researcher@mit.edu',
+            displayName: 'Researcher',
+          },
+          {
+            role: MessageParticipantRole.TO,
+            handle: 'professor@mit.edu',
+            displayName: 'Professor',
+          },
+        ],
+        attachments: [],
+      },
+    ];
+
+    const result = filterEmails(primaryHandle, [], messages, []);
+
+    expect(result).toEqual(messages);
+  });
+
   it('Should filter messages with participant from the blocklist', () => {
     const primaryHandle = 'guillim@acme.com';
     const messages = messagingGetMessagesServiceGetMessages.filter(
