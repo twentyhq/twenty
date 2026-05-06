@@ -2,6 +2,8 @@
 
 import { Container, IconButton, LinkButton } from '@/design-system/components';
 import { CloseIcon, MenuIcon } from '@/icons';
+import { useRenderMessage } from '@/lib/i18n/use-render-message';
+import { useTimeoutRegistry } from '@/lib/react';
 import type {
   MenuNavItemType,
   MenuScheme,
@@ -9,8 +11,9 @@ import type {
 } from '@/sections/Menu/types';
 import { theme } from '@/theme';
 import { Drawer } from '@base-ui/react/drawer';
+import { msg } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
-import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import { CloseDrawerWhenNavigationExpandsEffect } from './../effect-components/CloseDrawerWhenNavigationExpandsEffect';
 import { MenuDrawer } from './Drawer';
 
@@ -100,23 +103,24 @@ export function Root({
   surfaceColor,
   socialLinks,
 }: RootProps) {
+  const renderText = useRenderMessage();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [hasScrolled, setHasScrolled] = useState(false);
   const [isScrolling, setIsScrolling] = useState(false);
-  const scrollTimeoutRef = useRef<number | null>(null);
+  const timeoutRegistry = useTimeoutRegistry();
 
   useEffect(() => {
+    let cancelScrollIdle: (() => void) | null = null;
+
     const handleScroll = () => {
       setHasScrolled(window.scrollY > 8);
       setIsScrolling(true);
 
-      if (scrollTimeoutRef.current !== null) {
-        window.clearTimeout(scrollTimeoutRef.current);
-      }
+      cancelScrollIdle?.();
 
-      scrollTimeoutRef.current = window.setTimeout(() => {
+      cancelScrollIdle = timeoutRegistry.schedule(() => {
         setIsScrolling(false);
-        scrollTimeoutRef.current = null;
+        cancelScrollIdle = null;
       }, SCROLL_IDLE_TIMEOUT_MS);
     };
 
@@ -125,12 +129,9 @@ export function Root({
 
     return () => {
       window.removeEventListener('scroll', handleScroll);
-
-      if (scrollTimeoutRef.current !== null) {
-        window.clearTimeout(scrollTimeoutRef.current);
-      }
+      cancelScrollIdle?.();
     };
-  }, []);
+  }, [timeoutRegistry]);
 
   const buttonColor: {
     border: string;
@@ -181,8 +182,7 @@ export function Root({
               <LinkButton
                 color={buttonColor.linkButton}
                 href="https://app.twenty.com/welcome"
-                label="Get started"
-                type="anchor"
+                label={renderText(msg`Get started`)}
                 variant="contained"
               />
               <IconButton

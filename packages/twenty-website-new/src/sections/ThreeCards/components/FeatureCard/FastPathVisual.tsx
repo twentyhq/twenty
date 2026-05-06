@@ -1,5 +1,6 @@
 'use client';
 
+import { useTimeoutRegistry } from '@/lib/react';
 import { WebGlMount } from '@/lib/visual-runtime';
 import { useScaleToFit } from '@/sections/ThreeCards/utils/use-scale-to-fit';
 import { theme } from '@/theme';
@@ -829,6 +830,7 @@ export function FastPathVisual({
 }: FastPathVisualProps) {
   const rootRef = useRef<HTMLDivElement>(null);
   const previewSurfaceRef = useRef<HTMLDivElement>(null);
+  const timeoutRegistry = useTimeoutRegistry();
   const [confettiBursts, setConfettiBursts] = useState<
     Array<{ id: number; left: number; top: number }>
   >([]);
@@ -873,7 +875,7 @@ export function FastPathVisual({
       { id: burstId, left: burstLeft, top: burstTop },
     ]);
 
-    window.setTimeout(() => {
+    timeoutRegistry.schedule(() => {
       setConfettiBursts((currentBursts) =>
         currentBursts.filter((currentBurst) => currentBurst.id !== burstId),
       );

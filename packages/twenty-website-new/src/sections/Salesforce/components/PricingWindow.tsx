@@ -5,9 +5,13 @@ import type {
   SalesforcePricingPanelType,
   SalesforceRichTextPartType,
 } from '@/sections/Salesforce/types';
+import { useAnimatedNumber } from '@/lib/animation';
+import { useRenderMessage } from '@/lib/i18n/use-render-message';
+import type { MessageDescriptor } from '@lingui/core';
 import { theme } from '@/theme';
+import { msg } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
-import { useEffect, useRef, useState } from 'react';
+import { useRef } from 'react';
 
 const formatPriceAmount = (amount: number) =>
   `$${new Intl.NumberFormat('en-US').format(amount)}`;
@@ -51,40 +55,6 @@ const calculatePriceAmounts = (
     perSeatPriceAmount,
     totalPriceAmount,
   };
-};
-
-const ANIMATION_DURATION_MS = 500;
-
-const useAnimatedNumber = (target: number) => {
-  const [display, setDisplay] = useState(target);
-  const prevRef = useRef(target);
-
-  useEffect(() => {
-    const from = prevRef.current;
-    prevRef.current = target;
-
-    if (from === target) {
-      return;
-    }
-
-    const start = performance.now();
-    let rafId: number;
-
-    const tick = (now: number) => {
-      const progress = Math.min((now - start) / ANIMATION_DURATION_MS, 1);
-      const eased = 1 - (1 - progress) ** 3;
-      setDisplay(Math.round(from + (target - from) * eased));
-
-      if (progress < 1) {
-        rafId = requestAnimationFrame(tick);
-      }
-    };
-
-    rafId = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(rafId);
-  }, [target]);
-
-  return display;
 };
 
 const PANEL_BACKGROUND = '#c9c9c9';
@@ -556,6 +526,7 @@ const AddonRightText = styled.span`
   font-size: ${theme.font.size(4.5)};
   line-height: ${theme.spacing(5.5)};
   text-align: right;
+  white-space: pre-line;
 `;
 
 const AddonRightLine = styled.span<{ 'data-muted'?: boolean }>`
@@ -571,7 +542,10 @@ const AddonRightPart = styled.span`
   font: inherit;
 `;
 
-const renderRightLabelParts = (lines: SalesforceRichTextPartType[][]) =>
+const renderRightLabelParts = (
+  lines: SalesforceRichTextPartType[][],
+  renderText: (descriptor: MessageDescriptor) => string,
+) =>
   lines.map((line, lineIndex) => (
     <AddonRightLine key={lineIndex} data-muted={lineIndex > 0 || undefined}>
       {line.map((part, partIndex) => (
@@ -586,21 +560,17 @@ const renderRightLabelParts = (lines: SalesforceRichTextPartType[][]) =>
               : undefined
           }
         >
-          {part.text}
+          {partIndex > 0 ? ' ' : null}
+          {renderText(part.text)}
         </AddonRightPart>
       ))}
     </AddonRightLine>
   ));
 
-const renderRightLabel = (label: string) =>
-  label.split('\n').map((line, lineIndex) => (
-    <AddonRightLine
-      key={`${lineIndex}-${line}`}
-      data-muted={lineIndex > 0 || undefined}
-    >
-      {line}
-    </AddonRightLine>
-  ));
+const renderRightLabel = (
+  label: MessageDescriptor,
+  renderText: (descriptor: MessageDescriptor) => string,
+) => <AddonRightLine>{renderText(label)}</AddonRightLine>;
 
 const SelectAllButton = styled.button`
   align-items: center;
@@ -646,6 +616,7 @@ export function PricingWindow({
   onSelectAll,
   pricing,
 }: PricingWindowProps) {
+  const renderText = useRenderMessage();
   const addonAnchorRefs = useRef<Record<string, HTMLLabelElement | null>>({});
   const { fixedPriceAmount, perSeatPriceAmount, totalPriceAmount } =
     calculatePriceAmounts(pricing, checkedIds);
@@ -657,14 +628,14 @@ export function PricingWindow({
     <PanelWrapper>
       {pricing.promoTag ? (
         <PromoTagBorder>
-          <PromoTagInner>{pricing.promoTag}</PromoTagInner>
+          <PromoTagInner>{renderText(pricing.promoTag)}</PromoTagInner>
         </PromoTagBorder>
       ) : null}
       <Panel>
         <WindowChrome aria-hidden="true" />
         <PricingHeader>
           <TitleBar>
-            <TitleBarText>{pricing.windowTitle}</TitleBarText>
+            <TitleBarText>{renderText(pricing.windowTitle)}</TitleBarText>
             <TitleBarActions>
               <TitleBarActionButton
                 aria-label="Help"
@@ -687,7 +658,9 @@ export function PricingWindow({
               <ProductBlock>
                 <ProductHeader>
                   <ProductCopy>
-                    <ProductTitle>{pricing.productTitle}</ProductTitle>
+                    <ProductTitle>
+                      {renderText(pricing.productTitle)}
+                    </ProductTitle>
                     <PriceRow>
                       {perSeatPriceAmount > pricing.basePriceAmount ? (
                         <BasePriceAmount>
@@ -697,7 +670,10 @@ export function PricingWindow({
                       <PriceAmount>
                         {formatPriceAmount(animatedPerSeat)}
                       </PriceAmount>
-                      <PriceSuffix>{pricing.priceSuffix}</PriceSuffix>
+                      <PriceSuffix>
+                        {' '}
+                        {renderText(pricing.priceSuffix)}
+                      </PriceSuffix>
                     </PriceRow>
                     {fixedPriceAmount > 0 ? (
                       <TotalPriceRow>
@@ -705,7 +681,7 @@ export function PricingWindow({
                           {formatPriceAmount(animatedTotal)}
                         </TotalPriceAmount>
                         <TotalPriceLabel>
-                          {pricing.totalPriceLabel}
+                          {renderText(pricing.totalPriceLabel)}
                         </TotalPriceLabel>
                       </TotalPriceRow>
                     ) : null}
@@ -723,9 +699,11 @@ export function PricingWindow({
         <ContentPad>
           <Inner>
             <SectionHeader>
-              <SectionLabel>{pricing.featureSectionHeading}</SectionLabel>
+              <SectionLabel>
+                {renderText(pricing.featureSectionHeading)}
+              </SectionLabel>
               <SelectAllButton onClick={onSelectAll} type="button">
-                Select all
+                {renderText(msg`Select all`)}
               </SelectAllButton>
             </SectionHeader>
             {pricing.addons.map((addon) => {
@@ -754,17 +732,21 @@ export function PricingWindow({
                     <CheckboxFace checked={checked} aria-hidden="true">
                       {checked ? <CheckGlyph>✓</CheckGlyph> : null}
                     </CheckboxFace>
-                    <AddonLabelText>{addon.label}</AddonLabelText>
+                    <AddonLabelText>{renderText(addon.label)}</AddonLabelText>
                   </CheckboxLabel>
                   <AddonRightText>
                     {addon.rightLabelParts
-                      ? renderRightLabelParts(addon.rightLabelParts)
-                      : renderRightLabel(addon.rightLabel)}
+                      ? renderRightLabelParts(addon.rightLabelParts, renderText)
+                      : renderRightLabel(addon.rightLabel, renderText)}
                   </AddonRightText>
                   {addon.tooltip ? (
                     <Tooltip>
-                      <TooltipTitleBar>{addon.tooltip.title}</TooltipTitleBar>
-                      <TooltipBody>{addon.tooltip.body}</TooltipBody>
+                      <TooltipTitleBar>
+                        {renderText(addon.tooltip.title)}
+                      </TooltipTitleBar>
+                      <TooltipBody>
+                        {renderText(addon.tooltip.body)}
+                      </TooltipBody>
                     </Tooltip>
                   ) : null}
                 </AddonRow>
@@ -773,14 +755,14 @@ export function PricingWindow({
             <FooterCtaSection>
               <Separator aria-hidden="true" />
               {pricing.secondaryCtaNote ? (
-                <FooterNote>{pricing.secondaryCtaNote}</FooterNote>
+                <FooterNote>{renderText(pricing.secondaryCtaNote)}</FooterNote>
               ) : null}
               <FakeButton
                 href={pricing.secondaryCtaHref}
                 rel="noreferrer"
                 target="_blank"
               >
-                {pricing.secondaryCtaLabel}
+                {renderText(pricing.secondaryCtaLabel)}
               </FakeButton>
             </FooterCtaSection>
           </Inner>

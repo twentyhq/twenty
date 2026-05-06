@@ -1,11 +1,17 @@
 import { atom, type Atom } from 'jotai';
 
+import { type FieldMetadataItemRelation } from '@/object-metadata/types/FieldMetadataItemRelation';
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
-import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
+import {
+  type FieldMetadata,
+  type FieldMorphRelationManyToOneValue,
+  type FieldMorphRelationMetadata,
+  type FieldMorphRelationOneToManyValue,
+} from '@/object-record/record-field/ui/types/FieldMetadata';
 import { isFieldMorphRelation } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelation';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { createAtomFamilySelector } from '@/ui/utilities/state/jotai/utils/createAtomFamilySelector';
-import { RelationType, type ObjectRecord } from 'twenty-shared/types';
+import { RelationType } from 'twenty-shared/types';
 import { computeMorphRelationFieldName, isDefined } from 'twenty-shared/utils';
 
 const simpleFieldValueSelector = createAtomFamilySelector<
@@ -34,61 +40,53 @@ const getMorphRelationFieldValueAtom = (
   }
 
   const morphRelations =
-    (
-      fieldDefinition.metadata as {
-        morphRelations?: Array<{
-          type: string;
-          sourceFieldMetadata: { name: string };
-          targetObjectMetadata: {
-            nameSingular: string;
-            namePlural: string;
-          };
-        }>;
-      }
-    ).morphRelations ?? [];
+    (fieldDefinition.metadata as FieldMorphRelationMetadata).morphRelations ??
+    [];
+
+  const relationType = morphRelations[0]?.type;
 
   const derivedAtom = atom((get) => {
-    const record = get(recordStoreFamilyState.atomFamily(recordId));
+    const recordStore = get(recordStoreFamilyState.atomFamily(recordId));
 
-    const morphValuesWithObjectName = morphRelations.map((morphRelation) => {
-      const computedFieldName = computeMorphRelationFieldName({
+    const computeMorphFieldName = (morphRelation: FieldMetadataItemRelation) =>
+      computeMorphRelationFieldName({
         fieldName: morphRelation.sourceFieldMetadata.name,
-        relationType: morphRelation.type as RelationType,
+        relationType: morphRelation.type,
         targetObjectMetadataNameSingular:
           morphRelation.targetObjectMetadata.nameSingular,
         targetObjectMetadataNamePlural:
           morphRelation.targetObjectMetadata.namePlural,
       });
 
-      return {
-        objectNameSingular: morphRelation.targetObjectMetadata.nameSingular,
-        value: record?.[computedFieldName],
-      };
-    });
-
-    const relationType = morphRelations[0]?.type;
-
     if (relationType === RelationType.ONE_TO_MANY) {
-      return morphValuesWithObjectName.map((morphValue) => ({
-        ...morphValue,
-        value: morphValue.value ? morphValue.value : [],
-      })) as {
-        objectNameSingular: string;
-        value: ObjectRecord[];
-      }[];
+      return morphRelations.map((morphRelation) => ({
+        objectNameSingular: morphRelation.targetObjectMetadata.nameSingular,
+        objectNamePlural: morphRelation.targetObjectMetadata.namePlural,
+        value: recordStore?.[computeMorphFieldName(morphRelation)] ?? [],
+      })) as FieldMorphRelationOneToManyValue;
     }
 
     if (relationType === RelationType.MANY_TO_ONE) {
-      const morphValueFiltered = morphValuesWithObjectName.filter(
-        (morphValue) => isDefined(morphValue.value),
+      const morphValuesWithObjectName = morphRelations.map((morphRelation) => {
+        const computedFieldName = computeMorphFieldName(morphRelation);
+
+        return {
+          objectNameSingular: morphRelation.targetObjectMetadata.nameSingular,
+          objectNamePlural: morphRelation.targetObjectMetadata.namePlural,
+          value: recordStore?.[computedFieldName],
+          foreignKeyFieldValue: recordStore?.[`${computedFieldName}Id`],
+        };
+      });
+
+      const morphValueWithRelationOrForeignKey = morphValuesWithObjectName.find(
+        (morphValue) => isDefined(morphValue.foreignKeyFieldValue),
       );
 
-      return morphValueFiltered.length > 0
-        ? (morphValueFiltered[0] as {
-            objectNameSingular: string;
-            value: ObjectRecord;
-          })
-        : null;
+      if (isDefined(morphValueWithRelationOrForeignKey)) {
+        return morphValueWithRelationOrForeignKey as FieldMorphRelationManyToOneValue;
+      }
+
+      return null;
     }
 
     return null;

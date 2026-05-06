@@ -2,6 +2,7 @@
 
 import type { PlansHostingMode } from '@/sections/Plans/types';
 import { theme } from '@/theme';
+import { Trans } from '@lingui/react/macro';
 import { styled } from '@linaria/react';
 
 const ToggleRow = styled.label`
@@ -87,7 +88,9 @@ export function SelfHostToggle({
         onChange={() => onHostingChange(isSelfHost ? 'cloud' : 'selfHost')}
         type="checkbox"
       />
-      <LabelText>Selfhosting</LabelText>
+      <LabelText>
+        <Trans>Selfhosting</Trans>
+      </LabelText>
       <Checkbox data-checked={isSelfHost}>
         {isSelfHost && <CheckmarkIcon />}
       </Checkbox>

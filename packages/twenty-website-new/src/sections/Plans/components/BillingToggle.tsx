@@ -1,7 +1,9 @@
 'use client';
 
+import { observeElementsSize } from '@/lib/dom/observe-element-size';
 import type { PlansBillingPeriod } from '@/sections/Plans/types';
 import { theme } from '@/theme';
+import { Trans } from '@lingui/react/macro';
 import { styled } from '@linaria/react';
 import { useLayoutEffect, useRef, useState } from 'react';
 
@@ -146,13 +148,13 @@ export function BillingToggle({
 
     syncHighlight();
 
-    const resizeObserver = new ResizeObserver(syncHighlight);
-    resizeObserver.observe(track);
-    resizeObserver.observe(monthlyButton);
-    resizeObserver.observe(yearlyButton);
+    const stopObservingSize = observeElementsSize(
+      [track, monthlyButton, yearlyButton],
+      syncHighlight,
+    );
 
     return () => {
-      resizeObserver.disconnect();
+      stopObservingSize();
     };
   }, [billing]);
 
@@ -175,7 +177,9 @@ export function BillingToggle({
         role="radio"
         type="button"
       >
-        <ToggleLabel>Monthly</ToggleLabel>
+        <ToggleLabel>
+          <Trans>Monthly</Trans>
+        </ToggleLabel>
       </ToggleOption>
       <ToggleOption
         aria-checked={billing === 'yearly'}
@@ -186,7 +190,9 @@ export function BillingToggle({
         role="radio"
         type="button"
       >
-        <ToggleLabel>Yearly</ToggleLabel>
+        <ToggleLabel>
+          <Trans>Yearly</Trans>
+        </ToggleLabel>
         <DiscountBadge>-25%</DiscountBadge>
       </ToggleOption>
     </ToggleTrack>

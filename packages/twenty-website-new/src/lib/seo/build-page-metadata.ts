@@ -1,7 +1,14 @@
 import type { Metadata } from 'next';
 import { SOURCE_LOCALE, type AppLocale } from 'twenty-shared/translations';
 
-import { PUBLIC_APP_LOCALE_LIST } from '@/lib/i18n/app-locale-set';
+import {
+  PUBLIC_APP_LOCALE_LIST,
+  isPublicAppLocale,
+} from '@/lib/i18n/app-locale-set';
+import { createI18nInstance } from '@/lib/i18n/create-i18n-instance';
+import { createMessageDescriptorRenderer } from '@/lib/i18n/create-message-descriptor-renderer';
+import { localeToUrlSegment } from '@/lib/i18n/website-locale-segments';
+import type { MessageDescriptor } from '@lingui/core';
 
 import { getSiteUrl } from './site-url';
 
@@ -11,8 +18,8 @@ const TWITTER_HANDLE = '@twentycrm';
 export type BuildPageMetadataInput = {
   locale: AppLocale;
   path: string;
-  title: string;
-  description: string;
+  title: MessageDescriptor;
+  description: MessageDescriptor;
   ogImage?: string;
   type?: 'website' | 'article';
   extend?: Metadata;
@@ -22,10 +29,13 @@ const normalizePath = (path: string): string =>
   path.startsWith('/') ? path : `/${path}`;
 
 const localizePath = (locale: AppLocale, normalizedPath: string): string => {
-  if (locale === SOURCE_LOCALE) {
+  if (locale === SOURCE_LOCALE || !isPublicAppLocale(locale)) {
     return normalizedPath;
   }
-  return normalizedPath === '/' ? `/${locale}` : `/${locale}${normalizedPath}`;
+  const segment = localeToUrlSegment(locale);
+  return normalizedPath === '/'
+    ? `/${segment}`
+    : `/${segment}${normalizedPath}`;
 };
 
 const buildLanguageAlternates = (
@@ -50,7 +60,12 @@ export function buildPageMetadata({
 }: BuildPageMetadataInput): Metadata {
   const siteUrl = getSiteUrl();
   const normalizedPath = normalizePath(path);
-  const canonical = localizePath(locale, normalizedPath);
+  const metadataLocale = isPublicAppLocale(locale) ? locale : SOURCE_LOCALE;
+  const canonical = localizePath(metadataLocale, normalizedPath);
+  const i18n = createI18nInstance(metadataLocale);
+  const renderText = createMessageDescriptorRenderer(i18n);
+  const resolvedTitle = renderText(title);
+  const resolvedDescription = renderText(description);
 
   const ogImages =
     ogImage === undefined
@@ -64,25 +79,25 @@ export function buildPageMetadata({
         ];
 
   const baseMetadata: Metadata = {
-    title,
-    description,
+    title: { absolute: resolvedTitle },
+    description: resolvedDescription,
     alternates: {
       canonical,
       languages: buildLanguageAlternates(normalizedPath),
     },
     openGraph: {
-      title,
-      description,
+      title: resolvedTitle,
+      description: resolvedDescription,
       url: canonical,
       siteName: SITE_NAME,
-      locale,
+      locale: metadataLocale,
       type,
       ...(ogImages && { images: ogImages }),
     },
     twitter: {
       card: 'summary_large_image',
-      title,
-      description,
+      title: resolvedTitle,
+      description: resolvedDescription,
       site: TWITTER_HANDLE,
       creator: TWITTER_HANDLE,
       ...(ogImages && { images: ogImages.map((image) => image.url) }),

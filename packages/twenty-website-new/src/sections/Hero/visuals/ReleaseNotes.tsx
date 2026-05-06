@@ -2,7 +2,7 @@
 
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
-import { Milestone } from './Milestone';
+import { Milestone, type MilestoneSettingsOverrides } from './Milestone';
 
 const RELEASE_NOTES_SETTINGS = {
   animation: {
@@ -23,7 +23,7 @@ const RELEASE_NOTES_SETTINGS = {
     toneTarget: 'light' as const,
     width: 0.46,
   },
-};
+} satisfies MilestoneSettingsOverrides;
 
 const VisualContainer = styled.div`
   height: 462px;

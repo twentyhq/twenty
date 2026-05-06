@@ -1,5 +1,6 @@
+import { msg } from '@lingui/core/macro';
 import { HELPED_DATA } from '@/app/[locale]/(home)/helped.data';
-import { HERO_DATA } from '@/app/[locale]/(home)/hero.data';
+import { HERO_COPY, HERO_DATA } from '@/app/[locale]/(home)/hero.data';
 import { HOME_STEPPER_DATA } from '@/app/[locale]/(home)/home-stepper.data';
 import { PROBLEM_DATA } from '@/app/[locale]/(home)/problem.data';
 import { TESTIMONIALS_DATA } from '@/app/[locale]/(home)/testimonials.data';
@@ -9,10 +10,20 @@ import { TalkToUsButton } from '@/lib/contact-cal';
 import { FAQ_DATA } from '@/sections/Faq/data';
 import { MENU_DATA } from '@/sections/Menu/data';
 import { TRUSTED_BY_DATA } from '@/sections/TrustedBy/data';
-import { Body, Eyebrow, Heading, LinkButton } from '@/design-system/components';
-import { Pages } from '@/lib/pages';
-import { ArrowRightUpIcon } from '@/icons';
+import {
+  Body,
+  Eyebrow,
+  Heading,
+  HeadingPart,
+  LinkButton,
+} from '@/design-system/components';
 import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';
+import { createMessageDescriptorRenderer } from '@/lib/i18n/create-message-descriptor-renderer';
+import {
+  getRouteI18n,
+  type LocaleRouteParams,
+} from '@/lib/i18n/get-route-i18n';
+import { Pages } from '@/lib/pages';
 import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels';
 import { Faq } from '@/sections/Faq/components';
 import { Helped } from '@/sections/Helped/components';
@@ -22,23 +33,15 @@ import { Menu } from '@/sections/Menu/components';
 import { Problem } from '@/sections/Problem/components';
 import { Testimonials } from '@/sections/Testimonials/components';
 import { ThreeCards } from '@/sections/ThreeCards/components';
-import { buildLocalizedMetadata } from '@/lib/seo';
+import { buildFaqPageJsonLd, buildRouteMetadata, JsonLd } from '@/lib/seo';
 import { TrustedBy } from '@/sections/TrustedBy/components';
 import { theme } from '@/theme';
 import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
 
-export const generateMetadata = buildLocalizedMetadata({
-  path: '/',
-  title: 'Twenty | #1 open source CRM',
-  description:
-    'The #1 open source CRM for modern teams. Modular, scalable, and built to fit your business.',
-});
+export const generateMetadata = buildRouteMetadata('home');
 
 const HOME_TOP_BACKGROUND_COLOR = '#F4F4F4';
-const PRODUCT_HUNT_LAUNCH_URL =
-  'https://www.producthunt.com/products/twenty-crm?launch=twenty-2-0';
-const PRODUCT_HUNT_BRAND_COLOR = '#DA552F';
 
 const HeroHeadingGroup = styled.div`
   align-items: center;
@@ -50,58 +53,6 @@ const HeroHeadingGroup = styled.div`
   > *:last-child {
     margin-top: 0;
   }
-`;
-
-const HeroLaunchChip = styled.a`
-  align-items: center;
-  background: ${theme.colors.primary.background[100]};
-  border: 1px solid ${theme.colors.primary.border[10]};
-  border-radius: 999px;
-  color: ${theme.colors.primary.text[100]};
-  display: inline-flex;
-  font-family: ${theme.font.family.mono};
-  font-size: ${theme.font.size(2.5)};
-  font-weight: ${theme.font.weight.medium};
-  gap: ${theme.spacing(2)};
-  line-height: ${theme.lineHeight(3)};
-  padding: ${theme.spacing(2)} ${theme.spacing(3)};
-  text-decoration: none;
-  text-transform: uppercase;
-  transition:
-    border-color 180ms ease,
-    color 180ms ease,
-    transform 180ms ease;
-  white-space: nowrap;
-
-  &:is(:hover, :focus-visible) {
-    border-color: ${PRODUCT_HUNT_BRAND_COLOR};
-    color: ${PRODUCT_HUNT_BRAND_COLOR};
-    transform: translateY(-1px);
-  }
-
-  &:focus-visible {
-    outline: 1px solid ${theme.colors.highlight[100]};
-    outline-offset: 2px;
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    transition: none;
-  }
-`;
-
-const HeroLaunchChipDot = styled.span`
-  background: ${PRODUCT_HUNT_BRAND_COLOR};
-  border-radius: 999px;
-  display: block;
-  flex-shrink: 0;
-  height: ${theme.spacing(2)};
-  width: ${theme.spacing(2)};
-`;
-
-const HeroLaunchChipLabel = styled.span`
-  align-items: center;
-  display: inline-flex;
-  gap: ${theme.spacing(1.5)};
 `;
 
 const HeroIntroGroup = styled.div`
@@ -146,12 +97,21 @@ const threeCardsIllustrationBodyClassName = css`
   }
 `;
 
-export default async function HomePage() {
-  const stats = await fetchCommunityStats();
+type HomePageProps = {
+  params: Promise<LocaleRouteParams>;
+};
+
+export default async function HomePage({ params }: HomePageProps) {
+  const [i18n, stats] = await Promise.all([
+    getRouteI18n(params),
+    fetchCommunityStats(),
+  ]);
+  const renderText = createMessageDescriptorRenderer(i18n);
   const menuSocialLinks = mergeSocialLinkLabels(MENU_DATA.socialLinks, stats);
 
   return (
     <>
+      <JsonLd data={buildFaqPageJsonLd(FAQ_DATA.questions, renderText)} />
       {/*
        * Above-the-fold home hero background texture. Preload warms the
        * HTTP cache so it is ready by the time HomeBackgroundHalftone
@@ -177,31 +137,31 @@ export default async function HomePage() {
       <Hero.Root backgroundColor={HOME_TOP_BACKGROUND_COLOR} showHomeBackground>
         <HeroIntroGroup data-halftone-exclude>
           <HeroHeadingGroup>
-            <HeroLaunchChip
-              href={PRODUCT_HUNT_LAUNCH_URL}
-              rel="noopener noreferrer"
-              target="_blank"
-            >
-              <HeroLaunchChipDot />
-              <HeroLaunchChipLabel>
-                Live on Product Hunt
-                <ArrowRightUpIcon size={8} strokeColor="currentColor" />
-              </HeroLaunchChipLabel>
-            </HeroLaunchChip>
-            <Hero.Heading page={Pages.Home} segments={HERO_DATA.heading} />
-            <Hero.Body page={Pages.Home} body={HERO_DATA.body} size="sm" />
+            <Hero.Heading page={Pages.Home}>
+              <HeadingPart fontFamily="serif">
+                {renderText(msg`Build your Enterprise CRM`)}
+              </HeadingPart>{' '}
+              <HeadingPart fontFamily="sans">
+                {renderText(msg`at\u00A0AI\u00A0Speed`)}
+              </HeadingPart>
+            </Hero.Heading>
+            <Hero.Body
+              page={Pages.Home}
+              body={{ text: HERO_COPY.body }}
+              renderText={renderText}
+              size="sm"
+            />
           </HeroHeadingGroup>
           <Hero.Cta>
             <LinkButton
               color="secondary"
               href="https://app.twenty.com/welcome"
-              label="Get started"
-              type="anchor"
+              label={renderText(msg`Get started`)}
               variant="contained"
             />
             <TalkToUsButton
               color="secondary"
-              label="Talk to us"
+              label={msg`Talk to us`}
               variant="outlined"
             />
           </Hero.Cta>
@@ -210,9 +170,15 @@ export default async function HomePage() {
       </Hero.Root>
 
       <TrustedBy.Root>
-        <TrustedBy.Separator separator={TRUSTED_BY_DATA.separator} />
+        <TrustedBy.Separator
+          renderText={renderText}
+          separator={TRUSTED_BY_DATA.separator}
+        />
         <TrustedBy.Logos logos={TRUSTED_BY_DATA.logos} />
-        <TrustedBy.ClientCount label={TRUSTED_BY_DATA.clientCountLabel.text} />
+        <TrustedBy.ClientCount
+          label={TRUSTED_BY_DATA.clientCountLabel.text}
+          renderText={renderText}
+        />
       </TrustedBy.Root>
 
       <Problem.Root>
@@ -221,9 +187,26 @@ export default async function HomePage() {
           <Eyebrow
             colorScheme="primary"
             heading={PROBLEM_DATA.eyebrow.heading}
+            renderText={renderText}
           />
-          <Problem.Heading segments={PROBLEM_DATA.heading} />
-          <Problem.Points points={PROBLEM_DATA.points} />
+          <Problem.Heading>
+            <HeadingPart fontFamily="serif">
+              {renderText(msg`A custom CRM gives your org an edge,`)}
+            </HeadingPart>{' '}
+            <HeadingPart fontFamily="sans">
+              {renderText(msg`but building one`)}
+            </HeadingPart>{' '}
+            <HeadingPart fontFamily="serif">
+              {renderText(msg`comes with`)}
+            </HeadingPart>{' '}
+            <HeadingPart fontFamily="sans">
+              {renderText(msg`tradeoffs`)}
+            </HeadingPart>
+          </Problem.Heading>
+          <Problem.Points
+            points={PROBLEM_DATA.points}
+            renderText={renderText}
+          />
         </Problem.Content>
       </Problem.Root>
 
@@ -234,19 +217,29 @@ export default async function HomePage() {
               <Eyebrow
                 colorScheme="primary"
                 heading={THREE_CARDS_ILLUSTRATION_DATA.eyebrow.heading}
+                renderText={renderText}
               />
               <Heading
                 className={threeCardsIllustrationHeadingClassName}
-                segments={THREE_CARDS_ILLUSTRATION_DATA.heading}
                 size="lg"
                 weight="light"
-              />
+              >
+                <HeadingPart fontFamily="serif">
+                  {renderText(msg`Assemble, iterate and adapt a robust CRM,`)}
+                </HeadingPart>{' '}
+                <HeadingPart fontFamily="sans">
+                  {renderText(msg`that's quick to flex`)}
+                </HeadingPart>
+              </Heading>
             </ThreeCardsIllustrationIntroHeader>
-            <Body
-              body={THREE_CARDS_ILLUSTRATION_DATA.body}
-              className={threeCardsIllustrationBodyClassName}
-              size="sm"
-            />
+            {THREE_CARDS_ILLUSTRATION_DATA.body && (
+              <Body
+                body={THREE_CARDS_ILLUSTRATION_DATA.body}
+                className={threeCardsIllustrationBodyClassName}
+                renderText={renderText}
+                size="sm"
+              />
+            )}
           </ThreeCardsIllustrationIntroContent>
         </ThreeCards.Intro>
         <ThreeCards.IllustrationCards
@@ -261,12 +254,20 @@ export default async function HomePage() {
           <Eyebrow
             colorScheme="primary"
             heading={THREE_CARDS_FEATURE_DATA.eyebrow.heading}
+            renderText={renderText}
           />
-          <Heading
-            segments={THREE_CARDS_FEATURE_DATA.heading}
-            size="lg"
-            weight="light"
-          />
+          <Heading size="lg" weight="light">
+            <HeadingPart fontFamily="serif">
+              {renderText(msg`Make your GTM team happy`)}
+            </HeadingPart>
+            <br />
+            <HeadingPart fontFamily="serif">
+              {renderText(msg`with`)}
+            </HeadingPart>{' '}
+            <HeadingPart fontFamily="sans">
+              {renderText(msg`a CRM they'll love`)}
+            </HeadingPart>
+          </Heading>
         </ThreeCards.Intro>
         <ThreeCards.FeatureCards
           featureCards={THREE_CARDS_FEATURE_DATA.featureCards}
@@ -291,19 +292,30 @@ export default async function HomePage() {
 
       <Faq.Root>
         <Faq.Intro>
-          <Eyebrow colorScheme="secondary" heading={FAQ_DATA.eyebrow.heading} />
-          <Faq.Heading segments={FAQ_DATA.heading} />
+          <Eyebrow
+            colorScheme="secondary"
+            heading={FAQ_DATA.eyebrow.heading}
+            renderText={renderText}
+          />
+          <Faq.Heading>
+            <HeadingPart fontFamily="serif">
+              {renderText(msg`Stop fighting custom.`)}
+            </HeadingPart>
+            <br />
+            <HeadingPart fontFamily="sans">
+              {renderText(msg`Start building, with Twenty`)}
+            </HeadingPart>
+          </Faq.Heading>
           <Faq.Cta>
             <LinkButton
               color="primary"
               href="https://app.twenty.com/welcome"
-              label="Get started"
-              type="anchor"
+              label={renderText(msg`Get started`)}
               variant="contained"
             />
             <TalkToUsButton
               color="primary"
-              label="Talk to us"
+              label={msg`Talk to us`}
               variant="outlined"
             />
           </Faq.Cta>

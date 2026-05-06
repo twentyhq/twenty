@@ -5,10 +5,15 @@ import NextImage from 'next/image';
 
 import { Body, Heading, LinkButton } from '@/design-system/components';
 import { CheckIcon } from '@/icons/informative/Check';
+import { useAnimatedNumber } from '@/lib/animation';
+import { getMessageDescriptorSource } from '@/lib/i18n/get-message-descriptor-source';
+import { useRenderMessage } from '@/lib/i18n/use-render-message';
+import { useTimeoutRegistry } from '@/lib/react';
 import type { PlanCardType } from '@/sections/Plans/types';
 import { theme } from '@/theme';
+import { msg } from '@lingui/core/macro';
 import { css } from '@linaria/core';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const StyledCard = styled.div`
   background-color: ${theme.colors.primary.background[100]};
@@ -245,44 +250,8 @@ type CardProps = {
   maxBullets: number;
 };
 
-const PRICE_ROLL_DURATION_MS = 500;
 const PRICE_NUMBER_FORMATTER = new Intl.NumberFormat('en-US');
 const PRICE_HEADING_NUMBER_REGEX = /^(.*?)(\d[\d,]*)(.*)$/;
-
-const useAnimatedNumber = (target: number) => {
-  const [display, setDisplay] = useState(target);
-  const previousValueRef = useRef(target);
-
-  useEffect(() => {
-    const from = previousValueRef.current;
-    previousValueRef.current = target;
-
-    if (from === target) {
-      return;
-    }
-
-    const start = performance.now();
-    let animationFrameId = 0;
-
-    const tick = (now: number) => {
-      const progress = Math.min((now - start) / PRICE_ROLL_DURATION_MS, 1);
-      const eased = 1 - (1 - progress) ** 3;
-      setDisplay(Math.round(from + (target - from) * eased));
-
-      if (progress < 1) {
-        animationFrameId = requestAnimationFrame(tick);
-      }
-    };
-
-    animationFrameId = requestAnimationFrame(tick);
-
-    return () => {
-      cancelAnimationFrame(animationFrameId);
-    };
-  }, [target]);
-
-  return display;
-};
 
 function getHeadingSegments(heading: PlanCardType['price']['heading']) {
   return Array.isArray(heading) ? heading : [heading];
@@ -294,7 +263,9 @@ function getPriceHeadingNumericValue(
   const segments = getHeadingSegments(heading);
 
   for (const segment of segments) {
-    const match = segment.text.match(PRICE_HEADING_NUMBER_REGEX);
+    const match = getMessageDescriptorSource(segment.text).match(
+      PRICE_HEADING_NUMBER_REGEX,
+    );
 
     if (!match) {
       continue;
@@ -318,7 +289,9 @@ function getAnimatedPriceHeading(
       return segment;
     }
 
-    const match = segment.text.match(PRICE_HEADING_NUMBER_REGEX);
+    const match = getMessageDescriptorSource(segment.text).match(
+      PRICE_HEADING_NUMBER_REGEX,
+    );
 
     if (!match) {
       return segment;
@@ -336,7 +309,9 @@ function getAnimatedPriceHeading(
 }
 
 function getBulletsKey(bullets: PlanCardType['features']['bullets']) {
-  return bullets.map((bullet) => bullet.text).join('||');
+  return bullets
+    .map((bullet) => getMessageDescriptorSource(bullet.text))
+    .join('||');
 }
 
 function getFeaturesLayoutMinHeight(maxBullets: number) {
@@ -360,6 +335,8 @@ function getFeaturesAnimationMinHeight(maxBullets: number) {
 }
 
 export function Card({ card, highlighted = false, maxBullets }: CardProps) {
+  const renderText = useRenderMessage();
+  const timeoutRegistry = useTimeoutRegistry();
   const iconWidth = card.icon.width ?? 80;
   const targetPriceValue = getPriceHeadingNumericValue(card.price.heading);
   const animatedPriceValue = useAnimatedNumber(targetPriceValue ?? 0);
@@ -401,7 +378,7 @@ export function Card({ card, highlighted = false, maxBullets }: CardProps) {
       return;
     }
 
-    const timeoutId = window.setTimeout(
+    return timeoutRegistry.schedule(
       () => {
         setComparisonBullets(visibleBullets);
         setVisibleBullets(queuedBullets);
@@ -411,18 +388,14 @@ export function Card({ card, highlighted = false, maxBullets }: CardProps) {
       FEATURES_SWITCH_ANIMATION_MS +
         FEATURE_ITEM_STAGGER_MS * visibleBullets.length,
     );
-
-    return () => {
-      window.clearTimeout(timeoutId);
-    };
-  }, [featuresPhase, queuedBullets, visibleBullets]);
+  }, [featuresPhase, queuedBullets, timeoutRegistry, visibleBullets]);
 
   useEffect(() => {
     if (featuresPhase !== 'entering') {
       return;
     }
 
-    const timeoutId = window.setTimeout(
+    return timeoutRegistry.schedule(
       () => {
         setComparisonBullets(null);
         setFeaturesPhase('stable');
@@ -430,15 +403,11 @@ export function Card({ card, highlighted = false, maxBullets }: CardProps) {
       FEATURES_SWITCH_ANIMATION_MS +
         FEATURE_ITEM_STAGGER_MS * visibleBullets.length,
     );
-
-    return () => {
-      window.clearTimeout(timeoutId);
-    };
-  }, [featuresPhase, visibleBullets]);
+  }, [featuresPhase, timeoutRegistry, visibleBullets]);
 
   const comparisonBulletTexts = new Set(
     (featuresPhase === 'exiting' ? queuedBullets : comparisonBullets)?.map(
-      (bullet) => bullet.text,
+      (bullet) => getMessageDescriptorSource(bullet.text),
     ) ?? [],
   );
 
@@ -449,6 +418,7 @@ export function Card({ card, highlighted = false, maxBullets }: CardProps) {
           <Heading
             as="h3"
             className={cardPlanTitleClassName}
+            renderText={renderText}
             segments={card.heading}
             size="xs"
             weight="light"
@@ -456,6 +426,7 @@ export function Card({ card, highlighted = false, maxBullets }: CardProps) {
           <PriceLine>
             <Heading
               as="h4"
+              renderText={renderText}
               segments={animatedPriceHeading}
               size="sm"
               weight="regular"
@@ -464,6 +435,7 @@ export function Card({ card, highlighted = false, maxBullets }: CardProps) {
               as="span"
               body={card.price.body}
               className={priceBodyClassName}
+              renderText={renderText}
               size="sm"
             />
           </PriceLine>
@@ -495,11 +467,13 @@ export function Card({ card, highlighted = false, maxBullets }: CardProps) {
               data-state={
                 featuresPhase === 'stable'
                   ? 'stable'
-                  : comparisonBulletTexts.has(bullet.text)
+                  : comparisonBulletTexts.has(
+                        getMessageDescriptorSource(bullet.text),
+                      )
                     ? 'stable'
                     : featuresPhase
               }
-              key={bullet.text}
+              key={`${getMessageDescriptorSource(bullet.text)}-${index}`}
             >
               <FeatureCheck>
                 <CheckIcon
@@ -508,7 +482,7 @@ export function Card({ card, highlighted = false, maxBullets }: CardProps) {
                   strokeWidth={1.5}
                 />
               </FeatureCheck>
-              <Body as="span" body={bullet} size="sm" />
+              <Body as="span" body={bullet} renderText={renderText} size="sm" />
             </FeatureItem>
           ))}
         </FeaturesList>
@@ -518,8 +492,7 @@ export function Card({ card, highlighted = false, maxBullets }: CardProps) {
         <LinkButton
           color="secondary"
           href="https://app.twenty.com/welcome"
-          label="Start for free"
-          type="anchor"
+          label={renderText(msg`Start for free`)}
           variant={highlighted ? 'contained' : 'outlined'}
         />
       </CtaWrapper>

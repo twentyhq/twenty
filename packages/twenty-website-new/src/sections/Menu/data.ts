@@ -1,3 +1,4 @@
+import { msg } from '@lingui/core/macro';
 import { getLatestReleasePreview } from '@/lib/releases/get-latest-release-preview';
 import type {
   MenuDataType,
@@ -10,9 +11,8 @@ const FALLBACK_RELEASES_PREVIEW: MenuNavChildPreview = {
   image: '/images/releases/1.23/1.23.0-easier-layouts.webp',
   imageAlt: 'Twenty latest release',
   imageScale: 1.04,
-  title: 'See the latest release',
-  description:
-    'Track every release with changelogs, highlights and demos of the newest features.',
+  title: msg`See the latest release`,
+  description: msg`Track every release with changelogs, highlights and demos of the newest features.`,
 };
 
 function buildNavItems(): MenuNavItemType[] {
@@ -20,27 +20,26 @@ function buildNavItems(): MenuNavItemType[] {
     getLatestReleasePreview() ?? FALLBACK_RELEASES_PREVIEW;
 
   return [
-    { label: 'Why', href: '/why-twenty' },
+    { label: msg`Why`, href: '/why-twenty' },
     {
-      label: 'Resources',
+      label: msg`Resources`,
       children: [
         {
-          label: 'User Guide',
-          description: 'Learn how to use Twenty',
+          label: msg`User Guide`,
+          description: msg`Learn how to use Twenty`,
           href: 'https://docs.twenty.com/user-guide/introduction',
           external: true,
           icon: 'book',
           preview: {
             image: '/images/product/feature/contacts.webp',
             imageAlt: 'Twenty companies list',
-            title: 'Master every corner of Twenty',
-            description:
-              'Step-by-step guides and playbooks to help your team get the most out of their workspace.',
+            title: msg`Master every corner of Twenty`,
+            description: msg`Step-by-step guides and playbooks to help your team get the most out of their workspace.`,
           },
         },
         {
-          label: 'Developers',
-          description: 'Create apps on Twenty',
+          label: msg`Developers`,
+          description: msg`Create apps on Twenty`,
           href: 'https://docs.twenty.com/developers/introduction',
           external: true,
           icon: 'code',
@@ -49,36 +48,34 @@ function buildNavItems(): MenuNavItemType[] {
             imageAlt: 'Blue developer illustration with branching arrows',
             imagePosition: 'center',
             imageScale: 1.6,
-            title: 'Build on an open platform',
-            description:
-              'APIs, SDKs and webhooks to extend Twenty and ship apps on top of your CRM data.',
+            title: msg`Build on an open platform`,
+            description: msg`APIs, SDKs and webhooks to extend Twenty and ship apps on top of your CRM data.`,
           },
         },
         {
-          label: 'Partners',
-          description: 'Find a Twenty partner',
+          label: msg`Partners`,
+          description: msg`Find a Twenty partner`,
           href: '/partners',
           icon: 'users',
           preview: {
             image: '/images/partner/hero/hero.webp',
             imageAlt: 'Twenty partner ecosystem',
             imagePosition: 'center',
-            title: 'Team up with a Twenty expert',
-            description:
-              'Meet the certified agencies and consultants implementing Twenty for teams worldwide.',
+            title: msg`Team up with a Twenty expert`,
+            description: msg`Meet the certified agencies and consultants implementing Twenty for teams worldwide.`,
           },
         },
         {
-          label: 'Releases',
-          description: "Discover what's new",
+          label: msg`Releases`,
+          description: msg`Discover what's new`,
           href: '/releases',
           icon: 'tag',
           preview: releasesPreview,
         },
       ],
     },
-    { label: 'Customers', href: '/customers' },
-    { label: 'Pricing', href: '/pricing' },
+    { label: msg`Customers`, href: '/customers' },
+    { label: msg`Pricing`, href: '/pricing' },
   ];
 }
 

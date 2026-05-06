@@ -111,6 +111,19 @@ export interface HalftoneStudioSettings {
   animation: HalftoneAnimationSettings;
 }
 
+export type HalftoneStudioSettingsOverrides = Partial<
+  Omit<
+    HalftoneStudioSettings,
+    'lighting' | 'material' | 'halftone' | 'background' | 'animation'
+  >
+> & {
+  lighting?: Partial<HalftoneLightingSettings>;
+  material?: Partial<HalftoneMaterialSettings>;
+  halftone?: Partial<HalftoneEffectSettings>;
+  background?: Partial<HalftoneBackgroundSettings>;
+  animation?: Partial<HalftoneAnimationSettings>;
+};
+
 export interface HalftoneGeometrySpec {
   key: string;
   label: string;
@@ -533,7 +546,7 @@ function materialMatches(
 }
 
 export function normalizeHalftoneStudioSettings(
-  settings?: Partial<HalftoneStudioSettings>,
+  settings?: HalftoneStudioSettingsOverrides,
 ): HalftoneStudioSettings {
   const sourceMode =
     settings?.sourceMode ?? DEFAULT_HALFTONE_SETTINGS.sourceMode;

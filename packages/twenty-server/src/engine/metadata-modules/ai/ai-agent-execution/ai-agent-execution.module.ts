@@ -1,6 +1,7 @@
 import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
 import { WorkspaceDomainsModule } from 'src/engine/core-modules/domain/workspace-domains/workspace-domains.module';
 import { FileUrlModule } from 'src/engine/core-modules/file/file-url/file-url.module';
 import { ToolProviderModule } from 'src/engine/core-modules/tool-provider/tool-provider.module';
@@ -27,6 +28,7 @@ import { AgentAsyncExecutorService } from './services/agent-async-executor.servi
     AiBillingModule,
     AiModelsModule,
     AiAgentModule,
+    BillingModule,
     FileUrlModule,
     WorkspaceDomainsModule,
     UserWorkspaceModule,

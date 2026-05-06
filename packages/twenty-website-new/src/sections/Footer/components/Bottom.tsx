@@ -1,5 +1,7 @@
 import { ArrowRightUpIcon, SOCIAL_ICONS } from '@/icons';
+import type { MessageDescriptor } from '@lingui/core';
 import type { FooterSocialLinkType } from '@/sections/Footer/types';
+import { LocaleSwitcher } from '@/sections/Footer/components/LocaleSwitcher';
 import { theme } from '@/theme';
 import { Separator } from '@base-ui/react/separator';
 import { styled } from '@linaria/react';
@@ -15,18 +17,26 @@ const BottomGrid = styled.div`
   width: 100%;
 `;
 
-const Copyright = styled.div`
-  color: ${theme.colors.primary.text[100]};
-  font-family: ${theme.font.family.mono};
+const CopyrightRow = styled.div`
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: ${theme.spacing(4)};
   grid-column: 1 / -1;
   grid-row: 2;
   justify-self: start;
-  text-transform: uppercase;
+  min-width: 0;
 
   @media (min-width: ${theme.breakpoints.md}px) {
     grid-column: 1;
     grid-row: 1;
   }
+`;
+
+const Copyright = styled.div`
+  color: ${theme.colors.primary.text[100]};
+  font-family: ${theme.font.family.mono};
+  text-transform: uppercase;
 `;
 
 const SocialNav = styled.nav`
@@ -74,14 +84,18 @@ const SocialLink = styled.a`
 `;
 
 type BottomProps = {
-  copyright: string;
+  copyright: MessageDescriptor;
   links: FooterSocialLinkType[];
+  renderText: (descriptor: MessageDescriptor) => string;
 };
 
-export function Bottom({ copyright, links }: BottomProps) {
+export function Bottom({ copyright, links, renderText }: BottomProps) {
   return (
     <BottomGrid>
-      <Copyright>{copyright}</Copyright>
+      <CopyrightRow>
+        <Copyright>{renderText(copyright)}</Copyright>
+        <LocaleSwitcher />
+      </CopyrightRow>
       <SocialNav aria-label="Social media">
         {links.map((link, index) => {
           const IconComponent = SOCIAL_ICONS[link.icon];
@@ -100,7 +114,7 @@ export function Bottom({ copyright, links }: BottomProps) {
                   fillColor={theme.colors.secondary.background[100]}
                   aria-hidden
                 />
-                {link.label}
+                {link.label ?? null}
                 {link.label && (
                   <ArrowRightUpIcon
                     size={8}

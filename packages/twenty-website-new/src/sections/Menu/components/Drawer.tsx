@@ -10,8 +10,11 @@ import type {
 import { theme } from '@/theme';
 import { Drawer } from '@base-ui/react/drawer';
 import { Separator } from '@base-ui/react/separator';
+import type { MessageDescriptor } from '@lingui/core';
+import { msg } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
 import { LocalizedLink, useUnlocalizedPathname } from '@/lib/i18n';
+import { useRenderMessage } from '@/lib/i18n/use-render-message';
 import React, { useState } from 'react';
 
 const StyledDrawerContent = styled.div`
@@ -93,10 +96,6 @@ const navItemStyles = `
 `;
 
 const NavItem = styled(LocalizedLink)`
-  ${navItemStyles}
-`;
-
-const ExternalNavItem = styled.a`
   ${navItemStyles}
 `;
 
@@ -215,11 +214,11 @@ const NavChildLabel = styled.span`
   }
 `;
 
-const HorizontalSeparator = styled(Separator)<{ $separatorColor: string }>`
+const HorizontalSeparator = styled(Separator)`
   background: repeating-linear-gradient(
     90deg,
-    ${({ $separatorColor }) => $separatorColor} 0,
-    ${({ $separatorColor }) => $separatorColor} 1px,
+    var(--menu-separator-color) 0,
+    var(--menu-separator-color) 1px,
     transparent 2px,
     transparent 4px
   );
@@ -284,10 +283,11 @@ const Divider = styled(Separator)`
 type NavGroupProps = {
   item: MenuNavItemType;
   pathname: string;
+  renderText: (descriptor: MessageDescriptor) => string;
   scheme: MenuScheme;
 };
 
-function NavGroup({ item, pathname, scheme }: NavGroupProps) {
+function NavGroup({ item, pathname, renderText, scheme }: NavGroupProps) {
   const hasActiveChild =
     item.children?.some(
       (child) => !child.external && pathname.startsWith(child.href),
@@ -303,7 +303,7 @@ function NavGroup({ item, pathname, scheme }: NavGroupProps) {
         data-active={hasActiveChild || undefined}
         onClick={() => setIsOpen((prev) => !prev)}
       >
-        {item.label}
+        {renderText(item.label)}
         <NavGroupChevron aria-hidden>
           <svg
             width="12"
@@ -355,7 +355,7 @@ function NavGroup({ item, pathname, scheme }: NavGroupProps) {
                     <IconComponent size={20} color="currentColor" />
                   )}
                 </NavChildIcon>
-                <NavChildLabel>{child.label}</NavChildLabel>
+                <NavChildLabel>{renderText(child.label)}</NavChildLabel>
               </Drawer.Close>
             );
           })}
@@ -372,6 +372,7 @@ type MenuDrawerProps = {
 };
 
 export function MenuDrawer({ navItems, scheme, socialLinks }: MenuDrawerProps) {
+  const renderText = useRenderMessage();
   const pathname = useUnlocalizedPathname();
   const buttonColor = scheme === 'primary' ? 'secondary' : 'primary';
 
@@ -393,9 +394,14 @@ export function MenuDrawer({ navItems, scheme, socialLinks }: MenuDrawerProps) {
         <StyledDrawerContent data-scheme={scheme}>
           <NavigationContainer aria-label="Mobile navigation">
             {topLevelItems.map((item, index) => (
-              <React.Fragment key={item.label}>
+              <React.Fragment key={`${index}-${item.href ?? 'group'}`}>
                 {item.children ? (
-                  <NavGroup item={item} scheme={scheme} pathname={pathname} />
+                  <NavGroup
+                    item={item}
+                    pathname={pathname}
+                    renderText={renderText}
+                    scheme={scheme}
+                  />
                 ) : item.href ? (
                   <Drawer.Close
                     nativeButton={false}
@@ -409,13 +415,17 @@ export function MenuDrawer({ navItems, scheme, socialLinks }: MenuDrawerProps) {
                       />
                     }
                   >
-                    {item.label}
+                    {renderText(item.label)}
                   </Drawer.Close>
                 ) : null}
                 {index < topLevelItems.length - 1 && (
                   <HorizontalSeparator
-                    $separatorColor={separatorColor}
                     orientation="horizontal"
+                    style={
+                      {
+                        '--menu-separator-color': separatorColor,
+                      } as React.CSSProperties
+                    }
                   />
                 )}
               </React.Fragment>
@@ -426,8 +436,7 @@ export function MenuDrawer({ navItems, scheme, socialLinks }: MenuDrawerProps) {
             <LinkButton
               color={buttonColor}
               href="https://app.twenty.com/welcome"
-              label="Log in"
-              type="anchor"
+              label={renderText(msg`Log in`)}
               variant="outlined"
             />
           </CtaContainer>
@@ -456,7 +465,7 @@ export function MenuDrawer({ navItems, scheme, socialLinks }: MenuDrawerProps) {
                         fillColor={iconFillColor}
                         aria-hidden="true"
                       />
-                      {item.label}
+                      {item.label ?? null}
                       {item.label && (
                         <ArrowRightUpIcon
                           size={8}

@@ -1,5 +1,8 @@
 'use client';
 
+import { useRenderMessage } from '@/lib/i18n/use-render-message';
+import { useTimeoutRegistry } from '@/lib/react';
+import type { MessageDescriptor } from '@lingui/core';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
 import { useEffect, useState } from 'react';
@@ -97,13 +100,13 @@ const BodyText = styled.p`
 `;
 
 export type WrongChoicePopupProps = {
-  body: string;
+  body: MessageDescriptor;
   isClosingRequested?: boolean;
   layerIndex: number;
   left: number;
   onClose: () => void;
   top: number;
-  titleBar: string;
+  titleBar: MessageDescriptor;
   titleId: string;
 };
 
@@ -117,17 +120,15 @@ export function WrongChoicePopup({
   titleBar,
   titleId,
 }: WrongChoicePopupProps) {
+  const renderText = useRenderMessage();
+  const timeoutRegistry = useTimeoutRegistry();
   const [isClosing, setIsClosing] = useState(false);
 
   useEffect(() => {
-    const fadeTimer = window.setTimeout(() => {
+    return timeoutRegistry.schedule(() => {
       setIsClosing(true);
     }, POPUP_VISIBLE_DURATION_MS);
-
-    return () => {
-      window.clearTimeout(fadeTimer);
-    };
-  }, []);
+  }, [timeoutRegistry]);
 
   useEffect(() => {
     if (isClosingRequested) {
@@ -140,14 +141,10 @@ export function WrongChoicePopup({
       return;
     }
 
-    const removeTimer = window.setTimeout(() => {
+    return timeoutRegistry.schedule(() => {
       onClose();
     }, POPUP_FADE_DURATION_MS);
-
-    return () => {
-      window.clearTimeout(removeTimer);
-    };
-  }, [isClosing, onClose]);
+  }, [isClosing, onClose, timeoutRegistry]);
 
   return (
     <Shell
@@ -159,7 +156,7 @@ export function WrongChoicePopup({
       top={top}
     >
       <TitleBar>
-        <TitleText id={titleId}>{titleBar}</TitleText>
+        <TitleText id={titleId}>{renderText(titleBar)}</TitleText>
         <CloseButton
           aria-label="Close dialog"
           onClick={() => undefined}
@@ -170,7 +167,7 @@ export function WrongChoicePopup({
       </TitleBar>
       <BodyRow>
         <IconMark aria-hidden="true">⊘</IconMark>
-        <BodyText>{body}</BodyText>
+        <BodyText>{renderText(body)}</BodyText>
       </BodyRow>
     </Shell>
   );

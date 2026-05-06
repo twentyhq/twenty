@@ -242,9 +242,10 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       universalProperty: undefined,
     },
     imageIdentifierFieldMetadataId: {
-      toCompare: false,
+      toCompare: true,
       toStringify: false,
-      universalProperty: undefined,
+      // @ts-expect-error remove once https://github.com/twentyhq/core-team-issues/issues/2172 has been resolved
+      universalProperty: 'imageIdentifierFieldMetadataUniversalIdentifier',
     },
     targetTableName: {
       toCompare: false,
@@ -575,16 +576,6 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toStringify: false,
       universalProperty: undefined,
     },
-    toolInputSchema: {
-      toCompare: true,
-      toStringify: true,
-      universalProperty: undefined,
-    },
-    isTool: {
-      toCompare: true,
-      toStringify: false,
-      universalProperty: undefined,
-    },
     isBuildUpToDate: {
       toCompare: true,
       toStringify: false,
@@ -606,6 +597,16 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       universalProperty: undefined,
     },
     httpRouteTriggerSettings: {
+      toCompare: true,
+      toStringify: true,
+      universalProperty: undefined,
+    },
+    toolTriggerSettings: {
+      toCompare: true,
+      toStringify: true,
+      universalProperty: undefined,
+    },
+    workflowActionTriggerSettings: {
       toCompare: true,
       toStringify: true,
       universalProperty: undefined,
@@ -1536,6 +1537,30 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       universalProperty: undefined,
     },
     deletedAt: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+  },
+  connectionProvider: {
+    name: { toCompare: true, toStringify: false, universalProperty: undefined },
+    displayName: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    type: { toCompare: true, toStringify: false, universalProperty: undefined },
+    oauthConfig: {
+      toCompare: true,
+      toStringify: true,
+      universalProperty: undefined,
+    },
+    createdAt: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    updatedAt: {
       toCompare: false,
       toStringify: false,
       universalProperty: undefined,
