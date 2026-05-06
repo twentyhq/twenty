@@ -173,7 +173,7 @@ export const buildArticleJsonLd = (post: Article): JsonLdValue => {
 
   return {
     '@context': 'https://schema.org',
-    '@type': 'Articleing',
+    '@type': 'BlogPosting',
     headline: post.title,
     description: post.description,
     url: postUrl,
