@@ -222,7 +222,7 @@ export class BullMQDriver
     jobName: string,
     data: T,
     options?: QueueJobOptions,
-  ): Promise<void> {
+  ): Promise<string | undefined> {
     if (!this.queueMap[queueName]) {
       throw new Error(
         `Queue ${queueName} is not registered, make sure you have added it as a queue provider`,
@@ -257,6 +257,8 @@ export class BullMQDriver
       delay: options?.delay,
     };
 
-    await this.queueMap[queueName].add(jobName, data, queueOptions);
+    const job = await this.queueMap[queueName].add(jobName, data, queueOptions);
+
+    return job.id;
   }
 }

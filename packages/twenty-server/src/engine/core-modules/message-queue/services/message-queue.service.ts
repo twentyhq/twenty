@@ -31,7 +31,7 @@ export class MessageQueueService {
     jobName: string,
     data: T,
     options?: QueueJobOptions,
-  ): Promise<void> {
+  ): Promise<string | undefined> {
     return this.driver.add(this.queueName, jobName, data, options);
   }
 

@@ -1,5 +1,7 @@
 import { Logger } from '@nestjs/common';
 
+import { v4 } from 'uuid';
+
 import { type MessageQueueDriver } from 'src/engine/core-modules/message-queue/drivers/interfaces/message-queue-driver.interface';
 import {
   type MessageQueueJob,
@@ -20,8 +22,12 @@ export class SyncDriver implements MessageQueueDriver {
     queueName: MessageQueue,
     jobName: string,
     data: T,
-  ): Promise<void> {
-    await this.processJob(queueName, { id: '', name: jobName, data });
+  ): Promise<string | undefined> {
+    const jobId = v4();
+
+    await this.processJob(queueName, { id: jobId, name: jobName, data });
+
+    return jobId;
   }
 
   async addCron<T extends MessageQueueJobData | undefined>({

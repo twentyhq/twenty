@@ -13,7 +13,7 @@ export interface MessageQueueDriver {
     jobName: string,
     data: T,
     options?: QueueJobOptions,
-  ): Promise<void>;
+  ): Promise<string | undefined>;
   // @ts-expect-error legacy noImplicitAny
   work<T extends MessageQueueJobData>(
     queueName: MessageQueue,
