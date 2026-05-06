@@ -75,7 +75,7 @@ describe('SettingsApplicationConnectionsSection', () => {
           handleAliases: [],
           lastSignedInAt: null,
           userWorkspaceId: 'user-workspace-1',
-          applicationConnectionProviderId: 'provider-1',
+          connectionProviderId: 'provider-1',
           name: 'Main connection',
           visibility: 'workspace',
           lastCredentialsRefreshedAt: null,

@@ -179,7 +179,7 @@ describe('SettingsApplicationConnectionDetail', () => {
           handleAliases: [],
           lastSignedInAt: null,
           userWorkspaceId: 'user-workspace-1',
-          applicationConnectionProviderId: 'provider-1',
+          connectionProviderId: 'provider-1',
           name: 'Original name',
           visibility: 'user',
           lastCredentialsRefreshedAt: null,

@@ -140,13 +140,13 @@ export const SettingsApplicationConnectionDetail = () => {
   const connection = connectedAccounts.find(
     (account) =>
       account.id === connectedAccountId &&
-      account.applicationConnectionProviderId !== null &&
-      account.applicationConnectionProviderId !== undefined &&
-      providerIds.has(account.applicationConnectionProviderId),
+      account.connectionProviderId !== null &&
+      account.connectionProviderId !== undefined &&
+      providerIds.has(account.connectionProviderId),
   );
   const provider = connectionProviders.find(
     (connectionProvider) =>
-      connectionProvider.id === connection?.applicationConnectionProviderId,
+      connectionProvider.id === connection?.connectionProviderId,
   );
 
   const applicationName = application?.name ?? t`Application`;
