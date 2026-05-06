@@ -1,13 +1,23 @@
 ## Base documentation
 
-- General documentation:
+- Getting started:
     - https://docs.twenty.com/developers/extend/apps/getting-started.md
     - https://docs.twenty.com/developers/extend/apps/building.md
-    - https://docs.twenty.com/developers/extend/apps/data-model.md
-- Specific documentation:
-    - https://docs.twenty.com/developers/extend/apps/logic-functions.md
-    - https://docs.twenty.com/developers/extend/apps/front-components.md
-    - https://docs.twenty.com/developers/extend/apps/layout.md
+- Data:
+    - https://docs.twenty.com/developers/extend/apps/data/overview.md
+    - https://docs.twenty.com/developers/extend/apps/data/data-model.md
+- Logic:
+    - https://docs.twenty.com/developers/extend/apps/logic/overview.md
+    - https://docs.twenty.com/developers/extend/apps/logic/logic-functions.md
+    - https://docs.twenty.com/developers/extend/apps/logic/skills-and-agents.md
+    - https://docs.twenty.com/developers/extend/apps/logic/connections.md
+- Layout:
+    - https://docs.twenty.com/developers/extend/apps/layout/overview.md
+    - https://docs.twenty.com/developers/extend/apps/layout/views-and-pages.md
+    - https://docs.twenty.com/developers/extend/apps/layout/front-components.md
+- Operations:
+    - https://docs.twenty.com/developers/extend/apps/cli-and-testing.md
+    - https://docs.twenty.com/developers/extend/apps/publishing.md
 - Rich app example: https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/examples/postcard
 
 ## UUID requirement

@@ -1,0 +1,49 @@
+---
+title: Data
+description: Shape the data inside a workspace — application identity, roles, objects, fields, and relations.
+icon: "database"
+---
+
+A Twenty app's **data layer** is everything the app contributes to the shape of a workspace — the new record types it adds, how those records connect to standard objects like Person and Company, and the permissions the app holds on the data it touches.
+
+```text
+┌──────────────────────────────────────────────────┐
+│ Application — identity, default role, metadata   │
+│                                                  │
+│   ┌────────────────────────────────────────────┐ │
+│   │ Role — what objects and fields the app's   │ │
+│   │ logic functions can read and write         │ │
+│   └────────────────────────────────────────────┘ │
+│                                                  │
+│   ┌────────────────────────────────────────────┐ │
+│   │ Object — a record type, e.g. PostCard      │ │
+│   │    ├─ Field     (name, type, label)        │ │
+│   │    ├─ Field                                │ │
+│   │    └─ Relation  (link to another object)   │ │
+│   └────────────────────────────────────────────┘ │
+└──────────────────────────────────────────────────┘
+```
+
+## In this section
+
+<CardGroup cols={1}>
+  <Card title="Data Model" icon="database" href="/developers/extend/apps/data/data-model">
+    Reference for `defineApplication`, `defineRole`, `defineObject`, `defineField`, and bidirectional relations.
+  </Card>
+</CardGroup>
+
+## Entities at a glance
+
+| Entity | Purpose | Defined with |
+|--------|---------|--------------|
+| **Application** | The app itself — identifier, display name, default role, marketplace metadata | `defineApplication()` |
+| **Role** | A permission set: which objects and fields the app's logic functions can access | `defineRole()` |
+| **Object** | A new custom record type (e.g. PostCard, Invoice) with its own fields | `defineObject()` |
+| **Field** | A column on an object. Standalone fields can extend objects you didn't create (e.g. add `loyaltyTier` to Company) | `defineField()` |
+| **Relation** | A bidirectional link between two objects — both sides declared as fields | `defineField()` with `FieldType.RELATION` |
+
+The SDK detects these via AST analysis at build time, so file organization is up to you — the convention is `src/objects/`, `src/fields/`, `src/roles/`. Stable `universalIdentifier` UUIDs tie everything together across deploys.
+
+<Note>
+Looking for **Connections** (Linear, GitHub, Slack OAuth)? Those live under [Logic](/developers/extend/apps/logic/connections), since they exist to be called *from* logic functions rather than to add new data shapes.
+</Note>

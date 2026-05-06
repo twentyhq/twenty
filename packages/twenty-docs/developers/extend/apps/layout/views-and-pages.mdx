@@ -1,5 +1,5 @@
 ---
-title: Layout
+title: Views & Page Layouts
 description: Define views, navigation menu items, and page layouts to shape how your app appears in Twenty.
 icon: "table-columns"
 ---
@@ -18,7 +18,7 @@ Layout entities control how your app surfaces inside Twenty's UI — what lives 
 Views, navigation items, and page layouts reference each other by `universalIdentifier`:
 
 - A **navigation menu item** of type `VIEW` points at a `defineView` identifier, so the sidebar link opens that saved view.
-- A **page layout** of type `RECORD_PAGE` targets an object and can embed [front components](/developers/extend/apps/front-components) inside its tabs as widgets.
+- A **page layout** of type `RECORD_PAGE` targets an object and can embed [front components](/developers/extend/apps/layout/front-components) inside its tabs as widgets.
 
 <AccordionGroup>
 <Accordion title="defineView" description="Define saved views for objects">

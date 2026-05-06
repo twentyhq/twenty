@@ -36,17 +36,17 @@ your-app/
 
 | Entity | Purpose | Docs |
 |--------|---------|------|
-| **Application** | App identity, permissions, variables | [Data Model](/developers/extend/apps/data-model) |
-| **Role** | Permission sets for objects and fields | [Data Model](/developers/extend/apps/data-model) |
-| **Object** | Custom data tables with fields | [Data Model](/developers/extend/apps/data-model) |
-| **Field** | Extend existing objects, define relations | [Data Model](/developers/extend/apps/data-model) |
-| **Logic Function** | Server-side TypeScript with triggers | [Logic Functions](/developers/extend/apps/logic-functions) |
-| **Front Component** | Sandboxed React UI in Twenty's page | [Front Components](/developers/extend/apps/front-components) |
-| **Skill** | Reusable AI agent instructions | [Skills & Agents](/developers/extend/apps/skills-and-agents) |
-| **Agent** | AI assistants with custom prompts | [Skills & Agents](/developers/extend/apps/skills-and-agents) |
-| **View** | Pre-configured record list views | [Layout](/developers/extend/apps/layout) |
-| **Navigation Menu Item** | Custom sidebar entries | [Layout](/developers/extend/apps/layout) |
-| **Page Layout** | Custom record page tabs and widgets | [Layout](/developers/extend/apps/layout) |
+| **Application** | App identity, permissions, variables | [Data Model](/developers/extend/apps/data/data-model) |
+| **Role** | Permission sets for objects and fields | [Data Model](/developers/extend/apps/data/data-model) |
+| **Object** | Custom data tables with fields | [Data Model](/developers/extend/apps/data/data-model) |
+| **Field** | Extend existing objects, define relations | [Data Model](/developers/extend/apps/data/data-model) |
+| **Logic Function** | Server-side TypeScript with triggers | [Logic Functions](/developers/extend/apps/logic/logic-functions) |
+| **Front Component** | Sandboxed React UI in Twenty's page | [Front Components](/developers/extend/apps/layout/front-components) |
+| **Skill** | Reusable AI agent instructions | [Skills & Agents](/developers/extend/apps/logic/skills-and-agents) |
+| **Agent** | AI assistants with custom prompts | [Skills & Agents](/developers/extend/apps/logic/skills-and-agents) |
+| **View** | Pre-configured record list views | [Layout](/developers/extend/apps/layout/views-and-pages) |
+| **Navigation Menu Item** | Custom sidebar entries | [Layout](/developers/extend/apps/layout/views-and-pages) |
+| **Page Layout** | Custom record page tabs and widgets | [Layout](/developers/extend/apps/layout/views-and-pages) |
 
 ## Sandboxing
 
@@ -75,24 +75,24 @@ your-app/
 
 - **`yarn twenty dev`** — watches your source files and live-syncs changes to a connected Twenty server. The typed API client is regenerated automatically when the schema changes.
 - **`yarn twenty build`** — compiles TypeScript, bundles logic functions and front components with esbuild, and produces a manifest.
-- **Pre/post-install hooks** — optional logic functions that run during installation. See [Logic Functions](/developers/extend/apps/logic-functions) for details.
+- **Pre/post-install hooks** — optional logic functions that run during installation. See [Logic Functions](/developers/extend/apps/logic/logic-functions) for details.
 
 ## Next steps
 
 <CardGroup cols={2}>
-  <Card title="Data Model" icon="database" href="/developers/extend/apps/data-model">
+  <Card title="Data Model" icon="database" href="/developers/extend/apps/data/data-model">
     Define objects, fields, roles, and relations.
   </Card>
-  <Card title="Logic Functions" icon="bolt" href="/developers/extend/apps/logic-functions">
+  <Card title="Logic Functions" icon="bolt" href="/developers/extend/apps/logic/logic-functions">
     Server-side functions with HTTP, cron, and event triggers.
   </Card>
-  <Card title="Front Components" icon="window-maximize" href="/developers/extend/apps/front-components">
+  <Card title="Front Components" icon="window-maximize" href="/developers/extend/apps/layout/front-components">
     Sandboxed React components inside Twenty's UI.
   </Card>
-  <Card title="Layout" icon="table-columns" href="/developers/extend/apps/layout">
+  <Card title="Layout" icon="table-columns" href="/developers/extend/apps/layout/views-and-pages">
     Views, navigation items, and record page layouts.
   </Card>
-  <Card title="Skills & Agents" icon="robot" href="/developers/extend/apps/skills-and-agents">
+  <Card title="Skills & Agents" icon="robot" href="/developers/extend/apps/logic/skills-and-agents">
     AI skills and agents with custom prompts.
   </Card>
   <Card title="CLI & Testing" icon="terminal" href="/developers/extend/apps/cli-and-testing">
