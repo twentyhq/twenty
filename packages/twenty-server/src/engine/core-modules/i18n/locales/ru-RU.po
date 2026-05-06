@@ -588,6 +588,26 @@ msgstr "Переменная регистрации приложения не н
 msgid "Application upgrade failed."
 msgstr ""
 
+#. js-lingui-id: 5MJQ4s
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-application-variable-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-application-variable-validator.service.ts
+msgid "Application variable key is required"
+msgstr ""
+
+#. js-lingui-id: K+YEBR
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-application-variable-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-application-variable-validator.service.ts
+msgid "Application variable key must be unique"
+msgstr ""
+
+#. js-lingui-id: e6tjp1
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-application-variable-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-application-variable-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-application-variable-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-application-variable-validator.service.ts
+msgid "Application variable not found"
+msgstr ""
+
 #. js-lingui-id: 9qtW5o
 #: src/engine/core-modules/application/application-variable/application-variable.exception.ts
 msgid "Application variable not found."
@@ -3186,6 +3206,11 @@ msgstr "Недопустимые входные данные агента."
 #: src/engine/api/rest/input-request-parsers/rest-input-request-parser.exception.ts
 msgid "Invalid aggregate fields parameter."
 msgstr "Недопустимый параметр агрегируемых полей."
+
+#. js-lingui-id: 56bSD0
+#: src/engine/core-modules/application/application-variable/application-variable.exception.ts
+msgid "Invalid application variable input."
+msgstr ""
 
 #. js-lingui-id: KNrRpL
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
