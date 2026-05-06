@@ -158,8 +158,7 @@ export class ChatExecutionService {
       registeredModel.modelId,
     );
 
-    // Native chat search is a model capability, while action web search is
-    // permission-scoped through preloaded registry tools.
+    // Native and action search may both be bound here; the model picks at runtime.
     const nativeModelTools = this.nativeToolBinder.bind(registeredModel, {
       webSearch: true,
     });

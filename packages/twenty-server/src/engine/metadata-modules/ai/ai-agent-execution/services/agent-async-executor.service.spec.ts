@@ -133,6 +133,10 @@ describe('AgentAsyncExecutorService', () => {
     );
   });
 
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
   it('does not hydrate registry tools when the agent has no permission role', async () => {
     roleTargetRepository.findOne.mockResolvedValue(null);
 

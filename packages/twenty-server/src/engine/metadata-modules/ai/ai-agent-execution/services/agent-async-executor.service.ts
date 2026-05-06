@@ -143,7 +143,6 @@ export class AgentAsyncExecutorService {
           agent.workspaceId,
         );
 
-        // Native model tools are provider capabilities controlled by model configuration.
         const nativeModelToolOptions: NativeModelToolOptions = {
           webSearch: agent.modelConfiguration?.webSearch?.enabled === true,
           twitterSearch:
