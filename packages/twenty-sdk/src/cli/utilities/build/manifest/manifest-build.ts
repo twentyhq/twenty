@@ -135,6 +135,7 @@ export const buildManifest = async (
 
         applicationConfig = extract.config;
         errors.push(...extract.errors);
+        warnings.push(...extract.warnings);
         applicationFilePaths.push(relativePath);
         break;
       }
@@ -460,12 +461,6 @@ export const buildManifest = async (
 
   if (applicationRoleUniversalIdentifiers.length > 1) {
     errors.push('Only one defineApplicationRole is allowed per application');
-  }
-
-  if (applicationConfig?.defaultRoleUniversalIdentifier) {
-    warnings.push(
-      '`defaultRoleUniversalIdentifier` on defineApplication() is deprecated. Use defineApplicationRole() in your role file instead.',
-    );
   }
 
   const resolvedDefaultRoleUniversalIdentifier =

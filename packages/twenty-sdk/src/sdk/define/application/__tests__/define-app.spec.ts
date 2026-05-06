@@ -52,7 +52,23 @@ describe('defineApplication', () => {
 
     expect(result.success).toBe(true);
     expect(result.errors).toEqual([]);
+    expect(result.warnings).toEqual([]);
     expect(result.config?.defaultRoleUniversalIdentifier).toBeUndefined();
+  });
+
+  it('should warn that defaultRoleUniversalIdentifier is deprecated when provided', () => {
+    const result = defineApplication({
+      universalIdentifier: 'a9faf5f8-cf7e-4f24-9d37-fd523c30febe',
+      displayName: 'My App',
+      description: 'My app description',
+      defaultRoleUniversalIdentifier: '68bb56f3-8300-4cb5-8cc3-8da9ee66f1b2',
+    });
+
+    expect(result.success).toBe(true);
+    expect(result.errors).toEqual([]);
+    expect(result.warnings).toHaveLength(1);
+    expect(result.warnings[0]).toMatch(/deprecated/i);
+    expect(result.warnings[0]).toMatch(/defineApplicationRole/);
   });
 
   it('should return error when universalIdentifier is missing', () => {

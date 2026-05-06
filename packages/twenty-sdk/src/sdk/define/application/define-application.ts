@@ -4,6 +4,7 @@ import { createValidationResult } from '@/sdk/define/common/utils/create-validat
 
 export const defineApplication: DefineEntity<ApplicationConfig> = (config) => {
   const errors = [];
+  const warnings = [];
 
   if (!config.universalIdentifier) {
     errors.push('Application must have a universalIdentifier');
@@ -13,8 +14,15 @@ export const defineApplication: DefineEntity<ApplicationConfig> = (config) => {
     errors.push('Application must have a non empty display name');
   }
 
+  if (config.defaultRoleUniversalIdentifier) {
+    warnings.push(
+      '`defaultRoleUniversalIdentifier` on defineApplication() is deprecated. Use defineApplicationRole() in your role file instead.',
+    );
+  }
+
   return createValidationResult({
     config,
     errors,
+    warnings,
   });
 };
