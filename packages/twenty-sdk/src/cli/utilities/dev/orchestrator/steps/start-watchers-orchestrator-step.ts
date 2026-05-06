@@ -102,7 +102,10 @@ export class StartWatchersOrchestratorStep {
     ]);
   }
 
-  private handleChangeDetected(sourcePath: string, event: ChokidarFsEvent): void {
+  private handleChangeDetected(
+    sourcePath: string,
+    event: ChokidarFsEvent,
+  ): void {
     this.state.addEvent({
       message: `Change detected: ${sourcePath}`,
       status: 'info',

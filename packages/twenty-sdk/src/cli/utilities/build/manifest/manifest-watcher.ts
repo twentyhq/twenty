@@ -13,7 +13,10 @@ const IGNORED_DIRECTORY_NAMES = new Set(['node_modules', 'dist', '.twenty']);
 
 export class ManifestWatcher {
   private appPath: string;
-  private handleChangeDetected: (filePath: string, event: ChokidarFsEvent) => void;
+  private handleChangeDetected: (
+    filePath: string,
+    event: ChokidarFsEvent,
+  ) => void;
   private verbose: boolean;
   private watcher: FSWatcher | null = null;
 
