@@ -5,8 +5,8 @@ import {
   type HelpedHalftonePose,
   type HelpedHalftoneSettings,
 } from './HelpedHalftoneModel';
+import { HELPED_VISUAL_MODEL_URLS } from './helped-visual-models';
 
-const GLB_URL = '/illustrations/home/helped/spaceship.glb';
 const SPACESHIP_PREVIEW_DISTANCE = 3.5;
 
 const SPACESHIP_SETTINGS: HelpedHalftoneSettings = {
@@ -105,9 +105,8 @@ export function Spaceship() {
     <HelpedHalftoneModel
       initialPose={SPACESHIP_INITIAL_POSE}
       label="spaceship.glb"
-      modelUrl={GLB_URL}
+      modelUrl={HELPED_VISUAL_MODEL_URLS.spaceship}
       previewDistance={SPACESHIP_PREVIEW_DISTANCE}
-      renderer="studio"
       settings={SPACESHIP_SETTINGS}
     />
   );

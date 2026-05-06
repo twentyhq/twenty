@@ -15,7 +15,7 @@ import { ImapMessageListFetchErrorHandler } from 'src/modules/messaging/message-
 import { ImapSyncService } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-sync.service';
 import { createSyncCursor } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/create-sync-cursor.util';
 import { extractMailboxState } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/extract-mailbox-state.util';
-import { parseMessageId } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/parse-message-id.util';
+import { getImapFolderPath } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/get-imap-folder-path.util';
 import { parseSyncCursor } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/parse-sync-cursor.util';
 import { type GetMessageListsArgs } from 'src/modules/messaging/message-import-manager/types/get-message-lists-args.type';
 import {
@@ -79,7 +79,7 @@ export class ImapGetMessageListService {
     client: ImapFlow,
     folder: MessageFolder,
   ): Promise<GetOneMessageListResponse> {
-    const folderPath = parseMessageId(folder.externalId ?? '')?.folder;
+    const folderPath = getImapFolderPath(folder.externalId);
 
     if (!isDefined(folderPath)) {
       throw new MessageImportDriverException(
@@ -157,7 +157,7 @@ export class ImapGetMessageListService {
     client: ImapFlow,
     folder: MessageFolder,
   ): Promise<boolean> {
-    const folderPath = parseMessageId(folder.externalId ?? '')?.folder;
+    const folderPath = getImapFolderPath(folder.externalId);
     const previousCursor = parseSyncCursor(folder.syncCursor);
 
     if (!isDefined(folderPath) || !isDefined(previousCursor)) {

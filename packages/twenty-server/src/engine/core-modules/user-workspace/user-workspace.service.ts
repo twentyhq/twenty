@@ -162,7 +162,7 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
         colorScheme: 'System',
         userId: user.id,
         userEmail: user.email,
-        avatarUrl: userWorkspace.defaultAvatarUrl ?? '',
+        avatarUrl: userWorkspace.defaultAvatarUrl ?? null,
         locale: (user.locale ?? SOURCE_LOCALE) as keyof typeof APP_LOCALES,
       });
 
@@ -502,7 +502,10 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
             queryRunner,
           });
 
-        return savedFile.url;
+        return this.fileUrlService.getLegacyWorkspaceMemberAvatarUrl({
+          fileId: savedFile.id,
+          fileFolder: FileFolder.CorePicture,
+        });
       } catch (error) {
         if (error.code === FileStorageExceptionCode.FILE_NOT_FOUND) {
           return;
@@ -523,7 +526,14 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
         },
       );
 
-    return savedFile?.url;
+    if (!isDefined(savedFile)) {
+      return;
+    }
+
+    return this.fileUrlService.getLegacyWorkspaceMemberAvatarUrl({
+      fileId: savedFile.id,
+      fileFolder: FileFolder.CorePicture,
+    });
   }
 
   castWorkspaceToAvailableWorkspace(workspace: WorkspaceEntity) {

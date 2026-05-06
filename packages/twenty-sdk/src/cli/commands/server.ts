@@ -1,9 +1,11 @@
 import { serverStart } from '@/cli/operations/server-start';
+import { serverUpgrade } from '@/cli/operations/server-upgrade';
 import {
   CONTAINER_NAME,
   containerExists,
   DEFAULT_PORT,
   DEFAULT_TEST_PORT,
+  getContainerEnvVar,
   getContainerPort,
   isContainerRunning,
   TEST_CONTAINER_NAME,
@@ -12,11 +14,14 @@ import { checkServerHealth } from '@/cli/utilities/server/detect-local-server';
 import chalk from 'chalk';
 import type { Command } from 'commander';
 import { execSync, spawnSync } from 'node:child_process';
+import { CatalogSyncCommand } from './catalog-sync';
 
 export const registerServerCommands = (program: Command): void => {
   const server = program
     .command('server')
-    .description('Manage a local Twenty server instance');
+    .description(
+      'Manage a Twenty server (local instance and server-side actions)',
+    );
 
   server
     .command('start')
@@ -115,8 +120,14 @@ export const registerServerCommands = (program: Command): void => {
           ? chalk.yellow('running (starting...)')
           : chalk.gray('stopped');
 
+      const appVersion = getContainerEnvVar('APP_VERSION', containerName);
+
       console.log(`  Status:  ${statusText}`);
       console.log(`  URL:     http://localhost:${port}`);
+
+      if (appVersion) {
+        console.log(`  Version: ${chalk.gray(appVersion)}`);
+      }
 
       if (healthy) {
         console.log(chalk.gray('  Login:   tim@apple.dev / tim@apple.dev'));
@@ -154,5 +165,51 @@ export const registerServerCommands = (program: Command): void => {
           `Run 'yarn twenty server start${options.test ? ' --test' : ''}' to start a fresh instance.`,
         ),
       );
+    });
+
+  server
+    .command('upgrade [version]')
+    .description('Upgrade the twenty-app-dev Docker image')
+    .option('--test', 'Upgrade the test instance')
+    .action(
+      async (version: string | undefined, options: { test?: boolean }) => {
+        const result = await serverUpgrade({
+          version: version ?? 'latest',
+          test: options.test,
+          onProgress: (message) => console.log(chalk.gray(message)),
+        });
+
+        if (!result.success) {
+          console.error(chalk.red(result.error.message));
+          process.exit(1);
+        }
+
+        const { data } = result;
+
+        if (!data.imageUpdated) {
+          console.log(chalk.green(`  Already up to date (${data.image}).`));
+
+          return;
+        }
+
+        console.log(chalk.green(`  Upgraded to: ${data.image}`));
+
+        if (data.containerRecreated) {
+          console.log(
+            chalk.gray(
+              `  Run 'yarn twenty server start${options.test ? ' --test' : ''}' to wait for the server to be ready.`,
+            ),
+          );
+        }
+      },
+    );
+
+  server
+    .command('catalog-sync')
+    .description('Trigger a marketplace catalog sync on the server')
+    .option('-r, --remote <name>', 'Sync on a specific remote')
+    .action(async (options: { remote?: string }) => {
+      const command = new CatalogSyncCommand();
+      await command.execute({ remote: options.remote });
     });
 };

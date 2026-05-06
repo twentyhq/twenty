@@ -1,0 +1,189 @@
+---
+title: OAuth
+icon: cheie
+description: Fluxul codului de autorizare cu PKCE și acreditări de client pentru acces server-la-server.
+---
+
+Twenty implementează OAuth 2.0 cu cod de autorizare + PKCE pentru aplicațiile orientate către utilizatori și acreditări de client pentru acces server-la-server. Clienții sunt înregistrați dinamic prin [RFC 7591](https://datatracker.ietf.org/doc/html/rfc7591) — fără configurare manuală într-un panou de control.
+
+## Când să folosiți OAuth
+
+| Scenariu                                                    | Metodă de autentificare                                                             |
+| ----------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| Scripturi interne, automatizare                             | [Cheie API](/l/ro/developers/extend/api#authentication)                                  |
+| Aplicație externă care acționează în numele unui utilizator | **OAuth — Cod de autorizare**                                                       |
+| Server-la-server, fără context de utilizator                | **OAuth — Acreditări de client**                                                    |
+| Aplicație Twenty cu extensii UI                             | [Aplicații](/l/ro/developers/extend/apps/getting-started) (OAuth este gestionat automat) |
+
+## Înregistrați un client
+
+Twenty acceptă **înregistrarea dinamică a clienților** conform [RFC 7591](https://datatracker.ietf.org/doc/html/rfc7591). Nu este necesară configurare manuală — înregistrați programatic:
+
+```bash
+POST /oauth/register
+Content-Type: application/json
+
+{
+  "client_name": "My Integration",
+  "redirect_uris": ["https://myapp.com/callback"],
+  "grant_types": ["authorization_code"],
+  "token_endpoint_auth_method": "client_secret_post"
+}
+```
+
+**Răspuns:**
+
+```json
+{
+  "client_id": "abc123",
+  "client_secret": "secret456",
+  "client_name": "My Integration",
+  "redirect_uris": ["https://myapp.com/callback"]
+}
+```
+
+<Warning>
+Stocați `client_secret` în siguranță — nu poate fi recuperat ulterior.
+</Warning>
+
+## Domenii de aplicare
+
+| Domeniu de aplicare | Acces                                                          |
+| ------------------- | -------------------------------------------------------------- |
+| `api`               | Acces complet de citire/scriere la API-urile Core și Metadata  |
+| `profile`           | Citește informațiile de profil ale utilizatorului autentificat |
+
+Solicitați domeniile de aplicare ca un șir separat prin spații: `scope=api profile`
+
+## Fluxul codului de autorizare
+
+Folosiți acest flux când aplicația dvs. acționează în numele unui utilizator Twenty.
+
+### 1. Redirecționați utilizatorul pentru autorizare
+
+```
+GET /oauth/authorize?
+  client_id=YOUR_CLIENT_ID&
+  response_type=code&
+  redirect_uri=https://myapp.com/callback&
+  scope=api&
+  state=random_state_value&
+  code_challenge=CHALLENGE&
+  code_challenge_method=S256
+```
+
+| Parametru               | Obligatoriu | Descriere                                                             |
+| ----------------------- | ----------- | --------------------------------------------------------------------- |
+| `client_id`             | Da          | ID-ul clientului înregistrat                                          |
+| `response_type`         | Da          | Trebuie să fie `code`                                                 |
+| `redirect_uri`          | Da          | Trebuie să corespundă unei adrese URI de redirecționare înregistrate  |
+| `scope`                 | Nu          | Domenii de aplicare separate prin spațiu (implicit `api`)             |
+| `state`                 | Recomandat  | Șir aleatoriu pentru a preveni atacurile CSRF                         |
+| `code_challenge`        | Recomandat  | Provocare PKCE (hash SHA-256 al verificatorului, codificat base64url) |
+| `code_challenge_method` | Recomandat  | Trebuie să fie `S256` când se folosește PKCE                          |
+
+Utilizatorul vede un ecran de consimțământ și aprobă sau refuză accesul.
+
+### 2. Gestionați callback-ul
+
+După autorizare, Twenty redirecționează înapoi către `redirect_uri`-ul dvs.:
+
+```
+https://myapp.com/callback?code=AUTH_CODE&state=random_state_value
+```
+
+Verificați că `state` corespunde cu ceea ce ați trimis.
+
+### 3. Schimbați codul pe tokenuri
+
+```bash
+POST /oauth/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=authorization_code&
+code=AUTH_CODE&
+redirect_uri=https://myapp.com/callback&
+client_id=YOUR_CLIENT_ID&
+client_secret=YOUR_CLIENT_SECRET&
+code_verifier=YOUR_PKCE_VERIFIER
+```
+
+**Răspuns:**
+
+```json
+{
+  "access_token": "eyJhbG...",
+  "token_type": "Bearer",
+  "expires_in": 3600,
+  "refresh_token": "dGhpcyBpcyBh..."
+}
+```
+
+### 4. Utilizați tokenul de acces
+
+```bash
+GET /rest/companies
+Authorization: Bearer ACCESS_TOKEN
+```
+
+### 5. Reîmprospătați la expirare
+
+```bash
+POST /oauth/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=refresh_token&
+refresh_token=YOUR_REFRESH_TOKEN&
+client_id=YOUR_CLIENT_ID&
+client_secret=YOUR_CLIENT_SECRET
+```
+
+## Fluxul cu acreditări de client
+
+Pentru integrări server-la-server fără interacțiune cu utilizatorul:
+
+```bash
+POST /oauth/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=client_credentials&
+client_id=YOUR_CLIENT_ID&
+client_secret=YOUR_CLIENT_SECRET&
+scope=api
+```
+
+Tokenul returnat are acces la nivel de spațiu de lucru, neasociat unui utilizator specific.
+
+## Descoperirea serverului
+
+Twenty publică configurația sa OAuth la un endpoint standard de descoperire:
+
+```
+GET /.well-known/oauth-authorization-server
+```
+
+Acesta returnează toate endpoint-urile, tipurile de grant acceptate, domeniile de aplicare și capabilitățile — util pentru construirea de clienți OAuth generici.
+
+## Rezumatul endpoint-urilor API
+
+| Endpoint                                  | Scop                                   |
+| ----------------------------------------- | -------------------------------------- |
+| `/.well-known/oauth-authorization-server` | Descoperirea metadatelor serverului    |
+| `/oauth/register`                         | Înregistrare dinamică a clientului     |
+| `/oauth/authorize`                        | Autorizarea utilizatorului             |
+| `/oauth/token`                            | Schimb și reîmprospătare a tokenurilor |
+
+| Mediu                | URL de bază              |
+| -------------------- | ------------------------ |
+| **Cloud**            | `https://api.twenty.com` |
+| **Găzduire proprie** | `https://{your-domain}`  |
+
+## OAuth vs Chei API
+
+|                                  | Chei API                            | OAuth                                         |
+| -------------------------------- | ----------------------------------- | --------------------------------------------- |
+| **Configurare**                  | Generați în Setări                  | Înregistrați un client, implementați fluxul   |
+| **Contextul utilizatorului**     | Niciunul (nivel de spațiu de lucru) | Permisiunile utilizatorului specific          |
+| **Cel mai potrivit pentru**      | Scripturi, instrumente interne      | Aplicații externe, integrări multi-utilizator |
+| **Rotirea tokenurilor**          | Manual                              | Automată prin tokenuri de reîmprospătare      |
+| **Acces pe domenii de aplicare** | Acces API complet                   | Granular, prin domenii de aplicare            |

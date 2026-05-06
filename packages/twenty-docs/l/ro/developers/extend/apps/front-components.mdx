@@ -1,0 +1,489 @@
+---
+title: Componente front-end
+description: Construiți componente React care se afișează în interfața Twenty, cu izolare în sandbox.
+icon: window-maximize
+---
+
+Componentele front-end sunt componente React care se afișează direct în interfața Twenty. Rulează într-un **Web Worker** izolat folosind Remote DOM — codul este izolat (sandboxed), dar se redă nativ în pagină, nu într-un iframe.
+
+## Unde pot fi utilizate componentele frontale
+
+Componentele frontale pot fi afișate în două locații în cadrul Twenty:
+
+* **Panou lateral** — Componentele frontale care nu sunt headless se deschid în panoul lateral din dreapta. Acesta este comportamentul implicit atunci când o componentă frontală este declanșată din meniul de comenzi.
+* **Widgeturi (tablouri de bord și pagini de înregistrare)** — Componentele frontale pot fi încorporate ca widgeturi în machetele de pagină. La configurarea unui tablou de bord sau a machetei unei pagini de înregistrare, utilizatorii pot adăuga un widget de componentă frontală.
+
+## Exemplu de bază
+
+Cel mai rapid mod de a vedea o componentă front-end în acțiune este să o înregistrați ca **element din meniul de comenzi**. Folosiți `defineCommandMenuItem` într-un fișier separat pentru ca componenta să apară ca buton de acțiune rapidă în colțul din dreapta sus al paginii:
+
+```tsx src/front-components/hello-world.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+
+const HelloWorld = () => {
+  return (
+    <div style={{ padding: '20px', fontFamily: 'sans-serif' }}>
+      <h1>Hello from my app!</h1>
+      <p>This component renders inside Twenty.</p>
+    </div>
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: '74c526eb-cb68-4cf7-b05c-0dd8c288d948',
+  name: 'hello-world',
+  description: 'A simple front component',
+  component: HelloWorld,
+});
+```
+
+```ts src/command-menu-items/hello-world.command-menu-item.ts
+import { defineCommandMenuItem } from 'twenty-sdk/define';
+
+export default defineCommandMenuItem({
+  universalIdentifier: 'd4e5f6a7-b8c9-0123-defa-456789012345',
+  shortLabel: 'Hello',
+  label: 'Hello World',
+  icon: 'IconBolt',
+  isPinned: true,
+  availabilityType: 'GLOBAL',
+  frontComponentUniversalIdentifier: '74c526eb-cb68-4cf7-b05c-0dd8c288d948',
+});
+```
+
+După sincronizarea cu `yarn twenty dev` (sau prin rularea comenzii `yarn twenty dev --once` o singură dată), acțiunea rapidă apare în colțul din dreapta sus al paginii:
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/extends/apps/quick-action.png" alt="Buton de acțiune rapidă în colțul din dreapta sus" />
+</div>
+
+Faceți clic pe el pentru a afișa componenta inline.
+
+## Câmpuri de configurare
+
+| Câmp                  | Obligatoriu | Descriere                                                                   |
+| --------------------- | ----------- | --------------------------------------------------------------------------- |
+| `universalIdentifier` | Da          | ID unic stabil pentru această componentă                                    |
+| `component`           | Da          | O funcție de componentă React                                               |
+| `name`                | Nu          | Nume afișat                                                                 |
+| `description`         | Nu          | Descriere a ceea ce face componenta                                         |
+| `isHeadless`          | Nu          | Setați la `true` dacă componenta nu are interfață vizibilă (vedeți mai jos) |
+
+## Plasarea unei componente front-end pe o pagină
+
+Dincolo de comenzi, puteți încorpora o componentă front-end direct într-o pagină de înregistrare adăugând-o ca widget într-un **layout de pagină**. Consultați secțiunea [definePageLayout](/l/ro/developers/extend/apps/skills-and-agents#definepagelayout) pentru detalii.
+
+## Headless vs non-headless
+
+Componentele frontale au două moduri de randare controlate de opțiunea `isHeadless`:
+
+**Non-headless (implicit)** — Componenta afișează o interfață vizibilă. Când este declanșat din meniul de comenzi, se deschide în panoul lateral. Acesta este comportamentul implicit când `isHeadless` este `false` sau omis.
+
+**Headless (`isHeadless: true`)** — Componenta se montează invizibil în fundal. Nu deschide panoul lateral. Componentele headless sunt concepute pentru acțiuni care execută logică și apoi se demontează — de exemplu, rularea unei sarcini asincrone, navigarea la o pagină sau afișarea unui modal de confirmare. Se potrivesc în mod natural cu componentele Command din SDK descrise mai jos.
+
+```tsx src/front-components/sync-tracker.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { useRecordId, enqueueSnackbar } from 'twenty-sdk/front-component';
+import { useEffect } from 'react';
+
+const SyncTracker = () => {
+  const recordId = useRecordId();
+
+  useEffect(() => {
+    enqueueSnackbar({ message: `Tracking record ${recordId}`, variant: 'info' });
+  }, [recordId]);
+
+  return null;
+};
+
+export default defineFrontComponent({
+  universalIdentifier: '...',
+  name: 'sync-tracker',
+  description: 'Tracks record views silently',
+  isHeadless: true,
+  component: SyncTracker,
+});
+```
+
+Deoarece componenta returnează `null`, Twenty omite redarea unui container pentru ea — nu apare spațiu gol în layout. Componenta are în continuare acces la toate hook-urile și la API-ul de comunicare cu gazda.
+
+## Componentele Command din SDK
+
+Pachetul `twenty-sdk` oferă patru componente ajutătoare Command, concepute pentru componente front-end headless. Fiecare componentă execută o acțiune la montare, gestionează erorile afișând o notificare snackbar și demontează automat componenta de interfață la final.
+
+Importă-le din `twenty-sdk/command`:
+
+* **`Command`** — Rulează un callback asincron prin prop-ul `execute`.
+* **`CommandLink`** — Navighează către o rută a aplicației. Props: `to`, `params`, `queryParams`, `options`.
+* **`CommandModal`** — Deschide un modal de confirmare. Dacă utilizatorul confirmă, execută callback-ul `execute`. Props: `title`, `subtitle`, `execute`, `confirmButtonText`, `confirmButtonAccent`.
+* **`CommandOpenSidePanelPage`** — Deschide o anumită pagină din panoul lateral. Props: `page`, `pageTitle`, `pageIcon`.
+
+Iată un exemplu complet de componentă front-end headless care folosește `Command` pentru a rula o acțiune din meniul de comenzi:
+
+```tsx src/front-components/run-action.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { Command } from 'twenty-sdk/command';
+import { CoreApiClient } from 'twenty-sdk/clients';
+
+const RunAction = () => {
+  const execute = async () => {
+    const client = new CoreApiClient();
+
+    await client.mutation({
+      createTask: {
+        __args: { data: { title: 'Created by my app' } },
+        id: true,
+      },
+    });
+  };
+
+  return <Command execute={execute} />;
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'e5f6a7b8-c9d0-1234-efab-345678901234',
+  name: 'run-action',
+  description: 'Creates a task from the command menu',
+  component: RunAction,
+  isHeadless: true,
+});
+```
+
+```ts src/command-menu-items/run-action.command-menu-item.ts
+import { defineCommandMenuItem } from 'twenty-sdk/define';
+
+export default defineCommandMenuItem({
+  universalIdentifier: 'f6a7b8c9-d0e1-2345-fabc-456789012345',
+  label: 'Run my action',
+  icon: 'IconPlayerPlay',
+  frontComponentUniversalIdentifier: 'e5f6a7b8-c9d0-1234-efab-345678901234',
+});
+```
+
+Și un exemplu care folosește `CommandModal` pentru a cere confirmarea înainte de execuție:
+
+```tsx src/front-components/delete-draft.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { CommandModal } from 'twenty-sdk/command';
+
+const DeleteDraft = () => {
+  const execute = async () => {
+    // perform the deletion
+  };
+
+  return (
+    <CommandModal
+      title="Delete draft?"
+      subtitle="This action cannot be undone."
+      execute={execute}
+      confirmButtonText="Delete"
+      confirmButtonAccent="danger"
+    />
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'a7b8c9d0-e1f2-3456-abcd-567890123456',
+  name: 'delete-draft',
+  description: 'Deletes a draft with confirmation',
+  component: DeleteDraft,
+  isHeadless: true,
+});
+```
+
+## Accesarea contextului de rulare
+
+În interiorul componentei, folosiți hook-urile SDK pentru a accesa utilizatorul curent, înregistrarea curentă și instanța componentei:
+
+```tsx src/front-components/record-info.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import {
+  useUserId,
+  useRecordId,
+  useFrontComponentId,
+} from 'twenty-sdk/front-component';
+
+const RecordInfo = () => {
+  const userId = useUserId();
+  const recordId = useRecordId();
+  const componentId = useFrontComponentId();
+
+  return (
+    <div>
+      <p>User: {userId}</p>
+      <p>Record: {recordId ?? 'No record context'}</p>
+      <p>Component: {componentId}</p>
+    </div>
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'b2c3d4e5-f6a7-8901-bcde-f23456789012',
+  name: 'record-info',
+  component: RecordInfo,
+});
+```
+
+Hook-uri disponibile:
+
+| Hook                                          | Returnează          | Descriere                                                                           |
+| --------------------------------------------- | ------------------- | ----------------------------------------------------------------------------------- |
+| `useUserId()`                                 | `string` sau `null` | ID-ul utilizatorului curent                                                         |
+| `useSelectedRecordIds()`                      | `string[]`          | Toate ID-urile înregistrărilor selectate (array gol dacă nu este selectată niciuna) |
+| `useRecordId()`                               | `string` sau `null` | **Învechit.** Folosiți `useSelectedRecordIds()` în schimb                           |
+| `useFrontComponentId()`                       | `string`            | ID-ul acestei instanțe de componentă                                                |
+| `useFrontComponentExecutionContext(selector)` | variază             | Accesați întregul context de execuție cu o funcție selector                         |
+
+## API-ul de comunicare cu gazda
+
+Componentele front-end pot declanșa navigare, ferestre modale și notificări folosind funcții din `twenty-sdk`:
+
+| Funcție                                         | Descriere                           |
+| ----------------------------------------------- | ----------------------------------- |
+| `navigate(to, params?, queryParams?, options?)` | Navigați la o pagină din aplicație  |
+| `openSidePanelPage(params)`                     | Deschideți un panou lateral         |
+| `closeSidePanel()`                              | Închideți panoul lateral            |
+| `openCommandConfirmationModal(params)`          | Afișați un dialog de confirmare     |
+| `enqueueSnackbar(params)`                       | Afișați o notificare tip toast      |
+| `unmountFrontComponent()`                       | Demontați componenta                |
+| `updateProgress(progress)`                      | Actualizați un indicator de progres |
+
+Iată un exemplu care folosește API-ul gazdă pentru a afișa un snackbar și a închide panoul lateral după finalizarea unei acțiuni:
+
+```tsx src/front-components/archive-record.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { useRecordId } from 'twenty-sdk/front-component';
+import { enqueueSnackbar, closeSidePanel } from 'twenty-sdk/front-component';
+import { CoreApiClient } from 'twenty-sdk/clients';
+
+const ArchiveRecord = () => {
+  const recordId = useRecordId();
+
+  const handleArchive = async () => {
+    const client = new CoreApiClient();
+
+    await client.mutation({
+      updateTask: {
+        __args: { id: recordId, data: { status: 'ARCHIVED' } },
+        id: true,
+      },
+    });
+
+    await enqueueSnackbar({
+      message: 'Record archived',
+      variant: 'success',
+    });
+
+    await closeSidePanel();
+  };
+
+  return (
+    <div style={{ padding: '20px' }}>
+      <p>Archive this record?</p>
+      <button onClick={handleArchive}>Archive</button>
+    </div>
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'c9d0e1f2-a3b4-5678-cdef-789012345678',
+  name: 'archive-record',
+  description: 'Archives the current record',
+  component: ArchiveRecord,
+});
+```
+
+### Lucrul cu mai multe înregistrări
+
+Folosiți `useSelectedRecordIds()` pentru a gestiona mai multe înregistrări selectate. Acest lucru este util pentru operațiuni în masă:
+
+```tsx src/front-components/bulk-export.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { useSelectedRecordIds, numberOfSelectedRecords } from 'twenty-sdk/front-component';
+import { enqueueSnackbar, closeSidePanel } from 'twenty-sdk/front-component';
+import { CoreApiClient } from 'twenty-sdk/clients';
+
+const BulkExport = () => {
+  const selectedRecordIds = useSelectedRecordIds();
+
+  const handleExport = async () => {
+    const client = new CoreApiClient();
+
+    for (const recordId of selectedRecordIds) {
+      await client.mutation({
+        updateTask: {
+          __args: { id: recordId, data: { exported: true } },
+          id: true,
+        },
+      });
+    }
+
+    await enqueueSnackbar({
+      message: `Exported ${selectedRecordIds.length} records`,
+      variant: 'success',
+    });
+
+    await closeSidePanel();
+  };
+
+  return (
+    <div style={{ padding: '20px' }}>
+      <p>Export {selectedRecordIds.length} selected record(s)?</p>
+      <button onClick={handleExport}>Export</button>
+    </div>
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'd0e1f2a3-b4c5-6789-defa-012345678901',
+  name: 'bulk-export',
+  description: 'Export selected records',
+  component: BulkExport,
+  command: {
+    universalIdentifier: 'd0e1f2a3-b4c5-6789-defa-012345678902',
+    label: 'Bulk Export',
+    availabilityType: 'RECORD_SELECTION',
+    conditionalAvailabilityExpression: numberOfSelectedRecords > 0,
+  },
+});
+```
+
+## defineCommandMenuItem
+
+Folosiți `defineCommandMenuItem` pentru a înregistra o componentă front-end în meniul de comenzi (Cmd+K). Dacă `isPinned` este `true`, apare și ca buton de acțiune rapidă în colțul din dreapta sus al paginii.
+
+```ts src/command-menu-items/open-dashboard.command-menu-item.ts
+import { defineCommandMenuItem } from 'twenty-sdk/define';
+
+export default defineCommandMenuItem({
+  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  label: 'Open Dashboard',
+  shortLabel: 'Dashboard',
+  icon: 'IconLayoutDashboard',
+  isPinned: true,
+  availabilityType: 'GLOBAL',
+  frontComponentUniversalIdentifier: '74c526eb-cb68-4cf7-b05c-0dd8c288d948',
+});
+```
+
+| Câmp                                    | Obligatoriu | Descriere                                                                                                                                                                                        |
+| --------------------------------------- | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `universalIdentifier`                   | Da          | ID unic stabil pentru comandă                                                                                                                                                                    |
+| `label`                                 | Da          | Etichetă completă afișată în meniul de comenzi (Cmd+K)                                                                                                                                           |
+| `frontComponentUniversalIdentifier`     | Da          | `universalIdentifier` al componentei front-end pe care această comandă o deschide                                                                                                                |
+| `shortLabel`                            | Nu          | Etichetă mai scurtă afișată pe butonul de acțiune rapidă fixat                                                                                                                                   |
+| `icon`                                  | Nu          | Numele pictogramei afișat lângă etichetă (de ex. `'IconBolt'`, `'IconSend'`)                                                                                                                     |
+| `isPinned`                              | Nu          | Când este `true`, afișează comanda ca buton de acțiune rapidă în colțul din dreapta sus al paginii                                                                                               |
+| `availabilityType`                      | Nu          | Controlează unde apare comanda: `'GLOBAL'` (mereu disponibilă), `'RECORD_SELECTION'` (doar când sunt selectate înregistrări) sau `'FALLBACK'` (afișată când nicio altă comandă nu se potrivește) |
+| `availabilityObjectUniversalIdentifier` | Nu          | Restricționați comanda la paginile unui anumit tip de obiect (de ex., doar pe înregistrările Company)                                                                                            |
+| `conditionalAvailabilityExpression`     | Nu          | O expresie booleană pentru a controla dinamic dacă comanda este vizibilă (vezi mai jos)                                                                                                          |
+
+## Expresii de disponibilitate condițională
+
+Câmpul `conditionalAvailabilityExpression` vă permite să controlați când este vizibilă o comandă în funcție de contextul paginii curente. Importați variabile tipizate și operatori din `twenty-sdk` pentru a construi expresii:
+
+```ts src/command-menu-items/bulk-update.command-menu-item.ts
+import { defineCommandMenuItem } from 'twenty-sdk/define';
+import {
+  objectPermissions,
+  everyEquals,
+} from 'twenty-sdk/front-component';
+
+export default defineCommandMenuItem({
+  universalIdentifier: '...',
+  label: 'Bulk Update',
+  availabilityType: 'RECORD_SELECTION',
+  frontComponentUniversalIdentifier: '...',
+  conditionalAvailabilityExpression: everyEquals(
+    objectPermissions,
+    'canUpdateObjectRecords',
+    true,
+  ),
+});
+```
+
+**Variabile de context** — acestea reprezintă starea curentă a paginii:
+
+| Variabilă                      | Tip       | Descriere                                                              |
+| ------------------------------ | --------- | ---------------------------------------------------------------------- |
+| `pageType`                     | `string`  | Tipul paginii curente (de ex. `'RecordIndexPage'`, `'RecordShowPage'`) |
+| `isInSidePanel`                | `boolean` | Dacă componenta este redată într-un panou lateral                      |
+| `numberOfSelectedRecords`      | `number`  | Numărul de înregistrări selectate în prezent                           |
+| `isSelectAll`                  | `boolean` | Dacă "select all" este activ                                           |
+| `selectedRecords`              | `array`   | Obiectele înregistrărilor selectate                                    |
+| `favoriteRecordIds`            | `array`   | ID-urile înregistrărilor marcate ca favorite                           |
+| `objectPermissions`            | `object`  | Permisiuni pentru tipul de obiect curent                               |
+| `targetObjectReadPermissions`  | `object`  | Permisiuni de citire pentru obiectul țintă                             |
+| `targetObjectWritePermissions` | `object`  | Permisiuni de scriere pentru obiectul țintă                            |
+| `featureFlags`                 | `object`  | Steaguri de caracteristici active                                      |
+| `objectMetadataItem`           | `object`  | Metadatele tipului de obiect curent                                    |
+| `hasAnySoftDeleteFilterOnView` | `boolean` | Dacă vizualizarea curentă are un filtru soft-delete                    |
+
+**Operatori** — combinați variabilele în expresii booleene:
+
+| Operator                            | Descriere                                                               |
+| ----------------------------------- | ----------------------------------------------------------------------- |
+| `isDefined(value)`                  | `true` dacă valoarea nu este null/undefined                             |
+| `isNonEmptyString(value)`           | `true` dacă valoarea este un șir nevid                                  |
+| `includes(array, value)`            | `true` dacă array-ul conține valoarea                                   |
+| `includesEvery(array, prop, value)` | `true` dacă proprietatea fiecărui element include valoarea              |
+| `every(array, prop)`                | `true` dacă proprietatea este truthy pentru fiecare element             |
+| `everyDefined(array, prop)`         | `true` dacă proprietatea este definită pentru fiecare element           |
+| `everyEquals(array, prop, value)`   | `true` dacă proprietatea este egală cu valoarea pentru fiecare element  |
+| `some(array, prop)`                 | `true` dacă proprietatea este truthy pe cel puțin un element            |
+| `someDefined(array, prop)`          | `true` dacă proprietatea este definită pe cel puțin un element          |
+| `someEquals(array, prop, value)`    | `true` dacă proprietatea este egală cu valoarea pe cel puțin un element |
+| `someNonEmptyString(array, prop)`   | `true` dacă proprietatea este un șir nevid pe cel puțin un element      |
+| `none(array, prop)`                 | `true` dacă proprietatea este falsy pentru fiecare element              |
+| `noneDefined(array, prop)`          | `true` dacă proprietatea este nedefinită pentru fiecare element         |
+| `noneEquals(array, prop, value)`    | `true` dacă proprietatea nu este egală cu valoarea pe niciun element    |
+
+## Resurse publice
+
+Componentele front-end pot accesa fișiere din directorul `public/` al aplicației folosind `getPublicAssetUrl`:
+
+```tsx
+import { defineFrontComponent, getPublicAssetUrl } from 'twenty-sdk/define';
+
+const Logo = () => <img src={getPublicAssetUrl('logo.png')} alt="Logo" />;
+
+export default defineFrontComponent({
+  universalIdentifier: '...',
+  name: 'logo',
+  component: Logo,
+});
+```
+
+Consultați [secțiunea despre resurse publice](/l/ro/developers/extend/apps/cli-and-testing#public-assets-public-folder) pentru detalii.
+
+## Stilizare
+
+Componentele front-end acceptă mai multe abordări de stilizare. Puteți folosi:
+
+* **Stiluri inline** — `style={{ color: 'red' }}`
+* **Componente Twenty UI** — import din `twenty-sdk/ui` (Button, Tag, Status, Chip, Avatar și altele)
+* **Emotion** — CSS-in-JS cu `@emotion/react`
+* **Styled-components** — pattern-uri `styled.div`
+* **Tailwind CSS** — clase utilitare
+* **Orice bibliotecă CSS-in-JS** compatibilă cu React
+
+```tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { Button, Tag, Status } from 'twenty-sdk/ui';
+
+const StyledWidget = () => {
+  return (
+    <div style={{ padding: '16px', display: 'flex', gap: '8px' }}>
+      <Button title="Click me" onClick={() => alert('Clicked!')} />
+      <Tag text="Active" color="green" />
+      <Status color="green" text="Online" />
+    </div>
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'e5f6a7b8-c9d0-1234-efab-567890123456',
+  name: 'styled-widget',
+  component: StyledWidget,
+});
+```

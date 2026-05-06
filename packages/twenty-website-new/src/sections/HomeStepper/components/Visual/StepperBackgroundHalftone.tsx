@@ -9,6 +9,7 @@ import { observeElementSize } from '@/lib/dom/observe-element-size';
 import { getPrefersReducedMotionSnapshot } from '@/lib/motion';
 import {
   createVisualRenderLoop,
+  loadVisualImage,
   tryCreateSiteWebGlRenderer,
   type VisualRenderLoop,
 } from '@/lib/visual-runtime';
@@ -286,15 +287,6 @@ function createPointerState(): PointerState {
   };
 }
 
-function loadImage(src: string) {
-  return new Promise<HTMLImageElement>((resolve, reject) => {
-    const image = new Image();
-    image.onload = () => resolve(image);
-    image.onerror = () => reject(new Error(`Failed to load image: ${src}`));
-    image.src = src;
-  });
-}
-
 async function mountHalftoneCanvas({
   container,
   imageUrl,
@@ -311,7 +303,9 @@ async function mountHalftoneCanvas({
       1,
     );
 
-  const image = await loadImage(imageUrl);
+  const image = await loadVisualImage(imageUrl, {
+    label: 'stepper background image',
+  });
 
   if (!container.isConnected) {
     return;

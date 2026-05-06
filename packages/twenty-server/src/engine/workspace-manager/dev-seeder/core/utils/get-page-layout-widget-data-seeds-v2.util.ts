@@ -168,40 +168,6 @@ export const getPageLayoutWidgetDataSeedsV2 = (
         } satisfies SeederFlatPageLayoutWidget)
       : null,
 
-    // GAUGE chart: Average ARR (Customer Analytics)
-    isDefined(companyArrFieldId)
-      ? ({
-          id: generateSeedId(
-            workspaceId,
-            PAGE_LAYOUT_WIDGET_SEEDS.CUSTOMER_AVERAGE_ARR,
-          ),
-          pageLayoutTabId: generateSeedId(
-            workspaceId,
-            PAGE_LAYOUT_TAB_SEEDS.CUSTOMER_ANALYTICS,
-          ),
-          title: 'Average ARR',
-          type: WidgetType.GRAPH,
-          gridPosition: { row: 0, column: 7, rowSpan: 6, columnSpan: 5 },
-          position: {
-            layoutMode: PageLayoutTabLayoutMode.GRID,
-            row: 0,
-            column: 7,
-            rowSpan: 6,
-            columnSpan: 5,
-          },
-          configuration: {
-            configurationType: WidgetConfigurationType.GAUGE_CHART,
-            aggregateFieldMetadataId: companyArrFieldId,
-            aggregateOperation: AggregateOperations.AVG,
-            displayDataLabel: true,
-            timezone: 'UTC',
-            firstDayOfTheWeek: CalendarStartDay.MONDAY,
-          },
-          objectMetadataId: companyObject?.id ?? null,
-          overrides: null,
-        } satisfies SeederFlatPageLayoutWidget)
-      : null,
-
     // PIE chart: Companies by LinkedIn (Customer Overview)
     isDefined(companyIdFieldId) && isDefined(companyLinkedinLinkFieldId)
       ? ({

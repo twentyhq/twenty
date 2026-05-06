@@ -45,10 +45,8 @@ export class PrefillLogicFunctionService {
           id: definition.id,
           name: definition.name,
           description: definition.description,
-          toolInputSchema: definition.toolInputSchema,
           source: {
             sourceHandlerCode: definition.sourceHandlerCode,
-            toolInputSchema: definition.toolInputSchema,
             handlerName: 'main',
           },
         },

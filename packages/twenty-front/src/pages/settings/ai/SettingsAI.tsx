@@ -46,7 +46,9 @@ export const SettingsAI = () => {
       const result = await createLogicFunction({
         input: {
           name: 'new-tool',
-          isTool: true,
+          toolTriggerSettings: {
+            inputSchema: { type: 'object', properties: {} },
+          },
         },
       });
 

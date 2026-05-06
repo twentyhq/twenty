@@ -1,5 +1,4 @@
 import type { LinkButtonType } from '@/design-system/components/Button/types/LinkButtonType';
-import { LocalizedLink } from '@/lib/i18n';
 import { styled } from '@linaria/react';
 import {
   BaseButton,
@@ -11,14 +10,7 @@ const StyledButtonAnchor = styled.a`
   ${buttonBaseStyles}
 `;
 
-const StyledButtonLink = styled(LocalizedLink)`
-  ${buttonBaseStyles}
-`;
-
-export type LinkButtonPresentation = 'anchor' | 'link';
-
-export type LinkButtonProps = Omit<BaseButtonProps, 'label'> &
-  LinkButtonType & { type: LinkButtonPresentation };
+export type LinkButtonProps = Omit<BaseButtonProps, 'label'> & LinkButtonType;
 
 export function LinkButton({
   color,
@@ -26,7 +18,6 @@ export function LinkButton({
   label,
   leadingIcon,
   size = 'regular',
-  type,
   variant,
 }: LinkButtonProps) {
   const inner = (
@@ -39,29 +30,16 @@ export function LinkButton({
     />
   );
 
-  if (type === 'anchor') {
-    return (
-      <StyledButtonAnchor
-        data-color={color}
-        data-size={size}
-        data-variant={variant}
-        href={href}
-        rel="noopener noreferrer"
-        target="_blank"
-      >
-        {inner}
-      </StyledButtonAnchor>
-    );
-  }
-
   return (
-    <StyledButtonLink
+    <StyledButtonAnchor
       data-color={color}
       data-size={size}
       data-variant={variant}
       href={href}
+      rel="noopener noreferrer"
+      target="_blank"
     >
       {inner}
-    </StyledButtonLink>
+    </StyledButtonAnchor>
   );
 }

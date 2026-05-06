@@ -631,32 +631,50 @@ print('Analysis complete!')
 
 ## Calling Twenty Tools from Python (MCP Bridge)
 
-A \`twenty\` helper is automatically available in your code. Use it to call any Twenty tool directly from Python:
+**A \`twenty\` variable is already bound in your code's scope.** Do NOT write
+\`import twenty\` — there is no Python package by that name. The helper is an
+instance of a class that has been pre-instantiated for you; just call methods
+on it directly.
+
+Real catalog tools follow the pattern \`find_<object>\` / \`find_one_<object>\` /
+\`create_<object>\` / \`update_<object>\` / \`delete_<object>\` /
+\`group_by_<object>\` — e.g. \`find_companies\`, \`find_people\`, \`create_person\`.
+Call \`twenty.list_tools()\` to discover exact names. Catalog tools are routed
+through \`execute_tool\` automatically, and the helper raises an Exception on
+server-side failures with the error message.
 
 \`\`\`python
-# Find records
-people = twenty.call_tool('find_person_records', {'limit': 10})
-print(f"Found {len(people['edges'])} people")
+# List catalog tools (flat list, not grouped)
+tools = twenty.list_tools()
+print(f"{len(tools)} catalog tools available")
+for tool in tools[:5]:
+    print(f"- {tool['name']}")
 
-# Create a record
-result = twenty.call_tool('create_company_record', {
-    'data': {'name': 'Acme Corp', 'domainName': {'primaryLinkUrl': 'acme.com'}}
+# Find records — returns { 'records': [...], 'count': '5' }
+companies = twenty.call_tool('find_companies', {'limit': 5, 'offset': 0})
+for c in companies['records']:
+    print(c['name'], c.get('employees'))
+
+# Create a record — arguments match the tool's inputSchema directly,
+# no nested 'data' wrapper. Use twenty.call_tool('learn_tools', ...) to
+# inspect a schema if unsure.
+result = twenty.call_tool('create_company', {
+    'name': 'Acme Corp',
+    'domainName': {'primaryLinkUrl': 'https://acme.com'},
+    'position': 'first',
 })
-print(f"Created company: {result['id']}")
+print(f"Created company id={result['id']}")
 
 # Update a record
-twenty.call_tool('update_person_record', {
-    'id': 'person-uuid',
-    'data': {'jobTitle': 'CEO'}
+twenty.call_tool('update_person', {
+    'id': 'person-uuid-here',
+    'jobTitle': 'CEO',
 })
-
-# List available tools
-tools = twenty.list_tools()
-for tool in tools:
-    print(f"- {tool['name']}: {tool['description']}")
 \`\`\`
 
-This allows you to orchestrate complex multi-step operations in a single code execution, which is more efficient than multiple tool calls.`,
+This lets you orchestrate multi-step data workflows in a single sandbox
+execution — faster than an equivalent chain of individual tool calls from
+the agent, and the computation stays server-side.`,
         isCustom: false,
       },
     }),

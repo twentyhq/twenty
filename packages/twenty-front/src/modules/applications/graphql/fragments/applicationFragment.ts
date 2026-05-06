@@ -11,6 +11,7 @@ export const APPLICATION_FRAGMENT = gql`
     id
     name
     description
+    logo
     version
     universalIdentifier
     applicationRegistrationId
@@ -44,6 +45,20 @@ export const APPLICATION_FRAGMENT = gql`
       universalIdentifier
       isHeadless
       usesSdkClient
+      createdAt
+      updatedAt
+    }
+    commandMenuItems {
+      id
+      label
+      shortLabel
+      icon
+      isPinned
+      availabilityType
+      conditionalAvailabilityExpression
+      frontComponentId
+      universalIdentifier
+      applicationId
       createdAt
       updatedAt
     }

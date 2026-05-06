@@ -1,9 +1,9 @@
 import { styled } from '@linaria/react';
 
 import { Heading as BaseHeading } from '@/design-system/components';
-import type { HeadingType } from '@/design-system/components/Heading';
 import type { Page } from '@/lib/pages';
 import { theme } from '@/theme';
+import type { ReactNode } from 'react';
 
 const HeadingWrap = styled.div`
   margin-bottom: ${theme.spacing(2)};
@@ -21,14 +21,16 @@ const HeadingWrap = styled.div`
 `;
 
 type HeadingProps = {
+  children: ReactNode;
   page?: Page;
-  segments: HeadingType[];
 };
 
-export function Heading({ page, segments }: HeadingProps) {
+export function Heading({ children, page }: HeadingProps) {
   return (
     <HeadingWrap data-page={page}>
-      <BaseHeading as="h2" segments={segments} size="xl" weight="light" />
+      <BaseHeading as="h2" size="xl" weight="light">
+        {children}
+      </BaseHeading>
     </HeadingWrap>
   );
 }

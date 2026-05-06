@@ -1,86 +1,83 @@
+import { msg } from '@lingui/core/macro';
 import type { FeatureDataType } from '@/sections/Feature/types';
 
 export const FEATURE_DATA: FeatureDataType = {
   eyebrow: {
     heading: {
-      text: 'Core Features',
+      text: msg`Core Features`,
       fontFamily: 'sans',
     },
   },
-  heading: [
-    { text: 'Everything you need,', fontFamily: 'serif' },
-    { text: ' out of the box', fontFamily: 'sans' },
-  ],
   mask: { src: '/images/product/feature/mask.webp', alt: '' },
   tiles: [
     {
       icon: 'check',
       image: { src: '/images/product/feature/dashboards.webp', alt: '' },
-      heading: { text: 'Reports & Dashboards', fontFamily: 'sans' },
+      heading: { text: msg`Reports & Dashboards`, fontFamily: 'sans' },
       bullets: [
-        { text: 'Build custom dashboards' },
-        { text: 'Aggregate, bar, line, pie, and gauge widgets' },
-        { text: 'Filtered metrics from live CRM data' },
+        { text: msg`Build custom dashboards` },
+        { text: msg`Aggregate, bar, line, pie, and gauge widgets` },
+        { text: msg`Filtered metrics from live CRM data` },
       ],
     },
     {
       icon: 'check',
       image: { src: '/images/product/feature/tasks.webp', alt: '' },
-      heading: { text: 'Tasks & Activities', fontFamily: 'sans' },
+      heading: { text: msg`Tasks & Activities`, fontFamily: 'sans' },
       bullets: [
-        { text: 'Create tasks from records' },
-        { text: 'Assign owners and due dates' },
-        { text: 'Rich notes attached to records' },
+        { text: msg`Create tasks from records` },
+        { text: msg`Assign owners and due dates` },
+        { text: msg`Rich notes attached to records` },
       ],
     },
     {
       icon: 'check',
       image: { src: '/images/product/feature/emails.webp', alt: '' },
-      heading: { text: 'Email & Calendar', fontFamily: 'sans' },
+      heading: { text: msg`Email & Calendar`, fontFamily: 'sans' },
       bullets: [
-        { text: 'Connect Google or Microsoft accounts' },
-        { text: 'Emails and events linked to CRM records' },
-        { text: 'Full communication history in one place' },
+        { text: msg`Connect Google or Microsoft accounts` },
+        { text: msg`Emails and events linked to CRM records` },
+        { text: msg`Full communication history in one place` },
       ],
     },
     {
       icon: 'check',
       image: { src: '/images/product/feature/contacts.webp', alt: '' },
-      heading: { text: 'Contacts & Companies', fontFamily: 'sans' },
+      heading: { text: msg`Contacts & Companies`, fontFamily: 'sans' },
       bullets: [
-        { text: 'Custom fields and relationships' },
-        { text: 'Unified timeline (emails, events, tasks, notes, files)' },
-        { text: 'Email/calendar activity on each record' },
+        { text: msg`Custom fields and relationships` },
+        { text: msg`Unified timeline (emails, events, tasks, notes, files)` },
+        { text: msg`Email/calendar activity on each record` },
       ],
     },
     {
       icon: 'check',
       image: { src: '/images/product/feature/pipeline.webp', alt: '' },
-      heading: { text: 'Pipeline Management', fontFamily: 'sans' },
+      heading: { text: msg`Pipeline Management`, fontFamily: 'sans' },
       bullets: [
-        { text: 'Custom deal stages for your process' },
-        { text: 'Drag-and-drop deals between stages' },
-        { text: 'Track amount and close date' },
+        { text: msg`Custom deal stages for your process` },
+        { text: msg`Drag-and-drop deals between stages` },
+        { text: msg`Track amount and close date` },
       ],
     },
     {
       icon: 'check',
       image: { src: '/images/product/feature/files.webp', alt: '' },
-      heading: { text: 'Files', fontFamily: 'sans' },
+      heading: { text: msg`Files`, fontFamily: 'sans' },
       bullets: [
-        { text: 'Multi-file upload on records' },
-        { text: 'Rename, download, and delete attachments' },
-        { text: 'In-app preview for supported file types (when enabled)' },
+        { text: msg`Multi-file upload on records` },
+        { text: msg`Rename, download, and delete attachments` },
+        { text: msg`In-app preview for supported file types (when enabled)` },
       ],
     },
     {
       icon: 'check',
       image: { src: '/images/product/feature/data.webp', alt: '' },
-      heading: { text: 'Data import', fontFamily: 'sans' },
+      heading: { text: msg`Data import`, fontFamily: 'sans' },
       bullets: [
-        { text: 'CSV import flow' },
-        { text: 'Column-to-field mapping (including relations)' },
-        { text: 'CSV export anytime' },
+        { text: msg`CSV import flow` },
+        { text: msg`Column-to-field mapping (including relations)` },
+        { text: msg`CSV export anytime` },
       ],
     },
   ],

@@ -58,7 +58,6 @@ jobs:
           npx nx run twenty-server:lingui:compile --strict
           npx nx run twenty-emails:lingui:compile --strict
           npx nx run twenty-front:lingui:compile --strict
-          npx nx run twenty-website-new:lingui:compile --strict
         continue-on-error: true
 
       - name: Stash any changes before pulling translations
@@ -75,8 +74,6 @@ jobs:
           upload_sources: false
           upload_translations: false
           download_translations: true
-          source: '**/en.po'
-          translation: '%original_path%/%locale%.po'
           export_only_approved: false
           localization_branch_name: i18n
           base_url: 'https://twenty.api.crowdin.com'
@@ -116,7 +113,6 @@ jobs:
           npx nx run twenty-server:lingui:compile
           npx nx run twenty-emails:lingui:compile
           npx nx run twenty-front:lingui:compile
-          npx nx run twenty-website-new:lingui:compile
           git status
           git add .
           if ! git diff --staged --quiet --exit-code; then

@@ -6,9 +6,11 @@ import {
   buttonBaseStyles,
 } from '@/design-system/components/Button/BaseButton';
 import { ButtonShape } from '@/design-system/components/Button/ButtonShape';
+import { useRenderMessage } from '@/lib/i18n/use-render-message';
 import {
   PARTNER_APPLICATION_MODAL_COPY,
-  PARTNER_PROGRAM_OPTIONS,
+  PARTNER_PROGRAM_IDS,
+  PARTNER_PROGRAM_LABELS,
   type PartnerProgramId,
 } from '@/lib/partner-application/partner-application-modal-data';
 import { theme } from '@/theme';
@@ -266,6 +268,7 @@ export function PartnerApplicationModal({
   onClose,
   initialProgramId = 'technology',
 }: PartnerApplicationModalProps) {
+  const renderText = useRenderMessage();
   const formRef = useRef<HTMLFormElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const [programId, setProgramId] =
@@ -273,6 +276,7 @@ export function PartnerApplicationModal({
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const copy = PARTNER_APPLICATION_MODAL_COPY;
 
   useEffect(() => {
     if (open) {
@@ -336,12 +340,12 @@ export function PartnerApplicationModal({
       setSubmitError(null);
 
       if (!name || !email || !company || !website || !message) {
-        setSubmitError(validationCopy.incompleteForm);
+        setSubmitError(renderText(validationCopy.incompleteForm));
         return;
       }
 
       if (!emailLooksValid) {
-        setSubmitError(validationCopy.invalidEmail);
+        setSubmitError(renderText(validationCopy.invalidEmail));
         return;
       }
 
@@ -363,21 +367,19 @@ export function PartnerApplicationModal({
         });
 
         if (!response.ok) {
-          setSubmitError(validationCopy.submitFailed);
+          setSubmitError(renderText(validationCopy.submitFailed));
           return;
         }
 
         onClose();
       } catch {
-        setSubmitError(validationCopy.submitFailed);
+        setSubmitError(renderText(validationCopy.submitFailed));
       } finally {
         setIsSubmitting(false);
       }
     },
-    [isSubmitting, onClose, programId],
+    [isSubmitting, onClose, programId, renderText],
   );
-
-  const copy = PARTNER_APPLICATION_MODAL_COPY;
 
   return (
     <Modal.Root
@@ -406,6 +408,7 @@ export function PartnerApplicationModal({
                     newLine: true,
                   },
                 ]}
+                renderText={renderText}
                 size="lg"
                 weight="light"
               />
@@ -415,8 +418,16 @@ export function PartnerApplicationModal({
         <Modal.Description
           render={
             <SubtitleStack>
-              <Body body={{ text: copy.subtitleLine1 }} size="md" />
-              <Body body={{ text: copy.subtitleLine2 }} size="md" />
+              <Body
+                body={{ text: copy.subtitleLine1 }}
+                renderText={renderText}
+                size="md"
+              />
+              <Body
+                body={{ text: copy.subtitleLine2 }}
+                renderText={renderText}
+                size="md"
+              />
             </SubtitleStack>
           }
         />
@@ -424,19 +435,19 @@ export function PartnerApplicationModal({
 
       <form ref={formRef} autoComplete="off" noValidate onSubmit={handleSubmit}>
         <FormFields>
-          <Segments role="radiogroup" aria-label={copy.selectLabel}>
-            {PARTNER_PROGRAM_OPTIONS.map((option) => (
+          <Segments role="radiogroup" aria-label={renderText(copy.selectLabel)}>
+            {PARTNER_PROGRAM_IDS.map((id) => (
               <SegmentButton
-                key={option.id}
-                aria-checked={programId === option.id}
-                data-active={programId === option.id}
+                key={id}
+                aria-checked={programId === id}
+                data-active={programId === id}
                 role="radio"
                 type="button"
                 onClick={() => {
-                  setProgramId(option.id);
+                  setProgramId(id);
                 }}
               >
-                {option.label}
+                {renderText(PARTNER_PROGRAM_LABELS[id])}
               </SegmentButton>
             ))}
           </Segments>
@@ -446,20 +457,16 @@ export function PartnerApplicationModal({
               <DropdownTrigger
                 aria-expanded={dropdownOpen}
                 aria-haspopup="listbox"
-                aria-label={copy.selectLabel}
+                aria-label={renderText(copy.selectLabel)}
                 type="button"
                 onClick={() => {
                   setDropdownOpen((previous) => !previous);
                 }}
               >
                 <DropdownTriggerContent>
-                  <DropdownLabel>{copy.selectLabel}</DropdownLabel>
+                  <DropdownLabel>{renderText(copy.selectLabel)}</DropdownLabel>
                   <DropdownValue>
-                    {
-                      PARTNER_PROGRAM_OPTIONS.find(
-                        (option) => option.id === programId,
-                      )?.label
-                    }
+                    {renderText(PARTNER_PROGRAM_LABELS[programId])}
                   </DropdownValue>
                 </DropdownTriggerContent>
                 <DropdownIconContainer aria-hidden>
@@ -468,20 +475,23 @@ export function PartnerApplicationModal({
               </DropdownTrigger>
 
               {dropdownOpen && (
-                <DropdownPanel role="listbox" aria-label={copy.selectLabel}>
-                  {PARTNER_PROGRAM_OPTIONS.map((option) => (
+                <DropdownPanel
+                  role="listbox"
+                  aria-label={renderText(copy.selectLabel)}
+                >
+                  {PARTNER_PROGRAM_IDS.map((id) => (
                     <DropdownOption
-                      key={option.id}
-                      aria-selected={programId === option.id}
-                      data-selected={programId === option.id}
+                      key={id}
+                      aria-selected={programId === id}
+                      data-selected={programId === id}
                       role="option"
                       type="button"
                       onClick={() => {
-                        setProgramId(option.id);
+                        setProgramId(id);
                         setDropdownOpen(false);
                       }}
                     >
-                      {option.label}
+                      {renderText(PARTNER_PROGRAM_LABELS[id])}
                     </DropdownOption>
                   ))}
                 </DropdownPanel>
@@ -494,7 +504,7 @@ export function PartnerApplicationModal({
               aria-required="true"
               autoComplete="off"
               name="name"
-              placeholder={copy.fields.name}
+              placeholder={renderText(copy.fields.name)}
               type="text"
             />
           </Form.Field>
@@ -506,7 +516,7 @@ export function PartnerApplicationModal({
                 autoComplete="off"
                 inputMode="email"
                 name="email"
-                placeholder={copy.fields.email}
+                placeholder={renderText(copy.fields.email)}
                 type="text"
               />
             </Form.Field>
@@ -515,7 +525,7 @@ export function PartnerApplicationModal({
                 aria-required="true"
                 autoComplete="off"
                 name="company"
-                placeholder={copy.fields.company}
+                placeholder={renderText(copy.fields.company)}
                 type="text"
               />
             </Form.Field>
@@ -526,7 +536,7 @@ export function PartnerApplicationModal({
               aria-required="true"
               autoComplete="off"
               name="website"
-              placeholder={copy.fields.website}
+              placeholder={renderText(copy.fields.website)}
               type="text"
             />
           </Form.Field>
@@ -535,7 +545,7 @@ export function PartnerApplicationModal({
             <Form.Input
               autoComplete="off"
               name="opportunities"
-              placeholder={copy.fields.opportunities}
+              placeholder={renderText(copy.fields.opportunities)}
               type="text"
             />
           </Form.Field>
@@ -545,7 +555,7 @@ export function PartnerApplicationModal({
               aria-required="true"
               autoComplete="off"
               name="message"
-              placeholder={`${copy.fields.messageLabel}\n\n${copy.fields.messageHint}`}
+              placeholder={`${renderText(copy.fields.messageLabel)}\n\n${renderText(copy.fields.messageHint)}`}
             />
           </Form.Field>
 
@@ -564,7 +574,7 @@ export function PartnerApplicationModal({
                 strokeColor="none"
               />
               <SubmitLabel>
-                {isSubmitting ? copy.submitInFlight : copy.submit}
+                {renderText(isSubmitting ? copy.submitInFlight : copy.submit)}
               </SubmitLabel>
             </SubmitButton>
           </Modal.Footer>

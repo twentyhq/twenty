@@ -467,9 +467,10 @@ export class WorkflowExecutorWorkspaceService {
     workflowRunId: string;
     workspaceId: string;
   }) {
-    // TODO: re-enable workflow node execution credit cap once billing limits are revisited.
-    // Previously gated on BillingService.canBillMeteredProduct(WORKFLOW_NODE_EXECUTION);
-    // temporarily disabled so workflows keep running when the period cap is reached.
+    // Credit-cap enforcement lives at the AI entry points (chat resolver,
+    // executeAgent, generate-text controller, title generation). Cheap
+    // workflow steps (DB CRUD, branching, actions) are not gated here so a
+    // chat-driven cap exhaustion does not block non-AI automations.
     const stepId = step.id;
 
     const workflowAction = this.workflowActionFactory.get(step.type);

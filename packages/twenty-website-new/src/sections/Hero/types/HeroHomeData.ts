@@ -1,5 +1,3 @@
-import type { HeroBaseDataType } from '@/sections/Hero/types/HeroBaseData';
-
 export type HeroCellText = {
   type: 'text';
   targetLabel?: string;
@@ -192,8 +190,4 @@ export type HeroVisualType = {
   workspaceNav: HeroSidebarEntry[];
   tableWidth?: number;
   actions?: string[];
-};
-
-export type HeroHomeDataType = HeroBaseDataType & {
-  visual: HeroVisualType;
 };

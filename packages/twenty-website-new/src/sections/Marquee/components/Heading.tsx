@@ -1,7 +1,7 @@
-import type { HeadingType } from '@/design-system/components/Heading';
+import type { MessageHeadingSegment } from '@/lib/i18n/message-heading-segment';
 
 type HeadingProps = {
-  segments: HeadingType[];
+  segments: MessageHeadingSegment[];
 };
 
 export function Heading(_props: HeadingProps) {

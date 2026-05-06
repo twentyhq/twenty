@@ -1,10 +1,10 @@
-import { useApplicationAvatarColors } from '@/applications/hooks/useApplicationAvatarColors';
 import { OBJECT_SETTINGS_WIDTH } from '@/settings/data-model/constants/ObjectSettings';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { Avatar, IconEyeOff } from 'twenty-ui/display';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { getApplicationDescriptionSummary } from '~/pages/settings/applications/utils/getApplicationDescriptionSummary';
+import { useApplicationChipData } from '@/applications/hooks/useApplicationChipData';
 
 type SettingsApplicationDetailTitleProps = {
   displayName: string;
@@ -72,18 +72,14 @@ const StyledUnlistedBanner = styled.div`
 export const SettingsApplicationDetailTitle = ({
   displayName,
   description,
-  logoUrl,
   applicationId,
-  applicationName,
-  universalIdentifier,
   isUnlisted = false,
 }: SettingsApplicationDetailTitleProps) => {
-  const colors = useApplicationAvatarColors({
-    id: applicationId,
-    name: applicationName,
-    universalIdentifier,
-  });
   const descriptionSummary = getApplicationDescriptionSummary(description);
+
+  const { applicationChipData } = useApplicationChipData({
+    applicationId,
+  });
 
   return (
     <StyledTitleContainer>
@@ -99,12 +95,12 @@ export const SettingsApplicationDetailTitle = ({
             <Avatar
               type="app"
               size="lg"
-              avatarUrl={logoUrl}
-              placeholder={displayName}
-              placeholderColorSeed={universalIdentifier ?? displayName}
-              color={colors?.color}
-              backgroundColor={colors?.backgroundColor}
-              borderColor={colors?.borderColor}
+              avatarUrl={applicationChipData.logo}
+              placeholder={applicationChipData.name}
+              placeholderColorSeed={applicationChipData.seed}
+              color={applicationChipData.colors?.color}
+              backgroundColor={applicationChipData.colors?.backgroundColor}
+              borderColor={applicationChipData.colors?.borderColor}
             />
             <StyledAppName>{displayName}</StyledAppName>
           </StyledHeaderTop>

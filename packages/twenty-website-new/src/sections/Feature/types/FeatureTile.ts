@@ -1,10 +1,10 @@
-import type { BodyType } from '@/design-system/components/Body';
-import type { HeadingType } from '@/design-system/components/Heading';
+import type { MessageBody } from '@/lib/i18n/message-body';
+import type { MessageHeadingSegment } from '@/lib/i18n/message-heading-segment';
 import type { ImageType } from '@/design-system/components/Image';
 
 export type FeatureTileType = {
-  bullets: BodyType[];
-  heading: HeadingType;
+  bullets: MessageBody[];
+  heading: MessageHeadingSegment;
   icon: string;
   image: ImageType;
 };

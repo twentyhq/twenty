@@ -1,4 +1,4 @@
-const DEFAULT_MAX_ACTIVE_WEBGL_CONTEXTS = 8;
+const DEFAULT_MAX_ACTIVE_WEBGL_CONTEXTS = 6;
 
 function readNumberEnv(value: string | undefined, fallback: number): number {
   if (value === undefined) {

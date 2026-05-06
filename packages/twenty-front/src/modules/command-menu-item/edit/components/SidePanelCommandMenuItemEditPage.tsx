@@ -1,15 +1,13 @@
 import { CommandMenuItemEditRecordSelectionDropdown } from '@/command-menu-item/edit/components/CommandMenuItemEditRecordSelectionDropdown';
 import { CommandMenuItemOptionsDropdown } from '@/command-menu-item/edit/components/CommandMenuItemOptionsDropdown';
+import { useEditableCommandMenuItems } from '@/command-menu-item/edit/hooks/useEditableCommandMenuItems';
 import { useReorderCommandMenuItemsInDraft } from '@/command-menu-item/edit/hooks/useReorderCommandMenuItemsInDraft';
 import { useResetCommandMenuItemsDraft } from '@/command-menu-item/edit/hooks/useResetCommandMenuItemsDraft';
 import { useUpdateCommandMenuItemInDraft } from '@/command-menu-item/edit/hooks/useUpdateCommandMenuItemInDraft';
-import { commandMenuItemsDraftState } from '@/command-menu-item/edit/states/commandMenuItemsDraftState';
-import { useCommandMenuContextApi } from '@/command-menu-item/hooks/useCommandMenuContextApi';
+import { useCurrentCommandMenuContextApi } from '@/command-menu-item/hooks/useCurrentCommandMenuContextApi';
 import { commandMenuItemsSelector } from '@/command-menu-item/states/commandMenuItemsSelector';
-import { doesCommandMenuItemMatchObjectMetadataId } from '@/command-menu-item/utils/doesCommandMenuItemMatchObjectMetadataId';
 import { groupCommandMenuItems } from '@/command-menu-item/utils/groupCommandMenuItems';
 import { COMMAND_MENU_CLICK_OUTSIDE_ID } from '@/command-menu/constants/CommandMenuClickOutsideId';
-import { mainContextStoreHasSelectedRecordsSelector } from '@/context-store/states/selectors/mainContextStoreHasSelectedRecordsSelector';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelList } from '@/side-panel/components/SidePanelList';
 import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
@@ -36,10 +34,7 @@ import {
 import { Button } from 'twenty-ui/input';
 import { MenuItem, MenuItemDraggable } from 'twenty-ui/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import {
-  CommandMenuItemAvailabilityType,
-  type CommandMenuItemFieldsFragment,
-} from '~/generated-metadata/graphql';
+import { type CommandMenuItemFieldsFragment } from '~/generated-metadata/graphql';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 
 const StyledContainer = styled.div`
@@ -66,7 +61,7 @@ const StyledContent = styled.div`
 export const SidePanelCommandMenuItemEditPage = () => {
   const { t } = useLingui();
   const { getIcon } = useIcons();
-  const commandMenuContextApi = useCommandMenuContextApi();
+  const commandMenuContextApi = useCurrentCommandMenuContextApi();
 
   const currentObjectMetadataItemId =
     commandMenuContextApi.objectMetadataItem.id;
@@ -76,44 +71,20 @@ export const SidePanelCommandMenuItemEditPage = () => {
   const isRecordPage =
     commandMenuContextApi.pageType === ContextStorePageType.Record;
 
-  const isIndexPage =
-    commandMenuContextApi.pageType === ContextStorePageType.Index;
-
-  const mainContextStoreHasSelectedRecords = useAtomStateValue(
-    mainContextStoreHasSelectedRecordsSelector,
-  );
-
   const sidePanelSearch = useAtomStateValue(sidePanelSearchState);
 
   const commandMenuItems = useAtomStateValue(commandMenuItemsSelector);
   const serverItemsById = new Map(
     commandMenuItems.map((item) => [item.id, item]),
   );
-  const commandMenuItemsDraft =
-    useAtomStateValue(commandMenuItemsDraftState) ?? [];
   const { updateCommandMenuItemInDraft } = useUpdateCommandMenuItemInDraft();
   const { reorderCommandMenuItemInDraft } = useReorderCommandMenuItemsInDraft();
   const { resetCommandMenuItemsDraft } = useResetCommandMenuItemsDraft();
 
-  const allowedAvailabilityTypes = new Set<CommandMenuItemAvailabilityType>([
-    CommandMenuItemAvailabilityType.GLOBAL,
-    ...(isIndexPage || isRecordPage
-      ? [CommandMenuItemAvailabilityType.GLOBAL_OBJECT_CONTEXT]
-      : []),
-    ...(mainContextStoreHasSelectedRecords
-      ? [CommandMenuItemAvailabilityType.RECORD_SELECTION]
-      : []),
-  ]);
-
-  const filteredCommandMenuItems = commandMenuItemsDraft
-    .filter(
-      doesCommandMenuItemMatchObjectMetadataId(currentObjectMetadataItemId),
-    )
-    .filter((item) => allowedAvailabilityTypes.has(item.availabilityType))
-    .sort((firstItem, secondItem) => firstItem.position - secondItem.position);
+  const editableCommandMenuItems = useEditableCommandMenuItems();
 
   const filteredCommandMenuItemIds = new Set(
-    filteredCommandMenuItems.map((item) => item.id),
+    editableCommandMenuItems.map((item) => item.id),
   );
 
   const getDisplayLabel = (item: CommandMenuItemFieldsFragment) =>
@@ -123,7 +94,7 @@ export const SidePanelCommandMenuItemEditPage = () => {
     }) ?? item.label;
 
   const { pinned: allPinnedItems, other: allOtherItems } =
-    groupCommandMenuItems(filteredCommandMenuItems);
+    groupCommandMenuItems(editableCommandMenuItems);
 
   const normalizedSearch =
     sidePanelSearch.length > 0

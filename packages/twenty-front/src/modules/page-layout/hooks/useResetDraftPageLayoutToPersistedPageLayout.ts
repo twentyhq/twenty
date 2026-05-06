@@ -9,6 +9,8 @@ import { fieldsWidgetUngroupedFieldsPersistedComponentState } from '@/page-layou
 import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutPersistedComponentState } from '@/page-layout/states/pageLayoutPersistedComponentState';
+import { recordTableWidgetViewDraftComponentState } from '@/page-layout/states/recordTableWidgetViewDraftComponentState';
+import { recordTableWidgetViewPersistedComponentState } from '@/page-layout/states/recordTableWidgetViewPersistedComponentState';
 import { convertPageLayoutToTabLayouts } from '@/page-layout/utils/convertPageLayoutToTabLayouts';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
@@ -83,6 +85,17 @@ export const useResetDraftPageLayoutToPersistedPageLayout = ({
       componentInstanceId,
     );
 
+  const recordTableWidgetViewDraftState = useAtomComponentStateCallbackState(
+    recordTableWidgetViewDraftComponentState,
+    componentInstanceId,
+  );
+
+  const recordTableWidgetViewPersistedState =
+    useAtomComponentStateCallbackState(
+      recordTableWidgetViewPersistedComponentState,
+      componentInstanceId,
+    );
+
   const resetDraftPageLayoutToPersistedPageLayout = useCallback(() => {
     const pageLayoutPersisted = store.get(pageLayoutPersistedState);
 
@@ -132,6 +145,14 @@ export const useResetDraftPageLayoutToPersistedPageLayout = ({
         fieldsWidgetEditorModeDraftState,
         fieldsWidgetEditorModePersisted,
       );
+
+      const recordTableWidgetViewPersisted = store.get(
+        recordTableWidgetViewPersistedState,
+      );
+      store.set(
+        recordTableWidgetViewDraftState,
+        recordTableWidgetViewPersisted,
+      );
     }
   }, [
     pageLayoutDraftState,
@@ -143,6 +164,8 @@ export const useResetDraftPageLayoutToPersistedPageLayout = ({
     fieldsWidgetUngroupedFieldsPersistedState,
     fieldsWidgetEditorModeDraftState,
     fieldsWidgetEditorModePersistedState,
+    recordTableWidgetViewDraftState,
+    recordTableWidgetViewPersistedState,
     activeTabId,
     store,
   ]);

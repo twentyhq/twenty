@@ -1,0 +1,434 @@
+---
+title: CLI & Testare
+description: Comenzi CLI, configurare pentru testare, resurse publice, pachete npm, remote-uri și configurare CI.
+icon: terminal
+---
+
+## Resurse publice (folderul `public/`)
+
+Folderul `public/` din rădăcina aplicației conține fișiere statice — imagini, pictograme, fonturi sau orice alte resurse de care are nevoie aplicația la rulare. Aceste fișiere sunt incluse automat în build-uri, sincronizate în timpul modului de dezvoltare și încărcate pe server.
+
+Fișierele plasate în `public/` sunt:
+
+* **Accesibile public** — odată sincronizate pe server, resursele sunt servite la un URL public. Nu este necesară autentificarea pentru a le accesa.
+* **Disponibile în componentele frontend** — folosiți URL-urile resurselor pentru a afișa imagini, pictograme sau orice media în componentele React.
+* **Disponibile în funcțiile logice** — referiți URL-urile resurselor în e-mailuri, răspunsuri API sau orice logică pe server.
+* **Utilizate pentru metadatele marketplace-ului** — câmpurile `logoUrl` și `screenshots` din `defineApplication()` fac referire la fișiere din acest folder (de ex., `public/logo.png`). Acestea sunt afișate în marketplace când aplicația este publicată.
+* **Sincronizate automat în modul de dezvoltare** — când adăugați, actualizați sau ștergeți un fișier în `public/`, acesta este sincronizat automat cu serverul. Nu este nevoie de repornire.
+* **Incluse în build-uri** — `yarn twenty build` împachetează toate resursele publice în outputul de distribuție.
+
+### Accesarea resurselor publice cu `getPublicAssetUrl`
+
+Utilizați helperul `getPublicAssetUrl` din `twenty-sdk` pentru a obține URL-ul complet al unui fișier din directorul `public/`. Funcționează atât în funcții logice, cât și în componente frontend.
+
+**Într-o funcție logică:**
+
+```ts src/logic-functions/send-invoice.ts
+import { defineLogicFunction, getPublicAssetUrl } from 'twenty-sdk/define';
+
+const handler = async (): Promise<any> => {
+  const logoUrl = getPublicAssetUrl('logo.png');
+  const invoiceUrl = getPublicAssetUrl('templates/invoice.png');
+
+  // Fetch the file content (no auth required — public endpoint)
+  const response = await fetch(invoiceUrl);
+  const buffer = await response.arrayBuffer();
+
+  return { logoUrl, size: buffer.byteLength };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: 'a1b2c3d4-...',
+  name: 'send-invoice',
+  description: 'Sends an invoice with the app logo',
+  timeoutSeconds: 10,
+  handler,
+});
+```
+
+**Într-o componentă frontend:**
+
+```tsx src/front-components/company-card.tsx
+import { defineFrontComponent, getPublicAssetUrl } from 'twenty-sdk/define';
+
+export default defineFrontComponent(() => {
+  const logoUrl = getPublicAssetUrl('logo.png');
+
+  return <img src={logoUrl} alt="App logo" />;
+});
+```
+
+Argumentul `path` este relativ la folderul `public/` al aplicației. Atât `getPublicAssetUrl('logo.png')`, cât și `getPublicAssetUrl('public/logo.png')` se rezolvă la același URL — prefixul `public/` este eliminat automat dacă este prezent.
+
+## Utilizarea pachetelor npm
+
+Puteți instala și utiliza orice pachet npm în aplicația dvs. Atât funcțiile logice, cât și componentele frontend sunt împachetate cu [esbuild](https://esbuild.github.io/), care integrează toate dependențele în output — nu sunt necesare `node_modules` la rulare.
+
+### Instalarea unui pachet
+
+```bash filename="Terminal"
+yarn add axios
+```
+
+Apoi importați-l în codul dvs.:
+
+```ts src/logic-functions/fetch-data.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import axios from 'axios';
+
+const handler = async (): Promise<any> => {
+  const { data } = await axios.get('https://api.example.com/data');
+
+  return { data };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: '...',
+  name: 'fetch-data',
+  description: 'Fetches data from an external API',
+  timeoutSeconds: 10,
+  handler,
+});
+```
+
+Același lucru funcționează și pentru componentele frontend:
+
+```tsx src/front-components/chart.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { format } from 'date-fns';
+
+const DateWidget = () => {
+  return <p>Today is {format(new Date(), 'MMMM do, yyyy')}</p>;
+};
+
+export default defineFrontComponent({
+  universalIdentifier: '...',
+  name: 'date-widget',
+  component: DateWidget,
+});
+```
+
+### Cum funcționează împachetarea
+
+Pasul de build folosește esbuild pentru a produce un singur fișier autonom pentru fiecare funcție logică și pentru fiecare componentă frontend. Toate pachetele importate sunt integrate în bundle.
+
+**Funcțiile logice** rulează într-un mediu Node.js. Modulele built-in Node (`fs`, `path`, `crypto`, `http` etc.) sunt disponibile și nu trebuie instalate.
+
+**Componentele frontend** rulează într-un Web Worker. Modulele built-in Node nu sunt disponibile — doar API-urile de browser și pachetele npm care funcționează într-un mediu de browser.
+
+Ambele medii au `twenty-client-sdk/core` și `twenty-client-sdk/metadata` disponibile ca module pre-furnizate — acestea nu sunt incluse în bundle, ci sunt rezolvate la rulare de către server.
+
+## Testarea aplicației
+
+SDK-ul oferă API-uri programatice care vă permit să construiți, să distribuiți, să instalați și să dezinstalați aplicația din codul de test. Combinat cu [Vitest](https://vitest.dev/) și clienții API tipizați, puteți scrie teste de integrare care verifică faptul că aplicația funcționează cap-coadă împotriva unui server Twenty real.
+
+### Configurare
+
+Aplicația generată (scaffolded) include deja Vitest. Dacă o configurați manual, instalați dependențele:
+
+```bash filename="Terminal"
+yarn add -D vitest vite-tsconfig-paths
+```
+
+Creați un `vitest.config.ts` în rădăcina aplicației:
+
+```ts vitest.config.ts
+import tsconfigPaths from 'vite-tsconfig-paths';
+import { defineConfig } from 'vitest/config';
+
+export default defineConfig({
+  plugins: [
+    tsconfigPaths({
+      projects: ['tsconfig.spec.json'],
+      ignoreConfigErrors: true,
+    }),
+  ],
+  test: {
+    testTimeout: 120_000,
+    hookTimeout: 120_000,
+    include: ['src/**/*.integration-test.ts'],
+    setupFiles: ['src/__tests__/setup-test.ts'],
+    env: {
+      TWENTY_API_URL: 'http://localhost:2020',
+      TWENTY_API_KEY: 'your-api-key',
+    },
+  },
+});
+```
+
+Creați un fișier de configurare care verifică faptul că serverul este accesibil înainte de rularea testelor:
+
+```ts src/__tests__/setup-test.ts
+import * as fs from 'fs';
+import * as os from 'os';
+import * as path from 'path';
+import { beforeAll } from 'vitest';
+
+const TWENTY_API_URL = process.env.TWENTY_API_URL ?? 'http://localhost:2020';
+const TEST_CONFIG_DIR = path.join(os.tmpdir(), '.twenty-sdk-test');
+
+beforeAll(async () => {
+  // Verify the server is running
+  const response = await fetch(`${TWENTY_API_URL}/healthz`);
+
+  if (!response.ok) {
+    throw new Error(
+      `Twenty server is not reachable at ${TWENTY_API_URL}. ` +
+        'Start the server before running integration tests.',
+    );
+  }
+
+  // Write a temporary config for the SDK
+  fs.mkdirSync(TEST_CONFIG_DIR, { recursive: true });
+
+  fs.writeFileSync(
+    path.join(TEST_CONFIG_DIR, 'config.json'),
+    JSON.stringify({
+      remotes: {
+        local: {
+          apiUrl: process.env.TWENTY_API_URL,
+          apiKey: process.env.TWENTY_API_KEY,
+        },
+      },
+      defaultRemote: 'local',
+    }, null, 2),
+  );
+});
+```
+
+### API-uri SDK programatice
+
+Subruta `twenty-sdk/cli` exportă funcții pe care le puteți apela direct din codul de test:
+
+| Funcție        | Descriere                                                 |
+| -------------- | --------------------------------------------------------- |
+| `appBuild`     | Construiți aplicația și, opțional, împachetați un tarball |
+| `appDeploy`    | Încărcați un tarball pe server                            |
+| `appInstall`   | Instalați aplicația în spațiul de lucru activ             |
+| `appUninstall` | Dezinstalați aplicația din spațiul de lucru activ         |
+
+Fiecare funcție returnează un obiect rezultat cu `success: boolean` și fie `data`, fie `error`.
+
+### Scrierea unui test de integrare
+
+Iată un exemplu complet care construiește, distribuie și instalează aplicația, apoi verifică faptul că aceasta apare în spațiul de lucru:
+
+```ts src/__tests__/app-install.integration-test.ts
+import { APPLICATION_UNIVERSAL_IDENTIFIER } from 'src/application-config';
+import { appBuild, appDeploy, appInstall, appUninstall } from 'twenty-sdk/cli';
+import { MetadataApiClient } from 'twenty-client-sdk/metadata';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+
+const APP_PATH = process.cwd();
+
+describe('App installation', () => {
+  beforeAll(async () => {
+    const buildResult = await appBuild({
+      appPath: APP_PATH,
+      tarball: true,
+      onProgress: (message: string) => console.log(`[build] ${message}`),
+    });
+
+    if (!buildResult.success) {
+      throw new Error(`Build failed: ${buildResult.error?.message}`);
+    }
+
+    const deployResult = await appDeploy({
+      tarballPath: buildResult.data.tarballPath!,
+      onProgress: (message: string) => console.log(`[deploy] ${message}`),
+    });
+
+    if (!deployResult.success) {
+      throw new Error(`Deploy failed: ${deployResult.error?.message}`);
+    }
+
+    const installResult = await appInstall({ appPath: APP_PATH });
+
+    if (!installResult.success) {
+      throw new Error(`Install failed: ${installResult.error?.message}`);
+    }
+  });
+
+  afterAll(async () => {
+    await appUninstall({ appPath: APP_PATH });
+  });
+
+  it('should find the installed app in the workspace', async () => {
+    const metadataClient = new MetadataApiClient();
+
+    const result = await metadataClient.query({
+      findManyApplications: {
+        id: true,
+        name: true,
+        universalIdentifier: true,
+      },
+    });
+
+    const installedApp = result.findManyApplications.find(
+      (app: { universalIdentifier: string }) =>
+        app.universalIdentifier === APPLICATION_UNIVERSAL_IDENTIFIER,
+    );
+
+    expect(installedApp).toBeDefined();
+  });
+});
+```
+
+### Rularea testelor
+
+Asigurați-vă că serverul Twenty local rulează, apoi:
+
+```bash filename="Terminal"
+yarn test
+```
+
+Sau în modul watch în timpul dezvoltării:
+
+```bash filename="Terminal"
+yarn test:watch
+```
+
+### Verificarea tipurilor
+
+Puteți rula și verificarea tipurilor pe aplicație fără a rula testele:
+
+```bash filename="Terminal"
+yarn twenty typecheck
+```
+
+Aceasta rulează `tsc --noEmit` și raportează orice erori de tip.
+
+## Referință CLI
+
+Dincolo de `dev`, `build`, `add` și `typecheck`, CLI oferă comenzi pentru executarea funcțiilor, vizualizarea jurnalelor și gestionarea instalărilor de aplicații.
+
+### Executarea funcțiilor (`yarn twenty exec`)
+
+Rulați manual o funcție logică fără a o declanșa prin HTTP, cron sau eveniment de bază de date:
+
+```bash filename="Terminal"
+# Execute by function name
+yarn twenty exec -n create-new-post-card
+
+# Execute by universalIdentifier
+yarn twenty exec -u e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf
+
+# Pass a JSON payload
+yarn twenty exec -n create-new-post-card -p '{"name": "Hello"}'
+
+# Execute the post-install function
+yarn twenty exec --postInstall
+```
+
+### Vizualizarea jurnalelor funcțiilor (`yarn twenty logs`)
+
+Transmiteți în flux jurnalele de execuție pentru funcțiile logice ale aplicației:
+
+```bash filename="Terminal"
+# Stream all function logs
+yarn twenty logs
+
+# Filter by function name
+yarn twenty logs -n create-new-post-card
+
+# Filter by universalIdentifier
+yarn twenty logs -u e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf
+```
+
+<Note>
+Acest lucru este diferit de `yarn twenty server logs`, care afișează jurnalele containerului Docker. `yarn twenty logs` afișează jurnalele de execuție ale funcțiilor aplicației de pe serverul Twenty.
+</Note>
+
+### Dezinstalarea unei aplicații (`yarn twenty uninstall`)
+
+Eliminați aplicația din spațiul de lucru activ:
+
+```bash filename="Terminal"
+yarn twenty uninstall
+
+# Skip the confirmation prompt
+yarn twenty uninstall --yes
+```
+
+## Gestionarea remote-urilor
+
+Un „remote” este un server Twenty la care se conectează aplicația. În timpul configurării, Scaffolderul creează automat unul pentru dvs. Puteți adăuga mai multe remote-uri sau comuta între ele oricând.
+
+```bash filename="Terminal"
+# Add a new remote (opens a browser for OAuth login)
+yarn twenty remote add
+
+# Connect to a local Twenty server (auto-detects port 2020 or 3000)
+yarn twenty remote add --local
+
+# Add a remote non-interactively (useful for CI)
+yarn twenty remote add --api-url https://your-twenty-server.com --api-key $TWENTY_API_KEY --as my-remote
+
+# List all configured remotes
+yarn twenty remote list
+
+# Switch the active remote
+yarn twenty remote switch <name>
+```
+
+Acreditările dvs. sunt stocate în `~/.twenty/config.json`.
+
+## CI cu GitHub Actions
+
+Scaffolderul generează un workflow GitHub Actions gata de utilizare în `.github/workflows/ci.yml`. Rulează automat testele de integrare la fiecare push pe `main` și la pull request-uri.
+
+Workflow-ul:
+
+1. Preia codul
+2. Pornește un server Twenty temporar folosind acțiunea `twentyhq/twenty/.github/actions/spawn-twenty-docker-image`
+3. Instalează dependențele cu `yarn install --immutable`
+4. Rulează `yarn test` cu `TWENTY_API_URL` și `TWENTY_API_KEY` injectate din rezultatele acțiunii
+
+```yaml .github/workflows/ci.yml
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request: {}
+
+env:
+  TWENTY_VERSION: latest
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Spawn Twenty instance
+        id: twenty
+        uses: twentyhq/twenty/.github/actions/spawn-twenty-docker-image@main
+        with:
+          twenty-version: ${{ env.TWENTY_VERSION }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'yarn'
+
+      - name: Install dependencies
+        run: yarn install --immutable
+
+      - name: Run integration tests
+        run: yarn test
+        env:
+          TWENTY_API_URL: ${{ steps.twenty.outputs.server-url }}
+          TWENTY_API_KEY: ${{ steps.twenty.outputs.access-token }}
+```
+
+Nu trebuie să configurați niciun secret — acțiunea `spawn-twenty-docker-image` pornește un server Twenty efemer direct în runner și oferă detaliile de conectare. Secretul `GITHUB_TOKEN` este furnizat automat de GitHub.
+
+Pentru a fixa o versiune Twenty specifică în loc de `latest`, modificați variabila de mediu `TWENTY_VERSION` din partea de sus a workflow-ului.

@@ -56,7 +56,7 @@ export function ReleaseEntry({ content, date, release }: ReleaseEntryProps) {
   const displayDate = formatReleaseDisplayDate(date);
 
   return (
-    <ArticleRow>
+    <ArticleRow id={release}>
       <MetaColumn>
         <Version>{release}</Version>
         <DateText>{displayDate || 'TBD'}</DateText>

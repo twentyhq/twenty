@@ -28,13 +28,14 @@ export const fromLogicFunctionManifestToUniversalFlatLogicFunction = ({
     builtHandlerPath: logicFunctionManifest.builtHandlerPath,
     handlerName: logicFunctionManifest.handlerName,
     checksum: logicFunctionManifest.builtHandlerChecksum,
-    toolInputSchema: logicFunctionManifest.toolInputSchema,
-    isTool: logicFunctionManifest.isTool ?? false,
     cronTriggerSettings: logicFunctionManifest.cronTriggerSettings ?? null,
     databaseEventTriggerSettings:
       logicFunctionManifest.databaseEventTriggerSettings ?? null,
     httpRouteTriggerSettings:
       logicFunctionManifest.httpRouteTriggerSettings ?? null,
+    toolTriggerSettings: logicFunctionManifest.toolTriggerSettings ?? null,
+    workflowActionTriggerSettings:
+      logicFunctionManifest.workflowActionTriggerSettings ?? null,
     isBuildUpToDate: true,
     createdAt: now,
     updatedAt: now,

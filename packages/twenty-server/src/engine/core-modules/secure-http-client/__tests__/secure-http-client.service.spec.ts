@@ -11,6 +11,14 @@ jest.mock('axios-retry', () => ({
   default: jest.fn(),
 }));
 
+jest.mock('@lifeomic/axios-fetch', () => ({
+  buildAxiosFetch: jest.fn(() => jest.fn()),
+}));
+
+import { buildAxiosFetch } from '@lifeomic/axios-fetch';
+
+const mockBuildAxiosFetch = jest.mocked(buildAxiosFetch);
+
 jest.mock(
   'src/engine/core-modules/secure-http-client/utils/resolve-and-validate-hostname.util',
   () => ({
@@ -312,6 +320,37 @@ describe('SecureHttpClientService', () => {
       await expect(
         service.getValidatedHost('https://my-local-server.local/'),
       ).rejects.toThrow('internal IP address');
+    });
+  });
+
+  describe('createSsrfSafeFetch', () => {
+    beforeEach(() => {
+      mockBuildAxiosFetch.mockClear();
+    });
+
+    it('should return globalThis.fetch when safe mode is off', () => {
+      const service = new SecureHttpClientService(createMockConfigService());
+
+      const result = service.createSsrfSafeFetch();
+
+      expect(result).toBe(globalThis.fetch);
+      expect(mockBuildAxiosFetch).not.toHaveBeenCalled();
+    });
+
+    it('should wrap an SSRF-protected axios client when safe mode is on', () => {
+      const service = new SecureHttpClientService(
+        createMockConfigService({ OUTBOUND_HTTP_SAFE_MODE_ENABLED: true }),
+      );
+
+      service.createSsrfSafeFetch();
+
+      expect(mockBuildAxiosFetch).toHaveBeenCalledTimes(1);
+      const axiosClient = mockBuildAxiosFetch.mock.calls[0][0] as ReturnType<
+        SecureHttpClientService['getHttpClient']
+      >;
+
+      expect(axiosClient.defaults.httpAgent).toBeInstanceOf(http.Agent);
+      expect(axiosClient.defaults.httpsAgent).toBeInstanceOf(https.Agent);
     });
   });
 

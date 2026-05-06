@@ -1,6 +1,7 @@
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { useLoadRecordIndexStates } from '@/object-record/record-index/hooks/useLoadRecordIndexStates';
 import { lastLoadedRecordTableWidgetViewIdComponentState } from '@/object-record/record-table-widget/states/lastLoadedRecordTableWidgetViewIdComponentState';
+import { computeRecordTableWidgetViewLoadContentSignature } from '@/object-record/record-table-widget/utils/computeRecordTableWidgetViewLoadContentSignature';
 import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
 import { recordTableWidgetViewDraftByWidgetIdComponentFamilySelector } from '@/page-layout/states/selectors/recordTableWidgetViewDraftByWidgetIdComponentFamilySelector';
 import { constructViewFromRecordTableWidgetViewSnapshot } from '@/page-layout/widgets/record-table/utils/constructViewFromRecordTableWidgetViewSnapshot';
@@ -60,11 +61,17 @@ export const RecordTableWidgetViewLoadEffect = ({
       return;
     }
 
-    if (
+    const contentSignature =
+      computeRecordTableWidgetViewLoadContentSignature(currentView);
+
+    const lastLoadedMatches =
       viewId === lastLoadedRecordTableWidgetViewId?.viewId &&
       objectMetadataItem.updatedAt ===
-        lastLoadedRecordTableWidgetViewId?.objectMetadataItemUpdatedAt
-    ) {
+        lastLoadedRecordTableWidgetViewId?.objectMetadataItemUpdatedAt &&
+      contentSignature ===
+        lastLoadedRecordTableWidgetViewId?.loadedViewContentSignature;
+
+    if (lastLoadedMatches) {
       return;
     }
 
@@ -73,6 +80,7 @@ export const RecordTableWidgetViewLoadEffect = ({
     setLastLoadedRecordTableWidgetViewId({
       viewId,
       objectMetadataItemUpdatedAt: objectMetadataItem.updatedAt,
+      loadedViewContentSignature: contentSignature,
     });
   }, [
     viewId,

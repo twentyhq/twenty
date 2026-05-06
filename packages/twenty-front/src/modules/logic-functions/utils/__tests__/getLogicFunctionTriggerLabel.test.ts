@@ -23,8 +23,20 @@ describe('getLogicFunctionTriggerLabel', () => {
     expect(getLogicFunctionTriggerLabel({}, {})).toBe('');
   });
 
-  it('returns AI tool when isTool is set', () => {
-    expect(getLogicFunctionTriggerLabel({ isTool: true })).toBe('AI tool');
+  it('returns AI tool when toolTriggerSettings is set', () => {
+    expect(
+      getLogicFunctionTriggerLabel({
+        toolTriggerSettings: { inputSchema: { type: 'object' } },
+      }),
+    ).toBe('AI tool');
+  });
+
+  it('returns Workflow action when workflowActionTriggerSettings is set', () => {
+    expect(
+      getLogicFunctionTriggerLabel({
+        workflowActionTriggerSettings: { inputSchema: [] },
+      }),
+    ).toBe('Workflow action');
   });
 
   it('returns Cron when cron settings are present', () => {

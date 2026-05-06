@@ -17,6 +17,7 @@ import { type FlatApplication } from 'src/engine/core-modules/application/types/
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
+import { CommandMenuItemEntity } from 'src/engine/metadata-modules/command-menu-item/entities/command-menu-item.entity';
 import { ALL_FLAT_ENTITY_MAPS_PROPERTIES } from 'src/engine/metadata-modules/flat-entity/constant/all-flat-entity-maps-properties.constant';
 import { FrontComponentEntity } from 'src/engine/metadata-modules/front-component/entities/front-component.entity';
 import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
@@ -40,6 +41,8 @@ export class ApplicationService {
     private readonly agentRepository: Repository<AgentEntity>,
     @InjectRepository(FrontComponentEntity)
     private readonly frontComponentRepository: Repository<FrontComponentEntity>,
+    @InjectRepository(CommandMenuItemEntity)
+    private readonly commandMenuItemRepository: Repository<CommandMenuItemEntity>,
     @InjectRepository(ObjectMetadataEntity)
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     @InjectRepository(ApplicationVariableEntity)
@@ -187,6 +190,7 @@ export class ApplicationService {
       logicFunctions,
       agents,
       frontComponents,
+      commandMenuItems,
       objects,
       applicationVariables,
     ] = await Promise.all([
@@ -197,6 +201,9 @@ export class ApplicationService {
         where: { applicationId: application.id, workspaceId },
       }),
       this.frontComponentRepository.find({
+        where: { applicationId: application.id, workspaceId },
+      }),
+      this.commandMenuItemRepository.find({
         where: { applicationId: application.id, workspaceId },
       }),
       this.objectMetadataRepository.find({
@@ -210,6 +217,7 @@ export class ApplicationService {
     application.logicFunctions = logicFunctions;
     application.agents = agents;
     application.frontComponents = frontComponents;
+    application.commandMenuItems = commandMenuItems;
     application.objects = objects;
     application.applicationVariables = applicationVariables;
 

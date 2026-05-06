@@ -1,7 +1,7 @@
-import { BodyType } from '@/design-system/components/Body';
-import { HeadingType } from '@/design-system/components/Heading';
+import type { MessageBody } from '@/lib/i18n/message-body';
+import type { MessageHeadingSegment } from '@/lib/i18n/message-heading-segment';
 
 export type PlanPriceType = {
-  heading: HeadingType;
-  body: BodyType;
+  heading: MessageHeadingSegment;
+  body: MessageBody;
 };

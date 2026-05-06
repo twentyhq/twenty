@@ -16,6 +16,7 @@ import { TimelineCalendarEventService } from './timeline-calendar-event.service'
 type MockWorkspaceRepository = Partial<
   WorkspaceRepository<CalendarEventWorkspaceEntity>
 > & {
+  count: jest.Mock;
   find: jest.Mock;
   findAndCount: jest.Mock;
 };
@@ -40,6 +41,7 @@ describe('TimelineCalendarEventService', () => {
 
   beforeEach(async () => {
     mockCalendarEventRepository = {
+      count: jest.fn().mockResolvedValue(1),
       find: jest.fn(),
       findAndCount: jest.fn(),
     };

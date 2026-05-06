@@ -3,6 +3,7 @@ import { styled } from '@linaria/react';
 import type { ImageType } from '@/design-system/components/Image';
 import type { FeatureTileType } from '@/sections/Feature/types/FeatureTile';
 import { theme } from '@/theme';
+import type { MessageDescriptor } from '@lingui/core';
 
 import { TileContent } from './TileContent';
 import { TileVisual } from './TileVisual';
@@ -22,14 +23,15 @@ const TileRoot = styled.article`
 type TileProps = {
   index: number;
   mask: ImageType;
+  renderText: (descriptor: MessageDescriptor) => string;
   tile: FeatureTileType;
 };
 
-export function Tile({ index, mask, tile }: TileProps) {
+export function Tile({ index, mask, renderText, tile }: TileProps) {
   return (
     <TileRoot>
       <TileVisual image={tile.image} index={index} mask={mask} />
-      <TileContent tile={tile} />
+      <TileContent renderText={renderText} tile={tile} />
     </TileRoot>
   );
 }

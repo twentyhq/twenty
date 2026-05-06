@@ -4,6 +4,7 @@ import { Body, Heading } from '@/design-system/components';
 import { INFORMATIVE_ICONS } from '@/icons';
 import type { FeatureTileType } from '@/sections/Feature/types/FeatureTile';
 import { theme } from '@/theme';
+import type { MessageDescriptor } from '@lingui/core';
 
 const Content = styled.div`
   display: grid;
@@ -52,10 +53,11 @@ const BulletItem = styled.li`
 `;
 
 type TileContentProps = {
+  renderText: (descriptor: MessageDescriptor) => string;
   tile: FeatureTileType;
 };
 
-export function TileContent({ tile }: TileContentProps) {
+export function TileContent({ renderText, tile }: TileContentProps) {
   const Icon = INFORMATIVE_ICONS[tile.icon];
 
   return (
@@ -67,13 +69,25 @@ export function TileContent({ tile }: TileContentProps) {
           ) : null}
         </IconSlot>
         <HeadingWrap>
-          <Heading as="h3" segments={tile.heading} size="xs" weight="medium" />
+          <Heading
+            as="h3"
+            renderText={renderText}
+            segments={tile.heading}
+            size="xs"
+            weight="medium"
+          />
         </HeadingWrap>
       </TitleRow>
       <Bullets>
         {tile.bullets.map((bullet, bulletIndex) => (
           <BulletItem key={bulletIndex}>
-            <Body as="span" body={bullet} size="sm" weight="regular" />
+            <Body
+              as="span"
+              body={bullet}
+              renderText={renderText}
+              size="sm"
+              weight="regular"
+            />
           </BulletItem>
         ))}
       </Bullets>

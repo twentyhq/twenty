@@ -33,6 +33,11 @@ export const useActivities = <T extends Task | Note>({
     (activityTargets: (TaskTarget | NoteTarget)[]) => {
       for (const activityTarget of activityTargets) {
         const activity = activityTarget[objectNameSingular];
+
+        if (!isDefined(activity)) {
+          continue;
+        }
+
         store.set(recordStoreFamilyState.atomFamily(activity.id), activity);
       }
     },

@@ -1,11 +1,12 @@
 'use client';
 
-import { useCallback } from 'react';
+import { useCallback, useRef } from 'react';
 
 import { useScheduledOnScroll } from '@/lib/scroll';
 import type { HeadingCardType } from '@/sections/Helped/types/HeadingCard';
 import {
   applyHelpedSceneLayout,
+  createHelpedSceneLayoutState,
   type HelpedSceneLayoutRefs,
 } from '@/sections/Helped/utils/helped-scene-layout';
 
@@ -19,8 +20,13 @@ export function HelpedSceneScrollLayoutEffect({
   innerRef,
   sectionRef,
 }: HelpedSceneScrollLayoutEffectProps) {
+  const layoutStateRef = useRef(createHelpedSceneLayoutState());
   const runLayout = useCallback(() => {
-    applyHelpedSceneLayout({ cardRefs, innerRef, sectionRef }, cards);
+    applyHelpedSceneLayout(
+      { cardRefs, innerRef, sectionRef },
+      cards,
+      layoutStateRef.current,
+    );
   }, [cardRefs, cards, innerRef, sectionRef]);
 
   useScheduledOnScroll(runLayout);

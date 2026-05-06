@@ -1,5 +1,5 @@
 import { AiChatMessage } from '@/ai/components/AiChatMessage';
-import { agentChatNonLastMessageIdsComponentSelector } from '@/ai/states/agentChatNonLastMessageIdsComponentSelector';
+import { agentChatNonLastMessageIdsComponentSelector } from '@/ai/states/selectors/agentChatNonLastMessageIdsComponentSelector';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 
 export const AiChatNonLastMessageIdsList = () => {

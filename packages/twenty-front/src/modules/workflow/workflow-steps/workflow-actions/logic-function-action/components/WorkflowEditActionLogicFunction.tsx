@@ -81,17 +81,14 @@ export const WorkflowEditActionLogicFunction = ({
   );
 
   const functionInput = useMemo(() => {
-    const toolInputSchema = logicFunction?.toolInputSchema;
+    const inputSchema =
+      logicFunction?.workflowActionTriggerSettings?.inputSchema;
 
-    if (!isDefined(toolInputSchema)) {
+    if (!isDefined(inputSchema)) {
       return action.settings.input.logicFunctionInput ?? {};
     }
 
-    const schemaArray = Array.isArray(toolInputSchema)
-      ? toolInputSchema
-      : [toolInputSchema];
-
-    const defaultInput = getFunctionInputFromInputSchema(schemaArray)[0];
+    const defaultInput = getFunctionInputFromInputSchema(inputSchema)[0];
 
     if (!isObject(defaultInput)) {
       return action.settings.input.logicFunctionInput ?? {};
@@ -102,7 +99,7 @@ export const WorkflowEditActionLogicFunction = ({
       oldInput: action.settings.input.logicFunctionInput ?? {},
     });
   }, [
-    logicFunction?.toolInputSchema,
+    logicFunction?.workflowActionTriggerSettings?.inputSchema,
     action.settings.input.logicFunctionInput,
   ]);
 

@@ -3,6 +3,7 @@ import { filterSortableFieldMetadataItems } from '@/object-metadata/utils/filter
 import { RecordSortsComponentInstanceContext } from '@/object-record/record-sort/states/context/RecordSortsComponentInstanceContext';
 import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/utils/getRecordIndexIdFromObjectNamePluralAndViewId';
 import { useRecordTableWidgetViewForDisplay } from '@/page-layout/widgets/record-table/hooks/useRecordTableWidgetViewForDisplay';
+import { useRecordTableWidgetSortCallbacks } from '@/page-layout/widgets/record-table/hooks/useRecordTableWidgetSortCallbacks';
 import { RecordTableSettingsSortsContent } from '@/side-panel/pages/page-layout/components/record-table-settings/RecordTableSettingsSortsContent';
 import { RecordTableSettingsSortsInitializeStateEffect } from '@/side-panel/pages/page-layout/components/record-table-settings/RecordTableSettingsSortsInitializeStateEffect';
 import { InputLabel } from '@/ui/input/components/InputLabel';
@@ -50,6 +51,13 @@ export const RecordTableSettingsSorts = ({
     viewId,
   );
 
+  const { handleSortUpdate } = useRecordTableWidgetSortCallbacks({
+    pageLayoutId,
+    widgetId,
+    viewId,
+    recordIndexId,
+  });
+
   if (!isDefined(view)) {
     return null;
   }
@@ -82,6 +90,7 @@ export const RecordTableSettingsSorts = ({
         <RecordTableSettingsSortsContent
           sortableFieldOptions={sortableFieldOptions}
           directionOptions={directionOptions}
+          onUpdate={handleSortUpdate}
         />
         <RecordTableSettingsSortsInitializeStateEffect view={view} />
       </RecordSortsComponentInstanceContext.Provider>

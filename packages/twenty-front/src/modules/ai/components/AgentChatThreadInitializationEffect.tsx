@@ -8,15 +8,15 @@ import {
 } from '@/ai/states/agentChatDraftsByThreadIdState';
 import { agentChatInputState } from '@/ai/states/agentChatInputState';
 import { agentChatThreadsLoadingState } from '@/ai/states/agentChatThreadsLoadingState';
-import { agentChatThreadsSelector } from '@/ai/states/agentChatThreadsSelector';
 import { agentChatUsageComponentFamilyState } from '@/ai/states/agentChatUsageComponentFamilyState';
+import { agentChatVisibleThreadsSelector } from '@/ai/states/selectors/agentChatVisibleThreadsSelector';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { currentAiChatThreadTitleComponentFamilyState } from '@/ai/states/currentAiChatThreadTitleComponentFamilyState';
 import { hasInitializedAgentChatThreadsState } from '@/ai/states/hasInitializedAgentChatThreadsState';
 import { hasTriggeredCreateForDraftState } from '@/ai/states/hasTriggeredCreateForDraftState';
+import { sortChatThreadsByLastActivityDesc } from '@/ai/utils/sortChatThreadsByLastActivityDesc';
 import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
-import { type FlatAgentChatThread } from '@/metadata-store/types/FlatAgentChatThread';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
@@ -48,7 +48,9 @@ export const AgentChatThreadInitializationEffect = () => {
     agentChatUsageComponentFamilyState,
   );
   const store = useStore();
-  const agentChatThreads = useAtomStateValue(agentChatThreadsSelector);
+  const agentChatVisibleThreads = useAtomStateValue(
+    agentChatVisibleThreadsSelector,
+  );
   const storeEntry = useAtomValue(
     metadataStoreState.atomFamily('agentChatThreads'),
   );
@@ -63,17 +65,14 @@ export const AgentChatThreadInitializationEffect = () => {
     client
       .query({
         query: GetChatThreadsDocument,
-        variables: { paging: { first: 500 } },
         fetchPolicy: 'network-only',
       })
       .then((result) => {
-        if (!isDefined(result.data?.chatThreads?.edges)) {
+        if (!isDefined(result.data?.chatThreads)) {
           return;
         }
 
-        const threads = result.data.chatThreads.edges.map((edge) => edge.node);
-
-        replaceDraft('agentChatThreads', threads);
+        replaceDraft('agentChatThreads', result.data.chatThreads);
         applyChanges();
       });
   }, [
@@ -104,9 +103,8 @@ export const AgentChatThreadInitializationEffect = () => {
 
     setHasInitializedAgentChatThreads(true);
 
-    const sortedThreads = agentChatThreads.toSorted(
-      (a: FlatAgentChatThread, b: FlatAgentChatThread) =>
-        new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime(),
+    const sortedThreads = sortChatThreadsByLastActivityDesc(
+      agentChatVisibleThreads,
     );
 
     if (sortedThreads.length > 0) {
@@ -152,7 +150,7 @@ export const AgentChatThreadInitializationEffect = () => {
       );
     }
   }, [
-    agentChatThreads,
+    agentChatVisibleThreads,
     currentAiChatThread,
     hasAiSettingsPermission,
     hasInitializedAgentChatThreads,

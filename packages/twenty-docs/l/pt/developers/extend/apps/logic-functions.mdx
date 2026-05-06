@@ -141,11 +141,14 @@ const handler = async (event: RoutePayload) => {
 Os nomes dos cabeçalhos são normalizados para minúsculas. Acesse-os usando chaves em minúsculas (por exemplo, `event.headers['content-type']`).
 </Note>
 
-#### Expor uma função como ferramenta
+#### Expor uma função como ferramenta de IA ou como ação de fluxo de trabalho
 
-Funções lógicas podem ser expostas como **ferramentas** para agentes de IA e fluxos de trabalho. Quando marcada como ferramenta, uma função fica detectável pelos recursos de IA do Twenty e pode ser usada em automações de fluxos de trabalho.
+As funções de lógica podem ser expostas em duas superfícies, cada uma com seu próprio gatilho:
 
-Para marcar uma função de lógica como ferramenta, defina `isTool: true`:
+* **`toolTriggerSettings`** — torna a função disponível para os recursos de IA do Twenty (chat, MCP, chamadas de função). Usa o JSON Schema padrão, o formato que os LLMs entendem nativamente.
+* **`workflowActionTriggerSettings`** — torna a função visível como uma etapa no construtor visual de fluxos de trabalho. Usa o `InputSchema` avançado do Twenty para que o construtor possa renderizar editores de campo adequados, seletores de variáveis e rótulos.
+
+Uma função pode optar por uma, pela outra ou por ambas. Ficam ao lado de `cronTriggerSettings`, `databaseEventTriggerSettings` e `httpRouteTriggerSettings` — mesmo padrão, mesmo formato.
 
 ```ts src/logic-functions/enrich-company.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk/define';
@@ -175,31 +178,33 @@ export default defineLogicFunction({
   description: 'Enrich a company record with external data',
   timeoutSeconds: 10,
   handler,
-  isTool: true,
+  toolTriggerSettings: {},
 });
 ```
 
 Pontos-chave:
 
-* Você pode combinar `isTool` com gatilhos — uma função pode ser ao mesmo tempo uma ferramenta (chamável por agentes de IA) e acionada por eventos.
-* **`toolInputSchema`** (opcional): Um objeto JSON Schema que descreve os parâmetros que sua função aceita. O schema é calculado automaticamente a partir da análise estática do código-fonte, mas você pode defini-lo explicitamente:
+* Uma função pode misturar superfícies — declare tanto `toolTriggerSettings` quanto `workflowActionTriggerSettings` para expô-la no chat E no construtor de fluxos de trabalho.
+* `toolTriggerSettings.inputSchema` e `workflowActionTriggerSettings.inputSchema` são opcionais. Quando omitidos, o construtor de manifestos os infere a partir do código-fonte do handler (JSON Schema para a ferramenta de IA, `InputSchema` do Twenty para a ação de fluxo de trabalho). Forneça um explicitamente quando quiser uma tipagem mais rica — por exemplo, com campos compatíveis com `FieldMetadataType`, como `CURRENCY` ou `RELATION` para o construtor de fluxos de trabalho, ou com campos `description` que o agente de IA pode ler:
 
 ```ts
 export default defineLogicFunction({
   ...,
-  toolInputSchema: {
-    type: 'object',
-    properties: {
-      companyName: {
-        type: 'string',
-        description: 'The name of the company to enrich',
+  toolTriggerSettings: {
+    inputSchema: {
+      type: 'object',
+      properties: {
+        companyName: {
+          type: 'string',
+          description: 'The name of the company to enrich',
+        },
+        domain: {
+          type: 'string',
+          description: 'The company website domain (optional)',
+        },
       },
-      domain: {
-        type: 'string',
-        description: 'The company website domain (optional)',
-      },
+      required: ['companyName'],
     },
-    required: ['companyName'],
   },
 });
 ```
@@ -238,7 +243,7 @@ yarn twenty exec --postInstall
 ```
 
 Pontos-chave:
-* As funções de pós-instalação usam `definePostInstallLogicFunction()` — uma variante especializada que omite as configurações de gatilho (`cronTriggerSettings`, `databaseEventTriggerSettings`, `httpRouteTriggerSettings`, `isTool`).
+* As funções de pós-instalação usam `definePostInstallLogicFunction()` — uma variante especializada que omite as configurações de gatilho (`cronTriggerSettings`, `databaseEventTriggerSettings`, `httpRouteTriggerSettings`, `toolTriggerSettings`, `workflowActionTriggerSettings`).
 * O manipulador recebe um `InstallPayload` com `{ previousVersion?: string; newVersion: string }` — `newVersion` é a versão que está sendo instalada, e `previousVersion` é a versão que foi instalada anteriormente (ou `undefined` em uma instalação nova). Use esses valores para distinguir instalações novas de atualizações e para executar lógica de migração específica da versão.
 * **Quando o hook é executado**: apenas em instalações novas, por padrão. Passe `shouldRunOnVersionUpgrade: true` se você também quiser que ele seja executado quando o app for atualizado a partir de uma versão anterior. Quando omitida, a flag tem valor padrão `false` e as atualizações ignoram o hook.
 * **Modelo de execução — assíncrono por padrão, síncrono opcional**: a flag `shouldRunSynchronously` controla *como* a pós-instalação é executada.

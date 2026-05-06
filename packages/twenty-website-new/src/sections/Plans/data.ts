@@ -1,53 +1,54 @@
+import { msg } from '@lingui/core/macro';
 import type { PlansDataType } from '@/sections/Plans/types';
 
-const PRO_HEADING = { fontFamily: 'sans' as const, text: 'Pro' };
+const PRO_HEADING = { fontFamily: 'sans' as const, text: msg`Pro` };
 const ORGANIZATION_HEADING = {
   fontFamily: 'sans' as const,
-  text: 'Organization',
+  text: msg`Organization`,
 };
 
 const PRO_BULLETS_MONTHLY = [
-  { text: 'Full customization' },
-  { text: 'Create custom apps' },
-  { text: 'AI Agents with custom skills' },
-  { text: 'Up to 5M automation credits/month' },
-  { text: 'Standard support' },
+  { text: msg`Full customization` },
+  { text: msg`Create custom apps` },
+  { text: msg`AI Agents with custom skills` },
+  { text: msg`Up to 5M automation credits/month` },
+  { text: msg`Standard support` },
 ];
 
 const PRO_BULLETS_YEARLY = [
-  { text: 'Full customization' },
-  { text: 'Create custom apps' },
-  { text: 'AI Agents with custom skills' },
-  { text: 'Up to 50M automation credits/year' },
-  { text: 'Standard support' },
+  { text: msg`Full customization` },
+  { text: msg`Create custom apps` },
+  { text: msg`AI Agents with custom skills` },
+  { text: msg`Up to 50M automation credits/year` },
+  { text: msg`Standard support` },
 ];
 
 const PRO_BULLETS_SELF_HOST = [
-  { text: 'Full customization' },
-  { text: 'Create custom apps' },
-  { text: 'Community support' },
+  { text: msg`Full customization` },
+  { text: msg`Create custom apps` },
+  { text: msg`Community support` },
 ];
 
 const ORGANIZATION_BULLETS_MONTHLY = [
-  { text: 'Everything in Pro' },
-  { text: 'Roles & Permissions' },
-  { text: 'SAML/OIDC SSO' },
-  { text: 'Priority support' },
+  { text: msg`Everything in Pro` },
+  { text: msg`Roles & Permissions` },
+  { text: msg`SAML/OIDC SSO` },
+  { text: msg`Priority support` },
 ];
 
 const ORGANIZATION_BULLETS_YEARLY = [
-  { text: 'Everything in Pro' },
-  { text: 'Roles & Permissions' },
-  { text: 'SAML/OIDC SSO' },
-  { text: 'Priority support' },
+  { text: msg`Everything in Pro` },
+  { text: msg`Roles & Permissions` },
+  { text: msg`SAML/OIDC SSO` },
+  { text: msg`Priority support` },
 ];
 
 const ORGANIZATION_BULLETS_SELF_HOST = [
-  { text: 'Everything in Pro' },
-  { text: 'Roles & Permissions' },
-  { text: 'SAML/OIDC SSO' },
-  { text: 'Twenty team support' },
-  { text: 'No open-source distribution requirement' },
+  { text: msg`Everything in Pro` },
+  { text: msg`Roles & Permissions` },
+  { text: msg`SAML/OIDC SSO` },
+  { text: msg`Twenty team support` },
+  { text: msg`No open-source distribution requirement` },
 ];
 
 export const PLANS_DATA = {
@@ -57,15 +58,15 @@ export const PLANS_DATA = {
         monthly: {
           featureBullets: ORGANIZATION_BULLETS_MONTHLY,
           price: {
-            body: { text: '/user/month' },
-            heading: { fontFamily: 'sans', text: '$25' },
+            body: { text: msg`/user/month` },
+            heading: { fontFamily: 'sans', text: msg`$25` },
           },
         },
         yearly: {
           featureBullets: ORGANIZATION_BULLETS_YEARLY,
           price: {
-            body: { text: '/user/month' },
-            heading: { fontFamily: 'sans', text: '$19' },
+            body: { text: msg`/user/month` },
+            heading: { fontFamily: 'sans', text: msg`$19` },
           },
         },
       },
@@ -73,15 +74,15 @@ export const PLANS_DATA = {
         monthly: {
           featureBullets: ORGANIZATION_BULLETS_SELF_HOST,
           price: {
-            body: { text: '/user/month' },
-            heading: { fontFamily: 'sans', text: '$25' },
+            body: { text: msg`/user/month` },
+            heading: { fontFamily: 'sans', text: msg`$25` },
           },
         },
         yearly: {
           featureBullets: ORGANIZATION_BULLETS_SELF_HOST,
           price: {
-            body: { text: '/user/month' },
-            heading: { fontFamily: 'sans', text: '$19' },
+            body: { text: msg`/user/month` },
+            heading: { fontFamily: 'sans', text: msg`$19` },
           },
         },
       },
@@ -98,15 +99,15 @@ export const PLANS_DATA = {
         monthly: {
           featureBullets: PRO_BULLETS_MONTHLY,
           price: {
-            body: { text: '/user/month' },
-            heading: { fontFamily: 'sans', text: '$12' },
+            body: { text: msg`/user/month` },
+            heading: { fontFamily: 'sans', text: msg`$12` },
           },
         },
         yearly: {
           featureBullets: PRO_BULLETS_YEARLY,
           price: {
-            body: { text: '/user/month' },
-            heading: { fontFamily: 'sans', text: '$9' },
+            body: { text: msg`/user/month` },
+            heading: { fontFamily: 'sans', text: msg`$9` },
           },
         },
       },
@@ -114,15 +115,15 @@ export const PLANS_DATA = {
         monthly: {
           featureBullets: PRO_BULLETS_SELF_HOST,
           price: {
-            body: { text: '/user/month' },
-            heading: { fontFamily: 'sans', text: '$0' },
+            body: { text: msg`/user/month` },
+            heading: { fontFamily: 'sans', text: msg`$0` },
           },
         },
         yearly: {
           featureBullets: PRO_BULLETS_SELF_HOST,
           price: {
-            body: { text: '/user/month' },
-            heading: { fontFamily: 'sans', text: '$0' },
+            body: { text: msg`/user/month` },
+            heading: { fontFamily: 'sans', text: msg`$0` },
           },
         },
       },

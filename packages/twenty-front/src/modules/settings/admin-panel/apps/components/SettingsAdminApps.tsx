@@ -1,4 +1,4 @@
-import { ApplicationDisplay } from '@/applications/components/ApplicationDisplay';
+import { AppChip } from '@/applications/components/AppChip';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -173,7 +173,13 @@ const SettingsAdminAppsTableRow = ({
         minWidth="0"
         overflow="hidden"
       >
-        <ApplicationDisplay application={registration} />
+        <AppChip
+          size="md"
+          fallbackApplicationData={{
+            logo: registration.logoUrl,
+            name: registration.name,
+          }}
+        />
       </TableCell>
       <TableCell overflow="hidden" align="right">
         {getFormattedSource(registration)}

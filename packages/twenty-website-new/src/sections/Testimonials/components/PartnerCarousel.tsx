@@ -1,7 +1,8 @@
 'use client';
 
 import { Body, Eyebrow, Heading, IconButton } from '@/design-system/components';
-import type { EyebrowType } from '@/design-system/components/Eyebrow';
+import type { MessageEyebrow } from '@/lib/i18n/message-eyebrow';
+import { useRenderMessage } from '@/lib/i18n/use-render-message';
 import { ArrowLeftIcon, ArrowRightIcon } from '@/icons';
 import { PartnerEffect } from '@/sections/Testimonials/visuals/PartnerEffect';
 import type { TestimonialCardType } from '@/sections/Testimonials/types/TestimonialCard';
@@ -221,7 +222,7 @@ const NavGroup = styled.div`
 
 type PartnerCarouselProps = {
   children?: ReactNode;
-  eyebrow: EyebrowType;
+  eyebrow: MessageEyebrow;
   testimonials: TestimonialCardType[];
 };
 
@@ -230,6 +231,7 @@ export function PartnerCarousel({
   eyebrow,
   testimonials,
 }: PartnerCarouselProps) {
+  const renderText = useRenderMessage();
   const [index, setIndex] = useState(0);
 
   const total = testimonials.length;
@@ -248,7 +250,8 @@ export function PartnerCarousel({
   };
 
   const avatar = current.author.avatar;
-  const authorInitials = current.author.name.text
+  const authorName = renderText(current.author.name.text);
+  const authorInitials = authorName
     .split(/\s+/)
     .map((word) => word[0])
     .filter(Boolean)
@@ -267,7 +270,7 @@ export function PartnerCarousel({
           <PortraitFrame>
             {avatar ? (
               <PartnerEffect
-                alt={avatar.alt ?? current.author.name.text}
+                alt={avatar.alt ?? authorName}
                 fallback={authorInitials}
                 src={avatar.src}
               />
@@ -284,6 +287,7 @@ export function PartnerCarousel({
                 as="span"
                 body={current.author.name}
                 className={nameTextClassName}
+                renderText={renderText}
                 size="sm"
                 weight="medium"
               />
@@ -292,20 +296,16 @@ export function PartnerCarousel({
                   as="span"
                   body={current.author.designation}
                   className={handleTextClassName}
+                  renderText={renderText}
                   size="sm"
                 />
               </HandleText>
             </NameHandleRow>
 
             {current.author.date ? (
-              <Body
-                as="p"
-                body={{
-                  text: DATE_FORMATTER.format(current.author.date),
-                }}
-                className={dateTextClassName}
-                size="xs"
-              />
+              <p className={dateTextClassName}>
+                {DATE_FORMATTER.format(current.author.date)}
+              </p>
             ) : null}
           </AuthorMeta>
         </AuthorCard>
@@ -318,7 +318,11 @@ export function PartnerCarousel({
       <Separator colorScheme="secondary" />
 
       <RightColumn>
-        <Eyebrow colorScheme="secondary" heading={eyebrow.heading} />
+        <Eyebrow
+          colorScheme="secondary"
+          heading={eyebrow.heading}
+          renderText={renderText}
+        />
 
         <QuoteArea>
           <QuoteStack>
@@ -330,6 +334,7 @@ export function PartnerCarousel({
                 <Heading
                   as="h2"
                   className={quoteHeadingClassName}
+                  renderText={renderText}
                   segments={testimonial.heading}
                   size="md"
                   weight="light"

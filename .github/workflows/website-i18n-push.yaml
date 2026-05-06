@@ -1,0 +1,111 @@
+name: 'Push website translations to Crowdin'
+
+permissions:
+  contents: write
+  pull-requests: write
+
+on:
+  workflow_dispatch:
+  workflow_call:
+  push:
+    branches: ['main']
+    paths:
+      - 'packages/twenty-website-new/**'
+      - '.github/crowdin-website.yml'
+      - '.github/workflows/website-i18n-push.yaml'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+jobs:
+  extract_website_translations:
+    name: Extract and upload website translations
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ github.token }}
+          ref: main
+
+      - name: Setup website i18n branch
+        run: |
+          git fetch origin i18n-website || true
+          git checkout -B i18n-website origin/i18n-website || git checkout -b i18n-website
+
+      - name: Install dependencies
+        uses: ./.github/actions/yarn-install
+
+      - name: Build dependencies
+        run: npx nx build twenty-shared
+
+      - name: Extract website translations
+        run: npx nx run twenty-website-new:lingui:extract
+
+      - name: Check and commit extracted files
+        id: check_extract_changes
+        run: |
+          git config --global user.name 'github-actions'
+          git config --global user.email 'github-actions@twenty.com'
+          git add packages/twenty-website-new/src/locales
+          if ! git diff --staged --quiet --exit-code; then
+            git commit -m "chore: extract website translations"
+            echo "changes_detected=true" >> $GITHUB_OUTPUT
+          else
+            echo "changes_detected=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Compile website translations
+        run: npx nx run twenty-website-new:lingui:compile
+
+      - name: Check and commit compiled files
+        id: check_compile_changes
+        run: |
+          git config --global user.name 'github-actions'
+          git config --global user.email 'github-actions@twenty.com'
+          git add packages/twenty-website-new/src/locales/generated
+          if ! git diff --staged --quiet --exit-code; then
+            git commit -m "chore: compile website translations"
+            echo "changes_detected=true" >> $GITHUB_OUTPUT
+          else
+            echo "changes_detected=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Push changes and create remote branch if needed
+        if: steps.check_extract_changes.outputs.changes_detected == 'true' || steps.check_compile_changes.outputs.changes_detected == 'true'
+        run: git push origin HEAD:i18n-website
+
+      - name: Upload missing website translations
+        if: steps.check_extract_changes.outputs.changes_detected == 'true'
+        uses: crowdin/github-action@v2
+        with:
+          upload_sources: true
+          upload_translations: true
+          download_translations: false
+          localization_branch_name: i18n-website
+          base_url: 'https://twenty.api.crowdin.com'
+          config: '.github/crowdin-website.yml'
+        env:
+          # Website translations project
+          CROWDIN_PROJECT_ID: '4'
+          CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
+
+      - name: Create a pull request
+        if: steps.check_extract_changes.outputs.changes_detected == 'true' || steps.check_compile_changes.outputs.changes_detected == 'true'
+        run: |
+          if git diff --name-only origin/main..HEAD | grep -q .; then
+            gh pr create -B main -H i18n-website --title 'i18n - website translations' --body 'Created by Github action' || true
+          else
+            echo "No file differences between branches, skipping PR creation"
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Trigger i18n automerge
+        if: steps.check_extract_changes.outputs.changes_detected == 'true' || steps.check_compile_changes.outputs.changes_detected == 'true'
+        uses: peter-evans/repository-dispatch@v2
+        with:
+          token: ${{ secrets.TWENTY_INFRA_TOKEN }}
+          repository: twentyhq/twenty-infra
+          event-type: i18n-pr-ready

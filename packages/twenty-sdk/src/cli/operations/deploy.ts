@@ -14,6 +14,8 @@ export type AppDeployOptions = {
 };
 
 export type AppDeployResult = {
+  id: string;
+  name: string;
   universalIdentifier: string;
 };
 
@@ -49,9 +51,7 @@ const innerAppDeploy = async (
 
   return {
     success: true,
-    data: {
-      universalIdentifier: uploadResult.data.universalIdentifier,
-    },
+    data: uploadResult.data,
   };
 };
 

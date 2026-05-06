@@ -13,7 +13,6 @@ const MARKETPLACE_QUERY = `
       description
       author
       sourcePackage
-      icon
       category
       logo
       isFeatured
@@ -135,7 +134,6 @@ describe('Marketplace Catalog Sync (integration)', () => {
         sourcePackage: '@twentyhq/app-data-enrichment',
         manifest: {
           application: {
-            icon: 'IconSparkles',
             category: 'Data',
           },
         },
@@ -175,7 +173,6 @@ describe('Marketplace Catalog Sync (integration)', () => {
       expect(curatedApp).toBeDefined();
       expect(curatedApp.name).toBe('Data Enrichment');
       expect(curatedApp.category).toBe('Data');
-      expect(curatedApp.icon).toBe('IconSparkles');
     });
   });
 

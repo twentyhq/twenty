@@ -105,7 +105,7 @@ exports[`Standard field metadata update should succeed Atomic update test suite 
 exports[`Standard field metadata update should succeed Atomic update test suite when updating description 1`] = `
 {
   "defaultValue": "'NEW'",
-  "description": "Opportunity stage",
+  "description": "Updated test description for company name field",
   "icon": "IconProgressCheck",
   "id": Any<String>,
   "isActive": true,
@@ -161,7 +161,7 @@ exports[`Standard field metadata update should succeed Atomic update test suite 
 {
   "defaultValue": "'NEW'",
   "description": "Opportunity stage",
-  "icon": "IconProgressCheck",
+  "icon": "IconBuildingFactory",
   "id": Any<String>,
   "isActive": true,
   "isCustom": false,
@@ -220,7 +220,7 @@ exports[`Standard field metadata update should succeed Atomic update test suite 
   "id": Any<String>,
   "isActive": true,
   "isCustom": false,
-  "label": "Stage",
+  "label": "Business Name",
   "name": "stage",
   "options": [
     {

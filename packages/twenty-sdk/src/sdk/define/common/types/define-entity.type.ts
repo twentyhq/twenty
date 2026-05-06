@@ -1,4 +1,5 @@
 import { type ApplicationConfig } from '@/sdk/define/application/application-config';
+import { type CommandMenuItemConfig } from '@/sdk/define/command-menu-items/command-menu-item-config';
 import { type FrontComponentConfig } from '@/sdk/define/front-component/front-component-config';
 import { type LogicFunctionConfig } from '@/sdk/define/logic-functions/logic-function-config';
 import { type ObjectConfig } from '@/sdk/define/objects/object-config';
@@ -10,6 +11,7 @@ import { type PreInstallLogicFunctionConfig } from '@/sdk/define/logic-functions
 import { type RoleConfig } from '@/sdk/define/roles/role-config';
 import {
   type AgentManifest,
+  type ConnectionProviderManifest,
   type FieldManifest,
   type NavigationMenuItemManifest,
   type SkillManifest,
@@ -30,12 +32,14 @@ export type DefinableEntity =
   | PostInstallLogicFunctionConfig
   | PreInstallLogicFunctionConfig
   | AgentManifest
+  | ConnectionProviderManifest
   | RoleConfig
   | SkillManifest
   | ViewConfig
   | NavigationMenuItemManifest
   | PageLayoutConfig
-  | PageLayoutTabConfig;
+  | PageLayoutTabConfig
+  | CommandMenuItemConfig;
 
 export type DefineEntity<T extends DefinableEntity = DefinableEntity> = (
   config: T,

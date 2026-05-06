@@ -1,6 +1,6 @@
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 
 const CTAsContainer = styled.div`
   display: flex;

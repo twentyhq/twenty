@@ -1,3 +1,4 @@
+import type { MessageDescriptor } from '@lingui/core';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
 import NextImage from 'next/image';
@@ -26,10 +27,11 @@ const StyledText = styled.span`
 `;
 
 type ClientCountProps = {
-  label: string;
+  label: MessageDescriptor;
+  renderText: (descriptor: MessageDescriptor) => string;
 };
 
-export function ClientCount({ label }: ClientCountProps) {
+export function ClientCount({ label, renderText }: ClientCountProps) {
   return (
     <StyledChip>
       <NextImage
@@ -39,7 +41,7 @@ export function ClientCount({ label }: ClientCountProps) {
         unoptimized
         width={14}
       />
-      <StyledText>{label}</StyledText>
+      <StyledText>{renderText(label)}</StyledText>
     </StyledChip>
   );
 }

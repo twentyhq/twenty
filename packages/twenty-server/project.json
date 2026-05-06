@@ -288,6 +288,13 @@
         "cwd": "{projectRoot}",
         "command": "lingui compile --typescript"
       }
+    },
+    "version:bump": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "npx tsx scripts/bump-version.ts"
+      }
     }
   }
 }

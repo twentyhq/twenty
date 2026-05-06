@@ -1,7 +1,8 @@
+import { msg } from '@lingui/core/macro';
 import type { TrustedByDataType } from '@/sections/TrustedBy/types';
 
 export const TRUSTED_BY_DATA: TrustedByDataType = {
-  clientCountLabel: { text: '+10k others' },
+  clientCountLabel: { text: msg`+10k others` },
   logos: [
     { grayOpacity: 0.52, src: '/images/home/logo-bar/french-republic.webp' },
     {
@@ -29,5 +30,5 @@ export const TRUSTED_BY_DATA: TrustedByDataType = {
       src: '/images/home/logo-bar/shiawase-home.webp',
     },
   ],
-  separator: { text: 'trusted by' },
+  separator: { text: msg`trusted by` },
 };

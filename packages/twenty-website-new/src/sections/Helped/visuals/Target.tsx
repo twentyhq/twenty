@@ -5,8 +5,8 @@ import {
   type HelpedHalftonePose,
   type HelpedHalftoneSettings,
 } from './HelpedHalftoneModel';
+import { HELPED_VISUAL_MODEL_URLS } from './helped-visual-models';
 
-const GLB_URL = '/illustrations/home/helped/target.glb';
 const TARGET_PREVIEW_DISTANCE = 4;
 
 const TARGET_SETTINGS: HelpedHalftoneSettings = {
@@ -105,9 +105,8 @@ export function Target() {
     <HelpedHalftoneModel
       initialPose={TARGET_INITIAL_POSE}
       label="target.glb"
-      modelUrl={GLB_URL}
+      modelUrl={HELPED_VISUAL_MODEL_URLS.target}
       previewDistance={TARGET_PREVIEW_DISTANCE}
-      renderer="studio"
       settings={TARGET_SETTINGS}
     />
   );

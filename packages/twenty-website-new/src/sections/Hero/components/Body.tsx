@@ -1,10 +1,12 @@
 import {
   Body as BaseBody,
+  type BodyType,
   type BodyProps,
 } from '@/design-system/components/Body';
 import type { Page } from '@/lib/pages';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
+import type { ReactNode } from 'react';
 
 const defaultHeroBodyColor = `var(--hero-body-color, ${theme.colors.primary.text[60]})`;
 
@@ -62,25 +64,57 @@ const StyledBody = styled.div`
 
 export type HeroBodyColorScheme = 'primary' | 'secondary';
 
-export type HeroBodyProps = BodyProps & {
+export type HeroBodyProps<TText = ReactNode> = Omit<
+  BodyProps<TText>,
+  'renderText'
+> & {
   page: Page;
   colorScheme?: HeroBodyColorScheme;
   preserveLineBreaks?: boolean;
+  renderText?: (text: TText) => ReactNode;
 };
 
-export function Body({
+export function Body<TText = ReactNode>({
+  as,
+  body,
+  className,
   page,
   colorScheme,
+  family,
   preserveLineBreaks = false,
-  ...bodyProps
-}: HeroBodyProps) {
+  renderText,
+  size,
+  variant,
+  weight,
+}: HeroBodyProps<TText>) {
   return (
     <StyledBody
       data-color-scheme={colorScheme}
       data-page={page}
       data-preserve-line-breaks={preserveLineBreaks}
     >
-      <BaseBody {...bodyProps} />
+      {renderText === undefined ? (
+        <BaseBody
+          as={as}
+          body={body as BodyType<ReactNode>}
+          className={className}
+          family={family}
+          size={size}
+          variant={variant}
+          weight={weight}
+        />
+      ) : (
+        <BaseBody<TText>
+          as={as}
+          body={body}
+          className={className}
+          family={family}
+          renderText={renderText}
+          size={size}
+          variant={variant}
+          weight={weight}
+        />
+      )}
     </StyledBody>
   );
 }

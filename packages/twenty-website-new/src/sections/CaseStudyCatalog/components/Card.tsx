@@ -3,29 +3,18 @@ import { ArrowRightIcon, CLIENT_ICONS } from '@/icons';
 import { LocalizedLink } from '@/lib/i18n';
 import { CustomerCasesCover } from '@/sections/CaseStudyCatalog/visuals/CustomerCasesCover';
 import { theme } from '@/theme';
+import type { MessageDescriptor } from '@lingui/core';
 import { styled } from '@linaria/react';
 import Image from 'next/image';
-import { type ComponentProps } from 'react';
+import type { CSSProperties } from 'react';
 
 type CardVariant = 'default' | 'large';
 
-type CardLinkBaseProps = ComponentProps<typeof LocalizedLink> & {
-  $cardIndex: number;
-  variant: CardVariant;
+type CaseStudyCardStyle = CSSProperties & {
+  '--case-study-card-index': number;
 };
 
-function CardLinkBase({
-  $cardIndex: _cardIndex,
-  variant: _variant,
-  ...linkProps
-}: CardLinkBaseProps) {
-  return <LocalizedLink {...linkProps} />;
-}
-
-const CardLink = styled(CardLinkBase)<{
-  variant: CardVariant;
-  $cardIndex: number;
-}>`
+const CardLink = styled(LocalizedLink)`
   @keyframes caseStudyCardEnter {
     from {
       opacity: 0;
@@ -38,14 +27,13 @@ const CardLink = styled(CardLinkBase)<{
   }
 
   animation: caseStudyCardEnter 700ms cubic-bezier(0.22, 1, 0.36, 1) both;
-  animation-delay: calc(${({ $cardIndex }) => $cardIndex} * 90ms + 180ms);
+  animation-delay: calc(var(--case-study-card-index) * 90ms + 180ms);
   background-color: ${theme.colors.primary.background[100]};
   border: 1px solid ${theme.colors.primary.border[10]};
   border-radius: ${theme.radius(2)};
   color: inherit;
   display: flex;
   flex-direction: column;
-  grid-column: ${({ variant }) => (variant === 'large' ? '1 / -1' : 'auto')};
   overflow: hidden;
   text-decoration: none;
   transition:
@@ -54,9 +42,14 @@ const CardLink = styled(CardLinkBase)<{
     transform 0.25s ease;
   will-change: transform;
 
+  &[data-card-variant='large'] {
+    grid-column: 1 / -1;
+  }
+
   @media (min-width: ${theme.breakpoints.md}px) {
-    flex-direction: ${({ variant }) =>
-      variant === 'large' ? 'row' : 'column'};
+    &[data-card-variant='large'] {
+      flex-direction: row;
+    }
   }
 
   &:hover {
@@ -427,22 +420,6 @@ const ReadIconButton = styled.span`
   }
 `;
 
-const Dot = styled.span`
-  background-color: ${theme.colors.primary.text[40]};
-  border-radius: 50%;
-  flex-shrink: 0;
-  height: 3px;
-  width: 3px;
-`;
-
-const DateLabel = styled.span`
-  color: ${theme.colors.primary.text[40]};
-  font-family: ${theme.font.family.sans};
-  font-size: ${theme.font.size(3.5)};
-  font-weight: ${theme.font.weight.regular};
-  line-height: ${theme.lineHeight(4)};
-`;
-
 const IndustryLabel = styled.span`
   color: ${theme.colors.primary.text[60]};
   font-family: ${theme.font.family.mono};
@@ -470,7 +447,8 @@ const LARGE_LOGO_SCALE = 1.4;
 type CardProps = {
   entry: CaseStudyCatalogEntry;
   index?: number;
-  variant?: 'default' | 'large';
+  renderText: (descriptor: MessageDescriptor) => string;
+  variant?: CardVariant;
   dashColor?: string;
   hoverDashColor?: string;
 };
@@ -478,6 +456,7 @@ type CardProps = {
 export function Card({
   entry,
   index = 0,
+  renderText,
   variant = 'default',
   dashColor,
   hoverDashColor,
@@ -495,9 +474,12 @@ export function Card({
   const isLarge = variant === 'large';
   const hasQuote = isLarge && entry.quote;
   const kpiCount = entry.kpis.length;
+  const cardStyle: CaseStudyCardStyle = {
+    '--case-study-card-index': index,
+  };
 
   return (
-    <CardLink $cardIndex={index} href={entry.href} variant={variant}>
+    <CardLink data-card-variant={variant} href={entry.href} style={cardStyle}>
       <Thumbnail variant={variant}>
         {coverImageSrc ? (
           <CoverLayer>
@@ -520,27 +502,29 @@ export function Card({
 
       <ContentWrapper variant={variant}>
         <CardBody variant={variant}>
-          <IndustryLabel>{entry.industry}</IndustryLabel>
+          <IndustryLabel>{renderText(entry.industry)}</IndustryLabel>
           <Title variant={variant}>
             {entry.hero.title.map((segment, segmentIndex) =>
               segment.fontFamily === 'sans' ? (
-                <TitleSans key={segmentIndex}>{segment.text}</TitleSans>
+                <TitleSans key={segmentIndex}>
+                  {renderText(segment.text)}
+                </TitleSans>
               ) : (
-                <span key={segmentIndex}>{segment.text}</span>
+                <span key={segmentIndex}>{renderText(segment.text)}</span>
               ),
             )}
           </Title>
           {hasQuote && entry.quote ? (
-            <Quote>&ldquo;{entry.quote.text}&rdquo;</Quote>
+            <Quote>&ldquo;{renderText(entry.quote.text)}&rdquo;</Quote>
           ) : !isLarge ? (
-            <Summary>{entry.catalogCard.summary}</Summary>
+            <Summary>{renderText(entry.catalogCard.summary)}</Summary>
           ) : null}
           {isLarge && kpiCount > 0 ? (
             <KpiRow count={kpiCount}>
               {entry.kpis.map((kpi, kpiIndex) => (
-                <KpiCell count={kpiCount} index={kpiIndex} key={kpi.label}>
-                  <KpiValue>{kpi.value}</KpiValue>
-                  <KpiLabel>{kpi.label}</KpiLabel>
+                <KpiCell count={kpiCount} index={kpiIndex} key={kpiIndex}>
+                  <KpiValue>{renderText(kpi.value)}</KpiValue>
+                  <KpiLabel>{renderText(kpi.label)}</KpiLabel>
                 </KpiCell>
               ))}
             </KpiRow>
@@ -549,11 +533,11 @@ export function Card({
 
         {!isLarge && kpiCount > 0 ? (
           <KpiChipRow>
-            {entry.kpis.map((kpi) => (
-              <KpiChip key={kpi.label}>
-                <KpiChipValue>{kpi.value}</KpiChipValue>
+            {entry.kpis.map((kpi, kpiIndex) => (
+              <KpiChip key={kpiIndex}>
+                <KpiChipValue>{renderText(kpi.value)}</KpiChipValue>
                 <KpiChipDivider aria-hidden />
-                <KpiChipLabel>{kpi.label}</KpiChipLabel>
+                <KpiChipLabel>{renderText(kpi.label)}</KpiChipLabel>
               </KpiChip>
             ))}
           </KpiChipRow>
@@ -577,12 +561,16 @@ export function Card({
             {hasQuote && entry.quote ? (
               <AuthorText>
                 {entry.quote.author}{' '}
-                <AuthorRoleText>· {entry.quote.role}</AuthorRoleText>
+                <AuthorRoleText>
+                  · {renderText(entry.quote.role)}
+                </AuthorRoleText>
               </AuthorText>
             ) : (
               <AuthorText>
                 {entry.hero.author}{' '}
-                <AuthorRoleText>· {entry.authorRole}</AuthorRoleText>
+                <AuthorRoleText>
+                  · {renderText(entry.authorRole)}
+                </AuthorRoleText>
               </AuthorText>
             )}
           </AuthorGroup>

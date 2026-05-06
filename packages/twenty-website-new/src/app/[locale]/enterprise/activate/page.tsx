@@ -1,9 +1,19 @@
+import { msg } from '@lingui/core/macro';
 import { MENU_DATA } from '@/sections/Menu/data';
 import { EnterpriseActivateClient } from '@/app/[locale]/enterprise/activate/EnterpriseActivateClient';
-import { Body, Container, Eyebrow } from '@/design-system/components';
-import type { HeadingType } from '@/design-system/components/Heading';
-import { Pages } from '@/lib/pages';
+import {
+  Body,
+  Container,
+  Eyebrow,
+  HeadingPart,
+} from '@/design-system/components';
 import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';
+import { createMessageDescriptorRenderer } from '@/lib/i18n/create-message-descriptor-renderer';
+import {
+  getRouteI18n,
+  type LocaleRouteParams,
+} from '@/lib/i18n/get-route-i18n';
+import { Pages } from '@/lib/pages';
 import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels';
 import { Hero } from '@/sections/Hero/components';
 import { Menu } from '@/sections/Menu/components';
@@ -14,13 +24,8 @@ import { styled } from '@linaria/react';
 
 export const generateMetadata = buildRouteMetadata('enterpriseActivate');
 
-const ENTERPRISE_ACTIVATE_HEADING: HeadingType[] = [
-  { text: 'Enterprise ', fontFamily: 'serif' },
-  { text: 'activation', fontFamily: 'sans' },
-];
-
 const ENTERPRISE_ACTIVATE_BODY = {
-  text: 'Your checkout is complete. Follow the steps below to copy your license key into your Twenty instance.',
+  text: msg`Your checkout is complete. Follow the steps below to copy your license key into your Twenty instance.`,
 };
 
 const ActivatePageContent = styled.section`
@@ -38,18 +43,30 @@ const ActivateContentInner = styled.div`
   width: 100%;
 `;
 
-function EnterpriseActivateFallback() {
+type EnterpriseActivateFallbackProps = {
+  loadingLabel: string;
+};
+
+function EnterpriseActivateFallback({
+  loadingLabel,
+}: EnterpriseActivateFallbackProps) {
   return (
-    <Body
-      body={{ text: 'Loading activation…' }}
-      size="sm"
-      variant="body-paragraph"
-    />
+    <Body body={{ text: loadingLabel }} size="sm" variant="body-paragraph" />
   );
 }
 
-export default async function EnterpriseActivatePage() {
-  const stats = await fetchCommunityStats();
+type EnterpriseActivatePageProps = {
+  params: Promise<LocaleRouteParams>;
+};
+
+export default async function EnterpriseActivatePage({
+  params,
+}: EnterpriseActivatePageProps) {
+  const [i18n, stats] = await Promise.all([
+    getRouteI18n(params),
+    fetchCommunityStats(),
+  ]);
+  const renderText = createMessageDescriptorRenderer(i18n);
   const menuSocialLinks = mergeSocialLinkLabels(MENU_DATA.socialLinks, stats);
 
   return (
@@ -72,19 +89,34 @@ export default async function EnterpriseActivatePage() {
       >
         <Eyebrow
           colorScheme="primary"
-          heading={{ text: 'Self-hosting', fontFamily: 'sans' }}
+          heading={{ text: msg`Self-hosting`, fontFamily: 'sans' }}
+          renderText={renderText}
         />
-        <Hero.Heading
+        <Hero.Heading page={Pages.Pricing}>
+          <HeadingPart fontFamily="serif">
+            {renderText(msg`Enterprise`)}
+          </HeadingPart>{' '}
+          <HeadingPart fontFamily="sans">
+            {renderText(msg`activation`)}
+          </HeadingPart>
+        </Hero.Heading>
+        <Hero.Body
+          body={ENTERPRISE_ACTIVATE_BODY}
           page={Pages.Pricing}
-          segments={ENTERPRISE_ACTIVATE_HEADING}
+          renderText={renderText}
         />
-        <Hero.Body body={ENTERPRISE_ACTIVATE_BODY} page={Pages.Pricing} />
       </Hero.Root>
 
       <ActivatePageContent>
         <Container>
           <ActivateContentInner>
-            <Suspense fallback={<EnterpriseActivateFallback />}>
+            <Suspense
+              fallback={
+                <EnterpriseActivateFallback
+                  loadingLabel={renderText(msg`Loading activation…`)}
+                />
+              }
+            >
               <EnterpriseActivateClient />
             </Suspense>
           </ActivateContentInner>

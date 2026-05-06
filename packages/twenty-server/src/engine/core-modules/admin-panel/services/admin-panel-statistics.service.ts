@@ -153,7 +153,7 @@ export class AdminPanelStatisticsService {
     >();
 
     for (const user of users) {
-      signedAvatarUrlByUserId.set(user.id, user.defaultAvatarUrl ?? null);
+      signedAvatarUrlByUserId.set(user.id, null);
 
       for (const userWorkspace of user.userWorkspaces) {
         const workspace = userWorkspace.workspace;
@@ -169,7 +169,7 @@ export class AdminPanelStatisticsService {
 
         entry.fallbackAvatarUrlsByUserId.set(
           user.id,
-          userWorkspace.defaultAvatarUrl ?? user.defaultAvatarUrl ?? null,
+          userWorkspace.defaultAvatarUrl ?? null,
         );
         contextsByWorkspaceId.set(workspace.id, entry);
       }

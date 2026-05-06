@@ -92,7 +92,7 @@ export const SettingsToolDetail = () => {
     : systemTool?.description;
 
   const inputSchema = isCustomTool
-    ? logicFunction?.toolInputSchema
+    ? logicFunction?.toolTriggerSettings?.inputSchema
     : schemaData?.getToolInputSchema;
 
   const functionLink = isCustomTool

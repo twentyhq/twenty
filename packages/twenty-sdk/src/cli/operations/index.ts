@@ -27,7 +27,19 @@ export type { FunctionExecuteOptions } from './execute';
 // Server
 export { serverStart } from './server-start';
 export type { ServerStartOptions, ServerStartResult } from './server-start';
+export { serverUpgrade } from './server-upgrade';
+export type {
+  ServerUpgradeOptions,
+  ServerUpgradeResult,
+} from './server-upgrade';
 export { detectLocalServer } from '@/cli/utilities/server/detect-local-server';
+export {
+  checkDockerRunning,
+  containerExists,
+  getContainerDigest,
+  getImageDigest,
+  getImageForVersion,
+} from '@/cli/utilities/server/docker-container';
 
 // Config
 export { ConfigService } from '@/cli/utilities/config/config-service';

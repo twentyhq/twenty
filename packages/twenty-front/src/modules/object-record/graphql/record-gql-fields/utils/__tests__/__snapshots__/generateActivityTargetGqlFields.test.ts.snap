@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`generateActivityTargetGqlFields snapshot tests should match snapshot for Note with loadRelations="activity" 1`] = `
 {
@@ -24,13 +24,13 @@ exports[`generateActivityTargetGqlFields snapshot tests should match snapshot fo
   "position": true,
   "searchVector": true,
   "targetCompany": {
+    "domainName": true,
     "id": true,
     "name": true,
   },
   "targetCompanyId": true,
   "targetEmploymentHistory": {
     "id": true,
-    "name": true,
   },
   "targetEmploymentHistoryId": true,
   "targetOpportunity": {
@@ -39,6 +39,7 @@ exports[`generateActivityTargetGqlFields snapshot tests should match snapshot fo
   },
   "targetOpportunityId": true,
   "targetPerson": {
+    "avatarFile": true,
     "id": true,
     "name": true,
   },
@@ -49,7 +50,6 @@ exports[`generateActivityTargetGqlFields snapshot tests should match snapshot fo
   },
   "targetPetCareAgreement": {
     "id": true,
-    "name": true,
   },
   "targetPetCareAgreementId": true,
   "targetPetId": true,
@@ -76,45 +76,21 @@ exports[`generateActivityTargetGqlFields snapshot tests should match snapshot fo
   "id": true,
   "position": true,
   "searchVector": true,
-  "targetCompany": {
-    "id": true,
-    "name": true,
-  },
+  "targetCompany": true,
   "targetCompanyId": true,
-  "targetEmploymentHistory": {
-    "id": true,
-    "name": true,
-  },
+  "targetEmploymentHistory": true,
   "targetEmploymentHistoryId": true,
-  "targetOpportunity": {
-    "id": true,
-    "name": true,
-  },
+  "targetOpportunity": true,
   "targetOpportunityId": true,
-  "targetPerson": {
-    "id": true,
-    "name": true,
-  },
+  "targetPerson": true,
   "targetPersonId": true,
-  "targetPet": {
-    "id": true,
-    "name": true,
-  },
-  "targetPetCareAgreement": {
-    "id": true,
-    "name": true,
-  },
+  "targetPet": true,
+  "targetPetCareAgreement": true,
   "targetPetCareAgreementId": true,
   "targetPetId": true,
-  "targetRocket": {
-    "id": true,
-    "name": true,
-  },
+  "targetRocket": true,
   "targetRocketId": true,
-  "targetSurveyResult": {
-    "id": true,
-    "name": true,
-  },
+  "targetSurveyResult": true,
   "targetSurveyResultId": true,
   "updatedAt": true,
   "updatedBy": true,
@@ -140,13 +116,13 @@ exports[`generateActivityTargetGqlFields snapshot tests should match snapshot fo
   "position": true,
   "searchVector": true,
   "targetCompany": {
+    "domainName": true,
     "id": true,
     "name": true,
   },
   "targetCompanyId": true,
   "targetEmploymentHistory": {
     "id": true,
-    "name": true,
   },
   "targetEmploymentHistoryId": true,
   "targetOpportunity": {
@@ -155,6 +131,7 @@ exports[`generateActivityTargetGqlFields snapshot tests should match snapshot fo
   },
   "targetOpportunityId": true,
   "targetPerson": {
+    "avatarFile": true,
     "id": true,
     "name": true,
   },
@@ -165,7 +142,6 @@ exports[`generateActivityTargetGqlFields snapshot tests should match snapshot fo
   },
   "targetPetCareAgreement": {
     "id": true,
-    "name": true,
   },
   "targetPetCareAgreementId": true,
   "targetPetId": true,
@@ -197,45 +173,21 @@ exports[`generateActivityTargetGqlFields snapshot tests should match snapshot fo
   "id": true,
   "position": true,
   "searchVector": true,
-  "targetCompany": {
-    "id": true,
-    "name": true,
-  },
+  "targetCompany": true,
   "targetCompanyId": true,
-  "targetEmploymentHistory": {
-    "id": true,
-    "name": true,
-  },
+  "targetEmploymentHistory": true,
   "targetEmploymentHistoryId": true,
-  "targetOpportunity": {
-    "id": true,
-    "name": true,
-  },
+  "targetOpportunity": true,
   "targetOpportunityId": true,
-  "targetPerson": {
-    "id": true,
-    "name": true,
-  },
+  "targetPerson": true,
   "targetPersonId": true,
-  "targetPet": {
-    "id": true,
-    "name": true,
-  },
-  "targetPetCareAgreement": {
-    "id": true,
-    "name": true,
-  },
+  "targetPet": true,
+  "targetPetCareAgreement": true,
   "targetPetCareAgreementId": true,
   "targetPetId": true,
-  "targetRocket": {
-    "id": true,
-    "name": true,
-  },
+  "targetRocket": true,
   "targetRocketId": true,
-  "targetSurveyResult": {
-    "id": true,
-    "name": true,
-  },
+  "targetSurveyResult": true,
   "targetSurveyResultId": true,
   "updatedAt": true,
   "updatedBy": true,

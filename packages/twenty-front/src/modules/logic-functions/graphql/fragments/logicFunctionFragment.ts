@@ -9,11 +9,11 @@ export const LOGIC_FUNCTION_FRAGMENT = gql`
     timeoutSeconds
     sourceHandlerPath
     handlerName
-    toolInputSchema
-    isTool
     cronTriggerSettings
     databaseEventTriggerSettings
     httpRouteTriggerSettings
+    toolTriggerSettings
+    workflowActionTriggerSettings
     applicationId
     universalIdentifier
     createdAt

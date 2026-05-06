@@ -3,6 +3,7 @@ import { SettingsLogicFunctionCronTriggerSection } from '@/settings/logic-functi
 import { SettingsLogicFunctionDatabaseEventTriggerSection } from '@/settings/logic-functions/components/triggers/SettingsLogicFunctionDatabaseEventTriggerSection';
 import { SettingsLogicFunctionHttpTriggerSection } from '@/settings/logic-functions/components/triggers/SettingsLogicFunctionHttpTriggerSection';
 import { SettingsLogicFunctionToolTriggerSection } from '@/settings/logic-functions/components/triggers/SettingsLogicFunctionToolTriggerSection';
+import { SettingsLogicFunctionWorkflowActionTriggerSection } from '@/settings/logic-functions/components/triggers/SettingsLogicFunctionWorkflowActionTriggerSection';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
@@ -42,7 +43,8 @@ export const SettingsLogicFunctionTriggersTab = ({
     isDefined(formValues.httpRouteTriggerSettings) ||
     isDefined(formValues.cronTriggerSettings) ||
     isDefined(formValues.databaseEventTriggerSettings) ||
-    formValues.isTool;
+    isDefined(formValues.toolTriggerSettings) ||
+    isDefined(formValues.workflowActionTriggerSettings);
 
   if (readonly && !hasAnyTrigger) {
     return isDefined(applicationName) ? (
@@ -79,9 +81,13 @@ export const SettingsLogicFunctionTriggersTab = ({
         readonly={readonly}
       />
       <SettingsLogicFunctionToolTriggerSection
-        isTool={formValues.isTool}
-        toolInputSchema={formValues.toolInputSchema}
-        onChange={onChange('isTool')}
+        value={formValues.toolTriggerSettings}
+        onChange={onChange('toolTriggerSettings')}
+        readonly={readonly}
+      />
+      <SettingsLogicFunctionWorkflowActionTriggerSection
+        value={formValues.workflowActionTriggerSettings}
+        onChange={onChange('workflowActionTriggerSettings')}
         readonly={readonly}
       />
       {!readonly && !hasAnyTrigger && (

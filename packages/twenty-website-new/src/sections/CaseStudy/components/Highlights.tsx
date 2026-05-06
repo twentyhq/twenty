@@ -1,5 +1,7 @@
 import { Container } from '@/design-system/components';
+import type { MessageDescriptor } from '@lingui/core';
 import { theme } from '@/theme';
+import { msg } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
 
 const Section = styled.section`
@@ -111,14 +113,15 @@ const Label = styled.span`
 `;
 
 type HighlightsProps = {
-  industry?: string;
-  kpis?: { value: string; label: string }[];
+  industry?: MessageDescriptor;
+  kpis?: { value: MessageDescriptor; label: MessageDescriptor }[];
+  renderText: (descriptor: MessageDescriptor) => string;
 };
 
-export function Highlights({ industry, kpis }: HighlightsProps) {
-  const cells: { value: string; label: string }[] = [];
+export function Highlights({ industry, kpis, renderText }: HighlightsProps) {
+  const cells: { value: MessageDescriptor; label: MessageDescriptor }[] = [];
   if (industry) {
-    cells.push({ value: industry, label: 'Industry' });
+    cells.push({ value: industry, label: msg`Industry` });
   }
   if (kpis) {
     for (const kpi of kpis) {
@@ -136,9 +139,9 @@ export function Highlights({ industry, kpis }: HighlightsProps) {
         <ContentWrap>
           <Card count={cells.length}>
             {cells.map((cell, index) => (
-              <Cell count={cells.length} index={index} key={cell.label}>
-                <Value>{cell.value}</Value>
-                <Label>{cell.label}</Label>
+              <Cell count={cells.length} index={index} key={index}>
+                <Value>{renderText(cell.value)}</Value>
+                <Label>{renderText(cell.label)}</Label>
               </Cell>
             ))}
           </Card>

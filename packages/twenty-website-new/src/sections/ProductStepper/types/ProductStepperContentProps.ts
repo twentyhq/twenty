@@ -1,15 +1,15 @@
-import type { BodyType } from '@/design-system/components/Body';
-import type { EyebrowType } from '@/design-system/components/Eyebrow';
-import type { HeadingType } from '@/design-system/components/Heading';
+import type { MessageBody } from '@/lib/i18n/message-body';
+import type { MessageEyebrow } from '@/lib/i18n/message-eyebrow';
 import type { ProductStepperContentStepType } from '@/sections/ProductStepper/types/ProductStepperContentStep';
+import type { ReactNode } from 'react';
 
 export type ProductStepperLayoutMode = 'scroll' | 'swipe';
 
 export type ProductStepperContentProps = {
   activeStepIndex: number;
-  body: BodyType;
-  eyebrow: EyebrowType;
-  heading: HeadingType[];
+  body: MessageBody;
+  eyebrow: MessageEyebrow;
+  heading: ReactNode;
   layoutMode: ProductStepperLayoutMode;
   localProgress: number;
   onMobileStepIndexChange: (nextIndex: number) => void;

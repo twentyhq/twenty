@@ -3,21 +3,24 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
 
+import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ApplicationVariableEntity } from 'src/engine/core-modules/application/application-variable/application-variable.entity';
 import { ApplicationVariableEntityResolver } from 'src/engine/core-modules/application/application-variable/application-variable.resolver';
 import { ApplicationVariableEntityService } from 'src/engine/core-modules/application/application-variable/application-variable.service';
 import { WorkspaceApplicationVariableMapCacheService } from 'src/engine/core-modules/application/application-variable/workspace-application-variable-map-cache.service';
 import { SecretEncryptionModule } from 'src/engine/core-modules/secret-encryption/secret-encryption.module';
+import { FlatApplicationVariableModule } from 'src/engine/metadata-modules/flat-application-variable/flat-application-variable.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
 @Module({
   imports: [
     NestjsQueryTypeOrmModule.forFeature([ApplicationVariableEntity]),
-    TypeOrmModule.forFeature([ApplicationVariableEntity]),
+    TypeOrmModule.forFeature([ApplicationVariableEntity, ApplicationEntity]),
     PermissionsModule,
     WorkspaceCacheModule,
     SecretEncryptionModule,
+    FlatApplicationVariableModule,
   ],
   providers: [
     ApplicationVariableEntityService,

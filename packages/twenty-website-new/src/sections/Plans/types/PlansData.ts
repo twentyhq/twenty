@@ -1,5 +1,5 @@
-import type { BodyType } from '@/design-system/components/Body';
-import type { HeadingType } from '@/design-system/components/Heading';
+import type { MessageBody } from '@/lib/i18n/message-body';
+import type { MessageHeadingSegment } from '@/lib/i18n/message-heading-segment';
 import type { PlanIconType } from './PlanCard';
 import type { PlanPriceType } from './PlanPrice';
 
@@ -8,7 +8,7 @@ export type PlansBillingPeriod = 'monthly' | 'yearly';
 export type PlansTierId = 'pro' | 'organization';
 
 export type PlansTierCellType = {
-  featureBullets: BodyType[];
+  featureBullets: MessageBody[];
   price: PlanPriceType;
 };
 
@@ -24,7 +24,7 @@ export type PlansTierCellsType = {
 
 export type PlansTierType = {
   cells: PlansTierCellsType;
-  heading: HeadingType;
+  heading: MessageHeadingSegment;
   icon: PlanIconType;
 };
 

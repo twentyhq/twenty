@@ -1,4 +1,4 @@
-import { agentChatIsScrolledToBottomSelector } from '@/ai/states/agentChatIsScrolledToBottomSelector';
+import { agentChatIsScrolledToBottomSelector } from '@/ai/states/selectors/agentChatIsScrolledToBottomSelector';
 import { agentChatMessagesComponentFamilyState } from '@/ai/states/agentChatMessagesComponentFamilyState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { scrollAiChatToBottom } from '@/ai/utils/scrollAiChatToBottom';

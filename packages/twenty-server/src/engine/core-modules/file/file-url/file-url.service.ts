@@ -66,4 +66,16 @@ export class FileUrlService {
 
     return `${serverUrl}/file/${fileFolder}/${fileId}?token=${token}`;
   }
+
+  getLegacyWorkspaceMemberAvatarUrl({
+    fileId,
+    fileFolder,
+  }: {
+    fileId: string;
+    fileFolder: FileFolder;
+  }): string {
+    const serverUrl = this.twentyConfigService.get('SERVER_URL');
+
+    return `${serverUrl}/file/${fileFolder}/${fileId}`;
+  }
 }

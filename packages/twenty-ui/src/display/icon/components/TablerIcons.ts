@@ -1,6 +1,7 @@
 /* oxlint-disable no-restricted-imports */
 export {
   IconNumber123 as Icon123,
+  IconAdjustments,
   IconAlertCircle,
   IconAlertTriangle,
   IconAlignBoxLeftTop,
@@ -10,7 +11,6 @@ export {
   IconApi,
   IconApps,
   IconAppWindow,
-  IconWindow,
   IconArchive,
   IconArchiveOff,
   IconArrowBackUp,
@@ -427,6 +427,7 @@ export {
   IconVideo,
   IconWand,
   IconWebhook,
+  IconWindow,
   IconWorld,
   IconX,
 } from '@tabler/icons-react';

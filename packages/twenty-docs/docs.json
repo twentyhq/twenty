@@ -3866,10 +3866,10 @@
         "language": "ro",
         "tabs": [
           {
-            "tab": "Getting Started",
+            "tab": "Începeți",
             "groups": [
               {
-                "group": "Welcome",
+                "group": "Bun venit",
                 "pages": [
                   "l/ro/getting-started/introduction",
                   "l/ro/getting-started/key-features",
@@ -3877,7 +3877,7 @@
                 ]
               },
               {
-                "group": "Core Concepts",
+                "group": "Concepte cheie",
                 "pages": [
                   "l/ro/getting-started/core-concepts/data-model",
                   "l/ro/getting-started/core-concepts/layout",
@@ -3895,7 +3895,7 @@
             "tab": "User Guide",
             "groups": [
               {
-                "group": "Overview",
+                "group": "Prezentare generală",
                 "pages": [
                   "l/ro/user-guide/introduction"
                 ]
@@ -3906,7 +3906,7 @@
                 "pages": [
                   "l/ro/user-guide/data-model/overview",
                   {
-                    "group": "Reference",
+                    "group": "Referință",
                     "pages": [
                       "l/ro/user-guide/data-model/capabilities/objects",
                       "l/ro/user-guide/data-model/capabilities/fields",
@@ -3932,7 +3932,7 @@
                 "pages": [
                   "l/ro/user-guide/data-migration/overview",
                   {
-                    "group": "Reference",
+                    "group": "Referință",
                     "pages": [
                       "l/ro/user-guide/data-migration/capabilities/file-formats",
                       "l/ro/user-guide/data-migration/capabilities/field-mapping",
@@ -3964,7 +3964,7 @@
                 "pages": [
                   "l/ro/user-guide/calendar-emails/overview",
                   {
-                    "group": "Reference",
+                    "group": "Referință",
                     "pages": [
                       "l/ro/user-guide/calendar-emails/capabilities/mailbox",
                       "l/ro/user-guide/calendar-emails/capabilities/calendar"
@@ -3989,7 +3989,7 @@
                 "pages": [
                   "l/ro/user-guide/workflows/overview",
                   {
-                    "group": "Reference",
+                    "group": "Referință",
                     "pages": [
                       "l/ro/user-guide/workflows/capabilities/workflow-triggers",
                       "l/ro/user-guide/workflows/capabilities/workflow-actions",
@@ -4052,7 +4052,7 @@
                 "pages": [
                   "l/ro/user-guide/ai/overview",
                   {
-                    "group": "Reference",
+                    "group": "Referință",
                     "pages": [
                       "l/ro/user-guide/ai/capabilities/ai-chatbot",
                       "l/ro/user-guide/ai/capabilities/ai-agents",
@@ -4068,16 +4068,16 @@
                 ]
               },
               {
-                "group": "Layout",
+                "group": "Aspect",
                 "icon": "table-columns",
                 "pages": [
                   "l/ro/user-guide/layout/overview",
                   {
-                    "group": "Reference",
+                    "group": "Referință",
                     "pages": [
                       "l/ro/user-guide/layout/capabilities/navigation",
                       {
-                        "group": "Views",
+                        "group": "Vizualizări",
                         "pages": [
                           "l/ro/user-guide/views-pipelines/capabilities/table-views",
                           "l/ro/user-guide/views-pipelines/capabilities/kanban-views",
@@ -4091,7 +4091,7 @@
                     ]
                   },
                   {
-                    "group": "How-Tos",
+                    "group": "Ghiduri practice",
                     "pages": [
                       "l/ro/user-guide/views-pipelines/how-tos/create-a-table-view-with-grouping",
                       "l/ro/user-guide/views-pipelines/how-tos/create-a-kanban-view-for-projects",
@@ -4110,7 +4110,7 @@
                 "pages": [
                   "l/ro/user-guide/dashboards/overview",
                   {
-                    "group": "Reference",
+                    "group": "Referință",
                     "pages": [
                       "l/ro/user-guide/dashboards/capabilities/dashboards",
                       "l/ro/user-guide/dashboards/capabilities/widgets",
@@ -4132,7 +4132,7 @@
                 "pages": [
                   "l/ro/user-guide/permissions-access/overview",
                   {
-                    "group": "Reference",
+                    "group": "Referință",
                     "pages": [
                       "l/ro/user-guide/permissions-access/capabilities/permissions",
                       "l/ro/user-guide/permissions-access/capabilities/sso-configuration"
@@ -4152,7 +4152,7 @@
                 "pages": [
                   "l/ro/user-guide/billing/overview",
                   {
-                    "group": "Reference",
+                    "group": "Referință",
                     "pages": [
                       "l/ro/user-guide/billing/capabilities/pricing-plans",
                       "l/ro/user-guide/billing/capabilities/credits"
@@ -4172,7 +4172,7 @@
                 "pages": [
                   "l/ro/user-guide/settings/overview",
                   {
-                    "group": "Reference",
+                    "group": "Referință",
                     "pages": [
                       "l/ro/user-guide/settings/capabilities/workspace-settings",
                       "l/ro/user-guide/settings/capabilities/member-management",
@@ -4196,7 +4196,7 @@
             "tab": "Dezvoltatori",
             "groups": [
               {
-                "group": "Overview",
+                "group": "Prezentare generală",
                 "pages": [
                   "l/ro/developers/introduction"
                 ]

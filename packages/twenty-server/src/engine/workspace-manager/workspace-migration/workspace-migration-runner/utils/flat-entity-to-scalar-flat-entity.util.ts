@@ -26,5 +26,9 @@ export const flatEntityToScalarFlatEntity = <T extends AllMetadataName>({
   result.applicationId = flatEntityRecord.applicationId;
   result.universalIdentifier = flatEntityRecord.universalIdentifier;
 
+  if (metadataName === 'applicationVariable' && result.isSecret === true) {
+    result.value = '********';
+  }
+
   return result as ScalarFlatEntity<MetadataEntity<T>>;
 };

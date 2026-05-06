@@ -1,7 +1,7 @@
-import type { BodyType } from '@/design-system/components/Body';
-import type { HeadingType } from '@/design-system/components/Heading';
+import type { MessageBody } from '@/lib/i18n/message-body';
+import type { MessageHeadingSegment } from '@/lib/i18n/message-heading-segment';
 
 export type HomeStepperStepType = {
-  body: BodyType;
-  heading: HeadingType[];
+  body: MessageBody;
+  heading: MessageHeadingSegment[];
 };

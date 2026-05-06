@@ -8,6 +8,7 @@ import { FieldInputEventContext } from '@/object-record/record-field/ui/contexts
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useContext } from 'react';
 import { castAsNumberOrNull } from '~/utils/cast-as-number-or-null';
+import { normalizeAddressFieldValueForPersist } from '~/utils/normalize-address-field-value-for-persist';
 
 export const AddressFieldInput = () => {
   const { draftValue, setDraftValue, fieldDefinition } = useAddressField();
@@ -19,7 +20,7 @@ export const AddressFieldInput = () => {
   const convertToAddress = (
     newAddress: FieldAddressDraftValue | undefined,
   ): FieldAddressDraftValue => {
-    return {
+    return normalizeAddressFieldValueForPersist({
       addressStreet1: newAddress?.addressStreet1 ?? '',
       addressStreet2: newAddress?.addressStreet2 ?? null,
       addressCity: newAddress?.addressCity ?? null,
@@ -28,7 +29,7 @@ export const AddressFieldInput = () => {
       addressPostcode: newAddress?.addressPostcode ?? null,
       addressLat: castAsNumberOrNull(newAddress?.addressLat),
       addressLng: castAsNumberOrNull(newAddress?.addressLng),
-    };
+    });
   };
   const settings = fieldDefinition.metadata.settings;
 

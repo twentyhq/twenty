@@ -24,7 +24,6 @@ export const getCurrentUser = async ({
         email
         firstName
         lastName
-        defaultAvatarUrl
         isEmailVerified
         disabled
         canImpersonate

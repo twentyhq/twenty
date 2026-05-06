@@ -1,14 +1,16 @@
+import type { MessageDescriptor } from '@lingui/core';
+
 export type FooterCtaType =
   | {
       color: 'secondary';
       href: string;
       kind: 'link';
-      label: string;
+      label: MessageDescriptor;
       variant: 'contained' | 'outlined';
     }
   | {
       color: 'secondary';
       kind: 'contactModal';
-      label: string;
+      label: MessageDescriptor;
       variant: 'contained' | 'outlined';
     };

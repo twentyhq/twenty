@@ -29,8 +29,7 @@ const StyledScreenshotsContainer = styled.div`
 
 const StyledScreenshotImage = styled.img`
   height: 100%;
-  object-fit: cover;
-  object-position: center;
+  object-fit: contain;
   width: 100%;
 `;
 
@@ -43,6 +42,7 @@ const StyledScreenshotThumbnails = styled.div`
 
 const StyledThumbnail = styled.div<{ isSelected?: boolean }>`
   align-items: center;
+  aspect-ratio: 8 / 5;
   background-color: ${themeCssVariables.background.secondary};
   border: 1px solid
     ${({ isSelected }) =>
@@ -53,7 +53,6 @@ const StyledThumbnail = styled.div<{ isSelected?: boolean }>`
   cursor: pointer;
   display: flex;
   flex: 0 0 96px;
-  height: 56px;
   justify-content: center;
   overflow: hidden;
 
@@ -64,8 +63,7 @@ const StyledThumbnail = styled.div<{ isSelected?: boolean }>`
 
 const StyledThumbnailImage = styled.img`
   height: 100%;
-  object-fit: cover;
-  object-position: center;
+  object-fit: contain;
   width: 100%;
 `;
 

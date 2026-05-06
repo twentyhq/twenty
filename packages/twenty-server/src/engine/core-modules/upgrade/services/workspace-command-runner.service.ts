@@ -5,6 +5,7 @@ import { type ParsedUpgradeCommandOptions } from 'src/database/commands/upgrade-
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/services/upgrade-command-registry.service';
 import { UpgradeMigrationService } from 'src/engine/core-modules/upgrade/services/upgrade-migration.service';
+import { UpgradeStatusService } from 'src/engine/core-modules/upgrade/services/upgrade-status.service';
 
 type WorkspaceCommandEntry = Pick<
   RegisteredWorkspaceCommand,
@@ -24,6 +25,7 @@ export class WorkspaceCommandRunnerService {
   constructor(
     private readonly twentyConfigService: TwentyConfigService,
     private readonly upgradeMigrationService: UpgradeMigrationService,
+    private readonly upgradeStatusService: UpgradeStatusService,
   ) {}
 
   async runWorkspaceCommands({
@@ -40,17 +42,35 @@ export class WorkspaceCommandRunnerService {
     const executedByVersion =
       this.twentyConfigService.get('APP_VERSION') ?? 'unknown';
 
-    for (const workspaceCommandEntry of workspaceCommands) {
-      await this.runSingleWorkspaceCommandOrThrow({
-        workspaceCommandEntry,
-        workspaceId,
-        executedByVersion,
-        options,
-        iteratorContext,
-      });
-    }
+    try {
+      for (const workspaceCommandEntry of workspaceCommands) {
+        await this.runSingleWorkspaceCommandOrThrow({
+          workspaceCommandEntry,
+          workspaceId,
+          executedByVersion,
+          options,
+          iteratorContext,
+        });
+      }
 
-    this.logger.log(`Upgrade for workspace ${workspaceId} completed.`);
+      this.logger.log(`Upgrade for workspace ${workspaceId} completed.`);
+    } finally {
+      if (!options.dryRun) {
+        await this.safeInvalidateWorkspace(workspaceId);
+      }
+    }
+  }
+
+  private async safeInvalidateWorkspace(workspaceId: string): Promise<void> {
+    try {
+      await this.upgradeStatusService.invalidateInstanceAndAllWorkspacesStatus();
+    } catch (error) {
+      this.logger.warn(
+        `Failed to invalidate upgrade-status cache for workspace ${workspaceId}: ${
+          error instanceof Error ? error.message : String(error)
+        }`,
+      );
+    }
   }
 
   private async runSingleWorkspaceCommandOrThrow({

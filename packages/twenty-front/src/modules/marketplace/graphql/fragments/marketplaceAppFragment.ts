@@ -5,7 +5,6 @@ export const MARKETPLACE_APP_FRAGMENT = gql`
     id
     name
     description
-    icon
     author
     category
     logo

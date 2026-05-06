@@ -1,3 +1,5 @@
+import type { MessageDescriptor } from '@lingui/core';
+
 export type TrustedBySeparatorType = {
-  text: string;
+  text: MessageDescriptor;
 };

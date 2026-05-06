@@ -5,6 +5,7 @@ export const lastLoadedRecordTableWidgetViewIdComponentState =
   createAtomComponentState<{
     viewId: string;
     objectMetadataItemUpdatedAt: string;
+    loadedViewContentSignature: string;
   } | null>({
     key: 'lastLoadedRecordTableWidgetViewIdComponentState',
     defaultValue: null,

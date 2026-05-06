@@ -1,6 +1,7 @@
 import type { ImageType } from '@/design-system/components/Image';
 import type { FeatureTileType } from '@/sections/Feature/types/FeatureTile';
 import { theme } from '@/theme';
+import type { MessageDescriptor } from '@lingui/core';
 import { styled } from '@linaria/react';
 import { Tile } from './Tile/Tile';
 
@@ -39,15 +40,16 @@ const TileCell = styled.div`
 
 type TilesProps = {
   mask: ImageType;
+  renderText: (descriptor: MessageDescriptor) => string;
   tiles: FeatureTileType[];
 };
 
-export function Tiles({ mask, tiles }: TilesProps) {
+export function Tiles({ mask, renderText, tiles }: TilesProps) {
   return (
     <TilesGrid>
       {tiles.map((tile, index) => (
         <TileCell data-index={index} key={`${tile.heading.text}-${index}`}>
-          <Tile index={index} mask={mask} tile={tile} />
+          <Tile index={index} mask={mask} renderText={renderText} tile={tile} />
         </TileCell>
       ))}
     </TilesGrid>

@@ -118,7 +118,7 @@ exports[`NavigationMenuItem creation should fail when creating with missing targ
       "navigationMenuItem": 1,
       "totalErrors": 1,
     },
-    "userFriendlyMessage": "Metadata validation failed",
+    "userFriendlyMessage": "targetRecordId and targetObjectMetadataId are required for RECORD type",
   },
   "message": "Multiple validation errors occurred while creating navigation menu items",
   "name": "GraphQLError",

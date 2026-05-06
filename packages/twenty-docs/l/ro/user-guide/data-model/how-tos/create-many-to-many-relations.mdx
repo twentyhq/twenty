@@ -53,38 +53,45 @@ Mai întâi, creați obiectul intermediar care va păstra conexiunile.
 1. Accesați **Setări → Model de date**
 2. Faceți clic pe **+ Obiect nou**
 3. Dați-i un nume descriptiv (de ex., "Atribuire proiect", "Membru al echipei", "Comandă de produs")
-4. Faceți clic pe **Salvare**
+4. Activați "Omite crearea unui câmp Nume"
+
+<img src="/images/user-guide/fields/new-pivot-object.png" alt="Obiect pivot nou" />
+
+5. Faceți clic pe **Salvare**
 
 <Tip>
 **Convenție de denumire**: Folosiți un nume care descrie relația, cum ar fi "Atribuire proiect" sau "Apartenență la echipă". Acest lucru face modelul de date mai ușor de înțeles.
 </Tip>
 
-## Pasul 2: Creați relații din obiectul de legătură
+## Pasul 2: Creați relații între obiecte și obiectul de legătură
 
-Adăugați câmpuri de relație din obiectul de legătură către ambele obiecte pe care doriți să le conectați.
+Adăugați câmpuri de relație din fiecare dintre cele două obiecte la obiectul de legătură.
 
-### Prima relație (Obiect de legătură → Obiectul A)
+### Prima relație (Obiectul A → Obiect de legătură)
 
-1. Selectați obiectul de legătură în **Setări → Model de date**
-2. Faceți clic pe **+ Adaugă câmp**
-3. Alegeți **Relație** ca tip de câmp
-4. Selectați primul obiect (de ex., "Persoane")
-5. Setați tipul relației la **Mulți-la-unu** (multe atribuiri pot fi legate de o singură persoană)
-6. Denumiți câmpurile:
-   * Câmp pe obiectul de legătură: de ex., "Persoană"
-   * Câmp pe Persoane: de ex., "Atribuiri proiect"
-7. Faceți clic pe **Salvare**
-
-### A doua relație (Obiect de legătură → Obiectul B)
-
-1. Rămânând pe obiectul de legătură, faceți clic pe **+ Adăugați câmp**
-2. Alegeți **Relație** ca tip de câmp
-3. Selectați al doilea obiect (de ex., "Proiecte")
-4. Setați tipul relației la **Mulți-la-unu**
+1. Selectați primul obiect în **Setări → Model de date**
+2. Faceți clic pe **+ Adaugă relație**
+3. Selectați obiectul de legătură (de ex., "Atribuiri proiect")
+4. Setați tipul relației la **Unu-la-mulți** (o persoană poate fi asociată cu multe atribuiri)
 5. Denumiți câmpurile:
+   * Câmp pe Persoane: de ex., "Atribuiri proiect"
+   * Câmp pe obiectul de legătură: de ex., "Persoană"
+6. Faceți clic pe **Salvare**
+
+### A doua relație (Obiectul B → Obiect de legătură)
+
+1. Selectați al doilea obiect în **Setări → Model de date**
+2. Faceți clic pe **+ Adaugă relație**
+3. Selectați obiectul de legătură (de ex., "Atribuiri proiect")
+4. Setați tipul relației la **Unu-la-mulți** (un proiect poate fi asociat cu multe atribuiri)
+5. Activați **"Aceasta este o relație către un obiect de legătură"**
+
+<img src="/images/user-guide/fields/junction-relation-toggle.png" style={{width:'100%'}} />
+
+6. Denumiți câmpurile:
    * Câmp pe obiectul de legătură: de ex., "Proiect"
    * Câmp pe Proiecte: de ex., "Membrii echipei"
-6. Faceți clic pe **Salvare**
+7. Faceți clic pe **Salvare**
 
 ## Pasul 3: Configurați afișarea relației de joncțiune
 
@@ -94,21 +101,9 @@ Acum configurați obiectele sursă pentru a afișa direct înregistrările legat
 2. Selectați primul obiect (de ex., "Persoane")
 3. Găsiți câmpul de relație care indică spre obiectul de legătură (de ex., "Atribuiri proiect")
 4. Faceți clic pentru a edita câmpul
-5. Activați **"Aceasta este o relație către un obiect de legătură"**
+5. Activați **"Aceasta este o relație cu un obiect de legătură"**
 6. Selectați **Relația țintă** (de ex., "Proiect" — câmpul de pe obiectul de legătură care indică spre cealaltă parte)
 7. Faceți clic pe **Salvare**
-
-{/* TODO: Add image
-<img src="/images/user-guide/fields/junction-relation-toggle.png" style={{width:'100%'}}/>
-*/}
-
-Repetați pentru celălalt obiect:
-
-1. Selectați "Proiecte" în Model de date
-2. Editați câmpul de relație "Membrii echipei"
-3. Activați comutatorul de joncțiune
-4. Selectați "Persoană" ca relație țintă
-5. Salvează
 
 ## Rezultat
 
@@ -130,15 +125,15 @@ Iată un ghid complet:
 
 ### Adăugați relații
 
-1. **Atribuire proiect → Persoane**
-   * Tip: Mulți-la-unu
-   * Câmp pe Atribuire proiect: "Persoană"
+1. **Persoane → Atribuire proiect**
+   * Tip: Unu-la-mulți
    * Câmp pe Persoane: "Atribuiri proiect"
+   * Câmp pe Atribuire proiect: "Persoană"
 
-2. **Atribuire proiect → Proiecte**
-   * Tip: Mulți-la-unu
-   * Câmp pe Atribuire proiect: "Proiect"
+2. **Proiecte → Atribuire proiect**
+   * Tip: Unu-la-mulți
    * Câmp pe Proiecte: "Membrii echipei"
+   * Câmp pe Atribuire proiect: "Proiect"
 
 ### Configurați afișarea relației de joncțiune
 

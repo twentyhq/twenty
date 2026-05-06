@@ -43,7 +43,20 @@ const labelIdentifierFailingTestsUseCase: CreateOneObjectMetadataItemTestingCont
     },
   ];
 
-const allTestsUseCases = [...labelIdentifierFailingTestsUseCase];
+const imageIdentifierFailingTestsUseCase: CreateOneObjectMetadataItemTestingContext =
+  [
+    {
+      title: 'when imageIdentifier is not a uuid',
+      context: {
+        imageIdentifierFieldMetadataId: 'not-a-uuid',
+      },
+    },
+  ];
+
+const allTestsUseCases = [
+  ...labelIdentifierFailingTestsUseCase,
+  ...imageIdentifierFailingTestsUseCase,
+];
 
 describe('Object metadata update should fail', () => {
   let objectMetadataId: string;

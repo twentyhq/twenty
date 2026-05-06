@@ -77,6 +77,39 @@ Bir güncelleme yayımlamak için:
 
 {/* TODO: add screenshot of the Upgrade button */}
 
+### Sunucu sürümü uyumluluğu
+
+Uygulamanız belirli bir Twenty sunucu sürümünde sunulan bir özelliği kullanıyorsa (örneğin, v2.3.0'da eklenen OAuth sağlayıcıları), uygulamanızın gerektirdiği en düşük sunucu sürümünü `package.json` içindeki `engines.twenty` alanını kullanarak belirtmelisiniz:
+
+```json filename="package.json"
+{
+  "name": "twenty-my-app",
+  "version": "1.0.0",
+  "engines": {
+    "node": "^24.5.0",
+    "twenty": ">=2.3.0"
+  }
+}
+```
+
+Değer, standart bir [semver aralığı](https://github.com/npm/node-semver#ranges)dır. Yaygın Kalıplar:
+
+| Aralık                             | Anlam                                                     |
+| ---------------------------------- | --------------------------------------------------------- |
+| `>=2.3.0`                          | 2.3.0'dan itibaren herhangi bir sunucu                    |
+| `>=2.3.0 \<3.0.0` | 2.3.0 veya sonrası, ancak bir sonraki ana sürümün altında |
+| `^2.3.0`                           | `>=2.3.0 \<3.0.0` ile aynı               |
+
+**Dağıtım ve yükleme sırasında ne olur:**
+
+* `engines.twenty` ayarlanmışsa ve hedef sunucunun sürümü aralığı karşılamıyorsa, dağıtım (tarball yüklemesi) veya yükleme, gerekli aralığı ve gerçek sunucu sürümünü belirten bir mesajla birlikte `SERVER_VERSION_INCOMPATIBLE` hatasıyla reddedilir.
+* `engines.twenty` **ayarlı değilse**, uygulama herhangi bir sunucu sürümünde kabul edilir (mevcut uygulamalarla geriye dönük uyumludur).
+* Sunucuda `APP_VERSION` yapılandırılmamışsa, denetim atlanır.
+
+<Note>
+Nihai denetim sunucudadır — hem tarball yüklemesinde hem de çalışma alanı (workspace) kurulumunda `engines.twenty`'yi doğrular. Bir tarball'ı bant dışı dağıtırsanız veya marketplace'ten kurarsanız, sunucu yine de uyumluluğu zorunlu kılar.
+</Note>
+
 ## Otomatik CI/CD (hazır şablonlu iş akışları)
 
 `create-twenty-app` ile oluşturulan uygulamalar, kutudan çıktığı gibi `.github/workflows/` altında iki GitHub Actions iş akışıyla gelir. Depoyu GitHub’a iter itmez çalışmaya hazırdır — CI için ek bir kurulum gerekmez ve CD yalnızca tek bir gizli anahtar gerektirir.
@@ -165,6 +198,14 @@ export default defineApplication({
 
 Pazar yeri alanlarının tam listesi için Uygulama Oluşturma sayfasındaki [defineApplication akordeonu](/l/tr/developers/extend/apps/building#defineentity-functions)'na bakın (`author`, `category`, `aboutDescription`, `websiteUrl`, `termsUrl`, vb.).
 
+#### Önerilen ekran görüntüsü boyutları
+
+Marketplace, `screenshots`'ı sabit `8:5` oranlı bir kapsayıcıda görüntüler (örneğin, `1600×1000 px`).
+
+<Note>
+Herhangi bir en-boy oranındaki ekran görüntüleri eksiksiz görüntülenir ve asla kırpılmaz, ancak `8:5`'ten belirgin ölçüde daha uzun veya daha dar olanlarda yanlarda boş bantlar görünür.
+</Note>
+
 ### Yayımla
 
 ```bash filename="Terminal"
@@ -184,9 +225,9 @@ Twenty sunucusu pazar yeri kataloğunu npm kayıt defterinden **her saat** eşit
 Beklemek yerine eşitlemeyi hemen tetikleyebilirsiniz:
 
 ```bash filename="Terminal"
-yarn twenty catalog-sync
+yarn twenty server catalog-sync
 # To target a specific remote:
-# yarn twenty catalog-sync --remote production
+# yarn twenty server catalog-sync --remote production
 ```
 
 Pazar yerinde gösterilen meta veriler, `defineApplication()` yapılandırmanızdan gelir — `displayName`, `description`, `author`, `category`, `logoUrl`, `screenshots`, `aboutDescription`, `websiteUrl` ve `termsUrl` gibi alanlar.

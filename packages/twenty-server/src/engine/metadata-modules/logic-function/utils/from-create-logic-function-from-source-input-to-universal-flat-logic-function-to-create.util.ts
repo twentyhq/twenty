@@ -12,7 +12,6 @@ export const fromCreateLogicFunctionFromSourceInputToUniversalFlatLogicFunctionT
     builtHandlerPath,
     handlerName,
     checksum,
-    toolInputSchema,
     isBuildUpToDate,
     applicationUniversalIdentifier,
   }: {
@@ -21,7 +20,6 @@ export const fromCreateLogicFunctionFromSourceInputToUniversalFlatLogicFunctionT
     builtHandlerPath: string;
     handlerName: string;
     checksum: string | null;
-    toolInputSchema: object | null;
     isBuildUpToDate: boolean;
     applicationUniversalIdentifier: string;
   }): UniversalFlatLogicFunction & { id: string } => {
@@ -44,8 +42,6 @@ export const fromCreateLogicFunctionFromSourceInputToUniversalFlatLogicFunctionT
       runtime: LogicFunctionRuntime.NODE22,
       timeoutSeconds: createLogicFunctionFromSourceInput.timeoutSeconds ?? 300,
       checksum,
-      toolInputSchema,
-      isTool: createLogicFunctionFromSourceInput.isTool ?? false,
       isBuildUpToDate,
       handlerName,
       sourceHandlerPath,
@@ -56,6 +52,11 @@ export const fromCreateLogicFunctionFromSourceInputToUniversalFlatLogicFunctionT
         createLogicFunctionFromSourceInput.databaseEventTriggerSettings ?? null,
       httpRouteTriggerSettings:
         createLogicFunctionFromSourceInput.httpRouteTriggerSettings ?? null,
+      toolTriggerSettings:
+        createLogicFunctionFromSourceInput.toolTriggerSettings ?? null,
+      workflowActionTriggerSettings:
+        createLogicFunctionFromSourceInput.workflowActionTriggerSettings ??
+        null,
       createdAt: now,
       updatedAt: now,
       deletedAt: null,

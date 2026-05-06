@@ -4,6 +4,7 @@ export const APPLICATION_ENTITY_RELATION_PROPERTIES = [
   'workspace',
   'agents',
   'frontComponents',
+  'commandMenuItems',
   'logicFunctions',
   'objects',
   'applicationVariables',

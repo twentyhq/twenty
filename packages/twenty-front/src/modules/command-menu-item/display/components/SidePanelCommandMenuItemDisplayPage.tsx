@@ -79,9 +79,13 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
     ? pinnedCommandMenuItems.slice(visiblePinnedCommandMenuItemCount)
     : pinnedCommandMenuItems;
 
-  const matchingPinnedItems = filterCommandMenuItemsWithSidePanelSearch(
-    pinnedOverflowCommandMenuItems,
-  );
+  const pinnedItemsToFilter =
+    sidePanelSearch.length > 0
+      ? pinnedCommandMenuItems
+      : pinnedOverflowCommandMenuItems;
+
+  const matchingPinnedItems =
+    filterCommandMenuItemsWithSidePanelSearch(pinnedItemsToFilter);
   const matchingOtherItems = filterCommandMenuItemsWithSidePanelSearch(
     unpinnedCommandMenuItems,
   );

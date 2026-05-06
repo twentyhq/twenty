@@ -1,8 +1,8 @@
-import type { BodyType } from '@/design-system/components/Body';
+import type { MessageBody } from '@/lib/i18n/message-body';
 
 export type TestimonialAuthorType = {
-  name: BodyType;
-  designation: BodyType;
+  name: MessageBody;
+  designation: MessageBody;
   avatar?: {
     src: string;
     alt?: string;

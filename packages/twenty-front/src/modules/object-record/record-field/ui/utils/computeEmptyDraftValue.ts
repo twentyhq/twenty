@@ -48,6 +48,8 @@ export const computeEmptyDraftValue = <FieldValue>({
       addressState: '',
       addressCountry: '',
       addressPostcode: '',
+      addressLat: null,
+      addressLng: null,
     } as unknown as FieldInputDraftValue<FieldValue>;
   }
 

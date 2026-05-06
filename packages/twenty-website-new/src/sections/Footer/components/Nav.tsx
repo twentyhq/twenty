@@ -4,6 +4,7 @@ import { LocalizedLink } from '@/lib/i18n';
 import type { FooterNavGroupType } from '@/sections/Footer/types';
 import { theme } from '@/theme';
 import { NavigationMenu } from '@base-ui/react/navigation-menu';
+import type { MessageDescriptor } from '@lingui/core';
 import { styled } from '@linaria/react';
 import React from 'react';
 
@@ -125,9 +126,10 @@ const Actions = styled.div`
 
 type NavProps = {
   groups: FooterNavGroupType[];
+  renderText: (descriptor: MessageDescriptor) => string;
 };
 
-export function Nav({ groups }: NavProps) {
+export function Nav({ groups, renderText }: NavProps) {
   return (
     <NavigationMenu.Root render={<FooterNav />}>
       {groups.map((group, index) => (
@@ -148,10 +150,12 @@ export function Nav({ groups }: NavProps) {
             </NavDivider>
           )}
           <NavGroup aria-labelledby={group.id}>
-            <NavGroupTitle id={group.id}>{group.title}</NavGroupTitle>
+            <NavGroupTitle id={group.id}>
+              {renderText(group.title)}
+            </NavGroupTitle>
             <NavMenuList>
               {group.links.map((link) => (
-                <NavigationMenu.Item key={link.href + link.label}>
+                <NavigationMenu.Item key={link.href}>
                   <NavLink
                     render={
                       link.external ? (
@@ -171,7 +175,7 @@ export function Nav({ groups }: NavProps) {
                         fillColor={theme.colors.secondary.background[100]}
                       />
                     </NavLinkHoverIcon>
-                    {link.label}
+                    {renderText(link.label)}
                   </NavLink>
                 </NavigationMenu.Item>
               ))}
@@ -181,11 +185,10 @@ export function Nav({ groups }: NavProps) {
                 {group.ctas.map((cta) => (
                   <FooterNavCta
                     key={
-                      cta.kind === 'link'
-                        ? `${cta.label}-${cta.href}`
-                        : `${cta.label}-${cta.kind}`
+                      cta.kind === 'link' ? `${cta.href}-${cta.kind}` : cta.kind
                     }
                     cta={cta}
+                    renderText={renderText}
                   />
                 ))}
               </Actions>

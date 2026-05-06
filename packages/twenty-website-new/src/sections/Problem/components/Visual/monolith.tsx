@@ -5,6 +5,7 @@ import * as THREE from 'three';
 import { observeElementSize } from '@/lib/dom/observe-element-size';
 import {
   createVisualRenderLoop,
+  loadVisualImage,
   tryCreateSiteWebGlRenderer,
   type VisualRenderLoop,
   type VisualRenderLoopFrame,
@@ -445,38 +446,24 @@ function createAbortError() {
   return new DOMException('Aborted', 'AbortError');
 }
 
-function loadImage(imageUrl: string, signal: AbortSignal) {
-  return new Promise<HTMLImageElement>((resolve, reject) => {
+function createAbortTask(signal: AbortSignal) {
+  let cleanup = () => {};
+  const promise = new Promise<never>((_, reject) => {
     if (signal.aborted) {
       reject(createAbortError());
       return;
     }
 
-    const image = new Image();
-    image.decoding = 'async';
-
-    const cleanup = () => {
-      image.onload = null;
-      image.onerror = null;
-      signal.removeEventListener('abort', handleAbort);
-    };
     const handleAbort = () => {
-      cleanup();
-      image.src = '';
       reject(createAbortError());
     };
-
-    image.onload = () => {
-      cleanup();
-      resolve(image);
-    };
-    image.onerror = () => {
-      cleanup();
-      reject(new Error(`Failed to load image: ${imageUrl}`));
-    };
     signal.addEventListener('abort', handleAbort, { once: true });
-    image.src = imageUrl;
+    cleanup = () => {
+      signal.removeEventListener('abort', handleAbort);
+    };
   });
+
+  return { cleanup, promise };
 }
 
 async function mountHalftoneCanvas(options: MountHalftoneCanvasOptions) {
@@ -492,7 +479,11 @@ async function mountHalftoneCanvas(options: MountHalftoneCanvasOptions) {
       1,
     );
 
-  const image = await loadImage(imageUrl, signal);
+  const abortTask = createAbortTask(signal);
+  const image = await Promise.race([
+    loadVisualImage(imageUrl, { label: 'problem monolith image' }),
+    abortTask.promise,
+  ]).finally(abortTask.cleanup);
 
   if (signal.aborted) {
     return undefined;

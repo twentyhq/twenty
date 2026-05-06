@@ -11,7 +11,7 @@ export type CoreEntityCacheDataMap = {
 export type CoreEntityCacheKeyName = keyof CoreEntityCacheDataMap;
 
 export const CORE_ENTITY_CACHE_KEYS: Record<CoreEntityCacheKeyName, string> = {
-  workspaceEntity: 'core-entity:workspace',
-  user: 'core-entity:user',
-  userWorkspaceEntity: 'core-entity:user-workspace',
+  workspaceEntity: 'workspace',
+  user: 'user',
+  userWorkspaceEntity: 'user-workspace',
 };

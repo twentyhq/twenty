@@ -35,7 +35,8 @@ const RULES = [
     id: 'no-raw-animation-frame',
     description:
       '`requestAnimationFrame(...)` / `cancelAnimationFrame(...)` may only be used inside shared runtime primitives.',
-    pattern: /\b(?:window\.)?(?:requestAnimationFrame|cancelAnimationFrame)\s*\(/,
+    pattern:
+      /\b(?:window\.)?(?:requestAnimationFrame|cancelAnimationFrame)\s*\(/,
     appliesTo: (rel) =>
       rel.startsWith('src/') && /\.(ts|tsx|mjs|js|jsx)$/.test(rel),
     exempt: (rel) =>

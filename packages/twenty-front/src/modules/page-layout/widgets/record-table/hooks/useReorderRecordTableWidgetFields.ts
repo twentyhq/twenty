@@ -1,5 +1,6 @@
 import { recordTableWidgetViewDraftComponentState } from '@/page-layout/states/recordTableWidgetViewDraftComponentState';
 import { type RecordTableWidgetViewFieldItem } from '@/page-layout/widgets/record-table/types/RecordTableWidgetViewFieldItem';
+import { getRecordTableWidgetDraftViewFieldClientId } from '@/page-layout/widgets/record-table/utils/getRecordTableWidgetDraftViewFieldClientId';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
@@ -54,7 +55,10 @@ export const useReorderRecordTableWidgetFields = ({
           [widgetId]: {
             ...widgetViewDraft,
             viewFields: widgetViewDraft.viewFields.map((field) => {
-              const newPosition = updatedPositions.get(field.id);
+              const newPosition = updatedPositions.get(
+                getRecordTableWidgetDraftViewFieldClientId(field),
+              );
+
               return newPosition !== undefined
                 ? { ...field, position: newPosition }
                 : field;

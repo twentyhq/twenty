@@ -1,19 +1,19 @@
-import type { BodyType } from '@/design-system/components/Body';
-import type { HeadingType } from '@/design-system/components/Heading';
+import type { MessageBody } from '@/lib/i18n/message-body';
+import type { MessageDescriptor } from '@lingui/core';
 
 export type SalesforceWrongChoicePopupType = {
-  body: string;
-  titleBar: string;
+  body: MessageDescriptor;
+  titleBar: MessageDescriptor;
 };
 
 export type SalesforceRichTextPartType = {
   strike?: boolean;
-  text: string;
+  text: MessageDescriptor;
 };
 
 export type SalesforceAddonTooltipType = {
-  body: string;
-  title: string;
+  body: MessageDescriptor;
+  title: MessageDescriptor;
 };
 
 export type SalesforceAddonRowType = {
@@ -22,11 +22,11 @@ export type SalesforceAddonRowType = {
   disabled?: boolean;
   fixedCost?: number;
   id: string;
-  label: string;
+  label: MessageDescriptor;
   netSpendRate?: number;
   popup: SalesforceWrongChoicePopupType;
   rightLabelParts?: SalesforceRichTextPartType[][];
-  rightLabel: string;
+  rightLabel: MessageDescriptor;
   sharedCostKey?: string;
   tooltip?: SalesforceAddonTooltipType;
 };
@@ -35,20 +35,19 @@ export type SalesforcePricingPanelType = {
   basePriceAmount: number;
   productIconAlt: string;
   productIconSrc: string;
-  totalPriceLabel: string;
-  windowTitle: string;
-  productTitle: string;
-  priceSuffix: string;
-  promoTag?: string;
-  featureSectionHeading: string;
+  totalPriceLabel: MessageDescriptor;
+  windowTitle: MessageDescriptor;
+  productTitle: MessageDescriptor;
+  priceSuffix: MessageDescriptor;
+  promoTag?: MessageDescriptor;
+  featureSectionHeading: MessageDescriptor;
   addons: SalesforceAddonRowType[];
-  secondaryCtaNote?: string;
+  secondaryCtaNote?: MessageDescriptor;
   secondaryCtaHref: string;
-  secondaryCtaLabel: string;
+  secondaryCtaLabel: MessageDescriptor;
 };
 
 export type SalesforceDataType = {
-  heading: HeadingType[];
-  body: BodyType;
+  body: MessageBody;
   pricing: SalesforcePricingPanelType;
 };

@@ -1,3 +1,4 @@
+import { msg } from '@lingui/core/macro';
 import type { CaseStudyCatalogEntry } from '@/lib/customers/types';
 import { theme } from '@/theme';
 
@@ -38,23 +39,23 @@ export function getCaseStudyPalette(href: string) {
 export const CASE_STUDY_CATALOG_ENTRIES: CaseStudyCatalogEntry[] = [
   {
     href: '/customers/9dots',
-    industry: 'Real Estate',
-    authorRole: 'Founder, Nine Dots Ventures',
+    industry: msg`Real Estate`,
+    authorRole: msg`Founder, Nine Dots Ventures`,
     kpis: [
-      { value: '150 hrs', label: 'Saved / month' },
-      { value: '2,000+', label: 'Daily messages' },
-      { value: 'Q1 2026', label: 'Record quarter' },
+      { value: msg`150 hrs`, label: msg`Saved / month` },
+      { value: msg`2,000+`, label: msg`Daily messages` },
+      { value: msg`Q1 2026`, label: msg`Record quarter` },
     ],
     quote: {
-      text: 'Twenty lets us build a CRM around the business and not the business around the CRM.',
+      text: msg`Twenty lets us build a CRM around the business and not the business around the CRM.`,
       author: 'Mike Babiy',
-      role: 'Founder, Nine Dots Ventures',
+      role: msg`Founder, Nine Dots Ventures`,
     },
     hero: {
       readingTime: '9 min',
       title: [
-        { text: 'A real estate agency on WhatsApp ', fontFamily: 'serif' },
-        { text: 'built a CRM around it', fontFamily: 'sans' },
+        { text: msg`A real estate agency on WhatsApp`, fontFamily: 'serif' },
+        { text: msg`built a CRM around it`, fontFamily: 'sans' },
       ],
       author: 'Mike Babiy & Azmat Parveen',
       authorAvatarSrc: '/images/partner/testimonials/mike-babiy.png',
@@ -62,26 +63,25 @@ export const CASE_STUDY_CATALOG_ENTRIES: CaseStudyCatalogEntry[] = [
       heroImageSrc: PLACEHOLDER_HERO,
     },
     catalogCard: {
-      summary:
-        "Nine Dots put Twenty at the center of Homeseller's stack with APIs, automation, and AI on top of WhatsApp-heavy operations.",
-      date: 'Jul 2025',
+      summary: msg`Nine Dots put Twenty at the center of Homeseller's stack with APIs, automation, and AI on top of WhatsApp-heavy operations.`,
+      date: msg`Jul 2025`,
       coverImageSrc:
         'https://images.unsplash.com/photo-1733244766159-f58f4184fd38?w=1600&q=80',
     },
   },
   {
     href: '/customers/alternative-partners',
-    industry: 'Consulting',
-    authorRole: 'Principal and Founder, Alternative Partners',
+    industry: msg`Consulting`,
+    authorRole: msg`Principal and Founder, Alternative Partners`,
     kpis: [
-      { value: 'AI-assisted', label: 'Salesforce migration' },
-      { value: 'Self-hosted', label: 'Full ownership' },
+      { value: msg`AI-assisted`, label: msg`Salesforce migration` },
+      { value: msg`Self-hosted`, label: msg`Full ownership` },
     ],
     hero: {
       readingTime: '7 min',
       title: [
-        { text: 'From Salesforce to ', fontFamily: 'serif' },
-        { text: 'self-hosted Twenty', fontFamily: 'sans' },
+        { text: msg`From Salesforce to`, fontFamily: 'serif' },
+        { text: msg`self-hosted Twenty`, fontFamily: 'sans' },
       ],
       author: 'Benjamin Reynolds',
       authorAvatarSrc: '/images/partner/testimonials/benjamin-reynolds.webp',
@@ -89,26 +89,25 @@ export const CASE_STUDY_CATALOG_ENTRIES: CaseStudyCatalogEntry[] = [
       heroImageSrc: PLACEHOLDER_HERO,
     },
     catalogCard: {
-      summary:
-        'Alternative Partners replaced Salesforce with self-hosted Twenty, using agentic AI to compress migration work.',
-      date: '2025',
+      summary: msg`Alternative Partners replaced Salesforce with self-hosted Twenty, using agentic AI to compress migration work.`,
+      date: msg`2025`,
       coverImageSrc:
         'https://images.unsplash.com/photo-1702047149248-a6049168d2a8?w=1600&q=80',
     },
   },
   {
     href: '/customers/netzero',
-    industry: 'Agribusiness',
-    authorRole: 'Co-founder, NetZero',
+    industry: msg`Agribusiness`,
+    authorRole: msg`Co-founder, NetZero`,
     kpis: [
-      { value: '3 product lines', label: 'On a single CRM' },
-      { value: 'No-code', label: 'Customizations' },
+      { value: msg`3 product lines`, label: msg`On a single CRM` },
+      { value: msg`No-code`, label: msg`Customizations` },
     ],
     hero: {
       readingTime: '8 min',
       title: [
-        { text: 'A CRM that ', fontFamily: 'serif' },
-        { text: 'grows with you', fontFamily: 'sans' },
+        { text: msg`A CRM that`, fontFamily: 'serif' },
+        { text: msg`grows with you`, fontFamily: 'sans' },
       ],
       author: 'Olivier Reinaud',
       authorAvatarSrc: '/images/partner/testimonials/olivier-reinaud.jpg',
@@ -116,23 +115,22 @@ export const CASE_STUDY_CATALOG_ENTRIES: CaseStudyCatalogEntry[] = [
       heroImageSrc: PLACEHOLDER_HERO,
     },
     catalogCard: {
-      summary:
-        'NetZero uses Twenty as a modular CRM across product lines and countries, with a roadmap into AI-assisted workflows.',
-      date: '2025',
+      summary: msg`NetZero uses Twenty as a modular CRM across product lines and countries, with a roadmap into AI-assisted workflows.`,
+      date: msg`2025`,
       coverImageSrc:
         'https://images.unsplash.com/photo-1744830343976-ce690ba2a67c?w=1600&q=80',
     },
   },
   {
     href: '/customers/act-education',
-    industry: 'Education',
-    authorRole: 'CRM Engineer, AC&T Education Migration',
-    kpis: [{ value: '90%+', label: 'Lower CRM cost' }],
+    industry: msg`Education`,
+    authorRole: msg`CRM Engineer, AC&T Education Migration`,
+    kpis: [{ value: msg`90%+`, label: msg`Lower CRM cost` }],
     hero: {
       readingTime: '7 min',
       title: [
-        { text: 'A CRM they ', fontFamily: 'serif' },
-        { text: 'actually own', fontFamily: 'sans' },
+        { text: msg`A CRM they`, fontFamily: 'serif' },
+        { text: msg`actually own`, fontFamily: 'sans' },
       ],
       author: 'Joseph Chiang',
       authorAvatarSrc: '/images/partner/testimonials/joseph-chiang.jpg',
@@ -140,23 +138,22 @@ export const CASE_STUDY_CATALOG_ENTRIES: CaseStudyCatalogEntry[] = [
       heroImageSrc: PLACEHOLDER_HERO,
     },
     catalogCard: {
-      summary:
-        'AC&T and Flycoder moved from a dead vendor export to self-hosted Twenty, with over 90% lower CRM cost and full control.',
-      date: '2025',
+      summary: msg`AC&T and Flycoder moved from a dead vendor export to self-hosted Twenty, with over 90% lower CRM cost and full control.`,
+      date: msg`2025`,
       coverImageSrc:
         'https://images.unsplash.com/photo-1687600154329-150952c73169?w=1600&q=80',
     },
   },
   {
     href: '/customers/w3villa',
-    industry: 'EdTech',
-    authorRole: 'VP of Engineering, W3villa Technologies',
-    kpis: [{ value: 'Zero', label: 'Manual work at core' }],
+    industry: msg`EdTech`,
+    authorRole: msg`VP of Engineering, W3villa Technologies`,
+    kpis: [{ value: msg`Zero`, label: msg`Manual work at core` }],
     hero: {
       readingTime: '8 min',
       title: [
-        { text: 'When your CRM ', fontFamily: 'serif' },
-        { text: 'is the product', fontFamily: 'sans' },
+        { text: msg`When your CRM`, fontFamily: 'serif' },
+        { text: msg`is the product`, fontFamily: 'sans' },
       ],
       author: 'Amrendra Pratap Singh',
       authorAvatarSrc: '/images/partner/testimonials/amrendra-singh.webp',
@@ -164,41 +161,39 @@ export const CASE_STUDY_CATALOG_ENTRIES: CaseStudyCatalogEntry[] = [
       heroImageSrc: PLACEHOLDER_HERO,
     },
     catalogCard: {
-      summary:
-        'W3villa shipped W3Grads on Twenty for AI interviews, scoring, and institution-scale workflows without rebuilding CRM plumbing.',
-      date: '2025',
+      summary: msg`W3villa shipped W3Grads on Twenty for AI interviews, scoring, and institution-scale workflows without rebuilding CRM plumbing.`,
+      date: msg`2025`,
       coverImageSrc:
         'https://images.unsplash.com/photo-1756830231350-3b501f63c5c1?w=1600&q=80',
     },
   },
   {
     href: '/customers/elevate-consulting',
-    industry: 'Management Consulting',
-    authorRole: 'Director of Digital and Information, Elevate Consulting',
+    industry: msg`Management Consulting`,
+    authorRole: msg`Director of Digital and Information, Elevate Consulting`,
     kpis: [
-      { value: '1 click', label: 'Proposal automation' },
-      { value: '4 tools', label: 'Connected via API' },
-      { value: 'API-first', label: 'Tool integration' },
+      { value: msg`1 click`, label: msg`Proposal automation` },
+      { value: msg`4 tools`, label: msg`Connected via API` },
+      { value: msg`API-first`, label: msg`Tool integration` },
     ],
     quote: {
-      text: 'It is just such a nicer experience than dealing with a Salesforce or a HubSpot. My mission has been to get every tool API-accessible, so everything talks to each other.',
+      text: msg`It is just such a nicer experience than dealing with a Salesforce or a HubSpot. My mission has been to get every tool API-accessible, so everything talks to each other.`,
       author: 'Justin Beadle',
-      role: 'Director of Digital and Information, Elevate Consulting',
+      role: msg`Director of Digital and Information, Elevate Consulting`,
     },
     hero: {
       readingTime: '8 min',
       title: [
-        { text: 'Twenty as the API backbone ', fontFamily: 'serif' },
-        { text: 'of a go-to-market stack', fontFamily: 'sans' },
+        { text: msg`Twenty as the API backbone`, fontFamily: 'serif' },
+        { text: msg`of a go-to-market stack`, fontFamily: 'sans' },
       ],
       author: 'Justin Beadle',
       clientIcon: 'elevate-consulting',
       heroImageSrc: PLACEHOLDER_HERO,
     },
     catalogCard: {
-      summary:
-        'Elevate Consulting uses Twenty as the API backbone connecting billing, Teams, resourcing, and a custom front end around client and opportunity data.',
-      date: 'Jun 2025',
+      summary: msg`Elevate Consulting uses Twenty as the API backbone connecting billing, Teams, resourcing, and a custom front end around client and opportunity data.`,
+      date: msg`Jun 2025`,
       coverImageSrc:
         'https://images.unsplash.com/photo-1758873269035-aae0e1fd3422?w=1600&q=80',
     },

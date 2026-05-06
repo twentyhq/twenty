@@ -1,7 +1,7 @@
-import type { HeadingType } from '@/design-system/components/Heading';
+import type { MessageHeadingSegment } from '@/lib/i18n/message-heading-segment';
 import type { TestimonialAuthorType } from '@/sections/Testimonials/types/TestimonialAuthor';
 
 export type TestimonialCardType = {
-  heading: HeadingType;
+  heading: MessageHeadingSegment;
   author: TestimonialAuthorType;
 };

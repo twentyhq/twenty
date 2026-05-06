@@ -4,20 +4,19 @@
 # See https://crowdin.github.io/crowdin-cli/configuration for more information
 #
 
-"preserve_hierarchy": true
-"base_path": ".."
+preserve_hierarchy: true
+base_path: ..
 
-files: [
-  {
-    #
-    # Source files filter - PO files for Lingui
-    #
-    "source": "**/en.po",
-
+files:
+  #
+  # Source files filter - PO files for Lingui
+  #
+  - source: packages/twenty-front/src/locales/en.po
     #
     # Translation files path
     #
-    "translation": "%original_path%/%locale%.po",
-  }
-]
-
+    translation: '%original_path%/%locale%.po'
+  - source: packages/twenty-server/src/engine/core-modules/i18n/locales/en.po
+    translation: '%original_path%/%locale%.po'
+  - source: packages/twenty-emails/src/locales/en.po
+    translation: '%original_path%/%locale%.po'

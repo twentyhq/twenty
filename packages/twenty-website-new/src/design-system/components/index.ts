@@ -6,7 +6,7 @@ export { Eyebrow } from './Eyebrow';
 export { Form } from './Form';
 export type { FormFieldProps, FormTextareaProps } from './Form';
 export { GuideCrosshair } from './GuideCrosshair';
-export { Heading } from './Heading';
+export { Heading, HeadingPart } from './Heading';
 export { IconButton } from './IconButton';
 export { Image } from './Image';
 export { Grid, Inline, Stack } from './Layout';

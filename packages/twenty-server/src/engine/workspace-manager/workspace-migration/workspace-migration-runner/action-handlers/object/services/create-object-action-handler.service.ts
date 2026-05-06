@@ -15,8 +15,8 @@ import {
 import { fromUniversalFlatFieldMetadataToFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/field/services/utils/from-universal-flat-field-metadata-to-flat-field-metadata.util';
 import { fromUniversalFlatObjectMetadataToFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/object/services/utils/from-universal-flat-object-metadata-to-flat-object-metadata.util';
 import {
-  WorkspaceMigrationActionRunnerContext,
   type WorkspaceMigrationActionRunnerArgs,
+  WorkspaceMigrationActionRunnerContext,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/workspace-migration-action-runner-args.type';
 import { flatEntityToScalarFlatEntity } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/flat-entity-to-scalar-flat-entity.util';
 import { generateColumnDefinitions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/generate-column-definitions.util';
@@ -41,7 +41,7 @@ export class CreateObjectActionHandlerService extends WorkspaceMigrationRunnerAc
   override async transpileUniversalActionToFlatAction(
     context: WorkspaceMigrationActionRunnerArgs<UniversalCreateObjectAction>,
   ): Promise<FlatCreateObjectAction> {
-    const { action, workspaceId, allFlatEntityMaps } = context;
+    const { action, allFlatEntityMaps } = context;
     const { fieldIdByUniversalIdentifier, id: providedObjectId } = action;
 
     const allFieldIdToBeCreatedInActionByUniversalIdentifierMap = new Map<

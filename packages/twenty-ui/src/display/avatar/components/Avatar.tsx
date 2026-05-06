@@ -150,13 +150,15 @@ export const Avatar = ({
 
   const showBackgroundColor = showPlaceholder;
 
+  const showBorderColor = showPlaceholder;
+
   return (
     <StyledAvatar
       size={size}
       backgroundColor={
         Icon ? 'inherit' : showBackgroundColor ? fixedBackgroundColor : 'none'
       }
-      borderColor={fixedBorderColor}
+      borderColor={showBorderColor ? fixedBorderColor : undefined}
       color={fixedColor}
       clickable={!isUndefined(onClick)}
       rounded={type === 'rounded'}

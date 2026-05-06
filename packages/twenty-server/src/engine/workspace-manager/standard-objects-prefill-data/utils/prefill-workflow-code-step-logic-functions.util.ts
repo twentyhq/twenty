@@ -20,42 +20,6 @@ export const getCreateCompanyWhenAddingNewPersonCodeStepLogicFunctionIds = (
   ),
 });
 
-const EXTRACT_DOMAIN_TOOL_INPUT_SCHEMA = {
-  type: 'object',
-  properties: {
-    email: {
-      type: 'string',
-    },
-  },
-  required: ['email'],
-};
-
-const IS_PERSONAL_EMAIL_TOOL_INPUT_SCHEMA = {
-  type: 'object',
-  properties: {
-    primaryEmail: {
-      type: 'string',
-    },
-  },
-  required: ['primaryEmail'],
-};
-
-const FIND_MATCHING_COMPANY_BY_DOMAIN_TOOL_INPUT_SCHEMA = {
-  type: 'object',
-  properties: {
-    companies: {
-      type: 'array',
-      items: {
-        type: 'object',
-      },
-    },
-    domain: {
-      type: 'string',
-    },
-  },
-  required: ['companies', 'domain'],
-};
-
 const EXTRACT_DOMAIN_LOGIC_FUNCTION_SOURCE = `const psl = require('psl');
 
 export const main = async (params) => {
@@ -184,7 +148,6 @@ export type PrefilledWorkflowCodeStepLogicFunctionDefinition = {
   name: string;
   description: string;
   sourceHandlerCode: string;
-  toolInputSchema: object;
 };
 
 export const getCreateCompanyWhenAddingNewPersonCodeStepLogicFunctionDefinitions =
@@ -203,7 +166,6 @@ export const getCreateCompanyWhenAddingNewPersonCodeStepLogicFunctionDefinitions
         description:
           'Extracts a normalized company domain and URL from a person email address.',
         sourceHandlerCode: EXTRACT_DOMAIN_LOGIC_FUNCTION_SOURCE,
-        toolInputSchema: EXTRACT_DOMAIN_TOOL_INPUT_SCHEMA,
       },
       {
         id: findMatchingCompanyByDomainLogicFunctionId,
@@ -212,7 +174,6 @@ export const getCreateCompanyWhenAddingNewPersonCodeStepLogicFunctionDefinitions
           'Finds an existing company whose website matches a normalized registrable domain.',
         sourceHandlerCode:
           FIND_MATCHING_COMPANY_BY_DOMAIN_LOGIC_FUNCTION_SOURCE,
-        toolInputSchema: FIND_MATCHING_COMPANY_BY_DOMAIN_TOOL_INPUT_SCHEMA,
       },
       {
         id: isPersonalEmailLogicFunctionId,
@@ -220,7 +181,6 @@ export const getCreateCompanyWhenAddingNewPersonCodeStepLogicFunctionDefinitions
         description:
           'Detects whether an email address belongs to a common personal email provider.',
         sourceHandlerCode: IS_PERSONAL_EMAIL_LOGIC_FUNCTION_SOURCE,
-        toolInputSchema: IS_PERSONAL_EMAIL_TOOL_INPUT_SCHEMA,
       },
     ];
   };

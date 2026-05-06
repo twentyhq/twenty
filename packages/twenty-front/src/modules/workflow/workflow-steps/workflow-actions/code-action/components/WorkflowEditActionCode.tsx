@@ -38,6 +38,7 @@ import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
 import {
   getOutputSchemaFromValue,
+  jsonSchemaToInputSchema,
   type InputJsonSchema,
 } from 'twenty-shared/logic-function';
 import { IconCode, IconPlayerPlay } from 'twenty-ui/display';
@@ -137,7 +138,7 @@ export const WorkflowEditActionCode = ({
     );
 
   const handleUpdateFunctionInputSchema = useDebouncedCallback(
-    async (sourceCode: string, toolInputSchema: InputJsonSchema) => {
+    async (sourceCode: string, inferredJsonSchema: InputJsonSchema) => {
       if (actionOptions.readonly === true) {
         return;
       }
@@ -146,11 +147,9 @@ export const WorkflowEditActionCode = ({
         return;
       }
 
-      const schemaArray = Array.isArray(toolInputSchema)
-        ? toolInputSchema
-        : [toolInputSchema];
+      const inputSchema = jsonSchemaToInputSchema(inferredJsonSchema);
 
-      const newFunctionInput = getFunctionInputFromInputSchema(schemaArray)[0];
+      const newFunctionInput = getFunctionInputFromInputSchema(inputSchema)[0];
 
       const newMergedInput = mergeDefaultFunctionInputAndFunctionInput({
         newInput: newFunctionInput,
@@ -260,12 +259,12 @@ export const WorkflowEditActionCode = ({
       return;
     }
 
-    const toolInputSchema = await onChange('sourceHandlerCode')(newCode);
+    const inferredJsonSchema = await onChange('sourceHandlerCode')(newCode);
 
     await getUpdatableWorkflowVersion();
 
-    if (isDefined(toolInputSchema)) {
-      await handleUpdateFunctionInputSchema(newCode, toolInputSchema);
+    if (isDefined(inferredJsonSchema)) {
+      await handleUpdateFunctionInputSchema(newCode, inferredJsonSchema);
     }
   };
 

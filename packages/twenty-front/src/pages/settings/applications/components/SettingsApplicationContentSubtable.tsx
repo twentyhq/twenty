@@ -13,23 +13,32 @@ import {
   useIcons,
 } from 'twenty-ui/display';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { AppChip } from '@/applications/components/AppChip';
 
 export type ApplicationContentRow = {
   key: string;
   name: string;
+  applicationId?: string;
   icon?: string;
   secondary?: string;
   link?: string;
 };
 
-const GRID_TEMPLATE_COLUMNS = '1fr auto 32px';
+const GRID_TEMPLATE_COLUMNS = '200px 1fr 160px 32px';
 
 export const SettingsApplicationContentSubtable = ({
   title,
   rows,
+  applicationId,
+  fallbackApplicationData,
 }: {
   title: string;
   rows: ApplicationContentRow[];
+  applicationId?: string;
+  fallbackApplicationData?: {
+    logo?: string | null;
+    name?: string | null;
+  };
 }) => {
   const { theme } = useContext(ThemeContext);
   const { getIcon } = useIcons();
@@ -54,6 +63,12 @@ export const SettingsApplicationContentSubtable = ({
                 <Icon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
               )}
               <OverflowingTextWithTooltip text={row.name} />
+            </StyledNameTableCell>
+            <StyledNameTableCell minWidth="0" overflow="hidden" align={'right'}>
+              <AppChip
+                applicationId={row.applicationId ?? applicationId}
+                fallbackApplicationData={fallbackApplicationData}
+              />
             </StyledNameTableCell>
             <TableCell
               align="right"

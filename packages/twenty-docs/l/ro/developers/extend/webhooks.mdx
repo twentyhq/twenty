@@ -1,11 +1,12 @@
 ---
 title: Webhooks
-description: Primiți notificări în timp real atunci când au loc evenimente în CRM-ul dvs.
+icon: satellite-dish
+description: Primește notificări când înregistrările se modifică — HTTP POST către endpoint-ul tău la fiecare creare, actualizare sau ștergere.
 ---
 
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
-Webhook-urile trimit date către sistemele dvs. în timp real atunci când au loc evenimente în Twenty — nu este necesară interogarea periodică. Folosiți-le pentru a menține sistemele externe sincronizate, a declanșa automatizări sau a trimite alerte.
+Twenty trimite o solicitare HTTP POST către URL-ul tău ori de câte ori o înregistrare este creată, actualizată sau ștearsă. Toate tipurile de obiecte sunt acoperite, inclusiv obiectele personalizate.
 
 ## Creați un webhook
 

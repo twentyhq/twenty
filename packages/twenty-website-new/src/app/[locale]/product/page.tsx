@@ -1,15 +1,27 @@
+import { msg } from '@lingui/core/macro';
 import { FAQ_DATA } from '@/sections/Faq/data';
 import { MENU_DATA } from '@/sections/Menu/data';
 import { TRUSTED_BY_DATA } from '@/sections/TrustedBy/data';
 import { TalkToUsButton } from '@/lib/contact-cal';
 import { FEATURE_DATA } from '@/app/[locale]/product/feature.data';
-import { HERO_DATA } from '@/app/[locale]/product/hero.data';
-import { SIGNOFF_DATA } from '@/app/[locale]/product/signoff.data';
+import { HERO_COPY } from '@/app/[locale]/product/hero.data';
+import { SIGNOFF_COPY } from '@/app/[locale]/product/signoff.data';
 import { STEPPER_DATA } from '@/app/[locale]/product/stepper.data';
 import { THREE_CARDS_ILLUSTRATION_DATA } from '@/app/[locale]/product/three-cards.data';
-import { Body, Eyebrow, Heading, LinkButton } from '@/design-system/components';
-import { Pages } from '@/lib/pages';
+import {
+  Body,
+  Eyebrow,
+  Heading,
+  HeadingPart,
+  LinkButton,
+} from '@/design-system/components';
 import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';
+import { createMessageDescriptorRenderer } from '@/lib/i18n/create-message-descriptor-renderer';
+import {
+  getRouteI18n,
+  type LocaleRouteParams,
+} from '@/lib/i18n/get-route-i18n';
+import { Pages } from '@/lib/pages';
 import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels';
 import { Faq } from '@/sections/Faq/components';
 import { Feature } from '@/sections/Feature/components';
@@ -24,8 +36,16 @@ import { buildRouteMetadata } from '@/lib/seo';
 
 export const generateMetadata = buildRouteMetadata('product');
 
-export default async function ProductPage() {
-  const stats = await fetchCommunityStats();
+type ProductPageProps = {
+  params: Promise<LocaleRouteParams>;
+};
+
+export default async function ProductPage({ params }: ProductPageProps) {
+  const [i18n, stats] = await Promise.all([
+    getRouteI18n(params),
+    fetchCommunityStats(),
+  ]);
+  const renderText = createMessageDescriptorRenderer(i18n);
   const menuSocialLinks = mergeSocialLinkLabels(MENU_DATA.socialLinks, stats);
 
   return (
@@ -53,14 +73,28 @@ export default async function ProductPage() {
       </Menu.Root>
 
       <Hero.Root backgroundColor={theme.colors.primary.background[100]}>
-        <Hero.Heading page={Pages.Product} segments={HERO_DATA.heading} />
-        <Hero.Body body={HERO_DATA.body} page={Pages.Product} />
+        <Hero.Heading page={Pages.Product}>
+          <HeadingPart fontFamily="serif">
+            {renderText(msg`A CRM for teams`)}
+          </HeadingPart>
+          <br />
+          <HeadingPart fontFamily="serif">
+            {renderText(msg`that`)}
+          </HeadingPart>{' '}
+          <HeadingPart fontFamily="sans">
+            {renderText(msg`moves fast`)}
+          </HeadingPart>
+        </Hero.Heading>
+        <Hero.Body
+          body={{ text: HERO_COPY.body }}
+          page={Pages.Product}
+          renderText={renderText}
+        />
         <Hero.Cta>
           <LinkButton
             color="secondary"
             href="https://app.twenty.com/welcome"
-            label="Get started"
-            type="anchor"
+            label={renderText(msg`Get started`)}
             variant="contained"
           />
         </Hero.Cta>
@@ -68,9 +102,15 @@ export default async function ProductPage() {
       </Hero.Root>
 
       <TrustedBy.Root>
-        <TrustedBy.Separator separator={TRUSTED_BY_DATA.separator} />
+        <TrustedBy.Separator
+          renderText={renderText}
+          separator={TRUSTED_BY_DATA.separator}
+        />
         <TrustedBy.Logos logos={TRUSTED_BY_DATA.logos} />
-        <TrustedBy.ClientCount label={TRUSTED_BY_DATA.clientCountLabel.text} />
+        <TrustedBy.ClientCount
+          label={TRUSTED_BY_DATA.clientCountLabel.text}
+          renderText={renderText}
+        />
       </TrustedBy.Root>
 
       <Feature.Root backgroundColor={theme.colors.primary.background[100]}>
@@ -78,10 +118,22 @@ export default async function ProductPage() {
           <Eyebrow
             colorScheme="primary"
             heading={FEATURE_DATA.eyebrow.heading}
+            renderText={renderText}
           />
-          <Heading segments={FEATURE_DATA.heading} size="lg" weight="light" />
+          <Heading size="lg" weight="light">
+            <HeadingPart fontFamily="serif">
+              {renderText(msg`Everything you need,`)}
+            </HeadingPart>{' '}
+            <HeadingPart fontFamily="sans">
+              {renderText(msg`out of the box`)}
+            </HeadingPart>
+          </Heading>
         </Feature.Intro>
-        <Feature.Tiles mask={FEATURE_DATA.mask} tiles={FEATURE_DATA.tiles} />
+        <Feature.Tiles
+          mask={FEATURE_DATA.mask}
+          renderText={renderText}
+          tiles={FEATURE_DATA.tiles}
+        />
       </Feature.Root>
 
       <ThreeCards.Root backgroundColor={theme.colors.primary.background[100]}>
@@ -89,13 +141,23 @@ export default async function ProductPage() {
           <Eyebrow
             colorScheme="primary"
             heading={THREE_CARDS_ILLUSTRATION_DATA.eyebrow.heading}
+            renderText={renderText}
           />
-          <Heading
-            segments={THREE_CARDS_ILLUSTRATION_DATA.heading}
-            size="lg"
-            weight="light"
-          />
-          <Body body={THREE_CARDS_ILLUSTRATION_DATA.body} size="sm" />
+          <Heading size="lg" weight="light">
+            <HeadingPart fontFamily="serif">
+              {renderText(msg`A modern CRM with`)}
+            </HeadingPart>{' '}
+            <HeadingPart fontFamily="sans">
+              {renderText(msg`an intuitive interface`)}
+            </HeadingPart>
+          </Heading>
+          {THREE_CARDS_ILLUSTRATION_DATA.body && (
+            <Body
+              body={THREE_CARDS_ILLUSTRATION_DATA.body}
+              renderText={renderText}
+              size="sm"
+            />
+          )}
         </ThreeCards.Intro>
         <ThreeCards.IllustrationCards
           illustrationCards={THREE_CARDS_ILLUSTRATION_DATA.illustrationCards}
@@ -105,28 +167,48 @@ export default async function ProductPage() {
       <ProductStepper.Flow
         body={STEPPER_DATA.body}
         eyebrow={STEPPER_DATA.eyebrow}
-        heading={STEPPER_DATA.heading}
         steps={STEPPER_DATA.steps}
-      />
+      >
+        <HeadingPart fontFamily="serif">
+          {renderText(msg`Go the extra mile`)}
+        </HeadingPart>{' '}
+        <HeadingPart fontFamily="sans">
+          {renderText(msg`with no-code`)}
+        </HeadingPart>
+      </ProductStepper.Flow>
 
       <Signoff.Root
         backgroundColor={theme.colors.secondary.background[5]}
         color={theme.colors.primary.text[100]}
         page={Pages.Product}
       >
-        <Signoff.Heading page={Pages.Product} segments={SIGNOFF_DATA.heading} />
-        <Signoff.Body body={SIGNOFF_DATA.body} page={Pages.Product} />
+        <Signoff.Heading page={Pages.Product}>
+          <HeadingPart fontFamily="serif">
+            {renderText(msg`Ready to grow`)}
+          </HeadingPart>
+          <br />
+          <HeadingPart fontFamily="serif">
+            {renderText(msg`with`)}
+          </HeadingPart>{' '}
+          <HeadingPart fontFamily="sans">
+            {renderText(msg`Twenty?`)}
+          </HeadingPart>
+        </Signoff.Heading>
+        <Signoff.Body
+          body={{ text: SIGNOFF_COPY.body }}
+          page={Pages.Product}
+          renderText={renderText}
+        />
         <Signoff.Cta>
           <LinkButton
             color="secondary"
             href="https://app.twenty.com/welcome"
-            label="Get started"
-            type="anchor"
+            label={renderText(msg`Get started`)}
             variant="contained"
           />
           <TalkToUsButton
             color="secondary"
-            label="Talk to us"
+            label={msg`Talk to us`}
             variant="outlined"
           />
         </Signoff.Cta>
@@ -134,19 +216,30 @@ export default async function ProductPage() {
 
       <Faq.Root>
         <Faq.Intro>
-          <Eyebrow colorScheme="secondary" heading={FAQ_DATA.eyebrow.heading} />
-          <Faq.Heading segments={FAQ_DATA.heading} />
+          <Eyebrow
+            colorScheme="secondary"
+            heading={FAQ_DATA.eyebrow.heading}
+            renderText={renderText}
+          />
+          <Faq.Heading>
+            <HeadingPart fontFamily="serif">
+              {renderText(msg`Stop fighting custom.`)}
+            </HeadingPart>
+            <br />
+            <HeadingPart fontFamily="sans">
+              {renderText(msg`Start building, with Twenty`)}
+            </HeadingPart>
+          </Faq.Heading>
           <Faq.Cta>
             <LinkButton
               color="primary"
               href="https://app.twenty.com/welcome"
-              label="Get started"
-              type="anchor"
+              label={renderText(msg`Get started`)}
               variant="contained"
             />
             <TalkToUsButton
               color="primary"
-              label="Talk to us"
+              label={msg`Talk to us`}
               variant="outlined"
             />
           </Faq.Cta>

@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { FieldMetadataType, type ObjectRecord } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { type FindOptionsRelations, type ObjectLiteral } from 'typeorm';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
@@ -173,7 +174,7 @@ export class ProcessNestedRelationsV2Helper {
       targetObjectNameSingular,
     );
 
-    const columnsToSelect = buildColumnsToSelect({
+    const columnsToSelect: Record<string, boolean> = buildColumnsToSelect({
       select: selectedFields,
       relations: nestedRelations,
       flatObjectMetadata: targetObjectMetadata,
@@ -181,17 +182,22 @@ export class ProcessNestedRelationsV2Helper {
       flatFieldMetadataMaps,
     });
 
+    if (relationType === RelationType.MANY_TO_ONE) {
+      columnsToSelect.deletedAt = true;
+      targetObjectQueryBuilder = targetObjectQueryBuilder.withDeleted();
+    }
+
     targetObjectQueryBuilder = targetObjectQueryBuilder.setFindOptions({
       select: columnsToSelect,
     });
 
+    const joinColumnName =
+      sourceFieldMetadata.settings.joinColumnName ?? `${sourceFieldName}Id`;
+
     const relationIds = this.getUniqueIds({
       records: parentObjectRecords,
       idField:
-        relationType === RelationType.ONE_TO_MANY
-          ? 'id'
-          : (sourceFieldMetadata.settings.joinColumnName ??
-            `${sourceFieldName}Id`),
+        relationType === RelationType.ONE_TO_MANY ? 'id' : joinColumnName,
     });
 
     const fieldMetadataTargetRelationColumnName =
@@ -227,7 +233,9 @@ export class ProcessNestedRelationsV2Helper {
         relationType === RelationType.ONE_TO_MANY
           ? `${fieldMetadataTargetRelationColumnName}`
           : 'id',
+      joinColumnName,
       relationType,
+      selectedFields,
     });
 
     if (Object.keys(nestedRelations).length > 0) {
@@ -398,7 +406,9 @@ export class ProcessNestedRelationsV2Helper {
     relationAggregatedFieldsResult,
     sourceFieldName,
     joinField,
+    joinColumnName,
     relationType,
+    selectedFields,
   }: {
     parentRecords: ObjectRecord[];
     // oxlint-disable-next-line @typescripttypescript/no-explicit-any
@@ -409,7 +419,9 @@ export class ProcessNestedRelationsV2Helper {
     relationAggregatedFieldsResult: Record<string, any>;
     sourceFieldName: string;
     joinField: string;
+    joinColumnName: string;
     relationType: RelationType;
+    selectedFields: Record<string, unknown>;
   }): void {
     parentRecords.forEach((item) => {
       if (relationType === RelationType.ONE_TO_MANY) {
@@ -417,10 +429,24 @@ export class ProcessNestedRelationsV2Helper {
           (rel) => rel[joinField] === item.id,
         );
       } else {
-        item[sourceFieldName] =
-          relationResults.find(
-            (rel) => rel.id === item[`${sourceFieldName}Id`],
-          ) ?? null;
+        const matchedRelation = relationResults.find(
+          (rel) => rel.id === item[joinColumnName],
+        );
+
+        if (isDefined(matchedRelation?.deletedAt)) {
+          item[sourceFieldName] = null;
+          item[joinColumnName] = null;
+        } else if (isDefined(matchedRelation)) {
+          if (selectedFields?.deletedAt !== true) {
+            const { deletedAt: _, ...rest } = matchedRelation;
+
+            item[sourceFieldName] = rest;
+          } else {
+            item[sourceFieldName] = matchedRelation;
+          }
+        } else {
+          item[sourceFieldName] = null;
+        }
       }
     });
 

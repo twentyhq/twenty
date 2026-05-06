@@ -1,3 +1,5 @@
+import type { MessageDescriptor } from '@lingui/core';
+
 export type FooterBottomType = {
-  copyright: string;
+  copyright: MessageDescriptor;
 };

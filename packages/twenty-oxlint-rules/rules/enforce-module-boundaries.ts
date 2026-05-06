@@ -12,7 +12,6 @@ const PACKAGE_TAG_MAP: Record<string, string[]> = {
   'twenty-zapier': ['scope:zapier'],
   'twenty-oxlint-rules': ['scope:shared'],
   'twenty-docs': ['scope:docs'],
-  'twenty-website': ['scope:docs'],
   'twenty-e2e-testing': ['scope:testing'],
   'create-twenty-app': ['scope:create-app'],
 };

@@ -1,6 +1,10 @@
+import path from 'path';
+
 import { appBuild } from '@/cli/operations/build';
 import { appDeploy } from '@/cli/operations/deploy';
+import { ConfigService } from '@/cli/utilities/config/config-service';
 import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/current-execution-directory';
+import { readJson } from '@/cli/utilities/file/fs-utils';
 import { checkSdkVersionCompatibility } from '@/cli/utilities/version/check-sdk-version-compatibility';
 import chalk from 'chalk';
 
@@ -42,6 +46,17 @@ export class DeployCommand {
       process.exit(1);
     }
 
-    console.log(chalk.green('✓ Deployed successfully'));
+    const packageJson = await readJson<{ name?: string; version?: string }>(
+      path.join(appPath, 'package.json'),
+    ).catch(() => undefined);
+
+    const appName = packageJson?.name ?? result.data.name;
+    const appVersion = packageJson?.version ?? 'unknown';
+    const remoteName = ConfigService.getActiveRemote();
+
+    console.log(
+      chalk.green(`\n✓ Published ${appName} v${appVersion} to ${remoteName}\n`),
+    );
+    console.log('  To install deployed application: `yarn twenty install`');
   }
 }

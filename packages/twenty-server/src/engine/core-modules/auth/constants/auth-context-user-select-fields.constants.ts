@@ -5,7 +5,6 @@ export const AUTH_CONTEXT_USER_SELECT_FIELDS = [
   'firstName',
   'lastName',
   'email',
-  'defaultAvatarUrl',
   'isEmailVerified',
   'disabled',
   'canImpersonate',

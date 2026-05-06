@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { createAmazonBedrock } from '@ai-sdk/amazon-bedrock';
 import { createAnthropic, type AnthropicProvider } from '@ai-sdk/anthropic';
+import { createAzure } from '@ai-sdk/azure';
 import { createGoogleGenerativeAI } from '@ai-sdk/google';
 import { createMistral } from '@ai-sdk/mistral';
 import { createOpenAI, type OpenAIProvider } from '@ai-sdk/openai';
@@ -13,6 +14,7 @@ import { type AiSdkPackage } from 'twenty-shared/ai';
 
 import {
   AI_SDK_ANTHROPIC,
+  AI_SDK_AZURE,
   AI_SDK_BEDROCK,
   AI_SDK_GOOGLE,
   AI_SDK_MISTRAL,
@@ -95,6 +97,8 @@ export class SdkProviderFactoryService {
         return this.buildBedrockProvider(config);
       case AI_SDK_OPENAI_COMPATIBLE:
         return this.buildOpenAiCompatibleProvider(config);
+      case AI_SDK_AZURE:
+        return this.buildAzureProvider(config);
       default:
         throw new Error(`Unsupported SDK package: ${config.npm}`);
     }
@@ -172,6 +176,23 @@ export class SdkProviderFactoryService {
       createModel: (modelId: string) => provider(modelId),
       rawProvider: provider,
       sdkPackage: AI_SDK_OPENAI_COMPATIBLE,
+    };
+  }
+
+  private buildAzureProvider(config: AiProviderConfig): AiSdkProviderInstance {
+    if (!config.baseUrl) {
+      throw new Error('baseUrl is required for Azure OpenAI providers');
+    }
+
+    const provider = createAzure({
+      baseURL: config.baseUrl,
+      ...(config.apiKey && { apiKey: config.apiKey }),
+    });
+
+    return {
+      createModel: (modelId: string) => provider(modelId),
+      rawProvider: provider,
+      sdkPackage: AI_SDK_AZURE,
     };
   }
 }

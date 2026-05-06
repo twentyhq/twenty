@@ -138,10 +138,9 @@ export const SettingsAvailableApplicationDetails = () => {
       icon: IconGraph,
       count: (manifest?.frontComponents ?? []).filter(
         (fc) =>
-          !isDefined(fc.command) &&
-          fc.universalIdentifier !==
-            manifest?.application
-              .settingsCustomTabFrontComponentUniversalIdentifier,
+          !(manifest?.commandMenuItems ?? [])
+            .map((cm) => cm.frontComponentUniversalIdentifier)
+            .includes(fc.universalIdentifier),
       ).length,
       one: t`widget`,
       many: t`widgets`,
@@ -149,7 +148,11 @@ export const SettingsAvailableApplicationDetails = () => {
     {
       icon: IconCommand,
       count: (manifest?.frontComponents ?? []).filter(
-        (fc) => isDefined(fc.command) && !fc.isHeadless,
+        (fc) =>
+          !fc.isHeadless &&
+          (manifest?.commandMenuItems ?? [])
+            .map((cm) => cm.frontComponentUniversalIdentifier)
+            .includes(fc.universalIdentifier),
       ).length,
       one: t`command`,
       many: t`commands`,
@@ -230,6 +233,11 @@ export const SettingsAvailableApplicationDetails = () => {
           <SettingsApplicationDetailContentTab
             applicationId={detail.universalIdentifier}
             manifestContent={manifest}
+            applicationInfo={{
+              name: displayName,
+              logo: app?.logoUrl,
+              universalIdentifier: detail.universalIdentifier,
+            }}
           />
         );
       case 'permissions':
@@ -267,10 +275,7 @@ export const SettingsAvailableApplicationDetails = () => {
           <SettingsApplicationDetailTitle
             displayName={displayName}
             description={description}
-            logoUrl={app?.logoUrl}
             applicationId={application?.id}
-            applicationName={application?.name}
-            universalIdentifier={detail.universalIdentifier}
             isUnlisted={isUnlisted}
           />
         }
@@ -279,9 +284,7 @@ export const SettingsAvailableApplicationDetails = () => {
           <TabList
             tabs={tabs}
             componentInstanceId={AVAILABLE_APPLICATION_DETAIL_ID}
-            behaveAsLinks={false}
           />
-
           {renderActiveTabContent()}
         </SettingsPageContainer>
       </SubMenuTopBarContainer>

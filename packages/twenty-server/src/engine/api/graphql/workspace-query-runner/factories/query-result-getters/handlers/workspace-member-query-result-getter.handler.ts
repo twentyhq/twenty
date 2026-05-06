@@ -26,7 +26,10 @@ export class WorkspaceMemberQueryResultGetterHandler
     );
 
     if (!isDefined(fileId)) {
-      return workspaceMember;
+      return {
+        ...workspaceMember,
+        avatarUrl: '',
+      };
     }
 
     const signedUrl = this.fileUrlService.signFileByIdUrl({

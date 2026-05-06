@@ -22,6 +22,9 @@ export enum ApplicationExceptionCode {
   POST_INSTALL_ERROR = 'POST_INSTALL_ERROR',
   APP_ALREADY_INSTALLED = 'APP_ALREADY_INSTALLED',
   CANNOT_DOWNGRADE_APPLICATION = 'CANNOT_DOWNGRADE_APPLICATION',
+  SERVER_VERSION_INCOMPATIBLE = 'SERVER_VERSION_INCOMPATIBLE',
+  INVALID_APP_ENGINE_REQUIREMENT = 'INVALID_APP_ENGINE_REQUIREMENT',
+  INVALID_SERVER_VERSION = 'INVALID_SERVER_VERSION',
 }
 
 const getApplicationExceptionUserFriendlyMessage = (
@@ -62,6 +65,12 @@ const getApplicationExceptionUserFriendlyMessage = (
       return msg`This version of the application is already installed in this workspace.`;
     case ApplicationExceptionCode.CANNOT_DOWNGRADE_APPLICATION:
       return msg`A higher version of this application is already installed. Downgrading is not allowed.`;
+    case ApplicationExceptionCode.SERVER_VERSION_INCOMPATIBLE:
+      return msg`This app requires a newer version of the Twenty server. Please upgrade your server or use a compatible app version.`;
+    case ApplicationExceptionCode.INVALID_APP_ENGINE_REQUIREMENT:
+      return msg`The app manifest declares an invalid server version requirement.`;
+    case ApplicationExceptionCode.INVALID_SERVER_VERSION:
+      return msg`The server's APP_VERSION is not a valid semver version. Self-hosted instances must configure a valid APP_VERSION.`;
     default:
       assertUnreachable(code);
   }

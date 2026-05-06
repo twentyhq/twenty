@@ -1,8 +1,12 @@
 import { useEffect } from 'react';
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { useRecordId, updateProgress, enqueueSnackbar, unmountFrontComponent } from 'twenty-sdk/front-component';
+import {
+  enqueueSnackbar,
+  unmountFrontComponent,
+  updateProgress,
+  useRecordId,
+} from 'twenty-sdk/front-component';
 import { CoreApiClient } from 'twenty-client-sdk/core';
-import { isDefined } from 'twenty-shared/utils';
 import { POST_CARD_UNIVERSAL_IDENTIFIER } from '../objects/post-card.object';
 
 const SendPostCardsEffect = () => {
@@ -14,54 +18,24 @@ const SendPostCardsEffect = () => {
         await updateProgress(0.1);
         const client = new CoreApiClient();
 
-        let idsToSend: string[] = [];
-
-        if (isDefined(recordId)) {
-          idsToSend = [recordId];
-        } else {
-          const { postCards } = await client.query({
-            postCards: {
-              __args: {
-                filter: { status: { eq: 'DRAFT' } },
-              },
-              edges: { node: { id: true } },
-            },
-          });
-
-          idsToSend =
-            postCards?.edges?.map(
-              (edge: { node: { id: string; status: true } }) => edge.node.id,
-            ) ?? [];
-        }
-
-        if (idsToSend.length === 0) {
-          await updateProgress(1);
-          await unmountFrontComponent();
-          return;
-        }
-
         await updateProgress(0.3);
 
-        for (let i = 0; i < idsToSend.length; i++) {
+        if (recordId) {
           await client.mutation({
             updatePostCard: {
               __args: {
-                id: idsToSend[i],
+                id: recordId,
                 data: { status: 'SENT' },
               },
               id: true,
             },
           });
 
-          await updateProgress(0.3 + (0.7 * (i + 1)) / idsToSend.length);
+          await enqueueSnackbar({
+            message: `Postcard sent`,
+            variant: 'success',
+          });
         }
-
-        const count = idsToSend.length;
-
-        await enqueueSnackbar({
-          message: `${count} postcard${count > 1 ? 's' : ''} sent`,
-          variant: 'success',
-        });
 
         await unmountFrontComponent();
       } catch (error) {

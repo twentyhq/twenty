@@ -32,6 +32,7 @@ import {
   graphQLErrorCodesToFilter,
   shouldCaptureException,
 } from 'src/engine/utils/global-exception-handler.util';
+import { translateUserFriendlyMessageDescriptors } from 'src/engine/core-modules/i18n/utils/translate-user-friendly-message-descriptors.util';
 
 const DEFAULT_EVENT_ID_KEY = 'exceptionEventId';
 const SCHEMA_VERSION_HEADER = 'x-schema-version';
@@ -223,13 +224,15 @@ export const useGraphQLErrorHandlerHook = <
                 error instanceof BaseGraphQLError
                   ? {
                       ...error,
-                      extensions: {
-                        ...error.extensions,
-                        userFriendlyMessage: i18n._(
-                          error.extensions.userFriendlyMessage ??
+                      extensions: translateUserFriendlyMessageDescriptors(
+                        {
+                          ...error.extensions,
+                          userFriendlyMessage:
+                            error.extensions.userFriendlyMessage ??
                             defaultErrorMessage,
-                        ),
-                      },
+                        },
+                        i18n,
+                      ),
                     }
                   : generateGraphQLErrorFromError(error, i18n);
 

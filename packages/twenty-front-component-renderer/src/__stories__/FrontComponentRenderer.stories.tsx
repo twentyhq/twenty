@@ -20,6 +20,7 @@ const meta: Meta<typeof FrontComponentRenderer> = {
       frontComponentId: 'storybook-test',
       userId: null,
       recordId: null,
+      selectedRecordIds: [],
     },
   },
   beforeEach: () => {
@@ -122,6 +123,7 @@ export const SdkContext: Story = {
       frontComponentId: 'sdk-context-test',
       userId: 'test-user-abc-123',
       recordId: null,
+      selectedRecordIds: [],
     },
   },
   play: async ({ canvasElement }) => {
