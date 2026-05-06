@@ -1,17 +1,15 @@
 import { useMutation, useQuery } from '@apollo/client/react';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { type ReactNode } from 'react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 
-import { UPDATE_CONNECTED_ACCOUNT_NAME } from '@/settings/accounts/graphql/mutations/updateConnectedAccountName';
 import { SettingsApplicationConnectionDetail } from '~/pages/settings/applications/SettingsApplicationConnectionDetail';
 import { useFindApplicationConnectionProviders } from '~/pages/settings/applications/hooks/useFindApplicationConnectionProviders';
 import { useMyAppConnectedAccounts } from '~/pages/settings/applications/hooks/useMyAppConnectedAccounts';
 
 const mockTriggerAppOAuth = jest.fn();
-const mockUpdateConnectedAccountName = jest.fn();
 const mockDeleteConnectedAccount = jest.fn();
 const mockOpenModal = jest.fn();
 
@@ -59,28 +57,6 @@ jest.mock('@/ui/layout/modal/components/ConfirmationModal', () => ({
     confirmButtonText: string;
     onConfirmClick: () => void;
   }) => <button onClick={onConfirmClick}>{confirmButtonText}</button>,
-}));
-
-jest.mock('@/ui/input/components/SettingsTextInput', () => ({
-  SettingsTextInput: ({
-    value,
-    placeholder,
-    onChange,
-    onBlur,
-  }: {
-    value: string;
-    placeholder?: string;
-    onChange: (value: string) => void;
-    onBlur: () => void;
-  }) => (
-    <input
-      aria-label="Display name"
-      value={value}
-      placeholder={placeholder}
-      onChange={(event) => onChange(event.target.value)}
-      onBlur={onBlur}
-    />
-  ),
 }));
 
 jest.mock('@/settings/components/SettingsPageContainer', () => ({
@@ -137,19 +113,10 @@ describe('SettingsApplicationConnectionDetail', () => {
       },
       loading: false,
     } as never);
-    mockedUseMutation.mockImplementation((mutation) =>
-      mutation === UPDATE_CONNECTED_ACCOUNT_NAME
-        ? ([mockUpdateConnectedAccountName, { loading: false }] as never)
-        : ([mockDeleteConnectedAccount, { loading: false }] as never),
-    );
-    mockUpdateConnectedAccountName.mockResolvedValue({
-      data: {
-        updateConnectedAccountName: {
-          id: 'account-1',
-          name: 'Renamed account',
-        },
-      },
-    });
+    mockedUseMutation.mockReturnValue([
+      mockDeleteConnectedAccount,
+      { loading: false },
+    ] as never);
     mockedUseFindApplicationConnectionProviders.mockReturnValue({
       connectionProviders: [
         {
@@ -190,29 +157,6 @@ describe('SettingsApplicationConnectionDetail', () => {
       ],
       loading: false,
       refetch: jest.fn(),
-    });
-  });
-
-  it('renames the connected account inline', async () => {
-    renderDetailPage();
-
-    const nameInput = screen.getByLabelText('Display name');
-
-    expect(nameInput).toHaveValue('Original name');
-    expect(screen.getByText('Just for me')).toBeVisible();
-
-    fireEvent.change(nameInput, { target: { value: '  Renamed account  ' } });
-    fireEvent.blur(nameInput);
-
-    await waitFor(() => {
-      expect(mockUpdateConnectedAccountName).toHaveBeenCalledWith({
-        variables: {
-          input: {
-            id: 'account-1',
-            name: 'Renamed account',
-          },
-        },
-      });
     });
   });
 

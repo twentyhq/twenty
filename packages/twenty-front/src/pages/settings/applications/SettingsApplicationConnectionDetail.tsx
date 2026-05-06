@@ -1,7 +1,7 @@
 import { useMutation, useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
-import { type ReactNode, useEffect, useState } from 'react';
+import { type ReactNode } from 'react';
 import { useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
@@ -18,11 +18,9 @@ import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-import { UPDATE_CONNECTED_ACCOUNT_NAME } from '@/settings/accounts/graphql/mutations/updateConnectedAccountName';
 import { GET_MY_CONNECTED_ACCOUNTS } from '@/settings/accounts/graphql/queries/getMyConnectedAccounts';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
-import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
@@ -68,20 +66,6 @@ const StyledScopeList = styled.div`
   min-width: 0;
 `;
 
-type UpdateConnectedAccountNameMutation = {
-  updateConnectedAccountName: {
-    id: string;
-    name: string | null;
-  };
-};
-
-type UpdateConnectedAccountNameMutationVariables = {
-  input: {
-    id: string;
-    name: string | null;
-  };
-};
-
 const formatDateTime = (isoString?: string | null): string => {
   if (isoString === undefined || isoString === null) {
     return '-';
@@ -106,7 +90,6 @@ export const SettingsApplicationConnectionDetail = () => {
   const navigate = useNavigateSettings();
   const { openModal } = useModal();
   const { triggerAppOAuth } = useTriggerAppOAuth();
-  const [displayName, setDisplayName] = useState('');
   const { connectionProviders, loading: providersLoading } =
     useFindApplicationConnectionProviders(applicationId);
   const { accounts: connectedAccounts, loading: accountsLoading } =
@@ -126,12 +109,6 @@ export const SettingsApplicationConnectionDetail = () => {
       refetchQueries: [{ query: GET_MY_CONNECTED_ACCOUNTS }],
     },
   );
-  const [updateConnectedAccountName, { loading: isUpdatingName }] = useMutation<
-    UpdateConnectedAccountNameMutation,
-    UpdateConnectedAccountNameMutationVariables
-  >(UPDATE_CONNECTED_ACCOUNT_NAME, {
-    refetchQueries: [{ query: GET_MY_CONNECTED_ACCOUNTS }],
-  });
 
   const application = data?.findOneApplication;
   const providerIds = new Set(
@@ -151,8 +128,10 @@ export const SettingsApplicationConnectionDetail = () => {
 
   const applicationName = application?.name ?? t`Application`;
   const connectionLabel =
-    displayName.trim() !== ''
-      ? displayName.trim()
+    connection?.name !== null &&
+    connection?.name !== undefined &&
+    connection.name.trim() !== ''
+      ? connection.name
       : (connection?.handle ?? t`Connection`);
   const deleteModalId = `delete-application-connection-modal-${connectedAccountId}`;
   const changeVisibilityModalId = `change-application-connection-visibility-modal-${connectedAccountId}`;
@@ -166,34 +145,6 @@ export const SettingsApplicationConnectionDetail = () => {
     applicationId,
     connectedAccountId,
   });
-
-  useEffect(() => {
-    setDisplayName(connection?.name ?? '');
-  }, [connection?.id, connection?.name]);
-
-  const saveDisplayName = async () => {
-    if (connection === undefined) {
-      return;
-    }
-
-    const nextName = displayName.trim().length > 0 ? displayName.trim() : null;
-    const currentName = connection.name ?? null;
-
-    if (nextName === currentName) {
-      return;
-    }
-
-    const result = await updateConnectedAccountName({
-      variables: {
-        input: {
-          id: connection.id,
-          name: nextName,
-        },
-      },
-    });
-
-    setDisplayName(result.data?.updateConnectedAccountName.name ?? '');
-  };
 
   const handleReconnect = () => {
     if (connection === undefined || provider === undefined) {
@@ -251,22 +202,6 @@ export const SettingsApplicationConnectionDetail = () => {
     const scopes = connection.scopes ?? [];
 
     return [
-      {
-        key: 'name',
-        label: t`Display name`,
-        value: (
-          <SettingsTextInput
-            instanceId={`application-connection-name-${connection.id}`}
-            value={displayName}
-            placeholder={connection.handle}
-            onChange={setDisplayName}
-            onBlur={saveDisplayName}
-            onInputEnter={saveDisplayName}
-            disabled={isUpdatingName}
-            fullWidth
-          />
-        ),
-      },
       {
         key: 'provider',
         label: t`Provider`,

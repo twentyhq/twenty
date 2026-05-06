@@ -3237,7 +3237,6 @@ type Mutation {
   updateMessageFolder(input: UpdateMessageFolderInput!): MessageFolder!
   updateMessageFolders(input: UpdateMessageFoldersInput!): [MessageFolder!]!
   updateMessageChannel(input: UpdateMessageChannelInput!): MessageChannel!
-  updateConnectedAccountName(input: UpdateConnectedAccountNameInput!): ConnectedAccountDTO!
   deleteConnectedAccount(id: UUID!): ConnectedAccountDTO!
   updateCalendarChannel(input: UpdateCalendarChannelInput!): CalendarChannel!
   createWebhook(input: CreateWebhookInput!): Webhook!
@@ -4164,11 +4163,6 @@ input UpdateMessageChannelInputUpdates {
   isSyncEnabled: Boolean
   excludeNonProfessionalEmails: Boolean
   excludeGroupEmails: Boolean
-}
-
-input UpdateConnectedAccountNameInput {
-  id: UUID!
-  name: String
 }
 
 input UpdateCalendarChannelInput {
