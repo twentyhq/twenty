@@ -188,9 +188,7 @@ export class ApplicationRegistrationVariableService {
       applicationRegistrationId,
     );
 
-    const requiredSecrets = variables.filter(
-      (v) => v.isSecret && v.isRequired,
-    );
+    const requiredSecrets = variables.filter((v) => v.isSecret && v.isRequired);
 
     return requiredSecrets.every((v) => v.isFilled);
   }
