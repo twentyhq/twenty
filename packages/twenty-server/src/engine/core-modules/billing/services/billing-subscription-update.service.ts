@@ -98,6 +98,10 @@ export class BillingSubscriptionUpdateService {
   }
 
   async cancelSwitchMeteredPrice(workspace: WorkspaceEntity): Promise<void> {
+    if (await this.isV2(workspace.id)) {
+      return this.cancelSwitchResourceCreditPrice(workspace);
+    }
+
     const billingSubscription =
       await this.billingSubscriptionService.getCurrentBillingSubscriptionOrThrow(
         { workspaceId: workspace.id },

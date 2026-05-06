@@ -217,7 +217,7 @@ export class MeteredCreditService {
 
     const tierCap = Number(matchingPrice.metadata?.credit_amount ?? 0);
 
-    if (tierCap === 0) {
+    if (!Number.isFinite(tierCap) || tierCap <= 0) {
       return null;
     }
 
