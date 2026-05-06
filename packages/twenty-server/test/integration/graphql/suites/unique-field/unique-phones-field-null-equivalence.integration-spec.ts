@@ -125,7 +125,7 @@ describe('unique PHONES field with empty values', () => {
 
     expect(firstResponse.errors).toBeUndefined();
     expect(firstResponse.data.createOneResponse[FIELD_NAME]).toMatchObject({
-      primaryPhoneNumber: null,
+      primaryPhoneNumber: '',
       primaryPhoneCountryCode: 'US',
       primaryPhoneCallingCode: '+1',
     });
@@ -146,7 +146,7 @@ describe('unique PHONES field with empty values', () => {
 
     expect(secondResponse.errors).toBeUndefined();
     expect(secondResponse.data.createOneResponse[FIELD_NAME]).toMatchObject({
-      primaryPhoneNumber: null,
+      primaryPhoneNumber: '',
       primaryPhoneCountryCode: 'US',
       primaryPhoneCallingCode: '+1',
     });
