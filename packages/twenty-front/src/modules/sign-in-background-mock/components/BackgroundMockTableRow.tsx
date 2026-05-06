@@ -15,6 +15,12 @@ const StyledRow = styled.div`
   height: ${BACKGROUND_MOCK_TABLE_DIMENSIONS.rowHeight}px;
 `;
 
+const StyledDragHandleColumn = styled.div`
+  flex-shrink: 0;
+  height: ${BACKGROUND_MOCK_TABLE_DIMENSIONS.rowHeight}px;
+  width: ${BACKGROUND_MOCK_TABLE_DIMENSIONS.dragHandleColumnWidth}px;
+`;
+
 const StyledCheckboxColumn = styled.div`
   align-items: center;
   border-bottom: 1px solid ${themeCssVariables.border.color.light};
@@ -92,6 +98,7 @@ export const BackgroundMockTableRow = ({
 
   return (
     <StyledRow>
+      <StyledDragHandleColumn />
       <StyledCheckboxColumn>
         <Checkbox hoverable checked={false} />
       </StyledCheckboxColumn>

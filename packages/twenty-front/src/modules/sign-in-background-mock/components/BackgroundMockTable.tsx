@@ -5,7 +5,12 @@ import { BackgroundMockTableRow } from '@/sign-in-background-mock/components/Bac
 import { BACKGROUND_MOCK_COLUMNS } from '@/sign-in-background-mock/constants/BackgroundMockColumns';
 import { BACKGROUND_MOCK_COMPANIES } from '@/sign-in-background-mock/constants/BackgroundMockCompanies';
 import { BACKGROUND_MOCK_TABLE_DIMENSIONS } from '@/sign-in-background-mock/constants/BackgroundMockTableDimensions';
-import { IconChevronDown, IconPlus, useIcons } from 'twenty-ui/display';
+import {
+  IconChevronDown,
+  IconPlus,
+  OverflowingTextWithTooltip,
+  useIcons,
+} from 'twenty-ui/display';
 import { Checkbox } from 'twenty-ui/input';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -31,6 +36,13 @@ const StyledHeaderRow = styled.div`
   background: ${themeCssVariables.background.primary};
   display: flex;
   height: ${BACKGROUND_MOCK_TABLE_DIMENSIONS.rowHeight}px;
+`;
+
+const StyledDragHandleColumn = styled.div`
+  background: ${themeCssVariables.background.primary};
+  flex-shrink: 0;
+  height: ${BACKGROUND_MOCK_TABLE_DIMENSIONS.rowHeight}px;
+  width: ${BACKGROUND_MOCK_TABLE_DIMENSIONS.dragHandleColumnWidth}px;
 `;
 
 const StyledCheckboxHeaderColumn = styled.div`
@@ -111,11 +123,18 @@ const StyledFooterCell = styled.div<{ width: number }>`
   justify-content: space-between;
   overflow: hidden;
   padding: 0 ${themeCssVariables.spacing[2]};
+  white-space: nowrap;
   width: ${({ width }) => width}px;
+`;
+
+const StyledFooterLabel = styled.div`
+  flex: 1;
+  min-width: 0;
 `;
 
 const StyledFooterValue = styled.span`
   color: ${themeCssVariables.font.color.primary};
+  flex-shrink: 0;
 `;
 
 export const BackgroundMockTable = () => {
@@ -126,6 +145,7 @@ export const BackgroundMockTable = () => {
     <StyledTableWrapper>
       <StyledTable>
         <StyledHeaderRow>
+          <StyledDragHandleColumn />
           <StyledCheckboxHeaderColumn>
             <Checkbox hoverable checked={false} />
           </StyledCheckboxHeaderColumn>
@@ -153,27 +173,36 @@ export const BackgroundMockTable = () => {
           ))}
         </StyledTableBody>
         <StyledFooterRow>
+          <StyledDragHandleColumn />
           <StyledFooterCheckboxColumn />
           <StyledFooterCell width={BACKGROUND_MOCK_COLUMNS[0].width}>
-            <span>Calculate</span>
+            <StyledFooterLabel>
+              <OverflowingTextWithTooltip text="Calculate" />
+            </StyledFooterLabel>
             <IconChevronDown
               size={theme.icon.size.sm}
               stroke={theme.icon.stroke.sm}
             />
           </StyledFooterCell>
           <StyledFooterCell width={BACKGROUND_MOCK_COLUMNS[1].width}>
-            <span>Count all</span>
+            <StyledFooterLabel>
+              <OverflowingTextWithTooltip text="Count all" />
+            </StyledFooterLabel>
             <StyledFooterValue>599</StyledFooterValue>
           </StyledFooterCell>
           <StyledFooterCell width={BACKGROUND_MOCK_COLUMNS[2].width} />
           <StyledFooterCell width={BACKGROUND_MOCK_COLUMNS[3].width} />
           <StyledFooterCell width={BACKGROUND_MOCK_COLUMNS[4].width} />
           <StyledFooterCell width={BACKGROUND_MOCK_COLUMNS[5].width}>
-            <span>Max of Em…</span>
+            <StyledFooterLabel>
+              <OverflowingTextWithTooltip text="Max of Employees" />
+            </StyledFooterLabel>
             <StyledFooterValue>284,571</StyledFooterValue>
           </StyledFooterCell>
           <StyledFooterCell width={BACKGROUND_MOCK_COLUMNS[6].width}>
-            <span>Not empty of Add…</span>
+            <StyledFooterLabel>
+              <OverflowingTextWithTooltip text="Not empty of Address" />
+            </StyledFooterLabel>
             <StyledFooterValue>599</StyledFooterValue>
           </StyledFooterCell>
         </StyledFooterRow>
