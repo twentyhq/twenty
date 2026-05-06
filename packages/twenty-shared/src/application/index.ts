@@ -31,7 +31,6 @@ export type {
 } from './fieldManifestType';
 export type {
   CommandMenuItemManifest,
-  FrontComponentCommandManifest,
   FrontComponentManifest,
 } from './frontComponentManifestType';
 export type {

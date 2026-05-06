@@ -278,6 +278,46 @@ export interface FrontComponent {
     __typename: 'FrontComponent'
 }
 
+export interface CommandMenuItem {
+    id: Scalars['UUID']
+    workflowVersionId?: Scalars['UUID']
+    frontComponentId?: Scalars['UUID']
+    frontComponent?: FrontComponent
+    engineComponentKey: EngineComponentKey
+    label: Scalars['String']
+    icon?: Scalars['String']
+    shortLabel?: Scalars['String']
+    position: Scalars['Float']
+    isPinned: Scalars['Boolean']
+    availabilityType: CommandMenuItemAvailabilityType
+    payload?: CommandMenuItemPayload
+    hotKeys?: Scalars['String'][]
+    conditionalAvailabilityExpression?: Scalars['String']
+    availabilityObjectMetadataId?: Scalars['UUID']
+    pageLayoutId?: Scalars['UUID']
+    universalIdentifier?: Scalars['UUID']
+    applicationId?: Scalars['UUID']
+    createdAt: Scalars['DateTime']
+    updatedAt: Scalars['DateTime']
+    __typename: 'CommandMenuItem'
+}
+
+export type EngineComponentKey = 'NAVIGATE_TO_NEXT_RECORD' | 'NAVIGATE_TO_PREVIOUS_RECORD' | 'CREATE_NEW_RECORD' | 'DELETE_RECORDS' | 'RESTORE_RECORDS' | 'DESTROY_RECORDS' | 'ADD_TO_FAVORITES' | 'REMOVE_FROM_FAVORITES' | 'EXPORT_NOTE_TO_PDF' | 'EXPORT_RECORDS' | 'UPDATE_MULTIPLE_RECORDS' | 'MERGE_MULTIPLE_RECORDS' | 'IMPORT_RECORDS' | 'EXPORT_VIEW' | 'SEE_DELETED_RECORDS' | 'CREATE_NEW_VIEW' | 'HIDE_DELETED_RECORDS' | 'EDIT_RECORD_PAGE_LAYOUT' | 'EDIT_DASHBOARD_LAYOUT' | 'SAVE_DASHBOARD_LAYOUT' | 'CANCEL_DASHBOARD_LAYOUT' | 'DUPLICATE_DASHBOARD' | 'ACTIVATE_WORKFLOW' | 'DEACTIVATE_WORKFLOW' | 'DISCARD_DRAFT_WORKFLOW' | 'TEST_WORKFLOW' | 'SEE_ACTIVE_VERSION_WORKFLOW' | 'SEE_RUNS_WORKFLOW' | 'SEE_VERSIONS_WORKFLOW' | 'ADD_NODE_WORKFLOW' | 'TIDY_UP_WORKFLOW' | 'DUPLICATE_WORKFLOW' | 'SEE_VERSION_WORKFLOW_RUN' | 'SEE_WORKFLOW_WORKFLOW_RUN' | 'STOP_WORKFLOW_RUN' | 'SEE_RUNS_WORKFLOW_VERSION' | 'SEE_WORKFLOW_WORKFLOW_VERSION' | 'USE_AS_DRAFT_WORKFLOW_VERSION' | 'SEE_VERSIONS_WORKFLOW_VERSION' | 'SEARCH_RECORDS' | 'SEARCH_RECORDS_FALLBACK' | 'ASK_AI' | 'VIEW_PREVIOUS_AI_CHATS' | 'NAVIGATION' | 'TRIGGER_WORKFLOW_VERSION' | 'FRONT_COMPONENT_RENDERER' | 'REPLY_TO_EMAIL_THREAD' | 'COMPOSE_EMAIL' | 'GO_TO_PEOPLE' | 'GO_TO_COMPANIES' | 'GO_TO_DASHBOARDS' | 'GO_TO_OPPORTUNITIES' | 'GO_TO_SETTINGS' | 'GO_TO_TASKS' | 'GO_TO_NOTES' | 'GO_TO_WORKFLOWS' | 'GO_TO_RUNS' | 'DELETE_SINGLE_RECORD' | 'DELETE_MULTIPLE_RECORDS' | 'RESTORE_SINGLE_RECORD' | 'RESTORE_MULTIPLE_RECORDS' | 'DESTROY_SINGLE_RECORD' | 'DESTROY_MULTIPLE_RECORDS' | 'EXPORT_FROM_RECORD_INDEX' | 'EXPORT_FROM_RECORD_SHOW' | 'EXPORT_MULTIPLE_RECORDS'
+
+export type CommandMenuItemAvailabilityType = 'GLOBAL' | 'GLOBAL_OBJECT_CONTEXT' | 'RECORD_SELECTION' | 'FALLBACK'
+
+export type CommandMenuItemPayload = (PathCommandMenuItemPayload | ObjectMetadataCommandMenuItemPayload) & { __isUnion?: true }
+
+export interface PathCommandMenuItemPayload {
+    path: Scalars['String']
+    __typename: 'PathCommandMenuItemPayload'
+}
+
+export interface ObjectMetadataCommandMenuItemPayload {
+    objectMetadataItemId: Scalars['UUID']
+    __typename: 'ObjectMetadataCommandMenuItemPayload'
+}
+
 export interface LogicFunction {
     id: Scalars['UUID']
     name: Scalars['String']
@@ -429,6 +469,7 @@ export interface Application {
     defaultLogicFunctionRole?: Role
     agents: Agent[]
     frontComponents: FrontComponent[]
+    commandMenuItems: CommandMenuItem[]
     logicFunctions: LogicFunction[]
     objects: Object[]
     applicationVariables: ApplicationVariable[]
@@ -2070,45 +2111,6 @@ export interface PostgresCredentials {
     __typename: 'PostgresCredentials'
 }
 
-export interface CommandMenuItem {
-    id: Scalars['UUID']
-    workflowVersionId?: Scalars['UUID']
-    frontComponentId?: Scalars['UUID']
-    frontComponent?: FrontComponent
-    engineComponentKey: EngineComponentKey
-    label: Scalars['String']
-    icon?: Scalars['String']
-    shortLabel?: Scalars['String']
-    position: Scalars['Float']
-    isPinned: Scalars['Boolean']
-    availabilityType: CommandMenuItemAvailabilityType
-    payload?: CommandMenuItemPayload
-    hotKeys?: Scalars['String'][]
-    conditionalAvailabilityExpression?: Scalars['String']
-    availabilityObjectMetadataId?: Scalars['UUID']
-    pageLayoutId?: Scalars['UUID']
-    applicationId?: Scalars['UUID']
-    createdAt: Scalars['DateTime']
-    updatedAt: Scalars['DateTime']
-    __typename: 'CommandMenuItem'
-}
-
-export type EngineComponentKey = 'NAVIGATE_TO_NEXT_RECORD' | 'NAVIGATE_TO_PREVIOUS_RECORD' | 'CREATE_NEW_RECORD' | 'DELETE_RECORDS' | 'RESTORE_RECORDS' | 'DESTROY_RECORDS' | 'ADD_TO_FAVORITES' | 'REMOVE_FROM_FAVORITES' | 'EXPORT_NOTE_TO_PDF' | 'EXPORT_RECORDS' | 'UPDATE_MULTIPLE_RECORDS' | 'MERGE_MULTIPLE_RECORDS' | 'IMPORT_RECORDS' | 'EXPORT_VIEW' | 'SEE_DELETED_RECORDS' | 'CREATE_NEW_VIEW' | 'HIDE_DELETED_RECORDS' | 'EDIT_RECORD_PAGE_LAYOUT' | 'EDIT_DASHBOARD_LAYOUT' | 'SAVE_DASHBOARD_LAYOUT' | 'CANCEL_DASHBOARD_LAYOUT' | 'DUPLICATE_DASHBOARD' | 'ACTIVATE_WORKFLOW' | 'DEACTIVATE_WORKFLOW' | 'DISCARD_DRAFT_WORKFLOW' | 'TEST_WORKFLOW' | 'SEE_ACTIVE_VERSION_WORKFLOW' | 'SEE_RUNS_WORKFLOW' | 'SEE_VERSIONS_WORKFLOW' | 'ADD_NODE_WORKFLOW' | 'TIDY_UP_WORKFLOW' | 'DUPLICATE_WORKFLOW' | 'SEE_VERSION_WORKFLOW_RUN' | 'SEE_WORKFLOW_WORKFLOW_RUN' | 'STOP_WORKFLOW_RUN' | 'SEE_RUNS_WORKFLOW_VERSION' | 'SEE_WORKFLOW_WORKFLOW_VERSION' | 'USE_AS_DRAFT_WORKFLOW_VERSION' | 'SEE_VERSIONS_WORKFLOW_VERSION' | 'SEARCH_RECORDS' | 'SEARCH_RECORDS_FALLBACK' | 'ASK_AI' | 'VIEW_PREVIOUS_AI_CHATS' | 'NAVIGATION' | 'TRIGGER_WORKFLOW_VERSION' | 'FRONT_COMPONENT_RENDERER' | 'REPLY_TO_EMAIL_THREAD' | 'COMPOSE_EMAIL' | 'GO_TO_PEOPLE' | 'GO_TO_COMPANIES' | 'GO_TO_DASHBOARDS' | 'GO_TO_OPPORTUNITIES' | 'GO_TO_SETTINGS' | 'GO_TO_TASKS' | 'GO_TO_NOTES' | 'GO_TO_WORKFLOWS' | 'GO_TO_RUNS' | 'DELETE_SINGLE_RECORD' | 'DELETE_MULTIPLE_RECORDS' | 'RESTORE_SINGLE_RECORD' | 'RESTORE_MULTIPLE_RECORDS' | 'DESTROY_SINGLE_RECORD' | 'DESTROY_MULTIPLE_RECORDS' | 'EXPORT_FROM_RECORD_INDEX' | 'EXPORT_FROM_RECORD_SHOW' | 'EXPORT_MULTIPLE_RECORDS'
-
-export type CommandMenuItemAvailabilityType = 'GLOBAL' | 'GLOBAL_OBJECT_CONTEXT' | 'RECORD_SELECTION' | 'FALLBACK'
-
-export type CommandMenuItemPayload = (PathCommandMenuItemPayload | ObjectMetadataCommandMenuItemPayload) & { __isUnion?: true }
-
-export interface PathCommandMenuItemPayload {
-    path: Scalars['String']
-    __typename: 'PathCommandMenuItemPayload'
-}
-
-export interface ObjectMetadataCommandMenuItemPayload {
-    objectMetadataItemId: Scalars['UUID']
-    __typename: 'ObjectMetadataCommandMenuItemPayload'
-}
-
 export interface ToolIndexEntry {
     name: Scalars['String']
     description: Scalars['String']
@@ -3145,6 +3147,49 @@ export interface FrontComponentGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface CommandMenuItemGenqlSelection{
+    id?: boolean | number
+    workflowVersionId?: boolean | number
+    frontComponentId?: boolean | number
+    frontComponent?: FrontComponentGenqlSelection
+    engineComponentKey?: boolean | number
+    label?: boolean | number
+    icon?: boolean | number
+    shortLabel?: boolean | number
+    position?: boolean | number
+    isPinned?: boolean | number
+    availabilityType?: boolean | number
+    payload?: CommandMenuItemPayloadGenqlSelection
+    hotKeys?: boolean | number
+    conditionalAvailabilityExpression?: boolean | number
+    availabilityObjectMetadataId?: boolean | number
+    pageLayoutId?: boolean | number
+    universalIdentifier?: boolean | number
+    applicationId?: boolean | number
+    createdAt?: boolean | number
+    updatedAt?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface CommandMenuItemPayloadGenqlSelection{
+    on_PathCommandMenuItemPayload?:PathCommandMenuItemPayloadGenqlSelection,
+    on_ObjectMetadataCommandMenuItemPayload?:ObjectMetadataCommandMenuItemPayloadGenqlSelection,
+    __typename?: boolean | number
+}
+
+export interface PathCommandMenuItemPayloadGenqlSelection{
+    path?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface ObjectMetadataCommandMenuItemPayloadGenqlSelection{
+    objectMetadataItemId?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface LogicFunctionGenqlSelection{
     id?: boolean | number
     name?: boolean | number
@@ -3333,6 +3378,7 @@ export interface ApplicationGenqlSelection{
     defaultLogicFunctionRole?: RoleGenqlSelection
     agents?: AgentGenqlSelection
     frontComponents?: FrontComponentGenqlSelection
+    commandMenuItems?: CommandMenuItemGenqlSelection
     logicFunctions?: LogicFunctionGenqlSelection
     objects?: ObjectGenqlSelection
     applicationVariables?: ApplicationVariableGenqlSelection
@@ -5068,48 +5114,6 @@ export interface PostgresCredentialsGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface CommandMenuItemGenqlSelection{
-    id?: boolean | number
-    workflowVersionId?: boolean | number
-    frontComponentId?: boolean | number
-    frontComponent?: FrontComponentGenqlSelection
-    engineComponentKey?: boolean | number
-    label?: boolean | number
-    icon?: boolean | number
-    shortLabel?: boolean | number
-    position?: boolean | number
-    isPinned?: boolean | number
-    availabilityType?: boolean | number
-    payload?: CommandMenuItemPayloadGenqlSelection
-    hotKeys?: boolean | number
-    conditionalAvailabilityExpression?: boolean | number
-    availabilityObjectMetadataId?: boolean | number
-    pageLayoutId?: boolean | number
-    applicationId?: boolean | number
-    createdAt?: boolean | number
-    updatedAt?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface CommandMenuItemPayloadGenqlSelection{
-    on_PathCommandMenuItemPayload?:PathCommandMenuItemPayloadGenqlSelection,
-    on_ObjectMetadataCommandMenuItemPayload?:ObjectMetadataCommandMenuItemPayloadGenqlSelection,
-    __typename?: boolean | number
-}
-
-export interface PathCommandMenuItemPayloadGenqlSelection{
-    path?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface ObjectMetadataCommandMenuItemPayloadGenqlSelection{
-    objectMetadataItemId?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
 export interface ToolIndexEntryGenqlSelection{
     name?: boolean | number
     description?: boolean | number
@@ -6437,6 +6441,38 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     export const isFrontComponent = (obj?: { __typename?: any } | null): obj is FrontComponent => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isFrontComponent"')
       return FrontComponent_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const CommandMenuItem_possibleTypes: string[] = ['CommandMenuItem']
+    export const isCommandMenuItem = (obj?: { __typename?: any } | null): obj is CommandMenuItem => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isCommandMenuItem"')
+      return CommandMenuItem_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const CommandMenuItemPayload_possibleTypes: string[] = ['PathCommandMenuItemPayload','ObjectMetadataCommandMenuItemPayload']
+    export const isCommandMenuItemPayload = (obj?: { __typename?: any } | null): obj is CommandMenuItemPayload => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isCommandMenuItemPayload"')
+      return CommandMenuItemPayload_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const PathCommandMenuItemPayload_possibleTypes: string[] = ['PathCommandMenuItemPayload']
+    export const isPathCommandMenuItemPayload = (obj?: { __typename?: any } | null): obj is PathCommandMenuItemPayload => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isPathCommandMenuItemPayload"')
+      return PathCommandMenuItemPayload_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const ObjectMetadataCommandMenuItemPayload_possibleTypes: string[] = ['ObjectMetadataCommandMenuItemPayload']
+    export const isObjectMetadataCommandMenuItemPayload = (obj?: { __typename?: any } | null): obj is ObjectMetadataCommandMenuItemPayload => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isObjectMetadataCommandMenuItemPayload"')
+      return ObjectMetadataCommandMenuItemPayload_possibleTypes.includes(obj.__typename)
     }
     
 
@@ -7873,38 +7909,6 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     
 
 
-    const CommandMenuItem_possibleTypes: string[] = ['CommandMenuItem']
-    export const isCommandMenuItem = (obj?: { __typename?: any } | null): obj is CommandMenuItem => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isCommandMenuItem"')
-      return CommandMenuItem_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const CommandMenuItemPayload_possibleTypes: string[] = ['PathCommandMenuItemPayload','ObjectMetadataCommandMenuItemPayload']
-    export const isCommandMenuItemPayload = (obj?: { __typename?: any } | null): obj is CommandMenuItemPayload => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isCommandMenuItemPayload"')
-      return CommandMenuItemPayload_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const PathCommandMenuItemPayload_possibleTypes: string[] = ['PathCommandMenuItemPayload']
-    export const isPathCommandMenuItemPayload = (obj?: { __typename?: any } | null): obj is PathCommandMenuItemPayload => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isPathCommandMenuItemPayload"')
-      return PathCommandMenuItemPayload_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const ObjectMetadataCommandMenuItemPayload_possibleTypes: string[] = ['ObjectMetadataCommandMenuItemPayload']
-    export const isObjectMetadataCommandMenuItemPayload = (obj?: { __typename?: any } | null): obj is ObjectMetadataCommandMenuItemPayload => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isObjectMetadataCommandMenuItemPayload"')
-      return ObjectMetadataCommandMenuItemPayload_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
     const ToolIndexEntry_possibleTypes: string[] = ['ToolIndexEntry']
     export const isToolIndexEntry = (obj?: { __typename?: any } | null): obj is ToolIndexEntry => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isToolIndexEntry"')
@@ -8304,6 +8308,82 @@ export const enumWorkspaceMemberNumberFormatEnum = {
    APOSTROPHE_AND_DOT: 'APOSTROPHE_AND_DOT' as const
 }
 
+export const enumEngineComponentKey = {
+   NAVIGATE_TO_NEXT_RECORD: 'NAVIGATE_TO_NEXT_RECORD' as const,
+   NAVIGATE_TO_PREVIOUS_RECORD: 'NAVIGATE_TO_PREVIOUS_RECORD' as const,
+   CREATE_NEW_RECORD: 'CREATE_NEW_RECORD' as const,
+   DELETE_RECORDS: 'DELETE_RECORDS' as const,
+   RESTORE_RECORDS: 'RESTORE_RECORDS' as const,
+   DESTROY_RECORDS: 'DESTROY_RECORDS' as const,
+   ADD_TO_FAVORITES: 'ADD_TO_FAVORITES' as const,
+   REMOVE_FROM_FAVORITES: 'REMOVE_FROM_FAVORITES' as const,
+   EXPORT_NOTE_TO_PDF: 'EXPORT_NOTE_TO_PDF' as const,
+   EXPORT_RECORDS: 'EXPORT_RECORDS' as const,
+   UPDATE_MULTIPLE_RECORDS: 'UPDATE_MULTIPLE_RECORDS' as const,
+   MERGE_MULTIPLE_RECORDS: 'MERGE_MULTIPLE_RECORDS' as const,
+   IMPORT_RECORDS: 'IMPORT_RECORDS' as const,
+   EXPORT_VIEW: 'EXPORT_VIEW' as const,
+   SEE_DELETED_RECORDS: 'SEE_DELETED_RECORDS' as const,
+   CREATE_NEW_VIEW: 'CREATE_NEW_VIEW' as const,
+   HIDE_DELETED_RECORDS: 'HIDE_DELETED_RECORDS' as const,
+   EDIT_RECORD_PAGE_LAYOUT: 'EDIT_RECORD_PAGE_LAYOUT' as const,
+   EDIT_DASHBOARD_LAYOUT: 'EDIT_DASHBOARD_LAYOUT' as const,
+   SAVE_DASHBOARD_LAYOUT: 'SAVE_DASHBOARD_LAYOUT' as const,
+   CANCEL_DASHBOARD_LAYOUT: 'CANCEL_DASHBOARD_LAYOUT' as const,
+   DUPLICATE_DASHBOARD: 'DUPLICATE_DASHBOARD' as const,
+   ACTIVATE_WORKFLOW: 'ACTIVATE_WORKFLOW' as const,
+   DEACTIVATE_WORKFLOW: 'DEACTIVATE_WORKFLOW' as const,
+   DISCARD_DRAFT_WORKFLOW: 'DISCARD_DRAFT_WORKFLOW' as const,
+   TEST_WORKFLOW: 'TEST_WORKFLOW' as const,
+   SEE_ACTIVE_VERSION_WORKFLOW: 'SEE_ACTIVE_VERSION_WORKFLOW' as const,
+   SEE_RUNS_WORKFLOW: 'SEE_RUNS_WORKFLOW' as const,
+   SEE_VERSIONS_WORKFLOW: 'SEE_VERSIONS_WORKFLOW' as const,
+   ADD_NODE_WORKFLOW: 'ADD_NODE_WORKFLOW' as const,
+   TIDY_UP_WORKFLOW: 'TIDY_UP_WORKFLOW' as const,
+   DUPLICATE_WORKFLOW: 'DUPLICATE_WORKFLOW' as const,
+   SEE_VERSION_WORKFLOW_RUN: 'SEE_VERSION_WORKFLOW_RUN' as const,
+   SEE_WORKFLOW_WORKFLOW_RUN: 'SEE_WORKFLOW_WORKFLOW_RUN' as const,
+   STOP_WORKFLOW_RUN: 'STOP_WORKFLOW_RUN' as const,
+   SEE_RUNS_WORKFLOW_VERSION: 'SEE_RUNS_WORKFLOW_VERSION' as const,
+   SEE_WORKFLOW_WORKFLOW_VERSION: 'SEE_WORKFLOW_WORKFLOW_VERSION' as const,
+   USE_AS_DRAFT_WORKFLOW_VERSION: 'USE_AS_DRAFT_WORKFLOW_VERSION' as const,
+   SEE_VERSIONS_WORKFLOW_VERSION: 'SEE_VERSIONS_WORKFLOW_VERSION' as const,
+   SEARCH_RECORDS: 'SEARCH_RECORDS' as const,
+   SEARCH_RECORDS_FALLBACK: 'SEARCH_RECORDS_FALLBACK' as const,
+   ASK_AI: 'ASK_AI' as const,
+   VIEW_PREVIOUS_AI_CHATS: 'VIEW_PREVIOUS_AI_CHATS' as const,
+   NAVIGATION: 'NAVIGATION' as const,
+   TRIGGER_WORKFLOW_VERSION: 'TRIGGER_WORKFLOW_VERSION' as const,
+   FRONT_COMPONENT_RENDERER: 'FRONT_COMPONENT_RENDERER' as const,
+   REPLY_TO_EMAIL_THREAD: 'REPLY_TO_EMAIL_THREAD' as const,
+   COMPOSE_EMAIL: 'COMPOSE_EMAIL' as const,
+   GO_TO_PEOPLE: 'GO_TO_PEOPLE' as const,
+   GO_TO_COMPANIES: 'GO_TO_COMPANIES' as const,
+   GO_TO_DASHBOARDS: 'GO_TO_DASHBOARDS' as const,
+   GO_TO_OPPORTUNITIES: 'GO_TO_OPPORTUNITIES' as const,
+   GO_TO_SETTINGS: 'GO_TO_SETTINGS' as const,
+   GO_TO_TASKS: 'GO_TO_TASKS' as const,
+   GO_TO_NOTES: 'GO_TO_NOTES' as const,
+   GO_TO_WORKFLOWS: 'GO_TO_WORKFLOWS' as const,
+   GO_TO_RUNS: 'GO_TO_RUNS' as const,
+   DELETE_SINGLE_RECORD: 'DELETE_SINGLE_RECORD' as const,
+   DELETE_MULTIPLE_RECORDS: 'DELETE_MULTIPLE_RECORDS' as const,
+   RESTORE_SINGLE_RECORD: 'RESTORE_SINGLE_RECORD' as const,
+   RESTORE_MULTIPLE_RECORDS: 'RESTORE_MULTIPLE_RECORDS' as const,
+   DESTROY_SINGLE_RECORD: 'DESTROY_SINGLE_RECORD' as const,
+   DESTROY_MULTIPLE_RECORDS: 'DESTROY_MULTIPLE_RECORDS' as const,
+   EXPORT_FROM_RECORD_INDEX: 'EXPORT_FROM_RECORD_INDEX' as const,
+   EXPORT_FROM_RECORD_SHOW: 'EXPORT_FROM_RECORD_SHOW' as const,
+   EXPORT_MULTIPLE_RECORDS: 'EXPORT_MULTIPLE_RECORDS' as const
+}
+
+export const enumCommandMenuItemAvailabilityType = {
+   GLOBAL: 'GLOBAL' as const,
+   GLOBAL_OBJECT_CONTEXT: 'GLOBAL_OBJECT_CONTEXT' as const,
+   RECORD_SELECTION: 'RECORD_SELECTION' as const,
+   FALLBACK: 'FALLBACK' as const
+}
+
 export const enumFieldMetadataType = {
    ACTOR: 'ACTOR' as const,
    ADDRESS: 'ADDRESS' as const,
@@ -8661,82 +8741,6 @@ export const enumEmailingDomainStatus = {
    VERIFIED: 'VERIFIED' as const,
    FAILED: 'FAILED' as const,
    TEMPORARY_FAILURE: 'TEMPORARY_FAILURE' as const
-}
-
-export const enumEngineComponentKey = {
-   NAVIGATE_TO_NEXT_RECORD: 'NAVIGATE_TO_NEXT_RECORD' as const,
-   NAVIGATE_TO_PREVIOUS_RECORD: 'NAVIGATE_TO_PREVIOUS_RECORD' as const,
-   CREATE_NEW_RECORD: 'CREATE_NEW_RECORD' as const,
-   DELETE_RECORDS: 'DELETE_RECORDS' as const,
-   RESTORE_RECORDS: 'RESTORE_RECORDS' as const,
-   DESTROY_RECORDS: 'DESTROY_RECORDS' as const,
-   ADD_TO_FAVORITES: 'ADD_TO_FAVORITES' as const,
-   REMOVE_FROM_FAVORITES: 'REMOVE_FROM_FAVORITES' as const,
-   EXPORT_NOTE_TO_PDF: 'EXPORT_NOTE_TO_PDF' as const,
-   EXPORT_RECORDS: 'EXPORT_RECORDS' as const,
-   UPDATE_MULTIPLE_RECORDS: 'UPDATE_MULTIPLE_RECORDS' as const,
-   MERGE_MULTIPLE_RECORDS: 'MERGE_MULTIPLE_RECORDS' as const,
-   IMPORT_RECORDS: 'IMPORT_RECORDS' as const,
-   EXPORT_VIEW: 'EXPORT_VIEW' as const,
-   SEE_DELETED_RECORDS: 'SEE_DELETED_RECORDS' as const,
-   CREATE_NEW_VIEW: 'CREATE_NEW_VIEW' as const,
-   HIDE_DELETED_RECORDS: 'HIDE_DELETED_RECORDS' as const,
-   EDIT_RECORD_PAGE_LAYOUT: 'EDIT_RECORD_PAGE_LAYOUT' as const,
-   EDIT_DASHBOARD_LAYOUT: 'EDIT_DASHBOARD_LAYOUT' as const,
-   SAVE_DASHBOARD_LAYOUT: 'SAVE_DASHBOARD_LAYOUT' as const,
-   CANCEL_DASHBOARD_LAYOUT: 'CANCEL_DASHBOARD_LAYOUT' as const,
-   DUPLICATE_DASHBOARD: 'DUPLICATE_DASHBOARD' as const,
-   ACTIVATE_WORKFLOW: 'ACTIVATE_WORKFLOW' as const,
-   DEACTIVATE_WORKFLOW: 'DEACTIVATE_WORKFLOW' as const,
-   DISCARD_DRAFT_WORKFLOW: 'DISCARD_DRAFT_WORKFLOW' as const,
-   TEST_WORKFLOW: 'TEST_WORKFLOW' as const,
-   SEE_ACTIVE_VERSION_WORKFLOW: 'SEE_ACTIVE_VERSION_WORKFLOW' as const,
-   SEE_RUNS_WORKFLOW: 'SEE_RUNS_WORKFLOW' as const,
-   SEE_VERSIONS_WORKFLOW: 'SEE_VERSIONS_WORKFLOW' as const,
-   ADD_NODE_WORKFLOW: 'ADD_NODE_WORKFLOW' as const,
-   TIDY_UP_WORKFLOW: 'TIDY_UP_WORKFLOW' as const,
-   DUPLICATE_WORKFLOW: 'DUPLICATE_WORKFLOW' as const,
-   SEE_VERSION_WORKFLOW_RUN: 'SEE_VERSION_WORKFLOW_RUN' as const,
-   SEE_WORKFLOW_WORKFLOW_RUN: 'SEE_WORKFLOW_WORKFLOW_RUN' as const,
-   STOP_WORKFLOW_RUN: 'STOP_WORKFLOW_RUN' as const,
-   SEE_RUNS_WORKFLOW_VERSION: 'SEE_RUNS_WORKFLOW_VERSION' as const,
-   SEE_WORKFLOW_WORKFLOW_VERSION: 'SEE_WORKFLOW_WORKFLOW_VERSION' as const,
-   USE_AS_DRAFT_WORKFLOW_VERSION: 'USE_AS_DRAFT_WORKFLOW_VERSION' as const,
-   SEE_VERSIONS_WORKFLOW_VERSION: 'SEE_VERSIONS_WORKFLOW_VERSION' as const,
-   SEARCH_RECORDS: 'SEARCH_RECORDS' as const,
-   SEARCH_RECORDS_FALLBACK: 'SEARCH_RECORDS_FALLBACK' as const,
-   ASK_AI: 'ASK_AI' as const,
-   VIEW_PREVIOUS_AI_CHATS: 'VIEW_PREVIOUS_AI_CHATS' as const,
-   NAVIGATION: 'NAVIGATION' as const,
-   TRIGGER_WORKFLOW_VERSION: 'TRIGGER_WORKFLOW_VERSION' as const,
-   FRONT_COMPONENT_RENDERER: 'FRONT_COMPONENT_RENDERER' as const,
-   REPLY_TO_EMAIL_THREAD: 'REPLY_TO_EMAIL_THREAD' as const,
-   COMPOSE_EMAIL: 'COMPOSE_EMAIL' as const,
-   GO_TO_PEOPLE: 'GO_TO_PEOPLE' as const,
-   GO_TO_COMPANIES: 'GO_TO_COMPANIES' as const,
-   GO_TO_DASHBOARDS: 'GO_TO_DASHBOARDS' as const,
-   GO_TO_OPPORTUNITIES: 'GO_TO_OPPORTUNITIES' as const,
-   GO_TO_SETTINGS: 'GO_TO_SETTINGS' as const,
-   GO_TO_TASKS: 'GO_TO_TASKS' as const,
-   GO_TO_NOTES: 'GO_TO_NOTES' as const,
-   GO_TO_WORKFLOWS: 'GO_TO_WORKFLOWS' as const,
-   GO_TO_RUNS: 'GO_TO_RUNS' as const,
-   DELETE_SINGLE_RECORD: 'DELETE_SINGLE_RECORD' as const,
-   DELETE_MULTIPLE_RECORDS: 'DELETE_MULTIPLE_RECORDS' as const,
-   RESTORE_SINGLE_RECORD: 'RESTORE_SINGLE_RECORD' as const,
-   RESTORE_MULTIPLE_RECORDS: 'RESTORE_MULTIPLE_RECORDS' as const,
-   DESTROY_SINGLE_RECORD: 'DESTROY_SINGLE_RECORD' as const,
-   DESTROY_MULTIPLE_RECORDS: 'DESTROY_MULTIPLE_RECORDS' as const,
-   EXPORT_FROM_RECORD_INDEX: 'EXPORT_FROM_RECORD_INDEX' as const,
-   EXPORT_FROM_RECORD_SHOW: 'EXPORT_FROM_RECORD_SHOW' as const,
-   EXPORT_MULTIPLE_RECORDS: 'EXPORT_MULTIPLE_RECORDS' as const
-}
-
-export const enumCommandMenuItemAvailabilityType = {
-   GLOBAL: 'GLOBAL' as const,
-   GLOBAL_OBJECT_CONTEXT: 'GLOBAL_OBJECT_CONTEXT' as const,
-   RECORD_SELECTION: 'RECORD_SELECTION' as const,
-   FALLBACK: 'FALLBACK' as const
 }
 
 export const enumCalendarChannelSyncStatus = {

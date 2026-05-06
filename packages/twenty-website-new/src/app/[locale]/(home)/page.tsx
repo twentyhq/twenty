@@ -33,7 +33,7 @@ import { Menu } from '@/sections/Menu/components';
 import { Problem } from '@/sections/Problem/components';
 import { Testimonials } from '@/sections/Testimonials/components';
 import { ThreeCards } from '@/sections/ThreeCards/components';
-import { buildRouteMetadata } from '@/lib/seo';
+import { buildFaqPageJsonLd, buildRouteMetadata, JsonLd } from '@/lib/seo';
 import { TrustedBy } from '@/sections/TrustedBy/components';
 import { theme } from '@/theme';
 import { css } from '@linaria/core';
@@ -111,6 +111,7 @@ export default async function HomePage({ params }: HomePageProps) {
 
   return (
     <>
+      <JsonLd data={buildFaqPageJsonLd(FAQ_DATA.questions, renderText)} />
       {/*
        * Above-the-fold home hero background texture. Preload warms the
        * HTTP cache so it is ready by the time HomeBackgroundHalftone

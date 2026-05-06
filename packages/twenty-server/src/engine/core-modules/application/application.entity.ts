@@ -20,6 +20,7 @@ import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/appli
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { ApplicationVariableEntity } from 'src/engine/core-modules/application/application-variable/application-variable.entity';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
+import { CommandMenuItemEntity } from 'src/engine/metadata-modules/command-menu-item/entities/command-menu-item.entity';
 import { FrontComponentEntity } from 'src/engine/metadata-modules/front-component/entities/front-component.entity';
 import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -141,6 +142,15 @@ export class ApplicationEntity extends WorkspaceRelatedEntity {
     },
   )
   frontComponents: Relation<FrontComponentEntity[]>;
+
+  @OneToMany(
+    () => CommandMenuItemEntity,
+    (commandMenuItem) => commandMenuItem.application,
+    {
+      onDelete: 'CASCADE',
+    },
+  )
+  commandMenuItems: Relation<CommandMenuItemEntity[]>;
 
   @OneToMany(
     () => ApplicationVariableEntity,

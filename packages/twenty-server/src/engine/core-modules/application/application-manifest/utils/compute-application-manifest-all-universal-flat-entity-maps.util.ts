@@ -158,23 +158,6 @@ export const computeApplicationManifestAllUniversalFlatEntityMaps = ({
       universalFlatEntityMapsToMutate:
         allUniversalFlatEntityMaps.flatFrontComponentMaps,
     });
-
-    if (frontComponentManifest.command) {
-      addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
-        universalFlatEntity:
-          fromCommandMenuItemManifestToUniversalFlatCommandMenuItem({
-            commandMenuItemManifest: {
-              ...frontComponentManifest.command,
-              frontComponentUniversalIdentifier:
-                frontComponentManifest.universalIdentifier,
-            },
-            applicationUniversalIdentifier,
-            now,
-          }),
-        universalFlatEntityMapsToMutate:
-          allUniversalFlatEntityMaps.flatCommandMenuItemMaps,
-      });
-    }
   }
 
   for (const connectionProviderManifest of manifest.connectionProviders ?? []) {
@@ -446,6 +429,25 @@ export const computeApplicationManifestAllUniversalFlatEntityMaps = ({
           allUniversalFlatEntityMaps.flatPageLayoutWidgetMaps,
       });
     }
+  }
+
+  for (const commandMenuItemManifest of manifest.commandMenuItems ?? []) {
+    if (!isDefined(commandMenuItemManifest.frontComponentUniversalIdentifier)) {
+      throw new Error(
+        `Top-level commandMenuItem "${commandMenuItemManifest.universalIdentifier}" is missing required frontComponentUniversalIdentifier`,
+      );
+    }
+
+    addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
+      universalFlatEntity:
+        fromCommandMenuItemManifestToUniversalFlatCommandMenuItem({
+          commandMenuItemManifest,
+          applicationUniversalIdentifier,
+          now,
+        }),
+      universalFlatEntityMapsToMutate:
+        allUniversalFlatEntityMaps.flatCommandMenuItemMaps,
+    });
   }
 
   return allUniversalFlatEntityMaps;

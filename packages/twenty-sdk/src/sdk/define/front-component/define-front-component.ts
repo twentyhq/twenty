@@ -19,16 +19,6 @@ export const defineFrontComponent: DefineEntity<FrontComponentConfig> = (
     errors.push('Front component component must be a React component');
   }
 
-  if (config.command) {
-    if (!config.command.universalIdentifier) {
-      errors.push('Command must have a universalIdentifier');
-    }
-
-    if (!config.command.label) {
-      errors.push('Command must have a label');
-    }
-  }
-
   return createValidationResult({
     config,
     errors,
