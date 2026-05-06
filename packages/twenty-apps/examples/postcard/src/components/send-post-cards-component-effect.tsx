@@ -1,49 +1,41 @@
 import { useEffect } from 'react';
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { useSelectedRecordIds, updateProgress, enqueueSnackbar, unmountFrontComponent } from 'twenty-sdk/front-component';
+import {
+  enqueueSnackbar,
+  unmountFrontComponent,
+  updateProgress,
+  useRecordId,
+} from 'twenty-sdk/front-component';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 import { POST_CARD_UNIVERSAL_IDENTIFIER } from '../objects/post-card.object';
 
 const SendPostCardsEffect = () => {
-  const selectedRecordIds = useSelectedRecordIds();
+  const recordId = useRecordId();
 
   useEffect(() => {
     const send = async () => {
       try {
-        if (selectedRecordIds.length === 0) {
-          await enqueueSnackbar({
-            message: 'No postcards selected',
-            variant: 'error',
-          });
-          await unmountFrontComponent();
-          return;
-        }
-
         await updateProgress(0.1);
         const client = new CoreApiClient();
 
         await updateProgress(0.3);
 
-        for (let i = 0; i < selectedRecordIds.length; i++) {
+        if (recordId) {
           await client.mutation({
             updatePostCard: {
               __args: {
-                id: selectedRecordIds[i],
+                id: recordId,
                 data: { status: 'SENT' },
               },
               id: true,
             },
           });
 
-          await updateProgress(0.3 + (0.7 * (i + 1)) / selectedRecordIds.length);
+          await enqueueSnackbar({
+            message: `Postcard sent`,
+            variant: 'success',
+          });
         }
-
-        const count = selectedRecordIds.length;
-
-        await enqueueSnackbar({
-          message: `${count} postcard${count > 1 ? 's' : ''} sent`,
-          variant: 'success',
-        });
 
         await unmountFrontComponent();
       } catch (error) {
@@ -56,7 +48,7 @@ const SendPostCardsEffect = () => {
     };
 
     send();
-  }, [selectedRecordIds]);
+  }, [recordId]);
 
   return null;
 };

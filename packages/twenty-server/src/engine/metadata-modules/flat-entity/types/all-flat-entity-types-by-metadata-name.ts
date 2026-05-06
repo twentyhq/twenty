@@ -45,6 +45,8 @@ import { type FlatViewSortMaps } from 'src/engine/metadata-modules/flat-view-sor
 import { type FlatViewSort } from 'src/engine/metadata-modules/flat-view-sort/types/flat-view-sort.type';
 import { type FlatViewMaps } from 'src/engine/metadata-modules/flat-view/types/flat-view-maps.type';
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
+import { type FlatApplicationVariableMaps } from 'src/engine/metadata-modules/flat-application-variable/types/flat-application-variable-maps.type';
+import { type FlatApplicationVariable } from 'src/engine/metadata-modules/flat-application-variable/types/flat-application-variable.type';
 import { type FlatWebhookMaps } from 'src/engine/metadata-modules/flat-webhook/types/flat-webhook-maps.type';
 import { type FlatWebhook } from 'src/engine/metadata-modules/flat-webhook/types/flat-webhook.type';
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
@@ -80,6 +82,7 @@ import { type UniversalFlatViewFilter } from 'src/engine/workspace-manager/works
 import { type UniversalFlatViewGroup } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view-group.type';
 import { type UniversalFlatViewSort } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view-sort.type';
 import { type UniversalFlatView } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view.type';
+import { type UniversalFlatApplicationVariable } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-application-variable.type';
 import { type UniversalFlatWebhook } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-webhook.type';
 import {
   type FlatCreateAgentAction,
@@ -297,6 +300,14 @@ import {
   type UniversalDeleteViewAction,
   type UniversalUpdateViewAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view/types/workspace-migration-view-action.type';
+import {
+  type FlatCreateApplicationVariableAction,
+  type FlatDeleteApplicationVariableAction,
+  type FlatUpdateApplicationVariableAction,
+  type UniversalCreateApplicationVariableAction,
+  type UniversalDeleteApplicationVariableAction,
+  type UniversalUpdateApplicationVariableAction,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/application-variable/types/workspace-migration-application-variable-action.type';
 import {
   type FlatCreateWebhookAction,
   type FlatDeleteWebhookAction,
@@ -741,6 +752,22 @@ export type AllFlatEntityTypesByMetadataName = {
     flatEntity: FlatWebhook;
     universalFlatEntity: UniversalFlatWebhook;
     entity: MetadataEntity<'webhook'>;
+  };
+  applicationVariable: {
+    flatEntityMaps: FlatApplicationVariableMaps;
+    universalActions: {
+      create: UniversalCreateApplicationVariableAction;
+      update: UniversalUpdateApplicationVariableAction;
+      delete: UniversalDeleteApplicationVariableAction;
+    };
+    flatActions: {
+      create: FlatCreateApplicationVariableAction;
+      update: FlatUpdateApplicationVariableAction;
+      delete: FlatDeleteApplicationVariableAction;
+    };
+    flatEntity: FlatApplicationVariable;
+    universalFlatEntity: UniversalFlatApplicationVariable;
+    entity: MetadataEntity<'applicationVariable'>;
   };
   connectionProvider: {
     flatEntityMaps: FlatConnectionProviderMaps;

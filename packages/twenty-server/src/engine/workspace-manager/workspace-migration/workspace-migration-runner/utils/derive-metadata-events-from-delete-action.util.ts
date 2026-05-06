@@ -31,6 +31,9 @@ const deriveAllMetadataEventsFromDeleteAction = ({
   allFlatEntityMaps,
 }: DeriveMetadataEventsFromDeleteActionArgs): MetadataEvent[] => {
   switch (flatAction.metadataName) {
+    case 'applicationVariable': {
+      return [];
+    }
     case 'fieldMetadata':
     case 'objectMetadata':
     case 'view':
