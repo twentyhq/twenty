@@ -48,16 +48,15 @@ export class MarketplaceQueryService {
       return [];
     }
 
-    const configuredStatuses = await Promise.all(
-      registrations.map((registration) =>
-        this.applicationRegistrationVariableService.isConfigured(
-          registration.id,
-        ),
-      ),
-    );
+    const configuredStatuses =
+      await this.applicationRegistrationVariableService.isConfiguredBatch(
+        registrations.map((registration) => registration.id),
+      );
 
     return registrations
-      .filter((_, index) => configuredStatuses[index])
+      .filter(
+        (registration) => configuredStatuses.get(registration.id) ?? true,
+      )
       .map((registration) => this.toMarketplaceAppDTO(registration));
   }
 

@@ -175,22 +175,44 @@ export class ApplicationRegistrationVariableService {
     }
   }
 
-  async findVariablesByRegistrationId(
-    applicationRegistrationId: string,
-  ): Promise<ApplicationRegistrationVariableEntity[]> {
-    return this.variableRepository.find({
-      where: { applicationRegistrationId },
+  async isConfiguredBatch(
+    applicationRegistrationIds: string[],
+  ): Promise<Map<string, boolean>> {
+    const variables = await this.variableRepository.find({
+      where: { applicationRegistrationId: In(applicationRegistrationIds) },
     });
-  }
 
-  async isConfigured(applicationRegistrationId: string): Promise<boolean> {
-    const variables = await this.findVariablesByRegistrationId(
-      applicationRegistrationId,
-    );
+    const variablesByRegistrationId = new Map<
+      string,
+      ApplicationRegistrationVariableEntity[]
+    >();
 
-    const requiredVariables = variables.filter((v) => v.isRequired);
+    for (const variable of variables) {
+      const existing =
+        variablesByRegistrationId.get(variable.applicationRegistrationId) ?? [];
 
-    return requiredVariables.every((v) => v.isFilled);
+      existing.push(variable);
+      variablesByRegistrationId.set(
+        variable.applicationRegistrationId,
+        existing,
+      );
+    }
+
+    const result = new Map<string, boolean>();
+
+    for (const id of applicationRegistrationIds) {
+      const registrationVariables = variablesByRegistrationId.get(id) ?? [];
+      const requiredVariables = registrationVariables.filter(
+        (v) => v.isRequired,
+      );
+
+      result.set(
+        id,
+        requiredVariables.every((v) => v.isFilled),
+      );
+    }
+
+    return result;
   }
 
   private async assertRegistrationOwnedByWorkspace(

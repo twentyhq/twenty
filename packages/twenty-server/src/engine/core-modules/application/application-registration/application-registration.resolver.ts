@@ -1,10 +1,19 @@
 import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
-import { Args, Mutation, Parent, Query, ResolveField } from '@nestjs/graphql';
+import {
+  Args,
+  Context,
+  Mutation,
+  Parent,
+  Query,
+  ResolveField,
+} from '@nestjs/graphql';
 
 import GraphQLUpload from 'graphql-upload/GraphQLUpload.mjs';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+
+import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
 
 import type { FileUpload } from 'graphql-upload/processRequest.mjs';
 
@@ -313,9 +322,10 @@ export class ApplicationRegistrationResolver {
   @ResolveField(() => Boolean)
   async isConfigured(
     @Parent() registration: ApplicationRegistrationEntity,
+    @Context() context: { loaders: IDataloaders },
   ): Promise<boolean> {
-    return this.applicationRegistrationVariableService.isConfigured(
-      registration.id,
-    );
+    return context.loaders.isConfiguredLoader.load({
+      applicationRegistrationId: registration.id,
+    });
   }
 }
