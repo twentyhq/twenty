@@ -49,6 +49,7 @@ const StyledCheckboxHeaderColumn = styled.div`
   align-items: center;
   background: ${themeCssVariables.background.primary};
   border-bottom: 1px solid ${themeCssVariables.border.color.light};
+  box-sizing: border-box;
   display: flex;
   flex-shrink: 0;
   height: ${BACKGROUND_MOCK_TABLE_DIMENSIONS.rowHeight}px;
