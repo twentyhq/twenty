@@ -60,18 +60,48 @@ export default defineRole({
 ```
 
 </Accordion>
+<Accordion title="defineApplicationRole" description="Mark a role as the app's default role">
+
+`defineApplicationRole()` is a thin wrapper around `defineRole()` that flags **the** role used as your application's default role at install time. Validation is identical to `defineRole`, but the build pipeline auto-wires its `universalIdentifier` into the application manifest's `defaultRoleUniversalIdentifier` — so you do not need to reference it from `defineApplication()` yourself.
+
+```ts src/roles/default-role.ts
+import { defineApplicationRole, PermissionFlag } from 'twenty-sdk/define';
+
+export default defineApplicationRole({
+  universalIdentifier: 'b648f87b-1d26-4961-b974-0908fd991061',
+  label: 'Default function role',
+  description: 'Default role for function Twenty client',
+  canReadAllObjectRecords: true,
+  canUpdateAllObjectRecords: false,
+  canSoftDeleteAllObjectRecords: false,
+  canDestroyAllObjectRecords: false,
+  canUpdateAllSettings: false,
+  canBeAssignedToAgents: false,
+  canBeAssignedToUsers: false,
+  canBeAssignedToApiKeys: false,
+  objectPermissions: [],
+  fieldPermissions: [],
+  permissionFlags: [],
+});
+```
+
+Notes:
+- Exactly **one** `defineApplicationRole(...)` is allowed per app — the manifest build will fail if it finds more than one.
+- All other roles in your app must use `defineRole()`.
+- If your app uses `defineApplicationRole()`, the `defaultRoleUniversalIdentifier` field on `defineApplication()` is optional. Setting it explicitly is still supported for backward compatibility.
+
+</Accordion>
 <Accordion title="defineApplication" description="Configure application metadata (required, one per app)">
 
 Every app must have exactly one `defineApplication` call that describes:
 
 - **Identity**: identifiers, display name, and description.
-- **Permissions**: which role its functions and front components use.
+- **Permissions**: which role its functions and front components use (auto-detected from `defineApplicationRole()`).
 - **(Optional) Variables**: key–value pairs exposed to your functions as environment variables.
 - **(Optional) Pre-install / post-install functions**: logic functions that run before or after installation.
 
 ```ts src/application-config.ts
 import { defineApplication } from 'twenty-sdk/define';
-import { DEFAULT_ROLE_UNIVERSAL_IDENTIFIER } from 'src/roles/default-role';
 
 export default defineApplication({
   universalIdentifier: '39783023-bcac-41e3-b0d2-ff1944d8465d',
@@ -85,14 +115,13 @@ export default defineApplication({
       isSecret: false,
     },
   },
-  defaultRoleUniversalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
 });
 ```
 
 Notes:
 - `universalIdentifier` fields are deterministic IDs you own. Generate them once and keep them stable across syncs.
 - `applicationVariables` become environment variables for your functions and front components (e.g., `DEFAULT_RECIPIENT_NAME` is available as `process.env.DEFAULT_RECIPIENT_NAME`).
-- `defaultRoleUniversalIdentifier` must reference a role defined with `defineRole()` (see above).
+- The default role is detected automatically from the role file marked with `defineApplicationRole()` (see above). You can still set `defaultRoleUniversalIdentifier` explicitly here if you prefer.
 - Pre-install and post-install functions are detected automatically during the manifest build — you do not need to reference them in `defineApplication()`.
 
 #### Marketplace metadata
@@ -113,7 +142,7 @@ If you plan to [publish your app](/developers/extend/apps/publishing), these opt
 
 #### Roles and permissions
 
-The `defaultRoleUniversalIdentifier` in `application-config.ts` designates the default role used by your app's logic functions and front components. See `defineRole` above for details.
+The role declared with `defineApplicationRole()` designates the default role used by your app's logic functions and front components. See `defineApplicationRole` above for details.
 
 - The runtime token injected as `TWENTY_APP_ACCESS_TOKEN` is derived from this role.
 - The typed client is restricted to the permissions granted to that role.
@@ -121,15 +150,15 @@ The `defaultRoleUniversalIdentifier` in `application-config.ts` designates the d
 
 ##### Default function role
 
-When you scaffold a new app, the CLI creates a default role file:
+When you scaffold a new app, the CLI creates a default role file using `defineApplicationRole`:
 
 ```ts src/roles/default-role.ts
-import { defineRole, PermissionFlag } from 'twenty-sdk/define';
+import { defineApplicationRole, PermissionFlag } from 'twenty-sdk/define';
 
 export const DEFAULT_ROLE_UNIVERSAL_IDENTIFIER =
   'b648f87b-1d26-4961-b974-0908fd991061';
 
-export default defineRole({
+export default defineApplicationRole({
   universalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
   label: 'Default function role',
   description: 'Default role for function Twenty client',
@@ -147,15 +176,13 @@ export default defineRole({
 });
 ```
 
-This role's `universalIdentifier` is referenced in `application-config.ts` as `defaultRoleUniversalIdentifier`:
-
-- **\*.role.ts** defines what the role can do.
-- **application-config.ts** points to that role so your functions inherit its permissions.
+The build pipeline detects the `defineApplicationRole()` call and wires its `universalIdentifier` into the application manifest automatically — you do not need to reference it from `application-config.ts`.
 
 Notes:
 - Start from the scaffolded role, then progressively restrict it following least-privilege.
 - Replace `objectPermissions` and `fieldPermissions` with the objects and fields your functions actually need.
 - `permissionFlags` control access to platform-level capabilities. Keep them minimal.
+- Use `defineRole()` (not `defineApplicationRole()`) for any **additional** roles your app ships.
 - See a working example: [`hello-world/src/roles/function-role.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/hello-world/src/roles/function-role.ts).
 
 </Accordion>
