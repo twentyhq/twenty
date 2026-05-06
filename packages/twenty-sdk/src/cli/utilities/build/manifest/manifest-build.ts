@@ -78,11 +78,7 @@ export const buildManifest = async (
   const errors: string[] = [];
   const warnings: string[] = [];
 
-  let application:
-    | (Omit<ApplicationManifest, 'defaultRoleUniversalIdentifier'> & {
-        defaultRoleUniversalIdentifier?: string;
-      })
-    | undefined;
+  let applicationConfig: ApplicationConfig | undefined;
   const objects: ObjectManifest[] = [];
   const fields: FieldManifest[] = [];
   const roles: RoleManifest[] = [];
@@ -137,11 +133,7 @@ export const buildManifest = async (
           filePath,
         });
 
-        application = {
-          ...extract.config,
-          yarnLockChecksum: null,
-          packageJsonChecksum: null,
-        };
+        applicationConfig = extract.config;
         errors.push(...extract.errors);
         applicationFilePaths.push(relativePath);
         break;
@@ -448,7 +440,7 @@ export const buildManifest = async (
     publicAssetsFilePaths.push(relativePath);
   }
 
-  if (!application) {
+  if (!applicationConfig) {
     errors.push(
       'Cannot build application, please export default defineApplication() to define an application',
     );
@@ -470,38 +462,40 @@ export const buildManifest = async (
     errors.push('Only one defineApplicationRole is allowed per application');
   }
 
-  if (application?.defaultRoleUniversalIdentifier) {
+  if (applicationConfig?.defaultRoleUniversalIdentifier) {
     warnings.push(
       '`defaultRoleUniversalIdentifier` on defineApplication() is deprecated. Use defineApplicationRole() in your role file instead.',
     );
   }
 
-  if (application && postInstallLogicFunctions.length >= 1) {
-    application = {
-      ...application,
-      postInstallLogicFunction: postInstallLogicFunctions[0],
-    };
-  }
+  const resolvedDefaultRoleUniversalIdentifier =
+    applicationConfig?.defaultRoleUniversalIdentifier ??
+    (applicationRoleUniversalIdentifiers.length === 1
+      ? applicationRoleUniversalIdentifiers[0]
+      : undefined);
 
-  if (application && preInstallLogicFunctions.length >= 1) {
-    application = {
-      ...application,
-      preInstallLogicFunction: preInstallLogicFunctions[0],
-    };
-  }
-
-  if (application && applicationRoleUniversalIdentifiers.length === 1) {
-    application = {
-      ...application,
-      defaultRoleUniversalIdentifier: applicationRoleUniversalIdentifiers[0],
-    };
-  }
-
-  if (application && !application.defaultRoleUniversalIdentifier) {
+  if (applicationConfig && !resolvedDefaultRoleUniversalIdentifier) {
     errors.push(
       'Application must declare a default role: either pass `defaultRoleUniversalIdentifier` to defineApplication() or mark a role file with defineApplicationRole()',
     );
   }
+
+  const application: ApplicationManifest | undefined =
+    applicationConfig && resolvedDefaultRoleUniversalIdentifier
+      ? {
+          ...applicationConfig,
+          defaultRoleUniversalIdentifier:
+            resolvedDefaultRoleUniversalIdentifier,
+          yarnLockChecksum: null,
+          packageJsonChecksum: null,
+          ...(postInstallLogicFunctions.length >= 1
+            ? { postInstallLogicFunction: postInstallLogicFunctions[0] }
+            : {}),
+          ...(preInstallLogicFunctions.length >= 1
+            ? { preInstallLogicFunction: preInstallLogicFunctions[0] }
+            : {}),
+        }
+      : undefined;
 
   const byId = <T extends { universalIdentifier: string }>(a: T, b: T) =>
     a.universalIdentifier.localeCompare(b.universalIdentifier);
@@ -512,7 +506,7 @@ export const buildManifest = async (
   const manifest: Manifest | null = !application
     ? null
     : {
-        application: application as ApplicationManifest,
+        application,
         objects: objects.sort(byId),
         fields: fields.sort(byId),
         roles: roles.sort(byId),
