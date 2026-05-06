@@ -72,9 +72,11 @@ export const buildManifest = async (
   manifest: Manifest | null;
   filePaths: EntityFilePaths;
   errors: string[];
+  warnings: string[];
 }> => {
   const filePaths = await loadSources(appPath);
   const errors: string[] = [];
+  const warnings: string[] = [];
 
   let application:
     | (Omit<ApplicationManifest, 'defaultRoleUniversalIdentifier'> & {
@@ -468,6 +470,12 @@ export const buildManifest = async (
     errors.push('Only one defineApplicationRole is allowed per application');
   }
 
+  if (application?.defaultRoleUniversalIdentifier) {
+    warnings.push(
+      '`defaultRoleUniversalIdentifier` on defineApplication() is deprecated. Use defineApplicationRole() in your role file instead.',
+    );
+  }
+
   if (application && postInstallLogicFunctions.length >= 1) {
     application = {
       ...application,
@@ -539,5 +547,5 @@ export const buildManifest = async (
     commandMenuItems: commandMenuItemsFilePaths,
   };
 
-  return { manifest, filePaths: entityFilePaths, errors };
+  return { manifest, filePaths: entityFilePaths, errors, warnings };
 };

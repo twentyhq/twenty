@@ -1,26 +1,6 @@
-import {
-  afterEach,
-  beforeEach,
-  describe,
-  expect,
-  it,
-  vi,
-  type MockInstance,
-} from 'vitest';
-
 import { defineApplication } from '@/sdk/define';
 
 describe('defineApplication', () => {
-  let warnSpy: MockInstance<typeof console.warn>;
-
-  beforeEach(() => {
-    warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
-  });
-
-  afterEach(() => {
-    warnSpy.mockRestore();
-  });
-
   it('should return successful validation result when valid', () => {
     const config = {
       universalIdentifier: 'a9faf5f8-cf7e-4f24-9d37-fd523c30febe',
@@ -73,20 +53,6 @@ describe('defineApplication', () => {
     expect(result.success).toBe(true);
     expect(result.errors).toEqual([]);
     expect(result.config?.defaultRoleUniversalIdentifier).toBeUndefined();
-    expect(warnSpy).not.toHaveBeenCalled();
-  });
-
-  it('should warn that defaultRoleUniversalIdentifier is deprecated when provided', () => {
-    defineApplication({
-      universalIdentifier: 'a9faf5f8-cf7e-4f24-9d37-fd523c30febe',
-      displayName: 'My App',
-      description: 'My app description',
-      defaultRoleUniversalIdentifier: '68bb56f3-8300-4cb5-8cc3-8da9ee66f1b2',
-    });
-
-    expect(warnSpy).toHaveBeenCalledTimes(1);
-    expect(warnSpy.mock.calls[0][0]).toMatch(/deprecated/i);
-    expect(warnSpy.mock.calls[0][0]).toMatch(/defineApplicationRole/);
   });
 
   it('should return error when universalIdentifier is missing', () => {
