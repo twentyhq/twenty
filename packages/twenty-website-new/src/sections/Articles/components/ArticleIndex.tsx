@@ -103,16 +103,6 @@ const FrameCorner = styled.span`
   }
 `;
 
-const FrameCornerTopLeft = styled(FrameCorner)`
-  left: ${CORNER_OFFSET};
-  top: ${CORNER_OFFSET};
-`;
-
-const FrameCornerTopRight = styled(FrameCorner)`
-  right: ${CORNER_OFFSET};
-  top: ${CORNER_OFFSET};
-`;
-
 const FrameCornerBottomLeft = styled(FrameCorner)`
   bottom: ${CORNER_OFFSET};
   left: ${CORNER_OFFSET};
@@ -237,7 +227,8 @@ const CardBody = styled.div<{ $isLarge: boolean }>`
 
   @media (min-width: ${theme.breakpoints.md}px) {
     gap: ${({ $isLarge }) => ($isLarge ? theme.spacing(5) : theme.spacing(3))};
-    padding: ${({ $isLarge }) => ($isLarge ? '0' : `${theme.spacing(5)} ${theme.spacing(6)}`)};
+    padding: ${({ $isLarge }) =>
+      $isLarge ? '0' : `${theme.spacing(5)} ${theme.spacing(6)}`};
   }
 `;
 

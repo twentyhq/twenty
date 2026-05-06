@@ -100,8 +100,8 @@ export function Article({ post }: ArticleProps) {
           <BackLink href="/articles">← Back to articles</BackLink>
           <Header>
             <Meta>
-              {formatArticleDate(post.date)} · {post.readingTimeMinutes} min read ·{' '}
-              {post.author}
+              {formatArticleDate(post.date)} · {post.readingTimeMinutes} min
+              read · {post.author}
             </Meta>
             <Title>{post.title}</Title>
             <Description>{post.description}</Description>

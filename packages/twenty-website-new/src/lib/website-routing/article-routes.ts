@@ -13,7 +13,9 @@ export const ARTICLE_ROUTES: readonly WebsiteRoute[] =
         {
           id: 'articles',
           path: '/articles',
-          title: descriptorFromText('Twenty Articles | Open Source CRM Insights'),
+          title: descriptorFromText(
+            'Twenty Articles | Open Source CRM Insights',
+          ),
           description: descriptorFromText(
             'Ideas from the team building Twenty on open source CRM, customer data, GTM systems, and building software that lasts.',
           ),

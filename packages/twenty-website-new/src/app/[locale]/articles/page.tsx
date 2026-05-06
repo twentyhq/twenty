@@ -5,7 +5,10 @@ import { HeadingPart } from '@/design-system/components';
 import { getPublishedArticles } from '@/lib/articles';
 import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';
 import { createMessageDescriptorRenderer } from '@/lib/i18n/create-message-descriptor-renderer';
-import { getRouteI18n, type LocaleRouteParams } from '@/lib/i18n/get-route-i18n';
+import {
+  getRouteI18n,
+  type LocaleRouteParams,
+} from '@/lib/i18n/get-route-i18n';
 import { resolveLocaleParam } from '@/lib/i18n';
 import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels';
 import { Pages } from '@/lib/pages';
@@ -16,7 +19,6 @@ import { Menu } from '@/sections/Menu/components';
 import { MENU_DATA } from '@/sections/Menu/data';
 import { TrustedBy } from '@/sections/TrustedBy/components';
 import { TRUSTED_BY_DATA } from '@/sections/TrustedBy/data';
-import { theme } from '@/theme';
 import { css } from '@linaria/core';
 
 export const generateMetadata = buildRouteMetadata('articles');
@@ -75,7 +77,9 @@ export default async function ArticlesPage({ params }: ArticlesPageProps) {
 
   return (
     <>
-      {posts.length > 0 ? <JsonLd data={buildArticleListJsonLd(posts)} /> : null}
+      {posts.length > 0 ? (
+        <JsonLd data={buildArticleListJsonLd(posts)} />
+      ) : null}
       <Menu.Root
         backgroundColor={ARTICLES_TOP_BACKGROUND_COLOR}
         scheme="primary"

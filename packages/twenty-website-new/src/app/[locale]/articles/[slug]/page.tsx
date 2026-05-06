@@ -2,10 +2,7 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
-import {
-  getPublishedArticle,
-  getPublishedArticles,
-} from '@/lib/articles';
+import { getPublishedArticle, getPublishedArticles } from '@/lib/articles';
 import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';
 import { type LocaleRouteParams } from '@/lib/i18n/get-route-i18n';
 import { localeToUrlSegment } from '@/lib/i18n/website-locale-segments';
@@ -46,7 +43,10 @@ export async function generateMetadata({
   return buildPageMetadata({
     locale,
     path: `/articles/${post.slug}`,
-    title: { id: `${post.title} | Twenty Articles`, message: `${post.title} | Twenty Articles` },
+    title: {
+      id: `${post.title} | Twenty Articles`,
+      message: `${post.title} | Twenty Articles`,
+    },
     description: { id: post.description, message: post.description },
     locales: [SOURCE_LOCALE],
     type: 'article',

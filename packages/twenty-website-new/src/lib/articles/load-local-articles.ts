@@ -114,7 +114,11 @@ function parseArticle(fileName: string, raw: string): Article {
         : 'Twenty',
     content,
     date: normalizeDate(frontmatter.date, fileName),
-    description: requireString(frontmatter.description, 'description', fileName),
+    description: requireString(
+      frontmatter.description,
+      'description',
+      fileName,
+    ),
     draft: frontmatter.draft === true,
     readingTimeMinutes: calculateReadingTimeMinutes(content),
     slug: normalizeSlug(frontmatter.slug, fileName),
@@ -123,7 +127,9 @@ function parseArticle(fileName: string, raw: string): Article {
   };
 }
 
-export function loadLocalArticlesFromDirectory(directoryPath: string): Article[] {
+export function loadLocalArticlesFromDirectory(
+  directoryPath: string,
+): Article[] {
   const articles = fs
     .readdirSync(directoryPath)
     .filter((fileName) => fileName.endsWith('.md') || fileName.endsWith('.mdx'))
@@ -158,5 +164,7 @@ export function getPublishedArticles(): Article[] {
 }
 
 export function getPublishedArticle(slug: string): Article | null {
-  return getPublishedArticles().find((article) => article.slug === slug) ?? null;
+  return (
+    getPublishedArticles().find((article) => article.slug === slug) ?? null
+  );
 }
