@@ -15,18 +15,26 @@ export const fromMorphOrRelationFlatFieldMetadataToRelationDto = ({
   sourceFlatObjectMetadata,
   targetFlatFieldMetadata,
   targetFlatObjectMetadata,
-}: FromMorphOrRelationFlatFieldMetadataToRelationDtoArgs) => ({
-  type: sourceFlatFieldMetadata.settings.relationType,
-  sourceObjectMetadata: fromFlatObjectMetadataToObjectMetadataDto(
-    sourceFlatObjectMetadata,
-  ),
-  sourceFieldMetadata: fromFlatFieldMetadataToFieldMetadataDto(
-    sourceFlatFieldMetadata,
-  ),
-  targetObjectMetadata: fromFlatObjectMetadataToObjectMetadataDto(
-    targetFlatObjectMetadata,
-  ),
-  targetFieldMetadata: fromFlatFieldMetadataToFieldMetadataDto(
-    targetFlatFieldMetadata,
-  ),
-});
+}: FromMorphOrRelationFlatFieldMetadataToRelationDtoArgs) => {
+  const relationType = sourceFlatFieldMetadata.settings?.relationType;
+
+  if (!relationType) {
+    return null;
+  }
+
+  return {
+    type: relationType,
+    sourceObjectMetadata: fromFlatObjectMetadataToObjectMetadataDto(
+      sourceFlatObjectMetadata,
+    ),
+    sourceFieldMetadata: fromFlatFieldMetadataToFieldMetadataDto(
+      sourceFlatFieldMetadata,
+    ),
+    targetObjectMetadata: fromFlatObjectMetadataToObjectMetadataDto(
+      targetFlatObjectMetadata,
+    ),
+    targetFieldMetadata: fromFlatFieldMetadataToFieldMetadataDto(
+      targetFlatFieldMetadata,
+    ),
+  };
+};

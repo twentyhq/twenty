@@ -60,7 +60,7 @@ export const resolveMorphRelationsFromFlatFieldMetadata = ({
         namePlural: targetFlatObjectMetadata.namePlural,
       });
 
-    return fromMorphOrRelationFlatFieldMetadataToRelationDto({
+    const relationDto = fromMorphOrRelationFlatFieldMetadataToRelationDto({
       sourceFlatFieldMetadata: {
         ...sourceFlatFieldMetadata,
         name: morphNameFromMorphFieldMetadataName,
@@ -69,5 +69,7 @@ export const resolveMorphRelationsFromFlatFieldMetadata = ({
       targetFlatObjectMetadata,
       sourceFlatObjectMetadata,
     });
+
+    return relationDto ? [relationDto] : [];
   });
 };
