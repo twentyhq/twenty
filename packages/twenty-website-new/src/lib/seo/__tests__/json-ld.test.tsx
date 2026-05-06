@@ -1,4 +1,6 @@
 import {
+  buildBlogListJsonLd,
+  buildArticleJsonLd,
   buildFaqPageJsonLd,
   buildOrganizationJsonLd,
   buildReleaseListJsonLd,
@@ -164,5 +166,56 @@ describe('buildReleaseListJsonLd', () => {
     };
 
     expect(data.itemListElement[0].item).not.toHaveProperty('datePublished');
+  });
+});
+
+describe('blog JSON-LD', () => {
+  const post = {
+    author: 'Twenty',
+    content: 'Body',
+    date: '2026-05-06',
+    description: 'A practical CRM article.',
+    draft: false,
+    readingTimeMinutes: 3,
+    slug: 'practical-crm-article',
+    tags: ['CRM'],
+    title: 'Practical CRM Article',
+  };
+
+  it('builds a Blog schema for the blog index', () => {
+    const data = buildBlogListJsonLd([post]) as {
+      '@type': string;
+      blogPost: Array<Record<string, unknown>>;
+    };
+
+    expect(data).toMatchObject({
+      '@type': 'Blog',
+      name: 'Twenty Blog',
+      url: 'https://example.test/blog',
+    });
+    expect(data.blogPost[0]).toMatchObject({
+      '@type': 'BlogPosting',
+      headline: 'Practical CRM Article',
+      url: 'https://example.test/blog/practical-crm-article',
+      datePublished: '2026-05-06',
+    });
+  });
+
+  it('builds a BlogPosting schema for an article page', () => {
+    const data = buildArticleJsonLd(post);
+
+    expect(data).toMatchObject({
+      '@type': 'BlogPosting',
+      headline: 'Practical CRM Article',
+      description: 'A practical CRM article.',
+      url: 'https://example.test/blog/practical-crm-article',
+      mainEntityOfPage: 'https://example.test/blog/practical-crm-article',
+      datePublished: '2026-05-06',
+      publisher: {
+        '@type': 'Organization',
+        name: 'Twenty',
+        url: 'https://example.test',
+      },
+    });
   });
 });

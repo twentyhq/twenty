@@ -3,7 +3,10 @@ import { SOURCE_LOCALE, type AppLocale } from 'twenty-shared/translations';
 
 import { PUBLIC_APP_LOCALE_LIST, localeToUrlSegment } from '@/lib/i18n';
 import { getSiteUrl } from '@/lib/seo';
-import { getIndexedWebsiteRoutes } from '@/lib/website-routing';
+import {
+  getIndexedWebsiteRoutes,
+  type WebsiteRoute,
+} from '@/lib/website-routing';
 
 const SITE_URL = getSiteUrl();
 
@@ -14,9 +17,15 @@ const buildLocalizedUrl = (locale: AppLocale, path: string): string => {
   return `${SITE_URL}${prefix}${tail}`;
 };
 
-const buildLanguageAlternates = (path: string): Record<string, string> => {
+const getRouteLocales = (route: WebsiteRoute): readonly AppLocale[] =>
+  route.localeMode === 'source' ? [SOURCE_LOCALE] : PUBLIC_APP_LOCALE_LIST;
+
+const buildLanguageAlternates = (
+  path: string,
+  locales: readonly AppLocale[],
+): Record<string, string> => {
   const alternates: Record<string, string> = {};
-  for (const locale of PUBLIC_APP_LOCALE_LIST) {
+  for (const locale of locales) {
     alternates[locale] = buildLocalizedUrl(locale, path);
   }
   alternates['x-default'] = buildLocalizedUrl(SOURCE_LOCALE, path);
@@ -27,17 +36,22 @@ const localize = (
   path: string,
   changeFrequency: MetadataRoute.Sitemap[number]['changeFrequency'],
   priority: number,
+  locales: readonly AppLocale[],
 ): MetadataRoute.Sitemap =>
-  PUBLIC_APP_LOCALE_LIST.map((locale) => ({
+  locales.map((locale) => ({
     url: buildLocalizedUrl(locale, path),
     changeFrequency,
     priority,
-    alternates: { languages: buildLanguageAlternates(path) },
+    alternates: { languages: buildLanguageAlternates(path, locales) },
   }));
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  return getIndexedWebsiteRoutes().flatMap(
-    ({ path, changeFrequency, priority }) =>
-      localize(path, changeFrequency, priority),
+  return getIndexedWebsiteRoutes().flatMap((route) =>
+    localize(
+      route.path,
+      route.changeFrequency,
+      route.priority,
+      getRouteLocales(route),
+    ),
   );
 }

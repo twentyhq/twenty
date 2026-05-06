@@ -5,6 +5,8 @@ export {
 } from './build-page-metadata';
 export { buildRouteMetadata } from './build-route-metadata';
 export {
+  buildBlogListJsonLd,
+  buildArticleJsonLd,
   buildFaqPageJsonLd,
   buildOrganizationJsonLd,
   buildReleaseListJsonLd,

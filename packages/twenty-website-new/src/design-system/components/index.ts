@@ -18,6 +18,7 @@ export type {
   StackAlign,
   StackProps,
 } from './Layout';
+export { MarkdownProse } from './MarkdownProse';
 export { Modal } from './Modal';
 export type { ModalRootProps } from './Modal';
 export { StepperProgressRail } from './StepperProgressRail';
